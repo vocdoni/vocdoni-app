@@ -9,11 +9,13 @@ import { api, ApiEndpoints, UnverifiedApiError } from '~components/Auth/api'
 import { ILoginParams } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
 import { VerificationPending } from '~components/Auth/Verify'
+import { OrSeparator } from '~components/shared/Layout/Separators'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import InputPassword from '~shared/Form/InputPassword'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvent } from '~utils/analytics'
 import InputBasic from '../shared/Form/InputBasic'
+import GoogleAuth from './GoogleAuth'
 
 type FormData = {
   keepLogedIn: boolean
@@ -140,8 +142,10 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
           <Button type='submit' w='full' isLoading={isSubmitting} shouldWrapChildren>
             {t('signin')}
           </Button>
+          <OrSeparator my={6} />
         </Box>
       </FormProvider>
+      <GoogleAuth />
 
       <Text display={'flex'} justifyContent={'center'} alignItems={'center'} fontWeight='bold' fontSize='sm' mt={6}>
         {t('not_registred_yet')}

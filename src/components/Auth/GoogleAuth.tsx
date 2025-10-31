@@ -3,12 +3,13 @@ import { saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BsGoogle } from 'react-icons/bs'
-import { useAccount, useConnect } from 'wagmi'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { useAuth } from './useAuth'
 
 const GoogleAuth = () => {
   const { setBearer, updateSigner } = useAuth()
   const { isConnected, connector } = useAccount()
+  const { disconnect } = useDisconnect()
   const { t } = useTranslation()
   const toast = useToast()
 
@@ -30,6 +31,7 @@ const GoogleAuth = () => {
       const token = localStorage.getItem('authToken')
       setBearer(token)
       updateSigner(token)
+      disconnect() // Disconnect the wallet after successful authentication (session is maintained via token)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected, isError, connector])
