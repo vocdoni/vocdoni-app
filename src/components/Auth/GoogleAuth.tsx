@@ -18,12 +18,17 @@ const GoogleAuth = () => {
   useEffect(() => {
     if (isError) {
       console.error('Google OAuth error', error?.message || '')
+      const isOAuthConflictError = error?.message.indexOf('OAuthAccountConflictError') !== -1
       toast({
         status: 'error',
         title: t('google_oauth_error', { defaultValue: 'Google OAuth Error' }),
-        description: t('google_oauth_error_description', {
-          defaultValue: 'Google OAuth error, please try again',
-        }),
+        description: isOAuthConflictError
+          ? t('google_oauth_conflict_error', {
+              defaultValue: 'An account with this email already exists. Please sign in using your existing method.',
+            })
+          : t('google_oauth_error_description', {
+              defaultValue: 'Google OAuth error, please try again',
+            }),
       })
       return
     }
