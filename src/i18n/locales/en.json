@@ -534,6 +534,7 @@
   "free_trial_days_one": "One free day",
   "free_trial_days_other": "{{count}} free days",
   "go_back": "go back",
+  "google_oauth_conflict_error": "An account with this email already exists. Please sign in using your existing method.",
   "google_oauth_error": "Google OAuth Error",
   "google_oauth_error_description": "Google OAuth error, please try again",
   "group": {

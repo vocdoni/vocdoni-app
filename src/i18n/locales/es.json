@@ -539,6 +539,7 @@
   "free_trial_days_many": "",
   "free_trial_days_other": "{{count}} días gratis",
   "go_back": "Volver",
+  "google_oauth_conflict_error": "Ya existe una cuenta con este correo electrónico. Por favor, inicia sesión con tu método existente.",
   "google_oauth_error": "Error de Google OAuth",
   "google_oauth_error_description": "Error de Google OAuth, inténtalo de nuevo",
   "group": {
