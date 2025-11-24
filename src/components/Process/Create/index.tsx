@@ -926,113 +926,113 @@ const ProcessCreateView = () => {
 
   return (
     <FormProvider {...methods}>
-      <DashboardContents
-        as='form'
-        onSubmit={methods.handleSubmit(onSubmit, onError)}
-        display='flex'
-        flexDirection='row'
-        position='relative'
-        id='process-create'
-      >
-        {/* Main content area */}
-        <Box
-          flex={1}
-          marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
-          transition='margin-right 0.3s'
+      <Box position='relative' w='full' overflow='hidden'>
+        <DashboardContents
+          as='form'
+          onSubmit={methods.handleSubmit(onSubmit, onError)}
           display='flex'
-          flexDirection='column'
-          gap={8}
-          paddingRight={4}
-          paddingBottom={4}
+          flexDirection='row'
+          position='relative'
+          id='process-create'
+          overflow='hidden'
         >
-          {/* Top bar with draft status and sidebar toggle */}
-          <HStack position='sticky' top='64px' p={2} bg='chakra.body.bg' zIndex='contents'>
-            {effectiveDraftId && (
-              <Box px={3} py={1} borderRadius='full' bg='gray.100' _dark={{ bg: 'whiteAlpha.200' }} fontSize='sm'>
-                <Trans i18nKey='process.create.status.draft'>Draft</Trans>
-              </Box>
-            )}
-            <Spacer />
-            <ButtonGroup size='sm'>
-              {isDirty && (
+          <Box
+            flex={1}
+            marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
+            transition='margin-right 0.3s'
+            display='flex'
+            flexDirection='column'
+            gap={8}
+            paddingRight={4}
+            paddingBottom={4}
+          >
+            {/* Top bar with draft status and sidebar toggle */}
+            <HStack position='sticky' top='0px' p={2} bg='chakra.body.bg' zIndex='contents'>
+              {effectiveDraftId && (
+                <Box px={3} py={1} borderRadius='full' bg='gray.100' _dark={{ bg: 'whiteAlpha.200' }} fontSize='sm'>
+                  <Trans i18nKey='process.create.status.draft'>Draft</Trans>
+                </Box>
+              )}
+              <Spacer />
+              <ButtonGroup size='sm'>
+                {isDirty && (
+                  <IconButton
+                    onClick={openConfirmationModal}
+                    icon={<Icon as={LuRotateCcw} />}
+                    variant='outline'
+                    aria-label={t('dashboard.actions.reset_form', {
+                      defaultValue: 'Reset form',
+                    })}
+                  />
+                )}
                 <IconButton
-                  onClick={openConfirmationModal}
-                  icon={<Icon as={LuRotateCcw} />}
+                  aria-label={t('dashboard.actions.toggle_sidebar', {
+                    defaultValue: 'Toggle sidebar',
+                  })}
+                  icon={<Icon as={LuSettings} />}
                   variant='outline'
-                  aria-label={t('dashboard.actions.reset_form', {
-                    defaultValue: 'Reset form',
+                  onClick={() => setShowSidebar((prev) => !prev)}
+                />
+                <Button
+                  type='submit'
+                  colorScheme='black'
+                  alignSelf='flex-end'
+                  isLoading={methods.formState.isSubmitting}
+                >
+                  <Trans i18nKey='process.create.action.publish'>Publish</Trans>
+                </Button>
+                <Button type='button' colorScheme='black' variant='outline' onClick={saveDraft} isLoading={isSaving}>
+                  <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
+                </Button>
+              </ButtonGroup>
+            </HStack>
+
+            {/* Title, Video, and Description */}
+            <VStack as='header' align='stretch' spacing={4}>
+              <TemplateButtons />
+              <FormControl isInvalid={!!methods.formState.errors.title}>
+                <Input
+                  px={0}
+                  variant='unstyled'
+                  placeholder={
+                    placeholders[activeTemplate]?.title ??
+                    t('process.create.description.title', {
+                      defaultValue: 'Voting Process Title',
+                    })
+                  }
+                  size='2xl'
+                  fontWeight='bold'
+                  {...methods.register('title', {
+                    required: t('form.error.required', 'This field is required'),
                   })}
                 />
-              )}
-              <IconButton
-                aria-label={t('dashboard.actions.toggle_sidebar', {
-                  defaultValue: 'Toggle sidebar',
-                })}
-                icon={<Icon as={LuSettings} />}
-                variant='outline'
-                onClick={toggleSidebar}
+                <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
+              </FormControl>
+
+              {/* Live streaming video URL */}
+              <LiveStreamingInput />
+              <Controller
+                name='description'
+                control={methods.control}
+                render={({ field }) => (
+                  <Editor
+                    key={nextId}
+                    onChange={field.onChange}
+                    placeholder={
+                      placeholders[activeTemplate]?.description ??
+                      t('process.create.description.placeholder', 'Add a description...')
+                    }
+                    defaultValue={field.value}
+                  />
+                )}
               />
-              <Button type='submit' alignSelf='flex-end' isLoading={methods.formState.isSubmitting} shouldWrapChildren>
-                <Trans i18nKey='process.create.action.publish'>Publish</Trans>
-              </Button>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={handleManualSave}
-                isLoading={isSaving}
-                shouldWrapChildren
-              >
-                <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
-              </Button>
-            </ButtonGroup>
-          </HStack>
+            </VStack>
 
-          {/* Title, Video, and Description */}
-          <VStack as='header' align='stretch' spacing={4}>
-            <TemplateButtons />
-            <FormControl isInvalid={!!methods.formState.errors.title}>
-              <Input
-                px={0}
-                variant='unstyled'
-                placeholder={
-                  placeholders[activeTemplate]?.title ??
-                  t('process.create.description.title', {
-                    defaultValue: 'Voting Process Title',
-                  })
-                }
-                size='2xl'
-                fontWeight='bold'
-                {...methods.register('title', {
-                  required: t('form.error.required', 'This field is required'),
-                })}
-              />
-              <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
-            </FormControl>
-
-            {/* Live streaming video URL */}
-            <LiveStreamingInput />
-            <Controller
-              name='description'
-              control={methods.control}
-              render={({ field }) => (
-                <Editor
-                  key={nextId}
-                  onChange={field.onChange}
-                  placeholder={
-                    placeholders[activeTemplate]?.description ??
-                    t('process.create.description.placeholder', 'Add a description...')
-                  }
-                  defaultValue={field.value}
-                />
-              )}
-            />
-          </VStack>
-
-          <Questions />
-        </Box>
-
-        <CreateSidebar />
-      </DashboardContents>
+            <Questions />
+          </Box>
+        </DashboardContents>
+        <CreateSidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
+      </Box>
       <LeaveConfirmationModal
         isOpen={isOpen}
         onCancel={cancel}
