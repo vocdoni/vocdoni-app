@@ -104,127 +104,135 @@ const ProcessViewContent = () => {
   const { onCopy } = useClipboard(votingLink)
 
   return (
-    <DashboardContents display='flex' flexDirection='row' position='relative'>
-      {/* Main content area */}
-      <Box
-        flex={1}
-        marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
-        transition='margin-right 0.3s'
-        display='flex'
-        flexDirection='column'
-        gap={8}
-        paddingRight={4}
-        paddingBottom={4}
-      >
-        {/* Title, schedule, and description */}
-        <HStack justifyContent={'space-between'}>
-          <ElectionStatusBadge />
-          <IconButton
-            aria-label={t('dashboard.actions.toggle_sidebar', { defaultValue: 'Toggle sidebar' })}
-            icon={<Icon as={LuSettings} />}
-            variant='outline'
-            onClick={toggleSidebar}
-          />
-        </HStack>
-
-        <Box as='header'>
-          <ElectionTitle textAlign={'start'} fontWeight={'bold'} />
-          <ElectionVideo mb='3' />
-          <ElectionDescription color='texts.subtle' />
-        </Box>
-
-        {/* Schedule */}
-        <DashboardBox display='flex' flexDirection='column' flexWrap={'wrap'} justifyContent={'space-between'} gap={4}>
-          <Heading>
-            <Icon as={LuCalendar} />
-            <Trans i18nKey='calendar.title'>Schedule</Trans>
-          </Heading>
-          <HStack>
-            <SettingsField
-              icon={LuCalendar}
-              text={t('start_date', 'Start date')}
-              subtext={
-                election instanceof PublishedElection &&
-                formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
-              }
-            />
-            <SettingsField
-              icon={LuClock}
-              text={t('start_time', 'Start time')}
-              subtext={
-                election instanceof PublishedElection &&
-                formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))
-              }
+    <Box position='relative' w='full' overflow='hidden'>
+      <DashboardContents display='flex' flexDirection='row' position='relative'>
+        {/* Main content area */}
+        <Box
+          flex={1}
+          marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
+          transition='margin-right 0.3s'
+          display='flex'
+          flexDirection='column'
+          gap={8}
+          paddingRight={4}
+          paddingBottom={4}
+        >
+          {/* Title, schedule, and description */}
+          <HStack justifyContent={'space-between'}>
+            <ElectionStatusBadge />
+            <IconButton
+              aria-label={t('dashboard.actions.toggle_sidebar', { defaultValue: 'Toggle sidebar' })}
+              icon={<Icon as={LuSettings} />}
+              variant='outline'
+              onClick={() => setShowSidebar((prev) => !prev)}
             />
           </HStack>
-          <HStack>
-            <SettingsField
-              icon={LuCalendar}
-              text={t('end_date', 'End date')}
-              subtext={
-                election instanceof PublishedElection &&
-                formatDate(election.endDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
-              }
-            />
-            <SettingsField
-              icon={LuClock}
-              text={t('end_time', 'End time')}
-              subtext={
-                election instanceof PublishedElection &&
-                formatDate(election.endDate, t('dashboard.process_view.time_format', 'p'))
-              }
-            />
-          </HStack>
-        </DashboardBox>
 
-        {/* Voting link */}
-
-        <DashboardBox>
-          <Box>
-            <Heading>
-              <Icon as={LuExternalLink} />
-              <Trans i18nKey='voting_link.title'>Voting Link</Trans>
-            </Heading>
-            <Text color='texts.subtle' fontSize='sm'>
-              <Trans i18nKey='voting_link.description'>
-                Share this link with your voters to participate in the voting process
-              </Trans>
-            </Text>
+          <Box as='header'>
+            <ElectionTitle textAlign={'start'} fontWeight={'bold'} />
+            <ElectionVideo mb='3' />
+            <ElectionDescription color='texts.subtle' />
           </Box>
 
-          <Flex justifyContent='space-between' gap={2}>
-            <Input readOnly value={votingLink} />
-            <IconButton
-              variant='outline'
-              onClick={onCopy}
-              icon={<Icon as={LuCopy} />}
-              title={t('copy.copy', 'Copy')}
-              aria-label={t('copy.copy')}
-            />
-            <IconButton
-              as={Link}
-              href={votingLink}
-              isExternal
-              icon={<Icon as={LuEye} />}
-              variant='outline'
-              title={t('preview', 'Preview')}
-              aria-label={t('preview')}
-            />
-          </Flex>
-        </DashboardBox>
+          {/* Schedule */}
+          <DashboardBox
+            display='flex'
+            flexDirection='column'
+            flexWrap={'wrap'}
+            justifyContent={'space-between'}
+            gap={4}
+          >
+            <Heading>
+              <Icon as={LuCalendar} />
+              <Trans i18nKey='calendar.title'>Schedule</Trans>
+            </Heading>
+            <HStack>
+              <SettingsField
+                icon={LuCalendar}
+                text={t('start_date', 'Start date')}
+                subtext={
+                  election instanceof PublishedElection &&
+                  formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
+                }
+              />
+              <SettingsField
+                icon={LuClock}
+                text={t('start_time', 'Start time')}
+                subtext={
+                  election instanceof PublishedElection &&
+                  formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))
+                }
+              />
+            </HStack>
+            <HStack>
+              <SettingsField
+                icon={LuCalendar}
+                text={t('end_date', 'End date')}
+                subtext={
+                  election instanceof PublishedElection &&
+                  formatDate(election.endDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
+                }
+              />
+              <SettingsField
+                icon={LuClock}
+                text={t('end_time', 'End time')}
+                subtext={
+                  election instanceof PublishedElection &&
+                  formatDate(election.endDate, t('dashboard.process_view.time_format', 'p'))
+                }
+              />
+            </HStack>
+          </DashboardBox>
 
-        {/* Questions & Results */}
-        <DashboardBox>
-          <Heading as='h4' alignContent='center' justifyContent='space-between'>
-            <Trans i18nKey='questions_and_results'>Questions and results</Trans>
-            <ResultsStateBadge />
-          </Heading>
-          <ElectionResults forceRender />
-        </DashboardBox>
-      </Box>
+          {/* Voting link */}
 
-      <ProcessViewSidebar />
-    </DashboardContents>
+          <DashboardBox>
+            <Box>
+              <Heading>
+                <Icon as={LuExternalLink} />
+                <Trans i18nKey='voting_link.title'>Voting Link</Trans>
+              </Heading>
+              <Text color='texts.subtle' fontSize='sm'>
+                <Trans i18nKey='voting_link.description'>
+                  Share this link with your voters to participate in the voting process
+                </Trans>
+              </Text>
+            </Box>
+
+            <Flex justifyContent='space-between' gap={2}>
+              <Input readOnly value={votingLink} />
+              <IconButton
+                variant='outline'
+                onClick={onCopy}
+                icon={<Icon as={LuCopy} />}
+                title={t('copy.copy', 'Copy')}
+                aria-label={t('copy.copy')}
+              />
+              <IconButton
+                as={Link}
+                href={votingLink}
+                isExternal
+                icon={<Icon as={LuEye} />}
+                variant='outline'
+                title={t('preview', 'Preview')}
+                aria-label={t('preview')}
+              />
+            </Flex>
+          </DashboardBox>
+
+          {/* Questions & Results */}
+          <DashboardBox>
+            <Heading as='h4' alignContent='center' justifyContent='space-between'>
+              <Trans i18nKey='questions_and_results'>Questions and results</Trans>
+              <ResultsStateBadge />
+            </Heading>
+            <ElectionResults forceRender />
+          </DashboardBox>
+        </Box>
+      </DashboardContents>
+
+      <ProcessViewSidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
+    </Box>
   )
 }
 
