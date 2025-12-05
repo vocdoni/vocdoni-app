@@ -1,4 +1,4 @@
-import { Button, Flex } from '@chakra-ui/react'
+import { Button, Flex, useToast } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -12,6 +12,7 @@ type ForgotPasswordFormValues = {
 }
 
 const PasswordForgotForm: React.FC = () => {
+  const toast = useToast()
   const { t } = useTranslation()
   const navigate = useNavigate()
 
@@ -38,6 +39,13 @@ const PasswordForgotForm: React.FC = () => {
       onError: (error) => {
         // we actually should not have errors except for internal server errors
         methods.setError('email', { type: 'manual', message: error.message })
+        toast({
+          title: t('password_recovery_failed', { defaultValue: 'Password recovery failed' }),
+          description: error.message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
       },
     })
 

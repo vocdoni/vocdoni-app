@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, SimpleGrid, Text, useToast } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-providers'
 import { Account } from '@vocdoni/sdk'
@@ -11,7 +11,6 @@ import { useAuth } from '~components/Auth/useAuth'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { HSeparator } from '~components/shared/Layout/Separators'
 import { DashboardBox } from '~shared/Dashboard/Contents'
-import FormSubmitMessage from '~shared/Layout/FormSubmitMessage'
 import { AvatarUploader } from '~shared/Layout/Uploader'
 import { QueryKeys } from '~src/queries/keys'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
@@ -39,6 +38,7 @@ const useOrganizationEdit = (options?: Omit<UseMutationOptions<void, Error, Crea
 }
 
 const EditOrganization = () => {
+  const toast = useToast()
   const { t } = useTranslation()
   const [isPending, setPending] = useState(false)
   const {
@@ -82,15 +82,20 @@ const EditOrganization = () => {
         await updateAccount(newAccount)
       }
       await setStepDoneAsync(SetupStepIds.organizationDetails)
+      toast({
+        title: t('edit_saas_profile.edited_successfully', { defaultValue: 'Updated successfully' }),
+        status: 'success',
+      })
     } catch (e) {
-      console.error('Form submit failed:', e)
+      toast({
+        title: t('edit_saas_profile.edit_failed', { defaultValue: 'Update failed' }),
+        description: (e as Error).message,
+        status: 'error',
+      })
     } finally {
       setPending(false)
     }
   }
-
-  const isError = isSaasError || !!updateError
-  const error = saasError || updateError
 
   return (
     <DashboardBox p={6}>
@@ -148,13 +153,6 @@ const EditOrganization = () => {
             >
               {t('actions.save', { defaultValue: 'Save' })}
             </Button>
-            <FormSubmitMessage
-              isLoading={isPending}
-              isError={isError}
-              error={error}
-              isSuccess={isSuccess}
-              success={t('edit_saas_profile.edited_successfully', { defaultValue: 'Updated successfully' })}
-            />
           </Flex>
         </Flex>
       </FormProvider>

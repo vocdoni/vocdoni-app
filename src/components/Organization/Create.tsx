@@ -1,4 +1,4 @@
-import { Button, Flex, FlexProps, Link, Text } from '@chakra-ui/react'
+import { Button, Flex, FlexProps, Link, Text, useToast } from '@chakra-ui/react'
 
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { enforceHexPrefix, useClient } from '@vocdoni/react-providers'
@@ -13,7 +13,6 @@ import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys, useAuthProvider } from '~components/Auth/useAuthProvider'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { OrganizationMetaKeys, OrganizationMetaResponse, SetupStepIds } from '~queries/organization'
-import FormSubmitMessage from '~shared/Layout/FormSubmitMessage'
 import { QueryKeys } from '~src/queries/keys'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvent } from '~utils/analytics'
@@ -91,6 +90,7 @@ export const OrganizationCreate = ({
   canSkip?: boolean
   minified?: boolean
 } & FlexProps) => {
+  const toast = useToast()
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [isPending, setIsPending] = useState(false)
@@ -100,13 +100,17 @@ export const OrganizationCreate = ({
   const { trackPlausibleEvent } = useAnalytics()
   const { bearedFetch } = useAuth()
 
-  const {
-    mutateAsync: createOrganization,
-    isError,
-    error,
-  } = useOrganizationCreate({
+  const { mutateAsync: createOrganization } = useOrganizationCreate({
     onSuccess: async ({ address }) => {
       trackPlausibleEvent({ name: AnalyticsEvent.OrganizationCreated })
+      toast({
+        title: t('organization.create_org_success', {
+          defaultValue: 'Organization created successfully',
+        }),
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
       try {
         // Mark organizationDetails step as done (can't use org hook here because org is not created yet)
         await bearedFetch<OrganizationMetaResponse>(
@@ -122,11 +126,31 @@ export const OrganizationCreate = ({
         )
       } catch (e) {
         console.warn('Error marking organizationDetails step as done', e)
+        toast({
+          title: t('organization.create_org_step_update_failed', {
+            defaultValue: 'Failed to update organization setup step status',
+          }),
+          description: e.message,
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
+        })
       }
       navigate(onSuccessRoute)
       setTimeout(async () => {
         await fetchAccount()
       }, 50)
+    },
+    onError: (error) => {
+      toast({
+        title: t('organization.create_org_failed', {
+          defaultValue: 'Failed to create organization',
+        }),
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
     },
   })
 
@@ -167,7 +191,6 @@ export const OrganizationCreate = ({
         >
           {t('organization.create_org')}
         </Button>
-        <FormSubmitMessage isError={isError} error={error} />
         <Text color={'account_create_text_secondary'} fontSize='sm' textAlign='center' mt='auto'>
           <Trans i18nKey='create_org.already_profile'>
             If your organization already has a profile,{' '}

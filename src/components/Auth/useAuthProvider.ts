@@ -84,7 +84,23 @@ export const useAuthProvider = () => {
       storeLogin(data)
     },
   })
-  const register = useRegister()
+  const register = useRegister({
+    onSuccess: () =>
+      toast({
+        status: 'success',
+        title: t('registration_successful', { defaultValue: 'Registration successful' }),
+        description: t('please_check_email_to_verify', {
+          defaultValue: 'Please check your email to verify your account',
+        }),
+      }),
+    onError: (error) => {
+      toast({
+        status: 'error',
+        title: t('registration_failed', { defaultValue: 'Registration failed' }),
+        description: error.message,
+      })
+    },
+  })
   const mailVerify = useVerifyMail({
     onSuccess: (data) => {
       storeLogin(data)
