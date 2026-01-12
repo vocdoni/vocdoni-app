@@ -88,10 +88,10 @@ describe('Step0Base crisp integration', () => {
     await fillAndSubmit()
 
     await waitFor(() => {
-      expect(push).toHaveBeenCalledWith(['set', 'session:memberNumber', '123'])
-      expect(push).toHaveBeenCalledWith(['set', 'session:name', 'Alice'])
-      expect(push).toHaveBeenCalledWith(['set', 'session:email', 'alice@example.com'])
+      expect(push).toHaveBeenCalledWith(['set', 'user:nickname', '123'])
     })
+
+    expect(push).toHaveBeenCalledTimes(1)
   })
 
   it('does not push to crisp when auth fails', async () => {
