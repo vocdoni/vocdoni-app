@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { render, screen, waitFor } from '~src/test-utils'
 import { Step0Base } from './Step0'
 
@@ -88,7 +88,7 @@ describe('Step0Base crisp integration', () => {
     await fillAndSubmit()
 
     await waitFor(() => {
-      expect(push).toHaveBeenCalledWith(['set', 'user:nickname', '123'])
+      expect(push).toHaveBeenCalledWith(['set', 'user:nickname', ['memberNumber 123']])
     })
 
     expect(push).toHaveBeenCalledTimes(1)

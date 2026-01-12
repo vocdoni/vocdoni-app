@@ -83,9 +83,9 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
           return
         }
 
-        const [, value] = firstEntry
+        const [field, value] = firstEntry
         try {
-          w.$crisp.push(['set', 'user:nickname', value as string])
+          w.$crisp.push(['set', 'user:nickname', [`${field} ${value}` as string]])
         } catch (error) {
           console.error('Crisp push failed:', error)
         }
