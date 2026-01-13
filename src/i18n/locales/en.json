@@ -250,6 +250,20 @@
       "date_format": "MMMM do, y",
       "time_format": "p"
     },
+    "usage": {
+      "2fa_email": "2FA Email Codes",
+      "2fa_email_tooltip": "Email verification codes sent. Exceeding the limit costs €0.015 per code.",
+      "2fa_sms": "2FA SMS Codes",
+      "2fa_sms_tooltip": "SMS verification codes sent. Exceeding the limit costs €0.015 per code.",
+      "limit_exceeded_message": "Your current plan has reached its limits. Upgrade now to continue working without restrictions.",
+      "memberbase_size": "Memberbase Size",
+      "memberbase_tooltip": "Maximum number of members allowed in your memberbase.",
+      "plan_usage": "Plan Usage",
+      "plan_usage_description": "Track your current usage against your plan limits",
+      "upgrade_plan": "Upgrade Plan",
+      "voting_processes": "Voting Processes",
+      "voting_processes_tooltip": "Number of voting processes created this year. Votes with 10 members or fewer are not counted towards the limits."
+    },
     "welcome": {
       "common_tasks_actions": "Common tasks and actions",
       "create_first_organization": "Create your first organization",
