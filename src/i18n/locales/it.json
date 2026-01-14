@@ -145,7 +145,8 @@
       "confirm": "Confermare le scelte:",
       "sign": "Firma prima",
       "voted_description": "Per verificare il voto, è possibile utilizzare questo identificatore univoco: {{ id }}",
-      "voted_title": "Voto espresso con successo!"
+      "voted_title": "Voto espresso con successo!",
+      "weight": "Il tuo potere di voto è: "
     }
   },
   "census_size": "Dimensione del censimento",

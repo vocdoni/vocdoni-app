@@ -145,7 +145,8 @@
       "confirm": "Confirma tus opciones:",
       "sign": "Firmar primero",
       "voted_description": "Para verificar tu voto, puedes usar este identificador único: {{ id }}",
-      "voted_title": "¡Tu voto se ha emitido correctamente!"
+      "voted_title": "¡Tu voto se ha emitido correctamente!",
+      "weight": "Tu poder de voto es: "
     }
   },
   "census_size": "Tamaño del censo",

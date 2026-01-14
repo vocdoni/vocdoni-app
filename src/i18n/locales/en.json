@@ -142,7 +142,8 @@
       "confirm": "Please confirm your choices:",
       "sign": "Sign first",
       "voted_description": "To verify your vote, you can use this unique identifier: {{ id }}",
-      "voted_title": "Your vote was successfully cast!"
+      "voted_title": "Your vote was successfully cast!",
+      "weight": "Your voting power is: "
     }
   },
   "census_size": "Census size",

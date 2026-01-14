@@ -32,6 +32,7 @@ export const translations = (t: TFunction<string, string>) => ({
     sign: t('cc.vote.sign').toString(),
     voted_description: t('cc.vote.voted_description').toString(),
     voted_title: t('cc.vote.voted_title').toString(),
+    weight: t('cc.vote.weight').toString(),
   },
   empty: t('cc.empty').toString(),
   errors: {

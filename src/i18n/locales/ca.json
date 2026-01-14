@@ -145,7 +145,8 @@
       "confirm": "Confirma les teves seleccions:",
       "sign": "Signa abans de votar",
       "voted_description": "Per verificar el teu vot, pots utilitzar aquesta identificació única: {{ id }}",
-      "voted_title": "El teu vot s'ha registrat amb èxit!"
+      "voted_title": "El teu vot s'ha registrat amb èxit!",
+      "weight": "El teu poder de vot és: "
     }
   },
   "census_size": "Mida del cens",
