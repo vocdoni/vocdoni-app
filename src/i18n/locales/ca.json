@@ -255,9 +255,9 @@
     },
     "usage": {
       "2fa_email": "Codis 2FA per Email",
-      "2fa_email_tooltip": "Codis de verificació per email enviats. Superar el límit costa 0,015€ per codi.",
+      "2fa_email_tooltip": "Codis de verificació per email enviats. Superar el límit costa {{price}}€ per codi.",
       "2fa_sms": "Codis 2FA per SMS",
-      "2fa_sms_tooltip": "Codis de verificació per SMS enviats. Superar el límit costa 0,015€ per codi.",
+      "2fa_sms_tooltip": "Codis de verificació per SMS enviats. Superar el límit costa {{price}}€ per codi.",
       "limit_exceeded_message": "El teu pla actual ha assolit els seus límits. Actualitza ara per continuar treballant sense restriccions.",
       "memberbase_size": "Mida de la Base de Membres",
       "memberbase_tooltip": "Nombre màxim de membres permesos a la teva base de membres.",

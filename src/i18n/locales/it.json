@@ -255,9 +255,9 @@
     },
     "usage": {
       "2fa_email": "Codici Email 2FA",
-      "2fa_email_tooltip": "Codici di verifica email inviati. Il superamento del limite costa €0,015 per codice.",
+      "2fa_email_tooltip": "Codici di verifica email inviati. Il superamento del limite costa €{{price}} per codice.",
       "2fa_sms": "Codici SMS 2FA",
-      "2fa_sms_tooltip": "Codici di verifica SMS inviati. Il superamento del limite costa €0,015 per codice.",
+      "2fa_sms_tooltip": "Codici di verifica SMS inviati. Il superamento del limite costa €{{price}} per codice.",
       "limit_exceeded_message": "Il tuo piano attuale ha raggiunto i suoi limiti. Aggiorna ora per continuare a lavorare senza restrizioni.",
       "memberbase_size": "Dimensione della Base Membri",
       "memberbase_tooltip": "Numero massimo di membri consentiti per processo di voto.",

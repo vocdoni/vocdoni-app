@@ -5,6 +5,10 @@ export const FormatDate = 'dd/MM/yyyy'
 export const FormatDateLong = 'MMMM d - yyyy H:mm'
 export const TokenPrice = 0.15
 export const MinPurchaseTokens = 100
+export const TwoFACodePrice = {
+  email: 0.015,
+  sms: 0.015,
+} as const
 export const StripeEnabled = import.meta.env.STRIPE_PUBLIC_KEY !== ''
 export const InnerContentsMaxWidth = {
   base: 'full',

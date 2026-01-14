@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { LuInfo, LuMail, LuMessageSquare, LuUsers, LuVote } from 'react-icons/lu'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
+import { TwoFACodePrice } from '~constants'
 import { usePaginatedMembers } from '~queries/members'
 import { Routes } from '~routes'
 import { DashboardBox, DashboardCardHeader } from '~shared/Dashboard/Contents'
@@ -83,7 +84,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
 }
 
 export const UsageLimits = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { subscription, loading } = useSubscription()
 
   // Fetch memberbase data to get total count
@@ -101,6 +102,12 @@ export const UsageLimits = () => {
 
   const email2FA = plan.features['2FAemail'] || 0
   const sms2FA = plan.features['2FAsms'] || 0
+  const priceFormatter = new Intl.NumberFormat(i18n.resolvedLanguage || i18n.language || 'en', {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  })
+  const formattedEmailPrice = priceFormatter.format(TwoFACodePrice.email)
+  const formattedSmsPrice = priceFormatter.format(TwoFACodePrice.sms)
 
   const usageMetrics: UsageMetric[] = [
     {
@@ -136,7 +143,8 @@ export const UsageLimits = () => {
       color: 'green',
       isSoftLimit: true,
       tooltip: t('dashboard.usage.2fa_email_tooltip', {
-        defaultValue: 'Email verification codes sent. Exceeding the limit costs €0.015 per code.',
+        defaultValue: 'Email verification codes sent. Exceeding the limit costs €{{price}} per code.',
+        price: formattedEmailPrice,
       }),
     })
   }
@@ -150,7 +158,8 @@ export const UsageLimits = () => {
       color: 'cyan',
       isSoftLimit: true,
       tooltip: t('dashboard.usage.2fa_sms_tooltip', {
-        defaultValue: 'SMS verification codes sent. Exceeding the limit costs €0.015 per code.',
+        defaultValue: 'SMS verification codes sent. Exceeding the limit costs €{{price}} per code.',
+        price: formattedSmsPrice,
       }),
     })
   }
