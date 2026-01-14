@@ -45,7 +45,8 @@ const SubscriptionProviderComponent: React.FC<{ children: ReactNode }> = ({ chil
   const { account } = useClient()
 
   // Fetch organization subscription details
-  // TODO: In the future, this may be merged with the role permissions (not yet defined)
+  // TODO: In the future, this may be merged with the role permissions (not yet defined).
+  // Tracked in: https://github.com/vocdoni/ui-scaffold/issues/1510
   const {
     data: subscription,
     isFetching,
