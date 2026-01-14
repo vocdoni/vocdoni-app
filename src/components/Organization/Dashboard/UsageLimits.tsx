@@ -14,15 +14,11 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react'
-import { useQuery } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-providers'
-import { PublishedElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { LuInfo, LuMail, LuMessageSquare, LuUsers, LuVote } from 'react-icons/lu'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
 import { usePaginatedMembers } from '~queries/members'
-import { paginatedElectionsQuery } from '~queries/organization'
 import { Routes } from '~routes'
 import { DashboardBox, DashboardCardHeader } from '~shared/Dashboard/Contents'
 
@@ -89,14 +85,6 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
 export const UsageLimits = () => {
   const { t } = useTranslation()
   const { subscription, loading } = useSubscription()
-  const { client, account } = useClient()
-
-  // Fetch all elections to count them
-  // Set a high limit to ensure we get all elections for accurate counting
-  const { data: elections } = useQuery({
-    ...paginatedElectionsQuery(account, client, { limit: 1000 }),
-    enabled: !!account?.address && !!subscription,
-  })
 
   // Fetch memberbase data to get total count
   const { data: membersData } = usePaginatedMembers({ showAll: true })
@@ -107,7 +95,6 @@ export const UsageLimits = () => {
 
   const { plan, usage, subscriptionDetails } = subscription
 
-  const processesUsed = elections?.elections?.filter((election) => election instanceof PublishedElection).length || 0
   const maxProcesses = plan.organization.maxProcesses
   const maxCensus = plan.organization.maxCensus
   const maxCensusSize = subscriptionDetails.maxCensusSize || maxCensus
@@ -119,7 +106,7 @@ export const UsageLimits = () => {
     {
       icon: LuVote,
       label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting Processes' }),
-      current: processesUsed,
+      current: usage.processes || 0,
       max: maxProcesses,
       color: 'blue',
       tooltip: t('dashboard.usage.voting_processes_tooltip', {
