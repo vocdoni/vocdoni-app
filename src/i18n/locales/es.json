@@ -723,10 +723,6 @@
         "description": "Vocdoni admite diversos métodos de autenticación, como correo electrónico, eID, código por SMS, firma electrónica o integración con sistemas de identificación existentes.",
         "title": "¿Cómo puedo asegurarme de que solo voten las personas autorizadas?"
       },
-      "faq_27": {
-        "description": "Ofrecemos asistencia técnica y herramientas de recuperación para garantizar que todos los votantes puedan ejercer su derecho al voto sin dificultades.",
-        "title": "¿Qué ocurre si un votante tiene problemas técnicos durante la votación?"
-      },
       "faq_28": {
         "description": "Censo cerrado: solo pueden votar las personas registradas previamente en el censo. Censo abierto: cualquier persona que cumpla determinados criterios (por ejemplo, verificación eID) puede votar.",
         "title": "¿Cuál es la diferencia entre un censo cerrado y uno abierto?"
