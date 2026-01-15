@@ -180,33 +180,15 @@ export const UsageLimits = () => {
         />
 
         {hasExceededLimit && (
-          <Alert
-            status='warning'
-            variant='left-accent'
-            borderRadius='lg'
-            py={3}
-            px={4}
-            bg='orange.50'
-            borderColor='orange.400'
-            _dark={{
-              bg: 'orange.900',
-              borderColor: 'orange.500',
-            }}
-          >
-            <AlertIcon color='orange.500' _dark={{ color: 'orange.400' }} />
+          <Alert status='warning' variant='left-accent' borderRadius='lg' py={3} px={4}>
+            <AlertIcon />
             <Flex
               flex='1'
               direction={{ base: 'column', md: 'row' }}
               align={{ base: 'flex-start', md: 'center' }}
               gap={3}
             >
-              <AlertDescription
-                fontSize='sm'
-                color='gray.800'
-                _dark={{ color: 'gray.100' }}
-                fontWeight='medium'
-                flex='1'
-              >
+              <AlertDescription fontSize='sm' fontWeight='medium' flex='1'>
                 {t('dashboard.usage.limit_exceeded_message', {
                   defaultValue:
                     'Your current plan has reached its limits. Upgrade now to continue working without restrictions.',
