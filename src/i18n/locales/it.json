@@ -1205,6 +1205,20 @@
   "number_of_members_one": "{{ count }} membro del team",
   "number_of_members_many": "{{ count }} team member",
   "number_of_members_other": "{{ count }} membri del team",
+  "oauth": {
+    "link": {
+      "action": "Collega l'account {{provider}}",
+      "error": "Impossibile collegare il provider",
+      "success": "Provider collegato con successo"
+    },
+    "title": "Collega account",
+    "unlink": {
+      "action": "Scollega {{provider}}",
+      "confirm": "Scollegare {{provider}}?",
+      "error": "Impossibile scollegare il provider",
+      "success": "Provider scollegato con successo"
+    }
+  },
   "open_in_explorer": "Apri nell'explorer",
   "or_continue_with": "o continua con",
   "order_summary": "Riepilogo ordine",
@@ -1277,6 +1291,11 @@
   "password_recovery_failed": "Recupero della password non riuscito",
   "password_recovery_sent": "Email di recupero inviata",
   "password_recovery_sent_description": "Controlla la posta in arrivo per il link di reimpostazione.",
+  "password_request": {
+    "action": "Richiedi cambio password",
+    "error": "Impossibile richiedere la reimpostazione della password",
+    "success": "Email di reimpostazione password inviata"
+  },
   "password_reset": {
     "subtitle": "Se la tua email corrisponde a un account esistente, riceverai un'email con un codice per reimpostare la password.",
     "title": "Reimpostazione password"

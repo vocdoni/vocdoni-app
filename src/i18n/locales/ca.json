@@ -1205,6 +1205,20 @@
   "number_of_members_one": "{{ count }} membre de l'equip",
   "number_of_members_many": "",
   "number_of_members_other": "{{ count }} membres de l'equip",
+  "oauth": {
+    "link": {
+      "action": "Enllaça el compte de {{provider}}",
+      "error": "No s'ha pogut enllaçar el proveïdor",
+      "success": "Proveïdor enllaçat correctament"
+    },
+    "title": "Connecta comptes",
+    "unlink": {
+      "action": "Desenllaça {{provider}}",
+      "confirm": "Desenllaçar {{provider}}?",
+      "error": "No s'ha pogut desenllaçar el proveïdor",
+      "success": "Proveïdor desenllaçat correctament"
+    }
+  },
   "open_in_explorer": "Obre a l'explorador",
   "or_continue_with": "o continua amb",
   "order_summary": "Resum de la comanda",
@@ -1277,6 +1291,11 @@
   "password_recovery_failed": "No s'ha pogut enviar el correu de recuperació",
   "password_recovery_sent": "Correu de recuperació enviat",
   "password_recovery_sent_description": "Revisa la teva safata d'entrada per a l'enllaç de restabliment.",
+  "password_request": {
+    "action": "Sol·licita el canvi de contrasenya",
+    "error": "No s'ha pogut sol·licitar el restabliment de la contrasenya",
+    "success": "S'ha enviat el correu de restabliment de la contrasenya"
+  },
   "password_reset": {
     "subtitle": "Si el teu correu electrònic correspon a un compte existent, rebràs un missatge amb un codi per restablir la contrasenya.",
     "title": "Restablir contrasenya"

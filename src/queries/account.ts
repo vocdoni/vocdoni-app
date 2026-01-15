@@ -37,6 +37,8 @@ export interface User {
   firstName: string
   lastName: string
   organizations: Array<UserRole>
+  providers: string[]
+  hasPassword: boolean
 }
 
 export interface UpdateProfileParams {

@@ -18,6 +18,8 @@ export const InnerContentsMaxWidth = {
 export const MaxWindowWidth = '2560px'
 export const MaxNavbarWidth = '1920px'
 export const MaxContentsWidth = '1200px'
+export const OAuthProviders = ['google'] as const
+export type OAuthProvider = (typeof OAuthProviders)[number]
 
 export enum SubscriptionPermission {
   Name = 'name',

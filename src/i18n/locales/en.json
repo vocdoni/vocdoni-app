@@ -1186,6 +1186,20 @@
   "not_registred_yet": "Don't have an account?",
   "number_of_members_one": "{{ count }} team member",
   "number_of_members_other": "{{ count }} team members",
+  "oauth": {
+    "link": {
+      "action": "Link {{provider}} account",
+      "error": "Failed to link provider",
+      "success": "Provider linked successfully"
+    },
+    "title": "Connect accounts",
+    "unlink": {
+      "action": "Unlink {{provider}}",
+      "confirm": "Unlink {{provider}}?",
+      "error": "Failed to unlink provider",
+      "success": "Provider unlinked successfully"
+    }
+  },
   "open_in_explorer": "Open in explorer",
   "or_continue_with": "or continue with",
   "order_summary": "Order Summary",
@@ -1258,6 +1272,11 @@
   "password_recovery_failed": "Password recovery failed",
   "password_recovery_sent": "Recovery email sent",
   "password_recovery_sent_description": "Check your inbox for the reset link.",
+  "password_request": {
+    "action": "Request password change",
+    "error": "Failed to request password reset",
+    "success": "Password reset email sent"
+  },
   "password_reset": {
     "subtitle": "If your email corresponds to an existing account, you'll receive an email with a code to reset your password.",
     "title": "Password reset"

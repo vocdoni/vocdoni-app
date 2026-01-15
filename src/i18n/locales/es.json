@@ -1205,6 +1205,20 @@
   "number_of_members_one": "Un miembro del equipo",
   "number_of_members_many": "",
   "number_of_members_other": "{{ count }} miembros del equipo",
+  "oauth": {
+    "link": {
+      "action": "Vincular la cuenta de {{provider}}",
+      "error": "No se pudo vincular el proveedor",
+      "success": "Proveedor vinculado correctamente"
+    },
+    "title": "Conectar cuentas",
+    "unlink": {
+      "action": "Desvincular {{provider}}",
+      "confirm": "¿Desvincular {{provider}}?",
+      "error": "No se pudo desvincular el proveedor",
+      "success": "Proveedor desvinculado correctamente"
+    }
+  },
   "open_in_explorer": "Abrir en el explorador",
   "or_continue_with": "o continuar con",
   "order_summary": "Order Summary",
@@ -1277,6 +1291,11 @@
   "password_recovery_failed": "Error al enviar el correo de recuperación",
   "password_recovery_sent": "Correo de recuperación enviado",
   "password_recovery_sent_description": "Revisa tu bandeja de entrada para el enlace de restablecimiento.",
+  "password_request": {
+    "action": "Solicitar cambio de contraseña",
+    "error": "No se pudo solicitar el restablecimiento de contraseña",
+    "success": "Correo de restablecimiento enviado"
+  },
   "password_reset": {
     "subtitle": "Si tu correo electrónico corresponde a una cuenta existente, recibirás un correo con un código para restablecer tu contraseña.",
     "title": "Restablecimiento de contraseña"

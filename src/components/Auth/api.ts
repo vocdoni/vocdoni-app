@@ -30,6 +30,8 @@ export enum ApiEndpoints {
   OrganizationCensus = 'census/{censusId}',
   OrganizationCensusPublish = 'census/{censusId}/group/{groupId}/publish',
   ProcessBundle = 'process/bundle',
+  OAuthLink = 'auth/oauth/link',
+  OAuthUnlink = 'auth/oauth/unlink/{provider}',
   Password = 'users/password',
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
@@ -78,6 +80,20 @@ export class BadRequestApiError extends ApiError {}
 export class UnverifiedApiError extends ApiError {}
 
 export class UserAlreadyVerifiedApiError extends ApiError {}
+
+export const getApiErrorMessage = (error: unknown) => {
+  if (!error) return undefined
+  if (error instanceof ApiError) {
+    return error.apiError?.error || error.message
+  }
+
+  if (typeof error === 'object' && error !== null) {
+    const maybeError = error as { apiError?: { error?: string }; message?: string }
+    return maybeError.apiError?.error || maybeError.message
+  }
+
+  return undefined
+}
 
 export type ApiParams = {
   body?: unknown

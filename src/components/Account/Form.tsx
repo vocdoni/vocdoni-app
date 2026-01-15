@@ -4,13 +4,22 @@ import {
   FormErrorMessage,
   FormLabel,
   HStack,
+  Icon,
   Input,
   Text,
   useToast,
   VStack,
 } from '@chakra-ui/react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { linkSaasOAuth } from '@vocdoni/rainbowkit-wallets'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { BsGoogle, BsLink } from 'react-icons/bs'
+import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
+import { useAuth } from '~components/Auth/useAuth'
+import { OAuthProvider, OAuthProviders } from '~constants'
+import { QueryKeys } from '~queries/keys'
 import { User, useUpdateProfile } from '~src/queries/account'
 import { ChangePasswordButton } from './Password'
 
@@ -20,10 +29,14 @@ interface ProfileFormData {
   email: string
 }
 
-const AccountForm = ({ profile }: { profile: User }) => {
+const AccountForm = ({ profile }: { profile?: User }) => {
   const { t } = useTranslation()
   const toast = useToast()
   const updateProfile = useUpdateProfile()
+  const queryClient = useQueryClient()
+  const { bearedFetch, bearer } = useAuth()
+  const [linkingProvider, setLinkingProvider] = useState<OAuthProvider | null>(null)
+  const [unlinkingProvider, setUnlinkingProvider] = useState<OAuthProvider | null>(null)
   const {
     register,
     handleSubmit,
@@ -37,6 +50,94 @@ const AccountForm = ({ profile }: { profile: User }) => {
         }
       : undefined,
   })
+
+  const hasPassword = profile?.hasPassword ?? true
+  const linkedProviders = useMemo(() => new Set(profile?.providers ?? []), [profile?.providers])
+
+  const providerIcons: Partial<Record<OAuthProvider, typeof BsGoogle>> = {
+    google: BsGoogle,
+  }
+
+  const linkProvider = useMutation({
+    mutationFn: async (provider: OAuthProvider) => {
+      if (!bearer) throw new Error('Missing auth token')
+      return linkSaasOAuth({
+        oAuthServiceUrl: import.meta.env.OAUTH_URL,
+        oAuthServiceProvider: provider,
+        saasBackendUrl: import.meta.env.SAAS_URL,
+        provider,
+        authToken: bearer,
+      })
+    },
+    onMutate: (provider) => {
+      setLinkingProvider(provider)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.profile })
+      toast({
+        title: t('oauth.link.success', { defaultValue: 'Provider linked successfully' }),
+        status: 'success',
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('oauth.link.error', { defaultValue: 'Failed to link provider' }),
+        description: error.message,
+        status: 'error',
+      })
+    },
+    onSettled: () => {
+      setLinkingProvider(null)
+    },
+  })
+
+  const unlinkProvider = useMutation({
+    mutationFn: (provider: OAuthProvider) =>
+      bearedFetch<void>(ApiEndpoints.OAuthUnlink.replace('{provider}', provider), { method: 'DELETE' }),
+    onMutate: (provider) => {
+      setUnlinkingProvider(provider)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.profile })
+      toast({
+        title: t('oauth.unlink.success', { defaultValue: 'Provider unlinked successfully' }),
+        status: 'success',
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('oauth.unlink.error', { defaultValue: 'Failed to unlink provider' }),
+        description: getApiErrorMessage(error),
+        status: 'error',
+      })
+    },
+    onSettled: () => {
+      setUnlinkingProvider(null)
+    },
+  })
+
+  const requestPasswordReset = useMutation({
+    mutationFn: (email: string) =>
+      api(ApiEndpoints.PasswordRecovery, {
+        method: 'POST',
+        body: { email },
+      }),
+    onSuccess: () => {
+      toast({
+        title: t('password_request.success', { defaultValue: 'Password reset email sent' }),
+        status: 'success',
+      })
+    },
+    onError: (error: Error) => {
+      toast({
+        title: t('password_request.error', { defaultValue: 'Failed to request password reset' }),
+        description: error.message,
+        status: 'error',
+      })
+    },
+  })
+
+  const formatProviderLabel = (provider: string) => provider.charAt(0).toUpperCase() + provider.slice(1)
 
   const onSubmit = async (data: ProfileFormData) => {
     try {
@@ -97,11 +198,81 @@ const AccountForm = ({ profile }: { profile: User }) => {
 
           <FormControl>
             <FormLabel fontSize={'14px'}>{t('password', { defaultValue: 'Password' })}</FormLabel>
-            <HStack gap={2}>
-              <Input placeholder={'• • • • • • • •'} type='password' isDisabled />
-              <ChangePasswordButton />
-            </HStack>
+            {hasPassword ? (
+              <HStack gap={2}>
+                <Input placeholder={'• • • • • • • •'} type='password' isDisabled />
+                <ChangePasswordButton />
+              </HStack>
+            ) : (
+              <Button
+                onClick={() => profile?.email && requestPasswordReset.mutate(profile.email)}
+                size='sm'
+                variant='outline'
+                isLoading={requestPasswordReset.isPending}
+                alignSelf='start'
+              >
+                {t('password_request.action', { defaultValue: 'Request password change' })}
+              </Button>
+            )}
           </FormControl>
+
+          <VStack spacing={3} align='stretch'>
+            <Text fontSize={'14px'} fontWeight='600'>
+              {t('oauth.title', { defaultValue: 'Connect accounts' })}
+            </Text>
+            {OAuthProviders.map((provider) => {
+              const providerLabel = formatProviderLabel(provider)
+              const isLinked = linkedProviders.has(provider)
+              const isUnlinking = unlinkingProvider === provider && unlinkProvider.isPending
+              const isLinking = linkingProvider === provider && linkProvider.isPending
+              const linkLabel = t('oauth.link.action', {
+                defaultValue: 'Link {{provider}} account',
+                provider: providerLabel,
+              })
+              const unlinkLabel = t('oauth.unlink.action', {
+                defaultValue: 'Unlink {{provider}}',
+                provider: providerLabel,
+              })
+              const providerIcon = providerIcons[provider] || BsLink
+
+              return (
+                <HStack key={provider} justify='space-between' flexWrap='wrap' gap={3}>
+                  {isLinked ? (
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      colorScheme='red'
+                      leftIcon={<Icon as={providerIcon} />}
+                      onClick={() => {
+                        const confirmed = window.confirm(
+                          t('oauth.unlink.confirm', {
+                            defaultValue: `Unlink {{provider}}?`,
+                            provider: providerLabel,
+                          })
+                        )
+                        if (!confirmed) return
+                        unlinkProvider.mutate(provider)
+                      }}
+                      isLoading={isUnlinking}
+                    >
+                      {unlinkLabel}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant={'outline'}
+                      isLoading={isLinking}
+                      shouldWrapChildren
+                      onClick={() => linkProvider.mutate(provider)}
+                      fontWeight={'bold'}
+                      leftIcon={<Icon as={providerIcon} />}
+                    >
+                      {linkLabel}
+                    </Button>
+                  )}
+                </HStack>
+              )
+            })}
+          </VStack>
 
           <Button
             type='submit'
