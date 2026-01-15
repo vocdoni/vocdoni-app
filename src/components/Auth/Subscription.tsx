@@ -29,6 +29,7 @@ export type SubscriptionType = {
   usage: {
     sentSMS: number
     sentEmails: number
+    processes: number
     subOrgs: number
     users: number
   }

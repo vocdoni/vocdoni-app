@@ -35,9 +35,11 @@ import { DashboardBox, Heading, SubHeading } from '~shared/Dashboard/Contents'
 import InvertedAccordionIcon from '~shared/Layout/InvertedAccordionIcon'
 import { useProfile } from '~src/queries/account'
 import { CheckboxTypes, paginatedElectionsQuery, useOrganizationSetup } from '~src/queries/organization'
+import { UsageLimits } from './UsageLimits'
 
 const OrganizationDashboard = () => {
   const { t } = useTranslation()
+  const { organization } = useOrganization()
 
   return (
     <>
@@ -48,6 +50,16 @@ const OrganizationDashboard = () => {
         })}
       </SubHeading>
       <Tutorial />
+      <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={6} mb={6} alignItems='stretch'>
+        <Box flex='1 1 60%'>
+          <UsageLimits />
+        </Box>
+        {organization && (
+          <Box flex='1 1 40%'>
+            <QuickActions />
+          </Box>
+        )}
+      </Flex>
       <OrganizationProcesses />
       <Setup />
     </>
@@ -239,7 +251,6 @@ const Setup = () => {
 
 const OrganizationProcesses = () => {
   const { t } = useTranslation()
-  const { organization } = useOrganization()
 
   return (
     <Flex flexDirection={{ base: 'column', md: 'row' }} gap={4}>
@@ -258,7 +269,6 @@ const OrganizationProcesses = () => {
           <Processes />
         </Flex>
       </DashboardBox>
-      {organization && <QuickActions />}
     </Flex>
   )
 }
