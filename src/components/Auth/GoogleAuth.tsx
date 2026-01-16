@@ -1,13 +1,16 @@
 import { Button, Icon, useToast } from '@chakra-ui/react'
-import { saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
+import { AuthStorageKeys, saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BsGoogle } from 'react-icons/bs'
+import { useNavigate } from 'react-router-dom'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { Routes } from '~src/router/routes'
 import { useAuth } from './useAuth'
 
 const GoogleAuth = () => {
   const { setBearer, updateSigner } = useAuth()
+  const navigate = useNavigate()
   const { isConnected, connector } = useAccount()
   const { disconnect } = useDisconnect()
   const { t } = useTranslation()
@@ -33,9 +36,14 @@ const GoogleAuth = () => {
       return
     }
     if (isConnected && connector?.id === 'google') {
-      const token = localStorage.getItem('authToken')
+      const token = localStorage.getItem(AuthStorageKeys.Token)
       setBearer(token)
       updateSigner(token)
+      const registered = localStorage.getItem(AuthStorageKeys.Registered)
+      if (registered === 'true') {
+        localStorage.removeItem(AuthStorageKeys.Registered)
+        navigate(Routes.auth.organizationCreate)
+      }
       disconnect() // Disconnect the wallet after successful authentication (session is maintained via token)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

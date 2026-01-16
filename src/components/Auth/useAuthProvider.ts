@@ -1,5 +1,6 @@
 import { useToast } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
+import { clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { useClient } from '@vocdoni/react-providers'
 import { NoOrganizationsError, RemoteSigner, UnauthorizedError } from '@vocdoni/sdk'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -129,8 +130,7 @@ export const useAuthProvider = () => {
   }, [])
 
   const logout = useCallback(() => {
-    localStorage.removeItem(LocalStorageKeys.Token)
-    localStorage.removeItem(LocalStorageKeys.Expiry)
+    clearAuthStorageKeys()
     localStorage.removeItem(LocalStorageKeys.RenewSession)
     setBearer(null)
     clear()
