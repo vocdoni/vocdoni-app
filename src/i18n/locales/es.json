@@ -208,8 +208,11 @@
   },
   "create_process": "Crear proceso",
   "csp": {
+    "auth_failed": "Autenticación fallida",
+    "auth_success": "Autenticación correcta",
     "authenticate": "Identificarse",
     "code_info": "Recibirás un código único en el medio seleccionado para verificar tu identidad y completar la autenticación.",
+    "code_sent": "Código de verificación enviado",
     "contact_match_help": "Debe coincidir con el registrado en el sistema",
     "data_usage_info": "Tus datos solo se utilizarán para verificar tu identidad. Vocdoni no almacena datos personales.",
     "errors": {
@@ -272,6 +275,7 @@
       "create_first_organization": "Crea tu primera organización",
       "create_first_vote": "Crea tu primera votación",
       "empty": "No se han encontrado procesos de votación",
+      "empty_description": "Crea tu primera votación para empezar.",
       "error_loading_processes": "Error al cargar los procesos de votación",
       "hello": "¡Bienvenido a Vocdoni, {{ name }}!",
       "how_first_vote": "Cómo crear tu primera votación",
@@ -304,12 +308,17 @@
     "delete": "Eliminar borrador",
     "deleted_draft": "Borrador eliminado correctamente",
     "edit": "Editar borrador",
+    "empty": "No se han encontrado borradores",
+    "empty_description": "Crea un borrador para empezar.",
+    "load_error": "No se pudieron cargar los borradores",
+    "load_error_description": "Inténtalo de nuevo.",
     "not_defined": "No definido aún"
   },
   "drawer": {
     "close": "Cerrar panel"
   },
   "edit_saas_profile": {
+    "edit_failed": "Update failed",
     "edited_successfully": "Actualizado correctamente"
   },
   "editor": {
@@ -519,6 +528,8 @@
       "submit_ticket": "Enviar solicitud",
       "subtitle": "Envía una solicitud y nuestro equipo de soporte se pondrá en contacto contigo lo antes posible.",
       "technical_issue": "Problema técnico",
+      "ticket_error": "Failed to submit support ticket",
+      "ticket_success": "Support ticket submitted successfully",
       "title": "Título",
       "title_placeholder": "Describe brevemente tu incidencia",
       "voting_issue": "Problema de votación"
@@ -555,6 +566,11 @@
       "title": "Eliminar miembros"
     },
     "email": "Correo electrónico",
+    "members": {
+      "empty": "No se han encontrado miembros",
+      "empty_description": "Añade miembros para verlos aquí.",
+      "error": "No se pudieron cargar los miembros del grupo"
+    },
     "members_one": "Un miembro",
     "members_many": "",
     "members_other": "{{count}} miembros",
@@ -572,6 +588,7 @@
       "extra": "Cuando inicias una votación, se genera un censo como instantánea del grupo en ese momento. Los cambios posteriores en el grupo no afectarán a los censos ya existentes, pero sí se reflejarán en los procesos futuros.",
       "title": "Sobre los grupos"
     },
+    "load_error": "No se pudieron cargar los grupos",
     "load_more": "Cargar más",
     "no_groups": "No se han encontrado grupos",
     "search": "Buscar grupos..."
@@ -1089,6 +1106,13 @@
       "surname": "Apellidos",
       "weight": "Poder de voto (Peso)"
     },
+    "list": {
+      "empty": "No se han encontrado miembros",
+      "empty_description": "Añade tu primer miembro para empezar.",
+      "error": "No se pudieron cargar los miembros",
+      "no_search_results": "No hay miembros que coincidan con tu búsqueda",
+      "no_search_results_description": "Prueba a ajustar los términos de búsqueda."
+    },
     "table": {
       "add_to_group": "Añadir al grupo",
       "add_to_group_button_one": "Añadir un miembro",
@@ -1189,6 +1213,9 @@
   "organization": {
     "avatar_alt": "Imagen de avatar de la organización {{ name }}",
     "create_org": "Crear organización",
+    "create_org_failed": "Failed to create organization",
+    "create_org_step_update_failed": "Failed to update organization setup step status",
+    "create_org_success": "Organization created successfully",
     "dashboard": "Panel",
     "date_format": "d MMM y",
     "elections": "Votaciones",
@@ -1246,10 +1273,15 @@
   "password": "Contraseña",
   "password_placeholder": "Mín. 8 caracteres",
   "password_placeholder_confirm": "Confirmar contraseña",
+  "password_recovery_failed": "Password recovery failed",
+  "password_recovery_sent": "Correo de recuperación enviado",
+  "password_recovery_sent_description": "Revisa tu bandeja de entrada para el enlace de restablecimiento.",
   "password_reset": {
     "subtitle": "Si tu correo electrónico corresponde a una cuenta existente, recibirás un correo con un código para restablecer tu contraseña.",
     "title": "Restablecimiento de contraseña"
   },
+  "password_reset_failed": "Password reset failed",
+  "password_reset_successful": "Password reset successful",
   "password_update": {
     "actions": {
       "save": "Guardar contraseña"
@@ -1279,6 +1311,7 @@
     "subtitle": "Tu plan actual permite solo {{ memberLimit }} para la colaboración. Actualiza tu plan para añadir más miembros al equipo y desbloquear funciones avanzadas.",
     "title": "Actualiza para añadir más miembros al equipo"
   },
+  "please_check_email_to_verify": "Please check your email to verify your account",
   "preferences": "Preferencias",
   "preview": "Vista previa",
   "pricing": {
@@ -1299,10 +1332,14 @@
     "custom_subtitle": "Adaptado a tus necesidades",
     "custom_title": "Personalizado",
     "different_voting_methods": "Diferentes métodos de votación",
+    "empty": "No se han encontrado planes",
+    "empty_description": "Vuelve a intentarlo más tarde para ver los planes disponibles.",
     "essential_subtitle": "Perfecto para organizaciones medianas o grupos con necesidades básicas de votación.",
     "essential_title": "Básico",
     "free_subtitle": "Para organizaciones pequeñas o grupos comunitarios de hasta 50 miembros.",
     "free_title": "Gratuito",
+    "load_error": "No se pudieron cargar los planes",
+    "load_error_description": "Inténtalo de nuevo.",
     "premium_subtitle": "grandes organizaciones, empresas e instituciones que requieran una amplia personalización y soporte.",
     "premium_title": "Premium",
     "priority_support": "Soporte prioritario por correo electrónico (24h)",
@@ -1604,6 +1641,12 @@
     "title": "Título",
     "type": "Tipo"
   },
+  "processes": {
+    "empty": "No se han encontrado procesos de votación",
+    "empty_description": "Crea un proceso de votación para empezar.",
+    "no_results": "No hay resultados para este filtro",
+    "no_results_description": "Prueba a ajustar los filtros."
+  },
   "profile": {
     "error": "Error al actualizar el perfil",
     "success": "Perfil actualizado correctamente",
@@ -1618,6 +1661,8 @@
     },
     "recovery": ""
   },
+  "registration_failed": "Registration failed",
+  "registration_successful": "Registration successful",
   "remove": "Eliminar",
   "remove_avatar": "Eliminar avatar",
   "reset_password_button": "Restablecer contraseña",
@@ -1748,7 +1793,11 @@
       "confirmation": "Esto cancelará la invitación. La persona no podrá unirse a tu organización.",
       "title": "¿Estás seguro?"
     },
+    "empty": "No se han encontrado miembros del equipo",
+    "empty_description": "Invita a compañeros para empezar.",
     "expires_in": "Caduca en {{time}}",
+    "load_error": "No se pudieron cargar los miembros del equipo",
+    "load_error_description": "Inténtalo de nuevo.",
     "only_one_member": {
       "add_team_member": "Añadir miembro del equipo",
       "subtitle": "Añade miembros al equipo para colaborar en tu organización",
@@ -1791,9 +1840,14 @@
   "upgrade_plan": "Actualizar al plan {{plan}}",
   "uploaded_image_preview": "Vista previa de la imagen cargada",
   "uploader": {
+    "avatar_upload_failed": "Error al subir el avatar",
+    "avatar_upload_success": "Avatar subido",
     "click_or_drag_and_drop": "<click>Haz clic para subir o arrastra y suelta</click><formats>(Formatos permitidos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Subir imagen",
-    "drop_here": "Suelta aquí"
+    "drop_here": "Suelta aquí",
+    "image_upload_failed": "Error al subir la imagen",
+    "image_upload_success": "Imagen subida",
+    "upload_failed": "Error al subir"
   },
   "use_read_more": {
     "read_less": "Leer menos",
@@ -1847,6 +1901,7 @@
   "verify": {
     "account_created_succesfully": "¡Cuenta creada con éxito!",
     "check_spam_folder": "Si no ves el correo en tu bandeja de entrada, por favor, revisa la carpeta de spam.",
+    "email_send_failed": "Failed to send email",
     "email_sent": "Correo enviado correctamente",
     "enter_code": "Introduce el código a continuación para activar tu cuenta",
     "enter_verification_code": "Te hemos enviado un correo de verificación. Sigue las instrucciones para activar tu cuenta.",
@@ -1860,6 +1915,7 @@
   },
   "verify_mail": {
     "error_subtitle": "El código introducido no es correcto. Inténtalo de nuevo.",
+    "success": "Email verified successfully",
     "verifying_subtitle": "Espera mientras verificamos tu dirección de correo electrónico. Serás redirigido si la verificación tiene éxito.",
     "verifying_title": "Verificando {{ email }}"
   },
@@ -1885,6 +1941,7 @@
       "configure": "Configurar autenticación de votantes",
       "edit": "Editar autenticación de votantes"
     },
+    "configured": "Autenticación de votantes configurada",
     "configured_auth": "Autenticación de votantes",
     "credentials": "Credenciales",
     "description": "Configura cómo se autenticarán los votantes para participar en este proceso de votación.",
@@ -1906,6 +1963,7 @@
     "level_strong": "Fuerte",
     "level_weak": "Débil",
     "no_group_description": "Selecciona primero un grupo para configurar la autenticación.",
+    "save_failed": "No se pudo configurar la autenticación de votantes",
     "security_level": "Buena seguridad",
     "security_recommendation_1": "Para una mayor seguridad, recomendamos seleccionar al menos 2 credenciales.",
     "security_recommendation_2_one": "Has seleccionado {{ count }} credenciales, lo que proporciona una buena seguridad para tus votantes.",
@@ -1929,6 +1987,7 @@
     "validation_duplicates_many": "",
     "validation_duplicates_other": "{{count}} usuarios duplicados",
     "validation_error_title": "Error de validación",
+    "validation_failed": "La validación ha fallado",
     "validation_missing_data_one": "{{count}} usuarios sin campos obligatorios",
     "validation_missing_data_many": "",
     "validation_missing_data_other": "{{count}} usuarios sin campos obligatorios",

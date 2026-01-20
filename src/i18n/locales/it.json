@@ -208,8 +208,11 @@
   },
   "create_process": "Crea processo",
   "csp": {
+    "auth_failed": "Autenticazione non riuscita",
+    "auth_success": "Autenticazione riuscita",
     "authenticate": "Identifica",
     "code_info": "Si riceverà un codice univoco sul mezzo selezionato per verificare l'identità e completare l'autenticazione",
+    "code_sent": "Codice di verifica inviato",
     "contact_match_help": "Deve corrispondere a quello registrato nel sistema",
     "data_usage_info": "I dati verranno utilizzati solo per verificare l'identità. Vocdoni non conserva i dati personali.",
     "errors": {
@@ -272,6 +275,7 @@
       "create_first_organization": "Crea la tua prima organizzazione",
       "create_first_vote": "Crea la tua prima votazione",
       "empty": "Nessun processo di voto trovato",
+      "empty_description": "Crea il tuo primo voto per iniziare.",
       "error_loading_processes": "Errore durante il caricamento dei processi di voto",
       "hello": "Benvenuto in Vocdoni, {{name}}!",
       "how_first_vote": "Come creare la prima votazione",
@@ -304,12 +308,17 @@
     "delete": "Elimina bozza",
     "deleted_draft": "Bozza eliminata con successo",
     "edit": "Modifica bozza",
+    "empty": "Nessuna bozza trovata",
+    "empty_description": "Crea una bozza per iniziare.",
+    "load_error": "Impossibile caricare le bozze",
+    "load_error_description": "Riprova.",
     "not_defined": "Non ancora definito"
   },
   "drawer": {
     "close": "Chiudi cassetto"
   },
   "edit_saas_profile": {
+    "edit_failed": "Update failed",
     "edited_successfully": "Aggiornato con successo"
   },
   "editor": {
@@ -519,6 +528,8 @@
       "submit_ticket": "Invia ticket",
       "subtitle": "Invia un ticket e il nostro team di supporto ti risponderà il prima possibile.",
       "technical_issue": "Problema tecnico",
+      "ticket_error": "Failed to submit support ticket",
+      "ticket_success": "Support ticket submitted successfully",
       "title": "Titolo",
       "title_placeholder": "Descrivi brevemente il problema",
       "voting_issue": "Problema di voto"
@@ -555,6 +566,11 @@
       "title": "Elimina membri"
     },
     "email": "Email",
+    "members": {
+      "empty": "Nessun membro trovato",
+      "empty_description": "Aggiungi membri per vederli qui.",
+      "error": "Impossibile caricare i membri del gruppo"
+    },
     "members_one": "{{count}} membro",
     "members_many": "{{count}} member",
     "members_other": "{{count}} membri",
@@ -572,6 +588,7 @@
       "extra": "Quando si avvia una votazione, viene creato un censimento come istantanea temporale del gruppo. Eventuali modifiche successive al gruppo non influiranno sui censimenti esistenti, ma si rifletteranno nei futuri processi di voto.",
       "title": "Informazioni sui gruppi"
     },
+    "load_error": "Impossibile caricare i gruppi",
     "load_more": "Carica altro",
     "no_groups": "Nessun gruppo trovato",
     "search": "Cerca gruppi..."
@@ -1089,6 +1106,13 @@
       "surname": "Cognome",
       "weight": "Peso del voto"
     },
+    "list": {
+      "empty": "Nessun membro trovato",
+      "empty_description": "Aggiungi il tuo primo membro per iniziare.",
+      "error": "Impossibile caricare i membri",
+      "no_search_results": "Nessun membro corrisponde alla tua ricerca",
+      "no_search_results_description": "Prova a modificare i termini di ricerca."
+    },
     "table": {
       "add_to_group": "Aggiungi al gruppo",
       "add_to_group_button_one": "Aggiungi {{count}} membro",
@@ -1189,6 +1213,9 @@
   "organization": {
     "avatar_alt": "Immagine avatar dell'organizzazione {{ name }}",
     "create_org": "Crea organizzazione",
+    "create_org_failed": "Failed to create organization",
+    "create_org_step_update_failed": "Failed to update organization setup step status",
+    "create_org_success": "Organization created successfully",
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Votazioni",
@@ -1246,10 +1273,15 @@
   "password": "Password",
   "password_placeholder": "Min 8 caratteri",
   "password_placeholder_confirm": "Conferma password",
+  "password_recovery_failed": "Password recovery failed",
+  "password_recovery_sent": "Email di recupero inviata",
+  "password_recovery_sent_description": "Controlla la posta in arrivo per il link di reimpostazione.",
   "password_reset": {
     "subtitle": "Se la tua email corrisponde a un account esistente, riceverai un'email con un codice per reimpostare la password.",
     "title": "Reimpostazione password"
   },
+  "password_reset_failed": "Password reset failed",
+  "password_reset_successful": "Password reset successful",
   "password_update": {
     "actions": {
       "save": "Salva password"
@@ -1279,6 +1311,7 @@
     "subtitle": "Il piano attuale consente solo {{ memberLimit }} per la collaborazione. Aggiorna il piano per aggiungere più membri al team e sbloccare funzionalità avanzate.",
     "title": "Aggiorna per aggiungere più membri del team"
   },
+  "please_check_email_to_verify": "Please check your email to verify your account",
   "preferences": "Preferenze",
   "preview": "Anteprima",
   "pricing": {
@@ -1299,10 +1332,14 @@
     "custom_subtitle": "Su misura per le tue esigenze",
     "custom_title": "Custom",
     "different_voting_methods": "Metodi di voto diversi",
+    "empty": "Nessun piano trovato",
+    "empty_description": "Riprova più tardi per vedere i piani disponibili.",
     "essential_subtitle": "Per organizzazioni in crescita",
     "essential_title": "Essential",
     "free_subtitle": "Perfetto per iniziare",
     "free_title": "Gratuito",
+    "load_error": "Impossibile caricare i piani",
+    "load_error_description": "Riprova.",
     "premium_subtitle": "Per organizzazioni consolidate",
     "premium_title": "Premium",
     "priority_support": "Supporto email prioritario (24h)",
@@ -1604,6 +1641,12 @@
     "title": "Titolo",
     "type": "Tipo"
   },
+  "processes": {
+    "empty": "Nessun processo di voto trovato",
+    "empty_description": "Crea un processo di voto per iniziare.",
+    "no_results": "Nessun risultato per questo filtro",
+    "no_results_description": "Prova a modificare i filtri."
+  },
   "profile": {
     "error": "Errore durante l'aggiornamento del profilo",
     "success": "Profilo aggiornato con successo",
@@ -1618,6 +1661,8 @@
     },
     "recovery": ""
   },
+  "registration_failed": "Registration failed",
+  "registration_successful": "Registration successful",
   "remove": "Rimuovi",
   "remove_avatar": "Rimuovi avatar",
   "reset_password_button": "Reimposta Password",
@@ -1748,7 +1793,11 @@
       "confirmation": "Questo annullerà l'invito. La persona non potrà unirsi alla tua organizzazione.",
       "title": "Sei sicuro?"
     },
+    "empty": "Nessun membro del team trovato",
+    "empty_description": "Invita i colleghi per iniziare.",
     "expires_in": "Scade tra {{time}}",
+    "load_error": "Impossibile caricare i membri del team",
+    "load_error_description": "Riprova.",
     "only_one_member": {
       "add_team_member": "Aggiungi membro del team",
       "subtitle": "Aggiungi membri del team per collaborare alla tua organizzazione",
@@ -1791,9 +1840,14 @@
   "upgrade_plan": "Passa a {{plan}}",
   "uploaded_image_preview": "Anteprima dell'immagine caricata",
   "uploader": {
+    "avatar_upload_failed": "Caricamento avatar non riuscito",
+    "avatar_upload_success": "Avatar caricato",
     "click_or_drag_and_drop": "<click>Clicca per caricare o trascina e rilascia</click><formats>(Formati consentiti: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carica Immagine",
-    "drop_here": ""
+    "drop_here": "",
+    "image_upload_failed": "Caricamento immagine non riuscito",
+    "image_upload_success": "Immagine caricata",
+    "upload_failed": "Caricamento non riuscito"
   },
   "use_read_more": {
     "read_less": "Leggi meno",
@@ -1847,6 +1901,7 @@
   "verify": {
     "account_created_succesfully": "Account creato con successo!",
     "check_spam_folder": "Controlla la cartella spam se non vedi l'email nella tua casella di posta.",
+    "email_send_failed": "Failed to send email",
     "email_sent": "Email inviata con successo",
     "enter_code": "Inserisci il codice qui sotto per attivare il tuo account",
     "enter_verification_code": "Ti abbiamo inviato un'email di verifica. Segui le istruzioni per attivare il tuo account.",
@@ -1860,6 +1915,7 @@
   },
   "verify_mail": {
     "error_subtitle": "Il codice inserito non è corretto. Riprova.",
+    "success": "Email verified successfully",
     "verifying_subtitle": "Attendi mentre verifichiamo il tuo indirizzo email. Verrai reindirizzato in caso di successo.",
     "verifying_title": "Verifica di {{ email }}"
   },
@@ -1885,6 +1941,7 @@
       "configure": "Configura Autenticazione Votante",
       "edit": "Modifica Autenticazione Votante"
     },
+    "configured": "Autenticazione dei votanti configurata",
     "configured_auth": "Autenticazione Votante",
     "credentials": "Credenziali",
     "description": "Imposta come i votanti si autenticheranno per partecipare a questo processo di voto.",
@@ -1906,6 +1963,7 @@
     "level_strong": "Forte",
     "level_weak": "Debole",
     "no_group_description": "Seleziona prima un gruppo per configurare l'autenticazione.",
+    "save_failed": "Impossibile configurare l'autenticazione dei votanti",
     "security_level": "Buona sicurezza",
     "security_recommendation_1": "Per una migliore sicurezza, consigliamo di selezionare almeno 2 credenziali.",
     "security_recommendation_2_one": "Hai selezionato {{ count }} credenziale, che fornisce una buona sicurezza per i tuoi votanti.",
@@ -1929,6 +1987,7 @@
     "validation_duplicates_many": "{{count}} duplicated users",
     "validation_duplicates_other": "{{count}} utenti duplicati",
     "validation_error_title": "Errore di convalida",
+    "validation_failed": "Validazione non riuscita",
     "validation_missing_data_one": "{{count}} utenti con campi obbligatori mancanti",
     "validation_missing_data_many": "{{count}} users missing required fields",
     "validation_missing_data_other": "{{count}} utenti con campi obbligatori mancanti",
