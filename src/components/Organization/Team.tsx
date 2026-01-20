@@ -761,12 +761,7 @@ export const OrganizationUsers = () => {
   return (
     <>
       {showAlert && (
-        <ListStateAlert
-          show
-          status={hasError ? 'error' : 'info'}
-          title={alertTitle}
-          description={alertDescription}
-        />
+        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
       )}
       {!hasError && (users.length === 1 ? <UsersEmpty /> : users.length > 1 ? <UsersList users={users} /> : null)}
     </>

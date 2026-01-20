@@ -271,12 +271,7 @@ const Drafts = () => {
   return (
     <RoutedPaginationProvider initialPage={1} path={Routes.dashboard.processes.drafts} pagination={pagination}>
       {showAlert && (
-        <ListStateAlert
-          show
-          status={hasError ? 'error' : 'info'}
-          title={alertTitle}
-          description={alertDescription}
-        />
+        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
       )}
       <DraftsTable drafts={data?.processes ?? []} />
     </RoutedPaginationProvider>

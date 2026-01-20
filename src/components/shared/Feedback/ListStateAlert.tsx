@@ -8,13 +8,7 @@ type ListStateAlertProps = {
   mb?: number | string
 }
 
-export const ListStateAlert = ({
-  show = false,
-  status = 'info',
-  title,
-  description,
-  mb = 4,
-}: ListStateAlertProps) => {
+export const ListStateAlert = ({ show = false, status = 'info', title, description, mb = 4 }: ListStateAlertProps) => {
   if (!show) return null
 
   return (

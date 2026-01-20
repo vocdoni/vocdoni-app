@@ -436,14 +436,7 @@ const GroupMembersWithPagination = ({ group, isOpen }: GroupMembersProps) => {
 
   return (
     <>
-      {showAlert && (
-        <ListStateAlert
-          show
-          status={alertStatus}
-          title={alertTitle}
-          description={alertDescription}
-        />
-      )}
+      {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
       <TableProvider
         data={members}
         isLoading={isLoading}
@@ -606,14 +599,7 @@ const GroupsBoard = () => {
   return (
     <>
       {isLoading && <Progress isIndeterminate />}
-      {showAlert && (
-        <ListStateAlert
-          show
-          status={alertStatus}
-          title={alertTitle}
-          description={alertDescription}
-        />
-      )}
+      {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
       {!hasError && !isLoading && groups && groups.length > 0 && (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
           {groups.map((group) => (

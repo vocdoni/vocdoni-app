@@ -101,14 +101,7 @@ const Members = () => {
   return (
     <TableProvider data={members} initialColumns={columns} isLoading={isLoading} isFetching={isFetching} error={error}>
       <RoutedPaginationProvider path={Routes.dashboard.memberbase.members} initialPage={1} pagination={pagination}>
-        {showAlert && (
-          <ListStateAlert
-            show
-            status={alertStatus}
-            title={alertTitle}
-            description={alertDescription}
-          />
-        )}
+        {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
         <MembersTable />
       </RoutedPaginationProvider>
     </TableProvider>
