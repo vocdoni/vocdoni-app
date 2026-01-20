@@ -34,6 +34,15 @@ const PasswordForgotForm: React.FC = () => {
   const onSubmit = (data: ForgotPasswordFormValues) =>
     passwordRecoveryMutation.mutate(data, {
       onSuccess: () => {
+        toast({
+          title: t('password_recovery_sent', { defaultValue: 'Recovery email sent' }),
+          description: t('password_recovery_sent_description', {
+            defaultValue: 'Check your inbox for the reset link.',
+          }),
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
         navigate(`${Routes.auth.passwordReset}?email=${encodeURIComponent(data.email)}`)
       },
       onError: (error) => {
