@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, Flex, Progress, SimpleGrid, Tab, TabList, Tabs, Tag } from '@chakra-ui/react'
+import { Flex, Progress, SimpleGrid, Tab, TabList, Tabs, Tag } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -16,6 +16,7 @@ import {
 import { ApiEndpoints } from '~components/Auth/api'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
+import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import { PlanId } from '~constants'
 import { QueryKeys } from '~src/queries/keys'
 import PricingCard from './Card'
@@ -270,10 +271,11 @@ export const usePlanNameTranslator = () => {
 }
 
 export const SubscriptionPlans = () => {
-  const { subscription, error } = useSubscription()
-  const { data: plans, isLoading } = usePlans()
+  const { subscription, error: subscriptionError } = useSubscription()
+  const { data: plans, isLoading, error: plansError } = usePlans()
   const translations = usePlanTranslations(plans)
   const scheckout = useSubscriptionCheckout()
+  const { t } = useTranslation()
 
   const methods = useForm<SubscriptionCheckoutFormValues>({
     defaultValues: {
@@ -304,19 +306,32 @@ export const SubscriptionPlans = () => {
     })
   }, [plans, subscription, translations, period])
 
-  if (error) {
-    return (
-      <Alert status='error'>
-        <AlertDescription>{error.message.toString()}</AlertDescription>
-      </Alert>
-    )
-  }
+  const error = plansError ?? subscriptionError
+  const hasError = !!error && !isLoading
+  const isEmpty = (plans?.length ?? 0) === 0 && !isLoading && !hasError
+  const showAlert = hasError || isEmpty
+  const alertTitle = hasError
+    ? t('pricing.load_error', { defaultValue: 'Unable to load plans' })
+    : t('pricing.empty', { defaultValue: 'No plans found' })
+  const alertDescription = hasError
+    ? error instanceof Error
+      ? error.message.toString()
+      : t('pricing.load_error_description', { defaultValue: 'Please try again.' })
+    : t('pricing.empty_description', { defaultValue: 'Check back later for available plans.' })
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex flexDir='column' gap={4}>
           {isLoading && <Progress isIndeterminate />}
+          {showAlert && (
+            <ListStateAlert
+              show
+              status={hasError ? 'error' : 'info'}
+              title={alertTitle}
+              description={alertDescription}
+            />
+          )}
           <Tabs
             variant='settings'
             alignSelf='center'

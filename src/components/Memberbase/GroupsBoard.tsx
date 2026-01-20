@@ -43,6 +43,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuCalendar, LuClock, LuEllipsis, LuEye, LuSearch, LuTrash, LuUsers, LuVote, LuX } from 'react-icons/lu'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { DashboardBox } from '~components/shared/Dashboard/Contents'
+import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
 import { PaginatedTableFooter } from '~components/shared/Pagination/PaginatedTableFooter'
 import { Routes } from '~routes'
@@ -420,20 +421,40 @@ const GroupMembersDisplay = ({ group, isOpen }: GroupMembersProps) => {
 const GroupMembersWithPagination = ({ group, isOpen }: GroupMembersProps) => {
   const { t } = useTranslation()
   const { page } = usePagination()
-  const { data, isLoading } = useGroupMembers(group.id, page, isOpen)
+  const { data, isLoading, error } = useGroupMembers(group.id, page, isOpen)
   const members = data?.members ?? []
+  const hasError = !!error && !isLoading
+  const isEmpty = members.length === 0 && !isLoading && !hasError
+  const showAlert = hasError || isEmpty
+  const alertStatus = hasError ? 'error' : 'info'
+  const alertTitle = hasError
+    ? t('group.members.error', { defaultValue: 'Unable to load group members' })
+    : t('group.members.empty', { defaultValue: 'No members found' })
+  const alertDescription = hasError
+    ? error?.message?.toString()
+    : t('group.members.empty_description', { defaultValue: 'Add members to see them listed here.' })
 
   return (
-    <TableProvider
-      data={members}
-      isLoading={isLoading}
-      initialColumns={[
-        { id: 'name', label: t('group.name', { defaultValue: 'Name' }) },
-        { id: 'email', label: t('group.email', { defaultValue: 'Email' }) },
-      ]}
-    >
-      <GroupMembersTable groupId={group.id} />
-    </TableProvider>
+    <>
+      {showAlert && (
+        <ListStateAlert
+          show
+          status={alertStatus}
+          title={alertTitle}
+          description={alertDescription}
+        />
+      )}
+      <TableProvider
+        data={members}
+        isLoading={isLoading}
+        initialColumns={[
+          { id: 'name', label: t('group.name', { defaultValue: 'Name' }) },
+          { id: 'email', label: t('group.email', { defaultValue: 'Email' }) },
+        ]}
+      >
+        <GroupMembersTable groupId={group.id} />
+      </TableProvider>
+    </>
   )
 }
 
@@ -571,36 +592,36 @@ const GroupCard = ({ group }: GroupCardProps) => {
 const GroupsBoard = () => {
   const { t } = useTranslation()
   const { data: groups, isLoading, error, isFetched, fetchNextPage, hasNextPage, isFetchingNextPage } = useGroups()
-  const noGroups = isFetched && (!groups || groups.length === 0)
-
-  if (isLoading) return <Progress isIndeterminate />
-
-  if (error)
-    return (
-      <Flex direction='column' align='center' justify='center' h='100%'>
-        <Text fontWeight='bold'>{error.message}</Text>
-      </Flex>
-    )
-
-  if (noGroups) {
-    return (
-      <Flex direction='column' align='center' justify='center' h='100%'>
-        <Text fontWeight='bold'>{t('groups_board.no_groups', { defaultValue: 'No groups found' })}</Text>
-        <Text mt={2} color='texts.subtle'>
-          {t('groups_board.create_group', { defaultValue: 'Create a new group to get started.' })}
-        </Text>
-      </Flex>
-    )
-  }
+  const hasError = !!error && !isLoading
+  const noGroups = isFetched && (!groups || groups.length === 0) && !isLoading && !hasError
+  const showAlert = hasError || noGroups
+  const alertStatus = hasError ? 'error' : 'info'
+  const alertTitle = hasError
+    ? t('groups_board.load_error', { defaultValue: 'Unable to load groups' })
+    : t('groups_board.no_groups', { defaultValue: 'No groups found' })
+  const alertDescription = hasError
+    ? error?.message?.toString()
+    : t('groups_board.create_group', { defaultValue: 'Create a new group to get started.' })
 
   return (
     <>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-        {groups.map((group) => (
-          <GroupCard key={group.id} group={group} />
-        ))}
-      </SimpleGrid>
-      {hasNextPage && (
+      {isLoading && <Progress isIndeterminate />}
+      {showAlert && (
+        <ListStateAlert
+          show
+          status={alertStatus}
+          title={alertTitle}
+          description={alertDescription}
+        />
+      )}
+      {!hasError && !isLoading && groups && groups.length > 0 && (
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+          {groups.map((group) => (
+            <GroupCard key={group.id} group={group} />
+          ))}
+        </SimpleGrid>
+      )}
+      {hasNextPage && !hasError && !isLoading && groups && groups.length > 0 && (
         <Button
           mt={4}
           alignSelf='center'
