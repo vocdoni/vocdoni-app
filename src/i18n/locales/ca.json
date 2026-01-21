@@ -1661,8 +1661,8 @@
     },
     "recovery": ""
   },
-  "registration_failed": "Registration failed",
-  "registration_successful": "Registration successful",
+  "registration_failed": "El registre ha fallat",
+  "registration_successful": "Registre completat correctament",
   "remove": "Elimina",
   "remove_avatar": "Elimina l'avatar",
   "reset_password_button": "Restableix la contrasenya",
@@ -1901,7 +1901,7 @@
   "verify": {
     "account_created_succesfully": "Compte creat correctament!",
     "check_spam_folder": "Si no veus el correu a la safata d'entrada, si us plau, revisa la carpeta de correu brossa.",
-    "email_send_failed": "Failed to send email",
+    "email_send_failed": "No s'ha pogut enviar el correu electrònic",
     "email_sent": "Correu enviat correctament",
     "enter_code": "Introdueix el codi a continuació per activar el teu compte",
     "enter_verification_code": "T'hem enviat un correu de verificació. Si us plau, segueix les instruccions per activar el teu compte.",
@@ -1915,7 +1915,7 @@
   },
   "verify_mail": {
     "error_subtitle": "El codi que has introduït és incorrecte. Torna-ho a provar",
-    "success": "Email verified successfully",
+    "success": "Correu electrònic verificat correctament",
     "verifying_subtitle": "Espera mentre verifiquem la teva adreça de correu electrònic. Se't redirigirà si té èxit.",
     "verifying_title": "Verificant {{ email }}"
   },

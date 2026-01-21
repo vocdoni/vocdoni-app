@@ -318,7 +318,7 @@
     "close": "Chiudi cassetto"
   },
   "edit_saas_profile": {
-    "edit_failed": "Update failed",
+    "edit_failed": "Aggiornamento non riuscito",
     "edited_successfully": "Aggiornato con successo"
   },
   "editor": {
@@ -528,8 +528,8 @@
       "submit_ticket": "Invia ticket",
       "subtitle": "Invia un ticket e il nostro team di supporto ti risponderà il prima possibile.",
       "technical_issue": "Problema tecnico",
-      "ticket_error": "Failed to submit support ticket",
-      "ticket_success": "Support ticket submitted successfully",
+      "ticket_error": "Errore durante l'invio del ticket di supporto",
+      "ticket_success": "Ticket di supporto inviato con successo",
       "title": "Titolo",
       "title_placeholder": "Descrivi brevemente il problema",
       "voting_issue": "Problema di voto"
@@ -1213,9 +1213,9 @@
   "organization": {
     "avatar_alt": "Immagine avatar dell'organizzazione {{ name }}",
     "create_org": "Crea organizzazione",
-    "create_org_failed": "Failed to create organization",
-    "create_org_step_update_failed": "Failed to update organization setup step status",
-    "create_org_success": "Organization created successfully",
+    "create_org_failed": "Creazione dell'organizzazione non riuscita",
+    "create_org_step_update_failed": "Aggiornamento dello stato del passaggio di configurazione dell'organizzazione non riuscito",
+    "create_org_success": "Organizzazione creata con successo",
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Votazioni",
@@ -1273,15 +1273,15 @@
   "password": "Password",
   "password_placeholder": "Min 8 caratteri",
   "password_placeholder_confirm": "Conferma password",
-  "password_recovery_failed": "Password recovery failed",
+  "password_recovery_failed": "Recupero della password non riuscito",
   "password_recovery_sent": "Email di recupero inviata",
   "password_recovery_sent_description": "Controlla la posta in arrivo per il link di reimpostazione.",
   "password_reset": {
     "subtitle": "Se la tua email corrisponde a un account esistente, riceverai un'email con un codice per reimpostare la password.",
     "title": "Reimpostazione password"
   },
-  "password_reset_failed": "Password reset failed",
-  "password_reset_successful": "Password reset successful",
+  "password_reset_failed": "Reimpostazione della password non riuscita",
+  "password_reset_successful": "Reimpostazione della password riuscita",
   "password_update": {
     "actions": {
       "save": "Salva password"
