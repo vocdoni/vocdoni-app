@@ -80,7 +80,7 @@ export const AvatarUploader = (props: FormControlProps) => {
       })
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
+        error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
       setError('avatar', {
         message: errorMessage,
       })
@@ -190,7 +190,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
       })
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
+        error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
       setError(name, { message: errorMessage })
       toast({
         title: t('uploader.image_upload_failed', { defaultValue: 'Image upload failed' }),
