@@ -318,7 +318,7 @@
     "close": "Tanca el panell lateral"
   },
   "edit_saas_profile": {
-    "edit_failed": "Update failed",
+    "edit_failed": "L'actualització ha fallat",
     "edited_successfully": "Actualitzat correctament"
   },
   "editor": {
@@ -528,8 +528,8 @@
       "submit_ticket": "Envia la sol·licitud",
       "subtitle": "Envia una sol·licitud i el nostre equip de suport es posarà en contacte amb tu tan aviat com sigui possible.",
       "technical_issue": "Problema tècnic",
-      "ticket_error": "Failed to submit support ticket",
-      "ticket_success": "Support ticket submitted successfully",
+      "ticket_error": "Hi ha hagut un error en enviar la sol·licitud de suport",
+      "ticket_success": "Sol·licitud de suport enviada correctament",
       "title": "Títol",
       "title_placeholder": "Descriu breument el teu problema",
       "voting_issue": "Problema de votació"
@@ -1213,9 +1213,9 @@
   "organization": {
     "avatar_alt": "Imatge d'avatar de l'organització {{ name }}",
     "create_org": "Crear organització",
-    "create_org_failed": "Failed to create organization",
-    "create_org_step_update_failed": "Failed to update organization setup step status",
-    "create_org_success": "Organization created successfully",
+    "create_org_failed": "No s'ha pogut crear l'organització",
+    "create_org_step_update_failed": "No s'ha pogut actualitzar l'estat del pas de configuració de l'organització",
+    "create_org_success": "Organització creada correctament",
     "dashboard": "Tauler de control",
     "date_format": "d MMM y",
     "elections": "Votacions",
@@ -1273,15 +1273,15 @@
   "password": "Contrasenya",
   "password_placeholder": "Mínim 8 caràcters",
   "password_placeholder_confirm": "Confirma la contrasenya",
-  "password_recovery_failed": "Password recovery failed",
+  "password_recovery_failed": "No s'ha pogut enviar el correu de recuperació",
   "password_recovery_sent": "Correu de recuperació enviat",
   "password_recovery_sent_description": "Revisa la teva safata d'entrada per a l'enllaç de restabliment.",
   "password_reset": {
     "subtitle": "Si el teu correu electrònic correspon a un compte existent, rebràs un missatge amb un codi per restablir la contrasenya.",
     "title": "Restablir contrasenya"
   },
-  "password_reset_failed": "Password reset failed",
-  "password_reset_successful": "Password reset successful",
+  "password_reset_failed": "No s'ha pogut restablir la contrasenya",
+  "password_reset_successful": "Contrasenya restablerta correctament",
   "password_update": {
     "actions": {
       "save": "Desa la contrasenya"
@@ -1311,7 +1311,7 @@
     "subtitle": "El teu pla actual només permet {{ memberLimit }} per a la col·laboració. Actualitza el teu pla per afegir més membres de l'equip i desbloquejar funcions avançades.",
     "title": "Actualitza per afegir més membres de l'equip"
   },
-  "please_check_email_to_verify": "Please check your email to verify your account",
+  "please_check_email_to_verify": "Si us plau, comprova el teu correu electrònic per verificar el teu compte.",
   "preferences": "Preferències",
   "preview": "Vista prèvia",
   "pricing": {

@@ -318,7 +318,7 @@
     "close": "Cerrar panel"
   },
   "edit_saas_profile": {
-    "edit_failed": "Update failed",
+    "edit_failed": "Error al actualizar",
     "edited_successfully": "Actualizado correctamente"
   },
   "editor": {
@@ -528,8 +528,8 @@
       "submit_ticket": "Enviar solicitud",
       "subtitle": "Envía una solicitud y nuestro equipo de soporte se pondrá en contacto contigo lo antes posible.",
       "technical_issue": "Problema técnico",
-      "ticket_error": "Failed to submit support ticket",
-      "ticket_success": "Support ticket submitted successfully",
+      "ticket_error": "Error al enviar la solicitud de soporte",
+      "ticket_success": "Solicitud de soporte enviada con éxito",
       "title": "Título",
       "title_placeholder": "Describe brevemente tu incidencia",
       "voting_issue": "Problema de votación"
@@ -1213,9 +1213,9 @@
   "organization": {
     "avatar_alt": "Imagen de avatar de la organización {{ name }}",
     "create_org": "Crear organización",
-    "create_org_failed": "Failed to create organization",
-    "create_org_step_update_failed": "Failed to update organization setup step status",
-    "create_org_success": "Organization created successfully",
+    "create_org_failed": "Error al crear la organización",
+    "create_org_step_update_failed": "Error al actualizar el estado del paso de configuración de la organización",
+    "create_org_success": "Organización creada con éxito",
     "dashboard": "Panel",
     "date_format": "d MMM y",
     "elections": "Votaciones",
@@ -1273,15 +1273,15 @@
   "password": "Contraseña",
   "password_placeholder": "Mín. 8 caracteres",
   "password_placeholder_confirm": "Confirmar contraseña",
-  "password_recovery_failed": "Password recovery failed",
+  "password_recovery_failed": "Error al enviar el correo de recuperación",
   "password_recovery_sent": "Correo de recuperación enviado",
   "password_recovery_sent_description": "Revisa tu bandeja de entrada para el enlace de restablecimiento.",
   "password_reset": {
     "subtitle": "Si tu correo electrónico corresponde a una cuenta existente, recibirás un correo con un código para restablecer tu contraseña.",
     "title": "Restablecimiento de contraseña"
   },
-  "password_reset_failed": "Password reset failed",
-  "password_reset_successful": "Password reset successful",
+  "password_reset_failed": "Error al restablecer la contraseña",
+  "password_reset_successful": "Contraseña restablecida correctamente",
   "password_update": {
     "actions": {
       "save": "Guardar contraseña"
@@ -1311,7 +1311,7 @@
     "subtitle": "Tu plan actual permite solo {{ memberLimit }} para la colaboración. Actualiza tu plan para añadir más miembros al equipo y desbloquear funciones avanzadas.",
     "title": "Actualiza para añadir más miembros al equipo"
   },
-  "please_check_email_to_verify": "Please check your email to verify your account",
+  "please_check_email_to_verify": "Por favor, revisa tu correo electrónico para verificar tu cuenta",
   "preferences": "Preferencias",
   "preview": "Vista previa",
   "pricing": {
@@ -1661,8 +1661,8 @@
     },
     "recovery": ""
   },
-  "registration_failed": "Registration failed",
-  "registration_successful": "Registration successful",
+  "registration_failed": "Error en el registro",
+  "registration_successful": "Registro realizado correctamente",
   "remove": "Eliminar",
   "remove_avatar": "Eliminar avatar",
   "reset_password_button": "Restablecer contraseña",
@@ -1901,7 +1901,7 @@
   "verify": {
     "account_created_succesfully": "¡Cuenta creada con éxito!",
     "check_spam_folder": "Si no ves el correo en tu bandeja de entrada, por favor, revisa la carpeta de spam.",
-    "email_send_failed": "Failed to send email",
+    "email_send_failed": "Error al enviar el correo electrónico",
     "email_sent": "Correo enviado correctamente",
     "enter_code": "Introduce el código a continuación para activar tu cuenta",
     "enter_verification_code": "Te hemos enviado un correo de verificación. Sigue las instrucciones para activar tu cuenta.",
@@ -1915,7 +1915,7 @@
   },
   "verify_mail": {
     "error_subtitle": "El código introducido no es correcto. Inténtalo de nuevo.",
-    "success": "Email verified successfully",
+    "success": "Correo electrónico verificado con éxito",
     "verifying_subtitle": "Espera mientras verificamos tu dirección de correo electrónico. Serás redirigido si la verificación tiene éxito.",
     "verifying_title": "Verificando {{ email }}"
   },

@@ -1311,7 +1311,7 @@
     "subtitle": "Il piano attuale consente solo {{ memberLimit }} per la collaborazione. Aggiorna il piano per aggiungere più membri al team e sbloccare funzionalità avanzate.",
     "title": "Aggiorna per aggiungere più membri del team"
   },
-  "please_check_email_to_verify": "Please check your email to verify your account",
+  "please_check_email_to_verify": "Controlla la tua email per verificare il tuo account",
   "preferences": "Preferenze",
   "preview": "Anteprima",
   "pricing": {
@@ -1661,8 +1661,8 @@
     },
     "recovery": ""
   },
-  "registration_failed": "Registration failed",
-  "registration_successful": "Registration successful",
+  "registration_failed": "Registrazione non riuscita",
+  "registration_successful": "egistrazione avvenuta con successo",
   "remove": "Rimuovi",
   "remove_avatar": "Rimuovi avatar",
   "reset_password_button": "Reimposta Password",
@@ -1901,7 +1901,7 @@
   "verify": {
     "account_created_succesfully": "Account creato con successo!",
     "check_spam_folder": "Controlla la cartella spam se non vedi l'email nella tua casella di posta.",
-    "email_send_failed": "Failed to send email",
+    "email_send_failed": "Invio dell'email non riuscito",
     "email_sent": "Email inviata con successo",
     "enter_code": "Inserisci il codice qui sotto per attivare il tuo account",
     "enter_verification_code": "Ti abbiamo inviato un'email di verifica. Segui le istruzioni per attivare il tuo account.",
@@ -1915,7 +1915,7 @@
   },
   "verify_mail": {
     "error_subtitle": "Il codice inserito non è corretto. Riprova.",
-    "success": "Email verified successfully",
+    "success": "Email verificata con successo",
     "verifying_subtitle": "Attendi mentre verifichiamo il tuo indirizzo email. Verrai reindirizzato in caso di successo.",
     "verifying_title": "Verifica di {{ email }}"
   },
