@@ -205,8 +205,11 @@
   },
   "create_process": "Create process",
   "csp": {
+    "auth_failed": "Authentication failed",
+    "auth_success": "Authentication successful",
     "authenticate": "Identify",
     "code_info": "You will receive a unique code on the selected medium to verify your identity and complete authentication",
+    "code_sent": "Verification code sent",
     "contact_match_help": "Must match the one registered in the system",
     "data_usage_info": "Your data will only be used to verify your identity. Vocdoni does not store personal data.",
     "errors": {
@@ -269,6 +272,7 @@
       "create_first_organization": "Create your first organization",
       "create_first_vote": "Create your first vote",
       "empty": "No voting processes found",
+      "empty_description": "Create your first vote to get started.",
       "error_loading_processes": "Error loading voting processes",
       "hello": "Welcome to Vocdoni, {{name}}!",
       "how_first_vote": "How to create your first vote",
@@ -301,12 +305,17 @@
     "delete": "Delete Draft",
     "deleted_draft": "Draft deleted successfully",
     "edit": "Edit Draft",
+    "empty": "No drafts found",
+    "empty_description": "Create a draft to get started.",
+    "load_error": "Unable to load drafts",
+    "load_error_description": "Please try again.",
     "not_defined": "Not defined yet"
   },
   "drawer": {
     "close": "Close drawer"
   },
   "edit_saas_profile": {
+    "edit_failed": "Update failed",
     "edited_successfully": "Updated successfully"
   },
   "editor": {
@@ -515,6 +524,8 @@
       "submit_ticket": "Submit Ticket",
       "subtitle": "Submit a ticket and our support team will get back to you as soon as possible.",
       "technical_issue": "Technical issue",
+      "ticket_error": "Failed to submit support ticket",
+      "ticket_success": "Support ticket submitted successfully",
       "title": "Title",
       "title_placeholder": "Briefly describe your issue",
       "voting_issue": "Voting issue"
@@ -549,6 +560,11 @@
       "title": "Delete Members"
     },
     "email": "Email",
+    "members": {
+      "empty": "No members found",
+      "empty_description": "Add members to see them listed here.",
+      "error": "Unable to load group members"
+    },
     "members_one": "{{count}} member",
     "members_other": "{{count}} members",
     "name": "Name"
@@ -565,6 +581,7 @@
       "extra": "When you initiate a vote, a census is created as a time-specific snapshot of the group. Any subsequent changes to the group will not affect existing censuses, but will be reflected in future voting processes.",
       "title": "About Groups"
     },
+    "load_error": "Unable to load groups",
     "load_more": "Load more",
     "no_groups": "No groups found",
     "search": "Search groups..."
@@ -1076,6 +1093,13 @@
       "surname": "Last Name",
       "weight": "Voting power (Weight)"
     },
+    "list": {
+      "empty": "No members found",
+      "empty_description": "Add your first member to get started.",
+      "error": "Unable to load members",
+      "no_search_results": "No members match your search",
+      "no_search_results_description": "Try adjusting your search terms."
+    },
     "table": {
       "add_to_group": "Add to Group",
       "add_to_group_button_one": "Add {{count}} member",
@@ -1170,6 +1194,9 @@
   "organization": {
     "avatar_alt": "Avatar image of {{ name }} organization",
     "create_org": "Create organization",
+    "create_org_failed": "Failed to create organization",
+    "create_org_step_update_failed": "Failed to update organization setup step status",
+    "create_org_success": "Organization created successfully",
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Votings",
@@ -1227,10 +1254,15 @@
   "password": "Password",
   "password_placeholder": "Min 8 characters",
   "password_placeholder_confirm": "Confirm Password",
+  "password_recovery_failed": "Password recovery failed",
+  "password_recovery_sent": "Recovery email sent",
+  "password_recovery_sent_description": "Check your inbox for the reset link.",
   "password_reset": {
     "subtitle": "If your email corresponds to an existing account, you'll receive an email with a code to reset your password.",
     "title": "Password reset"
   },
+  "password_reset_failed": "Password reset failed",
+  "password_reset_successful": "Password reset successful",
   "password_update": {
     "actions": {
       "save": "Save Password"
@@ -1260,6 +1292,7 @@
     "subtitle": "Your current plan allows only {{ memberLimit }} for collaboration. Upgrade your plan to add more team members and unlock advanced features.",
     "title": "Upgrade to add more team members"
   },
+  "please_check_email_to_verify": "Please check your email to verify your account",
   "preferences": "Preferences",
   "preview": "Preview",
   "pricing": {
@@ -1279,10 +1312,14 @@
     "custom_subtitle": "Tailored for your needs",
     "custom_title": "Custom",
     "different_voting_methods": "Different voting methods",
+    "empty": "No plans found",
+    "empty_description": "Check back later for available plans.",
     "essential_subtitle": "For growing organizations",
     "essential_title": "Essential",
     "free_subtitle": "Perfect for getting started",
     "free_title": "Free",
+    "load_error": "Unable to load plans",
+    "load_error_description": "Please try again.",
     "premium_subtitle": "For established organizations",
     "premium_title": "Premium",
     "priority_support": "Priority email support (24h)",
@@ -1580,6 +1617,12 @@
     "title": "Title",
     "type": "Type"
   },
+  "processes": {
+    "empty": "No voting processes found",
+    "empty_description": "Create a voting process to get started.",
+    "no_results": "No results for this filter",
+    "no_results_description": "Try adjusting your filters."
+  },
   "profile": {
     "error": "Failed to update profile",
     "success": "Profile updated successfully",
@@ -1594,6 +1637,8 @@
     },
     "recovery": ""
   },
+  "registration_failed": "Registration failed",
+  "registration_successful": "Registration successful",
   "remove": "Remove",
   "remove_avatar": "Remove avatar",
   "reset_password_button": "Reset Password",
@@ -1724,7 +1769,11 @@
       "confirmation": "This will cancel the invitation. The person will not be able to join your organization.",
       "title": "Are you sure?"
     },
+    "empty": "No team members found",
+    "empty_description": "Invite teammates to get started.",
     "expires_in": "Expires in {{time}}",
+    "load_error": "Unable to load team members",
+    "load_error_description": "Please try again.",
     "only_one_member": {
       "add_team_member": "Add team member",
       "subtitle": "Add team members to collaborate on your organization",
@@ -1767,9 +1816,14 @@
   "upgrade_plan": "Upgrade to {{plan}}",
   "uploaded_image_preview": "Preview of the uploaded image",
   "uploader": {
+    "avatar_upload_failed": "Avatar upload failed",
+    "avatar_upload_success": "Avatar uploaded",
     "click_or_drag_and_drop": "<click>Click to upload or drag and drop</click><formats>(Allowed formats: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Upload Image",
-    "drop_here": ""
+    "drop_here": "",
+    "image_upload_failed": "Image upload failed",
+    "image_upload_success": "Image uploaded",
+    "upload_failed": "Upload failed"
   },
   "use_read_more": {
     "read_less": "Read less",
@@ -1823,6 +1877,7 @@
   "verify": {
     "account_created_succesfully": "Account created successfully!",
     "check_spam_folder": "Please check your spam folder if you don't see the email in your inbox.",
+    "email_send_failed": "Failed to send email",
     "email_sent": "Email sent successfully",
     "enter_code": "Enter the code below to activate your account",
     "enter_verification_code": "We've sent you a verification email. Please follow the instructions to activate your account.",
@@ -1836,6 +1891,7 @@
   },
   "verify_mail": {
     "error_subtitle": "The code you entered is incorrect. Please try again.",
+    "success": "Email verified successfully",
     "verifying_subtitle": "Await until we verify your email address. You will be redirect on success.",
     "verifying_title": "Verifying {{ email }}"
   },
@@ -1861,6 +1917,7 @@
       "configure": "Configure Voter Authentication",
       "edit": "Edit Voter Authentication"
     },
+    "configured": "Voter authentication configured",
     "configured_auth": "Voter Authentication",
     "credentials": "Credentials",
     "description": "Set up how voters will authenticate to participate in this voting process.",
@@ -1882,6 +1939,7 @@
     "level_strong": "Strong",
     "level_weak": "Weak",
     "no_group_description": "Please select a group first to configure authentication.",
+    "save_failed": "Failed to configure voter authentication",
     "security_level": "Good security",
     "security_recommendation_1": "For better security, we recommend selecting at least 2 credentials.",
     "security_recommendation_2_one": "You've selected {{ count }} credentials, which provides good security for your voters.",
@@ -1902,6 +1960,7 @@
     "validation_duplicates_one": "{{count}} duplicated users",
     "validation_duplicates_other": "{{count}} duplicated users",
     "validation_error_title": "Validation Error",
+    "validation_failed": "Validation failed",
     "validation_missing_data_one": "{{count}} users missing required fields",
     "validation_missing_data_other": "{{count}} users missing required fields",
     "validation_summary": "Validation failed for some users.",

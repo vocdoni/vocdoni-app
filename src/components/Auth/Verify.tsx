@@ -1,11 +1,10 @@
-import { Alert, AlertIcon, Box, Button, Flex, HStack, PinInput, PinInputField, Text } from '@chakra-ui/react'
+import { Alert, AlertIcon, Box, Button, Flex, HStack, PinInput, PinInputField, Text, useToast } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { useResendVerificationMail } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
-import FormSubmitMessage from '~shared/Layout/FormSubmitMessage'
 import { Routes } from '~src/router/routes'
 import { Loading } from '~src/router/SuspenseLoader'
 import { UnauthorizedApiError } from './api'
@@ -19,16 +18,37 @@ type VerifyFormProps = {
 }
 
 const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormProps) => {
+  const toast = useToast()
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [code, setCode] = useState(initialCode)
   const {
-    mailVerify: { mutateAsync: verifyAsync, isPending: isVerifyPending, isError: isVerifyError, error: verifyError },
+    mailVerify: { mutateAsync: verifyAsync, isPending: isVerifyPending, isError: isVerifyError },
   } = useAuth()
 
-  const verify = useCallback(() => {
-    verifyAsync({ email, code }).then(() => navigate(verificationSuccessRedirect))
-  }, [code, email])
+  const verify = useCallback(async () => {
+    try {
+      await verifyAsync({ email, code })
+      toast({
+        status: 'success',
+        title: t('verify_mail.success', { defaultValue: 'Email verified successfully' }),
+      })
+      navigate(verificationSuccessRedirect)
+    } catch (error) {
+      const title =
+        error instanceof UnauthorizedApiError
+          ? t('verify_mail.error_subtitle', {
+              defaultValue: 'The code you entered is incorrect. Please try again',
+            })
+          : error?.message
+
+      toast({
+        status: 'error',
+        title,
+        isClosable: true,
+      })
+    }
+  }, [code, email, verifyAsync, navigate, t, toast])
 
   // Auto-submit if code is provided and autoSubmit is true, or when all 6 characters are entered
   useEffect(() => {
@@ -67,31 +87,38 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
         >
           <Trans i18nKey={'verify.verify_code'}>Verify</Trans>
         </Button>
-        <FormSubmitMessage
-          isError={isVerifyError}
-          error={
-            verifyError instanceof UnauthorizedApiError
-              ? t('verify_mail.error_subtitle', {
-                  defaultValue: 'The code you entered is incorrect. Please try again',
-                })
-              : verifyError && verifyError.message
-          }
-        />
       </Box>
     </>
   )
 }
 
 export const VerificationPending = ({ email, code }: { email: string; code?: string }) => {
+  const toast = useToast()
   const { t } = useTranslation()
   const { setTitle, setSubtitle } = useOutletContext<AuthOutletContextType>()
   const {
     mutate: resend,
-    isError: isResendError,
-    error: resendError,
     isPending: isResendPending,
     isSuccess: isResendSuccess,
-  } = useResendVerificationMail()
+  } = useResendVerificationMail({
+    onSuccess: () => {
+      toast({
+        title: t('verify.email_sent', { defaultValue: 'Email sent successfully' }),
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
+    },
+    onError: (error) => {
+      toast({
+        title: t('verify.email_send_failed', { defaultValue: 'Failed to send email' }),
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
+    },
+  })
 
   useEffect(() => {
     setTitle(t('verify.account_created_succesfully', { defaultValue: 'Account created successfully!' }))
@@ -137,14 +164,6 @@ export const VerificationPending = ({ email, code }: { email: string; code?: str
           <Trans i18nKey={'verify.resend_confirmation_mail'}>Resend Email</Trans>
         </Button>
       )}
-      <FormSubmitMessage
-        isSuccess={isResendSuccess}
-        success={t('verify.email_sent', {
-          defaultValue: 'Email sent successfully',
-        })}
-        isError={isResendError}
-        error={resendError}
-      />
     </>
   )
 }

@@ -9,6 +9,7 @@ import {
   HStack,
   PinInput,
   PinInputField,
+  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
@@ -29,6 +30,7 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
     actions: { csp1 },
   } = useElection()
   const { t } = useTranslation()
+  const toast = useToast()
   const {
     handleSubmit,
     control,
@@ -48,7 +50,22 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
       })
 
       csp1(authToken)
+      toast({
+        title: t('csp.auth_success', { defaultValue: 'Authentication successful' }),
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : t('csp.auth_failed', { defaultValue: 'Authentication failed' })
+      toast({
+        title: t('csp.auth_failed', { defaultValue: 'Authentication failed' }),
+        description: errorMessage,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
       console.error('Authentication failed:', error)
     }
   }

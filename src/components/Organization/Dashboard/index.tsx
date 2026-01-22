@@ -30,6 +30,7 @@ import { useSubscription } from '~components/Auth/Subscription'
 import { WhatsAppButton } from '~components/shared/Layout/WhatsappButton'
 import { PlanId } from '~constants'
 import { Routes } from '~routes'
+import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import { DashboardBookerModalButton } from '~shared/Dashboard/Booker'
 import { DashboardBox, Heading, SubHeading } from '~shared/Dashboard/Contents'
 import InvertedAccordionIcon from '~shared/Layout/InvertedAccordionIcon'
@@ -284,6 +285,7 @@ const Processes = () => {
     data: elections,
     isLoading,
     isError,
+    error,
   } = useQuery({
     queryKey,
     queryFn,
@@ -297,11 +299,14 @@ const Processes = () => {
   if (isError) {
     return (
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
-        <Text color='texts.subtle'>
-          {t('dashboard.welcome.error_loading_processes', {
+        <ListStateAlert
+          show
+          status='error'
+          title={t('dashboard.welcome.error_loading_processes', {
             defaultValue: 'Error loading voting processes',
           })}
-        </Text>
+          description={error instanceof Error ? error.message : undefined}
+        />
       </Flex>
     )
   }
@@ -329,11 +334,16 @@ const Processes = () => {
   if (!elections?.elections?.length) {
     return (
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
-        <Text color='gray.500'>
-          {t('dashboard.welcome.empty', {
+        <ListStateAlert
+          show
+          status='info'
+          title={t('dashboard.welcome.empty', {
             defaultValue: 'No voting processes found',
           })}
-        </Text>
+          description={t('dashboard.welcome.empty_description', {
+            defaultValue: 'Create your first vote to get started.',
+          })}
+        />
         <Button as={ReactRouterLink} to={generatePath(Routes.processes.create)} colorScheme='gray' variant='outline'>
           {t('dashboard.welcome.create_first_vote', {
             defaultValue: 'Create your first vote',

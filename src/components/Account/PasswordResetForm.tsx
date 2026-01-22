@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, Flex } from '@chakra-ui/react'
+import { Button, Flex, useToast } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -21,6 +21,7 @@ type PasswordResetFormValues = {
 }
 
 const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) => {
+  const toast = useToast()
   const { t } = useTranslation()
   const navigate = useNavigate()
   const methods = useForm<PasswordResetFormValues>({
@@ -44,6 +45,21 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
     resetPasswordMutation.mutate(data, {
       onSuccess: () => {
         navigate(Routes.auth.signIn)
+        toast({
+          title: t('password_reset_successful', { defaultValue: 'Password reset successful' }),
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+      },
+      onError: (error) => {
+        toast({
+          title: t('password_reset_failed', { defaultValue: 'Password reset failed' }),
+          description: (error as Error).message,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
       },
     })
   }
@@ -82,13 +98,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
             validate: (value) => value === methods.getValues('newPassword') || t('passwords_do_not_match'),
           }}
         />
-        {resetPasswordMutation.error && (
-          <Alert status='error'>
-            <AlertIcon />
-            {resetPasswordMutation.error.message}
-          </Alert>
-        )}
-        <Button type='submit' fontSize='sm' fontWeight='500' w='100%' h={50}>
+        <Button type='submit' fontSize='sm' colorScheme='black' fontWeight='500' w='100%' h={50}>
           <Trans i18nKey='reset_password_button'>Reset Password</Trans>
         </Button>
       </Flex>

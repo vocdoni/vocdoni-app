@@ -15,6 +15,7 @@ import {
   Tabs,
   Text,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-providers'
@@ -119,6 +120,7 @@ const usePublishCensus = () => {
 
 export const VoterAuthentication = () => {
   const { t } = useTranslation()
+  const toast = useToast()
   const mainForm = useFormContext<Process>()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [activeTabIndex, setActiveTabIndex] = useState(0)
@@ -178,6 +180,18 @@ export const VoterAuthentication = () => {
         setActiveTabIndex(2)
       } catch (error) {
         setValidationError(error.apiError as ValidationError)
+        const errorMessage =
+          (error as any)?.apiError?.error ||
+          (error instanceof Error
+            ? error.message
+            : t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }))
+        toast({
+          title: t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }),
+          description: errorMessage,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
       }
     } else {
       // Step 3: Create and publish census
@@ -202,10 +216,28 @@ export const VoterAuthentication = () => {
           size: maxCensusSize,
         })
         setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
+        toast({
+          title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
         onClose()
         resetForm()
       } catch (error) {
         setValidationError(error.apiError as ValidationError)
+        const errorMessage =
+          (error as any)?.apiError?.error ||
+          (error instanceof Error
+            ? error.message
+            : t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }))
+        toast({
+          title: t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }),
+          description: errorMessage,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
       }
     }
   }

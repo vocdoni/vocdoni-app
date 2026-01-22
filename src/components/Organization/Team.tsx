@@ -44,8 +44,8 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuEllipsis, LuMail, LuPlus, LuRefreshCw, LuUserCog, LuUserPlus } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
-import QueryDataLayout from '~shared/Layout/QueryDataLayout'
 import { roleIcons } from '~shared/Layout/SaasSelector'
 import { useProfile } from '~src/queries/account'
 import { QueryKeys } from '~src/queries/keys'
@@ -742,13 +742,28 @@ const UsersList = ({ users }: UsersListProps) => {
 }
 
 export const OrganizationUsers = () => {
+  const { t } = useTranslation()
   const { users, isLoading, isError, error } = useAllUsers()
+  const hasError = isError && !isLoading
+  const isEmpty = users.length === 0 && !isLoading && !hasError
+  const showAlert = hasError || isEmpty
+  const alertTitle = hasError
+    ? t('team.load_error', { defaultValue: 'Unable to load team members' })
+    : t('team.empty', { defaultValue: 'No team members found' })
+  const alertDescription = hasError
+    ? error instanceof Error
+      ? error.message
+      : t('team.load_error_description', { defaultValue: 'Please try again.' })
+    : t('team.empty_description', { defaultValue: 'Invite teammates to get started.' })
 
   if (isLoading) return <Progress isIndeterminate />
 
   return (
-    <QueryDataLayout isEmpty={!users || users.length === 0} isLoading={isLoading} isError={isError} error={error}>
-      {users.length === 1 ? <UsersEmpty /> : <UsersList users={users} />}
-    </QueryDataLayout>
+    <>
+      {showAlert && (
+        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
+      )}
+      {!hasError && (users.length === 1 ? <UsersEmpty /> : users.length > 1 ? <UsersList users={users} /> : null)}
+    </>
   )
 }

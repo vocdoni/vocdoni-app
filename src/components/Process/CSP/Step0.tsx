@@ -11,6 +11,7 @@ import {
   Link,
   Stack,
   Text,
+  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
@@ -22,6 +23,7 @@ import { useCspAuthContext } from './CSPStepsProvider'
 
 export const Step0Base = ({ election }: { election: PublishedElection }) => {
   const { t } = useTranslation()
+  const toast = useToast()
   const { setCurrentStep, setAuthData, authFields, twoFaFields } = useCspAuthContext()
   const {
     actions: { csp1 },
@@ -105,12 +107,33 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
       // Check if 2FA is required
       if (is2Factor) {
         // 2FA required - proceed to Step 1 for code verification
+        toast({
+          title: t('csp.code_sent', { defaultValue: 'Verification code sent' }),
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
         setCurrentStep(1)
       } else {
         // No 2FA - complete authentication directly using the same method as Step 1
+        toast({
+          title: t('csp.auth_success', { defaultValue: 'Authentication successful' }),
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
         csp1(authToken)
       }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : t('csp.auth_failed', { defaultValue: 'Authentication failed' })
+      toast({
+        title: t('csp.auth_failed', { defaultValue: 'Authentication failed' }),
+        description: errorMessage,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
       console.error('CSP auth failed:', error)
     }
   }

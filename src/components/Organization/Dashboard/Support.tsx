@@ -12,6 +12,7 @@ import {
   Stack,
   Text,
   Textarea,
+  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
@@ -26,7 +27,6 @@ import { DashboardBox } from '~components/shared/Dashboard/Contents'
 import { SubscriptionLockedContent } from '~components/shared/Layout/SubscriptionLockedContent'
 import { SubscriptionPermission } from '~constants'
 import InputBasic from '~shared/Form/InputBasic'
-import FormSubmitMessage from '~shared/Layout/FormSubmitMessage'
 import { IssueTypeSelector, SelectOptionType } from '~shared/Layout/SaasSelector'
 import { maskValue } from '~utils/strings'
 
@@ -84,10 +84,11 @@ const useSendSupportTicket = (options?: Omit<UseMutationOptions<void, Error, Sup
 }
 
 const SupportTicketForm = () => {
+  const toast = useToast()
   const { t } = useTranslation()
   const methods = useForm<FormData>({})
   const { handleSubmit, register, reset } = methods
-  const { mutateAsync, isError, error, isSuccess } = useSendSupportTicket({
+  const { mutateAsync } = useSendSupportTicket({
     onSuccess: () => {
       reset()
     },
@@ -100,8 +101,16 @@ const SupportTicketForm = () => {
     }
     try {
       await mutateAsync(ticket)
+      toast({
+        title: t('form.support.ticket_success', { defaultValue: 'Support ticket submitted successfully' }),
+        status: 'success',
+      })
     } catch (e) {
-      console.error('Form submit failed:', e)
+      toast({
+        title: t('form.support.ticket_error', { defaultValue: 'Failed to submit support ticket' }),
+        description: (e as Error).message,
+        status: 'error',
+      })
     } finally {
     }
   }
@@ -137,12 +146,6 @@ const SupportTicketForm = () => {
           <Button type='submit' mt={4}>
             {t('form.support.submit_ticket', { defaultValue: 'Submit Ticket' })}
           </Button>
-          <FormSubmitMessage
-            isError={isError}
-            error={error}
-            isSuccess={isSuccess}
-            success={t('edit_saas_profile.edited_successfully', { defaultValue: 'Updated successfully' })}
-          />
         </VStack>
       </Box>
     </FormProvider>

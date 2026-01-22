@@ -5,6 +5,7 @@ import { useOutletContext } from 'react-router-dom'
 import { MemberbaseTabsContext } from '~components/Memberbase'
 import MembersTable from '~components/Memberbase/Members'
 import { TableProvider } from '~components/Memberbase/TableProvider'
+import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import { Routes } from '~routes'
 import { usePaginatedMembers } from '~src/queries/members'
 
@@ -69,6 +70,26 @@ const Members = () => {
     previousPage: null,
     nextPage: null,
   }
+  const isLoadingOrFetching = isLoading || isFetching
+  const hasError = !!error && !isLoadingOrFetching
+  const isEmpty = members.length === 0 && !isLoadingOrFetching && !hasError
+  const hasSearch = Boolean(debouncedSearch)
+  const showAlert = hasError || isEmpty
+  const alertStatus = hasError ? 'error' : 'info'
+  const alertTitle = hasError
+    ? t('members.list.error', { defaultValue: 'Unable to load members' })
+    : hasSearch
+      ? t('members.list.no_search_results', { defaultValue: 'No members match your search' })
+      : t('members.list.empty', { defaultValue: 'No members found' })
+  const alertDescription = hasError
+    ? error?.message?.toString()
+    : hasSearch
+      ? t('members.list.no_search_results_description', {
+          defaultValue: 'Try adjusting your search terms.',
+        })
+      : t('members.list.empty_description', {
+          defaultValue: 'Add your first member to get started.',
+        })
 
   useEffect(() => {
     setBreadcrumb([
@@ -80,6 +101,7 @@ const Members = () => {
   return (
     <TableProvider data={members} initialColumns={columns} isLoading={isLoading} isFetching={isFetching} error={error}>
       <RoutedPaginationProvider path={Routes.dashboard.memberbase.members} initialPage={1} pagination={pagination}>
+        {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
         <MembersTable />
       </RoutedPaginationProvider>
     </TableProvider>

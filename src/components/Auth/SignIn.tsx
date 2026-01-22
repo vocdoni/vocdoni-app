@@ -11,7 +11,6 @@ import { useAuth } from '~components/Auth/useAuth'
 import { VerificationPending } from '~components/Auth/Verify'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import InputPassword from '~shared/Form/InputPassword'
-import FormSubmitMessage from '~shared/Layout/FormSubmitMessage'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvent } from '~utils/analytics'
 import InputBasic from '../shared/Form/InputBasic'
@@ -150,7 +149,6 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
           {t('signup_title')}
         </Link>
       </Text>
-      <FormSubmitMessage isError={isError} error={error} />
     </>
   )
 }

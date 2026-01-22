@@ -208,8 +208,11 @@
   },
   "create_process": "Crea un procés",
   "csp": {
+    "auth_failed": "Autenticació fallida",
+    "auth_success": "Autenticació correcta",
     "authenticate": "Identifica't",
     "code_info": "Rebràs un codi únic al mitjà seleccionat per verificar la teva identitat i completar l'autenticació",
+    "code_sent": "Codi de verificació enviat",
     "contact_match_help": "Ha de coincidir amb el registrat al sistema",
     "data_usage_info": "Les teves dades només s'utilitzaran per verificar la teva identitat. Vocdoni no emmagatzema dades personals.",
     "errors": {
@@ -272,6 +275,7 @@
       "create_first_organization": "Crea la teva primera organització",
       "create_first_vote": "Crea la teva primera votació",
       "empty": "No s'ha trobat cap procés de votació",
+      "empty_description": "Crea la teva primera votació per començar.",
       "error_loading_processes": "Error en carregar els processos de votació",
       "hello": "Benvingut a Vocdoni, {{name}}!",
       "how_first_vote": "Com crear la teva primera votació",
@@ -304,12 +308,17 @@
     "delete": "Eliminar esborrany",
     "deleted_draft": "Esborrany eliminat correctament",
     "edit": "Editar esborrany",
+    "empty": "No s'han trobat esborranys",
+    "empty_description": "Crea un esborrany per començar.",
+    "load_error": "No s'han pogut carregar els esborranys",
+    "load_error_description": "Torna-ho a provar.",
     "not_defined": "No definit encara"
   },
   "drawer": {
     "close": "Tanca el panell lateral"
   },
   "edit_saas_profile": {
+    "edit_failed": "L'actualització ha fallat",
     "edited_successfully": "Actualitzat correctament"
   },
   "editor": {
@@ -519,6 +528,8 @@
       "submit_ticket": "Envia la sol·licitud",
       "subtitle": "Envia una sol·licitud i el nostre equip de suport es posarà en contacte amb tu tan aviat com sigui possible.",
       "technical_issue": "Problema tècnic",
+      "ticket_error": "Hi ha hagut un error en enviar la sol·licitud de suport",
+      "ticket_success": "Sol·licitud de suport enviada correctament",
       "title": "Títol",
       "title_placeholder": "Descriu breument el teu problema",
       "voting_issue": "Problema de votació"
@@ -555,6 +566,11 @@
       "title": "Elimina membres"
     },
     "email": "Correu electrònic",
+    "members": {
+      "empty": "No s'han trobat membres",
+      "empty_description": "Afegeix membres per veure'ls aquí.",
+      "error": "No s'han pogut carregar els membres del grup"
+    },
     "members_one": "un únic membre",
     "members_many": "",
     "members_other": "{{ count }} membres",
@@ -572,6 +588,7 @@
       "extra": "Quan inicies una votació, es crea un cens com una instantània temporal del grup. Qualsevol canvi posterior al grup no afectarà els censos existents, però es reflectirà en els futurs processos de votació.",
       "title": "Quant als grups"
     },
+    "load_error": "No s'han pogut carregar els grups",
     "load_more": "Carrega'n més",
     "no_groups": "No s'ha trobat cap grup",
     "search": "Cerca grups..."
@@ -1089,6 +1106,13 @@
       "surname": "Cognom",
       "weight": "Poder de votació (Pes)"
     },
+    "list": {
+      "empty": "No s'han trobat membres",
+      "empty_description": "Afegeix el teu primer membre per començar.",
+      "error": "No s'han pogut carregar els membres",
+      "no_search_results": "No hi ha membres que coincideixin amb la cerca",
+      "no_search_results_description": "Prova d'ajustar els termes de cerca."
+    },
     "table": {
       "add_to_group": "Afegeix al grup",
       "add_to_group_button_one": "Afegeix {{count}} membre",
@@ -1189,6 +1213,9 @@
   "organization": {
     "avatar_alt": "Imatge d'avatar de l'organització {{ name }}",
     "create_org": "Crear organització",
+    "create_org_failed": "No s'ha pogut crear l'organització",
+    "create_org_step_update_failed": "No s'ha pogut actualitzar l'estat del pas de configuració de l'organització",
+    "create_org_success": "Organització creada correctament",
     "dashboard": "Tauler de control",
     "date_format": "d MMM y",
     "elections": "Votacions",
@@ -1246,10 +1273,15 @@
   "password": "Contrasenya",
   "password_placeholder": "Mínim 8 caràcters",
   "password_placeholder_confirm": "Confirma la contrasenya",
+  "password_recovery_failed": "No s'ha pogut enviar el correu de recuperació",
+  "password_recovery_sent": "Correu de recuperació enviat",
+  "password_recovery_sent_description": "Revisa la teva safata d'entrada per a l'enllaç de restabliment.",
   "password_reset": {
     "subtitle": "Si el teu correu electrònic correspon a un compte existent, rebràs un missatge amb un codi per restablir la contrasenya.",
     "title": "Restablir contrasenya"
   },
+  "password_reset_failed": "No s'ha pogut restablir la contrasenya",
+  "password_reset_successful": "Contrasenya restablerta correctament",
   "password_update": {
     "actions": {
       "save": "Desa la contrasenya"
@@ -1279,6 +1311,7 @@
     "subtitle": "El teu pla actual només permet {{ memberLimit }} per a la col·laboració. Actualitza el teu pla per afegir més membres de l'equip i desbloquejar funcions avançades.",
     "title": "Actualitza per afegir més membres de l'equip"
   },
+  "please_check_email_to_verify": "Si us plau, comprova el teu correu electrònic per verificar el teu compte.",
   "preferences": "Preferències",
   "preview": "Vista prèvia",
   "pricing": {
@@ -1299,10 +1332,14 @@
     "custom_subtitle": "Adaptat a les teves necessitats",
     "custom_title": "Personalitzat",
     "different_voting_methods": "Diferents mètodes de votació",
+    "empty": "No s'han trobat plans",
+    "empty_description": "Torna-ho a provar més tard per veure els plans disponibles.",
     "essential_subtitle": "Organitzacions petites o mitjanes o grups comunitaris amb necessitats bàsiques de votació.",
     "essential_title": "Bàsic",
     "free_subtitle": "Organitzacions petites o grups comunitaris amb necessitats bàsiques de votació.",
     "free_title": "Gratuït",
+    "load_error": "No s'han pogut carregar els plans",
+    "load_error_description": "Torna-ho a provar.",
     "premium_subtitle": "un volum més gran que requereix funcions més avançades.",
     "premium_title": "Prèmium",
     "priority_support": "Suport prioritari per correu electrònic (24h)",
@@ -1604,6 +1641,12 @@
     "title": "Títol",
     "type": "Tipus"
   },
+  "processes": {
+    "empty": "No s'han trobat processos de votació",
+    "empty_description": "Crea un procés de votació per començar.",
+    "no_results": "No hi ha resultats per a aquest filtre",
+    "no_results_description": "Prova d'ajustar els filtres."
+  },
   "profile": {
     "error": "No s'ha pogut actualitzar el perfil",
     "success": "Perfil actualitzat correctament",
@@ -1618,6 +1661,8 @@
     },
     "recovery": ""
   },
+  "registration_failed": "El registre ha fallat",
+  "registration_successful": "Registre completat correctament",
   "remove": "Elimina",
   "remove_avatar": "Elimina l'avatar",
   "reset_password_button": "Restableix la contrasenya",
@@ -1748,7 +1793,11 @@
       "confirmation": "Això cancel·larà la invitació. La persona no podrà unir-se a la teva organització.",
       "title": "N'estàs segur?"
     },
+    "empty": "No s'han trobat membres de l'equip",
+    "empty_description": "Convida companys per començar.",
     "expires_in": "Caduca en {{time}}",
+    "load_error": "No s'han pogut carregar els membres de l'equip",
+    "load_error_description": "Torna-ho a provar.",
     "only_one_member": {
       "add_team_member": "Afegeix un membre a l'equip",
       "subtitle": "Afegeix membres de l'equip per col·laborar a la teva organització",
@@ -1791,9 +1840,14 @@
   "upgrade_plan": "Canvia a {{plan}}",
   "uploaded_image_preview": "Previsualització de la imatge carregada",
   "uploader": {
+    "avatar_upload_failed": "Error en pujar l'avatar",
+    "avatar_upload_success": "Avatar pujat",
     "click_or_drag_and_drop": "<click>Fes clic per pujar</click><formats>(Formats permesos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Puja una imatge",
-    "drop_here": "Deixa-ho aquí"
+    "drop_here": "Deixa-ho aquí",
+    "image_upload_failed": "Error en pujar la imatge",
+    "image_upload_success": "Imatge pujada",
+    "upload_failed": "Error en pujar"
   },
   "use_read_more": {
     "read_less": "Llegeix menys",
@@ -1847,6 +1901,7 @@
   "verify": {
     "account_created_succesfully": "Compte creat correctament!",
     "check_spam_folder": "Si no veus el correu a la safata d'entrada, si us plau, revisa la carpeta de correu brossa.",
+    "email_send_failed": "No s'ha pogut enviar el correu electrònic",
     "email_sent": "Correu enviat correctament",
     "enter_code": "Introdueix el codi a continuació per activar el teu compte",
     "enter_verification_code": "T'hem enviat un correu de verificació. Si us plau, segueix les instruccions per activar el teu compte.",
@@ -1860,6 +1915,7 @@
   },
   "verify_mail": {
     "error_subtitle": "El codi que has introduït és incorrecte. Torna-ho a provar",
+    "success": "Correu electrònic verificat correctament",
     "verifying_subtitle": "Espera mentre verifiquem la teva adreça de correu electrònic. Se't redirigirà si té èxit.",
     "verifying_title": "Verificant {{ email }}"
   },
@@ -1885,6 +1941,7 @@
       "configure": "Configura l'autenticació dels votants",
       "edit": "Edita l'autenticació dels votants"
     },
+    "configured": "Autenticació de votants configurada",
     "configured_auth": "Autenticació configurada",
     "credentials": "Credencials",
     "description": "Configura com s'autenticaran els votants per participar en aquest procés de votació.",
@@ -1906,6 +1963,7 @@
     "level_strong": "Fort",
     "level_weak": "Feble",
     "no_group_description": "Si us plau, selecciona primer un grup per configurar l'autenticació.",
+    "save_failed": "No s'ha pogut configurar l'autenticació de votants",
     "security_level": "Bona seguretat",
     "security_recommendation_1": "Per a una millor seguretat, recomanem seleccionar almenys 2 credencials.",
     "security_recommendation_2_one": "Has seleccionat {{ count }} credencials, cosa que proporciona bona seguretat als teus votants.",
@@ -1929,6 +1987,7 @@
     "validation_duplicates_many": "",
     "validation_duplicates_other": "{{count}} usuaris duplicats",
     "validation_error_title": "Error de validació",
+    "validation_failed": "La validació ha fallat",
     "validation_missing_data_one": "{{count}} usuaris sense els camps requerits",
     "validation_missing_data_many": "",
     "validation_missing_data_other": "{{count}} usuaris sense els camps requerits",

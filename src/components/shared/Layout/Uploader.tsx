@@ -13,6 +13,7 @@ import {
   Image,
   Spinner,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { DropzoneInputProps, DropzoneRootProps, useDropzone } from 'react-dropzone'
@@ -52,6 +53,7 @@ const useUploadFile = () => {
 
 export const AvatarUploader = (props: FormControlProps) => {
   const { t } = useTranslation()
+  const toast = useToast()
   const {
     watch,
     getValues,
@@ -70,9 +72,24 @@ export const AvatarUploader = (props: FormControlProps) => {
     try {
       const url = await uploadFile(files[0])
       setValue('avatar', url)
+      toast({
+        title: t('uploader.avatar_upload_success', { defaultValue: 'Avatar uploaded' }),
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
     } catch (error) {
+      const errorMessage =
+        error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
       setError('avatar', {
-        message: error.message,
+        message: errorMessage,
+      })
+      toast({
+        title: t('uploader.avatar_upload_failed', { defaultValue: 'Avatar upload failed' }),
+        description: errorMessage,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
       })
       console.error('Error uploading avatar:', error)
     }
@@ -148,6 +165,7 @@ export const AvatarUploader = (props: FormControlProps) => {
 
 export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }: ImageUploaderProps) => {
   const { t } = useTranslation()
+  const toast = useToast()
   const {
     watch,
     setValue,
@@ -164,8 +182,23 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
     try {
       const url = await uploadFile(files[0])
       setValue(name, url, { shouldDirty: true })
+      toast({
+        title: t('uploader.image_upload_success', { defaultValue: 'Image uploaded' }),
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
     } catch (error) {
-      setError(name, { message: error.message })
+      const errorMessage =
+        error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
+      setError(name, { message: errorMessage })
+      toast({
+        title: t('uploader.image_upload_failed', { defaultValue: 'Image upload failed' }),
+        description: errorMessage,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
       console.error(error)
     }
   }

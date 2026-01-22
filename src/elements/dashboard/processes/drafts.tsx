@@ -29,6 +29,7 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useCreateProcess } from '~components/Process/Create'
 import { Process } from '~components/Process/Create/common'
+import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/shared/Pagination/PaginatedTableFooter'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
@@ -243,7 +244,19 @@ const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
 }
 
 const Drafts = () => {
-  const { data, isLoading } = useDrafts()
+  const { t } = useTranslation()
+  const { data, isLoading, error } = useDrafts()
+  const hasError = !!error && !isLoading
+  const isEmpty = (data?.processes?.length ?? 0) === 0 && !isLoading && !hasError
+  const showAlert = hasError || isEmpty
+  const alertTitle = hasError
+    ? t('drafts.load_error', { defaultValue: 'Unable to load drafts' })
+    : t('drafts.empty', { defaultValue: 'No drafts found' })
+  const alertDescription = hasError
+    ? error instanceof Error
+      ? error.message
+      : t('drafts.load_error_description', { defaultValue: 'Please try again.' })
+    : t('drafts.empty_description', { defaultValue: 'Create a draft to get started.' })
 
   const pagination = data?.pagination || {
     totalItems: 0,
@@ -257,6 +270,9 @@ const Drafts = () => {
 
   return (
     <RoutedPaginationProvider initialPage={1} path={Routes.dashboard.processes.drafts} pagination={pagination}>
+      {showAlert && (
+        <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
+      )}
       <DraftsTable drafts={data?.processes ?? []} />
     </RoutedPaginationProvider>
   )
