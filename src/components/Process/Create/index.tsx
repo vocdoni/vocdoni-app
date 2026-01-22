@@ -971,7 +971,7 @@ const ProcessCreateView = () => {
                   })}
                   icon={<Icon as={LuSettings} />}
                   variant='outline'
-                  onClick={() => setShowSidebar((prev) => !prev)}
+                  onClick={toggleSidebar}
                 />
                 <Button
                   type='submit'
@@ -981,7 +981,13 @@ const ProcessCreateView = () => {
                 >
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
-                <Button type='button' colorScheme='black' variant='outline' onClick={saveDraft} isLoading={isSaving}>
+                <Button
+                  type='button'
+                  colorScheme='black'
+                  variant='outline'
+                  onClick={() => saveDraft(false)}
+                  isLoading={isSaving}
+                >
                   <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
                 </Button>
               </ButtonGroup>
@@ -1031,7 +1037,7 @@ const ProcessCreateView = () => {
             <Questions />
           </Box>
         </DashboardContents>
-        <CreateSidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
+        <CreateSidebar />
       </Box>
       <LeaveConfirmationModal
         isOpen={isOpen}

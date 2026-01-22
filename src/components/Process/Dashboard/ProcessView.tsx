@@ -124,7 +124,7 @@ const ProcessViewContent = () => {
               aria-label={t('dashboard.actions.toggle_sidebar', { defaultValue: 'Toggle sidebar' })}
               icon={<Icon as={LuSettings} />}
               variant='outline'
-              onClick={() => setShowSidebar((prev) => !prev)}
+              onClick={toggleSidebar}
             />
           </HStack>
 
@@ -231,7 +231,7 @@ const ProcessViewContent = () => {
         </Box>
       </DashboardContents>
 
-      <ProcessViewSidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
+      <ProcessViewSidebar />
     </Box>
   )
 }
