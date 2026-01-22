@@ -978,6 +978,7 @@ const ProcessCreateView = () => {
                   colorScheme='black'
                   alignSelf='flex-end'
                   isLoading={methods.formState.isSubmitting}
+                  shouldWrapChildren
                 >
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
@@ -985,8 +986,9 @@ const ProcessCreateView = () => {
                   type='button'
                   colorScheme='black'
                   variant='outline'
-                  onClick={() => saveDraft(false)}
+                  onClick={handleManualSave}
                   isLoading={isSaving}
+                  shouldWrapChildren
                 >
                   <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
                 </Button>
