@@ -1,4 +1,4 @@
-import { Tab, TabList, Tabs } from '@chakra-ui/react'
+import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom'
@@ -33,6 +33,7 @@ export const MemberbaseTabs = () => {
     { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
   ]
   const currentTabIndex = menuItems.findIndex((item) => location.pathname.endsWith(item.route))
+  const activeTabValue = currentTabIndex === -1 ? menuItems[0]?.route : menuItems[currentTabIndex]?.route
 
   const submitSearch = () => {
     setDebouncedSearch(search)
@@ -67,22 +68,24 @@ export const MemberbaseTabs = () => {
           defaultValue: "Manage your organization's members and create groups",
         })}
       </SubHeading>
-      <Tabs
+      <TabsRoot
         variant='settings'
-        index={currentTabIndex === -1 ? 0 : currentTabIndex}
-        onChange={(index) => {
-          const item = menuItems[index]
-          navigate(item.route)
+        value={activeTabValue}
+        onValueChange={({ value }) => {
+          const item = menuItems.find((entry) => entry.route === value)
+          if (item) navigate(item.route)
         }}
-        isLazy
+        lazyMount
       >
-        <TabList mb={6}>
-          {menuItems.map((item, index) => (
-            <Tab key={index}>{item.label}</Tab>
+        <TabsList mb={6}>
+          {menuItems.map((item) => (
+            <TabsTrigger key={item.route} value={item.route}>
+              {item.label}
+            </TabsTrigger>
           ))}
-        </TabList>
+        </TabsList>
         <Outlet context={{ setBreadcrumb, setJobId, jobId, search, setSearch, debouncedSearch, submitSearch }} />
-      </Tabs>
+      </TabsRoot>
     </>
   )
 }

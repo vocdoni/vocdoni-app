@@ -1,16 +1,37 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
-  AlertIcon,
+  AlertIndicator,
   AlertTitle,
   Box,
   Button,
-  Checkbox,
+  CheckboxControl,
+  CheckboxHiddenInput,
+  CheckboxLabel,
+  CheckboxRoot,
   chakra,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  FieldHelperText as FormHelperText,
+  FieldLabel as FormLabel,
+  RadioGroupItem,
+  RadioGroupItemControl,
+  RadioGroupItemHiddenInput,
+  RadioGroupItemText,
+  RadioGroupRoot,
+  Skeleton,
+  Stack,
+  Text,
+  TooltipArrow,
+  TooltipArrowTip,
+  TooltipContent,
+  TooltipPositioner,
+  TooltipRoot,
+  TooltipTrigger,
+  useDisclosure,
+  useSlotRecipe,
+} from '@chakra-ui/react'
+import {
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -18,32 +39,10 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Radio,
-  RadioGroup,
-  Skeleton,
-  Stack,
-  Text,
-  Tooltip,
-  useDisclosure,
-  useMultiStyleConfig,
-} from '@chakra-ui/react'
+} from '~shared/Modal/Modal'
 import { useClient, useElection } from '@vocdoni/react-providers'
-import {
-  ElectionResultsTypeNames,
-  ElectionStatus,
-  type IChoice,
-  type IQuestion,
-  PublishedElection,
-} from '@vocdoni/sdk'
-import {
-  createContext,
-  createElement,
-  useContext,
-  useEffect,
-  useState,
-  type ComponentProps,
-  type ReactNode,
-} from 'react'
+import { ElectionResultsTypeNames, ElectionStatus, type IChoice, type IQuestion, PublishedElection } from '@vocdoni/sdk'
+import { createContext, useContext, useEffect, useState, type ComponentProps, type ReactNode } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -69,7 +68,10 @@ export type QuestionsFormProviderProps = {
   confirmContents?: (election: PublishedElection, answers: Record<string, any>) => ReactNode
 }
 
-export const QuestionsFormProvider = ({ confirmContents, children }: QuestionsFormProviderProps & { children: ReactNode }) => {
+export const QuestionsFormProvider = ({
+  confirmContents,
+  children,
+}: QuestionsFormProviderProps & { children: ReactNode }) => {
   const fmethods = useForm()
   const { confirm } = useConfirm()
   const { election, client, vote: baseVote, connected } = useElection()
@@ -82,9 +84,11 @@ export const QuestionsFormProvider = ({ confirmContents, children }: QuestionsFo
     if (
       client.wallet &&
       !(await confirm(
-        typeof confirmContents === 'function'
-          ? confirmContents(election, values)
-          : ( <QuestionsConfirmation election={election} answers={values} /> )
+        typeof confirmContents === 'function' ? (
+          confirmContents(election, values)
+        ) : (
+          <QuestionsConfirmation election={election} answers={values} />
+        )
       ))
     ) {
       return false
@@ -135,7 +139,8 @@ export const QuestionsFormProvider = ({ confirmContents, children }: QuestionsFo
 }
 
 export const QuestionTip = () => {
-  const styles = useMultiStyleConfig('QuestionsTip')
+  const recipe = useSlotRecipe({ key: 'QuestionsTip' })
+  const styles = recipe()
   const {
     fmethods: { getValues },
   } = useQuestionsForm()
@@ -156,15 +161,16 @@ export const QuestionTip = () => {
       return null
   }
   return (
-    <chakra.div __css={styles.wrapper}>
-      <chakra.div __css={styles.text}>{txt}</chakra.div>
+    <chakra.div css={styles.wrapper}>
+      <chakra.div css={styles.text}>{txt}</chakra.div>
     </chakra.div>
   )
 }
 
 export const QuestionChoice = ({ choice, ...rest }: { choice: IChoice } & ComponentProps<typeof Stack>) => {
-  const styles = useMultiStyleConfig('QuestionChoice')
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const recipe = useSlotRecipe({ key: 'QuestionChoice' })
+  const styles = recipe()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const [loaded, setLoaded] = useState(false)
   const [loadedModal, setLoadedModal] = useState(false)
   const label = choice.title.default
@@ -173,49 +179,47 @@ export const QuestionChoice = ({ choice, ...rest }: { choice: IChoice } & Compon
   const renderModal = !!image && image.default && image.thumbnail
 
   return (
-    <Stack sx={styles.wrapper} {...rest}>
+    <Stack css={styles.wrapper} {...rest}>
       {renderImage && (
-        <Skeleton isLoaded={loaded} sx={styles.skeleton}>
-          <Box
-            as='img'
+        <Skeleton loading={!loaded} css={styles.skeleton}>
+          <chakra.img
             onClick={(event) => {
               if (!renderModal) return
               event.preventDefault()
               onOpen()
             }}
-            sx={styles.image}
+            css={styles.image}
             src={image.thumbnail ?? image.default}
             alt={label}
             onLoad={() => setLoaded(true)}
           />
         </Skeleton>
       )}
-      <Text sx={styles.label}>{label}</Text>
+      <Text css={styles.label}>{label}</Text>
       {description && (
-        <Box sx={styles.description}>
+        <Box css={styles.description}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
         </Box>
       )}
       {renderModal && (
         <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay sx={styles.modalOverlay} />
-          <ModalContent sx={styles.modalContent}>
-            <ModalCloseButton sx={styles.modalClose} />
-            <ModalBody sx={styles.modalBody}>
+          <ModalOverlay css={styles.modalOverlay} />
+          <ModalContent css={styles.modalContent}>
+            <ModalCloseButton css={styles.modalClose} />
+            <ModalBody css={styles.modalBody}>
               {renderImage && (
-                <Skeleton isLoaded={loadedModal} sx={styles.skeletonModal}>
-                  <Box
-                    as='img'
+                <Skeleton loading={!loadedModal} css={styles.skeletonModal}>
+                  <chakra.img
                     src={image.default}
                     alt={label}
-                    sx={styles.modalImage}
+                    css={styles.modalImage}
                     onLoad={() => setLoadedModal(true)}
                   />
                 </Skeleton>
               )}
-              <Text sx={styles.modalLabel}>{label}</Text>
+              <Text css={styles.modalLabel}>{label}</Text>
               {description && (
-                <Box sx={styles.modalDescription}>
+                <Box css={styles.modalDescription}>
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
                 </Box>
               )}
@@ -235,25 +239,27 @@ export const QuestionsConfirmation = ({
   answers: Record<string, any>
   election: PublishedElection
 }) => {
-  const mstyles = useMultiStyleConfig('ConfirmModal')
-  const styles = useMultiStyleConfig('QuestionsConfirmation', rest)
+  const modalRecipe = useSlotRecipe({ key: 'ConfirmModal' })
+  const questionsRecipe = useSlotRecipe({ key: 'QuestionsConfirmation' })
+  const mstyles = modalRecipe()
+  const styles = questionsRecipe()
   const { cancel, proceed } = useConfirm()
   const { localize } = useClient()
 
   return (
     <>
-      <ModalHeader sx={mstyles.header}>{localize('confirm.title')}</ModalHeader>
-      <ModalCloseButton sx={mstyles.close} />
-      <ModalBody sx={mstyles.body}>
-        <Box sx={styles.box} {...rest}>
-          <Text sx={styles.description}>{localize('vote.confirm')}</Text>
+      <ModalHeader css={mstyles.header}>{localize('confirm.title')}</ModalHeader>
+      <ModalCloseButton css={mstyles.close} />
+      <ModalBody css={mstyles.body}>
+        <Box css={styles.box} {...rest}>
+          <Text css={styles.description}>{localize('vote.confirm')}</Text>
           {election.questions.map((question, k) => {
             if (election.resultsType.name === ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION) {
               const choice = question.choices.find((v) => v.value === parseInt(answers[k.toString()], 10))
               return (
-                <chakra.div __css={styles.question} key={k}>
-                  <chakra.div __css={styles.title}>{question.title.default}</chakra.div>
-                  <chakra.div __css={styles.answer}>{choice?.title.default}</chakra.div>
+                <chakra.div css={styles.question} key={k}>
+                  <chakra.div css={styles.title}>{question.title.default}</chakra.div>
+                  <chakra.div css={styles.answer}>{choice?.title.default}</chakra.div>
                 </chakra.div>
               )
             }
@@ -270,19 +276,19 @@ export const QuestionsConfirmation = ({
                 </span>
               ))
             return (
-              <chakra.div __css={styles.question} key={k}>
-                <chakra.div __css={styles.title}>{question.title.default}</chakra.div>
-                <chakra.div __css={styles.answer}>{choices}</chakra.div>
+              <chakra.div css={styles.question} key={k}>
+                <chakra.div css={styles.title}>{question.title.default}</chakra.div>
+                <chakra.div css={styles.answer}>{choices}</chakra.div>
               </chakra.div>
             )
           })}
         </Box>
       </ModalBody>
-      <ModalFooter sx={mstyles.footer}>
-        <Button onClick={cancel ?? undefined} variant='ghost' sx={mstyles.cancel}>
+      <ModalFooter css={mstyles.footer}>
+        <Button onClick={cancel ?? undefined} variant='ghost' css={mstyles.cancel}>
           {localize('confirm.cancel')}
         </Button>
-        <Button onClick={proceed ?? undefined} sx={mstyles.confirm}>
+        <Button onClick={proceed ?? undefined} css={mstyles.confirm}>
           {localize('confirm.confirm')}
         </Button>
       </ModalFooter>
@@ -291,20 +297,21 @@ export const QuestionsConfirmation = ({
 }
 
 export const ElectionQuestion = ({ question, index }: { question: IQuestion; index: string }) => {
-  const styles = useMultiStyleConfig('ElectionQuestions')
+  const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
+  const styles = recipe()
   const {
     formState: { errors },
   } = useFormContext()
 
   return (
-    <chakra.div __css={styles.container}>
-      <FormControl isInvalid={Boolean((errors as Record<string, any>)[index])}>
-        <chakra.div __css={styles.header}>
-          <chakra.label __css={styles.title}>{question.title.default}</chakra.label>
+    <chakra.div css={styles.container}>
+      <FormControl invalid={Boolean((errors as Record<string, any>)[index])}>
+        <chakra.div css={styles.header}>
+          <chakra.label css={styles.title}>{question.title.default}</chakra.label>
         </chakra.div>
-        <chakra.div __css={styles.body}>
+        <chakra.div css={styles.body}>
           {question.description && (
-            <chakra.div __css={styles.description}>
+            <chakra.div css={styles.description}>
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{question.description.default}</ReactMarkdown>
             </chakra.div>
           )}
@@ -331,7 +338,8 @@ const FieldSwitcher = (props: { question: IQuestion; index: string }) => {
 }
 
 const MultiChoice = ({ index, question }: { index: string; question: IQuestion }) => {
-  const styles = useMultiStyleConfig('ElectionQuestions')
+  const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
+  const styles = recipe()
   const {
     election,
     isAbleToVote,
@@ -356,7 +364,7 @@ const MultiChoice = ({ index, question }: { index: string; question: IQuestion }
   }
 
   return (
-    <Stack sx={styles.stack}>
+    <Stack css={styles.stack}>
       <Controller
         control={control}
         disabled={isNotAbleToVote}
@@ -377,30 +385,36 @@ const MultiChoice = ({ index, question }: { index: string; question: IQuestion }
           return (
             <>
               {choices.map((choice, ck) => {
-                const maxSelected = currentValues.length >= election.voteType.maxCount && !currentValues.includes(choice.value.toString())
-                return createElement(
-                  Checkbox,
-                  {
-                    ...restField,
-                    key: ck,
-                    sx: styles.checkbox,
-                    value: choice.value.toString(),
-                    isDisabled: isNotAbleToVote || maxSelected,
-                    isChecked: currentValues.includes(choice.value.toString()),
-                    onChange: (event) => {
-                      if (values.includes(event.target.value)) {
-                        onChange(values.filter((v: string) => v !== event.target.value))
-                      } else {
+                const value = choice.value.toString()
+                const maxSelected = currentValues.length >= election.voteType.maxCount && !currentValues.includes(value)
+                const checked = currentValues.includes(value)
+                return (
+                  <CheckboxRoot
+                    {...restField}
+                    key={ck}
+                    css={styles.checkbox}
+                    checked={checked}
+                    disabled={isNotAbleToVote || maxSelected}
+                    onCheckedChange={(details) => {
+                      const isChecked = Boolean(details.checked)
+                      if (isChecked) {
                         if (maxSelected) return
-                        onChange([...values, event.target.value])
+                        onChange([...values, value])
+                      } else {
+                        onChange(values.filter((v: string) => v !== value))
                       }
                       trigger(index)
-                    },
-                  },
-                  <QuestionChoice choice={choice} />
+                    }}
+                  >
+                    <CheckboxHiddenInput value={value} />
+                    <CheckboxControl />
+                    <CheckboxLabel>
+                      <QuestionChoice choice={choice} />
+                    </CheckboxLabel>
+                  </CheckboxRoot>
                 )
               })}
-              <FormErrorMessage sx={styles.error}>{error?.message as string}</FormErrorMessage>
+              <FormErrorMessage css={styles.error}>{error?.message as string}</FormErrorMessage>
             </>
           )
         }}
@@ -410,7 +424,8 @@ const MultiChoice = ({ index, question }: { index: string; question: IQuestion }
 }
 
 const ApprovalChoice = ({ index, question }: { index: string; question: IQuestion }) => {
-  const styles = useMultiStyleConfig('ElectionQuestions')
+  const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
+  const styles = recipe()
   const {
     election,
     isAbleToVote,
@@ -427,37 +442,44 @@ const ApprovalChoice = ({ index, question }: { index: string; question: IQuestio
   const choices = [...question.choices]
 
   return (
-    <Stack sx={styles.stack}>
+    <Stack css={styles.stack}>
       <Controller
         control={control}
         disabled={isNotAbleToVote}
         rules={{
-          validate: (value) => value && value.length > 0 || localize('validation.at_least_one'),
+          validate: (value) => (value && value.length > 0) || localize('validation.at_least_one'),
         }}
         name={index}
         render={({ field: { onChange, ...restField }, fieldState: { error } }) => (
           <>
-            {choices.map((choice, ck) =>
-              createElement(
-                Checkbox,
-                {
-                  ...restField,
-                  key: ck,
-                  sx: styles.checkbox,
-                  value: choice.value.toString(),
-                  isDisabled: isNotAbleToVote,
-                  onChange: (event) => {
-                    if (values.includes(event.target.value)) {
-                      onChange(values.filter((v: string) => v !== event.target.value))
+            {choices.map((choice, ck) => {
+              const value = choice.value.toString()
+              const checked = values.includes(value)
+              return (
+                <CheckboxRoot
+                  {...restField}
+                  key={ck}
+                  css={styles.checkbox}
+                  checked={checked}
+                  disabled={isNotAbleToVote}
+                  onCheckedChange={(details) => {
+                    const isChecked = Boolean(details.checked)
+                    if (isChecked) {
+                      onChange([...values, value])
                     } else {
-                      onChange([...values, event.target.value])
+                      onChange(values.filter((v: string) => v !== value))
                     }
-                  },
-                },
-                <QuestionChoice choice={choice} />
+                  }}
+                >
+                  <CheckboxHiddenInput value={value} />
+                  <CheckboxControl />
+                  <CheckboxLabel>
+                    <QuestionChoice choice={choice} />
+                  </CheckboxLabel>
+                </CheckboxRoot>
               )
-            )}
-            <FormErrorMessage sx={styles.error}>{error?.message as string}</FormErrorMessage>
+            })}
+            <FormErrorMessage css={styles.error}>{error?.message as string}</FormErrorMessage>
           </>
         )}
       />
@@ -466,7 +488,8 @@ const ApprovalChoice = ({ index, question }: { index: string; question: IQuestio
 }
 
 const SingleChoice = ({ index, question }: { index: string; question: IQuestion }) => {
-  const styles = useMultiStyleConfig('ElectionQuestions')
+  const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
+  const styles = recipe()
   const {
     election,
     isAbleToVote,
@@ -488,39 +511,51 @@ const SingleChoice = ({ index, question }: { index: string; question: IQuestion 
       rules={{ required: localize('validation.required') }}
       name={index}
       render={({ field }) => (
-        <RadioGroup sx={styles.radioGroup} {...field} isDisabled={disabled}>
-          <Stack direction='column' sx={styles.stack}>
+        <RadioGroupRoot
+          css={styles.radioGroup}
+          value={field.value}
+          onValueChange={({ value }) => field.onChange(value)}
+          disabled={disabled}
+        >
+          <Stack direction='column' css={styles.stack}>
             {question.choices.map((choice, ck) => (
-              <Radio sx={styles.radio} value={choice.value.toString()} key={ck}>
-                <QuestionChoice choice={choice} />
-              </Radio>
+              <RadioGroupItem css={styles.radio} value={choice.value.toString()} key={ck}>
+                <RadioGroupItemHiddenInput />
+                <RadioGroupItemControl />
+                <RadioGroupItemText as='span'>
+                  <QuestionChoice choice={choice} />
+                </RadioGroupItemText>
+              </RadioGroupItem>
             ))}
           </Stack>
-          <FormErrorMessage sx={styles.error}>{(errors as Record<string, any>)[index]?.message}</FormErrorMessage>
-        </RadioGroup>
+          <FormErrorMessage css={styles.error}>{(errors as Record<string, any>)[index]?.message}</FormErrorMessage>
+        </RadioGroupRoot>
       )}
     />
   )
 }
 
 export const QuestionsEmpty = () => {
-  const styles = useMultiStyleConfig('QuestionsEmpty')
+  const recipe = useSlotRecipe({ key: 'QuestionsEmpty' })
+  const styles = recipe()
   const { localize } = useElection()
   return (
-    <Alert variant='subtle' status='warning' sx={styles.container}>
-      <AlertIcon sx={styles.icon} />
-      <AlertDescription sx={styles.description}>{localize('empty')}</AlertDescription>
+    <Alert variant='subtle' status='warning' css={styles.container}>
+      <AlertIndicator css={styles.icon} />
+      <AlertDescription css={styles.description}>{localize('empty')}</AlertDescription>
     </Alert>
   )
 }
 
 export const QuestionsTypeBadge = (props: ComponentProps<typeof chakra.div>) => {
-  const styles = useMultiStyleConfig('QuestionsTypeBadge')
+  const recipe = useSlotRecipe({ key: 'QuestionsTypeBadge' })
+  const styles = recipe()
   const { election, localize } = useElection()
   if (!election || !(election instanceof PublishedElection) || !election.census) {
     return null
   }
-  const weighted = Number(election.census.weight) !== election.census.size ? localize('question_types.weighted_voting') : ''
+  const weighted =
+    Number(election.census.weight) !== election.census.size ? localize('question_types.weighted_voting') : ''
   let title = ''
   let tooltip = ''
   switch (election?.resultsType.name) {
@@ -539,10 +574,20 @@ export const QuestionsTypeBadge = (props: ComponentProps<typeof chakra.div>) => 
       return null
   }
   return (
-    <chakra.div __css={styles.box} {...props}>
-      <Tooltip label={tooltip} hasArrow placement='auto' sx={styles.tooltip}>
-        <chakra.label __css={styles.title}>{title}</chakra.label>
-      </Tooltip>
+    <chakra.div css={styles.box} {...props}>
+      <TooltipRoot positioning={{ placement: 'top' }}>
+        <TooltipTrigger asChild>
+          <chakra.label css={styles.title}>{title}</chakra.label>
+        </TooltipTrigger>
+        <TooltipPositioner>
+          <TooltipContent css={styles.tooltip}>
+            {tooltip}
+            <TooltipArrow>
+              <TooltipArrowTip />
+            </TooltipArrow>
+          </TooltipContent>
+        </TooltipPositioner>
+      </TooltipRoot>
     </chakra.div>
   )
 }
@@ -550,7 +595,8 @@ export const QuestionsTypeBadge = (props: ComponentProps<typeof chakra.div>) => 
 export const Voted = () => {
   const { env } = useClient()
   const { localize, voted } = useElection()
-  const styles = useMultiStyleConfig('Voted')
+  const recipe = useSlotRecipe({ key: 'Voted' })
+  const styles = recipe()
   if (!voted) {
     return null
   }
@@ -563,12 +609,7 @@ export const Voted = () => {
           acc.push(part)
           if (idx < parts.length - 1) {
             acc.push(
-              <chakra.a
-                key={`link-${idx}`}
-                href={environment.verifyVote(env, voted)}
-                target='_blank'
-                __css={styles.link}
-              >
+              <chakra.a key={`link-${idx}`} href={environment.verifyVote(env, voted)} target='_blank' css={styles.link}>
                 {voted}
               </chakra.a>
             )
@@ -585,12 +626,11 @@ export const Voted = () => {
       textAlign='center'
       status='success'
       flexDir='column'
-      isTruncated
-      sx={styles.container}
+      css={styles.container}
     >
-      <AlertIcon sx={styles.icon} />
-      <AlertTitle sx={styles.title}>{localize('vote.voted_title')}</AlertTitle>
-      <AlertDescription isTruncated maxW='100%' whiteSpace='initial' sx={styles.description}>
+      <AlertIndicator css={styles.icon} />
+      <AlertTitle css={styles.title}>{localize('vote.voted_title')}</AlertTitle>
+      <AlertDescription truncate maxW='100%' whiteSpace='initial' css={styles.description}>
         {descriptionContent}
       </AlertDescription>
     </Alert>
@@ -610,10 +650,11 @@ export const ElectionQuestionsForm = ({
   ...rest
 }: ComponentProps<typeof chakra.div> & { onInvalid?: (errors: any) => void }) => {
   const { election } = useElection()
-  const styles = useMultiStyleConfig('ElectionQuestions')
+  const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
+  const styles = recipe()
   if (!(election instanceof PublishedElection)) return null
   return (
-    <chakra.div __css={styles.wrapper} {...rest}>
+    <chakra.div css={styles.wrapper} {...rest}>
       <QuestionsFormContents onInvalid={onInvalid} />
     </chakra.div>
   )
@@ -627,7 +668,10 @@ const QuestionsFormContents = ({ onInvalid }: { onInvalid?: (errors: any) => voi
     isAbleToVote,
   } = useElection()
   const { fmethods, vote } = useQuestionsForm()
-  const questions = election?.questions
+  if (!(election instanceof PublishedElection)) {
+    return null
+  }
+  const questions = election.questions
 
   if (voted && !isAbleToVote) {
     return <Voted />
@@ -644,7 +688,7 @@ const QuestionsFormContents = ({ onInvalid }: { onInvalid?: (errors: any) => voi
       ))}
       {error && (
         <Alert status='error' variant='solid' mb={3}>
-          <AlertIcon />
+          <AlertIndicator />
           {error}
         </Alert>
       )}

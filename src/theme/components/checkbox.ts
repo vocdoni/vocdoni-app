@@ -1,12 +1,9 @@
-import { checkboxAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react'
+import { checkboxAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(checkboxAnatomy.keys)
-const { definePartsStyle: defineDetailedPartsStyle, defineMultiStyleConfig: defineDetailedMultiStyleConfig } =
-  createMultiStyleConfigHelpers(['icon', 'title', 'badge', 'description', 'checkbox'])
-
-export const DetailedCheckbox = defineDetailedMultiStyleConfig({
-  baseStyle: defineDetailedPartsStyle((props) => ({
+export const DetailedCheckbox = defineSlotRecipe({
+  slots: ['icon', 'title', 'badge', 'description', 'checkbox'],
+  base: {
     title: {
       display: 'flex',
       alignItems: 'center',
@@ -23,14 +20,12 @@ export const DetailedCheckbox = defineDetailedMultiStyleConfig({
       textAlign: 'start',
       fontSize: 'sm',
     },
-  })),
+  },
 })
 
-export const Checkbox = defineMultiStyleConfig({
-  defaultProps: {
-    colorScheme: 'black',
-  },
-  baseStyle: {
+export const Checkbox = defineSlotRecipe({
+  slots: checkboxAnatomy.keys(),
+  base: {
     control: {
       minW: '18px',
       height: '18px',
@@ -38,27 +33,32 @@ export const Checkbox = defineMultiStyleConfig({
     },
   },
   variants: {
-    detailed: definePartsStyle({
-      container: defineStyle({
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        p: 4,
-        border: '1px solid',
-        borderColor: 'checkbox.detailed.border',
-        borderRadius: 'lg',
-      }),
-      control: defineStyle({
-        position: 'absolute',
-        right: '1rem',
-        top: '1rem',
-      }),
-      label: defineStyle({
-        fontSize: 'sm',
-        alignSelf: 'start',
-      }),
-    }),
+    variant: {
+      detailed: {
+        root: {
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          p: 4,
+          border: '1px solid',
+          borderColor: 'checkbox.detailed.border',
+          borderRadius: 'lg',
+        },
+        control: {
+          position: 'absolute',
+          right: '1rem',
+          top: '1rem',
+        },
+        label: {
+          fontSize: 'sm',
+          alignSelf: 'start',
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    colorPalette: 'black',
   },
 })

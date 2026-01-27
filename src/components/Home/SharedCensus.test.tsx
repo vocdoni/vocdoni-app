@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { act, render } from '@testing-library/react'
+import { act, render } from '~src/test-utils'
 import React from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -56,20 +56,28 @@ vi.mock('@vocdoni/sdk', () => ({
   InvalidElection: class InvalidElection {},
 }))
 
-vi.mock('~components/vocdoni-ui', () => ({
-  ElectionTitle: () => <div>ElectionTitle</div>,
-  ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
-  OrganizationImage: ({ alt }: { alt?: string }) => <img src='' alt={alt || 'OrganizationImage'} />,
-}))
+vi.mock('~components/vocdoni-ui', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~components/vocdoni-ui')>()
+  return {
+    ...actual,
+    ElectionTitle: () => <div>ElectionTitle</div>,
+    ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
+    OrganizationImage: ({ alt }: { alt?: string }) => <img src='' alt={alt || 'OrganizationImage'} />,
+  }
+})
 
 const i18nState = { resolvedLanguage: 'en', language: 'en' }
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (_key: string, opts?: { defaultValue?: string }) => opts?.defaultValue ?? _key,
-    i18n: i18nState,
-  }),
-}))
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>()
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (_key: string, opts?: { defaultValue?: string }) => opts?.defaultValue ?? _key,
+      i18n: i18nState,
+    }),
+  }
+})
 
 vi.mock('~components/Process/ActionsMenu', () => ({
   ActionsMenu: () => <div>ActionsMenu</div>,

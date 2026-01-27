@@ -1,6 +1,17 @@
-import { Button, Checkbox, Flex, FormControl, FormErrorMessage, Link, Text } from '@chakra-ui/react'
+import {
+  Button,
+  CheckboxControl,
+  CheckboxHiddenInput,
+  CheckboxLabel,
+  CheckboxRoot,
+  Flex,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  Link,
+  Text,
+} from '@chakra-ui/react'
 import { useEffect } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Navigate, NavLink, useOutletContext } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
@@ -46,7 +57,7 @@ const SignUp = ({ invite }: SignupProps) => {
   const {
     handleSubmit,
     watch,
-    register,
+    control,
     formState: { errors },
   } = methods
   const email = watch('email')
@@ -109,7 +120,7 @@ const SignUp = ({ invite }: SignupProps) => {
                   message: t('form.error.email_invalid', { defaultValue: 'Invalid email address' }),
                 },
               }}
-              isDisabled={!!invite}
+              disabled={!!invite}
             />
             <InputPassword
               formValue='password'
@@ -125,32 +136,67 @@ const SignUp = ({ invite }: SignupProps) => {
               }}
             />
             <FormControl as='fieldset'>
-              <Checkbox {...register('promotions')}>
-                <Text fontSize={'14px'}>
-                  <Trans
-                    i18nKey='signup_agree_promotions'
-                    defaultValue='I agree to receive promotions and offers for digital voting services offered by Vocdoni.'
-                  />
-                </Text>
-              </Checkbox>
+              <Controller
+                control={control}
+                name='promotions'
+                render={({ field }) => (
+                  <CheckboxRoot checked={field.value} onCheckedChange={(details) => field.onChange(details.checked)}>
+                    <CheckboxHiddenInput name={field.name} />
+                    <CheckboxControl />
+                    <CheckboxLabel>
+                      <Text fontSize={'14px'}>
+                        <Trans
+                          i18nKey='signup_agree_promotions'
+                          defaultValue='I agree to receive promotions and offers for digital voting services offered by Vocdoni.'
+                        />
+                      </Text>
+                    </CheckboxLabel>
+                  </CheckboxRoot>
+                )}
+              />
               <FormErrorMessage>{errors?.terms?.message.toString()}</FormErrorMessage>
             </FormControl>
-            <FormControl as='fieldset' isInvalid={!!errors?.terms}>
-              <Checkbox {...register('terms', { required: t('cc.validation.required') })}>
-                <Text fontSize={'14px'}>
-                  <Trans
-                    i18nKey='signup_agree_terms'
-                    components={{
-                      termsLink: <Link href={termsOfServiceUrl} isExternal fontSize={'14px'} />,
-                      privacyLink: <Link href={privacyPolicyUrl} isExternal fontSize={'14px'} />,
-                    }}
-                  />
-                </Text>
-              </Checkbox>
+            <FormControl as='fieldset' invalid={!!errors?.terms}>
+              <Controller
+                control={control}
+                name='terms'
+                rules={{ required: t('cc.validation.required') }}
+                render={({ field }) => (
+                  <CheckboxRoot checked={field.value} onCheckedChange={(details) => field.onChange(details.checked)}>
+                    <CheckboxHiddenInput name={field.name} />
+                    <CheckboxControl />
+                    <CheckboxLabel>
+                      <Text fontSize={'14px'}>
+                        <Trans
+                          i18nKey='signup_agree_terms'
+                          components={{
+                            termsLink: (
+                              <Link
+                                href={termsOfServiceUrl}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                fontSize={'14px'}
+                              />
+                            ),
+                            privacyLink: (
+                              <Link
+                                href={privacyPolicyUrl}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                fontSize={'14px'}
+                              />
+                            ),
+                          }}
+                        />
+                      </Text>
+                    </CheckboxLabel>
+                  </CheckboxRoot>
+                )}
+              />
               <FormErrorMessage>{errors?.terms?.message.toString()}</FormErrorMessage>
             </FormControl>
           </Flex>
-          <Button isLoading={isPending} shouldWrapChildren type='submit' w='100%'>
+          <Button loading={isPending} type='submit' w='100%'>
             {t('signup_create_account')}
           </Button>
           <OrSeparator />
@@ -169,8 +215,8 @@ const SignUp = ({ invite }: SignupProps) => {
         fontWeight={'bold'}
       >
         {t('already_member')}
-        <Link as={NavLink} to={Routes.auth.signIn} ml={1} fontWeight={'bold'} fontSize='sm'>
-          {t('signin')}
+        <Link asChild ml={1} fontWeight={'bold'} fontSize='sm'>
+          <NavLink to={Routes.auth.signIn}>{t('signin')}</NavLink>
         </Link>
       </Text>
     </>

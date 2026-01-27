@@ -9,7 +9,7 @@ export const HSeparator = (props: { variant?: string; [x: string]: any }) => {
 export const OrSeparator = (props: FlexProps) => (
   <Flex align='center' mb={4} {...props}>
     <HSeparator />
-    <Text color='gray.500' fontWeight='bold' mx={3.5} whiteSpace='nowrap' size='xs' textTransform='uppercase'>
+    <Text color='gray.500' fontWeight='bold' mx={3.5} whiteSpace='nowrap' fontSize='xs' textTransform='uppercase'>
       <Trans i18nKey='or_continue_with'>or continue with</Trans>
     </Text>
     <HSeparator />

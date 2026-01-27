@@ -1,6 +1,8 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { render } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
+import { ColorModeProvider } from '~theme/color-mode'
+import { system } from '~theme'
 import { ElectionTitle } from './ElectionTitle'
 
 vi.mock('@vocdoni/react-providers', () => ({
@@ -10,9 +12,11 @@ vi.mock('@vocdoni/react-providers', () => ({
 describe('ElectionTitle', () => {
   it('renders heading content', () => {
     const { getByText } = render(
-      <ChakraProvider>
-        <ElectionTitle />
-      </ChakraProvider>
+      <ColorModeProvider>
+        <ChakraProvider value={system}>
+          <ElectionTitle />
+        </ChakraProvider>
+      </ColorModeProvider>
     )
     expect(getByText('election-1')).toBeTruthy()
   })

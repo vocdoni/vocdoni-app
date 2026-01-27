@@ -1,4 +1,4 @@
-import { FormControl, FormErrorMessage, Link, Text } from '@chakra-ui/react'
+import { FieldErrorText as FormErrorMessage, FieldRoot as FormControl, Link, Text } from '@chakra-ui/react'
 import { useCallback, useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
@@ -87,7 +87,7 @@ export const CensusCsvManager = () => {
 
   return (
     <>
-      <Text color='texts.subtle' size='xs'>
+      <Text color='texts.subtle' fontSize='xs'>
         {t('form.process_create.spreadsheet.upload_description', {
           defaultValue:
             'Upload a CSV file with the participants. Each column will be used as a credential that the voter will have to use to authenticate. The first row will be the titles of that credential.',
@@ -99,7 +99,7 @@ export const CensusCsvManager = () => {
           required: { value: censusType === CensusTypes.Spreadsheet, message: t('form.error.field_is_required') },
         })}
         {...upload}
-        isInvalid={!!errors?.spreadsheet}
+        invalid={!!errors?.spreadsheet}
         display={manager?.data?.length ? 'none' : 'block'}
       >
         <Uploader getInputProps={getInputProps} getRootProps={getRootProps} isDragActive={isDragActive} />{' '}
@@ -107,7 +107,7 @@ export const CensusCsvManager = () => {
           {errors?.spreadsheet?.message?.toString()}
         </FormErrorMessage>
       </FormControl>
-      <Text size='xs' color='texts.subtle'>
+      <Text fontSize='xs' color='texts.subtle'>
         <Trans
           i18nKey='form.process_create.spreadsheet.download_template'
           components={{

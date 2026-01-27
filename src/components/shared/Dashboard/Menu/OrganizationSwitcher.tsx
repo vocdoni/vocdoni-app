@@ -1,4 +1,4 @@
-import { Button, Flex, Icon, PopoverBody, PopoverFooter, Stack, Tag, Text } from '@chakra-ui/react'
+import { Button, Flex, Icon, PopoverBody, PopoverFooter, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-providers'
 import { useEffect, useMemo, useState } from 'react'
@@ -89,7 +89,7 @@ export const OrganizationSwitcher = () => {
   return (
     <>
       <PopoverBody minH={'unset'}>
-        <Text size='xs' fontWeight={600} px={1.5} py={2}>
+        <Text fontSize='xs' fontWeight={600} px={1.5} py={2}>
           <Trans i18nKey='organizations' values={{ numOrgs }}>
             Organizations ({numOrgs})
           </Trans>
@@ -110,9 +110,9 @@ export const OrganizationSwitcher = () => {
                   {org.label}
                 </Text>
                 {org.value === selectedOrg && (
-                  <Tag colorScheme='gray' ml='auto !important'>
-                    {t('current', { defaultValue: 'Current' })}
-                  </Tag>
+                  <TagRoot colorPalette='gray' ml='auto !important'>
+                    <TagLabel>{t('current', { defaultValue: 'Current' })}</TagLabel>
+                  </TagRoot>
                 )}
               </Stack>
             </Button>
@@ -121,10 +121,8 @@ export const OrganizationSwitcher = () => {
       </PopoverBody>
       <PopoverFooter minH={'unset'}>
         <Button
-          as={ReactRouterLink}
+          asChild
           aria-label={t('create_org.title')}
-          to={Routes.dashboard.organizationCreate}
-          variant={'transparent'}
           justifyContent={'start'}
           gap={2}
           colorScheme='gray'
@@ -134,22 +132,24 @@ export const OrganizationSwitcher = () => {
           h={'unset'}
           borderRadius={'xs'}
           mt={1}
-          sx={{ '& span:nth-of-type(2)': { marginLeft: 'auto' } }}
+          css={{ '& span:nth-of-type(2)': { marginLeft: 'auto' } }}
         >
-          <Flex
-            justifyContent={'center'}
-            alignItems={'center'}
-            border='1px solid'
-            borderColor='table.border'
-            w='22px'
-            h='22px'
-            borderRadius='xs'
-          >
-            <Icon as={LuPlus} boxSize={4} ml={2} mr={2} />
-          </Flex>
-          <Text as={'span'} h='unset' fontWeight={'bold'} size={'sm'}>
-            {t('add_new_org', { defaultValue: 'Add a new organization' })}
-          </Text>
+          <ReactRouterLink to={Routes.dashboard.organizationCreate}>
+            <Flex
+              justifyContent={'center'}
+              alignItems={'center'}
+              border='1px solid'
+              borderColor='table.border'
+              w='22px'
+              h='22px'
+              borderRadius='xs'
+            >
+              <Icon as={LuPlus} boxSize={4} ml={2} mr={2} />
+            </Flex>
+            <Text as={'span'} h='unset' fontWeight={'bold'} fontSize='sm'>
+              {t('add_new_org', { defaultValue: 'Add a new organization' })}
+            </Text>
+          </ReactRouterLink>
         </Button>
       </PopoverFooter>
     </>

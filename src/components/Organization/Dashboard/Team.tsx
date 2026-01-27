@@ -12,7 +12,7 @@ const OrganizationTeam = () => {
       <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
         <Flex flex={1} direction='column'>
           <Heading size='md'>{t('organization_settings.team.title', { defaultValue: 'Team Members' })}</Heading>
-          <Text color='texts.subtle' size='sm'>
+          <Text color='texts.subtle' fontSize='sm'>
             {t('organization_settings.team.subtitle', {
               defaultValue: "Manage your organization's team members and their permissions.",
             })}

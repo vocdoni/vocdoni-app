@@ -1,14 +1,16 @@
-import { Modal, ModalContent, ModalOverlay, useMultiStyleConfig } from '@chakra-ui/react'
+import { useSlotRecipe } from '@chakra-ui/react'
+import { Modal, ModalContent, ModalOverlay } from '~shared/Modal/Modal'
 import { useConfirm } from './useConfirm'
 
 export const ConfirmModal = () => {
-  const styles = useMultiStyleConfig('ConfirmModal')
+  const recipe = useSlotRecipe({ key: 'ConfirmModal' })
+  const styles = recipe()
   const { prompt, isOpen, cancel } = useConfirm()
 
   return (
     <Modal isOpen={isOpen} onClose={cancel}>
-      <ModalOverlay sx={styles.overlay} />
-      <ModalContent sx={styles.content}>{prompt}</ModalContent>
+      <ModalOverlay css={styles.overlay} />
+      <ModalContent css={styles.content}>{prompt}</ModalContent>
     </Modal>
   )
 }

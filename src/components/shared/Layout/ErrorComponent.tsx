@@ -1,6 +1,6 @@
-import { WarningIcon } from '@chakra-ui/icons'
 import { Flex, FlexProps, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
+import { RiErrorWarningLine } from 'react-icons/ri'
 
 const ErrorComponent = ({ error, ...props }: { error: Error | string } & FlexProps) => {
   const { t } = useTranslation()
@@ -18,7 +18,7 @@ const ErrorComponent = ({ error, ...props }: { error: Error | string } & FlexPro
       }}
       {...props}
     >
-      <WarningIcon />
+      <RiErrorWarningLine />
       <Text>{t('error.loading_page')}</Text>
       <Text>{error.toString()}</Text>
     </Flex>

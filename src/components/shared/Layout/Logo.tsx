@@ -1,4 +1,5 @@
-import { chakra, ChakraProps, Flex, useColorModeValue } from '@chakra-ui/react'
+import { chakra, type HTMLChakraProps, Flex } from '@chakra-ui/react'
+import { useColorModeValue } from '~theme/color-mode'
 import { NavLink } from 'react-router-dom'
 import { Logo as LogoImage, LogoMbl } from '~theme/icons'
 
@@ -18,7 +19,7 @@ const Logo = () => {
   )
 }
 
-interface VocdoniLogoProps extends ChakraProps {
+interface VocdoniLogoProps extends HTMLChakraProps<'svg'> {
   minimal?: boolean
 }
 

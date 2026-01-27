@@ -1,36 +1,42 @@
 import {
-  Accordion,
-  AccordionButton,
   AccordionItem,
-  AccordionPanel,
+  AccordionItemBody,
+  AccordionItemContent,
+  AccordionItemTrigger,
+  AccordionRoot,
   AspectRatio,
   Box,
   Button,
-  Checkbox,
+  CheckboxControl,
+  CheckboxHiddenInput,
+  CheckboxLabel,
+  CheckboxRoot,
   Flex,
   HStack,
   Icon,
   IconButton,
   Link,
-  Progress,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
   Stack,
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
-import { ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { ElectionProvider, useClient, useOrganization } from '@vocdoni/react-providers'
 import { PublishedElection } from '@vocdoni/sdk'
 import { format } from 'date-fns'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote, LuX } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
-import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
+import { generatePath, Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
+import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import { WhatsAppButton } from '~components/shared/Layout/WhatsappButton'
+import { ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { PlanId } from '~constants'
 import { Routes } from '~routes'
-import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import { DashboardBookerModalButton } from '~shared/Dashboard/Booker'
 import { DashboardBox, Heading, SubHeading } from '~shared/Dashboard/Contents'
 import InvertedAccordionIcon from '~shared/Layout/InvertedAccordionIcon'
@@ -71,21 +77,29 @@ const Tutorial = () => {
   const { t, i18n } = useTranslation()
   const { data: profile, isLoading } = useProfile()
   const { subscription, loading } = useSubscription()
-  const videoTutorials = import.meta.env.VIDEO_TUTORIAL
+  const videoTutorials = import.meta.env.VIDEO_TUTORIAL ?? { en: '' }
   const language = i18n.resolvedLanguage || i18n.language || 'en'
   const videoTutorialSrc = videoTutorials[language] ?? videoTutorials.en
+
+  if (!videoTutorialSrc) {
+    return null
+  }
 
   return (
     <DashboardBox p={6} mb={12} display='flex' gap={10} position='relative' flexDirection='row'>
       <Box flex='1 1 60%'>
-        <Text fontWeight='bold' mb={2} size='2xl'>
+        <Text fontWeight='bold' mb={2} fontSize='2xl'>
           {t('dashboard.welcome.hello', {
             name: profile?.firstName,
             defaultValue: 'Welcome to Vocdoni, {{name}}!',
           })}
         </Text>
         {loading || isLoading ? (
-          <Progress isIndeterminate mb={4} />
+          <ProgressRoot value={null} mb={4}>
+            <ProgressTrack>
+              <ProgressRange />
+            </ProgressTrack>
+          </ProgressRoot>
         ) : !subscription ? (
           <Text color='gray.500' mb={4}>
             {t('dashboard.welcome.no_subscription', {
@@ -115,14 +129,21 @@ const Tutorial = () => {
           })}
         </Text>
         <Flex gap={3} flexDirection={{ base: 'column', sm: 'row' }}>
-          <Button as={ReactRouterLink} to={generatePath(Routes.processes.create)} leftIcon={<Icon as={LuPlus} />}>
-            <Trans i18nKey='new_voting'>New vote</Trans>
+          <Button asChild>
+            <ReactRouterLink to={generatePath(Routes.processes.create)}>
+              <HStack gap={2}>
+                <Icon as={LuPlus} />
+                <Text as='span'>
+                  <Trans i18nKey='new_voting'>New vote</Trans>
+                </Text>
+              </HStack>
+            </ReactRouterLink>
           </Button>
           <WhatsAppButton />
         </Flex>
       </Box>
       <Flex display={{ base: 'none', lg: 'flex' }} flex='1 1 33%' flexDirection='column'>
-        <Text size='lg' fontWeight='bold' textAlign='center' mb={2}>
+        <Text fontSize='lg' fontWeight='bold' textAlign='center' mb={2}>
           {t('dashboard.welcome.how_first_vote', {
             defaultValue: 'How to create your first vote',
           })}
@@ -137,8 +158,9 @@ const Tutorial = () => {
 
 const Setup = () => {
   const { t } = useTranslation()
-  const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true })
+  const { open: isOpen, onClose } = useDisclosure({ defaultOpen: true })
   const { checklist, progress, isStepsAccordionOpen } = useOrganizationSetup()
+  const navigate = useNavigate()
 
   return (
     isStepsAccordionOpen &&
@@ -156,8 +178,8 @@ const Setup = () => {
         _light={{ borderColor: 'gray.200', bgColor: 'white' }}
         _dark={{ borderColor: 'black.700', bgColor: 'black.650' }}
       >
-        <Accordion defaultIndex={0} allowToggle border='none'>
-          <AccordionItem border='none' alignItems='center'>
+        <AccordionRoot defaultValue={['setup']} collapsible border='none'>
+          <AccordionItem value='setup' border='none' alignItems='center'>
             <Flex px={4} py={3}>
               <Flex flex='1' align='center'>
                 <Icon as={LuCheck} mr={2} boxSize={5} />
@@ -168,83 +190,83 @@ const Setup = () => {
                 </Text>
               </Flex>
               <Flex>
-                <AccordionButton
-                  p={0}
-                  as={IconButton}
-                  variant='ghost'
-                  h='28px'
-                  minW='28px'
-                  colorScheme='gray'
-                  icon={<Icon as={InvertedAccordionIcon} />}
-                ></AccordionButton>
+                <AccordionItemTrigger asChild>
+                  <IconButton p={0} variant='ghost' h='28px' minW='28px' colorScheme='gray'>
+                    <InvertedAccordionIcon />
+                  </IconButton>
+                </AccordionItemTrigger>
                 <IconButton
                   aria-label={t('common.close', { defaultValue: 'Close' })}
-                  icon={<Icon as={LuX} />}
                   h='28px'
                   minW='28px'
                   variant='ghost'
                   colorScheme='gray'
                   onClick={onClose}
-                />
+                >
+                  <Icon as={LuX} />
+                </IconButton>
               </Flex>
             </Flex>
-            <AccordionPanel p={0}>
-              <Flex flexDirection='column' px={4} py={2}>
-                <Flex justify='space-between' align='center'>
-                  <Text fontSize='xs'>{t('setup.progress', { defaultValue: 'Your progress' })}</Text>
-                  <Text fontSize='xs'>{Math.round(progress)}%</Text>
+            <AccordionItemContent>
+              <AccordionItemBody p={0}>
+                <Flex flexDirection='column' px={4} py={2}>
+                  <Flex justify='space-between' align='center'>
+                    <Text fontSize='xs'>{t('setup.progress', { defaultValue: 'Your progress' })}</Text>
+                    <Text fontSize='xs'>{Math.round(progress)}%</Text>
+                  </Flex>
+                  <ProgressRoot value={progress} colorPalette='gray' size='sm' borderRadius='md'>
+                    <ProgressTrack borderRadius='0'>
+                      <ProgressRange />
+                    </ProgressTrack>
+                  </ProgressRoot>
                 </Flex>
-                <Progress
-                  value={progress}
-                  colorScheme='gray'
-                  size='sm'
-                  borderRadius='md'
-                  sx={{
-                    '& > [role="progressbar"]': {
-                      borderRadius: '0',
-                    },
-                  }}
-                />
-              </Flex>
-              <Stack spacing={3} direction='column' p={3} pt={2}>
-                {checklist.map((checkbox) => {
-                  const type = checkbox.type || CheckboxTypes.route
-                  if (type === CheckboxTypes.modal) {
-                    return (
-                      <Checkbox key={checkbox.id} colorScheme='gray' isChecked={checkbox.completed} size='sm' p={2}>
-                        <DashboardBookerModalButton
-                          variant='unstyled'
-                          ml={1}
-                          height='auto'
-                          display='flex'
-                          fontWeight='normal'
+                <Stack gap={3} direction='column' p={3} pt={2}>
+                  {checklist.map((checkbox) => {
+                    const type = checkbox.type || CheckboxTypes.route
+                    if (type === CheckboxTypes.modal) {
+                      return (
+                        <CheckboxRoot
+                          key={checkbox.id}
+                          colorPalette='gray'
+                          checked={checkbox.completed}
+                          size='sm'
+                          p={2}
                         >
-                          {checkbox.label}
-                        </DashboardBookerModalButton>
-                      </Checkbox>
+                          <CheckboxHiddenInput />
+                          <CheckboxControl />
+                          <CheckboxLabel>
+                            <DashboardBookerModalButton ml={1} height='auto' display='flex' fontWeight='normal'>
+                              {checkbox.label}
+                            </DashboardBookerModalButton>
+                          </CheckboxLabel>
+                        </CheckboxRoot>
+                      )
+                    }
+                    return (
+                      <CheckboxRoot
+                        key={checkbox.id}
+                        colorPalette='gray'
+                        checked={checkbox.completed}
+                        size='sm'
+                        p={2}
+                        onClick={() => navigate(checkbox.to)}
+                      >
+                        <CheckboxHiddenInput />
+                        <CheckboxControl />
+                        <CheckboxLabel>
+                          <HStack ml={1} gap={2} align='center'>
+                            <Icon as={checkbox.icon} boxSize={4} />
+                            <Text fontSize='sm'>{checkbox.label}</Text>
+                          </HStack>
+                        </CheckboxLabel>
+                      </CheckboxRoot>
                     )
-                  }
-                  return (
-                    <Checkbox
-                      key={checkbox.id}
-                      as={ReactRouterLink}
-                      to={checkbox.to}
-                      colorScheme='gray'
-                      isChecked={checkbox.completed}
-                      size='sm'
-                      p={2}
-                    >
-                      <HStack ml={1} spacing={2} align='center'>
-                        <Icon as={checkbox.icon} boxSize={4} />
-                        <Text size='sm'>{checkbox.label}</Text>
-                      </HStack>
-                    </Checkbox>
-                  )
-                })}
-              </Stack>
-            </AccordionPanel>
+                  })}
+                </Stack>
+              </AccordionItemBody>
+            </AccordionItemContent>
           </AccordionItem>
-        </Accordion>
+        </AccordionRoot>
       </Box>
     )
   )
@@ -293,7 +315,13 @@ const Processes = () => {
   })
 
   if (isLoading) {
-    return <Progress isIndeterminate />
+    return (
+      <ProgressRoot value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
   }
 
   if (isError) {
@@ -317,15 +345,12 @@ const Processes = () => {
         <Text color='texts.subtle'>
           {t('dashboard.welcome.no_organization', { defaultValue: 'No organization found' })}
         </Text>
-        <Button
-          as={ReactRouterLink}
-          to={generatePath(Routes.dashboard.organizationCreate)}
-          colorScheme='gray'
-          variant='outline'
-        >
-          {t('dashboard.welcome.create_first_organization', {
-            defaultValue: 'Create your first organization',
-          })}
+        <Button asChild colorScheme='gray' variant='outline'>
+          <ReactRouterLink to={generatePath(Routes.dashboard.organizationCreate)}>
+            {t('dashboard.welcome.create_first_organization', {
+              defaultValue: 'Create your first organization',
+            })}
+          </ReactRouterLink>
         </Button>
       </Flex>
     )
@@ -344,10 +369,12 @@ const Processes = () => {
             defaultValue: 'Create your first vote to get started.',
           })}
         />
-        <Button as={ReactRouterLink} to={generatePath(Routes.processes.create)} colorScheme='gray' variant='outline'>
-          {t('dashboard.welcome.create_first_vote', {
-            defaultValue: 'Create your first vote',
-          })}
+        <Button asChild colorScheme='gray' variant='outline'>
+          <ReactRouterLink to={generatePath(Routes.processes.create)}>
+            {t('dashboard.welcome.create_first_vote', {
+              defaultValue: 'Create your first vote',
+            })}
+          </ReactRouterLink>
         </Button>
       </Flex>
     )
@@ -362,16 +389,12 @@ const Processes = () => {
           <ElectionProvider election={election} id={election.id} key={election.id}>
             <Flex align='center'>
               <Box flex='1' minW={0} mr={4}>
-                <Link
-                  as={ReactRouterLink}
-                  to={generatePath(Routes.dashboard.process, { id: election.id })}
-                  _hover={{ textDecoration: 'underline' }}
-                  fontWeight='500'
-                  display='block'
-                >
-                  <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' isTruncated />
+                <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='500' display='block'>
+                  <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
+                    <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' truncate />
+                  </ReactRouterLink>
                 </Link>
-                <Text fontSize='sm' color='texts.subtle' isTruncated>
+                <Text fontSize='sm' color='texts.subtle' truncate>
                   {t('election.ends_on', {
                     defaultValue: 'Ends on {{date}}',
                     date: format(election.endDate, t('organization.date_format')),
@@ -390,8 +413,7 @@ const Processes = () => {
       })}
       <Flex justify='flex-end' mt={4}>
         <Link
-          as={ReactRouterLink}
-          to={generatePath(Routes.dashboard.processes.base)}
+          asChild
           display='inline-flex'
           alignItems='center'
           gap={3}
@@ -404,10 +426,12 @@ const Processes = () => {
             color: 'black',
           }}
         >
-          {t('actions.create_first_vote', {
-            defaultValue: 'View all processes',
-          })}
-          <Icon as={LuArrowUpRight} boxSize={4} />
+          <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
+            {t('actions.create_first_vote', {
+              defaultValue: 'View all processes',
+            })}
+            <Icon as={LuArrowUpRight} boxSize={4} />
+          </ReactRouterLink>
         </Link>
       </Flex>
     </Flex>
@@ -418,55 +442,52 @@ const QuickActions = () => {
   const { t } = useTranslation()
   return (
     <DashboardBox p={6} flex='1 1 33%' justifyContent='normal' gap={0}>
-      <Text fontWeight='bold' mb={1.5} size='2xl'>
+      <Text fontWeight='bold' mb={1.5} fontSize='2xl'>
         {t('dashboard.welcome.quick_actions', {
           defaultValue: 'Quick Actions',
         })}
       </Text>
-      <Text color='gray.500' size='sm' mb={6}>
+      <Text color='gray.500' fontSize='sm' mb={6}>
         {t('dashboard.welcome.common_tasks_actions', {
           defaultValue: 'Common tasks and actions',
         })}
       </Text>
       <Flex flexDirection='column' gap={4}>
-        <Button
-          as={ReactRouterLink}
-          to={generatePath(Routes.processes.create)}
-          colorScheme='gray'
-          variant='outline'
-          justifyContent='start'
-          leftIcon={<Icon as={LuPlus} mr={2} />}
-          fontWeight='bold'
-        >
-          {t('actions.create_new_vote', {
-            defaultValue: 'Create new vote',
-          })}
+        <Button asChild colorScheme='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+          <ReactRouterLink to={generatePath(Routes.processes.create)}>
+            <HStack gap={2}>
+              <Icon as={LuPlus} />
+              <Text as='span'>
+                {t('actions.create_new_vote', {
+                  defaultValue: 'Create new vote',
+                })}
+              </Text>
+            </HStack>
+          </ReactRouterLink>
         </Button>
-        <Button
-          as={ReactRouterLink}
-          to={generatePath(Routes.dashboard.processes.base)}
-          colorScheme='gray'
-          variant='outline'
-          justifyContent='start'
-          leftIcon={<Icon as={LuVote} mr={2} />}
-          fontWeight='bold'
-        >
-          {t('actions.view_active_votes', {
-            defaultValue: 'View active votes',
-          })}
+        <Button asChild colorScheme='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+          <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
+            <HStack gap={2}>
+              <Icon as={LuVote} />
+              <Text as='span'>
+                {t('actions.view_active_votes', {
+                  defaultValue: 'View active votes',
+                })}
+              </Text>
+            </HStack>
+          </ReactRouterLink>
         </Button>
-        <Button
-          as={ReactRouterLink}
-          to={generatePath(Routes.dashboard.settings.base)}
-          colorScheme='gray'
-          variant='outline'
-          justifyContent='start'
-          leftIcon={<Icon as={LuUsers} mr={2} />}
-          fontWeight='bold'
-        >
-          {t('actions.manage_team', {
-            defaultValue: 'Manage team',
-          })}
+        <Button asChild colorScheme='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+          <ReactRouterLink to={generatePath(Routes.dashboard.settings.base)}>
+            <HStack gap={2}>
+              <Icon as={LuUsers} />
+              <Text as='span'>
+                {t('actions.manage_team', {
+                  defaultValue: 'Manage team',
+                })}
+              </Text>
+            </HStack>
+          </ReactRouterLink>
         </Button>
       </Flex>
     </DashboardBox>

@@ -98,7 +98,7 @@ const Support = () => {
             </Text>
           </BookerModalButton>
         </Flex>
-        <Flex gap='20px' flexDirection={{ base: 'column', md2: 'row' }} justifyContent='center'>
+        <Flex gap='20px' flexDirection={{ base: 'column', md: 'row' }} justifyContent='center'>
           <Flex justifyContent='center' alignItems='center' gap='2' color='home.support.helper' opacity='.8'>
             <FaRegCheckCircle />
             <Text as='span'>{t('home.support.helper_1')}</Text>

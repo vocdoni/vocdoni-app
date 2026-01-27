@@ -33,15 +33,15 @@ export const VoteButton = (props: React.ComponentProps<typeof Button>) => {
     type: 'submit' as const,
     ...props,
     form: `election-questions-${election.id}`,
-    isDisabled,
-    isLoading: voting,
+    disabled: isDisabled,
+    loading: voting,
     children: voted && isAbleToVote ? localize('vote.button_update') : localize('vote.button'),
   }
 
   if (connected && election.electionType.anonymous && !signature) {
-    button.isLoading = loading
+    button.loading = loading
     button.type = 'button'
-    button.isDisabled = !client.wallet || !isAbleToVote
+    button.disabled = !client.wallet || !isAbleToVote
     button.children = localize('vote.sign')
     button.onClick = async () => {
       setLoading(true)
@@ -57,5 +57,5 @@ export const VoteButton = (props: React.ComponentProps<typeof Button>) => {
     return <Text>{localize('errors.not_voted_in_ended_election')}</Text>
   }
 
-  return <Button shouldWrapChildren {...button} />
+  return <Button {...button} />
 }

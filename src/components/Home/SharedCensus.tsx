@@ -187,7 +187,7 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
   return (
     <Flex>
       <Link
-        as={ReactRouterLink}
+        asChild
         flexGrow={1}
         display='flex'
         justifyContent='center'
@@ -209,22 +209,26 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
         _active={{
           transform: 'scale(0.9)',
         }}
-        to={`/processes/${election?.id}/${window.location.hash}`}
-        isExternal={!isAdmin}
         position='relative'
       >
-        <Box fontSize='18px' display='flex' alignItems='center' p={4}>
-          <Box as='span' mr={2} position='absolute' left={2} top={2} color='gray.400'>
-            {index + 1}
+        <ReactRouterLink
+          to={`/processes/${election?.id}/${window.location.hash}`}
+          target={!isAdmin ? '_blank' : undefined}
+          rel={!isAdmin ? 'noopener noreferrer' : undefined}
+        >
+          <Box fontSize='18px' display='flex' alignItems='center' p={4}>
+            <Box as='span' mr={2} position='absolute' left={2} top={2} color='gray.400'>
+              {index + 1}
+            </Box>
+            <ElectionTitle fontSize='18px' mb={0} />
+            <ElectionStatusBadge position='absolute' top={1} right={1} />
+            {voted && (
+              <Text fontSize='14px' color='green.400' position='absolute' bottom={0} right={1}>
+                {t('shared_census.voted', { defaultValue: 'You already voted' })}
+              </Text>
+            )}
           </Box>
-          <ElectionTitle fontSize='18px' mb={0} />
-          <ElectionStatusBadge position='absolute' top={1} right={1} />
-          {voted && (
-            <Text fontSize='14px' color='green.400' position='absolute' bottom={0} right={1}>
-              {t('shared_census.voted', { defaultValue: 'You already voted' })}
-            </Text>
-          )}
-        </Box>
+        </ReactRouterLink>
       </Link>
       {isAdmin && <ActionsMenu />}
     </Flex>

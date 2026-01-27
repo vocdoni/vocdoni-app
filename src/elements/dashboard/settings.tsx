@@ -1,4 +1,4 @@
-import { Tab, TabList, Tabs } from '@chakra-ui/react'
+import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom'
@@ -46,6 +46,7 @@ const Settings = () => {
     () => menuItems.findIndex((item) => (item.route ? location.pathname.endsWith(item.route) : false)),
     [location.pathname, menuItems]
   )
+  const activeTabValue = currentTabIndex === -1 ? menuItems[0]?.route : menuItems[currentTabIndex]?.route
 
   // Set layout variables
   useEffect(() => {
@@ -72,22 +73,25 @@ const Settings = () => {
         })}
       </SubHeading>
       <QueryDataLayout isLoading={isLoading} isError={isError} error={error}>
-        <Tabs
+        <TabsRoot
           variant='settings'
-          index={currentTabIndex === -1 ? 0 : currentTabIndex}
-          onChange={(index) => {
-            const item = menuItems[index]
-            if (!item.route) return
+          value={activeTabValue}
+          onValueChange={({ value }) => {
+            const item = menuItems.find((entry) => entry.route === value)
+            if (!item?.route) return
             navigate(item.route)
           }}
+          lazyMount
         >
-          <TabList mb={6}>
-            {menuItems.map((item, index) => (
-              <Tab key={index}>{item.label}</Tab>
+          <TabsList mb={6}>
+            {menuItems.map((item) => (
+              <TabsTrigger key={item.route} value={item.route}>
+                {item.label}
+              </TabsTrigger>
             ))}
-          </TabList>
+          </TabsList>
           <Outlet />
-        </Tabs>
+        </TabsRoot>
       </QueryDataLayout>
     </DashboardContents>
   )

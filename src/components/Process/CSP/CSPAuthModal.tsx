@@ -1,14 +1,4 @@
-import {
-  Button,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Button, Heading, useDisclosure } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
@@ -17,6 +7,7 @@ import { QueryKeys } from '~queries/keys'
 import { CspAuthProvider, useCspAuthContext } from './CSPStepsProvider'
 import { Step0Base } from './Step0'
 import { Step1Base } from './Step1'
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 type CensusBundleData = {
   id: string
@@ -64,7 +55,7 @@ const useCensusBundle = (censusURI?: string) => {
 
 export const CspAuthModal = () => {
   const { t } = useTranslation()
-  const { isOpen, onClose, onOpen } = useDisclosure()
+  const { open: isOpen, onClose, onOpen } = useDisclosure()
   const { election } = useElection()
   const { currentStep } = useCspAuthContext()
 

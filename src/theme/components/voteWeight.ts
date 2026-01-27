@@ -1,10 +1,9 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { defineSlotRecipe } from '@chakra-ui/react'
 import { voteWeightAnatomy } from '~components/vocdoni-ui'
 
-const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(voteWeightAnatomy)
-
-export const VoteWeight = defineMultiStyleConfig({
-  baseStyle: definePartsStyle({
+export const VoteWeight = defineSlotRecipe({
+  slots: voteWeightAnatomy,
+  base: {
     wrapper: {
       display: 'flex',
       gap: 2,
@@ -12,5 +11,5 @@ export const VoteWeight = defineMultiStyleConfig({
     weight: {
       fontWeight: 'bold',
     },
-  }),
+  },
 })

@@ -1,4 +1,4 @@
-import { Box, Card, CardBody, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Card, Flex, Image, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
 import solutions from '/assets/solutions.png'
@@ -30,8 +30,8 @@ const Solutions = () => {
             </Text>
           </Box>
           <Flex flexDirection='column' gap={{ base: '45px', lg: '30px' }}>
-            <Card variant='image-card'>
-              <CardBody>
+            <Card.Root variant='image-card'>
+              <Card.Body>
                 <Box>
                   <Image
                     role='none'
@@ -42,10 +42,10 @@ const Solutions = () => {
                   <Text>{t('home.solutions.card_1.title')}</Text>
                   <Text>{t('home.solutions.card_1.description')}</Text>
                 </Box>
-              </CardBody>
-            </Card>
-            <Card variant='image-card'>
-              <CardBody>
+              </Card.Body>
+            </Card.Root>
+            <Card.Root variant='image-card'>
+              <Card.Body>
                 <Box>
                   <Image
                     role='none'
@@ -56,10 +56,10 @@ const Solutions = () => {
                   <Text>{t('home.solutions.card_2.title')}</Text>
                   <Text>{t('home.solutions.card_2.description')}</Text>
                 </Box>
-              </CardBody>
-            </Card>
-            <Card variant='image-card'>
-              <CardBody>
+              </Card.Body>
+            </Card.Root>
+            <Card.Root variant='image-card'>
+              <Card.Body>
                 <Box>
                   <Image
                     role='none'
@@ -70,8 +70,8 @@ const Solutions = () => {
                   <Text>{t('home.solutions.card_3.title')}</Text>
                   <Text>{t('home.solutions.card_3.description')}</Text>
                 </Box>
-              </CardBody>
-            </Card>
+              </Card.Body>
+            </Card.Root>
           </Flex>
         </Box>
         <Flex
@@ -83,20 +83,20 @@ const Solutions = () => {
         >
           <Image role='none' src={solutions} borderRadius='lg' maxW={{ base: '250px', xl: '550px' }} />
           <Box position={'absolute'}>
-            <Card variant='solutions' mb={4}>
+            <Card.Root variant='solutions' mb={4}>
               <FaCircleCheck size={22} />
               <Text as='span'> {t('home.solutions.img_card_1')}</Text>
-            </Card>
-            <Card variant='solutions' mb={4}>
+            </Card.Root>
+            <Card.Root variant='solutions' mb={4}>
               <FaCircleCheck size={22} />
               <Text as='span'> {t('home.solutions.img_card_2')}</Text>
-            </Card>
-            <Card variant='solutions'>
+            </Card.Root>
+            <Card.Root variant='solutions'>
               <FaCircleCheck size={22} />
               <Text as='span' whiteSpace={{ sm: 'nowrap' }}>
                 {t('home.solutions.img_card_3')}
               </Text>
-            </Card>
+            </Card.Root>
           </Box>
         </Flex>
       </Flex>

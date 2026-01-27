@@ -1,4 +1,4 @@
-import { Box, Card, CardBody, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Card, Flex, Image, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { FaFingerprint } from 'react-icons/fa'
 import { MdDesignServices } from 'react-icons/md'
@@ -43,7 +43,7 @@ const ContactUs = () => {
           gap='30px'
           maxW={{ base: 'full', xl: '960px' }}
           px={{ base: '30px', xl: 0 }}
-          pr={{ xl: '37px', xl3: 0 }}
+          pr={{ xl: '37px', '2xl': 0 }}
         >
           <Box>
             <Text
@@ -57,8 +57,8 @@ const ContactUs = () => {
               {t('home.contactus.title')}
             </Text>
           </Box>
-          <Card variant='icon-card' mt='10px'>
-            <CardBody>
+          <Card.Root variant='icon-card' mt='10px'>
+            <Card.Body>
               <Box>
                 <MdDesignServices />
               </Box>
@@ -68,10 +68,10 @@ const ContactUs = () => {
                 </Text>
                 <Text>{t('home.contactus.card_1.description')}</Text>
               </Box>
-            </CardBody>
-          </Card>
-          <Card variant='icon-card'>
-            <CardBody>
+            </Card.Body>
+          </Card.Root>
+          <Card.Root variant='icon-card'>
+            <Card.Body>
               <Box>
                 <FaFingerprint />
               </Box>
@@ -81,10 +81,10 @@ const ContactUs = () => {
                 </Text>
                 <Text>{t('home.contactus.card_2.description')}</Text>
               </Box>
-            </CardBody>
-          </Card>
-          <Card variant='icon-card' mb={'30px'}>
-            <CardBody>
+            </Card.Body>
+          </Card.Root>
+          <Card.Root variant='icon-card' mb={'30px'}>
+            <Card.Body>
               <Box>
                 <FaFingerprint />
               </Box>
@@ -100,8 +100,8 @@ const ContactUs = () => {
                   })}
                 </Text>
               </Box>
-            </CardBody>
-          </Card>
+            </Card.Body>
+          </Card.Root>
 
           <ContactButton
             w={{ base: 'full', sm: 'fit-content', xl: 'full' }}

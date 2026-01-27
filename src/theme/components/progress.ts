@@ -1,11 +1,18 @@
-import { progressAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { progressAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
-const { defineMultiStyleConfig } = createMultiStyleConfigHelpers(progressAnatomy.keys)
-
-export const Progress = defineMultiStyleConfig({
-  defaultProps: {
-    colorScheme: 'black',
+export const Progress = defineSlotRecipe({
+  slots: progressAnatomy.keys(),
+  variants: {
+    size: {
+      xs: {},
+      sm: {},
+      md: {},
+      lg: {},
+    },
+  },
+  defaultVariants: {
+    colorPalette: 'black',
     size: 'xs',
   },
 })

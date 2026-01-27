@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardBody, Flex, Img, Text } from '@chakra-ui/react'
+import { Box, Button, Card, Flex, Image, Text } from '@chakra-ui/react'
 import { useClient, useOrganization } from '@vocdoni/react-providers'
 import { areEqualHexStrings } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
@@ -12,10 +12,10 @@ const NoElections = () => {
   const { organization } = useOrganization()
 
   return (
-    <Card variant='no-elections' minH='100%'>
-      <CardBody>
+    <Card.Root variant='no-elections' minH='100%'>
+      <Card.Body>
         <Flex justifyContent={'center'}>
-          <Img src={empty} alt={t('organization.elections_list_empty.alt')} _dark={{ filter: 'invert(70%)' }} />
+          <Image src={empty} alt={t('organization.elections_list_empty.alt')} _dark={{ filter: 'invert(70%)' }} />
         </Flex>
         <Box>
           {areEqualHexStrings(account?.address, organization?.address) ? (
@@ -25,16 +25,16 @@ const NoElections = () => {
               </Text>
               <Text>{t('organization.elections_list_empty.description')}</Text>
 
-              <Button mt='40px' w='100%' as={ReactRouterLink} to={generatePath(Routes.processes.create)}>
-                {t('menu.create')}
+              <Button mt='40px' w='100%' asChild>
+                <ReactRouterLink to={generatePath(Routes.processes.create)}>{t('menu.create')}</ReactRouterLink>
               </Button>
             </>
           ) : (
             <Text textAlign='center'>{t('organization.elections_list_empty.not_owner')}</Text>
           )}
         </Box>
-      </CardBody>
-    </Card>
+      </Card.Body>
+    </Card.Root>
   )
 }
 

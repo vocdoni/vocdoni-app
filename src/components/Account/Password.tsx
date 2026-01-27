@@ -1,11 +1,10 @@
 import {
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
   IconButton,
   Input,
   useDisclosure,
-  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
@@ -16,6 +15,7 @@ import { LuPencil } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ModalForm, useModalForm } from '~shared/Form/ModalForm'
+import { useToast } from '~shared/Toast'
 
 interface PasswordFormData {
   oldPassword: string
@@ -70,7 +70,7 @@ const PasswordForm = ({ onSuccess }: PasswordFormProps) => {
 
       toast({
         title: t('password_update.success', { defaultValue: 'Password updated successfully' }),
-        status: 'success',
+        type: 'success',
       })
       reset()
       onSuccess?.()
@@ -78,7 +78,7 @@ const PasswordForm = ({ onSuccess }: PasswordFormProps) => {
     } catch (error) {
       toast({
         title: t('password_update.error', { defaultValue: 'Failed to update password' }),
-        status: 'error',
+        type: 'error',
       })
     }
   }
@@ -91,8 +91,8 @@ const PasswordForm = ({ onSuccess }: PasswordFormProps) => {
       }}
       ref={formRef}
     >
-      <VStack spacing={6} align='stretch'>
-        <FormControl isInvalid={!!errors.oldPassword}>
+      <VStack gap={6} align='stretch'>
+        <FormControl invalid={!!errors.oldPassword}>
           <FormLabel>{t('password_update.old.label', { defaultValue: 'Current Password' })}</FormLabel>
           <Input
             type='password'
@@ -103,7 +103,7 @@ const PasswordForm = ({ onSuccess }: PasswordFormProps) => {
           <FormErrorMessage>{errors.oldPassword?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={!!errors.newPassword}>
+        <FormControl invalid={!!errors.newPassword}>
           <FormLabel>{t('password_update.new.label', { defaultValue: 'New Password' })}</FormLabel>
           <Input
             type='password'
@@ -147,19 +147,20 @@ const ChangePasswordModal = ({ isOpen, onClose }: ChangePasswordModalProps) => {
 
 export const ChangePasswordButton = () => {
   const { t } = useTranslation()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <>
       <IconButton
         onClick={onOpen}
-        icon={<LuPencil />}
         aria-label={t('change_password.title', { defaultValue: 'Change Password' })}
         variant={'outline'}
         size='sm'
         w='40px'
         h='40px'
-      />
+      >
+        <LuPencil />
+      </IconButton>
       <ChangePasswordModal isOpen={isOpen} onClose={onClose} />
     </>
   )

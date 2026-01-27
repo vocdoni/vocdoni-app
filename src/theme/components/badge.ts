@@ -1,50 +1,51 @@
-import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
-import { alpha } from '~utils/chakra'
+import { defineRecipe } from '@chakra-ui/react'
 
-const baseStyle = defineStyle((props) => ({
+const baseStyle = {
   border: '1px solid',
-  borderColor: alpha(`${props.colorScheme}.200`, 0.6),
+  borderColor: 'colorPalette.200',
   textTransform: 'normal',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   gap: 1,
-  bg: alpha(`${props.colorScheme}.100`, 0.2),
+  bg: 'colorPalette.100',
   '& svg': {
     boxSize: 3.5,
   },
-}))
+}
 
-const xs = defineStyle({
+const xs = {
   fontSize: 'xs',
   lineHeight: 'xs',
   px: 1,
   py: '3px',
-})
+}
 
-const sm = defineStyle({
+const sm = {
   fontSize: 'sm',
   lineHeight: 'sm',
   px: 2,
   py: 1,
-})
+}
 
-const md = defineStyle({
+const md = {
   fontSize: 'md',
   lineHeight: 'md',
   px: 3,
   py: 2,
-})
+}
 
-const lg = defineStyle({
+const lg = {
   fontSize: 'lg',
   lineHeight: 'lg',
   px: 3,
   py: 2,
-})
+}
 
-export const Badge = defineStyleConfig({
-  baseStyle,
-  sizes: { xs, sm, md, lg },
-  defaultProps: { size: 'xs' },
+export const Badge = defineRecipe({
+  base: baseStyle,
+  variants: {
+    size: { xs, sm, md, lg },
+  },
+  defaultVariants: { size: 'xs' },
 })

@@ -2,20 +2,16 @@ import {
   AbsoluteCenter,
   Box,
   Button,
-  Divider,
+  HStack,
+  Separator,
   Flex,
-  FormControl,
-  FormErrorMessage,
+  FieldErrorText as FormErrorMessage,
+  FieldRoot as FormControl,
   Icon,
   IconButton,
   Input,
   InputGroup,
-  InputRightElement,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
   NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Text,
 } from '@chakra-ui/react'
 import { enforceHexPrefix, errorToString, useClient } from '@vocdoni/react-providers'
@@ -144,8 +140,10 @@ export const CensusWeb3Addresses = () => {
 
           return (
             <Flex gap={2} key={field.id}>
-              <FormControl isInvalid={!!errors.addresses?.[index]?.address}>
-                <InputGroup>
+              <FormControl invalid={!!errors.addresses?.[index]?.address}>
+                <InputGroup
+                  endElement={isValidAddress(addressValue) ? <Icon as={LuCheck} color='green.400' /> : undefined}
+                >
                   <Input
                     {...register(`addresses.${index}.address`, {
                       required: { value: censusType === CensusTypes.Web3, message: t('form.error.field_is_required') },
@@ -162,11 +160,6 @@ export const CensusWeb3Addresses = () => {
                     })}
                     placeholder='0x000...000'
                   />
-                  {isValidAddress(addressValue) && (
-                    <InputRightElement pointerEvents='none'>
-                      <Icon as={LuCheck} color='green.400' />
-                    </InputRightElement>
-                  )}
                 </InputGroup>
                 <FormErrorMessage>{fieldMapErrorMessage(errors, `addresses.${index}.address`)}</FormErrorMessage>
               </FormControl>
@@ -176,52 +169,55 @@ export const CensusWeb3Addresses = () => {
                   name={weightName}
                   control={control}
                   render={({ field }) => (
-                    <NumberInput
-                      value={field.value ?? 1}
-                      onChange={(_, num) => field.onChange(Number.isNaN(num) ? '' : num)}
+                    <NumberInput.Root
+                      value={field.value === '' ? '' : String(field.value ?? 1)}
+                      onValueChange={(details) => field.onChange(details.value === '' ? '' : Number(details.value))}
                       min={1}
                     >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
+                      <NumberInput.Input />
+                      <NumberInput.Control>
+                        <NumberInput.IncrementTrigger />
+                        <NumberInput.DecrementTrigger />
+                      </NumberInput.Control>
+                    </NumberInput.Root>
                   )}
                 />
               )}
 
               <IconButton
                 variant='outline'
-                icon={<Icon as={LuTrash2} />}
                 aria-label={t('form.process_create.census.remove_address', { defaultValue: 'Remove address' })}
                 onClick={() => remove(index)}
                 disabled={fields.length <= 1}
-              />
+              >
+                <Icon as={LuTrash2} />
+              </IconButton>
             </Flex>
           )
         })}
       </Flex>
       <Button
         variant='outline'
-        leftIcon={<Icon as={LuPlus} />}
         type='button'
         ml='none'
         onClick={() => {
           append({ address: '', weight: 1 })
         }}
       >
-        {t('form.process_create.census.add_button')}
+        <HStack gap={2}>
+          <Icon as={LuPlus} />
+          <Text as='span'>{t('form.process_create.census.add_button')}</Text>
+        </HStack>
       </Button>
       <Box position='relative' py={4}>
-        <Divider />
+        <Separator />
         <AbsoluteCenter bg='chakra.body.bg' px={2} color='texts.subtle' fontSize='xs'>
           {t('form.process_create.web3.upload_csv', {
             defaultValue: 'OR UPLOAD CSV',
           })}
         </AbsoluteCenter>
       </Box>
-      <FormControl isInvalid={!!fileErr}>
+      <FormControl invalid={!!fileErr}>
         <Uploader getInputProps={getInputProps} getRootProps={getRootProps} isDragActive={isDragActive} />
         <FormErrorMessage>{fileErr}</FormErrorMessage>
       </FormControl>

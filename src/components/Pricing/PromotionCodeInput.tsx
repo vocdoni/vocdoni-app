@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Input, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, HStack, Icon, Input, Text } from '@chakra-ui/react'
 import { useCheckout } from '@stripe/react-stripe-js/checkout'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -79,9 +79,9 @@ export const PromotionCodeInput = () => {
             required: t('promo_code_required', { defaultValue: 'Promotion code is required' }),
           })}
           placeholder={t('enter_promo_code', { defaultValue: 'Enter code' })}
-          isDisabled={isApplying}
+          disabled={isApplying}
         />
-        <Button onClick={handleSubmit(onSubmit)} size='sm' isLoading={isApplying} shouldWrapChildren>
+        <Button onClick={handleSubmit(onSubmit)} size='sm' loading={isApplying}>
           <Trans i18nKey='apply'>Apply</Trans>
         </Button>
       </Flex>
@@ -100,15 +100,11 @@ export const PromotionCodeInput = () => {
             <Trans i18nKey='code_applied'>Code "{{ appliedCode }}" applied</Trans>
           </Text>
         </Flex>
-        <Button
-          size='xs'
-          variant='ghost'
-          onClick={handleRemove}
-          isLoading={isApplying}
-          shouldWrapChildren
-          leftIcon={<LuX />}
-        >
-          <Trans i18nKey='remove'>Remove</Trans>
+        <Button size='xs' variant='ghost' onClick={handleRemove} loading={isApplying}>
+          <HStack gap={2}>
+            <Icon as={LuX} />
+            <Trans i18nKey='remove'>Remove</Trans>
+          </HStack>
         </Button>
       </Flex>
     </Box>

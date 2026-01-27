@@ -1,21 +1,4 @@
-import {
-  Button,
-  Flex,
-  Icon,
-  Input,
-  InputGroup,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useClipboard,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react'
+import { Button, Flex, Icon, Input, InputGroup, Text, useClipboard, useDisclosure } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuShare } from 'react-icons/lu'
 import {
@@ -26,21 +9,31 @@ import {
   TwitterShare,
   WhatsappShare,
 } from '~components/Share/index'
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from '~shared/Modal/Modal'
+import { useToast } from '~shared/Toast'
 
 const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: string; text?: string; size?: string }) => {
   const { t } = useTranslation()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const rawUrl = document.location.href.split('#')[0] // Remove the PK after the hash
   const url = encodeURIComponent(rawUrl)
 
   const toast = useToast()
-  const { onCopy } = useClipboard(rawUrl as string)
+  const { copy } = useClipboard({ value: rawUrl })
   const iconWidth = 9
 
   return (
     <>
-      <Button onClick={onOpen} variant={'icon'} fontSize={size}>
-        <Icon as={LuShare} title={t('share.icon_title')} aria-label={t('share.icon_title')} />
+      <Button onClick={onOpen} fontSize={size} aria-label={t('share.icon_title')}>
+        <Icon as={LuShare} aria-hidden />
         {text && (
           <Text pl={2} as='span' fontSize={size}>
             {text}
@@ -70,11 +63,11 @@ const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: strin
           </ModalBody>
           <ModalFooter mt={8}>
             <Flex direction={'column'} gap={4} w={'full'}>
-              <InputGroup size='md'>
+              <InputGroup>
                 <Input
                   placeholder={rawUrl}
                   readOnly
-                  isTruncated
+                  truncate
                   _placeholder={{
                     fontSize: 'xs',
                   }}
@@ -86,7 +79,7 @@ const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: strin
                     title: t('copy.copied_title'),
                     duration: 3000,
                   })
-                  onCopy()
+                  copy()
                 }}
               >
                 {t('share.copy')}

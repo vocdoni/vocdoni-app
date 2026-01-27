@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, AlertIndicator, AlertTitle, Box } from '@chakra-ui/react'
 
 type ListStateAlertProps = {
   show?: boolean
@@ -14,7 +14,7 @@ export const ListStateAlert = ({ show = false, status = 'info', title, descripti
   return (
     <Box mb={mb}>
       <Alert status={status}>
-        <AlertIcon />
+        <AlertIndicator />
         <Box>
           <AlertTitle>{title}</AlertTitle>
           {description && <AlertDescription>{description}</AlertDescription>}

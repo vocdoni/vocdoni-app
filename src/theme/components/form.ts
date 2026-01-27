@@ -1,7 +1,7 @@
-import { defineStyleConfig } from '@chakra-ui/react'
+import { defineRecipe } from '@chakra-ui/react'
 
-export const FormLabel = defineStyleConfig({
-  baseStyle: {
+export const FormLabel = defineRecipe({
+  base: {
     fontSize: 'sm',
     fontWeight: 'normal',
   },

@@ -1,4 +1,16 @@
-import { Alert, AlertIcon, Box, Button, Flex, HStack, PinInput, PinInputField, Text, useToast } from '@chakra-ui/react'
+import {
+  AlertRoot as Alert,
+  AlertIndicator,
+  Box,
+  Button,
+  Flex,
+  HStack,
+  PinInputControl,
+  PinInputInput,
+  PinInputRoot,
+  Text,
+} from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate, useOutletContext } from 'react-router-dom'
@@ -30,7 +42,7 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
     try {
       await verifyAsync({ email, code })
       toast({
-        status: 'success',
+        type: 'success',
         title: t('verify_mail.success', { defaultValue: 'Email verified successfully' }),
       })
       navigate(verificationSuccessRedirect)
@@ -43,9 +55,9 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
           : error?.message
 
       toast({
-        status: 'error',
+        type: 'error',
         title,
-        isClosable: true,
+        closable: true,
       })
     }
   }, [code, email, verifyAsync, navigate, t, toast])
@@ -68,23 +80,23 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
   return (
     <>
       <HStack width='100%' justifyContent='space-between'>
-        <PinInput value={code} onChange={setCode} isDisabled={autoSubmit} type='alphanumeric' autoFocus>
-          <PinInputField />
-          <PinInputField />
-          <PinInputField />
-          <PinInputField />
-          <PinInputField />
-          <PinInputField />
-        </PinInput>
+        <PinInputRoot
+          value={code.split('')}
+          onValueChange={(details) => setCode(details.valueAsString)}
+          disabled={autoSubmit}
+          type='alphanumeric'
+          autoFocus
+          count={6}
+        >
+          <PinInputControl>
+            {Array.from({ length: 6 }).map((_, index) => (
+              <PinInputInput key={index} index={index} />
+            ))}
+          </PinInputControl>
+        </PinInputRoot>
       </HStack>
       <Box>
-        <Button
-          isDisabled={!code || (autoSubmit && isVerifyPending)}
-          isLoading={isVerifyPending}
-          shouldWrapChildren
-          onClick={verify}
-          w='full'
-        >
+        <Button disabled={!code || (autoSubmit && isVerifyPending)} loading={isVerifyPending} onClick={verify} w='full'>
           <Trans i18nKey={'verify.verify_code'}>Verify</Trans>
         </Button>
       </Box>
@@ -104,18 +116,18 @@ export const VerificationPending = ({ email, code }: { email: string; code?: str
     onSuccess: () => {
       toast({
         title: t('verify.email_sent', { defaultValue: 'Email sent successfully' }),
-        status: 'success',
+        type: 'success',
         duration: 5000,
-        isClosable: true,
+        closable: true,
       })
     },
     onError: (error) => {
       toast({
         title: t('verify.email_send_failed', { defaultValue: 'Failed to send email' }),
         description: error.message,
-        status: 'error',
+        type: 'error',
         duration: 5000,
-        isClosable: true,
+        closable: true,
       })
     },
   })
@@ -144,7 +156,7 @@ export const VerificationPending = ({ email, code }: { email: string; code?: str
           </Trans>
         </Text>
         <Alert status='info'>
-          <AlertIcon />
+          <AlertIndicator />
           <Text fontSize='sm' fontStyle='italic'>
             {t('verify.check_spam_folder', {
               defaultValue: "Please check your spam folder if you don't see the email in your inbox.",
@@ -160,7 +172,7 @@ export const VerificationPending = ({ email, code }: { email: string; code?: str
       </Flex>
 
       {!code && (
-        <Button variant={'outline'} isLoading={isResendPending} shouldWrapChildren onClick={resendMail} mt={6} w='full'>
+        <Button variant={'outline'} loading={isResendPending} onClick={resendMail} mt={6} w='full'>
           <Trans i18nKey={'verify.resend_confirmation_mail'}>Resend Email</Trans>
         </Button>
       )}

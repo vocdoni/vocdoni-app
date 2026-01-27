@@ -1,18 +1,8 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-} from '@chakra-ui/react'
+import { Box, Button, Flex, Heading } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Routes } from '~routes'
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 type ModalProps = {
   isOpen: boolean
@@ -96,8 +86,10 @@ export const PlanUpgradeModal = ({ isOpen, onClose, ...props }: ModalProps & Pla
             <Button variant='outline' onClick={onClose}>
               <Trans i18nKey='plan_upgrade.cancel' defaults={t('plan_upgrade.cancel', 'Cancel')} />
             </Button>
-            <Button variant='solid' as={Link} to={Routes.dashboard.settings.subscription} onClick={onClose}>
-              <Trans i18nKey='plan_upgrade.see_plans' defaults={t('plan_upgrade.see_plans', 'See Plans')} />
+            <Button variant='solid' asChild onClick={onClose}>
+              <Link to={Routes.dashboard.settings.subscription}>
+                <Trans i18nKey='plan_upgrade.see_plans'>See Plans</Trans>
+              </Link>
             </Button>
           </Flex>
         </ModalBody>

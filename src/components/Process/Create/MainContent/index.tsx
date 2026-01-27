@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Icon,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, Button, Flex, HStack, Heading, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -36,6 +23,7 @@ import { AnalyticsEvent } from '~utils/analytics'
 import { DefaultQuestions, SelectorTypes } from '../common'
 import { QuestionForm } from './QuestionForm'
 import { QuestionType } from './QuestionType'
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 const DeleteQuestionModal = ({ isOpen, onClose, removeQuestion }) => {
   const { t } = useTranslation()
@@ -93,11 +81,12 @@ const AddMultipleQuestionModal = ({ isOpen, onClose }) => {
               {t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
             </Button>
             <Button
-              as={Link}
-              to={Routes.dashboard.settings.support}
+              asChild
               aria-label={t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
             >
-              {t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
+              <Link to={Routes.dashboard.settings.support}>
+                {t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
+              </Link>
             </Button>
           </Flex>
         </ModalBody>
@@ -109,9 +98,9 @@ const AddMultipleQuestionModal = ({ isOpen, onClose }) => {
 export const Questions = () => {
   const { trackPlausibleEvent } = useAnalytics()
   const { control, watch } = useFormContext()
-  const { isOpen, onClose, onOpen } = useDisclosure()
+  const { open: isOpen, onClose, onOpen } = useDisclosure()
   const {
-    isOpen: isAddMultipleQuestionsOpen,
+    open: isAddMultipleQuestionsOpen,
     onClose: onAddMultipleQuestionsClose,
     onOpen: onAddMultipleQuestionsOpen,
   } = useDisclosure()
@@ -163,7 +152,7 @@ export const Questions = () => {
   }
 
   return (
-    <VStack align='stretch' spacing={4}>
+    <VStack align='stretch' gap={4}>
       <DashboardSection>
         <QuestionType />
       </DashboardSection>
@@ -188,8 +177,13 @@ export const Questions = () => {
         removeQuestion={() => removeQuestion(pendingDeleteIndex)}
       />
 
-      <Button leftIcon={<Icon as={LuPlus} />} variant='outline' onClick={addQuestion}>
-        <Trans i18nKey='process.create.question.add'>Add question</Trans>
+      <Button variant='outline' onClick={addQuestion}>
+        <HStack gap={2}>
+          <Icon as={LuPlus} />
+          <Text as='span'>
+            <Trans i18nKey='process.create.question.add'>Add question</Trans>
+          </Text>
+        </HStack>
       </Button>
       <AddMultipleQuestionModal isOpen={isAddMultipleQuestionsOpen} onClose={onAddMultipleQuestionsClose} />
     </VStack>

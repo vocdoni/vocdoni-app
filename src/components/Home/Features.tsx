@@ -1,4 +1,4 @@
-import { Box, Card, CardBody, Flex, Text } from '@chakra-ui/react'
+import { Box, Card, Flex, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import {
   FaBullseye,
@@ -42,8 +42,8 @@ const Features = () => {
       </Box>
 
       <Flex mx='auto' flexWrap='wrap' gap={{ base: '45px', lg: '30px' }}>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaVoteYea />
             </Box>
@@ -51,10 +51,10 @@ const Features = () => {
               <Text>{t('home.features.card_1.title')}</Text>
               <Text>{t('home.features.card_1.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+          </Card.Body>
+        </Card.Root>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaPalette />
             </Box>
@@ -62,10 +62,10 @@ const Features = () => {
               <Text>{t('home.features.card_2.title')}</Text>
               <Text>{t('home.features.card_2.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+          </Card.Body>
+        </Card.Root>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaUsers />
             </Box>
@@ -73,10 +73,10 @@ const Features = () => {
               <Text>{t('home.features.card_3.title')}</Text>
               <Text>{t('home.features.card_3.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+          </Card.Body>
+        </Card.Root>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaUserLock />
             </Box>
@@ -84,10 +84,10 @@ const Features = () => {
               <Text>{t('home.features.card_4.title')}</Text>
               <Text>{t('home.features.card_4.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+          </Card.Body>
+        </Card.Root>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaTasks />
             </Box>
@@ -95,10 +95,10 @@ const Features = () => {
               <Text>{t('home.features.card_5.title')}</Text>
               <Text>{t('home.features.card_5.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+          </Card.Body>
+        </Card.Root>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaNewspaper />
             </Box>
@@ -106,10 +106,10 @@ const Features = () => {
               <Text>{t('home.features.card_6.title')}</Text>
               <Text>{t('home.features.card_6.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+          </Card.Body>
+        </Card.Root>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaLanguage />
             </Box>
@@ -117,10 +117,10 @@ const Features = () => {
               <Text>{t('home.features.card_7.title')}</Text>
               <Text>{t('home.features.card_7.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+          </Card.Body>
+        </Card.Root>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaBullseye />
             </Box>
@@ -128,10 +128,10 @@ const Features = () => {
               <Text>{t('home.features.card_8.title')}</Text>
               <Text>{t('home.features.card_8.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
-        <Card variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
-          <CardBody>
+          </Card.Body>
+        </Card.Root>
+        <Card.Root variant='icon-card' flex={{ base: '1 0 100%', lg: '1 1 30%' }}>
+          <Card.Body>
             <Box>
               <FaCubes />
             </Box>
@@ -139,8 +139,8 @@ const Features = () => {
               <Text>{t('home.features.card_9.title')}</Text>
               <Text>{t('home.features.card_9.description')}</Text>
             </Box>
-          </CardBody>
-        </Card>
+          </Card.Body>
+        </Card.Root>
       </Flex>
     </Box>
   )

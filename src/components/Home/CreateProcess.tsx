@@ -19,8 +19,8 @@ const CreateProcess = () => {
     >
       <Box flex='1 1 50%'>
         <Text
-          fontSize={{ base: '42px', md: '48px', md2: '50px', lg2: '58px' }}
-          lineHeight={{ base: '48px', md: '52px', md2: '58px', lg2: '64px' }}
+          fontSize={{ base: '42px', md: '48px', xl: '50px', '2xl': '58px' }}
+          lineHeight={{ base: '48px', md: '52px', xl: '58px', '2xl': '64px' }}
           fontWeight='600'
           fontFamily='basier'
           mb={'40px'}
@@ -39,8 +39,7 @@ const CreateProcess = () => {
         </Text>
         <Box maxW={{ lg: '90%' }}>
           <Button
-            as={ReactRouterLink}
-            to={Routes.auth.signUp}
+            asChild
             mb='20px'
             w={{ base: 'full', sm: 'fit-content', lg: 'full' }}
             mx={{ base: 'auto', lg: 'start' }}
@@ -48,7 +47,7 @@ const CreateProcess = () => {
             fontSize='20px'
             minW='300px'
           >
-            {t('home.create_process.btn')}
+            <ReactRouterLink to={Routes.auth.signUp}>{t('home.create_process.btn')}</ReactRouterLink>
           </Button>
 
           <Box display='flex' alignItems='center' gap={1}>

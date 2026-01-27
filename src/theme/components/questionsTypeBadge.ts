@@ -1,10 +1,9 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { defineSlotRecipe } from '@chakra-ui/react'
 import { questionTypeBadgeAnatomy } from '~components/vocdoni-ui'
 
-const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(questionTypeBadgeAnatomy)
-
-export const QuestionsTypeBadge = defineMultiStyleConfig({
-  baseStyle: definePartsStyle({
+export const QuestionsTypeBadge = defineSlotRecipe({
+  slots: questionTypeBadgeAnatomy,
+  base: {
     box: {
       display: 'flex',
       flexDirection: 'column',
@@ -14,5 +13,5 @@ export const QuestionsTypeBadge = defineMultiStyleConfig({
       fontWeight: 'bold',
     },
     tooltip: {},
-  }),
+  },
 })

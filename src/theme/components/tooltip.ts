@@ -1,4 +1,5 @@
-import { defineStyleConfig } from '@chakra-ui/react'
+import { tooltipAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
 const baseStyle = {
   boxShadow: '0 1px 2px 0 rgb(0 0 0/0.05)',
@@ -14,4 +15,9 @@ const baseStyle = {
   },
 }
 
-export const Tooltip = defineStyleConfig({ baseStyle })
+export const Tooltip = defineSlotRecipe({
+  slots: tooltipAnatomy.keys(),
+  base: {
+    content: baseStyle,
+  },
+})

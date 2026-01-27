@@ -1,4 +1,4 @@
-import { useDisclosure } from '@chakra-ui/hooks'
+import { useDisclosure } from '@chakra-ui/react'
 import React, { ReactNode, useState } from 'react'
 import { PlanUpgradeData, PlanUpgradeModal } from './Modals'
 import { SubscriptionPaymentData } from './SubscriptionPayment'
@@ -7,7 +7,7 @@ import { PricingModalProviderContext, PricingModalType } from './use-pricing-mod
 type ModalData = PlanUpgradeData | SubscriptionPaymentData | null
 
 export const PricingModalProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const [modalType, setModalType] = useState<PricingModalType>(null)
   const [modalData, setModalData] = useState<ModalData>(null)
 

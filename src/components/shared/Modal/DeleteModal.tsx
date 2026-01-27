@@ -1,14 +1,5 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  ModalProps,
-} from '@chakra-ui/react'
+import { Box, Flex, Heading } from '@chakra-ui/react'
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay, type ModalProps } from '~shared/Modal/Modal'
 
 export type DeleteModalProps = {
   title: string | React.ReactNode

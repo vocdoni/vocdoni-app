@@ -1,4 +1,5 @@
-import { Button, Flex, useToast } from '@chakra-ui/react'
+import { Button, Flex } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -47,18 +48,18 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
         navigate(Routes.auth.signIn)
         toast({
           title: t('password_reset_successful', { defaultValue: 'Password reset successful' }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
       },
       onError: (error) => {
         toast({
           title: t('password_reset_failed', { defaultValue: 'Password reset failed' }),
           description: (error as Error).message,
-          status: 'error',
+          type: 'error',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
       },
     })
@@ -73,7 +74,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
           placeholder={t('email_placeholder', { defaultValue: 'your@email.com' })}
           type='email'
           required
-          isDisabled={!!email}
+          disabled={!!email}
         />
         <InputBasic
           formValue='code'
@@ -81,7 +82,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
           placeholder={t('verification_code_placeholder', { defaultValue: 'Enter the verification code' })}
           type='text'
           required
-          isDisabled={!!code}
+          disabled={!!code}
         />
         <InputPassword
           formValue='newPassword'

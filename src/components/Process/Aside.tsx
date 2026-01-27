@@ -130,7 +130,7 @@ const ProcessAside = () => {
             <Text
               fontWeight='extrabold'
               fontSize='sm'
-              sx={{
+              css={{
                 color: 'green.500',
                 _dark: { color: 'green.300' },
               }}
@@ -150,14 +150,10 @@ const ProcessAside = () => {
             </Text>
           )}
           {voted !== null && voted.length > 0 && (
-            <Link
-              sx={{ _hover: { textDecoration: 'underline' } }}
-              as={ReactRouterLink}
-              to={environment.verifyVote(env, voted)}
-              target='_blank'
-              whiteSpace='nowrap'
-            >
-              {t('aside.verify_vote_on_explorer')}
+            <Link css={{ _hover: { textDecoration: 'underline' } }} asChild whiteSpace='nowrap'>
+              <ReactRouterLink to={environment.verifyVote(env, voted)} target='_blank'>
+                {t('aside.verify_vote_on_explorer')}
+              </ReactRouterLink>
             </Link>
           )}
         </Flex>
@@ -219,7 +215,7 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
       alignItems='center'
       background='transparent'
       py={3}
-      px={{ base: 3, lg2: 0 }}
+      px={{ base: 3, lg: 0 }}
       gap={3}
       {...props}
     >
@@ -231,7 +227,7 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
             fontSize='lg'
             height='50px'
             onClick={setQuestionsTab}
-            sx={{
+            css={{
               '&::disabled': {
                 opacity: '0.8',
               },

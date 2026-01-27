@@ -4,7 +4,8 @@ import i18n from 'i18next'
 import { ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { theme } from '~theme'
+import { ColorModeProvider } from '~theme/color-mode'
+import { system } from '~theme'
 import { ConnectionToastProvider, useConnectionToast } from './ConnectionToast'
 
 // Initialize i18n for tests
@@ -28,27 +29,25 @@ const mockToast = vi.fn()
 const mockToastClose = vi.fn()
 const mockToastIsActive = vi.fn().mockReturnValue(false)
 
-vi.mock('@chakra-ui/react', async () => {
-  const actual = await vi.importActual('@chakra-ui/react')
-  return {
-    ...actual,
-    useToast: () => {
-      const toast = mockToast as any
-      toast.close = mockToastClose
-      toast.isActive = mockToastIsActive
-      return toast
-    },
-  }
-})
+vi.mock('~shared/Toast', () => ({
+  useToast: () => {
+    const toast = mockToast as any
+    toast.close = mockToastClose
+    toast.isActive = mockToastIsActive
+    return toast
+  },
+}))
 
 // Test wrapper with providers
 function wrapper({ children }: { children: ReactNode }) {
   return (
-    <ChakraProvider theme={theme}>
-      <I18nextProvider i18n={i18n}>
-        <ConnectionToastProvider>{children}</ConnectionToastProvider>
-      </I18nextProvider>
-    </ChakraProvider>
+    <ColorModeProvider>
+      <ChakraProvider value={system}>
+        <I18nextProvider i18n={i18n}>
+          <ConnectionToastProvider>{children}</ConnectionToastProvider>
+        </I18nextProvider>
+      </ChakraProvider>
+    </ColorModeProvider>
   )
 }
 
@@ -81,7 +80,7 @@ describe('ConnectionToastProvider', () => {
         expect(mockToast).toHaveBeenCalledWith(
           expect.objectContaining({
             id: 'connection-error-toast',
-            status: 'error',
+            type: 'error',
             duration: null,
             isClosable: false,
           })
@@ -145,7 +144,7 @@ describe('ConnectionToastProvider', () => {
         expect(mockToast).toHaveBeenCalledWith(
           expect.objectContaining({
             id: 'connection-success-toast',
-            status: 'success',
+            type: 'success',
             duration: 5000,
             isClosable: true,
           })
@@ -206,7 +205,7 @@ describe('ConnectionToastProvider', () => {
         expect(mockToast).toHaveBeenCalledWith(
           expect.objectContaining({
             id: 'connection-error-toast',
-            status: 'error',
+            type: 'error',
           })
         )
       })
@@ -222,7 +221,7 @@ describe('ConnectionToastProvider', () => {
         expect(mockToast).toHaveBeenCalledWith(
           expect.objectContaining({
             id: 'connection-success-toast',
-            status: 'success',
+            type: 'success',
           })
         )
       })

@@ -1,17 +1,19 @@
-import { chakra, forwardRef, useMultiStyleConfig, type HeadingProps } from '@chakra-ui/react'
+import { chakra, useRecipe, type HTMLChakraProps } from '@chakra-ui/react'
+import { forwardRef } from 'react'
 import { useDatesLocale, useElection, useLocalize } from '@vocdoni/react-providers'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format, formatDistance } from 'date-fns'
 
-export type ElectionScheduleProps = HeadingProps & {
+export type ElectionScheduleProps = HTMLChakraProps<'h2'> & {
   format?: string
   showRemaining?: boolean
   showCreatedAt?: boolean
 }
 
-export const ElectionSchedule = forwardRef<ElectionScheduleProps, 'h2'>(
+export const ElectionSchedule = forwardRef<HTMLHeadingElement, ElectionScheduleProps>(
   ({ format: formatPattern = 'PPp', showRemaining = false, showCreatedAt = false, ...rest }, ref) => {
-    const styles = useMultiStyleConfig('ElectionSchedule', rest)
+    const recipe = useRecipe({ key: 'ElectionSchedule' })
+    const styles = recipe()
     const { election } = useElection()
     const locale = useDatesLocale()
     const t = useLocalize()
@@ -62,7 +64,7 @@ export const ElectionSchedule = forwardRef<ElectionScheduleProps, 'h2'>(
     }
 
     return (
-      <chakra.h2 ref={ref} __css={styles} {...rest}>
+      <chakra.h2 ref={ref} css={styles} {...rest}>
         {text}
       </chakra.h2>
     )

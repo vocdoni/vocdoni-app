@@ -1,10 +1,8 @@
-import { tagAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { tagAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(tagAnatomy.keys)
-
-const baseStyle = definePartsStyle(() => ({
-  container: {
+const baseStyle = {
+  root: {
     width: 'fit-content',
     display: 'flex',
     justifyContent: 'center',
@@ -13,8 +11,9 @@ const baseStyle = definePartsStyle(() => ({
     py: 1,
     px: 3,
   },
-}))
+}
 
-export const Tag = defineMultiStyleConfig({
-  baseStyle,
+export const Tag = defineSlotRecipe({
+  slots: tagAnatomy.keys(),
+  base: baseStyle,
 })

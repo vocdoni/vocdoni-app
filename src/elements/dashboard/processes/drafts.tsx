@@ -1,23 +1,25 @@
 import {
   Box,
+  HStack,
   Icon,
   IconButton,
   Link,
-  Menu,
-  MenuButton,
-  MenuDivider,
+  MenuContent,
   MenuItem,
-  MenuList,
-  Portal,
-  Progress,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  useToast,
+  MenuPositioner,
+  MenuRoot,
+  MenuSeparator,
+  MenuTrigger,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
+  TableBody,
+  TableCell,
+  TableColumnHeader,
+  TableHeader,
+  TableRoot,
+  TableRow,
+  TableScrollArea,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { RoutedPaginationProvider, useClient, useOrganization } from '@vocdoni/react-providers'
@@ -31,6 +33,7 @@ import { useCreateProcess } from '~components/Process/Create'
 import { Process } from '~components/Process/Create/common'
 import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/shared/Pagination/PaginatedTableFooter'
+import { useToast } from '~shared/Toast'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
 import { Routes } from '~routes'
@@ -87,9 +90,9 @@ export const useDeleteDraft = () => {
           title: t('drafts.deleted_draft', {
             defaultValue: 'Draft deleted successfully',
           }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
       }
       queryClient.invalidateQueries({
@@ -105,24 +108,24 @@ const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
 
   return (
     <Box border='1px solid' borderColor='table.border' borderRadius='sm' w='full'>
-      <TableContainer>
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>{t('process_list.title', { defaultValue: 'Title' })}</Th>
-              <Th>{t('process_list.start_date', { defaultValue: 'Start date' })}</Th>
-              <Th>{t('process_list.end_date', { defaultValue: 'End date' })}</Th>
-              <Th>{t('process_list.type', { defaultValue: 'Type' })}</Th>
-              <Th>&nbsp;</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+      <TableScrollArea>
+        <TableRoot>
+          <TableHeader>
+            <TableRow>
+              <TableColumnHeader>{t('process_list.title', { defaultValue: 'Title' })}</TableColumnHeader>
+              <TableColumnHeader>{t('process_list.start_date', { defaultValue: 'Start date' })}</TableColumnHeader>
+              <TableColumnHeader>{t('process_list.end_date', { defaultValue: 'End date' })}</TableColumnHeader>
+              <TableColumnHeader>{t('process_list.type', { defaultValue: 'Type' })}</TableColumnHeader>
+              <TableColumnHeader>&nbsp;</TableColumnHeader>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {drafts.map((draft) => (
               <DraftsRow key={draft.id} draft={draft} />
             ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+          </TableBody>
+        </TableRoot>
+      </TableScrollArea>
       <Box p={4}>
         <RoutedPaginatedTableFooter />
       </Box>
@@ -133,31 +136,32 @@ const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
 const DraftsRow = ({ draft }: { draft: Draft }) => {
   const { t } = useTranslation()
   return (
-    <Tr key={draft.id} position='relative'>
-      <Td>
-        <Link
-          as={RouterLink}
-          to={{
-            pathname: generatePath(Routes.processes.create),
-            search: createSearchParams({ draftId: draft.id }).toString(),
-          }}
-          _hover={{ textDecoration: 'underline' }}
-          fontWeight='medium'
-        >
-          {draft.metadata?.title || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
+    <TableRow key={draft.id} position='relative'>
+      <TableCell>
+        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
+          <RouterLink
+            to={{
+              pathname: generatePath(Routes.processes.create),
+              search: createSearchParams({ draftId: draft.id }).toString(),
+            }}
+          >
+            {draft.metadata?.title || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
+          </RouterLink>
         </Link>
-      </Td>
-      <Td>{draft.metadata?.startDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Td>
-      <Td>{draft.metadata?.endDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Td>
-      <Td>{draft.metadata?.questionType || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Td>
-      <Td isNumeric>
+      </TableCell>
+      <TableCell>{draft.metadata?.startDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</TableCell>
+      <TableCell>{draft.metadata?.endDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</TableCell>
+      <TableCell>
+        {draft.metadata?.questionType || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
+      </TableCell>
+      <TableCell textAlign='end'>
         <DraftsContextMenu draft={draft} />
-      </Td>
-    </Tr>
+      </TableCell>
+    </TableRow>
   )
 }
 
-const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
+export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -176,9 +180,9 @@ const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
         title: t('drafts.cloned_draft', {
           defaultValue: 'Draft cloned successfully',
         }),
-        status: 'success',
+        type: 'success',
         duration: 3000,
-        isClosable: true,
+        closable: true,
       })
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.drafts(account?.address),
@@ -196,9 +200,9 @@ const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
         title: t('drafts.cloned_draft_error', {
           defaultValue: 'Error cloning draft',
         }),
-        status: 'error',
+        type: 'error',
         duration: 3000,
-        isClosable: true,
+        closable: true,
       })
     }
   }
@@ -209,37 +213,48 @@ const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
   }
 
   return (
-    <Menu>
-      <MenuButton
-        as={IconButton}
-        isLoading={deleteDraftMutation.isPending}
-        shouldWrapChildren
-        icon={<Icon as={LuEllipsisVertical} />}
-        variant='ghost'
-        size='sm'
-      />
-      <Portal>
-        <MenuList>
-          <MenuItem
-            as={RouterLink}
-            to={{
-              pathname: generatePath(Routes.processes.create),
-              search: createSearchParams({ draftId: draft.id }).toString(),
-            }}
-            icon={<Icon as={LuPencil} boxSize={4} />}
-          >
-            {t('drafts.edit', { defaultValue: 'Edit Draft' })}
+    <MenuRoot>
+      <MenuTrigger asChild>
+        <IconButton
+          aria-label={t('drafts.actions', { defaultValue: 'Draft actions' })}
+          loading={deleteDraftMutation.isPending}
+          variant='ghost'
+          size='sm'
+        >
+          <Icon as={LuEllipsisVertical} />
+        </IconButton>
+      </MenuTrigger>
+      <MenuPositioner>
+        <MenuContent>
+          <MenuItem value='edit' asChild>
+            <RouterLink
+              to={{
+                pathname: generatePath(Routes.processes.create),
+                search: createSearchParams({ draftId: draft.id }).toString(),
+              }}
+            >
+              <HStack gap={2} align='center'>
+                <Icon as={LuPencil} boxSize={4} />
+                <span>{t('drafts.edit', { defaultValue: 'Edit Draft' })}</span>
+              </HStack>
+            </RouterLink>
           </MenuItem>
-          <MenuItem onClick={cloneDraft} icon={<Icon as={LuCopy} boxSize={4} />}>
-            {t('drafts.clone', { defaultValue: 'Clone Draft' })}
+          <MenuItem value='clone' onClick={cloneDraft}>
+            <HStack gap={2} align='center'>
+              <Icon as={LuCopy} boxSize={4} />
+              <span>{t('drafts.clone', { defaultValue: 'Clone Draft' })}</span>
+            </HStack>
           </MenuItem>
-          <MenuDivider />
-          <MenuItem color='red.400' onClick={deleteDraft} icon={<Icon as={LuTrash} boxSize={4} />}>
-            {t('drafts.delete', { defaultValue: 'Delete Draft' })}
+          <MenuSeparator />
+          <MenuItem value='delete' color='red.400' onClick={deleteDraft}>
+            <HStack gap={2} align='center'>
+              <Icon as={LuTrash} boxSize={4} />
+              <span>{t('drafts.delete', { defaultValue: 'Delete Draft' })}</span>
+            </HStack>
           </MenuItem>
-        </MenuList>
-      </Portal>
-    </Menu>
+        </MenuContent>
+      </MenuPositioner>
+    </MenuRoot>
   )
 }
 
@@ -266,7 +281,15 @@ const Drafts = () => {
     nextPage: null,
   }
 
-  if (isLoading) return <Progress size='xs' isIndeterminate colorScheme='gray' />
+  if (isLoading) {
+    return (
+      <ProgressRoot size='xs' value={null} colorPalette='gray'>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
 
   return (
     <RoutedPaginationProvider initialPage={1} path={Routes.dashboard.processes.drafts} pagination={pagination}>

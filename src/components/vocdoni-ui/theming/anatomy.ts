@@ -1,13 +1,4 @@
-export const confirmAnatomy = [
-  'overlay',
-  'content',
-  'header',
-  'body',
-  'footer',
-  'confirm',
-  'cancel',
-  'close',
-] as const
+export const confirmAnatomy = ['overlay', 'content', 'header', 'body', 'footer', 'confirm', 'cancel', 'close'] as const
 
 export const questionChoiceAnatomy = [
   'label',
@@ -26,10 +17,20 @@ export const questionChoiceAnatomy = [
 ] as const
 
 export const questionsAnatomy = [
-  'container',
+  'alert',
+  'alertTitle',
+  'alertDescription',
+  'alertLink',
+  'wrapper',
   'form',
-  'radioGroup',
+  'container',
+  'question',
+  'header',
+  'title',
+  'body',
+  'description',
   'stack',
+  'radioGroup',
   'radio',
   'checkbox',
   'error',
@@ -40,6 +41,8 @@ export const questionsEmptyAnatomy = ['container', 'icon', 'description'] as con
 export const questionsErrorAnatomy = ['container', 'icon', 'description'] as const
 
 export const questionsConfirmationAnatomy = ['box', 'description', 'question', 'title', 'answer'] as const
+
+export const questionTipAnatomy = ['wrapper', 'text'] as const
 
 export const questionTypeBadgeAnatomy = ['box', 'title', 'tooltip'] as const
 

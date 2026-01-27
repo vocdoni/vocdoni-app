@@ -1,18 +1,24 @@
-import { Tag, type TagProps } from '@chakra-ui/react'
+import { TagLabel, TagRoot, type TagRootProps } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 
-export const ElectionStatusBadge = (props: TagProps) => {
+export const ElectionStatusBadge = (props: TagRootProps) => {
   const { election, localize } = useElection()
   if (!election) return null
-  let { colorScheme } = props
-  if (!colorScheme) {
-    colorScheme = 'green'
-    if (election instanceof PublishedElection && [ElectionStatus.PAUSED, ElectionStatus.ENDED].includes(election.status)) {
-      colorScheme = 'yellow'
+  let { colorPalette } = props
+  if (!colorPalette) {
+    colorPalette = 'green'
+    if (
+      election instanceof PublishedElection &&
+      [ElectionStatus.PAUSED, ElectionStatus.ENDED].includes(election.status)
+    ) {
+      colorPalette = 'yellow'
     }
-    if (election instanceof InvalidElection || [ElectionStatus.CANCELED, ElectionStatus.PROCESS_UNKNOWN].includes(election.status)) {
-      colorScheme = 'red'
+    if (
+      election instanceof InvalidElection ||
+      [ElectionStatus.CANCELED, ElectionStatus.PROCESS_UNKNOWN].includes(election.status)
+    ) {
+      colorPalette = 'red'
     }
   }
   const label =
@@ -20,8 +26,8 @@ export const ElectionStatusBadge = (props: TagProps) => {
       ? localize(`statuses.${election.status.toLowerCase()}`)
       : localize('statuses.invalid')
   return (
-    <Tag colorScheme={colorScheme} {...props}>
-      {label}
-    </Tag>
+    <TagRoot colorPalette={colorPalette} {...props}>
+      <TagLabel>{label}</TagLabel>
+    </TagRoot>
   )
 }

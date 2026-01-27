@@ -39,6 +39,7 @@ export {
   questionsConfirmationAnatomy,
   questionsEmptyAnatomy,
   questionsErrorAnatomy,
+  questionTipAnatomy,
   questionTypeBadgeAnatomy,
   votedAnatomy,
   resultsAnatomy,

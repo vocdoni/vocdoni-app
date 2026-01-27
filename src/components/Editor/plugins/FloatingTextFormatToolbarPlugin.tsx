@@ -1,4 +1,14 @@
-import { Card, HStack, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react'
+import {
+  Card,
+  HStack,
+  Icon,
+  IconButton,
+  MenuContent,
+  MenuItem,
+  MenuPositioner,
+  MenuRoot,
+  MenuTrigger,
+} from '@chakra-ui/react'
 import { $isCodeHighlightNode } from '@lexical/code'
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND } from '@lexical/list'
@@ -100,7 +110,7 @@ export function setFloatingElemPosition(
   floatingElem.style.transform = `translate(-2px, ${top}px)`
 }
 
-function TextFormatFloatingToolbar({
+export function TextFormatFloatingToolbar({
   editor,
   anchorElem,
   isLink,
@@ -235,105 +245,111 @@ function TextFormatFloatingToolbar({
   }, [editor, updateTextFormatFloatingToolbar])
 
   return (
-    <Card ref={popupCharStylesEditorRef} position='absolute' top={0} left={0} p={1} zIndex='contents'>
+    <Card.Root ref={popupCharStylesEditorRef} position='absolute' top={0} left={0} p={1} zIndex='contents'>
       {editor.isEditable() && (
         <HStack>
           <IconButton
-            icon={<Icon as={LuBold} />}
             aria-label={t('editor.bold', 'Bold')}
             variant={isBold ? 'solid' : 'ghost'}
             size='sm'
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
-          />
+          >
+            <Icon as={LuBold} />
+          </IconButton>
           <IconButton
-            icon={<Icon as={LuItalic} />}
             aria-label={t('editor.italic', 'Italic')}
             variant={isItalic ? 'solid' : 'ghost'}
             size='sm'
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}
-          />
+          >
+            <Icon as={LuItalic} />
+          </IconButton>
           <IconButton
-            icon={<Icon as={LuUnderline} />}
             aria-label={t('editor.underline', 'Underline')}
             variant={isUnderline ? 'solid' : 'ghost'}
             size='sm'
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}
-          />
+          >
+            <Icon as={LuUnderline} />
+          </IconButton>
           <IconButton
-            icon={<Icon as={LuStrikethrough} />}
             aria-label={t('editor.strikethrough', 'Strikethrough')}
             variant={isStrikethrough ? 'solid' : 'ghost'}
             size='sm'
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')}
-          />
+          >
+            <Icon as={LuStrikethrough} />
+          </IconButton>
           <IconButton
-            icon={<Icon as={LuLink} />}
             aria-label={t('editor.link.title', 'Link')}
             variant={isLink ? 'solid' : 'ghost'}
             size='sm'
             onClick={insertLink}
-          />
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              icon={
-                textType === 'text' ? (
+          >
+            <Icon as={LuLink} />
+          </IconButton>
+          <MenuRoot>
+            <MenuTrigger asChild>
+              <IconButton aria-label={t('editor.paragraph', 'Paragraph')} variant='ghost' size='sm'>
+                {textType === 'text' ? (
                   <Icon as={LuText} />
                 ) : textType === 'list' ? (
                   <Icon as={LuList} />
                 ) : (
                   <Icon as={LuListOrdered} />
-                )
-              }
-              aria-label={t('editor.paragraph', 'Paragraph')}
-              variant='ghost'
-              size='sm'
-            />
-            <MenuList minW='unset'>
-              <MenuItem
-                onClick={() => {
-                  setTextType('text')
-                  editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined)
-                }}
-              >
-                <Icon as={LuText} />
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  setTextType('list')
-                  editor.update(() => {
-                    const selection = $getSelection()
+                )}
+              </IconButton>
+            </MenuTrigger>
+            <MenuPositioner>
+              <MenuContent minW='unset'>
+                <MenuItem
+                  value='text'
+                  onClick={() => {
+                    setTextType('text')
+                    editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined)
+                  }}
+                >
+                  <Icon as={LuText} />
+                </MenuItem>
+                <MenuItem
+                  value='list'
+                  onClick={() => {
+                    setTextType('list')
+                    editor.update(() => {
+                      const selection = $getSelection()
 
-                    if (!$isRangeSelection(selection)) return
+                      if (!$isRangeSelection(selection)) return
 
-                    let node = selection.anchor.getNode()
+                      let node = selection.anchor.getNode()
 
-                    if (!$isParagraphNode(node) && !$isTextNode(node)) {
-                      const paragraph = $createParagraphNode()
-                      node.replace(paragraph)
-                      paragraph.select()
-                      node = paragraph
-                    }
+                      if (!$isParagraphNode(node) && !$isTextNode(node)) {
+                        const paragraph = $createParagraphNode()
+                        node.replace(paragraph)
+                        paragraph.select()
+                        node = paragraph
+                      }
 
-                    editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)
-                  })
-                }}
-              >
-                <Icon as={LuList} />
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  setTextType('ordered-list')
-                  editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)
-                }}
-              >
-                <Icon as={LuListOrdered} />
-              </MenuItem>
-            </MenuList>
-          </Menu>
+                      editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined)
+                    })
+                  }}
+                >
+                  <Icon as={LuList} />
+                </MenuItem>
+                <MenuItem
+                  value='ordered-list'
+                  onClick={() => {
+                    setTextType('ordered-list')
+                    editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined)
+                  }}
+                >
+                  <Icon as={LuListOrdered} />
+                </MenuItem>
+              </MenuContent>
+            </MenuPositioner>
+          </MenuRoot>
         </HStack>
       )}
-    </Card>
+    </Card.Root>
   )
 }
 

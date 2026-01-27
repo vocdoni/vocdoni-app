@@ -1,4 +1,5 @@
-import { Button, Flex, FlexProps, Link, Text, useToast } from '@chakra-ui/react'
+import { Button, Flex, FlexProps, Link, Text } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { enforceHexPrefix, useClient } from '@vocdoni/react-providers'
@@ -107,7 +108,7 @@ export const OrganizationCreate = ({
         title: t('organization.create_org_success', {
           defaultValue: 'Organization created successfully',
         }),
-        status: 'success',
+        type: 'success',
         duration: 5000,
         isClosable: true,
       })
@@ -131,7 +132,7 @@ export const OrganizationCreate = ({
             defaultValue: 'Failed to update organization setup step status',
           }),
           description: e.message,
-          status: 'warning',
+          type: 'warning',
           duration: 5000,
           isClosable: true,
         })
@@ -147,7 +148,7 @@ export const OrganizationCreate = ({
           defaultValue: 'Failed to create organization',
         }),
         description: error.message,
-        status: 'error',
+        type: 'error',
         duration: 5000,
         isClosable: true,
       })
@@ -185,8 +186,7 @@ export const OrganizationCreate = ({
         <Button
           form='process-create-form'
           type='submit'
-          isLoading={isPending}
-          shouldWrapChildren
+          loading={isPending}
           aria-label={t('organization.create_org', { defaultValue: 'Create organization' })}
         >
           {t('organization.create_org')}
@@ -194,22 +194,23 @@ export const OrganizationCreate = ({
         <Text color={'account_create_text_secondary'} fontSize='sm' textAlign='center' mt='auto'>
           <Trans i18nKey='create_org.already_profile'>
             If your organization already has a profile,{' '}
-            <Link as={ReactRouterLink} to={Routes.dashboard.base}>
-              access the dashboard
+            <Link asChild>
+              <ReactRouterLink to={Routes.dashboard.base}>access the dashboard</ReactRouterLink>
             </Link>{' '}
             and contact the administrator to invite you
           </Trans>
         </Text>
         {canSkip && (
           <Button
-            as={ReactRouterLink}
-            to={Routes.dashboard.base}
+            asChild
             aria-label={t('do_it_later', { defaultValue: 'Do it later' })}
             variant='outline'
             border='none'
-            isDisabled={isPending}
+            disabled={isPending}
           >
-            {t('do_it_later', { defaultValue: 'Do it later' })}
+            <ReactRouterLink to={Routes.dashboard.base}>
+              {t('do_it_later', { defaultValue: 'Do it later' })}
+            </ReactRouterLink>
           </Button>
         )}
       </Flex>

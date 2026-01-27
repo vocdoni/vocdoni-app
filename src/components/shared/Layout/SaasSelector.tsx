@@ -1,4 +1,13 @@
-import { Alert, Box, Flex, FormControl, FormErrorMessage, FormLabel, Icon, Text } from '@chakra-ui/react'
+import {
+  AlertRoot as Alert,
+  Box,
+  Flex,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
+  Icon,
+  Text,
+} from '@chakra-ui/react'
 import { Props as SelectProps, chakraComponents } from 'chakra-react-select'
 import { Controller, type ControllerProps, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -50,7 +59,7 @@ export const SelectCustom = ({
   }
 
   return (
-    <FormControl isInvalid={!!errors[name]} isRequired={required}>
+    <FormControl invalid={!!errors[name]} required={required}>
       {label && (
         <FormLabel htmlFor={name} display='flex' ms={1} fontSize='sm' fontWeight='500' mb={2}>
           {label}

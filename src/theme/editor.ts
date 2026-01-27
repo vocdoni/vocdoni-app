@@ -1,6 +1,6 @@
-import { SystemStyleObject } from '@chakra-ui/styled-system'
+import type { GlobalStyleObject } from '@chakra-ui/react'
 
-const editor: SystemStyleObject = {
+const editor: GlobalStyleObject = {
   '.lexical-bold': {
     fontWeight: 'extrabold',
   },

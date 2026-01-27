@@ -1,4 +1,4 @@
-import { createContext } from '@chakra-ui/react-utils'
+import { createContext, useContext } from 'react'
 import { PlanUpgradeData } from './Modals'
 import type { SubscriptionPaymentData } from './SubscriptionPayment'
 
@@ -12,10 +12,16 @@ export type PricingModalContextState = {
   modalData: any
 }
 
-const [PricingModalProviderContext, usePricingModal] = createContext<PricingModalContextState>({
-  name: 'PricingModalProvider',
-  errorMessage: 'usePricingModal must be used within a PricingModalProvider',
-  strict: true,
-})
+const PricingModalContext = createContext<PricingModalContextState | undefined>(undefined)
+
+const usePricingModal = () => {
+  const context = useContext(PricingModalContext)
+  if (!context) {
+    throw new Error('usePricingModal must be used within a PricingModalProvider')
+  }
+  return context
+}
+
+const PricingModalProviderContext = PricingModalContext.Provider
 
 export { PricingModalProviderContext, usePricingModal }

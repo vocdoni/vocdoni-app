@@ -1,17 +1,22 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
-  AlertIcon,
+  AlertIndicator,
   Box,
   Button,
   chakra,
-  Divider,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
+  Separator,
   Flex,
   HStack,
   Icon,
-  Progress,
   Text,
-  Tooltip,
+  TooltipContent,
+  TooltipPositioner,
+  TooltipRoot,
+  TooltipTrigger,
   VStack,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
@@ -45,20 +50,25 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
   return (
     <Box>
       <Flex justify='space-between' align='center' mb={2}>
-        <HStack spacing={2}>
+        <HStack gap={2}>
           <Icon as={icon} boxSize={4} color={`${color}.500`} />
           <Text fontSize='sm' fontWeight='medium' color='texts.primary'>
             {label}
             {tooltip && (
-              <Tooltip label={tooltip} placement='auto'>
-                <chakra.span verticalAlign='middle'>
-                  <Icon as={LuInfo} ml={1} />
-                </chakra.span>
-              </Tooltip>
+              <TooltipRoot>
+                <TooltipTrigger asChild>
+                  <chakra.span verticalAlign='middle'>
+                    <Icon as={LuInfo} ml={1} />
+                  </chakra.span>
+                </TooltipTrigger>
+                <TooltipPositioner>
+                  <TooltipContent>{tooltip}</TooltipContent>
+                </TooltipPositioner>
+              </TooltipRoot>
             )}
           </Text>
         </HStack>
-        <HStack spacing={2} align='baseline'>
+        <HStack gap={2} align='baseline'>
           <Text fontSize='lg' fontWeight='bold' color='texts.primary'>
             {current.toLocaleString()}
           </Text>
@@ -67,18 +77,11 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
           </Text>
         </HStack>
       </Flex>
-      <Progress
-        value={displayPercentage}
-        size='sm'
-        colorScheme={progressColor}
-        borderRadius='full'
-        bg='gray.200'
-        sx={{
-          _dark: {
-            bg: 'gray.600',
-          },
-        }}
-      />
+      <ProgressRoot value={displayPercentage} size='sm' colorPalette={progressColor} shape='full'>
+        <ProgressTrack bg='gray.200' _dark={{ bg: 'gray.600' }}>
+          <ProgressRange borderRadius='full' />
+        </ProgressTrack>
+      </ProgressRoot>
     </Box>
   )
 }
@@ -171,7 +174,7 @@ export const UsageLimits = () => {
 
   return (
     <DashboardBox p={6} height='100%'>
-      <VStack align='stretch' spacing={4}>
+      <VStack align='stretch' gap={4}>
         <DashboardCardHeader
           title={t('dashboard.usage.plan_usage', { defaultValue: 'Plan Usage' })}
           subtitle={t('dashboard.usage.plan_usage_description', {
@@ -180,8 +183,8 @@ export const UsageLimits = () => {
         />
 
         {hasExceededLimit && (
-          <Alert status='warning' variant='left-accent' borderRadius='lg' py={3} px={4}>
-            <AlertIcon />
+          <Alert status='warning' variant='subtle' borderRadius='lg' py={3} px={4}>
+            <AlertIndicator />
             <Flex
               flex='1'
               direction={{ base: 'column', md: 'row' }}
@@ -194,24 +197,18 @@ export const UsageLimits = () => {
                     'Your current plan has reached its limits. Upgrade now to continue working without restrictions.',
                 })}
               </AlertDescription>
-              <Button
-                as={ReactRouterLink}
-                to={generatePath(Routes.dashboard.settings.subscription)}
-                size='sm'
-                colorScheme='orange'
-                variant='solid'
-                flexShrink={0}
-                fontWeight='semibold'
-              >
-                {t('dashboard.usage.upgrade_plan', { defaultValue: 'Upgrade Plan' })}
+              <Button asChild size='sm' colorScheme='orange' variant='solid' flexShrink={0} fontWeight='semibold'>
+                <ReactRouterLink to={generatePath(Routes.dashboard.settings.subscription)}>
+                  {t('dashboard.usage.upgrade_plan', { defaultValue: 'Upgrade Plan' })}
+                </ReactRouterLink>
               </Button>
             </Flex>
           </Alert>
         )}
 
-        <Divider />
+        <Separator />
 
-        <VStack align='stretch' spacing={4}>
+        <VStack align='stretch' gap={4}>
           {usageMetrics.map((metric, index) => (
             <UsageRow key={index} {...metric} />
           ))}

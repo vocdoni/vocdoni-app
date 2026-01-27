@@ -1,4 +1,4 @@
-import { Box, BoxProps, Card, CardBody, CardHeader, Grid, GridProps, Image, Text } from '@chakra-ui/react'
+import { Box, BoxProps, Card, Grid, GridProps, Image, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import barca from '/assets/barca.png'
 import bellpuig from '/assets/bellpuig.svg.png'
@@ -43,86 +43,86 @@ export const ClientsGrid = (props: GridProps) => {
       w='full'
       {...props}
     >
-      <Card variant='client'>
-        <CardHeader>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={barca} h={'40px'} alt={t('alt.images.barca')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>F.C. Barcelona</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={omnium} h={'57px'} alt={t('alt.images.omnium')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>Omnium Cultural</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={berga} h={'41px'} alt={t('alt.images.berga')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>Ajuntament Berga</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={bisbal} h={'33px'} alt={t('alt.images.bisbal')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>Ajuntament la Bisbal</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={coec} h={'20px'} alt={t('alt.images.coec')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>COEC</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={erc} h={'32px'} alt={t('alt.images.esquerra')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>Esquerra Republicana</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={bellpuig} h={'33px'} alt={t('alt.images.bellpuig')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>Ajuntament Bellpuig</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={ticanoia} h={'18px'} alt={t('alt.images.ticanoia')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>TIC Anoia</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={decidim} h={'30px'} alt={t('alt.images.decidim')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>Decidim</Text>
-        </CardBody>
-      </Card>
-      <Card variant='client'>
-        <CardHeader>
+        </Card.Body>
+      </Card.Root>
+      <Card.Root variant='client'>
+        <Card.Header>
           <Image src={bloock} h={'17px'} alt={t('alt.images.bloock')} />
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <Text as='span'>Bloock</Text>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     </Grid>
   )
 }

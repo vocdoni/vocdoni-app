@@ -1,22 +1,11 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
-import {
-  Button,
-  ButtonProps,
-  Code,
-  Icon,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-  useColorMode,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Button, ButtonProps, Code, HStack, Icon, Text, useDisclosure } from '@chakra-ui/react'
+import { useColorMode } from '~theme/color-mode'
 import { useEffect } from 'react'
 import { Trans } from 'react-i18next'
 import { LuCalendar } from 'react-icons/lu'
 import { SetupStepIds, useOrganizationSetup } from '~queries/organization'
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay } from '~shared/Modal/Modal'
 
 type BookerProps = {
   callback?: () => void
@@ -54,24 +43,32 @@ export const Booker = ({ callback }: BookerProps) => {
   )
 }
 
-export type BookerModalButtonProps = ButtonProps & BookerProps
+export type BookerModalButtonProps = ButtonProps &
+  BookerProps & {
+    leftIcon?: React.ReactNode
+    iconSpacing?: ButtonProps['gap']
+  }
 
-export const BookerModalButton = ({ callback, ...props }: BookerModalButtonProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+export const BookerModalButton = ({
+  callback,
+  children,
+  leftIcon,
+  iconSpacing = 2,
+  ...props
+}: BookerModalButtonProps) => {
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const content = children ?? <Trans i18nKey='home.support.btn_watch' />
+  const icon = leftIcon ?? <Icon as={LuCalendar} boxSize={4} />
 
   return (
     <>
-      <Button
-        leftIcon={<Icon as={LuCalendar} boxSize={4} />}
-        colorScheme='gray'
-        variant='outline'
-        whiteSpace='wrap'
-        size='md'
-        onClick={onOpen}
-        children={<Trans i18nKey='home.support.btn_watch' />}
-        {...props}
-      />
-      <Modal isOpen={isOpen} onClose={onClose} size='6xl'>
+      <Button colorScheme='gray' variant='outline' whiteSpace='wrap' size='md' onClick={onOpen} {...props}>
+        <HStack gap={iconSpacing}>
+          {icon}
+          <Text as='span'>{content}</Text>
+        </HStack>
+      </Button>
+      <Modal isOpen={isOpen} onClose={onClose} size='full'>
         <ModalOverlay />
         <ModalContent>
           <ModalCloseButton />
@@ -84,7 +81,7 @@ export const BookerModalButton = ({ callback, ...props }: BookerModalButtonProps
   )
 }
 
-export const DashboardBookerModalButton = (props: ButtonProps) => {
+export const DashboardBookerModalButton = (props: BookerModalButtonProps) => {
   const { setStepDone } = useOrganizationSetup()
 
   return (

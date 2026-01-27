@@ -1,4 +1,4 @@
-import { Box, BoxProps, Button, Card, CardBody, CardHeader, Flex, Text } from '@chakra-ui/react'
+import { Box, BoxProps, Button, Card, Flex, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -207,7 +207,7 @@ const Faqs = (props: BoxProps) => {
         </Text>
         <Text
           mb='60px'
-          maxW={{ base: '100%', sm: '70%', sm2: '80%', lg: '840px' }}
+          maxW={{ base: '100%', sm: '70%', md: '80%', lg: '840px' }}
           mx='auto'
           fontFamily='basier'
           fontSize='20px'
@@ -221,10 +221,10 @@ const Faqs = (props: BoxProps) => {
           {faqs.map((el, idx) => {
             if (!showAll && idx > 7) return null
             return (
-              <Card key={idx} variant='faqs' flex={{ base: '1 1 100%', lg: '1 1 45%' }}>
-                <CardHeader>{el.title}</CardHeader>
-                <CardBody>{el.description}</CardBody>
-              </Card>
+              <Card.Root key={idx} variant='faqs' flex={{ base: '1 1 100%', lg: '1 1 45%' }}>
+                <Card.Header>{el.title}</Card.Header>
+                <Card.Body>{el.description}</Card.Body>
+              </Card.Root>
             )
           })}
         </Flex>

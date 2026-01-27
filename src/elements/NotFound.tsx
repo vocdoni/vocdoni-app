@@ -1,4 +1,4 @@
-import { Button, Flex, Icon, Text } from '@chakra-ui/react'
+import { Button, Flex, HStack, Icon, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuHouse } from 'react-icons/lu'
 import { matchPath, useLocation, useNavigate } from 'react-router-dom'
@@ -29,8 +29,11 @@ const NotFound = () => {
         })}
       </SubHeading>
 
-      <Button leftIcon={<Icon as={LuHouse} />} onClick={redirectToDashboardOrHome}>
-        {t('error.return_to_home')}
+      <Button onClick={redirectToDashboardOrHome}>
+        <HStack gap={2}>
+          <Icon as={LuHouse} />
+          <Text as='span'>{t('error.return_to_home')}</Text>
+        </HStack>
       </Button>
     </Flex>
   )

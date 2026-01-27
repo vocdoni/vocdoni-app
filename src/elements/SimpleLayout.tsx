@@ -30,7 +30,7 @@ const Layout = () => {
         mx='auto'
         justifyContent='space-between'
       >
-        {logo ?? <VocdoniLogo h={6} />}
+        {logo ?? <VocdoniLogo height={6} />}
         <Box display='flex' alignItems='center' gap={4}>
           <LanguagesMenu />
           <ColorModeSwitcher />

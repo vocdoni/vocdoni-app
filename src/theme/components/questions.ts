@@ -1,11 +1,7 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import { questionsAnatomy, questionsEmptyAnatomy, questionsErrorAnatomy, questionsConfirmationAnatomy } from '~components/vocdoni-ui'
-import checkIconBlack from '/assets/check-icon-black.png'
-import checkIcon from '/assets/check-icon.png'
+import { defineSlotRecipe } from '@chakra-ui/react'
+import { questionsAnatomy } from '~components/vocdoni-ui'
 
-const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(questionsAnatomy)
-
-const baseStyle = definePartsStyle({
+const baseStyle = {
   alert: {
     width: 'full',
     px: { base: 3, sm: 5 },
@@ -37,10 +33,10 @@ const baseStyle = definePartsStyle({
   alertDescription: {
     display: 'flex',
     gap: 2,
-    flexDirection: { base: 'column', lg2: 'row' },
+    flexDirection: { base: 'column', lg: 'row' },
     justifyContent: 'center',
     alignItems: { md: 'center' },
-    whiteSpace: { base: 'pre-wrap', lg2: 'nowrap' },
+    whiteSpace: { base: 'pre-wrap', lg: 'nowrap' },
     color: 'white',
   },
 
@@ -146,13 +142,13 @@ const baseStyle = definePartsStyle({
           bgColor: 'black',
           _dark: {
             bgColor: 'white',
-            bgImage: checkIconBlack,
+            bgImage: "url('/assets/check-icon-black.png')",
           },
           borderWidth: '1px',
           bgSize: '12px',
           bgRepeat: 'no-repeat',
           bgPosition: 'center',
-          bgImage: checkIcon,
+          bgImage: "url('/assets/check-icon.png')",
         },
       },
       '& span:nth-of-type(2)': {
@@ -190,8 +186,9 @@ const baseStyle = definePartsStyle({
     display: 'flex',
     justifyContent: 'center',
   },
-})
+}
 
-export const ElectionQuestions = defineMultiStyleConfig({
-  baseStyle,
+export const ElectionQuestions = defineSlotRecipe({
+  slots: questionsAnatomy,
+  base: baseStyle,
 })

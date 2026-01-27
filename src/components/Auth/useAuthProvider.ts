@@ -1,4 +1,4 @@
-import { useToast } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { useClient } from '@vocdoni/react-providers'
@@ -88,7 +88,7 @@ export const useAuthProvider = () => {
   const register = useRegister({
     onSuccess: () =>
       toast({
-        status: 'success',
+        type: 'success',
         title: t('registration_successful', { defaultValue: 'Registration successful' }),
         description: t('please_check_email_to_verify', {
           defaultValue: 'Please check your email to verify your account',
@@ -96,7 +96,7 @@ export const useAuthProvider = () => {
       }),
     onError: (error) => {
       toast({
-        status: 'error',
+        type: 'error',
         title: t('registration_failed', { defaultValue: 'Registration failed' }),
         description: error.message,
       })
@@ -143,7 +143,7 @@ export const useAuthProvider = () => {
       storeLogin(response)
     } catch (e) {
       toast({
-        status: 'error',
+        type: 'error',
         title: t('session_expired', { defaultValue: 'Session expired' }),
         description: t('session_expired_description', {
           defaultValue: 'Session may have been expired and it could not be refreshed, please login again',

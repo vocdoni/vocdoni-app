@@ -1,25 +1,14 @@
-import {
-  Button,
-  Flex,
-  ListItem,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Text,
-  UnorderedList,
-  useMultiStyleConfig,
-} from '@chakra-ui/react'
+import { Button, Flex, List, Text, useSlotRecipe } from '@chakra-ui/react'
 import { useConfirm } from '~components/vocdoni-ui'
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader } from '~shared/Modal/Modal'
 import { ElectionResultsTypeNames, IQuestion, PublishedElection } from '@vocdoni/sdk'
 import { FieldValues } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 export const ConfirmVoteModal = ({ election, answers }: { election: PublishedElection; answers: FieldValues }) => {
   const { t } = useTranslation()
-  const styles = useMultiStyleConfig('ConfirmModal', { variant: 'neutral' })
+  const recipe = useSlotRecipe({ key: 'ConfirmModal' })
+  const styles = recipe({ variant: 'neutral' })
   const { isOpen, cancel, proceed } = useConfirm()
 
   return (
@@ -31,7 +20,7 @@ export const ConfirmVoteModal = ({ election, answers }: { election: PublishedEle
         <ModalCloseButton />
         <ModalBody display='flex' flexDirection='column' gap={4}>
           <Flex direction='column' gap={2} border='1px solid' borderColor='table.border' borderRadius='lg' p={4}>
-            <Text size='sm' color='texts.subtle'>
+            <Text fontSize='sm' color='texts.subtle'>
               {t('process.spreadsheet.confirm.election_title', { defaultValue: 'Your vote has been recorded for:' })}
             </Text>
             <Text fontWeight='extrabold'>{election.title.default}</Text>
@@ -52,11 +41,11 @@ export const ConfirmVoteModal = ({ election, answers }: { election: PublishedEle
             ))}
           </Flex>
         </ModalBody>
-        <ModalFooter sx={styles.footer}>
-          <Button onClick={cancel!} variant='ghost' sx={styles.cancel}>
+        <ModalFooter css={styles.footer}>
+          <Button onClick={cancel!} variant='ghost' css={styles.cancel}>
             {t('cc.confirm.cancel')}
           </Button>
-          <Button onClick={proceed!} sx={styles.confirm}>
+          <Button onClick={proceed!} css={styles.confirm}>
             {t('cc.confirm.confirm')}
           </Button>
         </ModalFooter>
@@ -84,13 +73,13 @@ const ConfirmMultichoice = ({ question, answers }: { question: IQuestion; answer
       {answers[0].length === 0 ? (
         <Text>{t('process.spreadsheet.confirm.blank_vote')}</Text>
       ) : (
-        <UnorderedList>
+        <List.Root display='flex' flexDirection='column' gap={1} pl={4} listStyleType='disc'>
           {answers[0].map((answer: string) => (
-            <ListItem key={answer}>
+            <List.Item key={answer}>
               <Text color='texts.subtle'>{choices[Number(answer)].title.default}</Text>
-            </ListItem>
+            </List.Item>
           ))}
-        </UnorderedList>
+        </List.Root>
       )}
     </Flex>
   )

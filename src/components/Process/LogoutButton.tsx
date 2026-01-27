@@ -1,11 +1,11 @@
 import { Box, Button } from '@chakra-ui/react'
-import { SpreadsheetAccess } from '~components/vocdoni-ui'
 import { useClient, useElection } from '@vocdoni/react-providers'
 import { CensusType, dotobject, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useAccount, useDisconnect } from 'wagmi'
 import { useAuth } from '~components/Auth/useAuth'
 import { CensusMeta, CensusTypes } from '~components/Process/Census/CensusType'
+import { SpreadsheetAccess } from '~components/vocdoni-ui'
 
 // Note the LogoutButton is stored in the Process folder because it holds not just
 // the app logout, but all the process sessions logout
@@ -31,23 +31,9 @@ const LogoutButton = () => {
   return (
     <>
       <Box alignSelf='center' mb={{ base: 10, md: 0 }}>
-        {connected && isSpreadsheet && (
-          <SpreadsheetAccess
-            sx={{
-              color: 'red',
-              button: {
-                bg: 'transparent',
-                border: 'none',
-                color: 'red !important',
-                textDecoration: 'underline',
-                _hover: { textDecoration: 'none' },
-              },
-            }}
-          />
-        )}
+        {connected && isSpreadsheet && <SpreadsheetAccess />}
         {connected && isCSP && (
           <Button
-            variant='link'
             onClick={() => {
               clearClient()
             }}
@@ -57,7 +43,6 @@ const LogoutButton = () => {
         )}
         {isWeb3 && (
           <Button
-            variant='link'
             onClick={() => {
               if (isConnected) {
                 disconnect()

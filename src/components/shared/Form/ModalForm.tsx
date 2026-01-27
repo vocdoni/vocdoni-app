@@ -1,6 +1,7 @@
+import { Button, Heading, Text } from '@chakra-ui/react'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
-  Button,
-  Heading,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -8,10 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text,
-} from '@chakra-ui/react'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
+} from '~shared/Modal/Modal'
 
 interface ModalFormContextValue {
   isSubmitting: boolean
@@ -78,8 +76,7 @@ export const ModalForm = ({ isOpen, onClose, title, subtitle, children, submitTe
                 e.stopPropagation()
                 formRef.current?.requestSubmit()
               }}
-              isLoading={isSubmitting}
-              shouldWrapChildren
+              loading={isSubmitting}
             >
               {submitText || t('actions.save', { defaultValue: 'Save' })}
             </Button>

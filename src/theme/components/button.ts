@@ -1,43 +1,50 @@
-import { theme } from '@chakra-ui/react'
-import { defineStyle, defineStyleConfig } from '@chakra-ui/styled-system'
+import { defineRecipe } from '@chakra-ui/react'
 
-const baseStyle = defineStyle({
+const baseStyle = {
   minW: 0,
   fontWeight: 'bold',
   borderRadius: 'sm',
   fontSize: 'sm',
-})
+}
 
-const listmenu = defineStyle(({ colorMode }) => ({
+const listmenu = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   fontWeight: 'normal',
   borderRadius: 'sm',
-
   _active: {
     fontWeight: 'bold',
   },
   _hover: {
-    bg: colorMode === 'light' ? 'gray.100' : 'gray.700',
+    bg: 'gray.100',
+    _dark: {
+      bg: 'gray.700',
+    },
   },
-}))
+}
 
-const profilemenu = defineStyle((props) => ({
-  ...theme.components.Button.variants.ghost(props),
+const profilemenu = {
   w: 'full',
   px: 2,
   py: 1.5,
   borderRadius: 'xs',
   display: 'flex',
   justifyContent: 'start',
-}))
+  bg: 'transparent',
+  _hover: {
+    bg: 'gray.100',
+    _dark: {
+      bg: 'gray.700',
+    },
+  },
+}
 
-const unstyled = defineStyle(() => ({
+const unstyled = {
   textAlign: 'left',
-}))
+}
 
-const navbar = defineStyle(() => ({
+const navbar = {
   textAlign: 'left',
   fontWeight: 'semibold',
   display: 'flex',
@@ -45,73 +52,65 @@ const navbar = defineStyle(() => ({
   justifyContent: 'start',
   fontSize: 'md',
   h: 'fit-content',
-}))
+}
 
 const sizes = {
-  lg: defineStyle({
+  lg: {
     py: 7,
     px: 6,
     h: '14',
     minW: '14',
     fontSize: 'md',
-  }),
-  md: defineStyle({
+  },
+  md: {
     py: 6,
     px: 5,
     h: '12',
     minW: '12',
     fontSize: 'sm',
-  }),
-  sm: defineStyle({
+  },
+  sm: {
     py: 5,
     px: 4,
     h: '10',
     minW: '10',
     fontSize: 'sm',
-  }),
-  xs: defineStyle({
+  },
+  xs: {
     py: 4,
     px: 3,
     h: '8',
     minW: '8',
     fontSize: 'sm',
-  }),
+  },
 } as const
 
-// Helper function to convert space values to CSS variables
-const spaceVar = (v: number | string) => (typeof v === 'number' ? `var(--chakra-space-${v})` : v)
-
-const outline = defineStyle((props) => {
-  const s = (props.size ?? 'sm') as keyof typeof sizes
-  const base = sizes[s] ?? sizes.sm
-
-  const pyToken = (base as any).py ?? (sizes.sm as any).py
-  const pxToken = (base as any).px ?? (sizes.sm as any).px
-
-  // border width
-  const bw = '1px'
-
-  return {
-    ...theme.components.Button.variants.outline(props),
-    borderWidth: bw,
-    py: `calc(${spaceVar(pyToken)} - ${bw})`,
-    px: `calc(${spaceVar(pxToken)} - ${bw})`,
-  }
-})
-
-export const Button = defineStyleConfig({
-  variants: {
-    ...theme.components.Button.variants,
-    unstyled,
-    navbar,
-    listmenu,
-    outline,
-    profilemenu,
+const outline = {
+  borderWidth: '1px',
+  borderColor: 'colorPalette.500',
+  color: 'colorPalette.500',
+  _hover: {
+    bg: 'colorPalette.50',
   },
-  baseStyle,
-  sizes,
-  defaultProps: {
-    colorScheme: import.meta.env.BUTTON_COLOR_SCHEME,
+}
+
+const env = (import.meta as any)?.env ?? (typeof process !== 'undefined' ? process.env : {})
+const defaultPalette = env.BUTTON_COLOR_SCHEME || 'gray'
+
+export const Button = defineRecipe({
+  base: baseStyle,
+  variants: {
+    variant: {
+      unstyled,
+      navbar,
+      listmenu,
+      outline,
+      profilemenu,
+    },
+    size: sizes,
+  },
+  defaultVariants: {
+    colorPalette: defaultPalette as any,
     size: 'sm',
   },
 })

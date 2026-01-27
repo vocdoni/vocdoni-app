@@ -1,17 +1,14 @@
 import {
   Box,
   Button,
-  Checkbox,
+  CheckboxControl,
+  CheckboxHiddenInput,
+  CheckboxLabel,
+  CheckboxRoot,
   Flex,
   Heading,
+  HStack,
   Icon,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Stack,
   Text,
   useDisclosure,
@@ -20,6 +17,15 @@ import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileDown, LuFileSpreadsheet } from 'react-icons/lu'
 import { useTable } from '../TableProvider'
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from '~shared/Modal/Modal'
 
 type RadioCardProps = {
   label: string
@@ -30,14 +36,11 @@ type RadioCardProps = {
 
 export const RadioCard = ({ label, value, isSelected, onSelect }: RadioCardProps) => {
   return (
-    <Button
-      flex='1'
-      onClick={() => onSelect(value)}
-      p={4}
-      leftIcon={<Icon as={LuFileSpreadsheet} boxSize={4} />}
-      variant={isSelected ? 'solid' : 'outline'}
-    >
-      {label}
+    <Button flex='1' onClick={() => onSelect(value)} p={4} variant={isSelected ? 'solid' : 'outline'}>
+      <HStack gap={2}>
+        <Icon as={LuFileSpreadsheet} boxSize={4} />
+        <Text as='span'>{label}</Text>
+      </HStack>
       <input type='radio' value={value} checked={isSelected} onChange={() => {}} style={{ display: 'none' }} />
     </Button>
   )
@@ -45,7 +48,7 @@ export const RadioCard = ({ label, value, isSelected, onSelect }: RadioCardProps
 
 export const ExportMembers = () => {
   const { t } = useTranslation()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const { columns, selectedRows } = useTable()
 
   const methods = useForm({
@@ -76,16 +79,21 @@ export const ExportMembers = () => {
 
   return (
     <>
-      <Button leftIcon={<Icon as={LuFileDown} />} variant='outline' onClick={onOpen} disabled={true}>
-        {t('memberbase.exporter.button', { defaultValue: 'Export' })}
+      <Button variant='outline' onClick={onOpen} disabled={true}>
+        <HStack gap={2}>
+          <Icon as={LuFileDown} />
+          <Text as='span'>{t('memberbase.exporter.button', { defaultValue: 'Export' })}</Text>
+        </HStack>
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} size='md'>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            <Heading variant='header'>{t('memberbase.exporter.title', { defaultValue: 'Export Members' })}</Heading>
-            <Text variant='subheader'>
+            <Heading fontSize='lg' fontWeight='bold'>
+              {t('memberbase.exporter.title', { defaultValue: 'Export Members' })}
+            </Heading>
+            <Text fontSize='sm' color='texts.subtle'>
               {t('memberbase.exporter.subtitle', {
                 defaultValue: 'Configure your export options. The export will include {{count}} members.',
                 count: selectedRows.length,
@@ -128,25 +136,26 @@ export const ExportMembers = () => {
                       name='exportedColumns'
                       control={methods.control}
                       render={({ field }) => (
-                        <Stack spacing={3}>
+                        <Stack gap={3}>
                           {columns
                             .filter((col) => col.visible)
                             .map((col) => (
-                              <Checkbox
+                              <CheckboxRoot
                                 key={col.id}
-                                value={col.id}
-                                isChecked={field.value.includes(col.id)}
-                                onChange={(e) => {
-                                  const isChecked = e.target.checked
+                                checked={field.value.includes(col.id)}
+                                onCheckedChange={(details) => {
+                                  const isChecked = Boolean(details.checked)
                                   const value = col.id
                                   field.onChange(
                                     isChecked ? [...field.value, value] : field.value.filter((v) => v !== value)
                                   )
                                 }}
-                                colorScheme='black'
+                                colorPalette='black'
                               >
-                                {col.label}
-                              </Checkbox>
+                                <CheckboxHiddenInput value={col.id} />
+                                <CheckboxControl />
+                                <CheckboxLabel>{col.label}</CheckboxLabel>
+                              </CheckboxRoot>
                             ))}
                         </Stack>
                       )}

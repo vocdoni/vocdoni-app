@@ -1,8 +1,7 @@
-import { createContext } from '@chakra-ui/react-utils'
 import { useQuery } from '@tanstack/react-query'
 import { enforceHexPrefix, useClient } from '@vocdoni/react-providers'
 import { dotobject } from '@vocdoni/sdk'
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, createContext, useContext, useMemo } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
 import type { Plan } from '~components/Pricing/Plans'
 import { QueryKeys } from '~src/queries/keys'
@@ -36,10 +35,15 @@ export type SubscriptionType = {
   plan: Plan
 }
 
-const [SubscriptionProvider, useSubscription] = createContext<PermissionsContextType>({
-  name: 'PermissionsContext',
-  errorMessage: 'usePermissions must be used within a PermissionsProvider',
-})
+const SubscriptionContext = createContext<PermissionsContextType | undefined>(undefined)
+
+const useSubscription = () => {
+  const context = useContext(SubscriptionContext)
+  if (!context) {
+    throw new Error('usePermissions must be used within a PermissionsProvider')
+  }
+  return context
+}
 
 const SubscriptionProviderComponent: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { bearedFetch } = useAuth()
@@ -72,7 +76,7 @@ const SubscriptionProviderComponent: React.FC<{ children: ReactNode }> = ({ chil
 
   const value = { permission, subscription, loading: isFetching, error }
 
-  return <SubscriptionProvider value={value} children={children} />
+  return <SubscriptionContext.Provider value={value} children={children} />
 }
 
 export { SubscriptionProviderComponent as SubscriptionProvider, useSubscription }

@@ -6,7 +6,7 @@ export const Loading = ({ ...rest }: SquareProps) => {
   const { t } = useTranslation()
 
   return (
-    <Square centerContent size='full' h='300px' {...rest}>
+    <Square display='flex' alignItems='center' justifyContent='center' size='full' h='300px' {...rest}>
       <Spinner size='sm' mr={3} />
       <Text>{t('loading')}</Text>
     </Square>

@@ -1,13 +1,13 @@
-import { ChakraStylesConfig } from 'chakra-react-select'
+import type { ChakraStylesConfig } from 'chakra-react-select'
 
-export const selectStyles: ChakraStylesConfig = {
+export const selectStyles: ChakraStylesConfig<any, boolean> = {
   placeholder: (base) => ({
     ...base,
-    color: 'input.placeholder',
+    color: 'var(--chakra-colors-input-placeholder)',
   }),
 }
 
-export const languagesListSelectStyles: ChakraStylesConfig = {
+export const languagesListSelectStyles: ChakraStylesConfig<any, boolean> = {
   dropdownIndicator: (base) => ({
     ...base,
     m: 0,

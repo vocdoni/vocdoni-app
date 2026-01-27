@@ -1,15 +1,19 @@
-import { chakra, forwardRef, omitThemingProps, useStyleConfig, type HeadingProps } from '@chakra-ui/react'
+import { chakra, useRecipe, type HTMLChakraProps } from '@chakra-ui/react'
+import { forwardRef } from 'react'
 import { useElection } from '@vocdoni/react-providers'
 import { PublishedElection } from '@vocdoni/sdk'
 
-export const ElectionTitle = forwardRef<HeadingProps, 'h1'>((props, ref) => {
+type ElectionTitleProps = HTMLChakraProps<'h1'>
+
+export const ElectionTitle = forwardRef<HTMLHeadingElement, ElectionTitleProps>((props, ref) => {
   const { election } = useElection()
-  const styles = useStyleConfig('ElectionTitle', props)
-  const rest = omitThemingProps(props)
+  const { ...rest } = props
+  const recipe = useRecipe({ key: 'ElectionTitle' })
+  const styles = recipe()
   if (!election) return null
   const title = election instanceof PublishedElection ? election.title?.default : election.id
   return (
-    <chakra.h1 ref={ref} title={title} __css={styles} {...rest}>
+    <chakra.h1 ref={ref} title={title} css={styles} {...rest}>
       {title}
     </chakra.h1>
   )

@@ -1,4 +1,4 @@
-import { Button, Icon, useToast } from '@chakra-ui/react'
+import { Button, HStack, Icon, Text } from '@chakra-ui/react'
 import { AuthStorageKeys, saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,6 +6,7 @@ import { BsGoogle } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { Routes } from '~src/router/routes'
+import { useToast } from '~shared/Toast'
 import { useAuth } from './useAuth'
 
 const GoogleAuth = () => {
@@ -23,7 +24,7 @@ const GoogleAuth = () => {
       console.error('Google OAuth error', error?.message || '')
       const isOAuthConflictError = error?.message.indexOf('OAuthAccountConflictError') !== -1
       toast({
-        status: 'error',
+        type: 'error',
         title: t('google_oauth_error', { defaultValue: 'Google OAuth Error' }),
         description: isOAuthConflictError
           ? t('google_oauth_conflict_error', {
@@ -51,9 +52,8 @@ const GoogleAuth = () => {
 
   return (
     <Button
-      variant={'outline'}
-      isLoading={isPending}
-      shouldWrapChildren
+      variant='outline'
+      loading={isPending}
       onClick={() => {
         const wallet = saasOAuthWallet({
           id: 'google',
@@ -69,9 +69,11 @@ const GoogleAuth = () => {
       }}
       w='full'
       fontWeight={'bold'}
-      leftIcon={<Icon as={BsGoogle} />}
     >
-      {t('signin_google')}
+      <HStack gap={2}>
+        <Icon as={BsGoogle} />
+        <Text as='span'>{t('signin_google')}</Text>
+      </HStack>
     </Button>
   )
 }

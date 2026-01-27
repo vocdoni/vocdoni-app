@@ -1,4 +1,15 @@
-import { Flex, Progress, SimpleGrid, Tab, TabList, Tabs, Tag } from '@chakra-ui/react'
+import {
+  Flex,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
+  SimpleGrid,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
+  TagLabel,
+  TagRoot,
+} from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -323,7 +334,13 @@ export const SubscriptionPlans = () => {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex flexDir='column' gap={4}>
-          {isLoading && <Progress isIndeterminate />}
+          {isLoading && (
+            <ProgressRoot value={null}>
+              <ProgressTrack>
+                <ProgressRange />
+              </ProgressTrack>
+            </ProgressRoot>
+          )}
           {showAlert && (
             <ListStateAlert
               show
@@ -332,27 +349,27 @@ export const SubscriptionPlans = () => {
               description={alertDescription}
             />
           )}
-          <Tabs
+          <TabsRoot
             variant='settings'
             alignSelf='center'
-            onChange={(index) => methods.setValue('billingPeriod', index === 0 ? 'month' : 'year')}
-            defaultIndex={1}
+            value={period}
+            onValueChange={({ value }) => methods.setValue('billingPeriod', value as 'month' | 'year')}
           >
-            <TabList>
-              <Tab>
+            <TabsList>
+              <TabsTrigger value='month'>
                 <Trans i18nKey='monthly'>Monthly</Trans>
-              </Tab>
-              <Tab>
+              </TabsTrigger>
+              <TabsTrigger value='year'>
                 <Trans i18nKey='annual'>
                   Annual
-                  <Tag colorScheme='green' ml={2} size='sm' fontWeight='extrabold'>
-                    Save 40%
-                  </Tag>
+                  <TagRoot colorPalette='green' ml={2} size='sm' fontWeight='extrabold'>
+                    <TagLabel>Save 40%</TagLabel>
+                  </TagRoot>
                 </Trans>
-              </Tab>
-            </TabList>
-          </Tabs>
-          <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} spacing={6}>
+              </TabsTrigger>
+            </TabsList>
+          </TabsRoot>
+          <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={6}>
             {cards.map((card, idx) => (
               <PricingCard key={idx} plan={plans[idx]} {...card} />
             ))}

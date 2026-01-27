@@ -1,4 +1,4 @@
-import { useToast } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { useElection } from '@vocdoni/react-providers'
 import { ensure0x, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
@@ -53,7 +53,7 @@ export const useCloneAsDraft = () => {
         title: t('drafts.cloned_draft', {
           defaultValue: 'Draft cloned successfully',
         }),
-        status: 'success',
+        type: 'success',
         duration: 3000,
         isClosable: true,
       })
@@ -73,7 +73,7 @@ export const useCloneAsDraft = () => {
             "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
           count: limit,
         }),
-        status: 'error',
+        type: 'error',
         duration: 10000,
         isClosable: true,
       })

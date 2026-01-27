@@ -2,12 +2,16 @@ import {
   Box,
   Button,
   CloseButton,
-  Drawer,
+  DrawerBackdrop,
   DrawerContent,
-  DrawerOverlay,
+  DrawerPositioner,
+  DrawerRoot,
   Flex,
+  HStack,
   Icon,
-  Progress,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
   Text,
 } from '@chakra-ui/react'
 import { useContext } from 'react'
@@ -49,12 +53,14 @@ const DashboardMenu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
       </Box>
 
       {/* Sidebar for small screens */}
-      <Drawer isOpen={isOpen} placement='left' onClose={onClose}>
-        <DrawerOverlay />
-        <DrawerContent p={2}>
-          <DashboardMenuContent />
-        </DrawerContent>
-      </Drawer>
+      <DrawerRoot open={isOpen} placement='start' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
+        <DrawerBackdrop />
+        <DrawerPositioner>
+          <DrawerContent p={2}>
+            <DashboardMenuContent />
+          </DrawerContent>
+        </DrawerPositioner>
+      </DrawerRoot>
     </>
   )
 }
@@ -64,7 +70,15 @@ const SidebarTutorial = () => {
   const { reduced } = useContext(DashboardLayoutContext)
   const { isSidebarTutorialClosed, isLoading, closeSidebarTutorial } = useTutorials()
 
-  if (isLoading) return <Progress isIndeterminate />
+  if (isLoading) {
+    return (
+      <ProgressRoot value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
 
   if (isSidebarTutorialClosed) return null
 
@@ -105,32 +119,22 @@ const DashboardMenuContent = () => {
 
   return (
     <>
-      <Flex
-        as={ReactRouterLink}
-        to={Routes.dashboard.base}
-        justifyContent={'center'}
-        alignItems={'center'}
-        h='47px'
-        mb={2}
-      >
-        <VocdoniLogo width={reduced ? '32px' : '148px'} minimal={reduced} />
+      <Flex asChild justifyContent={'center'} alignItems={'center'} h='47px' mb={2}>
+        <ReactRouterLink to={Routes.dashboard.base}>
+          <VocdoniLogo width={reduced ? '32px' : '148px'} minimal={reduced} />
+        </ReactRouterLink>
       </Flex>
-      <Button
-        as={RouterLink}
-        to={generatePath(Routes.processes.create)}
-        w='full'
-        minW={0}
-        leftIcon={<Icon as={LuPlus} boxSize={4} />}
-        iconSpacing={reduced ? 0 : 2}
-        mt={'8px'}
-        mb={'32px'}
-        size={'xs'}
-      >
-        {!reduced && (
-          <Text as='span'>
-            <Trans i18nKey='new_vote'>New vote</Trans>
-          </Text>
-        )}
+      <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
+        <RouterLink to={generatePath(Routes.processes.create)}>
+          <HStack gap={reduced ? 0 : 2}>
+            <Icon as={LuPlus} boxSize={4} />
+            {!reduced && (
+              <Text as='span'>
+                <Trans i18nKey='new_vote'>New vote</Trans>
+              </Text>
+            )}
+          </HStack>
+        </RouterLink>
       </Button>
 
       <DashboardMenuOptions />

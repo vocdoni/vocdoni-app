@@ -1,25 +1,25 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
   Box,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
+  FieldErrorText,
+  FieldLabel,
+  FieldRoot,
   Input,
   Link,
   Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
+  TabsContent,
+  TabsContentGroup,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
 } from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
-import { CensusTypes, CensusTypeValues } from '~components/Process/Census/CensusType'
+import { CensusTypes } from '~components/Process/Census/CensusType'
 import { CensusCsvManager } from '~components/Process/Census/Spreadsheet'
 import { CensusWeb3Addresses } from '~components/Process/Census/Web3'
 import { Select } from '~components/shared/Form/Select'
@@ -63,10 +63,10 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
   }, [isFetching])
 
   return (
-    <FormControl isInvalid={!!errors.groupId}>
-      <FormLabel>
+    <FieldRoot invalid={!!errors.groupId}>
+      <FieldLabel>
         <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
-      </FormLabel>
+      </FieldLabel>
       <Controller
         control={control}
         name='groupId'
@@ -100,8 +100,8 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
           )
         }}
       />
-      <FormErrorMessage>{errors.groupId?.message?.toString()}</FormErrorMessage>
-    </FormControl>
+      <FieldErrorText>{errors.groupId?.message?.toString()}</FieldErrorText>
+    </FieldRoot>
   )
 }
 
@@ -143,7 +143,7 @@ const GroupCensusCreation = () => {
         </Alert>
       )}
 
-      <FormControl isInvalid={!!errors.census}>
+      <FieldRoot invalid={!!errors.census}>
         <Input
           type='hidden'
           {...register('census', {
@@ -153,8 +153,8 @@ const GroupCensusCreation = () => {
             },
           })}
         />
-        <FormErrorMessage>{errors.census?.message?.toString()}</FormErrorMessage>
-      </FormControl>
+        <FieldErrorText>{errors.census?.message?.toString()}</FieldErrorText>
+      </FieldRoot>
     </Box>
   )
 }
@@ -164,7 +164,7 @@ const CensusCreation = ({ showExtraMethods }: { showExtraMethods: boolean }) => 
   const { setValue, watch } = useFormContext()
   const censusType = watch('censusType')
 
-  const currentIndex = CensusTypeValues.indexOf(censusType)
+  const currentValue = censusType || CensusTypes.CSP
 
   // Set default census type to Memberbase (Group) if not set
   useEffect(() => {
@@ -173,8 +173,7 @@ const CensusCreation = ({ showExtraMethods }: { showExtraMethods: boolean }) => 
     }
   }, [censusType, setValue])
 
-  const handleTabChange = (index: number) => {
-    const nextType = CensusTypeValues[index]
+  const handleTabChange = (nextType: CensusTypes) => {
     const prevType = watch('censusType')
 
     if (nextType === prevType) return
@@ -201,24 +200,30 @@ const CensusCreation = ({ showExtraMethods }: { showExtraMethods: boolean }) => 
 
   // If extra methods are enabled, show the full tab system
   return (
-    <Tabs index={currentIndex} onChange={handleTabChange} isFitted>
-      <TabList w='full'>
-        <Tab>{t('process_create.census.group.label', { defaultValue: 'Group' })}</Tab>
-        <Tab>{t('process_create.census.spreadsheet.label', { defaultValue: 'Spreadsheet' })}</Tab>
-        <Tab>{t('process_create.census.web3.label', { defaultValue: 'Web3' })}</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel px={0}>
+    <TabsRoot value={currentValue} onValueChange={({ value }) => handleTabChange(value as CensusTypes)} fitted>
+      <TabsList w='full'>
+        <TabsTrigger value={CensusTypes.CSP}>
+          {t('process_create.census.group.label', { defaultValue: 'Group' })}
+        </TabsTrigger>
+        <TabsTrigger value={CensusTypes.Spreadsheet}>
+          {t('process_create.census.spreadsheet.label', { defaultValue: 'Spreadsheet' })}
+        </TabsTrigger>
+        <TabsTrigger value={CensusTypes.Web3}>
+          {t('process_create.census.web3.label', { defaultValue: 'Web3' })}
+        </TabsTrigger>
+      </TabsList>
+      <TabsContentGroup>
+        <TabsContent value={CensusTypes.CSP} px={0}>
           <GroupCensusCreation />
-        </TabPanel>
-        <TabPanel px={0} display='flex' flexDirection='column' gap={4}>
+        </TabsContent>
+        <TabsContent value={CensusTypes.Spreadsheet} px={0} display='flex' flexDirection='column' gap={4}>
           <CensusCsvManager />
-        </TabPanel>
-        <TabPanel px={0} display='flex' flexDirection='column' gap={4}>
+        </TabsContent>
+        <TabsContent value={CensusTypes.Web3} px={0} display='flex' flexDirection='column' gap={4}>
           <CensusWeb3Addresses />
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
+        </TabsContent>
+      </TabsContentGroup>
+    </TabsRoot>
   )
 }
 

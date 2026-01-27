@@ -1,13 +1,13 @@
-import { ChakraStylesConfig } from 'chakra-react-select'
+import type { ChakraStylesConfig } from 'chakra-react-select'
 
-export const customStylesSelect: ChakraStylesConfig = {
+export const customStylesSelect: ChakraStylesConfig<any, boolean> = {
   control: (base) => ({
     ...base,
     p: 0,
   }),
   placeholder: (base) => ({
     ...base,
-    color: 'dropdown.placeholder',
+    color: 'var(--chakra-colors-dropdown-placeholder)',
   }),
   menu: (base) => ({
     ...base,
@@ -19,27 +19,27 @@ export const customStylesSelect: ChakraStylesConfig = {
   }),
   option: (base, state) => ({
     ...base,
-    bgColor: state.isSelected && 'input.dropdown.option_bg_selected.light',
-    color: 'input.dropdown.option.light',
+    backgroundColor: state.isSelected ? 'var(--chakra-colors-input-dropdown-option-bg-selected-light)' : undefined,
+    color: 'var(--chakra-colors-input-dropdown-option-light)',
     icon: state.isSelected && 'PONER UN ICON DE CHECK AQUI',
 
-    _dark: {
-      bgColor: state.isSelected && 'input.dropdown.option_bg_selected.dark',
-      color: 'dropdown.option.dark',
+    ':where([data-theme="dark"]) &': {
+      backgroundColor: state.isSelected ? 'var(--chakra-colors-input-dropdown-option-bg-selected-dark)' : undefined,
+      color: 'var(--chakra-colors-dropdown-option-dark)',
     },
   }),
   dropdownIndicator: (base) => ({
     ...base,
-    bgColor: 'transparent',
-    color: 'input.dropdown.control',
+    backgroundColor: 'transparent',
+    color: 'var(--chakra-colors-input-dropdown-control)',
   }),
   clearIndicator: (base) => ({
     ...base,
-    bgColor: 'transparent',
-    color: 'input.dropdown.control',
+    backgroundColor: 'transparent',
+    color: 'var(--chakra-colors-input-dropdown-control)',
   }),
 }
 
-export const customStylesTokensSelect: ChakraStylesConfig = {
+export const customStylesTokensSelect: ChakraStylesConfig<any, boolean> = {
   ...customStylesSelect,
 }

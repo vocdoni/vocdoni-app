@@ -15,5 +15,5 @@ export const RoutesProvider = () => {
     basename: import.meta.env.BASE_URL,
   })
 
-  return <RouterProvider router={router} />
+  return <RouterProvider router={router} future={{ v7_startTransition: true }} />
 }

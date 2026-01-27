@@ -1,4 +1,17 @@
-import { Box, Button, Icon, Progress, Stack, Tag, TagLabel, Text, Wrap } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  HStack,
+  Icon,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
+  Stack,
+  TagLabel,
+  TagRoot,
+  Text,
+  Wrap,
+} from '@chakra-ui/react'
 import { dotobject } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { LuLock, LuSparkles } from 'react-icons/lu'
@@ -29,7 +42,15 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
   const hasPermission = permission(permissionType)
   const isLocked = !hasPermission
 
-  if (loading) return <Progress size='xs' isIndeterminate colorScheme='gray' />
+  if (loading) {
+    return (
+      <ProgressRoot size='xs' colorPalette='gray' value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
 
   if (hasPermission) return children({ isLocked })
 
@@ -73,29 +94,32 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
         </Text>
 
         {plansWithFeature.length > 0 && (
-          <Stack spacing={2} align='center' mt={2}>
+          <Stack gap={2} align='center' mt={2}>
             <Text fontSize='sm' color='texts.dark'>
               {t('subscription.locked_content.available_in', { defaultValue: 'Available in:' })}
             </Text>
-            <Wrap justify='center' spacing={2}>
+            <Wrap justify='center' gap={2}>
               {plansWithFeature.map((p) => (
-                <Tag key={p.id} size='md' variant='subtle' colorScheme='green'>
+                <TagRoot key={p.id} size='md' variant='subtle' colorPalette='green'>
                   <TagLabel>{translations[p.id]?.title ?? p.name ?? p.id}</TagLabel>
-                </Tag>
+                </TagRoot>
               ))}
             </Wrap>
           </Stack>
         )}
 
-        <Button
-          as={ReactRouterLink}
-          to={generatePath(Routes.dashboard.settings.subscription)}
-          leftIcon={<Icon as={LuSparkles} />}
-        >
-          {t(`subscription.locked_content.unlock`, {
-            defaultValue: 'Unlock {{ permissionName }}',
-            permissionName,
-          })}
+        <Button asChild>
+          <ReactRouterLink to={generatePath(Routes.dashboard.settings.subscription)}>
+            <HStack gap={2}>
+              <Icon as={LuSparkles} />
+              <Text as='span'>
+                {t(`subscription.locked_content.unlock`, {
+                  defaultValue: 'Unlock {{ permissionName }}',
+                  permissionName,
+                })}
+              </Text>
+            </HStack>
+          </ReactRouterLink>
         </Button>
       </Box>
     </Box>
