@@ -1,9 +1,7 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import { confirmAnatomy } from '@vocdoni/chakra-components'
+import { defineSlotRecipe } from '@chakra-ui/react'
+import { confirmAnatomy } from '~components/vocdoni-ui/theming/anatomy'
 
-const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(confirmAnatomy)
-
-const baseStyle = definePartsStyle({
+const baseStyle = {
   header: {
     fontWeight: 'extrabold',
     fontSize: 'lg',
@@ -19,23 +17,26 @@ const baseStyle = definePartsStyle({
     border: '1px solid',
     borderColor: 'table.border',
   },
-})
+}
 
-const danger = definePartsStyle({
+const danger = {
   confirm: {
     bg: 'red.600',
     _dark: { bg: 'red.800' },
     color: 'white',
     _hover: { bg: 'red.700', _dark: { bg: 'red.900' } },
   },
-})
+}
 
-const neutral = definePartsStyle({
+const neutral = {
   confirm: {},
-})
+}
 
-export const ConfirmModal = defineMultiStyleConfig({
-  baseStyle,
-  variants: { danger, neutral },
-  defaultProps: { variant: 'danger' },
+export const ConfirmModal = defineSlotRecipe({
+  slots: confirmAnatomy,
+  base: baseStyle,
+  variants: {
+    variant: { danger, neutral },
+  },
+  defaultVariants: { variant: 'danger' },
 })

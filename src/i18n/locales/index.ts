@@ -1,11 +1,11 @@
 import { Locale } from 'date-fns'
 /**
- * If you add or remove any languages, remember to also update languages.mjs
+ * If you add or remove any languages, remember to also update languages.ts
  */
-import ca from './ca.json'
-import en from './en.json'
-import es from './es.json'
-import it from './it.json'
+import ca from './ca/common.json'
+import en from './en/common.json'
+import es from './es/common.json'
+import it from './it/common.json'
 
 // no need to import english here, since it's date-fns default language
 import { ca as dca } from 'date-fns/locale/ca'

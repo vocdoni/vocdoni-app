@@ -1,5 +1,5 @@
 import { Box, Text } from '@chakra-ui/react'
-import { Pagination, RoutedPagination } from '@vocdoni/chakra-components'
+import { Pagination, RoutedPagination } from '~components/vocdoni-ui'
 import { usePagination, useRoutedPagination } from '@vocdoni/react-providers'
 import { Trans } from 'react-i18next'
 import RowsPerPageSelect from './RowsPerPageSelect'
@@ -33,7 +33,7 @@ const RoutedPaginatedTableFooter = () => {
         alignItems={{ base: 'flex-start', md: 'center' }}
         gap={5}
       >
-        <Text size='sm'>
+        <Text fontSize='sm'>
           <Trans i18nKey='pagination.page_out_of' values={{ page, total }}>
             Page {{ page }} of {{ total }}
           </Trans>
@@ -61,7 +61,7 @@ export const PaginatedTableFooter = () => {
   return (
     <Box display='flex' flexDirection='row' alignItems='center' gap={5} justifyContent='space-between'>
       <Box display='flex' flexDirection='row' alignItems='center' gap={5}>
-        <Text size='sm'>
+        <Text fontSize='sm'>
           <Trans i18nKey='pagination.page_out_of' values={{ page, total }}>
             Page {{ page }} of {{ total }}
           </Trans>

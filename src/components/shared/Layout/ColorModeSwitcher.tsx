@@ -2,18 +2,23 @@ import {
   Button,
   ButtonGroup,
   ButtonGroupProps,
+  HStack,
   Icon,
   IconButton,
   IconButtonProps,
-  Tooltip,
-  useColorMode,
-  useColorModeValue,
+  Text,
+  TooltipContent,
+  TooltipPositioner,
+  TooltipRoot,
+  TooltipTrigger,
 } from '@chakra-ui/react'
-import { useEffect, useState, type FC } from 'react'
+import { useTheme } from 'next-themes'
+import { type FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { IoMdMoon, IoMdSunny } from 'react-icons/io'
 import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu'
+import { useColorMode, useColorModeValue } from '~theme/color-mode'
 
 type ColorModeSwitcherProps = Omit<IconButtonProps, 'aria-label'>
 
@@ -25,12 +30,13 @@ export const ColorModeSwitcher: FC<ColorModeSwitcherProps> = (props) => {
 
   return (
     <IconButton
-      colorScheme='gray'
+      colorPalette='gray'
       onClick={toggleColorMode}
-      icon={<SwitchIcon />}
       aria-label={t('switch_mode', { defaultValue: 'Switch to {{ mode }} mode', mode: text })}
       {...props}
-    />
+    >
+      <SwitchIcon />
+    </IconButton>
   )
 }
 
@@ -42,36 +48,26 @@ export const ColorModeSwitcherDetailed: FC<ColorModeSwitcherProps> = (props) => 
 
   return (
     <Button
-      colorScheme='gray'
+      colorPalette='gray'
       fontSize='lg'
       onClick={toggleColorMode}
-      leftIcon={<SwitchIcon />}
       aria-label={t('switch_mode', { defaultValue: 'Switch to {{ mode }} mode', mode: text })}
-      children={text}
       {...props}
-    />
+    >
+      <HStack gap={2}>
+        <SwitchIcon />
+        <Text as='span'>{text}</Text>
+      </HStack>
+    </Button>
   )
 }
 
 type Mode = 'light' | 'dark' | 'system'
 
 export const ThemeToggleGroup = (props: ButtonGroupProps) => {
-  const { setColorMode } = useColorMode()
-  const [selected, setSelected] = useState<Mode>(() => {
-    return (localStorage.getItem('theme-preference') as Mode) || 'system'
-  })
+  const { theme, setTheme } = useTheme()
   const { t } = useTranslation()
-
-  // Effect to "properly" handle system color mode changes
-  useEffect(() => {
-    if (selected === 'system') {
-      const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      setColorMode(systemMode)
-    } else {
-      setColorMode(selected)
-    }
-    localStorage.setItem('theme-preference', selected)
-  }, [selected, setColorMode])
+  const selected: Mode = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system'
 
   const iconBg = useColorModeValue('gray.100', 'gray.700')
 
@@ -92,18 +88,24 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
       p={1}
     >
       {modes.map(({ mode, label, icon }) => (
-        <Tooltip key={mode} label={label}>
-          <IconButton
-            aria-label={label}
-            icon={<Icon as={icon} boxSize={4} />}
-            onClick={() => setSelected(mode)}
-            isActive={selected === mode}
-            bg={selected === mode ? iconBg : undefined}
-            variant='ghost'
-            borderRadius='sm'
-            size='xs'
-          />
-        </Tooltip>
+        <TooltipRoot key={mode}>
+          <TooltipTrigger asChild>
+            <IconButton
+              aria-label={label}
+              onClick={() => setTheme(mode)}
+              aria-pressed={selected === mode}
+              bg={selected === mode ? iconBg : undefined}
+              variant='ghost'
+              borderRadius='sm'
+              size='xs'
+            >
+              <Icon as={icon} boxSize={4} />
+            </IconButton>
+          </TooltipTrigger>
+          <TooltipPositioner>
+            <TooltipContent>{label}</TooltipContent>
+          </TooltipPositioner>
+        </TooltipRoot>
       ))}
     </ButtonGroup>
   )

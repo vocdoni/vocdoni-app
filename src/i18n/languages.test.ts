@@ -1,6 +1,4 @@
-import { describe, expect, it } from 'vitest'
-
-import languages, { baseLanguages } from './languages.mjs'
+import languages, { baseLanguages } from './languages'
 
 describe('languages configuration', () => {
   it('exports the base language map', () => {

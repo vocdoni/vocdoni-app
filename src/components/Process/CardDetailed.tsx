@@ -1,9 +1,9 @@
-import { Box, Card, CardBody, CardFooter, Text } from '@chakra-ui/react'
-import { ElectionDescription, ElectionStatusBadge, ElectionTitle } from '@vocdoni/chakra-components'
+import { Box, Card, Text } from '@chakra-ui/react'
 import { ElectionProvider, enforceHexPrefix, useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { ElectionDescription, ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { useDateFns } from '~i18n/use-date-fns'
 import { useReadMoreMarkdown } from '~shared/Layout/use-read-more'
 import { ActionsMenu } from './ActionsMenu'
@@ -16,8 +16,8 @@ interface Props {
 const ProcessCardDetailed = ({ election }: Props) => {
   return (
     <ElectionProvider election={election}>
-      <Card variant='detailed'>
-        <CardBody>
+      <Card.Root>
+        <Card.Body>
           <Link to={`/processes/${enforceHexPrefix(election.id)}`}>
             <ProcessDetailedCardTitle />
             <Box>
@@ -27,12 +27,12 @@ const ProcessCardDetailed = ({ election }: Props) => {
             <ProcessDetailedCardDescription />
           </Link>
           <ActionsMenu />
-        </CardBody>
+        </Card.Body>
 
-        <CardFooter>
+        <Card.Footer>
           <ProcessDetailedCardFooter />
-        </CardFooter>
-      </Card>
+        </Card.Footer>
+      </Card.Root>
     </ElectionProvider>
   )
 }

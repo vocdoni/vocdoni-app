@@ -1,13 +1,23 @@
-import { Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, MenuListProps } from '@chakra-ui/react'
-import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '@vocdoni/chakra-components'
+import {
+  Icon,
+  IconButton,
+  MenuContent,
+  MenuItem,
+  MenuPositioner,
+  MenuRoot,
+  MenuSeparator,
+  MenuTrigger,
+  type MenuContentProps,
+} from '@chakra-ui/react'
 import { useActions, useClient, useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, InvalidElection } from '@vocdoni/sdk'
 import { ElementType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCog } from 'react-icons/fa'
 import { RiCloseCircleLine, RiPauseCircleLine, RiPlayCircleLine, RiStopCircleLine } from 'react-icons/ri'
+import { ActionsProvider } from '~components/vocdoni-ui'
 
-export const ActionsMenu = (props: MenuListProps) => {
+export const ActionsMenu = (props: MenuContentProps) => {
   const { account } = useClient()
   const { election } = useElection()
 
@@ -22,90 +32,67 @@ export const ActionsMenu = (props: MenuListProps) => {
   }
 
   return (
-    <Menu closeOnSelect={false}>
-      <MenuButton as={IconButton} aria-label='Actions' icon={<FaCog />} variant='transparent' />
-      <ActionsProvider>
-        <ActionsMenuList {...props} />
-      </ActionsProvider>
-    </Menu>
+    <MenuRoot closeOnSelect={false}>
+      <MenuTrigger asChild>
+        <IconButton aria-label='Actions'>
+          <FaCog />
+        </IconButton>
+      </MenuTrigger>
+      <MenuPositioner>
+        <ActionsProvider>
+          <ActionsMenuList {...props} />
+        </ActionsProvider>
+      </MenuPositioner>
+    </MenuRoot>
   )
 }
 
-const ActionsMenuList = (props: MenuListProps) => {
+const ActionsMenuList = (props: MenuContentProps) => {
   const { t } = useTranslation()
   const { election } = useElection()
-  const { loading } = useActions()
+  const { loading, pause, resume, end, cancel, disabled } = useActions()
 
   if (!election || election instanceof InvalidElection) return null
 
   return (
-    <MenuList p={0}>
+    <MenuContent p={0} {...props}>
       {election.status === ElectionStatus.PAUSED && (
-        <ActionContinue
-          as={MenuItem}
+        <MenuItem
+          value='resume'
           aria-label={t('process_actions.start')}
-          icon={loading.continue ? undefined : <ActionIcon icon={RiPlayCircleLine} />}
-          justifyContent='start'
-          variant=''
-          sx={{
-            '& span': {
-              display: 'flex',
-              alignItems: 'center',
-            },
-          }}
+          onClick={resume}
+          disabled={disabled || loading.continue}
         >
+          <ActionIcon icon={RiPlayCircleLine} />
           {t('process_actions.start')}
-        </ActionContinue>
+        </MenuItem>
       )}
       {election.status === ElectionStatus.ONGOING && (
-        <ActionPause
-          as={MenuItem}
+        <MenuItem
+          value='pause'
           aria-label={t('process_actions.start')}
-          icon={loading.pause ? undefined : <ActionIcon icon={RiPauseCircleLine} />}
-          justifyContent='start'
-          variant=''
-          sx={{
-            '& span': {
-              display: 'flex',
-              alignItems: 'center',
-            },
-          }}
+          onClick={pause}
+          disabled={disabled || loading.pause}
         >
+          <ActionIcon icon={RiPauseCircleLine} />
           {t('process_actions.pause')}
-        </ActionPause>
+        </MenuItem>
       )}
-      <ActionEnd
-        as={MenuItem}
-        aria-label={t('process_actions.start')}
-        icon={loading.end ? undefined : <ActionIcon icon={RiStopCircleLine} />}
-        justifyContent='start'
-        variant=''
-        sx={{
-          '& span': {
-            display: 'flex',
-            alignItems: 'center',
-          },
-        }}
-      >
+      <MenuItem value='end' aria-label={t('process_actions.start')} onClick={end} disabled={disabled || loading.end}>
+        <ActionIcon icon={RiStopCircleLine} />
         {t('process_actions.end')}
-      </ActionEnd>
-      <MenuDivider m={1} />
-      <ActionCancel
-        as={MenuItem}
+      </MenuItem>
+      <MenuSeparator m={1} />
+      <MenuItem
+        value='cancel'
         aria-label={t('process_actions.start')}
-        icon={loading.cancel ? undefined : <ActionIcon icon={RiCloseCircleLine} />}
-        justifyContent='start'
-        variant=''
-        sx={{
-          '& span': {
-            display: 'flex',
-            alignItems: 'center',
-          },
-        }}
+        onClick={cancel}
+        disabled={disabled || loading.cancel}
       >
+        <ActionIcon icon={RiCloseCircleLine} />
         {t('process_actions.cancel')}
-      </ActionCancel>
-    </MenuList>
+      </MenuItem>
+    </MenuContent>
   )
 }
 

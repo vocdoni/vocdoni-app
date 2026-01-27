@@ -1,29 +1,45 @@
-import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
+import { defineRecipe } from '@chakra-ui/react'
 
-const sidebarTitle = defineStyle({
+const sidebarTitle = {
   pt: 4,
-})
+}
 
-const sidebarSubtitle = defineStyle({
+const sidebarSubtitle = {
   py: 4,
   textTransform: 'capitalize',
-})
+}
 
-export const Heading = defineStyleConfig({
-  baseStyle: {
+export const Heading = defineRecipe({
+  base: {
     fontWeight: 'bold',
   },
   variants: {
-    header: defineStyle({
-      fontWeight: 'extrabold',
-    }),
-    ['sidebar-title']: sidebarTitle,
-    ['sidebar-subtitle']: sidebarSubtitle,
-  },
-  defaultProps: {
-    size: 'md',
+    variant: {
+      header: {
+        fontWeight: 'extrabold',
+      },
+      ['sidebar-title']: sidebarTitle,
+      ['sidebar-subtitle']: sidebarSubtitle,
+    },
   },
 })
 
-// We want to treat election title as we treat other headings...
-export const ElectionTitle = Heading
+export const ElectionTitle = defineRecipe({
+  base: {
+    fontWeight: 'bold',
+    fontSize: 'xl',
+    textAlign: 'center',
+    lineHeight: 1.1,
+    mb: 3,
+  },
+})
+
+export const ElectionSchedule = defineRecipe({
+  base: {
+    fontWeight: 'bold',
+    fontSize: 'sm',
+    textAlign: 'center',
+    fontStyle: 'italic',
+    color: 'gray.400',
+  },
+})

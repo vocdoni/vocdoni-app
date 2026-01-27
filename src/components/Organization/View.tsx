@@ -1,4 +1,14 @@
-import { Alert, AlertDescription, AlertIcon, Box, Flex, Grid, GridItem, Spinner, Text } from '@chakra-ui/react'
+import {
+  AlertRoot as Alert,
+  AlertDescription,
+  AlertIndicator,
+  Box,
+  Flex,
+  Grid,
+  GridItem,
+  Spinner,
+  Text,
+} from '@chakra-ui/react'
 import { useClient, useOrganization } from '@vocdoni/react-providers'
 import { areEqualHexStrings, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
@@ -77,7 +87,7 @@ const OrganizationView = () => {
     <Box mb={44} mx='auto'>
       <Header />
 
-      <Text as='h2' fontSize='heading-sm' fontWeight='bold' mb={4} textAlign={{ base: 'center', md2: 'start' }}>
+      <Text as='h2' fontSize='heading-sm' fontWeight='bold' mb={4} textAlign={{ base: 'center', md: 'start' }}>
         {t('organization.elections')}
       </Text>
 
@@ -98,7 +108,7 @@ const OrganizationView = () => {
       </Flex>
       {error && (
         <Alert status='error'>
-          <AlertIcon />
+          <AlertIndicator />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}

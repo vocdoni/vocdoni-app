@@ -1,17 +1,19 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
-  AlertIcon,
+  AlertIndicator,
   Button,
-  Checkbox,
-  FormControl,
-  FormHelperText,
-  FormLabel,
+  CheckboxControl,
+  CheckboxHiddenInput,
+  CheckboxLabel,
+  CheckboxRoot,
+  FieldHelperText,
+  FieldLabel,
+  FieldRoot,
   Input,
   Link,
   Stack,
   Text,
-  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
@@ -20,6 +22,7 @@ import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
+import { useToast } from '~shared/Toast'
 
 export const Step0Base = ({ election }: { election: PublishedElection }) => {
   const { t } = useTranslation()
@@ -109,7 +112,7 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
         // 2FA required - proceed to Step 1 for code verification
         toast({
           title: t('csp.code_sent', { defaultValue: 'Verification code sent' }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
           isClosable: true,
         })
@@ -118,7 +121,7 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
         // No 2FA - complete authentication directly using the same method as Step 1
         toast({
           title: t('csp.auth_success', { defaultValue: 'Authentication successful' }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
           isClosable: true,
         })
@@ -130,7 +133,7 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
       toast({
         title: t('csp.auth_failed', { defaultValue: 'Authentication failed' }),
         description: errorMessage,
-        status: 'error',
+        type: 'error',
         duration: 3000,
         isClosable: true,
       })
@@ -168,53 +171,57 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
   }
 
   return (
-    <VStack spacing={6} align='stretch' w='full'>
+    <VStack gap={6} align='stretch' w='full'>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={4}>
+        <Stack gap={4}>
           {/* Render auth fields */}
           {authFields.map((field) => (
-            <FormControl key={field} isInvalid={!!errors[field]} isRequired>
-              <FormLabel>{getFieldLabel(field)}</FormLabel>
+            <FieldRoot key={field} invalid={!!errors[field]} required>
+              <FieldLabel>{getFieldLabel(field)}</FieldLabel>
               <Input {...register(field, { required: true })} type={getFieldType(field)} />
-            </FormControl>
+            </FieldRoot>
           ))}
 
           {/* Render 2FA field */}
           {is2Factor && (
-            <FormControl isInvalid={!!errors.contact} isRequired>
-              <FormLabel>{get2FaFieldLabel()}</FormLabel>
+            <FieldRoot invalid={!!errors.contact} required>
+              <FieldLabel>{get2FaFieldLabel()}</FieldLabel>
               <Input {...register('contact', { required: true })} type='text' />
-              <FormHelperText>
+              <FieldHelperText>
                 <Text as='span' fontWeight='bold'>
                   {t('csp.important', { defaultValue: 'Important' })}:
                 </Text>{' '}
                 {t('csp.contact_match_help', 'Must match the one registered in the system')}
-              </FormHelperText>
-            </FormControl>
+              </FieldHelperText>
+            </FieldRoot>
           )}
 
           {auth.isError && (
             <Alert status='error'>
-              <AlertIcon />
+              <AlertIndicator />
               <AlertDescription>{auth.error.message}</AlertDescription>
             </Alert>
           )}
 
-          <FormControl isRequired>
-            <Checkbox size='sm' variant='inline'>
-              <Trans i18nKey='csp.terms_acceptance'>
-                I have read and accept the{' '}
-                <Link href={termsOfServiceUrl} isExternal>
-                  Terms and Conditions
-                </Link>{' '}
-                and the{' '}
-                <Link href={privacyPolicyUrl} isExternal>
-                  Privacy Policy
-                </Link>
-                .
-              </Trans>
-            </Checkbox>
-          </FormControl>
+          <FieldRoot required>
+            <CheckboxRoot>
+              <CheckboxHiddenInput />
+              <CheckboxControl />
+              <CheckboxLabel>
+                <Trans i18nKey='csp.terms_acceptance'>
+                  I have read and accept the{' '}
+                  <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer'>
+                    Terms and Conditions
+                  </Link>{' '}
+                  and the{' '}
+                  <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer'>
+                    Privacy Policy
+                  </Link>
+                  .
+                </Trans>
+              </CheckboxLabel>
+            </CheckboxRoot>
+          </FieldRoot>
 
           <Text fontSize='xs'>
             💡{' '}
@@ -227,8 +234,7 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
           <Button
             type='submit'
             w='full'
-            isLoading={auth.isPending}
-            shouldWrapChildren
+            loading={auth.isPending}
             mt={2}
             aria-label={
               is2Factor

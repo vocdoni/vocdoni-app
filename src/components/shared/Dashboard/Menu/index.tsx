@@ -2,13 +2,18 @@ import {
   Box,
   Button,
   CloseButton,
-  Drawer,
+  DrawerBackdrop,
   DrawerContent,
-  DrawerOverlay,
+  DrawerPositioner,
+  DrawerRoot,
   Flex,
+  HStack,
   Icon,
-  Progress,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
   Text,
+  useToken,
 } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -25,6 +30,7 @@ import UserProfile from './UserProfile'
 
 const DashboardMenu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { reduced } = useContext(DashboardLayoutContext)
+  const [width, rWidth] = useToken('sizes', ['dashboard-menu.default', 'dashboard-menu.reduced'])
 
   return (
     <>
@@ -34,27 +40,27 @@ const DashboardMenu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
         borderRightColor='table.border'
         bgColor='dashboard.menu'
         display={{ base: 'none', md: 'flex' }}
-        flexDirection={'column'}
-        position={'sticky'}
+        flexDirection='column'
+        position='sticky'
         top={0}
-        minW={reduced ? '48px' : '255px'}
-        maxW={reduced ? '48px' : '255px'}
-        w={reduced ? '48px' : '255px'}
+        w={reduced ? rWidth : width}
         h='100vh'
         p={2}
         zIndex={100}
-        transition='width .3s ease, min-width .3s ease, max-width .3s ease'
+        transition='width .3s ease'
       >
         <DashboardMenuContent />
       </Box>
 
       {/* Sidebar for small screens */}
-      <Drawer isOpen={isOpen} placement='left' onClose={onClose}>
-        <DrawerOverlay />
-        <DrawerContent p={2}>
-          <DashboardMenuContent />
-        </DrawerContent>
-      </Drawer>
+      <DrawerRoot open={isOpen} placement='start' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
+        <DrawerBackdrop />
+        <DrawerPositioner>
+          <DrawerContent p={2}>
+            <DashboardMenuContent />
+          </DrawerContent>
+        </DrawerPositioner>
+      </DrawerRoot>
     </>
   )
 }
@@ -64,7 +70,15 @@ const SidebarTutorial = () => {
   const { reduced } = useContext(DashboardLayoutContext)
   const { isSidebarTutorialClosed, isLoading, closeSidebarTutorial } = useTutorials()
 
-  if (isLoading) return <Progress isIndeterminate />
+  if (isLoading) {
+    return (
+      <ProgressRoot value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
 
   if (isSidebarTutorialClosed) return null
 
@@ -83,7 +97,7 @@ const SidebarTutorial = () => {
         position={'absolute'}
         top={1}
         right={1}
-        colorScheme='gray'
+        colorPalette='gray'
         size='sm'
       />
       <Text fontSize={'sm'} fontWeight={'bold'}>
@@ -94,7 +108,7 @@ const SidebarTutorial = () => {
           defaultValue: 'Do you need some help with your first voting process? Watch this tutorial or schedule a call.',
         })}
       </Text>
-      <DashboardBookerModalButton variant='solid' colorScheme='gray' w='full' size={'sm'} fontSize={'12px'} />
+      <DashboardBookerModalButton variant='solid' colorPalette='gray' w='full' size={'sm'} fontSize={'12px'} />
     </DashboardBox>
   )
 }
@@ -105,32 +119,22 @@ const DashboardMenuContent = () => {
 
   return (
     <>
-      <Flex
-        as={ReactRouterLink}
-        to={Routes.dashboard.base}
-        justifyContent={'center'}
-        alignItems={'center'}
-        h='47px'
-        mb={2}
-      >
-        <VocdoniLogo width={reduced ? '32px' : '148px'} minimal={reduced} />
+      <Flex asChild justifyContent={'center'} alignItems={'center'} h='47px' mb={2}>
+        <ReactRouterLink to={Routes.dashboard.base}>
+          <VocdoniLogo width={reduced ? '32px' : '148px'} minimal={reduced} />
+        </ReactRouterLink>
       </Flex>
-      <Button
-        as={RouterLink}
-        to={generatePath(Routes.processes.create)}
-        w='full'
-        minW={0}
-        leftIcon={<Icon as={LuPlus} boxSize={4} />}
-        iconSpacing={reduced ? 0 : 2}
-        mt={'8px'}
-        mb={'32px'}
-        size={'xs'}
-      >
-        {!reduced && (
-          <Text as='span'>
-            <Trans i18nKey='new_vote'>New vote</Trans>
-          </Text>
-        )}
+      <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
+        <RouterLink to={generatePath(Routes.processes.create)}>
+          <HStack gap={reduced ? 0 : 2}>
+            <Icon as={LuPlus} boxSize={4} />
+            {!reduced && (
+              <Text as='span'>
+                <Trans i18nKey='new_vote'>New vote</Trans>
+              </Text>
+            )}
+          </HStack>
+        </RouterLink>
       </Button>
 
       <DashboardMenuOptions />

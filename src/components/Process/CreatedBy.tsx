@@ -1,4 +1,4 @@
-import { Avatar, Flex, FlexProps, Text, TextProps } from '@chakra-ui/react'
+import { AvatarFallback, AvatarImage, AvatarRoot, Flex, FlexProps, Text, TextProps } from '@chakra-ui/react'
 import { enforceHexPrefix, useOrganization } from '@vocdoni/react-providers'
 import { addressTextOverflow } from '~constants'
 
@@ -7,7 +7,10 @@ export const CreatedBy = (props: FlexProps) => {
 
   return (
     <Flex gap={2} alignItems='center' {...props}>
-      <Avatar size='xs' src={organization?.account.avatar} name={organization?.account.name.default} />
+      <AvatarRoot size='xs'>
+        {organization?.account.avatar ? <AvatarImage src={organization.account.avatar} /> : null}
+        <AvatarFallback name={organization?.account.name.default} />
+      </AvatarRoot>
       <LongOrganizationName size='sm' fontWeight='bold' />
     </Flex>
   )

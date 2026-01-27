@@ -25,7 +25,7 @@ export const DashboardLayoutContext = createContext<DashboardLayoutContextType |
 
 const LayoutDashboard: React.FC = () => {
   const [breadcrumb, setBreadcrumb] = useState<BreadcrumbItem[]>([])
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const [reduced, setReduced] = useLocalStorage(LocalStorageKeys.DashboardMenuReduced, false)
   const { t } = useTranslation()
@@ -38,7 +38,7 @@ const LayoutDashboard: React.FC = () => {
   return (
     <DashboardLayoutContext.Provider value={{ reduced: reduced && !isMobile }}>
       <DashboardLayoutProviders>
-        <Flex minH='100svh' w='full' _dark={{ bg: 'black.650' }} maxW={MaxWindowWidth} margin='0 auto'>
+        <Flex minH='100svh' w='full' _dark={{ bg: 'brand.650' }} maxW={MaxWindowWidth} margin='0 auto'>
           {/* Sidebar for large screens */}
           <DashboardMenu isOpen={isOpen} onClose={onClose} />
 
@@ -61,12 +61,14 @@ const LayoutDashboard: React.FC = () => {
               zIndex={100}
             >
               <IconButton
-                icon={<LuPanelLeft />}
                 aria-label={t('menu.open')}
-                colorScheme='gray'
+                colorPalette='gray'
+                variant='subtle'
                 size='xs'
                 onClick={isMobile ? onOpen : () => setReduced((prev) => !prev)}
-              />
+              >
+                <LuPanelLeft />
+              </IconButton>
 
               <Box borderRight='1px solid' borderRightColor='table.border' h={6} />
 
@@ -76,24 +78,19 @@ const LayoutDashboard: React.FC = () => {
                 <DashboardBookerModalButton
                   leftIcon={<Icon as={LuCircleHelp} />}
                   iconSpacing={{ base: 0, lg: 2 }}
-                  colorScheme='gray'
-                  variant='solid'
+                  variant='subtle'
+                  colorPalette='gray'
                   size='sm'
                 >
                   <Text as='span' display={{ base: 'none', lg: 'flex' }} fontSize='sm'>
                     <Trans i18nKey='do_you_need_help'>Do you need help?</Trans>
                   </Text>
                 </DashboardBookerModalButton>
-                <Button
-                  as={ReactRouterLink}
-                  to={generatePath(Routes.processes.create)}
-                  leftIcon={<Icon as={LuPlus} />}
-                  iconSpacing={{ base: 0, lg: 2 }}
-                  size='sm'
-                >
-                  <Text as='span' fontSize='sm' display={{ base: 'none', lg: 'flex' }}>
+                <Button asChild size='sm'>
+                  <ReactRouterLink to={generatePath(Routes.processes.create)}>
+                    <Icon as={LuPlus} />
                     <Trans i18nKey='new_voting'>New vote</Trans>
-                  </Text>
+                  </ReactRouterLink>
                 </Button>
               </Flex>
             </Box>

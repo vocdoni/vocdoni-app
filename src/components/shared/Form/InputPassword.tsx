@@ -1,4 +1,11 @@
-import { FormControl, FormErrorMessage, FormLabel, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
+import {
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
+  Icon,
+  Input,
+  InputGroup,
+} from '@chakra-ui/react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -45,17 +52,23 @@ const InputPassword = ({
   }
 
   return (
-    <FormControl isInvalid={!!errors[formValue]} isRequired={required}>
-      {label && <FormLabel variant='process-create-title-sm'>{label}</FormLabel>}
-      <InputGroup>
-        <Input {...register(formValue, validationRules)} type={inputType} placeholder={placeholder} required={false} />
-        <InputRightElement display='flex' alignItems='center' minH='100%'>
+    <FormControl invalid={!!errors[formValue]} required={required}>
+      {label && (
+        <FormLabel fontSize='sm' fontWeight='medium'>
+          {label}
+        </FormLabel>
+      )}
+      <InputGroup
+        endElement={
           <Icon
             _hover={{ cursor: 'pointer' }}
             as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
             onClick={handleClick}
           />
-        </InputRightElement>
+        }
+        endElementProps={{ display: 'flex', alignItems: 'center' }}
+      >
+        <Input {...register(formValue, validationRules)} type={inputType} placeholder={placeholder} required={false} />
       </InputGroup>
       <FormErrorMessage mt={2}>
         {errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}

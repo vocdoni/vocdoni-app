@@ -1,4 +1,4 @@
-import { Tab, TabList, Tabs } from '@chakra-ui/react'
+import { Tabs } from '@chakra-ui/react'
 import { ElectionStatus } from '@vocdoni/sdk'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,6 +30,7 @@ const OrganizationVotings = () => {
   const isDrafts = !!matchPath(Routes.dashboard.processes.drafts, location.pathname)
   const isEnded = !!matchPath(Routes.dashboard.processes.ended, location.pathname)
   const currentTabIndex = isDrafts ? 2 : isEnded ? 1 : 0
+  const activeTabValue = menuItems[currentTabIndex]?.route
 
   // Set page title
   useEffect(() => {
@@ -44,22 +45,24 @@ const OrganizationVotings = () => {
     <DashboardContents>
       <Heading textTransform='capitalize'>{t('voting_processes')}</Heading>
       <SubHeading>{t('voting_processes_description')}</SubHeading>
-      <Tabs
+      <Tabs.Root
         variant='settings'
-        index={currentTabIndex}
-        onChange={(index) => {
-          const item = menuItems[index]
-          navigate(item.route)
+        value={activeTabValue}
+        onValueChange={({ value }) => {
+          const item = menuItems.find((entry) => entry.route === value)
+          if (item) navigate(item.route)
         }}
-        isLazy
+        lazyMount
       >
-        <TabList mb={6}>
-          {menuItems.map((item, index) => (
-            <Tab key={index}>{item.label}</Tab>
+        <Tabs.List mb={6}>
+          {menuItems.map((item) => (
+            <Tabs.Trigger key={item.route} value={item.route}>
+              {item.label}
+            </Tabs.Trigger>
           ))}
-        </TabList>
+        </Tabs.List>
         <Outlet context={{ setBreadcrumb }} />
-      </Tabs>
+      </Tabs.Root>
     </DashboardContents>
   )
 }

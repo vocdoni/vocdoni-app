@@ -1,10 +1,8 @@
-import { menuAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { menuAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(menuAnatomy.keys)
-
-const baseStyle = definePartsStyle((props) => ({
-  list: {
+const baseStyle = {
+  content: {
     p: 1,
     borderRadius: 'sm',
     boxShadow: 'md',
@@ -13,18 +11,29 @@ const baseStyle = definePartsStyle((props) => ({
   item: {
     bg: 'chakra.body.bg',
     _selected: {
-      bg: props.colorMode === 'dark' ? 'black.700' : 'gray.100',
-      color: props.colorMode === 'dark' ? 'white' : 'black',
+      bg: 'gray.100',
+      color: 'black',
+      _dark: {
+        bg: 'brand.700',
+        color: 'white',
+      },
     },
     _focus: {
-      bg: props.colorMode === 'dark' ? 'black.800' : 'gray.100',
-      color: props.colorMode === 'dark' ? 'white' : 'black',
+      bg: 'gray.100',
+      color: 'black',
+      _dark: {
+        bg: 'brand.800',
+        color: 'white',
+      },
     },
   },
 
-  divider: {
+  separator: {
     m: 0,
   },
-}))
+}
 
-export const Menu = defineMultiStyleConfig({ baseStyle })
+export const Menu = defineSlotRecipe({
+  slots: menuAnatomy.keys(),
+  base: baseStyle,
+})

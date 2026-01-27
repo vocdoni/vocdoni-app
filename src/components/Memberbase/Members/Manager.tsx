@@ -1,32 +1,29 @@
 import {
   Button,
-  Drawer,
+  DrawerBackdrop,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
-  DrawerOverlay,
+  DrawerPositioner,
+  DrawerRoot,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
-  FormLabel,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  FieldHelperText as FormHelperText,
+  FieldLabel as FormLabel,
   Heading,
   Input,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
   NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Stack,
   Text,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-providers'
 import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useToast } from '~shared/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
 import { useTable } from '../TableProvider'
@@ -46,7 +43,7 @@ const stringifyObjectValues = (obj: Record<string, any>) =>
 export const MemberManager = ({ control, member = null }: MemberManagerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef(null)
   const { columns } = useTable()
   const addMember = useAddMembers()
@@ -141,7 +138,7 @@ export const MemberManager = ({ control, member = null }: MemberManagerProps) =>
     const handleSuccess = () => {
       toast({
         title: successToastMessage,
-        status: 'success',
+        type: 'success',
         duration: 3000,
         isClosable: true,
       })
@@ -157,7 +154,7 @@ export const MemberManager = ({ control, member = null }: MemberManagerProps) =>
       toast({
         title: errorToastMessage,
         description: error.message,
-        status: 'error',
+        type: 'error',
         duration: 3000,
         isClosable: true,
       })
@@ -170,7 +167,7 @@ export const MemberManager = ({ control, member = null }: MemberManagerProps) =>
         toast({
           title: errorToastMessage,
           description: t('memberbase.edit_member.missing_id', { defaultValue: 'Missing member id for update.' }),
-          status: 'error',
+          type: 'error',
           duration: 3000,
           isClosable: true,
         })
@@ -203,78 +200,88 @@ export const MemberManager = ({ control, member = null }: MemberManagerProps) =>
   return (
     <FormProvider {...methods}>
       {cloneElement(control, { ref: btnRef, onClick: onOpen })}
-      <Drawer isOpen={isOpen} placement='right' onClose={handleClose} finalFocusRef={btnRef} size='sm'>
-        <DrawerOverlay />
-        <DrawerContent p={1}>
-          <DrawerHeader>
-            <Heading size='md'>{title}</Heading>
-            <Text fontSize='sm' color='texts.subtle'>
-              {description}
-            </Text>
-          </DrawerHeader>
-          <DrawerBody>
-            <Stack as='form' id='member-form' spacing={4} onSubmit={methods.handleSubmit(onSubmit)}>
-              {columns.map((col) => {
-                const isPhone = col.id === 'phone'
-                const isBirthdate = col.id === 'birthDate'
-                const isWeighted = col.id === 'weight'
+      <DrawerRoot
+        open={isOpen}
+        placement='end'
+        onOpenChange={({ open }) => (!open ? handleClose() : undefined)}
+        finalFocusEl={btnRef ? () => btnRef.current : undefined}
+        size='sm'
+      >
+        <DrawerBackdrop />
+        <DrawerPositioner>
+          <DrawerContent p={1}>
+            <DrawerHeader>
+              <Heading size='md'>{title}</Heading>
+              <Text fontSize='sm' color='texts.subtle'>
+                {description}
+              </Text>
+            </DrawerHeader>
+            <DrawerBody>
+              <Stack as='form' id='member-form' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
+                {columns.map((col) => {
+                  const isPhone = col.id === 'phone'
+                  const isBirthdate = col.id === 'birthDate'
+                  const isWeighted = col.id === 'weight'
 
-                return (
-                  <FormControl key={col.id} isInvalid={!!methods.formState.errors[col.id]}>
-                    <FormLabel>{col.label}</FormLabel>
-                    {isWeighted ? (
-                      <Controller
-                        name={col.id}
-                        control={methods.control}
-                        rules={fieldValidations[col.id]}
-                        render={({ field }) => (
-                          <NumberInput
-                            value={field.value}
-                            onChange={(val) => field.onChange(val === '' ? '' : Number(val))}
-                          >
-                            <NumberInputField />
-                            <NumberInputStepper>
-                              <NumberIncrementStepper />
-                              <NumberDecrementStepper />
-                            </NumberInputStepper>
-                          </NumberInput>
-                        )}
-                      />
-                    ) : (
-                      <Input
-                        {...methods.register(col.id, {
-                          ...(fieldValidations[col.id] || {}),
-                        })}
-                        placeholder={hadPhone && isPhone ? '•••••••••••' : ''}
-                        type={isBirthdate ? 'date' : isPhone ? 'tel' : 'text'}
-                        required={false} // we don't want HTML5 validation
-                      />
-                    )}
-                    {isPhone && hadPhone && (
-                      <FormHelperText>
-                        {t('memberbase.form.phone_warning', {
-                          defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
-                        })}
-                      </FormHelperText>
-                    )}
-                    <FormErrorMessage mt={2}>
-                      {methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'}
-                    </FormErrorMessage>
-                  </FormControl>
-                )
-              })}
-            </Stack>
-            <Flex justify='flex-end' gap={2} mt={4}>
-              <Button variant='outline' onClick={handleClose}>
-                {t('memberbase.form.cancel', { defaultValue: 'Cancel' })}
-              </Button>
-              <Button type='submit' isLoading={isSubmitting} shouldWrapChildren form='member-form'>
-                {t('memberbase.form.save', { defaultValue: 'Save Changes' })}
-              </Button>
-            </Flex>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+                  return (
+                    <FormControl key={col.id} invalid={!!methods.formState.errors[col.id]}>
+                      <FormLabel>{col.label}</FormLabel>
+                      {isWeighted ? (
+                        <Controller
+                          name={col.id}
+                          control={methods.control}
+                          rules={fieldValidations[col.id]}
+                          render={({ field }) => (
+                            <NumberInput.Root
+                              value={field.value === '' ? '' : String(field.value ?? '')}
+                              onValueChange={(details) =>
+                                field.onChange(details.value === '' ? '' : Number(details.value))
+                              }
+                            >
+                              <NumberInput.Input />
+                              <NumberInput.Control>
+                                <NumberInput.IncrementTrigger />
+                                <NumberInput.DecrementTrigger />
+                              </NumberInput.Control>
+                            </NumberInput.Root>
+                          )}
+                        />
+                      ) : (
+                        <Input
+                          {...methods.register(col.id, {
+                            ...(fieldValidations[col.id] || {}),
+                          })}
+                          placeholder={hadPhone && isPhone ? '•••••••••••' : ''}
+                          type={isBirthdate ? 'date' : isPhone ? 'tel' : 'text'}
+                          required={false} // we don't want HTML5 validation
+                        />
+                      )}
+                      {isPhone && hadPhone && (
+                        <FormHelperText>
+                          {t('memberbase.form.phone_warning', {
+                            defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
+                          })}
+                        </FormHelperText>
+                      )}
+                      <FormErrorMessage mt={2}>
+                        {methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'}
+                      </FormErrorMessage>
+                    </FormControl>
+                  )
+                })}
+              </Stack>
+              <Flex justify='flex-end' gap={2} mt={4}>
+                <Button variant='outline' onClick={handleClose}>
+                  {t('memberbase.form.cancel', { defaultValue: 'Cancel' })}
+                </Button>
+                <Button type='submit' loading={isSubmitting} form='member-form'>
+                  {t('memberbase.form.save', { defaultValue: 'Save Changes' })}
+                </Button>
+              </Flex>
+            </DrawerBody>
+          </DrawerContent>
+        </DrawerPositioner>
+      </DrawerRoot>
     </FormProvider>
   )
 }

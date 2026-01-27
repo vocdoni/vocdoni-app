@@ -1,4 +1,5 @@
-import { Box, Button, Flex, Heading, SimpleGrid, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-providers'
 import { Account } from '@vocdoni/sdk'
@@ -84,13 +85,13 @@ const EditOrganization = () => {
       await setStepDoneAsync(SetupStepIds.organizationDetails)
       toast({
         title: t('edit_saas_profile.edited_successfully', { defaultValue: 'Updated successfully' }),
-        status: 'success',
+        type: 'success',
       })
     } catch (e) {
       toast({
         title: t('edit_saas_profile.edit_failed', { defaultValue: 'Update failed' }),
         description: (e as Error).message,
-        status: 'error',
+        type: 'error',
       })
     } finally {
       setPending(false)
@@ -105,17 +106,17 @@ const EditOrganization = () => {
             <Heading size='md'>
               {t('create_org.organization_details', { defaultValue: 'Organization Details' })}
             </Heading>
-            <Text color='texts.subtle' size='sm'>
+            <Text color='texts.subtle' fontSize='sm'>
               {t('create_org.organization_details_description', {
                 defaultValue: "Manage your organization's profile and configuration settings.",
               })}
             </Text>
           </Flex>
           <Box>
-            <Text fontWeight='bold' size='lg'>
+            <Text fontWeight='bold' fontSize='lg'>
               {t('create_org.public_info', { defaultValue: 'Public Profile' })}
             </Text>
-            <Text color='texts.subtle' size='sm' mb={4}>
+            <Text color='texts.subtle' fontSize='sm' mb={4}>
               {t('create_org.public_info_description', {
                 defaultValue: 'This information is shown in various places including the voting pages.',
               })}
@@ -132,25 +133,19 @@ const EditOrganization = () => {
               fontWeight='bold'
               mx={3.5}
               whiteSpace='nowrap'
-              size='xs'
+              fontSize='xs'
               textTransform='uppercase'
             >
               {t('other_details', { defaultValue: 'Other Details' })}
             </Text>
             <HSeparator />
           </Flex>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+          <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
             <PrivateOrgForm />
           </SimpleGrid>
 
           <Flex align='center' direction='column' alignSelf='end'>
-            <Button
-              type='submit'
-              isLoading={isPending}
-              shouldWrapChildren
-              aria-label={t('actions.save', { defaultValue: 'Save' })}
-              w='full'
-            >
+            <Button type='submit' loading={isPending} aria-label={t('actions.save', { defaultValue: 'Save' })} w='full'>
               {t('actions.save', { defaultValue: 'Save' })}
             </Button>
           </Flex>

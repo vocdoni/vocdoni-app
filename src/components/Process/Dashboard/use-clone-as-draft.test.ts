@@ -1,6 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 // Mock dependencies
@@ -16,7 +15,7 @@ vi.mock('react-router-dom', () => ({
   createSearchParams: vi.fn((params: any) => new URLSearchParams(params)),
 }))
 
-vi.mock('@chakra-ui/react', () => ({
+vi.mock('~shared/Toast', () => ({
   useToast: () => mockToast,
 }))
 
@@ -609,7 +608,7 @@ describe('useCloneAsDraft', () => {
         expect(mockToast).toHaveBeenCalledWith(
           expect.objectContaining({
             title: 'Draft cloned successfully',
-            status: 'success',
+            type: 'success',
             duration: 3000,
             isClosable: true,
           })
@@ -656,7 +655,7 @@ describe('useCloneAsDraft', () => {
           expect.objectContaining({
             title: 'Error cloning draft',
             description: expect.stringContaining('5 drafts'),
-            status: 'error',
+            type: 'error',
             duration: 10000,
             isClosable: true,
           })

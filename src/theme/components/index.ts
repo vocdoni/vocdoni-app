@@ -1,22 +1,27 @@
+import { Accordion } from './accordion'
 import { Badge } from './badge'
 import { Button } from './button'
 import { Card } from './card'
 import { Checkbox, DetailedCheckbox } from './checkbox'
 import { ConfirmModal } from './confirmModal'
 import { Drawer } from './drawer'
+import { ElectionDescription, ElectionVideo } from './election'
 import { EllipsisButton } from './ellipsisButton'
 import { FormLabel } from './form'
-import { ElectionTitle, Heading } from './heading'
+import { ElectionSchedule, ElectionTitle, Heading } from './heading'
 import { Input } from './input'
 import { Link } from './link'
 import { Menu } from './menu'
-import { Modal } from './modal'
+import { OrganizationDescription, OrganizationImage, OrganizationName } from './organization'
 import { Pagination } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
 import { QuestionChoice } from './questionChoice'
 import { ElectionQuestions } from './questions'
 import { QuestionsConfirmation } from './questionsConfirmation'
+import { QuestionsEmpty } from './questionsEmpty'
+import { QuestionsTip } from './questionsTip'
+import { QuestionsTypeBadge } from './questionsTypeBadge'
 import { Radio } from './radio'
 import { ElectionResults } from './results'
 import { SecurityLevelBox } from './securitylevelbox'
@@ -30,42 +35,54 @@ import { Text } from './text'
 import { Textarea } from './textarea'
 import { Tooltip } from './tooltip'
 import { Voted } from './voted'
+import { VoteWeight } from './voteWeight'
 
-const components = {
-  Badge,
-  Button,
-  EllipsisButton,
-  Card,
-  Checkbox,
-  DetailedCheckbox,
-  Drawer,
+export const recipes = {
+  badge: Badge,
+  button: Button,
+  formLabel: FormLabel,
+  heading: Heading,
+  input: Input,
+  link: Link,
+  text: Text,
+  textarea: Textarea,
+  ElectionDescription,
+  ElectionSchedule,
   ElectionTitle,
-  ElectionQuestions,
-  ElectionResults,
-  FormLabel,
-  Heading,
-  Input,
-  Link,
-  Menu,
-  Modal,
-  Pagination,
-  Popover,
-  Progress,
-  Radio,
-  Stepper,
-  Switch,
-  SpreadsheetAccess,
-  Table,
-  Tabs,
-  Tag,
-  Textarea,
-  Text,
-  Tooltip,
+  ElectionVideo,
+  OrganizationDescription,
+  OrganizationImage,
+  OrganizationName,
   SecurityLevelBox,
-  ConfirmModal,
-  QuestionsConfirmation,
-  QuestionChoice,
-  Voted,
 }
 
-export default components
+export const slotRecipes = {
+  accordion: Accordion,
+  card: Card,
+  checkbox: Checkbox,
+  drawer: Drawer,
+  menu: Menu,
+  popover: Popover,
+  progress: Progress,
+  radioGroup: Radio,
+  switch: Switch,
+  table: Table,
+  tabs: Tabs,
+  tag: Tag,
+  tooltip: Tooltip,
+  ConfirmModal,
+  DetailedCheckbox,
+  ElectionQuestions,
+  ElectionResults,
+  EllipsisButton,
+  Pagination,
+  QuestionChoice,
+  QuestionsConfirmation,
+  QuestionsEmpty,
+  QuestionsTip,
+  QuestionsTypeBadge,
+  SpreadsheetAccess,
+  steps: Stepper,
+  Voted,
+  VoteWeight,
+}

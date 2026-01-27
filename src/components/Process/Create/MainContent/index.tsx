@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Icon,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, Button, Dialog, Flex, HStack, Icon, Text, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -37,7 +24,7 @@ import { DefaultQuestions, SelectorTypes } from '../common'
 import { QuestionForm } from './QuestionForm'
 import { QuestionType } from './QuestionType'
 
-const DeleteQuestionModal = ({ isOpen, onClose, removeQuestion }) => {
+const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
   const { t } = useTranslation()
 
   return (
@@ -46,14 +33,14 @@ const DeleteQuestionModal = ({ isOpen, onClose, removeQuestion }) => {
       subtitle={t('process.create.question.delete.description', {
         defaultValue: 'Are you sure you want to delete this question?',
       })}
-      isOpen={isOpen}
-      onClose={onClose}
+      open={open}
+      onOpenChange={onOpenChange}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onClose}>
+        <Button variant='outline' onClick={() => onOpenChange({ open: false })}>
           {t('process.create.question.delete.cancel_button', { defaultValue: 'Cancel' })}
         </Button>
-        <Button colorScheme='red' onClick={removeQuestion}>
+        <Button colorPalette='red' onClick={removeQuestion}>
           {t('process.create.question.delete.delete_button', { defaultValue: 'Delete' })}
         </Button>
       </Flex>
@@ -61,60 +48,56 @@ const DeleteQuestionModal = ({ isOpen, onClose, removeQuestion }) => {
   )
 }
 
-const AddMultipleQuestionModal = ({ isOpen, onClose }) => {
+const AddMultipleQuestionModal = ({ open, onOpenChange }) => {
   const { t } = useTranslation()
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent p={5}>
-        <ModalHeader p={0}>
-          <Flex flexDirection='column' gap={3}>
-            <Heading size='sm'>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.Header>
+            <Dialog.Title>
               {t('process.create.question.add_multiple.title', {
                 defaultValue: 'Multi-question multiple-choice is not available yet',
               })}
-            </Heading>
-            <Box fontSize='sm' color='texts.subtle'>
-              {t('process.create.question.add_multiple.description', {
-                defaultValue:
-                  'Creating processes with more than one multiple-choice question is currently not available. If you need this type of process, please contact us.',
-              })}
-            </Box>
-          </Flex>
-        </ModalHeader>
-        <ModalBody p={0}>
-          <Flex justifyContent='flex-end' mt={4} gap={2}>
+              <Box fontSize='sm' color='texts.subtle'>
+                {t('process.create.question.add_multiple.description', {
+                  defaultValue:
+                    'Creating processes with more than one multiple-choice question is currently not available. If you need this type of process, please contact us.',
+                })}
+              </Box>
+            </Dialog.Title>
+          </Dialog.Header>
+          <Dialog.Footer>
+            <Dialog.ActionTrigger asChild>
+              <Button
+                variant='outline'
+                aria-label={t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
+              >
+                {t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
+              </Button>
+            </Dialog.ActionTrigger>
             <Button
-              variant='outline'
-              aria-label={t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
-              onClick={onClose}
-            >
-              {t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
-            </Button>
-            <Button
-              as={Link}
-              to={Routes.dashboard.settings.support}
+              asChild
               aria-label={t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
             >
-              {t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
+              <Link to={Routes.dashboard.settings.support}>
+                {t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
+              </Link>
             </Button>
-          </Flex>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }
 
 export const Questions = () => {
   const { trackPlausibleEvent } = useAnalytics()
   const { control, watch } = useFormContext()
-  const { isOpen, onClose, onOpen } = useDisclosure()
-  const {
-    isOpen: isAddMultipleQuestionsOpen,
-    onClose: onAddMultipleQuestionsClose,
-    onOpen: onAddMultipleQuestionsOpen,
-  } = useDisclosure()
+  const [isDeleteQuestionModalOpen, setDeleteQuestionModalOpen] = useState(false)
+  const [isAddMultipleQuestionsOpen, setAddMultipleQuestionsOpen] = useState(false)
   const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(null)
   const { fields, append, remove, move } = useFieldArray({
     control,
@@ -134,13 +117,13 @@ export const Questions = () => {
       append(DefaultQuestions[questionType])
     } else {
       trackPlausibleEvent({ name: AnalyticsEvent.TriedMultiquestionMultichoice })
-      onAddMultipleQuestionsOpen()
+      setAddMultipleQuestionsOpen(true)
     }
   }
 
   const removeQuestion = (index) => {
     remove(index)
-    onClose()
+    setDeleteQuestionModalOpen(false)
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -159,11 +142,11 @@ export const Questions = () => {
   const onRemoveQuestion = (index: number | null) => {
     if (index === null) return
     setPendingDeleteIndex(index)
-    onOpen()
+    setDeleteQuestionModalOpen(true)
   }
 
   return (
-    <VStack align='stretch' spacing={4}>
+    <VStack align='stretch' gap={4}>
       <DashboardSection>
         <QuestionType />
       </DashboardSection>
@@ -183,15 +166,23 @@ export const Questions = () => {
         </SortableContext>
       </DndContext>
       <DeleteQuestionModal
-        isOpen={isOpen}
-        onClose={onClose}
+        open={isDeleteQuestionModalOpen}
+        onOpenChange={({ open }) => setDeleteQuestionModalOpen(open)}
         removeQuestion={() => removeQuestion(pendingDeleteIndex)}
       />
 
-      <Button leftIcon={<Icon as={LuPlus} />} variant='outline' onClick={addQuestion}>
-        <Trans i18nKey='process.create.question.add'>Add question</Trans>
+      <Button variant='outline' onClick={addQuestion}>
+        <HStack gap={2}>
+          <Icon as={LuPlus} />
+          <Text as='span'>
+            <Trans i18nKey='process.create.question.add'>Add question</Trans>
+          </Text>
+        </HStack>
       </Button>
-      <AddMultipleQuestionModal isOpen={isAddMultipleQuestionsOpen} onClose={onAddMultipleQuestionsClose} />
+      <AddMultipleQuestionModal
+        open={isAddMultipleQuestionsOpen}
+        onOpenChange={({ open }) => setAddMultipleQuestionsOpen(open)}
+      />
     </VStack>
   )
 }

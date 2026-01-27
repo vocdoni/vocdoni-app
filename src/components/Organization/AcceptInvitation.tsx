@@ -1,4 +1,5 @@
-import { Alert, AlertDescription, AlertIcon, Button, Flex, Spinner, Text, useToast } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, AlertIndicator, Button, Flex, Spinner, Text } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { ReactNode, useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -10,7 +11,7 @@ import { Routes } from '~src/router/routes'
 
 const Error = ({ error }: { error: ReactNode }) => (
   <Alert status='error'>
-    <AlertIcon />
+    <AlertIndicator />
     <AlertDescription>{error}</AlertDescription>
   </Alert>
 )
@@ -50,7 +51,7 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
     toast({
       title: t('invite.success_title', { defaultValue: 'Invitation accepted' }),
       description: t('invite.success_description', { defaultValue: 'You can now sign in' }),
-      status: 'success',
+      type: 'success',
     })
     navigate(Routes.auth.signIn)
   }, [acceptInvitationMutation.isSuccess])
@@ -96,8 +97,10 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
               Your account is not verified. Please verify your account to continue.
             </Trans>
           </Text>
-          <Button as={RouterLink} to={generatePath(Routes.auth.verify)}>
-            <Trans i18nKey='invite.go_to_verify'>Verify Account</Trans>
+          <Button asChild>
+            <RouterLink to={generatePath(Routes.auth.verify)}>
+              <Trans i18nKey='invite.go_to_verify'>Verify Account</Trans>
+            </RouterLink>
           </Button>
         </Flex>
       )

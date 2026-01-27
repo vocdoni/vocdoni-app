@@ -1,18 +1,18 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
-  AlertIcon,
+  AlertIndicator,
   Box,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
   HStack,
   Input,
   Link,
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { MutableRefObject, useEffect, useRef, useState } from 'react'
+import { MutableRefObject, ReactNode, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
@@ -109,9 +109,9 @@ export const BasicConfig = () => {
     setDurationExceeded(durationDays > maxDurationDays)
   }, [startDate, endDate, autoStart, maxDuration])
 
-  const handleAutoStartChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('autoStart', e.target.checked)
-    if (e.target.checked) {
+  const handleAutoStartChange = (checked: boolean) => {
+    setValue('autoStart', checked)
+    if (checked) {
       setValue('startDate', '')
       setValue('startTime', '')
       setMin(new Date())
@@ -126,12 +126,21 @@ export const BasicConfig = () => {
           <FormLabel htmlFor='autoStart' mb='0'>
             <Trans i18nKey='process_create.auto_start'>Start immediately</Trans>
           </FormLabel>
-          <Switch id='autoStart' {...register('autoStart')} isChecked={autoStart} onChange={handleAutoStartChange} />
+          <Switch.Root
+            id='autoStart'
+            checked={autoStart}
+            onCheckedChange={(details) => handleAutoStartChange(details.checked)}
+          >
+            <Switch.HiddenInput {...register('autoStart')} />
+            <Switch.Control>
+              <Switch.Thumb />
+            </Switch.Control>
+          </Switch.Root>
         </FormControl>
 
         {!autoStart && (
           <>
-            <FormControl isInvalid={!!errors.startDate || !!errors.startTime} mb={2}>
+            <FormControl invalid={!!errors.startDate || !!errors.startTime} mb={2}>
               <FormLabel htmlFor='startDate'>
                 <Trans i18nKey='process_create.start_datetime'>Start date and time</Trans>
               </FormLabel>
@@ -168,11 +177,11 @@ export const BasicConfig = () => {
 
       {/* End date and time */}
       <Box>
-        <FormControl isInvalid={!!errors.endDate || !!errors.endTime} mb={2}>
+        <FormControl invalid={!!errors.endDate || !!errors.endTime} mb={2}>
           <FormLabel htmlFor='endDate'>
             <Trans i18nKey='process_create.end_datetime'>End date and time</Trans>
           </FormLabel>
-          <HStack spacing={4} align='start'>
+          <HStack gap={4} align='start'>
             <Box flex='1'>
               <Input
                 id='endDate'
@@ -214,12 +223,18 @@ export const BasicConfig = () => {
 
       {durationExceeded && (
         <Alert status='error'>
-          <AlertIcon />
+          <AlertIndicator />
           <AlertDescription fontSize='sm'>
             <Trans
               i18nKey='calendar.max_duration_exceeded'
               values={{ maxDuration }}
-              components={{ a: <Link as={RouterLink} to={Routes.dashboard.settings.support} /> }}
+              components={{
+                a: (
+                  <Link asChild>
+                    <RouterLink to={Routes.dashboard.settings.support} />
+                  </Link>
+                ),
+              }}
               defaults='Duration exceeds your plan’s {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days.'
             />
           </AlertDescription>

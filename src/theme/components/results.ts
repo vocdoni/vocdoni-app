@@ -1,9 +1,7 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import { resultsAnatomy } from '@vocdoni/chakra-components'
+import { defineSlotRecipe } from '@chakra-ui/react'
+import { resultsAnatomy } from '~components/vocdoni-ui/theming/anatomy'
 
-const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(resultsAnatomy)
-
-const baseStyle = definePartsStyle({
+const baseStyle = {
   wrapper: {
     gap: 6,
   },
@@ -61,8 +59,9 @@ const baseStyle = definePartsStyle({
       borderRadius: 'sm',
     },
   },
-})
+}
 
-export const ElectionResults = defineMultiStyleConfig({
-  baseStyle,
+export const ElectionResults = defineSlotRecipe({
+  slots: resultsAnatomy,
+  base: baseStyle,
 })

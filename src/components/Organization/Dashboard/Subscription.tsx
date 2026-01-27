@@ -1,6 +1,17 @@
-import { Alert, AlertDescription, Button, Flex, Heading, Link, Progress, Text } from '@chakra-ui/react'
+import {
+  AlertRoot as Alert,
+  AlertDescription,
+  Button,
+  Flex,
+  Heading,
+  Link,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
+  Text,
+} from '@chakra-ui/react'
 import { isBefore, isValid, parseISO } from 'date-fns'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -20,6 +31,12 @@ const SubscriptionPageContent = () => {
   const [showComparisonTable, setShowComparisonTable] = useState(false)
   const { view, checkout, showPlans } = useSubscriptionCheckout()
 
+  const SupportLink = ({ children }: { children?: ReactNode }) => (
+    <Link fontWeight='extrabold' fontSize='sm' asChild>
+      <ReactRouterLink to={Routes.dashboard.settings.support}>{children}</ReactRouterLink>
+    </Link>
+  )
+
   const handleChangeClick = () =>
     mutateAsync()
       .then((res) => {
@@ -29,7 +46,15 @@ const SubscriptionPageContent = () => {
 
   const toggleComparisonTable = () => setShowComparisonTable((prev) => !prev)
 
-  if (loading) return <Progress isIndeterminate />
+  if (loading) {
+    return (
+      <ProgressRoot value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
   if (error) {
     return (
       <Alert status='error'>
@@ -48,7 +73,7 @@ const SubscriptionPageContent = () => {
       <Flex direction={{ base: 'column', md: 'row' }}>
         <Flex flex={1} direction='column'>
           <Heading size='md'>{t('subscription_plan.title', { defaultValue: 'Subscription Plan' })}</Heading>
-          <Text mb={6} color='texts.subtle' size='sm'>
+          <Text mb={6} color='texts.subtle' fontSize='sm'>
             <Trans i18nKey='subscription_plan.subtitle'>
               With our subscriptions, you get more than a plan. You gain access to the most innovative governance
               platform. Thanks to this model, we can offer the best price in the market: whether you need 1, 5, or 20
@@ -59,7 +84,7 @@ const SubscriptionPageContent = () => {
           </Text>
         </Flex>
         {!isFree && view === 'plans' && (
-          <Button onClick={() => handleChangeClick()} isLoading={isPending} shouldWrapChildren>
+          <Button onClick={() => handleChangeClick()} loading={isPending}>
             {t('billing_details', { defaultValue: 'Billing Details' })}
           </Button>
         )}
@@ -84,14 +109,13 @@ const SubscriptionPageContent = () => {
           <Trans i18nKey='subscription_plan.gdpr_compliance'>All plans include GDPR compliance.</Trans>
         </Text>
         <Flex gap={1}>
-          <Trans i18nKey='subscription_plan.need_help'>
-            <Text fontSize='sm' color='texts.subtle' textAlign='center'>
-              Need help choosing?
-            </Text>
-            <Link fontWeight='extrabold' fontSize='sm' as={ReactRouterLink} to={Routes.dashboard.settings.support}>
-              Contact our sales team
-            </Link>
-          </Trans>
+          <Trans
+            i18nKey='subscription_plan.need_help'
+            components={[
+              <Text key='help-text' fontSize='sm' color='texts.subtle' textAlign='center' />,
+              <SupportLink key='support-link' />,
+            ]}
+          />
         </Flex>
       </Flex>
     </DashboardBox>

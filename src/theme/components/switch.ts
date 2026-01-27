@@ -1,32 +1,25 @@
-import { switchAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { switchAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(switchAnatomy.keys)
-
-const baseStyle = definePartsStyle(({ colorScheme }) => {
-  if (colorScheme === 'black') {
-    return {
-      track: {
-        _focusVisible: {
-          _dark: {
-            boxShadow: `0 0 0 2px darkgray`,
-          },
-        },
+const baseStyle = {
+  control: {
+    _focusVisible: {
+      _dark: {
+        boxShadow: '0 0 0 2px darkgray',
       },
-      thumb: {
-        _dark: {
-          bg: `${colorScheme}.600`,
-        },
-      },
-    }
-  }
+    },
+  },
+  thumb: {
+    _dark: {
+      bg: 'colorPalette.600',
+    },
+  },
+}
 
-  return {}
-})
-
-export const Switch = defineMultiStyleConfig({
-  baseStyle,
-  defaultProps: {
-    colorScheme: 'black',
+export const Switch = defineSlotRecipe({
+  slots: switchAnatomy.keys(),
+  base: baseStyle,
+  defaultVariants: {
+    colorPalette: 'brand',
   },
 })

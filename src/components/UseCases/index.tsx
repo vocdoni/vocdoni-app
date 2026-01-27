@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardBody, CardHeader, Flex, Heading, Text } from '@chakra-ui/react'
+import { Box, Button, Card, Flex, Heading, Text } from '@chakra-ui/react'
 import { ArrowUpRight } from '@untitled-ui/icons-react'
 import { Trans, useTranslation } from 'react-i18next'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
@@ -84,49 +84,50 @@ const UseCases = () => {
       </Text>
       <Flex rowGap={14} columnGap={'5%'} flexWrap={'wrap'} mx='auto' mb={24}>
         {Cases.map((el) => (
-          <Card
+          <Card.Root
             key={el.title}
-            as={ReactRouterLink}
-            to={`${generatePath(Routes.usecases.view, { lang: currentLanguage, case: el.case })}`}
+            asChild
             flex={{ base: '0 0 100%', md: '0 0 47.5%', xl: '0 0 30%' }}
             bgColor={'transparent'}
             boxShadow={'none'}
           >
-            <CardHeader
-              p={0}
-              h='200px'
-              overflow='hidden'
-              bgImage={`url(${el.image})`}
-              bgSize='cover'
-              bgPosition='center'
-              bgRepeat='no-repeat'
-              borderRadius={'lg'}
-            ></CardHeader>
+            <ReactRouterLink to={`${generatePath(Routes.usecases.view, { lang: currentLanguage, case: el.case })}`}>
+              <Card.Header
+                p={0}
+                h='200px'
+                overflow='hidden'
+                bgImage={`url(${el.image})`}
+                bgSize='cover'
+                backgroundPosition='center'
+                bgRepeat='no-repeat'
+                borderRadius={'lg'}
+              ></Card.Header>
 
-            <CardBody p={0} pt={2}>
-              <Text
-                color={'usecases.eyebrow.light'}
-                _dark={{ color: 'usecases.eyebrow.dark' }}
-                fontWeight={'600'}
-                fontSize={'xs'}
-              >
-                {el.eyebrow}
-              </Text>
-              <Flex justifyContent={'space-between'} alignItems={'center'} pb={1}>
-                <Text fontWeight={'bold'} fontSize={'lg'}>
-                  {el.title}
+              <Card.Body p={0} pt={2}>
+                <Text
+                  color={'usecases.eyebrow.light'}
+                  _dark={{ color: 'usecases.eyebrow.dark' }}
+                  fontWeight={'600'}
+                  fontSize={'xs'}
+                >
+                  {el.eyebrow}
                 </Text>
-                <ArrowUpRight />
-              </Flex>
-              <Text
-                color={'usecases.description.light'}
-                _dark={{ color: 'usecases.description.dark' }}
-                lineHeight={1.3}
-              >
-                {el.description}
-              </Text>
-            </CardBody>
-          </Card>
+                <Flex justifyContent={'space-between'} alignItems={'center'} pb={1}>
+                  <Text fontWeight={'bold'} fontSize={'lg'}>
+                    {el.title}
+                  </Text>
+                  <ArrowUpRight />
+                </Flex>
+                <Text
+                  color={'usecases.description.light'}
+                  _dark={{ color: 'usecases.description.dark' }}
+                  lineHeight={1.3}
+                >
+                  {el.description}
+                </Text>
+              </Card.Body>
+            </ReactRouterLink>
+          </Card.Root>
         ))}
       </Flex>
       <Box

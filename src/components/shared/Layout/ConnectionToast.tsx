@@ -1,4 +1,4 @@
-import { useToast } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { createContext, ReactNode, useContext, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConnectionMonitor } from '~utils/use-connection-monitor'
@@ -36,10 +36,9 @@ export const ConnectionToastProvider = ({ children }: { children: ReactNode }) =
         id: toastErrorId,
         title: t('connection.error_title', 'Connection issues detected'),
         description: t('connection.error_description', 'Unable to reach the server. Please check your connection.'),
-        status: 'error',
+        type: 'error',
         duration: null, // Persistent
         isClosable: false,
-        position: 'top',
       })
     }
 
@@ -54,10 +53,9 @@ export const ConnectionToastProvider = ({ children }: { children: ReactNode }) =
           id: toastSuccessId,
           title: t('connection.restored_title', 'Connection restored'),
           description: t('connection.restored_description', 'You are back online.'),
-          status: 'success',
+          type: 'success',
           duration: 5000,
           isClosable: true,
-          position: 'top',
         })
       }
     }

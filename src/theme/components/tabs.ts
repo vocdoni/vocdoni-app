@@ -1,10 +1,8 @@
-import { tabsAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { defineSlotRecipe } from '@chakra-ui/react'
+import { tabsAnatomy } from '@chakra-ui/react/anatomy'
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(tabsAnatomy.keys)
-
-const card = definePartsStyle({
-  tablist: {
+const card = {
+  list: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -18,7 +16,7 @@ const card = definePartsStyle({
     },
     bgColor: 'transparent',
   },
-  tab: {
+  trigger: {
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -67,17 +65,20 @@ const card = definePartsStyle({
       mr: 'auto',
     },
   },
-  tabpanel: {
+  content: {
     bgColor: 'tab.variant.card.bg.light',
     borderRadius: 'xl',
     _dark: {
       bgColor: 'tab.variant.card.bg.dark',
     },
   },
-})
+}
 
-const settings = definePartsStyle({
-  tablist: {
+const settings = {
+  root: {
+    '--tabs-height': 'auto',
+  },
+  list: {
     p: 1,
     bgColor: 'tabs.bg',
     borderRadius: 'sm',
@@ -85,7 +86,7 @@ const settings = definePartsStyle({
     maxWidth: 'full',
     overflowX: 'auto',
   },
-  tab: {
+  trigger: {
     py: 1.5,
     px: 3,
     whiteSpace: 'nowrap',
@@ -99,13 +100,16 @@ const settings = definePartsStyle({
       boxShadow: '0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a',
     },
   },
-  tabpanel: {
+  content: {
     borderRadius: 'md',
     p: 6,
   },
-})
+}
 
-export const Tabs = defineMultiStyleConfig({
-  variants: { card, settings },
-  defaultProps: { variant: 'settings' },
+export const Tabs = defineSlotRecipe({
+  slots: tabsAnatomy.keys(),
+  variants: {
+    variant: { card, settings },
+  },
+  defaultVariants: { variant: 'settings' },
 })

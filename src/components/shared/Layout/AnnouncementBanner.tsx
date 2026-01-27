@@ -1,14 +1,16 @@
-import { Alert, AlertDescription, AlertStatus, CloseButton, HStack } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, CloseButton, HStack } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useTranslation } from 'react-i18next'
 
+type AnnouncementStatus = (typeof Statuses)[number]
+
 export type AnnouncementBannerContents = {
-  status: AlertStatus
+  status: AnnouncementStatus
   message: string | Record<string, string>
   lsKey?: string
 }
 
-const Statuses = ['info', 'warning', 'success', 'error', 'loading'] as const
+const Statuses = ['info', 'warning', 'success', 'error', 'neutral'] as const
 
 const isRecord = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x)
 

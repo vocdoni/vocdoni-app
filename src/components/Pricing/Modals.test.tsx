@@ -7,7 +7,7 @@ describe('PlanUpgradeModal', () => {
   it('renders memberbase copy when context is memberbase', () => {
     i18n.addResourceBundle(
       'en',
-      'translation',
+      'common',
       {
         plan_upgrade: {
           memberbase_title: 'Memberbase upgrade title',
@@ -22,7 +22,13 @@ describe('PlanUpgradeModal', () => {
 
     render(
       <MemoryRouter>
-        <PlanUpgradeModal isOpen onClose={() => undefined} context='memberbase' limit='1000' />
+        <PlanUpgradeModal
+          open
+          onOpenChange={() => undefined}
+          onClose={() => undefined}
+          context='memberbase'
+          limit='1000'
+        />
       </MemoryRouter>
     )
 

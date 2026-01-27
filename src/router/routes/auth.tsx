@@ -8,7 +8,7 @@ import { SuspenseLoader } from '../SuspenseLoader'
 
 const AcceptInvite = lazy(() => import('~elements/account/invite'))
 const Signin = lazy(() => import('~elements/account/signin'))
-const SignUp = lazy(() => import('~components/Auth/SignUp'))
+const SignUp = lazy(() => import('~elements/account/signup'))
 const Verify = lazy(() => import('~elements/account/verify'))
 const PasswordForgot = lazy(() => import('~elements/account/password'))
 const PasswordReset = lazy(() => import('~elements/account/password/reset'))

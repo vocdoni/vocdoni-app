@@ -1,5 +1,13 @@
-import { Button, ButtonProps, Icon, Tooltip, forwardRef } from '@chakra-ui/react'
-import { ForwardedRef } from 'react'
+import {
+  Button,
+  ButtonProps,
+  Icon,
+  TooltipContent,
+  TooltipPositioner,
+  TooltipRoot,
+  TooltipTrigger,
+} from '@chakra-ui/react'
+import { ForwardedRef, forwardRef } from 'react'
 import { Link as ReactRouterLink, generatePath } from 'react-router-dom'
 
 export type DashboardMenuItem = {
@@ -11,39 +19,64 @@ export type DashboardMenuItem = {
 type DashboardMenuItemButtonProps = ButtonProps & {
   item: DashboardMenuItem
   reduced: boolean
+  isActive?: boolean
 }
 
 export const DashboardMenuItemButton = forwardRef(
-  ({ item, reduced, ...buttonProps }: DashboardMenuItemButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
+  ({ item, reduced, isActive, ...buttonProps }: DashboardMenuItemButtonProps, ref: ForwardedRef<HTMLButtonElement>) => {
     const isDisabled = !item.route
-    const as = isDisabled ? 'button' : ReactRouterLink
+    const inner = (
+      <>
+        <Icon as={item.icon} />
+        {!reduced && item.label}
+      </>
+    )
 
-    const button = (
+    const button = isDisabled ? (
       <Button
         ref={ref}
-        as={as}
-        {...(!isDisabled && { to: generatePath(item.route) })}
         onClick={(e) => {
           if (isDisabled) e.preventDefault()
         }}
         variant='listmenu'
         size='xs'
-        colorScheme='gray'
+        colorPalette='gray'
         justifyContent='start'
         gap={4}
         p={2}
-        isDisabled={isDisabled}
+        disabled={isDisabled}
+        data-active={isActive ? '' : undefined}
+        aria-current={isActive ? 'page' : undefined}
         {...buttonProps}
       >
-        <Icon as={item.icon} />
-        {!reduced && item.label}
+        {inner}
+      </Button>
+    ) : (
+      <Button
+        ref={ref}
+        asChild
+        variant='listmenu'
+        size='xs'
+        fontSize='sm'
+        colorPalette='gray'
+        justifyContent='start'
+        gap={4}
+        p={2}
+        data-active={isActive ? '' : undefined}
+        aria-current={isActive ? 'page' : undefined}
+        {...buttonProps}
+      >
+        <ReactRouterLink to={generatePath(item.route)}>{inner}</ReactRouterLink>
       </Button>
     )
 
     return reduced ? (
-      <Tooltip label={item.label} placement='right-end'>
-        {button}
-      </Tooltip>
+      <TooltipRoot positioning={{ placement: 'right-end' }}>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipPositioner>
+          <TooltipContent>{item.label}</TooltipContent>
+        </TooltipPositioner>
+      </TooltipRoot>
     ) : (
       button
     )

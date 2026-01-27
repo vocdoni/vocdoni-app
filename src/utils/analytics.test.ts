@@ -1,5 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 const mockPlausibleInit = vi.fn()
 const mockPlausibleTrack = vi.fn()
 

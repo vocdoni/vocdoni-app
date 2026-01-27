@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { Navigate } from 'react-router-dom'
 
 const mockParseProcessIds = vi.fn((value?: string) =>
   value
@@ -14,7 +14,6 @@ vi.mock('@vocdoni/react-providers', () => ({
   useClient: () => ({ client: { fetchAccountInfo: vi.fn() } }),
 }))
 
-vi.mock('~components/Home', () => ({ default: () => <div>Home</div> }))
 vi.mock('~components/Home/SharedCensus', () => ({
   default: () => <div>SharedCensus</div>,
   parseProcessIds: mockParseProcessIds,
@@ -58,6 +57,17 @@ describe('useHomeRoute', () => {
     const { result } = renderHook(() => useHomeRoute())
 
     expect(result.current.element?.type).toBe(Layout)
+  })
+
+  it('redirects to /admin when no domain and no PROCESS_IDS', async () => {
+    import.meta.env.PROCESS_IDS = ''
+    const { useHomeRoute } = await import('./home')
+
+    const { result } = renderHook(() => useHomeRoute())
+    const indexRoute = result.current.children?.[0]
+
+    expect(indexRoute?.element?.type).toBe(Navigate)
+    expect(indexRoute?.element?.props.to).toBe('/admin')
   })
 
   it('reads PROCESS_IDS only once even if multiple consumers need it', async () => {

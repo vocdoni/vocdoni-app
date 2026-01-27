@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Link, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Flex, Link, Text } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -12,6 +12,7 @@ import { VerificationPending } from '~components/Auth/Verify'
 import { OrSeparator } from '~components/shared/Layout/Separators'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import InputPassword from '~shared/Form/InputPassword'
+import { useToast } from '~shared/Toast'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvent } from '~utils/analytics'
 import InputBasic from '../shared/Form/InputBasic'
@@ -93,24 +94,24 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
             setVerifyNeeded(true)
             toast({
               title: t('verification_code_resent', { defaultValue: 'Verification code resent!' }),
-              status: 'success',
+              type: 'success',
               duration: 5000,
-              isClosable: true,
+              closable: true,
             })
           } catch (error) {
             toast({
               title: t('error.title', { defaultValue: 'Error' }),
               description: getApiErrorMessage(error),
-              status: 'error',
+              type: 'error',
               duration: 5000,
-              isClosable: true,
+              closable: true,
             })
           }
         } else {
           toast({
             title: t('error.title', { defaultValue: 'Error' }),
             description: getApiErrorMessage(e),
-            status: 'error',
+            type: 'error',
             duration: 5000,
             isClosable: true,
           })
@@ -140,12 +141,12 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
                 placeholder={t('password_placeholder', { defaultValue: 'Enter your password' })}
                 required
               />
-              <Link as={NavLink} to={Routes.auth.recovery} fontSize='xs' fontWeight='bold' alignSelf='end'>
-                {t('forgot_password_title')}
+              <Link asChild fontSize='xs' fontWeight='bold' alignSelf='end'>
+                <NavLink to={Routes.auth.recovery}>{t('forgot_password_title')}</NavLink>
               </Link>
             </Flex>
           </Flex>
-          <Button type='submit' w='full' isLoading={isSubmitting} shouldWrapChildren>
+          <Button type='submit' w='full' loading={isSubmitting}>
             {t('signin')}
           </Button>
           <OrSeparator my={6} />
@@ -155,8 +156,8 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
 
       <Text display={'flex'} justifyContent={'center'} alignItems={'center'} fontWeight='bold' fontSize='sm' mt={6}>
         {t('not_registred_yet')}
-        <Link as={NavLink} to={Routes.auth.signUp} ml={1} fontWeight={'bold'} fontSize='sm'>
-          {t('signup_title')}
+        <Link asChild ml={1} fontWeight={'bold'} fontSize='sm'>
+          <NavLink to={Routes.auth.signUp}>{t('signup_title')}</NavLink>
         </Link>
       </Text>
     </>

@@ -1,13 +1,12 @@
 import {
   Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
   HStack,
   Icon,
   Input,
   Text,
-  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -20,6 +19,7 @@ import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { OAuthProvider, OAuthProviders } from '~constants'
 import { QueryKeys } from '~queries/keys'
+import { useToast } from '~shared/Toast'
 import { User, useUpdateProfile } from '~src/queries/account'
 import { ChangePasswordButton } from './Password'
 
@@ -148,144 +148,132 @@ const AccountForm = ({ profile }: { profile?: User }) => {
 
       toast({
         title: t('profile.success', { defaultValue: 'Profile updated successfully' }),
-        status: 'success',
+        type: 'success',
       })
     } catch (error) {
       toast({
         title: t('profile.error', { defaultValue: 'Failed to update profile' }),
-        status: 'error',
+        type: 'error',
       })
     }
   }
 
   return (
-    <>
-      {' '}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Text size={'2xl'} fontWeight='bold' mb={1.5}>
-          {t('account.title', { defaultValue: 'Account Information' })}
-        </Text>
-        <Text size={'sm'} color={'rgb(115, 115, 115)'} mb={6}>
-          {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
-        </Text>
-        <VStack spacing={8} align='stretch'>
-          <HStack>
-            <FormControl isInvalid={!!errors.firstName}>
-              <FormLabel fontSize={'14px'}>{t('name', { defaultValue: 'Name' })}</FormLabel>
-              <Input
-                {...register('firstName', {
-                  required: t('form.error.field_is_required'),
-                })}
-              />
-              <FormErrorMessage>{errors.firstName?.message}</FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={!!errors.lastName}>
-              <FormLabel fontSize={'14px'}>{t('lastname', { defaultValue: 'Last name' })}</FormLabel>
-              <Input
-                {...register('lastName', {
-                  required: t('form.error.field_is_required'),
-                })}
-              />
-              <FormErrorMessage>{errors.lastName?.message}</FormErrorMessage>
-            </FormControl>
-          </HStack>
-
-          <FormControl isInvalid={!!errors.email}>
-            <FormLabel fontSize={'14px'}>{t('email', { defaultValue: 'Email' })}</FormLabel>
-            <Input {...register('email')} isDisabled type='email' />
-            <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Text fontSize={'2xl'} fontWeight='bold' mb={1.5}>
+        {t('account.title', { defaultValue: 'Account Information' })}
+      </Text>
+      <Text fontSize={'sm'} color={'rgb(115, 115, 115)'} mb={6}>
+        {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
+      </Text>
+      <VStack gap={8} align='stretch'>
+        <HStack>
+          <FormControl invalid={!!errors.firstName}>
+            <FormLabel fontSize={'14px'}>{t('name', { defaultValue: 'Name' })}</FormLabel>
+            <Input
+              {...register('firstName', {
+                required: t('form.error.field_is_required'),
+              })}
+            />
+            <FormErrorMessage>{errors.firstName?.message}</FormErrorMessage>
           </FormControl>
+          <FormControl invalid={!!errors.lastName}>
+            <FormLabel fontSize={'14px'}>{t('lastname', { defaultValue: 'Last name' })}</FormLabel>
+            <Input
+              {...register('lastName', {
+                required: t('form.error.field_is_required'),
+              })}
+            />
+            <FormErrorMessage>{errors.lastName?.message}</FormErrorMessage>
+          </FormControl>
+        </HStack>
 
-          <FormControl>
-            <FormLabel fontSize={'14px'}>{t('password', { defaultValue: 'Password' })}</FormLabel>
-            {hasPassword ? (
-              <HStack gap={2}>
-                <Input placeholder={'• • • • • • • •'} type='password' isDisabled />
-                <ChangePasswordButton />
+        <FormControl invalid={!!errors.email}>
+          <FormLabel fontSize={'14px'}>{t('email', { defaultValue: 'Email' })}</FormLabel>
+          <Input {...register('email')} disabled type='email' />
+          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel fontSize={'14px'}>{t('password', { defaultValue: 'Password' })}</FormLabel>
+          {hasPassword ? (
+            <HStack gap={2}>
+              <Input placeholder={'• • • • • • • •'} type='password' disabled />
+              <ChangePasswordButton />
+            </HStack>
+          ) : (
+            <Button
+              onClick={() => profile?.email && requestPasswordReset.mutate(profile.email)}
+              size='sm'
+              variant='outline'
+              loading={requestPasswordReset.isPending}
+              alignSelf='start'
+            >
+              {t('password_request.action', { defaultValue: 'Request password change' })}
+            </Button>
+          )}
+        </FormControl>
+
+        <VStack gap={3} align='stretch'>
+          <Text fontSize={'14px'} fontWeight='600'>
+            {t('oauth.title', { defaultValue: 'Connect accounts' })}
+          </Text>
+          {OAuthProviders.map((provider) => {
+            const providerLabel = formatProviderLabel(provider)
+            const isLinked = linkedProviders.has(provider)
+            const isUnlinking = unlinkingProvider === provider && unlinkProvider.isPending
+            const isLinking = linkingProvider === provider && linkProvider.isPending
+            const linkLabel = t('oauth.link.action', {
+              defaultValue: 'Link {{provider}} account',
+              provider: providerLabel,
+            })
+            const unlinkLabel = t('oauth.unlink.action', {
+              defaultValue: 'Unlink {{provider}}',
+              provider: providerLabel,
+            })
+            const providerIcon = providerIcons[provider] || BsLink
+
+            return (
+              <HStack key={provider} justify='space-between' flexWrap='wrap' gap={3}>
+                {isLinked ? (
+                  <Button
+                    size='sm'
+                    variant='outline'
+                    colorPalette='red'
+                    onClick={() => {
+                      const confirmed = window.confirm(
+                        t('oauth.unlink.confirm', {
+                          defaultValue: `Unlink {{provider}}?`,
+                          provider: providerLabel,
+                        })
+                      )
+                      if (!confirmed) return
+                      unlinkProvider.mutate(provider)
+                    }}
+                    loading={isUnlinking}
+                  >
+                    <Icon as={providerIcon} /> {unlinkLabel}
+                  </Button>
+                ) : (
+                  <Button
+                    variant='outline'
+                    loading={isLinking}
+                    onClick={() => linkProvider.mutate(provider)}
+                    fontWeight={'bold'}
+                  >
+                    <Icon as={providerIcon} /> {linkLabel}
+                  </Button>
+                )}
               </HStack>
-            ) : (
-              <Button
-                onClick={() => profile?.email && requestPasswordReset.mutate(profile.email)}
-                size='sm'
-                variant='outline'
-                isLoading={requestPasswordReset.isPending}
-                alignSelf='start'
-              >
-                {t('password_request.action', { defaultValue: 'Request password change' })}
-              </Button>
-            )}
-          </FormControl>
-
-          <VStack spacing={3} align='stretch'>
-            <Text fontSize={'14px'} fontWeight='600'>
-              {t('oauth.title', { defaultValue: 'Connect accounts' })}
-            </Text>
-            {OAuthProviders.map((provider) => {
-              const providerLabel = formatProviderLabel(provider)
-              const isLinked = linkedProviders.has(provider)
-              const isUnlinking = unlinkingProvider === provider && unlinkProvider.isPending
-              const isLinking = linkingProvider === provider && linkProvider.isPending
-              const linkLabel = t('oauth.link.action', {
-                defaultValue: 'Link {{provider}} account',
-                provider: providerLabel,
-              })
-              const unlinkLabel = t('oauth.unlink.action', {
-                defaultValue: 'Unlink {{provider}}',
-                provider: providerLabel,
-              })
-              const providerIcon = providerIcons[provider] || BsLink
-
-              return (
-                <HStack key={provider} justify='space-between' flexWrap='wrap' gap={3}>
-                  {isLinked ? (
-                    <Button
-                      size='sm'
-                      variant='outline'
-                      colorScheme='red'
-                      leftIcon={<Icon as={providerIcon} />}
-                      onClick={() => {
-                        const confirmed = window.confirm(
-                          t('oauth.unlink.confirm', {
-                            defaultValue: `Unlink {{provider}}?`,
-                            provider: providerLabel,
-                          })
-                        )
-                        if (!confirmed) return
-                        unlinkProvider.mutate(provider)
-                      }}
-                      isLoading={isUnlinking}
-                    >
-                      {unlinkLabel}
-                    </Button>
-                  ) : (
-                    <Button
-                      variant={'outline'}
-                      isLoading={isLinking}
-                      shouldWrapChildren
-                      onClick={() => linkProvider.mutate(provider)}
-                      fontWeight={'bold'}
-                      leftIcon={<Icon as={providerIcon} />}
-                    >
-                      {linkLabel}
-                    </Button>
-                  )}
-                </HStack>
-              )
-            })}
-          </VStack>
-
-          <Button
-            type='submit'
-            size='lg'
-            isLoading={isSubmitting || updateProfile.isPending}
-            shouldWrapChildren
-            alignSelf={'start'}
-          >
-            {t('actions.save_changes', { defaultValue: 'Save Changes' })}
-          </Button>
+            )
+          })}
         </VStack>
-      </form>
-    </>
+
+        <Button type='submit' loading={isSubmitting || updateProfile.isPending} alignSelf={'start'}>
+          {t('actions.save_changes', { defaultValue: 'Save Changes' })}
+        </Button>
+      </VStack>
+    </form>
   )
 }
 

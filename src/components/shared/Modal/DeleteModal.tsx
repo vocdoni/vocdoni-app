@@ -1,37 +1,29 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  ModalProps,
-} from '@chakra-ui/react'
+import { Box, Dialog, DialogRootProps, Heading } from '@chakra-ui/react'
 
 export type DeleteModalProps = {
   title: string | React.ReactNode
   subtitle: string | React.ReactNode
   children: React.ReactNode
-} & ModalProps
+} & DialogRootProps
 
-const DeleteModal = ({ title, subtitle, children, ...modalProps }: DeleteModalProps) => {
+const DeleteModal = ({ title, subtitle, children, ...dialogProps }: DeleteModalProps) => {
   return (
-    <Modal size='lg' {...modalProps}>
-      <ModalOverlay />
-      <ModalContent p={5}>
-        <ModalHeader p={0}>
-          <Flex flexDirection='column' gap={3}>
-            <Heading size='sm'>{title}</Heading>
-            <Box fontSize='sm' color='texts.subtle'>
-              {subtitle}
-            </Box>
-          </Flex>
-        </ModalHeader>
-        <ModalBody p={0}>{children}</ModalBody>
-      </ModalContent>
-    </Modal>
+    <Dialog.Root placement='center' {...dialogProps}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.Header>
+            <Dialog.Title>
+              <Heading size='sm'>{title}</Heading>
+              <Box fontSize='sm' color='texts.subtle'>
+                {subtitle}
+              </Box>
+            </Dialog.Title>
+          </Dialog.Header>
+          <Dialog.Body>{children}</Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }
 

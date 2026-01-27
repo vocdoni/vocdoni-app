@@ -1,15 +1,4 @@
-import {
-  Button,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-} from '@chakra-ui/react'
+import { Button, CloseButton, Dialog, Heading, Text } from '@chakra-ui/react'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -57,35 +46,38 @@ export const ModalForm = ({ isOpen, onClose, title, subtitle, children, submitTe
 
   return (
     <ModalFormContext.Provider value={contextValue}>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton fontSize={10} />
-          <ModalHeader>
-            <Heading variant='header'>{title}</Heading>
-            {subtitle && <Text variant='subheader'>{subtitle}</Text>}
-          </ModalHeader>
+      <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()} placement='center'>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton />
+            </Dialog.CloseTrigger>
+            <Dialog.Header>
+              <Heading variant='header'>{title}</Heading>
+              {subtitle && <Text variant='subheader'>{subtitle}</Text>}
+            </Dialog.Header>
 
-          <ModalBody>{children}</ModalBody>
+            <Dialog.Body>{children}</Dialog.Body>
 
-          <ModalFooter gap={2}>
-            <Button variant='ghost' onClick={onClose}>
-              {cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}
-            </Button>
-            <Button
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                formRef.current?.requestSubmit()
-              }}
-              isLoading={isSubmitting}
-              shouldWrapChildren
-            >
-              {submitText || t('actions.save', { defaultValue: 'Save' })}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            <Dialog.Footer>
+              <Button variant='ghost' onClick={onClose}>
+                {cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}
+              </Button>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  formRef.current?.requestSubmit()
+                }}
+                loading={isSubmitting}
+              >
+                {submitText || t('actions.save', { defaultValue: 'Save' })}
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Dialog.Root>
     </ModalFormContext.Provider>
   )
 }

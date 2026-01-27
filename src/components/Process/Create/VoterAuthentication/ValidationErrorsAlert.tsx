@@ -1,13 +1,12 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
-  AlertIcon,
+  AlertIndicator,
   AlertTitle,
   Box,
-  ListItem,
+  List,
   Stack,
   Text,
-  UnorderedList,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 
@@ -46,38 +45,38 @@ export const ValidationErrorsAlert = ({ validationError }: { validationError: Va
 
   return (
     <Alert status='error' variant='subtle' borderRadius='md'>
-      <AlertIcon />
+      <AlertIndicator />
       <Box>
         <AlertTitle fontWeight='bold'>{t('voter_auth.validation_error_title', 'Validation Error')}</AlertTitle>
 
         <AlertDescription fontSize='sm'>
-          <Stack spacing={3} mt={2}>
+          <Stack gap={3} mt={2}>
             <Text>
               {t('voter_auth.validation_summary', {
                 defaultValue: 'Validation failed for some users.',
               })}
             </Text>
 
-            <UnorderedList>
-              <ListItem>
+            <List.Root display='flex' flexDirection='column' gap={2} pl={4} listStyleType='disc'>
+              <List.Item>
                 {t('voter_auth.validation_total', {
                   defaultValue: '{{count}} users total',
                   count: total,
                 })}
-              </ListItem>
-              <ListItem>
+              </List.Item>
+              <List.Item>
                 {t('voter_auth.validation_missing_data', {
                   defaultValue: '{{count}} users missing required fields',
                   count: missingData.length,
                 })}
-              </ListItem>
-              <ListItem>
+              </List.Item>
+              <List.Item>
                 {t('voter_auth.validation_duplicates', {
                   defaultValue: '{{count}} duplicated users',
                   count: duplicates.length,
                 })}
-              </ListItem>
-            </UnorderedList>
+              </List.Item>
+            </List.Root>
           </Stack>
         </AlertDescription>
       </Box>

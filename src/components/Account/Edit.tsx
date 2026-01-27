@@ -1,4 +1,5 @@
-import { Button, Flex, Text, useDisclosure } from '@chakra-ui/react'
+import { Button, Dialog, Flex, Text } from '@chakra-ui/react'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
@@ -9,7 +10,7 @@ import AccountForm from './Form'
 
 export const AccountEdit = () => {
   const { t } = useTranslation()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setOpen] = useState(false)
   const { data: profile } = useProfile()
 
   return (
@@ -18,20 +19,20 @@ export const AccountEdit = () => {
         <AccountForm profile={profile} />
       </DashboardBox>
       <DashboardBox p={6}>
-        <Text size='2xl' fontWeight='600'>
+        <Text fontSize='2xl' fontWeight='600'>
           {t('delete.delete_title', { defaultValue: 'Delete Account' })}
         </Text>
-        <Text size='sm' color='texts.subtle'>
+        <Text fontSize='sm' color='texts.subtle'>
           {t('delete.delete_subtitle', { defaultValue: 'Permanently delete your account and all associated data' })}
         </Text>
-        <Button colorScheme='red' alignSelf={'flex-start'} onClick={onOpen}>
+        <Button colorPalette='red' alignSelf={'flex-start'} onClick={() => setOpen(true)}>
           <Trans i18nKey='delete_my_account'>Delete Account</Trans>
         </Button>
       </DashboardBox>
       <DeleteModal
         size='md'
-        isOpen={isOpen}
-        onClose={onClose}
+        open={isOpen}
+        onOpenChange={({ open }) => setOpen(open)}
         title={t('delete.confirm_title', { defaultValue: 'Delete Your Account' })}
         subtitle={
           <Flex flexDirection='column' gap={2}>
@@ -44,11 +45,15 @@ export const AccountEdit = () => {
         }
       >
         <Flex justifyContent='flex-end' gap={3}>
-          <Button variant='outline' alignSelf='flex-end' onClick={onClose}>
-            {t('delete.cancel_button', { defaultValue: 'Cancel' })}
-          </Button>
-          <Button as={Link} to={Routes.dashboard.settings.support}>
-            <Trans i18nKey='contact_us'>Contact us</Trans>
+          <Dialog.ActionTrigger asChild>
+            <Button variant='outline' alignSelf='flex-end'>
+              {t('delete.cancel_button', { defaultValue: 'Cancel' })}
+            </Button>
+          </Dialog.ActionTrigger>
+          <Button asChild>
+            <Link to={Routes.dashboard.settings.support}>
+              <Trans i18nKey='contact_us'>Contact us</Trans>
+            </Link>
           </Button>
         </Flex>
       </DeleteModal>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Alert, AlertDescription, AlertTitle, Box, Button, HStack, Link, Stack } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, AlertTitle, Box, Button, HStack, Link, Stack } from '@chakra-ui/react'
 import { getCookieConsent, hasCookieConsent, initializeGTM, setCookieConsent } from './utils'
 
 export function CookieConsent() {
@@ -78,13 +78,13 @@ export function CookieConsent() {
                 defaultValue:
                   'We use cookies and analytics tools to improve your experience and understand how you interact with our website. You can choose to accept or reject cookies.',
               })}{' '}
-              <Link href={privacyPolicyUrl} isExternal textDecoration='underline'>
+              <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' textDecoration='underline'>
                 {t('cookies.learnMore', { defaultValue: 'Learn more' })}
               </Link>
             </AlertDescription>
           </Box>
 
-          <HStack justify='end' spacing={2}>
+          <HStack justify='end' gap={2}>
             <Button variant='outline' size='sm' onClick={handleReject}>
               {t('cookies.reject', { defaultValue: 'Reject' })}
             </Button>

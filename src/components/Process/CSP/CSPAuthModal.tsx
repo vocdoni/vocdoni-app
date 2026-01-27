@@ -1,14 +1,4 @@
-import {
-  Button,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Button, CloseButton, Dialog, Heading } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
@@ -64,36 +54,41 @@ const useCensusBundle = (censusURI?: string) => {
 
 export const CspAuthModal = () => {
   const { t } = useTranslation()
-  const { isOpen, onClose, onOpen } = useDisclosure()
   const { election } = useElection()
   const { currentStep } = useCspAuthContext()
 
   if (election instanceof InvalidElection) return null
 
   return (
-    <>
-      <Button onClick={onOpen} w='full' aria-label={t('cc.spreadsheet.access_button', { defaultValue: 'Login' })}>
-        <Trans i18nKey='cc.spreadsheet.access_button'>Login</Trans>
-      </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader textAlign='center'>
-            <Heading>
-              <Trans i18nKey='csp.title'>Authentication</Trans>
-            </Heading>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
+    <Dialog.Root>
+      <Dialog.Trigger asChild>
+        <Button w='full' aria-label={t('cc.spreadsheet.access_button', { defaultValue: 'Login' })}>
+          <Trans i18nKey='cc.spreadsheet.access_button'>Login</Trans>
+        </Button>
+      </Dialog.Trigger>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.CloseTrigger asChild>
+            <CloseButton />
+          </Dialog.CloseTrigger>
+          <Dialog.Header>
+            <Dialog.Title>
+              <Heading>
+                <Trans i18nKey='csp.title'>Authentication</Trans>
+              </Heading>
+            </Dialog.Title>
+          </Dialog.Header>
+          <Dialog.Body>
             {currentStep === 0 ? (
               <Step0Base election={election as PublishedElection} />
             ) : (
               <Step1Base election={election as PublishedElection} />
             )}
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }
 

@@ -1,52 +1,47 @@
 import {
-  Box,
   Button,
   Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Checkbox,
+  CheckboxControl,
+  CheckboxHiddenInput,
+  CheckboxRoot,
   CloseButton,
-  Divider,
-  Drawer,
+  DrawerBackdrop,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
-  DrawerOverlay,
+  DrawerPositioner,
+  DrawerRoot,
   Flex,
   Heading,
+  HStack,
   Icon,
   IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Menu,
-  MenuButton,
-  MenuDivider,
+  MenuContent,
   MenuItem,
-  MenuList,
-  Progress,
+  MenuPositioner,
+  MenuRoot,
+  MenuSeparator,
+  MenuTrigger,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
+  Separator,
   SimpleGrid,
   Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react'
 import { PaginationProvider, usePagination } from '@vocdoni/react-providers'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCalendar, LuClock, LuEllipsis, LuEye, LuSearch, LuTrash, LuUsers, LuVote, LuX } from 'react-icons/lu'
+import { LuCalendar, LuClock, LuEllipsis, LuEye, LuTrash, LuUsers, LuVote, LuX } from 'react-icons/lu'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { DashboardBox } from '~components/shared/Dashboard/Contents'
 import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
 import { PaginatedTableFooter } from '~components/shared/Pagination/PaginatedTableFooter'
 import { Routes } from '~routes'
+import { useToast } from '~shared/Toast'
 import { Group, useDeleteGroup, useGroupMembers, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { TableProvider, useTable } from './TableProvider'
 
@@ -93,27 +88,15 @@ export const useNavigateToVote = () => {
   }
 }
 
-const GroupsFilter = () => {
-  const { t } = useTranslation()
-  return (
-    <InputGroup maxW='250px'>
-      <InputLeftElement pointerEvents='none'>
-        <Icon as={LuSearch} color='texts.subtle' />
-      </InputLeftElement>
-      <Input placeholder={t('groups_board.search', { defaultValue: 'Search groups...' })} />
-    </InputGroup>
-  )
-}
-
 const GroupsInfo = () => {
   const { t } = useTranslation()
-  const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true })
+  const { open: isOpen, onClose } = useDisclosure({ defaultOpen: true })
 
   if (!isOpen) return null
 
   return (
     <DashboardBox position='relative' flexDirection='column' display='flex' gap={2} p={6} borderColor='table.border'>
-      <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorScheme='gray' size='sm' />
+      <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorPalette='gray' size='sm' />
       <Flex flexDirection='row' gap={4}>
         <Icon as={LuUsers} boxSize={8} />
         <Flex flexDirection='column' gap={4}>
@@ -142,73 +125,88 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
   const { t } = useTranslation()
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size='sm'>
-      <DrawerOverlay />
-      <DrawerContent>
-        <IconButton
-          aria-label={t('drawer.close', 'Close drawer')}
-          icon={<Icon as={LuX} />}
-          position='absolute'
-          top='6px'
-          right='6px'
-          onClick={onClose}
-          variant='transparent'
-        />
-        <DrawerHeader>
-          <Flex direction='column' gap={2}>
-            <Heading size='md'>
-              {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: group.title })}
-            </Heading>
-            <Text color='texts.subtle' size='sm'>
-              {t('groups_board.history.description', {
-                defaultValue: 'View the history of this group and its associated censuses',
-              })}
-            </Text>
-          </Flex>
-        </DrawerHeader>
-        <DrawerBody>
-          <Flex justify='flex-end'>
-            <Button variant='outline' onClick={onClose}>
-              {t('groups_board.history.close', { defaultValue: 'Close' })}
-            </Button>
-          </Flex>
-        </DrawerBody>
-      </DrawerContent>
-    </Drawer>
+    <DrawerRoot open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
+      <DrawerBackdrop />
+      <DrawerPositioner>
+        <DrawerContent>
+          <IconButton
+            aria-label={t('drawer.close', 'Close drawer')}
+            position='absolute'
+            top='6px'
+            right='6px'
+            onClick={onClose}
+            variant='ghost'
+          >
+            <Icon as={LuX} />
+          </IconButton>
+          <DrawerHeader>
+            <Flex direction='column' gap={2}>
+              <Heading size='md'>
+                {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: group.title })}
+              </Heading>
+              <Text color='texts.subtle' fontSize='sm'>
+                {t('groups_board.history.description', {
+                  defaultValue: 'View the history of this group and its associated censuses',
+                })}
+              </Text>
+            </Flex>
+          </DrawerHeader>
+          <DrawerBody>
+            <Flex justify='flex-end'>
+              <Button variant='outline' onClick={onClose}>
+                {t('groups_board.history.close', { defaultValue: 'Close' })}
+              </Button>
+            </Flex>
+          </DrawerBody>
+        </DrawerContent>
+      </DrawerPositioner>
+    </DrawerRoot>
   )
 }
 
 const GroupActions = ({ group, onMembersDrawerOpen, onDeleteModalOpen }: GroupActionsProps) => {
   const { t } = useTranslation()
   const navigateToVote = useNavigateToVote()
-  const { isOpen: isHistoryOpen, onOpen: onHistoryOpen, onClose: onHistoryClose } = useDisclosure()
+  const { open: isHistoryOpen, onOpen: onHistoryOpen, onClose: onHistoryClose } = useDisclosure()
 
   return (
     <>
-      <Menu placement='bottom-end'>
-        <MenuButton
-          as={IconButton}
-          aria-label={t('actions.more', { defaultValue: 'More options' })}
-          icon={<Icon as={LuEllipsis} />}
-          variant='ghost'
-          size='sm'
-        />
-        <MenuList minW='100px' fontSize='sm'>
-          <MenuItem icon={<Icon boxSize={4} as={LuEye} />} onClick={onMembersDrawerOpen}>
-            {t('group.actions.view_members', { defaultValue: 'View Members' })}
-          </MenuItem>
-          <MenuItem icon={<Icon boxSize={4} as={LuVote} />} onClick={() => navigateToVote(group.id)}>
-            {t('group.actions.create_vote', { defaultValue: 'Create a Vote' })}
-          </MenuItem>
-          <MenuItem isDisabled icon={<Icon boxSize={4} as={LuClock} />} onClick={onHistoryOpen}>
-            {t('group.actions.history', { defaultValue: 'History' })}
-          </MenuItem>
-          <MenuDivider />
-          <MenuItem icon={<Icon boxSize={4} as={LuTrash} />} color='red.500' onClick={onDeleteModalOpen}>
-            {t('group.actions.delete_group', { defaultValue: 'Delete Group' })}
-          </MenuItem>
-        </MenuList>
-      </Menu>
+      <MenuRoot>
+        <MenuTrigger asChild>
+          <IconButton aria-label={t('actions.more', { defaultValue: 'More options' })} variant='ghost' size='sm'>
+            <Icon as={LuEllipsis} />
+          </IconButton>
+        </MenuTrigger>
+        <MenuPositioner>
+          <MenuContent minW='100px' fontSize='sm'>
+            <MenuItem value='members' onClick={onMembersDrawerOpen}>
+              <HStack gap={2}>
+                <Icon boxSize={4} as={LuEye} />
+                <Text as='span'>{t('group.actions.view_members', { defaultValue: 'View Members' })}</Text>
+              </HStack>
+            </MenuItem>
+            <MenuItem value='vote' onClick={() => navigateToVote(group.id)}>
+              <HStack gap={2}>
+                <Icon boxSize={4} as={LuVote} />
+                <Text as='span'>{t('group.actions.create_vote', { defaultValue: 'Create a Vote' })}</Text>
+              </HStack>
+            </MenuItem>
+            <MenuItem value='history' disabled onClick={onHistoryOpen}>
+              <HStack gap={2}>
+                <Icon boxSize={4} as={LuClock} />
+                <Text as='span'>{t('group.actions.history', { defaultValue: 'History' })}</Text>
+              </HStack>
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem value='delete' color='red.500' onClick={onDeleteModalOpen}>
+              <HStack gap={2}>
+                <Icon boxSize={4} as={LuTrash} />
+                <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>
+              </HStack>
+            </MenuItem>
+          </MenuContent>
+        </MenuPositioner>
+      </MenuRoot>
       <HistoryDrawer group={group} isOpen={isHistoryOpen} onClose={onHistoryClose} />
     </>
   )
@@ -217,7 +215,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onDeleteModalOpen }: GroupAc
 const GroupMembersTable = ({ groupId }: { groupId: string }) => {
   const { t } = useTranslation()
   const deleteGroupMembers = useUpdateGroup()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const [isDeleteMembersModalOpen, setDeleteMembersModalOpen] = useState(false)
   const {
     data,
     isLoading,
@@ -249,7 +247,8 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
                 defaults='Selected: <strong>{{count}} member</strong>'
               />
             </Text>
-            <Button leftIcon={<Icon as={LuTrash} />} onClick={onOpen} size='sm' colorScheme='red' variant='outline'>
+            <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' colorPalette='red' variant='outline'>
+              <Icon as={LuTrash} />
               {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
             </Button>
           </>
@@ -259,7 +258,13 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
           </Text>
         )}
       </Flex>
-      <TableContainer border='1px' borderRadius='sm' borderColor='table.border' overflowX='visible' overflowY='visible'>
+      <Table.ScrollArea
+        border='1px'
+        borderRadius='sm'
+        borderColor='table.border'
+        overflowX='visible'
+        overflowY='visible'
+      >
         {isEmpty ? (
           <Flex justify='center' align='center' height='200px'>
             <Text color='texts.subtle' fontSize='sm'>
@@ -270,64 +275,74 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
           </Flex>
         ) : (
           <>
-            {isLoading && <Progress isIndeterminate />}
-            <Table>
-              <Thead>
-                <Tr>
-                  <Th width='50px'>
-                    <Checkbox
-                      isChecked={allVisibleSelected}
-                      isIndeterminate={someSelected && !allVisibleSelected}
-                      onChange={(e) => toggleAll(e.target.checked)}
-                    />
-                  </Th>
+            {isLoading && (
+              <ProgressRoot value={null}>
+                <ProgressTrack>
+                  <ProgressRange />
+                </ProgressTrack>
+              </ProgressRoot>
+            )}
+            <Table.Root variant='outline'>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader width='50px'>
+                    <CheckboxRoot
+                      checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
+                      onCheckedChange={({ checked }) => toggleAll(checked === true)}
+                    >
+                      <CheckboxHiddenInput />
+                      <CheckboxControl />
+                    </CheckboxRoot>
+                  </Table.ColumnHeader>
                   {columns.map((col) => (
-                    <Th key={col.id}>{col.label}</Th>
+                    <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
                   ))}
-                </Tr>
-              </Thead>
-              <Tbody>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
                 {data.map((member) => (
-                  <Tr key={member.id}>
-                    <Td>
-                      <Checkbox
-                        isChecked={isSelected(member.id)}
-                        onChange={(e) => toggleOne(member.id, e.target.checked)}
-                      />
-                    </Td>
+                  <Table.Row key={member.id}>
+                    <Table.Cell>
+                      <CheckboxRoot
+                        checked={isSelected(member.id)}
+                        onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
+                      >
+                        <CheckboxHiddenInput />
+                        <CheckboxControl />
+                      </CheckboxRoot>
+                    </Table.Cell>
                     {columns.map((column) => (
-                      <Td key={column.id}>{member[column.id]}</Td>
+                      <Table.Cell key={column.id}>{member[column.id]}</Table.Cell>
                     ))}
-                  </Tr>
+                  </Table.Row>
                 ))}
-              </Tbody>
-            </Table>
-            <Box p={4}>
-              <PaginatedTableFooter />
-            </Box>
+              </Table.Body>
+              <Table.Caption>
+                <PaginatedTableFooter />
+              </Table.Caption>
+            </Table.Root>
           </>
         )}
-      </TableContainer>
+      </Table.ScrollArea>
       <DeleteModal
         title={t('group.delete_member.title', { defaultValue: 'Delete Members' })}
         subtitle={t('group.delete_member.subtitle', {
           defaultValue: 'Are you sure you want to delete {{count}} members?',
           count: selectedRows.length,
         })}
-        isOpen={isOpen}
-        onClose={onClose}
+        open={isDeleteMembersModalOpen}
+        onOpenChange={({ open }) => setDeleteMembersModalOpen(open)}
       >
         <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={() => setDeleteMembersModalOpen(false)}>
             {t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button
-            isLoading={deleteGroupMembers.isPending}
-            shouldWrapChildren
-            colorScheme='red'
+            loading={deleteGroupMembers.isPending}
+            colorPalette='red'
             onClick={() => {
               onDeleteMember(selectedRows.map((row) => row.id))
-              onClose()
+              setDeleteMembersModalOpen(false)
               resetSelectedRows()
             }}
           >
@@ -344,62 +359,67 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
   const navigateToVote = useNavigateToVote()
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size='lg'>
-      <DrawerOverlay />
-      <DrawerContent>
-        <IconButton
-          aria-label={t('drawer.close', 'Close drawer')}
-          icon={<Icon as={LuX} />}
-          position='absolute'
-          top='6px'
-          right='6px'
-          onClick={onClose}
-          variant='transparent'
-        />
-        <DrawerHeader>
-          <Flex direction='column' gap={2}>
-            <Heading size='md'>{group.title}</Heading>
-            <Text color='texts.subtle' size='sm'>
-              {`${t('group.created_on', {
-                defaultValue: 'Created {{date}}',
-                date: new Date(group.createdAt).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                }),
-              })} • ${t('group.members', {
-                defaultValue: '{{count}} member',
-                defaultValue_other: '{{count}} members',
-                count: group.membersCount || 0,
-              })}`}
-            </Text>
-          </Flex>
-        </DrawerHeader>
-        <DrawerBody>
-          <GroupMembersDisplay group={group} isOpen={isOpen} />
-          <Divider my={4} />
-          <Flex direction='column' gap={4}>
-            <Text fontWeight='extrabold' size='sm'>
-              {t('group.actions_title', { defaultValue: 'Actions' })}
-            </Text>
-            <Text size='xs' color='texts.subtle'>
-              {t('group.actions_description', {
-                defaultValue:
-                  "When a new vote is created, the system takes a snapshot of the group's members at that moment. Any changes to the member list afterward will not affect the created census.",
-              })}
-            </Text>
-          </Flex>
-          <Flex justify='space-between' mt={4}>
-            <Button leftIcon={<Icon as={LuVote} boxSize={4} />} size='xs' onClick={() => navigateToVote(group.id)}>
-              {t('group.create_vote', { defaultValue: 'Create a Vote' })}
-            </Button>
-            <Button leftIcon={<Icon as={LuTrash} boxSize={4} />} onClick={openDeleteModal} colorScheme='red' size='xs'>
-              {t('group.delete_group', { defaultValue: 'Delete group' })}
-            </Button>
-          </Flex>
-        </DrawerBody>
-      </DrawerContent>
-    </Drawer>
+    <DrawerRoot open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='lg'>
+      <DrawerBackdrop />
+      <DrawerPositioner>
+        <DrawerContent>
+          <IconButton
+            aria-label={t('drawer.close', 'Close drawer')}
+            position='absolute'
+            top='6px'
+            right='6px'
+            onClick={onClose}
+            variant='ghost'
+          >
+            <Icon as={LuX} />
+          </IconButton>
+          <DrawerHeader>
+            <Flex direction='column' gap={2}>
+              <Heading size='md'>{group.title}</Heading>
+              <Text color='texts.subtle' fontSize='sm'>
+                {`${t('group.created_on', {
+                  defaultValue: 'Created {{date}}',
+                  date: new Date(group.createdAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  }),
+                })} • ${t('group.members', {
+                  defaultValue: '{{count}} member',
+                  defaultValue_other: '{{count}} members',
+                  count: group.membersCount || 0,
+                })}`}
+              </Text>
+            </Flex>
+          </DrawerHeader>
+          <DrawerBody>
+            <GroupMembersDisplay group={group} isOpen={isOpen} />
+            <Separator my={4} />
+            <Flex direction='column' gap={4}>
+              <Text fontWeight='extrabold' fontSize='sm'>
+                {t('group.actions_title', { defaultValue: 'Actions' })}
+              </Text>
+              <Text fontSize='xs' color='texts.subtle'>
+                {t('group.actions_description', {
+                  defaultValue:
+                    "When a new vote is created, the system takes a snapshot of the group's members at that moment. Any changes to the member list afterward will not affect the created census.",
+                })}
+              </Text>
+            </Flex>
+            <Flex justify='space-between' mt={4}>
+              <Button size='xs' onClick={() => navigateToVote(group.id)}>
+                <Icon as={LuVote} boxSize={4} />
+                {t('group.create_vote', { defaultValue: 'Create a Vote' })}
+              </Button>
+              <Button onClick={openDeleteModal} colorPalette='red' size='xs'>
+                <Icon as={LuTrash} boxSize={4} />
+                {t('group.delete_group', { defaultValue: 'Delete group' })}
+              </Button>
+            </Flex>
+          </DrawerBody>
+        </DrawerContent>
+      </DrawerPositioner>
+    </DrawerRoot>
   )
 }
 
@@ -407,7 +427,15 @@ const GroupMembersDisplay = ({ group, isOpen }: GroupMembersProps) => {
   const initialPage = 1
   const { data, isLoading } = useGroupMembers(group.id, initialPage, isOpen)
 
-  if (isLoading) return <Progress isIndeterminate />
+  if (isLoading) {
+    return (
+      <ProgressRoot value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
 
   const pagination = data.pagination
 
@@ -461,9 +489,9 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
       onSuccess: () => {
         toast({
           title: t('group.actions.delete_success', { defaultValue: 'Group deleted successfully' }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
         onClose()
       },
@@ -471,9 +499,9 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
         toast({
           title: t('group.actions.delete_error', { defaultValue: 'Error deleting group' }),
           description: error.message,
-          status: 'error',
+          type: 'error',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
       },
     })
@@ -486,18 +514,18 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
         <Trans
           i18nKey='group.actions.delete_confirm_description'
           values={{ title: group.title }}
-          components={{ bold: <Text as='span' size='sm' fontWeight='extrabold' /> }}
+          components={{ bold: <Text as='span' fontSize='sm' fontWeight='extrabold' /> }}
           defaults='Are you sure you want to delete <bold>{{title}}</bold>? This action cannot be undone and will permanently remove the group from your organization.'
         />
       }
-      isOpen={isOpen}
-      onClose={onClose}
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
         <Button variant='outline' onClick={onClose}>
           {t('group.actions.cancel', { defaultValue: 'Cancel' })}
         </Button>
-        <Button colorScheme='red' onClick={handleDelete}>
+        <Button colorPalette='red' onClick={handleDelete}>
           {t('group.actions.delete', { defaultValue: 'Delete' })}
         </Button>
       </Flex>
@@ -508,27 +536,27 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
 const GroupCard = ({ group }: GroupCardProps) => {
   const { t } = useTranslation()
   const navigateToVote = useNavigateToVote()
-  const { isOpen: isMembersDrawerOpen, onOpen: onMembersDrawerOpen, onClose: onMembersDrawerClose } = useDisclosure()
-  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure()
+  const { open: isMembersDrawerOpen, onOpen: onMembersDrawerOpen, onClose: onMembersDrawerClose } = useDisclosure()
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
 
   return (
     <>
-      <Card variant='outline' borderColor='table.border' p={4} pt={2}>
-        <CardHeader p={0}>
+      <Card.Root variant='outline' borderColor='table.border' p={4} pt={2}>
+        <Card.Header p={0}>
           <Flex justify='space-between' align='center'>
             <Heading size='md'>{group.title}</Heading>
             <GroupActions
               group={group}
               onMembersDrawerOpen={onMembersDrawerOpen}
-              onDeleteModalOpen={onDeleteModalOpen}
+              onDeleteModalOpen={() => setDeleteModalOpen(true)}
             />
           </Flex>
-        </CardHeader>
-        <CardBody p={0}>
+        </Card.Header>
+        <Card.Body p={0}>
           <Flex direction='column' gap={2}>
             <Flex align='center' gap={2}>
               <Icon as={LuCalendar} boxSize={3.5} />
-              <Text color='texts.subtle' size='sm'>
+              <Text color='texts.subtle' fontSize='sm'>
                 {t('group.created_on', {
                   defaultValue: 'Created {{date}}',
                   date: new Date(group.createdAt).toLocaleDateString(undefined, {
@@ -544,7 +572,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
               <Text
                 onClick={onMembersDrawerOpen}
                 fontWeight='bold'
-                size='sm'
+                fontSize='sm'
                 cursor='pointer'
                 _hover={{ textDecoration: 'underline' }}
               >
@@ -555,29 +583,25 @@ const GroupCard = ({ group }: GroupCardProps) => {
                 })}
               </Text>
             </Flex>
-            <Text size='sm' color='texts.subtle'>
+            <Text fontSize='sm' color='texts.subtle'>
               {group.description}
             </Text>
           </Flex>
-        </CardBody>
-        <CardFooter px={0} pb={0}>
-          <Button
-            w='full'
-            size='xs'
-            leftIcon={<Icon boxSize={4} as={LuVote} />}
-            onClick={() => navigateToVote(group.id)}
-          >
-            <Text size='xs'>{t('group.create_vote', { defaultValue: 'Create a Vote' })}</Text>
+        </Card.Body>
+        <Card.Footer px={0} pb={0}>
+          <Button w='full' size='xs' onClick={() => navigateToVote(group.id)}>
+            <Icon boxSize={4} as={LuVote} />
+            {t('group.create_vote', { defaultValue: 'Create a Vote' })}
           </Button>
-        </CardFooter>
-      </Card>
+        </Card.Footer>
+      </Card.Root>
       <ViewMembersDrawer
         group={group}
         isOpen={isMembersDrawerOpen}
         onClose={onMembersDrawerClose}
-        openDeleteModal={onDeleteModalOpen}
+        openDeleteModal={() => setDeleteModalOpen(true)}
       />
-      <DeleteGroupModal group={group} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} />
+      <DeleteGroupModal group={group} isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} />
     </>
   )
 }
@@ -598,10 +622,16 @@ const GroupsBoard = () => {
 
   return (
     <>
-      {isLoading && <Progress isIndeterminate />}
+      {isLoading && (
+        <ProgressRoot value={null}>
+          <ProgressTrack>
+            <ProgressRange />
+          </ProgressTrack>
+        </ProgressRoot>
+      )}
       {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
       {!hasError && !isLoading && groups && groups.length > 0 && (
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
           {groups.map((group) => (
             <GroupCard key={group.id} group={group} />
           ))}
@@ -612,8 +642,7 @@ const GroupsBoard = () => {
           mt={4}
           alignSelf='center'
           onClick={() => fetchNextPage()}
-          isLoading={isFetchingNextPage}
-          shouldWrapChildren
+          loading={isFetchingNextPage}
           variant='outline'
         >
           {t('groups_board.load_more', { defaultValue: 'Load more' })}

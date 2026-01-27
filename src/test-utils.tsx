@@ -1,19 +1,54 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, RenderOptions } from '@testing-library/react'
-import i18n from 'i18next'
-import { ReactElement, ReactNode } from 'react'
-import { I18nextProvider } from 'react-i18next'
+import i18n, { type Resource } from 'i18next'
+import { ComponentType, ReactElement, ReactNode } from 'react'
+import { I18nextProvider, initReactI18next } from 'react-i18next'
 import { ConnectionToastProvider } from '~components/shared/Layout/ConnectionToast'
-import { theme } from '~theme'
+import { ToastProvider } from '~shared/Toast'
+import { ColorModeProvider } from '~theme/color-mode'
+import { system } from '~theme/system'
+
+type TestI18nOptions = {
+  resources: Resource
+  lng?: string
+  fallbackLng?: string
+  useReactI18next?: boolean
+}
+
+export async function createTestI18n({
+  resources,
+  lng = 'en',
+  fallbackLng = 'en',
+  useReactI18next = false,
+}: TestI18nOptions) {
+  const instance = i18n.createInstance()
+
+  if (useReactI18next) {
+    instance.use(initReactI18next)
+  }
+
+  await instance.init({
+    lng,
+    fallbackLng,
+    defaultNS: 'common',
+    showSupportNotice: false,
+    interpolation: { escapeValue: false },
+    resources,
+  })
+
+  return instance
+}
 
 // Initialize i18n for tests
 i18n.init({
   lng: 'en',
   fallbackLng: 'en',
+  defaultNS: 'common',
+  showSupportNotice: false,
   resources: {
     en: {
-      translation: {
+      common: {
         'connection.error_title': 'Connection issues detected',
         'connection.error_description': 'Unable to reach the server. Please check your connection.',
         'connection.restored_title': 'Connection restored',
@@ -37,29 +72,52 @@ export const createTestQueryClient = () =>
 interface AllProvidersProps {
   children: ReactNode
   queryClient?: QueryClient
+  i18nInstance?: typeof i18n
+  innerWrapper?: ComponentType<{ children: ReactNode }>
 }
 
 // Wrapper component with all providers needed for tests
-export function AllProviders({ children, queryClient = createTestQueryClient() }: AllProvidersProps) {
+export function AllProviders({
+  children,
+  queryClient = createTestQueryClient(),
+  i18nInstance = i18n,
+  innerWrapper: InnerWrapper,
+}: AllProvidersProps) {
+  const content = InnerWrapper ? <InnerWrapper>{children}</InnerWrapper> : children
+
   return (
-    <ChakraProvider theme={theme}>
-      <I18nextProvider i18n={i18n}>
-        <QueryClientProvider client={queryClient}>
-          <ConnectionToastProvider>{children}</ConnectionToastProvider>
-        </QueryClientProvider>
-      </I18nextProvider>
-    </ChakraProvider>
+    <ColorModeProvider>
+      <ChakraProvider value={system}>
+        <I18nextProvider i18n={i18nInstance}>
+          <QueryClientProvider client={queryClient}>
+            <ToastProvider>
+              <ConnectionToastProvider>{content}</ConnectionToastProvider>
+            </ToastProvider>
+          </QueryClientProvider>
+        </I18nextProvider>
+      </ChakraProvider>
+    </ColorModeProvider>
   )
 }
 
 // Custom render function that includes all providers
-export function renderWithProviders(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) {
-  const queryClient = createTestQueryClient()
+type RenderWithProvidersOptions = Omit<RenderOptions, 'wrapper'> & {
+  queryClient?: QueryClient
+  i18nInstance?: typeof i18n
+  wrapper?: ComponentType<{ children: ReactNode }>
+}
+
+export function renderWithProviders(ui: ReactElement, options?: RenderWithProvidersOptions) {
+  const { queryClient = createTestQueryClient(), i18nInstance, wrapper, ...renderOptions } = options ?? {}
 
   return {
     ...render(ui, {
-      wrapper: ({ children }) => <AllProviders queryClient={queryClient}>{children}</AllProviders>,
-      ...options,
+      wrapper: ({ children }) => (
+        <AllProviders queryClient={queryClient} i18nInstance={i18nInstance} innerWrapper={wrapper}>
+          {children}
+        </AllProviders>
+      ),
+      ...renderOptions,
     }),
     queryClient,
   }

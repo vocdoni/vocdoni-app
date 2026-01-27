@@ -1,7 +1,7 @@
-import { popoverAnatomy as parts } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(parts.keys)
-const baseStyle = definePartsStyle({
+import { popoverAnatomy as parts } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
+
+const baseStyle = {
   content: {
     bg: 'chakra.body.bg',
     padding: 1,
@@ -16,5 +16,9 @@ const baseStyle = definePartsStyle({
   footer: {
     p: 0,
   },
+}
+
+export const Popover = defineSlotRecipe({
+  slots: parts.keys(),
+  base: baseStyle,
 })
-export const Popover = defineMultiStyleConfig({ baseStyle })

@@ -3,23 +3,27 @@ import {
   Badge,
   BadgeProps,
   Box,
-  BoxProps,
   Button,
   Flex,
-  forwardRef,
   HStack,
   Icon,
   IconButton,
   IconProps,
   Input,
   Link,
-  Progress,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
   Text,
-  Tooltip,
+  TooltipContent,
+  TooltipPositioner,
+  TooltipRoot,
+  TooltipTrigger,
   useBreakpointValue,
   useClipboard,
-  useStyleConfig,
+  useRecipe,
   VStack,
+  type HTMLChakraProps,
 } from '@chakra-ui/react'
 import {
   ActionCancel,
@@ -31,11 +35,11 @@ import {
   ElectionResults,
   ElectionStatusBadge,
   ElectionTitle,
-} from '@vocdoni/chakra-components'
+} from '~components/vocdoni-ui'
 import { useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format as formatDate } from 'date-fns'
-import { ReactNode } from 'react'
+import { ReactNode, forwardRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
   LuCalendar,
@@ -70,9 +74,13 @@ import { SidebarVisibilityProvider, useSidebarVisibility } from '~shared/Dashboa
 import { Routes } from '~src/router/routes'
 import { useResultTypeLabel } from '../resultTypeLabels'
 
-export const ElectionVideo = forwardRef<BoxProps, 'div'>((props, ref) => {
+type ElectionVideoProps = HTMLChakraProps<'div'>
+
+export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((props, ref) => {
   const { election } = useElection()
-  const styles = useStyleConfig('ElectionVideo', props)
+  const { ...rest } = props
+  const recipe = useRecipe({ key: 'ElectionVideo' })
+  const styles = recipe()
 
   if (!election) return null
 
@@ -81,7 +89,7 @@ export const ElectionVideo = forwardRef<BoxProps, 'div'>((props, ref) => {
   if (!streamUri) return null
 
   return (
-    <Box ref={ref} __css={styles} {...props}>
+    <Box ref={ref} css={styles} {...rest}>
       <AspectRatio ratio={16 / 9} width='100%' height='100%'>
         <ReactPlayer src={streamUri} width='100%' controls height='100%' />
       </AspectRatio>
@@ -101,7 +109,7 @@ const ProcessViewContent = () => {
   const { id, election } = useElection()
 
   const votingLink = `${document.location.origin}${generatePath(Routes.processes.view, { id })}`
-  const { onCopy } = useClipboard(votingLink)
+  const { copy } = useClipboard({ value: votingLink })
 
   return (
     <Box position='relative' w='full' overflow='hidden'>
@@ -122,10 +130,11 @@ const ProcessViewContent = () => {
             <ElectionStatusBadge />
             <IconButton
               aria-label={t('dashboard.actions.toggle_sidebar', { defaultValue: 'Toggle sidebar' })}
-              icon={<Icon as={LuSettings} />}
               variant='outline'
               onClick={toggleSidebar}
-            />
+            >
+              <Icon as={LuSettings} />
+            </IconButton>
           </HStack>
 
           <Box as='header'>
@@ -201,22 +210,14 @@ const ProcessViewContent = () => {
 
             <Flex justifyContent='space-between' gap={2}>
               <Input readOnly value={votingLink} />
-              <IconButton
-                variant='outline'
-                onClick={onCopy}
-                icon={<Icon as={LuCopy} />}
-                title={t('copy.copy', 'Copy')}
-                aria-label={t('copy.copy')}
-              />
-              <IconButton
-                as={Link}
-                href={votingLink}
-                isExternal
-                icon={<Icon as={LuEye} />}
-                variant='outline'
-                title={t('preview', 'Preview')}
-                aria-label={t('preview')}
-              />
+              <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
+                <Icon as={LuCopy} />
+              </IconButton>
+              <IconButton asChild variant='outline' title={t('preview', 'Preview')} aria-label={t('preview')}>
+                <Link href={votingLink} target='_blank' rel='noopener noreferrer'>
+                  <Icon as={LuEye} />
+                </Link>
+              </IconButton>
             </Flex>
           </DashboardBox>
 
@@ -262,13 +263,22 @@ const ResultsStateBadge = (props: BadgeProps) => {
       text = t('results_state.results_available', 'Results available')
       tooltip = null
     }
+    const badge = (
+      <Badge colorScheme={color} {...props}>
+        {text}
+        {tooltip && <Icon as={LuInfo} />}
+      </Badge>
+    )
+
+    if (!tooltip) return badge
+
     return (
-      <Tooltip label={tooltip} isDisabled={!tooltip} placement='top'>
-        <Badge colorScheme={color} {...props}>
-          {text}
-          {tooltip && <Icon as={LuInfo} />}
-        </Badge>
-      </Tooltip>
+      <TooltipRoot positioning={{ placement: 'top' }}>
+        <TooltipTrigger asChild>{badge}</TooltipTrigger>
+        <TooltipPositioner>
+          <TooltipContent>{tooltip}</TooltipContent>
+        </TooltipPositioner>
+      </TooltipRoot>
     )
   }
 
@@ -294,14 +304,15 @@ const ProcessViewSidebar = () => {
         {isMobile && (
           <IconButton
             aria-label={t('drawer.close', { defaultValue: 'Close drawer' })}
-            icon={<Icon as={LuX} />}
             variant='ghost'
             size='sm'
             position='absolute'
             top={2}
             right={2}
             onClick={closeSidebar}
-          />
+          >
+            <Icon as={LuX} />
+          </IconButton>
         )}
       </SidebarContents>
       <SidebarContents flex='1' overflowY='auto'>
@@ -363,7 +374,11 @@ const ProcessViewSidebar = () => {
                 </Box>
                 <Box>{participation}%</Box>
               </Box>
-              <Progress colorScheme='gray' w='full' value={participation} />
+              <ProgressRoot colorPalette='gray' w='full' value={participation}>
+                <ProgressTrack>
+                  <ProgressRange />
+                </ProgressTrack>
+              </ProgressRoot>
             </Box>
             <Box display='flex' justifyContent='space-between' fontSize='sm'>
               <Text display='flex' gap={2} alignItems='center' fontSize='inherit'>
@@ -410,17 +425,15 @@ const ProcessViewSidebar = () => {
           <SidebarSubtitle>
             <Trans i18nKey='additional_actions'>Additional actions</Trans>
           </SidebarSubtitle>
-          <Button
-            as={Link}
-            variant='outline'
-            w='full'
-            size='sm'
-            href={`${client.explorerUrl}/process/${election.id}`}
-            justifyContent='start'
-            leftIcon={<Icon as={LuSearch} />}
-            isExternal
-          >
-            <Trans i18nKey='view_in_explorer'>View in explorer</Trans>
+          <Button asChild variant='outline' w='full' size='sm' justifyContent='start'>
+            <Link href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
+              <HStack gap={2}>
+                <Icon as={LuSearch} />
+                <Text as='span'>
+                  <Trans i18nKey='view_in_explorer'>View in explorer</Trans>
+                </Text>
+              </HStack>
+            </Link>
           </Button>
         </VStack>
       </SidebarContents>
@@ -433,7 +446,7 @@ const SettingsField = ({ subtext, icon, text }: { subtext?: string; icon: typeof
     <Box
       color='gray.600'
       bg='gray.100'
-      _dark={{ bg: 'black.700', color: 'gray.400' }}
+      _dark={{ bg: 'brand.700', color: 'gray.400' }}
       display='flex'
       alignItems='center'
       justifyContent='center'
@@ -454,4 +467,6 @@ const SettingsField = ({ subtext, icon, text }: { subtext?: string; icon: typeof
   </Box>
 )
 
-const ControlIcon = forwardRef<IconProps, 'svg'>((props, ref) => <Icon mr={3} boxSize={4} ref={ref} {...props} />)
+const ControlIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon mr={3} boxSize={4} ref={ref} {...props} />
+))

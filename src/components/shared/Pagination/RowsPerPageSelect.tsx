@@ -1,5 +1,6 @@
 import { Box, Text } from '@chakra-ui/react'
-import { GroupBase, Props, Select } from 'chakra-react-select'
+import { GroupBase, Props } from 'chakra-react-select'
+import { Select } from '~shared/Form/Select'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 
@@ -13,7 +14,7 @@ const rowsPerPageOptions = [
 
 type OptionType = {
   label: string
-  value: string
+  value: number
 }
 
 type SelectProps = Props<OptionType, false, GroupBase<OptionType>>
@@ -27,7 +28,7 @@ const RowsPerPageSelect = (props: SelectProps) => {
 
   return (
     <Box display='flex' alignItems='center' gap={2}>
-      <Text size='sm'>{t('pagination.rows_per_page', 'Rows per page')}</Text>
+      <Text fontSize='sm'>{t('pagination.rows_per_page', 'Rows per page')}</Text>
       <Select
         value={value}
         onChange={(newValue) => {

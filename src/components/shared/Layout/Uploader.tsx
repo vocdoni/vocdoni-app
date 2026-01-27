@@ -1,19 +1,20 @@
 import {
-  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  AvatarRoot,
   Box,
   BoxProps,
   Button,
   Flex,
-  FormControl,
-  FormControlProps,
-  FormErrorMessage,
-  FormLabel,
+  FieldRoot as FormControl,
+  FieldRootProps as FormControlProps,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
   Icon,
   IconButton,
   Image,
   Spinner,
   Text,
-  useToast,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { DropzoneInputProps, DropzoneRootProps, useDropzone } from 'react-dropzone'
@@ -23,6 +24,7 @@ import { BiTrash } from 'react-icons/bi'
 import { LuUpload } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { useToast } from '~shared/Toast'
 
 export type UploaderProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T) => T
@@ -74,7 +76,7 @@ export const AvatarUploader = (props: FormControlProps) => {
       setValue('avatar', url)
       toast({
         title: t('uploader.avatar_upload_success', { defaultValue: 'Avatar uploaded' }),
-        status: 'success',
+        type: 'success',
         duration: 3000,
         isClosable: true,
       })
@@ -87,7 +89,7 @@ export const AvatarUploader = (props: FormControlProps) => {
       toast({
         title: t('uploader.avatar_upload_failed', { defaultValue: 'Avatar upload failed' }),
         description: errorMessage,
-        status: 'error',
+        type: 'error',
         duration: 3000,
         isClosable: true,
       })
@@ -105,12 +107,15 @@ export const AvatarUploader = (props: FormControlProps) => {
   })
 
   return (
-    <FormControl isInvalid={!!errors?.avatar} {...props}>
+    <FormControl invalid={!!errors?.avatar} {...props}>
       <FormLabel>{t('avatar.label', { defaultValue: 'Logo/Avatar' })}</FormLabel>
       <Box borderRadius='full' px={6}>
         {avatar ? (
           <Box position='relative' borderRadius='full' w='128px' h='128px'>
-            <Avatar name={name?.toString() || ''} src={avatar} w='full' h='full' />
+            <AvatarRoot w='full' h='full'>
+              <AvatarImage src={avatar} />
+              <AvatarFallback name={name?.toString() || ''} />
+            </AvatarRoot>
             <Flex
               position='absolute'
               top={0}
@@ -126,12 +131,13 @@ export const AvatarUploader = (props: FormControlProps) => {
               borderRadius='full'
             >
               <IconButton
-                icon={<BiTrash />}
                 aria-label={t('remove_avatar', { defaultValue: 'Remove avatar' })}
                 onClick={() => setValue('avatar', '')}
                 size='sm'
-                colorScheme='red'
-              />
+                colorPalette='red'
+              >
+                <BiTrash />
+              </IconButton>
             </Flex>
           </Box>
         ) : (
@@ -152,7 +158,8 @@ export const AvatarUploader = (props: FormControlProps) => {
               <input {...getInputProps()} />
               {isPending ? <Spinner /> : <Icon as={LuUpload} boxSize={8} color='texts.subtle' />}
             </Box>
-            <Button variant='outline' leftIcon={<Icon as={LuUpload} mr={2} boxSize={4} />}>
+            <Button variant='outline'>
+              <Icon as={LuUpload} boxSize={4} />
               {t('uploader.click_or_drag_and_drop_image', { defaultValue: 'Upload Image' })}
             </Button>
           </Flex>
@@ -184,7 +191,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
       setValue(name, url, { shouldDirty: true })
       toast({
         title: t('uploader.image_upload_success', { defaultValue: 'Image uploaded' }),
-        status: 'success',
+        type: 'success',
         duration: 3000,
         isClosable: true,
       })
@@ -195,7 +202,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
       toast({
         title: t('uploader.image_upload_failed', { defaultValue: 'Image upload failed' }),
         description: errorMessage,
-        status: 'error',
+        type: 'error',
         duration: 3000,
         isClosable: true,
       })
@@ -213,7 +220,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
   })
 
   return (
-    <FormControl isInvalid={!!errors?.[name]}>
+    <FormControl invalid={!!errors?.[name]}>
       <Flex direction='column' gap={2} align='center'>
         {value ? (
           <Flex

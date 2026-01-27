@@ -1,22 +1,10 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
-import {
-  Button,
-  ButtonProps,
-  Code,
-  Icon,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Text,
-  useColorMode,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Button, ButtonProps, CloseButton, Code, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { Trans } from 'react-i18next'
 import { LuCalendar } from 'react-icons/lu'
 import { SetupStepIds, useOrganizationSetup } from '~queries/organization'
+import { useColorMode } from '~theme/color-mode'
 
 type BookerProps = {
   callback?: () => void
@@ -54,37 +42,54 @@ export const Booker = ({ callback }: BookerProps) => {
   )
 }
 
-export type BookerModalButtonProps = ButtonProps & BookerProps
+export type BookerModalButtonProps = ButtonProps &
+  BookerProps & {
+    leftIcon?: React.ReactNode
+    iconSpacing?: ButtonProps['gap']
+    trigger?: React.ReactElement
+  }
 
-export const BookerModalButton = ({ callback, ...props }: BookerModalButtonProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+export const BookerModalButton = ({
+  callback,
+  children,
+  leftIcon,
+  iconSpacing = 2,
+  trigger,
+  ...props
+}: BookerModalButtonProps) => {
+  const content = children ?? <Trans i18nKey='home.support.btn_watch' />
+  const icon = leftIcon ?? <Icon as={LuCalendar} boxSize={4} />
+
+  const triggerNode = trigger ?? (
+    <Button colorPalette='gray' variant='ghost' whiteSpace='wrap' size='md' {...props}>
+      <HStack gap={iconSpacing}>
+        {icon}
+        <Text as='span'>{content}</Text>
+      </HStack>
+    </Button>
+  )
 
   return (
-    <>
-      <Button
-        leftIcon={<Icon as={LuCalendar} boxSize={4} />}
-        colorScheme='gray'
-        variant='outline'
-        whiteSpace='wrap'
-        size='md'
-        onClick={onOpen}
-        children={<Trans i18nKey='home.support.btn_watch' />}
-        {...props}
-      />
-      <Modal isOpen={isOpen} onClose={onClose} size='6xl'>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton />
-          <ModalBody>
-            <Booker callback={callback} />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
+    <Dialog.Root size='full'>
+      <Dialog.Trigger asChild>{triggerNode}</Dialog.Trigger>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Body>
+              <Booker callback={callback} />
+            </Dialog.Body>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton size='sm' />
+            </Dialog.CloseTrigger>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   )
 }
 
-export const DashboardBookerModalButton = (props: ButtonProps) => {
+export const DashboardBookerModalButton = (props: BookerModalButtonProps) => {
   const { setStepDone } = useOrganizationSetup()
 
   return (

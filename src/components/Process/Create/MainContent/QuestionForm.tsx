@@ -1,4 +1,14 @@
-import { Box, FormControl, FormErrorMessage, HStack, Icon, IconButton, Input, Text, VStack } from '@chakra-ui/react'
+import {
+  Box,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  HStack,
+  Icon,
+  IconButton,
+  Input,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { restrictToParentElement } from '@dnd-kit/modifiers'
 import {
@@ -66,7 +76,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
     <div ref={setNodeRef} style={style}>
       <DashboardBox>
         {/* Question title and description */}
-        <HStack align='stretch' spacing={4}>
+        <HStack align='stretch' gap={4}>
           {/* Drag handle */}
           {questions.length > 1 && (
             <Box
@@ -83,7 +93,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
             </Box>
           )}
 
-          <VStack flex='1' align='stretch' spacing={2} mb={6}>
+          <VStack flex='1' align='stretch' gap={2} mb={6}>
             <Text fontSize='sm' color='texts.subtle'>
               {t('process.create.question.question_number', {
                 defaultValue: 'Question {{index}} of {{total}}',
@@ -91,10 +101,9 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                 total: questions.length,
               })}
             </Text>
-            <FormControl isInvalid={!!errors.questions?.[index]?.title}>
+            <FormControl invalid={!!errors.questions?.[index]?.title}>
               <Input
                 px={0}
-                variant='unstyled'
                 placeholder={
                   placeholders[activeTemplate]?.questions?.[index]?.title ??
                   t('process_create.question.title.placeholder', 'Add a title to the question')
@@ -127,12 +136,13 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
           </VStack>
           {questions.length > 1 && (
             <IconButton
-              icon={<Icon as={LuX} />}
               aria-label={t('process_create.question.remove', 'Remove question')}
               size='sm'
               variant='ghost'
               onClick={() => onRemove(index)}
-            />
+            >
+              <Icon as={LuX} />
+            </IconButton>
           )}
         </HStack>
 

@@ -1,11 +1,9 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import { paginationAnatomy } from '@vocdoni/chakra-components'
+import { defineSlotRecipe } from '@chakra-ui/react'
+import { paginationAnatomy } from '~components/vocdoni-ui/pagination/anatomy'
 
-const { defineMultiStyleConfig: defineVoteWeightTipStyle, definePartsStyle: defineVoteWeightParts } =
-  createMultiStyleConfigHelpers(paginationAnatomy)
-
-export const Pagination = defineVoteWeightTipStyle({
-  baseStyle: defineVoteWeightParts({
+export const Pagination = defineSlotRecipe({
+  slots: paginationAnatomy,
+  base: {
     wrapper: {
       display: 'flex',
       flexDirection: 'row',
@@ -14,5 +12,5 @@ export const Pagination = defineVoteWeightTipStyle({
     totalResults: {
       display: 'none',
     },
-  }),
+  },
 })

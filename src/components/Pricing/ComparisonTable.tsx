@@ -1,19 +1,4 @@
-import {
-  chakra,
-  Divider,
-  Flex,
-  Icon,
-  Progress,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tooltip,
-  Tr,
-} from '@chakra-ui/react'
+import { chakra, Flex, Icon, Progress, Separator, Table, Text, Tooltip } from '@chakra-ui/react'
 import { dotobject } from '@vocdoni/sdk'
 import { forwardRef, isValidElement } from 'react'
 import { Trans } from 'react-i18next'
@@ -63,33 +48,40 @@ const SubcategoryIcon: Record<string, React.ElementType> = {
 const ComparisonSectionTable = ({ titleKey, plans, category, specs }: ComparisonSectionTableProps) => {
   return (
     <>
-      <Thead id='section-header'>
-        <Tr>
-          <Th colSpan={4}>
+      <Table.Header id='section-header'>
+        <Table.Row>
+          <Table.ColumnHeader colSpan={4}>
             <Flex alignItems='center' gap={2}>
               <Icon boxSize={4} as={SubcategoryIcon[category]} />
               <Text as={'span'} textTransform='uppercase' fontSize='sm'>
                 <Trans i18nKey={titleKey} />
               </Text>
             </Flex>
-          </Th>
-        </Tr>
-      </Thead>
-      <Tbody>
+          </Table.ColumnHeader>
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
         {specs.map((spec) => {
           const rowKey = spec.kind === 'plan' ? spec.path : spec.id
           return (
-            <Tr key={rowKey}>
-              <Td fontWeight='medium'>
+            <Table.Row key={rowKey}>
+              <Table.Cell fontWeight='medium'>
                 <Trans i18nKey={spec.labelKey} />
                 {spec.tooltip && (
-                  <Tooltip label={<Trans i18nKey={spec.tooltip} />} placement='auto'>
-                    <chakra.span verticalAlign='middle'>
-                      <Icon as={LuInfo} ml={1} />
-                    </chakra.span>
-                  </Tooltip>
+                  <Tooltip.Root positioning={{ placement: 'top' }}>
+                    <Tooltip.Trigger asChild>
+                      <chakra.span verticalAlign='middle'>
+                        <Icon as={LuInfo} ml={1} />
+                      </chakra.span>
+                    </Tooltip.Trigger>
+                    <Tooltip.Positioner>
+                      <Tooltip.Content>
+                        <Trans i18nKey={spec.tooltip} />
+                      </Tooltip.Content>
+                    </Tooltip.Positioner>
+                  </Tooltip.Root>
                 )}
-              </Td>
+              </Table.Cell>
 
               {plans.map((plan) => {
                 let cell: React.ReactNode = '-'
@@ -109,17 +101,17 @@ const ComparisonSectionTable = ({ titleKey, plans, category, specs }: Comparison
                 }
 
                 return (
-                  <Td key={plan.id} textAlign='center' w={40}>
+                  <Table.Cell key={plan.id} textAlign='center' w={40}>
                     <Flex alignItems='center' justifyContent='center'>
                       {cell}
                     </Flex>
-                  </Td>
+                  </Table.Cell>
                 )
               })}
-            </Tr>
+            </Table.Row>
           )
         })}
-      </Tbody>
+      </Table.Body>
     </>
   )
 }
@@ -129,36 +121,42 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
   const translations = usePlanTranslations()
 
   if (isLoading) {
-    return <Progress size='sm' isIndeterminate />
+    return (
+      <Progress.Root size='sm' value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
+    )
   }
 
   const filteredPlans = plans.filter((plan) => !(plan?.organization?.customPlan || plan.id === PlanId.Custom))
 
   return (
     <Flex ref={ref} justifyContent='center' w='full' display='block'>
-      <TableContainer>
-        <Table borderWidth={1} variant='simple'>
-          <Thead>
-            <Tr>
-              <Th>
+      <Table.ScrollArea>
+        <Table.Root borderWidth={1} variant='outline'>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>
                 <Text as={'span'}>
                   <Trans i18nKey='features.section.features'>Features</Trans>
                 </Text>
-              </Th>
+              </Table.ColumnHeader>
 
               {filteredPlans.map((plan) => {
                 return (
-                  <Th key={plan.id} textAlign='center'>
+                  <Table.ColumnHeader key={plan.id} textAlign='center'>
                     <Flex flexDirection={'column'} justifyContent={'center'}>
                       <Text as={'span'} textAlign={'center'}>
                         {translations[plan.id].title}
                       </Text>
                     </Flex>
-                  </Th>
+                  </Table.ColumnHeader>
                 )
               })}
-            </Tr>
-          </Thead>
+            </Table.Row>
+          </Table.Header>
           {Object.entries(CategorizedSpecs).map(([category, specs]) => (
             <ComparisonSectionTable
               key={category}
@@ -168,9 +166,9 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
               specs={specs}
             />
           ))}
-        </Table>
-      </TableContainer>
-      <Divider mt={6} mb={1} />
+        </Table.Root>
+      </Table.ScrollArea>
+      <Separator mt={6} mb={1} />
       <Flex textAlign='left' color='texts.subtle' flexDirection='column'>
         <Text fontSize='xs'>
           <Trans i18nKey='pricing.comparison_table.footnote_1'>

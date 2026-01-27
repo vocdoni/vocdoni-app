@@ -1,4 +1,5 @@
-import { baseLanguages } from '../src/i18n/languages.mjs'
+// @ts-ignore
+import { baseLanguages } from '../src/i18n/languages'
 
 export const resolveLanguagesSlice = (rawValue?: string) => {
   if (!rawValue) {
@@ -22,10 +23,13 @@ export const resolveLanguagesSlice = (rawValue?: string) => {
     )
   }
 
-  return languages.reduce((acc, lang) => {
-    acc[lang] = baseLanguages[lang]
-    return acc
-  }, {} as Record<string, string>)
+  return languages.reduce(
+    (acc, lang) => {
+      acc[lang] = baseLanguages[lang]
+      return acc
+    },
+    {} as Record<string, string>
+  )
 }
 
 export { baseLanguages }

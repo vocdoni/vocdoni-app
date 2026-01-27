@@ -1,9 +1,10 @@
-import { Button, Flex, useToast } from '@chakra-ui/react'
+import { Button, Flex } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import InputPassword from '~shared/Form/InputPassword'
+import { useToast } from '~shared/Toast'
 import { Routes } from '~src/router/routes'
 import { api, ApiEndpoints } from '../Auth/api'
 import InputBasic from '../shared/Form/InputBasic'
@@ -47,18 +48,18 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
         navigate(Routes.auth.signIn)
         toast({
           title: t('password_reset_successful', { defaultValue: 'Password reset successful' }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
       },
       onError: (error) => {
         toast({
           title: t('password_reset_failed', { defaultValue: 'Password reset failed' }),
           description: (error as Error).message,
-          status: 'error',
+          type: 'error',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
       },
     })
@@ -73,7 +74,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
           placeholder={t('email_placeholder', { defaultValue: 'your@email.com' })}
           type='email'
           required
-          isDisabled={!!email}
+          disabled={!!email}
         />
         <InputBasic
           formValue='code'
@@ -81,7 +82,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
           placeholder={t('verification_code_placeholder', { defaultValue: 'Enter the verification code' })}
           type='text'
           required
-          isDisabled={!!code}
+          disabled={!!code}
         />
         <InputPassword
           formValue='newPassword'
@@ -98,7 +99,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
             validate: (value) => value === methods.getValues('newPassword') || t('passwords_do_not_match'),
           }}
         />
-        <Button type='submit' fontSize='sm' colorScheme='black' fontWeight='500' w='100%' h={50}>
+        <Button type='submit' fontSize='sm' colorPalette='black' fontWeight='500' w='100%' h={50}>
           <Trans i18nKey='reset_password_button'>Reset Password</Trans>
         </Button>
       </Flex>

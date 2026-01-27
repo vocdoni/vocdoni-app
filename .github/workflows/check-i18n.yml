@@ -26,26 +26,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate translations
-        run: pnpm translations
-
-      - name: Fail if translations changed
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          # Collect unstaged changes in the locales path (modified files)
-          MODIFIED="$(git diff --name-only -- src/i18n/locales/*.json || true)"
-
-          # Collect untracked (new) files in the locales path
-          UNTRACKED="$(git ls-files --others --exclude-standard -- src/i18n/locales/*.json || true)"
-
-          if [ -n "${MODIFIED}${UNTRACKED}" ]; then
-            echo "::error::Translation files are out of date. Run 'pnpm translations' locally and commit the changes."
-            echo "Changed files:"
-            [ -n "$MODIFIED" ] && echo "$MODIFIED"
-            [ -n "$UNTRACKED" ] && echo "$UNTRACKED"
-            exit 1
-          else
-            echo "Translations are up to date."
-          fi
+      - name: Check translations
+        run: pnpm translations --ci

@@ -1,9 +1,9 @@
 import { AspectRatio, Box, Flex, IconButton } from '@chakra-ui/react'
-import { OrganizationImage as Avatar, OrganizationDescription, OrganizationName } from '@vocdoni/chakra-components'
 import { useClient, useOrganization } from '@vocdoni/react-providers'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
+import { OrganizationImage as Avatar, OrganizationDescription, OrganizationName } from '~components/vocdoni-ui'
 import { useReadMoreMarkdown } from '~shared/Layout/use-read-more'
 import AddressBtn from './Address'
 import fallback from '/assets/default-avatar.png'
@@ -60,7 +60,7 @@ const OrganizationHeader = () => {
             flexDirection='row'
             justifyContent='space-between'
             alignItems='center'
-            sx={{
+            css={{
               p: {
                 noOfLines: readMore ? 1 : 'none',
                 overflow: 'hidden',
@@ -75,18 +75,18 @@ const OrganizationHeader = () => {
               fontSize={32}
               lineHeight={1.5}
               title={organization?.account.name.default || organization?.address}
-              maxW={{ base: '250px', sm: '300px', sm2: '350px', md: '450px', lg: '370px', lg2: '500px', xl: '650px' }}
+              maxW={{ base: '250px', sm: '300px', md: '450px', lg: '500px', xl: '650px' }}
             />
             <Box>
               {isTruncated && (
                 <IconButton
-                  icon={readMore ? <FaEye /> : <FaEyeSlash />}
-                  variant='transparent'
                   alignSelf='start'
                   title={t('organization.title.read_more')}
                   aria-label={t('organization.title.read_more')}
                   onClick={handleReadMore}
-                />
+                >
+                  {readMore ? <FaEye /> : <FaEyeSlash />}
+                </IconButton>
               )}
             </Box>
           </Flex>

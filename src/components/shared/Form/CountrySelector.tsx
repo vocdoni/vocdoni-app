@@ -1,4 +1,4 @@
-import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react'
+import { FieldRoot as FormControl, FieldErrorText as FormErrorMessage, FieldLabel as FormLabel } from '@chakra-ui/react'
 import { GroupBase, Props } from 'chakra-react-select'
 import countries from 'country-flag-emoji-json'
 import { useMemo } from 'react'
@@ -56,7 +56,7 @@ export const CountrySelector = ({ ...props }: Omit<SelectProps, 'options'>) => {
   }, [])
 
   return (
-    <FormControl isInvalid={!!errors?.country} isRequired={true}>
+    <FormControl invalid={!!errors?.country} required={true}>
       <FormLabel htmlFor='country'>
         <Trans i18nKey='country_selector.selector_label'>Country</Trans>
       </FormLabel>

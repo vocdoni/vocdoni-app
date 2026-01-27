@@ -1,3 +1,5 @@
+import { defineSemanticTokens } from '@chakra-ui/react'
+
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
  * https://v2.chakra-ui.com/docs/styled-system/semantic-tokens
@@ -6,126 +8,177 @@
 const chakra = {
   body: {
     bg: {
-      _dark: 'black.650',
-      _light: 'white',
+      value: {
+        _light: '{colors.white}',
+        _dark: '{colors.brand.650}',
+      },
     },
   },
 }
 
 const texts = {
   primary: {
-    _light: 'black',
-    _dark: 'white',
+    value: {
+      _light: '{colors.brand.500}',
+      _dark: '{colors.white}',
+    },
   },
   subtle: {
-    _light: 'gray.500',
-    _dark: 'gray.400',
+    value: {
+      _light: '{colors.gray.500}',
+      _dark: '{colors.gray.400}',
+    },
   },
   dark: {
-    default: 'gray.600',
-    _dark: 'gray.500',
+    value: {
+      _light: '{colors.gray.600}',
+      _dark: '{colors.gray.500}',
+    },
   },
 }
 
-export const colors = {
+export const colors = defineSemanticTokens.colors({
   chakra,
+  bg: {
+    muted: {
+      value: {
+        _dark: '{colors.brand.800}',
+      },
+    },
+  },
   auth: {
     bg: {
-      _dark: 'black.550',
-      _light: 'gray.50',
+      value: {
+        _light: '{colors.gray.50}',
+        _dark: '{colors.brand.550}',
+      },
     },
     card: {
       bg: {
-        _dark: 'black',
-        _light: 'white',
+        value: {
+          _light: '{colors.white}',
+          _dark: '{colors.brand.500}',
+        },
       },
-      border: 'gray.200',
+      border: {
+        value: '{colors.gray.200}',
+      },
     },
   },
   card: {
     pricing: {
       bg: {
-        default: chakra.body.bg._light,
-        _dark: chakra.body.bg._dark,
+        value: {
+          _light: '{colors.white}',
+          _dark: '{colors.brand.650}',
+        },
       },
       border: {
-        default: 'gray.200',
-        _dark: 'black.700',
+        value: {
+          _light: '{colors.gray.200}',
+          _dark: '{colors.brand.700}',
+        },
       },
       current: {
         bg: {
-          default: 'gray.100',
-          _dark: 'black.600',
+          value: {
+            _light: '{colors.gray.100}',
+            _dark: '{colors.brand.600}',
+          },
         },
         color: {
-          default: 'black',
-          _dark: 'white',
+          value: {
+            _light: '{colors.brand.500}',
+            _dark: '{colors.white}',
+          },
         },
       },
       featured: {
-        bg: 'gray.800',
+        bg: {
+          value: '{colors.gray.800}',
+        },
         badge: {
           bg: {
-            default: 'black',
-            _dark: 'white',
+            value: {
+              _light: '{colors.brand.500}',
+              _dark: '{colors.white}',
+            },
           },
           color: {
-            default: 'white',
-            _dark: 'black',
+            value: {
+              _light: '{colors.white}',
+              _dark: '{colors.brand.500}',
+            },
           },
         },
         border: {
-          default: 'black',
-          _dark: 'white',
+          value: {
+            _light: '{colors.brand.500}',
+            _dark: '{colors.white}',
+          },
         },
       },
     },
   },
   dashboard: {
     menu: {
-      default: '#fbfbfb',
-      _dark: '#18181b',
+      value: {
+        _light: '{colors.dashboardMenu.light}',
+        _dark: '{colors.dashboardMenu.dark}',
+      },
     },
   },
   input: {
-    placeholder: 'gray.500',
+    placeholder: {
+      value: '{colors.gray.500}',
+    },
   },
   table: {
     border: {
-      _light: 'gray.200',
-      _dark: 'black.700',
+      value: {
+        _light: '{colors.gray.200}',
+        _dark: '{colors.gray.800}',
+      },
     },
   },
   tabs: {
     tab: {
       color: {
-        _light: 'gray.500',
-        _dark: 'gray.400',
+        value: {
+          _light: '{colors.gray.500}',
+          _dark: '{colors.gray.400}',
+        },
       },
       active: {
         color: {
-          _light: 'black',
-          _dark: 'white',
+          value: {
+            _light: '{colors.brand.500}',
+            _dark: '{colors.white}',
+          },
         },
         bg: {
-          _light: 'white',
-          _dark: 'black',
+          value: {
+            _light: '{colors.white}',
+            _dark: '{colors.brand.500}',
+          },
         },
       },
     },
     bg: {
-      _light: 'gray.100',
-      _dark: 'black.700',
+      value: {
+        _light: '{colors.gray.100}',
+        _dark: '{colors.brand.700}',
+      },
     },
   },
   texts,
-}
+})
 
 const semanticTokens = {
   colors,
   fontWeights: {
-    normal: 300,
-    bold: 400,
+    normal: { value: 300 },
+    bold: { value: 400 },
   },
 }
 

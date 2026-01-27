@@ -24,14 +24,8 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb, setBreadcrumb }) =>
         {/* Dashboard link - only linked when there's breadcrumb */}
         <Box display={{ base: breadcrumb.length === 0 ? 'block' : 'none', md: 'block' }}>
           {breadcrumb.length ? (
-            <Link
-              as={ReactRouterLink}
-              to={generatePath(Routes.dashboard.base)}
-              variant='breadcrumb'
-              fontSize='sm'
-              onClick={() => setBreadcrumb([])}
-            >
-              {t('organization.dashboard')}
+            <Link variant='breadcrumb' fontSize='sm' onClick={() => setBreadcrumb([])} asChild>
+              <ReactRouterLink to={generatePath(Routes.dashboard.base)}>{t('organization.dashboard')}</ReactRouterLink>
             </Link>
           ) : (
             <Text fontSize='sm'>{t('organization.dashboard')}</Text>
@@ -56,8 +50,8 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ breadcrumb, setBreadcrumb }) =>
             {/* Item */}
             <Box display={{ base: index === breadcrumb.length - 1 ? 'block' : 'none', md: 'block' }}>
               {item.route ? (
-                <Link as={ReactRouterLink} to={generatePath(item.route)} variant='breadcrumb' fontSize='sm'>
-                  {item.title}
+                <Link variant='breadcrumb' fontSize='sm' asChild>
+                  <ReactRouterLink to={generatePath(item.route)}>{item.title}</ReactRouterLink>
                 </Link>
               ) : (
                 <Text fontSize='sm'>{item.title}</Text>

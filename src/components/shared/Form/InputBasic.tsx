@@ -1,4 +1,11 @@
-import { FormControl, FormErrorMessage, FormLabel, Input, InputProps, SystemStyleObject } from '@chakra-ui/react'
+import {
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
+  Input,
+  InputProps,
+  SystemStyleObject,
+} from '@chakra-ui/react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
@@ -32,8 +39,8 @@ const InputBasic = ({
   const errorMessage = errors[formValue]?.message?.toString() || ''
 
   return (
-    <FormControl isInvalid={!!errors[formValue]} isRequired={required}>
-      {label && <FormLabel sx={labelStyles}>{label}</FormLabel>}
+    <FormControl invalid={!!errors[formValue]} required={required}>
+      {label && <FormLabel css={labelStyles}>{label}</FormLabel>}
       <Input
         {...register(formValue, validationRules)}
         {...props}

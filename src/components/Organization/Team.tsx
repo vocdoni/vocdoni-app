@@ -1,44 +1,47 @@
 import {
-  Alert,
-  Avatar,
+  AlertRoot as Alert,
+  AvatarFallback,
+  AvatarIcon,
+  AvatarRoot,
   Badge,
   Box,
   Button,
+  CloseButton,
+  Dialog,
+  type DialogRootProps,
   Flex,
-  FormControl,
-  FormLabel,
+  FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Heading,
   HStack,
   Icon,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuGroup,
+  MenuContent,
   MenuItem,
-  MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  ModalProps,
-  Progress,
-  Radio,
-  RadioGroup,
-  RadioProps,
+  MenuItemGroup,
+  MenuItemGroupLabel,
+  MenuPositioner,
+  MenuRoot,
+  MenuSeparator,
+  MenuTrigger,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
+  RadioGroupItem,
+  RadioGroupItemControl,
+  RadioGroupItemHiddenInput,
+  RadioGroupItemText,
+  RadioGroupRoot,
   Spinner,
   Stack,
   Text,
   useDisclosure,
   useRadioGroupContext,
-  useToast,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
 import { enforceHexPrefix, useClient } from '@vocdoni/react-providers'
 import { formatDistanceToNow } from 'date-fns'
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuEllipsis, LuMail, LuPlus, LuRefreshCw, LuUserCog, LuUserPlus } from 'react-icons/lu'
@@ -47,6 +50,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
 import { roleIcons } from '~shared/Layout/SaasSelector'
+import { useToast } from '~shared/Toast'
 import { useProfile } from '~src/queries/account'
 import { QueryKeys } from '~src/queries/keys'
 import { Role, useRemoveUserMutation, useRoles } from '~src/queries/organization'
@@ -78,14 +82,13 @@ type User = ActiveUser | PendingUser
 
 const isActiveUser = (user: User): user is ActiveUser => !!user.info
 
-type UserModalProps<T extends User> = Omit<ModalProps, 'children' | 'isOpen' | 'onClose'> & {
-  isOpen: boolean
-  onClose: () => void
+type UserModalProps<T extends User> = {
   user: T
-}
+} & Pick<DialogRootProps, 'open' | 'onOpenChange'>
 
 type ActiveUserModalProps = UserModalProps<ActiveUser>
 type PendingUserModalProps = UserModalProps<PendingUser>
+type ChangeRoleDialogProps = ActiveUserModalProps
 
 type UpdateRoleBody = {
   role: string
@@ -101,7 +104,7 @@ type ChangeRoleFormProps = {
   onClose: () => void
 }
 
-type RoleRadioProps = RadioProps & {
+type RoleRadioProps = ComponentProps<typeof RadioGroupItem> & {
   fieldName: ReactNode
   description: ReactNode
   value: string
@@ -256,34 +259,39 @@ const useResendInvitationMutation = () => {
   })
 }
 
-const RoleRadio = ({ fieldName: title, description, value, isDisabled, ...props }: RoleRadioProps) => {
+const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }: RoleRadioProps) => {
   const group = useRadioGroupContext()
   const isSelected = group?.value === value
 
   return (
-    <Box
-      as='label'
+    <RadioGroupItem
+      value={value}
+      disabled={disabled}
       border='1px solid'
       borderRadius='md'
       borderColor={isSelected && 'gray.400'}
       p={2}
-      cursor={isDisabled ? 'not-allowed' : 'pointer'}
-      opacity={isDisabled ? 0.6 : 1}
-      _hover={!isDisabled ? { borderColor: 'gray.400' } : undefined}
+      cursor={disabled ? 'not-allowed' : 'pointer'}
+      opacity={disabled ? 0.6 : 1}
+      _hover={!disabled ? { borderColor: 'gray.400' } : undefined}
+      {...props}
     >
+      <RadioGroupItemHiddenInput />
       <Flex align='start' gap={4}>
-        <Radio value={value} isChecked={isSelected} mt={1} isDisabled={isDisabled} {...props} />
+        <RadioGroupItemControl mt={1} />
         <Box flex='1'>
           <Flex gap={2} align='center' mb={1}>
             <Text>{roleIcons[value]}</Text>
-            <Text fontWeight='semibold'>{title}</Text>
+            <RadioGroupItemText as='span' fontWeight='semibold'>
+              {title}
+            </RadioGroupItemText>
           </Flex>
           <Text fontSize='sm' color='texts.subtle'>
             {description}
           </Text>
         </Box>
       </Flex>
-    </Box>
+    </RadioGroupItem>
   )
 }
 
@@ -317,24 +325,30 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
   return (
     <FormControl>
       <FormLabel fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</FormLabel>
-      {rolesLoading && <Progress isIndeterminate />}
+      {rolesLoading && (
+        <ProgressRoot value={null}>
+          <ProgressTrack>
+            <ProgressRange />
+          </ProgressTrack>
+        </ProgressRoot>
+      )}
       <Controller
         name='role'
         control={control}
         render={({ field }) => (
-          <RadioGroup {...field} colorScheme='gray'>
+          <RadioGroupRoot value={field.value} onValueChange={({ value }) => field.onChange(value)} colorPalette='gray'>
             <Stack direction='column' gap={2}>
               {roles?.map((role: Role) => (
                 <RoleRadio
                   key={role.role}
                   value={role.role}
                   fieldName={role.name}
-                  isDisabled={role.role === currentRole}
+                  disabled={role.role === currentRole}
                   description={getRoleDescription(role)}
                 />
               ))}
             </Stack>
-          </RadioGroup>
+          </RadioGroupRoot>
         )}
       />
     </FormControl>
@@ -354,7 +368,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
         onSuccess: (): void => {
           toast({
             title: t('role.update.success', { defaultValue: 'Role updated successfully' }),
-            status: 'success',
+            type: 'success',
             duration: 5000,
             isClosable: true,
           })
@@ -364,7 +378,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
           toast({
             title: t('role.update.error', { defaultValue: 'Error updating role' }),
             description: error.message,
-            status: 'error',
+            type: 'error',
             duration: 5000,
             isClosable: true,
           })
@@ -380,7 +394,9 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
     <FormProvider {...methods}>
       <Flex as='form' direction='column' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
         <Flex border='1px solid' borderColor='table.border' p={4} borderRadius='md' alignItems='center'>
-          <Avatar name={fullName} />
+          <AvatarRoot>
+            <AvatarFallback name={fullName} />
+          </AvatarRoot>
           <Box ml='3'>
             <HStack align='center'>
               <Text fontWeight='bold'>{fullName}</Text>
@@ -410,7 +426,7 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
           <Button variant='outline' onClick={onClose}>
             {t('role.update.cancel', { defaultValue: 'Cancel' })}
           </Button>
-          <Button isLoading={updateRole.isPending} shouldWrapChildren type='submit'>
+          <Button loading={updateRole.isPending} type='submit'>
             {t('role.update.save', {
               defaultValue: 'Update role',
             })}
@@ -421,34 +437,42 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
   )
 }
 
-const ChangeRoleModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalProps) => {
+const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) => {
   const { t } = useTranslation()
+  const onClose = () => onOpenChange({ open: false })
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='xl' closeOnOverlayClick={false} {...props}>
-      <ModalOverlay />
-      <ModalContent py={4}>
-        <ModalHeader>
-          <Heading variant='header'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
-          <Text variant='subheader'>
-            <Trans i18nKey='role.update.subtitle'>
-              Update the permissions for this team member by changing their role.
-            </Trans>
-          </Text>
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <ChangeRoleForm user={user} onClose={onClose} />
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <Dialog.Root open={open} onOpenChange={onOpenChange} closeOnInteractOutside={false}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
+        <Dialog.Content maxW='xl' py={4}>
+          <Dialog.CloseTrigger>
+            <CloseButton />
+          </Dialog.CloseTrigger>
+          <Dialog.Header>
+            <Dialog.Title>
+              <Heading variant='header'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
+            </Dialog.Title>
+            <Text variant='subheader'>
+              <Trans i18nKey='role.update.subtitle'>
+                Update the permissions for this team member by changing their role.
+              </Trans>
+            </Text>
+          </Dialog.Header>
+          <Dialog.Body>
+            <ChangeRoleForm user={user} onClose={onClose} />
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }
 
-const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalProps) => {
+const RemoveUserModal = ({ open, onOpenChange, user }: ActiveUserModalProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const removeUser = useRemoveUserMutation()
+  const onClose = () => onOpenChange({ open: false })
 
   const id = user.info?.id
 
@@ -457,7 +481,7 @@ const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalPro
       onSuccess: () => {
         toast({
           title: t('team.remove_member.success', { defaultValue: 'Member removed successfully' }),
-          status: 'success',
+          type: 'success',
           duration: 5000,
           isClosable: true,
         })
@@ -467,7 +491,7 @@ const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalPro
         toast({
           title: t('team.remove_member.error', { defaultValue: 'Error removing member' }),
           description: error.message,
-          status: 'error',
+          type: 'error',
           duration: 5000,
           isClosable: true,
         })
@@ -482,15 +506,14 @@ const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalPro
         defaultValue: 'This will remove {{name}} from your team. They will no longer have access to your organization.',
         name: `${user.info.firstName} ${user.info.lastName}`,
       })}
-      isOpen={isOpen}
-      onClose={onClose}
-      {...props}
+      open={open}
+      onOpenChange={({ open }) => onOpenChange({ open })}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
         <Button variant='outline' onClick={onClose}>
           {t('team.remove_member.cancel', { defaultValue: 'Cancel' })}
         </Button>
-        <Button isLoading={removeUser.isPending} shouldWrapChildren colorScheme='red' onClick={removeUserHandler}>
+        <Button loading={removeUser.isPending} colorPalette='red' onClick={removeUserHandler}>
           {t('team.remove_member.confirm', { defaultValue: 'Remove' })}
         </Button>
       </Flex>
@@ -498,26 +521,28 @@ const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalPro
   )
 }
 
-const CancelInvitationModal = ({ isOpen, onClose, user, ...props }: PendingUserModalProps) => {
+const CancelInvitationModal = ({ open, onOpenChange, user }: PendingUserModalProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const cancelInvitation = useCancelInvitation()
+  const onClose = () => onOpenChange({ open: false })
 
   const cancelInvitationHandler = () => {
     cancelInvitation.mutate(user.id, {
       onSuccess: () => {
         toast({
           title: t('team.actions.cancel_invitation_success', { defaultValue: 'Invitation cancelled successfully' }),
-          status: 'success',
+          type: 'success',
           duration: 5000,
           isClosable: true,
         })
+        onClose()
       },
       onError: (error: Error) => {
         toast({
           title: t('team.actions.cancel_invitation_error', { defaultValue: 'Error cancelling invitation' }),
           description: error.message,
-          status: 'error',
+          type: 'error',
           duration: 5000,
           isClosable: true,
         })
@@ -531,19 +556,14 @@ const CancelInvitationModal = ({ isOpen, onClose, user, ...props }: PendingUserM
       subtitle={t('team.cancel_invitation.confirmation', {
         defaultValue: 'This will cancel the invitation. The person will not be able to join your organization.',
       })}
-      isOpen={isOpen}
-      onClose={onClose}
+      open={open}
+      onOpenChange={({ open }) => onOpenChange({ open })}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
         <Button variant='outline' onClick={onClose}>
           {t('team.cancel_invitation.cancel', { defaultValue: 'Cancel' })}
         </Button>
-        <Button
-          isLoading={cancelInvitation.isPending}
-          shouldWrapChildren
-          colorScheme='red'
-          onClick={cancelInvitationHandler}
-        >
+        <Button loading={cancelInvitation.isPending} colorPalette='red' onClick={cancelInvitationHandler}>
           {t('team.cancel_invitation.confirm', { defaultValue: 'Cancel invitation' })}
         </Button>
       </Flex>
@@ -565,7 +585,7 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
             defaultValue: 'Invitation resent to {{email}} successfully',
             email: user?.email,
           }),
-          status: 'success',
+          type: 'success',
           duration: 5000,
           isClosable: true,
         })
@@ -578,7 +598,7 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
             email: user?.email,
           }),
           description: error.message,
-          status: 'error',
+          type: 'error',
           duration: 5000,
           isClosable: true,
         })
@@ -588,15 +608,13 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
 
   return (
     <>
-      <MenuItem
-        icon={isLoading ? <Spinner size='xs' /> : <Icon as={LuRefreshCw} />}
-        fontSize='sm'
-        isDisabled={isLoading}
-        onClick={resendInvitationHandler}
-      >
-        {t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}
+      <MenuItem value='resend-invitation' fontSize='sm' disabled={isLoading} onClick={resendInvitationHandler}>
+        <HStack gap={2}>
+          {isLoading ? <Spinner size='xs' /> : <Icon as={LuRefreshCw} />}
+          <Text as='span'>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Text>
+        </HStack>
       </MenuItem>
-      <MenuItem color='red' fontSize='sm' isDisabled={isLoading} onClick={openCancelInvitation}>
+      <MenuItem value='cancel-invitation' color='red' fontSize='sm' disabled={isLoading} onClick={openCancelInvitation}>
         {t('team.actions.cancel_invitation', { defaultValue: 'Cancel Invitation' })}
       </MenuItem>
     </>
@@ -608,11 +626,14 @@ const ActiveUserActions = ({ openChangeRole, openRemoveUser }: ActiveUserActions
 
   return (
     <>
-      <MenuItem onClick={openChangeRole} fontSize='sm' icon={<Icon boxSize={4} as={LuUserCog} />}>
-        {t('team.actions.change_role', { defaultValue: 'Change role' })}
+      <MenuItem value='change-role' onClick={openChangeRole} fontSize='sm'>
+        <HStack gap={2}>
+          <Icon boxSize={4} as={LuUserCog} />
+          <Text as='span'>{t('team.actions.change_role', { defaultValue: 'Change role' })}</Text>
+        </HStack>
       </MenuItem>
-      <MenuDivider />
-      <MenuItem color='red.400' fontSize='sm' onClick={openRemoveUser}>
+      <MenuSeparator />
+      <MenuItem value='remove-user' color='red.400' fontSize='sm' onClick={openRemoveUser}>
         {t('team.actions.remove_user', { defaultValue: 'Remove user' })}
       </MenuItem>
     </>
@@ -622,10 +643,22 @@ const ActiveUserActions = ({ openChangeRole, openRemoveUser }: ActiveUserActions
 const UserActions = ({ user }: UserActionsProps) => {
   const { t } = useTranslation()
   const { data: profile, isLoading } = useProfile()
-  const { isOpen: isMenuOpen, onOpen: openMenu, onClose: closeMenu } = useDisclosure()
-  const roleModal = useDisclosure()
-  const removeModal = useDisclosure()
-  const cancelModal = useDisclosure()
+  const { open: isMenuOpen, onOpen: openMenu, onClose: closeMenu } = useDisclosure()
+  const [isRoleModalOpen, setRoleModalOpen] = useState(false)
+  const [isRemoveUserModalOpen, setRemoveUserModalOpen] = useState(false)
+  const [isCancelInvitationModalOpen, setCancelInvitationModalOpen] = useState(false)
+  const openChangeRole = () => {
+    setRoleModalOpen(true)
+    closeMenu()
+  }
+  const openRemoveUser = () => {
+    setRemoveUserModalOpen(true)
+    closeMenu()
+  }
+  const openCancelInvitation = () => {
+    setCancelInvitationModalOpen(true)
+    closeMenu()
+  }
 
   const isCurrentUser = String(user.info?.id) === String(profile?.id)
 
@@ -633,41 +666,55 @@ const UserActions = ({ user }: UserActionsProps) => {
 
   return (
     <>
-      <Menu
+      <MenuRoot
         closeOnSelect={false}
-        isOpen={isMenuOpen}
-        onOpen={openMenu}
-        onClose={closeMenu}
-        placement='bottom-end'
-        isLazy
+        open={isMenuOpen}
+        onOpenChange={({ open }) => (open ? openMenu() : closeMenu())}
+        positioning={{ placement: 'bottom-end' }}
       >
-        <MenuButton
-          as={IconButton}
-          isLoading={isLoading}
-          shouldWrapChildren
-          icon={<Icon as={LuEllipsis} />}
-          ml='auto'
-          variant='ghost'
-          aria-label={t('team.actions.options', { defaultValue: 'Options' })}
-          onClick={openMenu}
-        />
-        <MenuList minW='unset'>
-          <MenuGroup title={t('team.actions.title', { defaultValue: 'Actions' })}>
-            {isActiveUser(user) ? (
-              <ActiveUserActions openChangeRole={roleModal.onOpen} openRemoveUser={removeModal.onOpen} />
-            ) : (
-              <PendingInvitationActions user={user} openCancelInvitation={cancelModal.onOpen} closeMenu={closeMenu} />
-            )}
-          </MenuGroup>
-        </MenuList>
-      </Menu>
+        <MenuTrigger asChild>
+          <IconButton
+            loading={isLoading}
+            ml='auto'
+            variant='ghost'
+            aria-label={t('team.actions.options', { defaultValue: 'Options' })}
+            onClick={openMenu}
+          >
+            <Icon as={LuEllipsis} />
+          </IconButton>
+        </MenuTrigger>
+        <MenuPositioner>
+          <MenuContent minW='unset'>
+            <MenuItemGroup>
+              <MenuItemGroupLabel>{t('team.actions.title', { defaultValue: 'Actions' })}</MenuItemGroupLabel>
+              {isActiveUser(user) ? (
+                <ActiveUserActions openChangeRole={openChangeRole} openRemoveUser={openRemoveUser} />
+              ) : (
+                <PendingInvitationActions
+                  user={user}
+                  openCancelInvitation={openCancelInvitation}
+                  closeMenu={closeMenu}
+                />
+              )}
+            </MenuItemGroup>
+          </MenuContent>
+        </MenuPositioner>
+      </MenuRoot>
       {isActiveUser(user) ? (
         <>
-          <ChangeRoleModal isOpen={roleModal.isOpen} onClose={roleModal.onClose} user={user} />
-          <RemoveUserModal isOpen={removeModal.isOpen} onClose={removeModal.onClose} user={user} />
+          <ChangeRoleModal open={isRoleModalOpen} onOpenChange={({ open }) => setRoleModalOpen(open)} user={user} />
+          <RemoveUserModal
+            open={isRemoveUserModalOpen}
+            onOpenChange={({ open }) => setRemoveUserModalOpen(open)}
+            user={user}
+          />
         </>
       ) : (
-        <CancelInvitationModal isOpen={cancelModal.isOpen} onClose={cancelModal.onClose} user={user} />
+        <CancelInvitationModal
+          open={isCancelInvitationModalOpen}
+          onOpenChange={({ open }) => setCancelInvitationModalOpen(open)}
+          user={user}
+        />
       )}
     </>
   )
@@ -711,7 +758,7 @@ const UsersList = ({ users }: UsersListProps) => {
 
         return (
           <Flex alignItems='center' p={2} key={i}>
-            <Avatar name={avatarName} icon={!isActive && <Icon as={LuMail} />} />
+            <AvatarRoot>{!isActive ? <AvatarIcon as={LuMail} /> : <AvatarFallback name={avatarName} />}</AvatarRoot>
             <Box ml='3'>
               <HStack align='center'>
                 <Text fontWeight='bold'>{name}</Text>
@@ -756,7 +803,15 @@ export const OrganizationUsers = () => {
       : t('team.load_error_description', { defaultValue: 'Please try again.' })
     : t('team.empty_description', { defaultValue: 'Invite teammates to get started.' })
 
-  if (isLoading) return <Progress isIndeterminate />
+  if (isLoading) {
+    return (
+      <ProgressRoot value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
 
   return (
     <>

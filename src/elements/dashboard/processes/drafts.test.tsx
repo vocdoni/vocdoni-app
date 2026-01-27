@@ -1,7 +1,6 @@
-import React from 'react'
-import { renderHook, act } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { describe, expect, it, vi } from 'vitest'
+import { act, renderHook } from '@testing-library/react'
+import React from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useDeleteDraft } from './drafts'
 
@@ -28,13 +27,9 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: vi.fn() },
 }))
 
-vi.mock('@chakra-ui/react', async () => {
-  const actual = await vi.importActual<typeof import('@chakra-ui/react')>('@chakra-ui/react')
-  return {
-    ...actual,
-    useToast: () => toastSpy,
-  }
-})
+vi.mock('~shared/Toast', () => ({
+  useToast: () => toastSpy,
+}))
 
 const createWrapper = (queryClient: QueryClient) => {
   return ({ children }: { children: React.ReactNode }) => (

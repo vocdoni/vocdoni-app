@@ -29,7 +29,8 @@ const NotFound = () => {
         })}
       </SubHeading>
 
-      <Button leftIcon={<Icon as={LuHouse} />} onClick={redirectToDashboardOrHome}>
+      <Button onClick={redirectToDashboardOrHome}>
+        <Icon as={LuHouse} />
         {t('error.return_to_home')}
       </Button>
     </Flex>

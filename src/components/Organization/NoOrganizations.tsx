@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardBody, Flex, Img, Text } from '@chakra-ui/react'
+import { Box, Button, Card, Flex, Image, Text } from '@chakra-ui/react'
 import { Trans } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { DashboardContents } from '~shared/Dashboard/Contents'
@@ -8,13 +8,15 @@ import empty from '/assets/illustrations/9.png'
 export const NoOrganizations = () => {
   return (
     <Flex flexDirection={'column'}>
-      <Button as={ReactRouterLink} to={Routes.plans} alignSelf='end' colorScheme='gray' size='xs'>
-        <Trans i18nKey='view_plans_and_pricing'>View Plans & Pricing</Trans>
+      <Button asChild alignSelf='end' colorPalette='gray' size='xs'>
+        <ReactRouterLink to={Routes.plans}>
+          <Trans i18nKey='view_plans_and_pricing'>View Plans & Pricing</Trans>
+        </ReactRouterLink>
       </Button>
-      <Card variant='no-elections' minH='100%' maxW='650' mx='auto'>
-        <CardBody>
+      <Card.Root variant='no-elections' minH='100%' maxW='650' mx='auto'>
+        <Card.Body>
           <Flex justifyContent={'center'}>
-            <Img src={empty} _dark={{ filter: 'invert(70%)' }} />
+            <Image src={empty} _dark={{ filter: 'invert(70%)' }} />
           </Flex>
           <Box>
             <Text fontWeight='600' fontSize='lg' m='20px 0px'>
@@ -35,11 +37,13 @@ export const NoOrganizations = () => {
               </Trans>
             </Text>
           </Box>
-          <Button mt='40px' w='100%' as={ReactRouterLink} to={Routes.dashboard.organizationCreate}>
-            <Trans i18nKey='create_org.create_button'>Create your organization</Trans>
+          <Button mt='40px' w='100%' asChild>
+            <ReactRouterLink to={Routes.dashboard.organizationCreate}>
+              <Trans i18nKey='create_org.create_button'>Create your organization</Trans>
+            </ReactRouterLink>
           </Button>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     </Flex>
   )
 }

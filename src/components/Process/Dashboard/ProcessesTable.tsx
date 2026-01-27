@@ -1,31 +1,13 @@
-import {
-  Box,
-  Icon,
-  IconButton,
-  Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Portal,
-  Table,
-  TableContainer,
-  Tag,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react'
-import { ElectionStatusBadge, QuestionsTypeBadge } from '@vocdoni/chakra-components'
+import { Box, Icon, IconButton, Link, Menu, MenuPositioner, Table, Tag, Text } from '@chakra-ui/react'
 import { ElectionProvider, useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router-dom'
+import { ElectionStatusBadge, QuestionsTypeBadge } from '~components/vocdoni-ui'
 import { useDateFns } from '~i18n/use-date-fns'
+import { Routes } from '~routes'
 import RoutedPaginatedTableFooter from '~shared/Pagination/PaginatedTableFooter'
-import { Routes } from '~src/router/routes'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type Election = PublishedElection | InvalidElection
@@ -39,21 +21,23 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
 
   return (
     <Box border='1px solid' borderColor='table.border' borderRadius='sm' w='full'>
-      <TableContainer>
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>{t('process_list.title', { defaultValue: 'Title' })}</Th>
-              <Th>{t('process_list.start_date', { defaultValue: 'Start date' })}</Th>
-              <Th>{t('process_list.end_date', { defaultValue: 'End date' })}</Th>
-              <Th>{t('process_list.type', { defaultValue: 'Type' })}</Th>
-              <Th>{t('process_list.status', { defaultValue: 'Status' })}</Th>
-              <Th isNumeric>{t('process_list.recount', { defaultValue: 'Recount' })}</Th>
-              <Th>{t('process_list.results', { defaultValue: 'Results' })}</Th>
-              <Th>&nbsp;</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
+      <Table.ScrollArea>
+        <Table.Root variant='outline'>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>{t('process_list.title', { defaultValue: 'Title' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.start_date', { defaultValue: 'Start date' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.end_date', { defaultValue: 'End date' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.type', { defaultValue: 'Type' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.status', { defaultValue: 'Status' })}</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign='end'>
+                {t('process_list.recount', { defaultValue: 'Recount' })}
+              </Table.ColumnHeader>
+              <Table.ColumnHeader>{t('process_list.results', { defaultValue: 'Results' })}</Table.ColumnHeader>
+              <Table.ColumnHeader>&nbsp;</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
             {processes &&
               !!processes.length &&
               processes?.map((election) => (
@@ -61,12 +45,12 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
                   <ProcessRow />
                 </ElectionProvider>
               ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <Box p={4}>
-        <RoutedPaginatedTableFooter />
-      </Box>
+          </Table.Body>
+          <Table.Caption>
+            <RoutedPaginatedTableFooter />
+          </Table.Caption>
+        </Table.Root>
+      </Table.ScrollArea>
     </Box>
   )
 }
@@ -79,43 +63,46 @@ const ProcessRow = () => {
   if (!election || election instanceof InvalidElection) return null
 
   return (
-    <Tr position='relative'>
-      <Td>
-        <Link
-          as={RouterLink}
-          to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}
-          _hover={{ textDecoration: 'underline' }}
-          fontWeight='medium'
-        >
-          {election.title.default}
+    <Table.Row position='relative'>
+      <Table.Cell>
+        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
+          <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+            <Text truncate maxW='600px'>
+              {election.title.default}
+            </Text>
+          </RouterLink>
         </Link>
-      </Td>
-      <Td>{format(election.startDate, t('organization.date_format'))}</Td>
-      <Td>{format(election.endDate, t('organization.date_format'))}</Td>
-      <Td>
-        <QuestionsTypeBadge sx={{ '& label': { fontWeight: 'normal' } }} />
-      </Td>
-      <Td>
+      </Table.Cell>
+      <Table.Cell>{format(election.startDate, t('organization.date_format'))}</Table.Cell>
+      <Table.Cell>{format(election.endDate, t('organization.date_format'))}</Table.Cell>
+      <Table.Cell>
+        <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+      </Table.Cell>
+      <Table.Cell>
         <ElectionStatusBadge size='sm' />
-      </Td>
-      <Td isNumeric>{election.voteCount}</Td>
-      <Td>
+      </Table.Cell>
+      <Table.Cell textAlign='end'>{election.voteCount}</Table.Cell>
+      <Table.Cell>
         {ElectionStatus.RESULTS === election.status ||
         ([ElectionStatus.ENDED, ElectionStatus.ONGOING].includes(election.status) &&
           !election.electionType.secretUntilTheEnd) ? (
-          <Tag colorScheme='black' variant='solid' size='sm'>
-            <Trans i18nKey='process_list.results_live'>Live</Trans>
-          </Tag>
+          <Tag.Root colorPalette='gray' variant='subtle' size='sm'>
+            <Tag.Label>
+              <Trans i18nKey='process_list.results_live'>Live</Trans>
+            </Tag.Label>
+          </Tag.Root>
         ) : (
-          <Tag colorScheme='gray' size='sm'>
-            <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
-          </Tag>
+          <Tag.Root colorPalette='gray' variant='surface' size='sm'>
+            <Tag.Label>
+              <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
+            </Tag.Label>
+          </Tag.Root>
         )}
-      </Td>
-      <Td isNumeric>
+      </Table.Cell>
+      <Table.Cell textAlign='end'>
         <ProcessContextMenu />
-      </Td>
-    </Tr>
+      </Table.Cell>
+    </Table.Row>
   )
 }
 
@@ -126,39 +113,39 @@ const ProcessContextMenu = () => {
   if (!election || election instanceof InvalidElection) return null
 
   return (
-    <Menu>
-      <MenuButton as={IconButton} icon={<LuEllipsisVertical />} variant='ghost' size='sm' />
-      <Portal>
-        <MenuList>
-          <MenuItem
-            as={RouterLink}
-            to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}
-            icon={<Icon as={LuInfo} boxSize={4} />}
-          >
-            <Trans i18nKey='process_context.more_info'>More info</Trans>
-          </MenuItem>
-          <MenuItem
-            as={RouterLink}
-            to={generatePath(Routes.processes.view, { id: ensure0x(election.id) })}
-            icon={<Icon as={LuExternalLink} boxSize={4} />}
-            target='_blank'
-          >
-            <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
-          </MenuItem>
-          <MenuItem
-            as={Link}
-            href={`${client.explorerUrl}/process/${election.id}`}
-            icon={<Icon as={LuSearch} boxSize={4} />}
-            isExternal
-          >
-            <Trans i18nKey='process_context.explorer'>Explorer</Trans>
-          </MenuItem>
-          <MenuItem onClick={cloneAsDraft} icon={<Icon as={LuCopy} boxSize={4} />}>
+    <Menu.Root>
+      <Menu.Trigger asChild>
+        <IconButton variant='ghost' size='sm' aria-label='Open actions'>
+          <LuEllipsisVertical />
+        </IconButton>
+      </Menu.Trigger>
+      <MenuPositioner>
+        <Menu.Content>
+          <Menu.Item value='more-info' asChild>
+            <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+              <Icon as={LuInfo} boxSize={4} />
+              <Trans i18nKey='process_context.more_info'>More info</Trans>
+            </RouterLink>
+          </Menu.Item>
+          <Menu.Item value='public-voting-page' asChild>
+            <RouterLink to={generatePath(Routes.processes.view, { id: ensure0x(election.id) })} target='_blank'>
+              <Icon as={LuExternalLink} boxSize={4} />
+              <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
+            </RouterLink>
+          </Menu.Item>
+          <Menu.Item value='explorer' asChild>
+            <a href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
+              <Icon as={LuSearch} boxSize={4} />
+              <Trans i18nKey='process_context.explorer'>Explorer</Trans>
+            </a>
+          </Menu.Item>
+          <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
+            <Icon as={LuCopy} boxSize={4} />
             <Trans i18nKey='process_context.clone_as_draft'>Clone as draft</Trans>
-          </MenuItem>
-        </MenuList>
-      </Portal>
-    </Menu>
+          </Menu.Item>
+        </Menu.Content>
+      </MenuPositioner>
+    </Menu.Root>
   )
 }
 

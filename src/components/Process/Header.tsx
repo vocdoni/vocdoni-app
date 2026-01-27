@@ -1,10 +1,10 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
-import { ElectionDescription, ElectionSchedule, ElectionStatusBadge, ElectionTitle } from '@vocdoni/chakra-components'
 import { useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection, Strategy } from '@vocdoni/sdk'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ShareModalButton } from '~components/Share'
+import { ElectionDescription, ElectionSchedule, ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { useReadMoreMarkdown } from '~shared/Layout/use-read-more'
 import { StampIcon } from './Census/StampIcon'
 
@@ -22,8 +22,8 @@ const ProcessHeader = () => {
           <Image src={election?.header} w='100%' h='auto' objectFit='cover' />
         </Box>
       )}
-      <Flex direction={{ base: 'column', xl2: 'row' }} gap={{ base: 6, lg: 10, xl: 20 }}>
-        <Box flex={{ xl2: '0 0 75%' }}>
+      <Flex direction={{ base: 'column', xl: 'row' }} gap={{ base: 6, lg: 10, xl: 20 }}>
+        <Box flex={{ xl: '0 0 75%' }}>
           <ElectionTitle fontSize='4xl' textAlign='left' mb={5} />
           <Flex
             flexDirection={{ base: 'column', xl: 'row' }}
@@ -75,7 +75,7 @@ const ProcessHeader = () => {
                 <ElectionDescription mb={0} fontSize='lg' lineHeight={1.5} color='process.description' />
               </ReadMoreMarkdownWrapper>
             </Box>
-            <ReadMoreMarkdownButton colorScheme='primary' alignSelf='center' />
+            <ReadMoreMarkdownButton colorPalette='primary' alignSelf='center' />
           </Flex>
         </Box>
       </Flex>

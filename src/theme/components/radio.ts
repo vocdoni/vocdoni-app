@@ -1,10 +1,8 @@
-import { radioAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { radioGroupAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(radioAnatomy.keys)
-
-const sm = definePartsStyle({
-  control: {
+const sm = {
+  itemControl: {
     width: 4,
     height: 4,
 
@@ -14,10 +12,10 @@ const sm = definePartsStyle({
       },
     },
   },
-})
+}
 
-const md = definePartsStyle({
-  control: {
+const md = {
+  itemControl: {
     width: 5,
     height: 5,
 
@@ -27,14 +25,17 @@ const md = definePartsStyle({
       },
     },
   },
-})
+}
 
-export const Radio = defineMultiStyleConfig({
-  sizes: {
-    sm,
-    md,
+export const Radio = defineSlotRecipe({
+  slots: radioGroupAnatomy.keys(),
+  variants: {
+    size: {
+      sm,
+      md,
+    },
   },
-  defaultProps: {
-    colorScheme: 'black',
+  defaultVariants: {
+    colorPalette: 'brand',
   },
 })

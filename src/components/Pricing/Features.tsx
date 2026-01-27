@@ -1,4 +1,4 @@
-import { Flex, Tag, Text } from '@chakra-ui/react'
+import { Flex, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { dotobject } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
 import { BooleanIcon } from '~components/shared/Layout/BooleanIcon'
@@ -129,9 +129,11 @@ export const staticFeature = (
 })
 
 const OnDemandTag = () => (
-  <Tag size='sm'>
-    <Trans i18nKey='features.on_demand'>On demand</Trans>
-  </Tag>
+  <TagRoot size='sm'>
+    <TagLabel>
+      <Trans i18nKey='features.on_demand'>On demand</Trans>
+    </TagLabel>
+  </TagRoot>
 )
 
 export const CategorizedSpecs: Record<string, FeatureSpec[]> = {

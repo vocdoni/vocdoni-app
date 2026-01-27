@@ -64,15 +64,11 @@ const LayoutAuth = () => {
   return (
     <Flex justifyContent='center' alignItems='center' minH='100vh' p={{ base: 6, md: 10 }}>
       <Flex w='full' maxW={{ base: 'sm', md: '3xl' }} flexDir='column' gap={2}>
-        <Link
-          as={RouterLink}
-          to={isSignin ? Routes.root : Routes.auth.signIn}
-          display='flex'
-          alignItems='center'
-          alignSelf='start'
-        >
-          <Icon as={LuArrowLeft} />
-          {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
+        <Link asChild display='flex' alignItems='center' alignSelf='start'>
+          <RouterLink to={isSignin ? Routes.root : Routes.auth.signIn}>
+            <Icon as={LuArrowLeft} />
+            {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
+          </RouterLink>
         </Link>
         <Flex
           w='full'
@@ -90,7 +86,7 @@ const LayoutAuth = () => {
                   </Heading>
                 )}
                 {subtitle && (
-                  <Text color='gray.500' size='sm'>
+                  <Text color='gray.500' fontSize='sm'>
                     {subtitle}
                   </Text>
                 )}
@@ -105,15 +101,15 @@ const LayoutAuth = () => {
             display={{ base: 'none', md: 'block' }}
             bgImage={`linear-gradient(to top, rgb(17 24 39 / 0.8), rgb(17 24 39 / 0.3)), url(${testimonial.image})`}
             bgSize='cover'
-            bgPosition='center'
+            backgroundPosition='center'
             minH='100%'
             borderRightRadius='sm'
           >
             <Box position='absolute' left={0} bottom={0} right={0} p={8}>
-              <Text bottom={0} size='lg' fontWeight='bold' mb={2} color='gray.100'>
+              <Text bottom={0} fontSize='lg' fontWeight='bold' mb={2} color='gray.100'>
                 {testimonial.text}
               </Text>
-              <Text color='gray.400' size='sm'>
+              <Text color='gray.400' fontSize='sm'>
                 — {testimonial.author}, {testimonial.position} @ {testimonial.company}
               </Text>
             </Box>
