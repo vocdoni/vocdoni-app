@@ -120,7 +120,7 @@ export const LanguageListDashboard = ({ ...props }) => {
 
   return (
     <FormControl w='full' display='flex' justifyContent='space-between' alignItems='center' {...props}>
-      <FormLabel fontSize={'14px'} m='0' fontWeight={400}>
+      <FormLabel fontSize={'14px'} m='0'>
         {t('form.select_language', { defaultValue: 'Language' })}
       </FormLabel>
 
