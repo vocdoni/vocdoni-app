@@ -1,7 +1,7 @@
 import { ColorModeScript } from '@chakra-ui/react'
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ClientProvider } from '@vocdoni/chakra-components'
+import { ClientProvider } from '~components/vocdoni-ui'
 import { EnvOptions } from '@vocdoni/sdk'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
