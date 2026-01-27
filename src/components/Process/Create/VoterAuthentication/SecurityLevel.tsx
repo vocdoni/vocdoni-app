@@ -1,4 +1,4 @@
-import { AlertStatus, Box, HStack, ListItem, UnorderedList, useStyleConfig } from '@chakra-ui/react'
+import { Box, HStack, List, useRecipe } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
 
 export enum SecurityLevels {
@@ -8,6 +8,8 @@ export enum SecurityLevels {
 }
 
 export type SecurityLevel = SecurityLevels.WEAK | SecurityLevels.MID | SecurityLevels.STRONG
+
+type AlertStatus = 'success' | 'error' | 'warning' | 'info' | 'neutral'
 
 export type SecurityLevelMessages = {
   subtext: JSX.Element
@@ -51,13 +53,13 @@ export const getSecurityLevelMessages = (level: SecurityLevel): SecurityLevelMes
               <Trans i18nKey='voter_auth.guarantees_mid_description_intro'>
                 Your configuration provides mid-level authentication guarantees with 3 credentials.
               </Trans>
-              <UnorderedList mt={2} pl={4}>
-                <ListItem>
+              <List.Root mt={2} pl={4} listStyleType='disc' display='flex' flexDirection='column' gap={2}>
+                <List.Item>
                   <Trans i18nKey='voter_auth.guarantees_mid_list_1'>
                     Enable two-factor authentication for strong guarantees
                   </Trans>
-                </ListItem>
-              </UnorderedList>
+                </List.Item>
+              </List.Root>
             </>
           ),
           status: 'warning',
@@ -78,18 +80,18 @@ export const getSecurityLevelMessages = (level: SecurityLevel): SecurityLevelMes
               <Trans i18nKey='voter_auth.guarantees_weak_description_intro'>
                 Your current configuration provides minimal authentication guarantees. We strongly recommend:
               </Trans>
-              <UnorderedList mt={2} pl={4}>
-                <ListItem>
+              <List.Root mt={2} pl={4} listStyleType='disc' display='flex' flexDirection='column' gap={2}>
+                <List.Item>
                   <Trans i18nKey='voter_auth.guarantees_weak_list_1'>
                     Add more credentials (aim for 2) for better identity verification
                   </Trans>
-                </ListItem>
-                <ListItem>
+                </List.Item>
+                <List.Item>
                   <Trans i18nKey='voter_auth.guarantees_weak_list_2'>
                     Enable two-factor authentication for an additional verification layer
                   </Trans>
-                </ListItem>
-              </UnorderedList>
+                </List.Item>
+              </List.Root>
             </>
           ),
           status: 'error',
@@ -105,8 +107,9 @@ export const getSecurityLevel = (use2FA: boolean, credentials: string[]): Securi
 
 const SecurityLevelBox = ({ level, isActive }: { level: SecurityLevel; isActive: boolean }) => {
   const { t } = useTranslation()
-  const variant = isActive ? level.toLowerCase() : 'inactive'
-  const styles = useStyleConfig('SecurityLevelBox', { variant })
+  const variant = (isActive ? level.toLowerCase() : 'inactive') as 'weak' | 'mid' | 'strong' | 'inactive'
+  const recipe = useRecipe({ key: 'SecurityLevelBox' })
+  const styles = recipe({ variant })
 
   const getTranslatedLevel = (level: SecurityLevel) => {
     switch (level) {
@@ -121,14 +124,14 @@ const SecurityLevelBox = ({ level, isActive }: { level: SecurityLevel; isActive:
     }
   }
 
-  return <Box __css={styles}>{getTranslatedLevel(level)}</Box>
+  return <Box css={styles}>{getTranslatedLevel(level)}</Box>
 }
 
 export const SecurityLevelDisplay = ({ credentials = [], use2FA }: { credentials: string[]; use2FA: boolean }) => {
   const level = getSecurityLevel(use2FA, credentials)
 
   return (
-    <HStack spacing={3} w='full'>
+    <HStack gap={3} w='full'>
       {(['WEAK', 'MID', 'STRONG'] as SecurityLevel[]).map((lvl) => (
         <SecurityLevelBox key={lvl} level={lvl} isActive={lvl === level} />
       ))}

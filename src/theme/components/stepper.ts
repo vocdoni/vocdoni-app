@@ -1,14 +1,12 @@
-import { stepperAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { stepsAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(stepperAnatomy.keys)
-
-const baseStyle = definePartsStyle((props) => ({
+const baseStyle = {
   separator: {
     display: { base: 'none', lg: 'inline-block' },
     mt: { lg: 2 },
   },
-  stepper: {
+  item: {
     '&:first-of-type': {
       h: { lg: '600px' },
       my: { lg: 10 },
@@ -19,11 +17,12 @@ const baseStyle = definePartsStyle((props) => ({
     fontSize: 'xs',
     display: { base: 'none', lg: 'block' },
   },
-}))
+}
 
-export const Stepper = defineMultiStyleConfig({
-  baseStyle,
-  defaultProps: {
-    colorScheme: 'black',
+export const Stepper = defineSlotRecipe({
+  slots: stepsAnatomy.keys(),
+  base: baseStyle,
+  defaultVariants: {
+    colorPalette: 'black',
   },
 })

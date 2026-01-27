@@ -1,13 +1,13 @@
-import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
+import { defineRecipe } from '@chakra-ui/react'
 
-const baseStyle = defineStyle({
+const baseStyle = {
   fontSize: 'md',
   _placeholder: {
     color: 'input.placeholder',
     fontSize: 'md',
   },
-})
+}
 
-export const Textarea = defineStyleConfig({
-  baseStyle,
+export const Textarea = defineRecipe({
+  base: baseStyle,
 })

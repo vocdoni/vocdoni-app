@@ -2,15 +2,10 @@ import {
   Box,
   Button,
   Flex,
-  FormControl,
-  FormLabel,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
   Heading,
   HStack,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Switch,
   Text,
   useDisclosure,
@@ -20,6 +15,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Select } from '~components/shared/Form/Select'
 import { DefaultQuestions, SelectorTypes } from '../common'
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 interface SelectOption {
   value: SelectorTypes
@@ -87,22 +83,22 @@ const MultichoiceWarningModal = ({
 export const QuestionType = () => {
   const { t } = useTranslation()
   const { control, setValue, getValues } = useFormContext()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const pendingTypeRef = useRef<SelectorTypes | null>(null)
 
   return (
     <Box display='flex' justifyContent='space-between' flexDirection={{ base: 'column', md: 'row' }}>
       <Box>
-        <FormLabel mb={0} fontWeight='extrabold'>
+        <Text mb={0} fontWeight='extrabold'>
           <Trans i18nKey='process.question_type.title'>Question Type</Trans>
-        </FormLabel>
+        </Text>
         <Text fontSize='xs' color='texts.subtle'>
           <Trans i18nKey='process.question_type.description'>
             This applies to all questions in this voting process
           </Trans>
         </Text>
       </Box>
-      <HStack spacing={4} flexDir={{ base: 'column', sm: 'row' }} alignItems={{ base: 'start', sm: 'center' }}>
+      <HStack gap={4} flexDir={{ base: 'column', sm: 'row' }} alignItems={{ base: 'start', sm: 'center' }}>
         <FormControl display='flex' alignItems='center'>
           <FormLabel htmlFor='extended-info' mb='0'>
             <Trans i18nKey='process.extended_info'>Extended info</Trans>
@@ -111,7 +107,16 @@ export const QuestionType = () => {
             name='extendedInfo'
             control={control}
             render={({ field }) => (
-              <Switch id='extended-info' isChecked={!!field.value} onChange={(e) => field.onChange(e.target.checked)} />
+              <Switch.Root
+                id='extended-info'
+                checked={!!field.value}
+                onCheckedChange={(details) => field.onChange(details.checked)}
+              >
+                <Switch.HiddenInput />
+                <Switch.Control>
+                  <Switch.Thumb />
+                </Switch.Control>
+              </Switch.Root>
             )}
           />
         </FormControl>
@@ -154,7 +159,7 @@ export const QuestionType = () => {
                     options={options}
                     placeholder={t('process.question_type.single', 'Single choice')}
                     menuPortalTarget={document.body}
-                    chakraStyles={{ container: (p) => ({ ...p, width: 'max-content', maxWidth: '100%' }) }}
+                    styles={{ container: (p) => ({ ...p, width: 'max-content', maxWidth: '100%' }) }}
                   />
                   <MultichoiceWarningModal
                     isOpen={isOpen}

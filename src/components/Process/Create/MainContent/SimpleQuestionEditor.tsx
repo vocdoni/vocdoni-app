@@ -2,13 +2,13 @@ import {
   Box,
   Button,
   Checkbox,
-  FormControl,
-  FormErrorMessage,
+  FieldErrorText as FormErrorMessage,
+  FieldRoot as FormControl,
   HStack,
   Icon,
   IconButton,
   Input,
-  Radio,
+  Text,
   VStack,
 } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
@@ -40,7 +40,7 @@ const SimpleQuestionEditor = ({
   const questionType = watch('questionType')
 
   return (
-    <VStack align='stretch' spacing={2}>
+    <VStack align='stretch' gap={2}>
       {questionOptions.map((field, optionIndex) => (
         <SortableOption
           key={field.id}
@@ -58,14 +58,18 @@ const SimpleQuestionEditor = ({
         />
       ))}
       <Button
-        leftIcon={<Icon as={LuPlus} />}
         variant='ghost'
         size='sm'
         aria-label={t('process_create.new_option', { defaultValue: 'Add option' })}
         onClick={() => append({ option: '' })}
         alignSelf='flex-start'
       >
-        <Trans i18nKey='process_create.new_option'>Add option</Trans>
+        <HStack gap={2}>
+          <Icon as={LuPlus} />
+          <Text as='span'>
+            <Trans i18nKey='process_create.new_option'>Add option</Trans>
+          </Text>
+        </HStack>
       </Button>
     </VStack>
   )
@@ -113,11 +117,16 @@ const SortableOption = ({
         )}
 
         {questionType === SelectorTypes.Single ? (
-          <Radio isChecked={false} isReadOnly inputProps={{ tabIndex: -1 }} mt={2} />
+          <Box mt={2} boxSize={4} border='1px solid' borderColor='gray.300' borderRadius='full' flexShrink={0} />
         ) : (
-          <Checkbox isChecked={false} isReadOnly tabIndex={-1} mt={2} />
+          <Checkbox.Root checked={false} readOnly tabIndex={-1} mt={2}>
+            <Checkbox.HiddenInput />
+            <Checkbox.Control>
+              <Checkbox.Indicator />
+            </Checkbox.Control>
+          </Checkbox.Root>
         )}
-        <FormControl isInvalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option} flex='1'>
+        <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option} flex='1'>
           <Input
             placeholder={
               placeholders[activeTemplate]?.questions?.[questionIndex]?.options?.[optionIndex]?.option ??
@@ -135,12 +144,13 @@ const SortableOption = ({
         </FormControl>
         {fieldsLength > 2 && (
           <IconButton
-            icon={<Icon as={LuX} />}
             aria-label={t('process_create.option.remove', 'Remove option')}
             onClick={onRemove}
             size='sm'
             variant='ghost'
-          />
+          >
+            <Icon as={LuX} />
+          </IconButton>
         )}
       </HStack>
     </div>

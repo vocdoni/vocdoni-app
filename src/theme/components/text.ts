@@ -1,41 +1,43 @@
-import { defineStyle, defineStyleConfig } from '@chakra-ui/react'
+import { defineRecipe } from '@chakra-ui/react'
 
 const sizes = {
-  xs: defineStyle({
+  xs: {
     fontSize: '12px',
     lineHeight: '18px',
-  }),
-  sm: defineStyle({
+  },
+  sm: {
     fontSize: '14px',
     lineHeight: '20px',
-  }),
-  md: defineStyle({
+  },
+  md: {
     fontSize: '16px',
     lineHeight: '24px',
-  }),
-  lg: defineStyle({
+  },
+  lg: {
     fontSize: '18px',
     lineHeight: '28px',
-  }),
-  xl: defineStyle({
+  },
+  xl: {
     fontSize: '20px',
     lineHeight: '30px',
-  }),
-  '2xl': defineStyle({
+  },
+  '2xl': {
     fontSize: '24px',
     lineHeight: 1.3,
-  }),
+  },
 }
 
-export const Text = defineStyleConfig({
-  sizes,
+export const Text = defineRecipe({
   variants: {
-    subheader: defineStyle({
-      color: 'texts.subtle',
-      fontWeight: 'normal',
-    }),
+    size: sizes,
+    variant: {
+      subheader: {
+        color: 'texts.subtle',
+        fontWeight: 'normal',
+      },
+    },
   },
-  defaultProps: {
+  defaultVariants: {
     size: 'md',
   },
 })

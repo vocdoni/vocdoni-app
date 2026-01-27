@@ -241,9 +241,9 @@ function FloatingLinkEditor({
   }
 
   return (
-    <Card ref={editorRef} position='absolute' top={0} left={0} p={1} zIndex='contents'>
+    <Card.Root ref={editorRef} position='absolute' top={0} left={0} p={1} zIndex='contents'>
       {isLinkEditMode ? (
-        <HStack spacing={2}>
+        <HStack gap={2}>
           <Input
             ref={inputRef}
             flex={1}
@@ -254,27 +254,28 @@ function FloatingLinkEditor({
             size='sm'
           />
           <IconButton
-            icon={<Icon as={LuX} />}
             aria-label={t('editor.link.cancel', { defaultValue: 'Cancel' })}
             size='xs'
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => setIsLinkEditMode(false)}
-          />
+          >
+            <Icon as={LuX} />
+          </IconButton>
           <IconButton
-            icon={<Icon as={LuCheck} />}
             aria-label={t('editor.link.confirm', { defaultValue: 'Confirm' })}
             size='xs'
             onMouseDown={(e) => e.preventDefault()}
             onClick={handleLinkSubmission}
-          />
+          >
+            <Icon as={LuCheck} />
+          </IconButton>
         </HStack>
       ) : (
-        <HStack spacing={2}>
-          <Link flex={1} href={linkUrl} isExternal fontSize='sm'>
+        <HStack gap={2}>
+          <Link flex={1} href={linkUrl} target='_blank' rel='noopener noreferrer' fontSize='sm'>
             {linkUrl}
           </Link>
           <IconButton
-            icon={<Icon as={LuPencil} />}
             aria-label={t('editor.link.edit', { defaultValue: 'Edit link' })}
             size='xs'
             onMouseDown={(e) => e.preventDefault()}
@@ -282,18 +283,21 @@ function FloatingLinkEditor({
               setEditedLinkUrl(linkUrl)
               setIsLinkEditMode(true)
             }}
-          />
+          >
+            <Icon as={LuPencil} />
+          </IconButton>
           <IconButton
-            icon={<Icon as={LuTrash2} />}
             aria-label={t('editor.link.remove', { defaultValue: 'Remove link' })}
             size='xs'
             colorScheme='red'
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)}
-          />
+          >
+            <Icon as={LuTrash2} />
+          </IconButton>
         </HStack>
       )}
-    </Card>
+    </Card.Root>
   )
 }
 

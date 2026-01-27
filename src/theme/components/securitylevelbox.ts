@@ -1,6 +1,6 @@
-import { defineStyle, defineStyleConfig } from '@chakra-ui/styled-system'
+import { defineRecipe } from '@chakra-ui/react'
 
-const baseStyle = defineStyle({
+const baseStyle = {
   border: '2px solid',
   borderColor: 'table.border',
   borderRadius: 'md',
@@ -11,19 +11,21 @@ const baseStyle = defineStyle({
   w: 'full',
   color: 'white',
   textTransform: 'uppercase',
-})
+}
 
-const weak = defineStyle(() => ({ bg: 'red.800', borderColor: 'red.600' }))
-const mid = defineStyle(() => ({ bg: 'orange.800', borderColor: 'orange.600' }))
-const strong = defineStyle(() => ({ bg: 'green.800', borderColor: 'green.600' }))
-const inactive = defineStyle(() => ({ bg: 'gray.900' }))
+const weak = { bg: 'red.800', borderColor: 'red.600' }
+const mid = { bg: 'orange.800', borderColor: 'orange.600' }
+const strong = { bg: 'green.800', borderColor: 'green.600' }
+const inactive = { bg: 'gray.900' }
 
-export const SecurityLevelBox = defineStyleConfig({
-  baseStyle,
+export const SecurityLevelBox = defineRecipe({
+  base: baseStyle,
   variants: {
-    weak,
-    mid,
-    strong,
-    inactive,
+    variant: {
+      weak,
+      mid,
+      strong,
+      inactive,
+    },
   },
 })

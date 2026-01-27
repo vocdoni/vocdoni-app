@@ -5,7 +5,9 @@ import i18n from 'i18next'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ConnectionToastProvider } from '~components/shared/Layout/ConnectionToast'
-import { theme } from '~theme'
+import { ToastProvider } from '~shared/Toast'
+import { ColorModeProvider } from '~theme/color-mode'
+import { system } from '~theme'
 
 // Initialize i18n for tests
 i18n.init({
@@ -42,13 +44,17 @@ interface AllProvidersProps {
 // Wrapper component with all providers needed for tests
 export function AllProviders({ children, queryClient = createTestQueryClient() }: AllProvidersProps) {
   return (
-    <ChakraProvider theme={theme}>
-      <I18nextProvider i18n={i18n}>
-        <QueryClientProvider client={queryClient}>
-          <ConnectionToastProvider>{children}</ConnectionToastProvider>
-        </QueryClientProvider>
-      </I18nextProvider>
-    </ChakraProvider>
+    <ColorModeProvider>
+      <ChakraProvider value={system}>
+        <I18nextProvider i18n={i18n}>
+          <QueryClientProvider client={queryClient}>
+            <ToastProvider>
+              <ConnectionToastProvider>{children}</ConnectionToastProvider>
+            </ToastProvider>
+          </QueryClientProvider>
+        </I18nextProvider>
+      </ChakraProvider>
+    </ColorModeProvider>
   )
 }
 

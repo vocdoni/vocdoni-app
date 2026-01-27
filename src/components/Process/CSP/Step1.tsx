@@ -1,15 +1,16 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
-  AlertIcon,
+  AlertIndicator,
   Button,
-  FormControl,
-  FormErrorMessage,
-  FormHelperText,
+  FieldErrorText,
+  FieldHelperText,
+  FieldRoot,
   HStack,
-  PinInput,
-  PinInputField,
-  useToast,
+  PinInputControl,
+  PinInputHiddenInput,
+  PinInputInput,
+  PinInputRoot,
   VStack,
 } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
@@ -18,6 +19,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useCspAuthContext } from './CSPStepsProvider'
 import { useTwoFactorAuth } from './basics'
+import { useToast } from '~shared/Toast'
 
 // Define the form data structure
 type CSPStep1FormData = {
@@ -52,7 +54,7 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
       csp1(authToken)
       toast({
         title: t('csp.auth_success', { defaultValue: 'Authentication successful' }),
-        status: 'success',
+        type: 'success',
         duration: 3000,
         isClosable: true,
       })
@@ -62,7 +64,7 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
       toast({
         title: t('csp.auth_failed', { defaultValue: 'Authentication failed' }),
         description: errorMessage,
-        status: 'error',
+        type: 'error',
         duration: 3000,
         isClosable: true,
       })
@@ -71,10 +73,10 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
   }
 
   return (
-    <VStack spacing={6} align='stretch' w='full'>
+    <VStack gap={6} align='stretch' w='full'>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack spacing={4}>
-          <FormControl isInvalid={!!errors.code}>
+        <VStack gap={4}>
+          <FieldRoot invalid={!!errors.code}>
             <HStack justifyContent='center'>
               <Controller
                 control={control}
@@ -91,40 +93,41 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
                   },
                 }}
                 render={({ field: { onChange, value } }) => (
-                  <PinInput
+                  <PinInputRoot
                     size='lg'
-                    value={value}
-                    onChange={(val) => {
-                      onChange(val)
-                      if (val.length === 6) {
+                    value={value.split('')}
+                    onValueChange={({ valueAsString }) => {
+                      onChange(valueAsString)
+                      if (valueAsString.length === 6) {
                         handleSubmit(onSubmit)()
                       }
                     }}
                     autoFocus
+                    count={6}
                   >
-                    <PinInputField />
-                    <PinInputField />
-                    <PinInputField />
-                    <PinInputField />
-                    <PinInputField />
-                    <PinInputField />
-                  </PinInput>
+                    <PinInputHiddenInput />
+                    <PinInputControl>
+                      {Array.from({ length: 6 }).map((_, index) => (
+                        <PinInputInput key={index} index={index} />
+                      ))}
+                    </PinInputControl>
+                  </PinInputRoot>
                 )}
               />
             </HStack>
-            {errors.code && <FormErrorMessage textAlign='center'>{errors.code.message}</FormErrorMessage>}
-            <FormHelperText>
+            {errors.code && <FieldErrorText textAlign='center'>{errors.code.message}</FieldErrorText>}
+            <FieldHelperText>
               <Trans i18nKey='csp.step1.helper_text'>If using email, don't forget to check spam folder</Trans>
-            </FormHelperText>
-          </FormControl>
+            </FieldHelperText>
+          </FieldRoot>
           {auth.isError && (
             <Alert status='error'>
-              <AlertIcon />
+              <AlertIndicator />
               <AlertDescription>{auth.error.message}</AlertDescription>
             </Alert>
           )}
 
-          <Button type='submit' w='full' isLoading={auth.isPending} shouldWrapChildren>
+          <Button type='submit' w='full' loading={auth.isPending}>
             {t('csp.authenticate', { defaultValue: 'Authenticate' })}
           </Button>
         </VStack>

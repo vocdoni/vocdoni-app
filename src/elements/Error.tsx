@@ -1,9 +1,9 @@
-import { WarningIcon } from '@chakra-ui/icons'
 import { Flex, Text } from '@chakra-ui/react'
 import { ErrAccountNotFound, ErrAddressMalformed, ErrCantParseElectionID, ErrElectionNotFound } from '@vocdoni/sdk'
 import { lazy } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useRouteError } from 'react-router-dom'
+import { RiErrorWarningLine } from 'react-icons/ri'
 
 const NotFound = lazy(() => import('./NotFound'))
 
@@ -32,7 +32,7 @@ const Error = () => {
         sm: 14,
       }}
     >
-      <WarningIcon />
+      <RiErrorWarningLine />
       <Text>{t('error.loading_page')}</Text>
       <Text>{(error as Error).toString()}</Text>
     </Flex>

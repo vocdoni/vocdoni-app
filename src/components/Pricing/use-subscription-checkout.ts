@@ -1,4 +1,4 @@
-import { createContext } from '@chakra-ui/react-utils'
+import { createContext, useContext } from 'react'
 import { SubscriptionCheckoutFormValues } from './Plans'
 
 export type CheckoutView = 'plans' | 'checkout'
@@ -10,10 +10,16 @@ export type SubscriptionCheckoutContextState = {
   showPlans: () => void
 }
 
-const [SubscriptionCheckoutProviderContext, useSubscriptionCheckout] = createContext<SubscriptionCheckoutContextState>({
-  name: 'SubscriptionCheckoutProvider',
-  errorMessage: 'useSubscriptionCheckout must be used within a SubscriptionCheckoutProvider',
-  strict: false,
-})
+const SubscriptionCheckoutContext = createContext<SubscriptionCheckoutContextState | undefined>(undefined)
+
+const useSubscriptionCheckout = () => {
+  const context = useContext(SubscriptionCheckoutContext)
+  if (!context) {
+    throw new Error('useSubscriptionCheckout must be used within a SubscriptionCheckoutProvider')
+  }
+  return context
+}
+
+const SubscriptionCheckoutProviderContext = SubscriptionCheckoutContext.Provider
 
 export { SubscriptionCheckoutProviderContext, useSubscriptionCheckout }

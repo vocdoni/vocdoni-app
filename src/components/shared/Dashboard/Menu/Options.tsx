@@ -1,4 +1,4 @@
-import { Box, Flex, ListItem, Text, UnorderedList } from '@chakra-ui/react'
+import { Box, Flex, List, Text } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuHouse, LuLifeBuoy, LuSettings, LuUsers, LuVote } from 'react-icons/lu'
@@ -46,37 +46,37 @@ export const DashboardMenuOptions = () => {
     <Flex flexDirection={'column'} gap={8}>
       <Box>
         {!reduced && (
-          <Text mx={2} mb={2} fontWeight={'bold'} size={'xs'}>
+          <Text mx={2} mb={2} fontWeight={'bold'} fontSize='xs'>
             {t('section.platform', { defaultValue: 'Platform' })}
           </Text>
         )}
-        <UnorderedList display={'flex'} flexDirection={'column'} listStyleType={"''"} ml={'0'}>
+        <List.Root display='flex' flexDirection='column' listStyleType='none' ml={0}>
           {menuItemsPlatform.map((item, index) => (
-            <ListItem key={index}>
+            <List.Item key={index}>
               <DashboardMenuItemButton
                 item={item}
                 reduced={reduced}
                 isActive={Boolean(matchPath({ path: item.route || '', end: true }, location.pathname)) && true}
               />
-            </ListItem>
+            </List.Item>
           ))}
-        </UnorderedList>
+        </List.Root>
       </Box>
       {!reduced && (
         <Box>
-          <Text mx={2} mb={2} fontWeight={'bold'} size={'xs'}>
+          <Text mx={2} mb={2} fontWeight={'bold'} fontSize='xs'>
             {t('section.help', { defaultValue: 'Help' })}
           </Text>
 
-          <UnorderedList display={'flex'} flexDirection={'column'} listStyleType={"''"} ml={0}>
+          <List.Root display='flex' flexDirection='column' listStyleType='none' ml={0}>
             {menuItemsHelp.map((item, index) => {
               return (
-                <ListItem key={index}>
+                <List.Item key={index}>
                   <DashboardMenuItemButton item={item} reduced={reduced} />
-                </ListItem>
+                </List.Item>
               )
             })}
-          </UnorderedList>
+          </List.Root>
         </Box>
       )}
     </Flex>

@@ -1,23 +1,48 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
   AlertTitle,
   Box,
   Button,
   CloseButton,
-  Drawer,
+  DrawerBackdrop,
   DrawerBody,
   DrawerContent,
   DrawerHeader,
-  DrawerOverlay,
+  DrawerPositioner,
+  DrawerRoot,
   Flex,
-  FormControl,
-  FormLabel,
+  FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Heading,
   HStack,
   Icon,
   IconButton,
-  ListItem,
+  List,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
+  Stack,
+  TableBody,
+  TableCell,
+  TableColumnHeader,
+  TableHeader,
+  TableRoot,
+  TableRow,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useOrganization } from '@vocdoni/react-providers'
+import { chakraComponents } from 'chakra-react-select'
+import { useEffect, useRef, useState } from 'react'
+import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
+import { Trans, useTranslation } from 'react-i18next'
+import { LuCheck, LuTriangleAlert, LuUpload, LuX } from 'react-icons/lu'
+import { useOutletContext } from 'react-router-dom'
+import { SpreadsheetManager } from '~components/shared/Spreadsheet/SpreadsheetManager'
+import { Select } from '~shared/Form/Select'
+import {
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -25,28 +50,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Progress,
-  Stack,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  UnorderedList,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react'
-import { useQueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-providers'
-import { chakraComponents, Select } from 'chakra-react-select'
-import { useEffect, useRef, useState } from 'react'
-import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
-import { Trans, useTranslation } from 'react-i18next'
-import { LuCheck, LuTriangleAlert, LuUpload, LuX } from 'react-icons/lu'
-import { useOutletContext } from 'react-router-dom'
-import { SpreadsheetManager } from '~components/shared/Spreadsheet/SpreadsheetManager'
+} from '~shared/Modal/Modal'
+import { useToast } from '~shared/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { MemberbaseTabsContext } from '..'
@@ -94,7 +99,7 @@ const TemplateUploader = () => {
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.download_template.title', { defaultValue: 'Download Import Template' })}
       </Heading>
-      <Text color='texts.subtle' size='sm'>
+      <Text color='texts.subtle' fontSize='sm'>
         {t('memberbase.download_template.subtitle', {
           defaultValue:
             'Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it’s ready, you can start creating votes.',
@@ -135,7 +140,7 @@ export const ImportProgress = () => {
     return () => clearInterval(interval)
   }, [data?.progress, isComplete])
 
-  const { isOpen: isErrorModalOpen, onOpen: onOpenErrors, onClose: onCloseErrors } = useDisclosure()
+  const { open: isErrorModalOpen, onOpen: onOpenErrors, onClose: onCloseErrors } = useDisclosure()
 
   useEffect(() => {
     if (isComplete) {
@@ -173,7 +178,7 @@ export const ImportProgress = () => {
               defaultValue: 'Your data was imported with some errors.',
             })}
           </Text>
-          <Button onClick={onOpenErrors} variant='link' size='sm' mt={1} alignSelf='start'>
+          <Button onClick={onOpenErrors} size='sm' mt={1} alignSelf='start'>
             {t('import_progress.view_errors', {
               defaultValue: `View {{count}} errors`,
               count: data.errors.length,
@@ -212,7 +217,11 @@ export const ImportProgress = () => {
 
     return (
       <>
-        <Progress size='md' value={progress} borderRadius='md' isAnimated hasStripe />
+        <ProgressRoot size='md' value={progress} borderRadius='md' animated striped>
+          <ProgressTrack borderRadius='md'>
+            <ProgressRange />
+          </ProgressTrack>
+        </ProgressRoot>
         <Text>
           {t('import_progress.description', {
             defaultValue:
@@ -265,13 +274,13 @@ export const ImportProgress = () => {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody maxH='60vh' overflowY='auto'>
-            <UnorderedList spacing={2} pl={4}>
+            <List.Root display='flex' flexDirection='column' gap={2} pl={4} listStyleType='disc'>
               {data?.errors?.map((error, i) => (
-                <ListItem key={i} whiteSpace='pre-wrap' fontSize='sm'>
+                <List.Item key={i} whiteSpace='pre-wrap' fontSize='sm'>
                   {error}
-                </ListItem>
+                </List.Item>
               ))}
-            </UnorderedList>
+            </List.Root>
           </ModalBody>
           <ModalFooter>
             <Button variant='ghost' onClick={onCloseErrors}>
@@ -385,26 +394,26 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
         {t('memberbase.importer.data_preview', { defaultValue: 'Data Preview' })}
       </Heading>
       <Box borderColor='table.border' borderWidth='1px' borderRadius='lg' overflowX='auto' w='full'>
-        <Table>
-          <Thead>
-            <Tr>
+        <TableRoot>
+          <TableHeader>
+            <TableRow>
               {columns.map(({ id, label }) => (
-                <Th key={id} fontSize='sm' whiteSpace='nowrap'>
+                <TableColumnHeader key={id} fontSize='sm' whiteSpace='nowrap'>
                   {label}
-                </Th>
+                </TableColumnHeader>
               ))}
-            </Tr>
-          </Thead>
-          <Tbody>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {previewRows.map((row, index) => (
-              <Tr key={index}>
+              <TableRow key={index}>
                 {columns.map(({ id }) => (
-                  <Td key={id}>{getCellValue(row, id)}</Td>
+                  <TableCell key={id}>{getCellValue(row, id)}</TableCell>
                 ))}
-              </Tr>
+              </TableRow>
             ))}
-          </Tbody>
-        </Table>
+          </TableBody>
+        </TableRoot>
       </Box>
     </HStack>
   )
@@ -428,7 +437,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
       <Heading size='md' fontWeight='extrabold'>
         {t('memberbase.importer.map_columns.title', { defaultValue: 'Map Columns' })}
       </Heading>
-      <Text color='texts.subtle' size='sm'>
+      <Text color='texts.subtle' fontSize='sm'>
         {t('memberbase.importer.map_columns.subtitle', {
           defaultValue:
             'Map columns from your file to the corresponding fields in our system. Required fields are marked with an asterisk (*).',
@@ -439,7 +448,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
         <Button type='button' variant='outline' onClick={resetImport}>
           {t('memberbase.importer.reset', { defaultValue: 'Reset Import' })}
         </Button>
-        <Button type='submit' form='import-members' isLoading={methods.formState.isSubmitting} shouldWrapChildren>
+        <Button type='submit' form='import-members' loading={methods.formState.isSubmitting}>
           {t('memberbase.importer.submit', { defaultValue: 'Import Data' })}
         </Button>
       </Flex>
@@ -450,7 +459,7 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
 export const ImportMembers = () => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef<HTMLButtonElement>(null)
   const methods = useForm({ defaultValues: { spreadsheet: null } })
   const spreadsheet = useWatch({
@@ -482,7 +491,7 @@ export const ImportMembers = () => {
     } catch (error) {
       console.error(error)
       toast({
-        status: 'error',
+        type: 'error',
         title: 'Import failed',
         description: error?.message ?? 'Unexpected error while importing members',
       })
@@ -491,49 +500,60 @@ export const ImportMembers = () => {
 
   return (
     <>
-      <Button ref={btnRef} leftIcon={<Icon as={LuUpload} />} variant='outline' onClick={onOpen}>
-        {t('memberbase.importer.button', { defaultValue: 'Import' })}
+      <Button ref={btnRef} variant='outline' onClick={onOpen}>
+        <HStack gap={2}>
+          <Icon as={LuUpload} />
+          <Text as='span'>{t('memberbase.importer.button', { defaultValue: 'Import' })}</Text>
+        </HStack>
       </Button>
-      <Drawer isOpen={isOpen} placement='right' onClose={onClose} finalFocusRef={btnRef} size='md'>
-        <DrawerOverlay />
-        <DrawerContent p={1}>
-          <IconButton
-            aria-label={t('drawer.close', 'Close drawer')}
-            icon={<Icon as={LuX} />}
-            position='absolute'
-            top='6px'
-            right='6px'
-            onClick={onClose}
-            variant='transparent'
-          />
-          <DrawerHeader display='flex' flexDirection='column' gap={4}>
-            <Heading size='md' fontWeight='extrabold'>
-              {t('memberbase.importer.title', { defaultValue: 'Import Members' })}
-            </Heading>
-            <Text color='texts.subtle' size='sm'>
-              {t('memberbase.importer.subtitle', {
-                defaultValue: 'Download a template or import your own CSV, XLS, or XLSX file to add members.',
-              })}
-            </Text>
-          </DrawerHeader>
-          <DrawerBody display='flex' flexDirection='column' gap={4}>
-            <FormProvider {...methods}>
-              <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
-                {!hasSpreadsheet ? (
-                  <TemplateUploader />
-                ) : (
-                  <ImportDataPreview columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
-                )}
-              </Box>
-            </FormProvider>
-            <Flex justify='flex-end' gap={4}>
-              <Button type='button' variant='outline' onClick={onClose}>
-                {t('memberbase.importer.cancel', { defaultValue: 'Cancel' })}
-              </Button>
-            </Flex>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+      <DrawerRoot
+        open={isOpen}
+        placement='end'
+        onOpenChange={({ open }) => (!open ? onClose() : undefined)}
+        finalFocusEl={btnRef ? () => btnRef.current : undefined}
+        size='md'
+      >
+        <DrawerBackdrop />
+        <DrawerPositioner>
+          <DrawerContent p={1}>
+            <IconButton
+              aria-label={t('drawer.close', 'Close drawer')}
+              position='absolute'
+              top='6px'
+              right='6px'
+              onClick={onClose}
+            >
+              <Icon as={LuX} />
+            </IconButton>
+            <DrawerHeader display='flex' flexDirection='column' gap={4}>
+              <Heading size='md' fontWeight='extrabold'>
+                {t('memberbase.importer.title', { defaultValue: 'Import Members' })}
+              </Heading>
+              <Text color='texts.subtle' fontSize='sm'>
+                {t('memberbase.importer.subtitle', {
+                  defaultValue: 'Download a template or import your own CSV, XLS, or XLSX file to add members.',
+                })}
+              </Text>
+            </DrawerHeader>
+            <DrawerBody display='flex' flexDirection='column' gap={4}>
+              <FormProvider {...methods}>
+                <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
+                  {!hasSpreadsheet ? (
+                    <TemplateUploader />
+                  ) : (
+                    <ImportDataPreview columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
+                  )}
+                </Box>
+              </FormProvider>
+              <Flex justify='flex-end' gap={4}>
+                <Button type='button' variant='outline' onClick={onClose}>
+                  {t('memberbase.importer.cancel', { defaultValue: 'Cancel' })}
+                </Button>
+              </Flex>
+            </DrawerBody>
+          </DrawerContent>
+        </DrawerPositioner>
+      </DrawerRoot>
     </>
   )
 }

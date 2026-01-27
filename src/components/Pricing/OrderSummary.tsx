@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Text, VStack } from '@chakra-ui/react'
+import { Box, Flex, Separator, Text, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { usePlanNameTranslator } from './Plans'
 
@@ -26,12 +26,12 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
 
   return (
     <Box borderWidth={1} borderRadius='md' p={6} bg='card.bg'>
-      <VStack align='stretch' spacing={4}>
+      <VStack align='stretch' gap={4}>
         <Text fontSize='lg' fontWeight='bold'>
           {t('order_summary', { defaultValue: 'Order Summary' })}
         </Text>
 
-        <Divider />
+        <Separator />
 
         {/* Plan Name and Price/Trial */}
         <Flex justify='space-between' align='flex-start'>
@@ -60,7 +60,7 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
           </Flex>
         )}
 
-        <Divider />
+        <Separator />
 
         {/* Subtotal */}
         <Flex justify='space-between'>
@@ -89,7 +89,7 @@ export const OrderSummary = ({ checkout }: OrderSummaryProps) => {
             )
           })}
 
-        <Divider />
+        <Separator />
 
         {/* Total */}
         <Flex justify='space-between'>

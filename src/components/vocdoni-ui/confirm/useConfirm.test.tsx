@@ -1,6 +1,8 @@
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import { ChakraProvider } from '@chakra-ui/react'
+import { ColorModeProvider } from '~theme/color-mode'
+import { system } from '~theme'
 import { useConfirm } from './useConfirm'
 import { ConfirmProvider } from './ConfirmProvider'
 
@@ -8,9 +10,11 @@ describe('useConfirm', () => {
   it('opens prompt when confirm called', async () => {
     const { result } = renderHook(() => useConfirm(), {
       wrapper: ({ children }) => (
-        <ChakraProvider>
-          <ConfirmProvider>{children}</ConfirmProvider>
-        </ChakraProvider>
+        <ColorModeProvider>
+          <ChakraProvider value={system}>
+            <ConfirmProvider>{children}</ConfirmProvider>
+          </ChakraProvider>
+        </ColorModeProvider>
       ),
     })
     let promise: Promise<boolean>

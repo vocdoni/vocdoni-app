@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@chakra-ui/react'
+import { Button, ButtonProps, HStack, Text } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
@@ -13,14 +13,30 @@ const ContactButton = ({ children, leftIcon, ...buttonProps }: ContactLinkProps)
   const { isAuthenticated } = useAuth()
 
   return (
-    <Button
-      leftIcon={leftIcon}
-      {...buttonProps}
-      as={RouterLink}
-      to={isAuthenticated ? Routes.dashboard.settings.support : 'https://vocdoni.io/contact'}
-      target={isAuthenticated ? undefined : '_blank'}
-    >
-      {children}
+    <Button {...buttonProps} asChild>
+      {isAuthenticated ? (
+        <RouterLink to={Routes.dashboard.settings.support}>
+          {leftIcon ? (
+            <HStack gap={2}>
+              {leftIcon}
+              <Text as='span'>{children}</Text>
+            </HStack>
+          ) : (
+            children
+          )}
+        </RouterLink>
+      ) : (
+        <a href='https://vocdoni.io/contact' target='_blank' rel='noopener noreferrer'>
+          {leftIcon ? (
+            <HStack gap={2}>
+              {leftIcon}
+              <Text as='span'>{children}</Text>
+            </HStack>
+          ) : (
+            children
+          )}
+        </a>
+      )}
     </Button>
   )
 }

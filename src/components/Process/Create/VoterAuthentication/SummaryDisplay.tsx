@@ -1,15 +1,14 @@
 import {
-  Alert,
+  AlertRoot as Alert,
   AlertDescription,
-  AlertIcon,
+  AlertIndicator,
   AlertTitle,
   Badge,
   Box,
-  Divider,
+  Separator,
   HStack,
   Icon,
   Stack,
-  TabPanel,
   Text,
 } from '@chakra-ui/react'
 import { useFormContext } from 'react-hook-form'
@@ -45,7 +44,7 @@ export const CredentialsOverview = ({ credentials, use2FA, use2FAMethod }: Crede
             </Text>
           </HStack>
 
-          <Stack pl={6} spacing={2}>
+          <Stack pl={6} gap={2}>
             {credentials.map((cred) => (
               <HStack key={cred}>
                 <Icon as={LuCheck} color='green.500' />
@@ -89,35 +88,33 @@ export const SummaryDisplay = () => {
   const { subtext, alert } = getSecurityLevelMessages(level)
 
   return (
-    <TabPanel>
-      <Box border='1px solid' borderColor='table.border' borderRadius='md' p={5} bg='background.raised'>
-        <Stack spacing={4}>
-          <Text fontWeight='bold'>
-            {t('voter_auth.summary_title', { defaultValue: 'Authentication Configuration Summary' })}
-          </Text>
-          <CredentialsOverview credentials={credentials} use2FA={use2FA} use2FAMethod={use2FAMethod} />
-          <Divider />
-          <Box>
-            <HStack mb={3}>
-              <Icon as={LuShield} />
-              <Text fontWeight='semibold'>
-                {t('voter_auth.guarantees', { defaultValue: 'Authentication Guarantees' })}
-              </Text>
-            </HStack>
-            <SecurityLevelDisplay credentials={credentials} use2FA={use2FA} />
-            <Text fontSize='sm' color='texts.subtle' mt={2}>
-              {subtext}
+    <Box border='1px solid' borderColor='table.border' borderRadius='md' p={5} bg='background.raised'>
+      <Stack gap={4}>
+        <Text fontWeight='bold'>
+          {t('voter_auth.summary_title', { defaultValue: 'Authentication Configuration Summary' })}
+        </Text>
+        <CredentialsOverview credentials={credentials} use2FA={use2FA} use2FAMethod={use2FAMethod} />
+        <Separator />
+        <Box>
+          <HStack mb={3}>
+            <Icon as={LuShield} />
+            <Text fontWeight='semibold'>
+              {t('voter_auth.guarantees', { defaultValue: 'Authentication Guarantees' })}
             </Text>
+          </HStack>
+          <SecurityLevelDisplay credentials={credentials} use2FA={use2FA} />
+          <Text fontSize='sm' color='texts.subtle' mt={2}>
+            {subtext}
+          </Text>
+        </Box>
+        <Alert status={alert.status} variant='subtle' borderRadius='md' alignItems='start' py={3} px={4}>
+          <AlertIndicator />
+          <Box>
+            <AlertTitle fontWeight='bold'>{alert.title}</AlertTitle>
+            <AlertDescription fontSize='sm'>{alert.description}</AlertDescription>
           </Box>
-          <Alert status={alert.status} variant='subtle' borderRadius='md' alignItems='start' py={3} px={4}>
-            <AlertIcon />
-            <Box>
-              <AlertTitle fontWeight='bold'>{alert.title}</AlertTitle>
-              <AlertDescription fontSize='sm'>{alert.description}</AlertDescription>
-            </Box>
-          </Alert>
-        </Stack>
-      </Box>
-    </TabPanel>
+        </Alert>
+      </Stack>
+    </Box>
   )
 }

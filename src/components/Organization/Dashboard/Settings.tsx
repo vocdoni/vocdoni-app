@@ -1,4 +1,4 @@
-import { Avatar, Flex } from '@chakra-ui/react'
+import { AvatarFallback, AvatarImage, AvatarRoot, Flex } from '@chakra-ui/react'
 import { useClient } from '@vocdoni/react-providers'
 import { FaRegBell } from 'react-icons/fa6'
 import { LuInfo } from 'react-icons/lu'
@@ -12,7 +12,10 @@ const Settings = () => {
       <FaRegBell />
       <LuInfo />
       <RiSettings5Line />
-      <Avatar src={account?.account.avatar} name={account?.account.name.default || account?.address} size='sm' />
+      <AvatarRoot size='sm'>
+        {account?.account.avatar ? <AvatarImage src={account.account.avatar} /> : null}
+        <AvatarFallback name={account?.account.name.default || account?.address} />
+      </AvatarRoot>
     </Flex>
   )
 }

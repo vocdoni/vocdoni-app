@@ -1,15 +1,5 @@
-import {
-  Box,
-  BoxProps,
-  Heading as CHeading,
-  Flex,
-  forwardRef,
-  HeadingProps,
-  Slide,
-  Text,
-  TextProps,
-} from '@chakra-ui/react'
-import { ReactNode } from 'react'
+import { Box, BoxProps, Heading as CHeading, Flex, FlexProps, HeadingProps, Text, TextProps } from '@chakra-ui/react'
+import { ReactNode, forwardRef } from 'react'
 
 export type DashboardCardHeaderProps = BoxProps & {
   title: ReactNode
@@ -46,7 +36,7 @@ export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCard
   </Box>
 )
 
-export const DashboardContents = (props: BoxProps) => (
+export const DashboardContents = (props: FlexProps) => (
   <Flex flexDirection={'column'} maxW='1536px' w='full' mx='auto' p={6} {...props} />
 )
 
@@ -54,7 +44,7 @@ export const DashboardSection = (props: BoxProps) => (
   <Box _light={{ bg: 'gray.50' }} _dark={{ bg: 'whiteAlpha.50' }} p={4} borderRadius='sm' {...props} />
 )
 
-export const Heading = forwardRef<HeadingProps, 'h2'>((props, ref) => (
+export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
   <CHeading
     size='sm'
     fontSize='2xl'
@@ -67,7 +57,7 @@ export const Heading = forwardRef<HeadingProps, 'h2'>((props, ref) => (
   />
 ))
 
-export const SubHeading = forwardRef<TextProps, 'p'>((props, ref) => (
+export const SubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
   <Text
     mt={2}
     mb={4}
@@ -86,17 +76,16 @@ export type SidebarProps = BoxProps & {
 }
 
 export const Sidebar = ({ show, ...props }: SidebarProps) => (
-  <Slide
-    direction='right'
-    in={show}
-    style={{
-      position: 'absolute',
-      right: 0,
-      top: 0,
-      bottom: 0,
-      width: null, // to override chakra's default width
-      zIndex: 10,
-    }}
+  <Box
+    position='absolute'
+    right={0}
+    top={0}
+    bottom={0}
+    zIndex={10}
+    transition='transform 0.2s ease, opacity 0.2s ease'
+    transform={show ? 'translateX(0)' : 'translateX(100%)'}
+    opacity={show ? 1 : 0}
+    pointerEvents={show ? 'auto' : 'none'}
   >
     <Box
       height='100%'
@@ -109,7 +98,7 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
       flexDirection='column'
       {...props}
     />
-  </Slide>
+  </Box>
 )
 
 export const SidebarContents = (props: BoxProps) => <Box px={4} pb={4} {...props} />

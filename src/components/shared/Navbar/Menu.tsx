@@ -1,13 +1,13 @@
-import { ChevronDownIcon, ChevronUpIcon, CopyIcon } from '@chakra-ui/icons'
-import { Box, HStack, Icon, IconButton, Link, MenuItem, MenuList, Text, useClipboard } from '@chakra-ui/react'
-import { HR } from '~components/vocdoni-ui'
+import { Box, HStack, Icon, IconButton, Link, MenuContent, MenuItem, Text, useClipboard } from '@chakra-ui/react'
 import { useClient } from '@vocdoni/react-providers'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaWallet } from 'react-icons/fa'
 import { MdOutlineLogout } from 'react-icons/md'
+import { RiArrowDownSLine, RiArrowUpSLine, RiFileCopyLine } from 'react-icons/ri'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { useDisconnect } from 'wagmi'
+import { HR } from '~components/vocdoni-ui'
 import { addressTextOverflow } from '~constants'
 import { Routes } from '~src/router/routes'
 import { LanguagesList } from './LanguagesList'
@@ -16,7 +16,7 @@ const MenuDropdown = () => {
   const { t } = useTranslation()
   const { disconnect } = useDisconnect()
   const { account, clear } = useClient()
-  const { onCopy } = useClipboard(account?.address as string)
+  const { copy } = useClipboard({ value: account?.address ?? '' })
 
   const [isOpenMenuLanguages, setIsOpenMenuLanguages] = useState(false)
 
@@ -24,7 +24,7 @@ const MenuDropdown = () => {
   const termsOfServiceUrl = import.meta.env.TERMS_OF_SERVICE_URL
 
   return (
-    <MenuList
+    <MenuContent
       py={4}
       px={6}
       minW={{ base: '100vw', sm: 'min-content' }}
@@ -37,6 +37,7 @@ const MenuDropdown = () => {
       {account && (
         <>
           <MenuItem
+            value='wallet'
             as='div'
             display='flex'
             flexDirection='column'
@@ -58,7 +59,7 @@ const MenuDropdown = () => {
               },
             }}
             onClick={() => {
-              onCopy()
+              copy()
             }}
           >
             <Text fontWeight='bold'>{t('menu.wallet')}</Text>
@@ -68,24 +69,25 @@ const MenuDropdown = () => {
               </HStack>
               {addressTextOverflow((account?.address as string) || '', 10)}
               <IconButton
-                variant='icon'
                 size='xs'
                 type='button'
-                icon={<CopyIcon />}
                 aria-label={t('menu.copy_aria_label')}
                 onClick={() => {
-                  onCopy()
+                  copy()
                 }}
-              />
+              >
+                <RiFileCopyLine />
+              </IconButton>
             </Box>
           </MenuItem>
 
-          <MenuItem as={ReactRouterLink} to={Routes.dashboard.profile}>
-            {t('menu.organization')}
+          <MenuItem value='organization' asChild>
+            <ReactRouterLink to={Routes.dashboard.profile}>{t('menu.organization')}</ReactRouterLink>
           </MenuItem>
         </>
       )}
       <MenuItem
+        value='languages-toggle'
         closeOnSelect={false}
         onClick={() => setIsOpenMenuLanguages((prev) => !prev)}
         display='flex'
@@ -95,22 +97,24 @@ const MenuDropdown = () => {
       >
         <Box as='span' px={3} display='flex' w='full' pb={2}>
           <Text>{t('menu.languages')}</Text>
-          {isOpenMenuLanguages ? <ChevronUpIcon mt='5px' /> : <ChevronDownIcon mt='5px' />}
+          {isOpenMenuLanguages ? <Icon as={RiArrowUpSLine} mt='5px' /> : <Icon as={RiArrowDownSLine} mt='5px' />}
         </Box>
       </MenuItem>
       {isOpenMenuLanguages && <LanguagesList closeOnSelect={false} />}
-      <MenuItem
-        as={Link}
-        href='https://developer.vocdoni.io/'
-        target='_blank'
-        _hover={{
-          textDecoration: 'none',
-        }}
-      >
-        {t('menu.documentation')}
+      <MenuItem value='documentation' asChild>
+        <Link
+          href='https://developer.vocdoni.io/'
+          target='_blank'
+          _hover={{
+            textDecoration: 'none',
+          }}
+        >
+          {t('menu.documentation')}
+        </Link>
       </MenuItem>
       <HR h={0} my={2} />
       <MenuItem
+        value='logout'
         onClick={() => {
           disconnect()
           clear()
@@ -120,13 +124,17 @@ const MenuDropdown = () => {
         <Icon as={MdOutlineLogout} mr={1} />
         {t('menu.logout')}
       </MenuItem>
-      <MenuItem fontSize='xs' color='blackAlpha.700' as={Link} href={termsOfServiceUrl} isExternal>
-        {t('menu.terms')}
+      <MenuItem value='terms' asChild>
+        <Link fontSize='xs' color='blackAlpha.700' href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer'>
+          {t('menu.terms')}
+        </Link>
       </MenuItem>
-      <MenuItem fontSize='xs' color='blackAlpha.700' as={Link} href={privacyPolicyUrl} isExternal>
-        {t('menu.privacy')}
+      <MenuItem value='privacy' asChild>
+        <Link fontSize='xs' color='blackAlpha.700' href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer'>
+          {t('menu.privacy')}
+        </Link>
       </MenuItem>
-    </MenuList>
+    </MenuContent>
   )
 }
 

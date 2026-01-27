@@ -1,4 +1,3 @@
-import { WarningIcon } from '@chakra-ui/icons'
 import {
   Box,
   BoxProps,
@@ -9,23 +8,18 @@ import {
   Icon,
   Image,
   Link,
-  ListItem,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  List,
   Spinner,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
+  TabsContent,
+  TabsContentGroup,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
   Text,
-  Tooltip,
-  UnorderedList,
+  TooltipContent,
+  TooltipPositioner,
+  TooltipRoot,
+  TooltipTrigger,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
@@ -34,10 +28,20 @@ import { useClient, useElection, useOrganization } from '@vocdoni/react-provider
 import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
+import { RiErrorWarningLine } from 'react-icons/ri'
 import { FacebookShare, RedditShare, TelegramShare, TwitterShare } from '~components/Share'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
 import { ConfirmVoteModal } from './ConfirmVoteModal'
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from '~shared/Modal/Modal'
 import { CreatedBy } from './CreatedBy'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
@@ -59,7 +63,7 @@ export const ProcessInfoCard = ({ label, description, ...props }: ProcessInfoCar
         {label}
       </Text>
       {typeof description === 'string' ? (
-        <Text color='texts.subtle' size='sm'>
+        <Text color='texts.subtle' fontSize='sm'>
           {description}
         </Text>
       ) : (
@@ -124,7 +128,7 @@ const ProcessInfoPanel = () => {
       flex='0 0 360px'
       minW='360px'
     >
-      <Box flexDir='row' display='flex' justifyContent='space-between' w={{ xl2: 'full' }}>
+      <Box flexDir='row' display='flex' justifyContent='space-between' w={{ xl: 'full' }}>
         {election?.status !== ElectionStatus.CANCELED ? (
           <ProcessDate />
         ) : (
@@ -141,29 +145,30 @@ const ProcessInfoPanel = () => {
         label={t('process.census')}
         description={
           showTotalCensusSize ? (
-            <Tooltip
-              hasArrow
-              bg='primary.600'
-              color='white'
-              placement='top'
-              label={t('process.total_census_size_tooltip', {
-                censusSize: censusInfo?.size,
-                maxCensusSize: election?.maxCensusSize,
-                percent:
-                  censusInfo?.size && election?.maxCensusSize
-                    ? Math.round((election?.maxCensusSize / censusInfo?.size) * 100)
-                    : 0,
-              })}
-            >
-              <Text>
-                {t('process.total_census_size', {
-                  censusSize: censusInfo?.size,
-                  maxCensusSize: election?.maxCensusSize,
-                })}
-              </Text>
-            </Tooltip>
+            <TooltipRoot positioning={{ placement: 'top' }}>
+              <TooltipTrigger asChild>
+                <Text>
+                  {t('process.total_census_size', {
+                    censusSize: censusInfo?.size,
+                    maxCensusSize: election?.maxCensusSize,
+                  })}
+                </Text>
+              </TooltipTrigger>
+              <TooltipPositioner>
+                <TooltipContent bg='primary.600' color='white'>
+                  {t('process.total_census_size_tooltip', {
+                    censusSize: censusInfo?.size,
+                    maxCensusSize: election?.maxCensusSize,
+                    percent:
+                      censusInfo?.size && election?.maxCensusSize
+                        ? Math.round((election?.maxCensusSize / censusInfo?.size) * 100)
+                        : 0,
+                  })}
+                </TooltipContent>
+              </TooltipPositioner>
+            </TooltipRoot>
           ) : (
-            <Text color='texts.subtle' size='sm'>
+            <Text color='texts.subtle' fontSize='sm'>
               {t('process.people_in_census', { count: election?.maxCensusSize })}
             </Text>
           )
@@ -185,7 +190,7 @@ const ProcessInfoPanel = () => {
           borderRadius='lg'
           p={2}
         >
-          <Icon as={WarningIcon} />
+          <Icon as={RiErrorWarningLine} />
           <ProcessInfoCard label={t('process.status.paused')} description={t('process.status.paused_description')} />
         </Flex>
       )}
@@ -198,15 +203,15 @@ export const ProcessView = () => {
   const { election, voted } = useElection()
   const videoRef = useRef<HTMLDivElement>(null)
   const electionRef = useRef<HTMLDivElement>(null)
-  const [tabIndex, setTabIndex] = useState(0)
+  const [tabValue, setTabValue] = useState<'questions' | 'results'>('questions')
   const [formErrors, setFormErrors] = useState<any>(null)
 
-  const setQuestionsTab = () => setTabIndex(0)
+  const setQuestionsTab = () => setTabValue('questions')
 
   // If the election is finished, show the results tab
   useEffect(() => {
     if (election instanceof PublishedElection && election?.status === ElectionStatus.RESULTS) {
-      setTabIndex(1)
+      setTabValue('results')
     }
   }, [election])
 
@@ -258,22 +263,22 @@ export const ProcessView = () => {
 
           <ElectionVideo ref={videoRef} />
 
-          <Tabs
-            isFitted
-            order={{ base: 2, xl2: 1 }}
-            index={tabIndex}
-            onChange={setTabIndex}
-            flex={{ xl2: '0 0 75%' }}
+          <TabsRoot
+            fitted
+            order={{ base: 2, xl: 1 }}
+            value={tabValue}
+            onValueChange={({ value }) => setTabValue(value as 'questions' | 'results')}
+            flex={{ xl: '0 0 75%' }}
             w='full'
           >
-            <TabList w='full'>
-              <Tab>{t('process.questions')}</Tab>
+            <TabsList w='full'>
+              <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
               {election instanceof PublishedElection && election?.status !== ElectionStatus.CANCELED && (
-                <Tab>{t('process.results')}</Tab>
+                <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>
               )}
-            </TabList>
-            <TabPanels mt={6}>
-              <TabPanel p={0}>
+            </TabsList>
+            <TabsContentGroup mt={6}>
+              <TabsContent value='questions' p={0}>
                 <Box
                   ref={electionRef}
                   p={6}
@@ -290,17 +295,19 @@ export const ProcessView = () => {
                     confirmContents={(election, answers) => <ConfirmVoteModal election={election} answers={answers} />}
                   />
                 </Box>
-                <Box position='sticky' bottom={0} left={0} pb={1} pt={1} display={{ base: 'none', xl2: 'block' }}>
+                <Box position='sticky' bottom={0} left={0} pb={1} pt={1} display={{ base: 'none', xl: 'block' }}>
                   <VoteButton setQuestionsTab={setQuestionsTab} />
                 </Box>
-              </TabPanel>
-              <TabPanel p={0}>
-                <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                  <ElectionResults />
-                </Box>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+              </TabsContent>
+              {election instanceof PublishedElection && election?.status !== ElectionStatus.CANCELED && (
+                <TabsContent value='results' p={0}>
+                  <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                    <ElectionResults />
+                  </Box>
+                </TabsContent>
+              )}
+            </TabsContentGroup>
+          </TabsRoot>
         </Flex>
       </GridItem>
       <GridItem display='grid' gap={6}>
@@ -315,7 +322,7 @@ export const ProcessView = () => {
 
 const SuccessVoteModal = () => {
   const { t } = useTranslation()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const { votesLeft, election, voted } = useElection()
   const { env } = useClient()
 
@@ -356,20 +363,20 @@ const SuccessVoteModal = () => {
               p: <Text mb={2} />,
             }}
           />
-          <UnorderedList listStyleType='none' display='flex' justifyContent='center' gap={6} mt={6} mb={2} ml={0}>
-            <ListItem>
+          <List.Root listStyleType='none' display='flex' justifyContent='center' gap={6} mt={6} mb={2} ml={0}>
+            <List.Item>
               <TwitterShare url={url} caption={caption} />
-            </ListItem>
-            <ListItem>
+            </List.Item>
+            <List.Item>
               <FacebookShare url={url} caption={caption} />
-            </ListItem>
-            <ListItem>
+            </List.Item>
+            <List.Item>
               <TelegramShare url={url} caption={caption} />
-            </ListItem>
-            <ListItem>
+            </List.Item>
+            <List.Item>
               <RedditShare url={url} caption={caption} />
-            </ListItem>
-          </UnorderedList>
+            </List.Item>
+          </List.Root>
         </ModalBody>
 
         <ModalFooter mt={4}>

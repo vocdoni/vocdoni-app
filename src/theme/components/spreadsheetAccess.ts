@@ -1,57 +1,39 @@
-import { createMultiStyleConfigHelpers, StyleFunctionProps } from '@chakra-ui/react'
+import { defineSlotRecipe } from '@chakra-ui/react'
 import { spreadsheetAccessAnatomy } from '~components/vocdoni-ui'
 
-const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(spreadsheetAccessAnatomy)
-
-const baseStyle = definePartsStyle((props: StyleFunctionProps) => {
-  const { theme } = props
-  const btn = theme.components?.Button
-
-  const buttonVariant = 'solid'
-  const colorScheme = 'black'
-
-  const variantDef = btn.variants[buttonVariant]({ ...props, colorScheme })
-
-  return {
-    button: {
-      ...variantDef,
-      w: 'full',
-    },
-    disconnect: {
-      bg: 'transparent',
-      border: 'none',
-      _hover: {
-        textDecoration: 'underline',
-
-        _disabled: {
-          color: 'button.variant.common.disabled.color.light',
-
-          _dark: {
-            color: 'button.variant.common.disabled.color.dark',
-          },
-        },
-      },
+const baseStyle = {
+  button: {
+    w: 'full',
+  },
+  disconnect: {
+    bg: 'transparent',
+    border: 'none',
+    _hover: {
+      textDecoration: 'underline',
       _disabled: {
         color: 'button.variant.common.disabled.color.light',
-
         _dark: {
           color: 'button.variant.common.disabled.color.dark',
         },
       },
-
+    },
+    _disabled: {
+      color: 'button.variant.common.disabled.color.light',
       _dark: {
-        color: 'white',
+        color: 'button.variant.common.disabled.color.dark',
       },
     },
-
-    close: {
-      display: 'none',
+    _dark: {
+      color: 'white',
     },
+  },
+  close: {
+    display: 'none',
+  },
+  input: { mb: 5 },
+}
 
-    input: { mb: 5 },
-  }
-})
-
-export const SpreadsheetAccess = defineMultiStyleConfig({
-  baseStyle,
+export const SpreadsheetAccess = defineSlotRecipe({
+  slots: spreadsheetAccessAnatomy,
+  base: baseStyle,
 })

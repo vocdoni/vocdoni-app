@@ -3,19 +3,13 @@ import {
   Button,
   Flex,
   Heading,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Tab,
-  TabList,
-  TabPanels,
-  Tabs,
+  TabsContent,
+  TabsContentGroup,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
   Text,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-providers'
@@ -25,6 +19,8 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
+import { useToast } from '~shared/Toast'
 import { Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
 import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
@@ -122,7 +118,7 @@ export const VoterAuthentication = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const mainForm = useFormContext<Process>()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const [validationError, setValidationError] = useState<ValidationError | null>(null)
   const [stepCompletion, setStepCompletion] = useState<StepCompletionState>({
@@ -149,6 +145,8 @@ export const VoterAuthentication = () => {
   const hasNoCredentialsSelected = !formData?.credentials?.length && !formData?.use2FA
   const prevWeightedRef = useRef(weighted)
   const recreateInFlightRef = useRef(false)
+  const tabValues = ['credentials', 'twoFactor', 'summary'] as const
+  const activeTabValue = tabValues[activeTabIndex] ?? tabValues[0]
 
   // Sync form values with stored census data
   useEffect(() => {
@@ -251,7 +249,7 @@ export const VoterAuthentication = () => {
         toast({
           title: t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }),
           description: errorMessage,
-          status: 'error',
+          type: 'error',
           duration: 3000,
           isClosable: true,
         })
@@ -263,7 +261,7 @@ export const VoterAuthentication = () => {
         setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
         toast({
           title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
           isClosable: true,
         })
@@ -277,7 +275,7 @@ export const VoterAuthentication = () => {
         toast({
           title: t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }),
           description: errorMessage,
-          status: 'error',
+          type: 'error',
           duration: 3000,
           isClosable: true,
         })
@@ -329,7 +327,7 @@ export const VoterAuthentication = () => {
           />
         </Flex>
       )}
-      <Button isDisabled={!groupId} colorScheme='gray' w='full' onClick={onOpen}>
+      <Button disabled={!groupId} colorScheme='gray' w='full' onClick={onOpen}>
         {census ? (
           <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
         ) : (
@@ -337,7 +335,7 @@ export const VoterAuthentication = () => {
         )}
       </Button>
       {!groupId && (
-        <Text color='texts.subtle' size='xs'>
+        <Text color='texts.subtle' fontSize='xs'>
           {t('voter_auth.no_group_description', {
             defaultValue: 'Please select a group first to configure authentication.',
           })}
@@ -349,7 +347,6 @@ export const VoterAuthentication = () => {
           onClose()
           resetForm()
         }}
-        onCloseComplete={resetForm}
         size='xl'
       >
         <ModalOverlay />
@@ -367,24 +364,34 @@ export const VoterAuthentication = () => {
           <ModalBody display='flex' flexDirection='column' gap={4}>
             <FormProvider {...voterAuthForm}>
               <ValidationErrorsAlert validationError={validationError} />
-              <Tabs index={activeTabIndex} onChange={handleTabChange} isFitted>
-                <TabList w='full'>
-                  <Tab>
+              <TabsRoot value={activeTabValue} onValueChange={({ value }) => handleTabChange(tabValues[value])}>
+                <TabsList w='full'>
+                  <TabsTrigger value={tabValues[0]} flex='1'>
                     <Trans i18nKey='voter_auth.credentials'>Credentials</Trans>
-                  </Tab>
-                  <Tab isDisabled={!stepCompletion.step1Completed}>
+                  </TabsTrigger>
+                  <TabsTrigger value={tabValues[1]} flex='1' disabled={!stepCompletion.step1Completed}>
                     <Trans i18nKey='voter_auth.two_factor'>Two-Factor</Trans>
-                  </Tab>
-                  <Tab isDisabled={!stepCompletion.step2Completed || hasNoCredentialsSelected}>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value={tabValues[2]}
+                    flex='1'
+                    disabled={!stepCompletion.step2Completed || hasNoCredentialsSelected}
+                  >
                     <Trans i18nKey='voter_auth.summary'>Summary</Trans>
-                  </Tab>
-                </TabList>
-                <TabPanels>
-                  <CredentialsForm />
-                  <TwoFactorForm />
-                  <SummaryDisplay />
-                </TabPanels>
-              </Tabs>
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContentGroup>
+                  <TabsContent value={tabValues[0]} px={0} pb={0}>
+                    <CredentialsForm />
+                  </TabsContent>
+                  <TabsContent value={tabValues[1]} px={0} pb={0}>
+                    <TwoFactorForm />
+                  </TabsContent>
+                  <TabsContent value={tabValues[2]}>
+                    <SummaryDisplay />
+                  </TabsContent>
+                </TabsContentGroup>
+              </TabsRoot>
             </FormProvider>
           </ModalBody>
           <ModalFooter>
@@ -393,9 +400,8 @@ export const VoterAuthentication = () => {
             </Button>
             <Button
               onClick={handleNext}
-              isLoading={isLoading}
-              shouldWrapChildren
-              isDisabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
+              loading={isLoading}
+              disabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
             >
               {activeTabIndex === 2 ? t('common.confirm', 'Confirm') : t('common.next', 'Next')}
             </Button>

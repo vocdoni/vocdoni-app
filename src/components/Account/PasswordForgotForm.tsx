@@ -1,4 +1,5 @@
-import { Button, Flex, useToast } from '@chakra-ui/react'
+import { Button, Flex } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -39,9 +40,9 @@ const PasswordForgotForm: React.FC = () => {
           description: t('password_recovery_sent_description', {
             defaultValue: 'Check your inbox for the reset link.',
           }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
         navigate(`${Routes.auth.passwordReset}?email=${encodeURIComponent(data.email)}`)
       },
@@ -51,9 +52,9 @@ const PasswordForgotForm: React.FC = () => {
         toast({
           title: t('password_recovery_failed', { defaultValue: 'Password recovery failed' }),
           description: error.message,
-          status: 'error',
+          type: 'error',
           duration: 3000,
-          isClosable: true,
+          closable: true,
         })
       },
     })

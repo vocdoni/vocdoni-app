@@ -1,4 +1,14 @@
-import { Box, FormControl, FormErrorMessage, Icon, IconButton, Input, SimpleGrid, Text, VStack } from '@chakra-ui/react'
+import {
+  Box,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  Icon,
+  IconButton,
+  Input,
+  SimpleGrid,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -29,7 +39,7 @@ const ExtendedQuestionEditor = ({
   } = useFormContext()
 
   return (
-    <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} spacing={4}>
+    <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} gap={4}>
       {questionOptions.map((field, optionIndex) => (
         <SortableExtendedOption
           key={field.id}
@@ -111,7 +121,6 @@ const SortableExtendedOption = ({
         {/* Trash button */}
         {fieldsLength > 2 && (
           <IconButton
-            icon={<Icon as={LuTrash2} />}
             aria-label={t('process_create.remove_option', { defaultValue: 'Remove option' })}
             size='sm'
             colorScheme='red'
@@ -120,19 +129,20 @@ const SortableExtendedOption = ({
             top={2}
             right={2}
             zIndex='contents'
-          />
+          >
+            <Icon as={LuTrash2} />
+          </IconButton>
         )}
 
-        <VStack align='stretch' spacing={4}>
+        <VStack align='stretch' gap={4}>
           {/* Image uploader */}
           <ImageUploader name={`questions.${questionIndex}.options.${optionIndex}.image`} borderTopRadius='sm' />
           {/* Content box */}
           <Box p={4}>
             {/* Title */}
-            <FormControl isInvalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
+            <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
               <Input
                 px={0}
-                variant='unstyled'
                 placeholder={
                   placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.option ??
                   t('process_create.option.placeholder', 'Option {{number}}', {

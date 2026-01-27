@@ -1,9 +1,9 @@
-import { useToast } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
 import { useActions } from '@vocdoni/react-providers'
 import { useEffect, useRef } from 'react'
 
 export const useActionsToast = () => {
-  const toastRef = useRef<string | number | undefined>()
+  const toastRef = useRef<string | undefined>()
   const { info, error } = useActions()
   const toast = useToast()
 
@@ -15,7 +15,7 @@ export const useActionsToast = () => {
       toastRef.current = toast({
         title: info.title,
         description: info.description,
-        status: 'info',
+        type: 'info',
         duration: null,
         isClosable: false,
       })
@@ -24,7 +24,7 @@ export const useActionsToast = () => {
       toast({
         title: error.title,
         description: error.description,
-        status: 'error',
+        type: 'error',
         duration: 7000,
         isClosable: false,
       })

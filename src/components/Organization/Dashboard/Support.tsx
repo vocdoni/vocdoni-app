@@ -2,17 +2,18 @@ import {
   Box,
   Button,
   Flex,
-  FormControl,
-  FormLabel,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
   Heading,
   Icon,
-  Progress,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
   SimpleGrid,
   SimpleGridProps,
   Stack,
   Text,
   Textarea,
-  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
@@ -28,6 +29,7 @@ import { SubscriptionLockedContent } from '~components/shared/Layout/Subscriptio
 import { SubscriptionPermission } from '~constants'
 import InputBasic from '~shared/Form/InputBasic'
 import { IssueTypeSelector, SelectOptionType } from '~shared/Layout/SaasSelector'
+import { useToast } from '~shared/Toast'
 import { maskValue } from '~utils/strings'
 
 type FormData = {
@@ -57,7 +59,7 @@ const OrganizationSupport = () => {
           defaultValue: 'Get help and support for your organization.',
         })}
       </Text>
-      <SimpleGrid columns={columns} spacing={6}>
+      <SimpleGrid columns={columns} gap={6}>
         <SupportTicketForm />
         {import.meta.env.PRIORITY_SUPPORT_PHONE && (
           <SubscriptionLockedContent permissionType={SubscriptionPermission.PhoneSupport}>
@@ -103,13 +105,13 @@ const SupportTicketForm = () => {
       await mutateAsync(ticket)
       toast({
         title: t('form.support.ticket_success', { defaultValue: 'Support ticket submitted successfully' }),
-        status: 'success',
+        type: 'success',
       })
     } catch (e) {
       toast({
         title: t('form.support.ticket_error', { defaultValue: 'Failed to submit support ticket' }),
         description: (e as Error).message,
-        status: 'error',
+        type: 'error',
       })
     } finally {
     }
@@ -126,7 +128,7 @@ const SupportTicketForm = () => {
             defaultValue: 'Submit a ticket and our support team will get back to you as soon as possible.',
           })}
         </Text>
-        <VStack spacing={4} align='stretch'>
+        <VStack gap={4} align='stretch'>
           <InputBasic
             formValue='title'
             label={t('form.support.title', { defaultValue: 'Title' })}
@@ -136,7 +138,7 @@ const SupportTicketForm = () => {
             required
           />
           <IssueTypeSelector name='type' required />
-          <FormControl isRequired={true}>
+          <FormControl required>
             <FormLabel>{t('form.support.description', { defaultValue: 'Description' })}</FormLabel>
             <Textarea
               {...register('description')}
@@ -157,7 +159,15 @@ const PhoneSupportCard = ({ isLocked }) => {
   const { organization, isLoading } = useSaasAccount()
   const prioritySupportPhone = import.meta.env.PRIORITY_SUPPORT_PHONE
 
-  if (isLoading) return <Progress size='xs' isIndeterminate colorScheme='gray' />
+  if (isLoading) {
+    return (
+      <ProgressRoot size='xs' colorPalette='gray' value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
 
   return (
     <Box p={6}>
@@ -170,7 +180,7 @@ const PhoneSupportCard = ({ isLocked }) => {
         })}
       </Text>
 
-      <Stack spacing={4} mb={6}>
+      <Stack gap={4} mb={6}>
         <Flex p={4} borderRadius='md' bg='dashboard.menu' align='flex-start'>
           <Box
             bg='gray.200'

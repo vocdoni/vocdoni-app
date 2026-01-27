@@ -31,13 +31,12 @@ export const RoutedPagination = ({ maxButtons = 10, buttonProps, pagination, ...
       {visiblePages.map((pageIndex) => (
         <Button
           key={pageIndex}
-          as={RouterLink}
-          to={getPathForPage(pageIndex + 1)}
+          asChild
           onClick={() => setPage(pageIndex)}
           aria-current={pageIndex === currentPage ? 'page' : undefined}
           {...buttonProps}
         >
-          {pageIndex + 1}
+          <RouterLink to={getPathForPage(pageIndex + 1)}>{pageIndex + 1}</RouterLink>
         </Button>
       ))}
     </ButtonGroup>

@@ -1,5 +1,4 @@
-import { createContext } from '@chakra-ui/react-utils'
-import { ReactNode } from 'react'
+import { ReactNode, createContext, useContext } from 'react'
 
 // Define the context type
 type CallbackContextType = {
@@ -8,20 +7,15 @@ type CallbackContextType = {
 }
 
 // Use `createContext` to initialize the context and its provider
-const [CallbackContextProvider, _useCallbackContext] = createContext<CallbackContextType>({
-  name: 'CallbackContext',
-  errorMessage: 'useCallbackContext must be used within a CallbackProvider',
-})
+const CallbackContext = createContext<CallbackContextType | undefined>(undefined)
 
 // Wrapper hook to make the context optional
 export const useCallbackContext = (): CallbackContextType => {
-  try {
-    return _useCallbackContext()
-  } catch {
-    return {
-      success: () => {}, // default no-op function
-      error: () => {}, // default no-op function
-    }
+  const context = useContext(CallbackContext)
+  if (context) return context
+  return {
+    success: () => {}, // default no-op function
+    error: () => {}, // default no-op function
   }
 }
 
@@ -37,5 +31,5 @@ export const CallbackProvider = ({
 }) => {
   const value = { success, error }
 
-  return <CallbackContextProvider value={value}>{children}</CallbackContextProvider>
+  return <CallbackContext.Provider value={value}>{children}</CallbackContext.Provider>
 }

@@ -1,4 +1,4 @@
-import { Box, Card, CardBody, Flex, Image, Text } from '@chakra-ui/react'
+import { Box, Card, Flex, Image, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import {
   PiNumberSquareFourFill,
@@ -45,8 +45,8 @@ const Process = () => {
           alignItems={{ base: 'center', lg: 'start' }}
           gap='40px'
         >
-          <Card variant='icon-card' maxW={{ base: '700px' }}>
-            <CardBody>
+          <Card.Root variant='icon-card' maxW={{ base: '700px' }}>
+            <Card.Body>
               <Box>
                 <PiNumberSquareOneFill />
               </Box>
@@ -54,10 +54,10 @@ const Process = () => {
                 <Text>{t('home.process.step_1.title')}</Text>
                 <Text textAlign='justify'>{t('home.process.step_1.description')}</Text>
               </Box>
-            </CardBody>
-          </Card>
-          <Card variant='icon-card' maxW={{ base: '700px' }}>
-            <CardBody>
+            </Card.Body>
+          </Card.Root>
+          <Card.Root variant='icon-card' maxW={{ base: '700px' }}>
+            <Card.Body>
               <Box>
                 <PiNumberSquareTwoFill />
               </Box>
@@ -65,10 +65,10 @@ const Process = () => {
                 <Text>{t('home.process.step_2.title')}</Text>
                 <Text textAlign='justify'>{t('home.process.step_2.description')}</Text>
               </Box>
-            </CardBody>
-          </Card>
-          <Card variant='icon-card' maxW={{ base: '700px' }}>
-            <CardBody>
+            </Card.Body>
+          </Card.Root>
+          <Card.Root variant='icon-card' maxW={{ base: '700px' }}>
+            <Card.Body>
               <Box>
                 <PiNumberSquareThreeFill />
               </Box>
@@ -76,10 +76,10 @@ const Process = () => {
                 <Text>{t('home.process.step_3.title')}</Text>
                 <Text textAlign='justify'>{t('home.process.step_3.description')}</Text>
               </Box>
-            </CardBody>
-          </Card>
-          <Card variant='icon-card' maxW={{ base: '700px' }}>
-            <CardBody>
+            </Card.Body>
+          </Card.Root>
+          <Card.Root variant='icon-card' maxW={{ base: '700px' }}>
+            <Card.Body>
               <Box>
                 <PiNumberSquareFourFill color='#fff' />
               </Box>
@@ -87,8 +87,8 @@ const Process = () => {
                 <Text>{t('home.process.step_4.title')}</Text>
                 <Text textAlign='justify'>{t('home.process.step_4.description')}</Text>
               </Box>
-            </CardBody>
-          </Card>
+            </Card.Body>
+          </Card.Root>
         </Flex>
       </Flex>
     </Box>

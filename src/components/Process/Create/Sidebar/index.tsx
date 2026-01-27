@@ -1,17 +1,4 @@
-import {
-  Button,
-  Flex,
-  Icon,
-  IconButton,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useBreakpointValue,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Button, Flex, Icon, IconButton, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -19,6 +6,7 @@ import { LuSettings, LuX } from 'react-icons/lu'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { Sidebar, SidebarContents, SidebarSubtitle, SidebarTitle } from '~components/shared/Dashboard/Contents'
 import { useSidebarVisibility } from '~components/shared/Dashboard/SidebarContext'
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 import { Process } from '../common'
 import { BasicConfig } from './BasicConfig'
 import CensusCreation from './CensusCreation'
@@ -28,7 +16,7 @@ export const CreateSidebar = () => {
   const { t } = useTranslation()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const [showExtraCensusMethods, setShowExtraCensusMethods] = useLocalStorage('showExtraCensusMethods', false)
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const { setValue } = useFormContext<Process>()
   const { showSidebar, closeSidebar } = useSidebarVisibility()
 
@@ -50,14 +38,15 @@ export const CreateSidebar = () => {
         {isMobile && (
           <IconButton
             aria-label={t('drawer.close', { defaultValue: 'Close drawer' })}
-            icon={<Icon as={LuX} />}
             variant='ghost'
             size='sm'
             position='absolute'
             top={2}
             right={2}
             onClick={closeSidebar}
-          />
+          >
+            <Icon as={LuX} />
+          </IconButton>
         )}
       </SidebarContents>
 
@@ -85,12 +74,13 @@ export const CreateSidebar = () => {
           </SidebarSubtitle>
           <IconButton
             aria-label={t('process_create.census.settings', 'Census settings')}
-            icon={<Icon as={LuSettings} />}
             variant='ghost'
             size='sm'
             onClick={onOpen}
             _hover={{ bg: 'gray.100', _dark: { bg: 'whiteAlpha.200' } }}
-          />
+          >
+            <Icon as={LuSettings} />
+          </IconButton>
         </Flex>
 
         <CensusCreation showExtraMethods={showExtraCensusMethods} />

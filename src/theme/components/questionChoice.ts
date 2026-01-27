@@ -1,9 +1,7 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { defineSlotRecipe } from '@chakra-ui/react'
 import { questionChoiceAnatomy } from '~components/vocdoni-ui'
 
-const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(questionChoiceAnatomy)
-
-const baseStyle = definePartsStyle({
+const baseStyle = {
   skeleton: {
     w: '100%',
     h: '150px',
@@ -33,8 +31,9 @@ const baseStyle = definePartsStyle({
       mb: 4,
     },
   },
-})
+}
 
-export const QuestionChoice = defineMultiStyleConfig({
-  baseStyle,
+export const QuestionChoice = defineSlotRecipe({
+  slots: questionChoiceAnatomy,
+  base: baseStyle,
 })

@@ -1,21 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  ButtonProps,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Flex,
-  Icon,
-  Link,
-  ListIcon,
-  ListItem,
-  Text,
-  UnorderedList,
-} from '@chakra-ui/react'
+import { Badge, Box, Button, ButtonProps, Card, Flex, Icon, Link, List, Separator, Text } from '@chakra-ui/react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useRef } from 'react'
@@ -68,7 +51,7 @@ const PricingCard = ({
   const commonButtonProps: ButtonProps = {
     variant: isCurrentPlan ? 'outline' : 'solid',
     colorScheme: 'black',
-    isDisabled: isDisabled || isCurrentPlan,
+    disabled: isDisabled || isCurrentPlan,
     size: 'sm',
     w: 'full',
   }
@@ -104,12 +87,12 @@ const PricingCard = ({
   )
 
   return (
-    <Card ref={container} variant={isCustomPlan ? 'custom-pricing-card' : 'pricing-card'}>
-      <CardHeader>
+    <Card.Root ref={container} variant={isCustomPlan ? 'custom-pricing-card' : 'pricing-card'}>
+      <Card.Header>
         <Text>{title}</Text>
         <Text color='texts.subtle'>{subtitle}</Text>
-      </CardHeader>
-      <CardBody>
+      </Card.Header>
+      <Card.Body>
         <Flex direction='column' h='full' gap={4}>
           <Flex align='center'>
             {isCustomPlan ? (
@@ -122,7 +105,7 @@ const PricingCard = ({
                 values={{ price: currency(price) }}
                 components={{
                   price: <Text fontSize='3xl' fontWeight='extrabold' className='pricing-card-price' />,
-                  time: <Text size='sm' color='texts.subtle' />,
+                  time: <Text fontSize='sm' color='texts.subtle' />,
                 }}
                 defaults='<price>{{ price }}</price>/<time>month</time>'
               />
@@ -148,7 +131,7 @@ const PricingCard = ({
                   />
                 </Text>
               ))}
-            <Divider />
+            <Separator />
             {!isCustomPlan && plan.freeTrialDays > 0 && !hadSubscribed && period === 'year' && (
               <Text fontWeight='extrabold' display='flex' flexDir='row' alignItems='center' mt={1}>
                 <Icon as={LuCircleCheckBig} mr={1} />
@@ -168,35 +151,37 @@ const PricingCard = ({
               </Trans>
             </Text>
           ) : (
-            <UnorderedList spacing={3}>
+            <List.Root display='flex' flexDirection='column' gap={3} pl={4} listStyleType='disc'>
               {features.map((feature, idx) => (
-                <ListItem key={idx}>
-                  <ListIcon as={feature.icon} />
+                <List.Item key={idx}>
+                  <List.Indicator>
+                    <Icon as={feature.icon} />
+                  </List.Indicator>
                   {feature.text}
-                </ListItem>
+                </List.Item>
               ))}
-            </UnorderedList>
+            </List.Root>
           )}
         </Flex>
-      </CardBody>
+      </Card.Body>
       {(plan.id === PlanId.Premium || plan.id === PlanId.Essential) && (
-        <Text size='xs' fontStyle='italic' textAlign='center'>
+        <Text fontSize='xs' fontStyle='italic' textAlign='center'>
           <Trans i18nKey='pricing_card.need_more_members'>
             Need more members?{' '}
-            <Link to={Routes.dashboard.settings.support} as={RouterLink}>
-              Contact us
+            <Link asChild>
+              <RouterLink to={Routes.dashboard.settings.support}>Contact us</RouterLink>
             </Link>
           </Trans>
         </Text>
       )}
-      {!isCustomPlan && isDashboard && <Divider />}
-      <CardFooter>
+      {!isCustomPlan && isDashboard && <Separator />}
+      <Card.Footer>
         <Flex flexDirection='column' w='full' gap={2} alignItems='center' justifyContent='flex-end'>
           {isCustomPlan ? (
             <>
               <Flex gap={1} flexWrap='wrap' flexDir='column' w='full'>
                 <Trans i18nKey='pricing_card.contact_sales'>
-                  <ContactButton variant='link' fontWeight='extrabold' whiteSpace='unset' textAlign='center'>
+                  <ContactButton fontWeight='extrabold' whiteSpace='unset' textAlign='center'>
                     Contact our sales team
                   </ContactButton>
                   <Text as='span' fontSize='sm' color='texts.subtle' textAlign='center'>
@@ -230,8 +215,7 @@ const PricingCard = ({
                   }
                 }}
                 type={hasActiveSubscription ? 'button' : 'submit'}
-                isLoading={isPending}
-                shouldWrapChildren
+                loading={isPending}
                 aria-label={isCurrentPlan ? t('current_plan') : t('subscribe')}
               >
                 {isCurrentPlan
@@ -244,7 +228,7 @@ const PricingCard = ({
             )
           )}
         </Flex>
-      </CardFooter>
+      </Card.Footer>
       {popular && (
         <Badge
           position='absolute'
@@ -261,7 +245,7 @@ const PricingCard = ({
           <Trans i18nKey='pricing_card.most_popular_plan'>Most popular plan</Trans>
         </Badge>
       )}
-    </Card>
+    </Card.Root>
   )
 }
 

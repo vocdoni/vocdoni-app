@@ -2,13 +2,17 @@ import {
   Button,
   ButtonGroup,
   ButtonGroupProps,
+  HStack,
   Icon,
   IconButton,
   IconButtonProps,
-  Tooltip,
-  useColorMode,
-  useColorModeValue,
+  Text,
+  TooltipContent,
+  TooltipPositioner,
+  TooltipRoot,
+  TooltipTrigger,
 } from '@chakra-ui/react'
+import { useColorMode, useColorModeValue } from '~theme/color-mode'
 import { useEffect, useState, type FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
@@ -27,10 +31,11 @@ export const ColorModeSwitcher: FC<ColorModeSwitcherProps> = (props) => {
     <IconButton
       colorScheme='gray'
       onClick={toggleColorMode}
-      icon={<SwitchIcon />}
       aria-label={t('switch_mode', { defaultValue: 'Switch to {{ mode }} mode', mode: text })}
       {...props}
-    />
+    >
+      <SwitchIcon />
+    </IconButton>
   )
 }
 
@@ -45,11 +50,14 @@ export const ColorModeSwitcherDetailed: FC<ColorModeSwitcherProps> = (props) => 
       colorScheme='gray'
       fontSize='lg'
       onClick={toggleColorMode}
-      leftIcon={<SwitchIcon />}
       aria-label={t('switch_mode', { defaultValue: 'Switch to {{ mode }} mode', mode: text })}
-      children={text}
       {...props}
-    />
+    >
+      <HStack gap={2}>
+        <SwitchIcon />
+        <Text as='span'>{text}</Text>
+      </HStack>
+    </Button>
   )
 }
 
@@ -92,18 +100,24 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
       p={1}
     >
       {modes.map(({ mode, label, icon }) => (
-        <Tooltip key={mode} label={label}>
-          <IconButton
-            aria-label={label}
-            icon={<Icon as={icon} boxSize={4} />}
-            onClick={() => setSelected(mode)}
-            isActive={selected === mode}
-            bg={selected === mode ? iconBg : undefined}
-            variant='ghost'
-            borderRadius='sm'
-            size='xs'
-          />
-        </Tooltip>
+        <TooltipRoot key={mode}>
+          <TooltipTrigger asChild>
+            <IconButton
+              aria-label={label}
+              onClick={() => setSelected(mode)}
+              aria-pressed={selected === mode}
+              bg={selected === mode ? iconBg : undefined}
+              variant='ghost'
+              borderRadius='sm'
+              size='xs'
+            >
+              <Icon as={icon} boxSize={4} />
+            </IconButton>
+          </TooltipTrigger>
+          <TooltipPositioner>
+            <TooltipContent>{label}</TooltipContent>
+          </TooltipPositioner>
+        </TooltipRoot>
       ))}
     </ButtonGroup>
   )

@@ -6,24 +6,32 @@
 const chakra = {
   body: {
     bg: {
-      _dark: 'black.650',
-      _light: 'white',
+      value: {
+        _light: 'white',
+        _dark: 'black.650',
+      },
     },
   },
 }
 
 const texts = {
   primary: {
-    _light: 'black',
-    _dark: 'white',
+    value: {
+      _light: 'black',
+      _dark: 'white',
+    },
   },
   subtle: {
-    _light: 'gray.500',
-    _dark: 'gray.400',
+    value: {
+      _light: 'gray.500',
+      _dark: 'gray.400',
+    },
   },
   dark: {
-    default: 'gray.600',
-    _dark: 'gray.500',
+    value: {
+      _light: 'gray.600',
+      _dark: 'gray.500',
+    },
   },
 }
 
@@ -31,91 +39,127 @@ export const colors = {
   chakra,
   auth: {
     bg: {
-      _dark: 'black.550',
-      _light: 'gray.50',
+      value: {
+        _light: 'gray.50',
+        _dark: 'black.550',
+      },
     },
     card: {
       bg: {
-        _dark: 'black',
-        _light: 'white',
+        value: {
+          _light: 'white',
+          _dark: 'black',
+        },
       },
-      border: 'gray.200',
+      border: {
+        value: 'gray.200',
+      },
     },
   },
   card: {
     pricing: {
       bg: {
-        default: chakra.body.bg._light,
-        _dark: chakra.body.bg._dark,
+        value: {
+          _light: 'white',
+          _dark: 'black.650',
+        },
       },
       border: {
-        default: 'gray.200',
-        _dark: 'black.700',
+        value: {
+          _light: 'gray.200',
+          _dark: 'black.700',
+        },
       },
       current: {
         bg: {
-          default: 'gray.100',
-          _dark: 'black.600',
+          value: {
+            _light: 'gray.100',
+            _dark: 'black.600',
+          },
         },
         color: {
-          default: 'black',
-          _dark: 'white',
+          value: {
+            _light: 'black',
+            _dark: 'white',
+          },
         },
       },
       featured: {
-        bg: 'gray.800',
+        bg: {
+          value: 'gray.800',
+        },
         badge: {
           bg: {
-            default: 'black',
-            _dark: 'white',
+            value: {
+              _light: 'black',
+              _dark: 'white',
+            },
           },
           color: {
-            default: 'white',
-            _dark: 'black',
+            value: {
+              _light: 'white',
+              _dark: 'black',
+            },
           },
         },
         border: {
-          default: 'black',
-          _dark: 'white',
+          value: {
+            _light: 'black',
+            _dark: 'white',
+          },
         },
       },
     },
   },
   dashboard: {
     menu: {
-      default: '#fbfbfb',
-      _dark: '#18181b',
+      value: {
+        _light: '#fbfbfb',
+        _dark: '#18181b',
+      },
     },
   },
   input: {
-    placeholder: 'gray.500',
+    placeholder: {
+      value: 'gray.500',
+    },
   },
   table: {
     border: {
-      _light: 'gray.200',
-      _dark: 'black.700',
+      value: {
+        _light: 'gray.200',
+        _dark: 'black.700',
+      },
     },
   },
   tabs: {
     tab: {
       color: {
-        _light: 'gray.500',
-        _dark: 'gray.400',
+        value: {
+          _light: 'gray.500',
+          _dark: 'gray.400',
+        },
       },
       active: {
         color: {
-          _light: 'black',
-          _dark: 'white',
+          value: {
+            _light: 'black',
+            _dark: 'white',
+          },
         },
         bg: {
-          _light: 'white',
-          _dark: 'black',
+          value: {
+            _light: 'white',
+            _dark: 'black',
+          },
         },
       },
     },
     bg: {
-      _light: 'gray.100',
-      _dark: 'black.700',
+      value: {
+        _light: 'gray.100',
+        _dark: 'black.700',
+      },
     },
   },
   texts,
@@ -124,8 +168,8 @@ export const colors = {
 const semanticTokens = {
   colors,
   fontWeights: {
-    normal: 300,
-    bold: 400,
+    normal: { value: 300 },
+    bold: { value: 400 },
   },
 }
 

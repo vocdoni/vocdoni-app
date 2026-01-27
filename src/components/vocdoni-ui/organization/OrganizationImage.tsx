@@ -1,14 +1,21 @@
-import { Image, useStyleConfig, type ImageProps } from '@chakra-ui/react'
+import { Image, useRecipe, type ImageProps } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-providers'
 
-export type OrganizationImageProps = ImageProps & { gateway?: string }
+export type OrganizationImageProps = ImageProps & {
+  gateway?: string
+  size?: string
+  variant?: string
+  fallbackSrc?: string
+}
 
-export const OrganizationImage = ({ gateway, ...props }: OrganizationImageProps) => {
-  const styles = useStyleConfig('OrganizationImage', props)
+export const OrganizationImage = ({ gateway, fallbackSrc, ...props }: OrganizationImageProps) => {
+  const { size, variant, ...rest } = props
+  const recipe = useRecipe({ key: 'OrganizationImage' })
+  const styles = recipe({ size, variant })
   const { organization } = useOrganization()
   let avatar = organization?.account.avatar
   if (!avatar) {
     avatar = organization?.account.logo
   }
-  return <Image src={avatar} sx={styles} {...props} />
+  return <Image src={avatar || fallbackSrc} css={styles} {...rest} />
 }

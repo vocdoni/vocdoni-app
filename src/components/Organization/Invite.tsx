@@ -1,18 +1,4 @@
-import {
-  Button,
-  ButtonProps,
-  Flex,
-  Heading,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react'
+import { Button, ButtonProps, Flex, Heading, HStack, Text, useDisclosure } from '@chakra-ui/react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -20,9 +6,11 @@ import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { SubscriptionPermission } from '~constants'
 import InputBasic from '~shared/Form/InputBasic'
 import { RoleSelector } from '~shared/Layout/SaasSelector'
+import { useToast } from '~shared/Toast'
 import { useInviteMemberMutation } from '~src/queries/organization'
 import { CallbackProvider, useCallbackContext } from '~utils/callback-provider'
 import { useAllUsers } from './Team'
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 type InviteFormProps = {
   onClose: () => void
@@ -49,7 +37,7 @@ const InviteForm = ({ onClose }: InviteFormProps) => {
           toast({
             title: t('invite.success', { defaultValue: 'Invitation sent successfully!' }),
             description: t('invite.user_invited', { defaultValue: 'Email sent to {{email}}', email: data.email }),
-            status: 'success',
+            type: 'success',
             duration: 5000,
             isClosable: true,
           })
@@ -59,7 +47,7 @@ const InviteForm = ({ onClose }: InviteFormProps) => {
           toast({
             title: t('invite.error', { defaultValue: 'Error' }),
             description: error.message,
-            status: 'error',
+            type: 'error',
             duration: 5000,
             isClosable: true,
           })
@@ -82,7 +70,7 @@ const InviteForm = ({ onClose }: InviteFormProps) => {
           <Button onClick={onClose} colorScheme='gray' variant='outline'>
             <Trans i18nKey='cancel'>Cancel</Trans>
           </Button>
-          <Button type='submit' isLoading={mutation.isPending} shouldWrapChildren>
+          <Button type='submit' loading={mutation.isPending}>
             <Trans i18nKey='send_invitation'>Send invitation</Trans>
           </Button>
         </Flex>
@@ -91,8 +79,12 @@ const InviteForm = ({ onClose }: InviteFormProps) => {
   )
 }
 
-export const InviteToTeamModal = (props: ButtonProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+export const InviteToTeamModal = ({
+  leftIcon,
+  children,
+  ...props
+}: ButtonProps & { leftIcon?: React.ReactNode; children?: React.ReactNode }) => {
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const { permission } = useSubscription()
   const { t } = useTranslation()
   const { users, isLoading } = useAllUsers()
@@ -118,10 +110,18 @@ export const InviteToTeamModal = (props: ButtonProps) => {
           }
         }}
         {...props}
-        isLoading={isLoading}
-        shouldWrapChildren
+        loading={isLoading}
         loadingText={t('loading')}
-      />
+      >
+        {leftIcon ? (
+          <HStack gap={2}>
+            {leftIcon}
+            <Text as='span'>{children}</Text>
+          </HStack>
+        ) : (
+          children
+        )}
+      </Button>
       <CallbackProvider success={() => onClose()}>
         <Modal isOpen={isOpen} onClose={onClose} size='xl' closeOnOverlayClick>
           <ModalOverlay />

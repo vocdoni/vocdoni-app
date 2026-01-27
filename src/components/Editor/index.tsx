@@ -1,4 +1,4 @@
-import { Box, chakra, ChakraProps, Text, Textarea, TextareaProps } from '@chakra-ui/react'
+import { Box, chakra, Text, TextareaProps, useRecipe } from '@chakra-ui/react'
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from '@lexical/link'
 import { ListItemNode, ListNode } from '@lexical/list'
@@ -30,16 +30,12 @@ type EditorProps = {
   defaultValue?: string
   value?: string
   variant?: TextareaProps['variant']
-  padding?: ChakraProps['padding']
+  padding?: TextareaProps['padding']
 }
 
 const TRANSFORMERS = DEFAULT_TRANSFORMERS
 
-const ChakraContentEditable = chakra(ContentEditable, {
-  baseStyle: {
-    overflow: 'auto',
-  },
-})
+const ChakraContentEditable = chakra(ContentEditable)
 
 const theme = {
   text: {
@@ -68,6 +64,9 @@ const theme = {
 const MarkdownEditor = (props: EditorProps) => {
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null)
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
+  const isUnstyled = props.variant === ('unstyled' as EditorProps['variant'])
+  const recipe = useRecipe({ key: 'textarea' })
+  const textareaStyles = isUnstyled ? undefined : recipe({ variant: props.variant })
 
   return (
     <>
@@ -75,7 +74,14 @@ const MarkdownEditor = (props: EditorProps) => {
         <RichTextPlugin
           contentEditable={
             <Box ref={setFloatingAnchorElem}>
-              <Textarea variant={props.variant ?? 'unstyled'} padding={props.padding ?? 0} as={ChakraContentEditable} />
+              <ChakraContentEditable
+                css={textareaStyles}
+                padding={props.padding ?? 0}
+                overflow='auto'
+                w='full'
+                role='textbox'
+                aria-multiline='true'
+              />
             </Box>
           }
           aria-placeholder={props.placeholder}

@@ -1,25 +1,20 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Button,
   ButtonGroup,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
   HStack,
   Icon,
   IconButton,
   Input,
-  Progress,
+  ProgressRange,
+  ProgressRoot,
+  ProgressTrack,
   Spacer,
   Text,
   useDisclosure,
-  useToast,
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -45,7 +40,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuRotateCcw, LuSettings } from 'react-icons/lu'
-import ReactPlayer from 'react-player'
 import {
   createPath,
   generatePath,
@@ -63,14 +57,15 @@ import Editor from '~components/Editor'
 import { Web3Address } from '~components/Process/Census/Web3'
 import { DashboardContents } from '~components/shared/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/shared/Dashboard/SidebarContext'
-import { SubscriptionLockedContent } from '~components/shared/Layout/SubscriptionLockedContent'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
 import { SubscriptionPermission } from '~constants'
 import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
 import { Routes } from '~routes'
+import { useToast } from '~shared/Toast'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvent } from '~utils/analytics'
 import { CensusMeta, CensusTypes } from '../Census/CensusType'
+import { LiveStreamingInput } from './LiveStreamingInput'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { useProcessTemplates } from './TemplateProvider'
@@ -324,70 +319,11 @@ export const useFormDraftSaver = (
   return { saveDraft, isSaving, skipSave, draftLimitReached }
 }
 
-const LiveStreamingInput = () => {
-  const { t } = useTranslation()
-  const methods = useFormContext<Process>()
-  const { errors } = methods.formState
-  const streamUri = methods.watch('streamUri')
-
-  return (
-    <Accordion allowToggle>
-      <AccordionItem border='none'>
-        <AccordionButton px={0}>
-          <Box textAlign='left'>
-            <Text fontSize='sm' color='texts.subtle'>
-              {t('process_create.youtube.accordion_title', {
-                defaultValue: 'Attach video (optional)',
-              })}
-            </Text>
-          </Box>
-          <AccordionIcon />
-        </AccordionButton>
-
-        <AccordionPanel px={0} display='flex' flexDirection='column' gap={4}>
-          <SubscriptionLockedContent permissionType={SubscriptionPermission.LiveStreaming}>
-            {({ isLocked }) => (
-              <>
-                <FormControl isInvalid={!!errors.streamUri}>
-                  <FormLabel>
-                    <Trans i18nKey='process_create.youtube.title'>Live streaming video</Trans>
-                  </FormLabel>
-                  <Controller
-                    control={methods.control}
-                    name='streamUri'
-                    rules={{
-                      pattern: {
-                        value: /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+$/,
-                        message: t('form.error.invalid_youtube_url', 'Please enter a valid YouTube URL'),
-                      },
-                    }}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        type='url'
-                        placeholder='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-                        tabIndex={isLocked ? -1 : 0}
-                      />
-                    )}
-                  />
-                  <FormErrorMessage>{errors.streamUri?.message?.toString()}</FormErrorMessage>
-                </FormControl>
-                {/* Video Preview */}
-                {streamUri && <ReactPlayer src={streamUri} controls />}
-              </>
-            )}
-          </SubscriptionLockedContent>
-        </AccordionPanel>
-      </AccordionItem>
-    </Accordion>
-  )
-}
-
 const TemplateButtons = () => {
   const { t } = useTranslation()
   const methods = useFormContext<Process>()
   const { activeTemplate, setActiveTemplate } = useProcessTemplates()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const reset = useSafeReset()
   const pendingTemplateRef = useRef<TemplateTypes | null>(null)
 
@@ -436,7 +372,7 @@ const TemplateButtons = () => {
       <Text fontSize='sm' color='texts.subtle'>
         {t('process.create.template.title', { defaultValue: 'Get started with a template...' })}
       </Text>
-      <HStack spacing={2} flexWrap='wrap'>
+      <HStack gap={2} flexWrap='wrap'>
         <Button
           variant='outline'
           size='sm'
@@ -681,7 +617,7 @@ const ProcessCreateView = () => {
   })
   const reset = useSafeReset(methods.reset)
   const { activeTemplate, placeholders, setActiveTemplate } = useProcessTemplates()
-  const { isOpen, onOpen: openConfirmationModal, onClose } = useDisclosure()
+  const { open: isOpen, onOpen: openConfirmationModal, onClose } = useDisclosure()
   const { organization } = useOrganization()
   const { client } = useClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
@@ -746,7 +682,7 @@ const ProcessCreateView = () => {
     toast({
       title: t('process.create.save_draft_error.title', { defaultValue: 'Error saving draft' }),
       description,
-      status: 'error',
+      type: 'error',
       duration: 10000,
     })
   }
@@ -769,7 +705,7 @@ const ProcessCreateView = () => {
       if (result === 'saved') {
         toast({
           title: t('process.create.save_draft_success', { defaultValue: 'Draft saved' }),
-          status: 'success',
+          type: 'success',
           duration: 3000,
         })
       }
@@ -787,7 +723,7 @@ const ProcessCreateView = () => {
       toast({
         title: t('form.process_create.error_deleting_draft_title', { defaultValue: 'Error deleting draft' }),
         description: error instanceof Error ? error.message : String(error),
-        status: 'error',
+        type: 'error',
         duration: 3000,
       })
     }
@@ -875,7 +811,7 @@ const ProcessCreateView = () => {
       toast({
         title: t('form.process_create.success_title'),
         description: t('form.process_create.success_description'),
-        status: 'success',
+        type: 'success',
         duration: 4000,
       })
 
@@ -897,7 +833,7 @@ const ProcessCreateView = () => {
       toast({
         title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
         description: error instanceof Error ? error.message : String(error),
-        status: 'error',
+        type: 'error',
         duration: 4000,
       })
     }
@@ -922,7 +858,15 @@ const ProcessCreateView = () => {
     }
   }
 
-  if (!formDraftLoaded) return <Progress size='xs' isIndeterminate />
+  if (!formDraftLoaded) {
+    return (
+      <ProgressRoot size='xs' value={null}>
+        <ProgressTrack>
+          <ProgressRange />
+        </ProgressTrack>
+      </ProgressRoot>
+    )
+  }
 
   return (
     <FormProvider {...methods}>
@@ -958,28 +902,24 @@ const ProcessCreateView = () => {
                 {isDirty && (
                   <IconButton
                     onClick={openConfirmationModal}
-                    icon={<Icon as={LuRotateCcw} />}
                     variant='outline'
                     aria-label={t('dashboard.actions.reset_form', {
                       defaultValue: 'Reset form',
                     })}
-                  />
+                  >
+                    <Icon as={LuRotateCcw} />
+                  </IconButton>
                 )}
                 <IconButton
                   aria-label={t('dashboard.actions.toggle_sidebar', {
                     defaultValue: 'Toggle sidebar',
                   })}
-                  icon={<Icon as={LuSettings} />}
                   variant='outline'
                   onClick={toggleSidebar}
-                />
-                <Button
-                  type='submit'
-                  colorScheme='black'
-                  alignSelf='flex-end'
-                  isLoading={methods.formState.isSubmitting}
-                  shouldWrapChildren
                 >
+                  <Icon as={LuSettings} />
+                </IconButton>
+                <Button type='submit' colorScheme='black' alignSelf='flex-end' loading={methods.formState.isSubmitting}>
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
                 <Button
@@ -987,8 +927,7 @@ const ProcessCreateView = () => {
                   colorScheme='black'
                   variant='outline'
                   onClick={handleManualSave}
-                  isLoading={isSaving}
-                  shouldWrapChildren
+                  loading={isSaving}
                 >
                   <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
                 </Button>
@@ -996,12 +935,11 @@ const ProcessCreateView = () => {
             </HStack>
 
             {/* Title, Video, and Description */}
-            <VStack as='header' align='stretch' spacing={4}>
+            <VStack as='header' align='stretch' gap={4}>
               <TemplateButtons />
-              <FormControl isInvalid={!!methods.formState.errors.title}>
+              <FormControl invalid={!!methods.formState.errors.title}>
                 <Input
                   px={0}
-                  variant='unstyled'
                   placeholder={
                     placeholders[activeTemplate]?.title ??
                     t('process.create.description.title', {

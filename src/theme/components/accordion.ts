@@ -1,10 +1,8 @@
-import { accordionAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { accordionAnatomy } from '@chakra-ui/react/anatomy'
+import { defineSlotRecipe } from '@chakra-ui/react'
 
-const { definePartsStyle, defineMultiStyleConfig } = createMultiStyleConfigHelpers(accordionAnatomy.keys)
-
-const dashboard = definePartsStyle({
-  button: {
+const dashboard = {
+  itemTrigger: {
     borderRadius: 'xl',
     bg: 'dashboard.sidebar.bg.light',
     border: 'var(--border)',
@@ -12,18 +10,21 @@ const dashboard = definePartsStyle({
     _dark: { bg: 'dashboard.sidebar.bg.dark', boxShadow: '0 0 10px #101010' },
     p: 4,
   },
-  container: {
+  root: {
     border: 'none',
   },
-  panel: {
+  itemContent: {
     border: 'none',
     _dark: {},
   },
-  icon: {
+  itemIndicator: {
     _dark: {},
   },
-})
+}
 
-export const Accordion = defineMultiStyleConfig({
-  variants: { dashboard },
+export const Accordion = defineSlotRecipe({
+  slots: accordionAnatomy.keys(),
+  variants: {
+    variant: { dashboard },
+  },
 })

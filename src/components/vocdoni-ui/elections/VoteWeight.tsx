@@ -1,4 +1,4 @@
-import { chakra, useMultiStyleConfig } from '@chakra-ui/react'
+import { chakra, useSlotRecipe } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
 import { CensusType, formatUnits, PublishedElection } from '@vocdoni/sdk'
 import { useEffect, useState } from 'react'
@@ -14,7 +14,8 @@ export const VoteWeight = () => {
     csp: { token },
   } = useElection()
   const [weight, setWeight] = useState<number | null>(null)
-  const styles = useMultiStyleConfig('VoteWeight')
+  const recipe = useSlotRecipe({ key: 'VoteWeight' })
+  const styles = recipe()
 
   useEffect(() => {
     ;(async () => {
@@ -52,9 +53,9 @@ export const VoteWeight = () => {
   if (!weight || !election || !(election instanceof PublishedElection)) return null
 
   return (
-    <chakra.div __css={styles.wrapper}>
+    <chakra.div css={styles.wrapper}>
       {localize('vote.weight')}
-      <chakra.span __css={styles.weight}>{weight}</chakra.span>
+      <chakra.span css={styles.weight}>{weight}</chakra.span>
     </chakra.div>
   )
 }

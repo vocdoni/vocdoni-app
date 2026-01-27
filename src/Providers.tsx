@@ -1,4 +1,3 @@
-import { ColorModeScript } from '@chakra-ui/react'
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ClientProvider } from '~components/vocdoni-ui'
@@ -19,7 +18,7 @@ import { wagmiConfig } from './constants/rainbow'
 import { translations } from './i18n/components'
 import { datesLocale } from './i18n/locales'
 import { RoutesProvider } from './router/Router'
-import { RainbowKitTheme, Theme } from './Theme'
+import { RainbowKitTheme, Theme } from './theme/Theme'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -75,7 +74,6 @@ export const AppProviders = () => {
       >
         <ConnectionToastProvider>
           <SaasProviders>
-            <ColorModeScript />
             <AnalyticsProvider>
               <CookieConsent />
               <RoutesProvider />

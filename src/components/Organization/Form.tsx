@@ -1,4 +1,4 @@
-import { Box, FormControl, FormLabel, Text, VStack } from '@chakra-ui/react'
+import { Box, FieldLabel as FormLabel, FieldRoot as FormControl, Text, VStack } from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import Editor from '~components/Editor'
@@ -11,7 +11,7 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
   const { control, register } = useFormContext()
 
   return (
-    <VStack spacing={4} flex={1}>
+    <VStack gap={4} flex={1}>
       <InputBasic
         formValue='name'
         label={t('form.account_create.title', { defaultValue: 'Organization Name' })}

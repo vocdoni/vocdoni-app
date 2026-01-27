@@ -1,4 +1,5 @@
-import { Box, Flex, Icon, Image, Link, Text, useColorModeValue } from '@chakra-ui/react'
+import { Box, Flex, Icon, Image, Link, Text } from '@chakra-ui/react'
+import { useColorModeValue } from '~theme/color-mode'
 import { Trans, useTranslation } from 'react-i18next'
 import { FaDiscord, FaGithub } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
@@ -20,7 +21,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
         gap={6}
       >
         <Box flex='1 1 33%'>
-          <Link href='https://www.vocdoni.io' isExternal display='inline-block'>
+          <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
             <Image src={vcdLogo} w='125px' mb='12px' filter={invert} alt={t('vocdoni logo')} />
           </Link>
           <Text fontSize='16px' lineHeight='28px'>
@@ -46,13 +47,31 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               <Text fontWeight='bold' fontSize='18px' lineHeight='21px' mb='16px' display='none'>
                 {t('footer.company')}
               </Text>
-              <Link fontWeight='bold' variant='footer' href='https://www.vocdoni.io' isExternal>
+              <Link
+                fontWeight='bold'
+                variant='footer'
+                href='https://www.vocdoni.io'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
                 Vocdoni
               </Link>
-              <Link fontWeight='bold' variant='footer' href='https://www.vocdoni.io/contact' isExternal>
+              <Link
+                fontWeight='bold'
+                variant='footer'
+                href='https://www.vocdoni.io/contact'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
                 {t('footer.contact')}
               </Link>
-              <Link fontWeight='bold' variant='footer' href='https://developer.vocdoni.io/sdk' isExternal>
+              <Link
+                fontWeight='bold'
+                variant='footer'
+                href='https://developer.vocdoni.io/sdk'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
                 SDK
               </Link>
               <Link
@@ -60,11 +79,18 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
                 variant='footer'
                 href='https://developer.vocdoni.io'
                 whiteSpace='nowrap'
-                isExternal
+                target='_blank'
+                rel='noopener noreferrer'
               >
                 {t('footer.developer_portal')}
               </Link>
-              <Link fontWeight='bold' variant='footer' href='https://blog.vocdoni.io' isExternal>
+              <Link
+                fontWeight='bold'
+                variant='footer'
+                href='https://blog.vocdoni.io'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
                 Blog
               </Link>
             </Flex>
@@ -85,21 +111,21 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
           <Trans
             i18nKey='footer.terms_and_privacy'
             components={{
-              link1: <Link href={termsOfServiceUrl} isExternal color='gray' />,
-              link2: <Link href={privacyPolicyUrl} isExternal color='gray' />,
+              link1: <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' color='gray' />,
+              link2: <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' color='gray' />,
             }}
           />
         </Text>
         <Flex gap='10px'>
-          <Link variant='icon' href='https://twitter.com/vocdoni' isExternal>
+          <Link variant='icon' href='https://twitter.com/vocdoni' target='_blank' rel='noopener noreferrer'>
             <Icon aria-label={t('link.twitter').toString()} as={FaXTwitter} />
           </Link>
 
-          <Link variant='icon' href='https://chat.vocdoni.io/' isExternal>
+          <Link variant='icon' href='https://chat.vocdoni.io/' target='_blank' rel='noopener noreferrer'>
             <Icon aria-label={t('link.discord').toString()} as={FaDiscord} />
           </Link>
 
-          <Link variant='icon' href='https://github.com/vocdoni' isExternal>
+          <Link variant='icon' href='https://github.com/vocdoni' target='_blank' rel='noopener noreferrer'>
             <Icon aria-label={t('link.github').toString()} as={FaGithub} />
           </Link>
         </Flex>

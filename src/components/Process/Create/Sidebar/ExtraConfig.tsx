@@ -1,4 +1,15 @@
-import { Box, FormControl, FormErrorMessage, FormLabel, Icon, Tooltip, VStack } from '@chakra-ui/react'
+import {
+  Box,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
+  Icon,
+  TooltipContent,
+  TooltipPositioner,
+  TooltipRoot,
+  TooltipTrigger,
+  VStack,
+} from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCircleHelp } from 'react-icons/lu'
@@ -30,10 +41,10 @@ export const ExtraConfig = () => {
   ]
 
   return (
-    <VStack align='stretch' spacing={4}>
+    <VStack align='stretch' gap={4}>
       {/* Result visibility */}
       <Box>
-        <FormControl isInvalid={!!errors.resultVisibility}>
+        <FormControl invalid={!!errors.resultVisibility}>
           <FormLabel>
             <Trans i18nKey='process_create.result_visibility.title'>Result visibility</Trans>
           </FormLabel>
@@ -54,18 +65,22 @@ export const ExtraConfig = () => {
         </FormControl>
       </Box>
       <Box>
-        <FormControl isInvalid={!!errors.weightedVote}>
+        <FormControl invalid={!!errors.weightedVote}>
           <FormLabel display='flex' alignItems='center'>
             <Trans i18nKey='process_create.weight.title'>Voting power</Trans>
-            <Tooltip
-              placement='top'
-              label='Set whether votes are equal for each eligible voter or weighted according to the memberbase "Vote power" field.'
-              fontSize='sm'
-            >
-              <Box as='span' display='inline-flex' ml={1} cursor='help' color='texts.subtle'>
-                <Icon as={LuCircleHelp} />
-              </Box>
-            </Tooltip>
+            <TooltipRoot positioning={{ placement: 'top' }}>
+              <TooltipTrigger asChild>
+                <Box as='span' display='inline-flex' ml={1} cursor='help' color='texts.subtle'>
+                  <Icon as={LuCircleHelp} />
+                </Box>
+              </TooltipTrigger>
+              <TooltipPositioner>
+                <TooltipContent fontSize='sm'>
+                  Set whether votes are equal for each eligible voter or weighted according to the memberbase "Vote
+                  power" field.
+                </TooltipContent>
+              </TooltipPositioner>
+            </TooltipRoot>
           </FormLabel>
           <Controller
             control={control}

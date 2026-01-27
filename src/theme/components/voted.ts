@@ -1,12 +1,14 @@
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { defineSlotRecipe } from '@chakra-ui/react'
 import { votedAnatomy } from '~components/vocdoni-ui'
-const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(votedAnatomy)
 
-const baseStyle = definePartsStyle({
+const baseStyle = {
   link: {
     whiteSpace: 'normal',
     overflowWrap: 'anywhere',
   },
-})
+}
 
-export const Voted = defineMultiStyleConfig({ baseStyle })
+export const Voted = defineSlotRecipe({
+  slots: votedAnatomy,
+  base: baseStyle,
+})

@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react'
+import { Button, HStack, Text } from '@chakra-ui/react'
 import { ReactElement, ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -14,8 +14,19 @@ const NavbarLink = ({ name, to, icon }: NavbarLink) => {
   const isActive = to === location.pathname
 
   return (
-    <Button as={Link} to={to} isActive={isActive} justifyContent='start' variant='dashboard' w='full' leftIcon={icon}>
-      {name}
+    <Button
+      asChild
+      justifyContent='start'
+      w='full'
+      data-active={isActive ? '' : undefined}
+      aria-current={isActive ? 'page' : undefined}
+    >
+      <Link to={to}>
+        <HStack gap={2}>
+          {icon}
+          <Text as='span'>{name}</Text>
+        </HStack>
+      </Link>
     </Button>
   )
 }

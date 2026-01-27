@@ -1,14 +1,13 @@
 import {
   Button,
   Card,
-  CardBody,
-  CardFooter,
   Checkbox,
   CheckboxGroup,
   Flex,
-  FormControl,
-  FormErrorMessage,
+  FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
   Heading,
+  HStack,
   Link,
   Stack,
   Text,
@@ -120,39 +119,42 @@ export const MembersCsvManager = () => {
 
   return (
     <Flex flexDirection='column' gap={4}>
-      <Card>
-        <CardBody display='flex' flexDirection='column' gap={2}>
+      <Card.Root>
+        <Card.Body display='flex' flexDirection='column' gap={2}>
           <Text>
             {t('memberbase.importer.included_columns', {
               defaultValue: 'Select columns to include:',
             })}
           </Text>
-          <CheckboxGroup value={visibleColumns} onChange={handleColumnChange}>
+          <CheckboxGroup value={visibleColumns} onValueChange={handleColumnChange}>
             {columns.map((column) => (
-              <Checkbox key={column.id} value={column.id}>
-                {column.label}
-              </Checkbox>
+              <Checkbox.Root key={column.id} value={column.id}>
+                <Checkbox.HiddenInput />
+                <Checkbox.Control>
+                  <Checkbox.Indicator />
+                </Checkbox.Control>
+                <Checkbox.Label>{column.label}</Checkbox.Label>
+              </Checkbox.Root>
             ))}
           </CheckboxGroup>
-        </CardBody>
-        <CardFooter display='flex' flexDirection='column' gap={2}>
-          <Button
-            as={Link}
-            type='button'
-            variant='outline'
-            leftIcon={<LuFileSpreadsheet />}
-            isDisabled={!visibleColumns.length}
-            w='100%'
-            {...(visibleColumns.length && {
-              as: Link,
-              href: template.url,
-              download: 'memberbase-template.csv',
-              type: 'button',
-            })}
-          >
-            {t('memberbase.importer.download_template_btn', {
-              defaultValue: 'Download Template',
-            })}
+        </Card.Body>
+        <Card.Footer display='flex' flexDirection='column' gap={2}>
+          <Button asChild type='button' variant='outline' disabled={!visibleColumns.length} w='100%'>
+            <Link
+              href={template.url}
+              download='memberbase-template.csv'
+              aria-disabled={!visibleColumns.length}
+              pointerEvents={visibleColumns.length ? 'auto' : 'none'}
+            >
+              <HStack gap={2}>
+                <LuFileSpreadsheet />
+                <Text as='span'>
+                  {t('memberbase.importer.download_template_btn', {
+                    defaultValue: 'Download Template',
+                  })}
+                </Text>
+              </HStack>
+            </Link>
           </Button>
           {!visibleColumns.length && (
             <Text fontSize='sm' color='gray.500' mt={1}>
@@ -161,22 +163,22 @@ export const MembersCsvManager = () => {
               })}
             </Text>
           )}
-        </CardFooter>
-      </Card>
+        </Card.Footer>
+      </Card.Root>
 
       <FormControl
         {...register('spreadsheet', {
           required: { value: true, message: t('memberbase.importer.error.field_is_required') },
         })}
         {...upload}
-        isInvalid={!!errors?.spreadsheet}
+        invalid={!!errors?.spreadsheet}
         display={manager?.data.length ? 'none' : 'block'}
       >
         <Stack gap={4}>
           <Heading size='md' fontWeight='extrabold'>
             {t('memberbase.import_file.title', { defaultValue: 'Import File' })}
           </Heading>
-          <Text color='texts.subtle' size='sm'>
+          <Text color='texts.subtle' fontSize='sm'>
             {t('memberbase.import_file.subtitle', {
               defaultValue:
                 'Import your CSV, XLS, or XLSX file containing member data. Ensure column headers match the template for accurate mapping.',

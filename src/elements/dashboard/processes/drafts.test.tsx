@@ -28,13 +28,9 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: vi.fn() },
 }))
 
-vi.mock('@chakra-ui/react', async () => {
-  const actual = await vi.importActual<typeof import('@chakra-ui/react')>('@chakra-ui/react')
-  return {
-    ...actual,
-    useToast: () => toastSpy,
-  }
-})
+vi.mock('~shared/Toast', () => ({
+  useToast: () => toastSpy,
+}))
 
 const createWrapper = (queryClient: QueryClient) => {
   return ({ children }: { children: React.ReactNode }) => (

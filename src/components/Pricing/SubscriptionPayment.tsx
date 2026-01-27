@@ -1,4 +1,6 @@
-import { Alert, AlertDescription, Box, Button, Flex, Grid, IconButton, useColorMode, useToast } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, Box, Button, Flex, Grid, IconButton } from '@chakra-ui/react'
+import { useToast } from '~shared/Toast'
+import { useColorMode } from '~theme/color-mode'
 import {
   BillingAddressElement,
   CheckoutProvider,
@@ -108,12 +110,9 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
     return (
       <Box>
         <Flex justifyContent='flex-start' mb={4}>
-          <IconButton
-            aria-label={t('back', { defaultValue: 'Back' })}
-            icon={<LuArrowLeft />}
-            onClick={showPlans}
-            variant='ghost'
-          />
+          <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={showPlans} variant='ghost'>
+            <LuArrowLeft />
+          </IconButton>
         </Flex>
         <Box color='red.500' textAlign='center'>
           {t('error.title', { defaultValue: 'Error' })}: {checkoutState.error.message}
@@ -127,12 +126,9 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
   return (
     <Box as='form' onSubmit={handleSubmit}>
       <Flex justifyContent='flex-start' mb={6}>
-        <IconButton
-          aria-label={t('back', { defaultValue: 'Back' })}
-          icon={<LuArrowLeft />}
-          onClick={showPlans}
-          variant='ghost'
-        />
+        <IconButton aria-label={t('back', { defaultValue: 'Back' })} onClick={showPlans} variant='ghost'>
+          <LuArrowLeft />
+        </IconButton>
       </Flex>
 
       <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={6}>
@@ -158,14 +154,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
             </Alert>
           )}
 
-          <Button
-            type='submit'
-            w='full'
-            mt={6}
-            isLoading={isSubmitting}
-            shouldWrapChildren
-            isDisabled={checkoutState.type !== 'success'}
-          >
+          <Button type='submit' w='full' mt={6} loading={isSubmitting} disabled={checkoutState.type !== 'success'}>
             {t('subscribe', { defaultValue: 'Subscribe' })}
           </Button>
         </Flex>
@@ -196,7 +185,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
   const fetchClientSecret = useCallback(async () => {
     if (!signer) {
       toast({
-        status: 'error',
+        type: 'error',
         title: t('error.title', { defaultValue: 'Error' }),
         description: t('wallet_not_connected', { defaultValue: 'Wallet not connected' }),
       })
@@ -225,7 +214,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
         })
         .catch((e) => {
           toast({
-            status: 'error',
+            type: 'error',
             title: t('error.title', { defaultValue: 'Error' }),
             description: e.message,
           })
