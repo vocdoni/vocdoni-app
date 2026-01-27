@@ -20,6 +20,7 @@
     "@ethersproject/abstract-signer": "^5.8.0",
     "@ethersproject/address": "^5.8.0",
     "@ethersproject/providers": "^5.8.0",
+    "@ethersproject/wallet": "^5.8.0",
     "@fontsource/inter": "^5.2.8",
     "@gsap/react": "^2.1.2",
     "@lexical/code": "^0.34.0",
