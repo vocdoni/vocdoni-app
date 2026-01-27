@@ -1,5 +1,5 @@
 import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import { questionChoiceAnatomy } from '@vocdoni/chakra-components'
+import { questionChoiceAnatomy } from '~components/vocdoni-ui'
 
 const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(questionChoiceAnatomy)
 

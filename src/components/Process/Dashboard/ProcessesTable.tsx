@@ -17,7 +17,7 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react'
-import { ElectionStatusBadge, QuestionsTypeBadge } from '@vocdoni/chakra-components'
+import { ElectionStatusBadge, QuestionsTypeBadge } from '~components/vocdoni-ui'
 import { ElectionProvider, useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'

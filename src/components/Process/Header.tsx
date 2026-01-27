@@ -1,5 +1,5 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
-import { ElectionDescription, ElectionSchedule, ElectionStatusBadge, ElectionTitle } from '@vocdoni/chakra-components'
+import { ElectionDescription, ElectionSchedule, ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection, Strategy } from '@vocdoni/sdk'
 import { ReactNode } from 'react'

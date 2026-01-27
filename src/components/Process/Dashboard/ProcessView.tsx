@@ -31,7 +31,7 @@ import {
   ElectionResults,
   ElectionStatusBadge,
   ElectionTitle,
-} from '@vocdoni/chakra-components'
+} from '~components/vocdoni-ui'
 import { useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format as formatDate } from 'date-fns'

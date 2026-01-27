@@ -56,7 +56,7 @@ vi.mock('@vocdoni/sdk', () => ({
   InvalidElection: class InvalidElection {},
 }))
 
-vi.mock('@vocdoni/chakra-components', () => ({
+vi.mock('~components/vocdoni-ui', () => ({
   ElectionTitle: () => <div>ElectionTitle</div>,
   ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
   OrganizationImage: ({ alt }: { alt?: string }) => <img src='' alt={alt || 'OrganizationImage'} />,

@@ -1,5 +1,5 @@
 import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import { ellipsisButtonAnatomy } from '@vocdoni/chakra-components'
+import { ellipsisButtonAnatomy } from '~components/vocdoni-ui'
 const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(ellipsisButtonAnatomy)
 
 const sharedButtonInputStyle = { py: 4, px: 3, h: '8', minW: '8', fontSize: 'sm' }

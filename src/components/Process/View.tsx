@@ -29,7 +29,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
-import { ElectionQuestions, ElectionResults, environment } from '@vocdoni/chakra-components'
+import { ElectionQuestions, ElectionResults, environment } from '~components/vocdoni-ui'
 import { useClient, useElection, useOrganization } from '@vocdoni/react-providers'
 import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'

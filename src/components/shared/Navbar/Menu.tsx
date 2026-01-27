@@ -1,6 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon, CopyIcon } from '@chakra-ui/icons'
 import { Box, HStack, Icon, IconButton, Link, MenuItem, MenuList, Text, useClipboard } from '@chakra-ui/react'
-import { HR } from '@vocdoni/chakra-components'
+import { HR } from '~components/vocdoni-ui'
 import { useClient } from '@vocdoni/react-providers'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'

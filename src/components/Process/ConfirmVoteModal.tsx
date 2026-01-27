@@ -12,7 +12,7 @@ import {
   UnorderedList,
   useMultiStyleConfig,
 } from '@chakra-ui/react'
-import { useConfirm } from '@vocdoni/chakra-components'
+import { useConfirm } from '~components/vocdoni-ui'
 import { ElectionResultsTypeNames, IQuestion, PublishedElection } from '@vocdoni/sdk'
 import { FieldValues } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
