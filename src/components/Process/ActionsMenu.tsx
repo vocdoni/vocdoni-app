@@ -1,5 +1,5 @@
 import { Icon, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, MenuListProps } from '@chakra-ui/react'
-import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '@vocdoni/chakra-components'
+import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/vocdoni-ui'
 import { useActions, useClient, useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, InvalidElection } from '@vocdoni/sdk'
 import { ElementType } from 'react'

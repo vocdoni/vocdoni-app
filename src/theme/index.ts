@@ -1,6 +1,6 @@
 import { ColorMode, extendTheme } from '@chakra-ui/react'
 import { darkTheme, lightTheme } from '@rainbow-me/rainbowkit'
-import { theme as vtheme } from '@vocdoni/chakra-components'
+import { theme as vtheme } from '~components/vocdoni-ui'
 import { colors } from './colors'
 import components from './components'
 import editor from './editor'

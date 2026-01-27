@@ -17,6 +17,7 @@ import { Progress } from './progress'
 import { QuestionChoice } from './questionChoice'
 import { ElectionQuestions } from './questions'
 import { QuestionsConfirmation } from './questionsConfirmation'
+import { QuestionsTypeBadge } from './questionsTypeBadge'
 import { Radio } from './radio'
 import { ElectionResults } from './results'
 import { SecurityLevelBox } from './securitylevelbox'
@@ -30,6 +31,7 @@ import { Text } from './text'
 import { Textarea } from './textarea'
 import { Tooltip } from './tooltip'
 import { Voted } from './voted'
+import { VoteWeight } from './voteWeight'
 
 const components = {
   Badge,
@@ -65,7 +67,9 @@ const components = {
   ConfirmModal,
   QuestionsConfirmation,
   QuestionChoice,
+  QuestionsTypeBadge,
   Voted,
+  VoteWeight,
 }
 
 export default components

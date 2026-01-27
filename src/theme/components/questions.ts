@@ -1,5 +1,5 @@
 import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import { questionsAnatomy } from '@vocdoni/chakra-components'
+import { questionsAnatomy, questionsEmptyAnatomy, questionsErrorAnatomy, questionsConfirmationAnatomy } from '~components/vocdoni-ui'
 import checkIconBlack from '/assets/check-icon-black.png'
 import checkIcon from '/assets/check-icon.png'
 

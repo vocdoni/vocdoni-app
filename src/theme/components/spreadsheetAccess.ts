@@ -1,5 +1,5 @@
 import { createMultiStyleConfigHelpers, StyleFunctionProps } from '@chakra-ui/react'
-import { spreadsheetAccessAnatomy } from '@vocdoni/chakra-components'
+import { spreadsheetAccessAnatomy } from '~components/vocdoni-ui'
 
 const { defineMultiStyleConfig, definePartsStyle } = createMultiStyleConfigHelpers(spreadsheetAccessAnatomy)
 

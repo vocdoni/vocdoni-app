@@ -1,9 +1,14 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import { ActionsProvider as RActionsProvider } from '@vocdoni/react-providers'
+import { type ReactNode } from 'react'
+import { useActionsToast } from './use-actions-toast'
 
-const ActionsContext = createContext({})
+const ChakraInternalActionsProvider = ({ children }: { children: ReactNode }) => {
+  useActionsToast()
+  return <>{children}</>
+}
 
 export const ActionsProvider = ({ children }: { children: ReactNode }) => (
-  <ActionsContext.Provider value={{}}>{children}</ActionsContext.Provider>
+  <RActionsProvider>
+    <ChakraInternalActionsProvider>{children}</ChakraInternalActionsProvider>
+  </RActionsProvider>
 )
-
-export const useActions = () => useContext(ActionsContext)
