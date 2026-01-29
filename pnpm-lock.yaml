@@ -122,14 +122,14 @@ importers:
         specifier: ^0.1.4
         version: 0.1.4(@types/react@18.3.27)(react@18.3.1)
       '@vocdoni/chakra-components':
-        specifier: ^1.0.0-beta.6
-        version: 1.0.0-beta.6(@chakra-ui/react@2.10.9(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(framer-motion@10.18.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-markdown@8.0.7(@types/react@18.3.27)(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)(remark-gfm@3.0.1)
+        specifier: ^1.0.0-beta.7
+        version: 1.0.0-beta.7(@chakra-ui/react@2.10.9(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(framer-motion@10.18.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-markdown@8.0.7(@types/react@18.3.27)(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)(remark-gfm@3.0.1)
       '@vocdoni/rainbowkit-wallets':
-        specifier: ^1.0.0-beta.3
-        version: 1.0.0-beta.3(31caa0b82e2686b6b8096e6e119e730f)
+        specifier: ^1.0.0-beta.4
+        version: 1.0.0-beta.4(31caa0b82e2686b6b8096e6e119e730f)
       '@vocdoni/react-providers':
-        specifier: ^1.0.0-beta.6
-        version: 1.0.0-beta.6(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)
+        specifier: ^1.0.0-beta.7
+        version: 1.0.0-beta.7(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)
       '@vocdoni/sdk':
         specifier: ~0.9.1
         version: 0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10)
@@ -2295,8 +2295,8 @@ packages:
   '@vitest/utils@4.0.16':
     resolution: {integrity: sha512-h8z9yYhV3e1LEfaQ3zdypIrnAg/9hguReGZoS7Gl0aBG5xgA410zBqECqmaF/+RkTggRsfnzc1XaAHA6bmUufA==}
 
-  '@vocdoni/chakra-components@1.0.0-beta.6':
-    resolution: {integrity: sha512-SMCTR+tC2iCDO5wJKT+hmH/90p/izH8Uh6YSGPWUYobLCAGtvM76hnD6pUUSF8FvlpIsryn8wLmphXBxRlTToQ==}
+  '@vocdoni/chakra-components@1.0.0-beta.7':
+    resolution: {integrity: sha512-+K88cXF+MQFBkJsYFW7gvQPdNEoU+g1r0oxjEtfAtWkQw7QKtO9vN18mFQBa4iY0YEfSg7eXwgCK1svi26Ea8Q==}
     peerDependencies:
       '@chakra-ui/react': ^2.10.4
       '@ethersproject/abstract-signer': ^5.7.0
@@ -2311,8 +2311,8 @@ packages:
   '@vocdoni/proto@1.15.12':
     resolution: {integrity: sha512-VXgxJQN8eq8As9T5bN8uW+PVLahLQu2tjQMGbVnVvKIP2Hm3wPsqFj7rndgIDNbRHl3YJawjASdPo4VBLjEcNQ==}
 
-  '@vocdoni/rainbowkit-wallets@1.0.0-beta.3':
-    resolution: {integrity: sha512-YEngCrFNf4oMbNDDXDwbnUzlQo5NQbhWycNuu1sR+BT8EPn1coH6ZtHN8Z1wwGr0sJXZZtUXeg/gmK2KiMPHdw==}
+  '@vocdoni/rainbowkit-wallets@1.0.0-beta.4':
+    resolution: {integrity: sha512-zLPgiPQ2N+UEyyDr6DYN6cOmnc+EZPjwWocW5H01XFSVPMT12QkKFKX0UXI4o/8/zM1I4uqKH+8/U6L3dPHvCQ==}
     peerDependencies:
       '@rainbow-me/rainbowkit': ^2.0.0
       '@tanstack/react-query': ^5.0.0
@@ -2322,8 +2322,8 @@ packages:
       viem: ^2.37.1
       wagmi: ^2.16.9
 
-  '@vocdoni/react-providers@1.0.0-beta.6':
-    resolution: {integrity: sha512-oEi7dNUcJZB+q9nYSQRwoDawUosQtfKGu4RuJgXDyWjgDcRaxxzkGcMiNSq9WHVmCCkk3DlsukzTBCWHZTdfeA==}
+  '@vocdoni/react-providers@1.0.0-beta.7':
+    resolution: {integrity: sha512-uaXBEHENgKipPhGrak8Aol2eU6G8llJTCFQLH9Jbb7GLDriuNla86yZIicoqQ8IjuCA86Twtmx7CZZKjLHL7Fg==}
     peerDependencies:
       '@ethersproject/abstract-signer': ^5.7.0
       '@ethersproject/wallet': ^5.7.0
@@ -5366,6 +5366,7 @@ packages:
   tar@6.2.1:
     resolution: {integrity: sha512-DZ4yORTwrbTj/7MZYq2w+/ZFdI6OZ/f9SFHR+71gIVUZhOQPHzVCLpvRnPgyaMpfWxxk/4ONva3GQSyNIKRv6A==}
     engines: {node: '>=10'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exhorbitant rates) by contacting i@izs.me
 
   teex@1.0.1:
     resolution: {integrity: sha512-eYE6iEI62Ni1H8oIa7KlDU6uQBtqr4Eajni3wX7rpfXD8ysFx8z0+dri+KWEPWpBsxXfxu58x/0jvTVT1ekOSg==}
@@ -8914,12 +8915,12 @@ snapshots:
       '@vitest/pretty-format': 4.0.16
       tinyrainbow: 3.0.3
 
-  '@vocdoni/chakra-components@1.0.0-beta.6(@chakra-ui/react@2.10.9(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(framer-motion@10.18.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-markdown@8.0.7(@types/react@18.3.27)(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)(remark-gfm@3.0.1)':
+  '@vocdoni/chakra-components@1.0.0-beta.7(@chakra-ui/react@2.10.9(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(framer-motion@10.18.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-markdown@8.0.7(@types/react@18.3.27)(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)(remark-gfm@3.0.1)':
     dependencies:
       '@chakra-ui/react': 2.10.9(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(react@18.3.1))(@types/react@18.3.27)(framer-motion@10.18.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@ethersproject/abstract-signer': 5.8.0
       '@ethersproject/wallet': 5.8.0
-      '@vocdoni/react-providers': 1.0.0-beta.6(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)
+      '@vocdoni/react-providers': 1.0.0-beta.7(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)
       '@vocdoni/sdk': 0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10)
       react: 18.3.1
       react-markdown: 8.0.7(@types/react@18.3.27)(react@18.3.1)
@@ -8935,7 +8936,7 @@ snapshots:
       long: 5.3.2
       protobufjs: 7.5.4
 
-  '@vocdoni/rainbowkit-wallets@1.0.0-beta.3(31caa0b82e2686b6b8096e6e119e730f)':
+  '@vocdoni/rainbowkit-wallets@1.0.0-beta.4(31caa0b82e2686b6b8096e6e119e730f)':
     dependencies:
       '@rainbow-me/rainbowkit': 2.2.10(@tanstack/react-query@5.90.16(react@18.3.1))(@types/react@18.3.27)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(wagmi@2.19.5(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@18.3.1))(@types/react@18.3.27)(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5))
       '@tanstack/react-query': 5.90.16(react@18.3.1)
@@ -8947,7 +8948,7 @@ snapshots:
       viem: 2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5)
       wagmi: 2.19.5(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@18.3.1))(@types/react@18.3.27)(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5)
 
-  '@vocdoni/react-providers@1.0.0-beta.6(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)':
+  '@vocdoni/react-providers@1.0.0-beta.7(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@ethersproject/abstract-signer': 5.8.0
       '@ethersproject/wallet': 5.8.0
