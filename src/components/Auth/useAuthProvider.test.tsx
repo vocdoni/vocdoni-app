@@ -1,7 +1,7 @@
-import { renderHook, act } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
+import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { AllProviders } from '~src/test-utils'
 import { useAuthProvider } from './useAuthProvider'
-import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 
 const clearMock = vi.fn()
 const disconnectMock = vi.fn()

@@ -1,6 +1,6 @@
+import { Routes } from '~src/router/routes'
 import { render, waitFor } from '~src/test-utils'
 import GoogleAuth from './GoogleAuth'
-import { Routes } from '~src/router/routes'
 
 const setBearerMock = vi.fn()
 const updateSignerMock = vi.fn()
