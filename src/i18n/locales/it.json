@@ -1327,8 +1327,12 @@
   },
   "plan_upgrade": {
     "cancel": "Annulla",
+    "generic_subtitle": "Il piano attuale limita questa azione a {{limit}}. Aggiorna il piano per continuare e sbloccare funzionalità avanzate.",
+    "generic_title": "Aggiorna il piano per aumentare i limiti",
+    "memberbase_subtitle": "Il piano attuale consente fino a {{limit}} membri nella memberbase. Aggiorna il piano per aggiungere più membri e sbloccare funzionalità avanzate.",
+    "memberbase_title": "Aggiorna il piano per aggiungere più membri alla memberbase",
     "see_plans": "Vedi piani",
-    "subtitle": "Il piano attuale consente solo {{ memberLimit }} per la collaborazione. Aggiorna il piano per aggiungere più membri al team e sbloccare funzionalità avanzate.",
+    "subtitle": "Il piano attuale consente solo {{limit}} per la collaborazione. Aggiorna il piano per aggiungere più membri al team e sbloccare funzionalità avanzate.",
     "title": "Aggiorna per aggiungere più membri del team"
   },
   "please_check_email_to_verify": "Controlla la tua email per verificare il tuo account",
@@ -1864,6 +1868,7 @@
     "avatar_upload_success": "Avatar caricato",
     "click_or_drag_and_drop": "<click>Clicca per caricare o trascina e rilascia</click><formats>(Formati consentiti: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carica Immagine",
+    "csv_row_limit_exceeded": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
     "drop_here": "",
     "image_upload_failed": "Caricamento immagine non riuscito",
     "image_upload_success": "Immagine caricata",

@@ -19,12 +19,31 @@ type ModalProps = {
   onClose: () => void
 }
 
+type PlanUpgradeContext = 'collaboration' | 'memberbase' | 'generic'
+
 export type PlanUpgradeData = {
-  memberLimit: string
+  limit: string
+  context?: PlanUpgradeContext
+  titleKey?: string
+  subtitleKey?: string
 }
 
 export const PlanUpgradeModal = ({ isOpen, onClose, ...props }: ModalProps & PlanUpgradeData) => {
-  const { memberLimit } = props
+  const { limit, context = 'collaboration', titleKey, subtitleKey } = props
+  const titleI18nKey =
+    titleKey ??
+    (context === 'memberbase'
+      ? 'plan_upgrade.memberbase_title'
+      : context === 'generic'
+        ? 'plan_upgrade.generic_title'
+        : 'plan_upgrade.title')
+  const subtitleI18nKey =
+    subtitleKey ??
+    (context === 'memberbase'
+      ? 'plan_upgrade.memberbase_subtitle'
+      : context === 'generic'
+        ? 'plan_upgrade.generic_subtitle'
+        : 'plan_upgrade.subtitle')
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size='md'>
@@ -34,12 +53,12 @@ export const PlanUpgradeModal = ({ isOpen, onClose, ...props }: ModalProps & Pla
         <ModalHeader p={0}>
           <Flex flexDirection='column' gap={3}>
             <Heading size='sm'>
-              <Trans i18nKey='plan_upgrade.title'>Upgrade to add more team members</Trans>
+              <Trans i18nKey={titleI18nKey}>Upgrade to add more team members</Trans>
             </Heading>
             <Box fontSize='sm' color='texts.subtle'>
-              <Trans i18nKey='plan_upgrade.subtitle' values={{ memberLimit }}>
-                Your current plan allows only {memberLimit} for collaboration. Upgrade your plan to add more team
-                members and unlock advanced features.
+              <Trans i18nKey={subtitleI18nKey} values={{ limit }}>
+                Your current plan allows only {limit} for collaboration. Upgrade your plan to add more team members and
+                unlock advanced features.
               </Trans>
             </Box>
           </Flex>

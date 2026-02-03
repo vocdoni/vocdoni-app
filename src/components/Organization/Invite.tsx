@@ -109,7 +109,8 @@ export const InviteToTeamModal = (props: ButtonProps) => {
             onOpen()
           } else {
             openModal('planUpgrade', {
-              memberLimit: t('number_of_members', {
+              context: 'collaboration',
+              limit: t('number_of_members', {
                 defaultValue: '{{ count }} team member',
                 count: memberships,
               }),
