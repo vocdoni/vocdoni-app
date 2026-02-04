@@ -39,6 +39,7 @@ export const CensusCsvManager = () => {
           rowCount: spreadsheet.data.length,
           max: maxCensusSize,
           errorMessage: t('uploader.csv_row_limit_exceeded', {
+            defaultValue: 'This import would result in {{count}} total rows, exceeding your plan limit of {{max}}.',
             count: spreadsheet.data.length,
             max: maxCensusSize ?? 0,
           }),
