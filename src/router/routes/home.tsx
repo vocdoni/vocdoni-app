@@ -1,11 +1,11 @@
 import { useClient } from '@vocdoni/react-providers'
 import { lazy, useMemo } from 'react'
+import { Navigate } from 'react-router-dom'
 import { parseProcessIds } from '~components/Home/SharedCensus'
 import Layout from '~elements/Layout'
 import SimpleLayout from '~elements/SimpleLayout'
 import { SuspenseLoader } from '../SuspenseLoader'
 
-const Home = lazy(() => import('~components/Home'))
 const SharedCensus = lazy(() => import('~components/Home/SharedCensus'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
 
@@ -17,15 +17,14 @@ export const useHomeRoute = () => {
   const LayoutComponent = shouldUseSharedCensus ? SimpleLayout : Layout
   const homeIndexRoute = useMemo(() => {
     const domainForHost = domains[window.location.hostname]
-    let homeContent: JSX.Element
-
-    if (domainForHost) {
-      homeContent = <OrganizationView />
-    } else if (shouldUseSharedCensus) {
-      homeContent = <SharedCensus />
-    } else {
-      homeContent = <Home />
+    if (!domainForHost && !shouldUseSharedCensus) {
+      return {
+        index: true,
+        element: <Navigate to='/admin' replace />,
+      }
     }
+
+    const homeContent = domainForHost ? <OrganizationView /> : <SharedCensus />
 
     return {
       index: true,
