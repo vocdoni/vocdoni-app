@@ -1,9 +1,8 @@
 import '@testing-library/jest-dom'
-import { act, render } from '~src/test-utils'
 import React from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import SimpleLayout from '~elements/SimpleLayout'
+import { act, render } from '~src/test-utils'
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')

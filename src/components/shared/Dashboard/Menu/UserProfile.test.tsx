@@ -1,7 +1,6 @@
-import { render, screen } from '~src/test-utils'
-import { vi } from 'vitest'
-import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { MemoryRouter } from 'react-router-dom'
+import { DashboardLayoutContext } from '~elements/LayoutDashboard'
+import { render, screen } from '~src/test-utils'
 import UserProfile from './UserProfile'
 
 vi.mock('~components/Auth/useAuth', () => ({

@@ -7,7 +7,7 @@ import { I18nextProvider } from 'react-i18next'
 import { ConnectionToastProvider } from '~components/shared/Layout/ConnectionToast'
 import { ToastProvider } from '~shared/Toast'
 import { ColorModeProvider } from '~theme/color-mode'
-import { system } from '~theme'
+import { system } from '~theme/system'
 
 // Initialize i18n for tests
 i18n.init({

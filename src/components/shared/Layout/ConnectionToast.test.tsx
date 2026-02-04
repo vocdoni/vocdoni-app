@@ -3,9 +3,8 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import i18n from 'i18next'
 import { ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ColorModeProvider } from '~theme/color-mode'
-import { system } from '~theme'
+import { system } from '~theme/system'
 import { ConnectionToastProvider, useConnectionToast } from './ConnectionToast'
 
 // Initialize i18n for tests

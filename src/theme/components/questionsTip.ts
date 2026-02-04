@@ -1,5 +1,5 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
-import { questionTipAnatomy } from '~components/vocdoni-ui'
+import { questionTipAnatomy } from '~components/vocdoni-ui/theming/anatomy'
 
 export const QuestionsTip = defineSlotRecipe({
   slots: questionTipAnatomy,

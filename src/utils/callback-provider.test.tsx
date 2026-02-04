@@ -1,5 +1,4 @@
 import { renderHook } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
 import { CallbackProvider, useCallbackContext } from './callback-provider'
 
 describe('CallbackProvider', () => {

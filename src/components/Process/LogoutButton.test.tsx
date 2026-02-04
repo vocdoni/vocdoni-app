@@ -1,4 +1,3 @@
-import { vi } from 'vitest'
 import { render, screen } from '~src/test-utils'
 import { CensusTypes } from './Census/CensusType'
 import LogoutButton from './LogoutButton'

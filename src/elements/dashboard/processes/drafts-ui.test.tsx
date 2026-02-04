@@ -1,8 +1,7 @@
-import type { ReactNode } from 'react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '~src/test-utils'
+import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
+import { render, screen } from '~src/test-utils'
 import { DraftsContextMenu } from './drafts'
 
 vi.mock('react-router-dom', async () => {

@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
-import { vi } from 'vitest'
-import { render, screen } from '~src/test-utils'
 import { MemoryRouter } from 'react-router-dom'
+import { render, screen } from '~src/test-utils'
 import ProcessesTable from './ProcessesTable'
 
 const election = {

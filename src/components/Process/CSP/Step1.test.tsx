@@ -1,6 +1,5 @@
-import { vi } from 'vitest'
-import { render } from '~src/test-utils'
 import type { PublishedElection } from '@vocdoni/sdk'
+import { render } from '~src/test-utils'
 import { Step1Base } from './Step1'
 
 vi.mock('@vocdoni/react-providers', () => ({

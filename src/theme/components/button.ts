@@ -94,8 +94,7 @@ const outline = {
   },
 }
 
-const env = (import.meta as any)?.env ?? (typeof process !== 'undefined' ? process.env : {})
-const defaultPalette = env.BUTTON_COLOR_SCHEME || 'gray'
+const defaultPalette = import.meta.env?.BUTTON_COLOR_SCHEME || 'gray'
 
 export const Button = defineRecipe({
   base: baseStyle,

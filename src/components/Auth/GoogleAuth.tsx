@@ -41,7 +41,8 @@ const GoogleAuth = () => {
       setBearer(token)
       updateSigner(token)
       const registered = localStorage.getItem(AuthStorageKeys.Registered)
-      if (registered === 'true') {
+      const isRegistered = registered === 'true' || registered === '1' || (registered as unknown) === true
+      if (isRegistered) {
         localStorage.removeItem(AuthStorageKeys.Registered)
         navigate(Routes.auth.organizationCreate)
       }

@@ -1,5 +1,5 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
-import { spreadsheetAccessAnatomy } from '~components/vocdoni-ui'
+import { spreadsheetAccessAnatomy } from '~components/vocdoni-ui/theming/anatomy'
 
 const baseStyle = {
   button: {

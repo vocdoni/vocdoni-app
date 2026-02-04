@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest'
-
 import languages, { baseLanguages } from './languages.mjs'
 
 describe('languages configuration', () => {

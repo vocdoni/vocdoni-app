@@ -1,7 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import { system } from '~theme'
+import { system } from '~theme/system'
 import OrganizationVotings from './index'
 
 const navigateSpy = vi.fn()

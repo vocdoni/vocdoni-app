@@ -1,5 +1,4 @@
 import { render, screen } from '~src/test-utils'
-import { describe, expect, it } from 'vitest'
 import { ProcessInfoCard } from './View'
 
 describe('ProcessInfoCard', () => {

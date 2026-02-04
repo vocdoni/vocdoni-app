@@ -1,6 +1,5 @@
-import { render, screen } from '~src/test-utils'
-import { describe, expect, it, vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
+import { render, screen } from '~src/test-utils'
 import NoElections from './NoElections'
 
 vi.mock('@vocdoni/react-providers', () => ({

@@ -5,9 +5,12 @@ import AccountForm from './Form'
 
 const toastSpy = vi.fn()
 
-vi.mock('@chakra-ui/react', async () => {
-  const actual = await vi.importActual<typeof import('@chakra-ui/react')>('@chakra-ui/react')
-  return { ...actual, useToast: () => toastSpy }
+vi.mock('~shared/Toast', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~shared/Toast')>()
+  return {
+    ...actual,
+    useToast: () => toastSpy,
+  }
 })
 
 vi.mock('~src/queries/account', () => ({

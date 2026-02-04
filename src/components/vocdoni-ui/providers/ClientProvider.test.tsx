@@ -1,8 +1,7 @@
-import { render } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
 import { ChakraProvider } from '@chakra-ui/react'
+import { render } from '@testing-library/react'
 import { ColorModeProvider } from '~theme/color-mode'
-import { system } from '~theme'
+import { system } from '~theme/system'
 import { ClientProvider } from './ClientProvider'
 
 describe('ClientProvider', () => {

@@ -1,7 +1,6 @@
-import { render, screen } from '~src/test-utils'
-import { describe, expect, it, vi } from 'vitest'
 import { ElectionResultsTypeNames, PublishedElection } from '@vocdoni/sdk'
 import { FieldValues } from 'react-hook-form'
+import { render, screen } from '~src/test-utils'
 import { ConfirmVoteModal } from './ConfirmVoteModal'
 
 vi.mock('~components/vocdoni-ui', async (importOriginal) => {

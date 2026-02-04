@@ -1,6 +1,5 @@
-import { render, screen } from '~src/test-utils'
-import { describe, expect, it, vi } from 'vitest'
 import { DropzoneRootProps } from 'react-dropzone'
+import { render, screen } from '~src/test-utils'
 import { CsvPreview } from './Preview'
 
 describe('CsvPreview', () => {

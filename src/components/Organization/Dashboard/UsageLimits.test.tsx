@@ -1,6 +1,5 @@
-import { render, screen } from '~src/test-utils'
-import { vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
+import { render, screen } from '~src/test-utils'
 import { UsageLimits } from './UsageLimits'
 
 vi.mock('~components/Auth/Subscription', () => ({

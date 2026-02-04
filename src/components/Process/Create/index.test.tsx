@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react'
 import { Election, MultiChoiceElection, PlainCensus, Census as SDKCensus } from '@vocdoni/sdk'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CensusTypes } from '../Census/CensusType'
 import { Process, SelectorTypes } from './common'
 import { useFormToElectionMapper } from './index'

@@ -31,7 +31,7 @@ export const useSaasAccount = () => {
   return context
 }
 
-export const useSaasAccountProvider = (options?: Parameters<typeof useSaasOrganization>[0]) => {
+const useSaasAccountProvider = (options?: Parameters<typeof useSaasOrganization>[0]) => {
   const {
     account: accountSDK,
     fetchAccount,
@@ -60,7 +60,7 @@ export const useSaasAccountProvider = (options?: Parameters<typeof useSaasOrgani
   return { organization, refetchAccount, isLoading, isError, error }
 }
 
-export const SaasAccountContext = createContext<ReturnType<typeof useSaasAccountProvider> | undefined>(undefined)
+const SaasAccountContext = createContext<ReturnType<typeof useSaasAccountProvider> | undefined>(undefined)
 
 export const SaasAccountProvider = ({ children }: { children: ReactNode }) => {
   const saasAcount = useSaasAccountProvider()

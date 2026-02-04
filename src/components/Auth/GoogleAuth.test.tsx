@@ -1,7 +1,6 @@
+import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { Routes } from '~src/router/routes'
 import { render, waitFor } from '~src/test-utils'
-import GoogleAuth from './GoogleAuth'
-
 const setBearerMock = vi.fn()
 const updateSignerMock = vi.fn()
 const disconnectMock = vi.fn()
@@ -14,11 +13,15 @@ vi.mock('./useAuth', () => ({
   }),
 }))
 
-vi.mock('wagmi', () => ({
-  useAccount: () => ({ isConnected: true, connector: { id: 'google' } }),
-  useConnect: () => ({ connect: vi.fn(), isPending: false, isError: false, error: null }),
-  useDisconnect: () => ({ disconnect: disconnectMock }),
-}))
+vi.mock('wagmi', async () => {
+  const actual = await vi.importActual<typeof import('wagmi')>('wagmi')
+  return {
+    ...actual,
+    useAccount: () => ({ isConnected: true, connector: { id: 'google' } }),
+    useConnect: () => ({ connect: vi.fn(), isPending: false, isError: false, error: null }),
+    useDisconnect: () => ({ disconnect: disconnectMock }),
+  }
+})
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
@@ -35,9 +38,10 @@ describe('GoogleAuth', () => {
   })
 
   it('redirects OAuth signups to organization create', async () => {
-    localStorage.setItem('authToken', 'token-123')
-    localStorage.setItem('authRegistered', 'true')
+    localStorage.setItem(AuthStorageKeys.Token, 'token-123')
+    localStorage.setItem(AuthStorageKeys.Registered, 'true')
 
+    const { default: GoogleAuth } = await import('./GoogleAuth')
     render(<GoogleAuth />)
 
     await waitFor(() => {
@@ -45,9 +49,10 @@ describe('GoogleAuth', () => {
     })
   })
 
-  it('does not redirect when login is not a signup', () => {
-    localStorage.setItem('authToken', 'token-123')
+  it('does not redirect when login is not a signup', async () => {
+    localStorage.setItem(AuthStorageKeys.Token, 'token-123')
 
+    const { default: GoogleAuth } = await import('./GoogleAuth')
     render(<GoogleAuth />)
 
     expect(navigateMock).not.toHaveBeenCalled()
