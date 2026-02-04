@@ -24,12 +24,7 @@ describe('PlanUpgradeModal', () => {
 
     render(
       <MemoryRouter>
-        <PlanUpgradeModal
-          isOpen
-          onClose={() => undefined}
-          context='memberbase'
-          limit='1000'
-        />
+        <PlanUpgradeModal isOpen onClose={() => undefined} context='memberbase' limit='1000' />
       </MemoryRouter>
     )
 
