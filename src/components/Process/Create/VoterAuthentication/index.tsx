@@ -23,7 +23,7 @@ import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { ApiEndpoints } from '~components/Auth/api'
+import { ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
@@ -208,10 +208,8 @@ export const VoterAuthentication = () => {
       .catch((error) => {
         setValidationError(error.apiError as ValidationError)
         const errorMessage =
-          (error as any)?.apiError?.error ||
-          (error instanceof Error
-            ? error.message
-            : t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }))
+          getApiErrorMessage(error) ??
+          t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' })
         toast({
           title: t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }),
           description: errorMessage,
@@ -249,10 +247,7 @@ export const VoterAuthentication = () => {
       } catch (error) {
         setValidationError(error.apiError as ValidationError)
         const errorMessage =
-          (error as any)?.apiError?.error ||
-          (error instanceof Error
-            ? error.message
-            : t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }))
+          getApiErrorMessage(error) ?? t('voter_auth.validation_failed', { defaultValue: 'Validation failed' })
         toast({
           title: t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }),
           description: errorMessage,
@@ -277,10 +272,8 @@ export const VoterAuthentication = () => {
       } catch (error) {
         setValidationError(error.apiError as ValidationError)
         const errorMessage =
-          (error as any)?.apiError?.error ||
-          (error instanceof Error
-            ? error.message
-            : t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }))
+          getApiErrorMessage(error) ??
+          t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' })
         toast({
           title: t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }),
           description: errorMessage,
