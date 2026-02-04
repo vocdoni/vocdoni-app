@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { vi } from 'vitest'
 import { render, screen } from '~src/test-utils'
 import { ActionsMenu } from './ActionsMenu'
 

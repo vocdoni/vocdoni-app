@@ -1,4 +1,3 @@
-import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '~src/test-utils'
 
 vi.mock('~components/Auth/useAuth', () => ({

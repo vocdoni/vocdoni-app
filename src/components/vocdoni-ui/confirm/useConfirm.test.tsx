@@ -1,10 +1,9 @@
-import { renderHook, act, waitFor } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
 import { ChakraProvider } from '@chakra-ui/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { ColorModeProvider } from '~theme/color-mode'
-import { system } from '~theme'
-import { useConfirm } from './useConfirm'
+import { system } from '~theme/system'
 import { ConfirmProvider } from './ConfirmProvider'
+import { useConfirm } from './useConfirm'
 
 describe('useConfirm', () => {
   it('opens prompt when confirm called', async () => {

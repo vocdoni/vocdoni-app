@@ -1,7 +1,6 @@
 import i18n from 'i18next'
 import { FormProvider, useForm } from 'react-hook-form'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
 import { render } from '~src/test-utils'
 import { defaultProcessValues } from '../common'
 import CensusCreation from './CensusCreation'

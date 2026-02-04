@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest'
 import { PaginationProvider } from '@vocdoni/react-providers'
 import { render } from '~src/test-utils'
 import { Pagination } from './Pagination'

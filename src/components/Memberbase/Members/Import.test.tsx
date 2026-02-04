@@ -1,5 +1,4 @@
 import { render, screen } from '~src/test-utils'
-import { describe, expect, it, vi } from 'vitest'
 import { ImportProgress } from './Import'
 
 vi.mock('@vocdoni/react-providers', () => ({

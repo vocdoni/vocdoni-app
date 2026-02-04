@@ -1,5 +1,4 @@
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '~src/test-utils'
 import { PromotionCodeInput } from './PromotionCodeInput'
 

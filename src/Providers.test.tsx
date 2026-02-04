@@ -1,6 +1,5 @@
-import type { ReactNode } from 'react'
 import { render } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import type { ReactNode } from 'react'
 
 vi.mock('wagmi', () => ({
   WagmiProvider: ({ children }: { children: ReactNode }) => <>{children}</>,

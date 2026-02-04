@@ -1,6 +1,5 @@
-import { render, screen } from '~src/test-utils'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
+import { render, screen } from '~src/test-utils'
 import Navbar from './index'
 
 vi.mock('~components/Auth/useAuth', () => ({

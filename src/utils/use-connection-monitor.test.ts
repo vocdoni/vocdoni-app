@@ -1,5 +1,4 @@
 import { act, renderHook } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
 import { useConnectionMonitor } from './use-connection-monitor'
 
 describe('useConnectionMonitor', () => {

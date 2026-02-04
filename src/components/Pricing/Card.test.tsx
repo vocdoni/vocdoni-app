@@ -1,8 +1,7 @@
-import { render, screen } from '~src/test-utils'
-import { describe, expect, it, vi } from 'vitest'
 import { FormProvider, useForm } from 'react-hook-form'
-import { PlanId } from '~constants'
 import { MemoryRouter } from 'react-router-dom'
+import { PlanId } from '~constants'
+import { render, screen } from '~src/test-utils'
 import PricingCard from './Card'
 
 vi.mock('~components/Auth/Subscription', () => ({

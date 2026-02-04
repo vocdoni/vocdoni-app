@@ -1,5 +1,5 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
-import { ellipsisButtonAnatomy } from '~components/vocdoni-ui'
+import { ellipsisButtonAnatomy } from '~components/vocdoni-ui/pagination/anatomy'
 
 const sharedButtonInputStyle = { py: 4, px: 3, h: '8', minW: '8', fontSize: 'sm' }
 const sizes = {

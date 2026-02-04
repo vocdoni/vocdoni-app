@@ -1,8 +1,8 @@
-import { render, screen } from '@testing-library/react'
 import { ChakraProvider } from '@chakra-ui/react'
-import { ListStateAlert } from './ListStateAlert'
-import { system } from '~theme'
+import { render, screen } from '@testing-library/react'
 import { ColorModeProvider } from '~theme/color-mode'
+import { system } from '~theme/system'
+import { ListStateAlert } from './ListStateAlert'
 
 const matchMediaMock = (query: string) => {
   return {

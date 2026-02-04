@@ -1,6 +1,5 @@
-import { render, screen } from '~src/test-utils'
-import { describe, expect, it } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
+import { render, screen } from '~src/test-utils'
 import { NoOrganizations } from './NoOrganizations'
 
 describe('NoOrganizations', () => {

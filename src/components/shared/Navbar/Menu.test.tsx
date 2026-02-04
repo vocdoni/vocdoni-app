@@ -1,7 +1,6 @@
 import { ChakraProvider, MenuPositioner, MenuRoot } from '@chakra-ui/react'
 import { act, render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import { system } from '~theme'
+import { system } from '~theme/system'
 import MenuDropdown from './Menu'
 
 vi.mock('@vocdoni/react-providers', () => ({

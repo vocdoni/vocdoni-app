@@ -10,18 +10,16 @@ import {
   PinInputRoot,
   Text,
 } from '@chakra-ui/react'
-import { useToast } from '~shared/Toast'
 import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate, useOutletContext } from 'react-router-dom'
 import { useResendVerificationMail } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
+import { useToast } from '~shared/Toast'
 import { Routes } from '~src/router/routes'
 import { Loading } from '~src/router/SuspenseLoader'
 import { UnauthorizedApiError } from './api'
-
-export const verificationSuccessRedirect = Routes.auth.organizationCreate
 
 type VerifyFormProps = {
   email: string
@@ -45,7 +43,7 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
         type: 'success',
         title: t('verify_mail.success', { defaultValue: 'Email verified successfully' }),
       })
-      navigate(verificationSuccessRedirect)
+      navigate(Routes.auth.organizationCreate)
     } catch (error) {
       const title =
         error instanceof UnauthorizedApiError

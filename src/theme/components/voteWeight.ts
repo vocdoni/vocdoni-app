@@ -1,5 +1,5 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
-import { voteWeightAnatomy } from '~components/vocdoni-ui'
+import { voteWeightAnatomy } from '~components/vocdoni-ui/theming/anatomy'
 
 export const VoteWeight = defineSlotRecipe({
   slots: voteWeightAnatomy,

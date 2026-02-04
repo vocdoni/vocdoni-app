@@ -1,7 +1,6 @@
-import { render, screen } from '~src/test-utils'
-import { describe, expect, it } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
 import { DashboardLayoutContext } from '~elements/LayoutDashboard'
+import { render, screen } from '~src/test-utils'
 import { DashboardMenuOptions } from './Options'
 
 describe('DashboardMenuOptions', () => {

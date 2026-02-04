@@ -115,6 +115,12 @@ const GroupCensusCreation = () => {
   const censusType = watch('censusType')
   const { data: groups, fetchNextPage, hasNextPage, isFetching } = useGroups(6)
 
+  const TLink = ({ children }) => (
+    <Link asChild textDecoration='underline'>
+      <ReactRouterLink to={Routes.dashboard.memberbase.base}>{children}</ReactRouterLink>
+    </Link>
+  )
+
   return (
     <Box display='flex' flexDirection='column' gap={4}>
       {groups?.length > 0 && (
@@ -134,10 +140,7 @@ const GroupCensusCreation = () => {
           <AlertDescription>
             <Trans i18nKey='process_create.census.group.no_groups'>
               To start a vote, you first need to create a group of eligible voters from your memberbase.
-              <Link as={ReactRouterLink} to={Routes.dashboard.memberbase.base} textDecoration='underline'>
-                Create one here
-              </Link>
-              .
+              <TLink>Create one here</TLink>.
             </Trans>
           </AlertDescription>
         </Alert>

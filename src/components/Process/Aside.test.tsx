@@ -1,8 +1,7 @@
 import { ElectionStatus } from '@vocdoni/sdk'
-import { vi } from 'vitest'
 import { render, screen } from '~src/test-utils'
-import { CensusTypes } from './Census/CensusType'
 import ProcessAside, { VoteButton } from './Aside'
+import { CensusTypes } from './Census/CensusType'
 
 vi.mock('@vocdoni/react-providers', () => ({
   useElection: () => ({

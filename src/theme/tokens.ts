@@ -1,6 +1,5 @@
-import { MaxNavbarWidth } from '~constants'
-
 const sidebarWidth = '350px'
+const maxNavbarWidth = '1920px'
 
 export const fonts = {
   body: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
@@ -12,7 +11,7 @@ export const space = { sidebar: { value: sidebarWidth } }
 
 export const sizes = {
   sidebar: { value: sidebarWidth },
-  navbar: { value: MaxNavbarWidth },
+  navbar: { value: maxNavbarWidth },
   'modal-stretch': { value: 'calc(100% + var(--chakra-space-5)*2 + var(--chakra-space-6)*2)' },
   'modal-stretch-lg': { value: 'calc(100% + var(--chakra-space-10)*2 + var(--chakra-space-6)*2)' },
   'voting-page': { value: '1200px' },

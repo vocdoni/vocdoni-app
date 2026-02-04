@@ -1,5 +1,5 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
-import { resultsAnatomy } from '~components/vocdoni-ui'
+import { resultsAnatomy } from '~components/vocdoni-ui/theming/anatomy'
 
 const baseStyle = {
   wrapper: {

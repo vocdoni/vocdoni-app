@@ -1,5 +1,4 @@
 import { render, screen } from '~src/test-utils'
-import { vi } from 'vitest'
 import OrganizationHeader from './Header'
 
 vi.mock('@vocdoni/react-providers', () => ({

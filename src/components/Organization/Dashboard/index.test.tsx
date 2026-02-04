@@ -1,6 +1,5 @@
-import { render, screen } from '~src/test-utils'
-import { vi } from 'vitest'
 import { MemoryRouter } from 'react-router-dom'
+import { render, screen } from '~src/test-utils'
 import OrganizationDashboard from './index'
 
 vi.mock('@tanstack/react-query', async () => {
