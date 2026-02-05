@@ -12,12 +12,13 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from '@chakra-ui/react'
-import { useColorMode, useColorModeValue } from '~theme/color-mode'
-import { useEffect, useState, type FC } from 'react'
+import { useTheme } from 'next-themes'
+import { type FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { IoMdMoon, IoMdSunny } from 'react-icons/io'
 import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu'
+import { useColorMode, useColorModeValue } from '~theme/color-mode'
 
 type ColorModeSwitcherProps = Omit<IconButtonProps, 'aria-label'>
 
@@ -64,22 +65,9 @@ export const ColorModeSwitcherDetailed: FC<ColorModeSwitcherProps> = (props) => 
 type Mode = 'light' | 'dark' | 'system'
 
 export const ThemeToggleGroup = (props: ButtonGroupProps) => {
-  const { setColorMode } = useColorMode()
-  const [selected, setSelected] = useState<Mode>(() => {
-    return (localStorage.getItem('theme-preference') as Mode) || 'system'
-  })
+  const { theme, setTheme } = useTheme()
   const { t } = useTranslation()
-
-  // Effect to "properly" handle system color mode changes
-  useEffect(() => {
-    if (selected === 'system') {
-      const systemMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-      setColorMode(systemMode)
-    } else {
-      setColorMode(selected)
-    }
-    localStorage.setItem('theme-preference', selected)
-  }, [selected, setColorMode])
+  const selected: Mode = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system'
 
   const iconBg = useColorModeValue('gray.100', 'gray.700')
 
@@ -104,7 +92,7 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
           <TooltipTrigger asChild>
             <IconButton
               aria-label={label}
-              onClick={() => setSelected(mode)}
+              onClick={() => setTheme(mode)}
               aria-pressed={selected === mode}
               bg={selected === mode ? iconBg : undefined}
               variant='ghost'
