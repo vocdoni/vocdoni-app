@@ -1,4 +1,4 @@
-import { TagLabel, TagRoot, type TagRootProps } from '@chakra-ui/react'
+import { Tag, type TagRootProps } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 
@@ -26,8 +26,8 @@ export const ElectionStatusBadge = (props: TagRootProps) => {
       ? localize(`statuses.${election.status.toLowerCase()}`)
       : localize('statuses.invalid')
   return (
-    <TagRoot colorPalette={colorPalette} {...props}>
-      <TagLabel>{label}</TagLabel>
-    </TagRoot>
+    <Tag.Root colorPalette={colorPalette} variant='subtle' {...props}>
+      <Tag.Label>{label}</Tag.Label>
+    </Tag.Root>
   )
 }

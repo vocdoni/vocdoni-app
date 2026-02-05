@@ -37,7 +37,7 @@ export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCard
 )
 
 export const DashboardContents = (props: FlexProps) => (
-  <Flex flexDirection={'column'} maxW='1536px' w='full' mx='auto' p={6} {...props} />
+  <Flex flexDirection='column' maxW='1536px' w='full' mx='auto' p={6} {...props} />
 )
 
 export const DashboardSection = (props: BoxProps) => (

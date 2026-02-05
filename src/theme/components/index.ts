@@ -4,8 +4,8 @@ import { Button } from './button'
 import { Card } from './card'
 import { Checkbox, DetailedCheckbox } from './checkbox'
 import { ConfirmModal } from './confirmModal'
-import { Drawer } from './drawer'
 import { Dialog } from './dialog'
+import { Drawer } from './drawer'
 import { ElectionDescription, ElectionVideo } from './election'
 import { EllipsisButton } from './ellipsisButton'
 import { FormLabel } from './form'
@@ -29,7 +29,6 @@ import { SecurityLevelBox } from './securitylevelbox'
 import { SpreadsheetAccess } from './spreadsheetAccess'
 import { Stepper } from './stepper'
 import { Switch } from './switch'
-import { Table } from './table'
 import { Tabs } from './tabs'
 import { Tag } from './tag'
 import { Text } from './text'
@@ -68,7 +67,7 @@ export const slotRecipes = {
   progress: Progress,
   radioGroup: Radio,
   switch: Switch,
-  table: Table,
+  // table: Table,
   tabs: Tabs,
   tag: Tag,
   tooltip: Tooltip,

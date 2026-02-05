@@ -1,4 +1,4 @@
-import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
+import { Tabs } from '@chakra-ui/react'
 import { ElectionStatus } from '@vocdoni/sdk'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -45,7 +45,7 @@ const OrganizationVotings = () => {
     <DashboardContents>
       <Heading textTransform='capitalize'>{t('voting_processes')}</Heading>
       <SubHeading>{t('voting_processes_description')}</SubHeading>
-      <TabsRoot
+      <Tabs.Root
         variant='settings'
         value={activeTabValue}
         onValueChange={({ value }) => {
@@ -54,15 +54,15 @@ const OrganizationVotings = () => {
         }}
         lazyMount
       >
-        <TabsList mb={6}>
+        <Tabs.List mb={6}>
           {menuItems.map((item) => (
-            <TabsTrigger key={item.route} value={item.route}>
+            <Tabs.Trigger key={item.route} value={item.route}>
               {item.label}
-            </TabsTrigger>
+            </Tabs.Trigger>
           ))}
-        </TabsList>
+        </Tabs.List>
         <Outlet context={{ setBreadcrumb }} />
-      </TabsRoot>
+      </Tabs.Root>
     </DashboardContents>
   )
 }

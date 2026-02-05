@@ -6,11 +6,11 @@ import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { SubscriptionPermission } from '~constants'
 import InputBasic from '~shared/Form/InputBasic'
 import { RoleSelector } from '~shared/Layout/SaasSelector'
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 import { useToast } from '~shared/Toast'
 import { useInviteMemberMutation } from '~src/queries/organization'
 import { CallbackProvider, useCallbackContext } from '~utils/callback-provider'
 import { useAllUsers } from './Team'
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 type InviteFormProps = {
   onClose: () => void
@@ -116,7 +116,9 @@ export const InviteToTeamModal = ({
         {leftIcon ? (
           <HStack gap={2}>
             {leftIcon}
-            <Text as='span'>{children}</Text>
+            <Text as='span' fontSize='sm'>
+              {children}
+            </Text>
           </HStack>
         ) : (
           children

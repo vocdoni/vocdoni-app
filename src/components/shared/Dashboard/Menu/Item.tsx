@@ -57,6 +57,7 @@ export const DashboardMenuItemButton = forwardRef(
         asChild
         variant='listmenu'
         size='xs'
+        fontSize='sm'
         colorScheme='gray'
         justifyContent='start'
         gap={4}

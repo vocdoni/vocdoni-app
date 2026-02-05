@@ -1,5 +1,5 @@
-import { tabsAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
+import { tabsAnatomy } from '@chakra-ui/react/anatomy'
 
 const card = {
   list: {
@@ -75,6 +75,9 @@ const card = {
 }
 
 const settings = {
+  root: {
+    '--tabs-height': 'auto',
+  },
   list: {
     p: 1,
     bgColor: 'tabs.bg',

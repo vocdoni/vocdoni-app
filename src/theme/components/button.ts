@@ -54,37 +54,6 @@ const navbar = {
   h: 'fit-content',
 }
 
-const sizes = {
-  lg: {
-    py: 7,
-    px: 6,
-    h: '14',
-    minW: '14',
-    fontSize: 'md',
-  },
-  md: {
-    py: 6,
-    px: 5,
-    h: '12',
-    minW: '12',
-    fontSize: 'sm',
-  },
-  sm: {
-    py: 5,
-    px: 4,
-    h: '10',
-    minW: '10',
-    fontSize: 'sm',
-  },
-  xs: {
-    py: 4,
-    px: 3,
-    h: '8',
-    minW: '8',
-    fontSize: 'sm',
-  },
-} as const
-
 const outline = {
   borderWidth: '1px',
   borderColor: 'colorPalette.500',
@@ -106,10 +75,8 @@ export const Button = defineRecipe({
       outline,
       profilemenu,
     },
-    size: sizes,
   },
   defaultVariants: {
     colorPalette: defaultPalette as any,
-    size: 'sm',
   },
 })
