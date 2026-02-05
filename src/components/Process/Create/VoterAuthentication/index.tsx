@@ -20,10 +20,10 @@ import {
 import { useMutation } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-providers'
 import { ensure0x } from '@vocdoni/sdk'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { ApiEndpoints } from '~components/Auth/api'
+import { ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
@@ -147,6 +147,8 @@ export const VoterAuthentication = () => {
   const weighted = mainForm.watch('weightedVote')
   const formData = voterAuthForm.watch()
   const hasNoCredentialsSelected = !formData?.credentials?.length && !formData?.use2FA
+  const prevWeightedRef = useRef(weighted)
+  const recreateInFlightRef = useRef(false)
 
   // Sync form values with stored census data
   useEffect(() => {
@@ -156,6 +158,70 @@ export const VoterAuthentication = () => {
       voterAuthForm.setValue('use2FAMethod', census.use2FAMethod)
     }
   }, [census])
+
+  const resetForm = useCallback(() => {
+    setActiveTabIndex(0)
+    setStepCompletion({
+      step1Completed: false,
+      step2Completed: false,
+    })
+    setValidationError(null)
+    // clear possible main form census validation errors
+    mainForm.clearErrors('census')
+  }, [mainForm])
+
+  const createAndPublishCensus = useCallback(
+    async (currentWeighted: boolean) => {
+      const currentFormData = voterAuthForm.getValues()
+      const twoFaFields = currentFormData.use2FA ? getTwoFaFields(currentFormData.use2FAMethod) : []
+
+      const { id: censusId } = await createCensusMutation.mutateAsync()
+      const { size: maxCensusSize } = await publishCensusMutation.mutateAsync({
+        censusId,
+        groupId,
+        authFields: currentFormData.credentials,
+        twoFaFields,
+        weighted: currentWeighted,
+      })
+
+      mainForm.setValue('census', {
+        id: censusId,
+        credentials: currentFormData.credentials,
+        use2FA: currentFormData.use2FA,
+        use2FAMethod: currentFormData.use2FAMethod ?? null,
+        size: maxCensusSize,
+      })
+    },
+    [createCensusMutation, publishCensusMutation, voterAuthForm, groupId, mainForm]
+  )
+
+  useEffect(() => {
+    if (prevWeightedRef.current === weighted) return
+    prevWeightedRef.current = weighted
+
+    if (!mainForm.getValues('census') || !groupId || recreateInFlightRef.current) return
+
+    recreateInFlightRef.current = true
+    mainForm.setValue('census', null)
+
+    createAndPublishCensus(weighted)
+      .catch((error) => {
+        setValidationError(error.apiError as ValidationError)
+        const errorMessage =
+          getApiErrorMessage(error) ??
+          t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' })
+        toast({
+          title: t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }),
+          description: errorMessage,
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+      })
+      .finally(() => {
+        recreateInFlightRef.current = false
+      })
+  }, [weighted, groupId, mainForm, createAndPublishCensus, t, toast])
 
   const handleNext = async () => {
     if (activeTabIndex === 0) {
@@ -181,10 +247,7 @@ export const VoterAuthentication = () => {
       } catch (error) {
         setValidationError(error.apiError as ValidationError)
         const errorMessage =
-          (error as any)?.apiError?.error ||
-          (error instanceof Error
-            ? error.message
-            : t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }))
+          getApiErrorMessage(error) ?? t('voter_auth.validation_failed', { defaultValue: 'Validation failed' })
         toast({
           title: t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }),
           description: errorMessage,
@@ -194,27 +257,9 @@ export const VoterAuthentication = () => {
         })
       }
     } else {
-      // Step 3: Create and publish census
-      const currentFormData = voterAuthForm.getValues()
-      const twoFaFields = currentFormData.use2FA ? getTwoFaFields(currentFormData.use2FAMethod) : []
-
       try {
-        const { id: censusId } = await createCensusMutation.mutateAsync()
-        const { size: maxCensusSize } = await publishCensusMutation.mutateAsync({
-          censusId,
-          groupId,
-          authFields: currentFormData.credentials,
-          twoFaFields,
-          weighted,
-        })
-
-        mainForm.setValue('census', {
-          id: censusId,
-          credentials: currentFormData.credentials,
-          use2FA: currentFormData.use2FA,
-          use2FAMethod: currentFormData.use2FAMethod ?? null,
-          size: maxCensusSize,
-        })
+        // Step 3: Create and publish census
+        await createAndPublishCensus(weighted)
         setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
         toast({
           title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),
@@ -227,10 +272,8 @@ export const VoterAuthentication = () => {
       } catch (error) {
         setValidationError(error.apiError as ValidationError)
         const errorMessage =
-          (error as any)?.apiError?.error ||
-          (error instanceof Error
-            ? error.message
-            : t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }))
+          getApiErrorMessage(error) ??
+          t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' })
         toast({
           title: t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }),
           description: errorMessage,
@@ -240,17 +283,6 @@ export const VoterAuthentication = () => {
         })
       }
     }
-  }
-
-  const resetForm = () => {
-    setActiveTabIndex(0)
-    setStepCompletion({
-      step1Completed: false,
-      step2Completed: false,
-    })
-    setValidationError(null)
-    // clear possible main form census validation errors
-    mainForm.clearErrors('census')
   }
 
   const handleTabChange = (index: number) => {
