@@ -73,6 +73,7 @@
     "lint": "tsc && prettier --check src",
     "lint:fix": "prettier --write src",
     "translations": "i18next",
+    "prepare": "pnpm chakra:typegen",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
