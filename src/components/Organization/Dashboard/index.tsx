@@ -58,14 +58,8 @@ const OrganizationDashboard = () => {
       </SubHeading>
       <Tutorial />
       <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={6} mb={6} alignItems='stretch'>
-        <Box flex='1 1 60%'>
-          <UsageLimits />
-        </Box>
-        {organization && (
-          <Box flex='1 1 40%'>
-            <QuickActions />
-          </Box>
-        )}
+        <UsageLimits flex='1 1 60%' />
+        {organization && <QuickActions flex='1 1 40%' />}
       </Flex>
       <OrganizationProcesses />
       <Setup />
@@ -86,7 +80,7 @@ const Tutorial = () => {
   }
 
   return (
-    <DashboardBox p={6} mb={12} display='flex' gap={10} position='relative' flexDirection='row'>
+    <DashboardBox p={6} mb={6} display='flex' gap={10} position='relative' flexDirection='row'>
       <Box flex='1 1 60%'>
         <Text fontWeight='bold' mb={2} fontSize='2xl'>
           {t('dashboard.welcome.hello', {
@@ -176,7 +170,7 @@ const Setup = () => {
         zIndex='overlay'
         border='1px solid'
         _light={{ borderColor: 'gray.200', bgColor: 'white' }}
-        _dark={{ borderColor: 'black.700', bgColor: 'black.650' }}
+        _dark={{ borderColor: 'brand.700', bgColor: 'brand.650' }}
       >
         <AccordionRoot defaultValue={['setup']} collapsible border='none'>
           <AccordionItem value='setup' border='none' alignItems='center'>
@@ -438,10 +432,10 @@ const Processes = () => {
   )
 }
 
-const QuickActions = () => {
+const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t } = useTranslation()
   return (
-    <DashboardBox p={6} flex='1 1 33%' justifyContent='normal' gap={0}>
+    <DashboardBox p={6} flex='1 1 33%' justifyContent='normal' gap={0} {...props}>
       <Text fontWeight='bold' mb={1.5} fontSize='2xl'>
         {t('dashboard.welcome.quick_actions', {
           defaultValue: 'Quick Actions',

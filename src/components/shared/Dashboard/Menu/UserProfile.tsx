@@ -63,6 +63,8 @@ const UserProfile = () => {
           alignItems={'center'}
           gap={2}
           w='full'
+          colorPalette='gray'
+          variant='subtle'
           justifyContent='start'
           mt={2}
           p={reduced ? 0 : 2}

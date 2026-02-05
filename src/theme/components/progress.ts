@@ -12,7 +12,7 @@ export const Progress = defineSlotRecipe({
     },
   },
   defaultVariants: {
-    colorPalette: 'black',
+    colorPalette: 'brand',
     size: 'xs',
   },
 })

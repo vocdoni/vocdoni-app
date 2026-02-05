@@ -493,7 +493,7 @@ const CreateGroupButton = ({
                         ))}
                         {remainingCount > 0 && (
                           <WrapItem>
-                            <TagRoot borderRadius='sm' size='sm' variant='outline' colorPalette='black'>
+                            <TagRoot borderRadius='sm' size='sm' variant='outline' colorPalette='brand'>
                               <TagLabel>
                                 {t('members.table.remaining_members', {
                                   defaultValue: '+{{count}} more',

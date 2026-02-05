@@ -5,13 +5,13 @@ import {
   Box,
   Button,
   chakra,
+  Flex,
+  HStack,
+  Icon,
   ProgressRange,
   ProgressRoot,
   ProgressTrack,
   Separator,
-  Flex,
-  HStack,
-  Icon,
   Text,
   TooltipContent,
   TooltipPositioner,
@@ -86,7 +86,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
   )
 }
 
-export const UsageLimits = () => {
+export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t, i18n } = useTranslation()
   const { subscription, loading } = useSubscription()
 
@@ -173,7 +173,7 @@ export const UsageLimits = () => {
   )
 
   return (
-    <DashboardBox p={6} height='100%'>
+    <DashboardBox p={6} height='100%' {...props}>
       <VStack align='stretch' gap={4}>
         <DashboardCardHeader
           title={t('dashboard.usage.plan_usage', { defaultValue: 'Plan Usage' })}

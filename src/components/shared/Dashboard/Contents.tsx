@@ -11,7 +11,7 @@ export const DashboardBox = (props: BoxProps) => (
     borderRadius='md'
     boxShadow='sm'
     border='1px solid'
-    _dark={{ borderColor: 'black.700' }}
+    _dark={{ borderColor: 'brand.700' }}
     _light={{ borderColor: 'gray.200' }}
     p={4}
     display='flex'
