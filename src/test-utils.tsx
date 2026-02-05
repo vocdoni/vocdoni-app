@@ -2,7 +2,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, RenderOptions } from '@testing-library/react'
 import i18n from 'i18next'
-import { ReactElement, ReactNode } from 'react'
+import { ComponentType, ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ConnectionToastProvider } from '~components/shared/Layout/ConnectionToast'
 import { ToastProvider } from '~shared/Toast'
@@ -39,17 +39,26 @@ export const createTestQueryClient = () =>
 interface AllProvidersProps {
   children: ReactNode
   queryClient?: QueryClient
+  i18nInstance?: typeof i18n
+  innerWrapper?: ComponentType<{ children: ReactNode }>
 }
 
 // Wrapper component with all providers needed for tests
-export function AllProviders({ children, queryClient = createTestQueryClient() }: AllProvidersProps) {
+export function AllProviders({
+  children,
+  queryClient = createTestQueryClient(),
+  i18nInstance = i18n,
+  innerWrapper: InnerWrapper,
+}: AllProvidersProps) {
+  const content = InnerWrapper ? <InnerWrapper>{children}</InnerWrapper> : children
+
   return (
     <ColorModeProvider>
       <ChakraProvider value={system}>
-        <I18nextProvider i18n={i18n}>
+        <I18nextProvider i18n={i18nInstance}>
           <QueryClientProvider client={queryClient}>
             <ToastProvider>
-              <ConnectionToastProvider>{children}</ConnectionToastProvider>
+              <ConnectionToastProvider>{content}</ConnectionToastProvider>
             </ToastProvider>
           </QueryClientProvider>
         </I18nextProvider>
@@ -59,13 +68,23 @@ export function AllProviders({ children, queryClient = createTestQueryClient() }
 }
 
 // Custom render function that includes all providers
-export function renderWithProviders(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) {
-  const queryClient = createTestQueryClient()
+type RenderWithProvidersOptions = Omit<RenderOptions, 'wrapper'> & {
+  queryClient?: QueryClient
+  i18nInstance?: typeof i18n
+  wrapper?: ComponentType<{ children: ReactNode }>
+}
+
+export function renderWithProviders(ui: ReactElement, options?: RenderWithProvidersOptions) {
+  const { queryClient = createTestQueryClient(), i18nInstance, wrapper, ...renderOptions } = options ?? {}
 
   return {
     ...render(ui, {
-      wrapper: ({ children }) => <AllProviders queryClient={queryClient}>{children}</AllProviders>,
-      ...options,
+      wrapper: ({ children }) => (
+        <AllProviders queryClient={queryClient} i18nInstance={i18nInstance} innerWrapper={wrapper}>
+          {children}
+        </AllProviders>
+      ),
+      ...renderOptions,
     }),
     queryClient,
   }

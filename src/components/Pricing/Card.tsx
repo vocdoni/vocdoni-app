@@ -1,7 +1,7 @@
 import { Badge, Box, Button, ButtonProps, Card, Flex, Icon, Link, List, Separator, Text } from '@chakra-ui/react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { useRef } from 'react'
+import { ReactNode, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCircleCheckBig } from 'react-icons/lu'
@@ -63,6 +63,11 @@ const PricingCard = ({
     typeof me?.organizations.find(({ organization }) => organization.subscription?.planId !== PlanId.Free) !==
     'undefined'
   const hasActiveSubscription = subscription?.plan.id !== PlanId.Free && !!subscription?.subscriptionDetails.active
+  const ContactLink = ({ children }: { children?: ReactNode }) => (
+    <Link asChild>
+      <RouterLink to={Routes.dashboard.settings.support}>{children}</RouterLink>
+    </Link>
+  )
 
   useGSAP(
     () => {
@@ -166,12 +171,7 @@ const PricingCard = ({
       </Card.Body>
       {(plan.id === PlanId.Premium || plan.id === PlanId.Essential) && (
         <Text fontSize='xs' fontStyle='italic' textAlign='center'>
-          <Trans i18nKey='pricing_card.need_more_members'>
-            Need more members?{' '}
-            <Link asChild>
-              <RouterLink to={Routes.dashboard.settings.support}>Contact us</RouterLink>
-            </Link>
-          </Trans>
+          <Trans i18nKey='pricing_card.need_more_members' components={{ 2: <ContactLink /> }} />
         </Text>
       )}
       {!isCustomPlan && isDashboard && <Separator />}

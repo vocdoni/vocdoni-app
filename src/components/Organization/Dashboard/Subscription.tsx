@@ -11,7 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { isBefore, isValid, parseISO } from 'date-fns'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -30,6 +30,12 @@ const SubscriptionPageContent = () => {
   const { mutateAsync, isPending } = usePortalSession()
   const [showComparisonTable, setShowComparisonTable] = useState(false)
   const { view, checkout, showPlans } = useSubscriptionCheckout()
+
+  const SupportLink = ({ children }: { children?: ReactNode }) => (
+    <Link fontWeight='extrabold' fontSize='sm' asChild>
+      <ReactRouterLink to={Routes.dashboard.settings.support}>{children}</ReactRouterLink>
+    </Link>
+  )
 
   const handleChangeClick = () =>
     mutateAsync()
@@ -103,14 +109,13 @@ const SubscriptionPageContent = () => {
           <Trans i18nKey='subscription_plan.gdpr_compliance'>All plans include GDPR compliance.</Trans>
         </Text>
         <Flex gap={1}>
-          <Trans i18nKey='subscription_plan.need_help'>
-            <Text fontSize='sm' color='texts.subtle' textAlign='center'>
-              Need help choosing?
-            </Text>
-            <Link fontWeight='extrabold' fontSize='sm' asChild>
-              <ReactRouterLink to={Routes.dashboard.settings.support}>Contact our sales team</ReactRouterLink>
-            </Link>
-          </Trans>
+          <Trans
+            i18nKey='subscription_plan.need_help'
+            components={[
+              <Text key='help-text' fontSize='sm' color='texts.subtle' textAlign='center' />,
+              <SupportLink key='support-link' />,
+            ]}
+          />
         </Flex>
       </Flex>
     </DashboardBox>
