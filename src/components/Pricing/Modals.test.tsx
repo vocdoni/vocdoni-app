@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom'
-import { describe, expect, it } from 'vitest'
 import i18n from 'i18next'
 import { MemoryRouter } from 'react-router-dom'
 import { render, screen } from '~src/test-utils'
