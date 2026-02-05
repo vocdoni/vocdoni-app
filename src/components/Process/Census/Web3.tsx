@@ -24,11 +24,13 @@ import { useDropzone } from 'react-dropzone'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuPlus, LuTrash2, LuWallet } from 'react-icons/lu'
+import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardSection, SidebarSubtitle } from '~components/shared/Dashboard/Contents'
 import { fieldMapErrorMessage } from '~constants'
 import Uploader from '~shared/Layout/Uploader'
 import { CensusTypes } from './CensusType'
 import { Web3CensusSpreadsheetManager } from './Spreadsheet/Web3CensusSpreadsheetManager'
+import { enforceCsvRowLimit } from '~components/shared/Spreadsheet/limits'
 
 export interface Web3Address {
   address: string
@@ -57,6 +59,8 @@ export const CensusWeb3Addresses = () => {
   const addresses = watch('addresses')
   const weighted: boolean = watch('weightedVote')
   const censusType = watch('censusType')
+  const { subscription } = useSubscription()
+  const maxCensusSize = subscription?.subscriptionDetails?.maxCensusSize || subscription?.plan?.organization?.maxCensus
 
   useEffect(() => {
     if (account?.address && addresses.length === 0) {
@@ -72,6 +76,14 @@ export const CensusWeb3Addresses = () => {
 
       const spreadsheet = new Web3CensusSpreadsheetManager(file, weighted)
       await spreadsheet.read()
+      enforceCsvRowLimit({
+        rowCount: spreadsheet.data.length,
+        max: maxCensusSize,
+        errorMessage: t('uploader.csv_row_limit_exceeded', {
+          count: spreadsheet.data.length,
+          max: maxCensusSize ?? 0,
+        }),
+      })
 
       spreadsheet.data.forEach((row, idx) => {
         const [raw] = row

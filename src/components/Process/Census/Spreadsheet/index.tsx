@@ -3,9 +3,11 @@ import { useCallback, useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
+import { useSubscription } from '~components/Auth/Subscription'
 import Uploader from '~shared/Layout/Uploader'
-import { CsvGenerator } from '../../../shared/Spreadsheet/generator'
-import { CsvPreview } from '../../../shared/Spreadsheet/Preview'
+import { CsvGenerator } from '~shared/Spreadsheet/generator'
+import { enforceCsvRowLimit } from '~shared/Spreadsheet/limits'
+import { CsvPreview } from '~shared/Spreadsheet/Preview'
 import { CensusTypes } from '../CensusType'
 import { CensusSpreadsheetManager } from './CensusSpreadsheetManager'
 
@@ -22,6 +24,8 @@ export const CensusCsvManager = () => {
   const weighted: boolean = watch('weightedVote')
   const manager: CensusSpreadsheetManager | undefined = watch('spreadsheet')
   const censusType = watch('censusType')
+  const { subscription } = useSubscription()
+  const maxCensusSize = subscription?.subscriptionDetails?.maxCensusSize || subscription?.plan?.organization?.maxCensus
 
   // File dropzone
   const onDrop = useCallback(
@@ -31,6 +35,15 @@ export const CensusCsvManager = () => {
       try {
         const spreadsheet = new CensusSpreadsheetManager(file, true, weighted)
         await spreadsheet.read()
+        enforceCsvRowLimit({
+          rowCount: spreadsheet.data.length,
+          max: maxCensusSize,
+          errorMessage: t('uploader.csv_row_limit_exceeded', {
+            defaultValue: 'This import would result in {{count}} total rows, exceeding your plan limit of {{max}}.',
+            count: spreadsheet.data.length,
+            max: maxCensusSize ?? 0,
+          }),
+        })
         setValue('spreadsheet', spreadsheet)
       } catch (e) {
         if (e instanceof Error) {
@@ -43,7 +56,7 @@ export const CensusCsvManager = () => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [weighted]
+    [maxCensusSize, setError, setValue, t, weighted]
   )
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
