@@ -12,6 +12,10 @@ export const space = { sidebar: { value: sidebarWidth } }
 export const sizes = {
   sidebar: { value: sidebarWidth },
   navbar: { value: maxNavbarWidth },
+  'dashboard-menu': {
+    default: { value: '255px' },
+    reduced: { value: '48px' },
+  },
   'modal-stretch': { value: 'calc(100% + var(--chakra-space-5)*2 + var(--chakra-space-6)*2)' },
   'modal-stretch-lg': { value: 'calc(100% + var(--chakra-space-10)*2 + var(--chakra-space-6)*2)' },
   'voting-page': { value: '1200px' },

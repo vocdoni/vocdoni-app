@@ -76,23 +76,23 @@ const UserProfile = () => {
               <AvatarFallback name={`${profile.firstName} ${profile.lastName}`} />
             </AvatarRoot>
             {!reduced && (
-              <Flex flexDirection={'column'} justifyContent={'start'} gap={0.5} ml={0}>
-                <Text fontWeight='light' fontSize='sm' lineHeight={'14px'} textAlign={'start'} maxW={'165px'} truncate>
+              <Flex
+                css={{ '--size': 'calc(var(--chakra-sizes-dashboard-menu-default) - 7rem)' }}
+                flexDirection='column'
+                justifyContent='start'
+                alignItems='start'
+                gap={0.5}
+                ml={0}
+              >
+                <Text fontWeight='light' fontSize='sm' lineHeight='14px' maxW='var(--size)' truncate>
                   {profile.firstName}
                 </Text>
-                <Text
-                  fontWeight='light'
-                  fontSize='xs'
-                  lineHeight={'14px'}
-                  color='dashboard.profile.email'
-                  maxW={'165px'}
-                  truncate
-                >
+                <Text fontWeight='light' fontSize='xs' lineHeight='14px' color='gray.500' maxW='var(--size)' truncate>
                   {organization?.account?.name?.default}
                 </Text>
               </Flex>
             )}
-            {!reduced && <Icon as={LuChevronsUpDown} color='dashboard.chevron' ml='auto' />}
+            {!reduced && <Icon as={LuChevronsUpDown} color='gray.500' ml='auto' />}
           </Flex>
         </Button>
       </PopoverTrigger>

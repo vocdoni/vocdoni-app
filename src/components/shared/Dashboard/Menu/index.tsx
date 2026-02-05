@@ -13,6 +13,7 @@ import {
   ProgressRoot,
   ProgressTrack,
   Text,
+  useToken,
 } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -29,6 +30,7 @@ import UserProfile from './UserProfile'
 
 const DashboardMenu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { reduced } = useContext(DashboardLayoutContext)
+  const [width, rWidth] = useToken('sizes', ['dashboard-menu.default', 'dashboard-menu.reduced'])
 
   return (
     <>
@@ -38,16 +40,14 @@ const DashboardMenu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
         borderRightColor='table.border'
         bgColor='dashboard.menu'
         display={{ base: 'none', md: 'flex' }}
-        flexDirection={'column'}
-        position={'sticky'}
+        flexDirection='column'
+        position='sticky'
         top={0}
-        minW={reduced ? '48px' : '255px'}
-        maxW={reduced ? '48px' : '255px'}
-        w={reduced ? '48px' : '255px'}
+        w={reduced ? rWidth : width}
         h='100vh'
         p={2}
         zIndex={100}
-        transition='width .3s ease, min-width .3s ease, max-width .3s ease'
+        transition='width .3s ease'
       >
         <DashboardMenuContent />
       </Box>
