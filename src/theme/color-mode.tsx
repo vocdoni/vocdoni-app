@@ -4,7 +4,14 @@ import { useCallback } from 'react'
 export type ColorMode = 'light' | 'dark'
 
 export const ColorModeProvider = ({ children, ...props }: ThemeProviderProps) => (
-  <NextThemeProvider attribute='class' disableTransitionOnChange {...props}>
+  <NextThemeProvider
+    attribute='class'
+    disableTransitionOnChange
+    storageKey='theme-preference'
+    defaultTheme='system'
+    enableSystem
+    {...props}
+  >
     {children}
   </NextThemeProvider>
 )
