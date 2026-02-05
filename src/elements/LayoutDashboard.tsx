@@ -38,7 +38,7 @@ const LayoutDashboard: React.FC = () => {
   return (
     <DashboardLayoutContext.Provider value={{ reduced: reduced && !isMobile }}>
       <DashboardLayoutProviders>
-        <Flex minH='100svh' w='full' _dark={{ bg: 'black.650' }} maxW={MaxWindowWidth} margin='0 auto'>
+        <Flex minH='100svh' w='full' _dark={{ bg: 'brand.650' }} maxW={MaxWindowWidth} margin='0 auto'>
           {/* Sidebar for large screens */}
           <DashboardMenu isOpen={isOpen} onClose={onClose} />
 
@@ -63,6 +63,7 @@ const LayoutDashboard: React.FC = () => {
               <IconButton
                 aria-label={t('menu.open')}
                 colorScheme='gray'
+                variant='subtle'
                 size='xs'
                 onClick={isMobile ? onOpen : () => setReduced((prev) => !prev)}
               >
@@ -77,8 +78,8 @@ const LayoutDashboard: React.FC = () => {
                 <DashboardBookerModalButton
                   leftIcon={<Icon as={LuCircleHelp} />}
                   iconSpacing={{ base: 0, lg: 2 }}
-                  colorScheme='gray'
-                  variant='solid'
+                  variant='subtle'
+                  colorPalette='gray'
                   size='sm'
                 >
                   <Text as='span' display={{ base: 'none', lg: 'flex' }} fontSize='sm'>

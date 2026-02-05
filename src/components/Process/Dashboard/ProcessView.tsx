@@ -446,7 +446,7 @@ const SettingsField = ({ subtext, icon, text }: { subtext?: string; icon: typeof
     <Box
       color='gray.600'
       bg='gray.100'
-      _dark={{ bg: 'black.700', color: 'gray.400' }}
+      _dark={{ bg: 'brand.700', color: 'gray.400' }}
       display='flex'
       alignItems='center'
       justifyContent='center'

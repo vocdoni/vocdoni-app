@@ -68,13 +68,13 @@ const simple = {
   header: {
     backgroundColor: 'gray.100',
     _dark: {
-      backgroundColor: 'black.800',
+      backgroundColor: 'brand.800',
     },
 
     '&#section-header': {
       backgroundColor: 'gray.50',
       _dark: {
-        backgroundColor: 'black.700',
+        backgroundColor: 'brand.700',
       },
     },
   },

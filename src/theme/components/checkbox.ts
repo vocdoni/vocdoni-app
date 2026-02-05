@@ -59,6 +59,6 @@ export const Checkbox = defineSlotRecipe({
     },
   },
   defaultVariants: {
-    colorPalette: 'black',
+    colorPalette: 'brand',
   },
 })

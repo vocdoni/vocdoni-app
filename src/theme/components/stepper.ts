@@ -23,6 +23,6 @@ export const Stepper = defineSlotRecipe({
   slots: stepsAnatomy.keys(),
   base: baseStyle,
   defaultVariants: {
-    colorPalette: 'black',
+    colorPalette: 'brand',
   },
 })

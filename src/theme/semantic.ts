@@ -7,8 +7,8 @@ const chakra = {
   body: {
     bg: {
       value: {
-        _light: 'white',
-        _dark: 'black.650',
+        _light: '{colors.white}',
+        _dark: '{colors.brand.650}',
       },
     },
   },
@@ -17,20 +17,20 @@ const chakra = {
 const texts = {
   primary: {
     value: {
-      _light: 'black',
-      _dark: 'white',
+      _light: '{colors.brand.500}',
+      _dark: '{colors.white}',
     },
   },
   subtle: {
     value: {
-      _light: 'gray.500',
-      _dark: 'gray.400',
+      _light: '{colors.gray.500}',
+      _dark: '{colors.gray.400}',
     },
   },
   dark: {
     value: {
-      _light: 'gray.600',
-      _dark: 'gray.500',
+      _light: '{colors.gray.600}',
+      _dark: '{colors.gray.500}',
     },
   },
 }
@@ -40,19 +40,19 @@ export const colors = {
   auth: {
     bg: {
       value: {
-        _light: 'gray.50',
-        _dark: 'black.550',
+        _light: '{colors.gray.50}',
+        _dark: '{colors.brand.550}',
       },
     },
     card: {
       bg: {
         value: {
-          _light: 'white',
-          _dark: 'black',
+          _light: '{colors.white}',
+          _dark: '{colors.brand.500}',
         },
       },
       border: {
-        value: 'gray.200',
+        value: '{colors.gray.200}',
       },
     },
   },
@@ -60,52 +60,52 @@ export const colors = {
     pricing: {
       bg: {
         value: {
-          _light: 'white',
-          _dark: 'black.650',
+          _light: '{colors.white}',
+          _dark: '{colors.brand.650}',
         },
       },
       border: {
         value: {
-          _light: 'gray.200',
-          _dark: 'black.700',
+          _light: '{colors.gray.200}',
+          _dark: '{colors.brand.700}',
         },
       },
       current: {
         bg: {
           value: {
-            _light: 'gray.100',
-            _dark: 'black.600',
+            _light: '{colors.gray.100}',
+            _dark: '{colors.brand.600}',
           },
         },
         color: {
           value: {
-            _light: 'black',
-            _dark: 'white',
+            _light: '{colors.brand.500}',
+            _dark: '{colors.white}',
           },
         },
       },
       featured: {
         bg: {
-          value: 'gray.800',
+          value: '{colors.gray.800}',
         },
         badge: {
           bg: {
             value: {
-              _light: 'black',
-              _dark: 'white',
+              _light: '{colors.brand.500}',
+              _dark: '{colors.white}',
             },
           },
           color: {
             value: {
-              _light: 'white',
-              _dark: 'black',
+              _light: '{colors.white}',
+              _dark: '{colors.brand.500}',
             },
           },
         },
         border: {
           value: {
-            _light: 'black',
-            _dark: 'white',
+            _light: '{colors.brand.500}',
+            _dark: '{colors.white}',
           },
         },
       },
@@ -114,21 +114,21 @@ export const colors = {
   dashboard: {
     menu: {
       value: {
-        _light: '#fbfbfb',
-        _dark: '#18181b',
+        _light: '{colors.dashboardMenu.light}',
+        _dark: '{colors.dashboardMenu.dark}',
       },
     },
   },
   input: {
     placeholder: {
-      value: 'gray.500',
+      value: '{colors.gray.500}',
     },
   },
   table: {
     border: {
       value: {
-        _light: 'gray.200',
-        _dark: 'black.700',
+        _light: '{colors.gray.200}',
+        _dark: '{colors.gray.800}',
       },
     },
   },
@@ -136,29 +136,29 @@ export const colors = {
     tab: {
       color: {
         value: {
-          _light: 'gray.500',
-          _dark: 'gray.400',
+          _light: '{colors.gray.500}',
+          _dark: '{colors.gray.400}',
         },
       },
       active: {
         color: {
           value: {
-            _light: 'black',
-            _dark: 'white',
+            _light: '{colors.brand.500}',
+            _dark: '{colors.white}',
           },
         },
         bg: {
           value: {
-            _light: 'white',
-            _dark: 'black',
+            _light: '{colors.white}',
+            _dark: '{colors.brand.500}',
           },
         },
       },
     },
     bg: {
       value: {
-        _light: 'gray.100',
-        _dark: 'black.700',
+        _light: '{colors.gray.100}',
+        _dark: '{colors.brand.700}',
       },
     },
   },

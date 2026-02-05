@@ -36,6 +36,6 @@ export const Radio = defineSlotRecipe({
     },
   },
   defaultVariants: {
-    colorPalette: 'black',
+    colorPalette: 'brand',
   },
 })

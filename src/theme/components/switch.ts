@@ -20,6 +20,6 @@ export const Switch = defineSlotRecipe({
   slots: switchAnatomy.keys(),
   base: baseStyle,
   defaultVariants: {
-    colorPalette: 'black',
+    colorPalette: 'brand',
   },
 })

@@ -14,7 +14,7 @@ const baseStyle = {
       bg: 'gray.100',
       color: 'black',
       _dark: {
-        bg: 'black.700',
+        bg: 'brand.700',
         color: 'white',
       },
     },
@@ -22,7 +22,7 @@ const baseStyle = {
       bg: 'gray.100',
       color: 'black',
       _dark: {
-        bg: 'black.800',
+        bg: 'brand.800',
         color: 'white',
       },
     },
