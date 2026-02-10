@@ -83,6 +83,7 @@ type DeleteMemberModalProps = {
 type CreateGroupButtonProps = {
   members?: Member[]
   includeAllMembers?: boolean
+  total?: number
 } & ButtonProps
 
 type MembersListProps = {
@@ -309,7 +310,7 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
       </InputGroup>
       {data?.members?.length >= 1 && (
         <>
-          <CreateGroupButton includeAllMembers members={data?.members ?? []}>
+          <CreateGroupButton includeAllMembers members={data?.members ?? []} total={data.pagination.totalItems}>
             {t('members.table.create_group_all', { defaultValue: 'Create group (All)' })}
           </CreateGroupButton>
           <Button leftIcon={<Icon as={LuTrash2} />} variant='outline' colorScheme='red' onClick={onDelete}>
@@ -323,7 +324,13 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
   )
 }
 
-const CreateGroupButton = ({ children, members, includeAllMembers = false, ...rest }: CreateGroupButtonProps) => {
+const CreateGroupButton = ({
+  children,
+  members,
+  includeAllMembers = false,
+  total,
+  ...rest
+}: CreateGroupButtonProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false })
@@ -339,7 +346,8 @@ const CreateGroupButton = ({ children, members, includeAllMembers = false, ...re
 
   const selectedMembers = members ?? selectedRows
   const visible = selectedMembers.slice(0, 5)
-  const remainingCount = selectedMembers.length - visible.length
+  const selectedCount = total ?? selectedMembers.length
+  const remainingCount = selectedCount - visible.length
 
   const createGroup = (data) => {
     const memberIDs = selectedRows.map((row) => row.id)
@@ -373,6 +381,11 @@ const CreateGroupButton = ({ children, members, includeAllMembers = false, ...re
         })
       },
     })
+  }
+
+  const memberAlias = (member: Member) => {
+    if (!member.name && !member.surname) return member.email || member.memberNumber
+    return `${member.name} ${member.surname}`
   }
 
   return (
@@ -424,16 +437,14 @@ const CreateGroupButton = ({ children, members, includeAllMembers = false, ...re
                     <Text fontSize='sm' mb={2}>
                       {t('members.table.group_members_count', {
                         defaultValue: '{{count}} members selected',
-                        count: selectedMembers.length,
+                        count: selectedCount,
                       })}
                     </Text>
                     <Wrap>
                       {visible.map((member) => (
                         <WrapItem key={member.id}>
                           <Tag borderRadius='sm' size='sm' variant='subtle' colorScheme='gray'>
-                            <TagLabel>
-                              {member.name} {member.surname}
-                            </TagLabel>
+                            <TagLabel>{memberAlias(member)}</TagLabel>
                           </Tag>
                         </WrapItem>
                       ))}
@@ -457,7 +468,7 @@ const CreateGroupButton = ({ children, members, includeAllMembers = false, ...re
                 <Button variant='outline' onClick={onClose}>
                   {t('members.table.cancel', { defaultValue: 'Cancel' })}
                 </Button>
-                <Button disabled={!selectedMembers.length} ml={2} type='submit'>
+                <Button disabled={!selectedCount} ml={2} type='submit'>
                   {t('members.table.create_group', { defaultValue: 'Create group' })}
                 </Button>
               </Flex>
