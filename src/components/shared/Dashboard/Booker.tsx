@@ -1,11 +1,10 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
-import { Button, ButtonProps, Code, HStack, Icon, Text, useDisclosure } from '@chakra-ui/react'
-import { useColorMode } from '~theme/color-mode'
+import { Button, ButtonProps, CloseButton, Code, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { Trans } from 'react-i18next'
 import { LuCalendar } from 'react-icons/lu'
 import { SetupStepIds, useOrganizationSetup } from '~queries/organization'
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay } from '~shared/Modal/Modal'
+import { useColorMode } from '~theme/color-mode'
 
 type BookerProps = {
   callback?: () => void
@@ -47,6 +46,7 @@ export type BookerModalButtonProps = ButtonProps &
   BookerProps & {
     leftIcon?: React.ReactNode
     iconSpacing?: ButtonProps['gap']
+    trigger?: React.ReactElement
   }
 
 export const BookerModalButton = ({
@@ -54,30 +54,38 @@ export const BookerModalButton = ({
   children,
   leftIcon,
   iconSpacing = 2,
+  trigger,
   ...props
 }: BookerModalButtonProps) => {
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const content = children ?? <Trans i18nKey='home.support.btn_watch' />
   const icon = leftIcon ?? <Icon as={LuCalendar} boxSize={4} />
 
+  const triggerNode = trigger ?? (
+    <Button colorScheme='gray' variant='ghost' whiteSpace='wrap' size='md' {...props}>
+      <HStack gap={iconSpacing}>
+        {icon}
+        <Text as='span'>{content}</Text>
+      </HStack>
+    </Button>
+  )
+
   return (
-    <>
-      <Button colorScheme='gray' variant='outline' whiteSpace='wrap' size='md' onClick={onOpen} {...props}>
-        <HStack gap={iconSpacing}>
-          {icon}
-          <Text as='span'>{content}</Text>
-        </HStack>
-      </Button>
-      <Modal isOpen={isOpen} onClose={onClose} size='full'>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton />
-          <ModalBody>
-            <Booker callback={callback} />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
+    <Dialog.Root size='full'>
+      <Dialog.Trigger asChild>{triggerNode}</Dialog.Trigger>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Body>
+              <Booker callback={callback} />
+            </Dialog.Body>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton size='sm' />
+            </Dialog.CloseTrigger>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   )
 }
 

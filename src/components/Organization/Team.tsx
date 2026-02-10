@@ -6,9 +6,12 @@ import {
   Badge,
   Box,
   Button,
+  CloseButton,
+  Dialog,
+  type DialogRootProps,
   Flex,
-  FieldLabel as FormLabel,
   FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Heading,
   HStack,
   Icon,
@@ -38,7 +41,7 @@ import {
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
 import { enforceHexPrefix, useClient } from '@vocdoni/react-providers'
 import { formatDistanceToNow } from 'date-fns'
-import { ComponentProps, ReactNode } from 'react'
+import { ComponentProps, ReactNode, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuEllipsis, LuMail, LuPlus, LuRefreshCw, LuUserCog, LuUserPlus } from 'react-icons/lu'
@@ -52,15 +55,6 @@ import { useProfile } from '~src/queries/account'
 import { QueryKeys } from '~src/queries/keys'
 import { Role, useRemoveUserMutation, useRoles } from '~src/queries/organization'
 import { InviteToTeamModal } from './Invite'
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  type ModalProps,
-} from '~shared/Modal/Modal'
 
 // Define types
 type UserInfo = {
@@ -88,14 +82,13 @@ type User = ActiveUser | PendingUser
 
 const isActiveUser = (user: User): user is ActiveUser => !!user.info
 
-type UserModalProps<T extends User> = Omit<ModalProps, 'children' | 'isOpen' | 'onClose'> & {
-  isOpen: boolean
-  onClose: () => void
+type UserModalProps<T extends User> = {
   user: T
-}
+} & Pick<DialogRootProps, 'open' | 'onOpenChange'>
 
 type ActiveUserModalProps = UserModalProps<ActiveUser>
 type PendingUserModalProps = UserModalProps<PendingUser>
+type ChangeRoleDialogProps = ActiveUserModalProps
 
 type UpdateRoleBody = {
   role: string
@@ -444,34 +437,42 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
   )
 }
 
-const ChangeRoleModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalProps) => {
+const ChangeRoleModal = ({ open, onOpenChange, user }: ChangeRoleDialogProps) => {
   const { t } = useTranslation()
+  const onClose = () => onOpenChange({ open: false })
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='xl' closeOnOverlayClick={false} {...props}>
-      <ModalOverlay />
-      <ModalContent py={4}>
-        <ModalHeader>
-          <Heading variant='header'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
-          <Text variant='subheader'>
-            <Trans i18nKey='role.update.subtitle'>
-              Update the permissions for this team member by changing their role.
-            </Trans>
-          </Text>
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <ChangeRoleForm user={user} onClose={onClose} />
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <Dialog.Root open={open} onOpenChange={onOpenChange} closeOnInteractOutside={false}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner display='flex' alignItems='center' justifyContent='center'>
+        <Dialog.Content maxW='xl' py={4}>
+          <Dialog.CloseTrigger>
+            <CloseButton />
+          </Dialog.CloseTrigger>
+          <Dialog.Header>
+            <Dialog.Title>
+              <Heading variant='header'>{t('role.update.title', { defaultValue: 'Change team member role' })}</Heading>
+            </Dialog.Title>
+            <Text variant='subheader'>
+              <Trans i18nKey='role.update.subtitle'>
+                Update the permissions for this team member by changing their role.
+              </Trans>
+            </Text>
+          </Dialog.Header>
+          <Dialog.Body>
+            <ChangeRoleForm user={user} onClose={onClose} />
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }
 
-const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalProps) => {
+const RemoveUserModal = ({ open, onOpenChange, user }: ActiveUserModalProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const removeUser = useRemoveUserMutation()
+  const onClose = () => onOpenChange({ open: false })
 
   const id = user.info?.id
 
@@ -505,9 +506,8 @@ const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalPro
         defaultValue: 'This will remove {{name}} from your team. They will no longer have access to your organization.',
         name: `${user.info.firstName} ${user.info.lastName}`,
       })}
-      isOpen={isOpen}
-      onClose={onClose}
-      {...props}
+      open={open}
+      onOpenChange={({ open }) => onOpenChange({ open })}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
         <Button variant='outline' onClick={onClose}>
@@ -521,10 +521,11 @@ const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalPro
   )
 }
 
-const CancelInvitationModal = ({ isOpen, onClose, user, ...props }: PendingUserModalProps) => {
+const CancelInvitationModal = ({ open, onOpenChange, user }: PendingUserModalProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const cancelInvitation = useCancelInvitation()
+  const onClose = () => onOpenChange({ open: false })
 
   const cancelInvitationHandler = () => {
     cancelInvitation.mutate(user.id, {
@@ -535,6 +536,7 @@ const CancelInvitationModal = ({ isOpen, onClose, user, ...props }: PendingUserM
           duration: 5000,
           isClosable: true,
         })
+        onClose()
       },
       onError: (error: Error) => {
         toast({
@@ -554,8 +556,8 @@ const CancelInvitationModal = ({ isOpen, onClose, user, ...props }: PendingUserM
       subtitle={t('team.cancel_invitation.confirmation', {
         defaultValue: 'This will cancel the invitation. The person will not be able to join your organization.',
       })}
-      isOpen={isOpen}
-      onClose={onClose}
+      open={open}
+      onOpenChange={({ open }) => onOpenChange({ open })}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
         <Button variant='outline' onClick={onClose}>
@@ -642,9 +644,21 @@ const UserActions = ({ user }: UserActionsProps) => {
   const { t } = useTranslation()
   const { data: profile, isLoading } = useProfile()
   const { open: isMenuOpen, onOpen: openMenu, onClose: closeMenu } = useDisclosure()
-  const roleModal = useDisclosure()
-  const removeModal = useDisclosure()
-  const cancelModal = useDisclosure()
+  const [isRoleModalOpen, setRoleModalOpen] = useState(false)
+  const [isRemoveUserModalOpen, setRemoveUserModalOpen] = useState(false)
+  const [isCancelInvitationModalOpen, setCancelInvitationModalOpen] = useState(false)
+  const openChangeRole = () => {
+    setRoleModalOpen(true)
+    closeMenu()
+  }
+  const openRemoveUser = () => {
+    setRemoveUserModalOpen(true)
+    closeMenu()
+  }
+  const openCancelInvitation = () => {
+    setCancelInvitationModalOpen(true)
+    closeMenu()
+  }
 
   const isCurrentUser = String(user.info?.id) === String(profile?.id)
 
@@ -674,9 +688,13 @@ const UserActions = ({ user }: UserActionsProps) => {
             <MenuItemGroup>
               <MenuItemGroupLabel>{t('team.actions.title', { defaultValue: 'Actions' })}</MenuItemGroupLabel>
               {isActiveUser(user) ? (
-                <ActiveUserActions openChangeRole={roleModal.onOpen} openRemoveUser={removeModal.onOpen} />
+                <ActiveUserActions openChangeRole={openChangeRole} openRemoveUser={openRemoveUser} />
               ) : (
-                <PendingInvitationActions user={user} openCancelInvitation={cancelModal.onOpen} closeMenu={closeMenu} />
+                <PendingInvitationActions
+                  user={user}
+                  openCancelInvitation={openCancelInvitation}
+                  closeMenu={closeMenu}
+                />
               )}
             </MenuItemGroup>
           </MenuContent>
@@ -684,11 +702,19 @@ const UserActions = ({ user }: UserActionsProps) => {
       </MenuRoot>
       {isActiveUser(user) ? (
         <>
-          <ChangeRoleModal isOpen={roleModal.open} onClose={roleModal.onClose} user={user} />
-          <RemoveUserModal isOpen={removeModal.open} onClose={removeModal.onClose} user={user} />
+          <ChangeRoleModal open={isRoleModalOpen} onOpenChange={({ open }) => setRoleModalOpen(open)} user={user} />
+          <RemoveUserModal
+            open={isRemoveUserModalOpen}
+            onOpenChange={({ open }) => setRemoveUserModalOpen(open)}
+            user={user}
+          />
         </>
       ) : (
-        <CancelInvitationModal isOpen={cancelModal.open} onClose={cancelModal.onClose} user={user} />
+        <CancelInvitationModal
+          open={isCancelInvitationModalOpen}
+          onOpenChange={({ open }) => setCancelInvitationModalOpen(open)}
+          user={user}
+        />
       )}
     </>
   )

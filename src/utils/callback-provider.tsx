@@ -22,11 +22,11 @@ export const useCallbackContext = (): CallbackContextType => {
 // CallbackProvider component to wrap around components needing callback functionality
 export const CallbackProvider = ({
   children,
-  success,
+  success = () => {},
   error = () => {}, // default to a no-op if not provided
 }: {
   children: ReactNode
-  success: () => void
+  success?: () => void
   error?: () => void
 }) => {
   const value = { success, error }

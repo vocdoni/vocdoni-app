@@ -41,6 +41,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { PaginationProvider, usePagination } from '@vocdoni/react-providers'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCalendar, LuClock, LuEllipsis, LuEye, LuSearch, LuTrash, LuUsers, LuVote, LuX } from 'react-icons/lu'
 import { generatePath, useNavigate } from 'react-router-dom'
@@ -236,7 +237,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onDeleteModalOpen }: GroupAc
 const GroupMembersTable = ({ groupId }: { groupId: string }) => {
   const { t } = useTranslation()
   const deleteGroupMembers = useUpdateGroup()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [isDeleteMembersModalOpen, setDeleteMembersModalOpen] = useState(false)
   const {
     data,
     isLoading,
@@ -268,7 +269,7 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
                 defaults='Selected: <strong>{{count}} member</strong>'
               />
             </Text>
-            <Button onClick={onOpen} size='sm' colorScheme='red' variant='outline'>
+            <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' colorScheme='red' variant='outline'>
               <HStack gap={2}>
                 <Icon as={LuTrash} />
                 <Text as='span'>{t('members.table.bulk_delete', { defaultValue: 'Delete' })}</Text>
@@ -353,11 +354,11 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
           defaultValue: 'Are you sure you want to delete {{count}} members?',
           count: selectedRows.length,
         })}
-        isOpen={isOpen}
-        onClose={onClose}
+        open={isDeleteMembersModalOpen}
+        onOpenChange={({ open }) => setDeleteMembersModalOpen(open)}
       >
         <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' onClick={onClose}>
+          <Button variant='outline' onClick={() => setDeleteMembersModalOpen(false)}>
             {t('memberbase.delete_member.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button
@@ -365,7 +366,7 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
             colorScheme='red'
             onClick={() => {
               onDeleteMember(selectedRows.map((row) => row.id))
-              onClose()
+              setDeleteMembersModalOpen(false)
               resetSelectedRows()
             }}
           >
@@ -545,8 +546,8 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
           defaults='Are you sure you want to delete <bold>{{title}}</bold>? This action cannot be undone and will permanently remove the group from your organization.'
         />
       }
-      isOpen={isOpen}
-      onClose={onClose}
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
         <Button variant='outline' onClick={onClose}>
@@ -564,7 +565,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
   const { t } = useTranslation()
   const navigateToVote = useNavigateToVote()
   const { open: isMembersDrawerOpen, onOpen: onMembersDrawerOpen, onClose: onMembersDrawerClose } = useDisclosure()
-  const { open: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure()
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
 
   return (
     <>
@@ -575,7 +576,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
             <GroupActions
               group={group}
               onMembersDrawerOpen={onMembersDrawerOpen}
-              onDeleteModalOpen={onDeleteModalOpen}
+              onDeleteModalOpen={() => setDeleteModalOpen(true)}
             />
           </Flex>
         </Card.Header>
@@ -630,9 +631,9 @@ const GroupCard = ({ group }: GroupCardProps) => {
         group={group}
         isOpen={isMembersDrawerOpen}
         onClose={onMembersDrawerClose}
-        openDeleteModal={onDeleteModalOpen}
+        openDeleteModal={() => setDeleteModalOpen(true)}
       />
-      <DeleteGroupModal group={group} isOpen={isDeleteModalOpen} onClose={onDeleteModalClose} />
+      <DeleteGroupModal group={group} isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} />
     </>
   )
 }

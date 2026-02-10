@@ -1,5 +1,4 @@
-import { useSlotRecipe } from '@chakra-ui/react'
-import { Modal, ModalContent, ModalOverlay } from '~shared/Modal/Modal'
+import { Dialog, useSlotRecipe } from '@chakra-ui/react'
 import { useConfirm } from './useConfirm'
 
 export const ConfirmModal = () => {
@@ -8,9 +7,11 @@ export const ConfirmModal = () => {
   const { prompt, isOpen, cancel } = useConfirm()
 
   return (
-    <Modal isOpen={isOpen} onClose={cancel}>
-      <ModalOverlay css={styles.overlay} />
-      <ModalContent css={styles.content}>{prompt}</ModalContent>
-    </Modal>
+    <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && cancel?.()}>
+      <Dialog.Backdrop css={styles.overlay} />
+      <Dialog.Positioner>
+        <Dialog.Content css={styles.content}>{prompt}</Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }

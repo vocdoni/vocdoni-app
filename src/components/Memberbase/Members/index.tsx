@@ -704,8 +704,8 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
               count: isDeleteAllMode ? allMembersData?.pagination.totalItems : selectedMembers.length,
             })
       }
-      isOpen={isOpen}
-      onClose={onClose}
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onClose() : undefined)}
       {...props}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
@@ -728,7 +728,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
 const MembersTable = () => {
   const { t } = useTranslation()
   const [deleteMode, setDeleteMode] = useState<DeleteModes>(DeleteModes.SELECTED)
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
   const { isLoading, isFetching, allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } =
     useTable()
@@ -740,7 +740,7 @@ const MembersTable = () => {
       resetSelectedRows()
       toggleOne(member.id, true)
     }
-    onOpen()
+    setDeleteModalOpen(true)
   }
 
   const openAddToGroup = (member?: Member) => {
@@ -753,7 +753,7 @@ const MembersTable = () => {
 
   const openDeleteAll = () => {
     setDeleteMode(DeleteModes.ALL)
-    onOpen()
+    setDeleteModalOpen(true)
   }
 
   return (
@@ -816,7 +816,7 @@ const MembersTable = () => {
           <RoutedPaginatedTableFooter />
         </Box>
       </Box>
-      <DeleteMemberModal isOpen={isOpen} onClose={onClose} mode={deleteMode} />
+      <DeleteMemberModal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} mode={deleteMode} />
       <AddMembersToGroupDrawer isOpen={isAddToGroupOpen} onClose={onAddToGroupClose} />
     </>
   )

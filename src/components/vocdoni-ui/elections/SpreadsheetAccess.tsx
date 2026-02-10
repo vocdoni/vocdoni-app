@@ -1,11 +1,12 @@
 import {
   Button,
+  CloseButton,
+  Dialog,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldHelperText as FormHelperText,
   FieldLabel as FormLabel,
   Input,
-  useDisclosure,
   useSlotRecipe,
 } from '@chakra-ui/react'
 import { Wallet } from '@ethersproject/wallet'
@@ -13,15 +14,6 @@ import { useClient, useElection, walletFromRow, errorToString } from '@vocdoni/r
 import { PublishedElection, VocdoniSDKClient } from '@vocdoni/sdk'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from '~shared/Modal/Modal'
 import { useToast } from '~shared/Toast'
 
 export type SpreadsheetAccessProps = {
@@ -29,7 +21,7 @@ export type SpreadsheetAccessProps = {
 }
 
 export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccessProps) => {
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setIsOpen] = useState(false)
   const recipe = useSlotRecipe({ key: 'SpreadsheetAccess' })
   const styles = recipe(rest)
   const { connected, clearClient } = useElection()
@@ -119,7 +111,7 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
         document.location.hash = wallet.privateKey
       }
       reset()
-      onClose()
+      setIsOpen(false)
     } catch (error) {
       toast({
         type: 'error',
@@ -183,61 +175,71 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
 
   return (
     <>
-      <Button onClick={onOpen} css={styles.button}>
-        {localize('spreadsheet.access_button')}
-      </Button>
-      <Modal isOpen={isOpen} onClose={() => !loading && onClose()}>
-        <ModalOverlay css={styles.overlay} />
-        <ModalContent css={styles.content}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalHeader css={styles.header}>{localize('spreadsheet.modal_title')}</ModalHeader>
-            <ModalCloseButton disabled={loading} css={styles.top_close} />
-            <ModalBody css={styles.body}>
-              {fields.map((field, key) => (
-                <FormControl invalid={Boolean((errors as Record<string, any>)[key])} css={styles.control} key={field}>
-                  <FormLabel css={styles.label}>{field}</FormLabel>
-                  <Input
-                    {...register(key.toString(), {
-                      required,
-                      ...fspecs(field),
-                    })}
-                    css={styles.input}
-                    {...ispecs(field)}
-                  />
-                  {(errors as Record<string, any>)[key]?.message ? (
-                    <FormErrorMessage css={styles.error}>
-                      {(errors as Record<string, any>)[key]?.message?.toString()}
-                    </FormErrorMessage>
-                  ) : (
-                    description(field) && <FormHelperText>{description(field)}</FormHelperText>
-                  )}
-                </FormControl>
-              ))}
-              {election?.electionType.anonymous && (
-                <FormControl invalid={Boolean((errors as Record<string, any>).sik_password)} css={styles.sik_control}>
-                  <FormLabel css={styles.label}>{localize('spreadsheet.anon_sik_label')}</FormLabel>
-                  <Input {...register('sik_password', { required, minLength })} type='password' css={styles.input} />
-                  {(errors as Record<string, any>).sik_password ? (
-                    <FormErrorMessage css={styles.error}>
-                      {(errors as Record<string, any>).sik_password?.message?.toString()}
-                    </FormErrorMessage>
-                  ) : (
-                    <FormHelperText css={styles.helper}>{localize('spreadsheet.anon_sik_helper')}</FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            </ModalBody>
-            <ModalFooter css={styles.footer}>
-              <Button variant='ghost' mr={3} onClick={onClose} css={styles.close} disabled={loading}>
-                {localize('spreadsheet.close')}
-              </Button>
-              <Button type='submit' css={styles.submit} loading={loading}>
-                {localize('spreadsheet.access_button')}
-              </Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
+      <Dialog.Root
+        open={isOpen}
+        onOpenChange={({ open }) => {
+          if (loading && !open) return
+          setIsOpen(open)
+        }}
+      >
+        <Dialog.Trigger asChild>
+          <Button css={styles.button}>{localize('spreadsheet.access_button')}</Button>
+        </Dialog.Trigger>
+        <Dialog.Backdrop css={styles.overlay} />
+        <Dialog.Positioner>
+          <Dialog.Content css={styles.content}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Dialog.Header css={styles.header}>{localize('spreadsheet.modal_title')}</Dialog.Header>
+              <Dialog.CloseTrigger asChild>
+                <CloseButton disabled={loading} css={styles.top_close} />
+              </Dialog.CloseTrigger>
+              <Dialog.Body css={styles.body}>
+                {fields.map((field, key) => (
+                  <FormControl invalid={Boolean((errors as Record<string, any>)[key])} css={styles.control} key={field}>
+                    <FormLabel css={styles.label}>{field}</FormLabel>
+                    <Input
+                      {...register(key.toString(), {
+                        required,
+                        ...fspecs(field),
+                      })}
+                      css={styles.input}
+                      {...ispecs(field)}
+                    />
+                    {(errors as Record<string, any>)[key]?.message ? (
+                      <FormErrorMessage css={styles.error}>
+                        {(errors as Record<string, any>)[key]?.message?.toString()}
+                      </FormErrorMessage>
+                    ) : (
+                      description(field) && <FormHelperText>{description(field)}</FormHelperText>
+                    )}
+                  </FormControl>
+                ))}
+                {election?.electionType.anonymous && (
+                  <FormControl invalid={Boolean((errors as Record<string, any>).sik_password)} css={styles.sik_control}>
+                    <FormLabel css={styles.label}>{localize('spreadsheet.anon_sik_label')}</FormLabel>
+                    <Input {...register('sik_password', { required, minLength })} type='password' css={styles.input} />
+                    {(errors as Record<string, any>).sik_password ? (
+                      <FormErrorMessage css={styles.error}>
+                        {(errors as Record<string, any>).sik_password?.message?.toString()}
+                      </FormErrorMessage>
+                    ) : (
+                      <FormHelperText css={styles.helper}>{localize('spreadsheet.anon_sik_helper')}</FormHelperText>
+                    )}
+                  </FormControl>
+                )}
+              </Dialog.Body>
+              <Dialog.Footer css={styles.footer}>
+                <Button variant='ghost' mr={3} onClick={() => setIsOpen(false)} css={styles.close} disabled={loading}>
+                  {localize('spreadsheet.close')}
+                </Button>
+                <Button type='submit' css={styles.submit} loading={loading}>
+                  {localize('spreadsheet.access_button')}
+                </Button>
+              </Dialog.Footer>
+            </form>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Dialog.Root>
     </>
   )
 }

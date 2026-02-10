@@ -1,4 +1,3 @@
-import { useDisclosure } from '@chakra-ui/react'
 import React, { ReactNode, useState } from 'react'
 import { PlanUpgradeData, PlanUpgradeModal } from './Modals'
 import { SubscriptionPaymentData } from './SubscriptionPayment'
@@ -7,20 +6,20 @@ import { PricingModalProviderContext, PricingModalType } from './use-pricing-mod
 type ModalData = PlanUpgradeData | SubscriptionPaymentData | null
 
 export const PricingModalProvider: React.FC<{ children?: ReactNode }> = ({ children }) => {
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setIsOpen] = useState(false)
   const [modalType, setModalType] = useState<PricingModalType>(null)
   const [modalData, setModalData] = useState<ModalData>(null)
 
   const openModal = (type: PricingModalType, data?: ModalData) => {
     setModalType(type)
     setModalData(data || null)
-    onOpen()
+    setIsOpen(true)
   }
 
   const closeModal = () => {
+    setIsOpen(false)
     setModalType(null)
     setModalData(null)
-    onClose()
   }
 
   return (
@@ -28,8 +27,17 @@ export const PricingModalProvider: React.FC<{ children?: ReactNode }> = ({ child
       {children}
 
       {/* Render modals dynamically based on the modalType */}
-      {modalType === 'planUpgrade' && isOpen && (
-        <PlanUpgradeModal isOpen onClose={closeModal} {...(modalData as PlanUpgradeData)} />
+      {modalType === 'planUpgrade' && (
+        <PlanUpgradeModal
+          open={isOpen}
+          onOpenChange={({ open }) => {
+            if (!open) {
+              closeModal()
+            }
+          }}
+          onClose={closeModal}
+          {...(modalData as PlanUpgradeData)}
+        />
       )}
     </PricingModalProviderContext>
   )
