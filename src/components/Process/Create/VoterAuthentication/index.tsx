@@ -1,8 +1,11 @@
 import {
   Badge,
   Button,
+  CloseButton,
+  Dialog,
   Flex,
   Heading,
+  Portal,
   TabsContent,
   TabsContentGroup,
   TabsList,
@@ -19,7 +22,6 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 import { useToast } from '~shared/Toast'
 import { Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
@@ -327,13 +329,90 @@ export const VoterAuthentication = () => {
           />
         </Flex>
       )}
-      <Button disabled={!groupId} colorPalette='gray' w='full' onClick={onOpen}>
-        {census ? (
-          <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
-        ) : (
-          <Trans i18nKey='voter_auth.button.configure'>Configure Voter Authentication</Trans>
-        )}
-      </Button>
+      <Dialog.Root
+        open={isOpen}
+        onOpenChange={(details) => {
+          if (details.open) onOpen()
+          else onClose()
+        }}
+      >
+        <Dialog.Trigger asChild>
+          <Button disabled={!groupId} colorPalette='gray' w='full'>
+            {census ? (
+              <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
+            ) : (
+              <Trans i18nKey='voter_auth.button.configure'>Configure Voter Authentication</Trans>
+            )}
+          </Button>
+        </Dialog.Trigger>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              <Dialog.CloseTrigger asChild>
+                <CloseButton />
+              </Dialog.CloseTrigger>
+              <Dialog.Header>
+                <Dialog.Title>
+                  <Heading variant='header'>
+                    {t('voter_auth.title', { defaultValue: 'Configure Voter Authentication' })}
+                  </Heading>
+                  <Text variant='subheader'>
+                    {t('voter_auth.description', {
+                      defaultValue: 'Set up how voters will authenticate to participate in this voting process.',
+                    })}
+                  </Text>
+                </Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Body>
+                <FormProvider {...voterAuthForm}>
+                  <ValidationErrorsAlert validationError={validationError} />
+                  <TabsRoot value={activeTabValue} onValueChange={({ value }) => handleTabChange(tabValues[value])}>
+                    <TabsList w='full'>
+                      <TabsTrigger value={tabValues[0]} flex='1'>
+                        <Trans i18nKey='voter_auth.credentials'>Credentials</Trans>
+                      </TabsTrigger>
+                      <TabsTrigger value={tabValues[1]} flex='1' disabled={!stepCompletion.step1Completed}>
+                        <Trans i18nKey='voter_auth.two_factor'>Two-Factor</Trans>
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value={tabValues[2]}
+                        flex='1'
+                        disabled={!stepCompletion.step2Completed || hasNoCredentialsSelected}
+                      >
+                        <Trans i18nKey='voter_auth.summary'>Summary</Trans>
+                      </TabsTrigger>
+                    </TabsList>
+                    <TabsContentGroup>
+                      <TabsContent value={tabValues[0]} px={0} pb={0}>
+                        <CredentialsForm />
+                      </TabsContent>
+                      <TabsContent value={tabValues[1]} px={0} pb={0}>
+                        <TwoFactorForm />
+                      </TabsContent>
+                      <TabsContent value={tabValues[2]}>
+                        <SummaryDisplay />
+                      </TabsContent>
+                    </TabsContentGroup>
+                  </TabsRoot>
+                </FormProvider>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Button variant='ghost' onClick={handlePrevious}>
+                  {t('common.back', 'Back')}
+                </Button>
+                <Button
+                  onClick={handleNext}
+                  loading={isLoading}
+                  disabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
+                >
+                  {activeTabIndex === 2 ? t('common.confirm', 'Confirm') : t('common.next', 'Next')}
+                </Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
       {!groupId && (
         <Text color='texts.subtle' fontSize='xs'>
           {t('voter_auth.no_group_description', {
@@ -341,73 +420,6 @@ export const VoterAuthentication = () => {
           })}
         </Text>
       )}
-      <Modal
-        isOpen={isOpen}
-        onClose={() => {
-          onClose()
-          resetForm()
-        }}
-        size='xl'
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            <Heading variant='header'>
-              {t('voter_auth.title', { defaultValue: 'Configure Voter Authentication' })}
-            </Heading>
-            <Text variant='subheader'>
-              {t('voter_auth.description', {
-                defaultValue: 'Set up how voters will authenticate to participate in this voting process.',
-              })}
-            </Text>
-          </ModalHeader>
-          <ModalBody display='flex' flexDirection='column' gap={4}>
-            <FormProvider {...voterAuthForm}>
-              <ValidationErrorsAlert validationError={validationError} />
-              <TabsRoot value={activeTabValue} onValueChange={({ value }) => handleTabChange(tabValues[value])}>
-                <TabsList w='full'>
-                  <TabsTrigger value={tabValues[0]} flex='1'>
-                    <Trans i18nKey='voter_auth.credentials'>Credentials</Trans>
-                  </TabsTrigger>
-                  <TabsTrigger value={tabValues[1]} flex='1' disabled={!stepCompletion.step1Completed}>
-                    <Trans i18nKey='voter_auth.two_factor'>Two-Factor</Trans>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value={tabValues[2]}
-                    flex='1'
-                    disabled={!stepCompletion.step2Completed || hasNoCredentialsSelected}
-                  >
-                    <Trans i18nKey='voter_auth.summary'>Summary</Trans>
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContentGroup>
-                  <TabsContent value={tabValues[0]} px={0} pb={0}>
-                    <CredentialsForm />
-                  </TabsContent>
-                  <TabsContent value={tabValues[1]} px={0} pb={0}>
-                    <TwoFactorForm />
-                  </TabsContent>
-                  <TabsContent value={tabValues[2]}>
-                    <SummaryDisplay />
-                  </TabsContent>
-                </TabsContentGroup>
-              </TabsRoot>
-            </FormProvider>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant='ghost' onClick={handlePrevious}>
-              {t('common.back', 'Back')}
-            </Button>
-            <Button
-              onClick={handleNext}
-              loading={isLoading}
-              disabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
-            >
-              {activeTabIndex === 2 ? t('common.confirm', 'Confirm') : t('common.next', 'Next')}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   )
 }

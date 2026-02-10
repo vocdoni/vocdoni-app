@@ -5,11 +5,13 @@ import {
   AlertTitle,
   Box,
   Button,
+  CloseButton,
   CheckboxControl,
   CheckboxHiddenInput,
   CheckboxLabel,
   CheckboxRoot,
   chakra,
+  Dialog,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldHelperText as FormHelperText,
@@ -31,15 +33,6 @@ import {
   useDisclosure,
   useSlotRecipe,
 } from '@chakra-ui/react'
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from '~shared/Modal/Modal'
 import { useClient, useElection } from '@vocdoni/react-providers'
 import { ElectionResultsTypeNames, ElectionStatus, type IChoice, type IQuestion, PublishedElection } from '@vocdoni/sdk'
 import { createContext, useContext, useEffect, useState, type ComponentProps, type ReactNode } from 'react'
@@ -202,30 +195,34 @@ export const QuestionChoice = ({ choice, ...rest }: { choice: IChoice } & Compon
         </Box>
       )}
       {renderModal && (
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay css={styles.modalOverlay} />
-          <ModalContent css={styles.modalContent}>
-            <ModalCloseButton css={styles.modalClose} />
-            <ModalBody css={styles.modalBody}>
-              {renderImage && (
-                <Skeleton loading={!loadedModal} css={styles.skeletonModal}>
-                  <chakra.img
-                    src={image.default}
-                    alt={label}
-                    css={styles.modalImage}
-                    onLoad={() => setLoadedModal(true)}
-                  />
-                </Skeleton>
-              )}
-              <Text css={styles.modalLabel}>{label}</Text>
-              {description && (
-                <Box css={styles.modalDescription}>
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
-                </Box>
-              )}
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+        <Dialog.Root open={isOpen} onOpenChange={({ open }) => (open ? onOpen() : onClose())}>
+          <Dialog.Backdrop css={styles.modalOverlay} />
+          <Dialog.Positioner>
+            <Dialog.Content css={styles.modalContent}>
+              <Dialog.CloseTrigger asChild>
+                <CloseButton css={styles.modalClose} />
+              </Dialog.CloseTrigger>
+              <Dialog.Body css={styles.modalBody}>
+                {renderImage && (
+                  <Skeleton loading={!loadedModal} css={styles.skeletonModal}>
+                    <chakra.img
+                      src={image.default}
+                      alt={label}
+                      css={styles.modalImage}
+                      onLoad={() => setLoadedModal(true)}
+                    />
+                  </Skeleton>
+                )}
+                <Text css={styles.modalLabel}>{label}</Text>
+                {description && (
+                  <Box css={styles.modalDescription}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
+                  </Box>
+                )}
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Dialog.Root>
       )}
     </Stack>
   )
@@ -248,9 +245,11 @@ export const QuestionsConfirmation = ({
 
   return (
     <>
-      <ModalHeader css={mstyles.header}>{localize('confirm.title')}</ModalHeader>
-      <ModalCloseButton css={mstyles.close} />
-      <ModalBody css={mstyles.body}>
+      <Dialog.Header css={mstyles.header}>{localize('confirm.title')}</Dialog.Header>
+      <Dialog.CloseTrigger asChild>
+        <CloseButton css={mstyles.close} />
+      </Dialog.CloseTrigger>
+      <Dialog.Body css={mstyles.body}>
         <Box css={styles.box} {...rest}>
           <Text css={styles.description}>{localize('vote.confirm')}</Text>
           {election.questions.map((question, k) => {
@@ -283,15 +282,15 @@ export const QuestionsConfirmation = ({
             )
           })}
         </Box>
-      </ModalBody>
-      <ModalFooter css={mstyles.footer}>
+      </Dialog.Body>
+      <Dialog.Footer css={mstyles.footer}>
         <Button onClick={cancel ?? undefined} variant='ghost' css={mstyles.cancel}>
           {localize('confirm.cancel')}
         </Button>
         <Button onClick={proceed ?? undefined} css={mstyles.confirm}>
           {localize('confirm.confirm')}
         </Button>
-      </ModalFooter>
+      </Dialog.Footer>
     </>
   )
 }

@@ -1,4 +1,5 @@
-import { Button, Flex, Text, useDisclosure } from '@chakra-ui/react'
+import { Button, Dialog, Flex, Text } from '@chakra-ui/react'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
@@ -9,7 +10,7 @@ import AccountForm from './Form'
 
 export const AccountEdit = () => {
   const { t } = useTranslation()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setOpen] = useState(false)
   const { data: profile } = useProfile()
 
   return (
@@ -24,14 +25,14 @@ export const AccountEdit = () => {
         <Text fontSize='sm' color='texts.subtle'>
           {t('delete.delete_subtitle', { defaultValue: 'Permanently delete your account and all associated data' })}
         </Text>
-        <Button colorPalette='red' alignSelf={'flex-start'} onClick={onOpen}>
+        <Button colorPalette='red' alignSelf={'flex-start'} onClick={() => setOpen(true)}>
           <Trans i18nKey='delete_my_account'>Delete Account</Trans>
         </Button>
       </DashboardBox>
       <DeleteModal
         size='md'
-        isOpen={isOpen}
-        onClose={onClose}
+        open={isOpen}
+        onOpenChange={({ open }) => setOpen(open)}
         title={t('delete.confirm_title', { defaultValue: 'Delete Your Account' })}
         subtitle={
           <Flex flexDirection='column' gap={2}>
@@ -44,9 +45,11 @@ export const AccountEdit = () => {
         }
       >
         <Flex justifyContent='flex-end' gap={3}>
-          <Button variant='outline' alignSelf='flex-end' onClick={onClose}>
-            {t('delete.cancel_button', { defaultValue: 'Cancel' })}
-          </Button>
+          <Dialog.ActionTrigger asChild>
+            <Button variant='outline' alignSelf='flex-end'>
+              {t('delete.cancel_button', { defaultValue: 'Cancel' })}
+            </Button>
+          </Dialog.ActionTrigger>
           <Button asChild>
             <Link to={Routes.dashboard.settings.support}>
               <Trans i18nKey='contact_us'>Contact us</Trans>

@@ -1,16 +1,9 @@
 import {
-  AccordionItem,
-  AccordionItemBody,
-  AccordionItemContent,
-  AccordionItemTrigger,
-  AccordionRoot,
+  Accordion,
   AspectRatio,
   Box,
   Button,
-  CheckboxControl,
-  CheckboxHiddenInput,
-  CheckboxLabel,
-  CheckboxRoot,
+  Checkbox,
   Flex,
   HStack,
   Icon,
@@ -33,13 +26,13 @@ import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
 import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
+import InvertedAccordionIcon from '~components/shared/Layout/InvertedAccordionIcon'
 import { WhatsAppButton } from '~components/shared/Layout/WhatsappButton'
 import { ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { PlanId } from '~constants'
 import { Routes } from '~routes'
 import { DashboardBookerModalButton } from '~shared/Dashboard/Booker'
 import { DashboardBox, Heading, SubHeading } from '~shared/Dashboard/Contents'
-import InvertedAccordionIcon from '~shared/Layout/InvertedAccordionIcon'
 import { useProfile } from '~src/queries/account'
 import { CheckboxTypes, paginatedElectionsQuery, useOrganizationSetup } from '~src/queries/organization'
 import { UsageLimits } from './UsageLimits'
@@ -172,9 +165,9 @@ const Setup = () => {
         _light={{ borderColor: 'gray.200', bgColor: 'white' }}
         _dark={{ borderColor: 'brand.700', bgColor: 'brand.650' }}
       >
-        <AccordionRoot defaultValue={['setup']} collapsible border='none'>
-          <AccordionItem value='setup' border='none' alignItems='center'>
-            <Flex px={4} py={3}>
+        <Accordion.Root defaultValue={['setup']} collapsible border='none'>
+          <Accordion.Item value='setup' border='none' alignItems='center'>
+            <Accordion.ItemTrigger px={4} py={4}>
               <Flex flex='1' align='center'>
                 <Icon as={LuCheck} mr={2} boxSize={5} />
                 <Text fontWeight='bold'>
@@ -184,11 +177,11 @@ const Setup = () => {
                 </Text>
               </Flex>
               <Flex>
-                <AccordionItemTrigger asChild>
-                  <IconButton p={0} variant='ghost' h='28px' minW='28px' colorPalette='gray'>
+                <Accordion.ItemIndicator asChild>
+                  <IconButton p={0} variant='ghost' h='28px' minW='28px' colorScheme='gray'>
                     <InvertedAccordionIcon />
                   </IconButton>
-                </AccordionItemTrigger>
+                </Accordion.ItemIndicator>
                 <IconButton
                   aria-label={t('common.close', { defaultValue: 'Close' })}
                   h='28px'
@@ -200,9 +193,9 @@ const Setup = () => {
                   <Icon as={LuX} />
                 </IconButton>
               </Flex>
-            </Flex>
-            <AccordionItemContent>
-              <AccordionItemBody p={0}>
+            </Accordion.ItemTrigger>
+            <Accordion.ItemContent>
+              <Accordion.ItemBody p={0}>
                 <Flex flexDirection='column' px={4} py={2}>
                   <Flex justify='space-between' align='center'>
                     <Text fontSize='xs'>{t('setup.progress', { defaultValue: 'Your progress' })}</Text>
@@ -219,25 +212,27 @@ const Setup = () => {
                     const type = checkbox.type || CheckboxTypes.route
                     if (type === CheckboxTypes.modal) {
                       return (
-                        <CheckboxRoot
+                        <DashboardBookerModalButton
                           key={checkbox.id}
-                          colorPalette='gray'
-                          checked={checkbox.completed}
-                          size='sm'
-                          p={2}
-                        >
-                          <CheckboxHiddenInput />
-                          <CheckboxControl />
-                          <CheckboxLabel>
-                            <DashboardBookerModalButton ml={1} height='auto' display='flex' fontWeight='normal'>
-                              {checkbox.label}
-                            </DashboardBookerModalButton>
-                          </CheckboxLabel>
-                        </CheckboxRoot>
+                          trigger={
+                            <Box w='full'>
+                              <Checkbox.Root colorPalette='gray' checked={checkbox.completed} size='sm' p={2}>
+                                <Checkbox.HiddenInput />
+                                <Checkbox.Control />
+                                <Checkbox.Label>
+                                  <HStack ml={1} gap={2} align='center'>
+                                    <Icon as={checkbox.icon} boxSize={4} />
+                                    <Text fontSize='sm'>{checkbox.label}</Text>
+                                  </HStack>
+                                </Checkbox.Label>
+                              </Checkbox.Root>
+                            </Box>
+                          }
+                        />
                       )
                     }
                     return (
-                      <CheckboxRoot
+                      <Checkbox.Root
                         key={checkbox.id}
                         colorPalette='gray'
                         checked={checkbox.completed}
@@ -245,22 +240,22 @@ const Setup = () => {
                         p={2}
                         onClick={() => navigate(checkbox.to)}
                       >
-                        <CheckboxHiddenInput />
-                        <CheckboxControl />
-                        <CheckboxLabel>
+                        <Checkbox.HiddenInput />
+                        <Checkbox.Control />
+                        <Checkbox.Label>
                           <HStack ml={1} gap={2} align='center'>
                             <Icon as={checkbox.icon} boxSize={4} />
                             <Text fontSize='sm'>{checkbox.label}</Text>
                           </HStack>
-                        </CheckboxLabel>
-                      </CheckboxRoot>
+                        </Checkbox.Label>
+                      </Checkbox.Root>
                     )
                   })}
                 </Stack>
-              </AccordionItemBody>
-            </AccordionItemContent>
-          </AccordionItem>
-        </AccordionRoot>
+              </Accordion.ItemBody>
+            </Accordion.ItemContent>
+          </Accordion.Item>
+        </Accordion.Root>
       </Box>
     )
   )

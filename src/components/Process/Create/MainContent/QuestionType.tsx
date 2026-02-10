@@ -1,21 +1,18 @@
 import {
   Box,
   Button,
-  Flex,
-  FieldLabel as FormLabel,
+  Dialog,
   FieldRoot as FormControl,
-  Heading,
+  FieldLabel as FormLabel,
   HStack,
   Switch,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Select } from '~components/shared/Form/Select'
 import { DefaultQuestions, SelectorTypes } from '../common'
-import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 interface SelectOption {
   value: SelectorTypes
@@ -23,21 +20,23 @@ interface SelectOption {
 }
 
 type MultichoiceWarningModalProps = {
-  isOpen: boolean
-  onClose: () => void
+  open: boolean
+  onOpenChange: (details: { open: boolean }) => void
   updateQuestionType: (newType: SelectorTypes) => void
   pendingTypeRef: React.MutableRefObject<SelectorTypes | null>
 }
 
 const MultichoiceWarningModal = ({
-  isOpen,
-  onClose,
+  open,
+  onOpenChange,
   updateQuestionType,
   pendingTypeRef,
 }: MultichoiceWarningModalProps) => {
+  const close = () => onOpenChange({ open: false })
+
   const cancel = () => {
     pendingTypeRef.current = null
-    onClose()
+    close()
   }
 
   const confirm = () => {
@@ -45,45 +44,43 @@ const MultichoiceWarningModal = ({
       updateQuestionType(pendingTypeRef.current)
       pendingTypeRef.current = null
     }
-    onClose()
+    close()
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='md'>
-      <ModalOverlay />
-      <ModalContent p={5}>
-        <ModalHeader p={0}>
-          <Flex flexDirection='column' gap={3}>
-            <Heading size='sm'>
+    <Dialog.Root open={open} onOpenChange={onOpenChange} size='md'>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap={1}>
+            <Dialog.Title>
               <Trans i18nKey='process.question_type.confirm.title'>Do you want to switch to Multiple choice?</Trans>
-            </Heading>
+            </Dialog.Title>
             <Box fontSize='sm' color='texts.subtle'>
               <Trans i18nKey='process.question_type.confirm.subtitle'>
                 Multiple-choice allows only one question. Switching will keep only your first question and discard the
                 rest.
               </Trans>
             </Box>
-          </Flex>
-        </ModalHeader>
-        <ModalBody p={0}>
-          <Flex justifyContent='flex-end' mt={4} gap={2}>
+          </Dialog.Header>
+          <Dialog.Footer>
             <Button variant='outline' onClick={cancel}>
               <Trans i18nKey='common.cancel'>Cancel</Trans>
             </Button>
             <Button onClick={confirm}>
               <Trans i18nKey='common.confirm'>Confirm</Trans>
             </Button>
-          </Flex>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }
 
 export const QuestionType = () => {
   const { t } = useTranslation()
   const { control, setValue, getValues } = useFormContext()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [isWarningModalOpen, setWarningModalOpen] = useState(false)
   const pendingTypeRef = useRef<SelectorTypes | null>(null)
 
   return (
@@ -144,7 +141,7 @@ export const QuestionType = () => {
                 const oldType = field.value
 
                 if (oldType === SelectorTypes.Single && newType === SelectorTypes.Multiple && questions.length > 1) {
-                  onOpen()
+                  setWarningModalOpen(true)
                   pendingTypeRef.current = newType
                   return
                 }
@@ -162,8 +159,8 @@ export const QuestionType = () => {
                     styles={{ container: (p) => ({ ...p, width: 'max-content', maxWidth: '100%' }) }}
                   />
                   <MultichoiceWarningModal
-                    isOpen={isOpen}
-                    onClose={onClose}
+                    open={isWarningModalOpen}
+                    onOpenChange={({ open }) => setWarningModalOpen(open)}
                     updateQuestionType={updateQuestionType}
                     pendingTypeRef={pendingTypeRef}
                   />

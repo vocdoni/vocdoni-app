@@ -2,6 +2,7 @@ import {
   Box,
   BoxProps,
   Button,
+  Dialog,
   Flex,
   Grid,
   GridItem,
@@ -20,28 +21,18 @@ import {
   TooltipPositioner,
   TooltipRoot,
   TooltipTrigger,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react'
-import { ElectionQuestions, ElectionResults, environment } from '~components/vocdoni-ui'
 import { useClient, useElection, useOrganization } from '@vocdoni/react-providers'
 import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiErrorWarningLine } from 'react-icons/ri'
 import { FacebookShare, RedditShare, TelegramShare, TwitterShare } from '~components/Share'
+import { ElectionQuestions, ElectionResults, environment } from '~components/vocdoni-ui'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
 import { ConfirmVoteModal } from './ConfirmVoteModal'
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from '~shared/Modal/Modal'
 import { CreatedBy } from './CreatedBy'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
@@ -322,7 +313,7 @@ export const ProcessView = () => {
 
 const SuccessVoteModal = () => {
   const { t } = useTranslation()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [isOpen, setOpen] = useState(false)
   const { votesLeft, election, voted } = useElection()
   const { env } = useClient()
 
@@ -335,7 +326,7 @@ const SuccessVoteModal = () => {
 
     if (vLeft && votesLeft < vLeft) {
       setVLeft(votesLeft)
-      onOpen()
+      setOpen(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [votesLeft, vLeft])
@@ -347,43 +338,47 @@ const SuccessVoteModal = () => {
   const caption = t('process.share_caption', { title: election?.title.default })
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          <Text mb={3}>{t('process.success_modal.title')}</Text>
-          <Image src={successImg} borderRadius={'lg'} />
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Trans
-            i18nKey='process.success_modal.text'
-            components={{
-              verify: <Link href={verify} target='_blank' />,
-              p: <Text mb={2} />,
-            }}
-          />
-          <List.Root listStyleType='none' display='flex' justifyContent='center' gap={6} mt={6} mb={2} ml={0}>
-            <List.Item>
-              <TwitterShare url={url} caption={caption} />
-            </List.Item>
-            <List.Item>
-              <FacebookShare url={url} caption={caption} />
-            </List.Item>
-            <List.Item>
-              <TelegramShare url={url} caption={caption} />
-            </List.Item>
-            <List.Item>
-              <RedditShare url={url} caption={caption} />
-            </List.Item>
-          </List.Root>
-        </ModalBody>
+    <Dialog.Root open={isOpen} onOpenChange={({ open }) => setOpen(open)}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.CloseTrigger />
+          <Dialog.Header>
+            <Dialog.Title>{t('process.success_modal.title')}</Dialog.Title>
+            <Image src={successImg} borderRadius='lg' mt={3} />
+          </Dialog.Header>
+          <Dialog.Body>
+            <Trans
+              i18nKey='process.success_modal.text'
+              components={{
+                verify: <Link href={verify} target='_blank' />,
+                p: <Text mb={2} />,
+              }}
+            />
+            <List.Root listStyleType='none' display='flex' justifyContent='center' gap={6} mt={6} mb={2} ml={0}>
+              <List.Item>
+                <TwitterShare url={url} caption={caption} />
+              </List.Item>
+              <List.Item>
+                <FacebookShare url={url} caption={caption} />
+              </List.Item>
+              <List.Item>
+                <TelegramShare url={url} caption={caption} />
+              </List.Item>
+              <List.Item>
+                <RedditShare url={url} caption={caption} />
+              </List.Item>
+            </List.Root>
+          </Dialog.Body>
 
-        <ModalFooter mt={4}>
-          <Button onClick={onClose}>{t('process.success_modal.btn')}</Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+          <Dialog.Footer>
+            <Dialog.ActionTrigger asChild>
+              <Button>{t('process.success_modal.btn')}</Button>
+            </Dialog.ActionTrigger>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }
 
@@ -394,16 +389,18 @@ const VotingVoteModal = () => {
   } = useElection()
 
   return (
-    <Modal isOpen={voting} onClose={() => {}}>
-      <ModalOverlay />
-      <ModalContent p='30px !important'>
-        <ModalBody>
-          <VStack>
-            <Spinner color='process.spinner' mb={5} w={10} h={10} />
-          </VStack>
-          <Text textAlign='center'>{t('process.voting')}</Text>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <Dialog.Root open={voting} onOpenChange={() => {}} closeOnEscape={false} closeOnInteractOutside={false}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.Body>
+            <VStack>
+              <Spinner color='process.spinner' mb={5} w={10} h={10} />
+            </VStack>
+            <Text textAlign='center'>{t('process.voting')}</Text>
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }

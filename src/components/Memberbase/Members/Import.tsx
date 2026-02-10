@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   CloseButton,
+  Dialog,
   DrawerBackdrop,
   DrawerBody,
   DrawerContent,
@@ -42,15 +43,6 @@ import { LuCheck, LuTriangleAlert, LuUpload, LuX } from 'react-icons/lu'
 import { useOutletContext } from 'react-router-dom'
 import { SpreadsheetManager } from '~components/shared/Spreadsheet/SpreadsheetManager'
 import { Select } from '~shared/Form/Select'
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from '~shared/Modal/Modal'
 import { useToast } from '~shared/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
@@ -264,31 +256,42 @@ export const ImportProgress = () => {
       </Alert>
 
       {/* Error modal */}
-      <Modal isOpen={isErrorModalOpen} onClose={onCloseErrors} size='xl'>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            {t('import_progress.error_modal_title', {
-              defaultValue: 'Import Errors',
-            })}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody maxH='60vh' overflowY='auto'>
-            <List.Root display='flex' flexDirection='column' gap={2} pl={4} listStyleType='disc'>
-              {data?.errors?.map((error, i) => (
-                <List.Item key={i} whiteSpace='pre-wrap' fontSize='sm'>
-                  {error}
-                </List.Item>
-              ))}
-            </List.Root>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant='ghost' onClick={onCloseErrors}>
-              {t('close', { defaultValue: 'Close' })}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <Dialog.Root
+        size='xl'
+        placement='center'
+        open={isErrorModalOpen}
+        onOpenChange={({ open }) => (open ? onOpenErrors() : onCloseErrors())}
+      >
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton />
+            </Dialog.CloseTrigger>
+            <Dialog.Header>
+              <Dialog.Title>
+                {t('import_progress.error_modal_title', {
+                  defaultValue: 'Import Errors',
+                })}
+              </Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              <List.Root display='flex' flexDirection='column' gap={2} pl={4} listStyleType='disc'>
+                {data?.errors?.map((error, i) => (
+                  <List.Item key={i} whiteSpace='pre-wrap' fontSize='sm'>
+                    {error}
+                  </List.Item>
+                ))}
+              </List.Root>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button variant='ghost' onClick={onCloseErrors}>
+                {t('close', { defaultValue: 'Close' })}
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Dialog.Root>
     </>
   )
 }

@@ -1,11 +1,11 @@
-import { Box, Button, Flex, Heading } from '@chakra-ui/react'
+import { Box, Button, CloseButton, Dialog } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Routes } from '~routes'
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 type ModalProps = {
-  isOpen: boolean
+  open: boolean
+  onOpenChange: (details: { open: boolean }) => void
   onClose: () => void
 }
 
@@ -18,7 +18,7 @@ export type PlanUpgradeData = {
   subtitleKey?: string
 }
 
-export const PlanUpgradeModal = ({ isOpen, onClose, ...props }: ModalProps & PlanUpgradeData) => {
+export const PlanUpgradeModal = ({ open, onOpenChange, onClose, ...props }: ModalProps & PlanUpgradeData) => {
   const { t } = useTranslation()
   const { limit, context = 'collaboration', titleKey, subtitleKey } = props
 
@@ -65,24 +65,22 @@ export const PlanUpgradeModal = ({ isOpen, onClose, ...props }: ModalProps & Pla
           )
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='md'>
-      <ModalOverlay />
-      <ModalContent p={5}>
-        <ModalCloseButton />
-        <ModalHeader p={0}>
-          <Flex flexDirection='column' gap={3}>
-            <Heading size='sm'>
+    <Dialog.Root open={open} onOpenChange={onOpenChange} placement='center'>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.CloseTrigger asChild>
+            <CloseButton />
+          </Dialog.CloseTrigger>
+          <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap={1}>
+            <Dialog.Title>
               <Trans i18nKey={titleI18nKey} defaults={titleDefault} />
-            </Heading>
-
+            </Dialog.Title>
             <Box fontSize='sm' color='texts.subtle'>
               <Trans i18nKey={subtitleI18nKey} defaults={subtitleDefault} values={{ limit }} />
             </Box>
-          </Flex>
-        </ModalHeader>
-
-        <ModalBody p={0}>
-          <Flex justifyContent='flex-end' mt={4} gap={2}>
+          </Dialog.Header>
+          <Dialog.Footer>
             <Button variant='outline' onClick={onClose}>
               <Trans i18nKey='plan_upgrade.cancel' defaults={t('plan_upgrade.cancel', 'Cancel')} />
             </Button>
@@ -91,9 +89,9 @@ export const PlanUpgradeModal = ({ isOpen, onClose, ...props }: ModalProps & Pla
                 <Trans i18nKey='plan_upgrade.see_plans'>See Plans</Trans>
               </Link>
             </Button>
-          </Flex>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }

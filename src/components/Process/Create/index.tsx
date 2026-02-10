@@ -14,7 +14,6 @@ import {
   ProgressTrack,
   Spacer,
   Text,
-  useDisclosure,
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -323,7 +322,7 @@ const TemplateButtons = () => {
   const { t } = useTranslation()
   const methods = useFormContext<Process>()
   const { activeTemplate, setActiveTemplate } = useProcessTemplates()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [isTemplateModalOpen, setTemplateModalOpen] = useState(false)
   const reset = useSafeReset()
   const pendingTemplateRef = useRef<TemplateTypes | null>(null)
 
@@ -342,7 +341,7 @@ const TemplateButtons = () => {
     if (!template) return
 
     if (activeTemplate === template) {
-      onClose()
+      setTemplateModalOpen(false)
       return
     }
 
@@ -350,7 +349,7 @@ const TemplateButtons = () => {
       applyTemplate(template)
     } else {
       pendingTemplateRef.current = template
-      onOpen()
+      setTemplateModalOpen(true)
     }
   }
 
@@ -359,12 +358,12 @@ const TemplateButtons = () => {
       applyTemplate(pendingTemplateRef.current)
       pendingTemplateRef.current = null
     }
-    onClose()
+    setTemplateModalOpen(false)
   }
 
   const handleCancel = () => {
     pendingTemplateRef.current = null
-    onClose()
+    setTemplateModalOpen(false)
   }
 
   return (
@@ -399,8 +398,8 @@ const TemplateButtons = () => {
         subtitle={t('process.create.change_template.message', {
           defaultValue: 'You have unsaved changes. Are you sure you want to switch templates?',
         })}
-        isOpen={isOpen}
-        onClose={handleCancel}
+        open={isTemplateModalOpen}
+        onOpenChange={({ open }) => setTemplateModalOpen(open)}
       >
         <Flex justifyContent='flex-end' mt={4} gap={2}>
           <Button variant='outline' onClick={handleCancel}>
@@ -437,8 +436,8 @@ const LeaveConfirmationModal = ({
               defaultValue: 'You have unsaved changes. Are you sure you want to leave?',
             })
       }
-      isOpen={isOpen}
-      onClose={onCancel}
+      open={isOpen}
+      onOpenChange={({ open }) => (!open ? onCancel() : undefined)}
     >
       <Flex justifyContent='flex-end' mt={4} gap={2}>
         <Button variant='outline' onClick={onCancel}>
@@ -617,7 +616,8 @@ const ProcessCreateView = () => {
   })
   const reset = useSafeReset(methods.reset)
   const { activeTemplate, placeholders, setActiveTemplate } = useProcessTemplates()
-  const { open: isOpen, onOpen: openConfirmationModal, onClose } = useDisclosure()
+  const [isLeaveConfirmationOpen, setLeaveConfirmationOpen] = useState(false)
+  const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
   const { client } = useClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
@@ -632,7 +632,7 @@ const ProcessCreateView = () => {
     isSubmitting,
     isSubmitSuccessful,
     onOpen: openConfirmationModal,
-    onClose,
+    onClose: () => setLeaveConfirmationOpen(false),
   })
   const { saveDraft, isSaving, skipSave } = useFormDraftSaver(
     isDirty,
@@ -985,7 +985,7 @@ const ProcessCreateView = () => {
         <CreateSidebar />
       </Box>
       <LeaveConfirmationModal
-        isOpen={isOpen}
+        isOpen={isLeaveConfirmationOpen}
         onCancel={cancel}
         onLeave={discardAndLeave}
         onSaveAndLeave={handleSaveAndLeave}

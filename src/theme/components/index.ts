@@ -4,7 +4,6 @@ import { Button } from './button'
 import { Card } from './card'
 import { Checkbox, DetailedCheckbox } from './checkbox'
 import { ConfirmModal } from './confirmModal'
-import { Dialog } from './dialog'
 import { Drawer } from './drawer'
 import { ElectionDescription, ElectionVideo } from './election'
 import { EllipsisButton } from './ellipsisButton'
@@ -61,7 +60,6 @@ export const slotRecipes = {
   accordion: Accordion,
   card: Card,
   checkbox: Checkbox,
-  dialog: Dialog,
   drawer: Drawer,
   menu: Menu,
   popover: Popover,

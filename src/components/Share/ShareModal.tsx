@@ -1,4 +1,4 @@
-import { Button, Flex, Icon, Input, InputGroup, Text, useClipboard, useDisclosure } from '@chakra-ui/react'
+import { Button, CloseButton, Dialog, Flex, Icon, Input, InputGroup, Text, useClipboard } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuShare } from 'react-icons/lu'
 import {
@@ -9,20 +9,10 @@ import {
   TwitterShare,
   WhatsappShare,
 } from '~components/Share/index'
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from '~shared/Modal/Modal'
 import { useToast } from '~shared/Toast'
 
 const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: string; text?: string; size?: string }) => {
   const { t } = useTranslation()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const rawUrl = document.location.href.split('#')[0] // Remove the PK after the hash
   const url = encodeURIComponent(rawUrl)
 
@@ -31,21 +21,27 @@ const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: strin
   const iconWidth = 9
 
   return (
-    <>
-      <Button onClick={onOpen} fontSize={size} aria-label={t('share.icon_title')}>
-        <Icon as={LuShare} aria-hidden />
-        {text && (
-          <Text pl={2} as='span' fontSize={size}>
-            {text}
-          </Text>
-        )}
-      </Button>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{t('share.modal_title')}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody mt={8}>
+    <Dialog.Root>
+      <Dialog.Trigger asChild>
+        <Button fontSize={size} aria-label={t('share.icon_title')}>
+          <Icon as={LuShare} aria-hidden />
+          {text && (
+            <Text pl={2} as='span' fontSize={size}>
+              {text}
+            </Text>
+          )}
+        </Button>
+      </Dialog.Trigger>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.CloseTrigger asChild>
+            <CloseButton />
+          </Dialog.CloseTrigger>
+          <Dialog.Header>
+            <Dialog.Title>{t('share.modal_title')}</Dialog.Title>
+          </Dialog.Header>
+          <Dialog.Body>
             <Flex
               flexDirection={'row'}
               alignItems={{ base: 'start', xl: 'center' }}
@@ -60,23 +56,24 @@ const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: strin
               <MailShare h={iconWidth} w={iconWidth} url={url} caption={caption} />
               <WhatsappShare h={iconWidth} w={iconWidth} url={url} caption={caption} />
             </Flex>
-          </ModalBody>
-          <ModalFooter mt={8}>
-            <Flex direction={'column'} gap={4} w={'full'}>
-              <InputGroup>
-                <Input
-                  placeholder={rawUrl}
-                  readOnly
-                  truncate
-                  _placeholder={{
-                    fontSize: 'xs',
-                  }}
-                />
-              </InputGroup>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <InputGroup>
+              <Input
+                placeholder={rawUrl}
+                readOnly
+                truncate
+                _placeholder={{
+                  fontSize: 'xs',
+                }}
+              />
+            </InputGroup>
+            <Dialog.ActionTrigger asChild>
               <Button
                 onClick={() => {
                   toast({
                     title: t('copy.copied_title'),
+                    type: 'success',
                     duration: 3000,
                   })
                   copy()
@@ -84,11 +81,11 @@ const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: strin
               >
                 {t('share.copy')}
               </Button>
-            </Flex>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+            </Dialog.ActionTrigger>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
   )
 }
 
