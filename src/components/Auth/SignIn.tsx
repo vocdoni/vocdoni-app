@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useNavigate, useOutletContext } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
-import { api, ApiEndpoints, UnverifiedApiError } from '~components/Auth/api'
+import { api, ApiEndpoints, getApiErrorMessage, UnverifiedApiError } from '~components/Auth/api'
 import { ILoginParams } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
 import { VerificationPending } from '~components/Auth/Verify'
@@ -57,7 +57,7 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
   const email = watch('email', emailProp)
 
   const {
-    login: { mutateAsync: login, isError, error, reset },
+    login: { mutateAsync: login, reset },
   } = useAuth()
   const [verifyNeeded, setVerifyNeeded] = useState(false)
   const { mutateAsync: checkVerificationCodeStatus } = useVerificationCodeStatus()
@@ -100,14 +100,20 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
           } catch (error) {
             toast({
               title: t('error.title', { defaultValue: 'Error' }),
-              description: (error as Error).message,
+              description: getApiErrorMessage(error),
               status: 'error',
               duration: 5000,
               isClosable: true,
             })
           }
         } else {
-          throw e
+          toast({
+            title: t('error.title', { defaultValue: 'Error' }),
+            description: getApiErrorMessage(e),
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          })
         }
       })
   }
