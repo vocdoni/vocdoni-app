@@ -8,7 +8,8 @@ const baseStyle = definePartsStyle((props: StyleFunctionProps) => {
   const btn = theme.components?.Button
 
   const buttonVariant = 'solid'
-  const colorScheme = 'black'
+  const colorScheme =
+    props.colorScheme ?? btn?.defaultProps?.colorScheme ?? import.meta.env.BUTTON_COLOR_SCHEME ?? 'black'
 
   const variantDef = btn.variants[buttonVariant]({ ...props, colorScheme })
 

@@ -1498,7 +1498,7 @@
       "title": "Tipus de Pregunta"
     },
     "questions": "Preguntes",
-    "results": "Resultats",
+    "results": "Resultats provisionals",
     "share_caption": "Acabo d'emetre el meu vot a {{ title }}!!",
     "share_title": "Comparteix a {{ network }}",
     "spreadsheet": {

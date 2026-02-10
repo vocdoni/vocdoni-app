@@ -49,25 +49,9 @@ export function useHideNavbar() {
 }
 
 const Navbar = () => {
-  const { isAuthenticated } = useAuth()
-  const isOnProcessesPage = useMatch(Routes.processes.view)
-  const reducedMenu = !!isOnProcessesPage && !isAuthenticated
-  const hideNavbar = useHideNavbar()
-
   return (
-    <Flex width='full' m='0 auto' mx='auto' py={3} position='relative'>
-      <Flex
-        justifyContent='space-between'
-        alignItems='center'
-        zIndex={1}
-        w='100%'
-        display={{ base: 'flex', [BREAKPOINT]: 'grid' }}
-        gridTemplateColumns={`minmax(0, 1fr) ${hideNavbar ? '' : 'auto'} minmax(0, 1fr)`}
-      >
-        <Logo />
-        <DesktopNav display={{ base: reducedMenu ? 'flex' : 'none', [BREAKPOINT]: 'flex' }} />
-        {!reducedMenu && <Mobile />}
-      </Flex>
+    <Flex width='full' m='0 auto' mx='auto' py={3} position='relative' maxW='voting-page'>
+      <Logo />
     </Flex>
   )
 }

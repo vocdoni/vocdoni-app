@@ -84,6 +84,7 @@ const viteconfig = ({ mode }) => {
       'import.meta.env.VOCDONI_ENVIRONMENT': JSON.stringify(vocdoniEnvironment),
       'import.meta.env.CUSTOM_ORGANIZATION_DOMAINS': JSON.parse(process.env.CUSTOM_ORGANIZATION_DOMAINS || '{}'),
       'import.meta.env.PROCESS_IDS': JSON.stringify(process.env.PROCESS_IDS || ''),
+      'import.meta.env.SINGLE_PROCESS_ID': JSON.stringify(process.env.SINGLE_PROCESS_ID || ''),
       'import.meta.env.DEFAULT_CENSUS_SIZE': JSON.stringify(defaultCensusSize),
       'import.meta.env.title': JSON.stringify(title),
       'import.meta.env.STRIPE_PUBLIC_KEY': JSON.stringify(process.env.STRIPE_PUBLIC_KEY),
