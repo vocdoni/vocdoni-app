@@ -315,7 +315,7 @@ export const VoterAuthentication = () => {
               })}
             </Text>
             {census?.use2FA && (
-              <Badge colorScheme='black' fontSize='xs'>
+              <Badge colorPalette='black' fontSize='xs'>
                 <Trans i18nKey='voter_auth.2fa_badge'>2FA</Trans>
               </Badge>
             )}
@@ -327,7 +327,7 @@ export const VoterAuthentication = () => {
           />
         </Flex>
       )}
-      <Button disabled={!groupId} colorScheme='gray' w='full' onClick={onOpen}>
+      <Button disabled={!groupId} colorPalette='gray' w='full' onClick={onOpen}>
         {census ? (
           <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
         ) : (

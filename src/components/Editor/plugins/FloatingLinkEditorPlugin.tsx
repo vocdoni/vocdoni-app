@@ -289,7 +289,7 @@ function FloatingLinkEditor({
           <IconButton
             aria-label={t('editor.link.remove', { defaultValue: 'Remove link' })}
             size='xs'
-            colorScheme='red'
+            colorPalette='red'
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)}
           >

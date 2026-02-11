@@ -5,9 +5,9 @@ import {
   AlertTitle,
   Badge,
   Box,
-  Separator,
   HStack,
   Icon,
+  Separator,
   Stack,
   Text,
 } from '@chakra-ui/react'
@@ -57,7 +57,7 @@ export const CredentialsOverview = ({ credentials, use2FA, use2FAMethod }: Crede
       {use2FA && (
         <Box>
           <HStack mb={1}>
-            <Badge colorScheme='black' fontSize='xs'>
+            <Badge colorPalette='black' fontSize='xs'>
               2FA
             </Badge>
             <Text fontWeight='semibold'>

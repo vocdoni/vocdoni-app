@@ -1,10 +1,10 @@
 import { Button, Flex } from '@chakra-ui/react'
-import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import InputPassword from '~shared/Form/InputPassword'
+import { useToast } from '~shared/Toast'
 import { Routes } from '~src/router/routes'
 import { api, ApiEndpoints } from '../Auth/api'
 import InputBasic from '../shared/Form/InputBasic'
@@ -99,7 +99,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
             validate: (value) => value === methods.getValues('newPassword') || t('passwords_do_not_match'),
           }}
         />
-        <Button type='submit' fontSize='sm' colorScheme='black' fontWeight='500' w='100%' h={50}>
+        <Button type='submit' fontSize='sm' colorPalette='black' fontWeight='500' w='100%' h={50}>
           <Trans i18nKey='reset_password_button'>Reset Password</Trans>
         </Button>
       </Flex>

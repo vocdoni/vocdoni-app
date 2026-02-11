@@ -1,5 +1,5 @@
-import { tableAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
+import { tableAnatomy } from '@chakra-ui/react/anatomy'
 
 const striped = {
   root: {

@@ -7,8 +7,8 @@ import {
   Box,
   Button,
   Flex,
-  FieldLabel as FormLabel,
   FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Heading,
   HStack,
   Icon,
@@ -47,11 +47,6 @@ import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
 import { roleIcons } from '~shared/Layout/SaasSelector'
-import { useToast } from '~shared/Toast'
-import { useProfile } from '~src/queries/account'
-import { QueryKeys } from '~src/queries/keys'
-import { Role, useRemoveUserMutation, useRoles } from '~src/queries/organization'
-import { InviteToTeamModal } from './Invite'
 import {
   Modal,
   ModalBody,
@@ -61,6 +56,11 @@ import {
   ModalOverlay,
   type ModalProps,
 } from '~shared/Modal/Modal'
+import { useToast } from '~shared/Toast'
+import { useProfile } from '~src/queries/account'
+import { QueryKeys } from '~src/queries/keys'
+import { Role, useRemoveUserMutation, useRoles } from '~src/queries/organization'
+import { InviteToTeamModal } from './Invite'
 
 // Define types
 type UserInfo = {
@@ -513,7 +513,7 @@ const RemoveUserModal = ({ isOpen, onClose, user, ...props }: ActiveUserModalPro
         <Button variant='outline' onClick={onClose}>
           {t('team.remove_member.cancel', { defaultValue: 'Cancel' })}
         </Button>
-        <Button loading={removeUser.isPending} colorScheme='red' onClick={removeUserHandler}>
+        <Button loading={removeUser.isPending} colorPalette='red' onClick={removeUserHandler}>
           {t('team.remove_member.confirm', { defaultValue: 'Remove' })}
         </Button>
       </Flex>
@@ -561,7 +561,7 @@ const CancelInvitationModal = ({ isOpen, onClose, user, ...props }: PendingUserM
         <Button variant='outline' onClick={onClose}>
           {t('team.cancel_invitation.cancel', { defaultValue: 'Cancel' })}
         </Button>
-        <Button loading={cancelInvitation.isPending} colorScheme='red' onClick={cancelInvitationHandler}>
+        <Button loading={cancelInvitation.isPending} colorPalette='red' onClick={cancelInvitationHandler}>
           {t('team.cancel_invitation.confirm', { defaultValue: 'Cancel invitation' })}
         </Button>
       </Flex>

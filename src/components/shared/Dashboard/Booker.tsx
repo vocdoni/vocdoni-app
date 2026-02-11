@@ -1,11 +1,11 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
 import { Button, ButtonProps, Code, HStack, Icon, Text, useDisclosure } from '@chakra-ui/react'
-import { useColorMode } from '~theme/color-mode'
 import { useEffect } from 'react'
 import { Trans } from 'react-i18next'
 import { LuCalendar } from 'react-icons/lu'
 import { SetupStepIds, useOrganizationSetup } from '~queries/organization'
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay } from '~shared/Modal/Modal'
+import { useColorMode } from '~theme/color-mode'
 
 type BookerProps = {
   callback?: () => void
@@ -62,7 +62,7 @@ export const BookerModalButton = ({
 
   return (
     <>
-      <Button colorScheme='gray' variant='outline' whiteSpace='wrap' size='md' onClick={onOpen} {...props}>
+      <Button colorPalette='gray' variant='outline' whiteSpace='wrap' size='md' onClick={onOpen} {...props}>
         <HStack gap={iconSpacing}>
           {icon}
           <Text as='span'>{content}</Text>

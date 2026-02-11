@@ -185,7 +185,7 @@ const Setup = () => {
               </Flex>
               <Flex>
                 <AccordionItemTrigger asChild>
-                  <IconButton p={0} variant='ghost' h='28px' minW='28px' colorScheme='gray'>
+                  <IconButton p={0} variant='ghost' h='28px' minW='28px' colorPalette='gray'>
                     <InvertedAccordionIcon />
                   </IconButton>
                 </AccordionItemTrigger>
@@ -194,7 +194,7 @@ const Setup = () => {
                   h='28px'
                   minW='28px'
                   variant='ghost'
-                  colorScheme='gray'
+                  colorPalette='gray'
                   onClick={onClose}
                 >
                   <Icon as={LuX} />
@@ -339,7 +339,7 @@ const Processes = () => {
         <Text color='texts.subtle'>
           {t('dashboard.welcome.no_organization', { defaultValue: 'No organization found' })}
         </Text>
-        <Button asChild colorScheme='gray' variant='outline'>
+        <Button asChild colorPalette='gray' variant='outline'>
           <ReactRouterLink to={generatePath(Routes.dashboard.organizationCreate)}>
             {t('dashboard.welcome.create_first_organization', {
               defaultValue: 'Create your first organization',
@@ -363,7 +363,7 @@ const Processes = () => {
             defaultValue: 'Create your first vote to get started.',
           })}
         />
-        <Button asChild colorScheme='gray' variant='outline'>
+        <Button asChild colorPalette='gray' variant='outline'>
           <ReactRouterLink to={generatePath(Routes.processes.create)}>
             {t('dashboard.welcome.create_first_vote', {
               defaultValue: 'Create your first vote',
@@ -447,7 +447,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
         })}
       </Text>
       <Flex flexDirection='column' gap={4}>
-        <Button asChild colorScheme='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold'>
           <ReactRouterLink to={generatePath(Routes.processes.create)}>
             <HStack gap={2}>
               <Icon as={LuPlus} />
@@ -459,7 +459,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
             </HStack>
           </ReactRouterLink>
         </Button>
-        <Button asChild colorScheme='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold'>
           <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
             <HStack gap={2}>
               <Icon as={LuVote} />
@@ -471,7 +471,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
             </HStack>
           </ReactRouterLink>
         </Button>
-        <Button asChild colorScheme='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold'>
           <ReactRouterLink to={generatePath(Routes.dashboard.settings.base)}>
             <HStack gap={2}>
               <Icon as={LuUsers} />

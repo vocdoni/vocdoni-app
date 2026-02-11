@@ -71,11 +71,17 @@ export const LanguagesMenu = ({ ...props }) => {
   return (
     <MenuRoot onOpenChange={({ open }) => setIsOpen(open)}>
       <MenuTrigger asChild>
-        <Button aria-label={t('menu.burger_aria_label')} variant='solid' colorScheme='gray' minW='none' {...props}>
-          <HStack gap={1}>
-            <FaGlobeAmericas />
-            {isOpen ? <RiArrowUpSLine /> : <RiArrowDownSLine />}
-          </HStack>
+        <Button
+          aria-label={t('menu.burger_aria_label')}
+          variant='solid'
+          colorPalette='gray'
+          minW='none'
+          size='sm'
+          gap={1}
+          {...props}
+        >
+          <FaGlobeAmericas />
+          {isOpen ? <RiArrowUpSLine /> : <RiArrowDownSLine />}
         </Button>
       </MenuTrigger>
       <MenuPositioner>

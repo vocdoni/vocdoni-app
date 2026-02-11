@@ -1,6 +1,5 @@
 import {
   Button,
-  Flex,
   HStack,
   MenuContent,
   MenuItem,
@@ -30,10 +29,8 @@ const AddressBtn = ({ ...props }) => {
     <MenuRoot {...props}>
       <MenuTrigger asChild>
         <Button>
-          <Flex alignItems='center' gap={4}>
-            <Text truncate>{addressTextOverflow(address as string, 3)}</Text>
-            <HiOutlineEllipsisHorizontalCircle />
-          </Flex>
+          {addressTextOverflow(address as string, 3)}
+          <HiOutlineEllipsisHorizontalCircle />
         </Button>
       </MenuTrigger>
       <MenuPositioner>
@@ -53,10 +50,8 @@ const AddressBtn = ({ ...props }) => {
               borderRadius='none'
               mb={1}
             >
-              <HStack gap={2}>
-                <RiFileCopyLine />
-                <Text as='span'>{t('copy.address')}</Text>
-              </HStack>
+              <RiFileCopyLine />
+              {t('copy.address')}
             </Button>
           </MenuItem>
 

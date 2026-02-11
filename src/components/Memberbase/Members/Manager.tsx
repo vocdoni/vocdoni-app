@@ -18,12 +18,12 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useToast } from '~shared/Toast'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-providers'
 import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { useToast } from '~shared/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
 import { useTable } from '../TableProvider'

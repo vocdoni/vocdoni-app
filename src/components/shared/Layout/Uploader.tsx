@@ -13,11 +13,9 @@ import {
   Icon,
   IconButton,
   Image,
-  HStack,
   Spinner,
   Text,
 } from '@chakra-ui/react'
-import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { DropzoneInputProps, DropzoneRootProps, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
@@ -26,6 +24,7 @@ import { BiTrash } from 'react-icons/bi'
 import { LuUpload } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { useToast } from '~shared/Toast'
 
 export type UploaderProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T) => T
@@ -135,7 +134,7 @@ export const AvatarUploader = (props: FormControlProps) => {
                 aria-label={t('remove_avatar', { defaultValue: 'Remove avatar' })}
                 onClick={() => setValue('avatar', '')}
                 size='sm'
-                colorScheme='red'
+                colorPalette='red'
               >
                 <BiTrash />
               </IconButton>
@@ -160,10 +159,8 @@ export const AvatarUploader = (props: FormControlProps) => {
               {isPending ? <Spinner /> : <Icon as={LuUpload} boxSize={8} color='texts.subtle' />}
             </Box>
             <Button variant='outline'>
-              <HStack gap={2}>
-                <Icon as={LuUpload} boxSize={4} />
-                <Text as='span'>{t('uploader.click_or_drag_and_drop_image', { defaultValue: 'Upload Image' })}</Text>
-              </HStack>
+              <Icon as={LuUpload} boxSize={4} />
+              {t('uploader.click_or_drag_and_drop_image', { defaultValue: 'Upload Image' })}
             </Button>
           </Flex>
         )}

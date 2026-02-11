@@ -7,7 +7,6 @@ import {
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   Heading,
-  HStack,
   Link,
   Stack,
   Text,
@@ -146,14 +145,10 @@ export const MembersCsvManager = () => {
               aria-disabled={!visibleColumns.length}
               pointerEvents={visibleColumns.length ? 'auto' : 'none'}
             >
-              <HStack gap={2}>
-                <LuFileSpreadsheet />
-                <Text as='span'>
-                  {t('memberbase.importer.download_template_btn', {
-                    defaultValue: 'Download Template',
-                  })}
-                </Text>
-              </HStack>
+              <LuFileSpreadsheet />
+              {t('memberbase.importer.download_template_btn', {
+                defaultValue: 'Download Template',
+              })}
             </Link>
           </Button>
           {!visibleColumns.length && (

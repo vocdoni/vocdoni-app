@@ -67,7 +67,7 @@ const InviteForm = ({ onClose }: InviteFormProps) => {
         />
         <RoleSelector name='role' required />
         <Flex justifyContent='flex-end' gap={2}>
-          <Button onClick={onClose} colorScheme='gray' variant='outline'>
+          <Button onClick={onClose} colorPalette='gray' variant='outline'>
             <Trans i18nKey='cancel'>Cancel</Trans>
           </Button>
           <Button type='submit' loading={mutation.isPending}>

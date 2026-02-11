@@ -137,7 +137,7 @@ const UserProfile = () => {
                 <Box borderBottom='1px solid' borderBottomColor='table.border' py={1}>
                   <Button
                     fontWeight='normal'
-                    colorScheme='gray'
+                    colorPalette='gray'
                     variant='profilemenu'
                     onClick={() => setSwitchOrg(true)}
                   >
@@ -147,7 +147,7 @@ const UserProfile = () => {
                       <Icon as={LuChevronRight} marginLeft='auto' />
                     </Flex>
                   </Button>
-                  <Button fontWeight='normal' colorScheme='gray' variant='profilemenu' asChild>
+                  <Button fontWeight='normal' colorPalette='gray' variant='profilemenu' asChild>
                     <ReactRouterLink to={Routes.dashboard.profile}>
                       <HStack gap={2}>
                         <Icon as={LuUserPen} />
@@ -168,7 +168,7 @@ const UserProfile = () => {
                   </FieldRoot>
                   <LanguageListDashboard px={2} py={1.5} />
                 </Box>
-                <Button colorScheme='gray' fontWeight='bold' variant='profilemenu' onClick={logout}>
+                <Button colorPalette='gray' fontWeight='bold' variant='profilemenu' onClick={logout}>
                   <HStack gap={2}>
                     <Icon as={LuLogOut} />
                     <Trans i18nKey={'logout'} />

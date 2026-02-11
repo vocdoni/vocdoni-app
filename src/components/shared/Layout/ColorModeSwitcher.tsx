@@ -30,7 +30,7 @@ export const ColorModeSwitcher: FC<ColorModeSwitcherProps> = (props) => {
 
   return (
     <IconButton
-      colorScheme='gray'
+      colorPalette='gray'
       onClick={toggleColorMode}
       aria-label={t('switch_mode', { defaultValue: 'Switch to {{ mode }} mode', mode: text })}
       {...props}
@@ -48,7 +48,7 @@ export const ColorModeSwitcherDetailed: FC<ColorModeSwitcherProps> = (props) => 
 
   return (
     <Button
-      colorScheme='gray'
+      colorPalette='gray'
       fontSize='lg'
       onClick={toggleColorMode}
       aria-label={t('switch_mode', { defaultValue: 'Switch to {{ mode }} mode', mode: text })}

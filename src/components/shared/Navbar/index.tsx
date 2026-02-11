@@ -140,11 +140,16 @@ const Mobile = () => {
                 {isAuthenticated && (
                   <>
                     <List.Item>
-                      <Button onClick={logout} display='flex' alignItems='center' gap={2} h='fit-content'>
+                      <Button
+                        onClick={logout}
+                        display='flex'
+                        alignItems='center'
+                        gap={2}
+                        h='fit-content'
+                        fontWeight='semibold'
+                      >
                         <Icon as={LuLogOut} />
-                        <Text as={'span'} fontWeight={'semibold'}>
-                          <Trans i18nKey='logout'>Logout</Trans>
-                        </Text>
+                        <Trans i18nKey='logout'>Logout</Trans>
                       </Button>
                     </List.Item>
                     <Separator />

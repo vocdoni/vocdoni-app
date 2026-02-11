@@ -1,12 +1,12 @@
-import { Button, HStack, Icon, Text } from '@chakra-ui/react'
+import { Button, Icon } from '@chakra-ui/react'
 import { AuthStorageKeys, saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BsGoogle } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { Routes } from '~src/router/routes'
 import { useToast } from '~shared/Toast'
+import { Routes } from '~src/router/routes'
 import { useAuth } from './useAuth'
 
 const GoogleAuth = () => {
@@ -71,10 +71,8 @@ const GoogleAuth = () => {
       w='full'
       fontWeight={'bold'}
     >
-      <HStack gap={2}>
-        <Icon as={BsGoogle} />
-        <Text as='span'>{t('signin_google')}</Text>
-      </HStack>
+      <Icon as={BsGoogle} />
+      {t('signin_google')}
     </Button>
   )
 }

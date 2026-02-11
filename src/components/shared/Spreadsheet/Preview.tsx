@@ -40,7 +40,7 @@ export const CsvPreview = ({ manager, upload }: CsvPreviewProps) => {
             </List.Item>
           ))}
         </List.Root>
-        <Button colorScheme='primary' border='1px solid' flexShrink={0} {...upload}>
+        <Button colorPalette='primary' border='1px solid' flexShrink={0} {...upload}>
           {t('form.process_create.spreadsheet.preview.upload_new_list')}
         </Button>
       </AlertDescription>

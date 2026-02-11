@@ -54,15 +54,6 @@ const navbar = {
   h: 'fit-content',
 }
 
-const outline = {
-  borderWidth: '1px',
-  borderColor: 'colorPalette.500',
-  color: 'colorPalette.500',
-  _hover: {
-    bg: 'colorPalette.50',
-  },
-}
-
 const defaultPalette = import.meta.env?.BUTTON_COLOR_SCHEME || 'gray'
 
 export const Button = defineRecipe({
@@ -72,7 +63,6 @@ export const Button = defineRecipe({
       unstyled,
       navbar,
       listmenu,
-      outline,
       profilemenu,
     },
   },

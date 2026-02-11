@@ -97,7 +97,7 @@ const SidebarTutorial = () => {
         position={'absolute'}
         top={1}
         right={1}
-        colorScheme='gray'
+        colorPalette='gray'
         size='sm'
       />
       <Text fontSize={'sm'} fontWeight={'bold'}>
@@ -108,7 +108,7 @@ const SidebarTutorial = () => {
           defaultValue: 'Do you need some help with your first voting process? Watch this tutorial or schedule a call.',
         })}
       </Text>
-      <DashboardBookerModalButton variant='solid' colorScheme='gray' w='full' size={'sm'} fontSize={'12px'} />
+      <DashboardBookerModalButton variant='solid' colorPalette='gray' w='full' size={'sm'} fontSize={'12px'} />
     </DashboardBox>
   )
 }

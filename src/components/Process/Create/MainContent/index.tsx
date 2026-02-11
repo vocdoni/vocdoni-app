@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Heading, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, HStack, Icon, Text, useDisclosure, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -19,11 +19,11 @@ import { useAnalytics } from '~components/AnalyticsProvider'
 import { DashboardSection } from '~components/shared/Dashboard/Contents'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
 import { Routes } from '~routes'
+import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 import { AnalyticsEvent } from '~utils/analytics'
 import { DefaultQuestions, SelectorTypes } from '../common'
 import { QuestionForm } from './QuestionForm'
 import { QuestionType } from './QuestionType'
-import { Modal, ModalBody, ModalContent, ModalHeader, ModalOverlay } from '~shared/Modal/Modal'
 
 const DeleteQuestionModal = ({ isOpen, onClose, removeQuestion }) => {
   const { t } = useTranslation()
@@ -41,7 +41,7 @@ const DeleteQuestionModal = ({ isOpen, onClose, removeQuestion }) => {
         <Button variant='outline' onClick={onClose}>
           {t('process.create.question.delete.cancel_button', { defaultValue: 'Cancel' })}
         </Button>
-        <Button colorScheme='red' onClick={removeQuestion}>
+        <Button colorPalette='red' onClick={removeQuestion}>
           {t('process.create.question.delete.delete_button', { defaultValue: 'Delete' })}
         </Button>
       </Flex>

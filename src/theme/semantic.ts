@@ -1,3 +1,5 @@
+import { defineSemanticTokens } from '@chakra-ui/react'
+
 /**
  * Semantic tokens allow us to define tokens, like colors, based on their usage
  * https://v2.chakra-ui.com/docs/styled-system/semantic-tokens
@@ -35,8 +37,15 @@ const texts = {
   },
 }
 
-export const colors = {
+export const colors = defineSemanticTokens.colors({
   chakra,
+  bg: {
+    muted: {
+      value: {
+        _dark: '{colors.brand.800}',
+      },
+    },
+  },
   auth: {
     bg: {
       value: {
@@ -163,7 +172,7 @@ export const colors = {
     },
   },
   texts,
-}
+})
 
 const semanticTokens = {
   colors,

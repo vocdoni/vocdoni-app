@@ -6,7 +6,6 @@ import {
   CheckboxHiddenInput,
   CheckboxRoot,
   CloseButton,
-  Separator,
   DrawerBackdrop,
   DrawerBody,
   DrawerContent,
@@ -18,8 +17,6 @@ import {
   HStack,
   Icon,
   IconButton,
-  Input,
-  InputGroup,
   MenuContent,
   MenuItem,
   MenuPositioner,
@@ -29,28 +26,23 @@ import {
   ProgressRange,
   ProgressRoot,
   ProgressTrack,
+  Separator,
   SimpleGrid,
-  TableBody,
-  TableCell,
-  TableColumnHeader,
-  TableHeader,
-  TableRoot,
-  TableRow,
-  TableScrollArea,
+  Table,
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
 import { PaginationProvider, usePagination } from '@vocdoni/react-providers'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCalendar, LuClock, LuEllipsis, LuEye, LuSearch, LuTrash, LuUsers, LuVote, LuX } from 'react-icons/lu'
+import { LuCalendar, LuClock, LuEllipsis, LuEye, LuTrash, LuUsers, LuVote, LuX } from 'react-icons/lu'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { DashboardBox } from '~components/shared/Dashboard/Contents'
 import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import DeleteModal from '~components/shared/Modal/DeleteModal'
 import { PaginatedTableFooter } from '~components/shared/Pagination/PaginatedTableFooter'
 import { Routes } from '~routes'
-import { Group, useDeleteGroup, useGroupMembers, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { useToast } from '~shared/Toast'
+import { Group, useDeleteGroup, useGroupMembers, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { TableProvider, useTable } from './TableProvider'
 
 type GroupActionsProps = {
@@ -96,19 +88,6 @@ export const useNavigateToVote = () => {
   }
 }
 
-const GroupsFilter = () => {
-  const { t } = useTranslation()
-  return (
-    <InputGroup
-      maxW='250px'
-      startElement={<Icon as={LuSearch} color='texts.subtle' />}
-      startElementProps={{ pointerEvents: 'none' }}
-    >
-      <Input placeholder={t('groups_board.search', { defaultValue: 'Search groups...' })} />
-    </InputGroup>
-  )
-}
-
 const GroupsInfo = () => {
   const { t } = useTranslation()
   const { open: isOpen, onClose } = useDisclosure({ defaultOpen: true })
@@ -117,7 +96,7 @@ const GroupsInfo = () => {
 
   return (
     <DashboardBox position='relative' flexDirection='column' display='flex' gap={2} p={6} borderColor='table.border'>
-      <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorScheme='gray' size='sm' />
+      <CloseButton onClick={onClose} position='absolute' top={2} right={2} colorPalette='gray' size='sm' />
       <Flex flexDirection='row' gap={4}>
         <Icon as={LuUsers} boxSize={8} />
         <Flex flexDirection='column' gap={4}>
@@ -268,11 +247,9 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
                 defaults='Selected: <strong>{{count}} member</strong>'
               />
             </Text>
-            <Button onClick={onOpen} size='sm' colorScheme='red' variant='outline'>
-              <HStack gap={2}>
-                <Icon as={LuTrash} />
-                <Text as='span'>{t('members.table.bulk_delete', { defaultValue: 'Delete' })}</Text>
-              </HStack>
+            <Button onClick={onOpen} size='sm' colorPalette='red' variant='outline'>
+              <Icon as={LuTrash} />
+              {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
             </Button>
           </>
         ) : (
@@ -281,7 +258,7 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
           </Text>
         )}
       </Flex>
-      <TableScrollArea
+      <Table.ScrollArea
         border='1px'
         borderRadius='sm'
         borderColor='table.border'
@@ -305,10 +282,10 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
                 </ProgressTrack>
               </ProgressRoot>
             )}
-            <TableRoot>
-              <TableHeader>
-                <TableRow>
-                  <TableColumnHeader width='50px'>
+            <Table.Root variant='outline'>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader width='50px'>
                     <CheckboxRoot
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
@@ -316,16 +293,16 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
                       <CheckboxHiddenInput />
                       <CheckboxControl />
                     </CheckboxRoot>
-                  </TableColumnHeader>
+                  </Table.ColumnHeader>
                   {columns.map((col) => (
-                    <TableColumnHeader key={col.id}>{col.label}</TableColumnHeader>
+                    <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
                   ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
                 {data.map((member) => (
-                  <TableRow key={member.id}>
-                    <TableCell>
+                  <Table.Row key={member.id}>
+                    <Table.Cell>
                       <CheckboxRoot
                         checked={isSelected(member.id)}
                         onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
@@ -333,20 +310,20 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
                         <CheckboxHiddenInput />
                         <CheckboxControl />
                       </CheckboxRoot>
-                    </TableCell>
+                    </Table.Cell>
                     {columns.map((column) => (
-                      <TableCell key={column.id}>{member[column.id]}</TableCell>
+                      <Table.Cell key={column.id}>{member[column.id]}</Table.Cell>
                     ))}
-                  </TableRow>
+                  </Table.Row>
                 ))}
-              </TableBody>
-            </TableRoot>
+              </Table.Body>
+            </Table.Root>
             <Box p={4}>
               <PaginatedTableFooter />
             </Box>
           </>
         )}
-      </TableScrollArea>
+      </Table.ScrollArea>
       <DeleteModal
         title={t('group.delete_member.title', { defaultValue: 'Delete Members' })}
         subtitle={t('group.delete_member.subtitle', {
@@ -362,7 +339,7 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
           </Button>
           <Button
             loading={deleteGroupMembers.isPending}
-            colorScheme='red'
+            colorPalette='red'
             onClick={() => {
               onDeleteMember(selectedRows.map((row) => row.id))
               onClose()
@@ -431,16 +408,12 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
             </Flex>
             <Flex justify='space-between' mt={4}>
               <Button size='xs' onClick={() => navigateToVote(group.id)}>
-                <HStack gap={2}>
-                  <Icon as={LuVote} boxSize={4} />
-                  <Text as='span'>{t('group.create_vote', { defaultValue: 'Create a Vote' })}</Text>
-                </HStack>
+                <Icon as={LuVote} boxSize={4} />
+                {t('group.create_vote', { defaultValue: 'Create a Vote' })}
               </Button>
-              <Button onClick={openDeleteModal} colorScheme='red' size='xs'>
-                <HStack gap={2}>
-                  <Icon as={LuTrash} boxSize={4} />
-                  <Text as='span'>{t('group.delete_group', { defaultValue: 'Delete group' })}</Text>
-                </HStack>
+              <Button onClick={openDeleteModal} colorPalette='red' size='xs'>
+                <Icon as={LuTrash} boxSize={4} />
+                {t('group.delete_group', { defaultValue: 'Delete group' })}
               </Button>
             </Flex>
           </DrawerBody>
@@ -552,7 +525,7 @@ const DeleteGroupModal = ({ group, isOpen, onClose }: DeleteGroupModalProps) => 
         <Button variant='outline' onClick={onClose}>
           {t('group.actions.cancel', { defaultValue: 'Cancel' })}
         </Button>
-        <Button colorScheme='red' onClick={handleDelete}>
+        <Button colorPalette='red' onClick={handleDelete}>
           {t('group.actions.delete', { defaultValue: 'Delete' })}
         </Button>
       </Flex>
@@ -617,12 +590,8 @@ const GroupCard = ({ group }: GroupCardProps) => {
         </Card.Body>
         <Card.Footer px={0} pb={0}>
           <Button w='full' size='xs' onClick={() => navigateToVote(group.id)}>
-            <HStack gap={2}>
-              <Icon boxSize={4} as={LuVote} />
-              <Text as='span' fontSize='xs'>
-                {t('group.create_vote', { defaultValue: 'Create a Vote' })}
-              </Text>
-            </HStack>
+            <Icon boxSize={4} as={LuVote} />
+            {t('group.create_vote', { defaultValue: 'Create a Vote' })}
           </Button>
         </Card.Footer>
       </Card.Root>

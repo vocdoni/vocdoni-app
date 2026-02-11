@@ -6,7 +6,6 @@ import {
   Drawer,
   Flex,
   Heading,
-  HStack,
   Icon,
   IconButton,
   Input,
@@ -323,15 +322,11 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
           <CreateGroupButton includeAllMembers members={data?.members ?? []} total={data.pagination.totalItems}>
             {t('members.table.create_group_all', { defaultValue: 'Create group (All)' })}
           </CreateGroupButton>
-          <Button variant='outline' colorScheme='red' onClick={onDelete}>
-            <HStack gap={2}>
-              <Icon as={LuTrash2} />
-              <Text as='span'>
-                {t('members.table.delete_all', {
-                  defaultValue: 'Delete (All)',
-                })}
-              </Text>
-            </HStack>
+          <Button variant='outline' colorPalette='red' onClick={onDelete}>
+            <Icon as={LuTrash2} />
+            {t('members.table.delete_all', {
+              defaultValue: 'Delete (All)',
+            })}
           </Button>
         </>
       )}
@@ -405,11 +400,9 @@ const CreateGroupButton = ({
 
   return (
     <>
-      <Button variant='outline' colorScheme='gray' onClick={onOpen} {...rest}>
-        <HStack gap={2}>
-          <Icon as={LuUsers} />
-          <Text as='span'>{children}</Text>
-        </HStack>
+      <Button variant='outline' colorPalette='gray' onClick={onOpen} {...rest}>
+        <Icon as={LuUsers} />
+        {children}
       </Button>
       <Drawer.Root open={isOpen} placement='end' onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
         <Drawer.Backdrop />
@@ -526,16 +519,12 @@ const MemberBulkActions = ({ onDelete, onAddToGroup }: MemberBulkActionsProps) =
           </Text>
           <CreateGroupButton>{t('members.table.create_group', { defaultValue: 'Create group' })}</CreateGroupButton>
           <Button size='sm' variant='outline' onClick={() => onAddToGroup()}>
-            <HStack gap={2}>
-              <Icon as={LuUserPlus} />
-              <Text as='span'>{t('members.table.add_to_group', { defaultValue: 'Add to Group' })}</Text>
-            </HStack>
+            <Icon as={LuUserPlus} />
+            {t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
           </Button>
-          <Button size='sm' colorScheme='red' variant='outline' onClick={() => onDelete()}>
-            <HStack gap={2}>
-              <Icon as={LuTrash2} />
-              <Text as='span'>{t('members.table.bulk_delete', { defaultValue: 'Delete' })}</Text>
-            </HStack>
+          <Button size='sm' colorPalette='red' variant='outline' onClick={() => onDelete()}>
+            <Icon as={LuTrash2} />
+            {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
           </Button>
         </>
       ) : (
@@ -694,7 +683,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         </Button>
         <Button
           loading={deleteMutation.isPending || isFetchingAll}
-          colorScheme='red'
+          colorPalette='red'
           onClick={handleDelete}
           disabled={isFetchingAll || selectedMembers.length === 0}
         >
@@ -750,10 +739,8 @@ const MembersTable = () => {
             <MemberManager
               control={
                 <Button>
-                  <HStack gap={2}>
-                    <Icon as={LuPlus} />
-                    <Text as='span'>{t('memberbase.add_member.button', { defaultValue: 'Add Member' })}</Text>
-                  </HStack>
+                  <Icon as={LuPlus} />
+                  {t('memberbase.add_member.button', { defaultValue: 'Add Member' })}
                 </Button>
               }
             />

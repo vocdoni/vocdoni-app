@@ -24,7 +24,7 @@ export const AccountEdit = () => {
         <Text fontSize='sm' color='texts.subtle'>
           {t('delete.delete_subtitle', { defaultValue: 'Permanently delete your account and all associated data' })}
         </Text>
-        <Button colorScheme='red' alignSelf={'flex-start'} onClick={onOpen}>
+        <Button colorPalette='red' alignSelf={'flex-start'} onClick={onOpen}>
           <Trans i18nKey='delete_my_account'>Delete Account</Trans>
         </Button>
       </DashboardBox>

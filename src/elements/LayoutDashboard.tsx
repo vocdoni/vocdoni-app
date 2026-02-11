@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Icon, IconButton, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, Flex, Icon, IconButton, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { OrganizationProvider, useClient } from '@vocdoni/react-providers'
 import React, { createContext, PropsWithChildren, useEffect, useState } from 'react'
@@ -62,7 +62,7 @@ const LayoutDashboard: React.FC = () => {
             >
               <IconButton
                 aria-label={t('menu.open')}
-                colorScheme='gray'
+                colorPalette='gray'
                 variant='subtle'
                 size='xs'
                 onClick={isMobile ? onOpen : () => setReduced((prev) => !prev)}
@@ -88,12 +88,8 @@ const LayoutDashboard: React.FC = () => {
                 </DashboardBookerModalButton>
                 <Button asChild size='sm'>
                   <ReactRouterLink to={generatePath(Routes.processes.create)}>
-                    <HStack gap={{ base: 0, lg: 2 }}>
-                      <Icon as={LuPlus} />
-                      <Text as='span' fontSize='sm' display={{ base: 'none', lg: 'flex' }}>
-                        <Trans i18nKey='new_voting'>New vote</Trans>
-                      </Text>
-                    </HStack>
+                    <Icon as={LuPlus} />
+                    <Trans i18nKey='new_voting'>New vote</Trans>
                   </ReactRouterLink>
                 </Button>
               </Flex>

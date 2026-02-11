@@ -501,10 +501,8 @@ export const ImportMembers = () => {
   return (
     <>
       <Button ref={btnRef} variant='outline' onClick={onOpen}>
-        <HStack gap={2}>
-          <Icon as={LuUpload} />
-          <Text as='span'>{t('memberbase.importer.button', { defaultValue: 'Import' })}</Text>
-        </HStack>
+        <Icon as={LuUpload} />
+        {t('memberbase.importer.button', { defaultValue: 'Import' })}
       </Button>
       <DrawerRoot
         open={isOpen}

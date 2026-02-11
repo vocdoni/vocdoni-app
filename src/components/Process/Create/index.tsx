@@ -406,7 +406,7 @@ const TemplateButtons = () => {
           <Button variant='outline' onClick={handleCancel}>
             {t('process.create.change_template.cancel', 'Cancel')}
           </Button>
-          <Button colorScheme='red' onClick={handleConfirm}>
+          <Button colorPalette='red' onClick={handleConfirm}>
             {t('process.create.change_template.change', 'Change Template')}
           </Button>
         </Flex>
@@ -446,12 +446,12 @@ const LeaveConfirmationModal = ({
         </Button>
         <Spacer />
         {isSamePath ? (
-          <Button colorScheme='red' onClick={() => onResetSamePath()}>
+          <Button colorPalette='red' onClick={() => onResetSamePath()}>
             {t('process.create.leave_confirmation.reset', { defaultValue: 'Reset' })}
           </Button>
         ) : (
           <>
-            <Button colorScheme='red' onClick={onLeave}>
+            <Button colorPalette='red' onClick={onLeave}>
               {t('process.create.leave_confirmation.leave', { defaultValue: 'Leave without saving' })}
             </Button>
             <Button onClick={onSaveAndLeave}>
@@ -919,12 +919,17 @@ const ProcessCreateView = () => {
                 >
                   <Icon as={LuSettings} />
                 </IconButton>
-                <Button type='submit' colorScheme='black' alignSelf='flex-end' loading={methods.formState.isSubmitting}>
+                <Button
+                  type='submit'
+                  colorPalette='black'
+                  alignSelf='flex-end'
+                  loading={methods.formState.isSubmitting}
+                >
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
                 <Button
                   type='button'
-                  colorScheme='black'
+                  colorPalette='black'
                   variant='outline'
                   onClick={handleManualSave}
                   loading={isSaving}

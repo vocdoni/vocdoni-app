@@ -40,7 +40,7 @@ export const DashboardMenuItemButton = forwardRef(
         }}
         variant='listmenu'
         size='xs'
-        colorScheme='gray'
+        colorPalette='gray'
         justifyContent='start'
         gap={4}
         p={2}
@@ -58,7 +58,7 @@ export const DashboardMenuItemButton = forwardRef(
         variant='listmenu'
         size='xs'
         fontSize='sm'
-        colorScheme='gray'
+        colorPalette='gray'
         justifyContent='start'
         gap={4}
         p={2}
