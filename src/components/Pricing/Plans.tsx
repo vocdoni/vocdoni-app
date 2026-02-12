@@ -1,15 +1,4 @@
-import {
-  Flex,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
-  SimpleGrid,
-  TabsList,
-  TabsRoot,
-  TabsTrigger,
-  TagLabel,
-  TagRoot,
-} from '@chakra-ui/react'
+import { Flex, ProgressRange, ProgressRoot, ProgressTrack, SimpleGrid, Tabs, TagLabel, TagRoot } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -349,26 +338,25 @@ export const SubscriptionPlans = () => {
               description={alertDescription}
             />
           )}
-          <TabsRoot
-            variant='settings'
+          <Tabs.Root
             alignSelf='center'
             value={period}
             onValueChange={({ value }) => methods.setValue('billingPeriod', value as 'month' | 'year')}
           >
-            <TabsList>
-              <TabsTrigger value='month'>
+            <Tabs.List>
+              <Tabs.Trigger value='month'>
                 <Trans i18nKey='monthly'>Monthly</Trans>
-              </TabsTrigger>
-              <TabsTrigger value='year'>
+              </Tabs.Trigger>
+              <Tabs.Trigger value='year'>
                 <Trans i18nKey='annual'>
                   Annual
                   <TagRoot colorPalette='green' ml={2} size='sm' fontWeight='extrabold'>
                     <TagLabel>Save 40%</TagLabel>
                   </TagRoot>
                 </Trans>
-              </TabsTrigger>
-            </TabsList>
-          </TabsRoot>
+              </Tabs.Trigger>
+            </Tabs.List>
+          </Tabs.Root>
           <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={6}>
             {cards.map((card, idx) => (
               <PricingCard key={idx} plan={plans[idx]} {...card} />

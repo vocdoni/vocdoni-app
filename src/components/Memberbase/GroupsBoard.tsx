@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Card,
   CheckboxControl,
@@ -317,10 +316,10 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
                   </Table.Row>
                 ))}
               </Table.Body>
+              <Table.Caption>
+                <PaginatedTableFooter />
+              </Table.Caption>
             </Table.Root>
-            <Box p={4}>
-              <PaginatedTableFooter />
-            </Box>
           </>
         )}
       </Table.ScrollArea>

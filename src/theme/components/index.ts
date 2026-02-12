@@ -29,6 +29,7 @@ import { SecurityLevelBox } from './securitylevelbox'
 import { SpreadsheetAccess } from './spreadsheetAccess'
 import { Stepper } from './stepper'
 import { Switch } from './switch'
+import { Table } from './table'
 import { Tabs } from './tabs'
 import { Tag } from './tag'
 import { Text } from './text'
@@ -67,7 +68,7 @@ export const slotRecipes = {
   progress: Progress,
   radioGroup: Radio,
   switch: Switch,
-  // table: Table,
+  table: Table,
   tabs: Tabs,
   tag: Tag,
   tooltip: Tooltip,

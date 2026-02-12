@@ -777,11 +777,11 @@ const MembersTable = () => {
               </Table.Row>
             </Table.Header>
             <MembersList openDeleteSelected={openDeleteSelected} onAddToGroup={openAddToGroup} />
+            <Table.Caption p={4}>
+              <RoutedPaginatedTableFooter />
+            </Table.Caption>
           </Table.Root>
         </Table.ScrollArea>
-        <Box p={4}>
-          <RoutedPaginatedTableFooter />
-        </Box>
       </Box>
       <DeleteMemberModal isOpen={isOpen} onClose={onClose} mode={deleteMode} />
       <AddMembersToGroupDrawer isOpen={isAddToGroupOpen} onClose={onAddToGroupClose} />

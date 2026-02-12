@@ -269,7 +269,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
           })}
         </VStack>
 
-        <Button type='submit' size='lg' loading={isSubmitting || updateProfile.isPending} alignSelf={'start'}>
+        <Button type='submit' loading={isSubmitting || updateProfile.isPending} alignSelf={'start'}>
           {t('actions.save_changes', { defaultValue: 'Save Changes' })}
         </Button>
       </VStack>

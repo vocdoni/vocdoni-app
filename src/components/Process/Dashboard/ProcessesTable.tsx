@@ -1,4 +1,4 @@
-import { Box, Icon, IconButton, Link, Menu, MenuPositioner, Table, Tag } from '@chakra-ui/react'
+import { Box, Icon, IconButton, Link, Menu, MenuPositioner, Table, Tag, Text } from '@chakra-ui/react'
 import { ElectionProvider, useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
@@ -46,11 +46,11 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
                 </ElectionProvider>
               ))}
           </Table.Body>
+          <Table.Caption>
+            <RoutedPaginatedTableFooter />
+          </Table.Caption>
         </Table.Root>
       </Table.ScrollArea>
-      <Box p={4}>
-        <RoutedPaginatedTableFooter />
-      </Box>
     </Box>
   )
 }
@@ -67,7 +67,9 @@ const ProcessRow = () => {
       <Table.Cell>
         <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
           <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
-            {election.title.default}
+            <Text truncate maxW='600px'>
+              {election.title.default}
+            </Text>
           </RouterLink>
         </Link>
       </Table.Cell>

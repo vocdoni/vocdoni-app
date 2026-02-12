@@ -5,6 +5,16 @@ const baseStyle = {
   fontWeight: 'bold',
   borderRadius: 'sm',
   fontSize: 'sm',
+  _currentPage: {
+    fontWeight: 'bold',
+    backgroundColor: {
+      _dark: 'colorPalette.800',
+      _light: 'colorPalette.200',
+    },
+  },
+  _selected: {
+    fontWeight: 'bold',
+  },
 }
 
 const listmenu = {
