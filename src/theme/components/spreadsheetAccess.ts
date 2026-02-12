@@ -48,8 +48,9 @@ const baseStyle = definePartsStyle((props: StyleFunctionProps) => {
     close: {
       display: 'none',
     },
-
-    input: { mb: 5 },
+    control: {
+      mb: 5,
+    },
   }
 })
 
