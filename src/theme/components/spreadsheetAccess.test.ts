@@ -21,7 +21,10 @@ describe('SpreadsheetAccess theme', () => {
       colorMode: 'light',
     } as any
 
-    const styles = typeof SpreadsheetAccess.baseStyle === 'function' ? SpreadsheetAccess.baseStyle(props) : SpreadsheetAccess.baseStyle
+    const styles =
+      typeof SpreadsheetAccess.baseStyle === 'function'
+        ? SpreadsheetAccess.baseStyle(props)
+        : SpreadsheetAccess.baseStyle
     const yellowVariant = theme.components.Button.variants.solid({ ...props, colorScheme: 'yellow' })
     const blackVariant = theme.components.Button.variants.solid({ ...props, colorScheme: 'black' })
 

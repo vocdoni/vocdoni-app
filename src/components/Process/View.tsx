@@ -43,7 +43,7 @@ import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
 import { useVotingMethodLabel } from './resultTypeLabels'
-import successImg from '/assets/spreadsheet-success-modal.jpg'
+import successImg from '/assets/vote_success_icon.png'
 
 type CensusInfo = { size: number; weight: bigint; type: CensusType }
 
@@ -343,9 +343,11 @@ const SuccessVoteModal = () => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          <Text mb={3}>{t('process.success_modal.title')}</Text>
-          <Image src={successImg} borderRadius={'lg'} />
+        <ModalHeader alignItems='center'>
+          <Text mb={3} alignSelf='start'>
+            {t('process.success_modal.title')}
+          </Text>
+          <Image src={successImg} />
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -372,7 +374,7 @@ const SuccessVoteModal = () => {
           </UnorderedList>
         </ModalBody>
 
-        <ModalFooter mt={4}>
+        <ModalFooter mt={4} justifyContent='end'>
           <Button onClick={onClose}>{t('process.success_modal.btn')}</Button>
         </ModalFooter>
       </ModalContent>
