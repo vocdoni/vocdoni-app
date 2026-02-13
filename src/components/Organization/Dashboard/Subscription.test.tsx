@@ -47,10 +47,11 @@ beforeAll(async () => {
   await i18n.use(initReactI18next).init({
     lng: 'en',
     fallbackLng: 'en',
+    defaultNS: 'common',
     interpolation: { escapeValue: false },
     resources: {
       en: {
-        translation: {
+        common: {
           subscription_plan: {
             need_help: '<0>Need help choosing?</0> <1>Contact our sales team</1>',
           },

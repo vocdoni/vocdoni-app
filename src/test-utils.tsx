@@ -13,9 +13,10 @@ import { system } from '~theme/system'
 i18n.init({
   lng: 'en',
   fallbackLng: 'en',
+  defaultNS: 'common',
   resources: {
     en: {
-      translation: {
+      common: {
         'connection.error_title': 'Connection issues detected',
         'connection.error_description': 'Unable to reach the server. Please check your connection.',
         'connection.restored_title': 'Connection restored',

@@ -48,10 +48,11 @@ beforeAll(async () => {
   await i18n.use(initReactI18next).init({
     lng: 'en',
     fallbackLng: 'en',
+    defaultNS: 'common',
     interpolation: { escapeValue: false },
     resources: {
       en: {
-        translation: {
+        common: {
           pricing_card: {
             need_more_members: 'Need more members? <2>Contact us</2>',
           },

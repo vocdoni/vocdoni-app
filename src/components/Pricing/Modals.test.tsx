@@ -7,7 +7,7 @@ describe('PlanUpgradeModal', () => {
   it('renders memberbase copy when context is memberbase', () => {
     i18n.addResourceBundle(
       'en',
-      'translation',
+      'common',
       {
         plan_upgrade: {
           memberbase_title: 'Memberbase upgrade title',

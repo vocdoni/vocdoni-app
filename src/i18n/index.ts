@@ -19,7 +19,7 @@ i18n
       fallbackLng: fallbackLanguage,
       supportedLngs: supportedLanguages,
       debug: import.meta.env.NODE_ENV === 'development',
-      defaultNS: 'translation',
+      defaultNS: 'common',
       interpolation: {
         escapeValue: false,
       },
@@ -40,7 +40,7 @@ i18n
 // load translations
 for (const lang of supportedLanguages) {
   if (typeof translations[lang] !== 'undefined') {
-    i18n.addResourceBundle(lang, 'translation', translations[lang])
+    i18n.addResourceBundle(lang, 'common', translations[lang])
   }
 }
 

@@ -30,7 +30,7 @@ describe('CensusCreation', () => {
   it('renders group empty state without crashing', () => {
     i18n.addResource(
       'en',
-      'translation',
+      'common',
       'process_create.census.group.no_groups',
       'To start a vote, you first need to create a group of eligible voters from your memberbase. <0/>.'
     )

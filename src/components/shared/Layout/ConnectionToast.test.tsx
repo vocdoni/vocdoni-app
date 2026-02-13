@@ -11,9 +11,10 @@ import { ConnectionToastProvider, useConnectionToast } from './ConnectionToast'
 i18n.init({
   lng: 'en',
   fallbackLng: 'en',
+  defaultNS: 'common',
   resources: {
     en: {
-      translation: {
+      common: {
         'connection.error_title': 'Connection issues detected',
         'connection.error_description': 'Unable to reach the server',
         'connection.restored_title': 'Connection restored',

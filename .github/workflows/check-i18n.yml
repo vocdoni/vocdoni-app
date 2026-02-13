@@ -35,10 +35,10 @@ jobs:
           set -euo pipefail
 
           # Collect unstaged changes in the locales path (modified files)
-          MODIFIED="$(git diff --name-only -- src/i18n/locales/*.json || true)"
+          MODIFIED="$(git diff --name-only -- 'src/i18n/locales/**/*.json' || true)"
 
           # Collect untracked (new) files in the locales path
-          UNTRACKED="$(git ls-files --others --exclude-standard -- src/i18n/locales/*.json || true)"
+          UNTRACKED="$(git ls-files --others --exclude-standard -- 'src/i18n/locales/**/*.json' || true)"
 
           if [ -n "${MODIFIED}${UNTRACKED}" ]; then
             echo "::error::Translation files are out of date. Run 'pnpm translations' locally and commit the changes."
