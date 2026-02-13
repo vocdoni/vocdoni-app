@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Dialog,
-  FieldRoot as FormControl,
-  FieldLabel as FormLabel,
-  HStack,
-  Switch,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Button, Dialog, FieldRoot as FormControl, HStack, Switch, Text } from '@chakra-ui/react'
 import { useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -96,10 +87,7 @@ export const QuestionType = () => {
         </Text>
       </Box>
       <HStack gap={4} flexDir={{ base: 'column', sm: 'row' }} alignItems={{ base: 'start', sm: 'center' }}>
-        <FormControl display='flex' alignItems='center'>
-          <FormLabel htmlFor='extended-info' mb='0'>
-            <Trans i18nKey='process.extended_info'>Extended info</Trans>
-          </FormLabel>
+        <FormControl display='flex' flexDir='row'>
           <Controller
             name='extendedInfo'
             control={control}
@@ -110,6 +98,9 @@ export const QuestionType = () => {
                 onCheckedChange={(details) => field.onChange(details.checked)}
               >
                 <Switch.HiddenInput />
+                <Switch.Label>
+                  <Trans i18nKey='process.extended_info'>Extended info</Trans>
+                </Switch.Label>
                 <Switch.Control>
                   <Switch.Thumb />
                 </Switch.Control>

@@ -66,27 +66,26 @@ const MarkdownEditor = (props: EditorProps) => {
   const [isLinkEditMode, setIsLinkEditMode] = useState(false)
   const isUnstyled = props.variant === ('unstyled' as EditorProps['variant'])
   const recipe = useRecipe({ key: 'textarea' })
-  const textareaStyles = isUnstyled ? undefined : recipe({ variant: props.variant })
+  const textareaStyles = isUnstyled ? undefined : recipe(props)
 
   return (
     <>
-      <Box position='relative'>
+      <Box position='relative' w='full'>
         <RichTextPlugin
           contentEditable={
-            <Box ref={setFloatingAnchorElem}>
+            <Box ref={setFloatingAnchorElem} w='full'>
               <ChakraContentEditable
-                css={textareaStyles}
-                padding={props.padding ?? 0}
-                overflow='auto'
-                w='full'
-                role='textbox'
                 aria-multiline='true'
+                overflow='auto'
+                role='textbox'
+                minH='30px'
+                css={textareaStyles}
               />
             </Box>
           }
           aria-placeholder={props.placeholder}
           placeholder={
-            <Text position='absolute' top={0} padding={props.padding ?? 0} color='texts.dark' pointerEvents='none'>
+            <Text position='absolute' top={0} pointerEvents='none' css={textareaStyles} data-placeholder>
               {props.placeholder}
             </Text>
           }

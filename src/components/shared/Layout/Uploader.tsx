@@ -221,7 +221,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
 
   return (
     <FormControl invalid={!!errors?.[name]}>
-      <Flex direction='column' gap={2} align='center'>
+      <Flex direction='column' gap={2} align='center' w='full'>
         {value ? (
           <Flex
             {...getRootProps()}
@@ -254,7 +254,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
             borderColor={isDragActive ? 'green.400' : 'gray.600'}
           >
             <input {...getInputProps()} />
-            {isPending ? <Spinner /> : <Icon as={LuUpload} boxSize={6} color='gray.400' />}
+            {isPending ? <Spinner color='white' /> : <Icon as={LuUpload} boxSize={6} color='gray.400' />}
           </Flex>
         )}
       </Flex>

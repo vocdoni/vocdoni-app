@@ -103,11 +103,11 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
             </Text>
             <FormControl invalid={!!errors.questions?.[index]?.title}>
               <Input
-                px={0}
                 placeholder={
                   placeholders[activeTemplate]?.questions?.[index]?.title ??
                   t('process_create.question.title.placeholder', 'Add a title to the question')
                 }
+                variant='borderless'
                 fontSize='lg'
                 fontWeight='bold'
                 {...register(`questions.${index}.title`, {
@@ -122,6 +122,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
               render={({ field }) => (
                 <Editor
                   onChange={field.onChange}
+                  variant='borderless'
                   placeholder={
                     placeholders[activeTemplate]?.questions?.[index]?.description ??
                     t(

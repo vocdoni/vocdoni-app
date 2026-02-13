@@ -30,7 +30,7 @@ const baseStyle = {
   close: {
     display: 'none',
   },
-  input: { mb: 5 },
+  control: { mb: 5 },
 }
 
 export const SpreadsheetAccess = defineSlotRecipe({

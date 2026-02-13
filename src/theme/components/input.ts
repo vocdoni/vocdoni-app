@@ -1,29 +1,25 @@
 import { defineRecipe } from '@chakra-ui/react'
 
 const baseStyle = {
-  fontSize: 'md',
+  textStyle: 'md',
   _placeholder: {
     color: 'input.placeholder',
-    fontSize: 'md',
+    textStyle: 'md',
   },
 }
 
 const xxl = {
-  fontSize: '2xl',
+  textStyle: '2xl',
   _placeholder: {
-    fontSize: '2xl',
+    textStyle: '2xl',
   },
 }
 
 const sm = {
-  paddingY: 2,
-  paddingX: 3,
   borderRadius: 'sm',
 }
 
 const md = {
-  paddingY: 2.5,
-  paddingX: 3.5,
   borderRadius: 'sm',
 }
 
@@ -34,6 +30,13 @@ export const Input = defineRecipe({
       sm,
       md,
       '2xl': xxl,
+    },
+    variant: {
+      borderless: {
+        border: 'none',
+        px: 0,
+        bg: 'transparent',
+      },
     },
   },
 })

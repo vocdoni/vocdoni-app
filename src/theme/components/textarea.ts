@@ -10,4 +10,12 @@ const baseStyle = {
 
 export const Textarea = defineRecipe({
   base: baseStyle,
+  variants: {
+    variant: {
+      borderless: {
+        border: 'none',
+        px: 0,
+      },
+    },
+  },
 })

@@ -160,7 +160,13 @@ const UserProfile = () => {
                   <Text fontWeight='extrabold' fontSize='sm' px={2} py={1.5}>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
-                  <FieldRoot display='flex' justifyContent='space-between' p={2} alignItems='center'>
+                  <FieldRoot
+                    display='flex'
+                    justifyContent='space-between'
+                    p={2}
+                    alignItems='center'
+                    flexDirection='row'
+                  >
                     <FieldLabel m={0} htmlFor='theme-toggle'>
                       <Trans i18nKey='theme'>Theme</Trans>
                     </FieldLabel>

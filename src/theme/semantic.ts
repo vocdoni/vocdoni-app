@@ -176,10 +176,6 @@ export const colors = defineSemanticTokens.colors({
 
 const semanticTokens = {
   colors,
-  fontWeights: {
-    normal: { value: 300 },
-    bold: { value: 400 },
-  },
 }
 
 export default semanticTokens

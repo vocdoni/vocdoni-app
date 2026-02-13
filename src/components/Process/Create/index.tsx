@@ -944,7 +944,7 @@ const ProcessCreateView = () => {
               <TemplateButtons />
               <FormControl invalid={!!methods.formState.errors.title}>
                 <Input
-                  px={0}
+                  variant='borderless'
                   placeholder={
                     placeholders[activeTemplate]?.title ??
                     t('process.create.description.title', {
@@ -969,6 +969,7 @@ const ProcessCreateView = () => {
                   <Editor
                     key={nextId}
                     onChange={field.onChange}
+                    variant='borderless'
                     placeholder={
                       placeholders[activeTemplate]?.description ??
                       t('process.create.description.placeholder', 'Add a description...')

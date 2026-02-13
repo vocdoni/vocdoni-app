@@ -9,7 +9,6 @@ export type DashboardCardHeaderProps = BoxProps & {
 export const DashboardBox = (props: BoxProps) => (
   <Box
     borderRadius='md'
-    boxShadow='sm'
     border='1px solid'
     _dark={{ borderColor: 'brand.700' }}
     _light={{ borderColor: 'gray.200' }}

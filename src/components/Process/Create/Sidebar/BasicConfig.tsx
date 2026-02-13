@@ -3,16 +3,16 @@ import {
   AlertDescription,
   AlertIndicator,
   Box,
+  FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
-  FieldRoot as FormControl,
   HStack,
   Input,
   Link,
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { MutableRefObject, ReactNode, useEffect, useRef, useState } from 'react'
+import { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
@@ -120,106 +120,96 @@ export const BasicConfig = () => {
   }
 
   return (
-    <VStack align='stretch'>
-      <Box>
-        <FormControl display='flex' alignItems='center' mb={4}>
-          <FormLabel htmlFor='autoStart' mb='0'>
-            <Trans i18nKey='process_create.auto_start'>Start immediately</Trans>
-          </FormLabel>
-          <Switch.Root
-            id='autoStart'
-            checked={autoStart}
-            onCheckedChange={(details) => handleAutoStartChange(details.checked)}
-          >
-            <Switch.HiddenInput {...register('autoStart')} />
-            <Switch.Control>
-              <Switch.Thumb />
-            </Switch.Control>
-          </Switch.Root>
-        </FormControl>
+    <VStack align='stretch' gap={4}>
+      <Switch.Root checked={autoStart} onCheckedChange={(details) => handleAutoStartChange(details.checked)}>
+        <Switch.HiddenInput {...register('autoStart')} />
+        <Switch.Label>
+          <Trans i18nKey='process_create.auto_start'>Start immediately</Trans>
+        </Switch.Label>
+        <Switch.Control>
+          <Switch.Thumb />
+        </Switch.Control>
+      </Switch.Root>
 
-        {!autoStart && (
-          <>
-            <FormControl invalid={!!errors.startDate || !!errors.startTime} mb={2}>
-              <FormLabel htmlFor='startDate'>
-                <Trans i18nKey='process_create.start_datetime'>Start date and time</Trans>
-              </FormLabel>
-              <HStack>
-                <Box flex='1'>
-                  <Input
-                    id='startDate'
-                    {...startDateRegister}
-                    ref={(e) => {
-                      startDateRegister.ref(e)
-                      startDateRef.current = e
-                    }}
-                    type='date'
-                    min={today}
-                    onFocus={() => showPicker(startDateRef)}
-                  />
-                </Box>
-                <Box flex='1'>
-                  <Input
-                    type='time'
-                    {...register('startTime', {
-                      required,
-                    })}
-                  />
-                </Box>
-              </HStack>
-              <FormErrorMessage>
-                {errors.startDate?.message?.toString() || errors.startTime?.message?.toString()}
-              </FormErrorMessage>
-            </FormControl>
-          </>
-        )}
-      </Box>
+      {!autoStart && (
+        <>
+          <FormControl invalid={!!errors.startDate || !!errors.startTime} mb={2}>
+            <FormLabel htmlFor='startDate'>
+              <Trans i18nKey='process_create.start_datetime'>Start date and time</Trans>
+            </FormLabel>
+            <HStack>
+              <Box flex='1'>
+                <Input
+                  id='startDate'
+                  {...startDateRegister}
+                  ref={(e) => {
+                    startDateRegister.ref(e)
+                    startDateRef.current = e
+                  }}
+                  type='date'
+                  min={today}
+                  onFocus={() => showPicker(startDateRef)}
+                />
+              </Box>
+              <Box flex='1'>
+                <Input
+                  type='time'
+                  {...register('startTime', {
+                    required,
+                  })}
+                />
+              </Box>
+            </HStack>
+            <FormErrorMessage>
+              {errors.startDate?.message?.toString() || errors.startTime?.message?.toString()}
+            </FormErrorMessage>
+          </FormControl>
+        </>
+      )}
 
       {/* End date and time */}
-      <Box>
-        <FormControl invalid={!!errors.endDate || !!errors.endTime} mb={2}>
-          <FormLabel htmlFor='endDate'>
-            <Trans i18nKey='process_create.end_datetime'>End date and time</Trans>
-          </FormLabel>
-          <HStack gap={4} align='start'>
-            <Box flex='1'>
-              <Input
-                id='endDate'
-                {...endDateRegister}
-                ref={(e) => {
-                  endDateRegister.ref(e)
-                  endDateRef.current = e
-                }}
-                type='date'
-                min={format(min, DateFormatHtml)}
-                onFocus={() => showPicker(endDateRef)}
-              />
-            </Box>
-            <Box flex='1'>
-              <Input
-                type='time'
-                {...register('endTime', {
-                  required,
-                  validate: (value: string) => {
-                    if (!value || !endDate) return true
-                    const end = new Date(`${endDate}T${value}`)
-                    const start = startDate && !autoStart ? new Date(`${startDate}T${startTime}`) : new Date()
-                    return (
-                      end >= start ||
-                      t('form.create_process.error.end_time_greater_than_start', {
-                        defaultValue: 'End time must be greater than start time.',
-                      })
-                    )
-                  },
-                })}
-              />
-            </Box>
-          </HStack>
-          <FormErrorMessage>
-            {errors.endDate?.message?.toString() || errors.endTime?.message?.toString()}
-          </FormErrorMessage>
-        </FormControl>
-      </Box>
+      <FormControl invalid={!!errors.endDate || !!errors.endTime} mb={2}>
+        <FormLabel htmlFor='endDate'>
+          <Trans i18nKey='process_create.end_datetime'>End date and time</Trans>
+        </FormLabel>
+        <HStack gap={4} align='start'>
+          <Box flex='1'>
+            <Input
+              id='endDate'
+              {...endDateRegister}
+              ref={(e) => {
+                endDateRegister.ref(e)
+                endDateRef.current = e
+              }}
+              type='date'
+              min={format(min, DateFormatHtml)}
+              onFocus={() => showPicker(endDateRef)}
+            />
+          </Box>
+          <Box flex='1'>
+            <Input
+              type='time'
+              {...register('endTime', {
+                required,
+                validate: (value: string) => {
+                  if (!value || !endDate) return true
+                  const end = new Date(`${endDate}T${value}`)
+                  const start = startDate && !autoStart ? new Date(`${startDate}T${startTime}`) : new Date()
+                  return (
+                    end >= start ||
+                    t('form.create_process.error.end_time_greater_than_start', {
+                      defaultValue: 'End time must be greater than start time.',
+                    })
+                  )
+                },
+              })}
+            />
+          </Box>
+        </HStack>
+        <FormErrorMessage>
+          {errors.endDate?.message?.toString() || errors.endTime?.message?.toString()}
+        </FormErrorMessage>
+      </FormControl>
 
       {durationExceeded && (
         <Alert status='error'>

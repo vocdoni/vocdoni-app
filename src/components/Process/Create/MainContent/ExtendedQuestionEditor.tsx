@@ -142,7 +142,7 @@ const SortableExtendedOption = ({
             {/* Title */}
             <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
               <Input
-                px={0}
+                variant='borderless'
                 placeholder={
                   placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.option ??
                   t('process_create.option.placeholder', 'Option {{number}}', {
@@ -166,6 +166,7 @@ const SortableExtendedOption = ({
               render={({ field }) => (
                 <Editor
                   onChange={field.onChange}
+                  variant='borderless'
                   placeholder={
                     placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.description ??
                     t('process_create.option.description_placeholder', 'Project description')
