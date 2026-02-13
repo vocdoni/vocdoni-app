@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CloseButton,
   Flex,
   HStack,
   Icon,
@@ -21,7 +22,7 @@ import { ElectionProvider, useClient, useOrganization } from '@vocdoni/react-pro
 import { PublishedElection } from '@vocdoni/sdk'
 import { format } from 'date-fns'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote, LuX } from 'react-icons/lu'
+import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -167,33 +168,24 @@ const Setup = () => {
       >
         <Accordion.Root defaultValue={['setup']} collapsible border='none'>
           <Accordion.Item value='setup' border='none' alignItems='center'>
-            <Accordion.ItemTrigger px={4} py={4}>
-              <Flex flex='1' align='center'>
+            <Flex flex='1' align='center' px={4} py={4}>
+              <Accordion.ItemTrigger flex='1' p={0}>
                 <Icon as={LuCheck} mr={2} boxSize={5} />
                 <Text fontWeight='bold'>
                   {t('setup.title', {
                     defaultValue: 'Complete your setup',
                   })}
                 </Text>
-              </Flex>
-              <Flex>
+              </Accordion.ItemTrigger>
+              <Accordion.ItemTrigger asChild w='auto'>
                 <Accordion.ItemIndicator asChild>
-                  <IconButton p={0} variant='ghost' h='28px' minW='28px' colorScheme='gray'>
+                  <IconButton variant='ghost' colorPalette='gray' aria-label={t('setup.toggle_panel')}>
                     <InvertedAccordionIcon />
                   </IconButton>
                 </Accordion.ItemIndicator>
-                <IconButton
-                  aria-label={t('common.close', { defaultValue: 'Close' })}
-                  h='28px'
-                  minW='28px'
-                  variant='ghost'
-                  colorPalette='gray'
-                  onClick={onClose}
-                >
-                  <Icon as={LuX} />
-                </IconButton>
-              </Flex>
-            </Accordion.ItemTrigger>
+              </Accordion.ItemTrigger>
+              <CloseButton onClick={onClose} />
+            </Flex>
             <Accordion.ItemContent>
               <Accordion.ItemBody p={0}>
                 <Flex flexDirection='column' px={4} py={2}>

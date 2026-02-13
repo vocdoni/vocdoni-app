@@ -15,7 +15,7 @@ export const ConfirmVoteModal = ({ election, answers }: { election: PublishedEle
       <Dialog.Backdrop />
       <Dialog.Positioner>
         <Dialog.Content>
-          <Dialog.CloseTrigger>
+          <Dialog.CloseTrigger asChild>
             <CloseButton />
           </Dialog.CloseTrigger>
           <Dialog.Header>
