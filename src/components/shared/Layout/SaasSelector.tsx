@@ -239,7 +239,7 @@ export const RoleSelector = ({ ...props }: Omit<SelectCustomProps, 'options'>) =
       components={{ SingleValue: createRoleDisplay('SingleValue'), Option: createRoleDisplay('Option') }}
       defaultValue={defaultVal}
       controller={{ defaultValue: defaultVal }}
-      menuPortalTarget={document.body}
+      menuPosition='fixed'
       styles={{
         menuPortal: (base) => ({ ...base, zIndex: 1600 }),
       }}
