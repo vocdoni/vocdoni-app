@@ -1,5 +1,4 @@
 import { MemoryRouter } from 'react-router-dom'
-import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { createTestI18n, render } from '~src/test-utils'
 import SubscriptionPage from './Subscription'
 

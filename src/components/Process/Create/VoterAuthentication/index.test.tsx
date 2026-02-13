@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
-import { describe, expect, it, vi } from 'vitest'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { render, screen, waitFor } from '~src/test-utils'
 import { VoterAuthentication } from '.'

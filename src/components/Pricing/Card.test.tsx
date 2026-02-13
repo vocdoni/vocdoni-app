@@ -1,6 +1,5 @@
 import { FormProvider, useForm } from 'react-hook-form'
 import { MemoryRouter } from 'react-router-dom'
-import { beforeAll } from 'vitest'
 import { PlanId } from '~constants'
 import { createTestI18n, render, screen } from '~src/test-utils'
 import PricingCard from './Card'
