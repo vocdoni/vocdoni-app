@@ -168,24 +168,24 @@ const Setup = () => {
       >
         <Accordion.Root defaultValue={['setup']} collapsible border='none'>
           <Accordion.Item value='setup' border='none' alignItems='center'>
-            <Flex flex='1' align='center' px={4} py={4}>
-              <Accordion.ItemTrigger flex='1' p={0}>
-                <Icon as={LuCheck} mr={2} boxSize={5} />
+            <Accordion.ItemTrigger as='div' px={4} gap={0} justifyContent='space-between'>
+              <Flex gap={2} alignItems='center'>
+                <Icon as={LuCheck} boxSize={5} />
                 <Text fontWeight='bold'>
                   {t('setup.title', {
                     defaultValue: 'Complete your setup',
                   })}
                 </Text>
-              </Accordion.ItemTrigger>
-              <Accordion.ItemTrigger asChild w='auto'>
+              </Flex>
+              <Flex justifySelf='end'>
                 <Accordion.ItemIndicator asChild>
-                  <IconButton variant='ghost' colorPalette='gray' aria-label={t('setup.toggle_panel')}>
+                  <IconButton variant='unstyled' colorPalette='gray' aria-label={t('setup.toggle_panel')} size='xs'>
                     <InvertedAccordionIcon />
                   </IconButton>
                 </Accordion.ItemIndicator>
-              </Accordion.ItemTrigger>
-              <CloseButton onClick={onClose} />
-            </Flex>
+                <CloseButton onClick={onClose} size='xs' />
+              </Flex>
+            </Accordion.ItemTrigger>
             <Accordion.ItemContent>
               <Accordion.ItemBody p={0}>
                 <Flex flexDirection='column' px={4} py={2}>
