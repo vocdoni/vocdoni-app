@@ -84,10 +84,10 @@ const UserProfile = () => {
                 gap={0.5}
                 ml={0}
               >
-                <Text fontWeight='light' fontSize='sm' lineHeight='14px' maxW='var(--size)' truncate>
+                <Text fontWeight='light' fontSize='sm' lineHeight={1} maxW='var(--size)' truncate>
                   {profile.firstName}
                 </Text>
-                <Text fontWeight='light' fontSize='xs' lineHeight='14px' color='gray.500' maxW='var(--size)' truncate>
+                <Text fontWeight='light' fontSize='xs' lineHeight={1} color='gray.500' maxW='var(--size)' truncate>
                   {organization?.account?.name?.default}
                 </Text>
               </Flex>
@@ -97,32 +97,46 @@ const UserProfile = () => {
         </Button>
       </PopoverTrigger>
       <PopoverPositioner>
-        <PopoverContent w='max-content' minW='280px'>
+        <PopoverContent w='user-profile'>
           <PopoverHeader>
             <Box display={'flex'} gap={2} alignItems={'center'} justifyContent={'start'} px={1} py={1.5} mb={1}>
               <AvatarRoot size='sm' borderRadius='md'>
                 {avatarSrc ? <AvatarImage src={avatarSrc} /> : null}
                 <AvatarFallback name={`${profile.firstName} ${profile.lastName}`} />
               </AvatarRoot>
-              <Flex flexDirection={'column'} justifyContent={'start'} gap={0.5}>
-                <Text fontSize='sm' lineHeight={'14px'} textAlign={'start'} fontWeight={500} maxW={'170px'} truncate>
+              <Flex
+                css={{ '--size': 'calc(var(--chakra-sizes-user-profile) - 4rem)' }}
+                flexDirection='column'
+                justifyContent='start'
+                gap={0.5}
+              >
+                <Text fontSize='sm' lineHeight={1} textAlign='start' fontWeight='bolder' maxW='var(--size)' truncate>
                   {profile.firstName}
                 </Text>
                 {switchOrg ? (
                   <Button
                     onClick={() => setSwitchOrg(false)}
-                    display='flex'
-                    alignItems='center'
                     fontSize='xs'
                     h='unset'
+                    variant='plain'
+                    p={0}
+                    display='inline'
+                    asChild
                   >
-                    <HStack gap={2}>
-                      <Icon as={LuChevronLeft} />
+                    <Link>
+                      <Icon as={LuChevronLeft} boxSize={3} />
                       {t('back')}
-                    </HStack>
+                    </Link>
                   </Button>
                 ) : (
-                  <Text fontWeight='light' fontSize='xs' color='dashboard.profile.email' maxW='165px' truncate>
+                  <Text
+                    title={profile.email}
+                    fontWeight='light'
+                    fontSize='xs'
+                    color='dashboard.profile.email'
+                    maxW='var(--size)'
+                    truncate
+                  >
                     {profile.email}
                   </Text>
                 )}
@@ -182,7 +196,7 @@ const UserProfile = () => {
                 </Button>
               </PopoverBody>
               <PopoverFooter pt={1}>
-                <Flex gap={2} alignItems='center' justifyContent='center'>
+                <Flex gap={2} alignItems='center' justifyContent='center' w='full'>
                   <Link
                     href={privacyPolicyUrl}
                     target='_blank'

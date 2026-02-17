@@ -13,6 +13,7 @@ const fonts = defineTokens.fonts({
 const fontWeights = defineTokens.fontWeights({
   normal: { value: '300' },
   bold: { value: '400' },
+  bolder: { value: '500' },
 })
 
 const radii = defineTokens.radii({
@@ -33,6 +34,7 @@ const spacing = defineTokens.spacing({ sidebar: { value: sidebarWidth } })
 
 const sizes = defineTokens.sizes({
   sidebar: { value: sidebarWidth },
+  'user-profile': { value: '280px' },
   navbar: { value: maxNavbarWidth },
   'dashboard-menu': {
     default: { value: '255px' },

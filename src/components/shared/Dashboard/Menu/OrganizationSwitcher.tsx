@@ -125,7 +125,7 @@ export const OrganizationSwitcher = () => {
           aria-label={t('create_org.title')}
           justifyContent={'start'}
           gap={2}
-          colorPalette='gray'
+          variant='listmenu'
           w='full'
           px={2}
           py={1.5}

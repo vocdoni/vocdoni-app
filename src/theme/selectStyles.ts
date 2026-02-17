@@ -8,27 +8,18 @@ export const selectStyles: ChakraStylesConfig<any, boolean> = {
 }
 
 export const languagesListSelectStyles: ChakraStylesConfig<any, boolean> = {
-  dropdownIndicator: (base) => ({
+  container: (base) => ({
     ...base,
-    m: 0,
+    w: 'fit-content',
   }),
-  valueContainer: (base) => ({
+  control: (base) => ({
     ...base,
-    p: 0,
-    mr: 0,
+    fontWeight: 'normal',
+    px: 1,
+    py: 0,
   }),
-  menu: (base) => ({
+  option: (base) => ({
     ...base,
-    minW: 'fit-content',
-  }),
-  menuList: (base) => ({
-    ...base,
-    p: 1,
-    borderRadius: 'sm',
-  }),
-  placeholder: (base, state) => ({
-    ...selectStyles.placeholder?.(base, state),
-    py: 2,
-    px: 3,
+    fontWeight: 'normal',
   }),
 }
