@@ -478,4 +478,8 @@ export const colors = {
   yellow: {
     400: '#FFDF4F',
   },
+
+  red: {
+    400: '#F95838',
+  },
 }
