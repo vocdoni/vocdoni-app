@@ -42,6 +42,9 @@ const baseStyle = {
     fontSize: 'sm',
     color: 'black',
   },
+  question: {
+    width: 'full',
+  },
   progress: {
     position: 'absolute',
     inset: 0,

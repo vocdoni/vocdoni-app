@@ -1,19 +1,4 @@
-import {
-  Badge,
-  Button,
-  CloseButton,
-  Dialog,
-  Flex,
-  Heading,
-  Portal,
-  TabsContent,
-  TabsContentGroup,
-  TabsList,
-  TabsRoot,
-  TabsTrigger,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Badge, Button, CloseButton, Dialog, Flex, Heading, Portal, Tabs, Text, useDisclosure } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-providers'
 import { ensure0x } from '@vocdoni/sdk'
@@ -317,7 +302,7 @@ export const VoterAuthentication = () => {
               })}
             </Text>
             {census?.use2FA && (
-              <Badge colorPalette='black' fontSize='xs'>
+              <Badge fontSize='xs'>
                 <Trans i18nKey='voter_auth.2fa_badge'>2FA</Trans>
               </Badge>
             )}
@@ -367,34 +352,40 @@ export const VoterAuthentication = () => {
               <Dialog.Body>
                 <FormProvider {...voterAuthForm}>
                   <ValidationErrorsAlert validationError={validationError} />
-                  <TabsRoot value={activeTabValue} onValueChange={({ value }) => handleTabChange(tabValues[value])}>
-                    <TabsList w='full'>
-                      <TabsTrigger value={tabValues[0]} flex='1'>
+                  <Tabs.Root value={activeTabValue} onValueChange={({ value }) => handleTabChange(tabValues[value])}>
+                    <Tabs.List w='full'>
+                      <Tabs.Trigger value={tabValues[0]} flex='1' justifyContent='center'>
                         <Trans i18nKey='voter_auth.credentials'>Credentials</Trans>
-                      </TabsTrigger>
-                      <TabsTrigger value={tabValues[1]} flex='1' disabled={!stepCompletion.step1Completed}>
+                      </Tabs.Trigger>
+                      <Tabs.Trigger
+                        value={tabValues[1]}
+                        flex='1'
+                        disabled={!stepCompletion.step1Completed}
+                        justifyContent='center'
+                      >
                         <Trans i18nKey='voter_auth.two_factor'>Two-Factor</Trans>
-                      </TabsTrigger>
-                      <TabsTrigger
+                      </Tabs.Trigger>
+                      <Tabs.Trigger
                         value={tabValues[2]}
                         flex='1'
                         disabled={!stepCompletion.step2Completed || hasNoCredentialsSelected}
+                        justifyContent='center'
                       >
                         <Trans i18nKey='voter_auth.summary'>Summary</Trans>
-                      </TabsTrigger>
-                    </TabsList>
-                    <TabsContentGroup>
-                      <TabsContent value={tabValues[0]} px={0} pb={0}>
+                      </Tabs.Trigger>
+                    </Tabs.List>
+                    <Tabs.ContentGroup>
+                      <Tabs.Content value={tabValues[0]} px={0} pb={0}>
                         <CredentialsForm />
-                      </TabsContent>
-                      <TabsContent value={tabValues[1]} px={0} pb={0}>
+                      </Tabs.Content>
+                      <Tabs.Content value={tabValues[1]} px={0} pb={0}>
                         <TwoFactorForm />
-                      </TabsContent>
-                      <TabsContent value={tabValues[2]}>
+                      </Tabs.Content>
+                      <Tabs.Content value={tabValues[2]}>
                         <SummaryDisplay />
-                      </TabsContent>
-                    </TabsContentGroup>
-                  </TabsRoot>
+                      </Tabs.Content>
+                    </Tabs.ContentGroup>
+                  </Tabs.Root>
                 </FormProvider>
               </Dialog.Body>
               <Dialog.Footer>

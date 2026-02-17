@@ -235,7 +235,6 @@ const PricingCard = ({
           top={0}
           left='50%'
           transform='translate(-50%, -50%)'
-          py={0}
           px={3}
           size='xs'
           backgroundColor='card.pricing.featured.badge.bg'

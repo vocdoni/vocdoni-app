@@ -25,21 +25,10 @@ import {
   VStack,
   type HTMLChakraProps,
 } from '@chakra-ui/react'
-import {
-  ActionCancel,
-  ActionContinue,
-  ActionEnd,
-  ActionPause,
-  ActionsProvider,
-  ElectionDescription,
-  ElectionResults,
-  ElectionStatusBadge,
-  ElectionTitle,
-} from '~components/vocdoni-ui'
 import { useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format as formatDate } from 'date-fns'
-import { ReactNode, forwardRef } from 'react'
+import { forwardRef, ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
   LuCalendar,
@@ -61,6 +50,17 @@ import {
 } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
 import { generatePath } from 'react-router-dom'
+import {
+  ActionCancel,
+  ActionContinue,
+  ActionEnd,
+  ActionPause,
+  ActionsProvider,
+  ElectionDescription,
+  ElectionResults,
+  ElectionStatusBadge,
+  ElectionTitle,
+} from '~components/vocdoni-ui'
 import {
   DashboardBox,
   DashboardContents,
@@ -264,7 +264,7 @@ const ResultsStateBadge = (props: BadgeProps) => {
       tooltip = null
     }
     const badge = (
-      <Badge colorScheme={color} {...props}>
+      <Badge colorPalette={color} {...props}>
         {text}
         {tooltip && <Icon as={LuInfo} />}
       </Badge>

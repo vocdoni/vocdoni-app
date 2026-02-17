@@ -5,17 +5,15 @@ import {
   AlertTitle,
   Box,
   Button,
-  CloseButton,
+  chakra,
   CheckboxControl,
   CheckboxHiddenInput,
   CheckboxLabel,
   CheckboxRoot,
-  chakra,
+  CloseButton,
   Dialog,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
-  FieldHelperText as FormHelperText,
-  FieldLabel as FormLabel,
   RadioGroupItem,
   RadioGroupItemControl,
   RadioGroupItemHiddenInput,
@@ -34,7 +32,7 @@ import {
   useSlotRecipe,
 } from '@chakra-ui/react'
 import { useClient, useElection } from '@vocdoni/react-providers'
-import { ElectionResultsTypeNames, ElectionStatus, type IChoice, type IQuestion, PublishedElection } from '@vocdoni/sdk'
+import { ElectionResultsTypeNames, ElectionStatus, PublishedElection, type IChoice, type IQuestion } from '@vocdoni/sdk'
 import { createContext, useContext, useEffect, useState, type ComponentProps, type ReactNode } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import ReactMarkdown from 'react-markdown'

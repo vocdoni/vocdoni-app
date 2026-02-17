@@ -762,7 +762,7 @@ const UsersList = ({ users }: UsersListProps) => {
             <Box ml='3'>
               <HStack align='center'>
                 <Text fontWeight='bold'>{name}</Text>
-                <Badge variant='subtle' textTransform='capitalize'>
+                <Badge variant='surface' textTransform='capitalize'>
                   {user.role}
                 </Badge>
               </HStack>

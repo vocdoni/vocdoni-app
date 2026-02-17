@@ -1,4 +1,3 @@
-import { Accordion } from './accordion'
 import { Badge } from './badge'
 import { Button } from './button'
 import { Card } from './card'
@@ -57,7 +56,6 @@ export const recipes = {
 }
 
 export const slotRecipes = {
-  accordion: Accordion,
   card: Card,
   checkbox: Checkbox,
   drawer: Drawer,

@@ -57,9 +57,7 @@ export const CredentialsOverview = ({ credentials, use2FA, use2FAMethod }: Crede
       {use2FA && (
         <Box>
           <HStack mb={1}>
-            <Badge colorPalette='black' fontSize='xs'>
-              2FA
-            </Badge>
+            <Badge fontSize='xs'>2FA</Badge>
             <Text fontWeight='semibold'>
               {t('voter_auth.summary_2fa_enable', { defaultValue: 'Two-Factor Authentication' })}
             </Text>

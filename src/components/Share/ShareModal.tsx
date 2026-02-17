@@ -1,4 +1,15 @@
-import { Button, CloseButton, Dialog, Flex, Icon, Input, InputGroup, Text, useClipboard } from '@chakra-ui/react'
+import {
+  Button,
+  type ButtonProps,
+  CloseButton,
+  Dialog,
+  Flex,
+  Icon,
+  Input,
+  InputGroup,
+  Text,
+  useClipboard,
+} from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuShare } from 'react-icons/lu'
 import {
@@ -11,7 +22,15 @@ import {
 } from '~components/Share/index'
 import { useToast } from '~shared/Toast'
 
-const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: string; text?: string; size?: string }) => {
+const ShareModalButton = ({
+  caption = '',
+  text,
+  size = 'sm',
+}: {
+  caption?: string
+  text?: string
+  size?: ButtonProps['size']
+}) => {
   const { t } = useTranslation()
   const rawUrl = document.location.href.split('#')[0] // Remove the PK after the hash
   const url = encodeURIComponent(rawUrl)
@@ -23,7 +42,7 @@ const ShareModalButton = ({ caption = '', text, size = 'sm' }: { caption?: strin
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button fontSize={size} aria-label={t('share.icon_title')}>
+        <Button size={size} aria-label={t('share.icon_title')} variant='plain'>
           <Icon as={LuShare} aria-hidden />
           {text && (
             <Text pl={2} as='span' fontSize={size}>

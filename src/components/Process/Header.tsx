@@ -16,70 +16,68 @@ const ProcessHeader = () => {
   if (!(election instanceof PublishedElection)) return null
 
   return (
-    <Box>
+    <>
       {election?.header && (
         <Box w='100%' mx='auto' maxH='300px' my='30px' overflow='hidden'>
           <Image src={election?.header} w='100%' h='auto' objectFit='cover' />
         </Box>
       )}
-      <Flex direction={{ base: 'column', xl: 'row' }} gap={{ base: 6, lg: 10, xl: 20 }}>
-        <Box flex={{ xl: '0 0 75%' }}>
-          <ElectionTitle fontSize='4xl' textAlign='left' mb={5} />
+      <Flex flexDir='column'>
+        <ElectionTitle fontSize='4xl' textAlign='left' mb={5} />
+        <Flex
+          flexDirection={{ base: 'column', xl: 'row' }}
+          flexWrap={{ base: 'nowrap', xl: 'wrap' }}
+          mb={4}
+          justifyContent='space-between'
+          columnGap={4}
+          rowGap={3}
+        >
           <Flex
+            gap={2}
             flexDirection={{ base: 'column', xl: 'row' }}
-            flexWrap={{ base: 'nowrap', xl: 'wrap' }}
-            mb={4}
-            justifyContent='space-between'
-            columnGap={4}
-            rowGap={3}
+            alignItems={{ base: 'start', xl: 'center' }}
+            flex='1'
           >
-            <Flex
-              gap={2}
-              flexDirection={{ base: 'column', xl: 'row' }}
-              alignItems={{ base: 'start', xl: 'center' }}
-              flex='1'
-            >
-              <Flex gap={3} justifyContent={'space-between'} w={{ base: '100%', xl: 'fit-content' }}>
-                <ElectionStatusBadge whiteSpace='nowrap' />
-                <Box display={{ base: 'flex', xl: 'none' }}>
-                  <ShareModalButton
-                    caption={t('share.election_share_text')}
-                    text={t('share.election_share_btn_text')}
-                    size='xs'
-                  />
-                </Box>
-              </Flex>
-              <ElectionSchedule
-                textAlign='left'
-                color='process.info_title.light'
-                _dark={{ color: 'process.info_title.dark' }}
-                display='block'
-                fontSize='sm'
-                lineHeight='short'
-              />
+            <Flex gap={3} justifyContent='space-between' w={{ base: 'full', xl: 'fit-content' }}>
+              <ElectionStatusBadge whiteSpace='nowrap' />
+              <Box display={{ base: 'flex', xl: 'none' }}>
+                <ShareModalButton
+                  caption={t('share.election_share_text')}
+                  text={t('share.election_share_btn_text')}
+                  size='xs'
+                />
+              </Box>
             </Flex>
-            <Box display={{ base: 'none', xl: 'flex' }} flexShrink={0}>
-              <ShareModalButton
-                caption={t('share.election_share_text')}
-                text={t('share.election_share_btn_text')}
-                size='xs'
-              />
-            </Box>
+            <ElectionSchedule
+              textAlign='left'
+              color='process.info_title.light'
+              _dark={{ color: 'process.info_title.dark' }}
+              display='block'
+              fontSize='sm'
+              lineHeight='short'
+            />
           </Flex>
-          <Flex flexDirection='column'>
-            {!election?.description?.default.length && (
-              <Text color='process.description'>{t('process.no_description')}</Text>
-            )}
-            <Box className='md-sizes'>
-              <ReadMoreMarkdownWrapper toDark='var(--chakra-colors-process-read_more_dark)'>
-                <ElectionDescription mb={0} fontSize='lg' lineHeight={1.5} color='process.description' />
-              </ReadMoreMarkdownWrapper>
-            </Box>
-            <ReadMoreMarkdownButton colorPalette='primary' alignSelf='center' />
-          </Flex>
-        </Box>
+          <Box display={{ base: 'none', xl: 'flex' }} flexShrink={0}>
+            <ShareModalButton
+              caption={t('share.election_share_text')}
+              text={t('share.election_share_btn_text')}
+              size='xs'
+            />
+          </Box>
+        </Flex>
+        <Flex flexDirection='column'>
+          {!election?.description?.default.length && (
+            <Text color='process.description'>{t('process.no_description')}</Text>
+          )}
+          <Box className='md-sizes'>
+            <ReadMoreMarkdownWrapper toDark='var(--chakra-colors-process-read_more_dark)'>
+              <ElectionDescription mb={0} fontSize='lg' lineHeight={1.5} color='process.description' />
+            </ReadMoreMarkdownWrapper>
+          </Box>
+          <ReadMoreMarkdownButton colorPalette='primary' alignSelf='center' />
+        </Flex>
       </Flex>
-    </Box>
+    </>
   )
 }
 
