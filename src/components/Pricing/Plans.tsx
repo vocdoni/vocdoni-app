@@ -1,4 +1,4 @@
-import { Flex, ProgressRange, ProgressRoot, ProgressTrack, SimpleGrid, Tabs, TagLabel, TagRoot } from '@chakra-ui/react'
+import { Flex, Progress, SimpleGrid, Tabs, Tag } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
@@ -324,11 +324,11 @@ export const SubscriptionPlans = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Flex flexDir='column' gap={4}>
           {isLoading && (
-            <ProgressRoot value={null}>
-              <ProgressTrack>
-                <ProgressRange />
-              </ProgressTrack>
-            </ProgressRoot>
+            <Progress.Root value={null}>
+              <Progress.Track>
+                <Progress.Range />
+              </Progress.Track>
+            </Progress.Root>
           )}
           {showAlert && (
             <ListStateAlert
@@ -350,9 +350,9 @@ export const SubscriptionPlans = () => {
               <Tabs.Trigger value='year'>
                 <Trans i18nKey='annual'>
                   Annual
-                  <TagRoot colorPalette='green' ml={2} size='sm' fontWeight='extrabold'>
-                    <TagLabel>Save 40%</TagLabel>
-                  </TagRoot>
+                  <Tag.Root variant='subtle' colorPalette='green' ml={2} fontSize='xs' fontWeight='extrabold' py={0.5}>
+                    <Tag.Label>Save 40%</Tag.Label>
+                  </Tag.Root>
                 </Trans>
               </Tabs.Trigger>
             </Tabs.List>

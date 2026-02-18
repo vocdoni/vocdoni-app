@@ -138,12 +138,12 @@ export const MembersCsvManager = () => {
           </CheckboxGroup>
         </Card.Body>
         <Card.Footer display='flex' flexDirection='column' gap={2}>
-          <Button asChild type='button' variant='outline' disabled={!visibleColumns.length} w='100%'>
+          <Button asChild variant='outline' disabled={!visibleColumns.length} w='100%'>
             <Link
               href={template.url}
-              download='memberbase-template.csv'
               aria-disabled={!visibleColumns.length}
               pointerEvents={visibleColumns.length ? 'auto' : 'none'}
+              variant='button'
             >
               <LuFileSpreadsheet />
               {t('memberbase.importer.download_template_btn', {

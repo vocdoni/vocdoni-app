@@ -40,6 +40,9 @@ export const Link = defineRecipe({
           textDecoration: 'underline',
         },
       },
+      button: {
+        textDecoration: 'none',
+      },
     },
   },
 })

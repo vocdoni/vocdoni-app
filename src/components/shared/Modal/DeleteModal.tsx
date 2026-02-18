@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogRootProps, Heading } from '@chakra-ui/react'
+import { Dialog, DialogRootProps, Text } from '@chakra-ui/react'
 
 export type DeleteModalProps = {
   title: string | React.ReactNode
@@ -12,15 +12,13 @@ const DeleteModal = ({ title, subtitle, children, ...dialogProps }: DeleteModalP
       <Dialog.Backdrop />
       <Dialog.Positioner>
         <Dialog.Content>
-          <Dialog.Header>
-            <Dialog.Title>
-              <Heading size='sm'>{title}</Heading>
-              <Box fontSize='sm' color='texts.subtle'>
-                {subtitle}
-              </Box>
-            </Dialog.Title>
+          <Dialog.Header pb={0}>
+            <Dialog.Title>{title}</Dialog.Title>
           </Dialog.Header>
-          <Dialog.Body>{children}</Dialog.Body>
+          <Dialog.Body>
+            <Text variant='subheader'>{subtitle}</Text>
+            {children}
+          </Dialog.Body>
         </Dialog.Content>
       </Dialog.Positioner>
     </Dialog.Root>

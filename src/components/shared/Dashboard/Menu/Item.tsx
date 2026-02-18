@@ -14,6 +14,10 @@ export type DashboardMenuItem = {
   label: string
   icon?: any
   route?: string
+  activeMatch?: {
+    path: string
+    end?: boolean
+  }[]
 }
 
 type DashboardMenuItemButtonProps = ButtonProps & {

@@ -101,7 +101,7 @@
       "multichoice_title": "Vot multiresposta {{ weighted }}",
       "multichoice_tooltip": "El vot multiresposta et permet votar fins a {{maxcount}} opcions (definit per l'organitzador de la votació). Guanya la que rep més vots.",
       "singlechoice_title": "Vot d'elecció simple {{ weighted }}",
-      "weighted_voting": "Vot ponderat"
+      "weighted_voting": "ponderat"
     },
     "results": {
       "date_format": "PPpp",
@@ -532,7 +532,6 @@
   "free_trial_days_one": "Un dia gratuït",
   "free_trial_days_many": "",
   "free_trial_days_other": "{{count}} dies gratuïts",
-  "go_back": "torna enrere",
   "google_oauth_conflict_error": "Ja existeix un compte amb aquest correu electrònic. Si us plau, inicia sessió amb el teu mètode existent.",
   "google_oauth_error": "Error d'OAuth de Google",
   "google_oauth_error_description": "Error d'OAuth de Google, si us plau torna-ho a provar",
@@ -589,9 +588,6 @@
   },
   "home": {
     "clients_title": "Més de 100 organitzacions confien en nosaltres",
-    "create_process": {
-      "btn": "Prova-ho gratis"
-    },
     "faqs": {
       "faq_1": {
         "description": "Vocdoni és una plataforma de vot digital basada en tecnologia blockchain, que ofereix processos de votació segurs, transparents i verificables.",
@@ -816,7 +812,6 @@
     "unexpected_error": "",
     "user_invited": "S'ha enviat un correu a {{email}}"
   },
-  "languages": "Idiomes",
   "lastname": "Cognoms",
   "light": "Clar",
   "link": {
@@ -975,27 +970,14 @@
   "menu": {
     "burger_aria_label": "menú d'usuari",
     "connect": "Connectar",
-    "copy_aria_label": "copiar adreça",
     "create": "Crear Procés",
     "dashboard": "Dashboard",
-    "documentation": "Documentació",
-    "languages": "Idiomes",
     "login": "Iniciar sessió",
-    "logout": "Tancar sessió",
-    "open": "Obre menú",
-    "organization": "Edita Organització",
-    "privacy": "Privadesa",
-    "terms": "Termes",
-    "wallet": "Cartera"
+    "open": "Obre menú"
   },
   "month": "mes",
   "monthly": "Mensual",
   "name": "Nom",
-  "navbar": {
-    "contact": "Contacta'ns",
-    "pricing": "Preus",
-    "usecases": "Casos d'Ús"
-  },
   "need_help": {
     "description": "Necessites ajuda amb el teu primer procés de votació? Mira aquest tutorial o programa una trucada.",
     "title": "Primers passos"
@@ -1693,46 +1675,6 @@
   "use_read_more": {
     "read_less": "Llegeix menys",
     "read_more": "Llegeix més"
-  },
-  "usecases": {
-    "banner": {
-      "chat": "Xateja amb vendes",
-      "subtitle": "Uneix-te a la nostra xarxa de més de 500 organitzacions que utilitzen la nostra plataforma de vot segur",
-      "title": "Casos d'ús"
-    },
-    "city_councils": {
-      "description": "Millora la democràcia participativa als ajuntaments amb Vocdoni",
-      "eyebrow": "Institucions i sector públic",
-      "title": "Ajuntaments"
-    },
-    "community_organizations": {
-      "description": "Impulsa la participació dels membres i mantén la integritat amb Vocdoni",
-      "eyebrow": "Col·legis professionals",
-      "title": "Organitzacions comunitàries"
-    },
-    "description": "Vocdoni ha ajudat una àmplia gamma d'organitzacions i institucions a millorar els seus processos participatius, votacions i eleccions amb el nostre programari d'última generació. Descobreix més sobre les nostres històries d'èxit i entén com et podem ajudar; ens adaptem a tots els sectors.",
-    "eyebrow": "Casos d'ús",
-    "integrators": {
-      "description": "Integra programari de vot digital amb Vocdoni",
-      "eyebrow": "Producte",
-      "title": "Integradors"
-    },
-    "political_parties": {
-      "description": "Millora la democràcia participativa als partits polítics amb Vocdoni",
-      "eyebrow": "Enginyeria de programari",
-      "title": "Partits polítics"
-    },
-    "professional_associations": {
-      "description": "Fomenta la participació dels membres i redueix la càrrega administrativa amb Vocdoni",
-      "eyebrow": "Disseny",
-      "title": "Associacions professionals"
-    },
-    "sport_clubs": {
-      "description": "Fomenta la participació dels membres i redueix la càrrega administrativa amb Vocdoni",
-      "eyebrow": "Enginyeria de programari",
-      "title": "Clubs esportius"
-    },
-    "title": "Les nostres històries d'èxit"
   },
   "user_menu": "Menú d'usuari",
   "user_settings": "Configuració de l'usuari",

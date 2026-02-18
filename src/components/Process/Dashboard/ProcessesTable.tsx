@@ -65,9 +65,9 @@ const ProcessRow = () => {
   return (
     <Table.Row position='relative'>
       <Table.Cell>
-        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
+        <Link asChild title={election.title.default}>
           <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
-            <Text truncate maxW='600px'>
+            <Text w='full' maxW='500px' size='sm' truncate>
               {election.title.default}
             </Text>
           </RouterLink>
@@ -86,7 +86,7 @@ const ProcessRow = () => {
         {ElectionStatus.RESULTS === election.status ||
         ([ElectionStatus.ENDED, ElectionStatus.ONGOING].includes(election.status) &&
           !election.electionType.secretUntilTheEnd) ? (
-          <Tag.Root colorPalette='gray' variant='subtle' size='sm'>
+          <Tag.Root colorPalette='gray' variant='solid' size='sm'>
             <Tag.Label>
               <Trans i18nKey='process_list.results_live'>Live</Trans>
             </Tag.Label>

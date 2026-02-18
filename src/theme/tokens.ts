@@ -47,6 +47,7 @@ const zIndex = defineTokens.zIndex({
   background: { value: 0 },
   contents: { value: 1 },
   sidebar: { value: 2 },
+  topbar: { value: 3 },
   modal: { value: 1400 },
   hovering: { value: 1500 },
 })

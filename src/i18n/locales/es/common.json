@@ -101,7 +101,7 @@
       "multichoice_title": "Votación de elección múltiple {{ weighted }}",
       "multichoice_tooltip": "La votación de elección múltiple permite seleccionar hasta {{maxcount}} opciones (definidas por la persona organizadora). Gana la opción con más votos.",
       "singlechoice_title": "Votación de elección simple {{ weighted }}",
-      "weighted_voting": "Votación ponderada"
+      "weighted_voting": "ponderada"
     },
     "results": {
       "date_format": "d 'de' MMMM 'de' y 'a' 'las' H:mm",
@@ -532,7 +532,6 @@
   "free_trial_days_one": "Un día gratis",
   "free_trial_days_many": "",
   "free_trial_days_other": "{{count}} días gratis",
-  "go_back": "Volver",
   "google_oauth_conflict_error": "Ya existe una cuenta con este correo electrónico. Por favor, inicia sesión con tu método existente.",
   "google_oauth_error": "Error de Google OAuth",
   "google_oauth_error_description": "Error de Google OAuth, inténtalo de nuevo",
@@ -589,9 +588,6 @@
   },
   "home": {
     "clients_title": "Más de 100 organizaciones confían en nosotros",
-    "create_process": {
-      "btn": "Pruébalo gratis"
-    },
     "faqs": {
       "faq_1": {
         "description": "Vocdoni destaca por su experiencia de usuario fluida, sus avanzadas funciones de seguridad y una transparencia sin precedentes. Nuestra plataforma utiliza tecnología de vanguardia, como las pruebas de conocimiento cero y una cadena de bloques propia, para garantizar votaciones seguras y anónimas, al tiempo que ofrece un proceso transparente y verificable.",
@@ -816,7 +812,6 @@
     "unexpected_error": "",
     "user_invited": "Correo enviado a {{email}}"
   },
-  "languages": "Idiomas",
   "lastname": "Apellidos",
   "light": "Claro",
   "link": {
@@ -975,27 +970,14 @@
   "menu": {
     "burger_aria_label": "menú de usuario",
     "connect": "Conectar",
-    "copy_aria_label": "copiar dirección",
     "create": "Crear proceso",
     "dashboard": "Panel",
-    "documentation": "Documentación",
-    "languages": "Idiomas",
     "login": "Iniciar sesión",
-    "logout": "Cerrar sesión",
-    "open": "Abrir menú",
-    "organization": "Editar organización",
-    "privacy": "Privacidad",
-    "terms": "Términos",
-    "wallet": "Monedero"
+    "open": "Abrir menú"
   },
   "month": "mes",
   "monthly": "Mensual",
   "name": "Nombre",
-  "navbar": {
-    "contact": "Contáctanos",
-    "pricing": "Precios",
-    "usecases": "Casos de uso"
-  },
   "need_help": {
     "description": "¿Necesitas ayuda con tu primer proceso de votación? Mira este tutorial o programa una llamada.",
     "title": "Primeros pasos"
@@ -1693,46 +1675,6 @@
   "use_read_more": {
     "read_less": "Leer menos",
     "read_more": "Leer más"
-  },
-  "usecases": {
-    "banner": {
-      "chat": "Hablar con ventas",
-      "subtitle": "Únete a nuestra red de más de 500 organizaciones que utilizan nuestra plataforma de votación segura",
-      "title": "Casos de uso"
-    },
-    "city_councils": {
-      "description": "Mejora de la democracia participativa en los ayuntamientos con Vocdoni",
-      "eyebrow": "Instituciones y sector público",
-      "title": "Ayuntamientos"
-    },
-    "community_organizations": {
-      "description": "Fomentar la participación de la membresía y mantener la integridad con Vocdoni",
-      "eyebrow": "Colegios profesionales",
-      "title": "Organizaciones comunitarias"
-    },
-    "description": "Vocdoni ha ayudado a una amplia variedad de organizaciones e instituciones a mejorar sus procesos participativos, votaciones y elecciones con nuestro software de vanguardia. Conoce más sobre nuestros casos de éxito y descubre cómo podemos ayudarte: nos adaptamos a todos los ámbitos.",
-    "eyebrow": "Casos de uso",
-    "integrators": {
-      "description": "Integración del software de votación digital con Vocdoni",
-      "eyebrow": "Producto",
-      "title": "Integradores"
-    },
-    "political_parties": {
-      "description": "Mejora de la democracia participativa en los partidos políticos con Vocdoni",
-      "eyebrow": "Ingeniería de software",
-      "title": "Partidos políticos"
-    },
-    "professional_associations": {
-      "description": "Impulsar la participación de la membresía y reducir la carga administrativa con Vocdoni",
-      "eyebrow": "Diseño",
-      "title": "Asociaciones profesionales"
-    },
-    "sport_clubs": {
-      "description": "Impulsar la participación de la membresía y reducir la carga administrativa con Vocdoni",
-      "eyebrow": "Ingeniería de software",
-      "title": "Clubes deportivos"
-    },
-    "title": "Nuestros casos de éxito"
   },
   "user_menu": "Menú de usuario",
   "user_settings": "Ajustes de usuario",

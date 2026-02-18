@@ -527,7 +527,6 @@
   },
   "free_trial_days_one": "One free day",
   "free_trial_days_other": "{{count}} free days",
-  "go_back": "go back",
   "google_oauth_conflict_error": "An account with this email already exists. Please sign in using your existing method.",
   "google_oauth_error": "Google OAuth Error",
   "google_oauth_error_description": "Google OAuth error, please try again",
@@ -582,9 +581,6 @@
   },
   "home": {
     "clients_title": "Trusted by 100+ organizations",
-    "create_process": {
-      "btn": "Try it for free"
-    },
     "faqs": {
       "faq_1": {
         "description": "Vocdoni stands out for its seamless user experience, advanced security features, and unparalleled transparency. Our platform utilizes cutting-edge technology such as zero-knowledge proofs and a custom blockchain to ensure secure and anonymous voting while providing a transparent and verifiable voting process.",
@@ -808,7 +804,6 @@
     "unexpected_error": "",
     "user_invited": "Email sent to {{email}}"
   },
-  "languages": "Languages",
   "lastname": "Last name",
   "light": "Light",
   "link": {
@@ -959,27 +954,14 @@
   "menu": {
     "burger_aria_label": "user menu",
     "connect": "Connect",
-    "copy_aria_label": "copy address",
     "create": "Create Process",
     "dashboard": "Dashboard",
-    "documentation": "Documentation",
-    "languages": "Languages",
     "login": "Login",
-    "logout": "Logout",
-    "open": "Open Menu",
-    "organization": "Edit Organization",
-    "privacy": "Privacy",
-    "terms": "Terms",
-    "wallet": "Wallet"
+    "open": "Open Menu"
   },
   "month": "month",
   "monthly": "Monthly",
   "name": "Name",
-  "navbar": {
-    "contact": "Contact Us",
-    "pricing": "Pricing",
-    "usecases": "Use Cases"
-  },
   "need_help": {
     "description": "Do you need some help with your first voting process? Watch this tutorial or schedule a call.",
     "title": "First steps"
@@ -1670,46 +1652,6 @@
   "use_read_more": {
     "read_less": "Read less",
     "read_more": "Read more"
-  },
-  "usecases": {
-    "banner": {
-      "chat": "Chat to sales",
-      "subtitle": "Join our network of +500 organizations using our secure voting platform",
-      "title": "Use Cases"
-    },
-    "city_councils": {
-      "description": "Improving Participatory Democracy on City Councils with Vocdoni",
-      "eyebrow": "Institutions ans Public Sector",
-      "title": "City Councils"
-    },
-    "community_organizations": {
-      "description": "Engaging Membership and Maintaining Integrity with Vocdoni",
-      "eyebrow": "Professional Collages",
-      "title": "Community Organizations"
-    },
-    "description": "Vocdoni helped a wide range of organizations and institutions improve their participatory processes, voting and elections with out cutting-edge software. Know more about our success stories and understand how we can help you, we adapt to all verticals",
-    "eyebrow": "Use Cases",
-    "integrators": {
-      "description": "Embedding Digital Voting Software with Vocdoni",
-      "eyebrow": "Product",
-      "title": "Integrators"
-    },
-    "political_parties": {
-      "description": "Improving Participatory Democracy in Political Parties with Vocdoni",
-      "eyebrow": "Software Engineering",
-      "title": "Political Parties"
-    },
-    "professional_associations": {
-      "description": "Engaging Membership and Lowering Administrative Burden with Vocdoni",
-      "eyebrow": "Design",
-      "title": "Professional Associations"
-    },
-    "sport_clubs": {
-      "description": "Engaging Membership and Lowering Administrative Burden with Vocdoni",
-      "eyebrow": "Software Engineering",
-      "title": "Sport Clubs"
-    },
-    "title": "Our success stories"
   },
   "user_menu": "User menu",
   "user_settings": "User settings",

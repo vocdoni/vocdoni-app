@@ -260,6 +260,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                           rules={fieldValidations[col.id]}
                           render={({ field }) => (
                             <NumberInput.Root
+                              w='full'
                               value={field.value === '' ? '' : String(field.value ?? '')}
                               onValueChange={(details) =>
                                 field.onChange(details.value === '' ? '' : Number(details.value))

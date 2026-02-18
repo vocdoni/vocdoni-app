@@ -1,5 +1,4 @@
 import {
-  Box,
   HStack,
   Icon,
   IconButton,
@@ -13,13 +12,7 @@ import {
   ProgressRange,
   ProgressRoot,
   ProgressTrack,
-  TableBody,
-  TableCell,
-  TableColumnHeader,
-  TableHeader,
-  TableRoot,
-  TableRow,
-  TableScrollArea,
+  Table,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { RoutedPaginationProvider, useClient, useOrganization } from '@vocdoni/react-providers'
@@ -33,10 +26,10 @@ import { useCreateProcess } from '~components/Process/Create'
 import { Process } from '~components/Process/Create/common'
 import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/shared/Pagination/PaginatedTableFooter'
-import { useToast } from '~shared/Toast'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
 import { Routes } from '~routes'
+import { useToast } from '~shared/Toast'
 
 type Draft = {
   id: string
@@ -107,37 +100,34 @@ const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   const { t } = useTranslation()
 
   return (
-    <Box border='1px solid' borderColor='table.border' borderRadius='sm' w='full'>
-      <TableScrollArea>
-        <TableRoot>
-          <TableHeader>
-            <TableRow>
-              <TableColumnHeader>{t('process_list.title', { defaultValue: 'Title' })}</TableColumnHeader>
-              <TableColumnHeader>{t('process_list.start_date', { defaultValue: 'Start date' })}</TableColumnHeader>
-              <TableColumnHeader>{t('process_list.end_date', { defaultValue: 'End date' })}</TableColumnHeader>
-              <TableColumnHeader>{t('process_list.type', { defaultValue: 'Type' })}</TableColumnHeader>
-              <TableColumnHeader>&nbsp;</TableColumnHeader>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {drafts.map((draft) => (
-              <DraftsRow key={draft.id} draft={draft} />
-            ))}
-          </TableBody>
-        </TableRoot>
-      </TableScrollArea>
-      <Box p={4}>
-        <RoutedPaginatedTableFooter />
-      </Box>
-    </Box>
+    <Table.ScrollArea border='1px solid' borderColor='table.border' borderRadius='sm'>
+      <Table.Root variant='outline'>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>{t('process_list.title', { defaultValue: 'Title' })}</Table.ColumnHeader>
+            <Table.ColumnHeader>{t('process_list.start_date', { defaultValue: 'Start date' })}</Table.ColumnHeader>
+            <Table.ColumnHeader>{t('process_list.end_date', { defaultValue: 'End date' })}</Table.ColumnHeader>
+            <Table.ColumnHeader colSpan={2}>{t('process_list.type', { defaultValue: 'Type' })}</Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {drafts.map((draft) => (
+            <DraftsRow key={draft.id} draft={draft} />
+          ))}
+        </Table.Body>
+        <Table.Caption>
+          <RoutedPaginatedTableFooter />
+        </Table.Caption>
+      </Table.Root>
+    </Table.ScrollArea>
   )
 }
 
 const DraftsRow = ({ draft }: { draft: Draft }) => {
   const { t } = useTranslation()
   return (
-    <TableRow key={draft.id} position='relative'>
-      <TableCell>
+    <Table.Row key={draft.id} position='relative'>
+      <Table.Cell>
         <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
           <RouterLink
             to={{
@@ -148,16 +138,18 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
             {draft.metadata?.title || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
           </RouterLink>
         </Link>
-      </TableCell>
-      <TableCell>{draft.metadata?.startDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</TableCell>
-      <TableCell>{draft.metadata?.endDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</TableCell>
-      <TableCell>
+      </Table.Cell>
+      <Table.Cell>
+        {draft.metadata?.startDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
+      </Table.Cell>
+      <Table.Cell>{draft.metadata?.endDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Table.Cell>
+      <Table.Cell>
         {draft.metadata?.questionType || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
-      </TableCell>
-      <TableCell textAlign='end'>
+      </Table.Cell>
+      <Table.Cell textAlign='end'>
         <DraftsContextMenu draft={draft} />
-      </TableCell>
-    </TableRow>
+      </Table.Cell>
+    </Table.Row>
   )
 }
 

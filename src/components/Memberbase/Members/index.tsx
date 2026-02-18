@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  ButtonProps,
+  type ButtonProps,
   Checkbox,
   Drawer,
   Flex,
@@ -11,12 +11,10 @@ import {
   Input,
   InputGroup,
   Menu,
-  MenuPositioner,
   Progress,
   Switch,
   Table,
-  TagLabel,
-  TagRoot,
+  Tag,
   Text,
   useDisclosure,
   Wrap,
@@ -208,7 +206,7 @@ const MemberActions = ({ member, onDelete, onAddToGroup }: MemberActionsProps) =
             <LuEllipsis />
           </IconButton>
         </Menu.Trigger>
-        <MenuPositioner>
+        <Menu.Positioner>
           <Menu.Content minW='120px'>
             <Menu.Item value='edit' onSelect={() => onEditOpen()}>
               {t('members.table.edit', { defaultValue: 'Edit' })}
@@ -221,7 +219,7 @@ const MemberActions = ({ member, onDelete, onAddToGroup }: MemberActionsProps) =
               {t('members.table.delete', { defaultValue: 'Delete' })}
             </Menu.Item>
           </Menu.Content>
-        </MenuPositioner>
+        </Menu.Positioner>
       </Menu.Root>
       <MemberManager member={member} open={isEditOpen} onOpenChange={(open) => (open ? onEditOpen() : onEditClose())} />
     </>
@@ -456,23 +454,21 @@ const CreateGroupButton = ({
                       <Wrap>
                         {visible.map((member) => (
                           <WrapItem key={member.id}>
-                            <TagRoot borderRadius='sm' size='sm' variant='subtle' colorPalette='gray'>
-                              <TagLabel>
-                                {member.name} {member.surname}
-                              </TagLabel>
-                            </TagRoot>
+                            <Tag.Root borderRadius='sm' size='sm' variant='subtle' colorPalette='gray'>
+                              <Tag.Label>{memberAlias(member)}</Tag.Label>
+                            </Tag.Root>
                           </WrapItem>
                         ))}
                         {remainingCount > 0 && (
                           <WrapItem>
-                            <TagRoot borderRadius='sm' size='sm' variant='outline' colorPalette='brand'>
-                              <TagLabel>
+                            <Tag.Root borderRadius='sm' size='sm' variant='outline' colorPalette='brand'>
+                              <Tag.Label>
                                 {t('members.table.remaining_members', {
                                   defaultValue: '+{{count}} more',
                                   count: remainingCount,
                                 })}
-                              </TagLabel>
-                            </TagRoot>
+                              </Tag.Label>
+                            </Tag.Root>
                           </WrapItem>
                         )}
                       </Wrap>

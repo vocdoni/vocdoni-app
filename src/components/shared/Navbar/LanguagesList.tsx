@@ -1,27 +1,19 @@
 import {
-  AccordionItem,
-  AccordionItemBody,
-  AccordionItemContent,
-  AccordionItemIndicator,
-  AccordionItemTrigger,
-  AccordionRoot,
   Box,
   Button,
   Flex,
   FieldRoot as FormControl,
   FieldLabel as FormLabel,
-  HStack,
   Icon,
   MenuContent,
   MenuItem,
   MenuPositioner,
   MenuRoot,
   MenuTrigger,
-  Stack,
   Text,
 } from '@chakra-ui/react'
 import { useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { FaGlobeAmericas } from 'react-icons/fa'
 import { LuCheck } from 'react-icons/lu'
 import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
@@ -73,14 +65,13 @@ export const LanguagesMenu = ({ ...props }) => {
       <MenuTrigger asChild>
         <Button
           aria-label={t('menu.burger_aria_label')}
-          variant='solid'
+          variant='subtle'
           colorPalette='gray'
           minW='none'
-          size='sm'
           gap={1}
           {...props}
         >
-          <FaGlobeAmericas />
+          <Icon as={FaGlobeAmericas} />
           {isOpen ? <RiArrowUpSLine /> : <RiArrowDownSLine />}
         </Button>
       </MenuTrigger>
@@ -150,69 +141,3 @@ export const LanguageListDashboard = ({ ...props }) => {
     </FormControl>
   )
 }
-
-export const LanguagesListAccordion = () => {
-  const { i18n } = useTranslation()
-
-  const languages = import.meta.env.LANGUAGES as Record<string, string>
-  const languageEntries = Object.entries(languages).sort(([, a], [, b]) => a.localeCompare(b))
-
-  // Check if there's only one language
-  const hasMultipleLanguages = Object.keys(languages).length > 1
-
-  // Only render if there are multiple languages
-  if (!hasMultipleLanguages) {
-    return null
-  }
-
-  return (
-    <AccordionRoot multiple m={0} p={0} borderColor='transparent'>
-      <AccordionItem value='languages'>
-        <AccordionItemTrigger asChild>
-          <Button
-            m={0}
-            p={0}
-            h='fit-content'
-            display='flex'
-            alignItems='center'
-            justifyContent='start'
-            fontSize='md'
-            bg='none'
-          >
-            <HStack gap={2} w='full' justifyContent='space-between'>
-              <HStack gap={2}>
-                <FaGlobeAmericas />
-                <Text as='span'>
-                  <Trans i18nKey='languages'>Languages</Trans>
-                </Text>
-              </HStack>
-              <AccordionItemIndicator />
-            </HStack>
-          </Button>
-        </AccordionItemTrigger>
-        <AccordionItemContent>
-          <AccordionItemBody pb={0}>
-            <Stack direction={{ base: 'column', md: 'row' }} gap={2} mt={2}>
-              {languageEntries.map(([k, lang]) => (
-                <Button
-                  key={k}
-                  onClick={() => {
-                    i18n.changeLanguage(k)
-                  }}
-                  display='flex'
-                  data-active={k === i18n.language ? '' : undefined}
-                  p={2}
-                  h='fit-content'
-                >
-                  {lang}
-                </Button>
-              ))}
-            </Stack>
-          </AccordionItemBody>
-        </AccordionItemContent>
-      </AccordionItem>
-    </AccordionRoot>
-  )
-}
-
-export default LanguagesListAccordion

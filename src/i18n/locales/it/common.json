@@ -532,7 +532,6 @@
   "free_trial_days_one": "Un giorno gratuito",
   "free_trial_days_many": "{{count}}-day free trial",
   "free_trial_days_other": "{{count}} giorni gratuiti",
-  "go_back": "torna indietro",
   "google_oauth_conflict_error": "Esiste già un account con questa email. Accedi utilizzando il metodo che hai utilizzato in precedenza.",
   "google_oauth_error": "Errore Google OAuth",
   "google_oauth_error_description": "Errore Google OAuth, riprovare",
@@ -589,9 +588,6 @@
   },
   "home": {
     "clients_title": "Scelto da oltre 100 organizzazioni",
-    "create_process": {
-      "btn": "Provalo gratis"
-    },
     "faqs": {
       "faq_1": {
         "description": "Vocdoni si distingue per la sua esperienza utente fluida, le funzionalità di sicurezza avanzate e la trasparenza senza pari. La nostra piattaforma utilizza tecnologie all'avanguardia come le prove a conoscenza zero e una blockchain personalizzata per garantire un voto sicuro e anonimo fornendo al contempo un processo di voto trasparente e verificabile.",
@@ -816,7 +812,6 @@
     "unexpected_error": "",
     "user_invited": "Email inviata a {{email}}"
   },
-  "languages": "Lingue",
   "lastname": "Cognome",
   "light": "Chiaro",
   "link": {
@@ -975,27 +970,14 @@
   "menu": {
     "burger_aria_label": "menu utente",
     "connect": "Connetti",
-    "copy_aria_label": "copia indirizzo",
     "create": "Crea processo",
     "dashboard": "Dashboard",
-    "documentation": "Documentazione",
-    "languages": "Lingue",
     "login": "Accedi",
-    "logout": "Esci",
-    "open": "Apri menu",
-    "organization": "Modifica organizzazione",
-    "privacy": "Privacy",
-    "terms": "Termini",
-    "wallet": "Wallet"
+    "open": "Apri menu"
   },
   "month": "mese",
   "monthly": "Mensile",
   "name": "Nome",
-  "navbar": {
-    "contact": "Contattaci",
-    "pricing": "Prezzi",
-    "usecases": "Casi d'uso"
-  },
   "need_help": {
     "description": "Hai bisogno di aiuto con il tuo primo processo di voto? Guarda questo tutorial o prenota una chiamata.",
     "title": "Primi passi"
@@ -1693,46 +1675,6 @@
   "use_read_more": {
     "read_less": "Leggi meno",
     "read_more": "Leggi di più"
-  },
-  "usecases": {
-    "banner": {
-      "chat": "Parla con le vendite",
-      "subtitle": "Unisciti alla nostra rete di +500 organizzazioni che utilizzano la nostra piattaforma di voto sicura",
-      "title": "Casi d'uso"
-    },
-    "city_councils": {
-      "description": "Migliorare la democrazia partecipativa nei consigli comunali con Vocdoni",
-      "eyebrow": "Istituzioni e Settore Pubblico",
-      "title": "Consigli Comunali"
-    },
-    "community_organizations": {
-      "description": "Coinvolgere i membri e mantenere l'integrità con Vocdoni",
-      "eyebrow": "Ordini Professionali",
-      "title": "Organizzazioni Comunitarie"
-    },
-    "description": "Vocdoni ha aiutato un'ampia gamma di organizzazioni e istituzioni a migliorare i propri processi partecipativi, votazioni ed elezioni con il nostro software all'avanguardia. Scopri di più sulle nostre storie di successo e capisci come possiamo aiutarti, ci adattiamo a tutti i verticali",
-    "eyebrow": "Casi d'uso",
-    "integrators": {
-      "description": "Integrare il software di voto digitale con Vocdoni",
-      "eyebrow": "Prodotto",
-      "title": "Integratori"
-    },
-    "political_parties": {
-      "description": "Migliorare la democrazia partecipativa nei partiti politici con Vocdoni",
-      "eyebrow": "Ingegneria del Software",
-      "title": "Partiti Politici"
-    },
-    "professional_associations": {
-      "description": "Coinvolgere i membri e ridurre il carico amministrativo con Vocdoni",
-      "eyebrow": "Design",
-      "title": "Associazioni Professionali"
-    },
-    "sport_clubs": {
-      "description": "Coinvolgere i membri e ridurre il carico amministrativo con Vocdoni",
-      "eyebrow": "Ingegneria del Software",
-      "title": "Club Sportivi"
-    },
-    "title": "Le nostre storie di successo"
   },
   "user_menu": "Menu utente",
   "user_settings": "Impostazioni utente",

@@ -41,10 +41,7 @@ export const Routes = {
     create: '/admin/processes/create/:groupId?',
     view: '/processes/:id',
   },
-  usecases: {
-    base: '/use-cases',
-    view: '/use-cases/:lang?/:case?',
-  },
+  vocdoni: 'https://vocdoni.io',
 }
 
 export type RoutesType = typeof Routes

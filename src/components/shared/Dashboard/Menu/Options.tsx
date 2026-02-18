@@ -17,21 +17,28 @@ export const DashboardMenuOptions = () => {
       label: t('organization.dashboard'),
       icon: LuHouse,
       route: Routes.dashboard.base,
+      activeMatch: [{ path: Routes.dashboard.base, end: true }],
     },
     {
       label: t('voting_processes'),
       icon: LuVote,
       route: Routes.dashboard.processes.base,
+      activeMatch: [
+        { path: Routes.dashboard.processes.base, end: false },
+        { path: Routes.dashboard.process, end: false },
+      ],
     },
     {
       label: t('memberbase.title', { defaultValue: 'Memberbase' }),
       icon: LuUsers,
       route: Routes.dashboard.memberbase.base,
+      activeMatch: [{ path: Routes.dashboard.memberbase.base, end: false }],
     },
     {
       label: t('settings'),
       icon: LuSettings,
       route: Routes.dashboard.settings.base,
+      activeMatch: [{ path: Routes.dashboard.settings.base, end: false }],
     },
   ]
   const menuItemsHelp: DashboardMenuItem[] = [
@@ -51,15 +58,18 @@ export const DashboardMenuOptions = () => {
           </Text>
         )}
         <List.Root display='flex' flexDirection='column' listStyleType='none' ml={0}>
-          {menuItemsPlatform.map((item, index) => (
-            <List.Item key={index}>
-              <DashboardMenuItemButton
-                item={item}
-                reduced={reduced}
-                isActive={Boolean(matchPath({ path: item.route || '', end: true }, location.pathname)) && true}
-              />
-            </List.Item>
-          ))}
+          {menuItemsPlatform.map((item, index) => {
+            const activeMatch = item.activeMatch ?? (item.route ? [{ path: item.route, end: true }] : [])
+            const isActive = activeMatch.some((match) =>
+              Boolean(matchPath({ path: match.path, end: match.end ?? true }, location.pathname))
+            )
+
+            return (
+              <List.Item key={index}>
+                <DashboardMenuItemButton item={item} reduced={reduced} isActive={isActive} />
+              </List.Item>
+            )
+          })}
         </List.Root>
       </Box>
       {!reduced && (

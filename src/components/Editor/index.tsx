@@ -99,7 +99,7 @@ const MarkdownEditor = (props: EditorProps) => {
       <ReadOnlyPlugin isDisabled={props.isDisabled} />
       <OnChangeMarkdown onChange={props.onChange} transformers={TRANSFORMERS} />
       {props.maxLength && props.maxLength > 0 && <CharacterLimitPlugin maxLength={props.maxLength} charset='UTF-8' />}
-      {floatingAnchorElem && (
+      {floatingAnchorElem && !props.isDisabled && (
         <>
           <FloatingLinkEditorPlugin
             anchorElem={floatingAnchorElem}

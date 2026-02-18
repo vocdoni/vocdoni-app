@@ -65,7 +65,7 @@ const LayoutAuth = () => {
     <Flex justifyContent='center' alignItems='center' minH='100vh' p={{ base: 6, md: 10 }}>
       <Flex w='full' maxW={{ base: 'sm', md: '3xl' }} flexDir='column' gap={2}>
         <Link asChild display='flex' alignItems='center' alignSelf='start'>
-          <RouterLink to={isSignin ? Routes.root : Routes.auth.signIn}>
+          <RouterLink to={isSignin ? Routes.vocdoni : Routes.auth.signIn}>
             <Icon as={LuArrowLeft} />
             {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
           </RouterLink>

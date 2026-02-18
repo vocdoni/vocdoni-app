@@ -1,7 +1,8 @@
+import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui/react'
 import { Badge } from './badge'
 import { Button } from './button'
 import { Card } from './card'
-import { Checkbox, DetailedCheckbox } from './checkbox'
+import { Checkbox } from './checkbox'
 import { ConfirmModal } from './confirmModal'
 import { Drawer } from './drawer'
 import { ElectionDescription, ElectionVideo } from './election'
@@ -36,7 +37,7 @@ import { Tooltip } from './tooltip'
 import { Voted } from './voted'
 import { VoteWeight } from './voteWeight'
 
-export const recipes = {
+export const recipes: Record<string, RecipeDefinition> = {
   badge: Badge,
   button: Button,
   formLabel: FormLabel,
@@ -44,6 +45,12 @@ export const recipes = {
   input: Input,
   link: Link,
   text: Text,
+  icon: defineRecipe({
+    base: {
+      w: 4,
+      h: 4,
+    },
+  }),
   textarea: Textarea,
   ElectionDescription,
   ElectionSchedule,
@@ -55,7 +62,7 @@ export const recipes = {
   SecurityLevelBox,
 }
 
-export const slotRecipes = {
+export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   card: Card,
   checkbox: Checkbox,
   drawer: Drawer,
@@ -69,7 +76,6 @@ export const slotRecipes = {
   tag: Tag,
   tooltip: Tooltip,
   ConfirmModal,
-  DetailedCheckbox,
   ElectionQuestions,
   ElectionResults,
   EllipsisButton,

@@ -13,8 +13,6 @@ const NotFound = lazy(() => import('~elements/NotFound'))
 const Process = lazy(() => import('~elements/processes/view'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
 const PlansPublicPage = lazy(() => import('~elements/plans'))
-const UseCases = lazy(() => import('~components/UseCases'))
-const UseCase = lazy(() => import('~components/UseCases/view'))
 
 const RootElements = (client: VocdoniSDKClient) => [
   {
@@ -45,29 +43,6 @@ const RootElements = (client: VocdoniSDKClient) => [
         <PlansPublicPage />
       </SuspenseLoader>
     ),
-  },
-  {
-    path: Routes.usecases.base,
-    element: (
-      <SuspenseLoader>
-        <UseCases />
-      </SuspenseLoader>
-    ),
-  },
-  {
-    path: Routes.usecases.view,
-    element: (
-      <SuspenseLoader>
-        <UseCase />
-      </SuspenseLoader>
-    ),
-    loader: async ({ params }: { params: Params<string> }) => {
-      const response = await fetch(`${import.meta.env.BASE_URL}use-cases/${params.lang}/${params.case}.md`)
-      const md = await response.text()
-      if (!md) throw new Error('Error fetching MD')
-      return md
-    },
-    errorElement: <NotFound />,
   },
   {
     path: '*',

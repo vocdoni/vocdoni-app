@@ -1,5 +1,5 @@
 import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '~src/test-utils'
+import { createTestI18n, render, screen } from '~src/test-utils'
 import Navbar from './index'
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -15,13 +15,25 @@ vi.mock('react-router-dom', async (importOriginal) => {
 })
 
 describe('Navbar', () => {
-  it('renders the mobile menu trigger', () => {
+  it('renders the login button when not authenticated', async () => {
+    const i18nInstance = await createTestI18n({
+      useReactI18next: true,
+      resources: {
+        en: {
+          common: {
+            'menu.login': 'Login',
+          },
+        },
+      },
+    })
+
     render(
       <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Navbar />
-      </MemoryRouter>
+      </MemoryRouter>,
+      { i18nInstance }
     )
 
-    expect(screen.getByLabelText('Open Menu')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Login' })).toBeInTheDocument()
   })
 })
