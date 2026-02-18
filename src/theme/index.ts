@@ -17,8 +17,8 @@ const sidebarWidth = '350px'
 
 export const theme = extendTheme(vtheme, {
   config: {
-    initialColorMode: 'system',
-    useSystemColorMode: true,
+    initialColorMode: 'light',
+    useSystemColorMode: false,
   },
   fonts: {
     body: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif`,

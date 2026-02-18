@@ -1,16 +1,23 @@
-import { AspectRatio, Box, Flex, Link, Spinner, Text } from '@chakra-ui/react'
-import { ElectionStatusBadge, ElectionTitle, OrganizationImage } from '@vocdoni/chakra-components'
-import { ElectionProvider, OrganizationProvider, useClient, useElection } from '@vocdoni/react-providers'
+import { AspectRatio, Box, Flex, Image, Link, Spinner, Text } from '@chakra-ui/react'
+import { ElectionStatusBadge, ElectionTitle } from '@vocdoni/chakra-components'
+import {
+  ElectionProvider,
+  OrganizationProvider,
+  useClient,
+  useElection,
+  useOrganization,
+} from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink, useOutletContext } from 'react-router-dom'
 import Editor from '~components/Editor'
 import { ActionsMenu } from '~components/Process/ActionsMenu'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
 import { MaxContentsWidth } from '~constants'
+import { SimpleLayoutOutletContext } from '~elements/SimpleLayout'
 
 export const parseProcessIds = (value: string | undefined) =>
   (value || '')
@@ -38,16 +45,14 @@ const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode })
   const { election } = useElection()
   const organizationId = (election as PublishedElection | undefined)?.organizationId
 
-  if (!organizationId) {
-    return <>{children}</>
-  }
-
   return <OrganizationProvider id={organizationId}>{children}</OrganizationProvider>
 }
 
 const SharedCensusHomeContent = () => {
   const { t, i18n } = useTranslation()
   const { loading, loaded, election, connected } = useElection()
+  const { organization } = useOrganization()
+  const { setLogo } = useOutletContext<SimpleLayoutOutletContext>()
   const { account, connected: aconnected } = useClient()
 
   const isAdmin = aconnected && account?.address === (election as PublishedElection)?.organizationId
@@ -109,6 +114,13 @@ const SharedCensusHomeContent = () => {
     .filter(Boolean)
     .join('\n\n')
 
+  useEffect(() => {
+    ;(async () => {
+      if (!organization && !organization?.account.avatar) return null
+      setLogo(<Image src={organization.account.avatar} alt='Organization avatar' maxH='80px' />)
+    })()
+  }, [organization?.account?.avatar])
+
   if (!election || election instanceof InvalidElection) {
     return null
   }
@@ -119,7 +131,6 @@ const SharedCensusHomeContent = () => {
 
   return (
     <Flex flexDirection='column' gap={10} maxW={MaxContentsWidth} mx='auto' px={5} alignItems='center'>
-      <OrganizationImage h='100px' />
       {showTopContent && (
         <Box w='90%' display='flex' flexDirection='column' gap={4}>
           {(showAlways || showDisconnected || showConnected) && (
@@ -136,7 +147,7 @@ const SharedCensusHomeContent = () => {
           )}
         </Box>
       )}
-      <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
+      <Box>{election && !isAdmin && <CensusConnectButton isDisabled={true} />}</Box>
       {canViewProcesses && (
         <Box w='90%'>
           <Text alignSelf='start' mb={10} as='h3' fontWeight='bold' fontSize='22px' style={{ marginTop: '-30px' }}>

@@ -1,4 +1,4 @@
-import { Button, Flex, Link, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, Flex, Link, Text } from '@chakra-ui/react'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { VoteButton as CVoteButton, environment, SpreadsheetAccess, VoteWeight } from '@vocdoni/chakra-components'
 import { useClient, useElection } from '@vocdoni/react-providers'
@@ -169,7 +169,7 @@ const ProcessAside = () => {
   )
 }
 
-export const CensusConnectButton = () => {
+export const CensusConnectButton = (props: ButtonProps) => {
   const { t } = useTranslation()
 
   const { election, connected } = useElection()
@@ -190,8 +190,8 @@ export const CensusConnectButton = () => {
           {t('menu.connect').toString()}
         </Button>
       )}
-      {isCSP && !connected && <CspAuth />}
-      {isSpreadsheet && !connected && <SpreadsheetAccess />}
+      {isCSP && !connected && <CspAuth {...props} />}
+      {isSpreadsheet && !connected && <SpreadsheetAccess {...props} />}
     </>
   )
 }

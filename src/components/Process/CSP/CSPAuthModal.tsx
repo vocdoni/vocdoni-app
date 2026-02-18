@@ -1,5 +1,6 @@
 import {
   Button,
+  ButtonProps,
   Heading,
   Modal,
   ModalBody,
@@ -62,7 +63,7 @@ const useCensusBundle = (censusURI?: string) => {
   })
 }
 
-export const CspAuthModal = () => {
+export const CspAuthModal = (props: ButtonProps) => {
   const { t } = useTranslation()
   const { isOpen, onClose, onOpen } = useDisclosure()
   const { election } = useElection()
@@ -72,7 +73,12 @@ export const CspAuthModal = () => {
 
   return (
     <>
-      <Button onClick={onOpen} w='full' aria-label={t('cc.spreadsheet.access_button', { defaultValue: 'Login' })}>
+      <Button
+        onClick={onOpen}
+        w='full'
+        aria-label={t('cc.spreadsheet.access_button', { defaultValue: 'Login' })}
+        {...props}
+      >
         <Trans i18nKey='cc.spreadsheet.access_button'>Login</Trans>
       </Button>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -97,7 +103,7 @@ export const CspAuthModal = () => {
   )
 }
 
-export const CspAuth = () => {
+export const CspAuth = (props: ButtonProps) => {
   const { election } = useElection()
   const {
     data: censusData,
@@ -118,7 +124,7 @@ export const CspAuth = () => {
 
   return (
     <CspAuthProvider censusData={processedCensusData}>
-      <CspAuthModal />
+      <CspAuthModal {...props} />
     </CspAuthProvider>
   )
 }

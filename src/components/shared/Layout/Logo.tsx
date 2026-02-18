@@ -1,6 +1,6 @@
-import { chakra, ChakraProps, Flex, useColorModeValue } from '@chakra-ui/react'
+import { chakra, ChakraProps, Flex, Image, useColorModeValue } from '@chakra-ui/react'
 import { NavLink } from 'react-router-dom'
-import { Logo as LogoImage, LogoMbl } from '~theme/icons'
+import logo from '/assets/coib.png'
 
 // This Logo should be updated to use VocdoniLogo or simply deprecated.
 const Logo = () => {
@@ -8,11 +8,8 @@ const Logo = () => {
 
   return (
     <NavLink to='/'>
-      <Flex alignItems='center' gap={2} display={{ base: 'none', lg: 'flex' }} filter={invert}>
-        <LogoImage />
-      </Flex>
-      <Flex alignItems='center' gap={2} display={{ base: 'flex', lg: 'none' }} filter={invert}>
-        <LogoMbl />
+      <Flex alignItems='center' gap={2} filter={invert}>
+        <Image src={logo} alt='logo COIB' maxH='60px' />
       </Flex>
     </NavLink>
   )
