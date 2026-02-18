@@ -198,6 +198,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
 
 const MemberActions = ({ member, onDelete, onAddToGroup }: MemberActionsProps) => {
   const { t } = useTranslation()
+  const { open: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
 
   return (
     <>
@@ -209,20 +210,20 @@ const MemberActions = ({ member, onDelete, onAddToGroup }: MemberActionsProps) =
         </Menu.Trigger>
         <MenuPositioner>
           <Menu.Content minW='120px'>
-            <MemberManager
-              member={member}
-              control={<Menu.Item value='edit'>{t('members.table.edit', { defaultValue: 'Edit' })}</Menu.Item>}
-            />
-            <Menu.Item value='add-to-group' onClick={onAddToGroup}>
+            <Menu.Item value='edit' onSelect={() => onEditOpen()}>
+              {t('members.table.edit', { defaultValue: 'Edit' })}
+            </Menu.Item>
+            <Menu.Item value='add-to-group' onSelect={onAddToGroup}>
               {t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
             </Menu.Item>
             <Menu.Separator />
-            <Menu.Item value='delete' color='red.400' onClick={onDelete}>
+            <Menu.Item value='delete' color='red.400' onSelect={onDelete}>
               {t('members.table.delete', { defaultValue: 'Delete' })}
             </Menu.Item>
           </Menu.Content>
         </MenuPositioner>
       </Menu.Root>
+      <MemberManager member={member} open={isEditOpen} onOpenChange={(open) => (open ? onEditOpen() : onEditClose())} />
     </>
   )
 }

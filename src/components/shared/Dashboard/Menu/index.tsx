@@ -2,10 +2,7 @@ import {
   Box,
   Button,
   CloseButton,
-  DrawerBackdrop,
-  DrawerContent,
-  DrawerPositioner,
-  DrawerRoot,
+  Drawer,
   Flex,
   HStack,
   Icon,
@@ -53,14 +50,14 @@ const DashboardMenu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
       </Box>
 
       {/* Sidebar for small screens */}
-      <DrawerRoot open={isOpen} placement='start' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
-        <DrawerBackdrop />
-        <DrawerPositioner>
-          <DrawerContent p={2}>
+      <Drawer.Root open={isOpen} placement='start' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
+        <Drawer.Backdrop />
+        <Drawer.Positioner>
+          <Drawer.Content>
             <DashboardMenuContent />
-          </DrawerContent>
-        </DrawerPositioner>
-      </DrawerRoot>
+          </Drawer.Content>
+        </Drawer.Positioner>
+      </Drawer.Root>
     </>
   )
 }

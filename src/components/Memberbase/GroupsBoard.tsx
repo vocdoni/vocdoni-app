@@ -5,12 +5,7 @@ import {
   CheckboxHiddenInput,
   CheckboxRoot,
   CloseButton,
-  DrawerBackdrop,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPositioner,
-  DrawerRoot,
+  Drawer,
   Flex,
   Heading,
   HStack,
@@ -34,7 +29,7 @@ import {
 import { PaginationProvider, usePagination } from '@vocdoni/react-providers'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCalendar, LuClock, LuEllipsis, LuEye, LuTrash, LuUsers, LuVote, LuX } from 'react-icons/lu'
+import { LuCalendar, LuClock, LuEllipsis, LuEye, LuTrash, LuUsers, LuVote } from 'react-icons/lu'
 import { generatePath, useNavigate } from 'react-router-dom'
 import { DashboardBox } from '~components/shared/Dashboard/Contents'
 import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
@@ -125,42 +120,33 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
   const { t } = useTranslation()
 
   return (
-    <DrawerRoot open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
-      <DrawerBackdrop />
-      <DrawerPositioner>
-        <DrawerContent>
-          <IconButton
-            aria-label={t('drawer.close', 'Close drawer')}
-            position='absolute'
-            top='6px'
-            right='6px'
-            onClick={onClose}
-            variant='ghost'
-          >
-            <Icon as={LuX} />
-          </IconButton>
-          <DrawerHeader>
-            <Flex direction='column' gap={2}>
-              <Heading size='md'>
-                {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: group.title })}
-              </Heading>
-              <Text color='texts.subtle' fontSize='sm'>
-                {t('groups_board.history.description', {
-                  defaultValue: 'View the history of this group and its associated censuses',
-                })}
-              </Text>
-            </Flex>
-          </DrawerHeader>
-          <DrawerBody>
+    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
+      <Drawer.Backdrop />
+      <Drawer.Positioner>
+        <Drawer.Content>
+          <Drawer.CloseTrigger>
+            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
+          </Drawer.CloseTrigger>
+          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
+            <Drawer.Title>
+              {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: group.title })}
+            </Drawer.Title>
+            <Text color='texts.subtle' fontSize='sm'>
+              {t('groups_board.history.description', {
+                defaultValue: 'View the history of this group and its associated censuses',
+              })}
+            </Text>
+          </Drawer.Header>
+          <Drawer.Body>
             <Flex justify='flex-end'>
               <Button variant='outline' onClick={onClose}>
                 {t('groups_board.history.close', { defaultValue: 'Close' })}
               </Button>
             </Flex>
-          </DrawerBody>
-        </DrawerContent>
-      </DrawerPositioner>
-    </DrawerRoot>
+          </Drawer.Body>
+        </Drawer.Content>
+      </Drawer.Positioner>
+    </Drawer.Root>
   )
 }
 
@@ -359,40 +345,31 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
   const navigateToVote = useNavigateToVote()
 
   return (
-    <DrawerRoot open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='lg'>
-      <DrawerBackdrop />
-      <DrawerPositioner>
-        <DrawerContent>
-          <IconButton
-            aria-label={t('drawer.close', 'Close drawer')}
-            position='absolute'
-            top='6px'
-            right='6px'
-            onClick={onClose}
-            variant='ghost'
-          >
-            <Icon as={LuX} />
-          </IconButton>
-          <DrawerHeader>
-            <Flex direction='column' gap={2}>
-              <Heading size='md'>{group.title}</Heading>
-              <Text color='texts.subtle' fontSize='sm'>
-                {`${t('group.created_on', {
-                  defaultValue: 'Created {{date}}',
-                  date: new Date(group.createdAt).toLocaleDateString(undefined, {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  }),
-                })} • ${t('group.members', {
-                  defaultValue: '{{count}} member',
-                  defaultValue_other: '{{count}} members',
-                  count: group.membersCount || 0,
-                })}`}
-              </Text>
-            </Flex>
-          </DrawerHeader>
-          <DrawerBody>
+    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='lg'>
+      <Drawer.Backdrop />
+      <Drawer.Positioner>
+        <Drawer.Content>
+          <Drawer.CloseTrigger>
+            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
+          </Drawer.CloseTrigger>
+          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
+            <Drawer.Title>{group.title}</Drawer.Title>
+            <Text color='texts.subtle' fontSize='sm'>
+              {`${t('group.created_on', {
+                defaultValue: 'Created {{date}}',
+                date: new Date(group.createdAt).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                }),
+              })} • ${t('group.members', {
+                defaultValue: '{{count}} member',
+                defaultValue_other: '{{count}} members',
+                count: group.membersCount || 0,
+              })}`}
+            </Text>
+          </Drawer.Header>
+          <Drawer.Body>
             <GroupMembersDisplay group={group} isOpen={isOpen} />
             <Separator my={4} />
             <Flex direction='column' gap={4}>
@@ -416,10 +393,10 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
                 {t('group.delete_group', { defaultValue: 'Delete group' })}
               </Button>
             </Flex>
-          </DrawerBody>
-        </DrawerContent>
-      </DrawerPositioner>
-    </DrawerRoot>
+          </Drawer.Body>
+        </Drawer.Content>
+      </Drawer.Positioner>
+    </Drawer.Root>
   )
 }
 

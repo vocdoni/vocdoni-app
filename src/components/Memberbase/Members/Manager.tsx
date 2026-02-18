@@ -1,17 +1,11 @@
 import {
   Button,
-  DrawerBackdrop,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPositioner,
-  DrawerRoot,
+  Drawer,
   Flex,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldHelperText as FormHelperText,
   FieldLabel as FormLabel,
-  Heading,
   Input,
   NumberInput,
   Stack,
@@ -31,8 +25,14 @@ import { useTable } from '../TableProvider'
 type MemberFormData = Record<string, string>
 
 type MemberManagerProps = {
-  control: React.ReactElement
+  control?: React.ReactElement
   member?: Partial<Member> | null
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+type TriggerEvent = {
+  defaultPrevented?: boolean
 }
 
 const stringifyObjectValues = (obj: Record<string, any>) =>
@@ -40,10 +40,10 @@ const stringifyObjectValues = (obj: Record<string, any>) =>
     Object.entries(obj).map(([key, value]) => [key, value === undefined || value === null ? '' : value.toString()])
   )
 
-export const MemberManager = ({ control, member = null }: MemberManagerProps) => {
+export const MemberManager = ({ control, member = null, open: controlledOpen, onOpenChange }: MemberManagerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const { open: disclosureOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef(null)
   const { columns } = useTable()
   const addMember = useAddMembers()
@@ -55,6 +55,24 @@ export const MemberManager = ({ control, member = null }: MemberManagerProps) =>
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
 
   const methods = useForm({ defaultValues })
+  const isControlled = typeof controlledOpen === 'boolean'
+  const isOpen = isControlled ? controlledOpen : disclosureOpen
+
+  const openDrawer = () => {
+    if (isControlled) {
+      onOpenChange?.(true)
+      return
+    }
+    onOpen()
+  }
+
+  const closeDrawer = () => {
+    if (isControlled) {
+      onOpenChange?.(false)
+      return
+    }
+    onClose()
+  }
 
   const isEdit = Boolean(member)
   const isSubmitting = isEdit ? editMember.isPending : addMember.isPending
@@ -147,7 +165,7 @@ export const MemberManager = ({ control, member = null }: MemberManagerProps) =>
         queryKey: QueryKeys.organization.members(organization.address),
         exact: false,
       })
-      onClose()
+      closeDrawer()
     }
 
     const handleError = (error: Error) => {
@@ -194,29 +212,38 @@ export const MemberManager = ({ control, member = null }: MemberManagerProps) =>
 
   const handleClose = () => {
     methods.clearErrors()
-    onClose()
+    closeDrawer()
+  }
+
+  const controlProps = (control?.props || {}) as {
+    onClick?: (event: TriggerEvent) => void
+  }
+
+  const onClick = (event: TriggerEvent) => {
+    controlProps.onClick?.(event)
+    if (!event?.defaultPrevented) openDrawer()
   }
 
   return (
     <FormProvider {...methods}>
-      {cloneElement(control, { ref: btnRef, onClick: onOpen })}
-      <DrawerRoot
+      {control && cloneElement(control, { ref: btnRef, onClick })}
+      <Drawer.Root
         open={isOpen}
         placement='end'
         onOpenChange={({ open }) => (!open ? handleClose() : undefined)}
         finalFocusEl={btnRef ? () => btnRef.current : undefined}
         size='sm'
       >
-        <DrawerBackdrop />
-        <DrawerPositioner>
-          <DrawerContent p={1}>
-            <DrawerHeader>
-              <Heading size='md'>{title}</Heading>
+        <Drawer.Backdrop />
+        <Drawer.Positioner>
+          <Drawer.Content>
+            <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
+              <Drawer.Title>{title}</Drawer.Title>
               <Text fontSize='sm' color='texts.subtle'>
                 {description}
               </Text>
-            </DrawerHeader>
-            <DrawerBody>
+            </Drawer.Header>
+            <Drawer.Body>
               <Stack as='form' id='member-form' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
                 {columns.map((col) => {
                   const isPhone = col.id === 'phone'
@@ -278,10 +305,10 @@ export const MemberManager = ({ control, member = null }: MemberManagerProps) =>
                   {t('memberbase.form.save', { defaultValue: 'Save Changes' })}
                 </Button>
               </Flex>
-            </DrawerBody>
-          </DrawerContent>
-        </DrawerPositioner>
-      </DrawerRoot>
+            </Drawer.Body>
+          </Drawer.Content>
+        </Drawer.Positioner>
+      </Drawer.Root>
     </FormProvider>
   )
 }

@@ -6,19 +6,13 @@ import {
   Button,
   CloseButton,
   Dialog,
-  DrawerBackdrop,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerPositioner,
-  DrawerRoot,
+  Drawer,
   Flex,
   FieldRoot as FormControl,
   FieldLabel as FormLabel,
   Heading,
   HStack,
   Icon,
-  IconButton,
   List,
   ProgressRange,
   ProgressRoot,
@@ -39,7 +33,7 @@ import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCheck, LuTriangleAlert, LuUpload, LuX } from 'react-icons/lu'
+import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
 import { useOutletContext } from 'react-router-dom'
 import { SpreadsheetManager } from '~components/shared/Spreadsheet/SpreadsheetManager'
 import { Select } from '~shared/Form/Select'
@@ -502,59 +496,53 @@ export const ImportMembers = () => {
   }
 
   return (
-    <>
-      <Button ref={btnRef} variant='outline' onClick={onOpen}>
-        <Icon as={LuUpload} />
-        {t('memberbase.importer.button', { defaultValue: 'Import' })}
-      </Button>
-      <DrawerRoot
-        open={isOpen}
-        placement='end'
-        onOpenChange={({ open }) => (!open ? onClose() : undefined)}
-        finalFocusEl={btnRef ? () => btnRef.current : undefined}
-        size='md'
-      >
-        <DrawerBackdrop />
-        <DrawerPositioner>
-          <DrawerContent p={1}>
-            <IconButton
-              aria-label={t('drawer.close', 'Close drawer')}
-              position='absolute'
-              top='6px'
-              right='6px'
-              onClick={onClose}
-            >
-              <Icon as={LuX} />
-            </IconButton>
-            <DrawerHeader display='flex' flexDirection='column' gap={4}>
-              <Heading size='md' fontWeight='extrabold'>
-                {t('memberbase.importer.title', { defaultValue: 'Import Members' })}
-              </Heading>
-              <Text color='texts.subtle' fontSize='sm'>
-                {t('memberbase.importer.subtitle', {
-                  defaultValue: 'Download a template or import your own CSV, XLS, or XLSX file to add members.',
-                })}
-              </Text>
-            </DrawerHeader>
-            <DrawerBody display='flex' flexDirection='column' gap={4}>
-              <FormProvider {...methods}>
-                <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
-                  {!hasSpreadsheet ? (
-                    <TemplateUploader />
-                  ) : (
-                    <ImportDataPreview columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
-                  )}
-                </Box>
-              </FormProvider>
-              <Flex justify='flex-end' gap={4}>
-                <Button type='button' variant='outline' onClick={onClose}>
+    <Drawer.Root
+      open={isOpen}
+      placement='end'
+      onOpenChange={({ open }) => (open ? onOpen() : onClose())}
+      finalFocusEl={btnRef ? () => btnRef.current : undefined}
+      size='md'
+    >
+      <Drawer.Backdrop />
+      <Drawer.Trigger asChild>
+        <Button ref={btnRef} variant='outline'>
+          <Icon as={LuUpload} />
+          {t('memberbase.importer.button', { defaultValue: 'Import' })}
+        </Button>
+      </Drawer.Trigger>
+      <Drawer.Positioner>
+        <Drawer.Content>
+          <Drawer.CloseTrigger>
+            <CloseButton />
+          </Drawer.CloseTrigger>
+          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
+            <Drawer.Title>{t('memberbase.importer.title', { defaultValue: 'Import Members' })}</Drawer.Title>
+            <Text color='texts.subtle' fontSize='sm'>
+              {t('memberbase.importer.subtitle', {
+                defaultValue: 'Download a template or import your own CSV, XLS, or XLSX file to add members.',
+              })}
+            </Text>
+          </Drawer.Header>
+          <Drawer.Body display='flex' flexDirection='column' gap={4}>
+            <FormProvider {...methods}>
+              <Box as='form' id='import-members' onSubmit={methods.handleSubmit(onSubmit)}>
+                {!hasSpreadsheet ? (
+                  <TemplateUploader />
+                ) : (
+                  <ImportDataPreview columnMapping={columnMapping} setColumnMapping={setColumnMapping} />
+                )}
+              </Box>
+            </FormProvider>
+            <Flex justify='flex-end' gap={4}>
+              <Drawer.ActionTrigger asChild>
+                <Button type='button' variant='outline'>
                   {t('memberbase.importer.cancel', { defaultValue: 'Cancel' })}
                 </Button>
-              </Flex>
-            </DrawerBody>
-          </DrawerContent>
-        </DrawerPositioner>
-      </DrawerRoot>
-    </>
+              </Drawer.ActionTrigger>
+            </Flex>
+          </Drawer.Body>
+        </Drawer.Content>
+      </Drawer.Positioner>
+    </Drawer.Root>
   )
 }
