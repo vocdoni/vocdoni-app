@@ -1,14 +1,4 @@
-import {
-  ToastActionTrigger,
-  ToastCloseTrigger,
-  ToastDescription,
-  ToastIndicator,
-  ToastRoot,
-  ToastTitle,
-  Toaster,
-  createToaster,
-} from '@chakra-ui/react'
-import { Box } from '@chakra-ui/react'
+import { Box, Toast, Toaster, createToaster } from '@chakra-ui/react'
 import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
 
 type ToastContextValue = ReturnType<typeof createToaster>
@@ -22,17 +12,17 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
       {children}
       <Toaster toaster={toaster}>
         {(toast) => (
-          <ToastRoot>
-            <ToastIndicator />
+          <Toast.Root w='fit-content' maxW='sm' mx='auto'>
+            <Toast.Indicator />
             <Box flex='1'>
-              {toast.title ? <ToastTitle>{toast.title}</ToastTitle> : null}
-              {toast.description ? <ToastDescription>{toast.description}</ToastDescription> : null}
+              {toast.title ? <Toast.Title>{toast.title}</Toast.Title> : null}
+              {toast.description ? <Toast.Description>{toast.description}</Toast.Description> : null}
             </Box>
             {toast.action ? (
-              <ToastActionTrigger onClick={toast.action.onClick}>{toast.action.label}</ToastActionTrigger>
+              <Toast.ActionTrigger onClick={toast.action.onClick}>{toast.action.label}</Toast.ActionTrigger>
             ) : null}
-            {toast.closable ? <ToastCloseTrigger /> : null}
-          </ToastRoot>
+            {toast.closable ? <Toast.CloseTrigger /> : null}
+          </Toast.Root>
         )}
       </Toaster>
     </ToastContext.Provider>
