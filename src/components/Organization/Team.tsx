@@ -304,8 +304,6 @@ const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
   const { data: roles, isLoading: rolesLoading, isError: rolesError, error: rolesFetchError } = useRoles()
   const { control, getValues } = useFormContext()
 
-  console.log('values:', getValues())
-
   if (rolesError) return <Alert.Root status='error'>{rolesFetchError?.message || t('error.loading_roles')}</Alert.Root>
 
   return (
