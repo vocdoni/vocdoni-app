@@ -1,15 +1,4 @@
-import {
-  AlertRoot as Alert,
-  AlertDescription,
-  Button,
-  Flex,
-  Heading,
-  Link,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
-  Text,
-} from '@chakra-ui/react'
+import { Progress, AlertRoot as Alert, AlertDescription, Button, Flex, Heading, Link, Text } from '@chakra-ui/react'
 import { isBefore, isValid, parseISO } from 'date-fns'
 import { ReactNode, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -48,11 +37,11 @@ const SubscriptionPageContent = () => {
 
   if (loading) {
     return (
-      <ProgressRoot value={null}>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
   if (error) {

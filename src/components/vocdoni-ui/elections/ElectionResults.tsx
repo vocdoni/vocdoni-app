@@ -1,4 +1,4 @@
-import { Box, chakra, Flex, ProgressRange, ProgressRoot, ProgressTrack, Text, useSlotRecipe } from '@chakra-ui/react'
+import { Box, chakra, Flex, Progress, Text, useSlotRecipe } from '@chakra-ui/react'
 import { useClient, useDatesLocale, useElection } from '@vocdoni/react-providers'
 import { ElectionResultsTypeNames, ElectionStatus, formatUnits, PublishedElection } from '@vocdoni/sdk'
 import { format } from 'date-fns'
@@ -56,14 +56,14 @@ export const ElectionResults = (props: { forceRender?: boolean } & React.Compone
                           percent: percent(resultsValue(Number(choice.results), decimals), totals[idx]),
                         })}
                       </Text>
-                      <ProgressRoot
+                      <Progress.Root
                         css={styles.progress}
                         value={((Number(choice.results) / totals[idx]) * 100) / 10 ** decimals || 0}
                       >
-                        <ProgressTrack bg='gray.100' borderRadius='sm'>
-                          <ProgressRange bg='gray.400' borderRadius='sm' />
-                        </ProgressTrack>
-                      </ProgressRoot>
+                        <Progress.Track bg='gray.100' borderRadius='sm'>
+                          <Progress.Range bg='gray.400' borderRadius='sm' />
+                        </Progress.Track>
+                      </Progress.Root>
                     </Fragment>
                   )}
                 </Box>
