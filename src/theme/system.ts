@@ -1,5 +1,5 @@
 import { createSystem, defaultConfig } from '@chakra-ui/react'
-import { recipes, slotRecipes } from './components'
+import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import tokens from './tokens'
 

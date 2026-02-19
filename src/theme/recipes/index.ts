@@ -6,52 +6,51 @@ import { checkbox } from './checkbox'
 import { ChoiceCard } from './choiceCard'
 import { ConfirmModal } from './confirmModal'
 import { Drawer } from './drawer'
-import { ElectionDescription, ElectionVideo } from './election'
+import {
+  ElectionDescription,
+  ElectionQuestions,
+  ElectionResults,
+  ElectionSchedule,
+  ElectionTitle,
+  ElectionVideo,
+  QuestionChoice,
+  QuestionsConfirmation,
+  QuestionsEmpty,
+  QuestionsTip,
+  QuestionsTypeBadge,
+  SpreadsheetAccess,
+  Voted,
+  VoteWeight,
+} from './election'
 import { EllipsisButton } from './ellipsisButton'
-import { FormLabel } from './form'
-import { ElectionSchedule, ElectionTitle, Heading } from './heading'
-import { Input } from './input'
-import { Link } from './link'
+import { formLabel, input, switchRecipe, textarea } from './form'
 import { Menu } from './menu'
 import { OrganizationDescription, OrganizationImage, OrganizationName } from './organization'
 import { Pagination } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
-import { QuestionChoice } from './questionChoice'
-import { ElectionQuestions } from './questions'
-import { QuestionsConfirmation } from './questionsConfirmation'
-import { QuestionsEmpty } from './questionsEmpty'
-import { QuestionsTip } from './questionsTip'
-import { QuestionsTypeBadge } from './questionsTypeBadge'
-import { radioGroup } from './radio'
-import { ElectionResults } from './results'
 import { SecurityLevelBox } from './securitylevelbox'
-import { SpreadsheetAccess } from './spreadsheetAccess'
 import { Stepper } from './stepper'
-import { Switch } from './switch'
 import { Table } from './table'
 import { Tabs } from './tabs'
 import { Tag } from './tag'
-import { Text } from './text'
-import { Textarea } from './textarea'
 import { Tooltip } from './tooltip'
-import { Voted } from './voted'
-import { VoteWeight } from './voteWeight'
+import { heading, link, text } from './typography'
 
 export const recipes: Record<string, RecipeDefinition> = {
   badge: Badge,
   button: Button,
-  formLabel: FormLabel,
-  heading: Heading,
-  input: Input,
-  link: Link,
-  text: Text,
+  formLabel,
+  heading,
+  input,
+  link,
+  text,
   icon: defineRecipe({
     base: {
       boxSize: 4,
     },
   }),
-  textarea: Textarea,
+  textarea,
   ElectionDescription,
   ElectionSchedule,
   ElectionTitle,
@@ -69,8 +68,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   menu: Menu,
   popover: Popover,
   progress: Progress,
-  radioGroup,
-  switch: Switch,
+  switch: switchRecipe,
   table: Table,
   tabs: Tabs,
   tag: Tag,
