@@ -105,7 +105,7 @@
     },
     "results": {
       "date_format": "PPpp",
-      "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi el {{ endDate }}",
+      "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi",
       "title": "Resultats per a \"{{ title }}\"",
       "votes": "{{ votes }} vots ({{ percent }})"
     },
@@ -1520,7 +1520,7 @@
     },
     "success_modal": {
       "btn": "Finalitzar",
-      "text": "<p>El teu vot ha estat emès i emmagatzemat de forma segura a la cadena de blocs de Vocdoni. <verify>Pots comprovar-ho aquí</verify>.</p><p>La democràcia és important, la pots compartir amb la teva comunitat i amics:</p>",
+      "text": "<p>El teu vot ha estat emès i emmagatzemat de forma segura a la cadena de blocs de Vocdoni. <verify>Pots comprovar-ho aquí</verify>.</p>",
       "title": "Vot emès correctament!"
     },
     "template": {
