@@ -1,4 +1,5 @@
 import {
+  Progress,
   AlertRoot as Alert,
   AlertDescription,
   AlertTitle,
@@ -14,9 +15,6 @@ import {
   HStack,
   Icon,
   List,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
   Stack,
   TableBody,
   TableCell,
@@ -203,11 +201,11 @@ export const ImportProgress = () => {
 
     return (
       <>
-        <ProgressRoot size='md' value={progress} borderRadius='md' animated striped>
-          <ProgressTrack borderRadius='md'>
-            <ProgressRange />
-          </ProgressTrack>
-        </ProgressRoot>
+        <Progress.Root size='md' value={progress} borderRadius='md' animated striped>
+          <Progress.Track borderRadius='md'>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
         <Text>
           {t('import_progress.description', {
             defaultValue:

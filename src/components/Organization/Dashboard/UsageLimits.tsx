@@ -1,4 +1,5 @@
 import {
+  Progress,
   AlertRoot as Alert,
   AlertDescription,
   AlertIndicator,
@@ -8,9 +9,6 @@ import {
   Flex,
   HStack,
   Icon,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
   Separator,
   Text,
   TooltipContent,
@@ -77,11 +75,11 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
           </Text>
         </HStack>
       </Flex>
-      <ProgressRoot value={displayPercentage} size='sm' colorPalette={progressColor} shape='full'>
-        <ProgressTrack bg='gray.200' _dark={{ bg: 'gray.600' }}>
-          <ProgressRange borderRadius='full' />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root value={displayPercentage} size='sm' colorPalette={progressColor} shape='full'>
+        <Progress.Track bg='gray.200' _dark={{ bg: 'gray.600' }}>
+          <Progress.Range borderRadius='full' />
+        </Progress.Track>
+      </Progress.Root>
     </Box>
   )
 }

@@ -1,4 +1,5 @@
 import {
+  Progress,
   Accordion,
   AspectRatio,
   Box,
@@ -10,9 +11,6 @@ import {
   Icon,
   IconButton,
   Link,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
   Stack,
   Text,
   useDisclosure,
@@ -83,11 +81,11 @@ const Tutorial = () => {
           })}
         </Text>
         {loading || isLoading ? (
-          <ProgressRoot value={null} mb={4}>
-            <ProgressTrack>
-              <ProgressRange />
-            </ProgressTrack>
-          </ProgressRoot>
+          <Progress.Root value={null} mb={4}>
+            <Progress.Track>
+              <Progress.Range />
+            </Progress.Track>
+          </Progress.Root>
         ) : !subscription ? (
           <Text color='gray.500' mb={4}>
             {t('dashboard.welcome.no_subscription', {
@@ -193,11 +191,11 @@ const Setup = () => {
                     <Text fontSize='xs'>{t('setup.progress', { defaultValue: 'Your progress' })}</Text>
                     <Text fontSize='xs'>{Math.round(progress)}%</Text>
                   </Flex>
-                  <ProgressRoot value={progress} colorPalette='gray' size='sm' borderRadius='md'>
-                    <ProgressTrack borderRadius='0'>
-                      <ProgressRange />
-                    </ProgressTrack>
-                  </ProgressRoot>
+                  <Progress.Root value={progress} colorPalette='gray' size='sm' borderRadius='md'>
+                    <Progress.Track borderRadius='0'>
+                      <Progress.Range />
+                    </Progress.Track>
+                  </Progress.Root>
                 </Flex>
                 <Stack gap={3} direction='column' p={3} pt={2}>
                   {checklist.map((checkbox) => {
@@ -297,11 +295,11 @@ const Processes = () => {
 
   if (isLoading) {
     return (
-      <ProgressRoot value={null}>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
 

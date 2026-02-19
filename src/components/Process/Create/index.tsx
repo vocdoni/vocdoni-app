@@ -1,4 +1,5 @@
 import {
+  Progress,
   Box,
   Button,
   ButtonGroup,
@@ -9,9 +10,6 @@ import {
   Icon,
   IconButton,
   Input,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
   Spacer,
   Text,
   VStack,
@@ -860,11 +858,11 @@ const ProcessCreateView = () => {
 
   if (!formDraftLoaded) {
     return (
-      <ProgressRoot size='xs' value={null}>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root size='xs' value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
 

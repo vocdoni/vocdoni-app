@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  HStack,
-  Icon,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
-  Stack,
-  TagLabel,
-  TagRoot,
-  Text,
-  Wrap,
-} from '@chakra-ui/react'
+import { Progress, Box, Button, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wrap } from '@chakra-ui/react'
 import { dotobject } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { LuLock, LuSparkles } from 'react-icons/lu'
@@ -44,11 +31,11 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
 
   if (loading) {
     return (
-      <ProgressRoot size='xs' colorPalette='gray' value={null}>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root size='xs' colorPalette='gray' value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
 

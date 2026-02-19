@@ -1,4 +1,5 @@
 import {
+  Progress,
   AspectRatio,
   Badge,
   BadgeProps,
@@ -11,9 +12,6 @@ import {
   IconProps,
   Input,
   Link,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
   Text,
   TooltipContent,
   TooltipPositioner,
@@ -374,11 +372,11 @@ const ProcessViewSidebar = () => {
                 </Box>
                 <Box>{participation}%</Box>
               </Box>
-              <ProgressRoot colorPalette='gray' w='full' value={participation}>
-                <ProgressTrack>
-                  <ProgressRange />
-                </ProgressTrack>
-              </ProgressRoot>
+              <Progress.Root colorPalette='gray' w='full' value={participation}>
+                <Progress.Track>
+                  <Progress.Range />
+                </Progress.Track>
+              </Progress.Root>
             </Box>
             <Box display='flex' justifyContent='space-between' fontSize='sm'>
               <Text display='flex' gap={2} alignItems='center' fontSize='inherit'>

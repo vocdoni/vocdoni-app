@@ -1,4 +1,5 @@
 import {
+  Progress,
   HStack,
   Icon,
   IconButton,
@@ -9,9 +10,6 @@ import {
   MenuRoot,
   MenuSeparator,
   MenuTrigger,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
   Table,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -275,11 +273,11 @@ const Drafts = () => {
 
   if (isLoading) {
     return (
-      <ProgressRoot size='xs' value={null} colorPalette='gray'>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root size='xs' value={null} colorPalette='gray'>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
 

@@ -1,4 +1,5 @@
 import {
+  Progress,
   Button,
   Card,
   CheckboxControl,
@@ -17,9 +18,6 @@ import {
   MenuRoot,
   MenuSeparator,
   MenuTrigger,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
   Separator,
   SimpleGrid,
   Table,
@@ -262,11 +260,11 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
         ) : (
           <>
             {isLoading && (
-              <ProgressRoot value={null}>
-                <ProgressTrack>
-                  <ProgressRange />
-                </ProgressTrack>
-              </ProgressRoot>
+              <Progress.Root value={null}>
+                <Progress.Track>
+                  <Progress.Range />
+                </Progress.Track>
+              </Progress.Root>
             )}
             <Table.Root variant='outline'>
               <Table.Header>
@@ -406,11 +404,11 @@ const GroupMembersDisplay = ({ group, isOpen }: GroupMembersProps) => {
 
   if (isLoading) {
     return (
-      <ProgressRoot value={null}>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
 
@@ -600,11 +598,11 @@ const GroupsBoard = () => {
   return (
     <>
       {isLoading && (
-        <ProgressRoot value={null}>
-          <ProgressTrack>
-            <ProgressRange />
-          </ProgressTrack>
-        </ProgressRoot>
+        <Progress.Root value={null}>
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
       )}
       {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
       {!hasError && !isLoading && groups && groups.length > 0 && (

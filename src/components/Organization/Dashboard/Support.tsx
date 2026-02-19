@@ -1,4 +1,5 @@
 import {
+  Progress,
   Box,
   Button,
   Flex,
@@ -6,9 +7,6 @@ import {
   FieldRoot as FormControl,
   Heading,
   Icon,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
   SimpleGrid,
   SimpleGridProps,
   Stack,
@@ -161,11 +159,11 @@ const PhoneSupportCard = ({ isLocked }) => {
 
   if (isLoading) {
     return (
-      <ProgressRoot size='xs' colorPalette='gray' value={null}>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root size='xs' colorPalette='gray' value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
 

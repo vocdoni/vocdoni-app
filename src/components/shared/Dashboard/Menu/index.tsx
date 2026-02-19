@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  CloseButton,
-  Drawer,
-  Flex,
-  HStack,
-  Icon,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
-  Text,
-  useToken,
-} from '@chakra-ui/react'
+import { Progress, Box, Button, CloseButton, Drawer, Flex, HStack, Icon, Text, useToken } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus } from 'react-icons/lu'
@@ -69,11 +56,11 @@ const SidebarTutorial = () => {
 
   if (isLoading) {
     return (
-      <ProgressRoot value={null}>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
 
