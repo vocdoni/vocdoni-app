@@ -52,7 +52,7 @@ const Layout = () => {
         }}
         w='full'
       >
-        <Outlet context={{ setLogo }} />
+        <Outlet context={{ setLogo } satisfies SimpleLayoutOutletContext} />
       </Flex>
       <Box as='footer' w='full' px={{ base: 4, md: 6, xl: 10 }} maxW={MaxNavbarWidth} mx='auto'>
         <Footer simplified />

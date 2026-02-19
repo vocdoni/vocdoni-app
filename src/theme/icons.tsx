@@ -1,6 +1,5 @@
-import { Icon, Image } from '@chakra-ui/react'
+import { Image } from '@chakra-ui/react'
 import { AiFillCheckCircle } from 'react-icons/ai'
-import { FaRegArrowAltCircleLeft } from 'react-icons/fa'
 import { IoCloseOutline } from 'react-icons/io5'
 
 export const Close = IoCloseOutline
@@ -12,5 +11,3 @@ export const Logo = () => <Image src='/assets/logo_vocdoni.png' alt='vocdoni ico
 export const LogoMbl = ({ ...props }) => (
   <Image src='/assets/vocdoni_icon.png' alt='vocdoni icon' maxWidth={10} {...props} />
 )
-
-export const GoBack = () => <Icon as={FaRegArrowAltCircleLeft} mt='1.5px' boxSize={5} />

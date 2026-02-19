@@ -1,6 +1,5 @@
 import { ExternalProvider, Web3Provider } from '@ethersproject/providers'
-import { getWalletClient, type GetWalletClientReturnType } from '@wagmi/core'
-import { wagmiConfig } from './rainbow'
+import { type GetWalletClientReturnType } from '@wagmi/core'
 
 export function walletClientToSigner(walletClient: GetWalletClientReturnType) {
   if (!walletClient) throw new Error('Wallet client not found')
@@ -13,11 +12,4 @@ export function walletClientToSigner(walletClient: GetWalletClientReturnType) {
   const provider = new Web3Provider(transport as ExternalProvider, network)
   const signer = provider.getSigner(account.address)
   return signer
-}
-
-/** Action to convert a viem Wallet Client to an ethers.js Signer. */
-export async function getEthersSigner({ chainId }: { chainId?: number } = {}) {
-  const walletClient = await getWalletClient(wagmiConfig, { chainId })
-  if (!walletClient) return undefined
-  return walletClientToSigner(walletClient)
 }

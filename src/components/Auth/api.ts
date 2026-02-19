@@ -50,7 +50,6 @@ export enum ErrorCode {
   Unauthorized = 401,
   // Custom API errors
   MalformedJSONBody = 40004,
-  UserNotAuthorized = 40001,
   UserNotVerified = 40014,
   UserAlreadyVerified = 40015,
   DraftLimitReached = 40031,

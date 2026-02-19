@@ -43,5 +43,3 @@ export const Routes = {
   },
   vocdoni: 'https://vocdoni.io',
 }
-
-export type RoutesType = typeof Routes

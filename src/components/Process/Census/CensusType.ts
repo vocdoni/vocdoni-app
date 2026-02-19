@@ -13,5 +13,3 @@ export enum CensusTypes {
   Web3 = CensusTypeWeb3,
   CSP = CensusTypeCsp,
 }
-
-export const CensusTypeValues = [CensusTypes.CSP, CensusTypes.Spreadsheet, CensusTypes.Web3] as const

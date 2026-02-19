@@ -29,8 +29,7 @@ import { LuEllipsis, LuPlus, LuSearch, LuSettings, LuTrash2, LuUserPlus, LuUsers
 import { generatePath, useNavigate, useOutletContext } from 'react-router-dom'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
-import DeleteModal from '~components/Modal/DeleteModal'
-import { type ModalProps } from '~components/Modal/Modal'
+import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
@@ -62,7 +61,7 @@ type DeleteMemberModalProps = {
   isOpen: boolean
   onClose: () => void
   mode: DeleteModes
-} & Omit<ModalProps, 'children'>
+} & Omit<DeleteModalProps, 'children' | 'title' | 'subtitle'>
 
 type CreateGroupButtonProps = {
   members?: Member[]

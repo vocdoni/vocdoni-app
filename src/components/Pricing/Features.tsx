@@ -5,17 +5,6 @@ import { BooleanIcon } from '~components/Layout/BooleanIcon'
 import { PlanId, SubscriptionPermission } from '~constants'
 import type { Plan } from './Plans'
 
-export type FeaturesKeys =
-  | 'personalization'
-  | 'emailReminder'
-  | '2FAsms'
-  | '2FAemail'
-  | 'whiteLabel'
-  | 'liveStreaming'
-  | 'anonymous'
-  | 'overwrite'
-  | 'liveResults'
-
 export type PlanFeatureSpec = {
   kind: 'plan'
   path: string
@@ -61,36 +50,6 @@ export const PlanFeaturesTranslationKeys = {
 }
 
 // Translation keys for the subscription features in the comparison table
-export const PlanTableFeaturesTranslationKeys = {
-  ...PlanFeaturesTranslationKeys,
-  [SubscriptionPermission.Users]: 'features.total_users',
-  [SubscriptionPermission.SubOrgs]: 'features.total_orgs',
-}
-
-export const CategorizedFeatureKeys = {
-  generalLimits: [SubscriptionPermission.MaxCensus, SubscriptionPermission.MaxProcesses, SubscriptionPermission.Users],
-  votingTypes: [SubscriptionPermission.SingleVoting, SubscriptionPermission.MultipleVoting],
-  memberbaseManagement: [],
-  authenticationSecurity: [
-    SubscriptionPermission.TwoFASms,
-    SubscriptionPermission.TwoFAEmail,
-    SubscriptionPermission.Anonymous,
-    SubscriptionPermission.Overwrite,
-  ],
-  customization: [
-    SubscriptionPermission.Personalization,
-    SubscriptionPermission.WhiteLabel,
-    SubscriptionPermission.CustomURL,
-  ],
-  extraFeatures: [
-    SubscriptionPermission.LiveResults,
-    SubscriptionPermission.EmailReminder,
-    SubscriptionPermission.LiveStreaming,
-  ],
-  analyticsAndReporting: [],
-  support: [SubscriptionPermission.PhoneSupport],
-  complianceAndSecurity: [],
-}
 
 export const CategoryTitleKeys = {
   generalLimits: 'features.section.general_limits',

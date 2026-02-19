@@ -1,12 +1,9 @@
 import {
-  Button,
   ButtonGroup,
   ButtonGroupProps,
-  HStack,
   Icon,
   IconButton,
   IconButtonProps,
-  Text,
   TooltipContent,
   TooltipPositioner,
   TooltipRoot,
@@ -38,28 +35,6 @@ export const ColorModeSwitcher: FC<ColorModeSwitcherProps> = (props) => {
     >
       <Icon as={SwitchIcon} />
     </IconButton>
-  )
-}
-
-export const ColorModeSwitcherDetailed: FC<ColorModeSwitcherProps> = (props) => {
-  const { toggleColorMode } = useColorMode()
-  const SwitchIcon = useColorModeValue(IoMdMoon, IoMdSunny)
-  const { t } = useTranslation()
-  const text = useColorModeValue(t('dark'), t('light'))
-
-  return (
-    <Button
-      colorPalette='gray'
-      fontSize='lg'
-      onClick={toggleColorMode}
-      aria-label={t('switch_mode', { defaultValue: 'Switch to {{ mode }} mode', mode: text })}
-      {...props}
-    >
-      <HStack gap={2}>
-        <SwitchIcon />
-        <Text as='span'>{text}</Text>
-      </HStack>
-    </Button>
   )
 }
 

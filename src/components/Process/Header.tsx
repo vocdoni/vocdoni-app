@@ -1,7 +1,6 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
-import { InvalidElection, PublishedElection, Strategy } from '@vocdoni/sdk'
-import { ReactNode } from 'react'
+import { PublishedElection, Strategy } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { ShareModalButton } from '~components/Share'
@@ -124,30 +123,6 @@ const GitcoinStrategyInfo = () => {
       )}
     </>
   )
-}
-
-export const useStrategy = () => {
-  const { t } = useTranslation()
-  const { election } = useElection()
-
-  if (!election || election instanceof InvalidElection || !election?.meta?.census) return ''
-
-  const strategies: { [key: string]: ReactNode } = {
-    spreadsheet: t('process.census_strategies.spreadsheet'),
-    token: t('process.census_strategies.token', { token: election?.meta?.token }),
-    web3: t('process.census_strategies.web3'),
-    csp: t('process.census_strategies.csp'),
-    gitcoin: <GitcoinStrategyInfo />,
-  }
-
-  const type = election.get('census.type')
-
-  if (typeof strategies[type] === 'undefined') {
-    console.warn('unknown census type:', type)
-    return ''
-  }
-
-  return strategies[type]
 }
 
 export default ProcessHeader

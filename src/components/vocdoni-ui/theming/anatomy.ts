@@ -19,14 +19,8 @@ export const questionChoiceAnatomy = [
 export const choiceCardAnatomy = ['item', 'control', 'body', 'media'] as const
 
 export const questionsAnatomy = [
-  'alert',
-  'alertTitle',
-  'alertDescription',
-  'alertLink',
   'wrapper',
-  'form',
   'container',
-  'question',
   'header',
   'title',
   'body',
@@ -37,8 +31,6 @@ export const questionsAnatomy = [
 ] as const
 
 export const questionsEmptyAnatomy = ['container', 'icon', 'description'] as const
-
-export const questionsErrorAnatomy = ['container', 'icon', 'description'] as const
 
 export const questionsConfirmationAnatomy = ['box', 'description', 'question', 'title', 'answer'] as const
 

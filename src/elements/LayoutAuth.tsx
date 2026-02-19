@@ -2,10 +2,8 @@ import { Box, Flex, Heading, Icon, Link, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
-import { Outlet, Link as RouterLink, To, useLocation } from 'react-router-dom'
+import { Outlet, Link as RouterLink, useLocation } from 'react-router-dom'
 import { Routes } from '~routes'
-
-export type NavigationFunctionParams = To | number
 
 export type AuthOutletContextType = {
   setTitle: React.Dispatch<React.SetStateAction<string>>

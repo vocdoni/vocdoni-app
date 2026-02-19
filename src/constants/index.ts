@@ -1,20 +1,11 @@
 import { dotobject } from '@vocdoni/sdk'
-import { FieldErrors, FieldValues, useFormContext } from 'react-hook-form'
+import { FieldErrors, FieldValues } from 'react-hook-form'
 
-export const FormatDate = 'dd/MM/yyyy'
-export const FormatDateLong = 'MMMM d - yyyy H:mm'
-export const TokenPrice = 0.15
-export const MinPurchaseTokens = 100
 export const TwoFACodePrice = {
   email: 0.015,
   sms: 0.015,
 } as const
-export const StripeEnabled = import.meta.env.STRIPE_PUBLIC_KEY !== ''
-export const InnerContentsMaxWidth = {
-  base: 'full',
-  lg: '600px',
-  xl: '800px',
-}
+
 export const MaxWindowWidth = '2560px'
 export const MaxNavbarWidth = '1920px'
 export const MaxContentsWidth = '1200px'
@@ -63,22 +54,6 @@ export const LocalStorageKeys = {
 
 export const AppTitle = import.meta.env.title
 export const VocdoniEnvironment = import.meta.env.VOCDONI_ENVIRONMENT
-export const CensusPreviewRowsLimit = 10
-
-const defaultCensusSize = import.meta.env.DEFAULT_CENSUS_SIZE
-export const DefaultCensusSize = defaultCensusSize
-export const REGEX_AVATAR = /^(https?:\/\/|ipfs:\/\/)/i
-
-/**
- * Given an object of react-hook-form errors, determines if the specified mapped field is invalid (returns an error)
- *
- * @param {FieldErrors<FieldValues>} errors Object of errors obtained from formState in `useFormContext`.
- * @param {string} map The field map in dot notation.
- * @returns {boolean}
- */
-export const isInvalidFieldMap = (errors: FieldErrors<FieldValues>, map: string) => {
-  return !!fieldMapErrorMessage(errors, map)
-}
 
 /**
  * Given an object of react-hook-form errors, returns the specified mapped field error message.
@@ -94,22 +69,6 @@ export const fieldMapErrorMessage = (errors: FieldErrors<FieldValues>, map: stri
   if (!obj || (obj && !obj.message)) return null
 
   return obj.message
-}
-
-/**
- * Helper hook used for radio inputs that are actually boolean inputs, converting
- * their values to boolean as expected. Note you can't use boolean radio register
- * for more than two radio buttons, since it wouldn't be binary.
- *
- * @param name Radio input field name
- * @returns
- */
-export const useBooleanRadioRegister = (name: string) => {
-  const { getValues, setValue } = useFormContext()
-  return {
-    defaultValue: Number(getValues(name)).toString(),
-    onChange: (val: string) => setValue(name, Boolean(Number(val))),
-  }
 }
 
 /**

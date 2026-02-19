@@ -33,14 +33,6 @@ export function hasCookieConsent(): boolean {
 }
 
 /**
- * Check if the user has accepted cookies
- * @returns true if user accepted, false otherwise
- */
-export function hasAcceptedCookies(): boolean {
-  return getCookieConsent() === CONSENT_ACCEPTED
-}
-
-/**
  * Initialize Google Tag Manager with or without cookie storage
  * @param withCookies - if true, GTM will use cookies; if false, storage will be disabled
  */

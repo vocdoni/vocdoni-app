@@ -54,7 +54,7 @@ const SaasProviders = ({ children }: PropsWithChildren<{}>) => (
   </AuthProvider>
 )
 
-export const AppProviders = () => {
+const AppProviders = () => {
   const { data } = useWalletClient()
   const { address } = useAccount()
   const { t, i18n } = useTranslation()
