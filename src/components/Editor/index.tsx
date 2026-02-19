@@ -37,6 +37,34 @@ const TRANSFORMERS = DEFAULT_TRANSFORMERS
 
 const ChakraContentEditable = chakra(ContentEditable)
 
+const editorContentStyles = {
+  '& .lexical-bold': {
+    fontWeight: 'extrabold',
+  },
+  '& .lexical-italic': {
+    fontStyle: 'italic',
+  },
+  '& .lexical-underline': {
+    textDecoration: 'underline',
+  },
+  '& .lexical-strikethrough': {
+    textDecoration: 'line-through',
+  },
+  '& .lexical-ul, & .lexical-ol': {
+    paddingInlineStart: '1.25rem',
+    marginBlock: '0.5rem',
+  },
+  '& .lexical-ul': {
+    listStyleType: 'disc',
+  },
+  '& .lexical-ol': {
+    listStyleType: 'decimal',
+  },
+  '& .lexical-li': {
+    marginBlock: '0.125rem',
+  },
+}
+
 const theme = {
   text: {
     bold: 'lexical-bold',
@@ -79,7 +107,7 @@ const MarkdownEditor = (props: EditorProps) => {
                 overflow='auto'
                 role='textbox'
                 minH='30px'
-                css={textareaStyles}
+                css={[textareaStyles, editorContentStyles]}
               />
             </Box>
           }
