@@ -9,13 +9,13 @@ import { api, ApiEndpoints, getApiErrorMessage, UnverifiedApiError } from '~comp
 import { ILoginParams } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
 import { VerificationPending } from '~components/Auth/Verify'
-import { OrSeparator } from '~components/shared/Layout/Separators'
+import InputBasic from '~components/Form/InputBasic'
+import InputPassword from '~components/Form/InputPassword'
+import { OrSeparator } from '~components/Layout/Separators'
+import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
-import InputPassword from '~shared/Form/InputPassword'
-import { useToast } from '~shared/Toast'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvent } from '~utils/analytics'
-import InputBasic from '../shared/Form/InputBasic'
 import GoogleAuth from './GoogleAuth'
 
 type FormData = {

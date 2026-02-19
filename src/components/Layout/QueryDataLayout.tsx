@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react'
-import ErrorComponent from '~shared/Layout/ErrorComponent'
+import ErrorComponent from '~components/Layout/ErrorComponent'
 import { Loading } from '~src/router/SuspenseLoader'
 
 interface IUserQueryLayout {

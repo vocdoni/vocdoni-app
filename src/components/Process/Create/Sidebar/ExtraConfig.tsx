@@ -1,8 +1,8 @@
 import {
   Box,
+  FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
-  FieldRoot as FormControl,
   Icon,
   TooltipContent,
   TooltipPositioner,
@@ -13,7 +13,7 @@ import {
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCircleHelp } from 'react-icons/lu'
-import { Select } from '~components/shared/Form/Select'
+import { Select } from '~components/Form/Select'
 import { useValidations } from '~utils/validation'
 
 type SelectOption<T = string> = {

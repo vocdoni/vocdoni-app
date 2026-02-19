@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { BsGoogle } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { useToast } from '~shared/Toast'
+import { useToast } from '~components/Toast'
 import { Routes } from '~src/router/routes'
 import { useAuth } from './useAuth'
 

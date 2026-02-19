@@ -1,4 +1,4 @@
-import { useToast } from '~shared/Toast'
+import { useToast } from '~components/Toast'
 import { createContext, ReactNode, useContext, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useConnectionMonitor } from '~utils/use-connection-monitor'

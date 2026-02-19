@@ -1,5 +1,4 @@
 import {
-  Progress,
   HStack,
   Icon,
   IconButton,
@@ -10,6 +9,7 @@ import {
   MenuRoot,
   MenuSeparator,
   MenuTrigger,
+  Progress,
   Table,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -20,14 +20,14 @@ import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router-dom'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useCreateProcess } from '~components/Process/Create'
 import { Process } from '~components/Process/Create/common'
-import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
-import RoutedPaginatedTableFooter from '~components/shared/Pagination/PaginatedTableFooter'
+import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
 import { Routes } from '~routes'
-import { useToast } from '~shared/Toast'
 
 type Draft = {
   id: string

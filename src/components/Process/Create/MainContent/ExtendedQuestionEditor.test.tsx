@@ -35,7 +35,7 @@ vi.mock('~components/Editor', () => ({
   default: () => <div data-testid='editor' />,
 }))
 
-vi.mock('~components/shared/Layout/Uploader', () => ({
+vi.mock('~components/Layout/Uploader', () => ({
   ImageUploader: () => <div data-testid='image-uploader' />,
 }))
 

@@ -1,5 +1,5 @@
-import { MemoryRouter } from 'react-router-dom'
 import { LuCalendar } from 'react-icons/lu'
+import { MemoryRouter } from 'react-router-dom'
 import { render, screen, within } from '~src/test-utils'
 import OrganizationDashboard from './index'
 
@@ -37,7 +37,7 @@ vi.mock('react-player', () => ({
   default: () => <div>Player</div>,
 }))
 
-vi.mock('~components/shared/Layout/WhatsappButton', () => ({
+vi.mock('~components/Layout/WhatsappButton', () => ({
   WhatsAppButton: () => <div>WhatsApp</div>,
 }))
 
@@ -46,7 +46,7 @@ vi.mock('@calcom/embed-react', () => ({
   getCalApi: vi.fn(async () => vi.fn()),
 }))
 
-vi.mock('~shared/Layout/InvertedAccordionIcon', () => ({
+vi.mock('~components/Layout/InvertedAccordionIcon', () => ({
   default: () => <div>Icon</div>,
 }))
 

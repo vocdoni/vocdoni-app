@@ -2,16 +2,16 @@ import {
   AbsoluteCenter,
   Box,
   Button,
-  HStack,
-  Separator,
   Flex,
-  FieldErrorText as FormErrorMessage,
   FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
+  HStack,
   Icon,
   IconButton,
   Input,
   InputGroup,
   NumberInput,
+  Separator,
   Text,
 } from '@chakra-ui/react'
 import { enforceHexPrefix, errorToString, useClient } from '@vocdoni/react-providers'
@@ -21,12 +21,12 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuPlus, LuTrash2, LuWallet } from 'react-icons/lu'
 import { useSubscription } from '~components/Auth/Subscription'
-import { DashboardSection, SidebarSubtitle } from '~components/shared/Dashboard/Contents'
+import { DashboardSection, SidebarSubtitle } from '~components/Dashboard/Contents'
+import Uploader from '~components/Layout/Uploader'
+import { enforceCsvRowLimit } from '~components/Spreadsheet/limits'
 import { fieldMapErrorMessage } from '~constants'
-import Uploader from '~shared/Layout/Uploader'
 import { CensusTypes } from './CensusType'
 import { Web3CensusSpreadsheetManager } from './Spreadsheet/Web3CensusSpreadsheetManager'
-import { enforceCsvRowLimit } from '~components/shared/Spreadsheet/limits'
 
 export interface Web3Address {
   address: string

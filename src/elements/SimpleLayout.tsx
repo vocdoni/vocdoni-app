@@ -1,12 +1,12 @@
 import { Box, Flex, HStack } from '@chakra-ui/react'
 import { ReactNode, useState } from 'react'
 import { Outlet, ScrollRestoration } from 'react-router-dom'
-import { ColorModeSwitcher } from '~components/shared/Layout/ColorModeSwitcher'
-import CrispChat from '~components/shared/Layout/CrispChat'
-import { VocdoniLogo } from '~components/shared/Layout/Logo'
-import { LanguagesMenu } from '~components/shared/Navbar/LanguagesList'
+import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
+import CrispChat from '~components/Layout/CrispChat'
+import Footer from '~components/Layout/Footer'
+import { VocdoniLogo } from '~components/Layout/Logo'
+import { LanguagesMenu } from '~components/Navbar/LanguagesList'
 import { MaxNavbarWidth } from '~constants'
-import Footer from '~shared/Layout/Footer'
 
 export type SimpleLayoutOutletContext = {
   setLogo: (logo?: ReactNode) => void

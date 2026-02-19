@@ -1,7 +1,7 @@
 import { Box, Button, Card, Flex, Image, Text } from '@chakra-ui/react'
 import { Trans } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
-import { DashboardContents } from '~shared/Dashboard/Contents'
+import { DashboardContents } from '~components/Dashboard/Contents'
 import { Routes } from '~src/router/routes'
 import empty from '/assets/illustrations/9.png'
 

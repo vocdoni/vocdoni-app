@@ -1,5 +1,4 @@
 import {
-  Progress,
   AlertRoot as Alert,
   AlertDescription,
   AlertIndicator,
@@ -9,6 +8,7 @@ import {
   Flex,
   HStack,
   Icon,
+  Progress,
   Separator,
   Text,
   TooltipContent,
@@ -21,10 +21,10 @@ import { useTranslation } from 'react-i18next'
 import { LuInfo, LuMail, LuMessageSquare, LuUsers, LuVote } from 'react-icons/lu'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
+import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
 import { TwoFACodePrice } from '~constants'
 import { usePaginatedMembers } from '~queries/members'
 import { Routes } from '~routes'
-import { DashboardBox, DashboardCardHeader } from '~shared/Dashboard/Contents'
 
 type UsageMetric = {
   icon: React.ElementType

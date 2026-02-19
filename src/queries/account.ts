@@ -2,7 +2,7 @@ import { DefinedInitialDataOptions, QueryKey, useMutation, useQuery, useQueryCli
 import { useEffect, useRef } from 'react'
 import { api, ApiEndpoints, ApiError, UnauthorizedApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { useConnectionToast } from '~components/shared/Layout/ConnectionToast'
+import { useConnectionToast } from '~components/Layout/ConnectionToast'
 import { QueryKeys } from './keys'
 
 export interface Organization {

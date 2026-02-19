@@ -15,10 +15,10 @@ import { CSS } from '@dnd-kit/utilities'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuGripVertical, LuPlus, LuTrash2 } from 'react-icons/lu'
+import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
+import { ImageUploader } from '~components/Layout/Uploader'
 import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
-import { DashboardBox } from '~components/shared/Dashboard/Contents'
-import { ImageUploader } from '~components/shared/Layout/Uploader'
 
 const ExtendedQuestionEditor = ({
   index,

@@ -5,13 +5,13 @@ import React, { createContext, PropsWithChildren, useEffect, useState } from 're
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCircleHelp, LuPanelLeft, LuPlus } from 'react-icons/lu'
 import { generatePath, Outlet, Link as ReactRouterLink } from 'react-router-dom'
+import { DashboardBookerModalButton } from '~components/Dashboard/Booker'
+import Breadcrumb, { BreadcrumbItem } from '~components/Dashboard/Breadcrumb'
+import DashboardMenu from '~components/Dashboard/Menu'
+import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
-import AnnouncementBanner from '~components/shared/Layout/AnnouncementBanner'
 import { LocalStorageKeys, MaxWindowWidth } from '~constants'
 import { Routes } from '~routes'
-import { DashboardBookerModalButton } from '~shared/Dashboard/Booker'
-import Breadcrumb, { BreadcrumbItem } from '~shared/Dashboard/Breadcrumb'
-import DashboardMenu from '~shared/Dashboard/Menu'
 
 export type DashboardLayoutContext = {
   setBreadcrumb: (items: BreadcrumbItem[]) => void

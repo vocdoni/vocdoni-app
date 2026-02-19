@@ -1,5 +1,4 @@
 import {
-  Progress,
   Button,
   Card,
   CheckboxControl,
@@ -18,6 +17,7 @@ import {
   MenuRoot,
   MenuSeparator,
   MenuTrigger,
+  Progress,
   Separator,
   SimpleGrid,
   Table,
@@ -29,12 +29,12 @@ import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCalendar, LuClock, LuEllipsis, LuEye, LuTrash, LuUsers, LuVote } from 'react-icons/lu'
 import { generatePath, useNavigate } from 'react-router-dom'
-import { DashboardBox } from '~components/shared/Dashboard/Contents'
-import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
-import DeleteModal from '~components/shared/Modal/DeleteModal'
-import { PaginatedTableFooter } from '~components/shared/Pagination/PaginatedTableFooter'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import DeleteModal from '~components/Modal/DeleteModal'
+import { PaginatedTableFooter } from '~components/Pagination/PaginatedTableFooter'
+import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
-import { useToast } from '~shared/Toast'
 import { Group, useDeleteGroup, useGroupMembers, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { TableProvider, useTable } from './TableProvider'
 

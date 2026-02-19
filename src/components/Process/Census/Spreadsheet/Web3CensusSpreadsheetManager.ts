@@ -1,4 +1,4 @@
-import { ErrorType } from '../../../shared/Spreadsheet/SpreadsheetManager'
+import { ErrorType } from '~components/Spreadsheet/SpreadsheetManager'
 import { CensusSpreadsheetManager } from './CensusSpreadsheetManager'
 import ErrorCellData from './errors/ErrorCellData'
 

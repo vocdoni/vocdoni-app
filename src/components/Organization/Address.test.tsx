@@ -13,7 +13,7 @@ vi.mock('@vocdoni/react-providers', () => ({
   enforceHexPrefix: (value: string | undefined) => value,
 }))
 
-vi.mock('~shared/Toast', () => ({
+vi.mock('~components/Toast', () => ({
   useToast: () => mockUseToast,
 }))
 

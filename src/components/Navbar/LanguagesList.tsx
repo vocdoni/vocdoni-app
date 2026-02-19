@@ -18,7 +18,7 @@ import { FaGlobeAmericas } from 'react-icons/fa'
 import { LuCheck } from 'react-icons/lu'
 import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
 import i18n from '~i18n'
-import { Select } from '~shared/Form/Select'
+import { Select } from '~components/Form/Select'
 import { languagesListSelectStyles } from '~theme/selectStyles'
 
 export const LanguagesList = ({ closeOnSelect }: { closeOnSelect: boolean }) => {

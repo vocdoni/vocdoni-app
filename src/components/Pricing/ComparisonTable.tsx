@@ -13,8 +13,8 @@ import {
   LuVote,
   LuZap,
 } from 'react-icons/lu'
+import { BooleanIcon } from '~components/Layout/BooleanIcon'
 import { PlanId } from '~constants'
-import { BooleanIcon } from '~shared/Layout/BooleanIcon'
 import { CategorizedSpecs, CategoryTitleKeys, FeatureSpec } from './Features'
 import { Plan, usePlans, usePlanTranslations } from './Plans'
 

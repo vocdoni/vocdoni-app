@@ -1,5 +1,4 @@
 import {
-  Progress,
   Accordion,
   AspectRatio,
   Box,
@@ -11,6 +10,7 @@ import {
   Icon,
   IconButton,
   Link,
+  Progress,
   Stack,
   Text,
   useDisclosure,
@@ -24,14 +24,14 @@ import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu
 import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
-import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
-import InvertedAccordionIcon from '~components/shared/Layout/InvertedAccordionIcon'
-import { WhatsAppButton } from '~components/shared/Layout/WhatsappButton'
+import { DashboardBookerModalButton } from '~components/Dashboard/Booker'
+import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Contents'
+import { ListStateAlert } from '~components/Feedback/ListStateAlert'
+import InvertedAccordionIcon from '~components/Layout/InvertedAccordionIcon'
+import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { PlanId } from '~constants'
 import { Routes } from '~routes'
-import { DashboardBookerModalButton } from '~shared/Dashboard/Booker'
-import { DashboardBox, Heading, SubHeading } from '~shared/Dashboard/Contents'
 import { useProfile } from '~src/queries/account'
 import { CheckboxTypes, paginatedElectionsQuery, useOrganizationSetup } from '~src/queries/organization'
 import { UsageLimits } from './UsageLimits'

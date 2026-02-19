@@ -1,9 +1,10 @@
-import { Progress, AlertRoot as Alert, AlertDescription, Button, Flex, Heading, Link, Text } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, Button, Flex, Heading, Link, Progress, Text } from '@chakra-ui/react'
 import { isBefore, isValid, parseISO } from 'date-fns'
 import { ReactNode, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
+import { DashboardBox } from '~components/Dashboard/Contents'
 import { ComparisonTable } from '~components/Pricing/ComparisonTable'
 import { SubscriptionPlans } from '~components/Pricing/Plans'
 import { SubscriptionCheckoutProvider } from '~components/Pricing/SubscriptionCheckoutProvider'
@@ -11,7 +12,6 @@ import { SubscriptionPayment } from '~components/Pricing/SubscriptionPayment'
 import { useSubscriptionCheckout } from '~components/Pricing/use-subscription-checkout'
 import { usePortalSession } from '~queries/stripe'
 import { Routes } from '~routes'
-import { DashboardBox } from '~shared/Dashboard/Contents'
 
 const SubscriptionPageContent = () => {
   const { t } = useTranslation()

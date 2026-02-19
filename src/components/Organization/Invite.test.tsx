@@ -27,11 +27,11 @@ vi.mock('~src/queries/organization', () => ({
   }),
 }))
 
-vi.mock('~shared/Form/InputBasic', () => ({
+vi.mock('~components/Form/InputBasic', () => ({
   default: () => <div>InputBasic</div>,
 }))
 
-vi.mock('~shared/Layout/SaasSelector', () => ({
+vi.mock('~components/Layout/SaasSelector', () => ({
   RoleSelector: () => <div>RoleSelector</div>,
 }))
 

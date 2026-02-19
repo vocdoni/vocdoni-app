@@ -1,10 +1,10 @@
-import { Box, FieldLabel as FormLabel, FieldRoot as FormControl, Text, VStack } from '@chakra-ui/react'
+import { Box, FieldRoot as FormControl, FieldLabel as FormLabel, Text, VStack } from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import Editor from '~components/Editor'
-import { CountrySelector } from '~shared/Form/CountrySelector'
-import InputBasic from '~shared/Form/InputBasic'
-import { MembershipSizeSelector, OrganizationTypeSelector } from '~shared/Layout/SaasSelector'
+import { CountrySelector } from '~components/Form/CountrySelector'
+import InputBasic from '~components/Form/InputBasic'
+import { MembershipSizeSelector, OrganizationTypeSelector } from '~components/Layout/SaasSelector'
 
 export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
   const { t } = useTranslation()

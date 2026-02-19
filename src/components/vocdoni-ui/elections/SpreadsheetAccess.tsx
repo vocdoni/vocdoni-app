@@ -10,11 +10,11 @@ import {
   useSlotRecipe,
 } from '@chakra-ui/react'
 import { Wallet } from '@ethersproject/wallet'
-import { useClient, useElection, walletFromRow, errorToString } from '@vocdoni/react-providers'
+import { errorToString, useClient, useElection, walletFromRow } from '@vocdoni/react-providers'
 import { PublishedElection, VocdoniSDKClient } from '@vocdoni/sdk'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useToast } from '~shared/Toast'
+import { useToast } from '~components/Toast'
 
 export type SpreadsheetAccessProps = {
   hashPrivateKey?: boolean

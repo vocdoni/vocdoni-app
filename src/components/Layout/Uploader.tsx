@@ -24,7 +24,7 @@ import { BiTrash } from 'react-icons/bi'
 import { LuUpload } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { useToast } from '~shared/Toast'
+import { useToast } from '~components/Toast'
 
 export type UploaderProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T) => T

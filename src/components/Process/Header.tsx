@@ -3,9 +3,9 @@ import { useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection, Strategy } from '@vocdoni/sdk'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { ShareModalButton } from '~components/Share'
 import { ElectionDescription, ElectionSchedule, ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
-import { useReadMoreMarkdown } from '~shared/Layout/use-read-more'
 import { StampIcon } from './Census/StampIcon'
 
 const ProcessHeader = () => {

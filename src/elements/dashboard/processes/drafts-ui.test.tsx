@@ -33,7 +33,7 @@ vi.mock('~components/Process/Create', () => ({
   }),
 }))
 
-vi.mock('~shared/Toast', () => ({
+vi.mock('~components/Toast', () => ({
   ToastProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
   useToast: () => vi.fn(),
 }))

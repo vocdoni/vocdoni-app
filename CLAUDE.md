@@ -56,7 +56,6 @@ All environment variables are injected at build time via `vite.config.ts` using 
 - `~components/*` → `src/components/*`
 - `~elements/*` → `src/elements/*`
 - `~routes` → `src/router/routes/index.ts`
-- `~shared/*` → `src/components/shared/*`
 - `~queries/*` → `src/queries/*`
 - `~utils/*` → `src/utils/*`
 - `~constants` → `src/constants/index.ts`

@@ -5,8 +5,8 @@ import AccountForm from './Form'
 
 const toastSpy = vi.fn()
 
-vi.mock('~shared/Toast', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('~shared/Toast')>()
+vi.mock('~components/Toast', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~components/Toast')>()
   return {
     ...actual,
     useToast: () => toastSpy,

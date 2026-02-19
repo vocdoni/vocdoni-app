@@ -12,10 +12,10 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react'
-import ReactPlayer from 'react-player'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { SubscriptionLockedContent } from '~components/shared/Layout/SubscriptionLockedContent'
+import ReactPlayer from 'react-player'
+import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
 import { SubscriptionPermission } from '~constants'
 import type { Process } from './common'
 

@@ -13,8 +13,8 @@ import { enforceHexPrefix, useClient, useOrganization } from '@vocdoni/react-pro
 import { useTranslation } from 'react-i18next'
 import { HiOutlineEllipsisHorizontalCircle } from 'react-icons/hi2'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
+import { useToast } from '~components/Toast'
 import { addressTextOverflow } from '~constants'
-import { useToast } from '~shared/Toast'
 
 const AddressBtn = ({ ...props }) => {
   const { t } = useTranslation()

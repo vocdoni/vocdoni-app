@@ -1,12 +1,12 @@
 import {
-  Progress,
   Box,
   Button,
   Flex,
-  FieldLabel as FormLabel,
   FieldRoot as FormControl,
+  FieldLabel as FormLabel,
   Heading,
   Icon,
+  Progress,
   SimpleGrid,
   SimpleGridProps,
   Stack,
@@ -22,12 +22,12 @@ import { LuInfo } from 'react-icons/lu'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { DashboardBox } from '~components/shared/Dashboard/Contents'
-import { SubscriptionLockedContent } from '~components/shared/Layout/SubscriptionLockedContent'
+import { DashboardBox } from '~components/Dashboard/Contents'
+import InputBasic from '~components/Form/InputBasic'
+import { IssueTypeSelector, SelectOptionType } from '~components/Layout/SaasSelector'
+import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
+import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
-import InputBasic from '~shared/Form/InputBasic'
-import { IssueTypeSelector, SelectOptionType } from '~shared/Layout/SaasSelector'
-import { useToast } from '~shared/Toast'
 import { maskValue } from '~utils/strings'
 
 type FormData = {

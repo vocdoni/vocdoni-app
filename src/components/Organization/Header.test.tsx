@@ -8,7 +8,7 @@ vi.mock('@vocdoni/react-providers', () => ({
   useClient: () => ({ account: { address: '0x123' } }),
 }))
 
-vi.mock('~shared/Layout/use-read-more', () => ({
+vi.mock('~components/Layout/use-read-more', () => ({
   useReadMoreMarkdown: () => ({
     ReadMoreMarkdownWrapper: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
     ReadMoreMarkdownButton: () => <button>Read more</button>,

@@ -20,7 +20,7 @@ import {
   TwitterShare,
   WhatsappShare,
 } from '~components/Share/index'
-import { useToast } from '~shared/Toast'
+import { useToast } from '~components/Toast'
 
 const ShareModalButton = ({
   caption = '',

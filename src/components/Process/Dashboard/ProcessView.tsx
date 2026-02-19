@@ -1,5 +1,4 @@
 import {
-  Progress,
   AspectRatio,
   Badge,
   BadgeProps,
@@ -12,6 +11,7 @@ import {
   IconProps,
   Input,
   Link,
+  Progress,
   Text,
   TooltipContent,
   TooltipPositioner,
@@ -49,6 +49,16 @@ import {
 import ReactPlayer from 'react-player'
 import { generatePath } from 'react-router-dom'
 import {
+  DashboardBox,
+  DashboardContents,
+  Heading,
+  Sidebar,
+  SidebarContents,
+  SidebarSubtitle,
+  SidebarTitle,
+} from '~components/Dashboard/Contents'
+import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
+import {
   ActionCancel,
   ActionContinue,
   ActionEnd,
@@ -59,16 +69,6 @@ import {
   ElectionStatusBadge,
   ElectionTitle,
 } from '~components/vocdoni-ui'
-import {
-  DashboardBox,
-  DashboardContents,
-  Heading,
-  Sidebar,
-  SidebarContents,
-  SidebarSubtitle,
-  SidebarTitle,
-} from '~shared/Dashboard/Contents'
-import { SidebarVisibilityProvider, useSidebarVisibility } from '~shared/Dashboard/SidebarContext'
 import { Routes } from '~src/router/routes'
 import { useResultTypeLabel } from '../resultTypeLabels'
 

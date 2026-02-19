@@ -17,9 +17,9 @@ import { useElection } from '@vocdoni/react-providers'
 import { PublishedElection } from '@vocdoni/sdk'
 import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
+import { useToast } from '~components/Toast'
 import { useCspAuthContext } from './CSPStepsProvider'
 import { useTwoFactorAuth } from './basics'
-import { useToast } from '~shared/Toast'
 
 // Define the form data structure
 type CSPStep1FormData = {

@@ -1,4 +1,3 @@
-import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { useClient } from '@vocdoni/react-providers'
@@ -8,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
 import { LoginResponse, useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
+import { useToast } from '~components/Toast'
 
 export enum LocalStorageKeys {
   Token = 'authToken',

@@ -20,9 +20,9 @@ import { useElection } from '@vocdoni/react-providers'
 import { PublishedElection } from '@vocdoni/sdk'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
+import { useToast } from '~components/Toast'
 import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
-import { useToast } from '~shared/Toast'
 
 export const Step0Base = ({ election }: { election: PublishedElection }) => {
   const { t } = useTranslation()

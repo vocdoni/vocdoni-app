@@ -1,6 +1,6 @@
 import { Box, Text } from '@chakra-ui/react'
 import { GroupBase, Props } from 'chakra-react-select'
-import { Select } from '~shared/Form/Select'
+import { Select } from '~components/Form/Select'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 

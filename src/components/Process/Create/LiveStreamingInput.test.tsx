@@ -4,7 +4,7 @@ import { render, screen } from '~src/test-utils'
 import type { Process } from './common'
 import { LiveStreamingInput } from './LiveStreamingInput'
 
-vi.mock('~components/shared/Layout/SubscriptionLockedContent', () => ({
+vi.mock('~components/Layout/SubscriptionLockedContent', () => ({
   SubscriptionLockedContent: ({ children }) => <>{children({ isLocked: false })}</>,
 }))
 

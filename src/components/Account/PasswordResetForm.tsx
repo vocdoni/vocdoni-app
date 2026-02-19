@@ -3,11 +3,11 @@ import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import InputPassword from '~shared/Form/InputPassword'
-import { useToast } from '~shared/Toast'
+import InputBasic from '~components/Form/InputBasic'
+import InputPassword from '~components/Form/InputPassword'
+import { useToast } from '~components/Toast'
 import { Routes } from '~src/router/routes'
 import { api, ApiEndpoints } from '../Auth/api'
-import InputBasic from '../shared/Form/InputBasic'
 
 type PasswordResetFormProps = {
   code?: string

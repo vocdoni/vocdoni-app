@@ -30,7 +30,7 @@ const mockToast = vi.fn()
 const mockToastClose = vi.fn()
 const mockToastIsActive = vi.fn().mockReturnValue(false)
 
-vi.mock('~shared/Toast', () => ({
+vi.mock('~components/Toast', () => ({
   useToast: () => {
     const toast = mockToast as any
     toast.close = mockToastClose

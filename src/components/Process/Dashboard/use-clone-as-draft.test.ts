@@ -15,7 +15,7 @@ vi.mock('react-router-dom', () => ({
   createSearchParams: vi.fn((params: any) => new URLSearchParams(params)),
 }))
 
-vi.mock('~shared/Toast', () => ({
+vi.mock('~components/Toast', () => ({
   useToast: () => mockToast,
 }))
 

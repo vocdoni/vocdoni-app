@@ -3,9 +3,9 @@ import { ElectionStatus } from '@vocdoni/sdk'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, matchPath, Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom'
+import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
 import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { Routes } from '~routes'
-import { DashboardContents, Heading, SubHeading } from '~shared/Dashboard/Contents'
 
 const OrganizationVotings = () => {
   const { t } = useTranslation()

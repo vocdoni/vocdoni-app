@@ -1,10 +1,10 @@
 import { Box, Flex, HStack } from '@chakra-ui/react'
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
-import AnnouncementBanner from '~components/shared/Layout/AnnouncementBanner'
-import CrispChat from '~components/shared/Layout/CrispChat'
+import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
+import CrispChat from '~components/Layout/CrispChat'
+import Footer from '~components/Layout/Footer'
+import Navbar from '~components/Navbar'
 import { Routes } from '~routes'
-import Footer from '~shared/Layout/Footer'
-import Navbar from '~shared/Navbar'
 
 const Layout = () => {
   const location = useLocation()

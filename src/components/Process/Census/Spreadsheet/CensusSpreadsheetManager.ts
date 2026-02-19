@@ -1,5 +1,5 @@
 import { walletFromRow } from '@vocdoni/react-providers'
-import { ErrorType, SpreadsheetManager } from '../../../shared/Spreadsheet/SpreadsheetManager'
+import { ErrorType, SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import ErrorRowLength from './errors/ErrorRowLength'
 import ErrorWeightType from './errors/ErrorWeightType'
 

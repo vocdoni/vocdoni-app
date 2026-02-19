@@ -2,8 +2,8 @@ import { Box, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { DashboardSection } from '~components/shared/Dashboard/Contents'
-import { Select } from '~components/shared/Form/Select'
+import { DashboardSection } from '~components/Dashboard/Contents'
+import { Select } from '~components/Form/Select'
 import { SelectorTypes } from '../common'
 
 const SelectionLimits = ({ index }) => {

@@ -16,7 +16,7 @@ vi.mock('~components/Auth/useAuth', () => ({
 }))
 
 // Mock the connection toast hook
-vi.mock('~components/shared/Layout/ConnectionToast', () => ({
+vi.mock('~components/Layout/ConnectionToast', () => ({
   useConnectionToast: () => ({
     recordFailure: mockRecordFailure,
     recordSuccess: mockRecordSuccess,

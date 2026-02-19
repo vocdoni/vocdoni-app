@@ -1,6 +1,6 @@
-import { useToast } from '~shared/Toast'
 import { useActions } from '@vocdoni/react-providers'
 import { useEffect, useRef } from 'react'
+import { useToast } from '~components/Toast'
 
 export const useActionsToast = () => {
   const toastRef = useRef<string | undefined>()

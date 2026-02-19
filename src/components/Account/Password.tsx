@@ -14,8 +14,8 @@ import { useTranslation } from 'react-i18next'
 import { LuPencil } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { ModalForm, useModalForm } from '~shared/Form/ModalForm'
-import { useToast } from '~shared/Toast'
+import { ModalForm, useModalForm } from '~components/Form/ModalForm'
+import { useToast } from '~components/Toast'
 
 interface PasswordFormData {
   oldPassword: string

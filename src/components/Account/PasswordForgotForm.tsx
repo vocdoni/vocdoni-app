@@ -1,12 +1,12 @@
 import { Button, Flex } from '@chakra-ui/react'
-import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import InputBasic from '~components/Form/InputBasic'
+import { useToast } from '~components/Toast'
 import { Routes } from '~src/router/routes'
 import { api, ApiEndpoints } from '../Auth/api'
-import InputBasic from '../shared/Form/InputBasic'
 
 type ForgotPasswordFormValues = {
   email: string

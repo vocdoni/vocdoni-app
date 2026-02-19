@@ -1,6 +1,4 @@
 import { AlertRoot as Alert, AlertDescription, Box, Button, Flex, Grid, IconButton } from '@chakra-ui/react'
-import { useToast } from '~shared/Toast'
-import { useColorMode } from '~theme/color-mode'
 import {
   BillingAddressElement,
   CheckoutProvider,
@@ -19,7 +17,9 @@ import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { SubscriptionType, useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
+import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
+import { useColorMode } from '~theme/color-mode'
 import { AnalyticsEvent } from '~utils/analytics'
 import { OrderSummary } from './OrderSummary'
 import { PromotionCodeInput } from './PromotionCodeInput'

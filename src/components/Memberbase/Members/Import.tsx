@@ -1,5 +1,4 @@
 import {
-  Progress,
   AlertRoot as Alert,
   AlertDescription,
   AlertTitle,
@@ -15,6 +14,7 @@ import {
   HStack,
   Icon,
   List,
+  Progress,
   Stack,
   TableBody,
   TableCell,
@@ -33,9 +33,9 @@ import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
 import { useOutletContext } from 'react-router-dom'
-import { SpreadsheetManager } from '~components/shared/Spreadsheet/SpreadsheetManager'
-import { Select } from '~shared/Form/Select'
-import { useToast } from '~shared/Toast'
+import { Select } from '~components/Form/Select'
+import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
+import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { MemberbaseTabsContext } from '..'

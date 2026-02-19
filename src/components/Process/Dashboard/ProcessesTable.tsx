@@ -4,10 +4,10 @@ import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@v
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router-dom'
+import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { ElectionStatusBadge, QuestionsTypeBadge } from '~components/vocdoni-ui'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
-import RoutedPaginatedTableFooter from '~shared/Pagination/PaginatedTableFooter'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type Election = PublishedElection | InvalidElection

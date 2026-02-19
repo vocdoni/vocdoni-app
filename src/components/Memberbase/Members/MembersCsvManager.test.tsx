@@ -19,7 +19,7 @@ vi.mock('react-dropzone', () => ({
   },
 }))
 
-vi.mock('~components/shared/Spreadsheet/SpreadsheetManager', () => {
+vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
   class SpreadsheetManager {
     data: string[][]
     static AcceptedTypes = ['text/csv']

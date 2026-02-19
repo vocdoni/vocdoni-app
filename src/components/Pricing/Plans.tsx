@@ -16,7 +16,7 @@ import {
 import { ApiEndpoints } from '~components/Auth/api'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
-import { ListStateAlert } from '~components/shared/Feedback/ListStateAlert'
+import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { PlanId } from '~constants'
 import { QueryKeys } from '~src/queries/keys'
 import PricingCard from './Card'

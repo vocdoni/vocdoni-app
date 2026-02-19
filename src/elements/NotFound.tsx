@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { LuHouse } from 'react-icons/lu'
 import { matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
-import { Heading, SubHeading } from '~components/shared/Dashboard/Contents'
+import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~src/router/routes'
 
 const NotFound = () => {

@@ -1,11 +1,11 @@
 import { AlertRoot as Alert, AlertDescription, AlertIndicator, Button, Flex, Spinner, Text } from '@chakra-ui/react'
-import { useToast } from '~shared/Toast'
 import { useMutation } from '@tanstack/react-query'
 import { ReactNode, useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { generatePath, Link as RouterLink, useNavigate, useOutletContext } from 'react-router-dom'
 import { api, ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
 import SignUp, { InviteFields } from '~components/Auth/SignUp'
+import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~src/router/routes'
 

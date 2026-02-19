@@ -27,7 +27,7 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: vi.fn() },
 }))
 
-vi.mock('~shared/Toast', () => ({
+vi.mock('~components/Toast', () => ({
   useToast: () => toastSpy,
 }))
 

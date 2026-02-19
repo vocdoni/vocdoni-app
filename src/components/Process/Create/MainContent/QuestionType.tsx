@@ -2,7 +2,7 @@ import { Box, Button, Dialog, FieldRoot as FormControl, HStack, Switch, Text } f
 import { useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Select } from '~components/shared/Form/Select'
+import { Select } from '~components/Form/Select'
 import { DefaultQuestions, SelectorTypes } from '../common'
 
 interface SelectOption {

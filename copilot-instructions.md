@@ -22,7 +22,6 @@ Vocdoni UI Scaffold is a multi-tenant SaaS platform for creating and managing bl
 ### Imports and File Structure
 - Use `~` alias for src root imports: `import { Component } from '~components/Feature'`
 - Prefer absolute imports over relative imports
-- Components import from `@vocdoni/chakra-components` for shared UI elements
 
 ### Naming Conventions
 - **Components**: PascalCase (e.g., `SignIn.tsx`, `Dashboard/Organization.tsx`)
@@ -48,8 +47,7 @@ Theme → WagmiConfig → QueryClientProvider → ClientProvider → SaasProvide
 Where `SaasProviders` wraps: `AuthProvider → SubscriptionProvider → SaasAccountProvider`
 
 ### Component Organization
-- `src/components/` - Feature-based components (Auth, Organization, Process, etc.)
-- `src/components/shared/` - Reusable UI components
+- `src/components/` - Reusable UI components
 - `src/elements/` - Page-level components combining multiple features
 - `src/theme/` - Chakra UI theme customizations
 

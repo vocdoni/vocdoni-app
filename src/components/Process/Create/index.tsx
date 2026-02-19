@@ -1,5 +1,4 @@
 import {
-  Progress,
   Box,
   Button,
   ButtonGroup,
@@ -10,6 +9,7 @@ import {
   Icon,
   IconButton,
   Input,
+  Progress,
   Spacer,
   Text,
   VStack,
@@ -50,15 +50,15 @@ import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
 import { ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { DashboardContents } from '~components/Dashboard/Contents'
+import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
+import DeleteModal from '~components/Modal/DeleteModal'
 import { Web3Address } from '~components/Process/Census/Web3'
-import { DashboardContents } from '~components/shared/Dashboard/Contents'
-import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/shared/Dashboard/SidebarContext'
-import DeleteModal from '~components/shared/Modal/DeleteModal'
+import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
 import { Routes } from '~routes'
-import { useToast } from '~shared/Toast'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvent } from '~utils/analytics'
 import { CensusMeta, CensusTypes } from '../Census/CensusType'

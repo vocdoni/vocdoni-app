@@ -2,7 +2,7 @@ import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom'
-import { Heading, SubHeading } from '~components/shared/Dashboard/Contents'
+import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { Routes } from '~routes'
 
