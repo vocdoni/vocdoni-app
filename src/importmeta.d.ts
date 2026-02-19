@@ -13,7 +13,6 @@ interface ImportMeta {
     EMAILJS_PUBLIC_ID: string
     theme: string
     title: string
-    BUTTON_COLOR_SCHEME: string
     CSP_URL: string
     CSP_PUBKEY: string
     DEFAULT_CENSUS_SIZE: number

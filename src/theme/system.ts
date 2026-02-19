@@ -4,6 +4,11 @@ import semanticTokens from './semantic'
 import tokens from './tokens'
 
 export const system = createSystem(defaultConfig, {
+  globalCss: {
+    html: {
+      colorPalette: 'gray',
+    },
+  },
   theme: {
     tokens,
     semanticTokens,

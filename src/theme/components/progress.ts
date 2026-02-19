@@ -1,5 +1,5 @@
-import { progressAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
+import { progressAnatomy } from '@chakra-ui/react/anatomy'
 
 export const Progress = defineSlotRecipe({
   slots: progressAnatomy.keys(),
@@ -10,9 +10,5 @@ export const Progress = defineSlotRecipe({
       md: {},
       lg: {},
     },
-  },
-  defaultVariants: {
-    colorPalette: 'brand',
-    size: 'xs',
   },
 })

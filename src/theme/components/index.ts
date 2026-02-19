@@ -2,7 +2,8 @@ import { defineRecipe, RecipeDefinition, SlotRecipeDefinition } from '@chakra-ui
 import { Badge } from './badge'
 import { Button } from './button'
 import { Card } from './card'
-import { Checkbox } from './checkbox'
+import { checkbox } from './checkbox'
+import { ChoiceCard } from './choiceCard'
 import { ConfirmModal } from './confirmModal'
 import { Drawer } from './drawer'
 import { ElectionDescription, ElectionVideo } from './election'
@@ -22,7 +23,7 @@ import { QuestionsConfirmation } from './questionsConfirmation'
 import { QuestionsEmpty } from './questionsEmpty'
 import { QuestionsTip } from './questionsTip'
 import { QuestionsTypeBadge } from './questionsTypeBadge'
-import { Radio } from './radio'
+import { radioGroup } from './radio'
 import { ElectionResults } from './results'
 import { SecurityLevelBox } from './securitylevelbox'
 import { SpreadsheetAccess } from './spreadsheetAccess'
@@ -47,8 +48,7 @@ export const recipes: Record<string, RecipeDefinition> = {
   text: Text,
   icon: defineRecipe({
     base: {
-      w: 4,
-      h: 4,
+      boxSize: 4,
     },
   }),
   textarea: Textarea,
@@ -64,18 +64,19 @@ export const recipes: Record<string, RecipeDefinition> = {
 
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   card: Card,
-  checkbox: Checkbox,
+  checkbox,
   drawer: Drawer,
   menu: Menu,
   popover: Popover,
   progress: Progress,
-  radioGroup: Radio,
+  radioGroup,
   switch: Switch,
   table: Table,
   tabs: Tabs,
   tag: Tag,
   tooltip: Tooltip,
   ConfirmModal,
+  ChoiceCard,
   ElectionQuestions,
   ElectionResults,
   EllipsisButton,

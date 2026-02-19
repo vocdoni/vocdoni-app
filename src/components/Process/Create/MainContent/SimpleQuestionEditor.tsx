@@ -2,13 +2,14 @@ import {
   Box,
   Button,
   Checkbox,
-  FieldErrorText as FormErrorMessage,
   FieldRoot as FormControl,
+  FieldErrorText as FormErrorMessage,
   HStack,
   Icon,
   IconButton,
   Input,
   Text,
+  useSlotRecipe,
   VStack,
 } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
@@ -38,6 +39,8 @@ const SimpleQuestionEditor = ({
     watch,
   } = useFormContext()
   const questionType = watch('questionType')
+  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
+  const cardStyles = choiceCardRecipe({ layout: 'list' })
 
   return (
     <VStack align='stretch' gap={2}>
@@ -45,6 +48,7 @@ const SimpleQuestionEditor = ({
         <SortableOption
           key={field.id}
           field={field}
+          cardStyles={cardStyles}
           optionIndex={optionIndex}
           questionIndex={index}
           questionType={questionType}
@@ -78,6 +82,7 @@ const SimpleQuestionEditor = ({
 // SortableOption component for individual options
 const SortableOption = ({
   field,
+  cardStyles,
   optionIndex,
   questionIndex,
   questionType,
@@ -99,7 +104,7 @@ const SortableOption = ({
 
   return (
     <div ref={setNodeRef} style={style}>
-      <HStack align='start'>
+      <Box css={[cardStyles.item, { p: 0, border: 'none' }]} data-choice-card data-layout='list'>
         {/* Drag handle for options */}
         {fieldsLength > 1 && (
           <Box
@@ -108,7 +113,6 @@ const SortableOption = ({
             cursor={isDragging ? 'grabbing' : 'grab'}
             display='flex'
             alignItems='center'
-            pt={2}
             color='gray.400'
             _hover={{ color: 'gray.600' }}
           >
@@ -117,31 +121,33 @@ const SortableOption = ({
         )}
 
         {questionType === SelectorTypes.Single ? (
-          <Box mt={2} boxSize={4} border='1px solid' borderColor='gray.300' borderRadius='full' flexShrink={0} />
+          <Box css={cardStyles.control} boxSize={4} border='1px solid' borderColor='gray.300' borderRadius='full' />
         ) : (
-          <Checkbox.Root checked={false} readOnly tabIndex={-1} mt={2}>
+          <Checkbox.Root checked={false} readOnly tabIndex={-1} css={cardStyles.control}>
             <Checkbox.HiddenInput />
             <Checkbox.Control>
               <Checkbox.Indicator />
             </Checkbox.Control>
           </Checkbox.Root>
         )}
-        <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option} flex='1'>
-          <Input
-            placeholder={
-              placeholders[activeTemplate]?.questions?.[questionIndex]?.options?.[optionIndex]?.option ??
-              t('process_create.option.placeholder', 'Option {{number}}', {
-                number: optionIndex + 1,
-              })
-            }
-            {...register(`questions.${questionIndex}.options.${optionIndex}.option`, {
-              required: t('form.error.required', 'This field is required'),
-            })}
-          />
-          <FormErrorMessage>
-            {errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
-          </FormErrorMessage>
-        </FormControl>
+        <Box css={cardStyles.body}>
+          <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
+            <Input
+              placeholder={
+                placeholders[activeTemplate]?.questions?.[questionIndex]?.options?.[optionIndex]?.option ??
+                t('process_create.option.placeholder', 'Option {{number}}', {
+                  number: optionIndex + 1,
+                })
+              }
+              {...register(`questions.${questionIndex}.options.${optionIndex}.option`, {
+                required: t('form.error.required', 'This field is required'),
+              })}
+            />
+            <FormErrorMessage>
+              {errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
+            </FormErrorMessage>
+          </FormControl>
+        </Box>
         {fieldsLength > 2 && (
           <IconButton
             aria-label={t('process_create.option.remove', 'Remove option')}
@@ -152,7 +158,7 @@ const SortableOption = ({
             <Icon as={LuX} />
           </IconButton>
         )}
-      </HStack>
+      </Box>
     </div>
   )
 }

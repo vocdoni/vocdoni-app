@@ -1,14 +1,4 @@
-import {
-  Icon,
-  IconButton,
-  MenuContent,
-  MenuItem,
-  MenuPositioner,
-  MenuRoot,
-  MenuSeparator,
-  MenuTrigger,
-  type MenuContentProps,
-} from '@chakra-ui/react'
+import { Icon, IconButton, Menu, type MenuContentProps } from '@chakra-ui/react'
 import { useActions, useClient, useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, InvalidElection } from '@vocdoni/sdk'
 import { ElementType } from 'react'
@@ -32,18 +22,18 @@ export const ActionsMenu = (props: MenuContentProps) => {
   }
 
   return (
-    <MenuRoot closeOnSelect={false}>
-      <MenuTrigger asChild>
-        <IconButton aria-label='Actions'>
-          <FaCog />
+    <Menu.Root closeOnSelect={false}>
+      <Menu.Trigger asChild>
+        <IconButton aria-label='Actions' variant='surface' size='xs'>
+          <Icon as={FaCog} />
         </IconButton>
-      </MenuTrigger>
-      <MenuPositioner>
+      </Menu.Trigger>
+      <Menu.Positioner>
         <ActionsProvider>
           <ActionsMenuList {...props} />
         </ActionsProvider>
-      </MenuPositioner>
-    </MenuRoot>
+      </Menu.Positioner>
+    </Menu.Root>
   )
 }
 
@@ -55,9 +45,9 @@ const ActionsMenuList = (props: MenuContentProps) => {
   if (!election || election instanceof InvalidElection) return null
 
   return (
-    <MenuContent p={0} {...props}>
+    <Menu.Content p={0} {...props}>
       {election.status === ElectionStatus.PAUSED && (
-        <MenuItem
+        <Menu.Item
           value='resume'
           aria-label={t('process_actions.start')}
           onClick={resume}
@@ -65,10 +55,10 @@ const ActionsMenuList = (props: MenuContentProps) => {
         >
           <ActionIcon icon={RiPlayCircleLine} />
           {t('process_actions.start')}
-        </MenuItem>
+        </Menu.Item>
       )}
       {election.status === ElectionStatus.ONGOING && (
-        <MenuItem
+        <Menu.Item
           value='pause'
           aria-label={t('process_actions.start')}
           onClick={pause}
@@ -76,14 +66,14 @@ const ActionsMenuList = (props: MenuContentProps) => {
         >
           <ActionIcon icon={RiPauseCircleLine} />
           {t('process_actions.pause')}
-        </MenuItem>
+        </Menu.Item>
       )}
-      <MenuItem value='end' aria-label={t('process_actions.start')} onClick={end} disabled={disabled || loading.end}>
+      <Menu.Item value='end' aria-label={t('process_actions.start')} onClick={end} disabled={disabled || loading.end}>
         <ActionIcon icon={RiStopCircleLine} />
         {t('process_actions.end')}
-      </MenuItem>
-      <MenuSeparator m={1} />
-      <MenuItem
+      </Menu.Item>
+      <Menu.Separator m={1} />
+      <Menu.Item
         value='cancel'
         aria-label={t('process_actions.start')}
         onClick={cancel}
@@ -91,8 +81,8 @@ const ActionsMenuList = (props: MenuContentProps) => {
       >
         <ActionIcon icon={RiCloseCircleLine} />
         {t('process_actions.cancel')}
-      </MenuItem>
-    </MenuContent>
+      </Menu.Item>
+    </Menu.Content>
   )
 }
 

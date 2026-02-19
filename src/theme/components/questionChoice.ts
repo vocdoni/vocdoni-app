@@ -2,9 +2,14 @@ import { defineSlotRecipe } from '@chakra-ui/react'
 import { questionChoiceAnatomy } from '~components/vocdoni-ui/theming/anatomy'
 
 const baseStyle = {
+  wrapper: {
+    gap: 2,
+    height: '100%',
+  },
+
   skeleton: {
     w: '100%',
-    h: '150px',
+    aspectRatio: '4 / 3',
   },
 
   image: {
@@ -16,20 +21,12 @@ const baseStyle = {
   },
 
   label: {
-    '.chakra-skeleton + &': {
-      wordBreak: 'break-word',
-      fontWeight: 'semibold',
-      mt: 4,
-      px: 4,
-      mb: 4,
-    },
+    fontWeight: 'semibold',
+    wordBreak: 'break-word',
   },
 
   description: {
-    '.chakra-skeleton ~ &': {
-      px: 4,
-      mb: 4,
-    },
+    wordBreak: 'break-word',
   },
 }
 

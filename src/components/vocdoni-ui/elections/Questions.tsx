@@ -1,33 +1,17 @@
 import {
-  AlertRoot as Alert,
-  AlertDescription,
-  AlertIndicator,
-  AlertTitle,
+  Alert,
   Box,
   Button,
   chakra,
-  CheckboxControl,
-  CheckboxHiddenInput,
-  CheckboxLabel,
-  CheckboxRoot,
+  Checkbox,
   CloseButton,
   Dialog,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  RadioGroupItem,
-  RadioGroupItemControl,
-  RadioGroupItemHiddenInput,
-  RadioGroupItemText,
-  RadioGroupRoot,
+  Field,
+  RadioGroup,
   Skeleton,
   Stack,
   Text,
-  TooltipArrow,
-  TooltipArrowTip,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
+  Tooltip,
   useDisclosure,
   useSlotRecipe,
 } from '@chakra-ui/react'
@@ -44,6 +28,8 @@ type QuestionsFormContextState = {
   fmethods: ReturnType<typeof useForm>
   vote: (values: Record<string, any>) => Promise<false | void>
 }
+
+type QuestionLayout = 'list' | 'grid'
 
 const QuestionsFormContext = createContext<QuestionsFormContextState | undefined>(undefined)
 
@@ -158,7 +144,11 @@ export const QuestionTip = () => {
   )
 }
 
-export const QuestionChoice = ({ choice, ...rest }: { choice: IChoice } & ComponentProps<typeof Stack>) => {
+export const QuestionChoice = ({
+  choice,
+  layout,
+  ...rest
+}: { choice: IChoice; layout?: QuestionLayout } & ComponentProps<typeof Stack>) => {
   const recipe = useSlotRecipe({ key: 'QuestionChoice' })
   const styles = recipe()
   const { open: isOpen, onOpen, onClose } = useDisclosure()
@@ -170,7 +160,7 @@ export const QuestionChoice = ({ choice, ...rest }: { choice: IChoice } & Compon
   const renderModal = !!image && image.default && image.thumbnail
 
   return (
-    <Stack css={styles.wrapper} {...rest}>
+    <Stack css={styles.wrapper} data-layout={layout} data-no-image={renderImage ? undefined : ''} {...rest}>
       {renderImage && (
         <Skeleton loading={!loaded} css={styles.skeleton}>
           <chakra.img
@@ -295,14 +285,15 @@ export const QuestionsConfirmation = ({
 
 export const ElectionQuestion = ({ question, index }: { question: IQuestion; index: string }) => {
   const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
-  const styles = recipe()
+  const layout = getQuestionLayout(question)
+  const styles = recipe({ layout })
   const {
     formState: { errors },
   } = useFormContext()
 
   return (
     <chakra.div css={styles.container}>
-      <FormControl invalid={Boolean((errors as Record<string, any>)[index])}>
+      <Field.Root invalid={Boolean((errors as Record<string, any>)[index])}>
         <chakra.div css={styles.header}>
           <chakra.label css={styles.title}>{question.title.default}</chakra.label>
         </chakra.div>
@@ -312,15 +303,18 @@ export const ElectionQuestion = ({ question, index }: { question: IQuestion; ind
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{question.description.default}</ReactMarkdown>
             </chakra.div>
           )}
-          <FieldSwitcher index={index} question={question} />
+          <FieldSwitcher index={index} question={question} layout={layout} />
           <QuestionTip />
         </chakra.div>
-      </FormControl>
+      </Field.Root>
     </chakra.div>
   )
 }
 
-const FieldSwitcher = (props: { question: IQuestion; index: string }) => {
+const getQuestionLayout = (question: IQuestion): QuestionLayout =>
+  question.choices.some((choice) => Boolean(choice.meta?.image?.default)) ? 'grid' : 'list'
+
+const FieldSwitcher = (props: { question: IQuestion; index: string; layout: QuestionLayout }) => {
   const { election } = useElection()
   if (!(election instanceof PublishedElection)) return null
   switch (election?.resultsType.name) {
@@ -334,16 +328,18 @@ const FieldSwitcher = (props: { question: IQuestion; index: string }) => {
   }
 }
 
-const MultiChoice = ({ index, question }: { index: string; question: IQuestion }) => {
+const MultiChoice = ({ index, question, layout }: { index: string; question: IQuestion; layout: QuestionLayout }) => {
   const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
-  const styles = recipe()
+  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
+  const styles = recipe({ layout })
+  const cardStyles = choiceCardRecipe({ layout })
   const {
     election,
     isAbleToVote,
     loading: { voting },
     localize,
   } = useElection()
-  const { control, trigger, watch, getValues } = useFormContext()
+  const { control, trigger, watch } = useFormContext()
   const values = watch(index) || []
 
   if (!(election instanceof PublishedElection)) return null
@@ -361,7 +357,7 @@ const MultiChoice = ({ index, question }: { index: string; question: IQuestion }
   }
 
   return (
-    <Stack css={styles.stack}>
+    <Stack css={styles.stack} display={layout === 'grid' ? 'grid' : undefined}>
       <Controller
         control={control}
         disabled={isNotAbleToVote}
@@ -378,18 +374,27 @@ const MultiChoice = ({ index, question }: { index: string; question: IQuestion }
         }}
         name={index}
         render={({ field: { onChange, ...restField }, fieldState: { error } }) => {
-          const currentValues = getValues(index) || []
+          const currentValues = values || []
           return (
             <>
               {choices.map((choice, ck) => {
                 const value = choice.value.toString()
                 const maxSelected = currentValues.length >= election.voteType.maxCount && !currentValues.includes(value)
                 const checked = currentValues.includes(value)
+                const idBase = `question-${index}-choice-${value}`
                 return (
-                  <CheckboxRoot
+                  <Checkbox.Root
                     {...restField}
                     key={ck}
-                    css={styles.checkbox}
+                    ids={{
+                      root: `${idBase}-root`,
+                      hiddenInput: `${idBase}-input`,
+                      control: `${idBase}-control`,
+                      label: `${idBase}-label`,
+                    }}
+                    css={cardStyles.item}
+                    data-choice-card
+                    data-layout={layout}
                     checked={checked}
                     disabled={isNotAbleToVote || maxSelected}
                     onCheckedChange={(details) => {
@@ -403,15 +408,17 @@ const MultiChoice = ({ index, question }: { index: string; question: IQuestion }
                       trigger(index)
                     }}
                   >
-                    <CheckboxHiddenInput value={value} />
-                    <CheckboxControl />
-                    <CheckboxLabel>
-                      <QuestionChoice choice={choice} />
-                    </CheckboxLabel>
-                  </CheckboxRoot>
+                    <Checkbox.HiddenInput value={value} />
+                    <Checkbox.Control css={cardStyles.control}>
+                      <Checkbox.Indicator />
+                    </Checkbox.Control>
+                    <Checkbox.Label css={cardStyles.body}>
+                      <QuestionChoice choice={choice} layout={layout} />
+                    </Checkbox.Label>
+                  </Checkbox.Root>
                 )
               })}
-              <FormErrorMessage css={styles.error}>{error?.message as string}</FormErrorMessage>
+              <Field.ErrorText css={styles.error}>{error?.message as string}</Field.ErrorText>
             </>
           )
         }}
@@ -420,9 +427,19 @@ const MultiChoice = ({ index, question }: { index: string; question: IQuestion }
   )
 }
 
-const ApprovalChoice = ({ index, question }: { index: string; question: IQuestion }) => {
+const ApprovalChoice = ({
+  index,
+  question,
+  layout,
+}: {
+  index: string
+  question: IQuestion
+  layout: QuestionLayout
+}) => {
   const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
-  const styles = recipe()
+  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
+  const styles = recipe({ layout })
+  const cardStyles = choiceCardRecipe({ layout })
   const {
     election,
     isAbleToVote,
@@ -439,7 +456,7 @@ const ApprovalChoice = ({ index, question }: { index: string; question: IQuestio
   const choices = [...question.choices]
 
   return (
-    <Stack css={styles.stack}>
+    <Stack css={styles.stack} display={layout === 'grid' ? 'grid' : undefined}>
       <Controller
         control={control}
         disabled={isNotAbleToVote}
@@ -452,11 +469,20 @@ const ApprovalChoice = ({ index, question }: { index: string; question: IQuestio
             {choices.map((choice, ck) => {
               const value = choice.value.toString()
               const checked = values.includes(value)
+              const idBase = `question-${index}-choice-${value}`
               return (
-                <CheckboxRoot
+                <Checkbox.Root
                   {...restField}
                   key={ck}
-                  css={styles.checkbox}
+                  ids={{
+                    root: `${idBase}-root`,
+                    hiddenInput: `${idBase}-input`,
+                    control: `${idBase}-control`,
+                    label: `${idBase}-label`,
+                  }}
+                  css={cardStyles.item}
+                  data-choice-card
+                  data-layout={layout}
                   checked={checked}
                   disabled={isNotAbleToVote}
                   onCheckedChange={(details) => {
@@ -468,15 +494,17 @@ const ApprovalChoice = ({ index, question }: { index: string; question: IQuestio
                     }
                   }}
                 >
-                  <CheckboxHiddenInput value={value} />
-                  <CheckboxControl />
-                  <CheckboxLabel>
-                    <QuestionChoice choice={choice} />
-                  </CheckboxLabel>
-                </CheckboxRoot>
+                  <Checkbox.HiddenInput value={value} />
+                  <Checkbox.Control css={cardStyles.control}>
+                    <Checkbox.Indicator />
+                  </Checkbox.Control>
+                  <Checkbox.Label css={cardStyles.body}>
+                    <QuestionChoice choice={choice} layout={layout} />
+                  </Checkbox.Label>
+                </Checkbox.Root>
               )
             })}
-            <FormErrorMessage css={styles.error}>{error?.message as string}</FormErrorMessage>
+            <Field.ErrorText css={styles.error}>{error?.message as string}</Field.ErrorText>
           </>
         )}
       />
@@ -484,9 +512,11 @@ const ApprovalChoice = ({ index, question }: { index: string; question: IQuestio
   )
 }
 
-const SingleChoice = ({ index, question }: { index: string; question: IQuestion }) => {
+const SingleChoice = ({ index, question, layout }: { index: string; question: IQuestion; layout: QuestionLayout }) => {
   const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
-  const styles = recipe()
+  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
+  const styles = recipe({ layout })
+  const cardStyles = choiceCardRecipe({ layout })
   const {
     election,
     isAbleToVote,
@@ -508,25 +538,31 @@ const SingleChoice = ({ index, question }: { index: string; question: IQuestion 
       rules={{ required: localize('validation.required') }}
       name={index}
       render={({ field }) => (
-        <RadioGroupRoot
+        <RadioGroup.Root
           css={styles.radioGroup}
           value={field.value}
           onValueChange={({ value }) => field.onChange(value)}
           disabled={disabled}
         >
-          <Stack direction='column' css={styles.stack}>
+          <Stack direction='column' css={styles.stack} display={layout === 'grid' ? 'grid' : undefined}>
             {question.choices.map((choice, ck) => (
-              <RadioGroupItem css={styles.radio} value={choice.value.toString()} key={ck}>
-                <RadioGroupItemHiddenInput />
-                <RadioGroupItemControl />
-                <RadioGroupItemText as='span'>
-                  <QuestionChoice choice={choice} />
-                </RadioGroupItemText>
-              </RadioGroupItem>
+              <RadioGroup.Item
+                css={cardStyles.item}
+                data-choice-card
+                data-layout={layout}
+                value={choice.value.toString()}
+                key={ck}
+              >
+                <RadioGroup.ItemHiddenInput />
+                <RadioGroup.ItemIndicator css={cardStyles.control} />
+                <RadioGroup.ItemText as='span' css={cardStyles.body}>
+                  <QuestionChoice choice={choice} layout={layout} />
+                </RadioGroup.ItemText>
+              </RadioGroup.Item>
             ))}
           </Stack>
-          <FormErrorMessage css={styles.error}>{(errors as Record<string, any>)[index]?.message}</FormErrorMessage>
-        </RadioGroupRoot>
+          <Field.ErrorText css={styles.error}>{(errors as Record<string, any>)[index]?.message}</Field.ErrorText>
+        </RadioGroup.Root>
       )}
     />
   )
@@ -537,10 +573,10 @@ export const QuestionsEmpty = () => {
   const styles = recipe()
   const { localize } = useElection()
   return (
-    <Alert variant='subtle' status='warning' css={styles.container}>
-      <AlertIndicator css={styles.icon} />
-      <AlertDescription css={styles.description}>{localize('empty')}</AlertDescription>
-    </Alert>
+    <Alert.Root variant='subtle' status='warning' css={styles.container}>
+      <Alert.Indicator css={styles.icon} />
+      <Alert.Description css={styles.description}>{localize('empty')}</Alert.Description>
+    </Alert.Root>
   )
 }
 
@@ -572,19 +608,19 @@ export const QuestionsTypeBadge = (props: ComponentProps<typeof chakra.div>) => 
   }
   return (
     <chakra.div css={styles.box} {...props}>
-      <TooltipRoot positioning={{ placement: 'top' }}>
-        <TooltipTrigger asChild>
+      <Tooltip.Root positioning={{ placement: 'top' }}>
+        <Tooltip.Trigger asChild>
           <chakra.label css={styles.title}>{title}</chakra.label>
-        </TooltipTrigger>
-        <TooltipPositioner>
-          <TooltipContent css={styles.tooltip}>
+        </Tooltip.Trigger>
+        <Tooltip.Positioner>
+          <Tooltip.Content css={styles.tooltip}>
             {tooltip}
-            <TooltipArrow>
-              <TooltipArrowTip />
-            </TooltipArrow>
-          </TooltipContent>
-        </TooltipPositioner>
-      </TooltipRoot>
+            <Tooltip.Arrow>
+              <Tooltip.ArrowTip />
+            </Tooltip.Arrow>
+          </Tooltip.Content>
+        </Tooltip.Positioner>
+      </Tooltip.Root>
     </chakra.div>
   )
 }
@@ -616,7 +652,7 @@ export const Voted = () => {
       : description
 
   return (
-    <Alert
+    <Alert.Root
       variant='subtle'
       alignItems='center'
       justifyContent='center'
@@ -625,12 +661,12 @@ export const Voted = () => {
       flexDir='column'
       css={styles.container}
     >
-      <AlertIndicator css={styles.icon} />
-      <AlertTitle css={styles.title}>{localize('vote.voted_title')}</AlertTitle>
-      <AlertDescription truncate maxW='100%' whiteSpace='initial' css={styles.description}>
+      <Alert.Indicator css={styles.icon} />
+      <Alert.Title css={styles.title}>{localize('vote.voted_title')}</Alert.Title>
+      <Alert.Description truncate maxW='100%' whiteSpace='initial' css={styles.description}>
         {descriptionContent}
-      </AlertDescription>
-    </Alert>
+      </Alert.Description>
+    </Alert.Root>
   )
 }
 
@@ -684,10 +720,10 @@ const QuestionsFormContents = ({ onInvalid }: { onInvalid?: (errors: any) => voi
         <ElectionQuestion key={qk} index={qk.toString()} question={question} />
       ))}
       {error && (
-        <Alert status='error' variant='solid' mb={3}>
-          <AlertIndicator />
+        <Alert.Root status='error' variant='solid' mb={3}>
+          <Alert.Indicator />
           {error}
-        </Alert>
+        </Alert.Root>
       )}
     </form>
   )

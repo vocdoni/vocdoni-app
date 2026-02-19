@@ -7,6 +7,7 @@ import {
   Input,
   SimpleGrid,
   Text,
+  useSlotRecipe,
   VStack,
 } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
@@ -37,6 +38,8 @@ const ExtendedQuestionEditor = ({
     formState: { errors },
     control,
   } = useFormContext()
+  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
+  const cardStyles = choiceCardRecipe({ layout: 'grid' })
 
   return (
     <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} gap={4}>
@@ -44,6 +47,7 @@ const ExtendedQuestionEditor = ({
         <SortableExtendedOption
           key={field.id}
           field={field}
+          cardStyles={cardStyles}
           optionIndex={optionIndex}
           questionIndex={index}
           fieldsLength={questionOptions.length}
@@ -77,6 +81,7 @@ const ExtendedQuestionEditor = ({
 // SortableExtendedOption component for individual option cards
 const SortableExtendedOption = ({
   field,
+  cardStyles,
   optionIndex,
   questionIndex,
   fieldsLength,
@@ -98,7 +103,7 @@ const SortableExtendedOption = ({
 
   return (
     <div ref={setNodeRef} style={style}>
-      <DashboardBox position='relative' minH='350px' p={0}>
+      <Box css={cardStyles.item} data-choice-card data-layout='grid' position='relative' minH='350px'>
         {/* Drag handle */}
         {fieldsLength > 1 && (
           <Box
@@ -134,50 +139,49 @@ const SortableExtendedOption = ({
           </IconButton>
         )}
 
-        <VStack align='stretch' gap={4}>
+        <Box css={cardStyles.media}>
           {/* Image uploader */}
           <ImageUploader name={`questions.${questionIndex}.options.${optionIndex}.image`} borderTopRadius='sm' />
-          {/* Content box */}
-          <Box p={4}>
-            {/* Title */}
-            <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
-              <Input
+        </Box>
+        <Box css={cardStyles.body}>
+          {/* Title */}
+          <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
+            <Input
+              variant='borderless'
+              placeholder={
+                placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.option ??
+                t('process_create.option.placeholder', 'Option {{number}}', {
+                  number: optionIndex + 1,
+                })
+              }
+              fontWeight='bold'
+              fontSize='md'
+              {...register(`questions.${questionIndex}.options.${optionIndex}.option`, {
+                required: t('form.error.required', 'This field is required'),
+              })}
+            />
+            <FormErrorMessage>
+              {errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
+            </FormErrorMessage>
+          </FormControl>
+          {/* Description */}
+          <Controller
+            name={`questions.${questionIndex}.options.${optionIndex}.description`}
+            control={control}
+            render={({ field }) => (
+              <Editor
+                onChange={field.onChange}
                 variant='borderless'
                 placeholder={
-                  placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.option ??
-                  t('process_create.option.placeholder', 'Option {{number}}', {
-                    number: optionIndex + 1,
-                  })
+                  placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.description ??
+                  t('process_create.option.description_placeholder', 'Project description')
                 }
-                fontWeight='bold'
-                fontSize='md'
-                {...register(`questions.${questionIndex}.options.${optionIndex}.option`, {
-                  required: t('form.error.required', 'This field is required'),
-                })}
+                defaultValue={field.value}
               />
-              <FormErrorMessage>
-                {errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
-              </FormErrorMessage>
-            </FormControl>
-            {/* Description */}
-            <Controller
-              name={`questions.${questionIndex}.options.${optionIndex}.description`}
-              control={control}
-              render={({ field }) => (
-                <Editor
-                  onChange={field.onChange}
-                  variant='borderless'
-                  placeholder={
-                    placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.description ??
-                    t('process_create.option.description_placeholder', 'Project description')
-                  }
-                  defaultValue={field.value}
-                />
-              )}
-            />
-          </Box>
-        </VStack>
-      </DashboardBox>
+            )}
+          />
+        </Box>
+      </Box>
     </div>
   )
 }

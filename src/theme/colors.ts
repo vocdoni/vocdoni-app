@@ -1,6 +1,6 @@
 export const colors = {
   brand: {
-    // comments refer to button styles
+    // comments refer to (unused) button styles
     50: { value: '#e5e5e5' }, // ghost hover (light)
     100: { value: '#cccccc' }, // hover (light)
     200: { value: '#fafafa' }, // outline hover / ghost active (light)

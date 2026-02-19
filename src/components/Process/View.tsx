@@ -116,8 +116,6 @@ const ProcessInfoPanel = () => {
       flexWrap='wrap'
       gap={4}
       h='fit-content'
-      flex='0 0 360px'
-      minW='360px'
     >
       <Box flexDir='row' display='flex' justifyContent='space-between' w={{ xl: 'full' }}>
         {election?.status !== ElectionStatus.CANCELED ? (

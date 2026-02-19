@@ -64,8 +64,6 @@ const navbar = {
   h: 'fit-content',
 }
 
-const defaultPalette = import.meta.env?.BUTTON_COLOR_SCHEME || 'gray'
-
 export const Button = defineRecipe({
   base: baseStyle,
   variants: {
@@ -75,8 +73,5 @@ export const Button = defineRecipe({
       listmenu,
       profilemenu,
     },
-  },
-  defaultVariants: {
-    colorPalette: defaultPalette as any,
   },
 })

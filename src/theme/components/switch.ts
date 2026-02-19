@@ -1,5 +1,5 @@
-import { switchAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
+import { switchAnatomy } from '@chakra-ui/react/anatomy'
 
 const baseStyle = {
   control: {
@@ -19,7 +19,4 @@ const baseStyle = {
 export const Switch = defineSlotRecipe({
   slots: switchAnatomy.keys(),
   base: baseStyle,
-  defaultVariants: {
-    colorPalette: 'brand',
-  },
 })

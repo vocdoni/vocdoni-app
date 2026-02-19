@@ -1,37 +1,21 @@
 import {
-  AlertRoot as Alert,
-  AvatarFallback,
-  AvatarIcon,
-  AvatarRoot,
+  Alert,
+  Avatar,
   Badge,
   Box,
   Button,
   CloseButton,
   Dialog,
   type DialogRootProps,
+  Field,
   Flex,
-  FieldRoot as FormControl,
-  FieldLabel as FormLabel,
   Heading,
   HStack,
   Icon,
   IconButton,
-  MenuContent,
-  MenuItem,
-  MenuItemGroup,
-  MenuItemGroupLabel,
-  MenuPositioner,
-  MenuRoot,
-  MenuSeparator,
-  MenuTrigger,
-  ProgressRange,
-  ProgressRoot,
-  ProgressTrack,
-  RadioGroupItem,
-  RadioGroupItemControl,
-  RadioGroupItemHiddenInput,
-  RadioGroupItemText,
-  RadioGroupRoot,
+  Menu,
+  Progress,
+  RadioGroup,
   Spinner,
   Stack,
   Text,
@@ -104,7 +88,7 @@ type ChangeRoleFormProps = {
   onClose: () => void
 }
 
-type RoleRadioProps = ComponentProps<typeof RadioGroupItem> & {
+type RoleRadioProps = ComponentProps<typeof RadioGroup.Item> & {
   fieldName: ReactNode
   description: ReactNode
   value: string
@@ -264,7 +248,7 @@ const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }:
   const isSelected = group?.value === value
 
   return (
-    <RadioGroupItem
+    <RadioGroup.Item
       value={value}
       disabled={disabled}
       border='1px solid'
@@ -276,22 +260,22 @@ const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }:
       _hover={!disabled ? { borderColor: 'gray.400' } : undefined}
       {...props}
     >
-      <RadioGroupItemHiddenInput />
+      <RadioGroup.ItemHiddenInput />
       <Flex align='start' gap={4}>
-        <RadioGroupItemControl mt={1} />
+        <RadioGroup.ItemIndicator mt={1} />
         <Box flex='1'>
           <Flex gap={2} align='center' mb={1}>
             <Text>{roleIcons[value]}</Text>
-            <RadioGroupItemText as='span' fontWeight='semibold'>
+            <RadioGroup.ItemText as='span' fontWeight='semibold'>
               {title}
-            </RadioGroupItemText>
+            </RadioGroup.ItemText>
           </Flex>
           <Text fontSize='sm' color='texts.subtle'>
             {description}
           </Text>
         </Box>
       </Flex>
-    </RadioGroupItem>
+    </RadioGroup.Item>
   )
 }
 
@@ -318,47 +302,53 @@ const getRoleDescription = (role: Role) => {
 const RoleRadioGroup = ({ currentRole }: RoleRadioGroupProps) => {
   const { t } = useTranslation()
   const { data: roles, isLoading: rolesLoading, isError: rolesError, error: rolesFetchError } = useRoles()
-  const { control } = useFormContext()
+  const { control, getValues } = useFormContext()
 
-  if (rolesError) return <Alert status='error'>{rolesFetchError?.message || t('error.loading_roles')}</Alert>
+  console.log('values:', getValues())
+
+  if (rolesError) return <Alert.Root status='error'>{rolesFetchError?.message || t('error.loading_roles')}</Alert.Root>
 
   return (
-    <FormControl>
-      <FormLabel fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</FormLabel>
+    <Field.Root>
+      <Field.Label fontSize='sm'>{t('role.update.new_role', { defaultValue: 'New role' })}</Field.Label>
       {rolesLoading && (
-        <ProgressRoot value={null}>
-          <ProgressTrack>
-            <ProgressRange />
-          </ProgressTrack>
-        </ProgressRoot>
+        <Progress.Root value={null}>
+          <Progress.Track>
+            <Progress.Range />
+          </Progress.Track>
+        </Progress.Root>
       )}
       <Controller
         name='role'
         control={control}
         render={({ field }) => (
-          <RadioGroupRoot value={field.value} onValueChange={({ value }) => field.onChange(value)} colorPalette='gray'>
+          <RadioGroup.Root value={field.value} onValueChange={({ value }) => field.onChange(value)} colorPalette='gray'>
             <Stack direction='column' gap={2}>
               {roles?.map((role: Role) => (
                 <RoleRadio
                   key={role.role}
                   value={role.role}
                   fieldName={role.name}
-                  disabled={role.role === currentRole}
+                  // disabled={role.role === currentRole}
                   description={getRoleDescription(role)}
                 />
               ))}
             </Stack>
-          </RadioGroupRoot>
+          </RadioGroup.Root>
         )}
       />
-    </FormControl>
+    </Field.Root>
   )
 }
 
 const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
   const toast = useToast()
   const { t } = useTranslation()
-  const methods = useForm<UpdateRoleBody>()
+  const methods = useForm<UpdateRoleBody>({
+    defaultValues: {
+      role: user.role,
+    },
+  })
   const updateRole = useUpdateRole()
 
   const onSubmit = (body: UpdateRoleBody) => {
@@ -394,9 +384,9 @@ const ChangeRoleForm = ({ user, onClose }: ChangeRoleFormProps) => {
     <FormProvider {...methods}>
       <Flex as='form' direction='column' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
         <Flex border='1px solid' borderColor='table.border' p={4} borderRadius='md' alignItems='center'>
-          <AvatarRoot>
-            <AvatarFallback name={fullName} />
-          </AvatarRoot>
+          <Avatar.Root>
+            <Avatar.Fallback name={fullName} />
+          </Avatar.Root>
           <Box ml='3'>
             <HStack align='center'>
               <Text fontWeight='bold'>{fullName}</Text>
@@ -608,15 +598,21 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
 
   return (
     <>
-      <MenuItem value='resend-invitation' fontSize='sm' disabled={isLoading} onClick={resendInvitationHandler}>
+      <Menu.Item value='resend-invitation' fontSize='sm' disabled={isLoading} onClick={resendInvitationHandler}>
         <HStack gap={2}>
           {isLoading ? <Spinner size='xs' /> : <Icon as={LuRefreshCw} />}
           <Text as='span'>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Text>
         </HStack>
-      </MenuItem>
-      <MenuItem value='cancel-invitation' color='red' fontSize='sm' disabled={isLoading} onClick={openCancelInvitation}>
+      </Menu.Item>
+      <Menu.Item
+        value='cancel-invitation'
+        color='red'
+        fontSize='sm'
+        disabled={isLoading}
+        onClick={openCancelInvitation}
+      >
         {t('team.actions.cancel_invitation', { defaultValue: 'Cancel Invitation' })}
-      </MenuItem>
+      </Menu.Item>
     </>
   )
 }
@@ -626,16 +622,16 @@ const ActiveUserActions = ({ openChangeRole, openRemoveUser }: ActiveUserActions
 
   return (
     <>
-      <MenuItem value='change-role' onClick={openChangeRole} fontSize='sm'>
+      <Menu.Item value='change-role' onClick={openChangeRole} fontSize='sm'>
         <HStack gap={2}>
           <Icon boxSize={4} as={LuUserCog} />
           <Text as='span'>{t('team.actions.change_role', { defaultValue: 'Change role' })}</Text>
         </HStack>
-      </MenuItem>
-      <MenuSeparator />
-      <MenuItem value='remove-user' color='red.400' fontSize='sm' onClick={openRemoveUser}>
+      </Menu.Item>
+      <Menu.Separator />
+      <Menu.Item value='remove-user' color='red.400' fontSize='sm' onClick={openRemoveUser}>
         {t('team.actions.remove_user', { defaultValue: 'Remove user' })}
-      </MenuItem>
+      </Menu.Item>
     </>
   )
 }
@@ -666,13 +662,13 @@ const UserActions = ({ user }: UserActionsProps) => {
 
   return (
     <>
-      <MenuRoot
+      <Menu.Root
         closeOnSelect={false}
         open={isMenuOpen}
         onOpenChange={({ open }) => (open ? openMenu() : closeMenu())}
         positioning={{ placement: 'bottom-end' }}
       >
-        <MenuTrigger asChild>
+        <Menu.Trigger asChild>
           <IconButton
             loading={isLoading}
             ml='auto'
@@ -682,11 +678,11 @@ const UserActions = ({ user }: UserActionsProps) => {
           >
             <Icon as={LuEllipsis} />
           </IconButton>
-        </MenuTrigger>
-        <MenuPositioner>
-          <MenuContent minW='unset'>
-            <MenuItemGroup>
-              <MenuItemGroupLabel>{t('team.actions.title', { defaultValue: 'Actions' })}</MenuItemGroupLabel>
+        </Menu.Trigger>
+        <Menu.Positioner>
+          <Menu.Content minW='unset'>
+            <Menu.ItemGroup>
+              <Menu.ItemGroupLabel>{t('team.actions.title', { defaultValue: 'Actions' })}</Menu.ItemGroupLabel>
               {isActiveUser(user) ? (
                 <ActiveUserActions openChangeRole={openChangeRole} openRemoveUser={openRemoveUser} />
               ) : (
@@ -696,10 +692,10 @@ const UserActions = ({ user }: UserActionsProps) => {
                   closeMenu={closeMenu}
                 />
               )}
-            </MenuItemGroup>
-          </MenuContent>
-        </MenuPositioner>
-      </MenuRoot>
+            </Menu.ItemGroup>
+          </Menu.Content>
+        </Menu.Positioner>
+      </Menu.Root>
       {isActiveUser(user) ? (
         <>
           <ChangeRoleModal open={isRoleModalOpen} onOpenChange={({ open }) => setRoleModalOpen(open)} user={user} />
@@ -758,7 +754,7 @@ const UsersList = ({ users }: UsersListProps) => {
 
         return (
           <Flex alignItems='center' p={2} key={i}>
-            <AvatarRoot>{!isActive ? <AvatarIcon as={LuMail} /> : <AvatarFallback name={avatarName} />}</AvatarRoot>
+            <Avatar.Root>{!isActive ? <Avatar.Icon as={LuMail} /> : <Avatar.Fallback name={avatarName} />}</Avatar.Root>
             <Box ml='3'>
               <HStack align='center'>
                 <Text fontWeight='bold'>{name}</Text>
@@ -805,11 +801,11 @@ export const OrganizationUsers = () => {
 
   if (isLoading) {
     return (
-      <ProgressRoot value={null}>
-        <ProgressTrack>
-          <ProgressRange />
-        </ProgressTrack>
-      </ProgressRoot>
+      <Progress.Root value={null}>
+        <Progress.Track>
+          <Progress.Range />
+        </Progress.Track>
+      </Progress.Root>
     )
   }
 

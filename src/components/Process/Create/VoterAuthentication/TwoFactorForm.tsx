@@ -1,25 +1,4 @@
-import {
-  AlertRoot as Alert,
-  AlertDescription,
-  AlertIndicator,
-  AlertTitle,
-  Box,
-  Field,
-  HStack,
-  Icon,
-  RadioGroupItem,
-  RadioGroupItemControl,
-  RadioGroupItemHiddenInput,
-  RadioGroupItemText,
-  RadioGroupRoot,
-  Stack,
-  SwitchControl,
-  SwitchHiddenInput,
-  SwitchRoot,
-  SwitchThumb,
-  Text,
-  VStack,
-} from '@chakra-ui/react'
+import { Alert, Box, Field, HStack, Icon, RadioGroup, Stack, Switch, Text, VStack } from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuLock, LuMail, LuPhone } from 'react-icons/lu'
@@ -79,16 +58,16 @@ export const TwoFactorForm = () => {
             name='use2FA'
             control={control}
             render={({ field }) => (
-              <SwitchRoot
+              <Switch.Root
                 checked={field.value}
                 onCheckedChange={({ checked }) => field.onChange(checked)}
                 display='inline-flex'
               >
-                <SwitchHiddenInput />
-                <SwitchControl>
-                  <SwitchThumb />
-                </SwitchControl>
-              </SwitchRoot>
+                <Switch.HiddenInput />
+                <Switch.Control>
+                  <Switch.Thumb />
+                </Switch.Control>
+              </Switch.Root>
             )}
           />
         </Field.Root>
@@ -105,50 +84,50 @@ export const TwoFactorForm = () => {
                     name='use2FAMethod'
                     control={control}
                     render={({ field }) => (
-                      <RadioGroupRoot
+                      <RadioGroup.Root
                         value={field.value}
                         onValueChange={({ value }) => field.onChange(value)}
                         orientation='vertical'
                       >
                         <Stack direction='column' gap={2}>
                           {TwoFactorMethods.map((method) => (
-                            <RadioGroupItem key={method.value} value={method.value} alignItems='flex-start'>
-                              <RadioGroupItemHiddenInput />
-                              <RadioGroupItemControl />
+                            <RadioGroup.Item key={method.value} value={method.value} alignItems='flex-start'>
+                              <RadioGroup.ItemHiddenInput />
+                              <RadioGroup.ItemIndicator />
                               <Box>
-                                <RadioGroupItemText as='span' fontWeight='bold'>
+                                <RadioGroup.ItemText as='span' fontWeight='bold'>
                                   {method.label}
-                                </RadioGroupItemText>
+                                </RadioGroup.ItemText>
                                 <Text fontSize='sm' color='texts.subtle'>
                                   {method.description}
                                 </Text>
                               </Box>
-                            </RadioGroupItem>
+                            </RadioGroup.Item>
                           ))}
                         </Stack>
-                      </RadioGroupRoot>
+                      </RadioGroup.Root>
                     )}
                   />
                 </Field.Root>
               </VStack>
             </Box>
 
-            <Alert status='success' variant='subtle' borderRadius='md' alignItems='start' py={3} px={4}>
-              <AlertIndicator>
+            <Alert.Root status='success' variant='subtle' borderRadius='md' alignItems='start' py={3} px={4}>
+              <Alert.Indicator>
                 <Icon as={LuLock} />
-              </AlertIndicator>
+              </Alert.Indicator>
               <Box>
-                <AlertTitle fontWeight='bold'>
+                <Alert.Title fontWeight='bold'>
                   {t('voter_auth.2fa_security_title', { defaultValue: 'Enhanced Security' })}
-                </AlertTitle>
-                <AlertDescription fontSize='sm'>
+                </Alert.Title>
+                <Alert.Description fontSize='sm'>
                   {t('voter_auth.2fa_security_description', {
                     defaultValue:
                       'Two-factor authentication significantly increases the security of your voting process by ensuring only authorized members can vote.',
                   })}
-                </AlertDescription>
+                </Alert.Description>
               </Box>
-            </Alert>
+            </Alert.Root>
           </VStack>
         )}
       </VStack>

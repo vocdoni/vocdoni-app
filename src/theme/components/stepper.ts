@@ -1,5 +1,5 @@
-import { stepsAnatomy } from '@chakra-ui/react/anatomy'
 import { defineSlotRecipe } from '@chakra-ui/react'
+import { stepsAnatomy } from '@chakra-ui/react/anatomy'
 
 const baseStyle = {
   separator: {
@@ -22,7 +22,4 @@ const baseStyle = {
 export const Stepper = defineSlotRecipe({
   slots: stepsAnatomy.keys(),
   base: baseStyle,
-  defaultVariants: {
-    colorPalette: 'brand',
-  },
 })

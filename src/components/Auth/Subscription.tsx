@@ -40,7 +40,7 @@ const SubscriptionContext = createContext<PermissionsContextType | undefined>(un
 const useSubscription = () => {
   const context = useContext(SubscriptionContext)
   if (!context) {
-    throw new Error('usePermissions must be used within a PermissionsProvider')
+    throw new Error('useSubscription must be used within a SubscriptionProvider')
   }
   return context
 }
