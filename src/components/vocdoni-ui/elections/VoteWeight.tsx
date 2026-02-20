@@ -2,6 +2,7 @@ import { chakra, useSlotRecipe } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
 import { CensusType, formatUnits, PublishedElection } from '@vocdoni/sdk'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const resultsValue = (result: number, decimals?: number) =>
   decimals ? parseInt(formatUnits(BigInt(result), decimals), 10) : result
@@ -10,9 +11,9 @@ export const VoteWeight = () => {
   const {
     client,
     election,
-    localize,
     csp: { token },
   } = useElection()
+  const { t } = useTranslation()
   const [weight, setWeight] = useState<number | null>(null)
   const recipe = useSlotRecipe({ key: 'VoteWeight' })
   const styles = recipe()
@@ -54,7 +55,7 @@ export const VoteWeight = () => {
 
   return (
     <chakra.div css={styles.wrapper}>
-      {localize('vote.weight')}
+      {t('vote.weight')}
       <chakra.span css={styles.weight}>{weight}</chakra.span>
     </chakra.div>
   )

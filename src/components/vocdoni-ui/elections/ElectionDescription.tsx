@@ -1,8 +1,7 @@
 import { chakra, useRecipe, type HTMLChakraProps } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
 import { PublishedElection } from '@vocdoni/sdk'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import { Markdown } from '../primitives/Markdown'
 
 type Props = HTMLChakraProps<'div'>
 
@@ -16,7 +15,7 @@ export const ElectionDescription = (props: Props) => {
   if (!description) return null
   return (
     <chakra.div css={styles} {...rest}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
+      <Markdown>{description}</Markdown>
     </chakra.div>
   )
 }

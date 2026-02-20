@@ -5,13 +5,22 @@
   },
   "actions": {
     "cancel": "Cancel",
+    "cancel_description": "Canceling \"{{ election.title.default }}\"...\n\nAttention: this action is irreversible and will cancel all the previous votes on it",
+    "continue": "Resume the process immediately, in case it has been paused",
+    "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
     "create_first_vote": "View all processes",
     "create_new_vote": "Create new vote",
+    "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
+    "end_description": "Ending \"{{ election.title.default }}\" voting process...\n\nAttention: this action is irreversible and voters will no longer be able to vote.",
+    "error_title": "There was some error while executing the transaction",
     "manage_team": "Manage team",
     "more": "More options",
+    "pause": "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
+    "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",
     "save": "Save Changes",
     "save_changes": "Save Changes",
-    "view_active_votes": "View active votes"
+    "view_active_votes": "View active votes",
+    "waiting_title": "Waiting for transaction confirmation..."
   },
   "add_new_org": "Add a new organization",
   "additional_actions": "Additional actions",
@@ -57,95 +66,6 @@
   },
   "cancel": "Cancel",
   "cancel_vote": "Cancel vote",
-  "cc": {
-    "actions": {
-      "cancel": "Cancel the process immediately, not allowing new votes and not counting any results (caution: it cannot be reverted)",
-      "cancel_description": "Canceling \"{{ election.title.default }}\"...\n\nAttention: this action is irreversible and will cancel all the previous votes on it",
-      "continue": "Resume the process immediately, in case it has been paused",
-      "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
-      "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
-      "end_description": "Ending \"{{ election.title.default }}\" voting process...\n\nAttention: this action is irreversible and voters will no longer be able to vote.",
-      "error_title": "There was some error while executing the transaction",
-      "pause": "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
-      "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",
-      "waiting_title": "Waiting for transaction confirmation..."
-    },
-    "confirm": {
-      "cancel": "Cancel",
-      "cancel_button": "Cancel",
-      "cancel_process_button": "Cancel Vote",
-      "cancel_process_title": "Cancel Vote",
-      "confirm": "Confirm Vote",
-      "end_process_button": "End Vote",
-      "end_process_title": "End Vote",
-      "title": "Confirm"
-    },
-    "empty": "Apparently this process has no questions",
-    "errors": {
-      "wrong_data_description": "The specified data is not correct",
-      "wrong_data_title": "Wrong data"
-    },
-    "loading": "Loading...",
-    "pagination": {
-      "total_results": "Showing a total of {{ count }} results"
-    },
-    "question_types": {
-      "approval_title": "Approval Voting",
-      "approval_tooltip": "Approval voting lets you vote for as many options as you like. The one with the most votes wins. It's a simple way to show your support for all the choices you approve of.",
-      "multichoice_cannot_abstain": "Too many options selected",
-      "multichoice_desc": "You selected {{selected}} options from a maximum of {{maxcount}}",
-      "multichoice_desc_abstain": " (or abstain)",
-      "multichoice_title": "Multichoice Voting {{ weighted }}",
-      "multichoice_tooltip": "Multichoice voting lets you vote for up to {{maxcount}} options (defined by the voting organizer). The one with the most votes wins.",
-      "singlechoice_title": "Single Choice {{ weighted }}",
-      "weighted_voting": "Weighted Voting"
-    },
-    "results": {
-      "date_format": "PPpp",
-      "secret_until_the_end": "The results will be made public when the process finishes on {{ endDate }}.",
-      "title": "Results for \"{{ title }}\"",
-      "votes": "{{votes}} votes ({{ percent }})"
-    },
-    "schedule": {
-      "created": "Created {{ distance }}",
-      "ended": "Ended {{ distance }}",
-      "from_begin_to_end": "Voting from {{ begin }} to {{ end }}",
-      "paused_end": "(Paused) Ends {{ distance }}",
-      "paused_start": "(Paused) Starts {{ distance }}"
-    },
-    "spreadsheet": {
-      "access_button": "Identify",
-      "anon_sik_helper": "This ensures the vote to be anonymous",
-      "anon_sik_label": "Define a password for your vote",
-      "close": "Close",
-      "modal_title": "Authentication"
-    },
-    "statuses": {
-      "canceled": "Canceled",
-      "ended": "Ended",
-      "invalid": "Invalid",
-      "ongoing": "Ongoing",
-      "paused": "Paused",
-      "process_unknown": "Unknown",
-      "results": "Results",
-      "upcoming": "Upcoming"
-    },
-    "validation": {
-      "choices_count": "You must select {{ count }} choices",
-      "min_length": "This field must be at least {{ min }} characters long",
-      "required": "This field is required"
-    },
-    "vote": {
-      "abstain": "Abstain",
-      "button": "Vote",
-      "button_update": "Change my vote",
-      "confirm": "Please confirm your choices:",
-      "sign": "Sign first",
-      "voted_description": "To verify your vote, you can use this unique identifier: {{ id }}",
-      "voted_title": "Your vote was successfully cast!",
-      "weight": "Your voting power is: "
-    }
-  },
   "census_size": "Census size",
   "change_password": {
     "subtitle": "Enter your current password and a new password to update your credentials.",
@@ -163,6 +83,16 @@
     "enable": "Enable",
     "home": "Home",
     "next": "Next"
+  },
+  "confirm": {
+    "cancel": "Cancel",
+    "cancel_button": "Cancel",
+    "cancel_process_button": "Cancel Vote",
+    "cancel_process_title": "Cancel Vote",
+    "confirm": "Confirm Vote",
+    "end_process_button": "End Vote",
+    "end_process_title": "End Vote",
+    "title": "Confirm"
   },
   "confirm_password": "Confirm Password",
   "confirm_password_placeholder": "Confirm your new password",
@@ -338,6 +268,7 @@
   },
   "email": "Email",
   "email_placeholder": "name@email.com",
+  "empty": "Apparently this process has no questions",
   "end_date": "End date",
   "end_time": "End time",
   "end_vote": "End vote",
@@ -358,6 +289,11 @@
     "title": "Error"
   },
   "error_removing_code": "Error removing code",
+  "errors": {
+    "not_voted_in_ended_election": "You signed but did not vote in this ended election.",
+    "wrong_data_description": "The specified data is not correct",
+    "wrong_data_title": "Wrong data"
+  },
   "features": {
     "anonymous_voting": "Anonymous voting",
     "approval": "Approval voting",
@@ -1055,8 +991,13 @@
   "organizations": "Organizations ({{ numOrgs }})",
   "other_details": "other details",
   "pagination": {
+    "next": "Next",
     "page_out_of": "Page {{page}} of {{total}}",
-    "rows_per_page": "Rows per page"
+    "page_placeholder": "Page",
+    "previous": "Previous",
+    "rows_per_page": "Rows per page",
+    "total_results_one": "pagination.total_results",
+    "total_results_other": "pagination.total_results"
   },
   "password": "Password",
   "password_placeholder": "Min 8 characters",
@@ -1438,6 +1379,16 @@
   },
   "promo_code": "Promotion Code",
   "promo_code_required": "Promotion code is required",
+  "question_types": {
+    "approval_title": "Approval Voting",
+    "approval_tooltip": "Approval voting lets you vote for as many options as you like. The one with the most votes wins. It's a simple way to show your support for all the choices you approve of.",
+    "multichoice_desc": "You selected {{selected}} options from a maximum of {{maxcount}}",
+    "multichoice_desc_abstain": " (or abstain)",
+    "multichoice_title": "Multichoice Voting {{ weighted }}",
+    "multichoice_tooltip": "Multichoice voting lets you vote for up to {{maxcount}} options (defined by the voting organizer). The one with the most votes wins.",
+    "singlechoice_title": "Single Choice {{ weighted }}",
+    "weighted_voting": "Weighted Voting"
+  },
   "questions_and_results": "Questions and results",
   "rainbow": {
     "group": {
@@ -1451,6 +1402,12 @@
   "remove_avatar": "Remove avatar",
   "reset_password_button": "Reset Password",
   "result_visibility": "Results visibility",
+  "results": {
+    "date_format": "PPpp",
+    "secret_until_the_end": "The results will be made public when the process finishes on {{ endDate }}.",
+    "title": "Results for \"{{ title }}\"",
+    "votes": "{{votes}} votes ({{ percent }})"
+  },
   "results_state": {
     "enabled": "Enabled",
     "hidden_until_end": "Hidden until the end",
@@ -1540,8 +1497,26 @@
   "signup_lastname": "Last name",
   "signup_subtitle": "Enter your information to get started",
   "signup_title": "Sign up",
+  "spreadsheet": {
+    "access_button": "Identify",
+    "anon_sik_helper": "This ensures the vote to be anonymous",
+    "anon_sik_label": "Define a password for your vote",
+    "close": "Close",
+    "logout": "spreadsheet.logout",
+    "modal_title": "Authentication"
+  },
   "start_date": "Start date",
   "start_time": "Start time",
+  "statuses": {
+    "canceled": "Canceled",
+    "ended": "Ended",
+    "invalid": "Invalid",
+    "ongoing": "Ongoing",
+    "paused": "Paused",
+    "process_unknown": "Unknown",
+    "results": "Results",
+    "upcoming": "Upcoming"
+  },
   "subscribe": "Subscribe",
   "subscription": {
     "locked_content": {
@@ -1649,6 +1624,13 @@
   },
   "user_menu": "User menu",
   "user_settings": "User settings",
+  "validation": {
+    "at_least_one": "Select at least one option",
+    "choices_count_one": "validation.choices_count",
+    "choices_count_other": "validation.choices_count",
+    "min_length": "This field must be at least {{ min }} characters long",
+    "required": "This field is required"
+  },
   "verification_code": "Verification Code",
   "verification_code_placeholder": "Enter the verification code",
   "verification_code_resent": "Verification code resent!",
@@ -1676,6 +1658,16 @@
   "view_in_explorer": "View in explorer",
   "view_plans_and_pricing": "View Plans & Pricing",
   "vocdoni logo": "Vocdoni logo",
+  "vote": {
+    "abstain": "Abstain",
+    "button": "Vote",
+    "button_update": "Change my vote",
+    "confirm": "Please confirm your choices:",
+    "sign": "Sign first",
+    "voted_description": "To verify your vote, you can use this unique identifier: {{ id }}",
+    "voted_title": "Your vote was successfully cast!",
+    "weight": "Your voting power is: "
+  },
   "vote_information": "Vote information",
   "vote_overwrite": "Vote overwrite",
   "voter_auth": {

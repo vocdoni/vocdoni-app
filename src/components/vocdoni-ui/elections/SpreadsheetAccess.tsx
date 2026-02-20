@@ -14,6 +14,7 @@ import { errorToString, useClient, useElection, walletFromRow } from '@vocdoni/r
 import { PublishedElection, VocdoniSDKClient } from '@vocdoni/sdk'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 
 export type SpreadsheetAccessProps = {
@@ -32,11 +33,11 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
     election,
     client: currentClient,
     setClient,
-    localize,
     sikPassword,
     sikSignature,
     loading: { voting },
   } = useElection()
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -88,8 +89,8 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
       if (!(await client.isInCensus())) {
         return toast({
           type: 'error',
-          title: localize('errors.wrong_data_title'),
-          description: localize('errors.wrong_data_description'),
+          title: t('errors.wrong_data_title'),
+          description: t('errors.wrong_data_description'),
         })
       }
       if (election?.electionType.anonymous && sikp) {
@@ -99,8 +100,8 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
         if (sik && !valid) {
           return toast({
             type: 'error',
-            title: localize('errors.wrong_data_title'),
-            description: localize('errors.wrong_data_description'),
+            title: t('errors.wrong_data_title'),
+            description: t('errors.wrong_data_description'),
           })
         }
         sikPassword(sikp)
@@ -125,11 +126,11 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
   const fields = election.get('census.fields') as string[]
   const required = {
     value: true,
-    message: localize('validation.required'),
+    message: t('validation.required'),
   }
   const minLength = {
     value: 8,
-    message: localize('validation.min_length', { min: 8 }),
+    message: t('validation.min_length', { min: 8 }),
   }
   const specs = election?.get('census.specs') as Record<string, any> | undefined
   const fspecs = (field: string) => {
@@ -168,7 +169,7 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
   if (connected) {
     return (
       <Button onClick={logout} css={styles.disconnect} disabled={voting}>
-        {localize('spreadsheet.logout')}
+        {t('spreadsheet.logout')}
       </Button>
     )
   }
@@ -183,13 +184,13 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
         }}
       >
         <Dialog.Trigger asChild>
-          <Button css={styles.button}>{localize('spreadsheet.access_button')}</Button>
+          <Button css={styles.button}>{t('spreadsheet.access_button')}</Button>
         </Dialog.Trigger>
         <Dialog.Backdrop css={styles.overlay} />
         <Dialog.Positioner>
           <Dialog.Content css={styles.content}>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <Dialog.Header css={styles.header}>{localize('spreadsheet.modal_title')}</Dialog.Header>
+              <Dialog.Header css={styles.header}>{t('spreadsheet.modal_title')}</Dialog.Header>
               <Dialog.CloseTrigger asChild>
                 <CloseButton disabled={loading} css={styles.top_close} />
               </Dialog.CloseTrigger>
@@ -216,24 +217,24 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
                 ))}
                 {election?.electionType.anonymous && (
                   <FormControl invalid={Boolean((errors as Record<string, any>).sik_password)} css={styles.sik_control}>
-                    <FormLabel css={styles.label}>{localize('spreadsheet.anon_sik_label')}</FormLabel>
+                    <FormLabel css={styles.label}>{t('spreadsheet.anon_sik_label')}</FormLabel>
                     <Input {...register('sik_password', { required, minLength })} type='password' css={styles.input} />
                     {(errors as Record<string, any>).sik_password ? (
                       <FormErrorMessage css={styles.error}>
                         {(errors as Record<string, any>).sik_password?.message?.toString()}
                       </FormErrorMessage>
                     ) : (
-                      <FormHelperText css={styles.helper}>{localize('spreadsheet.anon_sik_helper')}</FormHelperText>
+                      <FormHelperText css={styles.helper}>{t('spreadsheet.anon_sik_helper')}</FormHelperText>
                     )}
                   </FormControl>
                 )}
               </Dialog.Body>
               <Dialog.Footer css={styles.footer}>
                 <Button variant='ghost' mr={3} onClick={() => setIsOpen(false)} css={styles.close} disabled={loading}>
-                  {localize('spreadsheet.close')}
+                  {t('spreadsheet.close')}
                 </Button>
                 <Button type='submit' css={styles.submit} loading={loading}>
-                  {localize('spreadsheet.access_button')}
+                  {t('spreadsheet.access_button')}
                 </Button>
               </Dialog.Footer>
             </form>

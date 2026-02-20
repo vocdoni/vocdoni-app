@@ -1,5 +1,6 @@
 import { Image, useRecipe, type ImageProps } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-providers'
+import { linkifyIpfs } from '../primitives/ipfs'
 
 export type OrganizationImageProps = ImageProps & {
   gateway?: string
@@ -17,5 +18,6 @@ export const OrganizationImage = ({ gateway, fallbackSrc, ...props }: Organizati
   if (!avatar) {
     avatar = organization?.account.logo
   }
-  return <Image src={avatar || fallbackSrc} css={styles} {...rest} />
+  const src = linkifyIpfs(avatar, gateway) || fallbackSrc
+  return <Image src={src} css={styles} {...rest} />
 }

@@ -1,8 +1,9 @@
 import { Box, chakra, Flex, Progress, Text, useSlotRecipe } from '@chakra-ui/react'
-import { useClient, useDatesLocale, useElection } from '@vocdoni/react-providers'
+import { useDatesLocale, useElection } from '@vocdoni/react-providers'
 import { ElectionResultsTypeNames, ElectionStatus, formatUnits, PublishedElection } from '@vocdoni/sdk'
 import { format } from 'date-fns'
 import { Fragment } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const percent = (result: number, total: number) => `${((Number(result) / total) * 100 || 0).toFixed(1)}%`
 
@@ -14,7 +15,7 @@ export const ElectionResults = (props: { forceRender?: boolean } & React.Compone
   const recipe = useSlotRecipe({ key: 'ElectionResults' })
   const styles = recipe()
   const { election } = useElection()
-  const { localize } = useClient()
+  const { t } = useTranslation()
   const locale = useDatesLocale()
 
   if (!election || !(election instanceof PublishedElection) || election.status === ElectionStatus.CANCELED) return null
@@ -22,8 +23,8 @@ export const ElectionResults = (props: { forceRender?: boolean } & React.Compone
   if (election.electionType.secretUntilTheEnd && election.status !== ElectionStatus.RESULTS && !forceRender) {
     return (
       <Text css={styles.secret}>
-        {localize('results.secret_until_the_end', {
-          endDate: format(election.endDate, localize('results.date_format'), { locale }),
+        {t('results.secret_until_the_end', {
+          endDate: format(election.endDate, t('results.date_format'), { locale }),
         })}
       </Text>
     )
@@ -38,11 +39,11 @@ export const ElectionResults = (props: { forceRender?: boolean } & React.Compone
   return (
     <Flex css={styles.wrapper} {...flexProps}>
       {election.questions.map((question, idx) => {
-        const choices = electionChoices(election, question, localize('vote.abstain'))
+        const choices = electionChoices(election, question, t('vote.abstain'))
         return (
           <chakra.div css={styles.question} key={idx}>
             <chakra.div css={styles.header}>
-              <Text css={styles.title}>{localize('results.title', { title: question.title.default })}</Text>
+              <Text css={styles.title}>{t('results.title', { title: question.title.default })}</Text>
             </chakra.div>
             <chakra.div css={styles.body}>
               {choices.map((choice, i) => (
@@ -51,7 +52,7 @@ export const ElectionResults = (props: { forceRender?: boolean } & React.Compone
                     <Fragment>
                       <Text css={styles.choiceTitle}>{choice.title.default}</Text>
                       <Text css={styles.choiceVotes}>
-                        {localize('results.votes', {
+                        {t('results.votes', {
                           votes: resultsValue(Number(choice.results), decimals) || 0,
                           percent: percent(resultsValue(Number(choice.results), decimals), totals[idx]),
                         })}

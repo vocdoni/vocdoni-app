@@ -1,9 +1,11 @@
 import { Tag, type TagRootProps } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import { useTranslation } from 'react-i18next'
 
 export const ElectionStatusBadge = (props: TagRootProps) => {
-  const { election, localize } = useElection()
+  const { election } = useElection()
+  const { t } = useTranslation()
   if (!election) return null
   let { colorPalette } = props
   if (!colorPalette) {
@@ -23,11 +25,21 @@ export const ElectionStatusBadge = (props: TagRootProps) => {
   }
   const label =
     election instanceof PublishedElection && election.status
-      ? localize(`statuses.${election.status.toLowerCase()}`)
-      : localize('statuses.invalid')
+      ? t(`statuses.${election.status.toLowerCase()}`)
+      : t('statuses.invalid')
   return (
     <Tag.Root colorPalette={colorPalette} variant='subtle' {...props}>
       <Tag.Label>{label}</Tag.Label>
     </Tag.Root>
   )
 }
+
+// Translation keys for extraction:
+// t('statuses.canceled', 'Canceled')
+// t('statuses.ended', 'Ended')
+// t('statuses.invalid', 'Invalid')
+// t('statuses.ongoing', 'Ongoing')
+// t('statuses.paused', 'Paused')
+// t('statuses.results', 'Results')
+// t('statuses.upcoming', 'Upcoming')
+// t('statuses.process_unknown', 'Unknown')

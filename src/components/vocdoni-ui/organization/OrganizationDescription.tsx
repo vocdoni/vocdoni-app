@@ -1,7 +1,6 @@
 import { chakra, useRecipe, type HTMLChakraProps } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-providers'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import { Markdown } from '../primitives/Markdown'
 
 type Props = HTMLChakraProps<'div'> & { size?: string; variant?: string }
 
@@ -14,7 +13,7 @@ export const OrganizationDescription = (props: Props) => {
   if (!organization.account.description) return null
   return (
     <chakra.div css={styles} {...rest}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{organization.account.description.default}</ReactMarkdown>
+      <Markdown>{organization.account.description.default}</Markdown>
     </chakra.div>
   )
 }

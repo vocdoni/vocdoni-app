@@ -19,10 +19,11 @@ import { useClient, useElection } from '@vocdoni/react-providers'
 import { ElectionResultsTypeNames, ElectionStatus, PublishedElection, type IChoice, type IQuestion } from '@vocdoni/sdk'
 import { createContext, useContext, useEffect, useState, type ComponentProps, type ReactNode } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
+import { useTranslation } from 'react-i18next'
 import { useConfirm } from '../confirm/useConfirm'
 import { environment } from '../environment'
+import { Markdown } from '../primitives/Markdown'
+import { linkifyIpfs } from '../primitives/ipfs'
 
 type QuestionsFormContextState = {
   fmethods: ReturnType<typeof useForm>
@@ -121,17 +122,18 @@ export const QuestionTip = () => {
   const {
     fmethods: { getValues },
   } = useQuestionsForm()
-  const { election, localize } = useElection()
+  const { election } = useElection()
+  const { t } = useTranslation()
   if (!election || !(election instanceof PublishedElection)) return null
   let txt = ''
   switch (election?.resultsType.name) {
     case ElectionResultsTypeNames.MULTIPLE_CHOICE:
-      txt = localize('question_types.multichoice_desc', {
+      txt = t('question_types.multichoice_desc', {
         selected: getValues()[0]?.length,
         maxcount: election.voteType.maxCount,
       })
       if (election.resultsType.properties.canAbstain) {
-        txt += localize('question_types.multichoice_desc_abstain')
+        txt += t('question_types.multichoice_desc_abstain')
       }
       break
     default:
@@ -184,7 +186,7 @@ const QuestionChoiceBody = ({
       {renderLabel && <Text css={styles.label}>{label}</Text>}
       {renderDescription && description && (
         <Box css={styles.description}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
+          <Markdown>{description}</Markdown>
         </Box>
       )}
     </Box>
@@ -203,6 +205,8 @@ const QuestionChoiceMedia = ({ choice }: { choice: IChoice }) => {
   const renderModal = !!image && image.default && image.thumbnail
 
   if (!hasImage) return null
+  const thumbnailSrc = linkifyIpfs(image.thumbnail ?? image.default)
+  const fullSrc = linkifyIpfs(image.default)
 
   return (
     <>
@@ -214,7 +218,7 @@ const QuestionChoiceMedia = ({ choice }: { choice: IChoice }) => {
             onOpen()
           }}
           css={styles.image}
-          src={image.thumbnail ?? image.default}
+          src={thumbnailSrc}
           alt={label}
           onLoad={() => setLoaded(true)}
         />
@@ -229,12 +233,7 @@ const QuestionChoiceMedia = ({ choice }: { choice: IChoice }) => {
               </Dialog.CloseTrigger>
               <Dialog.Body css={styles.modalBody}>
                 <Skeleton loading={!loadedModal} css={styles.skeletonModal}>
-                  <chakra.img
-                    src={image.default}
-                    alt={label}
-                    css={styles.modalImage}
-                    onLoad={() => setLoadedModal(true)}
-                  />
+                  <chakra.img src={fullSrc} alt={label} css={styles.modalImage} onLoad={() => setLoadedModal(true)} />
                 </Skeleton>
                 <Text css={styles.modalLabel}>{label}</Text>
                 <QuestionChoiceBody choice={choice} renderLabel={false} />
@@ -260,17 +259,17 @@ export const QuestionsConfirmation = ({
   const mstyles = modalRecipe()
   const styles = questionsRecipe()
   const { cancel, proceed } = useConfirm()
-  const { localize } = useClient()
+  const { t } = useTranslation()
 
   return (
     <>
-      <Dialog.Header css={mstyles.header}>{localize('confirm.title')}</Dialog.Header>
+      <Dialog.Header css={mstyles.header}>{t('confirm.title')}</Dialog.Header>
       <Dialog.CloseTrigger asChild>
         <CloseButton css={mstyles.close} />
       </Dialog.CloseTrigger>
       <Dialog.Body css={mstyles.body}>
         <Box css={styles.box} {...rest}>
-          <Text css={styles.description}>{localize('vote.confirm')}</Text>
+          <Text css={styles.description}>{t('vote.confirm')}</Text>
           {election.questions.map((question, k) => {
             if (election.resultsType.name === ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION) {
               const choice = question.choices.find((v) => v.value === parseInt(answers[k.toString()], 10))
@@ -283,9 +282,7 @@ export const QuestionsConfirmation = ({
             }
             const choices = (answers[0] || ['-1'])
               .map((answer: string) =>
-                question.choices[Number(answer)]
-                  ? question.choices[Number(answer)].title.default
-                  : localize('vote.abstain')
+                question.choices[Number(answer)] ? question.choices[Number(answer)].title.default : t('vote.abstain')
               )
               .map((choice) => (
                 <span key={choice}>
@@ -304,10 +301,10 @@ export const QuestionsConfirmation = ({
       </Dialog.Body>
       <Dialog.Footer css={mstyles.footer}>
         <Button onClick={cancel ?? undefined} variant='ghost' css={mstyles.cancel}>
-          {localize('confirm.cancel')}
+          {t('confirm.cancel')}
         </Button>
         <Button onClick={proceed ?? undefined} css={mstyles.confirm}>
-          {localize('confirm.confirm')}
+          {t('confirm.confirm')}
         </Button>
       </Dialog.Footer>
     </>
@@ -331,7 +328,7 @@ export const ElectionQuestion = ({ question, index }: { question: IQuestion; ind
         <chakra.div css={styles.body}>
           {question.description && (
             <chakra.div css={styles.description}>
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{question.description.default}</ReactMarkdown>
+              <Markdown>{question.description.default}</Markdown>
             </chakra.div>
           )}
           <FieldSwitcher index={index} question={question} layout={layout} />
@@ -368,8 +365,8 @@ const MultiChoice = ({ index, question, layout }: { index: string; question: IQu
     election,
     isAbleToVote,
     loading: { voting },
-    localize,
   } = useElection()
+  const { t } = useTranslation()
   const { control, trigger, watch } = useFormContext()
   const values = watch(index) || []
 
@@ -382,7 +379,7 @@ const MultiChoice = ({ index, question, layout }: { index: string; question: IQu
   const shouldRenderAbstain = canAbstain && !election.get('questions.hideAbstain')
   if (canAbstain && shouldRenderAbstain) {
     choices.push({
-      title: { default: localize('vote.abstain') },
+      title: { default: t('vote.abstain') },
       value: -1,
     } as IChoice)
   }
@@ -399,7 +396,7 @@ const MultiChoice = ({ index, question, layout }: { index: string; question: IQu
             }
             return (
               (value && value.length === election.voteType.maxCount) ||
-              localize('validation.choices_count', { count: election.voteType.maxCount })
+              t('validation.choices_count', { count: election.voteType.maxCount })
             )
           },
         }}
@@ -478,8 +475,8 @@ const ApprovalChoice = ({
     election,
     isAbleToVote,
     loading: { voting },
-    localize,
   } = useElection()
+  const { t } = useTranslation()
   const { control, watch } = useFormContext()
   const values = watch(index) || []
 
@@ -495,7 +492,8 @@ const ApprovalChoice = ({
         control={control}
         disabled={isNotAbleToVote}
         rules={{
-          validate: (value) => (value && value.length > 0) || localize('validation.at_least_one'),
+          validate: (value) =>
+            (value && value.length > 0) || t('validation.at_least_one', { defaultValue: 'Select at least one option' }),
         }}
         name={index}
         render={({ field: { onChange, ...restField }, fieldState: { error } }) => (
@@ -558,8 +556,8 @@ const SingleChoice = ({ index, question, layout }: { index: string; question: IQ
     election,
     isAbleToVote,
     loading: { voting },
-    localize,
   } = useElection()
+  const { t } = useTranslation()
   const {
     formState: { errors },
     control,
@@ -572,7 +570,7 @@ const SingleChoice = ({ index, question, layout }: { index: string; question: IQ
     <Controller
       control={control}
       disabled={disabled}
-      rules={{ required: localize('validation.required') }}
+      rules={{ required: t('validation.required') }}
       name={index}
       render={({ field }) => (
         <RadioGroup.Root
@@ -613,11 +611,11 @@ const SingleChoice = ({ index, question, layout }: { index: string; question: IQ
 export const QuestionsEmpty = () => {
   const recipe = useSlotRecipe({ key: 'QuestionsEmpty' })
   const styles = recipe()
-  const { localize } = useElection()
+  const { t } = useTranslation()
   return (
     <Alert.Root variant='subtle' status='warning' css={styles.container}>
       <Alert.Indicator css={styles.icon} />
-      <Alert.Description css={styles.description}>{localize('empty')}</Alert.Description>
+      <Alert.Description css={styles.description}>{t('empty')}</Alert.Description>
     </Alert.Root>
   )
 }
@@ -625,25 +623,25 @@ export const QuestionsEmpty = () => {
 export const QuestionsTypeBadge = (props: ComponentProps<typeof chakra.div>) => {
   const recipe = useSlotRecipe({ key: 'QuestionsTypeBadge' })
   const styles = recipe()
-  const { election, localize } = useElection()
+  const { election } = useElection()
+  const { t } = useTranslation()
   if (!election || !(election instanceof PublishedElection) || !election.census) {
     return null
   }
-  const weighted =
-    Number(election.census.weight) !== election.census.size ? localize('question_types.weighted_voting') : ''
+  const weighted = Number(election.census.weight) !== election.census.size ? t('question_types.weighted_voting') : ''
   let title = ''
   let tooltip = ''
   switch (election?.resultsType.name) {
     case ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION:
-      title = localize('question_types.singlechoice_title', { weighted })
+      title = t('question_types.singlechoice_title', { weighted })
       break
     case ElectionResultsTypeNames.MULTIPLE_CHOICE:
-      title = localize('question_types.multichoice_title', { weighted })
-      tooltip = localize('question_types.multichoice_tooltip', { maxcount: election.voteType.maxCount })
+      title = t('question_types.multichoice_title', { weighted })
+      tooltip = t('question_types.multichoice_tooltip', { maxcount: election.voteType.maxCount })
       break
     case ElectionResultsTypeNames.APPROVAL:
-      title = localize('question_types.approval_title')
-      tooltip = localize('question_types.approval_tooltip', { maxcount: election.voteType.maxCount })
+      title = t('question_types.approval_title')
+      tooltip = t('question_types.approval_tooltip', { maxcount: election.voteType.maxCount })
       break
     default:
       return null
@@ -669,14 +667,15 @@ export const QuestionsTypeBadge = (props: ComponentProps<typeof chakra.div>) => 
 
 export const Voted = () => {
   const { env } = useClient()
-  const { localize, voted } = useElection()
+  const { voted } = useElection()
+  const { t } = useTranslation()
   const recipe = useSlotRecipe({ key: 'Voted' })
   const styles = recipe()
   if (!voted) {
     return null
   }
 
-  const description = localize('vote.voted_description', { id: voted })
+  const description = t('vote.voted_description', { id: voted })
   const parts = voted ? description.split(voted) : [description]
   const descriptionContent =
     parts.length > 1
@@ -704,7 +703,7 @@ export const Voted = () => {
       css={styles.container}
     >
       <Alert.Indicator css={styles.icon} />
-      <Alert.Title css={styles.title}>{localize('vote.voted_title')}</Alert.Title>
+      <Alert.Title css={styles.title}>{t('vote.voted_title')}</Alert.Title>
       <Alert.Description truncate maxW='100%' whiteSpace='initial' css={styles.description}>
         {descriptionContent}
       </Alert.Description>
