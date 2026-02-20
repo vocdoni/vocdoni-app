@@ -46,10 +46,10 @@ export const ConfirmVoteModal = ({ election, answers }: { election: PublishedEle
           </Dialog.Body>
           <Dialog.Footer>
             <Button onClick={cancel!} variant='ghost' css={styles.cancel}>
-              {t('cc.confirm.cancel')}
+              {t('confirm.cancel')}
             </Button>
             <Button onClick={proceed!} css={styles.confirm}>
-              {t('cc.confirm.confirm')}
+              {t('confirm.confirm')}
             </Button>
           </Dialog.Footer>
         </Dialog.Content>
@@ -66,7 +66,7 @@ const ConfirmMultichoice = ({ question, answers }: { question: IQuestion; answer
   if (answers[0].includes('-1')) {
     choices[-1] = {
       title: {
-        default: t('cc.vote.abstain'),
+        default: t('vote.abstain'),
       },
       value: -1,
     }

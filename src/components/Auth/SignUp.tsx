@@ -160,7 +160,7 @@ const SignUp = ({ invite }: SignupProps) => {
               <Controller
                 control={control}
                 name='terms'
-                rules={{ required: t('cc.validation.required') }}
+                rules={{ required: t('validation.required') }}
                 render={({ field }) => (
                   <CheckboxRoot checked={field.value} onCheckedChange={(details) => field.onChange(details.checked)}>
                     <CheckboxHiddenInput name={field.name} />

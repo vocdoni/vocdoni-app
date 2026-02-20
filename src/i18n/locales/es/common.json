@@ -5,13 +5,22 @@
   },
   "actions": {
     "cancel": "Cancelar",
+    "cancel_description": "Cancelando «{{ election.title.default }}»...\n\nAtención: esta acción es irreversible y anulará todos los votos emitidos.",
+    "continue": "Reanudar el proceso de inmediato, en caso de que haya sido pausado.",
+    "continue_description": "Reanudando el proceso de votación «{{ election.title.default }}»...",
     "create_first_vote": "Ver todos los procesos",
     "create_new_vote": "Crear nueva votación",
+    "end": "Finalizar el proceso de inmediato, impidiendo la emisión de nuevos votos y mostrando los resultados de la votación (precaución: no se puede revertir).",
+    "end_description": "Finalizando el proceso de votación «{{ election.title.default }}»...\n\nAtención: esta acción es irreversible y los electores ya no podrán votar.",
+    "error_title": "Se ha producido un error al ejecutar la transacción",
     "manage_team": "Gestionar equipo",
     "more": "Más opciones",
+    "pause": "Pausar temporalmente el proceso de votación, hasta que se reanude manualmente. Mientras esté en pausa, los electores no podrán emitir su voto.",
+    "pause_description": "Pausando el proceso de votación «{{ election.title.default }}»...",
     "save": "Guardar cambios",
     "save_changes": "Guardar cambios",
-    "view_active_votes": "Ver votaciones activas"
+    "view_active_votes": "Ver votaciones activas",
+    "waiting_title": "Esperando confirmación de la transacción..."
   },
   "add_new_org": "Añadir una nueva organización",
   "additional_actions": "Acciones adicionales",
@@ -60,95 +69,6 @@
   },
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
-  "cc": {
-    "actions": {
-      "cancel": "Cancelar el proceso de inmediato, sin permitir nuevos votos ni contabilizar los resultados (precaución: no se puede revertir).",
-      "cancel_description": "Cancelando «{{ election.title.default }}»...\n\nAtención: esta acción es irreversible y anulará todos los votos emitidos.",
-      "continue": "Reanudar el proceso de inmediato, en caso de que haya sido pausado.",
-      "continue_description": "Reanudando el proceso de votación «{{ election.title.default }}»...",
-      "end": "Finalizar el proceso de inmediato, impidiendo la emisión de nuevos votos y mostrando los resultados de la votación (precaución: no se puede revertir).",
-      "end_description": "Finalizando el proceso de votación «{{ election.title.default }}»...\n\nAtención: esta acción es irreversible y los electores ya no podrán votar.",
-      "error_title": "Se ha producido un error al ejecutar la transacción",
-      "pause": "Pausar temporalmente el proceso de votación, hasta que se reanude manualmente. Mientras esté en pausa, los electores no podrán emitir su voto.",
-      "pause_description": "Pausando el proceso de votación «{{ election.title.default }}»...",
-      "waiting_title": "Esperando confirmación de la transacción..."
-    },
-    "confirm": {
-      "cancel": "Cancelar",
-      "cancel_button": "Cancelar",
-      "cancel_process_button": "Cancelar voto",
-      "cancel_process_title": "Cancelar voto",
-      "confirm": "Confirmar voto",
-      "end_process_button": "Finalizar votación",
-      "end_process_title": "Finalizar votación",
-      "title": "Confirmar"
-    },
-    "empty": "Aparentemente este proceso no tiene preguntas",
-    "errors": {
-      "wrong_data_description": "Los datos especificados no son correctos",
-      "wrong_data_title": "Datos incorrectos"
-    },
-    "loading": "Cargando...",
-    "pagination": {
-      "total_results": "Se muestra un total de {{ count }} resultados"
-    },
-    "question_types": {
-      "approval_title": "Votación aprobatoria",
-      "approval_tooltip": "La votación aprobatoria permite votar tantas opciones como se desee. Gana la opción con más votos. Es una forma sencilla de mostrar apoyo a todas las alternativas que apruebes.",
-      "multichoice_cannot_abstain": "Has seleccionado demasiadas opciones",
-      "multichoice_desc": "Has seleccionado {{selected}} opciones de un máximo de {{maxcount}}",
-      "multichoice_desc_abstain": " (o abstenerse)",
-      "multichoice_title": "Votación de elección múltiple {{ weighted }}",
-      "multichoice_tooltip": "La votación de elección múltiple permite seleccionar hasta {{maxcount}} opciones (definidas por la persona organizadora). Gana la opción con más votos.",
-      "singlechoice_title": "Votación de elección simple {{ weighted }}",
-      "weighted_voting": "ponderada"
-    },
-    "results": {
-      "date_format": "d 'de' MMMM 'de' y 'a' 'las' H:mm",
-      "secret_until_the_end": "Los resultados se harán públicos cuando finalice el proceso, el {{ endDate }}.",
-      "title": "Resultados de «{{ title }}»",
-      "votes": "{{votes}} votos ({{ percent }})"
-    },
-    "schedule": {
-      "created": "Creado hace {{ distance }}",
-      "ended": "Finalizado hace {{ distance }}",
-      "from_begin_to_end": "Votación desde {{ begin }} hasta {{ end }}",
-      "paused_end": "Finaliza en {{ distance }}",
-      "paused_start": "Comienza en {{ distance }}"
-    },
-    "spreadsheet": {
-      "access_button": "Identificarse",
-      "anon_sik_helper": "Esto garantiza que el voto sea anónimo",
-      "anon_sik_label": "Define una contraseña para tu voto",
-      "close": "Cerrar",
-      "modal_title": "Autenticación"
-    },
-    "statuses": {
-      "canceled": "Cancelada",
-      "ended": "Finalizada",
-      "invalid": "Inválida",
-      "ongoing": "En curso",
-      "paused": "Pausada",
-      "process_unknown": "Desconocido",
-      "results": "Resultados",
-      "upcoming": "Próxima"
-    },
-    "validation": {
-      "choices_count": "Debes seleccionar {{ count }} opciones",
-      "min_length": "Este campo debe tener al menos {{ min }} caracteres",
-      "required": "Este campo es obligatorio"
-    },
-    "vote": {
-      "abstain": "Abstenerse",
-      "button": "Votar",
-      "button_update": "Cambiar mi voto",
-      "confirm": "Confirma tus opciones:",
-      "sign": "Firmar primero",
-      "voted_description": "Para verificar tu voto, puedes usar este identificador único: {{ id }}",
-      "voted_title": "¡Tu voto se ha emitido correctamente!",
-      "weight": "Tu poder de voto es: "
-    }
-  },
   "census_size": "Tamaño del censo",
   "change_password": {
     "subtitle": "Introduce tu contraseña actual y una nueva para actualizar tus credenciales.",
@@ -166,6 +86,16 @@
     "enable": "Activar",
     "home": "Inicio",
     "next": "Siguiente"
+  },
+  "confirm": {
+    "cancel": "Cancelar",
+    "cancel_button": "Cancelar",
+    "cancel_process_button": "Cancelar voto",
+    "cancel_process_title": "Cancelar voto",
+    "confirm": "Confirmar voto",
+    "end_process_button": "Finalizar votación",
+    "end_process_title": "Finalizar votación",
+    "title": "Confirmar"
   },
   "confirm_password": "Confirmar contraseña",
   "confirm_password_placeholder": "Confirma tu nueva contraseña",
@@ -341,6 +271,7 @@
   },
   "email": "Correo electrónico",
   "email_placeholder": "nombre@correo.com",
+  "empty": "Aparentemente este proceso no tiene preguntas",
   "end_date": "Fecha de finalización",
   "end_time": "Hora de finalización",
   "end_vote": "Finalizar votación",
@@ -361,6 +292,11 @@
     "title": "Error"
   },
   "error_removing_code": "Error eliminando el código",
+  "errors": {
+    "not_voted_in_ended_election": "",
+    "wrong_data_description": "Los datos especificados no son correctos",
+    "wrong_data_title": "Datos incorrectos"
+  },
   "features": {
     "anonymous_voting": "Votación anónima",
     "approval": "Votación aprobatoria",
@@ -1072,8 +1008,14 @@
   "organizations": "Organizaciones ({{ numOrgs }})",
   "other_details": "otros detalles",
   "pagination": {
+    "next": "",
     "page_out_of": "Página {{page}} de {{total}}",
-    "rows_per_page": "Filas por página"
+    "page_placeholder": "",
+    "previous": "",
+    "rows_per_page": "Filas por página",
+    "total_results_one": "",
+    "total_results_many": "",
+    "total_results_other": ""
   },
   "password": "Contraseña",
   "password_placeholder": "Mín. 8 caracteres",
@@ -1460,6 +1402,16 @@
   },
   "promo_code": "Código promocional",
   "promo_code_required": "El código es obligatorio",
+  "question_types": {
+    "approval_title": "Votación aprobatoria",
+    "approval_tooltip": "La votación aprobatoria permite votar tantas opciones como se desee. Gana la opción con más votos. Es una forma sencilla de mostrar apoyo a todas las alternativas que apruebes.",
+    "multichoice_desc": "Has seleccionado {{selected}} opciones de un máximo de {{maxcount}}",
+    "multichoice_desc_abstain": " (o abstenerse)",
+    "multichoice_title": "Votación de elección múltiple {{ weighted }}",
+    "multichoice_tooltip": "La votación de elección múltiple permite seleccionar hasta {{maxcount}} opciones (definidas por la persona organizadora). Gana la opción con más votos.",
+    "singlechoice_title": "Votación de elección simple {{ weighted }}",
+    "weighted_voting": "ponderada"
+  },
   "questions_and_results": "Preguntas y resultados",
   "rainbow": {
     "group": {
@@ -1473,6 +1425,12 @@
   "remove_avatar": "Eliminar avatar",
   "reset_password_button": "Restablecer contraseña",
   "result_visibility": "Visibilidad de los resultados",
+  "results": {
+    "date_format": "d 'de' MMMM 'de' y 'a' 'las' H:mm",
+    "secret_until_the_end": "Los resultados se harán públicos cuando finalice el proceso, el {{ endDate }}.",
+    "title": "Resultados de «{{ title }}»",
+    "votes": "{{votes}} votos ({{ percent }})"
+  },
   "results_state": {
     "enabled": "Habilitado",
     "hidden_until_end": "Ocultos hasta el final",
@@ -1562,8 +1520,26 @@
   "signup_lastname": "Apellidos",
   "signup_subtitle": "Introduce tu información para comenzar",
   "signup_title": "Registro",
+  "spreadsheet": {
+    "access_button": "Identificarse",
+    "anon_sik_helper": "Esto garantiza que el voto sea anónimo",
+    "anon_sik_label": "Define una contraseña para tu voto",
+    "close": "Cerrar",
+    "logout": "",
+    "modal_title": "Autenticación"
+  },
   "start_date": "Fecha de inicio",
   "start_time": "Hora de inicio",
+  "statuses": {
+    "canceled": "Cancelada",
+    "ended": "Finalizada",
+    "invalid": "Inválida",
+    "ongoing": "En curso",
+    "paused": "Pausada",
+    "process_unknown": "Desconocido",
+    "results": "Resultados",
+    "upcoming": "Próxima"
+  },
   "subscribe": "Suscribirse",
   "subscription": {
     "locked_content": {
@@ -1672,6 +1648,14 @@
   },
   "user_menu": "Menú de usuario",
   "user_settings": "Ajustes de usuario",
+  "validation": {
+    "at_least_one": "",
+    "choices_count_one": "",
+    "choices_count_many": "",
+    "choices_count_other": "",
+    "min_length": "Este campo debe tener al menos {{ min }} caracteres",
+    "required": "Este campo es obligatorio"
+  },
   "verification_code": "Código de verificación",
   "verification_code_placeholder": "Introduce el código de verificación",
   "verification_code_resent": "¡Código de verificación reenviado!",
@@ -1699,6 +1683,16 @@
   "view_in_explorer": "Ver en el explorador",
   "view_plans_and_pricing": "Ver planes y precios",
   "vocdoni logo": "Logotipo de Vocdoni",
+  "vote": {
+    "abstain": "Abstenerse",
+    "button": "Votar",
+    "button_update": "Cambiar mi voto",
+    "confirm": "Confirma tus opciones:",
+    "sign": "Firmar primero",
+    "voted_description": "Para verificar tu voto, puedes usar este identificador único: {{ id }}",
+    "voted_title": "¡Tu voto se ha emitido correctamente!",
+    "weight": "Tu poder de voto es: "
+  },
   "vote_information": "Información del voto",
   "vote_overwrite": "Sobrescritura del voto",
   "voter_auth": {

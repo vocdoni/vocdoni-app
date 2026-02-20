@@ -62,8 +62,8 @@ export const CspAuthModal = () => {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button w='full' aria-label={t('cc.spreadsheet.access_button', { defaultValue: 'Login' })}>
-          <Trans i18nKey='cc.spreadsheet.access_button'>Login</Trans>
+        <Button w='full' aria-label={t('spreadsheet.access_button', { defaultValue: 'Login' })}>
+          <Trans i18nKey='spreadsheet.access_button'>Login</Trans>
         </Button>
       </Dialog.Trigger>
       <Dialog.Backdrop />

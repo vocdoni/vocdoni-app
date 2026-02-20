@@ -1,12 +1,17 @@
 import {
-  Button,
   ButtonGroup,
-  PaginationItem,
-  PaginationRoot,
+  Text,
+  chakra,
+  useSlotRecipe,
   type ButtonGroupProps,
   type ButtonProps,
+  type InputProps,
 } from '@chakra-ui/react'
 import { usePagination } from '@vocdoni/react-providers'
+import { useMemo, type ReactElement } from 'react'
+import { useTranslation } from 'react-i18next'
+import { PaginationButton } from './Button'
+import { EllipsisButton } from './EllipsisButton'
 
 type PaginationState = {
   lastPage: number
@@ -16,41 +21,159 @@ type PaginationState = {
 export type PaginationProps = ButtonGroupProps & {
   maxButtons?: number | false
   buttonProps?: ButtonProps
-  inputProps?: ButtonProps
+  inputProps?: InputProps
   pagination: PaginationState
 }
 
-const getTotalPages = (pagination: PaginationState, initialPage: number) =>
-  initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage
+type PaginatorButtonProps = {
+  pageNumber: number
+  currentPage: number
+  pageIndex?: number
+} & ButtonProps
 
-const getRootPage = (page: number, initialPage: number) => (initialPage === 0 ? (page === 0 ? 1 : page) : page)
+const PageButton = ({ pageNumber, pageIndex, currentPage, ...rest }: PaginatorButtonProps) => (
+  <PaginationButton data-active={currentPage === pageIndex ? '' : undefined} {...rest}>
+    {pageNumber + 1}
+  </PaginationButton>
+)
+PageButton.displayName = 'PageButton'
 
-const getVisiblePages = (totalPages: number, maxButtons: number | false) => {
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1)
-  return maxButtons === false ? pages : pages.slice(0, maxButtons)
-}
+type CreatePageButtonType = (i: number) => ReactElement
+type GotoPageType = (page: number) => void
 
-export const Pagination = ({ maxButtons = 10, buttonProps, pagination, ...rest }: PaginationProps) => {
-  const { page, setPage, initialPage } = usePagination()
-  const totalPages = getTotalPages(pagination, initialPage)
-  const rootPage = getRootPage(page, initialPage)
-  const visiblePages = getVisiblePages(totalPages, maxButtons)
+const usePaginationPages = (
+  currentPage: number,
+  totalPages: number | undefined,
+  maxButtons: number | undefined | false,
+  gotoPage: GotoPageType,
+  createPageButton: CreatePageButtonType,
+  inputProps?: InputProps,
+  buttonProps?: ButtonProps
+) =>
+  useMemo(() => {
+    if (totalPages === undefined) return []
+
+    const pages: ReactElement[] = []
+    for (let i = 0; i < totalPages; i++) {
+      pages.push(createPageButton(i))
+    }
+
+    if (!maxButtons || totalPages <= maxButtons) {
+      return pages
+    }
+
+    const startEllipsis = (
+      <EllipsisButton key='start-ellipsis' gotoPage={gotoPage} inputProps={inputProps} {...buttonProps} />
+    )
+    const endEllipsis = (
+      <EllipsisButton key='end-ellipsis' gotoPage={gotoPage} inputProps={inputProps} {...buttonProps} />
+    )
+
+    const sideButtons = 2
+    const availableButtons = maxButtons - sideButtons
+
+    if (currentPage <= availableButtons / 2) {
+      return [...pages.slice(0, availableButtons), endEllipsis, pages[totalPages - 1]]
+    }
+    if (currentPage >= totalPages - 1 - availableButtons / 2) {
+      return [pages[0], startEllipsis, ...pages.slice(totalPages - availableButtons, totalPages)]
+    }
+
+    const startPage = currentPage - Math.floor((availableButtons - 1) / 2)
+    const endPage = currentPage + Math.floor(availableButtons / 2)
+    return [pages[0], startEllipsis, ...pages.slice(startPage, endPage - 1), endEllipsis, pages[totalPages - 1]]
+  }, [totalPages, maxButtons, gotoPage, inputProps, buttonProps, currentPage, createPageButton])
+
+const PaginationButtons = ({
+  totalPages,
+  totalItems,
+  currentPage,
+  goToPage,
+  createPageButton,
+  maxButtons = 10,
+  buttonProps,
+  inputProps,
+  ...rest
+}: {
+  totalPages: number | undefined
+  totalItems: number | undefined
+  currentPage: number
+  createPageButton: CreatePageButtonType
+  goToPage: GotoPageType
+} & ButtonGroupProps &
+  Pick<PaginationProps, 'maxButtons' | 'buttonProps' | 'inputProps'>) => {
+  const { t } = useTranslation()
+  const recipe = useSlotRecipe({ key: 'Pagination' })
+  const styles = recipe()
+  const pages = usePaginationPages(
+    currentPage,
+    totalPages,
+    maxButtons ? Math.max(5, maxButtons) : false,
+    (page) => {
+      if (page >= 0 && totalPages && page < totalPages) {
+        goToPage(page)
+      }
+    },
+    createPageButton,
+    inputProps,
+    buttonProps
+  )
 
   return (
-    <PaginationRoot
-      count={totalPages}
-      pageSize={1}
-      page={rootPage}
-      onPageChange={(details) => setPage(details.page)}
-      asChild
-    >
-      <ButtonGroup {...rest}>
-        {visiblePages.map((pageValue) => (
-          <PaginationItem key={pageValue} type='page' value={pageValue} asChild>
-            <Button {...buttonProps}>{pageValue}</Button>
-          </PaginationItem>
-        ))}
+    <chakra.div css={styles.wrapper}>
+      <ButtonGroup css={styles.buttonGroup} {...rest}>
+        {totalPages === undefined ? (
+          <>
+            <PaginationButton onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 0} {...buttonProps}>
+              {t('pagination.previous', { defaultValue: 'Previous' })}
+            </PaginationButton>
+            <PaginationButton onClick={() => goToPage(currentPage + 1)} {...buttonProps}>
+              {t('pagination.next', { defaultValue: 'Next' })}
+            </PaginationButton>
+          </>
+        ) : (
+          pages
+        )}
       </ButtonGroup>
-    </PaginationRoot>
+      {Boolean(totalItems) && (
+        <Text css={styles.totalResults}>
+          {t('pagination.total_results', {
+            count: totalItems,
+          })}
+        </Text>
+      )}
+    </chakra.div>
+  )
+}
+
+export const Pagination = ({ maxButtons = 10, buttonProps, inputProps, pagination, ...rest }: PaginationProps) => {
+  const { page, setPage, initialPage } = usePagination()
+  const totalPages = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage
+  const currentPage = initialPage === 0 ? page - 1 : page
+
+  return (
+    <PaginationButtons
+      goToPage={(page) => setPage(page)}
+      createPageButton={(i) => {
+        const pageIndex = initialPage === 0 ? i : i + initialPage
+        return (
+          <PageButton
+            key={i}
+            onClick={() => setPage(pageIndex)}
+            pageIndex={pageIndex}
+            pageNumber={i}
+            currentPage={currentPage}
+            {...buttonProps}
+          />
+        )
+      }}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      totalItems={pagination.totalItems}
+      maxButtons={maxButtons}
+      buttonProps={buttonProps}
+      inputProps={inputProps}
+      {...rest}
+    />
   )
 }

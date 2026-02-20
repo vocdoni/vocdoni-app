@@ -15,7 +15,6 @@ import { ClientProvider } from '~components/vocdoni-ui'
 import { walletClientToSigner } from '~constants/wagmi-adapters'
 import { VocdoniEnvironment } from './constants'
 import { wagmiConfig } from './constants/rainbow'
-import { translations } from './i18n/components'
 import { datesLocale } from './i18n/locales'
 import { RoutesProvider } from './router/Router'
 import { RainbowKitTheme, Theme } from './theme/Theme'
@@ -57,7 +56,7 @@ const SaasProviders = ({ children }: PropsWithChildren<{}>) => (
 const AppProviders = () => {
   const { data } = useWalletClient()
   const { address } = useAccount()
-  const { t, i18n } = useTranslation()
+  const { i18n } = useTranslation()
 
   let signer = null
   if (data && address && data.account.address === address) {
@@ -69,7 +68,6 @@ const AppProviders = () => {
       <ClientProvider
         env={VocdoniEnvironment as EnvOptions}
         signer={signer as Signer}
-        locale={translations(t)}
         datesLocale={datesLocale(i18n.language)}
       >
         <ConnectionToastProvider>

@@ -1,4 +1,5 @@
 export { HR } from './primitives/HR'
+export { Markdown } from './primitives/Markdown'
 export { environment } from './environment'
 export { ClientProvider } from './providers/ClientProvider'
 export { ElectionStatusBadge } from './elections/ElectionStatusBadge'
@@ -30,6 +31,7 @@ export { ConfirmModal } from './confirm/ConfirmModal'
 export { Pagination } from './pagination/Pagination'
 export { RoutedPagination } from './pagination/RoutedPagination'
 export { EllipsisButton } from './pagination/EllipsisButton'
+export { PaginationButton } from './pagination/Button'
 export { paginationAnatomy, ellipsisButtonAnatomy } from './pagination/anatomy'
 export { theme } from './theme'
 export {
