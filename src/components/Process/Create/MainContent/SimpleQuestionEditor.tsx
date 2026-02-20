@@ -39,8 +39,8 @@ const SimpleQuestionEditor = ({
     watch,
   } = useFormContext()
   const questionType = watch('questionType')
-  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
-  const cardStyles = choiceCardRecipe({ layout: 'list' })
+  const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
+  const cardStyles = choiceRecipe({ context: 'plain', layout: 'list' })
 
   return (
     <VStack align='stretch' gap={2}>
@@ -104,7 +104,7 @@ const SortableOption = ({
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Box css={[cardStyles.item, { p: 0, border: 'none' }]} data-choice-card data-layout='list'>
+      <Box css={cardStyles.wrapper} data-choice-card data-layout='list'>
         {/* Drag handle for options */}
         {fieldsLength > 1 && (
           <Box
@@ -121,16 +121,16 @@ const SortableOption = ({
         )}
 
         {questionType === SelectorTypes.Single ? (
-          <Box css={cardStyles.control} boxSize={4} border='1px solid' borderColor='gray.300' borderRadius='full' />
+          <Box data-choice-control boxSize={4} border='1px solid' borderColor='gray.300' borderRadius='full' />
         ) : (
-          <Checkbox.Root checked={false} readOnly tabIndex={-1} css={cardStyles.control}>
+          <Checkbox.Root checked={false} readOnly tabIndex={-1}>
             <Checkbox.HiddenInput />
-            <Checkbox.Control>
+            <Checkbox.Control data-choice-control>
               <Checkbox.Indicator />
             </Checkbox.Control>
           </Checkbox.Root>
         )}
-        <Box css={cardStyles.body}>
+        <Box data-choice-body>
           <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
             <Input
               placeholder={

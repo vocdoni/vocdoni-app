@@ -16,8 +16,6 @@ export const questionChoiceAnatomy = [
   'modalOverlay',
 ] as const
 
-export const choiceCardAnatomy = ['item', 'control', 'body', 'media'] as const
-
 export const questionsAnatomy = [
   'wrapper',
   'container',

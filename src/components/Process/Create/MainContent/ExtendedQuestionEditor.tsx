@@ -38,8 +38,8 @@ const ExtendedQuestionEditor = ({
     formState: { errors },
     control,
   } = useFormContext()
-  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
-  const cardStyles = choiceCardRecipe({ layout: 'grid' })
+  const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
+  const cardStyles = choiceRecipe({ context: 'card', layout: 'grid' })
 
   return (
     <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} gap={4}>
@@ -66,7 +66,6 @@ const ExtendedQuestionEditor = ({
         onClick={() => append({ option: '', description: '' })}
         borderStyle='dashed'
         cursor='pointer'
-        minH='350px'
         _hover={{ bg: 'gray.100', _dark: { bg: 'gray.800' } }}
       >
         <VStack justify='center' align='center' height='100%'>
@@ -103,7 +102,7 @@ const SortableExtendedOption = ({
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Box css={cardStyles.item} data-choice-card data-layout='grid' position='relative' minH='350px'>
+      <Box css={cardStyles.wrapper} data-choice-card data-layout='grid' position='relative'>
         {/* Drag handle */}
         {fieldsLength > 1 && (
           <Box
@@ -117,7 +116,7 @@ const SortableExtendedOption = ({
             p={1}
             borderRadius='md'
             color='gray.400'
-            _hover={{ color: 'gray.600', bg: 'gray.100', _dark: { bg: 'gray.700' } }}
+            _hover={{ color: 'gray.200', bg: 'gray.600', _dark: { bg: 'gray.700' } }}
           >
             <Icon as={LuGripVertical} size='sm' />
           </Box>
@@ -139,11 +138,11 @@ const SortableExtendedOption = ({
           </IconButton>
         )}
 
-        <Box css={cardStyles.media}>
+        <Box data-choice-media>
           {/* Image uploader */}
           <ImageUploader name={`questions.${questionIndex}.options.${optionIndex}.image`} borderTopRadius='sm' />
         </Box>
-        <Box css={cardStyles.body}>
+        <Box data-choice-body>
           {/* Title */}
           <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
             <Input

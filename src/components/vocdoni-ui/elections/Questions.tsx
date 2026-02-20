@@ -147,41 +147,78 @@ export const QuestionTip = () => {
 export const QuestionChoice = ({
   choice,
   layout,
+  renderImage = true,
   ...rest
-}: { choice: IChoice; layout?: QuestionLayout } & ComponentProps<typeof Stack>) => {
+}: { choice: IChoice; layout?: QuestionLayout; renderImage?: boolean } & ComponentProps<typeof Stack>) => {
   const recipe = useSlotRecipe({ key: 'QuestionChoice' })
-  const styles = recipe()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
-  const [loaded, setLoaded] = useState(false)
-  const [loadedModal, setLoadedModal] = useState(false)
-  const label = choice.title.default
-  const { image, description } = choice.meta ?? {}
-  const renderImage = !!image && !!image.default
-  const renderModal = !!image && image.default && image.thumbnail
+  const styles = recipe({ context: 'content' })
+  const { image } = choice.meta ?? {}
+  const hasImage = !!image && !!image.default
 
   return (
-    <Stack css={styles.wrapper} data-layout={layout} data-no-image={renderImage ? undefined : ''} {...rest}>
-      {renderImage && (
-        <Skeleton loading={!loaded} css={styles.skeleton}>
-          <chakra.img
-            onClick={(event) => {
-              if (!renderModal) return
-              event.preventDefault()
-              onOpen()
-            }}
-            css={styles.image}
-            src={image.thumbnail ?? image.default}
-            alt={label}
-            onLoad={() => setLoaded(true)}
-          />
-        </Skeleton>
-      )}
-      <Text css={styles.label}>{label}</Text>
-      {description && (
+    <Stack css={styles.wrapper} data-layout={layout} data-no-image={hasImage ? undefined : ''} {...rest}>
+      {renderImage && hasImage && <QuestionChoiceMedia choice={choice} />}
+      <QuestionChoiceBody choice={choice} />
+    </Stack>
+  )
+}
+
+const QuestionChoiceBody = ({
+  choice,
+  compact,
+  renderLabel = true,
+  renderDescription = true,
+}: {
+  choice: IChoice
+  compact?: boolean
+  renderLabel?: boolean
+  renderDescription?: boolean
+}) => {
+  const recipe = useSlotRecipe({ key: 'QuestionChoice' })
+  const styles = recipe({ context: 'content' })
+  const label = choice.title.default
+  const { description } = choice.meta ?? {}
+
+  return (
+    <Box data-choice-body data-compact={compact ? '' : undefined}>
+      {renderLabel && <Text css={styles.label}>{label}</Text>}
+      {renderDescription && description && (
         <Box css={styles.description}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
         </Box>
       )}
+    </Box>
+  )
+}
+
+const QuestionChoiceMedia = ({ choice }: { choice: IChoice }) => {
+  const recipe = useSlotRecipe({ key: 'QuestionChoice' })
+  const styles = recipe({ context: 'content' })
+  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const [loaded, setLoaded] = useState(false)
+  const [loadedModal, setLoadedModal] = useState(false)
+  const label = choice.title.default
+  const { image } = choice.meta ?? {}
+  const hasImage = !!image && !!image.default
+  const renderModal = !!image && image.default && image.thumbnail
+
+  if (!hasImage) return null
+
+  return (
+    <>
+      <Skeleton loading={!loaded} css={styles.skeleton} data-choice-media>
+        <chakra.img
+          onClick={(event) => {
+            if (!renderModal) return
+            event.preventDefault()
+            onOpen()
+          }}
+          css={styles.image}
+          src={image.thumbnail ?? image.default}
+          alt={label}
+          onLoad={() => setLoaded(true)}
+        />
+      </Skeleton>
       {renderModal && (
         <Dialog.Root open={isOpen} onOpenChange={({ open }) => (open ? onOpen() : onClose())}>
           <Dialog.Backdrop css={styles.modalOverlay} />
@@ -191,28 +228,22 @@ export const QuestionChoice = ({
                 <CloseButton css={styles.modalClose} />
               </Dialog.CloseTrigger>
               <Dialog.Body css={styles.modalBody}>
-                {renderImage && (
-                  <Skeleton loading={!loadedModal} css={styles.skeletonModal}>
-                    <chakra.img
-                      src={image.default}
-                      alt={label}
-                      css={styles.modalImage}
-                      onLoad={() => setLoadedModal(true)}
-                    />
-                  </Skeleton>
-                )}
+                <Skeleton loading={!loadedModal} css={styles.skeletonModal}>
+                  <chakra.img
+                    src={image.default}
+                    alt={label}
+                    css={styles.modalImage}
+                    onLoad={() => setLoadedModal(true)}
+                  />
+                </Skeleton>
                 <Text css={styles.modalLabel}>{label}</Text>
-                {description && (
-                  <Box css={styles.modalDescription}>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{description}</ReactMarkdown>
-                  </Box>
-                )}
+                <QuestionChoiceBody choice={choice} renderLabel={false} />
               </Dialog.Body>
             </Dialog.Content>
           </Dialog.Positioner>
         </Dialog.Root>
       )}
-    </Stack>
+    </>
   )
 }
 
@@ -330,9 +361,9 @@ const FieldSwitcher = (props: { question: IQuestion; index: string; layout: Ques
 
 const MultiChoice = ({ index, question, layout }: { index: string; question: IQuestion; layout: QuestionLayout }) => {
   const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
-  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
+  const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
   const styles = recipe({ layout })
-  const cardStyles = choiceCardRecipe({ layout })
+  const cardStyles = choiceRecipe({ context: 'card', layout })
   const {
     election,
     isAbleToVote,
@@ -381,6 +412,8 @@ const MultiChoice = ({ index, question, layout }: { index: string; question: IQu
                 const value = choice.value.toString()
                 const maxSelected = currentValues.length >= election.voteType.maxCount && !currentValues.includes(value)
                 const checked = currentValues.includes(value)
+                const hasImage = Boolean(choice.meta?.image?.default)
+                const isCompact = !hasImage && layout === 'list'
                 const idBase = `question-${index}-choice-${value}`
                 return (
                   <Checkbox.Root
@@ -392,7 +425,7 @@ const MultiChoice = ({ index, question, layout }: { index: string; question: IQu
                       control: `${idBase}-control`,
                       label: `${idBase}-label`,
                     }}
-                    css={cardStyles.item}
+                    css={cardStyles.wrapper}
                     data-choice-card
                     data-layout={layout}
                     checked={checked}
@@ -409,11 +442,12 @@ const MultiChoice = ({ index, question, layout }: { index: string; question: IQu
                     }}
                   >
                     <Checkbox.HiddenInput value={value} />
-                    <Checkbox.Control css={cardStyles.control}>
+                    <Checkbox.Control data-choice-control>
                       <Checkbox.Indicator />
                     </Checkbox.Control>
-                    <Checkbox.Label css={cardStyles.body}>
-                      <QuestionChoice choice={choice} layout={layout} />
+                    <QuestionChoiceMedia choice={choice} />
+                    <Checkbox.Label as='div'>
+                      <QuestionChoiceBody choice={choice} compact={isCompact} />
                     </Checkbox.Label>
                   </Checkbox.Root>
                 )
@@ -437,9 +471,9 @@ const ApprovalChoice = ({
   layout: QuestionLayout
 }) => {
   const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
-  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
+  const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
   const styles = recipe({ layout })
-  const cardStyles = choiceCardRecipe({ layout })
+  const cardStyles = choiceRecipe({ context: 'card', layout })
   const {
     election,
     isAbleToVote,
@@ -469,6 +503,8 @@ const ApprovalChoice = ({
             {choices.map((choice, ck) => {
               const value = choice.value.toString()
               const checked = values.includes(value)
+              const hasImage = Boolean(choice.meta?.image?.default)
+              const isCompact = !hasImage && layout === 'list'
               const idBase = `question-${index}-choice-${value}`
               return (
                 <Checkbox.Root
@@ -480,7 +516,7 @@ const ApprovalChoice = ({
                     control: `${idBase}-control`,
                     label: `${idBase}-label`,
                   }}
-                  css={cardStyles.item}
+                  css={cardStyles.wrapper}
                   data-choice-card
                   data-layout={layout}
                   checked={checked}
@@ -495,11 +531,12 @@ const ApprovalChoice = ({
                   }}
                 >
                   <Checkbox.HiddenInput value={value} />
-                  <Checkbox.Control css={cardStyles.control}>
+                  <Checkbox.Control data-choice-control>
                     <Checkbox.Indicator />
                   </Checkbox.Control>
-                  <Checkbox.Label css={cardStyles.body}>
-                    <QuestionChoice choice={choice} layout={layout} />
+                  <QuestionChoiceMedia choice={choice} />
+                  <Checkbox.Label as='div'>
+                    <QuestionChoiceBody choice={choice} compact={isCompact} />
                   </Checkbox.Label>
                 </Checkbox.Root>
               )
@@ -514,9 +551,9 @@ const ApprovalChoice = ({
 
 const SingleChoice = ({ index, question, layout }: { index: string; question: IQuestion; layout: QuestionLayout }) => {
   const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
-  const choiceCardRecipe = useSlotRecipe({ key: 'ChoiceCard' })
+  const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
   const styles = recipe({ layout })
-  const cardStyles = choiceCardRecipe({ layout })
+  const cardStyles = choiceRecipe({ context: 'card', layout })
   const {
     election,
     isAbleToVote,
@@ -545,21 +582,26 @@ const SingleChoice = ({ index, question, layout }: { index: string; question: IQ
           disabled={disabled}
         >
           <Stack direction='column' css={styles.stack} display={layout === 'grid' ? 'grid' : undefined}>
-            {question.choices.map((choice, ck) => (
-              <RadioGroup.Item
-                css={cardStyles.item}
-                data-choice-card
-                data-layout={layout}
-                value={choice.value.toString()}
-                key={ck}
-              >
-                <RadioGroup.ItemHiddenInput />
-                <RadioGroup.ItemIndicator css={cardStyles.control} />
-                <RadioGroup.ItemText as='span' css={cardStyles.body}>
-                  <QuestionChoice choice={choice} layout={layout} />
-                </RadioGroup.ItemText>
-              </RadioGroup.Item>
-            ))}
+            {question.choices.map((choice, ck) => {
+              const hasImage = Boolean(choice.meta?.image?.default)
+              const isCompact = !hasImage && layout === 'list'
+              return (
+                <RadioGroup.Item
+                  css={cardStyles.wrapper}
+                  data-choice-card
+                  data-layout={layout}
+                  value={choice.value.toString()}
+                  key={ck}
+                >
+                  <RadioGroup.ItemHiddenInput />
+                  <RadioGroup.ItemIndicator data-choice-control />
+                  <QuestionChoiceMedia choice={choice} />
+                  <RadioGroup.ItemText as='span'>
+                    <QuestionChoiceBody choice={choice} compact={isCompact} />
+                  </RadioGroup.ItemText>
+                </RadioGroup.Item>
+              )
+            })}
           </Stack>
           <Field.ErrorText css={styles.error}>{(errors as Record<string, any>)[index]?.message}</Field.ErrorText>
         </RadioGroup.Root>
@@ -715,7 +757,6 @@ const QuestionsFormContents = ({ onInvalid }: { onInvalid?: (errors: any) => voi
   return (
     <form onSubmit={fmethods.handleSubmit(vote, onInvalid)} id={`election-questions-${election?.id}`}>
       <Voted />
-      <QuestionsTypeBadge />
       {questions.map((question, qk) => (
         <ElectionQuestion key={qk} index={qk.toString()} question={question} />
       ))}

@@ -45,6 +45,9 @@ export const ElectionQuestions = defineSlotRecipe({
       fontWeight: 'semibold',
       mb: 6,
     },
+    body: {
+      width: 'full',
+    },
 
     error: {
       display: 'flex',
@@ -158,8 +161,9 @@ export const QuestionChoice = defineSlotRecipe({
   slots: questionChoiceAnatomy,
   base: {
     wrapper: {
-      gap: 2,
-      height: '100%',
+      '& [data-choice-control]': {
+        flexShrink: 0,
+      },
     },
 
     skeleton: {
@@ -183,6 +187,100 @@ export const QuestionChoice = defineSlotRecipe({
     description: {
       wordBreak: 'break-word',
     },
+  },
+  variants: {
+    context: {
+      content: {
+        wrapper: {
+          gap: 2,
+          height: '100%',
+        },
+      },
+      card: {
+        wrapper: {
+          borderRadius: 'md',
+          borderWidth: '1px',
+          borderColor: 'gray.200',
+          _dark: { borderColor: 'brand.700' },
+          overflow: 'hidden',
+          transition: 'border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease',
+          bg: 'transparent',
+          p: 3,
+          '&[data-state="checked"]': {
+            borderColor: 'black',
+            _dark: { borderColor: 'white' },
+          },
+          '&[data-disabled="true"]': {
+            opacity: 0.6,
+            cursor: 'not-allowed',
+          },
+        },
+      },
+      plain: {
+        wrapper: {
+          border: 'none',
+          p: 0,
+          bg: 'transparent',
+        },
+      },
+    },
+    layout: {
+      list: {
+        wrapper: {
+          display: 'flex',
+          alignItems: 'center',
+          gap: 3,
+          '& [data-choice-body]': {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            flex: 1,
+            minW: 0,
+          },
+        },
+      },
+      grid: {
+        wrapper: {
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          position: 'relative',
+          alignItems: 'start',
+          w: 'full',
+          p: 0,
+          '& [data-choice-control]': {
+            position: 'absolute',
+            top: 2,
+            right: 2,
+            zIndex: 'docked',
+            bg: 'white',
+            borderWidth: '1px',
+            borderColor: 'table.border',
+            boxShadow: 'sm',
+            _dark: { bg: 'gray.800' },
+          },
+          '& [data-choice-media]': {
+            width: '100%',
+            display: 'block',
+            overflow: 'hidden',
+          },
+          '& [data-choice-body]': {
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            flex: 1,
+            minW: 0,
+          },
+          '& [data-choice-body][data-compact]': {
+            p: 0,
+          },
+        },
+      },
+    },
+  },
+  defaultVariants: {
+    context: 'content',
   },
 })
 
