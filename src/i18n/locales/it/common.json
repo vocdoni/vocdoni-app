@@ -1179,12 +1179,6 @@
   "privacy_policy": "Privacy policy",
   "process": {
     "census": "Censimento",
-    "census_strategies": {
-      "csp": "CSP",
-      "spreadsheet": "CSV/Foglio di calcolo",
-      "token": "Token ({{ token.type, uppercase }}): {{ token.symbol }}",
-      "web3": "Indirizzi Web3"
-    },
     "create": {
       "action": {
         "publish": "Pubblica",

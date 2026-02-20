@@ -1159,12 +1159,6 @@
   "privacy_policy": "Privacy policy",
   "process": {
     "census": "Census",
-    "census_strategies": {
-      "csp": "CSP",
-      "spreadsheet": "CSV/Spreadsheet",
-      "token": "Token ({{ token.type, uppercase }}): {{ token.symbol }}",
-      "web3": "Web3 addresses"
-    },
     "create": {
       "action": {
         "publish": "Publish",
