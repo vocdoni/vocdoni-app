@@ -105,7 +105,7 @@
     },
     "results": {
       "date_format": "PPpp",
-      "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi",
+      "secret_until_the_end": "Els resultats provisionals es faran públics quan el procés finalitzi",
       "title": "Resultats per a \"{{ title }}\"",
       "votes": "{{ votes }} vots ({{ percent }})"
     },
