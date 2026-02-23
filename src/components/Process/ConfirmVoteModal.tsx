@@ -1,4 +1,4 @@
-import { Button, CloseButton, Dialog, Flex, List, Text, useSlotRecipe } from '@chakra-ui/react'
+import { Button, CloseButton, Dialog, Flex, List, Portal, Text, useSlotRecipe } from '@chakra-ui/react'
 import { ElectionResultsTypeNames, IQuestion, PublishedElection } from '@vocdoni/sdk'
 import { FieldValues } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -11,49 +11,53 @@ export const ConfirmVoteModal = ({ election, answers }: { election: PublishedEle
   const { isOpen, cancel, proceed } = useConfirm()
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={proceed}>
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content>
-          <Dialog.CloseTrigger asChild>
-            <CloseButton />
-          </Dialog.CloseTrigger>
-          <Dialog.Header>
-            <Dialog.Title>{t('process.spreadsheet.confirm.description')}</Dialog.Title>
-          </Dialog.Header>
-          <Dialog.Body>
-            <Flex direction='column' gap={2} border='1px solid' borderColor='table.border' borderRadius='lg' p={4}>
-              <Text fontSize='sm' color='texts.subtle'>
-                {t('process.spreadsheet.confirm.election_title', { defaultValue: 'Your vote has been recorded for:' })}
+    <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && cancel?.()}>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton />
+            </Dialog.CloseTrigger>
+            <Dialog.Header>
+              <Dialog.Title>{t('process.spreadsheet.confirm.description')}</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              <Flex direction='column' gap={2} border='1px solid' borderColor='table.border' borderRadius='lg' p={4}>
+                <Text fontSize='sm' color='texts.subtle'>
+                  {t('process.spreadsheet.confirm.election_title', {
+                    defaultValue: 'Your vote has been recorded for:',
+                  })}
+                </Text>
+                <Text fontWeight='extrabold'>{election.title.default}</Text>
+              </Flex>
+              <Text fontWeight='extrabold'>
+                {t('process.spreadsheet.confirm.your_selections', { defaultValue: 'Your Selections:' })}
               </Text>
-              <Text fontWeight='extrabold'>{election.title.default}</Text>
-            </Flex>
-            <Text fontWeight='extrabold'>
-              {t('process.spreadsheet.confirm.your_selections', { defaultValue: 'Your Selections:' })}
-            </Text>
-            <Flex direction='column' gap={2} border='1px solid' borderColor='table.border' borderRadius='lg' p={4}>
-              {election.questions.map((q, i) => (
-                <Flex key={i} direction='column' gap={2}>
-                  <Text fontWeight='extrabold'>{q.title.default}</Text>
-                  {election.resultsType.name === ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION ? (
-                    <ConfirmQuestion question={q} answers={answers} index={i} />
-                  ) : (
-                    <ConfirmMultichoice question={q} answers={answers} />
-                  )}
-                </Flex>
-              ))}
-            </Flex>
-          </Dialog.Body>
-          <Dialog.Footer>
-            <Button onClick={cancel!} variant='ghost' css={styles.cancel}>
-              {t('confirm.cancel')}
-            </Button>
-            <Button onClick={proceed!} css={styles.confirm}>
-              {t('confirm.confirm')}
-            </Button>
-          </Dialog.Footer>
-        </Dialog.Content>
-      </Dialog.Positioner>
+              <Flex direction='column' gap={2} border='1px solid' borderColor='table.border' borderRadius='lg' p={4}>
+                {election.questions.map((q, i) => (
+                  <Flex key={i} direction='column' gap={2}>
+                    <Text fontWeight='extrabold'>{q.title.default}</Text>
+                    {election.resultsType.name === ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION ? (
+                      <ConfirmQuestion question={q} answers={answers} index={i} />
+                    ) : (
+                      <ConfirmMultichoice question={q} answers={answers} />
+                    )}
+                  </Flex>
+                ))}
+              </Flex>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Button onClick={cancel!} variant='ghost' css={styles.cancel}>
+                {t('cc.confirm.cancel')}
+              </Button>
+              <Button onClick={proceed!} css={styles.confirm}>
+                {t('cc.confirm.confirm')}
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
     </Dialog.Root>
   )
 }

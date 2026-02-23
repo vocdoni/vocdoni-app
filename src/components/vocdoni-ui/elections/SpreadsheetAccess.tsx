@@ -7,6 +7,7 @@ import {
   FieldHelperText as FormHelperText,
   FieldLabel as FormLabel,
   Input,
+  Portal,
   useSlotRecipe,
 } from '@chakra-ui/react'
 import { Wallet } from '@ethersproject/wallet'
@@ -186,60 +187,73 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
         <Dialog.Trigger asChild>
           <Button css={styles.button}>{t('spreadsheet.access_button')}</Button>
         </Dialog.Trigger>
-        <Dialog.Backdrop css={styles.overlay} />
-        <Dialog.Positioner>
-          <Dialog.Content css={styles.content}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Dialog.Header css={styles.header}>{t('spreadsheet.modal_title')}</Dialog.Header>
-              <Dialog.CloseTrigger asChild>
-                <CloseButton disabled={loading} css={styles.top_close} />
-              </Dialog.CloseTrigger>
-              <Dialog.Body css={styles.body}>
-                {fields.map((field, key) => (
-                  <FormControl invalid={Boolean((errors as Record<string, any>)[key])} css={styles.control} key={field}>
-                    <FormLabel css={styles.label}>{field}</FormLabel>
-                    <Input
-                      {...register(key.toString(), {
-                        required,
-                        ...fspecs(field),
-                      })}
-                      css={styles.input}
-                      {...ispecs(field)}
-                    />
-                    {(errors as Record<string, any>)[key]?.message ? (
-                      <FormErrorMessage css={styles.error}>
-                        {(errors as Record<string, any>)[key]?.message?.toString()}
-                      </FormErrorMessage>
-                    ) : (
-                      description(field) && <FormHelperText>{description(field)}</FormHelperText>
-                    )}
-                  </FormControl>
-                ))}
-                {election?.electionType.anonymous && (
-                  <FormControl invalid={Boolean((errors as Record<string, any>).sik_password)} css={styles.sik_control}>
-                    <FormLabel css={styles.label}>{t('spreadsheet.anon_sik_label')}</FormLabel>
-                    <Input {...register('sik_password', { required, minLength })} type='password' css={styles.input} />
-                    {(errors as Record<string, any>).sik_password ? (
-                      <FormErrorMessage css={styles.error}>
-                        {(errors as Record<string, any>).sik_password?.message?.toString()}
-                      </FormErrorMessage>
-                    ) : (
-                      <FormHelperText css={styles.helper}>{t('spreadsheet.anon_sik_helper')}</FormHelperText>
-                    )}
-                  </FormControl>
-                )}
-              </Dialog.Body>
-              <Dialog.Footer css={styles.footer}>
-                <Button variant='ghost' mr={3} onClick={() => setIsOpen(false)} css={styles.close} disabled={loading}>
-                  {t('spreadsheet.close')}
-                </Button>
-                <Button type='submit' css={styles.submit} loading={loading}>
-                  {t('spreadsheet.access_button')}
-                </Button>
-              </Dialog.Footer>
-            </form>
-          </Dialog.Content>
-        </Dialog.Positioner>
+        <Portal>
+          <Dialog.Backdrop css={styles.overlay} />
+          <Dialog.Positioner>
+            <Dialog.Content css={styles.content}>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Dialog.Header css={styles.header}>{t('spreadsheet.modal_title')}</Dialog.Header>
+                <Dialog.CloseTrigger asChild>
+                  <CloseButton disabled={loading} css={styles.top_close} />
+                </Dialog.CloseTrigger>
+                <Dialog.Body css={styles.body}>
+                  {fields.map((field, key) => (
+                    <FormControl
+                      invalid={Boolean((errors as Record<string, any>)[key])}
+                      css={styles.control}
+                      key={field}
+                    >
+                      <FormLabel css={styles.label}>{field}</FormLabel>
+                      <Input
+                        {...register(key.toString(), {
+                          required,
+                          ...fspecs(field),
+                        })}
+                        css={styles.input}
+                        {...ispecs(field)}
+                      />
+                      {(errors as Record<string, any>)[key]?.message ? (
+                        <FormErrorMessage css={styles.error}>
+                          {(errors as Record<string, any>)[key]?.message?.toString()}
+                        </FormErrorMessage>
+                      ) : (
+                        description(field) && <FormHelperText>{description(field)}</FormHelperText>
+                      )}
+                    </FormControl>
+                  ))}
+                  {election?.electionType.anonymous && (
+                    <FormControl
+                      invalid={Boolean((errors as Record<string, any>).sik_password)}
+                      css={styles.sik_control}
+                    >
+                      <FormLabel css={styles.label}>{t('spreadsheet.anon_sik_label')}</FormLabel>
+                      <Input
+                        {...register('sik_password', { required, minLength })}
+                        type='password'
+                        css={styles.input}
+                      />
+                      {(errors as Record<string, any>).sik_password ? (
+                        <FormErrorMessage css={styles.error}>
+                          {(errors as Record<string, any>).sik_password?.message?.toString()}
+                        </FormErrorMessage>
+                      ) : (
+                        <FormHelperText css={styles.helper}>{t('spreadsheet.anon_sik_helper')}</FormHelperText>
+                      )}
+                    </FormControl>
+                  )}
+                </Dialog.Body>
+                <Dialog.Footer css={styles.footer}>
+                  <Button variant='ghost' mr={3} onClick={() => setIsOpen(false)} css={styles.close} disabled={loading}>
+                    {t('spreadsheet.close')}
+                  </Button>
+                  <Button type='submit' css={styles.submit} loading={loading}>
+                    {t('spreadsheet.access_button')}
+                  </Button>
+                </Dialog.Footer>
+              </form>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
       </Dialog.Root>
     </>
   )
