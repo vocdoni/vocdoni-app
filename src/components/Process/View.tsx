@@ -7,9 +7,9 @@ import {
   Grid,
   GridItem,
   Icon,
-  Image,
   Link,
   List,
+  Portal,
   Spinner,
   TabsContent,
   TabsContentGroup,
@@ -32,13 +32,13 @@ import { FacebookShare, RedditShare, TelegramShare, TwitterShare } from '~compon
 import { ElectionQuestions, ElectionResults, environment } from '~components/vocdoni-ui'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
+import { BallotBoxAnimated } from './BallotBoxAnimated'
 import { ConfirmVoteModal } from './ConfirmVoteModal'
 import { CreatedBy } from './CreatedBy'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
 import { useVotingMethodLabel } from './resultTypeLabels'
-import successImg from '/assets/spreadsheet-success-modal.jpg'
 
 type CensusInfo = { size: number; weight: bigint; type: CensusType }
 
@@ -337,45 +337,56 @@ const SuccessVoteModal = () => {
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={({ open }) => setOpen(open)}>
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content>
-          <Dialog.CloseTrigger />
-          <Dialog.Header>
-            <Dialog.Title>{t('process.success_modal.title')}</Dialog.Title>
-            <Image src={successImg} borderRadius='lg' mt={3} />
-          </Dialog.Header>
-          <Dialog.Body>
-            <Trans
-              i18nKey='process.success_modal.text'
-              components={{
-                verify: <Link href={verify} target='_blank' />,
-                p: <Text mb={2} />,
-              }}
-            />
-            <List.Root listStyleType='none' display='flex' justifyContent='center' gap={6} mt={6} mb={2} ml={0}>
-              <List.Item>
-                <TwitterShare url={url} caption={caption} />
-              </List.Item>
-              <List.Item>
-                <FacebookShare url={url} caption={caption} />
-              </List.Item>
-              <List.Item>
-                <TelegramShare url={url} caption={caption} />
-              </List.Item>
-              <List.Item>
-                <RedditShare url={url} caption={caption} />
-              </List.Item>
-            </List.Root>
-          </Dialog.Body>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.CloseTrigger />
+            <Dialog.Header display='flex' flexDirection='column'>
+              <Dialog.Title>{t('process.success_modal.title')}</Dialog.Title>
+              <BallotBoxAnimated alignSelf='center' />
+            </Dialog.Header>
+            <Dialog.Body>
+              <Trans
+                i18nKey='process.success_modal.text'
+                components={{
+                  verify: <Link href={verify} target='_blank' />,
+                  p: <Text mb={2} />,
+                }}
+              />
+              <List.Root
+                listStyleType='none'
+                display='flex'
+                flexDirection='row'
+                justifyContent='center'
+                gap={6}
+                mt={6}
+                mb={2}
+                ml={0}
+              >
+                <List.Item>
+                  <TwitterShare url={url} caption={caption} />
+                </List.Item>
+                <List.Item>
+                  <FacebookShare url={url} caption={caption} />
+                </List.Item>
+                <List.Item>
+                  <TelegramShare url={url} caption={caption} />
+                </List.Item>
+                <List.Item>
+                  <RedditShare url={url} caption={caption} />
+                </List.Item>
+              </List.Root>
+            </Dialog.Body>
 
-          <Dialog.Footer>
-            <Dialog.ActionTrigger asChild>
-              <Button>{t('process.success_modal.btn')}</Button>
-            </Dialog.ActionTrigger>
-          </Dialog.Footer>
-        </Dialog.Content>
-      </Dialog.Positioner>
+            <Dialog.Footer>
+              <Dialog.ActionTrigger asChild>
+                <Button>{t('process.success_modal.btn')}</Button>
+              </Dialog.ActionTrigger>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
     </Dialog.Root>
   )
 }
