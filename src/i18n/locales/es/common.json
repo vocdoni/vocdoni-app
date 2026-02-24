@@ -282,8 +282,8 @@
     "invalid_row_length": "Corrige las líneas {{rows, list}} del documento  y vuelve a cargarlo",
     "invalid_weight_type": "Se esperaba un peso en la primera columna en las líneas {{rows, list}}, pero se han encontrado datos inesperados",
     "loading_page": "Error al cargar la página",
-    "loading_roles": "Cargando roles",
-    "loading_types": "",
+    "loading_roles": "Error cargando roles",
+    "loading_types": "Error cargando tipos",
     "missing_data": "La hoja de cálculo no contiene datos.",
     "missing_header": "La hoja de cálculo no tiene encabezado.",
     "not_found": "Página No Encontrada",
@@ -745,7 +745,7 @@
     "success_description": "Ya puedes iniciar sesión",
     "success_title": "Invitación aceptada",
     "title": "Añadir miembro al equipo",
-    "unexpected_error": "",
+    "unexpected_error": "Error inesperado",
     "user_invited": "Correo enviado a {{email}}"
   },
   "lastname": "Apellidos",
@@ -808,9 +808,6 @@
       "cancel": "Cancelar",
       "data_preview": "Vista previa de datos",
       "download_template_btn": "Descargar plantilla",
-      "error": {
-        "field_is_required": "Este campo es obligatorio"
-      },
       "field_mapper": {
         "empty": "-- No importar --",
         "placeholder": "Seleccionar columna"
@@ -897,7 +894,7 @@
       "selected_one": "Seleccionado: <strong>Un miembro</strong>",
       "selected_many": "",
       "selected_other": "Seleccionados: <strong>{{count}} miembros</strong>",
-      "toggle_column": ""
+      "toggle_column": "Alternar columna {{column}}"
     }
   },
   "membership_size": {
@@ -1413,12 +1410,6 @@
     "weighted_voting": "ponderada"
   },
   "questions_and_results": "Preguntas y resultados",
-  "rainbow": {
-    "group": {
-      "recovery": ""
-    },
-    "recovery": ""
-  },
   "registration_failed": "Error en el registro",
   "registration_successful": "Registro realizado correctamente",
   "remove": "Eliminar",
@@ -1682,7 +1673,7 @@
   },
   "view_in_explorer": "Ver en el explorador",
   "view_plans_and_pricing": "Ver planes y precios",
-  "vocdoni logo": "Logotipo de Vocdoni",
+  "vocdoni_logo": "Logotipo de Vocdoni",
   "vote": {
     "abstain": "Abstenerse",
     "button": "Votar",
