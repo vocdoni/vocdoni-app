@@ -279,8 +279,8 @@
     "invalid_row_length": "Correct document lines {{rows,list(style: short)}} and load it again",
     "invalid_weight_type": "Expecting weight in first column at lines {{rows,list(style:short)}}, but found unexpected data",
     "loading_page": "Error loading the page",
-    "loading_roles": "Loading roles",
-    "loading_types": "",
+    "loading_roles": "Error loading roles",
+    "loading_types": "Error loading organization types",
     "missing_data": "Spreadsheet has no data.",
     "missing_header": "Spreadsheet has no header.",
     "not_found": "Page Not Found",
@@ -737,7 +737,7 @@
     "success_description": "You can now sign in",
     "success_title": "Invitation accepted",
     "title": "Add team member",
-    "unexpected_error": "",
+    "unexpected_error": "Unexpected error",
     "user_invited": "Email sent to {{email}}"
   },
   "lastname": "Last name",
@@ -797,9 +797,6 @@
       "cancel": "Cancel",
       "data_preview": "Data Preview",
       "download_template_btn": "Download Template",
-      "error": {
-        "field_is_required": ""
-      },
       "field_mapper": {
         "empty": "-- Do not import --",
         "placeholder": "Select column"
@@ -880,8 +877,8 @@
       "select_group": "Select group",
       "select_hint": "Select members to perform bulk actions",
       "selected_one": "Selected: <strong>{{count}} member</strong>",
-      "selected_other": "Selected: <strong>{{count}} member</strong>",
-      "toggle_column": ""
+      "selected_other": "Selected: <strong>{{count}} members</strong>",
+      "toggle_column": "Toggle column {{column}}"
     }
   },
   "membership_size": {
@@ -1390,12 +1387,6 @@
     "weighted_voting": "Weighted Voting"
   },
   "questions_and_results": "Questions and results",
-  "rainbow": {
-    "group": {
-      "recovery": ""
-    },
-    "recovery": ""
-  },
   "registration_failed": "Registration failed",
   "registration_successful": "Registration successful",
   "remove": "Remove",
@@ -1613,7 +1604,7 @@
     "click_or_drag_and_drop_image": "Upload Image",
     "csv_row_limit_exceeded_one": "This import would result in {{count}} total row, exceeding your plan limit of {{max}}.",
     "csv_row_limit_exceeded_other": "This import would result in {{count}} total rows, exceeding your plan limit of {{max}}.",
-    "drop_here": "",
+    "drop_here": "Drop the file here",
     "image_upload_failed": "Image upload failed",
     "image_upload_success": "Image uploaded",
     "upload_failed": "Upload failed"
@@ -1657,7 +1648,7 @@
   },
   "view_in_explorer": "View in explorer",
   "view_plans_and_pricing": "View Plans & Pricing",
-  "vocdoni logo": "Vocdoni logo",
+  "vocdoni_logo": "Vocdoni logo",
   "vote": {
     "abstain": "Abstain",
     "button": "Vote",

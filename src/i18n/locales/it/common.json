@@ -282,8 +282,8 @@
     "invalid_row_length": "Correggere le righe del documento {{rows,list(style: short)}} e caricarlo di nuovo",
     "invalid_weight_type": "Previsto peso nella prima colonna alle righe {{rows,list(style:short)}}, ma trovati dati imprevisti",
     "loading_page": "Errore durante il caricamento della pagina",
-    "loading_roles": "Caricamento ruoli",
-    "loading_types": "",
+    "loading_roles": "Errore durante il caricamento dei ruoli",
+    "loading_types": "Errore durante il caricamento dei tipi",
     "missing_data": "Il foglio di calcolo non ha dati.",
     "missing_header": "Il foglio di calcolo non ha intestazione.",
     "not_found": "Pagina non trovata",
@@ -745,7 +745,7 @@
     "success_description": "Ora puoi accedere",
     "success_title": "Invito accettato",
     "title": "Aggiungi membro del team",
-    "unexpected_error": "",
+    "unexpected_error": "Errore imprevisto",
     "user_invited": "Email inviata a {{email}}"
   },
   "lastname": "Cognome",
@@ -808,9 +808,6 @@
       "cancel": "Annulla",
       "data_preview": "Anteprima dati",
       "download_template_btn": "Scarica modello",
-      "error": {
-        "field_is_required": ""
-      },
       "field_mapper": {
         "empty": "-- Non importare --",
         "placeholder": "Seleziona colonna"
@@ -897,7 +894,7 @@
       "selected_one": "Selezionato: <strong>{{count}} membro</strong>",
       "selected_many": "Selected: <strong>{{count}} member</strong>",
       "selected_other": "Selezionati: <strong>{{count}} membri</strong>",
-      "toggle_column": ""
+      "toggle_column": "Attiva/disattiva colonna {{column}}"
     }
   },
   "membership_size": {
@@ -1413,12 +1410,6 @@
     "weighted_voting": "Voto ponderato"
   },
   "questions_and_results": "Domande e risultati",
-  "rainbow": {
-    "group": {
-      "recovery": ""
-    },
-    "recovery": ""
-  },
   "registration_failed": "Registrazione non riuscita",
   "registration_successful": "egistrazione avvenuta con successo",
   "remove": "Rimuovi",
@@ -1637,7 +1628,7 @@
     "csv_row_limit_exceeded_one": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
     "csv_row_limit_exceeded_many": "",
     "csv_row_limit_exceeded_other": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
-    "drop_here": "",
+    "drop_here": "Rilascia il file qui",
     "image_upload_failed": "Caricamento immagine non riuscito",
     "image_upload_success": "Immagine caricata",
     "upload_failed": "Caricamento non riuscito"
@@ -1682,7 +1673,7 @@
   },
   "view_in_explorer": "Visualizza nell'explorer",
   "view_plans_and_pricing": "Visualizza Piani e Prezzi",
-  "vocdoni logo": "Logo Vocdoni",
+  "vocdoni_logo": "Logo di Vocdoni",
   "vote": {
     "abstain": "Astenersi",
     "button": "Vota",

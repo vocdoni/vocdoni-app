@@ -163,7 +163,7 @@ export const MembersCsvManager = () => {
 
       <FormControl
         {...register('spreadsheet', {
-          required: { value: true, message: t('memberbase.importer.error.field_is_required') },
+          required: { value: true, message: t('form.error.field_is_required') },
         })}
         {...upload}
         invalid={!!errors?.spreadsheet}

@@ -106,7 +106,7 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
       )
     }
 
-    return <Error error={error?.error || t('invite.unexpected_error')} />
+    return <Error error={error?.error || t('invite.unexpected_error', 'Unexpected error')} />
   }
 
   return <Spinner />

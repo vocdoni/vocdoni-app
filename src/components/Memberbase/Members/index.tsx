@@ -265,7 +265,8 @@ const ColumnManager = () => {
                     checked={col.visible}
                     onCheckedChange={({ checked }) => toggleColumn(col.id, checked === true)}
                     aria-label={t('members.table.toggle_column', {
-                      defaultValue: `Toggle ${col.id} column`,
+                      defaultValue: `Toggle column {{column}}`,
+                      column: col.label,
                     })}
                   >
                     <Switch.HiddenInput />

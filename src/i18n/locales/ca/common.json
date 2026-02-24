@@ -282,8 +282,8 @@
     "invalid_row_length": "Corregeix les línies {{rows, list}} del document i torna a carregar-lo",
     "invalid_weight_type": "S'esperava trobar el pes a la primera col·lumna a les línies {{rows, list}}, però s'han trobat dades inesperades",
     "loading_page": "Càrrega de pàgina errònia",
-    "loading_roles": "Carregant rols",
-    "loading_types": "Carregant tipus",
+    "loading_roles": "Error carregant rols",
+    "loading_types": "Error carregant tipus",
     "missing_data": "El full de càlcul no té dades.",
     "missing_header": "El full de càlcul no té capçalera.",
     "not_found": "Pàgina No Trobada",
@@ -745,7 +745,7 @@
     "success_description": "Ja pots iniciar sessió",
     "success_title": "Invitació acceptada",
     "title": "Afegeix un membre a l'equip",
-    "unexpected_error": "",
+    "unexpected_error": "Error inesperat",
     "user_invited": "S'ha enviat un correu a {{email}}"
   },
   "lastname": "Cognoms",
@@ -808,9 +808,6 @@
       "cancel": "Cancel·la",
       "data_preview": "Vista prèvia de les dades",
       "download_template_btn": "Descarregar plantilla",
-      "error": {
-        "field_is_required": ""
-      },
       "field_mapper": {
         "empty": "-- No importar --",
         "placeholder": "Selecciona una columna"
@@ -897,7 +894,7 @@
       "selected_one": "Seleccionat: <strong>{{count}} membre</strong>",
       "selected_many": "",
       "selected_other": "Seleccionats: <strong>{{count}} membres</strong>",
-      "toggle_column": "Commuta la columna"
+      "toggle_column": "Commuta la columna {{column}}"
     }
   },
   "membership_size": {
@@ -1413,12 +1410,6 @@
     "weighted_voting": "ponderat"
   },
   "questions_and_results": "Preguntes i resultats",
-  "rainbow": {
-    "group": {
-      "recovery": ""
-    },
-    "recovery": ""
-  },
   "registration_failed": "El registre ha fallat",
   "registration_successful": "Registre completat correctament",
   "remove": "Elimina",
@@ -1682,7 +1673,7 @@
   },
   "view_in_explorer": "Mostra a l'explorador",
   "view_plans_and_pricing": "Veure plans i preus",
-  "vocdoni logo": "",
+  "vocdoni_logo": "Logotip de Vocdoni",
   "vote": {
     "abstain": "Abstenció",
     "button": "Vota",
