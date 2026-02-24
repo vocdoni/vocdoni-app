@@ -124,7 +124,7 @@
     "selector_label": "País"
   },
   "create_org": {
-    "already_profile": "Si la teva organització ja té un perfil, <2>accedeix al tauler de control</2> i contacta amb l'administrador perquè et convidi",
+    "already_profile": "Si la teva organització ja té un perfil, <dlink>accedeix al tauler de control</dlink> i contacta amb l'administrador perquè et convidi",
     "create_button": "Crea la teva organització",
     "organization_details": "Detalls de l'organització",
     "organization_details_description": "Gestiona el perfil i la configuració de la teva organització.",

@@ -166,9 +166,9 @@ export const OrganizationCreate = ({
     }
   }
 
-  const RouterLink = () => (
+  const DashboardLink = ({ children }: { children?: React.ReactNode }) => (
     <Link asChild>
-      <ReactRouterLink to={Routes.dashboard.base}>access the dashboard</ReactRouterLink>
+      <ReactRouterLink to={Routes.dashboard.base}>{children}</ReactRouterLink>
     </Link>
   )
 
@@ -198,8 +198,9 @@ export const OrganizationCreate = ({
           {t('organization.create_org')}
         </Button>
         <Text color={'account_create_text_secondary'} fontSize='sm' textAlign='center' mt='auto'>
-          <Trans i18nKey='create_org.already_profile'>
-            If your organization already has a profile, <RouterLink /> and contact the administrator to invite you
+          <Trans i18nKey='create_org.already_profile' components={{ dlink: <DashboardLink /> }}>
+            If your organization already has a profile, <DashboardLink>access the dashboard</DashboardLink> and contact
+            the administrator to invite you
           </Trans>
         </Text>
         {canSkip && (

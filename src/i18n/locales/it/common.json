@@ -124,7 +124,7 @@
     "selector_label": "Paese"
   },
   "create_org": {
-    "already_profile": "Se la tua organizzazione ha già un profilo, <2>accedi alla dashboard</2> e contatta l'amministratore per farti invitare",
+    "already_profile": "Se la tua organizzazione ha già un profilo, <dlink>accedi alla dashboard</dlink> e contatta l'amministratore per farti invitare",
     "create_button": "Crea la tua organizzazione",
     "organization_details": "Dettagli dell'organizzazione",
     "organization_details_description": "Gestisci il profilo e le impostazioni di configurazione dell'organizzazione.",

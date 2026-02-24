@@ -124,7 +124,7 @@
     "selector_label": "País"
   },
   "create_org": {
-    "already_profile": "Si tu organización ya tiene perfil, <2>accede al panel</2> y contacta con el administrador para que te invite",
+    "already_profile": "Si tu organización ya tiene perfil, <dlink>accede al panel</dlink> y contacta con el administrador para que te invite",
     "create_button": "Crea tu organización",
     "organization_details": "Detalles de la organización",
     "organization_details_description": "Gestiona el perfil y la configuración de tu organización.",
