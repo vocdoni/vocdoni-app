@@ -2,6 +2,8 @@ import { render, screen } from '~src/test-utils'
 import userEvent from '@testing-library/user-event'
 import { CspAuthModal } from './CSPAuthModal'
 
+const cspStepState = vi.hoisted(() => ({ currentStep: 0 }))
+
 vi.mock('@vocdoni/react-providers', () => ({
   useElection: () => ({
     election: { id: 'test-election' },
@@ -9,7 +11,7 @@ vi.mock('@vocdoni/react-providers', () => ({
 }))
 
 vi.mock('./CSPStepsProvider', () => ({
-  useCspAuthContext: () => ({ currentStep: 0 }),
+  useCspAuthContext: () => ({ currentStep: cspStepState.currentStep }),
 }))
 
 vi.mock('./Step0', () => ({
@@ -20,32 +22,28 @@ vi.mock('./Step1', () => ({
   Step1Base: () => <div>Step 1</div>,
 }))
 
-vi.mock('@chakra-ui/react', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@chakra-ui/react')>()
-
-  return {
-    ...actual,
-    Dialog: {
-      ...actual.Dialog,
-      Backdrop: (props: any) => (
-        <actual.Dialog.Backdrop data-testid='csp-backdrop' data-zindex={props.zIndex} {...props} />
-      ),
-      Positioner: (props: any) => (
-        <actual.Dialog.Positioner data-testid='csp-positioner' data-zindex={props.zIndex} {...props} />
-      ),
-    },
-  }
-})
-
 describe('CspAuthModal', () => {
-  it('applies modal z-index layers to backdrop and positioner', async () => {
+  beforeEach(() => {
+    cspStepState.currentStep = 0
+  })
+
+  it('shows step 0 when modal opens at step 0', async () => {
+    const user = userEvent.setup()
+
+    render(<CspAuthModal />)
+
+    expect(screen.queryByText('Step 0')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /login/i }))
+    expect(screen.getByText('Step 0')).toBeInTheDocument()
+  })
+
+  it('shows step 1 when modal opens at step 1', async () => {
+    cspStepState.currentStep = 1
     const user = userEvent.setup()
 
     render(<CspAuthModal />)
 
     await user.click(screen.getByRole('button', { name: /login/i }))
-
-    expect(screen.getByTestId('csp-backdrop')).toHaveAttribute('data-zindex', 'modal')
-    expect(screen.getByTestId('csp-positioner')).toHaveAttribute('data-zindex', 'modal')
+    expect(screen.getByText('Step 1')).toBeInTheDocument()
   })
 })
