@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react'
 import { render } from '~src/test-utils'
-import { BallotBoxAnimated } from '.'
+import { BallotBoxAnimated } from './BallotBoxAnimated'
 
 describe('BallotBoxAnimated', () => {
   it('supports Chakra layout props and forwards html props', () => {
