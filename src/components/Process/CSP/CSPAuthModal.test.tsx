@@ -27,7 +27,9 @@ vi.mock('@chakra-ui/react', async (importOriginal) => {
     ...actual,
     Dialog: {
       ...actual.Dialog,
-      Backdrop: (props: any) => <actual.Dialog.Backdrop data-testid='csp-backdrop' data-zindex={props.zIndex} {...props} />,
+      Backdrop: (props: any) => (
+        <actual.Dialog.Backdrop data-testid='csp-backdrop' data-zindex={props.zIndex} {...props} />
+      ),
       Positioner: (props: any) => (
         <actual.Dialog.Positioner data-testid='csp-positioner' data-zindex={props.zIndex} {...props} />
       ),
