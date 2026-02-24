@@ -166,6 +166,12 @@ export const OrganizationCreate = ({
     }
   }
 
+  const RouterLink = () => (
+    <Link asChild>
+      <ReactRouterLink to={Routes.dashboard.base}>access the dashboard</ReactRouterLink>
+    </Link>
+  )
+
   return (
     <FormProvider {...methods}>
       <Flex
@@ -193,11 +199,7 @@ export const OrganizationCreate = ({
         </Button>
         <Text color={'account_create_text_secondary'} fontSize='sm' textAlign='center' mt='auto'>
           <Trans i18nKey='create_org.already_profile'>
-            If your organization already has a profile,{' '}
-            <Link asChild>
-              <ReactRouterLink to={Routes.dashboard.base}>access the dashboard</ReactRouterLink>
-            </Link>{' '}
-            and contact the administrator to invite you
+            If your organization already has a profile, <RouterLink /> and contact the administrator to invite you
           </Trans>
         </Text>
         {canSkip && (
