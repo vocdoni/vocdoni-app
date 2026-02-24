@@ -225,7 +225,7 @@ export const BasicConfig = () => {
                   </Link>
                 ),
               }}
-              defaults='Duration exceeds your plan’s {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days.'
+              defaults="Duration exceeds your plan's {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days."
             />
           </AlertDescription>
         </Alert>

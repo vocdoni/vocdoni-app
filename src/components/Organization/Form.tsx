@@ -8,7 +8,7 @@ import { MembershipSizeSelector, OrganizationTypeSelector } from '~components/La
 
 export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
   const { t } = useTranslation()
-  const { control, register } = useFormContext()
+  const { control } = useFormContext()
 
   return (
     <VStack gap={4} flex={1}>
