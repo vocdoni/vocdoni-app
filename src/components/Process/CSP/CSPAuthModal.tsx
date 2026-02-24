@@ -1,4 +1,4 @@
-import { Button, CloseButton, Dialog, Heading } from '@chakra-ui/react'
+import { Button, CloseButton, Dialog, Heading, Portal } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
@@ -66,28 +66,30 @@ export const CspAuthModal = () => {
           <Trans i18nKey='spreadsheet.access_button'>Login</Trans>
         </Button>
       </Dialog.Trigger>
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content>
-          <Dialog.CloseTrigger asChild>
-            <CloseButton />
-          </Dialog.CloseTrigger>
-          <Dialog.Header>
-            <Dialog.Title>
-              <Heading>
-                <Trans i18nKey='csp.title'>Authentication</Trans>
-              </Heading>
-            </Dialog.Title>
-          </Dialog.Header>
-          <Dialog.Body>
-            {currentStep === 0 ? (
-              <Step0Base election={election as PublishedElection} />
-            ) : (
-              <Step1Base election={election as PublishedElection} />
-            )}
-          </Dialog.Body>
-        </Dialog.Content>
-      </Dialog.Positioner>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton />
+            </Dialog.CloseTrigger>
+            <Dialog.Header>
+              <Dialog.Title>
+                <Heading>
+                  <Trans i18nKey='csp.title'>Authentication</Trans>
+                </Heading>
+              </Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              {currentStep === 0 ? (
+                <Step0Base election={election as PublishedElection} />
+              ) : (
+                <Step1Base election={election as PublishedElection} />
+              )}
+            </Dialog.Body>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
     </Dialog.Root>
   )
 }
