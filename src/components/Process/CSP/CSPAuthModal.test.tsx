@@ -1,5 +1,5 @@
-import { render, screen } from '~src/test-utils'
 import userEvent from '@testing-library/user-event'
+import { render, screen } from '~src/test-utils'
 import { CspAuthModal } from './CSPAuthModal'
 
 const cspStepState = vi.hoisted(() => ({ currentStep: 0 }))
