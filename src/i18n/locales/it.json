@@ -235,6 +235,11 @@
     "receive_code": "Ricevi codice",
     "step1": {
       "helper_text": "Se si usa l'email, non dimenticare di controllare la cartella spam",
+      "resend_action": "Reinvia",
+      "resend_cooldown": "Reinvia tra {{seconds}}s",
+      "resend_prompt": "Non hai ricevuto il codice?",
+      "support_text": "Se hai qualche problema, contatta questo numero di telefono: 900 705 705 o tramite l'email info@coib.cat",
+      "title": "Inserisci il codice univoco:",
       "validation": {
         "length": "Il codice deve essere di 6 cifre",
         "required": "Il codice è obbligatorio"

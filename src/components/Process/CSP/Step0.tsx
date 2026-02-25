@@ -21,7 +21,13 @@ import { Trans, useTranslation } from 'react-i18next'
 import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
 
-export const Step0Base = ({ election }: { election: PublishedElection }) => {
+export const Step0Base = ({
+  election,
+  onAuthSuccess,
+}: {
+  election: PublishedElection
+  onAuthSuccess?: () => void
+}) => {
   const { t } = useTranslation()
   const toast = useToast()
   const { setCurrentStep, setAuthData, authFields, twoFaFields } = useCspAuthContext()
@@ -100,7 +106,7 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
       const { authToken } = await auth.mutateAsync(form)
 
       // Store auth token in global context
-      setAuthData((prev) => ({ ...prev, authToken }))
+      setAuthData((prev) => ({ ...prev, authToken, step0Request: form }))
 
       pushCrispUserFields(form)
 
@@ -123,6 +129,7 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
           isClosable: true,
         })
         csp1(authToken)
+        onAuthSuccess?.()
       }
     } catch (error) {
       const errorMessage =

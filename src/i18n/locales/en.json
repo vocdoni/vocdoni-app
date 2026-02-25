@@ -232,6 +232,11 @@
     "receive_code": "Receive Code",
     "step1": {
       "helper_text": "If using email, don't forget to check spam folder",
+      "resend_action": "Re-send",
+      "resend_cooldown": "Re-send in {{seconds}}s",
+      "resend_prompt": "Didn't get the code?",
+      "support_text": "If you have any problems, contact this phone number: 900 705 705 or via email info@coib.cat",
+      "title": "Enter the unique code:",
       "validation": {
         "length": "Code must be 6 digits",
         "required": "Code is required"

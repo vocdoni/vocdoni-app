@@ -67,9 +67,19 @@ export const CspAuthModal = (props: ButtonProps) => {
   const { t } = useTranslation()
   const { isOpen, onClose, onOpen } = useDisclosure()
   const { election } = useElection()
-  const { currentStep } = useCspAuthContext()
+  const { currentStep, setAuthData, setCurrentStep } = useCspAuthContext()
 
   if (election instanceof InvalidElection) return null
+
+  const resetAuthState = () => {
+    setCurrentStep(0)
+    setAuthData({})
+  }
+
+  const handleClose = () => {
+    resetAuthState()
+    onClose()
+  }
 
   return (
     <>
@@ -81,7 +91,7 @@ export const CspAuthModal = (props: ButtonProps) => {
       >
         <Trans i18nKey='cc.spreadsheet.access_button'>Login</Trans>
       </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal isOpen={isOpen} onClose={handleClose} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader textAlign='center'>
@@ -92,9 +102,9 @@ export const CspAuthModal = (props: ButtonProps) => {
           <ModalCloseButton />
           <ModalBody pb={6}>
             {currentStep === 0 ? (
-              <Step0Base election={election as PublishedElection} />
+              <Step0Base election={election as PublishedElection} onAuthSuccess={handleClose} />
             ) : (
-              <Step1Base election={election as PublishedElection} />
+              <Step1Base election={election as PublishedElection} onAuthSuccess={handleClose} />
             )}
           </ModalBody>
         </ModalContent>

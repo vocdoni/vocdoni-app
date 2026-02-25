@@ -234,7 +234,12 @@
     "important": "Importante",
     "receive_code": "Recibir código",
     "step1": {
-      "helper_text": "Si utilizas correo electrónico, no olvides revisar la carpeta de correo no deseado.",
+      "helper_text": "Hemos enviado un código único al medio indicado. Si utilizas correo electrónico, no olvides revisar la carpeta de correo no deseado.",
+      "resend_action": "Reenviar",
+      "resend_cooldown": "Reenviar en {{seconds}}s",
+      "resend_prompt": "¿No has recibido el código?",
+      "support_text": "Si tienes algún problema, contacta con este número de teléfono: 900 705 705 o mediante el correo <2>info@coib.cat</2>.",
+      "title": "Introduce el código único:",
       "validation": {
         "length": "El código debe tener 6 dígitos",
         "required": "El código es obligatorio"

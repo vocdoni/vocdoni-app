@@ -151,4 +151,28 @@ describe('Step0Base crisp integration', () => {
     expect(consoleSpy).toHaveBeenCalled()
     consoleSpy.mockRestore()
   })
+
+  it('stores the step0 request data in auth context', async () => {
+    mockMutateAsync.mockResolvedValue({ authToken: 'token-1' })
+
+    render(<Step0Base election={{} as any} />)
+
+    await fillAndSubmit()
+
+    await waitFor(() => {
+      expect(mockSetAuthData).toHaveBeenCalled()
+    })
+
+    const updater = mockSetAuthData.mock.calls[0][0]
+    const nextState = updater({})
+
+    expect(nextState).toEqual({
+      authToken: 'token-1',
+      step0Request: {
+        memberNumber: '123',
+        name: 'Alice',
+        email: 'alice@example.com',
+      },
+    })
+  })
 })

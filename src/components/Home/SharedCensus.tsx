@@ -147,7 +147,7 @@ const SharedCensusHomeContent = () => {
           )}
         </Box>
       )}
-      <Box>{election && !isAdmin && <CensusConnectButton isDisabled={true} />}</Box>
+      <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
       {canViewProcesses && (
         <Box w='90%'>
           <Text alignSelf='start' mb={10} as='h3' fontWeight='bold' fontSize='22px' style={{ marginTop: '-30px' }}>
