@@ -220,6 +220,8 @@ export const ProcessView = () => {
       // We get the last input which is the closest to the error message
       const lastInputError = inputsError[inputsError.length - 1]
 
+      if (!lastInputError) return
+
       // Once we have the first input, we calculate the new position
       const newPosition = window.scrollY + lastInputError.getBoundingClientRect().top - 200
 
