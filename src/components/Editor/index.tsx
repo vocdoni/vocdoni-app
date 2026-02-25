@@ -18,6 +18,7 @@ import { TableCellNode, TableNode, TableRowNode } from '@lexical/table'
 import { $getRoot } from 'lexical'
 import { useState } from 'react'
 
+import editor from '~theme/editor'
 import { FloatingLinkEditorPlugin, FloatingTextFormatToolbarPlugin } from './plugins'
 import OnChangeMarkdown from './plugins/OnChangeMarkdown'
 import ReadOnlyPlugin from './plugins/ReadOnlyPlugin'
@@ -36,34 +37,6 @@ type EditorProps = {
 const TRANSFORMERS = DEFAULT_TRANSFORMERS
 
 const ChakraContentEditable = chakra(ContentEditable)
-
-const editorContentStyles = {
-  '& .lexical-bold': {
-    fontWeight: 'extrabold',
-  },
-  '& .lexical-italic': {
-    fontStyle: 'italic',
-  },
-  '& .lexical-underline': {
-    textDecoration: 'underline',
-  },
-  '& .lexical-strikethrough': {
-    textDecoration: 'line-through',
-  },
-  '& .lexical-ul, & .lexical-ol': {
-    paddingInlineStart: '1.25rem',
-    marginBlock: '0.5rem',
-  },
-  '& .lexical-ul': {
-    listStyleType: 'disc',
-  },
-  '& .lexical-ol': {
-    listStyleType: 'decimal',
-  },
-  '& .lexical-li': {
-    marginBlock: '0.125rem',
-  },
-}
 
 const theme = {
   text: {
@@ -107,7 +80,7 @@ const MarkdownEditor = (props: EditorProps) => {
                 overflow='auto'
                 role='textbox'
                 minH='30px'
-                css={[textareaStyles, editorContentStyles]}
+                css={[textareaStyles, editor]}
               />
             </Box>
           }
