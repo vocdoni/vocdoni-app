@@ -135,7 +135,6 @@
     "subtitle": "Reduce costes, ahorra tiempo: seguro, privado y conforme al RGPD",
     "title": "Cuéntanos sobre tu organización"
   },
-  "create_process": "Crear proceso",
   "csp": {
     "auth_failed": "Autenticación fallida",
     "auth_success": "Autenticación correcta",
@@ -227,7 +226,6 @@
   "description": "Descripción",
   "discount": "Descuento",
   "do_it_later": "Hacerlo más tarde",
-  "do_you_need_help": "¿Necesitas ayuda?",
   "draft_processes": "Borradores",
   "drafts": {
     "actions": "Acciones",
@@ -902,9 +900,11 @@
   },
   "menu": {
     "burger_aria_label": "menú de usuario",
+    "collapse": "Contraer menú",
     "connect": "Conectar",
     "create": "Crear proceso",
     "dashboard": "Panel",
+    "expand": "Expandir menú",
     "login": "Iniciar sesión",
     "open": "Abrir menú"
   },
@@ -1394,8 +1394,7 @@
   },
   "profile": {
     "error": "Error al actualizar el perfil",
-    "success": "Perfil actualizado correctamente",
-    "title": "Perfil"
+    "success": "Perfil actualizado correctamente"
   },
   "promo_code": "Código promocional",
   "promo_code_required": "El código es obligatorio",

@@ -135,7 +135,6 @@
     "subtitle": "Aquesta informació ens ajuda a personalitzar la teva experiència",
     "title": "Crea la teva organització"
   },
-  "create_process": "Crea un procés",
   "csp": {
     "auth_failed": "Autenticació fallida",
     "auth_success": "Autenticació correcta",
@@ -227,7 +226,6 @@
   "description": "Descripció",
   "discount": "Descompte",
   "do_it_later": "Fes-ho més tard",
-  "do_you_need_help": "Necessites ajuda?",
   "draft_processes": "Esborranys",
   "drafts": {
     "actions": "Accions",
@@ -902,9 +900,11 @@
   },
   "menu": {
     "burger_aria_label": "menú d'usuari",
+    "collapse": "Contraure menú",
     "connect": "Connectar",
     "create": "Crear Procés",
     "dashboard": "Dashboard",
+    "expand": "Expandir menú",
     "login": "Iniciar sessió",
     "open": "Obre menú"
   },
@@ -1394,8 +1394,7 @@
   },
   "profile": {
     "error": "No s'ha pogut actualitzar el perfil",
-    "success": "Perfil actualitzat correctament",
-    "title": "Perfil"
+    "success": "Perfil actualitzat correctament"
   },
   "promo_code": "Codi promocional",
   "promo_code_required": "Cal introduir un codi",

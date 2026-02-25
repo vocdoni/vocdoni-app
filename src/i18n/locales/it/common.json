@@ -135,7 +135,6 @@
     "subtitle": "Taglia i costi, risparmia tempo: sicuro, privato e conforme al GDPR",
     "title": "Parlaci della tua organizzazione"
   },
-  "create_process": "Crea processo",
   "csp": {
     "auth_failed": "Autenticazione non riuscita",
     "auth_success": "Autenticazione riuscita",
@@ -227,7 +226,6 @@
   "description": "Descrizione",
   "discount": "Sconto",
   "do_it_later": "Fallo più tardi",
-  "do_you_need_help": "Ti serve aiuto?",
   "draft_processes": "Bozze",
   "drafts": {
     "actions": "Azioni",
@@ -902,9 +900,11 @@
   },
   "menu": {
     "burger_aria_label": "menu utente",
+    "collapse": "Comprimi menu",
     "connect": "Connetti",
     "create": "Crea processo",
     "dashboard": "Dashboard",
+    "expand": "Espandi menu",
     "login": "Accedi",
     "open": "Apri menu"
   },
@@ -1394,8 +1394,7 @@
   },
   "profile": {
     "error": "Errore durante l'aggiornamento del profilo",
-    "success": "Profilo aggiornato con successo",
-    "title": "Profilo"
+    "success": "Profilo aggiornato con successo"
   },
   "promo_code": "Codice Promozione",
   "promo_code_required": "Il codice promozione è obbligatorio",

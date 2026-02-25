@@ -132,7 +132,6 @@
     "subtitle": "Cut cost, Save Time: Secure, Private, and GDPR Compliant",
     "title": "Tell us about your organization"
   },
-  "create_process": "Create process",
   "csp": {
     "auth_failed": "Authentication failed",
     "auth_success": "Authentication successful",
@@ -224,7 +223,6 @@
   "description": "Description",
   "discount": "Discount",
   "do_it_later": "Do it later",
-  "do_you_need_help": "Do you need help?",
   "draft_processes": "Drafts",
   "drafts": {
     "actions": "Draft actions",
@@ -886,9 +884,11 @@
   },
   "menu": {
     "burger_aria_label": "user menu",
+    "collapse": "Collapse menu",
     "connect": "Connect",
     "create": "Create Process",
     "dashboard": "Dashboard",
+    "expand": "Expand menu",
     "login": "Login",
     "open": "Open Menu"
   },
@@ -1371,8 +1371,7 @@
   },
   "profile": {
     "error": "Failed to update profile",
-    "success": "Profile updated successfully",
-    "title": "Profile"
+    "success": "Profile updated successfully"
   },
   "promo_code": "Promotion Code",
   "promo_code_required": "Promotion code is required",

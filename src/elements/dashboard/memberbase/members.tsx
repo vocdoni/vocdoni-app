@@ -1,5 +1,5 @@
 import { RoutedPaginationProvider } from '@vocdoni/react-providers'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOutletContext } from 'react-router-dom'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
@@ -59,7 +59,7 @@ export const useMemberColumns = () => {
 const Members = () => {
   const { t } = useTranslation()
   const columns = useMemberColumns()
-  const { setBreadcrumb, debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
+  const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
   const { data, isLoading, isFetching, error } = usePaginatedMembers({ search: debouncedSearch })
 
   const members = data?.members || []
@@ -90,13 +90,6 @@ const Members = () => {
       : t('members.list.empty_description', {
           defaultValue: 'Add your first member to get started.',
         })
-
-  useEffect(() => {
-    setBreadcrumb([
-      { title: t('memberbase.title', { defaultValue: 'Memberbase' }), route: Routes.dashboard.memberbase.base },
-      { title: t('memberbase.members.title', { defaultValue: 'Members' }) },
-    ])
-  }, [setBreadcrumb])
 
   return (
     <TableProvider data={members} initialColumns={columns} isLoading={isLoading} isFetching={isFetching} error={error}>

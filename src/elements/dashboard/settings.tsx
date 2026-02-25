@@ -1,11 +1,10 @@
 import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
 import QueryDataLayout from '~components/Layout/QueryDataLayout'
-import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { Routes } from '~src/router/routes'
 
 type MenuItem = {
@@ -18,8 +17,6 @@ type MenuItem = {
 const Settings = () => {
   const { t } = useTranslation()
   const { isLoading, isError, error, organization } = useSaasAccount()
-  const { setBreadcrumb } = useOutletContext<DashboardLayoutContext>()
-
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -47,17 +44,6 @@ const Settings = () => {
     [location.pathname, menuItems]
   )
   const activeTabValue = currentTabIndex === -1 ? menuItems[0]?.route : menuItems[currentTabIndex]?.route
-
-  // Set layout variables
-  useEffect(() => {
-    const currentTab = menuItems[currentTabIndex] || menuItems[0]
-    setBreadcrumb([
-      { title: t('settings', { defaultValue: 'Settings' }), route: Routes.dashboard.settings.base },
-      {
-        title: currentTab.label,
-      },
-    ])
-  }, [setBreadcrumb, currentTabIndex])
 
   return (
     <DashboardContents>

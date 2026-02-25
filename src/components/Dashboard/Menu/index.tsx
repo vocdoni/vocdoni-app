@@ -1,18 +1,39 @@
-import { Progress, Box, Button, CloseButton, Drawer, Flex, HStack, Icon, Text, useToken } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  CloseButton,
+  Drawer,
+  Flex,
+  HStack,
+  Icon,
+  IconButton,
+  Progress,
+  Text,
+  useMediaQuery,
+  useToken,
+} from '@chakra-ui/react'
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuPlus } from 'react-icons/lu'
+import { LuPanelLeft, LuPlus } from 'react-icons/lu'
 import { generatePath, Link as ReactRouterLink, Link as RouterLink } from 'react-router-dom'
-import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { VocdoniLogo } from '~components/Layout/Logo'
+import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { useTutorials } from '~src/queries/organization'
 import { Routes } from '~src/router/routes'
 import { DashboardBookerModalButton } from '../Booker'
 import { DashboardMenuOptions } from './Options'
 import UserProfile from './UserProfile'
 
-const DashboardMenu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+const DashboardMenu = ({
+  isOpen,
+  onClose,
+  onToggleReduced,
+}: {
+  isOpen: boolean
+  onClose: () => void
+  onToggleReduced: () => void
+}) => {
   const { reduced } = useContext(DashboardLayoutContext)
   const [width, rWidth] = useToken('sizes', ['dashboard-menu.default', 'dashboard-menu.reduced'])
 
@@ -33,15 +54,15 @@ const DashboardMenu = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
         zIndex={100}
         transition='width .3s ease'
       >
-        <DashboardMenuContent />
+        <DashboardMenuContent onToggleReduced={onToggleReduced} />
       </Box>
 
       {/* Sidebar for small screens */}
       <Drawer.Root open={isOpen} placement='start' onOpenChange={({ open }) => (!open ? onClose() : undefined)}>
         <Drawer.Backdrop />
         <Drawer.Positioner>
-          <Drawer.Content>
-            <DashboardMenuContent />
+          <Drawer.Content p={4}>
+            <DashboardMenuContent onToggleReduced={onToggleReduced} alignLogoCenter />
           </Drawer.Content>
         </Drawer.Positioner>
       </Drawer.Root>
@@ -98,15 +119,66 @@ const SidebarTutorial = () => {
 }
 
 // Common menu contents
-const DashboardMenuContent = () => {
+const DashboardMenuContent = ({
+  onToggleReduced,
+  alignLogoCenter = false,
+}: {
+  onToggleReduced: () => void
+  alignLogoCenter?: boolean
+}) => {
   const { reduced } = useContext(DashboardLayoutContext)
+  const { t } = useTranslation()
+  const [isTouchLike] = useMediaQuery(['(hover: none), (pointer: coarse)'])
 
   return (
     <>
-      <Flex asChild justifyContent={'center'} alignItems={'center'} h='47px' mb={2}>
-        <ReactRouterLink to={Routes.dashboard.base}>
-          <VocdoniLogo width={reduced ? '32px' : '148px'} minimal={reduced} />
+      <Flex
+        alignItems='center'
+        justifyContent={alignLogoCenter ? 'center' : 'flex-start'}
+        h='47px'
+        mb={2}
+        role='group'
+        position='relative'
+        w='full'
+        data-group
+        css={{
+          '&:hover .dashboard-collapse-toggle': {
+            opacity: 1,
+            pointerEvents: 'auto',
+          },
+        }}
+      >
+        <ReactRouterLink
+          to={Routes.dashboard.base}
+          onClick={() => {
+            if (reduced && isTouchLike) onToggleReduced()
+          }}
+        >
+          <VocdoniLogo width={reduced ? 'full' : '150px'} minimal={reduced} maxH='2rem' />
         </ReactRouterLink>
+        <IconButton
+          className='dashboard-collapse-toggle'
+          aria-label={
+            reduced
+              ? t('menu.expand', { defaultValue: 'Expand menu' })
+              : t('menu.collapse', { defaultValue: 'Collapse menu' })
+          }
+          colorPalette='gray'
+          variant='subtle'
+          size='xs'
+          onClick={onToggleReduced}
+          display={{ base: 'none', md: 'inline-flex' }}
+          position='absolute'
+          right={1}
+          top='50%'
+          left={reduced ? '50%' : undefined}
+          transform={reduced ? 'translate(-50%, -50%)' : 'translateY(-50%)'}
+          opacity={reduced ? 0 : 1}
+          pointerEvents={reduced ? 'none' : 'auto'}
+          zIndex={1}
+        >
+          <Icon as={LuPanelLeft} />
+        </IconButton>
       </Flex>
       <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
         <RouterLink to={generatePath(Routes.processes.create)}>

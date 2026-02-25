@@ -13,9 +13,6 @@ vi.mock('react-router-dom', async () => {
     useLocation: () => ({
       pathname: '/admin/processes/drafts/1',
     }),
-    useOutletContext: () => ({
-      setBreadcrumb: vi.fn(),
-    }),
   }
 })
 

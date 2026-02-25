@@ -14,9 +14,6 @@ vi.mock('react-router-dom', async () => {
     useLocation: () => ({
       pathname: Routes.dashboard.settings.organization,
     }),
-    useOutletContext: () => ({
-      setBreadcrumb: vi.fn(),
-    }),
   }
 })
 
