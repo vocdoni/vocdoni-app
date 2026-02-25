@@ -1,4 +1,4 @@
-import { Button, CloseButton, Dialog, Heading, Portal } from '@chakra-ui/react'
+import { Button, CloseButton, Dialog, Portal } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
 import { useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
@@ -75,9 +75,7 @@ export const CspAuthModal = () => {
             </Dialog.CloseTrigger>
             <Dialog.Header>
               <Dialog.Title>
-                <Heading>
-                  <Trans i18nKey='csp.title'>Authentication</Trans>
-                </Heading>
+                <Trans i18nKey='csp.title'>Authentication</Trans>
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
