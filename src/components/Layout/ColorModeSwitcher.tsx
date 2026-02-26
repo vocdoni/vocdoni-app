@@ -1,20 +1,11 @@
-import {
-  ButtonGroup,
-  ButtonGroupProps,
-  Icon,
-  IconButton,
-  IconButtonProps,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
-} from '@chakra-ui/react'
+import { ButtonGroup, ButtonGroupProps, Icon, IconButton, IconButtonProps } from '@chakra-ui/react'
 import { useTheme } from 'next-themes'
 import { type FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { IoMdMoon, IoMdSunny } from 'react-icons/io'
 import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu'
+import { Tooltip } from '~components/ui/Tooltip'
 import { useColorMode, useColorModeValue } from '~theme/color-mode'
 
 type ColorModeSwitcherProps = Omit<IconButtonProps, 'aria-label'>
@@ -64,24 +55,19 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
       p={1}
     >
       {modes.map(({ mode, label, icon }) => (
-        <TooltipRoot key={mode}>
-          <TooltipTrigger asChild>
-            <IconButton
-              aria-label={label}
-              onClick={() => setTheme(mode)}
-              aria-pressed={selected === mode}
-              bg={selected === mode ? iconBg : undefined}
-              variant='ghost'
-              borderRadius='sm'
-              size='xs'
-            >
-              <Icon as={icon} boxSize={4} />
-            </IconButton>
-          </TooltipTrigger>
-          <TooltipPositioner>
-            <TooltipContent>{label}</TooltipContent>
-          </TooltipPositioner>
-        </TooltipRoot>
+        <Tooltip content={label} key={mode} positioning={{ placement: 'top' }}>
+          <IconButton
+            aria-label={label}
+            onClick={() => setTheme(mode)}
+            aria-pressed={selected === mode}
+            bg={selected === mode ? iconBg : undefined}
+            variant='ghost'
+            borderRadius='sm'
+            size='xs'
+          >
+            <Icon as={icon} boxSize={4} />
+          </IconButton>
+        </Tooltip>
       ))}
     </ButtonGroup>
   )
