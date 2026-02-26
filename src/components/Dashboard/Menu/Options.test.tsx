@@ -1,14 +1,13 @@
-import { MemoryRouter } from 'react-router-dom'
 import { DashboardLayoutContext } from '~elements/LayoutDashboard'
-import { render, screen } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import { DashboardMenuOptions } from './Options'
 
 const renderMenu = (pathname: string) => {
   render(
     <DashboardLayoutContext.Provider value={{ reduced: false }}>
-      <MemoryRouter initialEntries={[pathname]} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter initialEntries={[pathname]}>
         <DashboardMenuOptions />
-      </MemoryRouter>
+      </TestMemoryRouter>
     </DashboardLayoutContext.Provider>
   )
 }

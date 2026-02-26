@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import ProcessesTable from './ProcessesTable'
 
 const election = {
@@ -34,9 +33,9 @@ vi.mock('./use-clone-as-draft', () => ({
 describe('ProcessesTable', () => {
   it('renders election title', () => {
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <ProcessesTable processes={[election as any]} />
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
     expect(screen.getByText('Test Election')).toBeInTheDocument()
   })

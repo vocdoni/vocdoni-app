@@ -1,7 +1,6 @@
 import i18n from 'i18next'
 import { FormProvider, useForm } from 'react-hook-form'
-import { MemoryRouter } from 'react-router-dom'
-import { render } from '~src/test-utils'
+import { render, TestMemoryRouter } from '~src/test-utils'
 import { defaultProcessValues } from '../common'
 import CensusCreation from './CensusCreation'
 
@@ -18,11 +17,11 @@ const CensusCreationHarness = () => {
   const methods = useForm({ defaultValues: defaultProcessValues })
 
   return (
-    <MemoryRouter>
+    <TestMemoryRouter>
       <FormProvider {...methods}>
         <CensusCreation showExtraMethods={false} />
       </FormProvider>
-    </MemoryRouter>
+    </TestMemoryRouter>
   )
 }
 

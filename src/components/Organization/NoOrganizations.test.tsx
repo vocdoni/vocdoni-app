@@ -1,13 +1,12 @@
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import { NoOrganizations } from './NoOrganizations'
 
 describe('NoOrganizations', () => {
   it('renders the create organization button', () => {
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <NoOrganizations />
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
 
     expect(screen.getByText('Create your organization')).toBeInTheDocument()

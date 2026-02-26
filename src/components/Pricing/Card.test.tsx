@@ -1,7 +1,6 @@
 import { FormProvider, useForm } from 'react-hook-form'
-import { MemoryRouter } from 'react-router-dom'
 import { PlanId } from '~constants'
-import { createTestI18n, render, screen } from '~src/test-utils'
+import { createTestI18n, render, screen, TestMemoryRouter } from '~src/test-utils'
 import PricingCard from './Card'
 
 vi.mock('~components/Auth/Subscription', () => ({
@@ -87,9 +86,7 @@ describe('PricingCard', () => {
 
     render(<Wrapper />, {
       i18nInstance: i18n,
-      wrapper: ({ children }) => (
-        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>{children}</MemoryRouter>
-      ),
+      wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter>,
     })
 
     expect(screen.getByText('Feature A')).toBeInTheDocument()
@@ -126,9 +123,7 @@ describe('PricingCard', () => {
     expect(() =>
       render(<Wrapper />, {
         i18nInstance: i18n,
-        wrapper: ({ children }) => (
-          <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>{children}</MemoryRouter>
-        ),
+        wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter>,
       })
     ).not.toThrow()
   })

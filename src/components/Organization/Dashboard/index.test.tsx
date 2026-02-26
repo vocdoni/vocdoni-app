@@ -1,6 +1,5 @@
 import { LuCalendar } from 'react-icons/lu'
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen, within } from '~src/test-utils'
+import { render, screen, TestMemoryRouter, within } from '~src/test-utils'
 import OrganizationDashboard from './index'
 
 const useOrganizationSetupMock = vi.fn()
@@ -73,9 +72,9 @@ describe('OrganizationDashboard', () => {
     })
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <OrganizationDashboard />
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
   })
@@ -96,9 +95,9 @@ describe('OrganizationDashboard', () => {
     })
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <OrganizationDashboard />
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
 
     const checkbox = screen.getByRole('checkbox', { name: /book a free call with our experts/i })

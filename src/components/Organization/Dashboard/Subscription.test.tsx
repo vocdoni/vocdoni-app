@@ -1,5 +1,4 @@
-import { MemoryRouter } from 'react-router-dom'
-import { createTestI18n, render } from '~src/test-utils'
+import { createTestI18n, render, TestMemoryRouter } from '~src/test-utils'
 import SubscriptionPage from './Subscription'
 
 vi.mock('~components/Auth/Subscription', () => ({
@@ -60,7 +59,7 @@ describe('SubscriptionPage', () => {
     expect(() =>
       render(<SubscriptionPage />, {
         i18nInstance: i18n,
-        wrapper: ({ children }) => <MemoryRouter>{children}</MemoryRouter>,
+        wrapper: ({ children }) => <TestMemoryRouter>{children}</TestMemoryRouter>,
       })
     ).not.toThrow()
   })

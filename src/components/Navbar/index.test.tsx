@@ -1,5 +1,4 @@
-import { MemoryRouter } from 'react-router-dom'
-import { createTestI18n, render, screen } from '~src/test-utils'
+import { createTestI18n, render, screen, TestMemoryRouter } from '~src/test-utils'
 import Navbar from './index'
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -28,9 +27,9 @@ describe('Navbar', () => {
     })
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <Navbar />
-      </MemoryRouter>,
+      </TestMemoryRouter>,
       { i18nInstance }
     )
 

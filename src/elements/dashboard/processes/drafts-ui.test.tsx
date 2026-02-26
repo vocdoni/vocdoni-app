@@ -1,7 +1,6 @@
 import userEvent from '@testing-library/user-event'
 import type { ReactNode } from 'react'
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import { DraftsContextMenu } from './drafts'
 
 vi.mock('react-router-dom', async () => {
@@ -52,14 +51,14 @@ describe('DraftsContextMenu', () => {
     const user = userEvent.setup()
 
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <DraftsContextMenu
           draft={{
             id: 'draft-1',
             metadata: { title: 'Draft title' } as any,
           }}
         />
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
 
     const trigger = screen.getByRole('button')

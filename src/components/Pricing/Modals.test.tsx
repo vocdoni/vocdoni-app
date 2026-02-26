@@ -1,6 +1,5 @@
 import i18n from 'i18next'
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import { PlanUpgradeModal } from './Modals'
 
 describe('PlanUpgradeModal', () => {
@@ -21,7 +20,7 @@ describe('PlanUpgradeModal', () => {
     )
 
     render(
-      <MemoryRouter>
+      <TestMemoryRouter>
         <PlanUpgradeModal
           open
           onOpenChange={() => undefined}
@@ -29,7 +28,7 @@ describe('PlanUpgradeModal', () => {
           context='memberbase'
           limit='1000'
         />
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
 
     expect(screen.getByText('Memberbase upgrade title')).toBeInTheDocument()

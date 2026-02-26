@@ -1,7 +1,6 @@
-import { MemoryRouter } from 'react-router-dom'
 import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { Routes } from '~src/router/routes'
-import { fireEvent, render, screen } from '~src/test-utils'
+import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
 import DashboardMenu from './index'
 
 const mockUseTutorials = vi.fn(() => ({
@@ -34,9 +33,9 @@ vi.mock('./Options', () => ({
 const renderMenu = (reduced: boolean, onToggleReduced = vi.fn()) =>
   render(
     <DashboardLayoutContext.Provider value={{ reduced } as any}>
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <DashboardMenu isOpen={false} onClose={vi.fn()} onToggleReduced={onToggleReduced} />
-      </MemoryRouter>
+      </TestMemoryRouter>
     </DashboardLayoutContext.Provider>
   )
 

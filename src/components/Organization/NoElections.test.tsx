@@ -1,5 +1,4 @@
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import NoElections from './NoElections'
 
 vi.mock('@vocdoni/react-providers', () => ({
@@ -10,9 +9,9 @@ vi.mock('@vocdoni/react-providers', () => ({
 describe('NoElections', () => {
   it('renders the create voting button when user owns the org', () => {
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <NoElections />
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
 
     expect(screen.getByText('menu.create')).toBeInTheDocument()

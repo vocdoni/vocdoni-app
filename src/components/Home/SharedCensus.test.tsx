@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom'
 import React from 'react'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import SimpleLayout from '~elements/SimpleLayout'
-import { act, render } from '~src/test-utils'
+import { act, render, TestMemoryRouter } from '~src/test-utils'
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
@@ -121,13 +121,13 @@ const renderSharedCensus = async (ui: React.ReactElement) => {
   let rendered: ReturnType<typeof render>
   await act(async () => {
     rendered = render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <Routes>
           <Route element={<SimpleLayout />}>
             <Route path='/' element={ui} />
           </Route>
         </Routes>
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
   })
 
@@ -135,13 +135,13 @@ const renderSharedCensus = async (ui: React.ReactElement) => {
     ...rendered!,
     rerender: (nextUi: React.ReactElement) =>
       rendered!.rerender(
-        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <TestMemoryRouter>
           <Routes>
             <Route element={<SimpleLayout />}>
               <Route path='/' element={nextUi} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </TestMemoryRouter>
       ),
   }
 }

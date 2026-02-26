@@ -1,5 +1,4 @@
-import { MemoryRouter } from 'react-router-dom'
-import { render, screen } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import { UsageLimits } from './UsageLimits'
 
 vi.mock('~components/Auth/Subscription', () => ({
@@ -23,9 +22,9 @@ vi.mock('~queries/members', () => ({
 describe('UsageLimits', () => {
   it('renders plan usage section', () => {
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <UsageLimits />
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
     expect(screen.getByText('Plan Usage')).toBeInTheDocument()
   })

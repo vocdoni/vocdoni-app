@@ -1,6 +1,5 @@
-import { MemoryRouter } from 'react-router-dom'
 import { DashboardLayoutContext } from '~elements/LayoutDashboard'
-import { render, screen } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import UserProfile from './UserProfile'
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -30,11 +29,11 @@ vi.mock('~components/Navbar/LanguagesList', () => ({
 describe('UserProfile', () => {
   it('renders profile name', () => {
     render(
-      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <TestMemoryRouter>
         <DashboardLayoutContext.Provider value={{ reduced: false } as any}>
           <UserProfile />
         </DashboardLayoutContext.Provider>
-      </MemoryRouter>
+      </TestMemoryRouter>
     )
 
     expect(screen.getAllByText('Jane')[0]).toBeInTheDocument()
