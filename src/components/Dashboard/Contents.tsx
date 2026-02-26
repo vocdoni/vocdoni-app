@@ -1,5 +1,7 @@
 import { Box, BoxProps, Heading as CHeading, Flex, FlexProps, HeadingProps, Text, TextProps } from '@chakra-ui/react'
 import { ReactNode, forwardRef } from 'react'
+import { useOutletContext } from 'react-router-dom'
+import type { DashboardOutletContext } from '~elements/LayoutDashboard'
 
 export type DashboardCardHeaderProps = BoxProps & {
   title: ReactNode
@@ -35,9 +37,12 @@ export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCard
   </Box>
 )
 
-export const DashboardContents = (props: FlexProps) => (
-  <Flex flexDirection='column' maxW='1536px' w='full' mx='auto' p={6} {...props} />
-)
+export const DashboardContents = (props: FlexProps) => {
+  const context = useOutletContext<DashboardOutletContext | undefined>()
+  const maxW = context?.reduced ? 'dashboard-content.reduced' : 'dashboard-content.default'
+
+  return <Flex flexDirection='column' maxW={maxW} w='full' mx='auto' p={6} {...props} />
+}
 
 export const DashboardSection = (props: BoxProps) => (
   <Box _light={{ bg: 'gray.50' }} _dark={{ bg: 'whiteAlpha.50' }} p={4} borderRadius='sm' {...props} />

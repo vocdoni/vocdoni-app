@@ -61,7 +61,7 @@ export const BookerModalButton = ({
   const icon = leftIcon ?? <Icon as={LuCalendar} boxSize={4} />
 
   const triggerNode = trigger ?? (
-    <Button colorPalette='gray' variant='ghost' whiteSpace='wrap' size='md' {...props}>
+    <Button colorPalette='gray' variant='ghost' size='md' {...props}>
       <HStack gap={iconSpacing}>
         {icon}
         <Text as='span'>{content}</Text>

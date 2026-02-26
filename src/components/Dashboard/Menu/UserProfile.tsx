@@ -26,10 +26,10 @@ import { LuBuilding, LuChevronLeft, LuChevronRight, LuChevronsUpDown, LuLogOut, 
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useAuth } from '~components/Auth/useAuth'
-import { DashboardLayoutContext } from '~elements/LayoutDashboard'
-import { Routes } from '~routes'
 import { ThemeToggleGroup } from '~components/Layout/ColorModeSwitcher'
 import { LanguageListDashboard } from '~components/Navbar/LanguagesList'
+import { DashboardLayoutContext } from '~elements/LayoutDashboard'
+import { Routes } from '~routes'
 import { useProfile } from '~src/queries/account'
 import { OrganizationSwitcher } from './OrganizationSwitcher'
 
@@ -67,11 +67,11 @@ const UserProfile = () => {
           variant='subtle'
           justifyContent='start'
           mt={2}
-          p={reduced ? 0 : 2}
+          p={2}
           minW={0}
         >
           <Flex alignItems='center' gap={2} w='full'>
-            <AvatarRoot size='sm' borderRadius='md'>
+            <AvatarRoot size='xs' borderRadius='full'>
               {avatarSrc ? <AvatarImage src={avatarSrc} /> : null}
               <AvatarFallback name={`${profile.firstName} ${profile.lastName}`} />
             </AvatarRoot>

@@ -50,7 +50,6 @@ const DashboardMenu = ({
         top={0}
         w={reduced ? rWidth : width}
         h='100vh'
-        p={2}
         zIndex={100}
         transition='width .3s ease'
       >
@@ -94,6 +93,7 @@ const SidebarTutorial = () => {
       display={reduced ? 'none' : 'flex'}
       gap={2}
       p={4}
+      m={2}
       bgColor='chakra.body.bg'
       borderColor='table.border'
     >
@@ -113,7 +113,7 @@ const SidebarTutorial = () => {
           defaultValue: 'Do you need some help with your first voting process? Watch this tutorial or schedule a call.',
         })}
       </Text>
-      <DashboardBookerModalButton variant='solid' colorPalette='gray' w='full' size={'sm'} fontSize={'12px'} />
+      <DashboardBookerModalButton variant='solid' colorPalette='gray' w='full' />
     </DashboardBox>
   )
 }
@@ -132,69 +132,70 @@ const DashboardMenuContent = ({
 
   return (
     <>
-      <Flex
-        alignItems='center'
-        justifyContent={alignLogoCenter ? 'center' : 'flex-start'}
-        h='47px'
-        mb={2}
-        role='group'
-        position='relative'
-        w='full'
-        data-group
-        css={{
-          '&:hover .dashboard-collapse-toggle': {
-            opacity: 1,
-            pointerEvents: 'auto',
-          },
-        }}
-      >
-        <ReactRouterLink
-          to={Routes.dashboard.base}
-          onClick={() => {
-            if (reduced && isTouchLike) onToggleReduced()
+      <Box p={2}>
+        <Flex
+          alignItems='center'
+          justifyContent={alignLogoCenter ? 'center' : 'flex-start'}
+          h='47px'
+          mb={2}
+          role='group'
+          position='relative'
+          w='full'
+          data-group
+          css={{
+            '&:hover .dashboard-collapse-toggle, &:focus-within .dashboard-collapse-toggle': {
+              opacity: 1,
+              pointerEvents: 'auto',
+            },
           }}
         >
-          <VocdoniLogo width={reduced ? 'full' : '150px'} minimal={reduced} maxH='2rem' />
-        </ReactRouterLink>
-        <IconButton
-          className='dashboard-collapse-toggle'
-          aria-label={
-            reduced
-              ? t('menu.expand', { defaultValue: 'Expand menu' })
-              : t('menu.collapse', { defaultValue: 'Collapse menu' })
-          }
-          colorPalette='gray'
-          variant='subtle'
-          size='xs'
-          onClick={onToggleReduced}
-          display={{ base: 'none', md: 'inline-flex' }}
-          position='absolute'
-          right={1}
-          top='50%'
-          left={reduced ? '50%' : undefined}
-          transform={reduced ? 'translate(-50%, -50%)' : 'translateY(-50%)'}
-          opacity={reduced ? 0 : 1}
-          pointerEvents={reduced ? 'none' : 'auto'}
-          zIndex={1}
-        >
-          <Icon as={LuPanelLeft} />
-        </IconButton>
-      </Flex>
-      <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
-        <RouterLink to={generatePath(Routes.processes.create)}>
-          <HStack gap={reduced ? 0 : 2}>
-            <Icon as={LuPlus} boxSize={4} />
-            {!reduced && (
-              <Text as='span'>
-                <Trans i18nKey='new_vote'>New vote</Trans>
-              </Text>
-            )}
-          </HStack>
-        </RouterLink>
-      </Button>
+          <ReactRouterLink
+            to={Routes.dashboard.base}
+            onClick={() => {
+              if (reduced && isTouchLike) onToggleReduced()
+            }}
+          >
+            <VocdoniLogo width={reduced ? 'full' : '150px'} minimal={reduced} maxH='2rem' />
+          </ReactRouterLink>
+          <IconButton
+            className='dashboard-collapse-toggle'
+            aria-label={
+              reduced
+                ? t('menu.expand', { defaultValue: 'Expand menu' })
+                : t('menu.collapse', { defaultValue: 'Collapse menu' })
+            }
+            colorPalette='gray'
+            variant='subtle'
+            size='xs'
+            onClick={onToggleReduced}
+            display={{ base: 'none', md: 'inline-flex' }}
+            position='absolute'
+            right={1}
+            top='50%'
+            left={reduced ? '50%' : undefined}
+            transform={reduced ? 'translate(-50%, -50%)' : 'translateY(-50%)'}
+            opacity={reduced ? 0 : 1}
+            pointerEvents={reduced ? 'none' : 'auto'}
+            zIndex={1}
+          >
+            <Icon as={LuPanelLeft} />
+          </IconButton>
+        </Flex>
+        <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
+          <RouterLink to={generatePath(Routes.processes.create)}>
+            <HStack gap={reduced ? 0 : 2}>
+              <Icon as={LuPlus} boxSize={4} />
+              {!reduced && (
+                <Text as='span'>
+                  <Trans i18nKey='new_vote'>New vote</Trans>
+                </Text>
+              )}
+            </HStack>
+          </RouterLink>
+        </Button>
 
-      <DashboardMenuOptions />
-
+        <DashboardMenuOptions />
+      </Box>
       <Box mt='auto'>
         <SidebarTutorial />
         <UserProfile />

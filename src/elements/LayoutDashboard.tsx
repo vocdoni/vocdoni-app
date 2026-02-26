@@ -10,11 +10,11 @@ import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
 import { LocalStorageKeys } from '~constants'
 
-export type DashboardLayoutContextType = {
+export type DashboardOutletContext = {
   reduced: boolean
 }
 
-export const DashboardLayoutContext = createContext<DashboardLayoutContextType | undefined>(undefined)
+export const DashboardLayoutContext = createContext<DashboardOutletContext | undefined>(undefined)
 
 const LayoutDashboard: React.FC = () => {
   const { open: isOpen, onOpen, onClose } = useDisclosure()
@@ -27,8 +27,10 @@ const LayoutDashboard: React.FC = () => {
     if (!isMobile) onClose()
   }, [isMobile])
 
+  const reducedValue = reduced && !isMobile
+
   return (
-    <DashboardLayoutContext.Provider value={{ reduced: reduced && !isMobile }}>
+    <DashboardLayoutContext.Provider value={{ reduced: reducedValue }}>
       <DashboardLayoutProviders>
         <Flex minH='100svh' w='full' _dark={{ bg: 'brand.650' }} maxW='max-window-width' margin='0 auto'>
           {/* Sidebar for large screens */}
@@ -41,7 +43,7 @@ const LayoutDashboard: React.FC = () => {
                 <LuPanelLeft />
               </IconButton>
             </Flex>
-            <Outlet />
+            <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
           </Flex>
         </Flex>
       </DashboardLayoutProviders>

@@ -29,12 +29,14 @@ const radii = defineTokens.radii({
   full: { value: '9999px' },
 })
 
-const spacing = defineTokens.spacing({ sidebar: { value: sidebarWidth } })
-
 const sizes = defineTokens.sizes({
   'dashboard-menu': {
     default: { value: '255px' },
     reduced: { value: '48px' },
+  },
+  'dashboard-content': {
+    default: { value: `calc(100vw - 255px)` },
+    reduced: { value: `calc(100vw - 48px)` },
   },
   'max-window-width': { value: '2560px' },
   'max-content-width': { value: '1200px' },
@@ -57,7 +59,6 @@ const tokens = defineTokens({
   colors,
   radii,
   sizes,
-  spacing,
   zIndex,
   fonts,
   fontWeights,

@@ -62,12 +62,11 @@ const AnnouncementBanner = ({ limited = false }: { limited?: boolean }) => {
 
   const limitStyles = {
     mx: 'auto',
-    maxW: 'navbar',
     px: { base: 0, md: 6, xl: 10 },
   }
 
   return (
-    <Alert status={Announcement.status}>
+    <Alert status={Announcement.status} borderRadius={0}>
       <HStack {...(limited ? limitStyles : {})} w='full' justifyContent='space-between'>
         <AlertDescription dangerouslySetInnerHTML={{ __html: message }} />
         <CloseButton onClick={() => setDismissed(true)} />
