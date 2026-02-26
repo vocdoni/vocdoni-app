@@ -2,7 +2,6 @@ import { defineTokens } from '@chakra-ui/react'
 import { colors } from './colors'
 
 const sidebarWidth = '350px'
-const maxNavbarWidth = '1920px'
 
 const fonts = defineTokens.fonts({
   body: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
@@ -33,13 +32,15 @@ const radii = defineTokens.radii({
 const spacing = defineTokens.spacing({ sidebar: { value: sidebarWidth } })
 
 const sizes = defineTokens.sizes({
-  sidebar: { value: sidebarWidth },
-  'user-profile': { value: '280px' },
-  navbar: { value: maxNavbarWidth },
   'dashboard-menu': {
     default: { value: '255px' },
     reduced: { value: '48px' },
   },
+  'max-window-width': { value: '2560px' },
+  'max-content-width': { value: '1200px' },
+  navbar: { value: '1920px' },
+  sidebar: { value: sidebarWidth },
+  'user-profile': { value: '280px' },
   'voting-page': { value: '1200px' },
 })
 

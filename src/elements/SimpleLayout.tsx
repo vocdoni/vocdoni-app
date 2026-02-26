@@ -6,7 +6,6 @@ import CrispChat from '~components/Layout/CrispChat'
 import Footer from '~components/Layout/Footer'
 import { VocdoniLogo } from '~components/Layout/Logo'
 import { LanguagesMenu } from '~components/Navbar/LanguagesList'
-import { MaxNavbarWidth } from '~constants'
 
 export type SimpleLayoutOutletContext = {
   setLogo: (logo?: ReactNode) => void
@@ -54,7 +53,7 @@ const Layout = () => {
       >
         <Outlet context={{ setLogo } satisfies SimpleLayoutOutletContext} />
       </Flex>
-      <Box as='footer' w='full' px={{ base: 4, md: 6, xl: 10 }} maxW={MaxNavbarWidth} mx='auto'>
+      <Box as='footer' w='full' px={{ base: 4, md: 6, xl: 10 }} maxW='navbar' mx='auto'>
         <Footer simplified />
       </Box>
     </Flex>

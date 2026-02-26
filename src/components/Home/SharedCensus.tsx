@@ -1,5 +1,4 @@
 import { AspectRatio, Box, Flex, Link, Spinner, Text } from '@chakra-ui/react'
-import { ElectionStatusBadge, ElectionTitle, OrganizationImage } from '~components/vocdoni-ui'
 import { ElectionProvider, OrganizationProvider, useClient, useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode } from 'react'
@@ -10,7 +9,7 @@ import Editor from '~components/Editor'
 import { ActionsMenu } from '~components/Process/ActionsMenu'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
-import { MaxContentsWidth } from '~constants'
+import { ElectionStatusBadge, ElectionTitle, OrganizationImage } from '~components/vocdoni-ui'
 
 export const parseProcessIds = (value: string | undefined) =>
   (value || '')
@@ -118,7 +117,7 @@ const SharedCensusHomeContent = () => {
   }
 
   return (
-    <Flex flexDirection='column' gap={10} maxW={MaxContentsWidth} mx='auto' px={5} alignItems='center'>
+    <Flex flexDirection='column' gap={10} maxW='max-content-width' mx='auto' px={5} alignItems='center'>
       <OrganizationImage h='100px' />
       {showTopContent && (
         <Box w='90%' display='flex' flexDirection='column' gap={4}>

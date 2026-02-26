@@ -8,7 +8,7 @@ import { Outlet } from 'react-router-dom'
 import DashboardMenu from '~components/Dashboard/Menu'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
-import { LocalStorageKeys, MaxWindowWidth } from '~constants'
+import { LocalStorageKeys } from '~constants'
 
 export type DashboardLayoutContextType = {
   reduced: boolean
@@ -30,7 +30,7 @@ const LayoutDashboard: React.FC = () => {
   return (
     <DashboardLayoutContext.Provider value={{ reduced: reduced && !isMobile }}>
       <DashboardLayoutProviders>
-        <Flex minH='100svh' w='full' _dark={{ bg: 'brand.650' }} maxW={MaxWindowWidth} margin='0 auto'>
+        <Flex minH='100svh' w='full' _dark={{ bg: 'brand.650' }} maxW='max-window-width' margin='0 auto'>
           {/* Sidebar for large screens */}
           <DashboardMenu isOpen={isOpen} onClose={onClose} onToggleReduced={() => setReduced((prev) => !prev)} />
 
