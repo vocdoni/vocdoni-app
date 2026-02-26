@@ -169,7 +169,7 @@
         "required": "El codi és obligatori"
       }
     },
-    "terms_acceptance": "He llegit i accepto els <2>Termes i Condicions</2> i la <6>Política de Privacitat</6>.",
+    "terms_acceptance": "He llegit i accepto els <2>Termes i Condicions</2> i la <6>Política de Privacitat.</6>",
     "title": "Autenticació"
   },
   "current": "Actual",
