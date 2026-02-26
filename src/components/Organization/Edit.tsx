@@ -42,14 +42,10 @@ const EditOrganization = () => {
   const toast = useToast()
   const { t } = useTranslation()
   const [isPending, setPending] = useState(false)
-  const {
-    updateAccount,
-    errors: { update: updateError },
-  } = useClient()
+  const { updateAccount } = useClient()
   const { organization } = useSaasAccount()
   const { setStepDoneAsync } = useOrganizationSetup()
-
-  const { mutateAsync, isError: isSaasError, error: saasError, isSuccess } = useOrganizationEdit()
+  const { mutateAsync } = useOrganizationEdit()
 
   const methods = useForm<FormData>({
     defaultValues: {

@@ -22,7 +22,7 @@ import { LuInfo } from 'react-icons/lu'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { DashboardBox } from '~components/Dashboard/Contents'
+import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
 import InputBasic from '~components/Form/InputBasic'
 import { IssueTypeSelector, SelectOptionType } from '~components/Layout/SaasSelector'
 import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
@@ -51,12 +51,14 @@ const OrganizationSupport = () => {
 
   return (
     <DashboardBox p={6}>
-      <Heading size='md'>{t('organization_settings.support.title', { defaultValue: 'Support' })}</Heading>
-      <Text mb={8} color='texts.dark'>
-        {t('organization_settings.support.description', {
-          defaultValue: 'Get help and support for your organization.',
-        })}
-      </Text>
+      <SectionHeader>
+        <SectionHeading>{t('organization_settings.support.title', { defaultValue: 'Support' })}</SectionHeading>
+        <SectionSubHeading>
+          {t('organization_settings.support.description', {
+            defaultValue: 'Get help and support for your organization.',
+          })}
+        </SectionSubHeading>
+      </SectionHeader>
       <SimpleGrid columns={columns} gap={6}>
         <SupportTicketForm />
         {import.meta.env.PRIORITY_SUPPORT_PHONE && (

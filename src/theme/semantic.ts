@@ -65,6 +65,22 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  border: {
+    dashboard: {
+      value: {
+        _light: '{colors.gray.200}',
+        _dark: '{colors.gray.800}',
+      },
+    },
+    pagination: {
+      active: {
+        value: {
+          _light: '{colors.gray.700}',
+          _dark: '{colors.gray.500}',
+        },
+      },
+    },
+  },
   card: {
     pricing: {
       bg: {
@@ -133,6 +149,7 @@ export const colors = defineSemanticTokens.colors({
       value: '{colors.gray.500}',
     },
   },
+  // @deprecated: to be removed in favor of border.dashboard
   table: {
     border: {
       value: {

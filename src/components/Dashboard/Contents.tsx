@@ -75,6 +75,18 @@ export const SubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, re
   />
 ))
 
+export const SectionHeader = forwardRef<HTMLDivElement, FlexProps>((props, ref) => (
+  <Flex flex={1} direction='column' ref={ref} {...props} />
+))
+
+export const SectionHeading = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
+  <CHeading size='md' ref={ref} {...props} />
+))
+
+export const SectionSubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
+  <Text color='texts.subtle' fontSize='sm' ref={ref} {...props} />
+))
+
 export type SidebarProps = BoxProps & {
   show: boolean
 }

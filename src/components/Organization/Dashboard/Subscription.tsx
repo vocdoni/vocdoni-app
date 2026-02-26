@@ -1,10 +1,10 @@
-import { AlertRoot as Alert, AlertDescription, Button, Flex, Heading, Link, Progress, Text } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, Button, Flex, Link, Progress, Text } from '@chakra-ui/react'
 import { isBefore, isValid, parseISO } from 'date-fns'
 import { ReactNode, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
-import { DashboardBox } from '~components/Dashboard/Contents'
+import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
 import { ComparisonTable } from '~components/Pricing/ComparisonTable'
 import { SubscriptionPlans } from '~components/Pricing/Plans'
 import { SubscriptionCheckoutProvider } from '~components/Pricing/SubscriptionCheckoutProvider'
@@ -60,9 +60,9 @@ const SubscriptionPageContent = () => {
   return (
     <DashboardBox p={6}>
       <Flex direction={{ base: 'column', md: 'row' }}>
-        <Flex flex={1} direction='column'>
-          <Heading size='md'>{t('subscription_plan.title', { defaultValue: 'Subscription Plan' })}</Heading>
-          <Text mb={6} color='texts.subtle' fontSize='sm'>
+        <SectionHeader>
+          <SectionHeading>{t('subscription_plan.title', { defaultValue: 'Subscription Plan' })}</SectionHeading>
+          <SectionSubHeading>
             <Trans i18nKey='subscription_plan.subtitle'>
               With our subscriptions, you get more than a plan. You gain access to the most innovative governance
               platform. Thanks to this model, we can offer the best price in the market: whether you need 1, 5, or 20
@@ -70,8 +70,8 @@ const SubscriptionPageContent = () => {
               platform is fully self-service, yet our team is always available to provide assistance or tailor solutions
               to your specific needs.
             </Trans>
-          </Text>
-        </Flex>
+          </SectionSubHeading>
+        </SectionHeader>
         {!isFree && view === 'plans' && (
           <Button onClick={() => handleChangeClick()} loading={isPending}>
             {t('billing_details', { defaultValue: 'Billing Details' })}

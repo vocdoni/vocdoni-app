@@ -868,7 +868,7 @@ const ProcessCreateView = () => {
 
   return (
     <FormProvider {...methods}>
-      <Box position='relative' w='full' overflow='hidden'>
+      <Box position='relative' w='full' overflow='hidden' height='full'>
         <DashboardContents
           as='form'
           onSubmit={methods.handleSubmit(onSubmit, onError)}

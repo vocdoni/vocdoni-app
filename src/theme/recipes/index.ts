@@ -25,7 +25,7 @@ import { EllipsisButton } from './ellipsisButton'
 import { formLabel, input, switchRecipe, textarea } from './form'
 import { Menu } from './menu'
 import { OrganizationDescription, OrganizationImage, OrganizationName } from './organization'
-import { Pagination } from './pagination'
+import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
 import { SecurityLevelBox } from './securitylevelbox'
@@ -57,6 +57,7 @@ export const recipes: Record<string, RecipeDefinition> = {
   OrganizationDescription,
   OrganizationImage,
   OrganizationName,
+  PaginationButton,
   SecurityLevelBox,
 }
 

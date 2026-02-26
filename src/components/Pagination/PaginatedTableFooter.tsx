@@ -1,7 +1,7 @@
 import { Box, Text } from '@chakra-ui/react'
-import { Pagination, RoutedPagination } from '~components/vocdoni-ui'
 import { usePagination, useRoutedPagination } from '@vocdoni/react-providers'
 import { Trans } from 'react-i18next'
+import { Pagination, RoutedPagination } from '~components/vocdoni-ui'
 import RowsPerPageSelect from './RowsPerPageSelect'
 
 const getCurrentPage = (currentPage, lastPage) => {
