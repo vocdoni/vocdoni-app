@@ -34,6 +34,7 @@ const spacing = defineTokens.spacing({
 })
 
 const sizes = defineTokens.sizes({
+  'cookies-consent': { value: '720px' },
   'dashboard-menu': {
     default: { value: '255px' },
     reduced: { value: '48px' },
@@ -53,6 +54,7 @@ const zIndex = defineTokens.zIndex({
   topbar: { value: 3 },
   modal: { value: 1400 },
   hovering: { value: 1500 },
+  top: { value: 9999 },
 })
 
 const tokens = defineTokens({
