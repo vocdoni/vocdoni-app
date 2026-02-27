@@ -6,6 +6,10 @@ import ca from './ca/common.json'
 import en from './en/common.json'
 import es from './es/common.json'
 import it from './it/common.json'
+import caReactProviders from './ca/react-providers.json'
+import enReactProviders from './en/react-providers.json'
+import esReactProviders from './es/react-providers.json'
+import itReactProviders from './it/react-providers.json'
 
 // no need to import english here, since it's date-fns default language
 import { ca as dca } from 'date-fns/locale/ca'
@@ -17,6 +21,13 @@ export const translations: { [key: string]: any } = {
   en,
   es,
   it,
+}
+
+export const reactProvidersTranslations: { [key: string]: any } = {
+  ca: caReactProviders,
+  en: enReactProviders,
+  es: esReactProviders,
+  it: itReactProviders,
 }
 
 export const dateLocales: { [key: string]: Locale } = {

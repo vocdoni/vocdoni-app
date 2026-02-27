@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
-import { render, screen, waitFor } from '~src/test-utils'
+import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ElectionQuestion, QuestionsFormProvider } from './Questions'
 
 const { PublishedElection, testElection } = vi.hoisted(() => {
@@ -18,20 +19,6 @@ vi.mock('@vocdoni/sdk', () => ({
   PublishedElection,
 }))
 
-vi.mock('@vocdoni/react-providers', () => ({
-  useElection: () => ({
-    election: testElection,
-    isAbleToVote: true,
-    loading: { voting: false },
-    localize: (key: string) => key,
-    client: { wallet: null },
-    vote: vi.fn(),
-    connected: true,
-    errors: { voting: null },
-    voted: null,
-  }),
-}))
-
 vi.mock('../confirm/useConfirm', () => ({
   useConfirm: () => ({ confirm: vi.fn() }),
 }))
@@ -44,6 +31,23 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 }
 
 describe('ElectionQuestion', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: testElection,
+          isAbleToVote: true,
+          loading: { voting: false },
+          localize: (key: string) => key,
+          client: { wallet: null },
+          vote: vi.fn(),
+          connected: true,
+          errors: { voting: null },
+          voted: null,
+        }),
+    })
+  })
+
   it('adds choice card wrappers for options', async () => {
     Object.assign(testElection, {
       questions: [

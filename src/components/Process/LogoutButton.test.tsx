@@ -1,18 +1,7 @@
-import { render, screen } from '~src/test-utils'
+import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from './Census/CensusType'
 import LogoutButton from './LogoutButton'
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useElection: () => ({
-    election: {
-      census: { type: CensusTypes.Web3 },
-      meta: { census: { type: 'spreadsheet' } },
-    },
-    connected: true,
-    clearClient: vi.fn(),
-  }),
-  useClient: () => ({ clear: vi.fn() }),
-}))
 
 vi.mock('wagmi', () => ({
   useAccount: () => ({ isConnected: false }),
@@ -32,6 +21,21 @@ vi.mock('~components/Auth/useAuth', () => ({
 }))
 
 describe('LogoutButton', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: {
+            census: { type: CensusTypes.Web3 },
+            meta: { census: { type: 'spreadsheet' } },
+          },
+          connected: true,
+          clearClient: vi.fn(),
+        }),
+      useClient: () => mockUseClient({ clear: vi.fn() }),
+    })
+  })
+
   it('renders SpreadsheetAccess when connected to spreadsheet census', () => {
     render(<LogoutButton />)
     expect(screen.getByText('SpreadsheetAccess')).toBeInTheDocument()

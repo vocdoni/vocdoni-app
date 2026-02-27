@@ -33,7 +33,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "@untitled-ui/icons-react": "^0.1.4",
     "@vocdoni/rainbowkit-wallets": "^1.0.0-beta.4",
-    "@vocdoni/react-providers": "^1.0.0-beta.7",
+    "@vocdoni/react-providers": "^1.0.0-beta.8",
     "@vocdoni/sdk": "~0.9.3",
     "@wagmi/core": "^2.22.1",
     "chakra-react-select": "^6.1.1",
@@ -41,7 +41,7 @@
     "crisp-sdk-web": "^1.0.27",
     "date-fns": "^4.1.0",
     "gsap": "^3.14.2",
-    "i18next": "^25.8.7",
+    "i18next": "^25.8.13",
     "i18next-browser-languagedetector": "^8.2.1",
     "lexical": "^0.34.0",
     "next-themes": "^0.4.6",
@@ -120,9 +120,10 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^4.0.16"
   },
-  "resolutions": {
-    "@vocdoni/sdk": "~0.9.1",
-    "axios": "^1.7.9"
+  "pnpm": {
+    "overrides": {
+      "axios": "^1.7.9"
+    }
   },
   "packageManager": "pnpm@10.16.1"
 }

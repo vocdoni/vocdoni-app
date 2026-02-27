@@ -2,13 +2,17 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { render } from '@testing-library/react'
 import { ColorModeProvider } from '~theme/color-mode'
 import { system } from '~theme/system'
+import { mockUseElection } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ElectionTitle } from './ElectionTitle'
 
-vi.mock('@vocdoni/react-providers', () => ({
-  useElection: () => ({ election: { id: 'election-1' } }),
-}))
-
 describe('ElectionTitle', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useElection: () => mockUseElection({ election: { id: 'election-1' } }),
+    })
+  })
+
   it('renders heading content', () => {
     const { getByText } = render(
       <ColorModeProvider>

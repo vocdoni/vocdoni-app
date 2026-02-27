@@ -1,14 +1,9 @@
 import userEvent from '@testing-library/user-event'
-import { render, screen } from '~src/test-utils'
+import { mockUseElection, render, screen } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CspAuthModal } from './CSPAuthModal'
 
 const cspStepState = vi.hoisted(() => ({ currentStep: 0 }))
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useElection: () => ({
-    election: { id: 'test-election' },
-  }),
-}))
 
 vi.mock('./CSPStepsProvider', () => ({
   useCspAuthContext: () => ({ currentStep: cspStepState.currentStep }),
@@ -25,6 +20,9 @@ vi.mock('./Step1', () => ({
 describe('CspAuthModal', () => {
   beforeEach(() => {
     cspStepState.currentStep = 0
+    setReactProvidersMock({
+      useElection: () => mockUseElection({ election: { id: 'test-election' } }),
+    })
   })
 
   it('shows step 0 when modal opens at step 0', async () => {

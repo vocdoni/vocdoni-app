@@ -1,14 +1,7 @@
 import type { PublishedElection } from '@vocdoni/sdk'
-import { render } from '~src/test-utils'
+import { mockUseElection, render } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { Step0Base } from './Step0'
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useElection: () => ({
-    actions: {
-      csp1: vi.fn(),
-    },
-  }),
-}))
 
 vi.mock('./CSPStepsProvider', () => ({
   useCspAuthContext: () => ({
@@ -28,6 +21,17 @@ vi.mock('./basics', () => ({
 }))
 
 describe('Step0Base', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          actions: {
+            csp1: vi.fn(),
+          },
+        }),
+    })
+  })
+
   it('renders the authenticate button', () => {
     const election = {} as PublishedElection
     const { getByRole } = render(<Step0Base election={election} />)

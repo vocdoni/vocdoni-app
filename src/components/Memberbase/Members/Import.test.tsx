@@ -1,9 +1,6 @@
-import { render, screen } from '~src/test-utils'
+import { mockUseOrganization, render, screen } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ImportProgress } from './Import'
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useOrganization: () => ({ organization: { address: '0x123' } }),
-}))
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>()
@@ -25,6 +22,12 @@ vi.mock('~src/queries/members', () => ({
 }))
 
 describe('ImportProgress', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0x123' } }),
+    })
+  })
+
   it('renders completed status', () => {
     render(<ImportProgress />)
 

@@ -1,28 +1,8 @@
 import { ElectionStatus } from '@vocdoni/sdk'
-import { render, screen } from '~src/test-utils'
+import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessAside, { VoteButton } from './Aside'
 import { CensusTypes } from './Census/CensusType'
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useElection: () => ({
-    election: {
-      status: ElectionStatus.ONGOING,
-      electionType: { anonymous: false, secretUntilTheEnd: false },
-      questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
-      voteCount: 3,
-      census: { type: CensusTypes.Web3, weight: 3, size: 3 },
-      voteType: { maxVoteOverwrites: 0 },
-      meta: {},
-    },
-    isInCensus: true,
-    voted: null,
-    votesLeft: 0,
-    loading: { voting: false },
-    isAbleToVote: true,
-    connected: false,
-  }),
-  useClient: () => ({ env: 'stg' }),
-}))
 
 vi.mock('@rainbow-me/rainbowkit', () => ({
   useConnectModal: () => ({ openConnectModal: vi.fn() }),
@@ -52,6 +32,30 @@ vi.mock('./LogoutButton', () => ({
 }))
 
 describe('ProcessAside', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: {
+            status: ElectionStatus.ONGOING,
+            electionType: { anonymous: false, secretUntilTheEnd: false },
+            questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
+            voteCount: 3,
+            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
+            voteType: { maxVoteOverwrites: 0 },
+            meta: {},
+          },
+          isInCensus: true,
+          voted: null,
+          votesLeft: 0,
+          loading: { voting: false },
+          isAbleToVote: true,
+          connected: false,
+        }),
+      useClient: () => mockUseClient({ env: 'stg' }),
+    })
+  })
+
   it('renders status and connect button', () => {
     render(<ProcessAside />)
 

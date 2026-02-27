@@ -1,10 +1,49 @@
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
+import i18n from 'i18next'
+import type { ReactNode } from 'react'
+import { initReactI18next } from 'react-i18next'
 import { afterEach, vi } from 'vitest'
 
+function createToastMock() {
+  const toastFn = ((options?: { id?: string }) => ({ id: options?.id ?? 'toast' })) as any
+  toastFn.close = vi.fn()
+  toastFn.closeAll = vi.fn()
+  toastFn.update = vi.fn()
+  toastFn.isActive = vi.fn(() => false)
+  return {
+    ToastProvider: ({ children }: { children: ReactNode }) => children as any,
+    useToast: () => toastFn,
+  }
+}
+
+vi.mock('~components/Toast', createToastMock)
+
+vi.mock('@vocdoni/react-providers', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-providers')>()
+  const { getReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
+  return {
+    ...actual,
+    ...getReactProvidersMock(),
+  }
+})
+
+if (!i18n.isInitialized) {
+  i18n.use(initReactI18next).init({
+    lng: 'en',
+    fallbackLng: 'en',
+    defaultNS: 'common',
+    showSupportNotice: false,
+    interpolation: { escapeValue: false },
+    resources: { en: { common: {} } },
+  })
+}
+
 // Cleanup after each test
-afterEach(() => {
+afterEach(async () => {
   cleanup()
+  const { resetReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
+  resetReactProvidersMock()
 })
 
 // Mock environment variables

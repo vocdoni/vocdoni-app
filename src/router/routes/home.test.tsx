@@ -1,5 +1,7 @@
 import { renderHook } from '@testing-library/react'
 import { Navigate } from 'react-router-dom'
+import { mockUseClient } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 
 const mockParseProcessIds = vi.fn((value?: string) =>
   value
@@ -9,10 +11,6 @@ const mockParseProcessIds = vi.fn((value?: string) =>
         .filter(Boolean)
     : []
 )
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useClient: () => ({ client: { fetchAccountInfo: vi.fn() } }),
-}))
 
 vi.mock('~components/Home/SharedCensus', () => ({
   default: () => <div>SharedCensus</div>,
@@ -32,6 +30,9 @@ describe('useHomeRoute', () => {
     import.meta.env.PROCESS_IDS = ''
     import.meta.env.CUSTOM_ORGANIZATION_DOMAINS = {}
     mockParseProcessIds.mockClear()
+    setReactProvidersMock({
+      useClient: () => mockUseClient({ client: { fetchAccountInfo: vi.fn() } }),
+    })
   })
 
   afterEach(() => {

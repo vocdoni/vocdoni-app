@@ -2,16 +2,13 @@ import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { CensusTypes } from '~components/Process/Census/CensusType'
-import { render, screen, waitFor } from '~src/test-utils'
+import { mockUseOrganization, render, screen, waitFor } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VoterAuthentication } from '.'
 import { Process, SelectorTypes } from '../common'
 import { ExtraConfig } from '../Sidebar/ExtraConfig'
 
 const mockBearedFetch = vi.fn()
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useOrganization: () => ({ organization: { address: '0x1' } }),
-}))
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({
@@ -71,6 +68,12 @@ const TestForm = () => {
 }
 
 describe('VoterAuthentication weightedVote changes', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0x1' } }),
+    })
+  })
+
   it('recreates census when weightedVote changes', async () => {
     mockBearedFetch.mockResolvedValueOnce({ id: 'census-new' }).mockResolvedValueOnce({ size: 42 })
 

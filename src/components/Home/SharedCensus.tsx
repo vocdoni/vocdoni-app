@@ -143,7 +143,7 @@ const SharedCensusHomeContent = () => {
           </Text>
           <Flex gap={5} flexDirection={{ base: 'column' }}>
             {processIds.map((processId, index) => (
-              <ElectionProvider id={processId} key={processId} autoUpdate autoUpdateInterval={15_000} fetchCensus>
+              <ElectionProvider id={processId} key={processId} queryOptions={{ refetchInterval: 15_000 }} fetchCensus>
                 <ElectionItemList isAdmin={isAdmin} index={index} />
               </ElectionProvider>
             ))}

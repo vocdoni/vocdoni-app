@@ -1,14 +1,7 @@
 import type { ReactNode } from 'react'
-import { render, screen } from '~src/test-utils'
+import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ActionsMenu } from './ActionsMenu'
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useClient: () => ({ account: { address: '0xabc' } }),
-  useElection: () => ({
-    election: { organizationId: '0xabc', status: 'ONGOING' },
-  }),
-  useActions: () => ({ loading: { continue: false, pause: false, end: false, cancel: false } }),
-}))
 
 vi.mock('~components/vocdoni-ui', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('~components/vocdoni-ui')
@@ -23,6 +16,14 @@ vi.mock('~components/vocdoni-ui', async (importOriginal) => {
 })
 
 describe('ActionsMenu', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useClient: () => mockUseClient({ account: { address: '0xabc' } }),
+      useElection: () => mockUseElection({ election: { organizationId: '0xabc', status: 'ONGOING' } }),
+      useActions: () => ({ loading: { continue: false, pause: false, end: false, cancel: false } }),
+    })
+  })
+
   it('renders actions menu button', () => {
     render(<ActionsMenu />)
     expect(screen.getByLabelText('Actions')).toBeInTheDocument()

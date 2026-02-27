@@ -1,7 +1,8 @@
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { EnvOptions } from '@vocdoni/sdk'
-import { PropsWithChildren } from 'react'
+import { setDefaultOptions } from 'date-fns'
+import { PropsWithChildren, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAccount, useWalletClient, WagmiProvider } from 'wagmi'
 import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
@@ -57,19 +58,20 @@ const AppProviders = () => {
   const { data } = useWalletClient()
   const { address } = useAccount()
   const { i18n } = useTranslation()
+  const locale = datesLocale(i18n.language)
 
   let signer = null
   if (data && address && data.account.address === address) {
     signer = walletClientToSigner(data)
   }
 
+  useEffect(() => {
+    setDefaultOptions({ locale })
+  }, [locale])
+
   return (
     <RainbowKitTheme>
-      <ClientProvider
-        env={VocdoniEnvironment as EnvOptions}
-        signer={signer as Signer}
-        datesLocale={datesLocale(i18n.language)}
-      >
+      <ClientProvider env={VocdoniEnvironment as EnvOptions} signer={signer as Signer}>
         <ConnectionToastProvider>
           <SaasProviders>
             <AnalyticsProvider>

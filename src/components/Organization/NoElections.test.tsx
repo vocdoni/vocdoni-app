@@ -1,12 +1,15 @@
-import { render, screen, TestMemoryRouter } from '~src/test-utils'
+import { mockUseClient, mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import NoElections from './NoElections'
 
-vi.mock('@vocdoni/react-providers', () => ({
-  useClient: () => ({ account: { address: '0xabc' } }),
-  useOrganization: () => ({ organization: { address: '0xabc' } }),
-}))
-
 describe('NoElections', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useClient: () => mockUseClient({ account: { address: '0xabc' } }),
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xabc' } }),
+    })
+  })
+
   it('renders the create voting button when user owns the org', () => {
     render(
       <TestMemoryRouter>

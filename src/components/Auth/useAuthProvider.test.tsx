@@ -1,21 +1,11 @@
 import { act, renderHook } from '@testing-library/react'
 import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
-import { AllProviders } from '~src/test-utils'
+import { AllProviders, mockUseClient } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useAuthProvider } from './useAuthProvider'
 
 const clearMock = vi.fn()
 const disconnectMock = vi.fn()
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useClient: () => ({
-    signer: null,
-    setSigner: vi.fn(),
-    fetchAccount: vi.fn(),
-    client: {},
-    setClient: vi.fn(),
-    clear: clearMock,
-  }),
-}))
 
 vi.mock('wagmi', () => ({
   useDisconnect: () => ({ disconnect: disconnectMock }),
@@ -31,6 +21,17 @@ describe('useAuthProvider logout', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     localStorage.clear()
+    setReactProvidersMock({
+      useClient: () =>
+        mockUseClient({
+          signer: null,
+          setSigner: vi.fn(),
+          fetchAccount: vi.fn(),
+          client: {},
+          setClient: vi.fn(),
+          clear: clearMock,
+        }),
+    })
   })
 
   it('clears auth storage keys on logout', () => {

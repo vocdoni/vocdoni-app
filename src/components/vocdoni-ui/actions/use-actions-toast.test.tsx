@@ -1,4 +1,6 @@
 import { renderHook } from '@testing-library/react'
+import { mockUseElection } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useActionsToast } from './use-actions-toast'
 
 const toastFn = vi.fn(() => 'toast-id')
@@ -8,15 +10,6 @@ let actionsState: { info: any; error: any } = {
   info: null,
   error: null,
 }
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useActions: () => actionsState,
-  useElection: () => ({
-    election: {
-      title: { default: 'Test Election' },
-    },
-  }),
-}))
 
 vi.mock('~components/Toast', () => ({
   useToast: () => Object.assign(toastFn, { close: closeFn }),
@@ -37,6 +30,7 @@ vi.mock('react-i18next', () => ({
       return raw
     },
   }),
+  initReactI18next: { type: '3rdParty', init: vi.fn() },
 }))
 
 describe('useActionsToast', () => {
@@ -44,6 +38,10 @@ describe('useActionsToast', () => {
     toastFn.mockClear()
     closeFn.mockClear()
     actionsState = { info: null, error: null }
+    setReactProvidersMock({
+      useActions: () => actionsState,
+      useElection: () => mockUseElection({ election: { title: { default: 'Test Election' } } }),
+    })
   })
 
   it('translates and interpolates action info toasts', () => {

@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event'
 import type { ReactNode } from 'react'
-import { render, screen, TestMemoryRouter } from '~src/test-utils'
+import { mockUseClient, mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { DraftsContextMenu } from './drafts'
 
 vi.mock('react-router-dom', async () => {
@@ -10,15 +11,6 @@ vi.mock('react-router-dom', async () => {
     useNavigate: () => vi.fn(),
   }
 })
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useClient: () => ({
-    account: { address: '0xabc' },
-  }),
-  useOrganization: () => ({
-    organization: { address: '0xorg' },
-  }),
-}))
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({
@@ -47,6 +39,13 @@ vi.mock('react-i18next', () => ({
 }))
 
 describe('DraftsContextMenu', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useClient: () => mockUseClient({ account: { address: '0xabc' } }),
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
+    })
+  })
+
   it('renders the edit draft action when opened', async () => {
     const user = userEvent.setup()
 

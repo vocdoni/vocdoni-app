@@ -5,7 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@vocdoni/sdk': ~0.9.1
   axios: ^1.7.9
 
 importers:
@@ -103,10 +102,10 @@ importers:
         specifier: ^1.0.0-beta.4
         version: 1.0.0-beta.4(31caa0b82e2686b6b8096e6e119e730f)
       '@vocdoni/react-providers':
-        specifier: ^1.0.0-beta.7
-        version: 1.0.0-beta.7(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)
+        specifier: ^1.0.0-beta.8
+        version: 1.0.0-beta.8(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@tanstack/react-query@5.90.16(react@18.3.1))(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)
       '@vocdoni/sdk':
-        specifier: ~0.9.1
+        specifier: ~0.9.3
         version: 0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10)
       '@wagmi/core':
         specifier: ^2.22.1
@@ -127,8 +126,8 @@ importers:
         specifier: ^3.14.2
         version: 3.14.2
       i18next:
-        specifier: ^25.8.7
-        version: 25.8.7(typescript@5.9.3)
+        specifier: ^25.8.13
+        version: 25.8.13(typescript@5.9.3)
       i18next-browser-languagedetector:
         specifier: ^8.2.1
         version: 8.2.1
@@ -155,7 +154,7 @@ importers:
         version: 7.70.0(react@18.3.1)
       react-i18next:
         specifier: ^16.5.4
-        version: 16.5.4(i18next@25.8.7(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
+        version: 16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
       react-icons:
         specifier: ^5.5.0
         version: 5.5.0(react@18.3.1)
@@ -225,7 +224,7 @@ importers:
         version: 4.0.16(vitest@4.0.16)
       i18next-cli:
         specifier: ^1.42.8
-        version: 1.42.8(@swc/helpers@0.5.18)(@types/node@22.19.3)(i18next@25.8.7(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(typescript@5.9.3)
+        version: 1.42.8(@swc/helpers@0.5.18)(@types/node@22.19.3)(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(typescript@5.9.3)
       jsdom:
         specifier: ^27.4.0
         version: 27.4.0(bufferutil@4.1.0)(utf-8-validate@5.0.10)
@@ -2655,14 +2654,17 @@ packages:
       viem: ^2.37.1
       wagmi: ^2.16.9
 
-  '@vocdoni/react-providers@1.0.0-beta.7':
-    resolution: {integrity: sha512-uaXBEHENgKipPhGrak8Aol2eU6G8llJTCFQLH9Jbb7GLDriuNla86yZIicoqQ8IjuCA86Twtmx7CZZKjLHL7Fg==}
+  '@vocdoni/react-providers@1.0.0-beta.8':
+    resolution: {integrity: sha512-bJg+i/3tr39zMuseqdn4FapyZUVW7BIDqNIYylzFGFqQ5/J1VuGgsqP+hmQhvM/23h355+GBRX/Vu5xIu9CriA==}
     peerDependencies:
       '@ethersproject/abstract-signer': ^5.7.0
       '@ethersproject/wallet': ^5.7.0
-      '@vocdoni/sdk': ~0.9.1
+      '@tanstack/react-query': ^5.0.0
+      '@vocdoni/sdk': ~0.9.3
       date-fns: ^4.1.0
+      i18next: ^25.8.13
       react: '>= 16.8.0 <19.0.0'
+      react-i18next: ^16.5.4
       react-router: '>= 6.0.0'
       react-router-dom: '>= 6.0.0'
 
@@ -4245,8 +4247,8 @@ packages:
     resolution: {integrity: sha512-RvATolbJlxrwpZh2+R7ZcNtg0ewmXFFx6rdu9i2bUEBvn6ThgA82rxDe3rJQa3hFS0SopX0qPaABqVDN3TUVpw==}
     hasBin: true
 
-  i18next@25.8.7:
-    resolution: {integrity: sha512-ttxxc5+67S/0hhoeVdEgc1lRklZhdfcUSEPp1//uUG2NB88X3667gRsDar+ZWQFdysnOsnb32bcoMsa4mtzhkQ==}
+  i18next@25.8.13:
+    resolution: {integrity: sha512-E0vzjBY1yM+nsFrtgkjLhST2NBkirkvOVoQa0MSldhsuZ3jUge7ZNpuwG0Cfc74zwo5ZwRzg3uOgT+McBn32iA==}
     peerDependencies:
       typescript: ^5
     peerDependenciesMeta:
@@ -6137,8 +6139,8 @@ packages:
       uploadthing:
         optional: true
 
-  up-fetch@2.5.0:
-    resolution: {integrity: sha512-rzNLKEQqU49+QqPhwcwhYuPL5yZHdJu6UE4gKH5LL+XR0ny8u8UKKHYlePj7973pLb6SWF8ngA+nJsnAvS9iEg==}
+  up-fetch@2.5.1:
+    resolution: {integrity: sha512-/qKHjEMJ9tjWdEmV7OWBQLM8XqEltTQxy9k4Q83ySw+aMm97MtO+hK+5dhWxn8v9Z4qfkJ7DyYrKWkfglJioEA==}
     engines: {node: '>=18'}
 
   update-browserslist-db@1.2.3:
@@ -9836,16 +9838,19 @@ snapshots:
       viem: 2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5)
       wagmi: 2.19.5(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@18.3.1))(@types/react@18.3.27)(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5)
 
-  '@vocdoni/react-providers@1.0.0-beta.7(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)':
+  '@vocdoni/react-providers@1.0.0-beta.8(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@tanstack/react-query@5.90.16(react@18.3.1))(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router@6.30.3(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@ethersproject/abstract-signer': 5.8.0
       '@ethersproject/wallet': 5.8.0
+      '@tanstack/react-query': 5.90.16(react@18.3.1)
       '@vocdoni/sdk': 0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10)
       date-fns: 4.1.0
+      i18next: 25.8.13(typescript@5.9.3)
       react: 18.3.1
+      react-i18next: 16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
       react-router: 6.30.3(react@18.3.1)
       react-router-dom: 6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      up-fetch: 2.5.0
+      up-fetch: 2.5.1
 
   '@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10)':
     dependencies:
@@ -12349,7 +12354,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.28.6
 
-  i18next-cli@1.42.8(@swc/helpers@0.5.18)(@types/node@22.19.3)(i18next@25.8.7(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(typescript@5.9.3):
+  i18next-cli@1.42.8(@swc/helpers@0.5.18)(@types/node@22.19.3)(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(typescript@5.9.3):
     dependencies:
       '@croct/json5-parser': 0.2.2
       '@swc/core': 1.15.11(@swc/helpers@0.5.18)
@@ -12364,7 +12369,7 @@ snapshots:
       minimatch: 10.1.2
       ora: 9.3.0
       react: 19.2.4
-      react-i18next: 16.5.4(i18next@25.8.7(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@19.2.4)(typescript@5.9.3)
+      react-i18next: 16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@19.2.4)(typescript@5.9.3)
       yaml: 2.8.2
     transitivePeerDependencies:
       - '@swc/helpers'
@@ -12383,7 +12388,7 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  i18next@25.8.7(typescript@5.9.3):
+  i18next@25.8.13(typescript@5.9.3):
     dependencies:
       '@babel/runtime': 7.28.6
     optionalDependencies:
@@ -13780,22 +13785,22 @@ snapshots:
     dependencies:
       react: 18.3.1
 
-  react-i18next@16.5.4(i18next@25.8.7(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3):
+  react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3):
     dependencies:
       '@babel/runtime': 7.28.6
       html-parse-stringify: 3.0.1
-      i18next: 25.8.7(typescript@5.9.3)
+      i18next: 25.8.13(typescript@5.9.3)
       react: 18.3.1
       use-sync-external-store: 1.6.0(react@18.3.1)
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
       typescript: 5.9.3
 
-  react-i18next@16.5.4(i18next@25.8.7(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@19.2.4)(typescript@5.9.3):
+  react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@19.2.4)(typescript@5.9.3):
     dependencies:
       '@babel/runtime': 7.28.6
       html-parse-stringify: 3.0.1
-      i18next: 25.8.7(typescript@5.9.3)
+      i18next: 25.8.13(typescript@5.9.3)
       react: 19.2.4
       use-sync-external-store: 1.6.0(react@19.2.4)
     optionalDependencies:
@@ -14516,7 +14521,7 @@ snapshots:
     optionalDependencies:
       idb-keyval: 6.2.2
 
-  up-fetch@2.5.0: {}
+  up-fetch@2.5.1: {}
 
   update-browserslist-db@1.2.3(browserslist@4.28.1):
     dependencies:

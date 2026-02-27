@@ -1,9 +1,10 @@
 import { Box, chakra, Flex, Progress, Text, useSlotRecipe } from '@chakra-ui/react'
-import { useDatesLocale, useElection } from '@vocdoni/react-providers'
+import { useElection } from '@vocdoni/react-providers'
 import { ElectionResultsTypeNames, ElectionStatus, formatUnits, PublishedElection } from '@vocdoni/sdk'
 import { format } from 'date-fns'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
+import { datesLocale } from '~i18n/locales'
 
 const percent = (result: number, total: number) => `${((Number(result) / total) * 100 || 0).toFixed(1)}%`
 
@@ -15,8 +16,8 @@ export const ElectionResults = (props: { forceRender?: boolean } & React.Compone
   const recipe = useSlotRecipe({ key: 'ElectionResults' })
   const styles = recipe()
   const { election } = useElection()
-  const { t } = useTranslation()
-  const locale = useDatesLocale()
+  const { t, i18n } = useTranslation()
+  const locale = datesLocale(i18n.language)
 
   if (!election || !(election instanceof PublishedElection) || election.status === ElectionStatus.CANCELED) return null
 

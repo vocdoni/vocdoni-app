@@ -1,5 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import { mockUseElection } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 // Mock dependencies
@@ -22,13 +24,6 @@ vi.mock('~components/Toast', () => ({
 vi.mock('~components/Auth/Subscription', () => ({
   useSubscription: () => ({
     permission: mockPermission,
-  }),
-}))
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useElection: () => ({
-    election: mockElection,
-    client: { explorerUrl: 'https://explorer.example.com' },
   }),
 }))
 
@@ -68,6 +63,7 @@ vi.mock('react-i18next', () => ({
       return options.defaultValue.replace('{{ count }}', options.count)
     },
   }),
+  initReactI18next: { type: '3rdParty', init: vi.fn() },
 }))
 
 // Helper function to create mock elections
@@ -116,6 +112,13 @@ describe('useCloneAsDraft', () => {
     mockToast.mockReset()
     mockPermission.mockReturnValue(5) // Default draft limit
     mockElection = null
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: mockElection,
+          client: { explorerUrl: 'https://explorer.example.com' },
+        }),
+    })
   })
 
   describe('extendedInfo detection', () => {

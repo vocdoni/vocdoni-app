@@ -1,5 +1,6 @@
 import { LuCalendar } from 'react-icons/lu'
-import { render, screen, TestMemoryRouter, within } from '~src/test-utils'
+import { mockUseClient, mockUseOrganization, render, screen, TestMemoryRouter, within } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import OrganizationDashboard from './index'
 
 const useOrganizationSetupMock = vi.fn()
@@ -11,12 +12,6 @@ vi.mock('@tanstack/react-query', async () => {
     useQuery: () => ({ data: null, isLoading: false, isError: false, error: null }),
   }
 })
-
-vi.mock('@vocdoni/react-providers', () => ({
-  ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  useClient: () => ({ client: {}, account: {} }),
-  useOrganization: () => ({ organization: null }),
-}))
 
 vi.mock('~src/queries/account', () => ({
   useProfile: () => ({ data: { firstName: 'Jane' }, isLoading: false }),
@@ -63,6 +58,14 @@ vi.mock('./UsageLimits', () => ({
 }))
 
 describe('OrganizationDashboard', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+      useClient: () => mockUseClient({ client: {}, account: {} }),
+      useOrganization: () => mockUseOrganization({ organization: null }),
+    })
+  })
+
   it('renders dashboard header', () => {
     useOrganizationSetupMock.mockReturnValue({ checklist: [], progress: 0, isStepsAccordionOpen: false })
     const env = (import.meta as any).env || {}

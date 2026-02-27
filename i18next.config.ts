@@ -11,6 +11,7 @@ export default defineConfig({
     contextSeparator: '_',
     functions: ['t', '*.t'],
     transComponents: ['Trans'],
+    ignoreNamespaces: ['react-providers'],
   },
   types: {
     input: ['src/i18n/locales/{{language}}/{{namespace}}.json'],

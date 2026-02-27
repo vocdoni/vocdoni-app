@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook } from '@testing-library/react'
 import React from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
+import { mockUseOrganization } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useDeleteDraft } from './drafts'
 
 const toastSpy = vi.fn()
@@ -10,12 +12,6 @@ const bearedFetchMock = vi.fn().mockResolvedValue(undefined)
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({
     bearedFetch: bearedFetchMock,
-  }),
-}))
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useOrganization: () => ({
-    organization: { address: '0xorg' },
   }),
 }))
 
@@ -41,6 +37,9 @@ describe('useDeleteDraft', () => {
   beforeEach(() => {
     bearedFetchMock.mockClear()
     toastSpy.mockClear()
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
+    })
   })
 
   it('shows success toast when deleting a draft normally', async () => {

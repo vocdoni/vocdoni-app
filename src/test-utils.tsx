@@ -6,7 +6,7 @@ import { ComponentType, ReactElement, ReactNode } from 'react'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
 import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
-import { ToastProvider } from '~components/Toast'
+import { ToastProvider as BaseToastProvider } from '~components/Toast'
 import { ColorModeProvider } from '~theme/color-mode'
 import { system } from '~theme/system'
 
@@ -42,7 +42,7 @@ export async function createTestI18n({
 }
 
 // Initialize i18n for tests
-i18n.init({
+i18n.use(initReactI18next).init({
   lng: 'en',
   fallbackLng: 'en',
   defaultNS: 'common',
@@ -70,11 +70,47 @@ export const createTestQueryClient = () =>
     },
   })
 
+export const mockUseClient = (overrides: Record<string, unknown> = {}) => ({
+  connected: false,
+  account: null,
+  client: {},
+  ...overrides,
+})
+
+export const mockUseElection = (overrides: Record<string, unknown> = {}) => ({
+  election: null,
+  connected: false,
+  loading: {},
+  errors: {},
+  ...overrides,
+})
+
+export const mockUseOrganization = (overrides: Record<string, unknown> = {}) => ({
+  organization: null,
+  ...overrides,
+})
+
+export const withReactProvidersMocks = (overrides?: {
+  useClient?: Record<string, unknown>
+  useElection?: Record<string, unknown>
+  useOrganization?: Record<string, unknown>
+}) => ({
+  useClient: () => mockUseClient(overrides?.useClient),
+  useElection: () => mockUseElection(overrides?.useElection),
+  useOrganization: () => mockUseOrganization(overrides?.useOrganization),
+})
+
 interface AllProvidersProps {
   children: ReactNode
   queryClient?: QueryClient
   i18nInstance?: typeof i18n
   innerWrapper?: ComponentType<{ children: ReactNode }>
+}
+
+const TestToastProvider = ({ children }: { children: ReactNode }) => {
+  const ToastProvider =
+    BaseToastProvider ?? (({ children: innerChildren }: { children: ReactNode }) => <>{innerChildren}</>)
+  return <ToastProvider>{children}</ToastProvider>
 }
 
 // Wrapper component with all providers needed for tests
@@ -91,9 +127,9 @@ export function AllProviders({
       <ChakraProvider value={system}>
         <I18nextProvider i18n={i18nInstance}>
           <QueryClientProvider client={queryClient}>
-            <ToastProvider>
+            <TestToastProvider>
               <ConnectionToastProvider>{content}</ConnectionToastProvider>
-            </ToastProvider>
+            </TestToastProvider>
           </QueryClientProvider>
         </I18nextProvider>
       </ChakraProvider>

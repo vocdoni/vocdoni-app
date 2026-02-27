@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render } from '~src/test-utils'
 import type { ReactNode } from 'react'
 
 vi.mock('wagmi', () => ({

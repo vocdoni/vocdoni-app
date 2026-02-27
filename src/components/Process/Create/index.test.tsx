@@ -1,5 +1,6 @@
 import { renderHook } from '@testing-library/react'
 import { Election, MultiChoiceElection, PlainCensus, Census as SDKCensus } from '@vocdoni/sdk'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { Process, SelectorTypes } from './common'
 import { useFormToElectionMapper } from './index'
@@ -19,11 +20,6 @@ vi.mock('~utils/analytics', () => ({
 }))
 
 // Mock other dependencies that are not needed for testing the mapper
-vi.mock('@vocdoni/react-providers', () => ({
-  useClient: vi.fn(),
-  useOrganization: vi.fn(),
-}))
-
 vi.mock('~components/AnalyticsProvider', () => ({
   useAnalytics: () => ({
     track: vi.fn(),
@@ -55,6 +51,10 @@ describe('useFormToElectionMapper', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    setReactProvidersMock({
+      useClient: vi.fn(),
+      useOrganization: vi.fn(),
+    })
 
     // Default: all permissions allowed
     mockPermission.mockReturnValue(true)

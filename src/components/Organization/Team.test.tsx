@@ -1,16 +1,10 @@
-import { render, screen } from '~src/test-utils'
+import { mockUseClient, render, screen } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({
     bearedFetch: vi.fn(),
   }),
-}))
-
-vi.mock('@vocdoni/react-providers', () => ({
-  useClient: () => ({
-    account: { address: '0xabc' },
-  }),
-  enforceHexPrefix: (value: string) => value,
 }))
 
 vi.mock('@tanstack/react-query', async (importOriginal) => {
@@ -26,6 +20,16 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
 })
 
 describe('OrganizationUsers', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useClient: () =>
+        mockUseClient({
+          account: { address: '0xabc' },
+          enforceHexPrefix: (value: string) => value,
+        }),
+    })
+  })
+
   it('renders an empty state when no users exist', async () => {
     const TeamModule = await import('./Team')
     render(<TeamModule.OrganizationUsers />)

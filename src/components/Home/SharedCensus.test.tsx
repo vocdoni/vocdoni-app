@@ -3,6 +3,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import SimpleLayout from '~elements/SimpleLayout'
 import { act, render, TestMemoryRouter } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
@@ -36,20 +37,6 @@ const states = {
   client: getDefaultClientState(),
   organization: getDefaultOrganizationState().organization,
 }
-
-vi.mock('@vocdoni/react-providers', () => ({
-  ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  OrganizationProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  useElection: () => states.election,
-  useClient: () => states.client,
-  useOrganization: () => ({ organization: states.organization }),
-  __setElectionState: (next: Partial<typeof states.election>) =>
-    Object.assign(states.election, getDefaultElectionState(), next),
-  __setClientState: (next: Partial<typeof states.client>) =>
-    Object.assign(states.client, getDefaultClientState(), next),
-  __setOrganizationState: (next: Partial<typeof states.organization>) =>
-    Object.assign(states.organization, getDefaultOrganizationState(), next),
-}))
 
 vi.mock('@vocdoni/sdk', () => ({
   InvalidElection: class InvalidElection {},
@@ -172,6 +159,11 @@ describe('SharedCensus', () => {
     i18nState.resolvedLanguage = 'en'
     i18nState.language = 'en'
     rafSpy.mockClear()
+    setReactProvidersMock({
+      useElection: () => states.election,
+      useClient: () => states.client,
+      useOrganization: () => ({ organization: states.organization }),
+    })
   })
 
   afterEach(() => {

@@ -1,9 +1,10 @@
 import { chakra, useRecipe, type HTMLChakraProps } from '@chakra-ui/react'
 import { forwardRef } from 'react'
-import { useDatesLocale, useElection } from '@vocdoni/react-providers'
+import { useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format, formatDistance } from 'date-fns'
 import { useTranslation } from 'react-i18next'
+import { datesLocale } from '~i18n/locales'
 
 export type ElectionScheduleProps = HTMLChakraProps<'h2'> & {
   format?: string
@@ -16,8 +17,8 @@ export const ElectionSchedule = forwardRef<HTMLHeadingElement, ElectionScheduleP
     const recipe = useRecipe({ key: 'ElectionSchedule' })
     const styles = recipe()
     const { election } = useElection()
-    const locale = useDatesLocale()
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const locale = datesLocale(i18n.language)
     if (!election || !(election instanceof PublishedElection)) return null
 
     const getRemaining = () => {
