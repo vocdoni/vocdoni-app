@@ -305,7 +305,7 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
         as='form'
         onSubmit={handleSubmit}
         endElement={
-          <IconButton size='xs' aria-label='search' type='submit'>
+          <IconButton size='xs' variant='plain' aria-label='search' type='submit'>
             <Icon as={LuSearch} />
           </IconButton>
         }
