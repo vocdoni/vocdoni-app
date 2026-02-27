@@ -147,7 +147,7 @@ export const QuestionType = () => {
                     options={options}
                     placeholder={t('process.question_type.single', 'Single choice')}
                     menuPortalTarget={document.body}
-                    styles={{ container: (p) => ({ ...p, width: 'max-content', maxWidth: '100%' }) }}
+                    chakraStyles={{ container: (p) => ({ ...p, width: 'max-content', maxWidth: '100%' }) }}
                   />
                   <MultichoiceWarningModal
                     open={isWarningModalOpen}
