@@ -38,10 +38,6 @@ const sizes = defineTokens.sizes({
     default: { value: '255px' },
     reduced: { value: '48px' },
   },
-  'dashboard-content': {
-    default: { value: `calc(100vw - 255px)` },
-    reduced: { value: `calc(100vw - 48px)` },
-  },
   'max-window-width': { value: '2560px' },
   'max-content-width': { value: '1200px' },
   navbar: { value: '1920px' },
