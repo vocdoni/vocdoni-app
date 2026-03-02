@@ -28,6 +28,8 @@ describe('ImportProgress', () => {
   it('renders completed status', () => {
     render(<ImportProgress />)
 
-    expect(screen.getByText('Import Completed Successfully')).toBeInTheDocument()
+    expect(screen.getByText('Your member data has been imported successfully.')).toBeInTheDocument()
+    expect(screen.getByText('You may now start using your imported members.')).toBeInTheDocument()
+    expect(screen.queryByText('Import Completed Successfully')).not.toBeInTheDocument()
   })
 })
