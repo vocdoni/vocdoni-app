@@ -713,9 +713,8 @@
     "error_modal_title": "Import Errors",
     "error_title": "Import Error",
     "note": "You can safely close this page. An email will be sent to you upon completion.",
-    "success_description": "Your member data has been imported successfully.",
-    "success_note": "You may now start using your imported members.",
-    "success_title": "Import Completed Successfully",
+    "success_description": "You may now start using your imported members.",
+    "success_title": "Your member data has been imported successfully.",
     "title": "Memberbase Import in Progress",
     "view_errors_one": "View {{count}} error",
     "view_errors_other": "View {{count}} errors"

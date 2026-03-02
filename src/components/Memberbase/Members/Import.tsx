@@ -147,7 +147,8 @@ export const ImportProgress = () => {
   const ImportTitle = () => {
     if (isComplete && hasErrors)
       return <Trans i18nKey='import_progress.completed_with_errors' defaults='Import Completed with Errors' />
-    if (isComplete) return <Trans i18nKey='import_progress.success_title' defaults='Import Completed Successfully' />
+    if (isComplete)
+      return <Trans i18nKey='import_progress.success_title' defaults='Your member data has been imported successfully.' />
     if (isError) return <Trans i18nKey='import_progress.error_title' defaults='Import Error' />
 
     return <Trans i18nKey='import_progress.title' defaults='Memberbase Import in Progress' />
@@ -174,18 +175,11 @@ export const ImportProgress = () => {
 
     if (isComplete) {
       return (
-        <>
-          <Text>
-            {t('import_progress.success_description', {
-              defaultValue: 'Your member data has been imported successfully.',
-            })}
-          </Text>
-          <Text fontSize='sm'>
-            {t('import_progress.success_note', {
-              defaultValue: 'You may now start using your imported members.',
-            })}
-          </Text>
-        </>
+        <Text>
+          {t('import_progress.success_description', {
+            defaultValue: 'You may now start using your imported members.',
+          })}
+        </Text>
       )
     }
 
