@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
+import { Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-providers'
 import { Account } from '@vocdoni/sdk'
@@ -108,16 +108,6 @@ const EditOrganization = () => {
               })}
             </Text>
           </Flex>
-          <Box>
-            <Text fontWeight='bold' fontSize='lg'>
-              {t('create_org.public_info', { defaultValue: 'Public Profile' })}
-            </Text>
-            <Text color='texts.subtle' fontSize='sm' mb={4}>
-              {t('create_org.public_info_description', {
-                defaultValue: 'This information is shown in various places including the voting pages.',
-              })}
-            </Text>
-          </Box>
           <Flex gap={6} flexDirection={{ base: 'column', sm: 'row' }}>
             <AvatarUploader w='fit-content' />
             <PublicOrgForm />

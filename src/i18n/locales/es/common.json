@@ -130,8 +130,6 @@
     "organization_details_description": "Gestiona el perfil y la configuración de tu organización.",
     "private_org": "Otros detalles",
     "private_org_description": "Ayúdanos a personalizar tu experiencia con información sobre tu organización. No compartiremos estos datos.",
-    "public_info": "Perfil público",
-    "public_info_description": "Esta información se muestra en varios lugares, incluidas las páginas de votación.",
     "subtitle": "Reduce costes, ahorra tiempo: seguro, privado y conforme al RGPD",
     "title": "Cuéntanos sobre tu organización"
   },
