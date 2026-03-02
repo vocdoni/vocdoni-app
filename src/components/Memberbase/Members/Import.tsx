@@ -148,7 +148,9 @@ export const ImportProgress = () => {
     if (isComplete && hasErrors)
       return <Trans i18nKey='import_progress.completed_with_errors' defaults='Import Completed with Errors' />
     if (isComplete)
-      return <Trans i18nKey='import_progress.success_title' defaults='Your member data has been imported successfully.' />
+      return (
+        <Trans i18nKey='import_progress.success_title' defaults='Your member data has been imported successfully.' />
+      )
     if (isError) return <Trans i18nKey='import_progress.error_title' defaults='Import Error' />
 
     return <Trans i18nKey='import_progress.title' defaults='Memberbase Import in Progress' />
