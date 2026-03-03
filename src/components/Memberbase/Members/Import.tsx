@@ -338,11 +338,9 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
         <Flex flexDirection='column' gap={4}>
           {columns.map(({ id, label }) => (
             <FormControl key={id}>
-              <Flex gap={3} align='center'>
-                <FormLabel htmlFor={id} flex='1'>
-                  {label}
-                </FormLabel>
-                <Box flex='1'>
+              <Flex gap={3} justifyContent='space-between' w='full'>
+                <FormLabel htmlFor={id}>{label}</FormLabel>
+                <Box>
                   <Select
                     id={id}
                     name={id}
