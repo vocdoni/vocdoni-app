@@ -130,8 +130,6 @@
     "organization_details_description": "Gestiona el perfil i la configuració de la teva organització.",
     "private_org": "Detalls privats de l'organització",
     "private_org_description": "Ajuda'ns a adaptar la teva experiència amb informació sobre la teva organització. No compartirem aquesta informació.",
-    "public_info": "Perfil públic",
-    "public_info_description": "Aquesta informació es mostra en diversos llocs, incloses les pàgines de votació.",
     "subtitle": "Aquesta informació ens ajuda a personalitzar la teva experiència",
     "title": "Crea la teva organització"
   },
