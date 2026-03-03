@@ -44,7 +44,13 @@ const sizes = defineTokens.sizes({
   navbar: { value: '1920px' },
   sidebar: { value: sidebarWidth },
   'user-profile': { value: '280px' },
-  'voting-page': { value: '1200px' },
+  voting: {
+    sidebar: { value: '360px' },
+    contents: {
+      min: { value: 'calc(640px + var(--chakra-sizes-voting-sidebar))' },
+      max: { value: '1200px' },
+    },
+  },
 })
 
 const zIndex = defineTokens.zIndex({

@@ -57,6 +57,14 @@ export const ElectionQuestions = defineSlotRecipe({
   variants: {
     layout: {
       list: {
+        container: {
+          '& + &': {
+            mt: 10,
+          },
+        },
+        title: {
+          mb: 0,
+        },
         stack: {
           display: 'flex',
           flexDirection: 'column',
@@ -64,6 +72,14 @@ export const ElectionQuestions = defineSlotRecipe({
         },
       },
       grid: {
+        container: {
+          '& + &': {
+            mt: 10,
+          },
+        },
+        title: {
+          mb: 0,
+        },
         stack: {
           display: 'grid',
           gridTemplateColumns: {

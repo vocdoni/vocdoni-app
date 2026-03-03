@@ -165,7 +165,11 @@ const ProcessInfoPanel = () => {
       />
       <ProcessInfoCard
         label={t('process.voting_type', { defaultValue: 'Voting method' })}
-        description={<VotingMethod />}
+        description={
+          <Text size='sm' color='texts.subtle'>
+            <VotingMethod />
+          </Text>
+        }
       />
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
       {election?.status === ElectionStatus.PAUSED && election?.organizationId !== account?.address && (
@@ -242,11 +246,12 @@ export const ProcessView = () => {
 
   return (
     <Grid
-      templateColumns={{ base: '1fr', xl: 'minmax(0,1fr) 360px' }}
+      templateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
       gap={10}
       alignItems='start'
       mx='auto'
-      maxW='voting-page'
+      minW='voting.contents.min'
+      maxW='voting.contents.max'
     >
       <GridItem>
         <Flex direction='column' gap={4}>
