@@ -1,4 +1,4 @@
-import { Box, chakra, Text, TextareaProps, useRecipe } from '@chakra-ui/react'
+import { Box, chakra, TextareaProps, useRecipe } from '@chakra-ui/react'
 import { CodeHighlightNode, CodeNode } from '@lexical/code'
 import { AutoLinkNode, LinkNode } from '@lexical/link'
 import { ListItemNode, ListNode } from '@lexical/list'
@@ -20,7 +20,9 @@ import { useState } from 'react'
 
 import editor from '~theme/editor'
 import { FloatingLinkEditorPlugin, FloatingTextFormatToolbarPlugin } from './plugins'
+import MarkdownValuePlugin from './plugins/MarkdownValuePlugin'
 import OnChangeMarkdown from './plugins/OnChangeMarkdown'
+import PlaceholderPlugin from './plugins/PlaceholderPlugin'
 import ReadOnlyPlugin from './plugins/ReadOnlyPlugin'
 
 type EditorProps = {
@@ -68,37 +70,38 @@ const MarkdownEditor = (props: EditorProps) => {
   const isUnstyled = props.variant === ('unstyled' as EditorProps['variant'])
   const recipe = useRecipe({ key: 'textarea' })
   const textareaStyles = isUnstyled ? undefined : recipe(props)
+  const onChange = props.onChange ?? (() => {})
 
   return (
     <>
-      <Box position='relative' w='full'>
+      <Box position='relative' w='full' display='grid'>
         <RichTextPlugin
           contentEditable={
-            <Box ref={setFloatingAnchorElem} w='full'>
+            <Box ref={setFloatingAnchorElem} w='full' gridArea='1 / 1'>
               <ChakraContentEditable
                 aria-multiline='true'
                 overflow='auto'
                 role='textbox'
                 minH='30px'
+                w='full'
+                h='full'
                 css={[textareaStyles, editor]}
               />
             </Box>
           }
           aria-placeholder={props.placeholder}
-          placeholder={
-            <Text position='absolute' top={0} pointerEvents='none' css={textareaStyles} data-placeholder>
-              {props.placeholder}
-            </Text>
-          }
+          placeholder={<></>}
           ErrorBoundary={LexicalErrorBoundary}
         />
+        <PlaceholderPlugin placeholder={props.placeholder} textareaStyles={textareaStyles} />
       </Box>
 
       <HistoryPlugin />
       <ListPlugin />
       <LinkPlugin />
       <ReadOnlyPlugin isDisabled={props.isDisabled} />
-      <OnChangeMarkdown onChange={props.onChange} transformers={TRANSFORMERS} />
+      <MarkdownValuePlugin value={props.value} transformers={TRANSFORMERS} />
+      <OnChangeMarkdown onChange={onChange} transformers={TRANSFORMERS} />
       {props.maxLength && props.maxLength > 0 && <CharacterLimitPlugin maxLength={props.maxLength} charset='UTF-8' />}
       {floatingAnchorElem && !props.isDisabled && (
         <>
@@ -116,7 +119,7 @@ const MarkdownEditor = (props: EditorProps) => {
 }
 
 const Editor = (props: EditorProps) => {
-  const initialMarkdown = props.defaultValue ?? ''
+  const initialMarkdown = props.value ?? props.defaultValue ?? ''
 
   const settings = {
     namespace: '',

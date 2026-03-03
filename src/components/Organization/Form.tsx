@@ -30,6 +30,7 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
               render={({ field }) => (
                 <Editor
                   onChange={field.onChange}
+                  value={field.value}
                   variant='outline'
                   padding={4}
                   placeholder={t('form.account_create.description_placeholder')}
