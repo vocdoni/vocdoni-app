@@ -33,7 +33,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "@untitled-ui/icons-react": "^0.1.4",
     "@vocdoni/rainbowkit-wallets": "^1.0.0-beta.4",
-    "@vocdoni/react-providers": "^1.0.0-beta.8",
+    "@vocdoni/react-providers": "^1.0.0-beta.9",
     "@vocdoni/sdk": "~0.9.3",
     "@wagmi/core": "^2.22.1",
     "chakra-react-select": "^6.1.1",

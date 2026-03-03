@@ -1512,7 +1512,6 @@
     "anon_sik_helper": "Esto garantiza que el voto sea anónimo",
     "anon_sik_label": "Define una contraseña para tu voto",
     "close": "Cerrar",
-    "logout": "",
     "modal_title": "Autenticación"
   },
   "start_date": "Fecha de inicio",

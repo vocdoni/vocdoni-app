@@ -170,7 +170,7 @@ export const SpreadsheetAccess = ({ hashPrivateKey, ...rest }: SpreadsheetAccess
   if (connected) {
     return (
       <Button onClick={logout} css={styles.disconnect} disabled={voting}>
-        {t('spreadsheet.logout')}
+        {t('logout')}
       </Button>
     )
   }

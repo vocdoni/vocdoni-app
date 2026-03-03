@@ -1489,7 +1489,6 @@
     "anon_sik_helper": "This ensures the vote to be anonymous",
     "anon_sik_label": "Define a password for your vote",
     "close": "Close",
-    "logout": "spreadsheet.logout",
     "modal_title": "Authentication"
   },
   "start_date": "Start date",
