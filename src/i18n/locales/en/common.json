@@ -1541,8 +1541,7 @@
       "remove_user": "Remove user",
       "resend_invitation": "Resend Invitation",
       "resend_invitation_error": "Error resending invitation",
-      "resend_invitation_success": "Invitation resent to {{email}} successfully",
-      "title": "Actions"
+      "resend_invitation_success": "Invitation resent to {{email}} successfully"
     },
     "cancel_invitation": {
       "cancel": "Cancel",

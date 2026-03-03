@@ -1564,8 +1564,7 @@
       "remove_user": "Eliminar usuario",
       "resend_invitation": "Reenviar invitación",
       "resend_invitation_error": "Error al reenviar la invitación",
-      "resend_invitation_success": "La invitación se ha reenviado correctamente a {{email}}",
-      "title": "Acciones"
+      "resend_invitation_success": "La invitación se ha reenviado correctamente a {{email}}"
     },
     "cancel_invitation": {
       "cancel": "Cancelar",

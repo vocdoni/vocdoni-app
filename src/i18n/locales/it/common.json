@@ -1564,8 +1564,7 @@
       "remove_user": "Rimuovi utente",
       "resend_invitation": "Reinvia Invito",
       "resend_invitation_error": "Errore durante il rinvio dell'invito",
-      "resend_invitation_success": "Invito rinviato a {{email}} con successo",
-      "title": "Azioni"
+      "resend_invitation_success": "Invito rinviato a {{email}} con successo"
     },
     "cancel_invitation": {
       "cancel": "Annulla",

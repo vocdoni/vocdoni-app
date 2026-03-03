@@ -596,19 +596,11 @@ const PendingInvitationActions = ({ user, closeMenu, openCancelInvitation }: Pen
 
   return (
     <>
-      <Menu.Item value='resend-invitation' fontSize='sm' disabled={isLoading} onClick={resendInvitationHandler}>
-        <HStack gap={2}>
-          {isLoading ? <Spinner size='xs' /> : <Icon as={LuRefreshCw} />}
-          <Text as='span'>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Text>
-        </HStack>
+      <Menu.Item value='resend-invitation' disabled={isLoading} onClick={resendInvitationHandler}>
+        {isLoading ? <Spinner size='xs' /> : <Icon as={LuRefreshCw} />}
+        <Box>{t('team.actions.resend_invitation', { defaultValue: 'Resend Invitation' })}</Box>
       </Menu.Item>
-      <Menu.Item
-        value='cancel-invitation'
-        color='red'
-        fontSize='sm'
-        disabled={isLoading}
-        onClick={openCancelInvitation}
-      >
+      <Menu.Item value='cancel-invitation' color='red.400' disabled={isLoading} onClick={openCancelInvitation}>
         {t('team.actions.cancel_invitation', { defaultValue: 'Cancel Invitation' })}
       </Menu.Item>
     </>
@@ -621,10 +613,8 @@ const ActiveUserActions = ({ openChangeRole, openRemoveUser }: ActiveUserActions
   return (
     <>
       <Menu.Item value='change-role' onClick={openChangeRole} fontSize='sm'>
-        <HStack gap={2}>
-          <Icon boxSize={4} as={LuUserCog} />
-          <Text as='span'>{t('team.actions.change_role', { defaultValue: 'Change role' })}</Text>
-        </HStack>
+        <Icon boxSize={4} as={LuUserCog} />
+        <Box>{t('team.actions.change_role', { defaultValue: 'Change role' })}</Box>
       </Menu.Item>
       <Menu.Separator />
       <Menu.Item value='remove-user' color='red.400' fontSize='sm' onClick={openRemoveUser}>
@@ -680,7 +670,6 @@ const UserActions = ({ user }: UserActionsProps) => {
         <Menu.Positioner>
           <Menu.Content minW='unset'>
             <Menu.ItemGroup>
-              <Menu.ItemGroupLabel>{t('team.actions.title', { defaultValue: 'Actions' })}</Menu.ItemGroupLabel>
               {isActiveUser(user) ? (
                 <ActiveUserActions openChangeRole={openChangeRole} openRemoveUser={openRemoveUser} />
               ) : (
