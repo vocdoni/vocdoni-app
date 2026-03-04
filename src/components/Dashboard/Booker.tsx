@@ -70,7 +70,7 @@ export const BookerModalButton = ({
   )
 
   return (
-    <Dialog.Root size='full'>
+    <Dialog.Root size='xl'>
       <Dialog.Trigger asChild>{triggerNode}</Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop />
