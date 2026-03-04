@@ -17,20 +17,20 @@ export type Group = {
 }
 
 export type GroupsResponse = {
-  currentPage: number
-  totalPages: number
   groups: Group[]
+} & PaginationResponse
+
+export const getNextGroupsPageParam = (lastPage: GroupsResponse) => {
+  const { currentPage, lastPage: lastPageNumber } = lastPage.pagination
+  if (currentPage < lastPageNumber) return currentPage + 1
+  return undefined
 }
 
 export type GroupMembers = {
   members: Partial<Member>[]
-  currentPage: number
-  totalPages: number
-}
-
-export type GroupMembersQueryData = {
-  members: Partial<Member>[]
 } & PaginationResponse
+
+export type GroupMembersQueryData = GroupMembers
 
 export type GroupData = {
   title: string
@@ -52,10 +52,7 @@ export const useGroups = (limit: number = 6) => {
         ApiEndpoints.OrganizationGroups.replace('{address}', enforceHexPrefix(organization?.address)) +
           `?page=${pageParam}&limit=${limit}`
       ),
-    getNextPageParam: (lastPage) => {
-      if (lastPage.currentPage < lastPage.totalPages) return lastPage.currentPage + 1
-      return undefined
-    },
+    getNextPageParam: (lastPage) => getNextGroupsPageParam(lastPage),
     select: (data) => data.pages.flatMap((page) => page.groups),
   })
 }
