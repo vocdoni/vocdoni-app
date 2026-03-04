@@ -1,7 +1,9 @@
-import { Button, CloseButton, Dialog, Flex, List, Portal, Text, useSlotRecipe } from '@chakra-ui/react'
+import { Button, CloseButton, Dialog, Flex, Heading, Icon, List, Portal, Text, useSlotRecipe } from '@chakra-ui/react'
 import { ElectionResultsTypeNames, IQuestion, PublishedElection } from '@vocdoni/sdk'
+import { ReactNode } from 'react'
 import { FieldValues } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { FaCircleCheck } from 'react-icons/fa6'
 import { useConfirm } from '~components/vocdoni-ui'
 
 export const ConfirmVoteModal = ({ election, answers }: { election: PublishedElection; answers: FieldValues }) => {
@@ -19,39 +21,30 @@ export const ConfirmVoteModal = ({ election, answers }: { election: PublishedEle
             <Dialog.CloseTrigger asChild>
               <CloseButton />
             </Dialog.CloseTrigger>
-            <Dialog.Header>
-              <Dialog.Title>{t('process.spreadsheet.confirm.description')}</Dialog.Title>
+            <Dialog.Header flexDirection='column'>
+              <Heading variant='header'>{election.title.default}</Heading>
+              <Text variant='subheader'>
+                {t('process.spreadsheet.confirm.election_title', {
+                  defaultValue: 'Your vote has been recorded for:',
+                })}
+              </Text>
             </Dialog.Header>
             <Dialog.Body>
-              <Flex direction='column' gap={2} border='1px solid' borderColor='table.border' borderRadius='lg' p={4}>
-                <Text fontSize='sm' color='texts.subtle'>
-                  {t('process.spreadsheet.confirm.election_title', {
-                    defaultValue: 'Your vote has been recorded for:',
-                  })}
-                </Text>
-                <Text fontWeight='extrabold'>{election.title.default}</Text>
-              </Flex>
-              <Text fontWeight='extrabold'>
-                {t('process.spreadsheet.confirm.your_selections', { defaultValue: 'Your Selections:' })}
-              </Text>
-              <Flex direction='column' gap={2} border='1px solid' borderColor='table.border' borderRadius='lg' p={4}>
-                {election.questions.map((q, i) => (
-                  <Flex key={i} direction='column' gap={2}>
-                    <Text fontWeight='extrabold'>{q.title.default}</Text>
-                    {election.resultsType.name === ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION ? (
-                      <ConfirmQuestion question={q} answers={answers} index={i} />
-                    ) : (
-                      <ConfirmMultichoice question={q} answers={answers} />
-                    )}
-                  </Flex>
-                ))}
+              <Flex direction='column' gap={3}>
+                {election.questions.map((q, i) =>
+                  election.resultsType.name === ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION ? (
+                    <ConfirmQuestion key={i} question={q} answers={answers} index={i} />
+                  ) : (
+                    <ConfirmMultichoice key={i} question={q} answers={answers} />
+                  )
+                )}
               </Flex>
             </Dialog.Body>
             <Dialog.Footer>
-              <Button onClick={cancel!} variant='ghost' css={styles.cancel}>
+              <Button onClick={cancel!} variant='ghost' css={styles.cancel} flex='1'>
                 {t('confirm.cancel')}
               </Button>
-              <Button onClick={proceed!} css={styles.confirm}>
+              <Button onClick={proceed!} css={styles.confirm} flex='1'>
                 {t('confirm.confirm')}
               </Button>
             </Dialog.Footer>
@@ -61,6 +54,15 @@ export const ConfirmVoteModal = ({ election, answers }: { election: PublishedEle
     </Dialog.Root>
   )
 }
+
+const ConfirmQuestionRow = ({ children }: { children: ReactNode }) => (
+  <Flex border='1px solid' borderColor='border.dashboard' borderRadius='lg' p={4} gap={3} align='flex-start'>
+    <Icon as={FaCircleCheck} mt={1} />
+    <Flex direction='column' gap={1} flex='1'>
+      {children}
+    </Flex>
+  </Flex>
+)
 
 const ConfirmMultichoice = ({ question, answers }: { question: IQuestion; answers: FieldValues }) => {
   const { t } = useTranslation()
@@ -77,9 +79,10 @@ const ConfirmMultichoice = ({ question, answers }: { question: IQuestion; answer
   }
 
   return (
-    <Flex direction='column' gap={1}>
+    <ConfirmQuestionRow>
+      <Text fontWeight='extrabold'>{question.title.default}</Text>
       {answers[0].length === 0 ? (
-        <Text>{t('process.spreadsheet.confirm.blank_vote')}</Text>
+        <Text color='texts.subtle'>{t('process.spreadsheet.confirm.blank_vote')}</Text>
       ) : (
         <List.Root display='flex' flexDirection='column' gap={1} pl={4} listStyleType='disc'>
           {answers[0].map((answer: string) => (
@@ -89,7 +92,7 @@ const ConfirmMultichoice = ({ question, answers }: { question: IQuestion; answer
           ))}
         </List.Root>
       )}
-    </Flex>
+    </ConfirmQuestionRow>
   )
 }
 
@@ -101,10 +104,9 @@ const ConfirmQuestion = ({
   question: IQuestion
   answers: FieldValues
   index: number
-}) => {
-  return (
-    <Flex direction='column' gap={1}>
-      {question.choices[Number(answers[index])].title.default}
-    </Flex>
-  )
-}
+}) => (
+  <ConfirmQuestionRow>
+    <Text fontWeight='extrabold'>{question.title.default}</Text>
+    <Text color='texts.subtle'>{question.choices[Number(answers[index])].title.default}</Text>
+  </ConfirmQuestionRow>
+)

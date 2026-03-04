@@ -1222,9 +1222,7 @@
     "spreadsheet": {
       "confirm": {
         "blank_vote": "Nessuna scelta selezionata, invio voto in bianco",
-        "description": "Prima di esprimere il voto controlla che tutto sia corretto.",
-        "election_title": "Il tuo voto sarà registrato per:",
-        "your_selections": "Le tue selezioni:"
+        "election_title": "Il tuo voto sarà registrato per:"
       }
     },
     "status": {

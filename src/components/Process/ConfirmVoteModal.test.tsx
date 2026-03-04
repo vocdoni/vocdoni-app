@@ -1,4 +1,4 @@
-import { Button, Dialog } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 import { ElectionResultsTypeNames, PublishedElection } from '@vocdoni/sdk'
 import { FieldValues } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'

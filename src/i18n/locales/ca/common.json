@@ -1222,9 +1222,7 @@
     "spreadsheet": {
       "confirm": {
         "blank_vote": "No s'han seleccionat opcions, enviant vot en blanc",
-        "description": "Abans de votar, reviseu que tot sigui correcte.",
-        "election_title": "El teu vot quedarà enregistrat així:",
-        "your_selections": "Les teves seleccions:"
+        "election_title": "El teu vot quedarà enregistrat així:"
       }
     },
     "status": {

@@ -1199,9 +1199,7 @@
     "spreadsheet": {
       "confirm": {
         "blank_vote": "No choices selected, sending blank vote",
-        "description": "Before casting your vote review that everything is correct.",
-        "election_title": "Your vote will be recorded for:",
-        "your_selections": "Your Selections:"
+        "election_title": "Your vote will be recorded for:"
       }
     },
     "status": {
