@@ -1,4 +1,4 @@
-import { Box, Code, Heading, Link, Text, chakra } from '@chakra-ui/react'
+import { Box, Code, Heading, Link, List, Table, Text, chakra } from '@chakra-ui/react'
 import ReactMarkdown, { type Options } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
@@ -27,9 +27,17 @@ const defaultComponents: NonNullable<Options['components']> = {
       {children}
     </Heading>
   ),
-  ol: ({ children, ...props }) => <chakra.ol {...props}>{children}</chakra.ol>,
-  ul: ({ children, ...props }) => <chakra.ul {...props}>{children}</chakra.ul>,
-  li: ({ children, ...props }) => <chakra.li {...props}>{children}</chakra.li>,
+  ol: ({ children, ...props }) => (
+    <List.Root as='ol' {...props}>
+      {children}
+    </List.Root>
+  ),
+  ul: ({ children, ...props }) => (
+    <List.Root as='ul' {...props}>
+      {children}
+    </List.Root>
+  ),
+  li: ({ children, ...props }) => <List.Item {...props}>{children}</List.Item>,
   p: ({ children, ...props }) => (
     <Text fontWeight='medium' mb={4} {...props}>
       {children}
@@ -40,9 +48,9 @@ const defaultComponents: NonNullable<Options['components']> = {
       <chakra.table {...props}>{children}</chakra.table>
     </Box>
   ),
-  tr: ({ children, ...props }) => <chakra.tr {...props}>{children}</chakra.tr>,
-  th: ({ children, ...props }) => <chakra.th {...props}>{children}</chakra.th>,
-  td: ({ children, ...props }) => <chakra.td {...props}>{children}</chakra.td>,
+  tr: ({ children, ...props }) => <Table.Row {...props}>{children}</Table.Row>,
+  th: ({ children, ...props }) => <Table.ColumnHeader {...props}>{children}</Table.ColumnHeader>,
+  td: ({ children, ...props }) => <Table.Cell {...props}>{children}</Table.Cell>,
   code: ({ children, ...props }) => <Code {...props}>{children}</Code>,
 }
 

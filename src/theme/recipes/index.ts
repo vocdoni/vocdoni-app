@@ -23,6 +23,7 @@ import {
 } from './election'
 import { EllipsisButton } from './ellipsisButton'
 import { formLabel, input, switchRecipe, textarea } from './form'
+import { listSlotRecipe } from './list'
 import { Menu } from './menu'
 import { OrganizationDescription, OrganizationImage, OrganizationName } from './organization'
 import { Pagination, PaginationButton } from './pagination'
@@ -65,6 +66,7 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   card: Card,
   checkbox,
   drawer: Drawer,
+  list: listSlotRecipe,
   menu: Menu,
   popover: Popover,
   progress: Progress,
