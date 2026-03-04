@@ -1,22 +1,13 @@
 import {
-  AvatarFallback,
-  AvatarImage,
-  AvatarRoot,
+  Avatar,
   Box,
   Button,
-  FieldLabel,
-  FieldRoot,
+  Field,
   Flex,
   HStack,
   Icon,
   Link,
-  PopoverBody,
-  PopoverContent,
-  PopoverFooter,
-  PopoverHeader,
-  PopoverPositioner,
-  PopoverRoot,
-  PopoverTrigger,
+  Popover,
   Text,
   useBreakpointValue,
 } from '@chakra-ui/react'
@@ -54,8 +45,8 @@ const UserProfile = () => {
   if (!profile) return
 
   return (
-    <PopoverRoot positioning={{ placement }}>
-      <PopoverTrigger asChild>
+    <Popover.Root positioning={{ placement }}>
+      <Popover.Trigger asChild>
         <Button
           aria-label={t('user_menu', 'User menu')}
           size='xl'
@@ -66,15 +57,16 @@ const UserProfile = () => {
           colorPalette='gray'
           variant='subtle'
           justifyContent='start'
+          borderRadius='none'
           mt={2}
           p={2}
           minW={0}
         >
           <Flex alignItems='center' gap={2} w='full'>
-            <AvatarRoot size='xs' borderRadius='full'>
-              {avatarSrc ? <AvatarImage src={avatarSrc} /> : null}
-              <AvatarFallback name={`${profile.firstName} ${profile.lastName}`} />
-            </AvatarRoot>
+            <Avatar.Root size='xs' borderRadius='full'>
+              {avatarSrc ? <Avatar.Image src={avatarSrc} /> : null}
+              <Avatar.Fallback name={`${profile.firstName} ${profile.lastName}`} />
+            </Avatar.Root>
             {!reduced && (
               <Flex
                 css={{ '--size': 'calc(var(--chakra-sizes-dashboard-menu-default) - 7rem)' }}
@@ -95,15 +87,15 @@ const UserProfile = () => {
             {!reduced && <Icon as={LuChevronsUpDown} color='gray.500' ml='auto' />}
           </Flex>
         </Button>
-      </PopoverTrigger>
-      <PopoverPositioner>
-        <PopoverContent w='user-profile'>
-          <PopoverHeader>
+      </Popover.Trigger>
+      <Popover.Positioner>
+        <Popover.Content w='user-profile'>
+          <Popover.Header>
             <Box display={'flex'} gap={2} alignItems={'center'} justifyContent={'start'} px={1} py={1.5} mb={1}>
-              <AvatarRoot size='sm' borderRadius='md'>
-                {avatarSrc ? <AvatarImage src={avatarSrc} /> : null}
-                <AvatarFallback name={`${profile.firstName} ${profile.lastName}`} />
-              </AvatarRoot>
+              <Avatar.Root size='sm' borderRadius='md'>
+                {avatarSrc ? <Avatar.Image src={avatarSrc} /> : null}
+                <Avatar.Fallback name={`${profile.firstName} ${profile.lastName}`} />
+              </Avatar.Root>
               <Flex
                 css={{ '--size': 'calc(var(--chakra-sizes-user-profile) - 4rem)' }}
                 flexDirection='column'
@@ -142,12 +134,12 @@ const UserProfile = () => {
                 )}
               </Flex>
             </Box>
-          </PopoverHeader>
+          </Popover.Header>
           {switchOrg ? (
             <OrganizationSwitcher />
           ) : (
             <>
-              <PopoverBody>
+              <Popover.Body>
                 <Box borderBottom='1px solid' borderBottomColor='table.border' py={1}>
                   <Button
                     fontWeight='normal'
@@ -174,18 +166,18 @@ const UserProfile = () => {
                   <Text fontWeight='extrabold' fontSize='sm' px={2} py={1.5}>
                     {t('preferences', { defaultValue: 'Preferences' })}
                   </Text>
-                  <FieldRoot
+                  <Field.Root
                     display='flex'
                     justifyContent='space-between'
                     p={2}
                     alignItems='center'
                     flexDirection='row'
                   >
-                    <FieldLabel m={0} htmlFor='theme-toggle'>
+                    <Field.Label m={0} htmlFor='theme-toggle'>
                       <Trans i18nKey='theme'>Theme</Trans>
-                    </FieldLabel>
+                    </Field.Label>
                     <ThemeToggleGroup />
-                  </FieldRoot>
+                  </Field.Root>
                   <LanguageListDashboard px={2} py={1.5} />
                 </Box>
                 <Button colorPalette='gray' fontWeight='bold' variant='profilemenu' onClick={logout}>
@@ -194,8 +186,8 @@ const UserProfile = () => {
                     <Trans i18nKey={'logout'} />
                   </HStack>
                 </Button>
-              </PopoverBody>
-              <PopoverFooter pt={1}>
+              </Popover.Body>
+              <Popover.Footer pt={1}>
                 <Flex gap={2} alignItems='center' justifyContent='center' w='full'>
                   <Link
                     href={privacyPolicyUrl}
@@ -217,12 +209,12 @@ const UserProfile = () => {
                     <Trans i18nKey='terms_of_service'>Terms of Service</Trans>
                   </Link>
                 </Flex>
-              </PopoverFooter>
+              </Popover.Footer>
             </>
           )}
-        </PopoverContent>
-      </PopoverPositioner>
-    </PopoverRoot>
+        </Popover.Content>
+      </Popover.Positioner>
+    </Popover.Root>
   )
 }
 
