@@ -11,6 +11,7 @@ const fonts = defineTokens.fonts({
 
 const fontWeights = defineTokens.fontWeights({
   normal: { value: '300' },
+  medium: { value: '300' },
   bold: { value: '400' },
   bolder: { value: '500' },
 })
