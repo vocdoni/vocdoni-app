@@ -191,7 +191,7 @@ export const CensusConnectButton = () => {
         </Button>
       )}
       {isCSP && !connected && <CspAuth />}
-      {isSpreadsheet && !connected && <SpreadsheetAccess />}
+      {isSpreadsheet && !connected && <SpreadsheetAccess hashPrivateKey />}
     </>
   )
 }
