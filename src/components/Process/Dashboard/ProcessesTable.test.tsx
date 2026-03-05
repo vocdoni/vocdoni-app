@@ -3,6 +3,15 @@ import { mockUseElection, render, screen, TestMemoryRouter } from '~src/test-uti
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessesTable from './ProcessesTable'
 
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  return {
+    ...actual,
+    QuestionsTypeBadge: () => <div>QuestionsTypeBadge</div>,
+    ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
+  }
+})
+
 const election = {
   id: '0x1',
   title: { default: 'Test Election' },

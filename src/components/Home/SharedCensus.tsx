@@ -1,4 +1,5 @@
 import { AspectRatio, Box, Flex, Link, Spinner, Text } from '@chakra-ui/react'
+import { ElectionStatusBadge, ElectionTitle, OrganizationImage } from '@vocdoni/react-components'
 import { ElectionProvider, OrganizationProvider, useClient, useElection } from '@vocdoni/react-providers'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode } from 'react'
@@ -9,7 +10,6 @@ import Editor from '~components/Editor'
 import { ActionsMenu } from '~components/Process/ActionsMenu'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
-import { ElectionStatusBadge, ElectionTitle, OrganizationImage } from '~components/vocdoni-ui'
 
 export const parseProcessIds = (value: string | undefined) =>
   (value || '')

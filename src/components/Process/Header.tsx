@@ -1,10 +1,10 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { ElectionDescription, ElectionSchedule, ElectionStatusBadge, ElectionTitle } from '@vocdoni/react-components'
 import { useElection } from '@vocdoni/react-providers'
 import { PublishedElection, Strategy } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { ShareModalButton } from '~components/Share'
-import { ElectionDescription, ElectionSchedule, ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { StampIcon } from './Census/StampIcon'
 
 const ProcessHeader = () => {

@@ -21,7 +21,6 @@ import {
   Voted,
   VoteWeight,
 } from './election'
-import { EllipsisButton } from './ellipsisButton'
 import { formLabel, input, switchRecipe, textarea } from './form'
 import { listSlotRecipe } from './list'
 import { Menu } from './menu'
@@ -78,7 +77,6 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   ConfirmModal,
   ElectionQuestions,
   ElectionResults,
-  EllipsisButton,
   Pagination,
   QuestionChoice,
   QuestionsConfirmation,

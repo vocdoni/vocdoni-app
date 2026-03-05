@@ -1,10 +1,10 @@
 import { Button, CloseButton, Dialog, Flex, Heading, Icon, List, Portal, Text, useSlotRecipe } from '@chakra-ui/react'
+import { useConfirm } from '@vocdoni/react-components'
 import { ElectionResultsTypeNames, IQuestion, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode } from 'react'
 import { FieldValues } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
-import { useConfirm } from '~components/vocdoni-ui'
 
 export const ConfirmVoteModal = ({ election, answers }: { election: PublishedElection; answers: FieldValues }) => {
   const { t } = useTranslation()

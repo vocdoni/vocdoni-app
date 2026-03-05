@@ -1,5 +1,5 @@
 import { defineRecipe, defineSlotRecipe } from '@chakra-ui/react'
-import { paginationAnatomy } from '~components/vocdoni-ui/pagination/anatomy'
+import { paginationAnatomy } from '~theme/react-components/anatomy/pagination'
 
 export const Pagination = defineSlotRecipe({
   slots: paginationAnatomy,
@@ -8,6 +8,7 @@ export const Pagination = defineSlotRecipe({
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'end',
+      gap: 2,
     },
     totalResults: {
       display: 'none',

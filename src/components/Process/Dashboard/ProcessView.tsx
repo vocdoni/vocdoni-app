@@ -23,6 +23,7 @@ import {
   VStack,
   type HTMLChakraProps,
 } from '@chakra-ui/react'
+import { ElectionDescription, ElectionResults, ElectionStatusBadge, ElectionTitle } from '@vocdoni/react-components'
 import { useElection } from '@vocdoni/react-providers'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format as formatDate } from 'date-fns'
@@ -48,6 +49,7 @@ import {
 } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
 import { generatePath } from 'react-router-dom'
+import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
 import {
   DashboardBox,
   DashboardContents,
@@ -58,17 +60,6 @@ import {
   SidebarTitle,
 } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
-import {
-  ActionCancel,
-  ActionContinue,
-  ActionEnd,
-  ActionPause,
-  ActionsProvider,
-  ElectionDescription,
-  ElectionResults,
-  ElectionStatusBadge,
-  ElectionTitle,
-} from '~components/vocdoni-ui'
 import { Routes } from '~src/router/routes'
 import { useResultTypeLabel } from '../resultTypeLabels'
 

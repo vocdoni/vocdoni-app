@@ -1,13 +1,16 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ComponentsProvider, ConfirmProvider as ReactComponentsConfirmProvider } from '@vocdoni/react-components'
 import { render, RenderOptions } from '@testing-library/react'
 import i18n, { type Resource } from 'i18next'
 import { ComponentType, ReactElement, ReactNode } from 'react'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
 import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom'
+import { ConfirmProvider } from '~components/Confirm'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { ToastProvider as BaseToastProvider } from '~components/Toast'
 import { ColorModeProvider } from '~theme/color-mode'
+import { uiScaffoldComponents } from '~theme/react-components'
 import { system } from '~theme/system'
 
 type TestI18nOptions = {
@@ -128,7 +131,13 @@ export function AllProviders({
         <I18nextProvider i18n={i18nInstance}>
           <QueryClientProvider client={queryClient}>
             <TestToastProvider>
-              <ConnectionToastProvider>{content}</ConnectionToastProvider>
+              <ReactComponentsConfirmProvider>
+                <ConfirmProvider>
+                  <ComponentsProvider components={uiScaffoldComponents}>
+                    <ConnectionToastProvider>{content}</ConnectionToastProvider>
+                  </ComponentsProvider>
+                </ConfirmProvider>
+              </ReactComponentsConfirmProvider>
             </TestToastProvider>
           </QueryClientProvider>
         </I18nextProvider>

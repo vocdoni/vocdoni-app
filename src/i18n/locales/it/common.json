@@ -267,7 +267,6 @@
   },
   "email": "Email",
   "email_placeholder": "nome@email.com",
-  "empty": "Sembra che questo processo non abbia domande",
   "end_date": "Data fine",
   "end_time": "Ora fine",
   "end_vote": "Termina votazione",
@@ -288,11 +287,6 @@
     "title": "Errore"
   },
   "error_removing_code": "Errore durante la rimozione del codice",
-  "errors": {
-    "not_voted_in_ended_election": "",
-    "wrong_data_description": "I dati specificati non sono corretti",
-    "wrong_data_title": "Dati errati"
-  },
   "features": {
     "anonymous_voting": "Voto anonimo",
     "approval": "Voto di approvazione",
@@ -1002,14 +996,8 @@
   "organizations": "Organizzazioni ({{ numOrgs }})",
   "other_details": "altri dettagli",
   "pagination": {
-    "next": "",
     "page_out_of": "Pagina {{page}} di {{total}}",
-    "page_placeholder": "",
-    "previous": "",
-    "rows_per_page": "Righe per pagina",
-    "total_results_one": "",
-    "total_results_many": "",
-    "total_results_other": ""
+    "rows_per_page": "Righe per pagina"
   },
   "password": "Password",
   "password_placeholder": "Min 8 caratteri",
@@ -1393,16 +1381,6 @@
   },
   "promo_code": "Codice Promozione",
   "promo_code_required": "Il codice promozione è obbligatorio",
-  "question_types": {
-    "approval_title": "Voto di approvazione",
-    "approval_tooltip": "Il voto di approvazione permette di votare per tutte le opzioni desiderate. Quella con più voti vince. È un modo semplice per mostrare supporto per tutte le scelte approvate.",
-    "multichoice_desc": "Selezionate {{selected}} opzioni su un massimo di {{maxcount}}",
-    "multichoice_desc_abstain": " (o astensione)",
-    "multichoice_title": "Voto a scelta multipla {{ weighted }}",
-    "multichoice_tooltip": "Il voto a scelta multipla permette di votare fino a {{maxcount}} opzioni (definite dall'organizzatore). Quella con più voti vince.",
-    "singlechoice_title": "Scelta singola {{ weighted }}",
-    "weighted_voting": "Voto ponderato"
-  },
   "questions_and_results": "Domande e risultati",
   "registration_failed": "Registrazione non riuscita",
   "registration_successful": "egistrazione avvenuta con successo",
@@ -1410,12 +1388,6 @@
   "remove_avatar": "Rimuovi avatar",
   "reset_password_button": "Reimposta Password",
   "result_visibility": "Visibilità risultati",
-  "results": {
-    "date_format": "PPpp",
-    "secret_until_the_end": "I risultati saranno resi pubblici al termine del processo il {{ endDate }}.",
-    "title": "Risultati per \"{{ title }}\"",
-    "votes": "{{votes}} voti ({{ percent }})"
-  },
   "results_state": {
     "enabled": "Abilitato",
     "hidden_until_end": "Nascosti fino alla fine",
@@ -1456,13 +1428,6 @@
   },
   "role_selector": {
     "selector_label": "Ruolo"
-  },
-  "schedule": {
-    "created": "Creato {{ distance }}",
-    "ended": "Terminato {{ distance }}",
-    "from_begin_to_end": "Votazione dal {{ begin }} al {{ end }}",
-    "paused_end": "(In pausa) Termina {{ distance }}",
-    "paused_start": "(In pausa) Inizia {{ distance }}"
   },
   "section": {
     "help": "Aiuto",
@@ -1507,23 +1472,11 @@
   "signup_title": "Iscriviti",
   "spreadsheet": {
     "access_button": "Identifica",
-    "anon_sik_helper": "Questo garantisce che il voto sia anonimo",
-    "anon_sik_label": "Definire una password per il voto",
     "close": "Chiudi",
     "modal_title": "Autenticazione"
   },
   "start_date": "Data inizio",
   "start_time": "Ora inizio",
-  "statuses": {
-    "canceled": "Annullato",
-    "ended": "Terminato",
-    "invalid": "Non valido",
-    "ongoing": "In corso",
-    "paused": "In pausa",
-    "process_unknown": "Sconosciuto",
-    "results": "Risultati",
-    "upcoming": "In arrivo"
-  },
   "subscribe": "Abbonati",
   "subscription": {
     "locked_content": {
@@ -1632,11 +1585,6 @@
   "user_menu": "Menu utente",
   "user_settings": "Impostazioni utente",
   "validation": {
-    "at_least_one": "",
-    "choices_count_one": "",
-    "choices_count_many": "",
-    "choices_count_other": "",
-    "min_length": "Questo campo deve contenere almeno {{ min }} caratteri",
     "required": "Questo campo è obbligatorio"
   },
   "verification_code": "Codice di verifica",
@@ -1668,13 +1616,8 @@
   "vocdoni_logo": "Logo di Vocdoni",
   "vote": {
     "abstain": "Astenersi",
-    "button": "Vota",
-    "button_update": "Modifica il mio voto",
     "confirm": "Confermare le scelte:",
-    "sign": "Firma prima",
-    "voted_description": "Per verificare il voto, è possibile utilizzare questo identificatore univoco: {{ id }}",
-    "voted_title": "Voto espresso con successo!",
-    "weight": "Il tuo potere di voto è: "
+    "voted_title": "Voto espresso con successo!"
   },
   "vote_information": "Informazioni sul voto",
   "vote_overwrite": "Sovrascrittura voto",

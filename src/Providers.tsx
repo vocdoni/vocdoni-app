@@ -1,5 +1,6 @@
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ComponentsProvider } from '@vocdoni/react-components'
 import { EnvOptions } from '@vocdoni/sdk'
 import { setDefaultOptions } from 'date-fns'
 import { PropsWithChildren, useEffect } from 'react'
@@ -12,11 +13,12 @@ import { AuthProvider } from '~components/Auth/AuthContext'
 import { SubscriptionProvider } from '~components/Auth/Subscription'
 import { CookieConsent } from '~components/Cookies/CookieConsent'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
-import { ClientProvider } from '~components/vocdoni-ui'
 import { walletClientToSigner } from '~constants/wagmi-adapters'
+import { uiScaffoldComponents } from '~theme/react-components'
 import { VocdoniEnvironment } from './constants'
 import { wagmiConfig } from './constants/rainbow'
 import { datesLocale } from './i18n/locales'
+import { ClientProvider } from './providers/VocdoniClientProvider'
 import { RoutesProvider } from './router/Router'
 import { RainbowKitTheme, Theme } from './theme/Theme'
 
@@ -77,14 +79,16 @@ const AppProviders = () => {
   return (
     <RainbowKitTheme>
       <ClientProvider env={VocdoniEnvironment as EnvOptions} signer={signer as Signer} {...options}>
-        <ConnectionToastProvider>
-          <SaasProviders>
-            <AnalyticsProvider>
-              <CookieConsent />
-              <RoutesProvider />
-            </AnalyticsProvider>
-          </SaasProviders>
-        </ConnectionToastProvider>
+        <ComponentsProvider components={uiScaffoldComponents}>
+          <ConnectionToastProvider>
+            <SaasProviders>
+              <AnalyticsProvider>
+                <CookieConsent />
+                <RoutesProvider />
+              </AnalyticsProvider>
+            </SaasProviders>
+          </ConnectionToastProvider>
+        </ComponentsProvider>
       </ClientProvider>
     </RainbowKitTheme>
   )

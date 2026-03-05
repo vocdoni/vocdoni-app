@@ -1,10 +1,10 @@
 import { AspectRatio, Box, Flex, IconButton } from '@chakra-ui/react'
+import { OrganizationImage as Avatar, OrganizationDescription, OrganizationName } from '@vocdoni/react-components'
 import { useClient, useOrganization } from '@vocdoni/react-providers'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
-import { OrganizationImage as Avatar, OrganizationDescription, OrganizationName } from '~components/vocdoni-ui'
 import AddressBtn from './Address'
 import fallback from '/assets/default-avatar.png'
 

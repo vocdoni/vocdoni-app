@@ -26,8 +26,8 @@ vi.mock('@chakra-ui/react', async (importOriginal) => {
   }
 })
 
-vi.mock('~components/vocdoni-ui', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('~components/vocdoni-ui')>()
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   return {
     ...actual,
     useConfirm: () => ({
@@ -66,7 +66,7 @@ describe('ConfirmVoteModal', () => {
     expect(screen.getByText('Choice A')).toBeInTheDocument()
   })
 
-  it('cancels when the modal requests close from outside interaction', () => {
+  it('cancels when pressing the cancel action button', () => {
     const election = {
       title: { default: 'Test Election' },
       resultsType: { name: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION },
@@ -82,7 +82,7 @@ describe('ConfirmVoteModal', () => {
 
     render(<ConfirmVoteModal election={election} answers={answers} />)
 
-    screen.getByRole('button', { name: 'trigger-close' }).click()
+    screen.getByRole('button', { name: 'confirm.cancel' }).click()
 
     expect(cancelSpy).toHaveBeenCalledTimes(1)
     expect(proceedSpy).not.toHaveBeenCalled()

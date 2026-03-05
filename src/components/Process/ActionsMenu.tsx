@@ -5,7 +5,7 @@ import { ElementType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCog } from 'react-icons/fa'
 import { RiCloseCircleLine, RiPauseCircleLine, RiPlayCircleLine, RiStopCircleLine } from 'react-icons/ri'
-import { ActionsProvider } from '~components/vocdoni-ui'
+import { ActionsProvider } from '~components/Actions'
 
 export const ActionsMenu = (props: MenuContentProps) => {
   const { account } = useClient()

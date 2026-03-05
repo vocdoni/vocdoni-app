@@ -1,0 +1,95 @@
+{
+  "balance": "{{ balance }} VOC tokens",
+  "actions": {
+    "cancel_description": "Canceling \"{{ election.title.default }}\"...\n\nAttention: this action is irreversible and will cancel all the previous votes on it",
+    "cancel": "Cancel",
+    "cancel_button": "Cancel",
+    "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
+    "continue": "Resume the process immediately, in case it has been paused",
+    "end_description": "Ending \"{{ election.title.default }}\" voting process...\n\nAttention: this action is irreversible and voters will no longer be able to vote.",
+    "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
+    "error_title": "There was some error while executing the transaction",
+    "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",
+    "pause": "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
+    "waiting_title": "Waiting for transaction confirmation..."
+  },
+  "confirm": {
+    "title": "Confirm",
+    "cancel": "Cancel",
+    "confirm": "Confirm Vote",
+    "cancel_process_button": "Cancel Vote",
+    "cancel_process_title": "Cancel Vote",
+    "end_process_title": "End Vote",
+    "end_process_button": "End Vote",
+    "cancel_button": "Cancel"
+  },
+  "empty": "Apparently this process has no questions",
+  "errors": {
+    "wrong_data_title": "Wrong data",
+    "wrong_data_description": "The specified data is not correct",
+    "not_voted_in_ended_election": "You signed but did not vote in this ended election."
+  },
+  "question_types": {
+    "approval_tooltip": "Approval voting lets you vote for as many options as you like. The one with the most votes wins. It's a simple way to show your support for all the choices you approve of.",
+    "approval_title": "Approval Voting",
+    "singlechoice_title": "Single Choice {{ weighted }}",
+    "multichoice_tooltip": "Multichoice voting lets you vote for up to {{maxcount}} options (defined by the voting organizer). The one with the most votes wins.",
+    "multichoice_title": "Multichoice Voting {{ weighted }}",
+    "multichoice_desc": "You selected {{selected}} options from a maximum of {{maxcount}}",
+    "multichoice_desc_abstain": " (or abstain)",
+    "weighted_voting": "Weighted Voting"
+  },
+  "schedule": {
+    "from_begin_to_end": "schedule.from_begin_to_end",
+    "ended": "schedule.ended",
+    "paused_start": "schedule.paused_start",
+    "paused_end": "schedule.paused_end",
+    "created": "schedule.created"
+  },
+  "results": {
+    "date_format": "PPpp",
+    "secret_until_the_end": "The results will be made public when the process finishes on {{ endDate }}.",
+    "title": "Results for \"{{ title }}\"",
+    "votes": "{{votes}} votes ({{ percent }})"
+  },
+  "statuses": {
+    "canceled": "Canceled",
+    "ended": "Ended",
+    "ongoing": "Ongoing",
+    "paused": "Paused",
+    "results": "Results",
+    "upcoming": "Upcoming",
+    "process_unknown": "Unknown",
+    "invalid": "Invalid"
+  },
+  "spreadsheet": {
+    "access_button": "Identify",
+    "anon_sik_label": "Define a password for your vote",
+    "anon_sik_helper": "This ensures the vote to be anonymous",
+    "close": "Close",
+    "logout": "Logout",
+    "modal_title": "Authentication"
+  },
+  "pagination": {
+    "page_placeholder": "Page",
+    "total_results": "Showing a total of {{ count }} results",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "validation": {
+    "required": "This field is required",
+    "min_length": "This field must be at least {{ min }} characters long",
+    "choices_count": "Select {{ count }} choices",
+    "at_least_one": "Select at least one option"
+  },
+  "vote": {
+    "abstain": "Abstain",
+    "button_update": "Change my vote",
+    "button": "Vote",
+    "confirm": "Please confirm your choices:",
+    "sign": "Sign first",
+    "voted_description": "To verify your vote, you can use this unique identifier: {{ id }}",
+    "voted_title": "Your vote was successfully cast!",
+    "weight": "Your voting power is: "
+  }
+}

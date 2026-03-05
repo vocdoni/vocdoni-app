@@ -10,7 +10,7 @@ import {
   spreadsheetAccessAnatomy,
   votedAnatomy,
   voteWeightAnatomy,
-} from '~components/vocdoni-ui'
+} from '~theme/react-components/anatomy/election'
 
 export const ElectionDescription = defineRecipe({
   base: {
@@ -152,13 +152,30 @@ export const ElectionResults = defineSlotRecipe({
       h: '100%',
       minH: 8,
       zIndex: 'background',
-      bg: 'gray.100',
+    },
+  },
+})
+
+const resultsProgressBarAnatomy = ['root', 'track', 'range'] as const
+
+export const resultsProgressRecipe = defineSlotRecipe({
+  slots: resultsProgressBarAnatomy,
+  base: {
+    root: {
+      h: '100%',
+      minH: 8,
       borderRadius: 'sm',
-      '& > div': {
-        height: '100%',
-        bg: 'gray.400',
-        borderRadius: 'sm',
-      },
+      overflow: 'hidden',
+    },
+    track: {
+      h: '100%',
+      bg: 'gray.100',
+      borderRadius: 'inherit',
+    },
+    range: {
+      h: '100%',
+      bg: 'gray.400',
+      borderRadius: 'inherit',
     },
   },
 })
@@ -268,11 +285,20 @@ export const QuestionChoice = defineSlotRecipe({
             top: 2,
             right: 2,
             zIndex: 'docked',
+          },
+          '& [data-choice-control][data-control-type="checkbox"]': {
             bg: 'white',
             borderWidth: '1px',
             borderColor: 'table.border',
             boxShadow: 'sm',
             _dark: { bg: 'gray.800' },
+          },
+          '& [data-choice-control][data-control-type="radio"]': {
+            bg: 'transparent',
+            border: 'none',
+            boxShadow: 'none',
+            p: 0,
+            borderRadius: 'full',
           },
           '& [data-choice-media]': {
             width: '100%',

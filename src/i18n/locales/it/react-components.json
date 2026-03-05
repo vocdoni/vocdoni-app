@@ -1,0 +1,95 @@
+{
+  "balance": "{{ balance }} VOC tokens",
+  "actions": {
+    "cancel_description": "Annullamento di \"{{ election.title.default }}\"...\n\nAttenzione: questa azione è irreversibile e annullerà tutti i voti precedenti",
+    "cancel": "Annulla",
+    "cancel_button": "Cancel",
+    "continue_description": "Ripresa del processo di voto \"{{ election.title.default }}\"...",
+    "continue": "Riprendi immediatamente il processo, nel caso fosse stato messo in pausa",
+    "end_description": "Chiusura del processo di voto \"{{ election.title.default }}\"...\n\nAttenzione: questa azione è irreversibile e i votanti non potranno più votare.",
+    "end": "Termina immediatamente il processo, impedendo l'invio di nuovi voti e mostrando i risultati (attenzione: non può essere annullato)",
+    "error_title": "Si è verificato un errore durante l'esecuzione della transazione",
+    "pause_description": "Messa in pausa del processo di voto \"{{ election.title.default }}\"...",
+    "pause": "Mette in pausa temporaneamente il processo di voto, fino alla ripresa manuale. Mentre il processo è in pausa, i votanti non possono inviare voti.",
+    "waiting_title": "In attesa di conferma della transazione..."
+  },
+  "confirm": {
+    "title": "Conferma",
+    "cancel": "Annulla",
+    "confirm": "Conferma voto",
+    "cancel_process_button": "Annulla voto",
+    "cancel_process_title": "Annulla voto",
+    "end_process_title": "Termina voto",
+    "end_process_button": "Termina voto",
+    "cancel_button": "Annulla"
+  },
+  "empty": "Sembra che questo processo non abbia domande",
+  "errors": {
+    "wrong_data_title": "Dati errati",
+    "wrong_data_description": "I dati specificati non sono corretti",
+    "not_voted_in_ended_election": "Hai firmato ma non hai votato in questa elezione terminata."
+  },
+  "question_types": {
+    "approval_tooltip": "Il voto di approvazione permette di votare per tutte le opzioni desiderate. Quella con più voti vince. È un modo semplice per mostrare supporto per tutte le scelte approvate.",
+    "approval_title": "Voto di approvazione",
+    "singlechoice_title": "Scelta singola {{ weighted }}",
+    "multichoice_tooltip": "Il voto a scelta multipla permette di votare fino a {{maxcount}} opzioni (definite dall'organizzatore). Quella con più voti vince.",
+    "multichoice_title": "Voto a scelta multipla {{ weighted }}",
+    "multichoice_desc": "Selezionate {{selected}} opzioni su un massimo di {{maxcount}}",
+    "multichoice_desc_abstain": " (o astensione)",
+    "weighted_voting": "Voto ponderato"
+  },
+  "schedule": {
+    "from_begin_to_end": "Votazione dal {{ begin }} al {{ end }}",
+    "ended": "Terminato {{ distance }}",
+    "paused_start": "(In pausa) Inizia {{ distance }}",
+    "paused_end": "(In pausa) Termina {{ distance }}",
+    "created": "Creato {{ distance }}"
+  },
+  "results": {
+    "date_format": "PPpp",
+    "secret_until_the_end": "I risultati saranno resi pubblici al termine del processo il {{ endDate }}.",
+    "title": "Risultati per \"{{ title }}\"",
+    "votes": "{{votes}} voti ({{ percent }})"
+  },
+  "statuses": {
+    "canceled": "Annullato",
+    "ended": "Terminato",
+    "ongoing": "In corso",
+    "paused": "In pausa",
+    "results": "Risultati",
+    "upcoming": "In arrivo",
+    "process_unknown": "Sconosciuto",
+    "invalid": "Non valido"
+  },
+  "spreadsheet": {
+    "access_button": "Identifica",
+    "anon_sik_label": "Definire una password per il voto",
+    "anon_sik_helper": "Questo garantisce che il voto sia anonimo",
+    "close": "Chiudi",
+    "logout": "Logout",
+    "modal_title": "Autenticazione"
+  },
+  "pagination": {
+    "page_placeholder": "Num. di pagina",
+    "total_results": "Mostrando un totale di {{ count }} risultati",
+    "previous": "Precedente",
+    "next": "Successiva"
+  },
+  "validation": {
+    "required": "Questo campo è obbligatorio",
+    "min_length": "Questo campo deve contenere almeno {{ min }} caratteri",
+    "choices_count": "Seleziona {{ count }} opzioni",
+    "at_least_one": "Seleziona almeno un'opzione"
+  },
+  "vote": {
+    "abstain": "Astenersi",
+    "button_update": "Modifica il mio voto",
+    "button": "Vota",
+    "confirm": "Confermare le scelte:",
+    "sign": "Firma prima",
+    "voted_description": "Per verificare il voto, è possibile utilizzare questo identificatore univoco: {{ id }}",
+    "voted_title": "Voto espresso con successo!",
+    "weight": "Il tuo potere di voto è: "
+  }
+}

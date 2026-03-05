@@ -42,8 +42,8 @@ vi.mock('@vocdoni/sdk', () => ({
   InvalidElection: class InvalidElection {},
 }))
 
-vi.mock('~components/vocdoni-ui', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('~components/vocdoni-ui')>()
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   return {
     ...actual,
     ElectionTitle: () => <div>ElectionTitle</div>,
@@ -146,7 +146,6 @@ describe('SharedCensus', () => {
   })
 
   beforeEach(() => {
-    vi.resetModules()
     import.meta.env.PROCESS_IDS = 'id-1'
     import.meta.env.LANGUAGES = JSON.stringify({ en: 'English', es: 'Spanish' }) as unknown as Record<string, string>
     delete import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT

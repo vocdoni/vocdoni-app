@@ -1,6 +1,6 @@
 import { Button, Flex, Link, Text } from '@chakra-ui/react'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { VoteButton as CVoteButton, environment, SpreadsheetAccess, VoteWeight } from '~components/vocdoni-ui'
+import { VoteButton as CVoteButton, environment, SpreadsheetAccess, VoteWeight } from '@vocdoni/react-components'
 import { useClient, useElection } from '@vocdoni/react-providers'
 import { CensusType, dotobject, ElectionStatus, formatUnits, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'

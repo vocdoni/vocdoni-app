@@ -8,8 +8,8 @@ vi.mock('wagmi', () => ({
   useDisconnect: () => ({ disconnect: vi.fn() }),
 }))
 
-vi.mock('~components/vocdoni-ui', async (importOriginal) => {
-  const actual = (await importOriginal()) as typeof import('~components/vocdoni-ui')
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
   return {
     ...actual,
     SpreadsheetAccess: () => <div>SpreadsheetAccess</div>,

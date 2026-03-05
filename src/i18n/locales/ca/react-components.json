@@ -1,0 +1,95 @@
+{
+  "balance": "{{ balance }} VOC tokens",
+  "actions": {
+    "cancel_description": "Cancel·lant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i cancel·larà els vots que s'hagin emès.",
+    "cancel": "Cancel·la",
+    "cancel_button": "Cancel",
+    "continue_description": "Reobrint el procés de votació \"{{ election.title.default }}\"",
+    "continue": "Reobre el procés immediatament, si s'ha pausat",
+    "end_description": "Finalitzant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i els votants no podran emetre nous vots.",
+    "end": "Finalitza immediatament el procés, impedint que es presentin nous vots, i mostra els resultats de votació (precaució: no es pot desfer)",
+    "error_title": "S'ha produït algun error en executar la transacció",
+    "pause_description": "Pausant el procés de votació \"{{ election.title.default }}\"...",
+    "pause": "Posa el procés de votació en pausa temporalment, fins que es reprengui manualment. Mentre el procés està en pausa, els votants no poden enviar vots.",
+    "waiting_title": "Esperant la confirmació de la transacció..."
+  },
+  "confirm": {
+    "title": "Confirmar",
+    "cancel": "Cancel·la",
+    "confirm": "Confirma Vot",
+    "cancel_process_button": "Cancel·la el procés",
+    "cancel_process_title": "Cancel·la el procés",
+    "end_process_title": "Finalitza votació",
+    "end_process_button": "Finalitza votació",
+    "cancel_button": "Cancel·la"
+  },
+  "empty": "Sembla que aquest procés no té preguntes",
+  "errors": {
+    "wrong_data_title": "Dades incorrectes",
+    "wrong_data_description": "Les dades especificades no són correctes",
+    "not_voted_in_ended_election": "Has signat però no has votat en aquesta elecció finalitzada."
+  },
+  "question_types": {
+    "approval_tooltip": "El vot d'aprovació et permet votar tantes opcions com vulguis. Guanya la que rep més vots. És una manera senzilla de mostrar suport a totes les opcions que aproves.",
+    "approval_title": "Vot d'aprovació",
+    "singlechoice_title": "Vot d'elecció simple {{ weighted }}",
+    "multichoice_tooltip": "El vot multiresposta et permet votar fins a {{maxcount}} opcions (definit per l'organitzador de la votació). Guanya la que rep més vots.",
+    "multichoice_title": "Vot multiresposta {{ weighted }}",
+    "multichoice_desc": "Has seleccionat {{selected}} opcions d'un màxim de {{maxcount}}",
+    "multichoice_desc_abstain": " (o abstenir-se)",
+    "weighted_voting": "ponderat"
+  },
+  "schedule": {
+    "from_begin_to_end": "Votació del {{ begin }} al {{ end }}",
+    "ended": "Finalitzat {{ distance }}",
+    "paused_start": "Comença {{ distance }}",
+    "paused_end": "Finalitza {{ distance }}",
+    "created": "Creat {{ distance }}"
+  },
+  "results": {
+    "date_format": "PPpp",
+    "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi el {{ endDate }}",
+    "title": "Resultats per a \"{{ title }}\"",
+    "votes": "{{ votes }} vots ({{ percent }})"
+  },
+  "statuses": {
+    "canceled": "Cancel·lada",
+    "ended": "Finalitzada",
+    "ongoing": "En curs",
+    "paused": "Pausada",
+    "results": "Resultats",
+    "upcoming": "Propera",
+    "process_unknown": "Desconeguda",
+    "invalid": "Invàlida"
+  },
+  "spreadsheet": {
+    "access_button": "Identificar-se",
+    "anon_sik_label": "Defineix una contrasenya per al teu vot",
+    "anon_sik_helper": "Això garanteix que el teu vot sigui anònim",
+    "close": "Tanca",
+    "logout": "Logout",
+    "modal_title": "Autenticació"
+  },
+  "pagination": {
+    "page_placeholder": "Num. de pàgina",
+    "total_results": "Mostrant un total de {{ count }} resultats",
+    "previous": "Anterior",
+    "next": "Següent"
+  },
+  "validation": {
+    "required": "Aquest camp és obligatori",
+    "min_length": "Aquest camp ha de tenir com a mínim {{ min }} caràcters",
+    "choices_count": "Selecciona {{ count }} opcions",
+    "at_least_one": "Selecciona com a mínim una opció"
+  },
+  "vote": {
+    "abstain": "Abstenció",
+    "button_update": "Canviar el meu vot",
+    "button": "Vota",
+    "confirm": "Confirma les teves seleccions:",
+    "sign": "Signa abans de votar",
+    "voted_description": "Per verificar el teu vot, pots utilitzar aquesta identificació única: {{ id }}",
+    "voted_title": "El teu vot s'ha registrat amb èxit!",
+    "weight": "El teu poder de vot és: "
+  }
+}

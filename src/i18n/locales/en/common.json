@@ -264,7 +264,6 @@
   },
   "email": "Email",
   "email_placeholder": "name@email.com",
-  "empty": "Apparently this process has no questions",
   "end_date": "End date",
   "end_time": "End time",
   "end_vote": "End vote",
@@ -285,11 +284,6 @@
     "title": "Error"
   },
   "error_removing_code": "Error removing code",
-  "errors": {
-    "not_voted_in_ended_election": "You signed but did not vote in this ended election.",
-    "wrong_data_description": "The specified data is not correct",
-    "wrong_data_title": "Wrong data"
-  },
   "features": {
     "anonymous_voting": "Anonymous voting",
     "approval": "Approval voting",
@@ -985,13 +979,8 @@
   "organizations": "Organizations ({{ numOrgs }})",
   "other_details": "other details",
   "pagination": {
-    "next": "Next",
     "page_out_of": "Page {{page}} of {{total}}",
-    "page_placeholder": "Page",
-    "previous": "Previous",
-    "rows_per_page": "Rows per page",
-    "total_results_one": "pagination.total_results",
-    "total_results_other": "pagination.total_results"
+    "rows_per_page": "Rows per page"
   },
   "password": "Password",
   "password_placeholder": "Min 8 characters",
@@ -1370,16 +1359,6 @@
   },
   "promo_code": "Promotion Code",
   "promo_code_required": "Promotion code is required",
-  "question_types": {
-    "approval_title": "Approval Voting",
-    "approval_tooltip": "Approval voting lets you vote for as many options as you like. The one with the most votes wins. It's a simple way to show your support for all the choices you approve of.",
-    "multichoice_desc": "You selected {{selected}} options from a maximum of {{maxcount}}",
-    "multichoice_desc_abstain": " (or abstain)",
-    "multichoice_title": "Multichoice Voting {{ weighted }}",
-    "multichoice_tooltip": "Multichoice voting lets you vote for up to {{maxcount}} options (defined by the voting organizer). The one with the most votes wins.",
-    "singlechoice_title": "Single Choice {{ weighted }}",
-    "weighted_voting": "Weighted Voting"
-  },
   "questions_and_results": "Questions and results",
   "registration_failed": "Registration failed",
   "registration_successful": "Registration successful",
@@ -1387,12 +1366,6 @@
   "remove_avatar": "Remove avatar",
   "reset_password_button": "Reset Password",
   "result_visibility": "Results visibility",
-  "results": {
-    "date_format": "PPpp",
-    "secret_until_the_end": "The results will be made public when the process finishes on {{ endDate }}.",
-    "title": "Results for \"{{ title }}\"",
-    "votes": "{{votes}} votes ({{ percent }})"
-  },
   "results_state": {
     "enabled": "Enabled",
     "hidden_until_end": "Hidden until the end",
@@ -1433,13 +1406,6 @@
   },
   "role_selector": {
     "selector_label": "Role"
-  },
-  "schedule": {
-    "created": "schedule.created",
-    "ended": "schedule.ended",
-    "from_begin_to_end": "schedule.from_begin_to_end",
-    "paused_end": "schedule.paused_end",
-    "paused_start": "schedule.paused_start"
   },
   "section": {
     "help": "Help",
@@ -1484,23 +1450,11 @@
   "signup_title": "Sign up",
   "spreadsheet": {
     "access_button": "Identify",
-    "anon_sik_helper": "This ensures the vote to be anonymous",
-    "anon_sik_label": "Define a password for your vote",
     "close": "Close",
     "modal_title": "Authentication"
   },
   "start_date": "Start date",
   "start_time": "Start time",
-  "statuses": {
-    "canceled": "Canceled",
-    "ended": "Ended",
-    "invalid": "Invalid",
-    "ongoing": "Ongoing",
-    "paused": "Paused",
-    "process_unknown": "Unknown",
-    "results": "Results",
-    "upcoming": "Upcoming"
-  },
   "subscribe": "Subscribe",
   "subscription": {
     "locked_content": {
@@ -1608,10 +1562,6 @@
   "user_menu": "User menu",
   "user_settings": "User settings",
   "validation": {
-    "at_least_one": "Select at least one option",
-    "choices_count_one": "validation.choices_count",
-    "choices_count_other": "validation.choices_count",
-    "min_length": "This field must be at least {{ min }} characters long",
     "required": "This field is required"
   },
   "verification_code": "Verification Code",
@@ -1643,13 +1593,8 @@
   "vocdoni_logo": "Vocdoni logo",
   "vote": {
     "abstain": "Abstain",
-    "button": "Vote",
-    "button_update": "Change my vote",
     "confirm": "Please confirm your choices:",
-    "sign": "Sign first",
-    "voted_description": "To verify your vote, you can use this unique identifier: {{ id }}",
-    "voted_title": "Your vote was successfully cast!",
-    "weight": "Your voting power is: "
+    "voted_title": "Your vote was successfully cast!"
   },
   "vote_information": "Vote information",
   "vote_overwrite": "Vote overwrite",

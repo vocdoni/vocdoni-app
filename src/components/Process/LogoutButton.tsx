@@ -1,11 +1,11 @@
 import { Box, Button } from '@chakra-ui/react'
+import { SpreadsheetAccess } from '@vocdoni/react-components'
 import { useClient, useElection } from '@vocdoni/react-providers'
 import { CensusType, dotobject, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useAccount, useDisconnect } from 'wagmi'
 import { useAuth } from '~components/Auth/useAuth'
 import { CensusMeta, CensusTypes } from '~components/Process/Census/CensusType'
-import { SpreadsheetAccess } from '~components/vocdoni-ui'
 
 // Note the LogoutButton is stored in the Process folder because it holds not just
 // the app logout, but all the process sessions logout

@@ -44,8 +44,8 @@ vi.mock('~components/Layout/InvertedAccordionIcon', () => ({
   default: () => <div>Icon</div>,
 }))
 
-vi.mock('~components/vocdoni-ui', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('~components/vocdoni-ui')>()
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   return {
     ...actual,
     ElectionStatusBadge: () => <div>Status</div>,

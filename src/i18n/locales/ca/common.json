@@ -267,7 +267,6 @@
   },
   "email": "Correu electrònic",
   "email_placeholder": "nom@email.com",
-  "empty": "Sembla que aquest procés no té preguntes",
   "end_date": "Data de finalització",
   "end_time": "Hora de finalització",
   "end_vote": "Finalitza votació",
@@ -288,11 +287,6 @@
     "title": "Error"
   },
   "error_removing_code": "Hi ha hagut un error eliminant el codi",
-  "errors": {
-    "not_voted_in_ended_election": "",
-    "wrong_data_description": "Les dades especificades no són correctes",
-    "wrong_data_title": "Dades incorrectes"
-  },
   "features": {
     "anonymous_voting": "Votació anònima",
     "approval": "Per aprovació",
@@ -1002,14 +996,8 @@
   "organizations": "Organitzacions ({{ numOrgs }})",
   "other_details": "Altres detalls",
   "pagination": {
-    "next": "",
     "page_out_of": "Pàgina {{page}} de {{total}}",
-    "page_placeholder": "",
-    "previous": "",
-    "rows_per_page": "Files per pàgina",
-    "total_results_one": "",
-    "total_results_many": "",
-    "total_results_other": ""
+    "rows_per_page": "Files per pàgina"
   },
   "password": "Contrasenya",
   "password_placeholder": "Mínim 8 caràcters",
@@ -1393,16 +1381,6 @@
   },
   "promo_code": "Codi promocional",
   "promo_code_required": "Cal introduir un codi",
-  "question_types": {
-    "approval_title": "Vot d'aprovació",
-    "approval_tooltip": "El vot d'aprovació et permet votar tantes opcions com vulguis. Guanya la que rep més vots. És una manera senzilla de mostrar suport a totes les opcions que aproves.",
-    "multichoice_desc": "Has seleccionat {{selected}} opcions d'un màxim de {{maxcount}}",
-    "multichoice_desc_abstain": " (o abstenir-se)",
-    "multichoice_title": "Vot multiresposta {{ weighted }}",
-    "multichoice_tooltip": "El vot multiresposta et permet votar fins a {{maxcount}} opcions (definit per l'organitzador de la votació). Guanya la que rep més vots.",
-    "singlechoice_title": "Vot d'elecció simple {{ weighted }}",
-    "weighted_voting": "ponderat"
-  },
   "questions_and_results": "Preguntes i resultats",
   "registration_failed": "El registre ha fallat",
   "registration_successful": "Registre completat correctament",
@@ -1410,12 +1388,6 @@
   "remove_avatar": "Elimina l'avatar",
   "reset_password_button": "Restableix la contrasenya",
   "result_visibility": "Visibilitat dels resultats",
-  "results": {
-    "date_format": "PPpp",
-    "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi el {{ endDate }}",
-    "title": "Resultats per a \"{{ title }}\"",
-    "votes": "{{ votes }} vots ({{ percent }})"
-  },
   "results_state": {
     "enabled": "Habilitat",
     "hidden_until_end": "Ocults fins al final",
@@ -1456,13 +1428,6 @@
   },
   "role_selector": {
     "selector_label": "Rol"
-  },
-  "schedule": {
-    "created": "Creat {{ distance }}",
-    "ended": "Finalitzat {{ distance }}",
-    "from_begin_to_end": "Votació del {{ begin }} al {{ end }}",
-    "paused_end": "Finalitza {{ distance }}",
-    "paused_start": "Comença {{ distance }}"
   },
   "section": {
     "help": "Ajuda",
@@ -1507,23 +1472,11 @@
   "signup_title": "Crea un compte",
   "spreadsheet": {
     "access_button": "Identificar-se",
-    "anon_sik_helper": "Això garanteix que el teu vot sigui anònim",
-    "anon_sik_label": "Defineix una contrasenya per al teu vot",
     "close": "Tanca",
     "modal_title": "Autenticació"
   },
   "start_date": "Data d'inici",
   "start_time": "Hora d'inici",
-  "statuses": {
-    "canceled": "Cancel·lada",
-    "ended": "Finalitzada",
-    "invalid": "Invàlida",
-    "ongoing": "En curs",
-    "paused": "Pausada",
-    "process_unknown": "Desconeguda",
-    "results": "Resultats",
-    "upcoming": "Propera"
-  },
   "subscribe": "Subscriu-te",
   "subscription": {
     "locked_content": {
@@ -1632,11 +1585,6 @@
   "user_menu": "Menú d'usuari",
   "user_settings": "Configuració de l'usuari",
   "validation": {
-    "at_least_one": "",
-    "choices_count_one": "",
-    "choices_count_many": "",
-    "choices_count_other": "",
-    "min_length": "Aquest camp ha de tenir com a mínim {{ min }} caràcters",
     "required": "Aquest camp és obligatori"
   },
   "verification_code": "Codi de verificació",
@@ -1668,13 +1616,8 @@
   "vocdoni_logo": "Logotip de Vocdoni",
   "vote": {
     "abstain": "Abstenció",
-    "button": "Vota",
-    "button_update": "Canviar el meu vot",
     "confirm": "Confirma les teves seleccions:",
-    "sign": "Signa abans de votar",
-    "voted_description": "Per verificar el teu vot, pots utilitzar aquesta identificació única: {{ id }}",
-    "voted_title": "El teu vot s'ha registrat amb èxit!",
-    "weight": "El teu poder de vot és: "
+    "voted_title": "El teu vot s'ha registrat amb èxit!"
   },
   "vote_information": "Informació de la votació",
   "vote_overwrite": "Sobreescriptura de la votació",

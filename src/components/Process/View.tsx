@@ -23,13 +23,13 @@ import {
   TooltipTrigger,
   VStack,
 } from '@chakra-ui/react'
+import { ElectionQuestions, ElectionResults, environment } from '@vocdoni/react-components'
 import { useClient, useElection, useOrganization } from '@vocdoni/react-providers'
 import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiErrorWarningLine } from 'react-icons/ri'
 import { FacebookShare, RedditShare, TelegramShare, TwitterShare } from '~components/Share'
-import { ElectionQuestions, ElectionResults, environment } from '~components/vocdoni-ui'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'

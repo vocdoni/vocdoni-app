@@ -2,6 +2,16 @@ import { mockUseClient, mockUseOrganization, render, screen } from '~src/test-ut
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import OrganizationHeader from './Header'
 
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  return {
+    ...actual,
+    OrganizationImage: ({ alt }: { alt?: string }) => <img alt={alt ?? 'OrganizationImage'} />,
+    OrganizationName: ({ title }: { title?: string }) => <p>{title}</p>,
+    OrganizationDescription: () => <p>OrganizationDescription</p>,
+  }
+})
+
 vi.mock('~components/Layout/use-read-more', () => ({
   useReadMoreMarkdown: () => ({
     ReadMoreMarkdownWrapper: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,

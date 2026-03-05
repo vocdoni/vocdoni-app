@@ -19,6 +19,7 @@
 .vscode
 .idea
 chakra-config.json
+.turbo
 
 # we use pnpm here
 package-lock.json

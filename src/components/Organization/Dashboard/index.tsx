@@ -16,6 +16,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
+import { ElectionStatusBadge, ElectionTitle } from '@vocdoni/react-components'
 import { ElectionProvider, useClient, useOrganization } from '@vocdoni/react-providers'
 import { PublishedElection } from '@vocdoni/sdk'
 import { format } from 'date-fns'
@@ -29,7 +30,6 @@ import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Content
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import InvertedAccordionIcon from '~components/Layout/InvertedAccordionIcon'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
-import { ElectionStatusBadge, ElectionTitle } from '~components/vocdoni-ui'
 import { PlanId } from '~constants'
 import { Routes } from '~routes'
 import { useProfile } from '~src/queries/account'

@@ -3,8 +3,8 @@ import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ActionsMenu } from './ActionsMenu'
 
-vi.mock('~components/vocdoni-ui', async (importOriginal) => {
-  const actual = (await importOriginal()) as typeof import('~components/vocdoni-ui')
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
   return {
     ...actual,
     ActionsProvider: ({ children }: { children: ReactNode }) => <>{children}</>,

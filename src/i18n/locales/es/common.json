@@ -267,7 +267,6 @@
   },
   "email": "Correo electrónico",
   "email_placeholder": "nombre@correo.com",
-  "empty": "Aparentemente este proceso no tiene preguntas",
   "end_date": "Fecha de finalización",
   "end_time": "Hora de finalización",
   "end_vote": "Finalizar votación",
@@ -288,11 +287,6 @@
     "title": "Error"
   },
   "error_removing_code": "Error eliminando el código",
-  "errors": {
-    "not_voted_in_ended_election": "",
-    "wrong_data_description": "Los datos especificados no son correctos",
-    "wrong_data_title": "Datos incorrectos"
-  },
   "features": {
     "anonymous_voting": "Votación anónima",
     "approval": "Votación aprobatoria",
@@ -1002,14 +996,8 @@
   "organizations": "Organizaciones ({{ numOrgs }})",
   "other_details": "otros detalles",
   "pagination": {
-    "next": "",
     "page_out_of": "Página {{page}} de {{total}}",
-    "page_placeholder": "",
-    "previous": "",
-    "rows_per_page": "Filas por página",
-    "total_results_one": "",
-    "total_results_many": "",
-    "total_results_other": ""
+    "rows_per_page": "Filas por página"
   },
   "password": "Contraseña",
   "password_placeholder": "Mín. 8 caracteres",
@@ -1393,16 +1381,6 @@
   },
   "promo_code": "Código promocional",
   "promo_code_required": "El código es obligatorio",
-  "question_types": {
-    "approval_title": "Votación aprobatoria",
-    "approval_tooltip": "La votación aprobatoria permite votar tantas opciones como se desee. Gana la opción con más votos. Es una forma sencilla de mostrar apoyo a todas las alternativas que apruebes.",
-    "multichoice_desc": "Has seleccionado {{selected}} opciones de un máximo de {{maxcount}}",
-    "multichoice_desc_abstain": " (o abstenerse)",
-    "multichoice_title": "Votación de elección múltiple {{ weighted }}",
-    "multichoice_tooltip": "La votación de elección múltiple permite seleccionar hasta {{maxcount}} opciones (definidas por la persona organizadora). Gana la opción con más votos.",
-    "singlechoice_title": "Votación de elección simple {{ weighted }}",
-    "weighted_voting": "ponderada"
-  },
   "questions_and_results": "Preguntas y resultados",
   "registration_failed": "Error en el registro",
   "registration_successful": "Registro realizado correctamente",
@@ -1410,12 +1388,6 @@
   "remove_avatar": "Eliminar avatar",
   "reset_password_button": "Restablecer contraseña",
   "result_visibility": "Visibilidad de los resultados",
-  "results": {
-    "date_format": "d 'de' MMMM 'de' y 'a' 'las' H:mm",
-    "secret_until_the_end": "Los resultados se harán públicos cuando finalice el proceso, el {{ endDate }}.",
-    "title": "Resultados de «{{ title }}»",
-    "votes": "{{votes}} votos ({{ percent }})"
-  },
   "results_state": {
     "enabled": "Habilitado",
     "hidden_until_end": "Ocultos hasta el final",
@@ -1456,13 +1428,6 @@
   },
   "role_selector": {
     "selector_label": "Rol"
-  },
-  "schedule": {
-    "created": "Creado hace {{ distance }}",
-    "ended": "Finalizado hace {{ distance }}",
-    "from_begin_to_end": "Votación desde {{ begin }} hasta {{ end }}",
-    "paused_end": "Finaliza en {{ distance }}",
-    "paused_start": "Comienza en {{ distance }}"
   },
   "section": {
     "help": "Ayuda",
@@ -1507,23 +1472,11 @@
   "signup_title": "Registro",
   "spreadsheet": {
     "access_button": "Identificarse",
-    "anon_sik_helper": "Esto garantiza que el voto sea anónimo",
-    "anon_sik_label": "Define una contraseña para tu voto",
     "close": "Cerrar",
     "modal_title": "Autenticación"
   },
   "start_date": "Fecha de inicio",
   "start_time": "Hora de inicio",
-  "statuses": {
-    "canceled": "Cancelada",
-    "ended": "Finalizada",
-    "invalid": "Inválida",
-    "ongoing": "En curso",
-    "paused": "Pausada",
-    "process_unknown": "Desconocido",
-    "results": "Resultados",
-    "upcoming": "Próxima"
-  },
   "subscribe": "Suscribirse",
   "subscription": {
     "locked_content": {
@@ -1632,11 +1585,6 @@
   "user_menu": "Menú de usuario",
   "user_settings": "Ajustes de usuario",
   "validation": {
-    "at_least_one": "",
-    "choices_count_one": "",
-    "choices_count_many": "",
-    "choices_count_other": "",
-    "min_length": "Este campo debe tener al menos {{ min }} caracteres",
     "required": "Este campo es obligatorio"
   },
   "verification_code": "Código de verificación",
@@ -1668,13 +1616,8 @@
   "vocdoni_logo": "Logotipo de Vocdoni",
   "vote": {
     "abstain": "Abstenerse",
-    "button": "Votar",
-    "button_update": "Cambiar mi voto",
     "confirm": "Confirma tus opciones:",
-    "sign": "Firmar primero",
-    "voted_description": "Para verificar tu voto, puedes usar este identificador único: {{ id }}",
-    "voted_title": "¡Tu voto se ha emitido correctamente!",
-    "weight": "Tu poder de voto es: "
+    "voted_title": "¡Tu voto se ha emitido correctamente!"
   },
   "vote_information": "Información del voto",
   "vote_overwrite": "Sobrescritura del voto",

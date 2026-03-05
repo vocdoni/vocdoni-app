@@ -12,8 +12,8 @@ vi.mock('wagmi', () => ({
   useAccount: () => ({ isConnected: false }),
 }))
 
-vi.mock('~components/vocdoni-ui', async (importOriginal) => {
-  const actual = (await importOriginal()) as typeof import('~components/vocdoni-ui')
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
   return {
     ...actual,
     VoteButton: (props: any) => <button {...props}>Vote</button>,
