@@ -1,9 +1,12 @@
 import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
+import { useClient } from '@vocdoni/react-providers'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
+import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
 
 export type MemberbaseTabsContext = {
   setJobId: (jobId: JobId) => void
@@ -18,9 +21,11 @@ export type JobId = string | null
 
 export const MemberbaseTabs = () => {
   const { t } = useTranslation()
+  const { account } = useClient()
   const navigate = useNavigate()
   const location = useLocation()
-  const [jobId, setJobIdState] = useState<JobId>(() => localStorage.getItem('memberbaseImportJobId'))
+  const accountId = account?.address || localStorage.getItem(LocalStorageKeys.SignerAddress)
+  const [jobId, setJobIdState] = useState<JobId>(() => getStoredImportJobId(accountId))
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState(search)
   const menuItems = [
@@ -38,13 +43,13 @@ export const MemberbaseTabs = () => {
   }
 
   const setJobId = (newJobId: string | null) => {
-    if (newJobId) {
-      localStorage.setItem('memberbaseImportJobId', newJobId)
-    } else {
-      localStorage.removeItem('memberbaseImportJobId')
-    }
+    setStoredImportJobId(newJobId, accountId)
     setJobIdState(newJobId)
   }
+
+  useEffect(() => {
+    setJobIdState(getStoredImportJobId(accountId))
+  }, [accountId])
 
   useEffect(() => {
     const timer = setTimeout(() => {
