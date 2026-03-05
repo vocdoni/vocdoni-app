@@ -1,6 +1,6 @@
 {
   "name": "@vocdoni/ui-scaffold",
-  "version": "0.1.0",
+  "version": "2.4.0",
   "private": true,
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
@@ -69,7 +69,7 @@
     "dev": "vite",
     "start": "vite",
     "build": "vite build",
-    "chakra:typegen": "chakra typegen ./src/theme/system.ts",
+    "chakra:typegen": "chakra typegen ./src/theme/system.ts --tsconfig ./tsconfig.paths.json",
     "lint": "tsc && prettier --check src",
     "lint:fix": "prettier --write src",
     "translations": "i18next-cli extract",
@@ -96,7 +96,7 @@
     ]
   },
   "devDependencies": {
-    "@chakra-ui/cli": "^3.32.0",
+    "@chakra-ui/cli": "^3.34.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",

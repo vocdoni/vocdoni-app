@@ -18,6 +18,7 @@
 !.env.example
 .vscode
 .idea
+chakra-config.json
 
 # we use pnpm here
 package-lock.json
