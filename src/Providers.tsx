@@ -69,9 +69,14 @@ const AppProviders = () => {
     setDefaultOptions({ locale })
   }, [locale])
 
+  const options: { options?: { api_url: string } } = {}
+  if (VocdoniEnvironment === 'dev') {
+    options.options = { api_url: 'https://one-dev.vocdoni.net/v2' }
+  }
+
   return (
     <RainbowKitTheme>
-      <ClientProvider env={VocdoniEnvironment as EnvOptions} signer={signer as Signer}>
+      <ClientProvider env={VocdoniEnvironment as EnvOptions} signer={signer as Signer} {...options}>
         <ConnectionToastProvider>
           <SaasProviders>
             <AnalyticsProvider>
