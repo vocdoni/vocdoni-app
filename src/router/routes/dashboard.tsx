@@ -96,6 +96,16 @@ export const useDashboardRoutes = () => {
                 errorElement: <Error />,
               },
               {
+                path: Routes.dashboard.processResults,
+                element: (
+                  <SuspenseLoader>
+                    <DashboardProcessView />
+                  </SuspenseLoader>
+                ),
+                loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
+                errorElement: <Error />,
+              },
+              {
                 path: Routes.dashboard.processes.base,
                 element: (
                   <SuspenseLoader>

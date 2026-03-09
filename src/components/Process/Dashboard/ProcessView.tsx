@@ -12,6 +12,11 @@ import {
   Input,
   Link,
   Progress,
+  TabsContent,
+  TabsContentGroup,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
   Text,
   TooltipContent,
   TooltipPositioner,
@@ -25,6 +30,7 @@ import {
 } from '@chakra-ui/react'
 import {
   ElectionDescription,
+  ElectionQuestions,
   ElectionResults,
   ElectionStatusBadge,
   ElectionTitle,
@@ -32,7 +38,7 @@ import {
 } from '@vocdoni/react-components'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format as formatDate } from 'date-fns'
-import { forwardRef, ReactNode } from 'react'
+import { forwardRef, ReactNode, useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
   LuCalendar,
@@ -53,7 +59,7 @@ import {
   LuX,
 } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
-import { generatePath } from 'react-router-dom'
+import { generatePath, useLocation, useNavigate } from 'react-router-dom'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
 import {
   DashboardBox,
@@ -67,6 +73,16 @@ import {
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { Routes } from '~src/router/routes'
 import { useResultTypeLabel } from '../resultTypeLabels'
+
+export type ProcessViewTab = 'questions' | 'results'
+
+export const getProcessViewTabFromPath = (pathname: string): ProcessViewTab =>
+  pathname.endsWith('/results') ? 'results' : 'questions'
+
+export const getProcessViewPathForTab = (pathname: string, tab: ProcessViewTab): string => {
+  const basePath = pathname.replace(/\/results\/?$/, '')
+  return tab === 'results' ? `${basePath}/results` : basePath
+}
 
 type ElectionVideoProps = HTMLChakraProps<'div'>
 
@@ -101,9 +117,19 @@ const ProcessViewContent = () => {
   const { t } = useTranslation()
   const { showSidebar, toggleSidebar } = useSidebarVisibility()
   const { id, election } = useElection()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const tabValue = getProcessViewTabFromPath(location.pathname)
+  const showResultsTab = election instanceof PublishedElection && election.status !== ElectionStatus.CANCELED
 
   const votingLink = `${document.location.origin}${generatePath(Routes.processes.view, { id })}`
   const { copy } = useClipboard({ value: votingLink })
+
+  useEffect(() => {
+    if (tabValue === 'results' && !showResultsTab) {
+      navigate(getProcessViewPathForTab(location.pathname, 'questions'), { replace: true })
+    }
+  }, [tabValue, showResultsTab, navigate, location.pathname])
 
   return (
     <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
@@ -222,7 +248,37 @@ const ProcessViewContent = () => {
               <Trans i18nKey='questions_and_results'>Questions and results</Trans>
               <ResultsStateBadge />
             </Heading>
-            <ElectionResults forceRender />
+            <TabsRoot
+              fitted
+              value={tabValue}
+              onValueChange={({ value }) => {
+                const nextTab = value as ProcessViewTab
+                if (nextTab === 'results' && !showResultsTab) return
+
+                const nextPath = getProcessViewPathForTab(location.pathname, nextTab)
+                if (nextPath !== location.pathname) navigate(nextPath)
+              }}
+              w='full'
+            >
+              <TabsList w='full'>
+                <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
+                {showResultsTab && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
+              </TabsList>
+              <TabsContentGroup mt={6}>
+                <TabsContent value='questions' p={0}>
+                  <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                    <ElectionQuestions />
+                  </Box>
+                </TabsContent>
+                {showResultsTab && (
+                  <TabsContent value='results' p={0}>
+                    <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                      <ElectionResults />
+                    </Box>
+                  </TabsContent>
+                )}
+              </TabsContentGroup>
+            </TabsRoot>
           </DashboardBox>
         </Box>
       </DashboardContents>
