@@ -92,27 +92,35 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
                     }),
                   },
                 }}
-                render={({ field: { onChange, value } }) => (
-                  <PinInputRoot
-                    size='lg'
-                    value={value.split('')}
-                    onValueChange={({ valueAsString }) => {
-                      onChange(valueAsString)
-                      if (valueAsString.length === 6) {
-                        handleSubmit(onSubmit)()
-                      }
-                    }}
-                    autoFocus
-                    count={6}
-                  >
-                    <PinInputHiddenInput />
-                    <PinInputControl>
-                      {Array.from({ length: 6 }).map((_, index) => (
-                        <PinInputInput key={index} index={index} />
-                      ))}
-                    </PinInputControl>
-                  </PinInputRoot>
-                )}
+                render={({ field: { onChange, value } }) => {
+                  const safeValue = typeof value === 'string' ? value : ''
+                  const pinValue = Array.from({ length: 6 }, (_, index) => safeValue[index] ?? '')
+
+                  return (
+                    <PinInputRoot
+                      size='lg'
+                      value={pinValue}
+                      onValueChange={({ value, valueAsString }) => {
+                        const nextValue =
+                          typeof valueAsString === 'string' ? valueAsString : Array.isArray(value) ? value.join('') : ''
+
+                        onChange(nextValue)
+                        if (nextValue.length === 6) {
+                          handleSubmit(onSubmit)()
+                        }
+                      }}
+                      autoFocus
+                      count={6}
+                    >
+                      <PinInputHiddenInput />
+                      <PinInputControl>
+                        {Array.from({ length: 6 }).map((_, index) => (
+                          <PinInputInput key={index} index={index} />
+                        ))}
+                      </PinInputControl>
+                    </PinInputRoot>
+                  )
+                }}
               />
             </HStack>
             {errors.code && <FieldErrorText textAlign='center'>{errors.code.message}</FieldErrorText>}
