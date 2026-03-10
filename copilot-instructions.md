@@ -105,7 +105,7 @@ Where `SaasProviders` wraps: `AuthProvider → SubscriptionProvider → SaasAcco
 ### Environment Variables
 - Access environment variables via `import.meta.env.VARIABLE_NAME`
 - Use environment-specific configurations from `src/constants/index.ts`
-- Support multiple environments: dev, stg, prod
+- Support multiple environments: dev, prod
 
 ## Development Workflow
 
@@ -156,7 +156,7 @@ Where `SaasProviders` wraps: `AuthProvider → SubscriptionProvider → SaasAcco
 
 ## Deployment Architecture
 - `develop` branch → app-dev.vocdoni.io (dev environment)
-- `stage` branch → app-stg.vocdoni.io (staging environment)
+- `stage` branch → deprecated staging environment
 - `main` branch → app.vocdoni.io (production environment)
 
 When generating code suggestions, prioritize patterns and conventions already established in the codebase. Always consider the multi-tenant nature of the application and the Web3/blockchain integration requirements.

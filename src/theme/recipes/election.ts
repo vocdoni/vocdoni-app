@@ -101,6 +101,12 @@ export const ElectionResults = defineSlotRecipe({
   slots: resultsAnatomy,
   base: {
     wrapper: {
+      display: 'grid',
+      gridTemplateColumns: {
+        base: '1fr',
+        md: 'repeat(2, minmax(0, 1fr))',
+      },
+      alignItems: 'start',
       gap: 6,
     },
     body: {
@@ -142,6 +148,7 @@ export const ElectionResults = defineSlotRecipe({
     },
     question: {
       width: 'full',
+      minW: 0,
     },
     progress: {
       position: 'absolute',

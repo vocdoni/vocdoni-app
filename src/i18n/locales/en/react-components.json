@@ -41,11 +41,11 @@
     "weighted_voting": "Weighted Voting"
   },
   "schedule": {
-    "from_begin_to_end": "schedule.from_begin_to_end",
-    "ended": "schedule.ended",
-    "paused_start": "schedule.paused_start",
-    "paused_end": "schedule.paused_end",
-    "created": "schedule.created"
+    "from_begin_to_end": "Voting from {{ begin }} to {{ end }}",
+    "ended": "Ended {{ distance }}",
+    "paused_start": "Starts {{ distance }}",
+    "paused_end": "Ends {{ distance }}",
+    "created": "Created {{ distance }}"
   },
   "results": {
     "date_format": "PPpp",

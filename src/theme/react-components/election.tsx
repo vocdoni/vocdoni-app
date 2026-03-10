@@ -1,6 +1,6 @@
 import {
   Alert,
-  AlertRootProps,
+  type AlertRootProps,
   Box,
   type BoxProps,
   Button,
@@ -13,16 +13,16 @@ import {
   type FlexProps,
   Heading,
   type HeadingProps,
+  Icon,
   Image,
   type ImageProps,
-  Icon,
   Input,
   List,
   Portal,
   Progress,
   Skeleton,
   Tag,
-  TagRootProps,
+  type TagRootProps,
   Text,
   type TextProps,
   useRecipe,
@@ -416,15 +416,15 @@ export const electionComponents: ComponentsPartialDefinition = {
     const styles = recipe()
     const progressRecipe = useSlotRecipe({ recipe: resultsProgressRecipe })
     const progressStyles = progressRecipe()
+    const { t } = useTranslation('react-components')
+    const hasMultipleQuestions = (questions?.length ?? 0) > 1
     return (
-      <Box css={styles.wrapper} {...props}>
+      <Box css={[styles.wrapper, !hasMultipleQuestions ? { gridTemplateColumns: '1fr' } : undefined]} {...props}>
         {secretText ? <Text css={styles.secret}>{secretText}</Text> : null}
         {questions?.map((question) => (
           <Box key={question.title} css={styles.question}>
             <Box css={styles.header}>
-              <Heading size='sm' css={styles.title}>
-                {question.title}
-              </Heading>
+              <Text css={styles.title}>{question.title}</Text>
             </Box>
             <Flex direction='column' css={styles.body}>
               {question.choices.map((choice) => {
@@ -432,7 +432,12 @@ export const electionComponents: ComponentsPartialDefinition = {
                 return (
                   <Box key={choice.title} position='relative'>
                     <Text css={styles.choiceTitle}>{choice.title}</Text>
-                    <Text css={styles.choiceVotes}>{choice.votes}</Text>
+                    <Text css={styles.choiceVotes}>
+                      {t('results.votes', {
+                        votes: choice.votes,
+                        percent: choice.percent,
+                      })}
+                    </Text>
                     <Progress.Root css={[styles.progress, progressStyles.root]} value={percent} max={100}>
                       <Progress.Track css={progressStyles.track}>
                         <Progress.Range css={progressStyles.range} />

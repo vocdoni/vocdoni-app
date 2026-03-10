@@ -54,7 +54,7 @@ describe('ProcessAside', () => {
           isAbleToVote: true,
           connected: false,
         }),
-      useClient: () => mockUseClient({ env: 'stg' }),
+      useClient: () => mockUseClient({ env: 'prod' }),
     })
   })
 

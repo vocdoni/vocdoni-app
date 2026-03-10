@@ -28,7 +28,14 @@ export const paginationComponents: ComponentsPartialDefinition = {
       const recipe = useRecipe({ key: 'PaginationButton' })
       const styles = recipe()
       return href ? (
-        <Button asChild className={className} css={styles} data-active={isActive ? '' : undefined} {...props}>
+        <Button
+          asChild
+          className={className}
+          css={styles}
+          data-active={isActive ? '' : undefined}
+          disabled={disabled}
+          {...props}
+        >
           <RouterLink to={href}>{label}</RouterLink>
         </Button>
       ) : (

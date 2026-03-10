@@ -1,7 +1,6 @@
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ComponentsProvider } from '@vocdoni/react-components'
-import { EnvOptions } from '@vocdoni/sdk'
+import { ClientEnv, ComponentsProvider } from '@vocdoni/react-components'
 import { setDefaultOptions } from 'date-fns'
 import { PropsWithChildren, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -72,14 +71,15 @@ const AppProviders = () => {
   }, [locale])
 
   const options: { options?: { api_url: string } } = {}
-  if (VocdoniEnvironment === 'dev') {
+  const clientEnv: ClientEnv = VocdoniEnvironment === 'prod' ? 'prod' : 'dev'
+  if (clientEnv === 'dev') {
     options.options = { api_url: 'https://one-dev.vocdoni.net/v2' }
   }
 
   return (
     <RainbowKitTheme>
       <ComponentsProvider components={uiScaffoldComponents}>
-        <ClientProvider env={VocdoniEnvironment as EnvOptions} signer={signer as Signer} {...options}>
+        <ClientProvider env={clientEnv} signer={signer as Signer} {...options}>
           <ConnectionToastProvider>
             <SaasProviders>
               <AnalyticsProvider>
