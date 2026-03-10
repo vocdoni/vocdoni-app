@@ -24,7 +24,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { PaginationProvider, usePagination } from '@vocdoni/react-providers'
+import { PaginationProvider, usePagination } from '@vocdoni/react-components/pagination'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCalendar, LuClock, LuEllipsis, LuEye, LuTrash, LuUsers, LuVote } from 'react-icons/lu'

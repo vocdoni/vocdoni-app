@@ -1,6 +1,6 @@
 import { Flex, IconButton, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
-import { OrganizationProvider, useClient } from '@vocdoni/react-providers'
+import { OrganizationProvider, useClient } from '@vocdoni/react-components'
 import React, { createContext, PropsWithChildren, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuPanelLeft } from 'react-icons/lu'

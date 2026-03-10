@@ -1,5 +1,6 @@
 import { Flex } from '@chakra-ui/react'
-import { RoutedPaginationProvider, useOrganization } from '@vocdoni/react-providers'
+import { useOrganization } from '@vocdoni/react-components'
+import { RoutedPaginationProvider } from '@vocdoni/react-components/pagination'
 import { ElectionListWithPagination } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'

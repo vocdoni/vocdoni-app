@@ -2,7 +2,7 @@ import { Button, Flex, FlexProps, Link, Text } from '@chakra-ui/react'
 import { useToast } from '~components/Toast'
 
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix, useClient } from '@vocdoni/react-providers'
+import { enforceHexPrefix, useClient } from '@vocdoni/react-components'
 import { Account, RemoteSigner } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'

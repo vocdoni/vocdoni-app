@@ -1,4 +1,4 @@
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
 import { Loading } from '~src/router/SuspenseLoader'

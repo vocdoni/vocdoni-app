@@ -23,8 +23,7 @@ import {
   TooltipTrigger,
   VStack,
 } from '@chakra-ui/react'
-import { ElectionQuestions, ElectionResults, environment } from '@vocdoni/react-components'
-import { useClient, useElection, useOrganization } from '@vocdoni/react-providers'
+import { ElectionQuestions, ElectionResults, environment, useClient, useElection, useOrganization } from '@vocdoni/react-components'
 import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'

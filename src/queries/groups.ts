@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-providers'
+import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '@vocdoni/sdk'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'

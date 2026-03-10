@@ -9,7 +9,7 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react'
-import { useClient, useOrganization } from '@vocdoni/react-providers'
+import { useClient, useOrganization } from '@vocdoni/react-components'
 import { areEqualHexStrings, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -1,11 +1,10 @@
+import { reactComponentsNamespace, reactComponentsResources } from '@vocdoni/react-components'
 import { format, formatDistance, Locale } from 'date-fns'
 import i18next from 'i18next'
 import BrowserLanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
-import { reactComponentsNamespace, reactComponentsResources } from '@vocdoni/react-components'
-import { reactProvidersNamespace, reactProvidersResources } from '@vocdoni/react-providers'
 import { ucfirst } from '~utils/strings'
-import { dateLocales, reactComponentsTranslations, reactProvidersTranslations, translations } from './locales'
+import { dateLocales, reactComponentsTranslations, translations } from './locales'
 
 const languagesSlice = import.meta.env.LANGUAGES as Record<string, string>
 const supportedLanguages = Object.keys(languagesSlice)
@@ -21,7 +20,7 @@ i18n
       fallbackLng: fallbackLanguage,
       supportedLngs: supportedLanguages,
       debug: import.meta.env.NODE_ENV === 'development',
-      ns: ['common', reactProvidersNamespace, reactComponentsNamespace],
+      ns: ['common', reactComponentsNamespace],
       defaultNS: 'common',
       showSupportNotice: false,
       interpolation: {
@@ -45,15 +44,6 @@ i18n
 for (const lang of supportedLanguages) {
   if (typeof translations[lang] !== 'undefined') {
     i18n.addResourceBundle(lang, 'common', translations[lang])
-  }
-
-  const providerResources = reactProvidersResources[lang as keyof typeof reactProvidersResources]
-  if (providerResources?.[reactProvidersNamespace]) {
-    i18n.addResourceBundle(lang, reactProvidersNamespace, providerResources[reactProvidersNamespace])
-  }
-
-  if (typeof reactProvidersTranslations[lang] !== 'undefined') {
-    i18n.addResourceBundle(lang, reactProvidersNamespace, reactProvidersTranslations[lang])
   }
 
   const componentsResources = reactComponentsResources[lang as keyof typeof reactComponentsResources]

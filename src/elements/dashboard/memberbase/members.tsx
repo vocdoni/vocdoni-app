@@ -1,4 +1,4 @@
-import { RoutedPaginationProvider } from '@vocdoni/react-providers'
+import { RoutedPaginationProvider } from '@vocdoni/react-components/pagination'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOutletContext } from 'react-router-dom'

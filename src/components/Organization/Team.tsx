@@ -23,7 +23,7 @@ import {
   useRadioGroupContext,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
-import { enforceHexPrefix, useClient } from '@vocdoni/react-providers'
+import { enforceHexPrefix, useClient } from '@vocdoni/react-components'
 import { formatDistanceToNow } from 'date-fns'
 import { ComponentProps, ReactNode, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'

@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { createContext, ReactNode, useCallback, useContext } from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'

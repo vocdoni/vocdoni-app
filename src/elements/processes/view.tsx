@@ -1,4 +1,4 @@
-import { ElectionProvider, OrganizationProvider, useElection } from '@vocdoni/react-providers'
+import { ElectionProvider, OrganizationProvider, useElection } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
 import { useLoaderData } from 'react-router-dom'
 import { ProcessView as ProcessViewComponent } from '~components/Process/View'

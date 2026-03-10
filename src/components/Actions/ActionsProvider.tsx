@@ -1,4 +1,4 @@
-import { ActionsProvider as RActionsProvider } from '@vocdoni/react-providers'
+import { ActionsProvider as RActionsProvider } from '@vocdoni/react-components'
 import { type ReactNode } from 'react'
 import { useActionsToast } from './use-actions-toast'
 

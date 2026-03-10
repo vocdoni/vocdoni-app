@@ -1,5 +1,5 @@
 import { AvatarFallback, AvatarImage, AvatarRoot, Flex, FlexProps, Text, TextProps } from '@chakra-ui/react'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-providers'
+import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
 import { addressTextOverflow } from '~constants'
 
 export const CreatedBy = (props: FlexProps) => {

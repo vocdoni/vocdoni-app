@@ -1,5 +1,5 @@
 import { Text } from '@chakra-ui/react'
-import { useElection } from '@vocdoni/react-providers'
+import { useElection } from '@vocdoni/react-components'
 import { ElectionStatus, InvalidElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'

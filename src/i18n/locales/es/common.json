@@ -94,8 +94,7 @@
     "cancel_process_title": "Cancelar voto",
     "confirm": "Confirmar voto",
     "end_process_button": "Finalizar votación",
-    "end_process_title": "Finalizar votación",
-    "title": "Confirmar"
+    "end_process_title": "Finalizar votación"
   },
   "confirm_password": "Confirmar contraseña",
   "confirm_password_placeholder": "Confirma tu nueva contraseña",
@@ -1209,7 +1208,6 @@
     "share_title": "Compartir en {{ network }}",
     "spreadsheet": {
       "confirm": {
-        "blank_vote": "No se han seleccionado opciones, enviando voto en blanco",
         "election_title": "Tu voto será registrado para:"
       }
     },
@@ -1615,8 +1613,6 @@
   "view_plans_and_pricing": "Ver planes y precios",
   "vocdoni_logo": "Logotipo de Vocdoni",
   "vote": {
-    "abstain": "Abstenerse",
-    "confirm": "Confirma tus opciones:",
     "voted_title": "¡Tu voto se ha emitido correctamente!"
   },
   "vote_information": "Información del voto",

@@ -9,7 +9,7 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react'
-import { enforceHexPrefix, useClient, useOrganization } from '@vocdoni/react-providers'
+import { enforceHexPrefix, useClient, useOrganization } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { HiOutlineEllipsisHorizontalCircle } from 'react-icons/hi2'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'

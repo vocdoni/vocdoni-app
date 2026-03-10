@@ -1,5 +1,5 @@
 import { Button, type ButtonProps } from '@chakra-ui/react'
-import { useActions, useClient, useElection } from '@vocdoni/react-providers'
+import { useActions, useClient, useElection } from '@vocdoni/react-components'
 import { areEqualHexStrings, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'

@@ -15,7 +15,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuInfo } from 'react-icons/lu'

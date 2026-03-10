@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-providers'
+import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
 import {
   AccountData,
   ensure0x,

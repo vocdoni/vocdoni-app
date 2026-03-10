@@ -1,5 +1,5 @@
 import { Icon, IconButton, Menu, type MenuContentProps } from '@chakra-ui/react'
-import { useActions, useClient, useElection } from '@vocdoni/react-providers'
+import { useActions, useClient, useElection } from '@vocdoni/react-components'
 import { ElectionStatus, InvalidElection } from '@vocdoni/sdk'
 import { ElementType } from 'react'
 import { useTranslation } from 'react-i18next'

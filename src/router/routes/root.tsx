@@ -1,4 +1,4 @@
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { VocdoniSDKClient } from '@vocdoni/sdk'
 import { lazy } from 'react'
 import { Params } from 'react-router-dom'

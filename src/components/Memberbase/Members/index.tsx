@@ -21,7 +21,7 @@ import {
   WrapItem,
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-providers'
+import { useOrganization } from '@vocdoni/react-components'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'

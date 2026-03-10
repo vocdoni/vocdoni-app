@@ -25,6 +25,7 @@
   },
   "empty": "Sembra che questo processo non abbia domande",
   "errors": {
+    "unauthorized": "Non autorizzato a votare",
     "wrong_data_title": "Dati errati",
     "wrong_data_description": "I dati specificati non sono corretti",
     "not_voted_in_ended_election": "Hai firmato ma non hai votato in questa elezione terminata."

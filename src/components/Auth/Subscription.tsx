@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { enforceHexPrefix, useClient } from '@vocdoni/react-providers'
+import { enforceHexPrefix, useClient } from '@vocdoni/react-components'
 import { dotobject } from '@vocdoni/sdk'
 import { ReactNode, createContext, useContext, useMemo } from 'react'
 import { useAuth } from '~components/Auth/useAuth'

@@ -15,7 +15,10 @@ const defaultMock: ReactProvidersMock = {
   useElection: () => ({ election: null, connected: false, loading: {}, errors: {} }),
   useOrganization: () => ({ organization: null }),
   useActions: () => ({ info: null, error: null }),
+  usePagination: () => ({ page: 1, total: 1, limit: 10, setPage: () => undefined }),
   useRoutedPagination: () => ({ page: 1, total: 1, limit: 10, setPage: () => undefined }),
+  PaginationProvider: ({ children }: { children: ReactNode }) => children as any,
+  RoutedPaginationProvider: ({ children }: { children: ReactNode }) => children as any,
   ElectionProvider: ({ children }: { children: ReactNode }) => children as any,
   OrganizationProvider: ({ children }: { children: ReactNode }) => children as any,
 }
@@ -37,7 +40,10 @@ export const getReactProvidersMock = () => ({
   useElection: (...args: any[]) => resolveMock('useElection')(...args),
   useOrganization: (...args: any[]) => resolveMock('useOrganization')(...args),
   useActions: (...args: any[]) => resolveMock('useActions')(...args),
+  usePagination: (...args: any[]) => resolveMock('usePagination')(...args),
   useRoutedPagination: (...args: any[]) => resolveMock('useRoutedPagination')(...args),
+  PaginationProvider: (props: any) => resolveMock('PaginationProvider')(props),
+  RoutedPaginationProvider: (props: any) => resolveMock('RoutedPaginationProvider')(props),
   ElectionProvider: (props: any) => resolveMock('ElectionProvider')(props),
   OrganizationProvider: (props: any) => resolveMock('OrganizationProvider')(props),
 })

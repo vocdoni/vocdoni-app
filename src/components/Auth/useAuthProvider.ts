@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import { clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { NoOrganizationsError, RemoteSigner, UnauthorizedError } from '@vocdoni/sdk'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'

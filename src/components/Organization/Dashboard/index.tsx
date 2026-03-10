@@ -16,8 +16,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
-import { ElectionStatusBadge, ElectionTitle } from '@vocdoni/react-components'
-import { ElectionProvider, useClient, useOrganization } from '@vocdoni/react-providers'
+import {
+  ElectionProvider,
+  ElectionStatusBadge,
+  ElectionTitle,
+  useClient,
+  useOrganization,
+} from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
 import { format } from 'date-fns'
 import { Trans, useTranslation } from 'react-i18next'

@@ -13,7 +13,7 @@ import {
   PinInputRoot,
   VStack,
 } from '@chakra-ui/react'
-import { useElection } from '@vocdoni/react-providers'
+import { useElection } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
 import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'

@@ -1,6 +1,5 @@
 import { Box, Text } from '@chakra-ui/react'
-import { Pagination, RoutedPagination } from '@vocdoni/react-components'
-import { usePagination, useRoutedPagination } from '@vocdoni/react-providers'
+import { Pagination, RoutedPagination, usePagination, useRoutedPagination } from '@vocdoni/react-components/pagination'
 import { Trans } from 'react-i18next'
 import RowsPerPageSelect from './RowsPerPageSelect'
 

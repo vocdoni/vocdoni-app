@@ -1,4 +1,4 @@
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { AccountData, ArchivedAccountData } from '@vocdoni/sdk'
 
 const isNotArchived = (account: AccountData | ArchivedAccountData): account is AccountData => {

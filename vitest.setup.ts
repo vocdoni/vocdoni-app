@@ -19,12 +19,25 @@ function createToastMock() {
 
 vi.mock('~components/Toast', createToastMock)
 
-vi.mock('@vocdoni/react-providers', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/react-providers')>()
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   const { getReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
   return {
     ...actual,
     ...getReactProvidersMock(),
+  }
+})
+
+vi.mock('@vocdoni/react-components/pagination', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components/pagination')>()
+  const { getReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
+  const mock = getReactProvidersMock()
+  return {
+    ...actual,
+    usePagination: mock.usePagination,
+    useRoutedPagination: mock.useRoutedPagination,
+    PaginationProvider: mock.PaginationProvider ?? actual.PaginationProvider,
+    RoutedPaginationProvider: mock.RoutedPaginationProvider ?? actual.RoutedPaginationProvider,
   }
 })
 

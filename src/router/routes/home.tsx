@@ -1,4 +1,4 @@
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { lazy, useMemo } from 'react'
 import { Navigate } from 'react-router-dom'
 import { parseProcessIds } from '~components/Home/SharedCensus'

@@ -1,6 +1,11 @@
 import { AspectRatio, Box, Flex, IconButton } from '@chakra-ui/react'
-import { OrganizationImage as Avatar, OrganizationDescription, OrganizationName } from '@vocdoni/react-components'
-import { useClient, useOrganization } from '@vocdoni/react-providers'
+import {
+  OrganizationImage as Avatar,
+  OrganizationDescription,
+  OrganizationName,
+  useClient,
+  useOrganization,
+} from '@vocdoni/react-components'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaEye, FaEyeSlash } from 'react-icons/fa'

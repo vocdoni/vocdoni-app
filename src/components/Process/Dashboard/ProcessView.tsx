@@ -23,8 +23,13 @@ import {
   VStack,
   type HTMLChakraProps,
 } from '@chakra-ui/react'
-import { ElectionDescription, ElectionResults, ElectionStatusBadge, ElectionTitle } from '@vocdoni/react-components'
-import { useElection } from '@vocdoni/react-providers'
+import {
+  ElectionDescription,
+  ElectionResults,
+  ElectionStatusBadge,
+  ElectionTitle,
+  useElection,
+} from '@vocdoni/react-components'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format as formatDate } from 'date-fns'
 import { forwardRef, ReactNode } from 'react'

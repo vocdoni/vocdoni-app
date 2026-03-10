@@ -1,4 +1,4 @@
-import { OrganizationProvider, useOrganization } from '@vocdoni/react-providers'
+import { OrganizationProvider, useOrganization } from '@vocdoni/react-components'
 import { AccountData } from '@vocdoni/sdk'
 import { useLoaderData } from 'react-router-dom'
 import OrganizationViewComponent from '~components/Organization/View'

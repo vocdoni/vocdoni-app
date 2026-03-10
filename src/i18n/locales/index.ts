@@ -3,16 +3,12 @@ import { Locale } from 'date-fns'
  * If you add or remove any languages, remember to also update languages.ts
  */
 import ca from './ca/common.json'
-import en from './en/common.json'
-import es from './es/common.json'
-import it from './it/common.json'
-import caReactProviders from './ca/react-providers.json'
-import enReactProviders from './en/react-providers.json'
-import esReactProviders from './es/react-providers.json'
-import itReactProviders from './it/react-providers.json'
 import caReactComponents from './ca/react-components.json'
+import en from './en/common.json'
 import enReactComponents from './en/react-components.json'
+import es from './es/common.json'
 import esReactComponents from './es/react-components.json'
+import it from './it/common.json'
 import itReactComponents from './it/react-components.json'
 
 // no need to import english here, since it's date-fns default language
@@ -25,13 +21,6 @@ export const translations: { [key: string]: any } = {
   en,
   es,
   it,
-}
-
-export const reactProvidersTranslations: { [key: string]: any } = {
-  ca: caReactProviders,
-  en: enReactProviders,
-  es: esReactProviders,
-  it: itReactProviders,
 }
 
 export const reactComponentsTranslations: { [key: string]: any } = {

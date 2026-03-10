@@ -1,4 +1,4 @@
-import { useElection } from '@vocdoni/react-providers'
+import { useElection } from '@vocdoni/react-components'
 import { ensure0x, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, useNavigate } from 'react-router-dom'

@@ -1,4 +1,4 @@
-import { ElectionProvider, OrganizationProvider, useOrganization } from '@vocdoni/react-providers'
+import { ElectionProvider, OrganizationProvider, useOrganization } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
 import { useEffect } from 'react'
 import { generatePath, useLoaderData, useNavigate } from 'react-router-dom'

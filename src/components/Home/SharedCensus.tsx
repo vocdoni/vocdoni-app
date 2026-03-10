@@ -1,6 +1,13 @@
 import { AspectRatio, Box, Flex, Link, Spinner, Text } from '@chakra-ui/react'
-import { ElectionStatusBadge, ElectionTitle, OrganizationImage } from '@vocdoni/react-components'
-import { ElectionProvider, OrganizationProvider, useClient, useElection } from '@vocdoni/react-providers'
+import {
+  ElectionProvider,
+  ElectionStatusBadge,
+  ElectionTitle,
+  OrganizationImage,
+  OrganizationProvider,
+  useClient,
+  useElection,
+} from '@vocdoni/react-components'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'

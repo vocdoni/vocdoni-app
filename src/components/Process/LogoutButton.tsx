@@ -1,6 +1,5 @@
 import { Box, Button } from '@chakra-ui/react'
-import { SpreadsheetAccess } from '@vocdoni/react-components'
-import { useClient, useElection } from '@vocdoni/react-providers'
+import { SpreadsheetAccess, useClient, useElection } from '@vocdoni/react-components'
 import { CensusType, dotobject, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useAccount, useDisconnect } from 'wagmi'

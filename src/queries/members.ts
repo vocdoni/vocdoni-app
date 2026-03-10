@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-providers'
+import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '@vocdoni/sdk'
 import { useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 import { ApiEndpoints } from '~components/Auth/api'

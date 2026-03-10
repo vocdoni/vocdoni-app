@@ -1,6 +1,5 @@
 import { Box, Icon, IconButton, Link, Menu, MenuPositioner, Table, Tag, Text } from '@chakra-ui/react'
-import { ElectionStatusBadge, QuestionsTypeBadge } from '@vocdoni/react-components'
-import { ElectionProvider, useElection } from '@vocdoni/react-providers'
+import { ElectionProvider, ElectionStatusBadge, QuestionsTypeBadge, useElection } from '@vocdoni/react-components'
 import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'

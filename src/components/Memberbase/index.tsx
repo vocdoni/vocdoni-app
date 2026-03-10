@@ -1,5 +1,5 @@
 import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Outlet, useLocation, useNavigate } from 'react-router-dom'

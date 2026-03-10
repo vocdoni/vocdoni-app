@@ -13,7 +13,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-providers'
+import { useOrganization } from '@vocdoni/react-components'
 import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

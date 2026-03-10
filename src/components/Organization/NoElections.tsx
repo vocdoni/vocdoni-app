@@ -1,5 +1,5 @@
 import { Box, Button, Card, Flex, Image, Text } from '@chakra-ui/react'
-import { useClient, useOrganization } from '@vocdoni/react-providers'
+import { useClient, useOrganization } from '@vocdoni/react-components'
 import { areEqualHexStrings } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'

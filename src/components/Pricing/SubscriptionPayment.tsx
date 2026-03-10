@@ -8,7 +8,7 @@ import {
 } from '@stripe/react-stripe-js/checkout'
 import { loadStripe, Stripe, StripeCheckoutOptions } from '@stripe/stripe-js'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'

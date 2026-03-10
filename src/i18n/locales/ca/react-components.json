@@ -25,6 +25,7 @@
   },
   "empty": "Sembla que aquest procés no té preguntes",
   "errors": {
+    "unauthorized": "No autoritzat per votar",
     "wrong_data_title": "Dades incorrectes",
     "wrong_data_description": "Les dades especificades no són correctes",
     "not_voted_in_ended_election": "Has signat però no has votat en aquesta elecció finalitzada."

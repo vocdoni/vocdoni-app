@@ -1,6 +1,6 @@
 import { Button, Flex, Icon, PopoverBody, PopoverFooter, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus, LuSquareStack } from 'react-icons/lu'

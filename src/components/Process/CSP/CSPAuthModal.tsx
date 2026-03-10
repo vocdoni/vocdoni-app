@@ -1,6 +1,6 @@
 import { Button, CloseButton, Dialog, Portal } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
-import { useElection } from '@vocdoni/react-providers'
+import { useElection } from '@vocdoni/react-components'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
 import { QueryKeys } from '~queries/keys'

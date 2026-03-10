@@ -1,6 +1,6 @@
 // These aren't lazy loaded since they are main layouts and related components
 import { useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-providers'
+import { useClient } from '@vocdoni/react-components'
 import { lazy } from 'react'
 import { generatePath, LoaderFunctionArgs, Navigate, Params } from 'react-router-dom'
 import Error from '~elements/Error'

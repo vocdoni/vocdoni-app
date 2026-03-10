@@ -91,8 +91,7 @@
     "cancel_process_title": "Cancel Vote",
     "confirm": "Confirm Vote",
     "end_process_button": "End Vote",
-    "end_process_title": "End Vote",
-    "title": "Confirm"
+    "end_process_title": "End Vote"
   },
   "confirm_password": "Confirm Password",
   "confirm_password_placeholder": "Confirm your new password",
@@ -1187,7 +1186,6 @@
     "share_title": "Share on {{ network }}",
     "spreadsheet": {
       "confirm": {
-        "blank_vote": "No choices selected, sending blank vote",
         "election_title": "Your vote will be recorded for:"
       }
     },
@@ -1592,8 +1590,6 @@
   "view_plans_and_pricing": "View Plans & Pricing",
   "vocdoni_logo": "Vocdoni logo",
   "vote": {
-    "abstain": "Abstain",
-    "confirm": "Please confirm your choices:",
     "voted_title": "Your vote was successfully cast!"
   },
   "vote_information": "Vote information",

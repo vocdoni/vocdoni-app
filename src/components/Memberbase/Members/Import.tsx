@@ -26,7 +26,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-providers'
+import { useOrganization } from '@vocdoni/react-components'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'

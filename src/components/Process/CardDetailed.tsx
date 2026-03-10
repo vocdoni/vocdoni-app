@@ -1,6 +1,12 @@
 import { Box, Card, Text } from '@chakra-ui/react'
-import { ElectionDescription, ElectionStatusBadge, ElectionTitle } from '@vocdoni/react-components'
-import { ElectionProvider, enforceHexPrefix, useElection } from '@vocdoni/react-providers'
+import {
+  ElectionDescription,
+  ElectionProvider,
+  ElectionStatusBadge,
+  ElectionTitle,
+  enforceHexPrefix,
+  useElection,
+} from '@vocdoni/react-components'
 import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'

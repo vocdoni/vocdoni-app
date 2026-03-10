@@ -1,6 +1,6 @@
 import { Badge, Button, CloseButton, Dialog, Flex, Heading, Portal, Tabs, Text, useDisclosure } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-providers'
+import { useOrganization } from '@vocdoni/react-components'
 import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'

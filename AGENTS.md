@@ -44,7 +44,7 @@
 
 ## Internal Dependencies Context
 - This repository depends on maintained Vocdoni packages; changes may require validating upstream behavior.
-- Key internal dependencies include `@vocdoni/sdk`, `@vocdoni/react-providers`, and `@vocdoni/rainbowkit-wallets`.
+- Key internal dependencies include `@vocdoni/sdk`, `@vocdoni/react-components`, and `@vocdoni/rainbowkit-wallets`.
 
 ## Commit & Pull Request Guidelines
 - Follow existing Conventional Commit patterns from repo history (`fix(scope): ...`, `chore(scope): ...`, `refactor(scope): ...`).

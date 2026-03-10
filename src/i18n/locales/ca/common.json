@@ -94,8 +94,7 @@
     "cancel_process_title": "Cancel·la el procés",
     "confirm": "Confirma Vot",
     "end_process_button": "Finalitza votació",
-    "end_process_title": "Finalitza votació",
-    "title": "Confirmar"
+    "end_process_title": "Finalitza votació"
   },
   "confirm_password": "Confirma la contrasenya",
   "confirm_password_placeholder": "Confirma la teva nova contrasenya",
@@ -1209,7 +1208,6 @@
     "share_title": "Comparteix a {{ network }}",
     "spreadsheet": {
       "confirm": {
-        "blank_vote": "No s'han seleccionat opcions, enviant vot en blanc",
         "election_title": "El teu vot quedarà enregistrat així:"
       }
     },
@@ -1615,8 +1613,6 @@
   "view_plans_and_pricing": "Veure plans i preus",
   "vocdoni_logo": "Logotip de Vocdoni",
   "vote": {
-    "abstain": "Abstenció",
-    "confirm": "Confirma les teves seleccions:",
     "voted_title": "El teu vot s'ha registrat amb èxit!"
   },
   "vote_information": "Informació de la votació",

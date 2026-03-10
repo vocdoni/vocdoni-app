@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useLocalStorage } from '@uidotdev/usehooks'
-import { useClient, useOrganization } from '@vocdoni/react-providers'
+import { useClient, useOrganization } from '@vocdoni/react-components'
 import {
   AccountData,
   ArchivedAccountData,

@@ -25,6 +25,7 @@
   },
   "empty": "Apparently this process has no questions",
   "errors": {
+    "unauthorized": "Not authorized to vote",
     "wrong_data_title": "Wrong data",
     "wrong_data_description": "The specified data is not correct",
     "not_voted_in_ended_election": "You signed but did not vote in this ended election."

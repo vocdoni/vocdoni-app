@@ -13,7 +13,8 @@ import {
   Table,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { RoutedPaginationProvider, useClient, useOrganization } from '@vocdoni/react-providers'
+import { useClient, useOrganization } from '@vocdoni/react-components'
+import { RoutedPaginationProvider } from '@vocdoni/react-components/pagination'
 import { ensure0x } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'

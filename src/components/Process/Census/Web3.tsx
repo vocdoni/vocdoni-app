@@ -14,7 +14,7 @@ import {
   Separator,
   Text,
 } from '@chakra-ui/react'
-import { enforceHexPrefix, errorToString, useClient } from '@vocdoni/react-providers'
+import { enforceHexPrefix, errorToString, useClient } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
