@@ -78,8 +78,8 @@ const AppProviders = () => {
 
   return (
     <RainbowKitTheme>
-      <ClientProvider env={VocdoniEnvironment as EnvOptions} signer={signer as Signer} {...options}>
-        <ComponentsProvider components={uiScaffoldComponents}>
+      <ComponentsProvider components={uiScaffoldComponents}>
+        <ClientProvider env={VocdoniEnvironment as EnvOptions} signer={signer as Signer} {...options}>
           <ConnectionToastProvider>
             <SaasProviders>
               <AnalyticsProvider>
@@ -88,8 +88,8 @@ const AppProviders = () => {
               </AnalyticsProvider>
             </SaasProviders>
           </ConnectionToastProvider>
-        </ComponentsProvider>
-      </ClientProvider>
+        </ClientProvider>
+      </ComponentsProvider>
     </RainbowKitTheme>
   )
 }

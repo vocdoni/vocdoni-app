@@ -5,8 +5,10 @@ import ProcessesTable from './ProcessesTable'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
   return {
     ...actual,
+    ...getReactProvidersMock(),
     QuestionsTypeBadge: () => <div>QuestionsTypeBadge</div>,
     ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
   }

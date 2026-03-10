@@ -5,8 +5,10 @@ import { ActionsMenu } from './ActionsMenu'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
+  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
   return {
     ...actual,
+    ...getReactProvidersMock(),
     ActionsProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
     ActionContinue: (props: any) => <button {...props} />,
     ActionPause: (props: any) => <button {...props} />,

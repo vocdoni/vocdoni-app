@@ -1,6 +1,6 @@
+import { useConfirm } from '@vocdoni/react-components'
 import { Button, CloseButton, Dialog, Text, useSlotRecipe } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { useConfirm } from '../Confirm/useConfirm'
 
 export type ConfirmActionModalProps = {
   title: string

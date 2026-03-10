@@ -23,7 +23,14 @@ import {
   TooltipTrigger,
   VStack,
 } from '@chakra-ui/react'
-import { ElectionQuestions, ElectionResults, environment, useClient, useElection, useOrganization } from '@vocdoni/react-components'
+import {
+  ElectionQuestions,
+  ElectionResults,
+  environment,
+  useClient,
+  useElection,
+  useOrganization,
+} from '@vocdoni/react-components'
 import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -32,7 +39,6 @@ import { FacebookShare, RedditShare, TelegramShare, TwitterShare } from '~compon
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
-import { ConfirmVoteModal } from './ConfirmVoteModal'
 import { CreatedBy } from './CreatedBy'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
@@ -287,7 +293,6 @@ export const ProcessView = () => {
                     onInvalid={(args) => {
                       setFormErrors(args)
                     }}
-                    confirmContents={(election, answers) => <ConfirmVoteModal election={election} answers={answers} />}
                   />
                 </Box>
                 <Box position='sticky' bottom={0} left={0} pb={1} pt={1} display={{ base: 'none', xl: 'block' }}>

@@ -14,8 +14,10 @@ vi.mock('wagmi', () => ({
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
+  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
   return {
     ...actual,
+    ...getReactProvidersMock(),
     VoteButton: (props: any) => <button {...props}>Vote</button>,
     SpreadsheetAccess: () => <div>Spreadsheet</div>,
     VoteWeight: () => <div>Weight</div>,

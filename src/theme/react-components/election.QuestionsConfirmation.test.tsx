@@ -22,6 +22,8 @@ describe('electionComponents.QuestionsConfirmation', () => {
       </DialogHost>
     )
 
+    expect(screen.getByText('Election')).toBeInTheDocument()
+    expect(screen.getByText('Your vote has been recorded for:')).toBeInTheDocument()
     expect(screen.getByText('Do you eat kiwi?')).toBeInTheDocument()
     expect(screen.getByText(/With skin/)).toBeInTheDocument()
     expect(screen.getByText('Double check')).toBeInTheDocument()

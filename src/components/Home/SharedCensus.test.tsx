@@ -44,8 +44,10 @@ vi.mock('@vocdoni/sdk', () => ({
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
   return {
     ...actual,
+    ...getReactProvidersMock(),
     ElectionTitle: () => <div>ElectionTitle</div>,
     ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
     OrganizationImage: ({ alt }: { alt?: string }) => <img src='' alt={alt || 'OrganizationImage'} />,

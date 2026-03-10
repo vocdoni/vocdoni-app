@@ -46,8 +46,10 @@ vi.mock('~components/Layout/InvertedAccordionIcon', () => ({
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
   return {
     ...actual,
+    ...getReactProvidersMock(),
     ElectionStatusBadge: () => <div>Status</div>,
     ElectionTitle: () => <div>Title</div>,
   }

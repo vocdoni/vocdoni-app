@@ -1,9 +1,8 @@
 import { Button, type ButtonProps } from '@chakra-ui/react'
-import { useActions, useClient, useElection } from '@vocdoni/react-components'
+import { useActions, useClient, useConfirm, useElection } from '@vocdoni/react-components'
 import { areEqualHexStrings, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useConfirm } from '../Confirm/useConfirm'
 import { ConfirmActionModal } from './ConfirmActionModal'
 
 export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {

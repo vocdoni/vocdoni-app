@@ -4,8 +4,10 @@ import OrganizationHeader from './Header'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
   return {
     ...actual,
+    ...getReactProvidersMock(),
     OrganizationImage: ({ alt }: { alt?: string }) => <img alt={alt ?? 'OrganizationImage'} />,
     OrganizationName: ({ title }: { title?: string }) => <p>{title}</p>,
     OrganizationDescription: () => <p>OrganizationDescription</p>,

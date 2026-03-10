@@ -15,7 +15,9 @@ import {
   type HeadingProps,
   Image,
   type ImageProps,
+  Icon,
   Input,
+  List,
   Portal,
   Progress,
   Skeleton,
@@ -29,6 +31,7 @@ import {
 import { type ComponentsPartialDefinition, defineComponent } from '@vocdoni/react-components'
 import { ChangeEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { FaCircleCheck } from 'react-icons/fa6'
 import { Markdown } from '~components/ui/Markdown'
 import { resultsProgressRecipe } from '~theme/recipes/election'
 
@@ -292,37 +295,70 @@ export const electionComponents: ComponentsPartialDefinition = {
       {error}
     </Text>
   )),
+  ConfirmShell: defineComponent<'ConfirmShell', BoxProps>(({ isOpen, onClose, content, ...props }) => {
+    const recipe = useSlotRecipe({ key: 'ConfirmModal' })
+    const styles = recipe()
+
+    return (
+      <Dialog.Root open={isOpen} onOpenChange={({ open }) => !open && onClose()}>
+        <Dialog.Backdrop css={styles.overlay} />
+        <Dialog.Positioner>
+          <Dialog.Content css={styles.content} {...props}>
+            {content}
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Dialog.Root>
+    )
+  }),
   QuestionsConfirmation: defineComponent<'QuestionsConfirmation', BoxProps>(
-    ({ answersView, onConfirm, onCancel, ...props }) => {
+    ({ election, answersView, onConfirm, onCancel }) => {
       const recipe = useSlotRecipe({ key: 'ConfirmModal' })
-      const questionsRecipe = useSlotRecipe({ key: 'QuestionsConfirmation' })
       const styles = recipe({ variant: 'neutral' })
-      const qstyles = questionsRecipe()
       const { t } = useTranslation()
 
       return (
         <>
-          <Dialog.Header css={styles.header}>{t('confirm.title')}</Dialog.Header>
+          <Dialog.Header css={styles.header} flexDirection='column'>
+            <Heading variant='header'>{election.title.default}</Heading>
+            <Text variant='subheader'>
+              {t('process.spreadsheet.confirm.election_title', {
+                defaultValue: 'Your vote has been recorded for:',
+              })}
+            </Text>
+          </Dialog.Header>
           <Dialog.CloseTrigger asChild>
             <CloseButton css={styles.close} />
           </Dialog.CloseTrigger>
-          <Dialog.Body css={styles.body} {...props}>
-            <Box css={qstyles.box}>
-              <Text css={qstyles.description}>{t('vote.confirm')}</Text>
+          <Dialog.Body css={styles.body}>
+            <Flex direction='column' gap={3}>
               {answersView.map((item, index) => (
-                <Box key={index} css={qstyles.question}>
-                  <Box css={qstyles.title}>{item.question}</Box>
-                  <Box css={qstyles.answer}>
-                    {item.answers.map((answer) => (
-                      <span key={answer}>
-                        - {answer}
-                        <br />
-                      </span>
-                    ))}
-                  </Box>
-                </Box>
+                <Flex
+                  key={`${item.question}-${index}`}
+                  border='1px solid'
+                  borderColor='border.dashboard'
+                  borderRadius='lg'
+                  p={4}
+                  gap={3}
+                  align='flex-start'
+                >
+                  <Icon as={FaCircleCheck} mt={1} />
+                  <Flex direction='column' gap={1} flex='1'>
+                    <Text fontWeight='extrabold'>{item.question}</Text>
+                    {item.answers.length <= 1 ? (
+                      <Text color='texts.subtle'>{item.answers[0] || '-'}</Text>
+                    ) : (
+                      <List.Root display='flex' flexDirection='column' gap={1} pl={4} listStyleType='disc'>
+                        {item.answers.map((answer, answerIndex) => (
+                          <List.Item key={`${item.question}-${index}-${answerIndex}`}>
+                            <Text color='texts.subtle'>{answer}</Text>
+                          </List.Item>
+                        ))}
+                      </List.Root>
+                    )}
+                  </Flex>
+                </Flex>
               ))}
-            </Box>
+            </Flex>
           </Dialog.Body>
           <Dialog.Footer css={styles.footer}>
             <Button variant='ghost' css={styles.cancel} onClick={onCancel}>
