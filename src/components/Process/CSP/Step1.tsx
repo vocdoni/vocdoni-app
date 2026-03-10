@@ -23,7 +23,7 @@ import { useTwoFactorAuth } from './basics'
 
 // Define the form data structure
 type CSPStep1FormData = {
-  code: string
+  code: string[]
 }
 
 export const Step1Base = ({ election }: { election: PublishedElection }) => {
@@ -39,16 +39,18 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
     formState: { errors },
   } = useForm<CSPStep1FormData>({
     defaultValues: {
-      code: '',
+      code: Array.from({ length: 6 }, () => ''),
     },
   })
   const auth = useTwoFactorAuth<1>(election, 1)
 
   const onSubmit = async (values: CSPStep1FormData) => {
+    const code = values.code.join('')
+
     try {
       const { authToken } = await auth.mutateAsync({
         authToken: authData.authToken,
-        authData: [values.code],
+        authData: [code],
       })
 
       csp1(authToken)
@@ -85,27 +87,26 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
                   required: t('csp.step1.validation.required', {
                     defaultValue: 'Code is required',
                   }),
-                  minLength: {
-                    value: 6,
-                    message: t('csp.step1.validation.length', {
+                  validate: (value) =>
+                    value.filter((digit) => digit.trim() !== '').length >= 6 ||
+                    t('csp.step1.validation.length', {
                       defaultValue: 'Code must be 6 digits',
                     }),
-                  },
                 }}
                 render={({ field: { onChange, value } }) => {
-                  const safeValue = typeof value === 'string' ? value : ''
-                  const pinValue = Array.from({ length: 6 }, (_, index) => safeValue[index] ?? '')
+                  const pinValue = Array.isArray(value) ? value : Array.from({ length: 6 }, () => '')
 
                   return (
                     <PinInputRoot
                       size='lg'
                       value={pinValue}
-                      onValueChange={({ value, valueAsString }) => {
-                        const nextValue =
-                          typeof valueAsString === 'string' ? valueAsString : Array.isArray(value) ? value.join('') : ''
+                      onValueChange={({ value: valueArray, valueAsString }) => {
+                        const nextValue = Array.isArray(valueArray)
+                          ? Array.from({ length: 6 }, (_, index) => valueArray[index] ?? '')
+                          : Array.from({ length: 6 }, (_, index) => valueAsString[index] ?? '')
 
                         onChange(nextValue)
-                        if (nextValue.length === 6) {
+                        if (nextValue.every((digit) => digit.trim() !== '')) {
                           handleSubmit(onSubmit)()
                         }
                       }}
