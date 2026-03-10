@@ -23,7 +23,7 @@ import { useTwoFactorAuth } from './basics'
 
 // Define the form data structure
 type CSPStep1FormData = {
-  code: string
+  code: string[]
 }
 
 export const Step1Base = ({ election }: { election: PublishedElection }) => {
@@ -39,16 +39,18 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
     formState: { errors },
   } = useForm<CSPStep1FormData>({
     defaultValues: {
-      code: '',
+      code: Array.from({ length: 6 }, () => ''),
     },
   })
   const auth = useTwoFactorAuth<1>(election, 1)
 
   const onSubmit = async (values: CSPStep1FormData) => {
+    const code = values.code.join('')
+
     try {
       const { authToken } = await auth.mutateAsync({
         authToken: authData.authToken,
-        authData: [values.code],
+        authData: [code],
       })
 
       csp1(authToken)
@@ -85,34 +87,41 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
                   required: t('csp.step1.validation.required', {
                     defaultValue: 'Code is required',
                   }),
-                  minLength: {
-                    value: 6,
-                    message: t('csp.step1.validation.length', {
+                  validate: (value) =>
+                    value.filter((digit) => digit.trim() !== '').length >= 6 ||
+                    t('csp.step1.validation.length', {
                       defaultValue: 'Code must be 6 digits',
                     }),
-                  },
                 }}
-                render={({ field: { onChange, value } }) => (
-                  <PinInputRoot
-                    size='lg'
-                    value={value.split('')}
-                    onValueChange={({ valueAsString }) => {
-                      onChange(valueAsString)
-                      if (valueAsString.length === 6) {
-                        handleSubmit(onSubmit)()
-                      }
-                    }}
-                    autoFocus
-                    count={6}
-                  >
-                    <PinInputHiddenInput />
-                    <PinInputControl>
-                      {Array.from({ length: 6 }).map((_, index) => (
-                        <PinInputInput key={index} index={index} />
-                      ))}
-                    </PinInputControl>
-                  </PinInputRoot>
-                )}
+                render={({ field: { onChange, value } }) => {
+                  const pinValue = Array.isArray(value) ? value : Array.from({ length: 6 }, () => '')
+
+                  return (
+                    <PinInputRoot
+                      size='lg'
+                      value={pinValue}
+                      onValueChange={({ value: valueArray, valueAsString }) => {
+                        const nextValue = Array.isArray(valueArray)
+                          ? Array.from({ length: 6 }, (_, index) => valueArray[index] ?? '')
+                          : Array.from({ length: 6 }, (_, index) => valueAsString[index] ?? '')
+
+                        onChange(nextValue)
+                        if (nextValue.every((digit) => digit.trim() !== '')) {
+                          handleSubmit(onSubmit)()
+                        }
+                      }}
+                      autoFocus
+                      count={6}
+                    >
+                      <PinInputHiddenInput />
+                      <PinInputControl>
+                        {Array.from({ length: 6 }).map((_, index) => (
+                          <PinInputInput key={index} index={index} />
+                        ))}
+                      </PinInputControl>
+                    </PinInputRoot>
+                  )
+                }}
               />
             </HStack>
             {errors.code && <FieldErrorText textAlign='center'>{errors.code.message}</FieldErrorText>}
