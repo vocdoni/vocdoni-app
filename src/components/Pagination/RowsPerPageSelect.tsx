@@ -1,8 +1,8 @@
 import { Box, Text } from '@chakra-ui/react'
 import { GroupBase, Props } from 'chakra-react-select'
-import { Select } from '~components/Form/Select'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
+import { Select } from '~components/Form/Select'
 
 const rowsPerPageOptions = [
   { value: 10, label: '10' },
@@ -35,6 +35,7 @@ const RowsPerPageSelect = (props: SelectProps) => {
           searchParams.set('limit', String(newValue?.value))
           setSearchParams(searchParams)
         }}
+        menuPortalTarget={document.body}
         options={rowsPerPageOptions}
         isSearchable={false}
         isClearable={false}
