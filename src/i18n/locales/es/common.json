@@ -1339,7 +1339,7 @@
     "no_account_address": "No se ha encontrado dirección de cuenta.",
     "no_election_index": "No se ha encontrado índice de elección para la cuenta.",
     "option": {
-      "description_placeholder": "Descripción del proyecto",
+      "description_placeholder": "Descripción (opcional)",
       "placeholder": "Opción {{number}}",
       "remove": "Eliminar opción"
     },

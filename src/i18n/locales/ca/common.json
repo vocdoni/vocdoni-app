@@ -1339,7 +1339,7 @@
     "no_account_address": "No s'ha trobat cap adreça de compte.",
     "no_election_index": "No s'ha trobat cap índex de votació per al compte.",
     "option": {
-      "description_placeholder": "Descripció del projecte",
+      "description_placeholder": "Descripció (opcional)",
       "placeholder": "Opció {{number}}",
       "remove": "Esborra l'opció"
     },

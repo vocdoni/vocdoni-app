@@ -1316,7 +1316,7 @@
     "no_account_address": "No account address found.",
     "no_election_index": "No election index found for the account.",
     "option": {
-      "description_placeholder": "Project description",
+      "description_placeholder": "Description (optional)",
       "placeholder": "Option {{number}}",
       "remove": "Remove option"
     },

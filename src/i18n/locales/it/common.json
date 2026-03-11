@@ -1339,7 +1339,7 @@
     "no_account_address": "Nessun indirizzo account trovato.",
     "no_election_index": "Nessun indice elettorale trovato per l'account.",
     "option": {
-      "description_placeholder": "Descrizione progetto",
+      "description_placeholder": "Descrizione (opzionale)",
       "placeholder": "Opzione {{number}}",
       "remove": "Rimuovi opzione"
     },
