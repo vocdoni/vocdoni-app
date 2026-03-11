@@ -71,12 +71,11 @@ export const ProcessInfoCard = ({ label, description, ...props }: ProcessInfoCar
 
 const VotingMethod = () => {
   const { t } = useTranslation()
-  const { election } = useElection()
+  const { election, isWeighted } = useElection()
 
   if (!election) return null
   if (!(election instanceof PublishedElection)) return null
 
-  const isWeighted = Number(election?.census.weight) !== election?.census.size
   const votingMethod = useVotingMethodLabel(election.resultsType?.name, {
     weighted: isWeighted,
     defaultValue: t('process.voting_method.unknown', { defaultValue: 'Unknown' }),
@@ -198,7 +197,7 @@ const ProcessInfoPanel = () => {
 
 export const ProcessView = () => {
   const { t } = useTranslation()
-  const { election, voted } = useElection()
+  const { election, voted, isAbleToVote } = useElection()
   const videoRef = useRef<HTMLDivElement>(null)
   const electionRef = useRef<HTMLDivElement>(null)
   const [tabValue, setTabValue] = useState<'questions' | 'results'>('questions')
@@ -295,7 +294,7 @@ export const ProcessView = () => {
                     }}
                   />
                 </Box>
-                <Box position='sticky' bottom={0} left={0} pb={1} pt={1} display={{ base: 'none', xl: 'block' }}>
+                <Box position='sticky' bottom={0} left={0} pb={1} pt={1}>
                   <VoteButton setQuestionsTab={setQuestionsTab} />
                 </Box>
               </TabsContent>

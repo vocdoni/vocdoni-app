@@ -790,9 +790,19 @@ const ProcessCreateView = () => {
           t('process_create.no_election_index', { defaultValue: 'No election index found for the account.' })
         )
       }
-      const salt = await client.electionService.getElectionSalt(account.address, account.electionIndex)
+      const saltOwner = organization.address || account.address
+      const salt = await client.electionService.getElectionSalt(saltOwner, account.electionIndex)
+
       const census = await getCensus(form, salt)
       const election = formToElectionMapper(form, census)
+
+      if (form.censusType === CensusTypes.Spreadsheet) {
+        ;(election as any).meta = (election as any).meta || {}
+        ;(election as any).meta.census = {
+          ...((election as any).meta.census || {}),
+          salt,
+        }
+      }
 
       let electionId: string | null = null
       for await (const step of client.createElectionSteps(election)) {

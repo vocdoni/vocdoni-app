@@ -5,7 +5,8 @@ export type CensusType = typeof CensusTypeWeb3 | typeof CensusTypeSpreadsheet | 
 
 export type CensusMeta = {
   type: CensusType
-  fields: string[]
+  fields?: string[]
+  salt?: string
 }
 
 export enum CensusTypes {

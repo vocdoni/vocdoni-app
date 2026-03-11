@@ -161,9 +161,18 @@ export const electionComponents: ComponentsPartialDefinition = {
       )
 
       if (controlType === 'checkbox') {
+        const idBase = dataAttrs?.['data-choice-id-base'] ?? `question-choice-${value}`
+        const inputName = dataAttrs?.['data-choice-field-name']
+
         return (
           <>
             <Checkbox.Root
+              ids={{
+                root: `${idBase}-root`,
+                hiddenInput: `${idBase}-input`,
+                control: `${idBase}-control`,
+                label: `${idBase}-label`,
+              }}
               css={styles.wrapper}
               w='full'
               data-state={selected ? 'checked' : 'unchecked'}
@@ -174,7 +183,7 @@ export const electionComponents: ComponentsPartialDefinition = {
               disabled={disabled}
               onCheckedChange={(details) => onSelect(Boolean(details.checked))}
             >
-              <Checkbox.HiddenInput value={value} />
+              <Checkbox.HiddenInput value={value} name={inputName} />
               <Checkbox.Control data-choice-control={dataAttrs?.['data-choice-control']} data-control-type='checkbox'>
                 <Checkbox.Indicator />
               </Checkbox.Control>
@@ -457,6 +466,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     ({
       connected,
       loading,
+      formError,
       title,
       open,
       onOpen,
@@ -503,8 +513,7 @@ export const electionComponents: ComponentsPartialDefinition = {
               <Dialog.Content css={styles.content} {...props}>
                 <form
                   onSubmit={(event) => {
-                    event.preventDefault()
-                    onSubmit()
+                    onSubmit(event)
                   }}
                 >
                   <Dialog.Header css={styles.header}>{title || t('spreadsheet.modal_title')}</Dialog.Header>
@@ -544,6 +553,11 @@ export const electionComponents: ComponentsPartialDefinition = {
                         ) : anonymousField.description ? (
                           <Field.HelperText css={styles.helper}>{anonymousField.description}</Field.HelperText>
                         ) : null}
+                      </Field.Root>
+                    ) : null}
+                    {formError ? (
+                      <Field.Root invalid css={styles.control}>
+                        <Field.ErrorText css={styles.error}>{formError}</Field.ErrorText>
                       </Field.Root>
                     ) : null}
                     {extraFields}

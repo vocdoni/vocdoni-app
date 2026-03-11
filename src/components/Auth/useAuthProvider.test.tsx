@@ -6,10 +6,25 @@ import { useAuthProvider } from './useAuthProvider'
 
 const clearMock = vi.fn()
 const disconnectMock = vi.fn()
+const addressesMock = vi.fn().mockResolvedValue(['0x123'])
 
 vi.mock('wagmi', () => ({
   useDisconnect: () => ({ disconnect: disconnectMock }),
 }))
+
+vi.mock('@vocdoni/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
+  return {
+    ...actual,
+    RemoteSigner: class {
+      public address?: string
+      public remoteSignerService = {
+        addresses: addressesMock,
+      }
+      constructor(_: unknown) {}
+    },
+  }
+})
 
 vi.mock('~components/Auth/authQueries', () => ({
   useLogin: () => ({ mutateAsync: vi.fn(), isPending: false }),
@@ -18,6 +33,10 @@ vi.mock('~components/Auth/authQueries', () => ({
 }))
 
 describe('useAuthProvider logout', () => {
+  const setSignerMock = vi.fn()
+  const setClientMock = vi.fn()
+  const fetchAccountMock = vi.fn()
+
   beforeEach(() => {
     vi.clearAllMocks()
     localStorage.clear()
@@ -25,10 +44,10 @@ describe('useAuthProvider logout', () => {
       useClient: () =>
         mockUseClient({
           signer: null,
-          setSigner: vi.fn(),
-          fetchAccount: vi.fn(),
+          setSigner: setSignerMock,
+          fetchAccount: fetchAccountMock,
           client: {},
-          setClient: vi.fn(),
+          setClient: setClientMock,
           clear: clearMock,
         }),
     })
@@ -52,5 +71,17 @@ describe('useAuthProvider logout', () => {
     expect(localStorage.getItem('authRenewSession')).toBeFalsy()
     expect(clearMock).toHaveBeenCalled()
     expect(disconnectMock).toHaveBeenCalled()
+  })
+
+  it('updates signer without mutating/re-setting client instance', async () => {
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+
+    await act(async () => {
+      await result.current.updateSigner('token')
+    })
+
+    expect(setSignerMock).toHaveBeenCalledTimes(1)
+    expect(setClientMock).not.toHaveBeenCalled()
+    expect(fetchAccountMock).not.toHaveBeenCalled()
   })
 })

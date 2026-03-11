@@ -294,11 +294,9 @@ export const QuestionChoice = defineSlotRecipe({
             zIndex: 'docked',
           },
           '& [data-choice-control][data-control-type="checkbox"]': {
-            bg: 'white',
             borderWidth: '1px',
             borderColor: 'table.border',
             boxShadow: 'sm',
-            _dark: { bg: 'gray.800' },
           },
           '& [data-choice-control][data-control-type="radio"]': {
             bg: 'transparent',

@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '~src/test-utils'
 import { vi } from 'vitest'
 import { electionComponents } from './election'
+import { useForm } from 'react-hook-form'
 
 const SpreadsheetAccess = electionComponents.SpreadsheetAccess!
 
@@ -79,6 +80,43 @@ describe('electionComponents.SpreadsheetAccess', () => {
         }}
       />
     )
+
+    expect(await screen.findByText('validation.required')).toBeInTheDocument()
+  })
+
+  it('shows react-hook-form required error in modal fields', async () => {
+    const Harness = () => {
+      const {
+        register,
+        handleSubmit,
+        formState: { errors },
+      } = useForm<{ code: string }>()
+
+      return (
+        <SpreadsheetAccess
+          connected={false}
+          loading={false}
+          title='Spreadsheet access'
+          open={true}
+          onOpen={() => {}}
+          onClose={() => {}}
+          onLogout={() => {}}
+          onSubmit={handleSubmit(() => {}) as unknown as () => void}
+          fields={[
+            {
+              id: 'code',
+              label: 'Code',
+              error: errors.code?.message as string | undefined,
+              inputProps: register('code', { required: 'validation.required' }),
+              inputAttrs: { type: 'text' },
+            },
+          ]}
+        />
+      )
+    }
+
+    render(<Harness />)
+    fireEvent.click(screen.getAllByRole('button', { name: 'spreadsheet.access_button' })[1])
 
     expect(await screen.findByText('validation.required')).toBeInTheDocument()
   })

@@ -2,9 +2,9 @@ import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ClientEnv, ComponentsProvider } from '@vocdoni/react-components'
 import { setDefaultOptions } from 'date-fns'
-import { PropsWithChildren, useEffect } from 'react'
+import { PropsWithChildren, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount, useWalletClient, WagmiProvider } from 'wagmi'
+import { useWalletClient, WagmiProvider } from 'wagmi'
 import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
 import { AnalyticsProvider } from '~components/AnalyticsProvider'
 import { UnauthorizedApiError } from '~components/Auth/api'
@@ -57,24 +57,22 @@ const SaasProviders = ({ children }: PropsWithChildren<{}>) => (
 
 const AppProviders = () => {
   const { data } = useWalletClient()
-  const { address } = useAccount()
   const { i18n } = useTranslation()
   const locale = datesLocale(i18n.language)
+  const clientEnv: ClientEnv = VocdoniEnvironment === 'prod' ? 'prod' : 'dev'
+  const options = useMemo(() => {
+    const next: { options?: { api_url: string } } = {}
+    if (clientEnv === 'dev') {
+      next.options = { api_url: 'https://one-dev.vocdoni.net/v2' }
+    }
+    return next
+  }, [clientEnv])
 
-  let signer = null
-  if (data && address && data.account.address === address) {
-    signer = walletClientToSigner(data)
-  }
+  const signer = data ? walletClientToSigner(data) : null
 
   useEffect(() => {
     setDefaultOptions({ locale })
   }, [locale])
-
-  const options: { options?: { api_url: string } } = {}
-  const clientEnv: ClientEnv = VocdoniEnvironment === 'prod' ? 'prod' : 'dev'
-  if (clientEnv === 'dev') {
-    options.options = { api_url: 'https://one-dev.vocdoni.net/v2' }
-  }
 
   return (
     <RainbowKitTheme>

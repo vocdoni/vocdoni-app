@@ -14,7 +14,6 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   return {
     ...actual,
     ...getReactProvidersMock(),
-    SpreadsheetAccess: () => <div>SpreadsheetAccess</div>,
   }
 })
 
@@ -38,8 +37,8 @@ describe('LogoutButton', () => {
     })
   })
 
-  it('renders SpreadsheetAccess when connected to spreadsheet census', () => {
+  it('renders logout button when connected to spreadsheet census', () => {
     render(<LogoutButton />)
-    expect(screen.getByText('SpreadsheetAccess')).toBeInTheDocument()
+    expect(screen.getByText('logout')).toBeInTheDocument()
   })
 })

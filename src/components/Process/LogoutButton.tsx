@@ -1,5 +1,5 @@
 import { Box, Button } from '@chakra-ui/react'
-import { SpreadsheetAccess, useClient, useElection } from '@vocdoni/react-components'
+import { useClient, useElection } from '@vocdoni/react-components'
 import { CensusType, dotobject, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useAccount, useDisconnect } from 'wagmi'
@@ -25,36 +25,30 @@ const LogoutButton = () => {
   const isSpreadsheet = census?.type === CensusTypes.Spreadsheet
   const isWeb3 = census?.type === CensusTypes.Web3
 
-  if (!connected && !isConnected) return null
+  if (!connected) return null
 
   return (
     <>
       <Box alignSelf='center' mb={{ base: 10, md: 0 }}>
-        {connected && isSpreadsheet && <SpreadsheetAccess />}
-        {connected && isCSP && (
-          <Button
-            onClick={() => {
+        <Button
+          onClick={() => {
+            if (isCSP || isSpreadsheet) {
               clearClient()
-            }}
-          >
-            {t('logout')}
-          </Button>
-        )}
-        {isWeb3 && (
-          <Button
-            onClick={() => {
-              if (isConnected) {
-                disconnect()
-                clear()
-              } else {
-                // If not connected with web3 wallet, but connected we logout from APP
-                logout()
-              }
-            }}
-          >
-            {t('logout')}
-          </Button>
-        )}
+              return
+            }
+
+            if (isWeb3 && isConnected) {
+              disconnect()
+              clear()
+              return
+            }
+
+            // If session is app-signer based, close app auth.
+            logout()
+          }}
+        >
+          {t('logout')}
+        </Button>
       </Box>
     </>
   )

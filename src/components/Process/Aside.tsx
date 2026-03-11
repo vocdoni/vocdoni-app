@@ -12,7 +12,6 @@ import { CensusType, dotobject, ElectionStatus, formatUnits, InvalidElection, Pu
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
-import { useAccount } from 'wagmi'
 import { CensusMeta, CensusTypes } from './Census/CensusType'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
@@ -24,17 +23,20 @@ const ProcessAside = () => {
   const { t } = useTranslation()
   const {
     election,
+    connected,
     isInCensus,
     voted,
     votesLeft,
-    loading: { voting },
+    loading: { voting, census: loadingCensus },
+    loaded: { census: loadedCensus },
   } = useElection()
-  const { isConnected } = useAccount()
   const { env } = useClient()
 
   if (election instanceof InvalidElection) return null
 
   const census: CensusMeta = dotobject(election?.meta || {}, 'census')
+  const isWalletCensus = !['spreadsheet', 'csp'].includes(census?.type)
+  const syncingCensus = connected && isWalletCensus && !isInCensus && (loadingCensus || !loadedCensus)
 
   const renderVoteMenu =
     voted ||
@@ -122,8 +124,8 @@ const ProcessAside = () => {
           </Flex>
         )}
       </Flex>
-      <CensusConnectButton />
-      {isConnected && !['spreadsheet', 'csp'].includes(census?.type) && !isInCensus && (
+      {connected ? <LogoutButton /> : <CensusConnectButton />}
+      {connected && isWalletCensus && !isInCensus && !syncingCensus && (
         <Text textAlign='center' fontSize='sm'>
           {t('aside.is_not_in_census')}
         </Text>
@@ -164,9 +166,6 @@ const ProcessAside = () => {
           )}
         </Flex>
       )}
-
-      {/* Logout buttons for Census spreadsheet, CSP and Wagmi (web3) */}
-      <LogoutButton />
     </Flex>
   )
 }
@@ -199,20 +198,28 @@ export const CensusConnectButton = () => {
 }
 
 export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () => void }) => {
-  const { election, isAbleToVote, isInCensus } = useElection()
-  const { isConnected } = useAccount()
+  const {
+    election,
+    connected,
+    isWeighted,
+    isAbleToVote,
+    isInCensus,
+    loading: { census: loadingCensus },
+    loaded: { census: loadedCensus },
+  } = useElection()
 
   if (election instanceof InvalidElection || election?.status === ElectionStatus.CANCELED) {
     return null
   }
 
   const census: CensusMeta = dotobject(election?.meta || {}, 'census')
+  const isWalletCensus = !['spreadsheet', 'csp'].includes(census?.type)
+  const syncingCensus = connected && isWalletCensus && !isInCensus && (loadingCensus || !loadedCensus)
+  const hideVote = connected && !syncingCensus && !isAbleToVote
 
-  if (isConnected && !isInCensus && !['spreadsheet', 'csp'].includes(census?.type)) {
+  if (hideVote) {
     return null
   }
-
-  const isWeighted = Number(election?.census.weight) !== election?.census.size
 
   return (
     <Flex
@@ -225,14 +232,16 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
       gap={3}
       {...props}
     >
-      <CensusConnectButton />
-      {isAbleToVote && (
+      {!connected ? (
+        <CensusConnectButton />
+      ) : (
         <>
           <CVoteButton
             w='100%'
             fontSize='lg'
             height='50px'
             onClick={setQuestionsTab}
+            disabled={syncingCensus}
             css={{
               '&::disabled': {
                 opacity: '0.8',

@@ -10,6 +10,7 @@ vi.mock('@rainbow-me/rainbowkit', () => ({
 
 vi.mock('wagmi', () => ({
   useAccount: () => ({ isConnected: false }),
+  useDisconnect: () => ({ disconnect: vi.fn() }),
 }))
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
@@ -29,8 +30,8 @@ vi.mock('./CSP/CSPAuthModal', () => ({
   CspAuth: () => <div>CSP</div>,
 }))
 
-vi.mock('./LogoutButton', () => ({
-  default: () => <div>Logout</div>,
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => ({ logout: vi.fn() }),
 }))
 
 describe('ProcessAside', () => {
@@ -50,7 +51,8 @@ describe('ProcessAside', () => {
           isInCensus: true,
           voted: null,
           votesLeft: 0,
-          loading: { voting: false },
+          loading: { voting: false, census: false },
+          loaded: { census: true },
           isAbleToVote: true,
           connected: false,
         }),
@@ -65,8 +67,115 @@ describe('ProcessAside', () => {
     expect(screen.getByText('menu.connect')).toBeInTheDocument()
   })
 
-  it('renders VoteButton', () => {
-    render(<VoteButton setQuestionsTab={vi.fn()} />)
-    expect(screen.getByText('Vote')).toBeInTheDocument()
+  it('shows login in sidebar and floating CTA when disconnected', () => {
+    render(
+      <>
+        <ProcessAside />
+        <VoteButton setQuestionsTab={vi.fn()} />
+      </>
+    )
+
+    expect(screen.getAllByText('menu.connect')).toHaveLength(2)
+    expect(screen.queryByText('logout')).not.toBeInTheDocument()
+    expect(screen.queryByText('Vote')).not.toBeInTheDocument()
+  })
+
+  it('shows sidebar logout and disabled vote while connected and census is syncing', () => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: {
+            status: ElectionStatus.ONGOING,
+            electionType: { anonymous: false, secretUntilTheEnd: false },
+            questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
+            voteCount: 3,
+            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
+            voteType: { maxVoteOverwrites: 0 },
+            meta: {},
+          },
+          isInCensus: false,
+          isAbleToVote: false,
+          loading: { voting: false, census: true },
+          loaded: { census: false },
+          connected: true,
+        }),
+    })
+
+    render(
+      <>
+        <ProcessAside />
+        <VoteButton setQuestionsTab={vi.fn()} />
+      </>
+    )
+
+    expect(screen.getByText('logout')).toBeInTheDocument()
+    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
+    expect(screen.getByText('Vote')).toBeDisabled()
+  })
+
+  it('shows sidebar logout and enabled vote when connected and eligible', () => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: {
+            status: ElectionStatus.ONGOING,
+            electionType: { anonymous: false, secretUntilTheEnd: false },
+            questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
+            voteCount: 3,
+            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
+            voteType: { maxVoteOverwrites: 0 },
+            meta: {},
+          },
+          isInCensus: true,
+          isAbleToVote: true,
+          loading: { voting: false, census: false },
+          loaded: { census: true },
+          connected: true,
+        }),
+    })
+
+    render(
+      <>
+        <ProcessAside />
+        <VoteButton setQuestionsTab={vi.fn()} />
+      </>
+    )
+
+    expect(screen.getByText('logout')).toBeInTheDocument()
+    expect(screen.getByText('Vote')).toBeEnabled()
+    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
+  })
+
+  it('shows sidebar logout and hides floating vote when connected and ineligible', () => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: {
+            status: ElectionStatus.ONGOING,
+            electionType: { anonymous: false, secretUntilTheEnd: false },
+            questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
+            voteCount: 3,
+            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
+            voteType: { maxVoteOverwrites: 0 },
+            meta: {},
+          },
+          isInCensus: false,
+          isAbleToVote: false,
+          loading: { voting: false, census: false },
+          loaded: { census: true },
+          connected: true,
+        }),
+    })
+
+    render(
+      <>
+        <ProcessAside />
+        <VoteButton setQuestionsTab={vi.fn()} />
+      </>
+    )
+
+    expect(screen.getByText('logout')).toBeInTheDocument()
+    expect(screen.queryByText('Vote')).not.toBeInTheDocument()
+    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
   })
 })
