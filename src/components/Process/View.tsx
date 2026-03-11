@@ -250,7 +250,7 @@ export const ProcessView = () => {
       gap={10}
       alignItems='start'
       mx='auto'
-      minW='voting.contents.min'
+      minW={{ base: 'full', xl: 'voting.contents.min' }}
       maxW='voting.contents.max'
     >
       <GridItem>
