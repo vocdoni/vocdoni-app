@@ -9,7 +9,6 @@ import {
   Icon,
   Image,
   Link,
-  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -25,7 +24,6 @@ import {
   Tabs,
   Text,
   Tooltip,
-  UnorderedList,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
@@ -34,7 +32,6 @@ import { useClient, useElection, useOrganization } from '@vocdoni/react-provider
 import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { FacebookShare, RedditShare, TelegramShare, TwitterShare } from '~components/Share'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
 import { ConfirmVoteModal } from './ConfirmVoteModal'
@@ -356,20 +353,6 @@ const SuccessVoteModal = () => {
               p: <Text mb={2} />,
             }}
           />
-          <UnorderedList listStyleType='none' display='flex' justifyContent='center' gap={6} mt={6} mb={2} ml={0}>
-            <ListItem>
-              <TwitterShare url={url} caption={caption} />
-            </ListItem>
-            <ListItem>
-              <FacebookShare url={url} caption={caption} />
-            </ListItem>
-            <ListItem>
-              <TelegramShare url={url} caption={caption} />
-            </ListItem>
-            <ListItem>
-              <RedditShare url={url} caption={caption} />
-            </ListItem>
-          </UnorderedList>
         </ModalBody>
 
         <ModalFooter mt={4}>
