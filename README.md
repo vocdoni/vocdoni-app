@@ -7,8 +7,8 @@
 </p>
 
 <p align="center" width="100%">
-    <a href="https://github.com/vocdoni/ui-scaffold/commits/main/"><img src="https://img.shields.io/github/commit-activity/m/vocdoni/ui-scaffold" /></a>
-    <a href="https://github.com/vocdoni/ui-scaffold/issues"><img src="https://img.shields.io/github/issues/vocdoni/ui-scaffold" /></a>
+    <a href="https://github.com/vocdoni/vocdoni-app/commits/main/"><img src="https://img.shields.io/github/commit-activity/m/vocdoni/vocdoni-app" /></a>
+    <a href="https://github.com/vocdoni/vocdoni-app/issues"><img src="https://img.shields.io/github/issues/vocdoni/vocdoni-app" /></a>
     <a href="https://chat.vocdoni.io"><img src="https://img.shields.io/badge/discord-join%20chat-blue.svg" /></a>
     <a href="https://twitter.com/vocdoni"><img src="https://img.shields.io/twitter/follow/vocdoni.svg?style=social&label=Follow" /></a>
 </p>
@@ -41,9 +41,9 @@
     <a href="https://github.com/vocdoni/census3">Census3</a>
   </div>
 
-# ui-scaffold
+# vocdoni-app
 
-Vocdoni's UI Scaffold is a React application that uses the [Vocdoni SDK](https://developer.vocdoni.io/sdk) and [UI Components library](https://developer.vocdoni.io/ui-components) to provide a user interface for the Vocdoni voting protocol.
+Vocdoni App is a React application that uses the [Vocdoni SDK](https://developer.vocdoni.io/sdk) and [UI Components library](https://developer.vocdoni.io/ui-components) to provide a user interface for the Vocdoni voting protocol.
 It is built with [Vite](https://vitejs.dev/guide/) and is deployed at https://app.vocdoni.io/.
 
 ### Table of Contents
@@ -74,7 +74,7 @@ custom `.env` file:
 ```bash
 VOCDONI_ENVIRONMENT=dev pnpm start
 # or an example using many of them...
-BUILD_PATH=build/dev BASE_URL=/ui-scaffold/dev VOCDONI_ENVIRONMENT=dev pnpm build
+BUILD_PATH=build/dev BASE_URL=/vocdoni-app/dev VOCDONI_ENVIRONMENT=dev pnpm build
 ```
 
 ### Custom domain names
@@ -167,18 +167,18 @@ Copyright © 2025 Vocdoni.
 [netlify stg]: https://vocdoni-app-stg.netlify.app/
 
 [vocdoni logo]: https://docs.vocdoni.io/Logotype.svg
-[commit activity badge]: https://img.shields.io/github/commit-activity/m/vocdoni/ui-scaffold
+[commit activity badge]: https://img.shields.io/github/commit-activity/m/vocdoni/vocdoni-app
 [discord badge]: https://img.shields.io/badge/discord-join%20chat-blue.svg
-[github issues badge]: https://img.shields.io/github/issues/vocdoni/ui-scaffold
+[github issues badge]: https://img.shields.io/github/issues/vocdoni/vocdoni-app
 [twitter badge]: https://img.shields.io/twitter/follow/vocdoni?style=social&label=Follow
-[build badge develop]: https://img.shields.io/github/actions/workflow/status/vocdoni/ui-scaffold/netlify.yml?branch=develop&label=develop
-[build badge stage]: https://img.shields.io/github/actions/workflow/status/vocdoni/ui-scaffold/netlify.yml?branch=stage&label=stage
-[build badge main]: https://img.shields.io/github/actions/workflow/status/vocdoni/ui-scaffold/netlify.yml?branch=main&label=main
+[build badge develop]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/netlify.yml?branch=develop&label=develop
+[build badge stage]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/netlify.yml?branch=stage&label=stage
+[build badge main]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/netlify.yml?branch=main&label=main
 
 [discord invite]: https://chat.vocdoni.io
 [twitter follow]: https://twitter.com/intent/user?screen_name=vocdoni
-[github issues]: https://github.com/vocdoni/ui-scaffold/issues
-[github commits]: https://github.com/vocdoni/ui-scaffold/commits/main
+[github issues]: https://github.com/vocdoni/vocdoni-app/issues
+[github commits]: https://github.com/vocdoni/vocdoni-app/commits/main
 
 [SDK]: https://developer.vocdoni.io/sdk
 [related react packages]: https://github.com/vocdoni/ui-components#vocdonis-ui-components
