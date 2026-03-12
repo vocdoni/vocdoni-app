@@ -38,7 +38,7 @@ import {
 } from '@vocdoni/react-components'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { format as formatDate } from 'date-fns'
-import { forwardRef, ReactNode, useEffect } from 'react'
+import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
   LuCalendar,
@@ -59,7 +59,7 @@ import {
   LuX,
 } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
-import { generatePath, useLocation, useNavigate } from 'react-router-dom'
+import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
 import {
   DashboardBox,
@@ -77,12 +77,10 @@ import { useResultTypeLabel } from '../resultTypeLabels'
 export type ProcessViewTab = 'questions' | 'results'
 
 export const getProcessViewTabFromPath = (pathname: string): ProcessViewTab =>
-  pathname.endsWith('/results') ? 'results' : 'questions'
+  matchPath(Routes.dashboard.processResults, pathname) ? 'results' : 'questions'
 
-export const getProcessViewPathForTab = (pathname: string, tab: ProcessViewTab): string => {
-  const basePath = pathname.replace(/\/results\/?$/, '')
-  return tab === 'results' ? `${basePath}/results` : basePath
-}
+export const getProcessViewPathForTab = (id: string, tab: ProcessViewTab): string =>
+  generatePath(tab === 'results' ? Routes.dashboard.processResults : Routes.dashboard.process, { id })
 
 type ElectionVideoProps = HTMLChakraProps<'div'>
 
@@ -121,15 +119,29 @@ const ProcessViewContent = () => {
   const navigate = useNavigate()
   const tabValue = getProcessViewTabFromPath(location.pathname)
   const showResultsTab = election instanceof PublishedElection && election.status !== ElectionStatus.CANCELED
+  const shouldOpenResultsByDefault = election instanceof PublishedElection && election.status === ElectionStatus.RESULTS
+  const hasResolvedInitialTabRef = useRef(false)
 
   const votingLink = `${document.location.origin}${generatePath(Routes.processes.view, { id })}`
   const { copy } = useClipboard({ value: votingLink })
 
   useEffect(() => {
+    if (hasResolvedInitialTabRef.current) return
+    if (!election) return
+
+    hasResolvedInitialTabRef.current = true
+
+    if (!shouldOpenResultsByDefault) return
+    if (!matchPath(Routes.dashboard.process, location.pathname)) return
+
+    navigate(getProcessViewPathForTab(id, 'results'), { replace: true })
+  }, [shouldOpenResultsByDefault, navigate, id, location.pathname, election])
+
+  useEffect(() => {
     if (tabValue === 'results' && !showResultsTab) {
-      navigate(getProcessViewPathForTab(location.pathname, 'questions'), { replace: true })
+      navigate(getProcessViewPathForTab(id, 'questions'), { replace: true })
     }
-  }, [tabValue, showResultsTab, navigate, location.pathname])
+  }, [tabValue, showResultsTab, navigate, id])
 
   return (
     <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
@@ -255,7 +267,7 @@ const ProcessViewContent = () => {
                 const nextTab = value as ProcessViewTab
                 if (nextTab === 'results' && !showResultsTab) return
 
-                const nextPath = getProcessViewPathForTab(location.pathname, nextTab)
+                const nextPath = getProcessViewPathForTab(id, nextTab)
                 if (nextPath !== location.pathname) navigate(nextPath)
               }}
               w='full'
