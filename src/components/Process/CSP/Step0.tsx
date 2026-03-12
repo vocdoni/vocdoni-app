@@ -223,14 +223,6 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
             </CheckboxRoot>
           </FieldRoot>
 
-          <Text fontSize='xs'>
-            💡{' '}
-            {t(
-              'csp.data_usage_info',
-              'Your data will only be used to verify your identity. Vocdoni does not store personal data.'
-            )}
-          </Text>
-
           <Button
             type='submit'
             w='full'

@@ -139,7 +139,6 @@
     "code_info": "Recibirás un código único en el medio seleccionado para verificar tu identidad y completar la autenticación.",
     "code_sent": "Código de verificación enviado",
     "contact_match_help": "Debe coincidir con el registrado en el sistema",
-    "data_usage_info": "Tus datos solo se utilizarán para verificar tu identidad. Vocdoni no almacena datos personales.",
     "errors": {
       "participant_not_found": "El votante no figura en el censo o las credenciales proporcionadas son incorrectas.",
       "requests_on_cooldown": "Demasiadas solicitudes. Espera un momento antes de volver a intentarlo.",

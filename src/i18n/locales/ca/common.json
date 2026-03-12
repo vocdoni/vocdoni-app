@@ -139,7 +139,6 @@
     "code_info": "Rebràs un codi únic al mitjà seleccionat per verificar la teva identitat i completar l'autenticació",
     "code_sent": "Codi de verificació enviat",
     "contact_match_help": "Ha de coincidir amb el registrat al sistema",
-    "data_usage_info": "Les teves dades només s'utilitzaran per verificar la teva identitat. Vocdoni no emmagatzema dades personals.",
     "errors": {
       "participant_not_found": "El votant no figura al cens o les credencials proporcionades són incorrectes.",
       "requests_on_cooldown": "Hi ha massa sol·licituds. Si us plau, espera un moment abans de tornar-ho a provar.",

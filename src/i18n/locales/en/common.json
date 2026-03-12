@@ -136,7 +136,6 @@
     "code_info": "You will receive a unique code on the selected medium to verify your identity and complete authentication",
     "code_sent": "Verification code sent",
     "contact_match_help": "Must match the one registered in the system",
-    "data_usage_info": "Your data will only be used to verify your identity. Vocdoni does not store personal data.",
     "errors": {
       "participant_not_found": "The voter is not listed in the census, or the provided credentials are incorrect.",
       "requests_on_cooldown": "Too many requests. Please wait a moment before trying again.",
