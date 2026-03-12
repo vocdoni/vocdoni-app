@@ -1,5 +1,5 @@
 import { useElection } from '@vocdoni/react-components'
-import { ensure0x, InvalidElection } from '@vocdoni/sdk'
+import { ElectionResultsTypeNames, ensure0x, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, useNavigate } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -7,13 +7,13 @@ import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { Routes } from '~src/router/routes'
 import { useCreateProcess } from '../Create'
-import { defaultProcessValues } from '../Create/common'
+import { defaultProcessValues, SelectorTypes } from '../Create/common'
 
 export const useCloneAsDraft = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const toast = useToast()
-  const { election } = useElection()
+  const { election, isWeighted } = useElection()
   const createProcess = useCreateProcess()
   const { permission } = useSubscription()
   const limit = permission(SubscriptionPermission.Drafts)
@@ -24,12 +24,27 @@ export const useCloneAsDraft = () => {
     const extendedInfo = election.questions.some((question) =>
       question.choices.some(({ meta }) => meta && (meta.description || meta.image?.default))
     )
+    const questionType =
+      election.resultsType?.name === ElectionResultsTypeNames.MULTIPLE_CHOICE
+        ? SelectorTypes.Multiple
+        : SelectorTypes.Single
+    const choiceLimits = (
+      election.resultsType?.properties as { numChoices?: { min?: number; max?: number } } | undefined
+    )?.numChoices
 
     const metadata = {
       ...defaultProcessValues,
       title: election.title.default,
       description: election.description.default,
       extendedInfo,
+      questionType,
+      minNumberOfChoices: questionType === SelectorTypes.Multiple ? (choiceLimits?.min ?? 0) : null,
+      maxNumberOfChoices:
+        questionType === SelectorTypes.Multiple
+          ? (choiceLimits?.max ?? election.questions[0]?.choices.length ?? null)
+          : null,
+      resultVisibility: election.electionType.secretUntilTheEnd ? ('hidden' as const) : ('live' as const),
+      weightedVote: Boolean(isWeighted),
       questions: election.questions.map((question) => {
         return {
           title: question.title.default,
