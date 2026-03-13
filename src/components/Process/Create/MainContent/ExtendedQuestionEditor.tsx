@@ -153,8 +153,9 @@ const SortableExtendedOption = ({
                   number: optionIndex + 1,
                 })
               }
-              fontWeight='bold'
+              fontWeight='semibold'
               fontSize='md'
+              _placeholder={{ fontWeight: 'semibold' }}
               {...register(`questions.${questionIndex}.options.${optionIndex}.option`, {
                 required: t('form.error.required', 'This field is required'),
               })}

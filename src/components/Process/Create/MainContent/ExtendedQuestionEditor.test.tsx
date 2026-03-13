@@ -60,4 +60,31 @@ describe('ExtendedQuestionEditor', () => {
     expect(screen.getByTestId('image-uploader')).toBeTruthy()
     expect(container.querySelectorAll('[data-choice-card]')).toHaveLength(1)
   })
+
+  it('renders option titles with semibold value and placeholder styles', () => {
+    const questionOptions = [{ id: 'opt-1' }]
+
+    render(<ExtendedQuestionEditor index={0} questionOptions={questionOptions} append={vi.fn()} remove={vi.fn()} />, {
+      wrapper: Wrapper,
+    })
+
+    const [optionInput] = screen.getAllByRole('textbox')
+    const inputClassName =
+      optionInput
+        .getAttribute('class')
+        ?.split(' ')
+        .find((className) => className.startsWith('css-')) ?? ''
+
+    expect(optionInput).toHaveStyle({ fontWeight: 'var(--chakra-font-weights-semibold)' })
+    expect(inputClassName).toBeTruthy()
+
+    const styleTags = Array.from(document.head.querySelectorAll('style'))
+      .map((tag) => tag.textContent ?? '')
+      .join('\n')
+
+    expect(styleTags).toContain(`.${inputClassName}::placeholder`)
+    expect(styleTags).toMatch(
+      new RegExp(`\\.${inputClassName}::placeholder[^}]*font-weight:var\\(--chakra-font-weights-semibold\\)`)
+    )
+  })
 })
