@@ -171,9 +171,9 @@ Copyright © 2025 Vocdoni.
 [discord badge]: https://img.shields.io/badge/discord-join%20chat-blue.svg
 [github issues badge]: https://img.shields.io/github/issues/vocdoni/vocdoni-app
 [twitter badge]: https://img.shields.io/twitter/follow/vocdoni?style=social&label=Follow
-[build badge develop]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/netlify.yml?branch=develop&label=develop
-[build badge stage]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/netlify.yml?branch=stage&label=stage
-[build badge main]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/netlify.yml?branch=main&label=main
+[build badge develop]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/test.yml?branch=develop&label=develop
+[build badge stage]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/test.yml?branch=stage&label=stage
+[build badge main]: https://img.shields.io/github/actions/workflow/status/vocdoni/vocdoni-app/test.yml?branch=main&label=main
 
 [discord invite]: https://chat.vocdoni.io
 [twitter follow]: https://twitter.com/intent/user?screen_name=vocdoni

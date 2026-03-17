@@ -14,15 +14,17 @@ vi.mock('crisp-sdk-web', () => ({
 }))
 
 describe('CrispChat', () => {
+  const originalAppEnv = globalThis.__APP_ENV__
+
   beforeEach(() => {
     vi.resetModules()
     mockConfigure.mockClear()
     localStorage.clear()
-    import.meta.env.CRISP_WEBSITE_ID = 'website-1'
+    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, CRISP_WEBSITE_ID: 'website-1' }
   })
 
   afterEach(() => {
-    import.meta.env.CRISP_WEBSITE_ID = ''
+    globalThis.__APP_ENV__ = originalAppEnv
   })
 
   it('does not configure Crisp until cookie consent is accepted', async () => {

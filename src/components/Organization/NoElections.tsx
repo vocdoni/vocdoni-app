@@ -2,8 +2,9 @@ import { Box, Button, Card, Flex, Image, Text } from '@chakra-ui/react'
 import { useClient, useOrganization } from '@vocdoni/react-components'
 import { areEqualHexStrings } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import { Routes } from '~src/router/routes'
+import { generatePath } from 'react-router-dom'
 import empty from '/assets/illustrations/2.png'
 
 const NoElections = () => {
@@ -26,7 +27,7 @@ const NoElections = () => {
               <Text>{t('organization.elections_list_empty.description')}</Text>
 
               <Button mt='40px' w='100%' asChild>
-                <ReactRouterLink to={generatePath(Routes.processes.create)}>{t('menu.create')}</ReactRouterLink>
+                <RouterAwareLink to={generatePath(Routes.processes.create)}>{t('menu.create')}</RouterAwareLink>
               </Button>
             </>
           ) : (

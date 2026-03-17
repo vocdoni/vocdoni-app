@@ -1,6 +1,6 @@
 import { chakra, type HTMLChakraProps, Flex } from '@chakra-ui/react'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useColorModeValue } from '~theme/color-mode'
-import { NavLink } from 'react-router-dom'
 import { Logo as LogoImage, LogoMbl } from '~theme/icons'
 
 // This Logo should be updated to use VocdoniLogo or simply deprecated.
@@ -8,14 +8,14 @@ const Logo = () => {
   const invert = useColorModeValue('invert(0%)', 'invert(100%)')
 
   return (
-    <NavLink to='/'>
+    <RouterAwareLink to='/'>
       <Flex alignItems='center' gap={2} display={{ base: 'none', lg: 'flex' }} filter={invert}>
         <LogoImage />
       </Flex>
       <Flex alignItems='center' gap={2} display={{ base: 'flex', lg: 'none' }} filter={invert}>
         <LogoMbl />
       </Flex>
-    </NavLink>
+    </RouterAwareLink>
   )
 }
 

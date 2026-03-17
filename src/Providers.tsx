@@ -1,8 +1,9 @@
+import './i18n'
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ClientEnv, ComponentsProvider } from '@vocdoni/react-components'
+import { ComponentsProvider } from '@vocdoni/react-components'
 import { setDefaultOptions } from 'date-fns'
-import { PropsWithChildren, useEffect, useMemo } from 'react'
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useWalletClient, WagmiProvider } from 'wagmi'
 import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
@@ -14,33 +15,40 @@ import { CookieConsent } from '~components/Cookies/CookieConsent'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { walletClientToSigner } from '~constants/wagmi-adapters'
 import { uiScaffoldComponents } from '~theme/react-components'
-import { VocdoniEnvironment } from './constants'
 import { wagmiConfig } from './constants/rainbow'
 import { datesLocale } from './i18n/locales'
+import { getVocdoniClientConfig } from './providers/vocdoni-client-config'
 import { ClientProvider } from './providers/VocdoniClientProvider'
 import { RoutesProvider } from './router/Router'
 import { RainbowKitTheme, Theme } from './theme/Theme'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: (failureCount, error) => {
-        // Never retry on 401 unauthorized errors - let each view handle them
-        if (error instanceof UnauthorizedApiError) return false
-        // Default retry logic for other errors (max 3 attempts)
-        return failureCount < 3
+export const createAppQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: (failureCount, error) => {
+          if (error instanceof UnauthorizedApiError) return false
+          return failureCount < 3
+        },
+        refetchOnWindowFocus: false,
       },
-      refetchOnWindowFocus: false,
     },
-  },
-})
+  })
 
-export const Providers = () => {
+export const Providers = () => (
+  <AppProviders>
+    <RoutesProvider />
+  </AppProviders>
+)
+
+export const AppProviders = ({ children, queryClient }: PropsWithChildren<{ queryClient?: QueryClient }>) => {
+  const [client] = useState(() => queryClient ?? createAppQueryClient())
+
   return (
     <Theme>
       <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <AppProviders />
+        <QueryClientProvider client={client}>
+          <AppRuntimeProviders>{children}</AppRuntimeProviders>
         </QueryClientProvider>
       </WagmiProvider>
     </Theme>
@@ -55,18 +63,11 @@ const SaasProviders = ({ children }: PropsWithChildren<{}>) => (
   </AuthProvider>
 )
 
-const AppProviders = () => {
+const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
   const { data } = useWalletClient()
   const { i18n } = useTranslation()
   const locale = datesLocale(i18n.language)
-  const clientEnv: ClientEnv = VocdoniEnvironment === 'prod' ? 'prod' : 'dev'
-  const options = useMemo(() => {
-    const next: { options?: { api_url: string } } = {}
-    if (clientEnv === 'dev') {
-      next.options = { api_url: 'https://one-dev.vocdoni.net/v2' }
-    }
-    return next
-  }, [clientEnv])
+  const { clientEnv, options } = useMemo(() => getVocdoniClientConfig(), [])
 
   const signer = data ? walletClientToSigner(data) : null
 
@@ -77,12 +78,12 @@ const AppProviders = () => {
   return (
     <RainbowKitTheme>
       <ComponentsProvider components={uiScaffoldComponents}>
-        <ClientProvider env={clientEnv} signer={signer as Signer} {...options}>
+        <ClientProvider env={clientEnv} signer={signer as Signer} options={options}>
           <ConnectionToastProvider>
             <SaasProviders>
               <AnalyticsProvider>
                 <CookieConsent />
-                <RoutesProvider />
+                {children}
               </AnalyticsProvider>
             </SaasProviders>
           </ConnectionToastProvider>

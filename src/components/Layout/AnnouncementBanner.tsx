@@ -1,6 +1,7 @@
 import { AlertRoot as Alert, AlertDescription, CloseButton, HStack } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useTranslation } from 'react-i18next'
+import { AppEnv } from '~src/app-env'
 
 type AnnouncementStatus = (typeof Statuses)[number]
 
@@ -45,7 +46,7 @@ const parseAnnouncement = (raw: string | undefined): AnnouncementBannerContents 
 }
 
 // Parsed once at module load:
-export const Announcement: AnnouncementBannerContents | null = parseAnnouncement(import.meta.env.ANNOUNCEMENT)
+export const Announcement: AnnouncementBannerContents | null = parseAnnouncement(AppEnv.ANNOUNCEMENT)
 
 const AnnouncementBanner = ({ limited = false }: { limited?: boolean }) => {
   const { i18n } = useTranslation()

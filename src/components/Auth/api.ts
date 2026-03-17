@@ -1,3 +1,4 @@
+import { AppEnv } from '~src/app-env'
 import i18n from '~i18n'
 
 type MethodTypes = 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -116,7 +117,7 @@ export const api = <T>(
   params.set('lang', i18n.language)
   path = `${basePath}?${params.toString()}`
 
-  return fetch(`${import.meta.env.SAAS_URL}/${path}`, {
+  return fetch(`${AppEnv.SAAS_URL}/${path}`, {
     method,
     headers,
     body: formatted,

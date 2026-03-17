@@ -22,13 +22,15 @@ vi.mock('../SuspenseLoader', () => ({
 }))
 
 describe('useHomeRoute', () => {
-  const originalProcessIds = import.meta.env.PROCESS_IDS
-  const originalDomains = import.meta.env.CUSTOM_ORGANIZATION_DOMAINS
+  const originalAppEnv = globalThis.__APP_ENV__
 
   beforeEach(() => {
     vi.resetModules()
-    import.meta.env.PROCESS_IDS = ''
-    import.meta.env.CUSTOM_ORGANIZATION_DOMAINS = {}
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      PROCESS_IDS: '',
+      CUSTOM_ORGANIZATION_DOMAINS: {},
+    }
     mockParseProcessIds.mockClear()
     setReactProvidersMock({
       useClient: () => mockUseClient({ client: { fetchAccountInfo: vi.fn() } }),
@@ -36,12 +38,11 @@ describe('useHomeRoute', () => {
   })
 
   afterEach(() => {
-    import.meta.env.PROCESS_IDS = originalProcessIds
-    import.meta.env.CUSTOM_ORGANIZATION_DOMAINS = originalDomains
+    globalThis.__APP_ENV__ = originalAppEnv
   })
 
   it('uses SimpleLayout when PROCESS_IDS has values', async () => {
-    import.meta.env.PROCESS_IDS = 'id-1'
+    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, PROCESS_IDS: 'id-1' }
     const { default: SimpleLayout } = await import('~elements/SimpleLayout')
     const { useHomeRoute } = await import('./home')
 
@@ -51,7 +52,7 @@ describe('useHomeRoute', () => {
   })
 
   it('uses Layout when PROCESS_IDS is empty', async () => {
-    import.meta.env.PROCESS_IDS = ''
+    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, PROCESS_IDS: '' }
     const { default: Layout } = await import('~elements/Layout')
     const { useHomeRoute } = await import('./home')
 
@@ -61,7 +62,7 @@ describe('useHomeRoute', () => {
   })
 
   it('redirects to /admin when no domain and no PROCESS_IDS', async () => {
-    import.meta.env.PROCESS_IDS = ''
+    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, PROCESS_IDS: '' }
     const { useHomeRoute } = await import('./home')
 
     const { result } = renderHook(() => useHomeRoute())
@@ -72,7 +73,7 @@ describe('useHomeRoute', () => {
   })
 
   it('reads PROCESS_IDS only once even if multiple consumers need it', async () => {
-    import.meta.env.PROCESS_IDS = 'id-1'
+    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, PROCESS_IDS: 'id-1' }
     const { useHomeRoute } = await import('./home')
 
     renderHook(() => useHomeRoute())

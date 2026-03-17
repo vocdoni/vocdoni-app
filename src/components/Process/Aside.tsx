@@ -11,7 +11,8 @@ import {
 import { CensusType, dotobject, ElectionStatus, formatUnits, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { AppEnv } from '~src/app-env'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import { CensusMeta, CensusTypes } from './Census/CensusType'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
@@ -47,11 +48,11 @@ const ProcessAside = () => {
     election?.status !== ElectionStatus.CANCELED &&
     election?.status !== ElectionStatus.UPCOMING &&
     !(election?.electionType.anonymous && voting) &&
-    !import.meta.env.HIDE_VOTER_COUNT
+    !AppEnv.HIDE_VOTER_COUNT
   const showVotes =
     !election?.electionType.secretUntilTheEnd &&
     election?.status !== ElectionStatus.UPCOMING &&
-    !import.meta.env.HIDE_VOTER_COUNT
+    !AppEnv.HIDE_VOTER_COUNT
 
   let votes = 0
   if (election && showVotes && election?.questions.length) {
@@ -159,9 +160,9 @@ const ProcessAside = () => {
           )}
           {voted !== null && voted.length > 0 && (
             <Link css={{ _hover: { textDecoration: 'underline' } }} asChild whiteSpace='nowrap'>
-              <ReactRouterLink to={environment.verifyVote(env, voted)} target='_blank'>
+              <RouterAwareLink to={environment.verifyVote(env, voted)} target='_blank' rel='noreferrer'>
                 {t('aside.verify_vote_on_explorer')}
-              </ReactRouterLink>
+              </RouterAwareLink>
             </Link>
           )}
         </Flex>
@@ -255,8 +256,9 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
   )
 }
 
-const hasOverwriteEnabled = (election?: PublishedElection): boolean =>
+const hasOverwriteEnabled = (election?: { voteType?: { maxVoteOverwrites?: number } } | null): boolean =>
   typeof election !== 'undefined' &&
+  election !== null &&
   typeof election.voteType.maxVoteOverwrites !== 'undefined' &&
   election.voteType.maxVoteOverwrites > 0
 

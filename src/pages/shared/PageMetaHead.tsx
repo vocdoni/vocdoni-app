@@ -1,0 +1,24 @@
+import type { PublicMeta } from '~src/ssr/public-pages'
+
+type PageMetaHeadProps = {
+  meta: PublicMeta
+}
+
+const PageMetaHead = ({ meta }: PageMetaHeadProps) => {
+  return (
+    <>
+      <title>{meta.title}</title>
+      <meta name='description' content={meta.description} />
+      <meta property='og:title' content={meta.openGraph.title} />
+      <meta property='og:description' content={meta.openGraph.description} />
+      <meta property='og:type' content={meta.openGraph.type} />
+      {meta.openGraph.url ? <meta property='og:url' content={meta.openGraph.url} /> : null}
+      <meta name='twitter:card' content={meta.twitter.card} />
+      <meta name='twitter:title' content={meta.twitter.title} />
+      <meta name='twitter:description' content={meta.twitter.description} />
+      {meta.canonicalUrl ? <link rel='canonical' href={meta.canonicalUrl} /> : null}
+    </>
+  )
+}
+
+export default PageMetaHead

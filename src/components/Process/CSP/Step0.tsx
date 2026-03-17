@@ -20,6 +20,7 @@ import { useElection } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
+import { AppEnv } from '~src/app-env'
 import { useToast } from '~components/Toast'
 import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
@@ -39,9 +40,9 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
   const auth = useTwoFactorAuth<0>(election, 0)
   const is2Factor = twoFaFields.length > 0
 
-  const privacyPolicyUrl = import.meta.env.PRIVACY_POLICY_URL
-  const termsOfServiceUrl = import.meta.env.TERMS_OF_SERVICE_URL
-  const crispWebsiteId = import.meta.env.CRISP_WEBSITE_ID
+  const privacyPolicyUrl = AppEnv.PRIVACY_POLICY_URL
+  const termsOfServiceUrl = AppEnv.TERMS_OF_SERVICE_URL
+  const crispWebsiteId = AppEnv.CRISP_WEBSITE_ID
 
   const onSubmit = async (values: CSPStep0FormData) => {
     const trimmed: CSPStep0FormData = Object.fromEntries(

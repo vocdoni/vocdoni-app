@@ -136,24 +136,22 @@ const renderSharedCensus = async (ui: React.ReactElement) => {
 }
 
 describe('SharedCensus', () => {
-  const originalProcessIds = import.meta.env.PROCESS_IDS
-  const originalLanguages = import.meta.env.LANGUAGES
-  const originalAlways = import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT
-  const originalDisconnected = import.meta.env.SHARED_CENSUS_DISCONNECTED_TEXT
-  const originalConnected = import.meta.env.SHARED_CENSUS_CONNECTED_TEXT
-  const originalStream = import.meta.env.STREAM_URL
+  const originalAppEnv = globalThis.__APP_ENV__
   const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
     cb(0)
     return 0
   })
 
   beforeEach(() => {
-    import.meta.env.PROCESS_IDS = 'id-1'
-    import.meta.env.LANGUAGES = JSON.stringify({ en: 'English', es: 'Spanish' }) as unknown as Record<string, string>
-    delete import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT
-    delete import.meta.env.SHARED_CENSUS_DISCONNECTED_TEXT
-    delete import.meta.env.SHARED_CENSUS_CONNECTED_TEXT
-    delete import.meta.env.STREAM_URL
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      PROCESS_IDS: 'id-1',
+      LANGUAGES: JSON.stringify({ en: 'English', es: 'Spanish' }) as unknown as Record<string, string>,
+      SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: undefined,
+      SHARED_CENSUS_DISCONNECTED_TEXT: undefined,
+      SHARED_CENSUS_CONNECTED_TEXT: undefined,
+      STREAM_URL: undefined,
+    }
     states.election = getDefaultElectionState()
     states.client = getDefaultClientState()
     states.organization = getDefaultOrganizationState().organization
@@ -168,23 +166,24 @@ describe('SharedCensus', () => {
   })
 
   afterEach(() => {
-    import.meta.env.PROCESS_IDS = originalProcessIds
-    import.meta.env.LANGUAGES = originalLanguages
-    import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT = originalAlways
-    import.meta.env.SHARED_CENSUS_DISCONNECTED_TEXT = originalDisconnected
-    import.meta.env.SHARED_CENSUS_CONNECTED_TEXT = originalConnected
-    import.meta.env.STREAM_URL = originalStream
+    globalThis.__APP_ENV__ = originalAppEnv
   })
 
   it('renders always-visible and disconnected text when not connected', async () => {
-    import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT = JSON.stringify({
-      en: 'Always EN',
-      es: 'Siempre ES',
-    }) as unknown as Record<string, string>
-    import.meta.env.SHARED_CENSUS_DISCONNECTED_TEXT = JSON.stringify({
-      en: 'Only when out EN',
-      es: 'Solo ES',
-    }) as unknown as Record<string, string>
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({
+        en: 'Always EN',
+        es: 'Siempre ES',
+      }) as unknown as Record<string, string>,
+    }
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_DISCONNECTED_TEXT: JSON.stringify({
+        en: 'Only when out EN',
+        es: 'Solo ES',
+      }) as unknown as Record<string, string>,
+    }
     i18nState.resolvedLanguage = 'es'
     i18nState.language = 'es'
     editorValues.length = 0
@@ -200,14 +199,14 @@ describe('SharedCensus', () => {
   })
 
   it('renders always-visible and connected text when connected/admin', async () => {
-    import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT = JSON.stringify({ en: 'Always EN' }) as unknown as Record<
-      string,
-      string
-    >
-    import.meta.env.SHARED_CENSUS_CONNECTED_TEXT = JSON.stringify({ en: 'Only when in EN' }) as unknown as Record<
-      string,
-      string
-    >
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({ en: 'Always EN' }) as unknown as Record<string, string>,
+    }
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_CONNECTED_TEXT: JSON.stringify({ en: 'Only when in EN' }) as unknown as Record<string, string>,
+    }
     editorValues.length = 0
     states.election.connected = true
     states.client.connected = true
@@ -222,18 +221,18 @@ describe('SharedCensus', () => {
   })
 
   it('rerenders pretext content when connection state changes', async () => {
-    import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT = JSON.stringify({ en: 'Always EN' }) as unknown as Record<
-      string,
-      string
-    >
-    import.meta.env.SHARED_CENSUS_DISCONNECTED_TEXT = JSON.stringify({ en: 'Disconnected EN' }) as unknown as Record<
-      string,
-      string
-    >
-    import.meta.env.SHARED_CENSUS_CONNECTED_TEXT = JSON.stringify({ en: 'Connected EN' }) as unknown as Record<
-      string,
-      string
-    >
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({ en: 'Always EN' }) as unknown as Record<string, string>,
+    }
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_DISCONNECTED_TEXT: JSON.stringify({ en: 'Disconnected EN' }) as unknown as Record<string, string>,
+    }
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_CONNECTED_TEXT: JSON.stringify({ en: 'Connected EN' }) as unknown as Record<string, string>,
+    }
     editorValues.length = 0
     states.client.connected = false
     states.client.account = { address: 'user-1' }
@@ -253,11 +252,17 @@ describe('SharedCensus', () => {
   })
 
   it('falls back to default language when current language is not available', async () => {
-    import.meta.env.LANGUAGES = JSON.stringify({ es: 'Spanish', en: 'English' }) as unknown as Record<string, string>
-    import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT = JSON.stringify({
-      es: 'Siempre',
-      en: 'Always',
-    }) as unknown as Record<string, string>
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      LANGUAGES: JSON.stringify({ es: 'Spanish', en: 'English' }) as unknown as Record<string, string>,
+    }
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({
+        es: 'Siempre',
+        en: 'Always',
+      }) as unknown as Record<string, string>,
+    }
     i18nState.resolvedLanguage = 'fr'
     i18nState.language = 'fr'
     editorValues.length = 0
@@ -277,10 +282,13 @@ describe('SharedCensus', () => {
   })
 
   it('shows stream video alongside pretext once the session is started', async () => {
-    import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT = JSON.stringify({
-      en: 'Always EN',
-    }) as unknown as Record<string, string>
-    import.meta.env.STREAM_URL = 'https://www.youtube.com/embed/test'
+    globalThis.__APP_ENV__ = {
+      ...globalThis.__APP_ENV__,
+      SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({
+        en: 'Always EN',
+      }) as unknown as Record<string, string>,
+    }
+    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, STREAM_URL: 'https://www.youtube.com/embed/test' }
     states.election.connected = true
     states.client.connected = true
     editorValues.length = 0
@@ -294,7 +302,7 @@ describe('SharedCensus', () => {
   })
 
   it('shows only the stream when no pretext is provided', async () => {
-    import.meta.env.STREAM_URL = 'https://www.youtube.com/embed/test-only'
+    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, STREAM_URL: 'https://www.youtube.com/embed/test-only' }
     states.election.connected = true
     states.client.connected = true
     editorValues.length = 0

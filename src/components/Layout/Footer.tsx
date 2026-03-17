@@ -2,14 +2,15 @@ import { Box, Flex, Icon, Image, Link, Text } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
 import { FaDiscord, FaGithub } from 'react-icons/fa'
 import { FaXTwitter } from 'react-icons/fa6'
+import { AppEnv } from '~src/app-env'
 import { useColorModeValue } from '~theme/color-mode'
 import vcdLogo from '/assets/logo-classic.svg'
 
 const Footer = ({ simplified }: { simplified?: boolean }) => {
   const { t } = useTranslation()
   const invert = useColorModeValue('invert(0%)', 'invert(100%)')
-  const privacyPolicyUrl = import.meta.env.PRIVACY_POLICY_URL
-  const termsOfServiceUrl = import.meta.env.TERMS_OF_SERVICE_URL
+  const privacyPolicyUrl = AppEnv.PRIVACY_POLICY_URL
+  const termsOfServiceUrl = AppEnv.TERMS_OF_SERVICE_URL
 
   return (
     <>

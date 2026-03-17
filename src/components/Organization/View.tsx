@@ -11,27 +11,39 @@ import {
 } from '@chakra-ui/react'
 import { useClient, useOrganization } from '@vocdoni/react-components'
 import { areEqualHexStrings, InvalidElection, PublishedElection } from '@vocdoni/sdk'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import type { ElectionsPageData } from '~src/ssr/public-pages'
 import ProcessCardDetailed from '../Process/CardDetailed'
 import Header from './Header'
 import NoElections from './NoElections'
 
-const OrganizationView = () => {
+type OrganizationViewProps = {
+  initialElectionsPage?: ElectionsPageData
+}
+
+const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
   const { t } = useTranslation()
   const { client, account } = useClient()
   const { organization, fetch } = useOrganization()
 
-  const [electionsList, setElectionsList] = useState<(PublishedElection | InvalidElection)[]>([])
+  const initialElections = (initialElectionsPage?.elections ?? []) as (PublishedElection | InvalidElection)[]
+  const isFinishedFromInitialPage =
+    !!initialElectionsPage &&
+    (!initialElections.length ||
+      initialElectionsPage.pagination.currentPage === initialElectionsPage.pagination.lastPage)
+
+  const [electionsList, setElectionsList] = useState<(PublishedElection | InvalidElection)[]>(initialElections)
   const [loading, setLoading] = useState<boolean>(false)
-  const [loaded, setLoaded] = useState<boolean>(false)
+  const [loaded, setLoaded] = useState<boolean>(!!initialElectionsPage)
   const [error, setError] = useState<string>()
-  const [finished, setFinished] = useState<boolean>(false)
+  const [finished, setFinished] = useState<boolean>(isFinishedFromInitialPage)
   // we need refobserver to be in state to ensure the observer is assigned when rendering the ref layer
   // otherwise, the observer is not assigned and the intersection is not triggered
   const [refObserver, setRefObserver] = useState<HTMLDivElement | null>(null)
 
-  const [page, setPage] = useState<number>(-1)
+  const [page, setPage] = useState<number>(initialElectionsPage ? 1 : -1)
+  const previousOrganizationAddressRef = useRef<string | undefined>(organization?.address)
   useObserver(refObserver, setPage, setRefObserver)
 
   // refetch account info in case it changes in client (i.e. when editing the account profile in this same page)
@@ -45,12 +57,15 @@ const OrganizationView = () => {
 
   // resets fields on account change
   useEffect(() => {
+    if (previousOrganizationAddressRef.current === organization?.address) return
+
+    previousOrganizationAddressRef.current = organization?.address
     setElectionsList([])
-    setFinished(false)
+    setFinished(isFinishedFromInitialPage)
     setPage(0)
     setLoaded(false)
     setLoading(false)
-  }, [organization?.address])
+  }, [initialElectionsPage, isFinishedFromInitialPage, organization?.address])
 
   // loads elections. Note the load trigger is done via useObserver using a layer visibility.
   useEffect(() => {
@@ -122,7 +137,7 @@ const useObserver = (
   setRefObserver: Dispatch<SetStateAction<HTMLDivElement | null>>
 ) => {
   useEffect(() => {
-    if (!refObserver) return
+    if (!refObserver || typeof IntersectionObserver === 'undefined') return
 
     const observer = new IntersectionObserver(
       (entries) => {

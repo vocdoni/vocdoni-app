@@ -5,6 +5,7 @@ import { NoOrganizationsError, RemoteSigner, UnauthorizedError } from '@vocdoni/
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
+import { AppEnv } from '~src/app-env'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
 import { LoginResponse, useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
 import { useToast } from '~components/Toast'
@@ -19,6 +20,16 @@ export enum LocalStorageKeys {
 // One week in milliseconds
 const OneWeek = 7 * 24 * 60 * 60 * 1000
 
+const getStorageItem = (key: string) => (typeof localStorage === 'undefined' ? null : localStorage.getItem(key))
+const setStorageItem = (key: string, value: string) => {
+  if (typeof localStorage === 'undefined') return
+  localStorage.setItem(key, value)
+}
+const removeStorageItem = (key: string) => {
+  if (typeof localStorage === 'undefined') return
+  localStorage.removeItem(key)
+}
+
 /**
  * Mutation to set the RemoteSigner and check its address
  * This hook is used as state to determine if an address is associated to the Signer to redirect
@@ -29,10 +40,10 @@ const useSigner = () => {
 
   const updateSigner = useCallback(
     async (token?: string) => {
-      const t = token || localStorage.getItem(LocalStorageKeys.Token)
+      const t = token || getStorageItem(LocalStorageKeys.Token)
 
       const signer = new RemoteSigner({
-        url: import.meta.env.SAAS_URL,
+        url: AppEnv.SAAS_URL,
         token: t,
       })
 
@@ -44,13 +55,13 @@ const useSigner = () => {
         }
 
         // Get stored address from local storage
-        const storedAddress = localStorage.getItem(LocalStorageKeys.SignerAddress)
+        const storedAddress = getStorageItem(LocalStorageKeys.SignerAddress)
 
         // Use stored address if it exists and is in the available addresses, otherwise use first address
         const selectedAddress = storedAddress && addresses.includes(storedAddress) ? storedAddress : addresses[0]
 
         // Store the selected address
-        localStorage.setItem(LocalStorageKeys.SignerAddress, selectedAddress)
+        setStorageItem(LocalStorageKeys.SignerAddress, selectedAddress)
 
         // Set the signer address and update the client
         signer.address = selectedAddress
@@ -72,7 +83,7 @@ const useSigner = () => {
 
 export const useAuthProvider = () => {
   const { signer: clientSigner, clear } = useClient()
-  const [bearer, setBearer] = useState<string | null>(localStorage.getItem(LocalStorageKeys.Token))
+  const [bearer, setBearer] = useState<string | null>(() => getStorageItem(LocalStorageKeys.Token))
   const toast = useToast()
   const { disconnect } = useDisconnect()
   const { t } = useTranslation()
@@ -118,10 +129,10 @@ export const useAuthProvider = () => {
 
   const storeLogin = useCallback(
     ({ token, expirity }: LoginResponse, renewSession = false) => {
-      localStorage.setItem(LocalStorageKeys.Token, token)
-      localStorage.setItem(LocalStorageKeys.Expiry, expirity)
+      setStorageItem(LocalStorageKeys.Token, token)
+      setStorageItem(LocalStorageKeys.Expiry, expirity)
       if (renewSession) {
-        localStorage.setItem(LocalStorageKeys.RenewSession, 'true')
+        setStorageItem(LocalStorageKeys.RenewSession, 'true')
       }
       setBearer(token)
       updateSigner(token)
@@ -131,7 +142,7 @@ export const useAuthProvider = () => {
 
   const logout = useCallback(() => {
     clearAuthStorageKeys()
-    localStorage.removeItem(LocalStorageKeys.RenewSession)
+    removeStorageItem(LocalStorageKeys.RenewSession)
     setBearer(null)
     clear()
     disconnect()
@@ -158,8 +169,8 @@ export const useAuthProvider = () => {
   useEffect(() => {
     if (!bearer) return
 
-    const expiry = localStorage.getItem(LocalStorageKeys.Expiry)
-    const renewSession = localStorage.getItem(LocalStorageKeys.RenewSession)
+    const expiry = getStorageItem(LocalStorageKeys.Expiry)
+    const renewSession = getStorageItem(LocalStorageKeys.RenewSession)
 
     if (!expiry || !renewSession) return
 

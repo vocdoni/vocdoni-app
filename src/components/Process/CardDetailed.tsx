@@ -9,7 +9,7 @@ import {
 } from '@vocdoni/react-components'
 import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { useDateFns } from '~i18n/use-date-fns'
 import { ActionsMenu } from './ActionsMenu'
@@ -24,14 +24,14 @@ const ProcessCardDetailed = ({ election }: Props) => {
     <ElectionProvider election={election}>
       <Card.Root>
         <Card.Body>
-          <Link to={`/processes/${enforceHexPrefix(election.id)}`}>
+          <RouterAwareLink to={`/processes/${enforceHexPrefix(election.id)}`}>
             <ProcessDetailedCardTitle />
             <Box>
               <ElectionStatusBadge />
               <ProcessDetailedCreationDate />
             </Box>
             <ProcessDetailedCardDescription />
-          </Link>
+          </RouterAwareLink>
           <ActionsMenu />
         </Card.Body>
 

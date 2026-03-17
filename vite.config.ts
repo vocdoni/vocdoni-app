@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react'
 import { execSync } from 'node:child_process'
+import { ssr } from 'vike/plugin'
 import { defineConfig, loadEnv } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import svgr from 'vite-plugin-svgr'
@@ -20,7 +21,12 @@ const viteconfig = ({ mode }) => {
   const outDir = process.env.BUILD_PATH
   const base = process.env.BASE_URL || '/'
 
-  const commit = execSync('git rev-parse --short HEAD').toString()
+  let commit = 'unknown'
+  try {
+    commit = execSync('git rev-parse --short HEAD').toString()
+  } catch {
+    console.warn('Unable to resolve git commit hash for HTML template injection.')
+  }
 
   let defaultCensusSize = Number(process.env.DEFAULT_CENSUS_SIZE)
   if (!defaultCensusSize) {
@@ -74,6 +80,30 @@ const viteconfig = ({ mode }) => {
 
   const languagesSlice = resolveLanguagesSlice(process.env.LANGUAGES)
   const defaultLanguage = Object.keys(languagesSlice)[0]
+  const appEnv = {
+    VOCDONI_ENVIRONMENT: vocdoniEnvironment,
+    CUSTOM_ORGANIZATION_DOMAINS: JSON.parse(process.env.CUSTOM_ORGANIZATION_DOMAINS || '{}'),
+    PROCESS_IDS: process.env.PROCESS_IDS || '',
+    DEFAULT_CENSUS_SIZE: defaultCensusSize,
+    title,
+    STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
+    SAAS_URL: saasUrl,
+    OAUTH_URL: oauthUrl,
+    PRIORITY_SUPPORT_PHONE: process.env.PRIORITY_SUPPORT_PHONE,
+    CALCOM_EVENT_SLUG: process.env.CALCOM_EVENT_SLUG,
+    VIDEO_TUTORIAL: resolveVideoTutorials(),
+    GTM_CONTAINER_ID: process.env.GTM_CONTAINER_ID,
+    PLAUSIBLE_DOMAIN: process.env.PLAUSIBLE_DOMAIN,
+    VOCDONI_CONTACT_EMAIL: process.env.VOCDONI_CONTACT_EMAIL || 'hello@vocdoni.io',
+    ANNOUNCEMENT: process.env.ANNOUNCEMENT,
+    PRIVACY_POLICY_URL: privacyPolicyUrl,
+    TERMS_OF_SERVICE_URL: termsOfServiceUrl,
+    WHATSAPP_PHONE_NUMBER: process.env.WHATSAPP_PHONE_NUMBER || '+34 621 501 155',
+    LANGUAGES: languagesSlice,
+    ANALYTICS_CLIENT_ID: process.env.ANALYTICS_CLIENT_ID || '',
+    CRISP_WEBSITE_ID: process.env.CRISP_WEBSITE_ID || '',
+    HIDE_VOTER_COUNT: process.env.HIDE_VOTER_COUNT === 'true',
+  }
 
   return defineConfig({
     base,
@@ -81,30 +111,10 @@ const viteconfig = ({ mode }) => {
       outDir,
     },
     define: {
-      'import.meta.env.VOCDONI_ENVIRONMENT': JSON.stringify(vocdoniEnvironment),
-      'import.meta.env.CUSTOM_ORGANIZATION_DOMAINS': JSON.parse(process.env.CUSTOM_ORGANIZATION_DOMAINS || '{}'),
-      'import.meta.env.PROCESS_IDS': JSON.stringify(process.env.PROCESS_IDS || ''),
-      'import.meta.env.DEFAULT_CENSUS_SIZE': JSON.stringify(defaultCensusSize),
-      'import.meta.env.title': JSON.stringify(title),
-      'import.meta.env.STRIPE_PUBLIC_KEY': JSON.stringify(process.env.STRIPE_PUBLIC_KEY),
-      'import.meta.env.SAAS_URL': JSON.stringify(saasUrl),
-      'import.meta.env.OAUTH_URL': JSON.stringify(oauthUrl),
-      'import.meta.env.PRIORITY_SUPPORT_PHONE': JSON.stringify(process.env.PRIORITY_SUPPORT_PHONE),
-      'import.meta.env.CALCOM_EVENT_SLUG': JSON.stringify(process.env.CALCOM_EVENT_SLUG),
-      'import.meta.env.VIDEO_TUTORIAL': JSON.stringify(resolveVideoTutorials()),
-      'import.meta.env.GTM_CONTAINER_ID': JSON.stringify(process.env.GTM_CONTAINER_ID),
-      'import.meta.env.PLAUSIBLE_DOMAIN': JSON.stringify(process.env.PLAUSIBLE_DOMAIN),
-      'import.meta.env.VOCDONI_CONTACT_EMAIL': JSON.stringify(process.env.VOCDONI_CONTACT_EMAIL || 'hello@vocdoni.io'),
-      'import.meta.env.ANNOUNCEMENT': JSON.stringify(process.env.ANNOUNCEMENT),
-      'import.meta.env.PRIVACY_POLICY_URL': JSON.stringify(privacyPolicyUrl),
-      'import.meta.env.TERMS_OF_SERVICE_URL': JSON.stringify(termsOfServiceUrl),
-      'import.meta.env.WHATSAPP_PHONE_NUMBER': JSON.stringify(process.env.WHATSAPP_PHONE_NUMBER || '+34 621 501 155'),
-      'import.meta.env.LANGUAGES': JSON.stringify(languagesSlice),
-      'import.meta.env.ANALYTICS_CLIENT_ID': JSON.stringify(process.env.ANALYTICS_CLIENT_ID || ''),
-      'import.meta.env.CRISP_WEBSITE_ID': JSON.stringify(process.env.CRISP_WEBSITE_ID || ''),
-      'import.meta.env.HIDE_VOTER_COUNT': JSON.stringify(process.env.HIDE_VOTER_COUNT === 'true'),
+      'globalThis.__APP_ENV__': JSON.stringify(appEnv),
     },
     plugins: [
+      ssr(),
       tsconfigPaths(),
       react(),
       svgr(),

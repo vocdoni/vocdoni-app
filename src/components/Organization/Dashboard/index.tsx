@@ -29,6 +29,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink, useNavigate } from 'react-router-dom'
+import { AppEnv } from '~src/app-env'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Contents'
@@ -68,7 +69,7 @@ const Tutorial = () => {
   const { t, i18n } = useTranslation()
   const { data: profile, isLoading } = useProfile()
   const { subscription, loading } = useSubscription()
-  const videoTutorials = import.meta.env.VIDEO_TUTORIAL ?? { en: '' }
+  const videoTutorials = AppEnv.VIDEO_TUTORIAL ?? { en: '' }
   const language = i18n.resolvedLanguage || i18n.language || 'en'
   const videoTutorialSrc = videoTutorials[language] ?? videoTutorials.en
 

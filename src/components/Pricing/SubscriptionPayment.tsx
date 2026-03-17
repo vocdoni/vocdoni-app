@@ -13,6 +13,7 @@ import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
+import { AppEnv } from '~src/app-env'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { SubscriptionType, useSubscription } from '~components/Auth/Subscription'
@@ -25,7 +26,7 @@ import { OrderSummary } from './OrderSummary'
 import { PromotionCodeInput } from './PromotionCodeInput'
 import { useSubscriptionCheckout } from './use-subscription-checkout'
 
-const stripePublicKey = import.meta.env.STRIPE_PUBLIC_KEY
+const stripePublicKey = AppEnv.STRIPE_PUBLIC_KEY
 
 export type SubscriptionPaymentData = {
   billingPeriod: 'month' | 'year'

@@ -1,5 +1,13 @@
-import { init, type PlausibleConfig, track } from '@plausible-analytics/tracker'
-import TagManager from 'react-gtm-module'
+import { AppEnv } from '~src/app-env'
+
+type PlausibleConfig = {
+  domain: string
+  customProperties?: Record<string, string> | ((eventName: string) => Record<string, string>)
+}
+
+type TagManagerArgs = {
+  gtmId: string
+}
 
 export const AnalyticsEvent = {
   AccountSignup: 'Signup',
@@ -17,9 +25,23 @@ export interface AnalyticsEvent {
 
 let plausibleInitialized = false
 let gtmInitialized = false
+let plausibleModulePromise: Promise<typeof import('@plausible-analytics/tracker')> | null = null
+let gtmModulePromise: Promise<typeof import('react-gtm-module')> | null = null
+
+const canUseBrowserAnalytics = () => typeof window !== 'undefined'
+
+const loadPlausibleModule = () => {
+  plausibleModulePromise ??= import('@plausible-analytics/tracker')
+  return plausibleModulePromise
+}
+
+const loadGtmModule = () => {
+  gtmModulePromise ??= import('react-gtm-module')
+  return gtmModulePromise
+}
 
 const getAnalyticsClientId = (): string | undefined => {
-  const analyticsClientId = import.meta.env.ANALYTICS_CLIENT_ID
+  const analyticsClientId = AppEnv.ANALYTICS_CLIENT_ID
   return analyticsClientId?.trim() || undefined
 }
 
@@ -47,19 +69,23 @@ const addAnalyticsClientIdToPlausibleConfig = (config: PlausibleConfig): Plausib
   }
 }
 
-export const initializeGTM = (config: TagManager.TagManagerArgs): void => {
+export const initializeGTM = (config: TagManagerArgs): void => {
   if (gtmInitialized) return
+  if (!canUseBrowserAnalytics()) return
+
   try {
-    TagManager.initialize(config)
-    const analyticsClientId = getAnalyticsClientId()
-    if (analyticsClientId) {
-      TagManager.dataLayer({
-        dataLayer: {
-          client: analyticsClientId,
-        },
-      })
-    }
-    gtmInitialized = true
+    void loadGtmModule().then((TagManager) => {
+      TagManager.initialize(config)
+      const analyticsClientId = getAnalyticsClientId()
+      if (analyticsClientId) {
+        TagManager.dataLayer({
+          dataLayer: {
+            client: analyticsClientId,
+          },
+        })
+      }
+      gtmInitialized = true
+    })
   } catch (error) {
     console.error('Failed to initialize GTM:', error)
   }
@@ -67,10 +93,13 @@ export const initializeGTM = (config: TagManager.TagManagerArgs): void => {
 
 export const initializePlausible = (config: PlausibleConfig): void => {
   if (plausibleInitialized) return
+  if (!canUseBrowserAnalytics()) return
 
   try {
-    init(addAnalyticsClientIdToPlausibleConfig(config))
-    plausibleInitialized = true
+    void loadPlausibleModule().then(({ init }) => {
+      init(addAnalyticsClientIdToPlausibleConfig(config))
+      plausibleInitialized = true
+    })
   } catch (error) {
     console.error('Failed to initialize Plausible:', error)
   }
@@ -79,8 +108,11 @@ export const initializePlausible = (config: PlausibleConfig): void => {
 export const trackPlausibleEvent = (event: AnalyticsEvent): void => {
   try {
     if (!plausibleInitialized) return
+    if (!canUseBrowserAnalytics()) return
 
-    track(event.name, { props: event.props })
+    void loadPlausibleModule().then(({ track }) => {
+      track(event.name, { props: event.props })
+    })
   } catch (error) {
     console.error('Failed to track Plausible event:', error)
   }
@@ -88,12 +120,15 @@ export const trackPlausibleEvent = (event: AnalyticsEvent): void => {
 
 export const trackGTMEvent = (event: AnalyticsEvent): void => {
   if (!gtmInitialized) return
+  if (!canUseBrowserAnalytics()) return
   try {
-    TagManager.dataLayer({
-      dataLayer: {
-        event: event.name,
-        ...event.props,
-      },
+    void loadGtmModule().then((TagManager) => {
+      TagManager.dataLayer({
+        dataLayer: {
+          event: event.name,
+          ...event.props,
+        },
+      })
     })
   } catch (error) {
     console.error('Failed to track GTM event:', error)

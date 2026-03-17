@@ -3,12 +3,18 @@ import { format, formatDistance, Locale } from 'date-fns'
 import i18next from 'i18next'
 import BrowserLanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
+import { AppEnv, getLanguagesEnv } from '~src/app-env'
 import { ucfirst } from '~utils/strings'
 import { dateLocales, reactComponentsTranslations, translations } from './locales'
 
-const languagesSlice = import.meta.env.LANGUAGES as Record<string, string>
+const languagesSlice = getLanguagesEnv()
 const supportedLanguages = Object.keys(languagesSlice)
 const fallbackLanguage = supportedLanguages[0]
+
+export const shouldEnableI18nDebug = ({ isDev, isTestEnv }: { isDev: boolean; isTestEnv: boolean }) =>
+  isDev && !isTestEnv
+
+const isTestEnv = typeof process !== 'undefined' && (process.env.VITEST === 'true' || process.env.NODE_ENV === 'test')
 
 // initialize i18next
 const i18n = i18next.createInstance()
@@ -19,7 +25,7 @@ i18n
     {
       fallbackLng: fallbackLanguage,
       supportedLngs: supportedLanguages,
-      debug: import.meta.env.NODE_ENV === 'development',
+      debug: shouldEnableI18nDebug({ isDev: AppEnv.DEV, isTestEnv }),
       ns: ['common', reactComponentsNamespace],
       defaultNS: 'common',
       showSupportNotice: false,

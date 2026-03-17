@@ -15,6 +15,7 @@ import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { BsGoogle, BsLink } from 'react-icons/bs'
+import { AppEnv } from '~src/app-env'
 import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
@@ -62,9 +63,9 @@ const AccountForm = ({ profile }: { profile?: User }) => {
     mutationFn: async (provider: OAuthProvider) => {
       if (!bearer) throw new Error('Missing auth token')
       return linkSaasOAuth({
-        oAuthServiceUrl: import.meta.env.OAUTH_URL,
+        oAuthServiceUrl: AppEnv.OAUTH_URL,
         oAuthServiceProvider: provider,
-        saasBackendUrl: import.meta.env.SAAS_URL,
+        saasBackendUrl: AppEnv.SAAS_URL,
         provider,
         authToken: bearer,
       })

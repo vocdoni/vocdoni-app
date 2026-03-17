@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { FaGlobeAmericas } from 'react-icons/fa'
 import { LuCheck } from 'react-icons/lu'
 import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
+import { getLanguagesEnv } from '~src/app-env'
 import i18n from '~i18n'
 import { Select } from '~components/Form/Select'
 import { languagesListSelectStyles } from '~theme/selectStyles'
@@ -24,7 +25,7 @@ import { languagesListSelectStyles } from '~theme/selectStyles'
 export const LanguagesList = ({ closeOnSelect }: { closeOnSelect: boolean }) => {
   const { i18n } = useTranslation()
 
-  const languages = import.meta.env.LANGUAGES as Record<string, string>
+  const languages = getLanguagesEnv()
   const languageEntries = Object.entries(languages).sort(([, a], [, b]) => a.localeCompare(b))
 
   return (
@@ -54,7 +55,7 @@ export const LanguagesMenu = ({ ...props }) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
-  const languages = import.meta.env.LANGUAGES as Record<string, string>
+  const languages = getLanguagesEnv()
   const hasMultipleLanguages = Object.keys(languages).length > 1
   if (!hasMultipleLanguages) {
     return null
@@ -106,7 +107,7 @@ const LanguageOptionLabel = ({ value, label }, { context }) => {
 export const LanguageListDashboard = ({ ...props }) => {
   const { t, i18n } = useTranslation()
 
-  const languages = import.meta.env.LANGUAGES as Record<string, string>
+  const languages = getLanguagesEnv()
   const languageOptions: LanguageOption[] = Object.entries(languages)
     .map(([key, label]) => ({
       value: key,

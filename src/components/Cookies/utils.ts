@@ -1,4 +1,5 @@
 import TagManager from 'react-gtm-module'
+import { AppEnv } from '~src/app-env'
 
 const CONSENT_KEY = 'vocdoni-cookie-consent'
 const CONSENT_ACCEPTED = 'accepted'
@@ -40,7 +41,7 @@ export function hasCookieConsent(): boolean {
  */
 
 // Replace this with your actual GTM ID or import from config/environment
-const GTM_ID = import.meta.env.GTM_CONTAINER_ID
+const GTM_ID = AppEnv.GTM_CONTAINER_ID
 
 export function initializeGTM(withCookies: boolean): void {
   if (typeof window === 'undefined') return

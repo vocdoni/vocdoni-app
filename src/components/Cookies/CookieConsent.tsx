@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { AppEnv } from '~src/app-env'
 
 import { AlertRoot as Alert, AlertDescription, AlertTitle, Box, Button, HStack, Link } from '@chakra-ui/react'
 import { getCookieConsent, hasCookieConsent, initializeGTM, setCookieConsent } from './utils'
@@ -8,7 +9,7 @@ export function CookieConsent() {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const privacyPolicyUrl = import.meta.env.PRIVACY_POLICY_URL
+  const privacyPolicyUrl = AppEnv.PRIVACY_POLICY_URL
 
   useEffect(() => {
     setMounted(true)

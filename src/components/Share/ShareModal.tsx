@@ -20,6 +20,7 @@ import {
   TwitterShare,
   WhatsappShare,
 } from '~components/Share/index'
+import { getBrowserHref } from '~components/Share/utils'
 import { useToast } from '~components/Toast'
 
 const ShareModalButton = ({
@@ -32,7 +33,7 @@ const ShareModalButton = ({
   size?: ButtonProps['size']
 }) => {
   const { t } = useTranslation()
-  const rawUrl = document.location.href.split('#')[0] // Remove the PK after the hash
+  const rawUrl = getBrowserHref().split('#')[0] // Remove the PK after the hash
   const url = encodeURIComponent(rawUrl)
 
   const toast = useToast()

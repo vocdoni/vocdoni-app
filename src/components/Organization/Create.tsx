@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink, To, useNavigate } from 'react-router-dom'
+import { AppEnv } from '~src/app-env'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -52,7 +53,7 @@ const useOrganizationCreate = (
       })
 
       const signer = new RemoteSigner({
-        url: import.meta.env.SAAS_URL,
+        url: AppEnv.SAAS_URL,
         token: bearer,
       })
 

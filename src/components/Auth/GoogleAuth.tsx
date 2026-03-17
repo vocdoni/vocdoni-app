@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { BsGoogle } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { AppEnv } from '~src/app-env'
 import { useToast } from '~components/Toast'
 import { Routes } from '~src/router/routes'
 import { useAuth } from './useAuth'
@@ -61,9 +62,9 @@ const GoogleAuth = () => {
           name: 'Google',
           iconUrl: 'https://authjs.dev/img/providers/google.svg',
           options: {
-            oAuthServiceUrl: import.meta.env.OAUTH_URL,
+            oAuthServiceUrl: AppEnv.OAUTH_URL,
             oAuthServiceProvider: 'google',
-            saasBackendUrl: import.meta.env.SAAS_URL,
+            saasBackendUrl: AppEnv.SAAS_URL,
           },
         })
         connect({ connector: wallet.createConnector({} as any) })

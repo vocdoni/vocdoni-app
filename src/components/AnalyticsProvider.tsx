@@ -1,4 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useEffect } from 'react'
+import { AppEnv } from '~src/app-env'
 import {
   AnalyticsEvent,
   initializeGTM,
@@ -9,8 +10,8 @@ import {
 
 const useAnalyticsProvider = () => {
   useEffect(() => {
-    const gtmContainerId = import.meta.env.GTM_CONTAINER_ID
-    const plausibleDomain = import.meta.env.PLAUSIBLE_DOMAIN
+    const gtmContainerId = AppEnv.GTM_CONTAINER_ID
+    const plausibleDomain = AppEnv.PLAUSIBLE_DOMAIN
 
     if (plausibleDomain) {
       initializePlausible({

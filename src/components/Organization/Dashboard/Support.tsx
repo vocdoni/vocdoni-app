@@ -19,6 +19,7 @@ import { useClient } from '@vocdoni/react-components'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuInfo } from 'react-icons/lu'
+import { AppEnv } from '~src/app-env'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -45,7 +46,7 @@ type SupportTicket = {
 const OrganizationSupport = () => {
   const { t } = useTranslation()
   let columns: SimpleGridProps['columns'] = { base: 1 }
-  if (import.meta.env.PRIORITY_SUPPORT_PHONE) {
+  if (AppEnv.PRIORITY_SUPPORT_PHONE) {
     columns = { base: 1, md: 2 }
   }
 
@@ -61,7 +62,7 @@ const OrganizationSupport = () => {
       </SectionHeader>
       <SimpleGrid columns={columns} gap={6}>
         <SupportTicketForm />
-        {import.meta.env.PRIORITY_SUPPORT_PHONE && (
+        {AppEnv.PRIORITY_SUPPORT_PHONE && (
           <SubscriptionLockedContent permissionType={SubscriptionPermission.PhoneSupport}>
             {({ isLocked }) => <PhoneSupportCard isLocked={isLocked} />}
           </SubscriptionLockedContent>
@@ -157,7 +158,7 @@ const SupportTicketForm = () => {
 const PhoneSupportCard = ({ isLocked }) => {
   const { t } = useTranslation()
   const { organization, isLoading } = useSaasAccount()
-  const prioritySupportPhone = import.meta.env.PRIORITY_SUPPORT_PHONE
+  const prioritySupportPhone = AppEnv.PRIORITY_SUPPORT_PHONE
 
   if (isLoading) {
     return (

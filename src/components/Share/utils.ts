@@ -5,3 +5,19 @@ export default function objectToGetParams(object: { [key: string]: string | numb
 
   return params.length > 0 ? `?${params.join('&')}` : ''
 }
+
+export const getBrowserHref = () => {
+  if (typeof document === 'undefined') {
+    return ''
+  }
+
+  return document.location.href
+}
+
+export const getBrowserUserAgent = () => {
+  if (typeof navigator === 'undefined') {
+    return ''
+  }
+
+  return navigator.userAgent
+}

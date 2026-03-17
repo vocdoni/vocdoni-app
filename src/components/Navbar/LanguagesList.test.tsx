@@ -1,14 +1,20 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen } from '@testing-library/react'
 import { system } from '~theme/system'
-import { LanguagesMenu } from './LanguagesList'
 
 const languagesEnv = { en: 'English', es: 'Spanish' } as unknown as Record<string, string>
 
+vi.mock('~src/app-env', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~src/app-env')>()
+  return {
+    ...actual,
+    getLanguagesEnv: () => languagesEnv,
+  }
+})
+
 describe('LanguagesList', () => {
-  it('renders the languages menu trigger when multiple languages exist', () => {
-    const originalLanguages = import.meta.env.LANGUAGES
-    import.meta.env.LANGUAGES = languagesEnv
+  it('renders the languages menu trigger when multiple languages exist', async () => {
+    const { LanguagesMenu } = await import('./LanguagesList')
 
     render(
       <ChakraProvider value={system}>
@@ -16,8 +22,6 @@ describe('LanguagesList', () => {
       </ChakraProvider>
     )
 
-    expect(screen.getByLabelText('menu.burger_aria_label')).toBeInTheDocument()
-
-    import.meta.env.LANGUAGES = originalLanguages
+    expect(screen.getByRole('button', { name: /user menu/i })).toBeInTheDocument()
   })
 })

@@ -1,11 +1,12 @@
 import { Button, ButtonProps, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
 import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import Logo from '~components/Layout/Logo'
 import { Routes } from '~src/router/routes'
 import { LanguagesMenu } from './LanguagesList'
+import { generatePath } from 'react-router-dom'
 
 const Navbar = () => (
   <Flex width='full' py={3} position='relative' justifyContent='space-between' zIndex='topbar' alignItems='center'>
@@ -24,9 +25,9 @@ const DashboardButton = (props?: ButtonProps) => {
 
   return (
     <Button asChild px={6} {...props}>
-      <ReactRouterLink to={isAuthenticated ? generatePath(Routes.dashboard.base) : Routes.auth.signIn}>
+      <RouterAwareLink to={isAuthenticated ? generatePath(Routes.dashboard.base) : Routes.auth.signIn}>
         {isAuthenticated ? t('menu.dashboard', { defaultValue: 'Dashboard' }) : t('menu.login')}
-      </ReactRouterLink>
+      </RouterAwareLink>
     </Button>
   )
 }

@@ -1,4 +1,4 @@
-name: Build and Deploy to Netlify
+name: Test
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
   pull_request:
 
 jobs:
-  build-and-deploy-dev:
-    name: Build & Deploy (dev)
+  build-dev:
+    name: Build (dev)
     runs-on: ubuntu-22.04
     environment: develop
     if: >
@@ -47,23 +47,8 @@ jobs:
           CALCOM_EVENT_SLUG: ${{ secrets.CALCOM_EVENT_SLUG }}
           VIDEO_TUTORIAL: '{"en": "https://www.youtube.com/watch?v=OQRF_4-zGSk", "es": "https://www.youtube.com/watch?v=zk6yIq3-SHw"}'
 
-      - name: Deploy to Netlify (dev)
-        uses: nwtgck/actions-netlify@v2.0
-        with:
-          publish-dir: './dist'
-          production-branch: develop
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: Vocdoni dev deploy from GitHub Actions
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 1
-
-  build-and-deploy-stg:
-    name: Build & Deploy (stg)
+  build-stg:
+    name: Build (stg)
     runs-on: ubuntu-22.04
     environment: stage
     # Only run for pushes/PRs to stage branch or d/** branches
@@ -100,18 +85,3 @@ jobs:
           STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
           CALCOM_EVENT_SLUG: ${{ secrets.CALCOM_EVENT_SLUG }}
           SAAS_URL: https://saas-api-stg.vocdoni.net
-
-      - name: Deploy to Netlify (stg)
-        uses: nwtgck/actions-netlify@v2.0
-        with:
-          publish-dir: './dist'
-          production-branch: stage
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: Vocdoni stg deploy from GitHub Actions
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 1

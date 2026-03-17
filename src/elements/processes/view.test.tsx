@@ -17,6 +17,11 @@ vi.mock('~components/Process/View', () => ({
   ProcessView: () => <div>Process view content</div>,
 }))
 
+const routerFutureFlags = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+} as const
+
 describe('Process view', () => {
   beforeEach(() => {
     resetReactProvidersMock()
@@ -43,7 +48,10 @@ describe('Process view', () => {
           element: <Process />,
         },
       ],
-      { initialEntries: ['/processes/123'] }
+      {
+        initialEntries: ['/processes/123'],
+        future: routerFutureFlags,
+      }
     )
 
     render(<TestRouterProvider router={router} />)
@@ -63,7 +71,10 @@ describe('Process view', () => {
           element: <div>Organization page</div>,
         },
       ],
-      { initialEntries: ['/organization/0xabc'] }
+      {
+        initialEntries: ['/organization/0xabc'],
+        future: routerFutureFlags,
+      }
     )
 
     render(<TestRouterProvider router={router} />)
