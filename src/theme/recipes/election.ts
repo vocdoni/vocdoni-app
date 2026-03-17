@@ -406,6 +406,9 @@ export const QuestionsTypeBadge = defineSlotRecipe({
 export const SpreadsheetAccess = defineSlotRecipe({
   slots: spreadsheetAccessAnatomy,
   base: {
+    button: {
+      w: 'full',
+    },
     close: {
       display: 'none',
     },
