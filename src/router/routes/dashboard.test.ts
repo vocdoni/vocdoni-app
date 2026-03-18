@@ -1,10 +1,6 @@
 import { matchRoutes } from 'react-router-dom'
 import { Routes } from '.'
-import {
-  dashboardProcessResultsChildPath,
-  dashboardProcessRoutePath,
-  shouldRevalidateDashboardProcess,
-} from './dashboard'
+import { shouldRevalidateDashboardProcess } from './dashboard'
 
 describe('shouldRevalidateDashboardProcess', () => {
   it('does not revalidate when only switching between process tabs for the same id', () => {
@@ -26,20 +22,18 @@ describe('shouldRevalidateDashboardProcess', () => {
   })
 })
 
-describe('dashboardProcessRoutePath', () => {
+describe('dashboard process routes', () => {
   it('models process and process results as explicit nested routes', () => {
     const matches = matchRoutes(
       [
         {
-          path: dashboardProcessRoutePath,
-          children: [{ index: true }, { path: dashboardProcessResultsChildPath }],
+          path: Routes.dashboard.process,
+          children: [{ index: true }, { path: Routes.dashboard.processResults }],
         },
       ],
       '/admin/process/0xabc/results'
     )
 
-    expect(dashboardProcessRoutePath).toBe(Routes.dashboard.process)
-    expect(dashboardProcessResultsChildPath).toBe(Routes.dashboard.processResults)
     expect(matches?.map((match) => match.route.path ?? 'index')).toEqual([
       Routes.dashboard.process,
       Routes.dashboard.processResults,
