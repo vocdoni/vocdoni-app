@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useEffect, useState } from 'react'
 // Note these imports are dynamic aliases. Check vite.config.ts for more details
 import { rainbowStyles } from '~theme'
 import { ColorModeProvider, useColorMode } from '~theme/color-mode'
@@ -21,5 +21,17 @@ export const Theme = ({ children }: PropsWithChildren) => {
 
 export const RainbowKitTheme = ({ children }: PropsWithChildren) => {
   const { colorMode } = useColorMode()
-  return <RainbowKitProvider theme={rainbowStyles(colorMode)}>{children}</RainbowKitProvider>
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const rainbowKitColorMode = mounted ? colorMode : 'light'
+
+  return (
+    <RainbowKitProvider key={rainbowKitColorMode} theme={rainbowStyles(rainbowKitColorMode)}>
+      {children}
+    </RainbowKitProvider>
+  )
 }

@@ -1,5 +1,5 @@
 import { ThemeProvider as NextThemeProvider, useTheme, type ThemeProviderProps } from 'next-themes'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export type ColorMode = 'light' | 'dark'
 
@@ -40,5 +40,11 @@ export const useColorMode = (): {
 
 export const useColorModeValue = <T,>(light: T, dark: T) => {
   const { colorMode } = useColorMode()
-  return colorMode === 'dark' ? dark : light
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  return mounted && colorMode === 'dark' ? dark : light
 }
