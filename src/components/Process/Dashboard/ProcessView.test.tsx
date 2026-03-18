@@ -6,6 +6,8 @@ import { getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from
 
 const navigateSpy = vi.fn()
 let currentPathname = '/admin/process/0xabc'
+let currentElectionId = '0xabc'
+let currentElectionStatus = ElectionStatus.RESULTS
 
 vi.mock('@vocdoni/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
@@ -60,9 +62,9 @@ vi.mock('~components/Actions', () => ({
   ActionCancel: ({ children }: { children: ReactNode }) => <button>{children}</button>,
 }))
 
-const createPublishedElection = (status: ElectionStatus) =>
+const createPublishedElection = (id: string, status: ElectionStatus) =>
   Object.assign(new PublishedElection({} as never), {
-    id: '0xabc',
+    id,
     status,
     title: { default: 'Test election' },
     description: { default: 'Description' },
@@ -107,14 +109,16 @@ describe('ProcessView navigation', () => {
   beforeEach(() => {
     navigateSpy.mockReset()
     currentPathname = '/admin/process/0xabc'
+    currentElectionId = '0xabc'
+    currentElectionStatus = ElectionStatus.RESULTS
   })
 
   it('redirects the base route to results when election results are already available', async () => {
     setReactProvidersMock({
       ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
       useElection: () => ({
-        id: '0xabc',
-        election: createPublishedElection(ElectionStatus.RESULTS),
+        id: currentElectionId,
+        election: createPublishedElection(currentElectionId, currentElectionStatus),
         participation: 50,
         client: { explorerUrl: 'https://example.test' },
       }),
@@ -135,8 +139,8 @@ describe('ProcessView navigation', () => {
     setReactProvidersMock({
       ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
       useElection: () => ({
-        id: '0xabc',
-        election: createPublishedElection(ElectionStatus.RESULTS),
+        id: currentElectionId,
+        election: createPublishedElection(currentElectionId, currentElectionStatus),
         participation: 50,
         client: { explorerUrl: 'https://example.test' },
       }),
@@ -171,6 +175,42 @@ describe('ProcessView navigation', () => {
 
     await waitFor(() => {
       expect(navigateSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  it('resolves the default tab again when navigating to a different process id', async () => {
+    setReactProvidersMock({
+      ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+      useElection: () => ({
+        id: currentElectionId,
+        election: createPublishedElection(currentElectionId, currentElectionStatus),
+        participation: 50,
+        client: { explorerUrl: 'https://example.test' },
+      }),
+    })
+
+    const { rerender } = render(
+      <TestMemoryRouter initialEntries={['/admin/process/0xabc']}>
+        <ProcessView />
+      </TestMemoryRouter>
+    )
+
+    await waitFor(() => {
+      expect(navigateSpy).toHaveBeenCalledWith('/admin/process/0xabc/results', { replace: true })
+    })
+
+    navigateSpy.mockClear()
+    currentElectionId = '0xdef'
+    currentPathname = '/admin/process/0xdef'
+
+    rerender(
+      <TestMemoryRouter initialEntries={['/admin/process/0xdef']}>
+        <ProcessView />
+      </TestMemoryRouter>
+    )
+
+    await waitFor(() => {
+      expect(navigateSpy).toHaveBeenCalledWith('/admin/process/0xdef/results', { replace: true })
     })
   })
 })

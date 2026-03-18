@@ -121,11 +121,17 @@ const ProcessViewContent = () => {
   const showResultsTab = election instanceof PublishedElection && election.status !== ElectionStatus.CANCELED
   const shouldOpenResultsByDefault = election instanceof PublishedElection && election.status === ElectionStatus.RESULTS
   const hasResolvedInitialTabRef = useRef(false)
+  const resolvedInitialTabElectionIdRef = useRef<string | null>(null)
 
   const votingLink = `${document.location.origin}${generatePath(Routes.processes.view, { id })}`
   const { copy } = useClipboard({ value: votingLink })
 
   useEffect(() => {
+    if (resolvedInitialTabElectionIdRef.current !== id) {
+      resolvedInitialTabElectionIdRef.current = id
+      hasResolvedInitialTabRef.current = false
+    }
+
     if (hasResolvedInitialTabRef.current) return
     if (!election) return
 
