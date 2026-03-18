@@ -8,10 +8,10 @@ Vocdoni UI Scaffold is a multi-tenant SaaS platform for creating and managing bl
 
 ### Technology Stack
 - **Frontend**: React 18 with TypeScript
-- **Build Tool**: Vite
+- **Build Tool**: Vite + Vike
 - **UI Library**: Chakra UI for components and theming
 - **State Management**: TanStack Query for server state, React Hook Form for forms
-- **Routing**: React Router v6
+- **Routing**: Vike for SSR entry routing + React Router v6 for the SPA portion
 - **Web3**: Wagmi + RainbowKit for wallet integration
 - **Blockchain**: Vocdoni SDK for voting protocol
 - **Internationalization**: i18next (English, Spanish, Catalan)
@@ -46,9 +46,13 @@ Theme → WagmiConfig → QueryClientProvider → ClientProvider → SaasProvide
 ```
 Where `SaasProviders` wraps: `AuthProvider → SubscriptionProvider → SaasAccountProvider`
 
+For Vike SSR pages, the same shared providers are reused, but the page entry comes from `src/pages/**/+Page.tsx` instead of the SPA router bootstrap.
+
 ### Component Organization
 - `src/components/` - Reusable UI components
 - `src/elements/` - Page-level components combining multiple features
+- `src/pages/` - Vike page files (`+Page`, `+data`, `+Head`, route entries)
+- `src/ssr/` - Shared SSR loaders and metadata builders
 - `src/theme/` - Chakra UI theme customizations
 
 ### State Management Patterns
@@ -61,6 +65,13 @@ Where `SaasProviders` wraps: `AuthProvider → SubscriptionProvider → SaasAcco
 - Use `AccountProtectedRoute` for authentication-required routes
 - Use `OrganizationProtectedRoute` for organization-specific routes
 - Routes organized in `src/router/routes/` with hooks returning configurations
+
+### Rendering Split
+- SSR routes are limited to:
+  - `/organization/:address`
+  - `/processes/:id`
+- The root route, auth routes, dashboard/backoffice routes, and the rest of the app remain SPA-only behind the Vike catch-all page.
+- For SSR pages, prefer Vike metadata (`+Head`, page data, SSR loaders) over client-side `document.title` or runtime-only SEO updates.
 
 ## Technology-Specific Guidelines
 
@@ -103,14 +114,15 @@ Where `SaasProviders` wraps: `AuthProvider → SubscriptionProvider → SaasAcco
 - Use RainbowKit for wallet connection UI
 
 ### Environment Variables
-- Access environment variables via `import.meta.env.VARIABLE_NAME`
+- Use the existing app environment helpers when reading app-specific runtime config.
+- Prefer `AppEnv` / related helpers for app-defined env values and `import.meta.env` only for Vite-provided built-ins when appropriate.
 - Use environment-specific configurations from `src/constants/index.ts`
 - Support multiple environments: dev, prod
 
 ## Development Workflow
 
 ### Commands
-- `pnpm dev` or `pnpm start` - Development server (http://localhost:5173)
+- `pnpm dev` or `pnpm start` - Vike + Vite development server (http://localhost:5173)
 - `pnpm build` - Production build
 - `pnpm lint` - TypeScript compiler and Prettier checks
 - `pnpm lint:fix` - Fix formatting with Prettier
@@ -119,7 +131,7 @@ Where `SaasProviders` wraps: `AuthProvider → SubscriptionProvider → SaasAcco
 ### Quality Assurance
 - Always run `pnpm lint` after making changes
 - Ensure TypeScript compilation passes
-- Test manually (no automated test runner configured)
+- Run `pnpm test` when changing behavior
 - Verify responsive design and accessibility
 
 ## Common Patterns

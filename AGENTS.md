@@ -3,7 +3,9 @@
 ## Project Structure & Module Organization
 - `src/components/`: reusable UI and feature components (organized by domain).
 - `src/elements/`: route-level screens composed from components.
+- `src/pages/`: Vike page entries and SSR route definitions.
 - `src/router/` and `src/router/routes/`: application routing and route mappings.
+- `src/ssr/`: shared SSR data loading and metadata helpers for Vike pages.
 - `src/queries/`: API/data access logic and related domain query helpers.
 - `src/utils/`: shared utility functions.
 - `src/constants/`: static constants and configuration values used in code.
@@ -13,8 +15,8 @@
 - `public/`: static files served directly by Vite.
 
 ## Build, Test, and Development Commands
-- `pnpm start` or `pnpm dev`: run the local Vite dev server.
-- `pnpm build`: create a production bundle.
+- `pnpm start` or `pnpm dev`: run the local Vike + Vite development server.
+- `pnpm build`: create the production client and SSR bundles in `dist/client` and `dist/server`.
 - `pnpm lint`: run TypeScript checks and Prettier validation on `src/`.
 - `pnpm lint:fix`: apply Prettier formatting fixes.
 - `pnpm test`: run all Vitest tests once.
@@ -45,6 +47,13 @@
 ## Internal Dependencies Context
 - This repository depends on maintained Vocdoni packages; changes may require validating upstream behavior.
 - Key internal dependencies include `@vocdoni/sdk`, `@vocdoni/react-components`, and `@vocdoni/rainbowkit-wallets`.
+
+## Rendering Architecture
+- The app is no longer a pure SPA.
+- Vike owns SSR for `/organization/:address` and `/processes/:id`.
+- The rest of the app remains client-rendered behind the Vike SPA catch-all page.
+- Keep this split incremental: do not move unrelated routes to SSR unless explicitly requested.
+- For public SSR pages, prefer Vike `+data`, `+Head`, and page metadata over client-side document mutations.
 
 ## Commit & Pull Request Guidelines
 - Follow existing Conventional Commit patterns from repo history (`fix(scope): ...`, `chore(scope): ...`, `refactor(scope): ...`).

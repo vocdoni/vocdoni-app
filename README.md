@@ -44,10 +44,11 @@
 # vocdoni-app
 
 Vocdoni App is a React application that uses the [Vocdoni SDK](https://developer.vocdoni.io/sdk) and [UI Components library](https://developer.vocdoni.io/ui-components) to provide a user interface for the Vocdoni voting protocol.
-It is built with [Vite](https://vitejs.dev/guide/) and is deployed at https://app.vocdoni.io/.
+It is built with [Vite](https://vitejs.dev/guide/) and [Vike](https://vike.dev/), and is deployed at https://app.vocdoni.io/.
 
 ### Table of Contents
 - [Getting Started](#getting-started)
+- [Rendering Architecture](#rendering-architecture)
 - [Preview](#preview)
 - [Contributing](#contributing)
 - [License](#license)
@@ -55,6 +56,32 @@ It is built with [Vite](https://vitejs.dev/guide/) and is deployed at https://ap
 
 
 ## Getting Started
+
+## Rendering Architecture
+
+The app now uses a mixed rendering model:
+
+- Vike handles SSR for the public pages:
+  - `/organization/:address`
+  - `/processes/:id`
+- The rest of the application remains client-rendered and is served through the SPA catch-all page:
+  - `/`
+  - auth and login routes
+  - dashboard and backoffice routes
+  - all other existing SPA routes
+
+This keeps the migration incremental:
+
+- public organization and process pages get server-rendered HTML and SEO metadata
+- the existing React Router application remains the source of truth for the rest of the app
+- Vike sits on top of the current Vite app instead of replacing the SPA router entirely
+
+Relevant entry points:
+
+- `src/pages/organization/@address/` for the SSR organization page
+- `src/pages/processes/@id/` for the SSR process page
+- `src/pages/@catchAll/` for the SPA catch-all page
+- `src/router/` for the client-side React Router application
 
 ### Environment variables
 
@@ -107,14 +134,17 @@ In the project directory, you can run:
 
 #### `pnpm start`
 
-Runs the app in the development mode.<br /> Open
+Runs the app in development mode with Vike + Vite.<br /> Open
 [http://localhost:5173](http://localhost:5173) to view it in the browser (note
 the port may change if already used).
 
 #### `pnpm build`
 
-Builds the app for production to the `dist` folder.<br /> It correctly bundles
-React in production mode and optimizes the build for the best performance.
+Builds the app for production to the `dist` folder.<br />
+The output now includes both the client bundle and the Vike SSR server bundle:
+
+- `dist/client` for browser assets
+- `dist/server` for the SSR entry and page server bundles
 
 #### `pnpm translations`
 
@@ -129,8 +159,9 @@ Three branches are linked to deploys:
 - [![GitHub Actions Workflow Status][build badge stage]][app-stg.vocdoni.io] linked to SaaS api-stg and vochain LTS.
 - [![GitHub Actions Workflow Status][build badge main]][app.vocdoni.io] linked to SaaS api-lts and vochain LTS.
 
-Also, all pushes to develop and stage are deployed to netlify. You can easily
-access these deploys on each commit to develop, or directly in pull requests.
+Pushes and pull requests to `develop` and `stage` are validated by the GitHub
+Actions test workflow, which runs lint, test, and env-specific production
+builds.
 
 The common flow to follow when deploying to `main` is passing through all the
 other stages:
@@ -163,9 +194,6 @@ Copyright © 2025 Vocdoni.
 [app-dev.vocdoni.io]: https://app-dev.vocdoni.io
 [app-stg.vocdoni.io]: https://app-stg.vocdoni.io
 [app.vocdoni.io]: https://app.vocdoni.io
-[netlify dev]: https://vocdoni-app-dev.netlify.app/
-[netlify stg]: https://vocdoni-app-stg.netlify.app/
-
 [vocdoni logo]: https://docs.vocdoni.io/Logotype.svg
 [commit activity badge]: https://img.shields.io/github/commit-activity/m/vocdoni/vocdoni-app
 [discord badge]: https://img.shields.io/badge/discord-join%20chat-blue.svg
