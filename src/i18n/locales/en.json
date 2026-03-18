@@ -1722,8 +1722,6 @@
   },
   "share": {
     "copy": "Copy",
-    "election_share_btn_text": "Share",
-    "election_share_text": "Look at this election!",
     "icon_title": "share link",
     "mail_subject": "Voting platform",
     "modal_title": "Share with friends"

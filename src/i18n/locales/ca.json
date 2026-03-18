@@ -1746,8 +1746,6 @@
   },
   "share": {
     "copy": "Copia",
-    "election_share_btn_text": "Comparteix",
-    "election_share_text": "Mira aquesta elecció!",
     "icon_title": "compartir enllaç",
     "mail_subject": "Plataforma de votació",
     "modal_title": "Comparteix amb amics"

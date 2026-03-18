@@ -1746,8 +1746,6 @@
   },
   "share": {
     "copy": "Copiar",
-    "election_share_btn_text": "Compartir",
-    "election_share_text": "¡Mira esta votación!",
     "icon_title": "enlace para compartir",
     "mail_subject": "Plataforma de votación",
     "modal_title": "Compartir con otras personas"
