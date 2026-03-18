@@ -1,10 +1,9 @@
-import './i18n'
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ComponentsProvider } from '@vocdoni/react-components'
 import { setDefaultOptions } from 'date-fns'
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { I18nextProvider, useTranslation } from 'react-i18next'
 import { useWalletClient, WagmiProvider } from 'wagmi'
 import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
 import { AnalyticsProvider } from '~components/AnalyticsProvider'
@@ -16,6 +15,8 @@ import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { walletClientToSigner } from '~constants/wagmi-adapters'
 import { uiScaffoldComponents } from '~theme/react-components'
 import { wagmiConfig } from './constants/rainbow'
+import './i18n'
+import baseI18n from './i18n'
 import { datesLocale } from './i18n/locales'
 import { getVocdoniClientConfig } from './providers/vocdoni-client-config'
 import { ClientProvider } from './providers/VocdoniClientProvider'
@@ -41,17 +42,31 @@ export const Providers = () => (
   </AppProviders>
 )
 
-export const AppProviders = ({ children, queryClient }: PropsWithChildren<{ queryClient?: QueryClient }>) => {
+export const AppProviders = ({
+  children,
+  queryClient,
+  language,
+}: PropsWithChildren<{ queryClient?: QueryClient; language?: string }>) => {
   const [client] = useState(() => queryClient ?? createAppQueryClient())
+  const i18nInstance = useMemo(() => {
+    if (!language) return baseI18n
+
+    return baseI18n.cloneInstance({
+      lng: language,
+      initAsync: false,
+    })
+  }, [language])
 
   return (
-    <Theme>
-      <WagmiProvider config={wagmiConfig}>
-        <QueryClientProvider client={client}>
-          <AppRuntimeProviders>{children}</AppRuntimeProviders>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </Theme>
+    <I18nextProvider i18n={i18nInstance}>
+      <Theme>
+        <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={client}>
+            <AppRuntimeProviders>{children}</AppRuntimeProviders>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </Theme>
+    </I18nextProvider>
   )
 }
 

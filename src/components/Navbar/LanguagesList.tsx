@@ -17,12 +17,34 @@ import { useTranslation } from 'react-i18next'
 import { FaGlobeAmericas } from 'react-icons/fa'
 import { LuCheck } from 'react-icons/lu'
 import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
-import { getLanguagesEnv } from '~src/app-env'
-import i18n from '~i18n'
 import { Select } from '~components/Form/Select'
+import i18n from '~i18n'
+import { getLanguagesEnv } from '~src/app-env'
 import { languagesListSelectStyles } from '~theme/selectStyles'
 
-export const LanguagesList = ({ closeOnSelect }: { closeOnSelect: boolean }) => {
+export const navigateToLanguage = (
+  language: string,
+  i18n: ReturnType<typeof useTranslation>['i18n'],
+  publicLanguageLinks?: Record<string, string>,
+  navigate: (url: string) => void = (url) => window.location.assign(url)
+) => {
+  const targetUrl = publicLanguageLinks?.[language]
+
+  if (targetUrl && typeof window !== 'undefined') {
+    navigate(targetUrl)
+    return
+  }
+
+  void i18n.changeLanguage(language)
+}
+
+export const LanguagesList = ({
+  closeOnSelect,
+  publicLanguageLinks,
+}: {
+  closeOnSelect: boolean
+  publicLanguageLinks?: Record<string, string>
+}) => {
   const { i18n } = useTranslation()
 
   const languages = getLanguagesEnv()
@@ -34,9 +56,7 @@ export const LanguagesList = ({ closeOnSelect }: { closeOnSelect: boolean }) => 
         <MenuItem
           key={k}
           value={k}
-          onClick={() => {
-            i18n.changeLanguage(k)
-          }}
+          onClick={() => navigateToLanguage(k, i18n, publicLanguageLinks)}
           closeOnSelect={closeOnSelect}
           w='full'
           display='flex'
@@ -51,7 +71,7 @@ export const LanguagesList = ({ closeOnSelect }: { closeOnSelect: boolean }) => 
   )
 }
 
-export const LanguagesMenu = ({ ...props }) => {
+export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguageLinks?: Record<string, string> }) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -78,7 +98,7 @@ export const LanguagesMenu = ({ ...props }) => {
       </MenuTrigger>
       <MenuPositioner>
         <MenuContent minW={16} mt={2}>
-          <LanguagesList closeOnSelect={true} />
+          <LanguagesList closeOnSelect={true} publicLanguageLinks={publicLanguageLinks} />
         </MenuContent>
       </MenuPositioner>
     </MenuRoot>
@@ -128,7 +148,7 @@ export const LanguageListDashboard = ({ ...props }) => {
         value={selectedLanguage}
         onChange={(option: LanguageOption | null) => {
           if (option) {
-            i18n.changeLanguage(option.value)
+            void i18n.changeLanguage(option.value)
           }
         }}
         isClearable={false}

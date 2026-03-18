@@ -1,19 +1,19 @@
 import { Button, ButtonProps, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
+import { generatePath } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
 import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
-import { RouterAwareLink } from '~components/RouterAwareLink'
 import Logo from '~components/Layout/Logo'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import { Routes } from '~src/router/routes'
 import { LanguagesMenu } from './LanguagesList'
-import { generatePath } from 'react-router-dom'
 
-const Navbar = () => (
+const Navbar = ({ publicLanguageLinks }: { publicLanguageLinks?: Record<string, string> }) => (
   <Flex width='full' py={3} position='relative' justifyContent='space-between' zIndex='topbar' alignItems='center'>
     <Logo />
     <Flex alignItems='center' gap={2} justifySelf='end'>
       <DashboardButton />
-      <LanguagesMenu />
+      <LanguagesMenu publicLanguageLinks={publicLanguageLinks} />
       <ColorModeSwitcher />
     </Flex>
   </Flex>

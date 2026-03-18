@@ -8,6 +8,7 @@ const PageMetaHead = ({ meta }: PageMetaHeadProps) => {
   return (
     <>
       <title>{meta.title}</title>
+      <meta property='og:locale' content={meta.language} />
       <meta name='description' content={meta.description} />
       <meta property='og:title' content={meta.openGraph.title} />
       <meta property='og:description' content={meta.openGraph.description} />
@@ -17,6 +18,14 @@ const PageMetaHead = ({ meta }: PageMetaHeadProps) => {
       <meta name='twitter:title' content={meta.twitter.title} />
       <meta name='twitter:description' content={meta.twitter.description} />
       {meta.canonicalUrl ? <link rel='canonical' href={meta.canonicalUrl} /> : null}
+      {meta.alternates.map((alternate) => (
+        <link
+          key={`${alternate.hrefLang}-${alternate.href}`}
+          rel='alternate'
+          hrefLang={alternate.hrefLang}
+          href={alternate.href}
+        />
+      ))}
     </>
   )
 }

@@ -2,8 +2,13 @@ import { PublishedElection } from '@vocdoni/sdk'
 import {
   buildOrganizationMeta,
   buildProcessMeta,
+  getDefaultPublicLanguage,
+  getPublicLanguageAlternates,
+  getPublicOrganizationPath,
+  getPublicProcessPath,
   loadOrganizationPageData,
   loadProcessPageData,
+  resolvePublicLanguage,
   serializePublicPageErrorDetails,
 } from './public-pages'
 
@@ -69,6 +74,8 @@ describe('loadOrganizationPageData', () => {
       client: client as any,
       address: '0xabc',
       canonicalUrl: 'https://app.example.org/organization/0xabc',
+      language: 'en',
+      alternates: [],
     })
 
     expect(client.fetchAccountInfo).toHaveBeenCalledWith('0xabc')
@@ -93,6 +100,8 @@ describe('loadProcessPageData', () => {
       client: client as any,
       id: '0xprocess',
       canonicalUrl: 'https://app.example.org/processes/0xprocess',
+      language: 'en',
+      alternates: [],
     })
 
     expect(client.fetchElection).toHaveBeenCalledWith('0xprocess')
@@ -104,10 +113,62 @@ describe('loadProcessPageData', () => {
 })
 
 describe('metadata builders', () => {
+  it('keeps bare organization urls as canonical english pages and exposes hreflang alternates', () => {
+    const meta = buildOrganizationMeta({
+      organization: createOrganization(),
+      canonicalUrl: 'https://app.example.org/organization/0xabc',
+      language: 'en',
+      alternates: getPublicLanguageAlternates({
+        languages: ['en', 'es', 'ca'],
+        pathnameByLanguage: {
+          en: '/organization/0xabc',
+          es: '/es/organization/0xabc',
+          ca: '/ca/organization/0xabc',
+        },
+        origin: 'https://app.example.org',
+      }),
+    })
+
+    expect(meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
+    expect(meta.alternates).toEqual([
+      { hrefLang: 'en', href: 'https://app.example.org/organization/0xabc' },
+      { hrefLang: 'es', href: 'https://app.example.org/es/organization/0xabc' },
+      { hrefLang: 'ca', href: 'https://app.example.org/ca/organization/0xabc' },
+      { hrefLang: 'x-default', href: 'https://app.example.org/organization/0xabc' },
+    ])
+  })
+
+  it('keeps localized process urls canonical to themselves', () => {
+    const meta = buildProcessMeta({
+      election: createElection(),
+      organization: createOrganization(),
+      canonicalUrl: 'https://app.example.org/es/processes/0xprocess',
+      language: 'es',
+      alternates: getPublicLanguageAlternates({
+        languages: ['en', 'es'],
+        pathnameByLanguage: {
+          en: '/processes/0xprocess',
+          es: '/es/processes/0xprocess',
+        },
+        origin: 'https://app.example.org',
+      }),
+    })
+
+    expect(meta.canonicalUrl).toBe('https://app.example.org/es/processes/0xprocess')
+    expect(meta.openGraph.url).toBe('https://app.example.org/es/processes/0xprocess')
+    expect(meta.alternates).toEqual([
+      { hrefLang: 'en', href: 'https://app.example.org/processes/0xprocess' },
+      { hrefLang: 'es', href: 'https://app.example.org/es/processes/0xprocess' },
+      { hrefLang: 'x-default', href: 'https://app.example.org/processes/0xprocess' },
+    ])
+  })
+
   it('builds organization metadata with canonical url when available', () => {
     const meta = buildOrganizationMeta({
       organization: createOrganization(),
       canonicalUrl: 'https://app.example.org/organization/0xabc',
+      language: 'en',
+      alternates: [],
     })
 
     expect(meta.title).toContain('Vocdoni Association')
@@ -123,6 +184,8 @@ describe('metadata builders', () => {
         address: '0xfallback',
         account: { name: { default: '' }, description: { default: '' } },
       }),
+      language: 'en',
+      alternates: [],
     })
 
     expect(meta.title).toContain('0xfallback')
@@ -135,6 +198,8 @@ describe('metadata builders', () => {
       election: createElection(),
       organization: createOrganization(),
       canonicalUrl: 'https://app.example.org/processes/0xprocess',
+      language: 'en',
+      alternates: [],
     })
 
     expect(meta.title).toContain('Board election 2026')
@@ -146,10 +211,44 @@ describe('metadata builders', () => {
     const meta = buildProcessMeta({
       election: createElection(),
       organization: createOrganization(),
+      language: 'en',
+      alternates: [],
     })
 
     expect(meta.canonicalUrl).toBeUndefined()
     expect(meta.openGraph.url).toBeUndefined()
+  })
+})
+
+describe('public language helpers', () => {
+  it('uses english as the bare public language when available', () => {
+    expect(getDefaultPublicLanguage(['es', 'en', 'ca'])).toBe('en')
+  })
+
+  it('falls back to the first configured language when english is unavailable', () => {
+    expect(getDefaultPublicLanguage(['ca', 'es'])).toBe('ca')
+  })
+
+  it('resolves a localized route language only when it is supported', () => {
+    expect(resolvePublicLanguage({ routeLanguage: 'es', supportedLanguages: ['en', 'es', 'ca'] })).toBe('es')
+    expect(() => resolvePublicLanguage({ routeLanguage: 'fr', supportedLanguages: ['en', 'es', 'ca'] })).toThrow(
+      'Unsupported public language'
+    )
+  })
+
+  it('builds public page paths with bare english and localized non-english variants', () => {
+    expect(getPublicOrganizationPath({ address: '0xabc', language: 'en', defaultLanguage: 'en' })).toBe(
+      '/organization/0xabc'
+    )
+    expect(getPublicOrganizationPath({ address: '0xabc', language: 'es', defaultLanguage: 'en' })).toBe(
+      '/es/organization/0xabc'
+    )
+    expect(getPublicProcessPath({ id: '0xprocess', language: 'en', defaultLanguage: 'en' })).toBe(
+      '/processes/0xprocess'
+    )
+    expect(getPublicProcessPath({ id: '0xprocess', language: 'ca', defaultLanguage: 'en' })).toBe(
+      '/ca/processes/0xprocess'
+    )
   })
 })
 

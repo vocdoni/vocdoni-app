@@ -8,9 +8,12 @@ import { Routes } from '~routes'
 
 type PublicLayoutProps = PropsWithChildren<{
   pathname: string
+  publicLanguageLinks?: Record<string, string>
 }>
 
-const PublicLayout = ({ pathname, children }: PublicLayoutProps) => {
+const PublicLayout = ({ pathname, publicLanguageLinks, children }: PublicLayoutProps) => {
+  const isOrganizationPage = pathname === '/organization' || pathname.includes('/organization/')
+
   return (
     <Flex position='relative' flexDirection='column' minH='100vh' mx='auto'>
       <HStack
@@ -24,7 +27,7 @@ const PublicLayout = ({ pathname, children }: PublicLayoutProps) => {
         maxW='navbar'
         mx='auto'
       >
-        <Navbar />
+        <Navbar publicLanguageLinks={publicLanguageLinks} />
       </HStack>
       <CrispChat />
       {[Routes.root, Routes.plans].includes(pathname) && <AnnouncementBanner limited />}
@@ -47,7 +50,7 @@ const PublicLayout = ({ pathname, children }: PublicLayoutProps) => {
       </Flex>
       <Box
         as='footer'
-        bgColor={`${pathname.startsWith('/organization') ? 'footer.gray' : 'footer.white'}`}
+        bgColor={`${isOrganizationPage ? 'footer.gray' : 'footer.white'}`}
         w='full'
         backdropFilter='blur(40px)'
         px={{ base: 4, md: 6, xl: 10 }}

@@ -9,7 +9,7 @@ export default async function data(pageContext: PageContextServer) {
   try {
     return await loadProcessPublicPageData(pageContext)
   } catch (error) {
-    console.error('[vike][processes/@id][data] failed to load process page data', {
+    console.error('[vike][@lang/processes/@id][data] failed to load process page data', {
       routeParams: pageContext.routeParams,
       urlPathname: pageContext.urlPathname,
       clientEnv,
