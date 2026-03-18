@@ -2,7 +2,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
 import { lazy } from 'react'
-import { generatePath, LoaderFunctionArgs, Navigate, Params } from 'react-router-dom'
+import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
 import { paginatedElectionsQuery } from '~queries/organization'
@@ -33,6 +33,12 @@ const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
 
 // others
 const Dashboard = lazy(() => import('~elements/dashboard'))
+export const dashboardProcessRouteId = 'dashboard-process'
+
+export const shouldRevalidateDashboardProcess = ({
+  currentParams,
+  nextParams,
+}: Pick<ShouldRevalidateFunctionArgs, 'currentParams' | 'nextParams'>) => currentParams.id !== nextParams.id
 
 export const useDashboardRoutes = () => {
   const queryClient = useQueryClient()
@@ -86,24 +92,29 @@ export const useDashboardRoutes = () => {
             ),
             children: [
               {
+                id: dashboardProcessRouteId,
                 path: Routes.dashboard.process,
-                element: (
-                  <SuspenseLoader>
-                    <DashboardProcessView />
-                  </SuspenseLoader>
-                ),
                 loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
+                shouldRevalidate: shouldRevalidateDashboardProcess,
                 errorElement: <Error />,
-              },
-              {
-                path: Routes.dashboard.processResults,
-                element: (
-                  <SuspenseLoader>
-                    <DashboardProcessView />
-                  </SuspenseLoader>
-                ),
-                loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
-                errorElement: <Error />,
+                children: [
+                  {
+                    index: true,
+                    element: (
+                      <SuspenseLoader>
+                        <DashboardProcessView />
+                      </SuspenseLoader>
+                    ),
+                  },
+                  {
+                    path: Routes.dashboard.processResults,
+                    element: (
+                      <SuspenseLoader>
+                        <DashboardProcessView />
+                      </SuspenseLoader>
+                    ),
+                  },
+                ],
               },
               {
                 path: Routes.dashboard.processes.base,
