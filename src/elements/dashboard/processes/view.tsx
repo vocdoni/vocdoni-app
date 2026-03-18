@@ -1,14 +1,13 @@
 import { ElectionProvider, OrganizationProvider, useOrganization } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
 import { useEffect } from 'react'
-import { generatePath, useNavigate, useRouteLoaderData } from 'react-router-dom'
+import { generatePath, useLoaderData, useNavigate } from 'react-router-dom'
 import { ProcessView } from '~components/Process/Dashboard/ProcessView'
 import { Routes } from '~src/router/routes'
-import { dashboardProcessRouteId } from '~src/router/routes/dashboard'
 
 const DashboardProcessViewElement = () => {
   const { organization } = useOrganization()
-  const election = useRouteLoaderData(dashboardProcessRouteId) as PublishedElection
+  const election = useLoaderData() as PublishedElection
   const navigate = useNavigate()
 
   // Redirect to processes list when current organization does not own this process
