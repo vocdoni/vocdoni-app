@@ -20,18 +20,14 @@ const RoutedPaginatedTableFooter = () => {
   return (
     <Box
       display='flex'
-      flexDirection={{ base: 'column', md: 'row' }}
-      alignItems={{ base: 'flex-start', md: 'center' }}
+      flexDirection='row'
+      flexWrap='wrap'
+      alignItems='center'
       gap={5}
-      justifyContent='space-between'
+      justifyContent={{ base: 'flex-start', md: 'space-between' }}
     >
       <RowsPerPageSelect />
-      <Box
-        display='flex'
-        flexDirection={{ base: 'column', md: 'row' }}
-        alignItems={{ base: 'flex-start', md: 'center' }}
-        gap={5}
-      >
+      <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5}>
         <Text fontSize='sm'>
           <Trans i18nKey='pagination.page_out_of' values={{ page, total }}>
             Page {{ page }} of {{ total }}
@@ -58,8 +54,8 @@ export const PaginatedTableFooter = () => {
   const total = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage
 
   return (
-    <Box display='flex' flexDirection='row' alignItems='center' gap={5} justifyContent='space-between'>
-      <Box display='flex' flexDirection='row' alignItems='center' gap={5}>
+    <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5} justifyContent='space-between'>
+      <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5}>
         <Text fontSize='sm'>
           <Trans i18nKey='pagination.page_out_of' values={{ page, total }}>
             Page {{ page }} of {{ total }}
