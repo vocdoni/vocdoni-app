@@ -2,6 +2,23 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'
 import ExtendedQuestionEditor from './ExtendedQuestionEditor'
 
+const mockInput = vi.fn()
+
+vi.mock('@chakra-ui/react', async () => {
+  const actual = await vi.importActual<typeof import('@chakra-ui/react')>('@chakra-ui/react')
+  const React = await vi.importActual<typeof import('react')>('react')
+  const Input = React.forwardRef<HTMLInputElement, Record<string, unknown>>((props, ref) => {
+    mockInput(props)
+    return React.createElement('input', { ...props, ref })
+  })
+  Input.displayName = 'Input'
+
+  return {
+    ...actual,
+    Input,
+  }
+})
+
 vi.mock('@dnd-kit/sortable', () => ({
   useSortable: () => ({
     attributes: {},
@@ -49,6 +66,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 }
 
 describe('ExtendedQuestionEditor', () => {
+  beforeEach(() => {
+    mockInput.mockClear()
+  })
+
   it('renders options using choice card wrappers', () => {
     const questionOptions = [{ id: 'opt-1' }]
 
@@ -69,22 +90,13 @@ describe('ExtendedQuestionEditor', () => {
     })
 
     const [optionInput] = screen.getAllByRole('textbox')
-    const inputClassName =
-      optionInput
-        .getAttribute('class')
-        ?.split(' ')
-        .find((className) => className.startsWith('css-')) ?? ''
+    expect(optionInput).toBeInTheDocument()
 
-    expect(optionInput).toHaveStyle({ fontWeight: 'var(--chakra-font-weights-semibold)' })
-    expect(inputClassName).toBeTruthy()
-
-    const styleTags = Array.from(document.head.querySelectorAll('style'))
-      .map((tag) => tag.textContent ?? '')
-      .join('\n')
-
-    expect(styleTags).toContain(`.${inputClassName}::placeholder`)
-    expect(styleTags).toMatch(
-      new RegExp(`\\.${inputClassName}::placeholder[^}]*font-weight:var\\(--chakra-font-weights-semibold\\)`)
+    expect(mockInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fontWeight: 'semibold',
+        _placeholder: { fontWeight: 'semibold' },
+      })
     )
   })
 })
