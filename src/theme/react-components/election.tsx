@@ -356,13 +356,13 @@ export const electionComponents: ComponentsPartialDefinition = {
                     {item.answers.length <= 1 ? (
                       <Text color='texts.subtle'>{item.answers[0] || '-'}</Text>
                     ) : (
-                      <List.Root display='flex' flexDirection='column' gap={1} pl={4} listStyleType='disc'>
+                      <Flex direction='column' gap={1}>
                         {item.answers.map((answer, answerIndex) => (
-                          <List.Item key={`${item.question}-${index}-${answerIndex}`}>
-                            <Text color='texts.subtle'>{answer}</Text>
-                          </List.Item>
+                          <Text key={`${item.question}-${index}-${answerIndex}`} color='texts.subtle'>
+                            {answer}
+                          </Text>
                         ))}
-                      </List.Root>
+                      </Flex>
                     )}
                   </Flex>
                 </Flex>

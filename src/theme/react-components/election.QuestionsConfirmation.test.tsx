@@ -29,6 +29,25 @@ describe('electionComponents.QuestionsConfirmation', () => {
     expect(screen.getByText('Double check')).toBeInTheDocument()
     expect(screen.getByText(/Abstain/)).toBeInTheDocument()
   })
+
+  it('renders multichoice answers as stacked text without list styling', () => {
+    const { container } = render(
+      <DialogHost>
+        <QuestionsConfirmation
+          election={{ title: { default: 'Election' } } as any}
+          answers={{}}
+          answersView={[{ question: 'Pick toppings', answers: ['Olives', 'Mushrooms'] }]}
+          onConfirm={() => {}}
+          onCancel={() => {}}
+        />
+      </DialogHost>
+    )
+
+    expect(screen.queryByRole('list')).not.toBeInTheDocument()
+    expect(container.querySelectorAll('li')).toHaveLength(0)
+    expect(screen.getByText('Olives')).toBeInTheDocument()
+    expect(screen.getByText('Mushrooms')).toBeInTheDocument()
+  })
 })
 
 function DialogHost({ children }: { children: ReactNode }) {
