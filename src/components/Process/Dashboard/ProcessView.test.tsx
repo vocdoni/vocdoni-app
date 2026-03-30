@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { mockUseElection, render, screen } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ProcessView } from './ProcessView'
@@ -21,7 +22,7 @@ vi.mock('~components/Actions', () => ({
   ActionContinue: (props: any) => <button {...props} />,
   ActionEnd: (props: any) => <button {...props} />,
   ActionPause: (props: any) => <button {...props} />,
-  ActionsProvider: ({ children }: { children: React.ReactNode }) => children,
+  ActionsProvider: ({ children }: { children: ReactNode }) => children,
 }))
 
 vi.mock('react-player', () => ({
@@ -48,6 +49,6 @@ describe('ProcessView', () => {
     const votingLinkActions = votingLinkInput.parentElement
 
     expect(votingLinkActions).toHaveStyle({ flexWrap: 'wrap' })
-    expect(votingLinkInput).toHaveStyle({ flexBasis: '18rem' })
+    expect(getComputedStyle(votingLinkInput).flex).toBe('1 1 18rem')
   })
 })
