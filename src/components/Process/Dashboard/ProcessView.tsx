@@ -106,11 +106,12 @@ const ProcessViewContent = () => {
   const { copy } = useClipboard({ value: votingLink })
 
   return (
-    <Box position='relative' w='full' overflow='hidden'>
+    <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
       <DashboardContents display='flex' flexDirection='row' position='relative'>
         {/* Main content area */}
         <Box
           flex={1}
+          minW={0}
           marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
           transition='margin-right 0.3s'
           display='flex'
@@ -149,7 +150,7 @@ const ProcessViewContent = () => {
               <Icon as={LuCalendar} />
               <Trans i18nKey='calendar.title'>Schedule</Trans>
             </Heading>
-            <HStack>
+            <Flex wrap='wrap' gap={4}>
               <SettingsField
                 icon={LuCalendar}
                 text={t('start_date', 'Start date')}
@@ -166,8 +167,8 @@ const ProcessViewContent = () => {
                   formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))
                 }
               />
-            </HStack>
-            <HStack>
+            </Flex>
+            <Flex wrap='wrap' gap={4}>
               <SettingsField
                 icon={LuCalendar}
                 text={t('end_date', 'End date')}
@@ -184,7 +185,7 @@ const ProcessViewContent = () => {
                   formatDate(election.endDate, t('dashboard.process_view.time_format', 'p'))
                 }
               />
-            </HStack>
+            </Flex>
           </DashboardBox>
 
           {/* Voting link */}
@@ -202,8 +203,8 @@ const ProcessViewContent = () => {
               </Text>
             </Box>
 
-            <Flex justifyContent='space-between' gap={2}>
-              <Input readOnly value={votingLink} />
+            <Flex justifyContent='space-between' gap={2} wrap='wrap'>
+              <Input readOnly value={votingLink} flex='1 1 18rem' minW={0} />
               <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
                 <Icon as={LuCopy} />
               </IconButton>
