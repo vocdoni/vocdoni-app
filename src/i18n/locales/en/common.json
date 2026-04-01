@@ -155,14 +155,17 @@
     "important": "Important",
     "receive_code": "Receive Code",
     "step1": {
-      "helper_text": "If using email, don't forget to check spam folder",
+      "footer_text": "If you experience any issues, contact your organization.",
+      "helper_text": "We’ve sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.",
+      "resend_text": "Didn’t receive the code? Resend it.",
+      "subtitle": "Enter the verification code",
+      "title": "Authentication",
       "validation": {
         "length": "Code must be 6 digits",
         "required": "Code is required"
       }
     },
-    "terms_acceptance": "I have read and accept the <2>Terms and Conditions</2> and the <6>Privacy Policy</6>.",
-    "title": "Authentication"
+    "terms_acceptance": "I have read and accept the <2>Terms and Conditions</2> and the <6>Privacy Policy</6>."
   },
   "current": "Current",
   "current_plan": "Current Plan",

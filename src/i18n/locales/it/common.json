@@ -158,14 +158,17 @@
     "important": "Importante",
     "receive_code": "Ricevi codice",
     "step1": {
-      "helper_text": "Se si usa l'email, non dimenticare di controllare la cartella spam",
+      "footer_text": "In caso di problemi, contatta la tua organizzazione.",
+      "helper_text": "Abbiamo inviato un codice di verifica al numero di telefono o all’indirizzo email indicato. Se hai scelto di riceverlo via email, controlla anche la cartella spam.",
+      "resend_text": "Non hai ricevuto il codice? Invia di nuovo.",
+      "subtitle": "Inserisci il codice di verifica",
+      "title": "Autenticazione",
       "validation": {
         "length": "Il codice deve essere di 6 cifre",
         "required": "Il codice è obbligatorio"
       }
     },
-    "terms_acceptance": "Ho letto e accetto i <2>Termini e condizioni</2> e la <6>Privacy Policy</6>.",
-    "title": "Autenticazione"
+    "terms_acceptance": "Ho letto e accetto i <2>Termini e condizioni</2> e la <6>Privacy Policy</6>."
   },
   "current": "Attuale",
   "current_plan": "Piano attuale",

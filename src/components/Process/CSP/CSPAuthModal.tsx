@@ -75,7 +75,7 @@ export const CspAuthModal = () => {
             </Dialog.CloseTrigger>
             <Dialog.Header>
               <Dialog.Title>
-                <Trans i18nKey='csp.title'>Authentication</Trans>
+                <Trans i18nKey='csp.step1.title'>Authentication</Trans>
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>

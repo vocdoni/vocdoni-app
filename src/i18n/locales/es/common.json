@@ -158,14 +158,17 @@
     "important": "Importante",
     "receive_code": "Recibir código",
     "step1": {
-      "helper_text": "Si utilizas correo electrónico, no olvides revisar la carpeta de correo no deseado.",
+      "footer_text": "Si tienes algún problema, contacta con tu organización.",
+      "helper_text": "Hemos enviado un código al número de teléfono o al correo electrónico indicados. Si has elegido recibirlo por correo electrónico, revisa también la carpeta de correo no deseado.",
+      "resend_text": "¿No has recibido el código? Vuelve a enviarlo.",
+      "subtitle": "Introduce el código de verificación",
+      "title": "Autenticación",
       "validation": {
         "length": "El código debe tener 6 dígitos",
         "required": "El código es obligatorio"
       }
     },
-    "terms_acceptance": "He leído y acepto los <2>Términos y condiciones</2> y la <6>Política de privacidad</6>.",
-    "title": "Autenticación"
+    "terms_acceptance": "He leído y acepto los <2>Términos y condiciones</2> y la <6>Política de privacidad</6>."
   },
   "current": "Actual",
   "current_plan": "Plan actual",

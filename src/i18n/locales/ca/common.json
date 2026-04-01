@@ -158,14 +158,17 @@
     "important": "Important",
     "receive_code": "Rebre codi",
     "step1": {
-      "helper_text": "Si fas servir el correu electrònic, no oblidis revisar la carpeta de correu brossa",
+      "footer_text": "Si tens cap problema, contacta amb la teva organització.",
+      "helper_text": "Hem enviat un codi al telèfon o al correu electrònic indicats. Si has triat el correu electrònic, revisa també la carpeta de correu brossa.",
+      "resend_text": "No has rebut el codi? Torna a enviar-lo.",
+      "subtitle": "Introdueix el codi de verificació",
+      "title": "Autenticació",
       "validation": {
         "length": "El codi ha de tenir 6 dígits",
         "required": "El codi és obligatori"
       }
     },
-    "terms_acceptance": "He llegit i accepto els <2>Termes i Condicions</2> i la <6>Política de Privacitat.</6>",
-    "title": "Autenticació"
+    "terms_acceptance": "He llegit i accepto els <2>Termes i Condicions</2> i la <6>Política de Privacitat.</6>"
   },
   "current": "Actual",
   "current_plan": "Pla Actual",

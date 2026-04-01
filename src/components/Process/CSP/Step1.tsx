@@ -11,6 +11,7 @@ import {
   PinInputHiddenInput,
   PinInputInput,
   PinInputRoot,
+  Text,
   VStack,
 } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
@@ -76,8 +77,9 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
 
   return (
     <VStack gap={6} align='stretch' w='full'>
+      <Text fontWeight='medium'>{t('csp.step1.subtitle', { defaultValue: 'Enter the verification code' })}</Text>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack gap={4}>
+        <VStack gap={5} align='stretch'>
           <FieldRoot invalid={!!errors.code}>
             <HStack justifyContent='center'>
               <Controller
@@ -125,8 +127,18 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
               />
             </HStack>
             {errors.code && <FieldErrorText textAlign='center'>{errors.code.message}</FieldErrorText>}
-            <FieldHelperText>
-              <Trans i18nKey='csp.step1.helper_text'>If using email, don't forget to check spam folder</Trans>
+            <FieldHelperText mt={3}>
+              <VStack gap={2} align='stretch'>
+                <Text color='fg.muted'>
+                  <Trans i18nKey='csp.step1.helper_text'>
+                    We’ve sent a code to your phone number or email address. If you chose to receive it by email, please
+                    check your spam folder.
+                  </Trans>
+                </Text>
+                <Text color='fg.muted'>
+                  <Trans i18nKey='csp.step1.resend_text'>Didn’t receive the code? Resend it.</Trans>
+                </Text>
+              </VStack>
             </FieldHelperText>
           </FieldRoot>
           {auth.isError && (
@@ -139,6 +151,11 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
           <Button type='submit' w='full' loading={auth.isPending}>
             {t('csp.authenticate', { defaultValue: 'Authenticate' })}
           </Button>
+          <Text fontSize='sm' color='fg.muted'>
+            {t('csp.step1.footer_text', {
+              defaultValue: 'If you experience any issues, contact your organization.',
+            })}
+          </Text>
         </VStack>
       </form>
     </VStack>

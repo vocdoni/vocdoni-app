@@ -135,6 +135,22 @@ describe('Step1Base', () => {
     expect(await findByRole('button', { name: 'Authenticate' })).toBeTruthy()
   })
 
+  it('renders the updated 2FA copy', () => {
+    const election = {} as PublishedElection
+
+    render(<Step1Base election={election} />)
+
+    expect(screen.getByText('Enter the verification code')).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'We’ve sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.'
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Authenticate' })).toBeInTheDocument()
+    expect(screen.getByText('Didn’t receive the code? Resend it.')).toBeInTheDocument()
+    expect(screen.getByText('If you experience any issues, contact your organization.')).toBeInTheDocument()
+  })
+
   it('does not render undefined values when pasting the pin code', async () => {
     const election = {} as PublishedElection
     const user = userEvent.setup()
