@@ -9,6 +9,7 @@ import {
   MenuRoot,
   MenuSeparator,
   MenuTrigger,
+  Portal,
   Progress,
   Table,
 } from '@chakra-ui/react'
@@ -215,36 +216,38 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
           <Icon as={LuEllipsisVertical} />
         </IconButton>
       </MenuTrigger>
-      <MenuPositioner>
-        <MenuContent>
-          <MenuItem value='edit' asChild>
-            <RouterLink
-              to={{
-                pathname: generatePath(Routes.processes.create),
-                search: createSearchParams({ draftId: draft.id }).toString(),
-              }}
-            >
+      <Portal>
+        <MenuPositioner>
+          <MenuContent>
+            <MenuItem value='edit' asChild>
+              <RouterLink
+                to={{
+                  pathname: generatePath(Routes.processes.create),
+                  search: createSearchParams({ draftId: draft.id }).toString(),
+                }}
+              >
+                <HStack gap={2} align='center'>
+                  <Icon as={LuPencil} boxSize={4} />
+                  <span>{t('drafts.edit', { defaultValue: 'Edit Draft' })}</span>
+                </HStack>
+              </RouterLink>
+            </MenuItem>
+            <MenuItem value='clone' onClick={cloneDraft}>
               <HStack gap={2} align='center'>
-                <Icon as={LuPencil} boxSize={4} />
-                <span>{t('drafts.edit', { defaultValue: 'Edit Draft' })}</span>
+                <Icon as={LuCopy} boxSize={4} />
+                <span>{t('drafts.clone', { defaultValue: 'Clone Draft' })}</span>
               </HStack>
-            </RouterLink>
-          </MenuItem>
-          <MenuItem value='clone' onClick={cloneDraft}>
-            <HStack gap={2} align='center'>
-              <Icon as={LuCopy} boxSize={4} />
-              <span>{t('drafts.clone', { defaultValue: 'Clone Draft' })}</span>
-            </HStack>
-          </MenuItem>
-          <MenuSeparator />
-          <MenuItem value='delete' color='red.400' onClick={deleteDraft}>
-            <HStack gap={2} align='center'>
-              <Icon as={LuTrash} boxSize={4} />
-              <span>{t('drafts.delete', { defaultValue: 'Delete Draft' })}</span>
-            </HStack>
-          </MenuItem>
-        </MenuContent>
-      </MenuPositioner>
+            </MenuItem>
+            <MenuSeparator />
+            <MenuItem value='delete' color='fg.error' onClick={deleteDraft}>
+              <HStack gap={2} align='center'>
+                <Icon as={LuTrash} boxSize={4} />
+                <span>{t('drafts.delete', { defaultValue: 'Delete Draft' })}</span>
+              </HStack>
+            </MenuItem>
+          </MenuContent>
+        </MenuPositioner>
+      </Portal>
     </MenuRoot>
   )
 }
