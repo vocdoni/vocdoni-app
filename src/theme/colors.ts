@@ -24,6 +24,14 @@ export const colors = {
     800: { value: '#27272a' },
   },
 
+  yellow: {
+    300: { value: '#E2BFA1' },
+  },
+
+  red: {
+    400: { value: '#F95838' },
+  },
+
   dashboardMenu: {
     light: { value: '#fbfbfb' },
     dark: { value: '#18181b' },

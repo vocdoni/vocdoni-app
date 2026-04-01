@@ -2,19 +2,12 @@ import { Button, ButtonProps, Flex } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
-import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
 import Logo from '~components/Layout/Logo'
 import { Routes } from '~src/router/routes'
-import { LanguagesMenu } from './LanguagesList'
 
 const Navbar = () => (
-  <Flex width='full' py={3} position='relative' justifyContent='space-between' zIndex='topbar' alignItems='center'>
+  <Flex width='full' m='0 auto' mx='auto' py={3} position='relative' maxW='voting-page'>
     <Logo />
-    <Flex alignItems='center' gap={2} justifySelf='end'>
-      <DashboardButton />
-      <LanguagesMenu />
-      <ColorModeSwitcher />
-    </Flex>
   </Flex>
 )
 

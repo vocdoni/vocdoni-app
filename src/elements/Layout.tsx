@@ -1,8 +1,7 @@
-import { Box, Flex, HStack } from '@chakra-ui/react'
+import { Box, Flex, HStack, Link } from '@chakra-ui/react'
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import CrispChat from '~components/Layout/CrispChat'
-import Footer from '~components/Layout/Footer'
 import Navbar from '~components/Navbar'
 import { Routes } from '~routes'
 
@@ -30,9 +29,8 @@ const Layout = () => {
       <Flex
         flexDirection='column'
         as='main'
-        flexGrow={1}
         mt={{ base: 4, lg: 6, xl: 10 }}
-        mb={{ base: 20, lg: 32 }}
+        mb={8}
         maxW='1600px'
         mx='auto'
         px={{
@@ -49,11 +47,17 @@ const Layout = () => {
         bgColor={`${location.pathname.startsWith('/organization') ? 'footer.gray' : 'footer.white'}`}
         w='full'
         backdropFilter='blur(40px)'
-        px={{ base: 4, md: 6, xl: 10 }}
-        maxW={'1920px'}
+        maxW='voting-page'
         mx={'auto'}
+        mb={10}
+        textAlign='center'
       >
-        <Footer />
+        <strong>Esquerra republicana</strong> utilitza la plataforma de programari lliure Vocdoni basada en tecnologia
+        blockchain per gestionar i registrar les votacions de manera segura i transparent. Per més informació sobre la
+        plataforma podeu consultar el següent enllaç:{' '}
+        <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer' textDecor='underline'>
+          vocdoni.io
+        </Link>
       </Box>
     </Flex>
   )

@@ -9,7 +9,6 @@ import {
 import { PublishedElection, Strategy } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
-import { ShareModalButton } from '~components/Share'
 import { StampIcon } from './Census/StampIcon'
 
 const ProcessHeader = () => {
@@ -44,13 +43,6 @@ const ProcessHeader = () => {
           >
             <Flex gap={3} justifyContent='space-between' w={{ base: 'full', xl: 'fit-content' }}>
               <ElectionStatusBadge whiteSpace='nowrap' />
-              <Box display={{ base: 'flex', xl: 'none' }}>
-                <ShareModalButton
-                  caption={t('share.election_share_text')}
-                  text={t('share.election_share_btn_text')}
-                  size='xs'
-                />
-              </Box>
             </Flex>
             <ElectionSchedule
               textAlign='left'
@@ -61,13 +53,6 @@ const ProcessHeader = () => {
               lineHeight='short'
             />
           </Flex>
-          <Box display={{ base: 'none', xl: 'flex' }} flexShrink={0}>
-            <ShareModalButton
-              caption={t('share.election_share_text')}
-              text={t('share.election_share_btn_text')}
-              size='xs'
-            />
-          </Box>
         </Flex>
         <Flex flexDirection='column'>
           {!election?.description?.default.length && (

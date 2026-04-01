@@ -13,7 +13,7 @@ import '@fontsource/inter/index.css'
 
 export const Theme = ({ children }: PropsWithChildren) => {
   return (
-    <ColorModeProvider>
+    <ColorModeProvider defaultTheme='light'>
       <ChakraProvider value={system}>{children}</ChakraProvider>
     </ColorModeProvider>
   )

@@ -8,6 +8,7 @@ interface ImportMeta {
       [key: string]: string
     }
     PROCESS_IDS: string
+    SINGLE_PROCESS_ID: string
     EMAILJS_SERVICE_ID: string
     EMAILJS_TEMPLATE_ID: string
     EMAILJS_PUBLIC_ID: string

@@ -408,6 +408,7 @@ export const SpreadsheetAccess = defineSlotRecipe({
   base: {
     button: {
       w: 'full',
+      colorPalette: 'yellow',
     },
     close: {
       display: 'none',

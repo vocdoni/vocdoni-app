@@ -1,7 +1,7 @@
-import { chakra, type HTMLChakraProps, Flex } from '@chakra-ui/react'
-import { useColorModeValue } from '~theme/color-mode'
+import { chakra, Flex, Image, type HTMLChakraProps } from '@chakra-ui/react'
 import { NavLink } from 'react-router-dom'
-import { Logo as LogoImage, LogoMbl } from '~theme/icons'
+import { useColorModeValue } from '~theme/color-mode'
+import erc from '/assets/logo_erc.png'
 
 // This Logo should be updated to use VocdoniLogo or simply deprecated.
 const Logo = () => {
@@ -9,11 +9,8 @@ const Logo = () => {
 
   return (
     <NavLink to='/'>
-      <Flex alignItems='center' gap={2} display={{ base: 'none', lg: 'flex' }} filter={invert}>
-        <LogoImage />
-      </Flex>
-      <Flex alignItems='center' gap={2} display={{ base: 'flex', lg: 'none' }} filter={invert}>
-        <LogoMbl />
+      <Flex alignItems='center' gap={2} filter={invert}>
+        <Image src={erc} alt='Logo Esquerra Republicana' h='auto' maxH='80px' />
       </Flex>
     </NavLink>
   )
