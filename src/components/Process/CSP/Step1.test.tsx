@@ -1,6 +1,6 @@
-import type { ChangeEvent, ReactNode } from 'react'
-import type { PublishedElection } from '@vocdoni/sdk'
 import userEvent from '@testing-library/user-event'
+import type { PublishedElection } from '@vocdoni/sdk'
+import type { ChangeEvent, ReactNode } from 'react'
 import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { Step1Base } from './Step1'
