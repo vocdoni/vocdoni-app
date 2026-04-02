@@ -17,8 +17,7 @@ const Layout = () => {
         w='full'
         backdropFilter='blur(40px)'
         zIndex={30}
-        px={{ base: 4, md: 6, xl: 10 }}
-        maxW='navbar'
+        maxW='voting.contents.max'
         mx='auto'
       >
         <Navbar />
@@ -47,7 +46,7 @@ const Layout = () => {
         bgColor={`${location.pathname.startsWith('/organization') ? 'footer.gray' : 'footer.white'}`}
         w='full'
         backdropFilter='blur(40px)'
-        maxW='voting-page'
+        maxW='voting.contents.max'
         mx={'auto'}
         mb={10}
         textAlign='center'
