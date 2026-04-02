@@ -65,6 +65,8 @@ describe('DraftsContextMenu', () => {
 
     expect(screen.getByText('Edit Draft')).toBeInTheDocument()
     expect(container).not.toContainElement(screen.getByText('Edit Draft'))
-    expect(screen.getByText('Delete Draft').closest('[role=\"menuitem\"]')).toHaveAttribute('data-danger')
+    expect(screen.getByText('Delete Draft').closest('[role="menuitem"]')).toHaveStyle({
+      color: 'var(--chakra-colors-fg-error)',
+    })
   })
 })
