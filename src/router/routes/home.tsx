@@ -20,7 +20,7 @@ export const useHomeRoute = () => {
   const LayoutComponent = shouldUseSharedCensus ? SimpleLayout : Layout
   const homeIndexRoute = useMemo(() => {
     const domainForHost = domains[window.location.hostname]
-    if (!domainForHost && !shouldUseSharedCensus) {
+    if (!domainForHost && !shouldUseSharedCensus && !shouldUseSingleProcess) {
       return {
         index: true,
         element: <Navigate to='/admin' replace />,
