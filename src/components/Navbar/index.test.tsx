@@ -1,4 +1,4 @@
-import { createTestI18n, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { render, screen, TestMemoryRouter } from '~src/test-utils'
 import Navbar from './index'
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -14,25 +14,13 @@ vi.mock('react-router-dom', async (importOriginal) => {
 })
 
 describe('Navbar', () => {
-  it('renders the login button when not authenticated', async () => {
-    const i18nInstance = await createTestI18n({
-      useReactI18next: true,
-      resources: {
-        en: {
-          common: {
-            'menu.login': 'Login',
-          },
-        },
-      },
-    })
-
+  it('renders the logo link', () => {
     render(
       <TestMemoryRouter>
         <Navbar />
-      </TestMemoryRouter>,
-      { i18nInstance }
+      </TestMemoryRouter>
     )
 
-    expect(screen.getByRole('link', { name: 'Login' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Logo Esquerra Republicana' })).toHaveAttribute('href', '/')
   })
 })
