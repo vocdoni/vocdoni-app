@@ -1,4 +1,4 @@
-import { Box, Icon, IconButton, Link, Menu, MenuPositioner, Table, Tag, Text } from '@chakra-ui/react'
+import { Box, Icon, IconButton, Link, Menu, MenuPositioner, Portal, Table, Tag, Text } from '@chakra-ui/react'
 import { ElectionProvider, ElectionStatusBadge, QuestionsTypeBadge, useElection } from '@vocdoni/react-components'
 import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
@@ -118,32 +118,34 @@ const ProcessContextMenu = () => {
           <LuEllipsisVertical />
         </IconButton>
       </Menu.Trigger>
-      <MenuPositioner>
-        <Menu.Content>
-          <Menu.Item value='more-info' asChild>
-            <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
-              <Icon as={LuInfo} boxSize={4} />
-              <Trans i18nKey='process_context.more_info'>More info</Trans>
-            </RouterLink>
-          </Menu.Item>
-          <Menu.Item value='public-voting-page' asChild>
-            <RouterLink to={generatePath(Routes.processes.view, { id: ensure0x(election.id) })} target='_blank'>
-              <Icon as={LuExternalLink} boxSize={4} />
-              <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
-            </RouterLink>
-          </Menu.Item>
-          <Menu.Item value='explorer' asChild>
-            <a href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
-              <Icon as={LuSearch} boxSize={4} />
-              <Trans i18nKey='process_context.explorer'>Explorer</Trans>
-            </a>
-          </Menu.Item>
-          <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
-            <Icon as={LuCopy} boxSize={4} />
-            <Trans i18nKey='process_context.clone_as_draft'>Clone as draft</Trans>
-          </Menu.Item>
-        </Menu.Content>
-      </MenuPositioner>
+      <Portal>
+        <MenuPositioner>
+          <Menu.Content>
+            <Menu.Item value='more-info' asChild>
+              <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+                <Icon as={LuInfo} boxSize={4} />
+                <Trans i18nKey='process_context.more_info'>More info</Trans>
+              </RouterLink>
+            </Menu.Item>
+            <Menu.Item value='public-voting-page' asChild>
+              <RouterLink to={generatePath(Routes.processes.view, { id: ensure0x(election.id) })} target='_blank'>
+                <Icon as={LuExternalLink} boxSize={4} />
+                <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
+              </RouterLink>
+            </Menu.Item>
+            <Menu.Item value='explorer' asChild>
+              <a href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
+                <Icon as={LuSearch} boxSize={4} />
+                <Trans i18nKey='process_context.explorer'>Explorer</Trans>
+              </a>
+            </Menu.Item>
+            <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
+              <Icon as={LuCopy} boxSize={4} />
+              <Trans i18nKey='process_context.clone_as_draft'>Clone as draft</Trans>
+            </Menu.Item>
+          </Menu.Content>
+        </MenuPositioner>
+      </Portal>
     </Menu.Root>
   )
 }

@@ -68,8 +68,8 @@ const editor: SystemStyleObject = {
     fontSize: 'md',
   },
   '& .lexical-paragraph': {
-    fontSize: 'md',
-    lineHeight: '24px',
+    textStyle: 'sm',
+    margin: 0,
   },
 }
 

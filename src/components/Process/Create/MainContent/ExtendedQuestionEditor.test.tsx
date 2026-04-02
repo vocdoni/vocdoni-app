@@ -2,6 +2,23 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { render, screen } from '~src/test-utils'
 import ExtendedQuestionEditor from './ExtendedQuestionEditor'
 
+const mockInput = vi.fn()
+
+vi.mock('@chakra-ui/react', async () => {
+  const actual = await vi.importActual<typeof import('@chakra-ui/react')>('@chakra-ui/react')
+  const React = await vi.importActual<typeof import('react')>('react')
+  const Input = React.forwardRef<HTMLInputElement, Record<string, unknown>>((props, ref) => {
+    mockInput(props)
+    return React.createElement('input', { ...props, ref })
+  })
+  Input.displayName = 'Input'
+
+  return {
+    ...actual,
+    Input,
+  }
+})
+
 vi.mock('@dnd-kit/sortable', () => ({
   useSortable: () => ({
     attributes: {},
@@ -49,6 +66,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 }
 
 describe('ExtendedQuestionEditor', () => {
+  beforeEach(() => {
+    mockInput.mockClear()
+  })
+
   it('renders options using choice card wrappers', () => {
     const questionOptions = [{ id: 'opt-1' }]
 
@@ -59,5 +80,23 @@ describe('ExtendedQuestionEditor', () => {
 
     expect(screen.getByTestId('image-uploader')).toBeTruthy()
     expect(container.querySelectorAll('[data-choice-card]')).toHaveLength(1)
+  })
+
+  it('renders option titles with semibold value and placeholder styles', () => {
+    const questionOptions = [{ id: 'opt-1' }]
+
+    render(<ExtendedQuestionEditor index={0} questionOptions={questionOptions} append={vi.fn()} remove={vi.fn()} />, {
+      wrapper: Wrapper,
+    })
+
+    const [optionInput] = screen.getAllByRole('textbox')
+    expect(optionInput).toBeInTheDocument()
+
+    expect(mockInput).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fontWeight: 'semibold',
+        _placeholder: { fontWeight: 'semibold' },
+      })
+    )
   })
 })

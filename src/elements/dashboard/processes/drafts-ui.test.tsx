@@ -49,7 +49,7 @@ describe('DraftsContextMenu', () => {
   it('renders the edit draft action when opened', async () => {
     const user = userEvent.setup()
 
-    render(
+    const { container } = render(
       <TestMemoryRouter>
         <DraftsContextMenu
           draft={{
@@ -64,5 +64,9 @@ describe('DraftsContextMenu', () => {
     await user.click(trigger)
 
     expect(screen.getByText('Edit Draft')).toBeInTheDocument()
+    expect(container).not.toContainElement(screen.getByText('Edit Draft'))
+    expect(screen.getByText('Delete Draft').closest('[role="menuitem"]')).toHaveStyle({
+      color: 'var(--chakra-colors-fg-error)',
+    })
   })
 })

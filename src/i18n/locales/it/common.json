@@ -1221,7 +1221,7 @@
     },
     "success_modal": {
       "btn": "Chiudi",
-      "text": "<p>Abbiamo elaborato e archiviato in modo sicuro il tuo voto sulla nostra Blockchain. <verify>Verifica il tuo voto</verify>.</p>",
+      "text": "<p>Il tuo voto è stato espresso e memorizzato in modo sicuro con la tecnologia di Vocdoni. <verify>Puoi verificarlo qui</verify>.</p>",
       "title": "Voto inviato!"
     },
     "template": {

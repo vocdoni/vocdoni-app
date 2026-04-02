@@ -1199,7 +1199,7 @@
     },
     "success_modal": {
       "btn": "Close",
-      "text": "<p>We've securely processed and stored your vote on our Blockchain. <verify>Verify your vote</verify>.</p>",
+      "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. <verify>You can verify it here</verify>.</p>",
       "title": "Vote submitted!"
     },
     "template": {

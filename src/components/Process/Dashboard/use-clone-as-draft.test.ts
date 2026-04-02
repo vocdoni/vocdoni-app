@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import { ElectionResultsTypeNames, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { mockUseElection } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useCloneAsDraft } from './use-clone-as-draft'
@@ -45,6 +45,7 @@ vi.mock('../Create', () => ({
     maxNumberOfChoices: null,
     minNumberOfChoices: null,
     resultVisibility: 'hidden',
+    weightedVote: false,
     voterPrivacy: 'public',
     groupId: '',
     census: null,
@@ -72,7 +73,13 @@ function createMockElection(
     title: string
     description?: string
     image?: string
-  }>
+  }>,
+  overrides: Partial<
+    PublishedElection & {
+      minNumberOfChoices?: number
+      maxNumberOfChoices?: number
+    }
+  > = {}
 ): PublishedElection {
   return {
     id: '0x1234567890abcdef',
@@ -101,7 +108,12 @@ function createMockElection(
       },
     ],
     electionType: { secretUntilTheEnd: false },
-  } as PublishedElection
+    resultsType: {
+      name: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
+      properties: {},
+    },
+    ...overrides,
+  } as unknown as PublishedElection
 }
 
 describe('useCloneAsDraft', () => {
@@ -592,6 +604,69 @@ describe('useCloneAsDraft', () => {
         expect(call.metadata.questions).toHaveLength(2)
         expect(call.metadata.questions[0].title).toBe('Question 1')
         expect(call.metadata.questions[1].title).toBe('Question 2')
+      })
+    })
+
+    it('should preserve weighted voting when cloning a weighted election', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }])
+      mockMutateAsync.mockResolvedValue('draft-123')
+
+      setReactProvidersMock({
+        useElection: () =>
+          mockUseElection({
+            election: mockElection,
+            isWeighted: true,
+            client: { explorerUrl: 'https://explorer.example.com' },
+          }),
+      })
+
+      const { result } = renderHook(() => useCloneAsDraft())
+
+      await act(async () => {
+        await result.current.cloneAsDraft()
+      })
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith(
+          expect.objectContaining({
+            metadata: expect.objectContaining({
+              weightedVote: true,
+            }),
+          })
+        )
+      })
+    })
+
+    it('should preserve multi-choice settings and limits when cloning a multi-choice election', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }, { title: 'Option 2' }, { title: 'Option 3' }], {
+        resultsType: {
+          name: ElectionResultsTypeNames.MULTIPLE_CHOICE,
+          properties: {
+            numChoices: {
+              min: 1,
+              max: 2,
+            },
+          },
+        } as PublishedElection['resultsType'],
+      })
+      mockMutateAsync.mockResolvedValue('draft-123')
+
+      const { result } = renderHook(() => useCloneAsDraft())
+
+      await act(async () => {
+        await result.current.cloneAsDraft()
+      })
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith(
+          expect.objectContaining({
+            metadata: expect.objectContaining({
+              questionType: ElectionResultsTypeNames.MULTIPLE_CHOICE,
+              minNumberOfChoices: 1,
+              maxNumberOfChoices: 2,
+            }),
+          })
+        )
       })
     })
   })
