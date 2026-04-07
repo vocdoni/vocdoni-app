@@ -18,8 +18,8 @@ const Layout = () => {
     <Flex position='relative' flexDirection='column' minH='100vh' mx='auto'>
       <HStack
         as='header'
-        position='sticky'
-        top={0}
+        position={{ base: 'static', lg: 'sticky' }}
+        top={{ base: 'auto', lg: 0 }}
         w='full'
         backdropFilter='blur(40px)'
         zIndex={30}
