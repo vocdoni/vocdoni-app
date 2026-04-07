@@ -31,6 +31,7 @@ const LogoutButton = () => {
     <>
       <Box alignSelf='center' mb={{ base: 10, md: 0 }}>
         <Button
+          colorPalette='yellow'
           onClick={() => {
             if (isCSP || isSpreadsheet) {
               clearClient()
