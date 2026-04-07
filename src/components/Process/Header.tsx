@@ -26,7 +26,7 @@ const ProcessHeader = () => {
         </Box>
       )}
       <Flex flexDir='column'>
-        <ElectionTitle fontSize='4xl' textAlign='left' mb={5} />
+        <ElectionTitle fontSize={{ base: '3xl', md: '4xl' }} textAlign='left' mb={5} />
         <Flex
           flexDirection={{ base: 'column', xl: 'row' }}
           flexWrap={{ base: 'nowrap', xl: 'wrap' }}
