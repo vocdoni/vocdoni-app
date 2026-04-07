@@ -1203,7 +1203,6 @@
     },
     "questions": "Preguntes",
     "results": "Resultats",
-    "share_caption": "Acabo d'emetre el meu vot a {{ title }}!!",
     "share_title": "Comparteix a {{ network }}",
     "spreadsheet": {
       "confirm": {
@@ -1441,8 +1440,6 @@
   },
   "share": {
     "copy": "Copia",
-    "election_share_btn_text": "Comparteix",
-    "election_share_text": "Mira aquesta elecció!",
     "icon_title": "compartir enllaç",
     "mail_subject": "Plataforma de votació",
     "modal_title": "Comparteix amb amics"

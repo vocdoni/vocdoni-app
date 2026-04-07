@@ -1181,7 +1181,6 @@
     },
     "questions": "Questions",
     "results": "Results",
-    "share_caption": "I've just cast my vote in {{ title }}!!",
     "share_title": "Share on {{ network }}",
     "spreadsheet": {
       "confirm": {
@@ -1419,8 +1418,6 @@
   },
   "share": {
     "copy": "Copy",
-    "election_share_btn_text": "Share",
-    "election_share_text": "Look at this election!",
     "icon_title": "share link",
     "mail_subject": "Voting platform",
     "modal_title": "Share with friends"

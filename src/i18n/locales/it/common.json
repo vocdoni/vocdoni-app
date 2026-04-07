@@ -1203,7 +1203,6 @@
     },
     "questions": "Domande",
     "results": "Risultati",
-    "share_caption": "Ho appena votato in {{ title }}!!",
     "share_title": "Condividi su {{ network }}",
     "spreadsheet": {
       "confirm": {
@@ -1441,8 +1440,6 @@
   },
   "share": {
     "copy": "Copia",
-    "election_share_btn_text": "Condividi",
-    "election_share_text": "Guarda questa elezione!",
     "icon_title": "condividi link",
     "mail_subject": "Piattaforma di voto",
     "modal_title": "Condividi con amici"
