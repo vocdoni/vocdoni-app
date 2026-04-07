@@ -410,6 +410,9 @@ export const SpreadsheetAccess = defineSlotRecipe({
       w: 'full',
       colorPalette: 'yellow',
     },
+    submit: {
+      colorPalette: 'yellow',
+    },
     close: {
       display: 'none',
     },
