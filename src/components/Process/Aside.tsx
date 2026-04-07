@@ -240,6 +240,7 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
             w='100%'
             fontSize='lg'
             height='50px'
+            colorPalette='yellow'
             onClick={setQuestionsTab}
             disabled={syncingCensus}
             css={{
