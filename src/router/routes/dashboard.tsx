@@ -1,8 +1,8 @@
 // These aren't lazy loaded since they are main layouts and related components
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
-import { lazy } from 'react'
-import { generatePath, LoaderFunctionArgs, Navigate, Params } from 'react-router-dom'
+import { Fragment, lazy } from 'react'
+import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
 import { paginatedElectionsQuery } from '~queries/organization'
@@ -33,6 +33,11 @@ const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
 
 // others
 const Dashboard = lazy(() => import('~elements/dashboard'))
+
+export const shouldRevalidateDashboardProcess = ({
+  currentParams,
+  nextParams,
+}: Pick<ShouldRevalidateFunctionArgs, 'currentParams' | 'nextParams'>) => currentParams.id !== nextParams.id
 
 export const useDashboardRoutes = () => {
   const queryClient = useQueryClient()
@@ -93,7 +98,12 @@ export const useDashboardRoutes = () => {
                   </SuspenseLoader>
                 ),
                 loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
+                shouldRevalidate: shouldRevalidateDashboardProcess,
                 errorElement: <Error />,
+                children: [
+                  { index: true, element: <Fragment /> },
+                  { path: Routes.dashboard.processResults, element: <Fragment /> },
+                ],
               },
               {
                 path: Routes.dashboard.processes.base,

@@ -15,6 +15,7 @@ export const Routes = {
     organization: '/admin/organization',
     organizationCreate: '/admin/organization/create', // Organization create with dashboard layout
     process: '/admin/process/:id',
+    processResults: '/admin/process/:id/results',
     processes: {
       base: '/admin/processes',
       all: '/admin/processes/all/:page?/:status?',

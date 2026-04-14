@@ -50,6 +50,11 @@ describe('DashboardMenuOptions', () => {
     expect(getMenuItemElement('voting_processes')).toHaveAttribute('data-active', '')
   })
 
+  it('marks voting processes as active on process results', () => {
+    renderMenu('/admin/process/abc123/results')
+    expect(getMenuItemElement('voting_processes')).toHaveAttribute('data-active', '')
+  })
+
   it('marks memberbase as active on memberbase subroutes', () => {
     renderMenu('/admin/memberbase/groups')
     expect(getMenuItemElement('Memberbase')).toHaveAttribute('data-active', '')

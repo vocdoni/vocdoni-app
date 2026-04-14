@@ -10,11 +10,11 @@ const DashboardProcessViewElement = () => {
   const election = useLoaderData() as PublishedElection
   const navigate = useNavigate()
 
-  // redirect to public view if not an owner (may need changes when org roles are in effect)
+  // Redirect to processes list when current organization does not own this process
   useEffect(() => {
     if (!organization || !election) return
     if (organization.address !== election.organizationId) {
-      return navigate(generatePath(Routes.processes.view, { id: election.id }))
+      return navigate(generatePath(Routes.dashboard.processes.all, { page: 1 }), { replace: true })
     }
   }, [organization, election, navigate])
 
