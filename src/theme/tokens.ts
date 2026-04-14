@@ -49,7 +49,7 @@ const sizes = defineTokens.sizes({
     sidebar: { value: '360px' },
     contents: {
       min: { value: 'calc(640px + var(--chakra-sizes-voting-sidebar))' },
-      max: { value: '1200px' },
+      max: { value: '1560px' },
     },
   },
 })
