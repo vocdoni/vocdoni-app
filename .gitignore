@@ -20,6 +20,7 @@
 .idea
 chakra-config.json
 .turbo
+.worktrees
 
 # we use pnpm here
 package-lock.json
