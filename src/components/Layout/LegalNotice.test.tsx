@@ -47,6 +47,35 @@ describe('LegalNotice', () => {
     expect(screen.getByRole('link', { name: 'vocdoni.io' })).toHaveAttribute('href', 'https://vocdoni.io/')
   })
 
+  it('falls back to the organization address when the account name is missing', async () => {
+    setReactProvidersMock({
+      useOrganization: () => ({
+        organization: {
+          account: {},
+          address: '0xabc',
+        },
+      }),
+    })
+
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/processes/:id',
+          id: 'process-view',
+          loader: async () => ({ organizationId: '0xabc' }),
+          element: <LegalNotice />,
+        },
+      ],
+      { initialEntries: ['/processes/123'] }
+    )
+
+    render(<RouterProvider router={router} />)
+
+    expect(await screen.findByTestId('layout-legal-notice')).toHaveTextContent(
+      'To ensure a secure, verifiable and transparent vote, 0xabc uses the Vocdoni platform'
+    )
+  })
+
   it('does not render on a non-process route', async () => {
     const router = createMemoryRouter(
       [

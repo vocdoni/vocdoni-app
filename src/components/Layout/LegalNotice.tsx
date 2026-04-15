@@ -5,7 +5,7 @@ import { useRouteLoaderData } from 'react-router-dom'
 
 const LegalNoticeContent = () => {
   const { organization } = useOrganization()
-  const orgName = organization?.account.name.default || organization?.address
+  const orgName = organization?.account?.name?.default || organization?.address
 
   if (!orgName) return null
 
