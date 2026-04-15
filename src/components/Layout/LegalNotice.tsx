@@ -1,7 +1,6 @@
 import { Box, Link, Text } from '@chakra-ui/react'
-import { OrganizationProvider, useOrganization } from '@vocdoni/react-components'
+import { useOrganization } from '@vocdoni/react-components'
 import { Trans } from 'react-i18next'
-import { useRouteLoaderData } from 'react-router-dom'
 
 const LegalNoticeContent = () => {
   const { organization } = useOrganization()
@@ -37,16 +36,7 @@ const LegalNoticeContent = () => {
 }
 
 const LegalNotice = () => {
-  const processData = useRouteLoaderData('process-view') as { organizationId?: string } | undefined
-  const organizationId = processData?.organizationId
-
-  if (!organizationId) return null
-
-  return (
-    <OrganizationProvider id={organizationId}>
-      <LegalNoticeContent />
-    </OrganizationProvider>
-  )
+  return <LegalNoticeContent />
 }
 
 export default LegalNotice

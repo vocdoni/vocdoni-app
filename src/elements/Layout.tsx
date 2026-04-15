@@ -2,7 +2,6 @@ import { Box, Flex, HStack } from '@chakra-ui/react'
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import CrispChat from '~components/Layout/CrispChat'
-import LegalNotice from '~components/Layout/LegalNotice'
 import Footer from '~components/Layout/Footer'
 import Navbar from '~components/Navbar'
 import { Routes } from '~routes'
@@ -44,7 +43,6 @@ const Layout = () => {
         w='full'
       >
         <Outlet />
-        <LegalNotice />
       </Flex>
       <Box
         as='footer'

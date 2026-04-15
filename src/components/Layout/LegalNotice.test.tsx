@@ -1,4 +1,3 @@
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
 import LegalNotice from './LegalNotice'
 import { render, screen } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -26,28 +25,14 @@ describe('LegalNotice', () => {
     })
   })
 
-  it('renders on the process route with the organization name and link', async () => {
-    const router = createMemoryRouter(
-      [
-        {
-          path: '/processes/:id',
-          id: 'process-view',
-          loader: async () => ({ organizationId: '0xabc' }),
-          element: <LegalNotice />,
-        },
-      ],
-      { initialEntries: ['/processes/123'] }
-    )
+  it('renders the expected organization name and link', () => {
+    render(<LegalNotice />)
 
-    render(<RouterProvider router={router} />)
-
-    expect(await screen.findByTestId('layout-legal-notice')).toHaveTextContent(
-      'To ensure a secure, verifiable and transparent vote, Esquerra republicana uses the Vocdoni platform'
-    )
+    expect(screen.getByText('Esquerra republicana')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'vocdoni.io' })).toHaveAttribute('href', 'https://vocdoni.io/')
   })
 
-  it('falls back to the organization address when the account name is missing', async () => {
+  it('falls back to the organization address when the account name is missing', () => {
     setReactProvidersMock({
       useOrganization: () => ({
         organization: {
@@ -57,39 +42,8 @@ describe('LegalNotice', () => {
       }),
     })
 
-    const router = createMemoryRouter(
-      [
-        {
-          path: '/processes/:id',
-          id: 'process-view',
-          loader: async () => ({ organizationId: '0xabc' }),
-          element: <LegalNotice />,
-        },
-      ],
-      { initialEntries: ['/processes/123'] }
-    )
+    render(<LegalNotice />)
 
-    render(<RouterProvider router={router} />)
-
-    expect(await screen.findByTestId('layout-legal-notice')).toHaveTextContent(
-      'To ensure a secure, verifiable and transparent vote, 0xabc uses the Vocdoni platform'
-    )
-  })
-
-  it('does not render on a non-process route', async () => {
-    const router = createMemoryRouter(
-      [
-        {
-          path: '/organization/:address',
-          loader: async () => ({ address: '0xabc' }),
-          element: <LegalNotice />,
-        },
-      ],
-      { initialEntries: ['/organization/0xabc'] }
-    )
-
-    render(<RouterProvider router={router} />)
-
-    expect(screen.queryByTestId('layout-legal-notice')).not.toBeInTheDocument()
+    expect(screen.getByText('0xabc')).toBeInTheDocument()
   })
 })
