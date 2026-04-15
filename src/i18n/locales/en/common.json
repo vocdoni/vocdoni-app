@@ -728,6 +728,9 @@
     "user_invited": "Email sent to {{email}}"
   },
   "lastname": "Last name",
+  "layout": {
+    "legal_notice": "To ensure a secure, verifiable and transparent vote, <strong>{{orgName}}</strong> uses the Vocdoni platform, which protects participants’ privacy at all times. More information at"
+  },
   "light": "Light",
   "link": {
     "discord": "Link to Vocdoni's discord",

@@ -17,6 +17,7 @@ const PlansPublicPage = lazy(() => import('~elements/plans'))
 const RootElements = (client: VocdoniSDKClient) => [
   {
     path: Routes.processes.view,
+    id: 'process-view',
     handle: { hideNavbar: true },
     element: (
       <SuspenseLoader>
