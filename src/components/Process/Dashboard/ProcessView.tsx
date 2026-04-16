@@ -71,6 +71,7 @@ import {
   SidebarSubtitle,
   SidebarTitle,
 } from '~components/Dashboard/Contents'
+import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { Routes } from '~src/router/routes'
 import { useResultTypeLabel } from '../resultTypeLabels'
@@ -113,7 +114,7 @@ export const ProcessView = () => (
 )
 
 const ProcessViewContent = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { showSidebar, toggleSidebar } = useSidebarVisibility()
   const { id, election } = useElection()
   const location = useLocation()
@@ -124,7 +125,8 @@ const ProcessViewContent = () => {
   const hasResolvedInitialTabRef = useRef(false)
   const resolvedInitialTabElectionIdRef = useRef<string | null>(null)
 
-  const votingLink = `${document.location.origin}${generatePath(Routes.processes.view, { id })}`
+  const publicLanguage = i18n.resolvedLanguage || i18n.language || 'en'
+  const votingLink = `${document.location.origin}${getPublicProcessPath({ id, language: publicLanguage })}`
   const { copy } = useClipboard({ value: votingLink })
 
   useEffect(() => {

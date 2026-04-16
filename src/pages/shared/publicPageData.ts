@@ -3,7 +3,6 @@ import type { PageContextServer } from 'vike/types'
 import { getLanguagesEnv } from '~src/app-env'
 import { createVocdoniSdkClient } from '~src/providers/vocdoni-client-config'
 import {
-  getDefaultPublicLanguage,
   getPublicLanguageAlternates,
   getPublicOrganizationPath,
   getPublicProcessPath,
@@ -54,7 +53,6 @@ export const loadOrganizationPublicPageData = async (pageContext: PageContextSer
   const client = createVocdoniSdkClient()
   const origin = resolvePublicOrigin(pageContext)
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
-  const defaultLanguage = getDefaultPublicLanguage(supportedLanguages)
   const address = pageContext.routeParams.address
   const pathnameByLanguage = Object.fromEntries(
     supportedLanguages.map((supportedLanguage) => [
@@ -62,7 +60,6 @@ export const loadOrganizationPublicPageData = async (pageContext: PageContextSer
       getPublicOrganizationPath({
         address,
         language: supportedLanguage,
-        defaultLanguage,
       }),
     ])
   )
@@ -84,7 +81,6 @@ export const loadProcessPublicPageData = async (pageContext: PageContextServer) 
   const client = createVocdoniSdkClient()
   const origin = resolvePublicOrigin(pageContext)
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
-  const defaultLanguage = getDefaultPublicLanguage(supportedLanguages)
   const id = pageContext.routeParams.id
   const pathnameByLanguage = Object.fromEntries(
     supportedLanguages.map((supportedLanguage) => [
@@ -92,7 +88,6 @@ export const loadProcessPublicPageData = async (pageContext: PageContextServer) 
       getPublicProcessPath({
         id,
         language: supportedLanguage,
-        defaultLanguage,
       }),
     ])
   )

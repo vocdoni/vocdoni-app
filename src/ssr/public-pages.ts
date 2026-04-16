@@ -1,5 +1,6 @@
 import { PublishedElection } from '@vocdoni/sdk'
 import { AppTitle } from '~constants'
+import { getDefaultPublicLanguage, normalizePublicLanguageCandidate } from '~i18n/public-language'
 
 type PublicLanguageAlternate = {
   hrefLang: string
@@ -95,9 +96,6 @@ const fallbackDescription = (value: string, kind: 'organization' | 'process', la
     ? (publicMetaCopy[language as keyof typeof publicMetaCopy] ?? publicMetaCopy.en).organizationFallback(value)
     : (publicMetaCopy[language as keyof typeof publicMetaCopy] ?? publicMetaCopy.en).processFallback(value)
 
-export const getDefaultPublicLanguage = (supportedLanguages: string[]) =>
-  supportedLanguages.includes('en') ? 'en' : supportedLanguages[0]
-
 export const resolvePublicLanguage = ({
   routeLanguage,
   supportedLanguages,
@@ -118,25 +116,83 @@ export const resolvePublicLanguage = ({
   throw new Error(`Unsupported public language: ${routeLanguage}`)
 }
 
-export const getPublicOrganizationPath = ({
-  address,
-  language,
-  defaultLanguage,
+export const getLocalizedPublicRedirectTarget = ({
+  routeType,
+  preferredLanguage,
+  currentLanguage,
+  idOrAddress,
 }: {
-  address: string
-  language: string
-  defaultLanguage: string
-}) => (language === defaultLanguage ? `/organization/${address}` : `/${language}/organization/${address}`)
+  routeType: 'organization' | 'process'
+  preferredLanguage: string
+  currentLanguage: string
+  idOrAddress: string
+}) => {
+  if (preferredLanguage === currentLanguage) return null
 
-export const getPublicProcessPath = ({
-  id,
-  language,
-  defaultLanguage,
+  if (routeType === 'organization') {
+    return getPublicOrganizationPath({
+      address: idOrAddress,
+      language: preferredLanguage,
+    })
+  }
+
+  return getPublicProcessPath({
+    id: idOrAddress,
+    language: preferredLanguage,
+  })
+}
+
+export const getPublicLocalizedOrganizationRouteMatch = ({
+  urlPathname,
+  supportedLanguages,
 }: {
-  id: string
-  language: string
-  defaultLanguage: string
-}) => (language === defaultLanguage ? `/processes/${id}` : `/${language}/processes/${id}`)
+  urlPathname: string
+  supportedLanguages: string[]
+}) => {
+  const match = urlPathname.match(/^\/([^/]+)\/organization\/([^/]+)\/?$/)
+
+  if (!match) return false
+
+  const [, lang, address] = match
+
+  if (!supportedLanguages.includes(lang)) return false
+
+  return {
+    routeParams: {
+      lang,
+      address,
+    },
+  }
+}
+
+export const getPublicLocalizedProcessRouteMatch = ({
+  urlPathname,
+  supportedLanguages,
+}: {
+  urlPathname: string
+  supportedLanguages: string[]
+}) => {
+  const match = urlPathname.match(/^\/([^/]+)\/processes\/([^/]+)\/?$/)
+
+  if (!match) return false
+
+  const [, lang, id] = match
+
+  if (!supportedLanguages.includes(lang)) return false
+
+  return {
+    routeParams: {
+      lang,
+      id,
+    },
+  }
+}
+
+export const getPublicOrganizationPath = ({ address, language }: { address: string; language: string }) =>
+  `/${language}/organization/${address}`
+
+export const getPublicProcessPath = ({ id, language }: { id: string; language: string }) =>
+  `/${language}/processes/${id}`
 
 export const getPublicLanguageAlternates = ({
   languages,
@@ -160,13 +216,10 @@ export const getPublicLanguageAlternates = ({
     }
   })
 
-  const defaultPathname = pathnameByLanguage[defaultLanguage]
-  if (defaultPathname) {
-    alternates.push({
-      hrefLang: 'x-default',
-      href: `${origin}/${trimSlashes(defaultPathname)}`,
-    })
-  }
+  alternates.push({
+    hrefLang: 'x-default',
+    href: origin,
+  })
 
   return alternates
 }
@@ -263,6 +316,7 @@ export const loadOrganizationPageData = async ({
   const electionsPage = await client.fetchElections({ organizationId: organization.address, page: 0 })
 
   return {
+    address,
     organization,
     electionsPage,
     meta: buildOrganizationMeta({ organization, canonicalUrl, language, alternates }),
@@ -286,6 +340,7 @@ export const loadProcessPageData = async ({
   const organization = await client.fetchAccountInfo(election.organizationId)
 
   return {
+    id,
     election,
     organization,
     meta: buildProcessMeta({ election, organization, canonicalUrl, language, alternates }),
@@ -309,5 +364,7 @@ export const serializePublicPageErrorDetails = (error: unknown) => {
 
   return details
 }
+
+export { getDefaultPublicLanguage, normalizePublicLanguageCandidate }
 
 export type { ElectionsPageData, OrganizationData, PublicLanguageAlternate, PublicMeta, PublicPageClient }

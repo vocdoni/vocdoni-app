@@ -4,8 +4,8 @@ describe('languages configuration', () => {
   it('exports the base language map', () => {
     expect(baseLanguages).toEqual({
       en: 'English',
-      es: 'Spanish',
-      ca: 'Catalan',
+      es: 'Español',
+      ca: 'Català',
       it: 'Italiano',
     })
   })

@@ -15,8 +15,7 @@ import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { walletClientToSigner } from '~constants/wagmi-adapters'
 import { uiScaffoldComponents } from '~theme/react-components'
 import { wagmiConfig } from './constants/rainbow'
-import './i18n'
-import baseI18n from './i18n'
+import { createPageI18nInstance, getBaseI18n } from './i18n'
 import { datesLocale } from './i18n/locales'
 import { getVocdoniClientConfig } from './providers/vocdoni-client-config'
 import { ClientProvider } from './providers/VocdoniClientProvider'
@@ -36,9 +35,9 @@ export const createAppQueryClient = () =>
     },
   })
 
-export const Providers = () => (
-  <AppProviders>
-    <RoutesProvider />
+export const Providers = ({ basename, language }: { basename?: string; language?: string } = {}) => (
+  <AppProviders language={language}>
+    <RoutesProvider basename={basename} />
   </AppProviders>
 )
 
@@ -49,12 +48,9 @@ export const AppProviders = ({
 }: PropsWithChildren<{ queryClient?: QueryClient; language?: string }>) => {
   const [client] = useState(() => queryClient ?? createAppQueryClient())
   const i18nInstance = useMemo(() => {
-    if (!language) return baseI18n
+    if (!language) return getBaseI18n()
 
-    return baseI18n.cloneInstance({
-      lng: language,
-      initAsync: false,
-    })
+    return createPageI18nInstance(language)
   }, [language])
 
   return (

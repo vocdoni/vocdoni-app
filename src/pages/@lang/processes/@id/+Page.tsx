@@ -1,1 +1,1 @@
-export { default } from '~src/pages/processes/@id/+Page'
+export { default } from '~src/pages/shared/PublicProcessPage'

@@ -18,6 +18,7 @@ import { FaGlobeAmericas } from 'react-icons/fa'
 import { LuCheck } from 'react-icons/lu'
 import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
 import { Select } from '~components/Form/Select'
+import { usePublicLanguageRouting, navigateToPublicLanguage } from '~i18n/usePublicLanguageRouting'
 import i18n from '~i18n'
 import { getLanguagesEnv } from '~src/app-env'
 import { languagesListSelectStyles } from '~theme/selectStyles'
@@ -28,14 +29,12 @@ export const navigateToLanguage = (
   publicLanguageLinks?: Record<string, string>,
   navigate: (url: string) => void = (url) => window.location.assign(url)
 ) => {
-  const targetUrl = publicLanguageLinks?.[language]
-
-  if (targetUrl && typeof window !== 'undefined') {
-    navigate(targetUrl)
-    return
-  }
-
-  void i18n.changeLanguage(language)
+  void navigateToPublicLanguage({
+    language,
+    publicLanguageLinks,
+    navigate,
+    changeLanguage: i18n.changeLanguage.bind(i18n),
+  })
 }
 
 export const LanguagesList = ({
@@ -45,7 +44,7 @@ export const LanguagesList = ({
   closeOnSelect: boolean
   publicLanguageLinks?: Record<string, string>
 }) => {
-  const { i18n } = useTranslation()
+  const { navigateToLanguage, currentLanguage } = usePublicLanguageRouting({ publicLanguageLinks })
 
   const languages = getLanguagesEnv()
   const languageEntries = Object.entries(languages).sort(([, a], [, b]) => a.localeCompare(b))
@@ -56,12 +55,12 @@ export const LanguagesList = ({
         <MenuItem
           key={k}
           value={k}
-          onClick={() => navigateToLanguage(k, i18n, publicLanguageLinks)}
+          onClick={() => void navigateToLanguage(k)}
           closeOnSelect={closeOnSelect}
           w='full'
           display='flex'
           justifyContent={closeOnSelect ? 'center' : 'start'}
-          fontWeight={k === i18n.language ? 'bold' : ''}
+          fontWeight={k === currentLanguage ? 'bold' : ''}
           borderRadius='none'
         >
           {k.toUpperCase()}
@@ -126,6 +125,7 @@ const LanguageOptionLabel = ({ value, label }, { context }) => {
 
 export const LanguageListDashboard = ({ ...props }) => {
   const { t, i18n } = useTranslation()
+  const { navigateToLanguage } = usePublicLanguageRouting()
 
   const languages = getLanguagesEnv()
   const languageOptions: LanguageOption[] = Object.entries(languages)
@@ -148,7 +148,7 @@ export const LanguageListDashboard = ({ ...props }) => {
         value={selectedLanguage}
         onChange={(option: LanguageOption | null) => {
           if (option) {
-            void i18n.changeLanguage(option.value)
+            void navigateToLanguage(option.value)
           }
         }}
         isClearable={false}

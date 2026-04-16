@@ -3,7 +3,10 @@ import {
   buildOrganizationMeta,
   buildProcessMeta,
   getDefaultPublicLanguage,
+  getLocalizedPublicRedirectTarget,
   getPublicLanguageAlternates,
+  getPublicLocalizedOrganizationRouteMatch,
+  getPublicLocalizedProcessRouteMatch,
   getPublicOrganizationPath,
   getPublicProcessPath,
   loadOrganizationPageData,
@@ -80,6 +83,7 @@ describe('loadOrganizationPageData', () => {
 
     expect(client.fetchAccountInfo).toHaveBeenCalledWith('0xabc')
     expect(client.fetchElections).toHaveBeenCalledWith({ organizationId: '0xabc', page: 0 })
+    expect(pageData.address).toBe('0xabc')
     expect(pageData.organization).toBe(organization)
     expect(pageData.electionsPage).toBe(elections)
     expect(pageData.meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
@@ -106,6 +110,7 @@ describe('loadProcessPageData', () => {
 
     expect(client.fetchElection).toHaveBeenCalledWith('0xprocess')
     expect(client.fetchAccountInfo).toHaveBeenCalledWith('0xabc')
+    expect(pageData.id).toBe('0xprocess')
     expect(pageData.election).toBe(election)
     expect(pageData.organization).toBe(organization)
     expect(pageData.meta.title).toContain('Board election 2026')
@@ -113,15 +118,15 @@ describe('loadProcessPageData', () => {
 })
 
 describe('metadata builders', () => {
-  it('keeps bare organization urls as canonical english pages and exposes hreflang alternates', () => {
+  it('uses localized organization urls as canonical pages and points x-default to /', () => {
     const meta = buildOrganizationMeta({
       organization: createOrganization(),
-      canonicalUrl: 'https://app.example.org/organization/0xabc',
+      canonicalUrl: 'https://app.example.org/en/organization/0xabc',
       language: 'en',
       alternates: getPublicLanguageAlternates({
         languages: ['en', 'es', 'ca'],
         pathnameByLanguage: {
-          en: '/organization/0xabc',
+          en: '/en/organization/0xabc',
           es: '/es/organization/0xabc',
           ca: '/ca/organization/0xabc',
         },
@@ -129,13 +134,33 @@ describe('metadata builders', () => {
       }),
     })
 
-    expect(meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
+    expect(meta.canonicalUrl).toBe('https://app.example.org/en/organization/0xabc')
     expect(meta.alternates).toEqual([
-      { hrefLang: 'en', href: 'https://app.example.org/organization/0xabc' },
+      { hrefLang: 'en', href: 'https://app.example.org/en/organization/0xabc' },
       { hrefLang: 'es', href: 'https://app.example.org/es/organization/0xabc' },
       { hrefLang: 'ca', href: 'https://app.example.org/ca/organization/0xabc' },
-      { hrefLang: 'x-default', href: 'https://app.example.org/organization/0xabc' },
+      { hrefLang: 'x-default', href: 'https://app.example.org' },
     ])
+  })
+
+  it('keeps bare english organization aliases non-canonical while pointing metadata to the prefixed canonical url', () => {
+    const meta = buildOrganizationMeta({
+      organization: createOrganization(),
+      canonicalUrl: 'https://app.example.org/en/organization/0xabc',
+      language: 'en',
+      alternates: getPublicLanguageAlternates({
+        languages: ['en', 'es', 'ca'],
+        pathnameByLanguage: {
+          en: '/en/organization/0xabc',
+          es: '/es/organization/0xabc',
+          ca: '/ca/organization/0xabc',
+        },
+        origin: 'https://app.example.org',
+      }),
+    })
+
+    expect(meta.canonicalUrl).toBe('https://app.example.org/en/organization/0xabc')
+    expect(meta.openGraph.url).toBe('https://app.example.org/en/organization/0xabc')
   })
 
   it('keeps localized process urls canonical to themselves', () => {
@@ -147,7 +172,7 @@ describe('metadata builders', () => {
       alternates: getPublicLanguageAlternates({
         languages: ['en', 'es'],
         pathnameByLanguage: {
-          en: '/processes/0xprocess',
+          en: '/en/processes/0xprocess',
           es: '/es/processes/0xprocess',
         },
         origin: 'https://app.example.org',
@@ -157,9 +182,9 @@ describe('metadata builders', () => {
     expect(meta.canonicalUrl).toBe('https://app.example.org/es/processes/0xprocess')
     expect(meta.openGraph.url).toBe('https://app.example.org/es/processes/0xprocess')
     expect(meta.alternates).toEqual([
-      { hrefLang: 'en', href: 'https://app.example.org/processes/0xprocess' },
+      { hrefLang: 'en', href: 'https://app.example.org/en/processes/0xprocess' },
       { hrefLang: 'es', href: 'https://app.example.org/es/processes/0xprocess' },
-      { hrefLang: 'x-default', href: 'https://app.example.org/processes/0xprocess' },
+      { hrefLang: 'x-default', href: 'https://app.example.org' },
     ])
   })
 
@@ -236,19 +261,108 @@ describe('public language helpers', () => {
     )
   })
 
-  it('builds public page paths with bare english and localized non-english variants', () => {
-    expect(getPublicOrganizationPath({ address: '0xabc', language: 'en', defaultLanguage: 'en' })).toBe(
-      '/organization/0xabc'
-    )
-    expect(getPublicOrganizationPath({ address: '0xabc', language: 'es', defaultLanguage: 'en' })).toBe(
-      '/es/organization/0xabc'
-    )
-    expect(getPublicProcessPath({ id: '0xprocess', language: 'en', defaultLanguage: 'en' })).toBe(
-      '/processes/0xprocess'
-    )
-    expect(getPublicProcessPath({ id: '0xprocess', language: 'ca', defaultLanguage: 'en' })).toBe(
-      '/ca/processes/0xprocess'
-    )
+  it('builds canonical public page paths with a prefixed language, including english', () => {
+    expect(getPublicOrganizationPath({ address: '0xabc', language: 'en' })).toBe('/en/organization/0xabc')
+    expect(getPublicOrganizationPath({ address: '0xabc', language: 'es' })).toBe('/es/organization/0xabc')
+    expect(getPublicProcessPath({ id: '0xprocess', language: 'en' })).toBe('/en/processes/0xprocess')
+    expect(getPublicProcessPath({ id: '0xprocess', language: 'ca' })).toBe('/ca/processes/0xprocess')
+  })
+
+  it('builds localized redirect targets whenever the stored and current languages differ', () => {
+    expect(
+      getLocalizedPublicRedirectTarget({
+        routeType: 'process',
+        preferredLanguage: 'ca',
+        currentLanguage: 'en',
+        idOrAddress: '0xprocess',
+      })
+    ).toBe('/ca/processes/0xprocess')
+
+    expect(
+      getLocalizedPublicRedirectTarget({
+        routeType: 'organization',
+        preferredLanguage: 'ca',
+        currentLanguage: 'it',
+        idOrAddress: '0xabc',
+      })
+    ).toBe('/ca/organization/0xabc')
+
+    expect(
+      getLocalizedPublicRedirectTarget({
+        routeType: 'process',
+        preferredLanguage: 'ca',
+        currentLanguage: 'ca',
+        idOrAddress: '0xprocess',
+      })
+    ).toBeNull()
+  })
+
+  it('matches localized organization routes only for supported languages', () => {
+    expect(
+      getPublicLocalizedOrganizationRouteMatch({
+        urlPathname: '/es/organization/0xabc',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toEqual({
+      routeParams: {
+        lang: 'es',
+        address: '0xabc',
+      },
+    })
+
+    expect(
+      getPublicLocalizedOrganizationRouteMatch({
+        urlPathname: '/admin/processes/0xprocess',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toBe(false)
+
+    expect(
+      getPublicLocalizedOrganizationRouteMatch({
+        urlPathname: '/fr/organization/0xabc',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toBe(false)
+
+    expect(
+      getPublicLocalizedOrganizationRouteMatch({
+        urlPathname: '/es/dashboard',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toBe(false)
+  })
+
+  it('matches localized process routes only for supported languages', () => {
+    expect(
+      getPublicLocalizedProcessRouteMatch({
+        urlPathname: '/es/processes/0xprocess',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toEqual({
+      routeParams: {
+        lang: 'es',
+        id: '0xprocess',
+      },
+    })
+
+    expect(
+      getPublicLocalizedProcessRouteMatch({
+        urlPathname: '/es/organization/0xabc',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toBe(false)
+
+    expect(
+      getPublicLocalizedProcessRouteMatch({
+        urlPathname: '/ca/processes/6be21a5a9dc034ede83966b661e6a648854bd92b7d209d2c97c202000000003f',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toEqual({
+      routeParams: {
+        lang: 'ca',
+        id: '6be21a5a9dc034ede83966b661e6a648854bd92b7d209d2c97c202000000003f',
+      },
+    })
   })
 })
 

@@ -8,6 +8,7 @@ import { VotingReportPdfMenuItem } from '../VotingReportPdf'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
+import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type Election = PublishedElection | InvalidElection
@@ -109,8 +110,15 @@ const ProcessRow = () => {
 const ProcessContextMenu = () => {
   const { election, client } = useElection()
   const { cloneAsDraft } = useCloneAsDraft()
+  const { i18n } = useTranslation()
 
   if (!election || election instanceof InvalidElection) return null
+
+  const publicLanguage = i18n.resolvedLanguage || i18n.language || 'en'
+  const publicProcessPath = getPublicProcessPath({
+    id: ensure0x(election.id),
+    language: publicLanguage,
+  })
 
   return (
     <Menu.Root>
@@ -129,7 +137,7 @@ const ProcessContextMenu = () => {
               </RouterLink>
             </Menu.Item>
             <Menu.Item value='public-voting-page' asChild>
-              <RouterLink to={generatePath(Routes.processes.view, { id: ensure0x(election.id) })} target='_blank'>
+              <RouterLink to={publicProcessPath} target='_blank'>
                 <Icon as={LuExternalLink} boxSize={4} />
                 <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
               </RouterLink>

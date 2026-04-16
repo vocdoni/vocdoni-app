@@ -1,1 +1,1 @@
-export { default } from '~src/pages/organization/@address/+Page'
+export { default } from '~src/pages/shared/PublicOrganizationPage'

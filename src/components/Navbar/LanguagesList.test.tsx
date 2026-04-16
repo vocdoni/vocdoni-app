@@ -61,4 +61,15 @@ describe('LanguagesList', () => {
     expect(locationAssign).toHaveBeenCalledWith('/es/organization/0xabc')
     expect(changeLanguage).not.toHaveBeenCalled()
   })
+
+  it('keeps auth routes unprefixed when changing language', async () => {
+    window.history.replaceState({}, '', '/account/signin')
+    const locationAssign = vi.fn()
+    const { navigateToLanguage } = await import('./LanguagesList')
+
+    navigateToLanguage('es', { language: 'en', changeLanguage } as any, undefined, locationAssign)
+
+    expect(locationAssign).not.toHaveBeenCalled()
+    expect(changeLanguage).toHaveBeenCalledWith('es')
+  })
 })

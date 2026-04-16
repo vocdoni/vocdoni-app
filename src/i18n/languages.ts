@@ -1,7 +1,7 @@
 export const baseLanguages = {
   en: 'English',
-  es: 'Spanish',
-  ca: 'Catalan',
+  es: 'Español',
+  ca: 'Català',
   it: 'Italiano',
 } as const
 

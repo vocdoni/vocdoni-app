@@ -1,5 +1,6 @@
 import { Box, Flex, HStack } from '@chakra-ui/react'
 import { PropsWithChildren } from 'react'
+import { getSupportedPublicLanguages, stripPublicLanguagePrefix } from '~i18n/public-language'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import CrispChat from '~components/Layout/CrispChat'
 import Footer from '~components/Layout/Footer'
@@ -12,7 +13,9 @@ type PublicLayoutProps = PropsWithChildren<{
 }>
 
 const PublicLayout = ({ pathname, publicLanguageLinks, children }: PublicLayoutProps) => {
-  const isOrganizationPage = pathname === '/organization' || pathname.includes('/organization/')
+  const normalizedPathname = stripPublicLanguagePrefix(pathname, getSupportedPublicLanguages())
+  const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
+  const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
 
   return (
     <Flex position='relative' flexDirection='column' minH='100vh' mx='auto'>
@@ -30,7 +33,7 @@ const PublicLayout = ({ pathname, publicLanguageLinks, children }: PublicLayoutP
         <Navbar publicLanguageLinks={publicLanguageLinks} />
       </HStack>
       <CrispChat />
-      {[Routes.root, Routes.plans].includes(pathname) && <AnnouncementBanner limited />}
+      {showLimitedAnnouncementBanner && <AnnouncementBanner limited />}
       <Flex
         flexDirection='column'
         as='main'
