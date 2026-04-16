@@ -48,7 +48,7 @@
     "created": "Created {{ distance }}"
   },
   "results": {
-    "date_format": "PPpp",
+    "date_format": "MMMM d, y 'at' H:mm",
     "secret_until_the_end": "The results will be made public when the process finishes on {{ endDate }}.",
     "title": "Results for \"{{ title }}\"",
     "votes": "{{votes}} votes ({{ percent }})"
