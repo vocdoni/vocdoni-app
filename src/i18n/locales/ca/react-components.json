@@ -48,7 +48,7 @@
     "created": "Creat {{ distance }}"
   },
   "results": {
-    "date_format": "PPpp",
+    "date_format": "d 'de' MMMM 'de' y 'a les' H:mm",
     "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi el {{ endDate }}",
     "title": "Resultats per a \"{{ title }}\"",
     "votes": "{{ votes }} vots ({{ percent }})"

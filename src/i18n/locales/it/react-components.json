@@ -48,7 +48,7 @@
     "created": "Creato {{ distance }}"
   },
   "results": {
-    "date_format": "PPpp",
+    "date_format": "d MMMM y 'alle' H:mm",
     "secret_until_the_end": "I risultati saranno resi pubblici al termine del processo il {{ endDate }}.",
     "title": "Risultati per \"{{ title }}\"",
     "votes": "{{votes}} voti ({{ percent }})"
