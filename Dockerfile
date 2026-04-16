@@ -1,14 +1,24 @@
-FROM node:22 as builder
+FROM node:22 AS builder
 ARG VOCDONI_ENVIRONMENT
+ENV VOCDONI_ENVIRONMENT=$VOCDONI_ENVIRONMENT
 WORKDIR /app
-COPY package.json pnpm-lock.yaml .
-RUN corepack enable && corepack prepare pnpm@10.16.1 --activate
-RUN pnpm install
-COPY . .
-RUN pnpm build
 
-FROM nginx
-WORKDIR /usr/share/nginx/html
-RUN rm -rf ./*
-COPY --from=builder /app/dist .
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@10.16.1 --activate
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
+COPY . .
+RUN pnpm prepare && pnpm build && pnpm prune --prod --ignore-scripts
+
+FROM node:22-slim AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3000
+
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server.mjs ./server.mjs
+
+EXPOSE 3000
+CMD ["node", "server.mjs"]

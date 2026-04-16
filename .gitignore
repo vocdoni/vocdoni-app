@@ -21,6 +21,7 @@
 chakra-config.json
 .turbo
 .worktrees
+.codex
 
 # we use pnpm here
 package-lock.json
