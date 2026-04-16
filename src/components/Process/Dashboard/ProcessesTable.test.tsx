@@ -1,7 +1,19 @@
+import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import type { ReactNode } from 'react'
-import { mockUseElection, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { fireEvent, mockUseElection, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessesTable from './ProcessesTable'
+
+vi.mock('@vocdoni/sdk', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
+
+  class MockPublishedElection {}
+
+  return {
+    ...actual,
+    PublishedElection: MockPublishedElection,
+  }
+})
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
@@ -14,15 +26,18 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   }
 })
 
-const election = {
+const election = Object.assign(new PublishedElection({} as never), {
   id: '0x1',
   title: { default: 'Test Election' },
-  startDate: new Date().toISOString(),
-  endDate: new Date().toISOString(),
-  status: 'ONGOING',
+  startDate: new Date('2026-01-01T00:00:00Z'),
+  endDate: new Date('2026-01-02T00:00:00Z'),
+  status: ElectionStatus.ONGOING,
   electionType: { secretUntilTheEnd: false },
   voteCount: 5,
-}
+  census: { size: 10 },
+  maxCensusSize: 10,
+  questions: [],
+})
 
 vi.mock('~i18n/use-date-fns', () => ({
   useDateFns: () => ({ format: () => '2026-01-01' }),
@@ -53,5 +68,19 @@ describe('ProcessesTable', () => {
       </TestMemoryRouter>
     )
     expect(screen.getByText('Test Election')).toBeInTheDocument()
+  })
+
+  it('shows the pdf download action in the row menu', async () => {
+    render(
+      <TestMemoryRouter>
+        <ProcessesTable processes={[election as any]} />
+      </TestMemoryRouter>
+    )
+
+    fireEvent.click(screen.getByLabelText('Open actions'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Download PDF')).toBeInTheDocument()
+    })
   })
 })

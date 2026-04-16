@@ -61,6 +61,7 @@ import {
 import ReactPlayer from 'react-player'
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
+import { VotingReportPdfButton } from '../VotingReportPdf'
 import {
   DashboardBox,
   DashboardContents,
@@ -504,6 +505,7 @@ const ProcessViewSidebar = () => {
               </HStack>
             </Link>
           </Button>
+          <VotingReportPdfButton election={election instanceof PublishedElection ? election : null} />
         </VStack>
       </SidebarContents>
     </Sidebar>

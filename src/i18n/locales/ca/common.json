@@ -1377,6 +1377,26 @@
     "title": "Títol",
     "type": "Tipus"
   },
+  "process_pdf": {
+    "census_size": "Cens",
+    "download": "Descarrega PDF",
+    "download_error": "No s'ha pogut generar l'informe PDF",
+    "downloading": "S'està generant el PDF",
+    "end_date": "Data de finalització",
+    "generated_at": "Generat a les {{date}}",
+    "no_choices": "Sense opcions",
+    "no_questions": "No hi ha preguntes disponibles",
+    "not_available": "No disponible",
+    "process_id": "ID del procés",
+    "question_label": "Pregunta {{index}}",
+    "questions": "Preguntes",
+    "start_date": "Data d'inici",
+    "status": "Estat",
+    "summary": "Resum",
+    "title": "Informe de votació",
+    "total_votes": "Vots totals",
+    "voting_method": "Mètode de votació"
+  },
   "processes": {
     "empty": "No s'han trobat processos de votació",
     "empty_description": "Crea un procés de votació per començar.",

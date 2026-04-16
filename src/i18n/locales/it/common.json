@@ -1377,6 +1377,26 @@
     "title": "Titolo",
     "type": "Tipo"
   },
+  "process_pdf": {
+    "census_size": "Censimento",
+    "download": "Scarica PDF",
+    "download_error": "Impossibile generare il report PDF",
+    "downloading": "Generazione PDF in corso",
+    "end_date": "Data di fine",
+    "generated_at": "Generato il {{date}}",
+    "no_choices": "Nessuna opzione",
+    "no_questions": "Nessuna domanda disponibile",
+    "not_available": "Non disponibile",
+    "process_id": "ID processo",
+    "question_label": "Domanda {{index}}",
+    "questions": "Domande",
+    "start_date": "Data di inizio",
+    "status": "Stato",
+    "summary": "Riepilogo",
+    "title": "Report di voto",
+    "total_votes": "Voti totali",
+    "voting_method": "Metodo di voto"
+  },
   "processes": {
     "empty": "Nessun processo di voto trovato",
     "empty_description": "Crea un processo di voto per iniziare.",

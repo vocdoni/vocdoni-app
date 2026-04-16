@@ -1355,6 +1355,26 @@
     "title": "Title",
     "type": "Type"
   },
+  "process_pdf": {
+    "census_size": "Census size",
+    "download": "Download PDF",
+    "download_error": "Could not generate the PDF report",
+    "downloading": "Generating PDF",
+    "end_date": "End date",
+    "generated_at": "Generated at {{date}}",
+    "no_choices": "No choices",
+    "no_questions": "No questions available",
+    "not_available": "Not available",
+    "process_id": "Process ID",
+    "question_label": "Question {{index}}",
+    "questions": "Questions",
+    "start_date": "Start date",
+    "status": "Status",
+    "summary": "Summary",
+    "title": "Voting report",
+    "total_votes": "Total votes",
+    "voting_method": "Voting method"
+  },
   "processes": {
     "empty": "No voting processes found",
     "empty_description": "Create a voting process to get started.",

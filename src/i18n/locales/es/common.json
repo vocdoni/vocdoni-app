@@ -1377,6 +1377,26 @@
     "title": "Título",
     "type": "Tipo"
   },
+  "process_pdf": {
+    "census_size": "Censo",
+    "download": "Descargar PDF",
+    "download_error": "No se ha podido generar el informe PDF",
+    "downloading": "Generando PDF",
+    "end_date": "Fecha de finalización",
+    "generated_at": "Generado el {{date}}",
+    "no_choices": "Sin opciones",
+    "no_questions": "No hay preguntas disponibles",
+    "not_available": "No disponible",
+    "process_id": "ID del proceso",
+    "question_label": "Pregunta {{index}}",
+    "questions": "Preguntas",
+    "start_date": "Fecha de inicio",
+    "status": "Estado",
+    "summary": "Resumen",
+    "title": "Informe de votación",
+    "total_votes": "Votos totales",
+    "voting_method": "Método de votación"
+  },
   "processes": {
     "empty": "No se han encontrado procesos de votación",
     "empty_description": "Crea un proceso de votación para empezar.",

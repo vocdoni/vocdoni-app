@@ -1,6 +1,6 @@
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import type { ReactNode } from 'react'
-import { render, TestMemoryRouter, waitFor } from '~src/test-utils'
+import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
 
@@ -133,6 +133,8 @@ describe('ProcessView navigation', () => {
     await waitFor(() => {
       expect(navigateSpy).toHaveBeenCalledWith('/admin/process/0xabc/results', { replace: true })
     })
+
+    expect(screen.getByRole('button', { name: /download pdf/i })).toBeInTheDocument()
   })
 
   it('does not force results again after the user comes back manually to questions', async () => {

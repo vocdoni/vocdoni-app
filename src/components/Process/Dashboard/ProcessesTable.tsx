@@ -4,6 +4,7 @@ import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@v
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router-dom'
+import { VotingReportPdfMenuItem } from '../VotingReportPdf'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
@@ -139,6 +140,7 @@ const ProcessContextMenu = () => {
                 <Trans i18nKey='process_context.explorer'>Explorer</Trans>
               </a>
             </Menu.Item>
+            <VotingReportPdfMenuItem election={election} />
             <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
               <Icon as={LuCopy} boxSize={4} />
               <Trans i18nKey='process_context.clone_as_draft'>Clone as draft</Trans>
