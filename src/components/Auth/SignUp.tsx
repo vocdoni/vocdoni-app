@@ -13,7 +13,7 @@ import {
 import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Navigate, NavLink, useOutletContext } from 'react-router-dom'
+import { NavLink, useOutletContext } from 'react-router-dom'
 import { AppEnv } from '~src/app-env'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { IRegisterParams } from '~components/Auth/authQueries'
@@ -23,6 +23,7 @@ import InputPassword from '~components/Form/InputPassword'
 import { OrSeparator } from '~components/Layout/Separators'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { useSignupFromInvite } from '~src/queries/account'
+import { AppNavigate } from '~src/router/appNavigation'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvent } from '~utils/analytics'
 import GoogleAuth from './GoogleAuth'
@@ -93,13 +94,13 @@ const SignUp = ({ invite }: SignupProps) => {
   if (signup.isSuccess) {
     trackPlausibleEvent({ name: AnalyticsEvent.AccountSignup })
     signup.reset()
-    return <Navigate to={`${Routes.auth.verify}?email=${encodeURIComponent(email)}`} />
+    return <AppNavigate to={`${Routes.auth.verify}?email=${encodeURIComponent(email)}`} replace />
   }
 
   // accounts coming from invites don't need verification
   if (inviteSignup.isSuccess) {
     trackPlausibleEvent({ name: AnalyticsEvent.AccountSignup })
-    return <Navigate to={Routes.auth.signIn} />
+    return <AppNavigate to={Routes.auth.signIn} replace />
   }
 
   return (

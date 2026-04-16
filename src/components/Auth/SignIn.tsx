@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { NavLink, useNavigate, useOutletContext } from 'react-router-dom'
+import { NavLink, useOutletContext } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { api, ApiEndpoints, getApiErrorMessage, UnverifiedApiError } from '~components/Auth/api'
 import { ILoginParams } from '~components/Auth/authQueries'
@@ -14,6 +14,8 @@ import InputPassword from '~components/Form/InputPassword'
 import { OrSeparator } from '~components/Layout/Separators'
 import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
+import { useAppNavigate } from '~src/router/appNavigation'
+import { normalizeAuthRedirectTarget } from '~src/router/authRedirects'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvent } from '~utils/analytics'
 import GoogleAuth from './GoogleAuth'
@@ -44,7 +46,7 @@ const useResendVerificationCode = () =>
 const SignIn = ({ email: emailProp }: { email?: string }) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const navigate = useNavigate()
+  const navigate = useAppNavigate()
   const { setTitle, setSubtitle } = useOutletContext<AuthOutletContextType>()
   const { trackPlausibleEvent } = useAnalytics()
   const methods = useForm<FormData>({
@@ -77,9 +79,9 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
     await login(data)
       .then(() => {
         trackPlausibleEvent({ name: AnalyticsEvent.UserLoggedIn })
-        const redirect = localStorage.getItem('redirectTo')
+        const redirect = normalizeAuthRedirectTarget(localStorage.getItem('redirectTo'))
         localStorage.removeItem('redirectTo')
-        navigate(redirect || Routes.dashboard.base)
+        navigate(redirect)
       })
       .catch(async (e) => {
         if (e instanceof UnverifiedApiError && email) {

@@ -1,7 +1,9 @@
 import { useClient } from '@vocdoni/react-components'
-import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router-dom'
+import { Outlet, useLocation, useOutletContext } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
 import { Loading } from '~src/router/SuspenseLoader'
+import { AppNavigate } from './appNavigation'
+import { normalizeAuthRedirectTarget } from './authRedirects'
 import { Routes } from './routes'
 
 const AccountProtectedRoute = () => {
@@ -18,8 +20,8 @@ const AccountProtectedRoute = () => {
   }
 
   if (!isAuthenticated) {
-    localStorage.setItem('redirectTo', pathname)
-    return <Navigate to={Routes.auth.signIn} />
+    localStorage.setItem('redirectTo', normalizeAuthRedirectTarget(pathname))
+    return <AppNavigate to={Routes.auth.signIn} replace />
   }
 
   return <Outlet context={context} />

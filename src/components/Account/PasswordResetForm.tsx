@@ -2,10 +2,10 @@ import { Button, Flex } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 import InputBasic from '~components/Form/InputBasic'
 import InputPassword from '~components/Form/InputPassword'
 import { useToast } from '~components/Toast'
+import { useAppNavigate } from '~src/router/appNavigation'
 import { Routes } from '~src/router/routes'
 import { api, ApiEndpoints } from '../Auth/api'
 
@@ -24,7 +24,7 @@ type PasswordResetFormValues = {
 const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) => {
   const toast = useToast()
   const { t } = useTranslation()
-  const navigate = useNavigate()
+  const navigate = useAppNavigate()
   const methods = useForm<PasswordResetFormValues>({
     defaultValues: {
       code: code || '',

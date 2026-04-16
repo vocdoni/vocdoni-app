@@ -2,11 +2,13 @@ import { AlertRoot as Alert, AlertDescription, AlertIndicator, Button, Flex, Spi
 import { useMutation } from '@tanstack/react-query'
 import { ReactNode, useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { generatePath, Link as RouterLink, useNavigate, useOutletContext } from 'react-router-dom'
+import { generatePath, useOutletContext } from 'react-router-dom'
 import { api, ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import SignUp, { InviteFields } from '~components/Auth/SignUp'
 import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
+import { useAppNavigate } from '~src/router/appNavigation'
 import { Routes } from '~src/router/routes'
 
 const Error = ({ error }: { error: ReactNode }) => (
@@ -18,7 +20,7 @@ const Error = ({ error }: { error: ReactNode }) => (
 
 const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
+  const navigate = useAppNavigate()
   const toast = useToast()
   const { setTitle, setSubtitle } = useOutletContext<AuthOutletContextType>()
 
@@ -98,9 +100,9 @@ const AcceptInvitation: React.FC<InviteFields> = ({ address, code, email }) => {
             </Trans>
           </Text>
           <Button asChild>
-            <RouterLink to={generatePath(Routes.auth.verify)}>
+            <RouterAwareLink to={generatePath(Routes.auth.verify)}>
               <Trans i18nKey='invite.go_to_verify'>Verify Account</Trans>
-            </RouterLink>
+            </RouterAwareLink>
           </Button>
         </Flex>
       )

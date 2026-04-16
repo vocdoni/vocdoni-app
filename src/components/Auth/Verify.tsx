@@ -12,11 +12,12 @@ import {
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
 import { useResendVerificationMail } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
+import { useAppNavigate } from '~src/router/appNavigation'
 import { Routes } from '~src/router/routes'
 import { Loading } from '~src/router/SuspenseLoader'
 import { UnauthorizedApiError } from './api'
@@ -29,7 +30,7 @@ type VerifyFormProps = {
 
 const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormProps) => {
   const toast = useToast()
-  const navigate = useNavigate()
+  const navigate = useAppNavigate()
   const { t } = useTranslation()
   const [code, setCode] = useState(initialCode)
   const {
