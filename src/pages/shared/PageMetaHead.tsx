@@ -4,15 +4,37 @@ type PageMetaHeadProps = {
   meta: PublicMeta
 }
 
+const openGraphLocaleMap: Record<string, string> = {
+  en: 'en_US',
+  es: 'es_ES',
+  ca: 'ca_ES',
+  it: 'it_IT',
+}
+
+const toOpenGraphLocale = (language: string) => openGraphLocaleMap[language] ?? language
+
 const PageMetaHead = ({ meta }: PageMetaHeadProps) => {
+  const alternateOpenGraphLocales = meta.alternates
+    .map((alternate) => alternate.hrefLang)
+    .filter((hrefLang) => hrefLang !== 'x-default' && hrefLang !== meta.language)
+    .map(toOpenGraphLocale)
+
   return (
     <>
-      <meta property='og:locale' content={meta.language} />
+      <meta property='og:locale' content={toOpenGraphLocale(meta.language)} />
+      {alternateOpenGraphLocales.map((locale) => (
+        <meta key={locale} property='og:locale:alternate' content={locale} />
+      ))}
       <meta property='og:type' content={meta.openGraph.type} />
+      <meta property='og:image' content={meta.openGraph.image} />
+      <meta property='og:site_name' content={meta.openGraph.siteName} />
       {meta.openGraph.url ? <meta property='og:url' content={meta.openGraph.url} /> : null}
       <meta name='twitter:card' content={meta.twitter.card} />
       <meta name='twitter:title' content={meta.twitter.title} />
       <meta name='twitter:description' content={meta.twitter.description} />
+      <meta name='twitter:image' content={meta.twitter.image} />
+      <meta name='twitter:site' content={meta.twitter.site} />
+      <meta name='twitter:creator' content={meta.twitter.creator} />
       {meta.canonicalUrl ? <link rel='canonical' href={meta.canonicalUrl} /> : null}
       {meta.alternates.map((alternate) => (
         <link

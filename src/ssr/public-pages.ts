@@ -37,11 +37,16 @@ type PublicMeta = {
     description: string
     url?: string
     type: 'website'
+    image: string
+    siteName: string
   }
   twitter: {
     card: 'summary_large_image'
     title: string
     description: string
+    image: string
+    site: string
+    creator: string
   }
 }
 
@@ -73,6 +78,11 @@ const trimText = (value?: string) => value?.trim() ?? ''
 const withAppTitle = (value: string) => `${AppTitle} - ${value}`
 
 const buildShortDescription = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' — ')
+const publicSocialImagePath = '/assets/vocdoniapp.png'
+const publicSiteName = 'Vocdoni'
+const publicTwitterAccount = '@vocdoni'
+const buildSocialImageUrl = (canonicalUrl?: string) =>
+  canonicalUrl ? new URL(publicSocialImagePath, canonicalUrl).toString() : publicSocialImagePath
 
 export const resolvePublicLanguage = ({
   routeLanguage,
@@ -216,6 +226,8 @@ export const buildOrganizationMeta = ({
   const displayName = trimText(organization.account?.name?.default) || organization.address
   const description = trimText(organization.account?.description?.default) || displayName
 
+  const socialImage = buildSocialImageUrl(canonicalUrl)
+
   return {
     title: withAppTitle(displayName),
     description,
@@ -227,11 +239,16 @@ export const buildOrganizationMeta = ({
       description,
       url: canonicalUrl,
       type: 'website',
+      image: socialImage,
+      siteName: publicSiteName,
     },
     twitter: {
       card: 'summary_large_image',
       title: withAppTitle(displayName),
       description,
+      image: socialImage,
+      site: publicTwitterAccount,
+      creator: publicTwitterAccount,
     },
   }
 }
@@ -253,6 +270,8 @@ export const buildProcessMeta = ({
   const organizationName = trimText(organization?.account?.name?.default)
   const description = trimText(election.description?.default) || buildShortDescription(electionTitle, organizationName)
 
+  const socialImage = buildSocialImageUrl(canonicalUrl)
+
   return {
     title: withAppTitle(electionTitle),
     description,
@@ -264,11 +283,16 @@ export const buildProcessMeta = ({
       description,
       url: canonicalUrl,
       type: 'website',
+      image: socialImage,
+      siteName: publicSiteName,
     },
     twitter: {
       card: 'summary_large_image',
       title: withAppTitle(electionTitle),
       description,
+      image: socialImage,
+      site: publicTwitterAccount,
+      creator: publicTwitterAccount,
     },
   }
 }

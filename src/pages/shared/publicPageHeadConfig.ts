@@ -3,7 +3,7 @@ import type { PublicMeta } from '~src/ssr/public-pages'
 
 type PublicPageHeadContext = PageContextServer & {
   data?: {
-    meta?: Pick<PublicMeta, 'title' | 'description'>
+    meta?: Pick<PublicMeta, 'title' | 'description' | 'language'>
   }
 }
 
@@ -11,3 +11,5 @@ export const getPublicPageTitle = (pageContext: PublicPageHeadContext) => pageCo
 
 export const getPublicPageDescription = (pageContext: PublicPageHeadContext) =>
   pageContext.data?.meta?.description ?? null
+
+export const getPublicPageLanguage = (pageContext: PublicPageHeadContext) => pageContext.data?.meta?.language ?? null
