@@ -21,7 +21,12 @@
 chakra-config.json
 .turbo
 .worktrees
+
+# AI related
 .codex
+.agents
+.pi
+skills-lock.json
 
 # we use pnpm here
 package-lock.json
