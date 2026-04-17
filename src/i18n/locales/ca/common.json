@@ -736,6 +736,9 @@
     "user_invited": "S'ha enviat un correu a {{email}}"
   },
   "lastname": "Cognoms",
+  "layout": {
+    "legal_notice": "Per garantir un vot segur, verificable i transparent, <strong>{{orgName}}</strong> utilitza la plataforma Vocdoni, que protegeix en tot moment la privacitat de les persones participants. Més informació a"
+  },
   "light": "Clar",
   "link": {
     "discord": "Enllaç al Discord de Vocdoni",

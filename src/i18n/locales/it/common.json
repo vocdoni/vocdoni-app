@@ -736,6 +736,9 @@
     "user_invited": "Email inviata a {{email}}"
   },
   "lastname": "Cognome",
+  "layout": {
+    "legal_notice": "Per garantire un voto sicuro, verificabile e trasparente, <strong>{{orgName}}</strong> utilizza la piattaforma Vocdoni, che protegge in ogni momento la privacy dei partecipanti. Maggiori informazioni su"
+  },
   "light": "Chiaro",
   "link": {
     "discord": "Link al discord di Vocdoni",

@@ -1,0 +1,75 @@
+import React from 'react'
+import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import Process from './view'
+import { render, screen } from '~src/test-utils'
+import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
+
+  return {
+    ...actual,
+    ...getReactProvidersMock(),
+  }
+})
+
+vi.mock('~components/Process/View', () => ({
+  __esModule: true,
+  ProcessView: () => <div>Process view content</div>,
+}))
+
+describe('Process view', () => {
+  beforeEach(() => {
+    resetReactProvidersMock()
+    setReactProvidersMock({
+      useOrganization: () => ({
+        organization: {
+          account: { name: { default: 'Esquerra republicana' } },
+          address: '0xabc',
+        },
+      }),
+      useElection: () => ({
+        election: null,
+      }),
+    })
+  })
+
+  it('renders the legal notice on the process route', async () => {
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/processes/:id',
+          id: 'process-view',
+          loader: async () => ({ organizationId: '0xabc' }),
+          element: <Process />,
+        },
+      ],
+      { initialEntries: ['/processes/123'] }
+    )
+
+    render(<RouterProvider router={router} />)
+
+    expect(await screen.findByTestId('layout-legal-notice')).toHaveTextContent(
+      'To ensure a secure, verifiable and transparent vote, Esquerra republicana uses the Vocdoni platform'
+    )
+    expect(screen.getByRole('link', { name: 'vocdoni.io' })).toHaveAttribute('href', 'https://vocdoni.io/')
+  })
+
+  it('does not render the legal notice on another route', async () => {
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/organization/:address',
+          loader: async () => ({ address: '0xabc' }),
+          element: <div>Organization page</div>,
+        },
+      ],
+      { initialEntries: ['/organization/0xabc'] }
+    )
+
+    render(<RouterProvider router={router} />)
+
+    expect(screen.queryByTestId('layout-legal-notice')).not.toBeInTheDocument()
+  })
+})
