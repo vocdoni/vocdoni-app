@@ -7,11 +7,7 @@ type PageMetaHeadProps = {
 const PageMetaHead = ({ meta }: PageMetaHeadProps) => {
   return (
     <>
-      <title>{meta.title}</title>
       <meta property='og:locale' content={meta.language} />
-      <meta name='description' content={meta.description} />
-      <meta property='og:title' content={meta.openGraph.title} />
-      <meta property='og:description' content={meta.openGraph.description} />
       <meta property='og:type' content={meta.openGraph.type} />
       {meta.openGraph.url ? <meta property='og:url' content={meta.openGraph.url} /> : null}
       <meta name='twitter:card' content={meta.twitter.card} />
