@@ -68,33 +68,11 @@ const serializeUnknown = (value: unknown): unknown => {
 }
 
 const trimSlashes = (value: string) => value.replace(/^\/+|\/+$/g, '')
-const publicMetaCopy = {
-  en: {
-    organizationFallback: (value: string) => `Explore the public organization page for ${value}.`,
-    processFallback: (value: string) => `Explore the public voting process ${value}.`,
-  },
-  es: {
-    organizationFallback: (value: string) => `Explora la pagina publica de la organizacion ${value}.`,
-    processFallback: (value: string) => `Explora el proceso de votacion publico ${value}.`,
-  },
-  ca: {
-    organizationFallback: (value: string) => `Explora la pagina publica de l'organitzacio ${value}.`,
-    processFallback: (value: string) => `Explora el proces de votacio public ${value}.`,
-  },
-  it: {
-    organizationFallback: (value: string) => `Esplora la pagina pubblica dell'organizzazione ${value}.`,
-    processFallback: (value: string) => `Esplora il processo di voto pubblico ${value}.`,
-  },
-} as const
-
 const trimText = (value?: string) => value?.trim() ?? ''
 
 const withAppTitle = (value: string) => `${AppTitle} - ${value}`
 
-const fallbackDescription = (value: string, kind: 'organization' | 'process', language: string) =>
-  kind === 'organization'
-    ? (publicMetaCopy[language as keyof typeof publicMetaCopy] ?? publicMetaCopy.en).organizationFallback(value)
-    : (publicMetaCopy[language as keyof typeof publicMetaCopy] ?? publicMetaCopy.en).processFallback(value)
+const buildShortDescription = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' — ')
 
 export const resolvePublicLanguage = ({
   routeLanguage,
@@ -236,9 +214,7 @@ export const buildOrganizationMeta = ({
   alternates: PublicLanguageAlternate[]
 }): PublicMeta => {
   const displayName = trimText(organization.account?.name?.default) || organization.address
-  const description =
-    trimText(organization.account?.description?.default) ||
-    fallbackDescription(organization.address, 'organization', language)
+  const description = trimText(organization.account?.description?.default) || displayName
 
   return {
     title: withAppTitle(displayName),
@@ -275,9 +251,7 @@ export const buildProcessMeta = ({
 }): PublicMeta => {
   const electionTitle = trimText(election.title?.default) || election.id
   const organizationName = trimText(organization?.account?.name?.default)
-  const descriptionBase =
-    trimText(election.description?.default) || fallbackDescription(electionTitle, 'process', language)
-  const description = organizationName ? `${descriptionBase} ${organizationName}` : descriptionBase
+  const description = trimText(election.description?.default) || buildShortDescription(electionTitle, organizationName)
 
   return {
     title: withAppTitle(electionTitle),

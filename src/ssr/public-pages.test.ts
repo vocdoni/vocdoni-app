@@ -203,6 +203,21 @@ describe('metadata builders', () => {
     expect(meta.twitter.card).toBe('summary_large_image')
   })
 
+  it('falls back to organization display data when the description is missing', () => {
+    const meta = buildOrganizationMeta({
+      organization: createOrganization({
+        address: '0xfallback',
+        account: { name: { default: 'Fallback Org' }, description: { default: '' } },
+      }),
+      language: 'en',
+      alternates: [],
+    })
+
+    expect(meta.title).toContain('Fallback Org')
+    expect(meta.description).toBe('Fallback Org')
+    expect(meta.canonicalUrl).toBeUndefined()
+  })
+
   it('falls back to organization address when name and description are missing', () => {
     const meta = buildOrganizationMeta({
       organization: createOrganization({
@@ -214,11 +229,11 @@ describe('metadata builders', () => {
     })
 
     expect(meta.title).toContain('0xfallback')
-    expect(meta.description).toContain('0xfallback')
+    expect(meta.description).toBe('0xfallback')
     expect(meta.canonicalUrl).toBeUndefined()
   })
 
-  it('builds process metadata with organization context', () => {
+  it('keeps the original process description untouched when it exists', () => {
     const meta = buildProcessMeta({
       election: createElection(),
       organization: createOrganization(),
@@ -228,8 +243,19 @@ describe('metadata builders', () => {
     })
 
     expect(meta.title).toContain('Board election 2026')
-    expect(meta.description).toContain('Vocdoni Association')
+    expect(meta.description).toBe('Vote for the next board members.')
     expect(meta.openGraph.url).toBe('https://app.example.org/processes/0xprocess')
+  })
+
+  it('falls back to a short process description when the election has no description', () => {
+    const meta = buildProcessMeta({
+      election: createElection({ description: { default: '' } }),
+      organization: createOrganization(),
+      language: 'en',
+      alternates: [],
+    })
+
+    expect(meta.description).toBe('Board election 2026 — Vocdoni Association')
   })
 
   it('omits canonical data when the request origin is unavailable', () => {
