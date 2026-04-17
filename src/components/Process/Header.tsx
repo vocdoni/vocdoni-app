@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react'
+import { AspectRatio, Box, Flex, Image, Text } from '@chakra-ui/react'
 import {
   ElectionDescription,
   ElectionSchedule,
@@ -24,8 +24,18 @@ const ProcessHeader = () => {
   return (
     <>
       {election?.header && (
-        <Box w='100%' mx='auto' maxH='300px' my='30px' overflow='hidden'>
-          <Image src={election?.header} w='100%' h='auto' objectFit='cover' />
+        <Box w='100%' mx='auto' my='30px' overflow='hidden'>
+          <AspectRatio ratio={3 / 1} maxH='300px'>
+            <Image
+              src={election?.header}
+              alt={election.title?.default || ''}
+              w='100%'
+              h='100%'
+              objectFit='cover'
+              loading='eager'
+              fetchPriority='high'
+            />
+          </AspectRatio>
         </Box>
       )}
       <Flex flexDir='column'>

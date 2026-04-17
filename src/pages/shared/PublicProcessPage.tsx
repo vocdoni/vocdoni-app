@@ -26,7 +26,11 @@ export default function PublicProcessPage() {
 
   return (
     <AppProviders language={data.meta.language}>
-      <PublicLayout pathname={pathname} publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}>
+      <PublicLayout
+        pathname={pathname}
+        publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}
+        enableChat={false}
+      >
         <PublicProcessView election={data.election} organization={data.organization} />
       </PublicLayout>
     </AppProviders>

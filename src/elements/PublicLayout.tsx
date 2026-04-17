@@ -10,9 +10,10 @@ import { Routes } from '~routes'
 type PublicLayoutProps = PropsWithChildren<{
   pathname: string
   publicLanguageLinks?: Record<string, string>
+  enableChat?: boolean
 }>
 
-const PublicLayout = ({ pathname, publicLanguageLinks, children }: PublicLayoutProps) => {
+const PublicLayout = ({ pathname, publicLanguageLinks, enableChat = true, children }: PublicLayoutProps) => {
   const normalizedPathname = stripPublicLanguagePrefix(pathname, getSupportedPublicLanguages())
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
   const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
@@ -32,7 +33,7 @@ const PublicLayout = ({ pathname, publicLanguageLinks, children }: PublicLayoutP
       >
         <Navbar publicLanguageLinks={publicLanguageLinks} />
       </HStack>
-      <CrispChat />
+      {enableChat ? <CrispChat /> : null}
       {showLimitedAnnouncementBanner && <AnnouncementBanner limited />}
       <Flex
         flexDirection='column'

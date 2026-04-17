@@ -1,7 +1,9 @@
+import type { StructuredData } from './publicPageSchema'
 import type { PublicMeta } from '~src/ssr/public-pages'
 
 type PageMetaHeadProps = {
   meta: PublicMeta
+  structuredData?: StructuredData[]
 }
 
 const openGraphLocaleMap: Record<string, string> = {
@@ -13,7 +15,7 @@ const openGraphLocaleMap: Record<string, string> = {
 
 const toOpenGraphLocale = (language: string) => openGraphLocaleMap[language] ?? language
 
-const PageMetaHead = ({ meta }: PageMetaHeadProps) => {
+const PageMetaHead = ({ meta, structuredData = [] }: PageMetaHeadProps) => {
   const alternateOpenGraphLocales = meta.alternates
     .map((alternate) => alternate.hrefLang)
     .filter((hrefLang) => hrefLang !== 'x-default' && hrefLang !== meta.language)
@@ -44,6 +46,13 @@ const PageMetaHead = ({ meta }: PageMetaHeadProps) => {
           rel='alternate'
           hrefLang={alternate.hrefLang}
           href={alternate.href}
+        />
+      ))}
+      {structuredData.map((entry, index) => (
+        <script
+          key={`structured-data-${index}`}
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
         />
       ))}
     </>

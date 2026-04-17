@@ -32,6 +32,13 @@ describe('PageMetaHead', () => {
             creator: '@vocdoni',
           },
         }}
+        structuredData={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: 'Board election 2026',
+          },
+        ]}
       />
     )
 
@@ -51,5 +58,7 @@ describe('PageMetaHead', () => {
     expect(html).toContain('name="twitter:creator" content="@vocdoni"')
     expect(html).toContain('rel="canonical" href="https://app.example.org/en/processes/0xprocess"')
     expect(html).toContain('rel="alternate" hrefLang="es" href="https://app.example.org/es/processes/0xprocess"')
+    expect(html).toContain('type="application/ld+json"')
+    expect(html).toContain('"@type":"WebPage"')
   })
 })

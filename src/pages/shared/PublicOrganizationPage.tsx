@@ -25,7 +25,11 @@ export default function PublicOrganizationPage() {
 
   return (
     <AppProviders language={data.meta.language}>
-      <PublicLayout pathname={pathname} publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}>
+      <PublicLayout
+        pathname={pathname}
+        publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}
+        enableChat={false}
+      >
         <PublicOrganizationView organization={data.organization} initialElectionsPage={data.electionsPage} />
       </PublicLayout>
     </AppProviders>
