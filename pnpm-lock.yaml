@@ -105,8 +105,8 @@ importers:
         specifier: ^1.0.0-beta.4
         version: 1.0.0-beta.4(31caa0b82e2686b6b8096e6e119e730f)
       '@vocdoni/react-components':
-        specifier: ^1.1.0-beta.0
-        version: 1.1.0-beta.0(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@tanstack/react-query@5.90.16(react@18.3.1))(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        specifier: ^1.1.0-beta.1
+        version: 1.1.0-beta.1(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@tanstack/react-query@5.90.16(react@18.3.1))(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@vocdoni/sdk':
         specifier: ~0.9.3
         version: 0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10)
@@ -2785,8 +2785,8 @@ packages:
       viem: ^2.37.1
       wagmi: ^2.16.9
 
-  '@vocdoni/react-components@1.1.0-beta.0':
-    resolution: {integrity: sha512-CB+2ZnejSJdCYtD0nRfWpdEij9WWBu21Ybxat4tPA9EJBGdu6YtZnn5AVfbQHvn042TCQu6Xf8n6qx9ytCum1Q==}
+  '@vocdoni/react-components@1.1.0-beta.1':
+    resolution: {integrity: sha512-gH6CvkLId6Oqsvfcol6ptOuY2vCeeKh8624vKMSKZY7cKt+7tjzjqFendeXQsnqWlY3MGapoMC6uQkKdRTZNlQ==}
     peerDependencies:
       '@ethersproject/abstract-signer': ^5.7.0
       '@ethersproject/wallet': ^5.7.0
@@ -10502,7 +10502,7 @@ snapshots:
       viem: 2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5)
       wagmi: 2.19.5(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@18.3.1))(@types/react@18.3.27)(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5)
 
-  '@vocdoni/react-components@1.1.0-beta.0(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@tanstack/react-query@5.90.16(react@18.3.1))(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@vocdoni/react-components@1.1.0-beta.1(@ethersproject/abstract-signer@5.8.0)(@ethersproject/wallet@5.8.0)(@tanstack/react-query@5.90.16(react@18.3.1))(@vocdoni/sdk@0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@ethersproject/abstract-signer': 5.8.0
       '@ethersproject/wallet': 5.8.0

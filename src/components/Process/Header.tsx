@@ -10,13 +10,11 @@ import { PublishedElection, Strategy } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { ShareModalButton } from '~components/Share'
-import { useHasMounted } from '~utils/use-has-mounted'
 import { StampIcon } from './Census/StampIcon'
 
 const ProcessHeader = () => {
   const { t } = useTranslation()
   const { election } = useElection()
-  const hasMounted = useHasMounted()
   const { ReadMoreMarkdownWrapper, ReadMoreMarkdownButton } = useReadMoreMarkdown(600, 20)
 
   if (!(election instanceof PublishedElection)) return null
@@ -64,16 +62,14 @@ const ProcessHeader = () => {
                 />
               </Box>
             </Flex>
-            {hasMounted ? (
-              <ElectionSchedule
-                textAlign='left'
-                color='process.info_title.light'
-                _dark={{ color: 'process.info_title.dark' }}
-                display='block'
-                fontSize='sm'
-                lineHeight='short'
-              />
-            ) : null}
+            <ElectionSchedule
+              textAlign='left'
+              color='process.info_title.light'
+              _dark={{ color: 'process.info_title.dark' }}
+              display='block'
+              fontSize='sm'
+              lineHeight='short'
+            />
           </Flex>
           <Box display={{ base: 'none', xl: 'flex' }} flexShrink={0}>
             <ShareModalButton

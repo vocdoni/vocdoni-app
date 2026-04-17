@@ -14,7 +14,6 @@ import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { useDateFns } from '~i18n/use-date-fns'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
-import { useHasMounted } from '~utils/use-has-mounted'
 import { ActionsMenu } from './ActionsMenu'
 import { ProcessDateInline } from './Date'
 
@@ -68,9 +67,8 @@ export default ProcessCardDetailed
 const ProcessDetailedCreationDate = () => {
   const { election } = useElection()
   const { format } = useDateFns()
-  const hasMounted = useHasMounted()
 
-  if (!hasMounted || election instanceof InvalidElection || !election?.creationTime) return null
+  if (election instanceof InvalidElection || !election?.creationTime) return null
 
   return <Text>{format(new Date(election.creationTime), 'PPP')}</Text>
 }
