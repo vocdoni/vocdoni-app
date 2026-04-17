@@ -9,7 +9,9 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...actual,
     ...getReactProvidersMock(),
     OrganizationImage: ({ alt }: { alt?: string }) => <img alt={alt ?? 'OrganizationImage'} />,
-    OrganizationName: ({ title }: { title?: string }) => <p>{title}</p>,
+    OrganizationName: ({ as: Tag = 'p', title }: { as?: keyof JSX.IntrinsicElements; title?: string }) => (
+      <Tag>{title}</Tag>
+    ),
     OrganizationDescription: () => <p>OrganizationDescription</p>,
   }
 })
@@ -36,8 +38,8 @@ describe('OrganizationHeader', () => {
     })
   })
 
-  it('renders organization name', () => {
+  it('renders organization name as the page h1', () => {
     render(<OrganizationHeader />)
-    expect(screen.getByText('Test Org')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: 'Test Org' })).toBeInTheDocument()
   })
 })

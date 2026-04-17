@@ -1,4 +1,4 @@
-import { PublishedElection } from '@vocdoni/sdk'
+import { ErrAccountNotFound, ErrElectionNotFound, PublishedElection } from '@vocdoni/sdk'
 import {
   buildOrganizationMeta,
   buildProcessMeta,
@@ -9,6 +9,7 @@ import {
   getPublicLocalizedProcessRouteMatch,
   getPublicOrganizationPath,
   getPublicProcessPath,
+  isPublicPageNotFoundError,
   loadOrganizationPageData,
   loadProcessPageData,
   resolvePublicLanguage,
@@ -118,7 +119,7 @@ describe('loadProcessPageData', () => {
 })
 
 describe('metadata builders', () => {
-  it('uses localized organization urls as canonical pages and points x-default to /', () => {
+  it('uses localized organization urls as canonical pages and points x-default to the default-language organization page', () => {
     const meta = buildOrganizationMeta({
       organization: createOrganization(),
       canonicalUrl: 'https://app.example.org/en/organization/0xabc',
@@ -139,7 +140,7 @@ describe('metadata builders', () => {
       { hrefLang: 'en', href: 'https://app.example.org/en/organization/0xabc' },
       { hrefLang: 'es', href: 'https://app.example.org/es/organization/0xabc' },
       { hrefLang: 'ca', href: 'https://app.example.org/ca/organization/0xabc' },
-      { hrefLang: 'x-default', href: 'https://app.example.org' },
+      { hrefLang: 'x-default', href: 'https://app.example.org/en/organization/0xabc' },
     ])
   })
 
@@ -184,7 +185,7 @@ describe('metadata builders', () => {
     expect(meta.alternates).toEqual([
       { hrefLang: 'en', href: 'https://app.example.org/en/processes/0xprocess' },
       { hrefLang: 'es', href: 'https://app.example.org/es/processes/0xprocess' },
-      { hrefLang: 'x-default', href: 'https://app.example.org' },
+      { hrefLang: 'x-default', href: 'https://app.example.org/en/processes/0xprocess' },
     ])
   })
 
@@ -389,6 +390,14 @@ describe('public language helpers', () => {
         id: '6be21a5a9dc034ede83966b661e6a648854bd92b7d209d2c97c202000000003f',
       },
     })
+  })
+})
+
+describe('isPublicPageNotFoundError', () => {
+  it('recognizes SDK public-page not-found errors', () => {
+    expect(isPublicPageNotFoundError(new ErrElectionNotFound())).toBe(true)
+    expect(isPublicPageNotFoundError(new ErrAccountNotFound())).toBe(true)
+    expect(isPublicPageNotFoundError(new Error('other error'))).toBe(false)
   })
 })
 

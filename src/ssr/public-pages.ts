@@ -1,4 +1,10 @@
-import { PublishedElection } from '@vocdoni/sdk'
+import {
+  ErrAccountNotFound,
+  ErrAddressMalformed,
+  ErrCantParseElectionID,
+  ErrElectionNotFound,
+  PublishedElection,
+} from '@vocdoni/sdk'
 import { AppTitle } from '~constants'
 import { getDefaultPublicLanguage, normalizePublicLanguageCandidate } from '~i18n/public-language'
 
@@ -204,9 +210,11 @@ export const getPublicLanguageAlternates = ({
     }
   })
 
+  const defaultPathname = pathnameByLanguage[defaultLanguage]
+
   alternates.push({
     hrefLang: 'x-default',
-    href: origin,
+    href: defaultPathname ? `${origin}/${trimSlashes(defaultPathname)}` : origin,
   })
 
   return alternates
@@ -344,6 +352,12 @@ export const loadProcessPageData = async ({
     meta: buildProcessMeta({ election, organization, canonicalUrl, language, alternates }),
   }
 }
+
+export const isPublicPageNotFoundError = (error: unknown) =>
+  error instanceof ErrElectionNotFound ||
+  error instanceof ErrCantParseElectionID ||
+  error instanceof ErrAddressMalformed ||
+  error instanceof ErrAccountNotFound
 
 export const serializePublicPageErrorDetails = (error: unknown) => {
   if (!(error instanceof Error)) {

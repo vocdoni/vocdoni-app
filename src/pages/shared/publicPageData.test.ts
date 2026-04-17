@@ -1,0 +1,84 @@
+import { ErrAccountNotFound, ErrCantParseElectionID } from '@vocdoni/sdk'
+
+const { createVocdoniSdkClient } = vi.hoisted(() => ({
+  createVocdoniSdkClient: vi.fn(),
+}))
+
+vi.mock('~src/app-env', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~src/app-env')>()
+
+  return {
+    ...actual,
+    getLanguagesEnv: () => ({
+      en: 'English',
+      ca: 'Catalan',
+    }),
+  }
+})
+
+vi.mock('~src/providers/vocdoni-client-config', () => ({
+  createVocdoniSdkClient,
+}))
+
+import { loadOrganizationPublicPageData, loadProcessPublicPageData } from './publicPageData'
+
+describe('public page data loaders', () => {
+  beforeEach(() => {
+    createVocdoniSdkClient.mockReset()
+  })
+
+  it('renders a 404 when the organization does not exist', async () => {
+    createVocdoniSdkClient.mockReturnValue({
+      fetchAccountInfo: vi.fn().mockRejectedValue(new ErrAccountNotFound()),
+      fetchElections: vi.fn(),
+      fetchElection: vi.fn(),
+    })
+
+    try {
+      await loadOrganizationPublicPageData({
+        routeParams: { lang: 'en', address: '0xmissing' },
+        headers: { host: 'app.example.org', 'x-forwarded-proto': 'https' },
+      } as any)
+      throw new Error('Expected loadOrganizationPublicPageData() to throw')
+    } catch (error) {
+      expect((error as any)._pageContextAbort.abortStatusCode).toBe(404)
+      expect((error as any)._pageContextAbort.abortReason).toBe('account not found')
+    }
+  })
+
+  it('renders a 404 when the process id is malformed', async () => {
+    createVocdoniSdkClient.mockReturnValue({
+      fetchAccountInfo: vi.fn(),
+      fetchElections: vi.fn(),
+      fetchElection: vi.fn().mockRejectedValue(new ErrCantParseElectionID()),
+    })
+
+    try {
+      await loadProcessPublicPageData({
+        routeParams: { lang: 'en', id: 'broken-id' },
+        headers: { host: 'app.example.org', 'x-forwarded-proto': 'https' },
+      } as any)
+      throw new Error('Expected loadProcessPublicPageData() to throw')
+    } catch (error) {
+      expect((error as any)._pageContextAbort.abortStatusCode).toBe(404)
+      expect((error as any)._pageContextAbort.abortReason).toBe('cannot parse electionId')
+    }
+  })
+
+  it('keeps non-not-found errors untouched', async () => {
+    const upstreamError = new Error('upstream failed')
+
+    createVocdoniSdkClient.mockReturnValue({
+      fetchAccountInfo: vi.fn(),
+      fetchElections: vi.fn(),
+      fetchElection: vi.fn().mockRejectedValue(upstreamError),
+    })
+
+    await expect(
+      loadProcessPublicPageData({
+        routeParams: { lang: 'en', id: '0xprocess' },
+        headers: { host: 'app.example.org', 'x-forwarded-proto': 'https' },
+      } as any)
+    ).rejects.toBe(upstreamError)
+  })
+})

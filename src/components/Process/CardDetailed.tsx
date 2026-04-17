@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { useDateFns } from '~i18n/use-date-fns'
+import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { ActionsMenu } from './ActionsMenu'
 import { ProcessDateInline } from './Date'
 
@@ -20,11 +21,18 @@ interface Props {
 }
 
 const ProcessCardDetailed = ({ election }: Props) => {
+  const { i18n } = useTranslation()
+  const publicLanguage = i18n.resolvedLanguage || i18n.language || 'en'
+  const publicProcessPath = getPublicProcessPath({
+    id: enforceHexPrefix(election.id),
+    language: publicLanguage,
+  })
+
   return (
     <ElectionProvider election={election}>
       <Card.Root>
         <Card.Body>
-          <RouterAwareLink to={`/processes/${enforceHexPrefix(election.id)}`}>
+          <RouterAwareLink to={publicProcessPath}>
             <ProcessDetailedCardTitle />
             <Box>
               <ElectionStatusBadge />

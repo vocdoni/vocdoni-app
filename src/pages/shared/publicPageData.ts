@@ -6,6 +6,7 @@ import {
   getPublicLanguageAlternates,
   getPublicOrganizationPath,
   getPublicProcessPath,
+  isPublicPageNotFoundError,
   loadOrganizationPageData,
   loadProcessPageData,
   resolvePublicLanguage,
@@ -49,6 +50,14 @@ export const getPublicLanguageLinksFromMeta = (meta: { alternates: { hrefLang: s
       .map((alternate) => [alternate.hrefLang, alternate.href])
   )
 
+const renderNotFoundIfNeeded = (error: unknown) => {
+  if (!isPublicPageNotFoundError(error)) {
+    throw error
+  }
+
+  throw render(404, error instanceof Error ? error.message : 'Not found')
+}
+
 export const loadOrganizationPublicPageData = async (pageContext: PageContextServer) => {
   const client = createVocdoniSdkClient()
   const origin = resolvePublicOrigin(pageContext)
@@ -64,17 +73,21 @@ export const loadOrganizationPublicPageData = async (pageContext: PageContextSer
     ])
   )
 
-  return loadOrganizationPageData({
-    client,
-    address,
-    language,
-    canonicalUrl: origin ? `${origin}${pathnameByLanguage[language]}` : undefined,
-    alternates: getPublicLanguageAlternates({
-      languages: supportedLanguages,
-      pathnameByLanguage,
-      origin,
-    }),
-  })
+  try {
+    return await loadOrganizationPageData({
+      client,
+      address,
+      language,
+      canonicalUrl: origin ? `${origin}${pathnameByLanguage[language]}` : undefined,
+      alternates: getPublicLanguageAlternates({
+        languages: supportedLanguages,
+        pathnameByLanguage,
+        origin,
+      }),
+    })
+  } catch (error) {
+    renderNotFoundIfNeeded(error)
+  }
 }
 
 export const loadProcessPublicPageData = async (pageContext: PageContextServer) => {
@@ -92,15 +105,19 @@ export const loadProcessPublicPageData = async (pageContext: PageContextServer) 
     ])
   )
 
-  return loadProcessPageData({
-    client,
-    id,
-    language,
-    canonicalUrl: origin ? `${origin}${pathnameByLanguage[language]}` : undefined,
-    alternates: getPublicLanguageAlternates({
-      languages: supportedLanguages,
-      pathnameByLanguage,
-      origin,
-    }),
-  })
+  try {
+    return await loadProcessPageData({
+      client,
+      id,
+      language,
+      canonicalUrl: origin ? `${origin}${pathnameByLanguage[language]}` : undefined,
+      alternates: getPublicLanguageAlternates({
+        languages: supportedLanguages,
+        pathnameByLanguage,
+        origin,
+      }),
+    })
+  } catch (error) {
+    renderNotFoundIfNeeded(error)
+  }
 }

@@ -66,7 +66,7 @@ const OrganizationHeader = () => {
             justifyContent='space-between'
             alignItems='center'
             css={{
-              p: {
+              h1: {
                 noOfLines: readMore ? 1 : 'none',
                 overflow: 'hidden',
                 display: '-webkit-box',
@@ -76,7 +76,7 @@ const OrganizationHeader = () => {
             }}
           >
             <OrganizationName
-              as='p'
+              as='h1'
               fontSize={32}
               lineHeight={1.5}
               title={organization?.account.name.default || organization?.address}
@@ -109,14 +109,14 @@ const OrganizationHeader = () => {
 const useReadMoreTitle = () => {
   const [readMore, setReadMore] = useState(false)
   const [isTruncated, setIsTruncated] = useState(false)
-  const containerRef = useRef<HTMLParagraphElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const handleReadMore = () => setReadMore((prev) => !prev)
 
   useEffect(() => {
     if (!containerRef.current) return
     const containerHeight = containerRef.current.getBoundingClientRect().height
-    const text = containerRef.current.querySelector('p')
+    const text = containerRef.current.querySelector('h1, p')
 
     if (!text) return
     const fontSizeTitle = Number(getComputedStyle(text).fontSize.split('px')[0])
