@@ -2,12 +2,14 @@ import express from 'express'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createDevMiddleware, renderPage } from 'vike/server'
+import { getSupportedPublicLanguagesFromEnv, resolvePublicLanguageRedirect } from './server/public-language-routing.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const isProduction = process.env.NODE_ENV === 'production'
 const port = Number(process.env.PORT || 3000)
 
 const app = express()
+const supportedPublicLanguages = getSupportedPublicLanguagesFromEnv(process.env)
 let viteServer
 
 if (isProduction) {
@@ -27,6 +29,16 @@ if (isProduction) {
 app.use(async (req, res, next) => {
   if (!['GET', 'HEAD'].includes(req.method)) {
     return next()
+  }
+
+  const redirectTarget = resolvePublicLanguageRedirect({
+    urlOriginal: req.originalUrl,
+    cookieHeader: req.headers.cookie,
+    supportedLanguages: supportedPublicLanguages,
+  })
+
+  if (redirectTarget) {
+    return res.redirect(307, redirectTarget)
   }
 
   try {

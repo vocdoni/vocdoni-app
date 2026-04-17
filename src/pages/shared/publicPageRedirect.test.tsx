@@ -43,6 +43,7 @@ describe('usePreferredPublicLanguageRedirect', () => {
 
   beforeEach(() => {
     window.localStorage.clear()
+    document.cookie = 'vocdoni-public-language=; Max-Age=0; Path=/'
     Object.defineProperty(window, 'navigator', {
       configurable: true,
       value: {
@@ -83,6 +84,22 @@ describe('usePreferredPublicLanguageRedirect', () => {
     })
 
     expect(window.localStorage.getItem('i18nextLng')).toBe('it')
+  })
+
+  it('prefers the consented language cookie over a stale local storage value', async () => {
+    const navigate = vi.fn()
+    window.history.replaceState({}, '', '/ca/processes/0xprocess')
+    window.localStorage.setItem('vocdoni-cookie-consent', 'accepted')
+    window.localStorage.setItem('i18nextLng', 'en')
+    document.cookie = 'vocdoni-public-language=ca; Path=/'
+
+    render(<TestRedirect pathname='/ca/processes/0xprocess' navigate={navigate} />)
+
+    await waitFor(() => {
+      expect(navigate).not.toHaveBeenCalled()
+    })
+
+    expect(window.localStorage.getItem('i18nextLng')).toBe('ca')
   })
 
   it('does not redirect when the stored and current languages already match', async () => {

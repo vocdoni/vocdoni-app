@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  clearPublicLanguageCookie,
+  getStoredPublicLanguage,
+  getSupportedPublicLanguages,
+  persistPublicLanguageCookie,
+} from '~i18n/public-language'
 import { AppEnv } from '~src/app-env'
 
 import { AlertRoot as Alert, AlertDescription, AlertTitle, Box, Button, HStack, Link } from '@chakra-ui/react'
@@ -27,14 +33,35 @@ export function CookieConsent() {
     }
   }, [])
 
+  const syncPublicLanguageCookie = () => {
+    const supportedLanguages = getSupportedPublicLanguages()
+    const storedLanguage = getStoredPublicLanguage({
+      supportedLanguages,
+      storage: window.localStorage,
+    })
+
+    if (!storedLanguage) return
+
+    persistPublicLanguageCookie(storedLanguage, {
+      supportedLanguages,
+      document,
+      location: window.location,
+    })
+  }
+
   const handleAccept = () => {
     setCookieConsent(true)
+    syncPublicLanguageCookie()
     initializeGTM(true)
     setOpen(false)
   }
 
   const handleReject = () => {
     setCookieConsent(false)
+    clearPublicLanguageCookie({
+      document,
+      location: window.location,
+    })
     initializeGTM(false)
     setOpen(false)
   }

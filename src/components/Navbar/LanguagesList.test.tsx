@@ -30,6 +30,8 @@ vi.mock('react-i18next', async (importOriginal) => {
 describe('LanguagesList', () => {
   beforeEach(() => {
     changeLanguage.mockReset()
+    window.localStorage.clear()
+    document.cookie = 'vocdoni-public-language=; Max-Age=0; Path=/'
   })
 
   it('renders the languages menu trigger when multiple languages exist', async () => {
@@ -71,5 +73,16 @@ describe('LanguagesList', () => {
 
     expect(locationAssign).toHaveBeenCalledWith('/es/account/signin')
     expect(changeLanguage).not.toHaveBeenCalled()
+  })
+
+  it('persists a language cookie when consent was accepted', async () => {
+    window.localStorage.setItem('vocdoni-cookie-consent', 'accepted')
+    const locationAssign = vi.fn()
+    const { navigateToLanguage } = await import('./LanguagesList')
+
+    navigateToLanguage('es', { language: 'en', changeLanguage } as any, undefined, locationAssign)
+
+    expect(document.cookie).toContain('vocdoni-public-language=es')
+    expect(window.localStorage.getItem('i18nextLng')).toBe('es')
   })
 })

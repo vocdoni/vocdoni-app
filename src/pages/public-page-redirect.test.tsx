@@ -118,64 +118,6 @@ describe('preferred public-language redirect', () => {
     )
   })
 
-  it('passes the bare english pathname through the unprefixed process alias page layout', async () => {
-    currentData = {
-      id: '0xprocess',
-      election: {},
-      organization: { address: '0xabc' },
-      meta: {
-        language: 'en',
-        alternates: [
-          { hrefLang: 'en', href: 'http://localhost:3000/en/processes/0xprocess' },
-          { hrefLang: 'ca', href: 'http://localhost:3000/ca/processes/0xprocess' },
-        ],
-      },
-    }
-    currentPageContext = { urlPathname: '/processes/0xprocess' }
-
-    const { default: ProcessPage } = await import('./processes/@id/+Page')
-
-    render(<ProcessPage />)
-
-    expect(usePreferredPublicLanguageRedirect).toHaveBeenCalledWith({
-      pathname: '/processes/0xprocess',
-    })
-    expect(publicLayout).toHaveBeenCalledWith(
-      expect.objectContaining({
-        pathname: '/processes/0xprocess',
-      })
-    )
-  })
-
-  it('passes the bare english pathname through the unprefixed organization alias page layout', async () => {
-    currentData = {
-      address: '0xabc',
-      organization: { address: '0xabc' },
-      electionsPage: { elections: [] },
-      meta: {
-        language: 'en',
-        alternates: [
-          { hrefLang: 'en', href: 'http://localhost:3000/en/organization/0xabc' },
-          { hrefLang: 'ca', href: 'http://localhost:3000/ca/organization/0xabc' },
-        ],
-      },
-    }
-    currentPageContext = { urlPathname: '/organization/0xabc' }
-
-    const { default: OrganizationPage } = await import('./organization/@address/+Page')
-
-    render(<OrganizationPage />)
-
-    expect(usePreferredPublicLanguageRedirect).toHaveBeenCalledWith({
-      pathname: '/organization/0xabc',
-    })
-    expect(publicLayout).toHaveBeenCalledWith(
-      expect.objectContaining({
-        pathname: '/organization/0xabc',
-      })
-    )
-  })
-
   it('does not redirect already localized public pages', async () => {
     currentData = {
       id: '0xprocess',

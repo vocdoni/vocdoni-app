@@ -1,6 +1,8 @@
 import { getLanguagesEnv } from '~src/app-env'
 
 export const PUBLIC_LANGUAGE_STORAGE_KEY = 'i18nextLng'
+export const PUBLIC_LANGUAGE_COOKIE_KEY = 'vocdoni-public-language'
+const PUBLIC_LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 
 export const getSupportedPublicLanguages = () => Object.keys(getLanguagesEnv())
 
@@ -47,6 +49,131 @@ export const persistPublicLanguage = (
 
   if (normalizedLanguage) {
     storage?.setItem(PUBLIC_LANGUAGE_STORAGE_KEY, normalizedLanguage)
+  }
+
+  return normalizedLanguage
+}
+
+const readCookieValue = (cookie: string | undefined, key: string) => {
+  if (!cookie) return null
+
+  const entry = cookie
+    .split(';')
+    .map((segment) => segment.trim())
+    .find((segment) => segment.startsWith(`${key}=`))
+
+  if (!entry) return null
+
+  return decodeURIComponent(entry.slice(key.length + 1))
+}
+
+const buildPublicLanguageCookie = ({ language, secure }: { language: string; secure: boolean }) =>
+  `${PUBLIC_LANGUAGE_COOKIE_KEY}=${encodeURIComponent(language)}; Max-Age=${PUBLIC_LANGUAGE_COOKIE_MAX_AGE}; Path=/; SameSite=Lax${secure ? '; Secure' : ''}`
+
+const buildPublicLanguageCookieRemoval = ({ secure }: { secure: boolean }) =>
+  `${PUBLIC_LANGUAGE_COOKIE_KEY}=; Max-Age=0; Path=/; SameSite=Lax${secure ? '; Secure' : ''}`
+
+export const getPublicLanguageFromCookie = ({
+  supportedLanguages,
+  cookie,
+}: {
+  supportedLanguages: string[]
+  cookie?: string
+}) => {
+  const cookieLanguage = readCookieValue(cookie, PUBLIC_LANGUAGE_COOKIE_KEY)
+
+  return cookieLanguage ? normalizePublicLanguageCandidate(cookieLanguage, supportedLanguages) : null
+}
+
+export const persistPublicLanguageCookie = (
+  language: string,
+  {
+    supportedLanguages,
+    document,
+    location,
+  }: {
+    supportedLanguages: string[]
+    document?: Pick<Document, 'cookie'>
+    location?: Pick<Location, 'protocol'>
+  }
+) => {
+  const normalizedLanguage = normalizePublicLanguageCandidate(language, supportedLanguages)
+
+  if (!normalizedLanguage) return null
+
+  if (document) {
+    document.cookie = buildPublicLanguageCookie({
+      language: normalizedLanguage,
+      secure: location?.protocol === 'https:',
+    })
+  }
+
+  return normalizedLanguage
+}
+
+export const clearPublicLanguageCookie = ({
+  document,
+  location,
+}: {
+  document?: Pick<Document, 'cookie'>
+  location?: Pick<Location, 'protocol'>
+} = {}) => {
+  if (!document) return
+
+  document.cookie = buildPublicLanguageCookieRemoval({
+    secure: location?.protocol === 'https:',
+  })
+}
+
+export const getPersistedPublicLanguageClient = ({
+  supportedLanguages,
+  storage,
+  cookie,
+  cookieEnabled,
+}: {
+  supportedLanguages: string[]
+  storage?: Pick<Storage, 'getItem'>
+  cookie?: string
+  cookieEnabled?: boolean
+}) => {
+  if (cookieEnabled) {
+    const cookieLanguage = getPublicLanguageFromCookie({ supportedLanguages, cookie })
+
+    if (cookieLanguage) {
+      return cookieLanguage
+    }
+  }
+
+  return getStoredPublicLanguage({ supportedLanguages, storage })
+}
+
+export const persistPublicLanguagePreferenceClient = (
+  language: string,
+  {
+    supportedLanguages,
+    storage,
+    cookieEnabled,
+    document,
+    location,
+  }: {
+    supportedLanguages: string[]
+    storage?: Pick<Storage, 'setItem'>
+    cookieEnabled?: boolean
+    document?: Pick<Document, 'cookie'>
+    location?: Pick<Location, 'protocol'>
+  }
+) => {
+  const normalizedLanguage = persistPublicLanguage(language, {
+    supportedLanguages,
+    storage,
+  })
+
+  if (normalizedLanguage && cookieEnabled) {
+    persistPublicLanguageCookie(normalizedLanguage, {
+      supportedLanguages,
+      document,
+      location,
+    })
   }
 
   return normalizedLanguage

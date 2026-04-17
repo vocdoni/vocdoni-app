@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
+import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
 import {
-  getPublicPathLanguageContext,
   getDefaultPublicLanguage,
-  getStoredPublicLanguage,
+  getPersistedPublicLanguageClient,
+  getPublicPathLanguageContext,
   getSupportedPublicLanguages,
   localizePublicPath,
-  persistPublicLanguage,
+  persistPublicLanguagePreferenceClient,
   resolvePreferredPublicLanguageClient,
 } from '~i18n/public-language'
 
@@ -24,19 +25,33 @@ export const usePreferredPublicLanguageRedirect = ({
     if (typeof window === 'undefined') return
 
     const supportedLanguages = getSupportedPublicLanguages()
+    const cookieEnabled = hasAcceptedCookieConsent()
     const { routeLanguage } = getPublicPathLanguageContext(pathname, supportedLanguages)
-    const preferredLanguage = getStoredPublicLanguage({
+    const preferredLanguage = getPersistedPublicLanguageClient({
       supportedLanguages,
       storage: window.localStorage,
+      cookie: document.cookie,
+      cookieEnabled,
     })
 
     if (!preferredLanguage) {
-      persistPublicLanguage(routeLanguage, {
+      persistPublicLanguagePreferenceClient(routeLanguage, {
         supportedLanguages,
         storage: window.localStorage,
+        cookieEnabled,
+        document,
+        location: window.location,
       })
       return
     }
+
+    persistPublicLanguagePreferenceClient(preferredLanguage, {
+      supportedLanguages,
+      storage: window.localStorage,
+      cookieEnabled,
+      document,
+      location: window.location,
+    })
 
     if (preferredLanguage === routeLanguage) return
 
@@ -57,17 +72,29 @@ export const useRootLanguageRedirect = ({ navigate }: { navigate?: (url: string)
 
     const supportedLanguages = getSupportedPublicLanguages()
     const defaultLanguage = getDefaultPublicLanguage(supportedLanguages)
-    const preferredLanguage = resolvePreferredPublicLanguageClient({
+    const cookieEnabled = hasAcceptedCookieConsent()
+    const persistedLanguage = getPersistedPublicLanguageClient({
       supportedLanguages,
-      defaultLanguage,
       storage: window.localStorage,
-      navigatorLanguages: [...(window.navigator.languages ?? []), window.navigator.language].filter(Boolean),
+      cookie: document.cookie,
+      cookieEnabled,
     })
+    const preferredLanguage =
+      persistedLanguage ??
+      resolvePreferredPublicLanguageClient({
+        supportedLanguages,
+        defaultLanguage,
+        storage: window.localStorage,
+        navigatorLanguages: [...(window.navigator.languages ?? []), window.navigator.language].filter(Boolean),
+      })
     const redirectTarget = `/${preferredLanguage}`
 
-    persistPublicLanguage(preferredLanguage, {
+    persistPublicLanguagePreferenceClient(preferredLanguage, {
       supportedLanguages,
       storage: window.localStorage,
+      cookieEnabled,
+      document,
+      location: window.location,
     })
 
     if (normalizePathname(window.location.pathname) === normalizePathname(redirectTarget)) return
@@ -86,15 +113,21 @@ export const useLegacyPublicPathRedirect = ({
     if (typeof window === 'undefined') return
 
     const supportedLanguages = getSupportedPublicLanguages()
+    const cookieEnabled = hasAcceptedCookieConsent()
     const preferredLanguage =
-      getStoredPublicLanguage({
+      getPersistedPublicLanguageClient({
         supportedLanguages,
         storage: window.localStorage,
+        cookie: document.cookie,
+        cookieEnabled,
       }) ?? getDefaultPublicLanguage(supportedLanguages)
 
-    persistPublicLanguage(preferredLanguage, {
+    persistPublicLanguagePreferenceClient(preferredLanguage, {
       supportedLanguages,
       storage: window.localStorage,
+      cookieEnabled,
+      document,
+      location: window.location,
     })
 
     const redirectTarget = localizePublicPath({

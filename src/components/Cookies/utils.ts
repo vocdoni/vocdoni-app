@@ -35,6 +35,10 @@ export function hasCookieConsent(): boolean {
   return consent === CONSENT_ACCEPTED || consent === CONSENT_REJECTED
 }
 
+export function hasAcceptedCookieConsent(): boolean {
+  return getCookieConsent() === CONSENT_ACCEPTED
+}
+
 /**
  * Initialize Google Tag Manager with or without cookie storage
  * @param withCookies - if true, GTM will use cookies; if false, storage will be disabled

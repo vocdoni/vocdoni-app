@@ -1,16 +1,20 @@
 import {
+  clearPublicLanguageCookie,
+  getPersistedPublicLanguageClient,
+  getPublicLanguageFromCookie,
   getPublicPathLanguageContext,
   getStoredPublicLanguage,
-  isAuthPath,
   isAdminPath,
+  isAuthPath,
   isBareEnglishPublicPath,
   isCanonicalLocalizedPublicPath,
   localizePublicPath,
   normalizePublicLanguageCandidate,
   persistPublicLanguage,
+  persistPublicLanguageCookie,
   resolvePreferredPublicLanguageClient,
-  toCanonicalPublicPath,
   stripPublicLanguagePrefix,
+  toCanonicalPublicPath,
 } from './public-language'
 
 describe('public language helpers', () => {
@@ -76,6 +80,61 @@ describe('public language helpers', () => {
         },
       })
     ).toBe('it')
+  })
+
+  it('reads and writes the normalized public language cookie', () => {
+    const cookieDocument = { cookie: '' }
+
+    persistPublicLanguageCookie('ca-ES', {
+      supportedLanguages: ['en', 'es', 'ca'],
+      document: cookieDocument,
+      location: { protocol: 'https:' },
+    })
+
+    expect(cookieDocument.cookie).toContain('vocdoni-public-language=ca')
+    expect(cookieDocument.cookie).toContain('Secure')
+    expect(
+      getPublicLanguageFromCookie({
+        supportedLanguages: ['en', 'es', 'ca'],
+        cookie: cookieDocument.cookie,
+      })
+    ).toBe('ca')
+  })
+
+  it('clears the public language cookie', () => {
+    const cookieDocument = { cookie: 'vocdoni-public-language=ca' }
+
+    clearPublicLanguageCookie({
+      document: cookieDocument,
+      location: { protocol: 'https:' },
+    })
+
+    expect(cookieDocument.cookie).toContain('vocdoni-public-language=')
+    expect(cookieDocument.cookie).toContain('Max-Age=0')
+  })
+
+  it('prefers the cookie-backed public language over local storage when enabled', () => {
+    expect(
+      getPersistedPublicLanguageClient({
+        supportedLanguages: ['en', 'es', 'ca'],
+        storage: {
+          getItem: () => 'es',
+        },
+        cookie: 'vocdoni-public-language=ca',
+        cookieEnabled: true,
+      })
+    ).toBe('ca')
+
+    expect(
+      getPersistedPublicLanguageClient({
+        supportedLanguages: ['en', 'es', 'ca'],
+        storage: {
+          getItem: () => 'es',
+        },
+        cookie: 'vocdoni-public-language=ca',
+        cookieEnabled: false,
+      })
+    ).toBe('es')
   })
 
   it('builds canonical public paths with a prefixed language, including english', () => {
