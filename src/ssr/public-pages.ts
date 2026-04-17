@@ -5,7 +5,6 @@ import {
   ErrElectionNotFound,
   PublishedElection,
 } from '@vocdoni/sdk'
-import { AppTitle } from '~constants'
 import { getDefaultPublicLanguage, normalizePublicLanguageCandidate } from '~i18n/public-language'
 
 type PublicLanguageAlternate = {
@@ -13,11 +12,13 @@ type PublicLanguageAlternate = {
   href: string
 }
 
+type LocalizedText = Record<string, string | undefined>
+
 type OrganizationData = {
   address: string
   account?: {
-    name?: { default?: string }
-    description?: { default?: string }
+    name?: LocalizedText
+    description?: LocalizedText
   }
 }
 
@@ -80,10 +81,49 @@ const serializeUnknown = (value: unknown): unknown => {
 
 const trimSlashes = (value: string) => value.replace(/^\/+|\/+$/g, '')
 const trimText = (value?: string) => value?.trim() ?? ''
+const normalizeWhitespace = (value: string) => value.replace(/\s+/g, ' ').trim()
+const stripHtml = (value: string) => value.replace(/<[^>]+>/g, ' ')
+const stripMarkdown = (value: string) =>
+  value
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[`*_~>#-]/g, ' ')
+    .replace(/\|/g, ' ')
+const sanitizeText = (value?: string) => normalizeWhitespace(stripMarkdown(stripHtml(trimText(value))))
+const clampText = (value: string, maxLength: number) => {
+  if (value.length <= maxLength) return value
 
-const withAppTitle = (value: string) => `${AppTitle} - ${value}`
+  return `${value.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`
+}
+const getLocalizedText = (value: LocalizedText | undefined, language: string) => {
+  if (!value) return ''
 
+  const exactLanguage = sanitizeText(value[language])
+  if (exactLanguage) return exactLanguage
+
+  const baseLanguage = language.split('-')[0]
+  const baseMatch = sanitizeText(value[baseLanguage])
+  if (baseMatch) return baseMatch
+
+  const defaultValue = sanitizeText(value.default)
+  if (defaultValue) return defaultValue
+
+  const firstValue = Object.values(value)
+    .map((entry) => sanitizeText(entry))
+    .find(Boolean)
+
+  return firstValue ?? ''
+}
+const withBrandSuffix = (value: string) => `${value} | ${publicSiteName}`
 const buildShortDescription = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' — ')
+const buildMetaDescription = (primary: string | undefined, ...fallbackParts: Array<string | undefined>) => {
+  const sanitizedPrimary = sanitizeText(primary)
+  if (sanitizedPrimary) return clampText(sanitizedPrimary, 160)
+
+  return clampText(sanitizeText(buildShortDescription(...fallbackParts)), 160)
+}
+const buildMetaTitle = (...parts: Array<string | undefined>) =>
+  clampText(withBrandSuffix(parts.filter(Boolean).join(' | ')), 60)
 const publicSocialImagePath = '/assets/vocdoniapp.png'
 const publicSiteName = 'Vocdoni'
 const publicTwitterAccount = '@vocdoni'
@@ -231,19 +271,21 @@ export const buildOrganizationMeta = ({
   language: string
   alternates: PublicLanguageAlternate[]
 }): PublicMeta => {
-  const displayName = trimText(organization.account?.name?.default) || organization.address
-  const description = trimText(organization.account?.description?.default) || displayName
+  const displayName = getLocalizedText(organization.account?.name, language) || organization.address
+  const description =
+    buildMetaDescription(getLocalizedText(organization.account?.description, language), displayName) || displayName
 
   const socialImage = buildSocialImageUrl(canonicalUrl)
+  const title = buildMetaTitle(displayName)
 
   return {
-    title: withAppTitle(displayName),
+    title,
     description,
     language,
     canonicalUrl,
     alternates,
     openGraph: {
-      title: withAppTitle(displayName),
+      title,
       description,
       url: canonicalUrl,
       type: 'website',
@@ -252,7 +294,7 @@ export const buildOrganizationMeta = ({
     },
     twitter: {
       card: 'summary_large_image',
-      title: withAppTitle(displayName),
+      title,
       description,
       image: socialImage,
       site: publicTwitterAccount,
@@ -274,20 +316,26 @@ export const buildProcessMeta = ({
   language: string
   alternates: PublicLanguageAlternate[]
 }): PublicMeta => {
-  const electionTitle = trimText(election.title?.default) || election.id
-  const organizationName = trimText(organization?.account?.name?.default)
-  const description = trimText(election.description?.default) || buildShortDescription(electionTitle, organizationName)
+  const electionTitle = getLocalizedText(election.title as LocalizedText | undefined, language) || election.id
+  const organizationName = getLocalizedText(organization?.account?.name, language)
+  const description =
+    buildMetaDescription(
+      getLocalizedText(election.description as LocalizedText | undefined, language),
+      electionTitle,
+      organizationName
+    ) || electionTitle
 
   const socialImage = buildSocialImageUrl(canonicalUrl)
+  const title = buildMetaTitle(electionTitle, organizationName)
 
   return {
-    title: withAppTitle(electionTitle),
+    title,
     description,
     language,
     canonicalUrl,
     alternates,
     openGraph: {
-      title: withAppTitle(electionTitle),
+      title,
       description,
       url: canonicalUrl,
       type: 'website',
@@ -296,7 +344,7 @@ export const buildProcessMeta = ({
     },
     twitter: {
       card: 'summary_large_image',
-      title: withAppTitle(electionTitle),
+      title,
       description,
       image: socialImage,
       site: publicTwitterAccount,

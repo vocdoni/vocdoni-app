@@ -197,9 +197,10 @@ describe('metadata builders', () => {
       alternates: [],
     })
 
-    expect(meta.title).toContain('Vocdoni Association')
+    expect(meta.title).toBe('Vocdoni Association | Vocdoni')
     expect(meta.description).toContain('digital voting organization')
     expect(meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
+    expect(meta.openGraph.title).toBe('Vocdoni Association | Vocdoni')
     expect(meta.openGraph.url).toBe('https://app.example.org/organization/0xabc')
     expect(meta.twitter.card).toBe('summary_large_image')
   })
@@ -214,7 +215,7 @@ describe('metadata builders', () => {
       alternates: [],
     })
 
-    expect(meta.title).toContain('Fallback Org')
+    expect(meta.title).toBe('Fallback Org | Vocdoni')
     expect(meta.description).toBe('Fallback Org')
     expect(meta.canonicalUrl).toBeUndefined()
   })
@@ -229,7 +230,7 @@ describe('metadata builders', () => {
       alternates: [],
     })
 
-    expect(meta.title).toContain('0xfallback')
+    expect(meta.title).toBe('0xfallback | Vocdoni')
     expect(meta.description).toBe('0xfallback')
     expect(meta.canonicalUrl).toBeUndefined()
   })
@@ -243,8 +244,9 @@ describe('metadata builders', () => {
       alternates: [],
     })
 
-    expect(meta.title).toContain('Board election 2026')
+    expect(meta.title).toBe('Board election 2026 | Vocdoni Association | Vocdoni')
     expect(meta.description).toBe('Vote for the next board members.')
+    expect(meta.openGraph.title).toBe('Board election 2026 | Vocdoni Association | Vocdoni')
     expect(meta.openGraph.url).toBe('https://app.example.org/processes/0xprocess')
   })
 
@@ -257,6 +259,26 @@ describe('metadata builders', () => {
     })
 
     expect(meta.description).toBe('Board election 2026 — Vocdoni Association')
+  })
+
+  it('prefers route-language metadata values when localized text exists', () => {
+    const meta = buildProcessMeta({
+      election: createElection({
+        title: { default: 'Board election 2026', ca: 'Elecció del consell 2026' },
+        description: { default: 'Vote for the next board members.', ca: 'Vota pels nous membres del consell.' },
+      }),
+      organization: createOrganization({
+        account: {
+          name: { default: 'Vocdoni Association', ca: 'Associació Vocdoni' },
+          description: { default: 'A digital voting organization for tests.', ca: 'Una organització de vot digital.' },
+        },
+      }),
+      language: 'ca',
+      alternates: [],
+    })
+
+    expect(meta.title).toBe('Elecció del consell 2026 | Associació Vocdoni | Vocdoni')
+    expect(meta.description).toBe('Vota pels nous membres del consell.')
   })
 
   it('omits canonical data when the request origin is unavailable', () => {
