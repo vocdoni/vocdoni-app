@@ -1,4 +1,3 @@
-import { Box, Flex, HStack } from '@chakra-ui/react'
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import PublicLayout from './PublicLayout'
 

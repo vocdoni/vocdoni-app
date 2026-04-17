@@ -6,16 +6,25 @@ import { useAuth } from '~components/Auth/useAuth'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~src/router/routes'
 
-const NotFound = () => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { isAuthenticated } = useAuth()
-  const { pathname } = useLocation()
-
+export const getNotFoundReturnPath = ({
+  isAuthenticated,
+  pathname,
+}: {
+  isAuthenticated?: boolean
+  pathname: string
+}) => {
   const inAdminContext = !!matchPath('/admin/*', pathname)
 
-  const redirectToDashboardOrHome = () =>
-    navigate(isAuthenticated && inAdminContext ? Routes.dashboard.base : Routes.root)
+  return isAuthenticated && inAdminContext ? Routes.dashboard.base : Routes.root
+}
+
+export type NotFoundViewProps = {
+  onReturnHome?: () => void
+  returnHomeHref?: string
+}
+
+export const NotFoundView = ({ onReturnHome, returnHomeHref }: NotFoundViewProps) => {
+  const { t } = useTranslation()
 
   return (
     <Flex direction='column' align='center' justify='center' textAlign='center' gap={3} minH='30vh'>
@@ -29,11 +38,39 @@ const NotFound = () => {
         })}
       </SubHeading>
 
-      <Button onClick={redirectToDashboardOrHome}>
-        <Icon as={LuHouse} />
-        {t('error.return_to_home')}
-      </Button>
+      {returnHomeHref ? (
+        <Button asChild>
+          <a href={returnHomeHref}>
+            <Icon as={LuHouse} />
+            {t('error.return_to_home')}
+          </a>
+        </Button>
+      ) : (
+        <Button onClick={onReturnHome}>
+          <Icon as={LuHouse} />
+          {t('error.return_to_home')}
+        </Button>
+      )}
     </Flex>
+  )
+}
+
+const NotFound = () => {
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+  const { pathname } = useLocation()
+
+  return (
+    <NotFoundView
+      onReturnHome={() =>
+        navigate(
+          getNotFoundReturnPath({
+            isAuthenticated,
+            pathname,
+          })
+        )
+      }
+    />
   )
 }
 

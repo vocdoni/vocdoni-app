@@ -1,24 +1,32 @@
 import { Flex, Text } from '@chakra-ui/react'
 import { ErrAccountNotFound, ErrAddressMalformed, ErrCantParseElectionID, ErrElectionNotFound } from '@vocdoni/sdk'
-import { lazy } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useRouteError } from 'react-router-dom'
+import { useLocation, useNavigate, useRouteError } from 'react-router-dom'
 import { RiErrorWarningLine } from 'react-icons/ri'
+import { useAuth } from '~components/Auth/useAuth'
+import { getNotFoundReturnPath, NotFoundView } from './NotFound'
 
-const NotFound = lazy(() => import('./NotFound'))
+export type ErrorViewProps = {
+  isNotFound?: boolean
+  message?: string
+  onReturnHome?: () => void
+  returnHomeHref?: string
+}
 
-const Error = () => {
+export const isNotFoundError = (error: unknown) =>
+  error instanceof ErrElectionNotFound ||
+  error instanceof ErrCantParseElectionID ||
+  error instanceof ErrAddressMalformed ||
+  error instanceof ErrAccountNotFound
+
+export const ErrorView = ({ isNotFound = false, message, onReturnHome, returnHomeHref }: ErrorViewProps) => {
   const { t } = useTranslation()
-  const error = useRouteError()
 
-  if (
-    error instanceof ErrElectionNotFound ||
-    error instanceof ErrCantParseElectionID ||
-    error instanceof ErrAddressMalformed ||
-    error instanceof ErrAccountNotFound
-  ) {
-    return <NotFound />
+  if (isNotFound) {
+    return <NotFoundView onReturnHome={onReturnHome} returnHomeHref={returnHomeHref} />
   }
+
+  const errorMessage = message ?? t('error.loading_page')
 
   return (
     <Flex
@@ -34,8 +42,30 @@ const Error = () => {
     >
       <RiErrorWarningLine />
       <Text>{t('error.loading_page')}</Text>
-      <Text>{(error as Error).toString()}</Text>
+      <Text>{errorMessage}</Text>
     </Flex>
+  )
+}
+
+const Error = () => {
+  const error = useRouteError()
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+  const { pathname } = useLocation()
+
+  return (
+    <ErrorView
+      isNotFound={isNotFoundError(error)}
+      message={(error as Error)?.toString()}
+      onReturnHome={() =>
+        navigate(
+          getNotFoundReturnPath({
+            isAuthenticated,
+            pathname,
+          })
+        )
+      }
+    />
   )
 }
 
