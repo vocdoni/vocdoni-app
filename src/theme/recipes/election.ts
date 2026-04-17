@@ -102,10 +102,7 @@ export const ElectionResults = defineSlotRecipe({
   base: {
     wrapper: {
       display: 'grid',
-      gridTemplateColumns: {
-        base: '1fr',
-        md: 'repeat(2, minmax(0, 1fr))',
-      },
+      gridTemplateColumns: '1fr',
       alignItems: 'start',
       gap: 6,
     },
