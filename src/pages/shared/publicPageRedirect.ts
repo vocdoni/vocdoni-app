@@ -74,3 +74,36 @@ export const useRootLanguageRedirect = ({ navigate }: { navigate?: (url: string)
     ;(navigate ?? ((url: string) => window.location.replace(url)))(withLocationSuffix(redirectTarget))
   }, [navigate])
 }
+
+export const useLegacyPublicPathRedirect = ({
+  pathname,
+  navigate,
+}: {
+  pathname: string
+  navigate?: (url: string) => void
+}) => {
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const supportedLanguages = getSupportedPublicLanguages()
+    const preferredLanguage =
+      getStoredPublicLanguage({
+        supportedLanguages,
+        storage: window.localStorage,
+      }) ?? getDefaultPublicLanguage(supportedLanguages)
+
+    persistPublicLanguage(preferredLanguage, {
+      supportedLanguages,
+      storage: window.localStorage,
+    })
+
+    const redirectTarget = localizePublicPath({
+      pathname,
+      language: preferredLanguage,
+      supportedLanguages,
+    })
+
+    if (normalizePathname(window.location.pathname) === normalizePathname(redirectTarget)) return
+    ;(navigate ?? ((url: string) => window.location.replace(url)))(withLocationSuffix(redirectTarget))
+  }, [navigate, pathname])
+}

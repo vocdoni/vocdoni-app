@@ -62,14 +62,14 @@ describe('LanguagesList', () => {
     expect(changeLanguage).not.toHaveBeenCalled()
   })
 
-  it('keeps auth routes unprefixed when changing language', async () => {
-    window.history.replaceState({}, '', '/account/signin')
+  it('localizes auth routes when changing language', async () => {
+    window.history.replaceState({}, '', '/en/account/signin')
     const locationAssign = vi.fn()
     const { navigateToLanguage } = await import('./LanguagesList')
 
     navigateToLanguage('es', { language: 'en', changeLanguage } as any, undefined, locationAssign)
 
-    expect(locationAssign).not.toHaveBeenCalled()
-    expect(changeLanguage).toHaveBeenCalledWith('es')
+    expect(locationAssign).toHaveBeenCalledWith('/es/account/signin')
+    expect(changeLanguage).not.toHaveBeenCalled()
   })
 })

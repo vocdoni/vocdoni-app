@@ -99,14 +99,13 @@ export const isCanonicalLocalizedPublicPath = (pathname: string, supportedLangua
   const normalizedPathname = pathname.replace(/\/+$/, '') || '/'
   const strippedPathname = stripPublicLanguagePrefix(normalizedPathname, supportedLanguages)
 
-  return normalizedPathname !== strippedPathname && !isUnlocalizedPath(strippedPathname)
+  return normalizedPathname !== strippedPathname
 }
 
 export const isBareEnglishPublicPath = (pathname: string, supportedLanguages: string[]) => {
   const normalizedPathname = pathname.replace(/\/+$/, '') || '/'
 
   if (normalizedPathname === '/') return false
-  if (isUnlocalizedPath(normalizedPathname)) return false
 
   return !isCanonicalLocalizedPublicPath(normalizedPathname, supportedLanguages)
 }
@@ -156,5 +155,3 @@ export const localizePublicPath = ({
 export const isAdminPath = (pathname: string) => pathname === '/admin' || pathname.startsWith('/admin/')
 
 export const isAuthPath = (pathname: string) => pathname === '/account' || pathname.startsWith('/account/')
-
-export const isUnlocalizedPath = (pathname: string) => isAdminPath(pathname) || isAuthPath(pathname)

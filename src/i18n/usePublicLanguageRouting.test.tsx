@@ -48,8 +48,8 @@ describe('usePublicLanguageRouting', () => {
     expect(window.localStorage.getItem('i18nextLng')).toBe('ca')
   })
 
-  it('keeps auth routes unlocalized and only changes i18n state', async () => {
-    window.history.replaceState({}, '', '/account/signin')
+  it('localizes auth routes like any other app route', async () => {
+    window.history.replaceState({}, '', '/en/account/signin')
     const navigate = vi.fn()
     const { result } = renderHook(() => usePublicLanguageRouting({ navigate }))
 
@@ -57,8 +57,8 @@ describe('usePublicLanguageRouting', () => {
       await result.current.navigateToLanguage('es')
     })
 
-    expect(navigate).not.toHaveBeenCalled()
-    expect(changeLanguage).toHaveBeenCalledWith('es')
+    expect(navigate).toHaveBeenCalledWith('/es/account/signin')
+    expect(changeLanguage).not.toHaveBeenCalled()
     expect(window.localStorage.getItem('i18nextLng')).toBe('es')
   })
 })

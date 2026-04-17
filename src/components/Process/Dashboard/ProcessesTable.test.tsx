@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import type { ReactNode } from 'react'
 import { fireEvent, mockUseElection, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
@@ -96,5 +97,20 @@ describe('ProcessesTable', () => {
     await waitFor(() => {
       expect(screen.getByText('Download PDF')).toBeInTheDocument()
     })
+  })
+
+  it('opens the public voting page with a single localized prefix from the dashboard', async () => {
+    render(
+      <TestMemoryRouter basename='/ca' initialEntries={['/ca/admin/processes']}>
+        <ProcessesTable processes={[election as any]} />
+      </TestMemoryRouter>
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /open actions/i }))
+
+    expect(await screen.findByRole('menuitem', { name: /public voting page/i })).toHaveAttribute(
+      'href',
+      '/en/processes/0x1'
+    )
   })
 })

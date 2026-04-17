@@ -1,10 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import {
-  getSupportedPublicLanguages,
-  isUnlocalizedPath,
-  localizePublicPath,
-  persistPublicLanguage,
-} from './public-language'
+import { getSupportedPublicLanguages, localizePublicPath, persistPublicLanguage } from './public-language'
 
 const defaultNavigate = (url: string) => window.location.assign(url)
 
@@ -37,7 +32,7 @@ export const navigateToPublicLanguage = async ({
 
   const pathname = currentPathname ?? (typeof window === 'undefined' ? undefined : window.location.pathname)
 
-  if (pathname && !isUnlocalizedPath(pathname)) {
+  if (pathname) {
     navigate(
       localizePublicPath({
         pathname,
@@ -45,10 +40,9 @@ export const navigateToPublicLanguage = async ({
         supportedLanguages,
       })
     )
-    return
+  } else {
+    await changeLanguage(language)
   }
-
-  await changeLanguage(language)
 }
 
 export const usePublicLanguageRouting = ({

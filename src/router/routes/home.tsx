@@ -1,10 +1,10 @@
 import { useClient } from '@vocdoni/react-components'
 import { lazy, useMemo } from 'react'
+import { Navigate } from 'react-router-dom'
 import { AppEnv, getCustomOrganizationDomainsEnv } from '~src/app-env'
 import { parseProcessIds } from '~components/Home/SharedCensus'
 import Layout from '~elements/Layout'
 import SimpleLayout from '~elements/SimpleLayout'
-import { AppNavigate } from '../appNavigation'
 import { SuspenseLoader } from '../SuspenseLoader'
 
 const SharedCensus = lazy(() => import('~components/Home/SharedCensus'))
@@ -21,7 +21,7 @@ export const useHomeRoute = () => {
     if (!domainForHost && !shouldUseSharedCensus) {
       return {
         index: true,
-        element: <AppNavigate to='/admin' replace />,
+        element: <Navigate to='/admin' replace />,
       }
     }
 

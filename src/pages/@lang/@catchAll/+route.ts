@@ -9,7 +9,6 @@ export default (pageContext: { urlPathname: string }) => {
   const supportedLanguages = Object.keys(getLanguagesEnv())
 
   if (!supportedLanguages.includes(lang)) return false
-  if (rest === '/admin' || rest.startsWith('/admin/')) return false
   if (/^\/organization\/[^/]+\/?$/.test(rest)) return false
   if (/^\/processes\/[^/]+\/?$/.test(rest)) return false
 

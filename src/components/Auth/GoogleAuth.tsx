@@ -3,16 +3,16 @@ import { AuthStorageKeys, saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BsGoogle } from 'react-icons/bs'
+import { useNavigate } from 'react-router-dom'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { AppEnv } from '~src/app-env'
 import { useToast } from '~components/Toast'
-import { useAppNavigate } from '~src/router/appNavigation'
 import { Routes } from '~src/router/routes'
 import { useAuth } from './useAuth'
 
 const GoogleAuth = () => {
   const { setBearer, updateSigner } = useAuth()
-  const navigate = useAppNavigate()
+  const navigate = useNavigate()
   const { isConnected, connector } = useAccount()
   const { disconnect } = useDisconnect()
   const { t } = useTranslation()

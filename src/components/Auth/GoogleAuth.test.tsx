@@ -13,10 +13,6 @@ vi.mock('./useAuth', () => ({
   }),
 }))
 
-vi.mock('~src/router/appNavigation', () => ({
-  useAppNavigate: () => navigateMock,
-}))
-
 vi.mock('wagmi', async () => {
   const actual = await vi.importActual<typeof import('wagmi')>('wagmi')
   return {
@@ -24,6 +20,14 @@ vi.mock('wagmi', async () => {
     useAccount: () => ({ isConnected: true, connector: { id: 'google' } }),
     useConnect: () => ({ connect: vi.fn(), isPending: false, isError: false, error: null }),
     useDisconnect: () => ({ disconnect: disconnectMock }),
+  }
+})
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
+  return {
+    ...actual,
+    useNavigate: () => navigateMock,
   }
 })
 

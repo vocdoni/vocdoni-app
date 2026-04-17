@@ -2,8 +2,7 @@ import { Box, Flex, Heading, Icon, Link, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
-import { Outlet, useLocation } from 'react-router-dom'
-import { RouterAwareLink } from '~components/RouterAwareLink'
+import { Outlet, Link as RouterLink, useLocation } from 'react-router-dom'
 import { Routes } from '~routes'
 
 export type AuthOutletContextType = {
@@ -64,10 +63,10 @@ const LayoutAuth = () => {
     <Flex justifyContent='center' alignItems='center' minH='100vh' p={{ base: 6, md: 10 }}>
       <Flex w='full' maxW={{ base: 'sm', md: '3xl' }} flexDir='column' gap={2}>
         <Link asChild display='flex' alignItems='center' alignSelf='start'>
-          <RouterAwareLink to={isSignin ? Routes.vocdoni : Routes.auth.signIn}>
+          <RouterLink to={isSignin ? Routes.vocdoni : Routes.auth.signIn}>
             <Icon as={LuArrowLeft} />
             {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
-          </RouterAwareLink>
+          </RouterLink>
         </Link>
         <Flex
           w='full'

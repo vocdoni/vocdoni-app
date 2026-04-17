@@ -1,7 +1,6 @@
-import { Outlet, useLocation, useOutletContext } from 'react-router-dom'
+import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
 import { Loading } from '~src/router/SuspenseLoader'
-import { AppNavigate } from './appNavigation'
 import { Routes } from './routes'
 
 const NonLoggedRoute = () => {
@@ -14,7 +13,7 @@ const NonLoggedRoute = () => {
   }
 
   if (isAuthenticated && pathname !== Routes.auth.passwordReset) {
-    return <AppNavigate to={Routes.dashboard.base} replace />
+    return <Navigate to={Routes.dashboard.base} replace />
   }
 
   return <Outlet context={context} />

@@ -5,7 +5,6 @@ import {
   isAdminPath,
   isBareEnglishPublicPath,
   isCanonicalLocalizedPublicPath,
-  isUnlocalizedPath,
   localizePublicPath,
   normalizePublicLanguageCandidate,
   persistPublicLanguage,
@@ -98,10 +97,13 @@ describe('public language helpers', () => {
   it('classifies bare and localized public path variants', () => {
     expect(isBareEnglishPublicPath('/processes/0xprocess', ['en', 'ca'])).toBe(true)
     expect(isBareEnglishPublicPath('/plans', ['en', 'ca'])).toBe(true)
+    expect(isBareEnglishPublicPath('/admin', ['en', 'ca'])).toBe(true)
+    expect(isBareEnglishPublicPath('/account/signin', ['en', 'ca'])).toBe(true)
     expect(isBareEnglishPublicPath('/ca/processes/0xprocess', ['en', 'ca'])).toBe(false)
 
     expect(isCanonicalLocalizedPublicPath('/en/processes/0xprocess', ['en', 'ca'])).toBe(true)
     expect(isCanonicalLocalizedPublicPath('/ca/processes/0xprocess', ['en', 'ca'])).toBe(true)
+    expect(isCanonicalLocalizedPublicPath('/en/admin', ['en', 'ca'])).toBe(true)
     expect(isCanonicalLocalizedPublicPath('/processes/0xprocess', ['en', 'ca'])).toBe(false)
   })
 
@@ -138,11 +140,5 @@ describe('public language helpers', () => {
     expect(isAuthPath('/account')).toBe(true)
     expect(isAuthPath('/account/signin')).toBe(true)
     expect(isAuthPath('/en/account/signin')).toBe(false)
-  })
-
-  it('treats admin and auth routes as unlocalized paths', () => {
-    expect(isUnlocalizedPath('/admin/processes')).toBe(true)
-    expect(isUnlocalizedPath('/account/signin')).toBe(true)
-    expect(isUnlocalizedPath('/plans')).toBe(false)
   })
 })

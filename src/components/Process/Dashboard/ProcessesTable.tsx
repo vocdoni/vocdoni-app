@@ -137,10 +137,10 @@ const ProcessContextMenu = () => {
               </RouterLink>
             </Menu.Item>
             <Menu.Item value='public-voting-page' asChild>
-              <RouterLink to={publicProcessPath} target='_blank'>
+              <a href={publicProcessPath} target='_blank' rel='noopener noreferrer'>
                 <Icon as={LuExternalLink} boxSize={4} />
                 <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
-              </RouterLink>
+              </a>
             </Menu.Item>
             <Menu.Item value='explorer' asChild>
               <a href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>

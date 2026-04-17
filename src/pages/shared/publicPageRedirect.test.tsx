@@ -1,6 +1,10 @@
 import { render, waitFor } from '@testing-library/react'
 
-import { usePreferredPublicLanguageRedirect, useRootLanguageRedirect } from './publicPageRedirect'
+import {
+  useLegacyPublicPathRedirect,
+  usePreferredPublicLanguageRedirect,
+  useRootLanguageRedirect,
+} from './publicPageRedirect'
 
 vi.mock('~src/app-env', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/app-env')>()
@@ -27,6 +31,11 @@ const TestRedirect = ({ pathname, navigate }: { pathname: string; navigate?: (ur
 const TestRootRedirect = ({ navigate }: { navigate?: (url: string) => void }) => {
   useRootLanguageRedirect({ navigate })
   return <div>root-redirect-test</div>
+}
+
+const TestLegacyRedirect = ({ pathname, navigate }: { pathname: string; navigate?: (url: string) => void }) => {
+  useLegacyPublicPathRedirect({ pathname, navigate })
+  return <div>legacy-redirect-test</div>
 }
 
 describe('usePreferredPublicLanguageRedirect', () => {
@@ -119,28 +128,26 @@ describe('usePreferredPublicLanguageRedirect', () => {
     })
   })
 
-  it('redirects bare english aliases to the stored localized route after hydration', async () => {
+  it('redirects bare paths to the stored localized route after hydration', async () => {
     const navigate = vi.fn()
     window.history.replaceState({}, '', '/processes/0xprocess')
     window.localStorage.setItem('i18nextLng', 'ca')
 
-    render(<TestRedirect pathname='/processes/0xprocess' navigate={navigate} />)
+    render(<TestLegacyRedirect pathname='/processes/0xprocess' navigate={navigate} />)
 
     await waitFor(() => {
       expect(navigate).toHaveBeenCalledWith('/ca/processes/0xprocess')
     })
   })
 
-  it('does not redirect bare english aliases when there is no stored language', async () => {
+  it('redirects bare auth routes to the default localized route when there is no stored language', async () => {
     const navigate = vi.fn()
-    window.history.replaceState({}, '', '/processes/0xprocess')
+    window.history.replaceState({}, '', '/account/signin')
 
-    render(<TestRedirect pathname='/processes/0xprocess' navigate={navigate} />)
+    render(<TestLegacyRedirect pathname='/account/signin' navigate={navigate} />)
 
     await waitFor(() => {
-      expect(navigate).not.toHaveBeenCalled()
+      expect(navigate).toHaveBeenCalledWith('/en/account/signin')
     })
-
-    expect(window.localStorage.getItem('i18nextLng')).toBe('en')
   })
 })

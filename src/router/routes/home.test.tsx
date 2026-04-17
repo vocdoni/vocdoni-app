@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react'
+import { Navigate } from 'react-router-dom'
 import { mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 
@@ -62,13 +63,12 @@ describe('useHomeRoute', () => {
 
   it('redirects to /admin when no domain and no PROCESS_IDS', async () => {
     globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, PROCESS_IDS: '' }
-    const { AppNavigate } = await import('../appNavigation')
     const { useHomeRoute } = await import('./home')
 
     const { result } = renderHook(() => useHomeRoute())
     const indexRoute = result.current.children?.[0]
 
-    expect(indexRoute?.element?.type).toBe(AppNavigate)
+    expect(indexRoute?.element?.type).toBe(Navigate)
     expect(indexRoute?.element?.props.to).toBe('/admin')
   })
 
