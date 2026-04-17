@@ -1,6 +1,10 @@
+.vscode
 node_modules
 dist
 .git
 .gitignore
 coverage
 .codex
+.agents
+.pi
+skills-lock.json
