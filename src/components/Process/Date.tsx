@@ -3,13 +3,15 @@ import { useElection } from '@vocdoni/react-components'
 import { ElectionStatus, InvalidElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
+import { useHasMounted } from '~utils/use-has-mounted'
 import { ProcessInfoCard } from './View'
 
 export const ProcessDate = () => {
   const { election } = useElection()
   const { t } = useTranslation()
+  const hasMounted = useHasMounted()
 
-  if (election instanceof InvalidElection || !election?.startDate) return null
+  if (!hasMounted || election instanceof InvalidElection || !election?.startDate) return null
 
   const statusText = getStatusText(t, election.status)
 
@@ -31,8 +33,9 @@ export const ProcessDate = () => {
 export const ProcessDateInline = () => {
   const { election } = useElection()
   const { t } = useTranslation()
+  const hasMounted = useHasMounted()
 
-  if (election instanceof InvalidElection || !election?.startDate) return null
+  if (!hasMounted || election instanceof InvalidElection || !election?.startDate) return null
 
   const status = getStatusText(t, election.status)
 
