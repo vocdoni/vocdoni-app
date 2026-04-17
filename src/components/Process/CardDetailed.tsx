@@ -8,6 +8,7 @@ import {
   useElection,
 } from '@vocdoni/react-components'
 import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
@@ -21,25 +22,18 @@ interface Props {
 }
 
 const ProcessCardDetailed = ({ election }: Props) => {
-  const { i18n } = useTranslation()
-  const publicLanguage = i18n.resolvedLanguage || i18n.language || 'en'
-  const publicProcessPath = getPublicProcessPath({
-    id: enforceHexPrefix(election.id),
-    language: publicLanguage,
-  })
-
   return (
     <ElectionProvider election={election}>
       <Card.Root>
         <Card.Body>
-          <RouterAwareLink to={publicProcessPath}>
+          <ProcessCardLink>
             <ProcessDetailedCardTitle />
             <Box>
               <ElectionStatusBadge />
               <ProcessDetailedCreationDate />
             </Box>
-            <ProcessDetailedCardDescription />
-          </RouterAwareLink>
+          </ProcessCardLink>
+          <ProcessDetailedCardDescription />
           <ActionsMenu />
         </Card.Body>
 
@@ -49,6 +43,23 @@ const ProcessCardDetailed = ({ election }: Props) => {
       </Card.Root>
     </ElectionProvider>
   )
+}
+
+const ProcessCardLink = ({ children }: PropsWithChildren) => {
+  const { election } = useElection()
+  const { i18n } = useTranslation()
+
+  if (election instanceof InvalidElection || !election?.id) {
+    return <>{children}</>
+  }
+
+  const publicLanguage = i18n.resolvedLanguage || i18n.language || 'en'
+  const publicProcessPath = getPublicProcessPath({
+    id: enforceHexPrefix(election.id),
+    language: publicLanguage,
+  })
+
+  return <RouterAwareLink to={publicProcessPath}>{children}</RouterAwareLink>
 }
 
 export default ProcessCardDetailed

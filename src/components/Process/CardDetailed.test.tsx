@@ -38,6 +38,7 @@ describe('ProcessCardDetailed', () => {
     setReactProvidersMock({
       useElection: () => ({
         election: {
+          id: '0xprocess',
           creationTime: '2026-01-01T00:00:00.000Z',
           status: 'READY',
           voteCount: 42,
