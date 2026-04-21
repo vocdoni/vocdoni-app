@@ -1,3 +1,4 @@
+import { toOpenGraphLocale } from '~i18n/languages'
 import type { StructuredData } from './publicPageSchema'
 import type { PublicMeta } from '~src/ssr/public-pages'
 
@@ -5,16 +6,6 @@ type PageMetaHeadProps = {
   meta: PublicMeta
   structuredData?: StructuredData[]
 }
-
-const openGraphLocaleMap: Record<string, string> = {
-  en: 'en_US',
-  es: 'es_ES',
-  ca: 'ca_ES',
-  it: 'it_IT',
-}
-
-const toOpenGraphLocale = (language: string) => openGraphLocaleMap[language] ?? language
-
 const PageMetaHead = ({ meta, structuredData = [] }: PageMetaHeadProps) => {
   const alternateOpenGraphLocales = meta.alternates
     .map((alternate) => alternate.hrefLang)
