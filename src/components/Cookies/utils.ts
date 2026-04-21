@@ -3,6 +3,7 @@ import TagManager from 'react-gtm-module'
 const CONSENT_KEY = 'vocdoni-cookie-consent'
 const CONSENT_ACCEPTED = 'accepted'
 const CONSENT_REJECTED = 'rejected'
+export const COOKIE_CONSENT_CHANGE_EVENT = 'vocdoni-cookie-consent-change'
 
 /**
  * Get the current cookie consent status from localStorage
@@ -20,6 +21,7 @@ export function getCookieConsent(): string | null {
 export function setCookieConsent(accepted: boolean): void {
   if (typeof window === 'undefined') return
   localStorage.setItem(CONSENT_KEY, accepted ? CONSENT_ACCEPTED : CONSENT_REJECTED)
+  window.dispatchEvent(new Event(COOKIE_CONSENT_CHANGE_EVENT))
 }
 
 /**
