@@ -202,7 +202,7 @@ describe('metadata builders', () => {
     expect(meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
     expect(meta.openGraph.title).toBe('Vocdoni Association | Vocdoni')
     expect(meta.openGraph.url).toBe('https://app.example.org/organization/0xabc')
-    expect(meta.twitter.card).toBe('summary_large_image')
+    expect(meta.twitter.card).toBe('summary')
   })
 
   it('falls back to organization display data when the description is missing', () => {

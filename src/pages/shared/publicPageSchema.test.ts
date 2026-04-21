@@ -25,7 +25,7 @@ const processMeta = {
     siteName: 'Vocdoni',
   },
   twitter: {
-    card: 'summary_large_image' as const,
+    card: 'summary' as const,
     title: 'Elecció del consell 2026 | Associació Vocdoni | Vocdoni',
     description: 'Vota pels nous membres del consell.',
     image: 'https://app.example.org/assets/vocdoniapp.png',

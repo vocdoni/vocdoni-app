@@ -19,6 +19,7 @@ type OrganizationData = {
   account?: {
     name?: LocalizedText
     description?: LocalizedText
+    avatar?: string
   }
 }
 
@@ -48,7 +49,7 @@ type PublicMeta = {
     siteName: string
   }
   twitter: {
-    card: 'summary_large_image'
+    card: 'summary'
     title: string
     description: string
     image: string
@@ -124,11 +125,14 @@ const buildMetaDescription = (primary: string | undefined, ...fallbackParts: Arr
 }
 const buildMetaTitle = (...parts: Array<string | undefined>) =>
   clampText(withBrandSuffix(parts.filter(Boolean).join(' | ')), 60)
-const publicSocialImagePath = '/assets/vocdoniapp.png'
+const publicSocialImagePath = '/assets/vocdoni_icon.png'
 const publicSiteName = 'Vocdoni'
 const publicTwitterAccount = '@vocdoni'
-const buildSocialImageUrl = (canonicalUrl?: string) =>
-  canonicalUrl ? new URL(publicSocialImagePath, canonicalUrl).toString() : publicSocialImagePath
+const buildSocialImageUrl = (avatarUrl: string | undefined, canonicalUrl: string | undefined): string => {
+  if (avatarUrl) return avatarUrl
+  if (canonicalUrl) return new URL(publicSocialImagePath, canonicalUrl).toString()
+  return publicSocialImagePath
+}
 
 export const resolvePublicLanguage = ({
   routeLanguage,
@@ -275,7 +279,7 @@ export const buildOrganizationMeta = ({
   const description =
     buildMetaDescription(getLocalizedText(organization.account?.description, language), displayName) || displayName
 
-  const socialImage = buildSocialImageUrl(canonicalUrl)
+  const socialImage = buildSocialImageUrl(organization.account?.avatar, canonicalUrl)
   const title = buildMetaTitle(displayName)
 
   return {
@@ -293,7 +297,7 @@ export const buildOrganizationMeta = ({
       siteName: publicSiteName,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title,
       description,
       image: socialImage,
@@ -325,7 +329,7 @@ export const buildProcessMeta = ({
       organizationName
     ) || electionTitle
 
-  const socialImage = buildSocialImageUrl(canonicalUrl)
+  const socialImage = buildSocialImageUrl(organization?.account?.avatar, canonicalUrl)
   const title = buildMetaTitle(electionTitle, organizationName)
 
   return {
@@ -343,7 +347,7 @@ export const buildProcessMeta = ({
       siteName: publicSiteName,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: 'summary',
       title,
       description,
       image: socialImage,

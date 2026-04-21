@@ -24,7 +24,7 @@ describe('PageMetaHead', () => {
             siteName: 'Vocdoni',
           },
           twitter: {
-            card: 'summary_large_image',
+            card: 'summary',
             title: 'Vocdoni - Board election 2026',
             description: 'Vote for the next board members.',
             image: 'https://app.example.org/assets/vocdoniapp.png',
