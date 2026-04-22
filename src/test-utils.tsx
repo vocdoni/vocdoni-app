@@ -5,7 +5,14 @@ import { render, RenderOptions } from '@testing-library/react'
 import i18n, { type Resource } from 'i18next'
 import { ComponentType, ReactElement, ReactNode } from 'react'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
-import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom'
+import {
+  createMemoryRouter,
+  MemoryRouter,
+  RouterProvider,
+  type MemoryRouterProps,
+  type RouterProviderProps,
+} from 'react-router-dom'
+import { type RouteObject } from 'react-router-dom'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { ToastProvider as BaseToastProvider } from '~components/Toast'
 import { ColorModeProvider } from '~theme/color-mode'
@@ -170,6 +177,17 @@ const routerFutureFlags = {
   v7_startTransition: true,
   v7_relativeSplatPath: true,
 } as const
+
+export function createTestMemoryRouter(routes: RouteObject[], opts?: Parameters<typeof createMemoryRouter>[1]) {
+  return createMemoryRouter(routes, {
+    ...opts,
+    future: { v7_relativeSplatPath: true, ...opts?.future },
+  })
+}
+
+export function TestRouterProvider({ future, ...props }: RouterProviderProps) {
+  return <RouterProvider {...props} future={{ v7_startTransition: true, ...future }} />
+}
 
 export function TestMemoryRouter({ children, future, ...props }: MemoryRouterProps) {
   return (

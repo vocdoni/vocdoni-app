@@ -1,8 +1,6 @@
-import React from 'react'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
-import Process from './view'
-import { render, screen } from '~src/test-utils'
+import { createTestMemoryRouter, render, screen, TestRouterProvider } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import Process from './view'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
@@ -36,7 +34,7 @@ describe('Process view', () => {
   })
 
   it('renders the legal notice on the process route', async () => {
-    const router = createMemoryRouter(
+    const router = createTestMemoryRouter(
       [
         {
           path: '/processes/:id',
@@ -48,7 +46,7 @@ describe('Process view', () => {
       { initialEntries: ['/processes/123'] }
     )
 
-    render(<RouterProvider router={router} />)
+    render(<TestRouterProvider router={router} />)
 
     expect(await screen.findByTestId('layout-legal-notice')).toHaveTextContent(
       'To ensure a secure, verifiable and transparent vote, Esquerra republicana uses the Vocdoni platform'
@@ -57,7 +55,7 @@ describe('Process view', () => {
   })
 
   it('does not render the legal notice on another route', async () => {
-    const router = createMemoryRouter(
+    const router = createTestMemoryRouter(
       [
         {
           path: '/organization/:address',
@@ -68,7 +66,7 @@ describe('Process view', () => {
       { initialEntries: ['/organization/0xabc'] }
     )
 
-    render(<RouterProvider router={router} />)
+    render(<TestRouterProvider router={router} />)
 
     expect(screen.queryByTestId('layout-legal-notice')).not.toBeInTheDocument()
   })
