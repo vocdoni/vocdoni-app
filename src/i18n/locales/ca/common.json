@@ -160,7 +160,9 @@
     "step1": {
       "footer_text": "Si tens cap problema, contacta amb la teva organització.",
       "helper_text": "Hem enviat un codi al telèfon o al correu electrònic indicats. Si has triat el correu electrònic, revisa també la carpeta de correu brossa.",
-      "resend_text": "No has rebut el codi? Torna a enviar-lo.",
+      "resend_failed": "No s'ha pogut tornar a enviar el codi",
+      "resend_success": "Codi tornat a enviar correctament",
+      "resend_text": "No has rebut el codi? <resendBtn>Torna a enviar-lo</resendBtn>",
       "subtitle": "Introdueix el codi de verificació",
       "title": "Autenticació",
       "validation": {

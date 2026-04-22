@@ -6,7 +6,6 @@ import {
   FieldErrorText,
   FieldHelperText,
   FieldRoot,
-  HStack,
   PinInputControl,
   PinInputHiddenInput,
   PinInputInput,
@@ -20,7 +19,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useCspAuthContext } from './CSPStepsProvider'
-import { useTwoFactorAuth } from './basics'
+import { useResendChallenge, useTwoFactorAuth } from './basics'
 
 // Define the form data structure
 type CSPStep1FormData = {
@@ -29,6 +28,7 @@ type CSPStep1FormData = {
 
 export const Step1Base = ({ election }: { election: PublishedElection }) => {
   const { authData } = useCspAuthContext()
+  const resend = useResendChallenge(election)
   const {
     actions: { csp1 },
   } = useElection()
@@ -44,6 +44,32 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
     },
   })
   const auth = useTwoFactorAuth<1>(election, 1)
+
+  const handleResend = async () => {
+    try {
+      await resend.mutateAsync({
+        authToken: authData.authToken,
+        email: authData.email,
+        phone: authData.phone,
+      })
+      toast({
+        title: t('csp.step1.resend_success', { defaultValue: 'Code resent successfully' }),
+        type: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : t('csp.step1.resend_failed', { defaultValue: 'Failed to resend code' })
+      toast({
+        title: t('csp.step1.resend_failed', { defaultValue: 'Failed to resend code' }),
+        description: errorMessage,
+        type: 'error',
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+  }
 
   const onSubmit = async (values: CSPStep1FormData) => {
     const code = values.code.join('')
@@ -81,62 +107,73 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap={5} align='stretch'>
           <FieldRoot invalid={!!errors.code}>
-            <HStack justifyContent='center'>
-              <Controller
-                control={control}
-                name='code'
-                rules={{
-                  required: t('csp.step1.validation.required', {
-                    defaultValue: 'Code is required',
+            <Controller
+              control={control}
+              name='code'
+              rules={{
+                required: t('csp.step1.validation.required', {
+                  defaultValue: 'Code is required',
+                }),
+                validate: (value) =>
+                  value.filter((digit) => digit.trim() !== '').length >= 6 ||
+                  t('csp.step1.validation.length', {
+                    defaultValue: 'Code must be 6 digits',
                   }),
-                  validate: (value) =>
-                    value.filter((digit) => digit.trim() !== '').length >= 6 ||
-                    t('csp.step1.validation.length', {
-                      defaultValue: 'Code must be 6 digits',
-                    }),
-                }}
-                render={({ field: { onChange, value } }) => {
-                  const pinValue = Array.isArray(value) ? value : Array.from({ length: 6 }, () => '')
+              }}
+              render={({ field: { onChange, value } }) => {
+                const pinValue = Array.isArray(value) ? value : Array.from({ length: 6 }, () => '')
 
-                  return (
-                    <PinInputRoot
-                      size='lg'
-                      value={pinValue}
-                      onValueChange={({ value: valueArray, valueAsString }) => {
-                        const nextValue = Array.isArray(valueArray)
-                          ? Array.from({ length: 6 }, (_, index) => valueArray[index] ?? '')
-                          : Array.from({ length: 6 }, (_, index) => valueAsString[index] ?? '')
+                return (
+                  <PinInputRoot
+                    size='lg'
+                    value={pinValue}
+                    onValueChange={({ value: valueArray, valueAsString }) => {
+                      const nextValue = Array.isArray(valueArray)
+                        ? Array.from({ length: 6 }, (_, index) => valueArray[index] ?? '')
+                        : Array.from({ length: 6 }, (_, index) => valueAsString[index] ?? '')
 
-                        onChange(nextValue)
-                        if (nextValue.every((digit) => digit.trim() !== '')) {
-                          handleSubmit(onSubmit)()
-                        }
-                      }}
-                      autoFocus
-                      count={6}
-                    >
-                      <PinInputHiddenInput />
-                      <PinInputControl>
-                        {Array.from({ length: 6 }).map((_, index) => (
-                          <PinInputInput key={index} index={index} />
-                        ))}
-                      </PinInputControl>
-                    </PinInputRoot>
-                  )
-                }}
-              />
-            </HStack>
+                      onChange(nextValue)
+                      if (nextValue.every((digit) => digit.trim() !== '')) {
+                        handleSubmit(onSubmit)()
+                      }
+                    }}
+                    autoFocus
+                    count={6}
+                  >
+                    <PinInputHiddenInput />
+                    <PinInputControl w='full' gap={3}>
+                      {Array.from({ length: 6 }).map((_, index) => (
+                        <PinInputInput key={index} index={index} />
+                      ))}
+                    </PinInputControl>
+                  </PinInputRoot>
+                )
+              }}
+            />
             {errors.code && <FieldErrorText textAlign='center'>{errors.code.message}</FieldErrorText>}
             <FieldHelperText mt={3}>
               <VStack gap={2} align='stretch'>
-                <Text color='fg.muted'>
+                <Text>
                   <Trans i18nKey='csp.step1.helper_text'>
-                    We’ve sent a code to your phone number or email address. If you chose to receive it by email, please
+                    We've sent a code to your phone number or email address. If you chose to receive it by email, please
                     check your spam folder.
                   </Trans>
                 </Text>
-                <Text color='fg.muted'>
-                  <Trans i18nKey='csp.step1.resend_text'>Didn’t receive the code? Resend it.</Trans>
+                <Text>
+                  <Trans
+                    i18nKey='csp.step1.resend_text'
+                    defaults="Didn't receive the code? <resendBtn>Resend it</resendBtn>"
+                    components={{
+                      resendBtn: (
+                        <Button
+                          variant='link'
+                          verticalAlign='unset'
+                          loading={resend.isPending}
+                          onClick={handleResend}
+                        />
+                      ),
+                    }}
+                  />
                 </Text>
               </VStack>
             </FieldHelperText>
@@ -151,7 +188,7 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
           <Button type='submit' w='full' loading={auth.isPending}>
             {t('csp.authenticate', { defaultValue: 'Authenticate' })}
           </Button>
-          <Text fontSize='sm' color='fg.muted'>
+          <Text fontSize='sm' color='texts.subtle'>
             {t('csp.step1.footer_text', {
               defaultValue: 'If you experience any issues, contact your organization.',
             })}

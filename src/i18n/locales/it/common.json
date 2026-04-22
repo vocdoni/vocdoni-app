@@ -160,7 +160,9 @@
     "step1": {
       "footer_text": "In caso di problemi, contatta la tua organizzazione.",
       "helper_text": "Abbiamo inviato un codice di verifica al numero di telefono o all’indirizzo email indicato. Se hai scelto di riceverlo via email, controlla anche la cartella spam.",
-      "resend_text": "Non hai ricevuto il codice? Invia di nuovo.",
+      "resend_failed": "Invio del codice non riuscito",
+      "resend_success": "Codice inviato correttamente",
+      "resend_text": "Non hai ricevuto il codice? <resendBtn>Invia di nuovo</resendBtn>",
       "subtitle": "Inserisci il codice di verifica",
       "title": "Autenticazione",
       "validation": {

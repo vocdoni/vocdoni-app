@@ -94,6 +94,7 @@ vi.mock('@chakra-ui/react', async () => {
 })
 
 const mutateAsync = vi.fn()
+const resendMutateAsync = vi.fn()
 
 const getPinInputs = () => screen.getAllByRole<HTMLInputElement>('textbox', { name: /pin code \d of 6/i })
 
@@ -101,6 +102,8 @@ vi.mock('./CSPStepsProvider', () => ({
   useCspAuthContext: () => ({
     authData: {
       authToken: 'token',
+      email: 'user@example.com',
+      phone: '+34600000000',
     },
   }),
 }))
@@ -111,12 +114,18 @@ vi.mock('./basics', () => ({
     isPending: false,
     isError: false,
   }),
+  useResendChallenge: () => ({
+    mutateAsync: resendMutateAsync,
+    isPending: false,
+  }),
 }))
 
 describe('Step1Base', () => {
   beforeEach(() => {
     mutateAsync.mockReset()
     mutateAsync.mockResolvedValue({ authToken: 'next-token' })
+    resendMutateAsync.mockReset()
+    resendMutateAsync.mockResolvedValue(undefined)
 
     setReactProvidersMock({
       useElection: () =>
@@ -143,11 +152,12 @@ describe('Step1Base', () => {
     expect(screen.getByText('Enter the verification code')).toBeInTheDocument()
     expect(
       screen.getByText(
-        'We’ve sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.'
+        "We've sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder."
       )
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Authenticate' })).toBeInTheDocument()
-    expect(screen.getByText('Didn’t receive the code? Resend it.')).toBeInTheDocument()
+    expect(screen.getByText("Didn't receive the code?", { exact: false })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Resend it' })).toBeInTheDocument()
     expect(screen.getByText('If you experience any issues, contact your organization.')).toBeInTheDocument()
   })
 
@@ -215,6 +225,51 @@ describe('Step1Base', () => {
 
       expect(values).toEqual(['1', '', '3', '4', '5', '6'])
       expect(values).not.toContain('undefined')
+    })
+  })
+
+  it('calls resend.mutateAsync with authToken and contact info when the resend button is clicked', async () => {
+    const election = {} as PublishedElection
+    const user = userEvent.setup()
+
+    render(<Step1Base election={election} />)
+
+    await user.click(screen.getByRole('button', { name: 'Resend it' }))
+
+    await waitFor(() => {
+      expect(resendMutateAsync).toHaveBeenCalledWith({
+        authToken: 'token',
+        email: 'user@example.com',
+        phone: '+34600000000',
+      })
+    })
+  })
+
+  it('shows a success toast when the resend succeeds', async () => {
+    const election = {} as PublishedElection
+    const user = userEvent.setup()
+
+    render(<Step1Base election={election} />)
+
+    await user.click(screen.getByRole('button', { name: 'Resend it' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Code resent successfully')).toBeInTheDocument()
+    })
+  })
+
+  it('shows an error toast when the resend fails', async () => {
+    resendMutateAsync.mockRejectedValue(new Error('Network error'))
+
+    const election = {} as PublishedElection
+    const user = userEvent.setup()
+
+    render(<Step1Base election={election} />)
+
+    await user.click(screen.getByRole('button', { name: 'Resend it' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed to resend code')).toBeInTheDocument()
     })
   })
 })

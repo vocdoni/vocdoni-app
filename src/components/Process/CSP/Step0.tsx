@@ -102,8 +102,13 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
     try {
       const { authToken } = await auth.mutateAsync(form)
 
-      // Store auth token in global context
-      setAuthData((prev) => ({ ...prev, authToken }))
+      // Store auth token and contact info in global context
+      setAuthData((prev) => ({
+        ...prev,
+        authToken,
+        ...(form.email && { email: form.email }),
+        ...(form.phone && { phone: form.phone }),
+      }))
 
       pushCrispUserFields(form)
 

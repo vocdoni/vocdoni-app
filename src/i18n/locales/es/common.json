@@ -160,7 +160,9 @@
     "step1": {
       "footer_text": "Si tienes algún problema, contacta con tu organización.",
       "helper_text": "Hemos enviado un código al número de teléfono o al correo electrónico indicados. Si has elegido recibirlo por correo electrónico, revisa también la carpeta de correo no deseado.",
-      "resend_text": "¿No has recibido el código? Vuelve a enviarlo.",
+      "resend_failed": "Error al reenviar el código",
+      "resend_success": "Código reenviado correctamente",
+      "resend_text": "¿No has recibido el código? <resendBtn>Vuelve a enviarlo</resendBtn>",
       "subtitle": "Introduce el código de verificación",
       "title": "Autenticación",
       "validation": {

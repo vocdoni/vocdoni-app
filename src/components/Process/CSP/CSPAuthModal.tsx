@@ -60,7 +60,7 @@ export const CspAuthModal = () => {
   if (election instanceof InvalidElection) return null
 
   return (
-    <Dialog.Root>
+    <Dialog.Root size='sm'>
       <Dialog.Trigger asChild>
         <Button w='full' aria-label={t('spreadsheet.access_button', { defaultValue: 'Login' })}>
           <Trans i18nKey='spreadsheet.access_button'>Login</Trans>

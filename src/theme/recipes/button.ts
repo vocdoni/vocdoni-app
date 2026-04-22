@@ -1,6 +1,6 @@
-import { defineRecipe } from '@chakra-ui/react'
+import { defineRecipe, defineStyle } from '@chakra-ui/react'
 
-const baseStyle = {
+const baseStyle = defineStyle({
   minW: 0,
   fontWeight: 'bold',
   borderRadius: 'sm',
@@ -15,9 +15,9 @@ const baseStyle = {
   _selected: {
     fontWeight: 'bold',
   },
-}
+})
 
-const listmenu = {
+const listmenu = defineStyle({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -32,9 +32,9 @@ const listmenu = {
       bg: 'gray.700',
     },
   },
-}
+})
 
-const profilemenu = {
+const profilemenu = defineStyle({
   w: 'full',
   px: 2,
   py: 1.5,
@@ -48,13 +48,24 @@ const profilemenu = {
       bg: 'gray.700',
     },
   },
-}
+})
 
-const unstyled = {
+const unstyled = defineStyle({
   textAlign: 'left',
-}
+})
 
-const navbar = {
+const link = defineStyle({
+  textAlign: 'left',
+  w: 'auto',
+  h: 'auto',
+  p: 0,
+  verticalAlign: 'unset',
+  _hover: {
+    textDecoration: 'underline',
+  },
+})
+
+const navbar = defineStyle({
   textAlign: 'left',
   fontWeight: 'semibold',
   display: 'flex',
@@ -62,7 +73,7 @@ const navbar = {
   justifyContent: 'start',
   fontSize: 'md',
   h: 'fit-content',
-}
+})
 
 export const Button = defineRecipe({
   base: baseStyle,
@@ -70,6 +81,7 @@ export const Button = defineRecipe({
     variant: {
       unstyled,
       navbar,
+      link,
       listmenu,
       profilemenu,
     },

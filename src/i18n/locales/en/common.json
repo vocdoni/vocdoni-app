@@ -61,7 +61,7 @@
   "back": "Back",
   "billing_details": "Billing Details",
   "calendar": {
-    "max_duration_exceeded": "Duration exceeds your plan’s {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days.",
+    "max_duration_exceeded": "Duration exceeds your plan's {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days.",
     "title": "Schedule"
   },
   "cancel": "Cancel",
@@ -156,8 +156,10 @@
     "receive_code": "Receive Code",
     "step1": {
       "footer_text": "If you experience any issues, contact your organization.",
-      "helper_text": "We’ve sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.",
-      "resend_text": "Didn’t receive the code? Resend it.",
+      "helper_text": "We've sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.",
+      "resend_failed": "Failed to resend code",
+      "resend_success": "Code resent successfully",
+      "resend_text": "Didn't receive the code? <resendBtn>Resend it</resendBtn>",
       "subtitle": "Enter the verification code",
       "title": "Authentication",
       "validation": {
@@ -732,7 +734,7 @@
   },
   "lastname": "Last name",
   "layout": {
-    "legal_notice": "To ensure a secure, verifiable and transparent vote, <strong>{{orgName}}</strong> uses the Vocdoni platform, which protects participants’ privacy at all times. More information at"
+    "legal_notice": "To ensure a secure, verifiable and transparent vote, <strong>{{orgName}}</strong> uses the Vocdoni platform, which protects participants' privacy at all times. More information at"
   },
   "light": "Light",
   "link": {
@@ -763,7 +765,7 @@
       "title": "Delete Members"
     },
     "download_template": {
-      "subtitle": "Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it’s ready, you can start creating votes.",
+      "subtitle": "Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it's ready, you can start creating votes.",
       "title": "Download Import Template"
     },
     "edit_member": {
@@ -1039,7 +1041,7 @@
   "preferences": "Preferences",
   "preview": "Preview",
   "pricing": {
-    "2fa": "2FA authentication² ({{suffix}})",
+    "2fa": "2FA authentication2 ({{suffix}})",
     "2fa_suffix_both": "Email & SMS",
     "2fa_suffix_email": "Email",
     "2fa_suffix_sms": "SMS",
@@ -1112,8 +1114,8 @@
         "title": "Saving Draft"
       },
       "limit_reached": {
-        "message_one": "You’ve reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
-        "message_other": "You’ve reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan."
+        "message_one": "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
+        "message_other": "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan."
       },
       "question": {
         "add": "Add question",

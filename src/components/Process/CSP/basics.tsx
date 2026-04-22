@@ -34,6 +34,31 @@ export type Step1Response = {
 
 export type TwoFactorResponse<T extends number> = T extends 0 ? Step0Response : T extends 1 ? Step1Response : unknown
 
+export type ResendChallengePayload = {
+  authToken: string
+  email?: string
+  phone?: string
+}
+
+export const useResendChallenge = (process: PublishedElection) => {
+  const { i18n } = useTranslation()
+  return useMutation<void, Error, ResendChallengePayload>({
+    mutationFn: async (payload: ResendChallengePayload) => {
+      const response = await fetch(`${process.census.censusURI}/auth/resend?lang=${i18n.language}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+      if (!response.ok) {
+        const { error } = await response.json()
+        throw new Error(error)
+      }
+    },
+  })
+}
+
 export const useTwoFactorAuth = <T extends number>(process: PublishedElection, step: T) => {
   const { t, i18n } = useTranslation()
   return useMutation<TwoFactorResponse<T>, Error, Record<string, any>>({
