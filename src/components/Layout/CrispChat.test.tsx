@@ -1,6 +1,8 @@
 import { act, render, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { setCookieConsent } from '~components/Cookies/utils'
+
 const { mockConfigure } = vi.hoisted(() => ({
   mockConfigure: vi.fn(),
 }))
@@ -34,9 +36,8 @@ describe('CrispChat', () => {
   it('configures Crisp after cookie consent is accepted', async () => {
     render(<CrispChat />)
 
-    localStorage.setItem('vocdoni-cookie-consent', 'accepted')
     act(() => {
-      window.dispatchEvent(new Event('vocdoni-cookie-consent-change'))
+      setCookieConsent(true)
     })
 
     await waitFor(() => {
@@ -50,9 +51,8 @@ describe('CrispChat', () => {
 
     render(<CrispChat />)
 
-    localStorage.setItem('vocdoni-cookie-consent', 'accepted')
     act(() => {
-      window.dispatchEvent(new Event('vocdoni-cookie-consent-change'))
+      setCookieConsent(true)
     })
 
     await waitFor(() => {
