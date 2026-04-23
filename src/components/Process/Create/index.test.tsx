@@ -651,6 +651,7 @@ describe('useFormToElectionMapper', () => {
 
       const form: Process = {
         ...mockForm,
+        extendedInfo: true,
         questions: [
           {
             title: 'Question',
@@ -670,6 +671,33 @@ describe('useFormToElectionMapper', () => {
       const choice = election.questions[0].choices[0]
       expect(choice.meta?.description).toBe('Option description')
       expect(choice.meta?.image).toEqual({ default: 'https://example.com/image.png' })
+    })
+
+    it('should NOT include metadata when extendedInfo is false', () => {
+      const { result } = renderHook(() => useFormToElectionMapper())
+      const mapper = result.current
+
+      const form: Process = {
+        ...mockForm,
+        extendedInfo: false,
+        questions: [
+          {
+            title: 'Question',
+            description: 'Description',
+            options: [
+              {
+                option: 'Option without metadata',
+                description: 'This should be ignored',
+                image: 'https://example.com/image.png',
+              },
+            ],
+          },
+        ],
+      }
+
+      const election = mapper(form, mockCensus)
+      const choice = election.questions[0].choices[0]
+      expect(choice.meta).toBeUndefined()
     })
   })
 

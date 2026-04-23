@@ -539,14 +539,22 @@ export const useFormToElectionMapper = () => {
           ({
             title: { default: question.title },
             description: { default: question.description },
-            choices: question.options.map((q: Option, i: number) => ({
-              title: { default: q.option },
-              value: i,
-              meta: {
-                description: q.description,
-                image: { default: q.image },
-              },
-            })),
+            choices: question.options.map((q: Option, i: number) => {
+              const choice: IQuestion['choices'][number] = {
+                title: { default: q.option },
+                value: i,
+              }
+
+              // Only include meta when extendedInfo is enabled
+              if (form.extendedInfo) {
+                choice.meta = {
+                  description: q.description,
+                  image: { default: q.image },
+                }
+              }
+
+              return choice
+            }),
           }) as IQuestion
       ),
       startDate,
