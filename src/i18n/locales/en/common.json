@@ -1356,24 +1356,124 @@
     "type": "Type"
   },
   "process_pdf": {
-    "census_size": "Census size",
+    "authentication": {
+      "identity_source": "Identity data source",
+      "method": "Authentication method",
+      "two_fa": "2FA authentication"
+    },
+    "boolean": {
+      "no": "No",
+      "yes": "Yes"
+    },
+    "census": {
+      "definition": "The electoral census defines the complete set of members authorized to participate in the voting process. Inclusion in the census does not imply actual participation.",
+      "size": "Total number of eligible participants (census size)",
+      "source": "Census source"
+    },
+    "census_type": {
+      "anonymous": "Anonymous weighted census",
+      "csp": "CSP census",
+      "unknown": "Not available",
+      "weighted": "Weighted census"
+    },
+    "disclaimer": {
+      "bullet_1": "It does not constitute legal certification of the voting process.",
+      "bullet_2": "It does not replace official records, minutes, or regulatory filings.",
+      "bullet_3": "All data originates from cryptographic and blockchain-based logs.",
+      "bullet_4": "Ballot secrecy and voter anonymity are preserved by design.",
+      "paragraph_1": "This document constitutes a technical certification derived from system-generated records of the Vocdoni Protocol.",
+      "paragraph_2": "The technical service provider assumes no responsibility for the accuracy of input data (e.g., census composition), legal interpretation of results, or compliance with applicable legal or regulatory frameworks.",
+      "paragraph_3": "Responsibility for legal interpretation and use of this certification rests solely with the requesting organization.",
+      "title": "Disclaimer"
+    },
     "download": "Download PDF",
     "download_error": "Could not generate the PDF report",
     "downloading": "Generating PDF",
-    "end_date": "End date",
-    "generated_at": "Generated at {{date}}",
-    "no_choices": "No choices",
-    "no_questions": "No questions available",
+    "encryption": {
+      "encrypted": "Encrypted",
+      "not_encrypted": "Not encrypted"
+    },
+    "general": {
+      "encryption_method": "Encryption method",
+      "event_name": "Event name",
+      "organization": "Organization",
+      "verification_explorer_url": "Verification explorer URL",
+      "vote_overwrite_enabled": "Vote overwrite enabled",
+      "voting_period_end": "Voting period (end)",
+      "voting_period_start": "Voting period (start)"
+    },
+    "intro_paragraph_1": "This document constitutes a formal technical certification of a digital voting process conducted using the Vocdoni Protocol. It establishes a structured, verifiable, and auditable record of the process configuration, eligible participant set (electoral census), actual participation, and final results. Its purpose is to enable independent auditors and authorized third parties to assess the integrity, consistency, and correct execution of the process.",
+    "intro_paragraph_2": "All relevant data associated with this voting process has been recorded and anchored in publicly auditable records within the Vocdoni network. These records ensure transparency, immutability, and end-to-end verifiability, while preserving voter anonymity and ballot confidentiality through cryptographic mechanisms.",
+    "intro_paragraph_3": "This certification is issued exclusively by the technical service provider to attest to the correctness of the system execution and the integrity of the recorded data. It does not replace, supersede, or constitute any form of legal certification, nor does it assert compliance with jurisdiction-specific legal or regulatory requirements.",
+    "issuer": {
+      "legal_entity": "Legal entity",
+      "paragraph": "Issued on behalf of the organizing entity in its role as technical service provider.",
+      "provider": "Provider"
+    },
     "not_available": "Not available",
-    "process_id": "Process ID",
-    "question_label": "Question {{index}}",
-    "questions": "Questions",
-    "start_date": "Start date",
-    "status": "Status",
-    "summary": "Summary",
-    "title": "Voting report",
-    "total_votes": "Total votes",
-    "voting_method": "Voting method"
+    "scope": {
+      "census": "Definition of the electoral census",
+      "configuration": "Configuration of the voting process",
+      "exclusion": "This certification does not cover governance rules, eligibility criteria correctness, or legal compliance.",
+      "paragraph": "This certification covers exclusively the following technical aspects:",
+      "participation": "Recording of participation data",
+      "period": "Voting period enforcement",
+      "results": "Final computed results",
+      "tally": "Automated tallying mechanisms"
+    },
+    "signature": {
+      "date": "Date",
+      "name": "Name",
+      "position": "Position",
+      "signatory_name": "Vocdoni Technical Team",
+      "signatory_position": "Technical service provider"
+    },
+    "turnout": {
+      "eligible": "Total number of eligible participants",
+      "participants_reference_note": "Each participant is represented once, irrespective of the number of questions answered. Where applicable, participants are identified using pseudonymous or cryptographic identifiers (e.g., hashed references) to preserve privacy.",
+      "participants_reference_title": "Participants who cast a vote (if applicable)",
+      "participation": "The number of votes cast reflects only those participants who effectively submitted a valid ballot during the defined voting period.",
+      "privacy_note": "Under no circumstances can a linkage be established between participant identity and individual vote selections.",
+      "rate": "Turnout rate",
+      "votes_cast": "Total number of votes cast"
+    },
+    "verification": {
+      "artifact_1": "Process Root Hash (SHA-256 or equivalent)",
+      "artifact_2": "Census Hash or Reference",
+      "artifact_3": "Ballot Box Identifier",
+      "artifact_4": "These elements collectively enable independent verification of:",
+      "artifact_5": "Data integrity (no alteration of records)",
+      "artifact_6": "Authenticity of the process",
+      "artifact_7": "Completeness of the recorded dataset",
+      "artifacts": "To facilitate auditability, the following cryptographic artifacts are provided:",
+      "ballot_box": "Ballot Box Identifier",
+      "census_hash": "Census Hash or Reference",
+      "explorer": "Verification explorer",
+      "paragraph": "All process data has been recorded on a blockchain-based infrastructure and may be independently verified through the following public explorer:",
+      "procedure_title": "Verification Procedure (informative)",
+      "process_root_hash": "Process Root Hash (SHA-256 or equivalent)",
+      "step_1": "Retrieve the process data via the explorer.",
+      "step_2": "Validate the process root hash against the published value.",
+      "step_3": "Confirm consistency of census reference and ballot records.",
+      "step_4": "Recompute and verify tally results where applicable."
+    },
+    "vote_overwrite_enabled_one": "Yes, up to {{count}} overwrites",
+    "vote_overwrite_enabled_other": "Yes, up to {{count}} overwrites",
+    "voting_process": {
+      "intro_one": "This voting process {{election_id}} consisted of {{count}} question(s).",
+      "intro_other": "This voting process {{election_id}} consisted of {{count}} question(s)."
+    },
+    "voting_system": {
+      "bullet_1": "Distributed ledger (blockchain) infrastructure",
+      "bullet_2": "Cryptographic verification and integrity mechanisms",
+      "executed_on": "The process was executed on the {{blockchain_network}} infrastructure.",
+      "guarantee_1": "Integrity of the voting process",
+      "guarantee_2": "Immutability of recorded data",
+      "guarantee_3": "Independent verifiability of results",
+      "guarantee_4": "Confidentiality of individual ballots",
+      "guarantee_lead": "The system guarantees:",
+      "paragraph": "Voting and tallying operations were executed using Vocdoni, a digital voting protocol supported by:"
+    }
   },
   "processes": {
     "empty": "No voting processes found",
