@@ -354,7 +354,7 @@ describe('useFormToElectionMapper', () => {
       expect(election.maxNumberOfChoices).toBe(4)
     })
 
-    it('should set canAbstain to true when minNumberOfChoices is 0', () => {
+    it('should always set canAbstain to false', () => {
       const { result } = renderHook(() => useFormToElectionMapper())
       const mapper = result.current
 
@@ -366,10 +366,10 @@ describe('useFormToElectionMapper', () => {
       }
 
       const election = mapper(form, mockCensus) as MultiChoiceElection
-      expect(election.canAbstain).toBe(true)
+      expect(election.canAbstain).toBe(false)
     })
 
-    it('should set canAbstain to false when minNumberOfChoices is greater than 0', () => {
+    it('should always set canAbstain to false regardless of minNumberOfChoices', () => {
       const { result } = renderHook(() => useFormToElectionMapper())
       const mapper = result.current
 

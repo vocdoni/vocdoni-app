@@ -570,7 +570,7 @@ export const useFormToElectionMapper = () => {
     if (form.questionType === SelectorTypes.Multiple) {
       return MultiChoiceElection.from({
         ...base,
-        canAbstain: form.minNumberOfChoices === 0,
+        canAbstain: false,
         maxNumberOfChoices: form.maxNumberOfChoices > 0 ? form.maxNumberOfChoices : form.questions[0].options.length,
         minNumberOfChoices: form.minNumberOfChoices ?? 0,
       })
