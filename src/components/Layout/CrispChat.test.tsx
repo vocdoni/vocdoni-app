@@ -13,8 +13,6 @@ vi.mock('crisp-sdk-web', () => ({
   },
 }))
 
-import CrispChat from './CrispChat'
-
 describe('CrispChat', () => {
   beforeEach(() => {
     vi.resetModules()
@@ -27,13 +25,18 @@ describe('CrispChat', () => {
     import.meta.env.CRISP_WEBSITE_ID = ''
   })
 
-  it('does not configure Crisp until cookie consent is accepted', () => {
+  it('does not configure Crisp until cookie consent is accepted', async () => {
+    import.meta.env.CRISP_WEBSITE_ID = ''
+    const { default: CrispChat } = await import('./CrispChat')
+
     render(<CrispChat />)
 
     expect(mockConfigure).not.toHaveBeenCalled()
   })
 
   it('configures Crisp after cookie consent is accepted', async () => {
+    const { default: CrispChat } = await import('./CrispChat')
+
     render(<CrispChat />)
 
     act(() => {
@@ -48,6 +51,8 @@ describe('CrispChat', () => {
 
   it('configures Crisp even if a queue already exists on window', async () => {
     ;(window as typeof window & { $crisp?: unknown }).$crisp = []
+
+    const { default: CrispChat } = await import('./CrispChat')
 
     render(<CrispChat />)
 
