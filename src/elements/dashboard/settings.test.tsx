@@ -46,7 +46,7 @@ describe('Settings', () => {
       </ChakraProvider>
     )
 
-    const activeTab = await screen.findByRole('tab', { name: 'Organization Details' })
+    const activeTab = await screen.findByRole('tab', { name: 'Organization details' })
     expect(activeTab).toHaveAttribute('aria-selected', 'true')
   })
 })

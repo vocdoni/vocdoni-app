@@ -303,7 +303,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                   {t('memberbase.form.cancel', { defaultValue: 'Cancel' })}
                 </Button>
                 <Button type='submit' loading={isSubmitting} form='member-form'>
-                  {t('memberbase.form.save', { defaultValue: 'Save Changes' })}
+                  {t('memberbase.form.save', { defaultValue: 'Save changes' })}
                 </Button>
               </Flex>
             </Drawer.Body>

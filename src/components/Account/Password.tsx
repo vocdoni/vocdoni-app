@@ -134,7 +134,7 @@ const ChangePasswordModal = ({ isOpen, onClose }: ChangePasswordModalProps) => {
     <ModalForm
       isOpen={isOpen}
       onClose={onClose}
-      title={t('change_password.title', { defaultValue: 'Change Password' })}
+      title={t('change_password.title', { defaultValue: 'Change password' })}
       subtitle={t('change_password.subtitle', {
         defaultValue: 'Enter your current password and a new password to update your credentials.',
       })}
@@ -153,7 +153,7 @@ export const ChangePasswordButton = () => {
     <>
       <IconButton
         onClick={onOpen}
-        aria-label={t('change_password.title', { defaultValue: 'Change Password' })}
+        aria-label={t('change_password.title', { defaultValue: 'Change password' })}
         variant={'outline'}
         size='sm'
         w='40px'

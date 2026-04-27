@@ -61,7 +61,7 @@ const SubscriptionPageContent = () => {
     <DashboardBox p={6}>
       <Flex direction={{ base: 'column', md: 'row' }}>
         <SectionHeader>
-          <SectionHeading>{t('subscription_plan.title', { defaultValue: 'Subscription Plan' })}</SectionHeading>
+          <SectionHeading>{t('subscription_plan.title', { defaultValue: 'Subscription plan' })}</SectionHeading>
           <SectionSubHeading>
             <Trans i18nKey='subscription_plan.subtitle'>
               With our subscriptions, you get more than a plan. You gain access to the most innovative governance
@@ -74,7 +74,7 @@ const SubscriptionPageContent = () => {
         </SectionHeader>
         {!isFree && view === 'plans' && (
           <Button onClick={() => handleChangeClick()} loading={isPending}>
-            {t('billing_details', { defaultValue: 'Billing Details' })}
+            {t('billing_details', { defaultValue: 'Billing details' })}
           </Button>
         )}
       </Flex>
