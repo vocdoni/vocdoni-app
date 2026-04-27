@@ -178,7 +178,7 @@ const ProcessViewContent = () => {
 
           <Box as='header'>
             <ElectionTitle textAlign={'start'} fontWeight={'bold'} />
-            <ElectionVideo mb='3' />
+            <ElectionVideo mb='3' maxW='4xl' />
             <ElectionDescription color='texts.subtle' />
           </Box>
 
