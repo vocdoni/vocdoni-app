@@ -1408,6 +1408,23 @@
       "paragraph_3": "La responsabilitat sobre la interpretació legal i l'ús d'aquesta certificació recau exclusivament en l'organització sol·licitant.",
       "title": "Avís legal"
     },
+    "document": {
+      "issued_by": "Emès per Vocdoni (Synergize SL) el {{issue_date}}, en la seva qualitat de proveïdor tècnic.",
+      "sections": {
+        "authentication": "2. Autenticació",
+        "certification_scope": "8. Abast de la certificació",
+        "electoral_census": "4. Cens electoral",
+        "general_information": "1. Informació general",
+        "issuer": "9. Emissor",
+        "signature": "10. Signatura",
+        "turnout_participation": "5. Participació i assistència",
+        "verification": "7. Verificació",
+        "voting_process": "6. Procés de votació",
+        "voting_system": "3. Sistema de votació"
+      },
+      "subtitle": "{{event_name}} | Emès el {{issue_date}}",
+      "title": "CERTIFICACIÓ TÈCNICA DEL PROCÉS DE VOTACIÓ DIGITAL {{event_reference}}"
+    },
     "download": "Descarrega PDF",
     "download_error": "No s'ha pogut generar l'informe PDF",
     "downloading": "S'està generant el PDF",
@@ -1483,9 +1500,17 @@
     "vote_overwrite_enabled_many": "Sí, fins a {{count}} sobreescriptures",
     "vote_overwrite_enabled_other": "Sí, fins a {{count}} sobreescriptures",
     "voting_process": {
-      "intro_one": "Aquest procés de votació {{election_id}} va constar de {{count}} pregunta(es).",
-      "intro_many": "Aquest procés de votació {{election_id}} va constar de {{count}} pregunta(es).",
-      "intro_other": "Aquest procés de votació {{election_id}} va constar de {{count}} pregunta(es)."
+      "card": {
+        "available_options": "Opcions disponibles:",
+        "item": "Pregunta {{index}}",
+        "outcome": "Resultat: {{outcome}}",
+        "participation": "Participació: {{votes}} vots registrats",
+        "question": "Pregunta: {{question}}",
+        "results": "Resultats:"
+      },
+      "intro_one": "Aquest procés de votació {{election_id}} va constar de {{count}} pregunta.",
+      "intro_many": "Aquest procés de votació {{election_id}} va constar de {{count}} preguntes.",
+      "intro_other": "Aquest procés de votació {{election_id}} va constar de {{count}} preguntes."
     },
     "voting_system": {
       "bullet_1": "Infraestructura de llibre major distribuït (blockchain)",

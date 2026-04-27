@@ -50,6 +50,7 @@ type CertificateData = {
   organizationName: string
   eventName: string
   blockchainNetwork: string
+  notAvailableLabel: string
   introParagraphs: string[]
   generalInformation: CertificateField[]
   authentication: CertificateField[]
@@ -89,6 +90,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 700,
+    lineHeight: 1.2,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -120,6 +122,11 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     alignItems: 'flex-start',
   },
+  fieldRowStacked: {
+    flexDirection: 'column',
+    gap: 2,
+    marginBottom: 6,
+  },
   fieldLabel: {
     width: '42%',
     fontWeight: 700,
@@ -130,6 +137,9 @@ const styles = StyleSheet.create({
     minWidth: 0,
     width: '58%',
     wordBreak: 'break-all',
+  },
+  fieldValueStacked: {
+    width: '100%',
   },
   paragraph: {
     marginBottom: 6,
@@ -192,6 +202,11 @@ const sanitizeFileName = (value: string) =>
 
 const notAvailable = (t: TFunction) => t('process_pdf.not_available', { defaultValue: 'Not available' })
 
+const isLongDenseValue = (value: string) => value.length >= 40 && !/\s/.test(value)
+
+const shouldStackFieldValue = (value: string) => /^https?:\/\//i.test(value) || isLongDenseValue(value)
+const formatPdfFieldValue = (value: string) => value
+
 const formatUtcDateTime = (date?: Date | null) =>
   date ? `${date.toISOString().slice(0, 16).replace('T', ' ')} UTC` : null
 
@@ -225,7 +240,7 @@ const getQuestionVotes = (election: PublishedElection, questionIndex: number) =>
   return Number.isFinite(numericVotes) && numericVotes > 0 ? numericVotes : (election.voteCount ?? 0)
 }
 
-const getQuestionChoices = (election: PublishedElection, questionIndex: number) => {
+const getQuestionChoices = (election: PublishedElection, questionIndex: number, notAvailableLabel: string) => {
   const question = election.questions[questionIndex]
   const votesForQuestion = getQuestionVotes(election, questionIndex)
   const counts = election.results?.[questionIndex] ?? []
@@ -234,11 +249,11 @@ const getQuestionChoices = (election: PublishedElection, questionIndex: number) 
     const rawVotes = counts[choiceIndex] ?? choice.results ?? choice.answer
     const numericVotes = Number(rawVotes)
     const hasNumericVotes = Number.isFinite(numericVotes)
-    const votes = hasNumericVotes ? String(numericVotes) : formatMaybeString(rawVotes, notAvailableString)
+    const votes = hasNumericVotes ? String(numericVotes) : formatMaybeString(rawVotes, notAvailableLabel)
     const percentage =
       hasNumericVotes && votesForQuestion > 0
         ? `${((numericVotes / votesForQuestion) * 100).toFixed(2)}%`
-        : notAvailableString
+        : notAvailableLabel
 
     return {
       name: choice.title.default,
@@ -279,11 +294,12 @@ const buildCertificateData = ({
   censusBundle?: CensusBundleData | null
   now: Date
 }): CertificateData => {
+  const notAvailableLabel = notAvailable(t)
   const eventReference = election.title.default?.trim() || election.id
-  const issueDate = formatUtcDate(now) ?? notAvailable(t)
-  const startDatetime = formatUtcDateTime(election.startDate) ?? notAvailable(t)
-  const endDatetime = formatUtcDateTime(election.endDate) ?? notAvailable(t)
-  const verificationExplorerLink = explorerUrl ? `${explorerUrl}/process/${election.id}` : notAvailable(t)
+  const issueDate = formatUtcDate(now) ?? notAvailableLabel
+  const startDatetime = formatUtcDateTime(election.startDate) ?? notAvailableLabel
+  const endDatetime = formatUtcDateTime(election.endDate) ?? notAvailableLabel
+  const verificationExplorerLink = explorerUrl ? `${explorerUrl}/process/${election.id}` : notAvailableLabel
   const count = election.voteCount ?? 0
   const censusMeta = dotobject(election.meta || {}, 'census') as
     | { type?: string; fields?: string[]; salt?: string }
@@ -292,13 +308,13 @@ const buildCertificateData = ({
   const censusFields = censusBundle?.census.authFields ?? censusMeta?.fields ?? []
   const twoFaFields = censusBundle?.census.twoFaFields ?? []
   const censusReference =
-    censusBundle?.census.published?.uri ?? election.census.censusURI ?? election.census.censusId ?? notAvailable(t)
-  const censusRootHash = censusBundle?.census.published?.root ?? election.census.censusId ?? notAvailable(t)
+    censusBundle?.census.published?.uri ?? election.census.censusURI ?? election.census.censusId ?? notAvailableLabel
+  const censusRootHash = censusBundle?.census.published?.root ?? election.census.censusId ?? notAvailableLabel
   const authenticationMethod = humanizeCensusType(t, censusType)
-  const identitySource = censusFields.length > 0 ? censusFields.join(', ') : notAvailable(t)
+  const identitySource = censusFields.length > 0 ? censusFields.join(', ') : notAvailableLabel
   const twoFaEnabledDisabled =
     censusBundle === null
-      ? notAvailable(t)
+      ? notAvailableLabel
       : twoFaFields.length > 0
         ? t('process_pdf.boolean.yes', { defaultValue: 'Yes' })
         : t('process_pdf.boolean.no', { defaultValue: 'No' })
@@ -307,8 +323,8 @@ const buildCertificateData = ({
       ? t('process_pdf.encryption.encrypted', { defaultValue: 'Encrypted' })
       : election.electionType?.metadata?.encrypted === false
         ? t('process_pdf.encryption.not_encrypted', { defaultValue: 'Not encrypted' })
-        : notAvailable(t)
-  const blockchainNetwork = election.chainId || notAvailable(t)
+        : notAvailableLabel
+  const blockchainNetwork = election.chainId || notAvailableLabel
   const totalEligibleParticipants = String(election.census?.size ?? election.maxCensusSize ?? 0)
   const turnoutPercentage =
     totalEligibleParticipants !== '0' ? ((count / Number(totalEligibleParticipants)) * 100).toFixed(2) : '0.00'
@@ -316,9 +332,10 @@ const buildCertificateData = ({
   return {
     eventReference,
     issueDate,
-    organizationName: organizationName || election.organizationId || notAvailable(t),
+    organizationName: organizationName || election.organizationId || notAvailableLabel,
     eventName: eventReference,
     blockchainNetwork,
+    notAvailableLabel,
     introParagraphs: [
       t('process_pdf.intro_paragraph_1', {
         defaultValue:
@@ -336,7 +353,7 @@ const buildCertificateData = ({
     generalInformation: [
       {
         label: t('process_pdf.general.organization', { defaultValue: 'Organization' }),
-        value: organizationName || notAvailable(t),
+        value: organizationName || notAvailableLabel,
       },
       { label: t('process_pdf.general.event_name', { defaultValue: 'Event name' }), value: eventReference },
       {
@@ -418,18 +435,21 @@ const buildCertificateData = ({
       { label: t('process_pdf.turnout.rate', { defaultValue: 'Turnout rate' }), value: `${turnoutPercentage}%` },
     ],
     participantsReference:
-      censusBundle?.census.published?.root || election.census.censusId || election.census.censusURI || notAvailable(t),
+      censusBundle?.census.published?.root ||
+      election.census.censusId ||
+      election.census.censusURI ||
+      notAvailableLabel,
     votingProcessIntro: t('process_pdf.voting_process.intro', {
       defaultValue: 'This voting process {{election_id}} consisted of {{count}} question(s).',
       election_id: election.id,
       count: election.questions.length,
     }),
     votingProcessQuestions: election.questions.map((question, questionIndex) => {
-      const choices = getQuestionChoices(election, questionIndex)
-      const outcome = getQuestionOutcome(choices, t('process_pdf.not_available', { defaultValue: 'Not available' }))
+      const choices = getQuestionChoices(election, questionIndex, notAvailableLabel)
+      const outcome = getQuestionOutcome(choices, notAvailableLabel)
 
       return {
-        question: question.title.default || notAvailableString,
+        question: question.title.default || notAvailableLabel,
         choices: choices.map(({ name, votes, percentage }) => ({ name, votes, percentage })),
         totalVotes: String(getQuestionVotes(election, questionIndex)),
         outcome,
@@ -444,7 +464,7 @@ const buildCertificateData = ({
         label: t('process_pdf.verification.process_root_hash', {
           defaultValue: 'Process Root Hash (SHA-256 or equivalent)',
         }),
-        value: notAvailable(t),
+        value: notAvailableLabel,
       },
       {
         label: t('process_pdf.verification.census_hash', { defaultValue: 'Census Hash or Reference' }),
@@ -492,7 +512,7 @@ const buildCertificateData = ({
       },
       {
         label: t('process_pdf.signature.date', { defaultValue: 'Date' }),
-        value: formatUtcDate(now) ?? notAvailable(t),
+        value: formatUtcDate(now) ?? notAvailableLabel,
       },
     ],
     disclaimerParagraphs: [
@@ -526,8 +546,6 @@ const buildCertificateData = ({
   }
 }
 
-const notAvailableString = 'Not available'
-
 const fetchCensusBundle = async (censusURI?: string | null) => {
   if (!censusURI) return null
 
@@ -545,9 +563,11 @@ const SectionTitle = ({ children }: { children: string }) => <PdfText style={sty
 const KeyValueList = ({ items }: { items: CertificateField[] }) => (
   <View>
     {items.map((item) => (
-      <View key={item.label} style={styles.fieldRow}>
+      <View key={item.label} style={shouldStackFieldValue(item.value) ? styles.fieldRowStacked : styles.fieldRow}>
         <PdfText style={styles.fieldLabel}>{item.label}:</PdfText>
-        <PdfText style={styles.fieldValue}>{item.value}</PdfText>
+        <PdfText style={shouldStackFieldValue(item.value) ? styles.fieldValueStacked : styles.fieldValue}>
+          {formatPdfFieldValue(item.value)}
+        </PdfText>
       </View>
     ))}
   </View>
@@ -579,29 +599,48 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
     <Document>
       <Page size='A4' style={styles.page}>
         <View style={styles.header}>
-          <PdfText style={styles.title}>
-            {`TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS ${data.eventReference}`}
+          <PdfText style={styles.title} hyphenationCallback={(word) => [word]}>
+            {t('process_pdf.document.title', {
+              defaultValue: 'TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS {{event_reference}}',
+              event_reference: data.eventReference,
+            })}
           </PdfText>
-          <PdfText style={styles.subtitle}>{`${data.eventName} | Issued on ${data.issueDate}`}</PdfText>
+          <PdfText style={styles.subtitle}>
+            {t('process_pdf.document.subtitle', {
+              defaultValue: '{{event_name}} | Issued on {{issue_date}}',
+              event_name: data.eventName,
+              issue_date: data.issueDate,
+            })}
+          </PdfText>
         </View>
 
         <Paragraphs items={data.introParagraphs} />
         <PdfText style={styles.issuedLine}>
-          {`Issued by Vocdoni (Synergize SL) on ${data.issueDate}, in its capacity as technical service provider.`}
+          {t('process_pdf.document.issued_by', {
+            defaultValue:
+              'Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.',
+            issue_date: data.issueDate,
+          })}
         </PdfText>
 
         <View style={styles.section}>
-          <SectionTitle>1. General Information</SectionTitle>
+          <SectionTitle>
+            {t('process_pdf.document.sections.general_information', { defaultValue: '1. General Information' })}
+          </SectionTitle>
           <KeyValueList items={data.generalInformation} />
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>2. Authentication</SectionTitle>
+          <SectionTitle>
+            {t('process_pdf.document.sections.authentication', { defaultValue: '2. Authentication' })}
+          </SectionTitle>
           <KeyValueList items={data.authentication} />
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>3. Voting System</SectionTitle>
+          <SectionTitle>
+            {t('process_pdf.document.sections.voting_system', { defaultValue: '3. Voting System' })}
+          </SectionTitle>
           <Paragraphs items={data.votingSystemParagraphs} />
           <BulletList items={data.votingSystemBullets} />
           <PdfText style={styles.paragraph}>
@@ -613,7 +652,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>4. Electoral Census</SectionTitle>
+          <SectionTitle>
+            {t('process_pdf.document.sections.electoral_census', { defaultValue: '4. Electoral Census' })}
+          </SectionTitle>
           <KeyValueList items={data.census} />
           <PdfText style={styles.paragraph}>
             {t('process_pdf.census.definition', {
@@ -624,7 +665,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>5. Turnout and Participation</SectionTitle>
+          <SectionTitle>
+            {t('process_pdf.document.sections.turnout_participation', { defaultValue: '5. Turnout and Participation' })}
+          </SectionTitle>
           <KeyValueList items={data.turnout} />
           <PdfText style={styles.paragraph}>
             {t('process_pdf.turnout.participation', {
@@ -653,15 +696,34 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>6. Voting Process</SectionTitle>
+          <SectionTitle>
+            {t('process_pdf.document.sections.voting_process', { defaultValue: '6. Voting Process' })}
+          </SectionTitle>
           <PdfText style={styles.paragraph}>{data.votingProcessIntro}</PdfText>
           {data.votingProcessQuestions.length > 0 ? (
             data.votingProcessQuestions.map((question, index) => (
               <View key={`${question.question}-${index}`} style={styles.questionCard}>
-                <PdfText style={styles.questionTitle}>{`Voting Item ${index + 1}`}</PdfText>
-                <PdfText style={styles.questionMeta}>{`Question: ${question.question}`}</PdfText>
-                <PdfText style={styles.questionMeta}>{`Participation: ${question.totalVotes} recorded votes`}</PdfText>
-                <PdfText style={styles.questionMeta}>Available options:</PdfText>
+                <PdfText style={styles.questionTitle}>
+                  {t('process_pdf.voting_process.card.item', {
+                    defaultValue: 'Voting Item {{index}}',
+                    index: index + 1,
+                  })}
+                </PdfText>
+                <PdfText style={styles.questionMeta}>
+                  {t('process_pdf.voting_process.card.question', {
+                    defaultValue: 'Question: {{question}}',
+                    question: question.question,
+                  })}
+                </PdfText>
+                <PdfText style={styles.questionMeta}>
+                  {t('process_pdf.voting_process.card.participation', {
+                    defaultValue: 'Participation: {{votes}} recorded votes',
+                    votes: question.totalVotes,
+                  })}
+                </PdfText>
+                <PdfText style={styles.questionMeta}>
+                  {t('process_pdf.voting_process.card.available_options', { defaultValue: 'Available options:' })}
+                </PdfText>
                 {question.choices.length > 0 ? (
                   question.choices.map((choice) => (
                     <View key={`${choice.name}-${choice.votes}`} style={{ marginBottom: 2 }}>
@@ -669,9 +731,11 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
                     </View>
                   ))
                 ) : (
-                  <PdfText style={styles.smallText}>{notAvailableString}</PdfText>
+                  <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
                 )}
-                <PdfText style={styles.questionMeta}>Results:</PdfText>
+                <PdfText style={styles.questionMeta}>
+                  {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
+                </PdfText>
                 {question.choices.length > 0 ? (
                   question.choices.map((choice) => (
                     <View key={`${choice.name}-${choice.votes}-result`} style={styles.optionRow}>
@@ -680,18 +744,25 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
                     </View>
                   ))
                 ) : (
-                  <PdfText style={styles.smallText}>{notAvailableString}</PdfText>
+                  <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
                 )}
-                <PdfText style={styles.questionMeta}>{`Outcome: ${question.outcome}`}</PdfText>
+                <PdfText style={styles.questionMeta}>
+                  {t('process_pdf.voting_process.card.outcome', {
+                    defaultValue: 'Outcome: {{outcome}}',
+                    outcome: question.outcome,
+                  })}
+                </PdfText>
               </View>
             ))
           ) : (
-            <PdfText style={styles.smallText}>{notAvailableString}</PdfText>
+            <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
           )}
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>7. Verification</SectionTitle>
+          <SectionTitle>
+            {t('process_pdf.document.sections.verification', { defaultValue: '7. Verification' })}
+          </SectionTitle>
           <PdfText style={styles.paragraph}>
             {t('process_pdf.verification.paragraph', {
               defaultValue:
@@ -724,7 +795,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>8. Certification Scope</SectionTitle>
+          <SectionTitle>
+            {t('process_pdf.document.sections.certification_scope', { defaultValue: '8. Certification Scope' })}
+          </SectionTitle>
           <PdfText style={styles.paragraph}>
             {t('process_pdf.scope.paragraph', {
               defaultValue: 'This certification covers exclusively the following technical aspects:',
@@ -740,7 +813,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>9. Issuer</SectionTitle>
+          <SectionTitle>{t('process_pdf.document.sections.issuer', { defaultValue: '9. Issuer' })}</SectionTitle>
           <KeyValueList items={data.issuer} />
           <PdfText style={styles.paragraph}>
             {t('process_pdf.issuer.paragraph', {
@@ -750,7 +823,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         </View>
 
         <View style={styles.section}>
-          <SectionTitle>10. Signature</SectionTitle>
+          <SectionTitle>{t('process_pdf.document.sections.signature', { defaultValue: '10. Signature' })}</SectionTitle>
           <KeyValueList items={data.signature} />
         </View>
 

@@ -1406,7 +1406,24 @@
       "paragraph_1": "Questo documento costituisce una certificazione tecnica derivata da registri generati dal sistema del Protocollo Vocdoni.",
       "paragraph_2": "Il fornitore tecnico non assume alcuna responsabilità per l'accuratezza dei dati di input (ad esempio, la composizione del censimento), l'interpretazione legale dei risultati o la conformità ai quadri legali o normativi applicabili.",
       "paragraph_3": "La responsabilità per l'interpretazione legale e l'uso di questa certificazione ricade esclusivamente sull'organizzazione richiedente.",
-      "title": "Disclaimer"
+      "title": "Esclusione di responsabilità"
+    },
+    "document": {
+      "issued_by": "Emesso da Vocdoni (Synergize SL) il {{issue_date}}, in qualità di fornitore tecnico.",
+      "sections": {
+        "authentication": "2. Autenticazione",
+        "certification_scope": "8. Ambito della certificazione",
+        "electoral_census": "4. Censimento elettorale",
+        "general_information": "1. Informazioni generali",
+        "issuer": "9. Emittente",
+        "signature": "10. Firma",
+        "turnout_participation": "5. Partecipazione e affluenza",
+        "verification": "7. Verifica",
+        "voting_process": "6. Processo di voto",
+        "voting_system": "3. Sistema di voto"
+      },
+      "subtitle": "{{event_name}} | Emesso il {{issue_date}}",
+      "title": "CERTIFICAZIONE TECNICA DEL PROCESSO DI VOTO DIGITALE {{event_reference}}"
     },
     "download": "Scarica PDF",
     "download_error": "Impossibile generare il report PDF",
@@ -1483,9 +1500,17 @@
     "vote_overwrite_enabled_many": "Sì, fino a {{count}} sovrascritture",
     "vote_overwrite_enabled_other": "Sì, fino a {{count}} sovrascritture",
     "voting_process": {
-      "intro_one": "Questo processo di voto {{election_id}} consisteva di {{count}} domanda/e.",
-      "intro_many": "Questo processo di voto {{election_id}} consisteva di {{count}} domanda/e.",
-      "intro_other": "Questo processo di voto {{election_id}} consisteva di {{count}} domanda/e."
+      "card": {
+        "available_options": "Opzioni disponibili:",
+        "item": "Domanda {{index}}",
+        "outcome": "Esito: {{outcome}}",
+        "participation": "Partecipazione: {{votes}} voti registrati",
+        "question": "Domanda: {{question}}",
+        "results": "Risultati:"
+      },
+      "intro_one": "Questo processo di voto {{election_id}} consisteva di {{count}} domanda.",
+      "intro_many": "Questo processo di voto {{election_id}} consisteva di {{count}} domande.",
+      "intro_other": "Questo processo di voto {{election_id}} consisteva di {{count}} domande."
     },
     "voting_system": {
       "bullet_1": "Infrastruttura di registro distribuito (blockchain)",

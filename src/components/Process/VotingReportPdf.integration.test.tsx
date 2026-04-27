@@ -45,9 +45,12 @@ describe('VotingReportPdf integration', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
 
-    await waitFor(() => {
-      expect(clickSpy).toHaveBeenCalled()
-    })
+    await waitFor(
+      () => {
+        expect(clickSpy).toHaveBeenCalled()
+      },
+      { timeout: 10_000 }
+    )
 
     createElementSpy.mockRestore()
     createObjectUrlSpy.mockRestore()

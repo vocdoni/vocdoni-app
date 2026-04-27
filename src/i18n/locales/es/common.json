@@ -1408,6 +1408,23 @@
       "paragraph_3": "La responsabilidad sobre la interpretación legal y el uso de esta certificación recae exclusivamente en la organización solicitante.",
       "title": "Aviso legal"
     },
+    "document": {
+      "issued_by": "Emitido por Vocdoni (Synergize SL) el {{issue_date}}, en su calidad de proveedor técnico.",
+      "sections": {
+        "authentication": "2. Autenticación",
+        "certification_scope": "8. Alcance de la certificación",
+        "electoral_census": "4. Censo electoral",
+        "general_information": "1. Información general",
+        "issuer": "9. Emisor",
+        "signature": "10. Firma",
+        "turnout_participation": "5. Participación y asistencia",
+        "verification": "7. Verificación",
+        "voting_process": "6. Proceso de votación",
+        "voting_system": "3. Sistema de votación"
+      },
+      "subtitle": "{{event_name}} | Emitido el {{issue_date}}",
+      "title": "CERTIFICACIÓN TÉCNICA DEL PROCESO DE VOTACIÓN DIGITAL {{event_reference}}"
+    },
     "download": "Descargar PDF",
     "download_error": "No se ha podido generar el informe PDF",
     "downloading": "Generando PDF",
@@ -1483,9 +1500,17 @@
     "vote_overwrite_enabled_many": "Sí, hasta {{count}} sobrescrituras",
     "vote_overwrite_enabled_other": "Sí, hasta {{count}} sobrescrituras",
     "voting_process": {
-      "intro_one": "Este proceso de votación {{election_id}} constó de {{count}} pregunta(s).",
-      "intro_many": "Este proceso de votación {{election_id}} constó de {{count}} pregunta(s).",
-      "intro_other": "Este proceso de votación {{election_id}} constó de {{count}} pregunta(s)."
+      "card": {
+        "available_options": "Opciones disponibles:",
+        "item": "Pregunta {{index}}",
+        "outcome": "Resultado: {{outcome}}",
+        "participation": "Participación: {{votes}} votos registrados",
+        "question": "Pregunta: {{question}}",
+        "results": "Resultados:"
+      },
+      "intro_one": "Este proceso de votación {{election_id}} constó de {{count}} pregunta.",
+      "intro_many": "Este proceso de votación {{election_id}} constó de {{count}} preguntas.",
+      "intro_other": "Este proceso de votación {{election_id}} constó de {{count}} preguntas."
     },
     "voting_system": {
       "bullet_1": "Infraestructura de libro mayor distribuido (blockchain)",

@@ -1386,6 +1386,23 @@
       "paragraph_3": "Responsibility for legal interpretation and use of this certification rests solely with the requesting organization.",
       "title": "Disclaimer"
     },
+    "document": {
+      "issued_by": "Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.",
+      "sections": {
+        "authentication": "2. Authentication",
+        "certification_scope": "8. Certification Scope",
+        "electoral_census": "4. Electoral Census",
+        "general_information": "1. General Information",
+        "issuer": "9. Issuer",
+        "signature": "10. Signature",
+        "turnout_participation": "5. Turnout and Participation",
+        "verification": "7. Verification",
+        "voting_process": "6. Voting Process",
+        "voting_system": "3. Voting System"
+      },
+      "subtitle": "{{event_name}} | Issued on {{issue_date}}",
+      "title": "TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS {{event_reference}}"
+    },
     "download": "Download PDF",
     "download_error": "Could not generate the PDF report",
     "downloading": "Generating PDF",
@@ -1460,8 +1477,16 @@
     "vote_overwrite_enabled_one": "Yes, up to {{count}} overwrites",
     "vote_overwrite_enabled_other": "Yes, up to {{count}} overwrites",
     "voting_process": {
-      "intro_one": "This voting process {{election_id}} consisted of {{count}} question(s).",
-      "intro_other": "This voting process {{election_id}} consisted of {{count}} question(s)."
+      "card": {
+        "available_options": "Available options:",
+        "item": "Question {{index}}",
+        "outcome": "Outcome: {{outcome}}",
+        "participation": "Participation: {{votes}} recorded votes",
+        "question": "Question: {{question}}",
+        "results": "Results:"
+      },
+      "intro_one": "This voting process {{election_id}} consisted of {{count}} question.",
+      "intro_other": "This voting process {{election_id}} consisted of {{count}} questions."
     },
     "voting_system": {
       "bullet_1": "Distributed ledger (blockchain) infrastructure",
