@@ -1,21 +1,35 @@
-import { useEffect } from 'react'
 import { Crisp } from 'crisp-sdk-web'
+import { useEffect, useState } from 'react'
+
+import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent } from '~components/Cookies/utils'
 
 const CrispChat = () => {
   const websiteId = import.meta.env.CRISP_WEBSITE_ID
+  const [hasConsent, setHasConsent] = useState(() => getCookieConsent() === 'accepted')
 
   useEffect(() => {
-    if (!websiteId || typeof window === 'undefined') {
-      return
-    }
-
-    const typedWindow = window as typeof window & { $crisp?: unknown }
-    if (typedWindow.$crisp) {
+    if (!websiteId || typeof window === 'undefined' || !hasConsent) {
       return
     }
 
     Crisp.configure(websiteId)
-  }, [websiteId])
+  }, [hasConsent, websiteId])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const syncConsent = () => {
+      setHasConsent(getCookieConsent() === 'accepted')
+    }
+
+    window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
+
+    return () => {
+      window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
+    }
+  }, [])
 
   return null
 }
