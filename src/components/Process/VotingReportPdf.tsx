@@ -851,9 +851,8 @@ const useVotingReportPdfDownload = (election?: PublishedElection | InvalidElecti
 
     setIsGenerating(true)
     try {
-      const censusMeta = dotobject(election.meta || {}, 'census') as { type?: string } | undefined
       const censusBundle =
-        censusMeta?.type === CensusType.CSP ? await fetchCensusBundle(election.census.censusURI) : null
+        election.census.type === CensusType.CSP ? await fetchCensusBundle(election.census.censusURI) : null
       const data = buildCertificateData({
         election,
         t,

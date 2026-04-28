@@ -143,4 +143,43 @@ describe('VotingReportPdf', () => {
 
     expect(authMethod?.value).toBe('CSP census')
   })
+
+  it('fetches the census bundle for csp elections even when census metadata uses spreadsheet labels', async () => {
+    pdfToBlob.mockResolvedValue(new Blob(['pdf']))
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          census: {
+            published: { uri: 'https://example.test/census', root: 'root-hash' },
+            authFields: ['email'],
+            twoFaFields: [],
+          },
+        }),
+        { status: 200 }
+      ) as Response
+    )
+
+    const election = Object.assign(createElection(), {
+      census: {
+        size: 100,
+        type: 'csp',
+        censusURI: 'https://example.test/census-bundle',
+      },
+      meta: {
+        census: {
+          type: 'spreadsheet',
+        },
+      },
+    })
+
+    render(<VotingReportPdfButton election={election} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+
+    await waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalledWith('https://example.test/census-bundle')
+    })
+
+    fetchSpy.mockRestore()
+  })
 })
