@@ -495,7 +495,7 @@ const ProcessViewSidebar = () => {
           <SidebarSubtitle>
             <Trans i18nKey='additional_actions'>Additional actions</Trans>
           </SidebarSubtitle>
-          <Button asChild variant='outline' w='full' size='sm' justifyContent='start'>
+          <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
             <Link href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
               <HStack gap={2}>
                 <Icon as={LuSearch} />

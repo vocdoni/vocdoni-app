@@ -1,4 +1,4 @@
-import { Button, HStack, Icon, Menu, Spinner, Text } from '@chakra-ui/react'
+import { Button, HStack, Icon, Link, Menu, Spinner, Text } from '@chakra-ui/react'
 import { useToast } from '~components/Toast'
 import * as ReactPDF from '@react-pdf/renderer'
 import { CensusType, dotobject, InvalidElection, PublishedElection } from '@vocdoni/sdk'
@@ -898,18 +898,21 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
 
   return (
     <Button
+      asChild
       variant='outline'
+      colorPalette='gray'
       w='full'
       size='sm'
       justifyContent='start'
-      onClick={download}
       loading={isGenerating}
       loadingText={t('process_pdf.downloading', { defaultValue: 'Generating PDF' })}
     >
-      <HStack gap={2}>
-        <Icon as={LuFileDown} />
-        <Text as='span'>{t('process_pdf.download', { defaultValue: 'Download PDF' })}</Text>
-      </HStack>
+      <Link as='button' variant='button' onClick={download}>
+        <HStack gap={2}>
+          <Icon as={LuFileDown} />
+          <Text as='span'>{t('process_pdf.download', { defaultValue: 'Download PDF' })}</Text>
+        </HStack>
+      </Link>
     </Button>
   )
 }
