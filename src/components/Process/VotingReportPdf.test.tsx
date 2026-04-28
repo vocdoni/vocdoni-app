@@ -119,4 +119,28 @@ describe('VotingReportPdf', () => {
 
     expect(values).toEqual(['2026-01-01 10:00 UTC', '2026-01-02 10:00 UTC'])
   })
+
+  it('uses the sdk census type for the authentication method', () => {
+    const election = Object.assign(createElection(), {
+      census: {
+        size: 100,
+        type: 'csp',
+      },
+      meta: {
+        census: {
+          type: 'spreadsheet',
+        },
+      },
+    })
+
+    const data = buildCertificateData({
+      election,
+      t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    const authMethod = data.authentication.find((field) => field.label === 'Authentication method')
+
+    expect(authMethod?.value).toBe('CSP census')
+  })
 })

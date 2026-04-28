@@ -304,7 +304,7 @@ export const buildCertificateData = ({
   const censusMeta = dotobject(election.meta || {}, 'census') as
     | { type?: string; fields?: string[]; salt?: string }
     | undefined
-  const censusType = censusMeta?.type ?? election.census.type
+  const censusType = election.census.type
   const censusFields = censusBundle?.census.authFields ?? censusMeta?.fields ?? []
   const twoFaFields = censusBundle?.census.twoFaFields ?? []
   const censusReference =
