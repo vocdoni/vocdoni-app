@@ -5,6 +5,7 @@ import {
   FieldErrorText,
   FieldLabel,
   FieldRoot,
+  HStack,
   Input,
   Link,
   Spinner,
@@ -13,11 +14,13 @@ import {
   TabsList,
   TabsRoot,
   TabsTrigger,
+  Text,
 } from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
+import { LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { Select } from '~components/Form/Select'
 import { CensusTypes } from '~components/Process/Census/CensusType'
@@ -29,6 +32,24 @@ import { VoterAuthentication } from '../VoterAuthentication'
 import { Process } from '../common'
 
 type GroupsQuery = ReturnType<typeof useGroups>
+
+type GroupOptionLabelContext = {
+  context: 'menu' | 'value'
+}
+
+export const formatGroupOptionLabel = (group: Group, { context }: GroupOptionLabelContext) => {
+  if (context === 'value') return group.title
+
+  return (
+    <HStack gap={4} align='center' justifyContent='space-between' w='full'>
+      <Text as='span'>{group.title}</Text>
+      <HStack gap={1.5} color='texts.subtle' fontSize='sm' flexShrink={0}>
+        <LuUsers />
+        <Text as='span'>{group.membersCount || 0}</Text>
+      </HStack>
+    </HStack>
+  )
+}
 
 export type GroupSelectProps = {
   groups: Group[]
@@ -89,6 +110,7 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
               placeholder={t('process_create.group.select', 'Select group')}
               isLoading={isFetching}
               onChange={(option) => field.onChange(option?.id ?? '')}
+              formatOptionLabel={(option, meta) => formatGroupOptionLabel(option, meta)}
               onMenuScrollToBottom={async () => {
                 if (hasNextPage && !hasFetchedScroll) {
                   setHasFetchedScroll(true)
