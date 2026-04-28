@@ -983,7 +983,7 @@
     }
   },
   "organizations": "Organizations ({{ numOrgs }})",
-  "other_details": "other details",
+  "other_details": "Other details",
   "pagination": {
     "page_out_of": "Page {{page}} of {{total}}",
     "rows_per_page": "Rows per page"
