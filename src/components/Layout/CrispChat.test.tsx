@@ -26,7 +26,6 @@ describe('CrispChat', () => {
   })
 
   it('does not configure Crisp until cookie consent is accepted', async () => {
-    import.meta.env.CRISP_WEBSITE_ID = ''
     const { default: CrispChat } = await import('./CrispChat')
 
     render(<CrispChat />)
