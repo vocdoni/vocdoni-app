@@ -59,7 +59,7 @@ export function CookieConsent() {
     >
       <Box>
         <AlertTitle fontSize='md' mb={1}>
-          {t('cookies.title', { defaultValue: 'Cookie Consent' })}
+          {t('cookies.title', { defaultValue: 'Cookie consent' })}
         </AlertTitle>
         <AlertDescription fontSize='sm'>
           {t('cookies.description', {

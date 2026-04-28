@@ -11,7 +11,7 @@ const OrganizationTeam = () => {
     <DashboardBox p={6}>
       <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
         <SectionHeader>
-          <SectionHeading>{t('organization_settings.team.title', { defaultValue: 'Team Members' })}</SectionHeading>
+          <SectionHeading>{t('organization_settings.team.title', { defaultValue: 'Team members' })}</SectionHeading>
           <SectionSubHeading>
             {t('organization_settings.team.subtitle', {
               defaultValue: "Manage your organization's team members and their permissions.",

@@ -22,7 +22,7 @@ const Settings = () => {
 
   const menuItems: MenuItem[] = [
     {
-      label: t('organization.organization', { defaultValue: 'Organization Details' }),
+      label: t('organization.organization', { defaultValue: 'Organization details' }),
       route: Routes.dashboard.settings.organization,
     },
     {
@@ -30,7 +30,7 @@ const Settings = () => {
       route: Routes.dashboard.settings.team,
     },
     {
-      label: t('subscription.title', { defaultValue: 'Subscription Plan' }),
+      label: t('subscription.title', { defaultValue: 'Subscription plan' }),
       route: Routes.dashboard.settings.subscription,
     },
     {

@@ -17,8 +17,8 @@
     "more": "More options",
     "pause": "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
     "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",
-    "save": "Save Changes",
-    "save_changes": "Save Changes",
+    "save": "Save changes",
+    "save_changes": "Save changes",
     "view_active_votes": "View active votes",
     "waiting_title": "Waiting for transaction confirmation..."
   },
@@ -59,7 +59,7 @@
     "label": "Organization Avatar"
   },
   "back": "Back",
-  "billing_details": "Billing Details",
+  "billing_details": "Billing details",
   "calendar": {
     "max_duration_exceeded": "Duration exceeds your plan's {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days.",
     "title": "Schedule"
@@ -69,7 +69,7 @@
   "census_size": "Census size",
   "change_password": {
     "subtitle": "Enter your current password and a new password to update your credentials.",
-    "title": "Change Password"
+    "title": "Change password"
   },
   "close": "Close",
   "code_applied": "Code \"{{appliedCode}}\" applied",
@@ -109,7 +109,7 @@
     "description": "We use cookies and analytics tools to improve your experience and understand how you interact with our website. You can choose to accept or reject cookies.",
     "learnMore": "Learn more",
     "reject": "Reject",
-    "title": "Cookie Consent"
+    "title": "Cookie consent"
   },
   "copy": {
     "address": "Copy address",
@@ -122,9 +122,9 @@
   "create_org": {
     "already_profile": "If your organization already has a profile, <dlink>access the dashboard</dlink> and contact the administrator to invite you",
     "create_button": "Create your organization",
-    "organization_details": "Organization Details",
+    "organization_details": "Organization details",
     "organization_details_description": "Manage your organization's profile and configuration settings.",
-    "private_org": "Other Details",
+    "private_org": "Other details",
     "private_org_description": "Help us tailor your experience with information about your org. We won't share this info",
     "subtitle": "Cut cost, Save Time: Secure, Private, and GDPR Compliant",
     "title": "Tell us about your organization"
@@ -369,7 +369,7 @@
   "form": {
     "account_create": {
       "description_placeholder": "Provide a brief description of your organization (optional)",
-      "title": "Organization Name",
+      "title": "Organization name",
       "title_placeholder": "Enter your organization's name",
       "website_placeholder": "https://example.com"
     },
@@ -778,7 +778,7 @@
     "form": {
       "cancel": "Cancel",
       "phone_warning": "Phone number hidden. Any changes here will overwrite it.",
-      "save": "Save Changes"
+      "save": "Save changes"
     },
     "groups": {
       "title": "Groups"
@@ -970,7 +970,7 @@
     "team": {
       "add_team_member": "Add team member",
       "subtitle": "Manage your organization's team members and their permissions.",
-      "title": "Team Members"
+      "title": "Team members"
     },
     "title": "{{organization}} Settings"
   },
@@ -983,7 +983,7 @@
     }
   },
   "organizations": "Organizations ({{ numOrgs }})",
-  "other_details": "other details",
+  "other_details": "Other details",
   "pagination": {
     "page_out_of": "Page {{page}} of {{total}}",
     "rows_per_page": "Rows per page"
@@ -1468,7 +1468,7 @@
       "title": "Your current {{ plan }} plan does not include {{ permissionName }}",
       "unlock": "Unlock {{ permissionName }}"
     },
-    "title": "Subscription Plan"
+    "title": "Subscription plan"
   },
   "subscription_plan": {
     "gdpr_compliance": "All plans include GDPR compliance.",
@@ -1476,7 +1476,7 @@
     "need_help": "<0>Need help choosing?</0> <1>Contact our sales team</1>",
     "show_comparison_table": "View all features",
     "subtitle": "With our subscriptions, you get more than a plan. You gain access to the most innovative governance platform. Thanks to this model, we can offer the best price in the market: whether you need 1, 5, or 20 votes per year, you'll always benefit from the most competitive costs and unmatched guarantees. The platform is fully self-service, yet our team is always available to provide assistance or tailor solutions to your specific needs.",
-    "title": "Subscription Plan"
+    "title": "Subscription plan"
   },
   "subtotal": "Subtotal",
   "support": "Support",

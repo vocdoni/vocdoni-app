@@ -14,7 +14,7 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
     <VStack gap={4} flex={1}>
       <InputBasic
         formValue='name'
-        label={t('form.account_create.title', { defaultValue: 'Organization Name' })}
+        label={t('form.account_create.title', { defaultValue: 'Organization name' })}
         placeholder={t('form.account_create.title_placeholder', {
           defaultValue: "Enter your organization's email",
         })}
@@ -65,7 +65,7 @@ export const PrivateOrgForm = ({ minified }: { minified?: boolean }) => {
       {!minified && (
         <Box>
           <Text fontWeight='bold' mb={2.5}>
-            {t('create_org.private_org', { defaultValue: 'Other Details' })}
+            {t('create_org.private_org', { defaultValue: 'Other details' })}
           </Text>
           <Text fontSize='sm'>
             {t('create_org.private_org_description', {

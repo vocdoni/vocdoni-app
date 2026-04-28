@@ -100,7 +100,7 @@ const EditOrganization = () => {
         <Flex as='form' id='process-create-form' onSubmit={handleSubmit(onSubmit)} flexDirection='column' gap={6}>
           <Flex flexDir='column'>
             <Heading size='md'>
-              {t('create_org.organization_details', { defaultValue: 'Organization Details' })}
+              {t('create_org.organization_details', { defaultValue: 'Organization details' })}
             </Heading>
             <Text color='texts.subtle' fontSize='sm'>
               {t('create_org.organization_details_description', {
@@ -122,7 +122,7 @@ const EditOrganization = () => {
               fontSize='xs'
               textTransform='uppercase'
             >
-              {t('other_details', { defaultValue: 'Other Details' })}
+              {t('other_details', { defaultValue: 'Other details' })}
             </Text>
             <HSeparator />
           </Flex>
