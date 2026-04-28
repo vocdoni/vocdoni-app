@@ -1,7 +1,7 @@
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import type { ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
-import { VotingReportPdfButton, VotingReportPdfMenuItem } from './VotingReportPdf'
+import { buildCertificateData, VotingReportPdfButton, VotingReportPdfMenuItem } from './VotingReportPdf'
 
 const pdfToBlob = vi.fn()
 const toastSpy = vi.fn()
@@ -100,5 +100,23 @@ describe('VotingReportPdf', () => {
     render(<VotingReportPdfMenuItem election={createElection()} />)
 
     expect(screen.getByRole('button', { name: /download pdf/i })).toBeInTheDocument()
+  })
+
+  it('formats voting period timestamps with a single UTC suffix', () => {
+    const election = Object.assign(createElection(), {
+      meta: {},
+    })
+
+    const data = buildCertificateData({
+      election,
+      t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    const values = data.generalInformation
+      .filter((field) => field.label.includes('Voting period'))
+      .map((field) => field.value)
+
+    expect(values).toEqual(['2026-01-01 10:00 UTC', '2026-01-02 10:00 UTC'])
   })
 })

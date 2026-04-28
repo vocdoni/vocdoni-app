@@ -279,7 +279,7 @@ const getQuestionOutcome = (choices: Array<{ name: string; numericVotes: number 
   return winners.length ? winners.join(', ') : fallback
 }
 
-const buildCertificateData = ({
+export const buildCertificateData = ({
   election,
   t,
   organizationName,
@@ -358,11 +358,11 @@ const buildCertificateData = ({
       { label: t('process_pdf.general.event_name', { defaultValue: 'Event name' }), value: eventReference },
       {
         label: t('process_pdf.general.voting_period_start', { defaultValue: 'Voting period (start)' }),
-        value: `${startDatetime} (UTC)`,
+        value: startDatetime,
       },
       {
         label: t('process_pdf.general.voting_period_end', { defaultValue: 'Voting period (end)' }),
-        value: `${endDatetime} (UTC)`,
+        value: endDatetime,
       },
       {
         label: t('process_pdf.general.encryption_method', { defaultValue: 'Encryption method' }),
