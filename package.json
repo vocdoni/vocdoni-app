@@ -27,8 +27,6 @@
     "@lexical/utils": "^0.34.0",
     "@plausible-analytics/tracker": "^0.4.4",
     "@rainbow-me/rainbowkit": "^2.2.10",
-    "@react-pdf/image": "3.0.4",
-    "@react-pdf/layout": "4.5.1",
     "@react-pdf/renderer": "4.4.1",
     "@stripe/react-stripe-js": "^4.0.2",
     "@stripe/stripe-js": "^7.9.0",
