@@ -650,7 +650,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
         </View>
+      </Page>
 
+      <Page size='A4' style={styles.page}>
         <View style={styles.section}>
           <SectionTitle>
             {t('process_pdf.document.sections.electoral_census', { defaultValue: '4. Electoral Census' })}
@@ -826,7 +828,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
           <SectionTitle>{t('process_pdf.document.sections.signature', { defaultValue: '10. Signature' })}</SectionTitle>
           <KeyValueList items={data.signature} />
         </View>
+      </Page>
 
+      <Page size='A4' style={styles.page}>
         <View style={styles.section}>
           <SectionTitle>{t('process_pdf.disclaimer.title', { defaultValue: 'Disclaimer' })}</SectionTitle>
           <Paragraphs items={data.disclaimerParagraphs} />

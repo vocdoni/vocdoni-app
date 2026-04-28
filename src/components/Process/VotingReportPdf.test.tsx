@@ -4,11 +4,16 @@ import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import { buildCertificateData, VotingReportPdfButton, VotingReportPdfMenuItem } from './VotingReportPdf'
 
 const pdfToBlob = vi.fn()
+const pdfSpy = vi.fn()
 const toastSpy = vi.fn()
 const realCreateElement = document.createElement.bind(document)
 
 vi.mock('@react-pdf/renderer', () => ({
-  pdf: vi.fn(() => ({ toBlob: pdfToBlob })),
+  pdf: vi.fn((document) => {
+    pdfSpy(document)
+
+    return { toBlob: pdfToBlob }
+  }),
   Document: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Page: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   Text: ({ children }: { children: ReactNode }) => <span>{children}</span>,
@@ -66,6 +71,7 @@ const createElection = () =>
 describe('VotingReportPdf', () => {
   beforeEach(() => {
     pdfToBlob.mockReset()
+    pdfSpy.mockReset()
     toastSpy.mockReset()
   })
 
@@ -118,6 +124,29 @@ describe('VotingReportPdf', () => {
       .map((field) => field.value)
 
     expect(values).toEqual(['2026-01-01 10:00 UTC', '2026-01-02 10:00 UTC'])
+  })
+
+  it('splits the certificate into separate pages around section 4 and the legal notice', async () => {
+    pdfToBlob.mockResolvedValue(new Blob(['pdf']))
+    const election = createElection()
+
+    render(<VotingReportPdfButton election={election} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+
+    await waitFor(() => {
+      expect(pdfSpy).toHaveBeenCalled()
+    })
+
+    const [documentElement] = pdfSpy.mock.calls[0]
+    const documentTree = (documentElement.type as (props: typeof documentElement.props) => ReactNode)(
+      documentElement.props
+    ) as { props: { children: ReactNode } }
+    const pages = Array.isArray(documentTree.props.children)
+      ? documentTree.props.children
+      : [documentTree.props.children]
+
+    expect(pages).toHaveLength(3)
   })
 
   it('uses the sdk census type for the authentication method', () => {
