@@ -181,13 +181,17 @@ const GroupActions = ({ group, onMembersDrawerOpen, onDeleteModalOpen }: GroupAc
                 <Text as='span'>{t('group.actions.history', { defaultValue: 'History' })}</Text>
               </HStack>
             </MenuItem>
-            <MenuSeparator />
-            <MenuItem value='delete' color='red.500' onClick={onDeleteModalOpen}>
-              <HStack gap={2}>
-                <Icon boxSize={4} as={LuTrash} />
-                <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>
-              </HStack>
-            </MenuItem>
+            {!group.isAutoGroup && (
+              <>
+                <MenuSeparator />
+                <MenuItem value='delete' color='red.500' onClick={onDeleteModalOpen}>
+                  <HStack gap={2}>
+                    <Icon boxSize={4} as={LuTrash} />
+                    <Text as='span'>{t('group.actions.delete_group', { defaultValue: 'Delete Group' })}</Text>
+                  </HStack>
+                </MenuItem>
+              </>
+            )}
           </MenuContent>
         </MenuPositioner>
       </MenuRoot>
@@ -381,15 +385,17 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
                 })}
               </Text>
             </Flex>
-            <Flex justify='space-between' mt={4}>
+            <Flex justify='space-between' mt={4} gap={2}>
               <Button size='xs' onClick={() => navigateToVote(group.id)}>
                 <Icon as={LuVote} boxSize={4} />
                 {t('group.create_vote', { defaultValue: 'Create a Vote' })}
               </Button>
-              <Button onClick={openDeleteModal} colorPalette='red' size='xs'>
-                <Icon as={LuTrash} boxSize={4} />
-                {t('group.delete_group', { defaultValue: 'Delete group' })}
-              </Button>
+              {!group.isAutoGroup && (
+                <Button onClick={openDeleteModal} colorPalette='red' size='xs'>
+                  <Icon as={LuTrash} boxSize={4} />
+                  {t('group.delete_group', { defaultValue: 'Delete group' })}
+                </Button>
+              )}
             </Flex>
           </Drawer.Body>
         </Drawer.Content>
