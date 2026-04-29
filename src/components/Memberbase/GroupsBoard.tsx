@@ -72,6 +72,18 @@ type DeleteGroupModalProps = {
   onClose: () => void
 }
 
+const useGroupDisplay = (group: Group) => {
+  const { t } = useTranslation()
+  return {
+    displayTitle: group.isAutoGroup ? t('groups_board.auto_group.title', { defaultValue: 'All Members' }) : group.title,
+    displayDescription: group.isAutoGroup
+      ? t('groups_board.auto_group.description', {
+          defaultValue: 'Automatically includes all members of your organization.',
+        })
+      : group.description,
+  }
+}
+
 export const useNavigateToVote = () => {
   const navigate = useNavigate()
 
@@ -116,10 +128,7 @@ const GroupsInfo = () => {
 
 const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
   const { t } = useTranslation()
-
-  const displayTitle = group.isAutoGroup
-    ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })
-    : group.title
+  const { displayTitle } = useGroupDisplay(group)
 
   return (
     <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
@@ -351,10 +360,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
 const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMembersDrawerProps) => {
   const { t } = useTranslation()
   const navigateToVote = useNavigateToVote()
-
-  const displayTitle = group.isAutoGroup
-    ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })
-    : group.title
+  const { displayTitle } = useGroupDisplay(group)
 
   return (
     <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='lg'>
@@ -529,15 +535,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
   const navigateToVote = useNavigateToVote()
   const { open: isMembersDrawerOpen, onOpen: onMembersDrawerOpen, onClose: onMembersDrawerClose } = useDisclosure()
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
-
-  const displayTitle = group.isAutoGroup
-    ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })
-    : group.title
-  const displayDescription = group.isAutoGroup
-    ? t('groups_board.auto_group.description', {
-        defaultValue: 'Automatically includes all members of your organization.',
-      })
-    : group.description
+  const { displayTitle, displayDescription } = useGroupDisplay(group)
 
   return (
     <>
