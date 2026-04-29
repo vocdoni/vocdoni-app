@@ -65,7 +65,6 @@ type DeleteMemberModalProps = {
 
 type CreateGroupButtonProps = {
   members?: Member[]
-  includeAllMembers?: boolean
   total?: number
 } & ButtonProps
 
@@ -318,29 +317,18 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
         />
       </InputGroup>
       {data?.members?.length >= 1 && (
-        <>
-          <CreateGroupButton includeAllMembers members={data?.members ?? []} total={data.pagination.totalItems}>
-            {t('members.table.create_group_all', { defaultValue: 'Create group (All)' })}
-          </CreateGroupButton>
-          <Button variant='outline' colorPalette='red' onClick={onDelete}>
-            <Icon as={LuTrash2} />
-            {t('members.table.delete_all', {
-              defaultValue: 'Delete (All)',
-            })}
-          </Button>
-        </>
+        <Button variant='outline' colorPalette='red' onClick={onDelete}>
+          <Icon as={LuTrash2} />
+          {t('members.table.delete_all', {
+            defaultValue: 'Delete (All)',
+          })}
+        </Button>
       )}
     </Flex>
   )
 }
 
-const CreateGroupButton = ({
-  children,
-  members,
-  includeAllMembers = false,
-  total,
-  ...rest
-}: CreateGroupButtonProps) => {
+const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupButtonProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const { open: isOpen, onOpen, onClose } = useDisclosure({ defaultOpen: false })
@@ -363,7 +351,6 @@ const CreateGroupButton = ({
     const memberIDs = selectedRows.map((row) => row.id)
     const group = {
       ...data,
-      includeAllMembers,
       ...(memberIDs.length > 0 && { memberIDs }),
     }
     createGroupMutation.mutate(group, {
