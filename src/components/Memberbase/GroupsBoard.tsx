@@ -204,7 +204,7 @@ const GroupActions = ({ group, onMembersDrawerOpen, onDeleteModalOpen }: GroupAc
   )
 }
 
-const GroupMembersTable = ({ groupId }: { groupId: string }) => {
+const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }) => {
   const { t } = useTranslation()
   const deleteGroupMembers = useUpdateGroup()
   const [isDeleteMembersModalOpen, setDeleteMembersModalOpen] = useState(false)
@@ -228,28 +228,30 @@ const GroupMembersTable = ({ groupId }: { groupId: string }) => {
 
   return (
     <>
-      <Flex gap={4} align='center' minH='42px' mb={2}>
-        {selectedRows.length > 0 ? (
-          <>
+      {!group.isAutoGroup && (
+        <Flex gap={4} align='center' minH='42px' mb={2}>
+          {selectedRows.length > 0 ? (
+            <>
+              <Text fontSize='sm' color='texts.subtle'>
+                <Trans
+                  i18nKey='members.table.selected'
+                  count={selectedRows.length}
+                  components={{ strong: <Text as='span' fontSize='sm' fontWeight='extrabold' display='inline' /> }}
+                  defaults='Selected: <strong>{{count}} member</strong>'
+                />
+              </Text>
+              <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' colorPalette='red' variant='outline'>
+                <Icon as={LuTrash} />
+                {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
+              </Button>
+            </>
+          ) : (
             <Text fontSize='sm' color='texts.subtle'>
-              <Trans
-                i18nKey='members.table.selected'
-                count={selectedRows.length}
-                components={{ strong: <Text as='span' fontSize='sm' fontWeight='extrabold' display='inline' /> }}
-                defaults='Selected: <strong>{{count}} member</strong>'
-              />
+              <Trans i18nKey='members.table.select_hint' defaults='Select members to perform bulk actions' />
             </Text>
-            <Button onClick={() => setDeleteMembersModalOpen(true)} size='sm' colorPalette='red' variant='outline'>
-              <Icon as={LuTrash} />
-              {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
-            </Button>
-          </>
-        ) : (
-          <Text fontSize='sm' color='texts.subtle'>
-            <Trans i18nKey='members.table.select_hint' defaults='Select members to perform bulk actions' />
-          </Text>
-        )}
-      </Flex>
+          )}
+        </Flex>
+      )}
       <Table.ScrollArea
         border='1px'
         borderRadius='sm'
@@ -462,7 +464,7 @@ const GroupMembersWithPagination = ({ group, isOpen }: GroupMembersProps) => {
           { id: 'email', label: t('group.email', { defaultValue: 'Email' }) },
         ]}
       >
-        <GroupMembersTable groupId={group.id} />
+        <GroupMembersTable groupId={group.id} group={group} />
       </TableProvider>
     </>
   )
