@@ -112,6 +112,21 @@ describe('VotingReportPdf', () => {
     expect(screen.getByRole('button', { name: /download pdf/i })).toBeInTheDocument()
   })
 
+  it('hides the download action while the voting process is still ongoing', () => {
+    const ongoingElection = Object.assign(createElection(), {
+      status: ElectionStatus.ONGOING,
+    })
+
+    render(
+      <>
+        <VotingReportPdfButton election={ongoingElection} />
+        <VotingReportPdfMenuItem election={ongoingElection} />
+      </>
+    )
+
+    expect(screen.queryByRole('button', { name: /download pdf/i })).toBeNull()
+  })
+
   it('formats voting period timestamps with a single UTC suffix', () => {
     const election = Object.assign(createElection(), {
       meta: {},
@@ -206,7 +221,7 @@ describe('VotingReportPdf', () => {
       ? documentTree.props.children
       : [documentTree.props.children]
 
-    expect(pages).toHaveLength(4)
+    expect(pages).toHaveLength(3)
   })
 
   it('renders the vocdoni logo, a larger title, and puts section 1 on the next page', async () => {
@@ -291,11 +306,7 @@ describe('VotingReportPdf', () => {
 
     expect(sectionTitle.props.children).toBe('1. General Information')
 
-    const thirdPage = pages[2] as { props: { children: ReactNode } }
-    const thirdPageChildren = Array.isArray(thirdPage.props.children)
-      ? thirdPage.props.children
-      : [thirdPage.props.children]
-    const turnoutSection = thirdPageChildren[2] as { props: { children: ReactNode } }
+    const turnoutSection = secondPageChildren[5] as { props: { children: ReactNode } }
     const turnoutSectionChildren = Array.isArray(turnoutSection.props.children)
       ? turnoutSection.props.children
       : [turnoutSection.props.children]
@@ -303,11 +314,11 @@ describe('VotingReportPdf', () => {
 
     expect(turnoutContact.props.children).toContain('If you need more details about the census')
 
-    const fourthPage = pages[3] as { props: { children: ReactNode } }
-    const fourthPageChildren = Array.isArray(fourthPage.props.children)
-      ? fourthPage.props.children
-      : [fourthPage.props.children]
-    const votingProcessSection = fourthPageChildren[1] as { props: { children: ReactNode } }
+    const thirdPage = pages[2] as { props: { children: ReactNode } }
+    const thirdPageChildren = Array.isArray(thirdPage.props.children)
+      ? thirdPage.props.children
+      : [thirdPage.props.children]
+    const votingProcessSection = thirdPageChildren[1] as { props: { children: ReactNode } }
     const votingProcessSectionChildren = Array.isArray(votingProcessSection.props.children)
       ? votingProcessSection.props.children
       : [votingProcessSection.props.children]
@@ -325,16 +336,7 @@ describe('VotingReportPdf', () => {
     })
     expect(votingProcessIntroChildren[2]).toContain('consisted of 0 questions.')
 
-    const issuerSection = fourthPageChildren[4] as { props: { children: ReactNode } }
-    const issuerSectionChildren = Array.isArray(issuerSection.props.children)
-      ? issuerSection.props.children
-      : [issuerSection.props.children]
-    const issuerFields = issuerSectionChildren[1] as { props: { items: Array<{ label: string; value: string }> } }
-    expect(issuerFields.props.items[2]).toMatchObject({
-      label: 'Issuing date',
-      value: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
-    })
-    const footer = fourthPageChildren[5] as { props: { style?: Record<string, unknown>; children: ReactNode } }
+    const footer = thirdPageChildren[5] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(footer.props.style).toMatchObject({
       paddingTop: 8,
     })

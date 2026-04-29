@@ -1,7 +1,7 @@
 import { Button, HStack, Icon, Link, Menu, Spinner, Text } from '@chakra-ui/react'
 import * as ReactPDF from '@react-pdf/renderer'
 import { useClient, useOrganization } from '@vocdoni/react-components'
-import { CensusType, dotobject, InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import { CensusType, dotobject, ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { type TFunction } from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -76,6 +76,11 @@ type PdfDocumentProps = {
   data: CertificateData
   t: TFunction
 }
+
+const downloadableElectionStatuses = new Set([ElectionStatus.RESULTS, ElectionStatus.ENDED, ElectionStatus.CANCELED])
+
+const canDownloadVotingReport = (election?: PublishedElection | InvalidElection | null) =>
+  election instanceof PublishedElection && downloadableElectionStatuses.has(election.status)
 
 const styles = StyleSheet.create({
   page: {
@@ -930,7 +935,7 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
   const { t } = useTranslation()
   const { download, isGenerating } = useVotingReportPdfDownload(election)
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!canDownloadVotingReport(election)) return null
 
   return (
     <Button
@@ -957,7 +962,7 @@ export const VotingReportPdfMenuItem = ({ election }: VotingReportPdfProps) => {
   const { t } = useTranslation()
   const { download, isGenerating } = useVotingReportPdfDownload(election)
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!canDownloadVotingReport(election)) return null
 
   return (
     <Menu.Item value='download-pdf' onClick={download} disabled={isGenerating}>

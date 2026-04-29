@@ -71,9 +71,23 @@ describe('ProcessesTable', () => {
   })
 
   it('shows the pdf download action in the row menu', async () => {
+    const endedElection = Object.assign(new PublishedElection({} as never), election, {
+      status: ElectionStatus.RESULTS,
+    })
+    setReactProvidersMock({
+      ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+      useElection: () =>
+        mockUseElection({
+          election: endedElection as any,
+          localize: (key: string) => key,
+          client: { explorerUrl: 'https://example.test' },
+        }),
+      useRoutedPagination: () => ({ pagination: null, initialPage: 1 }),
+    })
+
     render(
       <TestMemoryRouter>
-        <ProcessesTable processes={[election as any]} />
+        <ProcessesTable processes={[endedElection as any]} />
       </TestMemoryRouter>
     )
 
