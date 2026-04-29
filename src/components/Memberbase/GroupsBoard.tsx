@@ -126,7 +126,7 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
       <Drawer.Backdrop />
       <Drawer.Positioner>
         <Drawer.Content>
-          <Drawer.CloseTrigger>
+          <Drawer.CloseTrigger asChild>
             <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
@@ -361,7 +361,7 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
       <Drawer.Backdrop />
       <Drawer.Positioner>
         <Drawer.Content>
-          <Drawer.CloseTrigger>
+          <Drawer.CloseTrigger asChild>
             <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>

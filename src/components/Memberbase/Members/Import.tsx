@@ -504,7 +504,7 @@ export const ImportMembers = () => {
       </Drawer.Trigger>
       <Drawer.Positioner>
         <Drawer.Content>
-          <Drawer.CloseTrigger>
+          <Drawer.CloseTrigger asChild>
             <CloseButton />
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
