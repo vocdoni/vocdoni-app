@@ -586,7 +586,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
             </Text>
           </Flex>
         </Card.Body>
-        <Card.Footer px={0} pb={0}>
+        <Card.Footer px={0} pb={0} mt={3}>
           <Button w='full' size='xs' onClick={() => navigateToVote(group.id)}>
             <Icon boxSize={4} as={LuVote} />
             {t('group.create_vote', { defaultValue: 'Create a Vote' })}
