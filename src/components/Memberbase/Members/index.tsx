@@ -387,7 +387,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
 
   return (
     <>
-      <Button variant='outline' colorPalette='gray' onClick={onOpen} {...rest}>
+      <Button size='sm' variant='outline' onClick={onOpen} {...rest}>
         <Icon as={LuUsers} />
         {children}
       </Button>
