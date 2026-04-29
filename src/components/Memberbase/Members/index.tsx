@@ -100,7 +100,8 @@ export const maskIfNeeded = (fieldId: string, value: string): string => {
 const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { data } = useGroups()
+  const { data: allGroups } = useGroups()
+  const data = (allGroups ?? []).filter((g) => !g.isAutoGroup)
   const [selectedGroup, setSelectedGroup] = useState<{ id: string; title: string } | null>(null)
   const addMemberToGroup = useUpdateGroup()
   const { selectedRows, resetSelectedRows } = useTable()
