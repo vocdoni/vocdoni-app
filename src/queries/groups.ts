@@ -14,6 +14,7 @@ export type Group = {
   updatedAt: string
   censusIds: string[]
   membersCount: number
+  isAutoGroup?: boolean
 }
 
 export type GroupsResponse = {
