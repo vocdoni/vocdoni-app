@@ -500,6 +500,10 @@
     "name": "Nombre"
   },
   "groups_board": {
+    "auto_group": {
+      "description": "Incluye automáticamente todos los miembros de tu organización.",
+      "title": "Todos los miembros"
+    },
     "create_group": "Crea un nuevo grupo para empezar.",
     "history": {
       "close": "Cerrar",
@@ -861,7 +865,6 @@
       "cancel": "Cancelar",
       "close_drawer": "Cerrar",
       "create_group": "Crear grupo",
-      "create_group_all": "Crear grupo (Todos)",
       "create_group_error": "Error al crear grupo",
       "create_group_form_description": "Crea un nuevo grupo a partir de los miembros seleccionados. Esto los organizará para futuros procesos de votación.",
       "create_group_form_title": "Crear nuevo grupo",

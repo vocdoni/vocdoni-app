@@ -117,6 +117,10 @@ const GroupsInfo = () => {
 const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
   const { t } = useTranslation()
 
+  const displayTitle = group.isAutoGroup
+    ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })
+    : group.title
+
   return (
     <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
       <Drawer.Backdrop />
@@ -127,7 +131,7 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
             <Drawer.Title>
-              {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: group.title })}
+              {t('groups_board.history.title', { defaultValue: '{{ title }} History', title: displayTitle })}
             </Drawer.Title>
             <Text color='texts.subtle' fontSize='sm'>
               {t('groups_board.history.description', {
@@ -346,6 +350,10 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
   const { t } = useTranslation()
   const navigateToVote = useNavigateToVote()
 
+  const displayTitle = group.isAutoGroup
+    ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })
+    : group.title
+
   return (
     <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='lg'>
       <Drawer.Backdrop />
@@ -355,7 +363,7 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
             <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
           </Drawer.CloseTrigger>
           <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
-            <Drawer.Title>{group.title}</Drawer.Title>
+            <Drawer.Title>{displayTitle}</Drawer.Title>
             <Text color='texts.subtle' fontSize='sm'>
               {`${t('group.created_on', {
                 defaultValue: 'Created {{date}}',
@@ -520,12 +528,21 @@ const GroupCard = ({ group }: GroupCardProps) => {
   const { open: isMembersDrawerOpen, onOpen: onMembersDrawerOpen, onClose: onMembersDrawerClose } = useDisclosure()
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
 
+  const displayTitle = group.isAutoGroup
+    ? t('groups_board.auto_group.title', { defaultValue: 'All Members' })
+    : group.title
+  const displayDescription = group.isAutoGroup
+    ? t('groups_board.auto_group.description', {
+        defaultValue: 'Automatically includes all members of your organization.',
+      })
+    : group.description
+
   return (
     <>
       <Card.Root variant='outline' borderColor='table.border' p={4} pt={2}>
         <Card.Header p={0}>
           <Flex justify='space-between' align='center'>
-            <Heading size='md'>{group.title}</Heading>
+            <Heading size='md'>{displayTitle}</Heading>
             <GroupActions
               group={group}
               onMembersDrawerOpen={onMembersDrawerOpen}
@@ -565,7 +582,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
               </Text>
             </Flex>
             <Text fontSize='sm' color='texts.subtle'>
-              {group.description}
+              {displayDescription}
             </Text>
           </Flex>
         </Card.Body>

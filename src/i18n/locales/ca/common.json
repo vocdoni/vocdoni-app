@@ -500,6 +500,10 @@
     "name": "Nom"
   },
   "groups_board": {
+    "auto_group": {
+      "description": "Inclou automàticament tots els membres de la teva organització.",
+      "title": "Tots els membres"
+    },
     "create_group": "Crea un grup nou per començar.",
     "history": {
       "close": "Tanca",
@@ -861,7 +865,6 @@
       "cancel": "Cancel·la",
       "close_drawer": "Tanca",
       "create_group": "Crea un grup",
-      "create_group_all": "Crea un grup (Tots)",
       "create_group_error": "Error en crear el grup",
       "create_group_form_description": "Crea un nou grup a partir dels membres seleccionats. Això els organitzarà per a futurs processos de votació.",
       "create_group_form_title": "Crear un nou grup",

@@ -493,6 +493,10 @@
     "name": "Name"
   },
   "groups_board": {
+    "auto_group": {
+      "description": "Automatically includes all members of your organization.",
+      "title": "All Members"
+    },
     "create_group": "Create a new group to get started.",
     "history": {
       "close": "Close",
@@ -848,7 +852,6 @@
       "cancel": "Cancel",
       "close_drawer": "Close",
       "create_group": "Create group",
-      "create_group_all": "Create group (All)",
       "create_group_error": "Error creating group",
       "create_group_form_description": "Create a new group from selected members. This will organize them for future voting processes.",
       "create_group_form_title": "Create New Group",

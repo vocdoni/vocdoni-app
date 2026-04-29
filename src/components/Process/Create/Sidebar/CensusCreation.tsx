@@ -82,7 +82,9 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
             <Select
               options={groups ?? []}
               value={selected}
-              getOptionLabel={(option) => option.title}
+              getOptionLabel={(option) =>
+                option.isAutoGroup ? t('groups_board.auto_group.title', { defaultValue: 'All Members' }) : option.title
+              }
               getOptionValue={(option) => option.id}
               placeholder={t('process_create.group.select', 'Select group')}
               isLoading={isFetching}
