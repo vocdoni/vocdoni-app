@@ -1389,8 +1389,9 @@
     },
     "census": {
       "definition": "El censo electoral define el conjunto completo de miembros autorizados a participar en el proceso de votación. La inclusión en el censo no implica participación efectiva.",
-      "size": "Número total de participantes elegibles (tamaño del censo)",
-      "source": "Fuente del censo"
+      "provider": "Proveedor del censo",
+      "provider_value": "El censo lo proporciona la organización",
+      "total": "Total del censo"
     },
     "census_type": {
       "anonymous": "Censo ponderado anónimo",
@@ -1416,14 +1417,13 @@
         "electoral_census": "4. Censo electoral",
         "general_information": "1. Información general",
         "issuer": "9. Emisor",
-        "signature": "10. Firma",
         "turnout_participation": "5. Participación y asistencia",
         "verification": "7. Verificación",
         "voting_process": "6. Proceso de votación",
         "voting_system": "3. Sistema de votación"
       },
-      "subtitle": "{{event_name}} | Emitido el {{issue_date}}",
-      "title": "CERTIFICACIÓN TÉCNICA DEL PROCESO DE VOTACIÓN DIGITAL {{event_reference}}"
+      "subtitle": "Informe emitido el {{issue_date}} | ID del proceso: {{process_id}}",
+      "title_prefix": "CERTIFICACIÓN TÉCNICA DEL PROCESO DE VOTACIÓN DIGITAL"
     },
     "download": "Descargar PDF",
     "download_error": "No se ha podido generar el informe PDF",
@@ -1435,8 +1435,10 @@
     "general": {
       "encryption_method": "Método de cifrado",
       "event_name": "Nombre del evento",
+      "extended_process_details": "Detalles ampliados del proceso",
+      "network": "Red",
       "organization": "Organización",
-      "verification_explorer_url": "URL del explorador de verificación",
+      "results_visibility": "Visibilidad de los resultados",
       "vote_overwrite_enabled": "Sobrescritura del voto habilitada",
       "voting_period_end": "Periodo de votación (fin)",
       "voting_period_start": "Periodo de votación (inicio)"
@@ -1445,6 +1447,7 @@
     "intro_paragraph_2": "Todos los datos relevantes asociados a este proceso de votación han sido registrados y anclados en registros públicamente auditables dentro de la red Vocdoni. Estos registros garantizan transparencia, inmutabilidad y verificabilidad de extremo a extremo, preservando al mismo tiempo el anonimato del votante y la confidencialidad de la papeleta mediante mecanismos criptográficos.",
     "intro_paragraph_3": "Esta certificación la emite exclusivamente el proveedor técnico para acreditar la correcta ejecución del sistema y la integridad de los datos registrados. No sustituye ni reemplaza ninguna certificación legal ni afirma el cumplimiento de requisitos legales o normativos específicos de una jurisdicción.",
     "issuer": {
+      "issuing_date": "Fecha de emisión",
       "legal_entity": "Entidad jurídica",
       "paragraph": "Emitido en nombre de la entidad organizadora en su calidad de proveedor técnico.",
       "provider": "Vocdoni"
@@ -1460,37 +1463,17 @@
       "results": "Resultados finales calculados",
       "tally": "Mecanismos automatizados de recuento"
     },
-    "signature": {
-      "date": "Fecha",
-      "name": "Nombre",
-      "position": "Cargo",
-      "signatory_name": "Equipo técnico de Vocdoni",
-      "signatory_position": "Proveedor técnico"
-    },
     "turnout": {
+      "census_contact": "Si necesitas más detalles sobre el censo, contacta con nosotros.",
       "eligible": "Número total de participantes elegibles",
-      "participants_reference_note": "Cada participante se representa una sola vez, independientemente del número de preguntas respondidas. Cuando proceda, los participantes se identifican mediante identificadores seudónimos o criptográficos (por ejemplo, referencias hash) para preservar la privacidad.",
-      "participants_reference_title": "Participantes que emitieron voto (si aplica)",
       "participation": "El número de votos emitidos refleja solo a aquellos participantes que enviaron efectivamente una papeleta válida durante el periodo de votación definido.",
-      "privacy_note": "En ningún caso puede establecerse una vinculación entre la identidad del participante y las selecciones individuales de voto.",
       "rate": "Tasa de participación",
       "votes_cast": "Número total de votos emitidos"
     },
     "verification": {
-      "artifact_1": "Hash raíz del proceso (SHA-256 o equivalente)",
-      "artifact_2": "Hash o referencia del censo",
-      "artifact_3": "Identificador de la urna",
-      "artifact_4": "Estos elementos permiten verificar de forma independiente:",
-      "artifact_5": "La integridad de los datos (sin alteraciones de registros)",
-      "artifact_6": "La autenticidad del proceso",
-      "artifact_7": "La completitud del conjunto de datos registrado",
-      "artifacts": "Para facilitar la auditabilidad, se proporcionan los siguientes artefactos criptográficos:",
-      "ballot_box": "Identificador de la urna",
-      "census_hash": "Hash o referencia del censo",
       "explorer": "Explorador de verificación",
       "paragraph": "Todos los datos del proceso han quedado registrados en una infraestructura basada en blockchain y pueden verificarse de forma independiente a través del siguiente explorador público:",
-      "procedure_title": "Procedimiento de verificación (informativo)",
-      "process_root_hash": "Hash raíz del proceso (SHA-256 o equivalente)",
+      "procedure_title": "Procedimiento de verificación",
       "step_1": "Recuperar los datos del proceso a través del explorador.",
       "step_2": "Validar el hash raíz del proceso frente al valor publicado.",
       "step_3": "Confirmar la coherencia de la referencia del censo y de los registros de la urna.",
@@ -1501,16 +1484,15 @@
     "vote_overwrite_enabled_other": "Sí, hasta {{count}} sobrescrituras",
     "voting_process": {
       "card": {
-        "available_options": "Opciones disponibles:",
         "item": "Pregunta {{index}}",
         "outcome": "Resultado: {{outcome}}",
         "participation": "Participación: {{votes}} votos registrados",
         "question": "Pregunta: {{question}}",
         "results": "Resultados:"
       },
-      "intro_one": "Este proceso de votación {{election_id}} constó de {{count}} pregunta.",
-      "intro_many": "Este proceso de votación {{election_id}} constó de {{count}} preguntas.",
-      "intro_other": "Este proceso de votación {{election_id}} constó de {{count}} preguntas."
+      "intro_one": "El proceso de votación {{process_name}} consistió en 1 pregunta.",
+      "intro_many": "",
+      "intro_other": "El proceso de votación {{process_name}} consistió en {{count}} preguntas."
     },
     "voting_system": {
       "bullet_1": "Infraestructura de libro mayor distribuido (blockchain)",

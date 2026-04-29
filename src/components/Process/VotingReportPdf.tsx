@@ -1,14 +1,17 @@
 import { Button, HStack, Icon, Link, Menu, Spinner, Text } from '@chakra-ui/react'
-import { useToast } from '~components/Toast'
 import * as ReactPDF from '@react-pdf/renderer'
+import { useClient, useOrganization } from '@vocdoni/react-components'
 import { CensusType, dotobject, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { type TFunction } from 'i18next'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuFileDown } from 'react-icons/lu'
-import { useClient, useOrganization } from '@vocdoni/react-components'
+import { useToast } from '~components/Toast'
 
-const { pdf, Document, Page, StyleSheet, Text: PdfText, View } = ReactPDF
+const { pdf, Document, Image, Page, StyleSheet, Text: PdfText, View } = ReactPDF
+
+const vocdoniLogo = '/assets/logo_vocdoni.png'
+const vocdoniIcon = '/assets/vocdoni_icon.png'
 
 type VotingReportPdfProps = {
   election?: PublishedElection | InvalidElection | null
@@ -46,6 +49,7 @@ type CertificateQuestion = {
 
 type CertificateData = {
   eventReference: string
+  processId: string
   issueDate: string
   organizationName: string
   eventName: string
@@ -58,14 +62,12 @@ type CertificateData = {
   votingSystemBullets: string[]
   census: CertificateField[]
   turnout: CertificateField[]
-  participantsReference: string
   votingProcessIntro: string
   votingProcessQuestions: CertificateQuestion[]
   verification: CertificateField[]
   verificationProcedures: string[]
   scopeBullets: string[]
   issuer: CertificateField[]
-  signature: CertificateField[]
   disclaimerParagraphs: string[]
   disclaimerBullets: string[]
 }
@@ -78,6 +80,7 @@ type PdfDocumentProps = {
 const styles = StyleSheet.create({
   page: {
     padding: 34,
+    paddingTop: 28,
     fontFamily: 'Helvetica',
     fontSize: 10,
     lineHeight: 1.45,
@@ -85,19 +88,49 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   header: {
-    marginBottom: 16,
+    marginBottom: 18,
+    alignItems: 'center',
   },
-  title: {
-    fontSize: 18,
+  coverContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+  pageBrand: {
+    marginBottom: 14,
+    alignItems: 'flex-start',
+  },
+  pageBrandIcon: {
+    width: 20,
+    height: 20,
+    objectFit: 'contain',
+  },
+  logo: {
+    width: 124,
+    height: 27,
+    objectFit: 'contain',
+    marginBottom: 14,
+  },
+  titleBlock: {
+    alignItems: 'center',
+  },
+  titlePrefix: {
+    fontSize: 26,
     fontWeight: 700,
     lineHeight: 1.2,
     textAlign: 'center',
-    marginBottom: 8,
+  },
+  titleProcess: {
+    fontSize: 30,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    lineHeight: 1.2,
+    marginTop: 2,
   },
   subtitle: {
     fontSize: 10,
     color: '#4b5563',
     textAlign: 'center',
+    marginTop: 8,
   },
   leadParagraph: {
     marginBottom: 8,
@@ -144,6 +177,9 @@ const styles = StyleSheet.create({
   paragraph: {
     marginBottom: 6,
   },
+  italicText: {
+    fontStyle: 'italic',
+  },
   bulletRow: {
     flexDirection: 'row',
     gap: 8,
@@ -186,6 +222,24 @@ const styles = StyleSheet.create({
   optionValue: {
     width: '32%',
     textAlign: 'right',
+  },
+  footer: {
+    marginTop: 'auto',
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  footerTitle: {
+    fontSize: 8,
+    fontWeight: 700,
+    color: '#374151',
+    marginBottom: 3,
+  },
+  footerParagraph: {
+    fontSize: 6.25,
+    color: '#6b7280',
+    marginBottom: 1,
+    lineHeight: 1.15,
   },
   smallText: {
     fontSize: 9,
@@ -307,8 +361,6 @@ export const buildCertificateData = ({
   const censusType = election.census.type
   const censusFields = censusBundle?.census.authFields ?? censusMeta?.fields ?? []
   const twoFaFields = censusBundle?.census.twoFaFields ?? []
-  const censusReference =
-    censusBundle?.census.published?.uri ?? election.census.censusURI ?? election.census.censusId ?? notAvailableLabel
   const censusRootHash = censusBundle?.census.published?.root ?? election.census.censusId ?? notAvailableLabel
   const authenticationMethod = humanizeCensusType(t, censusType)
   const identitySource = censusFields.length > 0 ? censusFields.join(', ') : notAvailableLabel
@@ -325,12 +377,16 @@ export const buildCertificateData = ({
         ? t('process_pdf.encryption.not_encrypted', { defaultValue: 'Not encrypted' })
         : notAvailableLabel
   const blockchainNetwork = election.chainId || notAvailableLabel
+  const resultsVisibility = election.electionType?.secretUntilTheEnd
+    ? t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })
+    : t('results_state.live_results', { defaultValue: 'Live results' })
   const totalEligibleParticipants = String(election.census?.size ?? election.maxCensusSize ?? 0)
   const turnoutPercentage =
     totalEligibleParticipants !== '0' ? ((count / Number(totalEligibleParticipants)) * 100).toFixed(2) : '0.00'
 
   return {
     eventReference,
+    processId: election.id,
     issueDate,
     organizationName: organizationName || election.organizationId || notAvailableLabel,
     eventName: eventReference,
@@ -369,7 +425,15 @@ export const buildCertificateData = ({
         value: encryptionType,
       },
       {
-        label: t('process_pdf.general.verification_explorer_url', { defaultValue: 'Verification explorer URL' }),
+        label: t('process_pdf.general.results_visibility', { defaultValue: 'Results visibility' }),
+        value: resultsVisibility,
+      },
+      {
+        label: t('process_pdf.general.network', { defaultValue: 'Network' }),
+        value: blockchainNetwork,
+      },
+      {
+        label: t('process_pdf.general.extended_process_details', { defaultValue: 'Extended process details' }),
         value: verificationExplorerLink,
       },
       {
@@ -417,9 +481,14 @@ export const buildCertificateData = ({
       t('process_pdf.voting_system.guarantee_4', { defaultValue: 'Confidentiality of individual ballots' }),
     ],
     census: [
-      { label: t('process_pdf.census.source', { defaultValue: 'Census source' }), value: censusReference },
       {
-        label: t('process_pdf.census.size', { defaultValue: 'Total number of eligible participants (census size)' }),
+        label: t('process_pdf.census.provider', { defaultValue: 'Census provider' }),
+        value: t('process_pdf.census.provider_value', {
+          defaultValue: 'The census is provided by the organization',
+        }),
+      },
+      {
+        label: t('process_pdf.census.total', { defaultValue: 'Total census' }),
         value: totalEligibleParticipants,
       },
     ],
@@ -434,15 +503,10 @@ export const buildCertificateData = ({
       },
       { label: t('process_pdf.turnout.rate', { defaultValue: 'Turnout rate' }), value: `${turnoutPercentage}%` },
     ],
-    participantsReference:
-      censusBundle?.census.published?.root ||
-      election.census.censusId ||
-      election.census.censusURI ||
-      notAvailableLabel,
     votingProcessIntro: t('process_pdf.voting_process.intro', {
-      defaultValue: 'This voting process {{election_id}} consisted of {{count}} question(s).',
-      election_id: election.id,
+      defaultValue: 'The voting process {{process_name}} consisted of {{count}} questions.',
       count: election.questions.length,
+      process_name: eventReference,
     }),
     votingProcessQuestions: election.questions.map((question, questionIndex) => {
       const choices = getQuestionChoices(election, questionIndex, notAvailableLabel)
@@ -459,20 +523,6 @@ export const buildCertificateData = ({
       {
         label: t('process_pdf.verification.explorer', { defaultValue: 'Verification explorer' }),
         value: verificationExplorerLink,
-      },
-      {
-        label: t('process_pdf.verification.process_root_hash', {
-          defaultValue: 'Process Root Hash (SHA-256 or equivalent)',
-        }),
-        value: notAvailableLabel,
-      },
-      {
-        label: t('process_pdf.verification.census_hash', { defaultValue: 'Census Hash or Reference' }),
-        value: censusRootHash,
-      },
-      {
-        label: t('process_pdf.verification.ballot_box', { defaultValue: 'Ballot Box Identifier' }),
-        value: election.id,
       },
     ],
     verificationProcedures: [
@@ -498,20 +548,8 @@ export const buildCertificateData = ({
     issuer: [
       { label: t('process_pdf.issuer.provider', { defaultValue: 'Provider' }), value: 'Vocdoni' },
       { label: t('process_pdf.issuer.legal_entity', { defaultValue: 'Legal entity' }), value: 'Synergize SL' },
-    ],
-    signature: [
       {
-        label: t('process_pdf.signature.name', { defaultValue: 'Name' }),
-        value: t('process_pdf.signature.signatory_name', { defaultValue: 'Vocdoni Technical Team' }),
-      },
-      {
-        label: t('process_pdf.signature.position', { defaultValue: 'Position' }),
-        value: t('process_pdf.signature.signatory_position', {
-          defaultValue: 'Technical service provider',
-        }),
-      },
-      {
-        label: t('process_pdf.signature.date', { defaultValue: 'Date' }),
+        label: t('process_pdf.issuer.issuing_date', { defaultValue: 'Issuing date' }),
         value: formatUtcDate(now) ?? notAvailableLabel,
       },
     ],
@@ -584,6 +622,17 @@ const BulletList = ({ items }: { items: string[] }) => (
   </View>
 )
 
+const NumberedList = ({ items }: { items: string[] }) => (
+  <View>
+    {items.map((item, index) => (
+      <View key={`${item}-${index}`} style={styles.bulletRow}>
+        <PdfText style={styles.bulletMarker}>{`${index + 1}.`}</PdfText>
+        <PdfText style={styles.bulletText}>{item}</PdfText>
+      </View>
+    ))}
+  </View>
+)
+
 const Paragraphs = ({ items }: { items: string[] }) => (
   <View>
     {items.map((item, index) => (
@@ -598,30 +647,43 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
   return (
     <Document>
       <Page size='A4' style={styles.page}>
-        <View style={styles.header}>
-          <PdfText style={styles.title} hyphenationCallback={(word) => [word]}>
-            {t('process_pdf.document.title', {
-              defaultValue: 'TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS {{event_reference}}',
-              event_reference: data.eventReference,
-            })}
-          </PdfText>
-          <PdfText style={styles.subtitle}>
-            {t('process_pdf.document.subtitle', {
-              defaultValue: '{{event_name}} | Issued on {{issue_date}}',
-              event_name: data.eventName,
+        <View style={styles.coverContent}>
+          <View style={styles.header}>
+            <Image src={vocdoniLogo} style={styles.logo} />
+            <View style={styles.titleBlock}>
+              <PdfText style={styles.titlePrefix} hyphenationCallback={(word) => [word]}>
+                {t('process_pdf.document.title_prefix', {
+                  defaultValue: 'TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS',
+                })}
+              </PdfText>
+              <PdfText style={styles.titleProcess} hyphenationCallback={(word) => [word]}>
+                {data.eventReference}
+              </PdfText>
+            </View>
+            <PdfText style={styles.subtitle}>
+              {t('process_pdf.document.subtitle', {
+                defaultValue: 'Report issued on {{issue_date}} | Process ID: {{process_id}}',
+                issue_date: data.issueDate,
+                process_id: data.processId,
+              })}
+            </PdfText>
+          </View>
+
+          <Paragraphs items={data.introParagraphs} />
+          <PdfText style={styles.issuedLine}>
+            {t('process_pdf.document.issued_by', {
+              defaultValue:
+                'Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.',
               issue_date: data.issueDate,
             })}
           </PdfText>
         </View>
+      </Page>
 
-        <Paragraphs items={data.introParagraphs} />
-        <PdfText style={styles.issuedLine}>
-          {t('process_pdf.document.issued_by', {
-            defaultValue:
-              'Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.',
-            issue_date: data.issueDate,
-          })}
-        </PdfText>
+      <Page size='A4' style={styles.page}>
+        <View style={styles.pageBrand}>
+          <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
+        </View>
 
         <View style={styles.section}>
           <SectionTitle>
@@ -650,9 +712,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
         </View>
-      </Page>
 
-      <Page size='A4' style={styles.page}>
         <View style={styles.section}>
           <SectionTitle>
             {t('process_pdf.document.sections.electoral_census', { defaultValue: '4. Electoral Census' })}
@@ -678,30 +738,27 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
           <PdfText style={styles.paragraph}>
-            {t('process_pdf.turnout.participants_reference_title', {
-              defaultValue: 'Participants who cast a vote (if applicable)',
+            {t('process_pdf.turnout.census_contact', {
+              defaultValue: 'If you need more details about the census, please contact us.',
             })}
           </PdfText>
-          <PdfText style={styles.paragraph}>{data.participantsReference}</PdfText>
-          <PdfText style={styles.smallText}>
-            {t('process_pdf.turnout.participants_reference_note', {
-              defaultValue:
-                'Each participant is represented once, irrespective of the number of questions answered. Where applicable, participants are identified using pseudonymous or cryptographic identifiers (e.g., hashed references) to preserve privacy.',
-            })}
-          </PdfText>
-          <PdfText style={styles.smallText}>
-            {t('process_pdf.turnout.privacy_note', {
-              defaultValue:
-                'Under no circumstances can a linkage be established between participant identity and individual vote selections.',
-            })}
-          </PdfText>
+        </View>
+      </Page>
+
+      <Page size='A4' style={styles.page}>
+        <View style={styles.pageBrand}>
+          <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
         </View>
 
         <View style={styles.section}>
           <SectionTitle>
             {t('process_pdf.document.sections.voting_process', { defaultValue: '6. Voting Process' })}
           </SectionTitle>
-          <PdfText style={styles.paragraph}>{data.votingProcessIntro}</PdfText>
+          <PdfText style={styles.paragraph}>
+            {data.votingProcessIntro.split(data.eventReference)[0]}
+            <PdfText style={styles.italicText}>{data.eventReference}</PdfText>
+            {data.votingProcessIntro.split(data.eventReference)[1]}
+          </PdfText>
           {data.votingProcessQuestions.length > 0 ? (
             data.votingProcessQuestions.map((question, index) => (
               <View key={`${question.question}-${index}`} style={styles.questionCard}>
@@ -723,18 +780,6 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
                     votes: question.totalVotes,
                   })}
                 </PdfText>
-                <PdfText style={styles.questionMeta}>
-                  {t('process_pdf.voting_process.card.available_options', { defaultValue: 'Available options:' })}
-                </PdfText>
-                {question.choices.length > 0 ? (
-                  question.choices.map((choice) => (
-                    <View key={`${choice.name}-${choice.votes}`} style={{ marginBottom: 2 }}>
-                      <PdfText>{choice.name}</PdfText>
-                    </View>
-                  ))
-                ) : (
-                  <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
-                )}
                 <PdfText style={styles.questionMeta}>
                   {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
                 </PdfText>
@@ -773,27 +818,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
           </PdfText>
           <KeyValueList items={data.verification} />
           <PdfText style={styles.paragraph}>
-            {t('process_pdf.verification.artifacts', {
-              defaultValue: 'To facilitate auditability, the following cryptographic artifacts are provided:',
-            })}
+            {t('process_pdf.verification.procedure_title', { defaultValue: 'Verification Procedure' })}
           </PdfText>
-          <BulletList
-            items={[
-              t('process_pdf.verification.artifact_1', { defaultValue: 'Process Root Hash (SHA-256 or equivalent)' }),
-              t('process_pdf.verification.artifact_2', { defaultValue: 'Census Hash or Reference' }),
-              t('process_pdf.verification.artifact_3', { defaultValue: 'Ballot Box Identifier' }),
-              t('process_pdf.verification.artifact_4', {
-                defaultValue: 'These elements collectively enable independent verification of:',
-              }),
-              t('process_pdf.verification.artifact_5', { defaultValue: 'Data integrity (no alteration of records)' }),
-              t('process_pdf.verification.artifact_6', { defaultValue: 'Authenticity of the process' }),
-              t('process_pdf.verification.artifact_7', { defaultValue: 'Completeness of the recorded dataset' }),
-            ]}
-          />
-          <PdfText style={styles.paragraph}>
-            {t('process_pdf.verification.procedure_title', { defaultValue: 'Verification Procedure (informative)' })}
-          </PdfText>
-          <BulletList items={data.verificationProcedures} />
+          <NumberedList items={data.verificationProcedures} />
         </View>
 
         <View style={styles.section}>
@@ -824,19 +851,28 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
           </PdfText>
         </View>
 
-        <View style={styles.section}>
-          <SectionTitle>{t('process_pdf.document.sections.signature', { defaultValue: '10. Signature' })}</SectionTitle>
-          <KeyValueList items={data.signature} />
-        </View>
-      </Page>
-
-      <Page size='A4' style={styles.page}>
-        <View style={styles.section}>
-          <SectionTitle>{t('process_pdf.disclaimer.title', { defaultValue: 'Disclaimer' })}</SectionTitle>
-          <Paragraphs items={data.disclaimerParagraphs} />
-          <BulletList items={data.disclaimerBullets.slice(0, 4)} />
-          <PdfText style={styles.paragraph}>{data.disclaimerBullets[4]}</PdfText>
-          <PdfText style={styles.paragraph}>{data.disclaimerBullets[5]}</PdfText>
+        <View style={styles.footer}>
+          <PdfText style={styles.footerTitle}>
+            {t('process_pdf.disclaimer.title', { defaultValue: 'Disclaimer' })}
+          </PdfText>
+          <PdfText style={styles.footerParagraph}>
+            {t('process_pdf.disclaimer.paragraph_1', {
+              defaultValue:
+                'This document constitutes a technical certification derived from system-generated records of the Vocdoni Protocol.',
+            })}
+          </PdfText>
+          <PdfText style={styles.footerParagraph}>
+            {t('process_pdf.disclaimer.paragraph_2', {
+              defaultValue:
+                'The technical service provider assumes no responsibility for the accuracy of input data, the legal interpretation of results, or compliance with applicable legal or regulatory frameworks.',
+            })}
+          </PdfText>
+          <PdfText style={styles.footerParagraph}>
+            {t('process_pdf.disclaimer.paragraph_3', {
+              defaultValue:
+                'Responsibility for legal interpretation and use of this certification rests solely with the requesting organization.',
+            })}
+          </PdfText>
         </View>
       </Page>
     </Document>

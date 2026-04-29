@@ -1389,8 +1389,9 @@
     },
     "census": {
       "definition": "El cens electoral defineix el conjunt complet de membres autoritzats a participar en el procés de votació. La inclusió al cens no implica participació efectiva.",
-      "size": "Nombre total de participants elegibles (mida del cens)",
-      "source": "Font del cens"
+      "provider": "Proveïdor del cens",
+      "provider_value": "El cens el proporciona l'organització",
+      "total": "Total del cens"
     },
     "census_type": {
       "anonymous": "Cens ponderat anònim",
@@ -1416,14 +1417,13 @@
         "electoral_census": "4. Cens electoral",
         "general_information": "1. Informació general",
         "issuer": "9. Emissor",
-        "signature": "10. Signatura",
         "turnout_participation": "5. Participació i assistència",
         "verification": "7. Verificació",
         "voting_process": "6. Procés de votació",
         "voting_system": "3. Sistema de votació"
       },
-      "subtitle": "{{event_name}} | Emès el {{issue_date}}",
-      "title": "CERTIFICACIÓ TÈCNICA DEL PROCÉS DE VOTACIÓ DIGITAL {{event_reference}}"
+      "subtitle": "Informe emès el {{issue_date}} | ID del procés: {{process_id}}",
+      "title_prefix": "CERTIFICACIÓ TÈCNICA DEL PROCÉS DE VOTACIÓ DIGITAL"
     },
     "download": "Descarrega PDF",
     "download_error": "No s'ha pogut generar l'informe PDF",
@@ -1435,8 +1435,10 @@
     "general": {
       "encryption_method": "Mètode d'encriptació",
       "event_name": "Nom de l'esdeveniment",
+      "extended_process_details": "Detalls ampliats del procés",
+      "network": "Xarxa",
       "organization": "Organització",
-      "verification_explorer_url": "URL de l'explorador de verificació",
+      "results_visibility": "Visibilitat dels resultats",
       "vote_overwrite_enabled": "Sobreescriptura del vot activada",
       "voting_period_end": "Període de votació (final)",
       "voting_period_start": "Període de votació (inici)"
@@ -1445,6 +1447,7 @@
     "intro_paragraph_2": "Totes les dades rellevants associades a aquest procés de votació han estat registrades i ancorades en registres públicament auditables dins la xarxa Vocdoni. Aquests registres garanteixen transparència, immutabilitat i verificabilitat d'extrem a extrem, preservant alhora l'anonimat del votant i la confidencialitat de la papereta mitjançant mecanismes criptogràfics.",
     "intro_paragraph_3": "Aquesta certificació l'emet exclusivament el proveïdor tècnic per acreditar la correcta execució del sistema i la integritat de les dades registrades. No substitueix cap certificació legal ni afirma el compliment de requisits legals o normatius específics d'una jurisdicció.",
     "issuer": {
+      "issuing_date": "Data d'emissió",
       "legal_entity": "Entitat jurídica",
       "paragraph": "Emès en nom de l'entitat organitzadora en la seva qualitat de proveïdor tècnic.",
       "provider": "Vocdoni"
@@ -1460,37 +1463,17 @@
       "results": "Resultats finals calculats",
       "tally": "Mecanismes automatitzats de recompte"
     },
-    "signature": {
-      "date": "Data",
-      "name": "Nom",
-      "position": "Càrrec",
-      "signatory_name": "Equip tècnic de Vocdoni",
-      "signatory_position": "Proveïdor tècnic"
-    },
     "turnout": {
+      "census_contact": "Si necessites més detalls sobre el cens, contacta amb nosaltres.",
       "eligible": "Nombre total de participants elegibles",
-      "participants_reference_note": "Cada participant es representa una sola vegada, independentment del nombre de preguntes contestades. Quan escaigui, els participants s'identifiquen mitjançant identificadors pseudònims o criptogràfics (per exemple, referències hash) per preservar la privacitat.",
-      "participants_reference_title": "Participants que van emetre vot (si escau)",
       "participation": "El nombre de vots emesos reflecteix només aquells participants que van enviar efectivament una papereta vàlida durant el període de votació definit.",
-      "privacy_note": "En cap cas es pot establir una vinculació entre la identitat del participant i les seleccions individuals de vot.",
       "rate": "Taxa de participació",
       "votes_cast": "Nombre total de vots emesos"
     },
     "verification": {
-      "artifact_1": "Hash arrel del procés (SHA-256 o equivalent)",
-      "artifact_2": "Hash o referència del cens",
-      "artifact_3": "Identificador de l'urna",
-      "artifact_4": "Aquests elements permeten verificar de manera independent:",
-      "artifact_5": "La integritat de les dades (sense alteracions dels registres)",
-      "artifact_6": "L'autenticitat del procés",
-      "artifact_7": "La completitud del conjunt de dades registrat",
-      "artifacts": "Per facilitar l'auditabilitat, es proporcionen els artefactes criptogràfics següents:",
-      "ballot_box": "Identificador de l'urna",
-      "census_hash": "Hash o referència del cens",
       "explorer": "Explorador de verificació",
       "paragraph": "Totes les dades del procés han quedat registrades en una infraestructura basada en blockchain i es poden verificar de manera independent mitjançant l'explorador públic següent:",
-      "procedure_title": "Procediment de verificació (informatiu)",
-      "process_root_hash": "Hash arrel del procés (SHA-256 o equivalent)",
+      "procedure_title": "Procediment de verificació",
       "step_1": "Recuperar les dades del procés a través de l'explorador.",
       "step_2": "Validar el hash arrel del procés respecte al valor publicat.",
       "step_3": "Confirmar la coherència de la referència del cens i dels registres de l'urna.",
@@ -1501,16 +1484,15 @@
     "vote_overwrite_enabled_other": "Sí, fins a {{count}} sobreescriptures",
     "voting_process": {
       "card": {
-        "available_options": "Opcions disponibles:",
         "item": "Pregunta {{index}}",
         "outcome": "Resultat: {{outcome}}",
         "participation": "Participació: {{votes}} vots registrats",
         "question": "Pregunta: {{question}}",
         "results": "Resultats:"
       },
-      "intro_one": "Aquest procés de votació {{election_id}} va constar de {{count}} pregunta.",
-      "intro_many": "Aquest procés de votació {{election_id}} va constar de {{count}} preguntes.",
-      "intro_other": "Aquest procés de votació {{election_id}} va constar de {{count}} preguntes."
+      "intro_one": "El procés de votació {{process_name}} va consistir en 1 pregunta.",
+      "intro_many": "",
+      "intro_other": "El procés de votació {{process_name}} va consistir en {{count}} preguntes."
     },
     "voting_system": {
       "bullet_1": "Infraestructura de llibre major distribuït (blockchain)",

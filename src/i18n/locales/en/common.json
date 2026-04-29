@@ -1367,8 +1367,9 @@
     },
     "census": {
       "definition": "The electoral census defines the complete set of members authorized to participate in the voting process. Inclusion in the census does not imply actual participation.",
-      "size": "Total number of eligible participants (census size)",
-      "source": "Census source"
+      "provider": "Census provider",
+      "provider_value": "The census is provided by the organization",
+      "total": "Total census"
     },
     "census_type": {
       "anonymous": "Anonymous weighted census",
@@ -1394,14 +1395,13 @@
         "electoral_census": "4. Electoral Census",
         "general_information": "1. General Information",
         "issuer": "9. Issuer",
-        "signature": "10. Signature",
         "turnout_participation": "5. Turnout and Participation",
         "verification": "7. Verification",
         "voting_process": "6. Voting Process",
         "voting_system": "3. Voting System"
       },
-      "subtitle": "{{event_name}} | Issued on {{issue_date}}",
-      "title": "TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS {{event_reference}}"
+      "subtitle": "Report issued on {{issue_date}} | Process ID: {{process_id}}",
+      "title_prefix": "TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS"
     },
     "download": "Download PDF",
     "download_error": "Could not generate the PDF report",
@@ -1413,8 +1413,10 @@
     "general": {
       "encryption_method": "Encryption method",
       "event_name": "Event name",
+      "extended_process_details": "Extended process details",
+      "network": "Network",
       "organization": "Organization",
-      "verification_explorer_url": "Verification explorer URL",
+      "results_visibility": "Results visibility",
       "vote_overwrite_enabled": "Vote overwrite enabled",
       "voting_period_end": "Voting period (end)",
       "voting_period_start": "Voting period (start)"
@@ -1423,6 +1425,7 @@
     "intro_paragraph_2": "All relevant data associated with this voting process has been recorded and anchored in publicly auditable records within the Vocdoni network. These records ensure transparency, immutability, and end-to-end verifiability, while preserving voter anonymity and ballot confidentiality through cryptographic mechanisms.",
     "intro_paragraph_3": "This certification is issued exclusively by the technical service provider to attest to the correctness of the system execution and the integrity of the recorded data. It does not replace, supersede, or constitute any form of legal certification, nor does it assert compliance with jurisdiction-specific legal or regulatory requirements.",
     "issuer": {
+      "issuing_date": "Issuing date",
       "legal_entity": "Legal entity",
       "paragraph": "Issued on behalf of the organizing entity in its role as technical service provider.",
       "provider": "Provider"
@@ -1438,37 +1441,17 @@
       "results": "Final computed results",
       "tally": "Automated tallying mechanisms"
     },
-    "signature": {
-      "date": "Date",
-      "name": "Name",
-      "position": "Position",
-      "signatory_name": "Vocdoni Technical Team",
-      "signatory_position": "Technical service provider"
-    },
     "turnout": {
+      "census_contact": "If you need more details about the census, please contact us.",
       "eligible": "Total number of eligible participants",
-      "participants_reference_note": "Each participant is represented once, irrespective of the number of questions answered. Where applicable, participants are identified using pseudonymous or cryptographic identifiers (e.g., hashed references) to preserve privacy.",
-      "participants_reference_title": "Participants who cast a vote (if applicable)",
       "participation": "The number of votes cast reflects only those participants who effectively submitted a valid ballot during the defined voting period.",
-      "privacy_note": "Under no circumstances can a linkage be established between participant identity and individual vote selections.",
       "rate": "Turnout rate",
       "votes_cast": "Total number of votes cast"
     },
     "verification": {
-      "artifact_1": "Process Root Hash (SHA-256 or equivalent)",
-      "artifact_2": "Census Hash or Reference",
-      "artifact_3": "Ballot Box Identifier",
-      "artifact_4": "These elements collectively enable independent verification of:",
-      "artifact_5": "Data integrity (no alteration of records)",
-      "artifact_6": "Authenticity of the process",
-      "artifact_7": "Completeness of the recorded dataset",
-      "artifacts": "To facilitate auditability, the following cryptographic artifacts are provided:",
-      "ballot_box": "Ballot Box Identifier",
-      "census_hash": "Census Hash or Reference",
       "explorer": "Verification explorer",
       "paragraph": "All process data has been recorded on a blockchain-based infrastructure and may be independently verified through the following public explorer:",
-      "procedure_title": "Verification Procedure (informative)",
-      "process_root_hash": "Process Root Hash (SHA-256 or equivalent)",
+      "procedure_title": "Verification Procedure",
       "step_1": "Retrieve the process data via the explorer.",
       "step_2": "Validate the process root hash against the published value.",
       "step_3": "Confirm consistency of census reference and ballot records.",
@@ -1478,15 +1461,14 @@
     "vote_overwrite_enabled_other": "Yes, up to {{count}} overwrites",
     "voting_process": {
       "card": {
-        "available_options": "Available options:",
         "item": "Question {{index}}",
         "outcome": "Outcome: {{outcome}}",
         "participation": "Participation: {{votes}} recorded votes",
         "question": "Question: {{question}}",
         "results": "Results:"
       },
-      "intro_one": "This voting process {{election_id}} consisted of {{count}} question.",
-      "intro_other": "This voting process {{election_id}} consisted of {{count}} questions."
+      "intro_one": "The voting process {{process_name}} consisted of 1 question.",
+      "intro_other": "The voting process {{process_name}} consisted of {{count}} questions."
     },
     "voting_system": {
       "bullet_1": "Distributed ledger (blockchain) infrastructure",
