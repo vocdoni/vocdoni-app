@@ -259,7 +259,7 @@ describe('VotingReportPdf', () => {
 
     expect(headerChildren[0]).toMatchObject({
       props: {
-        src: '/assets/logo_vocdoni.png',
+        src: `${process.cwd()}/public/assets/logo_vocdoni.png`,
       },
     })
 
@@ -294,7 +294,7 @@ describe('VotingReportPdf', () => {
 
     expect(pageBrandChildren[0]).toMatchObject({
       props: {
-        src: '/assets/vocdoni_icon.png',
+        src: `${process.cwd()}/public/assets/vocdoni_icon.png`,
       },
     })
 

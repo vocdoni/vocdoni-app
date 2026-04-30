@@ -3,6 +3,7 @@ interface ImportMeta {
     NODE_ENV: string
     DEV: boolean
     BASE_URL: string
+    VITEST: true | undefined
     VOCDONI_ENVIRONMENT: string
     CUSTOM_ORGANIZATION_DOMAINS: {
       [key: string]: string
