@@ -8,10 +8,17 @@ import { useTranslation } from 'react-i18next'
 import { LuFileDown } from 'react-icons/lu'
 import { useToast } from '~components/Toast'
 
+import logoImport from '/assets/logo_vocdoni.png'
+import iconImport from '/assets/vocdoni_icon.png'
+
 const { pdf, Document, Image, Page, StyleSheet, Text: PdfText, View } = ReactPDF
 
-const vocdoniLogo = '/assets/logo_vocdoni.png'
-const vocdoniIcon = '/assets/vocdoni_icon.png'
+// @react-pdf/renderer uses Node's fs to read images, so it needs real filesystem paths.
+// In the test environment Vite resolves asset imports to URL strings (e.g. /assets/…)
+// which Node cannot open; use process.cwd() to build the actual path instead.
+const assetBase = import.meta.env.VITEST ? `${process.cwd()}/public` : ''
+const vocdoniLogo = assetBase ? `${assetBase}/assets/logo_vocdoni.png` : logoImport
+const vocdoniIcon = assetBase ? `${assetBase}/assets/vocdoni_icon.png` : iconImport
 
 type VotingReportPdfProps = {
   election?: PublishedElection | InvalidElection | null
