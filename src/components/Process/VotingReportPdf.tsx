@@ -845,7 +845,11 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
         </View>
-
+      </Page>
+      <Page size='A4' style={styles.page}>
+        <View style={styles.pageBrand}>
+          <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
+        </View>
         <View style={styles.section}>
           <SectionTitle>{t('process_pdf.document.sections.issuer', { defaultValue: '9. Issuer' })}</SectionTitle>
           <KeyValueList items={data.issuer} />
