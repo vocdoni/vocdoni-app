@@ -221,7 +221,7 @@ describe('VotingReportPdf', () => {
       ? documentTree.props.children
       : [documentTree.props.children]
 
-    expect(pages).toHaveLength(3)
+    expect(pages).toHaveLength(4)
   })
 
   it('renders the vocdoni logo, a larger title, and puts section 1 on the next page', async () => {
@@ -336,7 +336,11 @@ describe('VotingReportPdf', () => {
     })
     expect(votingProcessIntroChildren[2]).toContain('consisted of 0 questions.')
 
-    const footer = thirdPageChildren[5] as { props: { style?: Record<string, unknown>; children: ReactNode } }
+    const fourthPage = pages[3] as { props: { children: ReactNode } }
+    const fourthPageChildren = Array.isArray(fourthPage.props.children)
+      ? fourthPage.props.children
+      : [fourthPage.props.children]
+    const footer = fourthPageChildren[2] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(footer.props.style).toMatchObject({
       paddingTop: 8,
     })
