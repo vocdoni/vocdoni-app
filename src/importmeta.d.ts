@@ -27,6 +27,7 @@ interface ImportMeta {
     PLAUSIBLE_DOMAIN: string
     VOCDONI_CONTACT_EMAIL: string
     ANNOUNCEMENT: string
+    APP_URL: string
     PRIVACY_POLICY_URL: string
     TERMS_OF_SERVICE_URL: string
     WHATSAPP_PHONE_NUMBER: string
@@ -60,6 +61,7 @@ declare global {
         PLAUSIBLE_DOMAIN?: string
         VOCDONI_CONTACT_EMAIL?: string
         ANNOUNCEMENT?: string
+        APP_URL?: string
         PRIVACY_POLICY_URL?: string
         TERMS_OF_SERVICE_URL?: string
         WHATSAPP_PHONE_NUMBER?: string

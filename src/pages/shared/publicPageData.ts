@@ -1,6 +1,6 @@
 import { render } from 'vike/abort'
 import type { PageContextServer } from 'vike/types'
-import { getLanguagesEnv } from '~src/app-env'
+import { AppEnv, getLanguagesEnv } from '~src/app-env'
 import { createVocdoniSdkClient } from '~src/providers/vocdoni-client-config'
 import {
   getPublicLanguageAlternates,
@@ -15,6 +15,16 @@ import {
 const getSupportedPublicLanguages = () => Object.keys(getLanguagesEnv())
 
 const resolvePublicOrigin = (pageContext: PageContextServer) => {
+  const configuredOrigin = AppEnv.APP_URL?.trim()
+
+  if (configuredOrigin) {
+    try {
+      return new URL(configuredOrigin).origin
+    } catch {
+      return undefined
+    }
+  }
+
   const headers = pageContext.headers
 
   if (!headers) return undefined

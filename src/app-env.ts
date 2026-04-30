@@ -29,6 +29,9 @@ export const AppEnv = {
   get ANNOUNCEMENT() {
     return getEnvValue('ANNOUNCEMENT')
   },
+  get APP_URL() {
+    return getEnvValue('APP_URL')
+  },
   get CALCOM_EVENT_SLUG() {
     return getEnvValue('CALCOM_EVENT_SLUG')
   },

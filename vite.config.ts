@@ -34,6 +34,7 @@ const viteconfig = ({ mode }) => {
   }
 
   const title = process.env.APP_TITLE || 'Vocdoni - Digital voting SaaS platform'
+  const appUrl = process.env.APP_URL
 
   let saasUrl = process.env.SAAS_URL || 'https://saas-api-dev.vocdoni.net'
   if (saasUrl.endsWith('/')) {
@@ -86,6 +87,7 @@ const viteconfig = ({ mode }) => {
     PROCESS_IDS: process.env.PROCESS_IDS || '',
     DEFAULT_CENSUS_SIZE: defaultCensusSize,
     title,
+    APP_URL: appUrl,
     STRIPE_PUBLIC_KEY: process.env.STRIPE_PUBLIC_KEY,
     SAAS_URL: saasUrl,
     OAUTH_URL: oauthUrl,
