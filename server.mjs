@@ -165,58 +165,6 @@ const resolvePublicLanguageRedirect = ({
   return `${localizedPath}${url.search}`
 }
 
-const parseProcessIds = (value) =>
-  (value || '')
-    .split(',')
-    .map((id) => id.trim())
-    .filter(Boolean)
-
-const getOrganizationAddressesFromEnv = (env = process.env) => {
-  const rawValue = env?.CUSTOM_ORGANIZATION_DOMAINS
-
-  if (!rawValue) return []
-
-  try {
-    const parsed = typeof rawValue === 'string' ? JSON.parse(rawValue) : rawValue
-    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return []
-
-    return Array.from(new Set(Object.values(parsed).filter(Boolean)))
-  } catch {
-    return []
-  }
-}
-
-const xmlEscape = (value) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
-
-const buildSitemapXml = ({ origin, languages, processIds, organizationAddresses }) => {
-  const urls = new Set()
-
-  for (const language of languages) {
-    urls.add(`${origin}/${language}`)
-
-    for (const processId of processIds) {
-      urls.add(`${origin}/${language}/processes/${processId}`)
-    }
-
-    for (const address of organizationAddresses) {
-      urls.add(`${origin}/${language}/organization/${address}`)
-    }
-  }
-
-  const entries = Array.from(urls)
-    .sort()
-    .map((url) => `  <url><loc>${xmlEscape(url)}</loc></url>`)
-    .join('\n')
-
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`
-}
-
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const isProduction = process.env.NODE_ENV === 'production'
 const port = Number(process.env.PORT || 3000)
@@ -242,30 +190,6 @@ if (isProduction) {
 app.use(async (req, res, next) => {
   if (!['GET', 'HEAD'].includes(req.method)) {
     return next()
-  }
-
-  if (req.path === '/sitemap.xml') {
-    const host = req.headers['x-forwarded-host'] || req.headers.host
-    const protocol = req.headers['x-forwarded-proto'] || (host?.startsWith('localhost') ? 'http' : 'https')
-
-    if (!host || !protocol) {
-      return res.status(503).send('Sitemap unavailable')
-    }
-
-    const sitemapXml = buildSitemapXml({
-      origin: `${protocol}://${host}`,
-      languages: supportedPublicLanguages,
-      processIds: parseProcessIds(process.env.PROCESS_IDS),
-      organizationAddresses: getOrganizationAddressesFromEnv(process.env),
-    })
-
-    res.type('application/xml')
-
-    if (req.method === 'HEAD') {
-      return res.status(200).end()
-    }
-
-    return res.status(200).send(sitemapXml)
   }
 
   const redirectTarget = resolvePublicLanguageRedirect({
