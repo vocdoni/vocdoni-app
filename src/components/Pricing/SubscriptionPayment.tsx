@@ -21,7 +21,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useColorMode } from '~theme/color-mode'
-import { AnalyticsEvent } from '~utils/analytics'
+import { AnalyticsEvents } from '~utils/analytics'
 import { OrderSummary } from './OrderSummary'
 import { PromotionCodeInput } from './PromotionCodeInput'
 import { useSubscriptionCheckout } from './use-subscription-checkout'
@@ -240,7 +240,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
     }
     await queryClient.invalidateQueries({ queryKey: QueryKeys.organization.subscription() })
     trackPlausibleEvent({
-      name: AnalyticsEvent.SubscriptionSuccessful,
+      name: AnalyticsEvents.SubscriptionSuccessful,
     })
     onClose()
   }

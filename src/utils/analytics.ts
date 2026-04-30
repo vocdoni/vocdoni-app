@@ -9,7 +9,7 @@ type TagManagerArgs = {
   gtmId: string
 }
 
-export const AnalyticsEvent = {
+export const AnalyticsEvents = {
   AccountSignup: 'Signup',
   OrganizationCreated: 'OrganizationCreated',
   UserLoggedIn: 'LoggedIn',
@@ -19,7 +19,7 @@ export const AnalyticsEvent = {
 } as const
 
 export interface AnalyticsEvent {
-  name: (typeof AnalyticsEvent)[keyof typeof AnalyticsEvent]
+  name: (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents]
   props?: Record<string, string>
 }
 
@@ -73,8 +73,8 @@ export const initializeGTM = (config: TagManagerArgs): void => {
   if (gtmInitialized) return
   if (!canUseBrowserAnalytics()) return
 
-  try {
-    void loadGtmModule().then((TagManager) => {
+  void loadGtmModule()
+    .then((TagManager) => {
       TagManager.initialize(config)
       const analyticsClientId = getAnalyticsClientId()
       if (analyticsClientId) {
@@ -86,43 +86,44 @@ export const initializeGTM = (config: TagManagerArgs): void => {
       }
       gtmInitialized = true
     })
-  } catch (error) {
-    console.error('Failed to initialize GTM:', error)
-  }
+    .catch((error) => {
+      console.error('Failed to initialize GTM:', error)
+    })
 }
 
 export const initializePlausible = (config: PlausibleConfig): void => {
   if (plausibleInitialized) return
   if (!canUseBrowserAnalytics()) return
 
-  try {
-    void loadPlausibleModule().then(({ init }) => {
+  void loadPlausibleModule()
+    .then(({ init }) => {
       init(addAnalyticsClientIdToPlausibleConfig(config))
       plausibleInitialized = true
     })
-  } catch (error) {
-    console.error('Failed to initialize Plausible:', error)
-  }
+    .catch((error) => {
+      console.error('Failed to initialize Plausible:', error)
+    })
 }
 
 export const trackPlausibleEvent = (event: AnalyticsEvent): void => {
-  try {
-    if (!plausibleInitialized) return
-    if (!canUseBrowserAnalytics()) return
+  if (!plausibleInitialized) return
+  if (!canUseBrowserAnalytics()) return
 
-    void loadPlausibleModule().then(({ track }) => {
+  void loadPlausibleModule()
+    .then(({ track }) => {
       track(event.name, { props: event.props })
     })
-  } catch (error) {
-    console.error('Failed to track Plausible event:', error)
-  }
+    .catch((error) => {
+      console.error('Failed to track Plausible event:', error)
+    })
 }
 
 export const trackGTMEvent = (event: AnalyticsEvent): void => {
   if (!gtmInitialized) return
   if (!canUseBrowserAnalytics()) return
-  try {
-    void loadGtmModule().then((TagManager) => {
+
+  void loadGtmModule()
+    .then((TagManager) => {
       TagManager.dataLayer({
         dataLayer: {
           event: event.name,
@@ -130,7 +131,7 @@ export const trackGTMEvent = (event: AnalyticsEvent): void => {
         },
       })
     })
-  } catch (error) {
-    console.error('Failed to track GTM event:', error)
-  }
+    .catch((error) => {
+      console.error('Failed to track GTM event:', error)
+    })
 }

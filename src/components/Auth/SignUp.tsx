@@ -24,7 +24,7 @@ import { OrSeparator } from '~components/Layout/Separators'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { useSignupFromInvite } from '~src/queries/account'
 import { Routes } from '~src/router/routes'
-import { AnalyticsEvent } from '~utils/analytics'
+import { AnalyticsEvents } from '~utils/analytics'
 import GoogleAuth from './GoogleAuth'
 
 export type InviteFields = {
@@ -91,14 +91,14 @@ const SignUp = ({ invite }: SignupProps) => {
 
   // normally registered accounts need verification
   if (signup.isSuccess) {
-    trackPlausibleEvent({ name: AnalyticsEvent.AccountSignup })
+    trackPlausibleEvent({ name: AnalyticsEvents.AccountSignup })
     signup.reset()
     return <Navigate to={`${Routes.auth.verify}?email=${encodeURIComponent(email)}`} replace />
   }
 
   // accounts coming from invites don't need verification
   if (inviteSignup.isSuccess) {
-    trackPlausibleEvent({ name: AnalyticsEvent.AccountSignup })
+    trackPlausibleEvent({ name: AnalyticsEvents.AccountSignup })
     return <Navigate to={Routes.auth.signIn} replace />
   }
 

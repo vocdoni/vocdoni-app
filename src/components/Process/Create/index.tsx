@@ -60,7 +60,7 @@ import { SubscriptionPermission } from '~constants'
 import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
 import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
-import { AnalyticsEvent } from '~utils/analytics'
+import { AnalyticsEvents } from '~utils/analytics'
 import { CensusMeta, CensusTypes } from '../Census/CensusType'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { Questions } from './MainContent'
@@ -822,7 +822,7 @@ const ProcessCreateView = () => {
 
       await setStepDoneAsync(SetupStepIds.firstVoteCreation)
 
-      trackPlausibleEvent({ name: AnalyticsEvent.ProcessCreated })
+      trackPlausibleEvent({ name: AnalyticsEvents.ProcessCreated })
 
       toast({
         title: t('form.process_create.success_title'),

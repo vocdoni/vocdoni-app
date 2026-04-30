@@ -17,7 +17,7 @@ import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { OrganizationMetaKeys, OrganizationMetaResponse, SetupStepIds } from '~queries/organization'
 import { QueryKeys } from '~src/queries/keys'
 import { Routes } from '~src/router/routes'
-import { AnalyticsEvent } from '~utils/analytics'
+import { AnalyticsEvents } from '~utils/analytics'
 import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
 
 type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country'>
@@ -104,7 +104,7 @@ export const OrganizationCreate = ({
 
   const { mutateAsync: createOrganization } = useOrganizationCreate({
     onSuccess: async ({ address }) => {
-      trackPlausibleEvent({ name: AnalyticsEvent.OrganizationCreated })
+      trackPlausibleEvent({ name: AnalyticsEvents.OrganizationCreated })
       toast({
         title: t('organization.create_org_success', {
           defaultValue: 'Organization created successfully',

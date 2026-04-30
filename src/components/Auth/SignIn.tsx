@@ -15,7 +15,7 @@ import { OrSeparator } from '~components/Layout/Separators'
 import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~src/router/routes'
-import { AnalyticsEvent } from '~utils/analytics'
+import { AnalyticsEvents } from '~utils/analytics'
 import GoogleAuth from './GoogleAuth'
 
 type FormData = {
@@ -76,7 +76,7 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
   const onSubmit = async (data: FormData) => {
     await login(data)
       .then(() => {
-        trackPlausibleEvent({ name: AnalyticsEvent.UserLoggedIn })
+        trackPlausibleEvent({ name: AnalyticsEvents.UserLoggedIn })
         const redirect = localStorage.getItem('redirectTo')
         localStorage.removeItem('redirectTo')
         navigate(redirect || Routes.dashboard.base)

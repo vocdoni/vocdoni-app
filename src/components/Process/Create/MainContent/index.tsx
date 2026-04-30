@@ -19,7 +19,7 @@ import { useAnalytics } from '~components/AnalyticsProvider'
 import { DashboardSection } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { Routes } from '~routes'
-import { AnalyticsEvent } from '~utils/analytics'
+import { AnalyticsEvents } from '~utils/analytics'
 import { DefaultQuestions, SelectorTypes } from '../common'
 import { QuestionForm } from './QuestionForm'
 import { QuestionType } from './QuestionType'
@@ -116,7 +116,7 @@ export const Questions = () => {
     if (questionType === SelectorTypes.Single) {
       append(DefaultQuestions[questionType])
     } else {
-      trackPlausibleEvent({ name: AnalyticsEvent.TriedMultiquestionMultichoice })
+      trackPlausibleEvent({ name: AnalyticsEvents.TriedMultiquestionMultichoice })
       setAddMultipleQuestionsOpen(true)
     }
   }
