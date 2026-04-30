@@ -1377,6 +1377,135 @@
     "title": "Titolo",
     "type": "Tipo"
   },
+  "process_pdf": {
+    "authentication": {
+      "identity_source": "Fonte dei dati di identità",
+      "method": "Metodo di autenticazione",
+      "two_fa": "Autenticazione 2FA"
+    },
+    "boolean": {
+      "no": "No",
+      "yes": "Sì"
+    },
+    "census": {
+      "definition": "Il censimento elettorale definisce l'insieme completo dei membri autorizzati a partecipare al processo di voto. L'inclusione nel censimento non implica la partecipazione effettiva.",
+      "provider": "Fornitore del censimento",
+      "provider_value": "Il censimento è fornito dall'organizzazione",
+      "total": "Totale del censimento"
+    },
+    "census_type": {
+      "anonymous": "Censimento ponderato anonimo",
+      "csp": "Censimento CSP",
+      "unknown": "Non disponibile",
+      "weighted": "Censimento ponderato"
+    },
+    "disclaimer": {
+      "bullet_1": "Non costituisce una certificazione legale del processo di voto.",
+      "bullet_2": "Non sostituisce i registri ufficiali, i verbali o i depositi regolatori.",
+      "bullet_3": "Tutti i dati provengono da registri crittografici e basati su blockchain.",
+      "bullet_4": "La segretezza del voto e l'anonimato del votante sono preservati per progettazione.",
+      "paragraph_1": "Questo documento costituisce una certificazione tecnica derivata da registri generati dal sistema del Protocollo Vocdoni.",
+      "paragraph_2": "Il fornitore tecnico non assume alcuna responsabilità per l'accuratezza dei dati di input (ad esempio, la composizione del censimento), l'interpretazione legale dei risultati o la conformità ai quadri legali o normativi applicabili.",
+      "paragraph_3": "La responsabilità per l'interpretazione legale e l'uso di questa certificazione ricade esclusivamente sull'organizzazione richiedente.",
+      "title": "Esclusione di responsabilità"
+    },
+    "document": {
+      "issued_by": "Emesso da Vocdoni (Synergize SL) il {{issue_date}}, in qualità di fornitore tecnico.",
+      "sections": {
+        "authentication": "2. Autenticazione",
+        "certification_scope": "8. Ambito della certificazione",
+        "electoral_census": "4. Censimento elettorale",
+        "general_information": "1. Informazioni generali",
+        "issuer": "9. Emittente",
+        "turnout_participation": "5. Partecipazione e affluenza",
+        "verification": "7. Verifica",
+        "voting_process": "6. Processo di voto",
+        "voting_system": "3. Sistema di voto"
+      },
+      "subtitle": "Report emesso il {{issue_date}} | ID processo: {{process_id}}",
+      "title_prefix": "CERTIFICAZIONE TECNICA DEL PROCESSO DI VOTO DIGITALE"
+    },
+    "download": "Scarica PDF",
+    "download_error": "Impossibile generare il report PDF",
+    "downloading": "Generazione PDF in corso",
+    "encryption": {
+      "encrypted": "Crittografato",
+      "not_encrypted": "Non crittografato"
+    },
+    "general": {
+      "encryption_method": "Metodo di crittografia",
+      "event_name": "Nome dell'evento",
+      "extended_process_details": "Dettagli estesi del processo",
+      "network": "Rete",
+      "organization": "Organizzazione",
+      "results_visibility": "Visibilità dei risultati",
+      "vote_overwrite_enabled": "Sovrascrittura del voto abilitata",
+      "voting_period_end": "Periodo di voto (fine)",
+      "voting_period_start": "Periodo di voto (inizio)"
+    },
+    "intro_paragraph_1": "Questo documento costituisce una certificazione tecnica formale di un processo di voto digitale condotto tramite il Protocollo Vocdoni. Stabilisce un registro strutturato, verificabile e auditabile della configurazione del processo, dell'insieme dei partecipanti eleggibili (censimento elettorale), della partecipazione effettiva e dei risultati finali. Il suo scopo è consentire ad auditor indipendenti e terze parti autorizzate di valutare l'integrità, la coerenza e la corretta esecuzione del processo.",
+    "intro_paragraph_2": "Tutti i dati rilevanti associati a questo processo di voto sono stati registrati e ancorati in registri pubblicamente auditabili all'interno della rete Vocdoni. Questi registri garantiscono trasparenza, immutabilità e verificabilità end-to-end, preservando al contempo l'anonimato del votante e la riservatezza della scheda mediante meccanismi crittografici.",
+    "intro_paragraph_3": "Questa certificazione è emessa esclusivamente dal fornitore tecnico per attestare la correttezza dell'esecuzione del sistema e l'integrità dei dati registrati. Non sostituisce, né costituisce, alcuna forma di certificazione legale e non afferma la conformità a requisiti legali o normativi specifici di una giurisdizione.",
+    "issuer": {
+      "issuing_date": "Data di emissione",
+      "legal_entity": "Entità legale",
+      "paragraph": "Emesso a nome dell'ente organizzatore nella sua funzione di fornitore tecnico.",
+      "provider": "Vocdoni"
+    },
+    "not_available": "Non disponibile",
+    "scope": {
+      "census": "Definizione del censimento elettorale",
+      "configuration": "Configurazione del processo di voto",
+      "exclusion": "Questa certificazione non copre le regole di governance, la correttezza dei criteri di eleggibilità o la conformità legale.",
+      "paragraph": "Questa certificazione copre esclusivamente i seguenti aspetti tecnici:",
+      "participation": "Registrazione dei dati di partecipazione",
+      "period": "Applicazione del periodo di voto",
+      "results": "Risultati finali calcolati",
+      "tally": "Meccanismi di scrutinio automatizzati"
+    },
+    "turnout": {
+      "census_contact": "Se ti servono più dettagli sul censimento, contattaci.",
+      "eligible": "Numero totale di partecipanti eleggibili",
+      "participation": "Il numero di voti espressi riflette solo quei partecipanti che hanno effettivamente inviato una scheda valida durante il periodo di voto definito.",
+      "rate": "Tasso di partecipazione",
+      "votes_cast": "Numero totale di voti espressi"
+    },
+    "verification": {
+      "explorer": "Esploratore di verifica",
+      "paragraph": "Tutti i dati del processo sono stati registrati su un'infrastruttura basata su blockchain e possono essere verificati in modo indipendente tramite il seguente esploratore pubblico:",
+      "procedure_title": "Procedura di verifica",
+      "step_1": "Recuperare i dati del processo tramite l'esploratore.",
+      "step_2": "Validare l'hash radice del processo rispetto al valore pubblicato.",
+      "step_3": "Confermare la coerenza del riferimento del censimento e dei registri dell'urna.",
+      "step_4": "Ricalcolare e verificare i risultati dello scrutinio, ove applicabile."
+    },
+    "vote_overwrite_enabled_one": "Sì, fino a {{count}} sovrascritture",
+    "vote_overwrite_enabled_many": "Sì, fino a {{count}} sovrascritture",
+    "vote_overwrite_enabled_other": "Sì, fino a {{count}} sovrascritture",
+    "voting_process": {
+      "card": {
+        "item": "Domanda {{index}}",
+        "outcome": "Esito: {{outcome}}",
+        "participation": "Partecipazione: {{votes}} voti registrati",
+        "question": "Domanda: {{question}}",
+        "results": "Risultati:"
+      },
+      "intro_one": "Il processo di voto {{process_name}} è consistito in 1 domanda.",
+      "intro_many": "",
+      "intro_other": "Il processo di voto {{process_name}} è consistito in {{count}} domande."
+    },
+    "voting_system": {
+      "bullet_1": "Infrastruttura di registro distribuito (blockchain)",
+      "bullet_2": "Meccanismi crittografici di verifica e integrità",
+      "executed_on": "Il processo è stato eseguito sull'infrastruttura {{blockchain_network}}.",
+      "guarantee_1": "Integrità del processo di voto",
+      "guarantee_2": "Immutabilità dei dati registrati",
+      "guarantee_3": "Verificabilità indipendente dei risultati",
+      "guarantee_4": "Riservatezza delle schede individuali",
+      "guarantee_lead": "Il sistema garantisce:",
+      "paragraph": "Le operazioni di voto e scrutinio sono state eseguite tramite Vocdoni, un protocollo di voto digitale supportato da:"
+    }
+  },
   "processes": {
     "empty": "Nessun processo di voto trovato",
     "empty_description": "Crea un processo di voto per iniziare.",

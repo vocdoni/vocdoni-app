@@ -61,6 +61,7 @@ import {
 import ReactPlayer from 'react-player'
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
+import { VotingReportPdfButton } from '../VotingReportPdf'
 import {
   DashboardBox,
   DashboardContents,
@@ -494,7 +495,7 @@ const ProcessViewSidebar = () => {
           <SidebarSubtitle>
             <Trans i18nKey='additional_actions'>Additional actions</Trans>
           </SidebarSubtitle>
-          <Button asChild variant='outline' w='full' size='sm' justifyContent='start'>
+          <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
             <Link href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
               <HStack gap={2}>
                 <Icon as={LuSearch} />
@@ -504,6 +505,7 @@ const ProcessViewSidebar = () => {
               </HStack>
             </Link>
           </Button>
+          <VotingReportPdfButton election={election instanceof PublishedElection ? election : null} />
         </VStack>
       </SidebarContents>
     </Sidebar>

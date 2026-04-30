@@ -1377,6 +1377,135 @@
     "title": "Título",
     "type": "Tipo"
   },
+  "process_pdf": {
+    "authentication": {
+      "identity_source": "Fuente de datos de identidad",
+      "method": "Método de autenticación",
+      "two_fa": "Autenticación 2FA"
+    },
+    "boolean": {
+      "no": "No",
+      "yes": "Sí"
+    },
+    "census": {
+      "definition": "El censo electoral define el conjunto completo de miembros autorizados a participar en el proceso de votación. La inclusión en el censo no implica participación efectiva.",
+      "provider": "Proveedor del censo",
+      "provider_value": "El censo lo proporciona la organización",
+      "total": "Total del censo"
+    },
+    "census_type": {
+      "anonymous": "Censo ponderado anónimo",
+      "csp": "Censo CSP",
+      "unknown": "No disponible",
+      "weighted": "Censo ponderado"
+    },
+    "disclaimer": {
+      "bullet_1": "No constituye una certificación legal del proceso de votación.",
+      "bullet_2": "No sustituye los registros oficiales, actas o presentaciones regulatorias.",
+      "bullet_3": "Todos los datos proceden de registros criptográficos y basados en blockchain.",
+      "bullet_4": "El secreto del voto y el anonimato del votante se preservan por diseño.",
+      "paragraph_1": "Este documento constituye una certificación técnica derivada de registros generados por el sistema del Protocolo Vocdoni.",
+      "paragraph_2": "El proveedor técnico no asume responsabilidad por la exactitud de los datos de entrada (por ejemplo, la composición del censo), la interpretación legal de los resultados ni el cumplimiento de los marcos legales o regulatorios aplicables.",
+      "paragraph_3": "La responsabilidad sobre la interpretación legal y el uso de esta certificación recae exclusivamente en la organización solicitante.",
+      "title": "Aviso legal"
+    },
+    "document": {
+      "issued_by": "Emitido por Vocdoni (Synergize SL) el {{issue_date}}, en su calidad de proveedor técnico.",
+      "sections": {
+        "authentication": "2. Autenticación",
+        "certification_scope": "8. Alcance de la certificación",
+        "electoral_census": "4. Censo electoral",
+        "general_information": "1. Información general",
+        "issuer": "9. Emisor",
+        "turnout_participation": "5. Participación y asistencia",
+        "verification": "7. Verificación",
+        "voting_process": "6. Proceso de votación",
+        "voting_system": "3. Sistema de votación"
+      },
+      "subtitle": "Informe emitido el {{issue_date}} | ID del proceso: {{process_id}}",
+      "title_prefix": "CERTIFICACIÓN TÉCNICA DEL PROCESO DE VOTACIÓN DIGITAL"
+    },
+    "download": "Descargar PDF",
+    "download_error": "No se ha podido generar el informe PDF",
+    "downloading": "Generando PDF",
+    "encryption": {
+      "encrypted": "Cifrado",
+      "not_encrypted": "Sin cifrar"
+    },
+    "general": {
+      "encryption_method": "Método de cifrado",
+      "event_name": "Nombre del evento",
+      "extended_process_details": "Detalles ampliados del proceso",
+      "network": "Red",
+      "organization": "Organización",
+      "results_visibility": "Visibilidad de los resultados",
+      "vote_overwrite_enabled": "Sobrescritura del voto habilitada",
+      "voting_period_end": "Periodo de votación (fin)",
+      "voting_period_start": "Periodo de votación (inicio)"
+    },
+    "intro_paragraph_1": "Este documento constituye una certificación técnica formal de un proceso de votación digital realizado con el Protocolo Vocdoni. Establece un registro estructurado, verificable y auditable de la configuración del proceso, el conjunto de participantes elegibles (censo electoral), la participación efectiva y los resultados finales. Su propósito es permitir que auditores independientes y terceros autorizados evalúen la integridad, coherencia y correcta ejecución del proceso.",
+    "intro_paragraph_2": "Todos los datos relevantes asociados a este proceso de votación han sido registrados y anclados en registros públicamente auditables dentro de la red Vocdoni. Estos registros garantizan transparencia, inmutabilidad y verificabilidad de extremo a extremo, preservando al mismo tiempo el anonimato del votante y la confidencialidad de la papeleta mediante mecanismos criptográficos.",
+    "intro_paragraph_3": "Esta certificación la emite exclusivamente el proveedor técnico para acreditar la correcta ejecución del sistema y la integridad de los datos registrados. No sustituye ni reemplaza ninguna certificación legal ni afirma el cumplimiento de requisitos legales o normativos específicos de una jurisdicción.",
+    "issuer": {
+      "issuing_date": "Fecha de emisión",
+      "legal_entity": "Entidad jurídica",
+      "paragraph": "Emitido en nombre de la entidad organizadora en su calidad de proveedor técnico.",
+      "provider": "Vocdoni"
+    },
+    "not_available": "No disponible",
+    "scope": {
+      "census": "Definición del censo electoral",
+      "configuration": "Configuración del proceso de votación",
+      "exclusion": "Esta certificación no cubre las normas de gobernanza, la corrección de los criterios de elegibilidad ni el cumplimiento legal.",
+      "paragraph": "Esta certificación cubre exclusivamente los siguientes aspectos técnicos:",
+      "participation": "Registro de datos de participación",
+      "period": "Control del periodo de votación",
+      "results": "Resultados finales calculados",
+      "tally": "Mecanismos automatizados de recuento"
+    },
+    "turnout": {
+      "census_contact": "Si necesitas más detalles sobre el censo, contacta con nosotros.",
+      "eligible": "Número total de participantes elegibles",
+      "participation": "El número de votos emitidos refleja solo a aquellos participantes que enviaron efectivamente una papeleta válida durante el periodo de votación definido.",
+      "rate": "Tasa de participación",
+      "votes_cast": "Número total de votos emitidos"
+    },
+    "verification": {
+      "explorer": "Explorador de verificación",
+      "paragraph": "Todos los datos del proceso han quedado registrados en una infraestructura basada en blockchain y pueden verificarse de forma independiente a través del siguiente explorador público:",
+      "procedure_title": "Procedimiento de verificación",
+      "step_1": "Recuperar los datos del proceso a través del explorador.",
+      "step_2": "Validar el hash raíz del proceso frente al valor publicado.",
+      "step_3": "Confirmar la coherencia de la referencia del censo y de los registros de la urna.",
+      "step_4": "Recalcular y verificar los resultados del escrutinio cuando proceda."
+    },
+    "vote_overwrite_enabled_one": "Sí, hasta {{count}} sobrescrituras",
+    "vote_overwrite_enabled_many": "Sí, hasta {{count}} sobrescrituras",
+    "vote_overwrite_enabled_other": "Sí, hasta {{count}} sobrescrituras",
+    "voting_process": {
+      "card": {
+        "item": "Pregunta {{index}}",
+        "outcome": "Resultado: {{outcome}}",
+        "participation": "Participación: {{votes}} votos registrados",
+        "question": "Pregunta: {{question}}",
+        "results": "Resultados:"
+      },
+      "intro_one": "El proceso de votación {{process_name}} consistió en 1 pregunta.",
+      "intro_many": "",
+      "intro_other": "El proceso de votación {{process_name}} consistió en {{count}} preguntas."
+    },
+    "voting_system": {
+      "bullet_1": "Infraestructura de libro mayor distribuido (blockchain)",
+      "bullet_2": "Mecanismos criptográficos de verificación e integridad",
+      "executed_on": "El proceso se ejecutó sobre la infraestructura {{blockchain_network}}.",
+      "guarantee_1": "Integridad del proceso de votación",
+      "guarantee_2": "Inmutabilidad de los datos registrados",
+      "guarantee_3": "Verificabilidad independiente de los resultados",
+      "guarantee_4": "Confidencialidad de las papeletas individuales",
+      "guarantee_lead": "El sistema garantiza:",
+      "paragraph": "Las operaciones de votación y escrutinio se ejecutaron mediante Vocdoni, un protocolo de votación digital respaldado por:"
+    }
+  },
   "processes": {
     "empty": "No se han encontrado procesos de votación",
     "empty_description": "Crea un proceso de votación para empezar.",
