@@ -73,7 +73,7 @@
     "dev": "vite",
     "start": "vite",
     "build": "vite build",
-    "serve:ssr": "NODE_ENV=production node server.mjs",
+    "serve:ssr": "NODE_ENV=production node server/index.mjs",
     "chakra:typegen": "chakra typegen ./src/theme/system.ts --tsconfig ./tsconfig.paths.json",
     "lint": "tsc && prettier --check src",
     "lint:fix": "prettier --write src",
