@@ -20,8 +20,12 @@ const assetBase = import.meta.env.VITEST ? `${process.cwd()}/public` : ''
 const vocdoniLogo = assetBase ? `${assetBase}/assets/logo_vocdoni.png` : logoImport
 const vocdoniIcon = assetBase ? `${assetBase}/assets/vocdoni_icon.png` : iconImport
 
+// SerializedElection (Record<string, any>) is an internal react-components type not exported;
+// we define a compatible local alias so this component accepts ElectionLike from useElection().
+type ElectionLike = PublishedElection | InvalidElection | Record<string, unknown>
+
 type VotingReportPdfProps = {
-  election?: PublishedElection | InvalidElection | null
+  election?: ElectionLike | null
 }
 
 type CensusBundleData = {
@@ -86,7 +90,7 @@ type PdfDocumentProps = {
 
 const downloadableElectionStatuses = new Set([ElectionStatus.RESULTS, ElectionStatus.ENDED, ElectionStatus.CANCELED])
 
-const canDownloadVotingReport = (election?: PublishedElection | InvalidElection | null) =>
+const canDownloadVotingReport = (election?: ElectionLike | null) =>
   election instanceof PublishedElection && downloadableElectionStatuses.has(election.status)
 
 const styles = StyleSheet.create({
@@ -895,7 +899,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
   )
 }
 
-const useVotingReportPdfDownload = (election?: PublishedElection | InvalidElection | null) => {
+const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
   const { t } = useTranslation()
   const toast = useToast()
   const { client } = useClient()
