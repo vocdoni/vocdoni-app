@@ -11,7 +11,7 @@ import { useToast } from '~components/Toast'
 import logoImport from '/assets/logo_vocdoni.png'
 import iconImport from '/assets/vocdoni_icon.png'
 
-const { pdf, Document, Image, Page, StyleSheet, Text: PdfText, View } = ReactPDF
+const { pdf, Document, Image, Link: PdfLink, Page, StyleSheet, Text: PdfText, View } = ReactPDF
 
 // @react-pdf/renderer uses Node's fs to read images, so it needs real filesystem paths.
 // In the test environment Vite resolves asset imports to URL strings (e.g. /assets/…)
@@ -83,6 +83,12 @@ type CertificateData = {
   disclaimerBullets: string[]
 }
 
+type ReportSection = {
+  title: string
+  page: number
+  href: string
+}
+
 type PdfDocumentProps = {
   data: CertificateData
   t: TFunction
@@ -95,11 +101,11 @@ const canDownloadVotingReport = (election?: ElectionLike | null) =>
 
 const styles = StyleSheet.create({
   page: {
-    padding: 34,
+    padding: 60,
     paddingTop: 28,
     fontFamily: 'Helvetica',
     fontSize: 10,
-    lineHeight: 1.45,
+    // lineHeight: 1.45,
     color: '#111827',
     backgroundColor: '#ffffff',
   },
@@ -226,6 +232,30 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 6,
   },
+  indexIntro: {
+    marginBottom: 10,
+    color: '#4b5563',
+  },
+  indexRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    gap: 12,
+    marginBottom: 5,
+  },
+  indexLabel: {
+    flexGrow: 1,
+    paddingRight: 8,
+  },
+  indexPage: {
+    flexShrink: 0,
+    fontWeight: 700,
+    color: '#374151',
+  },
+  indexLink: {
+    color: '#111827',
+    textDecoration: 'none',
+  },
   optionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -244,6 +274,14 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
+  },
+  pageNumber: {
+    position: 'absolute',
+    bottom: 30,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    color: '#6b7280',
   },
   footerTitle: {
     fontSize: 8,
@@ -649,6 +687,54 @@ const NumberedList = ({ items }: { items: string[] }) => (
   </View>
 )
 
+const buildReportSections = (t: TFunction): ReportSection[] => [
+  {
+    title: t('process_pdf.document.sections.general_information', { defaultValue: '1. General Information' }),
+    page: 1,
+    href: '#report-page-3',
+  },
+  {
+    title: t('process_pdf.document.sections.authentication', { defaultValue: '2. Authentication' }),
+    page: 1,
+    href: '#report-page-3',
+  },
+  {
+    title: t('process_pdf.document.sections.voting_system', { defaultValue: '3. Voting System' }),
+    page: 1,
+    href: '#report-page-3',
+  },
+  {
+    title: t('process_pdf.document.sections.electoral_census', { defaultValue: '4. Electoral Census' }),
+    page: 1,
+    href: '#report-page-3',
+  },
+  {
+    title: t('process_pdf.document.sections.turnout_participation', { defaultValue: '5. Turnout and Participation' }),
+    page: 1,
+    href: '#report-page-3',
+  },
+  {
+    title: t('process_pdf.document.sections.voting_process', { defaultValue: '6. Voting Process' }),
+    page: 2,
+    href: '#report-page-4',
+  },
+  {
+    title: t('process_pdf.document.sections.verification', { defaultValue: '7. Verification' }),
+    page: 2,
+    href: '#report-page-4',
+  },
+  {
+    title: t('process_pdf.document.sections.certification_scope', { defaultValue: '8. Certification Scope' }),
+    page: 2,
+    href: '#report-page-4',
+  },
+  {
+    title: t('process_pdf.document.sections.issuer', { defaultValue: '9. Issuer' }),
+    page: 3,
+    href: '#report-page-5',
+  },
+]
+
 const Paragraphs = ({ items }: { items: string[] }) => (
   <View>
     {items.map((item, index) => (
@@ -659,10 +745,22 @@ const Paragraphs = ({ items }: { items: string[] }) => (
   </View>
 )
 
+const getReportPageNumber = (pageNumber: number) => pageNumber - 2
+
+const ReportPageNumber = () => (
+  <PdfText fixed style={styles.pageNumber} render={({ pageNumber }) => String(getReportPageNumber(pageNumber))} />
+)
+
 const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
+  const reportSections = buildReportSections(t)
+
   return (
     <Document>
-      <Page size='A4' style={styles.page}>
+      <Page
+        size='A4'
+        style={styles.page}
+        bookmark={t('process_pdf.document.bookmarks.index', { defaultValue: 'Index' })}
+      >
         <View style={styles.coverContent}>
           <View style={styles.header}>
             <Image src={vocdoniLogo} style={styles.logo} />
@@ -697,6 +795,36 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
       </Page>
 
       <Page size='A4' style={styles.page}>
+        <View style={styles.pageBrand}>
+          <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
+        </View>
+
+        <View style={styles.section}>
+          <SectionTitle>{t('process_pdf.document.index.title', { defaultValue: 'Index' })}</SectionTitle>
+          <PdfText style={styles.indexIntro}>
+            {t('process_pdf.document.index.intro', {
+              defaultValue: 'This report is organized into the following sections:',
+            })}
+          </PdfText>
+          <View>
+            {reportSections.map((section) => (
+              <PdfLink key={section.title} src={section.href} style={styles.indexLink}>
+                <View style={styles.indexRow}>
+                  <PdfText style={styles.indexLabel}>{section.title}</PdfText>
+                  <PdfText style={styles.indexPage}>{section.page}</PdfText>
+                </View>
+              </PdfLink>
+            ))}
+          </View>
+        </View>
+      </Page>
+
+      <Page
+        size='A4'
+        style={styles.page}
+        id='report-page-3'
+        bookmark={t('process_pdf.document.bookmarks.general_information', { defaultValue: 'General Information' })}
+      >
         <View style={styles.pageBrand}>
           <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
         </View>
@@ -759,9 +887,15 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
         </View>
+        <ReportPageNumber />
       </Page>
 
-      <Page size='A4' style={styles.page}>
+      <Page
+        size='A4'
+        style={styles.page}
+        id='report-page-4'
+        bookmark={t('process_pdf.document.bookmarks.voting_process', { defaultValue: 'Voting Process' })}
+      >
         <View style={styles.pageBrand}>
           <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
         </View>
@@ -856,8 +990,15 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
         </View>
+        <ReportPageNumber />
       </Page>
-      <Page size='A4' style={styles.page}>
+      <Page
+        size='A4'
+        style={styles.page}
+        wrap
+        id='report-page-5'
+        bookmark={t('process_pdf.document.bookmarks.issuer', { defaultValue: 'Issuer' })}
+      >
         <View style={styles.pageBrand}>
           <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
         </View>
@@ -894,6 +1035,8 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
         </View>
+
+        <ReportPageNumber />
       </Page>
     </Document>
   )

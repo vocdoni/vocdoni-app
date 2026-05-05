@@ -1412,6 +1412,16 @@
       "title": "Avís legal"
     },
     "document": {
+      "bookmarks": {
+        "general_information": "Informació general",
+        "index": "Índex",
+        "issuer": "Emissor",
+        "voting_process": "Procés de votació"
+      },
+      "index": {
+        "intro": "Aquest informe està organitzat en les seccions següents:",
+        "title": "Índex"
+      },
       "issued_by": "Emès per Vocdoni (Synergize SL) el {{issue_date}}, en la seva qualitat de proveïdor tècnic.",
       "sections": {
         "authentication": "2. Autenticació",

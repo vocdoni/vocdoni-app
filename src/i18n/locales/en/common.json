@@ -1390,6 +1390,16 @@
       "title": "Disclaimer"
     },
     "document": {
+      "bookmarks": {
+        "general_information": "General Information",
+        "index": "Index",
+        "issuer": "Issuer",
+        "voting_process": "Voting Process"
+      },
+      "index": {
+        "intro": "This report is organized into the following sections:",
+        "title": "Index"
+      },
       "issued_by": "Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.",
       "sections": {
         "authentication": "2. Authentication",

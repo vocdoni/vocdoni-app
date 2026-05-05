@@ -18,8 +18,11 @@ vi.mock('@react-pdf/renderer', () => ({
   Image: ({ src, alt }: { src?: string; alt?: string }) => (
     <img src={typeof src === 'string' ? src : undefined} alt={alt ?? 'image'} />
   ),
+  Link: ({ children, ...props }: { children: ReactNode } & Record<string, unknown>) => <a {...props}>{children}</a>,
   Page: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  Text: ({ children }: { children: ReactNode }) => <span>{children}</span>,
+  Text: ({ children, ...props }: { children: ReactNode } & Record<string, unknown>) => (
+    <span {...props}>{children}</span>
+  ),
   View: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   StyleSheet: { create: (styles: Record<string, unknown>) => styles },
 }))
@@ -221,10 +224,10 @@ describe('VotingReportPdf', () => {
       ? documentTree.props.children
       : [documentTree.props.children]
 
-    expect(pages).toHaveLength(4)
+    expect(pages).toHaveLength(5)
   })
 
-  it('renders the vocdoni logo, a larger title, and puts section 1 on the next page', async () => {
+  it('renders the vocdoni logo, a larger title, an index page, and page numbers', async () => {
     pdfToBlob.mockResolvedValue(new Blob(['pdf']))
     const election = createElection()
 
@@ -298,15 +301,66 @@ describe('VotingReportPdf', () => {
       },
     })
 
-    const firstSection = secondPageChildren[1] as { props: { children: ReactNode } }
+    const indexSection = secondPageChildren[1] as { props: { children: ReactNode } }
+    const indexSectionChildren = Array.isArray(indexSection.props.children)
+      ? indexSection.props.children
+      : [indexSection.props.children]
+    const indexTitle = indexSectionChildren[0] as { props: { children: ReactNode } }
+    const indexIntro = indexSectionChildren[1] as { props: { children: ReactNode } }
+    const indexList = indexSectionChildren[2] as { props: { children: ReactNode } }
+    const indexListChildren = Array.isArray(indexList.props.children)
+      ? indexList.props.children
+      : [indexList.props.children]
+
+    expect(indexTitle.props.children).toBe('Index')
+    expect(indexIntro.props.children).toContain('organized into the following sections')
+    const indexFirstRow = indexListChildren[0] as {
+      props: {
+        src: '#report-page-3'
+        children: ReactNode
+      }
+    }
+    const indexFirstRowChildren = Array.isArray(indexFirstRow.props.children)
+      ? indexFirstRow.props.children
+      : [indexFirstRow.props.children]
+
+    expect(indexFirstRow.props.src).toBe('#report-page-3')
+    const indexFirstRowBlock = indexFirstRowChildren[0] as { props: { children: ReactNode } }
+    const indexFirstRowBlockChildren = Array.isArray(indexFirstRowBlock.props.children)
+      ? indexFirstRowBlock.props.children
+      : [indexFirstRowBlock.props.children]
+    expect((indexFirstRowBlockChildren[1] as { props: { children: ReactNode } }).props.children).toBe(1)
+
+    const indexSecondRow = indexListChildren[5] as {
+      props: {
+        src: '#report-page-4'
+        children: ReactNode
+      }
+    }
+    const indexSecondRowChildren = Array.isArray(indexSecondRow.props.children)
+      ? indexSecondRow.props.children
+      : [indexSecondRow.props.children]
+
+    expect(indexSecondRow.props.src).toBe('#report-page-4')
+    const indexSecondRowBlock = indexSecondRowChildren[0] as { props: { children: ReactNode } }
+    const indexSecondRowBlockChildren = Array.isArray(indexSecondRowBlock.props.children)
+      ? indexSecondRowBlock.props.children
+      : [indexSecondRowBlock.props.children]
+    expect((indexSecondRowBlockChildren[1] as { props: { children: ReactNode } }).props.children).toBe(2)
+
+    const firstSection = pages[2] as { props: { children: ReactNode } }
     const firstSectionChildren = Array.isArray(firstSection.props.children)
       ? firstSection.props.children
       : [firstSection.props.children]
-    const sectionTitle = firstSectionChildren[0] as { props: { children: ReactNode } }
+    const firstSectionBlock = firstSectionChildren[1] as { props: { children: ReactNode } }
+    const firstSectionBlockChildren = Array.isArray(firstSectionBlock.props.children)
+      ? firstSectionBlock.props.children
+      : [firstSectionBlock.props.children]
+    const sectionTitle = firstSectionBlockChildren[0] as { props: { children: ReactNode } }
 
     expect(sectionTitle.props.children).toBe('1. General Information')
 
-    const turnoutSection = secondPageChildren[5] as { props: { children: ReactNode } }
+    const turnoutSection = firstSectionChildren[5] as { props: { children: ReactNode } }
     const turnoutSectionChildren = Array.isArray(turnoutSection.props.children)
       ? turnoutSection.props.children
       : [turnoutSection.props.children]
@@ -318,7 +372,11 @@ describe('VotingReportPdf', () => {
     const thirdPageChildren = Array.isArray(thirdPage.props.children)
       ? thirdPage.props.children
       : [thirdPage.props.children]
-    const votingProcessSection = thirdPageChildren[1] as { props: { children: ReactNode } }
+    const fourthPage = pages[3] as { props: { children: ReactNode } }
+    const fourthPageChildren = Array.isArray(fourthPage.props.children)
+      ? fourthPage.props.children
+      : [fourthPage.props.children]
+    const votingProcessSection = fourthPageChildren[1] as { props: { children: ReactNode } }
     const votingProcessSectionChildren = Array.isArray(votingProcessSection.props.children)
       ? votingProcessSection.props.children
       : [votingProcessSection.props.children]
@@ -335,19 +393,56 @@ describe('VotingReportPdf', () => {
       },
     })
     expect(votingProcessIntroChildren[2]).toContain('consisted of 0 questions.')
-
-    const fourthPage = pages[3] as { props: { children: ReactNode } }
-    const fourthPageChildren = Array.isArray(fourthPage.props.children)
-      ? fourthPage.props.children
-      : [fourthPage.props.children]
-    const footer = fourthPageChildren[2] as { props: { style?: Record<string, unknown>; children: ReactNode } }
-    expect(footer.props.style).toMatchObject({
+    const fifthPage = pages[4] as { props: { children: ReactNode } }
+    const fifthPageChildren = Array.isArray(fifthPage.props.children)
+      ? fifthPage.props.children
+      : [fifthPage.props.children]
+    const legalFooter = fifthPageChildren[2] as { props: { style?: Record<string, unknown>; children: ReactNode } }
+    expect(legalFooter.props.style).toMatchObject({
       paddingTop: 8,
     })
-    const footerTitle = Array.isArray(footer.props.children) ? footer.props.children[0] : footer.props.children
+    const footerTitle = Array.isArray(legalFooter.props.children)
+      ? legalFooter.props.children[0]
+      : legalFooter.props.children
     expect((footerTitle as { props: { style?: Record<string, unknown> } }).props.style).toMatchObject({
       fontSize: 8,
     })
+    const pageNumber = fifthPageChildren.find(
+      (
+        child
+      ): child is {
+        type: { name?: string }
+        props: { children?: ReactNode }
+      } =>
+        Boolean(
+          child &&
+          typeof child === 'object' &&
+          'type' in child &&
+          'props' in child &&
+          (child.type as { name?: string }).name === 'ReportPageNumber'
+        )
+    )
+
+    const renderedPageNumber = pageNumber
+      ? (pageNumber.type as (props: { children?: ReactNode }) => ReactNode)(pageNumber.props)
+      : null
+    expect(renderedPageNumber).toMatchObject({
+      props: {
+        style: {
+          position: 'absolute',
+          bottom: 30,
+          left: 0,
+          right: 0,
+          textAlign: 'center',
+          color: '#6b7280',
+        },
+      },
+    })
+    expect(
+      (
+        renderedPageNumber as { props: { render?: (args: { pageNumber: number; totalPages: number }) => string } }
+      )?.props.render?.({ pageNumber: 5, totalPages: 5 })
+    ).toBe('3')
   })
 
   it('uses the sdk census type for the authentication method', () => {

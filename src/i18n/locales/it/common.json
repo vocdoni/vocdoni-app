@@ -1412,6 +1412,16 @@
       "title": "Esclusione di responsabilità"
     },
     "document": {
+      "bookmarks": {
+        "general_information": "Informazioni generali",
+        "index": "Indice",
+        "issuer": "Emittente",
+        "voting_process": "Processo di voto"
+      },
+      "index": {
+        "intro": "Questo report è organizzato nelle seguenti sezioni:",
+        "title": "Indice"
+      },
       "issued_by": "Emesso da Vocdoni (Synergize SL) il {{issue_date}}, in qualità di fornitore tecnico.",
       "sections": {
         "authentication": "2. Autenticazione",
