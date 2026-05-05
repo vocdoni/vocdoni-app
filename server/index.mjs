@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createDevMiddleware, renderPage } from 'vike/server'
 import { getSupportedPublicLanguagesFromEnv, resolvePublicLanguageRedirect } from './public-language-routing.mjs'
+import { isViteInternalPath } from './vite-path-guard.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
@@ -30,6 +31,12 @@ if (isProduction) {
 app.use(async (req, res, next) => {
   if (!['GET', 'HEAD'].includes(req.method)) {
     return next()
+  }
+
+  // Block Vite-internal dev-only URL patterns that should never reach production
+  // These are common security scanner probes and Vite internal paths
+  if (isViteInternalPath(req.path)) {
+    return res.status(404).end()
   }
 
   const redirectTarget = resolvePublicLanguageRedirect({
