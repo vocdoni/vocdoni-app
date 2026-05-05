@@ -85,7 +85,6 @@ type CertificateData = {
 
 type ReportSection = {
   title: string
-  page: number
   href: string
 }
 
@@ -246,11 +245,6 @@ const styles = StyleSheet.create({
   indexLabel: {
     flexGrow: 1,
     paddingRight: 8,
-  },
-  indexPage: {
-    flexShrink: 0,
-    fontWeight: 700,
-    color: '#374151',
   },
   indexLink: {
     color: '#111827',
@@ -690,47 +684,38 @@ const NumberedList = ({ items }: { items: string[] }) => (
 const buildReportSections = (t: TFunction): ReportSection[] => [
   {
     title: t('process_pdf.document.sections.general_information', { defaultValue: '1. General Information' }),
-    page: 1,
     href: '#report-page-3',
   },
   {
     title: t('process_pdf.document.sections.authentication', { defaultValue: '2. Authentication' }),
-    page: 1,
     href: '#report-page-3',
   },
   {
     title: t('process_pdf.document.sections.voting_system', { defaultValue: '3. Voting System' }),
-    page: 1,
     href: '#report-page-3',
   },
   {
     title: t('process_pdf.document.sections.electoral_census', { defaultValue: '4. Electoral Census' }),
-    page: 1,
     href: '#report-page-3',
   },
   {
     title: t('process_pdf.document.sections.turnout_participation', { defaultValue: '5. Turnout and Participation' }),
-    page: 1,
     href: '#report-page-3',
   },
   {
     title: t('process_pdf.document.sections.voting_process', { defaultValue: '6. Voting Process' }),
-    page: 2,
     href: '#report-page-4',
   },
   {
     title: t('process_pdf.document.sections.verification', { defaultValue: '7. Verification' }),
-    page: 2,
     href: '#report-page-4',
   },
   {
     title: t('process_pdf.document.sections.certification_scope', { defaultValue: '8. Certification Scope' }),
-    page: 2,
     href: '#report-page-4',
   },
   {
     title: t('process_pdf.document.sections.issuer', { defaultValue: '9. Issuer' }),
-    page: 3,
     href: '#report-page-5',
   },
 ]
@@ -811,7 +796,6 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
               <PdfLink key={section.title} src={section.href} style={styles.indexLink}>
                 <View style={styles.indexRow}>
                   <PdfText style={styles.indexLabel}>{section.title}</PdfText>
-                  <PdfText style={styles.indexPage}>{section.page}</PdfText>
                 </View>
               </PdfLink>
             ))}

@@ -329,7 +329,7 @@ describe('VotingReportPdf', () => {
     const indexFirstRowBlockChildren = Array.isArray(indexFirstRowBlock.props.children)
       ? indexFirstRowBlock.props.children
       : [indexFirstRowBlock.props.children]
-    expect((indexFirstRowBlockChildren[1] as { props: { children: ReactNode } }).props.children).toBe(1)
+    expect(indexFirstRowBlockChildren).toHaveLength(1)
 
     const indexSecondRow = indexListChildren[5] as {
       props: {
@@ -346,7 +346,7 @@ describe('VotingReportPdf', () => {
     const indexSecondRowBlockChildren = Array.isArray(indexSecondRowBlock.props.children)
       ? indexSecondRowBlock.props.children
       : [indexSecondRowBlock.props.children]
-    expect((indexSecondRowBlockChildren[1] as { props: { children: ReactNode } }).props.children).toBe(2)
+    expect(indexSecondRowBlockChildren).toHaveLength(1)
 
     const firstSection = pages[2] as { props: { children: ReactNode } }
     const firstSectionChildren = Array.isArray(firstSection.props.children)
