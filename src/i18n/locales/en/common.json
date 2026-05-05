@@ -10,6 +10,7 @@
     "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
     "create_first_vote": "View all processes",
     "create_new_vote": "Create new vote",
+    "edit": "Edit",
     "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
     "end_description": "Ending \"{{ election.title.default }}\" voting process...\n\nAttention: this action is irreversible and voters will no longer be able to vote.",
     "error_title": "There was some error while executing the transaction",
@@ -469,6 +470,9 @@
       "delete_error": "Error deleting group",
       "delete_group": "Delete Group",
       "delete_success": "Group deleted successfully",
+      "edit_description": "Update the name and description of this group.",
+      "edit_error": "Error updating group",
+      "edit_success": "Group updated successfully",
       "history": "History",
       "view_members": "View Members"
     },

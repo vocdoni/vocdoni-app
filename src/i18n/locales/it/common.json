@@ -10,6 +10,7 @@
     "continue_description": "Ripresa del processo di voto \"{{ election.title.default }}\"...",
     "create_first_vote": "Visualizza tutti i processi",
     "create_new_vote": "Crea nuova votazione",
+    "edit": "Modifica",
     "end": "Termina immediatamente il processo, impedendo l'invio di nuovi voti e mostrando i risultati (attenzione: non può essere annullato)",
     "end_description": "Chiusura del processo di voto \"{{ election.title.default }}\"...\n\nAttenzione: questa azione è irreversibile e i votanti non potranno più votare.",
     "error_title": "Si è verificato un errore durante l'esecuzione della transazione",
@@ -474,6 +475,9 @@
       "delete_error": "Errore durante l'eliminazione del gruppo",
       "delete_group": "Elimina gruppo",
       "delete_success": "Gruppo eliminato con successo",
+      "edit_description": "Aggiorna il nome e la descrizione di questo gruppo.",
+      "edit_error": "Errore durante l'aggiornamento del gruppo",
+      "edit_success": "Gruppo aggiornato correttamente",
       "history": "Cronologia",
       "view_members": "Visualizza membri"
     },

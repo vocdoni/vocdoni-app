@@ -39,6 +39,13 @@ export type GroupData = {
   memberIDs: string[]
 }
 
+export type UpdateGroupData = {
+  title?: string
+  description?: string
+  addMembers?: string[]
+  removeMembers?: string[]
+}
+
 export const useGroups = (limit: number = 6) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
@@ -122,18 +129,13 @@ export const useGroupMembers = (groupId: string, page, isOpen: boolean = false) 
   })
 }
 
-type UpdateGroupMembersData = {
-  addMembers?: string[]
-  removeMembers?: string[]
-}
-
 export const useUpdateGroup = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ groupId, body }: { groupId: string; body: UpdateGroupMembersData }) => {
+    mutationFn: async ({ groupId, body }: { groupId: string; body: UpdateGroupData }) => {
       await bearedFetch(
         ApiEndpoints.OrganizationGroup.replace('{address}', enforceHexPrefix(organization.address)).replace(
           '{groupId}',

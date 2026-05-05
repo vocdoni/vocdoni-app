@@ -10,7 +10,9 @@ vi.mock('react-router-dom', async (importOriginal) => {
   }
 })
 
-let mockUseGroupsData = []
+let mockUseGroupsData: Array<Record<string, unknown>> = []
+const mockDeleteGroupMutation = vi.fn()
+const mockUpdateGroupMutation = vi.fn()
 
 vi.mock('~src/queries/groups', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/queries/groups')>()
@@ -25,8 +27,8 @@ vi.mock('~src/queries/groups', async (importOriginal) => {
       hasNextPage: false,
       isFetchingNextPage: false,
     }),
-    useDeleteGroup: () => ({ mutate: vi.fn() }),
-    useUpdateGroup: () => ({ mutate: vi.fn() }),
+    useDeleteGroup: () => ({ mutate: mockDeleteGroupMutation }),
+    useUpdateGroup: () => ({ mutate: mockUpdateGroupMutation, isPending: false }),
     useGroupMembers: () => ({
       data: {
         members: [],
@@ -39,6 +41,12 @@ vi.mock('~src/queries/groups', async (importOriginal) => {
 })
 
 describe('GroupsBoard', () => {
+  beforeEach(() => {
+    mockUseGroupsData = []
+    mockDeleteGroupMutation.mockReset()
+    mockUpdateGroupMutation.mockReset()
+  })
+
   it('renders an empty state when no groups exist', () => {
     render(<Groups />)
 
@@ -67,6 +75,70 @@ describe('GroupsBoard', () => {
 
     // Delete action must NOT be present
     expect(screen.queryByText(/delete group/i)).not.toBeInTheDocument()
+  })
+
+  it('shows the edit action for manual groups', async () => {
+    const group = {
+      id: 'group-1',
+      title: 'Existing group',
+      description: 'Existing description',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      censusIds: [],
+      membersCount: 5,
+      isAutoGroup: false,
+    }
+
+    mockUseGroupsData = [group]
+
+    const user = userEvent.setup()
+    render(<Groups />)
+
+    const moreButton = await screen.findByRole('button', { name: /more options/i })
+    await user.click(moreButton)
+
+    expect(await screen.findByRole('menuitem', { name: /edit/i })).toBeInTheDocument()
+  })
+
+  it('opens the edit drawer and submits updated group details', async () => {
+    const group = {
+      id: 'group-1',
+      title: 'Existing group',
+      description: 'Existing description',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      censusIds: [],
+      membersCount: 5,
+      isAutoGroup: false,
+    }
+
+    mockUseGroupsData = [group]
+
+    const user = userEvent.setup()
+    render(<Groups />)
+
+    await user.click(await screen.findByRole('button', { name: /more options/i }))
+    await user.click(await screen.findByRole('menuitem', { name: /edit/i }))
+
+    const titleInput = await screen.findByRole('textbox', { name: /group name/i })
+    const descriptionInput = await screen.findByRole('textbox', { name: /description/i })
+
+    await user.clear(titleInput)
+    await user.type(titleInput, 'Updated group')
+    await user.clear(descriptionInput)
+    await user.type(descriptionInput, 'Updated description')
+    await user.click(screen.getByRole('button', { name: /save changes/i }))
+
+    expect(mockUpdateGroupMutation).toHaveBeenCalledWith(
+      {
+        groupId: 'group-1',
+        body: {
+          title: 'Updated group',
+          description: 'Updated description',
+        },
+      },
+      expect.objectContaining({ onSuccess: expect.any(Function), onError: expect.any(Function) })
+    )
   })
 
   it('renders translated title for auto-groups', async () => {

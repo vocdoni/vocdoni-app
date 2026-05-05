@@ -1,6 +1,10 @@
 import {
+  Box,
   Button,
   Card,
+  FieldErrorText as FormErrorMessage,
+  FieldLabel as FormLabel,
+  FieldRoot as FormControl,
   CheckboxControl,
   CheckboxHiddenInput,
   CheckboxRoot,
@@ -21,14 +25,17 @@ import {
   Separator,
   SimpleGrid,
   Table,
+  Textarea,
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
 import { PaginationProvider, usePagination } from '@vocdoni/react-components/pagination'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuCalendar, LuClock, LuEllipsis, LuEye, LuTrash, LuUsers, LuVote } from 'react-icons/lu'
+import { LuCalendar, LuClock, LuEllipsis, LuEye, LuPencil, LuTrash, LuUsers, LuVote } from 'react-icons/lu'
 import { generatePath, useNavigate } from 'react-router-dom'
+import InputBasic from '~components/Form/InputBasic'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import DeleteModal from '~components/Modal/DeleteModal'
@@ -41,6 +48,7 @@ import { TableProvider, useTable } from './TableProvider'
 type GroupActionsProps = {
   group: Group
   onMembersDrawerOpen: () => void
+  onEditDrawerOpen: () => void
   onDeleteModalOpen: () => void
 }
 
@@ -48,6 +56,7 @@ type ViewMembersDrawerProps = {
   group: Group
   isOpen: boolean
   onClose: () => void
+  onEditDrawerOpen: () => void
   openDeleteModal: () => void
 }
 
@@ -161,7 +170,119 @@ const HistoryDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
   )
 }
 
-const GroupActions = ({ group, onMembersDrawerOpen, onDeleteModalOpen }: GroupActionsProps) => {
+type EditGroupFormData = {
+  title: string
+  description: string
+}
+
+const EditGroupDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
+  const { t } = useTranslation()
+  const toast = useToast()
+  const updateGroup = useUpdateGroup()
+  const methods = useForm<EditGroupFormData>({
+    defaultValues: {
+      title: group.title,
+      description: group.description,
+    },
+  })
+
+  const { handleSubmit, register, reset, formState } = methods
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    reset({
+      title: group.title,
+      description: group.description,
+    })
+  }, [group.description, group.title, isOpen, reset])
+
+  const onSubmit = handleSubmit((values) => {
+    updateGroup.mutate(
+      {
+        groupId: group.id,
+        body: {
+          title: values.title.trim(),
+          description: values.description.trim(),
+        },
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: t('group.actions.edit_success', { defaultValue: 'Group updated successfully' }),
+            type: 'success',
+            duration: 3000,
+            isClosable: true,
+          })
+          onClose()
+        },
+        onError: (error) => {
+          toast({
+            title: t('group.actions.edit_error', { defaultValue: 'Error updating group' }),
+            description: error.message,
+            type: 'error',
+            duration: 3000,
+            isClosable: true,
+          })
+        },
+      }
+    )
+  })
+
+  return (
+    <Drawer.Root open={isOpen} onOpenChange={({ open }) => (!open ? onClose() : undefined)} size='sm'>
+      <Drawer.Backdrop />
+      <Drawer.Positioner>
+        <Drawer.Content>
+          <Drawer.CloseTrigger asChild>
+            <CloseButton aria-label={t('drawer.close', 'Close drawer')} onClick={onClose} />
+          </Drawer.CloseTrigger>
+          <Drawer.Header display='flex' flexDirection='column' alignItems='start'>
+            <Drawer.Title>{t('actions.edit', { defaultValue: 'Edit' })}</Drawer.Title>
+            <Text color='texts.subtle' fontSize='sm'>
+              {t('group.actions.edit_description', {
+                defaultValue: 'Update the name and description of this group.',
+              })}
+            </Text>
+          </Drawer.Header>
+          <FormProvider {...methods}>
+            <Box as='form' onSubmit={onSubmit}>
+              <Drawer.Body display='flex' flexDirection='column' gap={4}>
+                <InputBasic
+                  formValue='title'
+                  label={t('members.table.group_name', { defaultValue: 'Group name' })}
+                  required
+                />
+                <FormControl invalid={!!formState.errors.description}>
+                  <FormLabel>
+                    {t('members.table.group_description', { defaultValue: 'Description (Optional)' })}
+                  </FormLabel>
+                  <Textarea
+                    {...register('description')}
+                    placeholder={t('members.table.group_description_placeholder', {
+                      defaultValue: 'Enter a brief description of the group',
+                    })}
+                  />
+                  <FormErrorMessage>{formState.errors.description?.message?.toString()}</FormErrorMessage>
+                </FormControl>
+              </Drawer.Body>
+              <Flex justifyContent='flex-end' gap={2} p={4}>
+                <Button variant='outline' onClick={onClose}>
+                  {t('actions.cancel', { defaultValue: 'Cancel' })}
+                </Button>
+                <Button type='submit' loading={updateGroup.isPending}>
+                  {t('actions.save', { defaultValue: 'Save changes' })}
+                </Button>
+              </Flex>
+            </Box>
+          </FormProvider>
+        </Drawer.Content>
+      </Drawer.Positioner>
+    </Drawer.Root>
+  )
+}
+
+const GroupActions = ({ group, onMembersDrawerOpen, onEditDrawerOpen, onDeleteModalOpen }: GroupActionsProps) => {
   const { t } = useTranslation()
   const navigateToVote = useNavigateToVote()
   const { open: isHistoryOpen, onOpen: onHistoryOpen, onClose: onHistoryClose } = useDisclosure()
@@ -176,6 +297,14 @@ const GroupActions = ({ group, onMembersDrawerOpen, onDeleteModalOpen }: GroupAc
         </MenuTrigger>
         <MenuPositioner>
           <MenuContent minW='100px' fontSize='sm'>
+            {!group.isAutoGroup && (
+              <MenuItem value='edit' onClick={onEditDrawerOpen}>
+                <HStack gap={2}>
+                  <Icon boxSize={4} as={LuPencil} />
+                  <Text as='span'>{t('actions.edit', { defaultValue: 'Edit' })}</Text>
+                </HStack>
+              </MenuItem>
+            )}
             <MenuItem value='members' onClick={onMembersDrawerOpen}>
               <HStack gap={2}>
                 <Icon boxSize={4} as={LuEye} />
@@ -357,7 +486,7 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
   )
 }
 
-const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMembersDrawerProps) => {
+const ViewMembersDrawer = ({ group, isOpen, onClose, onEditDrawerOpen, openDeleteModal }: ViewMembersDrawerProps) => {
   const { t } = useTranslation()
   const navigateToVote = useNavigateToVote()
   const { displayTitle } = useGroupDisplay(group)
@@ -407,10 +536,16 @@ const ViewMembersDrawer = ({ group, isOpen, onClose, openDeleteModal }: ViewMemb
                 {t('group.create_vote', { defaultValue: 'Create a Vote' })}
               </Button>
               {!group.isAutoGroup && (
-                <Button onClick={openDeleteModal} colorPalette='red' size='xs'>
-                  <Icon as={LuTrash} boxSize={4} />
-                  {t('group.delete_group', { defaultValue: 'Delete group' })}
-                </Button>
+                <>
+                  <Button variant='outline' onClick={onEditDrawerOpen} size='xs'>
+                    <Icon as={LuPencil} boxSize={4} />
+                    {t('actions.edit', { defaultValue: 'Edit' })}
+                  </Button>
+                  <Button onClick={openDeleteModal} colorPalette='red' size='xs'>
+                    <Icon as={LuTrash} boxSize={4} />
+                    {t('group.delete_group', { defaultValue: 'Delete group' })}
+                  </Button>
+                </>
               )}
             </Flex>
           </Drawer.Body>
@@ -534,6 +669,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
   const { t } = useTranslation()
   const navigateToVote = useNavigateToVote()
   const { open: isMembersDrawerOpen, onOpen: onMembersDrawerOpen, onClose: onMembersDrawerClose } = useDisclosure()
+  const { open: isEditDrawerOpen, onOpen: onEditDrawerOpen, onClose: onEditDrawerClose } = useDisclosure()
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { displayTitle, displayDescription } = useGroupDisplay(group)
 
@@ -546,6 +682,7 @@ const GroupCard = ({ group }: GroupCardProps) => {
             <GroupActions
               group={group}
               onMembersDrawerOpen={onMembersDrawerOpen}
+              onEditDrawerOpen={onEditDrawerOpen}
               onDeleteModalOpen={() => setDeleteModalOpen(true)}
             />
           </Flex>
@@ -597,8 +734,10 @@ const GroupCard = ({ group }: GroupCardProps) => {
         group={group}
         isOpen={isMembersDrawerOpen}
         onClose={onMembersDrawerClose}
+        onEditDrawerOpen={onEditDrawerOpen}
         openDeleteModal={() => setDeleteModalOpen(true)}
       />
+      <EditGroupDrawer group={group} isOpen={isEditDrawerOpen} onClose={onEditDrawerClose} />
       <DeleteGroupModal group={group} isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} />
     </>
   )

@@ -10,6 +10,7 @@
     "continue_description": "Reobrint el procés de votació \"{{ election.title.default }}\"",
     "create_first_vote": "Mostra tots els processos",
     "create_new_vote": "Crea una nova votació",
+    "edit": "Edita",
     "end": "Finalitza immediatament el procés, impedint que es presentin nous vots, i mostra els resultats de votació (precaució: no es pot desfer)",
     "end_description": "Finalitzant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i els votants no podran emetre nous vots.",
     "error_title": "S'ha produït algun error en executar la transacció",
@@ -474,6 +475,9 @@
       "delete_error": "Error en eliminar el grup",
       "delete_group": "Elimina el grup",
       "delete_success": "Grup eliminat correctament",
+      "edit_description": "Actualitza el nom i la descripció d'aquest grup.",
+      "edit_error": "Error en actualitzar el grup",
+      "edit_success": "Grup actualitzat correctament",
       "history": "Historial",
       "view_members": "Mostra els membres"
     },

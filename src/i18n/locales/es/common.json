@@ -10,6 +10,7 @@
     "continue_description": "Reanudando el proceso de votación «{{ election.title.default }}»...",
     "create_first_vote": "Ver todos los procesos",
     "create_new_vote": "Crear nueva votación",
+    "edit": "Editar",
     "end": "Finalizar el proceso de inmediato, impidiendo la emisión de nuevos votos y mostrando los resultados de la votación (precaución: no se puede revertir).",
     "end_description": "Finalizando el proceso de votación «{{ election.title.default }}»...\n\nAtención: esta acción es irreversible y los electores ya no podrán votar.",
     "error_title": "Se ha producido un error al ejecutar la transacción",
@@ -474,6 +475,9 @@
       "delete_error": "Error al eliminar el grupo",
       "delete_group": "Eliminar grupo",
       "delete_success": "Grupo eliminado correctamente",
+      "edit_description": "Actualiza el nombre y la descripción de este grupo.",
+      "edit_error": "Error al actualizar el grupo",
+      "edit_success": "Grupo actualizado correctamente",
       "history": "Historial",
       "view_members": "Ver miembros"
     },
