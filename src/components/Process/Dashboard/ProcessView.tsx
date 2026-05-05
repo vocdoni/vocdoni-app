@@ -12,6 +12,7 @@ import {
   Input,
   Link,
   Progress,
+  SimpleGrid,
   TabsContent,
   TabsContentGroup,
   TabsList,
@@ -197,7 +198,7 @@ const ProcessViewContent = () => {
               <Icon as={LuCalendar} />
               <Trans i18nKey='calendar.title'>Schedule</Trans>
             </Heading>
-            <Flex wrap='wrap' gap={4}>
+            <SimpleGrid columns={{ base: 1, sm: 2 }} gap={4}>
               <SettingsField
                 icon={LuCalendar}
                 text={t('start_date', 'Start date')}
@@ -214,8 +215,6 @@ const ProcessViewContent = () => {
                   formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))
                 }
               />
-            </Flex>
-            <Flex wrap='wrap' gap={4}>
               <SettingsField
                 icon={LuCalendar}
                 text={t('end_date', 'End date')}
@@ -232,7 +231,7 @@ const ProcessViewContent = () => {
                   formatDate(election.endDate, t('dashboard.process_view.time_format', 'p'))
                 }
               />
-            </Flex>
+            </SimpleGrid>
           </DashboardBox>
 
           {/* Voting link */}
@@ -515,7 +514,7 @@ const ProcessViewSidebar = () => {
 }
 
 const SettingsField = ({ subtext, icon, text }: { subtext?: string; icon: typeof LuCalendar; text: ReactNode }) => (
-  <Box display='flex' gap={2} flex={1} alignItems='center'>
+  <Box display='flex' gap={2} flex='1 1 0' minW={0} alignItems='center'>
     <Box
       color='gray.600'
       bg='gray.100'
@@ -529,7 +528,7 @@ const SettingsField = ({ subtext, icon, text }: { subtext?: string; icon: typeof
     >
       <Icon as={icon} boxSize={5} />
     </Box>
-    <Box flex={1} display='flex' flexDirection='column'>
+    <Box flex='1 1 0' minW={0} display='flex' flexDirection='column'>
       <Text fontSize='sm' fontWeight='bold' textTransform='capitalize'>
         {text}
       </Text>
