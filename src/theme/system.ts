@@ -6,7 +6,7 @@ import tokens from './tokens'
 export const system = createSystem(defaultConfig, {
   globalCss: {
     html: {
-      colorPalette: 'gray',
+      colorPalette: 'teal',
     },
   },
   theme: {
