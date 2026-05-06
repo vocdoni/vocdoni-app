@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createSsrCacheMiddleware, getCacheKey, getTtl, ssrCache } from './ssr-cache.mjs'
+import { LRUCache, createSsrCacheMiddleware, getCacheKey, getTtl, ssrCache } from './ssr-cache.mjs'
 
 // ---------------------------------------------------------------------------
 // Minimal Express-like fakes
@@ -104,7 +104,7 @@ describe('ssrCache byte-based size calculation', () => {
   it('uses UTF-8 byte encoding for size calculation', () => {
     // Verify that byte counting is accurate by checking cache behavior
     // With a small maxSize, we can verify byte-based eviction
-    const testCache = new (require('lru-cache').LRUCache)({
+    const testCache = new LRUCache({
       max: 10,
       maxSize: 10, // 10 bytes hard cap
       sizeCalculation: (entry) => new TextEncoder().encode(entry.body).length,

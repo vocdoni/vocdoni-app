@@ -64,6 +64,7 @@ export function getCacheKey(pathname, origin = '') {
 // LRU cache instance
 // Exported so tests can call ssrCache.clear() between runs.
 // ---------------------------------------------------------------------------
+export { LRUCache }
 export const ssrCache = new LRUCache({
   max: 500, // max number of cached pages
   maxSize: 50 * 1024 * 1024, // 50 MB hard cap
@@ -226,9 +227,9 @@ export function createSsrCacheMiddleware({ renderPage, getViteServer, isProducti
       // In-flight deduplication (thundering herd prevention)
       // ----------------------------------------------------------------
       if (inflight.has(cacheKey)) {
-        res.setHeader('X-SSR-Cache', 'COALESCED')
         const entry = await inflight.get(cacheKey)
         if (!entry) return next()
+        res.setHeader('X-SSR-Cache', 'COALESCED')
         sendEntry(req, res, entry)
         return
       }
@@ -236,7 +237,6 @@ export function createSsrCacheMiddleware({ renderPage, getViteServer, isProducti
       // ----------------------------------------------------------------
       // Cache miss — render, store, respond
       // ----------------------------------------------------------------
-      res.setHeader('X-SSR-Cache', 'MISS')
       const renderPromise = renderToEntry(req, renderPage, extraContext)
       inflight.set(cacheKey, renderPromise)
 
@@ -245,6 +245,7 @@ export function createSsrCacheMiddleware({ renderPage, getViteServer, isProducti
         if (!entry) {
           return next()
         }
+        res.setHeader('X-SSR-Cache', 'MISS')
         if (entry.statusCode === 200) {
           ssrCache.set(cacheKey, entry, { ttl: getTtl(req.path) })
         }
