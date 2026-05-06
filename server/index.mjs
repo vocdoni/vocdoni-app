@@ -11,15 +11,20 @@ const root = join(__dirname, '..')
 const isProduction = process.env.NODE_ENV === 'production'
 const port = Number(process.env.PORT || 3000)
 
-if (isProduction && !process.env.APP_URL) {
-  console.warn(
-    '[ssr-cache] APP_URL is unset; cache keys are path-only. Set APP_URL to prevent cross-domain cache poisoning.'
-  )
-}
-
 const app = express()
 const supportedPublicLanguages = getSupportedPublicLanguagesFromEnv(process.env)
 let viteServer
+
+// Production warning: APP_URL should be configured for reliable cache partitioning
+if (isProduction && !process.env.APP_URL?.trim()) {
+  console.warn(
+    '⚠️  WARNING: APP_URL is not set in production mode.\n' +
+      '  The SSR cache will derive its partition key from the x-forwarded-host header.\n' +
+      '  This requires a trusted reverse proxy to set this header correctly.\n' +
+      '  Without APP_URL configured, different origins may share cache entries incorrectly.\n' +
+      '  Set APP_URL environment variable to ensure consistent cache partitioning.'
+  )
+}
 
 if (isProduction) {
   await import(pathToFileURL(join(root, 'dist/server/entry.mjs')).href)

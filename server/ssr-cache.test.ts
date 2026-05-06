@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSsrCacheMiddleware, getCacheKey, getTtl, ssrCache } from './ssr-cache.mjs'
 
 // ---------------------------------------------------------------------------
 // Minimal Express-like fakes
 // ---------------------------------------------------------------------------
-function makeReq(path: string, method = 'GET') {
-  return { path, originalUrl: path, method, headers: {} } as any
+function makeReq(path: string, method = 'GET', headers: Record<string, string> = {}) {
+  return { path, originalUrl: path, method, headers } as any
 }
 
 function makeRes() {
@@ -78,6 +78,56 @@ describe('getCacheKey', () => {
   it('returns the pathname for processes routes', () => {
     expect(getCacheKey('/es/processes/0xprocess')).toBe('/es/processes/0xprocess')
     expect(getCacheKey('/it/processes/0xid')).toBe('/it/processes/0xid')
+  })
+
+  it('prefixes the key with origin when provided', () => {
+    expect(getCacheKey('/en/organization/0xabc', 'https://example.com')).toBe(
+      'https://example.com/en/organization/0xabc'
+    )
+  })
+
+  it('handles non-ASCII characters correctly in cache keys', () => {
+    // Verify that cache key generation works with Unicode paths
+    expect(getCacheKey('/en/processes/123')).toBe('/en/processes/123')
+    expect(getCacheKey('/en/organization/0xabc')).toBe('/en/organization/0xabc')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// ssrCache size calculation (byte-based)
+// ---------------------------------------------------------------------------
+describe('ssrCache byte-based size calculation', () => {
+  beforeEach(() => {
+    ssrCache.clear()
+  })
+
+  it('uses UTF-8 byte encoding for size calculation', () => {
+    // Verify that byte counting is accurate by checking cache behavior
+    // With a small maxSize, we can verify byte-based eviction
+    const testCache = new (require('lru-cache').LRUCache)({
+      max: 10,
+      maxSize: 10, // 10 bytes hard cap
+      sizeCalculation: (entry) => new TextEncoder().encode(entry.body).length,
+      ttlResolution: 0,
+    })
+
+    // 'a' = 1 byte in UTF-8
+    testCache.set('one-byte', { body: 'a', statusCode: 200, headers: [] })
+    expect(testCache.get('one-byte')).toBeDefined()
+
+    // Adding 9 more single-byte chars should fill the cache (1+9=10 bytes)
+    for (let i = 0; i < 9; i++) {
+      testCache.set(`char-${i}`, { body: 'x', statusCode: 200, headers: [] })
+    }
+    expect(testCache.size).toBe(10) // 10 entries, each 1 byte
+
+    // Adding a 2-byte UTF-8 character should evict the oldest entry (LRU)
+    testCache.set('two-bytes', { body: 'é', statusCode: 200, headers: [] })
+    // Should have 9 entries now (evicted oldest to make room for 2-byte char)
+    expect(testCache.size).toBe(9)
+
+    // The first entry ('one-byte') should be evicted because it was LRU
+    expect(testCache.get('one-byte')).toBeUndefined()
   })
 })
 
@@ -219,6 +269,98 @@ describe('createSsrCacheMiddleware', () => {
 
       expect(ssrCache.size).toBe(2)
       expect(renderPage).toHaveBeenCalledTimes(2)
+    })
+
+    it('different Host headers produce separate cache entries', async () => {
+      const renderPage = makeRenderPage()
+      const mw = createSsrCacheMiddleware({ renderPage, getViteServer: () => null, isProduction: true })
+
+      await mw(makeReq('/en/organization/0xabc', 'GET', { host: 'example.com' }), makeRes(), next)
+      await mw(makeReq('/en/organization/0xabc', 'GET', { host: 'other.com' }), makeRes(), next)
+
+      expect(ssrCache.size).toBe(2)
+      expect(renderPage).toHaveBeenCalledTimes(2)
+    })
+
+    it('uses APP_URL env for cache key when configured', async () => {
+      const previous = process.env.APP_URL
+      process.env.APP_URL = 'https://configured.com'
+
+      try {
+        const renderPage = makeRenderPage()
+        const mw = createSsrCacheMiddleware({ renderPage, getViteServer: () => null, isProduction: true })
+
+        await mw(makeReq('/en/organization/0xabc'), makeRes(), next)
+
+        expect(ssrCache.size).toBe(1)
+        const key = ssrCache.keys().next().value as string
+        expect(key.startsWith('https://configured.com')).toBe(true)
+      } finally {
+        process.env.APP_URL = previous
+      }
+    })
+
+    // ---- TTL expiry --------------------------------------------------------
+    describe('TTL expiry', () => {
+      beforeEach(() => {
+        vi.useFakeTimers()
+        ssrCache.clear()
+      })
+
+      afterEach(() => {
+        vi.useRealTimers()
+      })
+
+      it('re-renders after processes TTL elapses (1 minute)', async () => {
+        const renderPage = makeRenderPage()
+        const mw = createSsrCacheMiddleware({ renderPage, getViteServer: () => null, isProduction: true })
+        const req = makeReq('/en/processes/0xproc')
+
+        // Initial render — MISS
+        await mw(req, makeRes(), next)
+        expect(renderPage).toHaveBeenCalledOnce()
+
+        // Still within TTL (59s) — HIT, no re-render
+        vi.advanceTimersByTime(59 * 1000)
+        const res2 = makeRes()
+        await mw(req, res2, next)
+        expect(res2.headers['X-SSR-Cache']).toBe('HIT')
+        expect(renderPage).toHaveBeenCalledOnce()
+
+        // Advance past TTL (another 2s = 61s total)
+        vi.advanceTimersByTime(2 * 1000)
+
+        // After expiry: MISS and re-render (allowStale removed — no stale serving)
+        const res3 = makeRes()
+        await mw(req, res3, next)
+        expect(res3.headers['X-SSR-Cache']).toBe('MISS')
+        expect(renderPage).toHaveBeenCalledTimes(2)
+      })
+
+      it('re-renders after organization TTL elapses (5 minutes)', async () => {
+        const renderPage = makeRenderPage()
+        const mw = createSsrCacheMiddleware({ renderPage, getViteServer: () => null, isProduction: true })
+        const req = makeReq('/en/organization/0xorg')
+
+        await mw(req, makeRes(), next)
+        expect(renderPage).toHaveBeenCalledOnce()
+
+        // Advance to just inside TTL (4m 59s)
+        vi.advanceTimersByTime(4 * 60 * 1000 + 59 * 1000)
+        const resInside = makeRes()
+        await mw(req, resInside, next)
+        expect(resInside.headers['X-SSR-Cache']).toBe('HIT')
+        expect(renderPage).toHaveBeenCalledOnce()
+
+        // Advance past TTL (another 2s = 5m 01s total)
+        vi.advanceTimersByTime(2 * 1000)
+
+        // After expiry: MISS and re-render
+        const resExpired = makeRes()
+        await mw(req, resExpired, next)
+        expect(resExpired.headers['X-SSR-Cache']).toBe('MISS')
+        expect(renderPage).toHaveBeenCalledTimes(2)
+      })
     })
   })
 

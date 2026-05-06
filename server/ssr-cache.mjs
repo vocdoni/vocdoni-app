@@ -46,12 +46,18 @@ export function getTtl(pathname) {
  * Returns the cache key for a pathname, or null if the route is not cacheable.
  * Uses pathname only (no query string) because SSR pages do not use query
  * params for content differentiation.
+ *
+ * An optional origin prefix (e.g. 'https://example.com') scopes the key so
+ * that path-identical routes for different domains never collide in the LRU
+ * store, preventing cross-domain cache poisoning.
+ *
  * @param {string} pathname
+ * @param {string} [origin=''] - Effective origin prefix (empty → path-only key)
  * @returns {string | null}
  */
-export function getCacheKey(pathname) {
+export function getCacheKey(pathname, origin = '') {
   const normalized = normalizePath(pathname)
-  return CACHEABLE_PATTERN.test(normalized) ? normalized : null
+  return CACHEABLE_PATTERN.test(normalized) ? `${origin}${normalized}` : null
 }
 
 // ---------------------------------------------------------------------------
@@ -60,8 +66,14 @@ export function getCacheKey(pathname) {
 // ---------------------------------------------------------------------------
 export const ssrCache = new LRUCache({
   max: 500, // max number of cached pages
+  maxSize: 50 * 1024 * 1024, // 50 MB hard cap
+  sizeCalculation: (entry) => new TextEncoder().encode(entry.body).length,
   ttl: TTL_DEFAULT, // default TTL; per-entry TTL is set on cache.set()
-  allowStale: true, // serve stale while background refresh happens
+  // Use Date.now() so vi.useFakeTimers() works in tests.
+  // ttlResolution:0 disables the cachedNow debounce so each staleness check
+  // calls Date.now() directly — required for accurate fake-timer advancement.
+  perf: { now: () => Date.now() },
+  ttlResolution: 0,
 })
 
 // In-flight map: cacheKey → Promise<CacheEntry | null>
@@ -118,6 +130,39 @@ function sendEntry(req, res, entry) {
 }
 
 // ---------------------------------------------------------------------------
+// Origin helper
+// ---------------------------------------------------------------------------
+
+/**
+ * Derives the effective origin from the request, mirroring resolvePublicOrigin
+ * in src/pages/shared/publicPageData.ts.
+ *
+ * Used to scope cache keys so that path-identical routes for different domains
+ * never collide in the LRU store.
+ *
+ * @param {import('express').Request} req
+ * @returns {string}
+ */
+function getEffectiveOrigin(req) {
+  const configured = process.env.APP_URL?.trim()
+  if (configured) {
+    try {
+      return new URL(configured).origin
+    } catch {
+      // fall through to header-based derivation
+    }
+  }
+  const rawHost = req.headers['x-forwarded-host'] || req.headers['host']
+  if (!rawHost) return ''
+  const host = String(rawHost).split(',')[0].trim()
+  const rawProto = req.headers['x-forwarded-proto']
+  const proto = rawProto
+    ? String(rawProto).split(',')[0].trim()
+    : host.startsWith('localhost') ? 'http' : 'https'
+  return `${proto}://${host}`
+}
+
+// ---------------------------------------------------------------------------
 // Middleware factory
 // ---------------------------------------------------------------------------
 
@@ -157,7 +202,7 @@ export function createSsrCacheMiddleware({ renderPage, getViteServer, isProducti
       // ----------------------------------------------------------------
       // Production: determine whether this route is cacheable
       // ----------------------------------------------------------------
-      const cacheKey = getCacheKey(req.path)
+      const cacheKey = getCacheKey(req.path, getEffectiveOrigin(req))
 
       if (!cacheKey) {
         // SPA catch-all or other non-SSR route — render without caching
