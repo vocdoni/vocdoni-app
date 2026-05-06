@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createDevMiddleware, renderPage } from 'vike/server'
 import { getSupportedPublicLanguagesFromEnv, resolvePublicLanguageRedirect } from './public-language-routing.mjs'
+import { createSsrCacheMiddleware } from './ssr-cache.mjs'
 import { isViteInternalPath } from './vite-path-guard.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -13,6 +14,17 @@ const port = Number(process.env.PORT || 3000)
 const app = express()
 const supportedPublicLanguages = getSupportedPublicLanguagesFromEnv(process.env)
 let viteServer
+
+// Production warning: APP_URL should be configured for reliable cache partitioning
+if (isProduction && !process.env.APP_URL?.trim()) {
+  console.warn(
+    '⚠️  WARNING: APP_URL is not set in production mode.\n' +
+      '  The SSR cache will derive its partition key from the x-forwarded-host header.\n' +
+      '  This requires a trusted reverse proxy to set this header correctly.\n' +
+      '  Without APP_URL configured, different origins may share cache entries incorrectly.\n' +
+      '  Set APP_URL environment variable to ensure consistent cache partitioning.'
+  )
+}
 
 if (isProduction) {
   await import(pathToFileURL(join(root, 'dist/server/entry.mjs')).href)
@@ -28,57 +40,32 @@ if (isProduction) {
   app.use(devMiddleware)
 }
 
-app.use(async (req, res, next) => {
-  if (!['GET', 'HEAD'].includes(req.method)) {
-    return next()
-  }
-
+// Language redirect middleware — must run before SSR so redirects happen
+// before any cache lookup or render attempt.
+app.use((req, res, next) => {
+  if (!['GET', 'HEAD'].includes(req.method)) return next()
   // Block Vite-internal dev-only URL patterns that should never reach production
   // These are common security scanner probes and Vite internal paths
   if (isViteInternalPath(req.path)) {
     return res.status(404).end()
   }
-
   const redirectTarget = resolvePublicLanguageRedirect({
     urlOriginal: req.originalUrl,
     cookieHeader: req.headers.cookie,
     supportedLanguages: supportedPublicLanguages,
   })
-
-  if (redirectTarget) {
-    return res.redirect(307, redirectTarget)
-  }
-
-  try {
-    const pageContext = await renderPage({
-      urlOriginal: req.originalUrl,
-      headersOriginal: req.headers,
-      ...(isProduction ? {} : { _reqDev: req }),
-    })
-
-    const { httpResponse } = pageContext
-    if (!httpResponse) {
-      return next()
-    }
-
-    for (const [name, value] of httpResponse.headers) {
-      res.setHeader(name, value)
-    }
-
-    res.status(httpResponse.statusCode)
-
-    if (req.method === 'HEAD') {
-      return res.end()
-    }
-
-    res.send(await httpResponse.getBody())
-  } catch (error) {
-    if (viteServer) {
-      viteServer.ssrFixStacktrace(error)
-    }
-    next(error)
-  }
+  if (redirectTarget) return res.redirect(307, redirectTarget)
+  next()
 })
+
+// SSR render middleware — caches responses in production, bypasses cache in dev.
+app.use(
+  createSsrCacheMiddleware({
+    renderPage,
+    getViteServer: () => viteServer,
+    isProduction,
+  })
+)
 
 app.use((error, _req, res, _next) => {
   console.error(error)
