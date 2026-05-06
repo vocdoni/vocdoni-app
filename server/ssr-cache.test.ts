@@ -47,6 +47,22 @@ function makeRenderPage(overrides: Partial<{ statusCode: number; body: string; h
 // getCacheKey
 // ---------------------------------------------------------------------------
 describe('getCacheKey', () => {
+  it('returns null for sub-paths beyond the id segment', () => {
+    expect(getCacheKey('/en/processes/0xid/extra')).toBeNull()
+    expect(getCacheKey('/en/organization/0xabc/edit')).toBeNull()
+    expect(getCacheKey('/en/processes/0xid/votes/count')).toBeNull()
+  })
+
+  it('strips a trailing slash and returns the normalised key', () => {
+    expect(getCacheKey('/en/processes/123/')).toBe('/en/processes/123')
+    expect(getCacheKey('/en/organization/0xabc/')).toBe('/en/organization/0xabc')
+  })
+
+  it('returns the same key for a path with and without trailing slash', () => {
+    expect(getCacheKey('/en/processes/123/')).toBe(getCacheKey('/en/processes/123'))
+    expect(getCacheKey('/ca/organization/0xdef/')).toBe(getCacheKey('/ca/organization/0xdef'))
+  })
+
   it('returns null for non-SSR paths', () => {
     expect(getCacheKey('/plans')).toBeNull()
     expect(getCacheKey('/')).toBeNull()

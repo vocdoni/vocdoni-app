@@ -11,6 +11,12 @@ const root = join(__dirname, '..')
 const isProduction = process.env.NODE_ENV === 'production'
 const port = Number(process.env.PORT || 3000)
 
+if (isProduction && !process.env.APP_URL) {
+  console.warn(
+    '[ssr-cache] APP_URL is unset; cache keys are path-only. Set APP_URL to prevent cross-domain cache poisoning.'
+  )
+}
+
 const app = express()
 const supportedPublicLanguages = getSupportedPublicLanguagesFromEnv(process.env)
 let viteServer

@@ -9,7 +9,21 @@ const TTL_DEFAULT = 2 * 60 * 1000 // 2 minutes  — defensive fallback
 
 // Matches /<lang>/organization/<addr>  and  /<lang>/processes/<id>
 // Only two-letter lang codes are accepted to match the app's locale set.
-const CACHEABLE_PATTERN = /^\/[a-z]{2}\/(organization|processes)\/[^/]+/
+const CACHEABLE_PATTERN = /^\/[a-z]{2}\/(organization|processes)\/[^/]+$/
+
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Strips a single trailing slash from a pathname (leaves '/' unchanged).
+ * Used to normalise /path/ and /path to the same cache key.
+ * @param {string} pathname
+ * @returns {string}
+ */
+function normalizePath(pathname) {
+  return pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
+}
 
 // ---------------------------------------------------------------------------
 // Public helpers (exported for testing)
@@ -21,7 +35,7 @@ const CACHEABLE_PATTERN = /^\/[a-z]{2}\/(organization|processes)\/[^/]+/
  * @returns {number | null}
  */
 export function getTtl(pathname) {
-  const match = CACHEABLE_PATTERN.exec(pathname)
+  const match = CACHEABLE_PATTERN.exec(normalizePath(pathname))
   if (!match) return null
   if (match[1] === 'organization') return TTL_ORGANIZATION
   if (match[1] === 'processes') return TTL_PROCESSES
@@ -36,7 +50,8 @@ export function getTtl(pathname) {
  * @returns {string | null}
  */
 export function getCacheKey(pathname) {
-  return CACHEABLE_PATTERN.test(pathname) ? pathname : null
+  const normalized = normalizePath(pathname)
+  return CACHEABLE_PATTERN.test(normalized) ? normalized : null
 }
 
 // ---------------------------------------------------------------------------
