@@ -104,7 +104,6 @@ export const MembersCsvManager = () => {
     multiple: false,
     accept: SpreadsheetManager.AcceptedTypes.reduce((prev, curr) => ({ ...prev, [curr]: [] }), {}),
   })
-  const upload = getRootProps()
   const [visibleColumns, setVisibleColumns] = useState<string[]>(['name', 'surname', 'email'])
   const handleColumnChange = (value: string[]) => setVisibleColumns(value)
   const template = useMemo(() => {
@@ -165,7 +164,6 @@ export const MembersCsvManager = () => {
         {...register('spreadsheet', {
           required: { value: true, message: t('form.error.field_is_required') },
         })}
-        {...upload}
         invalid={!!errors?.spreadsheet}
         display={manager?.data.length ? 'none' : 'block'}
       >

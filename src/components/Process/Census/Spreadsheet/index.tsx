@@ -98,7 +98,6 @@ export const CensusCsvManager = () => {
         {...register('spreadsheet', {
           required: { value: censusType === CensusTypes.Spreadsheet, message: t('form.error.field_is_required') },
         })}
-        {...upload}
         invalid={!!errors?.spreadsheet}
         display={manager?.data?.length ? 'none' : 'block'}
       >

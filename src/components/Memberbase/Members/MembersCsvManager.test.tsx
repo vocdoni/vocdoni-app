@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { act } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { render } from '~src/test-utils'
 import { MembersCsvManager } from './MembersCsvManager'
@@ -12,7 +12,7 @@ vi.mock('react-dropzone', () => ({
   useDropzone: (options: { onDrop: (files: File[]) => Promise<void> }) => {
     dropHandler = options.onDrop
     return {
-      getRootProps: () => ({}),
+      getRootProps: () => ({ 'data-testid': 'dropzone-root' }),
       getInputProps: () => ({}),
       isDragActive: false,
     }
@@ -98,5 +98,11 @@ describe('MembersCsvManager', () => {
     })
 
     expect(openModal).toHaveBeenCalledWith('planUpgrade', { context: 'memberbase', limit: '1000' })
+  })
+
+  it('applies the dropzone root props only once', () => {
+    render(<MembersCsvManagerForm />)
+
+    expect(screen.getAllByTestId('dropzone-root')).toHaveLength(1)
   })
 })
