@@ -134,7 +134,7 @@ describe('ProcessView navigation', () => {
       expect(navigateSpy).toHaveBeenCalledWith('/admin/process/0xabc/results', { replace: true })
     })
 
-    expect(screen.getByRole('button', { name: /download pdf/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /election report \(pdf\)/i })).toBeInTheDocument()
   })
 
   it('does not force results again after the user comes back manually to questions', async () => {

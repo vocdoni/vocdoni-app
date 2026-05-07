@@ -95,7 +95,7 @@ describe('ProcessesTable', () => {
     fireEvent.click(screen.getByLabelText('Open actions'))
 
     await waitFor(() => {
-      expect(screen.getByText('Download PDF')).toBeInTheDocument()
+      expect(screen.getByText('Election report (PDF)')).toBeInTheDocument()
     })
   })
 

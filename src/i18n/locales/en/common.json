@@ -1407,7 +1407,7 @@
       "subtitle": "Report issued on {{issue_date}} | Process ID: {{process_id}}",
       "title_prefix": "TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS"
     },
-    "download": "Download PDF",
+    "download": "Election report (PDF)",
     "download_error": "Could not generate the PDF report",
     "downloading": "Generating PDF",
     "encryption": {
