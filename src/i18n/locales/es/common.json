@@ -1425,7 +1425,7 @@
       "subtitle": "Informe emitido el {{issue_date}} | ID del proceso: {{process_id}}",
       "title_prefix": "CERTIFICACIÓN TÉCNICA DEL PROCESO DE VOTACIÓN DIGITAL"
     },
-    "download": "Descargar PDF",
+    "download": "Informe electoral (PDF)",
     "download_error": "No se ha podido generar el informe PDF",
     "downloading": "Generando PDF",
     "encryption": {

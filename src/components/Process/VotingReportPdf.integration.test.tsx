@@ -43,7 +43,7 @@ describe('VotingReportPdf integration', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(
       () => {

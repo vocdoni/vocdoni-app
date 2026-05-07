@@ -92,7 +92,7 @@ describe('VotingReportPdf', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfToBlob).toHaveBeenCalled()
@@ -109,7 +109,7 @@ describe('VotingReportPdf', () => {
   it('renders the download action in the menu', () => {
     render(<VotingReportPdfMenuItem election={createElection()} />)
 
-    expect(screen.getByRole('button', { name: /download pdf/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /election report \(pdf\)/i })).toBeInTheDocument()
   })
 
   it('hides the download action while the voting process is still ongoing', () => {
@@ -124,7 +124,7 @@ describe('VotingReportPdf', () => {
       </>
     )
 
-    expect(screen.queryByRole('button', { name: /download pdf/i })).toBeNull()
+    expect(screen.queryByRole('button', { name: /election report \(pdf\)/i })).toBeNull()
   })
 
   it('formats voting period timestamps with a single UTC suffix', () => {
@@ -207,7 +207,7 @@ describe('VotingReportPdf', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -230,7 +230,7 @@ describe('VotingReportPdf', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -404,7 +404,7 @@ describe('VotingReportPdf', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledWith('https://example.test/census-bundle')

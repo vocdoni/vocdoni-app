@@ -962,7 +962,7 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
       <Link as='button' variant='button' onClick={download}>
         <HStack gap={2}>
           <Icon as={LuFileDown} />
-          <Text as='span'>{t('process_pdf.download', { defaultValue: 'Download PDF' })}</Text>
+          <Text as='span'>{t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}</Text>
         </HStack>
       </Link>
     </Button>
@@ -978,7 +978,7 @@ export const VotingReportPdfMenuItem = ({ election }: VotingReportPdfProps) => {
   return (
     <Menu.Item value='download-pdf' onClick={download} disabled={isGenerating}>
       {isGenerating ? <Spinner size='xs' /> : <Icon as={LuFileDown} boxSize={4} />}
-      {t('process_pdf.download', { defaultValue: 'Download PDF' })}
+      {t('process_pdf.download', { defaultValue: 'Election report (PDF)' })}
     </Menu.Item>
   )
 }
