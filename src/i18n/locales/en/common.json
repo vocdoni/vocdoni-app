@@ -1553,7 +1553,7 @@
   "setup": {
     "progress": "Your progress",
     "title": "Complete your setup",
-    "toggle_panel": "setup.toggle_panel"
+    "toggle_panel": "Toggle panel"
   },
   "share": {
     "copy": "Copy",
