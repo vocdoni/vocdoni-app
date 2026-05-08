@@ -7,6 +7,11 @@ describe('languages configuration', () => {
       es: 'Español',
       ca: 'Català',
       it: 'Italiano',
+      fr: 'Français',
+      pt: 'Português',
+      de: 'Deutsch',
+      el: 'Ελληνικά',
+      eu: 'Euskara',
     })
   })
 
