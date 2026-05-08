@@ -12,12 +12,15 @@ import fr from './fr/common.json'
 import frReactComponents from './fr/react-components.json'
 import it from './it/common.json'
 import itReactComponents from './it/react-components.json'
+import pt from './pt/common.json'
+import ptReactComponents from './pt/react-components.json'
 
 // no need to import english here, since it's date-fns default language
 import { ca as dca } from 'date-fns/locale/ca'
 import { es as des } from 'date-fns/locale/es'
 import { fr as dfr } from 'date-fns/locale/fr'
 import { it as dit } from 'date-fns/locale/it'
+import { pt as dpt } from 'date-fns/locale/pt'
 
 export const translations: { [key: string]: any } = {
   ca,
@@ -25,6 +28,7 @@ export const translations: { [key: string]: any } = {
   es,
   fr,
   it,
+  pt,
 }
 
 export const reactComponentsTranslations: { [key: string]: any } = {
@@ -33,6 +37,7 @@ export const reactComponentsTranslations: { [key: string]: any } = {
   es: esReactComponents,
   fr: frReactComponents,
   it: itReactComponents,
+  pt: ptReactComponents,
 }
 
 export const dateLocales: { [key: string]: Locale } = {
@@ -40,6 +45,7 @@ export const dateLocales: { [key: string]: Locale } = {
   es: des,
   fr: dfr,
   it: dit,
+  pt: dpt,
 }
 
 export const datesLocale = (lang?: string) => {
