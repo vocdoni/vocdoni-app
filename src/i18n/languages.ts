@@ -6,6 +6,7 @@ export const baseLanguages = {
   fr: 'Français',
   pt: 'Português',
   de: 'Deutsch',
+  el: 'Ελληνικά',
 } as const
 
 /**
@@ -20,6 +21,7 @@ export const openGraphLocaleMap: Record<string, string> = {
   fr: 'fr_FR',
   pt: 'pt_PT',
   de: 'de_DE',
+  el: 'el_GR',
 }
 
 export const toOpenGraphLocale = (language: string): string => openGraphLocaleMap[language] ?? language
