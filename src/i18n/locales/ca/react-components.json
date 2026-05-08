@@ -3,7 +3,7 @@
   "actions": {
     "cancel_description": "Cancel·lant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i cancel·larà els vots que s'hagin emès.",
     "cancel": "Cancel·la",
-    "cancel_button": "Cancel",
+    "cancel_button": "Cancel·la",
     "continue_description": "Reobrint el procés de votació \"{{ election.title.default }}\"",
     "continue": "Reobre el procés immediatament, si s'ha pausat",
     "end_description": "Finalitzant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i els votants no podran emetre nous vots.",
@@ -68,7 +68,7 @@
     "anon_sik_label": "Defineix una contrasenya per al teu vot",
     "anon_sik_helper": "Això garanteix que el teu vot sigui anònim",
     "close": "Tanca",
-    "logout": "Logout",
+    "logout": "Tanca la sessió",
     "modal_title": "Autenticació"
   },
   "pagination": {

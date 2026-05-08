@@ -210,7 +210,7 @@
       "recent_voting_description": "Your organization's latest voting activities",
       "recent_voting_title": "Recent Voting Processes",
       "subtitle": "Here's an overview of your organization's voting activities",
-      "title": "Here's an overview of your organization's voting activities"
+      "title": "Dashboard"
     }
   },
   "delete": {
@@ -516,8 +516,8 @@
     "clients_title": "Trusted by 100+ organizations",
     "faqs": {
       "faq_1": {
-        "description": "Vocdoni stands out for its seamless user experience, advanced security features, and unparalleled transparency. Our platform utilizes cutting-edge technology such as zero-knowledge proofs and a custom blockchain to ensure secure and anonymous voting while providing a transparent and verifiable voting process.",
-        "title": "What makes Vocdoni different from other voting platforms?"
+        "description": "Vocdoni is a digital voting platform built on blockchain technology, offering voting processes that are secure, transparent and verifiable.",
+        "title": "What is Vocdoni?"
       },
       "faq_10": {
         "description": "We provide technical support to help voters resolve any issues. Additionally, the system is designed to be intuitive and accessible to everyone.",
@@ -560,8 +560,8 @@
         "title": "Can completely private voting be conducted?"
       },
       "faq_2": {
-        "description": "Yes, Vocdoni strictly adheres to GDPR guidelines, ensuring that user data is handled with the utmost care and confidentiality. Our platform prioritizes data privacy and security at every stage of the voting process.",
-        "title": "Is Vocdoni compliant with data privacy regulations?"
+        "description": "Vocdoni combines blockchain, advanced cryptography and zero-knowledge proofs to guarantee the security, anonymity and verifiability of every vote.",
+        "title": "How does Vocdoni work?"
       },
       "faq_20": {
         "description": "Anyone can verify the results thanks to blockchain transparency. Additionally, we provide tools to audit the voting process and ensure its reliability.",
@@ -604,8 +604,8 @@
         "title": "How does result verification work for observers?"
       },
       "faq_3": {
-        "description": "Absolutely! Vocdoni offers customization options to align with your organization's branding, ensuring a seamless integration with your existing systems and maintaining a consistent brand experience for voters. Contact us to know more!",
-        "title": "Can Vocdoni be customized to fit our organization's branding?"
+        "description": "Vocdoni offers transparency, security, tamper-resistance and global accessibility — with no need for physical infrastructure.",
+        "title": "What advantages does Vocdoni have over traditional voting systems?"
       },
       "faq_30": {
         "description": "Yes, you can set exact dates and times for the start and end of voting, eliminating the need for manual intervention.",
@@ -648,8 +648,8 @@
         "title": "Are there limits on the number of voters or voting processes?"
       },
       "faq_4": {
-        "description": "We offer the Vocdoni SDK & Vocdoni UI Components libraries, designed for easy integration with your software or platform. We created them to prioritize ease of use on behalf of developers and to enable results from day one. Our team of experts will guide you through the integration process to ensure a smooth transition and minimal disruption to your operations.",
-        "title": "How easy is it to integrate Vocdoni with our existing systems?"
+        "description": "Vocdoni is designed for governments, companies, cooperatives, associations and any organization that needs a secure and transparent voting system.",
+        "title": "Who can use Vocdoni?"
       },
       "faq_40": {
         "description": "Yes, Vocdoni allows weighted voting, where each vote can have a different value based on criteria defined by the organization.",
@@ -676,20 +676,20 @@
         "title": "How can I start using Vocdoni?"
       },
       "faq_5": {
-        "description": "Vocdoni offers comprehensive support to assist you at every step of your voting journey. From initial setup and customization to ongoing maintenance and troubleshooting, our dedicated support team is here to help you maximize the value of our platform.",
-        "title": "What type of support does Vocdoni provide?"
+        "description": "It depends on the legal framework of each country. Vocdoni follows best practices in security and privacy, and can be adapted to comply with specific regulations.",
+        "title": "Is electronic voting with Vocdoni legal?"
       },
       "faq_6": {
-        "description": "Yes, Vocdoni is equipped to handle elections of any size, from small community votes to large-scale public elections. Our scalable infrastructure ensures reliable performance even during peak voting periods, allowing you to engage voters effectively and efficiently.",
-        "title": "Can Vocdoni handle large-scale elections?"
+        "description": "Vocdoni uses advanced encryption, blockchain and cryptographic techniques such as zk-SNARKs to ensure the privacy and security of every vote.",
+        "title": "How does Vocdoni guarantee the security of votes?"
       },
       "faq_7": {
-        "description": "Security is our top priority at Vocdoni. Our platform utilizes advanced cryptographic techniques and blockchain technology to ensure the highest level of security, maintaining vote integrity and protecting voter anonymity. With Vocdoni, you can trust that your voting process is secure and tamper-proof.",
-        "title": "How secure is the Vocdoni platform?"
+        "description": "Yes — thanks to the blockchain, anyone can verify the integrity of the results without compromising voter anonymity.",
+        "title": "Is it possible to audit a vote run with Vocdoni?"
       },
       "faq_8": {
-        "description": "Vocdoni ensures voting process integrity by recording each vote as an immutable blockchain transaction, providing transparency and verifiability.",
-        "title": "How does Vocdoni ensure the integrity of voting processes?"
+        "description": "Voters only need a device with an internet connection and a web browser. No apps or special software are required.",
+        "title": "What technical requirements do voters need?"
       },
       "faq_9": {
         "description": "Vocdoni uses advanced cryptographic techniques, such as zero-knowledge proofs (zk-SNARKs), to ensure that no one can link a vote with a voter's identity.",
@@ -843,8 +843,8 @@
       "actions": "Actions",
       "add_to_group": "Add to Group",
       "add_to_group_button_one": "Add {{count}} member",
-      "add_to_group_button_other": "Add {{count}} member",
-      "add_to_group_confirmation_one": "You will add {{count}} members to the \"{{group}}\" group.",
+      "add_to_group_button_other": "Add {{count}} members",
+      "add_to_group_confirmation_one": "You will add {{count}} member to the \"{{group}}\" group.",
       "add_to_group_confirmation_other": "You will add {{count}} members to the \"{{group}}\" group.",
       "add_to_group_description": "Select a group to add the members to.",
       "add_to_group_success": "Members added to group successfully",
@@ -862,7 +862,7 @@
       "group_description": "Description (optional)",
       "group_description_placeholder": "Enter a brief description of the group",
       "group_members": "Selected Members",
-      "group_members_count_one": "{{count}} members selected",
+      "group_members_count_one": "{{count}} member selected",
       "group_members_count_other": "{{count}} members selected",
       "group_name": "Group name",
       "manage_columns": "Manage Columns",
@@ -1023,7 +1023,7 @@
     },
     "success": "Password updated successfully"
   },
-  "passwords_do_not_match": "Passwords doesn't match",
+  "passwords_do_not_match": "Passwords don't match",
   "pause_vote": "Pause vote",
   "plan": {
     "encouragement": "Launching a vote is simple, and participants can join from anywhere. Strong guarantees at a lower cost have made Vocdoni a trusted choice for hundreds of municipalities, associations, political parties and companies.",
@@ -1044,7 +1044,7 @@
   "preferences": "Preferences",
   "preview": "Preview",
   "pricing": {
-    "2fa": "2FA authentication2 ({{suffix}})",
+    "2fa": "2FA authentication² ({{suffix}})",
     "2fa_suffix_both": "Email & SMS",
     "2fa_suffix_email": "Email",
     "2fa_suffix_sms": "SMS",
@@ -1054,7 +1054,7 @@
       "footnote_2": "² 2FA credits are only consumed when a user actually requests verification in a voting process. You'll never unexpectedly run out: if you exceed your included credits during a vote, each additional code will be charged at €0.015 as it's sent. You can also pre-purchase extra credits in convenient packages.",
       "footnote_on_demand": "* Requested features will be evaluated individually and may incur additional fees."
     },
-    "core_voting_one": "Up to {{ count }} members",
+    "core_voting_one": "One member",
     "core_voting_other": "Up to {{ count }} members",
     "custom_branding": "Custom branding*",
     "custom_subtitle": "Tailored for your needs",
@@ -1457,7 +1457,7 @@
       "step_3": "Confirm consistency of census reference and ballot records.",
       "step_4": "Recompute and verify tally results where applicable."
     },
-    "vote_overwrite_enabled_one": "Yes, up to {{count}} overwrites",
+    "vote_overwrite_enabled_one": "Yes, 1 overwrite",
     "vote_overwrite_enabled_other": "Yes, up to {{count}} overwrites",
     "voting_process": {
       "card": {
@@ -1574,7 +1574,7 @@
   },
   "signin": "Log In",
   "signin_google": "Sign in with Google",
-  "signin_subtitle": "Continue to acces your account",
+  "signin_subtitle": "Continue to access your account",
   "signin_title": "Welcome",
   "signup_agree_promotions": "I agree to receive promotions and offers for digital voting services offered by Vocdoni.",
   "signup_agree_terms": "I agree to the <termsLink>Terms of Service</termsLink> and <privacyLink>Privacy Policy</privacyLink>",
@@ -1773,7 +1773,7 @@
     "save_failed": "Failed to configure voter authentication",
     "security_level": "Good security",
     "security_recommendation_1": "For better security, we recommend selecting at least 2 credentials.",
-    "security_recommendation_2_one": "You've selected {{ count }} credentials, which provides good security for your voters.",
+    "security_recommendation_2_one": "You've selected {{ count }} credential, which provides good security for your voters.",
     "security_recommendation_2_other": "You've selected {{ count }} credentials, which provides good security for your voters.",
     "security_recommendation_title": "Security recommendation",
     "select_credentials": "Select required credentials for voter authentication",
@@ -1788,14 +1788,14 @@
     "summary_title": "Authentication Configuration Summary",
     "title": "Configure Voter Authentication",
     "two_factor": "Two-Factor",
-    "validation_duplicates_one": "{{count}} duplicated users",
+    "validation_duplicates_one": "{{count}} duplicated user",
     "validation_duplicates_other": "{{count}} duplicated users",
     "validation_error_title": "Validation Error",
     "validation_failed": "Validation failed",
-    "validation_missing_data_one": "{{count}} users missing required fields",
+    "validation_missing_data_one": "{{count}} user missing required fields",
     "validation_missing_data_other": "{{count}} users missing required fields",
     "validation_summary": "Validation failed for some users.",
-    "validation_total_one": "{{count}} users total",
+    "validation_total_one": "{{count}} user total",
     "validation_total_other": "{{count}} users total",
     "voters_choice": "Voter's choice"
   },
