@@ -46,15 +46,15 @@
     "has_already_voted": "Il voto è stato espresso correttamente",
     "is_not_in_census": "Non sei nel censimento",
     "overwrite_votes_left_one": "È possibile correggere il voto una volta.",
-    "overwrite_votes_left_many": "",
+    "overwrite_votes_left_many": "È possibile correggere il voto fino a {{ count }} volte.",
     "overwrite_votes_left_other": "È possibile correggere il voto fino a {{ count }} volte.",
     "submitting": "Invio in corso",
     "verify_vote_on_explorer": "Verifica il voto sull'explorer",
     "votes_one": "<span>1</span> <text>votante</text>",
-    "votes_many": "",
+    "votes_many": "<span>{{ count }}</span> <text>votanti</text>",
     "votes_other": "<span>{{ count }}</span> <text>votanti</text>",
     "votes_weight_one": "<span>1</span> <text>voto</text>",
-    "votes_weight_many": "",
+    "votes_weight_many": "<span>{{ count }}</span> <text>voti</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>voti</text>",
     "voting_anonymous_advice": "Attendere mentre viene applicata la magia dell'anonimato 🪄.\nL'operazione potrebbe richiedere alcuni minuti; non chiudere la finestra."
   },
@@ -213,7 +213,7 @@
       "recent_voting_description": "Le ultime attività di voto dell'organizzazione",
       "recent_voting_title": "Processi di voto recenti",
       "subtitle": "Ecco una panoramica delle attività di voto dell'organizzazione",
-      "title": "Ecco una panoramica delle attività di voto dell'organizzazione"
+      "title": "Pannello"
     }
   },
   "delete": {
@@ -430,11 +430,11 @@
       "web3": {
         "census_description": "Aggiungi indirizzi wallet idonei al voto. È possibile aggiungerli singolarmente o caricare un file CSV.",
         "census_summary_description_one": "<b>{{count}} indirizzo</b> sarà idoneo al voto",
-        "census_summary_description_many": "<b>{{count}}</b> wallet address will be eligible to vote",
+        "census_summary_description_many": "<b>{{count}} indirizzi</b> saranno idonei al voto",
         "census_summary_description_other": "<b>{{count}} indirizzi</b> saranno idonei al voto",
         "census_summary_title": "Riepilogo censimento",
         "csv_format": "Il file CSV deve contenere gli indirizzi wallet nella prima colonna.",
-        "csv_format_weighted": "CSV file should contain weights in the first column and wallet addresses in the second column.",
+        "csv_format_weighted": "Il file CSV deve contenere i pesi nella prima colonna e gli indirizzi wallet nella seconda colonna.",
         "upload_csv": "O CARICA CSV",
         "wallet_addresses": "Indirizzi wallet"
       }
@@ -459,7 +459,7 @@
     }
   },
   "free_trial_days_one": "Un giorno gratuito",
-  "free_trial_days_many": "{{count}}-day free trial",
+  "free_trial_days_many": "{{count}} giorni gratuiti",
   "free_trial_days_other": "{{count}} giorni gratuiti",
   "google_oauth_conflict_error": "Esiste già un account con questa email. Accedi utilizzando il metodo che hai utilizzato in precedenza.",
   "google_oauth_error": "Errore Google OAuth",
@@ -484,7 +484,7 @@
     "delete_group": "Elimina gruppo",
     "delete_member": {
       "subtitle_one": "Sei sicuro di voler eliminare {{count}} membro?",
-      "subtitle_many": "Are you sure you want to delete {{count}} members?",
+      "subtitle_many": "Sei sicuro di voler eliminare {{count}} membri?",
       "subtitle_other": "Sei sicuro di voler eliminare {{count}} membri?",
       "title": "Elimina membri"
     },
@@ -495,7 +495,7 @@
       "error": "Impossibile caricare i membri del gruppo"
     },
     "members_one": "{{count}} membro",
-    "members_many": "{{count}} member",
+    "members_many": "{{count}} membri",
     "members_other": "{{count}} membri",
     "name": "Nome"
   },
@@ -523,8 +523,8 @@
     "clients_title": "Scelto da oltre 100 organizzazioni",
     "faqs": {
       "faq_1": {
-        "description": "Vocdoni si distingue per la sua esperienza utente fluida, le funzionalità di sicurezza avanzate e la trasparenza senza pari. La nostra piattaforma utilizza tecnologie all'avanguardia come le prove a conoscenza zero e una blockchain personalizzata per garantire un voto sicuro e anonimo fornendo al contempo un processo di voto trasparente e verificabile.",
-        "title": "Cosa rende Vocdoni diverso dalle altre piattaforme di voto?"
+        "description": "Vocdoni è una piattaforma di voto digitale basata su tecnologia blockchain, che offre processi di voto sicuri, trasparenti e verificabili.",
+        "title": "Cos'è Vocdoni?"
       },
       "faq_10": {
         "description": "Forniamo supporto tecnico per aiutare i votanti a risolvere eventuali problemi. Inoltre, il sistema è progettato per essere intuitivo e accessibile a tutti.",
@@ -567,8 +567,8 @@
         "title": "È possibile condurre votazioni completamente private?"
       },
       "faq_2": {
-        "description": "Sì, Vocdoni aderisce rigorosamente alle linee guida GDPR, garantendo che i dati degli utenti siano trattati con la massima cura e riservatezza. La nostra piattaforma dà priorità alla privacy e alla sicurezza dei dati in ogni fase del processo di voto.",
-        "title": "Vocdoni è conforme alle normative sulla privacy dei dati?"
+        "description": "Vocdoni combina blockchain, crittografia avanzata e prove a conoscenza zero per garantire la sicurezza, l'anonimato e la verificabilità di ogni voto.",
+        "title": "Come funziona Vocdoni?"
       },
       "faq_20": {
         "description": "Chiunque può verificare i risultati grazie alla trasparenza della blockchain. Inoltre, forniamo strumenti per controllare il processo di voto e garantirne l'affidabilità.",
@@ -611,8 +611,8 @@
         "title": "Come funziona la verifica dei risultati per gli osservatori?"
       },
       "faq_3": {
-        "description": "Assolutamente! Vocdoni offre opzioni di personalizzazione per allinearsi al brand della tua organizzazione, garantendo un'integrazione fluida con i tuoi sistemi esistenti e mantenendo un'esperienza di brand coerente per i votanti. Contattaci per saperne di più!",
-        "title": "Vocdoni può essere personalizzato per adattarsi al brand della nostra organizzazione?"
+        "description": "Vocdoni offre trasparenza, sicurezza, resistenza alle manipolazioni e accessibilità globale, senza bisogno di infrastrutture fisiche.",
+        "title": "Quali vantaggi offre Vocdoni rispetto ai sistemi di voto tradizionali?"
       },
       "faq_30": {
         "description": "Sì, puoi impostare date e orari esatti per l'inizio e la fine della votazione, eliminando la necessità di interventi manuali.",
@@ -655,8 +655,8 @@
         "title": "Ci sono limiti al numero di votanti o processi di voto?"
       },
       "faq_4": {
-        "description": "Offriamo le librerie Vocdoni SDK e Vocdoni UI Components, progettate per una facile integrazione con il tuo software o piattaforma. Le abbiamo create per dare priorità alla facilità d'uso per gli sviluppatori e per consentire risultati fin dal primo giorno. Il nostro team di esperti ti guiderà attraverso il processo di integrazione per garantire una transizione fluida e il minimo disturbo alle tue operazioni.",
-        "title": "Quanto è facile integrare Vocdoni con i nostri sistemi esistenti?"
+        "description": "Vocdoni è pensato per pubbliche amministrazioni, aziende, cooperative, associazioni e qualsiasi organizzazione che necessiti di un sistema di voto sicuro e trasparente.",
+        "title": "Chi può utilizzare Vocdoni?"
       },
       "faq_40": {
         "description": "Sì, Vocdoni consente il voto ponderato, dove ogni voto può avere un valore diverso in base a criteri definiti dall'organizzazione.",
@@ -683,20 +683,20 @@
         "title": "Come posso iniziare a usare Vocdoni?"
       },
       "faq_5": {
-        "description": "Vocdoni offre un supporto completo per assisterti in ogni fase del tuo percorso di voto. Dalla configurazione iniziale e personalizzazione alla manutenzione continua e alla risoluzione dei problemi, il nostro team di supporto dedicato è qui per aiutarti a massimizzare il valore della nostra piattaforma.",
-        "title": "Che tipo di supporto fornisce Vocdoni?"
+        "description": "Dipende dal quadro normativo di ciascun paese. Vocdoni rispetta le migliori pratiche in materia di sicurezza e privacy e può essere adattato a normative specifiche.",
+        "title": "Il voto elettronico con Vocdoni è legale?"
       },
       "faq_6": {
-        "description": "Sì, Vocdoni è attrezzato per gestire elezioni di qualsiasi dimensione, dai piccoli voti comunitari alle elezioni pubbliche su larga scala. La nostra infrastruttura scalabile garantisce prestazioni affidabili anche durante i periodi di picco di voto, consentendoti di coinvolgere i votanti in modo efficace ed efficiente.",
-        "title": "Vocdoni può gestire elezioni su larga scala?"
+        "description": "Vocdoni utilizza crittografia avanzata, blockchain e tecniche crittografiche come le zk-SNARK per garantire la privacy e la sicurezza di ogni voto.",
+        "title": "Come garantisce Vocdoni la sicurezza dei voti?"
       },
       "faq_7": {
-        "description": "La sicurezza è la nostra massima priorità in Vocdoni. La nostra piattaforma utilizza tecniche crittografiche avanzate e tecnologia blockchain per garantire il massimo livello di sicurezza, mantenendo l'integrità del voto e proteggendo l'anonimato del votante. Con Vocdoni, puoi fidarti che il tuo processo di voto sia sicuro e a prova di manomissione.",
-        "title": "Quanto è sicura la piattaforma Vocdoni?"
+        "description": "Sì: grazie alla blockchain, chiunque può verificare l'integrità dei risultati senza compromettere l'anonimato dei votanti.",
+        "title": "È possibile verificare una votazione effettuata con Vocdoni?"
       },
       "faq_8": {
-        "description": "Vocdoni garantisce l'integrità del processo di voto registrando ogni voto come una transazione blockchain immutabile, fornendo trasparenza e verificabilità.",
-        "title": "Come garantisce Vocdoni l'integrità dei processi di voto?"
+        "description": "I votanti hanno bisogno solo di un dispositivo con connessione a Internet e di un browser web. Non sono necessarie app o software specifici.",
+        "title": "Di quali requisiti tecnici hanno bisogno i votanti?"
       },
       "faq_9": {
         "description": "Vocdoni utilizza tecniche crittografiche avanzate, come le prove a conoscenza zero (zk-SNARKs), per garantire che nessuno possa collegare un voto all'identità di un votante.",
@@ -723,7 +723,7 @@
     "success_title": "I dati dei membri sono stati importati con successo.",
     "title": "Importazione database membri in corso",
     "view_errors_one": "Visualizza {{count}} errore",
-    "view_errors_many": "View {{count}} errors",
+    "view_errors_many": "Visualizza {{count}} errori",
     "view_errors_other": "Visualizza {{count}} errori"
   },
   "internal_server_error": "Errore interno del server",
@@ -768,14 +768,14 @@
       "cancel": "Annulla",
       "delete": "Elimina",
       "error_one": "Errore durante l'eliminazione del membro",
-      "error_many": "Error deleting member",
+      "error_many": "Errore durante l'eliminazione dei membri",
       "error_other": "Errore durante l'eliminazione dei membri",
       "loading": "Caricamento membri da eliminare...",
       "subtitle_one": "Sei sicuro di voler eliminare {{count}} membro? Questa azione non può essere annullata.",
-      "subtitle_many": "Are you sure you want to delete {{count}} member? This action cannot be undone.",
+      "subtitle_many": "Sei sicuro di voler eliminare {{count}} membri? Questa azione non può essere annullata.",
       "subtitle_other": "Sei sicuro di voler eliminare {{count}} membri? Questa azione non può essere annullata.",
       "success_one": "Membro eliminato con successo",
-      "success_many": "Member deleted successfully",
+      "success_many": "Membri eliminati con successo",
       "success_other": "Membri eliminati con successo",
       "title": "Elimina membri"
     },
@@ -854,10 +854,10 @@
       "actions": "Azioni",
       "add_to_group": "Aggiungi al gruppo",
       "add_to_group_button_one": "Aggiungi {{count}} membro",
-      "add_to_group_button_many": "Add {{count}} member",
+      "add_to_group_button_many": "Aggiungi {{count}} membri",
       "add_to_group_button_other": "Aggiungi {{count}} membri",
-      "add_to_group_confirmation_one": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
-      "add_to_group_confirmation_many": "You will add {{count}} members to the \"{{group}}\" group.",
+      "add_to_group_confirmation_one": "Aggiungerai {{count}} membro al gruppo \"{{group}}\".",
+      "add_to_group_confirmation_many": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
       "add_to_group_confirmation_other": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
       "add_to_group_description": "Seleziona un gruppo a cui aggiungere i membri.",
       "add_to_group_success": "Membri aggiunti al gruppo con successo",
@@ -875,8 +875,8 @@
       "group_description": "Descrizione (opzionale)",
       "group_description_placeholder": "Inserisci una breve descrizione del gruppo",
       "group_members": "Membri selezionati",
-      "group_members_count_one": "{{count}} membri selezionati",
-      "group_members_count_many": "{{count}} members selected",
+      "group_members_count_one": "{{count}} membro selezionato",
+      "group_members_count_many": "{{count}} membri selezionati",
       "group_members_count_other": "{{count}} membri selezionati",
       "group_name": "Nome del gruppo",
       "manage_columns": "Gestisci colonne",
@@ -884,13 +884,13 @@
       "no_filter_results": "Nessun membro corrisponde a questi attributi",
       "no_results": "Nessun membro trovato",
       "remaining_members_one": "+{{count}} altro",
-      "remaining_members_many": "+{{count}} more",
+      "remaining_members_many": "+{{count}} altri",
       "remaining_members_other": "+{{count}} altri",
       "search": "Cerca membri...",
       "select_group": "Seleziona gruppo",
       "select_hint": "Seleziona membri per eseguire azioni di massa",
       "selected_one": "Selezionato: <strong>{{count}} membro</strong>",
-      "selected_many": "Selected: <strong>{{count}} member</strong>",
+      "selected_many": "Selezionati: <strong>{{count}} membri</strong>",
       "selected_other": "Selezionati: <strong>{{count}} membri</strong>",
       "toggle_column": "Attiva/disattiva colonna {{column}}"
     }
@@ -903,7 +903,7 @@
     "collapse": "Comprimi menu",
     "connect": "Connetti",
     "create": "Crea processo",
-    "dashboard": "Dashboard",
+    "dashboard": "Pannello",
     "expand": "Espandi menu",
     "login": "Accedi",
     "open": "Apri menu"
@@ -926,7 +926,7 @@
   "no_results_filtering": "Il filtro di ricerca attuale non restituisce risultati",
   "not_registred_yet": "Non hai un account?",
   "number_of_members_one": "{{ count }} membro del team",
-  "number_of_members_many": "{{ count }} team member",
+  "number_of_members_many": "{{ count }} membri del team",
   "number_of_members_other": "{{ count }} membri del team",
   "oauth": {
     "link": {
@@ -954,7 +954,7 @@
     "create_org_failed": "Creazione dell'organizzazione non riuscita",
     "create_org_step_update_failed": "Aggiornamento dello stato del passaggio di configurazione dell'organizzazione non riuscito",
     "create_org_success": "Organizzazione creata con successo",
-    "dashboard": "Dashboard",
+    "dashboard": "Pannello",
     "date_format": "d MMM y",
     "elections": "Votazioni",
     "elections_list_empty": {
@@ -1003,7 +1003,7 @@
     }
   },
   "organizations": "Organizzazioni ({{ numOrgs }})",
-  "other_details": "altri dettagli",
+  "other_details": "Altri dettagli",
   "pagination": {
     "page_out_of": "Pagina {{page}} di {{total}}",
     "rows_per_page": "Righe per pagina"
@@ -1071,8 +1071,8 @@
       "footnote_2": "² I crediti 2FA vengono consumati solo quando un utente richiede effettivamente la verifica in un processo di voto. Non rimarrai mai inaspettatamente senza: se superi i crediti inclusi durante una votazione, ogni codice aggiuntivo verrà addebitato a 0,015 € man mano che viene inviato. Puoi anche pre-acquistare crediti extra in comodi pacchetti.",
       "footnote_on_demand": "* Le funzionalità richieste verranno valutate individualmente e potrebbero comportare costi aggiuntivi."
     },
-    "core_voting_one": "Fino a {{ count }} membri",
-    "core_voting_many": "Up to {{ count }} members",
+    "core_voting_one": "Un solo membro",
+    "core_voting_many": "Fino a {{ count }} membri",
     "core_voting_other": "Fino a {{ count }} membri",
     "custom_branding": "Branding personalizzato*",
     "custom_subtitle": "Su misura per le tue esigenze",
@@ -1092,10 +1092,10 @@
     "ticket_support_48": "Supporto email (48h)",
     "ticket_support_72": "Supporto email (72h)",
     "up_to_admins_one": "Un amministratore",
-    "up_to_admins_many": "{{ count }} admins",
+    "up_to_admins_many": "{{ count }} amministratori",
     "up_to_admins_other": "{{ count }} amministratori",
     "yearly_processes_one": "{{ count }} voto all'anno¹",
-    "yearly_processes_many": "{{ count }} votes per year¹",
+    "yearly_processes_many": "{{ count }} voti all'anno¹",
     "yearly_processes_other": "{{ count }} voti all'anno¹"
   },
   "pricing_card": {
@@ -1137,8 +1137,8 @@
         "title": "Salvataggio bozza"
       },
       "limit_reached": {
-        "message_one": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano.",
-        "message_many": "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
+        "message_one": "Hai raggiunto il limite di {{ count }} bozza. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano.",
+        "message_many": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano.",
         "message_other": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano."
       },
       "question": {
@@ -1200,7 +1200,7 @@
     "is_invalid": "Questo processo contiene dati errati, rendendolo non valido",
     "no_description": "Nessuna descrizione fornita",
     "people_in_census_one": "Un votante",
-    "people_in_census_many": "",
+    "people_in_census_many": "{{ count }} votanti",
     "people_in_census_other": "{{ count }} votanti",
     "question_type": {
       "confirm": {
@@ -1479,7 +1479,7 @@
       "step_3": "Confermare la coerenza del riferimento del censimento e dei registri dell'urna.",
       "step_4": "Ricalcolare e verificare i risultati dello scrutinio, ove applicabile."
     },
-    "vote_overwrite_enabled_one": "Sì, fino a {{count}} sovrascritture",
+    "vote_overwrite_enabled_one": "Sì, 1 sovrascrittura",
     "vote_overwrite_enabled_many": "Sì, fino a {{count}} sovrascritture",
     "vote_overwrite_enabled_other": "Sì, fino a {{count}} sovrascritture",
     "voting_process": {
@@ -1491,7 +1491,7 @@
         "results": "Risultati:"
       },
       "intro_one": "Il processo di voto {{process_name}} è consistito in 1 domanda.",
-      "intro_many": "",
+      "intro_many": "Il processo di voto {{process_name}} è consistito in {{count}} domande.",
       "intro_other": "Il processo di voto {{process_name}} è consistito in {{count}} domande."
     },
     "voting_system": {
@@ -1520,7 +1520,7 @@
   "promo_code_required": "Il codice promozione è obbligatorio",
   "questions_and_results": "Domande e risultati",
   "registration_failed": "Registrazione non riuscita",
-  "registration_successful": "egistrazione avvenuta con successo",
+  "registration_successful": "Registrazione avvenuta con successo",
   "remove": "Rimuovi",
   "remove_avatar": "Rimuovi avatar",
   "reset_password_button": "Reimposta Password",
@@ -1707,8 +1707,8 @@
     "avatar_upload_success": "Avatar caricato",
     "click_or_drag_and_drop": "<click>Clicca per caricare o trascina e rilascia</click><formats>(Formati consentiti: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carica Immagine",
-    "csv_row_limit_exceeded_one": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
-    "csv_row_limit_exceeded_many": "",
+    "csv_row_limit_exceeded_one": "Questa importazione porterebbe a un totale di {{count}} riga, superando il limite del tuo piano di {{max}}.",
+    "csv_row_limit_exceeded_many": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
     "csv_row_limit_exceeded_other": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
     "drop_here": "Rilascia il file qui",
     "image_upload_failed": "Caricamento immagine non riuscito",
@@ -1798,14 +1798,14 @@
     "save_failed": "Impossibile configurare l'autenticazione dei votanti",
     "security_level": "Buona sicurezza",
     "security_recommendation_1": "Per una migliore sicurezza, consigliamo di selezionare almeno 2 credenziali.",
-    "security_recommendation_2_one": "Hai selezionato {{ count }} credenziale, che fornisce una buona sicurezza per i tuoi votanti.",
-    "security_recommendation_2_many": "You've selected {{ count }} credentials, which provides good security for your voters.",
-    "security_recommendation_2_other": "Hai selezionato {{ count }} credenziali, che fornisce una buona sicurezza per i tuoi votanti.",
+    "security_recommendation_2_one": "Hai selezionato {{ count }} credenziale, il che fornisce una buona sicurezza per i tuoi votanti.",
+    "security_recommendation_2_many": "Hai selezionato {{ count }} credenziali, il che fornisce una buona sicurezza per i tuoi votanti.",
+    "security_recommendation_2_other": "Hai selezionato {{ count }} credenziali, il che fornisce una buona sicurezza per i tuoi votanti.",
     "security_recommendation_title": "Raccomandazione di sicurezza",
     "select_credentials": "Seleziona credenziali richieste per l'autenticazione del votante",
     "select_credentials_description": "Scegli i campi che i votanti devono fornire per autenticarsi. Seleziona fino a 3 per il miglior equilibrio tra sicurezza e facilità d'uso. Se prevedi di utilizzare solo email o telefono per la 2FA, salta questo passaggio e clicca su Avanti per configurarlo",
     "selected_credentials_count_one": "{{ count }}/3 credenziali selezionate",
-    "selected_credentials_count_many": "{{ count }}/3 credentials selected",
+    "selected_credentials_count_many": "{{ count }}/3 credenziali selezionate",
     "selected_credentials_count_other": "{{ count }}/3 credenziali selezionate",
     "sms": "Via verifica SMS",
     "summary": "Riepilogo",
@@ -1815,17 +1815,17 @@
     "summary_title": "Riepilogo Configurazione Autenticazione",
     "title": "Configura Autenticazione Votante",
     "two_factor": "Due Fattori",
-    "validation_duplicates_one": "{{count}} utenti duplicati",
-    "validation_duplicates_many": "{{count}} duplicated users",
+    "validation_duplicates_one": "{{count}} utente duplicato",
+    "validation_duplicates_many": "{{count}} utenti duplicati",
     "validation_duplicates_other": "{{count}} utenti duplicati",
     "validation_error_title": "Errore di convalida",
     "validation_failed": "Validazione non riuscita",
-    "validation_missing_data_one": "{{count}} utenti con campi obbligatori mancanti",
-    "validation_missing_data_many": "{{count}} users missing required fields",
+    "validation_missing_data_one": "{{count}} utente con campi obbligatori mancanti",
+    "validation_missing_data_many": "{{count}} utenti con campi obbligatori mancanti",
     "validation_missing_data_other": "{{count}} utenti con campi obbligatori mancanti",
     "validation_summary": "Convalida fallita per alcuni utenti.",
-    "validation_total_one": "{{count}} utenti totali",
-    "validation_total_many": "{{count}} users total",
+    "validation_total_one": "{{count}} utente totale",
+    "validation_total_many": "{{count}} utenti totali",
     "validation_total_other": "{{count}} utenti totali",
     "voters_choice": "Scelta del votante"
   },

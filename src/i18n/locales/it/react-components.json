@@ -3,7 +3,7 @@
   "actions": {
     "cancel_description": "Annullamento di \"{{ election.title.default }}\"...\n\nAttenzione: questa azione è irreversibile e annullerà tutti i voti precedenti",
     "cancel": "Annulla",
-    "cancel_button": "Cancel",
+    "cancel_button": "Annulla",
     "continue_description": "Ripresa del processo di voto \"{{ election.title.default }}\"...",
     "continue": "Riprendi immediatamente il processo, nel caso fosse stato messo in pausa",
     "end_description": "Chiusura del processo di voto \"{{ election.title.default }}\"...\n\nAttenzione: questa azione è irreversibile e i votanti non potranno più votare.",
@@ -68,7 +68,7 @@
     "anon_sik_label": "Definire una password per il voto",
     "anon_sik_helper": "Questo garantisce che il voto sia anonimo",
     "close": "Chiudi",
-    "logout": "Logout",
+    "logout": "Esci",
     "modal_title": "Autenticazione"
   },
   "pagination": {

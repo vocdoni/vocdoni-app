@@ -338,7 +338,7 @@
     "single": "Elecció simple",
     "sms_notification": "Doble factor via missatges de text SMS",
     "sms_notifications": "Notificacions SMS als votants",
-    "sub_orgs": "Fins a {{ value }} suborganitzacions",
+    "sub_orgs": "Fins a {{ count }} suborganitzacions",
     "team_members": "Membres de l'equip",
     "tooltips": {
       "anonymous": "Aquesta és una funcionalitat opcional que els organitzadors poden triar. Quan s'activa, els vots són completament anònims: ni tan sols nosaltres podem saber qui ha votat quina opció. Alternativament, els organitzadors poden triar xifrar els resultats fins que acabi la votació, o fer la votació completament pública.",
