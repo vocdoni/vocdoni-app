@@ -1383,7 +1383,9 @@
     "authentication": {
       "identity_source": "Fuente de datos de identidad",
       "method": "Método de autenticación",
-      "two_fa": "Autenticación 2FA"
+      "two_fa": "Verificación adicional con código",
+      "two_fa_disabled": "No activada: no se requiere ningún código adicional de un solo uso",
+      "two_fa_enabled": "Activada: los votantes confirman su identidad con un código de un solo uso"
     },
     "boolean": {
       "no": "No",
@@ -1423,6 +1425,7 @@
         "title": "Índice"
       },
       "issued_by": "Emitido por Vocdoni (Synergize SL) el {{issue_date}}, en su calidad de proveedor técnico.",
+      "page_number": "Página",
       "sections": {
         "authentication": "2. Autenticación",
         "certification_scope": "8. Alcance de la certificación",
@@ -1497,10 +1500,15 @@
     "voting_process": {
       "card": {
         "item": "Pregunta {{index}}",
+        "option": "Opción",
         "outcome": "Resultado: {{outcome}}",
+        "outcome_label": "Resultado",
         "participation": "Participación: {{votes}} votos registrados",
+        "participation_short": "{{votes}} votos",
         "question": "Pregunta: {{question}}",
-        "results": "Resultados:"
+        "results": "Resultados:",
+        "share": "Porcentaje",
+        "votes": "Votos"
       },
       "intro_one": "El proceso de votación {{process_name}} consistió en 1 pregunta.",
       "intro_many": "",

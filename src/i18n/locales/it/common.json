@@ -1383,7 +1383,9 @@
     "authentication": {
       "identity_source": "Fonte dei dati di identità",
       "method": "Metodo di autenticazione",
-      "two_fa": "Autenticazione 2FA"
+      "two_fa": "Verifica aggiuntiva con codice",
+      "two_fa_disabled": "Non attivata: non è richiesto alcun codice monouso aggiuntivo",
+      "two_fa_enabled": "Attivata: i votanti confermano la propria identità con un codice monouso"
     },
     "boolean": {
       "no": "No",
@@ -1423,6 +1425,7 @@
         "title": "Indice"
       },
       "issued_by": "Emesso da Vocdoni (Synergize SL) il {{issue_date}}, in qualità di fornitore tecnico.",
+      "page_number": "Pagina",
       "sections": {
         "authentication": "2. Autenticazione",
         "certification_scope": "8. Ambito della certificazione",
@@ -1497,10 +1500,15 @@
     "voting_process": {
       "card": {
         "item": "Domanda {{index}}",
+        "option": "Opzione",
         "outcome": "Esito: {{outcome}}",
+        "outcome_label": "Esito",
         "participation": "Partecipazione: {{votes}} voti registrati",
+        "participation_short": "{{votes}} voti",
         "question": "Domanda: {{question}}",
-        "results": "Risultati:"
+        "results": "Risultati:",
+        "share": "Quota",
+        "votes": "Voti"
       },
       "intro_one": "Il processo di voto {{process_name}} è consistito in 1 domanda.",
       "intro_many": "",

@@ -1383,7 +1383,9 @@
     "authentication": {
       "identity_source": "Font de dades d'identitat",
       "method": "Mètode d'autenticació",
-      "two_fa": "Autenticació 2FA"
+      "two_fa": "Verificació addicional amb codi",
+      "two_fa_disabled": "No activada: no cal cap codi addicional d'un sol ús",
+      "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús"
     },
     "boolean": {
       "no": "No",
@@ -1423,6 +1425,7 @@
         "title": "Índex"
       },
       "issued_by": "Emès per Vocdoni (Synergize SL) el {{issue_date}}, en la seva qualitat de proveïdor tècnic.",
+      "page_number": "Pàgina",
       "sections": {
         "authentication": "2. Autenticació",
         "certification_scope": "8. Abast de la certificació",
@@ -1497,10 +1500,15 @@
     "voting_process": {
       "card": {
         "item": "Pregunta {{index}}",
+        "option": "Opció",
         "outcome": "Resultat: {{outcome}}",
+        "outcome_label": "Resultat",
         "participation": "Participació: {{votes}} vots registrats",
+        "participation_short": "{{votes}} vots",
         "question": "Pregunta: {{question}}",
-        "results": "Resultats:"
+        "results": "Resultats:",
+        "share": "Percentatge",
+        "votes": "Vots"
       },
       "intro_one": "El procés de votació {{process_name}} va consistir en 1 pregunta.",
       "intro_many": "",

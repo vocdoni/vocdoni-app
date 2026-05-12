@@ -3,7 +3,7 @@ import * as ReactPDF from '@react-pdf/renderer'
 import { useClient, useOrganization } from '@vocdoni/react-components'
 import { CensusType, dotobject, ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { type TFunction } from 'i18next'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuFileDown } from 'react-icons/lu'
 import { useToast } from '~components/Toast'
@@ -11,7 +11,11 @@ import { useToast } from '~components/Toast'
 import logoImport from '/assets/logo_vocdoni.png'
 import iconImport from '/assets/vocdoni_icon.png'
 
-const { pdf, Document, Image, Link: PdfLink, Page, StyleSheet, Text: PdfText, View } = ReactPDF
+const { pdf, Document, Font, Image, Link: PdfLink, Page, StyleSheet, Text: PdfText, View } = ReactPDF
+
+const preventPdfHyphenation = (word: string) => [word]
+
+Font.registerHyphenationCallback(preventPdfHyphenation)
 
 // @react-pdf/renderer uses Node's fs to read images, so it needs real filesystem paths.
 // In the test environment Vite resolves asset imports to URL strings (e.g. /assets/…)
@@ -49,6 +53,7 @@ type CertificateChoice = {
   name: string
   votes: string
   percentage: string
+  numericVotes: number | null
 }
 
 type CertificateQuestion = {
@@ -86,6 +91,7 @@ type CertificateData = {
 type ReportSection = {
   title: string
   href: string
+  page: string
 }
 
 type PdfDocumentProps = {
@@ -100,198 +106,430 @@ const canDownloadVotingReport = (election?: ElectionLike | null) =>
 
 const styles = StyleSheet.create({
   page: {
-    padding: 60,
-    paddingTop: 28,
+    paddingHorizontal: 56,
+    paddingTop: 36,
+    paddingBottom: 56,
+    fontFamily: 'Helvetica',
+    fontSize: 9.25,
+    lineHeight: 1.5,
+    color: '#172033',
+    backgroundColor: '#fbfcfe',
+  },
+  coverPage: {
+    paddingHorizontal: 62,
+    paddingTop: 52,
+    paddingBottom: 52,
     fontFamily: 'Helvetica',
     fontSize: 10,
-    // lineHeight: 1.45,
-    color: '#111827',
-    backgroundColor: '#ffffff',
+    lineHeight: 1.5,
+    color: '#172033',
+    backgroundColor: '#fbfcfe',
+  },
+  coverAccent: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 20,
+    backgroundColor: '#111827',
+  },
+  coverHairline: {
+    width: 52,
+    height: 3,
+    backgroundColor: '#18a3a8',
+    marginBottom: 20,
   },
   header: {
-    marginBottom: 18,
-    alignItems: 'center',
+    marginBottom: 28,
+    alignItems: 'flex-start',
   },
   coverContent: {
     flexGrow: 1,
     justifyContent: 'center',
   },
+  runningHeader: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 26,
+    paddingBottom: 11,
+    borderBottomWidth: 1,
+    borderBottomColor: '#dde3eb',
+  },
   pageBrand: {
-    marginBottom: 14,
     alignItems: 'flex-start',
   },
   pageBrandIcon: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
     objectFit: 'contain',
   },
   logo: {
-    width: 124,
-    height: 27,
+    width: 128,
+    height: 28,
     objectFit: 'contain',
-    marginBottom: 14,
+    marginBottom: 28,
   },
   titleBlock: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    maxWidth: 420,
   },
   titlePrefix: {
-    fontSize: 26,
+    fontSize: 23,
     fontWeight: 700,
-    lineHeight: 1.2,
-    textAlign: 'center',
+    lineHeight: 1.06,
+    color: '#111827',
+    textAlign: 'left',
   },
   titleProcess: {
-    fontSize: 30,
-    fontStyle: 'italic',
-    textAlign: 'center',
-    lineHeight: 1.2,
-    marginTop: 2,
-  },
-  subtitle: {
-    fontSize: 10,
-    color: '#4b5563',
-    textAlign: 'center',
-    marginTop: 8,
-  },
-  leadParagraph: {
-    marginBottom: 8,
-  },
-  issuedLine: {
-    marginTop: 4,
-    marginBottom: 12,
-    fontSize: 9,
-    color: '#374151',
-  },
-  section: {
+    fontSize: 24,
+    fontWeight: 700,
+    color: '#18a3a8',
+    textAlign: 'left',
+    lineHeight: 1.12,
     marginTop: 10,
   },
+  subtitle: {
+    fontSize: 8.5,
+    color: '#697386',
+    textAlign: 'left',
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#d8dee8',
+  },
+  coverIntroPanel: {
+    marginTop: 20,
+    paddingTop: 18,
+    borderTopWidth: 1,
+    borderTopColor: '#d8dee8',
+  },
+  issuedLine: {
+    marginTop: 10,
+    fontSize: 8.5,
+    color: '#4b5563',
+  },
+  section: {
+    marginBottom: 18,
+    paddingTop: 1,
+  },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: 12.5,
     fontWeight: 700,
-    marginBottom: 6,
+    color: '#111827',
+    marginBottom: 10,
+    paddingBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#18a3a8',
+  },
+  sectionLead: {
+    marginTop: 8,
+    marginBottom: 0,
+    color: '#3f4b5f',
+  },
+  keyValueTable: {
+    borderWidth: 1,
+    borderColor: '#dfe5ee',
+    borderRadius: 2,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
   },
   fieldRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 3,
+    gap: 14,
+    paddingVertical: 6.5,
+    paddingHorizontal: 9,
+    borderBottomWidth: 1,
+    borderBottomColor: '#edf1f6',
     alignItems: 'flex-start',
   },
   fieldRowStacked: {
     flexDirection: 'column',
-    gap: 2,
-    marginBottom: 6,
+    gap: 3,
+    paddingVertical: 6.5,
+    paddingHorizontal: 9,
+    borderBottomWidth: 1,
+    borderBottomColor: '#edf1f6',
+  },
+  lastFieldRow: {
+    borderBottomWidth: 0,
   },
   fieldLabel: {
-    width: '42%',
+    width: '37%',
     fontWeight: 700,
+    color: '#4b5563',
+    fontSize: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
   },
   fieldValue: {
     flexGrow: 1,
     flexShrink: 1,
     minWidth: 0,
-    width: '58%',
+    width: '63%',
+    color: '#172033',
     wordBreak: 'break-all',
   },
   fieldValueStacked: {
     width: '100%',
+    color: '#172033',
   },
   paragraph: {
-    marginBottom: 6,
+    marginBottom: 7.5,
+    color: '#2f3a4c',
   },
   italicText: {
     fontStyle: 'italic',
   },
   bulletRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 3,
+    gap: 9,
+    marginBottom: 4.5,
   },
   bulletMarker: {
     width: 10,
     flexShrink: 0,
+    color: '#18a3a8',
+    fontWeight: 700,
   },
   bulletText: {
     flex: 1,
+    color: '#2f3a4c',
   },
   questionCard: {
-    marginTop: 8,
-    padding: 10,
+    marginTop: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 13,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderColor: '#e5e7eb',
-    borderRadius: 4,
+    borderColor: '#e1e7ef',
+    borderRadius: 3,
+    backgroundColor: '#ffffff',
   },
   questionTitle: {
     fontSize: 11,
     fontWeight: 700,
-    marginBottom: 4,
+    color: '#111827',
+    marginBottom: 5,
   },
   questionMeta: {
-    fontSize: 9,
-    color: '#6b7280',
-    marginBottom: 6,
+    fontSize: 8.5,
+    color: '#5f6b7a',
+    marginBottom: 5,
+  },
+  questionResultsLabel: {
+    fontSize: 8,
+    color: '#697386',
+    marginTop: 4,
+    marginBottom: 5,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  questionSummaryRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  questionSummaryPill: {
+    paddingVertical: 4.5,
+    paddingHorizontal: 7,
+    backgroundColor: '#f3f6fa',
+    borderRadius: 2,
+  },
+  questionSummaryVotesPill: {
+    width: '30%',
+  },
+  questionSummaryOutcomePill: {
+    width: '66%',
+    flexShrink: 1,
+    minWidth: 0,
+  },
+  questionSummaryLabel: {
+    fontSize: 7.25,
+    color: '#697386',
+    textTransform: 'uppercase',
+    letterSpacing: 0.35,
+    marginBottom: 2,
+  },
+  questionSummaryValue: {
+    fontSize: 8.75,
+    color: '#172033',
+    fontWeight: 700,
+    lineHeight: 1.25,
+  },
+  questionOutcome: {
+    fontSize: 8.5,
+    color: '#172033',
+    marginTop: 7,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: '#edf1f6',
   },
   indexIntro: {
-    marginBottom: 10,
+    marginBottom: 16,
     color: '#4b5563',
   },
   indexRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    gap: 12,
-    marginBottom: 5,
+    gap: 10,
+    paddingVertical: 8.5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e7ecf3',
   },
   indexLabel: {
     flexGrow: 1,
     paddingRight: 8,
+    fontSize: 10,
+    color: '#172033',
+  },
+  indexLeader: {
+    flexGrow: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: '#cfd7e3',
+    marginBottom: 3,
+  },
+  indexPage: {
+    width: 24,
+    textAlign: 'right',
+    color: '#697386',
+    fontSize: 9,
   },
   indexLink: {
-    color: '#111827',
+    color: '#172033',
     textDecoration: 'none',
   },
-  optionRow: {
+  resultTable: {
+    borderTopWidth: 1,
+    borderTopColor: '#e1e7ef',
+  },
+  resultHeaderRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-    marginBottom: 2,
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e8edf4',
   },
-  optionLabel: {
-    width: '68%',
+  resultHeaderOption: {
+    width: '64%',
+    fontSize: 7.25,
+    fontWeight: 700,
+    color: '#697386',
+    textTransform: 'uppercase',
+    letterSpacing: 0.45,
   },
-  optionValue: {
-    width: '32%',
+  resultHeaderVotes: {
+    width: '13%',
+    fontSize: 7.25,
+    fontWeight: 700,
+    textAlign: 'right',
+    color: '#697386',
+    textTransform: 'uppercase',
+    letterSpacing: 0.45,
+  },
+  resultHeaderShare: {
+    width: '17%',
+    fontSize: 7.25,
+    fontWeight: 700,
+    textAlign: 'right',
+    color: '#697386',
+    textTransform: 'uppercase',
+    letterSpacing: 0.45,
+  },
+  resultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 6.25,
+    borderBottomWidth: 1,
+    borderBottomColor: '#edf1f6',
+  },
+  resultOptionCell: {
+    width: '64%',
+  },
+  resultValueCell: {
+    width: '13%',
+  },
+  resultShareCell: {
+    width: '17%',
+  },
+  resultChoiceName: {
+    fontSize: 8.7,
+    color: '#2f3a4c',
+    marginBottom: 4,
+  },
+  resultChoiceNameWinner: {
+    color: '#111827',
+    fontWeight: 700,
+  },
+  resultValueText: {
+    fontSize: 8.75,
+    color: '#111827',
+    textAlign: 'right',
+    fontWeight: 700,
+  },
+  resultShareText: {
+    fontSize: 8.5,
+    color: '#3f4b5f',
     textAlign: 'right',
   },
-  footer: {
-    marginTop: 'auto',
-    paddingTop: 8,
+  resultBarTrack: {
+    height: 4,
+    width: '100%',
+    backgroundColor: '#edf2f7',
+    borderRadius: 2,
+  },
+  resultBarFill: {
+    height: 4,
+    backgroundColor: '#9fb0c3',
+    borderRadius: 2,
+  },
+  resultBarFillWinner: {
+    backgroundColor: '#18a3a8',
+  },
+  legalNotice: {
+    marginTop: 18,
+    paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
+    borderTopColor: '#d8dee8',
+  },
+  pageFooter: {
+    position: 'absolute',
+    left: 56,
+    right: 56,
+    bottom: 39,
+    borderTopWidth: 1,
+    borderTopColor: '#c7d0dd',
   },
   pageNumber: {
     position: 'absolute',
-    bottom: 30,
-    left: 0,
-    right: 0,
-    textAlign: 'center',
-    color: '#6b7280',
+    bottom: 22,
+    left: 56,
+    right: 56,
+    textAlign: 'right',
+    color: '#111827',
+    fontSize: 11,
+    fontWeight: 700,
   },
   footerTitle: {
-    fontSize: 8,
+    fontSize: 8.5,
     fontWeight: 700,
-    color: '#374151',
-    marginBottom: 3,
+    color: '#111827',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   footerParagraph: {
-    fontSize: 6.25,
-    color: '#6b7280',
-    marginBottom: 1,
-    lineHeight: 1.15,
+    fontSize: 7.25,
+    color: '#4b5563',
+    marginBottom: 3,
+    lineHeight: 1.25,
   },
   smallText: {
     fontSize: 9,
-    color: '#6b7280',
+    color: '#697386',
   },
 })
 
@@ -313,6 +551,33 @@ const formatUtcDateTime = (date?: Date | null) =>
   date ? `${date.toISOString().slice(0, 16).replace('T', ' ')} UTC` : null
 
 const formatUtcDate = (date?: Date | null) => (date ? date.toISOString().slice(0, 10) : null)
+
+const getIdentityFieldLabel = (field: string, t: TFunction) => {
+  switch (field) {
+    case 'name':
+    case 'firstname':
+      return t('members.fields.firstname', { defaultValue: 'First Name' })
+    case 'surname':
+      return t('members.fields.surname', { defaultValue: 'Last Name' })
+    case 'email':
+      return t('members.fields.email', { defaultValue: 'Email' })
+    case 'phone':
+      return t('members.fields.phone', { defaultValue: 'Phone' })
+    case 'memberNumber':
+    case 'member_number':
+      return t('members.fields.member_number', { defaultValue: 'Member Number' })
+    case 'nationalId':
+    case 'national_id':
+      return t('members.fields.national_id', { defaultValue: 'National ID' })
+    case 'birthDate':
+    case 'birth_date':
+      return t('members.fields.birth_date', { defaultValue: 'Birth Date' })
+    case 'weight':
+      return t('members.fields.weight', { defaultValue: 'Voting power (Weight)' })
+    default:
+      return field
+  }
+}
 
 const humanizeCensusType = (t: TFunction, censusType?: string | null) => {
   switch (censusType) {
@@ -411,19 +676,20 @@ export const buildCertificateData = ({
   const twoFaFields = censusBundle?.census.twoFaFields ?? []
   const censusRootHash = censusBundle?.census.published?.root ?? election.census.censusId ?? notAvailableLabel
   const authenticationMethod = humanizeCensusType(t, censusType)
-  const identitySource = censusFields.length > 0 ? censusFields.join(', ') : notAvailableLabel
+  const identitySource =
+    censusFields.length > 0
+      ? censusFields.map((field) => getIdentityFieldLabel(field, t)).join(', ')
+      : notAvailableLabel
   const twoFaEnabledDisabled =
     censusBundle === null
       ? notAvailableLabel
       : twoFaFields.length > 0
-        ? t('process_pdf.boolean.yes', { defaultValue: 'Yes' })
-        : t('process_pdf.boolean.no', { defaultValue: 'No' })
-  const encryptionType =
-    election.electionType?.metadata?.encrypted === true
-      ? t('process_pdf.encryption.encrypted', { defaultValue: 'Encrypted' })
-      : election.electionType?.metadata?.encrypted === false
-        ? t('process_pdf.encryption.not_encrypted', { defaultValue: 'Not encrypted' })
-        : notAvailableLabel
+        ? t('process_pdf.authentication.two_fa_enabled', {
+            defaultValue: 'Enabled: voters confirm their identity with a one-time code',
+          })
+        : t('process_pdf.authentication.two_fa_disabled', {
+            defaultValue: 'Not enabled: no additional one-time code is required',
+          })
   const blockchainNetwork = election.chainId || notAvailableLabel
   const resultsVisibility = election.electionType?.secretUntilTheEnd
     ? t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })
@@ -469,10 +735,6 @@ export const buildCertificateData = ({
         value: endDatetime,
       },
       {
-        label: t('process_pdf.general.encryption_method', { defaultValue: 'Encryption method' }),
-        value: encryptionType,
-      },
-      {
         label: t('process_pdf.general.results_visibility', { defaultValue: 'Results visibility' }),
         value: resultsVisibility,
       },
@@ -505,7 +767,7 @@ export const buildCertificateData = ({
         value: identitySource,
       },
       {
-        label: t('process_pdf.authentication.two_fa', { defaultValue: '2FA authentication' }),
+        label: t('process_pdf.authentication.two_fa', { defaultValue: 'Additional code verification' }),
         value: twoFaEnabledDisabled,
       },
     ],
@@ -562,7 +824,12 @@ export const buildCertificateData = ({
 
       return {
         question: question.title.default || notAvailableLabel,
-        choices: choices.map(({ name, votes, percentage }) => ({ name, votes, percentage })),
+        choices: choices.map(({ name, votes, percentage, numericVotes }) => ({
+          name,
+          votes,
+          percentage,
+          numericVotes,
+        })),
         totalVotes: String(getQuestionVotes(election, questionIndex)),
         outcome,
       }
@@ -646,16 +913,27 @@ const fetchCensusBundle = async (censusURI?: string | null) => {
 
 const SectionTitle = ({ children }: { children: string }) => <PdfText style={styles.sectionTitle}>{children}</PdfText>
 
+const ReportSectionBlock = ({ children }: { children: ReactNode }) => (
+  <View wrap={false} style={styles.section}>
+    {children}
+  </View>
+)
+
 const KeyValueList = ({ items }: { items: CertificateField[] }) => (
-  <View>
-    {items.map((item) => (
-      <View key={item.label} style={shouldStackFieldValue(item.value) ? styles.fieldRowStacked : styles.fieldRow}>
-        <PdfText style={styles.fieldLabel}>{item.label}:</PdfText>
-        <PdfText style={shouldStackFieldValue(item.value) ? styles.fieldValueStacked : styles.fieldValue}>
-          {formatPdfFieldValue(item.value)}
-        </PdfText>
-      </View>
-    ))}
+  <View style={styles.keyValueTable}>
+    {items.map((item, index) => {
+      const isLast = index === items.length - 1
+      const rowStyle = shouldStackFieldValue(item.value) ? styles.fieldRowStacked : styles.fieldRow
+
+      return (
+        <View key={item.label} style={[rowStyle, isLast ? styles.lastFieldRow : {}]}>
+          <PdfText style={styles.fieldLabel}>{item.label}:</PdfText>
+          <PdfText style={shouldStackFieldValue(item.value) ? styles.fieldValueStacked : styles.fieldValue}>
+            {formatPdfFieldValue(item.value)}
+          </PdfText>
+        </View>
+      )
+    })}
   </View>
 )
 
@@ -685,38 +963,47 @@ const buildReportSections = (t: TFunction): ReportSection[] => [
   {
     title: t('process_pdf.document.sections.general_information', { defaultValue: '1. General Information' }),
     href: '#report-page-3',
+    page: '1',
   },
   {
     title: t('process_pdf.document.sections.authentication', { defaultValue: '2. Authentication' }),
     href: '#report-page-3',
+    page: '1',
   },
   {
     title: t('process_pdf.document.sections.voting_system', { defaultValue: '3. Voting System' }),
     href: '#report-page-3',
+    page: '1',
   },
   {
     title: t('process_pdf.document.sections.electoral_census', { defaultValue: '4. Electoral Census' }),
     href: '#report-page-3',
+    page: '1',
   },
   {
     title: t('process_pdf.document.sections.turnout_participation', { defaultValue: '5. Turnout and Participation' }),
     href: '#report-page-3',
+    page: '1',
   },
   {
     title: t('process_pdf.document.sections.voting_process', { defaultValue: '6. Voting Process' }),
     href: '#report-page-4',
+    page: '2',
   },
   {
     title: t('process_pdf.document.sections.verification', { defaultValue: '7. Verification' }),
     href: '#report-page-4',
+    page: '2',
   },
   {
     title: t('process_pdf.document.sections.certification_scope', { defaultValue: '8. Certification Scope' }),
-    href: '#report-page-4',
+    href: '#report-page-5',
+    page: '3',
   },
   {
     title: t('process_pdf.document.sections.issuer', { defaultValue: '9. Issuer' }),
     href: '#report-page-5',
+    page: '3',
   },
 ]
 
@@ -730,25 +1017,83 @@ const Paragraphs = ({ items }: { items: string[] }) => (
   </View>
 )
 
+const getPercentageNumber = (percentage: string) => {
+  const value = Number(percentage.replace('%', '').replace(',', '.'))
+  if (!Number.isFinite(value)) return 0
+  return Math.max(0, Math.min(100, value))
+}
+
+const getResultBarWidth = (choice: CertificateChoice) => {
+  const percentage = getPercentageNumber(choice.percentage)
+  const hasVotes = (choice.numericVotes ?? 0) > 0
+  if (!hasVotes && percentage <= 0) return '0%'
+
+  return `${Math.max(percentage, 2)}%`
+}
+
+const getHighestChoiceVotes = (choices: CertificateChoice[]) => {
+  const numericVotes = choices
+    .map((choice) => choice.numericVotes)
+    .filter((votes): votes is number => typeof votes === 'number' && Number.isFinite(votes))
+
+  return numericVotes.length ? Math.max(...numericVotes) : null
+}
+
+const ResultBarRow = ({ choice, isWinner }: { choice: CertificateChoice; isWinner: boolean }) => (
+  <View wrap={false} style={styles.resultRow}>
+    <View style={styles.resultOptionCell}>
+      <PdfText style={[styles.resultChoiceName, isWinner ? styles.resultChoiceNameWinner : {}]}>{choice.name}</PdfText>
+      <View style={styles.resultBarTrack}>
+        <View
+          style={[
+            styles.resultBarFill,
+            isWinner ? styles.resultBarFillWinner : {},
+            { width: getResultBarWidth(choice) },
+          ]}
+        />
+      </View>
+    </View>
+    <View style={styles.resultValueCell}>
+      <PdfText style={styles.resultValueText}>{choice.votes}</PdfText>
+    </View>
+    <View style={styles.resultShareCell}>
+      <PdfText style={styles.resultShareText}>{choice.percentage}</PdfText>
+    </View>
+  </View>
+)
+
 const getReportPageNumber = (pageNumber: number) => pageNumber - 2
 
-const ReportPageNumber = () => (
-  <PdfText fixed style={styles.pageNumber} render={({ pageNumber }) => String(getReportPageNumber(pageNumber))} />
+const PageFooterLine = () => <View fixed style={styles.pageFooter} />
+
+const ReportPageNumber = ({ label }: { label: string }) => (
+  <PdfText fixed style={styles.pageNumber} render={({ pageNumber }) => `${label} ${getReportPageNumber(pageNumber)}`} />
+)
+
+const RunningHeader = () => (
+  <View fixed style={styles.runningHeader}>
+    <View style={styles.pageBrand}>
+      <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
+    </View>
+  </View>
 )
 
 const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
   const reportSections = buildReportSections(t)
+  const pageNumberLabel = t('process_pdf.document.page_number', { defaultValue: 'Page' })
 
   return (
     <Document>
       <Page
         size='A4'
-        style={styles.page}
+        style={styles.coverPage}
         bookmark={t('process_pdf.document.bookmarks.index', { defaultValue: 'Index' })}
       >
+        <View style={styles.coverAccent} />
         <View style={styles.coverContent}>
           <View style={styles.header}>
             <Image src={vocdoniLogo} style={styles.logo} />
+            <View style={styles.coverHairline} />
             <View style={styles.titleBlock}>
               <PdfText style={styles.titlePrefix} hyphenationCallback={(word) => [word]}>
                 {t('process_pdf.document.title_prefix', {
@@ -768,23 +1113,23 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             </PdfText>
           </View>
 
-          <Paragraphs items={data.introParagraphs} />
-          <PdfText style={styles.issuedLine}>
-            {t('process_pdf.document.issued_by', {
-              defaultValue:
-                'Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.',
-              issue_date: data.issueDate,
-            })}
-          </PdfText>
+          <View style={styles.coverIntroPanel}>
+            <Paragraphs items={data.introParagraphs} />
+            <PdfText style={styles.issuedLine}>
+              {t('process_pdf.document.issued_by', {
+                defaultValue:
+                  'Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.',
+                issue_date: data.issueDate,
+              })}
+            </PdfText>
+          </View>
         </View>
       </Page>
 
       <Page size='A4' style={styles.page}>
-        <View style={styles.pageBrand}>
-          <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
-        </View>
+        <RunningHeader />
 
-        <View style={styles.section}>
+        <ReportSectionBlock>
           <SectionTitle>{t('process_pdf.document.index.title', { defaultValue: 'Index' })}</SectionTitle>
           <PdfText style={styles.indexIntro}>
             {t('process_pdf.document.index.intro', {
@@ -796,11 +1141,13 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
               <PdfLink key={section.title} src={section.href} style={styles.indexLink}>
                 <View style={styles.indexRow}>
                   <PdfText style={styles.indexLabel}>{section.title}</PdfText>
+                  <View style={styles.indexLeader} />
+                  <PdfText style={styles.indexPage}>{section.page}</PdfText>
                 </View>
               </PdfLink>
             ))}
           </View>
-        </View>
+        </ReportSectionBlock>
       </Page>
 
       <Page
@@ -809,25 +1156,25 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         id='report-page-3'
         bookmark={t('process_pdf.document.bookmarks.general_information', { defaultValue: 'General Information' })}
       >
-        <View style={styles.pageBrand}>
-          <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
-        </View>
+        <RunningHeader />
+        <PageFooterLine />
+        <ReportPageNumber label={pageNumberLabel} />
 
-        <View style={styles.section}>
+        <ReportSectionBlock>
           <SectionTitle>
             {t('process_pdf.document.sections.general_information', { defaultValue: '1. General Information' })}
           </SectionTitle>
           <KeyValueList items={data.generalInformation} />
-        </View>
+        </ReportSectionBlock>
 
-        <View style={styles.section}>
+        <ReportSectionBlock>
           <SectionTitle>
             {t('process_pdf.document.sections.authentication', { defaultValue: '2. Authentication' })}
           </SectionTitle>
           <KeyValueList items={data.authentication} />
-        </View>
+        </ReportSectionBlock>
 
-        <View style={styles.section}>
+        <ReportSectionBlock>
           <SectionTitle>
             {t('process_pdf.document.sections.voting_system', { defaultValue: '3. Voting System' })}
           </SectionTitle>
@@ -839,39 +1186,38 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
               blockchain_network: data.blockchainNetwork,
             })}
           </PdfText>
-        </View>
+        </ReportSectionBlock>
 
-        <View style={styles.section}>
+        <ReportSectionBlock>
           <SectionTitle>
             {t('process_pdf.document.sections.electoral_census', { defaultValue: '4. Electoral Census' })}
           </SectionTitle>
           <KeyValueList items={data.census} />
-          <PdfText style={styles.paragraph}>
+          <PdfText style={styles.sectionLead}>
             {t('process_pdf.census.definition', {
               defaultValue:
                 'The electoral census defines the complete set of members authorized to participate in the voting process. Inclusion in the census does not imply actual participation.',
             })}
           </PdfText>
-        </View>
+        </ReportSectionBlock>
 
-        <View style={styles.section}>
+        <ReportSectionBlock>
           <SectionTitle>
             {t('process_pdf.document.sections.turnout_participation', { defaultValue: '5. Turnout and Participation' })}
           </SectionTitle>
           <KeyValueList items={data.turnout} />
-          <PdfText style={styles.paragraph}>
+          <PdfText style={styles.sectionLead}>
             {t('process_pdf.turnout.participation', {
               defaultValue:
                 'The number of votes cast reflects only those participants who effectively submitted a valid ballot during the defined voting period.',
             })}
           </PdfText>
-          <PdfText style={styles.paragraph}>
+          <PdfText style={styles.sectionLead}>
             {t('process_pdf.turnout.census_contact', {
               defaultValue: 'If you need more details about the census, please contact us.',
             })}
           </PdfText>
-        </View>
-        <ReportPageNumber />
+        </ReportSectionBlock>
       </Page>
 
       <Page
@@ -880,11 +1226,11 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         id='report-page-4'
         bookmark={t('process_pdf.document.bookmarks.voting_process', { defaultValue: 'Voting Process' })}
       >
-        <View style={styles.pageBrand}>
-          <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
-        </View>
+        <RunningHeader />
+        <PageFooterLine />
+        <ReportPageNumber label={pageNumberLabel} />
 
-        <View style={styles.section}>
+        <ReportSectionBlock>
           <SectionTitle>
             {t('process_pdf.document.sections.voting_process', { defaultValue: '6. Voting Process' })}
           </SectionTitle>
@@ -894,53 +1240,70 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             {data.votingProcessIntro.split(data.eventReference)[1]}
           </PdfText>
           {data.votingProcessQuestions.length > 0 ? (
-            data.votingProcessQuestions.map((question, index) => (
-              <View key={`${question.question}-${index}`} style={styles.questionCard}>
-                <PdfText style={styles.questionTitle}>
-                  {t('process_pdf.voting_process.card.item', {
-                    defaultValue: 'Voting Item {{index}}',
-                    index: index + 1,
-                  })}
-                </PdfText>
-                <PdfText style={styles.questionMeta}>
-                  {t('process_pdf.voting_process.card.question', {
-                    defaultValue: 'Question: {{question}}',
-                    question: question.question,
-                  })}
-                </PdfText>
-                <PdfText style={styles.questionMeta}>
-                  {t('process_pdf.voting_process.card.participation', {
-                    defaultValue: 'Participation: {{votes}} recorded votes',
-                    votes: question.totalVotes,
-                  })}
-                </PdfText>
-                <PdfText style={styles.questionMeta}>
-                  {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
-                </PdfText>
-                {question.choices.length > 0 ? (
-                  question.choices.map((choice) => (
-                    <View key={`${choice.name}-${choice.votes}-result`} style={styles.optionRow}>
-                      <PdfText style={styles.optionLabel}>{choice.name}</PdfText>
-                      <PdfText style={styles.optionValue}>{`${choice.votes} (${choice.percentage})`}</PdfText>
+            data.votingProcessQuestions.map((question, index) => {
+              const highestVotes = getHighestChoiceVotes(question.choices)
+
+              return (
+                <View key={`${question.question}-${index}`} wrap={false} style={styles.questionCard}>
+                  <PdfText style={styles.questionTitle}>{question.question}</PdfText>
+                  <View style={styles.questionSummaryRow}>
+                    <View style={[styles.questionSummaryPill, styles.questionSummaryVotesPill]}>
+                      <PdfText style={styles.questionSummaryLabel}>
+                        {t('process_pdf.voting_process.card.item', {
+                          defaultValue: 'Question {{index}}',
+                          index: index + 1,
+                        })}
+                      </PdfText>
+                      <PdfText style={styles.questionSummaryValue}>
+                        {t('process_pdf.voting_process.card.participation_short', {
+                          defaultValue: '{{votes}} votes',
+                          votes: question.totalVotes,
+                        })}
+                      </PdfText>
                     </View>
-                  ))
-                ) : (
-                  <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
-                )}
-                <PdfText style={styles.questionMeta}>
-                  {t('process_pdf.voting_process.card.outcome', {
-                    defaultValue: 'Outcome: {{outcome}}',
-                    outcome: question.outcome,
-                  })}
-                </PdfText>
-              </View>
-            ))
+                    <View style={[styles.questionSummaryPill, styles.questionSummaryOutcomePill]}>
+                      <PdfText style={styles.questionSummaryLabel}>
+                        {t('process_pdf.voting_process.card.outcome_label', { defaultValue: 'Outcome' })}
+                      </PdfText>
+                      <PdfText style={styles.questionSummaryValue}>{question.outcome}</PdfText>
+                    </View>
+                  </View>
+                  <PdfText style={styles.questionResultsLabel}>
+                    {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
+                  </PdfText>
+                  {question.choices.length > 0 ? (
+                    <View style={styles.resultTable}>
+                      <View style={styles.resultHeaderRow}>
+                        <PdfText style={styles.resultHeaderOption}>
+                          {t('process_pdf.voting_process.card.option', { defaultValue: 'Option' })}
+                        </PdfText>
+                        <PdfText style={styles.resultHeaderVotes}>
+                          {t('process_pdf.voting_process.card.votes', { defaultValue: 'Votes' })}
+                        </PdfText>
+                        <PdfText style={styles.resultHeaderShare}>
+                          {t('process_pdf.voting_process.card.share', { defaultValue: 'Share' })}
+                        </PdfText>
+                      </View>
+                      {question.choices.map((choice) => (
+                        <ResultBarRow
+                          key={`${choice.name}-${choice.votes}-result`}
+                          choice={choice}
+                          isWinner={highestVotes !== null && highestVotes > 0 && choice.numericVotes === highestVotes}
+                        />
+                      ))}
+                    </View>
+                  ) : (
+                    <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
+                  )}
+                </View>
+              )
+            })
           ) : (
             <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
           )}
-        </View>
+        </ReportSectionBlock>
 
-        <View style={styles.section}>
+        <ReportSectionBlock>
           <SectionTitle>
             {t('process_pdf.document.sections.verification', { defaultValue: '7. Verification' })}
           </SectionTitle>
@@ -955,9 +1318,19 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             {t('process_pdf.verification.procedure_title', { defaultValue: 'Verification Procedure' })}
           </PdfText>
           <NumberedList items={data.verificationProcedures} />
-        </View>
-
-        <View style={styles.section}>
+        </ReportSectionBlock>
+      </Page>
+      <Page
+        size='A4'
+        style={styles.page}
+        wrap
+        id='report-page-5'
+        bookmark={t('process_pdf.document.bookmarks.issuer', { defaultValue: 'Issuer' })}
+      >
+        <RunningHeader />
+        <PageFooterLine />
+        <ReportPageNumber label={pageNumberLabel} />
+        <ReportSectionBlock>
           <SectionTitle>
             {t('process_pdf.document.sections.certification_scope', { defaultValue: '8. Certification Scope' })}
           </SectionTitle>
@@ -973,20 +1346,8 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
                 'This certification does not cover governance rules, eligibility criteria correctness, or legal compliance.',
             })}
           </PdfText>
-        </View>
-        <ReportPageNumber />
-      </Page>
-      <Page
-        size='A4'
-        style={styles.page}
-        wrap
-        id='report-page-5'
-        bookmark={t('process_pdf.document.bookmarks.issuer', { defaultValue: 'Issuer' })}
-      >
-        <View style={styles.pageBrand}>
-          <Image src={vocdoniIcon} style={styles.pageBrandIcon} />
-        </View>
-        <View style={styles.section}>
+        </ReportSectionBlock>
+        <ReportSectionBlock>
           <SectionTitle>{t('process_pdf.document.sections.issuer', { defaultValue: '9. Issuer' })}</SectionTitle>
           <KeyValueList items={data.issuer} />
           <PdfText style={styles.paragraph}>
@@ -994,9 +1355,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
               defaultValue: 'Issued on behalf of the organizing entity in its role as technical service provider.',
             })}
           </PdfText>
-        </View>
+        </ReportSectionBlock>
 
-        <View style={styles.footer}>
+        <View wrap={false} style={styles.legalNotice}>
           <PdfText style={styles.footerTitle}>
             {t('process_pdf.disclaimer.title', { defaultValue: 'Disclaimer' })}
           </PdfText>
@@ -1019,8 +1380,6 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
         </View>
-
-        <ReportPageNumber />
       </Page>
     </Document>
   )

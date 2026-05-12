@@ -1361,7 +1361,9 @@
     "authentication": {
       "identity_source": "Identity data source",
       "method": "Authentication method",
-      "two_fa": "2FA authentication"
+      "two_fa": "Additional code verification",
+      "two_fa_disabled": "Not enabled: no additional one-time code is required",
+      "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code"
     },
     "boolean": {
       "no": "No",
@@ -1401,6 +1403,7 @@
         "title": "Index"
       },
       "issued_by": "Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.",
+      "page_number": "Page",
       "sections": {
         "authentication": "2. Authentication",
         "certification_scope": "8. Certification Scope",
@@ -1474,10 +1477,15 @@
     "voting_process": {
       "card": {
         "item": "Question {{index}}",
+        "option": "Option",
         "outcome": "Outcome: {{outcome}}",
+        "outcome_label": "Outcome",
         "participation": "Participation: {{votes}} recorded votes",
+        "participation_short": "{{votes}} votes",
         "question": "Question: {{question}}",
-        "results": "Results:"
+        "results": "Results:",
+        "share": "Share",
+        "votes": "Votes"
       },
       "intro_one": "The voting process {{process_name}} consisted of 1 question.",
       "intro_other": "The voting process {{process_name}} consisted of {{count}} questions."
