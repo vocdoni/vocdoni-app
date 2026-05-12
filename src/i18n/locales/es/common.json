@@ -1235,7 +1235,7 @@
     },
     "success_modal": {
       "btn": "Cerrar",
-      "text": "<p>Tu voto ha sido emitido y almacenado de forma segura con la tecnología de Vocdoni. <verify>Puedes comprobarlo aquí</verify>.</p>",
+      "text": "<p>Tu voto ha sido emitido y almacenado de forma segura con la tecnología de Vocdoni. Puedes comprobarlo <verify>aquí</verify>.</p>",
       "title": "¡Voto enviado!"
     },
     "template": {
