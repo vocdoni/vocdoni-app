@@ -26,6 +26,6 @@ describe('UsageLimits', () => {
         <UsageLimits />
       </TestMemoryRouter>
     )
-    expect(screen.getByText('Plan Usage')).toBeInTheDocument()
+    expect(screen.getByText('Plan usage')).toBeInTheDocument()
   })
 })

@@ -190,12 +190,12 @@
       "2fa_sms": "Codis 2FA per SMS",
       "2fa_sms_tooltip": "Codis de verificació per SMS enviats. Superar el límit costa {{price}}€ per codi.",
       "limit_exceeded_message": "El teu pla actual ha assolit els seus límits. Actualitza ara per continuar treballant sense restriccions.",
-      "memberbase_size": "Mida de la Base de Membres",
+      "memberbase_size": "Mida de la base de membres",
       "memberbase_tooltip": "Nombre màxim de membres permesos a la teva base de membres.",
-      "plan_usage": "Ús del Pla",
+      "plan_usage": "Ús del pla",
       "plan_usage_description": "Controla el teu ús actual enfront els límits del teu pla",
-      "upgrade_plan": "Actualitzar Pla",
-      "voting_processes": "Processos de Votació",
+      "upgrade_plan": "Actualitzar pla",
+      "voting_processes": "Processos de votació",
       "voting_processes_tooltip": "Nombre de processos de votació creats aquest any. Les votacions amb 10 membres o menys no es compten per als límits."
     },
     "welcome": {
