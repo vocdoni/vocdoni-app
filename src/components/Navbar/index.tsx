@@ -9,11 +9,17 @@ import { RouterAwareLink } from '~components/RouterAwareLink'
 import { Routes } from '~src/router/routes'
 import { LanguagesMenu } from './LanguagesList'
 
-const Navbar = ({ publicLanguageLinks }: { publicLanguageLinks?: Record<string, string> }) => (
+const Navbar = ({
+  publicLanguageLinks,
+  showDashboardButton = true,
+}: {
+  publicLanguageLinks?: Record<string, string>
+  showDashboardButton?: boolean
+}) => (
   <Flex width='full' py={3} position='relative' justifyContent='space-between' zIndex='topbar' alignItems='center'>
     <Logo />
     <Flex alignItems='center' gap={2} justifySelf='end'>
-      <DashboardButton />
+      {showDashboardButton && <DashboardButton />}
       <LanguagesMenu publicLanguageLinks={publicLanguageLinks} />
       <ColorModeSwitcher />
     </Flex>

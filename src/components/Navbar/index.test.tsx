@@ -35,4 +35,26 @@ describe('Navbar', () => {
 
     expect(screen.getByRole('link', { name: 'Login' })).toBeInTheDocument()
   })
+
+  it('can hide the dashboard/login button entirely', async () => {
+    const i18nInstance = await createTestI18n({
+      useReactI18next: true,
+      resources: {
+        en: {
+          common: {
+            'menu.login': 'Login',
+          },
+        },
+      },
+    })
+
+    render(
+      <TestMemoryRouter>
+        <Navbar showDashboardButton={false} />
+      </TestMemoryRouter>,
+      { i18nInstance }
+    )
+
+    expect(screen.queryByRole('link', { name: 'Login' })).toBeNull()
+  })
 })

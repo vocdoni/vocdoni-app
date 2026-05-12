@@ -85,6 +85,7 @@ describe('preferred public-language redirect', () => {
     expect(publicLayout).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/en/processes/0xprocess',
+        showDashboardButton: false,
       })
     )
   })
