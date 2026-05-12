@@ -27,6 +27,9 @@ export const heading = defineRecipe({
 export const link = defineRecipe({
   base: {
     color: 'gray.800',
+    textDecoration: 'underline',
+    textDecorationThickness: 'from-font',
+    textUnderlineOffset: '0.15em',
     _dark: {
       color: 'gray.400',
       _hover: {
@@ -34,7 +37,6 @@ export const link = defineRecipe({
       },
     },
     _hover: {
-      textDecoration: 'none',
       color: 'gray.500',
     },
   },
@@ -56,6 +58,7 @@ export const link = defineRecipe({
         h: '30px',
         border: '1px solid',
         cursor: 'pointer',
+        textDecoration: 'none',
       },
       footer: {
         textDecoration: 'none',
