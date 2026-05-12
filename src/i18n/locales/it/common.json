@@ -1388,8 +1388,7 @@
       "two_fa_enabled": "Attivata: i votanti confermano la propria identità con un codice monouso"
     },
     "boolean": {
-      "no": "No",
-      "yes": "Sì"
+      "no": "No"
     },
     "census": {
       "definition": "Il censimento elettorale definisce l'insieme completo dei membri autorizzati a partecipare al processo di voto. L'inclusione nel censimento non implica la partecipazione effettiva.",
@@ -1443,12 +1442,7 @@
     "download": "Rapporto elettorale (PDF)",
     "download_error": "Impossibile generare il report PDF",
     "downloading": "Generazione PDF in corso",
-    "encryption": {
-      "encrypted": "Crittografato",
-      "not_encrypted": "Non crittografato"
-    },
     "general": {
-      "encryption_method": "Metodo di crittografia",
       "event_name": "Nome dell'evento",
       "extended_process_details": "Dettagli estesi del processo",
       "network": "Rete",
@@ -1501,11 +1495,8 @@
       "card": {
         "item": "Domanda {{index}}",
         "option": "Opzione",
-        "outcome": "Esito: {{outcome}}",
         "outcome_label": "Esito",
-        "participation": "Partecipazione: {{votes}} voti registrati",
         "participation_short": "{{votes}} voti",
-        "question": "Domanda: {{question}}",
         "results": "Risultati:",
         "share": "Quota",
         "votes": "Voti"

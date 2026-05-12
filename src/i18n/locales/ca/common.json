@@ -1388,8 +1388,7 @@
       "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús"
     },
     "boolean": {
-      "no": "No",
-      "yes": "Sí"
+      "no": "No"
     },
     "census": {
       "definition": "El cens electoral defineix el conjunt complet de membres autoritzats a participar en el procés de votació. La inclusió al cens no implica participació efectiva.",
@@ -1443,12 +1442,7 @@
     "download": "Informe electoral (PDF)",
     "download_error": "No s'ha pogut generar l'informe PDF",
     "downloading": "S'està generant el PDF",
-    "encryption": {
-      "encrypted": "Encriptat",
-      "not_encrypted": "Sense encriptar"
-    },
     "general": {
-      "encryption_method": "Mètode d'encriptació",
       "event_name": "Nom de l'esdeveniment",
       "extended_process_details": "Detalls ampliats del procés",
       "network": "Xarxa",
@@ -1501,11 +1495,8 @@
       "card": {
         "item": "Pregunta {{index}}",
         "option": "Opció",
-        "outcome": "Resultat: {{outcome}}",
         "outcome_label": "Resultat",
-        "participation": "Participació: {{votes}} vots registrats",
         "participation_short": "{{votes}} vots",
-        "question": "Pregunta: {{question}}",
         "results": "Resultats:",
         "share": "Percentatge",
         "votes": "Vots"

@@ -1366,8 +1366,7 @@
       "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code"
     },
     "boolean": {
-      "no": "No",
-      "yes": "Yes"
+      "no": "No"
     },
     "census": {
       "definition": "The electoral census defines the complete set of members authorized to participate in the voting process. Inclusion in the census does not imply actual participation.",
@@ -1421,12 +1420,7 @@
     "download": "Election report (PDF)",
     "download_error": "Could not generate the PDF report",
     "downloading": "Generating PDF",
-    "encryption": {
-      "encrypted": "Encrypted",
-      "not_encrypted": "Not encrypted"
-    },
     "general": {
-      "encryption_method": "Encryption method",
       "event_name": "Event name",
       "extended_process_details": "Extended process details",
       "network": "Network",
@@ -1478,11 +1472,8 @@
       "card": {
         "item": "Question {{index}}",
         "option": "Option",
-        "outcome": "Outcome: {{outcome}}",
         "outcome_label": "Outcome",
-        "participation": "Participation: {{votes}} recorded votes",
         "participation_short": "{{votes}} votes",
-        "question": "Question: {{question}}",
         "results": "Results:",
         "share": "Share",
         "votes": "Votes"

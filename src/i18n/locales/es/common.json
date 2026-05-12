@@ -1388,8 +1388,7 @@
       "two_fa_enabled": "Activada: los votantes confirman su identidad con un código de un solo uso"
     },
     "boolean": {
-      "no": "No",
-      "yes": "Sí"
+      "no": "No"
     },
     "census": {
       "definition": "El censo electoral define el conjunto completo de miembros autorizados a participar en el proceso de votación. La inclusión en el censo no implica participación efectiva.",
@@ -1443,12 +1442,7 @@
     "download": "Informe electoral (PDF)",
     "download_error": "No se ha podido generar el informe PDF",
     "downloading": "Generando PDF",
-    "encryption": {
-      "encrypted": "Cifrado",
-      "not_encrypted": "Sin cifrar"
-    },
     "general": {
-      "encryption_method": "Método de cifrado",
       "event_name": "Nombre del evento",
       "extended_process_details": "Detalles ampliados del proceso",
       "network": "Red",
@@ -1501,11 +1495,8 @@
       "card": {
         "item": "Pregunta {{index}}",
         "option": "Opción",
-        "outcome": "Resultado: {{outcome}}",
         "outcome_label": "Resultado",
-        "participation": "Participación: {{votes}} votos registrados",
         "participation_short": "{{votes}} votos",
-        "question": "Pregunta: {{question}}",
         "results": "Resultados:",
         "share": "Porcentaje",
         "votes": "Votos"
