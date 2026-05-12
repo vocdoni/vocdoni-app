@@ -1214,7 +1214,6 @@
     },
     "questions": "Domande",
     "results": "Risultati",
-    "share_caption": "Ho appena votato in {{ title }}!!",
     "share_title": "Condividi su {{ network }}",
     "spreadsheet": {
       "confirm": {

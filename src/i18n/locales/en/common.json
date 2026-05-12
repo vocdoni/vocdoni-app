@@ -1192,7 +1192,6 @@
     },
     "questions": "Questions",
     "results": "Results",
-    "share_caption": "I've just cast my vote in {{ title }}!!",
     "share_title": "Share on {{ network }}",
     "spreadsheet": {
       "confirm": {
