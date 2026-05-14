@@ -1,7 +1,5 @@
 validation:
   install_commands:
-    - curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-    - apt-get install -y nodejs
-    - npm install -g pnpm@10.16.1
-    - ln -sf "$(npm root -g)/pnpm/bin/pnpm.cjs" /usr/local/bin/pnpm
+    - curl -fsSL https://nodejs.org/dist/v22.22.2/node-v22.22.2-linux-x64.tar.xz | tar xJ -C /usr/local --strip-components=1
+    - curl -fsSL https://github.com/pnpm/pnpm/releases/download/v10.16.1/pnpm-linux-x64 -o /usr/local/bin/pnpm && chmod +x /usr/local/bin/pnpm
     - pnpm install
