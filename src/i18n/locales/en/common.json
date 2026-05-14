@@ -1569,6 +1569,7 @@
       "login": "To access the election press \"Identify\".",
       "vote": "Select the election to open a new window with the voting instructions. Once your vote is submitted, close the window to return here."
     },
+    "member_number_label": "Member No.",
     "section_title": "Elections",
     "voted": "You already voted"
   },

@@ -1593,6 +1593,7 @@
       "login": "Per accedir a la votació, prem \"Identificar-se\".",
       "vote": "Selecciona la votació per obrir una nova finestra amb les instruccions de votació. Un cop hagis enviat el teu vot, tanca la finestra per tornar aquí."
     },
+    "member_number_label": "Núm. de col·legiat",
     "section_title": "Eleccions",
     "voted": "Ja has votat"
   },
