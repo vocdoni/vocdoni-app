@@ -1,4 +1,4 @@
-import { Button, ButtonProps, Flex } from '@chakra-ui/react'
+import { Button, Flex, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
@@ -18,12 +18,20 @@ const Navbar = () => (
   </Flex>
 )
 
-const DashboardButton = (props?: ButtonProps) => {
+const DashboardButton = () => {
   const { t } = useTranslation()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, memberNumber } = useAuth()
+
+  if (memberNumber) {
+    return (
+      <Text color='texts.default' fontSize='sm' fontWeight='bold' whiteSpace='nowrap'>
+        {t('shared_census.member_number_label', { defaultValue: 'Colegiado nº' })} {memberNumber}
+      </Text>
+    )
+  }
 
   return (
-    <Button asChild px={6} {...props}>
+    <Button asChild px={6}>
       <ReactRouterLink to={isAuthenticated ? generatePath(Routes.dashboard.base) : Routes.auth.signIn}>
         {isAuthenticated ? t('menu.dashboard', { defaultValue: 'Dashboard' }) : t('menu.login')}
       </ReactRouterLink>

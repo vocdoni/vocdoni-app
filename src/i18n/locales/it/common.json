@@ -1593,6 +1593,7 @@
       "login": "Premi \"Identifica\" per accedere all'elezione.",
       "vote": "Seleziona l'elezione per aprire una nuova finestra con le istruzioni di voto. Una volta inviato il voto, chiudi la finestra per tornare qui."
     },
+    "member_number_label": "N. iscrizione",
     "section_title": "Elezioni",
     "voted": "Hai già votato"
   },

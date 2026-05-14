@@ -73,6 +73,7 @@ const useSigner = () => {
 export const useAuthProvider = () => {
   const { signer: clientSigner, clear } = useClient()
   const [bearer, setBearer] = useState<string | null>(localStorage.getItem(LocalStorageKeys.Token))
+  const [memberNumber, setMemberNumberState] = useState<string | null>(localStorage.getItem('sharedCensusMemberNumber'))
   const toast = useToast()
   const { disconnect } = useDisconnect()
   const { t } = useTranslation()
@@ -129,13 +130,27 @@ export const useAuthProvider = () => {
     [updateSigner]
   )
 
+  const setMemberNumber = useCallback((nextMemberNumber?: string | null) => {
+    const normalizedMemberNumber = nextMemberNumber?.trim()
+
+    if (normalizedMemberNumber) {
+      localStorage.setItem('sharedCensusMemberNumber', normalizedMemberNumber)
+      setMemberNumberState(normalizedMemberNumber)
+      return
+    }
+
+    localStorage.removeItem('sharedCensusMemberNumber')
+    setMemberNumberState(null)
+  }, [])
+
   const logout = useCallback(() => {
     clearAuthStorageKeys()
     localStorage.removeItem(LocalStorageKeys.RenewSession)
+    setMemberNumber(null)
     setBearer(null)
     clear()
     disconnect()
-  }, [clear, disconnect])
+  }, [clear, disconnect, setMemberNumber])
 
   const refreshToken = useCallback(async () => {
     try {
@@ -208,6 +223,8 @@ export const useAuthProvider = () => {
   return {
     isAuthenticated,
     bearer,
+    memberNumber,
+    setMemberNumber,
     setBearer,
     updateSigner,
     login,

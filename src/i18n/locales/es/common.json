@@ -1593,6 +1593,7 @@
       "login": "Para acceder a la votación, pulsa \"Identificarse\".",
       "vote": "Selecciona la votación para abrir una nueva ventana con las instrucciones de votación. Una vez que hayas enviado tu voto, cierra la ventana para volver aquí."
     },
+    "member_number_label": "Colegiado nº",
     "section_title": "Elecciones",
     "voted": "Ya has votado"
   },

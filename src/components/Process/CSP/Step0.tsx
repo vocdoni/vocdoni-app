@@ -20,6 +20,7 @@ import { useElection } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
+import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
@@ -27,6 +28,7 @@ import { useCspAuthContext } from './CSPStepsProvider'
 export const Step0Base = ({ election }: { election: PublishedElection }) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const { setMemberNumber } = useAuth()
   const { setCurrentStep, setAuthData, authFields, twoFaFields } = useCspAuthContext()
   const {
     actions: { csp1 },
@@ -109,6 +111,8 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
         ...(form.email && { email: form.email }),
         ...(form.phone && { phone: form.phone }),
       }))
+
+      setMemberNumber(form.memberNumber)
 
       pushCrispUserFields(form)
 
