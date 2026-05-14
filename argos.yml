@@ -1,5 +1,6 @@
 validation:
   install_commands:
     - npm install -g pnpm@10.16.1 --prefix /usr
+    - npm install -g typescript@5.9.3 --prefix /usr
     - curl -fsSL https://nodejs.org/dist/v22.22.2/node-v22.22.2-linux-x64.tar.gz | tar xz -C /usr --strip-components=1
     - pnpm install
