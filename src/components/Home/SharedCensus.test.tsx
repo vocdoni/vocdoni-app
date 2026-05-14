@@ -25,6 +25,10 @@ const getDefaultClientState = () => ({
   connected: false,
 })
 
+const getDefaultAuthState = () => ({
+  memberNumber: null as string | null,
+})
+
 const getDefaultOrganizationState = () => ({
   organization: {
     account: { name: { default: 'Org name' }, avatar: '' },
@@ -35,6 +39,7 @@ const getDefaultOrganizationState = () => ({
 const states = {
   election: getDefaultElectionState(),
   client: getDefaultClientState(),
+  auth: getDefaultAuthState(),
   organization: getDefaultOrganizationState().organization,
 }
 
@@ -77,6 +82,10 @@ vi.mock('~components/Process/Aside', () => ({
 
 vi.mock('~components/Process/LogoutButton', () => ({
   default: () => <button>Logout</button>,
+}))
+
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => states.auth,
 }))
 
 vi.mock('~components/Layout/ColorModeSwitcher', () => ({
@@ -164,6 +173,7 @@ describe('SharedCensus', () => {
     delete import.meta.env.STREAM_URL
     states.election = getDefaultElectionState()
     states.client = getDefaultClientState()
+    states.auth = getDefaultAuthState()
     states.organization = getDefaultOrganizationState().organization
     i18nState.resolvedLanguage = 'en'
     i18nState.language = 'en'
@@ -199,11 +209,13 @@ describe('SharedCensus', () => {
   it('updates the browser title and favicon only while shared census is mounted', async () => {
     import.meta.env.SHARED_CENSUS_BROWSER_TITLE = 'Asamblea General Ordinaria | ICOES'
     import.meta.env.SHARED_CENSUS_FAVICON = '/assets/icoes-favicon.svg'
+    states.auth.memberNumber = '15516'
     const { default: SharedCensus } = await import('./SharedCensus')
     const { unmount } = await renderSharedCensus(<SharedCensus />)
 
     expect(document.title).toBe('Asamblea General Ordinaria | ICOES')
-    expect(getFaviconLink()?.getAttribute('href')).toBe('/assets/icoes-favicon.svg')
+    expect(getFaviconLink()?.getAttribute('href')).toContain('/assets/icoes-favicon.svg')
+    expect(document.body.textContent).toContain('Member No. 15516')
 
     unmount()
 
