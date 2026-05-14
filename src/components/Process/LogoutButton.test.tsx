@@ -3,6 +3,11 @@ import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from './Census/CensusType'
 import LogoutButton from './LogoutButton'
 
+const authState = vi.hoisted(() => ({
+  logout: vi.fn(),
+  setMemberNumber: vi.fn(),
+}))
+
 vi.mock('wagmi', () => ({
   useAccount: () => ({ isConnected: false }),
   useDisconnect: () => ({ disconnect: vi.fn() }),
@@ -18,11 +23,13 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
 })
 
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ logout: vi.fn() }),
+  useAuth: () => authState,
 }))
 
 describe('LogoutButton', () => {
   beforeEach(() => {
+    authState.logout.mockClear()
+    authState.setMemberNumber.mockClear()
     setReactProvidersMock({
       useElection: () =>
         mockUseElection({
@@ -40,5 +47,13 @@ describe('LogoutButton', () => {
   it('renders logout button when connected to spreadsheet census', () => {
     render(<LogoutButton />)
     expect(screen.getByText('logout')).toBeInTheDocument()
+  })
+
+  it('clears the shared census member number when logging out', () => {
+    render(<LogoutButton />)
+
+    screen.getByText('logout').click()
+
+    expect(authState.setMemberNumber).toHaveBeenCalledWith(null)
   })
 })
