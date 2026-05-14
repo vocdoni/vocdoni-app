@@ -76,6 +76,8 @@ export const sharedCensusPlugin = ({ defaultLanguage }: SharedCensusPluginOption
     defaultLanguage
   )
   const streamUrl = resolveStreamUrl(process.env.STREAM_URL)
+  const sharedCensusBrowserTitle = process.env.SHARED_CENSUS_BROWSER_TITLE
+  const sharedCensusFavicon = process.env.SHARED_CENSUS_FAVICON
 
   const define: Record<string, string> = {}
 
@@ -97,6 +99,14 @@ export const sharedCensusPlugin = ({ defaultLanguage }: SharedCensusPluginOption
 
   if (typeof sharedCensusPostText !== 'undefined') {
     define['import.meta.env.SHARED_CENSUS_POST_TEXT'] = JSON.stringify(sharedCensusPostText)
+  }
+
+  if (typeof sharedCensusBrowserTitle === 'string') {
+    define['import.meta.env.SHARED_CENSUS_BROWSER_TITLE'] = JSON.stringify(sharedCensusBrowserTitle)
+  }
+
+  if (typeof sharedCensusFavicon === 'string') {
+    define['import.meta.env.SHARED_CENSUS_FAVICON'] = JSON.stringify(sharedCensusFavicon)
   }
 
   return {

@@ -37,6 +37,8 @@ interface ImportMeta {
     SHARED_CENSUS_DISCONNECTED_TEXT?: Record<string, string>
     SHARED_CENSUS_CONNECTED_TEXT?: Record<string, string>
     SHARED_CENSUS_POST_TEXT?: Record<string, string>
+    SHARED_CENSUS_BROWSER_TITLE?: string
+    SHARED_CENSUS_FAVICON?: string
     STREAM_URL?: string
     HIDE_VOTER_COUNT: boolean
   }
