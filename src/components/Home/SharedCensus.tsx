@@ -179,8 +179,27 @@ const SharedCensusHomeContent = () => {
       {showTopContent && (
         <Box w='90%' display='flex' flexDirection='column' gap={4}>
           {(showAlways || showDisconnected || showConnected) && (
-            <Box className='shared-census' data-testid='shared-census-pretext'>
-              <Editor key={pretextContent} isDisabled defaultValue={pretextContent} />
+            <Box
+              className='shared-census'
+              data-testid='shared-census-pretext'
+              css={{
+                '& h1': {
+                  textAlign: 'center',
+                  marginBottom: '1px',
+                },
+                '& h1 span, & h2 span': {
+                  fontWeight: 'extrabold',
+                },
+                '& h1 + p': {
+                  textAlign: 'center',
+                  marginBottom: '20px !important',
+                },
+                '& p': {
+                  marginBottom: '10px !important',
+                },
+              }}
+            >
+              <Editor key={pretextContent} isDisabled defaultValue={pretextContent} variant='borderless' />
             </Box>
           )}
           {showStream && (
