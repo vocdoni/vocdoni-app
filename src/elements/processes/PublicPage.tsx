@@ -18,6 +18,7 @@ const PublicProcessPage = ({ election, organization }: PublicProcessPageProps) =
     <OrganizationProvider {...organizationProviderProps}>
       <ElectionProvider
         election={election}
+        id={election.id}
         fetchCensus
         queryOptions={{
           refetchInterval: 15_000,
