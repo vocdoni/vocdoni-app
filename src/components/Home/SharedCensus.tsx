@@ -9,7 +9,7 @@ import {
   useElection,
 } from '@vocdoni/react-components'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
 import { Link as ReactRouterLink } from 'react-router-dom'
@@ -55,6 +55,8 @@ const SharedCensusHomeContent = () => {
   const { t, i18n } = useTranslation()
   const { loading, loaded, election, connected } = useElection()
   const { account, connected: aconnected } = useClient()
+  const sharedCensusBrowserTitle = import.meta.env.SHARED_CENSUS_BROWSER_TITLE
+  const sharedCensusFavicon = import.meta.env.SHARED_CENSUS_FAVICON
 
   const isAdmin = aconnected && account?.address === (election as PublishedElection)?.organizationId
   const canViewProcesses = connected || isAdmin
@@ -114,6 +116,54 @@ const SharedCensusHomeContent = () => {
   ]
     .filter(Boolean)
     .join('\n\n')
+
+  useEffect(() => {
+    if (!sharedCensusBrowserTitle && !sharedCensusFavicon) {
+      return
+    }
+
+    const previousTitle = document.title
+    const currentFaviconLink = document.querySelector("link[rel='icon']") as HTMLLinkElement | null
+    const previousFaviconHref = currentFaviconLink?.getAttribute('href')
+    const previousFaviconType = currentFaviconLink?.getAttribute('type')
+    let faviconLink = currentFaviconLink
+    let createdFaviconLink = false
+
+    if (!faviconLink && sharedCensusFavicon) {
+      faviconLink = document.createElement('link')
+      faviconLink.setAttribute('rel', 'icon')
+      document.head.appendChild(faviconLink)
+      createdFaviconLink = true
+    }
+
+    if (sharedCensusBrowserTitle) {
+      document.title = sharedCensusBrowserTitle
+    }
+
+    if (sharedCensusFavicon && faviconLink) {
+      faviconLink.setAttribute('href', sharedCensusFavicon)
+      faviconLink.setAttribute('type', sharedCensusFavicon.endsWith('.svg') ? 'image/svg+xml' : 'image/x-icon')
+    }
+
+    return () => {
+      document.title = previousTitle
+
+      if (!sharedCensusFavicon || !faviconLink) {
+        return
+      }
+
+      if (createdFaviconLink) {
+        faviconLink.remove()
+      } else if (previousFaviconHref !== null) {
+        faviconLink.setAttribute('href', previousFaviconHref)
+        if (previousFaviconType !== null) {
+          faviconLink.setAttribute('type', previousFaviconType)
+        } else {
+          faviconLink.removeAttribute('type')
+        }
+      }
+    }
+  }, [sharedCensusBrowserTitle, sharedCensusFavicon])
 
   if (!election || election instanceof InvalidElection) {
     return null

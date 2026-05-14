@@ -135,13 +135,19 @@ const renderSharedCensus = async (ui: React.ReactElement) => {
   }
 }
 
+const getFaviconLink = () => document.querySelector("link[rel='icon']") as HTMLLinkElement | null
+
 describe('SharedCensus', () => {
   const originalProcessIds = import.meta.env.PROCESS_IDS
   const originalLanguages = import.meta.env.LANGUAGES
   const originalAlways = import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT
   const originalDisconnected = import.meta.env.SHARED_CENSUS_DISCONNECTED_TEXT
   const originalConnected = import.meta.env.SHARED_CENSUS_CONNECTED_TEXT
+  const originalBrowserTitle = import.meta.env.SHARED_CENSUS_BROWSER_TITLE
+  const originalFavicon = import.meta.env.SHARED_CENSUS_FAVICON
   const originalStream = import.meta.env.STREAM_URL
+  const originalDocumentTitle = document.title
+  const originalFaviconHref = getFaviconLink()?.getAttribute('href') ?? '/favicon.ico'
   const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
     cb(0)
     return 0
@@ -153,12 +159,24 @@ describe('SharedCensus', () => {
     delete import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT
     delete import.meta.env.SHARED_CENSUS_DISCONNECTED_TEXT
     delete import.meta.env.SHARED_CENSUS_CONNECTED_TEXT
+    delete import.meta.env.SHARED_CENSUS_BROWSER_TITLE
+    delete import.meta.env.SHARED_CENSUS_FAVICON
     delete import.meta.env.STREAM_URL
     states.election = getDefaultElectionState()
     states.client = getDefaultClientState()
     states.organization = getDefaultOrganizationState().organization
     i18nState.resolvedLanguage = 'en'
     i18nState.language = 'en'
+    document.title = originalDocumentTitle
+    const favicon = getFaviconLink()
+    if (!favicon) {
+      const link = document.createElement('link')
+      link.setAttribute('rel', 'icon')
+      link.setAttribute('href', originalFaviconHref)
+      document.head.appendChild(link)
+    } else {
+      favicon.setAttribute('href', originalFaviconHref)
+    }
     rafSpy.mockClear()
     setReactProvidersMock({
       useElection: () => states.election,
@@ -173,7 +191,24 @@ describe('SharedCensus', () => {
     import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT = originalAlways
     import.meta.env.SHARED_CENSUS_DISCONNECTED_TEXT = originalDisconnected
     import.meta.env.SHARED_CENSUS_CONNECTED_TEXT = originalConnected
+    import.meta.env.SHARED_CENSUS_BROWSER_TITLE = originalBrowserTitle
+    import.meta.env.SHARED_CENSUS_FAVICON = originalFavicon
     import.meta.env.STREAM_URL = originalStream
+  })
+
+  it('updates the browser title and favicon only while shared census is mounted', async () => {
+    import.meta.env.SHARED_CENSUS_BROWSER_TITLE = 'Asamblea General Ordinaria | ICOES'
+    import.meta.env.SHARED_CENSUS_FAVICON = '/assets/icoes-favicon.svg'
+    const { default: SharedCensus } = await import('./SharedCensus')
+    const { unmount } = await renderSharedCensus(<SharedCensus />)
+
+    expect(document.title).toBe('Asamblea General Ordinaria | ICOES')
+    expect(getFaviconLink()?.getAttribute('href')).toBe('/assets/icoes-favicon.svg')
+
+    unmount()
+
+    expect(document.title).toBe(originalDocumentTitle)
+    expect(getFaviconLink()?.getAttribute('href')).toBe(originalFaviconHref)
   })
 
   it('renders always-visible and disconnected text when not connected', async () => {
