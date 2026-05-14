@@ -3,5 +3,5 @@ validation:
     - curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
     - apt-get install -y nodejs
     - npm install -g pnpm@10.16.1
+    - ln -sf "$(npm root -g)/pnpm/bin/pnpm.cjs" /usr/local/bin/pnpm
     - pnpm install
-    - pnpm chakra:typegen
