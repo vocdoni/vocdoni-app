@@ -1,5 +1,5 @@
 validation:
   install_commands:
-    - curl -fsSL https://nodejs.org/dist/v22.22.2/node-v22.22.2-linux-x64.tar.xz | tar xJ -C /usr/local --strip-components=1
-    - curl -fsSL https://github.com/pnpm/pnpm/releases/download/v10.16.1/pnpm-linux-x64 -o /usr/local/bin/pnpm && chmod +x /usr/local/bin/pnpm
+    - curl -fsSL https://nodejs.org/dist/v22.22.2/node-v22.22.2-linux-x64.tar.xz | tar xJ -C /usr --strip-components=1
+    - curl -fsSL https://github.com/pnpm/pnpm/releases/download/v10.16.1/pnpm-linux-x64 -o /usr/bin/pnpm && chmod +x /usr/bin/pnpm
     - pnpm install
