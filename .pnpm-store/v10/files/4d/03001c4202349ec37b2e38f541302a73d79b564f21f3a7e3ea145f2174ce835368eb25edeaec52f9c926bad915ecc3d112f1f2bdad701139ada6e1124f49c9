@@ -1,0 +1,1 @@
+{"version":3,"file":"locize.d.ts","sourceRoot":"","sources":["../src/locize.ts"],"names":[],"mappings":"AAKA,OAAO,KAAK,EAAE,oBAAoB,EAAE,MAAM,SAAS,CAAA;AAmQnD,eAAO,MAAM,aAAa,GAAI,QAAQ,oBAAoB,EAAE,aAAa,GAAG,kBAAiD,CAAA;AAC7H,eAAO,MAAM,iBAAiB,GAAI,QAAQ,oBAAoB,EAAE,aAAa,GAAG,kBAAqD,CAAA;AACrI,eAAO,MAAM,gBAAgB,GAAI,QAAQ,oBAAoB,EAAE,aAAa,GAAG,kBAAoD,CAAA"}

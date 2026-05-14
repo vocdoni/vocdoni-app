@@ -1,0 +1,31 @@
+import { b as PaginationProps } from './PaginationProvider-IQtJPf2v.js';
+export { B as Button, e as ButtonProps, P as Pagination, a as PaginationContextProps, c as PaginationProvider, d as PaginationProviderProps, u as usePagination } from './PaginationProvider-IQtJPf2v.js';
+import * as react_jsx_runtime from 'react/jsx-runtime';
+import { ComponentPropsWithoutRef, PropsWithChildren } from 'react';
+import { PaginationResponse } from '@vocdoni/sdk';
+
+type EllipsisButtonProps = ComponentPropsWithoutRef<'button'> & {
+    gotoPage: (page: number) => void;
+    inputProps?: ComponentPropsWithoutRef<'input'>;
+};
+declare const EllipsisButton: ({ gotoPage, inputProps, ...rest }: EllipsisButtonProps) => react_jsx_runtime.JSX.Element;
+
+declare const RoutedPagination: ({ maxButtons, buttonProps, inputProps, pagination, ...rest }: PaginationProps) => react_jsx_runtime.JSX.Element;
+
+type RoutedPaginationContextProps = {
+    page: number;
+    initialPage?: number;
+    path: string;
+    pagination: PaginationResponse['pagination'];
+    getPathForPage: (page: number, queryParams?: string) => string;
+    setPage: (page: number, queryParams?: string) => void;
+};
+declare const useRoutedPagination: () => RoutedPaginationContextProps;
+type RoutedPaginationProviderProps = {
+    path: string;
+    pagination: PaginationResponse['pagination'];
+    initialPage?: number;
+};
+declare const RoutedPaginationProvider: ({ path, pagination, initialPage, ...rest }: PropsWithChildren<RoutedPaginationProviderProps>) => react_jsx_runtime.JSX.Element;
+
+export { EllipsisButton, PaginationProps, RoutedPagination, type RoutedPaginationContextProps, RoutedPaginationProvider, type RoutedPaginationProviderProps, useRoutedPagination };

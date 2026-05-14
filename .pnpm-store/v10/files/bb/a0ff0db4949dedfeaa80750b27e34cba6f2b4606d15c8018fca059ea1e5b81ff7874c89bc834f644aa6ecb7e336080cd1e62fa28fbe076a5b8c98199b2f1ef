@@ -1,0 +1,132 @@
+'use strict';
+
+var glob = require('glob');
+var extractor = require('./extractor.js');
+var logger = require('../../utils/logger.js');
+var pluginManager = require('../plugin-manager.js');
+var astVisitors = require('./ast-visitors.js');
+var expressionResolver = require('../parsers/expression-resolver.js');
+
+/**
+ * Main function for finding translation keys across all source files in a project.
+ *
+ * This function orchestrates the key extraction process:
+ * 1. Processes source files based on input patterns
+ * 2. Initializes and manages plugins
+ * 3. Processes each file through AST parsing and key extraction
+ * 4. Runs plugin lifecycle hooks
+ * 5. Returns a deduplicated map of all found keys
+ *
+ * @param config - The i18next toolkit configuration object
+ * @param logger - Logger instance for output (defaults to ConsoleLogger)
+ * @returns Promise resolving to a Map of unique translation keys with metadata
+ *
+ * @example
+ * ```typescript
+ * const config = {
+ *   extract: {
+ *     input: ['src/**\/*.{ts,tsx}'],
+ *     functions: ['t', '*.t'],
+ *     transComponents: ['Trans']
+ *   }
+ * }
+ *
+ * const keys = await findKeys(config)
+ * console.log(`Found ${keys.size} unique translation keys`)
+ * ```
+ */
+async function findKeys(config, logger$1 = new logger.ConsoleLogger()) {
+    const { plugins: pluginsOrUndefined, ...otherConfig } = config;
+    const plugins = pluginsOrUndefined || [];
+    const sourceFiles = await processSourceFiles(config);
+    const allKeys = new Map();
+    // 1. Create the base context with config and logger.
+    const pluginContext = pluginManager.createPluginContext(allKeys, plugins, otherConfig, logger$1);
+    // 2. Create hooks for plugins to hook into AST
+    const hooks = {
+        onBeforeVisitNode: (node) => {
+            for (const plugin of plugins) {
+                try {
+                    plugin.onVisitNode?.(node, pluginContext);
+                }
+                catch (err) {
+                    logger$1.warn(`Plugin ${plugin.name} onVisitNode failed:`, err);
+                }
+            }
+        },
+        resolvePossibleKeyStringValues: (expression) => {
+            return plugins.flatMap(plugin => {
+                try {
+                    return plugin.extractKeysFromExpression?.(expression, config, logger$1) ?? [];
+                }
+                catch (err) {
+                    logger$1.warn(`Plugin ${plugin.name} extractKeysFromExpression failed:`, err);
+                    return [];
+                }
+            });
+        },
+        resolvePossibleContextStringValues: (expression) => {
+            return plugins.flatMap(plugin => {
+                try {
+                    return plugin.extractContextFromExpression?.(expression, config, logger$1) ?? [];
+                }
+                catch (err) {
+                    logger$1.warn(`Plugin ${plugin.name} extractContextFromExpression failed:`, err);
+                    return [];
+                }
+            });
+        },
+    };
+    // 3. Create the visitor instance, passing it the context.
+    // Use a shared ExpressionResolver so captured enums/objects in one file are available when resolving MemberExpressions
+    const sharedExpressionResolver = new expressionResolver.ExpressionResolver(hooks);
+    const astVisitors$1 = new astVisitors.ASTVisitors(otherConfig, pluginContext, logger$1, hooks, sharedExpressionResolver);
+    // 4. "Wire up" the visitor's scope method to the context.
+    // This avoids a circular dependency while giving plugins access to the scope.
+    pluginContext.getVarFromScope = astVisitors$1.getVarFromScope.bind(astVisitors$1);
+    // 5. Initialize plugins
+    await pluginManager.initializePlugins(plugins);
+    // 6. Process each file
+    for (const file of sourceFiles) {
+        await extractor.processFile(file, plugins, astVisitors$1, pluginContext, otherConfig, logger$1);
+    }
+    // 7. Run onEnd hooks
+    for (const plugin of plugins) {
+        await plugin.onEnd?.(allKeys);
+    }
+    // Normalization: mark already-expanded plural keys
+    const pluralSeparator = otherConfig.extract?.pluralSeparator ?? '_';
+    const categories = ['zero', 'one', 'two', 'few', 'many', 'other'];
+    for (const ek of allKeys.values()) {
+        const parts = String(ek.key).split(pluralSeparator);
+        const last = parts[parts.length - 1];
+        const isOrdinal = parts.length >= 3 && parts[parts.length - 2] === 'ordinal';
+        if (categories.includes(last) || (isOrdinal && categories.includes(last))) {
+            ek.isExpandedPlural = true;
+        }
+    }
+    return { allKeys, objectKeys: astVisitors$1.objectKeys };
+}
+/**
+ * Processes source files using glob patterns from configuration.
+ * Excludes node_modules by default and resolves relative to current working directory.
+ *
+ * @param config - The i18next toolkit configuration object
+ * @returns Promise resolving to array of file paths to process
+ *
+ * @internal
+ */
+async function processSourceFiles(config) {
+    const defaultIgnore = ['node_modules/**'];
+    // Normalize the user's ignore option into an array
+    const userIgnore = Array.isArray(config.extract.ignore)
+        ? config.extract.ignore
+        : config.extract.ignore ? [config.extract.ignore] : [];
+    return await glob.glob(config.extract.input, {
+        // Combine default ignore patterns with user-configured ones
+        ignore: [...defaultIgnore, ...userIgnore],
+        cwd: process.cwd(),
+    });
+}
+
+exports.findKeys = findKeys;

@@ -1,0 +1,333 @@
+import type { IncomingMessage } from 'node:http';
+export type { PageContext };
+export type { PageContextServer };
+export type { PageContextClient };
+export type { PageContextWithServerRouting };
+export type { PageContextClientWithServerRouting };
+export type { PageContextInternalServer };
+export type { PageContextInternalClient };
+export type { PageContextInternalClient_ServerRouting };
+export type { PageContextInternalClient_ClientRouting };
+export type { PageContextInitInternal };
+export type { PageContextInit };
+export type { PageContextBuiltInServer_deprecated as PageContextBuiltInServer };
+export type { PageContextBuiltInClientWithClientRouting_deprecated as PageContextBuiltInClientWithClientRouting };
+export type { PageContextBuiltInClientWithServerRouting_deprecated as PageContextBuiltInClientWithServerRouting };
+import type { RuntimeAdapterTarget } from '@universal-middleware/core';
+import type { PageContextUrlInternal, PageContextUrlClient, PageContextUrlServer } from '../shared-server-client/getPageContextUrlComputed.js';
+import type { From, PageContextConfig, Source, Sources } from '../shared-server-client/page-configs/resolveVikeConfigPublic.js';
+import type { Config } from './Config.js';
+import type { AbortStatusCode } from '../shared-server-client/route/abort.js';
+import type { GlobalContextClient, GlobalContextServer, GlobalContextClientWithServerRouting } from './GlobalContext.js';
+import type { DangerouslyUseInternals } from '../shared-server-client/getPublicProxy.js';
+import type { PageContextInternalClientAfterRender } from '../client/runtime-client-routing/renderPageClient.js';
+import type { PageContextAfterRender } from '../server/runtime/renderPageServer/renderPageServerAfterRoute.js';
+import type { PageContextPublicServer } from '../server/runtime/renderPageServer/getPageContextPublicServer.js';
+import type { PageContextPublicProxyClient } from '../client/runtime-client-routing/getPageContextPublicClient.js';
+type PageContextServer<Data = unknown> = PageContextBuiltInServer<Data> & {
+    /** https://vike.dev/warning/internals */
+    dangerouslyUseInternals: DangerouslyUseInternals<PageContextInternalServer & PageContextAfterRender & PageContextPublicServer>;
+} & Vike.PageContext & Vike.PageContextServer & (Vike.Server extends {
+    server: string;
+} ? {
+    runtime: RuntimeAdapterTarget<Vike.Server['server']>;
+} : {});
+type PageContext<Data = unknown> = PageContextClient<Data> | PageContextServer<Data>;
+type PageContextClient<Data = unknown> = PageContextBuiltInClientWithClientRouting<Data> & {
+    /** https://vike.dev/warning/internals */
+    dangerouslyUseInternals: DangerouslyUseInternals<PageContextInternalClient_ClientRouting & PageContextInternalClientAfterRender & PageContextPublicProxyClient>;
+} & Vike.PageContext & Vike.PageContextClient;
+type PageContextWithServerRouting<Data = unknown> = PageContextClientWithServerRouting<Data> | PageContextServer<Data>;
+type PageContextClientWithServerRouting<Data = unknown> = PageContextBuiltInClientWithServerRouting<Data> & Vike.PageContext & Vike.PageContextClient;
+type PageContextBuiltInCommon<Data> = PageContextConfig & {
+    /**
+     * Useful for distinguishing `pageContext` from other objects and narrowing down TypeScript unions.
+     *
+     * https://vike.dev/pageContext#typescript
+     */
+    isPageContext: true;
+    /** The `export { Page }` of your `.page.js` file.
+     *
+     * https://vike.dev/Page
+     * https://vike.dev/pageContext#Page
+     */
+    Page: Config['Page'];
+    /** Route Parameters, e.g. `pageContext.routeParams.productId` for a Route String `/product/@productId`.
+     *
+     * https://vike.dev/route-string
+     * https://vike.dev/pageContext#routeParams
+     */
+    routeParams: Record<string, string>;
+    /** The page's data which was fetched using the data() hook.
+     *
+     * https://vike.dev/data
+     * https://vike.dev/pageContext#data
+     */
+    data: Data;
+    /**
+     * The HTTP response headers.
+     *
+     * https://vike.dev/headers#response
+     */
+    headersResponse: Headers;
+    /** If an error occurs, whether the error is a `404 Page Not Found`.
+     *
+     * https://vike.dev/error-page
+     */
+    is404: boolean | null;
+    /**
+     * Whether the page was navigated by the client-side router.
+     *
+     * https://vike.dev/pageContext#isClientSideNavigation
+     */
+    isClientSideNavigation: boolean;
+    /**
+     * The reason why the original page was aborted. Usually used for showing a custom message on the error page.
+     *
+     * https://vike.dev/render
+     * https://vike.dev/pageContext#abortReason
+     */
+    abortReason?: unknown;
+    /**
+     * The status code set by `throw render(abortStatusCode)`.
+     *
+     * https://vike.dev/render
+     * https://vike.dev/pageContext#abortStatusCode
+     */
+    abortStatusCode?: AbortStatusCode;
+    /**
+     * Error that occurred while rendering.
+     *
+     * https://vike.dev/error-tracking
+     * https://vike.dev/pageContext#errorWhileRendering
+     */
+    errorWhileRendering?: unknown;
+    /**
+     * The page's unique identifier.
+     */
+    pageId: string | null;
+    /** @experimental https://github.com/vikejs/vike/issues/1268 */
+    from: From;
+    /** @experimental https://github.com/vikejs/vike/issues/1268 */
+    source: Source;
+    /** @experimental https://github.com/vikejs/vike/issues/1268 */
+    sources: Sources;
+    /** @deprecated */
+    pageExports: Record<string, unknown>;
+    /**
+     * Whether the Base URL is missing in the URL of the HTTP request made to the SSR server.
+     *
+     * https://vike.dev/base-url#setup
+     * https://vike.dev/pageContext#isBaseMissing
+     */
+    isBaseMissing?: true;
+};
+type PageContextInit = {
+    /** The URL provided when `renderPage({ urlOriginal })` is called.
+     *
+     * https://vike.dev/renderPage
+     */
+    urlOriginal: string;
+    /**
+     * The HTTP request headers.
+     *
+     * The original object provided by the server.
+     *
+     * https://vike.dev/headers
+     * https://vike.dev/pageContext#headersOriginal
+     */
+    headersOriginal?: unknown;
+    /** @deprecated Set `pageContextInit.urlOriginal` instead  */ url?: string;
+};
+type PageContextInitInternal = PageContextInit & {
+    _reqDev?: IncomingMessage;
+    _reqWeb?: Request;
+};
+type PageContextBuiltInServer<Data> = PageContextBuiltInCommon<Data> & PageContextInit & PageContextUrlServer & {
+    /**
+     * The HTTP request headers.
+     *
+     * As a string object normalized by Vike.
+     *
+     * https://vike.dev/headers
+     * https://vike.dev/pageContext#headers
+     */
+    headers: Record<string, string> | null;
+    /**
+     * Whether the environment is the client-side:
+     * - In the browser, the value is `true`.
+     * - Upon SSR and pre-rendering, the value is `false`.
+     *
+     * https://vike.dev/pageContext#isClientSide
+     */
+    isClientSide: false;
+    /**
+     * Whether the page is being pre-rendered.
+     *
+     * The value is always `false` in development.
+     *
+     * https://vike.dev/pre-rendering
+     * https://vike.dev/pageContext#isPrerendering
+     */
+    isPrerendering: boolean;
+    /**
+     * Runtime information about your app.
+     *
+     * https://vike.dev/getGlobalContext
+     * https://vike.dev/pageContext#globalContext
+     */
+    globalContext: GlobalContextServer;
+    /**
+     * The CSP nonce.
+     *
+     * https://vike.dev/csp
+     */
+    cspNonce: string | null;
+    /**
+     * List of previous `pageContext` aborted by `throw redirect()` or `throw render()` that led to the final rendered page.
+     *
+     * https://vike.dev/pageContext#pageContextsAborted
+     */
+    pageContextsAborted: Partial<PageContextServer<Data>>[];
+    isHydration?: undefined;
+    isBackwardNavigation?: undefined;
+    isHistoryNavigation?: undefined;
+    previousPageContext?: undefined;
+};
+type PageContextBuiltInClientWithClientRouting<Data> = Partial<PageContextBuiltInCommon<Data>> & Pick<PageContextBuiltInCommon<Data>, 'Page' | 'routeParams' | 'pageExports' | 'config' | 'configEntries' | 'exports' | 'exportsAll' | 'abortReason' | 'data' | 'pageId' | 'source' | 'sources' | 'from'> & PageContextClientCommon & {
+    /**
+     * The current URL unprocessed (e.g. with the Base URL).
+     */
+    urlOriginal: string;
+    /**
+     * Whether the page is the first page rendered.
+     *
+     * https://vike.dev/pageContext#isHydration
+     */
+    isHydration: boolean;
+    /**
+     * Whether the user is navigating backward in history.
+     *
+     * The value is `true` when the user clicks on his browser's backward navigation button, or when invoking `history.back()`.
+     *
+     * https://vike.dev/pageContext#isBackwardNavigation
+     */
+    isBackwardNavigation: boolean | null;
+    /**
+     * Whether the user is navigating back or forward in history.
+     *
+     * The value is `true` when the user clicks on his browser's backward/forward button, or when invoking `history.back()` or `history.forward()`.
+     *
+     * https://vike.dev/pageContext#isHistoryNavigation
+     */
+    isHistoryNavigation: boolean;
+    /**
+     * Upon client-side page navigation, you can use `pageContext.previousPageContext` to access the `pageContext` of the previous page.
+     *
+     * https://vike.dev/pageContext#previousPageContext
+     */
+    previousPageContext: PageContextClient<Data> | null;
+    /**
+     * List of previous `pageContext` aborted by `throw redirect()` or `throw render()` that led to the final rendered page.
+     *
+     * https://vike.dev/pageContext#pageContextsAborted
+     */
+    pageContextsAborted: Partial<PageContextClient<Data>>[];
+    globalContext: GlobalContextClient;
+} & PageContextUrlClient;
+type PageContextBuiltInClientWithServerRouting<Data> = Partial<PageContextBuiltInCommon<Data>> & Pick<PageContextBuiltInCommon<Data>, 'Page' | 'pageExports' | 'exports' | 'abortReason' | 'pageId' | 'data'> & PageContextClientCommon & {
+    /**
+     * Whether the page is the first page rendered.
+     *
+     * The value is always `true` when using Server Routing.
+     *
+     * https://vike.dev/pageContext#isHydration
+     */
+    isHydration: true;
+    /**
+     * Whether the user is navigating back in history.
+     *
+     * The `isBackwardNavigation` property only works with Client Routing. (The value is always `null` when using Server Routing.)
+     *
+     * https://vike.dev/pageContext#isBackwardNavigation
+     */
+    isBackwardNavigation: null;
+    /**
+     * Whether the user is navigating back or forward in history.
+     *
+     * The `isHistoryNavigation` property only works with Client Routing. (The value is always `null` when using Server Routing.)
+     *
+     * https://vike.dev/pageContext#isHistoryNavigation
+     */
+    isHistoryNavigation: null;
+    globalContext: GlobalContextClientWithServerRouting;
+};
+type PageContextClientCommon = {
+    /**
+     * Whether the environment is the client-side:
+     * - In the browser, the value is `true`.
+     * - Upon SSR and pre-rendering, the value is `false`.
+     *
+     * https://vike.dev/pageContext#isClientSide
+     */
+    isClientSide: true;
+    /**
+     * Whether the page is being pre-rendered.
+     *
+     * The value is always `false` in development.
+     *
+     * https://vike.dev/pre-rendering
+     * https://vike.dev/pageContext#isPrerendering
+     */
+    isPrerendering: false;
+    cspNonce?: undefined;
+    headers?: undefined;
+};
+type PageContextInternalServer = Omit<PageContextBuiltInCommon<unknown> & PageContextUrlInternal, 'data' | 'globalContext'>;
+type OnlyUsers = 'data' | 'Page' | 'globalContext';
+type PageContextInternalClient = Omit<PageContextInternalClient_ClientRouting | PageContextInternalClient_ServerRouting, OnlyUsers>;
+type PageContextInternalClient_ClientRouting = Omit<PageContextBuiltInClientWithClientRouting<unknown>, OnlyUsers | 'previousPageContext' | 'pageContextsAborted'> & {
+    previousPageContext: {
+        pageId: string;
+    } | null;
+};
+type PageContextInternalClient_ServerRouting = Omit<PageContextBuiltInClientWithServerRouting<unknown>, OnlyUsers>;
+/** @deprecated
+ * Replace:
+ *   ```
+ *   import type { PageContextBuiltInServer } from 'vike/types'
+ *   ```
+ * With:
+ *   ```
+ *   import type { PageContextServer } from 'vike/types'
+ *   ```
+ *
+ * See https://vike.dev/pageContext#typescript
+ */
+type PageContextBuiltInServer_deprecated<_Page = never> = PageContextBuiltInServer<unknown>;
+/** @deprecated
+ * Replace:
+ *   ```
+ *   import type { PageContextBuiltInClientWithClientRouting } from 'vike/types'
+ *   ```
+ * With:
+ *   ```
+ *   import type { PageContextClient } from 'vike/types'
+ *   ```
+ *
+ * See https://vike.dev/pageContext#typescript
+ */
+type PageContextBuiltInClientWithClientRouting_deprecated<_Page = never> = PageContextBuiltInClientWithClientRouting<unknown>;
+/** @deprecated
+ * Replace:
+ *   ```
+ *   import type { PageContextBuiltInClientWithServerRouting } from 'vike/types'
+ *   ```
+ * With:
+ *   ```
+ *   import type { PageContextClientWithServerRouting as PageContextClient } from 'vike/types'
+ *   ```
+ *
+ * See https://vike.dev/pageContext#typescript
+ */
+type PageContextBuiltInClientWithServerRouting_deprecated<_Page = never> = PageContextBuiltInClientWithServerRouting<unknown>;

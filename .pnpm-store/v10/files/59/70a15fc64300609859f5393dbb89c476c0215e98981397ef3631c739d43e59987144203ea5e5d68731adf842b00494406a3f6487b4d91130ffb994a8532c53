@@ -1,0 +1,66 @@
+{
+  "name": "@brillout/json-serializer",
+  "version": "0.5.22",
+  "description": "Same as JSON but with added support for `Date`, `undefined`, `Map`, `Set`, and more.",
+  "main": "./index.mjs",
+  "type": "module",
+  "exports": {
+    ".": "./index.mjs",
+    "./parse": {
+      "import": "./dist/parse.js",
+      "types": "./dist/parse.d.ts",
+      "default": "./dist/parse.js"
+    },
+    "./stringify": {
+      "import": "./dist/stringify.js",
+      "types": "./dist/stringify.d.ts",
+      "default": "./dist/stringify.js"
+    }
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.2",
+    "@brillout/mdocs": "^0.1.30",
+    "@brillout/release-me": "^0.4.7",
+    "@types/node": "^24.0.10",
+    "@types/react": "^18.2.21",
+    "lodash.isequal": "^4.5.0",
+    "prettier": "^3.2.5",
+    "react": "^17.0.2",
+    "typescript": "^5.8.3",
+    "vitest": "^0.34.3"
+  },
+  "// Use @vitest/snapshot PR https://github.com/vitest-dev/vitest/pull/3961": "",
+  "files": [
+    "dist/",
+    "*.d.ts",
+    "*.mjs",
+    "*.js"
+  ],
+  "repository": "github:brillout/json-serializer",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "========= Dev": "",
+    "dev": "tsc --watch",
+    "========= Build": "",
+    "build": "rm -rf dist/ && tsc",
+    "========= Test": "",
+    "test": "node ./examples && vitest run",
+    "========= Build readme.md": "",
+    "docs": "mdocs",
+    "========= Formatting": "",
+    "format": "pnpm run format:biome",
+    "format:prettier": "git ls-files | egrep '\\.(json|js|jsx|css|ts|tsx|vue|mjs|cjs)$' | grep --invert-match package.json | xargs pnpm exec prettier --write",
+    "format:biome": "biome format --write .",
+    "format:check": "biome format . || echo Fix formatting by running: $ pnpm -w run format",
+    "========= Reset": "",
+    "reset": "git clean -Xdf && pnpm install && pnpm run build",
+    "========= Release": "",
+    "release": "release-me patch",
+    "release:minor": "release-me minor",
+    "release:major": "release-me major",
+    "release:commit": "release-me commit"
+  }
+}

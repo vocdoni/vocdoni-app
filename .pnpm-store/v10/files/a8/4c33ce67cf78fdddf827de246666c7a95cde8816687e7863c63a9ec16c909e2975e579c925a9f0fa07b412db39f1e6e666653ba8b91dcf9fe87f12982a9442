@@ -1,0 +1,123 @@
+export { renderToStream };
+export { disable };
+export { renderToNodeStream_set };
+export { renderToWebStream_set };
+import React from 'react';
+import ReactDOMServer, { version as reactDomVersion } from 'react-dom/server';
+import { ReactStreamingProviderSuspenseData } from './useAsync/useSuspenseData.js';
+import { StreamProvider } from './useStream.js';
+import { resolveSeoStrategy } from './renderToStream/resolveSeoStrategy.js';
+import { assert, assertUsage, getGlobalObject } from './utils.js';
+import { debugFlow } from './renderToStream/common.js';
+const globalObject = getGlobalObject('renderToStream.ts', {
+    renderToNodeStream: null,
+    renderToWebStream: null,
+});
+assertReact();
+const globalConfig = (globalThis.__react_streaming = globalThis
+    .__react_streaming || {
+    disable: false,
+});
+function disable() {
+    globalConfig.disable = true;
+}
+async function renderToStream(element, options = {}) {
+    // Let's see if a user complains
+    assertUsage(!options.renderToPipeableStream && !options.renderToReadableStream, 'using deprecated options');
+    element = React.createElement(ReactStreamingProviderSuspenseData, null, element);
+    const buffer = [];
+    let injectToStream = async (chunk) => {
+        buffer.push(chunk);
+    };
+    const doNotClosePromise = { promise: null };
+    let doNotCloseTimeout = null;
+    const doNotClose = () => {
+        let resolve;
+        doNotClosePromise.promise = new Promise((r) => (resolve = r));
+        if (doNotCloseTimeout)
+            clearTimeout(doNotCloseTimeout);
+        doNotCloseTimeout = setTimeout(() => {
+            assertUsage(false, 'makeClosableAgain() not called after 10 seconds (`const makeClosableAgain = stream.doNotClose()`)');
+        }, 10 * 1000);
+        const makeClosableAgain = () => {
+            // TO-DO/eventually: add timeout to ensure makeClosableAgain() was called
+            resolve();
+            clearTimeout(doNotCloseTimeout);
+        };
+        return makeClosableAgain;
+    };
+    let abortFn;
+    const setAbortFn = (fn) => (abortFn = fn);
+    const streamTimeout = (() => {
+        // User explicity opting out of timeout (the default value is `undefined` not `null`)
+        if (options.timeout === null)
+            return null;
+        return setTimeout(() => {
+            assert(abortFn);
+            abortFn();
+            options.onTimeout?.();
+        }, (options.timeout ?? 20) * 1000);
+    })();
+    const clearTimeouts = () => {
+        if (streamTimeout !== null)
+            clearTimeout(streamTimeout);
+        if (doNotCloseTimeout !== null)
+            clearTimeout(doNotCloseTimeout);
+    };
+    let streamEndResolve;
+    const streamEnd = new Promise((resolve) => {
+        streamEndResolve = resolve;
+    });
+    let hasStreamEnded;
+    element = React.createElement(StreamProvider, {
+        value: {
+            injectToStream: (chunk, options) => injectToStream(chunk, options),
+            hasStreamEnded: () => (!hasStreamEnded ? false : hasStreamEnded()),
+            doNotClose,
+            streamEnd,
+        },
+    }, element);
+    const disable = globalConfig.disable || (options.disable ?? resolveSeoStrategy(options).disableStream);
+    const webStream = options.webStream ?? !globalObject.renderToNodeStream;
+    debugFlow(`disable === ${disable} && webStream === ${webStream}`);
+    let ret;
+    const retCommon = { disabled: disable, doNotClose };
+    if (!webStream) {
+        ret = {
+            ...retCommon,
+            ...(await globalObject.renderToNodeStream(element, disable, options, doNotClosePromise, setAbortFn, clearTimeouts)),
+        };
+    }
+    else {
+        assert(globalObject.renderToWebStream);
+        ret = {
+            ...retCommon,
+            ...(await globalObject.renderToWebStream(element, disable, options, doNotClosePromise, setAbortFn, clearTimeouts)),
+        };
+    }
+    injectToStream = ret.injectToStream;
+    buffer.forEach((chunk) => injectToStream(chunk));
+    buffer.length = 0;
+    hasStreamEnded = ret.hasStreamEnded;
+    ret.streamEnd.then(streamEndResolve);
+    // Properly handling rejection is complex, but luckily streamEnd never rejects
+    // https://github.com/brillout/promise-forwarding
+    ret.streamEnd.catch(() => assert(false)); // streamEnd never rejects
+    debugFlow('promise `await renderToStream()` resolved');
+    return ret;
+}
+function renderToNodeStream_set(renderToNodeStream) {
+    globalObject.renderToNodeStream = renderToNodeStream;
+}
+function renderToWebStream_set(renderToWebStream) {
+    globalObject.renderToWebStream = renderToWebStream;
+}
+// To debug wrong peer dependency loading:
+//  - https://stackoverflow.com/questions/21056748/seriously-debugging-node-js-cannot-find-module-xyz-abcd
+//  - https://stackoverflow.com/questions/59865584/how-to-invalidate-cached-require-resolve-results
+function assertReact() {
+    const versionMajor = parseInt(reactDomVersion.split('.')[0], 10);
+    assertUsage(versionMajor >= 18, `\`react-dom@${reactDomVersion}\` was loaded, but react-streaming only works with React version 18 or greater.`);
+    assert(typeof ReactDOMServer.renderToPipeableStream === 'function' ||
+        typeof ReactDOMServer.renderToReadableStream === 'function');
+}

@@ -1,0 +1,19 @@
+'use client';
+import { jsx } from 'react/jsx-runtime';
+import { mergeProps } from '@zag-js/react';
+import { forwardRef } from 'react';
+import { createSplitProps } from '../../utils/create-split-props.js';
+import { ark } from '../factory.js';
+import { useSplitterContext } from './use-splitter-context.js';
+import { SplitterResizeTriggerPropsProvider } from './use-splitter-resize-trigger-props-context.js';
+
+const splitResizeTriggerProps = createSplitProps();
+const SplitterResizeTrigger = forwardRef((props, ref) => {
+  const [triggerProps, localProps] = splitResizeTriggerProps(props, ["disabled", "id"]);
+  const splitter = useSplitterContext();
+  const mergedProps = mergeProps(splitter.getResizeTriggerProps(triggerProps), localProps);
+  return /* @__PURE__ */ jsx(SplitterResizeTriggerPropsProvider, { value: triggerProps, children: /* @__PURE__ */ jsx(ark.button, { ref, ...mergedProps }) });
+});
+SplitterResizeTrigger.displayName = "SplitterResizeTrigger";
+
+export { SplitterResizeTrigger };

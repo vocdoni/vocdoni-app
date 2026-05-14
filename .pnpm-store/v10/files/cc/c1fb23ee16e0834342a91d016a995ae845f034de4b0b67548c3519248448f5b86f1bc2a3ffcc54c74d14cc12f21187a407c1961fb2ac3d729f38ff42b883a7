@@ -1,0 +1,71 @@
+import { node, node as node$1 } from "@universal-deploy/node/vite";
+import { EntryMeta, Fetchable, ServerOptions } from "@universal-deploy/store";
+import { Environment, Plugin } from "vite";
+
+//#region src/const.d.ts
+declare const catchAllId: "ud:catch-all";
+declare const INSTANCE: unique symbol;
+//#endregion
+//#region src/plugins/auto.d.ts
+type NodePluginOptions = Parameters<typeof node$1>[0];
+/**
+ * Automatically enables the node adapter if no other deployment target (Vercel, Cloudflare, Netlify) is detected.
+ */
+declare function auto(options?: {
+  node?: NodePluginOptions;
+}): Plugin[];
+//#endregion
+//#region src/plugins/catch-all.d.ts
+declare function catchAll(): Plugin;
+//#endregion
+//#region src/plugins/dev-server.d.ts
+/**
+ * Resolves catch-all entry and forwards incoming requests to its `fetch()` handler.
+ *
+ * @param environment which server-side environment to use. Defaults to `ssr`
+ */
+declare function devServer({
+  environment
+}?: {
+  environment?: string;
+}): Plugin;
+//#endregion
+//#region src/plugins/hmr.d.ts
+declare function hmr(): Plugin;
+//#endregion
+//#region src/plugins/resolver.d.ts
+interface ResolverApi {
+  /**
+   * Map a resolved ID to zero, one, or multiple entries
+   */
+  findEntries: Map<string, EntryMeta[]>;
+}
+/**
+ * Keep track of resolved server entries
+ */
+declare function resolver(): Plugin<(env: Environment) => ResolverApi>;
+declare function isServerEntry(env: Environment, id: string): boolean;
+//#endregion
+//#region src/plugins/rollup-entries-compat.d.ts
+/**
+ * Vite plugin that provides compatibility for resolving the SSR Rollup entry
+ * and registers it in the shared `store.entries`.
+ *
+ * Notes:
+ * - The effect is applied only once per process (guarded by an internal flag).
+ * - It currently registers a catch-all route pattern.
+ */
+declare function compat(config?: {
+  entry?: string;
+}): Plugin;
+//#endregion
+//#region src/plugins/supported.d.ts
+type SupportedTarget = "vite-plugin-vercel" | "@cloudflare/vite-plugin" | "@netlify/vite-plugin" | "@universal-deploy/node";
+/**
+ * Resolves an array of supported target plugins.
+ *
+ * @param callback
+ */
+declare function resolveTargets(callback: (targets: SupportedTarget[]) => void | Promise<void>): Plugin;
+//#endregion
+export { type Fetchable, INSTANCE, type ServerOptions, type SupportedTarget, auto, auto as default, catchAll, catchAllId, compat, devServer, hmr, isServerEntry, node, resolveTargets, resolver };

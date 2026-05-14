@@ -1,0 +1,62 @@
+{
+  "name": "isbot-fast",
+  "version": "1.2.0",
+  "description": "JavaScript module detecting bots/crawlers/spiders via user-agent",
+  "main": "index.js",
+  "homepage": "https://github.com/mahovich/isbot-fast",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mahovich/isbot-fast.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mahovich/isbot-fast/issues"
+  },
+  "keywords": [
+    "bot",
+    "spider",
+    "robot",
+    "crawler",
+    "useragent",
+    "user-agent",
+    "detector",
+    "detect",
+    "detection",
+    "is-bot",
+    "isbot",
+    "bot-detection",
+    "botdetection",
+    "detect-bot",
+    "detectbot",
+    "bot-detect",
+    "botdetect",
+    "is-spider",
+    "isspider",
+    "spider-detection",
+    "spiderdetection",
+    "detect-spider",
+    "detectspider",
+    "spider-detect",
+    "spiderdetect",
+    "is-robot",
+    "isrobot",
+    "robot-detection",
+    "robotdetection",
+    "detect-robot",
+    "detectrobot",
+    "robot-detect",
+    "robotdetect",
+    "is-crawler",
+    "iscrawler",
+    "crawler-detection",
+    "crawlerdetection",
+    "detect-crawler",
+    "detectcrawler",
+    "crawler-detect",
+    "crawlerdetect"
+  ],
+  "author": "mahovich",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}

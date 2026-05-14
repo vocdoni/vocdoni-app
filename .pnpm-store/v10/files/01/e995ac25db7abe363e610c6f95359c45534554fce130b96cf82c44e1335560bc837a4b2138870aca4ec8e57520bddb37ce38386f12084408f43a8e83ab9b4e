@@ -1,0 +1,13 @@
+export { logVite };
+export { logConfigInfo };
+export { logErrorServerDev };
+export type { LogType };
+export type { AddAssertTagsDev };
+import { type PageContext_logRuntime } from '../../../server/runtime/loggerRuntime.js';
+import '../assertEnvVite.js';
+type LogType = 'info' | 'warn' | 'error' | 'error-resolve';
+declare function logConfigInfo(msg: string, logType: LogType): void;
+declare function logVite(msg: string, logType: LogType, requestId: number | null, prependViteTag: boolean): void;
+declare function logErrorServerDev(err: unknown, pageContext: PageContext_logRuntime, errorComesFromVite?: boolean): void;
+type AddAssertTagsDev = typeof addAssertTagsDev;
+declare function addAssertTagsDev<TagVike extends string, TagType extends string>(tagVike: TagVike, tagType: TagType): `1:37:00 PM ${TagVike}[request(n)]${TagType}`;

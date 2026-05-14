@@ -1,0 +1,47 @@
+export { modifyUrlSameOrigin };
+// We don't move modifyUrlSameOrigin() to the modifyUrl.ts file because we plan to use modifyUrlSameOrigin() on the client-side:
+// https://github.com/vikejs/vike/blob/c5a2de5e85262771f97851767c00ac35da69c64b/packages/vike/client/runtime-client-routing/navigate.ts#L4
+import { createUrlFromComponents, assertUsageUrlPathAbsolute, parseUrl } from '../utils/parseUrl.js';
+import { isNotNullish_keyVal } from '../utils/isNullish.js';
+import { objectFilter } from '../utils/objectFilter.js';
+function modifyUrlSameOrigin(url, modify) {
+    const urlParsed = parseUrl(url, '/');
+    // Pathname
+    const pathname = modify.pathname ?? urlParsed.pathnameOriginal;
+    assertUsageUrlPathAbsolute(pathname, 'modify.pathname');
+    // Search
+    let search = modify.search === null ? '' : !modify.search ? urlParsed.searchOriginal : resolveSearch(urlParsed, modify.search);
+    if (search === '?')
+        search = '';
+    // Hash
+    let hash;
+    if (modify.hash === null) {
+        hash = '';
+    }
+    else if (modify.hash === undefined) {
+        hash = urlParsed.hashOriginal ?? '';
+    }
+    else {
+        hash = modify.hash;
+        if (!hash.startsWith('#'))
+            hash = '#' + hash;
+    }
+    const urlModified = createUrlFromComponents(urlParsed.origin, pathname, search, hash);
+    return urlModified;
+}
+function resolveSearch(urlParsed, modifySearch) {
+    let searchParams;
+    if (modifySearch instanceof URLSearchParams) {
+        // Overwrite
+        searchParams = modifySearch;
+    }
+    else {
+        // Merge
+        const searchMap = objectFilter({ ...urlParsed.search, ...objectFilter(modifySearch, isNotUndefined) }, (isNotNullish_keyVal));
+        searchParams = new URLSearchParams(searchMap);
+    }
+    return '?' + searchParams.toString();
+}
+function isNotUndefined(arg) {
+    return arg[1] !== undefined;
+}

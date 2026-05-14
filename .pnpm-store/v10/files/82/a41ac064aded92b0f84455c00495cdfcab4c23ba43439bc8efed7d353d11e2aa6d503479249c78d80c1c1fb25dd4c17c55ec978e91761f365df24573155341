@@ -1,0 +1,12 @@
+'use client';
+'use strict';
+
+Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+
+const collection = require('@zag-js/collection');
+
+const createTreeCollection = (options) => new collection.TreeCollection(options);
+const createFileTreeCollection = (paths) => collection.filePathToTree(paths);
+
+exports.createFileTreeCollection = createFileTreeCollection;
+exports.createTreeCollection = createTreeCollection;

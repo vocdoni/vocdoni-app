@@ -1,0 +1,10 @@
+export { defineConfig } from './config.js';
+export { extract, runExtractor } from './extractor/core/extractor.js';
+export { findKeys } from './extractor/core/key-finder.js';
+export { getTranslations } from './extractor/core/translation-manager.js';
+import './extractor/parsers/jsx-parser.js';
+export { recommendedAcceptedAttributes, recommendedAcceptedTags, runLinter } from './linter.js';
+export { runSyncer } from './syncer.js';
+export { runStatus } from './status.js';
+export { runTypesGenerator } from './types-generator.js';
+export { runRenameKey } from './rename-key.js';

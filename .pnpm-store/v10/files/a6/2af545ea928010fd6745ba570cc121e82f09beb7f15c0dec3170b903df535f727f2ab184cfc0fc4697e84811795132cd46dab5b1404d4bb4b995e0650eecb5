@@ -1,0 +1,252 @@
+// TO-DO/next-major-release: remove
+// Remove this workaround if the other workaround config.build.ssrEmitAssets turns out to be reliable.
+//  - Remove this file then revert this commit: https://github.com/vikejs/vike/commit/805a18974f13420a78fcc30fdd676696e405c3ca
+// Workaround to make client-side bundles include the CSS imports living in server-side-only code.
+//  - This is needed for HTML-only pages, and React Server Components.
+//  - We recommend using the debug flag to get an idea of how this plugin works: `$ DEBUG=vike:pluginExtractAssets pnpm exec vike build`. Then have a look at `dist/client/manifest.json` and see how `.page.server.js` entries have zero JavaScript but only CSS.
+//  - This approach supports import path aliases `vite.config.js#resolve.alias` https://vitejs.dev/config/#resolve-alias
+export { pluginExtractAssets };
+export { extractAssetsRE };
+import { createDebug } from '../../../utils/debug.js';
+import { isScriptFile } from '../../../utils/isScriptFile.js';
+import { rollupSourceMapRemove } from '../../../utils/rollupSourceMap.js';
+import { styleFileRE } from '../../../utils/styleFileRE.js';
+import { addVirtualFileIdPrefix, isVirtualFileId, removeVirtualFileIdPrefix } from '../../../utils/virtualFileId.js';
+import { assert, assertUsage } from '../../../utils/assert.js';
+import { assertPosixPath } from '../../../utils/path.js';
+import { extractAssetsAddQuery } from '../../../shared-server-node/extractAssetsQuery.js';
+import { isAsset } from '../shared/isAsset.js';
+import { getImportStatements } from '../shared/parseEsModule.js';
+import pc from '@brillout/picocolors';
+import { handleAssetsManifest_isFixEnabled } from './build/handleAssetsManifest.js';
+import { getVikeConfigInternal } from '../shared/resolveVikeConfigInternal.js';
+import { assertV1Design } from '../../../shared-server-node/assertV1Design.js';
+import { normalizeId } from '../shared/normalizeId.js';
+import { isViteServerSide_extraSafe } from '../shared/isViteServerSide.js';
+import { resolveIncludeAssetsImportedByServer } from '../../../server/runtime/renderPageServer/getPageAssets/retrievePageAssetsProd.js';
+import '../assertEnvVite.js';
+const extractAssetsRE = /(\?|&)extractAssets(?:&|$)/;
+const rawRE = /(\?|&)raw(?:&|$)/;
+const urlRE = /(\?|&)url(?:&|$)/;
+const EMPTY_MODULE_ID = 'virtual:vike:empty-module';
+const debug = createDebug('vike:pluginExtractAssets');
+// === Rolldown filter
+const filterRolldown = {
+    id: {
+        include: extractAssetsRE,
+    },
+};
+const filterFunction = (id) => extractAssetsRE.test(id);
+// ===
+function pluginExtractAssets() {
+    let config;
+    let vikeConfig;
+    if (handleAssetsManifest_isFixEnabled())
+        return [];
+    let isFixEnabled;
+    return [
+        // This plugin removes all JavaScript from server-side only code, so that only CSS imports remains. (And also static files imports e.g. `import logoURL from './logo.svg.js'`).
+        {
+            name: 'vike:pluginExtractAssets:remove-javaScript',
+            // In dev, things just work. (Because Vite's module graph erroneously conflates the Vite server-side importees with the client-side importees.)
+            apply: 'build',
+            enforce: 'post',
+            transform: {
+                filter: filterRolldown,
+                async handler(src, id, options) {
+                    id = normalizeId(id);
+                    assert(filterFunction(id));
+                    if (isFixEnabled) {
+                        // I'm guessing isFixEnabled can only be true when mixing both designs: https://github.com/vikejs/vike/issues/1480
+                        assertV1Design(vikeConfig._pageConfigs, true);
+                        assert(false);
+                    }
+                    const includeAssetsImportedByServer = resolveIncludeAssetsImportedByServer(vikeConfig.config);
+                    assert(includeAssetsImportedByServer);
+                    assert(!isViteServerSide_extraSafe(config, this.environment, options));
+                    const importStatements = await getImportStatements(src);
+                    const moduleNames = getImportedModules(importStatements);
+                    const code = moduleNames.map((moduleName) => `import '${moduleName}';`).join('\n');
+                    debugTransformResult(id, code, importStatements);
+                    return rollupSourceMapRemove(code);
+                },
+            },
+        },
+        // This plugin appends `?extractAssets` to module IDs
+        {
+            name: 'vike:pluginExtractAssets:append-extractAssets-query',
+            apply: 'build',
+            // We ensure this plugin to be run before:
+            //  - rollup's `alias` plugin; https://github.com/rollup/plugins/blob/5363f55aa1933b6c650832b08d6a54cb9ea64539/packages/alias/src/index.ts
+            //  - Vite's `vite:resolve` plugin; https://github.com/vitejs/vite/blob/d649daba7682791178b711d9a3e44a6b5d00990c/packages/vite/src/node/plugins/resolve.ts#L105
+            enforce: 'pre',
+            resolveId: {
+                async handler(source, importer, options) {
+                    if (isViteServerSide_extraSafe(config, this.environment, options)) {
+                        // When building for the server, there should never be a `?extractAssets` query
+                        assert(!extractAssetsRE.test(source));
+                        assert(importer === undefined || !extractAssetsRE.test(importer));
+                        return;
+                    }
+                    // If there is no `importer` then `module` is an entry.
+                    // We don't need to append `?extractAssets` to entries because they already have `?extractAssets` as Vike appends `?extractAssets` to entries by using `import.meta.glob('/**/*.page.server.js', { as: "extractAssets" })` (see `generateImportGlobs.ts`).
+                    if (!importer) {
+                        return;
+                    }
+                    // We only append `?extractAssets` if the parent module has `?extractAssets`
+                    if (!extractAssetsRE.test(importer)) {
+                        return;
+                    }
+                    const includeAssetsImportedByServer = resolveIncludeAssetsImportedByServer(vikeConfig.config);
+                    assert(includeAssetsImportedByServer);
+                    let resolution = null;
+                    try {
+                        resolution = await this.resolve(source, importer, { skipSelf: true, ...options });
+                    }
+                    catch { }
+                    // Sometimes Rollup fails to resolve. If it fails to resolve, we assume the dependency to be an npm package and we skip it. (I guess Rollup should always be able to resolve local dependencies?)
+                    if (!resolution)
+                        return emptyModule(source, importer);
+                    const { id: file, external } = resolution;
+                    // Nothing is externalized when building for the client-side
+                    assert(external === false);
+                    // We include:
+                    //  - CSS(/LESS/SCSS/...) files
+                    //  - Asset files (`.svg`, `.pdf`, ...)
+                    //  - URL imports (e.g. `import scriptUrl from './script.js?url.js'`)
+                    if (styleFileRE.test(file) || isAsset(file) || urlRE.test(file)) {
+                        debugOperation('INCLUDED', file, importer);
+                        return resolution;
+                    }
+                    // We erase `source` if its file doesn't contain JavaScript
+                    if (!isScriptFile(file)) {
+                        return emptyModule(file, importer);
+                    }
+                    // If the import path resolves to a file in `node_modules/`, we ignore that file:
+                    //  - Direct CSS dependencies are included though, such as `import 'bootstrap/theme/dark.css'`. (Because the above if-branch for CSS files will add the file.)
+                    //  - Loading CSS from a library (living in `node_modules/`) in a non-direct way is unconventional; we can safely not support this case. (I'm not aware of any library that does this.)
+                    assertPosixPath(file);
+                    if (file.includes('/node_modules/')) {
+                        return emptyModule(file, importer);
+                    }
+                    // When a library is symlinked, it lives outside `root`.
+                    assertPosixPath(config.root);
+                    if (!file.startsWith(config.root)) {
+                        return emptyModule(file, importer);
+                    }
+                    return appendExtractAssetsQuery(file, importer);
+                },
+            },
+        },
+        {
+            name: 'vike:pluginExtractAssets-3',
+            apply: 'build',
+            load: {
+                handler(id) {
+                    if (!isVirtualFileId(id))
+                        return undefined;
+                    id = removeVirtualFileIdPrefix(id);
+                    if (id === EMPTY_MODULE_ID) {
+                        return '// Erased by vike:pluginExtractAssets';
+                    }
+                },
+            },
+            config: {
+                handler() {
+                    if (debug.isActivated) {
+                        return { logLevel: 'silent' };
+                    }
+                },
+            },
+        },
+        {
+            name: 'vike:pluginExtractAssets-4',
+            configResolved: {
+                async handler(config_) {
+                    config = config_;
+                    vikeConfig = await getVikeConfigInternal();
+                    isFixEnabled = handleAssetsManifest_isFixEnabled();
+                    if (!isFixEnabled) {
+                        // https://github.com/vikejs/vike/issues/1060
+                        assertUsage(!config.plugins.find((p) => p.name === 'vite-tsconfig-paths'), 'vite-tsconfig-paths not supported, remove it and use vite.config.js#resolve.alias instead');
+                    }
+                },
+            },
+        },
+    ];
+}
+function emptyModule(file, importer) {
+    debugOperation('NUKED', file, importer);
+    return addVirtualFileIdPrefix(EMPTY_MODULE_ID);
+}
+function appendExtractAssetsQuery(file, importer) {
+    debugOperation('TRANSFORMED', file, importer);
+    return extractAssetsAddQuery(file);
+}
+function getImportedModules(importStatements) {
+    const moduleNames = importStatements
+        .map(analyzeImport)
+        .filter(({ moduleName, skip }) => {
+        debug(`import ${skip ? 'SKIPPED' : 'INCLUDED'} : ${moduleName}`);
+        return !skip;
+    })
+        .map(({ moduleName }) => {
+        assert(moduleName);
+        return moduleName;
+    });
+    return moduleNames;
+}
+function analyzeImport(importStatement) {
+    const { a: assertion, n } = importStatement;
+    // `n` is `undefined` for dynamic imports with variable, e.g. `import(moduleName)`
+    if (n === undefined)
+        return { moduleName: null, skip: true };
+    const moduleName = n;
+    // Remove assertions such as:
+    //  - `import json from './json.json' assert { type: 'json.js' }`
+    //  - `import('asdf', { assert: { type: 'json' }})
+    if (assertion !== -1) {
+        return { moduleName, skip: true };
+    }
+    // Add imports such as `import logoUrl from './logo.svg?url.js'`
+    if (urlRE.test(moduleName)) {
+        return { moduleName, skip: false };
+    }
+    // Remove imports such as `import logoUrl from './logo.svg?raw.js'`
+    if (rawRE.test(moduleName)) {
+        return { moduleName, skip: true };
+    }
+    /* We shouldn't do this because of aliased imports
+    if (!moduleName.startsWith('.')) {
+      return { moduleName, skip: true }
+    }
+    */
+    // It seems like we need to manually nuke `react`; it seems that what the React runtime `@vitejs/react` injects is not picked up by our `resolveId` hook.
+    if (/^react($|\/)/.test(moduleName)) {
+        return { moduleName, skip: true };
+    }
+    return { moduleName, skip: false };
+}
+function debugOperation(operation, id, importer) {
+    debug(`import ${operation}: ${id} (importer: ${importer})`);
+}
+function stringifyImportStatements(importStatements) {
+    const importsStr = importStatements.map((importStatement) => {
+        const { a: assertion, n } = importStatement;
+        // `n` is `undefined` for dynamic imports with variable, e.g. `import(moduleName)`
+        if (n === undefined)
+            return 'import(...)';
+        let importStr = `import '${n}'`;
+        if (assertion !== -1) {
+            importStr += ' assert { ... }';
+        }
+        return importStr;
+    });
+    return importsStr;
+}
+function debugTransformResult(id, code, importStatements) {
+    const importStatementsStr = stringifyImportStatements(importStatements)
+        .map((s) => pc.cyan(s))
+        .join(', ');
+    debug(`source TRANSFORMED: ${id} (CODE: ${pc.cyan(code.split('\n').join(' '))}, IMPORTS: ${importStatementsStr})`);
+}

@@ -1,0 +1,87 @@
+{
+  "name": "i18next-cli",
+  "version": "1.42.8",
+  "description": "A unified, high-performance i18next CLI.",
+  "type": "module",
+  "bin": {
+    "i18next-cli": "./dist/esm/cli.js"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./types/index.d.ts",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./cjs": {
+      "types": "./types/index.d.ts",
+      "default": "./dist/cjs/index.js"
+    },
+    "./esm": {
+      "types": "./types/index.d.ts",
+      "default": "./dist/esm/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && rollup -c && rm -rf types && tsc -d --declarationDir types --declarationMap --emitDeclarationOnly",
+    "lint": "eslint .",
+    "test": "npm run lint && vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "preversion": "npm run test && npm run build",
+    "postversion": "npm run build && git push && git push --tags"
+  },
+  "keywords": [
+    "i18next",
+    "swc",
+    "cli"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i18next/i18next-cli.git"
+  },
+  "homepage": "https://github.com/i18next/i18next-cli",
+  "bugs": {
+    "url": "https://github.com/i18next/i18next-cli/issues"
+  },
+  "devDependencies": {
+    "@rollup/plugin-replace": "6.0.3",
+    "@rollup/plugin-terser": "0.4.4",
+    "@types/inquirer": "9.0.9",
+    "@types/node": "25.2.1",
+    "@types/react": "19.2.13",
+    "@vitest/coverage-v8": "4.0.18",
+    "eslint": "9.39.2",
+    "eslint-plugin-import": "2.32.0",
+    "memfs": "4.56.10",
+    "neostandard": "0.12.2",
+    "rollup-plugin-typescript2": "0.36.0",
+    "typescript": "5.9.3",
+    "unplugin-swc": "1.5.9",
+    "vitest": "4.0.18"
+  },
+  "dependencies": {
+    "@croct/json5-parser": "0.2.2",
+    "@swc/core": "1.15.11",
+    "yaml": "2.8.2",
+    "chokidar": "5.0.0",
+    "commander": "14.0.3",
+    "execa": "9.6.1",
+    "glob": "13.0.1",
+    "i18next-resources-for-ts": "2.0.0",
+    "inquirer": "13.2.2",
+    "jiti": "2.6.1",
+    "jsonc-parser": "3.3.1",
+    "minimatch": "10.1.2",
+    "ora": "9.3.0",
+    "react": "^19.2.4",
+    "react-i18next": "^16.5.4"
+  }
+}

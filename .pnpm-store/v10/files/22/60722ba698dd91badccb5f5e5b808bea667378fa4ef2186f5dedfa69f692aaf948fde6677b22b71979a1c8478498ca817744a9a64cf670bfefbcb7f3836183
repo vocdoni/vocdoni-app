@@ -1,0 +1,25 @@
+export { determineFsAllowList };
+import { searchForWorkspaceRoot } from 'vite';
+import path from 'node:path';
+import { assert } from '../../../../utils/assert.js';
+import { assertPosixPath } from '../../../../utils/path.js';
+import { getPackageNodeModulesDirectory } from '../../../../utils/requireResolve.js';
+import { fileURLToPath } from 'node:url';
+import '../../assertEnvVite.js';
+const importMetaUrl = import.meta.url;
+assertPosixPath(importMetaUrl);
+const __dirname_ = path.posix.dirname(fileURLToPath(importMetaUrl));
+assertPosixPath(__dirname_);
+async function determineFsAllowList(config) {
+    const fsAllow = config.server.fs.allow;
+    // fsAllow should already contain searchForWorkspaceRoot()
+    assert(fsAllow.length >= 1);
+    fsAllow.push(process.cwd());
+    // searchForWorkspaceRoot() is buggy: https://github.com/vikejs/vike/issues/555.
+    // BUt that's not a problem since Vite automatically inserts searchForWorkspaceRoot().
+    // We add it again just to be sure.
+    fsAllow.push(searchForWorkspaceRoot(process.cwd()));
+    // Add node_modules/vike/
+    const packageNodeModulesDirectory = getPackageNodeModulesDirectory();
+    fsAllow.push(packageNodeModulesDirectory);
+}

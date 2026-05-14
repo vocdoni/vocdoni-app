@@ -1,0 +1,16 @@
+// TO-DO/eventually: remove
+export { assertVirtualFileExports };
+import { assert } from '../utils/assert.js';
+function assertVirtualFileExports(moduleExports, test, moduleId) {
+    assert(moduleExports, typeof moduleExports);
+    if (!test(moduleExports)) {
+        /* https://github.com/vikejs/vike/issues/2903#issuecomment-3642285811
+        throw getProjectError('@cloudflare/vite-plugin error https://github.com/vikejs/vike/issues/2903#issuecomment-3642285811')
+        /*/
+        assert(false, { moduleExports, moduleExportsKeys: getKeys(moduleExports), moduleId });
+        //*/
+    }
+}
+function getKeys(obj) {
+    return [...Object.getOwnPropertyNames(obj), ...Object.getOwnPropertySymbols(obj), ...Object.keys(obj)];
+}

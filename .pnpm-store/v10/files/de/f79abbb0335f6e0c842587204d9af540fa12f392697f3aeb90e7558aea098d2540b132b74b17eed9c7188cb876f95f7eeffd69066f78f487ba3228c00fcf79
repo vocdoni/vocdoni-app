@@ -1,0 +1,74 @@
+export { pluginModuleBanner };
+import { assert } from '../../../../utils/assert.js';
+import { isVersionMatch } from '../../../../utils/assertVersion.js';
+import { removeVirtualFileIdPrefix } from '../../../../utils/virtualFileId.js';
+import { getMagicString } from '../../shared/getMagicString.js';
+import '../../assertEnvVite.js';
+// Misusing legal comments so that esbuild doesn't remove them.
+// - Legal comments: https://esbuild.github.io/api/#legal-comments
+// - Terser removes legal comments, but I guess users use terser to minify JavaScript so I guess it's a good thing that comment is removed.
+// - Rollup's banner feature doesn't work with Vite: https://github.com/vitejs/vite/issues/8412
+//   - But, anyways, we want to prepend the banner at the beginning of each module, not at the beginning of each file (I believe that's what Rollup's banner feature does).
+// - Potential alternative: Rolldown's `postBanner` https://x.com/voidzerodev/status/2001683010446299613
+// - Potential alternative: Rolldown's `//#region` https://github.com/vitejs/vite/issues/21228#issuecomment-3627899741
+function pluginModuleBanner() {
+    let config;
+    let isEnabled = false;
+    return [
+        {
+            name: 'vike:build:pluginModuleBanner',
+            enforce: 'post',
+            apply: 'build',
+            applyToEnvironment(environment) {
+                return checkIsEnabled(environment.config);
+            },
+            configResolved: {
+                handler(config_) {
+                    config = config_;
+                    isEnabled = checkIsEnabled(config);
+                },
+            },
+            transform: {
+                order: 'post',
+                filter: {
+                    get id() {
+                        return isEnabled ? undefined : 'this-module-id-does-not-exist-and-never-matches-any-module';
+                    },
+                },
+                handler(code, id) {
+                    if (!isEnabled)
+                        return undefined;
+                    const { minify } = this.environment.config.build;
+                    assert(minify === false, { minify });
+                    if (id.startsWith('\0'))
+                        id = id;
+                    id = removeVirtualFileIdPrefix(id);
+                    if (id.startsWith(config.root))
+                        id = id.slice(config.root.length + 1);
+                    id = id.replaceAll('*/', '*\\/'); // https://github.com/vikejs/vike/issues/2377
+                    const { magicString, getMagicStringResult } = getMagicString(code, id);
+                    magicString.prepend(`/*! ${id} [vike:pluginModuleBanner] */\n`);
+                    return getMagicStringResult();
+                },
+            },
+        },
+    ];
+}
+function checkIsEnabled(config) {
+    const { minify } = config.build;
+    assert(minify === false || minify, { minify });
+    const isEnabled = !minify && !hasNativeModuleRegions(config);
+    // Avoid the legal comments inserted in the transform() hook to be removed.
+    // https://github.com/vitejs/vite/issues/21085#issuecomment-3502781005
+    if (isEnabled && config.esbuild)
+        config.esbuild.legalComments = 'inline';
+    return isEnabled;
+}
+// Vite 8 / Rolldown already emits native `//#region /path/...` markers for non-minified builds.
+// - https://github.com/vitejs/vite/issues/21228#issuecomment-3627899741
+// - TO-DO/eventually: remove this file once Vike requires Vite 8 or above
+function hasNativeModuleRegions(config) {
+    const viteVersion = config._viteVersionResolved;
+    assert(viteVersion);
+    return isVersionMatch(viteVersion, ['8.0.0']);
+}

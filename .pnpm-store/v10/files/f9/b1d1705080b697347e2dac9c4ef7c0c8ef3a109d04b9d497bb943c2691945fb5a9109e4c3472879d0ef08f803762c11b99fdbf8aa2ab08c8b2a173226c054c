@@ -1,0 +1,38 @@
+"use strict";
+import { z } from 'zod';
+
+const compositionFileSchema = z.object({
+  type: z.string(),
+  id: z.string(),
+  file: z.object({
+    name: z.string(),
+    content: z.string()
+  }),
+  component: z.string(),
+  npmDependencies: z.array(z.string()),
+  fileDependencies: z.array(z.string())
+});
+const compositionIndexSchema = z.array(
+  z.object({
+    type: z.string(),
+    id: z.string(),
+    file: z.string(),
+    component: z.string(),
+    npmDependencies: z.array(z.string()),
+    fileDependencies: z.array(z.string())
+  })
+);
+const processEnvSchema = z.object({
+  // REGISTRY_URL: z.string().default("http://localhost:3000"),
+  REGISTRY_URL: z.string().default("https://chakra-v3-docs.vercel.app"),
+  HTTPS_PROXY: z.string().optional()
+});
+const addCommandFlagsSchema = z.object({
+  force: z.boolean().optional(),
+  dryRun: z.boolean().optional(),
+  outdir: z.string().optional(),
+  all: z.boolean().optional(),
+  tsx: z.boolean().optional()
+});
+
+export { addCommandFlagsSchema, compositionFileSchema, compositionIndexSchema, processEnvSchema };

@@ -1,0 +1,165 @@
+export { pluginCommon };
+import { isDevCheck } from '../../../utils/isDev.js';
+import { isDocker } from '../../../utils/isDocker.js';
+import { isExactlyOneTruthy } from '../../../utils/isExactlyOneTruthy.js';
+import { assert, assertUsage } from '../../../utils/assert.js';
+import { hasProp } from '../../../utils/hasProp.js';
+import { isObject } from '../../../utils/isObject.js';
+import { assertRollupInput } from './build/pluginBuildConfig.js';
+import pc from '@brillout/picocolors';
+import { assertResolveAlias } from './pluginCommon/assertResolveAlias.js';
+import { getVikeConfigInternal, setVikeConfigContext } from '../shared/resolveVikeConfigInternal.js';
+import { assertViteRoot, getViteRoot, normalizeViteRoot } from '../../api/resolveViteConfigFromUser.js';
+import { temp_disablePrerenderAutoRun } from '../../prerender/context.js';
+import { version as viteVersionVike } from 'vite';
+import '../assertEnvVite.js';
+const pluginName = 'vike:pluginCommon';
+globalThis.__VIKE__IS_PROCESS_SHARED_WITH_VITE = true;
+function pluginCommon(vikeVitePluginOptions) {
+    return [
+        {
+            name: `${pluginName}:pre`,
+            enforce: 'pre',
+            config: {
+                order: 'pre',
+                async handler(configFromUser, env) {
+                    const viteVersionUser = this?.meta?.viteVersion; // is `undefined` on old Vite versions
+                    const isDev = isDevCheck(env);
+                    const isBuild = env.command === 'build';
+                    const isPreview = env.isPreview;
+                    assert(isExactlyOneTruthy(isDev, isBuild, isPreview));
+                    const viteContext = isBuild ? 'build' : isPreview ? 'preview' : 'dev';
+                    const rootResolvedEarly = configFromUser.root
+                        ? normalizeViteRoot(configFromUser.root)
+                        : await getViteRoot(viteContext);
+                    assert(rootResolvedEarly);
+                    setVikeConfigContext({ userRootDir: rootResolvedEarly, isDev, vikeVitePluginOptions });
+                    const vikeConfig = await getVikeConfigInternal();
+                    return {
+                        _isDev: isDev,
+                        _viteVersionResolved: viteVersionUser || viteVersionVike,
+                        _rootResolvedEarly: rootResolvedEarly,
+                        // TO-DO/next-major-release: remove https://github.com/vikejs/vike/issues/2122
+                        configVikePromise: Promise.resolve({
+                            prerender: vikeConfig.prerenderContext.isPrerenderingEnabled,
+                        }),
+                    };
+                },
+            },
+        },
+        {
+            name: pluginName,
+            configResolved: {
+                handler(config) {
+                    assertViteRoot(config._rootResolvedEarly, config);
+                    assertSingleInstance(config);
+                },
+            },
+        },
+        {
+            name: `${pluginName}:post`,
+            enforce: 'post',
+            configResolved: {
+                order: 'post',
+                async handler(config) {
+                    /* Also externalize linked dependencies by default?
+                     * - Can this be done while the user sets ssr.external to `string[]`? I guess not?
+                     *   - If not then it's a problem: it makes the default inconsistent.
+                     * - https://vite.dev/config/ssr-options.html#ssr-external
+                     * - New setting +transpileLinkedDependencies ?
+                    overrideViteDefaultSsrExternal(config)
+                    //*/
+                    workaroundCI(config);
+                    assertRollupInput(config);
+                    assertResolveAlias(config);
+                    temp_supportOldInterface(config);
+                    await emitServerEntryOnlyIfNeeded(config);
+                },
+            },
+            config: {
+                order: 'post',
+                async handler(configFromUser) {
+                    let configFromVike = { server: {}, preview: {} };
+                    const vikeConfig = await getVikeConfigInternal();
+                    if (vikeConfig.config.port !== undefined) {
+                        // https://vike.dev/port
+                        setDefault('port', vikeConfig.config.port, configFromUser, configFromVike);
+                    }
+                    else {
+                        // Change Vite's default port
+                        setDefault('port', 3000, configFromUser, configFromVike);
+                    }
+                    if (vikeConfig.config.host) {
+                        // https://vike.dev/host
+                        setDefault('host', vikeConfig.config.host, configFromUser, configFromVike);
+                    }
+                    else if (isDocker()) {
+                        // Set `--host` for Docker/Podman
+                        setDefault('host', true, configFromUser, configFromVike);
+                    }
+                    // https://vike.dev/force
+                    if (vikeConfig.config.force !== undefined && configFromUser.optimizeDeps?.force === undefined) {
+                        configFromVike.optimizeDeps ?? (configFromVike.optimizeDeps = {});
+                        configFromVike.optimizeDeps.force = vikeConfig.config.force;
+                    }
+                    return configFromVike;
+                },
+            },
+        },
+    ];
+}
+// Override Vite's default value without overriding user settings
+function setDefault(setting, value, configFromUser, configFromVike) {
+    if (configFromUser.server?.[setting] === undefined)
+        configFromVike.server[setting] = value;
+    if (configFromUser.preview?.[setting] === undefined)
+        configFromVike.preview[setting] = value;
+}
+/*
+import { version } from 'vite'
+function overrideViteDefaultSsrExternal(config: ResolvedConfig) {
+  if (!isVersionMatch(version, ['5.0.12'])) return
+  // @ts-ignore Not released yet: https://github.com/vitejs/vite/pull/10939/files#diff-5a3d42620df2c6b17e25f440ffdb67683dee7ef57317674d19f41d5f30502310L5
+  config.ssr.external ??= true
+}
+//*/
+// Workaround GitHub Action failing to access the server
+function workaroundCI(config) {
+    var _a, _b;
+    if (process.env.CI) {
+        (_a = config.server).host ?? (_a.host = true);
+        (_b = config.preview).host ?? (_b.host = true);
+    }
+}
+function assertSingleInstance(config) {
+    const numberOfInstances = config.plugins.filter((o) => o.name === pluginName).length;
+    assertUsage(numberOfInstances === 1, `Vike's Vite plugin (${pc.cyan("import vike from 'vike/plugin'")}) is being added ${numberOfInstances} times to the list of Vite plugins. Make sure to add it only once instead.`);
+}
+// TO-DO/next-major-release: remove https://github.com/vikejs/vike/issues/2122
+function temp_supportOldInterface(config) {
+    if (!('vitePluginSsr' in config))
+        return;
+    assert(isObject(config.vitePluginSsr));
+    if (hasProp(config.vitePluginSsr, 'prerender', 'object')) {
+        assert(hasProp(config.vitePluginSsr.prerender, 'disableAutoRun', 'boolean'));
+        if (config.vitePluginSsr.prerender.disableAutoRun) {
+            temp_disablePrerenderAutoRun();
+        }
+        return;
+    }
+    if (hasProp(config.vitePluginSsr, 'disableAutoFullBuild')) {
+        if (config.vitePluginSsr.disableAutoFullBuild) {
+            assert(config.vitePluginSsr.disableAutoFullBuild === 'prerender');
+            temp_disablePrerenderAutoRun();
+        }
+        return;
+    }
+    assert(false);
+}
+// Only emit dist/server/entry.mjs if necessary
+async function emitServerEntryOnlyIfNeeded(config) {
+    const vikeConfig = await getVikeConfigInternal();
+    if (config.vitePluginServerEntry?.inject && !vikeConfig.prerenderContext.isPrerenderingEnabled) {
+        config.vitePluginServerEntry.disableServerEntryEmit = true;
+    }
+}

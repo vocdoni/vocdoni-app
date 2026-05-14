@@ -1,0 +1,662 @@
+export type { Config };
+export type { ConfigBuiltIn };
+export type { ConfigBuiltInResolved };
+export type { ConfigNameBuiltIn };
+export type { ConfigNameGlobal };
+export type { ConfigMeta };
+export type { HookName };
+export type { HookNameOld };
+export type { HookNamePage };
+export type { HookNameGlobal };
+export type { Route };
+export type { KeepScrollPosition };
+export type { Vercel };
+export type { DataAsync };
+export type { DataSync };
+export type { GuardAsync };
+export type { GuardSync };
+export type { OnBeforePrerenderStartAsync };
+export type { OnBeforePrerenderStartSync };
+export type { OnBeforeRenderAsync };
+export type { OnBeforeRenderSync };
+export type { OnBeforeRouteAsync };
+export type { OnBeforeRouteSync };
+export type { OnHydrationEndAsync };
+export type { OnHydrationEndSync };
+export type { OnPageTransitionEndAsync };
+export type { OnPageTransitionEndSync };
+export type { OnPageTransitionStartAsync };
+export type { OnPageTransitionStartSync };
+export type { OnPrerenderStartAsync };
+export type { OnPrerenderStartSync };
+export type { OnRenderClientAsync };
+export type { OnRenderClientSync };
+export type { OnRenderHtmlAsync };
+export type { OnRenderHtmlSync };
+export type { RouteAsync };
+export type { RouteSync };
+import type { PrefetchSetting, PrefetchStaticAssets } from '../client/runtime-client-routing/prefetch/PrefetchSetting.js';
+import type { ConfigDefinition } from '../node/vite/shared/resolveVikeConfigInternal/metaBuiltIn.js';
+import type { DocumentHtml } from '../server/runtime/renderPageServer/html/renderHtml.js';
+import type { InjectFilterEntry } from './index.js';
+import type { VikeVitePluginOptions } from '../node/vite/index.js';
+import type { Vike } from './VikeNamespace.js';
+import type { HooksTimeoutProvidedByUser } from '../shared-server-client/hooks/getHook.js';
+import type { PageContextClient, PageContextServer } from './PageContext.js';
+import type { GlobalContext } from './GlobalContext.js';
+import type { InlineConfig } from 'vite';
+import type { PassToClientPublic } from '../server/runtime/renderPageServer/html/serializeContext.js';
+import type { CliPreviewConfig } from '../node/api/preview.js';
+import type { StaticReplace } from '../node/vite/plugins/pluginStaticReplace/applyStaticReplace.js';
+import type { ImportStringList } from '../node/vite/shared/importString.js';
+import type { HookPublic } from '../shared-server-client/hooks/execHook.js';
+type HookNameOld = HookName | HookNameOldDesign;
+type HookName = HookNamePage | HookNameGlobal;
+type HookNamePage = 'onHydrationEnd' | 'onBeforePrerenderStart' | 'onBeforeRender' | 'onPageTransitionStart' | 'onPageTransitionEnd' | 'onRenderHtml' | 'onRenderClient' | 'guard' | 'data' | 'onData' | 'route';
+type HookNameGlobal = 'onBeforeRoute' | 'onPrerenderStart' | 'onCreatePageContext' | 'onCreateGlobalContext' | 'onError' | 'onHookCall';
+type HookNameOldDesign = 'render' | 'prerender' | 'onBeforePrerender';
+type ConfigNameBuiltIn = Exclude<keyof ConfigBuiltIn, keyof VikeVitePluginOptions | 'onBeforeRoute' | 'onPrerenderStart' | 'vite' | 'redirects'> | 'prerender' | 'hasServerOnlyHook' | 'isClientRuntimeLoaded' | 'onBeforeRenderEnv' | 'dataEnv' | 'guardEnv' | 'hooksTimeout' | 'clientHooks' | 'middleware' | 'server' | 'vercel';
+type ConfigNameGlobal = 'onPrerenderStart' | 'onBeforeRoute' | 'prerender' | 'disableAutoFullBuild' | 'includeAssetsImportedByServer' | 'baseAssets' | 'baseServer' | 'redirects' | 'trailingSlash' | 'disableUrlNormalization' | 'vite';
+type Config = ConfigBuiltIn & Vike.Config;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/data
+ */
+type DataAsync<Data = unknown> = (pageContext: PageContextServer) => Promise<Data>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/data
+ */
+type DataSync<Data = unknown> = (pageContext: PageContextServer) => Data;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/guard
+ */
+type GuardAsync = (pageContext: PageContextServer) => Promise<void>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/guard
+ */
+type GuardSync = (pageContext: PageContextServer) => void;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onBeforePrerenderStart
+ */
+type OnBeforePrerenderStartAsync<Data = unknown> = () => Promise<(string | {
+    url: string;
+    pageContext: Partial<Vike.PageContext & {
+        data: Data;
+    }>;
+})[]>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onBeforePrerenderStart
+ */
+type OnBeforePrerenderStartSync<Data = unknown> = () => (string | {
+    url: string;
+    pageContext: Partial<Vike.PageContext & {
+        data: Data;
+    }>;
+})[];
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onBeforeRender
+ */
+type OnBeforeRenderAsync = (pageContext: PageContextServer) => Promise<{
+    pageContext: Partial<Vike.PageContext>;
+} | void>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onBeforeRender
+ */
+type OnBeforeRenderSync = (pageContext: PageContextServer) => {
+    pageContext: Partial<Vike.PageContext>;
+} | void;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onBeforeRoute
+ */
+type OnBeforeRouteAsync = (pageContext: PageContextServer) => Promise<{
+    pageContext: Partial<{
+        /** The URL you provided to Vike when calling `renderPage({ urlOriginal })` in your server middleware.
+         *
+         * https://vike.dev/renderPage
+         */
+        urlOriginal: string;
+    } | Vike.PageContext>;
+}>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onBeforeRoute
+ */
+type OnBeforeRouteSync = (pageContext: PageContextServer) => {
+    pageContext: Partial<{
+        /** The URL you provided to Vike when calling `renderPage({ urlOriginal })` in your server middleware.
+         *
+         * https://vike.dev/renderPage
+         */
+        urlOriginal: string;
+    } | Vike.PageContext>;
+};
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onHydrationEnd
+ */
+type OnHydrationEndAsync = (pageContext: PageContextClient) => Promise<void>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onHydrationEnd
+ */
+type OnHydrationEndSync = (pageContext: PageContextClient) => void;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onPageTransitionEnd
+ */
+type OnPageTransitionEndAsync = (pageContext: PageContextClient) => Promise<void>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onPageTransitionEnd
+ */
+type OnPageTransitionEndSync = (pageContext: PageContextClient) => void;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onPageTransitionStart
+ */
+type OnPageTransitionStartAsync = (pageContext: PageContextClient) => Promise<void>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onPageTransitionStart
+ */
+type OnPageTransitionStartSync = (pageContext: PageContextClient) => void;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onPrerenderStart
+ */
+type OnPrerenderStartAsync = (prerenderContext: {
+    pageContexts: PageContextServer[];
+}) => Promise<{
+    prerenderContext: {
+        pageContexts: PageContextServer[];
+    };
+}>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onPrerenderStart
+ */
+type OnPrerenderStartSync = (prerenderContext: {
+    pageContexts: PageContextServer[];
+}) => {
+    prerenderContext: {
+        pageContexts: PageContextServer[];
+    };
+};
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onRenderClient
+ */
+type OnRenderClientAsync = (pageContext: PageContextClient) => Promise<void>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onRenderClient
+ */
+type OnRenderClientSync = (pageContext: PageContextClient) => void;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onRenderHtml
+ */
+type OnRenderHtmlAsync = (pageContext: PageContextServer) => Promise<OnRenderHtmlReturn>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/onRenderHtml
+ */
+type OnRenderHtmlSync = (pageContext: PageContextServer) => OnRenderHtmlReturn;
+type OnRenderHtmlReturn = DocumentHtml | {
+    injectFilter?: (assets: InjectFilterEntry[]) => void;
+    documentHtml?: DocumentHtml;
+    pageContext?: OnRenderHtmlPageContextReturn | (() => Promise<OnRenderHtmlPageContextReturn> | OnRenderHtmlPageContextReturn);
+};
+type OnRenderHtmlPageContextReturn = Partial<Vike.PageContext & {
+    /** See https://vike.dev/streaming */
+    enableEagerStreaming: boolean;
+}>;
+/** @deprecated Use a sync route() with an async guard() instead */
+type RouteAsync = (pageContext: PageContextServer | PageContextClient) => Promise<{
+    routeParams?: Record<string, string>;
+    precedence?: number;
+} | boolean>;
+/** @deprecated This type is deprecated, see:
+ * - https://vike.dev/migration/hook-types
+ * - https://vike.dev/route
+ */
+type RouteSync = (pageContext: PageContextServer | PageContextClient) => {
+    routeParams?: Record<string, string>;
+    precedence?: number;
+} | boolean;
+/** Whether the page scrolls to the top upon navigation.
+ *
+ * https://vike.dev/keepScrollPosition
+ */
+type KeepScrollPosition = boolean | string | string[] | ((pageContext: PageContextClient) => boolean | string | string[]);
+/** The page's route.
+ *
+ * https://vike.dev/routing
+ */
+type Route = string | RouteSync | RouteAsync;
+/** Page configuration.
+ *
+ * https://vike.dev/config
+ */
+type ConfigBuiltIn = {
+    /** The page's root component */
+    Page?: unknown;
+    /** The page's URL(s).
+     *
+     *  https://vike.dev/route
+     */
+    route?: Route | ImportStringList;
+    /** Protect page(s), e.g. forbid unauthorized access.
+     *
+     *  https://vike.dev/guard
+     */
+    guard?: GuardAsync | GuardSync | ImportStringList;
+    /**
+     * Pre-render page(s).
+     *
+     * https://vike.dev/pre-rendering
+     * https://vike.dev/prerender
+     *
+     * @default false
+     */
+    prerender?: PrerenderSetting | (() => PrerenderSetting | Promise<PrerenderSetting>) | ImportStringList;
+    /**
+     * Install Vike extensions.
+     *
+     * https://vike.dev/extends
+     */
+    extends?: Config | Config[] | ImportStringList;
+    /** Hook called before the page is rendered.
+     *
+     *  https://vike.dev/onBeforeRender
+     */
+    onBeforeRender?: OnBeforeRenderAsync | OnBeforeRenderSync | ImportStringList | null;
+    /** Hook called when a `pageContext` object is created.
+     *
+     *  https://vike.dev/onCreatePageContext
+     */
+    onCreatePageContext?: ((pageContext: PageContextServer) => void) | ImportStringList | null;
+    /** Hook called when an error occurs during server-side rendering.
+     *
+     *  https://vike.dev/onError
+     */
+    onError?: ((error: unknown, pageContext: null | PageContextServer) => void) | ImportStringList | null;
+    /** Hook called when the `globalContext` object is created.
+     *
+     *  https://vike.dev/onCreateGlobalContext
+     */
+    onCreateGlobalContext?: ((globalContext: GlobalContext) => void) | ImportStringList | null;
+    /** Hook called whenever a hook is called.
+     *
+     *  https://vike.dev/onHookCall
+     */
+    onHookCall?: ((hook: HookPublic, pageContext: PageContextServer | null) => void | Promise<void>) | ImportStringList;
+    /** Hook for fetching data.
+     *
+     *  https://vike.dev/data
+     */
+    data?: DataAsync<unknown> | DataSync<unknown> | ImportStringList | null;
+    /** Hook called as soon as `pageContext.data` is available.
+     *
+     *  https://vike.dev/onData
+     */
+    onData?: Function;
+    /** Determines what pageContext properties are sent to the client-side.
+     *
+     * https://vike.dev/passToClient
+     */
+    passToClient?: PassToClientPublic | ImportStringList;
+    /** Hook called when page is rendered on the client-side.
+     *
+     * https://vike.dev/onRenderClient
+     */
+    onRenderClient?: OnRenderClientAsync | OnRenderClientSync | ImportStringList;
+    /** Hook called when page is rendered to HTML on the server-side.
+     *
+     * https://vike.dev/onRenderHtml
+     */
+    onRenderHtml?: OnRenderHtmlAsync | OnRenderHtmlSync | ImportStringList;
+    /** Enable async Route Functions.
+     *
+     * https://vike.dev/route-function#async
+     */
+    iKnowThePerformanceRisksOfAsyncRouteFunctions?: boolean | ImportStringList;
+    /** Change the URL root of Filesystem Routing.
+     *
+     * https://vike.dev/filesystemRoutingRoot
+     */
+    filesystemRoutingRoot?: string | ImportStringList;
+    /** Hook called when pre-rendering starts.
+     *
+     * https://vike.dev/onPrerenderStart
+     */
+    onPrerenderStart?: OnPrerenderStartAsync | OnPrerenderStartSync | ImportStringList;
+    /** Hook called for initializing pre-rendering.
+     *
+     * https://vike.dev/onBeforePrerenderStart
+     */
+    onBeforePrerenderStart?: OnBeforePrerenderStartAsync | OnBeforePrerenderStartSync | ImportStringList;
+    /** Hook called before the URL is routed to a page.
+     *
+     * https://vike.dev/onBeforeRoute
+     */
+    onBeforeRoute?: OnBeforeRouteAsync | OnBeforeRouteSync | ImportStringList;
+    /** Hook called after the page is hydrated.
+     *
+     * https://vike.dev/onHydrationEnd
+     */
+    onHydrationEnd?: OnHydrationEndAsync | OnHydrationEndSync | ImportStringList;
+    /** Hook called before the user navigates to a new page.
+     *
+     * https://vike.dev/onPageTransitionStart
+     */
+    onPageTransitionStart?: OnPageTransitionStartAsync | OnPageTransitionStartSync | ImportStringList;
+    /** Hook called after the user navigates to a new page.
+     *
+     * https://vike.dev/onPageTransitionEnd
+     */
+    onPageTransitionEnd?: OnPageTransitionEndAsync | OnPageTransitionEndSync | ImportStringList;
+    /** Whether the UI framework (React/Vue/Solid/...) allows the page's hydration to be aborted.
+     *
+     * https://vike.dev/hydrationCanBeAborted
+     */
+    hydrationCanBeAborted?: boolean | ImportStringList;
+    /** Add client code.
+     *
+     * https://vike.dev/client
+     */
+    client?: string | ImportStringList;
+    /** Enable Client Routing.
+     *
+     * https://vike.dev/clientRouting
+     */
+    clientRouting?: boolean | ImportStringList;
+    /**
+     * Whether hooks are loaded on the client-side.
+     *
+     * https://vike.dev/clientHooks
+     */
+    clientHooks?: boolean | null | ImportStringList;
+    /** Create new or modify existing configurations.
+     *
+     * https://vike.dev/meta
+     */
+    meta?: ConfigMeta | ImportStringList;
+    /** Vite configuration.
+     *
+     * https://vite.dev/config/
+     */
+    vite?: InlineConfig | (() => InlineConfig | Promise<InlineConfig>);
+    /** Permanent redirections (HTTP status code 301)
+     *
+     * https://vike.dev/redirects
+     */
+    redirects?: Record<string, string>;
+    /** Whether URLs should end with a trailing slash.
+     *
+     * https://vike.dev/url-normalization
+     *
+     * @default false
+     */
+    trailingSlash?: boolean;
+    /** Disable automatic URL normalization.
+     *
+     * https://vike.dev/url-normalization
+     *
+     * @default false
+     */
+    disableUrlNormalization?: boolean;
+    /** @deprecated It's now `true` by default. You can remove this option. */
+    includeAssetsImportedByServer?: boolean;
+    /** @deprecated See https://vike.dev/disableAutoFullBuild */
+    disableAutoFullBuild?: boolean | 'prerender';
+    /** @deprecated It's value is now always true. */
+    vite6BuilderApp?: true;
+    /** The Base URL of your server.
+     *
+     * https://vike.dev/base-url
+     */
+    baseServer?: string;
+    /** The Base URL of your static assets.
+     *
+     * https://vike.dev/base-url
+     */
+    baseAssets?: string;
+    /**
+     * @experimental DON'T USE: the API *will* have breaking changes upon any minor version release.
+     *
+     * Prefetch pages/links.
+     *
+     * https://vike.dev/prefetch
+     */
+    prefetch?: PrefetchSetting | ImportStringList;
+    /** @deprecated Use `prefetch` setting (https://vike.dev/prefetch) instead.  */
+    /** Prefetch links.
+     *
+     * https://vike.dev/prefetchStaticAssets
+     */
+    prefetchStaticAssets?: PrefetchStaticAssets | ImportStringList;
+    /** Modify the timeouts of hooks. */
+    hooksTimeout?: HooksTimeoutProvidedByUser;
+    /** `Cache-Control` HTTP header value.
+     *
+     * Default: `no-store, max-age=0`
+     *
+     * Set to an empty string to not send the header.
+     *
+     * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+     */
+    cacheControl?: string;
+    /**
+     * Add HTTP headers to the HTTP response.
+     *
+     * https://vike.dev/headers#response
+     */
+    headersResponse?: HeadersInit | ((pageContext: PageContextServer) => HeadersInit | Promise<HeadersInit>);
+    /**
+     * Make development/preview server available over LAN and public addresses.
+     *
+     * Default: `false` (or `true` if running inside Docker/Podman).
+     *
+     * https://vike.dev/host
+     */
+    host?: boolean | string;
+    /**
+     * Change port of development/preview server.
+     *
+     * @default 3000
+     *
+     * https://vike.dev/port
+     */
+    port?: number;
+    /**
+     * Set the mode to run in.
+     *
+     * https://vike.dev/mode
+     */
+    mode?: string;
+    /**
+     * Disable Vite's cache.
+     *
+     * https://vike.dev/force
+     */
+    force?: boolean;
+    /**
+     * Content Security Policy (CSP).
+     *
+     * https://vike.dev/csp
+     */
+    csp?: {
+        nonce: boolean | ((pageContext: PageContextServer) => string | Promise<string>);
+    };
+    /** Where scripts are injected in the HTML.
+     *
+     * https://vike.dev/injectScriptsAt
+     */
+    injectScriptsAt?: 'HTML_BEGIN' | 'HTML_END' | 'HTML_STREAM' | null;
+    /** Used by Vike extensions to set their name.
+     *
+     * https://vike.dev/extends
+     */
+    name?: string;
+    /** Used by Vike extensions to enforce their peer dependencies.
+     *
+     * https://vike.dev/require
+     */
+    require?: Record<string, string | {
+        version: string;
+        optional?: boolean;
+    }>;
+    /** Whether the page scrolls to the top upon navigation.
+     *
+     * https://vike.dev/keepScrollPosition
+     */
+    keepScrollPosition?: KeepScrollPosition;
+    /** @experimental */
+    middleware?: Function;
+    /**
+     * Set to `false` to disable Vike's automatic server integration mechanism (e.g. for integrating a JavaScript server manually via `renderPage()`).
+     *
+     * Set to `true` to use Vike's built-in server (no need to define `+server.js`).
+     *
+     * https://vike.dev/server
+     */
+    server?: boolean | ImportStringList;
+    cli?: {
+        /** @experimental
+         *
+         * Preview configuration.
+         *
+         * Set it to `false` if previewing isn't supported.
+         *
+         * Set it to `true` if previewing should load the `dist/server/index.js` entry.
+         *
+         * Set it to `vite` if previewing should use Vite's preview server.
+         */
+        preview?: CliPreviewConfig;
+    };
+    /**
+     * Static code transformations for optimizations like removing component children server-side.
+     *
+     * @experimental
+     */
+    staticReplace?: StaticReplace[];
+    /**
+     * The license key for larger teams.
+     *
+     * https://vike.dev/license
+     * https://vike.dev/pricing
+     */
+    license?: string;
+    /**
+     * Vercel options
+     *
+     * https://vike.dev/vercel
+     */
+    vercel?: Vercel;
+};
+type Vercel = {
+    /**
+     * Incremental Static Regeneration (ISR).
+     *
+     * https://vike.dev/vercel#isr
+     */
+    isr?: {
+        expiration: number;
+    };
+    /**
+     * Deploy on Vercel Edge.
+     *
+     * https://vike.dev/vercel#edge
+     */
+    edge?: boolean;
+};
+type PrerenderSetting = boolean | {
+    /**
+     * Allow only some pages to be pre-rendered.
+     *
+     * This setting doesn't affect the pre-rendering process: it merely suppresses the warnings when some of your pages cannot be pre-rendered.
+     *
+     * https://vike.dev/prerender#partial
+     *
+     * @default false
+     */
+    partial?: boolean;
+    /**
+     * Whether +redirects should be pre-rendered to redirecting HTML documents.
+     *
+     * https://vike.dev/prerender#redirects
+     */
+    redirects?: boolean;
+    /**
+     * Don't create a new directory for each HTML file.
+     *
+     * For example, generate `dist/client/about.html` instead of `dist/client/about/index.html`.
+     *
+     * https://vike.dev/prerender#noextradir
+     *
+     * @default false
+     */
+    noExtraDir?: boolean;
+    /**
+     * Number of concurrent pre-render jobs.
+     *
+     * Set to `false` to disable concurrency.
+     *
+     * https://vike.dev/prerender#parallel
+     *
+     * @default os.cpus().length
+     */
+    parallel?: boolean | number;
+    /**
+     * Don't automatically run the pre-rendering process upon `$ vike build`.
+     *
+     * Use this if you want to programmatically initiate the pre-rendering process instead.
+     *
+     * https://vike.dev/prerender#disableautorun
+     *
+     * @default false
+     */
+    disableAutoRun?: boolean;
+    /**
+     * Change settings without enabling pre-rendering.
+     *
+     * By setting `enable: null` you can define pre-render settings without enabling pre-rendering.
+     *
+     * Used by Vike extensions to set pre-render settings without enabling pre-rerendering on behalf of the user.
+     *
+     * https://vike.dev/prerender#enable
+     *
+     * @default true
+     */
+    enable?: boolean | null;
+    /**
+     * Don't remove the `dist/server/` directory.
+     *
+     * If you pre-render all your pages then Vike removes the `dist/server/` directory after pre-rendering has finished.
+     *
+     * If `keepDistServer: true` then Vike won't remove the `dist/server/` directory.
+     *
+     * https://vike.dev/prerender#keepDistServer
+     *
+     * @default false
+     */
+    keepDistServer?: boolean;
+};
+type ConfigBuiltInResolved = {
+    passToClient?: string[][];
+    redirects?: Record<string, string>[];
+    prerender?: Exclude<Config['prerender'], ImportStringList | undefined>[];
+    middleware?: Function[];
+    headersResponse?: Exclude<Config['headersResponse'], ImportStringList | undefined>[];
+    staticReplace?: StaticReplace[][];
+};
+type ConfigMeta = Record<string, ConfigDefinition>;

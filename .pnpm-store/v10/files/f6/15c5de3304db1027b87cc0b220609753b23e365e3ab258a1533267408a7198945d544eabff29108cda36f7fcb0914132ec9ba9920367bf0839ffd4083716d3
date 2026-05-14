@@ -1,0 +1,10 @@
+export { stripAnsi };
+export { hasRed };
+export { hasGreen };
+export { hasYellow };
+export { colorVite };
+declare function colorVite<Str extends string>(str: Str): Str;
+declare function stripAnsi(string: string): string;
+declare function hasRed(str: string): boolean;
+declare function hasGreen(str: string): boolean;
+declare function hasYellow(str: string): boolean;

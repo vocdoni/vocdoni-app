@@ -1,0 +1,110 @@
+{
+  "name": "vike-react",
+  "version": "0.6.21",
+  "repository": "https://github.com/vikejs/vike-react",
+  "type": "module",
+  "exports": {
+    "./usePageContext": "./dist/hooks/usePageContext.js",
+    "./useData": "./dist/hooks/useData.js",
+    "./useHydrated": "./dist/hooks/useHydrated.js",
+    "./useConfig": {
+      "worker": "./dist/hooks/useConfig/useConfig-server.js",
+      "browser": "./dist/hooks/useConfig/useConfig-client.js",
+      "default": "./dist/hooks/useConfig/useConfig-server.js"
+    },
+    "./Config": {
+      "worker": "./dist/components/Config/Config-server.js",
+      "browser": "./dist/components/Config/Config-client.js",
+      "default": "./dist/components/Config/Config-server.js"
+    },
+    "./Head": {
+      "worker": "./dist/components/Head/Head-server.js",
+      "browser": "./dist/components/Head/Head-client.js",
+      "default": "./dist/components/Head/Head-server.js"
+    },
+    "./clientOnly": "./dist/helpers/clientOnly.js",
+    "./ClientOnly": "./dist/components/ClientOnly.js",
+    ".": "./dist/index.js",
+    "./config": "./dist/config.js",
+    "./__internal/integration/onRenderHtml": "./dist/integration/onRenderHtml.js",
+    "./__internal/integration/onRenderClient": "./dist/integration/onRenderClient.js",
+    "./__internal/integration/Loading": "./dist/integration/Loading.js"
+  },
+  "dependencies": {
+    "react-streaming": "^0.4.16"
+  },
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19",
+    "vike": ">=0.4.250"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@brillout/release-me": "^0.4.13",
+    "@types/node": "^24.0.8",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.9.2",
+    "vike": "^0.4.253",
+    "vite": "^7.3.0"
+  },
+  "typesVersions": {
+    "*": {
+      "useData": [
+        "./dist/hooks/useData.d.ts"
+      ],
+      "usePageContext": [
+        "./dist/hooks/usePageContext.d.ts"
+      ],
+      "useHydrated": [
+        "./dist/hooks/useHydrated.d.ts"
+      ],
+      "useConfig": [
+        "./dist/hooks/useConfig/useConfig-server.d.ts"
+      ],
+      "Config": [
+        "./dist/components/Config/Config-server.d.ts"
+      ],
+      "Head": [
+        "./dist/components/Head/Head-server.d.ts"
+      ],
+      "ClientOnly": [
+        "./dist/components/ClientOnly.d.ts"
+      ],
+      "clientOnly": [
+        "./dist/helpers/clientOnly.d.ts"
+      ],
+      ".": [
+        "./dist/index.d.ts"
+      ],
+      "config": [
+        "./dist/config.d.ts"
+      ],
+      "__/internal/integration/onRenderHtml": [
+        "./dist/integration/onRenderHtml.d.ts"
+      ],
+      "__/internal/integration/onRenderClient": [
+        "./dist/integration/onRenderClient.d.ts"
+      ]
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "react"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "rimraf dist/ && tsc",
+    "release": "release-me patch",
+    "release:minor": "release-me minor",
+    "release:commit": "release-me commit"
+  }
+}

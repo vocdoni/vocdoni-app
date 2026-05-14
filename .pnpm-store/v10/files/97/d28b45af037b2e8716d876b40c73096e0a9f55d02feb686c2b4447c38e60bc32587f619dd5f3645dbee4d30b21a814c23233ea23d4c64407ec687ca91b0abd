@@ -1,0 +1,413 @@
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/pagination.ts
+var pagination_exports = {};
+__export(pagination_exports, {
+  Button: () => Button,
+  EllipsisButton: () => EllipsisButton,
+  Pagination: () => Pagination,
+  PaginationProvider: () => PaginationProvider,
+  RoutedPagination: () => RoutedPagination,
+  RoutedPaginationProvider: () => RoutedPaginationProvider,
+  usePagination: () => usePagination,
+  useRoutedPagination: () => useRoutedPagination
+});
+module.exports = __toCommonJS(pagination_exports);
+
+// src/components/context/useComponents.ts
+var import_react2 = require("react");
+
+// src/components/context/ComponentsProvider.tsx
+var import_react = require("react");
+
+// src/components/shared/HR.tsx
+var import_jsx_runtime = require("react/jsx-runtime");
+
+// src/components/context/default-components.tsx
+var import_jsx_runtime2 = require("react/jsx-runtime");
+
+// src/components/context/ComponentsProvider.tsx
+var import_jsx_runtime3 = require("react/jsx-runtime");
+var ComponentsContext = (0, import_react.createContext)(void 0);
+
+// src/components/context/useComponents.ts
+var useComponents = () => {
+  const context = (0, import_react2.useContext)(ComponentsContext);
+  if (!context) {
+    throw new Error("useComponents must be used within a <ComponentsProvider />");
+  }
+  return context;
+};
+
+// src/components/Pagination/Button.tsx
+var import_jsx_runtime4 = require("react/jsx-runtime");
+var Button = ({ isActive, ...props }) => {
+  const { PaginationButton: Slot } = useComponents();
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(Slot, { ...props, isActive, label: props.children });
+};
+
+// src/components/Pagination/EllipsisButton.tsx
+var import_react3 = require("react");
+
+// src/i18n/localize.ts
+var import_react_i18next = require("react-i18next");
+
+// src/i18n/locales/en/react-components.json
+var react_components_default = {
+  balance: "{{ balance }} VOC tokens",
+  actions: {
+    cancel_description: 'canceling the "{{ election.title.default }}" election process',
+    cancel: "Cancel the process immediately, not allowing new votes and not counting any results (caution: it cannot be reverted)",
+    cancel_button: "Cancel",
+    continue_description: 'resuming the "{{ election.title.default }}" election process',
+    continue: "Resume the process immediately, in case it has been paused",
+    end_description: 'ending the "{{ election.title.default }}" election process',
+    end: "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
+    error_title: "There was some error while executing the transaction",
+    pause_description: 'pausing the "{{ election.title.default }}" election process',
+    pause: "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
+    waiting_title: "Waiting for transaction confirmation..."
+  },
+  confirm: {
+    title: "Confirm",
+    cancel: "Cancel",
+    confirm: "Confirm",
+    cancel_process_button: "Cancel process",
+    cancel_process_title: "Confirm cancelation",
+    end_process_title: "Confirm ending",
+    end_process_button: "End process",
+    cancel_button: "Cancel"
+  },
+  empty: "Apparently this process has no questions \u{1F914}",
+  errors: {
+    unauthorized: "Not authorized to vote",
+    wrong_data_title: "Wrong data",
+    wrong_data_description: "The specified data is not correct",
+    not_voted_in_ended_election: "You did not vote in this election and it's already finished"
+  },
+  question_types: {
+    approval_tooltip: "Approval voting lets you vote for as many options as you like. The one with the most votes wins. It's a simple way to show your support for all the choices you approve of.",
+    approval_title: "Approval Voting",
+    singlechoice_title: "Single Choice {{ weighted }}",
+    multichoice_tooltip: "Multichoice voting lets you vote for up to {{maxcount}} options (defined by the voting organizer). The one with the most votes wins.",
+    multichoice_title: "Multichoice Voting {{ weighted }}",
+    multichoice_desc: "You selected {{selected}} options (max {{maxcount}})",
+    multichoice_desc_abstain: " (or abstain)",
+    weighted_voting: "Weighted Voting"
+  },
+  schedule: {
+    from_begin_to_end: "Voting from {{ begin }} to {{ end }}",
+    ended: "Ended {{ distance }}",
+    paused_start: "(Paused) Starts {{ distance }}",
+    paused_end: "(Paused) Ends {{ distance }}",
+    created: "Created {{ distance }}"
+  },
+  results: {
+    date_format: "d-L-y HH:mm",
+    secret_until_the_end: "Secret until the end. The results will be available when the process ends at {{ endDate }}",
+    title: 'Results for "{{ title }}"',
+    votes: "Votes: {{ votes }} ({{ percent }})"
+  },
+  statuses: {
+    canceled: "Canceled",
+    ended: "Ended",
+    ongoing: "Ongoing",
+    paused: "Paused",
+    results: "Results",
+    upcoming: "Upcoming",
+    process_unknown: "Unknown",
+    invalid: "Invalid"
+  },
+  spreadsheet: {
+    access_button: "Identify",
+    anon_sik_label: "Define a password for your vote",
+    anon_sik_helper: "This ensures the vote to be anonymous",
+    close: "Close",
+    logout: "Logout",
+    modal_title: "You must identify first"
+  },
+  pagination: {
+    page_placeholder: "Page #",
+    total_results: "Showing a total of {{ count }} results",
+    previous: "Previous",
+    next: "Next"
+  },
+  validation: {
+    required: "This field is required",
+    min_length: "This field must be at least {{ min }} characters long",
+    choices_count: "Select {{ count }} choices",
+    at_least_one: "You must select at least one option"
+  },
+  vote: {
+    abstain: "Abstain",
+    button_update: "Re-submit vote",
+    button: "Vote",
+    confirm: "Please confirm your choices:",
+    sign: "Sign first",
+    voted_description: "Your vote id is {{ id }}. You can use it to verify your vote.",
+    voted_title: "Your vote was successfully cast!",
+    weight: "Your voting power is: "
+  }
+};
+
+// src/i18n/locales.ts
+var reactComponentsNamespace = "react-components";
+var reactComponentsDefaultLanguage = "en";
+var reactComponentsResources = {
+  [reactComponentsDefaultLanguage]: {
+    [reactComponentsNamespace]: react_components_default
+  }
+};
+
+// src/i18n/localize.ts
+var useReactComponentsLocalize = () => {
+  const { t } = (0, import_react_i18next.useTranslation)(reactComponentsNamespace);
+  return (key, substitutions) => t(key, substitutions);
+};
+
+// src/components/Pagination/EllipsisButton.tsx
+var import_jsx_runtime5 = require("react/jsx-runtime");
+var EllipsisButton = ({ gotoPage, inputProps, ...rest }) => {
+  const [isInput, setIsInput] = (0, import_react3.useState)(false);
+  const { PaginationEllipsisButton: Slot } = useComponents();
+  const localize = useReactComponentsLocalize();
+  return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
+    Slot,
+    {
+      className: rest.className,
+      isInput,
+      placeholder: localize("pagination.page_placeholder"),
+      onToggle: () => setIsInput((v) => !v),
+      onSubmitPage: (page) => {
+        gotoPage(page);
+        setIsInput(false);
+      },
+      buttonProps: rest,
+      inputProps: isInput ? inputProps : void 0
+    }
+  );
+};
+
+// src/providers/pagination/PaginationProvider.tsx
+var import_react4 = require("react");
+var import_jsx_runtime6 = require("react/jsx-runtime");
+var PaginationContext = (0, import_react4.createContext)(void 0);
+var usePagination = () => {
+  const context = (0, import_react4.useContext)(PaginationContext);
+  if (!context) {
+    throw new Error("usePagination must be used within a PaginationProvider");
+  }
+  return context;
+};
+var PaginationProvider = ({
+  pagination,
+  initialPage = 0,
+  ...rest
+}) => {
+  const [page, setPage] = (0, import_react4.useState)(initialPage);
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(PaginationContext.Provider, { value: { page, setPage, pagination, initialPage }, ...rest });
+};
+
+// src/components/Pagination/shared.tsx
+var import_react5 = require("react");
+var import_jsx_runtime7 = require("react/jsx-runtime");
+var usePaginationPages = (currentPage, totalPages, maxButtons, gotoPage, createPageButton, inputProps, buttonProps) => (0, import_react5.useMemo)(() => {
+  if (totalPages === void 0) return [];
+  const pages = [];
+  for (let i = 0; i < totalPages; i++) {
+    pages.push(createPageButton(i));
+  }
+  if (!maxButtons || totalPages <= maxButtons) {
+    return pages;
+  }
+  const startEllipsis = /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(EllipsisButton, { gotoPage, inputProps, ...buttonProps }, "start-ellipsis");
+  const endEllipsis = /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(EllipsisButton, { gotoPage, inputProps, ...buttonProps }, "end-ellipsis");
+  const sideButtons = 2;
+  const availableButtons = maxButtons - sideButtons;
+  if (currentPage <= availableButtons / 2) {
+    return [...pages.slice(0, availableButtons), endEllipsis, pages[totalPages - 1]];
+  }
+  if (currentPage >= totalPages - 1 - availableButtons / 2) {
+    return [pages[0], startEllipsis, ...pages.slice(totalPages - availableButtons, totalPages)];
+  }
+  const startPage = currentPage - Math.floor((availableButtons - 1) / 2);
+  const endPage = currentPage + Math.floor(availableButtons / 2);
+  return [pages[0], startEllipsis, ...pages.slice(startPage, endPage - 1), endEllipsis, pages[totalPages - 1]];
+}, [totalPages, maxButtons, gotoPage, inputProps, buttonProps, currentPage, createPageButton]);
+var PaginationButtons = ({
+  totalPages,
+  totalItems,
+  currentPage,
+  goToPage,
+  createPageButton,
+  maxButtons = 10,
+  buttonProps,
+  inputProps,
+  ...rest
+}) => {
+  const { PaginationContainer, PaginationSummary } = useComponents();
+  const t = useReactComponentsLocalize();
+  const pages = usePaginationPages(
+    currentPage,
+    totalPages,
+    maxButtons ? Math.max(5, maxButtons) : false,
+    (page) => {
+      if (page >= 0 && totalPages && page < totalPages) {
+        goToPage(page);
+      }
+    },
+    createPageButton,
+    inputProps,
+    buttonProps
+  );
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+    PaginationContainer,
+    {
+      ...rest,
+      items: /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+        totalPages === void 0 ? /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(import_jsx_runtime7.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+            Button,
+            {
+              onClick: () => goToPage(currentPage - 1),
+              disabled: currentPage === 0,
+              ...buttonProps,
+              children: t("pagination.previous")
+            },
+            "previous"
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(Button, { onClick: () => goToPage(currentPage + 1), ...buttonProps, children: t("pagination.next") }, "next")
+        ] }) : pages,
+        Boolean(totalItems) ? /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(
+          PaginationSummary,
+          {
+            text: t("pagination.total_results", {
+              count: totalItems
+            })
+          }
+        ) : null
+      ] })
+    }
+  );
+};
+
+// src/components/Pagination/Pagination.tsx
+var import_jsx_runtime8 = require("react/jsx-runtime");
+var Pagination = ({ maxButtons = 10, buttonProps, inputProps, pagination, ...rest }) => {
+  const { page, setPage, initialPage } = usePagination();
+  const totalPages = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage;
+  const currentPage = initialPage === 0 ? page - 1 : page;
+  return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(
+    PaginationButtons,
+    {
+      goToPage: (nextPage) => setPage(nextPage),
+      createPageButton: (i) => {
+        const pageIndex = initialPage === 0 ? i : i + initialPage;
+        return /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Button, { onClick: () => setPage(pageIndex), isActive: currentPage === pageIndex, ...buttonProps, children: i + 1 }, i);
+      },
+      currentPage,
+      totalPages,
+      totalItems: pagination.totalItems,
+      maxButtons,
+      buttonProps,
+      inputProps,
+      ...rest
+    }
+  );
+};
+
+// src/providers/pagination/RoutedPaginationProvider.tsx
+var import_react6 = require("react");
+var import_react_router_dom = require("react-router-dom");
+var import_jsx_runtime9 = require("react/jsx-runtime");
+var RoutedPaginationContext = (0, import_react6.createContext)(void 0);
+var useRoutedPagination = () => {
+  const context = (0, import_react6.useContext)(RoutedPaginationContext);
+  if (!context) {
+    throw new Error("useRoutedPagination must be used within a RoutedPaginationProvider");
+  }
+  return context;
+};
+var RoutedPaginationProvider = ({
+  path,
+  pagination,
+  initialPage = 0,
+  ...rest
+}) => {
+  const { search } = (0, import_react_router_dom.useLocation)();
+  const { page, ...extraParams } = (0, import_react_router_dom.useParams)();
+  const p = page && page > 0 ? Number(page) : 0;
+  const navigate = (0, import_react_router_dom.useNavigate)();
+  const getPathForPage = (page2, queryParams) => {
+    const queryString = queryParams || search;
+    return (0, import_react_router_dom.generatePath)(path, { page: page2, ...extraParams }) + queryString;
+  };
+  const setPage = (page2, queryParams) => {
+    navigate(getPathForPage(page2, queryParams));
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
+    RoutedPaginationContext.Provider,
+    {
+      value: { page: p, path, getPathForPage, setPage, pagination, initialPage },
+      ...rest
+    }
+  );
+};
+
+// src/components/Pagination/RoutedPagination.tsx
+var import_jsx_runtime10 = require("react/jsx-runtime");
+var RoutedPagination = ({
+  maxButtons = 10,
+  buttonProps,
+  inputProps,
+  pagination,
+  ...rest
+}) => {
+  const { getPathForPage, setPage, page, initialPage } = useRoutedPagination();
+  const totalPages = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage;
+  const currentPage = initialPage === 0 ? page - 1 : page;
+  return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+    PaginationButtons,
+    {
+      goToPage: (nextPage) => setPage(nextPage + 1),
+      createPageButton: (i) => {
+        const pageIndex = initialPage === 0 ? i : i + initialPage;
+        return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(Button, { href: getPathForPage(i + 1), isActive: currentPage === pageIndex, ...buttonProps, children: i + 1 }, i);
+      },
+      currentPage,
+      totalPages,
+      totalItems: pagination.totalItems,
+      maxButtons,
+      buttonProps,
+      inputProps,
+      ...rest
+    }
+  );
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  Button,
+  EllipsisButton,
+  Pagination,
+  PaginationProvider,
+  RoutedPagination,
+  RoutedPaginationProvider,
+  usePagination,
+  useRoutedPagination
+});

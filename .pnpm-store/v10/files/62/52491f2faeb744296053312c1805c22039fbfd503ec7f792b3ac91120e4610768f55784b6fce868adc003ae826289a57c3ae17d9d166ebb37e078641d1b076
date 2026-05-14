@@ -1,0 +1,47 @@
+{
+  "name": "blindsecp256k1",
+  "version": "0.0.9",
+  "description": "Blind signatures over secp256k1, compatible with https://github.com/arnaucube/go-blindsecp256k1",
+  "main": "dist/index",
+  "types": "dist/index",
+  "exports": {
+    ".": {
+      "browser": {
+        "default": "./dist/blindsecp256k1-browser.js"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "clean": "rimraf dist",
+    "build": "npm run clean && ./node_modules/.bin/tsc && npm run browserify",
+    "browserify": "browserify dist/index.js --standalone blindsecp256k1 > dist/blindsecp256k1-browser.js",
+    "watch": "./node_modules/.bin/tsc -w -p .",
+    "ts-node": "./node_modules/.bin/ts-node",
+    "test": "npm run build && ./node_modules/.bin/mocha -r ts-node/register test/**/*.ts"
+  },
+  "author": "arnaucube",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@ethersproject/keccak256": "5.0.7",
+    "bigi": "^1.4.2",
+    "bignumber.js": "7.0.2",
+    "ecurve": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/bigi": "^1.4.2",
+    "@types/chai": "^4.2.14",
+    "@types/ecurve": "^1.0.0",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.25",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.1.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.1.3",
+    "browserify": "^16.5.0"
+  }
+}

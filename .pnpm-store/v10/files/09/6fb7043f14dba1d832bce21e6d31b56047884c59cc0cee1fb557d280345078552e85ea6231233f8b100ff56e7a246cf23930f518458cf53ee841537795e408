@@ -1,0 +1,9 @@
+export const status = 'SET';
+export const pluginVersion = "0.7.18";
+export const loadServerEntry = async () => { await import("../../../../../../../../../dist/server/entry.mjs"); };
+export const paths = {
+  autoImporterFilePathOriginal: "/workspace/node_modules/.pnpm/@brillout+vite-plugin-server-entry@0.7.18/node_modules/@brillout/vite-plugin-server-entry/dist/esm/runtime/autoImporter.js",
+  autoImporterFilePathActual: (() => { try { return import.meta.url } catch { return null } })(),
+  serverEntryFilePathRelative: "../../../../../../../../../dist/server/entry.mjs",
+  serverEntryFilePathAbsolute: "/workspace/dist/server/entry.mjs",
+};

@@ -1,0 +1,88 @@
+{
+  "name": "@vocdoni/react-components",
+  "version": "1.1.0-beta.2",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/vocdoni/ui-components/tree/main/packages/react-components#readme",
+  "bugs": "https://github.com/vocdoni/ui-components/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vocdoni/ui-components.git",
+    "directory": "packages/react-components"
+  },
+  "description": "Vocdoni headless react components",
+  "keywords": [
+    "react",
+    "components",
+    "blockchain",
+    "voting"
+  ],
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.cjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./pagination": {
+      "types": "./dist/pagination.d.ts",
+      "import": "./dist/pagination.js",
+      "require": "./dist/pagination.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "latinize": "^0.5.0",
+    "react-hook-form": "^7.49.3",
+    "up-fetch": "^2.5.0"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.0.0",
+    "@ethersproject/abstract-signer": "^5.7.0",
+    "@ethersproject/wallet": "^5.7.0",
+    "date-fns": "^4.1.0",
+    "i18next": "^25.8.13",
+    "react-i18next": "^16.5.4",
+    "@vocdoni/sdk": "~0.9.3",
+    "react": ">= 16.8.0 <19.0.0",
+    "react-router-dom": ">= 6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-router-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^5.0.0",
+    "@ethersproject/abstract-signer": "^5.7.0",
+    "@ethersproject/wallet": "^5.7.0",
+    "@types/latinize": "^0.2.15",
+    "@types/react": "^18.0.30",
+    "@types/react-dom": "^18.0.11",
+    "@vocdoni/sdk": "~0.9.3",
+    "date-fns": "^4.1.0",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "i18next": "^25.8.13",
+    "latinize": "^0.5.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^16.5.4",
+    "react-router-dom": "^6.26.1",
+    "typescript": "^5.9.2",
+    "tsconfig": "0.0.0"
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "lint": "tsc",
+    "build": "tsup --config tsup.config.ts",
+    "clean": "rm -rf dist .turbo node_modules",
+    "test": "vitest run --config ../../vitest.config.ts"
+  }
+}

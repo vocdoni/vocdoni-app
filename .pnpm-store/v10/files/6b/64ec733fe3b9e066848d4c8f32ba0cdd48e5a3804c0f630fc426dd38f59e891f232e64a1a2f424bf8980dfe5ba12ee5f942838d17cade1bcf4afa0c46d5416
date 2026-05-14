@@ -1,0 +1,98 @@
+{
+  "name": "i18next-resources-for-ts",
+  "version": "2.0.0",
+  "description": "This package helps to transform resources to be used in a typesafe i18next project.",
+  "keywords": [
+    "i18next",
+    "typescript"
+  ],
+  "homepage": "https://github.com/i18next/i18next-resources-for-ts",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:i18next/i18next-resources-for-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/i18next/i18next-resources-for-ts/issues"
+  },
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "browser": "./dist/umd/i18nextResourcesForTS.js",
+  "types": "./index.d.mts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": {
+        "require": "./dist/cjs/index.d.ts",
+        "import": "./dist/esm/index.d.mts"
+      },
+      "module": "./dist/esm/index.js",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./cjs": {
+      "types": "./dist/cjs/index.d.ts",
+      "default": "./dist/cjs/index.js"
+    },
+    "./esm": {
+      "types": "./dist/esm/index.d.mts",
+      "default": "./dist/esm/index.js"
+    },
+    "./src": {
+      "default": "./src/index.js"
+    }
+  },
+  "bin": {
+    "i18next-resources-for-ts": "./bin/i18next-resources-for-ts.js"
+  },
+  "scripts": {
+    "lint:javascript": "eslint .",
+    "lint:typescript": "eslint -c .ts.eslintrc *.d.ts *.d.mts test/types/**/*.test-d.ts",
+    "lint": "npm run lint:javascript && npm run lint:typescript",
+    "build": "rm -rf dist && rollup -c && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json && cp index.d.ts dist/cjs/index.d.ts && cp index.d.ts dist/esm/index.d.ts && cp index.d.mts dist/esm/index.d.mts",
+    "test:typescript": "tsd",
+    "test": "npm run lint && mocha --colors --reporter spec --recursive test/*.js",
+    "test:all": "npm run test && npm run test:typescript",
+    "preversion": "npm run test && npm run build && git push",
+    "postversion": "git push && git push --tags"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.28.4",
+    "@swc/core": "^1.15.3",
+    "chokidar": "^5.0.0",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/plugin-transform-runtime": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@rollup/plugin-babel": "^6.1.0",
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "0.4.4",
+    "@types/mocha": "^10.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "@typescript-eslint/parser": "^8.48.1",
+    "babel-plugin-add-module-exports": "^1.0.4",
+    "eslint": "8.57.1",
+    "eslint-config-standard": "17.1.0",
+    "eslint-plugin-import": "2.31.0",
+    "eslint-plugin-n": "16.6.2",
+    "eslint-plugin-promise": "6.6.0",
+    "eslint-plugin-require-path-exists": "1.1.9",
+    "eslint-plugin-standard": "5.0.0",
+    "i18next": "^25.7.1",
+    "i18next-chained-backend": "^4.6.2",
+    "mocha": "^11.7.5",
+    "rollup": "^4.53.3",
+    "should": "^13.2.3",
+    "sinon": "^21.0.0",
+    "tsd": "^0.33.0",
+    "typescript": "^5.9.3"
+  },
+  "tsd": {
+    "directory": "test/types"
+  }
+}

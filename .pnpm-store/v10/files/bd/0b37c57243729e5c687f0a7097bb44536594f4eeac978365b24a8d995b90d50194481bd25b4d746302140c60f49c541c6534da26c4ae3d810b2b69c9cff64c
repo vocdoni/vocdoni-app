@@ -1,0 +1,7 @@
+"use client";
+
+// src/wallets/walletConnectors/safeheronWallet/safeheronWallet.svg
+var safeheronWallet_default = "data:image/svg+xml,%3Csvg%20width%3D%2238%22%20height%3D%2238%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%3Cdefs%3E%3Cpath%20id%3D%22prefix__a%22%20d%3D%22M0%200h38v38H0z%22%2F%3E%3C%2Fdefs%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cmask%20id%3D%22prefix__b%22%20fill%3D%22%23fff%22%3E%3Cuse%20xlink%3Ahref%3D%22%23prefix__a%22%2F%3E%3C%2Fmask%3E%3Cpath%20d%3D%22M19%200C8.507%200%200%208.507%200%2019s8.507%2019%2019%2019c10.494%200%2019-8.507%2019-19S29.494%200%2019%200z%22%20fill%3D%22%23109D84%22%20mask%3D%22url(%23prefix__b)%22%2F%3E%3Cpath%20fill%3D%22%23109D84%22%20mask%3D%22url(%23prefix__b)%22%20d%3D%22M0%200h38v38H0z%22%2F%3E%3Cpath%20d%3D%22M7.59%2015.792l16.07%2010.477c.149.11.236.283.236.469l-.079%205.095c0%20.547-.66.822-1.047.436L7.558%2018.25a1.12%201.12%200%2001-.33-.793v-1.483c0-.186.212-.294.362-.182zm8.73-10.065l15.29%2014.154c.215.21.336.5.336.8v1.54a.227.227%200%2001-.361.184l-11.577-7.196a.219.219%200%2000-.347.177v.771c0%20.255.103.499.285.677l3.579%203.504c.238.233.371.551.371.885V24.2c0%20.172-.204.26-.33.143L17.7%2018.871l-2.034-1.92a1.235%201.235%200%2001-.389-.9V6.168c0-.544.655-.82%201.044-.44z%22%20fill%3D%22%23FFF%22%20mask%3D%22url(%23prefix__b)%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E";
+export {
+  safeheronWallet_default as default
+};

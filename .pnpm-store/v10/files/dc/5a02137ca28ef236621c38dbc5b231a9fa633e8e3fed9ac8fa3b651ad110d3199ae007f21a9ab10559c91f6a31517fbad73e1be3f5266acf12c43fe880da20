@@ -1,0 +1,295 @@
+import type { ImportString, PageContext } from 'vike/types';
+import type { TagAttributes } from '../utils/getTagAttributesString.js';
+import type { Viewport, HtmlInjection } from '../integration/onRenderHtml.js';
+import type { ConfigsCumulative } from '../hooks/useConfig/configsCumulative.js';
+import type React from 'react';
+import type { HydrationOptions, RootOptions } from 'react-dom/client';
+import type { ServerOptions } from 'react-dom/server';
+import type { RenderToStreamOptions } from 'react-streaming/server';
+declare global {
+    namespace Vike {
+        interface Config {
+            /**
+             * The page's root React component.
+             *
+             * https://vike.dev/Page
+             */
+            Page?: () => React.ReactNode;
+            /**
+             * Add arbitrary `<head>` tags.
+             *
+             * https://vike.dev/Head
+             */
+            Head?: Head;
+            /**
+             * A component that defines the visual layout common to several pages.
+             *
+             * Technically: the `<Layout>` component wraps the root component `<Page>`.
+             *
+             * https://vike.dev/Layout
+             */
+            Layout?: Layout;
+            /**
+             * A component wrapping the the root component `<Page>`.
+             *
+             * https://vike.dev/Wrapper
+             */
+            Wrapper?: Wrapper | ImportString;
+            /**
+             * Set the page's tilte.
+             *
+             * Generates:
+             * ```jsx
+             * <head>
+             *   <title>{title}</title>
+             *   <meta property="og:title" content={title} />
+             * </head>
+             * ```
+             *
+             * https://vike.dev/title
+             */
+            title?: string | null | ((pageContext: PageContext_) => string | null | undefined);
+            /**
+             * Set the page's description.
+             *
+             * Generates:
+             * ```jsx
+             * <head>
+             *   <meta name="description" content={description}>
+             *   <meta property="og:description" content={description}>
+             * </head>
+             * ```
+             *
+             * https://vike.dev/description
+             */
+            description?: string | null | ((pageContext: PageContextServer) => string | null | undefined);
+            /**
+             * Set the page's preview image upon URL sharing.
+             *
+             * Generates:
+             * ```jsx
+             * <head>
+             *   <meta property="og:image" content={image}>
+             *   <meta name="twitter:card" content="summary_large_image">
+             * </head>
+             * ```
+             *
+             * https://vike.dev/image
+             */
+            image?: string | null | ((pageContext: PageContextServer) => string | null | undefined);
+            /**
+             * Set the page's width shown to the user on mobile/tablet devices.
+             *
+             * @default "responsive"
+             *
+             * https://vike.dev/viewport
+             */
+            viewport?: Viewport | ((pageContext: PageContextServer) => Viewport | undefined);
+            /**
+             * Set the page's favicon.
+             *
+             * Generates:
+             * ```jsx
+             * <head>
+             *   <link rel="icon" href={favicon} />
+             * </head>
+             * ```
+             *
+             * https://vike.dev/favicon
+             */
+            favicon?: string | null | ((pageContext: PageContextServer) => string | null | undefined);
+            /**
+             * Set the page's language (`<html lang>`).
+             *
+             * @default 'en'
+             *
+             * https://vike.dev/lang
+             */
+            lang?: string | null | ((pageContext: PageContext_) => string | null | undefined);
+            /**
+             * Raw HTML injected at the start of `<body>`.
+             *
+             * https://vike.dev/bodyHtmlBegin
+             */
+            bodyHtmlBegin?: HtmlInjection;
+            /**
+             * Raw HTML injected at the end of `<body>`.
+             *
+             * https://vike.dev/bodyHtmlEnd
+             */
+            bodyHtmlEnd?: HtmlInjection;
+            /**
+             * Raw HTML injected at the start of `<head>`.
+             *
+             * https://vike.dev/headHtmlBegin
+             */
+            headHtmlBegin?: HtmlInjection;
+            /**
+             * Raw HTML injected at the end of `<head>`.
+             *
+             * https://vike.dev/headHtmlEnd
+             */
+            headHtmlEnd?: HtmlInjection;
+            /**
+             * Add tag attributes such as `<html class="dark">`.
+             *
+             * https://vike.dev/htmlAttributes
+             */
+            htmlAttributes?: TagAttributes | ((pageContext: PageContextServer) => TagAttributes | undefined);
+            /**
+             * Add tag attributes such as `<body class="dark">`.
+             *
+             * https://vike.dev/bodyAttributes
+             */
+            bodyAttributes?: TagAttributes | ((pageContext: PageContextServer) => TagAttributes | undefined);
+            /**
+             * If `true`, the page is rendered twice: on the server-side (to HTML) and on the client-side (hydration).
+             *
+             * If `false`, the page is rendered only once in the browser.
+             *
+             * @default true
+             *
+             * https://vike.dev/ssr
+             */
+            ssr?: boolean;
+            /**
+             * Settings for HTML Streaming.
+             *
+             * https://vike.dev/stream
+             */
+            stream?: boolean | 'node' | 'web' | {
+                /**
+                 * Whether the HTML stream should be a Web Stream or a Node.js Stream.
+                 *
+                 * https://vike.dev/stream
+                 */
+                type?: 'node' | 'web';
+                /**
+                 * Whether Server-Side Rendering (SSR) must use a stream. (Some tool integrations require it.)
+                 *
+                 * Setting +stream to `{ require: true, disable: true }` means that SSR is done using a stream but, from the user's perspective, HTML Streaming is disabled: the stream is awaited, converted to a string, and the full HTML is sent at once.
+                 *
+                 * https://vike.dev/stream
+                 */
+                require?: boolean;
+                /**
+                 * Setting +stream to `{ enable: null }` is the same as not setting +stream at all.
+                 *
+                 * Useful for changing stream settings without enabling streaming. For example, Vike extensions can set +stream to `{ enable: null, type: 'web' }` to change the default stream type without enabling streaming.
+                 *
+                 * https://vike.dev/stream
+                 */
+                enable?: boolean | null;
+            };
+            /** @deprecated Set +stream.require instead */
+            streamIsRequired?: boolean;
+            /**
+             * Whether to use `<StrictMode>`.
+             *
+             * @default true
+             *
+             * https://vike.dev/reactStrictMode
+             */
+            reactStrictMode?: boolean;
+            /**
+             * Hook called right before rendering the page's root React component to HTML.
+             *
+             * https://vike.dev/onBeforeRenderHtml
+             */
+            onBeforeRenderHtml?: ((pageContext: PageContextServer) => void) | ImportString;
+            /**
+             * Hook called right after rendering the page's root React component to HTML.
+             *
+             * https://vike.dev/onAfterRenderHtml
+             */
+            onAfterRenderHtml?: ((pageContext: PageContextServer) => void) | ImportString;
+            /**
+             * Client-side hook called before the page is rendered.
+             *
+             * https://vike.dev/onBeforeRenderClient
+             */
+            onBeforeRenderClient?: ((pageContext: PageContextClient) => void) | ImportString;
+            /**
+             * Client-side hook called after the page is rendered.
+             *
+             * https://vike.dev/onAfterRenderClient
+             */
+            onAfterRenderClient?: ((pageContext: PageContextClient) => void) | ImportString;
+            /**
+             * Define loading animations.
+             *
+             * https://vike.dev/Loading
+             */
+            Loading?: Loading | ImportString;
+            /**
+             * Options passed to React functions such as `createRoot()` or `hydrateRoot()`.
+             *
+             * https://vike.dev/react-setting
+             */
+            react?: ReactOptions | ((pageContext: PageContext) => ReactOptions) | ImportString;
+        }
+        interface ConfigResolved {
+            Wrapper?: Wrapper[];
+            Layout?: Layout[];
+            Head?: Head[];
+            bodyHtmlBegin?: HtmlInjection[];
+            bodyHtmlEnd?: HtmlInjection[];
+            headHtmlBegin?: HtmlInjection[];
+            headHtmlEnd?: HtmlInjection[];
+            bodyAttributes?: TagAttributes[];
+            htmlAttributes?: TagAttributes[];
+            onBeforeRenderHtml?: Function[];
+            onAfterRenderHtml?: Function[];
+            onBeforeRenderClient?: Function[];
+            onAfterRenderClient?: Function[];
+            react?: Exclude<Config['react'], ImportString>[];
+            stream?: Exclude<Config['stream'], ImportString>[];
+        }
+    }
+}
+type PageContext_ = PageContext;
+export type Head = React.ReactNode | (() => React.ReactNode);
+type Wrapper = (props: {
+    children: React.ReactNode;
+}) => React.ReactNode;
+type Layout = Wrapper;
+type Loading = {
+    component?: () => React.ReactNode;
+    layout?: () => React.ReactNode;
+};
+type PickWithoutGetter<T, K extends keyof T> = {
+    [P in K]: Exclude<T[P], Function>;
+};
+export type ConfigViaHook = PickWithoutGetter<Vike.Config, 'Head' | 'title' | 'description' | 'image' | 'favicon' | 'lang' | 'viewport' | 'bodyAttributes' | 'htmlAttributes'>;
+export type ConfigViaHookResolved = Omit<ConfigViaHook, ConfigsCumulative> & Pick<Vike.ConfigResolved, ConfigsCumulative>;
+export type ReactOptions = {
+    /**
+     * Options passed to React's `hydrateRoot()`.
+     *
+     * https://react.dev/reference/react-dom/client/hydrateRoot
+     * https://vike.dev/react-setting
+     */
+    hydrateRootOptions?: HydrationOptions;
+    /**
+     * Options passed to React's `createRoot()`.
+     *
+     * https://react.dev/reference/react-dom/client/createRoot
+     * https://vike.dev/react-setting
+     */
+    createRootOptions?: RootOptions;
+    /**
+     * Options passed to React's `renderToString()`.
+     *
+     * https://react.dev/reference/react-dom/server/renderToString
+     * https://vike.dev/react-setting
+     */
+    renderToStringOptions?: ServerOptions;
+    /**
+     * Options passed to `react-streaming`'s `renderToStream()` during SSR streaming.
+     *
+     * https://github.com/brillout/react-streaming#options
+     * https://vike.dev/react-setting
+     */
+    renderToStreamOptions?: RenderToStreamOptions;
+};
+export {};

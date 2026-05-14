@@ -1,0 +1,86 @@
+{
+  "name": "@visulima/boxen",
+  "version": "2.0.10",
+  "description": "Util.format-like string formatting utility.",
+  "keywords": [
+    "anolilab",
+    "visulima",
+    "ansi",
+    "cli",
+    "box",
+    "gradient",
+    "boxes",
+    "boxen",
+    "terminal",
+    "term",
+    "console",
+    "ascii",
+    "unicode",
+    "border",
+    "text"
+  ],
+  "homepage": "https://www.visulima.com/docs/package/boxen",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/visulima/visulima.git",
+    "directory": "packages/boxen"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/prisis"
+    },
+    {
+      "type": "consulting",
+      "url": "https://anolilab.com/support"
+    }
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Bannert",
+    "email": "d.bannert@anolilab.de"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "typesVersions": {
+    ">=5.0": {
+      ".": [
+        "./dist/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist/**",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE.md"
+  ],
+  "engines": {
+    "node": ">=20.18 <=25.x"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
