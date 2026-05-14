@@ -14,7 +14,7 @@ const LogoutButton = () => {
   const { disconnect } = useDisconnect()
   const { election, connected, clearClient } = useElection()
   const { isConnected } = useAccount()
-  const { logout } = useAuth()
+  const { logout, setMemberNumber } = useAuth()
   const { clear } = useClient()
 
   if (election instanceof InvalidElection) return null
@@ -32,6 +32,8 @@ const LogoutButton = () => {
       <Box alignSelf='center' mb={{ base: 10, md: 0 }}>
         <Button
           onClick={() => {
+            setMemberNumber(null)
+
             if (isCSP || isSpreadsheet) {
               clearClient()
               return
