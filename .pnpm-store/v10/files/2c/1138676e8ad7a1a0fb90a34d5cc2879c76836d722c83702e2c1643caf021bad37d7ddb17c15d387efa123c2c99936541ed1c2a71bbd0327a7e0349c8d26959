@@ -1,0 +1,108 @@
+{
+  "name": "chakra-react-select",
+  "version": "6.1.1",
+  "description": "A Chakra UI wrapper for the popular library React Select",
+  "license": "MIT",
+  "author": "Chris Sandvik <chris.sandvik@gmail.com>",
+  "homepage": "https://github.com/csandman/chakra-react-select#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csandman/chakra-react-select.git"
+  },
+  "bugs": {
+    "url": "https://github.com/csandman/chakra-react-select/issues"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup --clean",
+    "dev": "concurrently npm:dev:*",
+    "dev:demo": "cd demo && npm run dev",
+    "dev:src": "tsup --watch",
+    "format": "concurrently npm:format:*",
+    "format:package": "prettier-package-json --write",
+    "format:src": "prettier --write .",
+    "install:all": "npm install && npm run install:demo && npm run install:codemod",
+    "install:codemod": "cd codemod && npm install",
+    "install:demo": "cd demo && npm install",
+    "lint": "concurrently npm:lint:*",
+    "lint:exports": "attw --pack .",
+    "lint:src": "eslint .",
+    "lint:types": "tsc",
+    "lint-fix": "eslint --fix src",
+    "prepare": "husky",
+    "prepublishOnly": "npm run build && npm run lint",
+    "postpublish": "git push --follow-tags"
+  },
+  "dependencies": {
+    "react-select": "^5.10.0"
+  },
+  "peerDependencies": {
+    "@chakra-ui/react": "3.x",
+    "next-themes": "0.x",
+    "react": "18.x || 19.x"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@chakra-ui/react": "^3.29.0",
+    "@eslint/js": "^9.39.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
+    "@types/react": "^19.2.4",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-unicorn": "^62.0.0",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "next-themes": "^0.4.6",
+    "prettier": "^3.6.2",
+    "prettier-package-json": "^2.8.0",
+    "react": "^19.2.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4"
+  },
+  "keywords": [
+    "accessibility",
+    "chakra",
+    "chakra-ui",
+    "combobox",
+    "dropdown",
+    "input",
+    "listbox",
+    "menu",
+    "multi-select",
+    "react",
+    "react-select",
+    "select"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint --cache --fix",
+    "*": "prettier --ignore-unknown --write",
+    "package.json": "prettier-package-json --write"
+  }
+}

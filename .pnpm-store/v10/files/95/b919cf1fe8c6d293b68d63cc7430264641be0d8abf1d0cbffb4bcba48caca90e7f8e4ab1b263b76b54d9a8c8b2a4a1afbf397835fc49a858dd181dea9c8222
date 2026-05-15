@@ -1,0 +1,63 @@
+{
+  "name": "@brillout/picocolors",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.30",
+  "// We don't use ./dist/picocolors.d.ts because of what seems to be a TypeScript bug": "",
+  "types": "./picocolors.d.ts",
+  "module": "./dist/picocolors.js",
+  "browser": "./dist/picocolors.browser.js",
+  "exports": {
+    "worker": "./dist/picocolors.js",
+    "browser": "./dist/picocolors.browser.js",
+    "types": "./picocolors.d.ts",
+    "default": "./dist/picocolors.js"
+  },
+  "type": "module",
+  "description": "The tiniest and the fastest library for terminal output formatting with ANSI colors",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "rm -rf dist/ && tsc",
+    "prepublishOnly": "pnpm run build",
+    "release": "npm version patch && npm publish && git push && git push --tags",
+    "reset": "git clean -Xdf && pnpm install && pnpm run build"
+  },
+  "files": [
+    "picocolors.d.ts",
+    "dist/"
+  ],
+  "keywords": [
+    "terminal",
+    "colors",
+    "formatting",
+    "cli",
+    "console"
+  ],
+  "author": "Alexey Raspopov",
+  "repository": "alexeyraspopov/picocolors",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "18.11.9",
+    "ansi-colors": "^4.1.1",
+    "benchmark": "^2.1.4",
+    "chalk": "^4.1.2",
+    "clean-publish": "^3.0.3",
+    "cli-color": "^2.0.0",
+    "colorette": "^2.0.12",
+    "kleur": "^4.1.4",
+    "nanocolors": "^0.2.12",
+    "prettier": "^2.4.1",
+    "typescript": "^4.9.5"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "useTabs": true,
+    "tabWidth": 2,
+    "semi": false,
+    "arrowParens": "avoid"
+  },
+  "clean-publish": {
+    "cleanDocs": true
+  }
+}

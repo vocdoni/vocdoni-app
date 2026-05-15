@@ -1,0 +1,71 @@
+{
+  "name": "qr",
+  "version": "0.5.3",
+  "description": "Minimal 0-dep QR code generator & reader. Supports ascii, term, gif and svg formats",
+  "files": [
+    "index.js",
+    "index.js.map",
+    "index.d.ts",
+    "index.d.ts.map",
+    "decode.js",
+    "decode.js.map",
+    "decode.d.ts",
+    "decode.d.ts.map",
+    "dom.js",
+    "dom.js.map",
+    "dom.d.ts",
+    "dom.d.ts.map",
+    "src",
+    "LICENSE",
+    "LICENSE-MIT"
+  ],
+  "devDependencies": {
+    "@paulmillr/jsbt": "0.4.5",
+    "@types/node": "24.2.1",
+    "prettier": "3.6.2",
+    "typescript": "5.9.2"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:release": "npx --no @paulmillr/jsbt esbuild test/build",
+    "bench": "cd test/benchmark && npm ci && node index.ts",
+    "format": "prettier --write src",
+    "test": "cd test; npm ci; node --experimental-strip-types --no-warnings index.ts",
+    "test:bun": "cd test; bun install; bun index.ts",
+    "test:deno": "cd test; npm install; deno --allow-env --allow-read index.ts",
+    "test:node20": "cd test; npx tsc; cd compiled/test; npm install; node index.js"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./decode.js": "./decode.js",
+    "./dom.js": "./dom.js"
+  },
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "keywords": [
+    "qr",
+    "code",
+    "qr code",
+    "qr pattern",
+    "qr generator",
+    "qr reader",
+    "ascii",
+    "gif",
+    "svg",
+    "camera",
+    "file"
+  ],
+  "homepage": "https://github.com/paulmillr/qr",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paulmillr/qr.git"
+  },
+  "type": "module",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
+  "sideEffects": false,
+  "author": "Paul Miller (https://paulmillr.com)",
+  "license": "(MIT OR Apache-2.0)"
+}

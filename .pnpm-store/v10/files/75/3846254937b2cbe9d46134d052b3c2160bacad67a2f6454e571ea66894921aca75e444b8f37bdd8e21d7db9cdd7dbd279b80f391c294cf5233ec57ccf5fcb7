@@ -1,0 +1,11 @@
+export { inferAssetTag };
+export { inferPreloadTag };
+export { inferEarlyHintLink };
+export { scriptCommonAttrs };
+import type { PageAsset } from '../../getPageAssets.js';
+import { type PageContextCspNonce } from '../../csp.js';
+import '../../../../assertEnvServer.js';
+declare const scriptCommonAttrs = "type=\"module\" async";
+declare function inferPreloadTag(pageAsset: PageAsset): string;
+declare function inferAssetTag(pageAsset: PageAsset, pageContext: PageContextCspNonce): string;
+declare function inferEarlyHintLink(pageAsset: PageAsset): string;

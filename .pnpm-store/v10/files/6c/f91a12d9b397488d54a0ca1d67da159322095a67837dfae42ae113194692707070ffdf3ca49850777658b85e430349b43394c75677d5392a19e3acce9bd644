@@ -1,0 +1,34 @@
+import '../utils/trackLogs.js'; // should be loaded ASAP
+import { assertIsNotBrowser } from '../utils/assertIsNotBrowser.js';
+import { assertNodeVersion } from '../utils/assertNodeVersion.js';
+import { setAssertAlwaysShowStackTrace } from '../utils/assert.js';
+import { isDebugError } from '../utils/debug.js';
+import { installUncaughtErrorHandlers } from '../utils/installUncaughtErrorHandlers.js';
+assertEnvServer();
+onLoad();
+function assertEnvServer() {
+    assertIsNotBrowser();
+    assertNodeVersion();
+}
+function onLoad() {
+    installUncaughtErrorHandlers();
+    if (isDebugError()) {
+        // Is also executed upon `$ vike build` because node/vite/utils.ts imports server/utils.ts
+        Error.stackTraceLimit = Infinity;
+        setAssertAlwaysShowStackTrace();
+    }
+    addEcosystemStamp();
+}
+// Used by:
+// - Telefunc (to detect the user's stack https://github.com/telefunc/telefunc/blob/8288310e88e06a42b710d39c39fb502364ca6d30/telefunc/utils/isVikeApp.ts#L4)
+function addEcosystemStamp() {
+    const g = globalThis;
+    g._isVikeApp =
+        /* Don't set to true so that consumers do `!!globalThis._isVikeApp` instead of `globalThis._isVikeApp === true`.
+        true
+        */
+        // We use an object so that we can eventually, in the future, add helpful information as needed. (E.g. the Vike version, or global settings.)
+        {};
+    // We keep the old stamp for older Telefunc versions
+    g._isVitePluginSsr = true;
+}

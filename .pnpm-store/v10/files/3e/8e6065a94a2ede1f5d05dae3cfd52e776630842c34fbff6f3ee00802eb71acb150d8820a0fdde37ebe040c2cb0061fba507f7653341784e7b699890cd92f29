@@ -1,0 +1,22 @@
+'use client';
+import { jsx, Fragment } from 'react/jsx-runtime';
+
+const JsonTreeViewValueNode = (props) => {
+  const { node, renderValue } = props;
+  if (node.type === "text") {
+    return /* @__PURE__ */ jsx(Fragment, { children: renderValue?.(node) ?? node.value });
+  }
+  const Element = node.tagName;
+  return /* @__PURE__ */ jsx(
+    Element,
+    {
+      "data-root": node.properties.root ? "" : void 0,
+      "data-type": node.properties.nodeType,
+      "data-kind": node.properties.kind,
+      suppressHydrationWarning: true,
+      children: node.children.map((child, index) => /* @__PURE__ */ jsx(JsonTreeViewValueNode, { node: child, renderValue }, index))
+    }
+  );
+};
+
+export { JsonTreeViewValueNode };

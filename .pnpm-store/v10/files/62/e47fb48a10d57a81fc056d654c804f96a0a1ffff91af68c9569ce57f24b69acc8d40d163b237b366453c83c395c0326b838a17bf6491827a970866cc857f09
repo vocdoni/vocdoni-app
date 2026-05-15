@@ -1,0 +1,56 @@
+{
+  "name": "@brillout/vite-plugin-server-entry",
+  "version": "0.7.18",
+  "repository": "https://github.com/brillout/vite-plugin-server-entry",
+  "dependencies": {
+    "@brillout/import": "^0.2.6",
+    "@brillout/picocolors": "^1.0.26"
+  },
+  "exports": {
+    "./plugin": "./dist/esm/plugin/index.js",
+    "./runtime": "./dist/esm/runtime/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "========= Dev": "",
+    "dev": "tsc --watch",
+    "========= Build": "",
+    "build": "rm -rf dist/ && tsc",
+    "========= Formatting": "",
+    "format": "pnpm run format:biome",
+    "format:prettier": "git ls-files | egrep '\\.(json|js|jsx|css|ts|tsx|vue|mjs|cjs)$' | grep --invert-match package.json | xargs pnpm exec prettier --write",
+    "format:biome": "biome format --write .",
+    "format:check": "biome format . || echo Fix formatting by running: $ pnpm run format",
+    "========= Reset": "",
+    "reset": "git clean -Xdf && pnpm install && pnpm run build",
+    "========= Release": "",
+    "release": "release-me patch",
+    "release:minor": "release-me minor",
+    "release:commit": "release-me commit"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@brillout/release-me": "^0.4.0",
+    "@types/node": "^15.12.2",
+    "prettier": "^3.3.3",
+    "typescript": "^5.7.3",
+    "vite": "^7.1.3"
+  },
+  "typesVersions": {
+    "*": {
+      "plugin": [
+        "./dist/esm/plugin/index.d.ts"
+      ],
+      "runtime": [
+        "./dist/esm/runtime/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

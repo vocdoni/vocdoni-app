@@ -1,0 +1,97 @@
+export { parseCli };
+import pc from '@brillout/picocolors';
+import { assert } from '../../utils/assert.js';
+import { includes } from '../../utils/includes.js';
+import { PROJECT_VERSION } from '../../utils/PROJECT_VERSION.js';
+import { parseJson5 } from '../vite/shared/getEnvVarObject.js';
+import './assertEnvCli.js';
+const commands = [
+    { name: 'dev', desc: 'Start development server' },
+    { name: 'build', desc: 'Build for production' },
+    { name: 'preview', desc: 'Start preview server using production build' },
+    { name: 'prerender', desc: 'Pre-render pages (only needed when +prerender.disableAutoRun is true)' },
+];
+function parseCli() {
+    const command = getCommand();
+    const cliOptions = getCliOptions();
+    return { command, cliOptions };
+}
+function getCommand() {
+    const firstArg = process.argv[2];
+    if (includes(commands.map((c) => c.name), firstArg)) {
+        return firstArg;
+    }
+    if (!firstArg)
+        showHelp();
+    showHelpOrVersion(firstArg);
+    wrongUsage(`Unknown command ${pc.bold(firstArg)}`);
+}
+function getCliOptions() {
+    let cliOptions = {};
+    let configNameCurrent;
+    const commitIfDefinedWithoutValue = () => {
+        if (configNameCurrent)
+            commit(true);
+    };
+    const commit = (val) => {
+        assert(configNameCurrent);
+        cliOptions[configNameCurrent] = val;
+        configNameCurrent = undefined;
+    };
+    for (const arg of process.argv.slice(3)) {
+        showHelpOrVersion(arg);
+        if (arg.startsWith('--')) {
+            commitIfDefinedWithoutValue();
+            configNameCurrent = arg.slice('--'.length);
+        }
+        else {
+            if (!configNameCurrent)
+                wrongUsage(`Unknown option ${pc.bold(arg)}`);
+            commit(parseJson5(arg, `CLI option --${configNameCurrent}`));
+        }
+    }
+    commitIfDefinedWithoutValue();
+    return cliOptions;
+}
+function showHelp() {
+    const TAB = ' '.repeat(2);
+    const nameMaxLength = Math.max(...commands.map((c) => c.name.length));
+    console.log([
+        `vike@${PROJECT_VERSION}`,
+        '',
+        'Usage:',
+        ...[...commands, { name: '-v', desc: "Print Vike's installed version" }].map((c) => `  ${pc.dim('$')} vike ${c.name.startsWith('-') ? pc.cyan(`${c.name}`) : pc.bold(`${c.name}`)}${' '.repeat(nameMaxLength - c.name.length)}${TAB}${pc.dim(`# ${c.desc}`)}`),
+        '',
+        'Common CLI options:',
+        [
+            `vike dev ${pc.cyan('--host')}          ${TAB}${pc.dim('# Make server available over LAN and public addresses')}`,
+            `vike dev ${pc.cyan('--port')} 80       ${TAB}${pc.dim('# Change the server port')}`,
+            `vike build ${pc.cyan('--mode')} staging${TAB}${pc.dim('# Set the mode to run in')}`,
+            `vike dev ${pc.cyan('--force')}         ${TAB}${pc.dim("# Disable Vite's cache")}`,
+        ]
+            .map((o) => `  ${pc.dim('$')} ${o}`)
+            .join('\n'),
+        '',
+        `More Vike settings can be passed over the ${pc.cyan('VIKE_CONFIG')} environment variable or as ${pc.cyan('CLI option')}.`,
+        `More Vite settings can be passed over the ${pc.cyan('VITE_CONFIG')} environment variable.`,
+        `See ${pc.underline('https://vike.dev/cli')} for more information.`,
+    ].join('\n'));
+    process.exit(1);
+}
+function showHelpOrVersion(arg) {
+    if (arg === '--version' || arg === '-v' || arg === '--v') {
+        showVersion();
+    }
+    if (arg === '--help' || arg === '-h' || arg === '--h') {
+        showHelp();
+    }
+}
+function showVersion() {
+    console.log(PROJECT_VERSION);
+    process.exit(1);
+}
+function wrongUsage(msg) {
+    console.error(pc.red(msg));
+    console.log();
+    showHelp();
+}

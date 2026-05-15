@@ -1,0 +1,1 @@
+Wraps `@universal-deploy/store` entries with [srvx](https://srvx.h3.dev/) + [sirv](https://universal-middleware.dev/middlewares/sirv)

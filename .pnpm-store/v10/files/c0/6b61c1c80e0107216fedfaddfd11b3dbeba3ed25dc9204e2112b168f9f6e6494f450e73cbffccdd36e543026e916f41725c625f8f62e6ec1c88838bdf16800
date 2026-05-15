@@ -1,0 +1,95 @@
+{
+  "name": "react-streaming",
+  "description": "React 18 Streaming. Full-fledged & Easy.",
+  "version": "0.4.16",
+  "peerDependencies": {
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "dependencies": {
+    "@brillout/import": "^0.2.3",
+    "@brillout/json-serializer": "^0.5.1",
+    "@brillout/picocolors": "^1.0.11",
+    "isbot-fast": "1.2.0"
+  },
+  "main": "./dist/server/hooks.js",
+  "// Explanation: https://gist.github.com/brillout/553253e27a43ccfc01ec6c38880d1360": "",
+  "exports": {
+    ".": {
+      "worker": "./dist/server/hooks.js",
+      "workerd": "./dist/server/hooks.js",
+      "browser": "./dist/client/hooks.js",
+      "node": "./dist/server/hooks.js",
+      "types": "./dist/server/hooks.d.ts",
+      "default": "./dist/server/hooks.js"
+    },
+    "./server": {
+      "worker": "./dist/server/index.web-only.js",
+      "workerd": "./dist/server/index.web-only.js",
+      "browser": "./dist/server/client-poison-pill.js",
+      "node": "./dist/server/index.node-and-web.js",
+      "types": "./dist/server/index.d.ts",
+      "default": "./dist/server/index.node-and-web.js"
+    },
+    "./server.web": {
+      "worker": "./dist/server/index.web-only.js",
+      "workerd": "./dist/server/index.web-only.js",
+      "browser": "./dist/server/client-poison-pill.js",
+      "node": "./dist/server/index.web-only.js",
+      "types": "./dist/server/index.d.ts",
+      "default": "./dist/server/index.web-only.js"
+    },
+    "./server.node": {
+      "worker": "./dist/server/index.node-only.js",
+      "workerd": "./dist/server/index.node-only.js",
+      "browser": "./dist/server/client-poison-pill.js",
+      "node": "./dist/server/index.node-only.js",
+      "types": "./dist/server/index.d.ts",
+      "default": "./dist/server/index.node-only.js"
+    }
+  },
+  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.0",
+    "@brillout/part-regex": "^0.1.2",
+    "@brillout/release-me": "^0.4.12",
+    "@brillout/test-e2e": "^0.6.21",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.8",
+    "@types/react-dom": "^19.2.3",
+    "playwright-chromium": "^1.57.0",
+    "prettier": "^3.2.5",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "typescript": "^4.8.3",
+    "vitest": "^4.0.15"
+  },
+  "files": [
+    "dist/",
+    "*.d.ts",
+    "*.js"
+  ],
+  "repository": "github:brillout/react-streaming",
+  "license": "MIT",
+  "scripts": {
+    "========= Test": "",
+    "// Make sure to run `pnpm run build` or `pnpm run dev` before running `pnpm run test`": "",
+    "test": "test-e2e && vitest run",
+    "========= Dev": "",
+    "dev": "tsc --watch",
+    "========= Build": "",
+    "build": "rm -rf dist/ && tsc",
+    "========= Formatting": "",
+    "format": "pnpm run format:biome",
+    "format:prettier": "git ls-files | egrep '\\.(json|js|jsx|css|ts|tsx|vue|mjs|cjs)$' | grep --invert-match package.json | xargs pnpm exec prettier --write",
+    "format:biome": "biome format --write .",
+    "format:check": "biome format . || echo Fix formatting by running: $ pnpm run format",
+    "========= Reset": "",
+    "reset": "git clean -Xdf && pnpm install && pnpm run build",
+    "========= Release": "",
+    "release": "release-me patch",
+    "release:minor": "release-me minor",
+    "release:major": "release-me major",
+    "release:commit": "release-me commit"
+  }
+}

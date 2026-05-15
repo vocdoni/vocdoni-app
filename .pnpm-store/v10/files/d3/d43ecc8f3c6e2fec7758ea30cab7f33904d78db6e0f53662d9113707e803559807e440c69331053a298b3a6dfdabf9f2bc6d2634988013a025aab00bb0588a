@@ -1,0 +1,32 @@
+import * as react_jsx_runtime from 'react/jsx-runtime';
+import { PaginationResponse } from '@vocdoni/sdk';
+import { ComponentPropsWithoutRef, PropsWithChildren } from 'react';
+
+type ButtonProps = ComponentPropsWithoutRef<'button'> & {
+    isActive?: boolean;
+    href?: string;
+} & Record<string, unknown>;
+declare const Button: ({ isActive, ...props }: ButtonProps) => react_jsx_runtime.JSX.Element;
+
+type PaginationProps = ComponentPropsWithoutRef<'div'> & Record<string, unknown> & {
+    maxButtons?: number | false;
+    buttonProps?: ButtonProps;
+    inputProps?: ComponentPropsWithoutRef<'input'>;
+} & PaginationResponse;
+
+declare const Pagination: ({ maxButtons, buttonProps, inputProps, pagination, ...rest }: PaginationProps) => react_jsx_runtime.JSX.Element;
+
+type PaginationContextProps = {
+    page: number;
+    setPage: (page: number) => void;
+    initialPage?: number;
+    pagination: PaginationResponse['pagination'];
+};
+declare const usePagination: () => PaginationContextProps;
+type PaginationProviderProps = {
+    pagination: PaginationResponse['pagination'];
+    initialPage?: number;
+};
+declare const PaginationProvider: ({ pagination, initialPage, ...rest }: PropsWithChildren<PaginationProviderProps>) => react_jsx_runtime.JSX.Element;
+
+export { Button as B, Pagination as P, type PaginationContextProps as a, type PaginationProps as b, PaginationProvider as c, type PaginationProviderProps as d, type ButtonProps as e, usePagination as u };

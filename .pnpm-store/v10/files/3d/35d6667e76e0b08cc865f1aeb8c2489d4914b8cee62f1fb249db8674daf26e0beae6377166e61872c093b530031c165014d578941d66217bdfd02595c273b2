@@ -1,0 +1,988 @@
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/index.ts
+var index_exports = {};
+__export(index_exports, {
+  AuthStorageKeys: () => AuthStorageKeys,
+  clearAuthStorageKeys: () => clearAuthStorageKeys,
+  clearLocalStorageWalletSeed: () => clearLocalStorageWalletSeed,
+  inputsWallet: () => inputsWallet2,
+  linkSaasOAuth: () => linkSaasOAuth,
+  oAuthWallet: () => oAuthWallet2,
+  privateKeyWallet: () => privateKeyWallet2,
+  saasOAuthWallet: () => saasOAuthWallet2
+});
+module.exports = __toCommonJS(index_exports);
+
+// src/wagmi/inputsConnector.ts
+var import_viem3 = require("viem");
+var import_chains3 = require("viem/chains");
+
+// src/lib/inputsWallet.tsx
+var import_client = require("react-dom/client");
+
+// src/components/CreateWalletModal.tsx
+var import_react = require("react");
+var import_react_modal = __toESM(require("react-modal"), 1);
+var import_jsx_runtime = require("react/jsx-runtime");
+var customStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    zIndex: 9999999999
+  },
+  overlay: { zIndex: 9999999999 }
+};
+function CreateWalletModal(props) {
+  const [modalIsOpen, setIsOpen] = (0, import_react.useState)(true);
+  const [username, setUsername] = (0, import_react.useState)("");
+  const [password, setPassword] = (0, import_react.useState)("");
+  function closeModal() {
+    setIsOpen(false);
+    props.onExit();
+  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsOpen(false);
+    props.onSubmit({ username, password });
+  };
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+    import_react_modal.default,
+    {
+      isOpen: modalIsOpen,
+      onRequestClose: closeModal,
+      style: customStyles,
+      contentLabel: "Example Modal",
+      ariaHideApp: false,
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { style: { fontWeight: "bold", marginBottom: "10px" }, children: "Please, fill in your username and password:" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("form", { onSubmit: handleSubmit, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { htmlFor: "username", children: "Username" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              style: {
+                display: "block",
+                border: "1px solid #CCC",
+                borderRadius: "8px",
+                height: "35px",
+                width: "100%",
+                padding: "10px",
+                marginBottom: "10px"
+              },
+              type: "text",
+              id: "username",
+              value: username,
+              onChange: (e) => setUsername(e.target.value)
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("label", { htmlFor: "password", children: "Password" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              type: "password",
+              style: {
+                display: "block",
+                border: "1px solid #CCC",
+                borderRadius: "8px",
+                height: "35px",
+                width: "100%",
+                padding: "10px"
+              },
+              id: "password",
+              value: password,
+              onChange: (e) => setPassword(e.target.value)
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "input",
+            {
+              type: "submit",
+              value: "Connect",
+              style: {
+                cursor: "pointer",
+                display: "block",
+                background: "#9526FC",
+                paddingRight: "14px",
+                paddingLeft: "14px",
+                height: "40px",
+                fontWeight: 700,
+                borderRadius: "8px",
+                color: "white",
+                marginTop: "20px"
+              }
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+
+// src/lib/localStorageWallet.ts
+var import_buffer = require("buffer");
+var import_crypto_js = __toESM(require("crypto-js"), 1);
+var import_viem = require("viem");
+var import_accounts = require("viem/accounts");
+var import_chains = require("viem/chains");
+var localStorageWallet = class {
+  static storageItemName = "localstorage-wallet-seed";
+  static storageItemEncryptionItemName = "session-wallet-encryption-key";
+  static async getWallet(provider) {
+    try {
+      const value = localStorage.getItem(this.storageItemName);
+      if (!value) return false;
+      const valueObj = JSON.parse(value);
+      let pk = valueObj.pk;
+      if (valueObj.type === "encrypted") {
+        const password = sessionStorage.getItem(this.storageItemEncryptionItemName);
+        if (!password) return false;
+        pk = import_crypto_js.default.AES.decrypt(pk, password).toString(import_crypto_js.default.enc.Utf8);
+      }
+      return await this.createWallet(pk, provider);
+    } catch (err) {
+      this.deleteWallet();
+      console.error("failed to generate wallet:", err);
+    }
+    throw new Error("could not find or create wallet");
+  }
+  static async createWalletFromPrivateKey(pkAndPassword, provider) {
+    let pk = pkAndPassword.pk;
+    if (!pk) {
+      const key = localStorage.getItem(this.storageItemName);
+      try {
+        const { pk: encrypted } = JSON.parse(key);
+        pk = import_crypto_js.default.AES.decrypt(encrypted, pkAndPassword.password).toString(import_crypto_js.default.enc.Utf8);
+      } catch (e) {
+        throw e;
+      }
+    }
+    if (!pk) {
+      throw new Error("got no private key (or the password was invalid)");
+    }
+    if (!pk.startsWith("0x")) {
+      pk = "0x" + pk;
+    }
+    if (!this.isValidEthereumPrivateKey(pk)) throw new Error("invalid private key");
+    const encryptedPk = import_crypto_js.default.AES.encrypt(pk, pkAndPassword.password).toString();
+    localStorage.setItem(this.storageItemName, JSON.stringify({ type: "encrypted", pk: encryptedPk }));
+    sessionStorage.setItem(this.storageItemEncryptionItemName, pkAndPassword.password);
+    return this.createWallet(pk, provider);
+  }
+  static async createWalletFromData(data, provider, options) {
+    const inputs = Array.isArray(data) ? data : [data];
+    const hash = inputs.reduce((acc, curr) => acc + curr, "");
+    const pk = (0, import_viem.keccak256)(import_buffer.Buffer.from(hash));
+    if (options?.persist !== false) {
+      localStorage.setItem(this.storageItemName, JSON.stringify({ type: "plain", pk }));
+    }
+    return this.createWallet(pk, provider);
+  }
+  static async createWallet(pk, provider) {
+    const account = (0, import_accounts.privateKeyToAccount)(pk);
+    const client = (0, import_viem.createWalletClient)({
+      account,
+      chain: import_chains.mainnet,
+      transport: (0, import_viem.custom)({
+        async request({ method, params }) {
+          switch (method) {
+            case "eth_accounts":
+              return [account.address];
+            case "net_version":
+            case "eth_chainId":
+              return `0x${import_chains.mainnet.id}`;
+            case "personal_sign": {
+              const [message] = params;
+              return await account.signMessage({ message }) || "0x";
+            }
+            case "eth_sign": {
+              const [, messageHash] = params;
+              return await account.signMessage({ message: messageHash }) || "0x";
+            }
+            case "eth_signTypedData":
+            case "eth_signTypedData_v4": {
+              const [, typedData] = params;
+              const parsedTypedData = typeof typedData === "string" ? JSON.parse(typedData) : typedData;
+              const signature = await account.signTypedData(parsedTypedData);
+              return signature || "0x";
+            }
+            default:
+              provider.request({ method, params });
+          }
+        }
+      })
+    });
+    return client;
+  }
+  static async deleteWallet() {
+    localStorage.removeItem(this.storageItemName);
+  }
+  static isValidEthereumPrivateKey(privateKey) {
+    const hexRegex = /^[0-9a-fA-F]+$/;
+    if (privateKey.startsWith("0x")) {
+      privateKey = privateKey.slice(2);
+    }
+    return privateKey.length === 64 && hexRegex.test(privateKey);
+  }
+  static isAwaitingPassword() {
+    if (localStorage.getItem(this.storageItemName) && !sessionStorage.getItem(this.storageItemEncryptionItemName)) {
+      return true;
+    }
+    return false;
+  }
+};
+
+// src/lib/inputsWallet.tsx
+var import_jsx_runtime2 = require("react/jsx-runtime");
+var inputsWallet = class extends localStorageWallet {
+  data;
+  cancel = false;
+  async create(provider) {
+    const myDiv = document.createElement("div");
+    myDiv.setAttribute("id", "myDiv" + Math.random());
+    document.getElementsByTagName("body")[0].appendChild(myDiv);
+    const root = (0, import_client.createRoot)(myDiv);
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime2.jsx)(CreateWalletModal, { onExit: () => this.cancel = true, onSubmit: (data) => this.data = data }));
+    const r = await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (this.data) {
+          clearInterval(interval);
+          resolve(this.data);
+        }
+        if (this.cancel) {
+          clearInterval(interval);
+          resolve(null);
+        }
+      }, 100);
+    });
+    if (r === null) {
+      throw new Error("User cancelled");
+    }
+    return await localStorageWallet.createWalletFromData(JSON.stringify(this.data), provider);
+  }
+};
+
+// src/wagmi/localStorageConnector.ts
+var import_viem2 = require("viem");
+var import_chains2 = require("viem/chains");
+var import_wagmi = require("wagmi");
+function localStorageConnector(parameters = {}) {
+  return (0, import_wagmi.createConnector)((config) => {
+    let currentWallet = null;
+    return {
+      id: parameters.id || "localStorageConnector",
+      name: parameters.name || "localStorage",
+      type: parameters.id || "localStorageConnector",
+      async connect() {
+        try {
+          const provider = (0, import_viem2.createPublicClient)({
+            chain: import_chains2.mainnet,
+            transport: (0, import_viem2.http)()
+          });
+          let wallet = await localStorageWallet.getWallet(provider);
+          if (!wallet && parameters.createWallet) {
+            await parameters.createWallet();
+            wallet = await localStorageWallet.getWallet(provider);
+          }
+          if (!wallet) {
+            throw new Error("No wallet available");
+          }
+          const account = wallet.account?.address;
+          if (!account) throw new Error("No account available");
+          currentWallet = wallet;
+          return {
+            accounts: [account],
+            chainId: import_chains2.mainnet.id
+          };
+        } catch (error) {
+          throw new import_viem2.UserRejectedRequestError(error);
+        }
+      },
+      async disconnect() {
+        await localStorageWallet.deleteWallet();
+        currentWallet = null;
+      },
+      async getAccounts() {
+        try {
+          const provider = (0, import_viem2.createPublicClient)({
+            chain: import_chains2.mainnet,
+            transport: (0, import_viem2.http)()
+          });
+          const wallet = await localStorageWallet.getWallet(provider);
+          if (!wallet) return [];
+          return wallet.account?.address ? [wallet.account.address] : [];
+        } catch {
+          return [];
+        }
+      },
+      async getChainId() {
+        return import_chains2.mainnet.id;
+      },
+      async getProvider() {
+        return (0, import_viem2.createPublicClient)({
+          chain: import_chains2.mainnet,
+          transport: (0, import_viem2.http)()
+        });
+      },
+      async getWalletClient() {
+        if (!currentWallet) {
+          const provider = (0, import_viem2.createPublicClient)({
+            chain: import_chains2.mainnet,
+            transport: (0, import_viem2.http)()
+          });
+          currentWallet = await localStorageWallet.getWallet(provider);
+        }
+        return currentWallet;
+      },
+      async isAuthorized() {
+        try {
+          const provider = (0, import_viem2.createPublicClient)({
+            chain: import_chains2.mainnet,
+            transport: (0, import_viem2.http)()
+          });
+          const wallet = await localStorageWallet.getWallet(provider);
+          return !!wallet;
+        } catch {
+          return false;
+        }
+      },
+      async switchChain({ chainId }) {
+        throw new Error("Switching chains is not supported by this connector");
+      },
+      onAccountsChanged() {
+      },
+      onChainChanged() {
+      },
+      onConnect() {
+      },
+      onDisconnect() {
+      },
+      onMessage() {
+      }
+    };
+  });
+}
+
+// src/wagmi/inputsConnector.ts
+function inputsConnector() {
+  return localStorageConnector({
+    async createWallet() {
+      const provider = (0, import_viem3.createPublicClient)({
+        chain: import_chains3.mainnet,
+        transport: (0, import_viem3.http)()
+      });
+      let wallet = await inputsWallet.getWallet(provider);
+      if (!wallet) {
+        const w = new inputsWallet();
+        wallet = await w.create(provider);
+      }
+    }
+  });
+}
+
+// src/inputsWallet.ts
+var inputsWallet2 = ({ name } = {}) => ({
+  id: "inputs",
+  name: name || "Inputs",
+  iconUrl: "https://svgshare.com/i/upy.svg",
+  iconBackground: "#fff",
+  createConnector: inputsConnector
+});
+
+// src/linkSaasOAuth.ts
+var import_viem4 = require("viem");
+var import_chains4 = require("viem/chains");
+
+// src/lib/saasOauthWallet.tsx
+var saasOAuthWallet = class extends localStorageWallet {
+  oAuthServiceUrl;
+  oAuthServiceProvider;
+  seed;
+  cancel = false;
+  email;
+  signedEmail;
+  userName;
+  constructor(oAuthServiceUrl, oAuthServiceProvider) {
+    super();
+    this.oAuthServiceUrl = oAuthServiceUrl;
+    this.oAuthServiceProvider = oAuthServiceProvider;
+  }
+  async create(provider, options) {
+    const url = this.oAuthServiceUrl + (this.oAuthServiceProvider ? `?provider=${this.oAuthServiceProvider}` : "");
+    this.openLoginPopup(url);
+    window.addEventListener("message", this.handlePopupMessage.bind(this));
+    const r = await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (this.seed) {
+          clearInterval(interval);
+          resolve(this.seed);
+        }
+        if (this.cancel) {
+          clearInterval(interval);
+          resolve(null);
+        }
+      }, 100);
+    });
+    if (r === null) {
+      throw new Error("User cancelled");
+    }
+    const wallet = await localStorageWallet.createWalletFromData(JSON.stringify(this.seed), provider, options);
+    return {
+      userSeed: this.seed,
+      userEmail: this.email,
+      userName: this.userName,
+      oauthSignedEmail: this.signedEmail,
+      wallet
+    };
+  }
+  async openLoginPopup(url) {
+    const width = 600;
+    const height = 600;
+    const left = window.outerWidth / 2 - width / 2;
+    const top = window.outerHeight / 2 - height / 2;
+    const params = [
+      `width=${width}`,
+      `height=${height}`,
+      `top=${top}`,
+      `left=${left}`,
+      `status=no`,
+      `resizable=yes`,
+      `scrollbars=yes`
+    ].join(",");
+    window.open(url, "oauth", params);
+  }
+  async handlePopupMessage(event) {
+    if (event.data.seed) {
+      this.seed = event.data.seed;
+      if (event.data.email) {
+        this.email = event.data.email;
+      }
+      if (event.data.signedEmail) {
+        this.signedEmail = event.data.signedEmail;
+      }
+      if (event.data.userName) {
+        this.userName = event.data.userName;
+      }
+      window.removeEventListener("message", this.handlePopupMessage);
+    }
+    if (event.data.error) {
+      window.removeEventListener("message", this.handlePopupMessage);
+      throw new Error(event.data.error);
+    }
+  }
+};
+
+// src/linkSaasOAuth.ts
+var linkSaasOAuth = async ({
+  oAuthServiceUrl,
+  oAuthServiceProvider,
+  saasBackendUrl,
+  provider,
+  authToken
+}) => {
+  if (!oAuthServiceUrl) throw new Error("oAuthServiceUrl is required");
+  if (!saasBackendUrl) throw new Error("saasBackendUrl is required");
+  if (!authToken) throw new Error("authToken is required");
+  const client = (0, import_viem4.createPublicClient)({
+    chain: import_chains4.mainnet,
+    transport: (0, import_viem4.http)()
+  });
+  const wallet = new saasOAuthWallet(oAuthServiceUrl, oAuthServiceProvider || "");
+  const params = await wallet.create(client, { persist: false });
+  const userOauthSignature = await params.wallet.signMessage({
+    account: params.wallet.account,
+    message: params.oauthSignedEmail
+  });
+  let lastname = "";
+  const nameData = params.userName.split(" ");
+  const firstname = nameData[0];
+  if (nameData.length > 1) {
+    lastname = nameData[1];
+  }
+  const response = await fetch(`${saasBackendUrl}/auth/oauth`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${authToken}`
+    },
+    body: JSON.stringify({
+      email: params.userEmail,
+      firstName: firstname,
+      lastName: lastname,
+      userOauthSignature,
+      oauthSignature: params.oauthSignedEmail,
+      address: params.wallet.account.address,
+      provider
+    })
+  });
+  if (response.ok) return;
+  let data = null;
+  try {
+    const raw = await response.text();
+    data = raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    throw new Error("Failed to parse response from backend");
+  }
+  const message = data?.message || data?.error || "OAuth link failed";
+  throw new Error(message);
+};
+
+// src/wagmi/oAuthConnector.ts
+var import_viem5 = require("viem");
+var import_chains5 = require("viem/chains");
+
+// src/lib/oAuthWallet.tsx
+var oAuthWallet = class extends localStorageWallet {
+  oAuthServiceUrl;
+  oAuthServiceProvider;
+  data;
+  cancel = false;
+  constructor(oAuthServiceUrl, oAuthServiceProvider) {
+    super();
+    this.oAuthServiceUrl = oAuthServiceUrl;
+    this.oAuthServiceProvider = oAuthServiceProvider;
+  }
+  async create(provider) {
+    const url = this.oAuthServiceUrl + (this.oAuthServiceProvider ? `?provider=${this.oAuthServiceProvider}` : "");
+    this.openLoginPopup(url);
+    window.addEventListener("message", this.handlePopupMessage.bind(this));
+    const r = await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (this.data) {
+          clearInterval(interval);
+          resolve(this.data);
+        }
+        if (this.cancel) {
+          clearInterval(interval);
+          resolve(null);
+        }
+      }, 100);
+    });
+    if (r === null) {
+      throw new Error("User cancelled");
+    }
+    return await localStorageWallet.createWalletFromData(JSON.stringify(this.data), provider);
+  }
+  async openLoginPopup(url) {
+    const width = 600;
+    const height = 600;
+    const left = window.outerWidth / 2 - width / 2;
+    const top = window.outerHeight / 2 - height / 2;
+    const params = [
+      `width=${width}`,
+      `height=${height}`,
+      `top=${top}`,
+      `left=${left}`,
+      `status=no`,
+      `resizable=yes`,
+      `scrollbars=yes`
+    ].join(",");
+    window.open(url, "oauth", params);
+  }
+  async handlePopupMessage(event) {
+    if (event.data.seed) {
+      this.data = event.data.seed;
+      window.removeEventListener("message", this.handlePopupMessage);
+    }
+    if (event.data.error) {
+      window.removeEventListener("message", this.handlePopupMessage);
+      throw new Error(event.data.error);
+    }
+  }
+};
+
+// src/wagmi/oAuthConnector.ts
+function oAuthConnector(options) {
+  if (!options.oAuthServiceUrl) throw new Error("oAuthServiceUrl is required");
+  return localStorageConnector({
+    async createWallet() {
+      const provider = (0, import_viem5.createPublicClient)({
+        chain: import_chains5.mainnet,
+        transport: (0, import_viem5.http)()
+      });
+      let wallet = await oAuthWallet.getWallet(provider);
+      if (!wallet) {
+        const w = new oAuthWallet(options.oAuthServiceUrl, options.oAuthServiceProvider || "");
+        wallet = await w.create(provider);
+      }
+    }
+  });
+}
+
+// src/oAuthWallet.ts
+var oAuthWallet2 = ({
+  id,
+  name,
+  iconUrl,
+  options
+}) => ({
+  id: id || "oAuth",
+  name: name || "OAuth",
+  iconUrl: iconUrl || "https://i.ibb.co/Mh7LXsn/social-login-COLOR-2.png",
+  iconBackground: "#fff",
+  createConnector: () => oAuthConnector(options)
+});
+
+// src/wagmi/privateKeyConnector.ts
+var import_viem6 = require("viem");
+var import_chains6 = require("viem/chains");
+
+// src/lib/privateKeyWallet.tsx
+var import_client2 = require("react-dom/client");
+
+// src/components/ImportPrivateKeyModal.tsx
+var import_react2 = require("react");
+var import_react_modal2 = __toESM(require("react-modal"), 1);
+var import_jsx_runtime3 = require("react/jsx-runtime");
+var customStyles2 = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)",
+    zIndex: 9999999999,
+    maxWidth: "300px"
+  },
+  overlay: { zIndex: 9999999999 }
+};
+function ImportPrivateKeyModal(props) {
+  const [modalIsOpen, setModalIsOpen] = (0, import_react2.useState)(true);
+  const [pk, setPk] = (0, import_react2.useState)("");
+  const [password, setPassword] = (0, import_react2.useState)("");
+  const [error, setError] = (0, import_react2.useState)("");
+  const [onlyPass, setOnlyPass] = (0, import_react2.useState)(false);
+  function closeModal() {
+    setModalIsOpen(false);
+    props.onExit();
+  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
+    if (pk.length && !localStorageWallet.isValidEthereumPrivateKey(pk)) {
+      setError("Invalid private key");
+      return false;
+    }
+    setModalIsOpen(false);
+    props.onSubmit({ pk, password });
+  };
+  (0, import_react2.useEffect)(() => {
+    if (!modalIsOpen) return;
+    if (localStorageWallet.isAwaitingPassword()) {
+      setOnlyPass(true);
+      return;
+    }
+    setOnlyPass(false);
+  }, [modalIsOpen]);
+  const intro = onlyPass ? "Please, specify the password of the stored private key" : "Please, fill in your private key and set a password for it";
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+    import_react_modal2.default,
+    {
+      isOpen: modalIsOpen,
+      onRequestClose: closeModal,
+      style: customStyles2,
+      contentLabel: "Private Key Import Modal",
+      ariaHideApp: false,
+      children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("h2", { style: { fontWeight: "bold", marginBottom: "10px" }, children: intro }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("form", { onSubmit: handleSubmit, children: [
+          !onlyPass && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_jsx_runtime3.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "pk", children: "Private Key" }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+              "input",
+              {
+                type: "password",
+                style: {
+                  display: "block",
+                  border: "1px solid #CCC",
+                  borderRadius: "8px",
+                  height: "35px",
+                  width: "100%",
+                  padding: "10px"
+                },
+                id: "pk",
+                value: pk,
+                onChange: (e) => setPk(e.target.value)
+              }
+            ),
+            error && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("p", { style: { color: "red" }, children: error })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("label", { htmlFor: "password", children: "Password" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+            "input",
+            {
+              type: "password",
+              style: {
+                display: "block",
+                border: "1px solid #CCC",
+                borderRadius: "8px",
+                height: "35px",
+                width: "100%",
+                padding: "10px"
+              },
+              id: "password",
+              value: password,
+              onChange: (e) => setPassword(e.target.value)
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+            "input",
+            {
+              type: "submit",
+              value: "Connect",
+              style: {
+                cursor: "pointer",
+                display: "block",
+                background: "#9526FC",
+                paddingRight: "14px",
+                paddingLeft: "14px",
+                height: "40px",
+                fontWeight: 700,
+                borderRadius: "8px",
+                color: "white",
+                marginTop: "20px"
+              }
+            }
+          ),
+          onlyPass && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+            "button",
+            {
+              onClick: () => {
+                localStorageWallet.deleteWallet();
+                setOnlyPass(false);
+              },
+              children: "Or reset and specify a new one"
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+
+// src/lib/privateKeyWallet.tsx
+var import_jsx_runtime4 = require("react/jsx-runtime");
+var privateKeyWallet = class extends localStorageWallet {
+  data;
+  cancel = false;
+  async create(provider) {
+    const myDiv = document.createElement("div");
+    myDiv.setAttribute("id", "myDiv" + Math.random());
+    document.getElementsByTagName("body")[0].appendChild(myDiv);
+    const root = (0, import_client2.createRoot)(myDiv);
+    root.render(/* @__PURE__ */ (0, import_jsx_runtime4.jsx)(ImportPrivateKeyModal, { onExit: () => this.cancel = true, onSubmit: (data) => this.data = data }));
+    const r = await new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (this.data) {
+          clearInterval(interval);
+          resolve(this.data);
+        }
+        if (this.cancel) {
+          clearInterval(interval);
+          resolve(null);
+        }
+      }, 100);
+    });
+    if (r === null) {
+      throw new Error("User cancelled");
+    }
+    return await localStorageWallet.createWalletFromPrivateKey(this.data, provider);
+  }
+};
+
+// src/wagmi/privateKeyConnector.ts
+function privateKeyConnector() {
+  return localStorageConnector({
+    async createWallet() {
+      const provider = (0, import_viem6.createPublicClient)({
+        chain: import_chains6.mainnet,
+        transport: (0, import_viem6.http)()
+      });
+      let wallet = await privateKeyWallet.getWallet(provider);
+      if (!wallet) {
+        const w = new privateKeyWallet();
+        wallet = await w.create(provider);
+      }
+    }
+  });
+}
+
+// src/privateKeyWallet.ts
+var privateKeyWallet2 = ({
+  id,
+  name,
+  iconUrl
+} = {}) => ({
+  id: id || "privateKey",
+  name: name || "Private Key",
+  iconUrl: iconUrl || "https://i.ibb.co/CBw87jR/private-key.png",
+  iconBackground: "#fff",
+  createConnector: privateKeyConnector
+});
+
+// src/wagmi/saasOauthConnector.ts
+var import_viem7 = require("viem");
+var import_chains7 = require("viem/chains");
+
+// src/storageKeys.ts
+var AuthStorageKeys = {
+  Token: "authToken",
+  Expiry: "authExpiry",
+  Registered: "authRegistered"
+};
+
+// src/storageCleanup.ts
+var clearAuthStorageKeys = () => {
+  localStorage.removeItem(AuthStorageKeys.Token);
+  localStorage.removeItem(AuthStorageKeys.Expiry);
+  localStorage.removeItem(AuthStorageKeys.Registered);
+};
+var clearLocalStorageWalletSeed = () => {
+  localStorage.removeItem(localStorageWallet.storageItemName);
+  sessionStorage.removeItem(localStorageWallet.storageItemEncryptionItemName);
+};
+
+// src/wagmi/saasOauthConnector.ts
+var STORAGE_TOKEN_NAME = AuthStorageKeys.Token;
+var STORAGE_EXPIRY_NAME = AuthStorageKeys.Expiry;
+var STORAGE_REGISTERED_NAME = AuthStorageKeys.Registered;
+function saasOAuthConnector(options) {
+  if (!options.oAuthServiceUrl) throw new Error("oAuthServiceUrl is required");
+  if (!options.saasBackendUrl) throw new Error("saasBackendUrl is required");
+  return localStorageConnector({
+    id: options.id,
+    name: options.name,
+    async createWallet() {
+      const provider = (0, import_viem7.createPublicClient)({
+        chain: import_chains7.mainnet,
+        transport: (0, import_viem7.http)()
+      });
+      let wallet = await saasOAuthWallet.getWallet(provider);
+      if (!wallet) {
+        const w = new saasOAuthWallet(options.oAuthServiceUrl, options.oAuthServiceProvider || "");
+        const params = await w.create(provider);
+        const userOauthSignature = await params.wallet.signMessage({
+          account: params.wallet.account,
+          message: params.oauthSignedEmail
+        });
+        let lastname = "";
+        let nameData = params.userName.split(" ");
+        const firstname = nameData[0];
+        if (nameData.length > 1) {
+          lastname = nameData[1];
+        }
+        const mode = options.mode || "login";
+        if (mode === "login") {
+          clearAuthStorageKeys();
+        }
+        const authToken = options.getAuthToken?.() || localStorage.getItem(STORAGE_TOKEN_NAME);
+        const endpoint = mode === "link" ? "/auth/oauth" : "/oauth/login";
+        const headers = authToken ? { "Content-Type": "application/json", Authorization: `Bearer ${authToken}` } : {
+          "Content-Type": "application/json"
+        };
+        const response = await fetch(options.saasBackendUrl + endpoint, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            email: params.userEmail,
+            firstName: firstname,
+            lastName: lastname,
+            userOauthSignature,
+            oauthSignature: params.oauthSignedEmail,
+            address: params.wallet.account.address,
+            provider: options.id
+          })
+        });
+        let data = null;
+        try {
+          const raw = await response.text();
+          data = raw ? JSON.parse(raw) : null;
+        } catch (e) {
+          throw new Error("Failed to parse response from backend");
+        }
+        if (!response.ok) {
+          const { code, message } = data;
+          switch (code) {
+            case 40101:
+              throw new Error("OAuthAccountConflictError");
+            default:
+              console.error("OAuth login failed", data);
+              throw new Error(message || "OAuth login failed");
+          }
+        }
+        if (mode === "login") {
+          if (!data) {
+            throw new Error("Failed to parse response from backend");
+          }
+          const { token, expirity: expiry, registered } = data;
+          localStorage.setItem(STORAGE_TOKEN_NAME, token);
+          localStorage.setItem(STORAGE_EXPIRY_NAME, expiry);
+          if (typeof registered !== "undefined") {
+            localStorage.setItem(STORAGE_REGISTERED_NAME, String(registered));
+          }
+        }
+        wallet = params.wallet;
+      }
+    }
+  });
+}
+
+// src/saasOauthWallet.ts
+var saasOAuthWallet2 = ({
+  id,
+  name,
+  iconUrl,
+  options
+}) => ({
+  id: id || "saasOAuth",
+  name: name || "SaaS OAuth",
+  iconUrl: iconUrl || "https://i.ibb.co/Mh7LXsn/social-login-COLOR-2.png",
+  iconBackground: "#fff",
+  createConnector: () => saasOAuthConnector({
+    ...options,
+    id: id || "saasOAuth",
+    name: name || "SaaS OAuth"
+  })
+});
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  AuthStorageKeys,
+  clearAuthStorageKeys,
+  clearLocalStorageWalletSeed,
+  inputsWallet,
+  linkSaasOAuth,
+  oAuthWallet,
+  privateKeyWallet,
+  saasOAuthWallet
+});

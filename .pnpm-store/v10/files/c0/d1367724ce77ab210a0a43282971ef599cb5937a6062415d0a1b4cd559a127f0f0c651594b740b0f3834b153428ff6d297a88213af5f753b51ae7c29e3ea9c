@@ -1,0 +1,49 @@
+export { renderToWebStream };
+import { createReadableWrapper } from './createReadableWrapper.js';
+import { assertReactImport, debugFlow, wrapStreamEnd, handleErrors } from './common.js';
+import { version } from 'react-dom/server';
+import { assert, assertVersion } from '../utils.js';
+async function renderToWebStream(element, disable, options, doNotClosePromise, setAbortFn, clearTimeouts) {
+    debugFlow('creating Web Stream Pipe');
+    // 'react-dom/server.edge' doesn't exist in React 18
+    assertVersion('React', version, '19.0.0');
+    // We import 'react-dom/server.edge' only if needed, because merely importing 'react-dom/server.browser' was preventing Node.js from exiting (e.g. after running Vike's prerender() API). But maybe that isn't the case with 'react-dom/server.edge' anymore?
+    // - Reproduction: https://github.com/vikejs/vike/blob/a0d6777c84aee4c2e5bd0a0a585b18f7a87c8cac/test/playground/scripts/prerender.js
+    const moduleExports = await import('react-dom/server.edge');
+    assert(moduleExports?.default?.renderToReadableStream, moduleExports);
+    const renderToReadableStream_ = moduleExports.default.renderToReadableStream;
+    const controller = new AbortController();
+    setAbortFn(() => {
+        controller.abort();
+    });
+    const { state, onBoundaryError, onReactBug } = handleErrors(options, () => promiseResolved);
+    const renderToReadableStream = options.renderToReadableStream ?? renderToReadableStream_;
+    if (!options.renderToReadableStream) {
+        assertReactImport(renderToReadableStream, 'renderToReadableStream');
+    }
+    const readableOriginal = await renderToReadableStream(element, {
+        onError: onBoundaryError,
+        signal: controller.signal,
+        ...options.streamOptions,
+    });
+    const { allReady } = readableOriginal;
+    let promiseResolved = false;
+    // Upon React internal errors (i.e. React bugs), React rejects `allReady`. React doesn't reject `allReady` upon boundary errors.
+    allReady.catch(onReactBug);
+    if (state.didError)
+        throw state.firstErr;
+    if (disable)
+        await allReady;
+    if (state.didError)
+        throw state.firstErr;
+    const { readableForUser, streamEnd, injectToStream, hasStreamEnded } = createReadableWrapper(readableOriginal, clearTimeouts, doNotClosePromise);
+    promiseResolved = true;
+    return {
+        readable: readableForUser,
+        pipe: null,
+        abort: controller.abort,
+        streamEnd: wrapStreamEnd(streamEnd, state.didError),
+        injectToStream,
+        hasStreamEnded,
+    };
+}

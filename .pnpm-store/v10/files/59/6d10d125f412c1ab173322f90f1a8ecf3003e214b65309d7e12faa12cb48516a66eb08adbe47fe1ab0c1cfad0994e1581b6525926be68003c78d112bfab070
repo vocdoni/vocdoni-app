@@ -1,0 +1,17 @@
+export { addIs404ToPageProps };
+import { assertWarning } from '../utils/assert.js';
+import { isObject } from '../utils/isObject.js';
+function addIs404ToPageProps(pageContext) {
+    addIs404(pageContext);
+}
+function addIs404(pageContext) {
+    if (pageContext.is404 === undefined || pageContext.is404 === null)
+        return;
+    const pageProps = pageContext.pageProps || {};
+    if (!isObject(pageProps)) {
+        assertWarning(false, 'pageContext.pageProps should be an object', { showStackTrace: true, onlyOnce: true });
+        return;
+    }
+    pageProps.is404 = pageProps.is404 || pageContext.is404;
+    pageContext.pageProps = pageProps;
+}

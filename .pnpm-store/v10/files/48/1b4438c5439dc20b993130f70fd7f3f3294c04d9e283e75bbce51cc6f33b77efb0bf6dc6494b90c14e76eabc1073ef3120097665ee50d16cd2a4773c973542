@@ -1,0 +1,40 @@
+{
+  "name": "@universal-deploy/store",
+  "version": "0.2.1",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.15",
+    "tsdown": "^0.21.1",
+    "type-predicate-generator": "^1.0.4",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0-beta.18"
+  },
+  "dependencies": {
+    "rou3": "^0.8.1",
+    "srvx": "*"
+  },
+  "peerDependencies": {
+    "srvx": "*"
+  },
+  "peerDependenciesMeta": {
+    "srvx": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "repository": "github:photon-js/universal-deploy",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "gen:validator": "type-predicate-generator src/types.ts",
+    "test:types": "tsc --noEmit"
+  }
+}

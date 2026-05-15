@@ -1,0 +1,5 @@
+{
+  "type": "module",
+  "types": "../_dist/undefined/QrCode.d.ts",
+  "main": "../_dist/undefined/QrCode.js"
+}

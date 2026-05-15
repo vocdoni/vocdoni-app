@@ -1,0 +1,82 @@
+import { builtinModules, createRequire } from "node:module";
+import { defaultClientConditions, defaultExternalConditions, defaultServerConditions } from "vite";
+//#region src/vite.ts
+const isBun = typeof Bun !== "undefined";
+const isDeno = typeof Deno !== "undefined";
+const re_udNode = /^virtual:ud:node-entry$/;
+function findClientOutDir(env) {
+	return Object.values(env.getTopLevelConfig().environments).find((e) => e.consumer === "client")?.build.outDir;
+}
+function node(options) {
+	return [
+		{
+			name: "ud:node:entry",
+			apply: "build",
+			resolveId: {
+				filter: { id: re_udNode },
+				async handler(id, importer) {
+					let importerResolvedId;
+					if (options?.importer) importerResolvedId = (await this.resolve(options.importer))?.id;
+					const resolved = await this.resolve("@universal-deploy/node/serve", importerResolvedId ?? importer);
+					if (!resolved) try {
+						return { id: createRequire(import.meta.url).resolve("@universal-deploy/node/serve") };
+					} catch {
+						throw new Error(`Cannot find server entry ${JSON.stringify(id)}`);
+					}
+					return { id: resolved.id };
+				}
+			},
+			transform: {
+				filter: { code: [/__UD_STATIC__/, /__UD_PROD__/] },
+				handler(code) {
+					const outDir = findClientOutDir(this.environment);
+					return code.replace(/__UD_STATIC__/g, JSON.stringify(typeof options?.static === "string" || typeof options?.static === "boolean" ? options.static : typeof outDir === "string" ? outDir : true)).replace(/__UD_PROD__/g, JSON.stringify(true));
+				}
+			}
+		},
+		{
+			name: "ud:node:node-like",
+			configEnvironment(_name, config) {
+				const defaultCondition = config.consumer === "client" ? defaultClientConditions : defaultServerConditions;
+				const additionalCondition = isBun ? ["bun"] : isDeno ? ["deno"] : [];
+				return { resolve: {
+					conditions: [...additionalCondition, ...defaultCondition],
+					externalConditions: [...additionalCondition, ...defaultExternalConditions]
+				} };
+			}
+		},
+		{
+			name: "ud:node:emit",
+			apply: "build",
+			config: {
+				order: "post",
+				handler() {
+					const buildEnvOptions = {};
+					if (this.meta.rolldownVersion) buildEnvOptions.rolldownOptions = {
+						input: { index: "virtual:ud:node-entry" },
+						output: { codeSplitting: { groups: [{
+							name: "srvx",
+							test: /node_modules[\\/]srvx/
+						}] } }
+					};
+					else buildEnvOptions.rollupOptions = {
+						input: { index: "virtual:ud:node-entry" },
+						output: { manualChunks(id) {
+							if (/node_modules[\\/]srvx/.test(id)) return "srvx";
+							return null;
+						} }
+					};
+					return {
+						environments: { ssr: {
+							build: { ...buildEnvOptions },
+							resolve: { noExternal: ["@universal-deploy/node"] }
+						} },
+						resolve: { alias: Object.fromEntries(builtinModules.filter((m) => !m.startsWith("node:")).map((m) => [m, `node:${m}`])) }
+					};
+				}
+			}
+		}
+	];
+}
+//#endregion
+export { node as default, node };

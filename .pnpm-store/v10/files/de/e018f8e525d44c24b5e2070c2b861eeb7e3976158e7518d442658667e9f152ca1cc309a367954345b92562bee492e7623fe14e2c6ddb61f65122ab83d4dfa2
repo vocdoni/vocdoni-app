@@ -1,0 +1,81 @@
+export { preview };
+import { prepareViteApiCall } from './prepareViteApiCall.js';
+import { preview as previewVite } from 'vite';
+import { importServerProductionIndex } from '@brillout/vite-plugin-server-entry/runtime';
+import { getOutDirs } from '../vite/shared/getOutDirs.js';
+import { assert, assertInfo, assertUsage } from '../../utils/assert.js';
+import { onSetupPreview } from '../../utils/assertSetup.js';
+import { isCallable } from '../../utils/isCallable.js';
+import pc from '@brillout/picocolors';
+import path from 'node:path';
+import { getVikeConfigInternal } from '../vite/shared/resolveVikeConfigInternal.js';
+import { isUniversalDeployVitePreview } from '../vite/plugins/pluginUniversalDeploy/getServerConfig.js';
+import './assertEnvApiDev.js';
+import { getStartupLogFirstLine } from './getStartupLogFirstLine.js';
+/**
+ * Programmatically trigger `$ vike preview`
+ *
+ * https://vike.dev/api#preview
+ */
+async function preview(options = {}) {
+    onSetupPreview();
+    const { viteConfigFromUserResolved, viteConfigResolved } = await prepareViteApiCall(options, 'preview');
+    const vikeConfig = await getVikeConfigInternal();
+    const cliPreviewConfig = await resolveCliPreviewConfig(vikeConfig);
+    assertUsage(cliPreviewConfig !== false, `${pc.cyan('$ vike preview')} isn't supported`);
+    const isUDVitePreview = isUniversalDeployVitePreview(vikeConfig, viteConfigResolved);
+    const useVitePreviewServer = (() => {
+        // === +cli.preview => manual overriding
+        if (cliPreviewConfig === 'vite')
+            return true;
+        if (cliPreviewConfig === true)
+            return false;
+        assert(cliPreviewConfig === undefined);
+        // === Universal Deploy
+        // dist/server/index.mjs doesn't exist with some deployment plugins such as vite-plugin-vercel -> we must use Vite's preview server
+        if (isUDVitePreview !== null)
+            return isUDVitePreview;
+        // === @brillout/vite-plugin-server-entry
+        // dist/server/index.mjs exists when using @brillout/vite-plugin-server-entry inject mode; otherwise it's missing -> we must use Vite's preview server
+        return !viteConfigResolved.vitePluginServerEntry?.inject;
+    })();
+    const { startupLogFirstLine, isStartupLogCompact } = getStartupLogFirstLine(viteConfigResolved, !useVitePreviewServer);
+    console.log(startupLogFirstLine);
+    if (!useVitePreviewServer) {
+        // Dynamically import() server production entry dist/server/index.js
+        const outDir = getOutDirs(viteConfigResolved, undefined).outDirRoot;
+        const { outServerIndex } = await importServerProductionIndex({ outDir });
+        const outServerIndexRelative = path.relative(viteConfigResolved.root, outServerIndex);
+        logHint(`, run ${pc.cyan(`$ node ${outServerIndexRelative}`)} instead (or Bun/Deno).`, isStartupLogCompact);
+        return {
+            viteConfig: viteConfigResolved,
+        };
+    }
+    else {
+        // Use Vite's preview server
+        const server = await previewVite(viteConfigFromUserResolved);
+        logHint(vikeConfig.prerenderContext.isPrerenderingEnabledForAllPages
+            ? ' — your app is fully pre-rendered and can be statically deployed.'
+            : '', isStartupLogCompact);
+        return {
+            viteServer: server,
+            viteConfig: server.config,
+        };
+    }
+}
+function logHint(hint = '', isStartupLogCompact) {
+    setTimeout(() => {
+        if (!isStartupLogCompact)
+            console.log();
+        assertInfo(false, `Don't use ${pc.cyan('$ vike preview')} for production${hint}`, { onlyOnce: true });
+    }, 0);
+}
+async function resolveCliPreviewConfig(vikeConfig) {
+    const val = vikeConfig.config.cli?.preview;
+    if (!isCallable(val)) {
+        return val;
+    }
+    else {
+        return await val();
+    }
+}

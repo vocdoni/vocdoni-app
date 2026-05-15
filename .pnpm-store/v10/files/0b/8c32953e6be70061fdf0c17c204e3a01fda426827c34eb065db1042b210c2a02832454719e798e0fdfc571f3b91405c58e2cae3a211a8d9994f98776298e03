@@ -1,0 +1,64 @@
+{
+  "name": "@vocdoni/proto",
+  "version": "1.15.12",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "ts-node": "^9.1.1",
+    "ts-proto": "^1.181.2",
+    "tsup": "^6.5.0",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "long": "^5.2.1",
+    "protobufjs": "^7.1.2"
+  },
+  "main": "build/js/index.js",
+  "types": "build/js/index.d.ts",
+  "module": "build/js/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./build/js/index.mjs",
+      "require": "./build/js/index.js",
+      "types": "./build/js/index.d.ts"
+    },
+    "./client-store": {
+      "import": "./build/js/client-store/index.mjs",
+      "require": "./build/js/client-store/index.js",
+      "types": "./build/js/client-store/index.d.ts"
+    },
+    "./metadata": {
+      "import": "./build/js/metadata/index.mjs",
+      "require": "./build/js/metadata/index.js",
+      "types": "./build/js/metadata/index.d.ts"
+    },
+    "./vochain": {
+      "import": "./build/js/vochain/index.mjs",
+      "require": "./build/js/vochain/index.js",
+      "types": "./build/js/vochain/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "client-store": [
+        "./build/js/client-store/index.d.ts"
+      ],
+      "metadata": [
+        "./build/js/metadata/index.d.ts"
+      ],
+      "vochain": [
+        "./build/js/vochain/index.d.ts"
+      ],
+      "*": [
+        "./build/js/index.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "make ts && tsup --dts --out-dir ./build/js",
+    "clean": "rm -Rf build/ts build/js"
+  },
+  "files": [
+    "build/js"
+  ]
+}

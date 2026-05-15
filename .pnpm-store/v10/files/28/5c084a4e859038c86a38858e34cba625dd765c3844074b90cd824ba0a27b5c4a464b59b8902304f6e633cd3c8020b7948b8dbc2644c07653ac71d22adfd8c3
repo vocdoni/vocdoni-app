@@ -1,0 +1,12 @@
+export { isScriptFile };
+export { isPlainScriptFile };
+export { isPlainJavaScriptFile };
+export { isTemplateFile };
+export { scriptFileExtensionList };
+export { scriptFileExtensionPattern };
+declare const scriptFileExtensionList: readonly ["js", "cjs", "mjs", "ts", "cts", "mts", "jsx", "cjsx", "mjsx", "tsx", "ctsx", "mtsx", "vue", "svelte", "marko", "md", "mdx"];
+declare const scriptFileExtensionPattern: string;
+declare function isScriptFile(filePath: string): boolean;
+declare function isPlainScriptFile(filePath: string): boolean;
+declare function isPlainJavaScriptFile(filePath: string): boolean;
+declare function isTemplateFile(filePath: string): boolean;

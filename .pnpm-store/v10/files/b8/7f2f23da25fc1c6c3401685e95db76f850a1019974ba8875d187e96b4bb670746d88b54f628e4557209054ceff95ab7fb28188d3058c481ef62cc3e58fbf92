@@ -1,0 +1,40 @@
+{
+  "name": "@universal-deploy/node",
+  "version": "0.1.5",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./serve": "./dist/serve.js",
+    "./vite": "./dist/vite.js"
+  },
+  "dependencies": {
+    "srvx": "^0.11.9",
+    "@universal-deploy/store": "^0.2.1"
+  },
+  "peerDependencies": {
+    "vite": ">=7.1"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.15",
+    "tsdown": "^0.21.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0-beta.18"
+  },
+  "files": [
+    "dist/"
+  ],
+  "repository": "github:photon-js/universal-deploy",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "test:types": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,77 @@
+export { resolvePrerenderConfigGlobal };
+export { resolvePrerenderConfigLocal };
+import { assert, assertUsage } from '../../utils/assert.js';
+import { isArray } from '../../utils/isArray.js';
+import { isObject } from '../../utils/isObject.js';
+import { objectAssign } from '../../utils/objectAssign.js';
+import { getConfigValueBuildTime } from '../../shared-server-client/page-configs/getConfigValueBuildTime.js';
+import { getConfigDefinedAt } from '../../shared-server-client/page-configs/getConfigDefinedAt.js';
+import { isCallable } from '../../utils/isCallable.js';
+// +prerender is callable but getGlobalContext() cannot be used (see https://github.com/vikejs/vike/issues/3002#issuecomment-3703878380) but it's still useful (see https://github.com/vikejs/vike/issues/3002#issuecomment-3704141813)
+// When setting +prerender to an object => it activates pre-rendering
+const defaultValueForObject = true;
+async function resolvePrerenderConfigGlobal(vikeConfig) {
+    const prerenderConfigs = vikeConfig.config.prerender || [];
+    const prerenderConfigsResolved = await Promise.all(prerenderConfigs.map((config) => (isCallable(config) ? config() : config)));
+    const prerenderSettings = prerenderConfigsResolved.filter(isObject2);
+    const prerenderConfigGlobal = {
+        partial: pickFirst(prerenderSettings.map((c) => c.partial)) ?? false,
+        noExtraDir: pickFirst(prerenderSettings.map((c) => c.noExtraDir)) ?? null,
+        parallel: pickFirst(prerenderSettings.map((c) => c.parallel)) ?? true,
+        disableAutoRun: pickFirst(prerenderSettings.map((c) => c.disableAutoRun)) ?? false,
+    };
+    let defaultLocalValue = false;
+    {
+        const valueFirst = prerenderConfigsResolved.filter((p) => !isObject(p) || p.enable !== null)[0];
+        if (valueFirst === true || (isObject(valueFirst) && (valueFirst.enable ?? defaultValueForObject))) {
+            defaultLocalValue = true;
+        }
+    }
+    // TO-DO/next-major-release: remove
+    // Backwards compatibility for `vike({prerender:true})` in vite.config.js
+    {
+        const valuesWithDefinedAt = vikeConfig._from.configsCumulative.prerender?.values ?? [];
+        if (valuesWithDefinedAt.some((v) => v.definedAt.includes('vite.config.js') && v.value)) {
+            defaultLocalValue = true;
+        }
+    }
+    const pageConfigs = vikeConfig._pageConfigs;
+    const prerenderConfigLocalList = await Promise.all(pageConfigs.map(resolvePrerenderConfigLocal));
+    const isEnable = (prerenderConfigLocal) => prerenderConfigLocal?.value ?? defaultLocalValue;
+    const isPrerenderingEnabled = pageConfigs.length > 0 && prerenderConfigLocalList.some(isEnable);
+    const isPrerenderingEnabledForAllPages = pageConfigs.length > 0 && prerenderConfigLocalList.every(isEnable);
+    objectAssign(prerenderConfigGlobal, {
+        defaultLocalValue,
+        isPrerenderingEnabled,
+        isPrerenderingEnabledForAllPages,
+        redirects: pickFirst(prerenderSettings.map((c) => c.redirects)) ?? isPrerenderingEnabledForAllPages,
+        keepDistServer: !isPrerenderingEnabledForAllPages
+            ? true
+            : (pickFirst(prerenderSettings.map((c) => c.keepDistServer)) ?? false),
+    });
+    // TO-DO/next-major-release: remove
+    if (vikeConfig._pageConfigs.length === 0 && defaultLocalValue)
+        prerenderConfigGlobal.isPrerenderingEnabled = true;
+    return prerenderConfigGlobal;
+}
+async function resolvePrerenderConfigLocal(pageConfig) {
+    const configValue = getConfigValueBuildTime(pageConfig, 'prerender');
+    if (!configValue)
+        return null;
+    const values = configValue.value;
+    assert(isArray(values));
+    let value = values[0];
+    if (isCallable(value))
+        value = await value();
+    assert(isArray(configValue.definedAtData));
+    const configDefinedAt = getConfigDefinedAt('Config', 'prerender', configValue.definedAtData);
+    assertUsage(typeof value === 'boolean', `${configDefinedAt} must be a boolean (or a function that returns a boolean) because it's defined as a page setting (not as a global setting)`);
+    const prerenderConfigLocal = { value };
+    return prerenderConfigLocal;
+}
+function isObject2(value) {
+    return typeof value === 'object' && value !== null;
+}
+function pickFirst(arr) {
+    return arr.filter((v) => v !== undefined)[0];
+}

@@ -1,0 +1,190 @@
+export { getFilesystemRouteString };
+export { getFilesystemRouteDefinedBy };
+export { isInherited };
+export { getLocationId };
+export { sortAfterInheritanceOrder };
+export { applyFilesystemRoutingRootEffect };
+// For ./filesystemRouting.spec.ts
+export { getLogicalPath };
+import pc from '@brillout/picocolors';
+import { assert, assertWarning } from '../../../../utils/assert.js';
+import { assertIsNotProductionRuntime } from '../../../../utils/assertSetup.js';
+import { assertPosixPath } from '../../../../utils/path.js';
+import { higherFirst } from '../../../../utils/sorter.js';
+import '../../assertEnvVite.js';
+assertIsNotProductionRuntime();
+/**
+ * `getLocationId('/pages/some-page/+Page.js')` => `'/pages/some-page'`
+ * `getLocationId('/renderer/+config.js')` => `'/renderer'`
+ *
+ * The value `locationId` is always a user-land path, because Filesystem Routing/Inheritance only applies to the user-land (Vike never uses Filesystem Routing/Inheritance for `node_modules/**`).
+ */
+function getLocationId(
+// We always determine `locationId` from a real user-land file: the `locationId` for Vike extensions is the `locationId` of the the user's `+config.js` that extends the Vike extension.
+filePathAbsoluteUserRootDir) {
+    assertPosixPath(filePathAbsoluteUserRootDir);
+    assert(filePathAbsoluteUserRootDir.startsWith('/'));
+    const locationId = removeFilename(filePathAbsoluteUserRootDir);
+    assertLocationId(locationId);
+    return locationId;
+}
+/** Filesystem Routing: get the URL */
+function getFilesystemRouteString(locationId) {
+    return getLogicalPath(locationId, ['renderer', 'pages', 'src', 'index'], true);
+}
+/** Filesystem Inheritance: get the apply root */
+function getInheritanceRoot(locationId) {
+    return getLogicalPath(locationId, [
+        'renderer',
+        // Enable hooks defined by vike-{react,vue,solid} such as +onBeforeRenderClient to be defined at the root directory. In other words, avoid following error:
+        // ```bash
+        // [11:09:43.072][/test-preview.test.ts][npm run preview][stderr] Error: [vike][Wrong Usage] /+onBeforeRenderClient.ts sets the value of the config onBeforeRenderClient which is a custom config that is defined with https://vike.dev/meta at a path that doesn't apply to / — see https://vike.dev/config#inheritance
+        // ```
+        'pages',
+    ]);
+}
+/**
+ * getLogicalPath('/pages/some-page', ['pages']) => '/some-page'
+ */
+function getLogicalPath(locationId, ignoredDirs, removeParenthesesDirs) {
+    let logicalPath = removeIgnoredDirectories(locationId, ignoredDirs, removeParenthesesDirs);
+    assertIsPath(logicalPath);
+    return logicalPath;
+}
+// See getPlusFilesRelevant() and getPlusFilesOrdered()
+function sortAfterInheritanceOrder(locationId1, locationId2, locationIdPage) {
+    assertLocationId(locationId1);
+    assertLocationId(locationId2);
+    if (locationId1 === locationId2)
+        return 0;
+    const inheritanceRoot1 = getInheritanceRoot(locationId1);
+    const inheritanceRoot2 = getInheritanceRoot(locationId2);
+    const inheritanceRootPage = getInheritanceRoot(locationIdPage);
+    // Only works if both locationId1 and locationId2 are inherited by the same page
+    assert(isInherited(locationId1, locationIdPage));
+    assert(isInherited(locationId2, locationIdPage));
+    // Equivalent assertion (see isInherited() implementation)
+    assert(startsWith(inheritanceRootPage, inheritanceRoot1));
+    assert(startsWith(inheritanceRootPage, inheritanceRoot2));
+    if (inheritanceRoot1 !== inheritanceRoot2) {
+        // Should be true since locationId1 and locationId2 are both inherited by the same page
+        assert(startsWith(inheritanceRoot1, inheritanceRoot2) || startsWith(inheritanceRoot2, inheritanceRoot1));
+        assert(inheritanceRoot1.length !== inheritanceRoot2.length);
+        return higherFirst((inheritanceRoot) => inheritanceRoot.length)(inheritanceRoot1, inheritanceRoot2);
+    }
+    // locationId1 first, i.e. `indexOf(locationId1) < indexOf(locationId2)`
+    const locationId1First = -1;
+    // locationId2 first, i.e. `indexOf(locationId2) < indexOf(locationId1)`
+    const locationId2First = 1;
+    if (locationIsRendererDir(locationId1) !== locationIsRendererDir(locationId2)) {
+        return locationIsRendererDir(locationId1) ? locationId2First : locationId1First;
+    }
+    // Doesn't have any function beyond making the order deterministic
+    //  - Although we make /src/renderer/+config.js override /renderer/+config.js which potentially can make somewhat sense (e.g. when ejecting a renderer)
+    if (locationId1.length !== locationId2.length) {
+        return higherFirst((locationId) => locationId.length)(locationId1, locationId2);
+    }
+    return locationId1 > locationId2 ? locationId1First : locationId2First;
+}
+function locationIsRendererDir(locationId) {
+    return locationId.split('/').includes('renderer');
+}
+/** Whether configs defined at `locationId1` also apply at `locationId2` */
+function isInherited(locationId1, locationId2) {
+    const inheritanceRoot1 = getInheritanceRoot(locationId1);
+    const inheritanceRoot2 = getInheritanceRoot(locationId2);
+    return startsWith(inheritanceRoot2, inheritanceRoot1);
+}
+function removeIgnoredDirectories(somePath, ignoredDirs, removeParenthesesDirs) {
+    assertPosixPath(somePath);
+    somePath = somePath
+        .split('/')
+        .filter((dir) => {
+        if (ignoredDirs.includes(dir)) {
+            return false;
+        }
+        if (removeParenthesesDirs && dir.startsWith('(') && dir.endsWith(')')) {
+            assertRedundantParentheses(dir, ignoredDirs, somePath);
+            return false;
+        }
+        return true;
+    })
+        .join('/');
+    if (somePath === '')
+        somePath = '/';
+    return somePath;
+}
+function assertRedundantParentheses(dir, ignoredDirs, somePath) {
+    const dirWithoutParentheses = dir.slice(1, -1);
+    if (!ignoredDirs.includes(dirWithoutParentheses)) {
+        return;
+    }
+    const dirnameActual = dir;
+    const dirnameCorrect = dirWithoutParentheses;
+    const dirpathActual = somePath.slice(0, somePath.indexOf(dirnameActual) + dirnameActual.length);
+    const dirpathCorrect = dirpathActual.replaceAll(dirnameActual, dirnameCorrect);
+    const logDir = (d) => pc.bold(d + '/');
+    assertWarning(false, [
+        `The directories ${logDir(dirnameCorrect)} are always ignored by Vike's Filesystem Routing`,
+        '(https://vike.dev/filesystem-routing):',
+        `rename directory ${logDir(dirpathActual)} to ${logDir(dirpathCorrect)}`,
+    ].join(' '), { onlyOnce: true });
+}
+function removeFilename(filePathAbsoluteUserRootDir) {
+    const filePathParts = filePathAbsoluteUserRootDir.split('/');
+    {
+        const filename = filePathParts.slice(-1)[0];
+        assert(filename.includes('.'));
+    }
+    let locationId = filePathParts.slice(0, -1).join('/');
+    if (locationId === '')
+        locationId = '/';
+    assertLocationId(locationId);
+    return locationId;
+}
+function getFilesystemRouteDefinedBy(locationId) {
+    if (locationId === '/')
+        return locationId;
+    assert(!locationId.endsWith('/'));
+    const routeFilesystemDefinedBy = locationId + '/';
+    return routeFilesystemDefinedBy;
+}
+function applyFilesystemRoutingRootEffect(routeFilesystem, filesystemRoutingRootEffect) {
+    const { before, after } = filesystemRoutingRootEffect;
+    assert(after.startsWith('/'));
+    assert(routeFilesystem.startsWith(before));
+    routeFilesystem = after + '/' + routeFilesystem.slice(before.length);
+    routeFilesystem = '/' + routeFilesystem.split('/').filter(Boolean).join('/');
+    return routeFilesystem;
+}
+function assertLocationId(locationId) {
+    assert(locationId.startsWith('/'));
+    assert(!locationId.endsWith('/') || locationId === '/');
+}
+function assertIsPath(logicalPath) {
+    assert(logicalPath.startsWith('/'));
+    assert(!logicalPath.endsWith('/') || logicalPath === '/');
+}
+/** Whether `inheritanceRoot1` starts with `inheritanceRoot2` */
+function startsWith(inheritanceRoot1, inheritanceRoot2) {
+    assertIsPath(inheritanceRoot1);
+    assertIsPath(inheritanceRoot2);
+    const segments1 = inheritanceRoot1.split('/').filter(Boolean);
+    const segments2 = inheritanceRoot2.split('/').filter(Boolean);
+    for (const i in segments2) {
+        const segment1 = segments1[i];
+        const segment2 = segments2[i];
+        if (segment1 !== segment2) {
+            /* This assertion fails for:
+               ```
+               inheritanceRoot1: '/pages/about2'
+               inheritanceRoot2: '/pages/about'
+               ```
+            assert(!inheritanceRoot1.startsWith(inheritanceRoot2))
+            */
+            return false;
+        }
+    }
+    assert(inheritanceRoot1.startsWith(inheritanceRoot2));
+    return true;
+}

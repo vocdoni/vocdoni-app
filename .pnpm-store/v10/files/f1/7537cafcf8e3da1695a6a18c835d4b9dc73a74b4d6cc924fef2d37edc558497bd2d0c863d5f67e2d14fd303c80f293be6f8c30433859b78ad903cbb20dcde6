@@ -1,0 +1,113 @@
+export { resolvePointerImport };
+export { resolvePointerImportData };
+import pc from '@brillout/picocolors';
+import { assert, assertUsage } from '../../../../utils/assert.js';
+import { isFilePathAbsolute } from '../../../../utils/isFilePathAbsoluteFilesystem.js';
+import { isImportPathRelative } from '../../../../utils/isImportPath.js';
+import { isImportNpmPackageOrPathAlias } from '../../../../utils/parseNpmPackage.js';
+import { assertPosixPath } from '../../../../utils/path.js';
+import { requireResolveOptional } from '../../../../utils/requireResolve.js';
+import { assertPointerImportPath, parsePointerImportData } from './pointerImports.js';
+import { getFilePathAbsoluteUserRootDir, getFilePathResolved, getFilePathUnresolved } from '../getFilePath.js';
+import '../../assertEnvVite.js';
+function resolvePointerImport(configValue, importerFilePath, userRootDir, configName) {
+    if (typeof configValue !== 'string')
+        return null;
+    const pointerImportData = parsePointerImportData(configValue);
+    if (!pointerImportData)
+        return null;
+    const { exportName } = pointerImportData;
+    const filePath = resolvePointerImportData(pointerImportData, importerFilePath, userRootDir);
+    const fileExportPathToShowToUser = exportName === 'default' || exportName === configName ? [] : [exportName];
+    const fileExportPath = {
+        ...filePath,
+        fileExportName: exportName,
+        fileExportPathToShowToUser,
+    };
+    return { fileExportPath };
+}
+function resolvePointerImportData(pointerImportData, importerFilePath, userRootDir) {
+    const { importPath } = pointerImportData;
+    assertPointerImportPath(importPath);
+    const filePathAbsoluteFilesystem = resolveImportPathWithNode(pointerImportData, importerFilePath, userRootDir);
+    let filePath;
+    assertPosixPath(importPath);
+    if (isImportPathRelative(importPath) || isFilePathAbsolute(importPath)) {
+        // Pointer imports are included in virtual files, thus relative imports need to be resolved. (Virtual modules cannot contain relative imports.)
+        assertUsageResolutionSuccess(filePathAbsoluteFilesystem, pointerImportData, importerFilePath);
+        // Pointer imports are included in virtual files, and we need filePathAbsoluteUserRootDir because we didn't find a way to have filesystem absolute import paths in virtual files: https://gist.github.com/brillout/2315231c9a8164f950c64b4b4a7bbd39
+        const errSuffix = `outside of the ${userRootDir} directory which is forbidden: make sure your import paths resolve inside the ${userRootDir} directory, or import from an npm package.`;
+        const filePathAbsoluteUserRootDir = getFilePathAbsoluteUserRootDir({ filePathAbsoluteFilesystem, userRootDir });
+        if (isImportPathRelative(importPath)) {
+            assertUsage(filePathAbsoluteUserRootDir, `The relative import ${pc.cyan(importPath)} defined by ${importerFilePath.filePathToShowToUser} resolves to ${filePathAbsoluteFilesystem} ${errSuffix}`);
+        }
+        else {
+            assert(isFilePathAbsolute(importPath));
+            assertUsage(filePathAbsoluteUserRootDir, `The import path ${importPath} defined by ${importerFilePath.filePathToShowToUser} is ${errSuffix}`);
+        }
+        // Forbid node_modules/ because it's brittle: if node_modules/ lives outside of userRootDir then it crashes.
+        assertUsage(!filePathAbsoluteUserRootDir.includes('/node_modules/'), `The import path ${importPath} defined by ${importerFilePath.filePathToShowToUser} resolves to ${filePathAbsoluteFilesystem} inside of node_modules/ which is forbidden: use an npm package import instead.`);
+        filePath = getFilePathResolved({ filePathAbsoluteUserRootDir, userRootDir });
+    }
+    else {
+        assert(isImportNpmPackageOrPathAlias(importPath));
+        const importPathAbsolute = importPath;
+        if (filePathAbsoluteFilesystem) {
+            filePath = getFilePathResolved({
+                userRootDir,
+                filePathAbsoluteFilesystem,
+                importPathAbsolute,
+            });
+        }
+        else {
+            // We cannot resolve path aliases defined only in Vite
+            filePath = getFilePathUnresolved({
+                importPathAbsolute,
+            });
+        }
+    }
+    return filePath;
+}
+function resolveImportPathWithNode(pointerImportData, importerFilePath, userRootDir) {
+    const importerFilePathAbsolute = importerFilePath.filePathAbsoluteFilesystem;
+    assertPosixPath(importerFilePathAbsolute);
+    // filePathAbsoluteFilesystem is null when pointerImportData.importPath is a path alias that Node.js doesn't know about
+    const filePathAbsoluteFilesystem = requireResolveOptional({
+        importPath: pointerImportData.importPath,
+        importerFilePath: importerFilePathAbsolute,
+        userRootDir,
+    });
+    if (!filePathAbsoluteFilesystem) {
+        if (isImportPathRelative(pointerImportData.importPath)) {
+            const { importPath, importStringWasGenerated, importString } = pointerImportData;
+            const { filePathToShowToUserResolved } = importerFilePath;
+            assert(filePathToShowToUserResolved);
+            const errIntro = importStringWasGenerated
+                ? `The import path ${pc.cyan(importPath)} in ${filePathToShowToUserResolved}`
+                : `The import ${pc.cyan(importString)} defined by ${filePathToShowToUserResolved}`;
+            assertUsage(false, `${errIntro} couldn't be resolved: does ${pc.cyan(importPath)} point to an existing file?`);
+        }
+        /* This assertion fails if the npm package has a wrongly defined package.json#exports
+        // Libraries don't use path aliases => filePathAbsoluteFilesystem should be defined
+        assert(!importerFilePathAbsolute.includes('node_modules'))
+        */
+    }
+    return filePathAbsoluteFilesystem;
+}
+function assertUsageResolutionSuccess(filePathAbsoluteFilesystem, pointerImportData, importerFilePath) {
+    const { importPath: importPath, importStringWasGenerated, importString } = pointerImportData;
+    const { filePathToShowToUser } = importerFilePath;
+    if (!filePathAbsoluteFilesystem) {
+        const importPathString = pc.code(`${importPath}`);
+        const errIntro = importStringWasGenerated
+            ? `The import path ${importPathString} in ${filePathToShowToUser}`
+            : `The import ${pc.code(importString)} defined by ${filePathToShowToUser}`;
+        const errIntro2 = `${errIntro} couldn't be resolved: does ${importPathString}`;
+        if (isImportPathRelative(importPath)) {
+            assertUsage(false, `${errIntro2} point to an existing file?`);
+        }
+        else {
+            assertUsage(false, `${errIntro2} exist?`);
+        }
+    }
+}

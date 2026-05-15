@@ -1,0 +1,16 @@
+export { injectHtmlTags };
+export { injectHtmlTagsUsingStream };
+export { createHtmlHeadIfMissing };
+export { joinHtmlTags };
+export { injectAtOpeningTag };
+export { injectAtClosingTag };
+import type { StreamFromReactStreamingPackage } from '../stream/react-streaming.js';
+import type { HtmlTag } from './getHtmlTags.js';
+import '../../../../assertEnvServer.js';
+type Position = 'HTML_BEGIN' | 'HTML_END';
+declare function injectHtmlTags(htmlString: string, htmlTags: HtmlTag[], position: Position): string;
+declare function injectHtmlTagsUsingStream(htmlTags: HtmlTag[], streamFromReactStreamingPackage: StreamFromReactStreamingPackage): void;
+declare function joinHtmlTags(htmlTags: HtmlTag[]): string;
+declare function injectAtOpeningTag(tag: 'head' | 'html' | '!doctype', htmlString: string, htmlFragment: string): string;
+declare function injectAtClosingTag(tag: 'body' | 'html', htmlString: string, htmlFragment: string): string;
+declare function createHtmlHeadIfMissing(htmlString: string): string;

@@ -1,0 +1,73 @@
+export { handlePageContextRequestUrl };
+import { pageContextJsonFileExtension, doNotCreateExtraDirectory, } from '../../../shared-server-client/getPageContextRequestUrl.js';
+import { modifyUrl } from '../../../shared-server-client/modifyUrl.js';
+import { slice } from '../../../utils/slice.js';
+import { baseServer } from '../../../utils/urlToFile.js';
+import { assert } from '../../../utils/assert.js';
+import { hasProp } from '../../../utils/hasProp.js';
+import { isObject } from '../../../utils/isObject.js';
+import { parseUrl } from '../../../utils/parseUrl.js';
+import '../../assertEnvServer.js';
+const pageContextJsonFileExtensionUrl = `/index${pageContextJsonFileExtension}`;
+// See also shared/getPageContextRequestUrl.ts
+function handlePageContextRequestUrl(url) {
+    const urlParsed = parseUrl(url, baseServer);
+    if (!isMatch(urlParsed)) {
+        return {
+            isPageContextJsonRequest: false,
+            urlWithoutPageContextRequestSuffix: url,
+        };
+    }
+    else {
+        const { urlWithoutPageContextRequestSuffix, searchVikeArgs } = processUrl(urlParsed, url);
+        // @ts-ignore
+        const previousUrl = parseSearchVikeArgs(searchVikeArgs);
+        return {
+            /* TO-DO/soon/once: pass & use previousUrl
+            isPageContextJsonRequest: { previousUrl },
+            /*/
+            isPageContextJsonRequest: true,
+            //*/
+            urlWithoutPageContextRequestSuffix,
+        };
+    }
+}
+function isMatch(urlParsed) {
+    const { pathnameOriginal, pathname } = urlParsed;
+    assert(pathname.endsWith(pageContextJsonFileExtensionUrl) === pathnameOriginal.endsWith(pageContextJsonFileExtensionUrl));
+    return pathname.endsWith(pageContextJsonFileExtensionUrl);
+}
+function processUrl(urlParsed, url) {
+    // We cannot use `urlParsed.pathname` because it would break the `urlParsed.pathnameOriginal` value of subsequent `parseUrl()` calls.
+    const { pathnameOriginal, search } = urlParsed;
+    assert(doNotCreateExtraDirectory === false);
+    assert(pathnameOriginal.endsWith(pageContextJsonFileExtensionUrl), { url });
+    let pathnameModified = slice(pathnameOriginal, 0, -1 * pageContextJsonFileExtensionUrl.length);
+    if (pathnameModified === '')
+        pathnameModified = '/';
+    const searchVikeArgs = search?._vike;
+    const urlWithoutPageContextRequestSuffix = modifyUrl(url, {
+        pathname: pathnameModified,
+        search: {
+            _vike: searchVikeArgs ? null : undefined,
+        },
+    });
+    return {
+        searchVikeArgs,
+        urlWithoutPageContextRequestSuffix,
+    };
+}
+function parseSearchVikeArgs(searchVikeArgs) {
+    const args = {
+        previousUrl: null,
+    };
+    if (searchVikeArgs) {
+        const parsed = JSON.parse(searchVikeArgs);
+        assert(isObject(parsed));
+        if ('previousUrl' in parsed) {
+            assert(hasProp(parsed, 'previousUrl', 'string'));
+            args.previousUrl = parsed.previousUrl;
+        }
+    }
+    return args;
+}

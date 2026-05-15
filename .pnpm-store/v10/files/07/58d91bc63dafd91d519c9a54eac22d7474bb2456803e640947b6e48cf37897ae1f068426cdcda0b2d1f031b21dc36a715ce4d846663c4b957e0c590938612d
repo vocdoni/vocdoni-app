@@ -1,0 +1,577 @@
+// src/components/shared/HR.tsx
+import { jsx } from "react/jsx-runtime";
+var HR = (props) => /* @__PURE__ */ jsx("hr", { ...props });
+
+// src/components/context/ComponentsProvider.tsx
+import { createContext, useMemo } from "react";
+
+// src/components/shared/ipfs.ts
+var linkifyIpfs = (link, gateway = "https://infura-ipfs.io/ipfs/") => {
+  if (typeof link === "undefined") return;
+  if (!link.startsWith("ipfs")) return link;
+  const matches = link.match(/(?:ipfs:\/\/)?(.*)/);
+  if (!matches) return link;
+  const [, pin] = matches;
+  return gateway + pin;
+};
+
+// src/components/context/default-components.tsx
+import { jsx as jsx2, jsxs } from "react/jsx-runtime";
+var ActionButton = ({ label, loading, ...props }) => /* @__PURE__ */ jsxs("button", { ...props, children: [
+  loading ? "..." : null,
+  label
+] });
+var TrustedHtml = ({ html, ...rest }) => {
+  if (!html) return null;
+  return /* @__PURE__ */ jsx2("div", { ...rest, dangerouslySetInnerHTML: { __html: html } });
+};
+var defaultComponents = {
+  HR,
+  ElectionTitle: ({ title, ...props }) => /* @__PURE__ */ jsx2("h1", { ...props, children: title }),
+  ElectionDescription: ({ description, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, children: /* @__PURE__ */ jsx2(TrustedHtml, { html: description }) }),
+  ElectionSchedule: ({ text, ...props }) => /* @__PURE__ */ jsx2("p", { ...props, children: text }),
+  ElectionStatusBadge: ({ label, tone, ...props }) => /* @__PURE__ */ jsx2("span", { ...props, "data-tone": tone, children: label }),
+  ElectionHeader: ({ src, alt, ...props }) => src ? /* @__PURE__ */ jsx2("img", { ...props, alt, src: linkifyIpfs(src) }) : null,
+  ElectionQuestions: ({ form, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, children: form }),
+  ElectionQuestion: ({
+    title,
+    description,
+    fields,
+    tip,
+    hasExtendedChoices,
+    selectionMode,
+    layout,
+    invalid,
+    ...props
+  }) => /* @__PURE__ */ jsxs(
+    "section",
+    {
+      ...props,
+      "data-has-extended-choices": hasExtendedChoices,
+      "data-selection-mode": selectionMode,
+      "data-layout": layout,
+      "data-invalid": invalid ? "true" : void 0,
+      children: [
+        /* @__PURE__ */ jsx2("label", { children: title }),
+        /* @__PURE__ */ jsx2(TrustedHtml, { html: description }),
+        fields,
+        tip
+      ]
+    }
+  ),
+  QuestionChoice: ({
+    choice,
+    value,
+    label,
+    description,
+    image,
+    compact,
+    canOpenImageModal,
+    dataAttrs,
+    presentation,
+    selectionMode,
+    selected,
+    disabled,
+    controlType,
+    onSelect,
+    ...props
+  }) => {
+    const id = `choice-${choice.value}`;
+    const imageSrc = image?.thumbnail ?? image?.default;
+    return /* @__PURE__ */ jsxs(
+      "label",
+      {
+        ...props,
+        "data-presentation": presentation,
+        "data-selection-mode": selectionMode,
+        "data-choice-card": dataAttrs?.["data-choice-card"],
+        "data-layout": dataAttrs?.["data-layout"],
+        children: [
+          /* @__PURE__ */ jsx2(
+            "input",
+            {
+              id,
+              value,
+              type: controlType,
+              checked: selected,
+              disabled,
+              onChange: (event) => onSelect(event.target.checked),
+              "data-choice-control": dataAttrs?.["data-choice-control"]
+            }
+          ),
+          imageSrc ? /* @__PURE__ */ jsx2(
+            "img",
+            {
+              src: linkifyIpfs(imageSrc),
+              alt: label,
+              "data-choice-media": dataAttrs?.["data-choice-media"],
+              "data-can-open-modal": canOpenImageModal ? "true" : void 0
+            }
+          ) : null,
+          /* @__PURE__ */ jsx2("span", { "data-choice-body": dataAttrs?.["data-choice-body"], "data-compact": compact ? "" : void 0, children: label }),
+          /* @__PURE__ */ jsx2(TrustedHtml, { html: description })
+        ]
+      }
+    );
+  },
+  QuestionsTypeBadge: ({ title, tooltip, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, title: tooltip, children: title }),
+  QuestionTip: ({ text, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, children: text }),
+  QuestionsEmpty: ({ text, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, children: text }),
+  QuestionsError: ({ error, variant, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, "data-variant": variant, children: error }),
+  QuestionsConfirmation: ({ election, answersView, onConfirm, onCancel, ...props }) => /* @__PURE__ */ jsxs("div", { ...props, children: [
+    /* @__PURE__ */ jsx2("h3", { children: "Confirm" }),
+    /* @__PURE__ */ jsx2("p", { children: election.title.default }),
+    answersView.map((item, idx) => /* @__PURE__ */ jsxs("div", { children: [
+      /* @__PURE__ */ jsx2("strong", { children: item.question }),
+      /* @__PURE__ */ jsx2("div", { children: item.answers.join(", ") })
+    ] }, idx)),
+    /* @__PURE__ */ jsx2("button", { onClick: onCancel, children: "Cancel" }),
+    /* @__PURE__ */ jsx2("button", { onClick: onConfirm, children: "Confirm" })
+  ] }),
+  Voted: ({ title, description, ...props }) => /* @__PURE__ */ jsxs("div", { ...props, children: [
+    /* @__PURE__ */ jsx2("strong", { children: title }),
+    /* @__PURE__ */ jsx2("p", { children: description })
+  ] }),
+  VoteButton: ({ label, loading, ...props }) => /* @__PURE__ */ jsx2("button", { ...props, children: loading ? "..." : label }),
+  VoteWeight: ({ label, weight, ...props }) => /* @__PURE__ */ jsxs("div", { ...props, children: [
+    label,
+    /* @__PURE__ */ jsx2("span", { children: weight })
+  ] }),
+  ElectionResults: ({ secretText, questions, ...props }) => /* @__PURE__ */ jsxs("div", { ...props, children: [
+    secretText ? /* @__PURE__ */ jsx2("p", { children: secretText }) : null,
+    questions?.map((question) => /* @__PURE__ */ jsxs("section", { children: [
+      /* @__PURE__ */ jsx2("h3", { children: question.title }),
+      question.choices.map((choice) => /* @__PURE__ */ jsxs("div", { children: [
+        /* @__PURE__ */ jsx2("strong", { children: choice.title }),
+        " ",
+        choice.votes,
+        " (",
+        choice.percent,
+        ")",
+        /* @__PURE__ */ jsx2(TrustedHtml, { html: choice.description }),
+        choice.image ? /* @__PURE__ */ jsx2("img", { src: linkifyIpfs(choice.image), alt: choice.title }) : null
+      ] }, choice.title))
+    ] }, question.title))
+  ] }),
+  SpreadsheetAccess: ({
+    connected,
+    loading,
+    formError,
+    title,
+    open,
+    onOpen,
+    onClose,
+    onLogout,
+    onSubmit,
+    fields,
+    anonymousField,
+    extraFields,
+    ...props
+  }) => {
+    if (connected) {
+      return /* @__PURE__ */ jsx2("button", { onClick: onLogout, disabled: loading, children: "Logout" });
+    }
+    if (!open) {
+      return /* @__PURE__ */ jsx2("button", { onClick: onOpen, disabled: loading, children: "Identify" });
+    }
+    return /* @__PURE__ */ jsxs("div", { ...props, children: [
+      /* @__PURE__ */ jsx2("h3", { children: title }),
+      /* @__PURE__ */ jsxs(
+        "form",
+        {
+          onSubmit: (event) => {
+            onSubmit(event);
+          },
+          children: [
+            fields.map((field) => /* @__PURE__ */ jsxs("label", { children: [
+              field.label,
+              /* @__PURE__ */ jsx2("input", { ...field.inputProps, ...field.inputAttrs }),
+              field.error ? /* @__PURE__ */ jsx2("small", { children: field.error }) : null,
+              field.description ? /* @__PURE__ */ jsx2("small", { children: field.description }) : null
+            ] }, field.id)),
+            anonymousField ? /* @__PURE__ */ jsxs("label", { children: [
+              anonymousField.label,
+              /* @__PURE__ */ jsx2("input", { ...anonymousField.inputProps, ...anonymousField.inputAttrs }),
+              anonymousField.error ? /* @__PURE__ */ jsx2("small", { children: anonymousField.error }) : null,
+              anonymousField.description ? /* @__PURE__ */ jsx2("small", { children: anonymousField.description }) : null
+            ] }) : null,
+            formError ? /* @__PURE__ */ jsx2("small", { children: formError }) : null,
+            extraFields,
+            /* @__PURE__ */ jsx2("button", { type: "button", onClick: onClose, children: "Close" }),
+            /* @__PURE__ */ jsx2("button", { type: "submit", disabled: loading, children: "Identify" })
+          ]
+        }
+      )
+    ] });
+  },
+  ElectionActions: ({ actions, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, children: actions }),
+  ActionContinue: ActionButton,
+  ActionPause: ActionButton,
+  ActionEnd: ActionButton,
+  ActionCancel: ActionButton,
+  ConfirmActionModal: ({ title, description, confirm, cancel, onConfirm, onCancel, ...props }) => /* @__PURE__ */ jsxs("div", { ...props, children: [
+    /* @__PURE__ */ jsx2("h3", { children: title }),
+    /* @__PURE__ */ jsx2("p", { children: description }),
+    /* @__PURE__ */ jsx2("button", { onClick: onCancel, children: cancel }),
+    /* @__PURE__ */ jsx2("button", { onClick: onConfirm, children: confirm })
+  ] }),
+  ConfirmShell: ({ isOpen, onClose, content, ...props }) => {
+    if (!isOpen) return null;
+    return /* @__PURE__ */ jsx2("div", { className: "vocdoni-confirm-modal-overlay", role: "presentation", onClick: onClose, ...props, children: /* @__PURE__ */ jsx2(
+      "div",
+      {
+        className: "vocdoni-confirm-modal-content",
+        role: "dialog",
+        "aria-modal": "true",
+        onClick: (event) => event.stopPropagation(),
+        children: content
+      }
+    ) });
+  },
+  AccountBalance: ({ label, tone, ...props }) => /* @__PURE__ */ jsx2("span", { ...props, "data-tone": tone, children: label }),
+  PaginationContainer: ({ items, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, children: items }),
+  PaginationButton: ({ label, href, isActive, disabled, onClick, ...props }) => href ? /* @__PURE__ */ jsx2("a", { ...props, href, "data-active": isActive ? "" : void 0, children: label }) : /* @__PURE__ */ jsx2("button", { ...props, onClick, disabled, "data-active": isActive ? "" : void 0, children: label }),
+  PaginationEllipsisButton: ({ className, isInput, onToggle, onSubmitPage, placeholder, buttonProps, inputProps }) => {
+    if (isInput) {
+      return /* @__PURE__ */ jsx2(
+        "input",
+        {
+          className,
+          ...inputProps,
+          placeholder,
+          onKeyDown: (event) => {
+            if (event.key !== "Enter" || !(event.currentTarget instanceof HTMLInputElement)) return;
+            const pageNumber = Number(event.currentTarget.value);
+            onSubmitPage(pageNumber);
+          },
+          onBlur: onToggle,
+          autoFocus: true
+        }
+      );
+    }
+    return /* @__PURE__ */ jsx2(
+      "button",
+      {
+        className,
+        ...buttonProps,
+        onClick: (event) => {
+          event.preventDefault();
+          onToggle();
+        },
+        children: "..."
+      }
+    );
+  },
+  PaginationSummary: ({ text, ...props }) => /* @__PURE__ */ jsx2("p", { ...props, children: text }),
+  OrganizationName: ({ name, ...props }) => /* @__PURE__ */ jsx2("h1", { ...props, children: name }),
+  OrganizationDescription: ({ description, ...props }) => /* @__PURE__ */ jsx2("div", { ...props, children: /* @__PURE__ */ jsx2(TrustedHtml, { html: description }) }),
+  OrganizationAvatar: ({ src, alt, ...props }) => src ? /* @__PURE__ */ jsx2("img", { ...props, src: linkifyIpfs(src), alt }) : null
+};
+
+// src/components/context/ComponentsProvider.tsx
+import { jsx as jsx3 } from "react/jsx-runtime";
+var ComponentsContext = createContext(void 0);
+var ComponentsProvider = ({ components, children }) => {
+  const merged = useMemo(() => ({ ...defaultComponents, ...components || {} }), [components]);
+  return /* @__PURE__ */ jsx3(ComponentsContext.Provider, { value: merged, children });
+};
+
+// src/components/context/useComponents.ts
+import { useContext } from "react";
+var useComponents = () => {
+  const context = useContext(ComponentsContext);
+  if (!context) {
+    throw new Error("useComponents must be used within a <ComponentsProvider />");
+  }
+  return context;
+};
+
+// src/i18n/locales/en/react-components.json
+var react_components_default = {
+  balance: "{{ balance }} VOC tokens",
+  actions: {
+    cancel_description: 'canceling the "{{ election.title.default }}" election process',
+    cancel: "Cancel the process immediately, not allowing new votes and not counting any results (caution: it cannot be reverted)",
+    cancel_button: "Cancel",
+    continue_description: 'resuming the "{{ election.title.default }}" election process',
+    continue: "Resume the process immediately, in case it has been paused",
+    end_description: 'ending the "{{ election.title.default }}" election process',
+    end: "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
+    error_title: "There was some error while executing the transaction",
+    pause_description: 'pausing the "{{ election.title.default }}" election process',
+    pause: "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
+    waiting_title: "Waiting for transaction confirmation..."
+  },
+  confirm: {
+    title: "Confirm",
+    cancel: "Cancel",
+    confirm: "Confirm",
+    cancel_process_button: "Cancel process",
+    cancel_process_title: "Confirm cancelation",
+    end_process_title: "Confirm ending",
+    end_process_button: "End process",
+    cancel_button: "Cancel"
+  },
+  empty: "Apparently this process has no questions \u{1F914}",
+  errors: {
+    unauthorized: "Not authorized to vote",
+    wrong_data_title: "Wrong data",
+    wrong_data_description: "The specified data is not correct",
+    not_voted_in_ended_election: "You did not vote in this election and it's already finished"
+  },
+  question_types: {
+    approval_tooltip: "Approval voting lets you vote for as many options as you like. The one with the most votes wins. It's a simple way to show your support for all the choices you approve of.",
+    approval_title: "Approval Voting",
+    singlechoice_title: "Single Choice {{ weighted }}",
+    multichoice_tooltip: "Multichoice voting lets you vote for up to {{maxcount}} options (defined by the voting organizer). The one with the most votes wins.",
+    multichoice_title: "Multichoice Voting {{ weighted }}",
+    multichoice_desc: "You selected {{selected}} options (max {{maxcount}})",
+    multichoice_desc_abstain: " (or abstain)",
+    weighted_voting: "Weighted Voting"
+  },
+  schedule: {
+    from_begin_to_end: "Voting from {{ begin }} to {{ end }}",
+    ended: "Ended {{ distance }}",
+    paused_start: "(Paused) Starts {{ distance }}",
+    paused_end: "(Paused) Ends {{ distance }}",
+    created: "Created {{ distance }}"
+  },
+  results: {
+    date_format: "d-L-y HH:mm",
+    secret_until_the_end: "Secret until the end. The results will be available when the process ends at {{ endDate }}",
+    title: 'Results for "{{ title }}"',
+    votes: "Votes: {{ votes }} ({{ percent }})"
+  },
+  statuses: {
+    canceled: "Canceled",
+    ended: "Ended",
+    ongoing: "Ongoing",
+    paused: "Paused",
+    results: "Results",
+    upcoming: "Upcoming",
+    process_unknown: "Unknown",
+    invalid: "Invalid"
+  },
+  spreadsheet: {
+    access_button: "Identify",
+    anon_sik_label: "Define a password for your vote",
+    anon_sik_helper: "This ensures the vote to be anonymous",
+    close: "Close",
+    logout: "Logout",
+    modal_title: "You must identify first"
+  },
+  pagination: {
+    page_placeholder: "Page #",
+    total_results: "Showing a total of {{ count }} results",
+    previous: "Previous",
+    next: "Next"
+  },
+  validation: {
+    required: "This field is required",
+    min_length: "This field must be at least {{ min }} characters long",
+    choices_count: "Select {{ count }} choices",
+    at_least_one: "You must select at least one option"
+  },
+  vote: {
+    abstain: "Abstain",
+    button_update: "Re-submit vote",
+    button: "Vote",
+    confirm: "Please confirm your choices:",
+    sign: "Sign first",
+    voted_description: "Your vote id is {{ id }}. You can use it to verify your vote.",
+    voted_title: "Your vote was successfully cast!",
+    weight: "Your voting power is: "
+  }
+};
+
+// src/i18n/locales.ts
+var reactComponentsNamespace = "react-components";
+var reactComponentsDefaultLanguage = "en";
+var reactComponentsResources = {
+  [reactComponentsDefaultLanguage]: {
+    [reactComponentsNamespace]: react_components_default
+  }
+};
+
+// src/i18n/localize.ts
+import { useTranslation } from "react-i18next";
+var useReactComponentsLocalize = () => {
+  const { t } = useTranslation(reactComponentsNamespace);
+  return (key, substitutions) => t(key, substitutions);
+};
+
+// src/providers/pagination/PaginationProvider.tsx
+import { createContext as createContext2, useContext as useContext2, useState } from "react";
+import { jsx as jsx4 } from "react/jsx-runtime";
+var PaginationContext = createContext2(void 0);
+var usePagination = () => {
+  const context = useContext2(PaginationContext);
+  if (!context) {
+    throw new Error("usePagination must be used within a PaginationProvider");
+  }
+  return context;
+};
+var PaginationProvider = ({
+  pagination,
+  initialPage = 0,
+  ...rest
+}) => {
+  const [page, setPage] = useState(initialPage);
+  return /* @__PURE__ */ jsx4(PaginationContext.Provider, { value: { page, setPage, pagination, initialPage }, ...rest });
+};
+
+// src/components/Pagination/Button.tsx
+import { jsx as jsx5 } from "react/jsx-runtime";
+var Button = ({ isActive, ...props }) => {
+  const { PaginationButton: Slot } = useComponents();
+  return /* @__PURE__ */ jsx5(Slot, { ...props, isActive, label: props.children });
+};
+
+// src/components/Pagination/EllipsisButton.tsx
+import { useState as useState2 } from "react";
+import { jsx as jsx6 } from "react/jsx-runtime";
+var EllipsisButton = ({ gotoPage, inputProps, ...rest }) => {
+  const [isInput, setIsInput] = useState2(false);
+  const { PaginationEllipsisButton: Slot } = useComponents();
+  const localize = useReactComponentsLocalize();
+  return /* @__PURE__ */ jsx6(
+    Slot,
+    {
+      className: rest.className,
+      isInput,
+      placeholder: localize("pagination.page_placeholder"),
+      onToggle: () => setIsInput((v) => !v),
+      onSubmitPage: (page) => {
+        gotoPage(page);
+        setIsInput(false);
+      },
+      buttonProps: rest,
+      inputProps: isInput ? inputProps : void 0
+    }
+  );
+};
+
+// src/components/Pagination/shared.tsx
+import { useMemo as useMemo2 } from "react";
+import { Fragment, jsx as jsx7, jsxs as jsxs2 } from "react/jsx-runtime";
+var usePaginationPages = (currentPage, totalPages, maxButtons, gotoPage, createPageButton, inputProps, buttonProps) => useMemo2(() => {
+  if (totalPages === void 0) return [];
+  const pages = [];
+  for (let i = 0; i < totalPages; i++) {
+    pages.push(createPageButton(i));
+  }
+  if (!maxButtons || totalPages <= maxButtons) {
+    return pages;
+  }
+  const startEllipsis = /* @__PURE__ */ jsx7(EllipsisButton, { gotoPage, inputProps, ...buttonProps }, "start-ellipsis");
+  const endEllipsis = /* @__PURE__ */ jsx7(EllipsisButton, { gotoPage, inputProps, ...buttonProps }, "end-ellipsis");
+  const sideButtons = 2;
+  const availableButtons = maxButtons - sideButtons;
+  if (currentPage <= availableButtons / 2) {
+    return [...pages.slice(0, availableButtons), endEllipsis, pages[totalPages - 1]];
+  }
+  if (currentPage >= totalPages - 1 - availableButtons / 2) {
+    return [pages[0], startEllipsis, ...pages.slice(totalPages - availableButtons, totalPages)];
+  }
+  const startPage = currentPage - Math.floor((availableButtons - 1) / 2);
+  const endPage = currentPage + Math.floor(availableButtons / 2);
+  return [pages[0], startEllipsis, ...pages.slice(startPage, endPage - 1), endEllipsis, pages[totalPages - 1]];
+}, [totalPages, maxButtons, gotoPage, inputProps, buttonProps, currentPage, createPageButton]);
+var PaginationButtons = ({
+  totalPages,
+  totalItems,
+  currentPage,
+  goToPage,
+  createPageButton,
+  maxButtons = 10,
+  buttonProps,
+  inputProps,
+  ...rest
+}) => {
+  const { PaginationContainer, PaginationSummary } = useComponents();
+  const t = useReactComponentsLocalize();
+  const pages = usePaginationPages(
+    currentPage,
+    totalPages,
+    maxButtons ? Math.max(5, maxButtons) : false,
+    (page) => {
+      if (page >= 0 && totalPages && page < totalPages) {
+        goToPage(page);
+      }
+    },
+    createPageButton,
+    inputProps,
+    buttonProps
+  );
+  return /* @__PURE__ */ jsx7(
+    PaginationContainer,
+    {
+      ...rest,
+      items: /* @__PURE__ */ jsxs2(Fragment, { children: [
+        totalPages === void 0 ? /* @__PURE__ */ jsxs2(Fragment, { children: [
+          /* @__PURE__ */ jsx7(
+            Button,
+            {
+              onClick: () => goToPage(currentPage - 1),
+              disabled: currentPage === 0,
+              ...buttonProps,
+              children: t("pagination.previous")
+            },
+            "previous"
+          ),
+          /* @__PURE__ */ jsx7(Button, { onClick: () => goToPage(currentPage + 1), ...buttonProps, children: t("pagination.next") }, "next")
+        ] }) : pages,
+        Boolean(totalItems) ? /* @__PURE__ */ jsx7(
+          PaginationSummary,
+          {
+            text: t("pagination.total_results", {
+              count: totalItems
+            })
+          }
+        ) : null
+      ] })
+    }
+  );
+};
+
+// src/components/Pagination/Pagination.tsx
+import { jsx as jsx8 } from "react/jsx-runtime";
+var Pagination = ({ maxButtons = 10, buttonProps, inputProps, pagination, ...rest }) => {
+  const { page, setPage, initialPage } = usePagination();
+  const totalPages = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage;
+  const currentPage = initialPage === 0 ? page - 1 : page;
+  return /* @__PURE__ */ jsx8(
+    PaginationButtons,
+    {
+      goToPage: (nextPage) => setPage(nextPage),
+      createPageButton: (i) => {
+        const pageIndex = initialPage === 0 ? i : i + initialPage;
+        return /* @__PURE__ */ jsx8(Button, { onClick: () => setPage(pageIndex), isActive: currentPage === pageIndex, ...buttonProps, children: i + 1 }, i);
+      },
+      currentPage,
+      totalPages,
+      totalItems: pagination.totalItems,
+      maxButtons,
+      buttonProps,
+      inputProps,
+      ...rest
+    }
+  );
+};
+
+export {
+  HR,
+  linkifyIpfs,
+  ComponentsProvider,
+  useComponents,
+  reactComponentsNamespace,
+  reactComponentsDefaultLanguage,
+  reactComponentsResources,
+  useReactComponentsLocalize,
+  usePagination,
+  PaginationProvider,
+  Button,
+  EllipsisButton,
+  PaginationButtons,
+  Pagination
+};

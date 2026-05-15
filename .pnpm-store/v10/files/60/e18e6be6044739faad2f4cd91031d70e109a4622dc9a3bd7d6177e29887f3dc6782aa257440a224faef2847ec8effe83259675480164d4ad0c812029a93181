@@ -1,0 +1,32 @@
+export { resolveBase };
+import { assert, assertUsage } from '../utils/assert.js';
+import { isBaseServer } from '../utils/parseUrl.js';
+import { isBaseAssets } from '../utils/parseUrl-extras.js';
+import pc from '@brillout/picocolors';
+function resolveBase(baseViteOriginal, baseServerUnresolved, baseAssetsUnresolved) {
+    if (baseViteOriginal === '/__UNSET__')
+        baseViteOriginal = null;
+    {
+        const wrongBase = (val) => `should start with ${pc.cyan('/')}, ${pc.cyan('http://')}, or ${pc.cyan('https://')} (it's ${pc.cyan(val)} instead)`;
+        assertUsage(baseViteOriginal === null || isBaseAssets(baseViteOriginal), `vite.config.js#base ${wrongBase(baseViteOriginal)}`);
+        assertUsage(baseAssetsUnresolved === null || isBaseAssets(baseAssetsUnresolved), `Config ${pc.cyan('baseAssets')} ${wrongBase(baseAssetsUnresolved)}`);
+        assertUsage(baseServerUnresolved === null || baseServerUnresolved.startsWith('/'), `Config ${pc.cyan('baseServer')} should start with a leading slash ${pc.cyan('/')} (it's ${pc.cyan(String(baseServerUnresolved))} instead)`);
+    }
+    if (baseViteOriginal) {
+        if (baseViteOriginal.startsWith('http')) {
+            baseAssetsUnresolved = baseAssetsUnresolved ?? baseViteOriginal;
+        }
+        else {
+            baseAssetsUnresolved = baseAssetsUnresolved ?? baseViteOriginal;
+            baseServerUnresolved = baseServerUnresolved ?? baseViteOriginal;
+        }
+    }
+    const baseServer = baseServerUnresolved ?? '/';
+    const baseAssets = baseAssetsUnresolved ?? '/';
+    assert(isBaseAssets(baseAssets));
+    assert(isBaseServer(baseServer));
+    return {
+        baseServer,
+        baseAssets,
+    };
+}

@@ -1,0 +1,42 @@
+{
+  "name": "@croct/json",
+  "version": "2.1.0",
+  "description": "Strong JSON typing for TypeScript.",
+  "author": {
+    "name": "croct",
+    "email": "lib+json@croct.com",
+    "url": "https://github.com/croct-tech/json-js"
+  },
+  "license": "MIT",
+  "keywords": [
+    "croct",
+    "typescript",
+    "json"
+  ],
+  "types": "index.d.ts",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/croct-tech/json-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/croct-tech/json-js/issues"
+  },
+  "homepage": "https://github.com/croct-tech/json-js",
+  "scripts": {
+    "lint": "eslint 'src/**/*.ts'",
+    "validate": "tsd test",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "devDependencies": {
+    "@croct/eslint-plugin": "^0.7.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.13",
+    "tsd": "^0.29.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "**/*.js",
+    "**/*.ts"
+  ]
+}

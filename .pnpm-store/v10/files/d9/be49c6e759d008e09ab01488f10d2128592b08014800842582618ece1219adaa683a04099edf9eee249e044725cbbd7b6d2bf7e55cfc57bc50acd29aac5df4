@@ -1,0 +1,25 @@
+export { pluginServerEntryInject };
+import { getMagicString } from '../../shared/getMagicString.js';
+import { serverEntryVirtualId } from '@brillout/vite-plugin-server-entry/plugin';
+import { pluginCommon } from './common.js';
+import '../../assertEnvVite.js';
+import { escapeRegex } from '../../../../utils/escapeRegex.js';
+function pluginServerEntryInject(serverEntryId) {
+    return {
+        name: 'vike:pluginUniversalDeploy:serverEntry',
+        apply: 'build',
+        transform: {
+            order: 'post',
+            filter: {
+                id: new RegExp(escapeRegex(serverEntryId)),
+            },
+            handler(code, id) {
+                const { magicString, getMagicStringResult } = getMagicString(code, id);
+                // Inject Vike virtual server entry
+                magicString.prepend(`import "${serverEntryVirtualId}";\n`);
+                return getMagicStringResult();
+            },
+        },
+        ...pluginCommon,
+    };
+}

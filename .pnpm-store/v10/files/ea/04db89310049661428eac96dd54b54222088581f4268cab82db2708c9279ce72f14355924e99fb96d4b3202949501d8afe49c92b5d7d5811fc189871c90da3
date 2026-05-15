@@ -1,0 +1,36 @@
+export { navigate };
+export { reload };
+// import { modifyUrlSameOrigin, ModifyUrlSameOriginOptions } from '../../shared/modifyUrlSameOrigin.js'
+import { getCurrentUrl } from '../shared/getCurrentUrl.js';
+import { normalizeUrlArgument } from './normalizeUrlArgument.js';
+import { renderPageClient } from './renderPageClient.js';
+import { assertClientRouting } from '../../utils/assertRoutingType.js';
+import { initClientRouter } from './initClientRouter.js';
+import '../assertEnvClient.js';
+assertClientRouting();
+/** Programmatically navigate to a new page.
+ *
+ * https://vike.dev/navigate
+ *
+ * @param url - The URL of the new page.
+ * @param keepScrollPosition - Don't scroll to the top of the page, instead keep the current scroll position.
+ * @param overwriteLastHistoryEntry - Don't create a new entry in the browser's history, instead let the new URL replace the current URL. (This effectively removes the current URL from the browser history).
+ */
+async function navigate(url, options) {
+    // let url = normalizeUrlArgument(options.url ?? getCurrentUrl(), 'navigate')
+    // url = modifyUrlSameOrigin(url, options)
+    normalizeUrlArgument(url, 'navigate');
+    // Ensure initClientRouter() is called before navigate() — otherwise race condition when +client.js calls navigate() before initClientRouter() is called in runtime-client-routing/entry.ts
+    initClientRouter();
+    const { keepScrollPosition, overwriteLastHistoryEntry, pageContext } = options ?? {};
+    const scrollTarget = { preserveScroll: keepScrollPosition ?? false };
+    await renderPageClient({
+        scrollTarget,
+        urlOriginal: url,
+        overwriteLastHistoryEntry,
+        pageContextInitClient: pageContext,
+    });
+}
+async function reload() {
+    await navigate(getCurrentUrl());
+}

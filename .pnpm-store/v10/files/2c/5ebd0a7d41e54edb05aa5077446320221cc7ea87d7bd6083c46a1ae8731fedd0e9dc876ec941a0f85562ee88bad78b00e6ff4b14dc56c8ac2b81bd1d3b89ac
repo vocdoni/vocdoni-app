@@ -1,0 +1,9 @@
+export { getManifestFilePathRelative };
+import { assert } from '../../../utils/assert.js';
+import '../assertEnvVite.js';
+function getManifestFilePathRelative(manifestConfig) {
+    assert(['string', 'boolean'].includes(typeof manifestConfig));
+    assert(manifestConfig !== false);
+    const manifestFileRelative = typeof manifestConfig === 'string' ? manifestConfig : '.vite/manifest.json';
+    return manifestFileRelative;
+}

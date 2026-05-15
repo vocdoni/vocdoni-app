@@ -1,0 +1,47 @@
+{
+  "name": "vite-plugin-wrapper",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.9",
+    "@types/node": "^22.19.3",
+    "@vikejs/biome-config": "^2.0.1",
+    "tsdown": "^0.20.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "vite": ">=7"
+  },
+  "files": [
+    "dist/"
+  ],
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "description": "A Vite plugin for transparently wrapping matched modules with custom implementations.",
+  "keywords": [
+    "vite",
+    "vite-plugin",
+    "wrapper",
+    "module-wrapper",
+    "virtual-module",
+    "rollup",
+    "bundler",
+    "esm"
+  ],
+  "repository": "github:magne4000/vite-plugin-wrapper",
+  "sideEffects": false,
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "test": "vitest run",
+    "format": "biome check --fix",
+    "test:types": "tsc --noEmit"
+  }
+}

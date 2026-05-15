@@ -1,0 +1,2 @@
+"use strict";
+export { TagsInputClearTrigger as ClearTrigger, TagsInputContext as Context, TagsInputControl as Control, TagsInputHiddenInput as HiddenInput, TagsInputInput as Input, TagsInputItem as Item, TagsInputItemContext as ItemContext, TagsInputItemDeleteTrigger as ItemDeleteTrigger, TagsInputItemInput as ItemInput, TagsInputItemPreview as ItemPreview, TagsInputItemText as ItemText, TagsInputItems as Items, TagsInputLabel as Label, TagsInputPropsProvider as PropsProvider, TagsInputRoot as Root, TagsInputRootProvider as RootProvider } from './tags-input.js';

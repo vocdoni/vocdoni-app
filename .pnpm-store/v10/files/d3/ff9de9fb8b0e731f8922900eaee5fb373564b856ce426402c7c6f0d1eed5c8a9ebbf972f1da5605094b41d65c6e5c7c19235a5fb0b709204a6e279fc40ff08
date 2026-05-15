@@ -1,0 +1,10 @@
+export { isVirtualFileId };
+export { addVirtualFileIdPrefix };
+export { removeVirtualFileIdPrefix };
+export { virtualFileIdPrefix1 };
+export { virtualFileIdPrefix2 };
+declare const virtualFileIdPrefix1 = "virtual:vike:";
+declare const virtualFileIdPrefix2: "\0virtual:vike:";
+declare function isVirtualFileId(id: string): boolean;
+declare function addVirtualFileIdPrefix(id: string): string;
+declare function removeVirtualFileIdPrefix(id: string): string;

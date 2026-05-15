@@ -1,0 +1,10 @@
+export { isPrerenderAutoRunEnabled };
+export { temp_disablePrerenderAutoRun };
+export { wasPrerenderRun };
+export { setWasPrerenderRun };
+import type { VikeConfigInternal } from '../vite/shared/resolveVikeConfigInternal.js';
+import type { PrerenderTrigger } from './runPrerender.js';
+declare function isPrerenderAutoRunEnabled(vikeConfig: VikeConfigInternal): Promise<boolean>;
+declare function temp_disablePrerenderAutoRun(): void;
+declare function wasPrerenderRun(): false | PrerenderTrigger;
+declare function setWasPrerenderRun(trigger: PrerenderTrigger): void;

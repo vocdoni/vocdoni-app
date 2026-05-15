@@ -1,0 +1,58 @@
+{
+  "scripts": {
+    "test": "nyc --reporter=text mocha --inspect --require @babel/register --require source-map-support --recursive && npx tsd",
+    "build": "babel src --out-dir js",
+    "prepare": "npm run build",
+    "watch": "babel --watch src --out-dir js",
+    "coverage": "nyc report --reporter=text-lcov"
+  },
+  "main": "js/index.js",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread"
+    ]
+  },
+  "name": "iso-language-codes",
+  "version": "1.1.0",
+  "description": "ISO 639-1, -2/T and -2/B codes with names",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pubcore/iso-language-codes.git"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "ISO",
+    "639-1",
+    "codes"
+  ],
+  "author": "pubcore",
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/register": "^7.10.5",
+    "chai": "^4.2.0",
+    "eslint": "^7.5.0",
+    "eslint-plugin-mocha": "^5.3.0",
+    "mocha": "^7.2.0",
+    "nyc": "^15.1.0",
+    "tsd": "^0.17.0"
+  },
+  "tsd": {
+    "directory": "test",
+    "compilerOptions": {
+      "paths": {
+        "iso-language-codes": [
+          "./"
+        ]
+      }
+    }
+  }
+}

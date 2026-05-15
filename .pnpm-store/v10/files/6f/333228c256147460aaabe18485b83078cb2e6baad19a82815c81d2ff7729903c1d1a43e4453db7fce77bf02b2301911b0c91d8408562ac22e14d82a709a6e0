@@ -1,0 +1,1033 @@
+import * as react_jsx_runtime from 'react/jsx-runtime';
+import * as react from 'react';
+import { ComponentPropsWithoutRef, PropsWithChildren, ComponentType, HTMLAttributes, ReactNode, FormEvent, ComponentProps } from 'react';
+import * as _vocdoni_sdk from '@vocdoni/sdk';
+import { EnvOptions, VocdoniSDKClient, Account, PublishedElection, Vote, AccountData, IQuestion, IChoice } from '@vocdoni/sdk';
+import { UseQueryOptions } from '@tanstack/react-query';
+import { FieldValues, UseFormRegisterReturn, UseFormReturn } from 'react-hook-form';
+import * as _ethersproject_wallet from '@ethersproject/wallet';
+import { Wallet } from '@ethersproject/wallet';
+import * as _ethersproject_abstract_signer from '@ethersproject/abstract-signer';
+import { Signer } from '@ethersproject/abstract-signer';
+export { P as Pagination, a as PaginationContextProps, b as PaginationProps, c as PaginationProvider, d as PaginationProviderProps, u as usePagination } from './PaginationProvider-IQtJPf2v.js';
+
+declare const Balance: (props: ComponentPropsWithoutRef<"span">) => react_jsx_runtime.JSX.Element;
+
+declare const ElectionActions: (props: ComponentPropsWithoutRef<"div">) => react_jsx_runtime.JSX.Element;
+
+declare const ActionsProvider: ({ children }: PropsWithChildren) => react_jsx_runtime.JSX.Element;
+
+declare const ActionCancel: (props: ComponentPropsWithoutRef<"button">) => react_jsx_runtime.JSX.Element;
+
+type ConfirmActionModalProps = ComponentPropsWithoutRef<'div'> & {
+    title: string;
+    description: string;
+    confirm: string;
+    cancel: string;
+};
+declare const ConfirmActionModal: ({ title, description, confirm, cancel, ...rest }: ConfirmActionModalProps) => react_jsx_runtime.JSX.Element;
+
+declare const ActionContinue: (props: ComponentPropsWithoutRef<"button">) => react_jsx_runtime.JSX.Element;
+
+declare const ActionEnd: (props: ComponentPropsWithoutRef<"button">) => react_jsx_runtime.JSX.Element;
+
+declare const ActionPause: (props: ComponentPropsWithoutRef<"button">) => react_jsx_runtime.JSX.Element;
+
+declare const ElectionDescription: (props: ComponentPropsWithoutRef<"div"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+
+declare const CLIENT_ENVS: readonly [EnvOptions.DEV, EnvOptions.PROD];
+type ClientEnv = (typeof CLIENT_ENVS)[number] | `${(typeof CLIENT_ENVS)[number]}`;
+type ClientReducerPropsOptions = {
+    api_url?: string;
+    faucet_url?: string;
+};
+type Census3Options = {
+    api_url?: string;
+};
+type ClientReducerProps = {
+    client?: VocdoniSDKClient;
+    env?: ClientEnv;
+    signer?: Wallet | Signer;
+    options?: ClientReducerPropsOptions;
+    census3Options?: Census3Options;
+};
+
+type ClientProviderProps = ClientReducerProps;
+declare const useClientProvider: ({ client: c, env: e, signer: s, options: o, census3Options: c3o, }: ClientProviderProps) => {
+    env: EnvOptions;
+    signer: Wallet | Signer;
+    client: VocdoniSDKClient;
+    census3: _vocdoni_sdk.VocdoniCensus3Client;
+    account: _vocdoni_sdk.AccountData;
+    balance: number;
+    connected: boolean;
+    loading: {
+        account: boolean;
+        fetch: boolean;
+        create: boolean;
+        update: boolean;
+    };
+    loaded: {
+        account: boolean;
+        fetch: boolean;
+        create: boolean;
+        update: boolean;
+    };
+    errors: {
+        account: string;
+        fetch: string;
+        create: string;
+        update: string;
+    };
+    options: ClientReducerPropsOptions;
+    census3Options: Census3Options;
+    clear: () => void;
+    setClient: (nextClient: VocdoniSDKClient) => void;
+    setSigner: (nextSigner: Wallet | Signer) => void;
+    setEnv: (nextEnv: ClientEnv | EnvOptions) => void;
+    createAccount: (opts?: {
+        account?: Account;
+        faucetPackage?: string;
+        sik?: boolean;
+        password?: string;
+    }) => Promise<_vocdoni_sdk.AccountData>;
+    fetchAccount: () => Promise<_vocdoni_sdk.AccountData>;
+    generateSigner: (seed?: string | string[]) => Wallet;
+    localize: (key: string, substitutions?: Record<string, unknown>) => string;
+    updateAccount: (account: Account) => Promise<_vocdoni_sdk.AccountData>;
+};
+
+type ClientState = ReturnType<typeof useClientProvider>;
+declare const useClient: <T extends VocdoniSDKClient>() => {
+    client: T;
+    env: _vocdoni_sdk.EnvOptions;
+    signer: _ethersproject_wallet.Wallet | _ethersproject_abstract_signer.Signer;
+    census3: _vocdoni_sdk.VocdoniCensus3Client;
+    account: _vocdoni_sdk.AccountData;
+    balance: number;
+    connected: boolean;
+    loading: {
+        account: boolean;
+        fetch: boolean;
+        create: boolean;
+        update: boolean;
+    };
+    loaded: {
+        account: boolean;
+        fetch: boolean;
+        create: boolean;
+        update: boolean;
+    };
+    errors: {
+        account: string;
+        fetch: string;
+        create: string;
+        update: string;
+    };
+    options: ClientReducerPropsOptions;
+    census3Options: Census3Options;
+    clear: () => void;
+    setClient: (nextClient: VocdoniSDKClient) => void;
+    setSigner: (nextSigner: _ethersproject_wallet.Wallet | _ethersproject_abstract_signer.Signer) => void;
+    setEnv: (nextEnv: ClientEnv | _vocdoni_sdk.EnvOptions) => void;
+    createAccount: (opts?: {
+        account?: _vocdoni_sdk.Account;
+        faucetPackage?: string;
+        sik?: boolean;
+        password?: string;
+    }) => Promise<_vocdoni_sdk.AccountData>;
+    fetchAccount: () => Promise<_vocdoni_sdk.AccountData>;
+    generateSigner: (seed?: string | string[]) => _ethersproject_wallet.Wallet;
+    localize: (key: string, substitutions?: Record<string, unknown>) => string;
+    updateAccount: (account: _vocdoni_sdk.Account) => Promise<_vocdoni_sdk.AccountData>;
+};
+type InternalClientProviderComponentProps = PropsWithChildren<ClientProviderProps>;
+type ClientProviderComponentProps = InternalClientProviderComponentProps;
+
+type LoadingState = {
+    continue: boolean;
+    pause: boolean;
+    end: boolean;
+    cancel: boolean;
+};
+type ActionsStatusMessage = {
+    title: string;
+    description?: string;
+};
+declare const useActionsProvider: () => {
+    disabled: boolean;
+    cancel: () => Promise<void>;
+    end: () => Promise<void>;
+    error: ActionsStatusMessage;
+    info: ActionsStatusMessage;
+    loading: LoadingState;
+    pause: () => Promise<void>;
+    resume: () => Promise<void>;
+};
+type ActionsState = ReturnType<typeof useActionsProvider>;
+declare const ActionsContext: react.Context<{
+    disabled: boolean;
+    cancel: () => Promise<void>;
+    end: () => Promise<void>;
+    error: ActionsStatusMessage;
+    info: ActionsStatusMessage;
+    loading: LoadingState;
+    pause: () => Promise<void>;
+    resume: () => Promise<void>;
+}>;
+declare const useActions: () => {
+    disabled: boolean;
+    cancel: () => Promise<void>;
+    end: () => Promise<void>;
+    error: ActionsStatusMessage;
+    info: ActionsStatusMessage;
+    loading: LoadingState;
+    pause: () => Promise<void>;
+    resume: () => Promise<void>;
+};
+
+type SerializedElection = Record<string, any>;
+type ElectionLike = PublishedElection | SerializedElection;
+
+type ElectionCspStep0Payload = {
+    token: string;
+};
+type SikPayload = string | undefined;
+
+type ElectionProviderProps = {
+    id?: string;
+    election?: ElectionLike;
+    queryOptions?: Omit<UseQueryOptions<ElectionLike, unknown>, 'queryKey' | 'queryFn' | 'enabled'>;
+    ConnectButton?: ComponentType;
+    fetchCensus?: boolean;
+    beforeSubmit?: (vote: Vote) => boolean;
+};
+declare const useElectionProvider: ({ id, election: data, queryOptions, fetchCensus, beforeSubmit, ...rest }: ElectionProviderProps) => {
+    isWeighted: boolean;
+    voteDraft: Vote;
+    loading: {
+        census: boolean;
+        election: boolean;
+        voting: boolean;
+    };
+    loaded: {
+        census: boolean;
+        election: boolean;
+        voted: boolean;
+    };
+    errors: {
+        census: string | null;
+        election: string | null;
+        voting: string | null;
+    };
+    actions: {
+        isAbleToVote: (payload?: boolean) => void;
+        voted: (voteId: string | null) => void;
+        clear: () => void;
+        error: (error: unknown) => void;
+        censusError: (error: unknown) => void;
+        votingError: (error: unknown) => void;
+        set: (nextElection: ElectionLike) => void;
+        load: (id?: string) => void;
+        loadCensus: (voter: string) => void;
+        voting: () => void;
+        setClient: (client: _vocdoni_sdk.VocdoniSDKClient) => void;
+        sikPassword: (password: SikPayload) => void;
+        sikSignature: (signature: SikPayload) => void;
+        clearClient: () => void;
+        csp0: (data: ElectionCspStep0Payload) => void;
+        csp1: (token: string) => void;
+        setVote: (vote: Vote) => void;
+        inCensus: (isIn: boolean) => void;
+        votesLeft: (votesLeft: number) => void;
+    };
+    fetchElection: (id: string) => Promise<void>;
+    localize: (key: string, substitutions?: Record<string, unknown>) => string;
+    vote: (values: number[]) => Promise<void>;
+    fetchCensus: () => Promise<void>;
+    clearClient: () => void;
+    setClient: (client: _vocdoni_sdk.VocdoniSDKClient) => void;
+    sikPassword: (password: SikPayload) => void;
+    sikSignature: (signature: SikPayload) => void;
+    client: _vocdoni_sdk.VocdoniSDKClient;
+    connected: boolean;
+    id: string | undefined;
+    isAbleToVote: boolean | undefined;
+    isInCensus: boolean;
+    election: ElectionLike | undefined;
+    voter: string | undefined;
+    votesLeft: number;
+    voted: string | null;
+    voting: boolean;
+    csp: {
+        token: string | undefined;
+    };
+    sik: {
+        password: string | undefined;
+        signature: string | undefined;
+    };
+    participation: number;
+    turnout: number;
+    ConnectButton?: ComponentType;
+};
+
+type ElectionState = ReturnType<typeof useElectionProvider>;
+declare const ElectionContext: react.Context<{
+    isWeighted: boolean;
+    voteDraft: _vocdoni_sdk.Vote;
+    loading: {
+        census: boolean;
+        election: boolean;
+        voting: boolean;
+    };
+    loaded: {
+        census: boolean;
+        election: boolean;
+        voted: boolean;
+    };
+    errors: {
+        census: string | null;
+        election: string | null;
+        voting: string | null;
+    };
+    actions: {
+        isAbleToVote: (payload?: boolean) => void;
+        voted: (voteId: string | null) => void;
+        clear: () => void;
+        error: (error: unknown) => void;
+        censusError: (error: unknown) => void;
+        votingError: (error: unknown) => void;
+        set: (nextElection: ElectionLike) => void;
+        load: (id?: string) => void;
+        loadCensus: (voter: string) => void;
+        voting: () => void;
+        setClient: (client: _vocdoni_sdk.VocdoniSDKClient) => void;
+        sikPassword: (password: SikPayload) => void;
+        sikSignature: (signature: SikPayload) => void;
+        clearClient: () => void;
+        csp0: (data: ElectionCspStep0Payload) => void;
+        csp1: (token: string) => void;
+        setVote: (vote: _vocdoni_sdk.Vote) => void;
+        inCensus: (isIn: boolean) => void;
+        votesLeft: (votesLeft: number) => void;
+    };
+    fetchElection: (id: string) => Promise<void>;
+    localize: (key: string, substitutions?: Record<string, unknown>) => string;
+    vote: (values: number[]) => Promise<void>;
+    fetchCensus: () => Promise<void>;
+    clearClient: () => void;
+    setClient: (client: _vocdoni_sdk.VocdoniSDKClient) => void;
+    sikPassword: (password: SikPayload) => void;
+    sikSignature: (signature: SikPayload) => void;
+    client: _vocdoni_sdk.VocdoniSDKClient;
+    connected: boolean;
+    id: string | undefined;
+    isAbleToVote: boolean | undefined;
+    isInCensus: boolean;
+    election: ElectionLike | undefined;
+    voter: string | undefined;
+    votesLeft: number;
+    voted: string | null;
+    voting: boolean;
+    csp: {
+        token: string | undefined;
+    };
+    sik: {
+        password: string | undefined;
+        signature: string | undefined;
+    };
+    participation: number;
+    turnout: number;
+    ConnectButton?: react.ComponentType;
+}>;
+declare const useElection: () => {
+    isWeighted: boolean;
+    voteDraft: _vocdoni_sdk.Vote;
+    loading: {
+        census: boolean;
+        election: boolean;
+        voting: boolean;
+    };
+    loaded: {
+        census: boolean;
+        election: boolean;
+        voted: boolean;
+    };
+    errors: {
+        census: string | null;
+        election: string | null;
+        voting: string | null;
+    };
+    actions: {
+        isAbleToVote: (payload?: boolean) => void;
+        voted: (voteId: string | null) => void;
+        clear: () => void;
+        error: (error: unknown) => void;
+        censusError: (error: unknown) => void;
+        votingError: (error: unknown) => void;
+        set: (nextElection: ElectionLike) => void;
+        load: (id?: string) => void;
+        loadCensus: (voter: string) => void;
+        voting: () => void;
+        setClient: (client: _vocdoni_sdk.VocdoniSDKClient) => void;
+        sikPassword: (password: SikPayload) => void;
+        sikSignature: (signature: SikPayload) => void;
+        clearClient: () => void;
+        csp0: (data: ElectionCspStep0Payload) => void;
+        csp1: (token: string) => void;
+        setVote: (vote: _vocdoni_sdk.Vote) => void;
+        inCensus: (isIn: boolean) => void;
+        votesLeft: (votesLeft: number) => void;
+    };
+    fetchElection: (id: string) => Promise<void>;
+    localize: (key: string, substitutions?: Record<string, unknown>) => string;
+    vote: (values: number[]) => Promise<void>;
+    fetchCensus: () => Promise<void>;
+    clearClient: () => void;
+    setClient: (client: _vocdoni_sdk.VocdoniSDKClient) => void;
+    sikPassword: (password: SikPayload) => void;
+    sikSignature: (signature: SikPayload) => void;
+    client: _vocdoni_sdk.VocdoniSDKClient;
+    connected: boolean;
+    id: string | undefined;
+    isAbleToVote: boolean | undefined;
+    isInCensus: boolean;
+    election: ElectionLike | undefined;
+    voter: string | undefined;
+    votesLeft: number;
+    voted: string | null;
+    voting: boolean;
+    csp: {
+        token: string | undefined;
+    };
+    sik: {
+        password: string | undefined;
+        signature: string | undefined;
+    };
+    participation: number;
+    turnout: number;
+    ConnectButton?: react.ComponentType;
+};
+type ElectionProviderComponentProps = ElectionProviderProps;
+declare const ElectionProvider: {
+    ({ children, ...rest }: PropsWithChildren<ElectionProviderComponentProps>): react_jsx_runtime.JSX.Element;
+    displayName: string;
+};
+
+declare const useLocalize: () => (key: string, substitutions?: Record<string, unknown>) => string;
+
+type SerializedOrganization = Omit<Partial<AccountData>, 'account'> & {
+    account?: ConstructorParameters<typeof Account>[0] | Account;
+};
+type OrganizationLike = AccountData | SerializedOrganization;
+
+type OrganizationProviderProps = {
+    id?: string;
+    organization?: OrganizationLike;
+    queryOptions?: Omit<UseQueryOptions<AccountData, unknown>, 'queryKey' | 'queryFn' | 'enabled'>;
+    organizationQueryOptions?: Omit<UseQueryOptions<AccountData, unknown>, 'queryKey' | 'queryFn' | 'enabled'>;
+};
+declare const useOrganizationProvider: ({ id, organization, queryOptions, organizationQueryOptions, }: OrganizationProviderProps) => {
+    loading: boolean;
+    loaded: boolean;
+    id: string;
+    errors: {
+        load: string;
+        update: string;
+    };
+    organization: AccountData;
+    fetch: (id?: string) => Promise<AccountData>;
+    update: (account: Account | Partial<Account>) => Promise<AccountData>;
+};
+
+type OrganizationState = ReturnType<typeof useOrganizationProvider>;
+declare const OrganizationContext: react.Context<{
+    loading: boolean;
+    loaded: boolean;
+    id: string;
+    errors: {
+        load: string;
+        update: string;
+    };
+    organization: _vocdoni_sdk.AccountData;
+    fetch: (id?: string) => Promise<_vocdoni_sdk.AccountData>;
+    update: (account: _vocdoni_sdk.Account | Partial<_vocdoni_sdk.Account>) => Promise<_vocdoni_sdk.AccountData>;
+}>;
+declare const useOrganization: () => {
+    loading: boolean;
+    loaded: boolean;
+    id: string;
+    errors: {
+        load: string;
+        update: string;
+    };
+    organization: _vocdoni_sdk.AccountData;
+    fetch: (id?: string) => Promise<_vocdoni_sdk.AccountData>;
+    update: (account: _vocdoni_sdk.Account | Partial<_vocdoni_sdk.Account>) => Promise<_vocdoni_sdk.AccountData>;
+};
+type OrganizationProviderComponentProps = OrganizationProviderProps;
+declare const OrganizationProvider: {
+    ({ children, ...rest }: PropsWithChildren<OrganizationProviderComponentProps>): react_jsx_runtime.JSX.Element;
+    displayName: string;
+};
+
+declare const queryKeys: {
+    client: {
+        account: (env: string, address: string) => readonly ["client", string, string, "account"];
+    };
+    organization: {
+        byId: (id: string) => readonly ["organization", string];
+    };
+    election: {
+        byId: (id: string) => readonly ["election", string];
+        census: (id: string, voter: string) => readonly ["election", string, "census", string];
+        voteInfo: (id: string, voter: string) => readonly ["election", string, "vote-info", string];
+    };
+};
+
+type ErrorPayload = any | unknown;
+type RecursivePartial<T> = {
+    [P in keyof T]?: T[P] extends (infer U)[] ? RecursivePartial<U>[] : T[P] extends object ? RecursivePartial<T[P]> : T[P];
+};
+
+/**
+ * Ensures a hex (0x) prefix is in the given string.
+ *
+ * @param address Address string to be hex enforced
+ * @returns
+ */
+declare const enforceHexPrefix: (address?: string) => string;
+/**
+ * Theoretically, all errors from the SDK should be returned as strings, but this is not true
+ * for any error coming from the signer (which is, in part, coming from the SDK). That's why
+ * we need to properly cast them to strings. Note we're not using error instanceof Error because
+ * it just not works for many signer errors.
+ *
+ * @param {any|unknown} error The error to be casted
+ * @returns {string}
+ */
+declare const errorToString: (error: any | unknown) => string;
+/**
+ * Normalizes text removing spaces and latinizing characters, in order to reduce as much as possible
+ * the possible inputs. So a text like "this is A TèXt" will end up as "thisisatext".
+ *
+ * @param text Text string to be normalized
+ * @returns string
+ */
+declare const normalizeText: (text?: string) => string;
+/**
+ * Generates a Wallet from a given row of data and a salt. The row of data should be an array of strings
+ *
+ * @param {string} salt A random string to be used as salt, the more random the better
+ * @param {string} row The row to be used to generate the wallet
+ * @returns {Wallet}
+ */
+declare const walletFromRow: (salt: string, row: string[]) => _ethersproject_wallet.Wallet;
+
+declare const Election: (props: ElectionProviderComponentProps) => react_jsx_runtime.JSX.Element;
+
+type VotePackageType = Record<string, unknown>;
+declare const Envelope: () => any;
+
+declare const ElectionHeader: (props: ComponentPropsWithoutRef<"img">) => react_jsx_runtime.JSX.Element;
+
+type BaseProps<T extends HTMLElement = HTMLElement> = Omit<HTMLAttributes<T>, 'children'>;
+type ElectionTitleSlotProps = BaseProps<HTMLHeadingElement> & {
+    title: string;
+};
+type ElectionDescriptionSlotProps = BaseProps<HTMLDivElement> & {
+    description: string;
+};
+type ElectionScheduleSlotProps = BaseProps<HTMLParagraphElement> & {
+    text: string;
+};
+type ElectionStatusBadgeSlotProps = BaseProps<HTMLSpanElement> & {
+    label: string;
+    tone: 'success' | 'warning' | 'danger';
+};
+type ElectionHeaderSlotProps = BaseProps<HTMLImageElement> & {
+    src?: string;
+    alt?: string;
+};
+type QuestionsTypeBadgeSlotProps = BaseProps<HTMLDivElement> & {
+    title: string;
+    tooltip?: string;
+};
+type QuestionTipSlotProps = BaseProps<HTMLDivElement> & {
+    text: string;
+};
+type QuestionsEmptySlotProps = BaseProps<HTMLDivElement> & {
+    text: string;
+};
+type QuestionsErrorSlotProps = BaseProps<HTMLDivElement> & {
+    error: string;
+    variant?: 'field' | 'form';
+};
+type VotedSlotProps = BaseProps<HTMLDivElement> & {
+    title: string;
+    description: ReactNode;
+};
+type VoteButtonSlotProps = BaseProps<HTMLButtonElement> & {
+    label: ReactNode;
+    form?: string;
+    disabled?: boolean;
+    loading?: boolean;
+    type?: 'button' | 'submit';
+    onClick?: () => void | Promise<void>;
+};
+type VoteWeightSlotProps = BaseProps<HTMLDivElement> & {
+    label: string;
+    weight: number;
+};
+type ElectionResultChoice = {
+    title: string;
+    votes: string;
+    percent: string;
+    description?: string;
+    image?: string;
+};
+type ElectionResultQuestion = {
+    title: string;
+    choices: ElectionResultChoice[];
+};
+type ElectionResultsSlotProps = BaseProps<HTMLDivElement> & {
+    secretText?: string;
+    questions?: ElectionResultQuestion[];
+};
+type SpreadsheetInputField = {
+    id: string;
+    label: string;
+    description?: string;
+    error?: string;
+    inputProps: UseFormRegisterReturn;
+    inputAttrs?: {
+        type?: string;
+        min?: number;
+        max?: number;
+    };
+};
+type SpreadsheetAccessSlotProps = BaseProps<HTMLDivElement> & {
+    connected: boolean;
+    loading: boolean;
+    formError?: string;
+    title: string;
+    open: boolean;
+    onOpen: () => void;
+    onClose: () => void;
+    onLogout: () => void;
+    onSubmit: (event?: FormEvent<HTMLFormElement>) => void;
+    fields: SpreadsheetInputField[];
+    anonymousField?: SpreadsheetInputField;
+    extraFields?: ReactNode;
+};
+type ElectionActionsSlotProps = BaseProps<HTMLDivElement> & {
+    actions?: ReactNode;
+};
+type ActionButtonSlotProps = BaseProps<HTMLButtonElement> & {
+    label: ReactNode;
+    disabled?: boolean;
+    loading?: boolean;
+    onClick?: () => void | Promise<void>;
+};
+type ConfirmActionModalSlotProps = BaseProps<HTMLDivElement> & {
+    title: string;
+    description: string;
+    confirm: string;
+    cancel: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+};
+type ConfirmShellSlotProps = Omit<BaseProps<HTMLDivElement>, 'content'> & {
+    isOpen: boolean;
+    onClose: () => void;
+    content: ReactNode;
+};
+type AccountBalanceSlotProps = BaseProps<HTMLSpanElement> & {
+    balance: number;
+    tone: 'success' | 'warning' | 'danger';
+    label: string;
+};
+type PaginationContainerSlotProps = BaseProps<HTMLDivElement> & {
+    items?: ReactNode;
+};
+type PaginationButtonSlotProps = {
+    label?: ReactNode;
+    isActive?: boolean;
+    disabled?: boolean;
+    href?: string;
+    className?: string;
+    type?: 'button' | 'submit' | 'reset';
+    onClick?: (...args: any[]) => void;
+};
+type PaginationEllipsisButtonSlotProps = {
+    className?: string;
+    isInput: boolean;
+    placeholder: string;
+    onToggle: () => void;
+    onSubmitPage: (page: number) => void;
+    buttonProps?: ComponentPropsWithoutRef<'button'>;
+    inputProps?: ComponentPropsWithoutRef<'input'>;
+};
+type PaginationSummarySlotProps = BaseProps<HTMLParagraphElement> & {
+    text: string;
+};
+type ElectionQuestionsSlotProps = BaseProps<HTMLDivElement> & {
+    form?: ReactNode;
+};
+type QuestionSelectionMode = 'single' | 'multiple';
+type QuestionChoicePresentation = 'basic' | 'extended';
+type QuestionLayout = 'list' | 'grid';
+type ElectionQuestionSlotProps = BaseProps<HTMLDivElement> & {
+    question: IQuestion;
+    index: string;
+    layout: QuestionLayout;
+    invalid: boolean;
+    hasExtendedChoices: boolean;
+    selectionMode: QuestionSelectionMode;
+    title: string;
+    description?: string;
+    fields: ReactNode;
+    tip?: ReactNode;
+};
+type QuestionChoiceSlotProps = BaseProps<HTMLLabelElement> & {
+    choice: IChoice;
+    value: string;
+    label: string;
+    description?: string;
+    image?: {
+        default?: string;
+        thumbnail?: string;
+    };
+    compact: boolean;
+    hasImage: boolean;
+    canOpenImageModal: boolean;
+    dataAttrs?: {
+        [key: string]: string | undefined;
+    };
+    presentation: QuestionChoicePresentation;
+    selectionMode: QuestionSelectionMode;
+    selected: boolean;
+    disabled?: boolean;
+    controlType: 'checkbox' | 'radio';
+    onSelect: (checked: boolean) => void;
+};
+type QuestionsConfirmationAnswerItem = {
+    question: string;
+    answers: string[];
+};
+type QuestionsConfirmationSlotProps = BaseProps<HTMLDivElement> & {
+    election: PublishedElection;
+    answers: FieldValues;
+    answersView: QuestionsConfirmationAnswerItem[];
+    onConfirm: () => void;
+    onCancel: () => void;
+};
+type OrganizationNameSlotProps = BaseProps<HTMLHeadingElement> & {
+    name: string;
+};
+type OrganizationDescriptionSlotProps = BaseProps<HTMLDivElement> & {
+    description: string;
+};
+type OrganizationAvatarSlotProps = BaseProps<HTMLImageElement> & {
+    src?: string;
+    alt?: string;
+};
+type ComponentsDefinition<ExternalProps extends object = {}> = {
+    HR: ComponentType<BaseProps<HTMLHRElement> & ExternalProps>;
+    ElectionTitle: ComponentType<ElectionTitleSlotProps & ExternalProps>;
+    ElectionDescription: ComponentType<ElectionDescriptionSlotProps & ExternalProps>;
+    ElectionSchedule: ComponentType<ElectionScheduleSlotProps & ExternalProps>;
+    ElectionStatusBadge: ComponentType<ElectionStatusBadgeSlotProps & ExternalProps>;
+    ElectionHeader: ComponentType<ElectionHeaderSlotProps & ExternalProps>;
+    ElectionQuestions: ComponentType<ElectionQuestionsSlotProps & ExternalProps>;
+    ElectionQuestion: ComponentType<ElectionQuestionSlotProps & ExternalProps>;
+    QuestionChoice: ComponentType<QuestionChoiceSlotProps & ExternalProps>;
+    QuestionsTypeBadge: ComponentType<QuestionsTypeBadgeSlotProps & ExternalProps>;
+    QuestionTip: ComponentType<QuestionTipSlotProps & ExternalProps>;
+    QuestionsEmpty: ComponentType<QuestionsEmptySlotProps & ExternalProps>;
+    QuestionsError: ComponentType<QuestionsErrorSlotProps & ExternalProps>;
+    QuestionsConfirmation: ComponentType<QuestionsConfirmationSlotProps & ExternalProps>;
+    Voted: ComponentType<VotedSlotProps & ExternalProps>;
+    VoteButton: ComponentType<VoteButtonSlotProps & ExternalProps>;
+    VoteWeight: ComponentType<VoteWeightSlotProps & ExternalProps>;
+    ElectionResults: ComponentType<ElectionResultsSlotProps & ExternalProps>;
+    SpreadsheetAccess: ComponentType<SpreadsheetAccessSlotProps & ExternalProps>;
+    ElectionActions: ComponentType<ElectionActionsSlotProps & ExternalProps>;
+    ActionContinue: ComponentType<ActionButtonSlotProps & ExternalProps>;
+    ActionPause: ComponentType<ActionButtonSlotProps & ExternalProps>;
+    ActionEnd: ComponentType<ActionButtonSlotProps & ExternalProps>;
+    ActionCancel: ComponentType<ActionButtonSlotProps & ExternalProps>;
+    ConfirmActionModal: ComponentType<ConfirmActionModalSlotProps & ExternalProps>;
+    ConfirmShell: ComponentType<ConfirmShellSlotProps & ExternalProps>;
+    AccountBalance: ComponentType<AccountBalanceSlotProps & ExternalProps>;
+    PaginationContainer: ComponentType<PaginationContainerSlotProps & ExternalProps>;
+    PaginationButton: ComponentType<PaginationButtonSlotProps & ExternalProps>;
+    PaginationEllipsisButton: ComponentType<PaginationEllipsisButtonSlotProps & ExternalProps>;
+    PaginationSummary: ComponentType<PaginationSummarySlotProps & ExternalProps>;
+    OrganizationName: ComponentType<OrganizationNameSlotProps & ExternalProps>;
+    OrganizationDescription: ComponentType<OrganizationDescriptionSlotProps & ExternalProps>;
+    OrganizationAvatar: ComponentType<OrganizationAvatarSlotProps & ExternalProps>;
+};
+type ComponentsPartialDefinition<ExternalProps extends object = {}> = Partial<ComponentsDefinition<ExternalProps>>;
+type ElectionComponentsDefinition = Pick<ComponentsDefinition, 'ElectionTitle' | 'ElectionDescription' | 'ElectionSchedule' | 'ElectionStatusBadge' | 'ElectionHeader' | 'ElectionQuestions' | 'ElectionQuestion' | 'QuestionChoice' | 'QuestionsTypeBadge' | 'QuestionTip' | 'QuestionsEmpty' | 'QuestionsError' | 'QuestionsConfirmation' | 'Voted' | 'VoteButton' | 'VoteWeight' | 'ElectionResults' | 'SpreadsheetAccess' | 'ElectionActions' | 'ActionContinue' | 'ActionPause' | 'ActionEnd' | 'ActionCancel' | 'ConfirmActionModal' | 'ConfirmShell'>;
+type OrganizationComponentsDefinition = Pick<ComponentsDefinition, 'OrganizationName' | 'OrganizationDescription' | 'OrganizationAvatar'>;
+type PaginationComponentsDefinition = Pick<ComponentsDefinition, 'PaginationContainer' | 'PaginationButton' | 'PaginationEllipsisButton' | 'PaginationSummary'>;
+type AccountComponentsDefinition = Pick<ComponentsDefinition, 'AccountBalance'>;
+
+type QuestionChoiceMeta = {
+    image?: {
+        default?: string;
+        thumbnail?: string;
+    };
+    description?: string;
+};
+declare const getQuestionChoiceMeta: (choice: IChoice) => QuestionChoiceMeta;
+declare const hasExtendedChoiceMeta: (choice: IChoice) => boolean;
+declare const QuestionChoice: ({ choice, value, compact, dataAttrs, selectionMode, presentation, selected, disabled, controlType, onSelect, ...rest }: ComponentPropsWithoutRef<"label"> & {
+    choice: IChoice;
+    value: string;
+    compact: boolean;
+    dataAttrs?: {
+        [key: string]: string | undefined;
+    };
+    selectionMode: QuestionSelectionMode;
+    presentation: QuestionChoicePresentation;
+    selected: boolean;
+    disabled?: boolean;
+    controlType: "checkbox" | "radio";
+    onSelect: (checked: boolean) => void;
+}) => react_jsx_runtime.JSX.Element;
+
+type QuestionsConfirmationProps = {
+    answers: FieldValues;
+    election: PublishedElection;
+};
+declare const QuestionsConfirmation: ({ answers, election }: QuestionsConfirmationProps) => react_jsx_runtime.JSX.Element;
+
+declare const QuestionsEmpty: () => react_jsx_runtime.JSX.Element;
+
+declare const QuestionsError: ({ error }: {
+    error: string;
+}) => react_jsx_runtime.JSX.Element;
+
+type QuestionProps = {
+    question: IQuestion;
+    index: string;
+};
+declare const ElectionQuestion: ({ question, index }: QuestionProps) => react_jsx_runtime.JSX.Element;
+
+type QuestionsFormContextState = {
+    fmethods: UseFormReturn<any>;
+    vote: (values: FieldValues) => Promise<false | void>;
+};
+declare const useQuestionsForm: () => QuestionsFormContextState;
+type QuestionsFormProviderProps = {};
+declare const QuestionsFormProvider: ({ children }: PropsWithChildren<QuestionsFormProviderProps>) => react_jsx_runtime.JSX.Element;
+
+type ElectionQuestionsFormProps = ComponentPropsWithoutRef<'div'> & {
+    onInvalid?: (errors: unknown) => void;
+};
+type ElectionQuestionsProps = ElectionQuestionsFormProps & QuestionsFormProviderProps;
+declare const ElectionQuestions: (props: ElectionQuestionsProps) => react_jsx_runtime.JSX.Element;
+declare const ElectionQuestionsForm: ({ onInvalid, ...rest }: ElectionQuestionsFormProps) => react_jsx_runtime.JSX.Element;
+
+declare const QuestionTip: () => react_jsx_runtime.JSX.Element;
+
+declare const QuestionsTypeBadge: (props: ComponentPropsWithoutRef<"div"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+
+declare const Voted: () => react_jsx_runtime.JSX.Element;
+
+declare const results: (result: number, decimals?: number) => number;
+type ElectionResultsProps = ComponentPropsWithoutRef<'div'> & {
+    forceRender?: boolean;
+    extended?: boolean;
+};
+declare const ElectionResults: ({ extended, forceRender, ...rest }: ElectionResultsProps) => react_jsx_runtime.JSX.Element;
+
+type ElectionScheduleProps = ComponentPropsWithoutRef<'p'> & Record<string, unknown> & {
+    format?: string;
+    showRemaining?: boolean;
+    showCreatedAt?: boolean;
+};
+declare const ElectionSchedule: ({ format, showRemaining, showCreatedAt, ...rest }: ElectionScheduleProps) => react_jsx_runtime.JSX.Element;
+
+type SpreadsheetAccessProps = {
+    hashPrivateKey?: boolean;
+    className?: string;
+};
+declare const SpreadsheetAccess: ({ hashPrivateKey, className }: SpreadsheetAccessProps) => react_jsx_runtime.JSX.Element;
+
+declare const ElectionStatusBadge: (props: ComponentPropsWithoutRef<"span"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+
+declare const ElectionTitle: (props: ComponentPropsWithoutRef<"h1"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+
+declare const VoteButton: (props: ComponentPropsWithoutRef<"button"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+
+declare const VoteWeight: () => react_jsx_runtime.JSX.Element;
+
+declare const OrganizationAvatar: (props: ComponentPropsWithoutRef<"img"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+declare const OrganizationImage: (props: ComponentPropsWithoutRef<"img"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+
+declare const OrganizationDescription: (props: ComponentPropsWithoutRef<"div"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+
+declare const OrganizationHeader: (props: ComponentPropsWithoutRef<"img">) => react_jsx_runtime.JSX.Element;
+
+declare const OrganizationName: (props: ComponentPropsWithoutRef<"h1"> & Record<string, unknown>) => react_jsx_runtime.JSX.Element;
+
+declare const reactComponentsNamespace = "react-components";
+declare const reactComponentsDefaultLanguage = "en";
+declare const reactComponentsResources: {
+    en: {
+        "react-components": {
+            balance: string;
+            actions: {
+                cancel_description: string;
+                cancel: string;
+                cancel_button: string;
+                continue_description: string;
+                continue: string;
+                end_description: string;
+                end: string;
+                error_title: string;
+                pause_description: string;
+                pause: string;
+                waiting_title: string;
+            };
+            confirm: {
+                title: string;
+                cancel: string;
+                confirm: string;
+                cancel_process_button: string;
+                cancel_process_title: string;
+                end_process_title: string;
+                end_process_button: string;
+                cancel_button: string;
+            };
+            empty: string;
+            errors: {
+                unauthorized: string;
+                wrong_data_title: string;
+                wrong_data_description: string;
+                not_voted_in_ended_election: string;
+            };
+            question_types: {
+                approval_tooltip: string;
+                approval_title: string;
+                singlechoice_title: string;
+                multichoice_tooltip: string;
+                multichoice_title: string;
+                multichoice_desc: string;
+                multichoice_desc_abstain: string;
+                weighted_voting: string;
+            };
+            schedule: {
+                from_begin_to_end: string;
+                ended: string;
+                paused_start: string;
+                paused_end: string;
+                created: string;
+            };
+            results: {
+                date_format: string;
+                secret_until_the_end: string;
+                title: string;
+                votes: string;
+            };
+            statuses: {
+                canceled: string;
+                ended: string;
+                ongoing: string;
+                paused: string;
+                results: string;
+                upcoming: string;
+                process_unknown: string;
+                invalid: string;
+            };
+            spreadsheet: {
+                access_button: string;
+                anon_sik_label: string;
+                anon_sik_helper: string;
+                close: string;
+                logout: string;
+                modal_title: string;
+            };
+            pagination: {
+                page_placeholder: string;
+                total_results: string;
+                previous: string;
+                next: string;
+            };
+            validation: {
+                required: string;
+                min_length: string;
+                choices_count: string;
+                at_least_one: string;
+            };
+            vote: {
+                abstain: string;
+                button_update: string;
+                button: string;
+                confirm: string;
+                sign: string;
+                voted_description: string;
+                voted_title: string;
+                weight: string;
+            };
+        };
+    };
+};
+type Locale = {
+    [key: string]: string | Locale;
+};
+
+declare const useReactComponentsLocalize: () => (key: string, substitutions?: Record<string, unknown>) => string;
+
+declare const vote: (client: VocdoniSDKClient, election: PublishedElection, token: string, vote: Vote) => Promise<string>;
+type SignInfoResponse = {
+    address: string;
+    nullifier: string;
+    at: string;
+};
+type SignInfoMutationVariables = {
+    endpoint: string;
+    processId: string;
+    authToken: string;
+};
+declare const fetchSignInfo: ({ endpoint, processId, authToken, }: SignInfoMutationVariables) => Promise<SignInfoResponse>;
+
+declare const ClientProvider: ({ children, ...props }: ClientProviderComponentProps) => react_jsx_runtime.JSX.Element;
+
+declare const environment: {
+    explorer: (env: string) => "https://dev.explorer.vote" | "https://explorer.vote";
+    verifyVote: (env: string, proof: string) => string;
+};
+
+type ComponentsProviderProps = {
+    components?: ComponentsPartialDefinition;
+    children: ReactNode;
+};
+declare const ComponentsProvider: ({ components, children }: ComponentsProviderProps) => react_jsx_runtime.JSX.Element;
+
+declare const composeComponents: (...partials: Array<ComponentsPartialDefinition | undefined>) => ComponentsPartialDefinition;
+declare const defineComponent: <K extends keyof ComponentsDefinition, UIProps extends object = {}, T extends ComponentType<ComponentProps<ComponentsDefinition[K]> & UIProps> = ComponentType<ComponentProps<ComponentsDefinition[K]> & UIProps>>(component: T) => T;
+
+declare const useComponents: () => ComponentsDefinition;
+
+declare const HR: (props: ComponentPropsWithoutRef<"hr">) => react_jsx_runtime.JSX.Element;
+
+declare const ConfirmModal: () => react_jsx_runtime.JSX.Element;
+
+declare const ConfirmProvider: ({ children }: {
+    children: ReactNode;
+}) => react_jsx_runtime.JSX.Element;
+
+declare const useConfirm: () => {
+    prompt: react.ReactNode | null;
+    isOpen: boolean;
+    proceed: null | ((value?: unknown) => void);
+    cancel: null | VoidFunction;
+} & {
+    confirm: (prompt: react.ReactNode) => Promise<boolean>;
+};
+
+export { type AccountComponentsDefinition, ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsContext, ActionsProvider, type ActionsState, type ActionsStatusMessage, Balance, type ClientEnv, ClientProvider, type ClientProviderComponentProps, type ClientState, type ComponentsDefinition, type ComponentsPartialDefinition, ComponentsProvider, ConfirmActionModal, type ConfirmActionModalProps, ConfirmModal, ConfirmProvider, Election, ElectionActions, type ElectionComponentsDefinition, ElectionContext, ElectionDescription, ElectionHeader, ElectionProvider, type ElectionProviderComponentProps, type ElectionProviderProps, ElectionQuestion, ElectionQuestions, ElectionQuestionsForm, type ElectionQuestionsFormProps, type ElectionQuestionsProps, ElectionResults, type ElectionResultsProps, ElectionSchedule, type ElectionScheduleProps, type ElectionState, ElectionStatusBadge, ElectionTitle, Envelope, type ErrorPayload, HR, type Locale, OrganizationAvatar, type OrganizationComponentsDefinition, OrganizationContext, OrganizationDescription, OrganizationHeader, OrganizationImage, OrganizationName, OrganizationProvider, type OrganizationProviderComponentProps, type OrganizationState, type PaginationComponentsDefinition, QuestionChoice, type QuestionChoiceMeta, type QuestionProps, QuestionTip, QuestionsConfirmation, type QuestionsConfirmationProps, QuestionsEmpty, QuestionsError, type QuestionsFormContextState, QuestionsFormProvider, type QuestionsFormProviderProps, QuestionsTypeBadge, type RecursivePartial, SpreadsheetAccess, type SpreadsheetAccessProps, VoteButton, type VotePackageType, VoteWeight, Voted, composeComponents, defineComponent, enforceHexPrefix, environment, errorToString, fetchSignInfo, getQuestionChoiceMeta, hasExtendedChoiceMeta, normalizeText, queryKeys, reactComponentsDefaultLanguage, reactComponentsNamespace, reactComponentsResources, results, useActions, useClient, useComponents, useConfirm, useElection, useLocalize, useOrganization, useQuestionsForm, useReactComponentsLocalize, vote, walletFromRow };

@@ -1,0 +1,288 @@
+"use strict";
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// src/index.ts
+var src_exports = {};
+__export(src_exports, {
+  ResponseError: () => ResponseError,
+  ValidationError: () => ValidationError,
+  isJsonifiable: () => isJsonifiable,
+  isResponseError: () => isResponseError,
+  isValidationError: () => isValidationError,
+  up: () => up
+});
+module.exports = __toCommonJS(src_exports);
+
+// src/response-error.ts
+var ResponseError = class extends Error {
+  constructor(props) {
+    super(props.message);
+    this.name = "ResponseError";
+    this.response = props.response;
+    this.request = props.request;
+    this.data = props.data;
+    this.status = props.response.status;
+  }
+};
+var isResponseError = (error) => error instanceof ResponseError;
+
+// src/validation-error.ts
+var ValidationError = class extends Error {
+  constructor(result, data) {
+    super(JSON.stringify(result.issues));
+    this.name = "ValidationError";
+    this.issues = result.issues;
+    this.data = data;
+  }
+};
+var isValidationError = (error) => error instanceof ValidationError;
+
+// src/utils.ts
+var mergeHeaders = (headerInits) => {
+  const res = {};
+  headerInits.forEach((init) => {
+    new Headers(init).forEach((value, key) => {
+      value === "null" || value === "undefined" ? delete res[key] : res[key] = value;
+    });
+  });
+  return res;
+};
+var withTimeout = (signal, timeout) => (
+  // if AbortSignal.any is not supported
+  // AbortSignal.timeout is not supported either.
+  // Feature detection is fine on AbortSignal.any only
+  "any" in AbortSignal ? AbortSignal.any(
+    [signal, timeout && AbortSignal.timeout(timeout)].filter(
+      Boolean
+    )
+  ) : signal
+);
+var omit = (obj, keys = []) => {
+  const copy = { ...obj };
+  for (const key in copy) {
+    keys.includes(key) && delete copy[key];
+  }
+  return copy;
+};
+var isJsonifiable = (value) => isPlainObject(value) || Array.isArray(value) || typeof value?.toJSON === "function";
+var isPlainObject = (value) => value && typeof value === "object" && value.constructor?.name === "Object";
+var resolveUrl = (base = "", input, defaultOptsParams, fetcherOptsParams, serializeParams) => {
+  input = input.href ?? input;
+  const qs = serializeParams({
+    // Removing the 'url.searchParams.keys()' from the defaultParams
+    // but not from the 'fetcherParams'. The user is responsible for not
+    // specifying the params in both the "input" and the fetcher "params" option.
+    ...omit(defaultOptsParams, [
+      ...new URL(input, "http://a").searchParams.keys()
+    ]),
+    ...fetcherOptsParams
+  });
+  let url = /^https?:\/\//.test(input) ? input : !base || !input ? base + input : base.replace(/\/$/, "") + "/" + input.replace(/^\//, "");
+  if (qs) {
+    url += (url.includes("?") ? "&" : "?") + qs.replace(/^\?/, "");
+  }
+  return url;
+};
+var abortableDelay = (delay, signal) => new Promise((resolve, reject) => {
+  signal?.addEventListener("abort", handleAbort, { once: true });
+  const token = setTimeout(() => {
+    signal?.removeEventListener("abort", handleAbort);
+    resolve();
+  }, delay);
+  function handleAbort() {
+    clearTimeout(token);
+    reject(signal.reason);
+  }
+});
+async function validate(schema, data) {
+  const result = await schema["~standard"].validate(data);
+  if (result.issues) throw new ValidationError(result, data);
+  return result.value;
+}
+
+// src/fallback-options.ts
+var fallbackOptions = {
+  parseResponse: (res) => res.clone().json().catch(() => res.text()).then((data) => data || null),
+  parseRejected: async (response, request) => new ResponseError({
+    message: `[${response.status}] ${response.statusText}`,
+    data: await fallbackOptions.parseResponse(response, request),
+    response,
+    request
+  }),
+  // TODO: find a lighter way to do this with about the same amount of code
+  serializeParams: (params) => (
+    // JSON.parse(JSON.stringify(params)) recursively transforms Dates to ISO strings and strips undefined
+    new URLSearchParams(
+      JSON.parse(JSON.stringify(params))
+    ).toString()
+  ),
+  serializeBody: (body) => isJsonifiable(body) ? JSON.stringify(body) : body,
+  reject: (response) => !response.ok,
+  retry: {
+    when: (ctx) => ctx.response?.ok === false,
+    attempts: 0,
+    delay: 0
+  }
+};
+
+// src/stream.ts
+var isWebkit = typeof window !== "undefined" && /AppleWebKit/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
+async function toStreamable(reqOrRes, onChunk) {
+  const isResponse = "ok" in reqOrRes;
+  const isNotSupported = isWebkit && !isResponse;
+  if (isNotSupported || !onChunk || !reqOrRes.clone().body) return reqOrRes;
+  const contentLength = reqOrRes.headers.get("content-length");
+  let totalBytes = contentLength ? +contentLength : void 0;
+  if (!isResponse && !contentLength) {
+    totalBytes = (await reqOrRes.clone().arrayBuffer()).byteLength;
+  }
+  let transferredBytes = 0;
+  await onChunk(
+    {
+      totalBytes,
+      transferredBytes,
+      chunk: new Uint8Array()
+    },
+    reqOrRes
+  );
+  const stream = new ReadableStream({
+    async start(controller) {
+      const reader = reqOrRes.body.getReader();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        transferredBytes += value.byteLength;
+        await onChunk(
+          {
+            totalBytes,
+            transferredBytes,
+            chunk: value
+          },
+          reqOrRes
+        );
+        controller.enqueue(value);
+      }
+      controller.close();
+    }
+  });
+  return isResponse ? new Response(stream, reqOrRes) : (
+    // @ts-expect-error outdated ts types
+    new Request(reqOrRes, { body: stream, duplex: "half" })
+  );
+}
+
+// src/up.ts
+var emptyOptions = {};
+var up = (fetchFn, getDefaultOptions = () => emptyOptions) => async (input, fetcherOpts = emptyOptions, ctx) => {
+  const defaultOpts = await getDefaultOptions(input, fetcherOpts, ctx);
+  const options = {
+    ...fallbackOptions,
+    ...defaultOpts,
+    ...fetcherOpts,
+    ...emptyOptions,
+    retry: {
+      ...fallbackOptions.retry,
+      ...defaultOpts.retry,
+      ...fetcherOpts.retry
+    }
+  };
+  options.body = fetcherOpts.body === null || fetcherOpts.body === void 0 ? fetcherOpts.body : options.serializeBody(fetcherOpts.body);
+  options.headers = mergeHeaders([
+    isJsonifiable(fetcherOpts.body) && typeof options.body === "string" ? { "content-type": "application/json" } : {},
+    defaultOpts.headers,
+    fetcherOpts.headers
+  ]);
+  let attempt = 0;
+  let request;
+  let response;
+  let error;
+  do {
+    options.signal = withTimeout(fetcherOpts.signal, options.timeout);
+    request = await toStreamable(
+      new Request(
+        input.url ? input : resolveUrl(
+          options.baseUrl,
+          input,
+          defaultOpts.params,
+          fetcherOpts.params,
+          options.serializeParams
+        ),
+        options
+      ),
+      fetcherOpts.onRequestStreaming
+    );
+    try {
+      await defaultOpts.onRequest?.(request);
+      await fetcherOpts.onRequest?.(request);
+      response = await toStreamable(
+        await fetchFn(
+          request,
+          // do not override the request body & patch headers again
+          { ...omit(options, ["body"]), headers: request.headers },
+          ctx
+        ),
+        fetcherOpts.onResponseStreaming
+      );
+      error = void 0;
+    } catch (e) {
+      error = e;
+    }
+    try {
+      if (!await options.retry.when({ request, response, error }) || ++attempt > (typeof options.retry.attempts === "function" ? await options.retry.attempts({ request }) : options.retry.attempts))
+        break;
+      const retryCtx = { attempt, request, response, error };
+      await abortableDelay(
+        typeof options.retry.delay === "function" ? await options.retry.delay(retryCtx) : options.retry.delay,
+        options.signal
+      );
+      await defaultOpts.onRetry?.(retryCtx);
+      await fetcherOpts.onRetry?.(retryCtx);
+    } catch (e) {
+      error = e;
+      break;
+    }
+  } while (true);
+  try {
+    await defaultOpts.onResponse?.(response, request);
+    await fetcherOpts.onResponse?.(response, request);
+    if (error) throw error;
+    if (await options.reject(response)) {
+      throw await options.parseRejected(response, request);
+    }
+    const parsed = await options.parseResponse(response, request);
+    const data = options.schema ? await validate(options.schema, parsed) : parsed;
+    await defaultOpts.onSuccess?.(data, request);
+    await fetcherOpts.onSuccess?.(data, request);
+    return data;
+  } catch (error2) {
+    await defaultOpts.onError?.(error2, request);
+    await fetcherOpts.onError?.(error2, request);
+    throw error2;
+  }
+};
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  ResponseError,
+  ValidationError,
+  isJsonifiable,
+  isResponseError,
+  isValidationError,
+  up
+});
+//# sourceMappingURL=index.cjs.map

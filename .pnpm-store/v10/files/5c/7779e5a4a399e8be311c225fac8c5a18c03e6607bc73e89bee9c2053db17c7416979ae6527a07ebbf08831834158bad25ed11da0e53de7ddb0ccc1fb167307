@@ -1,0 +1,9 @@
+import { Plugin } from "vite";
+
+//#region src/vite.d.ts
+declare function node(options?: {
+  static?: string | boolean;
+  importer?: string;
+}): Plugin[];
+//#endregion
+export { node as default, node };
