@@ -4,4 +4,3 @@ validation:
     - apt-get install -y nodejs
     - npm install -g pnpm@10.16.1
     - pnpm config set store-dir /tmp/pnpm-store
-    - CI=true pnpm install --frozen-lockfile
