@@ -85,6 +85,6 @@ export class SpreadsheetManager {
     const data: string[][] = utils.sheet_to_json(worksheet, { header: 1, raw: false })
     const filtered = data.filter((row) => row.length > 0)
 
-    return filtered
+    return filtered.map((row) => row.map((cell) => (typeof cell === 'string' ? cell.trim() : cell)))
   }
 }
