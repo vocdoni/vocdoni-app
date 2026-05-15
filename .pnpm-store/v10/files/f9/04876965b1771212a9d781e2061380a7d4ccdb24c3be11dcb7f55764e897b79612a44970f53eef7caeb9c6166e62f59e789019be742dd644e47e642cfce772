@@ -1,7 +1,0 @@
-import { HTMLProps, PolymorphicProps } from '../factory';
-import { ForwardRefExoticComponent, RefAttributes } from 'react';
-export interface PasswordInputLabelBaseProps extends PolymorphicProps {
-}
-export interface PasswordInputLabelProps extends HTMLProps<'label'>, PasswordInputLabelBaseProps {
-}
-export declare const PasswordInputLabel: ForwardRefExoticComponent<PasswordInputLabelProps & RefAttributes<HTMLLabelElement>>;

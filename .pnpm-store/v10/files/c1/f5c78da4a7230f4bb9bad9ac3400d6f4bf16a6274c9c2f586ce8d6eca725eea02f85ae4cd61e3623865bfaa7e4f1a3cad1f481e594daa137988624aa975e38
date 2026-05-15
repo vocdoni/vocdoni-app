@@ -1,8 +1,0 @@
-export * from './core/extractor';
-export * from './core/key-finder';
-export * from './core/translation-manager';
-export * from './core/ast-visitors';
-export * from './parsers/comment-parser';
-export * from './parsers/jsx-parser';
-export * from './plugin-manager';
-//# sourceMappingURL=index.d.ts.map

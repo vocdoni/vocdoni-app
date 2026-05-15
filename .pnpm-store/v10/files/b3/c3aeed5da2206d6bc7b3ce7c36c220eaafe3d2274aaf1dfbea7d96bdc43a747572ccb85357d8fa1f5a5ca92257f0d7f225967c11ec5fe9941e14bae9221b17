@@ -1,1 +1,0 @@
-export declare const splitterSlotRecipe: import("../..").SlotRecipeDefinition<"root" | "panel" | "resizeTrigger" | "resizeTriggerIndicator" | "resizeTriggerSeparator", import("../..").SlotRecipeVariantRecord<"root" | "panel" | "resizeTrigger" | "resizeTriggerIndicator" | "resizeTriggerSeparator">>;

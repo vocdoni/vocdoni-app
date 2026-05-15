@@ -1,6 +1,0 @@
-import { ReactNode } from 'react';
-import { UseListboxItemContext } from './use-listbox-item-context';
-export interface ListboxItemContextProps {
-    children: (context: UseListboxItemContext) => ReactNode;
-}
-export declare const ListboxItemContext: (props: ListboxItemContextProps) => ReactNode;

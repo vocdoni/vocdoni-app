@@ -1,8 +1,0 @@
-import { ItemProps } from '@zag-js/navigation-menu';
-import { HTMLProps, PolymorphicProps } from '../factory';
-import { ForwardRefExoticComponent, RefAttributes } from 'react';
-export interface NavigationMenuItemBaseProps extends ItemProps, PolymorphicProps {
-}
-export interface NavigationMenuItemProps extends HTMLProps<'div'>, NavigationMenuItemBaseProps {
-}
-export declare const NavigationMenuItem: ForwardRefExoticComponent<NavigationMenuItemProps & RefAttributes<HTMLDivElement>>;

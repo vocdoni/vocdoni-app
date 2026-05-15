@@ -1,6 +1,0 @@
-import { PropsWithChildren, RefObject } from 'react';
-export interface PortalProps {
-    disabled?: boolean | undefined;
-    container?: RefObject<HTMLElement | null> | undefined;
-}
-export declare const Portal: (props: PropsWithChildren<PortalProps>) => import("react/jsx-runtime").JSX.Element;

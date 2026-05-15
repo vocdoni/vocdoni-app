@@ -1,5 +1,0 @@
-import { UseNavigationMenuReturn } from './use-navigation-menu';
-import { Provider } from 'react';
-export interface UseNavigationMenuContext extends UseNavigationMenuReturn {
-}
-export declare const NavigationMenuProvider: Provider<UseNavigationMenuContext>, useNavigationMenuContext: () => UseNavigationMenuContext;

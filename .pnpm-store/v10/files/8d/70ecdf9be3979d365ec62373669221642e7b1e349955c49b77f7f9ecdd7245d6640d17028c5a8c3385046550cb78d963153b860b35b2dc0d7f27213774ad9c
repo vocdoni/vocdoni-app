@@ -1,7 +1,0 @@
-"use client";
-
-// src/wallets/walletConnectors/clvWallet/clvWallet.svg
-var clvWallet_default = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2028%2028%22%3E%3Cpath%20fill%3D%22url(%23a)%22%20d%3D%22M0%200h28v28H0z%22%2F%3E%3Cpath%20fill%3D%22%230C0B0B%22%20fill-rule%3D%22evenodd%22%20d%3D%22M14.014%2022.96c4.954%200%208.97-4.012%208.97-8.96%200-4.948-4.016-8.96-8.97-8.96-4.953%200-8.97%204.012-8.97%208.96%200%204.948%204.017%208.96%208.97%208.96ZM12.432%209.723c0-.258.208-.467.466-.467h2.232c.258%200%20.467.21.467.467v2.729h-3.165v3.096h3.165v2.729a.467.467%200%200%201-.466.466h-2.233a.467.467%200%200%201-.466-.466v-2.63h-2.7a.467.467%200%200%201-.466-.466v-2.262c0-.258.21-.467.467-.467h2.699V9.723Zm3.165%202.729h2.7c.258%200%20.466.209.466.467v2.262a.467.467%200%200%201-.466.467h-2.7v-3.196Z%22%20clip-rule%3D%22evenodd%22%2F%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22a%22%20x1%3D%222.331%22%20x2%3D%2226.805%22%20y1%3D%2225.667%22%20y2%3D%221.75%22%20gradientUnits%3D%22userSpaceOnUse%22%3E%3Cstop%20stop-color%3D%22%23BDFDE2%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%239BDAF6%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3C%2Fsvg%3E";
-export {
-  clvWallet_default as default
-};

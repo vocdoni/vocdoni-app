@@ -1,7 +1,0 @@
-import { HTMLProps, PolymorphicProps } from '../factory';
-import { ForwardRefExoticComponent, RefAttributes } from 'react';
-export interface CarouselProgressTextBaseProps extends PolymorphicProps {
-}
-export interface CarouselProgressTextProps extends HTMLProps<'span'>, CarouselProgressTextBaseProps {
-}
-export declare const CarouselProgressText: ForwardRefExoticComponent<CarouselProgressTextProps & RefAttributes<HTMLSpanElement>>;

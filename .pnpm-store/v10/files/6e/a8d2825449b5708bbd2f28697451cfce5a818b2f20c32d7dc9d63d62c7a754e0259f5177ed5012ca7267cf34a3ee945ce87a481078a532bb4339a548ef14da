@@ -1,1 +1,0 @@
-export {CreateConfirmationToken} from '../api';

@@ -1,7 +1,0 @@
-export { isSameErrorMessage };
-import { isObject } from './isObject.js';
-function isSameErrorMessage(err1, err2) {
-    if (!isObject(err1) || !isObject(err2))
-        return false;
-    return err1.message === err2.message;
-}

@@ -32,6 +32,9 @@ skills-lock.json
 package-lock.json
 yarn.lock
 
+# pnpm local store (when store-dir is not redirected to /tmp)
+.pnpm-store/
+
 # logs
 *-debug.log*
 *-error.log*

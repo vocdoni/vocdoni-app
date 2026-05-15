@@ -1,2 +1,0 @@
-"use strict";
-export { CarouselAutoplayIndicator as AutoplayIndicator, CarouselAutoplayTrigger as AutoplayTrigger, CarouselContext as Context, CarouselControl as Control, CarouselIndicator as Indicator, CarouselIndicatorGroup as IndicatorGroup, CarouselIndicators as Indicators, CarouselItem as Item, CarouselItemGroup as ItemGroup, CarouselNextTrigger as NextTrigger, CarouselPrevTrigger as PrevTrigger, CarouselProgressText as ProgressText, CarouselPropsProvider as PropsProvider, CarouselRoot as Root, CarouselRootProvider as RootProvider } from './carousel.js';

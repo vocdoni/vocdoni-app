@@ -1,5 +1,0 @@
-import { UsePasswordInputReturn } from './use-password-input';
-import { Provider } from 'react';
-export interface UsePasswordInputContext extends UsePasswordInputReturn {
-}
-export declare const PasswordInputProvider: Provider<UsePasswordInputContext>, usePasswordInputContext: () => UsePasswordInputContext;
