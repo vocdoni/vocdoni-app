@@ -1376,7 +1376,7 @@
       "bullet_2": "It does not replace official records, minutes, or regulatory filings.",
       "bullet_3": "All data originates from cryptographic and blockchain-based logs.",
       "bullet_4": "Ballot secrecy and voter anonymity are preserved by design.",
-      "paragraph_1": "This document constitutes a technical certification derived from data recorded through the Vocdoni Protocol.",
+      "paragraph_1": "This document constitutes a technical certification derived from data recorded on the Vocdoni infrastructure.",
       "paragraph_2": "The technical service provider assumes no responsibility for the accuracy of input data (e.g., census composition), legal interpretation of results, or compliance with applicable legal or regulatory frameworks.",
       "paragraph_3": "Responsibility for legal interpretation and use of this certification rests solely with the requesting organization.",
       "title": "Disclaimer"
@@ -1413,7 +1413,7 @@
     "general": {
       "event_name": "Event name",
       "extended_process_details": "Extended process details",
-      "network": "Network",
+      "network": "Infrastructure",
       "organization": "Organization",
       "results_visibility": "Results visibility",
       "vote_overwrite": "Vote overwrite",
@@ -1470,15 +1470,18 @@
       "intro_other": "The voting process {{process_name}} consisted of {{count}} questions."
     },
     "voting_system": {
-      "bullet_1": "Distributed ledger (blockchain) infrastructure",
-      "bullet_2": "Cryptographic verification and integrity mechanisms",
-      "executed_on": "The process was executed on the {{blockchain_network}} infrastructure.",
-      "guarantee_1": "Integrity of the voting process",
-      "guarantee_2": "Immutability of recorded data",
-      "guarantee_3": "Independent verifiability of results",
-      "guarantee_4": "Confidentiality of individual ballots",
-      "guarantee_lead": "The system guarantees:",
-      "paragraph": "Voting and tallying operations were executed using Vocdoni, a digital voting protocol supported by:"
+      "bullet_1": "A public record of the voting process configuration",
+      "bullet_2": "A census reference that identifies the eligible voter list without revealing voters’ personal data",
+      "bullet_3": "Cryptographic mechanisms that protect ballot secrecy and voter privacy",
+      "bullet_4": "Recorded participation and result data that can be independently checked",
+      "bullet_5": "Tamper-resistant records anchored in blockchain-based infrastructure",
+      "bullet_6": "Final results that can be compared with the public verification data",
+      "executed_on": "The process {{voting_process}} was executed on the {{blockchain_network}} infrastructure.",
+      "guarantee_lead": "The Vocdoni Protocol increases trust in the voting process by providing:",
+      "paragraph_1": "The voting process was conducted using the Vocdoni Protocol, a digital voting protocol designed to create, execute, record, and verify voting processes with strong integrity guarantees.",
+      "paragraph_2": "When a voting process is created, its configuration is recorded on the blockchain before voting begins, creating a public and auditable record of how the process is intended to work. This includes the voting period, the voting method, the eligible participant set, the questions, and the rules that determine how results are counted. The census defines who is allowed to participate in the process, while preserving the privacy of individual voters.",
+      "paragraph_3": "During the voting period, eligible voters authenticate according to the configured method and submit their ballots through the voting system. The protocol is designed so that the process can be verified end to end.",
+      "paragraph_4": "Once the voting process is completed, the final results and the relevant process records are anchored in the blockchain. This makes the process auditable and helps ensure that the published report can be compared against public technical records."
     }
   },
   "processes": {

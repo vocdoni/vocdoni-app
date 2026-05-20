@@ -1398,7 +1398,7 @@
       "bullet_2": "Non sostituisce i registri ufficiali, i verbali o i depositi regolatori.",
       "bullet_3": "Tutti i dati provengono da registri crittografici e basati su blockchain.",
       "bullet_4": "La segretezza del voto e l'anonimato del votante sono preservati per progettazione.",
-      "paragraph_1": "Questo documento costituisce una certificazione tecnica derivata da dati registrati tramite il Protocollo Vocdoni.",
+      "paragraph_1": "Questo documento costituisce una certificazione tecnica derivata da dati registrati sull'infrastruttura Vocdoni.",
       "paragraph_2": "Il fornitore tecnico non assume alcuna responsabilità per l'accuratezza dei dati di input (ad esempio, la composizione del censimento), l'interpretazione legale dei risultati o la conformità ai quadri legali o normativi applicabili.",
       "paragraph_3": "La responsabilità per l'interpretazione legale e l'uso di questa certificazione ricade esclusivamente sull'organizzazione richiedente.",
       "title": "Esclusione di responsabilità"
@@ -1435,7 +1435,7 @@
     "general": {
       "event_name": "Nome dell'evento",
       "extended_process_details": "Dettagli estesi del processo",
-      "network": "Rete",
+      "network": "Infrastruttura",
       "organization": "Organizzazione",
       "results_visibility": "Visibilità dei risultati",
       "vote_overwrite": "Sovrascrittura del voto",
@@ -1493,15 +1493,18 @@
       "intro_other": "Il processo di voto {{process_name}} è consistito in {{count}} domande."
     },
     "voting_system": {
-      "bullet_1": "Infrastruttura di registro distribuito (blockchain)",
-      "bullet_2": "Meccanismi crittografici di verifica e integrità",
-      "executed_on": "Il processo è stato eseguito sull'infrastruttura {{blockchain_network}}.",
-      "guarantee_1": "Integrità del processo di voto",
-      "guarantee_2": "Immutabilità dei dati registrati",
-      "guarantee_3": "Verificabilità indipendente dei risultati",
-      "guarantee_4": "Riservatezza delle schede individuali",
-      "guarantee_lead": "Il sistema garantisce:",
-      "paragraph": "Le operazioni di voto e scrutinio sono state eseguite tramite Vocdoni, un protocollo di voto digitale supportato da:"
+      "bullet_1": "Un registro pubblico della configurazione del processo di voto",
+      "bullet_2": "Un riferimento del censimento che identifica la lista degli aventi diritto senza rivelare dati personali dei votanti",
+      "bullet_3": "Meccanismi crittografici che proteggono la segretezza della scheda e la privacy del votante",
+      "bullet_4": "Dati registrati di partecipazione e risultati che possono essere controllati in modo indipendente",
+      "bullet_5": "Registri resistenti a manomissioni ancorati in un'infrastruttura basata su blockchain",
+      "bullet_6": "Risultati finali che possono essere confrontati con i dati pubblici di verifica",
+      "executed_on": "Il processo {{voting_process}} è stato eseguito sull'infrastruttura {{blockchain_network}}.",
+      "guarantee_lead": "Il Protocollo Vocdoni aumenta la fiducia nel processo di voto fornendo:",
+      "paragraph_1": "Il processo di voto è stato condotto utilizzando il Protocollo Vocdoni, un protocollo di voto digitale progettato per creare, eseguire, registrare e verificare processi di voto con solide garanzie di integrità.",
+      "paragraph_2": "Quando viene creato un processo di voto, la sua configurazione viene registrata sulla blockchain prima dell'inizio della votazione, creando un registro pubblico e auditabile di come il processo dovrebbe funzionare. Questo include il periodo di voto, il metodo di voto, l'insieme dei partecipanti eleggibili, le domande e le regole che determinano come vengono conteggiati i risultati. Il censimento definisce chi può partecipare al processo, preservando al contempo la privacy dei singoli votanti.",
+      "paragraph_3": "Durante il periodo di voto, gli elettori eleggibili si autenticano secondo il metodo configurato e inviano le proprie schede attraverso il sistema di voto. Il protocollo è progettato affinché il processo possa essere verificato end-to-end.",
+      "paragraph_4": "Una volta completato il processo di voto, i risultati finali e i registri rilevanti del processo vengono ancorati nella blockchain. Questo rende il processo auditabile e contribuisce a garantire che il report pubblicato possa essere confrontato con registri tecnici pubblici."
     }
   },
   "processes": {

@@ -760,7 +760,7 @@ export const buildCertificateData = ({
         value: resultsVisibility,
       },
       {
-        label: t('process_pdf.general.network', { defaultValue: 'Network' }),
+        label: t('process_pdf.general.network', { defaultValue: 'Infrastructure' }),
         value: blockchainNetwork,
       },
       {
@@ -787,23 +787,46 @@ export const buildCertificateData = ({
       },
     ],
     votingSystemParagraphs: [
-      t('process_pdf.voting_system.paragraph', {
+      t('process_pdf.voting_system.paragraph_1', {
         defaultValue:
-          'Voting and tallying operations were executed using Vocdoni, a digital voting protocol supported by:',
+          'The voting process was conducted using the Vocdoni Protocol, a digital voting protocol designed to create, execute, record, and verify voting processes with strong integrity guarantees.',
       }),
-      t('process_pdf.voting_system.guarantee_lead', { defaultValue: 'The system guarantees:' }),
+      t('process_pdf.voting_system.paragraph_2', {
+        defaultValue:
+          'When a voting process is created, its configuration is recorded on the blockchain before voting begins, creating a public and auditable record of how the process is intended to work. This includes the voting period, the voting method, the eligible participant set, the questions, and the rules that determine how results are counted. The census defines who is allowed to participate in the process, while preserving the privacy of individual voters.',
+      }),
+      t('process_pdf.voting_system.paragraph_3', {
+        defaultValue:
+          'During the voting period, eligible voters authenticate according to the configured method and submit their ballots through the voting system. The protocol is designed so that the process can be verified end to end.',
+      }),
+      t('process_pdf.voting_system.paragraph_4', {
+        defaultValue:
+          'Once the voting process is completed, the final results and the relevant process records are anchored in the blockchain. This makes the process auditable and helps ensure that the published report can be compared against public technical records.',
+      }),
+      t('process_pdf.voting_system.guarantee_lead', {
+        defaultValue: 'The Vocdoni Protocol increases trust in the voting process by providing:',
+      }),
     ],
     votingSystemBullets: [
       t('process_pdf.voting_system.bullet_1', {
-        defaultValue: 'Distributed ledger (blockchain) infrastructure',
+        defaultValue: 'A public record of the voting process configuration',
       }),
       t('process_pdf.voting_system.bullet_2', {
-        defaultValue: 'Cryptographic verification and integrity mechanisms',
+        defaultValue:
+          'A census reference that identifies the eligible voter list without revealing voters’ personal data',
       }),
-      t('process_pdf.voting_system.guarantee_1', { defaultValue: 'Integrity of the voting process' }),
-      t('process_pdf.voting_system.guarantee_2', { defaultValue: 'Immutability of recorded data' }),
-      t('process_pdf.voting_system.guarantee_3', { defaultValue: 'Independent verifiability of results' }),
-      t('process_pdf.voting_system.guarantee_4', { defaultValue: 'Confidentiality of individual ballots' }),
+      t('process_pdf.voting_system.bullet_3', {
+        defaultValue: 'Cryptographic mechanisms that protect ballot secrecy and voter privacy',
+      }),
+      t('process_pdf.voting_system.bullet_4', {
+        defaultValue: 'Recorded participation and result data that can be independently checked',
+      }),
+      t('process_pdf.voting_system.bullet_5', {
+        defaultValue: 'Tamper-resistant records anchored in blockchain-based infrastructure',
+      }),
+      t('process_pdf.voting_system.bullet_6', {
+        defaultValue: 'Final results that can be compared with the public verification data',
+      }),
     ],
     turnout: [
       {
@@ -873,7 +896,7 @@ export const buildCertificateData = ({
     disclaimerParagraphs: [
       t('process_pdf.disclaimer.paragraph_1', {
         defaultValue:
-          'This document constitutes a technical certification derived from data recorded through the Vocdoni Protocol.',
+          'This document constitutes a technical certification derived from data recorded on the Vocdoni infrastructure.',
       }),
     ],
     disclaimerBullets: [
@@ -1179,7 +1202,8 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
           <BulletList items={data.votingSystemBullets} />
           <PdfText style={styles.paragraph}>
             {t('process_pdf.voting_system.executed_on', {
-              defaultValue: 'The process was executed on the {{blockchain_network}} infrastructure.',
+              defaultValue: 'The process {{voting_process}} was executed on the {{blockchain_network}} infrastructure.',
+              voting_process: data.eventReference,
               blockchain_network: data.blockchainNetwork,
             })}
           </PdfText>

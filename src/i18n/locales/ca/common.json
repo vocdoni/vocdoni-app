@@ -1398,7 +1398,7 @@
       "bullet_2": "No substitueix els registres oficials, les actes o les presentacions reguladores.",
       "bullet_3": "Totes les dades provenen de registres criptogràfics i basats en blockchain.",
       "bullet_4": "El secret del vot i l'anonimat del votant es preserven per disseny.",
-      "paragraph_1": "Aquest document constitueix una certificació tècnica derivada de dades registrades mitjançant el Protocol Vocdoni.",
+      "paragraph_1": "Aquest document constitueix una certificació tècnica derivada de dades registrades a la infraestructura de Vocdoni.",
       "paragraph_2": "El proveïdor tècnic no assumeix responsabilitat per l'exactitud de les dades d'entrada (per exemple, la composició del cens), la interpretació legal dels resultats ni el compliment dels marcs legals o reguladors aplicables.",
       "paragraph_3": "La responsabilitat sobre la interpretació legal i l'ús d'aquesta certificació recau exclusivament en l'organització sol·licitant.",
       "title": "Avís legal"
@@ -1435,7 +1435,7 @@
     "general": {
       "event_name": "Nom de l'esdeveniment",
       "extended_process_details": "Detalls ampliats del procés",
-      "network": "Xarxa",
+      "network": "Infraestructura",
       "organization": "Organització",
       "results_visibility": "Visibilitat dels resultats",
       "vote_overwrite": "Sobreescriptura del vot",
@@ -1493,15 +1493,18 @@
       "intro_other": "El procés de votació {{process_name}} va consistir en {{count}} preguntes."
     },
     "voting_system": {
-      "bullet_1": "Infraestructura de llibre major distribuït (blockchain)",
-      "bullet_2": "Mecanismes criptogràfics de verificació i integritat",
-      "executed_on": "El procés es va executar sobre la infraestructura {{blockchain_network}}.",
-      "guarantee_1": "Integritat del procés de votació",
-      "guarantee_2": "Immutabilitat de les dades registrades",
-      "guarantee_3": "Verificabilitat independent dels resultats",
-      "guarantee_4": "Confidencialitat de les paperetes individuals",
-      "guarantee_lead": "El sistema garanteix:",
-      "paragraph": "Les operacions de votació i escrutini es van executar mitjançant Vocdoni, un protocol de votació digital recolzat per:"
+      "bullet_1": "Un registre públic de la configuració del procés de votació",
+      "bullet_2": "Una referència del cens que identifica la llista d'electors elegibles sense revelar dades personals dels votants",
+      "bullet_3": "Mecanismes criptogràfics que protegeixen el secret de la papereta i la privacitat del votant",
+      "bullet_4": "Dades de participació i resultats registrades que es poden comprovar de manera independent",
+      "bullet_5": "Registres resistents a manipulacions ancorats en una infraestructura basada en blockchain",
+      "bullet_6": "Resultats finals que es poden comparar amb les dades públiques de verificació",
+      "executed_on": "El procés {{voting_process}} es va executar sobre la infraestructura {{blockchain_network}}.",
+      "guarantee_lead": "El Protocol Vocdoni augmenta la confiança en el procés de votació proporcionant:",
+      "paragraph_1": "El procés de votació es va dur a terme mitjançant el Protocol Vocdoni, un protocol de votació digital dissenyat per crear, executar, registrar i verificar processos de votació amb fortes garanties d'integritat.",
+      "paragraph_2": "Quan es crea un procés de votació, la seva configuració es registra a la blockchain abans que comenci la votació, creant un registre públic i auditable de com està previst que funcioni el procés. Això inclou el període de votació, el mètode de votació, el conjunt de participants elegibles, les preguntes i les regles que determinen com es compten els resultats. El cens defineix qui pot participar en el procés, tot preservant la privacitat dels votants individuals.",
+      "paragraph_3": "Durant el període de votació, els votants elegibles s'autentiquen segons el mètode configurat i envien les seves paperetes a través del sistema de votació. El protocol està dissenyat perquè el procés es pugui verificar d'extrem a extrem.",
+      "paragraph_4": "Un cop completat el procés de votació, els resultats finals i els registres rellevants del procés queden ancorats a la blockchain. Això fa que el procés sigui auditable i ajuda a garantir que l'informe publicat es pugui comparar amb registres tècnics públics."
     }
   },
   "processes": {

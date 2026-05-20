@@ -176,7 +176,7 @@ describe('VotingReportPdf', () => {
     expect(data.generalInformation.find((field) => field.label === 'Extended process details')?.value).toBe(
       'https://explorer.example/process/0x1234'
     )
-    expect(data.generalInformation.find((field) => field.label === 'Network')?.value).toBe('vocdoni/LTS/1.2')
+    expect(data.generalInformation.find((field) => field.label === 'Infrastructure')?.value).toBe('vocdoni/LTS/1.2')
     expect(data.generalInformation.find((field) => field.label === 'Results visibility')?.value).toBe('Live results')
     expect(data.generalInformation.find((field) => field.label === 'Vote overwrite')?.value).toBe('Disabled')
   })
