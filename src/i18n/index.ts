@@ -88,6 +88,9 @@ const getI18nOptions = ({ language, isBrowser }: { language?: string; isBrowser:
   lng: language,
   fallbackLng: fallbackLanguage,
   supportedLngs: supportedLanguages,
+  // Lowercase resolved language codes so region variants (e.g. browser-detected
+  // `pt-BR`) match our lowercase resource keys (`pt-br`).
+  lowerCaseLng: true,
   debug: shouldEnableI18nDebug({ isDev: AppEnv.DEV, isTestEnv, isBrowser }),
   ns: defaultNamespaces,
   defaultNS: 'common',
