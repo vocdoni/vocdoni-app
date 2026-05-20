@@ -1,4 +1,4 @@
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import type { ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import { buildCertificateData, VotingReportPdfButton, VotingReportPdfMenuItem } from './VotingReportPdf'
@@ -72,6 +72,7 @@ const createElection = () =>
     census: { size: 100 },
     maxCensusSize: 100,
     electionType: { secretUntilTheEnd: false },
+    voteType: { maxVoteOverwrites: 0 },
     resultsType: undefined,
     questions: [],
   }) as PublishedElection
@@ -154,6 +155,9 @@ describe('VotingReportPdf', () => {
       now: new Date('2026-01-03T10:00:00Z'),
     })
 
+    expect(data.issueDate).toBe('2026-01-03')
+    expect(data.issueTime).toBe('10:00:00 UTC')
+
     const values = data.generalInformation
       .filter((field) => field.label.includes('Voting period'))
       .map((field) => field.value)
@@ -174,6 +178,40 @@ describe('VotingReportPdf', () => {
     )
     expect(data.generalInformation.find((field) => field.label === 'Network')?.value).toBe('vocdoni/LTS/1.2')
     expect(data.generalInformation.find((field) => field.label === 'Results visibility')?.value).toBe('Live results')
+    expect(data.generalInformation.find((field) => field.label === 'Vote overwrite')?.value).toBe('Disabled')
+  })
+
+  it('combines the issuer provider and legal entity in the provider field', () => {
+    const data = buildCertificateData({
+      election: createElection(),
+      t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.issuer).toEqual([
+      { label: 'Provider', value: 'Vocdoni (Synergize SL)' },
+      { label: 'Issuing date', value: '2026-01-03 10:00:00 UTC' },
+    ])
+  })
+
+  it('describes enabled vote overwrites with the configured limit', () => {
+    const t = ((key: string, options?: { defaultValue?: string; votes?: number }) =>
+      options?.defaultValue?.replace('{{votes}}', String(options.votes ?? '')) ?? key) as never
+    const election = Object.assign(createElection(), {
+      voteType: { maxVoteOverwrites: 10 },
+    }) as PublishedElection
+
+    const data = buildCertificateData({
+      election,
+      t,
+      organizationName: 'Vocdoni',
+      explorerUrl: 'https://explorer.vote',
+      now: new Date('2026-05-12T12:00:00Z'),
+    })
+
+    expect(data.generalInformation.find((field) => field.label === 'Vote overwrite')?.value).toBe(
+      'Enabled, up to 10 vote overwrites per voter'
+    )
   })
 
   it('uses the revised census and voting process copy', () => {
@@ -188,16 +226,6 @@ describe('VotingReportPdf', () => {
       now: new Date('2026-01-03T10:00:00Z'),
     })
 
-    expect(data.census).toEqual([
-      {
-        label: 'Census provider',
-        value: 'The census is provided by the organization',
-      },
-      {
-        label: 'Total census',
-        value: '100',
-      },
-    ])
     expect(data.votingProcessIntro).toBe('The voting process Annual vote consisted of 0 questions.')
   })
 
@@ -214,7 +242,7 @@ describe('VotingReportPdf', () => {
     expect(data.votingProcessQuestions[0]).toMatchObject({
       question: 'Board continuity proposal',
       totalVotes: '10',
-      outcome: 'Approve',
+      votingMethod: 'Single choice',
       choices: [
         { name: 'Approve', votes: '7', percentage: '70.00%', numericVotes: 7 },
         { name: 'Reject', votes: '3', percentage: '30.00%', numericVotes: 3 },
@@ -292,7 +320,7 @@ describe('VotingReportPdf', () => {
 
     const coverContent = firstPageChildren[1] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(coverContent.props.style).toMatchObject({
-      justifyContent: 'center',
+      justifyContent: 'space-between',
     })
     const coverContentChildren = Array.isArray(coverContent.props.children)
       ? coverContent.props.children
@@ -326,10 +354,13 @@ describe('VotingReportPdf', () => {
       color: '#18a3a8',
     })
     expect(processName.props.children).toBe('Annual vote')
-
     const subtitle = headerChildren[3] as { props: { children: ReactNode } }
-    expect(subtitle.props.children).toContain('Report issued on')
-    expect(subtitle.props.children).toContain('Process ID: 0x1234')
+    expect(subtitle.props.children).toBe('Process ID: 0x1234')
+    expect(subtitle.props.children).not.toContain('Report issued on')
+    const coverIntroPanel = coverContentChildren[1] as { props: { style?: Record<string, unknown> } }
+    expect(coverIntroPanel.props.style).toMatchObject({
+      marginTop: 'auto',
+    })
 
     const secondPage = pages[1] as { props: { children: ReactNode } }
     const secondPageChildren = Array.isArray(secondPage.props.children)
@@ -384,9 +415,16 @@ describe('VotingReportPdf', () => {
       ? indexFirstRowBlock.props.children
       : [indexFirstRowBlock.props.children]
     expect(indexFirstRowBlockChildren).toHaveLength(3)
+    expect((indexFirstRowBlockChildren[1] as { props: { style?: Record<string, unknown> } }).props.style).toMatchObject(
+      {
+        borderBottomStyle: 'dotted',
+      }
+    )
     expect((indexFirstRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('1')
 
-    const indexSecondRow = indexListChildren[5] as {
+    expect(indexListChildren).toHaveLength(8)
+
+    const indexSecondRow = indexListChildren[4] as {
       props: {
         src: '#report-page-4'
         children: ReactNode
@@ -402,9 +440,14 @@ describe('VotingReportPdf', () => {
       ? indexSecondRowBlock.props.children
       : [indexSecondRowBlock.props.children]
     expect(indexSecondRowBlockChildren).toHaveLength(3)
+    expect(
+      (indexSecondRowBlockChildren[1] as { props: { style?: Record<string, unknown> } }).props.style
+    ).toMatchObject({
+      borderBottomStyle: 'dotted',
+    })
     expect((indexSecondRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('2')
 
-    const indexCertificationScopeRow = indexListChildren[7] as {
+    const indexCertificationScopeRow = indexListChildren[6] as {
       props: {
         src: '#report-page-5'
         children: ReactNode
@@ -420,6 +463,11 @@ describe('VotingReportPdf', () => {
       ? indexCertificationScopeRowBlock.props.children
       : [indexCertificationScopeRowBlock.props.children]
     expect(indexCertificationScopeRow.props.src).toBe('#report-page-5')
+    expect(
+      (indexCertificationScopeRowBlockChildren[1] as { props: { style?: Record<string, unknown> } }).props.style
+    ).toMatchObject({
+      borderBottomStyle: 'dotted',
+    })
     expect((indexCertificationScopeRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('3')
 
     const firstSection = pages[2] as { props: { children: ReactNode } }
@@ -434,13 +482,12 @@ describe('VotingReportPdf', () => {
 
     expect(sectionTitle.props.children).toBe('1. General Information')
 
-    const turnoutSection = firstSectionChildren[7] as { props: { children: ReactNode } }
+    const turnoutSection = firstSectionChildren[6] as { props: { children: ReactNode } }
     const turnoutSectionChildren = Array.isArray(turnoutSection.props.children)
       ? turnoutSection.props.children
       : [turnoutSection.props.children]
-    const turnoutContact = turnoutSectionChildren[3] as { props: { children: ReactNode } }
 
-    expect(turnoutContact.props.children).toContain('If you need more details about the census')
+    expect(turnoutSectionChildren).toHaveLength(3)
 
     const thirdPage = pages[2] as { props: { children: ReactNode } }
     const thirdPageChildren = Array.isArray(thirdPage.props.children)
@@ -482,12 +529,12 @@ describe('VotingReportPdf', () => {
       : [issuerSection.props.children]
     const issuerTitle = issuerSectionChildren[0] as { props: { children: ReactNode } }
 
-    expect(certificationScopeTitle.props.children).toBe('8. Certification Scope')
-    expect(issuerTitle.props.children).toBe('9. Issuer')
+    expect(certificationScopeTitle.props.children).toBe('7. Certification Scope')
+    expect(issuerTitle.props.children).toBe('8. Issuer')
 
     const legalNotice = fifthPageChildren[5] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(legalNotice.props.style).toMatchObject({
-      marginTop: 18,
+      marginTop: 'auto',
       paddingTop: 12,
     })
     const footerTitle = Array.isArray(legalNotice.props.children)
@@ -604,6 +651,18 @@ describe('VotingReportPdf', () => {
       ? questionCard.props.children
       : [questionCard.props.children]
     const questionTitle = questionCardChildren[0] as { props: { children: ReactNode } }
+    const questionSummary = questionCardChildren[1] as { props: { children: ReactNode } }
+    const questionSummaryChildren = Array.isArray(questionSummary.props.children)
+      ? questionSummary.props.children
+      : [questionSummary.props.children]
+    const votesSummary = questionSummaryChildren[0] as { props: { children: ReactNode } }
+    const methodSummary = questionSummaryChildren[1] as { props: { children: ReactNode } }
+    const votesSummaryChildren = Array.isArray(votesSummary.props.children)
+      ? votesSummary.props.children
+      : [votesSummary.props.children]
+    const methodSummaryChildren = Array.isArray(methodSummary.props.children)
+      ? methodSummary.props.children
+      : [methodSummary.props.children]
     const resultTable = questionCardChildren[3] as { props: { children: ReactNode } }
     const resultTableChildren = Array.isArray(resultTable.props.children)
       ? resultTable.props.children
@@ -634,6 +693,10 @@ describe('VotingReportPdf', () => {
     const shareText = Array.isArray(shareCell.props.children) ? shareCell.props.children[0] : shareCell.props.children
 
     expect(questionTitle.props.children).toBe('Board continuity proposal')
+    expect((votesSummaryChildren[0] as { props: { children: ReactNode } }).props.children).toBe('Total votes')
+    expect((votesSummaryChildren[1] as { props: { children: ReactNode } }).props.children).toBe('10 votes')
+    expect((methodSummaryChildren[0] as { props: { children: ReactNode } }).props.children).toBe('Voting method')
+    expect((methodSummaryChildren[1] as { props: { children: ReactNode } }).props.children).toBe('Single choice')
     expect((resultHeaderChildren[0] as { props: { children: ReactNode } }).props.children).toBe('Option')
     expect((resultHeaderChildren[1] as { props: { children: ReactNode } }).props.children).toBe('Votes')
     expect((resultHeaderChildren[2] as { props: { children: ReactNode } }).props.children).toBe('Share')
@@ -647,29 +710,37 @@ describe('VotingReportPdf', () => {
   })
 
   it('uses the sdk census type for the authentication method', () => {
-    const election = Object.assign(createElection(), {
-      census: {
-        size: 100,
-        type: 'csp',
-      },
-      meta: {
+    const cases = [
+      [CensusType.CSP, 'Authentication using voters credentials'],
+      [CensusType.WEIGHTED, 'Census directly provided by the organization using a spreadsheet or Web3 wallets'],
+      [CensusType.ANONYMOUS, 'Authentication using voters credentials with enhanced voter anonymity'],
+      ['unknown', 'Not available'],
+    ] as const
+
+    cases.forEach(([censusType, expected]) => {
+      const election = Object.assign(createElection(), {
         census: {
-          type: 'spreadsheet',
+          size: 100,
+          type: censusType,
         },
-      },
+        meta: {
+          census: {
+            type: 'spreadsheet',
+          },
+        },
+      })
+
+      const data = buildCertificateData({
+        election,
+        t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
+        now: new Date('2026-01-03T10:00:00Z'),
+      })
+
+      const authMethod = data.authentication.find((field) => field.label === 'Authentication method')
+
+      expect(authMethod?.value).toBe(expected)
     })
-
-    const data = buildCertificateData({
-      election,
-      t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
-      now: new Date('2026-01-03T10:00:00Z'),
-    })
-
-    const authMethod = data.authentication.find((field) => field.label === 'Authentication method')
-
-    expect(authMethod?.value).toBe('CSP census')
   })
-
   it('describes additional code verification in user-centric language', () => {
     const election = Object.assign(createElection(), {
       census: {
@@ -690,11 +761,11 @@ describe('VotingReportPdf', () => {
       now: new Date('2026-01-03T10:00:00Z'),
     })
 
-    const additionalCodeVerification = data.authentication.find(
-      (field) => field.label === 'Additional code verification'
-    )
+    const additionalCodeVerification = data.authentication.find((field) => field.label === 'Additional identity check')
 
-    expect(additionalCodeVerification?.value).toBe('Enabled: voters confirm their identity with a one-time code')
+    expect(additionalCodeVerification?.value).toBe(
+      'Enabled: voters confirm their identity with a one-time code sent to their personal devices.'
+    )
   })
 
   it('renders identity source fields with translated member labels', () => {
@@ -722,7 +793,7 @@ describe('VotingReportPdf', () => {
       now: new Date('2026-01-03T10:00:00Z'),
     })
 
-    const identitySource = data.authentication.find((field) => field.label === 'Identity data source')
+    const identitySource = data.authentication.find((field) => field.label === 'Required voter credentials')
 
     expect(identitySource?.value).toBe("Nom, Número de soci, Document d'Identitat, customField")
   })

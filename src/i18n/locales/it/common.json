@@ -1381,33 +1381,24 @@
   },
   "process_pdf": {
     "authentication": {
-      "identity_source": "Fonte dei dati di identità",
+      "identity_source": "Credenziali richieste al votante",
       "method": "Metodo di autenticazione",
-      "two_fa": "Verifica aggiuntiva con codice",
-      "two_fa_disabled": "Non attivata: non è richiesto alcun codice monouso aggiuntivo",
-      "two_fa_enabled": "Attivata: i votanti confermano la propria identità con un codice monouso"
-    },
-    "boolean": {
-      "no": "No"
-    },
-    "census": {
-      "definition": "Il censimento elettorale definisce l'insieme completo dei membri autorizzati a partecipare al processo di voto. L'inclusione nel censimento non implica la partecipazione effettiva.",
-      "provider": "Fornitore del censimento",
-      "provider_value": "Il censimento è fornito dall'organizzazione",
-      "total": "Totale del censimento"
+      "two_fa": "Verifica aggiuntiva dell'identità",
+      "two_fa_disabled": "Disattivata: non è stata configurata alcuna verifica aggiuntiva dell'identità in questo processo di voto",
+      "two_fa_enabled": "Attivata: i votanti confermano la propria identità con un codice monouso inviato ai loro dispositivi personali."
     },
     "census_type": {
-      "anonymous": "Censimento ponderato anonimo",
-      "csp": "Censimento CSP",
+      "anonymous": "Autenticazione con credenziali dei votanti e anonimato rafforzato del votante",
+      "csp": "Autenticazione con credenziali dei votanti",
       "unknown": "Non disponibile",
-      "weighted": "Censimento ponderato"
+      "weighted": "Censimento fornito direttamente dall'organizzazione tramite un foglio di calcolo o wallet Web3"
     },
     "disclaimer": {
       "bullet_1": "Non costituisce una certificazione legale del processo di voto.",
       "bullet_2": "Non sostituisce i registri ufficiali, i verbali o i depositi regolatori.",
       "bullet_3": "Tutti i dati provengono da registri crittografici e basati su blockchain.",
       "bullet_4": "La segretezza del voto e l'anonimato del votante sono preservati per progettazione.",
-      "paragraph_1": "Questo documento costituisce una certificazione tecnica derivata da registri generati dal sistema del Protocollo Vocdoni.",
+      "paragraph_1": "Questo documento costituisce una certificazione tecnica derivata da dati registrati tramite il Protocollo Vocdoni.",
       "paragraph_2": "Il fornitore tecnico non assume alcuna responsabilità per l'accuratezza dei dati di input (ad esempio, la composizione del censimento), l'interpretazione legale dei risultati o la conformità ai quadri legali o normativi applicabili.",
       "paragraph_3": "La responsabilità per l'interpretazione legale e l'uso di questa certificazione ricade esclusivamente sull'organizzazione richiedente.",
       "title": "Esclusione di responsabilità"
@@ -1423,20 +1414,19 @@
         "intro": "Questo report è organizzato nelle seguenti sezioni:",
         "title": "Indice"
       },
-      "issued_by": "Emesso da Vocdoni (Synergize SL) il {{issue_date}}, in qualità di fornitore tecnico.",
+      "issued_by": "Emesso da Vocdoni (Synergize SL) il {{issue_date}} alle {{issue_time}}, in qualità di fornitore tecnico.",
       "page_number": "Pagina",
+      "process_id": "ID processo: {{process_id}}",
       "sections": {
         "authentication": "2. Autenticazione",
-        "certification_scope": "8. Ambito della certificazione",
-        "electoral_census": "4. Censimento elettorale",
+        "certification_scope": "7. Ambito della certificazione",
         "general_information": "1. Informazioni generali",
-        "issuer": "9. Emittente",
-        "turnout_participation": "5. Partecipazione e affluenza",
-        "verification": "7. Verifica",
-        "voting_process": "6. Processo di voto",
+        "issuer": "8. Emittente",
+        "turnout_participation": "4. Partecipazione e affluenza",
+        "verification": "6. Verifica",
+        "voting_process": "5. Processo di voto",
         "voting_system": "3. Sistema di voto"
       },
-      "subtitle": "Report emesso il {{issue_date}} | ID processo: {{process_id}}",
       "title_prefix": "CERTIFICAZIONE TECNICA DEL PROCESSO DI VOTO DIGITALE"
     },
     "download": "Rapporto elettorale (PDF)",
@@ -1448,16 +1438,15 @@
       "network": "Rete",
       "organization": "Organizzazione",
       "results_visibility": "Visibilità dei risultati",
-      "vote_overwrite_enabled": "Sovrascrittura del voto abilitata",
+      "vote_overwrite": "Sovrascrittura del voto",
       "voting_period_end": "Periodo di voto (fine)",
       "voting_period_start": "Periodo di voto (inizio)"
     },
-    "intro_paragraph_1": "Questo documento costituisce una certificazione tecnica formale di un processo di voto digitale condotto tramite il Protocollo Vocdoni. Stabilisce un registro strutturato, verificabile e auditabile della configurazione del processo, dell'insieme dei partecipanti eleggibili (censimento elettorale), della partecipazione effettiva e dei risultati finali. Il suo scopo è consentire ad auditor indipendenti e terze parti autorizzate di valutare l'integrità, la coerenza e la corretta esecuzione del processo.",
-    "intro_paragraph_2": "Tutti i dati rilevanti associati a questo processo di voto sono stati registrati e ancorati in registri pubblicamente auditabili all'interno della rete Vocdoni. Questi registri garantiscono trasparenza, immutabilità e verificabilità end-to-end, preservando al contempo l'anonimato del votante e la riservatezza della scheda mediante meccanismi crittografici.",
+    "intro_paragraph_1": "Questo documento costituisce una certificazione tecnica formale di un processo di voto digitale condotto tramite il Protocollo Vocdoni. Stabilisce un registro strutturato, verificabile e auditabile della configurazione del processo, dell'insieme dei partecipanti eleggibili (censimento elettorale), dell'affluenza e dei risultati finali (scrutinio). Il suo scopo è consentire ad auditor indipendenti e terze parti autorizzate di valutare l'integrità, la coerenza e la corretta esecuzione del processo.",
+    "intro_paragraph_2": "Tutti i dati rilevanti associati a questo processo di voto sono stati registrati e ancorati in registri pubblicamente auditabili utilizzando il Protocollo Vocdoni. Questi registri garantiscono trasparenza, immutabilità e verificabilità end-to-end, preservando al contempo l'anonimato del votante e la riservatezza della scheda mediante meccanismi crittografici.",
     "intro_paragraph_3": "Questa certificazione è emessa esclusivamente dal fornitore tecnico per attestare la correttezza dell'esecuzione del sistema e l'integrità dei dati registrati. Non sostituisce, né costituisce, alcuna forma di certificazione legale e non afferma la conformità a requisiti legali o normativi specifici di una giurisdizione.",
     "issuer": {
       "issuing_date": "Data di emissione",
-      "legal_entity": "Entità legale",
       "paragraph": "Emesso a nome dell'ente organizzatore nella sua funzione di fornitore tecnico.",
       "provider": "Vocdoni"
     },
@@ -1473,7 +1462,6 @@
       "tally": "Meccanismi di scrutinio automatizzati"
     },
     "turnout": {
-      "census_contact": "Se ti servono più dettagli sul censimento, contattaci.",
       "eligible": "Numero totale di partecipanti eleggibili",
       "participation": "Il numero di voti espressi riflette solo quei partecipanti che hanno effettivamente inviato una scheda valida durante il periodo di voto definito.",
       "rate": "Tasso di partecipazione",
@@ -1488,14 +1476,13 @@
       "step_3": "Confermare la coerenza del riferimento del censimento e dei registri dell'urna.",
       "step_4": "Ricalcolare e verificare i risultati dello scrutinio, ove applicabile."
     },
-    "vote_overwrite_enabled_one": "Sì, fino a {{count}} sovrascritture",
-    "vote_overwrite_enabled_many": "Sì, fino a {{count}} sovrascritture",
-    "vote_overwrite_enabled_other": "Sì, fino a {{count}} sovrascritture",
+    "vote_overwrite_disabled": "Disattivata",
+    "vote_overwrite_enabled": "Attivata, fino a {{votes}} sovrascritture del voto per votante",
     "voting_process": {
       "card": {
-        "item": "Domanda {{index}}",
+        "item": "Totale voti",
         "option": "Opzione",
-        "outcome_label": "Esito",
+        "outcome_label": "Metodo di voto",
         "participation_short": "{{votes}} voti",
         "results": "Risultati:",
         "share": "Quota",

@@ -1359,33 +1359,24 @@
   },
   "process_pdf": {
     "authentication": {
-      "identity_source": "Identity data source",
+      "identity_source": "Required voter credentials",
       "method": "Authentication method",
-      "two_fa": "Additional code verification",
-      "two_fa_disabled": "Not enabled: no additional one-time code is required",
-      "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code"
-    },
-    "boolean": {
-      "no": "No"
-    },
-    "census": {
-      "definition": "The electoral census defines the complete set of members authorized to participate in the voting process. Inclusion in the census does not imply actual participation.",
-      "provider": "Census provider",
-      "provider_value": "The census is provided by the organization",
-      "total": "Total census"
+      "two_fa": "Additional identity check",
+      "two_fa_disabled": "Disabled: no additional identity check has been configured in this voting process",
+      "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code sent to their personal devices."
     },
     "census_type": {
-      "anonymous": "Anonymous weighted census",
-      "csp": "CSP census",
+      "anonymous": "Authentication using voters credentials with enhanced voter anonymity",
+      "csp": "Authentication using voters credentials",
       "unknown": "Not available",
-      "weighted": "Weighted census"
+      "weighted": "Census directly provided by the organization using a spreadsheet or Web3 wallets"
     },
     "disclaimer": {
       "bullet_1": "It does not constitute legal certification of the voting process.",
       "bullet_2": "It does not replace official records, minutes, or regulatory filings.",
       "bullet_3": "All data originates from cryptographic and blockchain-based logs.",
       "bullet_4": "Ballot secrecy and voter anonymity are preserved by design.",
-      "paragraph_1": "This document constitutes a technical certification derived from system-generated records of the Vocdoni Protocol.",
+      "paragraph_1": "This document constitutes a technical certification derived from data recorded through the Vocdoni Protocol.",
       "paragraph_2": "The technical service provider assumes no responsibility for the accuracy of input data (e.g., census composition), legal interpretation of results, or compliance with applicable legal or regulatory frameworks.",
       "paragraph_3": "Responsibility for legal interpretation and use of this certification rests solely with the requesting organization.",
       "title": "Disclaimer"
@@ -1401,20 +1392,19 @@
         "intro": "This report is organized into the following sections:",
         "title": "Index"
       },
-      "issued_by": "Issued by Vocdoni (Synergize SL) on {{issue_date}}, in its capacity as technical service provider.",
+      "issued_by": "Issued by Vocdoni (Synergize SL) on {{issue_date}} at {{issue_time}}, in its capacity as technical service provider.",
       "page_number": "Page",
+      "process_id": "Process ID: {{process_id}}",
       "sections": {
         "authentication": "2. Authentication",
-        "certification_scope": "8. Certification Scope",
-        "electoral_census": "4. Electoral Census",
+        "certification_scope": "7. Certification Scope",
         "general_information": "1. General Information",
-        "issuer": "9. Issuer",
-        "turnout_participation": "5. Turnout and Participation",
-        "verification": "7. Verification",
-        "voting_process": "6. Voting Process",
+        "issuer": "8. Issuer",
+        "turnout_participation": "4. Turnout and Participation",
+        "verification": "6. Verification",
+        "voting_process": "5. Voting Process",
         "voting_system": "3. Voting System"
       },
-      "subtitle": "Report issued on {{issue_date}} | Process ID: {{process_id}}",
       "title_prefix": "TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS"
     },
     "download": "Election report (PDF)",
@@ -1426,16 +1416,15 @@
       "network": "Network",
       "organization": "Organization",
       "results_visibility": "Results visibility",
-      "vote_overwrite_enabled": "Vote overwrite enabled",
+      "vote_overwrite": "Vote overwrite",
       "voting_period_end": "Voting period (end)",
       "voting_period_start": "Voting period (start)"
     },
-    "intro_paragraph_1": "This document constitutes a formal technical certification of a digital voting process conducted using the Vocdoni Protocol. It establishes a structured, verifiable, and auditable record of the process configuration, eligible participant set (electoral census), actual participation, and final results. Its purpose is to enable independent auditors and authorized third parties to assess the integrity, consistency, and correct execution of the process.",
-    "intro_paragraph_2": "All relevant data associated with this voting process has been recorded and anchored in publicly auditable records within the Vocdoni network. These records ensure transparency, immutability, and end-to-end verifiability, while preserving voter anonymity and ballot confidentiality through cryptographic mechanisms.",
+    "intro_paragraph_1": "This document constitutes a formal technical certification of a digital voting process conducted using the Vocdoni Protocol. It establishes a structured, verifiable, and auditable record of the process configuration, eligible participant set (electoral census), turnout, and final results (tally). Its purpose is to enable independent auditors and authorized third parties to assess the integrity, consistency, and correct execution of the process.",
+    "intro_paragraph_2": "All relevant data associated with this voting process has been recorded and anchored in publicly auditable records using the Vocdoni Protocol. These records ensure transparency, immutability, and end-to-end verifiability, while preserving voter anonymity and ballot confidentiality through cryptographic mechanisms.",
     "intro_paragraph_3": "This certification is issued exclusively by the technical service provider to attest to the correctness of the system execution and the integrity of the recorded data. It does not replace, supersede, or constitute any form of legal certification, nor does it assert compliance with jurisdiction-specific legal or regulatory requirements.",
     "issuer": {
       "issuing_date": "Issuing date",
-      "legal_entity": "Legal entity",
       "paragraph": "Issued on behalf of the organizing entity in its role as technical service provider.",
       "provider": "Provider"
     },
@@ -1451,7 +1440,6 @@
       "tally": "Automated tallying mechanisms"
     },
     "turnout": {
-      "census_contact": "If you need more details about the census, please contact us.",
       "eligible": "Total number of eligible participants",
       "participation": "The number of votes cast reflects only those participants who effectively submitted a valid ballot during the defined voting period.",
       "rate": "Turnout rate",
@@ -1466,13 +1454,13 @@
       "step_3": "Confirm consistency of census reference and ballot records.",
       "step_4": "Recompute and verify tally results where applicable."
     },
-    "vote_overwrite_enabled_one": "Yes, up to {{count}} overwrites",
-    "vote_overwrite_enabled_other": "Yes, up to {{count}} overwrites",
+    "vote_overwrite_disabled": "Disabled",
+    "vote_overwrite_enabled": "Enabled, up to {{votes}} vote overwrites per voter",
     "voting_process": {
       "card": {
-        "item": "Question {{index}}",
+        "item": "Total votes",
         "option": "Option",
-        "outcome_label": "Outcome",
+        "outcome_label": "Voting method",
         "participation_short": "{{votes}} votes",
         "results": "Results:",
         "share": "Share",
