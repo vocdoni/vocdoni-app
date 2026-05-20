@@ -1419,9 +1419,8 @@
       "process_id": "ID del procés: {{process_id}}",
       "sections": {
         "authentication": "2. Autenticació",
-        "certification_scope": "7. Abast de la certificació",
         "general_information": "1. Informació general",
-        "issuer": "8. Emissor",
+        "issuer": "7. Emissor",
         "turnout_participation": "4. Participació i assistència",
         "verification": "6. Verificació",
         "voting_process": "5. Procés de votació",
@@ -1433,10 +1432,13 @@
     "download_error": "No s'ha pogut generar l'informe PDF",
     "downloading": "S'està generant el PDF",
     "general": {
+      "census_reference": "Referència del cens",
+      "census_reference_helper": "Referència pública que identifica el cens utilitzat per a aquest procés de votació. No inclou ni revela dades personals dels votants.",
       "event_name": "Nom de l'esdeveniment",
-      "extended_process_details": "Detalls ampliats del procés",
       "network": "Infraestructura",
       "organization": "Organització",
+      "process_id": "ID del procés",
+      "process_id_helper": "Identificador públic únic d'aquest procés de votació. Es pot utilitzar per trobar i verificar el procés a la infraestructura de votació.",
       "results_visibility": "Visibilitat dels resultats",
       "vote_overwrite": "Sobreescriptura del vot",
       "voting_period_end": "Període de votació (final)",
@@ -1451,16 +1453,6 @@
       "provider": "Vocdoni"
     },
     "not_available": "No disponible",
-    "scope": {
-      "census": "Definició del cens electoral",
-      "configuration": "Configuració del procés de votació",
-      "exclusion": "Aquesta certificació no cobreix les normes de governança, la correcció dels criteris d'elegibilitat ni el compliment legal.",
-      "paragraph": "Aquesta certificació cobreix exclusivament els aspectes tècnics següents:",
-      "participation": "Registre de dades de participació",
-      "period": "Control del període de votació",
-      "results": "Resultats finals calculats",
-      "tally": "Mecanismes automatitzats de recompte"
-    },
     "turnout": {
       "eligible": "Nombre total de participants elegibles",
       "participation": "El nombre de vots emesos reflecteix només aquells participants que van enviar efectivament una papereta vàlida durant el període de votació definit.",
@@ -1468,13 +1460,15 @@
       "votes_cast": "Nombre total de vots emesos"
     },
     "verification": {
-      "explorer": "Explorador de verificació",
+      "explorer": "Veure a l'explorador de verificació",
       "paragraph": "Totes les dades del procés han quedat registrades en una infraestructura basada en blockchain i es poden verificar de manera independent mitjançant l'explorador públic següent:",
       "procedure_title": "Procediment de verificació",
-      "step_1": "Recuperar les dades del procés a través de l'explorador.",
-      "step_2": "Validar el hash arrel del procés respecte al valor publicat.",
-      "step_3": "Confirmar la coherència de la referència del cens i dels registres de l'urna.",
-      "step_4": "Tornar a calcular i verificar els resultats de l'escrutini quan escaigui."
+      "step_1": "Obre l'enllaç de l'explorador de verificació. Aquesta pàgina conté el registre tècnic públic del procés de votació.",
+      "step_2": "Comprova que l'ID del procés a l'explorador és idèntic a l'ID del procés d'aquest informe. Això confirma que tots dos documents fan referència al mateix procés de votació.",
+      "step_3": "Comprova que la referència de la llista de votants elegibles que es mostra a l'explorador coincideix amb la referència d'aquest informe. Això confirma que la llista de votants elegibles vinculada al procés és la mateixa.",
+      "step_4": "Comprova que el nombre de paperetes registrades coincideix amb les dades de participació que es mostren en aquest informe.",
+      "step_5": "Compara el recompte final de l'explorador amb els resultats que es mostren en aquest informe.",
+      "step_6": "Per a una auditoria tècnica més profunda, un auditor pot inspeccionar els registres públics amb més detall o tornar a calcular el recompte per confirmar que les paperetes registrades i els resultats finals són coherents."
     },
     "vote_overwrite_disabled": "Desactivada",
     "vote_overwrite_enabled": "Activada, fins a {{votes}} sobreescriptures de vot per votant",

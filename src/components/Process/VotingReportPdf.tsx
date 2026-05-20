@@ -54,6 +54,8 @@ type CensusBundleData = {
 type CertificateField = {
   label: string
   value: string
+  kind?: 'link'
+  helperText?: string
 }
 
 type CertificateChoice = {
@@ -89,7 +91,6 @@ type CertificateData = {
   votingProcessQuestions: CertificateQuestion[]
   verification: CertificateField[]
   verificationProcedures: string[]
-  scopeBullets: string[]
   issuer: CertificateField[]
   disclaimerParagraphs: string[]
   disclaimerBullets: string[]
@@ -240,6 +241,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     overflow: 'hidden',
     backgroundColor: '#ffffff',
+    marginBottom: 10,
   },
   fieldRow: {
     flexDirection: 'row',
@@ -281,9 +283,31 @@ const styles = StyleSheet.create({
     width: '100%',
     color: '#172033',
   },
+  fieldHelperText: {
+    marginTop: 3,
+    fontSize: 7.6,
+    lineHeight: 1.35,
+    color: '#5f6b7a',
+  },
+  linkValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 1.5,
+  },
+  linkValueText: {
+    flexGrow: 1,
+    flexShrink: 1,
+    minWidth: 0,
+    color: '#0f7f86',
+    fontWeight: 700,
+    wordBreak: 'break-all',
+  },
   paragraph: {
     marginBottom: 7.5,
     color: '#2f3a4c',
+  },
+  afterBoxText: {
+    marginTop: 1,
   },
   italicText: {
     fontStyle: 'italic',
@@ -305,6 +329,7 @@ const styles = StyleSheet.create({
   },
   questionCard: {
     marginTop: 12,
+    marginBottom: 10,
     paddingVertical: 12,
     paddingHorizontal: 13,
     borderWidth: 1,
@@ -470,10 +495,6 @@ const styles = StyleSheet.create({
     color: '#2f3a4c',
     marginBottom: 4,
   },
-  resultChoiceNameWinner: {
-    color: '#111827',
-    fontWeight: 700,
-  },
   resultValueText: {
     fontSize: 8.75,
     color: '#111827',
@@ -493,11 +514,8 @@ const styles = StyleSheet.create({
   },
   resultBarFill: {
     height: 4,
-    backgroundColor: '#9fb0c3',
-    borderRadius: 2,
-  },
-  resultBarFillWinner: {
     backgroundColor: '#18a3a8',
+    borderRadius: 2,
   },
   legalNotice: {
     marginTop: 'auto',
@@ -666,6 +684,21 @@ const getVoteOverwriteStatus = (election: PublishedElection, t: TFunction) => {
     : t('process_pdf.vote_overwrite_disabled', { defaultValue: 'Disabled' })
 }
 
+const getCensusReference = (election: PublishedElection, censusBundle?: CensusBundleData | null) => {
+  const census = election.census as unknown as Record<string, unknown> | undefined
+
+  return (
+    censusBundle?.census.published?.root ??
+    (typeof census?.root === 'string' ? census.root : null) ??
+    (typeof census?._root === 'string' ? census._root : null) ??
+    (typeof census?.censusId === 'string' ? census.censusId : null) ??
+    (typeof census?._censusId === 'string' ? census._censusId : null) ??
+    (typeof census?.censusURI === 'string' ? census.censusURI : null) ??
+    (typeof census?._censusURI === 'string' ? census._censusURI : null) ??
+    null
+  )
+}
+
 export const buildCertificateData = ({
   election,
   t,
@@ -711,6 +744,7 @@ export const buildCertificateData = ({
             defaultValue: 'Disabled: no additional identity check has been configured in this voting process',
           })
   const blockchainNetwork = election.chainId || notAvailableLabel
+  const censusReference = getCensusReference(election, censusBundle) ?? notAvailableLabel
   const resultsVisibility = election.electionType?.secretUntilTheEnd
     ? t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })
     : t('results_state.live_results', { defaultValue: 'Live results' })
@@ -760,16 +794,32 @@ export const buildCertificateData = ({
         value: resultsVisibility,
       },
       {
-        label: t('process_pdf.general.network', { defaultValue: 'Infrastructure' }),
-        value: blockchainNetwork,
-      },
-      {
-        label: t('process_pdf.general.extended_process_details', { defaultValue: 'Extended process details' }),
-        value: verificationExplorerLink,
+        label: t('process_pdf.turnout.eligible', { defaultValue: 'Total number of eligible participants' }),
+        value: totalEligibleParticipants,
       },
       {
         label: t('process_pdf.general.vote_overwrite', { defaultValue: 'Vote overwrite' }),
         value: getVoteOverwriteStatus(election, t),
+      },
+      {
+        label: t('process_pdf.general.network', { defaultValue: 'Infrastructure' }),
+        value: blockchainNetwork,
+      },
+      {
+        label: t('process_pdf.general.process_id', { defaultValue: 'Process ID' }),
+        value: election.id,
+        helperText: t('process_pdf.general.process_id_helper', {
+          defaultValue:
+            'Unique public identifier of this voting process. It can be used to find and verify the process in the voting infrastructure.',
+        }),
+      },
+      {
+        label: t('process_pdf.general.census_reference', { defaultValue: 'Census reference' }),
+        value: censusReference,
+        helperText: t('process_pdf.general.census_reference_helper', {
+          defaultValue:
+            'Public reference that identifies the census used for this voting process. It does not include or reveal voters’ personal data.',
+        }),
       },
     ],
     authentication: [
@@ -861,29 +911,34 @@ export const buildCertificateData = ({
     }),
     verification: [
       {
-        label: t('process_pdf.verification.explorer', { defaultValue: 'Verification explorer' }),
+        label: t('process_pdf.verification.explorer', { defaultValue: 'View in verification explorer' }),
         value: verificationExplorerLink,
+        kind: 'link',
       },
     ],
     verificationProcedures: [
-      t('process_pdf.verification.step_1', { defaultValue: 'Retrieve the process data via the explorer.' }),
+      t('process_pdf.verification.step_1', {
+        defaultValue:
+          'Open the verification explorer link. This page contains the public technical record of the voting process.',
+      }),
       t('process_pdf.verification.step_2', {
-        defaultValue: 'Validate the process root hash against the published value.',
+        defaultValue:
+          'Check that the Process ID in the explorer is identical to the Process ID in this report. This confirms that both documents refer to the same voting process.',
       }),
       t('process_pdf.verification.step_3', {
-        defaultValue: 'Confirm consistency of census reference and ballot records.',
+        defaultValue:
+          'Check that the eligible voter list reference shown in the explorer matches the reference in this report. This confirms that the eligible voter list linked to the process is the same.',
       }),
       t('process_pdf.verification.step_4', {
-        defaultValue: 'Recompute and verify tally results where applicable.',
+        defaultValue: 'Check that the number of recorded ballots matches the participation data shown in this report.',
       }),
-    ],
-    scopeBullets: [
-      t('process_pdf.scope.configuration', { defaultValue: 'Configuration of the voting process' }),
-      t('process_pdf.scope.census', { defaultValue: 'Definition of the electoral census' }),
-      t('process_pdf.scope.period', { defaultValue: 'Voting period enforcement' }),
-      t('process_pdf.scope.participation', { defaultValue: 'Recording of participation data' }),
-      t('process_pdf.scope.tally', { defaultValue: 'Automated tallying mechanisms' }),
-      t('process_pdf.scope.results', { defaultValue: 'Final computed results' }),
+      t('process_pdf.verification.step_5', {
+        defaultValue: 'Compare the final tally in the explorer with the results shown in this report.',
+      }),
+      t('process_pdf.verification.step_6', {
+        defaultValue:
+          'For a deeper technical audit, an auditor may inspect the public records in more detail or recompute the tally to confirm that the recorded ballots and final results are consistent.',
+      }),
     ],
     issuer: [
       { label: t('process_pdf.issuer.provider', { defaultValue: 'Provider' }), value: 'Vocdoni (Synergize SL)' },
@@ -948,14 +1003,25 @@ const KeyValueList = ({ items }: { items: CertificateField[] }) => (
   <View style={styles.keyValueTable}>
     {items.map((item, index) => {
       const isLast = index === items.length - 1
-      const rowStyle = shouldStackFieldValue(item.value) ? styles.fieldRowStacked : styles.fieldRow
+      const rowStyle = shouldStackFieldValue(item.value) || item.helperText ? styles.fieldRowStacked : styles.fieldRow
 
       return (
         <View key={item.label} style={[rowStyle, isLast ? styles.lastFieldRow : {}]}>
           <PdfText style={styles.fieldLabel}>{item.label}:</PdfText>
-          <PdfText style={shouldStackFieldValue(item.value) ? styles.fieldValueStacked : styles.fieldValue}>
-            {formatPdfFieldValue(item.value)}
-          </PdfText>
+          {item.kind === 'link' ? (
+            <View style={[styles.fieldValueStacked, styles.linkValueRow]}>
+              <PdfText style={styles.linkValueText}>{formatPdfFieldValue(item.value)}</PdfText>
+            </View>
+          ) : (
+            <View
+              style={
+                shouldStackFieldValue(item.value) || item.helperText ? styles.fieldValueStacked : styles.fieldValue
+              }
+            >
+              <PdfText>{formatPdfFieldValue(item.value)}</PdfText>
+              {item.helperText && <PdfText style={styles.fieldHelperText}>{item.helperText}</PdfText>}
+            </View>
+          )}
         </View>
       )
     })}
@@ -1016,12 +1082,7 @@ const buildReportSections = (t: TFunction): ReportSection[] => [
     page: '2',
   },
   {
-    title: t('process_pdf.document.sections.certification_scope', { defaultValue: '7. Certification Scope' }),
-    href: '#report-page-5',
-    page: '3',
-  },
-  {
-    title: t('process_pdf.document.sections.issuer', { defaultValue: '8. Issuer' }),
+    title: t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' }),
     href: '#report-page-5',
     page: '3',
   },
@@ -1051,26 +1112,12 @@ const getResultBarWidth = (choice: CertificateChoice) => {
   return `${Math.max(percentage, 2)}%`
 }
 
-const getHighestChoiceVotes = (choices: CertificateChoice[]) => {
-  const numericVotes = choices
-    .map((choice) => choice.numericVotes)
-    .filter((votes): votes is number => typeof votes === 'number' && Number.isFinite(votes))
-
-  return numericVotes.length ? Math.max(...numericVotes) : null
-}
-
-const ResultBarRow = ({ choice, isWinner }: { choice: CertificateChoice; isWinner: boolean }) => (
+const ResultBarRow = ({ choice }: { choice: CertificateChoice }) => (
   <View wrap={false} style={styles.resultRow}>
     <View style={styles.resultOptionCell}>
-      <PdfText style={[styles.resultChoiceName, isWinner ? styles.resultChoiceNameWinner : {}]}>{choice.name}</PdfText>
+      <PdfText style={styles.resultChoiceName}>{choice.name}</PdfText>
       <View style={styles.resultBarTrack}>
-        <View
-          style={[
-            styles.resultBarFill,
-            isWinner ? styles.resultBarFillWinner : {},
-            { width: getResultBarWidth(choice) },
-          ]}
-        />
+        <View style={[styles.resultBarFill, { width: getResultBarWidth(choice) }]} />
       </View>
     </View>
     <View style={styles.resultValueCell}>
@@ -1243,64 +1290,56 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             {data.votingProcessIntro.split(data.eventReference)[1]}
           </PdfText>
           {data.votingProcessQuestions.length > 0 ? (
-            data.votingProcessQuestions.map((question, index) => {
-              const highestVotes = getHighestChoiceVotes(question.choices)
-
-              return (
-                <View key={`${question.question}-${index}`} wrap={false} style={styles.questionCard}>
-                  <PdfText style={styles.questionTitle}>{question.question}</PdfText>
-                  <View style={styles.questionSummaryRow}>
-                    <View style={[styles.questionSummaryPill, styles.questionSummaryVotesPill]}>
-                      <PdfText style={styles.questionSummaryLabel}>
-                        {t('process_pdf.voting_process.card.item', {
-                          defaultValue: 'Total votes',
-                          index: index + 1,
-                        })}
-                      </PdfText>
-                      <PdfText style={styles.questionSummaryValue}>
-                        {t('process_pdf.voting_process.card.participation_short', {
-                          defaultValue: '{{votes}} votes',
-                          votes: question.totalVotes,
-                        })}
-                      </PdfText>
-                    </View>
-                    <View style={[styles.questionSummaryPill, styles.questionSummaryOutcomePill]}>
-                      <PdfText style={styles.questionSummaryLabel}>
-                        {t('process_pdf.voting_process.card.outcome_label', { defaultValue: 'Voting method' })}
-                      </PdfText>
-                      <PdfText style={styles.questionSummaryValue}>{question.votingMethod}</PdfText>
-                    </View>
+            data.votingProcessQuestions.map((question, index) => (
+              <View key={`${question.question}-${index}`} wrap={false} style={styles.questionCard}>
+                <PdfText style={styles.questionTitle}>{question.question}</PdfText>
+                <View style={styles.questionSummaryRow}>
+                  <View style={[styles.questionSummaryPill, styles.questionSummaryVotesPill]}>
+                    <PdfText style={styles.questionSummaryLabel}>
+                      {t('process_pdf.voting_process.card.item', {
+                        defaultValue: 'Total votes',
+                        index: index + 1,
+                      })}
+                    </PdfText>
+                    <PdfText style={styles.questionSummaryValue}>
+                      {t('process_pdf.voting_process.card.participation_short', {
+                        defaultValue: '{{votes}} votes',
+                        votes: question.totalVotes,
+                      })}
+                    </PdfText>
                   </View>
-                  <PdfText style={styles.questionResultsLabel}>
-                    {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
-                  </PdfText>
-                  {question.choices.length > 0 ? (
-                    <View style={styles.resultTable}>
-                      <View style={styles.resultHeaderRow}>
-                        <PdfText style={styles.resultHeaderOption}>
-                          {t('process_pdf.voting_process.card.option', { defaultValue: 'Option' })}
-                        </PdfText>
-                        <PdfText style={styles.resultHeaderVotes}>
-                          {t('process_pdf.voting_process.card.votes', { defaultValue: 'Votes' })}
-                        </PdfText>
-                        <PdfText style={styles.resultHeaderShare}>
-                          {t('process_pdf.voting_process.card.share', { defaultValue: 'Share' })}
-                        </PdfText>
-                      </View>
-                      {question.choices.map((choice) => (
-                        <ResultBarRow
-                          key={`${choice.name}-${choice.votes}-result`}
-                          choice={choice}
-                          isWinner={highestVotes !== null && highestVotes > 0 && choice.numericVotes === highestVotes}
-                        />
-                      ))}
-                    </View>
-                  ) : (
-                    <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
-                  )}
+                  <View style={[styles.questionSummaryPill, styles.questionSummaryOutcomePill]}>
+                    <PdfText style={styles.questionSummaryLabel}>
+                      {t('process_pdf.voting_process.card.outcome_label', { defaultValue: 'Voting method' })}
+                    </PdfText>
+                    <PdfText style={styles.questionSummaryValue}>{question.votingMethod}</PdfText>
+                  </View>
                 </View>
-              )
-            })
+                <PdfText style={styles.questionResultsLabel}>
+                  {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
+                </PdfText>
+                {question.choices.length > 0 ? (
+                  <View style={styles.resultTable}>
+                    <View style={styles.resultHeaderRow}>
+                      <PdfText style={styles.resultHeaderOption}>
+                        {t('process_pdf.voting_process.card.option', { defaultValue: 'Option' })}
+                      </PdfText>
+                      <PdfText style={styles.resultHeaderVotes}>
+                        {t('process_pdf.voting_process.card.votes', { defaultValue: 'Votes' })}
+                      </PdfText>
+                      <PdfText style={styles.resultHeaderShare}>
+                        {t('process_pdf.voting_process.card.share', { defaultValue: 'Share' })}
+                      </PdfText>
+                    </View>
+                    {question.choices.map((choice) => (
+                      <ResultBarRow key={`${choice.name}-${choice.votes}-result`} choice={choice} />
+                    ))}
+                  </View>
+                ) : (
+                  <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
+                )}
+              </View>
+            ))
           ) : (
             <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
           )}
@@ -1317,7 +1356,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             })}
           </PdfText>
           <KeyValueList items={data.verification} />
-          <PdfText style={styles.paragraph}>
+          <PdfText style={[styles.paragraph, styles.afterBoxText]}>
             {t('process_pdf.verification.procedure_title', { defaultValue: 'Verification Procedure' })}
           </PdfText>
           <NumberedList items={data.verificationProcedures} />
@@ -1334,26 +1373,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         <PageFooterLine />
         <ReportPageNumber label={pageNumberLabel} />
         <ReportSectionBlock>
-          <SectionTitle>
-            {t('process_pdf.document.sections.certification_scope', { defaultValue: '7. Certification Scope' })}
-          </SectionTitle>
-          <PdfText style={styles.paragraph}>
-            {t('process_pdf.scope.paragraph', {
-              defaultValue: 'This certification covers exclusively the following technical aspects:',
-            })}
-          </PdfText>
-          <BulletList items={data.scopeBullets} />
-          <PdfText style={styles.paragraph}>
-            {t('process_pdf.scope.exclusion', {
-              defaultValue:
-                'This certification does not cover governance rules, eligibility criteria correctness, or legal compliance.',
-            })}
-          </PdfText>
-        </ReportSectionBlock>
-        <ReportSectionBlock>
-          <SectionTitle>{t('process_pdf.document.sections.issuer', { defaultValue: '8. Issuer' })}</SectionTitle>
+          <SectionTitle>{t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' })}</SectionTitle>
           <KeyValueList items={data.issuer} />
-          <PdfText style={styles.paragraph}>
+          <PdfText style={[styles.paragraph, styles.afterBoxText]}>
             {t('process_pdf.issuer.paragraph', {
               defaultValue: 'Issued on behalf of the organizing entity in its role as technical service provider.',
             })}
@@ -1367,7 +1389,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
           <PdfText style={styles.footerParagraph}>
             {t('process_pdf.disclaimer.paragraph_1', {
               defaultValue:
-                'This document constitutes a technical certification derived from data recorded through the Vocdoni Protocol.',
+                'This document constitutes a technical certification derived from data recorded on the Vocdoni infrastructure.',
             })}
           </PdfText>
           <PdfText style={styles.footerParagraph}>

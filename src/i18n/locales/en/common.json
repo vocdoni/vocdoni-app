@@ -1397,9 +1397,8 @@
       "process_id": "Process ID: {{process_id}}",
       "sections": {
         "authentication": "2. Authentication",
-        "certification_scope": "7. Certification Scope",
         "general_information": "1. General Information",
-        "issuer": "8. Issuer",
+        "issuer": "7. Issuer",
         "turnout_participation": "4. Turnout and Participation",
         "verification": "6. Verification",
         "voting_process": "5. Voting Process",
@@ -1411,10 +1410,13 @@
     "download_error": "Could not generate the PDF report",
     "downloading": "Generating PDF",
     "general": {
+      "census_reference": "Census reference",
+      "census_reference_helper": "Public reference that identifies the census used for this voting process. It does not include or reveal voters’ personal data.",
       "event_name": "Event name",
-      "extended_process_details": "Extended process details",
       "network": "Infrastructure",
       "organization": "Organization",
+      "process_id": "Process ID",
+      "process_id_helper": "Unique public identifier of this voting process. It can be used to find and verify the process in the voting infrastructure.",
       "results_visibility": "Results visibility",
       "vote_overwrite": "Vote overwrite",
       "voting_period_end": "Voting period (end)",
@@ -1429,16 +1431,6 @@
       "provider": "Provider"
     },
     "not_available": "Not available",
-    "scope": {
-      "census": "Definition of the electoral census",
-      "configuration": "Configuration of the voting process",
-      "exclusion": "This certification does not cover governance rules, eligibility criteria correctness, or legal compliance.",
-      "paragraph": "This certification covers exclusively the following technical aspects:",
-      "participation": "Recording of participation data",
-      "period": "Voting period enforcement",
-      "results": "Final computed results",
-      "tally": "Automated tallying mechanisms"
-    },
     "turnout": {
       "eligible": "Total number of eligible participants",
       "participation": "The number of votes cast reflects only those participants who effectively submitted a valid ballot during the defined voting period.",
@@ -1446,13 +1438,15 @@
       "votes_cast": "Total number of votes cast"
     },
     "verification": {
-      "explorer": "Verification explorer",
+      "explorer": "View in verification explorer",
       "paragraph": "All process data has been recorded on a blockchain-based infrastructure and may be independently verified through the following public explorer:",
       "procedure_title": "Verification Procedure",
-      "step_1": "Retrieve the process data via the explorer.",
-      "step_2": "Validate the process root hash against the published value.",
-      "step_3": "Confirm consistency of census reference and ballot records.",
-      "step_4": "Recompute and verify tally results where applicable."
+      "step_1": "Open the verification explorer link. This page contains the public technical record of the voting process.",
+      "step_2": "Check that the Process ID in the explorer is identical to the Process ID in this report. This confirms that both documents refer to the same voting process.",
+      "step_3": "Check that the eligible voter list reference shown in the explorer matches the reference in this report. This confirms that the eligible voter list linked to the process is the same.",
+      "step_4": "Check that the number of recorded ballots matches the participation data shown in this report.",
+      "step_5": "Compare the final tally in the explorer with the results shown in this report.",
+      "step_6": "For a deeper technical audit, an auditor may inspect the public records in more detail or recompute the tally to confirm that the recorded ballots and final results are consistent."
     },
     "vote_overwrite_disabled": "Disabled",
     "vote_overwrite_enabled": "Enabled, up to {{votes}} vote overwrites per voter",

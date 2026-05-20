@@ -165,7 +165,7 @@ describe('VotingReportPdf', () => {
     expect(values).toEqual(['2026-01-01 10:00 UTC', '2026-01-02 10:00 UTC'])
   })
 
-  it('includes the network, results visibility, and extended process details in general information', () => {
+  it('includes visibility, infrastructure, and public identifiers in general information', () => {
     const data = buildCertificateData({
       election: createElection(),
       explorerUrl: 'https://explorer.example',
@@ -173,12 +173,20 @@ describe('VotingReportPdf', () => {
       now: new Date('2026-01-03T10:00:00Z'),
     })
 
-    expect(data.generalInformation.find((field) => field.label === 'Extended process details')?.value).toBe(
-      'https://explorer.example/process/0x1234'
+    expect(data.generalInformation.find((field) => field.label === 'Process ID')?.value).toBe('0x1234')
+    expect(data.generalInformation.find((field) => field.label === 'Process ID')?.helperText).toBe(
+      'Unique public identifier of this voting process. It can be used to find and verify the process in the voting infrastructure.'
+    )
+    expect(data.generalInformation.find((field) => field.label === 'Census reference')?.value).toBe('Not available')
+    expect(data.generalInformation.find((field) => field.label === 'Census reference')?.helperText).toBe(
+      'Public reference that identifies the census used for this voting process. It does not include or reveal voters’ personal data.'
     )
     expect(data.generalInformation.find((field) => field.label === 'Infrastructure')?.value).toBe('vocdoni/LTS/1.2')
     expect(data.generalInformation.find((field) => field.label === 'Results visibility')?.value).toBe('Live results')
     expect(data.generalInformation.find((field) => field.label === 'Vote overwrite')?.value).toBe('Disabled')
+    expect(
+      data.generalInformation.find((field) => field.label === 'Total number of eligible participants')?.value
+    ).toBe('100')
   })
 
   it('combines the issuer provider and legal entity in the provider field', () => {
@@ -422,7 +430,7 @@ describe('VotingReportPdf', () => {
     )
     expect((indexFirstRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('1')
 
-    expect(indexListChildren).toHaveLength(8)
+    expect(indexListChildren).toHaveLength(7)
 
     const indexSecondRow = indexListChildren[4] as {
       props: {
@@ -447,28 +455,28 @@ describe('VotingReportPdf', () => {
     })
     expect((indexSecondRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('2')
 
-    const indexCertificationScopeRow = indexListChildren[6] as {
+    const indexIssuerRow = indexListChildren[6] as {
       props: {
         src: '#report-page-5'
         children: ReactNode
       }
     }
-    const indexCertificationScopeRowChildren = Array.isArray(indexCertificationScopeRow.props.children)
-      ? indexCertificationScopeRow.props.children
-      : [indexCertificationScopeRow.props.children]
-    const indexCertificationScopeRowBlock = indexCertificationScopeRowChildren[0] as {
+    const indexIssuerRowChildren = Array.isArray(indexIssuerRow.props.children)
+      ? indexIssuerRow.props.children
+      : [indexIssuerRow.props.children]
+    const indexIssuerRowBlock = indexIssuerRowChildren[0] as {
       props: { children: ReactNode }
     }
-    const indexCertificationScopeRowBlockChildren = Array.isArray(indexCertificationScopeRowBlock.props.children)
-      ? indexCertificationScopeRowBlock.props.children
-      : [indexCertificationScopeRowBlock.props.children]
-    expect(indexCertificationScopeRow.props.src).toBe('#report-page-5')
+    const indexIssuerRowBlockChildren = Array.isArray(indexIssuerRowBlock.props.children)
+      ? indexIssuerRowBlock.props.children
+      : [indexIssuerRowBlock.props.children]
+    expect(indexIssuerRow.props.src).toBe('#report-page-5')
     expect(
-      (indexCertificationScopeRowBlockChildren[1] as { props: { style?: Record<string, unknown> } }).props.style
+      (indexIssuerRowBlockChildren[1] as { props: { style?: Record<string, unknown> } }).props.style
     ).toMatchObject({
       borderBottomStyle: 'dotted',
     })
-    expect((indexCertificationScopeRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('3')
+    expect((indexIssuerRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('3')
 
     const firstSection = pages[2] as { props: { children: ReactNode } }
     const firstSectionChildren = Array.isArray(firstSection.props.children)
@@ -518,21 +526,15 @@ describe('VotingReportPdf', () => {
     const fifthPageChildren = Array.isArray(fifthPage.props.children)
       ? fifthPage.props.children
       : [fifthPage.props.children]
-    const certificationScopeSection = fifthPageChildren[3] as { props: { children: ReactNode } }
-    const certificationScopeSectionChildren = Array.isArray(certificationScopeSection.props.children)
-      ? certificationScopeSection.props.children
-      : [certificationScopeSection.props.children]
-    const certificationScopeTitle = certificationScopeSectionChildren[0] as { props: { children: ReactNode } }
-    const issuerSection = fifthPageChildren[4] as { props: { children: ReactNode } }
+    const issuerSection = fifthPageChildren[3] as { props: { children: ReactNode } }
     const issuerSectionChildren = Array.isArray(issuerSection.props.children)
       ? issuerSection.props.children
       : [issuerSection.props.children]
     const issuerTitle = issuerSectionChildren[0] as { props: { children: ReactNode } }
 
-    expect(certificationScopeTitle.props.children).toBe('7. Certification Scope')
-    expect(issuerTitle.props.children).toBe('8. Issuer')
+    expect(issuerTitle.props.children).toBe('7. Issuer')
 
-    const legalNotice = fifthPageChildren[5] as { props: { style?: Record<string, unknown>; children: ReactNode } }
+    const legalNotice = fifthPageChildren[4] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(legalNotice.props.style).toMatchObject({
       marginTop: 'auto',
       paddingTop: 12,
@@ -619,7 +621,7 @@ describe('VotingReportPdf', () => {
     expect(pageNumberText.props.render?.({ pageNumber: 5, totalPages: 5 })).toBe('Page 3')
   })
 
-  it('renders result rows with bars and highlights the highest-vote option', async () => {
+  it('renders all result rows with colored bars', async () => {
     pdfToBlob.mockResolvedValue(new Blob(['pdf']))
 
     render(<VotingReportPdfButton election={createElectionWithResults()} />)
@@ -676,6 +678,10 @@ describe('VotingReportPdf', () => {
       type: (props: Record<string, unknown>) => ReactNode
       props: Record<string, unknown>
     }
+    const secondResultRow = flattenedResultTableChildren[2] as {
+      type: (props: Record<string, unknown>) => ReactNode
+      props: Record<string, unknown>
+    }
     const renderedFirstResultRow = firstResultRow.type(firstResultRow.props) as { props: { children: ReactNode } }
     const renderedFirstResultRowChildren = Array.isArray(renderedFirstResultRow.props.children)
       ? renderedFirstResultRow.props.children
@@ -687,6 +693,16 @@ describe('VotingReportPdf', () => {
     const optionLabel = optionCellChildren[0] as { props: { children: ReactNode; style: unknown[] } }
     const barTrack = optionCellChildren[1] as { props: { children: ReactNode } }
     const barFill = barTrack.props.children as { props: { style: Array<Record<string, unknown>> } }
+    const renderedSecondResultRow = secondResultRow.type(secondResultRow.props) as { props: { children: ReactNode } }
+    const renderedSecondResultRowChildren = Array.isArray(renderedSecondResultRow.props.children)
+      ? renderedSecondResultRow.props.children
+      : [renderedSecondResultRow.props.children]
+    const secondOptionCell = renderedSecondResultRowChildren[0] as { props: { children: ReactNode } }
+    const secondOptionCellChildren = Array.isArray(secondOptionCell.props.children)
+      ? secondOptionCell.props.children
+      : [secondOptionCell.props.children]
+    const secondBarTrack = secondOptionCellChildren[1] as { props: { children: ReactNode } }
+    const secondBarFill = secondBarTrack.props.children as { props: { style: Array<Record<string, unknown>> } }
     const votesCell = renderedFirstResultRowChildren[1] as { props: { children: ReactNode } }
     const votesText = Array.isArray(votesCell.props.children) ? votesCell.props.children[0] : votesCell.props.children
     const shareCell = renderedFirstResultRowChildren[2] as { props: { children: ReactNode } }
@@ -701,9 +717,11 @@ describe('VotingReportPdf', () => {
     expect((resultHeaderChildren[1] as { props: { children: ReactNode } }).props.children).toBe('Votes')
     expect((resultHeaderChildren[2] as { props: { children: ReactNode } }).props.children).toBe('Share')
     expect(optionLabel.props.children).toBe('Approve')
-    expect(optionLabel.props.style).toEqual(expect.arrayContaining([expect.objectContaining({ fontWeight: 700 })]))
     expect(barFill.props.style).toEqual(
       expect.arrayContaining([expect.objectContaining({ backgroundColor: '#18a3a8' }), { width: '70%' }])
+    )
+    expect(secondBarFill.props.style).toEqual(
+      expect.arrayContaining([expect.objectContaining({ backgroundColor: '#18a3a8' }), { width: '30%' }])
     )
     expect((votesText as { props: { children: ReactNode } }).props.children).toBe('7')
     expect((shareText as { props: { children: ReactNode } }).props.children).toBe('70.00%')

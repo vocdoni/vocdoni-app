@@ -1419,9 +1419,8 @@
       "process_id": "ID processo: {{process_id}}",
       "sections": {
         "authentication": "2. Autenticazione",
-        "certification_scope": "7. Ambito della certificazione",
         "general_information": "1. Informazioni generali",
-        "issuer": "8. Emittente",
+        "issuer": "7. Emittente",
         "turnout_participation": "4. Partecipazione e affluenza",
         "verification": "6. Verifica",
         "voting_process": "5. Processo di voto",
@@ -1433,10 +1432,13 @@
     "download_error": "Impossibile generare il report PDF",
     "downloading": "Generazione PDF in corso",
     "general": {
+      "census_reference": "Riferimento del censimento",
+      "census_reference_helper": "Riferimento pubblico che identifica il censimento utilizzato per questo processo di voto. Non include né rivela dati personali degli elettori.",
       "event_name": "Nome dell'evento",
-      "extended_process_details": "Dettagli estesi del processo",
       "network": "Infrastruttura",
       "organization": "Organizzazione",
+      "process_id": "ID del processo",
+      "process_id_helper": "Identificativo pubblico univoco di questo processo di voto. Può essere usato per trovare e verificare il processo nell'infrastruttura di voto.",
       "results_visibility": "Visibilità dei risultati",
       "vote_overwrite": "Sovrascrittura del voto",
       "voting_period_end": "Periodo di voto (fine)",
@@ -1451,16 +1453,6 @@
       "provider": "Vocdoni"
     },
     "not_available": "Non disponibile",
-    "scope": {
-      "census": "Definizione del censimento elettorale",
-      "configuration": "Configurazione del processo di voto",
-      "exclusion": "Questa certificazione non copre le regole di governance, la correttezza dei criteri di eleggibilità o la conformità legale.",
-      "paragraph": "Questa certificazione copre esclusivamente i seguenti aspetti tecnici:",
-      "participation": "Registrazione dei dati di partecipazione",
-      "period": "Applicazione del periodo di voto",
-      "results": "Risultati finali calcolati",
-      "tally": "Meccanismi di scrutinio automatizzati"
-    },
     "turnout": {
       "eligible": "Numero totale di partecipanti eleggibili",
       "participation": "Il numero di voti espressi riflette solo quei partecipanti che hanno effettivamente inviato una scheda valida durante il periodo di voto definito.",
@@ -1468,13 +1460,15 @@
       "votes_cast": "Numero totale di voti espressi"
     },
     "verification": {
-      "explorer": "Esploratore di verifica",
+      "explorer": "Visualizza nell'esploratore di verifica",
       "paragraph": "Tutti i dati del processo sono stati registrati su un'infrastruttura basata su blockchain e possono essere verificati in modo indipendente tramite il seguente esploratore pubblico:",
       "procedure_title": "Procedura di verifica",
-      "step_1": "Recuperare i dati del processo tramite l'esploratore.",
-      "step_2": "Validare l'hash radice del processo rispetto al valore pubblicato.",
-      "step_3": "Confermare la coerenza del riferimento del censimento e dei registri dell'urna.",
-      "step_4": "Ricalcolare e verificare i risultati dello scrutinio, ove applicabile."
+      "step_1": "Apri il link dell'esploratore di verifica. Questa pagina contiene il registro tecnico pubblico del processo di voto.",
+      "step_2": "Controlla che l'ID del processo nell'esploratore sia identico all'ID del processo in questo report. Questo conferma che entrambi i documenti si riferiscono allo stesso processo di voto.",
+      "step_3": "Controlla che il riferimento dell'elenco degli elettori idonei mostrato nell'esploratore corrisponda al riferimento in questo report. Questo conferma che l'elenco degli elettori idonei collegato al processo è lo stesso.",
+      "step_4": "Controlla che il numero di schede registrate corrisponda ai dati di partecipazione mostrati in questo report.",
+      "step_5": "Confronta il conteggio finale nell'esploratore con i risultati mostrati in questo report.",
+      "step_6": "Per un audit tecnico più approfondito, un auditor può ispezionare i registri pubblici in maggiore dettaglio o ricalcolare il conteggio per confermare che le schede registrate e i risultati finali siano coerenti."
     },
     "vote_overwrite_disabled": "Disattivata",
     "vote_overwrite_enabled": "Attivata, fino a {{votes}} sovrascritture del voto per votante",

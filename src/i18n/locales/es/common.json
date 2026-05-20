@@ -1419,9 +1419,8 @@
       "process_id": "ID del proceso: {{process_id}}",
       "sections": {
         "authentication": "2. Autenticación",
-        "certification_scope": "7. Alcance de la certificación",
         "general_information": "1. Información general",
-        "issuer": "8. Emisor",
+        "issuer": "7. Emisor",
         "turnout_participation": "4. Participación y asistencia",
         "verification": "6. Verificación",
         "voting_process": "5. Proceso de votación",
@@ -1433,10 +1432,13 @@
     "download_error": "No se ha podido generar el informe PDF",
     "downloading": "Generando PDF",
     "general": {
+      "census_reference": "Referencia del censo",
+      "census_reference_helper": "Referencia pública que identifica el censo utilizado para este proceso de votación. No incluye ni revela datos personales de los votantes.",
       "event_name": "Nombre del evento",
-      "extended_process_details": "Detalles ampliados del proceso",
       "network": "Infraestructura",
       "organization": "Organización",
+      "process_id": "ID del proceso",
+      "process_id_helper": "Identificador público único de este proceso de votación. Se puede utilizar para encontrar y verificar el proceso en la infraestructura de votación.",
       "results_visibility": "Visibilidad de los resultados",
       "vote_overwrite": "Sobrescritura del voto",
       "voting_period_end": "Periodo de votación (fin)",
@@ -1451,16 +1453,6 @@
       "provider": "Vocdoni"
     },
     "not_available": "No disponible",
-    "scope": {
-      "census": "Definición del censo electoral",
-      "configuration": "Configuración del proceso de votación",
-      "exclusion": "Esta certificación no cubre las normas de gobernanza, la corrección de los criterios de elegibilidad ni el cumplimiento legal.",
-      "paragraph": "Esta certificación cubre exclusivamente los siguientes aspectos técnicos:",
-      "participation": "Registro de datos de participación",
-      "period": "Control del periodo de votación",
-      "results": "Resultados finales calculados",
-      "tally": "Mecanismos automatizados de recuento"
-    },
     "turnout": {
       "eligible": "Número total de participantes elegibles",
       "participation": "El número de votos emitidos refleja solo a aquellos participantes que enviaron efectivamente una papeleta válida durante el periodo de votación definido.",
@@ -1468,13 +1460,15 @@
       "votes_cast": "Número total de votos emitidos"
     },
     "verification": {
-      "explorer": "Explorador de verificación",
+      "explorer": "Ver en el explorador de verificación",
       "paragraph": "Todos los datos del proceso han quedado registrados en una infraestructura basada en blockchain y pueden verificarse de forma independiente a través del siguiente explorador público:",
       "procedure_title": "Procedimiento de verificación",
-      "step_1": "Recuperar los datos del proceso a través del explorador.",
-      "step_2": "Validar el hash raíz del proceso frente al valor publicado.",
-      "step_3": "Confirmar la coherencia de la referencia del censo y de los registros de la urna.",
-      "step_4": "Recalcular y verificar los resultados del escrutinio cuando proceda."
+      "step_1": "Abre el enlace del explorador de verificación. Esta página contiene el registro técnico público del proceso de votación.",
+      "step_2": "Comprueba que el ID del proceso en el explorador es idéntico al ID del proceso de este informe. Esto confirma que ambos documentos hacen referencia al mismo proceso de votación.",
+      "step_3": "Comprueba que la referencia de la lista de votantes elegibles que se muestra en el explorador coincide con la referencia de este informe. Esto confirma que la lista de votantes elegibles vinculada al proceso es la misma.",
+      "step_4": "Comprueba que el número de papeletas registradas coincide con los datos de participación que se muestran en este informe.",
+      "step_5": "Compara el recuento final del explorador con los resultados que se muestran en este informe.",
+      "step_6": "Para una auditoría técnica más profunda, un auditor puede inspeccionar los registros públicos con más detalle o recalcular el recuento para confirmar que las papeletas registradas y los resultados finales son coherentes."
     },
     "vote_overwrite_disabled": "Desactivada",
     "vote_overwrite_enabled": "Activada, hasta {{votes}} sobrescrituras de voto por votante",
