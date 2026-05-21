@@ -28,11 +28,12 @@ import {
   useRecipe,
   useSlotRecipe,
 } from '@chakra-ui/react'
-import { type ComponentsPartialDefinition, defineComponent } from '@vocdoni/react-components'
+import { type ComponentsPartialDefinition, defineComponent, useElection } from '@vocdoni/react-components'
 import { ChangeEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
 import { Markdown } from '~components/ui/Markdown'
+import { storeProcessSpreadsheetIdentifier } from '~components/Process/authenticatedVoterLabel'
 import { resultsProgressRecipe } from '~theme/recipes/election'
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
@@ -478,6 +479,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       extraFields,
       ...props
     }) => {
+      const { election } = useElection()
       const recipe = useSlotRecipe({ key: 'SpreadsheetAccess' })
       const styles = recipe()
       const { t } = useTranslation()
@@ -513,6 +515,16 @@ export const electionComponents: ComponentsPartialDefinition = {
               <Dialog.Content css={styles.content} {...props}>
                 <form
                   onSubmit={(event) => {
+                    const firstField = fields[0]
+                    if (election?.id && firstField?.inputProps?.name) {
+                      const formData = new FormData(event.currentTarget as HTMLFormElement)
+                      const firstValue = formData.get(firstField.inputProps.name)
+                      storeProcessSpreadsheetIdentifier(
+                        election.id,
+                        firstField.label,
+                        typeof firstValue === 'string' ? firstValue : undefined
+                      )
+                    }
                     onSubmit(event)
                   }}
                 >
