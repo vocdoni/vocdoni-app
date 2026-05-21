@@ -66,6 +66,12 @@ type HistoryDrawerProps = {
   onClose: () => void
 }
 
+type EditGroupDrawerProps = {
+  group: Group
+  isOpen: boolean
+  onClose: () => void
+}
+
 type GroupCardProps = {
   group: Group
 }
@@ -175,7 +181,7 @@ type EditGroupFormData = {
   description: string
 }
 
-const EditGroupDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
+const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const updateGroup = useUpdateGroup()
@@ -212,7 +218,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
             title: t('group.actions.edit_success', { defaultValue: 'Group updated successfully' }),
             type: 'success',
             duration: 3000,
-            isClosable: true,
+            closable: true,
           })
           onClose()
         },
@@ -222,7 +228,7 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
             description: error.message,
             type: 'error',
             duration: 3000,
-            isClosable: true,
+            closable: true,
           })
         },
       }
@@ -252,6 +258,9 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: HistoryDrawerProps) => {
                   formValue='title'
                   label={t('members.table.group_name', { defaultValue: 'Group name' })}
                   required
+                  validation={{
+                    setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
+                  }}
                 />
                 <FormControl invalid={!!formState.errors.description}>
                   <FormLabel>
