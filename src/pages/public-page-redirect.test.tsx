@@ -4,6 +4,7 @@ let currentData: any
 let currentPageContext: any
 const usePreferredPublicLanguageRedirect = vi.fn()
 const publicLayout = vi.fn(({ children }: { children: React.ReactNode }) => <>{children}</>)
+const publicProcessPage = vi.fn((_: any) => <div>process-page</div>)
 
 vi.mock('vike-react/useData', () => ({
   useData: () => currentData,
@@ -22,7 +23,7 @@ vi.mock('~elements/PublicLayout', () => ({
 }))
 
 vi.mock('~elements/processes/PublicPage', () => ({
-  default: () => <div>process-page</div>,
+  default: (props: any) => publicProcessPage(props),
 }))
 
 vi.mock('~elements/organization/PublicPage', () => ({
@@ -82,9 +83,13 @@ describe('preferred public-language redirect', () => {
     expect(usePreferredPublicLanguageRedirect).toHaveBeenCalledWith({
       pathname: '/en/processes/0xprocess',
     })
-    expect(publicLayout).toHaveBeenCalledWith(
+    expect(publicProcessPage).toHaveBeenCalledWith(
       expect.objectContaining({
         pathname: '/en/processes/0xprocess',
+        publicLanguageLinks: {
+          en: 'http://localhost:3000/en/processes/0xprocess',
+          ca: 'http://localhost:3000/ca/processes/0xprocess',
+        },
       })
     )
   })

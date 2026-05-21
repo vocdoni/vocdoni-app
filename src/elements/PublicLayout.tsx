@@ -5,15 +5,25 @@ import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import CrispChat from '~components/Layout/CrispChat'
 import Footer from '~components/Layout/Footer'
 import Navbar from '~components/Navbar'
+import type { ProcessAuthenticatedLabel } from '~components/Process/authenticatedVoterLabel'
 import { Routes } from '~routes'
 
 type PublicLayoutProps = PropsWithChildren<{
   pathname: string
   publicLanguageLinks?: Record<string, string>
+  authenticatedLabel?: ProcessAuthenticatedLabel
+  hideAuthButton?: boolean
   enableChat?: boolean
 }>
 
-const PublicLayout = ({ pathname, publicLanguageLinks, enableChat = true, children }: PublicLayoutProps) => {
+const PublicLayout = ({
+  pathname,
+  publicLanguageLinks,
+  authenticatedLabel,
+  hideAuthButton,
+  enableChat = true,
+  children,
+}: PublicLayoutProps) => {
   const normalizedPathname = stripPublicLanguagePrefix(pathname, getSupportedPublicLanguages())
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
   const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
@@ -31,7 +41,11 @@ const PublicLayout = ({ pathname, publicLanguageLinks, enableChat = true, childr
         maxW='navbar'
         mx='auto'
       >
-        <Navbar publicLanguageLinks={publicLanguageLinks} />
+        <Navbar
+          publicLanguageLinks={publicLanguageLinks}
+          authenticatedLabel={authenticatedLabel}
+          hideAuthButton={hideAuthButton}
+        />
       </HStack>
       {enableChat ? <CrispChat /> : null}
       {showLimitedAnnouncementBanner && <AnnouncementBanner limited />}

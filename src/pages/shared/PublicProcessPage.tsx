@@ -1,15 +1,13 @@
-import { PublishedElection } from '@vocdoni/sdk'
 import { useData } from 'vike-react/useData'
 import { usePageContext } from 'vike-react/usePageContext'
-import PublicLayout from '~elements/PublicLayout'
+import { PublishedElection } from '@vocdoni/sdk'
 import PublicProcessView from '~elements/processes/PublicPage'
 import { AppProviders } from '~src/Providers'
-import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
 import { getPublicLanguageLinksFromMeta } from '~src/pages/shared/publicPageData'
+import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
 import type { OrganizationData, PublicMeta } from '~src/ssr/public-pages'
 
 type ProcessPageData = {
-  id: string
   election: PublishedElection
   organization: OrganizationData
   meta: PublicMeta
@@ -26,13 +24,12 @@ export default function PublicProcessPage() {
 
   return (
     <AppProviders language={data.meta.language}>
-      <PublicLayout
+      <PublicProcessView
+        election={data.election}
+        organization={data.organization}
         pathname={pathname}
         publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}
-        enableChat={false}
-      >
-        <PublicProcessView election={data.election} organization={data.organization} />
-      </PublicLayout>
+      />
     </AppProviders>
   )
 }

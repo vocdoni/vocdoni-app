@@ -15,6 +15,16 @@ vi.mock('~components/Process/View', () => ({
   ProcessView: () => <div>process-view</div>,
 }))
 
+const publicLayout = vi.fn(({ children }: { children: React.ReactNode }) => <>{children}</>)
+
+vi.mock('~elements/PublicLayout', () => ({
+  default: (props: {
+    children: React.ReactNode
+    hideAuthButton?: boolean
+    authenticatedLabel?: { label?: string; value: string }
+  }) => publicLayout(props),
+}))
+
 vi.mock('~components/Layout/LegalNotice', () => ({
   default: () => <div>legal-notice</div>,
 }))
@@ -22,6 +32,13 @@ vi.mock('~components/Layout/LegalNotice', () => ({
 vi.mock('@vocdoni/react-components', () => ({
   OrganizationProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  reactComponentsNamespace: 'react-components',
+  reactComponentsResources: {
+    en: {},
+    es: {},
+    ca: {},
+    it: {},
+  },
   useOrganization: () => ({
     organization: {
       account: {
@@ -58,11 +75,19 @@ describe('SSR public pages title handling', () => {
 
   it('does not mutate document.title when rendering the process SSR page', () => {
     document.title = 'Initial title'
+    publicLayout.mockClear()
 
-    render(<PublicProcessPage election={new PublishedElection({} as any)} organization={{ address: '0xabc' } as any} />)
+    render(
+      <PublicProcessPage
+        election={new PublishedElection({} as any)}
+        organization={{ address: '0xabc' } as any}
+        pathname='/en/processes/0xabc'
+      />
+    )
 
     expect(screen.getByText('process-view')).toBeInTheDocument()
     expect(screen.getByText('legal-notice')).toBeInTheDocument()
+    expect(publicLayout).toHaveBeenCalledWith(expect.objectContaining({ hideAuthButton: true }))
     expect(document.title).toBe('Initial title')
   })
 })

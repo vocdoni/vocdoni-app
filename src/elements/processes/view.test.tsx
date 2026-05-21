@@ -12,6 +12,10 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   }
 })
 
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => ({ isAuthenticated: false, logout: vi.fn() }),
+}))
+
 vi.mock('~components/Process/View', () => ({
   __esModule: true,
   ProcessView: () => <div>Process view content</div>,
