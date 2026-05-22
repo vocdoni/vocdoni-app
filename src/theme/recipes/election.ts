@@ -416,9 +416,10 @@ export const SpreadsheetAccess = defineSlotRecipe({
 export const Voted = defineSlotRecipe({
   slots: votedAnatomy,
   base: {
-    link: {
-      whiteSpace: 'normal',
-      overflowWrap: 'anywhere',
+    description: {
+      '& > a': {
+        wordBreak: 'break-word',
+      },
     },
   },
 })
