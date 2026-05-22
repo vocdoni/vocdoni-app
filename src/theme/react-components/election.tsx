@@ -399,9 +399,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       >
         <Alert.Indicator css={styles.icon} />
         <Alert.Title css={styles.title}>{t('vote.voted_title')}</Alert.Title>
-        <Alert.Description truncate maxW='100%' whiteSpace='initial' css={styles.description}>
-          {description}
-        </Alert.Description>
+        <Alert.Description css={styles.description}>{description}</Alert.Description>
       </Alert.Root>
     )
   }),
