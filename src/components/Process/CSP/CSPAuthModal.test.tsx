@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event'
-import { mockUseElection, render, screen } from '~src/test-utils'
+import { createTestI18n, mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CspAuthModal } from './CSPAuthModal'
 
@@ -36,6 +36,10 @@ describe('CspAuthModal', () => {
     })
   })
 
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('shows step 0 when modal opens at step 0', async () => {
     const user = userEvent.setup()
 
@@ -63,5 +67,30 @@ describe('CspAuthModal', () => {
     expect(screen.getByText('Didn’t receive the code? Resend it.')).toBeInTheDocument()
     expect(screen.getByText('If you experience any issues, contact your organization.')).toBeInTheDocument()
     expect(screen.getByText('Step 1')).toBeInTheDocument()
+  })
+
+  it('uses the translated label before June 10 when the translation exists', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2026, 4, 25, 12, 0, 0))
+
+    const i18nInstance = await createTestI18n({
+      lng: 'en',
+      fallbackLng: 'en',
+      useReactI18next: true,
+      resources: {
+        en: {
+          common: {
+            'spreadsheet.access_available_june_10': 'Voting will be available on June 10',
+            'spreadsheet.access_button': 'Identify',
+            'csp.step1.title': 'Authentication',
+          },
+        },
+      },
+    })
+
+    render(<CspAuthModal />, { i18nInstance })
+
+    const button = screen.getByRole('button', { name: 'Voting will be available on June 10' })
+    expect(button).toBeDisabled()
   })
 })

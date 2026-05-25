@@ -1608,6 +1608,7 @@
   "signup_subtitle": "Continua per accedir al teu compte",
   "signup_title": "Crea un compte",
   "spreadsheet": {
+    "access_available_june_10": "La votació estarà disponible el dia 10 de juny",
     "access_button": "Identificar-se",
     "close": "Tanca",
     "modal_title": "Autenticació"

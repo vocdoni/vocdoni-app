@@ -53,17 +53,29 @@ const useCensusBundle = (censusURI?: string) => {
 }
 
 export const CspAuthModal = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { election } = useElection()
   const { currentStep } = useCspAuthContext()
+  const now = new Date()
+  const unlockDate = new Date(now.getFullYear(), 5, 10)
+  const hasAvailabilityTranslation = i18n.exists('spreadsheet.access_available_june_10')
+  const isLockedUntilJune10 = hasAvailabilityTranslation && now < unlockDate
+  const accessButtonLabel = isLockedUntilJune10
+    ? t('spreadsheet.access_available_june_10', { defaultValue: 'Login' })
+    : t('spreadsheet.access_button', { defaultValue: 'Login' })
 
   if (election instanceof InvalidElection) return null
 
   return (
     <Dialog.Root size='sm'>
       <Dialog.Trigger asChild>
-        <Button w='full' aria-label={t('spreadsheet.access_button', { defaultValue: 'Login' })}>
-          <Trans i18nKey='spreadsheet.access_button'>Login</Trans>
+        <Button
+          w='full'
+          aria-label={accessButtonLabel}
+          disabled={isLockedUntilJune10}
+          title={isLockedUntilJune10 ? accessButtonLabel : undefined}
+        >
+          {accessButtonLabel}
         </Button>
       </Dialog.Trigger>
       <Portal>

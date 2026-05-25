@@ -1608,6 +1608,7 @@
   "signup_subtitle": "Introduce tu información para comenzar",
   "signup_title": "Registro",
   "spreadsheet": {
+    "access_available_june_10": "La votación estará disponible el día 10 de junio",
     "access_button": "Identificarse",
     "close": "Cerrar",
     "modal_title": "Autenticación"

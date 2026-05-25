@@ -1584,6 +1584,7 @@
   "signup_subtitle": "Enter your information to get started",
   "signup_title": "Sign up",
   "spreadsheet": {
+    "access_available_june_10": "Voting will be available on June 10",
     "access_button": "Identify",
     "close": "Close",
     "modal_title": "Authentication"
