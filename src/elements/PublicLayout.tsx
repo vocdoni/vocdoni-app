@@ -11,9 +11,16 @@ type PublicLayoutProps = PropsWithChildren<{
   pathname: string
   publicLanguageLinks?: Record<string, string>
   enableChat?: boolean
+  showDashboardButton?: boolean
 }>
 
-const PublicLayout = ({ pathname, publicLanguageLinks, enableChat = true, children }: PublicLayoutProps) => {
+const PublicLayout = ({
+  pathname,
+  publicLanguageLinks,
+  enableChat = true,
+  showDashboardButton = true,
+  children,
+}: PublicLayoutProps) => {
   const normalizedPathname = stripPublicLanguagePrefix(pathname, getSupportedPublicLanguages())
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
   const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
@@ -31,7 +38,7 @@ const PublicLayout = ({ pathname, publicLanguageLinks, enableChat = true, childr
         maxW='navbar'
         mx='auto'
       >
-        <Navbar publicLanguageLinks={publicLanguageLinks} />
+        <Navbar publicLanguageLinks={publicLanguageLinks} showDashboardButton={showDashboardButton} />
       </HStack>
       {enableChat ? <CrispChat /> : null}
       {showLimitedAnnouncementBanner && <AnnouncementBanner limited />}

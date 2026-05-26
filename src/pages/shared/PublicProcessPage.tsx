@@ -30,6 +30,7 @@ export default function PublicProcessPage() {
         pathname={pathname}
         publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}
         enableChat={false}
+        showDashboardButton={false}
       >
         <PublicProcessView election={data.election} organization={data.organization} />
       </PublicLayout>
