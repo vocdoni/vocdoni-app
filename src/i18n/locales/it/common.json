@@ -185,17 +185,17 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "Codici Email 2FA",
+      "2fa_email": "Codici email 2FA",
       "2fa_email_tooltip": "Codici di verifica email inviati. Il superamento del limite costa €{{price}} per codice.",
       "2fa_sms": "Codici SMS 2FA",
       "2fa_sms_tooltip": "Codici di verifica SMS inviati. Il superamento del limite costa €{{price}} per codice.",
       "limit_exceeded_message": "Il tuo piano attuale ha raggiunto i suoi limiti. Aggiorna ora per continuare a lavorare senza restrizioni.",
-      "memberbase_size": "Dimensione della Base Membri",
+      "memberbase_size": "Dimensione della base membri",
       "memberbase_tooltip": "Numero massimo di membri consentiti per processo di voto.",
-      "plan_usage": "Utilizzo del Piano",
+      "plan_usage": "Utilizzo del piano",
       "plan_usage_description": "Monitora il tuo utilizzo attuale rispetto ai limiti del piano",
-      "upgrade_plan": "Aggiorna Piano",
-      "voting_processes": "Processi di Voto",
+      "upgrade_plan": "Aggiorna piano",
+      "voting_processes": "Processi di voto",
       "voting_processes_tooltip": "Numero di processi di voto creati quest'anno. Le votazioni con 10 membri o meno non vengono conteggiate nei limiti."
     },
     "welcome": {

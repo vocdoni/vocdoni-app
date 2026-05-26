@@ -31,7 +31,7 @@ const OrganizationVotings = () => {
 
   return (
     <DashboardContents>
-      <Heading textTransform='capitalize'>{t('voting_processes')}</Heading>
+      <Heading>{t('voting_processes')}</Heading>
       <SubHeading>{t('voting_processes_description')}</SubHeading>
       <Tabs.Root
         variant='settings'

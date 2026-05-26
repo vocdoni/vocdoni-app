@@ -113,7 +113,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   const usageMetrics: UsageMetric[] = [
     {
       icon: LuVote,
-      label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting Processes' }),
+      label: t('dashboard.usage.voting_processes', { defaultValue: 'Voting processes' }),
       current: usage.processes || 0,
       max: maxProcesses,
       color: 'blue',
@@ -124,7 +124,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
     },
     {
       icon: LuUsers,
-      label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase Size' }),
+      label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
       current: membersData?.pagination?.totalItems || 0,
       max: maxCensusSize,
       color: 'purple',
@@ -138,7 +138,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   if (email2FA > 0) {
     usageMetrics.push({
       icon: LuMail,
-      label: t('dashboard.usage.2fa_email', { defaultValue: '2FA Email Codes' }),
+      label: t('dashboard.usage.2fa_email', { defaultValue: '2FA email codes' }),
       current: usage.sentEmails || 0,
       max: email2FA,
       color: 'green',
@@ -153,7 +153,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   if (sms2FA > 0) {
     usageMetrics.push({
       icon: LuMessageSquare,
-      label: t('dashboard.usage.2fa_sms', { defaultValue: '2FA SMS Codes' }),
+      label: t('dashboard.usage.2fa_sms', { defaultValue: '2FA SMS codes' }),
       current: usage.sentSMS || 0,
       max: sms2FA,
       color: 'cyan',
@@ -174,7 +174,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
     <DashboardBox p={6} height='100%' {...props}>
       <VStack align='stretch' gap={4}>
         <DashboardCardHeader
-          title={t('dashboard.usage.plan_usage', { defaultValue: 'Plan Usage' })}
+          title={t('dashboard.usage.plan_usage', { defaultValue: 'Plan usage' })}
           subtitle={t('dashboard.usage.plan_usage_description', {
             defaultValue: 'Track your current usage against your plan limits',
           })}
@@ -197,7 +197,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
               </AlertDescription>
               <Button asChild size='sm' colorPalette='orange' variant='solid' flexShrink={0} fontWeight='semibold'>
                 <ReactRouterLink to={generatePath(Routes.dashboard.settings.subscription)}>
-                  {t('dashboard.usage.upgrade_plan', { defaultValue: 'Upgrade Plan' })}
+                  {t('dashboard.usage.upgrade_plan', { defaultValue: 'Upgrade plan' })}
                 </ReactRouterLink>
               </Button>
             </Flex>
