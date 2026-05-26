@@ -22,6 +22,7 @@ import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { AppEnv } from '~src/app-env'
 import { useToast } from '~components/Toast'
+import { storeProcessCspIdentifier } from '../authenticatedVoterLabel'
 import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
 
@@ -110,6 +111,19 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
         ...(form.email && { email: form.email }),
         ...(form.phone && { phone: form.phone }),
       }))
+
+      const cspMethod = form.email ? 'email' : form.phone ? 'phone' : undefined
+      const firstAuthField = authFields.find(
+        (field) => typeof trimmed[field] === 'string' && trimmed[field].trim().length > 0
+      )
+      const firstAuthValue = firstAuthField ? trimmed[firstAuthField] : undefined
+
+      storeProcessCspIdentifier(
+        election.id,
+        cspMethod,
+        cspMethod ? form.email || form.phone : firstAuthValue,
+        cspMethod ? undefined : firstAuthField ? getFieldLabel(firstAuthField) : undefined
+      )
 
       pushCrispUserFields(form)
 

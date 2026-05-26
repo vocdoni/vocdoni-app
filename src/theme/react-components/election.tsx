@@ -27,10 +27,12 @@ import {
   useRecipe,
   useSlotRecipe,
 } from '@chakra-ui/react'
-import { type ComponentsPartialDefinition, defineComponent } from '@vocdoni/react-components'
+import { type ComponentsPartialDefinition, defineComponent, useElection } from '@vocdoni/react-components'
+import { PublishedElection } from '@vocdoni/sdk'
 import { ChangeEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
+import { storeProcessSpreadsheetIdentifier } from '~components/Process/authenticatedVoterLabel'
 import { Markdown } from '~components/ui/Markdown'
 import { resultsProgressRecipe } from '~theme/recipes/election'
 
@@ -478,6 +480,17 @@ export const electionComponents: ComponentsPartialDefinition = {
       const recipe = useSlotRecipe({ key: 'SpreadsheetAccess' })
       const styles = recipe()
       const { t } = useTranslation()
+      let electionId: string | undefined
+
+      try {
+        const electionContext = useElection()
+        electionId =
+          electionContext?.election instanceof PublishedElection
+            ? electionContext.election.id
+            : electionContext?.election?.id
+      } catch {
+        electionId = undefined
+      }
 
       if (connected) {
         return (
@@ -510,6 +523,16 @@ export const electionComponents: ComponentsPartialDefinition = {
               <Dialog.Content css={styles.content} {...props}>
                 <form
                   onSubmit={(event) => {
+                    const firstField = fields[0]
+                    if (electionId && firstField?.inputProps?.name) {
+                      const formData = new FormData(event.currentTarget as HTMLFormElement)
+                      const firstValue = formData.get(firstField.inputProps.name)
+                      storeProcessSpreadsheetIdentifier(
+                        electionId,
+                        firstField.label,
+                        typeof firstValue === 'string' ? firstValue : undefined
+                      )
+                    }
                     onSubmit(event)
                   }}
                 >
