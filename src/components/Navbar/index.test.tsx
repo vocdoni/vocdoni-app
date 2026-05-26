@@ -36,13 +36,14 @@ describe('Navbar', () => {
     expect(screen.getByRole('link', { name: 'Login' })).toBeInTheDocument()
   })
 
-  it('can hide the dashboard/login button entirely', async () => {
+  it('renders the authenticated voter label instead of the dashboard button', async () => {
     const i18nInstance = await createTestI18n({
       useReactI18next: true,
       resources: {
         en: {
           common: {
             'menu.login': 'Login',
+            'menu.dashboard': 'Dashboard',
           },
         },
       },
@@ -50,11 +51,37 @@ describe('Navbar', () => {
 
     render(
       <TestMemoryRouter>
-        <Navbar showDashboardButton={false} />
+        <Navbar authenticatedLabel={{ label: 'Colegiado nº', value: '15516' }} />
       </TestMemoryRouter>,
       { i18nInstance }
     )
 
-    expect(screen.queryByRole('link', { name: 'Login' })).toBeNull()
+    expect(screen.getByText('Colegiado nº 15516')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Login' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Dashboard' })).not.toBeInTheDocument()
+  })
+
+  it('hides the admin button when requested', async () => {
+    const i18nInstance = await createTestI18n({
+      useReactI18next: true,
+      resources: {
+        en: {
+          common: {
+            'menu.login': 'Login',
+            'menu.dashboard': 'Dashboard',
+          },
+        },
+      },
+    })
+
+    render(
+      <TestMemoryRouter>
+        <Navbar hideAuthButton />
+      </TestMemoryRouter>,
+      { i18nInstance }
+    )
+
+    expect(screen.queryByRole('link', { name: 'Login' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Dashboard' })).not.toBeInTheDocument()
   })
 })
