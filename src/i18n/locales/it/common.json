@@ -1385,13 +1385,29 @@
       "method": "Metodo di autenticazione",
       "two_fa": "Verifica aggiuntiva dell'identità",
       "two_fa_disabled": "Disattivata: non è stata configurata alcuna verifica aggiuntiva dell'identità in questo processo di voto",
-      "two_fa_enabled": "Attivata: i votanti confermano la propria identità con un codice monouso inviato ai loro dispositivi personali."
+      "two_fa_enabled": "Attivata: i votanti confermano la propria identità con un codice monouso inviato ai loro dispositivi personali.",
+      "voter_access_source": "Origine dell'accesso del votante",
+      "voter_access_source_spreadsheet": "I votanti accedono con credenziali derivate dal censimento su foglio di calcolo caricato dall'organizzazione.",
+      "voter_access_source_web3": "I votanti accedono con l'indirizzo wallet incluso nel censimento Web3.",
+      "voter_access_source_weighted": "L'idoneità viene verificata rispetto al censimento ponderato fornito dall'organizzazione per questo processo."
+    },
+    "census": {
+      "counting_basis": "Base di conteggio",
+      "counting_basis_1p1v": "1 persona, 1 voto",
+      "counting_basis_weighted": "Voto ponderato",
+      "eligible_voters": "Votanti eleggibili",
+      "eligible_voting_power": "Potere di voto eleggibile totale",
+      "source": "Origine del censimento",
+      "voting_power_used": "Potere di voto utilizzato",
+      "weighted_participation": "Partecipazione ponderata"
     },
     "census_type": {
-      "anonymous": "Autenticazione con credenziali dei votanti e anonimato rafforzato del votante",
-      "csp": "Autenticazione con credenziali dei votanti",
+      "anonymous": "Censimento anonimo fornito dall'organizzazione",
+      "csp": "Censimento con credenziali della base membri",
+      "spreadsheet": "Censimento su foglio di calcolo fornito dall'organizzazione",
       "unknown": "Non disponibile",
-      "weighted": "Censimento fornito direttamente dall'organizzazione tramite un foglio di calcolo o wallet Web3"
+      "web3": "Censimento di wallet Web3 fornito dall'organizzazione",
+      "weighted": "Censimento ponderato fornito dall'organizzazione"
     },
     "disclaimer": {
       "bullet_1": "Non costituisce una certificazione legale del processo di voto.",
@@ -1399,16 +1415,16 @@
       "bullet_3": "Tutti i dati provengono da registri crittografici e basati su blockchain.",
       "bullet_4": "La segretezza del voto e l'anonimato del votante sono preservati per progettazione.",
       "paragraph_1": "Questo documento costituisce una certificazione tecnica derivata da dati registrati sull'infrastruttura Vocdoni.",
-      "paragraph_2": "Il fornitore tecnico non assume alcuna responsabilità per l'accuratezza dei dati di input (ad esempio, la composizione del censimento), l'interpretazione legale dei risultati o la conformità ai quadri legali o normativi applicabili.",
+      "paragraph_2": "Il fornitore tecnico non assume alcuna responsabilità per i dati forniti dall'organizzazione, inclusi composizione del censimento, pesi di voto, interpretazione legale dei risultati o conformità ai quadri legali o normativi applicabili.",
       "paragraph_3": "La responsabilità per l'interpretazione legale e l'uso di questa certificazione ricade esclusivamente sull'organizzazione richiedente.",
       "title": "Esclusione di responsabilità"
     },
     "document": {
       "bookmarks": {
-        "general_information": "Informazioni generali",
+        "general_information": "Quadro tecnico e informazioni generali",
         "index": "Indice",
         "issuer": "Emittente",
-        "voting_process": "Processo di voto"
+        "voting_process": "Domande e risultati"
       },
       "index": {
         "intro": "Questo report è organizzato nelle seguenti sezioni:",
@@ -1418,13 +1434,13 @@
       "page_number": "Pagina",
       "process_id": "ID processo: {{process_id}}",
       "sections": {
-        "authentication": "2. Autenticazione",
-        "general_information": "1. Informazioni generali",
+        "authentication": "3. Autenticazione",
+        "general_information": "2. Informazioni generali",
         "issuer": "7. Emittente",
-        "turnout_participation": "4. Partecipazione e affluenza",
+        "turnout_participation": "4. Censimento e partecipazione",
         "verification": "6. Verifica",
-        "voting_process": "5. Processo di voto",
-        "voting_system": "3. Sistema di voto"
+        "voting_process": "5. Domande e risultati",
+        "voting_system": "1. Quadro tecnico"
       },
       "title_prefix": "CERTIFICAZIONE TECNICA DEL PROCESSO DI VOTO DIGITALE"
     },
@@ -1453,11 +1469,15 @@
       "provider": "Vocdoni"
     },
     "not_available": "Non disponibile",
+    "results": {
+      "hidden_field": "Nascosto fino ai risultati finali"
+    },
     "turnout": {
       "eligible": "Numero totale di partecipanti eleggibili",
       "participation": "Il numero di voti espressi riflette solo quei partecipanti che hanno effettivamente inviato una scheda valida durante il periodo di voto definito.",
-      "rate": "Tasso di partecipazione",
-      "votes_cast": "Numero totale di voti espressi"
+      "submitted_ballots": "Schede inviate",
+      "voter_participation": "Partecipazione dei votanti",
+      "weighted_participation": "Le schede inviate contano i votanti che hanno partecipato. I totali ponderati dei risultati contano il potere di voto registrato per ogni risposta."
     },
     "verification": {
       "explorer": "Visualizza nell'esploratore di verifica",
@@ -1465,26 +1485,35 @@
       "procedure_title": "Procedura di verifica",
       "step_1": "Apri il link dell'esploratore di verifica. Questa pagina contiene il registro tecnico pubblico del processo di voto.",
       "step_2": "Controlla che l'ID del processo nell'esploratore sia identico all'ID del processo in questo report. Questo conferma che entrambi i documenti si riferiscono allo stesso processo di voto.",
-      "step_3": "Controlla che il riferimento dell'elenco degli elettori idonei mostrato nell'esploratore corrisponda al riferimento in questo report. Questo conferma che l'elenco degli elettori idonei collegato al processo è lo stesso.",
+      "step_3": "Controlla che il riferimento del censimento mostrato nell'esploratore corrisponda al riferimento in questo report. Questo conferma che l'elenco degli elettori idonei collegato al processo è lo stesso.",
       "step_4": "Controlla che il numero di schede registrate corrisponda ai dati di partecipazione mostrati in questo report.",
-      "step_5": "Confronta il conteggio finale nell'esploratore con i risultati mostrati in questo report.",
+      "step_5": "Confronta il conteggio finale nell'esploratore con i risultati per numero di schede o per potere di voto ponderato mostrati in questo report.",
       "step_6": "Per un audit tecnico più approfondito, un auditor può ispezionare i registri pubblici in maggiore dettaglio o ricalcolare il conteggio per confermare che le schede registrate e i risultati finali siano coerenti."
     },
     "vote_overwrite_disabled": "Disattivata",
     "vote_overwrite_enabled": "Attivata, fino a {{votes}} sovrascritture del voto per votante",
     "voting_process": {
       "card": {
+        "abstain": "Astensione",
         "item": "Totale voti",
         "option": "Opzione",
         "outcome_label": "Metodo di voto",
         "participation_short": "{{votes}} voti",
         "results": "Risultati:",
-        "share": "Quota",
-        "votes": "Voti"
+        "share_cast_power": "Quota del potere espresso",
+        "share_eligible_power": "Quota del potere eleggibile",
+        "share_votes": "Quota dei voti",
+        "submitted_ballots_short": "{{ballots}} schede",
+        "votes": "Voti",
+        "voting_power": "Potere di voto",
+        "voting_power_short": "{{power}} di potere di voto",
+        "voting_power_used": "Potere di voto utilizzato",
+        "weighted_method": "{{base}} con voto ponderato"
       },
       "intro_one": "Il processo di voto {{process_name}} è consistito in 1 domanda.",
       "intro_many": "",
-      "intro_other": "Il processo di voto {{process_name}} è consistito in {{count}} domande."
+      "intro_other": "Il processo di voto {{process_name}} è consistito in {{count}} domande.",
+      "results_hidden": "I risultati sono nascosti finché il processo non raggiunge la fase dei risultati finali."
     },
     "voting_system": {
       "bullet_1": "Un registro pubblico della configurazione del processo di voto",

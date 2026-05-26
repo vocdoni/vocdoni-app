@@ -7,6 +7,7 @@ export type CensusMeta = {
   type: CensusType
   fields?: string[]
   salt?: string
+  weighted?: boolean
 }
 
 export enum CensusTypes {

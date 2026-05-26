@@ -1,11 +1,12 @@
 import { Button, HStack, Icon, Link, Menu, Spinner, Text } from '@chakra-ui/react'
 import * as ReactPDF from '@react-pdf/renderer'
-import { useClient, useOrganization } from '@vocdoni/react-components'
+import { useClient, useElection, useOrganization } from '@vocdoni/react-components'
 import {
   CensusType,
   dotobject,
   ElectionResultsTypeNames,
   ElectionStatus,
+  formatUnits,
   InvalidElection,
   PublishedElection,
 } from '@vocdoni/sdk'
@@ -39,6 +40,22 @@ type VotingReportPdfProps = {
   election?: ElectionLike | null
 }
 
+type ReportCensusType = 'csp' | 'spreadsheet' | 'web3' | 'weighted' | 'anonymous' | 'unknown'
+
+type CensusMetadata = {
+  type?: string
+  fields?: string[]
+  salt?: string
+  weighted?: boolean
+}
+
+type ElectionReportContext = {
+  election: PublishedElection
+  isWeighted?: boolean
+  participation?: number
+  turnout?: number
+}
+
 type CensusBundleData = {
   census: {
     published?: {
@@ -48,6 +65,7 @@ type CensusBundleData = {
     authFields?: string[]
     twoFaFields?: string[]
     type?: string
+    weighted?: boolean
   }
 }
 
@@ -63,6 +81,10 @@ type CertificateChoice = {
   votes: string
   percentage: string
   numericVotes: number | null
+  votingPower?: string
+  castPowerPercentage?: string
+  eligiblePowerPercentage?: string
+  ballotCount?: string
 }
 
 type CertificateQuestion = {
@@ -70,6 +92,11 @@ type CertificateQuestion = {
   choices: CertificateChoice[]
   totalVotes: string
   votingMethod: string
+  countingBasisLabel: string
+  submittedBallots: string
+  votingPowerUsed: string
+  eligibleVotingPower: string
+  isWeighted: boolean
 }
 
 type CertificateData = {
@@ -86,9 +113,14 @@ type CertificateData = {
   authentication: CertificateField[]
   votingSystemParagraphs: string[]
   votingSystemBullets: string[]
-  turnout: CertificateField[]
+  censusParticipation: CertificateField[]
+  censusParticipationLead: string
   votingProcessIntro: string
   votingProcessQuestions: CertificateQuestion[]
+  isWeighted: boolean
+  resultValueLabel: string
+  questionTotalLabel: string
+  resultsHiddenText?: string
   verification: CertificateField[]
   verificationProcedures: string[]
   issuer: CertificateField[]
@@ -359,10 +391,14 @@ const styles = StyleSheet.create({
   },
   questionSummaryRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     marginBottom: 8,
   },
   questionSummaryPill: {
+    flexGrow: 1,
+    flexBasis: '30%',
+    minWidth: 0,
     paddingVertical: 4.5,
     paddingHorizontal: 7,
     backgroundColor: '#f3f6fa',
@@ -455,6 +491,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.45,
   },
+  resultHeaderOptionWeighted: {
+    width: '40%',
+  },
   resultHeaderVotes: {
     width: '13%',
     fontSize: 7.25,
@@ -464,8 +503,23 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.45,
   },
+  resultHeaderVotesWeighted: {
+    width: '16%',
+  },
   resultHeaderShare: {
     width: '17%',
+    fontSize: 7.25,
+    fontWeight: 700,
+    textAlign: 'right',
+    color: '#697386',
+    textTransform: 'uppercase',
+    letterSpacing: 0.45,
+  },
+  resultHeaderShareWeighted: {
+    width: '18%',
+  },
+  resultHeaderEligibleShare: {
+    width: '20%',
     fontSize: 7.25,
     fontWeight: 700,
     textAlign: 'right',
@@ -484,11 +538,23 @@ const styles = StyleSheet.create({
   resultOptionCell: {
     width: '64%',
   },
+  resultOptionCellWeighted: {
+    width: '40%',
+  },
   resultValueCell: {
     width: '13%',
   },
+  resultValueCellWeighted: {
+    width: '16%',
+  },
   resultShareCell: {
     width: '17%',
+  },
+  resultShareCellWeighted: {
+    width: '18%',
+  },
+  resultEligibleShareCell: {
+    width: '20%',
   },
   resultChoiceName: {
     fontSize: 8.7,
@@ -570,6 +636,9 @@ const sanitizeFileName = (value: string) =>
 
 const notAvailable = (t: TFunction) => t('process_pdf.not_available', { defaultValue: 'Not available' })
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+
 const isLongDenseValue = (value: string) => value.length >= 40 && !/\s/.test(value)
 
 const shouldStackFieldValue = (value: string) => /^https?:\/\//i.test(value) || isLongDenseValue(value)
@@ -609,20 +678,112 @@ const getIdentityFieldLabel = (field: string, t: TFunction) => {
   }
 }
 
-const humanizeCensusType = (t: TFunction, censusType?: string | null) => {
-  switch (censusType) {
-    case CensusType.CSP:
-      return t('process_pdf.census_type.csp', { defaultValue: 'Authentication using voters credentials' })
+const getNestedRecord = (source: unknown, path: string[]) => {
+  const value = path.reduce<unknown>((current, key) => (isRecord(current) ? current[key] : undefined), source)
+  return isRecord(value) ? value : undefined
+}
+
+const normalizeCensusMetadata = (value?: Record<string, unknown>): CensusMetadata | undefined => {
+  if (!value) return undefined
+
+  const rawFields = value.fields
+  const hasFields = Array.isArray(rawFields)
+  const fields = hasFields ? rawFields.filter((field): field is string => typeof field === 'string') : undefined
+  const type = typeof value.type === 'string' ? value.type : undefined
+  const salt = typeof value.salt === 'string' ? value.salt : undefined
+  const weighted = typeof value.weighted === 'boolean' ? value.weighted : undefined
+
+  if (!type && !hasFields && !salt && typeof weighted === 'undefined') return undefined
+
+  return { type, fields, salt, weighted }
+}
+
+const resolveCensusMetadata = (election: PublishedElection): CensusMetadata | undefined => {
+  const wrappedMetadata = normalizeCensusMetadata(getNestedRecord(election, ['metadata', 'meta', 'census']))
+  const normalizedMetadata = normalizeCensusMetadata(
+    dotobject(election.meta || {}, 'census') as Record<string, unknown>
+  )
+
+  if (!wrappedMetadata) return normalizedMetadata
+  if (!normalizedMetadata) return wrappedMetadata
+
+  return {
+    type: wrappedMetadata.type ?? normalizedMetadata.type,
+    fields: typeof wrappedMetadata.fields === 'undefined' ? normalizedMetadata.fields : wrappedMetadata.fields,
+    salt: wrappedMetadata.salt ?? normalizedMetadata.salt,
+    weighted:
+      typeof wrappedMetadata.weighted === 'undefined' ? normalizedMetadata.weighted : wrappedMetadata.weighted,
+  }
+}
+
+const normalizeReportCensusType = (value?: string | null): ReportCensusType => {
+  switch (value) {
+    case 'csp':
+      return 'csp'
+    case 'spreadsheet':
+      return 'spreadsheet'
+    case 'web3':
+      return 'web3'
     case CensusType.WEIGHTED:
-      return t('process_pdf.census_type.weighted', {
-        defaultValue: 'Census directly provided by the organization using a spreadsheet or Web3 wallets',
-      })
+      return 'weighted'
     case CensusType.ANONYMOUS:
+      return 'anonymous'
+    default:
+      return 'unknown'
+  }
+}
+
+const resolveReportCensusType = (election: PublishedElection, censusMeta?: CensusMetadata): ReportCensusType => {
+  if (censusMeta?.type) return normalizeReportCensusType(censusMeta.type)
+
+  return normalizeReportCensusType(election.census?.type)
+}
+
+const isCspReportCensus = (censusType: ReportCensusType) => censusType === 'csp'
+
+const humanizeCensusType = (t: TFunction, censusType?: ReportCensusType | null) => {
+  switch (censusType) {
+    case 'csp':
+      return t('process_pdf.census_type.csp', { defaultValue: 'Memberbase credentials census' })
+    case 'spreadsheet':
+      return t('process_pdf.census_type.spreadsheet', {
+        defaultValue: 'Spreadsheet census provided by the organization',
+      })
+    case 'web3':
+      return t('process_pdf.census_type.web3', {
+        defaultValue: 'Web3 wallet census provided by the organization',
+      })
+    case 'weighted':
+      return t('process_pdf.census_type.weighted', {
+        defaultValue: 'Organization-provided weighted census',
+      })
+    case 'anonymous':
       return t('process_pdf.census_type.anonymous', {
-        defaultValue: 'Authentication using voters credentials with enhanced voter anonymity',
+        defaultValue: 'Anonymous organization-provided census',
       })
     default:
       return t('process_pdf.census_type.unknown', { defaultValue: 'Not available' })
+  }
+}
+
+const getVoterAccessSourceDescription = (t: TFunction, censusType: ReportCensusType, fallback: string) => {
+  switch (censusType) {
+    case 'spreadsheet':
+      return t('process_pdf.authentication.voter_access_source_spreadsheet', {
+        defaultValue:
+          'Voters access with credentials derived from the spreadsheet census uploaded by the organization.',
+      })
+    case 'web3':
+      return t('process_pdf.authentication.voter_access_source_web3', {
+        defaultValue: 'Voters access with the wallet address included in the Web3 census.',
+      })
+    case 'weighted':
+    case 'anonymous':
+      return t('process_pdf.authentication.voter_access_source_weighted', {
+        defaultValue: 'Eligibility is checked against the organization-provided weighted census for this process.',
+      })
+    default:
+      return fallback
   }
 }
 
@@ -631,46 +792,200 @@ const formatMaybeString = (value?: string | number | null, fallback?: string) =>
   return String(value)
 }
 
-const getQuestionVotes = (election: PublishedElection, questionIndex: number) => {
-  const results = election.results?.[questionIndex] ?? []
-  const numericVotes = results
-    .map((vote) => Number(vote))
-    .filter((vote) => Number.isFinite(vote))
-    .reduce((acc, vote) => acc + vote, 0)
+const getNumericValue = (value: unknown) => {
+  if (typeof value === 'bigint') return Number(value)
 
-  return Number.isFinite(numericVotes) && numericVotes > 0 ? numericVotes : (election.voteCount ?? 0)
+  const numericValue = Number(value)
+  return Number.isFinite(numericValue) ? numericValue : null
 }
 
-const getQuestionChoices = (election: PublishedElection, questionIndex: number, notAvailableLabel: string) => {
-  const question = election.questions[questionIndex]
-  const votesForQuestion = getQuestionVotes(election, questionIndex)
-  const counts = election.results?.[questionIndex] ?? []
+const formatResultAmount = (value: unknown, decimals: number) => {
+  const numericValue = getNumericValue(value)
+  if (numericValue === null) return null
 
-  const choices = question.choices.map((choice, choiceIndex) => {
-    const rawVotes = counts[choiceIndex] ?? choice.results ?? choice.answer
-    const numericVotes = Number(rawVotes)
+  if (!decimals) return numericValue
+
+  try {
+    const formattedValue = Number(formatUnits(BigInt(numericValue), decimals))
+    return Number.isFinite(formattedValue) ? formattedValue : numericValue
+  } catch {
+    return numericValue
+  }
+}
+
+const formatNumber = (value: unknown, fallback: string, decimals = 0) => {
+  const numericValue = formatResultAmount(value, decimals)
+  if (numericValue === null) return fallback
+
+  return String(numericValue)
+}
+
+const getCensusSize = (election: PublishedElection) => Number(election.census?.size ?? election.maxCensusSize ?? 0)
+
+const getElectionWeight = (election: PublishedElection) =>
+  getNumericValue((election.census as unknown as Record<string, unknown> | undefined)?.weight)
+
+const getFallbackIsWeighted = (election: PublishedElection) => {
+  const weight = getElectionWeight(election)
+  const size = getCensusSize(election)
+
+  return weight !== null && Number.isFinite(size) && weight !== size
+}
+
+const resolveReportIsWeighted = (
+  report: ElectionReportContext,
+  censusMeta?: CensusMetadata,
+  censusBundle?: CensusBundleData | null
+) => {
+  if (report.isWeighted === true) return true
+  if (censusMeta?.weighted === true) return true
+  if (censusBundle?.census.weighted === true) return true
+
+  return getFallbackIsWeighted(report.election)
+}
+
+const calculatePercentage = (numerator: number, denominator: number) =>
+  denominator > 0 ? Math.round((numerator / denominator) * 10000) / 100 : 0
+
+const formatPercentage = (numerator: number, denominator: number) =>
+  denominator > 0 ? `${((numerator / denominator) * 100).toFixed(1)}%` : '0.0%'
+
+const formatPercentageValue = (value: number) => `${value.toFixed(2)}%`
+
+const getFallbackParticipation = (election: PublishedElection) =>
+  calculatePercentage(Number(election.voteCount ?? 0), getCensusSize(election))
+
+const getQuestionChoiceRawResult = (election: PublishedElection, questionIndex: number, choiceIndex: number) => {
+  const question = election.questions[questionIndex]
+  const choice = question?.choices[choiceIndex]
+
+  return choice?.results ?? election.results?.[questionIndex]?.[choiceIndex] ?? 0
+}
+
+const shouldIncludeAbstainChoice = (election: PublishedElection) =>
+  election.resultsType?.name === ElectionResultsTypeNames.MULTIPLE_CHOICE &&
+  Boolean((election.resultsType.properties as { canAbstain?: boolean } | undefined)?.canAbstain)
+
+const getQuestionRawResults = (election: PublishedElection, questionIndex: number) => {
+  const question = election.questions[questionIndex]
+  if (!question) return []
+
+  const results = question.choices.map((choice, choiceIndex) => ({
+    title: choice.title.default,
+    result: getQuestionChoiceRawResult(election, questionIndex, choiceIndex),
+  }))
+
+  if (shouldIncludeAbstainChoice(election)) {
+    results.push({
+      title: 'abstain',
+      result: 'numAbstains' in question ? question.numAbstains : 0,
+    })
+  }
+
+  return results
+}
+
+const getQuestionRawTotal = (election: PublishedElection, questionIndex: number) =>
+  getQuestionRawResults(election, questionIndex)
+    .map(({ result }) => getNumericValue(result) ?? 0)
+    .reduce((acc, vote) => acc + vote, 0)
+
+const getQuestionResultsTotal = (election: PublishedElection, questionIndex: number, decimals: number) =>
+  formatResultAmount(getQuestionRawTotal(election, questionIndex), decimals) ?? 0
+
+const getQuestionResultTotals = (election: PublishedElection, decimals: number) =>
+  election.questions.map((_, questionIndex) => getQuestionResultsTotal(election, questionIndex, decimals))
+
+const formatNumberRange = (values: number[], fallback: string) => {
+  const numericValues = values.filter((value) => Number.isFinite(value))
+  if (!numericValues.length) return fallback
+
+  const min = Math.min(...numericValues)
+  const max = Math.max(...numericValues)
+  return min === max ? String(min) : `${min} - ${max}`
+}
+
+const formatPercentageRange = (values: number[], fallback: string) => {
+  const numericValues = values.filter((value) => Number.isFinite(value))
+  if (!numericValues.length) return fallback
+
+  const min = Math.min(...numericValues)
+  const max = Math.max(...numericValues)
+  return min === max ? formatPercentageValue(min) : `${formatPercentageValue(min)} - ${formatPercentageValue(max)}`
+}
+
+const getTotalEligibleVotingPower = (election: PublishedElection, decimals: number) =>
+  formatResultAmount((election.census as unknown as Record<string, unknown> | undefined)?.weight, decimals)
+
+const getQuestionChoices = (
+  election: PublishedElection,
+  questionIndex: number,
+  notAvailableLabel: string,
+  decimals: number,
+  abstainLabel: string,
+  isWeighted: boolean,
+  totalEligibleVotingPower: number | null
+) => {
+  const question = election.questions[questionIndex]
+  const totalForQuestion = getQuestionResultsTotal(election, questionIndex, decimals)
+
+  const choiceResults = question.choices.map((choice, choiceIndex) => ({
+    name: choice.title.default,
+    rawVotes: getQuestionChoiceRawResult(election, questionIndex, choiceIndex),
+  }))
+
+  if (shouldIncludeAbstainChoice(election)) {
+    choiceResults.push({
+      name: abstainLabel,
+      rawVotes: 'numAbstains' in question ? question.numAbstains : 0,
+    })
+  }
+
+  const choices = choiceResults.map(({ name, rawVotes }) => {
+    const numericVotes = formatResultAmount(rawVotes, decimals)
     const hasNumericVotes = Number.isFinite(numericVotes)
-    const votes = hasNumericVotes ? String(numericVotes) : formatMaybeString(rawVotes, notAvailableLabel)
+    const votes = hasNumericVotes
+      ? String(numericVotes)
+      : formatMaybeString(rawVotes as string | number | null, notAvailableLabel)
     const percentage =
-      hasNumericVotes && votesForQuestion > 0
-        ? `${((numericVotes / votesForQuestion) * 100).toFixed(2)}%`
+      hasNumericVotes && totalForQuestion > 0
+        ? formatPercentage(Number(numericVotes), totalForQuestion)
         : notAvailableLabel
+    const eligiblePowerPercentage =
+      isWeighted && hasNumericVotes && totalEligibleVotingPower
+        ? formatPercentage(Number(numericVotes), totalEligibleVotingPower)
+        : undefined
 
     return {
-      name: choice.title.default,
+      name,
       votes,
       percentage,
-      numericVotes: hasNumericVotes ? numericVotes : null,
+      numericVotes: hasNumericVotes ? Number(numericVotes) : null,
+      ...(isWeighted
+        ? {
+            votingPower: votes,
+            castPowerPercentage: percentage,
+            eligiblePowerPercentage,
+          }
+        : {}),
     }
   })
 
   return choices
 }
 
-const getVotingMethod = (election: PublishedElection, t: TFunction) => {
-  return election.resultsType?.name === ElectionResultsTypeNames.MULTIPLE_CHOICE
-    ? t('process.question_type.multiple', { defaultValue: 'Multiple choice' })
-    : t('process.question_type.single', { defaultValue: 'Single choice' })
+const getVotingMethod = (election: PublishedElection, t: TFunction, isWeighted: boolean) => {
+  const base =
+    election.resultsType?.name === ElectionResultsTypeNames.MULTIPLE_CHOICE
+      ? t('process.question_type.multiple', { defaultValue: 'Multiple choice' })
+      : t('process.question_type.single', { defaultValue: 'Single choice' })
+
+  return isWeighted
+    ? t('process_pdf.voting_process.card.weighted_method', {
+        defaultValue: '{{base}} with weighted voting',
+        base,
+      })
+    : base
 }
 
 const getVoteOverwriteStatus = (election: PublishedElection, t: TFunction) => {
@@ -700,20 +1015,21 @@ const getCensusReference = (election: PublishedElection, censusBundle?: CensusBu
 }
 
 export const buildCertificateData = ({
-  election,
+  report,
   t,
   organizationName,
   explorerUrl,
   censusBundle,
   now,
 }: {
-  election: PublishedElection
+  report: ElectionReportContext
   t: TFunction
   organizationName?: string
   explorerUrl?: string
   censusBundle?: CensusBundleData | null
   now: Date
 }): CertificateData => {
+  const { election } = report
   const notAvailableLabel = notAvailable(t)
   const eventReference = election.title.default?.trim() || election.id
   const issueDate = formatUtcDate(now) ?? notAvailableLabel
@@ -722,10 +1038,10 @@ export const buildCertificateData = ({
   const endDatetime = formatUtcDateTime(election.endDate) ?? notAvailableLabel
   const verificationExplorerLink = explorerUrl ? `${explorerUrl}/process/${election.id}` : notAvailableLabel
   const count = election.voteCount ?? 0
-  const censusMeta = dotobject(election.meta || {}, 'census') as
-    | { type?: string; fields?: string[]; salt?: string }
-    | undefined
-  const censusType = election.census.type
+  const resultDecimals = Number((election.meta as { token?: { decimals?: number } } | undefined)?.token?.decimals ?? 0)
+  const censusMeta = resolveCensusMetadata(election)
+  const censusType = resolveReportCensusType(election, censusMeta)
+  const isWeighted = resolveReportIsWeighted(report, censusMeta, censusBundle)
   const censusFields = censusBundle?.census.authFields ?? censusMeta?.fields ?? []
   const twoFaFields = censusBundle?.census.twoFaFields ?? []
   const authenticationMethod = humanizeCensusType(t, censusType)
@@ -748,9 +1064,63 @@ export const buildCertificateData = ({
   const resultsVisibility = election.electionType?.secretUntilTheEnd
     ? t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })
     : t('results_state.live_results', { defaultValue: 'Live results' })
-  const totalEligibleParticipants = String(election.census?.size ?? election.maxCensusSize ?? 0)
-  const turnoutPercentage =
-    totalEligibleParticipants !== '0' ? ((count / Number(totalEligibleParticipants)) * 100).toFixed(2) : '0.00'
+  const eligibleVoters = getCensusSize(election)
+  const totalEligibleParticipants = String(eligibleVoters)
+  const participationPercentage = (report.participation ?? getFallbackParticipation(election)).toFixed(2)
+  const hasHiddenResults = Boolean(
+    election.electionType?.secretUntilTheEnd && election.status !== ElectionStatus.RESULTS
+  )
+  const hiddenResultFieldValue = t('process_pdf.results.hidden_field', {
+    defaultValue: 'Hidden until final results',
+  })
+  const totalEligibleVotingPowerValue = getTotalEligibleVotingPower(election, resultDecimals)
+  const totalEligibleVotingPower =
+    totalEligibleVotingPowerValue === null ? notAvailableLabel : String(totalEligibleVotingPowerValue)
+  const questionVotingPowerTotals = getQuestionResultTotals(election, resultDecimals)
+  const votingPowerUsed = hasHiddenResults
+    ? hiddenResultFieldValue
+    : formatNumberRange(questionVotingPowerTotals, notAvailableLabel)
+  const weightedParticipationValues =
+    totalEligibleVotingPowerValue === null
+      ? []
+      : questionVotingPowerTotals.map((questionTotal) =>
+          calculatePercentage(questionTotal, totalEligibleVotingPowerValue)
+        )
+  const weightedParticipation = hasHiddenResults
+    ? hiddenResultFieldValue
+    : formatPercentageRange(weightedParticipationValues, notAvailableLabel)
+  const countingBasisLabel = isWeighted
+    ? t('process_pdf.census.counting_basis_weighted', { defaultValue: 'Weighted voting' })
+    : t('process_pdf.census.counting_basis_1p1v', { defaultValue: '1 person, 1 vote' })
+  const resultValueLabel = isWeighted
+    ? t('process_pdf.voting_process.card.voting_power', { defaultValue: 'Voting power' })
+    : t('process_pdf.voting_process.card.votes', { defaultValue: 'Votes' })
+  const questionTotalLabel = isWeighted
+    ? t('process_pdf.voting_process.card.voting_power_used', { defaultValue: 'Voting power used' })
+    : t('process_pdf.voting_process.card.item', { defaultValue: 'Total votes' })
+  const authentication = [
+    {
+      label: t('process_pdf.authentication.method', { defaultValue: 'Authentication method' }),
+      value: authenticationMethod,
+    },
+    ...(isCspReportCensus(censusType)
+      ? [
+          {
+            label: t('process_pdf.authentication.identity_source', { defaultValue: 'Required voter credentials' }),
+            value: identitySource,
+          },
+          {
+            label: t('process_pdf.authentication.two_fa', { defaultValue: 'Additional identity check' }),
+            value: twoFaEnabledDisabled,
+          },
+        ]
+      : [
+          {
+            label: t('process_pdf.authentication.voter_access_source', { defaultValue: 'Voter access source' }),
+            value: getVoterAccessSourceDescription(t, censusType, notAvailableLabel),
+          },
+        ]),
+  ]
 
   return {
     eventReference,
@@ -822,20 +1192,7 @@ export const buildCertificateData = ({
         }),
       },
     ],
-    authentication: [
-      {
-        label: t('process_pdf.authentication.method', { defaultValue: 'Authentication method' }),
-        value: authenticationMethod,
-      },
-      {
-        label: t('process_pdf.authentication.identity_source', { defaultValue: 'Required voter credentials' }),
-        value: identitySource,
-      },
-      {
-        label: t('process_pdf.authentication.two_fa', { defaultValue: 'Additional identity check' }),
-        value: twoFaEnabledDisabled,
-      },
-    ],
+    authentication,
     votingSystemParagraphs: [
       t('process_pdf.voting_system.paragraph_1', {
         defaultValue:
@@ -878,37 +1235,92 @@ export const buildCertificateData = ({
         defaultValue: 'Final results that can be compared with the public verification data',
       }),
     ],
-    turnout: [
+    censusParticipation: [
       {
-        label: t('process_pdf.turnout.eligible', { defaultValue: 'Total number of eligible participants' }),
+        label: t('process_pdf.census.source', { defaultValue: 'Census source' }),
+        value: humanizeCensusType(t, censusType),
+      },
+      {
+        label: t('process_pdf.census.eligible_voters', { defaultValue: 'Eligible voters' }),
         value: totalEligibleParticipants,
       },
       {
-        label: t('process_pdf.turnout.votes_cast', { defaultValue: 'Total number of votes cast' }),
+        label: t('process_pdf.turnout.submitted_ballots', { defaultValue: 'Submitted ballots' }),
         value: String(count),
       },
-      { label: t('process_pdf.turnout.rate', { defaultValue: 'Turnout rate' }), value: `${turnoutPercentage}%` },
+      {
+        label: t('process_pdf.turnout.voter_participation', { defaultValue: 'Voter participation' }),
+        value: `${participationPercentage}%`,
+      },
+      {
+        label: t('process_pdf.census.counting_basis', { defaultValue: 'Counting basis' }),
+        value: countingBasisLabel,
+      },
+      ...(isWeighted
+        ? [
+            {
+              label: t('process_pdf.census.eligible_voting_power', { defaultValue: 'Total eligible voting power' }),
+              value: totalEligibleVotingPower,
+            },
+            {
+              label: t('process_pdf.census.voting_power_used', { defaultValue: 'Voting power used' }),
+              value: votingPowerUsed,
+            },
+            {
+              label: t('process_pdf.census.weighted_participation', { defaultValue: 'Weighted participation' }),
+              value: weightedParticipation,
+            },
+          ]
+        : []),
     ],
+    censusParticipationLead: isWeighted
+      ? t('process_pdf.turnout.weighted_participation', {
+          defaultValue:
+            'Submitted ballots count voters who participated. Weighted result totals count the voting power recorded for each answer.',
+        })
+      : t('process_pdf.turnout.participation', {
+          defaultValue:
+            'The number of votes cast reflects only those participants who effectively submitted a valid ballot during the defined voting period.',
+        }),
     votingProcessIntro: t('process_pdf.voting_process.intro', {
       defaultValue: 'The voting process {{process_name}} consisted of {{count}} questions.',
       count: election.questions.length,
       process_name: eventReference,
     }),
-    votingProcessQuestions: election.questions.map((question, questionIndex) => {
-      const choices = getQuestionChoices(election, questionIndex, notAvailableLabel)
+    votingProcessQuestions: hasHiddenResults
+      ? []
+      : election.questions.map((question, questionIndex) => {
+          const choices = getQuestionChoices(
+            election,
+            questionIndex,
+            notAvailableLabel,
+            resultDecimals,
+            t('process_pdf.voting_process.card.abstain', { defaultValue: 'Abstain' }),
+            isWeighted,
+            totalEligibleVotingPowerValue
+          )
+          const questionTotal = getQuestionResultsTotal(election, questionIndex, resultDecimals)
 
-      return {
-        question: question.title.default || notAvailableLabel,
-        choices: choices.map(({ name, votes, percentage, numericVotes }) => ({
-          name,
-          votes,
-          percentage,
-          numericVotes,
-        })),
-        totalVotes: String(getQuestionVotes(election, questionIndex)),
-        votingMethod: getVotingMethod(election, t),
-      }
-    }),
+          return {
+            question: question.title.default || notAvailableLabel,
+            choices,
+            totalVotes: String(questionTotal),
+            votingMethod: getVotingMethod(election, t, isWeighted),
+            countingBasisLabel,
+            submittedBallots: String(count),
+            votingPowerUsed: String(questionTotal),
+            eligibleVotingPower: totalEligibleVotingPower,
+            isWeighted,
+          }
+        }),
+    isWeighted,
+    resultValueLabel,
+    questionTotalLabel,
+    resultsHiddenText: hasHiddenResults
+      ? t('process_pdf.voting_process.results_hidden', {
+          defaultValue: 'Results are hidden until the process reaches the final results stage.',
+        })
+      : undefined,
     verification: [
       {
         label: t('process_pdf.verification.explorer', { defaultValue: 'View in verification explorer' }),
@@ -927,13 +1339,15 @@ export const buildCertificateData = ({
       }),
       t('process_pdf.verification.step_3', {
         defaultValue:
-          'Check that the eligible voter list reference shown in the explorer matches the reference in this report. This confirms that the eligible voter list linked to the process is the same.',
+          'Check that the census reference shown in the explorer matches the reference in this report. This confirms that the eligible voter list linked to the process is the same.',
       }),
       t('process_pdf.verification.step_4', {
         defaultValue: 'Check that the number of recorded ballots matches the participation data shown in this report.',
       }),
       t('process_pdf.verification.step_5', {
-        defaultValue: 'Compare the final tally in the explorer with the results shown in this report.',
+        defaultValue: isWeighted
+          ? 'Compare the final tally in the explorer with the weighted voting-power results shown in this report.'
+          : 'Compare the final tally in the explorer with the ballot-count results shown in this report.',
       }),
       t('process_pdf.verification.step_6', {
         defaultValue:
@@ -969,7 +1383,7 @@ export const buildCertificateData = ({
       }),
       t('process_pdf.disclaimer.paragraph_2', {
         defaultValue:
-          'The technical service provider assumes no responsibility for the accuracy of input data (e.g., census composition), legal interpretation of results, or compliance with applicable legal or regulatory frameworks.',
+          'The technical service provider assumes no responsibility for organizer-provided input data, including census composition, voter weights, legal interpretation of results, or compliance with applicable legal or regulatory frameworks.',
       }),
       t('process_pdf.disclaimer.paragraph_3', {
         defaultValue:
@@ -988,6 +1402,31 @@ const fetchCensusBundle = async (censusURI?: string | null) => {
     return (await response.json()) as CensusBundleData
   } catch {
     return null
+  }
+}
+
+const useOptionalElectionContext = () => {
+  try {
+    return useElection()
+  } catch {
+    return null
+  }
+}
+
+const getReportContext = (
+  electionContext: ReturnType<typeof useOptionalElectionContext>,
+  fallbackElection?: ElectionLike | null
+): ElectionReportContext | null => {
+  const contextElection = electionContext?.election instanceof PublishedElection ? electionContext.election : undefined
+  const election = contextElection ?? (fallbackElection instanceof PublishedElection ? fallbackElection : undefined)
+
+  if (!election) return null
+
+  return {
+    election,
+    isWeighted: contextElection ? electionContext?.isWeighted : undefined,
+    participation: contextElection ? electionContext?.participation : undefined,
+    turnout: contextElection ? electionContext?.turnout : undefined,
   }
 }
 
@@ -1052,27 +1491,27 @@ const NumberedList = ({ items }: { items: string[] }) => (
 
 const buildReportSections = (t: TFunction): ReportSection[] => [
   {
-    title: t('process_pdf.document.sections.general_information', { defaultValue: '1. General Information' }),
+    title: t('process_pdf.document.sections.voting_system', { defaultValue: '1. Technical Framework' }),
     href: '#report-page-3',
     page: '1',
   },
   {
-    title: t('process_pdf.document.sections.authentication', { defaultValue: '2. Authentication' }),
+    title: t('process_pdf.document.sections.general_information', { defaultValue: '2. General Information' }),
     href: '#report-page-3',
     page: '1',
   },
   {
-    title: t('process_pdf.document.sections.voting_system', { defaultValue: '3. Voting System' }),
+    title: t('process_pdf.document.sections.authentication', { defaultValue: '3. Authentication' }),
     href: '#report-page-3',
     page: '1',
   },
   {
-    title: t('process_pdf.document.sections.turnout_participation', { defaultValue: '4. Turnout and Participation' }),
+    title: t('process_pdf.document.sections.turnout_participation', { defaultValue: '4. Census and Participation' }),
     href: '#report-page-3',
     page: '1',
   },
   {
-    title: t('process_pdf.document.sections.voting_process', { defaultValue: '5. Voting Process' }),
+    title: t('process_pdf.document.sections.voting_process', { defaultValue: '5. Questions and Results' }),
     href: '#report-page-4',
     page: '2',
   },
@@ -1112,20 +1551,37 @@ const getResultBarWidth = (choice: CertificateChoice) => {
   return `${Math.max(percentage, 2)}%`
 }
 
-const ResultBarRow = ({ choice }: { choice: CertificateChoice }) => (
+const ResultBarRow = ({
+  choice,
+  isWeighted,
+  notAvailableLabel,
+}: {
+  choice: CertificateChoice
+  isWeighted: boolean
+  notAvailableLabel: string
+}) => (
   <View wrap={false} style={styles.resultRow}>
-    <View style={styles.resultOptionCell}>
+    <View style={[styles.resultOptionCell, isWeighted ? styles.resultOptionCellWeighted : {}]}>
       <PdfText style={styles.resultChoiceName}>{choice.name}</PdfText>
       <View style={styles.resultBarTrack}>
         <View style={[styles.resultBarFill, { width: getResultBarWidth(choice) }]} />
       </View>
     </View>
-    <View style={styles.resultValueCell}>
-      <PdfText style={styles.resultValueText}>{choice.votes}</PdfText>
+    <View style={[styles.resultValueCell, isWeighted ? styles.resultValueCellWeighted : {}]}>
+      <PdfText style={styles.resultValueText}>
+        {isWeighted ? (choice.votingPower ?? choice.votes) : choice.votes}
+      </PdfText>
     </View>
-    <View style={styles.resultShareCell}>
-      <PdfText style={styles.resultShareText}>{choice.percentage}</PdfText>
+    <View style={[styles.resultShareCell, isWeighted ? styles.resultShareCellWeighted : {}]}>
+      <PdfText style={styles.resultShareText}>
+        {isWeighted ? (choice.castPowerPercentage ?? choice.percentage) : choice.percentage}
+      </PdfText>
     </View>
+    {isWeighted && (
+      <View style={styles.resultEligibleShareCell}>
+        <PdfText style={styles.resultShareText}>{choice.eligiblePowerPercentage ?? notAvailableLabel}</PdfText>
+      </View>
+    )}
   </View>
 )
 
@@ -1148,6 +1604,13 @@ const RunningHeader = () => (
 const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
   const reportSections = buildReportSections(t)
   const pageNumberLabel = t('process_pdf.document.page_number', { defaultValue: 'Page' })
+  const formatVotingPowerShort = (power: string) =>
+    power === data.notAvailableLabel
+      ? data.notAvailableLabel
+      : t('process_pdf.voting_process.card.voting_power_short', {
+          defaultValue: '{{power}} voting power',
+          power,
+        })
 
   return (
     <Document>
@@ -1221,7 +1684,9 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         size='A4'
         style={styles.page}
         id='report-page-3'
-        bookmark={t('process_pdf.document.bookmarks.general_information', { defaultValue: 'General Information' })}
+        bookmark={t('process_pdf.document.bookmarks.general_information', {
+          defaultValue: 'Technical Framework and General Information',
+        })}
       >
         <RunningHeader />
         <PageFooterLine />
@@ -1229,21 +1694,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
 
         <ReportSectionBlock>
           <SectionTitle>
-            {t('process_pdf.document.sections.general_information', { defaultValue: '1. General Information' })}
-          </SectionTitle>
-          <KeyValueList items={data.generalInformation} />
-        </ReportSectionBlock>
-
-        <ReportSectionBlock>
-          <SectionTitle>
-            {t('process_pdf.document.sections.authentication', { defaultValue: '2. Authentication' })}
-          </SectionTitle>
-          <KeyValueList items={data.authentication} />
-        </ReportSectionBlock>
-
-        <ReportSectionBlock>
-          <SectionTitle>
-            {t('process_pdf.document.sections.voting_system', { defaultValue: '3. Voting System' })}
+            {t('process_pdf.document.sections.voting_system', { defaultValue: '1. Technical Framework' })}
           </SectionTitle>
           <Paragraphs items={data.votingSystemParagraphs} />
           <BulletList items={data.votingSystemBullets} />
@@ -1258,15 +1709,24 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
 
         <ReportSectionBlock>
           <SectionTitle>
-            {t('process_pdf.document.sections.turnout_participation', { defaultValue: '4. Turnout and Participation' })}
+            {t('process_pdf.document.sections.general_information', { defaultValue: '2. General Information' })}
           </SectionTitle>
-          <KeyValueList items={data.turnout} />
-          <PdfText style={styles.sectionLead}>
-            {t('process_pdf.turnout.participation', {
-              defaultValue:
-                'The number of votes cast reflects only those participants who effectively submitted a valid ballot during the defined voting period.',
-            })}
-          </PdfText>
+          <KeyValueList items={data.generalInformation} />
+        </ReportSectionBlock>
+
+        <ReportSectionBlock>
+          <SectionTitle>
+            {t('process_pdf.document.sections.authentication', { defaultValue: '3. Authentication' })}
+          </SectionTitle>
+          <KeyValueList items={data.authentication} />
+        </ReportSectionBlock>
+
+        <ReportSectionBlock>
+          <SectionTitle>
+            {t('process_pdf.document.sections.turnout_participation', { defaultValue: '4. Census and Participation' })}
+          </SectionTitle>
+          <KeyValueList items={data.censusParticipation} />
+          <PdfText style={styles.sectionLead}>{data.censusParticipationLead}</PdfText>
         </ReportSectionBlock>
       </Page>
 
@@ -1274,7 +1734,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         size='A4'
         style={styles.page}
         id='report-page-4'
-        bookmark={t('process_pdf.document.bookmarks.voting_process', { defaultValue: 'Voting Process' })}
+        bookmark={t('process_pdf.document.bookmarks.voting_process', { defaultValue: 'Questions and Results' })}
       >
         <RunningHeader />
         <PageFooterLine />
@@ -1282,64 +1742,131 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
 
         <ReportSectionBlock>
           <SectionTitle>
-            {t('process_pdf.document.sections.voting_process', { defaultValue: '5. Voting Process' })}
+            {t('process_pdf.document.sections.voting_process', { defaultValue: '5. Questions and Results' })}
           </SectionTitle>
           <PdfText style={styles.paragraph}>
             {data.votingProcessIntro.split(data.eventReference)[0]}
             <PdfText style={styles.italicText}>{data.eventReference}</PdfText>
             {data.votingProcessIntro.split(data.eventReference)[1]}
           </PdfText>
-          {data.votingProcessQuestions.length > 0 ? (
-            data.votingProcessQuestions.map((question, index) => (
-              <View key={`${question.question}-${index}`} wrap={false} style={styles.questionCard}>
-                <PdfText style={styles.questionTitle}>{question.question}</PdfText>
-                <View style={styles.questionSummaryRow}>
-                  <View style={[styles.questionSummaryPill, styles.questionSummaryVotesPill]}>
-                    <PdfText style={styles.questionSummaryLabel}>
-                      {t('process_pdf.voting_process.card.item', {
-                        defaultValue: 'Total votes',
-                        index: index + 1,
-                      })}
-                    </PdfText>
-                    <PdfText style={styles.questionSummaryValue}>
-                      {t('process_pdf.voting_process.card.participation_short', {
+          {data.resultsHiddenText ? (
+            <PdfText style={styles.smallText}>{data.resultsHiddenText}</PdfText>
+          ) : data.votingProcessQuestions.length > 0 ? (
+            data.votingProcessQuestions.map((question, index) => {
+              const summaryFields = question.isWeighted
+                ? [
+                    {
+                      label: data.questionTotalLabel,
+                      value: formatVotingPowerShort(question.votingPowerUsed),
+                    },
+                    {
+                      label: t('process_pdf.voting_process.card.outcome_label', { defaultValue: 'Voting method' }),
+                      value: question.votingMethod,
+                    },
+                    {
+                      label: t('process_pdf.census.counting_basis', { defaultValue: 'Counting basis' }),
+                      value: question.countingBasisLabel,
+                    },
+                    {
+                      label: t('process_pdf.turnout.submitted_ballots', { defaultValue: 'Submitted ballots' }),
+                      value: t('process_pdf.voting_process.card.submitted_ballots_short', {
+                        defaultValue: '{{ballots}} ballots',
+                        ballots: question.submittedBallots,
+                      }),
+                    },
+                    {
+                      label: t('process_pdf.census.eligible_voting_power', {
+                        defaultValue: 'Total eligible voting power',
+                      }),
+                      value: formatVotingPowerShort(question.eligibleVotingPower),
+                    },
+                  ]
+                : [
+                    {
+                      label: data.questionTotalLabel,
+                      value: t('process_pdf.voting_process.card.participation_short', {
                         defaultValue: '{{votes}} votes',
                         votes: question.totalVotes,
-                      })}
-                    </PdfText>
-                  </View>
-                  <View style={[styles.questionSummaryPill, styles.questionSummaryOutcomePill]}>
-                    <PdfText style={styles.questionSummaryLabel}>
-                      {t('process_pdf.voting_process.card.outcome_label', { defaultValue: 'Voting method' })}
-                    </PdfText>
-                    <PdfText style={styles.questionSummaryValue}>{question.votingMethod}</PdfText>
-                  </View>
-                </View>
-                <PdfText style={styles.questionResultsLabel}>
-                  {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
-                </PdfText>
-                {question.choices.length > 0 ? (
-                  <View style={styles.resultTable}>
-                    <View style={styles.resultHeaderRow}>
-                      <PdfText style={styles.resultHeaderOption}>
-                        {t('process_pdf.voting_process.card.option', { defaultValue: 'Option' })}
-                      </PdfText>
-                      <PdfText style={styles.resultHeaderVotes}>
-                        {t('process_pdf.voting_process.card.votes', { defaultValue: 'Votes' })}
-                      </PdfText>
-                      <PdfText style={styles.resultHeaderShare}>
-                        {t('process_pdf.voting_process.card.share', { defaultValue: 'Share' })}
-                      </PdfText>
-                    </View>
-                    {question.choices.map((choice) => (
-                      <ResultBarRow key={`${choice.name}-${choice.votes}-result`} choice={choice} />
+                      }),
+                    },
+                    {
+                      label: t('process_pdf.voting_process.card.outcome_label', { defaultValue: 'Voting method' }),
+                      value: question.votingMethod,
+                    },
+                    {
+                      label: t('process_pdf.census.counting_basis', { defaultValue: 'Counting basis' }),
+                      value: question.countingBasisLabel,
+                    },
+                  ]
+
+              return (
+                <View key={`${question.question}-${index}`} wrap={false} style={styles.questionCard}>
+                  <PdfText style={styles.questionTitle}>{question.question}</PdfText>
+                  <View style={styles.questionSummaryRow}>
+                    {summaryFields.map((field) => (
+                      <View key={`${question.question}-${field.label}`} style={styles.questionSummaryPill}>
+                        <PdfText style={styles.questionSummaryLabel}>{field.label}</PdfText>
+                        <PdfText style={styles.questionSummaryValue}>{field.value}</PdfText>
+                      </View>
                     ))}
                   </View>
-                ) : (
-                  <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
-                )}
-              </View>
-            ))
+                  <PdfText style={styles.questionResultsLabel}>
+                    {t('process_pdf.voting_process.card.results', { defaultValue: 'Results:' })}
+                  </PdfText>
+                  {question.choices.length > 0 ? (
+                    <View style={styles.resultTable}>
+                      <View style={styles.resultHeaderRow}>
+                        <PdfText
+                          style={[
+                            styles.resultHeaderOption,
+                            question.isWeighted ? styles.resultHeaderOptionWeighted : {},
+                          ]}
+                        >
+                          {t('process_pdf.voting_process.card.option', { defaultValue: 'Option' })}
+                        </PdfText>
+                        <PdfText
+                          style={[
+                            styles.resultHeaderVotes,
+                            question.isWeighted ? styles.resultHeaderVotesWeighted : {},
+                          ]}
+                        >
+                          {data.resultValueLabel}
+                        </PdfText>
+                        <PdfText
+                          style={[
+                            styles.resultHeaderShare,
+                            question.isWeighted ? styles.resultHeaderShareWeighted : {},
+                          ]}
+                        >
+                          {question.isWeighted
+                            ? t('process_pdf.voting_process.card.share_cast_power', {
+                                defaultValue: 'Share of cast power',
+                              })
+                            : t('process_pdf.voting_process.card.share_votes', { defaultValue: 'Share of votes' })}
+                        </PdfText>
+                        {question.isWeighted && (
+                          <PdfText style={styles.resultHeaderEligibleShare}>
+                            {t('process_pdf.voting_process.card.share_eligible_power', {
+                              defaultValue: 'Share of eligible power',
+                            })}
+                          </PdfText>
+                        )}
+                      </View>
+                      {question.choices.map((choice) => (
+                        <ResultBarRow
+                          key={`${choice.name}-${choice.votes}-result`}
+                          choice={choice}
+                          isWeighted={question.isWeighted}
+                          notAvailableLabel={data.notAvailableLabel}
+                        />
+                      ))}
+                    </View>
+                  ) : (
+                    <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
+                  )}
+                </View>
+              )
+            })
           ) : (
             <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
           )}
@@ -1395,7 +1922,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
           <PdfText style={styles.footerParagraph}>
             {t('process_pdf.disclaimer.paragraph_2', {
               defaultValue:
-                'The technical service provider assumes no responsibility for the accuracy of input data, the legal interpretation of results, or compliance with applicable legal or regulatory frameworks.',
+                'The technical service provider assumes no responsibility for organizer-provided input data, including census composition, voter weights, legal interpretation of results, or compliance with applicable legal or regulatory frameworks.',
             })}
           </PdfText>
           <PdfText style={styles.footerParagraph}>
@@ -1415,17 +1942,21 @@ const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
   const toast = useToast()
   const { client } = useClient()
   const { organization } = useOrganization()
+  const electionContext = useOptionalElectionContext()
+  const report = getReportContext(electionContext, election)
   const [isGenerating, setIsGenerating] = useState(false)
 
   const download = async () => {
-    if (!(election instanceof PublishedElection) || isGenerating) return
+    if (!report || isGenerating) return
 
     setIsGenerating(true)
     try {
-      const censusBundle =
-        election.census.type === CensusType.CSP ? await fetchCensusBundle(election.census.censusURI) : null
+      const { election } = report
+      const censusMeta = resolveCensusMetadata(election)
+      const censusType = resolveReportCensusType(election, censusMeta)
+      const censusBundle = isCspReportCensus(censusType) ? await fetchCensusBundle(election.census.censusURI) : null
       const data = buildCertificateData({
-        election,
+        report,
         t,
         organizationName: organization?.account?.name?.default,
         explorerUrl: client?.explorerUrl,
@@ -1454,14 +1985,14 @@ const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
     }
   }
 
-  return { download, isGenerating }
+  return { download, isGenerating, report }
 }
 
 export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
   const { t } = useTranslation()
-  const { download, isGenerating } = useVotingReportPdfDownload(election)
+  const { download, isGenerating, report } = useVotingReportPdfDownload(election)
 
-  if (!canDownloadVotingReport(election)) return null
+  if (!canDownloadVotingReport(report?.election)) return null
 
   return (
     <Button
@@ -1486,9 +2017,9 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
 
 export const VotingReportPdfMenuItem = ({ election }: VotingReportPdfProps) => {
   const { t } = useTranslation()
-  const { download, isGenerating } = useVotingReportPdfDownload(election)
+  const { download, isGenerating, report } = useVotingReportPdfDownload(election)
 
-  if (!canDownloadVotingReport(election)) return null
+  if (!canDownloadVotingReport(report?.election)) return null
 
   return (
     <Menu.Item value='download-pdf' onClick={download} disabled={isGenerating}>

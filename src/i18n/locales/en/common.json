@@ -1363,13 +1363,29 @@
       "method": "Authentication method",
       "two_fa": "Additional identity check",
       "two_fa_disabled": "Disabled: no additional identity check has been configured in this voting process",
-      "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code sent to their personal devices."
+      "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code sent to their personal devices.",
+      "voter_access_source": "Voter access source",
+      "voter_access_source_spreadsheet": "Voters access with credentials derived from the spreadsheet census uploaded by the organization.",
+      "voter_access_source_web3": "Voters access with the wallet address included in the Web3 census.",
+      "voter_access_source_weighted": "Eligibility is checked against the organization-provided weighted census for this process."
+    },
+    "census": {
+      "counting_basis": "Counting basis",
+      "counting_basis_1p1v": "1 person, 1 vote",
+      "counting_basis_weighted": "Weighted voting",
+      "eligible_voters": "Eligible voters",
+      "eligible_voting_power": "Total eligible voting power",
+      "source": "Census source",
+      "voting_power_used": "Voting power used",
+      "weighted_participation": "Weighted participation"
     },
     "census_type": {
-      "anonymous": "Authentication using voters credentials with enhanced voter anonymity",
-      "csp": "Authentication using voters credentials",
+      "anonymous": "Anonymous organization-provided census",
+      "csp": "Memberbase credentials census",
+      "spreadsheet": "Spreadsheet census provided by the organization",
       "unknown": "Not available",
-      "weighted": "Census directly provided by the organization using a spreadsheet or Web3 wallets"
+      "web3": "Web3 wallet census provided by the organization",
+      "weighted": "Organization-provided weighted census"
     },
     "disclaimer": {
       "bullet_1": "It does not constitute legal certification of the voting process.",
@@ -1377,16 +1393,16 @@
       "bullet_3": "All data originates from cryptographic and blockchain-based logs.",
       "bullet_4": "Ballot secrecy and voter anonymity are preserved by design.",
       "paragraph_1": "This document constitutes a technical certification derived from data recorded on the Vocdoni infrastructure.",
-      "paragraph_2": "The technical service provider assumes no responsibility for the accuracy of input data (e.g., census composition), legal interpretation of results, or compliance with applicable legal or regulatory frameworks.",
+      "paragraph_2": "The technical service provider assumes no responsibility for organizer-provided input data, including census composition, voter weights, legal interpretation of results, or compliance with applicable legal or regulatory frameworks.",
       "paragraph_3": "Responsibility for legal interpretation and use of this certification rests solely with the requesting organization.",
       "title": "Disclaimer"
     },
     "document": {
       "bookmarks": {
-        "general_information": "General Information",
+        "general_information": "Technical Framework and General Information",
         "index": "Index",
         "issuer": "Issuer",
-        "voting_process": "Voting Process"
+        "voting_process": "Questions and Results"
       },
       "index": {
         "intro": "This report is organized into the following sections:",
@@ -1396,13 +1412,13 @@
       "page_number": "Page",
       "process_id": "Process ID: {{process_id}}",
       "sections": {
-        "authentication": "2. Authentication",
-        "general_information": "1. General Information",
+        "authentication": "3. Authentication",
+        "general_information": "2. General Information",
         "issuer": "7. Issuer",
-        "turnout_participation": "4. Turnout and Participation",
+        "turnout_participation": "4. Census and Participation",
         "verification": "6. Verification",
-        "voting_process": "5. Voting Process",
-        "voting_system": "3. Voting System"
+        "voting_process": "5. Questions and Results",
+        "voting_system": "1. Technical Framework"
       },
       "title_prefix": "TECHNICAL CERTIFICATION OF THE DIGITAL VOTING PROCESS"
     },
@@ -1431,11 +1447,15 @@
       "provider": "Provider"
     },
     "not_available": "Not available",
+    "results": {
+      "hidden_field": "Hidden until final results"
+    },
     "turnout": {
       "eligible": "Total number of eligible participants",
       "participation": "The number of votes cast reflects only those participants who effectively submitted a valid ballot during the defined voting period.",
-      "rate": "Turnout rate",
-      "votes_cast": "Total number of votes cast"
+      "submitted_ballots": "Submitted ballots",
+      "voter_participation": "Voter participation",
+      "weighted_participation": "Submitted ballots count voters who participated. Weighted result totals count the voting power recorded for each answer."
     },
     "verification": {
       "explorer": "View in verification explorer",
@@ -1443,25 +1463,34 @@
       "procedure_title": "Verification Procedure",
       "step_1": "Open the verification explorer link. This page contains the public technical record of the voting process.",
       "step_2": "Check that the Process ID in the explorer is identical to the Process ID in this report. This confirms that both documents refer to the same voting process.",
-      "step_3": "Check that the eligible voter list reference shown in the explorer matches the reference in this report. This confirms that the eligible voter list linked to the process is the same.",
+      "step_3": "Check that the census reference shown in the explorer matches the reference in this report. This confirms that the eligible voter list linked to the process is the same.",
       "step_4": "Check that the number of recorded ballots matches the participation data shown in this report.",
-      "step_5": "Compare the final tally in the explorer with the results shown in this report.",
+      "step_5": "Compare the final tally in the explorer with the ballot-count or weighted voting-power results shown in this report.",
       "step_6": "For a deeper technical audit, an auditor may inspect the public records in more detail or recompute the tally to confirm that the recorded ballots and final results are consistent."
     },
     "vote_overwrite_disabled": "Disabled",
     "vote_overwrite_enabled": "Enabled, up to {{votes}} vote overwrites per voter",
     "voting_process": {
       "card": {
+        "abstain": "Abstain",
         "item": "Total votes",
         "option": "Option",
         "outcome_label": "Voting method",
         "participation_short": "{{votes}} votes",
         "results": "Results:",
-        "share": "Share",
-        "votes": "Votes"
+        "share_cast_power": "Share of cast power",
+        "share_eligible_power": "Share of eligible power",
+        "share_votes": "Share of votes",
+        "submitted_ballots_short": "{{ballots}} ballots",
+        "votes": "Votes",
+        "voting_power": "Voting power",
+        "voting_power_short": "{{power}} voting power",
+        "voting_power_used": "Voting power used",
+        "weighted_method": "{{base}} with weighted voting"
       },
       "intro_one": "The voting process {{process_name}} consisted of 1 question.",
-      "intro_other": "The voting process {{process_name}} consisted of {{count}} questions."
+      "intro_other": "The voting process {{process_name}} consisted of {{count}} questions.",
+      "results_hidden": "Results are hidden until the process reaches the final results stage."
     },
     "voting_system": {
       "bullet_1": "A public record of the voting process configuration",

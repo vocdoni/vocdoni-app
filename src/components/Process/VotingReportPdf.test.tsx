@@ -1,6 +1,7 @@
-import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
-import type { ReactNode } from 'react'
+import { CensusType, ElectionResultsTypeNames, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { isValidElement, type ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { buildCertificateData, VotingReportPdfButton, VotingReportPdfMenuItem } from './VotingReportPdf'
 
 const pdfToBlob = vi.fn()
@@ -89,6 +90,43 @@ const createElectionWithResults = () =>
     results: [[7, 3]],
   }) as PublishedElection
 
+const createReport = (
+  election: PublishedElection,
+  overrides: Partial<{ isWeighted: boolean; participation: number; turnout: number }> = {}
+) => ({
+  election,
+  isWeighted: false,
+  participation: 42,
+  turnout: 42,
+  ...overrides,
+})
+
+const translate = ((key: string, options?: Record<string, unknown> & { defaultValue?: string }) => {
+  let value = options?.defaultValue ?? key
+
+  Object.entries(options ?? {}).forEach(([name, replacement]) => {
+    value = value.replace(`{{${name}}}`, String(replacement))
+  })
+
+  return value
+}) as never
+
+const collectTextContent = (node: ReactNode): string[] => {
+  if (node === null || typeof node === 'undefined' || typeof node === 'boolean') return []
+  if (typeof node === 'string' || typeof node === 'number') return [String(node)]
+  if (Array.isArray(node)) return node.flatMap((child) => collectTextContent(child))
+  if (!isValidElement<{ children?: ReactNode }>(node)) return []
+
+  const props = node.props
+
+  if (typeof node.type === 'function') {
+    const Component = node.type as (componentProps: typeof props) => ReactNode
+    return collectTextContent(Component(props))
+  }
+
+  return collectTextContent(props.children)
+}
+
 describe('VotingReportPdf', () => {
   beforeEach(() => {
     pdfToBlob.mockReset()
@@ -150,7 +188,7 @@ describe('VotingReportPdf', () => {
     })
 
     const data = buildCertificateData({
-      election,
+      report: createReport(election),
       t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -167,7 +205,7 @@ describe('VotingReportPdf', () => {
 
   it('includes visibility, infrastructure, and public identifiers in general information', () => {
     const data = buildCertificateData({
-      election: createElection(),
+      report: createReport(createElection()),
       explorerUrl: 'https://explorer.example',
       t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
       now: new Date('2026-01-03T10:00:00Z'),
@@ -181,17 +219,25 @@ describe('VotingReportPdf', () => {
     expect(data.generalInformation.find((field) => field.label === 'Census reference')?.helperText).toBe(
       'Public reference that identifies the census used for this voting process. It does not include or reveal voters’ personal data.'
     )
+    expect(data.censusParticipation.find((field) => field.label === 'Census reference')).toBeUndefined()
     expect(data.generalInformation.find((field) => field.label === 'Infrastructure')?.value).toBe('vocdoni/LTS/1.2')
     expect(data.generalInformation.find((field) => field.label === 'Results visibility')?.value).toBe('Live results')
     expect(data.generalInformation.find((field) => field.label === 'Vote overwrite')?.value).toBe('Disabled')
     expect(
       data.generalInformation.find((field) => field.label === 'Total number of eligible participants')?.value
     ).toBe('100')
+    expect(
+      data.censusParticipation.find((field) => field.label === 'Total number of eligible participants')
+    ).toBeUndefined()
+    expect(data.censusParticipation.find((field) => field.label === 'Eligible voters')?.value).toBe('100')
+    expect(data.censusParticipation.find((field) => field.label === 'Submitted ballots')?.value).toBe('42')
+    expect(data.censusParticipation.find((field) => field.label === 'Voter participation')?.value).toBe('42.00%')
+    expect(data.censusParticipation.find((field) => field.label === 'Counting basis')?.value).toBe('1 person, 1 vote')
   })
 
   it('combines the issuer provider and legal entity in the provider field', () => {
     const data = buildCertificateData({
-      election: createElection(),
+      report: createReport(createElection()),
       t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -210,7 +256,7 @@ describe('VotingReportPdf', () => {
     }) as PublishedElection
 
     const data = buildCertificateData({
-      election,
+      report: createReport(election),
       t,
       organizationName: 'Vocdoni',
       explorerUrl: 'https://explorer.vote',
@@ -229,7 +275,7 @@ describe('VotingReportPdf', () => {
         .replace('{{process_name}}', options.process_name ?? '') ?? key) as never
 
     const data = buildCertificateData({
-      election: createElection(),
+      report: createReport(createElection()),
       t,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -239,7 +285,7 @@ describe('VotingReportPdf', () => {
 
   it('preserves result counts and percentages for the executive result table', () => {
     const data = buildCertificateData({
-      election: createElectionWithResults(),
+      report: createReport(createElectionWithResults()),
       t: ((key: string, options?: { defaultValue?: string; count?: number; process_name?: string }) =>
         options?.defaultValue
           ?.replace('{{count}}', String(options.count ?? ''))
@@ -252,8 +298,8 @@ describe('VotingReportPdf', () => {
       totalVotes: '10',
       votingMethod: 'Single choice',
       choices: [
-        { name: 'Approve', votes: '7', percentage: '70.00%', numericVotes: 7 },
-        { name: 'Reject', votes: '3', percentage: '30.00%', numericVotes: 3 },
+        { name: 'Approve', votes: '7', percentage: '70.0%', numericVotes: 7 },
+        { name: 'Reject', votes: '3', percentage: '30.0%', numericVotes: 3 },
       ],
     })
   })
@@ -264,7 +310,7 @@ describe('VotingReportPdf', () => {
     })
 
     const data = buildCertificateData({
-      election: hiddenElection,
+      report: createReport(hiddenElection),
       t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -488,7 +534,7 @@ describe('VotingReportPdf', () => {
       : [firstSectionBlock.props.children]
     const sectionTitle = firstSectionBlockChildren[0] as { props: { children: ReactNode } }
 
-    expect(sectionTitle.props.children).toBe('1. General Information')
+    expect(sectionTitle.props.children).toBe('1. Technical Framework')
 
     const turnoutSection = firstSectionChildren[6] as { props: { children: ReactNode } }
     const turnoutSectionChildren = Array.isArray(turnoutSection.props.children)
@@ -715,7 +761,7 @@ describe('VotingReportPdf', () => {
     expect((methodSummaryChildren[1] as { props: { children: ReactNode } }).props.children).toBe('Single choice')
     expect((resultHeaderChildren[0] as { props: { children: ReactNode } }).props.children).toBe('Option')
     expect((resultHeaderChildren[1] as { props: { children: ReactNode } }).props.children).toBe('Votes')
-    expect((resultHeaderChildren[2] as { props: { children: ReactNode } }).props.children).toBe('Share')
+    expect((resultHeaderChildren[2] as { props: { children: ReactNode } }).props.children).toBe('Share of votes')
     expect(optionLabel.props.children).toBe('Approve')
     expect(barFill.props.style).toEqual(
       expect.arrayContaining([expect.objectContaining({ backgroundColor: '#18a3a8' }), { width: '70%' }])
@@ -724,32 +770,134 @@ describe('VotingReportPdf', () => {
       expect.arrayContaining([expect.objectContaining({ backgroundColor: '#18a3a8' }), { width: '30%' }])
     )
     expect((votesText as { props: { children: ReactNode } }).props.children).toBe('7')
-    expect((shareText as { props: { children: ReactNode } }).props.children).toBe('70.00%')
+    expect((shareText as { props: { children: ReactNode } }).props.children).toBe('70.0%')
   })
 
-  it('uses the sdk census type for the authentication method', () => {
+  it('renders weighted question cards with voting-power result columns', async () => {
+    pdfToBlob.mockResolvedValue(new Blob(['pdf']))
+    const weightedElection = Object.assign(createElection(), {
+      voteCount: 2,
+      census: {
+        size: 3,
+        type: CensusType.WEIGHTED,
+        weight: 2000,
+      },
+      meta: {
+        token: {
+          decimals: 2,
+        },
+      },
+      questions: [
+        {
+          title: { default: 'Weighted board proposal' },
+          choices: [
+            { title: { default: 'Approve' }, results: 700 },
+            { title: { default: 'Reject' }, results: 300 },
+          ],
+        },
+      ],
+    }) as PublishedElection
+
+    render(<VotingReportPdfButton election={weightedElection} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+
+    await waitFor(() => {
+      expect(pdfSpy).toHaveBeenCalled()
+    })
+
+    const [documentElement] = pdfSpy.mock.calls[0]
+    const documentText = collectTextContent(documentElement)
+
+    expect(documentText.filter((text) => text === 'Counting basis').length).toBeGreaterThan(0)
+    expect(documentText.filter((text) => text === 'Weighted voting').length).toBeGreaterThan(0)
+    expect(documentText.filter((text) => text === 'Voting power used').length).toBeGreaterThan(0)
+    expect(documentText).toContain('10 voting power')
+    expect(documentText.filter((text) => text === 'Submitted ballots').length).toBeGreaterThan(0)
+    expect(documentText).toContain('2 ballots')
+    expect(documentText.filter((text) => text === 'Total eligible voting power').length).toBeGreaterThan(0)
+    expect(documentText).toContain('20 voting power')
+    expect(documentText.filter((text) => text === 'Voting power').length).toBeGreaterThan(0)
+    expect(documentText).toContain('Share of cast power')
+    expect(documentText).toContain('Share of eligible power')
+    expect(documentText).not.toContain('Share of votes')
+  })
+
+  it('uses CSP weighted metadata during PDF download when election context reports unweighted', async () => {
+    pdfToBlob.mockResolvedValue(new Blob(['pdf']))
+    const cspWeightedElection = Object.assign(createElection(), {
+      voteCount: 2,
+      census: {
+        size: 3,
+        type: CensusType.CSP,
+      },
+      meta: {
+        census: {
+          type: 'csp',
+          weighted: true,
+        },
+      },
+      questions: [
+        {
+          title: { default: 'Weighted memberbase proposal' },
+          choices: [
+            { title: { default: 'Approve' }, results: 7 },
+            { title: { default: 'Reject' }, results: 3 },
+          ],
+        },
+      ],
+    }) as PublishedElection
+
+    setReactProvidersMock({
+      useElection: () => ({
+        election: cspWeightedElection,
+        isWeighted: false,
+        participation: 66.67,
+        turnout: 333.33,
+      }),
+    })
+
+    render(<VotingReportPdfButton election={cspWeightedElection} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+
+    await waitFor(() => {
+      expect(pdfSpy).toHaveBeenCalled()
+    })
+
+    const [documentElement] = pdfSpy.mock.calls[0]
+    const documentText = collectTextContent(documentElement)
+
+    expect(documentText.filter((text) => text === 'Weighted voting').length).toBeGreaterThan(0)
+    expect(documentText.filter((text) => text === 'Voting power').length).toBeGreaterThan(0)
+    expect(documentText).toContain('10 voting power')
+    expect(documentText).not.toContain('1 person, 1 vote')
+    expect(documentText).not.toContain('Share of votes')
+  })
+
+  it('uses metadata census type for the authentication method before sdk census type', () => {
     const cases = [
-      [CensusType.CSP, 'Authentication using voters credentials'],
-      [CensusType.WEIGHTED, 'Census directly provided by the organization using a spreadsheet or Web3 wallets'],
-      [CensusType.ANONYMOUS, 'Authentication using voters credentials with enhanced voter anonymity'],
-      ['unknown', 'Not available'],
+      ['csp', CensusType.WEIGHTED, 'Memberbase credentials census'],
+      ['spreadsheet', CensusType.CSP, 'Spreadsheet census provided by the organization'],
+      ['web3', CensusType.CSP, 'Web3 wallet census provided by the organization'],
+      ['unknown', CensusType.CSP, 'Not available'],
     ] as const
 
-    cases.forEach(([censusType, expected]) => {
+    cases.forEach(([metadataCensusType, sdkCensusType, expected]) => {
       const election = Object.assign(createElection(), {
         census: {
           size: 100,
-          type: censusType,
+          type: sdkCensusType,
         },
         meta: {
           census: {
-            type: 'spreadsheet',
+            type: metadataCensusType,
           },
         },
       })
 
       const data = buildCertificateData({
-        election,
+        report: createReport(election),
         t: ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never,
         now: new Date('2026-01-03T10:00:00Z'),
       })
@@ -759,6 +907,420 @@ describe('VotingReportPdf', () => {
       expect(authMethod?.value).toBe(expected)
     })
   })
+
+  it('prefers wrapped metadata.meta.census over normalized metadata', () => {
+    const election = Object.assign(createElection(), {
+      census: {
+        size: 100,
+        type: CensusType.WEIGHTED,
+      },
+      metadata: {
+        meta: {
+          census: {
+            type: 'csp',
+            fields: ['email'],
+          },
+        },
+      },
+      meta: {
+        census: {
+          type: 'web3',
+        },
+      },
+    })
+
+    const data = buildCertificateData({
+      report: createReport(election),
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.authentication.find((field) => field.label === 'Authentication method')?.value).toBe(
+      'Memberbase credentials census'
+    )
+    expect(data.authentication.find((field) => field.label === 'Required voter credentials')?.value).toBe('Email')
+    expect(data.censusParticipation.find((field) => field.label === 'Census source')?.value).toBe(
+      'Memberbase credentials census'
+    )
+  })
+
+  it('uses normalized meta.census values when wrapped metadata is partial', () => {
+    const election = Object.assign(createElection(), {
+      census: {
+        size: 100,
+        type: CensusType.CSP,
+      },
+      metadata: {
+        meta: {
+          census: {
+            fields: ['email'],
+          },
+        },
+      },
+      meta: {
+        census: {
+          type: 'web3',
+        },
+      },
+    })
+
+    const data = buildCertificateData({
+      report: createReport(election),
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.authentication.find((field) => field.label === 'Authentication method')?.value).toBe(
+      'Web3 wallet census provided by the organization'
+    )
+    expect(data.authentication.find((field) => field.label === 'Voter access source')?.value).toBe(
+      'Voters access with the wallet address included in the Web3 census.'
+    )
+  })
+
+  it('shows spreadsheet and web3 access as census-source authentication instead of credential checks', () => {
+    const cases = [
+      [
+        'spreadsheet',
+        'Spreadsheet census provided by the organization',
+        'Voters access with credentials derived from the spreadsheet census uploaded by the organization.',
+      ],
+      [
+        'web3',
+        'Web3 wallet census provided by the organization',
+        'Voters access with the wallet address included in the Web3 census.',
+      ],
+    ] as const
+
+    cases.forEach(([censusType, expectedMethod, expectedSource]) => {
+      const election = Object.assign(createElection(), {
+        census: {
+          size: 100,
+          type: CensusType.CSP,
+        },
+        meta: {
+          census: {
+            type: censusType,
+          },
+        },
+      })
+
+      const data = buildCertificateData({
+        report: createReport(election),
+        t: translate,
+        now: new Date('2026-01-03T10:00:00Z'),
+      })
+
+      expect(data.authentication.find((field) => field.label === 'Authentication method')?.value).toBe(expectedMethod)
+      expect(data.authentication.find((field) => field.label === 'Voter access source')?.value).toBe(expectedSource)
+      expect(data.authentication.find((field) => field.label === 'Additional identity check')).toBeUndefined()
+    })
+  })
+
+  it('separates voter participation from weighted voting-power totals', () => {
+    const weightedElection = Object.assign(createElection(), {
+      voteCount: 2,
+      census: {
+        size: 3,
+        type: CensusType.WEIGHTED,
+        weight: 2000,
+      },
+      meta: {
+        census: {
+          type: 'web3',
+        },
+        token: {
+          decimals: 2,
+        },
+      },
+      questions: [
+        {
+          title: { default: 'Weighted board proposal' },
+          choices: [
+            { title: { default: 'Approve' }, results: 700 },
+            { title: { default: 'Reject' }, results: 300 },
+          ],
+        },
+      ],
+    }) as PublishedElection
+
+    const data = buildCertificateData({
+      report: createReport(weightedElection, { isWeighted: true, participation: 66.67, turnout: 100 }),
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.censusParticipation.find((field) => field.label === 'Eligible voters')?.value).toBe('3')
+    expect(data.censusParticipation.find((field) => field.label === 'Submitted ballots')?.value).toBe('2')
+    expect(data.censusParticipation.find((field) => field.label === 'Voter participation')?.value).toBe('66.67%')
+    expect(data.censusParticipation.find((field) => field.label === 'Counting basis')?.value).toBe('Weighted voting')
+    expect(data.censusParticipation.find((field) => field.label === 'Total eligible voting power')?.value).toBe('20')
+    expect(data.censusParticipation.find((field) => field.label === 'Voting power used')?.value).toBe('10')
+    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe('50.00%')
+    expect(data.resultValueLabel).toBe('Voting power')
+    expect(data.questionTotalLabel).toBe('Voting power used')
+    expect(data.votingProcessQuestions[0]).toMatchObject({
+      totalVotes: '10',
+      countingBasisLabel: 'Weighted voting',
+      submittedBallots: '2',
+      votingPowerUsed: '10',
+      eligibleVotingPower: '20',
+      isWeighted: true,
+      votingMethod: 'Single choice with weighted voting',
+      choices: [
+        {
+          name: 'Approve',
+          votes: '7',
+          votingPower: '7',
+          percentage: '70.0%',
+          castPowerPercentage: '70.0%',
+          eligiblePowerPercentage: '35.0%',
+          numericVotes: 7,
+        },
+        {
+          name: 'Reject',
+          votes: '3',
+          votingPower: '3',
+          percentage: '30.0%',
+          castPowerPercentage: '30.0%',
+          eligiblePowerPercentage: '15.0%',
+          numericVotes: 3,
+        },
+      ],
+    })
+    expect(data.votingProcessQuestions[0].choices[0].ballotCount).toBeUndefined()
+  })
+
+  it('uses weighted census metadata for CSP reports even when provider context says unweighted', () => {
+    const cspWeightedElection = Object.assign(createElection(), {
+      voteCount: 2,
+      census: {
+        size: 3,
+        type: CensusType.CSP,
+      },
+      meta: {
+        census: {
+          type: 'csp',
+          weighted: true,
+        },
+      },
+      questions: [
+        {
+          title: { default: 'Weighted memberbase proposal' },
+          choices: [
+            { title: { default: 'Approve' }, results: 7 },
+            { title: { default: 'Reject' }, results: 3 },
+          ],
+        },
+      ],
+    }) as PublishedElection
+
+    const data = buildCertificateData({
+      report: createReport(cspWeightedElection, { isWeighted: false, participation: 66.67 }),
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.censusParticipation.find((field) => field.label === 'Counting basis')?.value).toBe('Weighted voting')
+    expect(data.censusParticipation.find((field) => field.label === 'Total eligible voting power')?.value).toBe(
+      'Not available'
+    )
+    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe(
+      'Not available'
+    )
+    expect(data.resultValueLabel).toBe('Voting power')
+    expect(data.questionTotalLabel).toBe('Voting power used')
+    expect(data.votingProcessQuestions[0]).toMatchObject({
+      totalVotes: '10',
+      countingBasisLabel: 'Weighted voting',
+      submittedBallots: '2',
+      votingPowerUsed: '10',
+      eligibleVotingPower: 'Not available',
+      isWeighted: true,
+      choices: [
+        {
+          name: 'Approve',
+          votingPower: '7',
+          castPowerPercentage: '70.0%',
+          eligiblePowerPercentage: undefined,
+        },
+        {
+          name: 'Reject',
+          votingPower: '3',
+          castPowerPercentage: '30.0%',
+          eligiblePowerPercentage: undefined,
+        },
+      ],
+    })
+    expect(data.censusParticipation.find((field) => field.value === '1 person, 1 vote')).toBeUndefined()
+  })
+
+  it('keeps fractional voting power when token decimals are applied', () => {
+    const weightedElection = Object.assign(createElection(), {
+      voteCount: 2,
+      census: {
+        size: 3,
+        type: CensusType.WEIGHTED,
+        weight: 1234,
+      },
+      meta: {
+        token: {
+          decimals: 2,
+        },
+      },
+      questions: [
+        {
+          title: { default: 'Weighted budget proposal' },
+          choices: [
+            { title: { default: 'Approve' }, results: 317 },
+            { title: { default: 'Reject' }, results: 300 },
+          ],
+        },
+      ],
+    }) as PublishedElection
+
+    const data = buildCertificateData({
+      report: createReport(weightedElection, { isWeighted: true, participation: 66.67 }),
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.censusParticipation.find((field) => field.label === 'Total eligible voting power')?.value).toBe('12.34')
+    expect(data.censusParticipation.find((field) => field.label === 'Voting power used')?.value).toBe('6.17')
+    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe('50.00%')
+    expect(data.votingProcessQuestions[0]).toMatchObject({
+      totalVotes: '6.17',
+      votingPowerUsed: '6.17',
+      eligibleVotingPower: '12.34',
+      choices: [
+        {
+          name: 'Approve',
+          votingPower: '3.17',
+          castPowerPercentage: '51.4%',
+          eligiblePowerPercentage: '25.7%',
+        },
+        {
+          name: 'Reject',
+          votingPower: '3',
+          castPowerPercentage: '48.6%',
+          eligiblePowerPercentage: '24.3%',
+        },
+      ],
+    })
+  })
+
+  it('summarizes multi-question weighted voting power as a range in section 4', () => {
+    const weightedElection = Object.assign(createElection(), {
+      voteCount: 3,
+      census: {
+        size: 5,
+        type: CensusType.WEIGHTED,
+        weight: 2000,
+      },
+      meta: {
+        token: {
+          decimals: 2,
+        },
+      },
+      questions: [
+        {
+          title: { default: 'First weighted proposal' },
+          choices: [
+            { title: { default: 'Approve' }, results: 700 },
+            { title: { default: 'Reject' }, results: 300 },
+          ],
+        },
+        {
+          title: { default: 'Second weighted proposal' },
+          choices: [
+            { title: { default: 'Approve' }, results: 200 },
+            { title: { default: 'Reject' }, results: 300 },
+          ],
+        },
+      ],
+    }) as PublishedElection
+
+    const data = buildCertificateData({
+      report: createReport(weightedElection, { isWeighted: true, participation: 60 }),
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.censusParticipation.find((field) => field.label === 'Voting power used')?.value).toBe('5 - 10')
+    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe(
+      '25.00% - 50.00%'
+    )
+    expect(data.votingProcessQuestions[1]).toMatchObject({
+      totalVotes: '5',
+      votingPowerUsed: '5',
+      eligibleVotingPower: '20',
+      choices: [
+        {
+          name: 'Approve',
+          votingPower: '2',
+          castPowerPercentage: '40.0%',
+          eligiblePowerPercentage: '10.0%',
+        },
+        {
+          name: 'Reject',
+          votingPower: '3',
+          castPowerPercentage: '60.0%',
+          eligiblePowerPercentage: '15.0%',
+        },
+      ],
+    })
+  })
+
+  it('includes abstain results for abstain-enabled multiple choice elections', () => {
+    const election = Object.assign(createElection(), {
+      voteCount: 10,
+      resultsType: {
+        name: ElectionResultsTypeNames.MULTIPLE_CHOICE,
+        properties: {
+          canAbstain: true,
+        },
+      },
+      questions: [
+        {
+          title: { default: 'Pick priorities' },
+          numAbstains: 3,
+          choices: [
+            { title: { default: 'Climate' }, results: 4 },
+            { title: { default: 'Housing' }, results: 3 },
+          ],
+        },
+      ],
+    }) as PublishedElection
+
+    const data = buildCertificateData({
+      report: createReport(election),
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.votingProcessQuestions[0].choices).toEqual([
+      { name: 'Climate', votes: '4', percentage: '40.0%', numericVotes: 4 },
+      { name: 'Housing', votes: '3', percentage: '30.0%', numericVotes: 3 },
+      { name: 'Abstain', votes: '3', percentage: '30.0%', numericVotes: 3 },
+    ])
+  })
+
+  it('hides question results while secret-until-end elections are not in final results', () => {
+    const election = Object.assign(createElectionWithResults(), {
+      status: ElectionStatus.ENDED,
+      electionType: { secretUntilTheEnd: true },
+    }) as PublishedElection
+
+    const data = buildCertificateData({
+      report: createReport(election),
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.resultsHiddenText).toBe('Results are hidden until the process reaches the final results stage.')
+    expect(data.votingProcessQuestions).toEqual([])
+  })
+
   it('describes additional code verification in user-centric language', () => {
     const election = Object.assign(createElection(), {
       census: {
@@ -768,7 +1330,7 @@ describe('VotingReportPdf', () => {
     })
 
     const data = buildCertificateData({
-      election,
+      report: createReport(election),
       censusBundle: {
         census: {
           authFields: ['email'],
@@ -805,7 +1367,7 @@ describe('VotingReportPdf', () => {
     }
 
     const data = buildCertificateData({
-      election,
+      report: createReport(election),
       t: ((key: string, options?: { defaultValue?: string }) =>
         translations[key] ?? options?.defaultValue ?? key) as never,
       now: new Date('2026-01-03T10:00:00Z'),
@@ -816,7 +1378,7 @@ describe('VotingReportPdf', () => {
     expect(identitySource?.value).toBe("Nom, Número de soci, Document d'Identitat, customField")
   })
 
-  it('fetches the census bundle for csp elections even when census metadata uses spreadsheet labels', async () => {
+  it('does not fetch the census bundle when metadata identifies a spreadsheet census', async () => {
     pdfToBlob.mockResolvedValue(new Blob(['pdf']))
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(
@@ -847,6 +1409,53 @@ describe('VotingReportPdf', () => {
     render(<VotingReportPdfButton election={election} />)
 
     fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
+
+    await waitFor(() => {
+      expect(pdfToBlob).toHaveBeenCalled()
+    })
+    expect(fetchSpy).not.toHaveBeenCalled()
+
+    fetchSpy.mockRestore()
+  })
+
+  it('fetches the census bundle when wrapped metadata identifies a csp census', async () => {
+    pdfToBlob.mockResolvedValue(new Blob(['pdf']))
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          census: {
+            published: { uri: 'https://example.test/census', root: 'root-hash' },
+            authFields: ['email'],
+            twoFaFields: [],
+          },
+        }),
+        { status: 200 }
+      ) as Response
+    )
+
+    const election = Object.assign(createElection(), {
+      census: {
+        size: 100,
+        type: CensusType.WEIGHTED,
+        censusURI: 'https://example.test/census-bundle',
+      },
+      metadata: {
+        meta: {
+          census: {
+            type: 'csp',
+          },
+        },
+      },
+      meta: {
+        census: {
+          type: 'spreadsheet',
+        },
+      },
+    })
+
+    render(<VotingReportPdfButton election={election} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
 
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledWith('https://example.test/census-bundle')

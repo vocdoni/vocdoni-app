@@ -1385,13 +1385,29 @@
       "method": "Mètode d'autenticació",
       "two_fa": "Comprovació addicional d'identitat",
       "two_fa_disabled": "Desactivada: no s'ha configurat cap comprovació addicional d'identitat en aquest procés de votació",
-      "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús enviat als seus dispositius personals."
+      "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús enviat als seus dispositius personals.",
+      "voter_access_source": "Origen de l'accés del votant",
+      "voter_access_source_spreadsheet": "Els votants accedeixen amb credencials derivades del cens de full de càlcul carregat per l'organització.",
+      "voter_access_source_web3": "Els votants accedeixen amb l'adreça de cartera inclosa en el cens Web3.",
+      "voter_access_source_weighted": "L'elegibilitat es comprova contra el cens ponderat proporcionat per l'organització per a aquest procés."
+    },
+    "census": {
+      "counting_basis": "Base de recompte",
+      "counting_basis_1p1v": "1 persona, 1 vot",
+      "counting_basis_weighted": "Vot ponderat",
+      "eligible_voters": "Votants elegibles",
+      "eligible_voting_power": "Poder de vot elegible total",
+      "source": "Origen del cens",
+      "voting_power_used": "Poder de vot utilitzat",
+      "weighted_participation": "Participació ponderada"
     },
     "census_type": {
-      "anonymous": "Autenticació amb credencials dels votants i anonimat reforçat del votant",
-      "csp": "Autenticació amb credencials dels votants",
+      "anonymous": "Cens anònim proporcionat per l'organització",
+      "csp": "Cens de credencials de la base de membres",
+      "spreadsheet": "Cens de full de càlcul proporcionat per l'organització",
       "unknown": "No disponible",
-      "weighted": "Cens proporcionat directament per l'organització mitjançant un full de càlcul o carteres Web3"
+      "web3": "Cens de carteres Web3 proporcionat per l'organització",
+      "weighted": "Cens ponderat proporcionat per l'organització"
     },
     "disclaimer": {
       "bullet_1": "No constitueix una certificació legal del procés de votació.",
@@ -1399,16 +1415,16 @@
       "bullet_3": "Totes les dades provenen de registres criptogràfics i basats en blockchain.",
       "bullet_4": "El secret del vot i l'anonimat del votant es preserven per disseny.",
       "paragraph_1": "Aquest document constitueix una certificació tècnica derivada de dades registrades a la infraestructura de Vocdoni.",
-      "paragraph_2": "El proveïdor tècnic no assumeix responsabilitat per l'exactitud de les dades d'entrada (per exemple, la composició del cens), la interpretació legal dels resultats ni el compliment dels marcs legals o reguladors aplicables.",
+      "paragraph_2": "El proveïdor tècnic no assumeix responsabilitat per les dades proporcionades per l'organització, inclosa la composició del cens, els pesos de vot, la interpretació legal dels resultats o el compliment dels marcs legals o reguladors aplicables.",
       "paragraph_3": "La responsabilitat sobre la interpretació legal i l'ús d'aquesta certificació recau exclusivament en l'organització sol·licitant.",
       "title": "Avís legal"
     },
     "document": {
       "bookmarks": {
-        "general_information": "Informació general",
+        "general_information": "Marc tècnic i informació general",
         "index": "Índex",
         "issuer": "Emissor",
-        "voting_process": "Procés de votació"
+        "voting_process": "Preguntes i resultats"
       },
       "index": {
         "intro": "Aquest informe està organitzat en les seccions següents:",
@@ -1418,13 +1434,13 @@
       "page_number": "Pàgina",
       "process_id": "ID del procés: {{process_id}}",
       "sections": {
-        "authentication": "2. Autenticació",
-        "general_information": "1. Informació general",
+        "authentication": "3. Autenticació",
+        "general_information": "2. Informació general",
         "issuer": "7. Emissor",
-        "turnout_participation": "4. Participació i assistència",
+        "turnout_participation": "4. Cens i participació",
         "verification": "6. Verificació",
-        "voting_process": "5. Procés de votació",
-        "voting_system": "3. Sistema de votació"
+        "voting_process": "5. Preguntes i resultats",
+        "voting_system": "1. Marc tècnic"
       },
       "title_prefix": "CERTIFICACIÓ TÈCNICA DEL PROCÉS DE VOTACIÓ DIGITAL"
     },
@@ -1453,11 +1469,15 @@
       "provider": "Vocdoni"
     },
     "not_available": "No disponible",
+    "results": {
+      "hidden_field": "Ocult fins als resultats finals"
+    },
     "turnout": {
       "eligible": "Nombre total de participants elegibles",
       "participation": "El nombre de vots emesos reflecteix només aquells participants que van enviar efectivament una papereta vàlida durant el període de votació definit.",
-      "rate": "Taxa de participació",
-      "votes_cast": "Nombre total de vots emesos"
+      "submitted_ballots": "Paperetes enviades",
+      "voter_participation": "Participació dels votants",
+      "weighted_participation": "Les paperetes enviades compten els votants que han participat. Els totals ponderats dels resultats compten el poder de vot registrat per a cada resposta."
     },
     "verification": {
       "explorer": "Veure a l'explorador de verificació",
@@ -1465,26 +1485,35 @@
       "procedure_title": "Procediment de verificació",
       "step_1": "Obre l'enllaç de l'explorador de verificació. Aquesta pàgina conté el registre tècnic públic del procés de votació.",
       "step_2": "Comprova que l'ID del procés a l'explorador és idèntic a l'ID del procés d'aquest informe. Això confirma que tots dos documents fan referència al mateix procés de votació.",
-      "step_3": "Comprova que la referència de la llista de votants elegibles que es mostra a l'explorador coincideix amb la referència d'aquest informe. Això confirma que la llista de votants elegibles vinculada al procés és la mateixa.",
+      "step_3": "Comprova que la referència del cens que es mostra a l'explorador coincideix amb la referència d'aquest informe. Això confirma que la llista de votants elegibles vinculada al procés és la mateixa.",
       "step_4": "Comprova que el nombre de paperetes registrades coincideix amb les dades de participació que es mostren en aquest informe.",
-      "step_5": "Compara el recompte final de l'explorador amb els resultats que es mostren en aquest informe.",
+      "step_5": "Compara el recompte final de l'explorador amb els resultats per nombre de paperetes o per poder de vot ponderat que es mostren en aquest informe.",
       "step_6": "Per a una auditoria tècnica més profunda, un auditor pot inspeccionar els registres públics amb més detall o tornar a calcular el recompte per confirmar que les paperetes registrades i els resultats finals són coherents."
     },
     "vote_overwrite_disabled": "Desactivada",
     "vote_overwrite_enabled": "Activada, fins a {{votes}} sobreescriptures de vot per votant",
     "voting_process": {
       "card": {
+        "abstain": "Abstenció",
         "item": "Total de vots",
         "option": "Opció",
         "outcome_label": "Mètode de votació",
         "participation_short": "{{votes}} vots",
         "results": "Resultats:",
-        "share": "Percentatge",
-        "votes": "Vots"
+        "share_cast_power": "Percentatge del poder emès",
+        "share_eligible_power": "Percentatge del poder elegible",
+        "share_votes": "Percentatge de vots",
+        "submitted_ballots_short": "{{ballots}} paperetes",
+        "votes": "Vots",
+        "voting_power": "Poder de vot",
+        "voting_power_short": "{{power}} de poder de vot",
+        "voting_power_used": "Poder de vot utilitzat",
+        "weighted_method": "{{base}} amb vot ponderat"
       },
       "intro_one": "El procés de votació {{process_name}} va consistir en 1 pregunta.",
       "intro_many": "",
-      "intro_other": "El procés de votació {{process_name}} va consistir en {{count}} preguntes."
+      "intro_other": "El procés de votació {{process_name}} va consistir en {{count}} preguntes.",
+      "results_hidden": "Els resultats estan ocults fins que el procés arribi a la fase de resultats finals."
     },
     "voting_system": {
       "bullet_1": "Un registre públic de la configuració del procés de votació",

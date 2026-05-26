@@ -571,6 +571,7 @@ export const useFormToElectionMapper = () => {
         census: {
           type: form.censusType,
           fields: form.spreadsheet?.header ?? undefined,
+          weighted: form.weightedVote,
         } as CensusMeta,
       },
     }
