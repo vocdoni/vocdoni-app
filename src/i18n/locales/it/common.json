@@ -185,7 +185,7 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "Codici Email 2FA",
+      "2fa_email": "Codici email 2FA",
       "2fa_email_tooltip": "Codici di verifica email inviati. Il superamento del limite costa €{{price}} per codice.",
       "2fa_sms": "Codici SMS 2FA",
       "2fa_sms_tooltip": "Codici di verifica SMS inviati. Il superamento del limite costa €{{price}} per codice.",

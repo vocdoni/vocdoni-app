@@ -185,7 +185,7 @@
       "time_format": "p"
     },
     "usage": {
-      "2fa_email": "Codis 2FA per Email",
+      "2fa_email": "Codis 2FA per email",
       "2fa_email_tooltip": "Codis de verificació per email enviats. Superar el límit costa {{price}}€ per codi.",
       "2fa_sms": "Codis 2FA per SMS",
       "2fa_sms_tooltip": "Codis de verificació per SMS enviats. Superar el límit costa {{price}}€ per codi.",
