@@ -69,25 +69,6 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               <Link
                 fontWeight='bold'
                 variant='footer'
-                href='https://developer.vocdoni.io/sdk'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                SDK
-              </Link>
-              <Link
-                fontWeight='bold'
-                variant='footer'
-                href='https://developer.vocdoni.io'
-                whiteSpace='nowrap'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                {t('footer.developer_portal')}
-              </Link>
-              <Link
-                fontWeight='bold'
-                variant='footer'
                 href='https://blog.vocdoni.io'
                 target='_blank'
                 rel='noopener noreferrer'
