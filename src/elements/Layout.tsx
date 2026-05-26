@@ -1,5 +1,5 @@
 import { Box, Flex, HStack } from '@chakra-ui/react'
-import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
+import { matchPath, Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import CrispChat from '~components/Layout/CrispChat'
 import Footer from '~components/Layout/Footer'
@@ -8,6 +8,7 @@ import { Routes } from '~routes'
 
 const Layout = () => {
   const location = useLocation()
+  const isVotingPage = !!matchPath(Routes.processes.view, location.pathname)
 
   return (
     <Flex position='relative' flexDirection='column' minH='100vh' mx='auto'>
@@ -22,7 +23,7 @@ const Layout = () => {
         maxW='navbar'
         mx='auto'
       >
-        <Navbar />
+        <Navbar showDashboardButton={!isVotingPage} />
       </HStack>
       <ScrollRestoration />
       <CrispChat />
