@@ -4,6 +4,7 @@ import { CensusType, dotobject, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useAccount, useDisconnect } from 'wagmi'
 import { useAuth } from '~components/Auth/useAuth'
+import { clearProcessAuthenticatedIdentifiers } from '~components/Process/authenticatedVoterLabel'
 import { CensusMeta, CensusTypes } from '~components/Process/Census/CensusType'
 
 // Note the LogoutButton is stored in the Process folder because it holds not just
@@ -34,12 +35,14 @@ const LogoutButton = () => {
           onClick={() => {
             if (isCSP || isSpreadsheet) {
               clearClient()
+              clearProcessAuthenticatedIdentifiers(election.id)
               return
             }
 
             if (isWeb3 && isConnected) {
               disconnect()
               clear()
+              clearProcessAuthenticatedIdentifiers(election.id)
               return
             }
 

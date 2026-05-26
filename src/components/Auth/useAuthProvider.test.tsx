@@ -1,5 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
+import { processCspIdentifierStorageKey } from '~components/Process/authenticatedVoterLabel'
 import { AllProviders, mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useAuthProvider } from './useAuthProvider'
@@ -58,6 +59,7 @@ describe('useAuthProvider logout', () => {
     localStorage.setItem('authExpiry', 'expiry')
     localStorage.setItem(AuthStorageKeys.Registered, 'true')
     localStorage.setItem('authRenewSession', 'true')
+    localStorage.setItem(processCspIdentifierStorageKey('0xprocess-1'), JSON.stringify({ value: 'user@example.com' }))
 
     const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
 
@@ -69,6 +71,7 @@ describe('useAuthProvider logout', () => {
     expect(localStorage.getItem('authExpiry')).toBeFalsy()
     expect(localStorage.getItem(AuthStorageKeys.Registered)).toBeFalsy()
     expect(localStorage.getItem('authRenewSession')).toBeFalsy()
+    expect(localStorage.getItem(processCspIdentifierStorageKey('0xprocess-1'))).toBeFalsy()
     expect(clearMock).toHaveBeenCalled()
     expect(disconnectMock).toHaveBeenCalled()
   })

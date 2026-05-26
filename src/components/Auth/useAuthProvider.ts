@@ -5,6 +5,7 @@ import { NoOrganizationsError, RemoteSigner, UnauthorizedError } from '@vocdoni/
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
+import { clearProcessAuthenticatedIdentifiers } from '~components/Process/authenticatedVoterLabel'
 import { AppEnv } from '~src/app-env'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
 import { LoginResponse, useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
@@ -142,6 +143,7 @@ export const useAuthProvider = () => {
 
   const logout = useCallback(() => {
     clearAuthStorageKeys()
+    clearProcessAuthenticatedIdentifiers()
     removeStorageItem(LocalStorageKeys.RenewSession)
     setBearer(null)
     clear()
