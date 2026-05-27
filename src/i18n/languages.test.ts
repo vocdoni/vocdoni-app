@@ -7,6 +7,7 @@ describe('languages configuration', () => {
       es: 'Español',
       ca: 'Català',
       it: 'Italiano',
+      de: 'Deutsch',
     })
   })
 
