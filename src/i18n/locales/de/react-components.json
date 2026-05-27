@@ -1,0 +1,96 @@
+{
+  "balance": "{{ balance }} VOC-Token",
+  "actions": {
+    "cancel_description": "„{{ election.title.default }}“ wird storniert …\n\nAchtung: Diese Aktion ist unumkehrbar und annulliert alle bereits abgegebenen Stimmen.",
+    "cancel": "Abbrechen",
+    "cancel_button": "Abbrechen",
+    "continue_description": "Abstimmungsprozess „{{ election.title.default }}“ wird fortgesetzt …",
+    "continue": "Den Prozess sofort fortsetzen, falls er pausiert wurde",
+    "end_description": "Abstimmungsprozess „{{ election.title.default }}“ wird beendet …\n\nAchtung: Diese Aktion ist unumkehrbar und Wähler können nicht mehr abstimmen.",
+    "end": "Beendet den Prozess sofort, sodass keine neuen Stimmen mehr abgegeben werden können, und zeigt die Abstimmungsergebnisse an (Achtung: kann nicht rückgängig gemacht werden)",
+    "error_title": "Beim Ausführen der Transaktion ist ein Fehler aufgetreten",
+    "pause_description": "Abstimmungsprozess „{{ election.title.default }}“ wird pausiert …",
+    "pause": "Pausiert den Abstimmungsprozess vorübergehend, bis er manuell fortgesetzt wird. Während der Pause können keine Stimmen abgegeben werden.",
+    "waiting_title": "Bestätigung der Transaktion wird abgewartet …"
+  },
+  "confirm": {
+    "title": "Bestätigen",
+    "cancel": "Abbrechen",
+    "confirm": "Stimme bestätigen",
+    "cancel_process_button": "Abstimmung stornieren",
+    "cancel_process_title": "Abstimmung stornieren",
+    "end_process_title": "Abstimmung beenden",
+    "end_process_button": "Abstimmung beenden",
+    "cancel_button": "Abbrechen"
+  },
+  "empty": "Dieser Prozess enthält offenbar keine Fragen",
+  "errors": {
+    "unauthorized": "Nicht zur Abstimmung berechtigt",
+    "wrong_data_title": "Falsche Daten",
+    "wrong_data_description": "Die angegebenen Daten sind nicht korrekt",
+    "not_voted_in_ended_election": "Sie haben unterzeichnet, aber in dieser bereits beendeten Wahl nicht abgestimmt."
+  },
+  "question_types": {
+    "approval_tooltip": "Bei der Zustimmungswahl können Sie für so viele Optionen stimmen, wie Sie möchten. Die Option mit den meisten Stimmen gewinnt. Eine einfache Möglichkeit, alle von Ihnen befürworteten Optionen zu unterstützen.",
+    "approval_title": "Zustimmungswahl",
+    "singlechoice_title": "Einfachauswahl {{ weighted }}",
+    "multichoice_tooltip": "Bei der Mehrfachauswahl können Sie für bis zu {{maxcount}} Optionen stimmen (festgelegt vom Veranstalter). Die Option mit den meisten Stimmen gewinnt.",
+    "multichoice_title": "Mehrfachauswahl {{ weighted }}",
+    "multichoice_desc": "Sie haben {{selected}} Optionen aus maximal {{maxcount}} ausgewählt",
+    "multichoice_desc_abstain": " (oder enthalten)",
+    "weighted_voting": "gewichtet"
+  },
+  "schedule": {
+    "from_begin_to_end": "Abstimmung vom {{ begin }} bis zum {{ end }}",
+    "ended": "Beendet {{ distance }}",
+    "paused_start": "Beginnt {{ distance }}",
+    "paused_end": "Endet {{ distance }}",
+    "created": "Erstellt {{ distance }}"
+  },
+  "results": {
+    "date_format": "PPpp",
+    "secret_until_the_end": "Die Ergebnisse werden veröffentlicht, sobald der Prozess am {{ endDate }} endet.",
+    "title": "Ergebnisse für „{{ title }}“",
+    "votes": "{{votes}} Stimmen ({{ percent }})"
+  },
+  "statuses": {
+    "canceled": "Storniert",
+    "ended": "Beendet",
+    "ongoing": "Laufend",
+    "paused": "Pausiert",
+    "results": "Ergebnisse",
+    "upcoming": "Bevorstehend",
+    "process_unknown": "Unbekannt",
+    "invalid": "Ungültig"
+  },
+  "spreadsheet": {
+    "access_button": "Identifizieren",
+    "anon_sik_label": "Legen Sie ein Passwort für Ihre Stimme fest",
+    "anon_sik_helper": "So bleibt Ihre Stimme anonym",
+    "close": "Schließen",
+    "logout": "Abmelden",
+    "modal_title": "Authentifizierung"
+  },
+  "pagination": {
+    "page_placeholder": "Seite",
+    "total_results": "Insgesamt {{ count }} Ergebnisse werden angezeigt",
+    "previous": "Zurück",
+    "next": "Weiter"
+  },
+  "validation": {
+    "required": "Dieses Feld ist erforderlich",
+    "min_length": "Dieses Feld muss mindestens {{ min }} Zeichen lang sein",
+    "choices_count": "Wählen Sie {{ count }} Optionen aus",
+    "at_least_one": "Wählen Sie mindestens eine Option aus"
+  },
+  "vote": {
+    "abstain": "Enthalten",
+    "button_update": "Meine Stimme ändern",
+    "button": "Abstimmen",
+    "confirm": "Bitte bestätigen Sie Ihre Auswahl:",
+    "sign": "Zuerst unterzeichnen",
+    "voted_description": "Zur Überprüfung Ihrer Stimme können Sie diese eindeutige Kennung verwenden: {{ id }}",
+    "voted_title": "Ihre Stimme wurde erfolgreich abgegeben!",
+    "weight": "Ihr Stimmgewicht beträgt: "
+  }
+}
