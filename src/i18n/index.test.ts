@@ -1,5 +1,4 @@
-import { describe, expect, it } from 'vitest'
-import { createPageI18nInstance, shouldEnableI18nDebug } from './index'
+import { shouldEnableI18nDebug } from './index'
 
 describe('shouldEnableI18nDebug', () => {
   it('disables i18next debug output in test mode', () => {
@@ -16,7 +15,8 @@ describe('shouldEnableI18nDebug', () => {
 })
 
 describe('createPageI18nInstance', () => {
-  it('has common and react-components resources available immediately at init time', () => {
+  it('has common and react-components resources available immediately at init time', async () => {
+    const { createPageI18nInstance } = await import('./index')
     const instance = createPageI18nInstance('en')
 
     expect(instance.t('menu.login')).toBe('Login')
