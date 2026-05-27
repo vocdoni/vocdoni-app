@@ -332,7 +332,7 @@ describe('VotingReportPdf', () => {
       expect(pdfSpy).toHaveBeenCalled()
     })
 
-    const [documentElement] = pdfSpy.mock.calls[0]
+    const [documentElement] = pdfSpy.mock.calls[1]
     const documentTree = (documentElement.type as (props: typeof documentElement.props) => ReactNode)(
       documentElement.props
     ) as { props: { children: ReactNode } }
@@ -355,7 +355,7 @@ describe('VotingReportPdf', () => {
       expect(pdfSpy).toHaveBeenCalled()
     })
 
-    const [documentElement] = pdfSpy.mock.calls[0]
+    const [documentElement] = pdfSpy.mock.calls[1]
     const documentTree = (documentElement.type as (props: typeof documentElement.props) => ReactNode)(
       documentElement.props
     ) as { props: { children: ReactNode } }
@@ -528,7 +528,7 @@ describe('VotingReportPdf', () => {
     const firstSectionChildren = Array.isArray(firstSection.props.children)
       ? firstSection.props.children
       : [firstSection.props.children]
-    const firstSectionBlock = firstSectionChildren[3] as { props: { children: ReactNode } }
+    const firstSectionBlock = firstSectionChildren[4] as { props: { children: ReactNode } }
     const firstSectionBlockChildren = Array.isArray(firstSectionBlock.props.children)
       ? firstSectionBlock.props.children
       : [firstSectionBlock.props.children]
@@ -536,7 +536,7 @@ describe('VotingReportPdf', () => {
 
     expect(sectionTitle.props.children).toBe('1. Technical Framework')
 
-    const turnoutSection = firstSectionChildren[6] as { props: { children: ReactNode } }
+    const turnoutSection = firstSectionChildren[7] as { props: { children: ReactNode } }
     const turnoutSectionChildren = Array.isArray(turnoutSection.props.children)
       ? turnoutSection.props.children
       : [turnoutSection.props.children]
@@ -551,7 +551,7 @@ describe('VotingReportPdf', () => {
     const fourthPageChildren = Array.isArray(fourthPage.props.children)
       ? fourthPage.props.children
       : [fourthPage.props.children]
-    const votingProcessSection = fourthPageChildren[3] as { props: { children: ReactNode } }
+    const votingProcessSection = fourthPageChildren[4] as { props: { children: ReactNode } }
     const votingProcessSectionChildren = Array.isArray(votingProcessSection.props.children)
       ? votingProcessSection.props.children
       : [votingProcessSection.props.children]
@@ -572,7 +572,7 @@ describe('VotingReportPdf', () => {
     const fifthPageChildren = Array.isArray(fifthPage.props.children)
       ? fifthPage.props.children
       : [fifthPage.props.children]
-    const issuerSection = fifthPageChildren[3] as { props: { children: ReactNode } }
+    const issuerSection = fifthPageChildren[4] as { props: { children: ReactNode } }
     const issuerSectionChildren = Array.isArray(issuerSection.props.children)
       ? issuerSection.props.children
       : [issuerSection.props.children]
@@ -580,7 +580,7 @@ describe('VotingReportPdf', () => {
 
     expect(issuerTitle.props.children).toBe('7. Issuer')
 
-    const legalNotice = fifthPageChildren[4] as { props: { style?: Record<string, unknown>; children: ReactNode } }
+    const legalNotice = fifthPageChildren[5] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(legalNotice.props.style).toMatchObject({
       marginTop: 'auto',
       paddingTop: 12,
@@ -639,6 +639,7 @@ describe('VotingReportPdf', () => {
         },
       },
     })
+    // The outer View carries the absolute positioning; the inner Text carries text styles + render prop.
     expect(renderedPageNumber).toMatchObject({
       props: {
         style: {
@@ -646,25 +647,24 @@ describe('VotingReportPdf', () => {
           bottom: 22,
           left: 56,
           right: 56,
-          fontSize: 11,
-          fontWeight: 700,
-          color: '#111827',
         },
       },
     })
-    const pageNumberText = renderedPageNumber as {
+    const pageNumberView = renderedPageNumber as {
+      props: { fixed?: boolean; style?: Record<string, unknown>; children?: ReactNode }
+    }
+    // The inner Text child carries text styles and the render prop.
+    const innerText = pageNumberView.props.children as {
       props: { render?: (args: { pageNumber: number; totalPages: number }) => string; style?: Record<string, unknown> }
     }
-    expect(pageNumberText.props.style).toMatchObject({
-      position: 'absolute',
-      bottom: 22,
-      left: 56,
-      right: 56,
+    expect(innerText.props.style).toMatchObject({
+      textAlign: 'right',
+      color: '#111827',
       fontSize: 11,
       fontWeight: 700,
-      color: '#111827',
     })
-    expect(pageNumberText.props.render?.({ pageNumber: 5, totalPages: 5 })).toBe('Page 3')
+    expect((innerText.props.style as Record<string, unknown>).lineHeight).toBeUndefined()
+    expect(innerText.props.render?.({ pageNumber: 5, totalPages: 5 })).toBe('Page 3')
   })
 
   it('renders all result rows with colored bars', async () => {
@@ -678,7 +678,7 @@ describe('VotingReportPdf', () => {
       expect(pdfSpy).toHaveBeenCalled()
     })
 
-    const [documentElement] = pdfSpy.mock.calls[0]
+    const [documentElement] = pdfSpy.mock.calls[1]
     const documentTree = (documentElement.type as (props: typeof documentElement.props) => ReactNode)(
       documentElement.props
     ) as { props: { children: ReactNode } }
@@ -689,7 +689,7 @@ describe('VotingReportPdf', () => {
     const fourthPageChildren = Array.isArray(fourthPage.props.children)
       ? fourthPage.props.children
       : [fourthPage.props.children]
-    const votingProcessSection = fourthPageChildren[3] as { props: { children: ReactNode } }
+    const votingProcessSection = fourthPageChildren[4] as { props: { children: ReactNode } }
     const votingProcessSectionChildren = Array.isArray(votingProcessSection.props.children)
       ? votingProcessSection.props.children
       : [votingProcessSection.props.children]
@@ -806,7 +806,7 @@ describe('VotingReportPdf', () => {
       expect(pdfSpy).toHaveBeenCalled()
     })
 
-    const [documentElement] = pdfSpy.mock.calls[0]
+    const [documentElement] = pdfSpy.mock.calls[1]
     const documentText = collectTextContent(documentElement)
 
     expect(documentText.filter((text) => text === 'Counting basis').length).toBeGreaterThan(0)
@@ -865,7 +865,7 @@ describe('VotingReportPdf', () => {
       expect(pdfSpy).toHaveBeenCalled()
     })
 
-    const [documentElement] = pdfSpy.mock.calls[0]
+    const [documentElement] = pdfSpy.mock.calls[1]
     const documentText = collectTextContent(documentElement)
 
     expect(documentText.filter((text) => text === 'Weighted voting').length).toBeGreaterThan(0)

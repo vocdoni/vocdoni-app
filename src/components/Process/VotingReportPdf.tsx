@@ -132,11 +132,14 @@ type ReportSection = {
   title: string
   href: string
   page: string
+  pageId: string
 }
 
 type PdfDocumentProps = {
   data: CertificateData
   t: TFunction
+  capturedPages?: Record<string, number> // pageId -> absolute PDF page number
+  onCapturePage?: (pageId: string, pageNumber: number) => void // called during pass-1 layout
 }
 
 const downloadableElectionStatuses = new Set([ElectionStatus.RESULTS, ElectionStatus.ENDED, ElectionStatus.CANCELED])
@@ -151,7 +154,6 @@ const styles = StyleSheet.create({
     paddingBottom: 56,
     fontFamily: 'Helvetica',
     fontSize: 9.25,
-    lineHeight: 1.5,
     color: '#172033',
     backgroundColor: '#fbfcfe',
   },
@@ -161,7 +163,6 @@ const styles = StyleSheet.create({
     paddingBottom: 52,
     fontFamily: 'Helvetica',
     fontSize: 10,
-    lineHeight: 1.5,
     color: '#172033',
     backgroundColor: '#fbfcfe',
   },
@@ -602,6 +603,8 @@ const styles = StyleSheet.create({
     bottom: 22,
     left: 56,
     right: 56,
+  },
+  pageNumberText: {
     textAlign: 'right',
     color: '#111827',
     fontSize: 11,
@@ -635,6 +638,31 @@ const sanitizeFileName = (value: string) =>
     .replace(/^-+|-+$/g, '')
 
 const notAvailable = (t: TFunction) => t('process_pdf.not_available', { defaultValue: 'Not available' })
+
+// Preamble pages (cover + index) that carry no visible page number
+const PREAMBLE_PAGE_COUNT = 2 as const
+
+// Page IDs for content sections - maps logical section groups to PDF page IDs.
+// These are arbitrary anchor labels; the numeric suffix is kept for legacy PDF bookmark compatibility.
+const REPORT_PAGE_IDS = {
+  sectionsA: 'report-page-3', // Sections 1-4
+  sectionsB: 'report-page-4', // Sections 5-6
+  sectionsC: 'report-page-5', // Section 7
+} as const
+
+// Ordered list of content page IDs: position (1-based) == report page number shown in the index.
+// Adding or removing a content page only requires updating this array; REPORT_PAGE_NUMBERS re-derives automatically.
+const REPORT_CONTENT_PAGE_ORDER = [
+  REPORT_PAGE_IDS.sectionsA,
+  REPORT_PAGE_IDS.sectionsB,
+  REPORT_PAGE_IDS.sectionsC,
+] as const
+
+// Derived: maps each page ID to its 1-based report page number string.
+// reportPageNumber = position in REPORT_CONTENT_PAGE_ORDER (= pdfPage - PREAMBLE_PAGE_COUNT)
+const REPORT_PAGE_NUMBERS: Record<string, string> = Object.fromEntries(
+  REPORT_CONTENT_PAGE_ORDER.map((id, i) => [id, String(i + 1)])
+)
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -711,8 +739,7 @@ const resolveCensusMetadata = (election: PublishedElection): CensusMetadata | un
     type: wrappedMetadata.type ?? normalizedMetadata.type,
     fields: typeof wrappedMetadata.fields === 'undefined' ? normalizedMetadata.fields : wrappedMetadata.fields,
     salt: wrappedMetadata.salt ?? normalizedMetadata.salt,
-    weighted:
-      typeof wrappedMetadata.weighted === 'undefined' ? normalizedMetadata.weighted : wrappedMetadata.weighted,
+    weighted: typeof wrappedMetadata.weighted === 'undefined' ? normalizedMetadata.weighted : wrappedMetadata.weighted,
   }
 }
 
@@ -1492,45 +1519,52 @@ const NumberedList = ({ items }: { items: string[] }) => (
 const buildReportSections = (t: TFunction): ReportSection[] => [
   {
     title: t('process_pdf.document.sections.voting_system', { defaultValue: '1. Technical Framework' }),
-    href: '#report-page-3',
-    page: '1',
+    href: `#${REPORT_PAGE_IDS.sectionsA}`,
+    page: REPORT_PAGE_NUMBERS[REPORT_PAGE_IDS.sectionsA],
+    pageId: REPORT_PAGE_IDS.sectionsA,
   },
   {
     title: t('process_pdf.document.sections.general_information', { defaultValue: '2. General Information' }),
-    href: '#report-page-3',
-    page: '1',
+    href: `#${REPORT_PAGE_IDS.sectionsA}`,
+    page: REPORT_PAGE_NUMBERS[REPORT_PAGE_IDS.sectionsA],
+    pageId: REPORT_PAGE_IDS.sectionsA,
   },
   {
     title: t('process_pdf.document.sections.authentication', { defaultValue: '3. Authentication' }),
-    href: '#report-page-3',
-    page: '1',
+    href: `#${REPORT_PAGE_IDS.sectionsA}`,
+    page: REPORT_PAGE_NUMBERS[REPORT_PAGE_IDS.sectionsA],
+    pageId: REPORT_PAGE_IDS.sectionsA,
   },
   {
     title: t('process_pdf.document.sections.turnout_participation', { defaultValue: '4. Census and Participation' }),
-    href: '#report-page-3',
-    page: '1',
+    href: `#${REPORT_PAGE_IDS.sectionsA}`,
+    page: REPORT_PAGE_NUMBERS[REPORT_PAGE_IDS.sectionsA],
+    pageId: REPORT_PAGE_IDS.sectionsA,
   },
   {
     title: t('process_pdf.document.sections.voting_process', { defaultValue: '5. Questions and Results' }),
-    href: '#report-page-4',
-    page: '2',
+    href: `#${REPORT_PAGE_IDS.sectionsB}`,
+    page: REPORT_PAGE_NUMBERS[REPORT_PAGE_IDS.sectionsB],
+    pageId: REPORT_PAGE_IDS.sectionsB,
   },
   {
     title: t('process_pdf.document.sections.verification', { defaultValue: '6. Verification' }),
-    href: '#report-page-4',
-    page: '2',
+    href: `#${REPORT_PAGE_IDS.sectionsB}`,
+    page: REPORT_PAGE_NUMBERS[REPORT_PAGE_IDS.sectionsB],
+    pageId: REPORT_PAGE_IDS.sectionsB,
   },
   {
     title: t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' }),
-    href: '#report-page-5',
-    page: '3',
+    href: `#${REPORT_PAGE_IDS.sectionsC}`,
+    page: REPORT_PAGE_NUMBERS[REPORT_PAGE_IDS.sectionsC],
+    pageId: REPORT_PAGE_IDS.sectionsC,
   },
 ]
 
 const Paragraphs = ({ items }: { items: string[] }) => (
   <View>
     {items.map((item, index) => (
-      <PdfText key={`${item}-${index}`} style={styles.paragraph}>
+      <PdfText key={`${item}-${index}`} style={[styles.paragraph, { lineHeight: 1.5 }]}>
         {item}
       </PdfText>
     ))}
@@ -1585,12 +1619,41 @@ const ResultBarRow = ({
   </View>
 )
 
-const getReportPageNumber = (pageNumber: number) => pageNumber - 2
+const getReportPageNumber = (pageNumber: number) => pageNumber - PREAMBLE_PAGE_COUNT
 
 const PageFooterLine = () => <View fixed style={styles.pageFooter} />
 
+// Probe component for pass-1 page number capture. Only renders when onCapturePage is provided.
+const PageStartCapture = ({
+  pageId,
+  onCapturePage,
+}: {
+  pageId: string
+  onCapturePage?: (id: string, n: number) => void
+}) => {
+  if (!onCapturePage) return null
+  return (
+    <PdfText
+      style={{ fontSize: 0, height: 0, position: 'absolute' }}
+      render={({ pageNumber, subPageNumber }) => {
+        if (subPageNumber === 1) onCapturePage(pageId, pageNumber)
+        return ''
+      }}
+    />
+  )
+}
+
+const getIndexPageLabel = (pageId: string, capturedPages?: Record<string, number>): string => {
+  if (capturedPages && capturedPages[pageId] !== undefined) {
+    return String(capturedPages[pageId] - PREAMBLE_PAGE_COUNT)
+  }
+  return REPORT_PAGE_NUMBERS[pageId]
+}
+
 const ReportPageNumber = ({ label }: { label: string }) => (
-  <PdfText fixed style={styles.pageNumber} render={({ pageNumber }) => `${label} ${getReportPageNumber(pageNumber)}`} />
+  <View fixed style={styles.pageNumber}>
+    <PdfText render={({ pageNumber }) => `${label} ${getReportPageNumber(pageNumber)}`} style={styles.pageNumberText} />
+  </View>
 )
 
 const RunningHeader = () => (
@@ -1601,7 +1664,7 @@ const RunningHeader = () => (
   </View>
 )
 
-const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
+const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePage }: PdfDocumentProps) => {
   const reportSections = buildReportSections(t)
   const pageNumberLabel = t('process_pdf.document.page_number', { defaultValue: 'Page' })
   const formatVotingPowerShort = (power: string) =>
@@ -1634,7 +1697,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
                 {data.eventReference}
               </PdfText>
             </View>
-            <PdfText style={styles.subtitle}>
+            <PdfText style={[styles.subtitle, { lineHeight: 1.5 }]}>
               {t('process_pdf.document.process_id', {
                 defaultValue: 'Process ID: {{process_id}}',
                 process_id: data.processId,
@@ -1644,7 +1707,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
 
           <View style={styles.coverIntroPanel}>
             <Paragraphs items={data.introParagraphs} />
-            <PdfText style={styles.issuedLine}>
+            <PdfText style={[styles.issuedLine, { lineHeight: 1.5 }]}>
               {t('process_pdf.document.issued_by', {
                 defaultValue:
                   'Issued by Vocdoni (Synergize SL) on {{issue_date}} at {{issue_time}}, in its capacity as technical service provider.',
@@ -1661,7 +1724,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
 
         <ReportSectionBlock>
           <SectionTitle>{t('process_pdf.document.index.title', { defaultValue: 'Index' })}</SectionTitle>
-          <PdfText style={styles.indexIntro}>
+          <PdfText style={[styles.indexIntro, { lineHeight: 1.5 }]}>
             {t('process_pdf.document.index.intro', {
               defaultValue: 'This report is organized into the following sections:',
             })}
@@ -1670,9 +1733,11 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             {reportSections.map((section) => (
               <PdfLink key={section.title} src={section.href} style={styles.indexLink}>
                 <View wrap={false} style={styles.indexRow}>
-                  <PdfText style={styles.indexLabel}>{section.title}</PdfText>
+                  <PdfText style={[styles.indexLabel, { lineHeight: 1.5 }]}>{section.title}</PdfText>
                   <View style={styles.indexLeader} />
-                  <PdfText style={styles.indexPage}>{section.page}</PdfText>
+                  <PdfText style={[styles.indexPage, { lineHeight: 1.5 }]}>
+                    {getIndexPageLabel(section.pageId, capturedPages)}
+                  </PdfText>
                 </View>
               </PdfLink>
             ))}
@@ -1683,7 +1748,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
       <Page
         size='A4'
         style={styles.page}
-        id='report-page-3'
+        id={REPORT_PAGE_IDS.sectionsA}
         bookmark={t('process_pdf.document.bookmarks.general_information', {
           defaultValue: 'Technical Framework and General Information',
         })}
@@ -1691,6 +1756,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         <RunningHeader />
         <PageFooterLine />
         <ReportPageNumber label={pageNumberLabel} />
+        {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsA} onCapturePage={onCapturePage} />}
 
         <ReportSectionBlock>
           <SectionTitle>
@@ -1698,7 +1764,7 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
           </SectionTitle>
           <Paragraphs items={data.votingSystemParagraphs} />
           <BulletList items={data.votingSystemBullets} />
-          <PdfText style={styles.paragraph}>
+          <PdfText style={[styles.paragraph, { lineHeight: 1.5 }]}>
             {t('process_pdf.voting_system.executed_on', {
               defaultValue: 'The process {{voting_process}} was executed on the {{blockchain_network}} infrastructure.',
               voting_process: data.eventReference,
@@ -1726,19 +1792,20 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
             {t('process_pdf.document.sections.turnout_participation', { defaultValue: '4. Census and Participation' })}
           </SectionTitle>
           <KeyValueList items={data.censusParticipation} />
-          <PdfText style={styles.sectionLead}>{data.censusParticipationLead}</PdfText>
+          <PdfText style={[styles.sectionLead, { lineHeight: 1.5 }]}>{data.censusParticipationLead}</PdfText>
         </ReportSectionBlock>
       </Page>
 
       <Page
         size='A4'
         style={styles.page}
-        id='report-page-4'
+        id={REPORT_PAGE_IDS.sectionsB}
         bookmark={t('process_pdf.document.bookmarks.voting_process', { defaultValue: 'Questions and Results' })}
       >
         <RunningHeader />
         <PageFooterLine />
         <ReportPageNumber label={pageNumberLabel} />
+        {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsB} onCapturePage={onCapturePage} />}
 
         <ReportSectionBlock>
           <SectionTitle>
@@ -1893,12 +1960,13 @@ const VotingCertificateDocument = ({ data, t }: PdfDocumentProps) => {
         size='A4'
         style={styles.page}
         wrap
-        id='report-page-5'
+        id={REPORT_PAGE_IDS.sectionsC}
         bookmark={t('process_pdf.document.bookmarks.issuer', { defaultValue: 'Issuer' })}
       >
         <RunningHeader />
         <PageFooterLine />
         <ReportPageNumber label={pageNumberLabel} />
+        {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsC} onCapturePage={onCapturePage} />}
         <ReportSectionBlock>
           <SectionTitle>{t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' })}</SectionTitle>
           <KeyValueList items={data.issuer} />
@@ -1963,7 +2031,23 @@ const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
         censusBundle,
         now: new Date(),
       })
-      const blob = await pdf(<VotingCertificateDocument data={data} t={t} />).toBlob()
+
+      // --- Pass 1: capture actual page starts ---
+      const capturedPages: Record<string, number> = {}
+      const captureDoc = (
+        <VotingCertificateDocument
+          data={data}
+          t={t}
+          onCapturePage={(id, n) => {
+            capturedPages[id] = n
+          }}
+        />
+      )
+      await pdf(captureDoc).toBlob() // discard; only needed to run layout
+
+      // --- Pass 2: final PDF with real page numbers ---
+      const finalDoc = <VotingCertificateDocument data={data} t={t} capturedPages={capturedPages} />
+      const blob = await pdf(finalDoc).toBlob()
       const url = URL.createObjectURL(blob)
       const anchor = document.createElement('a')
       anchor.href = url
