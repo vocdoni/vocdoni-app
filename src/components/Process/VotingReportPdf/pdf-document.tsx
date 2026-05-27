@@ -233,6 +233,10 @@ const getReportPageNumber = (pageNumber: number) => pageNumber - PREAMBLE_PAGE_C
 
 const PageFooterLine = () => <View fixed style={styles.pageFooter} />
 
+// react-pdf v4 constraint: PdfText nodes that use the `render` prop must NOT have `lineHeight` in
+// their style — mixing `render` with `lineHeight` causes a layout crash in @react-pdf/renderer v4.
+// Both PageStartCapture and ReportPageNumber intentionally omit `lineHeight` from their styles.
+
 // Probe component for pass-1 page number capture. Only renders when onCapturePage is provided.
 const PageStartCapture = ({
   pageId,
