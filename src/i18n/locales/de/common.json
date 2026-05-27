@@ -1361,22 +1361,30 @@
     "authentication": {
       "identity_source": "Identitätsdatenquelle",
       "method": "Authentifizierungsmethode",
-      "two_fa": "Zwei-Faktor-Authentifizierung"
-    },
-    "boolean": {
-      "no": "Nein",
-      "yes": "Ja"
+      "two_fa": "Zwei-Faktor-Authentifizierung",
+      "two_fa_disabled": "Deaktiviert: In diesem Abstimmungsprozess wurde keine zusätzliche Identitätsprüfung konfiguriert.",
+      "two_fa_enabled": "Aktiviert: Wählende bestätigen ihre Identität mit einem Einmalcode, der an ihre persönlichen Geräte gesendet wird.",
+      "voter_access_source": "Zugangsberechtigung der Wählenden",
+      "voter_access_source_spreadsheet": "Wählende melden sich mit Zugangsdaten an, die aus der von der Organisation hochgeladenen Tabellen-Teilnehmerliste abgeleitet sind.",
+      "voter_access_source_web3": "Wählende melden sich mit der in der Web3-Teilnehmerliste enthaltenen Wallet-Adresse an.",
+      "voter_access_source_weighted": "Die Berechtigung wird anhand der von der Organisation bereitgestellten gewichteten Teilnehmerliste für diesen Prozess geprüft."
     },
     "census": {
-      "definition": "Die Teilnehmerliste legt alle Mitglieder fest, die zur Teilnahme am Abstimmungsprozess berechtigt sind. Die Aufnahme in die Liste bedeutet nicht zwingend eine tatsächliche Teilnahme.",
-      "provider": "Anbieter der Teilnehmerliste",
-      "provider_value": "Die Teilnehmerliste wird von der Organisation bereitgestellt",
-      "total": "Gesamte Teilnehmerliste"
+      "counting_basis": "Auszählungsgrundlage",
+      "counting_basis_1p1v": "1 Person, 1 Stimme",
+      "counting_basis_weighted": "Gewichtete Abstimmung",
+      "eligible_voters": "Stimmberechtigte",
+      "eligible_voting_power": "Gesamtes stimmberechtigtes Stimmgewicht",
+      "source": "Teilnehmerlisten-Quelle",
+      "voting_power_used": "Genutztes Stimmgewicht",
+      "weighted_participation": "Gewichtete Beteiligung"
     },
     "census_type": {
       "anonymous": "Geheime gewichtete Teilnehmerliste",
       "csp": "CSP-Teilnehmerliste",
+      "spreadsheet": "Von der Organisation bereitgestellte Tabellen-Teilnehmerliste",
       "unknown": "Nicht verfügbar",
+      "web3": "Von der Organisation bereitgestellte Web3-Wallet-Teilnehmerliste",
       "weighted": "Gewichtete Teilnehmerliste"
     },
     "disclaimer": {
@@ -1390,36 +1398,43 @@
       "title": "Haftungsausschluss"
     },
     "document": {
-      "issued_by": "Ausgestellt von Vocdoni (Synergize SL) am {{issue_date}} in seiner Eigenschaft als technischer Dienstleister.",
-      "sections": {
-        "authentication": "2. Authentifizierung",
-        "certification_scope": "8. Zertifizierungsumfang",
-        "electoral_census": "4. Teilnehmerliste",
-        "general_information": "1. Allgemeine Informationen",
-        "issuer": "9. Aussteller",
-        "turnout_participation": "5. Beteiligung und Wahlbeteiligung",
-        "verification": "7. Verifizierung",
-        "voting_process": "6. Abstimmungsprozess",
-        "voting_system": "3. Abstimmungssystem"
+      "bookmarks": {
+        "general_information": "Technischer Rahmen und allgemeine Informationen",
+        "index": "Inhaltsverzeichnis",
+        "issuer": "Aussteller",
+        "voting_process": "Fragen und Ergebnisse"
       },
-      "subtitle": "Bericht ausgestellt am {{issue_date}} | Prozess-ID: {{process_id}}",
+      "index": {
+        "intro": "Dieser Bericht ist in folgende Abschnitte gegliedert:",
+        "title": "Inhaltsverzeichnis"
+      },
+      "issued_by": "Ausgestellt von Vocdoni (Synergize SL) am {{issue_date}} um {{issue_time}} in seiner Eigenschaft als technischer Dienstleister.",
+      "page_number": "Seite",
+      "process_id": "Prozess-ID: {{process_id}}",
+      "sections": {
+        "authentication": "3. Authentifizierung",
+        "general_information": "2. Allgemeine Informationen",
+        "issuer": "7. Aussteller",
+        "turnout_participation": "4. Teilnehmerliste und Beteiligung",
+        "verification": "6. Verifizierung",
+        "voting_process": "5. Fragen und Ergebnisse",
+        "voting_system": "1. Technischer Rahmen"
+      },
       "title_prefix": "TECHNISCHE ZERTIFIZIERUNG DES DIGITALEN ABSTIMMUNGSPROZESSES"
     },
     "download": "PDF herunterladen",
     "download_error": "PDF-Bericht konnte nicht erstellt werden",
     "downloading": "PDF wird erstellt",
-    "encryption": {
-      "encrypted": "Verschlüsselt",
-      "not_encrypted": "Nicht verschlüsselt"
-    },
     "general": {
-      "encryption_method": "Verschlüsselungsmethode",
+      "census_reference": "Teilnehmerlisten-Referenz",
+      "census_reference_helper": "Öffentliche Referenz, die die für diesen Abstimmungsprozess verwendete Teilnehmerliste identifiziert. Sie enthält keine personenbezogenen Daten der Wählenden und gibt diese nicht preis.",
       "event_name": "Veranstaltungsname",
-      "extended_process_details": "Erweiterte Prozessdetails",
       "network": "Netzwerk",
       "organization": "Organisation",
+      "process_id": "Prozess-ID",
+      "process_id_helper": "Eindeutiger öffentlicher Bezeichner dieses Abstimmungsprozesses. Mit ihm lässt sich der Prozess in der Abstimmungsinfrastruktur finden und überprüfen.",
       "results_visibility": "Sichtbarkeit der Ergebnisse",
-      "vote_overwrite_enabled": "Stimme ändern aktiviert",
+      "vote_overwrite": "Stimme ändern",
       "voting_period_end": "Abstimmungszeitraum (Ende)",
       "voting_period_start": "Abstimmungszeitraum (Beginn)"
     },
@@ -1428,60 +1443,70 @@
     "intro_paragraph_3": "Diese Zertifizierung wird ausschließlich vom technischen Dienstleister ausgestellt, um die Korrektheit der Systemausführung und die Integrität der aufgezeichneten Daten zu bestätigen. Sie ersetzt keine rechtliche Zertifizierung, stellt keine dar und behauptet auch keine Konformität mit jurisdiktionsspezifischen gesetzlichen oder regulatorischen Anforderungen.",
     "issuer": {
       "issuing_date": "Ausstellungsdatum",
-      "legal_entity": "Juristische Person",
       "paragraph": "Ausgestellt im Auftrag der organisierenden Einheit in ihrer Eigenschaft als technischer Dienstleister.",
       "provider": "Anbieter"
     },
     "not_available": "Nicht verfügbar",
-    "scope": {
-      "census": "Definition der Teilnehmerliste",
-      "configuration": "Konfiguration des Abstimmungsprozesses",
-      "exclusion": "Diese Zertifizierung deckt keine Governance-Regeln, die Richtigkeit von Berechtigungskriterien oder die Einhaltung gesetzlicher Vorschriften ab.",
-      "paragraph": "Diese Zertifizierung umfasst ausschließlich die folgenden technischen Aspekte:",
-      "participation": "Erfassung der Beteiligungsdaten",
-      "period": "Durchsetzung des Abstimmungszeitraums",
-      "results": "Endgültig berechnete Ergebnisse",
-      "tally": "Automatisierte Auszählungsmechanismen"
+    "results": {
+      "hidden_field": "Verborgen bis zur Veröffentlichung der Endergebnisse"
     },
     "turnout": {
-      "census_contact": "Wenn du weitere Details zur Teilnehmerliste benötigst, kontaktiere uns bitte.",
       "eligible": "Gesamtzahl der berechtigten Teilnehmenden",
       "participation": "Die Anzahl der abgegebenen Stimmen umfasst nur jene Teilnehmenden, die während des festgelegten Abstimmungszeitraums einen gültigen Stimmzettel eingereicht haben.",
-      "rate": "Beteiligungsquote",
-      "votes_cast": "Gesamtzahl der abgegebenen Stimmen"
+      "submitted_ballots": "Abgegebene Stimmzettel",
+      "voter_participation": "Wahlbeteiligung",
+      "weighted_participation": "Abgegebene Stimmzettel zählen die teilnehmenden Wählenden. Gewichtete Gesamtergebnisse zählen das für jede Antwort erfasste Stimmgewicht."
     },
     "verification": {
       "explorer": "Verifizierungs-Explorer",
       "paragraph": "Alle Prozessdaten wurden in einer blockchain-basierten Infrastruktur gespeichert und können über den folgenden öffentlichen Explorer unabhängig überprüft werden:",
       "procedure_title": "Verifizierungsverfahren",
-      "step_1": "Rufe die Prozessdaten über den Explorer ab.",
-      "step_2": "Überprüfe den Root-Hash des Prozesses anhand des veröffentlichten Werts.",
-      "step_3": "Bestätige die Konsistenz der Teilnehmerlisten-Referenz und der Stimmzetteleinträge.",
-      "step_4": "Berechne die Auszählungsergebnisse gegebenenfalls neu und überprüfe sie."
+      "step_1": "Öffne den Link zum Verifizierungs-Explorer. Diese Seite enthält das öffentliche technische Protokoll des Abstimmungsprozesses.",
+      "step_2": "Prüfe, ob die Prozess-ID im Explorer mit der Prozess-ID in diesem Bericht übereinstimmt. Dies bestätigt, dass sich beide Dokumente auf denselben Abstimmungsprozess beziehen.",
+      "step_3": "Prüfe, ob die im Explorer angezeigte Teilnehmerlisten-Referenz mit der Referenz in diesem Bericht übereinstimmt. Dies bestätigt, dass die mit dem Prozess verknüpfte Teilnehmerliste dieselbe ist.",
+      "step_4": "Prüfe, ob die Anzahl der erfassten Stimmzettel mit den in diesem Bericht angezeigten Beteiligungsdaten übereinstimmt.",
+      "step_5": "Vergleiche das abschließende Auszählungsergebnis im Explorer mit den Stimmzahl- oder gewichteten Stimmgewicht-Ergebnissen in diesem Bericht.",
+      "step_6": "Für eine tiefere technische Prüfung kann ein Prüfer die öffentlichen Aufzeichnungen im Detail einsehen oder die Auszählung neu berechnen, um sicherzustellen, dass die erfassten Stimmzettel und Endergebnisse übereinstimmen."
     },
+    "vote_overwrite_disabled": "Deaktiviert",
+    "vote_overwrite_enabled": "Aktiviert, bis zu {{votes}} Stimmänderungen pro Wählendem",
     "vote_overwrite_enabled_one": "Ja, bis zu {{count}} Änderung",
     "vote_overwrite_enabled_other": "Ja, bis zu {{count}} Änderungen",
     "voting_process": {
       "card": {
+        "abstain": "Enthalten",
         "item": "Frage {{index}}",
-        "outcome": "Ergebnis: {{outcome}}",
-        "participation": "Beteiligung: {{votes}} erfasste Stimmen",
-        "question": "Frage: {{question}}",
-        "results": "Ergebnisse:"
+        "option": "Option",
+        "outcome_label": "Abstimmungsmethode",
+        "participation_short": "{{votes}} Stimmen",
+        "results": "Ergebnisse:",
+        "share_cast_power": "Anteil am genutzten Stimmgewicht",
+        "share_eligible_power": "Anteil am berechtigten Stimmgewicht",
+        "share_votes": "Stimmenanteil",
+        "submitted_ballots_short": "{{ballots}} Stimmzettel",
+        "votes": "Stimmen",
+        "voting_power": "Stimmgewicht",
+        "voting_power_short": "{{power}} Stimmgewicht",
+        "voting_power_used": "Genutztes Stimmgewicht",
+        "weighted_method": "{{base}} mit gewichteter Abstimmung"
       },
       "intro_one": "Der Abstimmungsprozess {{process_name}} bestand aus 1 Frage.",
-      "intro_other": "Der Abstimmungsprozess {{process_name}} bestand aus {{count}} Fragen."
+      "intro_other": "Der Abstimmungsprozess {{process_name}} bestand aus {{count}} Fragen.",
+      "results_hidden": "Ergebnisse werden erst nach Abschluss der endgültigen Ergebnisphase angezeigt."
     },
     "voting_system": {
-      "bullet_1": "Infrastruktur auf Basis eines verteilten Ledgers (Blockchain)",
-      "bullet_2": "Kryptografische Überprüfungs- und Integritätsmechanismen",
-      "executed_on": "Der Prozess wurde auf der {{blockchain_network}}-Infrastruktur ausgeführt.",
-      "guarantee_1": "Integrität des Abstimmungsprozesses",
-      "guarantee_2": "Unveränderlichkeit der erfassten Daten",
-      "guarantee_3": "Unabhängige Nachprüfbarkeit der Ergebnisse",
-      "guarantee_4": "Vertraulichkeit der einzelnen Stimmzettel",
-      "guarantee_lead": "Das System gewährleistet:",
-      "paragraph": "Abstimmungs- und Auszählungsvorgänge wurden mit Vocdoni durchgeführt, einem digitalen Abstimmungsprotokoll, das unterstützt wird von:"
+      "bullet_1": "Ein öffentliches Protokoll der Abstimmungsprozess-Konfiguration",
+      "bullet_2": "Eine Teilnehmerlisten-Referenz, die die Teilnehmerliste identifiziert, ohne personenbezogene Daten der Wählenden preiszugeben",
+      "bullet_3": "Kryptografische Mechanismen zum Schutz des Stimmgeheimnisses und der Privatsphäre der Wählenden",
+      "bullet_4": "Erfasste Beteiligungs- und Ergebnisdaten, die unabhängig überprüft werden können",
+      "bullet_5": "Manipulationssichere Aufzeichnungen in blockchain-basierter Infrastruktur",
+      "bullet_6": "Endergebnisse, die mit den öffentlichen Verifizierungsdaten verglichen werden können",
+      "executed_on": "Der Prozess {{voting_process}} wurde auf der {{blockchain_network}}-Infrastruktur ausgeführt.",
+      "guarantee_lead": "Das Vocdoni-Protokoll stärkt das Vertrauen in den Abstimmungsprozess durch:",
+      "paragraph_1": "Der Abstimmungsprozess wurde mit dem Vocdoni-Protokoll durchgeführt, einem digitalen Abstimmungsprotokoll, das Abstimmungsprozesse mit starken Integritätsgarantien erstellt, ausführt, erfasst und nachprüfbar macht.",
+      "paragraph_2": "Wenn ein Abstimmungsprozess erstellt wird, wird seine Konfiguration vor Beginn der Abstimmung in der Blockchain erfasst – so entsteht ein öffentliches und prüfbares Protokoll der geplanten Durchführung. Dies umfasst den Abstimmungszeitraum, die Abstimmungsmethode, die berechtigten Teilnehmenden, die Fragen sowie die Regeln zur Ergebnisermittlung. Die Teilnehmerliste legt fest, wer an der Abstimmung teilnehmen darf, und schützt dabei die Privatsphäre der einzelnen Wählenden.",
+      "paragraph_3": "Während des Abstimmungszeitraums authentifizieren sich berechtigte Wählende entsprechend der konfigurierten Methode und geben ihre Stimmzettel über das Abstimmungssystem ab. Das Protokoll ist so konzipiert, dass der Prozess von Anfang bis Ende nachvollziehbar ist.",
+      "paragraph_4": "Nach Abschluss des Abstimmungsprozesses werden die Endergebnisse und die relevanten Prozessaufzeichnungen in der Blockchain verankert. Dadurch ist der Prozess prüfbar, und der veröffentlichte Bericht kann mit den öffentlichen technischen Aufzeichnungen verglichen werden."
     }
   },
   "processes": {
