@@ -1,4 +1,4 @@
-import { CensusType, ElectionResultsTypeNames, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { isValidElement, type ReactNode } from 'react'
 
 export const createElection = () =>

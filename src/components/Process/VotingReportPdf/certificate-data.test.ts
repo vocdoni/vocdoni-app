@@ -1,6 +1,6 @@
 import { CensusType, ElectionResultsTypeNames, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
-import { buildCertificateData } from './certificate-data'
 import { createElection, createElectionWithResults, createReport, translate } from './__fixtures__'
+import { buildCertificateData } from './certificate-data'
 
 vi.mock('@vocdoni/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/sdk')>()

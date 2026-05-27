@@ -1,8 +1,8 @@
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { ElectionStatus } from '@vocdoni/sdk'
 import { type ReactNode } from 'react'
 import { render, screen } from '~src/test-utils'
-import { VotingReportPdfMenuItem } from './VotingReportPdfMenuItem'
 import { VotingReportPdfButton } from './VotingReportPdfButton'
+import { VotingReportPdfMenuItem } from './VotingReportPdfMenuItem'
 import { createElection } from './__fixtures__'
 
 vi.mock('@react-pdf/renderer', () => ({
@@ -51,7 +51,7 @@ describe('VotingReportPdfMenuItem', () => {
   it('renders the download action in the menu', () => {
     render(<VotingReportPdfMenuItem election={createElection()} />)
 
-    expect(screen.getByRole('button', { name: /download pdf/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /election report \(pdf\)/i })).toBeInTheDocument()
   })
 
   it('hides the download action while the voting process is still ongoing', () => {
@@ -66,6 +66,6 @@ describe('VotingReportPdfMenuItem', () => {
       </>
     )
 
-    expect(screen.queryByRole('button', { name: /download pdf/i })).toBeNull()
+    expect(screen.queryByRole('button', { name: /election report \(pdf\)/i })).toBeNull()
   })
 })

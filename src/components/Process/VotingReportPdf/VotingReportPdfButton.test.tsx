@@ -1,4 +1,4 @@
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { CensusType } from '@vocdoni/sdk'
 import { type ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import { VotingReportPdfButton } from './VotingReportPdfButton'
@@ -91,7 +91,7 @@ describe('VotingReportPdfButton', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -134,7 +134,7 @@ describe('VotingReportPdfButton', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -180,7 +180,7 @@ describe('VotingReportPdfButton', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledWith('https://example.test/census-bundle')
@@ -189,5 +189,3 @@ describe('VotingReportPdfButton', () => {
     fetchSpy.mockRestore()
   })
 })
-
-import { CensusType } from '@vocdoni/sdk'

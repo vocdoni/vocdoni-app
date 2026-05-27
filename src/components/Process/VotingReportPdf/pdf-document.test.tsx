@@ -1,8 +1,9 @@
-import { isValidElement, type ReactNode } from 'react'
+import { CensusType, PublishedElection } from '@vocdoni/sdk'
+import { type ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VotingReportPdfButton } from './VotingReportPdfButton'
-import { createElection, createElectionWithResults, createReport, collectTextContent } from './__fixtures__'
+import { collectTextContent, createElection, createElectionWithResults } from './__fixtures__'
 
 const mockModule = vi.hoisted(() => ({
   pdfSpy: vi.fn(),
@@ -78,7 +79,7 @@ describe('VotingCertificateDocument', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -100,7 +101,7 @@ describe('VotingCertificateDocument', () => {
 
     render(<VotingReportPdfButton election={election} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -421,7 +422,7 @@ describe('VotingCertificateDocument', () => {
   it('renders all result rows with colored bars', async () => {
     render(<VotingReportPdfButton election={createElectionWithResults()} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -548,7 +549,7 @@ describe('VotingCertificateDocument', () => {
 
     render(<VotingReportPdfButton election={weightedElection} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -606,7 +607,7 @@ describe('VotingCertificateDocument', () => {
 
     render(<VotingReportPdfButton election={cspWeightedElection} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /download pdf/i }))
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
@@ -622,5 +623,3 @@ describe('VotingCertificateDocument', () => {
     expect(documentText).not.toContain('Share of votes')
   })
 })
-
-import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'

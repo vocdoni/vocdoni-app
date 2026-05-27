@@ -1,13 +1,8 @@
-import { Icon, Menu, MenuItem, Spinner } from '@chakra-ui/react'
-import { LuFileDown } from 'react-icons/lu'
+import { Icon, Menu, Spinner } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
+import { LuFileDown } from 'react-icons/lu'
 
-import {
-  type ElectionLike,
-  canDownloadVotingReport,
-  useVotingReportPdfDownload,
-  VotingReportPdfButton,
-} from './VotingReportPdfButton'
+import { type ElectionLike, canDownloadVotingReport, useVotingReportPdfDownload } from './VotingReportPdfButton'
 
 type VotingReportPdfProps = {
   election?: ElectionLike | null

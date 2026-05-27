@@ -5,18 +5,16 @@ import { type ReactNode } from 'react'
 import logoImport from '/assets/logo_vocdoni.png'
 import iconImport from '/assets/vocdoni_icon.png'
 
-import { styles } from './styles'
 import {
-  type CertificateData,
   type CertificateChoice,
+  type CertificateData,
   type CertificateField,
-  type CertificateQuestion,
   formatPdfFieldValue,
-  notAvailable,
   shouldStackFieldValue,
 } from './certificate-data'
+import { styles } from './styles'
 
-const { pdf, Document, Font, Image, Link: PdfLink, Page, Text: PdfText, View } = ReactPDF
+const { Document, Font, Image, Link: PdfLink, Page, Text: PdfText, View } = ReactPDF
 
 const preventPdfHyphenation = (word: string) => [word]
 

@@ -1,8 +1,8 @@
-import { Button, HStack, Icon, Link, Spinner, Text } from '@chakra-ui/react'
+import { Button, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import * as ReactPDF from '@react-pdf/renderer'
 import { useClient, useOrganization } from '@vocdoni/react-components'
 import { ElectionStatus, PublishedElection, type InvalidElection } from '@vocdoni/sdk'
-import { type ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuFileDown } from 'react-icons/lu'
 

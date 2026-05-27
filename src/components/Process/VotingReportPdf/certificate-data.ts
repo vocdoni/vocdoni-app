@@ -1,4 +1,4 @@
-import { useElection, useOrganization } from '@vocdoni/react-components'
+import { useElection } from '@vocdoni/react-components'
 import {
   CensusType,
   dotobject,
