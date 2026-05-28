@@ -188,7 +188,13 @@ export const styles = StyleSheet.create({
   paragraph: {
     marginBottom: 7.5,
     color: '#2f3a4c',
-    lineHeight: 1.1,
+    lineHeight: 0.9,
+  },
+  coverParagraph: {
+    marginBottom: 7.5,
+    color: '#2f3a4c',
+    lineHeight: 1.3,
+    fontSize: 8.5,
   },
   afterBoxText: {
     marginTop: 1,

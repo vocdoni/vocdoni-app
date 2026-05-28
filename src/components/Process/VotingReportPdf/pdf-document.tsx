@@ -190,10 +190,16 @@ export const buildReportSections = (t: TFunction): ReportSection[] => [
   },
 ]
 
-const Paragraphs = ({ items }: { items: string[] }) => (
+const Paragraphs = ({
+  items,
+  style = styles.paragraph,
+}: {
+  items: string[]
+  style?: (typeof styles)[keyof typeof styles]
+}) => (
   <View>
     {items.map((item, index) => (
-      <PdfText key={`${item}-${index}`} style={styles.paragraph}>
+      <PdfText key={`${item}-${index}`} style={style}>
         {item}
       </PdfText>
     ))}
@@ -329,7 +335,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
           </View>
 
           <View style={styles.coverIntroPanel}>
-            <Paragraphs items={data.introParagraphs} />
+            <Paragraphs items={data.introParagraphs} style={styles.coverParagraph} />
             <PdfText style={styles.issuedLine}>
               {t('process_pdf.document.issued_by', {
                 defaultValue:
