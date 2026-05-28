@@ -27,9 +27,9 @@ import {
   useRecipe,
   useSlotRecipe,
 } from '@chakra-ui/react'
-import { type ComponentsPartialDefinition, defineComponent, useElection } from '@vocdoni/react-components'
+import { ElectionContext, type ComponentsPartialDefinition, defineComponent } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
 import { storeProcessSpreadsheetIdentifier } from '~components/Process/authenticatedVoterLabel'
@@ -480,17 +480,11 @@ export const electionComponents: ComponentsPartialDefinition = {
       const recipe = useSlotRecipe({ key: 'SpreadsheetAccess' })
       const styles = recipe()
       const { t } = useTranslation()
-      let electionId: string | undefined
-
-      try {
-        const electionContext = useElection()
-        electionId =
-          electionContext?.election instanceof PublishedElection
-            ? electionContext.election.id
-            : electionContext?.election?.id
-      } catch {
-        electionId = undefined
-      }
+      const electionContext = useContext(ElectionContext)
+      const electionId =
+        electionContext?.election instanceof PublishedElection
+          ? electionContext.election.id
+          : electionContext?.election?.id
 
       if (connected) {
         return (
