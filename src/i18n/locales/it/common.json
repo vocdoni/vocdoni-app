@@ -1217,7 +1217,6 @@
     },
     "questions": "Domande",
     "results": "Risultati",
-    "share_caption": "Ho appena votato in {{ title }}!!",
     "share_title": "Condividi su {{ network }}",
     "spreadsheet": {
       "confirm": {
@@ -1235,7 +1234,7 @@
     },
     "success_modal": {
       "btn": "Chiudi",
-      "text": "<p>Il tuo voto è stato espresso e memorizzato in modo sicuro con la tecnologia di Vocdoni. <verify>Puoi verificarlo qui</verify>.</p>",
+      "text": "<p>Il tuo voto è stato espresso e memorizzato in modo sicuro con la tecnologia di Vocdoni. Puoi verificarlo <verify>qui</verify>.</p>",
       "title": "Voto inviato!"
     },
     "template": {

@@ -360,7 +360,6 @@
   "footer": {
     "company": "Unternehmen",
     "contact": "Kontakt",
-    "developer_portal": "Entwicklerportal",
     "footer_subtitle": "Das globale Abstimmungsprotokoll",
     "terms_and_privacy": "<link1>Nutzungsbedingungen</link1> & <link2>Datenschutzrichtlinie</link2>"
   },
@@ -1196,7 +1195,6 @@
     },
     "questions": "Fragen",
     "results": "Ergebnisse",
-    "share_caption": "Ich habe gerade meine Stimme abgegeben in {{ title }}!!",
     "share_title": "Auf {{ network }} teilen",
     "spreadsheet": {
       "confirm": {

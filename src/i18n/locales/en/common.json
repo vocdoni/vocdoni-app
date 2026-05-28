@@ -1195,7 +1195,6 @@
     },
     "questions": "Questions",
     "results": "Results",
-    "share_caption": "I've just cast my vote in {{ title }}!!",
     "share_title": "Share on {{ network }}",
     "spreadsheet": {
       "confirm": {
@@ -1213,7 +1212,7 @@
     },
     "success_modal": {
       "btn": "Close",
-      "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. <verify>You can verify it here</verify>.</p>",
+      "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. You can verify it <verify>here</verify>.</p>",
       "title": "Vote submitted!"
     },
     "template": {

@@ -1217,7 +1217,6 @@
     },
     "questions": "Preguntes",
     "results": "Resultats",
-    "share_caption": "Acabo d'emetre el meu vot a {{ title }}!!",
     "share_title": "Comparteix a {{ network }}",
     "spreadsheet": {
       "confirm": {
@@ -1235,7 +1234,7 @@
     },
     "success_modal": {
       "btn": "Finalitzar",
-      "text": "<p>El teu vot ha estat emès i emmagatzemat de forma segura amb la tecnologia de Vocdoni. <verify>Pots comprovar-ho aquí</verify>.</p>",
+      "text": "<p>El teu vot ha estat emès i emmagatzemat de forma segura amb la tecnologia de Vocdoni. Pots comprovar-ho <verify>aquí</verify>.</p>",
       "title": "Vot emès correctament!"
     },
     "template": {

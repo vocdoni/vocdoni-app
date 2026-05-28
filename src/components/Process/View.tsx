@@ -8,7 +8,6 @@ import {
   GridItem,
   Icon,
   Link,
-  List,
   Portal,
   Spinner,
   TabsContent,
@@ -35,7 +34,6 @@ import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiErrorWarningLine } from 'react-icons/ri'
-import { FacebookShare, RedditShare, TelegramShare, TwitterShare } from '~components/Share'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
@@ -342,8 +340,6 @@ const SuccessVoteModal = () => {
   if (!election || !voted || !(election instanceof PublishedElection)) return null
 
   const verify = environment.verifyVote(env, voted)
-  const url = encodeURIComponent(document.location.href)
-  const caption = t('process.share_caption', { title: election?.title.default })
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={({ open }) => setOpen(open)}>
@@ -364,29 +360,6 @@ const SuccessVoteModal = () => {
                   p: <Text mb={2} />,
                 }}
               />
-              <List.Root
-                listStyleType='none'
-                display='flex'
-                flexDirection='row'
-                justifyContent='center'
-                gap={6}
-                mt={6}
-                mb={2}
-                ml={0}
-              >
-                <List.Item>
-                  <TwitterShare url={url} caption={caption} />
-                </List.Item>
-                <List.Item>
-                  <FacebookShare url={url} caption={caption} />
-                </List.Item>
-                <List.Item>
-                  <TelegramShare url={url} caption={caption} />
-                </List.Item>
-                <List.Item>
-                  <RedditShare url={url} caption={caption} />
-                </List.Item>
-              </List.Root>
             </Dialog.Body>
 
             <Dialog.Footer>
