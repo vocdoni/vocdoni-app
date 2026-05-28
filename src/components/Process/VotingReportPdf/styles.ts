@@ -188,7 +188,7 @@ export const styles = StyleSheet.create({
   paragraph: {
     marginBottom: 7.5,
     color: '#2f3a4c',
-    lineHeight: 1.3,
+    lineHeight: 1.1,
   },
   afterBoxText: {
     marginTop: 1,
@@ -479,5 +479,12 @@ export const styles = StyleSheet.create({
   smallText: {
     fontSize: 9,
     color: '#697386',
+  },
+  // Zero-size invisible text node used as a layout probe to capture the PDF page number
+  // a section block lands on. Must NOT include lineHeight (react-pdf v4 render-prop constraint).
+  captureProbe: {
+    fontSize: 0,
+    height: 0,
+    position: 'absolute',
   },
 })

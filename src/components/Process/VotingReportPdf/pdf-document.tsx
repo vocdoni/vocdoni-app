@@ -89,15 +89,7 @@ const ReportSectionBlock = ({
   onCapturePage?: (id: string, n: number) => void
 }) => (
   <View wrap={false} style={styles.section} id={sectionId}>
-    {sectionId && onCapturePage && (
-      <PdfText
-        style={{ fontSize: 0, height: 0, position: 'absolute' }}
-        render={({ pageNumber }) => {
-          onCapturePage(sectionId, pageNumber)
-          return ''
-        }}
-      />
-    )}
+    {sectionId && onCapturePage && <PdfText style={styles.captureProbe} />}
     {children}
   </View>
 )
@@ -232,18 +224,18 @@ const ResultBarRow = ({
   notAvailableLabel: string
 }) => (
   <View wrap={false} style={styles.resultRow}>
-    <View style={[styles.resultOptionCell, isWeighted ? styles.resultOptionCellWeighted : {}]}>
+    <View style={isWeighted ? [styles.resultOptionCell, styles.resultOptionCellWeighted] : styles.resultOptionCell}>
       <PdfText style={styles.resultChoiceName}>{choice.name}</PdfText>
       <View style={styles.resultBarTrack}>
         <View style={[styles.resultBarFill, { width: getResultBarWidth(choice) }]} />
       </View>
     </View>
-    <View style={[styles.resultValueCell, isWeighted ? styles.resultValueCellWeighted : {}]}>
+    <View style={isWeighted ? [styles.resultValueCell, styles.resultValueCellWeighted] : styles.resultValueCell}>
       <PdfText style={styles.resultValueText}>
         {isWeighted ? (choice.votingPower ?? choice.votes) : choice.votes}
       </PdfText>
     </View>
-    <View style={[styles.resultShareCell, isWeighted ? styles.resultShareCellWeighted : {}]}>
+    <View style={isWeighted ? [styles.resultShareCell, styles.resultShareCellWeighted] : styles.resultShareCell}>
       <PdfText style={styles.resultShareText}>
         {isWeighted ? (choice.castPowerPercentage ?? choice.percentage) : choice.percentage}
       </PdfText>
@@ -273,15 +265,7 @@ const PageStartCapture = ({
   onCapturePage?: (id: string, n: number) => void
 }) => {
   if (!onCapturePage) return null
-  return (
-    <PdfText
-      style={{ fontSize: 0, height: 0, position: 'absolute' }}
-      render={({ pageNumber, subPageNumber }) => {
-        if (subPageNumber === 1) onCapturePage(pageId, pageNumber)
-        return ''
-      }}
-    />
-  )
+  return <PdfText style={styles.captureProbe} />
 }
 
 const getIndexPageLabel = (pageId: string, capturedPages?: Record<string, number>): string => {
@@ -523,26 +507,29 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
                     <View style={styles.resultTable}>
                       <View style={styles.resultHeaderRow}>
                         <PdfText
-                          style={[
-                            styles.resultHeaderOption,
-                            question.isWeighted ? styles.resultHeaderOptionWeighted : {},
-                          ]}
+                          style={
+                            question.isWeighted
+                              ? [styles.resultHeaderOption, styles.resultHeaderOptionWeighted]
+                              : styles.resultHeaderOption
+                          }
                         >
                           {t('process_pdf.voting_process.card.option', { defaultValue: 'Option' })}
                         </PdfText>
                         <PdfText
-                          style={[
-                            styles.resultHeaderVotes,
-                            question.isWeighted ? styles.resultHeaderVotesWeighted : {},
-                          ]}
+                          style={
+                            question.isWeighted
+                              ? [styles.resultHeaderVotes, styles.resultHeaderVotesWeighted]
+                              : styles.resultHeaderVotes
+                          }
                         >
                           {data.resultValueLabel}
                         </PdfText>
                         <PdfText
-                          style={[
-                            styles.resultHeaderShare,
-                            question.isWeighted ? styles.resultHeaderShareWeighted : {},
-                          ]}
+                          style={
+                            question.isWeighted
+                              ? [styles.resultHeaderShare, styles.resultHeaderShareWeighted]
+                              : styles.resultHeaderShare
+                          }
                         >
                           {question.isWeighted
                             ? t('process_pdf.voting_process.card.share_cast_power', {
