@@ -118,13 +118,7 @@ describe('VotingCertificateDocument', () => {
     const firstPageChildren = Array.isArray(firstPage.props.children)
       ? firstPage.props.children
       : [firstPage.props.children]
-    const coverAccent = firstPageChildren[0] as { props: { style?: Record<string, unknown> } }
-    expect(coverAccent.props.style).toMatchObject({
-      backgroundColor: '#111827',
-      width: 20,
-    })
-
-    const coverContent = firstPageChildren[1] as { props: { style?: Record<string, unknown>; children: ReactNode } }
+    const coverContent = firstPageChildren[0] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(coverContent.props.style).toMatchObject({
       justifyContent: 'space-between',
     })

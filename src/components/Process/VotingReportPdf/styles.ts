@@ -21,14 +21,6 @@ export const styles = StyleSheet.create({
     color: '#172033',
     backgroundColor: '#fbfcfe',
   },
-  coverAccent: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 20,
-    backgroundColor: '#111827',
-  },
   coverHairline: {
     width: 52,
     height: 3,

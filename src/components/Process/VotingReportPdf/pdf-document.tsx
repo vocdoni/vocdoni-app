@@ -322,7 +322,6 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
         style={styles.coverPage}
         bookmark={t('process_pdf.document.bookmarks.index', { defaultValue: 'Index' })}
       >
-        <View style={styles.coverAccent} />
         <View style={styles.coverContent}>
           <View style={styles.header}>
             <Image src={vocdoniLogo} style={styles.logo} />
