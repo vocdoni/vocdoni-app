@@ -856,9 +856,21 @@ const ProcessCreateView = () => {
   }
 
   const onError = (errors) => {
+    console.error(
+      '[ProcessCreate] Validation failed. Failing fields:',
+      Object.entries(errors).map(([key, err]: [string, any]) => ({
+        field: key,
+        type: err?.type,
+        message: err?.message,
+        value: methods.getValues(key as keyof Process),
+      }))
+    )
+
     const sidebarFieldKeys = [
       'groupId',
       'census',
+      'spreadsheet',
+      'addresses',
       'resultVisibility',
       'weightedVote',
       'endDate',
