@@ -1212,7 +1212,7 @@
     },
     "success_modal": {
       "btn": "Close",
-      "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. You can verify <verify>here</verify>.</p>",
+      "text": "<p>Your vote has been securely cast and stored using Vocdoni's technology. You can verify it <verify>here</verify>.</p>",
       "title": "Vote submitted!"
     },
     "template": {
