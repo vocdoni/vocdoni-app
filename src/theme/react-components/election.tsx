@@ -29,7 +29,7 @@ import {
 } from '@chakra-ui/react'
 import { ElectionContext, type ComponentsPartialDefinition, defineComponent } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
-import { ChangeEvent, useContext, useState } from 'react'
+import { ChangeEvent, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
 import { storeProcessSpreadsheetIdentifier } from '~components/Process/authenticatedVoterLabel'
@@ -485,6 +485,20 @@ export const electionComponents: ComponentsPartialDefinition = {
         electionContext?.election instanceof PublishedElection
           ? electionContext.election.id
           : electionContext?.election?.id
+      const [pendingSpreadsheetIdentifier, setPendingSpreadsheetIdentifier] = useState<
+        { label?: string; value?: string } | undefined
+      >()
+
+      useEffect(() => {
+        if (!connected || !electionId || !pendingSpreadsheetIdentifier?.value) return
+
+        storeProcessSpreadsheetIdentifier(
+          electionId,
+          pendingSpreadsheetIdentifier.label,
+          pendingSpreadsheetIdentifier.value
+        )
+        setPendingSpreadsheetIdentifier(undefined)
+      }, [connected, electionId, pendingSpreadsheetIdentifier])
 
       if (connected) {
         return (
@@ -518,14 +532,13 @@ export const electionComponents: ComponentsPartialDefinition = {
                 <form
                   onSubmit={(event) => {
                     const firstField = fields[0]
-                    if (electionId && firstField?.inputProps?.name) {
+                    if (firstField?.inputProps?.name) {
                       const formData = new FormData(event.currentTarget as HTMLFormElement)
                       const firstValue = formData.get(firstField.inputProps.name)
-                      storeProcessSpreadsheetIdentifier(
-                        electionId,
-                        firstField.label,
-                        typeof firstValue === 'string' ? firstValue : undefined
-                      )
+                      setPendingSpreadsheetIdentifier({
+                        label: firstField.label,
+                        value: typeof firstValue === 'string' ? firstValue : undefined,
+                      })
                     }
                     onSubmit(event)
                   }}

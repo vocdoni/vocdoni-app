@@ -1,17 +1,23 @@
 import { fireEvent, render, screen } from '~src/test-utils'
+import type { ReactElement } from 'react'
 import { vi } from 'vitest'
-import { electionComponents } from './election'
+import { ElectionContext } from '@vocdoni/react-components'
 import { useForm } from 'react-hook-form'
+import { processSpreadsheetIdentifierStorageKey } from '~components/Process/authenticatedVoterLabel'
+import { electionComponents } from './election'
 
 const SpreadsheetAccess = electionComponents.SpreadsheetAccess!
 
 describe('electionComponents.SpreadsheetAccess', () => {
+  const renderWithElection = (ui: ReactElement) =>
+    render(<ElectionContext.Provider value={{ election: { id: 'process-1' } } as any}>{ui}</ElectionContext.Provider>)
+
   it('binds visible input to provided field inputProps', () => {
     const onChange = vi.fn()
     const onBlur = vi.fn()
     const ref = vi.fn()
 
-    render(
+    renderWithElection(
       <SpreadsheetAccess
         connected={false}
         loading={false}
@@ -119,5 +125,63 @@ describe('electionComponents.SpreadsheetAccess', () => {
     fireEvent.click(screen.getAllByRole('button', { name: 'spreadsheet.access_button' })[1])
 
     expect(await screen.findByText('validation.required')).toBeInTheDocument()
+  })
+
+  it('persists the spreadsheet identifier only after the connection succeeds', async () => {
+    const onSubmit = vi.fn()
+
+    const { rerender } = renderWithElection(
+      <SpreadsheetAccess
+        connected={false}
+        loading={false}
+        title='Spreadsheet access'
+        open={true}
+        onOpen={() => {}}
+        onClose={() => {}}
+        onLogout={() => {}}
+        onSubmit={onSubmit}
+        fields={[
+          {
+            id: 'code',
+            label: 'Code',
+            inputProps: { name: 'code', onChange: async () => {}, onBlur: async () => {}, ref: () => {} },
+            inputAttrs: { type: 'text' },
+          },
+        ]}
+      />
+    )
+
+    fireEvent.change(screen.getByLabelText('Code'), { target: { value: '  Katleen  ' } })
+    fireEvent.click(screen.getAllByRole('button', { name: 'spreadsheet.access_button' })[1])
+
+    expect(onSubmit).toHaveBeenCalledTimes(1)
+    expect(window.localStorage.getItem(processSpreadsheetIdentifierStorageKey('process-1'))).toBeNull()
+
+    rerender(
+      <ElectionContext.Provider value={{ election: { id: 'process-1' } } as any}>
+        <SpreadsheetAccess
+          connected={true}
+          loading={false}
+          title='Spreadsheet access'
+          open={true}
+          onOpen={() => {}}
+          onClose={() => {}}
+          onLogout={() => {}}
+          onSubmit={onSubmit}
+          fields={[
+            {
+              id: 'code',
+              label: 'Code',
+              inputProps: { name: 'code', onChange: async () => {}, onBlur: async () => {}, ref: () => {} },
+              inputAttrs: { type: 'text' },
+            },
+          ]}
+        />
+      </ElectionContext.Provider>
+    )
+
+    expect(window.localStorage.getItem(processSpreadsheetIdentifierStorageKey('process-1'))).toBe(
+      JSON.stringify({ label: 'Code', value: 'Katleen' })
+    )
   })
 })
