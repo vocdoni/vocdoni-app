@@ -142,15 +142,18 @@ describe('authenticatedVoterLabel', () => {
     })
   })
 
-  it('falls back to the current pathname scope when reading identifiers', () => {
+  it('falls back to the current pathname scope only when no process id is provided', () => {
     window.history.pushState({}, '', '/en/processes/0xprocess-1')
+    window.localStorage.setItem(
+      processSpreadsheetIdentifierStorageKey('/en/processes/0xprocess-1'),
+      JSON.stringify({ label: 'firstname', value: 'Katleen' })
+    )
 
-    storeProcessSpreadsheetIdentifier('0xdifferent-process', 'firstname', 'Katleen')
-
-    expect(readProcessSpreadsheetIdentifier('0xprocess-1')).toEqual({
+    expect(readProcessSpreadsheetIdentifier()).toEqual({
       label: 'firstname',
       value: 'Katleen',
     })
+    expect(readProcessSpreadsheetIdentifier('0xprocess-1')).toBeUndefined()
   })
 
   it('clears stored identifiers for the active process scope', () => {

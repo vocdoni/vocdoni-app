@@ -3,10 +3,13 @@ const getBrowserPathScope = () =>
   typeof window === 'undefined' ? undefined : window.location.pathname?.trim().toLowerCase()
 const getStorageScopes = (processId?: string) => {
   const scopes = [normalizeProcessId(processId)]
-  const browserPathScope = getBrowserPathScope()
 
-  if (browserPathScope && !scopes.includes(browserPathScope)) {
-    scopes.push(browserPathScope)
+  if (!processId) {
+    const browserPathScope = getBrowserPathScope()
+
+    if (browserPathScope && !scopes.includes(browserPathScope)) {
+      scopes.push(browserPathScope)
+    }
   }
 
   return scopes
