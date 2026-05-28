@@ -85,6 +85,7 @@ export const styles = StyleSheet.create({
     paddingTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#d8dee8',
+    lineHeight: 1.3,
   },
   coverIntroPanel: {
     marginTop: 'auto',
@@ -96,6 +97,7 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 8.5,
     color: '#4b5563',
+    lineHeight: 1.3,
   },
   section: {
     marginBottom: 18,
@@ -114,6 +116,7 @@ export const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 0,
     color: '#3f4b5f',
+    lineHeight: 1.3,
   },
   keyValueTable: {
     borderWidth: 1,
@@ -185,6 +188,7 @@ export const styles = StyleSheet.create({
   paragraph: {
     marginBottom: 7.5,
     color: '#2f3a4c',
+    lineHeight: 1.3,
   },
   afterBoxText: {
     marginTop: 1,
@@ -284,6 +288,7 @@ export const styles = StyleSheet.create({
   indexIntro: {
     marginBottom: 14,
     color: '#4b5563',
+    lineHeight: 1.3,
   },
   indexRow: {
     flexDirection: 'row',

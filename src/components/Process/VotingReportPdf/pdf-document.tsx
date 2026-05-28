@@ -201,7 +201,7 @@ export const buildReportSections = (t: TFunction): ReportSection[] => [
 const Paragraphs = ({ items }: { items: string[] }) => (
   <View>
     {items.map((item, index) => (
-      <PdfText key={`${item}-${index}`} style={[styles.paragraph, { lineHeight: 1.5 }]}>
+      <PdfText key={`${item}-${index}`} style={styles.paragraph}>
         {item}
       </PdfText>
     ))}
@@ -336,7 +336,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
                 {data.eventReference}
               </PdfText>
             </View>
-            <PdfText style={[styles.subtitle, { lineHeight: 1.5 }]}>
+            <PdfText style={styles.subtitle}>
               {t('process_pdf.document.process_id', {
                 defaultValue: 'Process ID: {{process_id}}',
                 process_id: data.processId,
@@ -346,7 +346,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
 
           <View style={styles.coverIntroPanel}>
             <Paragraphs items={data.introParagraphs} />
-            <PdfText style={[styles.issuedLine, { lineHeight: 1.5 }]}>
+            <PdfText style={styles.issuedLine}>
               {t('process_pdf.document.issued_by', {
                 defaultValue:
                   'Issued by Vocdoni (Synergize SL) on {{issue_date}} at {{issue_time}}, in its capacity as technical service provider.',
@@ -365,7 +365,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
 
         <ReportSectionBlock>
           <SectionTitle>{t('process_pdf.document.index.title', { defaultValue: 'Index' })}</SectionTitle>
-          <PdfText style={[styles.indexIntro, { lineHeight: 1.5 }]}>
+          <PdfText style={styles.indexIntro}>
             {t('process_pdf.document.index.intro', {
               defaultValue: 'This report is organized into the following sections:',
             })}
@@ -374,11 +374,9 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
             {reportSections.map((section) => (
               <PdfLink key={section.title} src={section.href} style={styles.indexLink}>
                 <View wrap={false} style={styles.indexRow}>
-                  <PdfText style={[styles.indexLabel, { lineHeight: 1.5 }]}>{section.title}</PdfText>
+                  <PdfText style={styles.indexLabel}>{section.title}</PdfText>
                   <View style={styles.indexLeader} />
-                  <PdfText style={[styles.indexPage, { lineHeight: 1.5 }]}>
-                    {getIndexPageLabel(section.pageId, capturedPages)}
-                  </PdfText>
+                  <PdfText style={styles.indexPage}>{getIndexPageLabel(section.pageId, capturedPages)}</PdfText>
                 </View>
               </PdfLink>
             ))}
@@ -405,7 +403,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
           </SectionTitle>
           <Paragraphs items={data.votingSystemParagraphs} />
           <BulletList items={data.votingSystemBullets} />
-          <PdfText style={[styles.paragraph, { lineHeight: 1.5 }]}>
+          <PdfText style={styles.paragraph}>
             {t('process_pdf.voting_system.executed_on', {
               defaultValue: 'The process {{voting_process}} was executed on the {{blockchain_network}} infrastructure.',
               voting_process: data.eventReference,
@@ -433,7 +431,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
             {t('process_pdf.document.sections.turnout_participation', { defaultValue: '4. Census and Participation' })}
           </SectionTitle>
           <KeyValueList items={data.censusParticipation} />
-          <PdfText style={[styles.sectionLead, { lineHeight: 1.5 }]}>{data.censusParticipationLead}</PdfText>
+          <PdfText style={styles.sectionLead}>{data.censusParticipationLead}</PdfText>
         </ReportSectionBlock>
       </Page>
 
