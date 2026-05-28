@@ -207,7 +207,7 @@ describe('VotingCertificateDocument', () => {
     expect(indexIntro.props.children).toContain('organized into the following sections')
     const indexFirstRow = indexListChildren[0] as {
       props: {
-        src: '#report-page-3'
+        src: string
         children: ReactNode
       }
     }
@@ -215,7 +215,7 @@ describe('VotingCertificateDocument', () => {
       ? indexFirstRow.props.children
       : [indexFirstRow.props.children]
 
-    expect(indexFirstRow.props.src).toBe('#report-page-3')
+    expect(indexFirstRow.props.src).toBe('#sec-1-framework')
     const indexFirstRowBlock = indexFirstRowChildren[0] as { props: { children: ReactNode } }
     const indexFirstRowBlockChildren = Array.isArray(indexFirstRowBlock.props.children)
       ? indexFirstRowBlock.props.children
@@ -232,7 +232,7 @@ describe('VotingCertificateDocument', () => {
 
     const indexSecondRow = indexListChildren[4] as {
       props: {
-        src: '#report-page-4'
+        src: string
         children: ReactNode
       }
     }
@@ -240,7 +240,7 @@ describe('VotingCertificateDocument', () => {
       ? indexSecondRow.props.children
       : [indexSecondRow.props.children]
 
-    expect(indexSecondRow.props.src).toBe('#report-page-4')
+    expect(indexSecondRow.props.src).toBe('#sec-5-results')
     const indexSecondRowBlock = indexSecondRowChildren[0] as { props: { children: ReactNode } }
     const indexSecondRowBlockChildren = Array.isArray(indexSecondRowBlock.props.children)
       ? indexSecondRowBlock.props.children
@@ -255,7 +255,7 @@ describe('VotingCertificateDocument', () => {
 
     const indexIssuerRow = indexListChildren[6] as {
       props: {
-        src: '#report-page-5'
+        src: string
         children: ReactNode
       }
     }
@@ -268,7 +268,7 @@ describe('VotingCertificateDocument', () => {
     const indexIssuerRowBlockChildren = Array.isArray(indexIssuerRowBlock.props.children)
       ? indexIssuerRowBlock.props.children
       : [indexIssuerRowBlock.props.children]
-    expect(indexIssuerRow.props.src).toBe('#report-page-5')
+    expect(indexIssuerRow.props.src).toBe('#sec-7-issuer')
     expect(
       (indexIssuerRowBlockChildren[1] as { props: { style?: Record<string, unknown> } }).props.style
     ).toMatchObject({
