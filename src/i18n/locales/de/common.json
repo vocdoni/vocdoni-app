@@ -1409,7 +1409,6 @@
         "title": "Inhaltsverzeichnis"
       },
       "issued_by": "Ausgestellt von Vocdoni (Synergize SL) am {{issue_date}} um {{issue_time}} in seiner Eigenschaft als technischer Dienstleister.",
-      "page_number": "Seite",
       "process_id": "Prozess-ID: {{process_id}}",
       "sections": {
         "authentication": "3. Authentifizierung",

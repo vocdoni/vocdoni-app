@@ -1431,7 +1431,6 @@
         "title": "Índex"
       },
       "issued_by": "Emès per Vocdoni (Synergize SL) el {{issue_date}} a les {{issue_time}}, en la seva qualitat de proveïdor tècnic.",
-      "page_number": "Pàgina",
       "process_id": "ID del procés: {{process_id}}",
       "sections": {
         "authentication": "3. Autenticació",

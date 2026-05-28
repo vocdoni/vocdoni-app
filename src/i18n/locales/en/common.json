@@ -1409,7 +1409,6 @@
         "title": "Index"
       },
       "issued_by": "Issued by Vocdoni (Synergize SL) on {{issue_date}} at {{issue_time}}, in its capacity as technical service provider.",
-      "page_number": "Page",
       "process_id": "Process ID: {{process_id}}",
       "sections": {
         "authentication": "3. Authentication",

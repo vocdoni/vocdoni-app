@@ -1431,7 +1431,6 @@
         "title": "Índice"
       },
       "issued_by": "Emitido por Vocdoni (Synergize SL) el {{issue_date}} a las {{issue_time}}, en su calidad de proveedor técnico.",
-      "page_number": "Página",
       "process_id": "ID del proceso: {{process_id}}",
       "sections": {
         "authentication": "3. Autenticación",
