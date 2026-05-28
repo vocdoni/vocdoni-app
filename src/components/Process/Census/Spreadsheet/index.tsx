@@ -94,13 +94,13 @@ export const CensusCsvManager = () => {
         })}
       </Text>
 
-      <FormControl
-        {...register('spreadsheet', {
-          required: { value: censusType === CensusTypes.Spreadsheet, message: t('form.error.field_is_required') },
-        })}
-        invalid={!!errors?.spreadsheet}
-        display={manager?.data?.length ? 'none' : 'block'}
-      >
+      <FormControl invalid={!!errors?.spreadsheet} display={manager?.data?.length ? 'none' : 'block'}>
+        <input
+          type='hidden'
+          {...register('spreadsheet', {
+            required: { value: censusType === CensusTypes.Spreadsheet, message: t('form.error.field_is_required') },
+          })}
+        />
         <Uploader getInputProps={getInputProps} getRootProps={getRootProps} isDragActive={isDragActive} />{' '}
         <FormErrorMessage display='flex' justifyContent='center'>
           {errors?.spreadsheet?.message?.toString()}
