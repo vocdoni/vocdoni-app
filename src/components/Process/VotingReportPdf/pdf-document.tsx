@@ -41,7 +41,8 @@ type PdfDocumentProps = {
   onCapturePage?: (pageId: string, pageNumber: number) => void // called during pass-1 layout
 }
 
-const PREAMBLE_PAGE_COUNT = 2 as const
+// Only the cover page is excluded from the visible page counter; the TOC is page 1.
+const PREAMBLE_PAGE_COUNT = 1 as const
 
 // Page IDs for content sections – used as PDF named destinations (href anchors) in the TOC.
 // The numeric suffix is kept for legacy PDF bookmark compatibility.
@@ -67,13 +68,13 @@ const SECTION_IDS = {
 // Static fallback page numbers (report-relative, i.e. pdfPage - PREAMBLE_PAGE_COUNT).
 // Used when capturedPages has no entry for a section (e.g. during tests where PDF layout is mocked).
 const SECTION_DEFAULT_PAGES: Record<string, string> = {
-  [SECTION_IDS.s1]: '1',
-  [SECTION_IDS.s2]: '1',
-  [SECTION_IDS.s3]: '1',
-  [SECTION_IDS.s4]: '1',
-  [SECTION_IDS.s5]: '2',
-  [SECTION_IDS.s6]: '2',
-  [SECTION_IDS.s7]: '3',
+  [SECTION_IDS.s1]: '2',
+  [SECTION_IDS.s2]: '2',
+  [SECTION_IDS.s3]: '2',
+  [SECTION_IDS.s4]: '2',
+  [SECTION_IDS.s5]: '3',
+  [SECTION_IDS.s6]: '3',
+  [SECTION_IDS.s7]: '4',
 }
 
 const SectionTitle = ({ children }: { children: string }) => <PdfText style={styles.sectionTitle}>{children}</PdfText>
@@ -290,9 +291,9 @@ const getIndexPageLabel = (pageId: string, capturedPages?: Record<string, number
   return SECTION_DEFAULT_PAGES[pageId] ?? '?'
 }
 
-const ReportPageNumber = ({ label }: { label: string }) => (
+const ReportPageNumber = () => (
   <View fixed style={styles.pageNumber}>
-    <PdfText render={({ pageNumber }) => `${label} ${getReportPageNumber(pageNumber)}`} style={styles.pageNumberText} />
+    <PdfText render={({ pageNumber }) => `${getReportPageNumber(pageNumber)}`} style={styles.pageNumberText} />
   </View>
 )
 
@@ -306,7 +307,6 @@ const RunningHeader = () => (
 
 export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePage }: PdfDocumentProps) => {
   const reportSections = buildReportSections(t)
-  const pageNumberLabel = t('process_pdf.document.page_number', { defaultValue: 'Page' })
   const formatVotingPowerShort = (power: string) =>
     power === data.notAvailableLabel
       ? data.notAvailableLabel
@@ -361,6 +361,8 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
 
       <Page size='A4' style={styles.page}>
         <RunningHeader />
+        <PageFooterLine />
+        <ReportPageNumber />
 
         <ReportSectionBlock>
           <SectionTitle>{t('process_pdf.document.index.title', { defaultValue: 'Index' })}</SectionTitle>
@@ -395,7 +397,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
       >
         <RunningHeader />
         <PageFooterLine />
-        <ReportPageNumber label={pageNumberLabel} />
+        <ReportPageNumber />
         {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsA} onCapturePage={onCapturePage} />}
 
         <ReportSectionBlock sectionId={SECTION_IDS.s1} onCapturePage={onCapturePage}>
@@ -444,7 +446,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
       >
         <RunningHeader />
         <PageFooterLine />
-        <ReportPageNumber label={pageNumberLabel} />
+        <ReportPageNumber />
         {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsB} onCapturePage={onCapturePage} />}
 
         <ReportSectionBlock sectionId={SECTION_IDS.s5} onCapturePage={onCapturePage}>
@@ -605,7 +607,7 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
       >
         <RunningHeader />
         <PageFooterLine />
-        <ReportPageNumber label={pageNumberLabel} />
+        <ReportPageNumber />
         {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsC} onCapturePage={onCapturePage} />}
         <ReportSectionBlock sectionId={SECTION_IDS.s7} onCapturePage={onCapturePage}>
           <SectionTitle>{t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' })}</SectionTitle>

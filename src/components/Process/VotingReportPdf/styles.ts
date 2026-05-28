@@ -460,7 +460,7 @@ export const styles = StyleSheet.create({
     right: 56,
   },
   pageNumberText: {
-    textAlign: 'right',
+    textAlign: 'center',
     color: '#111827',
     fontSize: 11,
     fontWeight: 700,

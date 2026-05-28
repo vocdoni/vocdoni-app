@@ -192,7 +192,7 @@ describe('VotingCertificateDocument', () => {
       },
     })
 
-    const indexSection = secondPageChildren[1] as { props: { children: ReactNode } }
+    const indexSection = secondPageChildren[3] as { props: { children: ReactNode } }
     const indexSectionChildren = Array.isArray(indexSection.props.children)
       ? indexSection.props.children
       : [indexSection.props.children]
@@ -226,7 +226,7 @@ describe('VotingCertificateDocument', () => {
         borderBottomStyle: 'dotted',
       }
     )
-    expect((indexFirstRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('1')
+    expect((indexFirstRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('2')
 
     expect(indexListChildren).toHaveLength(7)
 
@@ -251,7 +251,7 @@ describe('VotingCertificateDocument', () => {
     ).toMatchObject({
       borderBottomStyle: 'dotted',
     })
-    expect((indexSecondRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('2')
+    expect((indexSecondRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('3')
 
     const indexIssuerRow = indexListChildren[6] as {
       props: {
@@ -274,7 +274,7 @@ describe('VotingCertificateDocument', () => {
     ).toMatchObject({
       borderBottomStyle: 'dotted',
     })
-    expect((indexIssuerRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('3')
+    expect((indexIssuerRowBlockChildren[2] as { props: { children: ReactNode } }).props.children).toBe('4')
 
     const firstSection = pages[2] as { props: { children: ReactNode } }
     const firstSectionChildren = Array.isArray(firstSection.props.children)
@@ -410,13 +410,13 @@ describe('VotingCertificateDocument', () => {
       props: { render?: (args: { pageNumber: number; totalPages: number }) => string; style?: Record<string, unknown> }
     }
     expect(innerText.props.style).toMatchObject({
-      textAlign: 'right',
+      textAlign: 'center',
       color: '#111827',
       fontSize: 11,
       fontWeight: 700,
     })
     expect((innerText.props.style as Record<string, unknown>).lineHeight).toBeUndefined()
-    expect(innerText.props.render?.({ pageNumber: 5, totalPages: 5 })).toBe('Page 3')
+    expect(innerText.props.render?.({ pageNumber: 5, totalPages: 5 })).toBe('4')
   })
 
   it('renders all result rows with colored bars', async () => {
