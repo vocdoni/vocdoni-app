@@ -1196,7 +1196,6 @@
     },
     "questions": "Fragen",
     "results": "Ergebnisse",
-    "share_caption": "Ich habe gerade meine Stimme abgegeben in {{ title }}!!",
     "share_title": "Auf {{ network }} teilen",
     "spreadsheet": {
       "confirm": {
