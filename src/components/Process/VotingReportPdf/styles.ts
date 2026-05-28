@@ -465,8 +465,8 @@ export const styles = StyleSheet.create({
   pageNumberText: {
     textAlign: 'center',
     color: '#111827',
-    fontSize: 11,
-    fontWeight: 700,
+    fontSize: 10,
+    fontWeight: 300,
   },
   footerTitle: {
     fontSize: 8.5,

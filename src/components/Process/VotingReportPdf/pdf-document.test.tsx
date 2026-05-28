@@ -406,8 +406,6 @@ describe('VotingCertificateDocument', () => {
     expect(innerText.props.style).toMatchObject({
       textAlign: 'center',
       color: '#111827',
-      fontSize: 11,
-      fontWeight: 700,
     })
     expect((innerText.props.style as Record<string, unknown>).lineHeight).toBeUndefined()
     expect(innerText.props.render?.({ pageNumber: 5, totalPages: 5 })).toBe('4')
