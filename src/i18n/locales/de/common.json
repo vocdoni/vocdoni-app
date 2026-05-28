@@ -10,6 +10,7 @@
     "continue_description": "Abstimmungsprozess \"{{ election.title.default }}\" wird fortgesetzt...",
     "create_first_vote": "Alle Prozesse anzeigen",
     "create_new_vote": "Neue Abstimmung erstellen",
+    "edit": "Bearbeiten",
     "end": "Prozess sofort beenden, sodass keine neuen Stimmen mehr abgegeben werden können, und Abstimmungsergebnisse anzeigen (Achtung: nicht rückgängig zu machen)",
     "end_description": "Abstimmungsprozess \"{{ election.title.default }}\" wird beendet...\n\nAchtung: Diese Aktion ist unwiderruflich und Wählende können nicht mehr abstimmen.",
     "error_title": "Bei der Ausführung der Transaktion ist ein Fehler aufgetreten",
@@ -469,6 +470,9 @@
       "delete_error": "Fehler beim Löschen der Gruppe",
       "delete_group": "Gruppe löschen",
       "delete_success": "Gruppe erfolgreich gelöscht",
+      "edit_description": "Name und Beschreibung dieser Gruppe aktualisieren.",
+      "edit_error": "Fehler beim Aktualisieren der Gruppe",
+      "edit_success": "Gruppe erfolgreich aktualisiert",
       "history": "Verlauf",
       "view_members": "Mitglieder anzeigen"
     },
