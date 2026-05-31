@@ -29,7 +29,7 @@ const LogoutButton = () => {
 
   return (
     <>
-      <Box alignSelf='center' mb={{ base: 10, md: 0 }}>
+      <Box alignSelf='center'>
         <Button
           onClick={() => {
             if (isCSP || isSpreadsheet) {
