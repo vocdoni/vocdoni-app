@@ -189,7 +189,7 @@ const SharedCensusPretext = () => (
 const SharedCensusPostText = () => (
   <Text textStyle='sm' maxW='90%' mt={10} data-testid='shared-census-posttext'>
     Si no reps el correu de la votació o tens qualsevol incidència tècnica, posa't en contacte amb{` `}
-    <Link href='mailto:consultaunitaria@sindicat.net'>consultaunitaria@sindicat.net</Link> i indica el teu nom i
+    <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link> i indica el teu nom i
     cognoms, correu XTEC, centre de treball i especialitat. Moltes gràcies!
   </Text>
 )
