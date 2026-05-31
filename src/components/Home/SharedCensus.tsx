@@ -16,7 +16,6 @@ import { ActionsMenu } from '~components/Process/ActionsMenu'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
 import cgt from '/assets/cgt.png'
-import cos from '/assets/cos.png'
 import intersindical from '/assets/intersindical.png'
 import ustec from '/assets/ustec.png'
 
@@ -89,10 +88,9 @@ const SharedCensusHomeContent = () => {
         Consulta sobre el preacord del 29 de maig
       </Heading>
       <Flex wrap='wrap' justify='center' align='center' gap={{ base: 6, md: 10 }} data-testid='shared-census-logos'>
-        <Image src={ustec} alt='USTEC' h={{ base: '50px', md: '70px' }} w='auto' />
-        <Image src={cgt} alt='CGT' h={{ base: '50px', md: '70px' }} w='auto' />
-        <Image src={intersindical} alt='Intersindical' h={{ base: '50px', md: '70px' }} w='auto' />
-        <Image src={cos} alt='COS' h={{ base: '50px', md: '70px' }} w='auto' />
+        <Image src={ustec} alt='Logo USTEC' h={{ base: '50px', md: '70px' }} w='auto' />
+        <Image src={cgt} alt='Logo CGT' h={{ base: '50px', md: '70px' }} w='auto' />
+        <Image src={intersindical} alt='Logo La Intersindical' h={{ base: '50px', md: '70px' }} w='auto' />
       </Flex>
       <Box w='90%' display='flex' flexDirection='column' gap={4}>
         <SharedCensusPretext />
@@ -150,7 +148,7 @@ const SharedCensusPretext = () => (
   <Box className='shared-census' data-testid='shared-census-pretext' display='flex' flexDirection='column' gap={4}>
     <Text textStyle='sm'>
       Aquesta consulta té com a objectiu recollir la decisió del personal docent sobre el preacord assolit el 29 de maig
-      de 2026 entre el Departament d'Educació i les organitzacions sindicals USTEC, CGT, Intersindical i COS.
+      de 2026 entre el Departament d'Educació i les organitzacions sindicals USTEC, CGT i La Intersindical.
     </Text>
     <Text textStyle='sm'>
       Podrà participar en la consulta el personal docent habilitat segons els criteris establerts per les organitzacions
