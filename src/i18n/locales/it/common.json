@@ -895,9 +895,7 @@
     "collapse": "Comprimi menu",
     "connect": "Connetti",
     "create": "Crea processo",
-    "dashboard": "Dashboard",
     "expand": "Espandi menu",
-    "login": "Accedi",
     "open": "Apri menu"
   },
   "month": "mese",
@@ -1452,7 +1450,6 @@
   },
   "shared_census": {
     "instructions": {
-      "identification": "Dovrai identificarti per votare in sicurezza.",
       "login": "Premi \"Identifica\" per accedere all'elezione.",
       "vote": "Seleziona l'elezione per aprire una nuova finestra con le istruzioni di voto. Una volta inviato il voto, chiudi la finestra per tornare qui."
     },

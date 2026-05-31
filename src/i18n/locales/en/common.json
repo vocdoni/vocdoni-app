@@ -879,9 +879,7 @@
     "collapse": "Collapse menu",
     "connect": "Connect",
     "create": "Create Process",
-    "dashboard": "Dashboard",
     "expand": "Expand menu",
-    "login": "Login",
     "open": "Open Menu"
   },
   "month": "month",
@@ -1430,7 +1428,6 @@
   },
   "shared_census": {
     "instructions": {
-      "identification": "We will ask for your identification. Afterwards, you can cast your vote securely.",
       "login": "To access the election press \"Identify\".",
       "vote": "Select the election to open a new window with the voting instructions. Once your vote is submitted, close the window to return here."
     },

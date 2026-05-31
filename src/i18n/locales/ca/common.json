@@ -895,9 +895,7 @@
     "collapse": "Contraure menú",
     "connect": "Connectar",
     "create": "Crear Procés",
-    "dashboard": "Dashboard",
     "expand": "Expandir menú",
-    "login": "Iniciar sessió",
     "open": "Obre menú"
   },
   "month": "mes",
@@ -1452,7 +1450,6 @@
   },
   "shared_census": {
     "instructions": {
-      "identification": "Et demanarem la teva identificació. Després, podràs emetre el teu vot de forma segura.",
       "login": "Per accedir a la votació, prem \"Identificar-se\".",
       "vote": "Selecciona la votació per obrir una nova finestra amb les instruccions de votació. Un cop hagis enviat el teu vot, tanca la finestra per tornar aquí."
     },

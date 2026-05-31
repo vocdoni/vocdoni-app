@@ -131,10 +131,6 @@ const SharedCensusHomeContent = () => {
           {t('shared_census.instructions.login', {
             defaultValue: 'To access the election press "Identify".',
           })}
-          <br />
-          {t('shared_census.instructions.identification', {
-            defaultValue: 'We will ask for your identification. Afterwards, you can cast your vote securely.',
-          })}
         </Text>
       )}
       <SharedCensusPostText />
@@ -187,7 +183,7 @@ const SharedCensusPretext = () => (
 )
 
 const SharedCensusPostText = () => (
-  <Text textStyle='sm' maxW='90%' mt={10} data-testid='shared-census-posttext'>
+  <Text textStyle='sm' maxW='90%' mt={6} data-testid='shared-census-posttext'>
     Si no reps el correu de la votació o tens qualsevol incidència tècnica, posa't en contacte amb{` `}
     <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link> i indica el teu nom i
     cognoms, correu XTEC, centre de treball i especialitat. Moltes gràcies!
