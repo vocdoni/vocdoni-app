@@ -38,6 +38,8 @@ const resolveSharedCensusText = (
   return parsed as Record<string, string>
 }
 
+const resolveBoolean = (value: string | undefined) => value === 'true' || value === '1'
+
 const resolveStreamUrl = (value: string | undefined) => {
   if (!value) {
     return undefined
@@ -76,8 +78,13 @@ export const sharedCensusPlugin = ({ defaultLanguage }: SharedCensusPluginOption
     defaultLanguage
   )
   const streamUrl = resolveStreamUrl(process.env.STREAM_URL)
+  const autoRedirect = resolveBoolean(process.env.SHARED_CENSUS_AUTOREDIRECT)
 
   const define: Record<string, string> = {}
+
+  if (autoRedirect) {
+    define['import.meta.env.SHARED_CENSUS_AUTOREDIRECT'] = JSON.stringify(autoRedirect)
+  }
 
   if (typeof sharedCensusAlways !== 'undefined') {
     define['import.meta.env.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT'] = JSON.stringify(sharedCensusAlways)

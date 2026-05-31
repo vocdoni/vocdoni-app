@@ -9,10 +9,10 @@ import {
   useElection,
 } from '@vocdoni/react-components'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import Editor from '~components/Editor'
 import { ActionsMenu } from '~components/Process/ActionsMenu'
 import { CensusConnectButton } from '~components/Process/Aside'
@@ -25,6 +25,9 @@ export const parseProcessIds = (value: string | undefined) =>
     .filter(Boolean)
 
 const processIds = parseProcessIds(import.meta.env.PROCESS_IDS)
+
+const autoRedirect =
+  import.meta.env.SHARED_CENSUS_AUTOREDIRECT === true || import.meta.env.SHARED_CENSUS_AUTOREDIRECT === 'true'
 
 const SharedCensus = () => {
   if (processIds.length === 0) {
@@ -53,11 +56,20 @@ const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode })
 
 const SharedCensusHomeContent = () => {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const { loading, loaded, election, connected } = useElection()
   const { account, connected: aconnected } = useClient()
 
   const isAdmin = aconnected && account?.address === (election as PublishedElection)?.organizationId
   const canViewProcesses = connected || isAdmin
+
+  useEffect(() => {
+    if (!autoRedirect || !connected || isAdmin || !processIds[0]) {
+      return
+    }
+
+    navigate(`/processes/${processIds[0]}/${window.location.hash}`)
+  }, [connected, isAdmin, navigate])
   const parseLanguageSlice = (value: Record<string, string> | string) => {
     if (typeof value === 'string') {
       try {
