@@ -16,7 +16,7 @@ import { ActionsMenu } from '~components/Process/ActionsMenu'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
 import cgt from '/assets/cgt.png'
-import intersindical from '/assets/intersindical.png'
+import intersindical from '/assets/laintersindical.png'
 import ustec from '/assets/ustec.png'
 
 export const parseProcessIds = (value: string | undefined) =>
