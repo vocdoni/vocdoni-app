@@ -150,6 +150,13 @@ const SharedCensusPretext = () => (
       Podrà participar en la consulta el personal docent habilitat segons els criteris establerts per les organitzacions
       convocants.
     </Text>
+    <Link
+      href='https://voting-images.lon1.cdn.digitaloceanspaces.com/2026-06/ConsultaEducacio.pdf'
+      target='_blank'
+      rel='noopener noreferrer'
+    >
+      Enllaç al document de preacord.
+    </Link>
     <Box>
       <Text textStyle='sm' fontWeight='extrabold'>
         Com funciona la votació?
