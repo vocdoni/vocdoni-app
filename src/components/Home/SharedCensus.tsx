@@ -87,11 +87,6 @@ const SharedCensusHomeContent = () => {
       <Heading size='4xl' fontWeight='bold'>
         Consulta sobre el preacord del 29 de maig
       </Heading>
-      <Flex wrap='wrap' justify='center' align='center' gap={{ base: 6, md: 10 }} data-testid='shared-census-logos'>
-        <Image src={ustec} alt='Logo USTEC' h={{ base: '50px', md: '70px' }} w='auto' />
-        <Image src={cgt} alt='Logo CGT' h={{ base: '50px', md: '70px' }} w='auto' />
-        <Image src={intersindical} alt='Logo La Intersindical' h={{ base: '50px', md: '70px' }} w='auto' />
-      </Flex>
       <Box w='90%' display='flex' flexDirection='column' gap={4}>
         <SharedCensusPretext />
         {showStream && (
@@ -190,11 +185,18 @@ const SharedCensusPretext = () => (
 )
 
 const SharedCensusPostText = () => (
-  <Text textStyle='sm' maxW='90%' mt={6} data-testid='shared-census-posttext'>
-    Si no reps el correu de la votació o tens qualsevol incidència tècnica, posa't en contacte amb{` `}
-    <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link> i indica el teu nom i
-    cognoms, correu XTEC, centre de treball i especialitat. Moltes gràcies!
-  </Text>
+  <>
+    <Text textStyle='sm' maxW='90%' mt={6} data-testid='shared-census-posttext'>
+      Si no reps el correu de la votació o tens qualsevol incidència tècnica, posa't en contacte amb{` `}
+      <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link> i indica el teu nom i
+      cognoms, correu XTEC, centre de treball i especialitat. Moltes gràcies!
+    </Text>
+    <Flex wrap='wrap' justify='center' align='center' gap={{ base: 6, md: 10 }} data-testid='shared-census-logos'>
+      <Image src={ustec} alt='Logo USTEC' h={{ base: '50px', md: '70px' }} w='auto' />
+      <Image src={cgt} alt='Logo CGT' h={{ base: '50px', md: '70px' }} w='auto' />
+      <Image src={intersindical} alt='Logo La Intersindical' h={{ base: '50px', md: '70px' }} w='auto' />
+    </Flex>
+  </>
 )
 
 const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number }) => {

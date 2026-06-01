@@ -27,6 +27,7 @@ export const heading = defineRecipe({
 export const link = defineRecipe({
   base: {
     color: 'gray.800',
+    textDecoration: 'underline',
     _dark: {
       color: 'gray.400',
       _hover: {
