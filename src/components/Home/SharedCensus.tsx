@@ -83,8 +83,8 @@ const SharedCensusHomeContent = () => {
   }
 
   return (
-    <Flex flexDirection='column' gap={10} maxW='max-content-width' mx='auto' px={5} alignItems='center'>
-      <Heading size='4xl' fontWeight='bold'>
+    <Flex flexDirection='column' gap={4} maxW='max-content-width' mx='auto' px={5} alignItems='center'>
+      <Heading size='4xl' fontWeight='bold' mb={6}>
         Consulta sobre el preacord del 29 de maig
       </Heading>
       <Box w='90%' display='flex' flexDirection='column' gap={4}>
@@ -97,7 +97,7 @@ const SharedCensusHomeContent = () => {
           </Box>
         )}
       </Box>
-      <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
+      <Box w='250px'>{election && !isAdmin && <CensusConnectButton />}</Box>
       {canViewProcesses && (
         <Box w='90%'>
           <Text alignSelf='start' mb={10} as='h3' fontWeight='bold' fontSize='22px' style={{ marginTop: '-30px' }}>
@@ -136,7 +136,14 @@ const SharedCensusHomeContent = () => {
 // Texts are hardcoded here (instead of relying on the SHARED_CENSUS_* env vars) because env vars are
 // declared inconsistently across our deployment environments. They are styled to mimic rendered markdown.
 const SharedCensusPretext = () => (
-  <Box className='shared-census' data-testid='shared-census-pretext' display='flex' flexDirection='column' gap={4}>
+  <Box
+    className='shared-census'
+    data-testid='shared-census-pretext'
+    display='flex'
+    flexDirection='column'
+    gap={4}
+    mb={6}
+  >
     <Text textStyle='sm'>
       Aquesta consulta té com a objectiu recollir la decisió del personal docent sobre el preacord assolit el 29 de maig
       de 2026 entre el Departament d'Educació i les organitzacions sindicals USTEC, CGT i La Intersindical.
@@ -145,13 +152,36 @@ const SharedCensusPretext = () => (
       Podrà participar en la consulta el personal docent habilitat segons els criteris establerts per les organitzacions
       convocants.
     </Text>
-    <Link
-      href='https://voting-images.lon1.cdn.digitaloceanspaces.com/2026-06/ConsultaEducacio.pdf'
-      target='_blank'
-      rel='noopener noreferrer'
-    >
-      Enllaç al document de preacord.
-    </Link>
+    <Text textStyle='sm'>Enllaços als documents:</Text>
+    <List.Root listStyle='decimal' ps='2rem'>
+      <List.Item>
+        <Link
+          href='https://voting-images.lon1.cdn.digitaloceanspaces.com/2026-06/Preacord.pdf'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          Document de preacord
+        </Link>
+      </List.Item>
+      <List.Item>
+        <Link
+          href='https://voting-images.lon1.cdn.digitaloceanspaces.com/2026-06/AcordDel9DeMar%C3%A7.pdf'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          Document de l'acord de març
+        </Link>
+      </List.Item>
+      <List.Item>
+        <Link
+          href='https://voting-images.lon1.cdn.digitaloceanspaces.com/2026-06/AcordsPresosEnLaComissi%C3%B3DeSeguimentiDesplegament.pdf'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          Acta de la Comissió de Desplegament i Seguiment
+        </Link>
+      </List.Item>
+    </List.Root>
     <Box>
       <Text textStyle='sm' fontWeight='extrabold'>
         Com funciona la votació?
@@ -186,7 +216,7 @@ const SharedCensusPretext = () => (
 
 const SharedCensusPostText = () => (
   <>
-    <Text textStyle='sm' maxW='90%' mt={6} data-testid='shared-census-posttext'>
+    <Text textStyle='sm' maxW='90%' mt={4} mb={6} data-testid='shared-census-posttext'>
       Si no reps el correu de la votació o tens qualsevol incidència tècnica, posa't en contacte amb{` `}
       <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link> i indica el teu nom i
       cognoms, correu XTEC, centre de treball i especialitat. Moltes gràcies!
