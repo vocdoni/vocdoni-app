@@ -61,12 +61,12 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
       if (twoFaFields.includes('email') && twoFaFields.includes('phone')) {
         // Both are supported, determine based on content
         if (trimmed.contact.includes('@')) {
-          form.email = trimmed.contact
+          form.email = trimmed.contact.toLowerCase()
         } else {
           form.phone = trimmed.contact
         }
       } else if (twoFaFields.includes('email')) {
-        form.email = trimmed.contact
+        form.email = trimmed.contact.toLowerCase()
       } else if (twoFaFields.includes('phone')) {
         form.phone = trimmed.contact
       }
