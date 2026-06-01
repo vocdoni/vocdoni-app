@@ -41,6 +41,7 @@ export const Routes = {
   processes: {
     create: '/admin/processes/create/:groupId?',
     view: '/processes/:id',
+    summary: '/processes/:id/summary',
   },
   vocdoni: 'https://vocdoni.io',
 }

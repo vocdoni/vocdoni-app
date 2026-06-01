@@ -33,7 +33,9 @@ import {
 import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { RiErrorWarningLine } from 'react-icons/ri'
+import { RiBarChartBoxLine, RiErrorWarningLine } from 'react-icons/ri'
+import { generatePath } from 'react-router-dom'
+import { Routes } from '~src/router/routes'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
@@ -190,6 +192,13 @@ const ProcessInfoPanel = () => {
           <ProcessInfoCard label={t('process.status.paused')} description={t('process.status.paused_description')} />
         </Flex>
       )}
+      <Button asChild variant='outline' size='sm' alignSelf='start'>
+        {/* Plain anchor (not a router Link): the public process view renders without a router context. */}
+        <a href={generatePath(Routes.processes.summary, { id: election.id })}>
+          <Icon as={RiBarChartBoxLine} />
+          {t('process.summary.view_summary')}
+        </a>
+      </Button>
     </Flex>
   )
 }
