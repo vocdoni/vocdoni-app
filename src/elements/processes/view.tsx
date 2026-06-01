@@ -22,9 +22,10 @@ const Process = () => {
     <OrganizationProvider id={election.organizationId}>
       <ElectionProvider
         election={election}
+        id={election.id}
         fetchCensus
         queryOptions={{
-          refetchInterval: 15_000,
+          refetchInterval: 30_000,
         }}
       >
         <ProcessView />

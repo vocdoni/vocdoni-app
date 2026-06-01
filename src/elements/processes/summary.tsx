@@ -21,9 +21,10 @@ const ProcessSummary = () => {
   return (
     <OrganizationProvider id={election.organizationId}>
       <ElectionProvider
+        id={election.id}
         election={election}
         queryOptions={{
-          refetchInterval: 15_000,
+          refetchInterval: 30_000,
         }}
       >
         <Summary />
