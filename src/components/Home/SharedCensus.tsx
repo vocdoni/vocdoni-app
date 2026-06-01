@@ -207,7 +207,7 @@ const SharedCensusPretext = () => (
           Si formes part del cens habilitat, rebràs un codi d'autenticació al teu correu electrònic, si no, escriu a{' '}
           <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link>.
         </List.Item>
-        <List.Item textStyle='sm'>Introdueix el codi a la pantalla de validació per accedir a la votació..</List.Item>
+        <List.Item textStyle='sm'>Introdueix el codi a la pantalla de validació per accedir a la votació.</List.Item>
         <List.Item textStyle='sm'>
           Selecciona l'opció desitjada i prem el botó «Votar». El sistema et demanarà una confirmació abans d'emetre el
           vot.
