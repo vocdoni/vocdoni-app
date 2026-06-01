@@ -1217,7 +1217,6 @@
       "stat_votes_received": "Votes received",
       "tech_description": "This consultation uses Vocdoni's digital voting system, an open-source technology that provides unions, associations and other organizations with the highest democratic guarantees in voting processes.",
       "tech_integrity": "<b>Integrity:</b> the system guarantees that no vote can be altered, deleted or manipulated once cast.",
-      "tech_open_source": "Open source & auditable",
       "tech_privacy": "<b>Privacy:</b> the vote is completely secret and it is not possible to link any cast vote with the voter's identity.",
       "tech_title": "Voting guarantees",
       "tech_verifiability": "<b>Verifiability:</b> any participant can check that their vote was correctly recorded and counted, without compromising vote secrecy.",

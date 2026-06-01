@@ -315,12 +315,6 @@ const CertifiedTech = () => {
             pl={{ lg: 8 }}
             minW={{ lg: '240px' }}
           >
-            <Heading size='4xl' color='blue.400'>
-              100%
-            </Heading>
-            <Text color='gray.400' textTransform='uppercase' fontSize='xs' letterSpacing='wide' textAlign='center'>
-              {t('process.summary.tech_open_source')}
-            </Text>
             <Button colorPalette='blue' mt={2} asChild>
               <a href={Routes.vocdoni} target='_blank' rel='noreferrer'>
                 {t('process.summary.learn_more')}

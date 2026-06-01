@@ -1239,7 +1239,6 @@
       "stat_votes_received": "Vots rebuts",
       "tech_description": "Aquesta consulta utilitza el sistema de votació digital de Vocdoni, una tecnologia de codi obert que ofereix a sindicats, associacions i altres entitats les màximes garanties democràtiques en els processos de votació.",
       "tech_integrity": "<b>Integritat:</b> el sistema garanteix que cap vot no pot ser alterat, eliminat ni manipulat un cop emès.",
-      "tech_open_source": "Codi obert i auditable",
       "tech_privacy": "<b>Privacitat:</b> el vot és completament secret i no és possible vincular cap vot emès amb la identitat de la persona votant.",
       "tech_title": "Garanties de la votació",
       "tech_verifiability": "<b>Verificabilitat:</b> qualsevol participant pot comprovar que el seu vot ha estat correctament registrat i comptabilitzat, sense comprometre el secret del vot.",
