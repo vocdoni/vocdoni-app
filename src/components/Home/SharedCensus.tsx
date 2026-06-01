@@ -15,15 +15,13 @@ import { Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { ActionsMenu } from '~components/Process/ActionsMenu'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
+import { parseProcessIds } from '~utils/strings'
 import cgt from '/assets/cgt.png'
 import intersindical from '/assets/laintersindical.png'
 import ustec from '/assets/ustec.png'
 
-export const parseProcessIds = (value: string | undefined) =>
-  (value || '')
-    .split(',')
-    .map((id) => id.trim())
-    .filter(Boolean)
+// Re-exported for backwards compatibility with existing importers (e.g. the home route).
+export { parseProcessIds }
 
 const processIds = parseProcessIds(import.meta.env.PROCESS_IDS)
 

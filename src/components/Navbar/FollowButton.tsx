@@ -1,13 +1,13 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { FiExternalLink } from 'react-icons/fi'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
-import { parseProcessIds } from '~components/Home/SharedCensus'
 import { Routes } from '~src/router/routes'
-
-const followProcessId = parseProcessIds(import.meta.env.PROCESS_IDS)[0]
+import { parseProcessIds } from '~utils/strings'
 
 // Hardcoded "Seguiment" shortcut to the summary of the first configured process.
 const FollowButton = () => {
+  const followProcessId = parseProcessIds(import.meta.env.PROCESS_IDS)[0]
+
   if (!followProcessId) return null
 
   return (

@@ -4,6 +4,15 @@
 export const ucfirst = (str: string, lng?: string | undefined) => str.charAt(0).toLocaleUpperCase(lng) + str.slice(1)
 
 /**
+ * parseProcessIds turns a comma-separated list of process ids into a trimmed, non-empty array
+ */
+export const parseProcessIds = (value: string | undefined) =>
+  (value || '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean)
+
+/**
  * maskValue masks a string value with a specified character, leaving the last n characters visible
  * @param {string} value - The string to be masked
  * @param {boolean} condition - If true, the value will be masked
