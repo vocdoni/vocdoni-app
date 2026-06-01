@@ -7,8 +7,10 @@ import {
   getPublicLanguageAlternates,
   getPublicLocalizedOrganizationRouteMatch,
   getPublicLocalizedProcessRouteMatch,
+  getPublicLocalizedProcessSummaryRouteMatch,
   getPublicOrganizationPath,
   getPublicProcessPath,
+  getPublicProcessSummaryPath,
   isPublicPageNotFoundError,
   loadOrganizationPageData,
   loadProcessPageData,
@@ -315,6 +317,8 @@ describe('public language helpers', () => {
     expect(getPublicOrganizationPath({ address: '0xabc', language: 'es' })).toBe('/es/organization/0xabc')
     expect(getPublicProcessPath({ id: '0xprocess', language: 'en' })).toBe('/en/processes/0xprocess')
     expect(getPublicProcessPath({ id: '0xprocess', language: 'ca' })).toBe('/ca/processes/0xprocess')
+    expect(getPublicProcessSummaryPath({ id: '0xprocess', language: 'en' })).toBe('/en/processes/0xprocess/summary')
+    expect(getPublicProcessSummaryPath({ id: '0xprocess', language: 'ca' })).toBe('/ca/processes/0xprocess/summary')
   })
 
   it('builds localized redirect targets whenever the stored and current languages differ', () => {
@@ -412,6 +416,43 @@ describe('public language helpers', () => {
         id: '6be21a5a9dc034ede83966b661e6a648854bd92b7d209d2c97c202000000003f',
       },
     })
+  })
+
+  it('matches localized process summary routes and ignores the bare process route', () => {
+    expect(
+      getPublicLocalizedProcessSummaryRouteMatch({
+        urlPathname: '/es/processes/0xprocess/summary',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toEqual({
+      routeParams: {
+        lang: 'es',
+        id: '0xprocess',
+      },
+    })
+
+    expect(
+      getPublicLocalizedProcessSummaryRouteMatch({
+        urlPathname: '/es/processes/0xprocess',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toBe(false)
+
+    expect(
+      getPublicLocalizedProcessSummaryRouteMatch({
+        urlPathname: '/fr/processes/0xprocess/summary',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toBe(false)
+  })
+
+  it('does not match the summary route with the bare process matcher', () => {
+    expect(
+      getPublicLocalizedProcessRouteMatch({
+        urlPathname: '/es/processes/0xprocess/summary',
+        supportedLanguages: ['en', 'es', 'ca'],
+      })
+    ).toBe(false)
   })
 })
 

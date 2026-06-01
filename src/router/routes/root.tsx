@@ -11,7 +11,6 @@ import { SuspenseLoader } from '../SuspenseLoader'
 // elements / pages
 const NotFound = lazy(() => import('~elements/NotFound'))
 const Process = lazy(() => import('~elements/processes/view'))
-const ProcessSummary = lazy(() => import('~elements/processes/summary'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
 const PlansPublicPage = lazy(() => import('~elements/plans'))
 
@@ -23,18 +22,6 @@ const RootElements = (client: VocdoniSDKClient) => [
     element: (
       <SuspenseLoader>
         <Process />
-      </SuspenseLoader>
-    ),
-    loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
-    errorElement: <ErrorElement />,
-  },
-  {
-    path: Routes.processes.summary,
-    id: 'process-summary',
-    handle: { hideNavbar: true },
-    element: (
-      <SuspenseLoader>
-        <ProcessSummary />
       </SuspenseLoader>
     ),
     loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),

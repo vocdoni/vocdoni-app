@@ -6,6 +6,7 @@ import {
   getPublicLanguageAlternates,
   getPublicOrganizationPath,
   getPublicProcessPath,
+  getPublicProcessSummaryPath,
   isPublicPageNotFoundError,
   loadOrganizationPageData,
   loadProcessPageData,
@@ -100,7 +101,9 @@ export const loadOrganizationPublicPageData = async (pageContext: PageContextSer
   }
 }
 
-export const loadProcessPublicPageData = async (pageContext: PageContextServer) => {
+type ProcessPathBuilder = (params: { id: string; language: string }) => string
+
+const loadProcessPublicPageDataWith = async (pageContext: PageContextServer, buildPath: ProcessPathBuilder) => {
   const client = createVocdoniSdkClient()
   const origin = resolvePublicOrigin(pageContext)
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
@@ -108,7 +111,7 @@ export const loadProcessPublicPageData = async (pageContext: PageContextServer) 
   const pathnameByLanguage = Object.fromEntries(
     supportedLanguages.map((supportedLanguage) => [
       supportedLanguage,
-      getPublicProcessPath({
+      buildPath({
         id,
         language: supportedLanguage,
       }),
@@ -131,3 +134,9 @@ export const loadProcessPublicPageData = async (pageContext: PageContextServer) 
     renderNotFoundIfNeeded(error)
   }
 }
+
+export const loadProcessPublicPageData = (pageContext: PageContextServer) =>
+  loadProcessPublicPageDataWith(pageContext, getPublicProcessPath)
+
+export const loadProcessSummaryPublicPageData = (pageContext: PageContextServer) =>
+  loadProcessPublicPageDataWith(pageContext, getPublicProcessSummaryPath)
