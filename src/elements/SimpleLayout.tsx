@@ -5,6 +5,7 @@ import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
 import CrispChat from '~components/Layout/CrispChat'
 import Footer from '~components/Layout/Footer'
 import { VocdoniLogo } from '~components/Layout/Logo'
+import FollowButton from '~components/Navbar/FollowButton'
 import { LanguagesMenu } from '~components/Navbar/LanguagesList'
 
 export type SimpleLayoutOutletContext = {
@@ -31,6 +32,7 @@ const Layout = () => {
       >
         {logo ?? <VocdoniLogo height={6} />}
         <Box display='flex' alignItems='center' gap={4}>
+          <FollowButton />
           <LanguagesMenu />
           <ColorModeSwitcher />
         </Box>
