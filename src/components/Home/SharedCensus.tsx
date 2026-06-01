@@ -146,21 +146,28 @@ const SharedCensusPretext = () => (
   >
     <Text textStyle='sm'>
       Aquesta consulta té com a objectiu recollir la decisió del personal docent sobre el preacord assolit el 29 de maig
-      de 2026 entre el Departament d'Educació i les organitzacions sindicals USTEC, CGT i La Intersindical.
+      de 2026 entre el Departament d'Educació i les organitzacions sindicals USTEC·STEs (IAC), ASPEPC·SPS, CCOO I UGT.
+    </Text>
+    <Text textStyle='sm'>
+      Aquesta consulta la promovem conjuntament les organitzacions USTEC·STEs (IAC), CGT i La Intersindical.
     </Text>
     <Text textStyle='sm'>
       Podrà participar en la consulta el personal docent habilitat segons els criteris establerts per les organitzacions
-      convocants.
+      convocants, des d'avui, dilluns 1 de juny a les 12 h, fins dijous 4 de juny a les 12 h.
     </Text>
-    <Text textStyle='sm'>Enllaços als documents:</Text>
-    <List.Root listStyle='decimal' ps='2rem'>
+    <Text textStyle='sm'>
+      Abans de votar, us animem a debatre el preacord als centres i assemblees. Cal decidir si és el moment de ratificar
+      el preacord i consolidar aquests avenços, o si es considera insuficient i cal continuar pressionant, amb vagues
+      fins a acabar el curs, per aconseguir una proposta millor.
+    </Text>
+    <List.Root ps='1rem'>
       <List.Item>
         <Link
           href='https://voting-images.lon1.cdn.digitaloceanspaces.com/2026-06/Preacord.pdf'
           target='_blank'
           rel='noopener noreferrer'
         >
-          Document de preacord
+          Preacord del 29 de maig
         </Link>
       </List.Item>
       <List.Item>
@@ -169,7 +176,7 @@ const SharedCensusPretext = () => (
           target='_blank'
           rel='noopener noreferrer'
         >
-          Document de l'acord de març
+          Acord del 9 de març
         </Link>
       </List.Item>
       <List.Item>
@@ -195,11 +202,12 @@ const SharedCensusPretext = () => (
         flexDirection='column'
         gap='0.125rem'
       >
-        <List.Item textStyle='sm'>Identifica't amb el teu correu corporatiu.</List.Item>
+        <List.Item textStyle='sm'>Identifica't amb el teu correu corporatiu d'XTEC.</List.Item>
         <List.Item textStyle='sm'>
-          Si formes part del cens habilitat, rebràs un codi d'autenticació al teu correu electrònic.
+          Si formes part del cens habilitat, rebràs un codi d'autenticació al teu correu electrònic, si no, escriu a{' '}
+          <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link>.
         </List.Item>
-        <List.Item textStyle='sm'>Introdueix el codi a la pantalla de validació per accedir a la votació.</List.Item>
+        <List.Item textStyle='sm'>Introdueix el codi a la pantalla de validació per accedir a la votació..</List.Item>
         <List.Item textStyle='sm'>
           Selecciona l'opció desitjada i prem el botó «Votar». El sistema et demanarà una confirmació abans d'emetre el
           vot.
@@ -211,16 +219,16 @@ const SharedCensusPretext = () => (
       El vot és secret i el sistema incorpora les mesures tècniques necessàries per garantir la integritat del procés de
       votació i assegurar que cada participant només pugui emetre un únic vot.
     </Text>
+    <Text textStyle='sm' maxW='90%' data-testid='shared-census-posttext'>
+      Si no reps el correu de la votació o tens qualsevol incidència tècnica, posa't en contacte amb{` `}
+      <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link> i indica el teu nom i
+      cognoms, correu XTEC, centre de treball i especialitat. Moltes gràcies!
+    </Text>
   </Box>
 )
 
 const SharedCensusPostText = () => (
   <>
-    <Text textStyle='sm' maxW='90%' mt={4} mb={6} data-testid='shared-census-posttext'>
-      Si no reps el correu de la votació o tens qualsevol incidència tècnica, posa't en contacte amb{` `}
-      <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link> i indica el teu nom i
-      cognoms, correu XTEC, centre de treball i especialitat. Moltes gràcies!
-    </Text>
     <Flex wrap='wrap' justify='center' align='center' gap={{ base: 6, md: 10 }} data-testid='shared-census-logos'>
       <Image src={ustec} alt='Logo USTEC' h={{ base: '50px', md: '70px' }} w='auto' />
       <Image src={cgt} alt='Logo CGT' h={{ base: '50px', md: '70px' }} w='auto' />
