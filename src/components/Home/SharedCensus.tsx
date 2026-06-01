@@ -160,7 +160,7 @@ const SharedCensusPretext = () => (
       el preacord i consolidar aquests avenços, o si es considera insuficient i cal continuar pressionant, amb vagues
       fins a acabar el curs, per aconseguir una proposta millor.
     </Text>
-    <List.Root ps='1rem'>
+    <List.Root ps={{ base: 0, md: '1rem' }} listStylePos={{ base: 'outside', md: 'inside' }}>
       <List.Item>
         <Link
           href='https://voting-images.lon1.cdn.digitaloceanspaces.com/2026-06/Preacord.pdf'
@@ -179,11 +179,12 @@ const SharedCensusPretext = () => (
           Acord del 9 de març
         </Link>
       </List.Item>
-      <List.Item>
+      <List.Item whiteSpace='pre'>
         <Link
           href='https://voting-images.lon1.cdn.digitaloceanspaces.com/2026-06/AcordsPresosEnLaComissi%C3%B3DeSeguimentiDesplegament.pdf'
           target='_blank'
           rel='noopener noreferrer'
+          textWrap='balance'
         >
           Acta de la Comissió de Desplegament i Seguiment
         </Link>
@@ -196,11 +197,12 @@ const SharedCensusPretext = () => (
       <List.Root
         as='ol'
         listStyleType='decimal'
-        ps='1rem'
+        ps={{ base: 0, md: '2rem' }}
         mt='1rem'
         display='flex'
         flexDirection='column'
         gap='0.125rem'
+        listStylePos={{ base: 'outside', md: 'inside' }}
       >
         <List.Item textStyle='sm'>Identifica't amb el teu correu corporatiu d'XTEC.</List.Item>
         <List.Item textStyle='sm'>
