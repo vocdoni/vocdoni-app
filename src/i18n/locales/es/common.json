@@ -1225,6 +1225,30 @@
       "text": "<p>Tu voto ha sido emitido y almacenado de forma segura con la tecnología de Vocdoni. <verify>Puedes comprobarlo aquí</verify>.</p>",
       "title": "¡Voto enviado!"
     },
+    "summary": {
+      "countdown": "{{days}}d : {{hours}}h : {{minutes}}m",
+      "end_label": "Hora de cierre",
+      "indicators_title": "Indicadores clave del proceso",
+      "learn_more": "Saber más",
+      "participation_current": "Participación actual: <b>{{percent}}%</b>",
+      "results_private": "Los resultados se mantienen cifrados hasta que termine la votación el {{date}}. Nadie puede ver resultados parciales antes de ese momento.",
+      "results_title": "Resultados de la votación",
+      "start_label": "Hora de inicio",
+      "stat_census": "Censo total",
+      "stat_participation": "Participación",
+      "stat_votes_received": "Votos recibidos",
+      "tech_description": "Esta consulta utiliza el sistema de votación digital de Vocdoni, una tecnología de código abierto que ofrece a sindicatos, asociaciones y otras entidades las máximas garantías democráticas en los procesos de votación.",
+      "tech_integrity": "<b>Integridad:</b> el sistema garantiza que ningún voto puede ser alterado, eliminado ni manipulado una vez emitido.",
+      "tech_open_source": "Código abierto y auditable",
+      "tech_privacy": "<b>Privacidad:</b> el voto es completamente secreto y no es posible vincular ningún voto emitido con la identidad de la persona votante.",
+      "tech_title": "Garantías de la votación",
+      "tech_verifiability": "<b>Verificabilidad:</b> cualquier participante puede comprobar que su voto ha sido correctamente registrado y contabilizado, sin comprometer el secreto del voto.",
+      "time_remaining": "Tiempo restante para votar",
+      "time_until_start": "Tiempo hasta el inicio",
+      "votes_cast_one": "{{votes}} voto emitido",
+      "votes_cast_many": "",
+      "votes_cast_other": "{{votes}} votos emitidos"
+    },
     "template": {
       "annual_general_meeting": {
         "description": "Configura la descripción de tu asamblea general anual (opcional)",

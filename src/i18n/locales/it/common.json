@@ -1225,6 +1225,30 @@
       "text": "<p>Il tuo voto è stato espresso e memorizzato in modo sicuro con la tecnologia di Vocdoni. <verify>Puoi verificarlo qui</verify>.</p>",
       "title": "Voto inviato!"
     },
+    "summary": {
+      "countdown": "{{days}}g : {{hours}}h : {{minutes}}m",
+      "end_label": "Ora di chiusura",
+      "indicators_title": "Indicatori chiave del processo",
+      "learn_more": "Scopri di più",
+      "participation_current": "Partecipazione attuale: <b>{{percent}}%</b>",
+      "results_private": "I risultati restano crittografati fino al termine della votazione il {{date}}. Nessuno può vedere risultati parziali prima di quel momento.",
+      "results_title": "Risultati della votazione",
+      "start_label": "Ora di inizio",
+      "stat_census": "Censimento totale",
+      "stat_participation": "Partecipazione",
+      "stat_votes_received": "Voti ricevuti",
+      "tech_description": "Questa consultazione utilizza il sistema di voto digitale di Vocdoni, una tecnologia open source che offre a sindacati, associazioni e altre organizzazioni le massime garanzie democratiche nei processi di voto.",
+      "tech_integrity": "<b>Integrità:</b> il sistema garantisce che nessun voto possa essere alterato, eliminato o manipolato una volta espresso.",
+      "tech_open_source": "Codice aperto e verificabile",
+      "tech_privacy": "<b>Privacy:</b> il voto è completamente segreto e non è possibile collegare alcun voto espresso all'identità della persona votante.",
+      "tech_title": "Garanzie della votazione",
+      "tech_verifiability": "<b>Verificabilità:</b> qualsiasi partecipante può verificare che il proprio voto sia stato correttamente registrato e conteggiato, senza compromettere la segretezza del voto.",
+      "time_remaining": "Tempo rimanente per votare",
+      "time_until_start": "Tempo all'inizio",
+      "votes_cast_one": "{{votes}} voto espresso",
+      "votes_cast_many": "",
+      "votes_cast_other": "{{votes}} voti espressi"
+    },
     "template": {
       "annual_general_meeting": {
         "description": "Imposta la descrizione dell'assemblea generale annuale (opzionale)",

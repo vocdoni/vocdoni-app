@@ -1225,6 +1225,30 @@
       "text": "<p>El teu vot ha estat emès i emmagatzemat de forma segura amb la tecnologia de Vocdoni. <verify>Pots comprovar-ho aquí</verify>.</p>",
       "title": "Vot emès correctament!"
     },
+    "summary": {
+      "countdown": "{{days}}d : {{hours}}h : {{minutes}}m",
+      "end_label": "Hora de tancament",
+      "indicators_title": "Indicadors clau del procés",
+      "learn_more": "Saber-ne més",
+      "participation_current": "Participació actual: <b>{{percent}}%</b>",
+      "results_private": "Els resultats es mantenen xifrats fins que acabi la votació el {{date}}. Ningú pot veure resultats parcials abans d'aquell moment.",
+      "results_title": "Resultats de la votació",
+      "start_label": "Hora d'inici",
+      "stat_census": "Cens total",
+      "stat_participation": "Participació",
+      "stat_votes_received": "Vots rebuts",
+      "tech_description": "Aquesta consulta utilitza el sistema de votació digital de Vocdoni, una tecnologia de codi obert que ofereix a sindicats, associacions i altres entitats les màximes garanties democràtiques en els processos de votació.",
+      "tech_integrity": "<b>Integritat:</b> el sistema garanteix que cap vot no pot ser alterat, eliminat ni manipulat un cop emès.",
+      "tech_open_source": "Codi obert i auditable",
+      "tech_privacy": "<b>Privacitat:</b> el vot és completament secret i no és possible vincular cap vot emès amb la identitat de la persona votant.",
+      "tech_title": "Garanties de la votació",
+      "tech_verifiability": "<b>Verificabilitat:</b> qualsevol participant pot comprovar que el seu vot ha estat correctament registrat i comptabilitzat, sense comprometre el secret del vot.",
+      "time_remaining": "Temps restant per votar",
+      "time_until_start": "Temps fins a l'inici",
+      "votes_cast_one": "{{votes}} vot emès",
+      "votes_cast_many": "",
+      "votes_cast_other": "{{votes}} vots emesos"
+    },
     "template": {
       "annual_general_meeting": {
         "description": "Configura la descripció de la teva assemblea general anual (opcional)",
