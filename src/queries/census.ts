@@ -1,6 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useElection } from '@vocdoni/react-components'
+import type { VocdoniSDKClient } from '@vocdoni/sdk'
 import { CensusType, PublishedElection } from '@vocdoni/sdk'
+import { ApiEndpoints } from '~components/Auth/api'
+import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~queries/keys'
 
 export type CensusBundleData = {
@@ -64,4 +67,63 @@ export const useCensusSize = () => {
   const size = bundle?.census?.size ?? fallback
 
   return { size, isLoading: !!bundleURI && isLoading }
+}
+
+export type ProcessBundleResponse = {
+  census?: {
+    id: string
+  }
+}
+
+export type AddCensusParticipantsResponse = {
+  added: number
+  jobId?: string
+  errors?: string[]
+}
+
+// The election's census URL points to its process bundle, e.g. `.../process/bundle/{bundleId}`.
+const BUNDLE_ID_REGEX = /\/process\/bundle\/([^/?#]+)/
+
+/**
+ * Resolves the SaaS census id for a process. SaaS member-based censuses are not referenced directly on
+ * the vochain election: the election's census URL points to its process bundle, whose `census.id` is the
+ * SaaS census id we can append members to. So we fetch the election from the vochain to read its census
+ * URL, then fetch the bundle to read the census id.
+ *
+ * Returns `undefined` for processes that are not backed by a SaaS member census (e.g. spreadsheet/web3).
+ */
+export const useProcessCensusId = (client: VocdoniSDKClient, processId?: string, enabled: boolean = true) => {
+  const { bearedFetch } = useAuth()
+
+  return useQuery<string | undefined, Error>({
+    queryKey: QueryKeys.process.census(processId),
+    enabled: enabled && !!processId,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const election = await client.fetchElection(processId)
+      const bundleId = election.census?.censusURI?.match(BUNDLE_ID_REGEX)?.[1]
+      if (!bundleId) return undefined
+
+      const bundle = await bearedFetch<ProcessBundleResponse>(
+        ApiEndpoints.ProcessBundleId.replace('{bundleId}', bundleId)
+      )
+      return bundle.census?.id
+    },
+  })
+}
+
+/**
+ * Appends existing organization members to a census (append-only: members already present are
+ * skipped by the backend).
+ */
+export const useAddCensusParticipants = () => {
+  const { bearedFetch } = useAuth()
+
+  return useMutation({
+    mutationFn: ({ censusId, memberIds }: { censusId: string; memberIds: string[] }) =>
+      bearedFetch<AddCensusParticipantsResponse>(ApiEndpoints.Census.replace('{censusId}', censusId), {
+        method: 'POST',
+        body: { memberIds },
+      }),
+  })
 }

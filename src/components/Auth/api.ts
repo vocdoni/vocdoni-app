@@ -1,5 +1,5 @@
-import { AppEnv } from '~src/app-env'
 import i18n from '~i18n'
+import { AppEnv } from '~src/app-env'
 
 type MethodTypes = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
@@ -28,8 +28,10 @@ export enum ApiEndpoints {
   OrganizationProcess = 'process/{processId}',
   OrganizationDrafts = 'organizations/{address}/processes/drafts',
   OrganizationCensuses = 'census',
+  Census = 'census/{censusId}',
   OrganizationCensusPublish = 'census/{censusId}/group/{groupId}/publish',
   ProcessBundle = 'process/bundle',
+  ProcessBundleId = 'process/bundle/{bundleId}',
   ProcessBundleParticipantsCheck = 'process/bundle/{bundleId}/participants/check',
   OAuthLink = 'auth/oauth',
   OAuthUnlink = 'auth/oauth/{provider}',
