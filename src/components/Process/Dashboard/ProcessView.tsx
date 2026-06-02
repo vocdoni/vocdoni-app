@@ -72,6 +72,7 @@ import {
   SidebarSubtitle,
   SidebarTitle,
 } from '~components/Dashboard/Contents'
+import { CensusSearch } from './CensusSearch'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { Routes } from '~src/router/routes'
@@ -461,6 +462,9 @@ const ProcessViewSidebar = () => {
               </Text>
             </Box>
           </DashboardBox>
+
+          {/* Census voter lookup */}
+          <CensusSearch />
 
           {/* Voting settings */}
           <SidebarSubtitle>
