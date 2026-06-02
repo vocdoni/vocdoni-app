@@ -75,6 +75,7 @@ import {
 import { CensusSearch } from './CensusSearch'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
+import { useCensusSize } from '~queries/census'
 import { Routes } from '~src/router/routes'
 import { useResultTypeLabel } from '../resultTypeLabels'
 
@@ -358,8 +359,13 @@ const ResultsStateBadge = (props: BadgeProps) => {
 }
 
 const ProcessViewSidebar = () => {
-  const { election, participation, client } = useElection()
+  const { election, client } = useElection()
   const { t } = useTranslation()
+  // The hook's `participation`/census size fall back to `maxCensusSize` for CSP elections, which is the
+  // allowed-voters cap rather than the real census size. Recompute both from the actual census size.
+  const { size: censusSize } = useCensusSize()
+  const voteCount = (election instanceof PublishedElection && election.voteCount) || 0
+  const participation = censusSize > 0 ? Math.round((voteCount / censusSize) * 1e4) / 100 : 0
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { showSidebar, closeSidebar } = useSidebarVisibility()
   const resultTypeLabel = useResultTypeLabel(
@@ -437,7 +443,7 @@ const ProcessViewSidebar = () => {
                   <Trans i18nKey='total_votes'>Total votes</Trans>
                 </Text>
               </Box>
-              <Text fontWeight='bold'>{(election instanceof PublishedElection && election.voteCount) || 0}</Text>
+              <Text fontWeight='bold'>{voteCount}</Text>
             </Box>
             <Box pb={6} borderBottom='1px solid' borderColor='table.border'>
               <Box display='flex' w='full' justifyContent='space-between' alignItems='center' fontSize='xs' mb={1}>
@@ -457,9 +463,7 @@ const ProcessViewSidebar = () => {
                 <Icon as={LuUsers} />
                 <Trans i18nKey='census_size'>Census size</Trans>
               </Text>
-              <Text fontSize='inherit'>
-                {election instanceof PublishedElection && (election.census.size || election.maxCensusSize)}
-              </Text>
+              <Text fontSize='inherit'>{censusSize || ''}</Text>
             </Box>
           </DashboardBox>
 
