@@ -169,7 +169,9 @@ const CensusSearchPanel = ({ bundleId, processID, options }: CensusSearchPanelPr
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('census.search.placeholder', { defaultValue: 'Search census…' })}
+          aria-label={t('census.search.placeholder', { defaultValue: 'Search census…' })}
         />
+      </InputGroup>
       </InputGroup>
 
       {hasSearch && (
