@@ -172,7 +172,6 @@ const CensusSearchPanel = ({ bundleId, processID, options }: CensusSearchPanelPr
           aria-label={t('census.search.placeholder', { defaultValue: 'Search census…' })}
         />
       </InputGroup>
-      </InputGroup>
 
       {hasSearch && (
         <Box>
