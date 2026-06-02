@@ -220,7 +220,7 @@ const SharedCensusPretext = () => (
       votació i assegurar que cada participant només pugui emetre un únic vot.
     </Text>
     <Text textStyle='sm' maxW='90%' data-testid='shared-census-posttext'>
-      Si no reps el correu de la votació o tens qualsevol incidència tècnica, posa't en contacte amb{` `}
+      Si no reps el codi de votació, tingues paciència. Si no surts al cens, posa't en contacte amb{' '}
       <Link href='mailto:consulta.unitaria@sindicat.net'>consulta.unitaria@sindicat.net</Link> i indica el teu nom i
       cognoms, correu XTEC, centre de treball i especialitat. Moltes gràcies!
     </Text>
