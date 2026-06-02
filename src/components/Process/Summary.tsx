@@ -18,6 +18,7 @@ import { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiLock2Line, RiSearchEyeLine, RiShieldCheckLine } from 'react-icons/ri'
+import { useCensusSize } from '~queries/census'
 import { Routes } from '~src/router/routes'
 
 // Returns the milliseconds left until the relevant deadline (start when upcoming, end otherwise).
@@ -85,11 +86,11 @@ const CountdownStat = ({ target, isUpcoming, status }: CountdownStatProps) => {
 const ParticipationCard = () => {
   const { t, i18n } = useTranslation()
   const { election } = useElection()
+  const { size: census } = useCensusSize()
 
   if (!(election instanceof PublishedElection)) return null
 
   const voteCount = election.voteCount ?? 0
-  const census = election.maxCensusSize ?? 0
   const percent = census > 0 ? (voteCount / census) * 100 : 0
   const isUpcoming = election.status === ElectionStatus.UPCOMING
   const target = isUpcoming ? election.startDate : election.endDate
@@ -185,11 +186,11 @@ const Indicator = ({ label, value, accent }: IndicatorProps) => (
 const KeyIndicators = () => {
   const { t, i18n } = useTranslation()
   const { election } = useElection()
+  const { size: census } = useCensusSize()
 
   if (!(election instanceof PublishedElection)) return null
 
   const voteCount = election.voteCount ?? 0
-  const census = election.maxCensusSize ?? 0
   const percent = census > 0 ? (voteCount / census) * 100 : 0
   const nf = (value: number, fractionDigits = 0) =>
     new Intl.NumberFormat(i18n.language, {
