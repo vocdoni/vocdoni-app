@@ -82,7 +82,7 @@
       },
       "field_selector": "Suchfeld",
       "loading": "Teilnehmerliste wird durchsucht…",
-      "memberbase_note": "Diese Ergebnisse basieren auf deiner aktuellen Mitgliederverwaltung. Wenn Mitglieder hinzugefuegt, entfernt oder aktualisiert werden, koennen diese Ergebnisse ungenau sein.",
+      "memberbase_note": "Diese Ergebnisse basieren auf deiner aktuellen Mitgliederverwaltung. Wenn Mitglieder hinzugefügt, entfernt oder aktualisiert werden, können diese Ergebnisse ungenau sein.",
       "no_results": "Es gibt niemanden in der Teilnehmerliste, der diesen Angaben entspricht.",
       "not_voted": "Nicht abgestimmt",
       "placeholder": "Teilnehmerliste durchsuchen…",
