@@ -61,7 +61,6 @@ import {
 import ReactPlayer from 'react-player'
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
-import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import {
   DashboardBox,
   DashboardContents,
@@ -74,6 +73,8 @@ import {
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import { Routes } from '~src/router/routes'
 import { useResultTypeLabel } from '../resultTypeLabels'
+import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
+import { CensusSearch } from './CensusSearch'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -460,6 +461,9 @@ const ProcessViewSidebar = () => {
               </Text>
             </Box>
           </DashboardBox>
+
+          {/* Census voter lookup */}
+          <CensusSearch />
 
           {/* Voting settings */}
           <SidebarSubtitle>

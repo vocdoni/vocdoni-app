@@ -69,6 +69,29 @@
   },
   "cancel": "Annulla",
   "cancel_vote": "Annulla votazione",
+  "census": {
+    "search": {
+      "description": "Cerca un votante tramite le sue credenziali per verificare se è nel censimento e se ha già votato.",
+      "error": "Impossibile cercare nel censimento.",
+      "field": {
+        "birth_date": "Data di nascita",
+        "email": "Email",
+        "member_number": "Numero membro",
+        "name": "Nome",
+        "national_id": "Documento d'identità",
+        "phone": "Telefono",
+        "surname": "Cognome"
+      },
+      "field_selector": "Campo di ricerca",
+      "loading": "Ricerca nel censimento…",
+      "memberbase_note": "Questi risultati si basano sul tuo Database membri attuale. Se i membri vengono aggiunti, rimossi o aggiornati, questi risultati potrebbero non essere più accurati.",
+      "no_results": "Non c'è nessuno nel censimento che corrisponda a queste credenziali.",
+      "not_voted": "Non ha votato",
+      "placeholder": "Cerca nel censimento…",
+      "title": "Verifica partecipanti",
+      "voted": "Ha votato"
+    }
+  },
   "census_size": "Dimensione del censimento",
   "change_password": {
     "subtitle": "Inserire la password attuale e una nuova password per aggiornare le credenziali.",

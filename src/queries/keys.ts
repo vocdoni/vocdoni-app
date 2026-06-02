@@ -19,6 +19,10 @@ export const QueryKeys = {
   census: {
     bundle: (censusURI?: string) => ['census', 'bundle', censusURI].filter(Boolean),
   },
+  process: {
+    participantsCheck: (bundleId?: string, processID?: string, fieldName?: string, value?: string) =>
+      ['process', 'participantsCheck', bundleId, processID, fieldName, value].filter(Boolean),
+  },
   plans: ['plans'],
   profile: ['profile'],
 }

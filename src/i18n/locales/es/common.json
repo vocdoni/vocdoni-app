@@ -69,6 +69,29 @@
   },
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
+  "census": {
+    "search": {
+      "description": "Busca a un votante por sus credenciales para comprobar si está en el censo y si ya ha votado.",
+      "error": "No se pudo buscar en el censo.",
+      "field": {
+        "birth_date": "Fecha de nacimiento",
+        "email": "Correo electrónico",
+        "member_number": "Número de miembro",
+        "name": "Nombre",
+        "national_id": "Documento de identidad",
+        "phone": "Teléfono",
+        "surname": "Apellidos"
+      },
+      "field_selector": "Campo de búsqueda",
+      "loading": "Buscando en el censo…",
+      "memberbase_note": "Estos resultados se basan en tu Base de miembros actual. Si se añaden, eliminan o actualizan miembros, es posible que estos resultados ya no sean precisos.",
+      "no_results": "No hay nadie en el censo que coincida con esas credenciales.",
+      "not_voted": "No ha votado",
+      "placeholder": "Buscar en el censo…",
+      "title": "Comprobar participantes",
+      "voted": "Ha votado"
+    }
+  },
   "census_size": "Tamaño del censo",
   "change_password": {
     "subtitle": "Introduce tu contraseña actual y una nueva para actualizar tus credenciales.",

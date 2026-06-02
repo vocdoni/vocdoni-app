@@ -29,6 +29,7 @@ export enum ApiEndpoints {
   OrganizationCensuses = 'census',
   OrganizationCensusPublish = 'census/{censusId}/group/{groupId}/publish',
   ProcessBundle = 'process/bundle',
+  ProcessBundleParticipantsCheck = 'process/bundle/{bundleId}/participants/check',
   OAuthLink = 'auth/oauth',
   OAuthUnlink = 'auth/oauth/{provider}',
   Password = 'users/password',
