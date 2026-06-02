@@ -85,7 +85,7 @@
       },
       "field_selector": "Campo di ricerca",
       "loading": "Ricerca nel censimento…",
-      "memberbase_note": "Questi risultati si basano sul tuo Database membri attuale. Se i membri vengono aggiunti, rimossi o aggiornati, questi risultati potrebbero non essere piu accurati.",
+      "memberbase_note": "Questi risultati si basano sul tuo Database membri attuale. Se i membri vengono aggiunti, rimossi o aggiornati, questi risultati potrebbero non essere più accurati.",
       "no_results": "Non c'è nessuno nel censimento che corrisponda a queste credenziali.",
       "not_voted": "Non ha votato",
       "placeholder": "Cerca nel censimento…",
