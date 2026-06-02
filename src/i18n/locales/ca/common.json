@@ -136,7 +136,7 @@
     "auth_failed": "Autenticació fallida",
     "auth_success": "Autenticació correcta",
     "authenticate": "Identifica't",
-    "code_info": "Rebràs un codi únic al mitjà seleccionat per verificar la teva identitat i completar l'autenticació",
+    "code_info": "Rebràs un codi al correu electrònic per verificar la teva identitat. En moments d'alta participació, el codi pot trigar uns minuts a arribar. Si us plau, espera abans de sol·licitar-ne un de nou.",
     "code_sent": "Codi de verificació enviat",
     "contact_match_help": "Ha de coincidir amb el registrat al sistema",
     "errors": {
@@ -158,7 +158,7 @@
     "important": "Important",
     "receive_code": "Rebre codi",
     "step1": {
-      "helper_text": "Si fas servir el correu electrònic, no oblidis revisar la carpeta de correu brossa",
+      "helper_text": "No has rebut el codi? Alguns correus arriben de seguida, però en moments d'alta participació poden trigar uns minuts. Espera abans de tornar-ho a provar i revisa també la carpeta de correu no dessitjat.",
       "validation": {
         "length": "El codi ha de tenir 6 dígits",
         "required": "El codi és obligatori"
