@@ -39,6 +39,7 @@ import { FacebookShare, RedditShare, TelegramShare, TwitterShare } from '~compon
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
+import { useCspSessionGuard } from './CSP/use-csp-session-guard'
 import { CreatedBy } from './CreatedBy'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
@@ -198,6 +199,8 @@ const ProcessInfoPanel = () => {
 export const ProcessView = () => {
   const { t } = useTranslation()
   const { election, voted, isAbleToVote } = useElection()
+  // Close ineligible CSP sessions so the UI offers "Identify" instead of "Logout".
+  useCspSessionGuard()
   const videoRef = useRef<HTMLDivElement>(null)
   const electionRef = useRef<HTMLDivElement>(null)
   const [tabValue, setTabValue] = useState<'questions' | 'results'>('questions')
