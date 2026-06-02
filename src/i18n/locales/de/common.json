@@ -67,6 +67,29 @@
   },
   "cancel": "Abbrechen",
   "cancel_vote": "Abstimmung abbrechen",
+  "census": {
+    "search": {
+      "description": "Suche eine wählende Person anhand ihrer Anmeldedaten, um zu prüfen, ob sie in der Teilnehmerliste ist und bereits abgestimmt hat.",
+      "error": "Die Teilnehmerliste konnte nicht durchsucht werden.",
+      "field": {
+        "birth_date": "Geburtsdatum",
+        "email": "E-Mail",
+        "member_number": "Mitgliedsnummer",
+        "name": "Name",
+        "national_id": "Ausweisnummer",
+        "phone": "Telefon",
+        "surname": "Nachname"
+      },
+      "field_selector": "Suchfeld",
+      "loading": "Teilnehmerliste wird durchsucht…",
+      "memberbase_note": "Diese Ergebnisse basieren auf deiner aktuellen Mitgliederverwaltung. Wenn Mitglieder hinzugefuegt, entfernt oder aktualisiert werden, koennen diese Ergebnisse ungenau sein.",
+      "no_results": "Es gibt niemanden in der Teilnehmerliste, der diesen Angaben entspricht.",
+      "not_voted": "Nicht abgestimmt",
+      "placeholder": "Teilnehmerliste durchsuchen…",
+      "title": "Teilnehmer prüfen",
+      "voted": "Abgestimmt"
+    }
+  },
   "census_size": "Teilnehmerzahl",
   "change_password": {
     "subtitle": "Gib dein aktuelles Passwort und ein neues Passwort ein, um deine Zugangsdaten zu aktualisieren.",

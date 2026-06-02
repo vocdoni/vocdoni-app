@@ -70,6 +70,29 @@
   },
   "cancel": "Cancel·la",
   "cancel_vote": "Cancel·la el procés",
+  "census": {
+    "search": {
+      "description": "Cerca un votant per les seves credencials per comprovar si és al cens i si ja ha votat.",
+      "error": "No s'ha pogut cercar al cens.",
+      "field": {
+        "birth_date": "Data de naixement",
+        "email": "Correu electrònic",
+        "member_number": "Número de membre",
+        "name": "Nom",
+        "national_id": "Document d'identitat",
+        "phone": "Telèfon",
+        "surname": "Cognoms"
+      },
+      "field_selector": "Camp de cerca",
+      "loading": "Cercant al cens…",
+      "memberbase_note": "Aquests resultats es basen en la teva Base de membres actual. Si s'afegeixen, eliminen o actualitzen membres, és possible que aquests resultats ja no siguin precisos.",
+      "no_results": "No hi ha ningú al cens que coincideixi amb aquestes credencials.",
+      "not_voted": "No ha votat",
+      "placeholder": "Cerca al cens…",
+      "title": "Comprova els participants",
+      "voted": "Ha votat"
+    }
+  },
   "census_size": "Mida del cens",
   "change_password": {
     "subtitle": "Introdueix la contrasenya actual i una de nova per actualitzar les teves credencials.",

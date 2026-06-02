@@ -67,6 +67,29 @@
   },
   "cancel": "Cancel",
   "cancel_vote": "Cancel vote",
+  "census": {
+    "search": {
+      "description": "Look up a voter by their credentials to check whether they are in the census and if they have already voted.",
+      "error": "Could not search the census.",
+      "field": {
+        "birth_date": "Birth date",
+        "email": "Email",
+        "member_number": "Member number",
+        "name": "Name",
+        "national_id": "National ID",
+        "phone": "Phone",
+        "surname": "Surname"
+      },
+      "field_selector": "Search field",
+      "loading": "Searching census…",
+      "memberbase_note": "These results are based on your current Memberbase. If members are added, removed, or updated, these results may no longer be accurate.",
+      "no_results": "There is no one in the census matching those credentials.",
+      "not_voted": "Not voted",
+      "placeholder": "Search census…",
+      "title": "Check participants",
+      "voted": "Voted"
+    }
+  },
   "census_size": "Census size",
   "change_password": {
     "subtitle": "Enter your current password and a new password to update your credentials.",
