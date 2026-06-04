@@ -15,6 +15,7 @@ import { Link as ReactRouterLink } from 'react-router-dom'
 import { CensusMeta, CensusTypes } from './Census/CensusType'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
+import { ElectionLike } from './VotingReportPdf/VotingReportPdfButton'
 
 const results = (result: number, decimals?: number) =>
   decimals ? parseInt(formatUnits(BigInt(result), decimals), 10) : result
@@ -255,8 +256,9 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
   )
 }
 
-const hasOverwriteEnabled = (election?: PublishedElection): boolean =>
+const hasOverwriteEnabled = (election?: ElectionLike): boolean =>
   typeof election !== 'undefined' &&
+  election instanceof PublishedElection &&
   typeof election.voteType.maxVoteOverwrites !== 'undefined' &&
   election.voteType.maxVoteOverwrites > 0
 
