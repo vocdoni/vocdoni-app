@@ -18,6 +18,7 @@ import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { normalizeEmail } from '~utils/strings'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
 import { useTable } from '../TableProvider'
@@ -146,7 +147,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       memberNumber,
       name,
       surname,
-      email,
+      email: email ? normalizeEmail(email) : email,
       phone,
       nationalId,
       birthDate,

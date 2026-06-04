@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { normalizeEmail } from '~utils/strings'
 import { QueryKeys } from './keys'
 
 // The credential field a member is looked up by. This is whichever field the census uses for voter
@@ -32,7 +33,8 @@ type UseParticipantsCheckParams = {
 // overwriting a newer search), and the polling timer is cleaned up automatically on unmount.
 export const useParticipantsCheck = ({ bundleId, processID, fieldName, value }: UseParticipantsCheckParams) => {
   const { bearedFetch } = useAuth()
-  const trimmed = value.trim()
+  // Emails are matched case-insensitively (see normalizeEmail); other fields are only trimmed.
+  const trimmed = fieldName === 'email' ? normalizeEmail(value) : value.trim()
   const url = ApiEndpoints.ProcessBundleParticipantsCheck.replace('{bundleId}', bundleId ?? '')
 
   return useQuery<ParticipantsCheckResponse, Error>({

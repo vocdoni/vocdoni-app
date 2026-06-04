@@ -36,6 +36,7 @@ import { useOutletContext } from 'react-router-dom'
 import { Select } from '~components/Form/Select'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
+import { normalizeEmail } from '~utils/strings'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { MemberbaseTabsContext } from '..'
@@ -67,7 +68,7 @@ const mapSpreadsheetData = (data: SpreadsheetRow[], mapping: ColumnMapping): Map
     for (const targetKey in mapping) {
       const sourceKey = mapping[targetKey]
       if (row[sourceKey] !== undefined) {
-        mappedRow[targetKey] = row[sourceKey]
+        mappedRow[targetKey] = targetKey === 'email' ? normalizeEmail(row[sourceKey]) : row[sourceKey]
       }
     }
 

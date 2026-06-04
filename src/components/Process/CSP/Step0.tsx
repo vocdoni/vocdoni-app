@@ -21,6 +21,7 @@ import { PublishedElection } from '@vocdoni/sdk'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { normalizeEmail } from '~utils/strings'
 import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
 
@@ -61,12 +62,12 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
       if (twoFaFields.includes('email') && twoFaFields.includes('phone')) {
         // Both are supported, determine based on content
         if (trimmed.contact.includes('@')) {
-          form.email = trimmed.contact
+          form.email = normalizeEmail(trimmed.contact)
         } else {
           form.phone = trimmed.contact
         }
       } else if (twoFaFields.includes('email')) {
-        form.email = trimmed.contact
+        form.email = normalizeEmail(trimmed.contact)
       } else if (twoFaFields.includes('phone')) {
         form.phone = trimmed.contact
       }
