@@ -7,7 +7,7 @@ import {
   useClient,
   useElection,
 } from '@vocdoni/react-components'
-import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
@@ -69,6 +69,19 @@ const SharedCensusHomeContent = () => {
 
     navigate(`/processes/${processIds[0]}/${window.location.hash}`)
   }, [connected, isAdmin, navigate])
+
+  // Once the election has ended (or its results are published) there's nothing left to vote on, so send
+  // everyone — voters and admins alike — straight to the first process summary page.
+  const status = (election as PublishedElection | undefined)?.status
+  const hasEnded = status === ElectionStatus.ENDED || status === ElectionStatus.RESULTS
+
+  useEffect(() => {
+    if (!hasEnded || !processIds[0]) {
+      return
+    }
+
+    navigate(`/processes/${processIds[0]}/summary`)
+  }, [hasEnded, navigate])
   const streamUrl = typeof import.meta.env.STREAM_URL === 'string' ? import.meta.env.STREAM_URL : undefined
   const showStream = canViewProcesses && !!streamUrl
 

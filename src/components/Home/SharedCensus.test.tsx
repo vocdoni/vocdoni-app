@@ -40,6 +40,14 @@ const states = {
 
 vi.mock('@vocdoni/sdk', () => ({
   InvalidElection: class InvalidElection {},
+  ElectionStatus: {
+    UPCOMING: 'UPCOMING',
+    ONGOING: 'ONGOING',
+    ENDED: 'ENDED',
+    CANCELED: 'CANCELED',
+    PAUSED: 'PAUSED',
+    RESULTS: 'RESULTS',
+  },
 }))
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {

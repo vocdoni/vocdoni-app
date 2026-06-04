@@ -5,6 +5,7 @@ import {
   Card,
   Flex,
   Heading,
+  Image,
   List,
   Progress,
   Separator,
@@ -20,6 +21,9 @@ import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiLock2Line, RiSearchEyeLine, RiShieldCheckLine } from 'react-icons/ri'
 import { useCensusSize } from '~queries/census'
 import { Routes } from '~src/router/routes'
+import cgt from '/assets/cgt.png'
+import intersindical from '/assets/laintersindical.png'
+import ustec from '/assets/ustec.png'
 
 // Returns the milliseconds left until the relevant deadline (start when upcoming, end otherwise).
 const useTimeLeft = (target?: Date) => {
@@ -328,6 +332,14 @@ const CertifiedTech = () => {
   )
 }
 
+const Logos = () => (
+  <Flex wrap='wrap' justify='center' align='center' gap={{ base: 6, md: 10 }} data-testid='shared-census-logos'>
+    <Image src={ustec} alt='Logo USTEC' h={{ base: '50px', md: '70px' }} w='auto' />
+    <Image src={cgt} alt='Logo CGT' h={{ base: '50px', md: '70px' }} w='auto' />
+    <Image src={intersindical} alt='Logo La Intersindical' h={{ base: '50px', md: '70px' }} w='auto' />
+  </Flex>
+)
+
 const ProcessSummary = () => {
   const { election } = useElection()
 
@@ -338,6 +350,7 @@ const ProcessSummary = () => {
       <ParticipationCard />
       <KeyIndicators />
       <ResultsNotice />
+      <Logos />
       <CertifiedTech />
     </Flex>
   )
