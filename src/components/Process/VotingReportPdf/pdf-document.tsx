@@ -89,7 +89,15 @@ const ReportSectionBlock = ({
   onCapturePage?: (id: string, n: number) => void
 }) => (
   <View wrap={false} style={styles.section} id={sectionId}>
-    {sectionId && onCapturePage && <PdfText style={styles.captureProbe} />}
+    {sectionId && onCapturePage && (
+      <PdfText
+        style={styles.captureProbe}
+        render={({ pageNumber }) => {
+          onCapturePage(sectionId, pageNumber)
+          return null
+        }}
+      />
+    )}
     {children}
   </View>
 )
@@ -271,7 +279,15 @@ const PageStartCapture = ({
   onCapturePage?: (id: string, n: number) => void
 }) => {
   if (!onCapturePage) return null
-  return <PdfText style={styles.captureProbe} />
+  return (
+    <PdfText
+      style={styles.captureProbe}
+      render={({ pageNumber }) => {
+        onCapturePage(pageId, pageNumber)
+        return null
+      }}
+    />
+  )
 }
 
 const getIndexPageLabel = (pageId: string, capturedPages?: Record<string, number>): string => {
