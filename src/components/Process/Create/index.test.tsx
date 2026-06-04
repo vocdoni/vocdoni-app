@@ -264,28 +264,6 @@ describe('useFormToElectionMapper', () => {
         expect(election.maxCensusSize).toBe(3)
       })
 
-      it('should persist weighted voting in election census metadata', () => {
-        const { result } = renderHook(() => useFormToElectionMapper())
-        const mapper = result.current
-
-        const form: Process = {
-          ...mockForm,
-          censusType: CensusTypes.CSP,
-          weightedVote: true,
-          census: {
-            id: 'census-id',
-            credentials: [],
-            size: 100,
-            use2FA: false,
-            use2FAMethod: 'email',
-          },
-        }
-
-        const election = mapper(form, mockCensus)
-
-        expect((election.meta as { census?: { weighted?: boolean } }).census?.weighted).toBe(true)
-      })
-
       it.skip('should handle empty addresses array (edge case - causes SDK validation error)', () => {
         // This test is skipped because empty addresses array results in maxCensusSize = 0
         // which violates SDK validation (must be > 0)

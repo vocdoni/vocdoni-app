@@ -20,7 +20,6 @@ type CensusMetadata = {
   type?: string
   fields?: string[]
   salt?: string
-  weighted?: boolean
 }
 
 type ElectionReportContext = {
@@ -171,11 +170,10 @@ const normalizeCensusMetadata = (value?: Record<string, unknown>): CensusMetadat
   const fields = hasFields ? rawFields.filter((field): field is string => typeof field === 'string') : undefined
   const type = typeof value.type === 'string' ? value.type : undefined
   const salt = typeof value.salt === 'string' ? value.salt : undefined
-  const weighted = typeof value.weighted === 'boolean' ? value.weighted : undefined
 
-  if (!type && !hasFields && !salt && typeof weighted === 'undefined') return undefined
+  if (!type && !hasFields && !salt) return undefined
 
-  return { type, fields, salt, weighted }
+  return { type, fields, salt }
 }
 
 export const resolveCensusMetadata = (election: PublishedElection): CensusMetadata | undefined => {
@@ -191,7 +189,6 @@ export const resolveCensusMetadata = (election: PublishedElection): CensusMetada
     type: wrappedMetadata.type ?? normalizedMetadata.type,
     fields: typeof wrappedMetadata.fields === 'undefined' ? normalizedMetadata.fields : wrappedMetadata.fields,
     salt: wrappedMetadata.salt ?? normalizedMetadata.salt,
-    weighted: typeof wrappedMetadata.weighted === 'undefined' ? normalizedMetadata.weighted : wrappedMetadata.weighted,
   }
 }
 
@@ -311,13 +308,8 @@ const getFallbackIsWeighted = (election: PublishedElection) => {
   return weight !== null && Number.isFinite(size) && weight !== size
 }
 
-const resolveReportIsWeighted = (
-  report: ElectionReportContext,
-  censusMeta?: CensusMetadata,
-  censusBundle?: CensusBundleData | null
-) => {
+const resolveReportIsWeighted = (report: ElectionReportContext, censusBundle?: CensusBundleData | null) => {
   if (report.isWeighted === true) return true
-  if (censusMeta?.weighted === true) return true
   if (censusBundle?.census.weighted === true) return true
 
   return getFallbackIsWeighted(report.election)
@@ -520,7 +512,7 @@ export const buildCertificateData = ({
   const resultDecimals = Number((election.meta as { token?: { decimals?: number } } | undefined)?.token?.decimals ?? 0)
   const censusMeta = resolveCensusMetadata(election)
   const censusType = resolveReportCensusType(election, censusMeta)
-  const isWeighted = resolveReportIsWeighted(report, censusMeta, censusBundle)
+  const isWeighted = resolveReportIsWeighted(report, censusBundle)
   const censusFields = censusBundle?.census.authFields ?? censusMeta?.fields ?? []
   const twoFaFields = censusBundle?.census.twoFaFields ?? []
   const authenticationMethod = humanizeCensusType(t, censusType)
