@@ -1,6 +1,6 @@
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
-import { VotingReportPdfButton } from './VotingReportPdf'
+import { VotingReportPdfButton } from './VotingReportPdf/VotingReportPdfButton'
 
 vi.mock('@vocdoni/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/sdk')>()

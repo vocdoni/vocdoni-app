@@ -1404,131 +1404,152 @@
   },
   "process_pdf": {
     "authentication": {
-      "identity_source": "Font de dades d'identitat",
+      "identity_source": "Credencials requerides del votant",
       "method": "Mètode d'autenticació",
-      "two_fa": "Autenticació 2FA"
-    },
-    "boolean": {
-      "no": "No",
-      "yes": "Sí"
+      "two_fa": "Comprovació addicional d'identitat",
+      "two_fa_disabled": "Desactivada: no s'ha configurat cap comprovació addicional d'identitat en aquest procés de votació",
+      "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús enviat als seus dispositius personals.",
+      "voter_access_source": "Origen de l'accés del votant",
+      "voter_access_source_spreadsheet": "Els votants accedeixen amb credencials derivades del cens de full de càlcul carregat per l'organització.",
+      "voter_access_source_web3": "Els votants accedeixen amb l'adreça de cartera inclosa en el cens Web3.",
+      "voter_access_source_weighted": "L'elegibilitat es comprova contra el cens ponderat proporcionat per l'organització per a aquest procés."
     },
     "census": {
-      "definition": "El cens electoral defineix el conjunt complet de membres autoritzats a participar en el procés de votació. La inclusió al cens no implica participació efectiva.",
-      "provider": "Proveïdor del cens",
-      "provider_value": "El cens el proporciona l'organització",
-      "total": "Total del cens"
+      "counting_basis": "Base de recompte",
+      "counting_basis_1p1v": "1 persona, 1 vot",
+      "counting_basis_weighted": "Vot ponderat",
+      "eligible_voters": "Votants elegibles",
+      "eligible_voting_power": "Poder de vot elegible total",
+      "source": "Origen del cens",
+      "voting_power_used": "Poder de vot utilitzat",
+      "weighted_participation": "Participació ponderada"
     },
     "census_type": {
-      "anonymous": "Cens ponderat anònim",
-      "csp": "Cens CSP",
+      "anonymous": "Cens anònim proporcionat per l'organització",
+      "csp": "Cens de credencials de la base de membres",
+      "spreadsheet": "Cens de full de càlcul proporcionat per l'organització",
       "unknown": "No disponible",
-      "weighted": "Cens ponderat"
+      "web3": "Cens de carteres Web3 proporcionat per l'organització",
+      "weighted": "Cens ponderat proporcionat per l'organització"
     },
     "disclaimer": {
       "bullet_1": "No constitueix una certificació legal del procés de votació.",
       "bullet_2": "No substitueix els registres oficials, les actes o les presentacions reguladores.",
       "bullet_3": "Totes les dades provenen de registres criptogràfics i basats en blockchain.",
       "bullet_4": "El secret del vot i l'anonimat del votant es preserven per disseny.",
-      "paragraph_1": "Aquest document constitueix una certificació tècnica derivada de registres generats pel sistema del Protocol Vocdoni.",
-      "paragraph_2": "El proveïdor tècnic no assumeix responsabilitat per l'exactitud de les dades d'entrada (per exemple, la composició del cens), la interpretació legal dels resultats ni el compliment dels marcs legals o reguladors aplicables.",
+      "paragraph_1": "Aquest document constitueix una certificació tècnica derivada de dades registrades a la infraestructura de Vocdoni.",
+      "paragraph_2": "El proveïdor tècnic no assumeix responsabilitat per les dades proporcionades per l'organització, inclosa la composició del cens, els pesos de vot, la interpretació legal dels resultats o el compliment dels marcs legals o reguladors aplicables.",
       "paragraph_3": "La responsabilitat sobre la interpretació legal i l'ús d'aquesta certificació recau exclusivament en l'organització sol·licitant.",
       "title": "Avís legal"
     },
     "document": {
-      "issued_by": "Emès per Vocdoni (Synergize SL) el {{issue_date}}, en la seva qualitat de proveïdor tècnic.",
-      "sections": {
-        "authentication": "2. Autenticació",
-        "certification_scope": "8. Abast de la certificació",
-        "electoral_census": "4. Cens electoral",
-        "general_information": "1. Informació general",
-        "issuer": "9. Emissor",
-        "turnout_participation": "5. Participació i assistència",
-        "verification": "7. Verificació",
-        "voting_process": "6. Procés de votació",
-        "voting_system": "3. Sistema de votació"
+      "bookmarks": {
+        "general_information": "Marc tècnic i informació general",
+        "index": "Índex",
+        "issuer": "Emissor",
+        "voting_process": "Preguntes i resultats"
       },
-      "subtitle": "Informe emès el {{issue_date}} | ID del procés: {{process_id}}",
+      "index": {
+        "intro": "Aquest informe està organitzat en les seccions següents:",
+        "title": "Índex"
+      },
+      "issued_by": "Emès per Vocdoni (Synergize SL) el {{issue_date}} a les {{issue_time}}, en la seva qualitat de proveïdor tècnic.",
+      "process_id": "ID del procés: {{process_id}}",
+      "sections": {
+        "authentication": "3. Autenticació",
+        "general_information": "2. Informació general",
+        "issuer": "7. Emissor",
+        "turnout_participation": "4. Cens i participació",
+        "verification": "6. Verificació",
+        "voting_process": "5. Preguntes i resultats",
+        "voting_system": "1. Marc tècnic"
+      },
       "title_prefix": "CERTIFICACIÓ TÈCNICA DEL PROCÉS DE VOTACIÓ DIGITAL"
     },
     "download": "Informe electoral (PDF)",
     "download_error": "No s'ha pogut generar l'informe PDF",
     "downloading": "S'està generant el PDF",
-    "encryption": {
-      "encrypted": "Encriptat",
-      "not_encrypted": "Sense encriptar"
-    },
     "general": {
-      "encryption_method": "Mètode d'encriptació",
+      "census_reference": "Referència del cens",
+      "census_reference_helper": "Referència pública que identifica el cens utilitzat per a aquest procés de votació. No inclou ni revela dades personals dels votants.",
       "event_name": "Nom de l'esdeveniment",
-      "extended_process_details": "Detalls ampliats del procés",
-      "network": "Xarxa",
+      "network": "Infraestructura",
       "organization": "Organització",
+      "process_id": "ID del procés",
+      "process_id_helper": "Identificador públic únic d'aquest procés de votació. Es pot utilitzar per trobar i verificar el procés a la infraestructura de votació.",
       "results_visibility": "Visibilitat dels resultats",
-      "vote_overwrite_enabled": "Sobreescriptura del vot activada",
+      "vote_overwrite": "Sobreescriptura del vot",
       "voting_period_end": "Període de votació (final)",
       "voting_period_start": "Període de votació (inici)"
     },
-    "intro_paragraph_1": "Aquest document constitueix una certificació tècnica formal d'un procés de votació digital realitzat amb el Protocol Vocdoni. Estableix un registre estructurat, verificable i auditable de la configuració del procés, el conjunt de participants elegibles (cens electoral), la participació efectiva i els resultats finals. La seva finalitat és permetre que auditors independents i tercers autoritzats valorin la integritat, la coherència i la correcta execució del procés.",
-    "intro_paragraph_2": "Totes les dades rellevants associades a aquest procés de votació han estat registrades i ancorades en registres públicament auditables dins la xarxa Vocdoni. Aquests registres garanteixen transparència, immutabilitat i verificabilitat d'extrem a extrem, preservant alhora l'anonimat del votant i la confidencialitat de la papereta mitjançant mecanismes criptogràfics.",
+    "intro_paragraph_1": "Aquest document constitueix una certificació tècnica formal d'un procés de votació digital realitzat amb el Protocol Vocdoni. Estableix un registre estructurat, verificable i auditable de la configuració del procés, el conjunt de participants elegibles (cens electoral), la participació, i els resultats finals (recompte). La seva finalitat és permetre que auditors independents i tercers autoritzats valorin la integritat, la coherència i la correcta execució del procés.",
+    "intro_paragraph_2": "Totes les dades rellevants associades a aquest procés de votació han estat registrades i ancorades en registres públicament auditables mitjançant el Protocol Vocdoni. Aquests registres garanteixen transparència, immutabilitat i verificabilitat d'extrem a extrem, preservant alhora l'anonimat del votant i la confidencialitat de la papereta mitjançant mecanismes criptogràfics.",
     "intro_paragraph_3": "Aquesta certificació l'emet exclusivament el proveïdor tècnic per acreditar la correcta execució del sistema i la integritat de les dades registrades. No substitueix cap certificació legal ni afirma el compliment de requisits legals o normatius específics d'una jurisdicció.",
     "issuer": {
       "issuing_date": "Data d'emissió",
-      "legal_entity": "Entitat jurídica",
       "paragraph": "Emès en nom de l'entitat organitzadora en la seva qualitat de proveïdor tècnic.",
       "provider": "Vocdoni"
     },
     "not_available": "No disponible",
-    "scope": {
-      "census": "Definició del cens electoral",
-      "configuration": "Configuració del procés de votació",
-      "exclusion": "Aquesta certificació no cobreix les normes de governança, la correcció dels criteris d'elegibilitat ni el compliment legal.",
-      "paragraph": "Aquesta certificació cobreix exclusivament els aspectes tècnics següents:",
-      "participation": "Registre de dades de participació",
-      "period": "Control del període de votació",
-      "results": "Resultats finals calculats",
-      "tally": "Mecanismes automatitzats de recompte"
+    "results": {
+      "hidden_field": "Ocult fins als resultats finals"
     },
     "turnout": {
-      "census_contact": "Si necessites més detalls sobre el cens, contacta amb nosaltres.",
       "eligible": "Nombre total de participants elegibles",
       "participation": "El nombre de vots emesos reflecteix només aquells participants que van enviar efectivament una papereta vàlida durant el període de votació definit.",
-      "rate": "Taxa de participació",
-      "votes_cast": "Nombre total de vots emesos"
+      "submitted_ballots": "Paperetes enviades",
+      "voter_participation": "Participació dels votants",
+      "weighted_participation": "Les paperetes enviades compten els votants que han participat. Els totals ponderats dels resultats compten el poder de vot registrat per a cada resposta."
     },
     "verification": {
-      "explorer": "Explorador de verificació",
+      "explorer": "Veure a l'explorador de verificació",
       "paragraph": "Totes les dades del procés han quedat registrades en una infraestructura basada en blockchain i es poden verificar de manera independent mitjançant l'explorador públic següent:",
       "procedure_title": "Procediment de verificació",
-      "step_1": "Recuperar les dades del procés a través de l'explorador.",
-      "step_2": "Validar el hash arrel del procés respecte al valor publicat.",
-      "step_3": "Confirmar la coherència de la referència del cens i dels registres de l'urna.",
-      "step_4": "Tornar a calcular i verificar els resultats de l'escrutini quan escaigui."
+      "step_1": "Obre l'enllaç de l'explorador de verificació. Aquesta pàgina conté el registre tècnic públic del procés de votació.",
+      "step_2": "Comprova que l'ID del procés a l'explorador és idèntic a l'ID del procés d'aquest informe. Això confirma que tots dos documents fan referència al mateix procés de votació.",
+      "step_3": "Comprova que la referència del cens que es mostra a l'explorador coincideix amb la referència d'aquest informe. Això confirma que la llista de votants elegibles vinculada al procés és la mateixa.",
+      "step_4": "Comprova que el nombre de paperetes registrades coincideix amb les dades de participació que es mostren en aquest informe.",
+      "step_5": "Compara el recompte final de l'explorador amb els resultats per nombre de paperetes o per poder de vot ponderat que es mostren en aquest informe.",
+      "step_6": "Per a una auditoria tècnica més profunda, un auditor pot inspeccionar els registres públics amb més detall o tornar a calcular el recompte per confirmar que les paperetes registrades i els resultats finals són coherents."
     },
-    "vote_overwrite_enabled_one": "Sí, fins a {{count}} sobreescriptures",
-    "vote_overwrite_enabled_many": "Sí, fins a {{count}} sobreescriptures",
-    "vote_overwrite_enabled_other": "Sí, fins a {{count}} sobreescriptures",
+    "vote_overwrite_disabled": "Desactivada",
+    "vote_overwrite_enabled": "Activada, fins a {{votes}} sobreescriptures de vot per votant",
     "voting_process": {
       "card": {
-        "item": "Pregunta {{index}}",
-        "outcome": "Resultat: {{outcome}}",
-        "participation": "Participació: {{votes}} vots registrats",
-        "question": "Pregunta: {{question}}",
-        "results": "Resultats:"
+        "abstain": "Abstenció",
+        "item": "Total de vots",
+        "option": "Opció",
+        "outcome_label": "Mètode de votació",
+        "participation_short": "{{votes}} vots",
+        "results": "Resultats:",
+        "share_cast_power": "Percentatge del poder emès",
+        "share_eligible_power": "Percentatge del poder elegible",
+        "share_votes": "Percentatge de vots",
+        "submitted_ballots_short": "{{ballots}} paperetes",
+        "votes": "Vots",
+        "voting_power": "Poder de vot",
+        "voting_power_short": "{{power}} de poder de vot",
+        "voting_power_used": "Poder de vot utilitzat",
+        "weighted_method": "{{base}} amb vot ponderat"
       },
       "intro_one": "El procés de votació {{process_name}} va consistir en 1 pregunta.",
       "intro_many": "",
-      "intro_other": "El procés de votació {{process_name}} va consistir en {{count}} preguntes."
+      "intro_other": "El procés de votació {{process_name}} va consistir en {{count}} preguntes.",
+      "results_hidden": "Els resultats estan ocults fins que el procés arribi a la fase de resultats finals."
     },
     "voting_system": {
-      "bullet_1": "Infraestructura de llibre major distribuït (blockchain)",
-      "bullet_2": "Mecanismes criptogràfics de verificació i integritat",
-      "executed_on": "El procés es va executar sobre la infraestructura {{blockchain_network}}.",
-      "guarantee_1": "Integritat del procés de votació",
-      "guarantee_2": "Immutabilitat de les dades registrades",
-      "guarantee_3": "Verificabilitat independent dels resultats",
-      "guarantee_4": "Confidencialitat de les paperetes individuals",
-      "guarantee_lead": "El sistema garanteix:",
-      "paragraph": "Les operacions de votació i escrutini es van executar mitjançant Vocdoni, un protocol de votació digital recolzat per:"
+      "bullet_1": "Un registre públic de la configuració del procés de votació",
+      "bullet_2": "Una referència del cens que identifica la llista d'electors elegibles sense revelar dades personals dels votants",
+      "bullet_3": "Mecanismes criptogràfics que protegeixen el secret de la papereta i la privacitat del votant",
+      "bullet_4": "Dades de participació i resultats registrades que es poden comprovar de manera independent",
+      "bullet_5": "Registres resistents a manipulacions ancorats en una infraestructura basada en blockchain",
+      "bullet_6": "Resultats finals que es poden comparar amb les dades públiques de verificació",
+      "executed_on": "El procés {{voting_process}} es va executar sobre la infraestructura {{blockchain_network}}.",
+      "guarantee_lead": "El Protocol Vocdoni augmenta la confiança en el procés de votació proporcionant:",
+      "paragraph_1": "El procés de votació es va dur a terme mitjançant el Protocol Vocdoni, un protocol de votació digital dissenyat per crear, executar, registrar i verificar processos de votació amb fortes garanties d'integritat.",
+      "paragraph_2": "Quan es crea un procés de votació, la seva configuració es registra a la blockchain abans que comenci la votació, creant un registre públic i auditable de com està previst que funcioni el procés. Això inclou el període de votació, el mètode de votació, el conjunt de participants elegibles, les preguntes i les regles que determinen com es compten els resultats. El cens defineix qui pot participar en el procés, tot preservant la privacitat dels votants individuals.",
+      "paragraph_3": "Durant el període de votació, els votants elegibles s'autentiquen segons el mètode configurat i envien les seves paperetes a través del sistema de votació. El protocol està dissenyat perquè el procés es pugui verificar d'extrem a extrem.",
+      "paragraph_4": "Un cop completat el procés de votació, els resultats finals i els registres rellevants del procés queden ancorats a la blockchain. Això fa que el procés sigui auditable i ajuda a garantir que l'informe publicat es pugui comparar amb registres tècnics públics."
     }
   },
   "processes": {
