@@ -37,6 +37,17 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | resume | berrekin | |
 | sign (cryptographic) | sinatu | Technical term in common use — keep |
 
+## Verb forms — standard Batua (aditzoina)
+With the **potential** auxiliaries (`daiteke`, `daitezke`, `dezake`, `ditzake`, `dezakezu`, `ditzakezu`, `dezakete`, `gaitezke`, `zaitezke`, etc.) and with **subjunctive / purpose** auxiliaries (`dadin`, `daitezen`, `dezan`, `ditzan`, `dezagun`, `dezala`, …), the non-finite verb must take the **aditzoina (radical)**, not the `-tu`/`-i` participle. This is the standard Batua norm (Euskaltzaindia, Arau 28).
+
+- `-tu` / `-du` verbs: drop the suffix → `hautatu` → `hauta dezakezu`, `kudeatu` → `kudea ditzake`, `sortu` → `sor daiteke`, `ezartu` → `ezar`, `mantendu` → `manten`, `zifratu` → `zifra`, `egokitu` → `egoki`.
+- `-i` verbs: drop the `-i` → `hasi` → `has daiteke`, `eskaini` → `eskain`, `jarri` → `jar`, `ikusi` → `ikus`.
+- **Exceptions that keep the `-i`:** `itxi` (`itxi dezakezu`) and `etsi`/`ezetsi` (`ezetsi ditzakezu`). Likewise `-n` verbs where radical = participle: `egin`, `egon`, `izan`, `iraun`, `jakin`.
+
+Do **not** apply this to:
+- **Imperative button labels / commands**, which keep the participle: `Egiaztatu`, `Sortu`, `Gehitu`, `Bidali`, `Hautatu`.
+- The **`ahal izan`** potential form, which legitimately uses the participle (`ikusi ahal duzu` ≈ `ikus dezakezu`).
+
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. Basque uses the same two-form pattern — translate accordingly.
 

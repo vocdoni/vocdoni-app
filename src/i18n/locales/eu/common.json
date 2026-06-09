@@ -10,6 +10,7 @@
     "continue_description": "«{{ election.title.default }}» bozketa-prozesuari berrekiten...",
     "create_first_vote": "Ikusi prozesu guztiak",
     "create_new_vote": "Sortu bozketa berria",
+    "edit": "Editatu",
     "end": "Bozketa berehala amaitu, boto berririk eman ezin dadin, eta emaitzak agertarazi (kontuz: ezin da desegin).",
     "end_description": "«{{ election.title.default }}» bozketa-prozesua amaitzen...\n\nKontuz: ekintza hau ezin da desegin eta hautesleek ezingo dute jada bozkatu.",
     "error_title": "Errorea gertatu da transakzioa burutzean",
@@ -66,7 +67,30 @@
   },
   "cancel": "Utzi",
   "cancel_vote": "Utzi botoa",
-  "census_size": "Erroldaren tamaina",
+  "census": {
+    "search": {
+      "description": "Bilatu botogile bat bere kredentzialak erabiliz erroldean dagoen eta dagoeneko bozka eman duen egiaztatzeko.",
+      "error": "Ezin izan da erroldea bilatu.",
+      "field": {
+        "birth_date": "Jaiotze-data",
+        "email": "Posta elektronikoa",
+        "member_number": "Kide-zenbakia",
+        "name": "Izena",
+        "national_id": "Nortasun-agiria",
+        "phone": "Telefonoa",
+        "surname": "Abizena"
+      },
+      "field_selector": "Bilaketa-eremua",
+      "loading": "Erroldea bilatzen…",
+      "memberbase_note": "Emaitza hauek zure uneko Memberbase-n oinarrituta daude. Kideak gehitu, kendu edo eguneratzen badira, emaitza hauek ez dira zehatzak izango.",
+      "no_results": "Ez dago inor erroldean kredentzial horiekin bat datorrenik.",
+      "not_voted": "Botoa eman gabe",
+      "placeholder": "Bilatu erroldean…",
+      "title": "Egiaztatu parte-hartzaileak",
+      "voted": "Botoa emana"
+    }
+  },
+  "census_size": "Erroldeko tamaina",
   "change_password": {
     "subtitle": "Sartu zure egungo pasahitza eta berri bat zure kredentzialak eguneratzeko.",
     "title": "Aldatu pasahitza"
@@ -120,7 +144,7 @@
     "selector_label": "Herrialdea"
   },
   "create_org": {
-    "already_profile": "Zure erakundeak dagoeneko profila badu, <dlink>sartu panelean</dlink> eta jarri harremanetan administratzailearekin gonbita egin diezazun",
+    "already_profile": "Zure erakundeak dagoeneko profila badu, <dlink>sartu Dashboard-era</dlink> eta jarri harremanetan administratzailearekin gonbita egin diezazun",
     "create_button": "Sortu zure erakundea",
     "organization_details": "Erakundearen xehetasunak",
     "organization_details_description": "Kudeatu zure erakundearen profila eta ezarpenak.",
@@ -137,9 +161,9 @@
     "code_sent": "Egiaztapen-kodea bidali da",
     "contact_match_help": "Sisteman erregistratutakoarekin bat etorri behar du",
     "errors": {
-      "participant_not_found": "Boto-emailea ez dago erroldan edo emandako kredentzialak ez dira zuzenak.",
+      "participant_not_found": "Botogilea ez dago erroldan edo emandako kredentzialak ez dira zuzenak.",
       "requests_on_cooldown": "Eskaera gehiegi. Itxaron pixka bat berriro saiatu aurretik.",
-      "zero_voting_weight": "Ez duzu boto-ahalmen nahikoa bozketara sartzeko."
+      "zero_voting_weight": "Ez duzu boto-pisu nahikoa bozketara sartzeko."
     },
     "fields": {
       "birthDate": "Jaioteguna",
@@ -202,7 +226,7 @@
       "empty": "Ez da bozketa-prozesurik aurkitu",
       "empty_description": "Sortu zure lehen bozketa hasteko.",
       "error_loading_processes": "Errorea bozketa-prozesuak kargatzean",
-      "hello": "Ongi etorri Vocdoni-ra, {{ name }}!",
+      "hello": "Ongi etorri Vocdoni-ra, {{name}}!",
       "how_first_vote": "Nola sortu zure lehen bozketa",
       "no_organization": "Ez da erakunderik aurkitu",
       "no_subscription": "Ez dago harpidetzarik eskuragarri. Sortu erakunde bat zure plana aktibatzeko.",
@@ -288,7 +312,7 @@
   },
   "error_removing_code": "Errorea kodea kentzean",
   "features": {
-    "anonymous_voting": "Bozketa anonimoa",
+    "anonymous_voting": "Boto sekretua",
     "approval": "Onarpen-bozketa",
     "audit": "Auditoria",
     "audit_blockchain": "% 100 auditagarria blockchainean",
@@ -313,7 +337,7 @@
     "memberbase_all_in_one_management": "Kideen kudeaketa integrala",
     "multiple": "Aukera anitzeko bozketa",
     "on_demand": "Eskaeraren arabera*",
-    "overwrite": "Botoa berridatzi",
+    "overwrite": "Botoa aldatu",
     "participatory_budgeting": "Aurrekontu parte-hartzaileak",
     "personalization": "Pertsonalizazioa",
     "phone_support": "Telefono bidezko laguntza",
@@ -338,8 +362,8 @@
     "sub_orgs": "{{ count }} azpierakunde arte",
     "team_members": "Taldeko kideak",
     "tooltips": {
-      "anonymous": "Aukerako funtzionalitate hau antolatzaileek hautatu dezakete. Aktibatuta dagoenean, botoak guztiz anonimoak dira: ezta guk ere ezin dugu jakin nork bozkatu duen aukera zehatz baten alde. Bestela, antolatzaileek emaitzak zifratu ditzakete bozketa amaitu arte, edo bozketa guztiz publikoa egin.",
-      "live_results": "Aukerako funtzionalitate hau antolatzaileek hautatu dezakete. Emaitzak denbora errealean erakuts daitezke botoak ematen diren heinean, edo antolatzaileek emaitzak zifratuta eta ezkutatuta mantendu ditzakete bozketa-aldia amaitu arte.",
+      "anonymous": "Aukerako funtzionalitate hau antolatzaileek hauta dezakete. Aktibatuta dagoenean, botoak guztiz anonimoak dira: ezta guk ere ezin dugu jakin nork bozkatu duen aukera zehatz baten alde. Bestela, antolatzaileek emaitzak zifra ditzakete bozketa amaitu arte, edo bozketa guztiz publikoa egin.",
+      "live_results": "Aukerako funtzionalitate hau antolatzaileek hauta dezakete. Emaitzak denbora errealean erakuts daitezke botoak ematen diren heinean, edo antolatzaileek emaitzak zifratuta eta ezkutatuta manten ditzakete bozketa-aldia amaitu arte.",
       "memberbase_all_in_one": "Inportatu zure kide-oinarria boto-emaile hautagarrien taldeak sortzeko eta bozketa-baimenak oso erraz kudeatzeko.",
       "multiple": "Hautesleek hainbat aukera hauta ditzakete eskuragarri dauden aukeren artean. Ezin hobea inkesta eta erabaki anitzentzat.",
       "overwrite": "Hautesleek beren botoa alda dezakete bozketa-aldia amaitu aurretik. Funtzionalitate honek erroreak saihesten eta bortxa eragozten laguntzen du, hautesleei beren aukerak zuzentzeko aukera emanez.",
@@ -353,13 +377,12 @@
     "uptime": "% 99,99ko jardun-denbora",
     "uptime_guaranteed": "Bermatua ({{suffix}})",
     "vote_templates": "Erabilerraza diren txantiloiak bozketa-metodo guztietarako",
-    "weighted": "Bozketa haztatua",
+    "weighted": "Ponderatutako botazioa",
     "white_label": "Marka zuria"
   },
   "footer": {
     "company": "Konpainia",
     "contact": "Kontaktua",
-    "developer_portal": "Garatzaileen ataria",
     "footer_subtitle": "Mundu mailako bozketa-protokoloa",
     "terms_and_privacy": "<link1>Erabilera-baldintzak</link1> eta <link2>Pribatutasun-politika</link2>"
   },
@@ -390,7 +413,7 @@
       "generic": "Errorea eragiketa burutzean",
       "invalid_youtube_url": "Sartu baliozko YouTube URL bat",
       "max_greater_than_min": "Gehienezko balioak gutxienekoa baino handiagoa edo berdina izan behar du",
-      "password_min_length": "Geh. 8 karaktere",
+      "password_min_length": "Gut. 8 karaktere",
       "required": "Eremu hau bete beharrekoa da"
     },
     "member": {
@@ -430,7 +453,7 @@
         "census_summary_description_other": "<b>{{count}}</b> Web3 helbide bozkatu ahal izango dute",
         "census_summary_title": "Erroldaren laburpena",
         "csv_format": "CSV fitxategiak Web3 helbideak izan behar ditu lehen zutabean.",
-        "csv_format_weighted": " CSV fitxategiak pisuak izan behar ditu lehen zutabean eta Web3 helbideak bigarren zutabean.",
+        "csv_format_weighted": "CSV fitxategiak pisuak izan behar ditu lehen zutabean eta Web3 helbideak bigarren zutabean.",
         "upload_csv": "EDO KARGATU CSV",
         "wallet_addresses": "Web3 helbideak"
       }
@@ -469,6 +492,9 @@
       "delete_error": "Errorea taldea ezabatzean",
       "delete_group": "Ezabatu taldea",
       "delete_success": "Taldea behar bezala ezabatu da",
+      "edit_description": "Eguneratu talde honen izena eta deskribapena.",
+      "edit_error": "Errorea taldea eguneratzean",
+      "edit_success": "Taldea behar bezala eguneratu da",
       "history": "Historia",
       "view_members": "Ikusi kideak"
     },
@@ -488,7 +514,7 @@
       "empty_description": "Gehitu kideak hemen ikusteko.",
       "error": "Ezin izan dira taldeko kideak kargatu"
     },
-    "members_one": "Kide bat",
+    "members_one": "{{count}} kide",
     "members_other": "{{count}} kide",
     "name": "Izena"
   },
@@ -516,8 +542,8 @@
     "clients_title": "100 erakunde baino gehiagok konfiantza dute gugan",
     "faqs": {
       "faq_1": {
-        "description": "Vocdoni blockchain teknologian oinarritutako boto digitaleko plataforma da, bozketa-prozesu seguruak, gardenak eta egiaztagarriak eskaintzen dituena.",
-        "title": "Zer da Vocdoni?"
+        "description": "Vocdoni bere erabiltzaile-esperientzia bikainagatik, segurtasun-neurri aurreratuengatik eta gardentasun paregabeagatik nabarmentzen da. Gure plataformak teknologia aitzindaria erabiltzen du, zero ezagutza-frogak eta blockchain pertsonalizatua barne, bozketa segurua eta sekretua bermatzeko eta prozesu garden eta egiaztagarria eskaintzeko.",
+        "title": "Zer bereizten du Vocdoni beste bozketa-plataformetatik?"
       },
       "faq_10": {
         "description": "Laguntza teknikoa eskaintzen dugu boto-emaileei edozein arazo konpontzen laguntzeko. Gainera, sistema diseinatuta dago intuitiboa eta eskuragarria izan dadin pertsona guztientzat.",
@@ -525,7 +551,7 @@
       },
       "faq_11": {
         "description": "Vocdoni erasoetarako erresistentea da blockchain teknologiari eta beste segurtasun-neurri aurreratu batzuei esker. Sistema tradizionalak manipulazioen aurrean ahulak izan daitezkeen bitartean, Vocdonin boto bakoitza kriptografikoki babestuta dago eta ezin da aldatu.",
-        "title": "Zer-nolako segurtasuna eskaintzen du Vocdonik ziberasoen aurrean?"
+        "title": "Zer-nolako segurtasuna eskaintzen du Vocdonik zibererasoen aurrean?"
       },
       "faq_12": {
         "description": "Vocdonik bozketa mota guztiak egiteko aukera ematen du: barne-hauteskundeak, batzarrak, erreferendumak, inkestak eta parte-hartze prozesuak. Plataforma gobernu, enpresa, kooperatiba, elkarte eta beste erakunde batzuen beharretara egokitzen da.",
@@ -560,8 +586,8 @@
         "title": "Bozketa guztiz pribatuak egin daitezke?"
       },
       "faq_2": {
-        "description": "Vocdonik blockchain, kriptografia aurreratua eta zero ezagutza-frogak konbinatzen ditu boto bakoitzaren segurtasuna, anonimotasuna eta egiaztagarritasuna bermatzeko.",
-        "title": "Nola funtzionatzen du Vocdonik?"
+        "description": "Bai, Vocdonik GDPRren gidalerroak zorrotz betetzen ditu, erabiltzaile-datuak modu ahalik eta zainduenean eta konfidentzialenean kudeatzea bermatuz. Gure plataformak datuen pribatutasuna eta segurtasuna jartzen ditu lehentasunez bozketa-prozesuaren etapa guztietan.",
+        "title": "Vocdoni bat dator datuen pribatutasunari buruzko araudiarekin?"
       },
       "faq_20": {
         "description": "Edonork egiazta ditzake emaitzak bloke-katearen gardentasunari esker. Gainera, bozketa-prozesua auditatzeko eta haren fidagarritasuna bermatzeko tresnak eskaintzen ditugu.",
@@ -584,8 +610,8 @@
         "title": "Zenbat boto-emaile kudea ditzake Vocdonik aldi berean?"
       },
       "faq_25": {
-        "description": "Bai, plataformak rolak eta baimenak definitzeko aukera ematen die administratzaileei, funtzio jakin batzuetarako sarbidea mugatuz erakundearen beharren arabera.",
-        "title": "Administratzaileentzat sarbide-maila desberdinak ezar daitezke?"
+        "description": "Bai, plataformak rolak eta baimenak definitzeko aukera ematen dizu, funtzio jakin batzuetarako sarbidea mugatuz erakundearen beharren arabera.",
+        "title": "Administratzaileentzat sarbide-maila desberdinak ezar ditzakezu?"
       },
       "faq_26": {
         "description": "Vocdonik autentifikazio-metodo desberdinak onartzen ditu, hala nola posta elektronikoa, eID, SMS bidezko kodea, sinadura elektronikoa edo lehendik dauden identifikazio-sistemekin integrazioa.",
@@ -601,103 +627,103 @@
       },
       "faq_29": {
         "description": "Behatzaileek hauteskunde-prozesua denbora errealean egiazta dezakete eta emaitzak audita ditzakete Vocdoniren gardentasun- eta egiaztapen-tresnak erabiliz.",
-        "title": "Nola funtzionatzen du behatzaileentzako emaitzen egiaztapenak?"
+        "title": "Nola funtzionatzen du behatzaileentzako emaitzen egiaztapena?"
       },
       "faq_3": {
-        "description": "Vocdonik gardentasuna, segurtasuna, manipulazioarekiko erresistentzia eta mundu mailako irisgarritasuna eskaintzen ditu, azpiegitura fisikoaren beharrik gabe.",
-        "title": "Zer abantaila ditu Vocdonik bozketa-sistema tradizionalen aldean?"
+        "description": "Bai, Vocdonik pertsonalizazio-aukerak eskaintzen ditu zure erakundearen markarekin bat etortzeko, zure sistemekin integrazio arina bermatuz eta botoentzat marka-esperientzia koherentea mantenduz. Gurekin harremanetan jar zaitezke gehiago jakiteko!",
+        "title": "Pertsonaliza al daiteke Vocdoni zure erakundearen markari egokitzeko?"
       },
       "faq_30": {
-        "description": "Bai, hasiera- eta amaiera-data eta -ordu zehatzak ezar ditzakezu bozketarako, eskuzko esku-hartzeen beharra ezabatuz.",
-        "title": "Bozketa bat programa daiteke automatikoki has eta amai dadin?"
+        "description": "Bai, hasiera- eta amaiera-data eta -ordu zehatzak ezar ditzakezu bozketarako, eskuzko esku-hartzerik beharrik gabe.",
+        "title": "Programa al daiteke bozketa automatikoki has eta amaitzeko?"
       },
       "faq_31": {
         "description": "Bai, plataformak hainbat bozketa-formatu onartzen ditu, hala nola aukera anitzeko galderak, boto haztatua eta lehentasunezko botoa edo STV bezalako sistemak.",
-        "title": "Erantzun-aukera anitz dituzten galderak plantea daitezke?"
+        "title": "Galdera erantzun-aukera anitzez osa al daitezke?"
       },
       "faq_32": {
         "description": "Bai, Vocdonik prozesu deliberatiboetan, batzarretan eta gobernantza-mekanismoetan parte hartzea errazten du, erabaki-hartze sistema desberdinetara egokituz.",
-        "title": "Vocdoni egokia al da erabaki-prozesu kolaboratiboetarako?"
+        "title": "Egokia al da Vocdoni erabaki-prozesu kolaboratiboetarako?"
       },
       "faq_33": {
         "description": "Bai, Vocdonik bozketa-metodo sofistikatuagoak ezartzeko aukera ematen du erakunde edo hauteskunde-prozesu bakoitzaren beharren arabera.",
-        "title": "Bozketa-metodo aurreratuak integra daitezke, hala nola boto koadratikoa edo onarpen-bozketa?"
+        "title": "Integra al daitezke bozketa-metodo aurreratuak, hala nola boto koadratikoa edo onarpenzko botazioa?"
       },
       "faq_34": {
         "description": "Bozketaren konfigurazioaren arabera, denbora errealeko emaitzak edo prozesuaren amaieran azken zenbaketa hauta dezakezu.",
-        "title": "Emaitzak denbora errealean kontsulta daitezke?"
+        "title": "Denbora errealean eskuragarri al daude emaitzak?"
       },
       "faq_35": {
-        "description": "Bloke-katearen gardentasuna eta egiaztagarritasuna direla eta, edozein parte-hartzaile edo behatzailek emaitzak audita ditzake eta balizko anomaliak antzeman ditzake.",
-        "title": "Nola inpugna daitezke bozketa baten emaitzak?"
+        "description": "Bloke-katearen gardentasuna eta egiaztagarritasuna direla eta, edozein parte-hartzaile edo behatzailek emaitzak audita ditzake eta balizko anomaliak detekta ditzake.",
+        "title": "Nola inbuga daitezke bozketa baten emaitzak?"
       },
       "faq_36": {
-        "description": "Bai, aurrez definitutako errolda erraz karga dezakezu CSV fitxategi baten bidez edo lehendik dauden datu-baseekin integratu.",
-        "title": "Posible al da lehendik dagoen hautesle-errolda inportatzea?"
+        "description": "Bai, aurrez definitutako errolda erraz igo dezakezu CSV fitxategiaren bidez edo lehendik dauden datu-baseekin integratu.",
+        "title": "Inporta al daiteke dagoeneko existitzen den boto-errolda?"
       },
       "faq_37": {
-        "description": "Bai, segurtasun- eta gardentasun-praktika onenak jarraitzen ditugu, eta herrialde eta erakunde desberdinetako araudi espezifikoetara egokitu gaitezke.",
+        "description": "Bai, segurtasun- eta gardentasun-praktika onenak jarraitzen ditugu, eta herrialde eta erakunde desberdinetako araudi espezifikoetara egoki gaitezke.",
         "title": "Vocdonik betetzen al ditu boto elektronikoaren araudi ofizialak?"
       },
       "faq_38": {
-        "description": "Bai, edozein eskalatako kontsulta publiko, erreferendum eta hiritarren parte-hartze prozesuetarako tresna egokia da.",
-        "title": "Vocdonik erreferendumak eta herritarren kontsultak kudea al ditzake?"
+        "description": "Bai, edozein eskalatako kontsulta publiko, erreferendum eta herritarren parte-hartze prozesuetarako tresna egokia da.",
+        "title": "Kudea al ditzake Vocdonik erreferendumak eta herritarren kontsultak?"
       },
       "faq_39": {
-        "description": "Vocdoniren planek oinarrizko boto-emaile kopuru bat barne hartzen dute, baina edukiera handitu dezakezu zure erakundearen beharren arabera. Plataforma eskalagarria da eta batzar txikietatik hasi eta hauteskunde handietara kudea ditzake.",
-        "title": "Ba al dago boto-emaile edo bozketa-prozesu kopuruan mugarik?"
+        "description": "Vocdoniren planek oinarrizko boto-emaile kopuru bat barne hartzen dute, baina gehi dezakezu zure erakundearen beharren arabera. Plataforma eskalagarria da eta batzar txikietatik hasi eta hauteskunde handietara kudea ditzake.",
+        "title": "Ba al dago boto-emaile edo bozketa-prozesu kopuru mugarik?"
       },
       "faq_4": {
-        "description": "Vocdoni administrazio publikoentzat, enpresentzat, kooperatibentzat, elkarteentzat eta boto-sistema seguru eta gardena behar duen edozein erakunderentzat pentsatuta dago.",
-        "title": "Nork erabil dezake Vocdoni?"
+        "description": "Vocdoni SDK eta Vocdoni UI Components liburutegiak eskaintzen ditugu, zure softwarearekin edo plataforma batekin integratzeko erraza izateko. Garatzaileentzat erabilerraztasuna lantzeko sortu genituen, eta lehen egunetik emaitzak lor ditzazun. Gure aditu-taldeak integrazio-prozesuan zehar lagunduko dizu, trantsizio leuna eta zure jardueran ahalik eta eragin txikiena bermatzeko.",
+        "title": "Zein erraza da Vocdoni zure sistemekin integratzea?"
       },
       "faq_40": {
-        "description": "Bai, Vocdonik bozketa haztatua egiteko aukera ematen du, non boto bakoitzak balio desberdina izan dezakeen erakundeak definitutako irizpideen arabera.",
-        "title": "Boto-pisu desberdinak ezar daitezke?"
+        "description": "Bai, Vocdonik boto haztatua egiteko aukera ematen du, non boto bakoitzak balio desberdina izan dezakeen erakundeak definitutako irizpideen arabera.",
+        "title": "Ezar al daitezke boto-pisu desberdinak?"
       },
       "faq_41": {
-        "description": "Vocdoni edozein gailutik eta nabigatzailetik irisgarria izateko diseinatuta dago. Arazoak izanez gero, laguntza teknikoa eta botoa berreskuratzeko aukerak eskaintzen ditugu, inor kanpoan ez gera dadin.",
+        "description": "Vocdoni edozein gailutik eta nabigatzailetik irisgarri izateko diseinatuta dago. Arazoak izanez gero, laguntza teknikoa eta botoa berreskuratzeko aukerak eskaintzen ditugu, inor kanpoan ez gera dadin.",
         "title": "Zer gertatzen da boto-emaile batek arazo teknikoak baditu bozketan?"
       },
       "faq_42": {
         "description": "Vocdonik zifratze aurreratua, zero ezagutza-frogak eta blockchain arkitektura deszentralizatua erabiltzen ditu segurtasuna eta erasoekiko erresistentzia bermatzeko.",
-        "title": "Nola babesten da sistema ziberasoen aurka?"
+        "title": "Nola babesten da sistema zibererasoen aurka?"
       },
       "faq_43": {
         "description": "Bai, bozketa-sistema desberdinak onartzen ditugu, hala nola gehiengo soileko botoa, lehentasunezko botoa (STV sistema bezala), aukera anitzeko galderak eta beste batzuk.",
-        "title": "Aukera anitzeko edo lehentasunezko botoa duten galderak sor daitezke?"
+        "title": "Sor al daitezke aukera anitzeko edo lehentasunezko botoa duten galderak?"
       },
       "faq_44": {
-        "description": "Bai, proba-bozketak egiteko aukera eskaintzen dugu, antolatzaileak eta boto-emaileak sistemarekin ohitzeko aukera izan dezaten hauteskunde ofizialak baino lehen.",
-        "title": "Posible al da proba egitea benetako bozketa baino lehen?"
+        "description": "Bai, proba-bozketak egiteko aukera eskaintzen dugu, antolatzaileek eta boto-emaileek sistemarekin ohitu daitezkeen hauteskunde ofizialak baino lehen.",
+        "title": "Posible al da benetako bozketa baten aurretik proba egitea?"
       },
       "faq_45": {
         "description": "Erregistratu eta minutu gutxitan has zaitezke bozketak sortzen. Laguntza edo konfigurazio pertsonalizatua behar baduzu, gure taldea prest dago laguntzeko.",
         "title": "Nola has naiteke Vocdoni erabiltzen?"
       },
       "faq_5": {
-        "description": "Herrialde bakoitzaren esparru juridikoaren araberakoa da. Vocdonik segurtasun- eta pribatutasun-praktika onenak betetzen ditu eta araudi espezifikoetara egokitu daiteke.",
-        "title": "Legezkoa al da boto elektronikoa Vocdonirekin?"
+        "description": "Vocdonik laguntza osoa eskaintzen dizu zure bozketa-bidaiaren urrats bakoitzean. Hasierako konfiguraziotik eta pertsonalizaziotik hasi eta etengabeko mantentzera eta arazoak konpontzera, gure laguntza-talde dedikatua prest dago gure plataformaren balioa ahalik eta gehien ateratzen laguntzeko.",
+        "title": "Zein motatako laguntza eskaintzen du Vocdonik?"
       },
       "faq_6": {
-        "description": "Vocdonik zifratze aurreratua, blockchaina eta zk-SNARK bezalako teknika kriptografikoak erabiltzen ditu boto bakoitzaren pribatutasuna eta segurtasuna bermatzeko.",
-        "title": "Nola bermatzen du Vocdonik botoen segurtasuna?"
+        "description": "Bai, Vocdoni edozein tamainako hauteskundeak kudeatzeko prest dago, komunitateko boto txikietatik hasi eta eskala handiko hauteskunde publikoetara. Gure azpiegitura eskalagarriak errendimendu fidagarria bermatzen du bozketa-une gorenetan ere, boto-emaileekin modu eraginkor eta efizientean harremanetan jartzeko aukera emanez.",
+        "title": "Kudea al ditzake Vocdonik eskala handiko hauteskundeak?"
       },
       "faq_7": {
-        "description": "Bai: blockchainari esker, edonork egiazta dezake emaitzen osotasuna boto-emaileen anonimotasuna arriskuan jarri gabe.",
-        "title": "Posible al da Vocdonirekin egindako bozketa bat auditatzea?"
+        "description": "Segurtasuna da gure lehentasunik handiena Vocdonin. Gure plataformak teknika kriptografiko aurreratuak eta blockchain teknologia erabiltzen ditu segurtasun-maila gorena bermatzeko, boto-osotasuna mantenduz eta boto-emaileen anonimotasuna babestuz. Vocdonirekin, ziur egon zaitezke zure boto-prozesua segurua eta manipulaezina dela.",
+        "title": "Zein segurua da Vocdoni plataforma?"
       },
       "faq_8": {
-        "description": "Boto-emaileek internet konexioa eta web-nabigatzailea dituen gailu bat baino ez dute behar. Ez da aplikazio edo programa espezifikorik instalatu behar.",
-        "title": "Zer baldintza tekniko behar dituzte boto-emaileek?"
+        "description": "Vocdonik boto-prozesuen osotasuna bermatzen du boto bakoitza blockchain transakzio aldaezin gisa erregistratuz, gardentasuna eta egiaztagarritasuna eskainiz.",
+        "title": "Nola bermatzen du Vocdonik boto-prozesuen osotasuna?"
       },
       "faq_9": {
-        "description": "Vocdonik teknika kriptografiko aurreratuak erabiltzen ditu, hala nola zero ezagutza-frogak (zk-SNARK), botorik ezin dela boto-emailearen nortasunarekin lotu bermatzen dutenak.",
-        "title": "Nola babesten du Vocdonik boto-emaileen anonimotasuna?"
+        "description": "Vocdonik teknika kriptografiko aurreratuak erabiltzen ditu, hala nola zero ezagutza-frogak (zk-SNARKs), boto bat boto-emailearen identitatearekin lotzea inork ezin izan dezala bermatzeko.",
+        "title": "Nola babesten da boto-emaileen anonimotasuna?"
       },
       "show_less": "Erakutsi gutxiago",
       "show_more": "Erakutsi gehiago",
-      "subtitle": "Jarraian, gure erabiltzaileen ohiko galderen erantzunak aurkituko dituzu. Argitasuna eta konfiantza eman zure boto digitaleko esperientziari.",
+      "subtitle": "Hemen behean aurkituko dituzu gure erabiltzaileen ohiko galderetarako erantzunak. Eman argitasuna eta konfiantza zure boto digitaleko esperientziari.",
       "title": "Ohiko galderak"
     },
     "support": {
@@ -706,31 +732,31 @@
   },
   "import_progress": {
     "completed_with_errors": "Inportazioa erroreekin amaitu da",
-    "completed_with_errors_description": "Zure kideen datuak inportatu dira, baina errore batzuk gertatu dira eta, beraz, kide batzuek eremu hutsak dituzte.",
-    "description": "Zure kideen datuak inportatzen ari dira. Honek minutu batzuk iraun ditzake fitxategiaren tamainaren arabera.",
+    "completed_with_errors_description": "Zure kideen datuak inportatu dira, baina errore batzuk gertatu dira eta horregatik kide batzuek eremu hutsak dituzte.",
+    "description": "Zure kideen datuak inportatzen ari dira. Fitxategiaren tamainaren arabera minutu batzuk iraun ditzake.",
     "error_description": "Errorea gertatu da zure kideen datuak inportatzean. Saiatu berriro geroago.",
     "error_modal_title": "Inportazio-erroreak",
     "error_title": "Inportazio-errorea",
-    "note": "Lasai itxi dezakezu orri hau. Posta elektroniko bat jasoko duzu amaitzean.",
-    "success_description": "Inportatutako kideak erabiltzen has zaitezke.",
+    "note": "Orri hau lasai itxi dezakezu. Amaitzean, posta elektroniko bat jasoko duzu.",
+    "success_description": "Orain has zaitezke zure inportatutako kideak erabiltzen.",
     "success_title": "Zure kideen datuak behar bezala inportatu dira.",
     "title": "Kide-oinarriaren inportazioa abian",
-    "view_errors_one": "Ikusi {{count}} errore",
+    "view_errors_one": "Ikusi {{count}} errorea",
     "view_errors_other": "Ikusi {{count}} errore"
   },
   "internal_server_error": "Zerbitzariaren barne-errorea",
   "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",
   "invite": {
-    "account_not_verified": "Zure kontua ez dago egiaztatuta. Egiaztatu jarraitzeko.",
+    "account_not_verified": "Zure kontua ez dago egiaztatuta. Egiaztatu zure kontua jarraitzeko.",
     "create_account_subtitle": "Lehenik kontu bat behar duzu gonbidapena onartzeko",
     "create_account_title": "Sortu zure kontua",
     "error": "Errorea",
     "go_to_verify": "Egiaztatu kontua",
     "invalid_link": "Jasotako gonbidapen-esteka ez da baliozkoa",
     "processing": "Zure gonbidapena prozesatzen...",
-    "subtitle": "Bidali gonbidapen bat zure erakundean sartzeko. Gonbidatutako pertsonak posta elektroniko bat jasoko du jarraibideekin.",
+    "subtitle": "Bidali gonbidapen bat zure erakundean sartzeko. Gonbidatutako pertsona batek posta elektroniko bat jasoko du jarraibideekin.",
     "success": "Gonbidapena behar bezala bidali da!",
-    "success_description": "Saioa hasi dezakezu",
+    "success_description": "Orain saioa has dezakezu",
     "success_title": "Gonbidapena onartu da",
     "title": "Gehitu kidea taldera",
     "unexpected_error": "Ustekabeko errorea",
@@ -751,9 +777,9 @@
   "memberbase": {
     "add_member": {
       "button": "Gehitu kidea",
-      "description": "Bete kidearen datuak behean.",
+      "description": "Bete behean kidearen xehetasunak.",
       "error": "Errorea kidea gehitzean.",
-      "success": "Kidea behar bezala gehitu da!",
+      "success": "Kidea ongi gehitu da!",
       "title": "Gehitu kidea"
     },
     "delete_member": {
@@ -764,8 +790,8 @@
       "loading": "Ezabatzeko kideak kargatzen...",
       "subtitle_one": "Ziur zaude kide bat ezabatu nahi duzula? Ekintza hau ezin da desegin.",
       "subtitle_other": "Ziur zaude {{count}} kide ezabatu nahi dituzula? Ekintza hau ezin da desegin.",
-      "success_one": "Kidea behar bezala ezabatu da",
-      "success_other": "Kideak behar bezala ezabatu dira",
+      "success_one": "Kidea ongi ezabatu da",
+      "success_other": "Kideak ongi ezabatu dira",
       "title": "Ezabatu kideak"
     },
     "download_template": {
@@ -776,12 +802,12 @@
       "description": "Editatu kidearen datuak behean.",
       "error": "Errorea kidea eguneratzean.",
       "missing_id": "Editatu beharreko kidearen IDa falta da.",
-      "success": "Kidea behar bezala eguneratu da!",
+      "success": "Kidea ongi eguneratu da!",
       "title": "Editatu kidea"
     },
     "form": {
       "cancel": "Utzi",
-      "phone_warning": "Telefono-zenbakia ezkutatuta. Hemen edozein aldaketa egiteak gainidatziko du.",
+      "phone_warning": "Telefono-zenbakia ezkutatuta. Hemen egindako aldaketa gainidatziko du.",
       "save": "Gorde aldaketak"
     },
     "groups": {
@@ -802,8 +828,8 @@
       },
       "included_columns": "Hautatu sartu nahi dituzun zutabeak:",
       "map_columns": {
-        "subtitle": "Esleitu zure fitxategiko zutabeak gure sistemako dagozkien eremuei. Nahitaezko eremuak izartxoarekin (*) markatuta daude.",
-        "title": "Esleitu zutabeak"
+        "subtitle": "Lotu zure fitxategiko zutabeak gure sistemako dagozkien eremuei. Nahitaezko eremuak izartxoarekin (*) markatuta daude.",
+        "title": "Lotu zutabeak"
       },
       "reset": "Berrezarri inportazioa",
       "select_at_least_one_column": "Hautatu gutxienez zutabe bat txantiloia deskargatzeko.",
@@ -811,7 +837,7 @@
       "subtitle": "Deskargatu txantiloi bat edo inportatu zure CSV, XLS edo XLSX fitxategia kideak gehitzeko.",
       "title": "Inportatu kideak",
       "warning": {
-        "subtitle": "Esleitzen ez diren zutabeen informazioa ez da inportatuko.",
+        "subtitle": "Ez da esleitzen ez diren zutabeen informazioa inportatuko.",
         "title": "Oharra"
       }
     },
@@ -830,22 +856,22 @@
       "national_id": "NAN/AIZ",
       "phone": "Telefonoa",
       "surname": "Abizenak",
-      "weight": "Boto-ahalmena (Pisua)"
+      "weight": "Boto-pisua (Pisua)"
     },
     "list": {
       "empty": "Ez da kiderik aurkitu",
-      "empty_description": "Gehitu zure lehen kidea hasteko.",
+      "empty_description": "Gehitu zure lehen kidea hasiera emateko.",
       "error": "Ezin izan dira kideak kargatu",
       "no_search_results": "Ez dago zure bilaketarekin bat datorren kiderik",
-      "no_search_results_description": "Saiatu bilaketa-terminoak doitzen."
+      "no_search_results_description": "Saiatu bilaketa-terminoak aldatzen."
     },
     "table": {
       "actions": "Ekintzak",
       "add_to_group": "Gehitu taldera",
       "add_to_group_button_one": "Gehitu kide bat",
       "add_to_group_button_other": "Gehitu {{count}} kide",
-      "add_to_group_confirmation_one": "«{{group}}» taldera kide bat gehitzera zoaz.",
-      "add_to_group_confirmation_other": "«{{group}}» taldera {{count}} kide gehitzera zoaz.",
+      "add_to_group_confirmation_one": "«{{group}}» taldera kide bat gehituko duzu.",
+      "add_to_group_confirmation_other": "«{{group}}» taldera {{count}} kide gehituko dituzu.",
       "add_to_group_description": "Hautatu kideak gehitzeko taldea.",
       "add_to_group_success": "Kideak behar bezala gehitu dira taldera",
       "bulk_delete": "Ezabatu",
@@ -853,7 +879,7 @@
       "close_drawer": "Itxi",
       "create_group": "Sortu taldea",
       "create_group_error": "Errorea taldea sortzean",
-      "create_group_form_description": "Sortu talde berri bat hautatutako kideetatik. Honek antolatuko ditu etorkizuneko bozketa-prozesuetarako.",
+      "create_group_form_description": "Sortu talde berri bat hautatutako kideetatik. Honek antolatuko ditu etorkizuneko boto-emate-prozesuetarako.",
       "create_group_form_title": "Sortu talde berria",
       "create_group_success": "Taldea behar bezala sortu da",
       "delete": "Ezabatu",
@@ -880,7 +906,7 @@
     }
   },
   "membership_size": {
-    "selector_label": "Kide kop."
+    "selector_label": "Kide-kopurua"
   },
   "menu": {
     "burger_aria_label": "erabiltzaile-menua",
@@ -907,9 +933,9 @@
   "new_password_placeholder": "Sartu zure pasahitz berria",
   "new_vote": "Bozketa berria",
   "new_voting": "Bozketa berria",
-  "no_results_filtering": "Zure egungo bilaketa-iragazkiak ez du emaitzarik itzultzen",
+  "no_results_filtering": "Zure bilaketa-iragazkiak ez du emaitzarik itzultzen",
   "not_registred_yet": "Ez duzu konturik?",
-  "number_of_members_one": "Taldeko kide bat",
+  "number_of_members_one": "Taldeko kide {{ count }}",
   "number_of_members_other": "Taldeko {{ count }} kide",
   "oauth": {
     "link": {
@@ -960,7 +986,7 @@
       "id": "ID",
       "info": "Eduki prest zure erakundearen IDa deitzean.",
       "organization_id": "Zure erakundearen IDa",
-      "organization_id_description": "Eman ID hau laguntzarekin harremanetan jartzean",
+      "organization_id_description": "Eman hau laguntzarekin harremanetan jartzean",
       "priority_support_line": "Lehentasunezko laguntza-lerroa",
       "priority_support_line_description": "Eskuragarri astelehenetik ostiralera, 9:00etatik 18:00etara CET",
       "title": "Telefono bidezko laguntza"
@@ -1024,9 +1050,9 @@
     "success": "Pasahitza behar bezala eguneratu da"
   },
   "passwords_do_not_match": "Pasahitzak ez datoz bat",
-  "pause_vote": "Etenarazi bozketa",
+  "pause_vote": "Pausatu bozketa",
   "plan": {
-    "encouragement": "Bozketa bat abiaraztea sinplea da, eta parte-hartzaileek edonondik elkartu daitezke. Berme sendoak prezio txikiagoan: horregatik bihurtu da Vocdoni ehunka udal, elkarte, alderdi politiko eta enpresentzako hautu fidagarria.",
+    "encouragement": "Bozketa bat abiaraztea sinplea da, eta parte-hartzaileek edonondik elkar daitezke. Berme sendoak prezio txikiagoan: horregatik bihurtu da Vocdoni ehunka udal, elkarte, alderdi politiko eta enpresentzako hautu fidagarria.",
     "free": "<0>Doako planean zaude</0>, eta horrek dagoeneko bozketak abiarazteko aukera ematen dizu. Funtzionalitate gehiago, muga handiagoak edo aukera espezifikoak behar badituzu, arakatu ordainpeko planak eta probatu doan.",
     "special_needs": "Laguntza edo zerbait espezifikoa behar duzu? Antolatu dei bat."
   },
@@ -1034,8 +1060,8 @@
     "cancel": "Utzi",
     "generic_subtitle": "Zure egungo planak ekintza hau {{limit}}era mugatzen du. Eguneratu zure plana jarraitzeko eta funtzio aurreratuak desblokeatzeko.",
     "generic_title": "Eguneratu zure plana mugak handitzeko",
-    "memberbase_subtitle": "Zure egungo planak {{limit}} kide arte onartzen ditu kide-oinarrian. Eguneratu zure plana kide gehiago gehitzeko eta funtzio aurreratuak desblokeatzeko.",
-    "memberbase_title": "Eguneratu zure plana kide-oinarrira kide gehiago gehitzeko",
+    "memberbase_subtitle": "Zure egungo planak {{limit}} kide arte onartzen ditu zure kide-oinarrian. Eguneratu zure plana kide gehiago gehitzeko eta funtzio aurreratuak desblokeatzeko.",
+    "memberbase_title": "Eguneratu zure plana zure kide-oinarrera kide gehiago gehitzeko",
     "see_plans": "Ikusi planak",
     "subtitle": "Zure egungo planak {{limit}} baino ez du onartzen lankidetzarako. Eguneratu zure plana taldera kide gehiago gehitzeko eta funtzio aurreratuak desblokeatzeko.",
     "title": "Eguneratu taldera kide gehiago gehitzeko"
@@ -1083,7 +1109,7 @@
     "annual_total_cost": "{{ price }} urteko fakturatua",
     "contact_sales": "<0>Jarri harremanetan gure salmenta-taldearekin</0> <1>edo</1>",
     "custom_plan": "Prezioa eskaeraren arabera",
-    "custom_plan_description": "Gobernantza-eskakizun bereziak dituzu? Zure beharretara egokitu gaitezke konponbide pertsonalizatu batekin. Jarri harremanetan.",
+    "custom_plan_description": "Gobernantza-eskakizun bereziak dituzu? Zure beharretara egoki gaitezke konponbide pertsonalizatu batekin. Jarri harremanetan.",
     "free_trial": "{{ freeDays }} egun doan",
     "from": "<price>{{ price }}</price><time>/hilean+BEZ</time>",
     "most_popular_plan": "Ezagunena",
@@ -1105,14 +1131,14 @@
       },
       "description": {
         "placeholder": "Gehitu deskribapena...",
-        "title": "Bozketa-prozesuaren izenburua"
+        "title": "Prozesuaren izenburua"
       },
       "leave_confirmation": {
         "cancel": "Utzi",
         "leave": "Baztertu eta irten",
         "message": "Gorde gabeko aldaketak dituzu. Ziur zaude irten nahi duzula?",
         "reset": "Berrezarri",
-        "reset_message": "Honek inprimakia berrabiaraziko du. Jarraitu nahi duzu?",
+        "reset_message": "Honek inprimakia berrezarriko du. Jarraitu nahi duzu?",
         "save_and_leave": "Gorde eta irten",
         "title": "Zirriborroa gordetzen"
       },
@@ -1168,12 +1194,12 @@
     "extended_info": "Informazio zabaldua",
     "gitcoin": {
       "all_of_them": "(Guztiak)",
-      "gps_score": "Gitcoin Passport puntuazioa: gut. {{score}}",
+      "gps_score": "Gitcoin Passport puntuazioa: gutx. {{score}}",
       "needed_stamps": "Beharrezko zigiluak",
       "one_of_them": "(Gutxienez bat)"
     },
     "is_anonymous": {
-      "description": "Bozketa anonimoa",
+      "description": "Boto sekretua",
       "title": "Pribatutasuna"
     },
     "is_invalid": "Prozesu honek datu okerrak ditu eta, beraz, ez da baliozkoa",
@@ -1192,7 +1218,6 @@
     },
     "questions": "Galderak",
     "results": "Emaitzak",
-    "share_caption": "{{ title }} bozketan eman dut botoa!",
     "share_title": "Partekatu {{ network }}-en",
     "spreadsheet": {
       "confirm": {
@@ -1257,7 +1282,7 @@
       "quadratic": "Koadratikoa",
       "single_choice": "Aukera bakarra",
       "unknown": "Ezezaguna",
-      "weighted_format": "{{base}} boto haztatuarekin"
+      "weighted_format": "{{base}} haztatua"
     },
     "voting_type": "Bozketa-metodoa"
   },
@@ -1265,7 +1290,7 @@
     "cancel": "Bertan behera utzi prozesua",
     "continue": "Jarraitu",
     "end": "Amaitu bozketa",
-    "pause": "Etenarazi",
+    "pause": "Pausatu",
     "start": "Hasi/Berrekin"
   },
   "process_context": {
@@ -1280,12 +1305,12 @@
     "census": {
       "extra_methods": {
         "disable_description": "Errolda-metodo osagarriak desgaitu nahi dituzu? Honek Kalkulu-orria eta Web3 aukerak ezkutatuko ditu eta Talde metodoa bakarrik erakutsiko du.",
-        "enable_description": "Errolda-metodo osagarriak gaitu nahi dituzu? Honek aukera osagarriak erakutsiko ditu, hala nola Kalkulu-orria eta Web3 errolda-sorrera.",
+        "enable_description": "Errolda-metodo osagarriak gaitu nahi dituzu? Honek Kalkulu-orria eta Web3 errolda-sorrera bezalako aukera osagarriak erakutsiko ditu.",
         "modal_title": "Errolda-metodo osagarriak"
       },
       "group": {
         "label": "Taldea",
-        "no_groups": "Bozketa bat hasteko, lehenik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu zure kide-oinarritik. <1>Sortu hemen</1>."
+        "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },
       "memberbase": {
         "label": "Hautatu kide-talde bat errolda sortzeko"
@@ -1298,8 +1323,8 @@
         "label": "Web3"
       }
     },
-    "census_creation": "Errolda sortzea",
-    "census_missing": "Errolda-datuak falta dira Talde errolda motarako",
+    "census_creation": "Erroldaren sorrera",
+    "census_missing": "Errolda-datuak falta dira Kide-oinarri errolda motarako",
     "census_type_not_allowed": "{{type}} errolda mota ez da onartzen",
     "end_datetime": "Amaiera-data eta -ordua",
     "extra_configuration": "Konfigurazio aurreratua",
@@ -1307,7 +1332,7 @@
       "select": "Hautatu taldea"
     },
     "groups": {
-      "scroll_to_load": "Korritu gehiago kargatzeko..."
+      "scroll_to_load": "Gehiago kargatzeko korritu..."
     },
     "new_option": "Gehitu aukera berria",
     "no_account_address": "Ez da kontuaren helbiderik aurkitu.",
@@ -1319,35 +1344,35 @@
     },
     "question": {
       "description": {
-        "placeholder": "Gehitu hemen galderaren deskribapena (aukerakoa)..."
+        "placeholder": "Gehitu galderaren deskribapena hemen (aukerakoa)..."
       },
       "remove": "Kendu galdera",
       "title": {
-        "placeholder": "Gehitu galderari izenburua"
+        "placeholder": "Gehitu izenburu galderari"
       }
     },
     "remove_option": "Kendu aukera",
     "result_visibility": {
-      "hidden": "Ezkutuak amaitu arte",
-      "live": "Zuzeneko emaitzak",
+      "hidden": "Ezkututa amaitu arte",
+      "live": "Emaitzak zuzenean",
       "title": "Emaitzen ikusgaitasuna"
     },
     "settings": "Konfigurazioa",
     "start_datetime": "Hasiera-data eta -ordua",
     "weight": {
       "equal": "Pertsona bat, boto bat",
-      "title": "Boto-ahalmena",
-      "weighted": "Boto-ahalmenaren araberako haztatzea"
+      "title": "Boto-pisua",
+      "weighted": "Boto-pisuan oinarritutako haztatzea"
     },
     "youtube": {
       "accordion_title": "Erantsi bideoa (aukerakoa)",
-      "title": "Zuzeneko bideoa"
+      "title": "Zuzeneko bideo-transmisioa"
     }
   },
   "process_list": {
     "end_date": "Amaiera-data",
     "not_yet": "Oraindik ez",
-    "recount": "Zenbaketa",
+    "recount": "Berriro zenbatu",
     "results": "Emaitzak",
     "results_live": "Zuzenean",
     "start_date": "Hasiera-data",
@@ -1357,129 +1382,151 @@
   },
   "process_pdf": {
     "authentication": {
-      "identity_source": "Nortasun-datuen iturria",
+      "identity_source": "Nortasun-datuak eskatuta",
       "method": "Autentifikazio-metodoa",
-      "two_fa": "2FA autentifikazioa"
-    },
-    "boolean": {
-      "no": "Ez",
-      "yes": "Bai"
+      "two_fa": "Identitatearen egiaztapen gehigarria",
+      "two_fa_disabled": "Desgaituta: ez da identitatearen egiaztapen gehigarririk konfiguratu boto-emate-prozesu honetan",
+      "two_fa_enabled": "Gaituta: boto-emaileek beren nortasuna ziurtatzen dute kode bakarreko mezua bidaltzean haien gailu pertsonaletara.",
+      "voter_access_source": "Boto-emaileen sarbide-iturria",
+      "voter_access_source_spreadsheet": "Boto-emaileek erakundeak igotako orria oinarri duten erroldeko datuekin sartzen dira.",
+      "voter_access_source_web3": "Boto-emaileek Web3 erroldean agertzen diren wallet helbideekin sartzen dira.",
+      "voter_access_source_weighted": "Eskubidea prozesu honetarako erakundeak emandako errolde haztatuarekin egiaztatzen da."
     },
     "census": {
-      "definition": "Hauteskunde-erroldak bozketa-prozesuan parte hartzeko baimendutako kideen multzo osoa zehazten du. Erroldan egoteak ez du parte-hartze eraginkorra esan nahi.",
-      "provider": "Errolda-hornitzailea",
-      "provider_value": "Errolda erakundeak ematen du",
-      "total": "Errolda guztira"
+      "counting_basis": "Zenbaketaren oinarria",
+      "counting_basis_1p1v": "1 pertsona, boto bat",
+      "counting_basis_weighted": "Ponderatutako botazioa",
+      "eligible_voters": "Botoa emateko eskubidea dutenak",
+      "eligible_voting_power": "Guztira boto-pisua",
+      "source": "Erroldaren iturria",
+      "voting_power_used": "Erabilitako boto-pisua",
+      "weighted_participation": "Ponderatutako parte-hartzea"
     },
     "census_type": {
-      "anonymous": "Errolda haztatu anonimoa",
-      "csp": "CSP errolda",
+      "anonymous": "Erakundearen errolda anonimoa",
+      "csp": "Kideen erroldea",
+      "spreadsheet": "Erakundeak emandako orriko errolda",
       "unknown": "Ez dago eskuragarri",
-      "weighted": "Errolda haztatua"
+      "web3": "Erakundeak emandako Web3 wallet errolda",
+      "weighted": "Erakundearen errolde haztatua"
     },
     "disclaimer": {
       "bullet_1": "Ez du bozketa-prozesuaren legezko ziurtagiria eratzen.",
-      "bullet_2": "Ez ditu ordezkatzen erregistro ofizialak, aktak edo aurkezpen arau-emaileak.",
-      "bullet_3": "Datu guztiak erregistro kriptografiko eta blockchainean oinarritutakoetatik datoz.",
+      "bullet_2": "Ez ditu ordezkatzen erregistro ofizialak, aktak edo arau-emaileen aurkezpenak.",
+      "bullet_3": "Datu guztiak kriptografikoko eta blockchaineko erregistroetatik datoz.",
       "bullet_4": "Botoaren sekretua eta boto-emailearen anonimotasuna diseinuz babestuta daude.",
       "paragraph_1": "Dokumentu hau Vocdoni Protokoloaren sistemak sortutako erregistroetatik eratorritako ziurtagiri tekniko bat da.",
-      "paragraph_2": "Hornitzaile teknikoak ez du erantzukizunik hartzen sarrera-datuen zehaztasunari (esate baterako, erroldaren osaerari), emaitzen interpretazio juridikoari edo aplikatu beharreko esparru juridiko edo arau-emaileen betetzeari buruz.",
+      "paragraph_2": "Hornitzaile teknikoak ez du erantzukizunik hartzen sarrera-datuen zehaztasunari (esate baterako, erroldaren osaerari), boto-pisuei, emaitzen interpretazio juridikoari edo aplikatu beharreko esparru juridiko edo arau-emaileen betetzeari buruz.",
       "paragraph_3": "Ziurtagiri honen interpretazio juridikoaren eta erabileraren erantzukizuna, esklusiboki, eskatzaile den erakundearena da.",
       "title": "Lege-oharra"
     },
     "document": {
-      "issued_by": "Vocdonik (Synergize SL) {{issue_date}}(e)an emana, hornitzaile tekniko gisa.",
-      "sections": {
-        "authentication": "2. Autentifikazioa",
-        "certification_scope": "8. Ziurtagiriaren irismena",
-        "electoral_census": "4. Hauteskunde-errolda",
-        "general_information": "1. Informazio orokorra",
-        "issuer": "9. Igorlea",
-        "turnout_participation": "5. Parte-hartzea",
-        "verification": "7. Egiaztapena",
-        "voting_process": "6. Bozketa-prozesua",
-        "voting_system": "3. Bozketa-sistema"
+      "bookmarks": {
+        "general_information": "Egitura tekniko eta informazio orokorra",
+        "index": "Indizea",
+        "issuer": "Emilea",
+        "voting_process": "Galderak eta emaitzak"
       },
-      "subtitle": "Txostena {{issue_date}}(e)an emana | Prozesuaren IDa: {{process_id}}",
+      "index": {
+        "intro": "Txosten hau atal honetan antolatuta dago:",
+        "title": "Indizea"
+      },
+      "issued_by": "Vocdonik (Synergize SL) emana {{issue_date}}(e)an, {{issue_time}}(ean), hornitzaile tekniko gisa.",
+      "process_id": "Prozesuaren IDa: {{process_id}}",
+      "sections": {
+        "authentication": "3. Autentifikazioa",
+        "general_information": "2. Informazio orokorra",
+        "issuer": "7. Igorlea",
+        "turnout_participation": "4. Erroldea eta Parte-hartzea",
+        "verification": "6. Egiaztapena",
+        "voting_process": "5. Galderak eta Emaitzak",
+        "voting_system": "1. Marko Teknikoa"
+      },
       "title_prefix": "BOZKETA-PROZESU DIGITALAREN ZIURTAGIRI TEKNIKOA"
     },
-    "download": "Deskargatu PDFa",
+    "download": "Hauteskundeen txostena (PDF)",
     "download_error": "Ezin izan da PDF txostena sortu",
     "downloading": "PDFa sortzen",
-    "encryption": {
-      "encrypted": "Zifratua",
-      "not_encrypted": "Zifratu gabea"
-    },
     "general": {
-      "encryption_method": "Zifratze-metodoa",
-      "event_name": "Gertakariaren izena",
-      "extended_process_details": "Prozesuaren xehetasun zabalduak",
-      "network": "Sarea",
+      "census_reference": "Erroldearen erreferentzia",
+      "census_reference_helper": "Publikoan identifikatutako erreferentzia, bozketa-prozesu honetan erabilitako erroldea zehazteko. Ez du boto-emaileen datu pertsonalik sartzen edo azaleratzen.",
+      "event_name": "Gertaeraren izena",
+      "network": "Azpiegitura",
       "organization": "Erakundea",
+      "process_id": "Prozesuaren IDa",
+      "process_id_helper": "Bozketa-prozesu honen identifikatzaile publiko bakarra. Prozesua aurkitu eta egiaztatzeko erabil daiteke bozketa-azpiegituran.",
       "results_visibility": "Emaitzen ikusgaitasuna",
-      "vote_overwrite_enabled": "Botoa berridaztea gaituta",
+      "vote_overwrite": "Botoa aldatzea",
       "voting_period_end": "Bozketa-aldia (amaiera)",
       "voting_period_start": "Bozketa-aldia (hasiera)"
     },
     "intro_paragraph_1": "Dokumentu hau Vocdoni Protokoloarekin egindako bozketa-prozesu digital baten ziurtagiri tekniko formala da. Prozesuaren konfigurazioaren, parte-hartzaile hautagarrien multzoaren (hauteskunde-errolda), benetako parte-hartzearen eta azken emaitzen erregistro egituratu, egiaztagarri eta auditagarri bat ezartzen du. Bere helburua auditore independenteek eta baimendutako hirugarrenek prozesuaren osotasuna, koherentzia eta exekuzio zuzena ebaluatu ahal izatea da.",
-    "intro_paragraph_2": "Bozketa-prozesu honi lotutako datu garrantzitsu guztiak Vocdoni sarearen barruan publikoki auditagarriak diren erregistroetan inskribatu eta ainguratu dira. Erregistro hauek muturretik muturreko gardentasuna, aldaezintasuna eta egiaztagarritasuna bermatzen dute, aldi berean boto-emailearen anonimotasuna eta papereta-isilpekotasuna mekanismo kriptografikoen bidez babestuz.",
+    "intro_paragraph_2": "Bozketa-prozesu honi lotutako datu garrantzitsu guztiak Vocdoni Protokoloaren bidez publikoki auditagarriak diren erregistroetan inskribatu eta ainguratu dira. Erregistro hauek gardentasuna, aldaezintasuna eta muturretik muturrera egiaztagarritasuna bermatzen dute, boto-emailearen anonimotasuna eta bozka-isilpea mekanismo kriptografikoen bidez babestuz.",
     "intro_paragraph_3": "Ziurtagiri hau hornitzaile teknikoak emana da esklusiboki, sistemaren exekuzio zuzena eta erregistratutako datuen osotasuna egiaztatzeko. Ez du legezko ziurtagiririk ordezkatzen ezta jurisdikzio jakin bateko legezko edo arau-emaile eskakizunen betetzea baieztatzen.",
     "issuer": {
       "issuing_date": "Igorpen-data",
-      "legal_entity": "Erakunde juridikoa",
       "paragraph": "Antolatzaile-erakundearen izenean emana, hornitzaile tekniko gisa.",
       "provider": "Vocdoni"
     },
     "not_available": "Ez dago eskuragarri",
-    "scope": {
-      "census": "Hauteskunde-erroldaren definizioa",
-      "configuration": "Bozketa-prozesuaren konfigurazioa",
-      "exclusion": "Ziurtagiri honek ez ditu hartzen gobernantza-arauak, hautagarritasun-irizpideen zuzentasuna edo legezko betetzea.",
-      "paragraph": "Ziurtagiri honek alderdi tekniko hauek soilik hartzen ditu:",
-      "participation": "Parte-hartze datuen erregistroa",
-      "period": "Bozketa-aldiaren kontrola",
-      "results": "Kalkulatutako azken emaitzak",
-      "tally": "Zenbaketaren mekanismo automatizatuak"
+    "results": {
+      "hidden_field": "Ezkutuan emaitzak iritsi arte"
     },
     "turnout": {
-      "census_contact": "Erroldari buruzko xehetasun gehiago behar badituzu, jarri gurekin harremanetan.",
       "eligible": "Parte-hartzaile hautagarrien kopuru osoa",
       "participation": "Emandako boto kopuruak benetan papereta baliozko bat bidali zuten parte-hartzaileak baino ez ditu islatzen, definitutako bozketa-aldian.",
-      "rate": "Parte-hartze tasa",
-      "votes_cast": "Emandako boto kopuru osoa"
+      "submitted_ballots": "Bidalitako paperetak",
+      "voter_participation": "Botogileen parte-hartzea",
+      "weighted_participation": "Bidalitako paperetek parte hartu duten botogileak zenbatzen dituzte. Emaitza pisatu guztiek erantzun bakoitzeko erregistratutako boto-pisua kontuan hartzen dute."
     },
     "verification": {
-      "explorer": "Egiaztapen-esploratzailea",
-      "paragraph": "Prozesuaren datu guztiak blockchain azpiegituran inskribatuta daude eta independenteki egiazta daitezke esploratzaile publiko honen bidez:",
+      "explorer": "Ikusi egiaztapen esploratzailean",
+      "paragraph": "Prozesuaren datu guztiak blockchain azpiegituran inskribatuta daude eta independenteki egiazta daitezke hurrengo esploratzaile publikoaren bidez:",
       "procedure_title": "Egiaztapen-prozedura",
-      "step_1": "Berreskuratu prozesuaren datuak esploratzailearen bidez.",
-      "step_2": "Balidatu prozesuaren erro-hash-a argitaratutako balioaren aldean.",
-      "step_3": "Berretsi erroldaren erreferentziaren eta hauteskunde-ontziaren erregistroen koherentzia.",
-      "step_4": "Birkalkulatu eta egiaztatu zenbaketaren emaitzak hala dagokionean."
+      "step_1": "Ireki egiaztapen esploratzailearen esteka. Orrialde honek bozketa-prozesuaren erregistro tekniko publikoa du.",
+      "step_2": "Egiaztatu esploratzaileko Prozesu IDa txosteneko Prozesu IDarekin bat datorrela. Horrek ziurtatzen du bi dokumentuak bozketa-prozesu bera aipatzen dutela.",
+      "step_3": "Egiaztatu esploratzailean erakusten den erroldearen erreferentzia txostenean agertzen denarekin bat datorrela. Horrek ziurtatzen du prozesuari lotutako boto-emaileen zerrenda berdina dela.",
+      "step_4": "Egiaztatu erregistratutako papereten kopurua txostenean agertzen den parte-hartze-daturekin bat datorrela.",
+      "step_5": "Konparatu esploratzaileko azken zenbaketaren emaitzak txostenean erakusten diren papereta-kontaketa edo boto-pisua pisatutako emaitzekin.",
+      "step_6": "Tekniko auditu sakonago baterako, auditore batek erregistro publikoak xehetasun gehiagotan azter ditzake edo birkalkulatu zenbaketaren emaitzak ziurtatzeko erregistratutako paperetak eta azken emaitzak koherenteak direla."
     },
-    "vote_overwrite_enabled_one": "Bai, berridazte 1",
-    "vote_overwrite_enabled_other": "Bai, {{count}} berridazte arte",
+    "vote_overwrite_disabled": "Desgaituta",
+    "vote_overwrite_enabled": "Gaituta, boto {{votes}} aldaera arte boto-emaile bakoitzeko",
     "voting_process": {
       "card": {
+        "abstain": "Abstenitu",
         "item": "{{index}}. galdera",
-        "outcome": "Emaitza: {{outcome}}",
-        "participation": "Parte-hartzea: {{votes}} boto erregistratuak",
-        "question": "Galdera: {{question}}",
-        "results": "Emaitzak:"
+        "option": "Aukera",
+        "outcome_label": "Bozketa-metodoa",
+        "participation_short": "{{votes}} boto",
+        "results": "Emaitzak:",
+        "share_cast_power": "Emandako boto-pisuaren zatia",
+        "share_eligible_power": "Dagokion boto-pisuaren zatia",
+        "share_votes": "Botoen zatia",
+        "submitted_ballots_short": "{{ballots}} boto",
+        "votes": "Botoak",
+        "voting_power": "Boto-pisua",
+        "voting_power_short": "{{power}} boto-pisu",
+        "voting_power_used": "Erabilitako boto-pisua",
+        "weighted_method": "{{base}} boto-pisuarekin"
       },
       "intro_one": "{{process_name}} bozketa-prozesuak galdera 1 zuen.",
-      "intro_other": "{{process_name}} bozketa-prozesuak {{count}} galdera zituen."
+      "intro_other": "{{process_name}} bozketa-prozesuak {{count}} galdera zituen.",
+      "results_hidden": "Emaitzak ezkutuan daude prozesua emaitza-fase finaletara iritsi arte."
     },
     "voting_system": {
-      "bullet_1": "Liburu nagusi banatuaren azpiegitura (blockchain)",
-      "bullet_2": "Egiaztapen eta osotasunaren mekanismo kriptografikoak",
-      "executed_on": "Prozesua {{blockchain_network}} azpiegituran exekutatu zen.",
-      "guarantee_1": "Bozketa-prozesuaren osotasuna",
-      "guarantee_2": "Erregistratutako datuen aldaezintasuna",
-      "guarantee_3": "Emaitzen egiaztagarritasun independentea",
-      "guarantee_4": "Banakako paperetan isilpekotasuna",
-      "guarantee_lead": "Sistemak hau bermatzen du:",
-      "paragraph": "Bozketa- eta zenbaketa-eragiketak Vocdoniren bidez exekutatu ziren, honako hauek babestutako bozketa-protokolo digitala:"
+      "bullet_1": "Bozketa-prozesuaren konfigurazioaren erregistro publikoa",
+      "bullet_2": "Botogile egokien zerrenda identifikatzen duen errolde-erreferentzia, botogileen datu pertsonalak azaleratu gabe",
+      "bullet_3": "Botoaren sekretua eta botogilearen pribatutasuna babesten dituzten mekanismo kriptografikoak",
+      "bullet_4": "Partaidetza eta emaitzen datu erregistratuak, independentez egiaztatu daitezkeenak",
+      "bullet_5": "Blockchain bidezko azpiegituran oinarritutako manipulatzearekiko erresistenteak diren erregistroak",
+      "bullet_6": "Erregistro publikoetako egiaztapen-datuekin konpara daitezkeen emaitza finalak",
+      "executed_on": "{{voting_process}} prozesua {{blockchain_network}} azpiegituran exekutatu zen.",
+      "guarantee_lead": "Vocdoni Protokoloak hauteskunde-prozesuan konfiantza handitzen du hau bermatuz:",
+      "paragraph_1": "Bozketa-prozesua Vocdoni Protokoloarekin egin da, osotasun-berme sendoekin bozketa-prozesuak sortu, exekutatu, erregistratu eta egiaztatzeko diseinatutako bozketa-digitalaren protokoloa.",
+      "paragraph_2": "Bozketa-prozesu bat sortzen denean, bere konfigurazioa blockchainean erregistratzen da bozketa hasi aurretik, prozesuak nola funtzionatu behar duen jakiteko erregistro publiko eta aztergarria sortuz. Horrek barne hartzen ditu bozketa-epea, bozketa-metodoa, parte-hartzaile egokien multzoa, galderak eta emaitzak nola zenbatzen diren zehazten dituzten arauak. Erroldeak prozesuan parte hartzeko baimena dutenak definitzen ditu, botogile bakoitzaren pribatutasuna gordetzearekin batera.",
+      "paragraph_3": "Bozketa-epean zehar, botogile egokiek konfiguraturiko metodoaren arabera autentifikatzen dira eta beren botoak bozketa-sistemaren bidez aurkezten dituzte. Protokoloa horrela diseinatuta dago prozesua mutur-muturreraino egiaztatu ahal izateko.",
+      "paragraph_4": "Bozketa-prozesua amaitutakoan, emaitza finalak eta prozesuaren erregistro egokiak blockchainean finkatzen dira. Horrek prozesua aztergarri bihurtzen du eta argitaratutako txostena erregistro tekniko publikoekin konpara daitekeela bermatzen laguntzen du."
     }
   },
   "processes": {
@@ -1522,7 +1569,7 @@
     },
     "manage_members_votes": {
       "badge": "(Kudeatu kideak eta bozketak)",
-      "description": "Kideak, taldeak, erroldak eta bozketa-prozesuak kudeatu ditzake."
+      "description": "Kideak, taldeak, erroldak eta boto-ematearen prozesuak kudea ditzake."
     },
     "read_only": {
       "badge": "(Soilik irakurtzeko)",
@@ -1565,9 +1612,9 @@
   },
   "shared_census": {
     "instructions": {
-      "identification": " Identifikatzeko eskatuko dizugu. Ondoren, modu seguruan eman ahal izango duzu zure botoa.",
+      "identification": "Identifikatzeko eskatuko dizugu. Ondoren, modu seguruan eman ahal izango duzu zure botoa.",
       "login": "Bozketara sartzeko, sakatu \"Identifikatu\".",
-      "vote": "Hautatu bozketa leiho berri bat irekitzeko bozketa-jarraibideekin. Botoa bidali ondoren, itxi leihoa hona itzultzeko."
+      "vote": "Hautatu bozketa leiho berri bat irekitzeko boto-ematearen jarraibideekin. Botoa bidali ondoren, itxi leihoa hona itzultzeko."
     },
     "section_title": "Hauteskundeak",
     "voted": "Dagoeneko bozkatu duzu"
@@ -1598,22 +1645,22 @@
       "title": "Zure egungo {{ plan }} planak ez du {{ permissionName }} barne hartzen",
       "unlock": "Desblokeatu {{ permissionName }}"
     },
-    "title": "Harpidetza"
+    "title": "Harpidetza-plana"
   },
   "subscription_plan": {
     "gdpr_compliance": "Plan guztiek DBEOrekiko betetzea barne hartzen dute.",
     "hide_comparison_table": "Erakutsi funtzionalitate gutxiago",
     "need_help": "<0>Aukeraketan laguntza behar duzu?</0> <1>Jarri harremanetan gure salmenta-taldearekin</1>",
     "show_comparison_table": "Ikusi funtzionalitate guztiak",
-    "subtitle": "Gure harpidetzekin, plan bat baino gehiago lortzen duzu. Gobernantza-plataformarik berritzaileenerako sarbidea lortzen duzu. Eredu honi esker, merkatuko prezio onena eskaini dezakegu: urtean 1, 5 edo 20 bozketa behar dituzun ala ez, betiere kostu lehiakorrenak eta berme paregabeak izango dituzu. Plataforma autozerbitzu osokoa da, baina gure taldea beti dago prest laguntza eskaintzeko edo soluzioak zure behar espezifikoetara egokitzeko.",
+    "subtitle": "Gure harpidetzekin, plan bat baino gehiago lortzen duzu. Gobernantza-plataformarik berritzaileenerako sarbidea lortzen duzu. Eredu honi esker, merkatuko prezio onena eskain dezakegu: urtean 1, 5 edo 20 bozka behar dituzun ala ez, betiere kostu lehiakorrenak eta berme paregabeak izango dituzu. Plataforma autozerbitzu osokoa da, baina gure taldea beti dago prest laguntza eskaintzeko edo soluzioak zure behar espezifikoetara egokitzeko.",
     "title": "Harpidetza-plana"
   },
   "subtotal": "Azpitotala",
   "support": "Laguntza",
   "switch_mode": "Aldatu {{ mode }} modura",
-  "switch_organization": "Aldatu erakundez",
+  "switch_organization": "Aldatu erakundea",
   "system": "Sistema",
-  "tax": "Zergak (% {{percent}})",
+  "tax": "Zerga (% {{percent}})",
   "team": {
     "actions": {
       "cancel_invitation": "Bertan behera utzi gonbidapena",
@@ -1639,7 +1686,7 @@
     "load_error_description": "Saiatu berriro.",
     "only_one_member": {
       "add_team_member": "Gehitu kidea taldera",
-      "subtitle": "Gehitu kideak taldera zure erakundean lankidetzan jarduteko",
+      "subtitle": "Gehitu kideak zure erakundean lankidetzan jarduteko",
       "title": "Erakunde honetan zara taldeko kide bakarra"
     },
     "pending_invitation": "Gonbidapen pendientea",
@@ -1780,7 +1827,7 @@
     "select_credentials_description": "Aukeratu hautesleek autentifikatzeko eman beharko dituzten eremuak. Hautatu 3 arte segurtasunaren eta erabilerraztasunaren arteko oreka onena lortzeko. 2FArako posta elektronikoa edo telefonoa bakarrik erabili nahi badituzu, saltatu urrats hau eta egin klik Hurrengoan konfiguratzeko.",
     "selected_credentials_count_one": "{{ count }}/3 kredentzial hautatuta",
     "selected_credentials_count_other": "{{ count }}/3 kredentzial hautatuta",
-    "sms": "SMS bidezko egiaztapenaren bidez",
+    "sms": "SMS bidezko egiaztapena",
     "summary": "Laburpena",
     "summary_2fa_enable": "Bi pausoko autentifikazioa",
     "summary_2fa_enabled": "Gaituta",
@@ -1788,27 +1835,27 @@
     "summary_title": "Autentifikazio-konfigurazioaren laburpena",
     "title": "Konfiguratu hautesleen autentifikazioa",
     "two_factor": "Bi pausokoa",
-    "validation_duplicates_one": "{{count}} erabiltzaile bikoiztua",
-    "validation_duplicates_other": "{{count}} erabiltzaile bikoiztu",
+    "validation_duplicates_one": "Erabiltzaile bikoiztu {{count}}",
+    "validation_duplicates_other": "Erabiltzaile bikoiztu {{count}}",
     "validation_error_title": "Balidazio-errorea",
     "validation_failed": "Balidazioak huts egin du",
-    "validation_missing_data_one": "{{count}} erabiltzaile derrigorrezko eremurik gabe",
-    "validation_missing_data_other": "{{count}} erabiltzaile derrigorrezko eremurik gabe",
+    "validation_missing_data_one": "Eremu beharrezkorik gabe {{count}} erabiltzaile",
+    "validation_missing_data_other": "Eremu beharrezkorik gabe {{count}} erabiltzaile",
     "validation_summary": "Balidazioak huts egin du erabiltzaile batzuentzat.",
-    "validation_total_one": "{{count}} erabiltzaile guztira",
-    "validation_total_other": "{{count}} erabiltzaile guztira",
+    "validation_total_one": "Guztira {{count}} erabiltzaile",
+    "validation_total_other": "Guztira {{count}} erabiltzaile",
     "voters_choice": "Boto-emailearen aukera"
   },
   "voting_link": {
-    "description": "Partekatu esteka hau zure hautesleekin bozketa-prozesuan parte har dezaten",
+    "description": "Partekatu esteka hau zure hautesleekin bozketa-prozesuan parte hartzeko",
     "title": "Bozketa-esteka"
   },
   "voting_processes": "Bozketa-prozesuak",
   "voting_processes_description": "Kudeatu eta gainbegiratu zure bozketa-prozesuak",
   "voting_settings": "Bozketa-ezarpenak",
   "voting_status": "Bozketaren egoera",
-  "wallet_not_connected": "Zorroa konektatu gabe",
+  "wallet_not_connected": "Zorroa ez dago konektatuta",
   "website": "Webgunea",
   "whatsapp_contact": "Hitz egin gurekin!",
-  "year": "urte"
+  "year": "urtea"
 }
