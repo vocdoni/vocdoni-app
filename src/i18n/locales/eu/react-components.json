@@ -1,0 +1,96 @@
+{
+  "balance": "{{ balance }} VOC token",
+  "actions": {
+    "cancel_description": "«{{ election.title.default }}» bertan behera uzten…\n\nKontuz: ekintza hau ezin da desegin eta dagoeneko emandako boto guztiak baliogabetuko ditu.",
+    "cancel": "Utzi",
+    "cancel_button": "Utzi",
+    "continue_description": "«{{ election.title.default }}» bozketa-prozesuari berrekiten…",
+    "continue": "Prozesuari berehala berrekiten dio, etenda badago.",
+    "end_description": "«{{ election.title.default }}» bozketa-prozesua amaitzen…\n\nKontuz: ekintza hau ezin da desegin eta hautesleek ezingo dute jada bozkatu.",
+    "end": "Bozketa berehala amaitzen du, boto berririk eman ezin dadin, eta emaitzak agertarazten ditu (kontuz: ezin da desegin).",
+    "error_title": "Errorea gertatu da transakzioa burutzean",
+    "pause_description": "«{{ election.title.default }}» bozketa-prozesua etenarazten…",
+    "pause": "Bozketa-prozesua aldi baterako etenarazten du, eskuz berrekiten ez zaion arte. Etenda dagoen bitartean, hautesleek ezingo dute botorik eman.",
+    "waiting_title": "Transakzioa berresteko zain…"
+  },
+  "confirm": {
+    "title": "Berretsi",
+    "cancel": "Utzi",
+    "confirm": "Berretsi botoa",
+    "cancel_process_button": "Bertan behera utzi bozketa",
+    "cancel_process_title": "Bertan behera utzi bozketa",
+    "end_process_title": "Amaitu bozketa",
+    "end_process_button": "Amaitu bozketa",
+    "cancel_button": "Utzi"
+  },
+  "empty": "Badirudi prozesu honek ez duela galderarik",
+  "errors": {
+    "unauthorized": "Ez duzu bozkatzeko baimenik",
+    "wrong_data_title": "Datu okerrak",
+    "wrong_data_description": "Emandako datuak ez dira zuzenak",
+    "not_voted_in_ended_election": "Sinatu duzu, baina ez duzu botorik eman amaitu den bozketa honetan."
+  },
+  "question_types": {
+    "approval_tooltip": "Onarpen-bozketak nahi adina aukera bozkatzeko aukera ematen dizu. Boto gehien jasotzen dituena izango da garaile. Onartzen dituzun aukera guztiei zure laguntza erakusteko modu erraza da.",
+    "approval_title": "Onarpen-bozketa",
+    "singlechoice_title": "Aukera bakarra {{ weighted }}",
+    "multichoice_tooltip": "Aukera anitzeko bozketak {{maxcount}} aukera bozkatzeko aukera ematen dizu (antolatzaileak ezarrita). Boto gehien jasotzen dituena izango da garaile.",
+    "multichoice_title": "Aukera anitza {{ weighted }}",
+    "multichoice_desc": "{{selected}} aukera hautatu dituzu gehienez {{maxcount}} aukeratan",
+    "multichoice_desc_abstain": " (edo abstentzioa)",
+    "weighted_voting": "haztatua"
+  },
+  "schedule": {
+    "from_begin_to_end": "Bozketa: {{ begin }}etik {{ end }}era",
+    "ended": "Amaitua: {{ distance }}",
+    "paused_start": "Hasiera: {{ distance }}",
+    "paused_end": "Amaiera: {{ distance }}",
+    "created": "Sortua: {{ distance }}"
+  },
+  "results": {
+    "date_format": "PPpp",
+    "secret_until_the_end": "Emaitzak {{ endDate }}(e)an, prozesua amaitzean, jakinaraziko dira.",
+    "title": "«{{ title }}»: emaitzak",
+    "votes": "{{votes}} boto ({{ percent }})"
+  },
+  "statuses": {
+    "canceled": "Bertan behera utzia",
+    "ended": "Amaitua",
+    "ongoing": "Abian",
+    "paused": "Etenda",
+    "results": "Emaitzak",
+    "upcoming": "Datorrena",
+    "process_unknown": "Ezezaguna",
+    "invalid": "Baliogabea"
+  },
+  "spreadsheet": {
+    "access_button": "Identifikatu",
+    "anon_sik_label": "Ezarri pasahitz bat zure botorako",
+    "anon_sik_helper": "Horrela, botoa anonimoa dela bermatzen da",
+    "close": "Itxi",
+    "logout": "Amaitu saioa",
+    "modal_title": "Autentifikazioa"
+  },
+  "pagination": {
+    "page_placeholder": "Orrialdea",
+    "total_results": "Guztira {{ count }} emaitza erakusten dira",
+    "previous": "Aurrekoa",
+    "next": "Hurrengoa"
+  },
+  "validation": {
+    "required": "Eremu hau bete beharrekoa da",
+    "min_length": "Eremu honek gutxienez {{ min }} karaktere izan behar ditu",
+    "choices_count": "Hautatu {{ count }} aukera",
+    "at_least_one": "Hautatu gutxienez aukera bat"
+  },
+  "vote": {
+    "abstain": "Abstentzioa",
+    "button_update": "Aldatu nire botoa",
+    "button": "Bozkatu",
+    "confirm": "Berretsi zure aukerak:",
+    "sign": "Sinatu lehenik",
+    "voted_description": "Zure botoa egiaztatzeko, identifikatzaile bakar hau erabil dezakezu: {{ id }}",
+    "voted_title": "Zure botoa behar bezala erregistratu da!",
+    "weight": "Zure botoaren pisua: "
+  }
+}
