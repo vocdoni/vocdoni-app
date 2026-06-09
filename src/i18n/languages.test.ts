@@ -8,6 +8,7 @@ describe('languages configuration', () => {
       ca: 'Català',
       it: 'Italiano',
       de: 'Deutsch',
+      fr: 'Français',
       el: 'Ελληνικά',
       eu: 'Euskara',
     })
