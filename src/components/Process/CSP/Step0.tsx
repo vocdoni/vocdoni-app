@@ -49,6 +49,13 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
     const trimmed: CSPStep0FormData = Object.fromEntries(
       Object.entries(values).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
     )
+
+    // Strip leading zeros from the member number (e.g. "00123" -> "123"), keeping at
+    // least one digit so an all-zeros value collapses to "0" instead of an empty string.
+    if (typeof trimmed.memberNumber === 'string') {
+      trimmed.memberNumber = trimmed.memberNumber.replace(/^0+(?=\d)/, '')
+    }
+
     const form: CSPStep0RequestData = {}
 
     // Add auth fields to the form

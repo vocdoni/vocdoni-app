@@ -75,4 +75,40 @@ describe('Step0Base', () => {
 
     expect(cspState.setMemberNumber).toHaveBeenCalledWith('12345')
   })
+
+  it('strips leading zeros from the member number on submit', async () => {
+    cspState.authFields = ['memberNumber']
+    cspState.mutateAsync.mockResolvedValue({ authToken: 'token' })
+    const user = userEvent.setup()
+    const election = {} as PublishedElection
+    const { container } = render(<Step0Base election={election} />)
+
+    const input = container.querySelector('input[name="memberNumber"]') as HTMLInputElement
+    await user.type(input, '00123')
+    // The terms-acceptance checkbox is required, so it must be ticked to allow submission.
+    await user.click(screen.getByRole('checkbox'))
+    await user.click(screen.getByRole('button', { name: 'Authenticate' }))
+
+    await vi.waitFor(() => {
+      expect(cspState.mutateAsync).toHaveBeenCalledWith({ memberNumber: '123' })
+    })
+  })
+
+  it('collapses an all-zeros member number to a single "0" on submit', async () => {
+    cspState.authFields = ['memberNumber']
+    cspState.mutateAsync.mockResolvedValue({ authToken: 'token' })
+    const user = userEvent.setup()
+    const election = {} as PublishedElection
+    const { container } = render(<Step0Base election={election} />)
+
+    const input = container.querySelector('input[name="memberNumber"]') as HTMLInputElement
+    await user.type(input, '000000')
+    // The terms-acceptance checkbox is required, so it must be ticked to allow submission.
+    await user.click(screen.getByRole('checkbox'))
+    await user.click(screen.getByRole('button', { name: 'Authenticate' }))
+
+    await vi.waitFor(() => {
+      expect(cspState.mutateAsync).toHaveBeenCalledWith({ memberNumber: '0' })
+    })
+  })
 })
