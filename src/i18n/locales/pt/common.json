@@ -10,6 +10,7 @@
     "continue_description": "A retomar o processo de votação «{{ election.title.default }}»…",
     "create_first_vote": "Ver todos os processos",
     "create_new_vote": "Criar nova votação",
+    "edit": "Editar",
     "end": "Termina imediatamente o processo, impedindo a submissão de novos votos e mostrando os resultados (atenção: a ação é irreversível)",
     "end_description": "A terminar o processo de votação «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e os votantes deixarão de poder votar.",
     "error_title": "Ocorreu um erro ao executar a transação",
@@ -44,7 +45,7 @@
   "apply": "Aplicar",
   "aside": {
     "has_already_voted": "O teu voto foi registado corretamente",
-    "is_not_in_census": "Não constás da lista de participantes",
+    "is_not_in_census": "Não constas da lista de participantes",
     "overwrite_votes_left_one": "Podes corrigir o teu voto uma vez.",
     "overwrite_votes_left_many": "",
     "overwrite_votes_left_other": "Podes corrigir o teu voto até {{ count }} vezes.",
@@ -69,6 +70,29 @@
   },
   "cancel": "Cancelar",
   "cancel_vote": "Cancelar voto",
+  "census": {
+    "search": {
+      "description": "Pesquisa um votante pelas suas credenciais para verificar se está na lista de participantes e se já votou.",
+      "error": "Ocorreu um erro ao pesquisar o votante. Por favor, tenta novamente.",
+      "field": {
+        "birth_date": "Data de nascimento",
+        "email": "Email",
+        "member_number": "Número de membro",
+        "name": "Nome",
+        "national_id": "Número de identificação",
+        "phone": "Telefone",
+        "surname": "Apelido"
+      },
+      "field_selector": "Pesquisar por",
+      "loading": "A pesquisar o votante na lista de participantes…",
+      "memberbase_note": "Estes resultados baseiam-se no teu Memberbase atual. Se forem adicionados, removidos ou atualizados membros, estes resultados podem deixar de ser precisos.",
+      "no_results": "Nenhum votante encontrado na lista de participantes com os dados fornecidos.",
+      "not_voted": "Não votou",
+      "placeholder": "Introduz os dados do votante…",
+      "title": "Pesquisar na lista de participantes",
+      "voted": "Votou"
+    }
+  },
   "census_size": "Número de participantes",
   "change_password": {
     "subtitle": "Introduz a palavra-passe atual e uma nova para atualizar as tuas credenciais.",
@@ -123,7 +147,7 @@
     "selector_label": "País"
   },
   "create_org": {
-    "already_profile": "Se a tua organização já tem perfil, <dlink>acede ao painel</dlink> e contacta o administrador para que te convide",
+    "already_profile": "Se a tua organização já tem perfil, <dlink>acede ao Dashboard</dlink> e contacta o administrador para que te convide",
     "create_button": "Criar a tua organização",
     "organization_details": "Dados da organização",
     "organization_details_description": "Faz a gestão do perfil e das definições da tua organização.",
@@ -277,7 +301,7 @@
   "enter_promo_code": "Introduzir código",
   "error": {
     "invalid_cell_data": "Algumas linhas não contêm endereços corretos: {{rows,list(style:short)}}",
-    "invalid_row_length": "Corrija as linhas {{rows,list(style: short)}} do documento e carregue-o novamente",
+    "invalid_row_length": "Corrige as linhas {{rows,list(style: short)}} do documento e carrega-o novamente",
     "invalid_weight_type": "Era esperado um peso na primeira coluna nas linhas {{rows,list(style:short)}}, mas foram encontrados dados inesperados",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar os perfis",
@@ -362,7 +386,6 @@
   "footer": {
     "company": "Empresa",
     "contact": "Contacto",
-    "developer_portal": "Portal do programador",
     "footer_subtitle": "O protocolo global de votação",
     "terms_and_privacy": "<link1>Termos de utilização</link1> e <link2>Política de privacidade</link2>"
   },
@@ -391,7 +414,7 @@
       "email_invalid": "Endereço de email inválido",
       "field_is_required": "Este campo é obrigatório",
       "generic": "Erro ao executar a operação",
-      "invalid_youtube_url": "Introduza um URL do YouTube válido",
+      "invalid_youtube_url": "Introduz um URL do YouTube válido",
       "max_greater_than_min": "O máximo tem de ser maior ou igual ao mínimo",
       "password_min_length": "Mín. 8 caracteres",
       "required": "Este campo é obrigatório"
@@ -474,6 +497,9 @@
       "delete_error": "Erro ao eliminar o grupo",
       "delete_group": "Eliminar grupo",
       "delete_success": "Grupo eliminado com sucesso",
+      "edit_description": "Atualiza o nome e a descrição deste grupo.",
+      "edit_error": "Erro ao editar o grupo",
+      "edit_success": "Grupo editado com sucesso",
       "history": "Histórico",
       "view_members": "Ver membros"
     },
@@ -547,8 +573,8 @@
         "title": "É possível alterar um voto depois de submetido?"
       },
       "faq_15": {
-        "description": "Sim, a plataforma permite configurações avançadas como o voto ponderado (em que um voto vale mais consoante determinados critérios) e o voto delegado (em que um utilizador pode transferir o seu voto para outra pessoa).",
-        "title": "O Vocdoni permite voto ponderado ou delegado?"
+        "description": "Sim, a plataforma permite configurações avançadas como a votação ponderada (em que um voto vale mais consoante determinados critérios) e a votação delegada (em que um utilizador pode transferir o seu voto para outra pessoa).",
+        "title": "O Vocdoni permite votação ponderada ou delegada?"
       },
       "faq_16": {
         "description": "Sim, é possível combinar a votação digital com a votação presencial e depois integrar os resultados numa contagem unificada. Disponibilizamos vários sistemas para realizar votações híbridas.",
@@ -607,7 +633,7 @@
         "title": "Qual é a diferença entre uma lista fechada e uma lista aberta de participantes?"
       },
       "faq_29": {
-        "description": "Os observadores podem verificar o processo eleitoral em tempo real e auditar os resultados utilizando as ferramentas de transparência e verificação do Vocdoni.",
+        "description": "Os observadores podem verificar o processo de votação em tempo real e auditar os resultados utilizando as ferramentas de transparência e verificação do Vocdoni.",
         "title": "Como funciona a verificação dos resultados pelos observadores?"
       },
       "faq_3": {
@@ -615,11 +641,11 @@
         "title": "Que vantagens tem o Vocdoni face aos sistemas de votação tradicionais?"
       },
       "faq_30": {
-        "description": "Sim, pode definir datas e horas exatas para o início e o fim da votação, eliminando a necessidade de intervenção manual.",
+        "description": "Sim, podes definir datas e horas exatas para o início e o fim da votação, eliminando a necessidade de intervenção manual.",
         "title": "Posso programar uma votação para começar e terminar automaticamente?"
       },
       "faq_31": {
-        "description": "Sim, a plataforma suporta diferentes formatos de votação, incluindo perguntas de escolha múltipla, voto ponderado e sistemas como o voto preferencial ou STV.",
+        "description": "Sim, a plataforma suporta diferentes formatos de votação, incluindo perguntas de escolha múltipla, votação ponderada e sistemas como o voto preferencial ou STV.",
         "title": "As perguntas podem ter várias opções de resposta?"
       },
       "faq_32": {
@@ -627,7 +653,7 @@
         "title": "O Vocdoni é adequado para processos colaborativos de decisão?"
       },
       "faq_33": {
-        "description": "Sim, o Vocdoni permite implementar métodos de votação mais sofisticados consoante as necessidades de cada organização ou processo eleitoral.",
+        "description": "Sim, o Vocdoni permite implementar métodos de votação mais sofisticados consoante as necessidades de cada organização ou processo de votação.",
         "title": "É possível integrar métodos de votação avançados como o voto quadrático ou por aprovação?"
       },
       "faq_34": {
@@ -659,7 +685,7 @@
         "title": "Quem pode utilizar o Vocdoni?"
       },
       "faq_40": {
-        "description": "Sim, o Vocdoni permite o voto ponderado, em que cada voto pode ter um valor diferente consoante critérios definidos pela organização.",
+        "description": "Sim, o Vocdoni permite a votação ponderada, em que cada voto pode ter um valor diferente consoante critérios definidos pela organização.",
         "title": "É possível definir diferentes pesos de voto?"
       },
       "faq_41": {
@@ -799,7 +825,7 @@
       "title": "Grupos"
     },
     "import_file": {
-      "subtitle": "Importe o seu ficheiro CSV, XLS ou XLSX com os dados dos membros. Certifique-se de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",
+      "subtitle": "Importa o teu ficheiro CSV, XLS ou XLSX com os dados dos membros. Certifica-te de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",
       "title": "Importar ficheiro"
     },
     "importer": {
@@ -811,15 +837,15 @@
         "empty": "-- Não importar --",
         "placeholder": "Selecionar coluna"
       },
-      "included_columns": "Selecione as colunas a incluir:",
+      "included_columns": "Seleciona as colunas a incluir:",
       "map_columns": {
-        "subtitle": "Associe as colunas do seu ficheiro aos campos correspondentes no nosso sistema. Os campos obrigatórios estão assinalados com um asterisco (*).",
+        "subtitle": "Associa as colunas do teu ficheiro aos campos correspondentes no nosso sistema. Os campos obrigatórios estão assinalados com um asterisco (*).",
         "title": "Associar colunas"
       },
       "reset": "Repor importação",
-      "select_at_least_one_column": "Selecione pelo menos uma coluna para transferir o modelo.",
+      "select_at_least_one_column": "Seleciona pelo menos uma coluna para transferir o modelo.",
       "submit": "Importar dados",
-      "subtitle": "Transfira um modelo ou importe o seu próprio ficheiro CSV, XLS ou XLSX para adicionar membros.",
+      "subtitle": "Transfere um modelo ou importa o teu próprio ficheiro CSV, XLS ou XLSX para adicionar membros.",
       "title": "Importar membros",
       "warning": {
         "subtitle": "A informação das colunas que não forem associadas não será importada.",
@@ -1079,13 +1105,13 @@
     "custom_title": "Personalizado",
     "different_voting_methods": "Diferentes métodos de votação",
     "empty": "Não foram encontrados planos",
-    "empty_description": "Volte mais tarde para ver os planos disponíveis.",
+    "empty_description": "Volta mais tarde para ver os planos disponíveis.",
     "essential_subtitle": "Para organizações em crescimento",
     "essential_title": "Essencial",
     "free_subtitle": "Ideal para começar",
     "free_title": "Gratuito",
     "load_error": "Não foi possível carregar os planos",
-    "load_error_description": "Tente novamente.",
+    "load_error_description": "Tenta novamente.",
     "premium_subtitle": "Para organizações consolidadas",
     "premium_title": "Premium",
     "priority_support": "Apoio prioritário por email (24 h)",
@@ -1099,9 +1125,9 @@
     "yearly_processes_other": "{{ count }} votações por ano¹"
   },
   "pricing_card": {
-    "annual_savings": "Poupe {{ savings }}/ano com o plano anual",
+    "annual_savings": "Poupa {{ savings }}/ano com o plano anual",
     "annual_total_cost": "{{ price }} faturados anualmente",
-    "contact_sales": "<0>Contacte a nossa equipa comercial</0> <1>ou</1>",
+    "contact_sales": "<0>Contacta a nossa equipa comercial</0> <1>ou</1>",
     "custom_plan": "Preço sob consulta",
     "custom_plan_description": "Tens requisitos de governança especiais? Podemos adaptar-nos às tuas necessidades com uma solução totalmente personalizada. Um gestor de conta dedicado irá acompanhar-te durante toda a colaboração.",
     "free_trial": "Período experimental gratuito de {{ freeDays }} dias",
@@ -1214,7 +1240,6 @@
     },
     "questions": "Perguntas",
     "results": "Resultados",
-    "share_caption": "Acabei de votar em {{ title }}!!",
     "share_title": "Partilhar em {{ network }}",
     "spreadsheet": {
       "confirm": {
@@ -1301,9 +1326,9 @@
     "basic_configuration": "Configuração básica",
     "census": {
       "extra_methods": {
-        "disable_description": "Pretendes desativar os métodos de censo adicionais? Isto irá ocultar as opções de Folha de cálculo e Web3 e mostrar apenas o método de Grupo.",
-        "enable_description": "Pretendes ativar os métodos de censo adicionais? Isto mostrará opções adicionais como a criação de censo via Folha de cálculo e Web3.",
-        "modal_title": "Métodos de censo adicionais"
+        "disable_description": "Pretendes desativar os métodos adicionais de lista de participantes? Isto irá ocultar as opções de Folha de cálculo e Web3 e mostrar apenas o método de Grupo.",
+        "enable_description": "Pretendes ativar os métodos adicionais de lista de participantes? Isto mostrará opções adicionais como a criação da lista de participantes via Folha de cálculo e Web3.",
+        "modal_title": "Métodos adicionais de lista de participantes"
       },
       "group": {
         "label": "Grupo",
@@ -1329,7 +1354,7 @@
       "select": "Selecionar grupo"
     },
     "groups": {
-      "scroll_to_load": "Desça para carregar mais…"
+      "scroll_to_load": "Desce para carregar mais…"
     },
     "new_option": "Adicionar uma nova opção",
     "no_account_address": "Não foi encontrado nenhum endereço de conta.",
@@ -1379,131 +1404,152 @@
   },
   "process_pdf": {
     "authentication": {
-      "identity_source": "Origem dos dados de identidade",
+      "identity_source": "Credenciais necessárias do votante",
       "method": "Método de autenticação",
-      "two_fa": "Autenticação 2FA"
-    },
-    "boolean": {
-      "no": "Não",
-      "yes": "Sim"
+      "two_fa": "Autenticação 2FA",
+      "two_fa_disabled": "Desativada: não foi configurada verificação de identidade adicional neste processo de votação.",
+      "two_fa_enabled": "Ativada: os votantes confirmam a sua identidade com um código de utilização única enviado para os seus dispositivos pessoais.",
+      "voter_access_source": "Origem do acesso do votante",
+      "voter_access_source_spreadsheet": "Os votantes acedem com credenciais derivadas da folha de cálculo carregada pela organização.",
+      "voter_access_source_web3": "Os votantes acedem com o endereço de carteira incluído na lista de participantes Web3.",
+      "voter_access_source_weighted": "A elegibilidade é verificada com base na lista de participantes ponderada fornecida pela organização para este processo."
     },
     "census": {
-      "definition": "A lista de participantes define o conjunto completo de membros autorizados a participar no processo de votação. A inclusão na lista não implica participação efetiva.",
-      "provider": "Fornecedor da lista de participantes",
-      "provider_value": "A lista de participantes é fornecida pela organização",
-      "total": "Total da lista de participantes"
+      "counting_basis": "Base de contagem",
+      "counting_basis_1p1v": "1 pessoa, 1 voto",
+      "counting_basis_weighted": "Votação ponderada",
+      "eligible_voters": "Votantes elegíveis",
+      "eligible_voting_power": "Poder de voto elegível",
+      "source": "Origem da lista de participantes",
+      "voting_power_used": "Poder de voto utilizado",
+      "weighted_participation": "Participação ponderada"
     },
     "census_type": {
-      "anonymous": "Lista de participantes ponderada anónima",
-      "csp": "Censo CSP",
+      "anonymous": "Lista de participantes anónima",
+      "csp": "Lista de participantes CSP",
+      "spreadsheet": "Folha de cálculo",
       "unknown": "Não disponível",
-      "weighted": "Censo ponderado"
+      "web3": "Web3",
+      "weighted": "Lista de participantes ponderada"
     },
     "disclaimer": {
       "bullet_1": "Não constitui certificação legal do processo de votação.",
       "bullet_2": "Não substitui registos oficiais, atas ou submissões regulamentares.",
       "bullet_3": "Todos os dados provêm de registos criptográficos e baseados em blockchain.",
-      "bullet_4": "O segredo de voto e o anonimato dos eleitores são preservados desde a conceção.",
+      "bullet_4": "O segredo de voto e o anonimato dos votantes são preservados desde a conceção.",
       "paragraph_1": "Este documento constitui uma certificação técnica derivada dos registos gerados pelo sistema do protocolo Vocdoni.",
-      "paragraph_2": "O prestador técnico não assume qualquer responsabilidade pela exatidão dos dados de entrada (por exemplo, a composição do censo), pela interpretação jurídica dos resultados ou pelo cumprimento dos enquadramentos legais ou regulamentares aplicáveis.",
+      "paragraph_2": "O prestador técnico não assume qualquer responsabilidade pela exatidão dos dados de entrada (por exemplo, a composição da lista de participantes), pela interpretação jurídica dos resultados ou pelo cumprimento dos enquadramentos legais ou regulamentares aplicáveis.",
       "paragraph_3": "A responsabilidade pela interpretação jurídica e pela utilização desta certificação cabe exclusivamente à organização requerente.",
       "title": "Aviso legal"
     },
     "document": {
-      "issued_by": "Emitido pela Vocdoni (Synergize SL) a {{issue_date}}, na sua qualidade de prestador técnico.",
-      "sections": {
-        "authentication": "2. Autenticação",
-        "certification_scope": "8. Âmbito da certificação",
-        "electoral_census": "4. Censo eleitoral",
-        "general_information": "1. Informação geral",
-        "issuer": "9. Emissor",
-        "turnout_participation": "5. Participação e afluência",
-        "verification": "7. Verificação",
-        "voting_process": "6. Processo de votação",
-        "voting_system": "3. Sistema de votação"
+      "bookmarks": {
+        "general_information": "Enquadramento técnico e informação geral",
+        "index": "Índice",
+        "issuer": "Emissor",
+        "voting_process": "Perguntas e Resultados"
       },
-      "subtitle": "Relatório emitido a {{issue_date}} | ID do processo: {{process_id}}",
+      "index": {
+        "intro": "Este relatório está organizado nas seguintes secções:",
+        "title": "Índice"
+      },
+      "issued_by": "Emitido pela Vocdoni (Synergize SL) a {{issue_date}} às {{issue_time}}, na sua qualidade de prestador técnico.",
+      "process_id": "ID do processo: {{process_id}}",
+      "sections": {
+        "authentication": "3. Autenticação",
+        "general_information": "2. Informação geral",
+        "issuer": "7. Emissor",
+        "turnout_participation": "4. Lista de participantes e participação",
+        "verification": "6. Verificação",
+        "voting_process": "5. Perguntas e resultados",
+        "voting_system": "1. Enquadramento técnico"
+      },
       "title_prefix": "CERTIFICAÇÃO TÉCNICA DO PROCESSO DE VOTAÇÃO DIGITAL"
     },
-    "download": "Transferir PDF",
+    "download": "Relatório da votação (PDF)",
     "download_error": "Não foi possível gerar o relatório PDF",
     "downloading": "A gerar o PDF",
-    "encryption": {
-      "encrypted": "Cifrado",
-      "not_encrypted": "Não cifrado"
-    },
     "general": {
-      "encryption_method": "Método de cifragem",
+      "census_reference": "Referência da lista de participantes",
+      "census_reference_helper": "Referência pública que identifica a lista de participantes utilizada neste processo de votação. Não inclui nem revela dados pessoais dos votantes.",
       "event_name": "Nome do evento",
-      "extended_process_details": "Detalhes alargados do processo",
-      "network": "Rede",
+      "network": "Infraestrutura",
       "organization": "Organização",
+      "process_id": "ID do processo",
+      "process_id_helper": "Identificador público único deste processo de votação. Pode ser utilizado para encontrar e verificar o processo na infraestrutura de votação.",
       "results_visibility": "Visibilidade dos resultados",
-      "vote_overwrite_enabled": "Alteração do voto ativada",
+      "vote_overwrite": "Substituição do voto",
       "voting_period_end": "Período de votação (fim)",
       "voting_period_start": "Período de votação (início)"
     },
-    "intro_paragraph_1": "Este documento constitui uma certificação técnica formal de um processo de votação digital realizado através do protocolo Vocdoni. Estabelece um registo estruturado, verificável e auditável da configuração do processo, do conjunto de participantes elegíveis (censo eleitoral), da participação efetiva e dos resultados finais. O seu propósito é permitir que auditores independentes e terceiros autorizados avaliem a integridade, a coerência e a correta execução do processo.",
-    "intro_paragraph_2": "Todos os dados relevantes associados a este processo de votação foram registados e ancorados em registos publicamente auditáveis na rede Vocdoni. Estes registos garantem transparência, imutabilidade e verificabilidade ponta a ponta, preservando ao mesmo tempo o anonimato dos eleitores e a confidencialidade do boletim de voto através de mecanismos criptográficos.",
+    "intro_paragraph_1": "Este documento constitui uma certificação técnica formal de um processo de votação digital realizado através do protocolo Vocdoni. Estabelece um registo estruturado, verificável e auditável da configuração do processo, do conjunto de participantes elegíveis (lista de participantes), da participação efetiva e dos resultados finais. O seu propósito é permitir que auditores independentes e terceiros autorizados avaliem a integridade, a coerência e a correta execução do processo.",
+    "intro_paragraph_2": "Todos os dados relevantes associados a este processo de votação foram registados e ancorados em registos publicamente auditáveis na rede Vocdoni. Estes registos garantem transparência, imutabilidade e verificabilidade ponta a ponta, preservando ao mesmo tempo o anonimato dos votantes e a confidencialidade do boletim de voto através de mecanismos criptográficos.",
     "intro_paragraph_3": "Esta certificação é emitida exclusivamente pelo prestador técnico para atestar a correta execução do sistema e a integridade dos dados registados. Não substitui, suplanta nem constitui qualquer forma de certificação legal, nem afirma o cumprimento de requisitos legais ou regulamentares próprios de uma jurisdição.",
     "issuer": {
       "issuing_date": "Data de emissão",
-      "legal_entity": "Entidade jurídica",
       "paragraph": "Emitido em nome da entidade organizadora na sua qualidade de prestador técnico.",
       "provider": "Fornecedor"
     },
     "not_available": "Não disponível",
-    "scope": {
-      "census": "Definição do censo eleitoral",
-      "configuration": "Configuração do processo de votação",
-      "exclusion": "Esta certificação não cobre regras de governança, a correção dos critérios de elegibilidade nem o cumprimento legal.",
-      "paragraph": "Esta certificação cobre exclusivamente os seguintes aspetos técnicos:",
-      "participation": "Registo dos dados de participação",
-      "period": "Aplicação do período de votação",
-      "results": "Resultados finais calculados",
-      "tally": "Mecanismos automatizados de apuramento"
+    "results": {
+      "hidden_field": "Ocultos até aos resultados finais"
     },
     "turnout": {
-      "census_contact": "Se precisar de mais detalhes sobre o censo, contacte-nos.",
       "eligible": "Número total de participantes elegíveis",
       "participation": "O número de votos submetidos reflete apenas os participantes que efetivamente entregaram um boletim válido durante o período de votação definido.",
-      "rate": "Taxa de participação",
-      "votes_cast": "Número total de votos submetidos"
+      "submitted_ballots": "Boletins submetidos",
+      "voter_participation": "Participação dos votantes",
+      "weighted_participation": "Os boletins submetidos contabilizam os votantes que participaram. Os totais ponderados contabilizam o peso de voto registado em cada resposta."
     },
     "verification": {
-      "explorer": "Explorador de verificação",
+      "explorer": "Ver no explorador de verificação",
       "paragraph": "Todos os dados do processo foram registados numa infraestrutura baseada em blockchain e podem ser verificados de forma independente através do seguinte Explorer público:",
       "procedure_title": "Procedimento de verificação",
-      "step_1": "Obter os dados do processo através do explorador.",
-      "step_2": "Validar o hash de raiz do processo face ao valor publicado.",
-      "step_3": "Confirmar a coerência da referência do censo e dos registos das urnas.",
-      "step_4": "Recalcular e verificar os resultados do apuramento, quando aplicável."
+      "step_1": "Abre o link do explorador de verificação. Esta página contém o registo técnico público do processo de votação.",
+      "step_2": "Verifica que o ID do processo no explorador é idêntico ao ID do processo neste relatório. Isto confirma que ambos os documentos se referem ao mesmo processo de votação.",
+      "step_3": "Verifica que a referência da lista de participantes apresentada no explorador corresponde à referência neste relatório. Isto confirma que a lista de votantes associada ao processo é a mesma.",
+      "step_4": "Verifica que o número de boletins registados corresponde aos dados de participação apresentados neste relatório.",
+      "step_5": "Compara os resultados finais no explorador com os resultados por contagem de boletins ou por peso de voto ponderado apresentados neste relatório.",
+      "step_6": "Para uma auditoria técnica mais aprofundada, um auditor pode inspecionar os registos públicos com mais detalhe ou recalcular os resultados para confirmar que os boletins registados e os resultados finais são consistentes."
     },
-    "vote_overwrite_enabled_one": "Sim, 1 alteração",
-    "vote_overwrite_enabled_many": "",
-    "vote_overwrite_enabled_other": "Sim, até {{count}} alterações",
+    "vote_overwrite_disabled": "Desativada",
+    "vote_overwrite_enabled": "Ativada, até {{votes}} substituições de voto por votante",
     "voting_process": {
       "card": {
-        "item": "Pergunta {{index}}",
-        "outcome": "Resultado: {{outcome}}",
-        "participation": "Participação: {{votes}} votos registados",
-        "question": "Pergunta: {{question}}",
-        "results": "Resultados:"
+        "abstain": "Abstenção",
+        "item": "Total de votos",
+        "option": "Opção",
+        "outcome_label": "Método de votação",
+        "participation_short": "{{votes}} votos",
+        "results": "Resultados:",
+        "share_cast_power": "Quota do poder exercido",
+        "share_eligible_power": "Quota do poder elegível",
+        "share_votes": "Quota de votos",
+        "submitted_ballots_short": "{{ballots}} boletins",
+        "votes": "Votos",
+        "voting_power": "Peso de voto",
+        "voting_power_short": "{{power}} peso de voto",
+        "voting_power_used": "Peso de voto utilizado",
+        "weighted_method": "{{base}} com votação ponderada"
       },
       "intro_one": "O processo de votação {{process_name}} foi composto por 1 pergunta.",
       "intro_many": "",
-      "intro_other": "O processo de votação {{process_name}} foi composto por {{count}} perguntas."
+      "intro_other": "O processo de votação {{process_name}} foi composto por {{count}} perguntas.",
+      "results_hidden": "Os resultados ficam ocultos até que o processo atinja a fase de resultados finais."
     },
     "voting_system": {
-      "bullet_1": "Infraestrutura de registo distribuído (blockchain)",
-      "bullet_2": "Mecanismos criptográficos de verificação e integridade",
-      "executed_on": "O processo foi executado na infraestrutura {{blockchain_network}}.",
-      "guarantee_1": "Integridade do processo de votação",
-      "guarantee_2": "Imutabilidade dos dados registados",
-      "guarantee_3": "Verificabilidade independente dos resultados",
-      "guarantee_4": "Confidencialidade dos boletins individuais",
-      "guarantee_lead": "O sistema garante:",
-      "paragraph": "As operações de votação e apuramento foram executadas através do Vocdoni, um protocolo de votação digital sustentado por:"
+      "bullet_1": "Um registo público da configuração do processo de votação",
+      "bullet_2": "Uma referência à lista de participantes que identifica os votantes elegíveis sem revelar os seus dados pessoais",
+      "bullet_3": "Mecanismos criptográficos que protegem o segredo dos boletins e a privacidade dos votantes",
+      "bullet_4": "Dados de participação e resultados registados que podem ser verificados de forma independente",
+      "bullet_5": "Registos invioláveis ancorados em infraestrutura de blockchain",
+      "bullet_6": "Resultados finais que podem ser comparados com os dados públicos de verificação",
+      "executed_on": "O processo {{voting_process}} foi executado na infraestrutura {{blockchain_network}}.",
+      "guarantee_lead": "O Protocolo Vocdoni aumenta a confiança no processo de votação ao proporcionar:",
+      "paragraph_1": "O processo de votação foi conduzido através do Protocolo Vocdoni, um protocolo de votação digital concebido para criar, executar, registar e verificar processos de votação com fortes garantias de integridade.",
+      "paragraph_2": "Quando um processo de votação é criado, a sua configuração é registada na blockchain antes do início da votação, criando um registo público e auditável de como o processo deve funcionar. Isto inclui o período de votação, o método de votação, o conjunto de participantes elegíveis, as perguntas e as regras que determinam como os resultados são apurados. A lista de participantes define quem pode participar no processo, preservando a privacidade de cada votante.",
+      "paragraph_3": "Durante o período de votação, os votantes elegíveis autenticam-se de acordo com o método configurado e submetem os seus boletins através do sistema de votação. O protocolo foi concebido para que o processo possa ser verificado de ponta a ponta.",
+      "paragraph_4": "Uma vez concluído o processo de votação, os resultados finais e os registos relevantes do processo são ancorados na blockchain. Isto torna o processo auditável e ajuda a garantir que o relatório publicado pode ser comparado com os registos técnicos públicos."
     }
   },
   "processes": {
@@ -1558,7 +1604,7 @@
       "error": "Erro ao atualizar o perfil",
       "new_role": "Novo perfil",
       "save": "Atualizar perfil",
-      "subtitle": "Atualize as permissões deste membro da equipa alterando o seu perfil.",
+      "subtitle": "Atualiza as permissões deste membro da equipa alterando o seu perfil.",
       "success": "Perfil atualizado com sucesso",
       "title": "Alterar perfil do membro da equipa"
     }
@@ -1572,7 +1618,7 @@
   },
   "send_invitation": "Enviar convite",
   "session_expired": "Sessão expirada",
-  "session_expired_description": "A sessão pode ter expirado e não foi possível renová-la, inicie sessão novamente",
+  "session_expired_description": "A sessão pode ter expirado e não foi possível renová-la, inicia sessão novamente",
   "settings": "Definições",
   "setup": {
     "progress": "O teu progresso",
@@ -1643,7 +1689,7 @@
       "cancel_invitation": "Cancelar convite",
       "cancel_invitation_error": "Erro ao cancelar o convite",
       "cancel_invitation_success": "Convite cancelado com sucesso",
-      "change_role": "Alterar perfil",
+      "change_role": "Alterar função",
       "options": "Opções",
       "remove_user": "Remover utilizador",
       "resend_invitation": "Reenviar convite",
@@ -1677,12 +1723,12 @@
     },
     "title": "Equipa"
   },
-  "terms_of_service": "Termos do serviço",
+  "terms_of_service": "Termos de Serviço",
   "testimonials": {
     "bellpuig": {
       "company": "Câmara Municipal de Bellpuig",
       "position": "Presidente da câmara",
-      "text": "Escolhemos o Vocdoni porque acreditamos que este é o futuro de qualquer eleição real. O voto eletrónico está ao alcance de todos e simplifica o processo para os cidadãos."
+      "text": "Escolhemos o Vocdoni porque acreditamos que este é o futuro de como devem ser as votações reais. O voto eletrónico está ao alcance de todos e simplifica o processo de votação para os cidadãos."
     },
     "ceec": {
       "position": "CEO",
