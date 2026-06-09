@@ -5,13 +5,14 @@ describe('languages configuration', () => {
     expect(baseLanguages).toEqual({
       ca: 'Català',
       de: 'Deutsch',
-      en: 'English',
       el: 'Ελληνικά',
+      en: 'English',
       es: 'Español',
       eu: 'Euskara',
       fr: 'Français',
       it: 'Italiano',
       pt: 'Português',
+      'pt-br': 'Português (Brasil)',
     })
   })
 

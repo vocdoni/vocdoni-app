@@ -1,13 +1,14 @@
 export const baseLanguages = {
+  ca: 'Català',
+  de: 'Deutsch',
+  el: 'Ελληνικά',
   en: 'English',
   es: 'Español',
-  ca: 'Català',
-  it: 'Italiano',
-  de: 'Deutsch',
-  fr: 'Français',
-  el: 'Ελληνικά',
   eu: 'Euskara',
+  fr: 'Français',
+  it: 'Italiano',
   pt: 'Português',
+  'pt-br': 'Português (Brasil)',
 } as const
 
 /**
@@ -15,15 +16,16 @@ export const baseLanguages = {
  * Used for og:locale and og:locale:alternate meta tags.
  */
 export const openGraphLocaleMap: Record<string, string> = {
+  ca: 'ca_ES',
+  de: 'de_DE',
+  el: 'el_GR',
   en: 'en_US',
   es: 'es_ES',
-  ca: 'ca_ES',
-  it: 'it_IT',
-  de: 'de_DE',
-  fr: 'fr_FR',
-  el: 'el_GR',
   eu: 'eu_ES',
+  fr: 'fr_FR',
+  it: 'it_IT',
   pt: 'pt_PT',
+  'pt-br': 'pt_BR',
 }
 
 export const toOpenGraphLocale = (language: string): string => openGraphLocaleMap[language] ?? language

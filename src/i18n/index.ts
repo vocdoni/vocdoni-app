@@ -88,6 +88,7 @@ const getI18nOptions = ({ language, isBrowser }: { language?: string; isBrowser:
   lng: language,
   fallbackLng: fallbackLanguage,
   supportedLngs: supportedLanguages,
+  lowerCaseLng: true,
   debug: shouldEnableI18nDebug({ isDev: AppEnv.DEV, isTestEnv, isBrowser }),
   ns: defaultNamespaces,
   defaultNS: 'common',
