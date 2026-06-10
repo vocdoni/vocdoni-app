@@ -5,13 +5,14 @@ import { useTranslation } from 'react-i18next'
 import { BsGoogle } from 'react-icons/bs'
 import { useNavigate } from 'react-router-dom'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { AppEnv } from '~src/app-env'
 import { useToast } from '~components/Toast'
+import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
 import { useAuth } from './useAuth'
 
 const GoogleAuth = () => {
   const { setBearer, updateSigner } = useAuth()
+  const appEnv = useAppEnv()
   const navigate = useNavigate()
   const { isConnected, connector } = useAccount()
   const { disconnect } = useDisconnect()
@@ -62,9 +63,9 @@ const GoogleAuth = () => {
           name: 'Google',
           iconUrl: 'https://authjs.dev/img/providers/google.svg',
           options: {
-            oAuthServiceUrl: AppEnv.OAUTH_URL,
+            oAuthServiceUrl: appEnv.OAUTH_URL,
             oAuthServiceProvider: 'google',
-            saasBackendUrl: AppEnv.SAAS_URL,
+            saasBackendUrl: appEnv.SAAS_URL,
           },
         })
         connect({ connector: wallet.createConnector({} as any) })

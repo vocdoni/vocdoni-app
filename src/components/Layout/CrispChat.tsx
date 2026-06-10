@@ -2,10 +2,10 @@ import { Crisp } from 'crisp-sdk-web'
 import { useEffect, useState } from 'react'
 
 import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent } from '~components/Cookies/utils'
-import { AppEnv } from '~src/app-env'
+import { useAppEnv } from '~src/app-env'
 
 const CrispChat = () => {
-  const websiteId = AppEnv.CRISP_WEBSITE_ID
+  const websiteId = useAppEnv().CRISP_WEBSITE_ID
   const [hasConsent, setHasConsent] = useState(() => getCookieConsent() === 'accepted')
 
   useEffect(() => {

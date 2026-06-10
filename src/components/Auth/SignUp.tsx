@@ -14,7 +14,6 @@ import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Navigate, NavLink, useOutletContext } from 'react-router-dom'
-import { AppEnv } from '~src/app-env'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { IRegisterParams } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
@@ -22,6 +21,7 @@ import { default as InputBasic } from '~components/Form/InputBasic'
 import InputPassword from '~components/Form/InputPassword'
 import { OrSeparator } from '~components/Layout/Separators'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
+import { useAppEnv } from '~src/app-env'
 import { useSignupFromInvite } from '~src/queries/account'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
@@ -67,8 +67,9 @@ const SignUp = ({ invite }: SignupProps) => {
   const isError = signup.isError || inviteSignup.isError
   const error = signup.error || inviteSignup.error
 
-  const privacyPolicyUrl = AppEnv.PRIVACY_POLICY_URL
-  const termsOfServiceUrl = AppEnv.TERMS_OF_SERVICE_URL
+  const appEnv = useAppEnv()
+  const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
+  const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
 
   useEffect(() => {
     // set SignUp title and description

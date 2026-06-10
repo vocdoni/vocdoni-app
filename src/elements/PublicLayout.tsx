@@ -1,11 +1,12 @@
 import { Box, Flex, HStack } from '@chakra-ui/react'
 import { PropsWithChildren } from 'react'
-import { getSupportedPublicLanguages, stripPublicLanguagePrefix } from '~i18n/public-language'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import CrispChat from '~components/Layout/CrispChat'
 import Footer from '~components/Layout/Footer'
 import Navbar from '~components/Navbar'
+import { stripPublicLanguagePrefix } from '~i18n/public-language'
 import { Routes } from '~routes'
+import { useLanguagesEnv } from '~src/app-env'
 
 type PublicLayoutProps = PropsWithChildren<{
   pathname: string
@@ -21,7 +22,7 @@ const PublicLayout = ({
   showDashboardButton = true,
   children,
 }: PublicLayoutProps) => {
-  const normalizedPathname = stripPublicLanguagePrefix(pathname, getSupportedPublicLanguages())
+  const normalizedPathname = stripPublicLanguagePrefix(pathname, Object.keys(useLanguagesEnv()))
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
   const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
 

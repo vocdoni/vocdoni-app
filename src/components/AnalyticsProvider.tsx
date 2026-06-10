@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useEffect } from 'react'
-import { AppEnv } from '~src/app-env'
+import { useAppEnv } from '~src/app-env'
 import {
   AnalyticsEvent,
   initializeGTM,
@@ -9,22 +9,18 @@ import {
 } from '~utils/analytics'
 
 const useAnalyticsProvider = () => {
-  useEffect(() => {
-    const gtmContainerId = AppEnv.GTM_CONTAINER_ID
-    const plausibleDomain = AppEnv.PLAUSIBLE_DOMAIN
+  const { GTM_CONTAINER_ID: gtmContainerId, PLAUSIBLE_DOMAIN: plausibleDomain, ANALYTICS_CLIENT_ID } = useAppEnv()
+  const analyticsClientId = ANALYTICS_CLIENT_ID?.trim() || undefined
 
+  useEffect(() => {
     if (plausibleDomain) {
-      initializePlausible({
-        domain: plausibleDomain,
-      })
+      initializePlausible({ domain: plausibleDomain }, analyticsClientId)
     }
 
     if (gtmContainerId && window.location.pathname === '/') {
-      initializeGTM({
-        gtmId: gtmContainerId,
-      })
+      initializeGTM({ gtmId: gtmContainerId }, analyticsClientId)
     }
-  }, [])
+  }, [gtmContainerId, plausibleDomain, analyticsClientId])
 
   const trackEvent = (event: AnalyticsEvent) => {
     trackPlausibleEvent(event)

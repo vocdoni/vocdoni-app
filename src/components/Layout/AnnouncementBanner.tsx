@@ -1,7 +1,7 @@
 import { AlertRoot as Alert, AlertDescription, CloseButton, HStack } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useTranslation } from 'react-i18next'
-import { AppEnv } from '~src/app-env'
+import { useAppEnv } from '~src/app-env'
 
 type AnnouncementStatus = (typeof Statuses)[number]
 
@@ -45,19 +45,17 @@ const parseAnnouncement = (raw: string | undefined): AnnouncementBannerContents 
   }
 }
 
-// Parsed once at module load:
-export const Announcement: AnnouncementBannerContents | null = parseAnnouncement(AppEnv.ANNOUNCEMENT)
-
 const AnnouncementBanner = ({ limited = false }: { limited?: boolean }) => {
   const { i18n } = useTranslation()
-  const [dismissed, setDismissed] = useLocalStorage(Announcement?.lsKey || 'announcement.banner_dismissed', false)
+  const announcement = parseAnnouncement(useAppEnv().ANNOUNCEMENT)
+  const [dismissed, setDismissed] = useLocalStorage(announcement?.lsKey || 'announcement.banner_dismissed', false)
 
-  if (!Announcement || dismissed) return null
+  if (!announcement || dismissed) return null
 
   const message =
-    typeof Announcement.message === 'object'
-      ? Announcement.message[i18n.language] || Announcement.message['en'] || null
-      : Announcement.message
+    typeof announcement.message === 'object'
+      ? announcement.message[i18n.language] || announcement.message['en'] || null
+      : announcement.message
 
   if (!message) return null
 
@@ -67,7 +65,7 @@ const AnnouncementBanner = ({ limited = false }: { limited?: boolean }) => {
   }
 
   return (
-    <Alert status={Announcement.status} borderRadius={0}>
+    <Alert status={announcement.status} borderRadius={0}>
       <HStack {...(limited ? limitStyles : {})} w='full' justifyContent='space-between'>
         <AlertDescription dangerouslySetInnerHTML={{ __html: message }} />
         <CloseButton onClick={() => setDismissed(true)} />

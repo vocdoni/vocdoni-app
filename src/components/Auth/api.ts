@@ -1,7 +1,16 @@
 import i18n from '~i18n'
-import { AppEnv } from '~src/app-env'
 
 type MethodTypes = 'GET' | 'POST' | 'PUT' | 'DELETE'
+
+// `api` is imperative, non-React infrastructure called from React Query, so it
+// can't read runtime config through usePageContext(). The SaaS base URL is
+// injected once from the React layer (see AppProviders, which reads it from
+// Vike's globalContext via useAppEnv) instead of a build-time value.
+let saasBaseUrl: string | undefined
+
+export const configureApiBaseUrl = (url?: string) => {
+  saasBaseUrl = url
+}
 
 export enum ApiEndpoints {
   InviteAccept = 'organizations/{address}/users/accept',
@@ -120,7 +129,7 @@ export const api = <T>(
   params.set('lang', i18n.language)
   path = `${basePath}?${params.toString()}`
 
-  return fetch(`${AppEnv.SAAS_URL}/${path}`, {
+  return fetch(`${saasBaseUrl}/${path}`, {
     method,
     headers,
     body: formatted,

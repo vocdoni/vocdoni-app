@@ -21,27 +21,12 @@ describe('analytics initialization', () => {
     mockPlausibleTrack.mockClear()
     mockGtmInitialize.mockClear()
     mockGtmDataLayer.mockClear()
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
-      ANALYTICS_CLIENT_ID: '',
-    }
-  })
-
-  afterEach(() => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
-      ANALYTICS_CLIENT_ID: '',
-    }
   })
 
   it('adds analytics client id to plausible custom properties on init', async () => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
-      ANALYTICS_CLIENT_ID: 'client-1',
-    }
     const { initializePlausible } = await import('./analytics')
 
-    initializePlausible({ domain: 'example.com' })
+    initializePlausible({ domain: 'example.com' }, 'client-1')
     await vi.waitFor(() => expect(mockPlausibleInit).toHaveBeenCalledTimes(1))
 
     const config = mockPlausibleInit.mock.calls[0][0]
@@ -49,13 +34,9 @@ describe('analytics initialization', () => {
   })
 
   it('sets analytics client id in the GTM dataLayer on init', async () => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
-      ANALYTICS_CLIENT_ID: 'client-1',
-    }
     const { initializeGTM } = await import('./analytics')
 
-    initializeGTM({ gtmId: 'GTM-XXXX' })
+    initializeGTM({ gtmId: 'GTM-XXXX' }, 'client-1')
     await vi.waitFor(() => expect(mockGtmInitialize).toHaveBeenCalledTimes(1))
 
     expect(mockGtmDataLayer).toHaveBeenCalledWith({
@@ -73,10 +54,6 @@ describe('analytics error handling', () => {
     mockPlausibleTrack.mockReset()
     mockGtmInitialize.mockReset()
     mockGtmDataLayer.mockReset()
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
-      ANALYTICS_CLIENT_ID: '',
-    }
     consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
   })
 

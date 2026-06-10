@@ -9,9 +9,11 @@ vi.mock('~src/app-env', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/app-env')>()
   return {
     ...actual,
-    getLanguagesEnv: () => languagesEnv,
+    useLanguagesEnv: () => languagesEnv,
   }
 })
+
+const supportedLanguages = Object.keys(languagesEnv)
 
 vi.mock('react-i18next', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-i18next')>()
@@ -53,6 +55,7 @@ describe('LanguagesList', () => {
     navigateToLanguage(
       'es',
       { language: 'en', changeLanguage } as any,
+      supportedLanguages,
       {
         en: '/organization/0xabc',
         es: '/es/organization/0xabc',
@@ -69,7 +72,7 @@ describe('LanguagesList', () => {
     const locationAssign = vi.fn()
     const { navigateToLanguage } = await import('./LanguagesList')
 
-    navigateToLanguage('es', { language: 'en', changeLanguage } as any, undefined, locationAssign)
+    navigateToLanguage('es', { language: 'en', changeLanguage } as any, supportedLanguages, undefined, locationAssign)
 
     expect(locationAssign).toHaveBeenCalledWith('/es/account/signin')
     expect(changeLanguage).not.toHaveBeenCalled()
@@ -80,7 +83,7 @@ describe('LanguagesList', () => {
     const locationAssign = vi.fn()
     const { navigateToLanguage } = await import('./LanguagesList')
 
-    navigateToLanguage('es', { language: 'en', changeLanguage } as any, undefined, locationAssign)
+    navigateToLanguage('es', { language: 'en', changeLanguage } as any, supportedLanguages, undefined, locationAssign)
 
     expect(document.cookie).toContain('vocdoni-public-language=es')
     expect(window.localStorage.getItem('i18nextLng')).toBe('es')

@@ -2,8 +2,12 @@ import '@testing-library/jest-dom'
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import SimpleLayout from '~elements/SimpleLayout'
+import type { AppEnv } from '~src/app-env-build'
 import { act, render, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+
+// Runtime env override applied to the test provider; mutated per test.
+let appEnvOverride: Partial<AppEnv> = {}
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
@@ -116,7 +120,8 @@ const renderSharedCensus = async (ui: React.ReactElement) => {
             <Route path='/' element={ui} />
           </Route>
         </Routes>
-      </TestMemoryRouter>
+      </TestMemoryRouter>,
+      { appEnv: appEnvOverride }
     )
   })
 
@@ -136,15 +141,13 @@ const renderSharedCensus = async (ui: React.ReactElement) => {
 }
 
 describe('SharedCensus', () => {
-  const originalAppEnv = globalThis.__APP_ENV__
   const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
     cb(0)
     return 0
   })
 
   beforeEach(() => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
       PROCESS_IDS: 'id-1',
       LANGUAGES: JSON.stringify({ en: 'English', es: 'Spanish' }) as unknown as Record<string, string>,
       SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: undefined,
@@ -166,19 +169,19 @@ describe('SharedCensus', () => {
   })
 
   afterEach(() => {
-    globalThis.__APP_ENV__ = originalAppEnv
+    appEnvOverride = {}
   })
 
   it('renders always-visible and disconnected text when not connected', async () => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({
         en: 'Always EN',
         es: 'Siempre ES',
       }) as unknown as Record<string, string>,
     }
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_DISCONNECTED_TEXT: JSON.stringify({
         en: 'Only when out EN',
         es: 'Solo ES',
@@ -199,12 +202,12 @@ describe('SharedCensus', () => {
   })
 
   it('renders always-visible and connected text when connected/admin', async () => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({ en: 'Always EN' }) as unknown as Record<string, string>,
     }
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_CONNECTED_TEXT: JSON.stringify({ en: 'Only when in EN' }) as unknown as Record<string, string>,
     }
     editorValues.length = 0
@@ -221,16 +224,16 @@ describe('SharedCensus', () => {
   })
 
   it('rerenders pretext content when connection state changes', async () => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({ en: 'Always EN' }) as unknown as Record<string, string>,
     }
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_DISCONNECTED_TEXT: JSON.stringify({ en: 'Disconnected EN' }) as unknown as Record<string, string>,
     }
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_CONNECTED_TEXT: JSON.stringify({ en: 'Connected EN' }) as unknown as Record<string, string>,
     }
     editorValues.length = 0
@@ -252,12 +255,12 @@ describe('SharedCensus', () => {
   })
 
   it('falls back to default language when current language is not available', async () => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       LANGUAGES: JSON.stringify({ es: 'Spanish', en: 'English' }) as unknown as Record<string, string>,
     }
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({
         es: 'Siempre',
         en: 'Always',
@@ -282,13 +285,13 @@ describe('SharedCensus', () => {
   })
 
   it('shows stream video alongside pretext once the session is started', async () => {
-    globalThis.__APP_ENV__ = {
-      ...globalThis.__APP_ENV__,
+    appEnvOverride = {
+      ...appEnvOverride,
       SHARED_CENSUS_ALWAYS_VISIBLE_TEXT: JSON.stringify({
         en: 'Always EN',
       }) as unknown as Record<string, string>,
     }
-    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, STREAM_URL: 'https://www.youtube.com/embed/test' }
+    appEnvOverride = { ...appEnvOverride, STREAM_URL: 'https://www.youtube.com/embed/test' }
     states.election.connected = true
     states.client.connected = true
     editorValues.length = 0
@@ -302,7 +305,7 @@ describe('SharedCensus', () => {
   })
 
   it('shows only the stream when no pretext is provided', async () => {
-    globalThis.__APP_ENV__ = { ...globalThis.__APP_ENV__, STREAM_URL: 'https://www.youtube.com/embed/test-only' }
+    appEnvOverride = { ...appEnvOverride, STREAM_URL: 'https://www.youtube.com/embed/test-only' }
     states.election.connected = true
     states.client.connected = true
     editorValues.length = 0

@@ -4,11 +4,11 @@ import {
   getDefaultPublicLanguage,
   getPersistedPublicLanguageClient,
   getPublicPathLanguageContext,
-  getSupportedPublicLanguages,
   localizePublicPath,
   persistPublicLanguagePreferenceClient,
   resolvePreferredPublicLanguageClient,
 } from '~i18n/public-language'
+import { useLanguagesEnv } from '~src/app-env'
 
 const normalizePathname = (pathname: string) => pathname.replace(/\/+$/, '') || '/'
 const withLocationSuffix = (url: string) =>
@@ -21,10 +21,11 @@ export const usePreferredPublicLanguageRedirect = ({
   pathname: string
   navigate?: (url: string) => void
 }) => {
+  const languages = useLanguagesEnv()
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const supportedLanguages = getSupportedPublicLanguages()
+    const supportedLanguages = Object.keys(languages)
     const cookieEnabled = hasAcceptedCookieConsent()
     const { routeLanguage } = getPublicPathLanguageContext(pathname, supportedLanguages)
     const preferredLanguage = getPersistedPublicLanguageClient({
@@ -63,14 +64,15 @@ export const usePreferredPublicLanguageRedirect = ({
 
     if (normalizePathname(window.location.pathname) === normalizePathname(redirectTarget)) return
     ;(navigate ?? ((url: string) => window.location.replace(url)))(withLocationSuffix(redirectTarget))
-  }, [navigate, pathname])
+  }, [navigate, pathname, languages])
 }
 
 export const useRootLanguageRedirect = ({ navigate }: { navigate?: (url: string) => void }) => {
+  const languages = useLanguagesEnv()
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const supportedLanguages = getSupportedPublicLanguages()
+    const supportedLanguages = Object.keys(languages)
     const defaultLanguage = getDefaultPublicLanguage(supportedLanguages)
     const cookieEnabled = hasAcceptedCookieConsent()
     const persistedLanguage = getPersistedPublicLanguageClient({
@@ -99,7 +101,7 @@ export const useRootLanguageRedirect = ({ navigate }: { navigate?: (url: string)
 
     if (normalizePathname(window.location.pathname) === normalizePathname(redirectTarget)) return
     ;(navigate ?? ((url: string) => window.location.replace(url)))(withLocationSuffix(redirectTarget))
-  }, [navigate])
+  }, [navigate, languages])
 }
 
 export const useLegacyPublicPathRedirect = ({
@@ -109,10 +111,11 @@ export const useLegacyPublicPathRedirect = ({
   pathname: string
   navigate?: (url: string) => void
 }) => {
+  const languages = useLanguagesEnv()
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const supportedLanguages = getSupportedPublicLanguages()
+    const supportedLanguages = Object.keys(languages)
     const cookieEnabled = hasAcceptedCookieConsent()
     const preferredLanguage =
       getPersistedPublicLanguageClient({
@@ -138,5 +141,5 @@ export const useLegacyPublicPathRedirect = ({
 
     if (normalizePathname(window.location.pathname) === normalizePathname(redirectTarget)) return
     ;(navigate ?? ((url: string) => window.location.replace(url)))(withLocationSuffix(redirectTarget))
-  }, [navigate, pathname])
+  }, [navigate, pathname, languages])
 }

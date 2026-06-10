@@ -15,13 +15,13 @@ import { useContext, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuBuilding, LuChevronLeft, LuChevronRight, LuChevronsUpDown, LuLogOut, LuUserPen } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router-dom'
-import { AppEnv } from '~src/app-env'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { ThemeToggleGroup } from '~components/Layout/ColorModeSwitcher'
 import { LanguageListDashboard } from '~components/Navbar/LanguagesList'
 import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { Routes } from '~routes'
+import { useAppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
 import { OrganizationSwitcher } from './OrganizationSwitcher'
 
@@ -37,8 +37,9 @@ const UserProfile = () => {
   })
   const [switchOrg, setSwitchOrg] = useState(false)
 
-  const privacyPolicyUrl = AppEnv.PRIVACY_POLICY_URL
-  const termsOfServiceUrl = AppEnv.TERMS_OF_SERVICE_URL
+  const appEnv = useAppEnv()
+  const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
+  const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
 
   const placement = variant ? 'right-end' : 'bottom'
   const avatarSrc = organization?.account?.avatar || ''

@@ -7,7 +7,7 @@ vi.mock('~src/app-env', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/app-env')>()
   return {
     ...actual,
-    getLanguagesEnv: () => ({
+    useLanguagesEnv: () => ({
       en: 'English',
       es: 'Spanish',
       ca: 'Catalan',

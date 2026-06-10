@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  clearPublicLanguageCookie,
-  getStoredPublicLanguage,
-  getSupportedPublicLanguages,
-  persistPublicLanguageCookie,
-} from '~i18n/public-language'
-import { AppEnv } from '~src/app-env'
+import { clearPublicLanguageCookie, getStoredPublicLanguage, persistPublicLanguageCookie } from '~i18n/public-language'
+import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 
 import { AlertRoot as Alert, AlertDescription, AlertTitle, Box, Button, HStack, Link } from '@chakra-ui/react'
 import { getCookieConsent, hasCookieConsent, initializeGTM, setCookieConsent } from './utils'
@@ -15,7 +10,8 @@ export function CookieConsent() {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const privacyPolicyUrl = AppEnv.PRIVACY_POLICY_URL
+  const { PRIVACY_POLICY_URL: privacyPolicyUrl, GTM_CONTAINER_ID: gtmId } = useAppEnv()
+  const supportedLanguages = Object.keys(useLanguagesEnv())
 
   useEffect(() => {
     setMounted(true)
@@ -26,15 +22,14 @@ export function CookieConsent() {
       // User has already made a choice, initialize GTM accordingly
       const consent = getCookieConsent()
       const accepted = consent === 'accepted'
-      initializeGTM(accepted)
+      initializeGTM(accepted, gtmId)
     } else {
       // Show the cookie consent banner
       setOpen(true)
     }
-  }, [])
+  }, [gtmId])
 
   const syncPublicLanguageCookie = () => {
-    const supportedLanguages = getSupportedPublicLanguages()
     const storedLanguage = getStoredPublicLanguage({
       supportedLanguages,
       storage: window.localStorage,
@@ -52,7 +47,7 @@ export function CookieConsent() {
   const handleAccept = () => {
     setCookieConsent(true)
     syncPublicLanguageCookie()
-    initializeGTM(true)
+    initializeGTM(true, gtmId)
     setOpen(false)
   }
 
@@ -62,7 +57,7 @@ export function CookieConsent() {
       document,
       location: window.location,
     })
-    initializeGTM(false)
+    initializeGTM(false, gtmId)
     setOpen(false)
   }
 

@@ -1,10 +1,6 @@
-import { getLanguagesEnv } from '~src/app-env'
-
 export const PUBLIC_LANGUAGE_STORAGE_KEY = 'i18nextLng'
 export const PUBLIC_LANGUAGE_COOKIE_KEY = 'vocdoni-public-language'
 const PUBLIC_LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
-
-export const getSupportedPublicLanguages = () => Object.keys(getLanguagesEnv())
 
 export const getDefaultPublicLanguage = (supportedLanguages: string[]) =>
   supportedLanguages.includes('en') ? 'en' : supportedLanguages[0]

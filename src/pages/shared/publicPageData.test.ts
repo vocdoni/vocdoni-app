@@ -4,17 +4,14 @@ const { createVocdoniSdkClient } = vi.hoisted(() => ({
   createVocdoniSdkClient: vi.fn(),
 }))
 
-vi.mock('~src/app-env', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('~src/app-env')>()
-
-  return {
-    ...actual,
-    getLanguagesEnv: () => ({
-      en: 'English',
-      ca: 'Catalan',
-    }),
-  }
-})
+vi.mock('~src/app-env-server', () => ({
+  // Read APP_URL live from process.env so per-test overrides take effect
+  // (the real getServerAppEnv memoizes for the process lifetime).
+  getServerAppEnv: () => ({
+    LANGUAGES: { en: 'English', ca: 'Catalan' },
+    APP_URL: process.env.APP_URL,
+  }),
+}))
 
 vi.mock('~src/providers/vocdoni-client-config', () => ({
   createVocdoniSdkClient,

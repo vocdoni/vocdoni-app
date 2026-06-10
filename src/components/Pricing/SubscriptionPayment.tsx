@@ -13,20 +13,18 @@ import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
-import { AppEnv } from '~src/app-env'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { SubscriptionType, useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
+import { useAppEnv } from '~src/app-env'
 import { QueryKeys } from '~src/queries/keys'
 import { useColorMode } from '~theme/color-mode'
 import { AnalyticsEvents } from '~utils/analytics'
 import { OrderSummary } from './OrderSummary'
 import { PromotionCodeInput } from './PromotionCodeInput'
 import { useSubscriptionCheckout } from './use-subscription-checkout'
-
-const stripePublicKey = AppEnv.STRIPE_PUBLIC_KEY
 
 export type SubscriptionPaymentData = {
   billingPeriod: 'month' | 'year'
@@ -173,9 +171,10 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
   const toast = useToast()
   const { trackPlausibleEvent } = useAnalytics()
   const { colorMode } = useColorMode()
+  const stripePublicKey = useAppEnv().STRIPE_PUBLIC_KEY
 
   const [stripePromise] = useState<Promise<Stripe | null>>(
-    loadStripe(stripePublicKey, {
+    loadStripe(stripePublicKey ?? '', {
       locale: i18n.resolvedLanguage as any,
       betas: ['custom_checkout_tax_id_1'],
     })

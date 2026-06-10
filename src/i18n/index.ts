@@ -3,15 +3,28 @@ import { format, formatDistance, Locale } from 'date-fns'
 import i18next, { i18n as I18nInstance } from 'i18next'
 import BrowserLanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
-import { AppEnv, getLanguagesEnv } from '~src/app-env'
 import { ucfirst } from '~utils/strings'
+import { baseLanguages } from './languages'
 import { dateLocales, reactComponentsTranslations, translations } from './locales'
 
-const languagesSlice = getLanguagesEnv()
-const supportedLanguages = Object.keys(languagesSlice)
-const fallbackLanguage = supportedLanguages[0]
+// Translation resources are bundled for every supported language regardless of
+// the runtime LANGUAGES config; the runtime config only restricts which
+// languages are offered and which is the fallback (see LanguageOptions below).
+const allLanguages = Object.keys(baseLanguages)
+const DEFAULT_FALLBACK_LANGUAGE = 'en'
 const defaultNamespaces = ['common', reactComponentsNamespace]
 const isTestEnv = typeof process !== 'undefined' && (process.env.VITEST === 'true' || process.env.NODE_ENV === 'test')
+
+/** Runtime-driven language configuration passed from the app's env. */
+export type LanguageOptions = {
+  supportedLanguages: string[]
+  fallbackLanguage: string
+}
+
+const defaultLanguageOptions: LanguageOptions = {
+  supportedLanguages: allLanguages,
+  fallbackLanguage: DEFAULT_FALLBACK_LANGUAGE,
+}
 
 type DebugOptions = {
   isDev: boolean
@@ -22,7 +35,7 @@ type DebugOptions = {
 export const shouldEnableI18nDebug = ({ isDev, isTestEnv, isBrowser }: DebugOptions) => isDev && !isTestEnv && isBrowser
 
 const resources = Object.fromEntries(
-  supportedLanguages.map((lang) => {
+  allLanguages.map((lang) => {
     const componentResources = reactComponentsResources[lang as keyof typeof reactComponentsResources]
 
     return [
@@ -84,12 +97,17 @@ const registerFormatters = (instance: I18nInstance) => {
   instance.services.formatter?.add('ucfirst', (value: string, lng: string | undefined) => ucfirst(value, lng))
 }
 
-const getI18nOptions = ({ language, isBrowser }: { language?: string; isBrowser: boolean }) => ({
+const getI18nOptions = ({
+  language,
+  isBrowser,
+  supportedLanguages,
+  fallbackLanguage,
+}: { language?: string; isBrowser: boolean } & LanguageOptions) => ({
   lng: language,
   fallbackLng: fallbackLanguage,
   supportedLngs: supportedLanguages,
   lowerCaseLng: true,
-  debug: shouldEnableI18nDebug({ isDev: AppEnv.DEV, isTestEnv, isBrowser }),
+  debug: shouldEnableI18nDebug({ isDev: import.meta.env.DEV, isTestEnv, isBrowser }),
   ns: defaultNamespaces,
   defaultNS: 'common',
   resources,
@@ -105,10 +123,12 @@ const initializeInstance = ({
   instance,
   language,
   useBrowserLanguageDetector,
+  languageOptions = defaultLanguageOptions,
 }: {
   instance: I18nInstance
   language?: string
   useBrowserLanguageDetector: boolean
+  languageOptions?: LanguageOptions
 }) => {
   if (useBrowserLanguageDetector) {
     instance.use(BrowserLanguageDetector)
@@ -119,6 +139,7 @@ const initializeInstance = ({
     getI18nOptions({
       language,
       isBrowser: typeof window !== 'undefined',
+      ...languageOptions,
     }),
     (err) => {
       if (err) {
@@ -136,7 +157,7 @@ const initializeInstance = ({
 
 let baseI18nInstance: I18nInstance | null = null
 
-export const getBaseI18n = () => {
+export const getBaseI18n = (languageOptions?: LanguageOptions) => {
   if (baseI18nInstance) {
     return baseI18nInstance
   }
@@ -145,17 +166,19 @@ export const getBaseI18n = () => {
   initializeInstance({
     instance: baseI18nInstance,
     useBrowserLanguageDetector: true,
+    languageOptions,
   })
 
   return baseI18nInstance
 }
 
-export const createPageI18nInstance = (language: string) => {
+export const createPageI18nInstance = (language: string, languageOptions?: LanguageOptions) => {
   const instance = i18next.createInstance()
   initializeInstance({
     instance,
     language,
     useBrowserLanguageDetector: false,
+    languageOptions,
   })
 
   return instance

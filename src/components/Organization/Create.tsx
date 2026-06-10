@@ -8,13 +8,13 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink, To, useNavigate } from 'react-router-dom'
-import { AppEnv } from '~src/app-env'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys, useAuthProvider } from '~components/Auth/useAuthProvider'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { OrganizationMetaKeys, OrganizationMetaResponse, SetupStepIds } from '~queries/organization'
+import { useAppEnv } from '~src/app-env'
 import { QueryKeys } from '~src/queries/keys'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
@@ -36,6 +36,7 @@ const useOrganizationCreate = (
   const { client, setSigner, signer: csigner } = useClient()
   const { bearer, signerRefresh } = useAuthProvider()
   const qclient = useQueryClient()
+  const { SAAS_URL } = useAppEnv()
 
   return useMutation<OrganizationCreateResponse, Error, FormData>({
     mutationFn: async (values: FormData) => {
@@ -53,7 +54,7 @@ const useOrganizationCreate = (
       })
 
       const signer = new RemoteSigner({
-        url: AppEnv.SAAS_URL,
+        url: SAAS_URL,
         token: bearer,
       })
 

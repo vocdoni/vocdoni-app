@@ -5,10 +5,10 @@ import { NoOrganizationsError, RemoteSigner, UnauthorizedError } from '@vocdoni/
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
-import { AppEnv } from '~src/app-env'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
 import { LoginResponse, useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
 import { useToast } from '~components/Toast'
+import { useAppEnv } from '~src/app-env'
 
 export enum LocalStorageKeys {
   Token = 'authToken',
@@ -37,13 +37,14 @@ const removeStorageItem = (key: string) => {
  */
 const useSigner = () => {
   const { setSigner } = useClient()
+  const { SAAS_URL } = useAppEnv()
 
   const updateSigner = useCallback(
     async (token?: string) => {
       const t = token || getStorageItem(LocalStorageKeys.Token)
 
       const signer = new RemoteSigner({
-        url: AppEnv.SAAS_URL,
+        url: SAAS_URL,
         token: t,
       })
 

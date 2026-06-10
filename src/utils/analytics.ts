@@ -1,5 +1,3 @@
-import { AppEnv } from '~src/app-env'
-
 type PlausibleConfig = {
   domain: string
   customProperties?: Record<string, string> | ((eventName: string) => Record<string, string>)
@@ -40,13 +38,10 @@ const loadGtmModule = () => {
   return gtmModulePromise
 }
 
-const getAnalyticsClientId = (): string | undefined => {
-  const analyticsClientId = AppEnv.ANALYTICS_CLIENT_ID
-  return analyticsClientId?.trim() || undefined
-}
-
-const addAnalyticsClientIdToPlausibleConfig = (config: PlausibleConfig): PlausibleConfig => {
-  const analyticsClientId = getAnalyticsClientId()
+const addAnalyticsClientIdToPlausibleConfig = (
+  config: PlausibleConfig,
+  analyticsClientId?: string
+): PlausibleConfig => {
   if (!analyticsClientId) return config
 
   const existingCustomProperties = config.customProperties
@@ -69,14 +64,13 @@ const addAnalyticsClientIdToPlausibleConfig = (config: PlausibleConfig): Plausib
   }
 }
 
-export const initializeGTM = (config: TagManagerArgs): void => {
+export const initializeGTM = (config: TagManagerArgs, analyticsClientId?: string): void => {
   if (gtmInitialized) return
   if (!canUseBrowserAnalytics()) return
 
   void loadGtmModule()
     .then((TagManager) => {
       TagManager.initialize(config)
-      const analyticsClientId = getAnalyticsClientId()
       if (analyticsClientId) {
         TagManager.dataLayer({
           dataLayer: {
@@ -91,13 +85,13 @@ export const initializeGTM = (config: TagManagerArgs): void => {
     })
 }
 
-export const initializePlausible = (config: PlausibleConfig): void => {
+export const initializePlausible = (config: PlausibleConfig, analyticsClientId?: string): void => {
   if (plausibleInitialized) return
   if (!canUseBrowserAnalytics()) return
 
   void loadPlausibleModule()
     .then(({ init }) => {
-      init(addAnalyticsClientIdToPlausibleConfig(config))
+      init(addAnalyticsClientIdToPlausibleConfig(config, analyticsClientId))
       plausibleInitialized = true
     })
     .catch((error) => {

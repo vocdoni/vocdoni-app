@@ -18,19 +18,21 @@ import { FaGlobeAmericas } from 'react-icons/fa'
 import { LuCheck } from 'react-icons/lu'
 import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
 import { Select } from '~components/Form/Select'
-import { usePublicLanguageRouting, navigateToPublicLanguage } from '~i18n/usePublicLanguageRouting'
 import i18n from '~i18n'
-import { getLanguagesEnv } from '~src/app-env'
+import { navigateToPublicLanguage, usePublicLanguageRouting } from '~i18n/usePublicLanguageRouting'
+import { useLanguagesEnv } from '~src/app-env'
 import { languagesListSelectStyles } from '~theme/selectStyles'
 
 export const navigateToLanguage = (
   language: string,
   i18n: ReturnType<typeof useTranslation>['i18n'],
+  supportedLanguages: string[],
   publicLanguageLinks?: Record<string, string>,
   navigate: (url: string) => void = (url) => window.location.assign(url)
 ) => {
   void navigateToPublicLanguage({
     language,
+    supportedLanguages,
     publicLanguageLinks,
     navigate,
     changeLanguage: i18n.changeLanguage.bind(i18n),
@@ -46,7 +48,7 @@ export const LanguagesList = ({
 }) => {
   const { navigateToLanguage, currentLanguage } = usePublicLanguageRouting({ publicLanguageLinks })
 
-  const languages = getLanguagesEnv()
+  const languages = useLanguagesEnv()
   const languageEntries = Object.entries(languages).sort(([, a], [, b]) => a.localeCompare(b))
 
   return (
@@ -74,7 +76,7 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
-  const languages = getLanguagesEnv()
+  const languages = useLanguagesEnv()
   const hasMultipleLanguages = Object.keys(languages).length > 1
   if (!hasMultipleLanguages) {
     return null
@@ -127,7 +129,7 @@ export const LanguageListDashboard = ({ ...props }) => {
   const { t, i18n } = useTranslation()
   const { navigateToLanguage } = usePublicLanguageRouting()
 
-  const languages = getLanguagesEnv()
+  const languages = useLanguagesEnv()
   const languageOptions: LanguageOption[] = Object.entries(languages)
     .map(([key, label]) => ({
       value: key,

@@ -1,12 +1,13 @@
-import { getLanguagesEnv } from '~src/app-env'
+import type { PageContext } from 'vike/types'
+import { normalizeLanguages } from '~src/app-env'
 
-export default (pageContext: { urlPathname: string }) => {
+export default (pageContext: PageContext) => {
   const match = pageContext.urlPathname.match(/^\/([^/]+)(\/.*)?$/)
 
   if (!match) return false
 
   const [, lang, rest = '/'] = match
-  const supportedLanguages = Object.keys(getLanguagesEnv())
+  const supportedLanguages = Object.keys(normalizeLanguages(pageContext.globalContext.appEnv?.LANGUAGES))
 
   if (!supportedLanguages.includes(lang)) return false
   if (/^\/organization\/[^/]+\/?$/.test(rest)) return false

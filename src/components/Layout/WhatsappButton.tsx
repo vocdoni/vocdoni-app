@@ -1,7 +1,7 @@
 import { Button, HStack, Icon, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { MdOutlineWhatsapp } from 'react-icons/md'
-import { AppEnv } from '~src/app-env'
+import { useAppEnv } from '~src/app-env'
 
 interface WhatsAppButtonProps {
   noExpand?: boolean
@@ -9,7 +9,7 @@ interface WhatsAppButtonProps {
 
 export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
   const { t } = useTranslation()
-  const phoneNumber = AppEnv.WHATSAPP_PHONE_NUMBER.replace(/\D/g, '')
+  const phoneNumber = (useAppEnv().WHATSAPP_PHONE_NUMBER ?? '').replace(/\D/g, '')
   const whatsappUrl = `https://wa.me/${phoneNumber}`
 
   return (

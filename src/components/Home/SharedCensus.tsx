@@ -13,11 +13,11 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
 import { Link as ReactRouterLink } from 'react-router-dom'
-import { AppEnv, getLanguagesEnv } from '~src/app-env'
 import Editor from '~components/Editor'
 import { ActionsMenu } from '~components/Process/ActionsMenu'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
+import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 
 export const parseProcessIds = (value: string | undefined) =>
   (value || '')
@@ -25,9 +25,10 @@ export const parseProcessIds = (value: string | undefined) =>
     .map((id) => id.trim())
     .filter(Boolean)
 
-const processIds = parseProcessIds(AppEnv.PROCESS_IDS)
-
 const SharedCensus = () => {
+  const { PROCESS_IDS } = useAppEnv()
+  const processIds = parseProcessIds(PROCESS_IDS)
+
   if (processIds.length === 0) {
     return null
   }
@@ -59,18 +60,9 @@ const SharedCensusHomeContent = () => {
 
   const isAdmin = aconnected && account?.address === (election as PublishedElection)?.organizationId
   const canViewProcesses = connected || isAdmin
-  const parseLanguageSlice = (value: Record<string, string> | string) => {
-    if (typeof value === 'string') {
-      try {
-        return JSON.parse(value) as Record<string, string>
-      } catch {
-        return {}
-      }
-    }
-    return value
-  }
-
-  const languagesSlice = parseLanguageSlice(getLanguagesEnv())
+  const appEnv = useAppEnv()
+  const processIds = parseProcessIds(appEnv.PROCESS_IDS)
+  const languagesSlice = useLanguagesEnv()
   const defaultLanguage = Object.keys(languagesSlice)[0] || 'en'
 
   const getLocalizedMarkdown = (content?: Record<string, string>) => {
@@ -95,14 +87,14 @@ const SharedCensusHomeContent = () => {
     return value
   }
 
-  const sharedCensusAlways = parseSharedCensusCopy(AppEnv.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT)
-  const sharedCensusDisconnected = parseSharedCensusCopy(AppEnv.SHARED_CENSUS_DISCONNECTED_TEXT)
-  const sharedCensusConnected = parseSharedCensusCopy(AppEnv.SHARED_CENSUS_CONNECTED_TEXT)
-  const postText = parseSharedCensusCopy(AppEnv.SHARED_CENSUS_POST_TEXT)
+  const sharedCensusAlways = parseSharedCensusCopy(appEnv.SHARED_CENSUS_ALWAYS_VISIBLE_TEXT)
+  const sharedCensusDisconnected = parseSharedCensusCopy(appEnv.SHARED_CENSUS_DISCONNECTED_TEXT)
+  const sharedCensusConnected = parseSharedCensusCopy(appEnv.SHARED_CENSUS_CONNECTED_TEXT)
+  const postText = parseSharedCensusCopy(appEnv.SHARED_CENSUS_POST_TEXT)
   const alwaysMarkdown = getLocalizedMarkdown(sharedCensusAlways)
   const disconnectedMarkdown = getLocalizedMarkdown(sharedCensusDisconnected)
   const connectedMarkdown = getLocalizedMarkdown(sharedCensusConnected)
-  const streamUrl = typeof AppEnv.STREAM_URL === 'string' ? AppEnv.STREAM_URL : undefined
+  const streamUrl = typeof appEnv.STREAM_URL === 'string' ? appEnv.STREAM_URL : undefined
   const showStream = canViewProcesses && !!streamUrl
   const showAlways = !!alwaysMarkdown
   const showDisconnected = !!disconnectedMarkdown && !canViewProcesses

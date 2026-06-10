@@ -8,11 +8,11 @@ import {
   useElection,
   VoteWeight,
 } from '@vocdoni/react-components'
-import { CensusType, dotobject, ElectionStatus, formatUnits, InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import { CensusType, dotobject, ElectionStatus, formatUnits, InvalidElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
-import { AppEnv } from '~src/app-env'
 import { RouterAwareLink } from '~components/RouterAwareLink'
+import { useAppEnv } from '~src/app-env'
 import { CensusMeta, CensusTypes } from './Census/CensusType'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
@@ -32,6 +32,7 @@ const ProcessAside = () => {
     loaded: { census: loadedCensus },
   } = useElection()
   const { env } = useClient()
+  const appEnv = useAppEnv()
 
   if (election instanceof InvalidElection) return null
 
@@ -48,11 +49,11 @@ const ProcessAside = () => {
     election?.status !== ElectionStatus.CANCELED &&
     election?.status !== ElectionStatus.UPCOMING &&
     !(election?.electionType.anonymous && voting) &&
-    !AppEnv.HIDE_VOTER_COUNT
+    !appEnv.HIDE_VOTER_COUNT
   const showVotes =
     !election?.electionType.secretUntilTheEnd &&
     election?.status !== ElectionStatus.UPCOMING &&
-    !AppEnv.HIDE_VOTER_COUNT
+    !appEnv.HIDE_VOTER_COUNT
 
   let votes = 0
   if (election && showVotes && election?.questions.length) {

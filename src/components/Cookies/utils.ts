@@ -1,5 +1,4 @@
 import TagManager from 'react-gtm-module'
-import { AppEnv } from '~src/app-env'
 
 const CONSENT_KEY = 'vocdoni-cookie-consent'
 const CONSENT_ACCEPTED = 'accepted'
@@ -42,18 +41,15 @@ export function hasAcceptedCookieConsent(): boolean {
 /**
  * Initialize Google Tag Manager with or without cookie storage
  * @param withCookies - if true, GTM will use cookies; if false, storage will be disabled
+ * @param gtmId - the GTM container id (from runtime env, provided by the caller)
  */
-
-// Replace this with your actual GTM ID or import from config/environment
-const GTM_ID = AppEnv.GTM_CONTAINER_ID
-
-export function initializeGTM(withCookies: boolean): void {
+export function initializeGTM(withCookies: boolean, gtmId?: string): void {
   if (typeof window === 'undefined') return
 
-  if (!GTM_ID) return
+  if (!gtmId) return
 
   // Initialize GTM
-  TagManager.initialize({ gtmId: GTM_ID })
+  TagManager.initialize({ gtmId })
 
   // If cookies are rejected, configure gtag to disable all storage
   if (!withCookies) {

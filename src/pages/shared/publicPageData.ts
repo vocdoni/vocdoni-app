@@ -1,6 +1,6 @@
 import { render } from 'vike/abort'
 import type { PageContextServer } from 'vike/types'
-import { AppEnv, getLanguagesEnv } from '~src/app-env'
+import { getServerAppEnv } from '~src/app-env-server'
 import { createVocdoniSdkClient } from '~src/providers/vocdoni-client-config'
 import {
   getPublicLanguageAlternates,
@@ -13,10 +13,10 @@ import {
   resolvePublicLanguage,
 } from '~src/ssr/public-pages'
 
-const getSupportedPublicLanguages = () => Object.keys(getLanguagesEnv())
+const getSupportedPublicLanguages = () => Object.keys(getServerAppEnv().LANGUAGES ?? {})
 
 const resolvePublicOrigin = (pageContext: PageContextServer) => {
-  const configuredOrigin = AppEnv.APP_URL?.trim()
+  const configuredOrigin = getServerAppEnv().APP_URL?.trim()
 
   if (configuredOrigin) {
     try {
@@ -70,7 +70,7 @@ const renderNotFoundIfNeeded = (error: unknown) => {
 }
 
 export const loadOrganizationPublicPageData = async (pageContext: PageContextServer) => {
-  const client = createVocdoniSdkClient()
+  const client = createVocdoniSdkClient(getServerAppEnv().VOCDONI_ENVIRONMENT)
   const origin = resolvePublicOrigin(pageContext)
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
   const address = pageContext.routeParams.address
@@ -104,7 +104,7 @@ export const loadOrganizationPublicPageData = async (pageContext: PageContextSer
 type ProcessPathBuilder = (params: { id: string; language: string }) => string
 
 const loadProcessPublicPageDataWith = async (pageContext: PageContextServer, buildPath: ProcessPathBuilder) => {
-  const client = createVocdoniSdkClient()
+  const client = createVocdoniSdkClient(getServerAppEnv().VOCDONI_ENVIRONMENT)
   const origin = resolvePublicOrigin(pageContext)
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
   const id = pageContext.routeParams.id

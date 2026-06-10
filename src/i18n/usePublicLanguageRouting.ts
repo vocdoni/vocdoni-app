@@ -1,28 +1,25 @@
 import { useTranslation } from 'react-i18next'
 import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
-import {
-  getSupportedPublicLanguages,
-  localizePublicPath,
-  persistPublicLanguagePreferenceClient,
-} from './public-language'
+import { useLanguagesEnv } from '~src/app-env'
+import { localizePublicPath, persistPublicLanguagePreferenceClient } from './public-language'
 
 const defaultNavigate = (url: string) => window.location.assign(url)
 
 export const navigateToPublicLanguage = async ({
   language,
+  supportedLanguages,
   currentPathname,
   publicLanguageLinks,
   navigate = defaultNavigate,
   changeLanguage,
 }: {
   language: string
+  supportedLanguages: string[]
   currentPathname?: string
   publicLanguageLinks?: Record<string, string>
   navigate?: (url: string) => void
   changeLanguage: (language: string) => Promise<unknown>
 }) => {
-  const supportedLanguages = getSupportedPublicLanguages()
-
   const cookieEnabled = typeof window !== 'undefined' && hasAcceptedCookieConsent()
 
   persistPublicLanguagePreferenceClient(language, {
@@ -63,12 +60,14 @@ export const usePublicLanguageRouting = ({
   navigate?: (url: string) => void
 } = {}) => {
   const { i18n } = useTranslation()
+  const supportedLanguages = Object.keys(useLanguagesEnv())
 
   return {
     currentLanguage: i18n.language,
     navigateToLanguage: (language: string) =>
       navigateToPublicLanguage({
         language,
+        supportedLanguages,
         publicLanguageLinks,
         navigate,
         changeLanguage: i18n.changeLanguage.bind(i18n),

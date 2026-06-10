@@ -1,7 +1,7 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ComponentsProvider, ConfirmProvider } from '@vocdoni/react-components'
 import { render, RenderOptions } from '@testing-library/react'
+import { ComponentsProvider, ConfirmProvider } from '@vocdoni/react-components'
 import i18n, { type Resource } from 'i18next'
 import { ComponentType, ReactElement, ReactNode } from 'react'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
@@ -10,11 +10,13 @@ import {
   MemoryRouter,
   RouterProvider,
   type MemoryRouterProps,
+  type RouteObject,
   type RouterProviderProps,
 } from 'react-router-dom'
-import { type RouteObject } from 'react-router-dom'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { ToastProvider as BaseToastProvider } from '~components/Toast'
+import { AppEnvProvider } from '~src/app-env'
+import { buildAppEnv, type AppEnv } from '~src/app-env-build'
 import { ColorModeProvider } from '~theme/color-mode'
 import { uiScaffoldComponents } from '~theme/react-components'
 import { system } from '~theme/system'
@@ -114,6 +116,7 @@ interface AllProvidersProps {
   queryClient?: QueryClient
   i18nInstance?: typeof i18n
   innerWrapper?: ComponentType<{ children: ReactNode }>
+  appEnv?: Partial<AppEnv>
 }
 
 const TestToastProvider = ({ children }: { children: ReactNode }) => {
@@ -128,25 +131,29 @@ export function AllProviders({
   queryClient = createTestQueryClient(),
   i18nInstance = i18n,
   innerWrapper: InnerWrapper,
+  appEnv,
 }: AllProvidersProps) {
   const content = InnerWrapper ? <InnerWrapper>{children}</InnerWrapper> : children
+  const env: AppEnv = { ...buildAppEnv({}), ...appEnv }
 
   return (
-    <ColorModeProvider>
-      <ChakraProvider value={system}>
-        <I18nextProvider i18n={i18nInstance}>
-          <QueryClientProvider client={queryClient}>
-            <TestToastProvider>
-              <ComponentsProvider components={uiScaffoldComponents}>
-                <ConfirmProvider>
-                  <ConnectionToastProvider>{content}</ConnectionToastProvider>
-                </ConfirmProvider>
-              </ComponentsProvider>
-            </TestToastProvider>
-          </QueryClientProvider>
-        </I18nextProvider>
-      </ChakraProvider>
-    </ColorModeProvider>
+    <AppEnvProvider value={env}>
+      <ColorModeProvider>
+        <ChakraProvider value={system}>
+          <I18nextProvider i18n={i18nInstance}>
+            <QueryClientProvider client={queryClient}>
+              <TestToastProvider>
+                <ComponentsProvider components={uiScaffoldComponents}>
+                  <ConfirmProvider>
+                    <ConnectionToastProvider>{content}</ConnectionToastProvider>
+                  </ConfirmProvider>
+                </ComponentsProvider>
+              </TestToastProvider>
+            </QueryClientProvider>
+          </I18nextProvider>
+        </ChakraProvider>
+      </ColorModeProvider>
+    </AppEnvProvider>
   )
 }
 
@@ -155,15 +162,16 @@ type RenderWithProvidersOptions = Omit<RenderOptions, 'wrapper'> & {
   queryClient?: QueryClient
   i18nInstance?: typeof i18n
   wrapper?: ComponentType<{ children: ReactNode }>
+  appEnv?: Partial<AppEnv>
 }
 
 export function renderWithProviders(ui: ReactElement, options?: RenderWithProvidersOptions) {
-  const { queryClient = createTestQueryClient(), i18nInstance, wrapper, ...renderOptions } = options ?? {}
+  const { queryClient = createTestQueryClient(), i18nInstance, wrapper, appEnv, ...renderOptions } = options ?? {}
 
   return {
     ...render(ui, {
       wrapper: ({ children }) => (
-        <AllProviders queryClient={queryClient} i18nInstance={i18nInstance} innerWrapper={wrapper}>
+        <AllProviders queryClient={queryClient} i18nInstance={i18nInstance} innerWrapper={wrapper} appEnv={appEnv}>
           {children}
         </AllProviders>
       ),

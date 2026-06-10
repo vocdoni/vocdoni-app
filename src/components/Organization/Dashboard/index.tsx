@@ -38,7 +38,7 @@ import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { PlanId } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
-import { AppEnv } from '~src/app-env'
+import { useAppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
 import { CheckboxTypes, paginatedElectionsQuery, useOrganizationSetup } from '~src/queries/organization'
 import { UsageLimits } from './UsageLimits'
@@ -70,7 +70,7 @@ const Tutorial = () => {
   const { t } = useTranslation()
   const { data: profile, isLoading } = useProfile()
   const { subscription, loading } = useSubscription()
-  const videoTutorials = AppEnv.VIDEO_TUTORIAL ?? { en: '' }
+  const videoTutorials = useAppEnv().VIDEO_TUTORIAL ?? { en: '' }
   const language = usePublicLanguage()
   const videoTutorialSrc = videoTutorials[language] ?? videoTutorials.en
 

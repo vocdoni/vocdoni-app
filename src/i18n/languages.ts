@@ -30,4 +30,40 @@ export const openGraphLocaleMap: Record<string, string> = {
 
 export const toOpenGraphLocale = (language: string): string => openGraphLocaleMap[language] ?? language
 
+/**
+ * Resolves the configured `LANGUAGES` env value (a comma-separated list of
+ * language codes) into an ordered slice of `baseLanguages`. Returns every base
+ * language when unset, and throws on unsupported codes.
+ */
+export const resolveLanguagesSlice = (rawValue?: string): Record<string, string> => {
+  if (!rawValue) {
+    return { ...baseLanguages }
+  }
+
+  const languages = rawValue
+    .split(',')
+    .map((lang) => lang.trim())
+    .filter(Boolean)
+
+  if (languages.length === 0) {
+    return { ...baseLanguages }
+  }
+
+  const invalidLanguages = languages.filter((lang) => !baseLanguages[lang as keyof typeof baseLanguages])
+
+  if (invalidLanguages.length) {
+    throw new Error(
+      `Invalid LANGUAGES configuration. Received: ${invalidLanguages.join(', ')}. Supported: ${Object.keys(baseLanguages).join(', ')}.`
+    )
+  }
+
+  return languages.reduce(
+    (acc, lang) => {
+      acc[lang] = baseLanguages[lang as keyof typeof baseLanguages]
+      return acc
+    },
+    {} as Record<string, string>
+  )
+}
+
 export default Object.keys(baseLanguages)

@@ -3,8 +3,8 @@ import { Button, ButtonProps, CloseButton, Code, Dialog, HStack, Icon, Portal, T
 import { useEffect } from 'react'
 import { Trans } from 'react-i18next'
 import { LuCalendar } from 'react-icons/lu'
-import { AppEnv } from '~src/app-env'
 import { SetupStepIds, useOrganizationSetup } from '~queries/organization'
+import { useAppEnv } from '~src/app-env'
 import { useColorMode } from '~theme/color-mode'
 
 type BookerProps = {
@@ -13,6 +13,7 @@ type BookerProps = {
 
 export const Booker = ({ callback }: BookerProps) => {
   const { colorMode } = useColorMode()
+  const appEnv = useAppEnv()
 
   useEffect(() => {
     ;(async function () {
@@ -25,7 +26,7 @@ export const Booker = ({ callback }: BookerProps) => {
     })()
   }, [])
 
-  if (!AppEnv.CALCOM_EVENT_SLUG) {
+  if (!appEnv.CALCOM_EVENT_SLUG) {
     return (
       <Text>
         Hey developer, you forgot to define <Code>CALCOM_EVENT_SLUG</Code> env var 🥲
@@ -36,7 +37,7 @@ export const Booker = ({ callback }: BookerProps) => {
   return (
     <Cal
       namespace='30min'
-      calLink={AppEnv.CALCOM_EVENT_SLUG}
+      calLink={appEnv.CALCOM_EVENT_SLUG}
       style={{ width: '100%', height: '100%', overflow: 'scroll' }}
       config={{ layout: 'month_view' }}
     />
