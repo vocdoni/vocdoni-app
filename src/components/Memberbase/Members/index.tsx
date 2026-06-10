@@ -20,12 +20,23 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react'
-import { useQueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-components'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useClient, useOrganization } from '@vocdoni/react-components'
+import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuEllipsis, LuPlus, LuSearch, LuSettings, LuTrash2, LuUserPlus, LuUsers, LuX } from 'react-icons/lu'
+import {
+  LuEllipsis,
+  LuListPlus,
+  LuPlus,
+  LuSearch,
+  LuSettings,
+  LuTrash2,
+  LuUserPlus,
+  LuUsers,
+  LuX,
+} from 'react-icons/lu'
 import { generatePath, useNavigate, useOutletContext } from 'react-router-dom'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
@@ -33,9 +44,11 @@ import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
+import { useAddCensusParticipants, useProcessCensusId } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useDeleteMembers, usePaginatedMembers } from '~src/queries/members'
+import { paginatedElectionsQuery } from '~src/queries/organization'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
@@ -50,11 +63,13 @@ type MemberActionsProps = {
   member: Member
   onDelete: () => void
   onAddToGroup: () => void
+  onAddToCensus: () => void
 }
 
 type MemberBulkActionsProps = {
   onDelete: () => void
   onAddToGroup: () => void
+  onAddToCensus: () => void
 }
 
 type DeleteMemberModalProps = {
@@ -71,9 +86,15 @@ type CreateGroupButtonProps = {
 type MembersListProps = {
   openDeleteSelected: (member: Member) => void
   onAddToGroup: (member: Member) => void
+  onAddToCensus: (member: Member) => void
 }
 
 type AddMembersToGroupDrawerProps = {
+  isOpen: boolean
+  onClose: () => void
+}
+
+type AddMembersToCensusDrawerProps = {
   isOpen: boolean
   onClose: () => void
 }
@@ -86,6 +107,7 @@ type MemberTableItemProps = {
   member: Member
   openDeleteSelected: () => void
   onAddToGroup: () => void
+  onAddToCensus: () => void
 }
 
 const maskedFields = new Set<string>(['phone'])
@@ -193,7 +215,160 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
   )
 }
 
-const MemberActions = ({ member, onDelete, onAddToGroup }: MemberActionsProps) => {
+const ACTIVE_PROCESS_STATUSES = [ElectionStatus.ONGOING, ElectionStatus.UPCOMING, ElectionStatus.PAUSED]
+
+const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerProps) => {
+  const { t } = useTranslation()
+  const toast = useToast()
+  const { client, account } = useClient()
+  const [selectedProcess, setSelectedProcess] = useState<{ id: string; title: string } | null>(null)
+  const { selectedRows, resetSelectedRows } = useTable()
+  const addCensusParticipants = useAddCensusParticipants()
+
+  const electionsQuery = paginatedElectionsQuery(account, client, { limit: 100 })
+  const { data: elections, isLoading: isLoadingElections } = useQuery({
+    ...electionsQuery,
+    enabled: electionsQuery.enabled && isOpen,
+  })
+
+  const processes = (elections?.elections ?? [])
+    .filter((election): election is PublishedElection => election instanceof PublishedElection)
+    .filter((election) => ACTIVE_PROCESS_STATUSES.includes(election.status as ElectionStatus))
+    .map((election) => ({ id: election.id, title: election.title?.default || election.id }))
+
+  const {
+    data: censusId,
+    isLoading: isLoadingCensus,
+    isError: isCensusError,
+    error: censusError,
+  } = useProcessCensusId(client, selectedProcess?.id, isOpen)
+
+  const handleClose = () => {
+    setSelectedProcess(null)
+    onClose()
+  }
+
+  const handleAddToCensus = () => {
+    if (!censusId) return
+
+    addCensusParticipants.mutate(
+      { censusId, memberIds: selectedRows.map((row) => row.id) },
+      {
+        onSuccess: (response) => {
+          toast({
+            title: t('members.table.add_to_census_success', {
+              defaultValue: '{{count}} member added to the census',
+              defaultValue_other: '{{count}} members added to the census',
+              count: response.added,
+            }),
+            description: response.errors?.length
+              ? t('members.table.add_to_census_partial', {
+                  defaultValue: 'Some members could not be added.',
+                })
+              : undefined,
+            type: 'success',
+            duration: 3000,
+            isClosable: true,
+          })
+          resetSelectedRows()
+          handleClose()
+        },
+        onError: (error: Error) => {
+          toast({
+            title: t('members.table.add_to_census_error', { defaultValue: 'Error adding members to the census' }),
+            description: error.message,
+            type: 'error',
+            duration: 3000,
+            isClosable: true,
+          })
+        },
+      }
+    )
+  }
+
+  return (
+    <Drawer.Root
+      open={isOpen}
+      placement='end'
+      onOpenChange={({ open }) => (!open ? handleClose() : undefined)}
+      size='sm'
+    >
+      <Drawer.Backdrop />
+      <Drawer.Positioner>
+        <Drawer.Content>
+          <Drawer.Header display='flex' justifyContent='space-between' alignItems='center'>
+            <Box>
+              <Heading size='md'>{t('members.table.add_to_census', { defaultValue: 'Add to census' })}</Heading>
+              <Text fontSize='sm' color='texts.subtle'>
+                {t('members.table.add_to_census_description', {
+                  defaultValue: 'Select an active voting process to add the members to its census.',
+                })}
+              </Text>
+            </Box>
+            <IconButton
+              aria-label={t('members.table.close_drawer', { defaultValue: 'Close' })}
+              variant='ghost'
+              size='sm'
+              onClick={handleClose}
+            >
+              <LuX />
+            </IconButton>
+          </Drawer.Header>
+
+          <Drawer.Body display='flex' flexDirection='column' gap={4}>
+            <Select
+              placeholder={t('members.table.select_process', { defaultValue: 'Select process' })}
+              options={processes}
+              isLoading={isLoadingElections}
+              noOptionsMessage={() =>
+                t('members.table.no_active_processes', { defaultValue: 'No active processes found' })
+              }
+              getOptionLabel={(option) => option.title}
+              getOptionValue={(option) => option.id}
+              value={selectedProcess}
+              onChange={(option) => setSelectedProcess(option)}
+            />
+
+            {selectedProcess && !isCensusError && censusId && (
+              <Text fontSize='sm' color='texts.subtle'>
+                {t('members.table.add_to_census_confirmation', {
+                  defaultValue: 'You will add {{count}} member to the "{{process}}" process census.',
+                  defaultValue_other: 'You will add {{count}} members to the "{{process}}" process census.',
+                  count: selectedRows.length,
+                  process: selectedProcess.title,
+                })}
+              </Text>
+            )}
+
+            {selectedProcess && (isCensusError || (!isLoadingCensus && !censusId)) && (
+              <Text fontSize='sm' color='red.400'>
+                {t('members.table.add_to_census_no_census', {
+                  defaultValue: 'Could not resolve a census for this process.',
+                })}
+                {censusError?.message ? ` (${censusError.message})` : ''}
+              </Text>
+            )}
+
+            <Button
+              onClick={handleAddToCensus}
+              mt={2}
+              width='100%'
+              loading={addCensusParticipants.isPending}
+              disabled={!selectedProcess || !censusId || isLoadingCensus || selectedRows.length === 0}
+            >
+              {t('members.table.add_to_census_button', {
+                defaultValue: 'Add {{count}} member',
+                count: selectedRows.length,
+              })}
+            </Button>
+          </Drawer.Body>
+        </Drawer.Content>
+      </Drawer.Positioner>
+    </Drawer.Root>
+  )
+}
+
+const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: MemberActionsProps) => {
   const { t } = useTranslation()
   const { open: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
 
@@ -212,6 +387,9 @@ const MemberActions = ({ member, onDelete, onAddToGroup }: MemberActionsProps) =
             </Menu.Item>
             <Menu.Item value='add-to-group' onSelect={onAddToGroup}>
               {t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
+            </Menu.Item>
+            <Menu.Item value='add-to-census' onSelect={onAddToCensus}>
+              {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
             </Menu.Item>
             <Menu.Separator />
             <Menu.Item value='delete' color='red.400' onSelect={onDelete}>
@@ -480,7 +658,7 @@ const CreateGroupButton = ({ children, members, total, ...rest }: CreateGroupBut
   )
 }
 
-const MemberBulkActions = ({ onDelete, onAddToGroup }: MemberBulkActionsProps) => {
+const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulkActionsProps) => {
   const { t } = useTranslation()
   const { selectedRows } = useTable()
 
@@ -507,6 +685,10 @@ const MemberBulkActions = ({ onDelete, onAddToGroup }: MemberBulkActionsProps) =
             <Icon as={LuUserPlus} />
             {t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
           </Button>
+          <Button size='sm' variant='outline' onClick={() => onAddToCensus()}>
+            <Icon as={LuListPlus} />
+            {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
+          </Button>
           <Button size='sm' colorPalette='red' variant='outline' onClick={() => onDelete()}>
             <Icon as={LuTrash2} />
             {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
@@ -521,7 +703,7 @@ const MemberBulkActions = ({ onDelete, onAddToGroup }: MemberBulkActionsProps) =
   )
 }
 
-const MembersList = ({ openDeleteSelected, onAddToGroup }: MembersListProps) => {
+const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
   const { data = [], isLoading, isFetching } = useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isEmpty = data.length === 0 && !isLoadingOrImporting
@@ -536,6 +718,7 @@ const MembersList = ({ openDeleteSelected, onAddToGroup }: MembersListProps) => 
             member={member}
             openDeleteSelected={() => openDeleteSelected(member)}
             onAddToGroup={() => onAddToGroup(member)}
+            onAddToCensus={() => onAddToCensus(member)}
           />
         ))
       )}
@@ -569,7 +752,7 @@ const EmptyMembers = () => {
   )
 }
 
-const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup }: MemberTableItemProps) => {
+const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
   const { isSelected, toggleOne, columns } = useTable()
 
   return (
@@ -589,7 +772,12 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup }: MemberTab
           <Table.Cell key={column.id}>{maskIfNeeded(column.id, member[column.id])}</Table.Cell>
         ))}
       <Table.Cell>
-        <MemberActions member={member} onDelete={openDeleteSelected} onAddToGroup={onAddToGroup} />
+        <MemberActions
+          member={member}
+          onDelete={openDeleteSelected}
+          onAddToGroup={onAddToGroup}
+          onAddToCensus={onAddToCensus}
+        />
       </Table.Cell>
     </Table.Row>
   )
@@ -684,6 +872,7 @@ const MembersTable = () => {
   const [deleteMode, setDeleteMode] = useState<DeleteModes>(DeleteModes.SELECTED)
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
+  const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
   const { isLoading, isFetching, allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } =
     useTable()
   const isLoadingOrImporting = isLoading || isFetching
@@ -705,6 +894,14 @@ const MembersTable = () => {
     onOpenAddToGroup()
   }
 
+  const openAddToCensus = (member?: Member) => {
+    if (member) {
+      resetSelectedRows()
+      toggleOne(member.id, true)
+    }
+    onOpenAddToCensus()
+  }
+
   const openDeleteAll = () => {
     setDeleteMode(DeleteModes.ALL)
     setDeleteModalOpen(true)
@@ -717,7 +914,11 @@ const MembersTable = () => {
         <Flex direction={{ base: 'column', lg: 'row' }} p={4} gap={2}>
           <Flex direction='column' flex={1} gap={2}>
             <MemberFilters onDelete={openDeleteAll} />
-            <MemberBulkActions onDelete={openDeleteSelected} onAddToGroup={openAddToGroup} />
+            <MemberBulkActions
+              onDelete={openDeleteSelected}
+              onAddToGroup={openAddToGroup}
+              onAddToCensus={openAddToCensus}
+            />
           </Flex>
           <Flex gap={2}>
             <ImportMembers />
@@ -761,7 +962,11 @@ const MembersTable = () => {
                 </Table.ColumnHeader>
               </Table.Row>
             </Table.Header>
-            <MembersList openDeleteSelected={openDeleteSelected} onAddToGroup={openAddToGroup} />
+            <MembersList
+              openDeleteSelected={openDeleteSelected}
+              onAddToGroup={openAddToGroup}
+              onAddToCensus={openAddToCensus}
+            />
             <Table.Caption p={4}>
               <RoutedPaginatedTableFooter />
             </Table.Caption>
@@ -770,6 +975,7 @@ const MembersTable = () => {
       </Box>
       <DeleteMemberModal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} mode={deleteMode} />
       <AddMembersToGroupDrawer isOpen={isAddToGroupOpen} onClose={onAddToGroupClose} />
+      <AddMembersToCensusDrawer isOpen={isAddToCensusOpen} onClose={onAddToCensusClose} />
     </>
   )
 }
