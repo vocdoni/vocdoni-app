@@ -26,4 +26,12 @@ describe('localized catch-all route', () => {
       },
     })
   })
+
+  it('does not claim routes owned by dedicated SSR pages', async () => {
+    const { default: route } = await import('./+route')
+
+    expect(route({ urlPathname: '/ca/organization/0xabc' })).toBe(false)
+    expect(route({ urlPathname: '/ca/processes/0xprocess' })).toBe(false)
+    expect(route({ urlPathname: '/ca/processes/0xprocess/summary' })).toBe(false)
+  })
 })

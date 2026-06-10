@@ -22,7 +22,7 @@ import { LuCircleHelp, LuSearch } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
-import { useCensusBundle } from '~queries/bundle'
+import { useCensusBundle } from '~queries/census'
 import { CensusParticipant, useParticipantsCheck } from '~queries/participants'
 
 // Maps a census credential field to a human label. Unknown fields fall back to their raw key.

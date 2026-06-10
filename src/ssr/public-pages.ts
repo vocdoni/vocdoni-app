@@ -226,11 +226,37 @@ export const getPublicLocalizedProcessRouteMatch = ({
   }
 }
 
+export const getPublicLocalizedProcessSummaryRouteMatch = ({
+  urlPathname,
+  supportedLanguages,
+}: {
+  urlPathname: string
+  supportedLanguages: string[]
+}) => {
+  const match = urlPathname.match(/^\/([^/]+)\/processes\/([^/]+)\/summary\/?$/)
+
+  if (!match) return false
+
+  const [, lang, id] = match
+
+  if (!supportedLanguages.includes(lang)) return false
+
+  return {
+    routeParams: {
+      lang,
+      id,
+    },
+  }
+}
+
 export const getPublicOrganizationPath = ({ address, language }: { address: string; language: string }) =>
   `/${language}/organization/${address}`
 
 export const getPublicProcessPath = ({ id, language }: { id: string; language: string }) =>
   `/${language}/processes/${id}`
+
+export const getPublicProcessSummaryPath = ({ id, language }: { id: string; language: string }) =>
+  `/${language}/processes/${id}/summary`
 
 export const getPublicLanguageAlternates = ({
   languages,

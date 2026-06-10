@@ -11,6 +11,7 @@ export default (pageContext: { urlPathname: string }) => {
   if (!supportedLanguages.includes(lang)) return false
   if (/^\/organization\/[^/]+\/?$/.test(rest)) return false
   if (/^\/processes\/[^/]+\/?$/.test(rest)) return false
+  if (/^\/processes\/[^/]+\/summary\/?$/.test(rest)) return false
 
   return {
     routeParams: {

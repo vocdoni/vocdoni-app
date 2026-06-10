@@ -30,10 +30,13 @@ import {
   useElection,
   useOrganization,
 } from '@vocdoni/react-components'
-import { CensusType, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { RiErrorWarningLine } from 'react-icons/ri'
+import { RiBarChartBoxLine, RiErrorWarningLine } from 'react-icons/ri'
+import { usePublicLanguage } from '~i18n/usePublicLanguage'
+import { useCensusSize } from '~queries/census'
+import { getPublicProcessSummaryPath } from '~src/ssr/public-pages'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
@@ -43,8 +46,6 @@ import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
 import { useVotingMethodLabel } from './resultTypeLabels'
-
-type CensusInfo = { size: number; weight: bigint; type: CensusType }
 
 type ProcessInfoCardProps = {
   label: string
@@ -85,29 +86,18 @@ const VotingMethod = () => {
 
 const ProcessInfoPanel = () => {
   const { t } = useTranslation()
+  const language = usePublicLanguage()
   const { election } = useElection()
   const { organization, loaded } = useOrganization()
-  const { account, client } = useClient()
-  const [censusInfo, setCensusInfo] = useState<CensusInfo>()
-
-  // Get the census info to show the total size if the maxCensusSize is less than the total size
-  useEffect(() => {
-    ;(async () => {
-      try {
-        if (!client || !(election instanceof PublishedElection) || !election?.census?.censusId) return
-        const censusInfo: CensusInfo = await client.fetchCensusInfo(election.census.censusId)
-        setCensusInfo(censusInfo)
-      } catch (e) {
-        // If the census info is not available, just ignore it
-        setCensusInfo(undefined)
-      }
-    })()
-  }, [election, client])
+  const { account } = useClient()
+  // For CSP elections the actual census size comes from the bundle, not from `maxCensusSize`
+  // (which only caps how many voters may vote). See useCensusSize.
+  const { size: censusSize } = useCensusSize()
 
   if (!(election instanceof PublishedElection)) return null
 
   const showOrgInformation = !loaded || (loaded && organization?.account?.name)
-  const showTotalCensusSize = censusInfo?.size && election?.maxCensusSize && election.maxCensusSize < censusInfo.size
+  const showTotalCensusSize = censusSize > 0 && !!election?.maxCensusSize && election.maxCensusSize < censusSize
 
   return (
     <Flex
@@ -141,7 +131,7 @@ const ProcessInfoPanel = () => {
               <TooltipTrigger asChild>
                 <Text>
                   {t('process.total_census_size', {
-                    censusSize: censusInfo?.size,
+                    censusSize,
                     maxCensusSize: election?.maxCensusSize,
                   })}
                 </Text>
@@ -149,11 +139,11 @@ const ProcessInfoPanel = () => {
               <TooltipPositioner>
                 <TooltipContent bg='primary.600' color='white'>
                   {t('process.total_census_size_tooltip', {
-                    censusSize: censusInfo?.size,
+                    censusSize,
                     maxCensusSize: election?.maxCensusSize,
                     percent:
-                      censusInfo?.size && election?.maxCensusSize
-                        ? Math.round((election?.maxCensusSize / censusInfo?.size) * 100)
+                      censusSize && election?.maxCensusSize
+                        ? Math.round((election?.maxCensusSize / censusSize) * 100)
                         : 0,
                   })}
                 </TooltipContent>
@@ -161,7 +151,7 @@ const ProcessInfoPanel = () => {
             </TooltipRoot>
           ) : (
             <Text color='texts.subtle' fontSize='sm'>
-              {t('process.people_in_census', { count: election?.maxCensusSize })}
+              {t('process.people_in_census', { count: censusSize })}
             </Text>
           )
         }
@@ -190,6 +180,13 @@ const ProcessInfoPanel = () => {
           <ProcessInfoCard label={t('process.status.paused')} description={t('process.status.paused_description')} />
         </Flex>
       )}
+      <Button asChild variant='outline' size='sm' alignSelf='start'>
+        {/* Plain anchor (not a router Link): the public process view renders without a router context. */}
+        <a href={getPublicProcessSummaryPath({ id: election.id, language })}>
+          <Icon as={RiBarChartBoxLine} />
+          {t('process.summary.view_summary')}
+        </a>
+      </Button>
     </Flex>
   )
 }

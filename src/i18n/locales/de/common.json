@@ -1238,6 +1238,29 @@
       "text": "<p>Deine Stimme wurde sicher abgegeben und mit der Technologie von Vocdoni gespeichert. <verify>Du kannst sie hier überprüfen</verify>.</p>",
       "title": "Stimme abgegeben!"
     },
+    "summary": {
+      "countdown": "{{days}}T : {{hours}}h : {{minutes}}m",
+      "end_label": "Schließzeit",
+      "indicators_title": "Wichtige Prozesskennzahlen",
+      "learn_more": "Mehr erfahren",
+      "participation_current": "Aktuelle Beteiligung: <b>{{percent}}%</b>",
+      "results_private": "Die Ergebnisse bleiben verschlüsselt, bis die Abstimmung am {{date}} endet. Niemand kann vorher Teilergebnisse sehen.",
+      "results_title": "Abstimmungsergebnisse",
+      "start_label": "Startzeit",
+      "stat_census": "Gesamtes Wählerverzeichnis",
+      "stat_participation": "Beteiligung",
+      "stat_votes_received": "Eingegangene Stimmen",
+      "tech_description": "Diese Abstimmung nutzt das digitale Abstimmungssystem von Vocdoni, eine Open-Source-Technologie, die Gewerkschaften, Verbänden und anderen Organisationen höchste demokratische Garantien bei Abstimmungsprozessen bietet.",
+      "tech_integrity": "<b>Integrität:</b> Das System garantiert, dass keine Stimme nach der Abgabe verändert, gelöscht oder manipuliert werden kann.",
+      "tech_privacy": "<b>Datenschutz:</b> Die Stimme ist vollständig geheim und es ist nicht möglich, eine abgegebene Stimme mit der Identität der wählenden Person zu verknüpfen.",
+      "tech_title": "Garantien der Abstimmung",
+      "tech_verifiability": "<b>Überprüfbarkeit:</b> Jede teilnehmende Person kann überprüfen, dass ihre Stimme korrekt erfasst und gezählt wurde, ohne das Wahlgeheimnis zu gefährden.",
+      "time_remaining": "Verbleibende Zeit zum Abstimmen",
+      "time_until_start": "Zeit bis zum Beginn",
+      "view_summary": "Prozess verfolgen",
+      "votes_cast_one": "{{votes}} Stimme abgegeben",
+      "votes_cast_other": "{{votes}} Stimmen abgegeben"
+    },
     "template": {
       "annual_general_meeting": {
         "description": "Beschreibung deiner Jahreshauptversammlung eingeben (optional)",

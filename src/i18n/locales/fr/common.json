@@ -1260,6 +1260,30 @@
       "text": "<p>Votre vote a été émis et stocké de manière sécurisée grâce à la technologie de Vocdoni. Vous pouvez le vérifier <verify>ici</verify>.</p>",
       "title": "Vote envoyé !"
     },
+    "summary": {
+      "countdown": "{{days}}j : {{hours}}h : {{minutes}}min",
+      "end_label": "Heure de clôture",
+      "indicators_title": "Indicateurs clés du processus",
+      "learn_more": "En savoir plus",
+      "participation_current": "Participation actuelle : <b>{{percent}} %</b>",
+      "results_private": "Les résultats restent chiffrés jusqu'à la fin du vote, le {{date}}. Personne ne peut voir de résultats partiels avant cette date.",
+      "results_title": "Résultats du vote",
+      "start_label": "Heure de début",
+      "stat_census": "Total des inscrits",
+      "stat_participation": "Participation",
+      "stat_votes_received": "Votes reçus",
+      "tech_description": "Cette consultation utilise le système de vote numérique de Vocdoni, une technologie open source qui offre aux syndicats, associations et autres organisations les plus hautes garanties démocratiques dans les processus de vote.",
+      "tech_integrity": "<b>Intégrité :</b> le système garantit qu'aucun vote ne peut être modifié, supprimé ou manipulé une fois émis.",
+      "tech_privacy": "<b>Confidentialité :</b> le vote est totalement secret et il est impossible de relier un vote émis à l'identité de l'électeur.",
+      "tech_title": "Garanties du vote",
+      "tech_verifiability": "<b>Vérifiabilité :</b> chaque participant peut vérifier que son vote a été correctement enregistré et comptabilisé, sans compromettre le secret du vote.",
+      "time_remaining": "Temps restant pour voter",
+      "time_until_start": "Temps avant le début",
+      "view_summary": "Suivre le processus",
+      "votes_cast_one": "{{votes}} vote exprimé",
+      "votes_cast_many": "{{votes}} votes exprimés",
+      "votes_cast_other": "{{votes}} votes exprimés"
+    },
     "template": {
       "annual_general_meeting": {
         "description": "Configurez la description de votre assemblée générale annuelle (facultatif)",
