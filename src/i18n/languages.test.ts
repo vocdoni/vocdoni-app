@@ -3,14 +3,15 @@ import languages, { baseLanguages } from './languages'
 describe('languages configuration', () => {
   it('exports the base language map', () => {
     expect(baseLanguages).toEqual({
-      en: 'English',
-      es: 'Español',
       ca: 'Català',
-      it: 'Italiano',
       de: 'Deutsch',
-      fr: 'Français',
+      en: 'English',
       el: 'Ελληνικά',
+      es: 'Español',
       eu: 'Euskara',
+      fr: 'Français',
+      it: 'Italiano',
+      pt: 'Português',
     })
   })
 
