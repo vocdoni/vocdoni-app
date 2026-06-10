@@ -12,6 +12,8 @@ import en from './en/common.json'
 import enReactComponents from './en/react-components.json'
 import es from './es/common.json'
 import esReactComponents from './es/react-components.json'
+import eu from './eu/common.json'
+import euReactComponents from './eu/react-components.json'
 import it from './it/common.json'
 import itReactComponents from './it/react-components.json'
 
@@ -20,6 +22,7 @@ import { ca as dca } from 'date-fns/locale/ca'
 import { de as dde } from 'date-fns/locale/de'
 import { el as del } from 'date-fns/locale/el'
 import { es as des } from 'date-fns/locale/es'
+import { eu as deu } from 'date-fns/locale/eu'
 import { it as dit } from 'date-fns/locale/it'
 
 export const translations: { [key: string]: any } = {
@@ -28,6 +31,7 @@ export const translations: { [key: string]: any } = {
   el,
   en,
   es,
+  eu,
   it,
 }
 
@@ -37,6 +41,7 @@ export const reactComponentsTranslations: { [key: string]: any } = {
   el: elReactComponents,
   en: enReactComponents,
   es: esReactComponents,
+  eu: euReactComponents,
   it: itReactComponents,
 }
 
@@ -45,6 +50,7 @@ export const dateLocales: { [key: string]: Locale } = {
   de: dde,
   el: del,
   es: des,
+  eu: deu,
   it: dit,
 }
 
