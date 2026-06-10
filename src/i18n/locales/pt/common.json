@@ -1554,9 +1554,9 @@
   },
   "processes": {
     "empty": "Não foram encontrados processos de votação",
-    "empty_description": "Crie um processo de votação para começar.",
+    "empty_description": "Cria um processo de votação para começar.",
     "no_results": "Sem resultados para este filtro",
-    "no_results_description": "Tente ajustar os filtros."
+    "no_results_description": "Tenta ajustar os filtros."
   },
   "profile": {
     "error": "Falha ao atualizar o perfil",

@@ -6,11 +6,11 @@
     "cancel_button": "Cancelar",
     "continue_description": "A retomar o processo de votação «{{ election.title.default }}»…",
     "continue": "Retomar imediatamente o processo, caso tenha sido pausado",
-    "end_description": "A terminar o processo de votação «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e os eleitores deixarão de poder votar.",
+    "end_description": "A terminar o processo de votação «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e os votantes deixarão de poder votar.",
     "end": "Termina imediatamente o processo, impedindo a submissão de novos votos e mostrando os resultados (atenção: a ação é irreversível)",
     "error_title": "Ocorreu um erro ao executar a transação",
     "pause_description": "A pausar o processo de votação «{{ election.title.default }}»…",
-    "pause": "Pausa temporariamente o processo de votação até que seja retomado manualmente. Enquanto estiver em pausa, os eleitores não podem votar.",
+    "pause": "Pausa temporariamente o processo de votação até que seja retomado manualmente. Enquanto estiver em pausa, os votantes não podem votar.",
     "waiting_title": "A aguardar a confirmação da transação…"
   },
   "confirm": {
@@ -28,15 +28,15 @@
     "unauthorized": "Sem autorização para votar",
     "wrong_data_title": "Dados incorretos",
     "wrong_data_description": "Os dados indicados não estão corretos",
-    "not_voted_in_ended_election": "Assinou mas não votou nesta eleição já terminada."
+    "not_voted_in_ended_election": "Assinaste mas não votaste nesta votação já terminada."
   },
   "question_types": {
-    "approval_tooltip": "O voto por aprovação permite votar em todas as opções que desejar. Vence a opção com mais votos. É uma forma simples de mostrar apoio a todas as alternativas que aprova.",
+    "approval_tooltip": "O voto por aprovação permite votar em todas as opções que quiseres. Vence a opção com mais votos. É uma forma simples de mostrar apoio a todas as alternativas que aprovas.",
     "approval_title": "Voto por aprovação",
     "singlechoice_title": "Escolha única {{ weighted }}",
     "multichoice_tooltip": "O voto de escolha múltipla permite votar em até {{maxcount}} opções (definidas pelo organizador). Vence a opção com mais votos.",
     "multichoice_title": "Voto de escolha múltipla {{ weighted }}",
-    "multichoice_desc": "Selecionou {{selected}} opções de um máximo de {{maxcount}}",
+    "multichoice_desc": "Selecionaste {{selected}} opções de um máximo de {{maxcount}}",
     "multichoice_desc_abstain": " (ou abster-se)",
     "weighted_voting": "ponderado"
   },
@@ -65,7 +65,7 @@
   },
   "spreadsheet": {
     "access_button": "Identificar-se",
-    "anon_sik_label": "Defina uma palavra-passe para o seu voto",
+    "anon_sik_label": "Define uma palavra-passe para o teu voto",
     "anon_sik_helper": "Isto garante o anonimato do voto",
     "close": "Fechar",
     "logout": "Terminar sessão",
@@ -80,17 +80,17 @@
   "validation": {
     "required": "Este campo é obrigatório",
     "min_length": "Este campo deve ter pelo menos {{ min }} caracteres",
-    "choices_count": "Selecione {{ count }} opções",
-    "at_least_one": "Selecione pelo menos uma opção"
+    "choices_count": "Seleciona {{ count }} opções",
+    "at_least_one": "Seleciona pelo menos uma opção"
   },
   "vote": {
     "abstain": "Abster-se",
     "button_update": "Alterar o meu voto",
     "button": "Votar",
-    "confirm": "Confirme as suas escolhas:",
-    "sign": "Assine primeiro",
-    "voted_description": "Para verificar o seu voto, pode utilizar este identificador único: {{ id }}",
-    "voted_title": "O seu voto foi registado com sucesso!",
-    "weight": "O seu poder de voto é: "
+    "confirm": "Confirma as tuas escolhas:",
+    "sign": "Assina primeiro",
+    "voted_description": "Para verificares o teu voto, podes utilizar este identificador único: {{ id }}",
+    "voted_title": "O teu voto foi registado com sucesso!",
+    "weight": "O teu poder de voto é: "
   }
 }
