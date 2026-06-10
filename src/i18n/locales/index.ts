@@ -18,6 +18,8 @@ import fr from './fr/common.json'
 import frReactComponents from './fr/react-components.json'
 import it from './it/common.json'
 import itReactComponents from './it/react-components.json'
+import ptBR from './pt-br/common.json'
+import ptBRReactComponents from './pt-br/react-components.json'
 import pt from './pt/common.json'
 import ptReactComponents from './pt/react-components.json'
 
@@ -30,6 +32,7 @@ import { eu as deu } from 'date-fns/locale/eu'
 import { fr as dfr } from 'date-fns/locale/fr'
 import { it as dit } from 'date-fns/locale/it'
 import { pt as dpt } from 'date-fns/locale/pt'
+import { ptBR as dptBR } from 'date-fns/locale/pt-BR'
 
 export const translations: { [key: string]: any } = {
   ca,
@@ -41,6 +44,7 @@ export const translations: { [key: string]: any } = {
   fr,
   it,
   pt,
+  'pt-br': ptBR,
 }
 
 export const reactComponentsTranslations: { [key: string]: any } = {
@@ -53,6 +57,7 @@ export const reactComponentsTranslations: { [key: string]: any } = {
   fr: frReactComponents,
   it: itReactComponents,
   pt: ptReactComponents,
+  'pt-br': ptBRReactComponents,
 }
 
 export const dateLocales: { [key: string]: Locale } = {
@@ -64,6 +69,7 @@ export const dateLocales: { [key: string]: Locale } = {
   fr: dfr,
   it: dit,
   pt: dpt,
+  'pt-br': dptBR,
 }
 
 export const datesLocale = (lang?: string) => {
