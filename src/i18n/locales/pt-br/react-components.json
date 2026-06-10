@@ -38,7 +38,7 @@
     "multichoice_title": "Voto de escolha múltipla {{ weighted }}",
     "multichoice_desc": "Você selecionou {{selected}} opções de um máximo de {{maxcount}}",
     "multichoice_desc_abstain": " (ou abster-se)",
-    "weighted_voting": "ponderado"
+    "weighted_voting": "ponderada"
   },
   "schedule": {
     "from_begin_to_end": "Votação de {{ begin }} até {{ end }}",
@@ -60,7 +60,7 @@
     "paused": "Pausada",
     "results": "Resultados",
     "upcoming": "Em breve",
-    "process_unknown": "Desconhecido",
+    "process_unknown": "Desconhecida",
     "invalid": "Inválida"
   },
   "spreadsheet": {
@@ -91,6 +91,6 @@
     "sign": "Assine primeiro",
     "voted_description": "Para verificar seu voto, você pode usar este identificador único: {{ id }}",
     "voted_title": "Seu voto foi registrado com sucesso!",
-    "weight": "Seu poder de voto é: "
+    "weight": "O peso do seu voto é: "
   }
 }

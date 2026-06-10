@@ -1,10 +1,10 @@
-Review the following Brazilian Portuguese strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
+Review that the following Brazilian Portuguese strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
 
 Tone: professional yet approachable. Strings are user-facing UI text (buttons, labels, descriptions, error messages). Be clear and concise — prefer shorter phrasing where natural. Use "você" (third-person conjugation) as the standard form of address throughout — this is the default register in Brazilian Portuguese and appropriate for both formal and informal contexts. Target Brazilian Portuguese (pt-BR) — prefer Brazilian spelling, vocabulary, and idiomatic expressions over European Portuguese.
 
 ## Never translate or modify
 - Interpolation placeholders: `{{ variable }}` and `{{variable}}` — copy them exactly, including spacing
-- React i18next component tags: `<1>`, `<span>`, `<text>`, `<a>`, `<dlink>` and their closing counterparts — keep structure intact
+- React i18next component tags: any tag of the form `<name>`/`</name>` (e.g. `<span>`, `<bold>`, `<strong>`, `<a>`, `<dlink>`, `<click>`, `<link1>`, `<termsLink>`, `<privacyLink>`, `<verify>`, `<time>`, `<price>`) or `<0>`/`<1>`/`<2>`/… numbered placeholders, together with their closing counterparts — never translate, reorder, or alter them; keep the structure intact and only translate the text between them
 - Brand name: **Vocdoni**
 - Token name: **VOC**
 - `\n` newline sequences — keep as-is
@@ -38,7 +38,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | sign (cryptographic) | assinar | Technical term in common use — keep |
 
 ## Spelling notes (Brazilian vs. European Portuguese)
-- Use Brazilian spelling throughout: "você" (not "vós"), "anônimo" (not "anónimo"), "eleição" (not "eleição" — same, but watch accents), "ônibus" style accents.
+- Use Brazilian spelling throughout: "você" (not "vós"), "anônimo" (not "anónimo"), "econômico" (not "económico"), "registro"/"registrar" (not "registo"/"registar") — watch the circumflex/acute accent differences typical of Brazilian Portuguese.
 - Avoid European Portuguese forms like "ecrã" (use "tela"), "senha" vs "palavra-passe" (use "senha"), "telemóvel" (use "celular").
 
 ## Pluralization keys
