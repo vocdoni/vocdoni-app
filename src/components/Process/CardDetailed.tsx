@@ -10,9 +10,10 @@ import {
 import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useDateFns } from '~i18n/use-date-fns'
+import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { ActionsMenu } from './ActionsMenu'
 import { ProcessDateInline } from './Date'
@@ -47,16 +48,15 @@ const ProcessCardDetailed = ({ election }: Props) => {
 
 const ProcessCardLink = ({ children }: PropsWithChildren) => {
   const { election } = useElection()
-  const { i18n } = useTranslation()
+  const language = usePublicLanguage()
 
   if (election instanceof InvalidElection || !election?.id) {
     return <>{children}</>
   }
 
-  const publicLanguage = i18n.resolvedLanguage || i18n.language || 'en'
   const publicProcessPath = getPublicProcessPath({
     id: enforceHexPrefix(election.id),
-    language: publicLanguage,
+    language,
   })
 
   return <RouterAwareLink to={publicProcessPath}>{children}</RouterAwareLink>

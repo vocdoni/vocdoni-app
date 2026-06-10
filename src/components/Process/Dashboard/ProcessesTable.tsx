@@ -4,11 +4,12 @@ import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@v
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router-dom'
-import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useDateFns } from '~i18n/use-date-fns'
+import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type Election = PublishedElection | InvalidElection
@@ -110,11 +111,10 @@ const ProcessRow = () => {
 const ProcessContextMenu = () => {
   const { election, client } = useElection()
   const { cloneAsDraft } = useCloneAsDraft()
-  const { i18n } = useTranslation()
+  const publicLanguage = usePublicLanguage()
 
   if (!election || election instanceof InvalidElection) return null
 
-  const publicLanguage = i18n.resolvedLanguage || i18n.language || 'en'
   const publicProcessPath = getPublicProcessPath({
     id: ensure0x(election.id),
     language: publicLanguage,

@@ -29,7 +29,6 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
 import { generatePath, Link as ReactRouterLink, useNavigate } from 'react-router-dom'
-import { AppEnv } from '~src/app-env'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Contents'
@@ -37,7 +36,9 @@ import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import InvertedAccordionIcon from '~components/Layout/InvertedAccordionIcon'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { PlanId } from '~constants'
+import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
+import { AppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
 import { CheckboxTypes, paginatedElectionsQuery, useOrganizationSetup } from '~src/queries/organization'
 import { UsageLimits } from './UsageLimits'
@@ -66,11 +67,11 @@ const OrganizationDashboard = () => {
 }
 
 const Tutorial = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { data: profile, isLoading } = useProfile()
   const { subscription, loading } = useSubscription()
   const videoTutorials = AppEnv.VIDEO_TUTORIAL ?? { en: '' }
-  const language = i18n.resolvedLanguage || i18n.language || 'en'
+  const language = usePublicLanguage()
   const videoTutorialSrc = videoTutorials[language] ?? videoTutorials.en
 
   if (!videoTutorialSrc) {

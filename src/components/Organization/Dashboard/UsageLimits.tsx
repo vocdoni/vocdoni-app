@@ -23,6 +23,7 @@ import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
 import { TwoFACodePrice } from '~constants'
+import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { usePaginatedMembers } from '~queries/members'
 import { Routes } from '~routes'
 
@@ -85,7 +86,8 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
 }
 
 export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
+  const language = usePublicLanguage()
   const { subscription, loading } = useSubscription()
 
   // Fetch memberbase data to get total count
@@ -103,7 +105,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
 
   const email2FA = plan.features['2FAemail'] || 0
   const sms2FA = plan.features['2FAsms'] || 0
-  const priceFormatter = new Intl.NumberFormat(i18n.resolvedLanguage || i18n.language || 'en', {
+  const priceFormatter = new Intl.NumberFormat(language, {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
   })

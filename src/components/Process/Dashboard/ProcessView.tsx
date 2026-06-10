@@ -62,7 +62,6 @@ import {
 import ReactPlayer from 'react-player'
 import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
-import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import {
   DashboardBox,
   DashboardContents,
@@ -72,12 +71,14 @@ import {
   SidebarSubtitle,
   SidebarTitle,
 } from '~components/Dashboard/Contents'
-import { CensusSearch } from './CensusSearch'
-import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
+import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { Routes } from '~src/router/routes'
+import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { useResultTypeLabel } from '../resultTypeLabels'
+import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
+import { CensusSearch } from './CensusSearch'
 
 export type ProcessViewTab = 'questions' | 'results'
 
@@ -117,7 +118,7 @@ export const ProcessView = () => (
 )
 
 const ProcessViewContent = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { showSidebar, toggleSidebar } = useSidebarVisibility()
   const { id, election } = useElection()
   const location = useLocation()
@@ -128,7 +129,7 @@ const ProcessViewContent = () => {
   const hasResolvedInitialTabRef = useRef(false)
   const resolvedInitialTabElectionIdRef = useRef<string | null>(null)
 
-  const publicLanguage = i18n.resolvedLanguage || i18n.language || 'en'
+  const publicLanguage = usePublicLanguage()
   const votingLink = `${document.location.origin}${getPublicProcessPath({ id, language: publicLanguage })}`
   const { copy } = useClipboard({ value: votingLink })
 

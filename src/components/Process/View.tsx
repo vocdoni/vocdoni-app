@@ -34,9 +34,9 @@ import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiErrorWarningLine } from 'react-icons/ri'
-import { generatePath } from 'react-router-dom'
+import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
-import { Routes } from '~src/router/routes'
+import { getPublicProcessSummaryPath } from '~src/ssr/public-pages'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ActionsMenu } from './ActionsMenu'
 import ProcessAside, { VoteButton } from './Aside'
@@ -86,6 +86,7 @@ const VotingMethod = () => {
 
 const ProcessInfoPanel = () => {
   const { t } = useTranslation()
+  const language = usePublicLanguage()
   const { election } = useElection()
   const { organization, loaded } = useOrganization()
   const { account } = useClient()
@@ -181,7 +182,7 @@ const ProcessInfoPanel = () => {
       )}
       <Button asChild variant='outline' size='sm' alignSelf='start'>
         {/* Plain anchor (not a router Link): the public process view renders without a router context. */}
-        <a href={generatePath(Routes.processes.summary, { id: election.id })}>
+        <a href={getPublicProcessSummaryPath({ id: election.id, language })}>
           <Icon as={RiBarChartBoxLine} />
           {t('process.summary.view_summary')}
         </a>
