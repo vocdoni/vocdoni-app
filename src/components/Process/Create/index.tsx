@@ -14,7 +14,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useClient, useOrganization } from '@vocdoni/react-components'
 import {
@@ -58,6 +58,7 @@ import { Web3Address } from '~components/Process/Census/Web3'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
+import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
@@ -626,6 +627,7 @@ const ProcessCreateView = () => {
   const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
   const { client } = useClient()
+  const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
   const { setStepDoneAsync } = useOrganizationSetup()
   const processBundleMutation = useProcessBundle()
@@ -821,6 +823,17 @@ const ProcessCreateView = () => {
       }
 
       await setStepDoneAsync(SetupStepIds.firstVoteCreation)
+
+      // Drop the cached elections pages so the processes index reflects the new
+      // vote without a full page refresh. The index loads through a route loader
+      // backed by ensureQueryData, which returns cached data without refetching
+      // when it is merely marked stale — so invalidateQueries isn't enough here.
+      // Removing the entries forces the loader to fetch fresh data on its next
+      // navigation. The key omits the pagination params so every paginated/status
+      // variant is evicted.
+      queryClient.removeQueries({
+        queryKey: QueryKeys.organization.elections(account.address),
+      })
 
       trackPlausibleEvent({ name: AnalyticsEvents.ProcessCreated })
 
