@@ -17,6 +17,7 @@ describe('getVocdoniClientConfig', () => {
       options: {
         api_url: 'https://one-dev.vocdoni.net/v2',
       },
+      explorerUrl: 'https://one-dev.explorer.vote',
     })
   })
 })
