@@ -46,7 +46,7 @@ const sizes = defineTokens.sizes({
   sidebar: { value: sidebarWidth },
   'user-profile': { value: '280px' },
   voting: {
-    sidebar: { value: '360px' },
+    sidebar: { value: '320px' },
     contents: {
       min: { value: 'calc(640px + var(--chakra-sizes-voting-sidebar))' },
       max: { value: '1560px' },
