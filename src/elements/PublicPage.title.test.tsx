@@ -59,7 +59,13 @@ describe('SSR public pages title handling', () => {
   it('does not mutate document.title when rendering the process SSR page', () => {
     document.title = 'Initial title'
 
-    render(<PublicProcessPage election={new PublishedElection({} as any)} organization={{ address: '0xabc' } as any} />)
+    render(
+      <PublicProcessPage
+        id='0x0'
+        election={new PublishedElection({} as any)}
+        organization={{ address: '0xabc' } as any}
+      />
+    )
 
     expect(screen.getByText('process-view')).toBeInTheDocument()
     expect(screen.getByText('legal-notice')).toBeInTheDocument()

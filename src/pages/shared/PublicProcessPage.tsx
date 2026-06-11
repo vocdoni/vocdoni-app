@@ -32,7 +32,7 @@ export default function PublicProcessPage() {
         enableChat={false}
         showDashboardButton={false}
       >
-        <PublicProcessView election={data.election} organization={data.organization} />
+        <PublicProcessView id={data.id} election={data.election} organization={data.organization} />
       </PublicLayout>
     </AppProviders>
   )

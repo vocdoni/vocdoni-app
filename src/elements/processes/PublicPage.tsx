@@ -5,11 +5,12 @@ import { ProcessView as ProcessViewComponent } from '~components/Process/View'
 import type { OrganizationData } from '~src/ssr/public-pages'
 
 type PublicProcessPageProps = {
+  id: string
   election: PublishedElection
   organization?: OrganizationData
 }
 
-const PublicProcessPage = ({ election, organization }: PublicProcessPageProps) => {
+const PublicProcessPage = ({ id, election, organization }: PublicProcessPageProps) => {
   const organizationProviderProps = organization
     ? { organization: organization as any }
     : { id: election.organizationId }
@@ -18,9 +19,13 @@ const PublicProcessPage = ({ election, organization }: PublicProcessPageProps) =
     <OrganizationProvider {...organizationProviderProps}>
       <ElectionProvider
         election={election}
+        // The election comes from Vike SSR serialization, which drops the SDK's
+        // `id` getter (only `_id` survives), so `election.id` is undefined here.
+        // Use the route-param id so the provider query is enabled and refetches.
+        id={id}
         fetchCensus
         queryOptions={{
-          refetchInterval: 15_000,
+          refetchInterval: 30_000,
         }}
       >
         <ProcessViewComponent />
