@@ -140,11 +140,11 @@ export const electionComponents: ComponentsPartialDefinition = {
       // started fetching from the server-rendered markup before hydration. In
       // those cases `onLoad` never fires, leaving the Skeleton overlay covering an
       // image that is actually present (matching the "url is there, hovering shows
-      // it, but it stays grey" reports). Reconcile against the DOM `complete` flag.
+      // it, but it stays grey" reports). Reconcile against the DOM `complete` flag
+      // on every src change so a new image that isn't loaded yet shows the skeleton
+      // again instead of inheriting the previous image's loaded state.
       useEffect(() => {
-        if (imageRef.current?.complete) {
-          setLoaded(true)
-        }
+        setLoaded(imageRef.current?.complete ?? false)
       }, [imageThumbnail])
 
       const media = hasImage ? (
