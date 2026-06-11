@@ -18,7 +18,6 @@ import { FaGlobeAmericas } from 'react-icons/fa'
 import { LuCheck } from 'react-icons/lu'
 import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
 import { Select } from '~components/Form/Select'
-import i18n from '~i18n'
 import { navigateToPublicLanguage, usePublicLanguageRouting } from '~i18n/usePublicLanguageRouting'
 import { useLanguagesEnv } from '~src/app-env'
 import { languagesListSelectStyles } from '~theme/selectStyles'
@@ -120,20 +119,24 @@ interface LanguageOption {
   label: string
 }
 
-const LanguageOptionLabel = ({ value, label }, { context }) => {
-  const isSelected = value === i18n.language
-
-  return (
-    <Flex alignItems='center' gap={2} w='full' px={1}>
-      {context === 'menu' && (
-        <Box w='1rem' display='flex' alignItems='center' justifyContent='center'>
-          {isSelected && <Icon as={LuCheck} boxSize='3' />}
-        </Box>
-      )}
-      <Text w='full'>{label}</Text>
-    </Flex>
-  )
-}
+const LanguageOptionLabel = ({
+  label,
+  isSelected,
+  context,
+}: {
+  label: string
+  isSelected: boolean
+  context?: string
+}) => (
+  <Flex alignItems='center' gap={2} w='full' px={1}>
+    {context === 'menu' && (
+      <Box w='1rem' display='flex' alignItems='center' justifyContent='center'>
+        {isSelected && <Icon as={LuCheck} boxSize='3' />}
+      </Box>
+    )}
+    <Text w='full'>{label}</Text>
+  </Flex>
+)
 
 export const LanguageListDashboard = ({ ...props }) => {
   const { t, i18n } = useTranslation()
@@ -171,7 +174,15 @@ export const LanguageListDashboard = ({ ...props }) => {
         size='sm'
         placeholder={t('form.choose_an_option', { defaultValue: 'Choose an option' })}
         menuPlacement='top'
-        formatOptionLabel={LanguageOptionLabel}
+        formatOptionLabel={(option: LanguageOption, meta) => (
+          // Compare against the active (hook) i18n language so the checkmark
+          // follows in-place language switches, not the base i18n instance.
+          <LanguageOptionLabel
+            label={option.label}
+            isSelected={option.value === i18n.language}
+            context={meta.context}
+          />
+        )}
         chakraStyles={languagesListSelectStyles(longestLabelLength)}
       />
     </FormControl>

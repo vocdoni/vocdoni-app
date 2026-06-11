@@ -10,5 +10,7 @@ export default function Page() {
     pathname: pageContext.urlPathname,
   })
 
-  return <Providers language={language} basename={`/${language}`} />
+  // Providers derives the router basename from the language and keeps it in
+  // client state so it can be switched in place without a full reload.
+  return <Providers language={language} />
 }

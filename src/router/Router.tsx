@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { useAuthRoutes, useCreateOrganizationRoutes } from './routes/auth'
 import { useDashboardRoutes } from './routes/dashboard'
@@ -11,9 +12,18 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
   const dashboard = useDashboardRoutes()
   const createOrganizationRoute = useCreateOrganizationRoutes()
 
-  const router = createBrowserRouter([home, root, auth, dashboard, createOrganizationRoute], {
-    basename: basename ?? import.meta.env.BASE_URL,
-  })
+  const resolvedBasename = basename ?? import.meta.env.BASE_URL
 
-  return <RouterProvider router={router} future={{ v7_startTransition: true }} />
+  // Recreate the router only when the basename (language prefix) changes, so a
+  // language switch swaps it in place instead of forcing a full reload. The
+  // route trees are static, so capturing them once on (re)creation is intended.
+  const router = useMemo(
+    () => createBrowserRouter([home, root, auth, dashboard, createOrganizationRoute], { basename: resolvedBasename }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [resolvedBasename]
+  )
+
+  // Key by basename: RouterProvider ignores a changed `router` prop, so remount
+  // it when the language prefix changes to adopt the new basename.
+  return <RouterProvider key={resolvedBasename} router={router} future={{ v7_startTransition: true }} />
 }
