@@ -84,6 +84,13 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
       const normalized = normalizePublicLanguageCandidate(next, supportedLanguages)
       if (!normalized) return
 
+      // Re-selecting the active language is a no-op; avoids a duplicate history entry.
+      const currentUrlLanguage = normalizePublicLanguageCandidate(
+        window.location.pathname.split('/')[1] ?? '',
+        supportedLanguages
+      )
+      if (normalized === currentUrlLanguage) return
+
       persistPublicLanguagePreferenceClient(normalized, {
         supportedLanguages,
         storage: window.localStorage,
@@ -94,12 +101,15 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
 
       // Swap the visible URL language prefix without navigating/reloading; the
       // basename change below re-points the router at the already-updated URL.
+      // Use pushState (not replaceState) so the switch is a real history entry the
+      // user can navigate back from — the popstate listener above re-syncs the
+      // language from the URL on back/forward.
       const target = localizePublicPath({
         pathname: window.location.pathname,
         language: normalized,
         supportedLanguages,
       })
-      window.history.replaceState(window.history.state, '', `${target}${window.location.search}${window.location.hash}`)
+      window.history.pushState(null, '', `${target}${window.location.search}${window.location.hash}`)
 
       setLanguageState(normalized)
     },
