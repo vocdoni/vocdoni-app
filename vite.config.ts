@@ -34,6 +34,12 @@ const viteconfig = ({ mode }: { mode: string }) => {
 
   return defineConfig({
     base,
+    // Expose the dev server on the local network (equivalent to `--host`).
+    // It is set here rather than on the CLI because Vike intercepts the vite
+    // command and its parser rejects unknown flags like `--host`/`--port`.
+    server: {
+      host: true,
+    },
     build: {
       outDir,
     },
