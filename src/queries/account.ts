@@ -1,8 +1,10 @@
 import { DefinedInitialDataOptions, QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
-import { api, ApiEndpoints, ApiError, UnauthorizedApiError } from '~components/Auth/api'
+import { useTranslation } from 'react-i18next'
+import { api, ApiEndpoints, ApiError, getApiErrorMessage, UnauthorizedApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useConnectionToast } from '~components/Layout/ConnectionToast'
+import { useToast } from '~components/Toast'
 import { QueryKeys } from './keys'
 
 export interface Organization {
@@ -156,11 +158,24 @@ type InviteAcceptRequestBody = {
   }
 }
 
-export const useSignupFromInvite = (address: string) =>
-  useMutation<AuthResponse, Error, InviteAcceptRequestBody>({
+export const useSignupFromInvite = (address: string) => {
+  const toast = useToast()
+  const { t } = useTranslation()
+
+  return useMutation<AuthResponse, Error, InviteAcceptRequestBody>({
     mutationFn: (body) =>
       api<AuthResponse>(ApiEndpoints.InviteAccept.replace('{address}', address), {
         method: 'POST',
         body,
       }),
+    // Surface invite-signup failures the same way the regular register mutation
+    // does (see useAuthProvider); otherwise the error is silently swallowed.
+    onError: (error) => {
+      toast({
+        type: 'error',
+        title: t('registration_failed', { defaultValue: 'Registration failed' }),
+        description: getApiErrorMessage(error),
+      })
+    },
   })
+}

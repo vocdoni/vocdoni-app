@@ -63,9 +63,9 @@ const SignUp = ({ invite }: SignupProps) => {
   } = methods
   const email = watch('email')
 
+  // Both mutations surface their own errors via toast (see useAuthProvider's
+  // register and useSignupFromInvite), so we only track the pending state here.
   const isPending = signup.isPending || inviteSignup.isPending
-  const isError = signup.isError || inviteSignup.isError
-  const error = signup.error || inviteSignup.error
 
   const appEnv = useAppEnv()
   const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
