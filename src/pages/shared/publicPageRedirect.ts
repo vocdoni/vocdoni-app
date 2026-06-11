@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { usePageContext } from 'vike-react/usePageContext'
 import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
 import {
   getDefaultPublicLanguage,
@@ -8,7 +9,14 @@ import {
   persistPublicLanguagePreferenceClient,
   resolvePreferredPublicLanguageClient,
 } from '~i18n/public-language'
-import { useLanguagesEnv } from '~src/app-env'
+import { normalizeLanguages } from '~src/app-env'
+
+// These redirect hooks run at the Vike page-shell level (the `ssr: false`
+// catch-all pages) OUTSIDE the React AppEnvProvider that AppProviders mounts, so
+// they read the runtime languages straight from Vike's globalContext — the same
+// source the provider is seeded from — instead of useLanguagesEnv(), which would
+// throw without a surrounding provider.
+const useRedirectLanguages = () => normalizeLanguages(usePageContext().globalContext.appEnv?.LANGUAGES)
 
 const normalizePathname = (pathname: string) => pathname.replace(/\/+$/, '') || '/'
 const withLocationSuffix = (url: string) =>
@@ -21,7 +29,7 @@ export const usePreferredPublicLanguageRedirect = ({
   pathname: string
   navigate?: (url: string) => void
 }) => {
-  const languages = useLanguagesEnv()
+  const languages = useRedirectLanguages()
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -68,7 +76,7 @@ export const usePreferredPublicLanguageRedirect = ({
 }
 
 export const useRootLanguageRedirect = ({ navigate }: { navigate?: (url: string) => void }) => {
-  const languages = useLanguagesEnv()
+  const languages = useRedirectLanguages()
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -111,7 +119,7 @@ export const useLegacyPublicPathRedirect = ({
   pathname: string
   navigate?: (url: string) => void
 }) => {
-  const languages = useLanguagesEnv()
+  const languages = useRedirectLanguages()
   useEffect(() => {
     if (typeof window === 'undefined') return
 

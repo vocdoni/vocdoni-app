@@ -1084,6 +1084,9 @@
   },
   "passwords_do_not_match": "As senhas não coincidem",
   "pause_vote": "Pausar votação",
+  "payment": {
+    "stripe_unavailable": "Os pagamentos estão temporariamente indisponíveis. Tente novamente mais tarde."
+  },
   "plan": {
     "encouragement": "Lançar uma votação é simples, e os participantes podem votar de qualquer lugar. Garantias sólidas a um custo menor tornaram o Vocdoni uma escolha confiável para centenas de municípios, associações, partidos políticos e empresas.",
     "free": "<0>Você está no Plano Gratuito</0>, que já permite lançar votações. Se precisar de mais recursos, limites maiores ou opções específicas, explore os planos pagos e experimente-os gratuitamente.",

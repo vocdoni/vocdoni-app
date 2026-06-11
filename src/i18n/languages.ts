@@ -33,31 +33,35 @@ export const toOpenGraphLocale = (language: string): string => openGraphLocaleMa
 /**
  * Resolves the configured `LANGUAGES` env value (a comma-separated list of
  * language codes) into an ordered slice of `baseLanguages`. Returns every base
- * language when unset, and throws on unsupported codes.
+ * language when unset or when no valid code is provided.
+ *
+ * Runs at runtime during globalContext creation, so it is lenient: unsupported
+ * codes are logged and dropped rather than thrown, mirroring the SHARED_CENSUS_*
+ * handling, so a config typo never takes down SSR for every request.
  */
 export const resolveLanguagesSlice = (rawValue?: string): Record<string, string> => {
   if (!rawValue) {
     return { ...baseLanguages }
   }
 
-  const languages = rawValue
+  const requested = rawValue
     .split(',')
     .map((lang) => lang.trim())
     .filter(Boolean)
 
-  if (languages.length === 0) {
-    return { ...baseLanguages }
-  }
-
-  const invalidLanguages = languages.filter((lang) => !baseLanguages[lang as keyof typeof baseLanguages])
-
+  const invalidLanguages = requested.filter((lang) => !baseLanguages[lang as keyof typeof baseLanguages])
   if (invalidLanguages.length) {
-    throw new Error(
-      `Invalid LANGUAGES configuration. Received: ${invalidLanguages.join(', ')}. Supported: ${Object.keys(baseLanguages).join(', ')}.`
+    console.warn(
+      `Ignoring unsupported LANGUAGES: ${invalidLanguages.join(', ')}. Supported: ${Object.keys(baseLanguages).join(', ')}.`
     )
   }
 
-  return languages.reduce(
+  const validLanguages = requested.filter((lang) => baseLanguages[lang as keyof typeof baseLanguages])
+  if (validLanguages.length === 0) {
+    return { ...baseLanguages }
+  }
+
+  return validLanguages.reduce(
     (acc, lang) => {
       acc[lang] = baseLanguages[lang as keyof typeof baseLanguages]
       return acc

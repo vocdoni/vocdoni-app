@@ -6,18 +6,22 @@ import {
   useRootLanguageRedirect,
 } from './publicPageRedirect'
 
-vi.mock('~src/app-env', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('~src/app-env')>()
-  return {
-    ...actual,
-    useLanguagesEnv: () => ({
-      en: 'English',
-      ca: 'Catalan',
-      es: 'Spanish',
-      it: 'Italian',
-    }),
-  }
-})
+// The redirect hooks read runtime languages from Vike's globalContext (they run
+// outside the AppEnvProvider), so stub usePageContext rather than the env hooks.
+vi.mock('vike-react/usePageContext', () => ({
+  usePageContext: () => ({
+    globalContext: {
+      appEnv: {
+        LANGUAGES: {
+          en: 'English',
+          ca: 'Catalan',
+          es: 'Spanish',
+          it: 'Italian',
+        },
+      },
+    },
+  }),
+}))
 
 const TestRedirect = ({ pathname, navigate }: { pathname: string; navigate?: (url: string) => void }) => {
   usePreferredPublicLanguageRedirect({

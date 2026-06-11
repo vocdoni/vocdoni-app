@@ -155,14 +155,45 @@ const initializeInstance = ({
   registerFormatters(instance)
 }
 
+// Applies runtime LANGUAGES (supported set + fallback) to an already-initialized
+// instance. i18next caches supportedLngs inside languageUtils at init time, so we
+// update both the options and that cache, then re-resolve the active language
+// against the new supported set.
+const applyRuntimeLanguageOptions = (
+  instance: I18nInstance,
+  { supportedLanguages, fallbackLanguage }: LanguageOptions
+) => {
+  instance.options.supportedLngs = supportedLanguages
+  instance.options.fallbackLng = fallbackLanguage
+
+  const languageUtils = instance.services?.languageUtils as { supportedLngs?: string[] } | undefined
+  if (languageUtils) {
+    languageUtils.supportedLngs = supportedLanguages
+  }
+
+  if (instance.language) {
+    instance.changeLanguage(instance.language)
+  }
+}
+
 let baseI18nInstance: I18nInstance | null = null
+let baseI18nHasRuntimeOptions = false
 
 export const getBaseI18n = (languageOptions?: LanguageOptions) => {
   if (baseI18nInstance) {
+    // The base instance is created eagerly at import time (see the default export
+    // below) with default options, before AppProviders can supply the runtime
+    // LANGUAGES slice. Apply those options the first time they arrive so the
+    // configured supported languages and fallback actually take effect.
+    if (languageOptions && !baseI18nHasRuntimeOptions) {
+      applyRuntimeLanguageOptions(baseI18nInstance, languageOptions)
+      baseI18nHasRuntimeOptions = true
+    }
     return baseI18nInstance
   }
 
   baseI18nInstance = i18next.createInstance()
+  baseI18nHasRuntimeOptions = Boolean(languageOptions)
   initializeInstance({
     instance: baseI18nInstance,
     useBrowserLanguageDetector: true,

@@ -1064,6 +1064,9 @@
   },
   "passwords_do_not_match": "Passwords doesn't match",
   "pause_vote": "Pause vote",
+  "payment": {
+    "stripe_unavailable": "Payments are temporarily unavailable. Please try again later."
+  },
   "plan": {
     "encouragement": "Launching a vote is simple, and participants can join from anywhere. Strong guarantees at a lower cost have made Vocdoni a trusted choice for hundreds of municipalities, associations, political parties and companies.",
     "free": "<0>You're on the Free Plan</0>, which already lets you launch votes. If you need more features, higher limits or specific options, explore the paid plans and try them for free.",

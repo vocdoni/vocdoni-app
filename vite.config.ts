@@ -9,10 +9,11 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 // https://vitejs.dev/config/
 //
 // Public runtime env (SAAS_URL, OAUTH_URL, …) is NO LONGER baked into the bundle
-// here. It is resolved per request on the server from process.env and injected as
-// `globalThis.__APP_ENV__` (see src/app-env-build.ts, src/pages/+onCreatePageContext.ts
-// and src/pages/+Head.tsx). This keeps a single Docker image configurable at
-// runtime with `docker run -e ...` instead of freezing values at build time.
+// here. It is resolved on the server from process.env (see src/app-env-build.ts),
+// stored on Vike's globalContext in src/pages/+onCreateGlobalContext.server.ts, and
+// forwarded to the client via `passToClient: ['appEnv']` (src/pages/+config.ts).
+// This keeps a single Docker image configurable at runtime with `docker run -e ...`
+// instead of freezing values at build time.
 const viteconfig = ({ mode }: { mode: string }) => {
   // load env variables from .env files
   process.env = { ...process.env, ...loadEnv(mode, process.cwd(), '') }

@@ -129,6 +129,12 @@ export const api = <T>(
   params.set('lang', i18n.language)
   path = `${basePath}?${params.toString()}`
 
+  // Fail loudly if the base URL was never injected (e.g. a non-Vike render or a
+  // test that forgot to configure it) rather than silently fetching `undefined/...`.
+  if (!saasBaseUrl) {
+    throw new Error('SaaS API base URL is not configured. Call configureApiBaseUrl() before using api().')
+  }
+
   return fetch(`${saasBaseUrl}/${path}`, {
     method,
     headers,

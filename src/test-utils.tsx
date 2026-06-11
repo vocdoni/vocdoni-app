@@ -13,6 +13,7 @@ import {
   type RouteObject,
   type RouterProviderProps,
 } from 'react-router-dom'
+import { configureApiBaseUrl } from '~components/Auth/api'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { ToastProvider as BaseToastProvider } from '~components/Toast'
 import { AppEnvProvider } from '~src/app-env'
@@ -135,6 +136,8 @@ export function AllProviders({
 }: AllProvidersProps) {
   const content = InnerWrapper ? <InnerWrapper>{children}</InnerWrapper> : children
   const env: AppEnv = { ...buildAppEnv({}), ...appEnv }
+  // Mirror AppProviders so the imperative api() client has a base URL in tests.
+  configureApiBaseUrl(env.SAAS_URL)
 
   return (
     <AppEnvProvider value={env}>

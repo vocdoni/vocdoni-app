@@ -1064,6 +1064,9 @@
   },
   "passwords_do_not_match": "Passwörter stimmen nicht überein",
   "pause_vote": "Abstimmung pausieren",
+  "payment": {
+    "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut."
+  },
   "plan": {
     "encouragement": "Eine Abstimmung zu starten ist einfach, und Teilnehmende können von überall mitmachen. Starke Garantien zu niedrigen Kosten haben Vocdoni zur vertrauenswürdigen Wahl für Hunderte von Gemeinden, Vereinen, politischen Parteien und Unternehmen gemacht.",
     "free": "<0>Du nutzt den kostenlosen Plan</0>, mit dem du bereits Abstimmungen starten kannst. Wenn du mehr Funktionen, höhere Limits oder bestimmte Optionen benötigst, erkunde die kostenpflichtigen Pläne und teste sie kostenlos.",

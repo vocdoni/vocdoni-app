@@ -1084,6 +1084,9 @@
   },
   "passwords_do_not_match": "Les contrasenyes no coincideixen",
   "pause_vote": "Pausa votació",
+  "payment": {
+    "stripe_unavailable": "Els pagaments no estan disponibles temporalment. Torna-ho a provar més tard."
+  },
   "plan": {
     "encouragement": "Llançar una votació és senzill, i els participants poden unir-s'hi des de qualsevol lloc. Les fortes garanties a un cost més baix han convertit Vocdoni en una opció de confiança per a centenars d'ajuntaments, associacions, partits polítics i empreses.",
     "free": "<0>Estàs al Pla Gratuït</0>, que ja et permet llançar votacions. Si necessites més funcionalitats, límits més alts o opcions específiques, explora els plans de pagament i prova'ls gratuïtament.",

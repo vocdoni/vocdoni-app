@@ -173,11 +173,15 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
   const { colorMode } = useColorMode()
   const stripePublicKey = useAppEnv().STRIPE_PUBLIC_KEY
 
-  const [stripePromise] = useState<Promise<Stripe | null>>(
-    loadStripe(stripePublicKey ?? '', {
-      locale: i18n.resolvedLanguage as any,
-      betas: ['custom_checkout_tax_id_1'],
-    })
+  // Lazy initializer so loadStripe runs once (not on every render), and only when
+  // a key is configured — loadStripe('') throws, and STRIPE_PUBLIC_KEY is optional.
+  const [stripePromise] = useState<Promise<Stripe | null> | null>(() =>
+    stripePublicKey
+      ? loadStripe(stripePublicKey, {
+          locale: i18n.resolvedLanguage as any,
+          betas: ['custom_checkout_tax_id_1'],
+        })
+      : null
   )
   const [sessionId, setSessionId] = useState<string | null>(null)
   const queryClient = useQueryClient()
@@ -254,6 +258,16 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
         },
       },
     },
+  }
+
+  if (!stripePromise) {
+    return (
+      <Box id='checkout' p={4} color='red.500' textAlign='center'>
+        {t('payment.stripe_unavailable', {
+          defaultValue: 'Payments are temporarily unavailable. Please try again later.',
+        })}
+      </Box>
+    )
   }
 
   return (

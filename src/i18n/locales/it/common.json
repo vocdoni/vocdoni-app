@@ -1084,6 +1084,9 @@
   },
   "passwords_do_not_match": "Le password non coincidono",
   "pause_vote": "Metti in pausa voto",
+  "payment": {
+    "stripe_unavailable": "I pagamenti non sono temporaneamente disponibili. Riprova più tardi."
+  },
   "plan": {
     "encouragement": "Lanciare una votazione è semplice e i partecipanti possono unirsi da qualsiasi luogo. Forti garanzie a un costo inferiore hanno reso Vocdoni una scelta affidabile per centinaia di comuni, associazioni, partiti politici e aziende.",
     "free": "<0>Sei nel Piano Gratuito</0>, che ti consente già di lanciare votazioni. Se hai bisogno di più funzionalità, limiti più alti o opzioni specifiche, esplora i piani a pagamento e provali gratuitamente.",
