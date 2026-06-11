@@ -28,7 +28,7 @@ import {
   useSlotRecipe,
 } from '@chakra-ui/react'
 import { type ComponentsPartialDefinition, defineComponent } from '@vocdoni/react-components'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
 import { Markdown } from '~components/ui/Markdown'
@@ -129,19 +129,35 @@ export const electionComponents: ComponentsPartialDefinition = {
       const styles = recipe({ layout, context })
       const [isOpen, setIsOpen] = useState(false)
       const [loaded, setLoaded] = useState(false)
+      const imageRef = useRef<HTMLImageElement>(null)
 
       const imageDefault = image?.default
       const imageThumbnail = image?.thumbnail ?? imageDefault
       const hasImage = Boolean(imageThumbnail)
 
+      // An image can already be fully loaded before React attaches `onLoad` — it
+      // happens with cached responses and, on SSR pages, with images the browser
+      // started fetching from the server-rendered markup before hydration. In
+      // those cases `onLoad` never fires, leaving the Skeleton overlay covering an
+      // image that is actually present (matching the "url is there, hovering shows
+      // it, but it stays grey" reports). Reconcile against the DOM `complete` flag.
+      useEffect(() => {
+        if (imageRef.current?.complete) {
+          setLoaded(true)
+        }
+      }, [imageThumbnail])
+
       const media = hasImage ? (
         <Box data-choice-media={dataAttrs?.['data-choice-media']}>
           <Skeleton loading={!loaded} css={styles.skeleton}>
             <Image
+              ref={imageRef}
               css={styles.image}
               src={imageThumbnail}
               alt={label}
               onLoad={() => setLoaded(true)}
+              // Don't let a failed request hang as an eternal skeleton either.
+              onError={() => setLoaded(true)}
               onClick={(event) => {
                 if (!canOpenImageModal) return
                 event.preventDefault()
