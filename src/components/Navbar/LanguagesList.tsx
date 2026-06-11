@@ -49,25 +49,35 @@ export const LanguagesList = ({
   const { navigateToLanguage, currentLanguage } = usePublicLanguageRouting({ publicLanguageLinks })
 
   const languages = useLanguagesEnv()
-  const languageEntries = Object.entries(languages).sort(([, a], [, b]) => a.localeCompare(b))
+  // Sort by language code rather than label: the labels are native names, so a
+  // non-Latin script like Greek ('Ελληνικά') would always collate to the end.
+  // The code ('el') keeps it within the Latin alphabet ordering instead.
+  const languageEntries = Object.entries(languages).sort(([a], [b]) => a.localeCompare(b))
 
   return (
     <>
-      {languageEntries.map(([k]) => (
-        <MenuItem
-          key={k}
-          value={k}
-          onClick={() => void navigateToLanguage(k)}
-          closeOnSelect={closeOnSelect}
-          w='full'
-          display='flex'
-          justifyContent={closeOnSelect ? 'center' : 'start'}
-          fontWeight={k === currentLanguage ? 'bold' : ''}
-          borderRadius='none'
-        >
-          {k.toUpperCase()}
-        </MenuItem>
-      ))}
+      {languageEntries.map(([k, label]) => {
+        // Case-insensitive so a region-variant active language (e.g. 'pt-BR')
+        // still matches its 'pt-br' key.
+        const isSelected = k.toLowerCase() === currentLanguage?.toLowerCase()
+
+        return (
+          <MenuItem
+            key={k}
+            value={k}
+            onClick={() => void navigateToLanguage(k)}
+            closeOnSelect={closeOnSelect}
+            w='full'
+            display='flex'
+            justifyContent='start'
+            fontWeight={isSelected ? 'bold' : ''}
+            bg={isSelected ? 'bg.emphasized' : undefined}
+            borderRadius='none'
+          >
+            {label}
+          </MenuItem>
+        )
+      })}
     </>
   )
 }
@@ -83,7 +93,7 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
   }
 
   return (
-    <MenuRoot onOpenChange={({ open }) => setIsOpen(open)}>
+    <MenuRoot positioning={{ placement: 'bottom-end' }} onOpenChange={({ open }) => setIsOpen(open)}>
       <MenuTrigger asChild>
         <Button
           aria-label={t('menu.burger_aria_label')}
@@ -98,7 +108,7 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
         </Button>
       </MenuTrigger>
       <MenuPositioner>
-        <MenuContent minW={16} mt={2}>
+        <MenuContent minW={16} mt={2} maxH='15rem' overflowY='auto'>
           <LanguagesList closeOnSelect={true} publicLanguageLinks={publicLanguageLinks} />
         </MenuContent>
       </MenuPositioner>
@@ -135,9 +145,12 @@ export const LanguageListDashboard = ({ ...props }) => {
       value: key,
       label,
     }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+    // Sort by code, not label, so non-Latin native names (e.g. Greek 'Ελληνικά')
+    // collate within the alphabet instead of being pushed to the end.
+    .sort((a, b) => a.value.localeCompare(b.value))
 
   const selectedLanguage = languageOptions.find((opt) => opt.value === i18n.language)
+  const longestLabelLength = languageOptions.reduce((max, opt) => Math.max(max, opt.label.length), 0)
 
   return (
     <FormControl w='full' display='flex' justifyContent='space-between' alignItems='center' flexDir='row' {...props}>
@@ -159,7 +172,7 @@ export const LanguageListDashboard = ({ ...props }) => {
         placeholder={t('form.choose_an_option', { defaultValue: 'Choose an option' })}
         menuPlacement='top'
         formatOptionLabel={LanguageOptionLabel}
-        chakraStyles={languagesListSelectStyles}
+        chakraStyles={languagesListSelectStyles(longestLabelLength)}
       />
     </FormControl>
   )
