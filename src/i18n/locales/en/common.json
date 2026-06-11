@@ -61,6 +61,9 @@
   },
   "back": "Back",
   "billing_details": "Billing details",
+  "booking": {
+    "unavailable": "Booking is currently unavailable. Please try again later."
+  },
   "calendar": {
     "max_duration_exceeded": "Duration exceeds your plan's {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days.",
     "title": "Schedule"

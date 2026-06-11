@@ -64,6 +64,9 @@
   },
   "back": "Atrás",
   "billing_details": "Datos de facturación",
+  "booking": {
+    "unavailable": "La reserva no está disponible en este momento. Inténtalo de nuevo más tarde."
+  },
   "calendar": {
     "max_duration_exceeded": "La duración supera el límite de {{ maxDuration }} días de tu plan. Reduce el período de votación o <a>contáctanos</a> si necesitas más días.",
     "title": "Calendario"

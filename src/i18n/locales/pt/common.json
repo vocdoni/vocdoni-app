@@ -64,6 +64,9 @@
   },
   "back": "Voltar",
   "billing_details": "Dados de faturação",
+  "booking": {
+    "unavailable": "A marcação está indisponível de momento. Tente novamente mais tarde."
+  },
   "calendar": {
     "max_duration_exceeded": "A duração excede o limite de {{ maxDuration }} dias do teu plano. Reduz a duração da votação ou <a>contacta-nos</a> se precisares de mais dias.",
     "title": "Calendário"

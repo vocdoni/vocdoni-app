@@ -64,6 +64,9 @@
   },
   "back": "Voltar",
   "billing_details": "Dados de cobrança",
+  "booking": {
+    "unavailable": "O agendamento está indisponível no momento. Tente novamente mais tarde."
+  },
   "calendar": {
     "max_duration_exceeded": "A duração excede o limite de {{ maxDuration }} dias do seu plano. Reduza o período de votação ou <a>fale conosco</a> se precisar de mais dias.",
     "title": "Agendamento"

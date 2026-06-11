@@ -64,6 +64,9 @@
   },
   "back": "Indietro",
   "billing_details": "Dettagli di fatturazione",
+  "booking": {
+    "unavailable": "La prenotazione non è al momento disponibile. Riprova più tardi."
+  },
   "calendar": {
     "max_duration_exceeded": "La durata supera il limite di {{ maxDuration }} giorni del piano. Ridurre la durata della votazione o <a>contattarci</a> se servono più giorni.",
     "title": "Programma"

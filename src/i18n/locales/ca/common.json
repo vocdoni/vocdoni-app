@@ -64,6 +64,9 @@
   },
   "back": "Enrere",
   "billing_details": "Detalls de Facturació",
+  "booking": {
+    "unavailable": "La reserva no està disponible en aquest moment. Torna-ho a provar més tard."
+  },
   "calendar": {
     "max_duration_exceeded": "La durada supera el límit de {{ maxDuration }} dies del teu pla. Redueix la durada de la votació o <a>contacta'ns</a> si necessites més dies.",
     "title": "Calendari"

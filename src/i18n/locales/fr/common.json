@@ -64,6 +64,9 @@
   },
   "back": "Retour",
   "billing_details": "Informations de facturation",
+  "booking": {
+    "unavailable": "La réservation est actuellement indisponible. Veuillez réessayer plus tard."
+  },
   "calendar": {
     "max_duration_exceeded": "La durée dépasse la limite de {{ maxDuration }} jours de votre forfait. Réduisez la durée du vote ou <a>contactez-nous</a> si vous avez besoin de plus de jours.",
     "title": "Calendrier"

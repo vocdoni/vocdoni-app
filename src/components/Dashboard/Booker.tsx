@@ -1,7 +1,7 @@
 import Cal, { getCalApi } from '@calcom/embed-react'
-import { Button, ButtonProps, CloseButton, Code, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
+import { Button, ButtonProps, CloseButton, Dialog, HStack, Icon, Portal, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
-import { Trans } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { LuCalendar } from 'react-icons/lu'
 import { SetupStepIds, useOrganizationSetup } from '~queries/organization'
 import { useAppEnv } from '~src/app-env'
@@ -13,6 +13,7 @@ type BookerProps = {
 
 export const Booker = ({ callback }: BookerProps) => {
   const { colorMode } = useColorMode()
+  const { t } = useTranslation()
   const appEnv = useAppEnv()
 
   useEffect(() => {
@@ -29,7 +30,9 @@ export const Booker = ({ callback }: BookerProps) => {
   if (!appEnv.CALCOM_EVENT_SLUG) {
     return (
       <Text>
-        Hey developer, you forgot to define <Code>CALCOM_EVENT_SLUG</Code> env var 🥲
+        {t('booking.unavailable', {
+          defaultValue: 'Booking is currently unavailable. Please try again later.',
+        })}
       </Text>
     )
   }

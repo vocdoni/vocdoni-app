@@ -61,6 +61,9 @@
   },
   "back": "Zurück",
   "billing_details": "Rechnungsdetails",
+  "booking": {
+    "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut."
+  },
   "calendar": {
     "max_duration_exceeded": "Die Dauer überschreitet das {{ maxDuration }}-Tage-Limit deines Plans. Verkürze den Abstimmungszeitraum oder <a>kontaktiere uns</a>, wenn du mehr Tage benötigst.",
     "title": "Zeitplan"

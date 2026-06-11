@@ -1,5 +1,6 @@
 import { AlertRoot as Alert, AlertDescription, CloseButton, HStack } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
 
@@ -47,7 +48,9 @@ const parseAnnouncement = (raw: string | undefined): AnnouncementBannerContents 
 
 const AnnouncementBanner = ({ limited = false }: { limited?: boolean }) => {
   const { i18n } = useTranslation()
-  const announcement = parseAnnouncement(useAppEnv().ANNOUNCEMENT)
+  const rawAnnouncement = useAppEnv().ANNOUNCEMENT
+  // Parse (and possibly warn) once per raw value instead of on every render.
+  const announcement = useMemo(() => parseAnnouncement(rawAnnouncement), [rawAnnouncement])
   const [dismissed, setDismissed] = useLocalStorage(announcement?.lsKey || 'announcement.banner_dismissed', false)
 
   if (!announcement || dismissed) return null
