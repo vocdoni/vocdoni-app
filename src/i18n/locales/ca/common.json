@@ -1380,9 +1380,6 @@
         "label": "Grup",
         "no_groups": "Per començar una votació, primer has de crear un grup de votants elegibles a partir de la teva base de membres. <1>Crea'n un aquí</1>."
       },
-      "memberbase": {
-        "label": "Selecciona un grup de membres per crear el cens"
-      },
       "settings": "Configuració del cens",
       "spreadsheet": {
         "label": "Full de càlcul"
@@ -1396,12 +1393,6 @@
     "census_type_not_allowed": "El tipus de cens {{type}} no està permès",
     "end_datetime": "Data i hora de finalització",
     "extra_configuration": "Configuració addicional",
-    "group": {
-      "select": "Selecciona un grup"
-    },
-    "groups": {
-      "scroll_to_load": "Desplaça't per carregar-ne més..."
-    },
     "new_option": "Afegeix una opció",
     "no_account_address": "No s'ha trobat cap adreça de compte.",
     "no_election_index": "No s'ha trobat cap índex de votació per al compte.",
@@ -1849,7 +1840,6 @@
   "vote_information": "Informació de la votació",
   "vote_overwrite": "Sobreescriptura de la votació",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Afegeix una capa extra de seguretat requerint que els votants verifiquin la seva identitat",
     "2fa_email": "<email /> Verificació per correu electrònic",
     "2fa_email_description": "Els votants rebran un codi de verificació per correu electrònic",
@@ -1862,14 +1852,34 @@
     "2fa_voter_choice": "<email /> o <phone /> Elecció del votant",
     "2fa_voter_choice_description": "Els votants poden escollir el mètode de verificació que prefereixin",
     "button": {
-      "configure": "Configura l'autenticació dels votants",
-      "edit": "Edita l'autenticació dels votants"
+      "create_access": "Crea l'accés dels votants",
+      "set_up": "Configura l'accés dels votants"
     },
     "configured": "Autenticació de votants configurada",
-    "configured_auth": "Autenticació configurada",
-    "credentials": "Credencials",
-    "description": "Configura com s'autenticaran els votants per participar en aquest procés de votació.",
+    "credential": {
+      "example": {
+        "birthDate": "1985-06-15",
+        "email": "joan.garcia@exemple.com",
+        "memberNumber": "MBR-0042",
+        "name": "Joan",
+        "nationalId": "12345678A",
+        "phone": "+34 600 00 00 00",
+        "surname": "Garcia"
+      }
+    },
     "email": "Via verificació per correu electrònic",
+    "group": {
+      "auto_badge": "Auto",
+      "change": "Canvia",
+      "choose": "Tria un grup",
+      "create_new": "Crea un grup nou",
+      "drawer_title": "Tria un grup",
+      "empty": "Encara no hi ha grups",
+      "no_group_selected": "Encara no has seleccionat cap grup de votants",
+      "no_results": "Cap grup coincideix amb \"{{query}}\"",
+      "search_placeholder": "Cerca grups…",
+      "voters": "votants"
+    },
     "guarantees": "Garanties d'autenticació",
     "guarantees_mid_description_intro": "La teva configuració proporciona garanties d'autenticació mitjanes amb 3 credencials.",
     "guarantees_mid_list_1": "Habilita l'autenticació en dos passos per tenir garanties fortes",
@@ -1886,8 +1896,48 @@
     "level_mid": "Mitjà",
     "level_strong": "Fort",
     "level_weak": "Feble",
-    "no_group_description": "Si us plau, selecciona primer un grup per configurar l'autenticació.",
+    "method": {
+      "choice_desc": "Permet que els membres triïn correu o SMS",
+      "choice_label": "Elecció del membre",
+      "email_desc": "Un codi de 6 dígits enviat al seu correu",
+      "email_label": "Codi per correu",
+      "sms_desc": "Un codi de 6 dígits enviat per missatge de text",
+      "sms_label": "Codi per SMS"
+    },
+    "passport": {
+      "configured": "Accés dels votants a punt",
+      "edit": "Edita l'accés dels votants",
+      "voters_one": "{{name}} · {{count}} votant",
+      "voters_many": "",
+      "voters_other": "{{name}} · {{count}} votants"
+    },
+    "preview": {
+      "code_sent": "Hem enviat un codi de 6 dígits a {{destination}}",
+      "code_sent_choice": "el teu correu o telèfon",
+      "code_sent_email": "el teu correu",
+      "code_sent_phone": "el teu telèfon",
+      "contact_choice": "Correu o telèfon",
+      "cta_continue": "Continua",
+      "cta_vote": "Accedeix a la votació",
+      "empty": "Selecciona camps per construir la pantalla del votant",
+      "heading": "Pantalla del votant",
+      "secure": "Votació segura",
+      "title": "Verifica la teva identitat per votar"
+    },
+    "progress": {
+      "identity": "Identitat",
+      "launch": "Crear",
+      "verification": "Verificació"
+    },
     "save_failed": "No s'ha pogut configurar l'autenticació de votants",
+    "security": {
+      "mid_label": "Bona",
+      "strong_label": "Forta",
+      "verdict_mid": "Bona protecció",
+      "verdict_strong": "Protecció forta",
+      "verdict_weak": "Protecció bàsica",
+      "weak_label": "Bàsica"
+    },
     "security_level": "Bona seguretat",
     "security_recommendation_1": "Per a una millor seguretat, recomanem seleccionar almenys 2 credencials.",
     "security_recommendation_2_one": "Has seleccionat {{ count }} credencials, cosa que proporciona bona seguretat als teus votants.",
@@ -1900,13 +1950,34 @@
     "selected_credentials_count_many": "",
     "selected_credentials_count_other": "{{ count }}/3 credencials seleccionades",
     "sms": "Via verificació per SMS",
-    "summary": "Resum",
+    "step": {
+      "identity": {
+        "counter_one": "{{count}} de {{max}} seleccionat",
+        "counter_many": "",
+        "counter_other": "{{count}} de {{max}} seleccionats",
+        "heading": "Com demostraran la seva identitat els votants?",
+        "subheading": "Tria les dades que els membres han d'introduir per accedir a la votació. Dos camps ofereixen el millor equilibri entre seguretat i facilitat."
+      },
+      "launch": {
+        "heading": "Tot a punt per crear l'accés dels votants",
+        "identity_fields": "Camps d'identitat",
+        "no_fields": "Sense camps d’identitat: només verificació per codi",
+        "subheading": "Això és el que cada votant haurà de fer per accedir a la votació.",
+        "two_factor": "Codi d'un sol ús"
+      },
+      "verification": {
+        "heading": "Vols afegir una capa addicional de seguretat?",
+        "method_title": "Com s'enviaran els codis?",
+        "subheading": "Un codi d'un sol ús confirma que els votants són qui diuen ser. Recomanat per a votacions importants.",
+        "toggle_subtitle": "Els votants confirmen un codi enviat al seu correu o telèfon abans de votar.",
+        "toggle_title": "Exigeix un codi d'un sol ús"
+      }
+    },
     "summary_2fa_enable": "Autenticació en dos passos",
     "summary_2fa_enabled": "Habilitada",
     "summary_credentials": "Credencials requerides",
     "summary_title": "Resum de configuració d'autenticació",
     "title": "Configura l'autenticació dels votants",
-    "two_factor": "Doble factor",
     "validation_duplicates_one": "{{count}} usuaris duplicats",
     "validation_duplicates_many": "",
     "validation_duplicates_other": "{{count}} usuaris duplicats",

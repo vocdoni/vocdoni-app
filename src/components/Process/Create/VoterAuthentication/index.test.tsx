@@ -61,7 +61,7 @@ const TestForm = () => {
   return (
     <FormProvider {...methods}>
       <ExtraConfig />
-      <VoterAuthentication />
+      <VoterAuthentication isOpen={false} onClose={vi.fn()} />
       <FormWatcher name='census' />
     </FormProvider>
   )

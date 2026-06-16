@@ -1380,9 +1380,6 @@
         "label": "Grupo",
         "no_groups": "Para iniciar una votación, primero necesitas crear un grupo de votantes con derecho a voto a partir de tu base de miembros. <1>Créalo aquí</1>."
       },
-      "memberbase": {
-        "label": "Selecciona un grupo de miembros para crear el censo"
-      },
       "settings": "Configuración del censo",
       "spreadsheet": {
         "label": "Hoja de cálculo"
@@ -1396,12 +1393,6 @@
     "census_type_not_allowed": "Tipo de censo {{type}} no permitido",
     "end_datetime": "Fecha y hora de finalización",
     "extra_configuration": "Configuración avanzada",
-    "group": {
-      "select": "Seleccionar grupo"
-    },
-    "groups": {
-      "scroll_to_load": "Desplázate para cargar más..."
-    },
     "new_option": "Añadir nueva opción",
     "no_account_address": "No se ha encontrado dirección de cuenta.",
     "no_election_index": "No se ha encontrado índice de elección para la cuenta.",
@@ -1849,7 +1840,6 @@
   "vote_information": "Información del voto",
   "vote_overwrite": "Sobrescritura del voto",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Añade una capa adicional de seguridad exigiendo a los votantes que verifiquen su identidad",
     "2fa_email": "<email /> Verificación por correo electrónico",
     "2fa_email_description": "Los votantes recibirán un código de verificación por correo electrónico",
@@ -1862,14 +1852,34 @@
     "2fa_voter_choice": "<email /> o <phone /> Elección del votante",
     "2fa_voter_choice_description": "Los votantes pueden elegir su método de verificación preferido",
     "button": {
-      "configure": "Configurar autenticación de votantes",
-      "edit": "Editar autenticación de votantes"
+      "create_access": "Crear acceso de votantes",
+      "set_up": "Configurar acceso de votantes"
     },
     "configured": "Autenticación de votantes configurada",
-    "configured_auth": "Autenticación de votantes",
-    "credentials": "Credenciales",
-    "description": "Configura cómo se autenticarán los votantes para participar en este proceso de votación.",
+    "credential": {
+      "example": {
+        "birthDate": "1985-06-15",
+        "email": "juan.garcia@ejemplo.com",
+        "memberNumber": "MBR-0042",
+        "name": "Juan",
+        "nationalId": "12345678A",
+        "phone": "+34 600 00 00 00",
+        "surname": "García"
+      }
+    },
     "email": "Por verificación de correo electrónico",
+    "group": {
+      "auto_badge": "Auto",
+      "change": "Cambiar",
+      "choose": "Elegir un grupo",
+      "create_new": "Crear un grupo nuevo",
+      "drawer_title": "Elige un grupo",
+      "empty": "Aún no hay grupos",
+      "no_group_selected": "Aún no has seleccionado ningún grupo de votantes",
+      "no_results": "Ningún grupo coincide con \"{{query}}\"",
+      "search_placeholder": "Buscar grupos…",
+      "voters": "votantes"
+    },
     "guarantees": "Garantías de autenticación",
     "guarantees_mid_description_intro": "Tu configuración proporciona garantías de autenticación medias con 3 credenciales.",
     "guarantees_mid_list_1": "Habilita la autenticación en dos pasos para reforzar las garantías",
@@ -1886,8 +1896,48 @@
     "level_mid": "Media",
     "level_strong": "Fuerte",
     "level_weak": "Débil",
-    "no_group_description": "Selecciona primero un grupo para configurar la autenticación.",
+    "method": {
+      "choice_desc": "Permite que los miembros elijan correo o SMS",
+      "choice_label": "Elección del miembro",
+      "email_desc": "Un código de 6 dígitos enviado a su correo",
+      "email_label": "Código por correo",
+      "sms_desc": "Un código de 6 dígitos enviado por mensaje de texto",
+      "sms_label": "Código por SMS"
+    },
+    "passport": {
+      "configured": "Acceso de votantes listo",
+      "edit": "Editar acceso de votantes",
+      "voters_one": "{{name}} · {{count}} votante",
+      "voters_many": "",
+      "voters_other": "{{name}} · {{count}} votantes"
+    },
+    "preview": {
+      "code_sent": "Hemos enviado un código de 6 dígitos a {{destination}}",
+      "code_sent_choice": "tu correo o teléfono",
+      "code_sent_email": "tu correo",
+      "code_sent_phone": "tu teléfono",
+      "contact_choice": "Correo o teléfono",
+      "cta_continue": "Continuar",
+      "cta_vote": "Acceder a la votación",
+      "empty": "Selecciona campos para construir la pantalla del votante",
+      "heading": "Pantalla del votante",
+      "secure": "Votación segura",
+      "title": "Verifica tu identidad para votar"
+    },
+    "progress": {
+      "identity": "Identidad",
+      "launch": "Crear",
+      "verification": "Verificación"
+    },
     "save_failed": "No se pudo configurar la autenticación de votantes",
+    "security": {
+      "mid_label": "Buena",
+      "strong_label": "Fuerte",
+      "verdict_mid": "Buena protección",
+      "verdict_strong": "Protección fuerte",
+      "verdict_weak": "Protección básica",
+      "weak_label": "Básica"
+    },
     "security_level": "Buena seguridad",
     "security_recommendation_1": "Para una mayor seguridad, recomendamos seleccionar al menos 2 credenciales.",
     "security_recommendation_2_one": "Has seleccionado {{ count }} credenciales, lo que proporciona una buena seguridad para tus votantes.",
@@ -1900,13 +1950,34 @@
     "selected_credentials_count_many": "",
     "selected_credentials_count_other": "{{ count }}/3 credenciales seleccionadas",
     "sms": "Por verificación SMS",
-    "summary": "Resumen",
+    "step": {
+      "identity": {
+        "counter_one": "{{count}} de {{max}} seleccionado",
+        "counter_many": "",
+        "counter_other": "{{count}} de {{max}} seleccionados",
+        "heading": "¿Cómo demostrarán su identidad los votantes?",
+        "subheading": "Elige los datos que los miembros deben introducir para acceder a la votación. Dos campos ofrecen el mejor equilibrio entre seguridad y facilidad."
+      },
+      "launch": {
+        "heading": "Todo listo para crear el acceso de los votantes",
+        "identity_fields": "Campos de identidad",
+        "no_fields": "Sin campos de identidad: solo verificación por código",
+        "subheading": "Esto es lo que cada votante deberá hacer para acceder a la votación.",
+        "two_factor": "Código de un solo uso"
+      },
+      "verification": {
+        "heading": "¿Añadir una capa extra de seguridad?",
+        "method_title": "¿Cómo se enviarán los códigos?",
+        "subheading": "Un código de un solo uso confirma que los votantes son quienes dicen ser. Recomendado para votaciones importantes.",
+        "toggle_subtitle": "Los votantes confirman un código enviado a su correo o teléfono antes de votar.",
+        "toggle_title": "Exigir un código de un solo uso"
+      }
+    },
     "summary_2fa_enable": "Autenticación en dos pasos",
     "summary_2fa_enabled": "Habilitada",
     "summary_credentials": "Credenciales requeridas",
     "summary_title": "Resumen de la configuración de autenticación",
     "title": "Configurar autenticación de votantes",
-    "two_factor": "Dos pasos",
     "validation_duplicates_one": "{{count}} usuarios duplicados",
     "validation_duplicates_many": "",
     "validation_duplicates_other": "{{count}} usuarios duplicados",

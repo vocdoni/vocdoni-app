@@ -1380,9 +1380,6 @@
         "label": "Gruppo",
         "no_groups": "Per avviare una votazione, devi prima creare un gruppo di votanti idonei dal tuo database membri. <1>Creane uno qui</1>."
       },
-      "memberbase": {
-        "label": "Seleziona un gruppo di membri per creare il censimento"
-      },
       "settings": "Impostazioni censimento",
       "spreadsheet": {
         "label": "Foglio di calcolo"
@@ -1396,12 +1393,6 @@
     "census_type_not_allowed": "Tipo di censimento {{type}} non consentito",
     "end_datetime": "Data e ora di fine",
     "extra_configuration": "Configurazione extra",
-    "group": {
-      "select": "Seleziona gruppo"
-    },
-    "groups": {
-      "scroll_to_load": "Scorri per caricare altro..."
-    },
     "new_option": "Aggiungi una nuova opzione",
     "no_account_address": "Nessun indirizzo account trovato.",
     "no_election_index": "Nessun indice elettorale trovato per l'account.",
@@ -1849,7 +1840,6 @@
   "vote_information": "Informazioni sul voto",
   "vote_overwrite": "Sovrascrittura voto",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Aggiungi un ulteriore livello di sicurezza richiedendo ai votanti di verificare la propria identità",
     "2fa_email": "<email /> Verifica email",
     "2fa_email_description": "I votanti riceveranno un codice di verifica via email",
@@ -1862,14 +1852,34 @@
     "2fa_voter_choice": "<email /> o <phone /> Scelta del votante",
     "2fa_voter_choice_description": "I votanti possono scegliere il metodo di verifica preferito",
     "button": {
-      "configure": "Configura Autenticazione Votante",
-      "edit": "Modifica Autenticazione Votante"
+      "create_access": "Crea l'accesso dei votanti",
+      "set_up": "Configura l'accesso dei votanti"
     },
     "configured": "Autenticazione dei votanti configurata",
-    "configured_auth": "Autenticazione Votante",
-    "credentials": "Credenziali",
-    "description": "Imposta come i votanti si autenticheranno per partecipare a questo processo di voto.",
+    "credential": {
+      "example": {
+        "birthDate": "1985-06-15",
+        "email": "marco.rossi@esempio.it",
+        "memberNumber": "MBR-0042",
+        "name": "Marco",
+        "nationalId": "12345678A",
+        "phone": "+39 320 000 0000",
+        "surname": "Rossi"
+      }
+    },
     "email": "Via verifica email",
+    "group": {
+      "auto_badge": "Auto",
+      "change": "Cambia",
+      "choose": "Scegli un gruppo",
+      "create_new": "Crea un nuovo gruppo",
+      "drawer_title": "Scegli un gruppo",
+      "empty": "Ancora nessun gruppo",
+      "no_group_selected": "Nessun gruppo di votanti ancora selezionato",
+      "no_results": "Nessun gruppo corrisponde a \"{{query}}\"",
+      "search_placeholder": "Cerca gruppi…",
+      "voters": "votanti"
+    },
     "guarantees": "Garanzie di Autenticazione",
     "guarantees_mid_description_intro": "La configurazione fornisce garanzie di autenticazione di medio livello con 3 credenziali.",
     "guarantees_mid_list_1": "Abilita l'autenticazione a due fattori per garanzie forti",
@@ -1886,8 +1896,48 @@
     "level_mid": "Medio",
     "level_strong": "Forte",
     "level_weak": "Debole",
-    "no_group_description": "Seleziona prima un gruppo per configurare l'autenticazione.",
+    "method": {
+      "choice_desc": "Lascia che i membri scelgano email o SMS",
+      "choice_label": "Scelta del membro",
+      "email_desc": "Un codice di 6 cifre inviato alla loro email",
+      "email_label": "Codice via email",
+      "sms_desc": "Un codice di 6 cifre inviato via SMS",
+      "sms_label": "Codice via SMS"
+    },
+    "passport": {
+      "configured": "Accesso dei votanti pronto",
+      "edit": "Modifica accesso dei votanti",
+      "voters_one": "{{name}} · {{count}} votante",
+      "voters_many": "",
+      "voters_other": "{{name}} · {{count}} votanti"
+    },
+    "preview": {
+      "code_sent": "Abbiamo inviato un codice di 6 cifre a {{destination}}",
+      "code_sent_choice": "la tua email o il tuo telefono",
+      "code_sent_email": "la tua email",
+      "code_sent_phone": "il tuo telefono",
+      "contact_choice": "Email o telefono",
+      "cta_continue": "Continua",
+      "cta_vote": "Accedi alla votazione",
+      "empty": "Seleziona i campi per costruire la schermata del votante",
+      "heading": "Schermata del votante",
+      "secure": "Voto sicuro",
+      "title": "Verifica la tua identità per votare"
+    },
+    "progress": {
+      "identity": "Identità",
+      "launch": "Crea",
+      "verification": "Verifica"
+    },
     "save_failed": "Impossibile configurare l'autenticazione dei votanti",
+    "security": {
+      "mid_label": "Buona",
+      "strong_label": "Forte",
+      "verdict_mid": "Buona protezione",
+      "verdict_strong": "Protezione forte",
+      "verdict_weak": "Protezione base",
+      "weak_label": "Base"
+    },
     "security_level": "Buona sicurezza",
     "security_recommendation_1": "Per una migliore sicurezza, consigliamo di selezionare almeno 2 credenziali.",
     "security_recommendation_2_one": "Hai selezionato {{ count }} credenziale, che fornisce una buona sicurezza per i tuoi votanti.",
@@ -1900,13 +1950,34 @@
     "selected_credentials_count_many": "{{ count }}/3 credentials selected",
     "selected_credentials_count_other": "{{ count }}/3 credenziali selezionate",
     "sms": "Via verifica SMS",
-    "summary": "Riepilogo",
+    "step": {
+      "identity": {
+        "counter_one": "{{count}} di {{max}} selezionato",
+        "counter_many": "",
+        "counter_other": "{{count}} di {{max}} selezionati",
+        "heading": "Come dimostreranno la propria identità i votanti?",
+        "subheading": "Scegli i dati che i membri devono inserire per accedere alla votazione. Due campi offrono il miglior equilibrio tra sicurezza e semplicità."
+      },
+      "launch": {
+        "heading": "Tutto pronto per creare l'accesso dei votanti",
+        "identity_fields": "Campi d'identità",
+        "no_fields": "Nessun campo d'identità: solo verifica tramite codice",
+        "subheading": "Ecco cosa dovrà fare ogni votante per accedere alla votazione.",
+        "two_factor": "Codice monouso"
+      },
+      "verification": {
+        "heading": "Aggiungere un ulteriore livello di sicurezza?",
+        "method_title": "Come devono essere inviati i codici?",
+        "subheading": "Un codice monouso conferma che i votanti sono chi dichiarano di essere. Consigliato per votazioni importanti.",
+        "toggle_subtitle": "I votanti confermano un codice inviato alla loro email o al telefono prima di votare.",
+        "toggle_title": "Richiedi un codice monouso"
+      }
+    },
     "summary_2fa_enable": "Autenticazione a Due Fattori",
     "summary_2fa_enabled": "Abilitato",
     "summary_credentials": "Credenziali Richieste",
     "summary_title": "Riepilogo Configurazione Autenticazione",
     "title": "Configura Autenticazione Votante",
-    "two_factor": "Due Fattori",
     "validation_duplicates_one": "{{count}} utenti duplicati",
     "validation_duplicates_many": "{{count}} duplicated users",
     "validation_duplicates_other": "{{count}} utenti duplicati",

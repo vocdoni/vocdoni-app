@@ -1354,9 +1354,6 @@
         "label": "Gruppe",
         "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
       },
-      "memberbase": {
-        "label": "Wähle eine Mitgliedergruppe aus, um die Teilnehmerliste zu erstellen"
-      },
       "settings": "Einstellungen der Teilnehmerliste",
       "spreadsheet": {
         "label": "Tabellenkalkulation"
@@ -1370,12 +1367,6 @@
     "census_type_not_allowed": "Teilnehmerlisten-Typ {{type}} ist nicht zulässig",
     "end_datetime": "Enddatum und -uhrzeit",
     "extra_configuration": "Zusätzliche Konfiguration",
-    "group": {
-      "select": "Gruppe auswählen"
-    },
-    "groups": {
-      "scroll_to_load": "Scrollen, um mehr zu laden…"
-    },
     "new_option": "Neue Option hinzufügen",
     "no_account_address": "Keine Kontoadresse gefunden.",
     "no_election_index": "Kein Abstimmungsindex für das Konto gefunden.",
@@ -1823,7 +1814,6 @@
   "vote_information": "Abstimmungsdetails",
   "vote_overwrite": "Stimme überschreiben",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Erhöhe die Sicherheit, indem Wählende ihre Identität bestätigen müssen",
     "2fa_email": "<email /> E-Mail-Verifizierung",
     "2fa_email_description": "Wählende erhalten einen Bestätigungscode per E-Mail",
@@ -1836,14 +1826,34 @@
     "2fa_voter_choice": "<email /> oder <phone /> Wahl der Wählenden",
     "2fa_voter_choice_description": "Wählende können ihre bevorzugte Verifizierungsmethode wählen",
     "button": {
-      "configure": "Wähler-Authentifizierung konfigurieren",
-      "edit": "Wähler-Authentifizierung bearbeiten"
+      "create_access": "Wählerzugang erstellen",
+      "set_up": "Wählerzugang einrichten"
     },
     "configured": "Wähler-Authentifizierung konfiguriert",
-    "configured_auth": "Wähler-Authentifizierung",
-    "credentials": "Zugangsdaten",
-    "description": "Lege fest, wie sich Wählende authentifizieren, um an diesem Abstimmungsprozess teilzunehmen.",
+    "credential": {
+      "example": {
+        "birthDate": "1985-06-15",
+        "email": "max.mustermann@beispiel.de",
+        "memberNumber": "MBR-0042",
+        "name": "Max",
+        "nationalId": "12345678A",
+        "phone": "+49 151 00000000",
+        "surname": "Mustermann"
+      }
+    },
     "email": "Per E-Mail-Verifizierung",
+    "group": {
+      "auto_badge": "Auto",
+      "change": "Ändern",
+      "choose": "Gruppe auswählen",
+      "create_new": "Neue Gruppe erstellen",
+      "drawer_title": "Gruppe auswählen",
+      "empty": "Noch keine Gruppen",
+      "no_group_selected": "Noch keine Wählergruppe ausgewählt",
+      "no_results": "Keine Gruppen passen zu „{{query}}“",
+      "search_placeholder": "Gruppen suchen…",
+      "voters": "Wählende"
+    },
     "guarantees": "Authentifizierungsgarantien",
     "guarantees_mid_description_intro": "Deine Konfiguration bietet mittlere Authentifizierungsgarantien mit 3 Zugangsdaten.",
     "guarantees_mid_list_1": "Zwei-Faktor-Authentifizierung für starke Garantien aktivieren",
@@ -1860,8 +1870,47 @@
     "level_mid": "Mittel",
     "level_strong": "Stark",
     "level_weak": "Schwach",
-    "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
+    "method": {
+      "choice_desc": "Mitglieder wählen zwischen E-Mail oder SMS",
+      "choice_label": "Wahl des Mitglieds",
+      "email_desc": "Ein 6-stelliger Code per E-Mail",
+      "email_label": "Code per E-Mail",
+      "sms_desc": "Ein 6-stelliger Code per SMS",
+      "sms_label": "Code per SMS"
+    },
+    "passport": {
+      "configured": "Wählerzugang bereit",
+      "edit": "Wählerzugang bearbeiten",
+      "voters_one": "{{name}} · {{count}} wählende Person",
+      "voters_other": "{{name}} · {{count}} Wählende"
+    },
+    "preview": {
+      "code_sent": "Wir haben einen 6-stelligen Code an {{destination}} gesendet",
+      "code_sent_choice": "deine E-Mail oder dein Telefon",
+      "code_sent_email": "deine E-Mail",
+      "code_sent_phone": "dein Telefon",
+      "contact_choice": "E-Mail oder Telefon",
+      "cta_continue": "Weiter",
+      "cta_vote": "Zur Abstimmung",
+      "empty": "Wähle Felder aus, um die Wähleransicht aufzubauen",
+      "heading": "Ansicht der Wählenden",
+      "secure": "Sichere Abstimmung",
+      "title": "Bestätige deine Identität, um abzustimmen"
+    },
+    "progress": {
+      "identity": "Identität",
+      "launch": "Erstellen",
+      "verification": "Verifizierung"
+    },
     "save_failed": "Authentifizierung der Wählenden konnte nicht konfiguriert werden",
+    "security": {
+      "mid_label": "Gut",
+      "strong_label": "Stark",
+      "verdict_mid": "Guter Schutz",
+      "verdict_strong": "Starker Schutz",
+      "verdict_weak": "Einfacher Schutz",
+      "weak_label": "Einfach"
+    },
     "security_level": "Gute Sicherheit",
     "security_recommendation_1": "Für mehr Sicherheit empfehlen wir, mindestens 2 Zugangsdaten auszuwählen.",
     "security_recommendation_2_one": "Du hast {{ count }} Zugangsdatum ausgewählt, was deinen Wählenden gute Sicherheit bietet.",
@@ -1872,13 +1921,33 @@
     "selected_credentials_count_one": "{{ count }}/3 Zugangsdatum ausgewählt",
     "selected_credentials_count_other": "{{ count }}/3 Zugangsdaten ausgewählt",
     "sms": "Per SMS-Verifizierung",
-    "summary": "Zusammenfassung",
+    "step": {
+      "identity": {
+        "counter_one": "{{count}} von {{max}} ausgewählt",
+        "counter_other": "{{count}} von {{max}} ausgewählt",
+        "heading": "Wie weisen die Wählenden ihre Identität nach?",
+        "subheading": "Wähle die Angaben, die Mitglieder eingeben müssen, um zur Abstimmung zu gelangen. Zwei Felder bieten die beste Balance aus Sicherheit und Einfachheit."
+      },
+      "launch": {
+        "heading": "Bereit, den Wählerzugang zu erstellen",
+        "identity_fields": "Identitätsfelder",
+        "no_fields": "Keine Identitätsfelder – nur Verifizierung per Code",
+        "subheading": "So gelangt jede wählende Person zur Abstimmung.",
+        "two_factor": "Einmalcode"
+      },
+      "verification": {
+        "heading": "Eine zusätzliche Sicherheitsebene hinzufügen?",
+        "method_title": "Wie sollen die Codes versendet werden?",
+        "subheading": "Ein Einmalcode bestätigt, dass die Wählenden die sind, die sie vorgeben zu sein. Empfohlen für wichtige Abstimmungen.",
+        "toggle_subtitle": "Die Wählenden bestätigen vor der Stimmabgabe einen Code, der an ihre E-Mail oder ihr Telefon gesendet wird.",
+        "toggle_title": "Einmalcode verlangen"
+      }
+    },
     "summary_2fa_enable": "Zwei-Faktor-Authentifizierung",
     "summary_2fa_enabled": "Aktiviert",
     "summary_credentials": "Erforderliche Zugangsdaten",
     "summary_title": "Zusammenfassung der Authentifizierungskonfiguration",
     "title": "Authentifizierung der Wählenden konfigurieren",
-    "two_factor": "Zwei-Faktor",
     "validation_duplicates_one": "{{count}} doppelter Nutzer",
     "validation_duplicates_other": "{{count}} doppelte Nutzer",
     "validation_error_title": "Validierungsfehler",

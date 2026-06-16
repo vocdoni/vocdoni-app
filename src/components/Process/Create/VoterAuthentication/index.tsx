@@ -1,19 +1,22 @@
-import { Badge, Button, CloseButton, Dialog, Flex, Heading, Portal, Tabs, Text, useDisclosure } from '@chakra-ui/react'
+import { Box, Button, CloseButton, Dialog, Grid, GridItem, Portal } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { Process } from '../common'
-import { CredentialsForm } from './CredentialsForm'
-import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
-import { TwoFactorForm } from './TwoFactorForm'
+import { IdentityStep } from './steps/IdentityStep'
+import { LaunchStep } from './steps/LaunchStep'
+import { VerificationStep } from './steps/VerificationStep'
 import { getTwoFaFields, StepCompletionState, VoterAuthFormData } from './utils'
 import { ValidationError, ValidationErrorsAlert } from './ValidationErrorsAlert'
+import { VoterPreview } from './VoterPreview'
+import { WizardProgress } from './WizardProgress'
+import { WizardStep } from './WizardStep'
 
 type ValidateGroupArgs = {
   groupId: string
@@ -101,12 +104,17 @@ const usePublishCensus = () => {
   })
 }
 
-export const VoterAuthentication = () => {
+export type VoterAuthenticationProps = {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export const VoterAuthentication = ({ isOpen, onClose }: VoterAuthenticationProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const mainForm = useFormContext<Process>()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
   const [activeTabIndex, setActiveTabIndex] = useState(0)
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
   const [validationError, setValidationError] = useState<ValidationError | null>(null)
   const [stepCompletion, setStepCompletion] = useState<StepCompletionState>({
     step1Completed: false,
@@ -132,8 +140,6 @@ export const VoterAuthentication = () => {
   const hasNoCredentialsSelected = !formData?.credentials?.length && !formData?.use2FA
   const prevWeightedRef = useRef(weighted)
   const recreateInFlightRef = useRef(false)
-  const tabValues = ['credentials', 'twoFactor', 'summary'] as const
-  const activeTabValue = tabValues[activeTabIndex] ?? tabValues[0]
 
   // Sync form values with stored census data
   useEffect(() => {
@@ -143,6 +149,15 @@ export const VoterAuthentication = () => {
       voterAuthForm.setValue('use2FAMethod', census.use2FAMethod)
     }
   }, [census])
+
+  // Start every time the wizard opens at the first step with a clean slate.
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTabIndex(0)
+      setDirection('forward')
+      setValidationError(null)
+    }
+  }, [isOpen])
 
   const resetForm = useCallback(() => {
     setActiveTabIndex(0)
@@ -212,6 +227,7 @@ export const VoterAuthentication = () => {
     if (activeTabIndex === 0) {
       // Step 1 → Step 2: Simple navigation
       setStepCompletion((prev) => ({ ...prev, step1Completed: true }))
+      setDirection('forward')
       setActiveTabIndex(1)
     } else if (activeTabIndex === 1) {
       // Step 2 → Step 3: Validate data
@@ -228,6 +244,7 @@ export const VoterAuthentication = () => {
           twoFaFields,
         })
 
+        setDirection('forward')
         setActiveTabIndex(2)
       } catch (error) {
         setValidationError(error.apiError as ValidationError)
@@ -270,19 +287,9 @@ export const VoterAuthentication = () => {
     }
   }
 
-  const handleTabChange = (index: number) => {
-    // Allow navigation to any completed step or the next available step
-    if (index === 0) {
-      setActiveTabIndex(0)
-    } else if (index === 1 && stepCompletion.step1Completed) {
-      setActiveTabIndex(1)
-    } else if (index === 2 && stepCompletion.step2Completed) {
-      setActiveTabIndex(2)
-    }
-  }
-
   const handlePrevious = () => {
     if (activeTabIndex > 0) {
+      setDirection('backward')
       setActiveTabIndex(activeTabIndex - 1)
     } else {
       onClose()
@@ -292,125 +299,76 @@ export const VoterAuthentication = () => {
   const isLoading = validateGroupMutation.isPending || createCensusMutation.isPending || publishCensusMutation.isPending
 
   return (
-    <>
-      {census && (
-        <Flex p={4} direction='column' border='1px solid' borderColor='table.border' borderRadius='md' gap={2}>
-          <Flex justify='space-between'>
-            <Text fontWeight='semibold'>
-              {t('voter_auth.configured_auth', {
-                defaultValue: 'Voter Authentication',
-              })}
-            </Text>
-            {census?.use2FA && (
-              <Badge fontSize='xs'>
-                <Trans i18nKey='voter_auth.2fa_badge'>2FA</Trans>
-              </Badge>
-            )}
-          </Flex>
-          <CredentialsOverview
-            credentials={census?.credentials}
-            use2FA={census?.use2FA}
-            use2FAMethod={census?.use2FAMethod}
-          />
-        </Flex>
-      )}
-      <Dialog.Root
-        open={isOpen}
-        onOpenChange={(details) => {
-          if (details.open) onOpen()
-          else onClose()
-        }}
-      >
-        <Dialog.Trigger asChild>
-          <Button disabled={!groupId} colorPalette='gray' w='full'>
-            {census ? (
-              <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
-            ) : (
-              <Trans i18nKey='voter_auth.button.configure'>Configure Voter Authentication</Trans>
-            )}
-          </Button>
-        </Dialog.Trigger>
-        <Portal>
-          <Dialog.Backdrop />
-          <Dialog.Positioner>
-            <Dialog.Content>
-              <Dialog.CloseTrigger asChild>
-                <CloseButton />
-              </Dialog.CloseTrigger>
-              <Dialog.Header>
-                <Dialog.Title>
-                  <Heading variant='header'>
-                    {t('voter_auth.title', { defaultValue: 'Configure Voter Authentication' })}
-                  </Heading>
-                  <Text variant='subheader'>
-                    {t('voter_auth.description', {
-                      defaultValue: 'Set up how voters will authenticate to participate in this voting process.',
-                    })}
-                  </Text>
-                </Dialog.Title>
-              </Dialog.Header>
-              <Dialog.Body>
-                <FormProvider {...voterAuthForm}>
-                  <ValidationErrorsAlert validationError={validationError} />
-                  <Tabs.Root value={activeTabValue} onValueChange={({ value }) => handleTabChange(tabValues[value])}>
-                    <Tabs.List w='full'>
-                      <Tabs.Trigger value={tabValues[0]} flex='1' justifyContent='center'>
-                        <Trans i18nKey='voter_auth.credentials'>Credentials</Trans>
-                      </Tabs.Trigger>
-                      <Tabs.Trigger
-                        value={tabValues[1]}
-                        flex='1'
-                        disabled={!stepCompletion.step1Completed}
-                        justifyContent='center'
-                      >
-                        <Trans i18nKey='voter_auth.two_factor'>Two-Factor</Trans>
-                      </Tabs.Trigger>
-                      <Tabs.Trigger
-                        value={tabValues[2]}
-                        flex='1'
-                        disabled={!stepCompletion.step2Completed || hasNoCredentialsSelected}
-                        justifyContent='center'
-                      >
-                        <Trans i18nKey='voter_auth.summary'>Summary</Trans>
-                      </Tabs.Trigger>
-                    </Tabs.List>
-                    <Tabs.ContentGroup>
-                      <Tabs.Content value={tabValues[0]} px={0} pb={0}>
-                        <CredentialsForm />
-                      </Tabs.Content>
-                      <Tabs.Content value={tabValues[1]} px={0} pb={0}>
-                        <TwoFactorForm />
-                      </Tabs.Content>
-                      <Tabs.Content value={tabValues[2]}>
-                        <SummaryDisplay />
-                      </Tabs.Content>
-                    </Tabs.ContentGroup>
-                  </Tabs.Root>
-                </FormProvider>
-              </Dialog.Body>
-              <Dialog.Footer>
-                <Button variant='ghost' onClick={handlePrevious}>
-                  {t('common.back', 'Back')}
-                </Button>
-                <Button
-                  onClick={handleNext}
-                  loading={isLoading}
-                  disabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
-                >
-                  {activeTabIndex === 2 ? t('common.confirm', 'Confirm') : t('common.next', 'Next')}
-                </Button>
-              </Dialog.Footer>
-            </Dialog.Content>
-          </Dialog.Positioner>
-        </Portal>
-      </Dialog.Root>
-      {!groupId && (
-        <Text color='texts.subtle' fontSize='xs'>
-          {t('voter_auth.no_group_description', {
-            defaultValue: 'Please select a group first to configure authentication.',
-          })}
-        </Text>
-      )}
-    </>
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(details) => {
+        if (!details.open) onClose()
+      }}
+      size='xl'
+      scrollBehavior='inside'
+    >
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content maxW={{ base: '100%', md: '880px' }} overflow='hidden'>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton />
+            </Dialog.CloseTrigger>
+            <Dialog.Header flexDirection='column' alignItems='stretch' gap={3} pb={2}>
+              <Dialog.Title fontSize='md'>
+                {t('voter_auth.title', { defaultValue: 'Set up voter access' })}
+              </Dialog.Title>
+              <Box maxW='420px' w='full'>
+                <WizardProgress currentStep={activeTabIndex} />
+              </Box>
+            </Dialog.Header>
+            <Dialog.Body p={0}>
+              <FormProvider {...voterAuthForm}>
+                <Grid templateColumns={{ base: '1fr', md: '1fr 300px' }}>
+                  <GridItem p={6}>
+                    <ValidationErrorsAlert validationError={validationError} />
+                    <Box position='relative' minH='420px'>
+                      <WizardStep isActive={activeTabIndex === 0} direction={direction}>
+                        <IdentityStep />
+                      </WizardStep>
+                      <WizardStep isActive={activeTabIndex === 1} direction={direction}>
+                        <VerificationStep />
+                      </WizardStep>
+                      <WizardStep isActive={activeTabIndex === 2} direction={direction}>
+                        <LaunchStep />
+                      </WizardStep>
+                    </Box>
+                  </GridItem>
+                  <GridItem
+                    bg='auth.bg'
+                    borderLeftWidth={{ base: 0, md: '1px' }}
+                    borderTopWidth={{ base: '1px', md: 0 }}
+                    borderColor='table.border'
+                    p={5}
+                    display='flex'
+                  >
+                    <VoterPreview activeStep={activeTabIndex} />
+                  </GridItem>
+                </Grid>
+              </FormProvider>
+            </Dialog.Body>
+            <Dialog.Footer borderTopWidth='1px' borderColor='table.border'>
+              <Button variant='ghost' onClick={handlePrevious} disabled={isLoading}>
+                {activeTabIndex === 0 ? t('common.cancel', 'Cancel') : t('common.back', 'Back')}
+              </Button>
+              <Button
+                onClick={handleNext}
+                loading={isLoading}
+                disabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
+              >
+                {activeTabIndex === 2
+                  ? t('voter_auth.button.create_access', 'Create voter access')
+                  : t('common.next', 'Next')}
+              </Button>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   )
 }

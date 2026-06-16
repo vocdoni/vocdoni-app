@@ -1354,9 +1354,6 @@
         "label": "Group",
         "no_groups": "To start a vote, you first need to create a group of eligible voters from your memberbase. <1>Create one here</1>."
       },
-      "memberbase": {
-        "label": "Select a group of members to create the census"
-      },
       "settings": "Census settings",
       "spreadsheet": {
         "label": "Spreadsheet"
@@ -1370,12 +1367,6 @@
     "census_type_not_allowed": "Census type {{type}} not allowed",
     "end_datetime": "End date and time",
     "extra_configuration": "Extra configuration",
-    "group": {
-      "select": "Select group"
-    },
-    "groups": {
-      "scroll_to_load": "Scroll to load more..."
-    },
     "new_option": "Add a new option",
     "no_account_address": "No account address found.",
     "no_election_index": "No election index found for the account.",
@@ -1821,7 +1812,6 @@
   "vote_information": "Vote information",
   "vote_overwrite": "Vote overwrite",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Add an extra layer of security by requiring voters to verify their identity",
     "2fa_email": "<email /> Email verification",
     "2fa_email_description": "Voters will receive a verification code via email",
@@ -1834,14 +1824,34 @@
     "2fa_voter_choice": "<email /> or <phone /> Voter's choice",
     "2fa_voter_choice_description": "Voters can choose their preferred verification method",
     "button": {
-      "configure": "Configure Voter Authentication",
-      "edit": "Edit Voter Authentication"
+      "create_access": "Create voter access",
+      "set_up": "Set up voter access"
     },
     "configured": "Voter authentication configured",
-    "configured_auth": "Voter Authentication",
-    "credentials": "Credentials",
-    "description": "Set up how voters will authenticate to participate in this voting process.",
+    "credential": {
+      "example": {
+        "birthDate": "1985-06-15",
+        "email": "john.doe@example.com",
+        "memberNumber": "MBR-0042",
+        "name": "John",
+        "nationalId": "12345678A",
+        "phone": "+1 555 0100",
+        "surname": "Doe"
+      }
+    },
     "email": "Via email verification",
+    "group": {
+      "auto_badge": "Auto",
+      "change": "Change",
+      "choose": "Choose a group",
+      "create_new": "Create a new group",
+      "drawer_title": "Choose a group",
+      "empty": "No groups yet",
+      "no_group_selected": "No group of voters selected yet",
+      "no_results": "No groups match \"{{query}}\"",
+      "search_placeholder": "Search groups…",
+      "voters": "voters"
+    },
     "guarantees": "Authentication Guarantees",
     "guarantees_mid_description_intro": "Your configuration provides mid-level authentication guarantees with 3 credentials.",
     "guarantees_mid_list_1": "Enable two-factor authentication for strong guarantees",
@@ -1858,8 +1868,47 @@
     "level_mid": "Mid",
     "level_strong": "Strong",
     "level_weak": "Weak",
-    "no_group_description": "Please select a group first to configure authentication.",
+    "method": {
+      "choice_desc": "Let members pick email or SMS",
+      "choice_label": "Member's choice",
+      "email_desc": "A 6-digit code sent to their email",
+      "email_label": "Email code",
+      "sms_desc": "A 6-digit code sent by text message",
+      "sms_label": "SMS code"
+    },
+    "passport": {
+      "configured": "Voter access ready",
+      "edit": "Edit voter access",
+      "voters_one": "{{name}} · {{count}} voters",
+      "voters_other": "{{name}} · {{count}} voters"
+    },
+    "preview": {
+      "code_sent": "We sent a 6-digit code to {{destination}}",
+      "code_sent_choice": "your email or phone",
+      "code_sent_email": "your email",
+      "code_sent_phone": "your phone",
+      "contact_choice": "Email or phone",
+      "cta_continue": "Continue",
+      "cta_vote": "Enter ballot",
+      "empty": "Select fields to build the voter screen",
+      "heading": "Voter's screen",
+      "secure": "Secure ballot",
+      "title": "Verify your identity to vote"
+    },
+    "progress": {
+      "identity": "Identity",
+      "launch": "Launch",
+      "verification": "Verification"
+    },
     "save_failed": "Failed to configure voter authentication",
+    "security": {
+      "mid_label": "Good",
+      "strong_label": "Strong",
+      "verdict_mid": "Good protection",
+      "verdict_strong": "Strong protection",
+      "verdict_weak": "Basic protection",
+      "weak_label": "Basic"
+    },
     "security_level": "Good security",
     "security_recommendation_1": "For better security, we recommend selecting at least 2 credentials.",
     "security_recommendation_2_one": "You've selected {{ count }} credentials, which provides good security for your voters.",
@@ -1870,13 +1919,33 @@
     "selected_credentials_count_one": "{{ count }}/3 credentials selected",
     "selected_credentials_count_other": "{{ count }}/3 credentials selected",
     "sms": "Via SMS verification",
-    "summary": "Summary",
+    "step": {
+      "identity": {
+        "counter_one": "{{count}} of {{max}} selected",
+        "counter_other": "{{count}} of {{max}} selected",
+        "heading": "How will voters prove their identity?",
+        "subheading": "Pick the details members must enter to reach the ballot. Two fields strike the best balance of security and ease."
+      },
+      "launch": {
+        "heading": "Ready to create voter access",
+        "identity_fields": "Identity fields",
+        "no_fields": "No identity fields — verification by code only",
+        "subheading": "Here's what every voter will go through to reach the ballot.",
+        "two_factor": "One-time code"
+      },
+      "verification": {
+        "heading": "Add an extra layer of security?",
+        "method_title": "How should codes be delivered?",
+        "subheading": "A one-time code confirms voters are who they say they are. Recommended for high-stakes votes.",
+        "toggle_subtitle": "Voters confirm a code sent to their email or phone before voting.",
+        "toggle_title": "Require a one-time code"
+      }
+    },
     "summary_2fa_enable": "Two-Factor Authentication",
     "summary_2fa_enabled": "Enabled",
     "summary_credentials": "Required Credentials",
     "summary_title": "Authentication Configuration Summary",
     "title": "Configure Voter Authentication",
-    "two_factor": "Two-Factor",
     "validation_duplicates_one": "{{count}} duplicated users",
     "validation_duplicates_other": "{{count}} duplicated users",
     "validation_error_title": "Validation Error",
