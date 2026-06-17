@@ -21,7 +21,7 @@ export const CensusCsvManager = () => {
     formState: { errors },
     control,
   } = useFormContext()
-  const weighted: boolean = watch('weightedVote')
+  const weighted: boolean = !!watch('weightedVote')
   const manager: CensusSpreadsheetManager | undefined = watch('spreadsheet')
   const censusType = watch('censusType')
   const { subscription } = useSubscription()

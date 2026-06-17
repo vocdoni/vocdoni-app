@@ -1,24 +1,22 @@
 import {
   Box,
-  Button,
-  Checkbox,
+  chakra,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
-  HStack,
   Icon,
   IconButton,
   Input,
-  Text,
-  useSlotRecipe,
-  VStack,
 } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useEffect, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { LuGripVertical, LuPlus, LuX } from 'react-icons/lu'
 import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
 import { SelectorTypes } from '../common'
+import { inputType, textType } from '../editor/typography'
+import { EASE } from '../VoterAuthentication/motion'
 
 const SimpleQuestionEditor = ({
   index,
@@ -39,16 +37,24 @@ const SimpleQuestionEditor = ({
     watch,
   } = useFormContext()
   const questionType = watch('questionType')
-  const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
-  const cardStyles = choiceRecipe({ context: 'plain', layout: 'list' })
+  const containerRef = useRef<HTMLDivElement>(null)
+  const prevLen = useRef(questionOptions.length)
+
+  // Focus the freshly added option so adding flows without reaching for the mouse.
+  useEffect(() => {
+    if (questionOptions.length > prevLen.current && containerRef.current) {
+      const inputs = containerRef.current.querySelectorAll<HTMLInputElement>('[data-choice-card] input')
+      inputs[inputs.length - 1]?.focus()
+    }
+    prevLen.current = questionOptions.length
+  }, [questionOptions.length])
 
   return (
-    <VStack align='stretch' gap={2}>
+    <Box ref={containerRef} display='flex' flexDirection='column' gap={1}>
       {questionOptions.map((field, optionIndex) => (
         <SortableOption
           key={field.id}
           field={field}
-          cardStyles={cardStyles}
           optionIndex={optionIndex}
           questionIndex={index}
           questionType={questionType}
@@ -61,28 +67,32 @@ const SimpleQuestionEditor = ({
           t={t}
         />
       ))}
-      <Button
-        variant='ghost'
-        size='sm'
+      <chakra.button
+        type='button'
         aria-label={t('process_create.new_option', { defaultValue: 'Add option' })}
         onClick={() => append({ option: '' })}
         alignSelf='flex-start'
+        display='inline-flex'
+        alignItems='center'
+        gap={2}
+        mt={1}
+        px={2}
+        py={2}
+        borderRadius='lg'
+        color='texts.subtle'
+        {...textType.addAffordance}
+        css={{ transition: `color 0.15s ${EASE}, background-color 0.15s ${EASE}` }}
+        _hover={{ color: 'texts.primary', bg: 'auth.bg' }}
       >
-        <HStack gap={2}>
-          <Icon as={LuPlus} />
-          <Text as='span'>
-            <Trans i18nKey='process_create.new_option'>Add option</Trans>
-          </Text>
-        </HStack>
-      </Button>
-    </VStack>
+        <Icon as={LuPlus} boxSize={4} />
+        {t('process_create.new_option', { defaultValue: 'Add option' })}
+      </chakra.button>
+    </Box>
   )
 }
 
-// SortableOption component for individual options
 const SortableOption = ({
   field,
-  cardStyles,
   optionIndex,
   questionIndex,
   questionType,
@@ -104,43 +114,54 @@ const SortableOption = ({
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Box css={cardStyles.wrapper} data-choice-card data-layout='list'>
-        {/* Drag handle for options */}
+      <Box
+        data-choice-card
+        display='flex'
+        alignItems='center'
+        gap={2.5}
+        px={2}
+        py={1}
+        borderRadius='lg'
+        css={{ transition: `background-color 0.15s ${EASE}` }}
+        _hover={{ bg: 'auth.bg' }}
+      >
         {fieldsLength > 1 && (
           <Box
             {...attributes}
             {...listeners}
             cursor={isDragging ? 'grabbing' : 'grab'}
-            display='flex'
-            alignItems='center'
-            color='gray.400'
-            _hover={{ color: 'gray.600' }}
+            color='gray.300'
+            _hover={{ color: 'texts.primary' }}
+            css={{ transition: `color 0.15s ${EASE}` }}
+            lineHeight={0}
+            flexShrink={0}
           >
-            <Icon as={LuGripVertical} size='sm' />
+            <Icon as={LuGripVertical} boxSize={4} />
           </Box>
         )}
 
-        {questionType === SelectorTypes.Single ? (
-          <Box data-choice-control boxSize={4} border='1px solid' borderColor='gray.300' borderRadius='full' />
-        ) : (
-          <Checkbox.Root checked={false} readOnly tabIndex={-1}>
-            <Checkbox.HiddenInput />
-            <Checkbox.Control data-choice-control>
-              <Checkbox.Indicator />
-            </Checkbox.Control>
-          </Checkbox.Root>
-        )}
-        <Box data-choice-body>
+        <Box
+          data-choice-control
+          boxSize={4}
+          borderWidth='2px'
+          borderColor='gray.300'
+          borderRadius={questionType === SelectorTypes.Single ? 'full' : 'xs'}
+          flexShrink={0}
+          css={{ transition: `border-radius 0.25s ${EASE}` }}
+        />
+
+        <Box flex={1} minW={0}>
           <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
             <Input
+              variant='borderless'
+              px={0}
+              {...inputType.optionText}
               placeholder={
                 placeholders[activeTemplate]?.questions?.[questionIndex]?.options?.[optionIndex]?.option ??
-                t('process_create.option.placeholder', 'Option {{number}}', {
-                  number: optionIndex + 1,
-                })
+                t('process_create.option.placeholder', { defaultValue: 'Option {{number}}', number: optionIndex + 1 })
               }
               {...register(`questions.${questionIndex}.options.${optionIndex}.option`, {
-                required: t('form.error.required', 'This field is required'),
+                required: t('form.error.required', { defaultValue: 'This field is required' }),
               })}
             />
             <FormErrorMessage>
@@ -148,12 +169,16 @@ const SortableOption = ({
             </FormErrorMessage>
           </FormControl>
         </Box>
+
         {fieldsLength > 2 && (
           <IconButton
-            aria-label={t('process_create.option.remove', 'Remove option')}
+            aria-label={t('process_create.option.remove', { defaultValue: 'Remove option' })}
             onClick={onRemove}
-            size='sm'
+            size='xs'
             variant='ghost'
+            color='gray.400'
+            _hover={{ color: 'red.500', bg: 'red.50' }}
+            flexShrink={0}
           >
             <Icon as={LuX} />
           </IconButton>

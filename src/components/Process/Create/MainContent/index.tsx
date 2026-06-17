@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, Flex, HStack, Icon, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, chakra, Dialog, Flex, Icon, Portal, Text, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -16,13 +16,13 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus } from 'react-icons/lu'
 import { Link } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
-import { DashboardSection } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
+import { textType } from '../editor/typography'
+import { EASE } from '../VoterAuthentication/motion'
 import { DefaultQuestions, SelectorTypes } from '../common'
 import { QuestionForm } from './QuestionForm'
-import { QuestionType } from './QuestionType'
 
 const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
   const { t } = useTranslation()
@@ -53,42 +53,46 @@ const AddMultipleQuestionModal = ({ open, onOpenChange }) => {
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content>
-          <Dialog.Header>
-            <Dialog.Title>
-              {t('process.create.question.add_multiple.title', {
-                defaultValue: 'Multi-question multiple-choice is not available yet',
-              })}
-              <Box fontSize='sm' color='texts.subtle'>
-                {t('process.create.question.add_multiple.description', {
-                  defaultValue:
-                    'Creating processes with more than one multiple-choice question is currently not available. If you need this type of process, please contact us.',
+      {/* Portal to <body> so the fixed positioner isn't offset by an editor ancestor
+          with backdrop-filter (which would push the dialog off-screen behind a grey backdrop). */}
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>
+                {t('process.create.question.add_multiple.title', {
+                  defaultValue: 'Multi-question multiple-choice is not available yet',
                 })}
-              </Box>
-            </Dialog.Title>
-          </Dialog.Header>
-          <Dialog.Footer>
-            <Dialog.ActionTrigger asChild>
+                <Box fontSize='sm' color='texts.subtle'>
+                  {t('process.create.question.add_multiple.description', {
+                    defaultValue:
+                      'Creating processes with more than one multiple-choice question is currently not available. If you need this type of process, please contact us.',
+                  })}
+                </Box>
+              </Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Footer>
+              <Dialog.ActionTrigger asChild>
+                <Button
+                  variant='outline'
+                  aria-label={t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
+                >
+                  {t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
+                </Button>
+              </Dialog.ActionTrigger>
               <Button
-                variant='outline'
-                aria-label={t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
+                asChild
+                aria-label={t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
               >
-                {t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
+                <Link to={Routes.dashboard.settings.support}>
+                  {t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
+                </Link>
               </Button>
-            </Dialog.ActionTrigger>
-            <Button
-              asChild
-              aria-label={t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
-            >
-              <Link to={Routes.dashboard.settings.support}>
-                {t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
-              </Link>
-            </Button>
-          </Dialog.Footer>
-        </Dialog.Content>
-      </Dialog.Positioner>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
     </Dialog.Root>
   )
 }
@@ -146,10 +150,10 @@ export const Questions = () => {
   }
 
   return (
-    <VStack align='stretch' gap={4}>
-      <DashboardSection>
-        <QuestionType />
-      </DashboardSection>
+    <VStack align='stretch' gap={5}>
+      <Text {...textType.sectionLabel}>
+        <Trans i18nKey='editor.questions.heading'>Questions</Trans>
+      </Text>
 
       <DndContext
         sensors={sensors}
@@ -158,11 +162,13 @@ export const Questions = () => {
         modifiers={[restrictToVerticalAxis]}
       >
         <SortableContext items={fields.map((field) => field.id)} strategy={verticalListSortingStrategy}>
-          {fields.map((field, index) => (
-            <Box key={field.id}>
-              <QuestionForm index={index} onRemove={onRemoveQuestion} questionId={field.id} />
-            </Box>
-          ))}
+          <VStack align='stretch' gap={4}>
+            {fields.map((field, index) => (
+              <Box key={field.id}>
+                <QuestionForm index={index} onRemove={onRemoveQuestion} questionId={field.id} />
+              </Box>
+            ))}
+          </VStack>
         </SortableContext>
       </DndContext>
       <DeleteQuestionModal
@@ -171,14 +177,27 @@ export const Questions = () => {
         removeQuestion={() => removeQuestion(pendingDeleteIndex)}
       />
 
-      <Button variant='outline' onClick={addQuestion}>
-        <HStack gap={2}>
-          <Icon as={LuPlus} />
-          <Text as='span'>
-            <Trans i18nKey='process.create.question.add'>Add question</Trans>
-          </Text>
-        </HStack>
-      </Button>
+      <chakra.button
+        type='button'
+        onClick={addQuestion}
+        display='flex'
+        alignItems='center'
+        justifyContent='center'
+        gap={2}
+        w='full'
+        py={4}
+        borderRadius='2xl'
+        borderWidth='1px'
+        borderStyle='dashed'
+        borderColor='table.border'
+        color='texts.subtle'
+        {...textType.addAffordance}
+        css={{ transition: `border-color 0.15s ${EASE}, color 0.15s ${EASE}, background-color 0.15s ${EASE}` }}
+        _hover={{ borderColor: 'gray.400', color: 'texts.primary', bg: 'auth.bg' }}
+      >
+        <Icon as={LuPlus} boxSize={4} />
+        <Trans i18nKey='process.create.question.add'>Add question</Trans>
+      </chakra.button>
       <AddMultipleQuestionModal
         open={isAddMultipleQuestionsOpen}
         onOpenChange={({ open }) => setAddMultipleQuestionsOpen(open)}

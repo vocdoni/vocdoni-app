@@ -144,6 +144,36 @@ export const colors = defineSemanticTokens.colors({
       },
     },
   },
+  // Editor-scoped surface tiers (whisper-subtle depth). Three stepped surfaces +
+  // a border, correct in both modes: light leans on a tinted canvas + soft
+  // shadow; dark leans on surface stepping (raised card lighter than the page,
+  // nested inset darker). Only the vote-creation editor consumes these.
+  editor: {
+    canvas: {
+      value: {
+        _light: '{colors.surface.canvas}',
+        _dark: '{colors.brand.650}',
+      },
+    },
+    surface: {
+      value: {
+        _light: '{colors.white}',
+        _dark: '{colors.surface.card}',
+      },
+    },
+    inset: {
+      value: {
+        _light: '{colors.gray.150}',
+        _dark: '{colors.surface.inset}',
+      },
+    },
+    border: {
+      value: {
+        _light: '{colors.gray.200}',
+        _dark: '{colors.surface.border}',
+      },
+    },
+  },
   input: {
     placeholder: {
       value: '{colors.gray.500}',

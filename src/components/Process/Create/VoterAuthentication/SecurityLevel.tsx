@@ -43,7 +43,7 @@ export const getSecurityLevelMessages = (level: SecurityLevel): SecurityLevelMes
       return {
         subtext: (
           <Trans i18nKey='voter_auth.guarantees_sub_mid'>
-            Mid-level authentication guarantees with 3 credentials but no two-factor verification.
+            Mid-level authentication guarantees with multiple credentials but no two-factor verification.
           </Trans>
         ),
         alert: {
@@ -51,7 +51,7 @@ export const getSecurityLevelMessages = (level: SecurityLevel): SecurityLevelMes
           description: (
             <>
               <Trans i18nKey='voter_auth.guarantees_mid_description_intro'>
-                Your configuration provides mid-level authentication guarantees with 3 credentials.
+                Your configuration provides mid-level authentication guarantees with multiple credentials.
               </Trans>
               <List.Root mt={2} pl={4} listStyleType='disc' display='flex' flexDirection='column' gap={2}>
                 <List.Item>
@@ -102,7 +102,7 @@ export const getSecurityLevelMessages = (level: SecurityLevel): SecurityLevelMes
 
 export const getSecurityLevel = (use2FA: boolean, credentials: string[]): SecurityLevel => {
   if (use2FA) return SecurityLevels.STRONG
-  return credentials?.length === 3 ? SecurityLevels.MID : SecurityLevels.WEAK
+  return credentials?.length >= 2 ? SecurityLevels.MID : SecurityLevels.WEAK
 }
 
 const SecurityLevelBox = ({ level, isActive }: { level: SecurityLevel; isActive: boolean }) => {

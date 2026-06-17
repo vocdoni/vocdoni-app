@@ -277,8 +277,36 @@
     "edited_successfully": "Actualizado correctamente"
   },
   "editor": {
+    "autosave": {
+      "saved": "Guardado",
+      "saving": "Guardando…"
+    },
     "bold": "Negrita",
+    "format": {
+      "config_label": "Configuración de la pregunta",
+      "how_many": "¿Cuántas opciones pueden elegir los votantes?",
+      "inherited": "Igual que la pregunta 1",
+      "method_help": "Elige cómo responden los votantes a esta pregunta.",
+      "method_label": "Método de votación",
+      "style_label": "Visualización de opciones"
+    },
     "italic": "Cursiva",
+    "limits": {
+      "and": "y",
+      "any": "Cualquier número",
+      "any_desc": "Votar tantas como quieran",
+      "between": "Entre",
+      "exactly": "Exactamente",
+      "exactly_desc": "Un número fijo de elecciones",
+      "max_label": "Máximo",
+      "min_label": "Mínimo",
+      "no_more_than": "No más de",
+      "options_label": "opciones",
+      "range": "Un intervalo",
+      "range_desc": "Entre un mínimo y un máximo",
+      "upto": "Hasta un límite",
+      "upto_desc": "No más de un número fijado"
+    },
     "link": {
       "cancel": "Cancelar",
       "confirm": "Confirmar",
@@ -287,9 +315,74 @@
       "remove": "Eliminar enlace",
       "title": "Enlace"
     },
+    "method": {
+      "multiple_name": "Opción múltiple",
+      "multiple_what": "Los votantes pueden elegir varias opciones",
+      "single_name": "Opción única",
+      "single_what": "Los votantes eligen una opción"
+    },
+    "new_vote": "Nueva votación",
+    "open_setup": "Abrir configuración",
     "paragraph": "Párrafo",
+    "questions": {
+      "heading": "Preguntas"
+    },
+    "ready_count_one": "{{count}} de {{total}} listo",
+    "ready_count_many": "",
+    "ready_count_other": "{{count}} de {{total}} listos",
+    "results": {
+      "equal_desc": "Cada votante cuenta lo mismo",
+      "hidden_desc": "Los resultados se revelan solo al cerrar la votación",
+      "live_desc": "Los recuentos se actualizan según llegan los votos",
+      "weight_help": "Elige si cada votante elegible cuenta igual o si los votos se ponderan según el campo \"Poder de voto\" de la memberbase.",
+      "weighted_desc": "Usa el peso de voto de cada miembro"
+    },
+    "schedule": {
+      "preset_1d": "1 día",
+      "preset_1w": "1 semana",
+      "preset_2w": "2 semanas",
+      "preset_3d": "3 días",
+      "presets_label": "Duración rápida"
+    },
+    "section": {
+      "access": "Acceso de votantes",
+      "access_sub": "Quién puede votar y cómo se identifica",
+      "content": "Contenido",
+      "results": "Resultados y voto",
+      "results_sub": "Visibilidad y poder de voto",
+      "schedule": "Calendario",
+      "schedule_sub": "Cuándo abre y cierra la votación"
+    },
+    "setup": "Configuración",
     "strikethrough": "Tachado",
-    "underline": "Subrayado"
+    "summary": {
+      "access_ready_one": "{{count}} votante · autenticación lista",
+      "access_ready_many": "",
+      "access_ready_other": "{{count}} votantes · autenticación lista",
+      "access_unset": "Elige votantes y autenticación",
+      "method_any": "Opción múltiple",
+      "method_exactly": "Opción múltiple · exactamente {{n}}",
+      "method_range": "Opción múltiple · {{a}}–{{b}}",
+      "method_single": "Opción única",
+      "method_upto": "Opción múltiple · hasta {{n}}",
+      "results_unset": "",
+      "schedule_now": "Empieza de inmediato",
+      "schedule_now_until": "Empieza ahora · termina {{date}}",
+      "schedule_range": "{{start}} → {{end}}",
+      "schedule_unset": "Define inicio y fin",
+      "style_cards": "Opciones con tarjeta",
+      "style_text": "Opciones de texto"
+    },
+    "template": {
+      "heading": "¿Cómo quieres empezar?",
+      "subheading": "Elige una plantilla para rellenar la votación, o empieza en blanco."
+    },
+    "underline": "Subrayado",
+    "variant": {
+      "focused": "Enfocado",
+      "label": "Diseño",
+      "two_pane": "Dos paneles"
+    }
   },
   "election": {
     "ends_on": "Finaliza el {{date}}",
@@ -418,7 +511,6 @@
       "field_is_required": "Este campo es obligatorio",
       "generic": "Error al realizar la operación",
       "invalid_youtube_url": "Introduce una URL de YouTube válida",
-      "max_greater_than_min": "El valor máximo debe ser mayor o igual que el mínimo",
       "password_min_length": "Mín. 8 caracteres",
       "required": "Este campo es obligatorio"
     },
@@ -1165,12 +1257,6 @@
         "publish": "Publicar",
         "save_draft": "Guardar"
       },
-      "change_template": {
-        "cancel": "Cancelar",
-        "change": "Cambiar plantilla",
-        "message": "Tienes cambios sin guardar. ¿Seguro que quieres cambiar de plantilla?",
-        "title": "Cambiar plantilla"
-      },
       "description": {
         "placeholder": "Añade una descripción...",
         "title": "Título del proceso de votación"
@@ -1205,25 +1291,14 @@
         },
         "description": {
           "placeholder": "Añade aquí la descripción de la pregunta (opcional)..."
-        },
-        "question_number": "Pregunta {{index}} de {{total}}"
+        }
       },
       "save_draft_error": {
         "title": "Error al guardar el borrador"
       },
       "save_draft_success": "Borrador guardado",
-      "selectionLimits": {
-        "full": "Los votantes deben seleccionar al menos <min /> y como máximo <max /> opciones.",
-        "title": "Límites de selección:"
-      },
       "status": {
         "draft": "Borrador"
-      },
-      "template": {
-        "annual_general_meeting": "Asamblea General Anual",
-        "election": "Elección",
-        "participatory_budgeting": "Presupuestos participativos",
-        "title": "Comienza con una plantilla..."
       }
     },
     "created_by": "Creado por",
@@ -1234,7 +1309,6 @@
       "relative_inline": "{{ status }} {{ date, relative(past: hace %time; future: en %time) }}",
       "starts": "Comienza"
     },
-    "extended_info": "Información ampliada",
     "gitcoin": {
       "all_of_them": "(Todos)",
       "gps_score": "Puntuación de Gitcoin Passport: mín. {{score}}",
@@ -1255,10 +1329,8 @@
         "subtitle": "La opción múltiple solo permite una pregunta. Si cambias, se mantendrá únicamente la primera y se descartarán las demás.",
         "title": "¿Quieres cambiar a opción múltiple?"
       },
-      "description": "Esto se aplica a todas las preguntas de este proceso de votación",
       "multiple": "Opción múltiple",
-      "single": "Opción única",
-      "title": "Tipo de pregunta"
+      "single": "Opción única"
     },
     "questions": "Preguntas",
     "results": "Resultados",
@@ -1397,7 +1469,7 @@
     "no_account_address": "No se ha encontrado dirección de cuenta.",
     "no_election_index": "No se ha encontrado índice de elección para la cuenta.",
     "option": {
-      "description_placeholder": "Descripción (opcional)",
+      "description_placeholder": "Describe esta opción (opcional)",
       "placeholder": "Opción {{number}}",
       "remove": "Eliminar opción"
     },
@@ -1405,6 +1477,7 @@
       "description": {
         "placeholder": "Añade aquí la descripción de la pregunta (opcional)..."
       },
+      "drag": "Arrastra para reordenar",
       "remove": "Eliminar pregunta",
       "title": {
         "placeholder": "Añade un título a la pregunta"
@@ -1425,7 +1498,8 @@
     },
     "youtube": {
       "accordion_title": "Adjuntar vídeo (opcional)",
-      "title": "Vídeo en directo"
+      "preview": "Vista previa",
+      "remove": "Quitar vídeo"
     }
   },
   "process_list": {
@@ -1952,9 +2026,9 @@
     "sms": "Por verificación SMS",
     "step": {
       "identity": {
-        "counter_one": "{{count}} de {{max}} seleccionado",
-        "counter_many": "",
-        "counter_other": "{{count}} de {{max}} seleccionados",
+        "counter_selected_one": "",
+        "counter_selected_many": "",
+        "counter_selected_other": "",
         "heading": "¿Cómo demostrarán su identidad los votantes?",
         "subheading": "Elige los datos que los miembros deben introducir para acceder a la votación. Dos campos ofrecen el mejor equilibrio entre seguridad y facilidad."
       },

@@ -2,6 +2,7 @@ import { Box, Button, HStack, Icon, Text, VStack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuCircleCheck, LuMail, LuPencil, LuPhone, LuShield, LuSmartphone, LuUsers } from 'react-icons/lu'
 import { Census } from '../common'
+import { ELEVATION, SURFACE } from '../editor/surfaces'
 import { useCredentialMeta } from './credentialMeta'
 import { EASE, popIn } from './motion'
 import { TwoFAMethod } from './utils'
@@ -33,13 +34,14 @@ export const AuthPassportCard = ({ census, groupName, groupMembersCount, onEdit 
   return (
     <Box
       borderWidth='1px'
-      borderColor='table.border'
+      borderColor={SURFACE.border}
       borderRadius='xl'
       overflow='hidden'
-      bg='auth.card.bg'
+      bg={SURFACE.surface}
+      boxShadow={ELEVATION.rest}
       css={{ animation: `${popIn} 0.28s ${EASE} both` }}
     >
-      <HStack px={4} py={3} gap={2} bg='auth.bg'>
+      <HStack px={4} py={3} gap={2} bg={SURFACE.inset}>
         <Icon as={LuCircleCheck} color='green.500' boxSize={4} />
         <Text fontWeight='semibold' fontSize='sm'>
           {t('voter_auth.passport.configured', { defaultValue: 'Voter access ready' })}

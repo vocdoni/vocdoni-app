@@ -1,4 +1,4 @@
-import { Dialog, DialogRootProps, Text } from '@chakra-ui/react'
+import { Dialog, DialogRootProps, Portal, Text } from '@chakra-ui/react'
 
 export type DeleteModalProps = {
   title: string | React.ReactNode
@@ -9,18 +9,22 @@ export type DeleteModalProps = {
 const DeleteModal = ({ title, subtitle, children, ...dialogProps }: DeleteModalProps) => {
   return (
     <Dialog.Root placement='center' {...dialogProps}>
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content>
-          <Dialog.Header pb={0}>
-            <Dialog.Title>{title}</Dialog.Title>
-          </Dialog.Header>
-          <Dialog.Body>
-            <Text variant='subheader'>{subtitle}</Text>
-            {children}
-          </Dialog.Body>
-        </Dialog.Content>
-      </Dialog.Positioner>
+      {/* Portal to <body> so the fixed positioner is viewport-relative and isn't
+          offset by an ancestor with backdrop-filter (which creates a containing block). */}
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header pb={0}>
+              <Dialog.Title>{title}</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              <Text variant='subheader'>{subtitle}</Text>
+              {children}
+            </Dialog.Body>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
     </Dialog.Root>
   )
 }

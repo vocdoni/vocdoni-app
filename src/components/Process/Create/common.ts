@@ -52,8 +52,9 @@ export type Process = {
   questions: Question[]
   maxNumberOfChoices: number | null
   minNumberOfChoices: number | null
-  resultVisibility: 'live' | 'hidden'
-  weightedVote: boolean
+  // null = the admin hasn't chosen yet (no default selection in the editor).
+  resultVisibility: 'live' | 'hidden' | null
+  weightedVote: boolean | null
   voterPrivacy: 'public' | 'anonymous'
   groupId: string
   census?: Census | null
@@ -90,8 +91,8 @@ export const defaultProcessValues: Process = {
   questions: [DefaultQuestions[SelectorTypes.Single]],
   maxNumberOfChoices: null,
   minNumberOfChoices: null,
-  resultVisibility: 'hidden',
-  weightedVote: false,
+  resultVisibility: null,
+  weightedVote: null,
   voterPrivacy: 'public',
   groupId: '',
   census: null,

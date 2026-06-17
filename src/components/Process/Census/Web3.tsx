@@ -53,7 +53,7 @@ export const CensusWeb3Addresses = () => {
   })
 
   const addresses = watch('addresses')
-  const weighted: boolean = watch('weightedVote')
+  const weighted: boolean = !!watch('weightedVote')
   const censusType = watch('censusType')
   const { subscription } = useSubscription()
   const maxCensusSize = subscription?.subscriptionDetails?.maxCensusSize || subscription?.plan?.organization?.maxCensus

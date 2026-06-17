@@ -277,8 +277,36 @@
     "edited_successfully": "Atualizado com sucesso"
   },
   "editor": {
+    "autosave": {
+      "saved": "Salvo",
+      "saving": "Salvando…"
+    },
     "bold": "Negrito",
+    "format": {
+      "config_label": "Configuração da pergunta",
+      "how_many": "Quantas opções os eleitores podem escolher?",
+      "inherited": "Igual à pergunta 1",
+      "method_help": "Escolha como os eleitores respondem a esta pergunta.",
+      "method_label": "Método de votação",
+      "style_label": "Exibição das opções"
+    },
     "italic": "Itálico",
+    "limits": {
+      "and": "e",
+      "any": "Qualquer número",
+      "any_desc": "Votar em quantas quiserem",
+      "between": "Entre",
+      "exactly": "Exatamente",
+      "exactly_desc": "Um número fixo de escolhas",
+      "max_label": "Máximo",
+      "min_label": "Mínimo",
+      "no_more_than": "No máximo",
+      "options_label": "opções",
+      "range": "Um intervalo",
+      "range_desc": "Entre um mínimo e um máximo",
+      "upto": "Até um limite",
+      "upto_desc": "Não mais que um número definido"
+    },
     "link": {
       "cancel": "Cancelar",
       "confirm": "Confirmar",
@@ -287,9 +315,74 @@
       "remove": "Remover link",
       "title": "Link"
     },
+    "method": {
+      "multiple_name": "Escolha múltipla",
+      "multiple_what": "Os eleitores podem escolher várias opções",
+      "single_name": "Escolha única",
+      "single_what": "Os eleitores escolhem uma opção"
+    },
+    "new_vote": "Nova votação",
+    "open_setup": "Abrir configuração",
     "paragraph": "Parágrafo",
+    "questions": {
+      "heading": "Perguntas"
+    },
+    "ready_count_one": "{{count}} de {{total}} pronto",
+    "ready_count_many": "",
+    "ready_count_other": "{{count}} de {{total}} prontos",
+    "results": {
+      "equal_desc": "Cada eleitor conta o mesmo",
+      "hidden_desc": "Os resultados aparecem só ao fechar a votação",
+      "live_desc": "As contagens atualizam conforme os votos chegam",
+      "weight_help": "Escolha se cada eleitor elegível conta igual ou se os votos são ponderados pelo campo \"Poder de voto\" da memberbase.",
+      "weighted_desc": "Usa o peso de voto de cada membro"
+    },
+    "schedule": {
+      "preset_1d": "1 dia",
+      "preset_1w": "1 semana",
+      "preset_2w": "2 semanas",
+      "preset_3d": "3 dias",
+      "presets_label": "Duração rápida"
+    },
+    "section": {
+      "access": "Acesso dos eleitores",
+      "access_sub": "Quem pode votar e como se autentica",
+      "content": "Conteúdo",
+      "results": "Resultados e voto",
+      "results_sub": "Visibilidade e poder de voto",
+      "schedule": "Cronograma",
+      "schedule_sub": "Quando a votação abre e fecha"
+    },
+    "setup": "Configuração",
     "strikethrough": "Tachado",
-    "underline": "Sublinhado"
+    "summary": {
+      "access_ready_one": "{{count}} eleitor · autenticação pronta",
+      "access_ready_many": "",
+      "access_ready_other": "{{count}} eleitores · autenticação pronta",
+      "access_unset": "Escolha eleitores e autenticação",
+      "method_any": "Escolha múltipla",
+      "method_exactly": "Escolha múltipla · exatamente {{n}}",
+      "method_range": "Escolha múltipla · {{a}}–{{b}}",
+      "method_single": "Escolha única",
+      "method_upto": "Escolha múltipla · até {{n}}",
+      "results_unset": "",
+      "schedule_now": "Começa imediatamente",
+      "schedule_now_until": "Começa agora · termina {{date}}",
+      "schedule_range": "{{start}} → {{end}}",
+      "schedule_unset": "Defina início e fim",
+      "style_cards": "Opções em cartão",
+      "style_text": "Opções de texto"
+    },
+    "template": {
+      "heading": "Como você quer começar?",
+      "subheading": "Escolha um modelo para preencher a votação, ou comece em branco."
+    },
+    "underline": "Sublinhado",
+    "variant": {
+      "focused": "Focado",
+      "label": "Layout",
+      "two_pane": "Dois painéis"
+    }
   },
   "election": {
     "ends_on": "Encerra em {{date}}",
@@ -418,7 +511,6 @@
       "field_is_required": "Este campo é obrigatório",
       "generic": "Erro ao executar a operação",
       "invalid_youtube_url": "Insira uma URL válida do YouTube",
-      "max_greater_than_min": "O valor máximo deve ser maior ou igual ao mínimo",
       "password_min_length": "Mín. 8 caracteres",
       "required": "Este campo é obrigatório"
     },
@@ -1165,12 +1257,6 @@
         "publish": "Publicar",
         "save_draft": "Salvar"
       },
-      "change_template": {
-        "cancel": "Cancelar",
-        "change": "Trocar modelo",
-        "message": "Você tem alterações não salvas. Tem certeza de que deseja trocar de modelo?",
-        "title": "Trocar modelo"
-      },
       "description": {
         "placeholder": "Adicione uma descrição...",
         "title": "Título do processo de votação"
@@ -1205,25 +1291,14 @@
         },
         "description": {
           "placeholder": "Adicione aqui a descrição da pergunta (opcional)..."
-        },
-        "question_number": "Pergunta {{index}} de {{total}}"
+        }
       },
       "save_draft_error": {
         "title": "Erro ao salvar o rascunho"
       },
       "save_draft_success": "Rascunho salvo",
-      "selectionLimits": {
-        "full": "Os eleitores devem selecionar pelo menos  <min />  e no máximo  <max />  opções.",
-        "title": "Limites de seleção:"
-      },
       "status": {
         "draft": "Rascunho"
-      },
-      "template": {
-        "annual_general_meeting": "Assembleia Geral Anual",
-        "election": "Eleição",
-        "participatory_budgeting": "Orçamento participativo",
-        "title": "Comece com um modelo..."
       }
     },
     "created_by": "Criado por",
@@ -1234,7 +1309,6 @@
       "relative_inline": "{{ status }} {{ date, relative(past: há %time; future: em %time) }}",
       "starts": "Começa"
     },
-    "extended_info": "Informações detalhadas",
     "gitcoin": {
       "all_of_them": "(Todos)",
       "gps_score": "Pontuação do Gitcoin Passport: mín. {{score}}",
@@ -1255,10 +1329,8 @@
         "subtitle": "A múltipla escolha permite apenas uma pergunta. Se você trocar, somente a primeira pergunta será mantida e as demais serão descartadas.",
         "title": "Deseja mudar para múltipla escolha?"
       },
-      "description": "Isso se aplica a todas as perguntas deste processo de votação",
       "multiple": "Múltipla escolha",
-      "single": "Escolha única",
-      "title": "Tipo de pergunta"
+      "single": "Escolha única"
     },
     "questions": "Perguntas",
     "results": "Resultados",
@@ -1397,7 +1469,7 @@
     "no_account_address": "Nenhum endereço de conta encontrado.",
     "no_election_index": "Nenhum índice de eleição encontrado para a conta.",
     "option": {
-      "description_placeholder": "Descrição (opcional)",
+      "description_placeholder": "Descreva esta opção (opcional)",
       "placeholder": "Opção {{number}}",
       "remove": "Remover opção"
     },
@@ -1405,6 +1477,7 @@
       "description": {
         "placeholder": "Adicione aqui a descrição da pergunta (opcional)..."
       },
+      "drag": "Arraste para reordenar",
       "remove": "Remover pergunta",
       "title": {
         "placeholder": "Adicione um título à pergunta"
@@ -1425,7 +1498,8 @@
     },
     "youtube": {
       "accordion_title": "Anexar vídeo (opcional)",
-      "title": "Vídeo ao vivo"
+      "preview": "Pré-visualização",
+      "remove": "Remover vídeo"
     }
   },
   "process_list": {
@@ -1952,9 +2026,9 @@
     "sms": "Verificação via SMS",
     "step": {
       "identity": {
-        "counter_one": "{{count}} de {{max}} selecionado",
-        "counter_many": "",
-        "counter_other": "{{count}} de {{max}} selecionados",
+        "counter_selected_one": "",
+        "counter_selected_many": "",
+        "counter_selected_other": "",
         "heading": "Como os eleitores vão comprovar a identidade deles?",
         "subheading": "Escolha os dados que os membros precisam inserir para acessar a votação. Dois campos oferecem o melhor equilíbrio entre segurança e facilidade."
       },

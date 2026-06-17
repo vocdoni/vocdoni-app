@@ -1,24 +1,27 @@
 import {
   Box,
+  chakra,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
+  Grid,
   Icon,
   IconButton,
   Input,
-  SimpleGrid,
   Text,
-  useSlotRecipe,
   VStack,
 } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuGripVertical, LuPlus, LuTrash2 } from 'react-icons/lu'
-import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { ImageUploader } from '~components/Layout/Uploader'
 import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
+import { ELEVATION, SURFACE } from '../editor/surfaces'
+import { editorBody, inputType, textType } from '../editor/typography'
+import { EASE } from '../VoterAuthentication/motion'
 
 const ExtendedQuestionEditor = ({
   index,
@@ -38,16 +41,28 @@ const ExtendedQuestionEditor = ({
     formState: { errors },
     control,
   } = useFormContext()
-  const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
-  const cardStyles = choiceRecipe({ context: 'card', layout: 'grid' })
+  const gridRef = useRef<HTMLDivElement>(null)
+  const prevLen = useRef(questionOptions.length)
+
+  // Focus the new option's title when a card is added.
+  useEffect(() => {
+    if (questionOptions.length > prevLen.current && gridRef.current) {
+      const inputs = gridRef.current.querySelectorAll<HTMLInputElement>('[data-choice-body] input')
+      inputs[inputs.length - 1]?.focus()
+    }
+    prevLen.current = questionOptions.length
+  }, [questionOptions.length])
 
   return (
-    <SimpleGrid columns={{ base: 1, lg: 2, xl: 3, '2xl': 4 }} gap={4}>
+    // Columns derive from the container width (not the viewport) so cards keep a
+    // sensible ~180px+ width inside the narrow editor column instead of getting
+    // squeezed into 4 skinny, elongated columns. auto-fill (not auto-fit) reserves
+    // empty tracks so a lone wrapped card doesn't stretch full-width.
+    <Grid ref={gridRef} templateColumns='repeat(auto-fill, minmax(180px, 1fr))' gap={4}>
       {questionOptions.map((field, optionIndex) => (
         <SortableExtendedOption
           key={field.id}
           field={field}
-          cardStyles={cardStyles}
           optionIndex={optionIndex}
           questionIndex={index}
           fieldsLength={questionOptions.length}
@@ -62,25 +77,32 @@ const ExtendedQuestionEditor = ({
       ))}
 
       {/* Add new option card */}
-      <DashboardBox
+      <chakra.button
+        type='button'
         onClick={() => append({ option: '', description: '' })}
+        display='flex'
+        flexDirection='column'
+        alignItems='center'
+        justifyContent='center'
+        gap={2}
+        minH='180px'
+        borderRadius='2xl'
+        borderWidth='1px'
         borderStyle='dashed'
-        cursor='pointer'
-        _hover={{ bg: 'gray.100', _dark: { bg: 'gray.800' } }}
+        borderColor='table.border'
+        color='texts.subtle'
+        css={{ transition: `border-color 0.15s ${EASE}, color 0.15s ${EASE}, background-color 0.15s ${EASE}` }}
+        _hover={{ borderColor: 'gray.400', color: 'texts.primary', bg: 'auth.bg' }}
       >
-        <VStack justify='center' align='center' height='100%'>
-          <Icon as={LuPlus} boxSize={6} />
-          <Text>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
-        </VStack>
-      </DashboardBox>
-    </SimpleGrid>
+        <Icon as={LuPlus} boxSize={6} />
+        <Text {...textType.addAffordance}>{t('process_create.new_option', { defaultValue: 'Add option' })}</Text>
+      </chakra.button>
+    </Grid>
   )
 }
 
-// SortableExtendedOption component for individual option cards
 const SortableExtendedOption = ({
   field,
-  cardStyles,
   optionIndex,
   questionIndex,
   fieldsLength,
@@ -98,11 +120,24 @@ const SortableExtendedOption = ({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 2 : undefined,
   }
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Box css={cardStyles.wrapper} data-choice-card data-layout='grid' position='relative'>
+      <Box
+        data-choice-card
+        data-layout='grid'
+        position='relative'
+        borderWidth='1px'
+        borderColor={SURFACE.border}
+        borderRadius='2xl'
+        overflow='hidden'
+        bg={SURFACE.surface}
+        css={{ transition: `border-color 0.18s ${EASE}, box-shadow 0.18s ${EASE}` }}
+        boxShadow={isDragging ? ELEVATION.drag : ELEVATION.rest}
+        _hover={{ boxShadow: isDragging ? undefined : ELEVATION.hover }}
+      >
         {/* Drag handle */}
         {fieldsLength > 1 && (
           <Box
@@ -113,20 +148,24 @@ const SortableExtendedOption = ({
             top={2}
             left={2}
             zIndex='contents'
-            p={1}
+            p={1.5}
             borderRadius='md'
-            color='gray.400'
-            _hover={{ color: 'gray.200', bg: 'gray.600', _dark: { bg: 'gray.700' } }}
+            bg='blackAlpha.500'
+            color='white'
+            lineHeight={0}
+            _hover={{ bg: 'blackAlpha.700' }}
+            css={{ transition: `background-color 0.15s ${EASE}` }}
           >
-            <Icon as={LuGripVertical} size='sm' />
+            <Icon as={LuGripVertical} boxSize={4} />
           </Box>
         )}
 
-        {/* Trash button */}
+        {/* Remove */}
         {fieldsLength > 2 && (
           <IconButton
             aria-label={t('process_create.remove_option', { defaultValue: 'Remove option' })}
             size='sm'
+            variant='solid'
             colorPalette='red'
             onClick={onRemove}
             position='absolute'
@@ -139,32 +178,26 @@ const SortableExtendedOption = ({
         )}
 
         <Box data-choice-media>
-          {/* Image uploader */}
           <ImageUploader name={`questions.${questionIndex}.options.${optionIndex}.image`} borderTopRadius='sm' />
         </Box>
-        <Box data-choice-body>
-          {/* Title */}
+        <Box data-choice-body p={4}>
           <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
             <Input
               variant='borderless'
+              px={0}
+              {...inputType.optionTitle}
               placeholder={
                 placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.option ??
-                t('process_create.option.placeholder', 'Option {{number}}', {
-                  number: optionIndex + 1,
-                })
+                t('process_create.option.placeholder', { defaultValue: 'Option {{number}}', number: optionIndex + 1 })
               }
-              fontWeight='semibold'
-              fontSize='md'
-              _placeholder={{ fontWeight: 'semibold' }}
               {...register(`questions.${questionIndex}.options.${optionIndex}.option`, {
-                required: t('form.error.required', 'This field is required'),
+                required: t('form.error.required', { defaultValue: 'This field is required' }),
               })}
             />
             <FormErrorMessage>
               {errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
             </FormErrorMessage>
           </FormControl>
-          {/* Description */}
           <Controller
             name={`questions.${questionIndex}.options.${optionIndex}.description`}
             control={control}
@@ -172,9 +205,12 @@ const SortableExtendedOption = ({
               <Editor
                 onChange={field.onChange}
                 variant='borderless'
+                typography={editorBody.optionDescription}
                 placeholder={
                   placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.description ??
-                  t('process_create.option.description_placeholder', 'Project description')
+                  t('process_create.option.description_placeholder', {
+                    defaultValue: 'Describe this option (optional)',
+                  })
                 }
                 defaultValue={field.value}
               />

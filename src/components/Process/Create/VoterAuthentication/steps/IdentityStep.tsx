@@ -6,12 +6,10 @@ import { useCredentialMeta } from '../credentialMeta'
 import { SecurityGauge } from '../SecurityGauge'
 import { VoterAuthFormData } from '../utils'
 
-const MAX_CREDENTIALS = 3
-
 /**
  * Step 1 — choose which identity fields voters must provide. Cards (not
  * checkboxes) make each field tangible, and the live gauge shows the security
- * impact of every choice.
+ * impact of every choice. Admins may select as many fields as are available.
  */
 export const IdentityStep = () => {
   const { t } = useTranslation()
@@ -37,13 +35,12 @@ export const IdentityStep = () => {
       <Controller
         control={control}
         name='credentials'
-        rules={{ validate: (val) => (val?.length ?? 0) <= MAX_CREDENTIALS }}
         render={({ field }) => {
           const value: string[] = field.value ?? []
           const toggle = (id: string) => {
             if (value.includes(id)) {
               field.onChange(value.filter((v) => v !== id))
-            } else if (value.length < MAX_CREDENTIALS) {
+            } else {
               field.onChange([...value, id])
             }
           }
@@ -52,14 +49,12 @@ export const IdentityStep = () => {
               <SimpleGrid columns={2} gap={3}>
                 {identityCredentials.map((meta, index) => {
                   const isSelected = value.includes(meta.id)
-                  const isDisabled = !isSelected && value.length >= MAX_CREDENTIALS
                   return (
                     <CredentialCard
                       key={meta.id}
                       meta={meta}
                       index={index}
                       isSelected={isSelected}
-                      isDisabled={isDisabled}
                       onToggle={() => toggle(meta.id)}
                     />
                   )
@@ -67,10 +62,9 @@ export const IdentityStep = () => {
               </SimpleGrid>
 
               <Text fontSize='xs' color='texts.subtle'>
-                {t('voter_auth.step.identity.counter', {
-                  defaultValue: '{{count}} of {{max}} selected',
+                {t('voter_auth.step.identity.counter_selected', {
+                  defaultValue: '{{count}} selected',
                   count: value.length,
-                  max: MAX_CREDENTIALS,
                 })}
               </Text>
             </VStack>

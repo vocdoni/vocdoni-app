@@ -274,8 +274,36 @@
     "edited_successfully": "Erfolgreich aktualisiert"
   },
   "editor": {
+    "autosave": {
+      "saved": "Gespeichert",
+      "saving": "Wird gespeichert…"
+    },
     "bold": "Fett",
+    "format": {
+      "config_label": "Fragenkonfiguration",
+      "how_many": "Wie viele Optionen können Wählende auswählen?",
+      "inherited": "Wie Frage 1",
+      "method_help": "Lege fest, wie die Wählenden diese Frage beantworten.",
+      "method_label": "Abstimmungsmethode",
+      "style_label": "Optionsdarstellung"
+    },
     "italic": "Kursiv",
+    "limits": {
+      "and": "und",
+      "any": "Beliebig viele",
+      "any_desc": "So viele wie gewünscht",
+      "between": "Zwischen",
+      "exactly": "Genau",
+      "exactly_desc": "Eine feste Anzahl an Auswahlen",
+      "max_label": "Maximum",
+      "min_label": "Minimum",
+      "no_more_than": "Höchstens",
+      "options_label": "Optionen",
+      "range": "Ein Bereich",
+      "range_desc": "Zwischen Minimum und Maximum",
+      "upto": "Bis zu einem Limit",
+      "upto_desc": "Nicht mehr als eine festgelegte Anzahl"
+    },
     "link": {
       "cancel": "Abbrechen",
       "confirm": "Bestätigen",
@@ -284,9 +312,72 @@
       "remove": "Link entfernen",
       "title": "Link"
     },
+    "method": {
+      "multiple_name": "Mehrfachauswahl",
+      "multiple_what": "Wählende können mehrere Optionen wählen",
+      "single_name": "Einzelauswahl",
+      "single_what": "Wählende wählen eine Option"
+    },
+    "new_vote": "Neue Abstimmung",
+    "open_setup": "Einrichtung öffnen",
     "paragraph": "Absatz",
+    "questions": {
+      "heading": "Fragen"
+    },
+    "ready_count_one": "{{count}} von {{total}} bereit",
+    "ready_count_other": "{{count}} von {{total}} bereit",
+    "results": {
+      "equal_desc": "Jede Stimme zählt gleich",
+      "hidden_desc": "Ergebnisse erscheinen erst nach Abstimmungsende",
+      "live_desc": "Auszählung aktualisiert sich mit jeder Stimme",
+      "weight_help": "Lege fest, ob jede stimmberechtigte Person gleich zählt oder Stimmen nach dem Feld „Stimmgewicht\" der Memberbase gewichtet werden.",
+      "weighted_desc": "Nutzt das Stimmgewicht jedes Mitglieds"
+    },
+    "schedule": {
+      "preset_1d": "1 Tag",
+      "preset_1w": "1 Woche",
+      "preset_2w": "2 Wochen",
+      "preset_3d": "3 Tage",
+      "presets_label": "Schnelle Dauer"
+    },
+    "section": {
+      "access": "Wählerzugang",
+      "access_sub": "Wer abstimmen darf und wie er sich anmeldet",
+      "content": "Inhalt",
+      "results": "Ergebnisse & Abstimmung",
+      "results_sub": "Sichtbarkeit und Stimmgewicht",
+      "schedule": "Zeitplan",
+      "schedule_sub": "Wann die Abstimmung öffnet und schließt"
+    },
+    "setup": "Einrichtung",
     "strikethrough": "Durchgestrichen",
-    "underline": "Unterstrichen"
+    "summary": {
+      "access_ready_one": "{{count}} Wählender · Authentifizierung bereit",
+      "access_ready_other": "{{count}} Wählende · Authentifizierung bereit",
+      "access_unset": "Wähler & Authentifizierung wählen",
+      "method_any": "Mehrfachauswahl",
+      "method_exactly": "Mehrfachauswahl · genau {{n}}",
+      "method_range": "Mehrfachauswahl · {{a}}–{{b}}",
+      "method_single": "Einzelauswahl",
+      "method_upto": "Mehrfachauswahl · bis zu {{n}}",
+      "results_unset": "",
+      "schedule_now": "Startet sofort",
+      "schedule_now_until": "Startet jetzt · endet {{date}}",
+      "schedule_range": "{{start}} → {{end}}",
+      "schedule_unset": "Start und Ende festlegen",
+      "style_cards": "Kartenoptionen",
+      "style_text": "Textoptionen"
+    },
+    "template": {
+      "heading": "Wie möchtest du beginnen?",
+      "subheading": "Wähle eine Vorlage zum Vorausfüllen oder beginne leer."
+    },
+    "underline": "Unterstrichen",
+    "variant": {
+      "focused": "Fokussiert",
+      "label": "Layout",
+      "two_pane": "Zwei Spalten"
+    }
   },
   "election": {
     "ends_on": "Endet am {{date}}",
@@ -415,7 +506,6 @@
       "field_is_required": "Dieses Feld ist erforderlich",
       "generic": "Fehler beim Ausführen der Operation",
       "invalid_youtube_url": "Bitte gib eine gültige YouTube-URL ein",
-      "max_greater_than_min": "Maximum muss größer oder gleich dem Minimum sein",
       "password_min_length": "Min. 8 Zeichen",
       "required": "Dieses Feld ist erforderlich"
     },
@@ -1142,12 +1232,6 @@
         "publish": "Veröffentlichen",
         "save_draft": "Speichern"
       },
-      "change_template": {
-        "cancel": "Abbrechen",
-        "change": "Vorlage ändern",
-        "message": "Du hast nicht gespeicherte Änderungen. Möchtest du die Vorlage wirklich wechseln?",
-        "title": "Vorlage ändern"
-      },
       "description": {
         "placeholder": "Beschreibung hinzufügen…",
         "title": "Titel des Abstimmungsprozesses"
@@ -1181,25 +1265,14 @@
         },
         "description": {
           "placeholder": "Beschreibung der Frage hier eingeben (optional)..."
-        },
-        "question_number": "Frage {{index}} von {{total}}"
+        }
       },
       "save_draft_error": {
         "title": "Fehler beim Speichern des Entwurfs"
       },
       "save_draft_success": "Entwurf gespeichert",
-      "selectionLimits": {
-        "full": "Wählende müssen mindestens  <min />  und höchstens  <max />  Optionen auswählen.",
-        "title": "Auswahlgrenzen:"
-      },
       "status": {
         "draft": "Entwurf"
-      },
-      "template": {
-        "annual_general_meeting": "Jahreshauptversammlung",
-        "election": "Wahl",
-        "participatory_budgeting": "Partizipatives Budget",
-        "title": "Mit einer Vorlage beginnen..."
       }
     },
     "created_by": "Erstellt von",
@@ -1210,7 +1283,6 @@
       "relative_inline": "{{ status }} {{ date, relative(past: %time ago; future: in %time) }}",
       "starts": "Beginnt"
     },
-    "extended_info": "Erweiterte Infos",
     "gitcoin": {
       "all_of_them": "(Alle davon)",
       "gps_score": "Gitcoin Passport Score: Mindestpunktzahl {{score}}",
@@ -1230,10 +1302,8 @@
         "subtitle": "Mehrfachauswahl erlaubt nur eine Frage. Beim Wechsel wird nur deine erste Frage behalten, alle anderen werden verworfen.",
         "title": "Möchtest du zur Mehrfachauswahl wechseln?"
       },
-      "description": "Dies gilt für alle Fragen in diesem Abstimmungsprozess",
       "multiple": "Mehrfachauswahl",
-      "single": "Einfachauswahl",
-      "title": "Fragentyp"
+      "single": "Einfachauswahl"
     },
     "questions": "Fragen",
     "results": "Ergebnisse",
@@ -1371,7 +1441,7 @@
     "no_account_address": "Keine Kontoadresse gefunden.",
     "no_election_index": "Kein Abstimmungsindex für das Konto gefunden.",
     "option": {
-      "description_placeholder": "Beschreibung (optional)",
+      "description_placeholder": "Diese Option beschreiben (optional)",
       "placeholder": "Option {{number}}",
       "remove": "Option entfernen"
     },
@@ -1379,6 +1449,7 @@
       "description": {
         "placeholder": "Beschreibung der Frage hier hinzufügen (optional)…"
       },
+      "drag": "Zum Umsortieren ziehen",
       "remove": "Frage entfernen",
       "title": {
         "placeholder": "Titel der Frage hinzufügen"
@@ -1399,7 +1470,8 @@
     },
     "youtube": {
       "accordion_title": "Video anhängen (optional)",
-      "title": "Livestreaming-Video"
+      "preview": "Vorschau",
+      "remove": "Video entfernen"
     }
   },
   "process_list": {
@@ -1923,8 +1995,8 @@
     "sms": "Per SMS-Verifizierung",
     "step": {
       "identity": {
-        "counter_one": "{{count}} von {{max}} ausgewählt",
-        "counter_other": "{{count}} von {{max}} ausgewählt",
+        "counter_selected_one": "",
+        "counter_selected_other": "",
         "heading": "Wie weisen die Wählenden ihre Identität nach?",
         "subheading": "Wähle die Angaben, die Mitglieder eingeben müssen, um zur Abstimmung zu gelangen. Zwei Felder bieten die beste Balance aus Sicherheit und Einfachheit."
       },

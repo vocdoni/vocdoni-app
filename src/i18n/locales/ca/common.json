@@ -277,8 +277,36 @@
     "edited_successfully": "Actualitzat correctament"
   },
   "editor": {
+    "autosave": {
+      "saved": "Desat",
+      "saving": "Desant…"
+    },
     "bold": "Negreta",
+    "format": {
+      "config_label": "Configuració de la pregunta",
+      "how_many": "Quantes opcions poden triar els votants?",
+      "inherited": "Igual que la pregunta 1",
+      "method_help": "Tria com responen els votants a aquesta pregunta.",
+      "method_label": "Mètode de votació",
+      "style_label": "Visualització d'opcions"
+    },
     "italic": "Cursiva",
+    "limits": {
+      "and": "i",
+      "any": "Qualsevol nombre",
+      "any_desc": "Votar-ne tantes com vulguin",
+      "between": "Entre",
+      "exactly": "Exactament",
+      "exactly_desc": "Un nombre fix de tries",
+      "max_label": "Màxim",
+      "min_label": "Mínim",
+      "no_more_than": "No més de",
+      "options_label": "opcions",
+      "range": "Un interval",
+      "range_desc": "Entre un mínim i un màxim",
+      "upto": "Fins a un límit",
+      "upto_desc": "No més d’un nombre fixat"
+    },
     "link": {
       "cancel": "Cancel·la",
       "confirm": "Confirma",
@@ -287,9 +315,74 @@
       "remove": "Elimina l'enllaç",
       "title": "Enllaç"
     },
+    "method": {
+      "multiple_name": "Opció múltiple",
+      "multiple_what": "Els votants poden triar diverses opcions",
+      "single_name": "Opció única",
+      "single_what": "Els votants trien una opció"
+    },
+    "new_vote": "Nova votació",
+    "open_setup": "Obre la configuració",
     "paragraph": "Paràgraf",
+    "questions": {
+      "heading": "Preguntes"
+    },
+    "ready_count_one": "{{count}} de {{total}} a punt",
+    "ready_count_many": "",
+    "ready_count_other": "{{count}} de {{total}} a punt",
+    "results": {
+      "equal_desc": "Cada votant compta igual",
+      "hidden_desc": "Els resultats es revelen només en tancar la votació",
+      "live_desc": "Els recomptes s’actualitzen a mesura que arriben els vots",
+      "weight_help": "Tria si cada votant elegible compta igual o si els vots es ponderen segons el camp \"Poder de vot\" de la memberbase.",
+      "weighted_desc": "Usa el pes de vot de cada membre"
+    },
+    "schedule": {
+      "preset_1d": "1 dia",
+      "preset_1w": "1 setmana",
+      "preset_2w": "2 setmanes",
+      "preset_3d": "3 dies",
+      "presets_label": "Durada ràpida"
+    },
+    "section": {
+      "access": "Accés dels votants",
+      "access_sub": "Qui pot votar i com s’identifica",
+      "content": "Contingut",
+      "results": "Resultats i vot",
+      "results_sub": "Visibilitat i poder de vot",
+      "schedule": "Calendari",
+      "schedule_sub": "Quan s'obre i es tanca la votació"
+    },
+    "setup": "Configuració",
     "strikethrough": "Ratllat",
-    "underline": "Subratllat"
+    "summary": {
+      "access_ready_one": "{{count}} votant · autenticació a punt",
+      "access_ready_many": "",
+      "access_ready_other": "{{count}} votants · autenticació a punt",
+      "access_unset": "Tria votants i autenticació",
+      "method_any": "Opció múltiple",
+      "method_exactly": "Opció múltiple · exactament {{n}}",
+      "method_range": "Opció múltiple · {{a}}–{{b}}",
+      "method_single": "Opció única",
+      "method_upto": "Opció múltiple · fins a {{n}}",
+      "results_unset": "",
+      "schedule_now": "Comença immediatament",
+      "schedule_now_until": "Comença ara · acaba {{date}}",
+      "schedule_range": "{{start}} → {{end}}",
+      "schedule_unset": "Defineix inici i fi",
+      "style_cards": "Opcions amb targeta",
+      "style_text": "Opcions de text"
+    },
+    "template": {
+      "heading": "Com vols començar?",
+      "subheading": "Tria una plantilla per emplenar la votació, o comença en blanc."
+    },
+    "underline": "Subratllat",
+    "variant": {
+      "focused": "Enfocat",
+      "label": "Disseny",
+      "two_pane": "Dos panells"
+    }
   },
   "election": {
     "ends_on": "Acaba el {{date}}",
@@ -418,7 +511,6 @@
       "field_is_required": "Aquest camp és obligatori",
       "generic": "Error en realitzar l'operació",
       "invalid_youtube_url": "Si us plau, introdueix una URL vàlida de YouTube",
-      "max_greater_than_min": "El valor màxim ha de ser més gran o igual que el mínim",
       "password_min_length": "Mín. 8 caràcters",
       "required": "Aquest camp és obligatori"
     },
@@ -1165,12 +1257,6 @@
         "publish": "Publica",
         "save_draft": "Desa"
       },
-      "change_template": {
-        "cancel": "Cancel·la",
-        "change": "Canvia Plantilla",
-        "message": "Tens missatges sense desar. Segur que vols canviar de plantilla?",
-        "title": "Canviar Plantilla"
-      },
       "description": {
         "placeholder": "Afegir una descripció...",
         "title": "Títol del Procés de Votació"
@@ -1205,25 +1291,14 @@
         },
         "description": {
           "placeholder": "Afegeix aquí la descripció de la pregunta (opcional)..."
-        },
-        "question_number": "Pregunta {{index}} de {{total}}"
+        }
       },
       "save_draft_error": {
         "title": "Error al desar l'esborrany"
       },
       "save_draft_success": "Esborrany desat",
-      "selectionLimits": {
-        "full": "Els votants han de seleccionar com a mínim <min /> i com a màxim <max /> opcions.",
-        "title": "Límits de selecció:"
-      },
       "status": {
         "draft": "Esborrany"
-      },
-      "template": {
-        "annual_general_meeting": "Assemblea general anual",
-        "election": "Elecció",
-        "participatory_budgeting": "Pressupost participatiu",
-        "title": "Comença amb una plantilla..."
       }
     },
     "created_by": "Creat per",
@@ -1234,7 +1309,6 @@
       "relative_inline": "{{ status }} {{ date, relative(past: fa %time; future: en %time) }}",
       "starts": "Comença el procés"
     },
-    "extended_info": "Informació ampliada",
     "gitcoin": {
       "all_of_them": "(Tots ells)",
       "gps_score": "Gitcoin Passport Score: Puntuació mínima {{score}}",
@@ -1255,10 +1329,8 @@
         "subtitle": "Els processos de selecció múltiple només permeten una pregunta. Canviar mantindrà només la vostra primera pregunta i descartarà la resta.",
         "title": "Voleu canviar a Selecció múltiple?"
       },
-      "description": "Això aplica a totes les preguntes d'aquest procés.",
       "multiple": "Elecció múltiple",
-      "single": "Elecció simple",
-      "title": "Tipus de Pregunta"
+      "single": "Elecció simple"
     },
     "questions": "Preguntes",
     "results": "Resultats",
@@ -1397,7 +1469,7 @@
     "no_account_address": "No s'ha trobat cap adreça de compte.",
     "no_election_index": "No s'ha trobat cap índex de votació per al compte.",
     "option": {
-      "description_placeholder": "Descripció (opcional)",
+      "description_placeholder": "Descriu aquesta opció (opcional)",
       "placeholder": "Opció {{number}}",
       "remove": "Esborra l'opció"
     },
@@ -1405,6 +1477,7 @@
       "description": {
         "placeholder": "Afegeix aquí la descripció de la pregunta (opcional)..."
       },
+      "drag": "Arrossega per reordenar",
       "remove": "Elimina la pregunta",
       "title": {
         "placeholder": "Afegeix un títol a la pregunta"
@@ -1425,7 +1498,8 @@
     },
     "youtube": {
       "accordion_title": "Adjunta un vídeo (opcional)",
-      "title": "Vídeo en directe"
+      "preview": "Vista prèvia",
+      "remove": "Treu el vídeo"
     }
   },
   "process_list": {
@@ -1952,9 +2026,9 @@
     "sms": "Via verificació per SMS",
     "step": {
       "identity": {
-        "counter_one": "{{count}} de {{max}} seleccionat",
-        "counter_many": "",
-        "counter_other": "{{count}} de {{max}} seleccionats",
+        "counter_selected_one": "",
+        "counter_selected_many": "",
+        "counter_selected_other": "",
         "heading": "Com demostraran la seva identitat els votants?",
         "subheading": "Tria les dades que els membres han d'introduir per accedir a la votació. Dos camps ofereixen el millor equilibri entre seguretat i facilitat."
       },

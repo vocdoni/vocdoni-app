@@ -35,23 +35,20 @@ export const CredentialsForm = () => {
         <Text fontSize='sm' color='texts.subtle'>
           {t('voter_auth.select_credentials_description', {
             defaultValue:
-              'Choose the fields voters must provide to authenticate. Select up to 3 for the best balance of security and ease of use. If you plan to use only email or phone for 2FA, skip this step and click Next to set it up',
+              'Choose the fields voters must provide to authenticate. If you plan to use only email or phone for 2FA, skip this step and click Next to set it up.',
           })}
         </Text>
         <Flex direction='column' gap={2}>
           <Controller
             name='credentials'
             control={control}
-            rules={{ validate: (val) => val.length <= 3 }}
             render={({ field }) => (
               <CheckboxGroup value={field.value} onValueChange={(value) => field.onChange(value)}>
                 {fields.map((column) => {
                   if (column.is2fa) return null // Skip 2FA fields in this selection
                   if (column.id === 'weight') return null // Skip weight field
-                  const isChecked = credentials.includes(column.id)
-                  const isAtLimit = credentials.length >= 3 && !isChecked
                   return (
-                    <CheckboxRoot key={column.id} value={column.id} disabled={isAtLimit}>
+                    <CheckboxRoot key={column.id} value={column.id}>
                       <CheckboxHiddenInput />
                       <CheckboxControl />
                       <CheckboxLabel>{column.label}</CheckboxLabel>
@@ -99,7 +96,7 @@ export const CredentialsForm = () => {
         )}
         <Text>
           {t('voter_auth.selected_credentials_count', {
-            defaultValue: '{{ count }}/3 credentials selected',
+            defaultValue: '{{ count }} credentials selected',
             count: credentials?.length,
           })}
         </Text>

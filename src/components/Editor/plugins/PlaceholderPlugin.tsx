@@ -8,9 +8,11 @@ const isEditorEmpty = () => $getRoot().getTextContent().trim().length === 0
 const PlaceholderPlugin = ({
   placeholder,
   textareaStyles,
+  typography,
 }: {
   placeholder?: string
   textareaStyles?: SystemStyleObject
+  typography?: { fontSize: string; lineHeight: string; fontWeight: number; placeholderColor: string }
 }) => {
   const [editor] = useLexicalComposerContext()
   const [showPlaceholder, setShowPlaceholder] = useState(true)
@@ -30,11 +32,20 @@ const PlaceholderPlugin = ({
 
   if (!placeholder || !showPlaceholder) return null
 
+  const typoOverride = typography
+    ? {
+        fontSize: typography.fontSize,
+        lineHeight: typography.lineHeight,
+        fontWeight: typography.fontWeight,
+        color: typography.placeholderColor,
+      }
+    : undefined
+
   return (
     <Text
       gridArea='1 / 1'
       pointerEvents='none'
-      css={textareaStyles}
+      css={[textareaStyles, typoOverride]}
       bg='transparent'
       border='none'
       boxShadow='none'

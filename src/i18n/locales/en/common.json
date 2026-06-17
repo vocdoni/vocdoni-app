@@ -274,8 +274,36 @@
     "edited_successfully": "Updated successfully"
   },
   "editor": {
+    "autosave": {
+      "saved": "Saved",
+      "saving": "Saving…"
+    },
     "bold": "Bold",
+    "format": {
+      "config_label": "Question configuration",
+      "how_many": "How many options can voters pick?",
+      "inherited": "Matches question 1",
+      "method_help": "Choose how voters answer this question.",
+      "method_label": "Voting method",
+      "style_label": "Option display"
+    },
     "italic": "Italic",
+    "limits": {
+      "and": "and",
+      "any": "Any number",
+      "any_desc": "Vote for as many as they like",
+      "between": "Between",
+      "exactly": "Exactly",
+      "exactly_desc": "A fixed number of picks",
+      "max_label": "Maximum",
+      "min_label": "Minimum",
+      "no_more_than": "No more than",
+      "options_label": "options",
+      "range": "A range",
+      "range_desc": "Between a minimum and maximum",
+      "upto": "Up to a limit",
+      "upto_desc": "No more than a set number"
+    },
     "link": {
       "cancel": "Cancel",
       "confirm": "Confirm",
@@ -284,9 +312,72 @@
       "remove": "Remove link",
       "title": "Link"
     },
+    "method": {
+      "multiple_name": "Pick several",
+      "multiple_what": "Voters choose more than one option",
+      "single_name": "Pick one",
+      "single_what": "Voters choose a single option"
+    },
+    "new_vote": "New vote",
+    "open_setup": "Open setup",
     "paragraph": "Paragraph",
+    "questions": {
+      "heading": "Questions"
+    },
+    "ready_count_one": "{{count}} of {{total}} ready",
+    "ready_count_other": "{{count}} of {{total}} ready",
+    "results": {
+      "equal_desc": "Every voter counts the same",
+      "hidden_desc": "Results reveal only when voting closes",
+      "live_desc": "Tallies update as votes arrive",
+      "weight_help": "Choose whether every eligible voter counts equally, or votes are weighted by the memberbase \"Vote power\" field.",
+      "weighted_desc": "Uses each member’s vote weight"
+    },
+    "schedule": {
+      "preset_1d": "1 day",
+      "preset_1w": "1 week",
+      "preset_2w": "2 weeks",
+      "preset_3d": "3 days",
+      "presets_label": "Quick duration"
+    },
+    "section": {
+      "access": "Voter access",
+      "access_sub": "Who can vote and how they sign in",
+      "content": "Content",
+      "results": "Results & voting",
+      "results_sub": "Visibility and voting power",
+      "schedule": "Schedule",
+      "schedule_sub": "When voting opens and closes"
+    },
+    "setup": "Setup",
     "strikethrough": "Strikethrough",
-    "underline": "Underline"
+    "summary": {
+      "access_ready_one": "{{count}} voters · authentication ready",
+      "access_ready_other": "{{count}} voters · authentication ready",
+      "access_unset": "Choose voters & authentication",
+      "method_any": "Pick any number",
+      "method_exactly": "Pick exactly {{n}}",
+      "method_range": "Pick between {{a}} and {{b}}",
+      "method_single": "Pick one",
+      "method_upto": "Pick up to {{n}}",
+      "results_unset": "Choose visibility & voting power",
+      "schedule_now": "Starts immediately",
+      "schedule_now_until": "Starts now · ends {{date}}",
+      "schedule_range": "{{start}} → {{end}}",
+      "schedule_unset": "Set start and end",
+      "style_cards": "Card options",
+      "style_text": "Text options"
+    },
+    "template": {
+      "heading": "How do you want to start?",
+      "subheading": "Pick a template to prefill the ballot, or start blank."
+    },
+    "underline": "Underline",
+    "variant": {
+      "focused": "Focused",
+      "label": "Layout",
+      "two_pane": "Two-pane"
+    }
   },
   "election": {
     "ends_on": "Ends on {{date}}",
@@ -415,7 +506,6 @@
       "field_is_required": "This field is required",
       "generic": "Error performing the operation",
       "invalid_youtube_url": "Please enter a valid YouTube URL",
-      "max_greater_than_min": "Max must be greater than or equal to Min",
       "password_min_length": "Min. 8 characters",
       "required": "This field is required"
     },
@@ -1142,12 +1232,6 @@
         "publish": "Publish",
         "save_draft": "Save"
       },
-      "change_template": {
-        "cancel": "Cancel",
-        "change": "Change Template",
-        "message": "You have unsaved changes. Are you sure you want to switch templates?",
-        "title": "Change Template"
-      },
       "description": {
         "placeholder": "Add a description...",
         "title": "Voting Process Title"
@@ -1181,25 +1265,14 @@
         },
         "description": {
           "placeholder": "Add the description of the question here (optional)..."
-        },
-        "question_number": "Question {{index}} of {{total}}"
+        }
       },
       "save_draft_error": {
         "title": "Error saving draft"
       },
       "save_draft_success": "Draft saved",
-      "selectionLimits": {
-        "full": "Voters must select at least  <min />  and at most  <max />  options.",
-        "title": "Selection limits:"
-      },
       "status": {
         "draft": "Draft"
-      },
-      "template": {
-        "annual_general_meeting": "Annual General Meeting",
-        "election": "Election",
-        "participatory_budgeting": "Participatory Budgeting",
-        "title": "Get started with a template..."
       }
     },
     "created_by": "Created by",
@@ -1210,7 +1283,6 @@
       "relative_inline": "{{ status }} {{ date, relative(past: %time ago; future: in %time) }}",
       "starts": "Starts"
     },
-    "extended_info": "Extended info",
     "gitcoin": {
       "all_of_them": "(All of them)",
       "gps_score": "Gitcoin Passport Score: Min. score {{score}}",
@@ -1230,10 +1302,8 @@
         "subtitle": "Multiple-choice allows only one question. Switching will keep only your first question and discard the rest.",
         "title": "Do you want to switch to Multiple choice?"
       },
-      "description": "This applies to all questions in this voting process",
       "multiple": "Multiple choice",
-      "single": "Single choice",
-      "title": "Question Type"
+      "single": "Single choice"
     },
     "questions": "Questions",
     "results": "Results",
@@ -1379,6 +1449,7 @@
       "description": {
         "placeholder": "Add the description of the question here (optional)..."
       },
+      "drag": "Drag to reorder",
       "remove": "Remove question",
       "title": {
         "placeholder": "Add a title to the question"
@@ -1399,7 +1470,8 @@
     },
     "youtube": {
       "accordion_title": "Attach video (optional)",
-      "title": "Live streaming video"
+      "preview": "Preview",
+      "remove": "Remove video"
     }
   },
   "process_list": {
@@ -1921,8 +1993,8 @@
     "sms": "Via SMS verification",
     "step": {
       "identity": {
-        "counter_one": "{{count}} of {{max}} selected",
-        "counter_other": "{{count}} of {{max}} selected",
+        "counter_selected_one": "{{count}} selected",
+        "counter_selected_other": "{{count}} selected",
         "heading": "How will voters prove their identity?",
         "subheading": "Pick the details members must enter to reach the ballot. Two fields strike the best balance of security and ease."
       },

@@ -277,8 +277,36 @@
     "edited_successfully": "Aggiornato con successo"
   },
   "editor": {
+    "autosave": {
+      "saved": "Salvato",
+      "saving": "Salvataggio…"
+    },
     "bold": "Grassetto",
+    "format": {
+      "config_label": "Configurazione della domanda",
+      "how_many": "Quante opzioni possono scegliere i votanti?",
+      "inherited": "Come la domanda 1",
+      "method_help": "Scegli come i votanti rispondono a questa domanda.",
+      "method_label": "Metodo di voto",
+      "style_label": "Visualizzazione opzioni"
+    },
     "italic": "Corsivo",
+    "limits": {
+      "and": "e",
+      "any": "Un numero qualsiasi",
+      "any_desc": "Votano quante vogliono",
+      "between": "Tra",
+      "exactly": "Esattamente",
+      "exactly_desc": "Un numero fisso di scelte",
+      "max_label": "Massimo",
+      "min_label": "Minimo",
+      "no_more_than": "Non più di",
+      "options_label": "opzioni",
+      "range": "Un intervallo",
+      "range_desc": "Tra un minimo e un massimo",
+      "upto": "Fino a un limite",
+      "upto_desc": "Non più di un numero stabilito"
+    },
     "link": {
       "cancel": "Annulla",
       "confirm": "Conferma",
@@ -287,9 +315,74 @@
       "remove": "Rimuovi link",
       "title": "Link"
     },
+    "method": {
+      "multiple_name": "Scelta multipla",
+      "multiple_what": "I votanti possono scegliere più opzioni",
+      "single_name": "Scelta singola",
+      "single_what": "I votanti scelgono un'opzione"
+    },
+    "new_vote": "Nuova votazione",
+    "open_setup": "Apri impostazioni",
     "paragraph": "Paragrafo",
+    "questions": {
+      "heading": "Domande"
+    },
+    "ready_count_one": "{{count}} di {{total}} pronto",
+    "ready_count_many": "",
+    "ready_count_other": "{{count}} di {{total}} pronti",
+    "results": {
+      "equal_desc": "Ogni votante conta allo stesso modo",
+      "hidden_desc": "I risultati si rivelano solo alla chiusura",
+      "live_desc": "I conteggi si aggiornano man mano che arrivano i voti",
+      "weight_help": "Scegli se ogni votante idoneo conta allo stesso modo o se i voti sono ponderati in base al campo \"Potere di voto\" della memberbase.",
+      "weighted_desc": "Usa il peso di voto di ciascun membro"
+    },
+    "schedule": {
+      "preset_1d": "1 giorno",
+      "preset_1w": "1 settimana",
+      "preset_2w": "2 settimane",
+      "preset_3d": "3 giorni",
+      "presets_label": "Durata rapida"
+    },
+    "section": {
+      "access": "Accesso dei votanti",
+      "access_sub": "Chi può votare e come accede",
+      "content": "Contenuto",
+      "results": "Risultati e voto",
+      "results_sub": "Visibilità e potere di voto",
+      "schedule": "Pianificazione",
+      "schedule_sub": "Quando si apre e si chiude la votazione"
+    },
+    "setup": "Impostazioni",
     "strikethrough": "Barrato",
-    "underline": "Sottolineato"
+    "summary": {
+      "access_ready_one": "{{count}} votante · autenticazione pronta",
+      "access_ready_many": "",
+      "access_ready_other": "{{count}} votanti · autenticazione pronta",
+      "access_unset": "Scegli votanti e autenticazione",
+      "method_any": "Scelta multipla",
+      "method_exactly": "Scelta multipla · esattamente {{n}}",
+      "method_range": "Scelta multipla · {{a}}–{{b}}",
+      "method_single": "Scelta singola",
+      "method_upto": "Scelta multipla · fino a {{n}}",
+      "results_unset": "",
+      "schedule_now": "Inizia subito",
+      "schedule_now_until": "Inizia ora · termina {{date}}",
+      "schedule_range": "{{start}} → {{end}}",
+      "schedule_unset": "Imposta inizio e fine",
+      "style_cards": "Opzioni a schede",
+      "style_text": "Opzioni testuali"
+    },
+    "template": {
+      "heading": "Come vuoi iniziare?",
+      "subheading": "Scegli un modello per precompilare la votazione o parti da zero."
+    },
+    "underline": "Sottolineato",
+    "variant": {
+      "focused": "A fuoco",
+      "label": "Layout",
+      "two_pane": "Due pannelli"
+    }
   },
   "election": {
     "ends_on": "Termina il {{date}}",
@@ -418,7 +511,6 @@
       "field_is_required": "Questo campo è obbligatorio",
       "generic": "Errore durante l'esecuzione dell'operazione",
       "invalid_youtube_url": "Inserire un URL YouTube valido",
-      "max_greater_than_min": "Max deve essere maggiore o uguale a Min",
       "password_min_length": "Min. 8 caratteri",
       "required": "Questo campo è obbligatorio"
     },
@@ -1165,12 +1257,6 @@
         "publish": "Pubblica",
         "save_draft": "Salva"
       },
-      "change_template": {
-        "cancel": "Annulla",
-        "change": "Cambia modello",
-        "message": "Hai modifiche non salvate. Sei sicuro di voler cambiare modello?",
-        "title": "Cambia modello"
-      },
       "description": {
         "placeholder": "Aggiungi una descrizione...",
         "title": "Titolo del processo di voto"
@@ -1205,25 +1291,14 @@
         },
         "description": {
           "placeholder": "Aggiungi qui la descrizione della domanda (opzionale)..."
-        },
-        "question_number": "Domanda {{index}} di {{total}}"
+        }
       },
       "save_draft_error": {
         "title": "Errore durante il salvataggio della bozza"
       },
       "save_draft_success": "Bozza salvata",
-      "selectionLimits": {
-        "full": "I votanti devono selezionare almeno <min /> e al massimo <max /> opzioni.",
-        "title": "Limiti di selezione:"
-      },
       "status": {
         "draft": "Bozza"
-      },
-      "template": {
-        "annual_general_meeting": "Assemblea Generale Annuale",
-        "election": "Elezione",
-        "participatory_budgeting": "Bilancio Partecipativo",
-        "title": "Inizia con un modello..."
       }
     },
     "created_by": "Creato da",
@@ -1234,7 +1309,6 @@
       "relative_inline": "{{ status }} {{ date, relative(past: %time fa; future: tra %time) }}",
       "starts": "Inizia"
     },
-    "extended_info": "Informazioni estese",
     "gitcoin": {
       "all_of_them": "(Tutti loro)",
       "gps_score": "Punteggio Gitcoin Passport: Punteggio min. {{score}}",
@@ -1255,10 +1329,8 @@
         "subtitle": "La scelta multipla consente solo una domanda. Cambiando si manterrà solo la prima domanda e si scarterà il resto.",
         "title": "Vuoi passare alla Scelta multipla?"
       },
-      "description": "Questo si applica a tutte le domande in questo processo di voto",
       "multiple": "Scelta multipla",
-      "single": "Scelta singola",
-      "title": "Tipo di domanda"
+      "single": "Scelta singola"
     },
     "questions": "Domande",
     "results": "Risultati",
@@ -1397,7 +1469,7 @@
     "no_account_address": "Nessun indirizzo account trovato.",
     "no_election_index": "Nessun indice elettorale trovato per l'account.",
     "option": {
-      "description_placeholder": "Descrizione (opzionale)",
+      "description_placeholder": "Descrivi questa opzione (facoltativo)",
       "placeholder": "Opzione {{number}}",
       "remove": "Rimuovi opzione"
     },
@@ -1405,6 +1477,7 @@
       "description": {
         "placeholder": "Aggiungi qui la descrizione della domanda (opzionale)..."
       },
+      "drag": "Trascina per riordinare",
       "remove": "Rimuovi domanda",
       "title": {
         "placeholder": "Aggiungi un titolo alla domanda"
@@ -1425,7 +1498,8 @@
     },
     "youtube": {
       "accordion_title": "Allega video (opzionale)",
-      "title": "Video live streaming"
+      "preview": "Anteprima",
+      "remove": "Rimuovi video"
     }
   },
   "process_list": {
@@ -1952,9 +2026,9 @@
     "sms": "Via verifica SMS",
     "step": {
       "identity": {
-        "counter_one": "{{count}} di {{max}} selezionato",
-        "counter_many": "",
-        "counter_other": "{{count}} di {{max}} selezionati",
+        "counter_selected_one": "",
+        "counter_selected_many": "",
+        "counter_selected_other": "",
         "heading": "Come dimostreranno la propria identità i votanti?",
         "subheading": "Scegli i dati che i membri devono inserire per accedere alla votazione. Due campi offrono il miglior equilibrio tra sicurezza e semplicità."
       },

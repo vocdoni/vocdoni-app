@@ -57,7 +57,7 @@ export const GroupCard = ({ group, isSelected, onSelect, index = 0 }: GroupCardP
           )}
         </HStack>
         {group.description && (
-          <Text fontSize='sm' color='texts.subtle' lineClamp={1}>
+          <Text fontSize='sm' color='texts.subtle' lineClamp={2}>
             {group.description}
           </Text>
         )}

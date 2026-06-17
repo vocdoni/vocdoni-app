@@ -7,17 +7,16 @@ import { EASE, fadeUp, popIn, shake } from './motion'
 export type CredentialCardProps = {
   meta: CredentialMeta
   isSelected: boolean
-  isDisabled: boolean
+  isDisabled?: boolean
   onToggle: () => void
   index?: number
 }
 
 /**
  * A toggleable identity-credential card. Selecting it adds the field to the
- * voter's screen. Teaches the field via an example value and an icon. Attempting
- * to select past the cap gives a gentle shake instead of a dead click.
+ * voter's screen. Teaches the field via an example value and an icon.
  */
-export const CredentialCard = ({ meta, isSelected, isDisabled, onToggle, index = 0 }: CredentialCardProps) => {
+export const CredentialCard = ({ meta, isSelected, isDisabled = false, onToggle, index = 0 }: CredentialCardProps) => {
   const [shaking, setShaking] = useState(false)
 
   const handleClick = () => {

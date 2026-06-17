@@ -15,7 +15,6 @@ import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPl
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { HeadingNode, QuoteNode } from '@lexical/rich-text'
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table'
-import { $getRoot } from 'lexical'
 import { useState } from 'react'
 
 import editor from '~theme/editor'
@@ -24,6 +23,14 @@ import MarkdownValuePlugin from './plugins/MarkdownValuePlugin'
 import OnChangeMarkdown from './plugins/OnChangeMarkdown'
 import PlaceholderPlugin from './plugins/PlaceholderPlugin'
 import ReadOnlyPlugin from './plugins/ReadOnlyPlugin'
+
+export type EditorTypographyProp = {
+  fontSize: string
+  lineHeight: string
+  fontWeight: number
+  color: string
+  placeholderColor: string
+}
 
 type EditorProps = {
   isDisabled?: boolean
@@ -34,6 +41,9 @@ type EditorProps = {
   value?: string
   variant?: TextareaProps['variant']
   padding?: TextareaProps['padding']
+  /** Opt-in: makes typed content and the placeholder share the same metrics
+   * (only colour differs). Other Editor usages omit it and are unchanged. */
+  typography?: EditorTypographyProp
 }
 
 const TRANSFORMERS = DEFAULT_TRANSFORMERS
@@ -72,6 +82,18 @@ const MarkdownEditor = (props: EditorProps) => {
   const textareaStyles = isUnstyled ? undefined : recipe(props)
   const onChange = props.onChange ?? (() => {})
 
+  const typo = props.typography
+  const contentTypography = typo
+    ? {
+        color: typo.color,
+        '& .lexical-paragraph': {
+          fontSize: typo.fontSize,
+          lineHeight: typo.lineHeight,
+          fontWeight: typo.fontWeight,
+        },
+      }
+    : undefined
+
   return (
     <>
       <Box position='relative' w='full' display='grid'>
@@ -85,7 +107,7 @@ const MarkdownEditor = (props: EditorProps) => {
                 minH='30px'
                 w='full'
                 h='full'
-                css={[textareaStyles, editor]}
+                css={[textareaStyles, editor, contentTypography]}
               />
             </Box>
           }
@@ -93,7 +115,7 @@ const MarkdownEditor = (props: EditorProps) => {
           placeholder={<></>}
           ErrorBoundary={LexicalErrorBoundary}
         />
-        <PlaceholderPlugin placeholder={props.placeholder} textareaStyles={textareaStyles} />
+        <PlaceholderPlugin placeholder={props.placeholder} textareaStyles={textareaStyles} typography={typo} />
       </Box>
 
       <HistoryPlugin />
@@ -143,8 +165,11 @@ const Editor = (props: EditorProps) => {
     ],
     editorState(editor: any) {
       editor.update(() => {
+        // Initialise content only — do NOT selectEnd()/focus here. Auto-focusing
+        // on mount makes every inline editor (one per question/option) steal focus
+        // as it initialises; with multiple questions the last one wins and yanks
+        // focus away from whatever field the admin just clicked.
         $convertFromMarkdownString(initialMarkdown, TRANSFORMERS)
-        $getRoot().selectEnd()
       })
     },
   }

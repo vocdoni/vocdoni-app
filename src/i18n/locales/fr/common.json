@@ -277,8 +277,36 @@
     "edited_successfully": "Mise à jour réussie"
   },
   "editor": {
+    "autosave": {
+      "saved": "Enregistré",
+      "saving": "Enregistrement…"
+    },
     "bold": "Gras",
+    "format": {
+      "config_label": "Configuration de la question",
+      "how_many": "Combien d'options les votants peuvent-ils choisir ?",
+      "inherited": "Identique à la question 1",
+      "method_help": "Choisissez comment les votants répondent à cette question.",
+      "method_label": "Méthode de vote",
+      "style_label": "Affichage des options"
+    },
     "italic": "Italique",
+    "limits": {
+      "and": "et",
+      "any": "Autant qu’ils veulent",
+      "any_desc": "Voter pour autant qu’ils le souhaitent",
+      "between": "Entre",
+      "exactly": "Exactement",
+      "exactly_desc": "Un nombre fixe de choix",
+      "max_label": "Maximum",
+      "min_label": "Minimum",
+      "no_more_than": "Pas plus de",
+      "options_label": "options",
+      "range": "Une plage",
+      "range_desc": "Entre un minimum et un maximum",
+      "upto": "Jusqu’à une limite",
+      "upto_desc": "Pas plus d’un nombre défini"
+    },
     "link": {
       "cancel": "Annuler",
       "confirm": "Confirmer",
@@ -287,9 +315,74 @@
       "remove": "Supprimer le lien",
       "title": "Lien"
     },
+    "method": {
+      "multiple_name": "Choix multiple",
+      "multiple_what": "Les votants peuvent choisir plusieurs options",
+      "single_name": "Choix unique",
+      "single_what": "Les votants choisissent une option"
+    },
+    "new_vote": "Nouveau vote",
+    "open_setup": "Ouvrir la configuration",
     "paragraph": "Paragraphe",
+    "questions": {
+      "heading": "Questions"
+    },
+    "ready_count_one": "{{count}} sur {{total}} prêt",
+    "ready_count_many": "",
+    "ready_count_other": "{{count}} sur {{total}} prêts",
+    "results": {
+      "equal_desc": "Chaque votant compte autant",
+      "hidden_desc": "Les résultats n’apparaissent qu’à la clôture",
+      "live_desc": "Les décomptes se mettent à jour à l’arrivée des votes",
+      "weight_help": "Choisissez si chaque votant éligible compte également ou si les votes sont pondérés selon le champ « Pouvoir de vote » de la memberbase.",
+      "weighted_desc": "Utilise le poids de vote de chaque membre"
+    },
+    "schedule": {
+      "preset_1d": "1 jour",
+      "preset_1w": "1 semaine",
+      "preset_2w": "2 semaines",
+      "preset_3d": "3 jours",
+      "presets_label": "Durée rapide"
+    },
+    "section": {
+      "access": "Accès des votants",
+      "access_sub": "Qui peut voter et comment s’identifier",
+      "content": "Contenu",
+      "results": "Résultats et vote",
+      "results_sub": "Visibilité et pouvoir de vote",
+      "schedule": "Calendrier",
+      "schedule_sub": "Quand le vote ouvre et se ferme"
+    },
+    "setup": "Configuration",
     "strikethrough": "Barré",
-    "underline": "Souligné"
+    "summary": {
+      "access_ready_one": "{{count}} votant · authentification prête",
+      "access_ready_many": "",
+      "access_ready_other": "{{count}} votants · authentification prête",
+      "access_unset": "Choisir votants et authentification",
+      "method_any": "Choix multiple",
+      "method_exactly": "Choix multiple · exactement {{n}}",
+      "method_range": "Choix multiple · {{a}}–{{b}}",
+      "method_single": "Choix unique",
+      "method_upto": "Choix multiple · jusqu'à {{n}}",
+      "results_unset": "",
+      "schedule_now": "Démarre immédiatement",
+      "schedule_now_until": "Démarre maintenant · se termine {{date}}",
+      "schedule_range": "{{start}} → {{end}}",
+      "schedule_unset": "Définir début et fin",
+      "style_cards": "Options en cartes",
+      "style_text": "Options texte"
+    },
+    "template": {
+      "heading": "Comment voulez-vous commencer ?",
+      "subheading": "Choisissez un modèle pour préremplir le vote, ou partez de zéro."
+    },
+    "underline": "Souligné",
+    "variant": {
+      "focused": "Focalisé",
+      "label": "Disposition",
+      "two_pane": "Deux volets"
+    }
   },
   "election": {
     "ends_on": "Se termine le {{date}}",
@@ -418,7 +511,6 @@
       "field_is_required": "Ce champ est obligatoire",
       "generic": "Erreur lors de l'opération",
       "invalid_youtube_url": "Saisissez une URL YouTube valide.",
-      "max_greater_than_min": "Le maximum doit être supérieur ou égal au minimum",
       "password_min_length": "8 caractères minimum",
       "required": "Ce champ est obligatoire"
     },
@@ -1165,12 +1257,6 @@
         "publish": "Publier",
         "save_draft": "Enregistrer"
       },
-      "change_template": {
-        "cancel": "Annuler",
-        "change": "Changer de modèle",
-        "message": "Vous avez des modifications non enregistrées. Voulez-vous vraiment changer de modèle ?",
-        "title": "Changer de modèle"
-      },
       "description": {
         "placeholder": "Ajouter une description…",
         "title": "Titre du processus de vote"
@@ -1205,25 +1291,14 @@
         },
         "description": {
           "placeholder": "Ajoutez ici la description de la question (facultatif)…"
-        },
-        "question_number": "Question {{index}} sur {{total}}"
+        }
       },
       "save_draft_error": {
         "title": "Erreur lors de l'enregistrement du brouillon"
       },
       "save_draft_success": "Brouillon enregistré",
-      "selectionLimits": {
-        "full": "Les électeurs doivent sélectionner au moins  <min />  et au plus  <max />  options.",
-        "title": "Limites de sélection :"
-      },
       "status": {
         "draft": "Brouillon"
-      },
-      "template": {
-        "annual_general_meeting": "Assemblée générale annuelle",
-        "election": "Élection",
-        "participatory_budgeting": "Budget participatif",
-        "title": "Commencez avec un modèle…"
       }
     },
     "created_by": "Créé par",
@@ -1234,7 +1309,6 @@
       "relative_inline": "{{ status }} {{ date, relative(past: il y a %time; future: dans %time) }}",
       "starts": "Commence"
     },
-    "extended_info": "Informations détaillées",
     "gitcoin": {
       "all_of_them": "(Tous)",
       "gps_score": "Score Gitcoin Passport : score min. {{score}}",
@@ -1255,10 +1329,8 @@
         "subtitle": "Le choix multiple n'autorise qu'une seule question. Le changement ne conservera que votre première question et écartera les autres.",
         "title": "Voulez-vous passer au choix multiple ?"
       },
-      "description": "Cela s'applique à toutes les questions de ce processus de vote",
       "multiple": "Choix multiple",
-      "single": "Choix unique",
-      "title": "Type de question"
+      "single": "Choix unique"
     },
     "questions": "Questions",
     "results": "Résultats",
@@ -1397,7 +1469,7 @@
     "no_account_address": "Aucune adresse de compte trouvée.",
     "no_election_index": "Aucun index d'élection trouvé pour le compte.",
     "option": {
-      "description_placeholder": "Description (facultatif)",
+      "description_placeholder": "Décrivez cette option (facultatif)",
       "placeholder": "Option {{number}}",
       "remove": "Supprimer l'option"
     },
@@ -1405,6 +1477,7 @@
       "description": {
         "placeholder": "Ajoutez ici la description de la question (facultatif)…"
       },
+      "drag": "Glisser pour réorganiser",
       "remove": "Supprimer la question",
       "title": {
         "placeholder": "Ajouter un titre à la question"
@@ -1425,7 +1498,8 @@
     },
     "youtube": {
       "accordion_title": "Joindre une vidéo (facultatif)",
-      "title": "Diffusion vidéo en direct"
+      "preview": "Aperçu",
+      "remove": "Retirer la vidéo"
     }
   },
   "process_list": {
@@ -1952,9 +2026,9 @@
     "sms": "Par vérification SMS",
     "step": {
       "identity": {
-        "counter_one": "{{count}} sur {{max}} sélectionné",
-        "counter_many": "",
-        "counter_other": "{{count}} sur {{max}} sélectionnés",
+        "counter_selected_one": "",
+        "counter_selected_many": "",
+        "counter_selected_other": "",
         "heading": "Comment les votants prouveront-ils leur identité ?",
         "subheading": "Choisissez les informations que les membres doivent saisir pour accéder au vote. Deux champs offrent le meilleur équilibre entre sécurité et simplicité."
       },

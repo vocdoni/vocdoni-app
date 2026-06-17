@@ -1,19 +1,4 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Flex,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  HStack,
-  Icon,
-  IconButton,
-  Input,
-  Progress,
-  Spacer,
-  Text,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, Button, Flex, Progress, Spacer } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useClient, useOrganization } from '@vocdoni/react-components'
@@ -34,9 +19,8 @@ import {
 } from '@vocdoni/sdk'
 import { addDays, parse } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
-import { Trans, useTranslation } from 'react-i18next'
-import { LuRotateCcw, LuSettings } from 'react-icons/lu'
+import { FormProvider, useForm, useFormContext } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import {
   createPath,
   generatePath,
@@ -50,9 +34,6 @@ import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
 import { ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { DashboardContents } from '~components/Dashboard/Contents'
-import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
-import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { Web3Address } from '~components/Process/Census/Web3'
 import { useToast } from '~components/Toast'
@@ -63,11 +44,11 @@ import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
 import { CensusMeta, CensusTypes } from '../Census/CensusType'
-import { LiveStreamingInput } from './LiveStreamingInput'
-import { Questions } from './MainContent'
-import { CreateSidebar } from './Sidebar'
+import { EditorShell } from './editor/EditorShell'
+import { EditorChrome } from './editor/types'
+import { EditorVariantProvider, VariantSwitcher } from './editor/variant'
 import { useProcessTemplates } from './TemplateProvider'
-import { defaultProcessValues, Option, Process, SelectorTypes, TemplateConfigs, TemplateTypes } from './common'
+import { defaultProcessValues, Option, Process, SelectorTypes } from './common'
 
 type ConfirmOnNavigateOptions = {
   isDirty: boolean
@@ -317,102 +298,6 @@ export const useFormDraftSaver = (
   return { saveDraft, isSaving, skipSave, draftLimitReached }
 }
 
-const TemplateButtons = () => {
-  const { t } = useTranslation()
-  const methods = useFormContext<Process>()
-  const { activeTemplate, setActiveTemplate } = useProcessTemplates()
-  const [isTemplateModalOpen, setTemplateModalOpen] = useState(false)
-  const reset = useSafeReset()
-  const pendingTemplateRef = useRef<TemplateTypes | null>(null)
-
-  const applyTemplate = (templateId: TemplateTypes) => {
-    const config = TemplateConfigs[templateId]
-    const previousFormValues = methods.getValues()
-    setActiveTemplate(templateId)
-    reset({
-      ...previousFormValues,
-      ...config,
-    })
-  }
-
-  const handleTemplateClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const template = e.currentTarget.dataset.template as TemplateTypes
-    if (!template) return
-
-    if (activeTemplate === template) {
-      setTemplateModalOpen(false)
-      return
-    }
-
-    if (!methods.formState.isDirty) {
-      applyTemplate(template)
-    } else {
-      pendingTemplateRef.current = template
-      setTemplateModalOpen(true)
-    }
-  }
-
-  const handleConfirm = () => {
-    if (pendingTemplateRef.current) {
-      applyTemplate(pendingTemplateRef.current)
-      pendingTemplateRef.current = null
-    }
-    setTemplateModalOpen(false)
-  }
-
-  const handleCancel = () => {
-    pendingTemplateRef.current = null
-    setTemplateModalOpen(false)
-  }
-
-  return (
-    <>
-      <Text fontSize='sm' color='texts.subtle'>
-        {t('process.create.template.title', { defaultValue: 'Get started with a template...' })}
-      </Text>
-      <HStack gap={2} flexWrap='wrap'>
-        <Button
-          variant='outline'
-          size='sm'
-          data-template={TemplateTypes.AnnualGeneralMeeting}
-          onClick={handleTemplateClick}
-        >
-          {t('process.create.template.annual_general_meeting', 'Annual General Meeting')}
-        </Button>
-        <Button variant='outline' size='sm' data-template={TemplateTypes.Election} onClick={handleTemplateClick}>
-          {t('process.create.template.election', 'Election')}
-        </Button>
-        <Button
-          variant='outline'
-          size='sm'
-          data-template={TemplateTypes.ParticipatoryBudgeting}
-          onClick={handleTemplateClick}
-        >
-          {t('process.create.template.participatory_budgeting', 'Participatory Budgeting')}
-        </Button>
-      </HStack>
-
-      <DeleteModal
-        title={t('process.create.change_template.title', 'Change Template')}
-        subtitle={t('process.create.change_template.message', {
-          defaultValue: 'You have unsaved changes. Are you sure you want to switch templates?',
-        })}
-        open={isTemplateModalOpen}
-        onOpenChange={({ open }) => setTemplateModalOpen(open)}
-      >
-        <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' onClick={handleCancel}>
-            {t('process.create.change_template.cancel', 'Cancel')}
-          </Button>
-          <Button colorPalette='red' onClick={handleConfirm}>
-            {t('process.create.change_template.change', 'Change Template')}
-          </Button>
-        </Flex>
-      </DeleteModal>
-    </>
-  )
-}
-
 const LeaveConfirmationModal = ({
   isOpen,
   onCancel,
@@ -614,7 +499,6 @@ const ProcessCreateView = () => {
   const deleteDraft = useDeleteDraft()
   const navigate = useNavigate()
   const location = useLocation()
-  const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
   const methods = useForm<Process>({
     defaultValues: {
       ...defaultProcessValues,
@@ -622,7 +506,7 @@ const ProcessCreateView = () => {
     },
   })
   const reset = useSafeReset(methods.reset)
-  const { activeTemplate, placeholders, setActiveTemplate } = useProcessTemplates()
+  const { setActiveTemplate } = useProcessTemplates()
   const [isLeaveConfirmationOpen, setLeaveConfirmationOpen] = useState(false)
   const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
@@ -878,25 +762,6 @@ const ProcessCreateView = () => {
         value: methods.getValues(key as keyof Process),
       }))
     )
-
-    const sidebarFieldKeys = [
-      'groupId',
-      'census',
-      'spreadsheet',
-      'addresses',
-      'resultVisibility',
-      'weightedVote',
-      'endDate',
-      'endTime',
-      'startDate',
-      'startTime',
-    ]
-
-    const hasSidebarErrors = sidebarFieldKeys.some((key) => key in errors)
-
-    if (hasSidebarErrors) {
-      openSidebar()
-    }
   }
 
   if (!formDraftLoaded) {
@@ -909,139 +774,44 @@ const ProcessCreateView = () => {
     )
   }
 
+  const chrome: EditorChrome = {
+    effectiveDraftId,
+    isDirty,
+    isSubmitting: methods.formState.isSubmitting,
+    isSaving,
+    onReset: openConfirmationModal,
+    onManualSave: handleManualSave,
+  }
+
   return (
     <FormProvider {...methods}>
-      <Box position='relative' w='full' overflow='hidden' height='full'>
-        <DashboardContents
-          as='form'
-          onSubmit={methods.handleSubmit(onSubmit, onError)}
-          display='flex'
-          flexDirection='row'
-          position='relative'
-          id='process-create'
-          overflow='hidden'
-        >
-          <Box
-            flex={1}
-            marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
-            transition='margin-right 0.3s'
-            display='flex'
-            flexDirection='column'
-            gap={8}
-            paddingRight={4}
-            paddingBottom={4}
-          >
-            {/* Top bar with draft status and sidebar toggle */}
-            <HStack position='sticky' top='0px' p={2} bg='chakra.body.bg' zIndex='contents'>
-              {effectiveDraftId && (
-                <Box px={3} py={1} borderRadius='full' bg='gray.100' _dark={{ bg: 'whiteAlpha.200' }} fontSize='sm'>
-                  <Trans i18nKey='process.create.status.draft'>Draft</Trans>
-                </Box>
-              )}
-              <Spacer />
-              <ButtonGroup size='sm'>
-                {isDirty && (
-                  <IconButton
-                    onClick={openConfirmationModal}
-                    variant='outline'
-                    aria-label={t('dashboard.actions.reset_form', {
-                      defaultValue: 'Reset form',
-                    })}
-                  >
-                    <Icon as={LuRotateCcw} />
-                  </IconButton>
-                )}
-                <IconButton
-                  aria-label={t('dashboard.actions.toggle_sidebar', {
-                    defaultValue: 'Toggle sidebar',
-                  })}
-                  variant='outline'
-                  onClick={toggleSidebar}
-                >
-                  <Icon as={LuSettings} />
-                </IconButton>
-                <Button
-                  type='submit'
-                  colorPalette='black'
-                  alignSelf='flex-end'
-                  loading={methods.formState.isSubmitting}
-                >
-                  <Trans i18nKey='process.create.action.publish'>Publish</Trans>
-                </Button>
-                <Button
-                  type='button'
-                  colorPalette='black'
-                  variant='outline'
-                  onClick={handleManualSave}
-                  loading={isSaving}
-                >
-                  <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
-                </Button>
-              </ButtonGroup>
-            </HStack>
-
-            {/* Title, Video, and Description */}
-            <VStack as='header' align='stretch' gap={4}>
-              <TemplateButtons />
-              <FormControl invalid={!!methods.formState.errors.title}>
-                <Input
-                  variant='borderless'
-                  placeholder={
-                    placeholders[activeTemplate]?.title ??
-                    t('process.create.description.title', {
-                      defaultValue: 'Voting Process Title',
-                    })
-                  }
-                  size='2xl'
-                  fontWeight='bold'
-                  {...methods.register('title', {
-                    required: t('form.error.required', 'This field is required'),
-                  })}
-                />
-                <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
-              </FormControl>
-
-              {/* Live streaming video URL */}
-              <LiveStreamingInput />
-              <Controller
-                name='description'
-                control={methods.control}
-                render={({ field }) => (
-                  <Editor
-                    key={nextId}
-                    onChange={field.onChange}
-                    variant='borderless'
-                    placeholder={
-                      placeholders[activeTemplate]?.description ??
-                      t('process.create.description.placeholder', 'Add a description...')
-                    }
-                    defaultValue={field.value}
-                  />
-                )}
-              />
-            </VStack>
-
-            <Questions />
-          </Box>
-        </DashboardContents>
-        <CreateSidebar />
+      <Box
+        as='form'
+        onSubmit={methods.handleSubmit(onSubmit, onError)}
+        id='process-create'
+        position='relative'
+        w='full'
+        minH='full'
+      >
+        <EditorShell chrome={chrome} editorKey={nextId} />
+        <VariantSwitcher />
+        <LeaveConfirmationModal
+          isOpen={isLeaveConfirmationOpen}
+          onCancel={cancel}
+          onLeave={discardAndLeave}
+          onSaveAndLeave={handleSaveAndLeave}
+          onResetSamePath={() => resetSamePath(() => resetForm())}
+          isSamePath={isSamePath}
+        />
       </Box>
-      <LeaveConfirmationModal
-        isOpen={isLeaveConfirmationOpen}
-        onCancel={cancel}
-        onLeave={discardAndLeave}
-        onSaveAndLeave={handleSaveAndLeave}
-        onResetSamePath={() => resetSamePath(() => resetForm())}
-        isSamePath={isSamePath}
-      />
     </FormProvider>
   )
 }
 
 export const ProcessCreate = () => (
-  <SidebarVisibilityProvider>
+  <EditorVariantProvider>
     <ProcessCreateView />
-  </SidebarVisibilityProvider>
+  </EditorVariantProvider>
 )
 
 export default ProcessCreate

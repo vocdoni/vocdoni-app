@@ -94,8 +94,8 @@ describe('ExtendedQuestionEditor', () => {
 
     expect(mockInput).toHaveBeenCalledWith(
       expect.objectContaining({
-        fontWeight: 'semibold',
-        _placeholder: { fontWeight: 'semibold' },
+        fontWeight: 600,
+        _placeholder: expect.objectContaining({ fontWeight: 600 }),
       })
     )
   })
