@@ -108,7 +108,6 @@
     "back": "Atrás",
     "cancel": "Cancelar",
     "close_drawer": "Cerrar panel",
-    "confirm": "Confirmar",
     "disable": "Desactivar",
     "enable": "Activar",
     "home": "Inicio",
@@ -322,7 +321,6 @@
       "single_what": "Los votantes eligen una opción"
     },
     "new_vote": "Nueva votación",
-    "open_setup": "Abrir configuración",
     "paragraph": "Párrafo",
     "questions": {
       "heading": "Preguntas"
@@ -353,7 +351,6 @@
       "schedule": "Calendario",
       "schedule_sub": "Cuándo abre y cierra la votación"
     },
-    "setup": "Configuración",
     "strikethrough": "Tachado",
     "summary": {
       "access_ready_one": "{{count}} votante · autenticación lista",
@@ -377,12 +374,7 @@
       "heading": "¿Cómo quieres empezar?",
       "subheading": "Elige una plantilla para rellenar la votación, o empieza en blanco."
     },
-    "underline": "Subrayado",
-    "variant": {
-      "focused": "Enfocado",
-      "label": "Diseño",
-      "two_pane": "Dos paneles"
-    }
+    "underline": "Subrayado"
   },
   "election": {
     "ends_on": "Finaliza el {{date}}",
@@ -1296,10 +1288,7 @@
       "save_draft_error": {
         "title": "Error al guardar el borrador"
       },
-      "save_draft_success": "Borrador guardado",
-      "status": {
-        "draft": "Borrador"
-      }
+      "save_draft_success": "Borrador guardado"
     },
     "created_by": "Creado por",
     "date": {
@@ -1325,10 +1314,6 @@
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} votantes",
     "question_type": {
-      "confirm": {
-        "subtitle": "La opción múltiple solo permite una pregunta. Si cambias, se mantendrá únicamente la primera y se descartarán las demás.",
-        "title": "¿Quieres cambiar a opción múltiple?"
-      },
       "multiple": "Opción múltiple",
       "single": "Opción única"
     },

@@ -105,7 +105,6 @@
     "back": "Zurück",
     "cancel": "Abbrechen",
     "close_drawer": "Seitenleiste schließen",
-    "confirm": "Bestätigen",
     "disable": "Deaktivieren",
     "enable": "Aktivieren",
     "home": "Startseite",
@@ -319,7 +318,6 @@
       "single_what": "Wählende wählen eine Option"
     },
     "new_vote": "Neue Abstimmung",
-    "open_setup": "Einrichtung öffnen",
     "paragraph": "Absatz",
     "questions": {
       "heading": "Fragen"
@@ -349,7 +347,6 @@
       "schedule": "Zeitplan",
       "schedule_sub": "Wann die Abstimmung öffnet und schließt"
     },
-    "setup": "Einrichtung",
     "strikethrough": "Durchgestrichen",
     "summary": {
       "access_ready_one": "{{count}} Wählender · Authentifizierung bereit",
@@ -372,12 +369,7 @@
       "heading": "Wie möchtest du beginnen?",
       "subheading": "Wähle eine Vorlage zum Vorausfüllen oder beginne leer."
     },
-    "underline": "Unterstrichen",
-    "variant": {
-      "focused": "Fokussiert",
-      "label": "Layout",
-      "two_pane": "Zwei Spalten"
-    }
+    "underline": "Unterstrichen"
   },
   "election": {
     "ends_on": "Endet am {{date}}",
@@ -1270,10 +1262,7 @@
       "save_draft_error": {
         "title": "Fehler beim Speichern des Entwurfs"
       },
-      "save_draft_success": "Entwurf gespeichert",
-      "status": {
-        "draft": "Entwurf"
-      }
+      "save_draft_success": "Entwurf gespeichert"
     },
     "created_by": "Erstellt von",
     "date": {
@@ -1298,10 +1287,6 @@
     "people_in_census_one": "Ein Wähler",
     "people_in_census_other": "{{ count }} Wählende",
     "question_type": {
-      "confirm": {
-        "subtitle": "Mehrfachauswahl erlaubt nur eine Frage. Beim Wechsel wird nur deine erste Frage behalten, alle anderen werden verworfen.",
-        "title": "Möchtest du zur Mehrfachauswahl wechseln?"
-      },
       "multiple": "Mehrfachauswahl",
       "single": "Einfachauswahl"
     },

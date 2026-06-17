@@ -108,7 +108,6 @@
     "back": "Indietro",
     "cancel": "Annulla",
     "close_drawer": "Chiudi cassetto",
-    "confirm": "Conferma",
     "disable": "Disabilita",
     "enable": "Abilita",
     "home": "Home",
@@ -322,7 +321,6 @@
       "single_what": "I votanti scelgono un'opzione"
     },
     "new_vote": "Nuova votazione",
-    "open_setup": "Apri impostazioni",
     "paragraph": "Paragrafo",
     "questions": {
       "heading": "Domande"
@@ -353,7 +351,6 @@
       "schedule": "Pianificazione",
       "schedule_sub": "Quando si apre e si chiude la votazione"
     },
-    "setup": "Impostazioni",
     "strikethrough": "Barrato",
     "summary": {
       "access_ready_one": "{{count}} votante · autenticazione pronta",
@@ -377,12 +374,7 @@
       "heading": "Come vuoi iniziare?",
       "subheading": "Scegli un modello per precompilare la votazione o parti da zero."
     },
-    "underline": "Sottolineato",
-    "variant": {
-      "focused": "A fuoco",
-      "label": "Layout",
-      "two_pane": "Due pannelli"
-    }
+    "underline": "Sottolineato"
   },
   "election": {
     "ends_on": "Termina il {{date}}",
@@ -1296,10 +1288,7 @@
       "save_draft_error": {
         "title": "Errore durante il salvataggio della bozza"
       },
-      "save_draft_success": "Bozza salvata",
-      "status": {
-        "draft": "Bozza"
-      }
+      "save_draft_success": "Bozza salvata"
     },
     "created_by": "Creato da",
     "date": {
@@ -1325,10 +1314,6 @@
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} votanti",
     "question_type": {
-      "confirm": {
-        "subtitle": "La scelta multipla consente solo una domanda. Cambiando si manterrà solo la prima domanda e si scarterà il resto.",
-        "title": "Vuoi passare alla Scelta multipla?"
-      },
       "multiple": "Scelta multipla",
       "single": "Scelta singola"
     },

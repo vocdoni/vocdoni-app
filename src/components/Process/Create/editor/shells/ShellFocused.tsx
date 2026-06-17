@@ -1,11 +1,9 @@
 import { Box, chakra, Flex, HStack, Icon, Separator, Spacer, Text, VStack } from '@chakra-ui/react'
-import { useLocalStorage } from '@uidotdev/usehooks'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { LuCheck, LuFileText } from 'react-icons/lu'
-import { LocalStorageKeys } from '~constants'
 import { EditorCanvas } from '../../canvas/EditorCanvas'
 import { Process } from '../../common'
 import { EASE, fadeUp, popIn } from '../../VoterAuthentication/motion'
@@ -14,7 +12,12 @@ import { EditorActions } from '../EditorActions'
 import { useEditorSections } from '../sections'
 import { SettingsSection } from '../SettingsSection'
 import { SURFACE } from '../surfaces'
-import { ShellProps } from './ShellTwoPane'
+import { EditorChrome } from '../types'
+
+export type ShellProps = {
+  chrome: EditorChrome
+  editorKey: string
+}
 
 type NavId = 'content' | 'schedule' | 'results' | 'access'
 
@@ -108,15 +111,6 @@ export const ShellFocused = ({ chrome, editorKey }: ShellProps) => {
   const { watch } = useFormContext<Process>()
   const sections = useEditorSections()
   const [active, setActive] = useState<NavId>('content')
-
-  // This shell has its own left nav, so the app-level dashboard sidebar is
-  // redundant here — collapse it on enter and restore the admin's preference on leave.
-  const [menuReduced, setMenuReduced] = useLocalStorage<boolean>(LocalStorageKeys.DashboardMenuReduced, false)
-  const restoreMenuReducedRef = useRef(menuReduced)
-  useEffect(() => {
-    setMenuReduced(true)
-    return () => setMenuReduced(restoreMenuReducedRef.current)
-  }, [setMenuReduced])
 
   const title = watch('title')
   const questions = watch('questions')

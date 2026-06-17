@@ -105,7 +105,6 @@
     "back": "Back",
     "cancel": "Cancel",
     "close_drawer": "Close drawer",
-    "confirm": "Confirm",
     "disable": "Disable",
     "enable": "Enable",
     "home": "Home",
@@ -319,7 +318,6 @@
       "single_what": "Voters choose a single option"
     },
     "new_vote": "New vote",
-    "open_setup": "Open setup",
     "paragraph": "Paragraph",
     "questions": {
       "heading": "Questions"
@@ -349,7 +347,6 @@
       "schedule": "Schedule",
       "schedule_sub": "When voting opens and closes"
     },
-    "setup": "Setup",
     "strikethrough": "Strikethrough",
     "summary": {
       "access_ready_one": "{{count}} voters · authentication ready",
@@ -372,12 +369,7 @@
       "heading": "How do you want to start?",
       "subheading": "Pick a template to prefill the ballot, or start blank."
     },
-    "underline": "Underline",
-    "variant": {
-      "focused": "Focused",
-      "label": "Layout",
-      "two_pane": "Two-pane"
-    }
+    "underline": "Underline"
   },
   "election": {
     "ends_on": "Ends on {{date}}",
@@ -1270,10 +1262,7 @@
       "save_draft_error": {
         "title": "Error saving draft"
       },
-      "save_draft_success": "Draft saved",
-      "status": {
-        "draft": "Draft"
-      }
+      "save_draft_success": "Draft saved"
     },
     "created_by": "Created by",
     "date": {
@@ -1298,10 +1287,6 @@
     "people_in_census_one": "One voter",
     "people_in_census_other": "{{ count }} voters",
     "question_type": {
-      "confirm": {
-        "subtitle": "Multiple-choice allows only one question. Switching will keep only your first question and discard the rest.",
-        "title": "Do you want to switch to Multiple choice?"
-      },
       "multiple": "Multiple choice",
       "single": "Single choice"
     },

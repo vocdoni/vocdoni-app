@@ -108,7 +108,6 @@
     "back": "Retour",
     "cancel": "Annuler",
     "close_drawer": "Fermer le panneau",
-    "confirm": "Confirmer",
     "disable": "Désactiver",
     "enable": "Activer",
     "home": "Accueil",
@@ -322,7 +321,6 @@
       "single_what": "Les votants choisissent une option"
     },
     "new_vote": "Nouveau vote",
-    "open_setup": "Ouvrir la configuration",
     "paragraph": "Paragraphe",
     "questions": {
       "heading": "Questions"
@@ -353,7 +351,6 @@
       "schedule": "Calendrier",
       "schedule_sub": "Quand le vote ouvre et se ferme"
     },
-    "setup": "Configuration",
     "strikethrough": "Barré",
     "summary": {
       "access_ready_one": "{{count}} votant · authentification prête",
@@ -377,12 +374,7 @@
       "heading": "Comment voulez-vous commencer ?",
       "subheading": "Choisissez un modèle pour préremplir le vote, ou partez de zéro."
     },
-    "underline": "Souligné",
-    "variant": {
-      "focused": "Focalisé",
-      "label": "Disposition",
-      "two_pane": "Deux volets"
-    }
+    "underline": "Souligné"
   },
   "election": {
     "ends_on": "Se termine le {{date}}",
@@ -1296,10 +1288,7 @@
       "save_draft_error": {
         "title": "Erreur lors de l'enregistrement du brouillon"
       },
-      "save_draft_success": "Brouillon enregistré",
-      "status": {
-        "draft": "Brouillon"
-      }
+      "save_draft_success": "Brouillon enregistré"
     },
     "created_by": "Créé par",
     "date": {
@@ -1325,10 +1314,6 @@
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} électeurs",
     "question_type": {
-      "confirm": {
-        "subtitle": "Le choix multiple n'autorise qu'une seule question. Le changement ne conservera que votre première question et écartera les autres.",
-        "title": "Voulez-vous passer au choix multiple ?"
-      },
       "multiple": "Choix multiple",
       "single": "Choix unique"
     },

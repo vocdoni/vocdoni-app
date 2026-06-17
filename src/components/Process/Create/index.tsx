@@ -44,9 +44,8 @@ import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
 import { CensusMeta, CensusTypes } from '../Census/CensusType'
-import { EditorShell } from './editor/EditorShell'
+import { ShellFocused } from './editor/shells/ShellFocused'
 import { EditorChrome } from './editor/types'
-import { EditorVariantProvider, VariantSwitcher } from './editor/variant'
 import { useProcessTemplates } from './TemplateProvider'
 import { defaultProcessValues, Option, Process, SelectorTypes } from './common'
 
@@ -793,8 +792,7 @@ const ProcessCreateView = () => {
         w='full'
         minH='full'
       >
-        <EditorShell chrome={chrome} editorKey={nextId} />
-        <VariantSwitcher />
+        <ShellFocused chrome={chrome} editorKey={nextId} />
         <LeaveConfirmationModal
           isOpen={isLeaveConfirmationOpen}
           onCancel={cancel}
@@ -808,10 +806,6 @@ const ProcessCreateView = () => {
   )
 }
 
-export const ProcessCreate = () => (
-  <EditorVariantProvider>
-    <ProcessCreateView />
-  </EditorVariantProvider>
-)
+export const ProcessCreate = () => <ProcessCreateView />
 
 export default ProcessCreate

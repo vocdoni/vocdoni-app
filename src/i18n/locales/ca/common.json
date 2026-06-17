@@ -108,7 +108,6 @@
     "back": "Enrere",
     "cancel": "Cancel·la",
     "close_drawer": "Tanca el panell lateral",
-    "confirm": "Confirma",
     "disable": "Desactiva",
     "enable": "Activa",
     "home": "Inici",
@@ -322,7 +321,6 @@
       "single_what": "Els votants trien una opció"
     },
     "new_vote": "Nova votació",
-    "open_setup": "Obre la configuració",
     "paragraph": "Paràgraf",
     "questions": {
       "heading": "Preguntes"
@@ -353,7 +351,6 @@
       "schedule": "Calendari",
       "schedule_sub": "Quan s'obre i es tanca la votació"
     },
-    "setup": "Configuració",
     "strikethrough": "Ratllat",
     "summary": {
       "access_ready_one": "{{count}} votant · autenticació a punt",
@@ -377,12 +374,7 @@
       "heading": "Com vols començar?",
       "subheading": "Tria una plantilla per emplenar la votació, o comença en blanc."
     },
-    "underline": "Subratllat",
-    "variant": {
-      "focused": "Enfocat",
-      "label": "Disseny",
-      "two_pane": "Dos panells"
-    }
+    "underline": "Subratllat"
   },
   "election": {
     "ends_on": "Acaba el {{date}}",
@@ -1296,10 +1288,7 @@
       "save_draft_error": {
         "title": "Error al desar l'esborrany"
       },
-      "save_draft_success": "Esborrany desat",
-      "status": {
-        "draft": "Esborrany"
-      }
+      "save_draft_success": "Esborrany desat"
     },
     "created_by": "Creat per",
     "date": {
@@ -1325,10 +1314,6 @@
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} votants",
     "question_type": {
-      "confirm": {
-        "subtitle": "Els processos de selecció múltiple només permeten una pregunta. Canviar mantindrà només la vostra primera pregunta i descartarà la resta.",
-        "title": "Voleu canviar a Selecció múltiple?"
-      },
       "multiple": "Elecció múltiple",
       "single": "Elecció simple"
     },
