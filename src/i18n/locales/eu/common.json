@@ -61,6 +61,9 @@
   },
   "back": "Atzera",
   "billing_details": "Fakturazio-datuak",
+  "booking": {
+    "unavailable": "Erreserba ez dago erabilgarri une honetan. Saiatu berriro geroago."
+  },
   "calendar": {
     "max_duration_exceeded": "Iraupena zure planaren {{ maxDuration }} eguneko muga gainditzen du. Murriztu bozketa-aldia edo <a>jarri gurekin harremanetan</a> egun gehiago behar badituzu.",
     "title": "Egutegia"
@@ -867,6 +870,17 @@
     },
     "table": {
       "actions": "Ekintzak",
+      "add_to_census": "Gehitu erroldara",
+      "add_to_census_button_one": "Gehitu {{count}} kide",
+      "add_to_census_button_other": "Gehitu {{count}} kide",
+      "add_to_census_confirmation_one": "\"{{process}}\" prozesuaren erroldara {{count}} kide gehituko dituzu.",
+      "add_to_census_confirmation_other": "\"{{process}}\" prozesuaren erroldara {{count}} kide gehituko dituzu.",
+      "add_to_census_description": "Hautatu boto-prozesu aktibo bat kideak bere erroldara gehitzeko.",
+      "add_to_census_error": "Errorea kideak erroldara gehitzean",
+      "add_to_census_no_census": "Ezin izan da prozesu honetarako errolda zehaztu.",
+      "add_to_census_partial": "Kide batzuk ezin izan dira gehitu.",
+      "add_to_census_success_one": "{{count}} kide erroldara gehitu da",
+      "add_to_census_success_other": "{{count}} kide erroldara gehitu dira",
       "add_to_group": "Gehitu taldera",
       "add_to_group_button_one": "Gehitu kide bat",
       "add_to_group_button_other": "Gehitu {{count}} kide",
@@ -893,6 +907,7 @@
       "group_name": "Taldearen izena",
       "manage_columns": "Kudeatu zutabeak",
       "manage_columns_description": "Pertsonalizatu kideen taulan zer zutabe agertzen diren.",
+      "no_active_processes": "Ez da prozesu aktiborik aurkitu",
       "no_filter_results": "Ez dago atributu hauekin bat datorren kiderik",
       "no_results": "Ez da kiderik aurkitu",
       "remaining_members_one": "+{{count}} gehiago",
@@ -900,6 +915,7 @@
       "search": "Bilatu kideak...",
       "select_group": "Hautatu taldea",
       "select_hint": "Hautatu kideak ekintza masiboak egiteko",
+      "select_process": "Hautatu prozesua",
       "selected_one": "Hautatuta: <strong>Kide bat</strong>",
       "selected_other": "Hautatuta: <strong>{{count}} kide</strong>",
       "toggle_column": "Txandakatu {{column}} zutabea"
@@ -1051,6 +1067,9 @@
   },
   "passwords_do_not_match": "Pasahitzak ez datoz bat",
   "pause_vote": "Pausatu bozketa",
+  "payment": {
+    "stripe_unavailable": "Ordainketak aldi baterako ez daude erabilgarri. Saiatu berriro geroago."
+  },
   "plan": {
     "encouragement": "Bozketa bat abiaraztea sinplea da, eta parte-hartzaileek edonondik elkar daitezke. Berme sendoak prezio txikiagoan: horregatik bihurtu da Vocdoni ehunka udal, elkarte, alderdi politiko eta enpresentzako hautu fidagarria.",
     "free": "<0>Doako planean zaude</0>, eta horrek dagoeneko bozketak abiarazteko aukera ematen dizu. Funtzionalitate gehiago, muga handiagoak edo aukera espezifikoak behar badituzu, arakatu ordainpeko planak eta probatu doan.",
@@ -1237,6 +1256,29 @@
       "btn": "Itxi",
       "text": "<p>Zure botoa eman da eta modu seguruan gorde da Vocdoniren teknologiarekin. <verify>Hemen egiazta dezakezu</verify>.</p>",
       "title": "Botoa bidalita!"
+    },
+    "summary": {
+      "countdown": "{{days}}d : {{hours}}h : {{minutes}}m",
+      "end_label": "Amaiera ordua",
+      "indicators_title": "Prozesuaren adierazle nagusiak",
+      "learn_more": "Argibide gehiago",
+      "participation_current": "Uneko parte-hartzea: <b>{{percent}}%</b>",
+      "results_private": "Emaitzak enkriptatuta egongo dira bozketak {{date}}n amaitu arte. Ordura arte inork ezingo ditu emaitza partzialak ikusi.",
+      "results_title": "Bozketaren emaitzak",
+      "start_label": "Hasiera ordua",
+      "stat_census": "Errolda osoa",
+      "stat_participation": "Parte-hartzea",
+      "stat_votes_received": "Jasotako botoak",
+      "tech_description": "Kontsulta honek Vocdoni-ren boto-sistema digitala erabiltzen du, iturburu irekiko teknologia bat, sindikatuei, elkarteei eta beste erakunde batzuei boto-prozesuetan berme demokratiko handienak eskaintzen dizkiena.",
+      "tech_integrity": "<b>Osotasuna:</b> sistemak bermatzen du emandako botoa ezin dela aldatu, ezabatu edo manipulatu, behin emanda.",
+      "tech_privacy": "<b>Pribatutasuna:</b> botoa guztiz sekretua da eta ezinezkoa da emandako edozein boto botogilearen identitatearekin lotzea.",
+      "tech_title": "Boto-bermeak",
+      "tech_verifiability": "<b>Egiaztagarritasuna:</b> edozein parte-hartzailek egiazta dezake bere botoa behar bezala erregistratu eta zenbatu dela, boto-sekretua arriskuan jarri gabe.",
+      "time_remaining": "Bozkatzeko geratzen den denbora",
+      "time_until_start": "Hasteko geratzen den denbora",
+      "view_summary": "Jarraitu prozesua",
+      "votes_cast_one": "{{votes}} boto eman da",
+      "votes_cast_other": "{{votes}} boto eman dira"
     },
     "template": {
       "annual_general_meeting": {
