@@ -31,14 +31,16 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
   const toast = useToast()
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const [code, setCode] = useState(initialCode)
+  const [code, setCode] = useState<string[]>(() => Array.from({ length: 6 }, (_, i) => initialCode[i] ?? ''))
   const {
     mailVerify: { mutateAsync: verifyAsync, isPending: isVerifyPending, isError: isVerifyError },
   } = useAuth()
 
+  const codeString = code.join('')
+
   const verify = useCallback(async () => {
     try {
-      await verifyAsync({ email, code })
+      await verifyAsync({ email, code: codeString })
       toast({
         type: 'success',
         title: t('verify_mail.success', { defaultValue: 'Email verified successfully' }),
@@ -58,16 +60,16 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
         closable: true,
       })
     }
-  }, [code, email, verifyAsync, navigate, t, toast])
+  }, [codeString, email, verifyAsync, navigate, t, toast])
 
   // Auto-submit if code is provided and autoSubmit is true, or when all 6 characters are entered
   useEffect(() => {
-    if ((autoSubmit && code) || (!autoSubmit && code?.length === 6)) {
+    if ((autoSubmit && codeString) || (!autoSubmit && code.every((c) => c.trim() !== ''))) {
       verify()
     }
-  }, [autoSubmit, code])
+  }, [autoSubmit, codeString])
 
-  if (autoSubmit && code && !isVerifyError) {
+  if (autoSubmit && codeString && !isVerifyError) {
     return (
       <Box height={'100px'}>
         <Loading minHeight={1} />
@@ -79,8 +81,13 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
     <>
       <HStack width='100%' justifyContent='space-between'>
         <PinInputRoot
-          value={code.split('')}
-          onValueChange={(details) => setCode(details.valueAsString)}
+          value={code}
+          onValueChange={({ value, valueAsString }) => {
+            const next = Array.isArray(value)
+              ? Array.from({ length: 6 }, (_, i) => value[i] ?? '')
+              : Array.from({ length: 6 }, (_, i) => (valueAsString ?? '')[i] ?? '')
+            setCode(next)
+          }}
           disabled={autoSubmit}
           type='alphanumeric'
           autoFocus
@@ -94,7 +101,12 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
         </PinInputRoot>
       </HStack>
       <Box>
-        <Button disabled={!code || (autoSubmit && isVerifyPending)} loading={isVerifyPending} onClick={verify} w='full'>
+        <Button
+          disabled={code.every((c) => c === '') || (autoSubmit && isVerifyPending)}
+          loading={isVerifyPending}
+          onClick={verify}
+          w='full'
+        >
           <Trans i18nKey={'verify.verify_code'}>Verify</Trans>
         </Button>
       </Box>
