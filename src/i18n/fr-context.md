@@ -11,6 +11,10 @@ Address the user with formal **vous / votre** throughout — in French this is t
 - Token name: **VOC**
 - `\n` newline sequences — keep as-is
 
+## Place & proper names
+- Translate geographic place names (countries, regions, cities) to their established French form when one exists (e.g. Belarus → Biélorussie, Catalonia → Catalogne). Keep the original spelling when there is no common French form (e.g. small towns such as Bellpuig).
+- Do NOT translate organization, movement, or brand names, even when they contain a place name: the movement "New Belarus" stays "New Belarus", while the country Belarus takes its French form (Biélorussie). When unsure whether a name is a place or a brand, keep it in its original form.
+
 ## Key domain terminology
 
 | English | French | Notes |

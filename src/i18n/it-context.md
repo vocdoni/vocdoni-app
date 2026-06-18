@@ -9,6 +9,10 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - Token name: **VOC**
 - `\n` newline sequences — keep as-is
 
+## Place & proper names
+- Translate geographic place names (countries, regions, cities) to their established Italian form when one exists (e.g. Belarus → Bielorussia, Catalonia → Catalogna). Keep the original spelling when there is no common Italian form (e.g. small towns such as Bellpuig).
+- Do NOT translate organization, movement, or brand names, even when they contain a place name: the movement "New Belarus" stays "New Belarus", while the country Belarus takes its Italian form (Bielorussia). When unsure whether a name is a place or a brand, keep it in its original form.
+
 ## Key domain terminology
 
 | English | Italian | Notes |
