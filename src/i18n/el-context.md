@@ -1,4 +1,4 @@
-Review the following Greek strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
+Translate or review whether the following Greek strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
 
 Tone: professional yet approachable. Strings are user-facing UI text (buttons, labels, descriptions, error messages). Be clear and concise — prefer shorter phrasing where natural. Use formal/polite plural address (εσείς / second-person plural verb forms, σας) throughout — this is the register used consistently in the existing translations (e.g. "ο κωδικός πρόσβασής σας", "Επιλέξτε", "Μπορείτε"). Target standard Modern Greek (Δημοτική), suitable for a general Greek-speaking audience. Prefer natural, everyday Greek words over English borrowings unless the English form is universally established in the tech/blockchain domain.
 
@@ -7,6 +7,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - React i18next component tags: `<1>`, `<span>`, `<text>`, `<a>`, `<dlink>` and their closing counterparts — keep structure intact
 - Brand name: **Vocdoni**
 - Token name: **VOC**
+- Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
 
 ## Place & proper names
@@ -31,6 +32,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | anonymous voting | ανώνυμη ψηφοφορία | "anonymous"/"anonymity" → "ανώνυμη"/"ανωνυμία" |
 | ballot secrecy / secret vote | μυστικότητα (της ψήφου) | **Distinct concept — do not conflate with anonymity.** English "secret"/"secrecy" → "μυστική"/"μυστικότητα". Anonymity means a vote can't be linked to a voter; secrecy means the ballot content stays hidden. Translate each English term with its matching Greek term — never use "μυστική" for the anonymous-voting feature, nor "ανώνυμη" for ballot secrecy |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| open source | ανοιχτού κώδικα | Translate to "ανοιχτού κώδικα" (idiomatic Greek). Use one spelling consistently: the everyday "ανοιχτ-" form (not "ανοικτ-"). Do not leave it in English |
 | overwrite vote / correct vote | τροποποίηση ψήφου / διόρθωση ψήφου | Prefer "τροποποίηση" for buttons, "διόρθωση" for descriptions |
 | abstain | αποχή | Use "απέχω" for the verb, "αποχή" for the noun |
 | census size | αριθμός ψηφοφόρων | |
@@ -73,6 +75,12 @@ Use the formal plural ("πληθυντικός ευγενείας") consistently
 
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. Greek uses the same two-form pattern — translate accordingly.
+
+## Numbers & punctuation
+- Decimal separator: comma (e.g. "77,12%").
+- Thousands separator: dot (e.g. "6.349", "6.723").
+- Percent: no space before "%" (e.g. "77,12%", "90%").
+- Quotation marks: use Greek guillemets «…» consistently for quoted text inside strings. Do not mix straight ("), curly and guillemets.
 
 ## Date/number formats
 When translating format strings (e.g. `PPpp`), leave them as-is — they are date-fns locale tokens, not human-readable text.

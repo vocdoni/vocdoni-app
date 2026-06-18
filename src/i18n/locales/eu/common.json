@@ -873,8 +873,8 @@
       "add_to_census": "Gehitu erroldara",
       "add_to_census_button_one": "Gehitu {{count}} kide",
       "add_to_census_button_other": "Gehitu {{count}} kide",
-      "add_to_census_confirmation_one": "\"{{process}}\" prozesuaren erroldara {{count}} kide gehituko dituzu.",
-      "add_to_census_confirmation_other": "\"{{process}}\" prozesuaren erroldara {{count}} kide gehituko dituzu.",
+      "add_to_census_confirmation_one": "«{{process}}» prozesuaren erroldara {{count}} kide gehituko dituzu.",
+      "add_to_census_confirmation_other": "«{{process}}» prozesuaren erroldara {{count}} kide gehituko dituzu.",
       "add_to_census_description": "Hautatu boto-prozesu aktibo bat kideak bere erroldara gehitzeko.",
       "add_to_census_error": "Errorea kideak erroldara gehitzean",
       "add_to_census_no_census": "Ezin izan da prozesu honetarako errolda zehaztu.",
@@ -1655,7 +1655,7 @@
   "shared_census": {
     "instructions": {
       "identification": "Identifikatzeko eskatuko dizugu. Ondoren, modu seguruan eman ahal izango duzu zure botoa.",
-      "login": "Bozketara sartzeko, sakatu \"Identifikatu\".",
+      "login": "Bozketara sartzeko, sakatu «Identifikatu».",
       "vote": "Hautatu bozketa leiho berri bat irekitzeko boto-ematearen jarraibideekin. Botoa bidali ondoren, itxi leihoa hona itzultzeko."
     },
     "section_title": "Hauteskundeak",

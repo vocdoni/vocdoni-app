@@ -1,4 +1,4 @@
-Review the following Catalan strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
+Translate or review whether the following Catalan strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
 
 Tone: professional yet approachable. Strings are user-facing UI text (buttons, labels, descriptions, error messages). Be clear and concise — prefer shorter phrasing where natural. Use informal address (tu, et, el teu/la teva) throughout — this is the standard register for a modern product and is not read as disrespectful. Target standard Central Catalan, suitable for a general Catalan-speaking audience. Prefer natural, everyday Catalan words over English or Castilian borrowings unless the foreign form is universally established in the tech/blockchain domain.
 
@@ -7,6 +7,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - React i18next component tags: `<1>`, `<span>`, `<text>`, `<a>`, `<dlink>` and their closing counterparts — keep structure intact
 - Brand name: **Vocdoni**
 - Token name: **VOC**
+- Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
 
 ## Place & proper names
@@ -75,6 +76,12 @@ Use "tu" and its forms consistently:
 
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. Catalan uses the same two-form pattern — translate accordingly.
+
+## Numbers & punctuation
+- Decimal separator: comma (e.g. "77,12%").
+- Thousands separator: dot (e.g. "6.349", "6.723").
+- Percent: no space before "%" (e.g. "77,12%", "90%").
+- Quotation marks: use the angular guillemets «…» consistently for quoted text inside strings. Do not mix straight ("), curly ("…") and guillemets.
 
 ## Date/number formats
 When translating format strings (e.g. `PPpp`), leave them as-is — they are date-fns locale tokens, not human-readable text.

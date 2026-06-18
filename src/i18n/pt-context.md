@@ -1,4 +1,4 @@
-Review the following Portuguese strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
+Translate or review whether the following Portuguese strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
 
 Tone: professional yet approachable. Strings are user-facing UI text (buttons, labels, descriptions, error messages). Be clear and concise — prefer shorter phrasing where natural. Use informal address (tu, te, teu/tua) throughout. Target European Portuguese (PT-PT) — not Brazilian Portuguese. Prefer natural, everyday Portuguese words over Latin-derived or bureaucratic equivalents where a simpler option exists.
 
@@ -7,6 +7,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - React i18next component tags: `<1>`, `<span>`, `<text>`, `<a>`, `<dlink>` and their closing counterparts — keep structure intact
 - Brand name: **Vocdoni**
 - Token name: **VOC**
+- Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
 
 ## Place & proper names
@@ -26,6 +27,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | approval voting | votação de aprovação | |
 | anonymous voting | votação anónima | Note PT-PT spelling: "anónima", not "anônima" (Brazilian) |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| open source | código aberto | Use the idiomatic PT-PT "código aberto". As an adjective use "de código aberto" (e.g. "infraestrutura de código aberto", "protocolo de votação de código aberto"). Do not use "fonte aberta" and do not leave it in English |
 | overwrite vote / correct vote | alterar voto / corrigir voto | Prefer "alterar" for buttons, "corrigir" for descriptions |
 | abstain | abster-se / abstenção | Use "abster-se" for actions, "abstenção" for the noun form |
 | census size | número de participantes | Avoid "tamanho do censo" |
@@ -82,6 +84,12 @@ Follow the 1990 Orthographic Agreement as ratified in Portugal:
 - Use "direcção" → "direção" (updated spelling)
 - Use "acção" → "ação" (updated spelling)
 - When in doubt, prefer the PT-PT European variant over the Brazilian spelling.
+
+## Numbers & punctuation
+- Decimal separator: comma (e.g. "77,12%").
+- Thousands separator: dot (e.g. "6.349", "6.723").
+- Percent: no space before "%" (e.g. "77,12%", "90%").
+- Quotation marks: use PT-PT guillemets «…» consistently for quoted text inside strings. Do not mix curly "…", guillemets and escaped straight quotes.
 
 ## Date/number formats
 When translating format strings (e.g. `PPpp`), leave them as-is — they are date-fns locale tokens, not human-readable text.

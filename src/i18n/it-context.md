@@ -1,4 +1,4 @@
-Review the following Italian strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
+Translate or review whether the following Italian strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
 
 Tone: professional yet approachable. Strings are user-facing UI text (buttons, labels, descriptions, error messages). Be clear and concise — prefer shorter phrasing where natural. Use informal address (tu, ti, tuo/tua) throughout — this is the standard register for a modern product and is not read as disrespectful. Target standard Italian, neutral and suitable for a general Italian-speaking audience. Prefer natural, everyday Italian words over English borrowings unless the English form is universally established in the tech/blockchain domain.
 
@@ -7,6 +7,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - React i18next component tags: `<1>`, `<span>`, `<text>`, `<a>`, `<dlink>` and their closing counterparts — keep structure intact
 - Brand name: **Vocdoni**
 - Token name: **VOC**
+- Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
 
 ## Place & proper names
@@ -27,6 +28,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | anonymous voting | voto anonimo | "anonymous"/"anonymity" → "anonimo"/"anonimato" (noun) |
 | ballot secrecy / secret vote | segretezza del voto | **Distinct concept — do not conflate with anonymity.** English "secret"/"secrecy" → "segreto"/"segretezza" ("il voto è completamente segreto", "la segretezza del voto"). Anonymity means a vote can't be linked to a voter; secrecy means the ballot content stays hidden. Translate each English term with its matching Italian term — never use "segreto" for the anonymous-voting feature, nor "anonimo" for ballot secrecy |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| open source | Open Source | Keep in English — do not translate |
 | overwrite vote / correct vote | modificare il voto / correggere il voto | Prefer "modificare" for buttons, "correggere" for descriptions |
 | abstain | astenersi / astensione | Use "astenersi" for actions, "astensione" for the noun form |
 | census size | dimensione del censimento | Or "numero di votanti" |
@@ -72,6 +74,12 @@ Use the correct grave/acute accents on final stressed vowels: "è" (verb) vs "e"
 
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. Italian uses the same two-form pattern — translate accordingly.
+
+## Numbers & punctuation
+- Decimal separator: comma (e.g. "77,12%").
+- Thousands separator: dot (e.g. "6.349", "6.723").
+- Percent: no space before "%" (e.g. "77,12%", "90%").
+- Quotation marks: use guillemets «…» for quoted text inside strings (e.g. «voto segreto»). Do not use curly "…", straight (") or escaped quotes for quoting. The apostrophe ’ for elision (e.g. "dell’organizzazione") is correct and must stay.
 
 ## Date/number formats
 When translating format strings (e.g. `PPpp`), leave them as-is — they are date-fns locale tokens, not human-readable text.

@@ -1,4 +1,4 @@
-Review that the following Brazilian Portuguese strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
+Translate or review whether the following Brazilian Portuguese strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
 
 Tone: professional yet approachable. Strings are user-facing UI text (buttons, labels, descriptions, error messages). Be clear and concise — prefer shorter phrasing where natural. Use "você" (third-person conjugation) as the standard form of address throughout — this is the default register in Brazilian Portuguese and appropriate for both formal and informal contexts. Target Brazilian Portuguese (pt-BR) — prefer Brazilian spelling, vocabulary, and idiomatic expressions over European Portuguese.
 
@@ -7,6 +7,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 - React i18next component tags: any tag of the form `<name>`/`</name>` (e.g. `<span>`, `<bold>`, `<strong>`, `<a>`, `<dlink>`, `<click>`, `<link1>`, `<termsLink>`, `<privacyLink>`, `<verify>`, `<time>`, `<price>`) or `<0>`/`<1>`/`<2>`/… numbered placeholders, together with their closing counterparts — never translate, reorder, or alter them; keep the structure intact and only translate the text between them
 - Brand name: **Vocdoni**
 - Token name: **VOC**
+- Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
 
 ## Place & proper names
@@ -47,6 +48,12 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. Brazilian Portuguese uses the same two-form pattern — translate accordingly.
+
+## Numbers & punctuation
+- Decimal separator: comma (e.g. "77,12%").
+- Thousands separator: dot (e.g. "6.349", "6.723").
+- Percent: no space before "%" (e.g. "77,12%", "90%").
+- Quotation marks: use the curly double quotes “…” for quoted text inside strings. Do not use guillemets «…» or straight (") quotes for quoting.
 
 ## Date/number formats
 When translating format strings (e.g. `PPpp`), leave them as-is — they are date-fns locale tokens, not human-readable text.

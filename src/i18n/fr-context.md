@@ -1,4 +1,4 @@
-Review the following French strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
+Translate or review whether the following French strings are correctly translated for the Vocdoni app, a decentralized digital voting platform that lets organizations run transparent, verifiable online elections.
 
 Tone: professional yet approachable. Strings are user-facing UI text (buttons, labels, descriptions, error messages). Be clear and concise — prefer shorter phrasing where natural. Target standard metropolitan French (neutral, suitable for France and other Francophone audiences). Prefer natural everyday French words over English borrowings unless the English form is universally established in the tech/blockchain domain.
 
@@ -9,6 +9,7 @@ Address the user with formal **vous / votre** throughout — in French this is t
 - React i18next component tags: `<1>`, `<span>`, `<text>`, `<a>`, `<dlink>` and their closing counterparts — keep structure intact
 - Brand name: **Vocdoni**
 - Token name: **VOC**
+- Product names (keep exactly as in English, do not translate or reorder): **Vocdoni app**, **Vocdoni Petitions**, **Vocdoni Passport**, **Vocdoni SDK**, **Vocdoni Global**, **Vocdoni Association**
 - `\n` newline sequences — keep as-is
 
 ## Place & proper names
@@ -28,6 +29,7 @@ Address the user with formal **vous / votre** throughout — in French this is t
 | approval voting | vote par approbation | |
 | anonymous voting | vote anonyme | Prefer "vote anonyme" over "vote secret" for accuracy |
 | explorer | Explorer | Keep in English — common in blockchain UIs |
+| open source | open source | Keep in English — the calques "code ouvert" and "logiciel libre" are barely used in this domain. Use it as an adjective ("un protocole open source", "une infrastructure open source") or noun ("l'open source") |
 | overwrite vote / correct vote | modifier son vote / corriger son vote | Prefer "modifier" for buttons, "corriger" for descriptions |
 | abstain | s'abstenir | |
 | census size | nombre d'inscrits | Or "nombre d'électeurs". Avoid "taille du recensement" and "taille de la liste" |
@@ -45,6 +47,12 @@ Address the user with formal **vous / votre** throughout — in French this is t
 
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. French uses the same two-form pattern — translate accordingly. Note that French treats 0 as plural (`_other`), unlike some languages.
+
+## Numbers & punctuation
+- Decimal separator: comma (e.g. "77,12 %").
+- Thousands separator: a narrow no-break space (e.g. "6 349", "6 723"), never a dot.
+- Percent: a (narrow) no-break space before "%" (e.g. "77,12 %", "90 %"). Same for ":" "?" "!" ";" per French typography.
+- Quotation marks: use French guillemets with a no-break space inside « … » consistently. Do not mix straight ("), curly and guillemets.
 
 ## Date/number formats
 When translating format strings (e.g. `PPpp`), leave them as-is — they are date-fns locale tokens, not human-readable text.
