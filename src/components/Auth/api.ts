@@ -22,6 +22,8 @@ export enum ApiEndpoints {
   OrganizationPendingUsers = 'organizations/{address}/users/pending',
   OrganizationPendingUser = 'organizations/{address}/users/pending/{inviteId}',
   Organizations = 'organizations',
+  Integrator = 'organizations/{address}/integrator',
+  ManagedOrganizations = 'organizations/{address}/managed',
   OrganizationsRoles = 'organizations/roles',
   OrganizationsTypes = 'organizations/types',
   OrganizationSubscription = 'organizations/{address}/subscription',
@@ -66,6 +68,9 @@ export enum ErrorCode {
   UserNotVerified = 40014,
   UserAlreadyVerified = 40015,
   DraftLimitReached = 40031,
+  NotAnIntegrator = 40153,
+  MaxManagedOrgsReached = 40154,
+  IntegratorQuotaExceeded = 40155,
 }
 
 interface IApiError {

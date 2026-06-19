@@ -747,6 +747,55 @@
     "view_errors_one": "View {{count}} error",
     "view_errors_other": "View {{count}} errors"
   },
+  "integrator": {
+    "create": {
+      "action": "Create organization",
+      "color": "Brand color",
+      "communications": "Enable communications",
+      "country": "Country",
+      "country_placeholder": "e.g. ES",
+      "error": "Failed to create organization",
+      "limit_reached": "You've reached your managed-organization limit.",
+      "owner_email": "Owner email",
+      "owner_email_placeholder": "Existing user to own the org (optional)",
+      "quota_exceeded": "You've reached your integrator quota.",
+      "subdomain": "Subdomain",
+      "subtitle": "Provision a new organization under your integrator account.",
+      "success": "Organization created successfully",
+      "timezone": "Timezone",
+      "title": "Create managed organization",
+      "website": "Website"
+    },
+    "menu": {
+      "organizations": "Managed organizations",
+      "overview": "Overview",
+      "section": "Integrator"
+    },
+    "organizations": {
+      "active": "Active",
+      "address": "Address",
+      "country": "Country",
+      "created_at": "Created",
+      "empty": "No managed organizations yet",
+      "empty_description": "Create an organization to start managing it.",
+      "inactive": "Inactive",
+      "load_error": "Unable to load organizations",
+      "load_error_description": "Please try again.",
+      "status": "Status",
+      "subtitle": "Organizations you manage on behalf of your customers.",
+      "title": "Managed organizations",
+      "type": "Type"
+    },
+    "overview": {
+      "limit_reached": "Limit reached",
+      "load_error": "Unable to load integrator quota",
+      "managed_census": "Census size",
+      "managed_orgs": "Managed organizations",
+      "managed_processes": "Voting processes",
+      "subtitle": "Your integrator quota and current usage.",
+      "title": "Overview"
+    }
+  },
   "internal_server_error": "Internal server error",
   "invalid_promo_code": "Invalid promotion code",
   "invite": {

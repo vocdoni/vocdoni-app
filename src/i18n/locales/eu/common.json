@@ -747,6 +747,55 @@
     "view_errors_one": "Ikusi {{count}} errorea",
     "view_errors_other": "Ikusi {{count}} errore"
   },
+  "integrator": {
+    "create": {
+      "action": "",
+      "color": "",
+      "communications": "",
+      "country": "",
+      "country_placeholder": "",
+      "error": "",
+      "limit_reached": "",
+      "owner_email": "",
+      "owner_email_placeholder": "",
+      "quota_exceeded": "",
+      "subdomain": "",
+      "subtitle": "",
+      "success": "",
+      "timezone": "",
+      "title": "",
+      "website": ""
+    },
+    "menu": {
+      "organizations": "",
+      "overview": "",
+      "section": ""
+    },
+    "organizations": {
+      "active": "",
+      "address": "",
+      "country": "",
+      "created_at": "",
+      "empty": "",
+      "empty_description": "",
+      "inactive": "",
+      "load_error": "",
+      "load_error_description": "",
+      "status": "",
+      "subtitle": "",
+      "title": "",
+      "type": ""
+    },
+    "overview": {
+      "limit_reached": "",
+      "load_error": "",
+      "managed_census": "",
+      "managed_orgs": "",
+      "managed_processes": "",
+      "subtitle": "",
+      "title": ""
+    }
+  },
   "internal_server_error": "Zerbitzariaren barne-errorea",
   "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",
   "invite": {

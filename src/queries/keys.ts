@@ -16,6 +16,10 @@ export const QueryKeys = {
     drafts: (address?: string) => ['organizations', 'drafts', address].filter(Boolean),
     groups: (address?: string) => ['organizations', 'groups', address].filter(Boolean),
   },
+  integrator: {
+    info: (address?: string) => ['integrator', 'info', address].filter(Boolean),
+    managed: (address?: string) => ['integrator', 'managed', address].filter(Boolean),
+  },
   census: {
     bundle: (censusURI?: string) => ['census', 'bundle', censusURI].filter(Boolean),
   },

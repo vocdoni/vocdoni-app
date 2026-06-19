@@ -21,6 +21,8 @@ import { VocdoniLogo } from '~components/Layout/Logo'
 import { DashboardLayoutContext } from '~elements/LayoutDashboard'
 import { useTutorials } from '~src/queries/organization'
 import { Routes } from '~src/router/routes'
+import { IntegratorMenuOptions } from '~components/Integrator/MenuOptions'
+import { useIntegratorInfo } from '~queries/integrator'
 import { DashboardBookerModalButton } from '../Booker'
 import { DashboardMenuOptions } from './Options'
 import UserProfile from './UserProfile'
@@ -129,6 +131,9 @@ const DashboardMenuContent = ({
   const { reduced } = useContext(DashboardLayoutContext)
   const { t } = useTranslation()
   const [isTouchLike] = useMediaQuery(['(hover: none), (pointer: coarse)'])
+  // Integrators get a different app: no "new vote" action and a dedicated navigation.
+  const { data: integrator } = useIntegratorInfo()
+  const isIntegrator = !!integrator?.enabled
 
   return (
     <>
@@ -181,20 +186,22 @@ const DashboardMenuContent = ({
             <Icon as={LuPanelLeft} />
           </IconButton>
         </Flex>
-        <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
-          <RouterLink to={generatePath(Routes.processes.create)}>
-            <HStack gap={reduced ? 0 : 2}>
-              <Icon as={LuPlus} boxSize={4} />
-              {!reduced && (
-                <Text as='span'>
-                  <Trans i18nKey='new_vote'>New vote</Trans>
-                </Text>
-              )}
-            </HStack>
-          </RouterLink>
-        </Button>
+        {!isIntegrator && (
+          <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
+            <RouterLink to={generatePath(Routes.processes.create)}>
+              <HStack gap={reduced ? 0 : 2}>
+                <Icon as={LuPlus} boxSize={4} />
+                {!reduced && (
+                  <Text as='span'>
+                    <Trans i18nKey='new_vote'>New vote</Trans>
+                  </Text>
+                )}
+              </HStack>
+            </RouterLink>
+          </Button>
+        )}
 
-        <DashboardMenuOptions />
+        {isIntegrator ? <IntegratorMenuOptions /> : <DashboardMenuOptions />}
       </Box>
       <Box mt='auto'>
         <SidebarTutorial />

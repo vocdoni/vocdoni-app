@@ -23,6 +23,10 @@ export const Routes = {
       drafts: '/admin/processes/drafts/:page?',
     },
     profile: '/admin/profile',
+    integrator: {
+      base: '/admin/integrator',
+      organizations: '/admin/integrator/organizations/:page?',
+    },
     memberbase: {
       base: '/admin/memberbase',
       members: '/admin/memberbase/members/:page?',

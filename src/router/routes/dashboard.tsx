@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
 import { Fragment, lazy } from 'react'
 import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
+import IntegratorProtectedRoute from '~components/Integrator/IntegratorProtectedRoute'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
 import { paginatedElectionsQuery } from '~queries/organization'
@@ -30,6 +31,8 @@ const Settings = lazy(() => import('~elements/dashboard/settings'))
 const Memberbase = lazy(() => import('~elements/dashboard/memberbase'))
 const Members = lazy(() => import('~elements/dashboard/memberbase/members'))
 const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
+const IntegratorDashboard = lazy(() => import('~elements/dashboard/integrator'))
+const ManagedOrganizations = lazy(() => import('~elements/dashboard/integrator/organizations'))
 
 // others
 const Dashboard = lazy(() => import('~elements/dashboard'))
@@ -90,6 +93,34 @@ export const useDashboardRoutes = () => {
               </SuspenseLoader>
             ),
             children: [
+              // Integrator app: a separate experience gated to integrator-enabled organizations.
+              {
+                element: (
+                  <SuspenseLoader>
+                    <IntegratorProtectedRoute />
+                  </SuspenseLoader>
+                ),
+                children: [
+                  {
+                    path: Routes.dashboard.integrator.base,
+                    element: (
+                      <SuspenseLoader>
+                        <IntegratorDashboard />
+                      </SuspenseLoader>
+                    ),
+                    errorElement: <Error />,
+                  },
+                  {
+                    path: Routes.dashboard.integrator.organizations,
+                    element: (
+                      <SuspenseLoader>
+                        <ManagedOrganizations />
+                      </SuspenseLoader>
+                    ),
+                    errorElement: <Error />,
+                  },
+                ],
+              },
               {
                 path: Routes.dashboard.process,
                 element: (

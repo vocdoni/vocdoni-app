@@ -755,6 +755,55 @@
     "view_errors_many": "",
     "view_errors_other": "Mostra {{count}} errors"
   },
+  "integrator": {
+    "create": {
+      "action": "Crea organització",
+      "color": "Color de marca",
+      "communications": "Activa les comunicacions",
+      "country": "País",
+      "country_placeholder": "p. ex. ES",
+      "error": "No s'ha pogut crear l'organització",
+      "limit_reached": "Has arribat al límit d'organitzacions gestionades.",
+      "owner_email": "Correu del propietari",
+      "owner_email_placeholder": "Usuari existent que en serà propietari (opcional)",
+      "quota_exceeded": "Has arribat a la teva quota d'integrador.",
+      "subdomain": "Subdomini",
+      "subtitle": "Proveeix una nova organització sota el teu compte d'integrador.",
+      "success": "Organització creada correctament",
+      "timezone": "Zona horària",
+      "title": "Crea una organització gestionada",
+      "website": "Lloc web"
+    },
+    "menu": {
+      "organizations": "Organitzacions gestionades",
+      "overview": "Resum",
+      "section": "Integrador"
+    },
+    "organizations": {
+      "active": "Activa",
+      "address": "Adreça",
+      "country": "País",
+      "created_at": "Creada",
+      "empty": "Encara no hi ha organitzacions gestionades",
+      "empty_description": "Crea una organització per començar a gestionar-la.",
+      "inactive": "Inactiva",
+      "load_error": "No s'han pogut carregar les organitzacions",
+      "load_error_description": "Torna-ho a provar.",
+      "status": "Estat",
+      "subtitle": "Organitzacions que gestiones en nom dels teus clients.",
+      "title": "Organitzacions gestionades",
+      "type": "Tipus"
+    },
+    "overview": {
+      "limit_reached": "Límit assolit",
+      "load_error": "No s'ha pogut carregar la quota d'integrador",
+      "managed_census": "Mida del cens",
+      "managed_orgs": "Organitzacions gestionades",
+      "managed_processes": "Processos de votació",
+      "subtitle": "La teva quota d'integrador i l'ús actual.",
+      "title": "Resum"
+    }
+  },
   "internal_server_error": "Error intern del servidor",
   "invalid_promo_code": "Codi de promoció no vàlid",
   "invite": {

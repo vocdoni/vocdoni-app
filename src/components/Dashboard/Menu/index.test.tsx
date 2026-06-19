@@ -30,6 +30,10 @@ vi.mock('./Options', () => ({
   DashboardMenuOptions: () => <div>MenuOptions</div>,
 }))
 
+vi.mock('~queries/integrator', () => ({
+  useIntegratorInfo: () => ({ data: undefined }),
+}))
+
 const renderMenu = (reduced: boolean, onToggleReduced = vi.fn()) =>
   render(
     <DashboardLayoutContext.Provider value={{ reduced } as any}>

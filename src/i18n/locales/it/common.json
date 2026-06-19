@@ -755,6 +755,55 @@
     "view_errors_many": "View {{count}} errors",
     "view_errors_other": "Visualizza {{count}} errori"
   },
+  "integrator": {
+    "create": {
+      "action": "Crea organizzazione",
+      "color": "Colore del marchio",
+      "communications": "Abilita le comunicazioni",
+      "country": "Paese",
+      "country_placeholder": "es. ES",
+      "error": "Impossibile creare l'organizzazione",
+      "limit_reached": "Hai raggiunto il limite di organizzazioni gestite.",
+      "owner_email": "Email del proprietario",
+      "owner_email_placeholder": "Utente esistente che sarà proprietario (facoltativo)",
+      "quota_exceeded": "Hai raggiunto la tua quota di integratore.",
+      "subdomain": "Sottodominio",
+      "subtitle": "Crea una nuova organizzazione sotto il tuo account integratore.",
+      "success": "Organizzazione creata con successo",
+      "timezone": "Fuso orario",
+      "title": "Crea organizzazione gestita",
+      "website": "Sito web"
+    },
+    "menu": {
+      "organizations": "Organizzazioni gestite",
+      "overview": "Panoramica",
+      "section": "Integratore"
+    },
+    "organizations": {
+      "active": "Attiva",
+      "address": "Indirizzo",
+      "country": "Paese",
+      "created_at": "Creata",
+      "empty": "Nessuna organizzazione gestita",
+      "empty_description": "Crea un'organizzazione per iniziare a gestirla.",
+      "inactive": "Inattiva",
+      "load_error": "Impossibile caricare le organizzazioni",
+      "load_error_description": "Riprova.",
+      "status": "Stato",
+      "subtitle": "Organizzazioni che gestisci per conto dei tuoi clienti.",
+      "title": "Organizzazioni gestite",
+      "type": "Tipo"
+    },
+    "overview": {
+      "limit_reached": "Limite raggiunto",
+      "load_error": "Impossibile caricare la quota di integratore",
+      "managed_census": "Dimensione del censimento",
+      "managed_orgs": "Organizzazioni gestite",
+      "managed_processes": "Processi di voto",
+      "subtitle": "La tua quota di integratore e l'utilizzo attuale.",
+      "title": "Panoramica"
+    }
+  },
   "internal_server_error": "Errore interno del server",
   "invalid_promo_code": "Codice promozione non valido",
   "invite": {

@@ -755,6 +755,55 @@
     "view_errors_many": "",
     "view_errors_other": "Ver {{count}} errores"
   },
+  "integrator": {
+    "create": {
+      "action": "Crear organización",
+      "color": "Color de marca",
+      "communications": "Habilitar comunicaciones",
+      "country": "País",
+      "country_placeholder": "p. ej. ES",
+      "error": "No se pudo crear la organización",
+      "limit_reached": "Has alcanzado tu límite de organizaciones gestionadas.",
+      "owner_email": "Correo del propietario",
+      "owner_email_placeholder": "Usuario existente que será propietario (opcional)",
+      "quota_exceeded": "Has alcanzado tu cuota de integrador.",
+      "subdomain": "Subdominio",
+      "subtitle": "Provisiona una nueva organización bajo tu cuenta de integrador.",
+      "success": "Organización creada correctamente",
+      "timezone": "Zona horaria",
+      "title": "Crear organización gestionada",
+      "website": "Sitio web"
+    },
+    "menu": {
+      "organizations": "Organizaciones gestionadas",
+      "overview": "Resumen",
+      "section": "Integrador"
+    },
+    "organizations": {
+      "active": "Activa",
+      "address": "Dirección",
+      "country": "País",
+      "created_at": "Creada",
+      "empty": "Aún no hay organizaciones gestionadas",
+      "empty_description": "Crea una organización para empezar a gestionarla.",
+      "inactive": "Inactiva",
+      "load_error": "No se pudieron cargar las organizaciones",
+      "load_error_description": "Inténtalo de nuevo.",
+      "status": "Estado",
+      "subtitle": "Organizaciones que gestionas en nombre de tus clientes.",
+      "title": "Organizaciones gestionadas",
+      "type": "Tipo"
+    },
+    "overview": {
+      "limit_reached": "Límite alcanzado",
+      "load_error": "No se pudo cargar la cuota de integrador",
+      "managed_census": "Tamaño del censo",
+      "managed_orgs": "Organizaciones gestionadas",
+      "managed_processes": "Procesos de votación",
+      "subtitle": "Tu cuota de integrador y uso actual.",
+      "title": "Resumen"
+    }
+  },
   "internal_server_error": "Error interno del servidor",
   "invalid_promo_code": "Código promocional no válido",
   "invite": {
