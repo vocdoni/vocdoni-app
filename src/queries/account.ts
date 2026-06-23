@@ -16,6 +16,7 @@ export interface Organization {
   subdomain: string
   timezone: string
   active: boolean
+  integrator?: boolean
   parent?: any
   subscription?: Subscription
 }

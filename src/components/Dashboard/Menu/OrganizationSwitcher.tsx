@@ -4,7 +4,7 @@ import { useClient } from '@vocdoni/react-components'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus, LuSquareStack } from 'react-icons/lu'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { Routes } from '~routes'
@@ -24,6 +24,7 @@ export const OrganizationSwitcher = () => {
   const { signerRefresh } = useAuth()
   const queryClient = useQueryClient()
   const { client } = useClient()
+  const navigate = useNavigate()
 
   const addresses = useMemo(() => profile?.organizations?.map((org) => org.organization.address) || [], [profile])
 
@@ -82,6 +83,9 @@ export const OrganizationSwitcher = () => {
     queryClient.clear()
     // refresh signer
     await signerRefresh()
+    // Navigate to the correct private app root based on the selected org's integrator flag
+    const targetPath = option.organization.integrator ? Routes.integrators.base : Routes.dashboard.base
+    navigate(targetPath, { replace: true })
   }
 
   const numOrgs = organizations.length

@@ -10,6 +10,9 @@ export const Routes = {
     passwordReset: '/account/password/reset',
   },
   contact: 'https://www.vocdoni.io/contact',
+  integrators: {
+    base: '/integrators',
+  },
   dashboard: {
     base: '/admin',
     organization: '/admin/organization',
