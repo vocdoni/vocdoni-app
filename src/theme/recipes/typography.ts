@@ -12,6 +12,8 @@ const sidebarSubtitle = {
 export const heading = defineRecipe({
   base: {
     fontWeight: 'bold',
+    // Balance line lengths so multi-line headings don't leave a stray short last line.
+    textWrap: 'balance',
   },
   variants: {
     variant: {

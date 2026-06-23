@@ -16,6 +16,12 @@ const fontWeights = defineTokens.fontWeights({
   bolder: { value: '500' },
 })
 
+// Standard motion curve recommended for interactive state changes. Merges with
+// Chakra's default easings (ease-in, ease-out, ease-in-out, ease-in-smooth).
+const easings = defineTokens.easings({
+  standard: { value: 'cubic-bezier(0.2, 0, 0, 1)' },
+})
+
 const radii = defineTokens.radii({
   none: { value: '0rem' },
   xxs: { value: '2px' },
@@ -67,6 +73,7 @@ const zIndex = defineTokens.zIndex({
 const tokens = defineTokens({
   colors,
   radii,
+  easings,
   sizes,
   spacing,
   zIndex,

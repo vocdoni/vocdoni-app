@@ -81,7 +81,7 @@ const settings = {
   list: {
     p: 1,
     bgColor: 'tabs.bg',
-    borderRadius: 'sm',
+    borderRadius: 'lg',
     w: 'fit-content',
     maxWidth: 'full',
     overflowX: 'auto',
@@ -90,6 +90,7 @@ const settings = {
     py: 1.5,
     px: 3,
     whiteSpace: 'nowrap',
+    // Concentric with the list: outer `lg` (10px) − `p={1}` (4px) padding = 6px (`sm`).
     borderRadius: 'sm',
     fontWeight: 'medium',
     color: 'tabs.tab.color',

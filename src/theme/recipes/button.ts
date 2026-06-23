@@ -5,6 +5,13 @@ const baseStyle = defineStyle({
   fontWeight: 'bold',
   borderRadius: 'sm',
   fontSize: 'sm',
+  // Tactile feedback on press. Named properties only (never `transition: all`).
+  transitionProperty: 'transform, background-color, border-color, color, box-shadow',
+  transitionDuration: 'fast',
+  transitionTimingFunction: 'standard',
+  _active: {
+    transform: 'scale(0.96)',
+  },
   _currentPage: {
     fontWeight: 'bold',
     backgroundColor: {
@@ -60,6 +67,10 @@ const link = defineStyle({
   h: 'auto',
   p: 0,
   verticalAlign: 'unset',
+  // Text-like button: scaling reads as a glitch, not a press.
+  _active: {
+    transform: 'none',
+  },
   _hover: {
     textDecoration: 'underline',
   },
@@ -73,6 +84,10 @@ const navbar = defineStyle({
   justifyContent: 'start',
   fontSize: 'md',
   h: 'fit-content',
+  // Text-like nav button: no press-scale.
+  _active: {
+    transform: 'none',
+  },
 })
 
 export const Button = defineRecipe({

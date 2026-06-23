@@ -191,8 +191,39 @@ export const colors = defineSemanticTokens.colors({
   texts,
 })
 
+/**
+ * Mode-aware elevation. Reference as `boxShadow="elevation.rest"` etc. Layered,
+ * multi-`box-shadow` values ("shadows over borders") adapt to any background; dark
+ * mode uses deeper shadows so depth reads correctly on dark surfaces. Values are
+ * inlined here (rather than raw tokens) to avoid a CSS-var name collision between a
+ * raw `elevation-rest` token and this semantic `elevation.rest`.
+ */
+export const shadows = defineSemanticTokens.shadows({
+  elevation: {
+    rest: {
+      value: {
+        _light: '0 1px 2px rgba(17, 18, 20, 0.04), 0 1px 3px rgba(17, 18, 20, 0.05)',
+        _dark: '0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.36)',
+      },
+    },
+    hover: {
+      value: {
+        _light: '0 2px 4px rgba(17, 18, 20, 0.04), 0 8px 20px -8px rgba(17, 18, 20, 0.1)',
+        _dark: '0 2px 4px rgba(0, 0, 0, 0.3), 0 8px 20px -8px rgba(0, 0, 0, 0.45)',
+      },
+    },
+    overlay: {
+      value: {
+        _light: '0 12px 32px -12px rgba(17, 18, 20, 0.22)',
+        _dark: '0 12px 32px -12px rgba(0, 0, 0, 0.6)',
+      },
+    },
+  },
+})
+
 const semanticTokens = {
   colors,
+  shadows,
 }
 
 export default semanticTokens

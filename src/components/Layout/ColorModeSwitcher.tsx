@@ -62,7 +62,8 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
             aria-pressed={selected === mode}
             bg={selected === mode ? iconBg : undefined}
             variant='ghost'
-            borderRadius='sm'
+            // Concentric with the group: outer `sm` (6px) − `p={1}` (4px) padding = 2px (`xxs`).
+            borderRadius='xxs'
             size='xs'
           >
             <Icon as={icon} boxSize={4} />

@@ -144,7 +144,7 @@ export const OrganizationSwitcher = () => {
               h='22px'
               borderRadius='xs'
             >
-              <Icon as={LuPlus} boxSize={4} ml={2} mr={2} />
+              <Icon as={LuPlus} boxSize={4} />
             </Flex>
             <Text as={'span'} h='unset' fontWeight={'bold'} fontSize='sm'>
               {t('add_new_org', { defaultValue: 'Add a new organization' })}
