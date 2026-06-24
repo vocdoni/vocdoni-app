@@ -4,8 +4,6 @@ import { useAuth } from '~platform/auth/AuthContext'
 import { useOrg } from '~platform/auth/OrgContext'
 import { QueryKeys } from './keys'
 
-const ensure0x = (address: string) => (address.startsWith('0x') ? address : `0x${address}`)
-
 // Mirrors the backend OrganizationInfo fields we display (saas-backend#525).
 export type ManagedOrganization = {
   address: string
@@ -33,7 +31,7 @@ export type IntegratorUsage = {
   managedCensusSize: number
 }
 
-// GET /organizations/{address}/integrator. `limits` is present only when enabled.
+// GET /integrator. `limits` is present only when enabled.
 export type IntegratorInfo = {
   enabled: boolean
   limits?: IntegratorLimits
@@ -66,9 +64,10 @@ export const useIntegratorInfo = () => {
     staleTime: 5 * 60 * 1000,
     retry: false,
     queryFn: () =>
-      bearedFetch<IntegratorInfo>(ApiEndpoints.Integrator.replace('{address}', ensure0x(selectedAddress!))).catch(
-        () => ({ enabled: false, usage: { managedOrgs: 0, managedProcesses: 0, managedCensusSize: 0 } })
-      ),
+      bearedFetch<IntegratorInfo>(ApiEndpoints.Integrator).catch(() => ({
+        enabled: false,
+        usage: { managedOrgs: 0, managedProcesses: 0, managedCensusSize: 0 },
+      })),
   })
 }
 
@@ -80,9 +79,7 @@ export const usePaginatedManagedOrganizations = (page: number, limit: number) =>
   return useQuery<ManagedOrganizationsResponse>({
     queryKey: [...QueryKeys.integrator.managed(selectedAddress), page, limit],
     enabled: !!selectedAddress,
-    queryFn: () => {
-      const base = ApiEndpoints.ManagedOrganizations.replace('{address}', ensure0x(selectedAddress!))
-      return bearedFetch<ManagedOrganizationsResponse>(`${base}?page=${page}&limit=${limit}`)
-    },
+    queryFn: () =>
+      bearedFetch<ManagedOrganizationsResponse>(`${ApiEndpoints.ManagedOrganizations}?page=${page}&limit=${limit}`),
   })
 }
