@@ -11,6 +11,7 @@
 
 # production
 /dist
+/dist-platform
 
 # misc
 .DS_Store

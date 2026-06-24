@@ -1,0 +1,78 @@
+name: Test Platform
+
+# CI for the standalone platform (integrator) SPA build (vite.platform.config.ts → dist-platform).
+# Kept separate from test.yml so the end-user app pipeline is untouched. `pnpm lint` already
+# typechecks all of src (including src/platform); this also exercises the platform build itself.
+
+on:
+  push:
+    branches:
+      - develop
+      - stage
+      - d/**
+  pull_request:
+
+jobs:
+  build-platform-dev:
+    name: Build platform (dev)
+    runs-on: ubuntu-22.04
+    environment: develop
+    if: >
+      (github.event_name == 'push' && (github.ref == 'refs/heads/develop')) ||
+      (github.event_name == 'pull_request' && github.base_ref == 'develop')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build platform (dev)
+        run: pnpm build:platform
+        env:
+          VITE_SAAS_URL: https://saas-api-dev.vocdoni.net
+          VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
+
+  build-platform-stg:
+    name: Build platform (stg)
+    runs-on: ubuntu-22.04
+    environment: stage
+    if: >
+      (github.event_name == 'push' && (github.ref == 'refs/heads/stage' || startsWith(github.ref, 'refs/heads/d/'))) ||
+      (github.event_name == 'pull_request' && (github.base_ref == 'stage' || startsWith(github.base_ref, 'd/')))
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build platform (stg)
+        run: pnpm build:platform
+        env:
+          VITE_SAAS_URL: https://saas-api-stg.vocdoni.net
+          VITE_STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}

@@ -41,5 +41,10 @@ interface ImportMeta {
     SHARED_CENSUS_POST_TEXT?: Record<string, string>
     STREAM_URL?: string
     HIDE_VOTER_COUNT: boolean
+    // Build-time vars for the standalone platform (integrator) SPA build (vite.platform.config.ts).
+    // Optional because they only apply to that target, not the end-user app.
+    VITE_SAAS_URL?: string
+    VITE_STRIPE_PUBLISHABLE_KEY?: string
+    VITE_BASE_URL?: string
   }
 }

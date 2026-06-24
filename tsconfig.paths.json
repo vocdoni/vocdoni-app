@@ -13,7 +13,8 @@
       "~theme/*" : ["theme/*"],
       "~queries/*": ["queries/*"],
       "~utils/*": ["utils/*"],
-      "~src/*": ["./*"]
+      "~src/*": ["./*"],
+      "~platform/*": ["platform/*"]
     }
   }
 }
