@@ -25,9 +25,10 @@ export enum ApiEndpoints {
   SubscriptionCheckout = 'subscriptions/checkout',
   OrganizationSubscription = 'organizations/{address}/subscription',
   SubscriptionPortal = 'subscriptions/{address}/portal',
-  // Integrator (saas-backend#525)
-  Integrator = 'organizations/{address}/integrator',
-  ManagedOrganizations = 'organizations/{address}/managed',
+  // Integrator (saas-backend#549) — path-less; the integrator org is resolved server-side from
+  // the session (or an API key), so no organization address is passed in the URL.
+  Integrator = 'integrator',
+  ManagedOrganizations = 'integrator/organizations',
   // API keys (saas-backend#535)
   APIKeys = 'organizations/{address}/apikeys',
   APIKey = 'organizations/{address}/apikeys/{keyID}',
