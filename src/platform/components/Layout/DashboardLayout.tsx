@@ -1,9 +1,8 @@
-import { Box, Button, Flex, Icon, NativeSelect, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Icon, Stack, Text } from '@chakra-ui/react'
 import { LuBuilding2, LuGauge, LuKey, LuLogOut, LuSettings } from 'react-icons/lu'
 import { NavLink, Outlet } from 'react-router-dom'
 import { VocdoniLogo } from '~components/Layout/Logo'
 import { useAuth } from '~platform/auth/AuthContext'
-import { useOrg } from '~platform/auth/OrgContext'
 import { useProfile } from '~platform/queries/profile'
 import { Routes } from '~platform/routes'
 
@@ -13,28 +12,6 @@ const navItems = [
   { label: 'API Keys', icon: LuKey, to: Routes.dashboard.apiKeys, end: false },
   { label: 'Configuration', icon: LuSettings, to: Routes.dashboard.configuration, end: false },
 ]
-
-const OrgSwitcher = () => {
-  const { candidates, selectedAddress, setSelectedAddress } = useOrg()
-  if (candidates.length <= 1) return null
-
-  return (
-    <NativeSelect.Root size='sm'>
-      <NativeSelect.Field
-        value={selectedAddress}
-        onChange={(e) => setSelectedAddress(e.currentTarget.value)}
-        aria-label='Select organization'
-      >
-        {candidates.map(({ organization }) => (
-          <option key={organization.address} value={organization.address}>
-            {organization.subdomain || organization.address.slice(0, 10)}
-          </option>
-        ))}
-      </NativeSelect.Field>
-      <NativeSelect.Indicator />
-    </NativeSelect.Root>
-  )
-}
 
 const Sidebar = () => {
   const { logout } = useAuth()
@@ -54,8 +31,6 @@ const Sidebar = () => {
       h='100dvh'
     >
       <VocdoniLogo w='150px' h='auto' />
-
-      <OrgSwitcher />
 
       <Stack as='nav' gap={1} flex='1'>
         {navItems.map((item) => (
