@@ -2,7 +2,7 @@ import { Alert, Button, Center, Spinner, Stack, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { getApiErrorMessage } from '~platform/api/client'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { useIntegratorInfo } from '~platform/queries/integrator'
 import { useCreateOrganization } from '~platform/queries/organization'
 import { UpgradePlansButton } from './UpgradeDialog'
@@ -12,14 +12,14 @@ import { UpgradePlansButton } from './UpgradeDialog'
  * time we find none (e.g. right after sign-up) we provision one automatically on the free
  * integrator tier with type "others" — no empty dashboard, no manual create step. All other org
  * fields are optional and can be edited later in Configuration. The surrounding layout (sidebar,
- * org switcher, logout) stays available throughout.
+ * logout) stays available throughout.
  */
 const OrgGuard = () => {
-  const { selectedAddress, candidates, isLoading: orgLoading } = useOrg()
+  const { address, isLoading: orgLoading } = useOrg()
   const { data, isLoading: infoLoading } = useIntegratorInfo()
   const create = useCreateOrganization()
 
-  const needsOrg = !orgLoading && (!candidates.length || !selectedAddress)
+  const needsOrg = !orgLoading && !address
 
   useEffect(() => {
     if (needsOrg && create.isIdle) {
@@ -76,8 +76,7 @@ const OrgGuard = () => {
             <Alert.Title>Not an integrator yet</Alert.Title>
             <Alert.Description>
               This organization isn't on an integrator plan. Subscribe to a plan that includes managed organizations to
-              unlock the integrator dashboard — no manual approval needed. If you administer another organization, you
-              can switch to it from the sidebar.
+              unlock the integrator dashboard — no manual approval needed.
             </Alert.Description>
           </Alert.Content>
         </Alert.Root>

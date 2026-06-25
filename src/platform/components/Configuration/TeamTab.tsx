@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { LuEllipsisVertical } from 'react-icons/lu'
 import { getApiErrorMessage } from '~platform/api/client'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { toaster } from '~platform/components/ui/toaster'
 import { useProfile } from '~platform/queries/profile'
 import { useOrganizationRoles } from '~platform/queries/organization'

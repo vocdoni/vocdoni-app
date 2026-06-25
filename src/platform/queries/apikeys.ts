@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiEndpoints } from '~platform/api/endpoints'
 import { useAuth } from '~platform/auth/AuthContext'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { QueryKeys } from './keys'
 
 const ensure0x = (address: string) => (address.startsWith('0x') ? address : `0x${address}`)
@@ -38,13 +38,13 @@ export type CreatedApiKey = ApiKey & { secret: string }
 /** API keys owned by the active organization (admin only). */
 export const useApiKeys = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useQuery<ApiKey[]>({
-    queryKey: QueryKeys.organization.apikeys(selectedAddress),
-    enabled: !!selectedAddress,
+    queryKey: QueryKeys.organization.apikeys(address),
+    enabled: !!address,
     queryFn: () =>
-      bearedFetch<{ apiKeys: ApiKey[] }>(ApiEndpoints.APIKeys.replace('{address}', ensure0x(selectedAddress!))).then(
+      bearedFetch<{ apiKeys: ApiKey[] }>(ApiEndpoints.APIKeys.replace('{address}', ensure0x(address!))).then(
         (d) => d.apiKeys ?? []
       ),
   })
@@ -53,17 +53,17 @@ export const useApiKeys = () => {
 /** Create an API key. The returned secret is shown only once. */
 export const useCreateApiKey = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const queryClient = useQueryClient()
 
   return useMutation<CreatedApiKey, Error, CreateApiKeyBody>({
     mutationFn: (body) =>
-      bearedFetch<CreatedApiKey>(ApiEndpoints.APIKeys.replace('{address}', ensure0x(selectedAddress!)), {
+      bearedFetch<CreatedApiKey>(ApiEndpoints.APIKeys.replace('{address}', ensure0x(address!)), {
         method: 'POST',
         body,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(selectedAddress) })
+      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(address) })
     },
   })
 }
@@ -71,16 +71,16 @@ export const useCreateApiKey = () => {
 /** Revoke (permanently disable) an API key. */
 export const useRevokeApiKey = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const queryClient = useQueryClient()
 
   return useMutation<void, Error, { id: string }>({
     mutationFn: ({ id }) =>
-      bearedFetch<void>(ApiEndpoints.APIKey.replace('{address}', ensure0x(selectedAddress!)).replace('{keyID}', id), {
+      bearedFetch<void>(ApiEndpoints.APIKey.replace('{address}', ensure0x(address!)).replace('{keyID}', id), {
         method: 'DELETE',
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(selectedAddress) })
+      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(address) })
     },
   })
 }

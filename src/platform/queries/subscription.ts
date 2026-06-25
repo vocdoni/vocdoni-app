@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ApiEndpoints } from '~platform/api/endpoints'
 import { useAuth } from '~platform/auth/AuthContext'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { QueryKeys } from './keys'
 
 const ensure0x = (address: string) => (address.startsWith('0x') ? address : `0x${address}`)
@@ -36,16 +36,16 @@ export type OrganizationSubscriptionInfo = {
 /** Current subscription (plan + usage) for the active organization (admin only). */
 export const useSubscription = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useQuery<OrganizationSubscriptionInfo>({
-    queryKey: QueryKeys.subscription(selectedAddress),
-    enabled: !!selectedAddress,
+    queryKey: QueryKeys.subscription(address),
+    enabled: !!address,
     staleTime: 5 * 60 * 1000,
     retry: false,
     queryFn: () =>
       bearedFetch<OrganizationSubscriptionInfo>(
-        ApiEndpoints.OrganizationSubscription.replace('{address}', ensure0x(selectedAddress!))
+        ApiEndpoints.OrganizationSubscription.replace('{address}', ensure0x(address!))
       ),
   })
 }
@@ -53,13 +53,12 @@ export const useSubscription = () => {
 /** Creates a Stripe billing-portal session; returns the URL to redirect the admin to. */
 export const usePortalSession = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useMutation<{ portalURL: string }, Error, void>({
     mutationFn: () =>
-      bearedFetch<{ portalURL: string }>(
-        ApiEndpoints.SubscriptionPortal.replace('{address}', ensure0x(selectedAddress!)),
-        { method: 'POST' }
-      ),
+      bearedFetch<{ portalURL: string }>(ApiEndpoints.SubscriptionPortal.replace('{address}', ensure0x(address!)), {
+        method: 'POST',
+      }),
   })
 }

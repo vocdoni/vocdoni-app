@@ -23,7 +23,7 @@ import { useCallback, useState } from 'react'
 import { LuArrowLeft, LuSparkles } from 'react-icons/lu'
 import { ApiEndpoints } from '~platform/api/endpoints'
 import { useAuth } from '~platform/auth/AuthContext'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { toaster } from '~platform/components/ui/toaster'
 import { QueryKeys } from '~platform/queries/keys'
 import { Plan, useIntegratorPlans } from '~platform/queries/plans'
@@ -252,7 +252,7 @@ const CheckoutView = ({
   onClose: () => void
 }) => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const queryClient = useQueryClient()
 
   const fetchClientSecret = useCallback(async () => {
@@ -261,16 +261,16 @@ const CheckoutView = ({
       body: {
         lookupKey: plan.id,
         billingPeriod: period,
-        address: ensure0x(selectedAddress!),
+        address: ensure0x(address!),
         locale: 'en',
       },
     })
     return data.clientSecret
-  }, [bearedFetch, plan.id, period, selectedAddress])
+  }, [bearedFetch, plan.id, period, address])
 
   const onComplete = async () => {
     toaster.create({ type: 'success', title: 'Subscription active', closable: true })
-    await queryClient.invalidateQueries({ queryKey: QueryKeys.integrator.info(selectedAddress) })
+    await queryClient.invalidateQueries({ queryKey: QueryKeys.integrator.info(address) })
     onClose()
   }
 

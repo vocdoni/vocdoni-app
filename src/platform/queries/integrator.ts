@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { ApiEndpoints } from '~platform/api/endpoints'
 import { useAuth } from '~platform/auth/AuthContext'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { QueryKeys } from './keys'
 
 // Mirrors the backend OrganizationInfo fields we display (saas-backend#525).
@@ -56,11 +56,11 @@ export type ManagedOrganizationsResponse = {
  */
 export const useIntegratorInfo = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useQuery<IntegratorInfo>({
-    queryKey: QueryKeys.integrator.info(selectedAddress),
-    enabled: !!selectedAddress,
+    queryKey: QueryKeys.integrator.info(address),
+    enabled: !!address,
     staleTime: 5 * 60 * 1000,
     retry: false,
     queryFn: () =>
@@ -74,11 +74,11 @@ export const useIntegratorInfo = () => {
 /** Paginated list of organizations managed by the active integrator. */
 export const usePaginatedManagedOrganizations = (page: number, limit: number) => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useQuery<ManagedOrganizationsResponse>({
-    queryKey: [...QueryKeys.integrator.managed(selectedAddress), page, limit],
-    enabled: !!selectedAddress,
+    queryKey: [...QueryKeys.integrator.managed(address), page, limit],
+    enabled: !!address,
     queryFn: () =>
       bearedFetch<ManagedOrganizationsResponse>(`${ApiEndpoints.ManagedOrganizations}?page=${page}&limit=${limit}`),
   })

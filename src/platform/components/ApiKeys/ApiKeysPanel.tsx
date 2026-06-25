@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { LuTrash2 } from 'react-icons/lu'
 import { ApiError, getApiErrorMessage } from '~platform/api/client'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { toaster } from '~platform/components/ui/toaster'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~platform/queries/apikeys'
 import { CreateApiKeyButton } from './CreateApiKeyModal'

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiEndpoints } from '~platform/api/endpoints'
 import { useAuth } from '~platform/auth/AuthContext'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { QueryKeys } from './keys'
 
 const ensure0x = (address: string) => (address.startsWith('0x') ? address : `0x${address}`)
@@ -23,14 +23,14 @@ export type PendingInvite = {
 /** Active members of the active organization (admin only). */
 export const useOrgUsers = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useQuery<OrganizationUser[]>({
-    queryKey: QueryKeys.organization.users(selectedAddress),
-    enabled: !!selectedAddress,
+    queryKey: QueryKeys.organization.users(address),
+    enabled: !!address,
     queryFn: () =>
       bearedFetch<{ users: OrganizationUser[] }>(
-        ApiEndpoints.OrganizationUsers.replace('{address}', ensure0x(selectedAddress!))
+        ApiEndpoints.OrganizationUsers.replace('{address}', ensure0x(address!))
       ).then((d) => d.users ?? []),
   })
 }
@@ -38,14 +38,14 @@ export const useOrgUsers = () => {
 /** Pending invitations for the active organization (admin only). */
 export const usePendingInvites = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useQuery<PendingInvite[]>({
-    queryKey: QueryKeys.organization.pending(selectedAddress),
-    enabled: !!selectedAddress,
+    queryKey: QueryKeys.organization.pending(address),
+    enabled: !!address,
     queryFn: () =>
       bearedFetch<{ pending: PendingInvite[] }>(
-        ApiEndpoints.OrganizationPendingUsers.replace('{address}', ensure0x(selectedAddress!))
+        ApiEndpoints.OrganizationPendingUsers.replace('{address}', ensure0x(address!))
       ).then((d) => d.pending ?? []),
   })
 }
@@ -53,22 +53,22 @@ export const usePendingInvites = () => {
 /** Shared invalidation: refresh both the members list and the pending invites. */
 const useInvalidateTeam = () => {
   const queryClient = useQueryClient()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   return () => {
-    queryClient.invalidateQueries({ queryKey: QueryKeys.organization.users(selectedAddress) })
-    queryClient.invalidateQueries({ queryKey: QueryKeys.organization.pending(selectedAddress) })
+    queryClient.invalidateQueries({ queryKey: QueryKeys.organization.users(address) })
+    queryClient.invalidateQueries({ queryKey: QueryKeys.organization.pending(address) })
   }
 }
 
 /** Invite a new member by email + role. */
 export const useInviteMember = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const invalidate = useInvalidateTeam()
 
   return useMutation<void, Error, { email: string; role: string }>({
     mutationFn: (body) =>
-      bearedFetch<void>(ApiEndpoints.OrganizationUsers.replace('{address}', ensure0x(selectedAddress!)), {
+      bearedFetch<void>(ApiEndpoints.OrganizationUsers.replace('{address}', ensure0x(address!)), {
         method: 'POST',
         body,
       }),
@@ -79,16 +79,13 @@ export const useInviteMember = () => {
 /** Change an existing member's role. */
 export const useUpdateUserRole = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const invalidate = useInvalidateTeam()
 
   return useMutation<void, Error, { userId: number; role: string }>({
     mutationFn: ({ userId, role }) =>
       bearedFetch<void>(
-        ApiEndpoints.OrganizationUser.replace('{address}', ensure0x(selectedAddress!)).replace(
-          '{userid}',
-          String(userId)
-        ),
+        ApiEndpoints.OrganizationUser.replace('{address}', ensure0x(address!)).replace('{userid}', String(userId)),
         { method: 'PUT', body: { role } }
       ),
     onSuccess: invalidate,
@@ -98,16 +95,13 @@ export const useUpdateUserRole = () => {
 /** Remove a member from the organization. */
 export const useRemoveUser = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const invalidate = useInvalidateTeam()
 
   return useMutation<void, Error, { userId: number }>({
     mutationFn: ({ userId }) =>
       bearedFetch<void>(
-        ApiEndpoints.OrganizationUser.replace('{address}', ensure0x(selectedAddress!)).replace(
-          '{userid}',
-          String(userId)
-        ),
+        ApiEndpoints.OrganizationUser.replace('{address}', ensure0x(address!)).replace('{userid}', String(userId)),
         { method: 'DELETE' }
       ),
     onSuccess: invalidate,
@@ -117,13 +111,13 @@ export const useRemoveUser = () => {
 /** Cancel a pending invitation. */
 export const useCancelInvite = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const invalidate = useInvalidateTeam()
 
   return useMutation<void, Error, { invitationId: string }>({
     mutationFn: ({ invitationId }) =>
       bearedFetch<void>(
-        ApiEndpoints.OrganizationPendingUser.replace('{address}', ensure0x(selectedAddress!)).replace(
+        ApiEndpoints.OrganizationPendingUser.replace('{address}', ensure0x(address!)).replace(
           '{invitationID}',
           invitationId
         ),
@@ -136,13 +130,13 @@ export const useCancelInvite = () => {
 /** Resend a pending invitation (regenerates the code and re-sends the email). */
 export const useResendInvite = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const invalidate = useInvalidateTeam()
 
   return useMutation<void, Error, { invitationId: string }>({
     mutationFn: ({ invitationId }) =>
       bearedFetch<void>(
-        ApiEndpoints.OrganizationPendingUser.replace('{address}', ensure0x(selectedAddress!)).replace(
+        ApiEndpoints.OrganizationPendingUser.replace('{address}', ensure0x(address!)).replace(
           '{invitationID}',
           invitationId
         ),

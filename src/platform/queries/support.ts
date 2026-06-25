@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { ApiEndpoints } from '~platform/api/endpoints'
 import { useAuth } from '~platform/auth/AuthContext'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 
 const ensure0x = (address: string) => (address.startsWith('0x') ? address : `0x${address}`)
 
@@ -15,11 +15,11 @@ export type SupportTicket = {
 /** Submits a support ticket for the active organization. */
 export const useSendTicket = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useMutation<void, Error, SupportTicket>({
     mutationFn: (body) =>
-      bearedFetch<void>(ApiEndpoints.OrganizationTicket.replace('{address}', ensure0x(selectedAddress!)), {
+      bearedFetch<void>(ApiEndpoints.OrganizationTicket.replace('{address}', ensure0x(address!)), {
         method: 'POST',
         body,
       }),

@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { UnauthorizedApiError } from '~platform/api/client'
 import { AuthProvider } from '~platform/auth/AuthContext'
-import { OrgProvider } from '~platform/auth/OrgContext'
 import { Toaster } from '~platform/components/ui/toaster'
 import { AppRouter } from '~platform/Router'
 import { Theme } from '~platform/Theme'
@@ -23,9 +22,7 @@ export const Providers = () => (
   <Theme>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <OrgProvider>
-          <AppRouter />
-        </OrgProvider>
+        <AppRouter />
       </AuthProvider>
       <Toaster />
     </QueryClientProvider>

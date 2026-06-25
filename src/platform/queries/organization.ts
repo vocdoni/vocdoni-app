@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiEndpoints } from '~platform/api/endpoints'
 import { useAuth } from '~platform/auth/AuthContext'
-import { useOrg } from '~platform/auth/OrgContext'
+import { useOrg } from '~platform/auth/useOrg'
 import { QueryKeys } from './keys'
 
 const ensure0x = (address: string) => (address.startsWith('0x') ? address : `0x${address}`)
@@ -76,30 +76,29 @@ export type UpdateOrganizationBody = {
 /** Organization details for the active org. */
 export const useOrganization = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
 
   return useQuery<OrganizationDetails>({
-    queryKey: QueryKeys.organization.info(selectedAddress),
-    enabled: !!selectedAddress,
-    queryFn: () =>
-      bearedFetch<OrganizationDetails>(ApiEndpoints.Organization.replace('{address}', ensure0x(selectedAddress!))),
+    queryKey: QueryKeys.organization.info(address),
+    enabled: !!address,
+    queryFn: () => bearedFetch<OrganizationDetails>(ApiEndpoints.Organization.replace('{address}', ensure0x(address!))),
   })
 }
 
 /** Updates the active organization's details (admin only). Refreshes the org info + profile. */
 export const useUpdateOrganization = () => {
   const { bearedFetch } = useAuth()
-  const { selectedAddress } = useOrg()
+  const { address } = useOrg()
   const queryClient = useQueryClient()
 
   return useMutation<void, Error, UpdateOrganizationBody>({
     mutationFn: (body) =>
-      bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', ensure0x(selectedAddress!)), {
+      bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', ensure0x(address!)), {
         method: 'PUT',
         body,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.info(selectedAddress) })
+      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.info(address) })
       queryClient.invalidateQueries({ queryKey: QueryKeys.profile })
     },
   })
