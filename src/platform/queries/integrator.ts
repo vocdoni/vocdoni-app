@@ -4,7 +4,18 @@ import { useAuth } from '~platform/auth/AuthContext'
 import { useOrg } from '~platform/auth/useOrg'
 import { QueryKeys } from './keys'
 
-// Mirrors the backend OrganizationInfo fields we display (saas-backend#525).
+// Per-org usage counters (backend SubscriptionUsage). The endpoint always sends the object, but
+// individual fields default to 0 — keep it optional defensively.
+export type OrganizationCounters = {
+  sentSMS: number
+  sentEmails: number
+  subOrgs: number
+  users: number
+  processes: number
+}
+
+// Mirrors the backend OrganizationInfo fields we display (saas-backend#525). `meta` is a free-form
+// map; we only read `name` (the org's display name, set at creation by whoever provisions the org).
 export type ManagedOrganization = {
   address: string
   website: string
@@ -17,6 +28,8 @@ export type ManagedOrganization = {
   timezone: string
   active: boolean
   communications: boolean
+  meta?: { name?: string }
+  counters?: OrganizationCounters
 }
 
 export type IntegratorLimits = {
