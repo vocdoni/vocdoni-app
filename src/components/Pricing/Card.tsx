@@ -9,12 +9,12 @@ import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
 import ContactButton from '~components/ContactLink'
 import { BookerModalButton } from '~components/Dashboard/Booker'
-import { PlanId } from '~constants'
+import { getPlanKey, isPlanNamed, PlanName } from '~constants'
 import { useProfile } from '~queries/account'
 import { usePortalSession } from '~queries/stripe'
 import { Routes } from '~routes'
 import { currency } from '~utils/numbers'
-import { usePlanTranslations, type Plan } from './Plans'
+import { usePlans, usePlanTranslations, type Plan } from './Plans'
 
 gsap.registerPlugin(useGSAP)
 
@@ -26,6 +26,7 @@ type PricingCardProps = {
   features: { icon: React.ElementType; text: string }[]
   isDisabled?: boolean
   isCurrentPlan: boolean
+  isCustom: boolean
   width?: string
   plan: Plan
 }
@@ -38,11 +39,13 @@ const PricingCard = ({
   features,
   isDisabled,
   isCurrentPlan,
+  isCustom,
   plan,
 }: PricingCardProps) => {
   const { t } = useTranslation()
   const translations = usePlanTranslations()
   const { subscription } = useSubscription()
+  const { data: plans } = usePlans()
   const { mutateAsync, isPending } = usePortalSession()
   const { setValue, watch } = useFormContext()
   const { data: me } = useProfile()
@@ -56,13 +59,19 @@ const PricingCard = ({
     w: 'full',
   }
 
-  const isCustomPlan = plan?.organization?.customPlan || plan.id === PlanId.Custom
+  const isCustomPlan = isCustom
   const period = watch('billingPeriod', 'year')
   const isDashboard = pathname.startsWith(Routes.dashboard.base)
+  // The lightweight org subscription only exposes the plan's product key, so we
+  // resolve the Free plan's id from the plans list to detect prior paid subscriptions.
+  const freePlanId = plans?.find((p) => isPlanNamed(p, PlanName.Free))?.id
   const hadSubscribed =
-    typeof me?.organizations.find(({ organization }) => organization.subscription?.planId !== PlanId.Free) !==
-    'undefined'
-  const hasActiveSubscription = subscription?.plan.id !== PlanId.Free && !!subscription?.subscriptionDetails.active
+    !!freePlanId &&
+    !!me?.organizations.some(
+      ({ organization }) => organization.subscription && organization.subscription.planId !== freePlanId
+    )
+  const hasActiveSubscription =
+    !isPlanNamed(subscription?.plan, PlanName.Free) && !!subscription?.subscriptionDetails.active
   const ContactLink = ({ children }: { children?: ReactNode }) => (
     <Link asChild>
       <RouterLink to={Routes.dashboard.settings.support}>{children}</RouterLink>
@@ -169,7 +178,7 @@ const PricingCard = ({
           )}
         </Flex>
       </Card.Body>
-      {(plan.id === PlanId.Premium || plan.id === PlanId.Essential) && (
+      {(isPlanNamed(plan, PlanName.Professional) || isPlanNamed(plan, PlanName.Starter)) && (
         <Text fontSize='xs' fontStyle='italic' textAlign='center'>
           <Trans i18nKey='pricing_card.need_more_members' components={{ 2: <ContactLink /> }} />
         </Text>
@@ -222,7 +231,7 @@ const PricingCard = ({
                   ? t('current_plan', { defaultValue: 'Current Plan' })
                   : t('upgrade_plan', {
                       defaultValue: 'Upgrade to {{plan}}',
-                      plan: translations[plan.id]?.title || plan.name,
+                      plan: translations[getPlanKey(plan) as PlanName]?.title || plan.name,
                     })}
               </Button>
             )

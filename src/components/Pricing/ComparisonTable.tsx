@@ -14,7 +14,7 @@ import {
   LuZap,
 } from 'react-icons/lu'
 import { BooleanIcon } from '~components/Layout/BooleanIcon'
-import { PlanId } from '~constants'
+import { getPlanKey, PlanName } from '~constants'
 import { CategorizedSpecs, CategoryTitleKeys, FeatureSpec } from './Features'
 import { Plan, usePlans, usePlanTranslations } from './Plans'
 
@@ -130,7 +130,8 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
     )
   }
 
-  const filteredPlans = plans.filter((plan) => !(plan?.organization?.customPlan || plan.id === PlanId.Custom))
+  // The custom plan is no longer returned by the API, so all returned plans are shown.
+  const filteredPlans = plans ?? []
 
   return (
     <Flex ref={ref} justifyContent='center' w='full' display='block'>
@@ -149,7 +150,7 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
                   <Table.ColumnHeader key={plan.id} textAlign='center'>
                     <Flex flexDirection={'column'} justifyContent={'center'}>
                       <Text as={'span'} textAlign={'center'}>
-                        {translations[plan.id].title}
+                        {translations[getPlanKey(plan) as PlanName]?.title ?? plan.name}
                       </Text>
                     </Flex>
                   </Table.ColumnHeader>

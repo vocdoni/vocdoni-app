@@ -21,7 +21,7 @@ export interface Organization {
 }
 
 export interface Subscription {
-  planId: number
+  planId: string
   startDate: string
   renewalDate: string
   lastPaymentDate: string

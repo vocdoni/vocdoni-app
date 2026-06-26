@@ -2,7 +2,7 @@ import { Flex, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { dotobject } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
 import { BooleanIcon } from '~components/Layout/BooleanIcon'
-import { PlanId, SubscriptionPermission } from '~constants'
+import { isPlanNamed, PlanName, SubscriptionPermission } from '~constants'
 import type { Plan } from './Plans'
 
 export type PlanFeatureSpec = {
@@ -131,7 +131,7 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
   ],
   customization: [
     staticFeature('basicBranding', 'features.basic_branding', {
-      render: (plan) => (plan.id === PlanId.Premium ? <OnDemandTag /> : false),
+      render: (plan) => (isPlanNamed(plan, PlanName.Professional) ? <OnDemandTag /> : false),
     }),
     planFeature(SubscriptionPermission.WhiteLabel, 'features.white_label'),
     planFeature(SubscriptionPermission.Personalization, 'features.personalization'),
@@ -140,10 +140,10 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
   extraFeatures: [
     planFeature(SubscriptionPermission.LiveResults, 'features.live_results', 'features.tooltips.live_results'),
     staticFeature('emailNotifications', 'features.email_notifications', {
-      render: (plan) => (plan.id === PlanId.Premium ? <OnDemandTag /> : false),
+      render: (plan) => (isPlanNamed(plan, PlanName.Professional) ? <OnDemandTag /> : false),
     }),
     staticFeature('smsNotifications', 'features.sms_notifications', {
-      render: (plan) => (plan.id === PlanId.Premium ? <OnDemandTag /> : false),
+      render: (plan) => (isPlanNamed(plan, PlanName.Professional) ? <OnDemandTag /> : false),
     }),
     planFeature(SubscriptionPermission.LiveStreaming, 'features.live_streaming'),
   ],
@@ -157,7 +157,7 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
   ],
   support: [
     staticFeature('prioritySupport', 'features.priority_support', {
-      available: (plan) => (plan.id === PlanId.Premium ? true : false),
+      available: (plan) => (isPlanNamed(plan, PlanName.Professional) ? true : false),
     }),
     staticFeature('emailSupport', 'features.email_support', {
       available: () => true,
@@ -167,9 +167,9 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
           <Flex flexDirection='column' alignItems='center' gap={1}>
             <BooleanIcon value={true} />
             <Text fontSize='xs'>
-              {plan.id === PlanId.Premium
+              {isPlanNamed(plan, PlanName.Professional)
                 ? t('features.email_support_premium', { defaultValue: '(24h resp.)' })
-                : plan.id === PlanId.Essential
+                : isPlanNamed(plan, PlanName.Starter)
                   ? t('features.email_support_essential', { defaultValue: '(48h resp.)' })
                   : t('features.email_support_basic', { defaultValue: '(72h resp.)' })}
             </Text>
@@ -205,10 +205,9 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
               <BooleanIcon value={true} />
               <Text fontSize='xs'>
                 {t('features.uptime_guaranteed', {
-                  suffix:
-                    plan.id === PlanId.Premium
-                      ? t('features.generic_sla', { defaultValue: 'Generic SLA' })
-                      : t('features.basic_sla', { defaultValue: 'Best-effort' }),
+                  suffix: isPlanNamed(plan, PlanName.Professional)
+                    ? t('features.generic_sla', { defaultValue: 'Generic SLA' })
+                    : t('features.basic_sla', { defaultValue: 'Best-effort' }),
                   defaultValue: 'Guaranteed ({{suffix}})',
                 })}
               </Text>

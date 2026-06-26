@@ -35,7 +35,7 @@ import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Content
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import InvertedAccordionIcon from '~components/Layout/InvertedAccordionIcon'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
-import { PlanId } from '~constants'
+import { isPlanNamed, PlanName } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
@@ -101,7 +101,7 @@ const Tutorial = () => {
           </Text>
         ) : (
           subscription &&
-          subscription.plan.id === PlanId.Free && (
+          isPlanNamed(subscription.plan, PlanName.Free) && (
             <Text color='gray.500' mb={4}>
               <Trans i18nKey='plan.free'>
                 <strong>You're on the Free Plan</strong>, which already lets you launch votes. If you need more

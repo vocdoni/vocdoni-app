@@ -17,13 +17,13 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
-import { PlanId } from '~constants'
+import { getPlanKey, isPlanNamed, PlanName } from '~constants'
 import { QueryKeys } from '~src/queries/keys'
 import PricingCard from './Card'
 import { useSubscriptionCheckout } from './use-subscription-checkout'
 
 export type Plan = {
-  id: number
+  id: string
   name: string
   stripeID: string
   yearlyPrice: number
@@ -39,7 +39,6 @@ export type Plan = {
     maxDuration: string
     customURL: boolean
     drafts: boolean
-    customPlan: boolean
   }
   votingTypes: {
     single: boolean
@@ -65,7 +64,7 @@ export type Plan = {
 
 export type SubscriptionCheckoutFormValues = {
   billingPeriod: 'month' | 'year'
-  planId: number | null
+  planId: string | null
 }
 
 export const usePlans = () => {
@@ -83,21 +82,25 @@ export const usePlans = () => {
 export const usePlanTranslations = (plans?: Plan[]) => {
   const { t } = useTranslation()
 
-  const byId = useMemo(() => {
-    const m = new Map<PlanId, Plan>()
-    plans?.forEach((p) => m.set(p.id, p))
+  const byName = useMemo(() => {
+    const m = new Map<string, Plan>()
+    plans?.forEach((p) => {
+      const key = normalizeName(p.name)
+      if (key) m.set(key, p)
+    })
     return m
   }, [plans])
 
-  const getMembers = (id: PlanId, fallback = 100) => byId.get(id)?.organization?.maxCensus ?? fallback
-  const getProcesses = (id: PlanId, fallback = 10) => byId.get(id)?.organization?.maxProcesses ?? fallback
-  const getTeamMembers = (id: PlanId, fallback = 1) => byId.get(id)?.organization?.teamMembers ?? fallback
-  const get2FAsms = (id: PlanId, fallback = 0) => byId.get(id)?.features?.['2FAsms'] ?? fallback
-  const get2FAemail = (id: PlanId, fallback = 0) => byId.get(id)?.features?.['2FAemail'] ?? fallback
+  const get = (name: PlanName) => byName.get(name.toLowerCase())
+  const getMembers = (name: PlanName, fallback = 100) => get(name)?.organization?.maxCensus ?? fallback
+  const getProcesses = (name: PlanName, fallback = 10) => get(name)?.organization?.maxProcesses ?? fallback
+  const getTeamMembers = (name: PlanName, fallback = 1) => get(name)?.organization?.teamMembers ?? fallback
+  const get2FAsms = (name: PlanName, fallback = 0) => get(name)?.features?.['2FAsms'] ?? fallback
+  const get2FAemail = (name: PlanName, fallback = 0) => get(name)?.features?.['2FAemail'] ?? fallback
 
-  const get2FA = (id: PlanId) => {
-    const hasEmail = Number(get2FAemail(id)) > 0
-    const hasSms = Number(get2FAsms(id)) > 0
+  const get2FA = (name: PlanName) => {
+    const hasEmail = Number(get2FAemail(name)) > 0
+    const hasSms = Number(get2FAsms(name)) > 0
 
     const suffix =
       hasSms && hasEmail
@@ -110,7 +113,7 @@ export const usePlanTranslations = (plans?: Plan[]) => {
   }
 
   const translations = {
-    [PlanId.Free]: {
+    [PlanName.Free]: {
       title: t('pricing.free_title', { defaultValue: 'Free' }),
       subtitle: t('pricing.free_subtitle', {
         defaultValue: 'Perfect for getting started',
@@ -120,21 +123,21 @@ export const usePlanTranslations = (plans?: Plan[]) => {
           icon: LuUsers,
           text: t('pricing.core_voting', {
             defaultValue: 'Up to {{ count }} members',
-            count: getMembers(PlanId.Free, 100),
+            count: getMembers(PlanName.Free, 100),
           }),
         },
         {
           icon: LuVote,
           text: t('pricing.yearly_processes', {
             defaultValue: '{{ count }} votes per year¹',
-            count: getProcesses(PlanId.Free, 10),
+            count: getProcesses(PlanName.Free, 10),
           }),
         },
         {
           icon: LuUserCheck,
           text: t('pricing.up_to_admins', {
             defaultValue: '{{ count }} admins',
-            count: getTeamMembers(PlanId.Free, 1),
+            count: getTeamMembers(PlanName.Free, 1),
           }),
         },
         {
@@ -144,7 +147,7 @@ export const usePlanTranslations = (plans?: Plan[]) => {
         {
           icon: LuShield,
           text: t('pricing.2fa', {
-            suffix: get2FA(PlanId.Free),
+            suffix: get2FA(PlanName.Free),
             defaultValue: '2FA authentication² ({{suffix}})',
           }),
         },
@@ -152,7 +155,7 @@ export const usePlanTranslations = (plans?: Plan[]) => {
         { icon: LuMail, text: t('pricing.ticket_support_72', { defaultValue: 'Email support (72h)' }) },
       ],
     },
-    [PlanId.Essential]: {
+    [PlanName.Starter]: {
       title: t('pricing.essential_title', { defaultValue: 'Essential' }),
       subtitle: t('pricing.essential_subtitle', {
         defaultValue: 'For growing organizations',
@@ -161,33 +164,33 @@ export const usePlanTranslations = (plans?: Plan[]) => {
         {
           icon: LuUsers,
           text: t('pricing.core_voting', {
-            count: getMembers(PlanId.Essential, 500),
+            count: getMembers(PlanName.Starter, 500),
           }),
         },
         {
           icon: LuVote,
           text: t('pricing.yearly_processes', {
-            count: getProcesses(PlanId.Essential, 20),
+            count: getProcesses(PlanName.Starter, 20),
           }),
         },
         {
           icon: LuUserCheck,
           text: t('pricing.up_to_admins', {
-            count: getTeamMembers(PlanId.Essential, 1),
+            count: getTeamMembers(PlanName.Starter, 1),
           }),
         },
         { icon: LuCircleCheckBig, text: t('pricing.different_voting_methods') },
         {
           icon: LuShield,
           text: t('pricing.2fa', {
-            suffix: get2FA(PlanId.Essential),
+            suffix: get2FA(PlanName.Starter),
           }),
         },
         { icon: LuChartColumn, text: t('pricing.basic_analytics', { defaultValue: 'Basic analytics' }) },
         { icon: LuMail, text: t('pricing.ticket_support_48', { defaultValue: 'Email support (48h)' }) },
       ],
     },
-    [PlanId.Premium]: {
+    [PlanName.Professional]: {
       title: t('pricing.premium_title', { defaultValue: 'Premium' }),
       subtitle: t('pricing.premium_subtitle', {
         defaultValue: 'For established organizations',
@@ -196,37 +199,31 @@ export const usePlanTranslations = (plans?: Plan[]) => {
         {
           icon: LuUsers,
           text: t('pricing.core_voting', {
-            count: getMembers(PlanId.Premium, 2000),
+            count: getMembers(PlanName.Professional, 2000),
           }),
         },
         {
           icon: LuVote,
           text: t('pricing.yearly_processes', {
-            count: getProcesses(PlanId.Premium, 50),
+            count: getProcesses(PlanName.Professional, 50),
           }),
         },
         {
           icon: LuUserCheck,
           text: t('pricing.up_to_admins', {
-            count: getTeamMembers(PlanId.Premium, 5),
+            count: getTeamMembers(PlanName.Professional, 5),
           }),
         },
         { icon: LuCircleCheckBig, text: t('pricing.different_voting_methods') },
         {
           icon: LuShield,
           text: t('pricing.2fa', {
-            suffix: get2FA(PlanId.Premium),
+            suffix: get2FA(PlanName.Professional),
           }),
         },
         { icon: LuPalette, text: t('pricing.custom_branding', { defaultValue: 'Custom branding*' }) },
         { icon: LuMail, text: t('pricing.priority_support', { defaultValue: 'Priority email support (24h)' }) },
       ],
-    },
-    [PlanId.Custom]: {
-      title: t('pricing.custom_title', { defaultValue: 'Custom' }),
-      subtitle: t('pricing.custom_subtitle', {
-        defaultValue: 'Tailored for your needs',
-      }),
     },
   }
 
@@ -249,7 +246,7 @@ export const usePlanNameTranslator = () => {
     return plans.reduce<Record<string, string>>((acc, plan) => {
       const normalizedPlanName = normalizeName(plan.name)
       if (normalizedPlanName) {
-        acc[normalizedPlanName] = planTranslations[plan.id]?.title || plan.name
+        acc[normalizedPlanName] = planTranslations[getPlanKey(plan) as PlanName]?.title || plan.name
       }
       return acc
     }, {})
@@ -269,6 +266,10 @@ export const usePlanNameTranslator = () => {
 
   return translatePlanName
 }
+
+// Synthetic plan backing the hardcoded custom card. PricingCard short-circuits all
+// plan-data usage when `isCustom` is set, so a minimal shape is enough.
+const CUSTOM_PLAN = { id: 'custom', name: 'Custom', organization: {} } as unknown as Plan
 
 export const SubscriptionPlans = () => {
   const { subscription, error: subscriptionError } = useSubscription()
@@ -294,17 +295,34 @@ export const SubscriptionPlans = () => {
   const cards = useMemo(() => {
     if (!plans) return []
 
-    return plans.map((plan) => {
+    const planCards = plans.map((plan) => {
+      const key = getPlanKey(plan) as PlanName
       return {
-        popular: plan.id === PlanId.Premium,
-        title: translations[plan.id]?.title || plan.name,
-        subtitle: translations[plan.id]?.subtitle || '',
+        plan,
+        isCustom: false,
+        popular: isPlanNamed(plan, PlanName.Professional),
+        title: translations[key]?.title || plan.name,
+        subtitle: translations[key]?.subtitle || '',
         price: period === 'year' ? plan.yearlyPrice / 12 : plan.monthlyPrice,
-        features: translations[plan.id]?.features || [],
-        isCurrentPlan: subscription && plan.id === subscription?.plan.id,
+        features: translations[key]?.features || [],
+        isCurrentPlan: !!subscription && isPlanNamed(plan, subscription.plan?.name),
       }
     })
-  }, [plans, subscription, translations, period])
+
+    // The "custom" plan no longer exists in the API; it's hardcoded and appended last.
+    planCards.push({
+      plan: CUSTOM_PLAN,
+      isCustom: true,
+      popular: false,
+      title: t('pricing.custom_title', { defaultValue: 'Custom' }),
+      subtitle: t('pricing.custom_subtitle', { defaultValue: 'Tailored for your needs' }),
+      price: 0,
+      features: [],
+      isCurrentPlan: false,
+    })
+
+    return planCards
+  }, [plans, subscription, translations, period, t])
 
   const error = plansError ?? subscriptionError
   const hasError = !!error && !isLoading
@@ -359,7 +377,7 @@ export const SubscriptionPlans = () => {
           </Tabs.Root>
           <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={6}>
             {cards.map((card, idx) => (
-              <PricingCard key={idx} plan={plans[idx]} {...card} />
+              <PricingCard key={idx} {...card} />
             ))}
           </SimpleGrid>
         </Flex>

@@ -28,7 +28,7 @@ import { useSubscriptionCheckout } from './use-subscription-checkout'
 
 export type SubscriptionPaymentData = {
   billingPeriod: 'month' | 'year'
-  lookupKey: number
+  lookupKey: string
 }
 
 type CheckoutResponse = {

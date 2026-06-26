@@ -5,15 +5,16 @@ vi.mock('./Plans', () => ({
   usePlans: () => ({
     data: [
       {
-        id: 'basic',
+        id: 'prod_starter',
+        name: 'Starter',
         limits: { maxMembers: 10 },
-        organization: { customPlan: false },
+        organization: {},
       },
     ],
     isLoading: false,
   }),
   usePlanTranslations: () => ({
-    basic: { title: 'Basic' },
+    Starter: { title: 'Basic' },
   }),
 }))
 

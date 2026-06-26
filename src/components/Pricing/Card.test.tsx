@@ -1,11 +1,10 @@
 import { FormProvider, useForm } from 'react-hook-form'
-import { PlanId } from '~constants'
 import { createTestI18n, render, screen, TestMemoryRouter } from '~src/test-utils'
 import PricingCard from './Card'
 
 vi.mock('~components/Auth/Subscription', () => ({
   useSubscription: () => ({
-    subscription: { plan: { id: 3 }, subscriptionDetails: { active: false } },
+    subscription: { plan: { name: 'Free' }, subscriptionDetails: { active: false } },
   }),
 }))
 
@@ -35,6 +34,7 @@ vi.mock('./Plans', async (importOriginal) => {
   return {
     ...actual,
     usePlanTranslations: () => ({}),
+    usePlans: () => ({ data: [] }),
   }
 })
 
@@ -69,13 +69,15 @@ describe('PricingCard', () => {
             popular={false}
             isDisabled={false}
             isCurrentPlan={false}
+            isCustom={false}
             plan={
               {
-                id: PlanId.Essential,
+                id: 'prod_starter',
+                name: 'Starter',
                 monthlyPrice: 10,
                 yearlyPrice: 100,
                 freeTrialDays: 0,
-                organization: { customPlan: false },
+                organization: {},
               } as any
             }
             features={[{ icon: () => null, text: 'Feature A' }]}
@@ -105,13 +107,15 @@ describe('PricingCard', () => {
             popular={false}
             isDisabled={false}
             isCurrentPlan={false}
+            isCustom={false}
             plan={
               {
-                id: PlanId.Essential,
+                id: 'prod_starter',
+                name: 'Starter',
                 monthlyPrice: 10,
                 yearlyPrice: 100,
                 freeTrialDays: 0,
-                organization: { customPlan: false },
+                organization: {},
               } as any
             }
             features={[{ icon: () => null, text: 'Feature A' }]}

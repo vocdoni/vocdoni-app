@@ -38,12 +38,39 @@ export enum SubscriptionPermission {
   LiveStreaming = 'features.liveStreaming',
 }
 
-export enum PlanId {
-  Essential = 1,
-  Premium = 2,
-  Free = 3,
-  Custom = 4,
-}
+/**
+ * Canonical Stripe product names returned by the `/plans` endpoint. These are
+ * the stable identifiers used to match plans, since the plan `id` is now the
+ * Stripe product key (which may change).
+ */
+export const PlanName = {
+  Free: 'Free',
+  Starter: 'Starter',
+  Professional: 'Professional',
+} as const
+
+export type PlanName = (typeof PlanName)[keyof typeof PlanName]
+
+/**
+ * Normalizes a plan name for case-insensitive comparison. The API returns names
+ * in TitleCase, but matching defensively avoids breakage on casing drift.
+ */
+export const normalizePlanName = (value?: string | null) => value?.trim().toLowerCase() || undefined
+
+/**
+ * Whether a plan matches a given name (case-insensitively).
+ */
+export const isPlanNamed = (plan: { name?: string } | null | undefined, name?: string | null) =>
+  !!normalizePlanName(plan?.name) && normalizePlanName(plan?.name) === normalizePlanName(name)
+
+/**
+ * Resolves a plan to its canonical PlanName key (or undefined if it doesn't match
+ * any known plan). Useful to look up plan-specific translations by name.
+ */
+export const getPlanKey = (plan: { name?: string } | null | undefined): PlanName | undefined =>
+  (Object.values(PlanName) as string[]).find((n) => normalizePlanName(n) === normalizePlanName(plan?.name)) as
+    | PlanName
+    | undefined
 
 export const LocalStorageKeys = {
   DashboardMenuReduced: 'dashboard.menu.reduced',
