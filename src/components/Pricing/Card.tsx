@@ -60,6 +60,7 @@ const PricingCard = ({
   }
 
   const isCustomPlan = isCustom
+  const planKey = getPlanKey(plan)
   const period = watch('billingPeriod', 'year')
   const isDashboard = pathname.startsWith(Routes.dashboard.base)
   // The lightweight org subscription only exposes the plan's product key, so we
@@ -231,7 +232,7 @@ const PricingCard = ({
                   ? t('current_plan', { defaultValue: 'Current Plan' })
                   : t('upgrade_plan', {
                       defaultValue: 'Upgrade to {{plan}}',
-                      plan: translations[getPlanKey(plan) as PlanName]?.title || plan.name,
+                      plan: (planKey ? translations[planKey]?.title : undefined) || plan.name,
                     })}
               </Button>
             )

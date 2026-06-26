@@ -60,8 +60,10 @@ export const normalizePlanName = (value?: string | null) => value?.trim().toLowe
 /**
  * Whether a plan matches a given name (case-insensitively).
  */
-export const isPlanNamed = (plan: { name?: string } | null | undefined, name?: string | null) =>
-  !!normalizePlanName(plan?.name) && normalizePlanName(plan?.name) === normalizePlanName(name)
+export const isPlanNamed = (plan: { name?: string } | null | undefined, name?: string | null) => {
+  const a = normalizePlanName(plan?.name)
+  return !!a && a === normalizePlanName(name)
+}
 
 /**
  * Resolves a plan to its canonical PlanName key (or undefined if it doesn't match

@@ -246,7 +246,8 @@ export const usePlanNameTranslator = () => {
     return plans.reduce<Record<string, string>>((acc, plan) => {
       const normalizedPlanName = normalizeName(plan.name)
       if (normalizedPlanName) {
-        acc[normalizedPlanName] = planTranslations[getPlanKey(plan) as PlanName]?.title || plan.name
+        const planKey = getPlanKey(plan)
+        acc[normalizedPlanName] = (planKey ? planTranslations[planKey]?.title : undefined) || plan.name
       }
       return acc
     }, {})
@@ -296,15 +297,15 @@ export const SubscriptionPlans = () => {
     if (!plans) return []
 
     const planCards = plans.map((plan) => {
-      const key = getPlanKey(plan) as PlanName
+      const key = getPlanKey(plan)
       return {
         plan,
         isCustom: false,
         popular: isPlanNamed(plan, PlanName.Professional),
-        title: translations[key]?.title || plan.name,
-        subtitle: translations[key]?.subtitle || '',
+        title: (key ? translations[key]?.title : undefined) || plan.name,
+        subtitle: (key ? translations[key]?.subtitle : undefined) || '',
         price: period === 'year' ? plan.yearlyPrice / 12 : plan.monthlyPrice,
-        features: translations[key]?.features || [],
+        features: (key ? translations[key]?.features : undefined) || [],
         isCurrentPlan: !!subscription && isPlanNamed(plan, subscription.plan?.name),
       }
     })
@@ -376,8 +377,8 @@ export const SubscriptionPlans = () => {
             </Tabs.List>
           </Tabs.Root>
           <SimpleGrid columns={{ base: 1, md: 2, xl: 4 }} gap={6}>
-            {cards.map((card, idx) => (
-              <PricingCard key={idx} {...card} />
+            {cards.map((card) => (
+              <PricingCard key={card.plan.id} {...card} />
             ))}
           </SimpleGrid>
         </Flex>

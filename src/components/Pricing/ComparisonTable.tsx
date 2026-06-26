@@ -146,11 +146,12 @@ export const ComparisonTable = forwardRef<HTMLDivElement, ComparisonTableProps>(
               </Table.ColumnHeader>
 
               {filteredPlans.map((plan) => {
+                const planKey = getPlanKey(plan)
                 return (
                   <Table.ColumnHeader key={plan.id} textAlign='center'>
                     <Flex flexDirection={'column'} justifyContent={'center'}>
                       <Text as={'span'} textAlign={'center'}>
-                        {translations[getPlanKey(plan) as PlanName]?.title ?? plan.name}
+                        {(planKey ? translations[planKey]?.title : undefined) ?? plan.name}
                       </Text>
                     </Flex>
                   </Table.ColumnHeader>
