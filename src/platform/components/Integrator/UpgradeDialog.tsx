@@ -74,8 +74,8 @@ const PlanCard = ({
         </HStack>
         <Stack gap={1} fontSize='sm' color='fg.muted'>
           <Text>{plan.integratorLimits.maxManagedOrgs} managed organizations</Text>
-          <Text>{plan.integratorLimits.maxManagedProcesses} voting processes</Text>
-          <Text>{plan.integratorLimits.maxManagedCensusSize} census size</Text>
+          <Text>{plan.organization.maxProcesses} voting processes</Text>
+          <Text>{plan.organization.maxCensus} census size</Text>
         </Stack>
         {isCurrent ? (
           <Button mt={2} variant='outline' disabled>

@@ -35,7 +35,6 @@ export const IntegratorOverview = () => {
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
         <QuotaCard label='Managed organizations' usage={usage.managedOrgs} limit={limits.maxManagedOrgs} />
         <QuotaCard label='Voting processes' usage={usage.managedProcesses} limit={limits.maxManagedProcesses} />
-        <QuotaCard label='Census size' usage={usage.managedCensusSize} limit={limits.maxManagedCensusSize} />
       </SimpleGrid>
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
         <QuotaCard label='Votes emitted' usage={usage.sentVotes} limit={limits.maxVotes} />

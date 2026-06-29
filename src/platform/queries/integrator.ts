@@ -34,8 +34,9 @@ export type ManagedOrganization = {
 
 export type IntegratorLimits = {
   maxManagedOrgs: number
+  // The process cap is the integrator plan's pooled limit (relocated from the dropped
+  // per-integrator census/process limits; saas-backend feat/integrator-usage-counters).
   maxManagedProcesses: number
-  maxManagedCensusSize: number
   // Shared-pool caps from the integrator's plan; 0 means unlimited.
   maxVotes: number
   maxSMS: number
@@ -45,7 +46,6 @@ export type IntegratorLimits = {
 export type IntegratorUsage = {
   managedOrgs: number
   managedProcesses: number
-  managedCensusSize: number
   // Usage summed across the integrator's managed organizations.
   sentVotes: number
   sentSMS: number
@@ -90,7 +90,6 @@ export const useIntegratorInfo = () => {
         usage: {
           managedOrgs: 0,
           managedProcesses: 0,
-          managedCensusSize: 0,
           sentVotes: 0,
           sentSMS: 0,
           sentEmails: 0,

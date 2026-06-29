@@ -4,8 +4,13 @@ import { useAuth } from '~platform/auth/AuthContext'
 
 export type IntegratorLimits = {
   maxManagedOrgs: number
-  maxManagedProcesses: number
-  maxManagedCensusSize: number
+}
+
+// The plan's pooled org limits. The process and census-size caps for an integrator now live here
+// (relocated out of integratorLimits; saas-backend feat/integrator-usage-counters).
+export type PlanLimits = {
+  maxProcesses: number
+  maxCensus: number
 }
 
 // Subset of the backend SubscriptionPlan we use here (saas-backend#532 exposes integratorLimits).
@@ -15,6 +20,7 @@ export type Plan = {
   monthlyPrice: number
   yearlyPrice: number
   default: boolean
+  organization: PlanLimits
   integratorLimits: IntegratorLimits
 }
 
