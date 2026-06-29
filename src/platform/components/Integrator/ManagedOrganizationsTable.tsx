@@ -23,7 +23,6 @@ export const ManagedOrganizationsTable = ({ organizations }: { organizations: Ma
         <Table.Row>
           <Table.ColumnHeader>Organization</Table.ColumnHeader>
           <Table.ColumnHeader textAlign='end'>Processes</Table.ColumnHeader>
-          <Table.ColumnHeader textAlign='end'>Members</Table.ColumnHeader>
           <Table.ColumnHeader textAlign='end'>SMS</Table.ColumnHeader>
           <Table.ColumnHeader textAlign='end'>Emails</Table.ColumnHeader>
           <Table.ColumnHeader>Created</Table.ColumnHeader>
@@ -48,7 +47,6 @@ export const ManagedOrganizationsTable = ({ organizations }: { organizations: Ma
                 )}
               </Table.Cell>
               <Table.Cell textAlign='end'>{formatCount(org.counters?.processes)}</Table.Cell>
-              <Table.Cell textAlign='end'>{formatCount(org.counters?.users)}</Table.Cell>
               <Table.Cell textAlign='end'>{formatCount(org.counters?.sentSMS)}</Table.Cell>
               <Table.Cell textAlign='end'>{formatCount(org.counters?.sentEmails)}</Table.Cell>
               <Table.Cell>{formatDate(org.createdAt)}</Table.Cell>
