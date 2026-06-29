@@ -4,12 +4,6 @@ import { toaster } from '~platform/components/ui/toaster'
 import { UpgradePlansButton } from '~platform/components/Integrator/UpgradeDialog'
 import { usePortalSession, useSubscription } from '~platform/queries/subscription'
 
-const formatDate = (value?: string) => {
-  if (!value) return '-'
-  const date = new Date(value)
-  return isNaN(date.getTime()) ? value : date.toLocaleDateString()
-}
-
 const SubscriptionTab = () => {
   const { data, isLoading, error } = useSubscription()
   const portal = usePortalSession()
@@ -65,8 +59,7 @@ const SubscriptionTab = () => {
                 {plan.name}
               </Text>
               <Text fontSize='sm' color='fg.muted'>
-                {subscriptionDetails.active ? 'Active' : 'Inactive'} · Renews{' '}
-                {formatDate(subscriptionDetails.renewalDate)}
+                {subscriptionDetails.active ? 'Active' : 'Inactive'}
               </Text>
             </Stack>
             <Flex gap={2} wrap='wrap'>

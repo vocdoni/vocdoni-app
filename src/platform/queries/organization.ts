@@ -117,22 +117,3 @@ export const useOrganizationTypes = () => {
       bearedFetch<{ types: OrganizationType[] }>(ApiEndpoints.OrganizationTypes).then((d) => d.types ?? []),
   })
 }
-
-export type OrganizationRole = {
-  role: string
-  name: string
-  organizationWritePermission: boolean
-  processWritePermission: boolean
-}
-
-/** Available organization user roles (public list), used for the team role selector. */
-export const useOrganizationRoles = () => {
-  const { bearedFetch } = useAuth()
-
-  return useQuery<OrganizationRole[]>({
-    queryKey: QueryKeys.organization.roles,
-    staleTime: 60 * 60 * 1000,
-    queryFn: () =>
-      bearedFetch<{ roles: OrganizationRole[] }>(ApiEndpoints.OrganizationRoles).then((d) => d.roles ?? []),
-  })
-}
