@@ -36,12 +36,20 @@ export type IntegratorLimits = {
   maxManagedOrgs: number
   maxManagedProcesses: number
   maxManagedCensusSize: number
+  // Shared-pool caps from the integrator's plan; 0 means unlimited.
+  maxVotes: number
+  maxSMS: number
+  maxEmails: number
 }
 
 export type IntegratorUsage = {
   managedOrgs: number
   managedProcesses: number
   managedCensusSize: number
+  // Usage summed across the integrator's managed organizations.
+  sentVotes: number
+  sentSMS: number
+  sentEmails: number
 }
 
 // GET /integrator. `limits` is present only when enabled.
@@ -79,7 +87,14 @@ export const useIntegratorInfo = () => {
     queryFn: () =>
       bearedFetch<IntegratorInfo>(ApiEndpoints.Integrator).catch(() => ({
         enabled: false,
-        usage: { managedOrgs: 0, managedProcesses: 0, managedCensusSize: 0 },
+        usage: {
+          managedOrgs: 0,
+          managedProcesses: 0,
+          managedCensusSize: 0,
+          sentVotes: 0,
+          sentSMS: 0,
+          sentEmails: 0,
+        },
       })),
   })
 }
