@@ -1,8 +1,8 @@
-import { Flex, IconButton, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
+import { Button, Flex, Icon, IconButton, Popover, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
 import { OrganizationProvider, useClient } from '@vocdoni/react-components'
 import React, { createContext, PropsWithChildren, useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
-import { LuLogOut, LuPanelLeft } from 'react-icons/lu'
+import { LuBuilding, LuChevronsUpDown, LuLogOut, LuPanelLeft } from 'react-icons/lu'
 import { Trans, useTranslation } from 'react-i18next'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
@@ -52,7 +52,21 @@ const LayoutIntegrators: React.FC = () => {
               bg='white'
               _dark={{ bg: 'brand.700' }}
             >
-              <OrganizationSwitcher />
+              {/* OrganizationSwitcher only renders the popover body/footer, so it must live inside a Popover.Root */}
+              <Popover.Root positioning={{ placement: 'bottom-start' }}>
+                <Popover.Trigger asChild>
+                  <Button variant='subtle' colorPalette='gray' size='sm' gap={2} mr='auto'>
+                    <Icon as={LuBuilding} />
+                    <Trans i18nKey='switch_organization' />
+                    <Icon as={LuChevronsUpDown} />
+                  </Button>
+                </Popover.Trigger>
+                <Popover.Positioner>
+                  <Popover.Content w='user-profile'>
+                    <OrganizationSwitcher />
+                  </Popover.Content>
+                </Popover.Positioner>
+              </Popover.Root>
               <IconButton
                 aria-label={t('logout')}
                 variant='ghost'
