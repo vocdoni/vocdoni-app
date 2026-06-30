@@ -9,6 +9,7 @@ import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
 import { LocalStorageKeys } from '~constants'
 import { useAuth } from '~components/Auth/useAuth'
 import { OrganizationSwitcher } from '~components/Dashboard/Menu/OrganizationSwitcher'
+import { useProfile } from '~src/queries/account'
 
 export type IntegratorsOutletContext = {
   reduced: boolean
@@ -21,7 +22,12 @@ const LayoutIntegrators: React.FC = () => {
   const isMobile = useBreakpointValue({ base: true, md: false })
   const [reduced, setReduced] = React.useState(false)
   const { isAuthenticated, logout } = useAuth()
+  const { data: profile } = useProfile()
   const { t } = useTranslation()
+
+  // Integrators normally have a single organization, so there's nothing to switch between —
+  // only surface the switcher when the user actually belongs to more than one org.
+  const hasMultipleOrgs = (profile?.organizations?.length ?? 0) > 1
 
   // Close the mobile drawer when the screen size changes
   useEffect(() => {
@@ -53,26 +59,29 @@ const LayoutIntegrators: React.FC = () => {
               _dark={{ bg: 'brand.700' }}
             >
               {/* OrganizationSwitcher only renders the popover body/footer, so it must live inside a Popover.Root */}
-              <Popover.Root positioning={{ placement: 'bottom-start' }}>
-                <Popover.Trigger asChild>
-                  <Button variant='subtle' colorPalette='gray' size='sm' gap={2} mr='auto'>
-                    <Icon as={LuBuilding} />
-                    <Trans i18nKey='switch_organization' />
-                    <Icon as={LuChevronsUpDown} />
-                  </Button>
-                </Popover.Trigger>
-                <Popover.Positioner>
-                  <Popover.Content w='user-profile'>
-                    <OrganizationSwitcher />
-                  </Popover.Content>
-                </Popover.Positioner>
-              </Popover.Root>
+              {hasMultipleOrgs && (
+                <Popover.Root positioning={{ placement: 'bottom-start' }}>
+                  <Popover.Trigger asChild>
+                    <Button variant='subtle' colorPalette='gray' size='sm' gap={2}>
+                      <Icon as={LuBuilding} />
+                      <Trans i18nKey='switch_organization' />
+                      <Icon as={LuChevronsUpDown} />
+                    </Button>
+                  </Popover.Trigger>
+                  <Popover.Positioner>
+                    <Popover.Content w='user-profile'>
+                      <OrganizationSwitcher />
+                    </Popover.Content>
+                  </Popover.Positioner>
+                </Popover.Root>
+              )}
               <IconButton
                 aria-label={t('logout')}
                 variant='ghost'
                 size='sm'
                 onClick={logout}
                 title={t('logout')}
+                ml='auto'
               >
                 <LuLogOut />
               </IconButton>
