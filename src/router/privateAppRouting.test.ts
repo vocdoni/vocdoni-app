@@ -13,7 +13,7 @@ const mockProfile = (orgs: Array<{ address: string; integrator?: boolean }> = []
       subdomain: '',
       timezone: 'UTC',
       active: true,
-      integrator: org.integrator,
+      isIntegrator: org.integrator,
     },
   })),
 })
@@ -28,7 +28,7 @@ describe('privateAppRouting helpers', () => {
       const result = getSelectedOrganization(profile, 'org2')
       expect(result).toBeDefined()
       expect(result?.address).toBe('org2')
-      expect(result?.integrator).toBe(true)
+      expect(result?.isIntegrator).toBe(true)
     })
 
     it('returns the first org when selectedAddress is not in profile', () => {

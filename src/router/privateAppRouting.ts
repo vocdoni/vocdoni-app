@@ -22,7 +22,7 @@ export const getSelectedOrganization = (profile: Profile | null, selectedAddress
  */
 export const isSelectedOrganizationIntegrator = (profile: Profile | null, selectedAddress: string): boolean => {
   const org = getSelectedOrganization(profile, selectedAddress)
-  return org?.integrator ?? false
+  return org?.isIntegrator ?? false
 }
 
 /**

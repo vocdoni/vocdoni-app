@@ -54,7 +54,7 @@ describe('OrganizationTypeGuard', () => {
             subdomain: '',
             timezone: 'UTC',
             active: true,
-            integrator,
+            isIntegrator: integrator,
           },
         },
       ],

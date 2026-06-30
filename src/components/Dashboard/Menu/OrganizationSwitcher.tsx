@@ -84,7 +84,7 @@ export const OrganizationSwitcher = () => {
     // refresh signer
     await signerRefresh()
     // Navigate to the correct private app root based on the selected org's integrator flag
-    const targetPath = option.organization.integrator ? Routes.integrators.base : Routes.dashboard.base
+    const targetPath = option.organization.isIntegrator ? Routes.integrators.base : Routes.dashboard.base
     navigate(targetPath, { replace: true })
   }
 
