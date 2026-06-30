@@ -26,6 +26,7 @@ vi.mock('./routes/root', () => ({
 
 vi.mock('./routes/integrators', () => ({
   useIntegratorsRoutes: () => ({ path: '/integrators' }),
+  useIntegratorsAuthRoutes: () => ({ path: '/integrators/signin' }),
 }))
 
 describe('RoutesProvider', () => {

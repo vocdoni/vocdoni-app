@@ -112,7 +112,8 @@
     "disable": "Desativar",
     "enable": "Ativar",
     "home": "Início",
-    "next": "Seguinte"
+    "next": "Seguinte",
+    "retry": ""
   },
   "confirm": {
     "cancel": "Cancelar",
@@ -754,6 +755,14 @@
     "view_errors_one": "Ver {{count}} erro",
     "view_errors_many": "",
     "view_errors_other": "Ver {{count}} erros"
+  },
+  "integrators": {
+    "provision_failed": "",
+    "setting_up_org": "",
+    "signin_subtitle": "",
+    "signin_title": "",
+    "signup_subtitle": "",
+    "signup_title": ""
   },
   "internal_server_error": "Erro interno do servidor",
   "invalid_promo_code": "Código promocional inválido",

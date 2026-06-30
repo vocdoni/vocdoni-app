@@ -109,7 +109,8 @@
     "disable": "Desgaitu",
     "enable": "Gaitu",
     "home": "Hasiera",
-    "next": "Hurrengoa"
+    "next": "Hurrengoa",
+    "retry": ""
   },
   "confirm": {
     "cancel": "Utzi",
@@ -746,6 +747,14 @@
     "title": "Kide-oinarriaren inportazioa abian",
     "view_errors_one": "Ikusi {{count}} errorea",
     "view_errors_other": "Ikusi {{count}} errore"
+  },
+  "integrators": {
+    "provision_failed": "",
+    "setting_up_org": "",
+    "signin_subtitle": "",
+    "signin_title": "",
+    "signup_subtitle": "",
+    "signup_title": ""
   },
   "internal_server_error": "Zerbitzariaren barne-errorea",
   "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",

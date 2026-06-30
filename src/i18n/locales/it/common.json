@@ -112,7 +112,8 @@
     "disable": "Disabilita",
     "enable": "Abilita",
     "home": "Home",
-    "next": "Avanti"
+    "next": "Avanti",
+    "retry": ""
   },
   "confirm": {
     "cancel": "Annulla",
@@ -754,6 +755,14 @@
     "view_errors_one": "Visualizza {{count}} errore",
     "view_errors_many": "View {{count}} errors",
     "view_errors_other": "Visualizza {{count}} errori"
+  },
+  "integrators": {
+    "provision_failed": "",
+    "setting_up_org": "",
+    "signin_subtitle": "",
+    "signin_title": "",
+    "signup_subtitle": "",
+    "signup_title": ""
   },
   "internal_server_error": "Errore interno del server",
   "invalid_promo_code": "Codice promozione non valido",

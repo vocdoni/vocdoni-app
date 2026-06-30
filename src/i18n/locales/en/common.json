@@ -109,7 +109,8 @@
     "disable": "Disable",
     "enable": "Enable",
     "home": "Home",
-    "next": "Next"
+    "next": "Next",
+    "retry": "Try again"
   },
   "confirm": {
     "cancel": "Cancel",
@@ -746,6 +747,14 @@
     "title": "Memberbase Import in Progress",
     "view_errors_one": "View {{count}} error",
     "view_errors_other": "View {{count}} errors"
+  },
+  "integrators": {
+    "provision_failed": "We couldn't set up your organization.",
+    "setting_up_org": "Setting up your organization…",
+    "signin_subtitle": "Access your integrator dashboard.",
+    "signin_title": "Sign in",
+    "signup_subtitle": "Sign up to manage organizations as an integrator.",
+    "signup_title": "Create your integrator account"
   },
   "internal_server_error": "Internal server error",
   "invalid_promo_code": "Invalid promotion code",

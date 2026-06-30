@@ -70,3 +70,27 @@ describe('integrators routes', () => {
     expect(matches?.[0]?.route.path).toBe(Routes.integrators.base)
   })
 })
+
+describe('integrators auth routes', () => {
+  beforeEach(() => {
+    setReactProvidersMock({
+      useClient: () => mockUseClient({}),
+    })
+  })
+
+  it('exposes single-column sign in and sign up routes', async () => {
+    const { useIntegratorsAuthRoutes } = await import('./integrators')
+
+    const { result } = renderHook(() => useIntegratorsAuthRoutes())
+
+    // NonLoggedRoute wrapper -> LayoutIntegratorsAuth -> signin/signup pages
+    expect(result.current.element).toBeDefined()
+    const layoutRoute = (result.current.children ?? [])[0]
+    expect(layoutRoute).toBeDefined()
+
+    const pages = layoutRoute?.children ?? []
+    const paths = pages.map((c: any) => c.path)
+    expect(paths).toContain(Routes.integrators.signIn)
+    expect(paths).toContain(Routes.integrators.signUp)
+  })
+})

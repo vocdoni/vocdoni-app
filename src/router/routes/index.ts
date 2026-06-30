@@ -12,6 +12,8 @@ export const Routes = {
   contact: 'https://www.vocdoni.io/contact',
   integrators: {
     base: '/integrators',
+    signIn: '/integrators/signin',
+    signUp: '/integrators/signup',
   },
   dashboard: {
     base: '/admin',
