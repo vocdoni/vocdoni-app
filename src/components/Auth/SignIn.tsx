@@ -41,7 +41,23 @@ const useResendVerificationCode = () =>
     },
   })
 
-const SignIn = ({ email: emailProp }: { email?: string }) => {
+type SignInProps = {
+  email?: string
+  // Navigation targets, overridable so the integrators app can reuse this component with its
+  // own routes. Defaults preserve the regular /account flow behavior.
+  successRoute?: string
+  signUpRoute?: string
+  recoveryRoute?: string
+  verifyNextRoute?: string
+}
+
+const SignIn = ({
+  email: emailProp,
+  successRoute = Routes.dashboard.base,
+  signUpRoute = Routes.auth.signUp,
+  recoveryRoute = Routes.auth.recovery,
+  verifyNextRoute,
+}: SignInProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const navigate = useNavigate()
@@ -79,7 +95,7 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
         trackPlausibleEvent({ name: AnalyticsEvents.UserLoggedIn })
         const redirect = localStorage.getItem('redirectTo')
         localStorage.removeItem('redirectTo')
-        navigate(redirect || Routes.dashboard.base)
+        navigate(redirect || successRoute)
       })
       .catch(async (e) => {
         if (e instanceof UnverifiedApiError && email) {
@@ -120,7 +136,7 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
   }
 
   if (verifyNeeded) {
-    return <VerificationPending email={email} />
+    return <VerificationPending email={email} nextRoute={verifyNextRoute} />
   }
 
   return (
@@ -142,7 +158,7 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
                 required
               />
               <Link asChild fontSize='xs' fontWeight='bold' alignSelf='end'>
-                <NavLink to={Routes.auth.recovery}>{t('forgot_password_title')}</NavLink>
+                <NavLink to={recoveryRoute}>{t('forgot_password_title')}</NavLink>
               </Link>
             </Flex>
           </Flex>
@@ -157,7 +173,7 @@ const SignIn = ({ email: emailProp }: { email?: string }) => {
       <Text display={'flex'} justifyContent={'center'} alignItems={'center'} fontWeight='bold' fontSize='sm' mt={6}>
         {t('not_registred_yet')}
         <Link asChild ml={1} fontWeight={'bold'} fontSize='sm'>
-          <NavLink to={Routes.auth.signUp}>{t('signup_title')}</NavLink>
+          <NavLink to={signUpRoute}>{t('signup_title')}</NavLink>
         </Link>
       </Text>
     </>
