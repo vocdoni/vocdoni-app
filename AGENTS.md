@@ -37,6 +37,7 @@
 - After adding or changing translation keys, always run `pnpm translations`.
 - Review generated locale diffs and ensure new keys are translated for supported locales (`en`, `es`, `ca`, `it`) when applicable.
 - Avoid leaving partial localization changes unreviewed.
+- Per-locale translation guidance lives in `src/i18n/contexts/` (one file per locale, e.g. `es.md`, `ca.md`; `en` is the source language and has none). These files are prompts that capture tone, register, and non-translatable terms (placeholders, component tags, brand/product names) for each language. When translating or reviewing strings for a locale, follow its context file, and keep it updated whenever its conventions change.
 
 ## Testing Guidelines
 - Test stack: Vitest + Testing Library (`jsdom` environment).
