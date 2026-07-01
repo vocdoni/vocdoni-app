@@ -18,10 +18,11 @@ import { LuPanelLeft, LuPlus } from 'react-icons/lu'
 import { generatePath, Link as ReactRouterLink, Link as RouterLink } from 'react-router-dom'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { VocdoniLogo } from '~components/Layout/Logo'
-import { DashboardLayoutContext } from '~elements/LayoutDashboard'
+import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useTutorials } from '~src/queries/organization'
 import { Routes } from '~src/router/routes'
 import { DashboardBookerModalButton } from '../Booker'
+import { DashboardMenuConfig } from './menus'
 import { DashboardMenuOptions } from './Options'
 import UserProfile from './UserProfile'
 
@@ -29,10 +30,12 @@ const DashboardMenu = ({
   isOpen,
   onClose,
   onToggleReduced,
+  menu,
 }: {
   isOpen: boolean
   onClose: () => void
   onToggleReduced: () => void
+  menu: DashboardMenuConfig
 }) => {
   const { reduced } = useContext(DashboardLayoutContext)
   const [width, rWidth] = useToken('sizes', ['dashboard-menu.default', 'dashboard-menu.reduced'])
@@ -53,7 +56,7 @@ const DashboardMenu = ({
         zIndex={100}
         transition='width .3s ease'
       >
-        <DashboardMenuContent onToggleReduced={onToggleReduced} />
+        <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} />
       </Box>
 
       {/* Sidebar for small screens */}
@@ -61,7 +64,7 @@ const DashboardMenu = ({
         <Drawer.Backdrop />
         <Drawer.Positioner>
           <Drawer.Content p={4}>
-            <DashboardMenuContent onToggleReduced={onToggleReduced} alignLogoCenter />
+            <DashboardMenuContent onToggleReduced={onToggleReduced} menu={menu} alignLogoCenter />
           </Drawer.Content>
         </Drawer.Positioner>
       </Drawer.Root>
@@ -121,9 +124,11 @@ const SidebarTutorial = () => {
 // Common menu contents
 const DashboardMenuContent = ({
   onToggleReduced,
+  menu,
   alignLogoCenter = false,
 }: {
   onToggleReduced: () => void
+  menu: DashboardMenuConfig
   alignLogoCenter?: boolean
 }) => {
   const { reduced } = useContext(DashboardLayoutContext)
@@ -150,7 +155,7 @@ const DashboardMenuContent = ({
           }}
         >
           <ReactRouterLink
-            to={Routes.dashboard.base}
+            to={menu.homeRoute}
             onClick={() => {
               if (reduced && isTouchLike) onToggleReduced()
             }}
@@ -181,23 +186,25 @@ const DashboardMenuContent = ({
             <Icon as={LuPanelLeft} />
           </IconButton>
         </Flex>
-        <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
-          <RouterLink to={generatePath(Routes.processes.create)}>
-            <HStack gap={reduced ? 0 : 2}>
-              <Icon as={LuPlus} boxSize={4} />
-              {!reduced && (
-                <Text as='span'>
-                  <Trans i18nKey='new_vote'>New vote</Trans>
-                </Text>
-              )}
-            </HStack>
-          </RouterLink>
-        </Button>
+        {menu.newVote && (
+          <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
+            <RouterLink to={generatePath(Routes.processes.create)}>
+              <HStack gap={reduced ? 0 : 2}>
+                <Icon as={LuPlus} boxSize={4} />
+                {!reduced && (
+                  <Text as='span'>
+                    <Trans i18nKey='new_vote'>New vote</Trans>
+                  </Text>
+                )}
+              </HStack>
+            </RouterLink>
+          </Button>
+        )}
 
-        <DashboardMenuOptions />
+        <DashboardMenuOptions sections={menu.sections} />
       </Box>
       <Box mt='auto'>
-        <SidebarTutorial />
+        {menu.tutorial && <SidebarTutorial />}
         <UserProfile />
       </Box>
     </>
