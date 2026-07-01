@@ -758,6 +758,10 @@
   },
   "integrators": {
     "change_plan": "Change plan",
+    "configuration": {
+      "subtitle": "Manage your subscription and get support.",
+      "title": "Configuration"
+    },
     "overview": "Overview",
     "overview_error": "Unable to load integrator quota",
     "overview_subtitle": "Your integrator quota and current usage.",
@@ -777,7 +781,15 @@
     "signin_subtitle": "",
     "signin_title": "",
     "signup_subtitle": "",
-    "signup_title": ""
+    "signup_title": "",
+    "subscription": {
+      "active": "Active",
+      "billing_details": "Billing details",
+      "current_plan": "Current plan",
+      "inactive": "Inactive",
+      "portal_error": "Could not open the billing portal",
+      "unavailable": "Subscription details are unavailable"
+    }
   },
   "internal_server_error": "Error intern del servidor",
   "invalid_promo_code": "Codi de promoció no vàlid",

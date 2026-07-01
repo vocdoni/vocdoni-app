@@ -750,6 +750,10 @@
   },
   "integrators": {
     "change_plan": "",
+    "configuration": {
+      "subtitle": "",
+      "title": ""
+    },
     "overview": "",
     "overview_error": "",
     "overview_subtitle": "",
@@ -769,7 +773,15 @@
     "signin_subtitle": "",
     "signin_title": "",
     "signup_subtitle": "",
-    "signup_title": ""
+    "signup_title": "",
+    "subscription": {
+      "active": "",
+      "billing_details": "",
+      "current_plan": "",
+      "inactive": "",
+      "portal_error": "",
+      "unavailable": ""
+    }
   },
   "internal_server_error": "Interner Serverfehler",
   "invalid_promo_code": "Ungültiger Aktionscode",

@@ -1,5 +1,13 @@
 import { useTranslation } from 'react-i18next'
-import { LuHouse, LuLayoutDashboard, LuLifeBuoy, LuSettings, LuUsers, LuVote } from 'react-icons/lu'
+import {
+  LuHouse,
+  LuLayoutDashboard,
+  LuLifeBuoy,
+  LuSettings,
+  LuSlidersHorizontal,
+  LuUsers,
+  LuVote,
+} from 'react-icons/lu'
 import { Routes } from '~src/router/routes'
 import { DashboardMenuItem } from './Item'
 
@@ -92,7 +100,13 @@ export const useIntegratorMenuConfig = (): DashboardMenuConfig => {
             route: Routes.integrators.base,
             activeMatch: [{ path: Routes.integrators.base, end: true }],
           },
-          // Managed organizations, API keys and Configuration land in follow-up PRs.
+          // Managed organizations and API keys land in follow-up commits.
+          {
+            label: t('integrators.configuration.title', { defaultValue: 'Configuration' }),
+            icon: LuSlidersHorizontal,
+            route: Routes.integrators.configuration.base,
+            activeMatch: [{ path: Routes.integrators.configuration.base, end: false }],
+          },
         ],
       },
     ],

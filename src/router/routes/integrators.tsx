@@ -1,5 +1,7 @@
-// Integrators private app - minimal separate dashboard for integrator organizations
+// Integrators private app - separate dashboard for integrator organizations
 import { lazy } from 'react'
+import { Navigate } from 'react-router-dom'
+import OrganizationSupport from '~components/Organization/Dashboard/Support'
 import Error from '~elements/Error'
 import LayoutIntegrators from '~elements/LayoutIntegrators'
 import LayoutIntegratorsAuth from '~elements/LayoutIntegratorsAuth'
@@ -9,10 +11,11 @@ import NonLoggedRoute from '~src/router/NonLoggedRoute'
 import { Routes } from '.'
 import { SuspenseLoader } from '../SuspenseLoader'
 
-// Minimal integrators placeholder page
 const IntegratorsDashboard = lazy(() => import('~elements/integrators'))
 const IntegratorsSignin = lazy(() => import('~elements/integrators/signin'))
 const IntegratorsSignup = lazy(() => import('~elements/integrators/signup'))
+const IntegratorsConfiguration = lazy(() => import('~elements/integrators/configuration'))
+const IntegratorSubscriptionTab = lazy(() => import('~components/Integrator/SubscriptionTab'))
 
 // Independent single-column sign in / sign up for the integrators app.
 export const useIntegratorsAuthRoutes = () => {
@@ -75,6 +78,37 @@ export const useIntegratorsRoutes = () => {
                   </SuspenseLoader>
                 ),
                 errorElement: <Error />,
+              },
+              {
+                path: Routes.integrators.configuration.base,
+                element: (
+                  <SuspenseLoader>
+                    <IntegratorsConfiguration />
+                  </SuspenseLoader>
+                ),
+                errorElement: <Error />,
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to={Routes.integrators.configuration.subscription} replace />,
+                  },
+                  {
+                    path: Routes.integrators.configuration.subscription,
+                    element: (
+                      <SuspenseLoader>
+                        <IntegratorSubscriptionTab />
+                      </SuspenseLoader>
+                    ),
+                  },
+                  {
+                    path: Routes.integrators.configuration.support,
+                    element: (
+                      <SuspenseLoader>
+                        <OrganizationSupport />
+                      </SuspenseLoader>
+                    ),
+                  },
+                ],
               },
             ],
           },

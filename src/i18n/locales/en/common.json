@@ -750,6 +750,10 @@
   },
   "integrators": {
     "change_plan": "Change plan",
+    "configuration": {
+      "subtitle": "Manage your subscription and get support.",
+      "title": "Configuration"
+    },
     "overview": "Overview",
     "overview_error": "Unable to load integrator quota",
     "overview_subtitle": "Your integrator quota and current usage.",
@@ -769,7 +773,15 @@
     "signin_subtitle": "Access your integrator dashboard.",
     "signin_title": "Sign in",
     "signup_subtitle": "Sign up to manage organizations as an integrator.",
-    "signup_title": "Create your integrator account"
+    "signup_title": "Create your integrator account",
+    "subscription": {
+      "active": "Active",
+      "billing_details": "Billing details",
+      "current_plan": "Current plan",
+      "inactive": "Inactive",
+      "portal_error": "Could not open the billing portal",
+      "unavailable": "Subscription details are unavailable"
+    }
   },
   "internal_server_error": "Internal server error",
   "invalid_promo_code": "Invalid promotion code",
