@@ -754,6 +754,22 @@
       "subtitle": "",
       "title": ""
     },
+    "managed": {
+      "active": "",
+      "created": "",
+      "emails": "",
+      "empty_description": "",
+      "empty_title": "",
+      "error": "",
+      "inactive": "",
+      "organization": "",
+      "pagination": "",
+      "processes": "",
+      "sms": "",
+      "status": "",
+      "subtitle": "",
+      "title": ""
+    },
     "overview": "",
     "overview_error": "",
     "overview_subtitle": "",
@@ -1066,7 +1082,9 @@
   "organizations": "Οργανισμοί ({{ numOrgs }})",
   "other_details": "Άλλες λεπτομέρειες",
   "pagination": {
+    "next": "",
     "page_out_of": "Σελίδα {{page}} από {{total}}",
+    "previous": "",
     "rows_per_page": "Γραμμές ανά σελίδα"
   },
   "password": "Κωδικός πρόσβασης",

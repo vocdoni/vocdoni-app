@@ -754,6 +754,22 @@
       "subtitle": "",
       "title": ""
     },
+    "managed": {
+      "active": "",
+      "created": "",
+      "emails": "",
+      "empty_description": "",
+      "empty_title": "",
+      "error": "",
+      "inactive": "",
+      "organization": "",
+      "pagination": "",
+      "processes": "",
+      "sms": "",
+      "status": "",
+      "subtitle": "",
+      "title": ""
+    },
     "overview": "",
     "overview_error": "",
     "overview_subtitle": "",
@@ -1066,7 +1082,9 @@
   "organizations": "Erakundeak ({{ numOrgs }})",
   "other_details": "Bestelako xehetasunak",
   "pagination": {
+    "next": "",
     "page_out_of": "{{page}}. orrialdea, guztira {{total}}",
+    "previous": "",
     "rows_per_page": "Errenkadak orrialdeko"
   },
   "password": "Pasahitza",

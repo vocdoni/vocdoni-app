@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import {
+  LuBuilding2,
   LuHouse,
   LuLayoutDashboard,
   LuLifeBuoy,
@@ -100,7 +101,13 @@ export const useIntegratorMenuConfig = (): DashboardMenuConfig => {
             route: Routes.integrators.base,
             activeMatch: [{ path: Routes.integrators.base, end: true }],
           },
-          // Managed organizations and API keys land in follow-up commits.
+          {
+            label: t('integrators.managed.title', { defaultValue: 'Managed organizations' }),
+            icon: LuBuilding2,
+            route: Routes.integrators.managedOrganizations,
+            activeMatch: [{ path: Routes.integrators.managedOrganizations, end: false }],
+          },
+          // API keys lands in a follow-up commit.
           {
             label: t('integrators.configuration.title', { defaultValue: 'Configuration' }),
             icon: LuSlidersHorizontal,

@@ -16,6 +16,7 @@ export enum ApiEndpoints {
   InviteAccept = 'organizations/{address}/users/accept',
   // Path-less: the integrator organization is resolved server-side from the authenticated session.
   Integrator = 'integrator',
+  ManagedOrganizations = 'integrator/organizations',
   Login = 'auth/login',
   Me = 'users/me',
   Organization = 'organizations/{address}',

@@ -754,6 +754,22 @@
       "subtitle": "Manage your subscription and get support.",
       "title": "Configuration"
     },
+    "managed": {
+      "active": "Active",
+      "created": "Created",
+      "emails": "Emails",
+      "empty_description": "Organizations you provision for your customers will appear here.",
+      "empty_title": "No managed organizations yet",
+      "error": "Unable to load organizations",
+      "inactive": "Inactive",
+      "organization": "Organization",
+      "pagination": "Page {{page}} of {{total}} · {{items}} total",
+      "processes": "Processes",
+      "sms": "SMS",
+      "status": "Status",
+      "subtitle": "Organizations you manage on behalf of your customers.",
+      "title": "Managed organizations"
+    },
     "overview": "Overview",
     "overview_error": "Unable to load integrator quota",
     "overview_subtitle": "Your integrator quota and current usage.",
@@ -1066,7 +1082,9 @@
   "organizations": "Organizations ({{ numOrgs }})",
   "other_details": "Other details",
   "pagination": {
+    "next": "",
     "page_out_of": "Page {{page}} of {{total}}",
+    "previous": "",
     "rows_per_page": "Rows per page"
   },
   "password": "Password",

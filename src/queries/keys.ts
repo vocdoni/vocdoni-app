@@ -26,6 +26,8 @@ export const QueryKeys = {
   },
   integrator: {
     info: (address?: string) => ['integrator', 'info', address].filter(Boolean),
+    managed: (address?: string, page?: number, limit?: number) =>
+      ['integrator', 'managed', address, page, limit].filter((v) => v !== undefined && v !== null),
   },
   plans: ['plans'],
   profile: ['profile'],

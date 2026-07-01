@@ -762,6 +762,23 @@
       "subtitle": "",
       "title": ""
     },
+    "managed": {
+      "active": "",
+      "created": "",
+      "emails": "",
+      "empty_description": "",
+      "empty_title": "",
+      "error": "",
+      "inactive": "",
+      "organization": "",
+      "pagination": "",
+      "pagination_many": "",
+      "processes": "",
+      "sms": "",
+      "status": "",
+      "subtitle": "",
+      "title": ""
+    },
     "overview": "",
     "overview_error": "",
     "overview_subtitle": "",
@@ -1086,7 +1103,9 @@
   "organizations": "Organizzazioni ({{ numOrgs }})",
   "other_details": "altri dettagli",
   "pagination": {
+    "next": "",
     "page_out_of": "Pagina {{page}} di {{total}}",
+    "previous": "",
     "rows_per_page": "Righe per pagina"
   },
   "password": "Password",

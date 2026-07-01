@@ -47,6 +47,53 @@ export const useIntegratorInfo = () => {
   })
 }
 
+// Per-managed-org usage counters (backend SubscriptionUsage). Fields default to 0.
+export type OrganizationCounters = {
+  sentSMS: number
+  sentEmails: number
+  subOrgs: number
+  users: number
+  processes: number
+}
+
+// A single organization managed by the integrator. `meta.name` is the display name set at
+// creation; the rest mirror the backend OrganizationInfo fields we surface.
+export type ManagedOrganization = {
+  address: string
+  website: string
+  createdAt: string
+  type: string
+  active: boolean
+  meta?: { name?: string }
+  counters?: OrganizationCounters
+}
+
+export type ManagedOrganizationsResponse = {
+  pagination: {
+    totalItems: number
+    currentPage: number
+    lastPage: number
+    previousPage: number | null
+    nextPage: number | null
+  }
+  organizations: ManagedOrganization[]
+}
+
+/**
+ * Paginated list of organizations managed by the signed-in integrator
+ * (GET /integrator/organizations, path-less). Read-only.
+ */
+export const useManagedOrganizations = (page: number, limit: number) => {
+  const { bearedFetch } = useAuth()
+  const selectedAddress = localStorage.getItem(LocalStorageKeys.SignerAddress) ?? undefined
+
+  return useQuery<ManagedOrganizationsResponse>({
+    queryKey: QueryKeys.integrator.managed(selectedAddress, page, limit),
+    queryFn: () =>
+      bearedFetch<ManagedOrganizationsResponse>(`${ApiEndpoints.ManagedOrganizations}?page=${page}&limit=${limit}`),
+  })
+}
+
 /**
  * Self-serve integrator org provisioning. A signed-in integrator always has exactly one
  * organization, so when none exists yet (e.g. right after sign-up) we create one in the
