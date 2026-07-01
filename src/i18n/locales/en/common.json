@@ -805,7 +805,7 @@
     "create_org": {
       "cancel": "Cancel",
       "confirm": "Create organization",
-      "description": "A new organization on the free integrator plan will be created on your account and set as your active organization. You can edit its details later.",
+      "description": "A new organization on the free integrator plan will be created on your account and set as your active organization.",
       "error": "Could not create the organization",
       "switch_instead": "Or switch to an existing organization",
       "title": "Create a free integrator organization?"

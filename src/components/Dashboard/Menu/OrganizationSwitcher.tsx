@@ -1,4 +1,4 @@
-import { Button, Flex, Icon, PopoverBody, PopoverFooter, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
+import { Button, Flex, HStack, Icon, PopoverBody, PopoverFooter, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus, LuSquareStack } from 'react-icons/lu'
@@ -73,7 +73,7 @@ export const OrganizationSwitcher = () => {
         <Flex flexDirection={'column'} maxH={'130px'} overflowY={'scroll'}>
           {organizations.map((org, idx) => (
             <Button key={idx} onClick={() => handleOrgChange(org)} variant='profilemenu' py={5}>
-              <Stack direction='row' w='full'>
+              <Stack direction='row' w='full' align='center'>
                 <Icon
                   as={LuSquareStack}
                   border='1px solid'
@@ -81,15 +81,24 @@ export const OrganizationSwitcher = () => {
                   borderRadius='xs'
                   p={1}
                   boxSize={6}
+                  flexShrink={0}
                 />
-                <Text as='span' fontSize='sm'>
+                <Text as='span' fontSize='sm' flex='1' minW={0} textAlign='start' truncate>
                   {org.label}
                 </Text>
-                {org.value === selectedOrg && (
-                  <TagRoot colorPalette='gray' ml='auto !important'>
-                    <TagLabel>{t('current', { defaultValue: 'Current' })}</TagLabel>
-                  </TagRoot>
-                )}
+                <HStack gap={1} flexShrink={0}>
+                  {org.organization.isIntegrator && (
+                    <TagRoot colorPalette='purple'>
+                      {/* "API" is a universal acronym, not translated in any locale */}
+                      <TagLabel>API</TagLabel>
+                    </TagRoot>
+                  )}
+                  {org.value === selectedOrg && (
+                    <TagRoot colorPalette='gray'>
+                      <TagLabel>{t('current', { defaultValue: 'Current' })}</TagLabel>
+                    </TagRoot>
+                  )}
+                </HStack>
               </Stack>
             </Button>
           ))}

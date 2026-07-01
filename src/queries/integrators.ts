@@ -182,8 +182,10 @@ export const useRevokeApiKey = () => {
  *   so the client never needs an SDK signer/wallet step.
  * - `integrator: true` subscribes the org to the free integrator plan, so `users/me` then
  *   reports `isIntegrator: true`.
- * `type: 'others'` and all other fields are defaults the user can edit later. On success the
- * profile is refreshed so the new org shows up.
+ * - `name` gives the forged org a sensible default (integrators have no create form), so it
+ *   shows up as "Integrator" rather than a raw address in the org switcher.
+ * `type: 'others'` and the remaining fields are backend defaults. On success the profile is
+ * refreshed so the new org shows up.
  */
 export const useProvisionIntegratorOrganization = () => {
   const { bearedFetch } = useAuth()
@@ -193,7 +195,7 @@ export const useProvisionIntegratorOrganization = () => {
     mutationFn: () =>
       bearedFetch<ProvisionedOrganization>(ApiEndpoints.Organizations, {
         method: 'POST',
-        body: { type: 'others', provisionAccount: true, integrator: true },
+        body: { type: 'others', provisionAccount: true, integrator: true, name: 'Integrator' },
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.profile })

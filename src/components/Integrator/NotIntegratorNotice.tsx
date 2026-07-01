@@ -1,4 +1,4 @@
-import { Alert, Button, Flex, Icon, Stack, Text } from '@chakra-ui/react'
+import { Alert, Button, Flex, Icon, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuSquareStack } from 'react-icons/lu'
@@ -73,7 +73,7 @@ const NotIntegratorNotice = () => {
         title={t('integrators.create_org.title', { defaultValue: 'Create a free integrator organization?' })}
         subtitle={t('integrators.create_org.description', {
           defaultValue:
-            'A new organization on the free integrator plan will be created on your account and set as your active organization. You can edit its details later.',
+            'A new organization on the free integrator plan will be created on your account and set as your active organization.',
         })}
         open={open}
         onOpenChange={({ open }) => setOpen(open)}
@@ -96,6 +96,12 @@ const NotIntegratorNotice = () => {
                   <Text as='span' fontSize='sm' truncate>
                     {names[organization.address] || organization.address}
                   </Text>
+                  {organization.isIntegrator && (
+                    <TagRoot colorPalette='purple' ml='auto !important'>
+                      {/* "API" is a universal acronym, not translated in any locale */}
+                      <TagLabel>API</TagLabel>
+                    </TagRoot>
+                  )}
                 </Button>
               ))}
             </Stack>
