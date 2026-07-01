@@ -1,9 +1,51 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiEndpoints } from '~components/Auth/api'
+import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from './keys'
 
 type ProvisionedOrganization = { address: string }
+
+// Effective caps for the integrator dashboard. Mirrors the backend `IntegratorLimits`. Note the
+// zero semantics are not uniform: `maxVotes === 0` means unlimited, while the other caps at 0 mean
+// no allowance (or "unknown" when an override integrator has no subscription plan to source them).
+export type IntegratorLimits = {
+  maxManagedOrgs: number
+  maxManagedProcesses: number
+  maxVotes: number
+  maxSMS: number
+  maxEmails: number
+}
+
+// Current usage counters (shared pools summed across the integrator's managed orgs).
+export type IntegratorUsage = {
+  managedOrgs: number
+  managedProcesses: number
+  sentVotes: number
+  sentSMS: number
+  sentEmails: number
+}
+
+// Response of GET /integrator. `limits` is only present when `enabled` is true.
+export type IntegratorInfo = {
+  enabled: boolean
+  limits?: IntegratorLimits
+  usage: IntegratorUsage
+}
+
+/**
+ * Reads the signed-in integrator's quota and usage (GET /integrator, path-less — the org is
+ * resolved from the session). Powers the Overview quota cards.
+ */
+export const useIntegratorInfo = () => {
+  const { bearedFetch } = useAuth()
+  const selectedAddress = localStorage.getItem(LocalStorageKeys.SignerAddress) ?? undefined
+
+  return useQuery<IntegratorInfo>({
+    queryKey: QueryKeys.integrator.info(selectedAddress),
+    queryFn: () => bearedFetch<IntegratorInfo>(ApiEndpoints.Integrator),
+  })
+}
 
 /**
  * Self-serve integrator org provisioning. A signed-in integrator always has exactly one

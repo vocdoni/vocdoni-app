@@ -1,16 +1,10 @@
-import { Box, Heading } from '@chakra-ui/react'
+import { IntegratorOverview } from '~components/Integrator/Overview'
 
 /**
- * Minimal placeholder page for the integrators app.
+ * Integrators app landing page: the Overview (quota + usage).
  */
 const IntegratorsDashboard = () => {
-  return (
-    <Box p={4}>
-      <Heading as='h1' size='lg'>
-        Integrators Dashboard
-      </Heading>
-    </Box>
-  )
+  return <IntegratorOverview />
 }
 
 export default IntegratorsDashboard

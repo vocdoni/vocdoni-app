@@ -757,7 +757,22 @@
     "view_errors_other": "Voir {{count}} erreurs"
   },
   "integrators": {
+    "change_plan": "",
+    "overview": "",
+    "overview_error": "",
+    "overview_subtitle": "",
+    "overview_title": "",
     "provision_failed": "",
+    "quota": {
+      "emails": "",
+      "limit_reached": "",
+      "managed_orgs": "",
+      "sms": "",
+      "unlimited": "",
+      "used": "",
+      "votes": "",
+      "voting_processes": ""
+    },
     "setting_up_org": "",
     "signin_subtitle": "",
     "signin_title": "",

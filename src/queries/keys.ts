@@ -24,6 +24,9 @@ export const QueryKeys = {
     participantsCheck: (bundleId?: string, processID?: string, fieldName?: string, value?: string) =>
       ['process', 'participantsCheck', bundleId, processID, fieldName, value].filter(Boolean),
   },
+  integrator: {
+    info: (address?: string) => ['integrator', 'info', address].filter(Boolean),
+  },
   plans: ['plans'],
   profile: ['profile'],
 }

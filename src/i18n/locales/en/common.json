@@ -749,7 +749,22 @@
     "view_errors_other": "View {{count}} errors"
   },
   "integrators": {
+    "change_plan": "Change plan",
+    "overview": "Overview",
+    "overview_error": "Unable to load integrator quota",
+    "overview_subtitle": "Your integrator quota and current usage.",
+    "overview_title": "Overview",
     "provision_failed": "We couldn't set up your organization.",
+    "quota": {
+      "emails": "Emails used",
+      "limit_reached": "Limit reached",
+      "managed_orgs": "Managed organizations",
+      "sms": "SMS used",
+      "unlimited": "Unlimited",
+      "used": "used",
+      "votes": "Votes emitted",
+      "voting_processes": "Voting processes"
+    },
     "setting_up_org": "Setting up your organization…",
     "signin_subtitle": "Access your integrator dashboard.",
     "signin_title": "Sign in",
