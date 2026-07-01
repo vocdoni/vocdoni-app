@@ -7,13 +7,18 @@ import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useProfile } from '~src/queries/account'
 import { useProvisionIntegratorOrganization } from '~src/queries/integrators'
 import { Loading } from '~src/router/SuspenseLoader'
+import { isSelectedOrganizationIntegrator } from './privateAppRouting'
 import { Routes } from './routes'
 
 /**
- * Gates the integrators app. A signed-in integrator always has exactly one organization, so the
- * first time we find none (e.g. right after sign-up) we provision one automatically on the free
- * integrator tier — no empty dashboard, no manual create step. Users whose org is not an
- * integrator are sent to the regular dashboard, which they belong to.
+ * Gates the integrators app based on the *currently selected* organization (the one pointed at by
+ * signerAddress), mirroring OrganizationTypeGuard on /admin. A user can own both integrator and
+ * regular organizations, so "owns any integrator org" is not enough — routing must follow the
+ * active selection, otherwise a non-integrator org selected while the user happens to also own an
+ * integrator one would still be trapped in /integrators.
+ *
+ * When the user has no organization at all (e.g. right after sign-up) we provision one
+ * automatically on the free integrator tier — no empty dashboard, no manual create step.
  */
 const IntegratorOrgGuard = () => {
   const { isAuthenticated, isAuthLoading, signerRefresh } = useAuth()
@@ -21,7 +26,8 @@ const IntegratorOrgGuard = () => {
   const provision = useProvisionIntegratorOrganization()
 
   const organizations = profile?.organizations ?? []
-  const hasIntegratorOrg = organizations.some((org) => org.organization.isIntegrator)
+  const selectedAddress = localStorage.getItem(LocalStorageKeys.SignerAddress) ?? ''
+  const selectedIsIntegrator = isSelectedOrganizationIntegrator(profile ?? null, selectedAddress)
   // Only provision once we are sure the profile loaded and the user genuinely has no org.
   const needsOrg = !isAuthLoading && !isProfileLoading && isAuthenticated && organizations.length === 0
 
@@ -48,13 +54,13 @@ const IntegratorOrgGuard = () => {
     return <Navigate to={Routes.integrators.signIn} replace />
   }
 
-  // Already an integrator: render the app.
-  if (hasIntegratorOrg) {
-    return <Outlet context={undefined} />
-  }
-
-  // Has an organization, but it is not an integrator: this user belongs to the regular dashboard.
+  // The user already has organizations: route based on the selected one.
   if (organizations.length > 0) {
+    // Selected org is an integrator: render the app.
+    if (selectedIsIntegrator) {
+      return <Outlet context={undefined} />
+    }
+    // Selected org is not an integrator: this user belongs to the regular dashboard.
     return <Navigate to={Routes.dashboard.base} replace />
   }
 

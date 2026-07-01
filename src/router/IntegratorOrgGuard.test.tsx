@@ -49,18 +49,32 @@ const renderGuard = () =>
 const mockAuth = (overrides = {}) =>
   ({ isAuthenticated: true, isAuthLoading: false, signerRefresh: vi.fn(), ...overrides }) as any
 
-const mockProfile = (orgs: Array<{ isIntegrator?: boolean }>) =>
+const mockProfile = (orgs: Array<{ isIntegrator?: boolean; address?: string }>) =>
   ({
-    data: { organizations: orgs.map((o) => ({ role: 'admin', organization: { address: '0x1', isIntegrator: o.isIntegrator } })) },
+    data: {
+      organizations: orgs.map((o, i) => ({
+        role: 'admin',
+        organization: { address: o.address ?? `0x${i + 1}`, isIntegrator: o.isIntegrator },
+      })),
+    },
     isLoading: false,
   }) as any
 
 const mockProvision = (overrides = {}) =>
-  ({ mutate: vi.fn(), isIdle: true, isSuccess: false, isError: false, data: undefined, reset: vi.fn(), ...overrides }) as any
+  ({
+    mutate: vi.fn(),
+    isIdle: true,
+    isSuccess: false,
+    isError: false,
+    data: undefined,
+    reset: vi.fn(),
+    ...overrides,
+  }) as any
 
 describe('IntegratorOrgGuard', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.clear()
     vi.mocked(useProvisionIntegratorOrganization).mockReturnValue(mockProvision())
   })
 
@@ -81,6 +95,39 @@ describe('IntegratorOrgGuard', () => {
 
     expect(screen.getByText('Admin')).toBeInTheDocument()
     expect(screen.queryByText('Integrator Dashboard')).not.toBeInTheDocument()
+  })
+
+  it('redirects to /admin when a non-integrator org is selected, even if the user also owns an integrator one', () => {
+    // The selected org (signerAddress) is the non-integrator one; the user also owns an integrator
+    // org. Routing must follow the selection, not "owns any integrator org".
+    localStorage.setItem('signerAddress', '0xregular')
+    vi.mocked(useAuth).mockReturnValue(mockAuth())
+    vi.mocked(useProfile).mockReturnValue(
+      mockProfile([
+        { isIntegrator: false, address: '0xregular' },
+        { isIntegrator: true, address: '0xintegrator' },
+      ])
+    )
+
+    renderGuard()
+
+    expect(screen.getByText('Admin')).toBeInTheDocument()
+    expect(screen.queryByText('Integrator Dashboard')).not.toBeInTheDocument()
+  })
+
+  it('renders the integrator app when the selected org is the integrator one', () => {
+    localStorage.setItem('signerAddress', '0xintegrator')
+    vi.mocked(useAuth).mockReturnValue(mockAuth())
+    vi.mocked(useProfile).mockReturnValue(
+      mockProfile([
+        { isIntegrator: false, address: '0xregular' },
+        { isIntegrator: true, address: '0xintegrator' },
+      ])
+    )
+
+    renderGuard()
+
+    expect(screen.getByText('Integrator Dashboard')).toBeInTheDocument()
   })
 
   it('provisions an organization in the background when the user has none', () => {
