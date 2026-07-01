@@ -316,7 +316,6 @@
   },
   "error_removing_code": "Error removing code",
   "features": {
-    "GDPR_compliance": "GDPR Compliance",
     "anonymous_voting": "Anonymous voting",
     "approval": "Approval voting",
     "audit": "Audit",
@@ -335,6 +334,7 @@
     "email_support_basic": "(72h resp.)",
     "email_support_essential": "(48h resp.)",
     "email_support_premium": "(24h resp.)",
+    "GDPR_compliance": "GDPR Compliance",
     "generic_sla": "Generic SLA",
     "live_results": "Live results",
     "live_streaming": "Live streaming integration",
@@ -771,6 +771,10 @@
       "last_used": "Last used",
       "load_error": "Couldn't load API keys",
       "revoke": "Revoke key",
+      "revoke_cancel": "Cancel",
+      "revoke_confirm": "Revoke",
+      "revoke_confirm_description": "This permanently disables \"{{label}}\". Any integration using it will stop working immediately.",
+      "revoke_confirm_title": "Revoke API key?",
       "revoke_error": "Could not revoke key",
       "revoked": "API key revoked",
       "scopes": {
@@ -798,6 +802,14 @@
       "subtitle": "Manage your subscription and get support.",
       "title": "Configuration"
     },
+    "create_org": {
+      "cancel": "Cancel",
+      "confirm": "Create organization",
+      "description": "A new organization on the free integrator plan will be created on your account and set as your active organization. You can edit its details later.",
+      "error": "Could not create the organization",
+      "switch_instead": "Or switch to an existing organization",
+      "title": "Create a free integrator organization?"
+    },
     "managed": {
       "active": "Active",
       "created": "Created",
@@ -813,6 +825,11 @@
       "status": "Status",
       "subtitle": "Organizations you manage on behalf of your customers.",
       "title": "Managed organizations"
+    },
+    "not_integrator": {
+      "cta": "Create a free integrator organization",
+      "description": "The selected organization is not an integrator. Create a free integrator organization to unlock this dashboard — no manual approval needed.",
+      "title": "This organization isn't an integrator yet"
     },
     "overview": "Overview",
     "overview_error": "Unable to load integrator quota",

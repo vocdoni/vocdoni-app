@@ -1,6 +1,7 @@
 import {
   Alert,
   Badge,
+  Button,
   Center,
   Code,
   Flex,
@@ -12,9 +13,11 @@ import {
   Table,
   Text,
 } from '@chakra-ui/react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuTrash2 } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
+import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
 import { CreateApiKeyButton } from './CreateApiKeyModal'
@@ -42,11 +45,14 @@ const ApiKeysPanel = () => {
   const keys = useApiKeys()
   const revoke = useRevokeApiKey()
   const status = useStatus()
+  const [keyToRevoke, setKeyToRevoke] = useState<ApiKey | null>(null)
 
-  const onRevoke = async (k: ApiKey) => {
+  const onRevoke = async () => {
+    if (!keyToRevoke) return
     try {
-      await revoke.mutateAsync({ id: k.id })
+      await revoke.mutateAsync({ id: keyToRevoke.id })
       toast({ type: 'success', title: t('integrators.api_keys.revoked', { defaultValue: 'API key revoked' }) })
+      setKeyToRevoke(null)
     } catch (err) {
       toast({
         type: 'error',
@@ -156,7 +162,7 @@ const ApiKeysPanel = () => {
                         size='sm'
                         color='fg.error'
                         disabled={k.revoked || revoke.isPending}
-                        onClick={() => onRevoke(k)}
+                        onClick={() => setKeyToRevoke(k)}
                       >
                         <Icon as={LuTrash2} />
                       </IconButton>
@@ -168,6 +174,26 @@ const ApiKeysPanel = () => {
           </Table.Root>
         </Table.ScrollArea>
       )}
+
+      <DeleteModal
+        title={t('integrators.api_keys.revoke_confirm_title', { defaultValue: 'Revoke API key?' })}
+        subtitle={t('integrators.api_keys.revoke_confirm_description', {
+          defaultValue:
+            'This permanently disables "{{label}}". Any integration using it will stop working immediately.',
+          label: keyToRevoke?.label,
+        })}
+        open={!!keyToRevoke}
+        onOpenChange={({ open }) => !open && setKeyToRevoke(null)}
+      >
+        <Flex justifyContent='flex-end' mt={4} gap={2}>
+          <Button variant='outline' onClick={() => setKeyToRevoke(null)}>
+            {t('integrators.api_keys.revoke_cancel', { defaultValue: 'Cancel' })}
+          </Button>
+          <Button loading={revoke.isPending} colorPalette='red' onClick={onRevoke}>
+            {t('integrators.api_keys.revoke_confirm', { defaultValue: 'Revoke' })}
+          </Button>
+        </Flex>
+      </DeleteModal>
     </Stack>
   )
 }

@@ -58,17 +58,20 @@ export const useIntegratorsRoutes = () => {
     ),
     children: [
       {
-        // Guard that provisions an integrator org when missing and redirects non-integrators to /admin
+        // Layout first (always-visible sidebar/shell), then the guard renders either the pages,
+        // the provisioning state, or the "not an integrator yet" notice in the content area.
         element: (
           <SuspenseLoader>
-            <IntegratorOrgGuard />
+            <LayoutIntegrators />
           </SuspenseLoader>
         ),
         children: [
           {
+            // Guard that provisions an integrator org when missing and shows the not-integrator
+            // notice for non-integrator orgs.
             element: (
               <SuspenseLoader>
-                <LayoutIntegrators />
+                <IntegratorOrgGuard />
               </SuspenseLoader>
             ),
             children: [

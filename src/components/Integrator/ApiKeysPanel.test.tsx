@@ -1,10 +1,12 @@
-import { render, screen } from '~src/test-utils'
+import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import type { ApiKey } from '~src/queries/integrators'
+
+const revokeMutateAsync = vi.fn()
 
 vi.mock('~src/queries/integrators', () => ({
   API_KEY_SCOPES: ['quota:read', 'managed:read', 'managed:write', 'voting:write', 'members:write'],
   useApiKeys: vi.fn(),
-  useRevokeApiKey: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+  useRevokeApiKey: vi.fn(() => ({ mutateAsync: revokeMutateAsync, isPending: false })),
   useCreateApiKey: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
 }))
 
@@ -53,5 +55,33 @@ describe('ApiKeysPanel', () => {
     render(<ApiKeysPanel />)
 
     expect(screen.getByText('No API keys yet')).toBeInTheDocument()
+  })
+
+  it('asks for confirmation before revoking and only revokes on confirm', async () => {
+    mockKeys({ data: [key()] })
+
+    render(<ApiKeysPanel />)
+
+    fireEvent.click(screen.getByLabelText('Revoke key'))
+
+    // Confirmation dialog opens without revoking yet.
+    expect(await screen.findByText('Revoke API key?')).toBeInTheDocument()
+    expect(revokeMutateAsync).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Revoke' }))
+
+    await waitFor(() => expect(revokeMutateAsync).toHaveBeenCalledWith({ id: 'k1' }))
+  })
+
+  it('does not revoke when the confirmation is cancelled', async () => {
+    mockKeys({ data: [key()] })
+
+    render(<ApiKeysPanel />)
+
+    fireEvent.click(screen.getByLabelText('Revoke key'))
+    fireEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
+
+    await waitFor(() => expect(screen.queryByText('Revoke API key?')).not.toBeInTheDocument())
+    expect(revokeMutateAsync).not.toHaveBeenCalled()
   })
 })

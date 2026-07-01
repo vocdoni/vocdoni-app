@@ -779,6 +779,10 @@
       "last_used": "Last used",
       "load_error": "Couldn't load API keys",
       "revoke": "Revoke key",
+      "revoke_cancel": "",
+      "revoke_confirm": "",
+      "revoke_confirm_description": "",
+      "revoke_confirm_title": "",
       "revoke_error": "Could not revoke key",
       "revoked": "API key revoked",
       "scopes": {
@@ -806,6 +810,14 @@
       "subtitle": "Manage your subscription and get support.",
       "title": "Configuration"
     },
+    "create_org": {
+      "cancel": "",
+      "confirm": "",
+      "description": "",
+      "error": "",
+      "switch_instead": "",
+      "title": ""
+    },
     "managed": {
       "active": "Active",
       "created": "Created",
@@ -821,6 +833,11 @@
       "status": "Status",
       "subtitle": "Organizations you manage on behalf of your customers.",
       "title": "Managed organizations"
+    },
+    "not_integrator": {
+      "cta": "",
+      "description": "",
+      "title": ""
     },
     "overview": "Overview",
     "overview_error": "Unable to load integrator quota",

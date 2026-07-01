@@ -20,6 +20,11 @@ vi.mock('~components/Auth/useAuthProvider', () => ({
   LocalStorageKeys: { SignerAddress: 'signerAddress' },
 }))
 
+// The notice has its own test; here we only assert the guard renders it (instead of redirecting).
+vi.mock('~components/Integrator/NotIntegratorNotice', () => ({
+  default: () => <div>Not an integrator notice</div>,
+}))
+
 vi.mock('./routes', () => ({
   Routes: {
     dashboard: { base: '/admin' },
@@ -87,17 +92,18 @@ describe('IntegratorOrgGuard', () => {
     expect(screen.getByText('Integrator Dashboard')).toBeInTheDocument()
   })
 
-  it('redirects a user whose org is not an integrator to /admin', () => {
+  it('shows the not-integrator notice when the selected org is not an integrator', () => {
     vi.mocked(useAuth).mockReturnValue(mockAuth())
     vi.mocked(useProfile).mockReturnValue(mockProfile([{ isIntegrator: false }]))
 
     renderGuard()
 
-    expect(screen.getByText('Admin')).toBeInTheDocument()
+    expect(screen.getByText('Not an integrator notice')).toBeInTheDocument()
     expect(screen.queryByText('Integrator Dashboard')).not.toBeInTheDocument()
+    expect(screen.queryByText('Admin')).not.toBeInTheDocument()
   })
 
-  it('redirects to /admin when a non-integrator org is selected, even if the user also owns an integrator one', () => {
+  it('shows the notice when a non-integrator org is selected, even if the user also owns an integrator one', () => {
     // The selected org (signerAddress) is the non-integrator one; the user also owns an integrator
     // org. Routing must follow the selection, not "owns any integrator org".
     localStorage.setItem('signerAddress', '0xregular')
@@ -111,7 +117,7 @@ describe('IntegratorOrgGuard', () => {
 
     renderGuard()
 
-    expect(screen.getByText('Admin')).toBeInTheDocument()
+    expect(screen.getByText('Not an integrator notice')).toBeInTheDocument()
     expect(screen.queryByText('Integrator Dashboard')).not.toBeInTheDocument()
   })
 

@@ -771,6 +771,10 @@
       "last_used": "",
       "load_error": "",
       "revoke": "",
+      "revoke_cancel": "",
+      "revoke_confirm": "",
+      "revoke_confirm_description": "",
+      "revoke_confirm_title": "",
       "revoke_error": "",
       "revoked": "",
       "scopes": {
@@ -798,6 +802,14 @@
       "subtitle": "",
       "title": ""
     },
+    "create_org": {
+      "cancel": "",
+      "confirm": "",
+      "description": "",
+      "error": "",
+      "switch_instead": "",
+      "title": ""
+    },
     "managed": {
       "active": "",
       "created": "",
@@ -812,6 +824,11 @@
       "sms": "",
       "status": "",
       "subtitle": "",
+      "title": ""
+    },
+    "not_integrator": {
+      "cta": "",
+      "description": "",
       "title": ""
     },
     "overview": "",

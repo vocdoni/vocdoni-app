@@ -1,15 +1,13 @@
 import { Button, Flex, Icon, PopoverBody, PopoverFooter, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus, LuSquareStack } from 'react-icons/lu'
-import { Link as ReactRouterLink, useNavigate } from 'react-router-dom'
-import { useAuth } from '~components/Auth/useAuth'
+import { Link as ReactRouterLink } from 'react-router-dom'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { Routes } from '~routes'
 import { Organization, useProfile } from '~src/queries/account'
-import { QueryKeys } from '~src/queries/keys'
+import { useOrganizationNames } from './useOrganizationNames'
+import { useSelectOrganization } from './useSelectOrganization'
 
 type SelectOption = {
   value: string
@@ -21,30 +19,11 @@ export const OrganizationSwitcher = () => {
   const { t } = useTranslation()
   const { data: profile } = useProfile()
   const [selectedOrg, setSelectedOrg] = useState<string | null>(localStorage.getItem(LocalStorageKeys.SignerAddress))
-  const { signerRefresh } = useAuth()
-  const queryClient = useQueryClient()
-  const { client } = useClient()
-  const navigate = useNavigate()
+  const selectOrganization = useSelectOrganization()
 
   const addresses = useMemo(() => profile?.organizations?.map((org) => org.organization.address) || [], [profile])
 
-  const { data: names = {} } = useQuery({
-    queryKey: QueryKeys.organization.names,
-    queryFn: async () => {
-      const names: Record<string, string> = {}
-      for (const address of addresses) {
-        try {
-          const data = await client.fetchAccountInfo(address)
-          names[address] = data?.account?.name?.default || address
-        } catch (error) {
-          console.error('Error fetching organization name:', error)
-          names[address] = address
-        }
-      }
-      return names
-    },
-    enabled: addresses.length > 0,
-  })
+  const { data: names = {} } = useOrganizationNames(addresses)
 
   // Populate organizations for the selector
   const organizations = useMemo(() => {
@@ -78,14 +57,7 @@ export const OrganizationSwitcher = () => {
   const handleOrgChange = async (option: SelectOption | null) => {
     if (!option) return
     setSelectedOrg(option.value)
-    localStorage.setItem(LocalStorageKeys.SignerAddress, option.value)
-    // clear all query client query cache
-    queryClient.clear()
-    // refresh signer
-    await signerRefresh()
-    // Navigate to the correct private app root based on the selected org's integrator flag
-    const targetPath = option.organization.isIntegrator ? Routes.integrators.base : Routes.dashboard.base
-    navigate(targetPath, { replace: true })
+    await selectOrganization(option.organization)
   }
 
   const numOrgs = organizations.length

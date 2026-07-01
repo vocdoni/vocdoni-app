@@ -5,6 +5,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useProfile } from '~src/queries/account'
+import NotIntegratorNotice from '~components/Integrator/NotIntegratorNotice'
 import { useProvisionIntegratorOrganization } from '~src/queries/integrators'
 import { Loading } from '~src/router/SuspenseLoader'
 import { isSelectedOrganizationIntegrator } from './privateAppRouting'
@@ -60,8 +61,9 @@ const IntegratorOrgGuard = () => {
     if (selectedIsIntegrator) {
       return <Outlet context={undefined} />
     }
-    // Selected org is not an integrator: this user belongs to the regular dashboard.
-    return <Navigate to={Routes.dashboard.base} replace />
+    // Selected org is not an integrator: render the dashboard shell with a notice offering to
+    // create a free integrator org (or switch orgs), instead of bouncing the user to /admin.
+    return <NotIntegratorNotice />
   }
 
   if (provision.isError) {

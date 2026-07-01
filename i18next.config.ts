@@ -6,6 +6,10 @@ export default defineConfig({
   extract: {
     input: ['src/**/*.{ts,tsx,mjs}'],
     output: 'src/i18n/locales/{{language}}/{{namespace}}.json',
+    // English is the source language: it receives the defaultValue from the code,
+    // every other locale is left empty for translators. Without this, i18next-cli
+    // falls back to the first locale in the array (ca) and dumps English into it.
+    primaryLanguage: 'en',
     defaultNS: 'common',
     keySeparator: '.',
     nsSeparator: ':',
