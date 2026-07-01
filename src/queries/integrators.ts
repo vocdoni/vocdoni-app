@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useClient } from '@vocdoni/react-components'
+import { ensure0x } from '@vocdoni/sdk'
 import { ApiEndpoints } from '~components/Auth/api'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
@@ -91,6 +93,84 @@ export const useManagedOrganizations = (page: number, limit: number) => {
     queryKey: QueryKeys.integrator.managed(selectedAddress, page, limit),
     queryFn: () =>
       bearedFetch<ManagedOrganizationsResponse>(`${ApiEndpoints.ManagedOrganizations}?page=${page}&limit=${limit}`),
+  })
+}
+
+// Assignable API key scopes (mirrors the backend). Human labels/descriptions are resolved in the
+// create form so the query layer stays translation-free.
+export const API_KEY_SCOPES = ['quota:read', 'managed:read', 'managed:write', 'voting:write', 'members:write'] as const
+
+export type ApiKey = {
+  id: string
+  label: string
+  prefix: string
+  scopes: string[]
+  createdBy: string
+  createdAt: string
+  lastUsedAt?: string
+  expiresAt?: string
+  revoked: boolean
+}
+
+export type CreateApiKeyBody = {
+  label: string
+  scopes: string[]
+  expiresAt?: string
+}
+
+export type CreatedApiKey = ApiKey & { secret: string }
+
+/** API keys owned by the selected organization (GET /organizations/{address}/apikeys, admin only). */
+export const useApiKeys = () => {
+  const { bearedFetch } = useAuth()
+  const { account } = useClient()
+  const address = account?.address
+
+  return useQuery<ApiKey[]>({
+    queryKey: QueryKeys.organization.apikeys(address),
+    enabled: !!address,
+    queryFn: () =>
+      bearedFetch<{ apiKeys: ApiKey[] }>(
+        ApiEndpoints.OrganizationApiKeys.replace('{address}', ensure0x(address as string))
+      ).then((d) => d.apiKeys ?? []),
+  })
+}
+
+/** Create an API key. The returned secret is shown only once. */
+export const useCreateApiKey = () => {
+  const { bearedFetch } = useAuth()
+  const { account } = useClient()
+  const address = account?.address
+  const queryClient = useQueryClient()
+
+  return useMutation<CreatedApiKey, Error, CreateApiKeyBody>({
+    mutationFn: (body) =>
+      bearedFetch<CreatedApiKey>(ApiEndpoints.OrganizationApiKeys.replace('{address}', ensure0x(address as string)), {
+        method: 'POST',
+        body,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(address) })
+    },
+  })
+}
+
+/** Revoke (permanently disable) an API key. */
+export const useRevokeApiKey = () => {
+  const { bearedFetch } = useAuth()
+  const { account } = useClient()
+  const address = account?.address
+  const queryClient = useQueryClient()
+
+  return useMutation<void, Error, { id: string }>({
+    mutationFn: ({ id }) =>
+      bearedFetch<void>(
+        ApiEndpoints.OrganizationApiKey.replace('{address}', ensure0x(address as string)).replace('{keyID}', id),
+        { method: 'DELETE' }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(address) })
+    },
   })
 }
 

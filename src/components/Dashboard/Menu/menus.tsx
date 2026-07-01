@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import {
   LuBuilding2,
   LuHouse,
+  LuKeyRound,
   LuLayoutDashboard,
   LuLifeBuoy,
   LuSettings,
@@ -107,7 +108,12 @@ export const useIntegratorMenuConfig = (): DashboardMenuConfig => {
             route: Routes.integrators.managedOrganizations,
             activeMatch: [{ path: Routes.integrators.managedOrganizations, end: false }],
           },
-          // API keys lands in a follow-up commit.
+          {
+            label: t('integrators.api_keys.title', { defaultValue: 'API keys' }),
+            icon: LuKeyRound,
+            route: Routes.integrators.apiKeys,
+            activeMatch: [{ path: Routes.integrators.apiKeys, end: false }],
+          },
           {
             label: t('integrators.configuration.title', { defaultValue: 'Configuration' }),
             icon: LuSlidersHorizontal,

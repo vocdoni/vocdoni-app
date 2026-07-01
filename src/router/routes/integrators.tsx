@@ -17,6 +17,7 @@ const IntegratorsSignup = lazy(() => import('~elements/integrators/signup'))
 const IntegratorsConfiguration = lazy(() => import('~elements/integrators/configuration'))
 const IntegratorSubscriptionTab = lazy(() => import('~components/Integrator/SubscriptionTab'))
 const IntegratorsManagedOrganizations = lazy(() => import('~elements/integrators/organizations'))
+const IntegratorsApiKeys = lazy(() => import('~elements/integrators/api-keys'))
 
 // Independent single-column sign in / sign up for the integrators app.
 export const useIntegratorsAuthRoutes = () => {
@@ -85,6 +86,15 @@ export const useIntegratorsRoutes = () => {
                 element: (
                   <SuspenseLoader>
                     <IntegratorsManagedOrganizations />
+                  </SuspenseLoader>
+                ),
+                errorElement: <Error />,
+              },
+              {
+                path: Routes.integrators.apiKeys,
+                element: (
+                  <SuspenseLoader>
+                    <IntegratorsApiKeys />
                   </SuspenseLoader>
                 ),
                 errorElement: <Error />,
