@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { useClient } from '@vocdoni/react-components'
 import { NoOrganizationsError, RemoteSigner, UnauthorizedError } from '@vocdoni/sdk'
@@ -88,6 +88,7 @@ export const useAuthProvider = () => {
   const toast = useToast()
   const { disconnect } = useDisconnect()
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
 
   const login = useLogin({
     onSuccess: (data) => {
@@ -147,7 +148,13 @@ export const useAuthProvider = () => {
     setBearer(null)
     clear()
     disconnect()
-  }, [clear, disconnect])
+    // Wipe the query cache so a different account logging in afterwards doesn't inherit the
+    // previous user's profile (the profile key is static). Without this, e.g. an integrator's
+    // cached org survives logout and the next non-integrator login is misrouted to /integrators.
+    // We intentionally keep signerAddress: the same user resumes their last-selected org, and
+    // updateSigner overwrites it when a different user doesn't own that address.
+    queryClient.clear()
+  }, [clear, disconnect, queryClient])
 
   const refreshToken = useCallback(async () => {
     try {

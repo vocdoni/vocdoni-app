@@ -1,3 +1,4 @@
+import { QueryClient } from '@tanstack/react-query'
 import { act, renderHook } from '@testing-library/react'
 import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { AllProviders, mockUseClient } from '~src/test-utils'
@@ -71,6 +72,18 @@ describe('useAuthProvider logout', () => {
     expect(localStorage.getItem('authRenewSession')).toBeFalsy()
     expect(clearMock).toHaveBeenCalled()
     expect(disconnectMock).toHaveBeenCalled()
+  })
+
+  it('clears the query cache on logout so the next account does not inherit a stale profile', () => {
+    const clearCacheSpy = vi.spyOn(QueryClient.prototype, 'clear')
+
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+
+    act(() => {
+      result.current.logout()
+    })
+
+    expect(clearCacheSpy).toHaveBeenCalled()
   })
 
   it('updates signer without mutating/re-setting client instance', async () => {
