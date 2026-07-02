@@ -1,6 +1,6 @@
 import { Alert, Box, Flex, HStack, Icon, LinkOverlay, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowUpRight, LuCode, LuServer, LuShieldCheck } from 'react-icons/lu'
+import { LuArrowUpRight, LuNetwork, LuRocket, LuTerminal } from 'react-icons/lu'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { useIntegratorInfo } from '~src/queries/integrators'
@@ -37,30 +37,33 @@ export const IntegratorOverview = () => {
 
   const { limits, usage } = data
 
-  // Documentation shortcuts, mirroring the developer portal cards (API / SDK / Protocol).
+  // Documentation shortcuts, mirroring the developer portal pillars (Quickstart / SaaS API / SDK).
   const docs = [
     {
-      href: 'https://vocdoni.io/en/developers/docs',
-      icon: LuServer,
-      title: t('integrators.docs.api_title', { defaultValue: 'API' }),
-      description: t('integrators.docs.api_description', {
-        defaultValue: 'REST API to run managed elections: organizations, members, censuses, processes and results.',
+      href: 'https://vocdoni.io/developers/docs/quickstart',
+      icon: LuRocket,
+      title: t('integrators.docs.quickstart_title', { defaultValue: 'Quickstart' }),
+      description: t('integrators.docs.quickstart_description', {
+        defaultValue:
+          'Run a full election end to end — create an org, build a census, open a process and read the tally — in a few API calls.',
       }),
     },
     {
-      href: 'https://github.com/vocdoni/integrator-sdk',
-      icon: LuCode,
+      href: 'https://vocdoni.io/developers/docs',
+      icon: LuNetwork,
+      title: t('integrators.docs.api_title', { defaultValue: 'SaaS API' }),
+      description: t('integrators.docs.api_description', {
+        defaultValue:
+          'A REST API to run managed elections: organizations, members, censuses, processes, results and async jobs.',
+      }),
+    },
+    {
+      href: 'https://vocdoni.io/developers/docs/sdk-quickstart',
+      icon: LuTerminal,
       title: t('integrators.docs.sdk_title', { defaultValue: 'SDK' }),
       description: t('integrators.docs.sdk_description', {
-        defaultValue: 'The TypeScript SDK gives you lower-level control over voting and census operations.',
-      }),
-    },
-    {
-      href: 'https://davinci.vote',
-      icon: LuShieldCheck,
-      title: t('integrators.docs.protocol_title', { defaultValue: 'Protocol' }),
-      description: t('integrators.docs.protocol_description', {
-        defaultValue: 'Every vote is anonymous and end-to-end verifiable, anchored on a public voting protocol.',
+        defaultValue:
+          'The TypeScript SDK adds client-side voting to your app — CSP auth, ballot encoding and vote signing — all through the SaaS API.',
       }),
     },
   ]
