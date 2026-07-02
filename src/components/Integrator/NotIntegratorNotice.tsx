@@ -27,7 +27,9 @@ const NotIntegratorNotice = () => {
   const selectOrganization = useSelectOrganization()
   const [open, setOpen] = useState(false)
 
-  const organizations = profile?.organizations ?? []
+  // Hide managed orgs from the "switch instead" list for the same reason as the org switcher:
+  // they belong to the integrator's managed set, not the user's own orgs.
+  const organizations = (profile?.organizations ?? []).filter(({ organization }) => !organization.managedBy)
   const hasMultipleOrgs = organizations.length > 1
   const { data: names = {} } = useOrganizationNames(organizations.map(({ organization }) => organization.address))
 

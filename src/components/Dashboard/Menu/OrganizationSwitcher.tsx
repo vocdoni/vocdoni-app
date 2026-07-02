@@ -37,15 +37,20 @@ export const OrganizationSwitcher = () => {
 
   const { data: names = {} } = useOrganizationNames(addresses)
 
-  // Populate organizations for the selector
+  // Populate organizations for the selector. Managed orgs (created through the integrator portal)
+  // are hidden here: they belong to the integrator's managed set, not the user's own orgs, and are
+  // reached from the Managed organizations page instead. `managedBy` is only sent by the backend for
+  // managed orgs, so this is a no-op against older backends that omit the field.
   const organizations = useMemo(() => {
     if (!profile?.organizations) return []
-    return profile.organizations.map((org) => ({
-      value: org.organization.address,
-      label: names[org.organization.address] || org.organization.address,
-      isIntegrator: org.isIntegrator,
-      organization: org.organization,
-    }))
+    return profile.organizations
+      .filter((org) => !org.organization.managedBy)
+      .map((org) => ({
+        value: org.organization.address,
+        label: names[org.organization.address] || org.organization.address,
+        isIntegrator: org.isIntegrator,
+        organization: org.organization,
+      }))
   }, [profile, names])
 
   // Set first organization as default if none selected

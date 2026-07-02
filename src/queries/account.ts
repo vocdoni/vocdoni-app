@@ -17,6 +17,9 @@ export interface Organization {
   timezone: string
   active: boolean
   parent?: any
+  // Integrator org that manages this one, when it was created through the integrator portal.
+  // Present only for managed orgs (regular orgs omit it), so we can hide them from org pickers.
+  managedBy?: string
   subscription?: Subscription
 }
 
