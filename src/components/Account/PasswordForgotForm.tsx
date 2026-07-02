@@ -12,7 +12,13 @@ type ForgotPasswordFormValues = {
   email: string
 }
 
-const PasswordForgotForm: React.FC = () => {
+type PasswordForgotFormProps = {
+  // Route to send the user to after requesting the code, overridable so the integrators app can
+  // keep users within its own flow. Defaults preserve the regular /account flow behavior.
+  resetRoute?: string
+}
+
+const PasswordForgotForm: React.FC<PasswordForgotFormProps> = ({ resetRoute = Routes.auth.passwordReset }) => {
   const toast = useToast()
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -44,7 +50,7 @@ const PasswordForgotForm: React.FC = () => {
           duration: 3000,
           closable: true,
         })
-        navigate(`${Routes.auth.passwordReset}?email=${encodeURIComponent(data.email)}`)
+        navigate(`${resetRoute}?email=${encodeURIComponent(data.email)}`)
       },
       onError: (error) => {
         // we actually should not have errors except for internal server errors

@@ -14,6 +14,8 @@ export const Routes = {
     base: '/integrators', // Overview
     signIn: '/integrators/signin',
     signUp: '/integrators/signup',
+    recovery: '/integrators/password',
+    passwordReset: '/integrators/password/reset',
     // Sections landing in follow-up PRs (declared here so the nav config can reference them):
     managedOrganizations: '/integrators/organizations',
     apiKeys: '/integrators/api-keys',

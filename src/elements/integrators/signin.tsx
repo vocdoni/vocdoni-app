@@ -21,7 +21,7 @@ const IntegratorsSignin = () => {
       email={searchParams.get('email') ?? undefined}
       successRoute={Routes.integrators.base}
       signUpRoute={Routes.integrators.signUp}
-      recoveryRoute={Routes.auth.recovery}
+      recoveryRoute={Routes.integrators.recovery}
       verifyNextRoute={Routes.integrators.base}
     />
   )

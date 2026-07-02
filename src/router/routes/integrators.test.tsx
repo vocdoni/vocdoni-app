@@ -90,4 +90,16 @@ describe('integrators auth routes', () => {
     expect(paths).toContain(Routes.integrators.signIn)
     expect(paths).toContain(Routes.integrators.signUp)
   })
+
+  it('exposes the password recovery and reset routes within the integrators flow', async () => {
+    const { useIntegratorsAuthRoutes } = await import('./integrators')
+
+    const { result } = renderHook(() => useIntegratorsAuthRoutes())
+
+    const layoutRoute = (result.current.children ?? [])[0]
+    const pages = layoutRoute?.children ?? []
+    const paths = pages.map((c: any) => c.path)
+    expect(paths).toContain(Routes.integrators.recovery)
+    expect(paths).toContain(Routes.integrators.passwordReset)
+  })
 })

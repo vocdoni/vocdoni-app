@@ -14,6 +14,8 @@ import { SuspenseLoader } from '../SuspenseLoader'
 const IntegratorsDashboard = lazy(() => import('~elements/integrators'))
 const IntegratorsSignin = lazy(() => import('~elements/integrators/signin'))
 const IntegratorsSignup = lazy(() => import('~elements/integrators/signup'))
+const IntegratorsPasswordForgot = lazy(() => import('~elements/integrators/password'))
+const IntegratorsPasswordReset = lazy(() => import('~elements/integrators/password/reset'))
 const IntegratorsConfiguration = lazy(() => import('~elements/integrators/configuration'))
 const IntegratorSubscriptionTab = lazy(() => import('~components/Integrator/SubscriptionTab'))
 const IntegratorsManagedOrganizations = lazy(() => import('~elements/integrators/organizations'))
@@ -40,6 +42,22 @@ export const useIntegratorsAuthRoutes = () => {
             element: (
               <SuspenseLoader>
                 <IntegratorsSignup />
+              </SuspenseLoader>
+            ),
+          },
+          {
+            path: Routes.integrators.recovery,
+            element: (
+              <SuspenseLoader>
+                <IntegratorsPasswordForgot />
+              </SuspenseLoader>
+            ),
+          },
+          {
+            path: Routes.integrators.passwordReset,
+            element: (
+              <SuspenseLoader>
+                <IntegratorsPasswordReset />
               </SuspenseLoader>
             ),
           },
