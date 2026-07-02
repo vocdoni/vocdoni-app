@@ -4,7 +4,13 @@ import { useAuth } from '~components/Auth/useAuth'
 import { Loading } from '~src/router/SuspenseLoader'
 import { Routes } from './routes'
 
-const AccountProtectedRoute = () => {
+type AccountProtectedRouteProps = {
+  // Where to send unauthenticated users. Overridable so the integrators app keeps users within
+  // its own auth flow (/integrators/signin); defaults to the regular /account sign in.
+  signInRoute?: string
+}
+
+const AccountProtectedRoute = ({ signInRoute = Routes.auth.signIn }: AccountProtectedRouteProps) => {
   const context = useOutletContext()
   const {
     loaded: { account: fetchLoaded },
@@ -19,7 +25,7 @@ const AccountProtectedRoute = () => {
 
   if (!isAuthenticated) {
     localStorage.setItem('redirectTo', pathname)
-    return <Navigate to={Routes.auth.signIn} replace />
+    return <Navigate to={signInRoute} replace />
   }
 
   return <Outlet context={context} />

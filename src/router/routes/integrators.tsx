@@ -71,7 +71,7 @@ export const useIntegratorsRoutes = () => {
   return {
     element: (
       <SuspenseLoader>
-        <AccountProtectedRoute />
+        <AccountProtectedRoute signInRoute={Routes.integrators.signIn} />
       </SuspenseLoader>
     ),
     children: [
