@@ -40,35 +40,37 @@ describe('OrganizationTypeGuard', () => {
     ;(localStorage as any).getItem.mockReturnValue('0x123')
   })
 
-  const mockProfile = (integrator: boolean) => ({
-    data: {
-      organizations: [
-        {
-          role: 'admin',
-          organization: {
-            address: '0x123',
-            type: 'organization',
-            size: 1,
-            color: '#000',
-            logo: '',
-            subdomain: '',
-            timezone: 'UTC',
-            active: true,
-            isIntegrator: integrator,
+  const mockProfile = (integrator: boolean) =>
+    ({
+      data: {
+        organizations: [
+          {
+            role: 'admin',
+            organization: {
+              address: '0x123',
+              type: 'organization',
+              size: 1,
+              color: '#000',
+              logo: '',
+              subdomain: '',
+              timezone: 'UTC',
+              active: true,
+              isIntegrator: integrator,
+            },
           },
-        },
-      ],
-    },
-    isLoading: false,
-    isFetching: false,
-    isError: false,
-    isSuccess: true,
-  } as any)
+        ],
+      },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+      isSuccess: true,
+    }) as any
 
-  const mockAuth = (isAuthenticated = true, isAuthLoading = false) => ({
-    isAuthenticated,
-    isAuthLoading,
-  } as any)
+  const mockAuth = (isAuthenticated = true, isAuthLoading = false) =>
+    ({
+      isAuthenticated,
+      isAuthLoading,
+    }) as any
 
   it('renders Outlet when integrator accesses /integrators', () => {
     vi.mocked(useAuth).mockReturnValue(mockAuth(true, false))

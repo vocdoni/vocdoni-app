@@ -61,10 +61,7 @@ describe('integrators routes', () => {
   })
 
   it('models the integrators index route correctly', () => {
-    const matches = matchRoutes(
-      [{ path: Routes.integrators.base }],
-      '/integrators'
-    )
+    const matches = matchRoutes([{ path: Routes.integrators.base }], '/integrators')
 
     expect(matches).toBeDefined()
     expect(matches?.[0]?.route.path).toBe(Routes.integrators.base)

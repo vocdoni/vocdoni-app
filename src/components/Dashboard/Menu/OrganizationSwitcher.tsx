@@ -1,4 +1,15 @@
-import { Button, Flex, HStack, Icon, PopoverBody, PopoverFooter, Stack, TagLabel, TagRoot, Text } from '@chakra-ui/react'
+import {
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  PopoverBody,
+  PopoverFooter,
+  Stack,
+  TagLabel,
+  TagRoot,
+  Text,
+} from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus, LuSquareStack } from 'react-icons/lu'
