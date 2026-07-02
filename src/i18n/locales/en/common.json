@@ -811,11 +811,11 @@
       "title": "Create a free integrator organization?"
     },
     "docs": {
-      "api_description": "REST API to run managed elections: organizations, members, censuses, processes and results.",
-      "api_title": "API",
-      "protocol_description": "Every vote is anonymous and end-to-end verifiable, anchored on a public voting protocol.",
-      "protocol_title": "Protocol",
-      "sdk_description": "The TypeScript SDK gives you lower-level control over voting and census operations.",
+      "api_description": "A REST API to run managed elections: organizations, members, censuses, processes, results and async jobs.",
+      "api_title": "SaaS API",
+      "quickstart_description": "Run a full election end to end — create an org, build a census, open a process and read the tally — in a few API calls.",
+      "quickstart_title": "Quickstart",
+      "sdk_description": "The TypeScript SDK adds client-side voting to your app — CSP auth, ballot encoding and vote signing — all through the SaaS API.",
       "sdk_title": "SDK",
       "subtitle": "Guides and references to start building with Vocdoni.",
       "title": "Documentation"
@@ -1153,9 +1153,9 @@
   "organizations": "Organizations ({{ numOrgs }})",
   "other_details": "Other details",
   "pagination": {
-    "next": "",
+    "next": "Next page",
     "page_out_of": "Page {{page}} of {{total}}",
-    "previous": "",
+    "previous": "Previous page",
     "rows_per_page": "Rows per page"
   },
   "password": "Password",
