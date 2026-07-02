@@ -810,6 +810,16 @@
       "switch_instead": "Or switch to an existing organization",
       "title": "Create a free integrator organization?"
     },
+    "docs": {
+      "api_description": "REST API to run managed elections: organizations, members, censuses, processes and results.",
+      "api_title": "API",
+      "protocol_description": "Every vote is anonymous and end-to-end verifiable, anchored on a public voting protocol.",
+      "protocol_title": "Protocol",
+      "sdk_description": "The TypeScript SDK gives you lower-level control over voting and census operations.",
+      "sdk_title": "SDK",
+      "subtitle": "Guides and references to start building with Vocdoni.",
+      "title": "Documentation"
+    },
     "managed": {
       "active": "Active",
       "created": "Created",

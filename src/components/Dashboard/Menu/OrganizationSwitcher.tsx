@@ -80,6 +80,14 @@ export const OrganizationSwitcher = () => {
 
   const numOrgs = organizations.length
 
+  // Hide the "add new organization" action while operating in an integrator org: integrators manage a
+  // single org and create client orgs through the portal, not this switcher. Derived from the selected
+  // membership so we don't need to thread a prop down through the layout into the shared switcher.
+  const selectedIsIntegrator = useMemo(
+    () => profile?.organizations?.some((org) => org.organization.address === selectedOrg && org.isIntegrator) ?? false,
+    [profile, selectedOrg]
+  )
+
   return (
     <>
       <PopoverBody minH={'unset'}>
@@ -122,39 +130,41 @@ export const OrganizationSwitcher = () => {
           ))}
         </Flex>
       </PopoverBody>
-      <PopoverFooter minH={'unset'}>
-        <Button
-          asChild
-          aria-label={t('create_org.title')}
-          justifyContent={'start'}
-          gap={2}
-          variant='listmenu'
-          w='full'
-          px={2}
-          py={1.5}
-          h={'unset'}
-          borderRadius={'xs'}
-          mt={1}
-          css={{ '& span:nth-of-type(2)': { marginLeft: 'auto' } }}
-        >
-          <ReactRouterLink to={Routes.dashboard.organizationCreate}>
-            <Flex
-              justifyContent={'center'}
-              alignItems={'center'}
-              border='1px solid'
-              borderColor='table.border'
-              w='22px'
-              h='22px'
-              borderRadius='xs'
-            >
-              <Icon as={LuPlus} boxSize={4} ml={2} mr={2} />
-            </Flex>
-            <Text as={'span'} h='unset' fontWeight={'bold'} fontSize='sm'>
-              {t('add_new_org', { defaultValue: 'Add a new organization' })}
-            </Text>
-          </ReactRouterLink>
-        </Button>
-      </PopoverFooter>
+      {!selectedIsIntegrator && (
+        <PopoverFooter minH={'unset'}>
+          <Button
+            asChild
+            aria-label={t('create_org.title')}
+            justifyContent={'start'}
+            gap={2}
+            variant='listmenu'
+            w='full'
+            px={2}
+            py={1.5}
+            h={'unset'}
+            borderRadius={'xs'}
+            mt={1}
+            css={{ '& span:nth-of-type(2)': { marginLeft: 'auto' } }}
+          >
+            <ReactRouterLink to={Routes.dashboard.organizationCreate}>
+              <Flex
+                justifyContent={'center'}
+                alignItems={'center'}
+                border='1px solid'
+                borderColor='table.border'
+                w='22px'
+                h='22px'
+                borderRadius='xs'
+              >
+                <Icon as={LuPlus} boxSize={4} ml={2} mr={2} />
+              </Flex>
+              <Text as={'span'} h='unset' fontWeight={'bold'} fontSize='sm'>
+                {t('add_new_org', { defaultValue: 'Add a new organization' })}
+              </Text>
+            </ReactRouterLink>
+          </Button>
+        </PopoverFooter>
+      )}
     </>
   )
 }

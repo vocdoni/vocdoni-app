@@ -810,6 +810,16 @@
       "switch_instead": "",
       "title": ""
     },
+    "docs": {
+      "api_description": "",
+      "api_title": "",
+      "protocol_description": "",
+      "protocol_title": "",
+      "sdk_description": "",
+      "sdk_title": "",
+      "subtitle": "",
+      "title": ""
+    },
     "managed": {
       "active": "",
       "created": "",

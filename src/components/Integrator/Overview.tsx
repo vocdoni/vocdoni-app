@@ -1,7 +1,8 @@
-import { Alert, Flex, SimpleGrid, Spinner } from '@chakra-ui/react'
+import { Alert, Box, Flex, HStack, Icon, LinkOverlay, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
+import { LuArrowUpRight, LuCode, LuServer, LuShieldCheck } from 'react-icons/lu'
 import { BookerModalButton } from '~components/Dashboard/Booker'
-import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DashboardBox, DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
 import { useIntegratorInfo } from '~src/queries/integrators'
 import { QuotaCard } from './QuotaCard'
 
@@ -35,6 +36,34 @@ export const IntegratorOverview = () => {
   }
 
   const { limits, usage } = data
+
+  // Documentation shortcuts, mirroring the developer portal cards (API / SDK / Protocol).
+  const docs = [
+    {
+      href: 'https://vocdoni.io/en/developers/docs',
+      icon: LuServer,
+      title: t('integrators.docs.api_title', { defaultValue: 'API' }),
+      description: t('integrators.docs.api_description', {
+        defaultValue: 'REST API to run managed elections: organizations, members, censuses, processes and results.',
+      }),
+    },
+    {
+      href: 'https://github.com/vocdoni/integrator-sdk',
+      icon: LuCode,
+      title: t('integrators.docs.sdk_title', { defaultValue: 'SDK' }),
+      description: t('integrators.docs.sdk_description', {
+        defaultValue: 'The TypeScript SDK gives you lower-level control over voting and census operations.',
+      }),
+    },
+    {
+      href: 'https://davinci.vote',
+      icon: LuShieldCheck,
+      title: t('integrators.docs.protocol_title', { defaultValue: 'Protocol' }),
+      description: t('integrators.docs.protocol_description', {
+        defaultValue: 'Every vote is anonymous and end-to-end verifiable, anchored on a public voting protocol.',
+      }),
+    },
+  ]
 
   return (
     <DashboardContents>
@@ -76,6 +105,38 @@ export const IntegratorOverview = () => {
           limit={limits.maxEmails}
         />
       </SimpleGrid>
+
+      <Box mt={8}>
+        <DashboardCardHeader
+          title={t('integrators.docs.title', { defaultValue: 'Documentation' })}
+          subtitle={t('integrators.docs.subtitle', {
+            defaultValue: 'Guides and references to start building with Vocdoni.',
+          })}
+        />
+        <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+          {docs.map((doc) => (
+            <DashboardBox
+              key={doc.href}
+              position='relative'
+              gap={3}
+              justifyContent='flex-start'
+              transition='border-color 0.15s'
+              _hover={{ _light: { borderColor: 'blue.400' }, _dark: { borderColor: 'blue.400' } }}
+            >
+              <HStack justify='space-between'>
+                <Icon as={doc.icon} boxSize={6} color='blue.500' />
+                <Icon as={LuArrowUpRight} boxSize={4} color='texts.subtle' />
+              </HStack>
+              <LinkOverlay href={doc.href} target='_blank' rel='noopener noreferrer' fontWeight='bold' fontSize='md'>
+                {doc.title}
+              </LinkOverlay>
+              <Text fontSize='sm' color='texts.subtle'>
+                {doc.description}
+              </Text>
+            </DashboardBox>
+          ))}
+        </SimpleGrid>
+      </Box>
     </DashboardContents>
   )
 }
