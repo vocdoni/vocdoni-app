@@ -59,7 +59,8 @@ const mockProfile = (orgs: Array<{ isIntegrator?: boolean; address?: string }>) 
     data: {
       organizations: orgs.map((o, i) => ({
         role: 'admin',
-        organization: { address: o.address ?? `0x${i + 1}`, isIntegrator: o.isIntegrator },
+        isIntegrator: o.isIntegrator,
+        organization: { address: o.address ?? `0x${i + 1}` },
       })),
     },
     isLoading: false,

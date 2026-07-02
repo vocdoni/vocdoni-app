@@ -3,6 +3,7 @@ import { Organization } from '~src/queries/account'
 export interface Profile {
   organizations: Array<{
     role: string
+    isIntegrator?: boolean
     organization: Organization
   }>
 }
@@ -18,11 +19,13 @@ export const getSelectedOrganization = (profile: Profile | null, selectedAddress
 }
 
 /**
- * Returns true if the selected organization (or first org as fallback) is an integrator.
+ * Returns true if the selected membership (or first one as fallback) is an integrator. The flag
+ * lives on the membership wrapper, not the nested organization (see UserRole).
  */
 export const isSelectedOrganizationIntegrator = (profile: Profile | null, selectedAddress: string): boolean => {
-  const org = getSelectedOrganization(profile, selectedAddress)
-  return org?.isIntegrator ?? false
+  if (!profile?.organizations) return false
+  const selected = profile.organizations.find((org) => org.organization.address === selectedAddress)
+  return (selected ?? profile.organizations[0])?.isIntegrator ?? false
 }
 
 /**

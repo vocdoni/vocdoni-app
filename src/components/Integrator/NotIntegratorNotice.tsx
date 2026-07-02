@@ -84,19 +84,19 @@ const NotIntegratorNotice = () => {
               {t('integrators.create_org.switch_instead', { defaultValue: 'Or switch to an existing organization' })}
             </Text>
             <Stack gap={1} maxH='160px' overflowY='auto'>
-              {organizations.map(({ organization }) => (
+              {organizations.map(({ organization, isIntegrator }) => (
                 <Button
                   key={organization.address}
                   variant='outline'
                   justifyContent='flex-start'
                   gap={2}
-                  onClick={() => selectOrganization(organization)}
+                  onClick={() => selectOrganization(organization, isIntegrator)}
                 >
                   <Icon as={LuSquareStack} />
                   <Text as='span' fontSize='sm' truncate>
                     {names[organization.address] || organization.address}
                   </Text>
-                  {organization.isIntegrator && (
+                  {isIntegrator && (
                     <TagRoot colorPalette='purple' ml='auto !important'>
                       {/* "API" is a universal acronym, not translated in any locale */}
                       <TagLabel>API</TagLabel>

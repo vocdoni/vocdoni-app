@@ -23,6 +23,7 @@ import { useSelectOrganization } from './useSelectOrganization'
 type SelectOption = {
   value: string
   label: string
+  isIntegrator?: boolean
   organization: Organization
 }
 
@@ -42,6 +43,7 @@ export const OrganizationSwitcher = () => {
     return profile.organizations.map((org) => ({
       value: org.organization.address,
       label: names[org.organization.address] || org.organization.address,
+      isIntegrator: org.isIntegrator,
       organization: org.organization,
     }))
   }, [profile, names])
@@ -68,7 +70,7 @@ export const OrganizationSwitcher = () => {
   const handleOrgChange = async (option: SelectOption | null) => {
     if (!option) return
     setSelectedOrg(option.value)
-    await selectOrganization(option.organization)
+    await selectOrganization(option.organization, option.isIntegrator)
   }
 
   const numOrgs = organizations.length
@@ -78,7 +80,7 @@ export const OrganizationSwitcher = () => {
       <PopoverBody minH={'unset'}>
         <Text fontSize='xs' fontWeight={600} px={1.5} py={2}>
           <Trans i18nKey='organizations' values={{ numOrgs }}>
-            Organizations ({numOrgs})
+            Organizations ({{ numOrgs }})
           </Trans>
         </Text>
         <Flex flexDirection={'column'} maxH={'130px'} overflowY={'scroll'}>
@@ -98,7 +100,7 @@ export const OrganizationSwitcher = () => {
                   {org.label}
                 </Text>
                 <HStack gap={1} flexShrink={0}>
-                  {org.organization.isIntegrator && (
+                  {org.isIntegrator && (
                     <TagRoot colorPalette='purple'>
                       {/* "API" is a universal acronym, not translated in any locale */}
                       <TagLabel>API</TagLabel>

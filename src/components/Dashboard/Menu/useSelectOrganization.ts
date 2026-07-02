@@ -16,14 +16,15 @@ export const useSelectOrganization = () => {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  return async (organization: Organization) => {
+  // `isIntegrator` comes from the membership wrapper (UserRole), not the organization itself.
+  return async (organization: Organization, isIntegrator: boolean = false) => {
     localStorage.setItem(LocalStorageKeys.SignerAddress, organization.address)
     // clear all query client query cache
     queryClient.clear()
     // refresh signer
     await signerRefresh()
     // Navigate to the correct private app root based on the selected org's integrator flag
-    const targetPath = organization.isIntegrator ? Routes.integrators.base : Routes.dashboard.base
+    const targetPath = isIntegrator ? Routes.integrators.base : Routes.dashboard.base
     navigate(targetPath, { replace: true })
   }
 }

@@ -4,6 +4,7 @@ import { getPrivateAppRoot, getSelectedOrganization, isSelectedOrganizationInteg
 const mockProfile = (orgs: Array<{ address: string; integrator?: boolean }> = []) => ({
   organizations: orgs.map((org) => ({
     role: 'admin',
+    isIntegrator: org.integrator,
     organization: {
       address: org.address,
       type: 'organization',
@@ -13,7 +14,6 @@ const mockProfile = (orgs: Array<{ address: string; integrator?: boolean }> = []
       subdomain: '',
       timezone: 'UTC',
       active: true,
-      isIntegrator: org.integrator,
     },
   })),
 })
@@ -28,7 +28,6 @@ describe('privateAppRouting helpers', () => {
       const result = getSelectedOrganization(profile, 'org2')
       expect(result).toBeDefined()
       expect(result?.address).toBe('org2')
-      expect(result?.isIntegrator).toBe(true)
     })
 
     it('returns the first org when selectedAddress is not in profile', () => {

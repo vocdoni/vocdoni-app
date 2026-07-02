@@ -34,7 +34,7 @@ import NotIntegratorNotice from './NotIntegratorNotice'
 const mockProfile = (addresses: string[]) =>
   vi.mocked(useProfile).mockReturnValue({
     data: {
-      organizations: addresses.map((address) => ({ role: 'admin', organization: { address, isIntegrator: false } })),
+      organizations: addresses.map((address) => ({ role: 'admin', isIntegrator: false, organization: { address } })),
     },
   } as any)
 

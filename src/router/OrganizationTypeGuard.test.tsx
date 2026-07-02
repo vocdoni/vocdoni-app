@@ -46,6 +46,7 @@ describe('OrganizationTypeGuard', () => {
         organizations: [
           {
             role: 'admin',
+            isIntegrator: integrator,
             organization: {
               address: '0x123',
               type: 'organization',
@@ -55,7 +56,6 @@ describe('OrganizationTypeGuard', () => {
               subdomain: '',
               timezone: 'UTC',
               active: true,
-              isIntegrator: integrator,
             },
           },
         ],

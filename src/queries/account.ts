@@ -16,7 +16,6 @@ export interface Organization {
   subdomain: string
   timezone: string
   active: boolean
-  isIntegrator?: boolean
   parent?: any
   subscription?: Subscription
 }
@@ -31,6 +30,9 @@ export interface Subscription {
 
 export interface UserRole {
   role: string
+  // The integrator flag lives on the membership, not the organization: /users/me returns it at
+  // organizations[].isIntegrator (alongside `role`), not on the nested organization object.
+  isIntegrator?: boolean
   organization: Organization
 }
 
