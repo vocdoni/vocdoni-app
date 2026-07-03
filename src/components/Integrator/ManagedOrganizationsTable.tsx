@@ -11,10 +11,6 @@ const formatDate = (value: string) => {
 const shortAddress = (address: string) =>
   address && address.length > 14 ? `${address.slice(0, 8)}…${address.slice(-4)}` : address
 
-// A human label for the org: its given name, falling back to the website (the address is always
-// shown beneath, so an unnamed org still renders an identifier).
-const orgName = (org: ManagedOrganization) => org.meta?.name?.trim() || org.website?.trim() || ''
-
 const formatCount = (value?: number) => (value ?? 0).toLocaleString()
 
 export const ManagedOrganizationsTable = ({ organizations }: { organizations: ManagedOrganization[] }) => {
@@ -43,7 +39,7 @@ export const ManagedOrganizationsTable = ({ organizations }: { organizations: Ma
         </Table.Header>
         <Table.Body>
           {organizations.map((org) => {
-            const name = orgName(org)
+            const name = org.meta?.name?.trim() || org.website?.trim() || undefined
             return (
               <Table.Row key={org.address}>
                 <Table.Cell>

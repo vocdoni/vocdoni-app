@@ -22,13 +22,20 @@ describe('ManagedOrganizationsTable', () => {
     )
 
     expect(screen.getByText('Acme')).toBeInTheDocument()
-    // shortened address
     expect(screen.getByText('0x123456…5678')).toBeInTheDocument()
     expect(screen.getByText('7')).toBeInTheDocument()
     expect(screen.getByText('Active')).toBeInTheDocument()
   })
 
-  it('falls back to the address when the org has no name', () => {
+  it('falls back to the website when the org has no name', () => {
+    render(<ManagedOrganizationsTable organizations={[org({ website: 'https://example.com', active: false })]} />)
+
+    expect(screen.getByText('https://example.com')).toBeInTheDocument()
+    expect(screen.getByText('0x123456…5678')).toBeInTheDocument()
+    expect(screen.getByText('Inactive')).toBeInTheDocument()
+  })
+
+  it('falls back to the address when the org has no name and no website', () => {
     render(<ManagedOrganizationsTable organizations={[org({ active: false })]} />)
 
     expect(screen.getByText('0x123456…5678')).toBeInTheDocument()
