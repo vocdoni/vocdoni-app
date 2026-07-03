@@ -11,7 +11,7 @@ export const useOrganizationNames = (addresses: string[]) => {
   const { client } = useClient()
 
   return useQuery({
-    queryKey: QueryKeys.organization.names,
+    queryKey: [...QueryKeys.organization.names, ...addresses],
     queryFn: async () => {
       const names: Record<string, string> = {}
       for (const address of addresses) {

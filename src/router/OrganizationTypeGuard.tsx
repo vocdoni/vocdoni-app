@@ -1,9 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { Routes } from './routes'
 import { Loading } from '~src/router/SuspenseLoader'
+import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useProfile } from '~src/queries/account'
-import { getPrivateAppRoot, Profile as ProfileType } from './privateAppRouting'
+import { getPrivateAppRoot } from './privateAppRouting'
 
 interface OrganizationTypeGuardProps {
   redirectPath: string // The path this guard should redirect to (/admin or /integrators)
@@ -29,7 +30,7 @@ const OrganizationTypeGuard = ({ redirectPath }: OrganizationTypeGuardProps) => 
 
   // Determine the correct private app root based on organization type
   const expectedRoot = redirectPath
-  const actualRoot = getPrivateAppRoot(profile ?? null, localStorage.getItem('signerAddress') ?? '')
+  const actualRoot = getPrivateAppRoot(profile ?? null, localStorage.getItem(LocalStorageKeys.SignerAddress) ?? '')
 
   // If the actual root doesn't match the expected path, redirect
   if (actualRoot !== expectedRoot) {
