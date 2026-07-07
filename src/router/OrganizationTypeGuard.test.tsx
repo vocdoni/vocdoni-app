@@ -1,6 +1,10 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useAuth } from '~components/Auth/useAuth'
+import { useProfile } from '~src/queries/account'
+import { TestMemoryRouter } from '~src/test-utils'
+import OrganizationTypeGuard from './OrganizationTypeGuard'
 
 // Mock at module level
 vi.mock('~src/queries/account', () => ({
@@ -17,19 +21,15 @@ vi.mock('./routes', () => ({
   },
 }))
 
-import OrganizationTypeGuard from './OrganizationTypeGuard'
-import { useProfile } from '~src/queries/account'
-import { useAuth } from '~components/Auth/useAuth'
-
 const renderWithRouter = (component: React.ReactElement, initialEntries = ['/admin']) => {
   return render(
-    <MemoryRouter initialEntries={initialEntries}>
+    <TestMemoryRouter initialEntries={initialEntries}>
       <Routes>
         <Route path='/admin' element={<div>Admin</div>} />
         <Route path='/integrators' element={<div>Integrators</div>} />
         <Route path='*' element={component} />
       </Routes>
-    </MemoryRouter>
+    </TestMemoryRouter>
   )
 }
 

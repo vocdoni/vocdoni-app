@@ -1,7 +1,8 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route, Routes as RouterRoutes } from 'react-router-dom'
+import { Route, Routes as RouterRoutes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { TestMemoryRouter } from '~src/test-utils'
 import { system } from '~theme/system'
 
 vi.mock('~src/queries/account', () => ({
@@ -40,14 +41,14 @@ import IntegratorOrgGuard from './IntegratorOrgGuard'
 const renderGuard = () =>
   render(
     <ChakraProvider value={system}>
-      <MemoryRouter initialEntries={['/integrators']}>
+      <TestMemoryRouter initialEntries={['/integrators']}>
         <RouterRoutes>
           <Route path='/admin' element={<div>Admin</div>} />
           <Route path='/integrators' element={<IntegratorOrgGuard />}>
             <Route index element={<div>Integrator Dashboard</div>} />
           </Route>
         </RouterRoutes>
-      </MemoryRouter>
+      </TestMemoryRouter>
     </ChakraProvider>
   )
 
