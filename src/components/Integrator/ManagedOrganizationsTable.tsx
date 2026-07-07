@@ -39,7 +39,7 @@ export const ManagedOrganizationsTable = ({ organizations }: { organizations: Ma
         </Table.Header>
         <Table.Body>
           {organizations.map((org) => {
-            const name = org.meta?.name?.trim() || org.website?.trim() || undefined
+            const name = org.meta?.name?.default.trim() || org.website?.trim() || undefined
             return (
               <Table.Row key={org.address}>
                 <Table.Cell>

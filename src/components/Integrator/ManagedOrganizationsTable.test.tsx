@@ -1,5 +1,5 @@
-import { render, screen } from '~src/test-utils'
 import { ManagedOrganization } from '~src/queries/integrators'
+import { render, screen } from '~src/test-utils'
 import { ManagedOrganizationsTable } from './ManagedOrganizationsTable'
 
 const org = (overrides: Partial<ManagedOrganization> = {}): ManagedOrganization => ({
@@ -16,7 +16,10 @@ describe('ManagedOrganizationsTable', () => {
     render(
       <ManagedOrganizationsTable
         organizations={[
-          org({ meta: { name: 'Acme' }, counters: { processes: 7, sentSMS: 3, sentEmails: 9, subOrgs: 0, users: 0 } }),
+          org({
+            meta: { name: { default: 'Acme' } },
+            counters: { processes: 7, sentSMS: 3, sentEmails: 9, subOrgs: 0, users: 0 },
+          }),
         ]}
       />
     )

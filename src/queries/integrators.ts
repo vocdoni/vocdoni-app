@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
-import { ensure0x } from '@vocdoni/sdk'
+import { ensure0x, MultiLanguage } from '@vocdoni/sdk'
 import { ApiEndpoints } from '~components/Auth/api'
-import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
+import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { QueryKeys } from './keys'
 
 type ProvisionedOrganization = { address: string }
@@ -62,12 +62,14 @@ export type OrganizationCounters = {
 // creation; the rest mirror the backend OrganizationInfo fields we surface.
 export type ManagedOrganization = {
   address: string
-  website: string
-  createdAt: string
-  type: string
   active: boolean
-  meta?: { name?: string }
   counters?: OrganizationCounters
+  createdAt: string
+  meta?: { name?: MultiLanguage<string> }
+  name?: MultiLanguage<string>
+  description?: MultiLanguage<string>
+  type: string
+  website: string
 }
 
 export type ManagedOrganizationsResponse = {
