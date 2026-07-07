@@ -14,6 +14,11 @@ export const configureApiBaseUrl = (url?: string) => {
 
 export enum ApiEndpoints {
   InviteAccept = 'organizations/{address}/users/accept',
+  // Path-less: the integrator organization is resolved server-side from the authenticated session.
+  Integrator = 'integrator',
+  ManagedOrganizations = 'integrator/organizations',
+  OrganizationApiKeys = 'organizations/{address}/apikeys',
+  OrganizationApiKey = 'organizations/{address}/apikeys/{keyID}',
   Login = 'auth/login',
   Me = 'users/me',
   Organization = 'organizations/{address}',

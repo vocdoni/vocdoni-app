@@ -109,7 +109,8 @@
     "disable": "Disable",
     "enable": "Enable",
     "home": "Home",
-    "next": "Next"
+    "next": "Next",
+    "retry": "Try again"
   },
   "confirm": {
     "cancel": "Cancel",
@@ -747,6 +748,128 @@
     "view_errors_one": "View {{count}} error",
     "view_errors_other": "View {{count}} errors"
   },
+  "integrators": {
+    "api_keys": {
+      "actions": "Actions",
+      "copy": "Copy",
+      "copy_now_description": "This is the only time the full secret is shown. Store it somewhere safe.",
+      "copy_now_title": "Copy your key now",
+      "create": "Create API key",
+      "created_title": "API key created",
+      "done": "Done",
+      "empty_description": "Create a key to access the API without signing in.",
+      "empty_title": "No API keys yet",
+      "error_label_required": "A label is required.",
+      "error_scope_required": "Select at least one scope.",
+      "expires": "Expires",
+      "expiry": "Expiry (optional)",
+      "expiry_help": "Leave empty for a key that never expires.",
+      "intro": "Programmatic credentials for calling the API as this organization. Secrets are shown only once.",
+      "key": "Key",
+      "label": "Label",
+      "label_placeholder": "e.g. CI pipeline",
+      "last_used": "Last used",
+      "load_error": "Couldn't load API keys",
+      "revoke": "Revoke key",
+      "revoke_cancel": "Cancel",
+      "revoke_confirm": "Revoke",
+      "revoke_confirm_description": "This permanently disables \"{{label}}\". Any integration using it will stop working immediately.",
+      "revoke_confirm_title": "Revoke API key?",
+      "revoke_error": "Could not revoke key",
+      "revoked": "API key revoked",
+      "scopes": {
+        "managed_read": "List managed orgs",
+        "managed_read_desc": "List managed organizations",
+        "managed_write": "Create managed orgs",
+        "managed_write_desc": "Create managed organizations",
+        "members_write": "Manage members",
+        "members_write_desc": "Manage members and groups",
+        "quota_read": "Read quota",
+        "quota_read_desc": "Read integrator quota and usage",
+        "voting_write": "Manage voting",
+        "voting_write_desc": "Create and publish processes, censuses and bundles"
+      },
+      "scopes_legend": "Scopes",
+      "status": "Status",
+      "status_active": "Active",
+      "status_expired": "Expired",
+      "status_revoked": "Revoked",
+      "subtitle": "Create and manage API keys to access the API programmatically.",
+      "title": "API keys"
+    },
+    "change_plan": "Change plan",
+    "configuration": {
+      "subtitle": "Manage your subscription and get support.",
+      "title": "Configuration"
+    },
+    "create_org": {
+      "cancel": "Cancel",
+      "confirm": "Create organization",
+      "description": "A new organization on the free integrator plan will be created on your account and set as your active organization.",
+      "error": "Could not create the organization",
+      "switch_instead": "Or switch to an existing organization",
+      "title": "Create a free integrator organization?"
+    },
+    "docs": {
+      "api_description": "A REST API to run managed elections: organizations, members, censuses, processes, results and async jobs.",
+      "api_title": "SaaS API",
+      "quickstart_description": "Run a full election end to end — create an org, build a census, open a process and read the tally — in a few API calls.",
+      "quickstart_title": "Quickstart",
+      "sdk_description": "The TypeScript SDK adds client-side voting to your app — CSP auth, ballot encoding and vote signing — all through the SaaS API.",
+      "sdk_title": "SDK",
+      "subtitle": "Guides and references to start building with Vocdoni.",
+      "title": "Documentation"
+    },
+    "managed": {
+      "active": "Active",
+      "created": "Created",
+      "emails": "Emails",
+      "empty_description": "Organizations you provision for your customers will appear here.",
+      "empty_title": "No managed organizations yet",
+      "error": "Unable to load organizations",
+      "inactive": "Inactive",
+      "organization": "Organization",
+      "pagination": "Page {{page}} of {{total}} · {{items}} total",
+      "processes": "Processes",
+      "sms": "SMS",
+      "status": "Status",
+      "subtitle": "Organizations you manage on behalf of your customers.",
+      "title": "Managed organizations"
+    },
+    "not_integrator": {
+      "cta": "Create a free integrator organization",
+      "description": "The selected organization is not an integrator. Create a free integrator organization to unlock this dashboard — no manual approval needed.",
+      "title": "This organization isn't an integrator yet"
+    },
+    "overview": "Overview",
+    "overview_error": "Unable to load integrator quota",
+    "overview_subtitle": "Your integrator quota and current usage.",
+    "overview_title": "Overview",
+    "provision_failed": "We couldn't set up your organization.",
+    "quota": {
+      "emails": "Emails used",
+      "limit_reached": "Limit reached",
+      "managed_orgs": "Managed organizations",
+      "sms": "SMS used",
+      "unlimited": "Unlimited",
+      "used": "used",
+      "votes": "Votes emitted",
+      "voting_processes": "Voting processes"
+    },
+    "setting_up_org": "Setting up your organization…",
+    "signin_subtitle": "Access your integrator dashboard.",
+    "signin_title": "Sign in",
+    "signup_subtitle": "Sign up to manage organizations as an integrator.",
+    "signup_title": "Create your integrator account",
+    "subscription": {
+      "active": "Active",
+      "billing_details": "Billing details",
+      "current_plan": "Current plan",
+      "inactive": "Inactive",
+      "portal_error": "Could not open the billing portal",
+      "unavailable": "Subscription details are unavailable"
+    }
+  },
   "internal_server_error": "Internal server error",
   "invalid_promo_code": "Invalid promotion code",
   "invite": {
@@ -1030,7 +1153,9 @@
   "organizations": "Organizations ({{ numOrgs }})",
   "other_details": "Other details",
   "pagination": {
+    "next": "Next page",
     "page_out_of": "Page {{page}} of {{total}}",
+    "previous": "Previous page",
     "rows_per_page": "Rows per page"
   },
   "password": "Password",

@@ -24,6 +24,11 @@ vi.mock('./routes/root', () => ({
   useRootRoutes: () => ({ path: '/' }),
 }))
 
+vi.mock('./routes/integrators', () => ({
+  useIntegratorsRoutes: () => ({ path: '/integrators' }),
+  useIntegratorsAuthRoutes: () => ({ path: '/integrators/signin' }),
+}))
+
 describe('RoutesProvider', () => {
   beforeEach(() => {
     createBrowserRouter.mockClear()

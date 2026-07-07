@@ -12,6 +12,9 @@ import { api, ApiEndpoints } from '../Auth/api'
 type PasswordResetFormProps = {
   code?: string
   email?: string
+  // Route to send the user to after a successful reset, overridable so the integrators app can
+  // keep users within its own flow. Defaults preserve the regular /account flow behavior.
+  signInRoute?: string
 }
 
 type PasswordResetFormValues = {
@@ -21,7 +24,7 @@ type PasswordResetFormValues = {
   confirmPassword: string
 }
 
-const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) => {
+const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email, signInRoute = Routes.auth.signIn }) => {
   const toast = useToast()
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -45,7 +48,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email }) =>
   const onSubmit = (data: PasswordResetFormValues) => {
     resetPasswordMutation.mutate(data, {
       onSuccess: () => {
-        navigate(Routes.auth.signIn)
+        navigate(signInRoute)
         toast({
           title: t('password_reset_successful', { defaultValue: 'Password reset successful' }),
           type: 'success',

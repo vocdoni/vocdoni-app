@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { useAuthRoutes, useCreateOrganizationRoutes } from './routes/auth'
 import { useDashboardRoutes } from './routes/dashboard'
+import { useIntegratorsAuthRoutes, useIntegratorsRoutes } from './routes/integrators'
 import { useHomeRoute } from './routes/home'
 import { useRootRoutes } from './routes/root'
 
@@ -9,6 +10,8 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
   const root = useRootRoutes()
   const auth = useAuthRoutes()
   const dashboard = useDashboardRoutes()
+  const integrators = useIntegratorsRoutes()
+  const integratorsAuth = useIntegratorsAuthRoutes()
   const createOrganizationRoute = useCreateOrganizationRoutes()
 
   const resolvedBasename = basename ?? import.meta.env.BASE_URL
@@ -17,9 +20,12 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
   // whenever the values their loaders close over change (client/account from
   // useClient, queryClient), so memoizing would pin stale loader closures —
   // e.g. the dashboard list loader would keep a pre-login `account`.
-  const router = createBrowserRouter([home, root, auth, dashboard, createOrganizationRoute], {
-    basename: resolvedBasename,
-  })
+  const router = createBrowserRouter(
+    [home, root, auth, dashboard, integrators, integratorsAuth, createOrganizationRoute],
+    {
+      basename: resolvedBasename,
+    }
+  )
 
   // Key by basename so a language switch — the only time the basename changes —
   // remounts the router to adopt the new prefix, since RouterProvider keeps the

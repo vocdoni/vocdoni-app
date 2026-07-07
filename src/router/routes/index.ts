@@ -10,6 +10,21 @@ export const Routes = {
     passwordReset: '/account/password/reset',
   },
   contact: 'https://www.vocdoni.io/contact',
+  integrators: {
+    base: '/integrators', // Overview
+    signIn: '/integrators/signin',
+    signUp: '/integrators/signup',
+    recovery: '/integrators/password',
+    passwordReset: '/integrators/password/reset',
+    // Sections landing in follow-up PRs (declared here so the nav config can reference them):
+    managedOrganizations: '/integrators/organizations',
+    apiKeys: '/integrators/api-keys',
+    configuration: {
+      base: '/integrators/configuration',
+      subscription: '/integrators/configuration/subscription',
+      support: '/integrators/configuration/support',
+    },
+  },
   dashboard: {
     base: '/admin',
     organization: '/admin/organization',

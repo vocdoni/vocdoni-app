@@ -67,8 +67,20 @@ describe('dashboard process routes', () => {
     const { useDashboardRoutes } = await import('./dashboard')
 
     const { result } = renderHook(() => useDashboardRoutes())
-    const protectedRoute = result.current.children?.[0]?.children?.find((route) => !route.path)
-    const processRoute = protectedRoute?.children?.find((route) => route.path === Routes.dashboard.process)
+    // There's OrganizationTypeGuard wrapper before LayoutDashboard
+    const guardRoute = result.current.children?.[0]
+    expect(guardRoute).toBeDefined()
+    // Find the LayoutDashboard route (no path, has organizationCreate as child)
+    const layoutRoute = guardRoute?.children?.find(
+      (route: any) => !route.path && route.children?.some((c: any) => c.path === Routes.dashboard.organizationCreate)
+    )
+    expect(layoutRoute).toBeDefined()
+    // Find the OrganizationProtectedRoute wrapper (no path, has process as child)
+    const orgProtectedRoute = layoutRoute?.children?.find(
+      (route: any) => !route.path && route.children?.some((c: any) => c.path === Routes.dashboard.process)
+    )
+    expect(orgProtectedRoute).toBeDefined()
+    const processRoute = orgProtectedRoute?.children?.find((route: any) => route.path === Routes.dashboard.process)
     const indexChild = processRoute?.children?.[0]
     const resultsChild = processRoute?.children?.[1]
 

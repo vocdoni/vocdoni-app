@@ -1,7 +1,15 @@
-import { DashboardLayoutContext } from '~elements/LayoutDashboard'
+import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { Routes } from '~src/router/routes'
 import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
 import DashboardMenu from './index'
+import { DashboardMenuConfig } from './menus'
+
+const adminMenu: DashboardMenuConfig = {
+  homeRoute: Routes.dashboard.base,
+  newVote: true,
+  tutorial: true,
+  sections: [],
+}
 
 const mockUseTutorials = vi.fn(() => ({
   isSidebarTutorialClosed: true,
@@ -34,7 +42,7 @@ const renderMenu = (reduced: boolean, onToggleReduced = vi.fn()) =>
   render(
     <DashboardLayoutContext.Provider value={{ reduced } as any}>
       <TestMemoryRouter>
-        <DashboardMenu isOpen={false} onClose={vi.fn()} onToggleReduced={onToggleReduced} />
+        <DashboardMenu isOpen={false} onClose={vi.fn()} onToggleReduced={onToggleReduced} menu={adminMenu} />
       </TestMemoryRouter>
     </DashboardLayoutContext.Provider>
   )

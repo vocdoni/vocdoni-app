@@ -109,7 +109,8 @@
     "disable": "Desgaitu",
     "enable": "Gaitu",
     "home": "Hasiera",
-    "next": "Hurrengoa"
+    "next": "Hurrengoa",
+    "retry": "Berriro saiatu"
   },
   "confirm": {
     "cancel": "Utzi",
@@ -747,6 +748,128 @@
     "view_errors_one": "Ikusi {{count}} errorea",
     "view_errors_other": "Ikusi {{count}} errore"
   },
+  "integrators": {
+    "api_keys": {
+      "actions": "Ekintzak",
+      "copy": "Kopiatu",
+      "copy_now_description": "Hau da sekretua agertzeko bakarra den aldi. Gorde leku seguruan.",
+      "copy_now_title": "Kopiatu zure gakoa orain",
+      "create": "Sortu APIren gakoa",
+      "created_title": "APIren gakoa sortu da",
+      "done": "Eginda",
+      "empty_description": "Sortu gako bat APIa atzitzeko sartu beharrik gabe.",
+      "empty_title": "Oraindik ez dago APIren gakorik",
+      "error_label_required": "Etiketa bat beharrezkoa da.",
+      "error_scope_required": "Hautatu esparru bat gutxienez.",
+      "expires": "Baliogabetzea",
+      "expiry": "Baliogabetzea (aukerazkoa)",
+      "expiry_help": "Utzi hutsik gakoaren baliogabetzarik ez izatea nahi baduzu.",
+      "intro": "Erakundearen APIa deitzeko kredentzialen programatikoak. Sekretuak behin bakarrik agertzen dira.",
+      "key": "Gakoa",
+      "label": "Etiketa",
+      "label_placeholder": "adib. CI pipeline",
+      "last_used": "Azkenean erabilia",
+      "load_error": "Ezin izan da APIren gakoak kargatu",
+      "revoke": "Deuseztatu gakoa",
+      "revoke_cancel": "Utzi",
+      "revoke_confirm": "Deuseztatu",
+      "revoke_confirm_description": "«{{label}}» betirako desgaitzen duzu. Hura erabiltzen duten integrazio guztiak berehala gelditu egingo dira.",
+      "revoke_confirm_title": "APIren gakoa deuseztatu?",
+      "revoke_error": "Ezin izan da gakoa deuseztatu",
+      "revoked": "APIren gakoa deustatu da",
+      "scopes": {
+        "managed_read": "Kudeatutako erakundeak zerrendatu",
+        "managed_read_desc": "Kudeatutako erakundeak zerrendatu",
+        "managed_write": "Kudeatutako erakundeak sortu",
+        "managed_write_desc": "Kudeatutako erakundeak sortu",
+        "members_write": "Kideak kudeatu",
+        "members_write_desc": "Kideak eta taldeak kudeatu",
+        "quota_read": "Kuota irakurri",
+        "quota_read_desc": "Integradorearen kuota eta erabilera irakurri",
+        "voting_write": "Hauteskundeak kudeatu",
+        "voting_write_desc": "Prozesuak, erroldeak eta multzoak sortu eta argitaratu"
+      },
+      "scopes_legend": "Esparruak",
+      "status": "Egoera",
+      "status_active": "Aktibo",
+      "status_expired": "Baliogabea",
+      "status_revoked": "Deustatu",
+      "subtitle": "Sortu eta kudeatu APIren gakoak APIa programatikoki atzitzeko.",
+      "title": "APIren gakoak"
+    },
+    "change_plan": "Aldatu plana",
+    "configuration": {
+      "subtitle": "Kudeatu zure harpidetzea eta lortu laguntza.",
+      "title": "Konfigurazioa"
+    },
+    "create_org": {
+      "cancel": "Utzi",
+      "confirm": "Sortu erakundea",
+      "description": "Zure kontuan integrador plano librean erakunde berri bat sortuko da eta aktibo gisa ezarriko da.",
+      "error": "Ezin izan da erakundea sortu",
+      "switch_instead": "Edo aldatu dagoen erakunde baten",
+      "title": "Integrador erakunde askea sortu?"
+    },
+    "docs": {
+      "api_description": "REST API bat kudeaturiko hauteskundeak exekutatzeko: erakundeak, kideak, erroldetak, prozesuak, emaitzak eta asinkro lanak.",
+      "api_title": "SaaS API",
+      "quickstart_description": "Hauteskunde osoa exekutatu (erakunde bat sortu, erroldeta bat sortu, prozesua ireki eta emaitzak irakurri) gutxi batzuen API deiekin.",
+      "quickstart_title": "Quickstart",
+      "sdk_description": "TypeScript SDK-ak zure aplikazioari botogintza alde-kliente bidezko funtzionalitatea gehitzen dio (CSP autentifikazioa, boto-kodifikazioa eta botoen sinadura) SaaS API baten bidez.",
+      "sdk_title": "SDK",
+      "subtitle": "Gidak eta erreferentziak Vocdoni erabiliz eraikitzen hastzeko.",
+      "title": "Dokumentazioa"
+    },
+    "managed": {
+      "active": "Aktibo",
+      "created": "Sortua",
+      "emails": "Emailak",
+      "empty_description": "Zure bezeroarentzat hornidurako erakundeak hemen agertuko dira.",
+      "empty_title": "Ez dago kudeaturiko erakunderik oraindik",
+      "error": "Ezin izan da erakundeak kargatu",
+      "inactive": "Inaktibo",
+      "organization": "Erakundea",
+      "pagination": "{{page}} orria {{total}} guztitik · {{items}} guztira",
+      "processes": "Prozesuak",
+      "sms": "SMS",
+      "status": "Egoera",
+      "subtitle": "Zure bezeroaren ordez kudeaturiko erakundeak.",
+      "title": "Kudeaturiko erakundeak"
+    },
+    "not_integrator": {
+      "cta": "Sortu dohaineko integrator erakundea",
+      "description": "Hautatutako erakundea ez da integradorea. Sortu dohaineko integrator erakundea dashboard hau desblokeatzeko - eskuzko baimenaren beharrik ez.",
+      "title": "Erakundea ez da oraindik integradorea"
+    },
+    "overview": "Gainbegirada",
+    "overview_error": "Ezin izan da integrator kuota kargatu",
+    "overview_subtitle": "Zure integrator kuota eta uneko erabilpena.",
+    "overview_title": "Gainbegirada",
+    "provision_failed": "Ezin izan dugu zure erakundea konfiguratu.",
+    "quota": {
+      "emails": "Erabilitako emailak",
+      "limit_reached": "Muga heldu da",
+      "managed_orgs": "Kudeaturiko erakundeak",
+      "sms": "Erabilitako SMS",
+      "unlimited": "Mugarik gabe",
+      "used": "erabilia",
+      "votes": "Emitutako botoak",
+      "voting_processes": "Boto-ematearen prozesuak"
+    },
+    "setting_up_org": "Zure erakundea prestatzen…",
+    "signin_subtitle": "Sartu zure integrator dashboarda.",
+    "signin_title": "Sartu",
+    "signup_subtitle": "Izena eman integrator gisa erakundeak kudeatzeko.",
+    "signup_title": "Sortu zure integrator kontua",
+    "subscription": {
+      "active": "Aktiboa",
+      "billing_details": "Fakturatze-xehetasunak",
+      "current_plan": "Uneko plana",
+      "inactive": "Inaktibo",
+      "portal_error": "Ezin da fakturazio portala ireki",
+      "unavailable": "Harpidetzaren xehetasunak ez daude erabilgarri"
+    }
+  },
   "internal_server_error": "Zerbitzariaren barne-errorea",
   "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",
   "invite": {
@@ -1030,7 +1153,9 @@
   "organizations": "Erakundeak ({{ numOrgs }})",
   "other_details": "Bestelako xehetasunak",
   "pagination": {
+    "next": "",
     "page_out_of": "{{page}}. orrialdea, guztira {{total}}",
+    "previous": "",
     "rows_per_page": "Errenkadak orrialdeko"
   },
   "password": "Pasahitza",

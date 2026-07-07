@@ -15,6 +15,7 @@ export const QueryKeys = {
       ['organizations', 'members', address, 'importJobProgress', jobID].filter(Boolean),
     drafts: (address?: string) => ['organizations', 'drafts', address].filter(Boolean),
     groups: (address?: string) => ['organizations', 'groups', address].filter(Boolean),
+    apikeys: (address?: string) => ['organizations', 'apikeys', address].filter(Boolean),
   },
   census: {
     bundle: (censusURI?: string) => ['census', 'bundle', censusURI].filter(Boolean),
@@ -23,6 +24,11 @@ export const QueryKeys = {
     census: (processId?: string) => ['process', 'census', processId].filter(Boolean),
     participantsCheck: (bundleId?: string, processID?: string, fieldName?: string, value?: string) =>
       ['process', 'participantsCheck', bundleId, processID, fieldName, value].filter(Boolean),
+  },
+  integrator: {
+    info: (address?: string) => ['integrator', 'info', address].filter(Boolean),
+    managed: (address?: string, page?: number, limit?: number) =>
+      ['integrator', 'managed', address, page, limit].filter((v) => v !== undefined && v !== null),
   },
   plans: ['plans'],
   profile: ['profile'],

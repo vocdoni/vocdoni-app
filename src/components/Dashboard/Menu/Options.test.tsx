@@ -1,12 +1,20 @@
-import { DashboardLayoutContext } from '~elements/LayoutDashboard'
+import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { render, screen, TestMemoryRouter } from '~src/test-utils'
+import { useAdminMenuConfig } from './menus'
 import { DashboardMenuOptions } from './Options'
+
+// Renders the admin options through the real admin config so the assertions below exercise the
+// actual nav items and active-match logic.
+const AdminOptions = () => {
+  const { sections } = useAdminMenuConfig()
+  return <DashboardMenuOptions sections={sections} />
+}
 
 const renderMenu = (pathname: string) => {
   render(
     <DashboardLayoutContext.Provider value={{ reduced: false }}>
       <TestMemoryRouter initialEntries={[pathname]}>
-        <DashboardMenuOptions />
+        <AdminOptions />
       </TestMemoryRouter>
     </DashboardLayoutContext.Provider>
   )

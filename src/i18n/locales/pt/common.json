@@ -112,7 +112,8 @@
     "disable": "Desativar",
     "enable": "Ativar",
     "home": "Início",
-    "next": "Seguinte"
+    "next": "Seguinte",
+    "retry": "Tenta de novo"
   },
   "confirm": {
     "cancel": "Cancelar",
@@ -755,6 +756,128 @@
     "view_errors_many": "",
     "view_errors_other": "Ver {{count}} erros"
   },
+  "integrators": {
+    "api_keys": {
+      "actions": "Ações",
+      "copy": "Copiar",
+      "copy_now_description": "Esta é a única vez que o segredo completo é mostrado. Guarda-o num lugar seguro.",
+      "copy_now_title": "Copia a tua chave agora",
+      "create": "Criar chave de API",
+      "created_title": "Chave de API criada",
+      "done": "Concluído",
+      "empty_description": "Cria uma chave para aceder à API sem iniciares sessão.",
+      "empty_title": "Ainda não há chaves de API",
+      "error_label_required": "É necessário um rótulo.",
+      "error_scope_required": "Seleciona pelo menos um âmbito.",
+      "expires": "Expira",
+      "expiry": "Validade (opcional)",
+      "expiry_help": "Deixa em branco para uma chave que nunca expira.",
+      "intro": "Credenciais programáticas para chamar a API a partir desta organização. Os segredos são mostrados apenas uma vez.",
+      "key": "Chave",
+      "label": "Rótulo",
+      "label_placeholder": "ex. pipeline de CI",
+      "last_used": "Última utilização",
+      "load_error": "Não foi possível carregar as chaves de API",
+      "revoke": "Revogar chave",
+      "revoke_cancel": "Cancelar",
+      "revoke_confirm": "Revogar",
+      "revoke_confirm_description": "Isto desativa permanentemente «{{label}}». Qualquer integração que a use vai deixar de funcionar imediatamente.",
+      "revoke_confirm_title": "Revogar chave de API?",
+      "revoke_error": "Não foi possível revogar a chave",
+      "revoked": "Chave de API revogada",
+      "scopes": {
+        "managed_read": "Listar organizações geridas",
+        "managed_read_desc": "Listar organizações geridas",
+        "managed_write": "Criar organizações geridas",
+        "managed_write_desc": "Criar organizações geridas",
+        "members_write": "Gerir membros",
+        "members_write_desc": "Gerir membros e grupos",
+        "quota_read": "Ler quota",
+        "quota_read_desc": "Ler quota do integrador e utilização",
+        "voting_write": "Gerir votação",
+        "voting_write_desc": "Criar e publicar processos de votação, listas de participantes e pacotes"
+      },
+      "scopes_legend": "Âmbitos",
+      "status": "Estado",
+      "status_active": "Ativo",
+      "status_expired": "Expirado",
+      "status_revoked": "Revogado",
+      "subtitle": "Cria e gere chaves de API para aceder à API de forma programática.",
+      "title": "Chaves de API"
+    },
+    "change_plan": "Alterar plano",
+    "configuration": {
+      "subtitle": "Gerir a tua subscrição e pedir apoio.",
+      "title": "Configuração"
+    },
+    "create_org": {
+      "cancel": "Cancelar",
+      "confirm": "Criar organização",
+      "description": "Uma nova organização no plano de integrador gratuito será criada na tua conta e definida como a tua organização ativa.",
+      "error": "Não foi possível criar a organização",
+      "switch_instead": "Ou alterna para uma organização existente",
+      "title": "Criar uma organização de integrador gratuita?"
+    },
+    "docs": {
+      "api_description": "Uma API REST para executar votações geridas: organizações, membros, listas de participantes, processos, resultados e tarefas assíncronas.",
+      "api_title": "API SaaS",
+      "quickstart_description": "Executa uma votação completa de ponta a ponta - cria uma organização, constrói uma lista de participantes, abre um processo e lê a contagem - em poucas chamadas de API.",
+      "quickstart_title": "Início rápido",
+      "sdk_description": "O SDK TypeScript adiciona votação no lado do cliente à tua app - autenticação CSP, codificação do boletim de voto e assinatura do voto - tudo através da API SaaS.",
+      "sdk_title": "SDK",
+      "subtitle": "Guias e referências para começares a construir com Vocdoni.",
+      "title": "Documentação"
+    },
+    "managed": {
+      "active": "Ativa",
+      "created": "Criada",
+      "emails": "E-mails",
+      "empty_description": "As organizações que preparas para os teus clientes aparecem aqui.",
+      "empty_title": "Ainda não há organizações geridas",
+      "error": "Não foi possível carregar as organizações",
+      "inactive": "Inativa",
+      "organization": "Organização",
+      "pagination": "Página {{page}} de {{total}} · {{items}} no total",
+      "processes": "Processos",
+      "sms": "SMS",
+      "status": "Estado",
+      "subtitle": "Organizações que geres em nome dos teus clientes.",
+      "title": "Organizações geridas"
+    },
+    "not_integrator": {
+      "cta": "Cria uma organização de integrador grátis",
+      "description": "A organização selecionada não é um integrador. Cria uma organização de integrador grátis para desbloquear este Dashboard - não é necessária aprovação manual.",
+      "title": "Esta organização ainda não é um integrador"
+    },
+    "overview": "Visão geral",
+    "overview_error": "Não foi possível carregar a quota de integrador",
+    "overview_subtitle": "A tua quota de integrador e o teu uso atual.",
+    "overview_title": "Visão geral",
+    "provision_failed": "Não conseguimos configurar a tua organização.",
+    "quota": {
+      "emails": "E-mails usados",
+      "limit_reached": "Limite atingido",
+      "managed_orgs": "Organizações geridas",
+      "sms": "SMS usados",
+      "unlimited": "Ilimitado",
+      "used": "usado",
+      "votes": "Votos emitidos",
+      "voting_processes": "Processos de votação"
+    },
+    "setting_up_org": "A preparar a tua organização…",
+    "signin_subtitle": "Acede ao teu Dashboard de integrador.",
+    "signin_title": "Iniciar sessão",
+    "signup_subtitle": "Regista-te para gerir organizações como integrador.",
+    "signup_title": "Cria a tua conta de integrador",
+    "subscription": {
+      "active": "Ativo",
+      "billing_details": "Detalhes de faturação",
+      "current_plan": "Plano atual",
+      "inactive": "Inativo",
+      "portal_error": "Não foi possível abrir o portal de faturação",
+      "unavailable": "Os detalhes da subscrição não estão disponíveis"
+    }
+  },
   "internal_server_error": "Erro interno do servidor",
   "invalid_promo_code": "Código promocional inválido",
   "invite": {
@@ -1050,7 +1173,9 @@
   "organizations": "Organizações ({{ numOrgs }})",
   "other_details": "Outros dados",
   "pagination": {
+    "next": "Seguinte",
     "page_out_of": "Página {{page}} de {{total}}",
+    "previous": "Anterior",
     "rows_per_page": "Linhas por página"
   },
   "password": "Palavra-passe",
@@ -1303,7 +1428,7 @@
       "time_until_start": "Tempo até ao início",
       "view_summary": "Acompanhar o processo",
       "votes_cast_one": "{{votes}} voto emitido",
-      "votes_cast_many": "{{votes}} votos emitidos",
+      "votes_cast_many": "",
       "votes_cast_other": "{{votes}} votos emitidos"
     },
     "template": {

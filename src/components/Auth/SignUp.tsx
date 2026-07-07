@@ -10,13 +10,14 @@ import {
   Link,
   Text,
 } from '@chakra-ui/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Navigate, NavLink, useOutletContext } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { IRegisterParams } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
+import { VerificationPending } from '~components/Auth/Verify'
 import { default as InputBasic } from '~components/Form/InputBasic'
 import InputPassword from '~components/Form/InputPassword'
 import { OrSeparator } from '~components/Layout/Separators'
@@ -35,6 +36,15 @@ export type InviteFields = {
 
 export type SignupProps = {
   invite?: InviteFields
+  // Navigation targets, overridable so the integrators app can reuse this component with its
+  // own routes. Defaults preserve the regular /account flow behavior.
+  signInRoute?: string
+  afterRegisterRoute?: string
+  // When true, render the verification form inline right after registering instead of routing
+  // to a separate verify page. Used by the integrators app, which has no standalone verify
+  // route — the user verifies without leaving the sign-up screen.
+  verifyInline?: boolean
+  verifyNextRoute?: string
 }
 
 type FormData = {
@@ -42,7 +52,13 @@ type FormData = {
   promotions: boolean
 } & IRegisterParams
 
-const SignUp = ({ invite }: SignupProps) => {
+const SignUp = ({
+  invite,
+  signInRoute = Routes.auth.signIn,
+  afterRegisterRoute = Routes.auth.verify,
+  verifyInline = false,
+  verifyNextRoute,
+}: SignupProps) => {
   const { t } = useTranslation()
   const { register: signup } = useAuth()
   const inviteSignup = useSignupFromInvite(invite?.address)
@@ -62,6 +78,8 @@ const SignUp = ({ invite }: SignupProps) => {
     formState: { errors },
   } = methods
   const email = watch('email')
+  // Holds the email being verified once registration succeeds in inline-verify mode.
+  const [verifyingEmail, setVerifyingEmail] = useState<string | null>(null)
 
   // Both mutations surface their own errors via toast (see useAuthProvider's
   // register and useSignupFromInvite), so we only track the pending state here.
@@ -90,11 +108,25 @@ const SignUp = ({ invite }: SignupProps) => {
     })
   }
 
-  // normally registered accounts need verification
+  // Inline verification (integrators have no standalone verify route): capture the email once
+  // registration succeeds so the verify form below can render without leaving the page.
+  useEffect(() => {
+    if (verifyInline && signup.isSuccess && !verifyingEmail) {
+      trackPlausibleEvent({ name: AnalyticsEvents.AccountSignup })
+      setVerifyingEmail(email)
+      signup.reset()
+    }
+  }, [verifyInline, signup.isSuccess, verifyingEmail, email, trackPlausibleEvent, signup])
+
+  if (verifyInline && (signup.isSuccess || verifyingEmail)) {
+    return <VerificationPending email={verifyingEmail ?? email} nextRoute={verifyNextRoute} />
+  }
+
+  // normally registered accounts need verification (separate verify page)
   if (signup.isSuccess) {
     trackPlausibleEvent({ name: AnalyticsEvents.AccountSignup })
     signup.reset()
-    return <Navigate to={`${Routes.auth.verify}?email=${encodeURIComponent(email)}`} replace />
+    return <Navigate to={`${afterRegisterRoute}?email=${encodeURIComponent(email)}`} replace />
   }
 
   // accounts coming from invites don't need verification
@@ -218,7 +250,7 @@ const SignUp = ({ invite }: SignupProps) => {
       >
         {t('already_member')}
         <Link asChild ml={1} fontWeight={'bold'} fontSize='sm'>
-          <NavLink to={Routes.auth.signIn}>{t('signin')}</NavLink>
+          <NavLink to={signInRoute}>{t('signin')}</NavLink>
         </Link>
       </Text>
     </>

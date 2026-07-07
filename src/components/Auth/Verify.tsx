@@ -25,9 +25,16 @@ type VerifyFormProps = {
   email: string
   initialCode?: string
   autoSubmit?: boolean
+  // Route to navigate to after a successful verification (defaults to the org-creation step).
+  nextRoute?: string
 }
 
-const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormProps) => {
+const VerifyForm = ({
+  email,
+  initialCode = '',
+  autoSubmit = false,
+  nextRoute = Routes.auth.organizationCreate,
+}: VerifyFormProps) => {
   const toast = useToast()
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -45,7 +52,7 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
         type: 'success',
         title: t('verify_mail.success', { defaultValue: 'Email verified successfully' }),
       })
-      navigate(Routes.auth.organizationCreate)
+      navigate(nextRoute)
     } catch (error) {
       const title =
         error instanceof UnauthorizedApiError
@@ -60,7 +67,7 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
         closable: true,
       })
     }
-  }, [codeString, email, verifyAsync, navigate, t, toast])
+  }, [codeString, email, verifyAsync, navigate, nextRoute, t, toast])
 
   // Auto-submit if code is provided and autoSubmit is true, or when all 6 characters are entered
   useEffect(() => {
@@ -114,7 +121,15 @@ const VerifyForm = ({ email, initialCode = '', autoSubmit = false }: VerifyFormP
   )
 }
 
-export const VerificationPending = ({ email, code }: { email: string; code?: string }) => {
+export const VerificationPending = ({
+  email,
+  code,
+  nextRoute,
+}: {
+  email: string
+  code?: string
+  nextRoute?: string
+}) => {
   const toast = useToast()
   const { t } = useTranslation()
   const { setTitle, setSubtitle } = useOutletContext<AuthOutletContextType>()
@@ -178,7 +193,7 @@ export const VerificationPending = ({ email, code }: { email: string; code?: str
             defaultValue: 'Enter the code below to activate your account',
           })}
         </Text>
-        <VerifyForm email={email} initialCode={code} autoSubmit={!!code} />
+        <VerifyForm email={email} initialCode={code} autoSubmit={!!code} nextRoute={nextRoute} />
       </Flex>
 
       {!code && (

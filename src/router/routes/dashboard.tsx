@@ -11,6 +11,7 @@ import ProtectedRoutes from '~src/router/ProtectedRoutes'
 import { getPaginationParams } from '~utils/pagination'
 import { Routes } from '.'
 import AccountProtectedRoute from '../AccountProtectedRoute'
+import OrganizationTypeGuard from '../OrganizationTypeGuard'
 import { SuspenseLoader } from '../SuspenseLoader'
 
 // elements/pages
@@ -51,204 +52,220 @@ export const useDashboardRoutes = () => {
     ),
     children: [
       {
+        // Guard that redirects integrators to /integrators
         element: (
           <SuspenseLoader>
-            <LayoutDashboard />
+            <OrganizationTypeGuard redirectPath={Routes.dashboard.base} />
           </SuspenseLoader>
         ),
         children: [
           {
-            path: Routes.dashboard.organizationCreate,
             element: (
               <SuspenseLoader>
-                <DashboardCreateOrg />
-              </SuspenseLoader>
-            ),
-          },
-          {
-            path: Routes.dashboard.base,
-            element: (
-              <SuspenseLoader>
-                <Dashboard />
-              </SuspenseLoader>
-            ),
-            errorElement: <Error />,
-          },
-          {
-            path: Routes.dashboard.profile,
-            element: (
-              <SuspenseLoader>
-                <Profile />
-              </SuspenseLoader>
-            ),
-          },
-          // Protected routes if no account created without organization
-          {
-            element: (
-              <SuspenseLoader>
-                <OrganizationProtectedRoute />
+                <LayoutDashboard />
               </SuspenseLoader>
             ),
             children: [
               {
-                path: Routes.dashboard.process,
+                path: Routes.dashboard.organizationCreate,
                 element: (
                   <SuspenseLoader>
-                    <DashboardProcessView />
+                    <DashboardCreateOrg />
                   </SuspenseLoader>
                 ),
-                loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
-                shouldRevalidate: shouldRevalidateDashboardProcess,
-                errorElement: <Error />,
-                children: [
-                  { index: true, element: <Fragment /> },
-                  { path: Routes.dashboard.processResults, element: <Fragment /> },
-                ],
               },
               {
-                path: Routes.dashboard.processes.base,
+                path: Routes.dashboard.base,
                 element: (
                   <SuspenseLoader>
-                    <DashboardProcesses />
-                  </SuspenseLoader>
-                ),
-                children: [
-                  {
-                    index: true,
-                    element: <Navigate to={generatePath(Routes.dashboard.processes.all)} replace />,
-                  },
-                  {
-                    path: Routes.dashboard.processes.all,
-                    element: (
-                      <SuspenseLoader>
-                        <AllProcesses />
-                      </SuspenseLoader>
-                    ),
-                    loader: async ({ params, request }: LoaderFunctionArgs) => {
-                      const url = new URL(request.url)
-                      const queryParams = getPaginationParams(url.searchParams)
-                      // we want our route params to override the query params
-                      const mergedParams = { ...queryParams, ...params }
-
-                      return await queryClient.ensureQueryData(paginatedElectionsQuery(account, client, mergedParams))
-                    },
-                  },
-                  {
-                    path: Routes.dashboard.processes.ended,
-                    element: (
-                      <SuspenseLoader>
-                        <EndedProcesses />
-                      </SuspenseLoader>
-                    ),
-                    loader: async ({ params, request }: LoaderFunctionArgs) => {
-                      const url = new URL(request.url)
-                      const queryParams = getPaginationParams(url.searchParams)
-                      // we want our route params to override the query params
-                      const mergedParams = { ...queryParams, ...params }
-
-                      return await queryClient.ensureQueryData(paginatedElectionsQuery(account, client, mergedParams))
-                    },
-                  },
-                  {
-                    path: Routes.dashboard.processes.drafts,
-                    element: (
-                      <SuspenseLoader>
-                        <Drafts />
-                      </SuspenseLoader>
-                    ),
-                  },
-                ],
-
-                errorElement: <Error />,
-              },
-              {
-                path: Routes.dashboard.memberbase.base,
-                element: (
-                  <SuspenseLoader>
-                    <Memberbase />
+                    <Dashboard />
                   </SuspenseLoader>
                 ),
                 errorElement: <Error />,
-                children: [
-                  {
-                    index: true,
-                    element: <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: 1 })} replace />,
-                  },
-                  {
-                    path: Routes.dashboard.memberbase.members,
-                    element: (
-                      <SuspenseLoader>
-                        <Members />
-                      </SuspenseLoader>
-                    ),
-                  },
-                  {
-                    path: Routes.dashboard.memberbase.groups,
-                    element: (
-                      <SuspenseLoader>
-                        <Groups />
-                      </SuspenseLoader>
-                    ),
-                  },
-                ],
               },
               {
-                path: Routes.dashboard.settings.base,
+                path: Routes.dashboard.profile,
                 element: (
                   <SuspenseLoader>
-                    <Settings />
+                    <Profile />
+                  </SuspenseLoader>
+                ),
+              },
+              // Protected routes if no account created without organization
+              {
+                element: (
+                  <SuspenseLoader>
+                    <OrganizationProtectedRoute />
                   </SuspenseLoader>
                 ),
                 children: [
                   {
-                    index: true,
-                    element: <Navigate to={Routes.dashboard.settings.organization} replace />,
-                  },
-                  {
-                    path: Routes.dashboard.settings.organization,
+                    path: Routes.dashboard.process,
                     element: (
                       <SuspenseLoader>
-                        <OrganizationEdit />
+                        <DashboardProcessView />
                       </SuspenseLoader>
                     ),
+                    loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
+                    shouldRevalidate: shouldRevalidateDashboardProcess,
+                    errorElement: <Error />,
+                    children: [
+                      { index: true, element: <Fragment /> },
+                      { path: Routes.dashboard.processResults, element: <Fragment /> },
+                    ],
                   },
                   {
-                    path: Routes.dashboard.settings.team,
+                    path: Routes.dashboard.processes.base,
                     element: (
                       <SuspenseLoader>
-                        <OrganizationTeam />
+                        <DashboardProcesses />
                       </SuspenseLoader>
                     ),
+                    children: [
+                      {
+                        index: true,
+                        element: <Navigate to={generatePath(Routes.dashboard.processes.all)} replace />,
+                      },
+                      {
+                        path: Routes.dashboard.processes.all,
+                        element: (
+                          <SuspenseLoader>
+                            <AllProcesses />
+                          </SuspenseLoader>
+                        ),
+                        loader: async ({ params, request }: LoaderFunctionArgs) => {
+                          const url = new URL(request.url)
+                          const queryParams = getPaginationParams(url.searchParams)
+                          // we want our route params to override the query params
+                          const mergedParams = { ...queryParams, ...params }
+
+                          return await queryClient.ensureQueryData(
+                            paginatedElectionsQuery(account, client, mergedParams)
+                          )
+                        },
+                      },
+                      {
+                        path: Routes.dashboard.processes.ended,
+                        element: (
+                          <SuspenseLoader>
+                            <EndedProcesses />
+                          </SuspenseLoader>
+                        ),
+                        loader: async ({ params, request }: LoaderFunctionArgs) => {
+                          const url = new URL(request.url)
+                          const queryParams = getPaginationParams(url.searchParams)
+                          // we want our route params to override the query params
+                          const mergedParams = { ...queryParams, ...params }
+
+                          return await queryClient.ensureQueryData(
+                            paginatedElectionsQuery(account, client, mergedParams)
+                          )
+                        },
+                      },
+                      {
+                        path: Routes.dashboard.processes.drafts,
+                        element: (
+                          <SuspenseLoader>
+                            <Drafts />
+                          </SuspenseLoader>
+                        ),
+                      },
+                    ],
+
+                    errorElement: <Error />,
                   },
                   {
-                    path: Routes.dashboard.settings.subscription,
+                    path: Routes.dashboard.memberbase.base,
                     element: (
                       <SuspenseLoader>
-                        <SubscriptionPage />
+                        <Memberbase />
                       </SuspenseLoader>
                     ),
+                    errorElement: <Error />,
+                    children: [
+                      {
+                        index: true,
+                        element: (
+                          <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: 1 })} replace />
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.memberbase.members,
+                        element: (
+                          <SuspenseLoader>
+                            <Members />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.memberbase.groups,
+                        element: (
+                          <SuspenseLoader>
+                            <Groups />
+                          </SuspenseLoader>
+                        ),
+                      },
+                    ],
                   },
                   {
-                    path: Routes.dashboard.settings.support,
+                    path: Routes.dashboard.settings.base,
                     element: (
                       <SuspenseLoader>
-                        <OrganizationSupport />
+                        <Settings />
                       </SuspenseLoader>
                     ),
+                    children: [
+                      {
+                        index: true,
+                        element: <Navigate to={Routes.dashboard.settings.organization} replace />,
+                      },
+                      {
+                        path: Routes.dashboard.settings.organization,
+                        element: (
+                          <SuspenseLoader>
+                            <OrganizationEdit />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.settings.team,
+                        element: (
+                          <SuspenseLoader>
+                            <OrganizationTeam />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.settings.subscription,
+                        element: (
+                          <SuspenseLoader>
+                            <SubscriptionPage />
+                          </SuspenseLoader>
+                        ),
+                      },
+                      {
+                        path: Routes.dashboard.settings.support,
+                        element: (
+                          <SuspenseLoader>
+                            <OrganizationSupport />
+                          </SuspenseLoader>
+                        ),
+                      },
+                    ],
+                  },
+                  {
+                    ...ProtectedRoutes([
+                      {
+                        path: Routes.processes.create,
+                        element: (
+                          <SuspenseLoader>
+                            <ProcessCreate />
+                          </SuspenseLoader>
+                        ),
+                      },
+                    ]),
                   },
                 ],
-              },
-              {
-                ...ProtectedRoutes([
-                  {
-                    path: Routes.processes.create,
-                    element: (
-                      <SuspenseLoader>
-                        <ProcessCreate />
-                      </SuspenseLoader>
-                    ),
-                  },
-                ]),
               },
             ],
           },
