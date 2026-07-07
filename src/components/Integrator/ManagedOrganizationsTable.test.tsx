@@ -17,7 +17,7 @@ describe('ManagedOrganizationsTable', () => {
       <ManagedOrganizationsTable
         organizations={[
           org({
-            meta: { name: { default: 'Acme' } },
+            name: { default: 'Acme' },
             counters: { processes: 7, sentSMS: 3, sentEmails: 9, subOrgs: 0, users: 0 },
           }),
         ]}
