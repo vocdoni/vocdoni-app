@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
-import { ensure0x, MultiLanguage } from '@vocdoni/sdk'
+import { ensure0x, type MultiLanguage } from '@vocdoni/sdk'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
@@ -58,14 +58,13 @@ export type OrganizationCounters = {
   processes: number
 }
 
-// A single organization managed by the integrator. `meta.name` is the display name set at
+// A single organization managed by the integrator. `name` is the localized display name set at
 // creation; the rest mirror the backend OrganizationInfo fields we surface.
 export type ManagedOrganization = {
   address: string
   active: boolean
   counters?: OrganizationCounters
   createdAt: string
-  meta?: { name?: MultiLanguage<string> }
   name?: MultiLanguage<string>
   description?: MultiLanguage<string>
   type: string
