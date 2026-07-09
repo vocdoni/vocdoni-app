@@ -49,6 +49,48 @@ describe('ApiKeysPanel', () => {
     expect(screen.getByText('Revoked')).toBeInTheDocument()
   })
 
+  // The global matchMedia stub matches nothing, so useBreakpointValue resolves the `base` value
+  // and the panel renders the mobile card list (no table element).
+  it('renders stacked cards instead of a table on mobile', () => {
+    mockKeys({ data: [key()] })
+
+    render(<ApiKeysPanel />)
+
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.getByText('Last used')).toBeInTheDocument()
+    expect(screen.getByText('Expires')).toBeInTheDocument()
+  })
+
+  it('renders the table on desktop widths', () => {
+    // Pretend every media query matches (jsdom has no layout): min-width: 48em (md) then holds,
+    // so useBreakpointValue resolves the `md` value and the table branch renders.
+    const original = window.matchMedia
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    })
+
+    try {
+      mockKeys({ data: [key()] })
+
+      render(<ApiKeysPanel />)
+
+      expect(screen.getByRole('table')).toBeInTheDocument()
+      expect(screen.getByText('vk_abc…')).toBeInTheDocument()
+    } finally {
+      Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
+    }
+  })
+
   it('shows an empty state when there are no keys', () => {
     mockKeys({ data: [] })
 
