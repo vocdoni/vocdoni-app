@@ -78,6 +78,10 @@ const NotIntegratorNotice = () => {
             'A new organization on the free integrator plan will be created on your account and set as your active organization.',
         })}
         open={open}
+        // While the org is being created, keep the modal locked: block ESC and outside clicks so the
+        // request can't be dismissed mid-flight (it still completes, but closing it is confusing).
+        closeOnEscape={!provision.isPending}
+        closeOnInteractOutside={!provision.isPending}
         onOpenChange={({ open }) => setOpen(open)}
       >
         {hasMultipleOrgs && (
@@ -92,6 +96,7 @@ const NotIntegratorNotice = () => {
                   variant='outline'
                   justifyContent='flex-start'
                   gap={2}
+                  disabled={provision.isPending}
                   onClick={() => selectOrganization(organization, isIntegrator)}
                 >
                   <Icon as={LuSquareStack} />
@@ -111,7 +116,7 @@ const NotIntegratorNotice = () => {
         )}
 
         <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' onClick={() => setOpen(false)}>
+          <Button variant='outline' disabled={provision.isPending} onClick={() => setOpen(false)}>
             {t('integrators.create_org.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button loading={provision.isPending} onClick={onCreate}>
