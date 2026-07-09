@@ -15,7 +15,7 @@ const Layout = () => {
   const [logo, setLogo] = useState<React.ReactNode>()
 
   return (
-    <Flex position='relative' flexDirection='column' minH='100vh' mx='auto'>
+    <Flex position='relative' flexDirection='column' minH='100dvh' mx='auto'>
       <HStack
         as='header'
         position='sticky'

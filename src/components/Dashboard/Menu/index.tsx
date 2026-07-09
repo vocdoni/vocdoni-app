@@ -52,7 +52,7 @@ const DashboardMenu = ({
         position='sticky'
         top={0}
         w={reduced ? rWidth : width}
-        h='100vh'
+        h='100dvh'
         zIndex={100}
         transition='width .3s ease'
       >
