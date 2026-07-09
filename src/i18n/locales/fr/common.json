@@ -806,25 +806,25 @@
       "subtitle": "Créez et gérez des clés API pour accéder à l'API par programmation.",
       "title": "Clés API"
     },
-    "change_plan": "Changer de plan",
+    "change_plan": "Passer au plan supérieur",
     "configuration": {
       "subtitle": "Gérez votre abonnement et obtenez du support.",
       "title": "Configuration"
     },
     "create_org": {
       "cancel": "Annuler",
-      "confirm": "Créer une organisation",
-      "description": "Une nouvelle organisation au plan intégrateur gratuit sera créée sur votre compte et définie comme votre organisation active.",
-      "error": "Impossible de créer l'organisation",
+      "confirm": "Créer le compte",
+      "description": "Un nouveau compte intégrateur au plan gratuit sera créé et défini comme votre organisation active.",
+      "error": "Impossible de créer le compte intégrateur",
       "switch_instead": "Ou basculez vers une organisation existante",
-      "title": "Créer une organisation intégrateur gratuite ?"
+      "title": "Créer un compte intégrateur gratuit ?"
     },
     "docs": {
       "api_description": "Une API REST pour gérer des élections : organisations, membres, listes électorales, processus, résultats et tâches asynchrones.",
-      "api_title": "API SaaS",
-      "quickstart_description": "Exécutez une élection complète de bout en bout - créez une organisation, constituez une liste électorale, ouvrez un processus et lisez le résultat - en quelques appels API.",
+      "api_title": "Référence de l'API",
+      "quickstart_description": "Exécutez une élection complète de bout en bout en quelques appels API : créez une organisation, constituez une liste électorale, ouvrez un processus et lisez le résultat.",
       "quickstart_title": "Démarrage rapide",
-      "sdk_description": "Le SDK TypeScript ajoute le vote côté client à votre application - authentification CSP, encodage et signature des votes - tous via l'API SaaS.",
+      "sdk_description": "Le SDK TypeScript ajoute le vote côté client à votre application via l'API : authentification CSP, encodage et signature des votes.",
       "sdk_title": "SDK",
       "subtitle": "Guides et références pour commencer à créer avec Vocdoni.",
       "title": "Documentation"
@@ -832,9 +832,11 @@
     "managed": {
       "active": "Actif",
       "created": "Créé",
+      "docs_card_description": "Découvrez comment créer et gérer des organisations par programmation via l'API.",
+      "docs_card_title": "Créer une organisation",
       "emails": "E-mails",
-      "empty_description": "Les organisations que vous mettez en place pour vos clients apparaîtront ici.",
-      "empty_title": "Aucune organisation gérée pour le moment",
+      "empty_description": "Les organisations sont créées via l'API, pas depuis ce tableau de bord. Dès que vous créerez votre première organisation, elle apparaîtra ici.",
+      "empty_title": "Aucune organisation pour le moment",
       "error": "Impossible de charger les organisations",
       "inactive": "Inactif",
       "organization": "Organisation",
@@ -846,26 +848,26 @@
       "title": "Organisations gérées"
     },
     "not_integrator": {
-      "cta": "Créer une organisation intégrateur gratuite",
-      "description": "L'organisation sélectionnée n'est pas un intégrateur. Créez une organisation intégrateur gratuite pour déverrouiller ce tableau de bord - aucune approbation manuelle requise.",
+      "cta": "Créer un compte intégrateur gratuit",
+      "description": "L'organisation sélectionnée n'est pas un intégrateur. Créez un compte intégrateur gratuit pour déverrouiller ce tableau de bord. Aucune approbation manuelle requise.",
       "title": "Cette organisation n'est pas encore un intégrateur"
     },
     "overview": "Aperçu",
     "overview_error": "Impossible de charger le quota d'intégrateur",
     "overview_subtitle": "Votre quota d'intégrateur et votre utilisation actuelle.",
     "overview_title": "Aperçu",
-    "provision_failed": "Nous n'avons pas pu configurer votre organisation.",
+    "provision_failed": "Nous n'avons pas pu configurer votre compte intégrateur.",
     "quota": {
-      "emails": "E-mails utilisés",
+      "emails": "Vérifications des votants par e-mail",
       "limit_reached": "Limite atteinte",
-      "managed_orgs": "Organisations gérées",
-      "sms": "SMS utilisés",
+      "managed_orgs": "Organisations créées",
+      "sms": "Vérifications des votants par SMS",
       "unlimited": "Illimité",
       "used": "utilisé",
-      "votes": "Votes émis",
-      "voting_processes": "Processus de vote"
+      "votes": "Votes exprimés",
+      "voting_processes": "Processus de vote créés"
     },
-    "setting_up_org": "Configuration de votre organisation…",
+    "setting_up_org": "Configuration de votre compte intégrateur…",
     "signin_subtitle": "Accédez à votre tableau de bord d'intégrateur.",
     "signin_title": "Se connecter",
     "signup_subtitle": "Inscrivez-vous pour gérer les organisations en tant qu'intégrateur.",

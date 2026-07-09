@@ -806,25 +806,25 @@
       "subtitle": "Crie e gerencie chaves de API para acessar a API programaticamente.",
       "title": "Chaves de API"
     },
-    "change_plan": "Alterar plano",
+    "change_plan": "Fazer upgrade do plano",
     "configuration": {
       "subtitle": "Gerencie sua assinatura e obtenha suporte.",
       "title": "Configuração"
     },
     "create_org": {
       "cancel": "Cancelar",
-      "confirm": "Criar organização",
-      "description": "Uma nova organização no plano gratuito de integrador será criada na sua conta e definida como sua organização ativa.",
-      "error": "Não foi possível criar a organização",
+      "confirm": "Criar conta",
+      "description": "Uma nova conta de integrador no plano gratuito será criada e definida como sua organização ativa.",
+      "error": "Não foi possível criar a conta de integrador",
       "switch_instead": "Ou mude para uma organização existente",
-      "title": "Criar uma organização gratuita de integrador?"
+      "title": "Criar uma conta de integrador gratuita?"
     },
     "docs": {
       "api_description": "Uma API REST para executar eleições gerenciadas: organizações, membros, listas de participantes, processos, resultados e jobs assíncronos.",
-      "api_title": "API SaaS",
-      "quickstart_description": "Execute uma eleição completa ponta a ponta - crie uma org, monte uma lista de participantes, abra um processo e leia a apuração - em algumas chamadas de API.",
+      "api_title": "Referência da API",
+      "quickstart_description": "Execute uma eleição completa ponta a ponta em algumas chamadas de API: crie uma organização, monte uma lista de participantes, abra um processo e leia a apuração.",
       "quickstart_title": "Guia rápido",
-      "sdk_description": "O SDK em TypeScript adiciona votação no lado do cliente ao seu app - autenticação CSP, codificação de boletins e assinatura do voto - tudo via a API SaaS.",
+      "sdk_description": "O SDK em TypeScript adiciona votação no lado do cliente ao seu app via API: autenticação CSP, codificação de boletins e assinatura do voto.",
       "sdk_title": "SDK",
       "subtitle": "Guias e referências para começar a desenvolver com a Vocdoni.",
       "title": "Documentação"
@@ -832,9 +832,11 @@
     "managed": {
       "active": "Ativa",
       "created": "Criada",
+      "docs_card_description": "Aprenda a criar e gerenciar organizações de forma programática pela API.",
+      "docs_card_title": "Criar uma organização",
       "emails": "E-mails",
-      "empty_description": "As organizações que você provisionou para seus clientes aparecerão aqui.",
-      "empty_title": "Nenhuma organização gerenciada ainda",
+      "empty_description": "As organizações são criadas pela API, não por este painel. Quando você criar sua primeira organização, ela aparecerá aqui.",
+      "empty_title": "Nenhuma organização ainda",
       "error": "Não foi possível carregar as organizações",
       "inactive": "Inativa",
       "organization": "Organização",
@@ -846,26 +848,26 @@
       "title": "Organizações gerenciadas"
     },
     "not_integrator": {
-      "cta": "Criar uma organização integradora gratuita",
-      "description": "A organização selecionada não é uma integradora. Crie uma organização integradora gratuita para desbloquear este painel - não é necessário aprovação manual.",
+      "cta": "Criar uma conta de integrador gratuita",
+      "description": "A organização selecionada não é uma integradora. Crie uma conta de integrador gratuita para desbloquear este painel. Não é necessária aprovação manual.",
       "title": "Esta organização ainda não é uma integradora"
     },
     "overview": "Visão geral",
     "overview_error": "Não foi possível carregar a cota da integradora",
     "overview_subtitle": "Sua cota de integradora e uso atual.",
     "overview_title": "Visão geral",
-    "provision_failed": "Não conseguimos configurar sua organização.",
+    "provision_failed": "Não conseguimos configurar sua conta de integrador.",
     "quota": {
-      "emails": "E-mails usados",
+      "emails": "Verificações de votantes por e-mail",
       "limit_reached": "Limite atingido",
-      "managed_orgs": "Organizações gerenciadas",
-      "sms": "SMS usados",
+      "managed_orgs": "Organizações criadas",
+      "sms": "Verificações de votantes por SMS",
       "unlimited": "Ilimitado",
       "used": "usados",
-      "votes": "Votos enviados",
-      "voting_processes": "Processos de votação"
+      "votes": "Votos emitidos",
+      "voting_processes": "Processos de votação criados"
     },
-    "setting_up_org": "Configurando sua organização…",
+    "setting_up_org": "Configurando sua conta de integrador…",
     "signin_subtitle": "Acesse seu painel de integradora.",
     "signin_title": "Entrar",
     "signup_subtitle": "Cadastre-se para gerenciar organizações como integradora.",

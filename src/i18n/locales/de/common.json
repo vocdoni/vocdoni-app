@@ -798,25 +798,25 @@
       "subtitle": "Erstelle und verwalte API-Schlüssel, um programmatisch auf die API zuzugreifen.",
       "title": "API-Schlüssel"
     },
-    "change_plan": "Plan ändern",
+    "change_plan": "Plan upgraden",
     "configuration": {
       "subtitle": "Verwalte dein Abonnement und erhalte Support.",
       "title": "Konfiguration"
     },
     "create_org": {
       "cancel": "Abbrechen",
-      "confirm": "Organisation erstellen",
-      "description": "Eine neue Organisation im kostenlosen Integrator-Plan wird in deinem Konto erstellt und als deine aktive Organisation festgelegt.",
-      "error": "Die Organisation konnte nicht erstellt werden",
+      "confirm": "Konto erstellen",
+      "description": "Ein neues Integrator-Konto im kostenlosen Plan wird erstellt und als deine aktive Organisation festgelegt.",
+      "error": "Das Integrator-Konto konnte nicht erstellt werden",
       "switch_instead": "Oder wechsle zu einer bestehenden Organisation",
-      "title": "Kostenlose Integrator-Organisation erstellen?"
+      "title": "Kostenloses Integrator-Konto erstellen?"
     },
     "docs": {
       "api_description": "Eine REST-API zum Durchführen von verwalteten Abstimmungen: Organisationen, Mitglieder, Teilnehmerlisten, Prozesse, Ergebnisse und asynchrone Jobs.",
-      "api_title": "SaaS-API",
-      "quickstart_description": "Führe eine vollständige Abstimmung von Anfang bis Ende durch - erstelle eine Organisation, baue eine Teilnehmerliste auf, öffne einen Prozess und lese die Auszählung - in wenigen API-Aufrufen.",
+      "api_title": "API-Referenz",
+      "quickstart_description": "Führe eine vollständige Abstimmung von Anfang bis Ende mit wenigen API-Aufrufen durch: erstelle eine Organisation, baue eine Teilnehmerliste auf, öffne einen Prozess und lese die Auszählung.",
       "quickstart_title": "Quickstart",
-      "sdk_description": "Das TypeScript SDK fügt deiner App clientseitiges Wählen hinzu - CSP-Authentifizierung, Stimmzettel-Kodierung und Stimmen-Signierung - alles über die SaaS-API.",
+      "sdk_description": "Das TypeScript SDK fügt deiner App clientseitiges Wählen über die API hinzu: CSP-Authentifizierung, Stimmzettel-Kodierung und Stimmen-Signierung.",
       "sdk_title": "SDK",
       "subtitle": "Anleitungen und Referenzen zum Starten der Entwicklung mit Vocdoni.",
       "title": "Dokumentation"
@@ -824,9 +824,11 @@
     "managed": {
       "active": "Aktiv",
       "created": "Erstellt",
+      "docs_card_description": "Erfahre, wie du Organisationen programmatisch über die API erstellst und verwaltest.",
+      "docs_card_title": "Eine Organisation erstellen",
       "emails": "E-Mails",
-      "empty_description": "Organisationen, die du für deine Kunden bereitstellst, werden hier angezeigt.",
-      "empty_title": "Noch keine verwalteten Organisationen",
+      "empty_description": "Organisationen werden über die API erstellt, nicht über dieses Dashboard. Sobald du deine erste Organisation anlegst, erscheint sie hier.",
+      "empty_title": "Noch keine Organisationen",
       "error": "Organisationen konnten nicht geladen werden",
       "inactive": "Inaktiv",
       "organization": "Organisation",
@@ -838,26 +840,26 @@
       "title": "Verwaltete Organisationen"
     },
     "not_integrator": {
-      "cta": "Kostenlose Integrator-Organisation erstellen",
-      "description": "Die ausgewählte Organisation ist noch kein Integrator. Erstelle eine kostenlose Integrator-Organisation, um dieses Dashboard freizuschalten - keine manuelle Genehmigung erforderlich.",
+      "cta": "Kostenloses Integrator-Konto erstellen",
+      "description": "Die ausgewählte Organisation ist noch kein Integrator. Erstelle ein kostenloses Integrator-Konto, um dieses Dashboard freizuschalten. Eine manuelle Genehmigung ist nicht erforderlich.",
       "title": "Diese Organisation ist noch kein Integrator"
     },
     "overview": "Übersicht",
     "overview_error": "Integrator-Kontingent konnte nicht geladen werden",
     "overview_subtitle": "Dein Integrator-Kontingent und aktuelle Nutzung.",
     "overview_title": "Übersicht",
-    "provision_failed": "Wir konnten deine Organisation nicht einrichten.",
+    "provision_failed": "Wir konnten dein Integrator-Konto nicht einrichten.",
     "quota": {
-      "emails": "E-Mails verwendet",
+      "emails": "Wählerverifizierungen per E-Mail",
       "limit_reached": "Limit erreicht",
-      "managed_orgs": "Verwaltete Organisationen",
-      "sms": "SMS verwendet",
+      "managed_orgs": "Erstellte Organisationen",
+      "sms": "Wählerverifizierungen per SMS",
       "unlimited": "Unbegrenzt",
       "used": "verwendet",
-      "votes": "Stimmen abgegeben",
-      "voting_processes": "Abstimmungsprozesse"
+      "votes": "Abgegebene Stimmen",
+      "voting_processes": "Erstellte Abstimmungsprozesse"
     },
-    "setting_up_org": "Organisation wird eingerichtet …",
+    "setting_up_org": "Integrator-Konto wird eingerichtet …",
     "signin_subtitle": "Greife auf dein Integrator-Dashboard zu.",
     "signin_title": "Anmelden",
     "signup_subtitle": "Melde dich an, um Organisationen als Integrator zu verwalten.",

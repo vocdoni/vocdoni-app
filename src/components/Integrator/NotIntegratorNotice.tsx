@@ -44,7 +44,7 @@ const NotIntegratorNotice = () => {
     } catch (err) {
       toast({
         type: 'error',
-        title: t('integrators.create_org.error', { defaultValue: 'Could not create the organization' }),
+        title: t('integrators.create_org.error', { defaultValue: 'Could not create the integrator account' }),
         description: getApiErrorMessage(err),
       })
     }
@@ -61,21 +61,21 @@ const NotIntegratorNotice = () => {
           <Alert.Description>
             {t('integrators.not_integrator.description', {
               defaultValue:
-                'The selected organization is not an integrator. Create a free integrator organization to unlock this dashboard — no manual approval needed.',
+                'The selected organization is not an integrator. Create a free integrator account to unlock this dashboard. No manual approval is needed.',
             })}
           </Alert.Description>
         </Alert.Content>
       </Alert.Root>
 
       <Button onClick={() => setOpen(true)}>
-        {t('integrators.not_integrator.cta', { defaultValue: 'Create a free integrator organization' })}
+        {t('integrators.not_integrator.cta', { defaultValue: 'Create a free integrator account' })}
       </Button>
 
       <DeleteModal
-        title={t('integrators.create_org.title', { defaultValue: 'Create a free integrator organization?' })}
+        title={t('integrators.create_org.title', { defaultValue: 'Create a free integrator account?' })}
         subtitle={t('integrators.create_org.description', {
           defaultValue:
-            'A new organization on the free integrator plan will be created on your account and set as your active organization.',
+            'A new integrator account on the free plan will be created and set as your active organization.',
         })}
         open={open}
         // While the org is being created, keep the modal locked: block ESC and outside clicks so the
@@ -120,7 +120,7 @@ const NotIntegratorNotice = () => {
             {t('integrators.create_org.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button loading={provision.isPending} onClick={onCreate}>
-            {t('integrators.create_org.confirm', { defaultValue: 'Create organization' })}
+            {t('integrators.create_org.confirm', { defaultValue: 'Create account' })}
           </Button>
         </Flex>
       </DeleteModal>

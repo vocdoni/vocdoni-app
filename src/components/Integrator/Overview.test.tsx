@@ -31,7 +31,7 @@ describe('IntegratorOverview', () => {
 
     render(<IntegratorOverview />)
 
-    expect(screen.getByText('Managed organizations')).toBeInTheDocument()
+    expect(screen.getByText('Organizations created')).toBeInTheDocument()
     expect(screen.getByText('3')).toBeInTheDocument()
     expect(screen.getByText('/ 10')).toBeInTheDocument()
   })
@@ -41,7 +41,7 @@ describe('IntegratorOverview', () => {
 
     render(<IntegratorOverview />)
 
-    // Votes emitted has maxVotes: 0 -> unlimited
+    // Votes cast has maxVotes: 0 -> unlimited
     expect(screen.getByText('Unlimited')).toBeInTheDocument()
   })
 
@@ -50,7 +50,7 @@ describe('IntegratorOverview', () => {
 
     render(<IntegratorOverview />)
 
-    // SMS used: usage 100 >= limit 100 -> "Limit reached"
+    // SMS verifications: usage 100 >= limit 100 -> "Limit reached"
     expect(screen.getByText('Limit reached')).toBeInTheDocument()
   })
 
@@ -60,6 +60,6 @@ describe('IntegratorOverview', () => {
     render(<IntegratorOverview />)
 
     expect(screen.getByText('Unable to load integrator quota')).toBeInTheDocument()
-    expect(screen.queryByText('Managed organizations')).not.toBeInTheDocument()
+    expect(screen.queryByText('Organizations created')).not.toBeInTheDocument()
   })
 })
