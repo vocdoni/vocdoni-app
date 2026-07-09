@@ -124,9 +124,9 @@ describe('NotIntegratorNotice', () => {
     } as any)
 
     render(<NotIntegratorNotice />)
-    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator organization' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator account' }))
 
-    await screen.findByText('Create a free integrator organization?')
+    await screen.findByText('Create a free integrator account?')
 
     // Dialog can't be dismissed via ESC or outside interaction while the request is in-flight.
     expect(deleteModalProps.closeOnEscape).toBe(false)
