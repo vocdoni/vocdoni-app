@@ -27,7 +27,7 @@ const PublicLayout = ({
   const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
 
   return (
-    <Flex position='relative' flexDirection='column' minH='100vh' mx='auto'>
+    <Flex position='relative' flexDirection='column' minH='100dvh' mx='auto'>
       <HStack
         as='header'
         position='sticky'

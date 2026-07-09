@@ -23,12 +23,24 @@ const xxl = {
   },
 }
 
+// iOS Safari auto-zooms focused inputs with a font-size below 16px; keep base at
+// `md` (16px) on mobile and restore the compact `sm` (14px) look from `md` up.
+// Set at variant level so it overrides Chakra's default size variants (textStyle `sm`).
+const mobileSafeFontSize = {
+  fontSize: { base: 'md', md: 'sm' },
+  _placeholder: {
+    fontSize: { base: 'md', md: 'sm' },
+  },
+}
+
 const sm = {
   borderRadius: 'sm',
+  ...mobileSafeFontSize,
 }
 
 const md = {
   borderRadius: 'sm',
+  ...mobileSafeFontSize,
 }
 
 export const input = defineRecipe({
@@ -58,6 +70,10 @@ export const textarea = defineRecipe({
     },
   },
   variants: {
+    size: {
+      sm: mobileSafeFontSize,
+      md: mobileSafeFontSize,
+    },
     variant: {
       borderless: {
         border: 'none',

@@ -60,8 +60,8 @@ const LayoutAuth = () => {
   const isSignin = pathname === Routes.auth.signIn
 
   return (
-    <Flex justifyContent='center' alignItems='center' minH='100vh' p={{ base: 6, md: 10 }}>
-      <Flex w='full' maxW={{ base: 'sm', md: '3xl' }} flexDir='column' gap={2}>
+    <Flex justifyContent='center' minH='100dvh' p={{ base: 6, md: 10 }}>
+      <Flex w='full' maxW={{ base: 'sm', md: '3xl' }} flexDir='column' gap={2} my='auto'>
         <Link asChild display='flex' alignItems='center' alignSelf='start'>
           <RouterLink to={isSignin ? Routes.vocdoni : Routes.auth.signIn}>
             <Icon as={LuArrowLeft} />
