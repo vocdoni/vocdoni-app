@@ -1,19 +1,20 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
-import { useClient } from '@vocdoni/react-components'
-import { NoOrganizationsError, RemoteSigner, UnauthorizedError } from '@vocdoni/sdk'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { AuthStorageKeys, clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
+import { useAuth as useSdkAuth } from '@vocdoni/react-providers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
-import { LoginResponse, useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
+import { useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
 import { useToast } from '~components/Toast'
-import { useAppEnv } from '~src/app-env'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 
 export enum LocalStorageKeys {
-  Token = 'authToken',
-  Expiry = 'authExpiry',
+  // Flags a "keep me logged in" session so the auto-refresh effect below renews the
+  // token as it nears expiry. The token/expiry themselves live under the react-providers
+  // AuthProvider keys (see AUTH_STORAGE_KEY), not here.
   RenewSession = 'authRenewSession',
+  // The organization address the session is currently acting as (multi-org accounts).
   SignerAddress = 'signerAddress',
 }
 
@@ -30,61 +31,13 @@ const removeStorageItem = (key: string) => {
   localStorage.removeItem(key)
 }
 
-/**
- * Mutation to set the RemoteSigner and check its address
- * This hook is used as state to determine if an address is associated to the Signer to redirect
- * to create organization page if not.
- */
-const useSigner = () => {
-  const { setSigner } = useClient()
-  const { SAAS_URL } = useAppEnv()
-
-  const updateSigner = useCallback(
-    async (token?: string) => {
-      const t = token || getStorageItem(LocalStorageKeys.Token)
-
-      const signer = new RemoteSigner({
-        url: SAAS_URL,
-        token: t,
-      })
-
-      // Once the signer is set, try to get the signer address
-      try {
-        const addresses = await signer.remoteSignerService.addresses()
-        if (!addresses.length) {
-          throw new Error('No addresses available')
-        }
-
-        // Get stored address from local storage
-        const storedAddress = getStorageItem(LocalStorageKeys.SignerAddress)
-
-        // Use stored address if it exists and is in the available addresses, otherwise use first address
-        const selectedAddress = storedAddress && addresses.includes(storedAddress) ? storedAddress : addresses[0]
-
-        // Store the selected address
-        setStorageItem(LocalStorageKeys.SignerAddress, selectedAddress)
-
-        // Set the signer address and update the client
-        signer.address = selectedAddress
-        setSigner(signer)
-
-        return signer
-      } catch (e) {
-        // If is NoOrganizationsError ignore the error
-        if (!(e instanceof NoOrganizationsError)) {
-          throw e
-        }
-      }
-    },
-    [setSigner]
-  )
-
-  return useMutation<RemoteSigner, Error, string>({ mutationFn: updateSigner })
-}
-
 export const useAuthProvider = () => {
-  const { signer: clientSigner, clear } = useClient()
-  const [bearer, setBearer] = useState<string | null>(() => getStorageItem(LocalStorageKeys.Token))
+  // Token lifecycle (token, expiry, persistence, refresh, logout) is owned by the
+  // react-providers AuthProvider. This hook layers the app-specific pieces on top:
+  // register/verify/password REST, OAuth token injection, session renewal, the active
+  // organization address (formerly resolved through the SDK RemoteSigner) and routing.
+  const { token: bearer, expiry, isAuthenticated, setSession, refresh: sdkRefresh, logout: sdkLogout } = useSdkAuth()
+  const { client: apiClient } = useApiClient()
   const toast = useToast()
   const { disconnect } = useDisconnect()
   const { t } = useTranslation()
@@ -92,7 +45,7 @@ export const useAuthProvider = () => {
 
   const login = useLogin({
     onSuccess: (data) => {
-      storeLogin(data)
+      setSession(data)
     },
   })
   const register = useRegister({
@@ -114,10 +67,9 @@ export const useAuthProvider = () => {
   })
   const mailVerify = useVerifyMail({
     onSuccess: (data) => {
-      storeLogin(data)
+      setSession(data)
     },
   })
-  const { mutateAsync: updateSigner, isIdle: signerIdle, isPending: signerPending } = useSigner()
 
   const bearedFetch = useCallback(
     <T>(path: string, { headers = new Headers({}), ...params }: ApiParams = {}) => {
@@ -129,37 +81,71 @@ export const useAuthProvider = () => {
     [bearer]
   )
 
-  const storeLogin = useCallback(
-    ({ token, expirity }: LoginResponse, renewSession = false) => {
-      setStorageItem(LocalStorageKeys.Token, token)
-      setStorageItem(LocalStorageKeys.Expiry, expirity)
-      if (renewSession) {
-        setStorageItem(LocalStorageKeys.RenewSession, 'true')
-      }
-      setBearer(token)
-      updateSigner(token)
-    },
-    [updateSigner]
+  // --- Active organization address -------------------------------------------------
+  // Replaces the RemoteSigner: the list of org addresses the logged-in user owns comes
+  // from the SaaS API via the new client, and the "selected" one is persisted so a
+  // multi-org user resumes their last-used organization.
+  const {
+    data: addressesData,
+    isLoading: addressesLoading,
+    refetch: refetchAddresses,
+  } = useQuery({
+    queryKey: ['auth', 'addresses', bearer],
+    queryFn: () => apiClient.auth.addresses(),
+    enabled: !!bearer,
+    retry: false,
+    // A user with no organization yet legitimately has no addresses; don't surface it.
+    throwOnError: false,
+  })
+  const addresses = useMemo(() => addressesData?.addresses ?? [], [addressesData])
+
+  const [currentAddress, setCurrentAddress] = useState<string | undefined>(
+    () => getStorageItem(LocalStorageKeys.SignerAddress) ?? undefined
   )
+
+  // Pick the active address from an address list: prefer the stored selection when it is
+  // still owned by the user, otherwise fall back to the first one. Persists the choice.
+  const applySelection = useCallback((list: string[]) => {
+    if (!list.length) {
+      setCurrentAddress(undefined)
+      return
+    }
+    const stored = getStorageItem(LocalStorageKeys.SignerAddress)
+    const selected = stored && list.includes(stored) ? stored : list[0]
+    setStorageItem(LocalStorageKeys.SignerAddress, selected)
+    setCurrentAddress(selected)
+  }, [])
+
+  useEffect(() => {
+    if (!addressesData) return
+    applySelection(addressesData.addresses ?? [])
+  }, [addressesData, applySelection])
+
+  // Re-fetch the address list and re-apply the selection. Callers that change the active
+  // org (org switcher, freshly created/provisioned org) set SignerAddress first, then call
+  // this so currentAddress and every address-keyed query pick up the new selection.
+  const refreshAddresses = useCallback(async () => {
+    const res = await refetchAddresses()
+    applySelection(res.data?.addresses ?? [])
+  }, [refetchAddresses, applySelection])
 
   const logout = useCallback(() => {
     clearAuthStorageKeys()
     removeStorageItem(LocalStorageKeys.RenewSession)
-    setBearer(null)
-    clear()
+    sdkLogout()
+    setCurrentAddress(undefined)
     disconnect()
     // Wipe the query cache so a different account logging in afterwards doesn't inherit the
     // previous user's profile (the profile key is static). Without this, e.g. an integrator's
     // cached org survives logout and the next non-integrator login is misrouted to /integrators.
     // We intentionally keep signerAddress: the same user resumes their last-selected org, and
-    // updateSigner overwrites it when a different user doesn't own that address.
+    // refreshAddresses overwrites it when a different user doesn't own that address.
     queryClient.clear()
-  }, [clear, disconnect, queryClient])
+  }, [disconnect, queryClient, sdkLogout])
 
   const refreshToken = useCallback(async () => {
     try {
-      const response = await api<LoginResponse>(ApiEndpoints.Refresh, { method: 'POST' })
-      storeLogin(response)
+      await sdkRefresh()
     } catch (e) {
       toast({
         type: 'error',
@@ -171,13 +157,12 @@ export const useAuthProvider = () => {
       logout()
       throw e
     }
-  }, [logout, storeLogin, t, toast])
+  }, [logout, sdkRefresh, t, toast])
 
-  // Handle token refresh
+  // Handle token refresh for "keep me logged in" sessions.
   useEffect(() => {
     if (!bearer) return
 
-    const expiry = getStorageItem(LocalStorageKeys.Expiry)
     const renewSession = getStorageItem(LocalStorageKeys.RenewSession)
 
     if (!expiry || !renewSession) return
@@ -196,45 +181,37 @@ export const useAuthProvider = () => {
     if (timeUntilExpiry <= OneWeek) {
       refreshToken()
     }
-  }, [bearer, logout, refreshToken])
+  }, [bearer, expiry, logout, refreshToken])
 
-  const signerRefresh = useCallback(async () => {
-    if (bearer) {
-      try {
-        return await updateSigner(bearer)
-      } catch (e) {
-        if (e instanceof UnauthorizedError) {
-          logout()
-        }
-      }
-    }
-  }, [bearer, logout, updateSigner])
-
-  // If no signer but berarer instantiate the signer
-  // For example when bearer is on local storage but no login was done to instantiate the signer
-  useEffect(() => {
-    if (!clientSigner) {
-      signerRefresh()
-    }
-  }, [clientSigner, signerRefresh])
-
-  const isAuthenticated = useMemo(() => !!bearer, [bearer])
-  const isAuthLoading = useMemo(
-    () => (isAuthenticated && signerIdle) || (isAuthenticated && !signerIdle && signerPending),
-    [isAuthenticated, signerIdle, signerPending]
-  )
+  const isAuthLoading = useMemo(() => isAuthenticated && addressesLoading, [isAuthenticated, addressesLoading])
 
   return {
     isAuthenticated,
     bearer,
-    setBearer,
-    updateSigner,
+    expiry,
     login,
     register,
     mailVerify,
     logout,
     bearedFetch,
     isAuthLoading,
-    signerRefresh,
+    // Active organization address surface (replaces the former RemoteSigner helpers
+    // updateSigner / signerRefresh / setBearer).
+    addresses,
+    currentAddress,
+    refreshAddresses,
+    // Inject a session obtained out-of-band (OAuth). Reads token + expiry from the
+    // rainbowkit storage the OAuth wallet wrote.
+    setSession,
   }
+}
+
+/**
+ * Injects a token obtained out-of-band (e.g. the Google OAuth wallet, which persists it
+ * under the rainbowkit AuthStorageKeys) into the react-providers session.
+ */
+export const readOAuthSession = () => {
+  const token = getStorageItem(AuthStorageKeys.Token)
+  if (!token) return null
+  return { token, expirity: getStorageItem(AuthStorageKeys.Expiry) ?? '' }
 }

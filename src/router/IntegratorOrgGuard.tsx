@@ -22,7 +22,7 @@ import { Routes } from './routes'
  * automatically on the free integrator tier — no empty dashboard, no manual create step.
  */
 const IntegratorOrgGuard = () => {
-  const { isAuthenticated, isAuthLoading, signerRefresh } = useAuth()
+  const { isAuthenticated, isAuthLoading, refreshAddresses } = useAuth()
   const { data: profile, isLoading: isProfileLoading } = useProfile()
   const provision = useProvisionIntegratorOrganization()
 
@@ -38,14 +38,14 @@ const IntegratorOrgGuard = () => {
     }
   }, [needsOrg, provision])
 
-  // Point the SDK client/account at the freshly provisioned org so the layout's
-  // OrganizationProvider picks it up (mirrors OrganizationSwitcher.handleOrgChange).
+  // Point the session at the freshly provisioned org so the layout's OrganizationProvider
+  // picks it up (mirrors OrganizationSwitcher.handleOrgChange).
   useEffect(() => {
     if (provision.isSuccess && provision.data?.address) {
       localStorage.setItem(LocalStorageKeys.SignerAddress, provision.data.address)
-      signerRefresh()
+      refreshAddresses()
     }
-  }, [provision.isSuccess, provision.data, signerRefresh])
+  }, [provision.isSuccess, provision.data, refreshAddresses])
 
   if (isAuthLoading || isProfileLoading) {
     return <Loading />

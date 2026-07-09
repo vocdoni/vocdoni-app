@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { enforceHexPrefix, useClient } from '@vocdoni/react-components'
+import { enforceHexPrefix } from '@vocdoni/react-components'
 import { dotobject } from '@vocdoni/sdk'
 import { ReactNode, createContext, useContext, useMemo } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
@@ -46,8 +46,7 @@ const useSubscription = () => {
 }
 
 const SubscriptionProviderComponent: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
+  const { bearedFetch, currentAddress } = useAuth()
 
   // Fetch organization subscription details
   // TODO: In the future, this may be merged with the role permissions (not yet defined)
@@ -56,14 +55,14 @@ const SubscriptionProviderComponent: React.FC<{ children: ReactNode }> = ({ chil
     isFetching,
     error,
   } = useQuery({
-    queryKey: QueryKeys.organization.subscription(enforceHexPrefix(account?.address)),
+    queryKey: QueryKeys.organization.subscription(currentAddress && enforceHexPrefix(currentAddress)),
     queryFn: () =>
       bearedFetch<SubscriptionType>(
-        ApiEndpoints.OrganizationSubscription.replace('{address}', enforceHexPrefix(account?.address))
+        ApiEndpoints.OrganizationSubscription.replace('{address}', enforceHexPrefix(currentAddress!))
       ),
     // Cache for 15 minutes
     staleTime: 15 * 60 * 1000,
-    enabled: !!account?.address,
+    enabled: !!currentAddress,
   })
 
   // Helper function to access permission using dot notation
