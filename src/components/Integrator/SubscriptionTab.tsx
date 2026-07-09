@@ -61,7 +61,7 @@ const IntegratorSubscriptionTab = () => {
           <Text fontSize='sm' color='texts.subtle'>
             {t('integrators.subscription.current_plan', { defaultValue: 'Current plan' })}
           </Text>
-          <Text fontSize='2xl' fontWeight='bold'>
+          <Text size='2xl' fontWeight='bold'>
             {plan.name}
           </Text>
           <Text fontSize='sm' color='texts.subtle'>

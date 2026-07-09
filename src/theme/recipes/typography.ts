@@ -42,6 +42,22 @@ export const link = defineRecipe({
   },
   variants: {
     variant: {
+      // Chakra's default `plain` variant (applied via defaultVariants) fades the
+      // underline to currentColor/20 and shifts its offset to 3px on hover,
+      // fighting the base styles above — pin both so hover keeps a solid,
+      // consistent underline.
+      plain: {
+        _hover: {
+          textDecorationColor: 'currentColor',
+          textUnderlineOffset: '0.15em',
+        },
+      },
+      unstyled: {
+        textDecoration: 'none',
+        _hover: {
+          textDecoration: 'none',
+        },
+      },
       breadcrumb: {
         color: 'dashboard.breadcrumb',
         textDecoration: 'none',
@@ -74,26 +90,28 @@ export const link = defineRecipe({
   },
 })
 
+// Line heights are unitless so text keeps proportional spacing even when a
+// consumer overrides fontSize without changing the size variant.
 const sizes = {
   xs: {
     fontSize: '12px',
-    lineHeight: '18px',
+    lineHeight: 1.5,
   },
   sm: {
     fontSize: '14px',
-    lineHeight: '20px',
+    lineHeight: 1.43,
   },
   md: {
     fontSize: '16px',
-    lineHeight: '24px',
+    lineHeight: 1.5,
   },
   lg: {
     fontSize: '18px',
-    lineHeight: '28px',
+    lineHeight: 1.56,
   },
   xl: {
     fontSize: '20px',
-    lineHeight: '30px',
+    lineHeight: 1.5,
   },
   '2xl': {
     fontSize: '24px',

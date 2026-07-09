@@ -81,7 +81,7 @@ const Tutorial = () => {
   return (
     <DashboardBox p={6} mb={6} display='flex' gap={10} position='relative' flexDirection='row'>
       <Box flex='1 1 60%'>
-        <Text fontWeight='bold' mb={2} fontSize='2xl'>
+        <Text fontWeight='bold' mb={2} size='2xl'>
           {t('dashboard.welcome.hello', {
             name: profile?.firstName,
             defaultValue: 'Welcome to Vocdoni, {{name}}!',
@@ -263,10 +263,10 @@ const OrganizationProcesses = () => {
 
   return (
     <Flex flexDirection={{ base: 'column', md: 'row' }} gap={4}>
-      <DashboardBox p={6} minH='324px' flex='1 1 66%' display='flex' flexWrap='unset'>
+      <DashboardBox p={6} minH='324px' flex='1 1 66%'>
         <Box mb={4}>
-          <Text fontWeight='bold' mb={1.5} fontSize='2xl'>
-            {t('dashboard.welcome.recent_voting_title', { defaultValue: 'Recent Voting Processes' })}
+          <Text fontWeight='bold' mb={1.5} size='2xl'>
+            {t('dashboard.welcome.recent_voting_title', { defaultValue: 'Recent voting processes' })}
           </Text>
           <Text color='gray.500' fontSize='sm'>
             {t('dashboard.welcome.recent_voting_description', {
@@ -375,7 +375,7 @@ const Processes = () => {
           <ElectionProvider election={election} id={election.id} key={election.id}>
             <Flex align='center'>
               <Box flex='1' minW={0} mr={4}>
-                <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='500' display='block'>
+                <Link asChild variant='unstyled' fontWeight='500' display='block'>
                   <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
                     <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' truncate />
                   </ReactRouterLink>
@@ -428,9 +428,9 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
   const { t } = useTranslation()
   return (
     <DashboardBox p={6} flex='1 1 33%' justifyContent='normal' gap={0} {...props}>
-      <Text fontWeight='bold' mb={1.5} fontSize='2xl'>
+      <Text fontWeight='bold' mb={1.5} size='2xl'>
         {t('dashboard.welcome.quick_actions', {
-          defaultValue: 'Quick Actions',
+          defaultValue: 'Quick actions',
         })}
       </Text>
       <Text color='gray.500' fontSize='sm' mb={6}>
@@ -438,12 +438,12 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
           defaultValue: 'Common tasks and actions',
         })}
       </Text>
-      <Flex flexDirection='column' gap={4}>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+      <Flex flexDirection='column' gap={4} minW={0}>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold' minW={0}>
           <ReactRouterLink to={generatePath(Routes.processes.create)}>
-            <HStack gap={2}>
-              <Icon as={LuPlus} />
-              <Text as='span'>
+            <HStack gap={2} minW={0}>
+              <Icon as={LuPlus} flexShrink={0} />
+              <Text as='span' truncate>
                 {t('actions.create_new_vote', {
                   defaultValue: 'Create new vote',
                 })}
@@ -451,11 +451,11 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
             </HStack>
           </ReactRouterLink>
         </Button>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold' minW={0}>
           <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
-            <HStack gap={2}>
-              <Icon as={LuVote} />
-              <Text as='span'>
+            <HStack gap={2} minW={0}>
+              <Icon as={LuVote} flexShrink={0} />
+              <Text as='span' truncate>
                 {t('actions.view_active_votes', {
                   defaultValue: 'View active votes',
                 })}
@@ -463,11 +463,11 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
             </HStack>
           </ReactRouterLink>
         </Button>
-        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold'>
+        <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold' minW={0}>
           <ReactRouterLink to={generatePath(Routes.dashboard.settings.base)}>
-            <HStack gap={2}>
-              <Icon as={LuUsers} />
-              <Text as='span'>
+            <HStack gap={2} minW={0}>
+              <Icon as={LuUsers} flexShrink={0} />
+              <Text as='span' truncate>
                 {t('actions.manage_team', {
                   defaultValue: 'Manage team',
                 })}
