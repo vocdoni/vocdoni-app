@@ -30,6 +30,13 @@ const viteconfig = ({ mode }: { mode: string }) => {
 
   return defineConfig({
     base,
+    resolve: {
+      // The integrator-sdk packages (@vocdoni/api-*, @vocdoni/react-providers) are
+      // consumed via pnpm `link:`, so their symlinked node_modules would otherwise
+      // resolve their own React (19) instead of the app's (18), triggering the classic
+      // "invalid hook call" duplicate-React error. Force a single React/react-dom copy.
+      dedupe: ['react', 'react-dom'],
+    },
     // Expose the dev server on the local network (equivalent to `--host`).
     // It is set here rather than on the CLI because Vike intercepts the vite
     // command and its parser rejects unknown flags like `--host`/`--port`.

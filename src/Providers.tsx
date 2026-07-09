@@ -1,6 +1,7 @@
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ComponentsProvider } from '@vocdoni/react-components'
+import { ComponentsProvider, useClient } from '@vocdoni/react-components'
+import { AuthProvider as SdkAuthProvider } from '@vocdoni/react-providers'
 import { setDefaultOptions } from 'date-fns'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { I18nextProvider, useTranslation } from 'react-i18next'
@@ -15,6 +16,7 @@ import { CookieConsent } from '~components/Cookies/CookieConsent'
 import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { walletClientToSigner } from '~constants/wagmi-adapters'
+import { ApiClientProvider, AUTH_STORAGE_KEY } from '~src/providers/ApiClientProvider'
 import { LanguageRoutingContext } from '~i18n/LanguageRoutingContext'
 import {
   localizePublicPath,
@@ -188,11 +190,13 @@ export const AppProviders = ({
 }
 
 const SaasProviders = ({ children }: PropsWithChildren<{}>) => (
-  <AuthProvider>
-    <SubscriptionProvider>
-      <SaasAccountProvider>{children}</SaasAccountProvider>
-    </SubscriptionProvider>
-  </AuthProvider>
+  <SdkAuthProvider storageKey={AUTH_STORAGE_KEY}>
+    <AuthProvider>
+      <SubscriptionProvider>
+        <SaasAccountProvider>{children}</SaasAccountProvider>
+      </SubscriptionProvider>
+    </AuthProvider>
+  </SdkAuthProvider>
 )
 
 const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
@@ -213,12 +217,14 @@ const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
       <ComponentsProvider components={uiScaffoldComponents}>
         <ClientProvider env={clientEnv} signer={signer as Signer}>
           <ConnectionToastProvider>
-            <SaasProviders>
-              <AnalyticsProvider>
-                <CookieConsent />
-                {children}
-              </AnalyticsProvider>
-            </SaasProviders>
+            <ApiClientProvider>
+              <SaasProviders>
+                <AnalyticsProvider>
+                  <CookieConsent />
+                  {children}
+                </AnalyticsProvider>
+              </SaasProviders>
+            </ApiClientProvider>
           </ConnectionToastProvider>
         </ClientProvider>
       </ComponentsProvider>
