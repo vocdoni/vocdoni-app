@@ -1,7 +1,11 @@
 import { LuCalendar } from 'react-icons/lu'
-import { mockUseClient, mockUseOrganization, render, screen, TestMemoryRouter, within } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { mockUseOrganization, render, screen, TestMemoryRouter, within } from '~src/test-utils'
+import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import OrganizationDashboard from './index'
+
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => getAuthMock(),
+}))
 
 const useOrganizationSetupMock = vi.fn()
 
@@ -61,9 +65,9 @@ vi.mock('./UsageLimits', () => ({
 
 describe('OrganizationDashboard', () => {
   beforeEach(() => {
+    setAuthMock({ currentAddress: '0xabc' })
     setReactProvidersMock({
       ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-      useClient: () => mockUseClient({ client: {}, account: {} }),
       useOrganization: () => mockUseOrganization({ organization: null }),
     })
   })

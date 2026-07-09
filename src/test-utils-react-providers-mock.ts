@@ -33,6 +33,37 @@ export const resetReactProvidersMock = () => {
   currentMock = { ...defaultMock }
 }
 
+// --- App auth hook (~components/Auth/useAuth) --------------------------------------
+// Mirrors the react-components mock so component tests can set the active org address
+// and auth state without wiring the whole AuthProvider tree.
+const defaultAuthMock: Record<string, any> = {
+  isAuthenticated: false,
+  bearer: null,
+  expiry: null,
+  currentAddress: undefined,
+  addresses: [],
+  isAuthLoading: false,
+  login: { mutateAsync: () => Promise.resolve(), isPending: false, reset: () => undefined },
+  register: { mutateAsync: () => Promise.resolve() },
+  mailVerify: { mutateAsync: () => Promise.resolve() },
+  logout: () => undefined,
+  bearedFetch: () => Promise.resolve(undefined),
+  refreshAddresses: () => Promise.resolve(),
+  setSession: () => undefined,
+}
+
+let currentAuthMock: Record<string, any> = { ...defaultAuthMock }
+
+export const setAuthMock = (overrides: Record<string, any>) => {
+  currentAuthMock = { ...currentAuthMock, ...overrides }
+}
+
+export const resetAuthMock = () => {
+  currentAuthMock = { ...defaultAuthMock }
+}
+
+export const getAuthMock = () => currentAuthMock
+
 const resolveMock = (key: string) => (currentMock[key] ?? defaultMock[key]) as any
 
 export const getReactProvidersMock = () => ({

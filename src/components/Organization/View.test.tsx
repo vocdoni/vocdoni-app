@@ -1,7 +1,11 @@
 import { PublishedElection } from '@vocdoni/sdk'
 import { render, screen } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import OrganizationView from './View'
+
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => getAuthMock(),
+}))
 
 vi.mock('./Header', () => ({
   default: () => <div>Organization header</div>,
@@ -38,6 +42,7 @@ describe('OrganizationView', () => {
   it('renders the server-provided first elections page without refetching page 0 on mount', () => {
     const fetchElections = vi.fn()
 
+    setAuthMock({ currentAddress: '0xabc' })
     setReactProvidersMock({
       useClient: () => ({
         connected: false,

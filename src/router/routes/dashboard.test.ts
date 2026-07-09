@@ -3,8 +3,12 @@ import { renderHook } from '@testing-library/react'
 import { matchRoutes } from 'react-router-dom'
 import { Routes } from '.'
 import { mockUseClient } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import { shouldRevalidateDashboardProcess } from './dashboard'
+
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => getAuthMock(),
+}))
 
 vi.mock('@tanstack/react-query', () => ({
   useQueryClient: () => ({
@@ -38,6 +42,7 @@ describe('shouldRevalidateDashboardProcess', () => {
 
 describe('dashboard process routes', () => {
   beforeEach(() => {
+    setAuthMock({ currentAddress: '0xabc' })
     setReactProvidersMock({
       useClient: () =>
         mockUseClient({
