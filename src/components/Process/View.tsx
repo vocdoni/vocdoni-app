@@ -37,6 +37,7 @@ import { RiBarChartBoxLine, RiErrorWarningLine } from 'react-icons/ri'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { getPublicProcessSummaryPath } from '~src/ssr/public-pages'
+import { useAuth } from '~components/Auth/useAuth'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
@@ -89,7 +90,7 @@ const ProcessInfoPanel = () => {
   const language = usePublicLanguage()
   const { election } = useElection()
   const { organization, loaded } = useOrganization()
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   // For CSP elections the actual census size comes from the bundle, not from `maxCensusSize`
   // (which only caps how many voters may vote). See useCensusSize.
   const { size: censusSize } = useCensusSize()
@@ -165,7 +166,7 @@ const ProcessInfoPanel = () => {
         }
       />
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
-      {election?.status === ElectionStatus.PAUSED && election?.organizationId !== account?.address && (
+      {election?.status === ElectionStatus.PAUSED && election?.organizationId !== currentAddress && (
         <Flex
           color='process.paused'
           _dark={{ color: 'white' }}

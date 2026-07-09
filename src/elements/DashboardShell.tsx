@@ -1,10 +1,11 @@
 import { Flex, IconButton, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
-import { OrganizationProvider, useClient } from '@vocdoni/react-components'
+import { OrganizationProvider } from '@vocdoni/react-components'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuPanelLeft } from 'react-icons/lu'
 import { Outlet, useLocation } from 'react-router-dom'
+import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import DashboardMenu from '~components/Dashboard/Menu'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
@@ -78,9 +79,9 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
 }
 
 const DashboardLayoutProviders = (props: PropsWithChildren) => {
-  const { account } = useClient()
+  const { organization } = useSaasAccount()
   return (
-    <OrganizationProvider organization={account}>
+    <OrganizationProvider organization={organization}>
       <PricingModalProvider {...props} />
     </OrganizationProvider>
   )

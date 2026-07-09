@@ -14,13 +14,14 @@ import {
   Separator,
   Text,
 } from '@chakra-ui/react'
-import { enforceHexPrefix, errorToString, useClient } from '@vocdoni/react-components'
+import { enforceHexPrefix, errorToString } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuPlus, LuTrash2, LuWallet } from 'react-icons/lu'
 import { useSubscription } from '~components/Auth/Subscription'
+import { useAuth } from '~components/Auth/useAuth'
 import { DashboardSection, SidebarSubtitle } from '~components/Dashboard/Contents'
 import Uploader from '~components/Layout/Uploader'
 import { enforceCsvRowLimit } from '~components/Spreadsheet/limits'
@@ -37,7 +38,7 @@ const isValidAddress = (value: string) => /^(0x)?[0-9a-f]{40}$/i.test(value)
 
 export const CensusWeb3Addresses = () => {
   const { t } = useTranslation()
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const [fileErr, setFileErr] = useState<string | null>(null)
 
   const {
@@ -59,11 +60,11 @@ export const CensusWeb3Addresses = () => {
   const maxCensusSize = subscription?.subscriptionDetails?.maxCensusSize || subscription?.plan?.organization?.maxCensus
 
   useEffect(() => {
-    if (account?.address && addresses.length === 0) {
-      setValue('addresses', [{ address: enforceHexPrefix(account.address), weight: 1 }])
+    if (currentAddress && addresses.length === 0) {
+      setValue('addresses', [{ address: enforceHexPrefix(currentAddress), weight: 1 }])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account?.address, addresses, censusType])
+  }, [currentAddress, addresses, censusType])
 
   // File dropzone
   const onDrop = async ([file]: File[]) => {

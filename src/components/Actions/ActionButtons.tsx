@@ -1,12 +1,13 @@
 import { Button, type ButtonProps } from '@chakra-ui/react'
-import { useActions, useClient, useConfirm, useElection } from '@vocdoni/react-components'
+import { useActions, useConfirm, useElection } from '@vocdoni/react-components'
 import { areEqualHexStrings, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useAuth } from '~components/Auth/useAuth'
 import { ConfirmActionModal } from './ConfirmActionModal'
 
 export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const { election } = useElection()
   const {
     resume,
@@ -18,7 +19,7 @@ export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ chil
   if (
     !election ||
     !(election instanceof PublishedElection) ||
-    !areEqualHexStrings(election.organizationId, account?.address)
+    !areEqualHexStrings(election.organizationId, currentAddress)
   ) {
     return null
   }
@@ -38,7 +39,7 @@ export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ chil
 ActionContinue.displayName = 'ActionContinue'
 
 export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const { election } = useElection()
   const {
     pause,
@@ -50,7 +51,7 @@ export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ childre
   if (
     !election ||
     !(election instanceof PublishedElection) ||
-    !areEqualHexStrings(election.organizationId, account?.address)
+    !areEqualHexStrings(election.organizationId, currentAddress)
   ) {
     return null
   }
@@ -70,7 +71,7 @@ export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ childre
 ActionPause.displayName = 'ActionPause'
 
 export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const { confirm } = useConfirm()
   const { election } = useElection()
   const {
@@ -98,7 +99,7 @@ export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children,
   if (
     !election ||
     !(election instanceof PublishedElection) ||
-    !areEqualHexStrings(election.organizationId, account?.address)
+    !areEqualHexStrings(election.organizationId, currentAddress)
   ) {
     return null
   }
@@ -123,7 +124,7 @@ export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children,
 ActionEnd.displayName = 'ActionEnd'
 
 export const ActionCancel = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const { confirm } = useConfirm()
   const { election } = useElection()
   const {
@@ -151,7 +152,7 @@ export const ActionCancel = forwardRef<HTMLButtonElement, ButtonProps>(({ childr
   if (
     !election ||
     !(election instanceof PublishedElection) ||
-    !areEqualHexStrings(election.organizationId, account?.address)
+    !areEqualHexStrings(election.organizationId, currentAddress)
   ) {
     return null
   }

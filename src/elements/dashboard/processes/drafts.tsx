@@ -18,7 +18,7 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient, useOrganization } from '@vocdoni/react-components'
+import { useOrganization } from '@vocdoni/react-components'
 import { RoutedPaginationProvider } from '@vocdoni/react-components/pagination'
 import { ensure0x } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
@@ -209,14 +209,14 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
   const toast = useToast()
   const deleteDraftMutation = useDeleteDraft()
   const createProcess = useCreateProcess()
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const navigate = useNavigate()
 
   const cloneDraft = async () => {
     try {
       const clonedDraftId = await createProcess.mutateAsync({
         metadata: draft.metadata,
-        orgAddress: ensure0x(account?.address),
+        orgAddress: ensure0x(currentAddress),
       })
       toast({
         title: t('drafts.cloned_draft', {
@@ -227,7 +227,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
         closable: true,
       })
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.drafts(account?.address),
+        queryKey: QueryKeys.organization.drafts(currentAddress),
         exact: false,
       })
       navigate(

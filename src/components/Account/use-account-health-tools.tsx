@@ -1,16 +1,14 @@
-import { useClient } from '@vocdoni/react-components'
-import { AccountData, ArchivedAccountData } from '@vocdoni/sdk'
+import { useAuth } from '~components/Auth/useAuth'
 
-const isNotArchived = (account: AccountData | ArchivedAccountData): account is AccountData => {
-  return (account as AccountData).nonce !== undefined
-}
-
+/**
+ * Whether the session has a usable organization. Formerly derived from the on-chain
+ * account object (RemoteSigner-connected, checking it existed and wasn't archived); now
+ * an org simply exists when the session resolved an active organization address.
+ */
 export const useAccountHealthTools = () => {
-  const { account } = useClient()
-
-  const exists = typeof account !== 'undefined' && isNotArchived(account)
+  const { currentAddress } = useAuth()
 
   return {
-    exists,
+    exists: !!currentAddress,
   }
 }

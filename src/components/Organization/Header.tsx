@@ -3,7 +3,6 @@ import {
   OrganizationImage as Avatar,
   OrganizationDescription,
   OrganizationName,
-  useClient,
   useOrganization,
 } from '@vocdoni/react-components'
 import { useEffect, useRef, useState } from 'react'
@@ -16,7 +15,6 @@ import fallback from '/assets/default-avatar.png'
 const OrganizationHeader = () => {
   const { t } = useTranslation()
   const { organization } = useOrganization()
-  const { account } = useClient()
 
   const { ReadMoreMarkdownWrapper, ReadMoreMarkdownButton } = useReadMoreMarkdown(600, 20)
 

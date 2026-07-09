@@ -2,6 +2,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
 import { Fragment, lazy } from 'react'
+import { useAuth } from '~components/Auth/useAuth'
 import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
@@ -42,7 +43,8 @@ export const shouldRevalidateDashboardProcess = ({
 
 export const useDashboardRoutes = () => {
   const queryClient = useQueryClient()
-  const { client, account } = useClient()
+  const { client } = useClient()
+  const { currentAddress } = useAuth()
 
   return {
     element: (
@@ -140,7 +142,7 @@ export const useDashboardRoutes = () => {
                           const mergedParams = { ...queryParams, ...params }
 
                           return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(account, client, mergedParams)
+                            paginatedElectionsQuery(currentAddress, client, mergedParams)
                           )
                         },
                       },
@@ -158,7 +160,7 @@ export const useDashboardRoutes = () => {
                           const mergedParams = { ...queryParams, ...params }
 
                           return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(account, client, mergedParams)
+                            paginatedElectionsQuery(currentAddress, client, mergedParams)
                           )
                         },
                       },

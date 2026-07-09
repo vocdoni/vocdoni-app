@@ -37,12 +37,11 @@ type CheckoutResponse = {
 }
 
 const useUpdateSubscription = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
+  const { bearedFetch, currentAddress } = useAuth()
 
   return useMutation<SubscriptionType>({
     mutationFn: async () =>
-      await bearedFetch(ApiEndpoints.OrganizationSubscription.replace('{address}', ensure0x(account?.address))),
+      await bearedFetch(ApiEndpoints.OrganizationSubscription.replace('{address}', ensure0x(currentAddress))),
   })
 }
 

@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { ensure0x, type MultiLanguage } from '@vocdoni/sdk'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -123,9 +122,8 @@ export type CreatedApiKey = ApiKey & { secret: string }
 
 /** API keys owned by the selected organization (GET /integrator/organizations/{orgAddress}/apikeys, admin only). */
 export const useApiKeys = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const address = account?.address
+  const { bearedFetch, currentAddress } = useAuth()
+  const address = currentAddress
 
   return useQuery<ApiKey[]>({
     queryKey: QueryKeys.organization.apikeys(address),
@@ -139,9 +137,8 @@ export const useApiKeys = () => {
 
 /** Create an API key. The returned secret is shown only once. */
 export const useCreateApiKey = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const address = account?.address
+  const { bearedFetch, currentAddress } = useAuth()
+  const address = currentAddress
   const queryClient = useQueryClient()
 
   return useMutation<CreatedApiKey, Error, CreateApiKeyBody>({
@@ -161,9 +158,8 @@ export const useCreateApiKey = () => {
 
 /** Revoke (permanently disable) an API key. */
 export const useRevokeApiKey = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const address = account?.address
+  const { bearedFetch, currentAddress } = useAuth()
+  const address = currentAddress
   const queryClient = useQueryClient()
 
   return useMutation<void, Error, { id: string }>({

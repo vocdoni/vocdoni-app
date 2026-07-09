@@ -220,7 +220,7 @@ export const useFormDraftSaver = (
   storeDraftId: (id: string | null) => void,
   saveCooldown?: (ms: number) => void
 ) => {
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const createProcess = useCreateProcess()
   const updateProcess = useUpdateProcess()
   const skipNextSaveRef = useRef(false)
@@ -245,12 +245,12 @@ export const useFormDraftSaver = (
         if (draftId) {
           await updateProcess.mutateAsync({
             processId: draftId,
-            body: { metadata: form, orgAddress: ensure0x(account?.address) },
+            body: { metadata: form, orgAddress: ensure0x(currentAddress) },
           })
         } else {
           const draftProcessId = await createProcess.mutateAsync({
             metadata: form,
-            orgAddress: ensure0x(account?.address),
+            orgAddress: ensure0x(currentAddress),
           })
           storeDraftId(draftProcessId)
         }
@@ -280,7 +280,7 @@ export const useFormDraftSaver = (
       draftLimitReached,
       getValues,
       draftId,
-      account?.address,
+      currentAddress,
       updateProcess,
       createProcess,
       storeDraftId,

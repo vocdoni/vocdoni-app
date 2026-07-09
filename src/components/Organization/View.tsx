@@ -14,6 +14,7 @@ import { areEqualHexStrings, InvalidElection, PublishedElection } from '@vocdoni
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ElectionsPageData } from '~src/ssr/public-pages'
+import { useAuth } from '~components/Auth/useAuth'
 import ProcessCardDetailed from '../Process/CardDetailed'
 import Header from './Header'
 import NoElections from './NoElections'
@@ -24,7 +25,8 @@ type OrganizationViewProps = {
 
 const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
   const { t } = useTranslation()
-  const { client, account } = useClient()
+  const { client } = useClient()
+  const { currentAddress } = useAuth()
   const { organization, fetch } = useOrganization()
 
   const initialElections = (initialElectionsPage?.elections ?? []) as (PublishedElection | InvalidElection)[]
@@ -49,11 +51,11 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
   // refetch account info in case it changes in client (i.e. when editing the account profile in this same page)
   useEffect(() => {
     // only re-fetch if account is the same as the one rendered, otherwise it will load incorrect data
-    if (!areEqualHexStrings(account?.address, organization?.address)) return
+    if (!areEqualHexStrings(currentAddress, organization?.address)) return
 
     fetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [currentAddress])
 
   // resets fields on account change
   useEffect(() => {

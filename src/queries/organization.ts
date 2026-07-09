@@ -80,15 +80,15 @@ type InviteData = {
 }
 
 export const paginatedElectionsQuery = (
-  account: AccountData,
+  address: string | undefined,
   client: VocdoniSDKClient,
   params: PaginatedElectionsParams
 ) => ({
-  enabled: !!account?.address,
-  queryKey: QueryKeys.organization.elections(account?.address, params),
+  enabled: !!address,
+  queryKey: QueryKeys.organization.elections(address, params),
   queryFn: async () =>
     client.fetchElections({
-      organizationId: account?.address,
+      organizationId: address,
       page: params.page ? Number(params.page) - 1 : 0,
       status: params.status?.toUpperCase() as FetchElectionsParameters['status'],
       limit: params.limit,

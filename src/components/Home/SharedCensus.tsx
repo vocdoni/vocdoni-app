@@ -5,7 +5,6 @@ import {
   ElectionTitle,
   OrganizationImage,
   OrganizationProvider,
-  useClient,
   useElection,
 } from '@vocdoni/react-components'
 import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
@@ -14,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import Editor from '~components/Editor'
+import { useAuth } from '~components/Auth/useAuth'
 import { ManageProcessLink } from '~components/Process/ManageProcessLink'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
@@ -56,9 +56,10 @@ const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode })
 const SharedCensusHomeContent = () => {
   const { t, i18n } = useTranslation()
   const { loading, loaded, election, connected } = useElection()
-  const { account, connected: aconnected } = useClient()
+  const { currentAddress, isAuthenticated } = useAuth()
 
-  const isAdmin = aconnected && account?.address === (election as PublishedElection)?.organizationId
+  const isAdmin =
+    isAuthenticated && currentAddress?.toLowerCase() === (election as PublishedElection)?.organizationId?.toLowerCase()
   const canViewProcesses = connected || isAdmin
   const appEnv = useAppEnv()
   const processIds = parseProcessIds(appEnv.PROCESS_IDS)

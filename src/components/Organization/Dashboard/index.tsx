@@ -24,6 +24,7 @@ import {
   useOrganization,
 } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
+import { useAuth } from '~components/Auth/useAuth'
 import { format } from 'date-fns'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
@@ -284,10 +285,11 @@ const OrganizationProcesses = () => {
 
 const Processes = () => {
   const { t } = useTranslation()
-  const { client, account } = useClient()
+  const { client } = useClient()
   const { organization } = useOrganization()
+  const { currentAddress } = useAuth()
 
-  const { queryKey, queryFn } = paginatedElectionsQuery(account, client, {})
+  const { queryKey, queryFn } = paginatedElectionsQuery(currentAddress, client, {})
 
   const {
     data: elections,

@@ -1,7 +1,5 @@
 import { Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
-import { Account } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -20,12 +18,11 @@ import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
 type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country'>
 
 const useOrganizationEdit = (options?: Omit<UseMutationOptions<void, Error, CreateOrgParams>, 'mutationFn'>) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
+  const { bearedFetch, currentAddress } = useAuth()
   const client = useQueryClient()
   return useMutation<void, Error, CreateOrgParams>({
     mutationFn: (params: CreateOrgParams) =>
-      bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', account?.address), {
+      bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', currentAddress!), {
         body: params,
         method: 'PUT',
       }),
@@ -42,7 +39,6 @@ const EditOrganization = () => {
   const toast = useToast()
   const { t } = useTranslation()
   const [isPending, setPending] = useState(false)
-  const { updateAccount } = useClient()
   const { organization } = useSaasAccount()
   const { setStepDoneAsync } = useOrganizationSetup()
   const { mutateAsync } = useOrganizationEdit()
@@ -64,7 +60,14 @@ const EditOrganization = () => {
 
   const onSubmit: SubmitHandler<FormData> = async (values: FormData) => {
     setPending(true)
+    // Profile metadata (name/description/avatar) is now persisted through the SaaS
+    // organization endpoint; the backend provisions the on-chain account server-side,
+    // so there is no client-side on-chain account update anymore.
     const newInfo: CreateOrgParams = {
+      name: values.name,
+      description: values.description,
+      avatar: values.avatar,
+      header: values.header,
       website: values.website,
       size: values.size,
       type: values.type,
@@ -73,11 +76,6 @@ const EditOrganization = () => {
 
     try {
       await mutateAsync({ ...organization, ...newInfo })
-      const newAccount = new Account({ ...organization?.account, ...values })
-      // Check if account changed before trying to update
-      if (JSON.stringify(newAccount.generateMetadata()) !== JSON.stringify(organization?.account.generateMetadata())) {
-        await updateAccount(newAccount)
-      }
       await setStepDoneAsync(SetupStepIds.organizationDetails)
       toast({
         title: t('edit_saas_profile.edited_successfully', { defaultValue: 'Updated successfully' }),
