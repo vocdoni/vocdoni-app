@@ -29,7 +29,7 @@ export const ElectionTitle = defineRecipe({
     fontWeight: 'bold',
     fontSize: 'xl',
     textAlign: 'center',
-    lineHeight: 1.1,
+    lineHeight: 1.3,
     mb: 3,
   },
 })

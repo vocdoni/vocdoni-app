@@ -19,7 +19,7 @@ export const AccountEdit = () => {
         <AccountForm profile={profile} />
       </DashboardBox>
       <DashboardBox p={6}>
-        <Text fontSize='2xl' fontWeight='600'>
+        <Text size='2xl' fontWeight='600'>
           {t('delete.delete_title', { defaultValue: 'Delete Account' })}
         </Text>
         <Text fontSize='sm' color='texts.subtle'>

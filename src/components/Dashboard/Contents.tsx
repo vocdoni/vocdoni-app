@@ -13,9 +13,9 @@ export const DashboardBox = (props: BoxProps) => (
     _dark={{ borderColor: 'brand.700' }}
     _light={{ borderColor: 'gray.200' }}
     p={4}
+    minW={0}
     display='flex'
     flexDirection='column'
-    flexWrap='wrap'
     justifyContent='space-between'
     gap={4}
     {...props}
@@ -24,11 +24,11 @@ export const DashboardBox = (props: BoxProps) => (
 
 export const DashboardCardHeader = ({ title, subtitle, ...props }: DashboardCardHeaderProps) => (
   <Box mb={4} {...props}>
-    <Text fontWeight='bold' fontSize='2xl' mb={1}>
+    <Text fontWeight='bold' size='2xl' mb={1}>
       {title}
     </Text>
     {subtitle && (
-      <Text color='texts.subtle' fontSize='sm'>
+      <Text color='texts.subtle' size='sm'>
         {subtitle}
       </Text>
     )}
@@ -44,16 +44,7 @@ export const DashboardSection = (props: BoxProps) => (
 )
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>((props, ref) => (
-  <CHeading
-    size='sm'
-    fontSize='2xl'
-    fontWeight='bold'
-    display='flex'
-    gap={2}
-    alignItems='center'
-    ref={ref}
-    {...props}
-  />
+  <CHeading size='2xl' fontWeight='bold' display='flex' gap={2} alignItems='center' ref={ref} {...props} />
 ))
 
 export const SubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, ref) => (
@@ -115,8 +106,8 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
 export const SidebarContents = (props: BoxProps) => <Box px={4} pb={4} {...props} />
 
 export const SidebarTitle = (props: HeadingProps) => (
-  <Heading as='h4' fontSize='lg' fontWeight='bold' variant='sidebar-title' {...props} />
+  <Heading as='h4' size='lg' fontWeight='bold' variant='sidebar-title' {...props} />
 )
 export const SidebarSubtitle = (props: HeadingProps) => (
-  <Heading as='h5' fontSize='sm' variant='sidebar-subtitle' {...props} />
+  <Heading as='h5' size='sm' variant='sidebar-subtitle' {...props} />
 )
