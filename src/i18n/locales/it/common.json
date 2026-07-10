@@ -1057,6 +1057,7 @@
       "remaining_members_many": "",
       "remaining_members_other": "+{{count}} altri",
       "search": "Cerca membri...",
+      "select_all": "Seleziona tutti",
       "select_group": "Seleziona gruppo",
       "select_hint": "Seleziona membri per eseguire azioni di massa",
       "select_process": "Seleziona processo",

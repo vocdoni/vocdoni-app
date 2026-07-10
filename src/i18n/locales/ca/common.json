@@ -1057,6 +1057,7 @@
       "remaining_members_many": "",
       "remaining_members_other": "+{{count}} més",
       "search": "Cerca membres...",
+      "select_all": "Selecciona-ho tot",
       "select_group": "Selecciona un grup",
       "select_hint": "Selecciona membres per realitzar accions massives",
       "select_process": "Selecciona un procés",

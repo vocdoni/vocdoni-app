@@ -1039,6 +1039,7 @@
       "remaining_members_one": "+{{count}} gehiago",
       "remaining_members_other": "+{{count}} gehiago",
       "search": "Bilatu kideak...",
+      "select_all": "Hautatu denak",
       "select_group": "Hautatu taldea",
       "select_hint": "Hautatu kideak ekintza masiboak egiteko",
       "select_process": "Hautatu prozesua",

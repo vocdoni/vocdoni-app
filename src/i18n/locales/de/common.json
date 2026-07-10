@@ -1039,6 +1039,7 @@
       "remaining_members_one": "+{{count}} weitere",
       "remaining_members_other": "+{{count}} weitere",
       "search": "Mitglieder suchen...",
+      "select_all": "Alle auswählen",
       "select_group": "Gruppe auswählen",
       "select_hint": "Mitglieder auswählen, um Sammelaktionen durchzuführen",
       "select_process": "Prozess auswählen",

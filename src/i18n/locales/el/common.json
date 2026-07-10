@@ -1039,6 +1039,7 @@
       "remaining_members_one": "+{{count}} ακόμη",
       "remaining_members_other": "+{{count}} ακόμη",
       "search": "Αναζήτηση μελών...",
+      "select_all": "Επιλογή όλων",
       "select_group": "Επιλογή ομάδας",
       "select_hint": "Επιλέξτε μέλη για μαζικές ενέργειες",
       "select_process": "Επιλέξτε διαδικασία",

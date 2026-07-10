@@ -1039,6 +1039,7 @@
       "remaining_members_one": "+{{count}} more",
       "remaining_members_other": "+{{count}} more",
       "search": "Search members...",
+      "select_all": "Select all",
       "select_group": "Select group",
       "select_hint": "Select members to perform bulk actions",
       "select_process": "Select process",
