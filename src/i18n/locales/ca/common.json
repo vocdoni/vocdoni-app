@@ -1060,6 +1060,7 @@
       "select_all": "Selecciona-ho tot",
       "select_group": "Selecciona un grup",
       "select_hint": "Selecciona membres per realitzar accions massives",
+      "select_member": "Selecciona {{name}}",
       "select_process": "Selecciona un procés",
       "selected_one": "Seleccionat: <strong>{{count}} membre</strong>",
       "selected_many": "",

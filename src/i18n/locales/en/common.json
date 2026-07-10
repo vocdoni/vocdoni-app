@@ -1042,6 +1042,7 @@
       "select_all": "Select all",
       "select_group": "Select group",
       "select_hint": "Select members to perform bulk actions",
+      "select_member": "Select {{name}}",
       "select_process": "Select process",
       "selected_one": "Selected: <strong>{{count}} member</strong>",
       "selected_other": "Selected: <strong>{{count}} members</strong>",

@@ -1,5 +1,6 @@
 import { Card, Checkbox, Flex, Text } from '@chakra-ui/react'
 import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Member } from '~src/queries/members'
 import { useTable } from '../TableProvider'
 import { maskIfNeeded } from './index'
@@ -14,7 +15,9 @@ const memberAlias = (member: Member) =>
   [member.name, member.surname].filter(Boolean).join(' ') || member.email || member.memberNumber
 
 const MemberCard = ({ member, actions, selectable = true }: MemberCardProps) => {
+  const { t } = useTranslation()
   const { columns, isSelected, toggleOne } = useTable()
+  const alias = memberAlias(member)
 
   return (
     <Card.Root variant='data-list-item'>
@@ -24,13 +27,14 @@ const MemberCard = ({ member, actions, selectable = true }: MemberCardProps) => 
             <Checkbox.Root
               checked={isSelected(member.id)}
               onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
+              aria-label={t('members.table.select_member', { defaultValue: 'Select {{name}}', name: alias })}
             >
               <Checkbox.HiddenInput />
               <Checkbox.Control />
             </Checkbox.Root>
           )}
           <Text fontWeight='medium' lineClamp={2}>
-            {memberAlias(member)}
+            {alias}
           </Text>
         </Flex>
         {actions}

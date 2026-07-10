@@ -1060,6 +1060,7 @@
       "select_all": "Selecionar todos",
       "select_group": "Selecionar grupo",
       "select_hint": "Selecione membros para realizar ações em massa",
+      "select_member": "Selecionar {{name}}",
       "select_process": "Selecionar processo",
       "selected_one": "Selecionado: <strong>{{count}} membro</strong>",
       "selected_many": "",

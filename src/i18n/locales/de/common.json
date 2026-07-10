@@ -1042,6 +1042,7 @@
       "select_all": "Alle auswählen",
       "select_group": "Gruppe auswählen",
       "select_hint": "Mitglieder auswählen, um Sammelaktionen durchzuführen",
+      "select_member": "{{name}} auswählen",
       "select_process": "Prozess auswählen",
       "selected_one": "Ausgewählt: <strong>{{count}} Mitglied</strong>",
       "selected_other": "Ausgewählt: <strong>{{count}} Mitglieder</strong>",

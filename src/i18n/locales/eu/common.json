@@ -1042,6 +1042,7 @@
       "select_all": "Hautatu denak",
       "select_group": "Hautatu taldea",
       "select_hint": "Hautatu kideak ekintza masiboak egiteko",
+      "select_member": "Hautatu {{name}}",
       "select_process": "Hautatu prozesua",
       "selected_one": "Hautatuta: <strong>Kide bat</strong>",
       "selected_other": "Hautatuta: <strong>{{count}} kide</strong>",
