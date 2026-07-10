@@ -73,7 +73,7 @@ export const IntegratorOverview = () => {
     },
   ]
 
-  const upgradeLabel = t('integrators.change_plan', { defaultValue: 'Upgrade plan' })
+  const upgradeLabel = t('integrators.upgrade_plan', { defaultValue: 'Upgrade plan' })
 
   return (
     <DashboardContents>
@@ -85,16 +85,19 @@ export const IntegratorOverview = () => {
             defaultValue: 'Your integrator quota and current usage.',
           })}
         />
-        {/* Desktop: sits at the top-right of the page header. On mobile the button is hidden here
-            and portaled into the shared top bar (next to the sidebar toggle) instead. */}
-        <BookerModalButton
-          variant='solid'
-          colorPalette='gray'
-          flexShrink={0}
-          display={{ base: 'none', md: 'inline-flex' }}
-        >
-          {upgradeLabel}
-        </BookerModalButton>
+        {/* Desktop: sits at the top-right of the page header. On mobile the layout exposes a slot
+            in the shared top bar (next to the sidebar toggle) and the button is portaled there
+            instead, so only one instance is ever mounted. */}
+        {!layout?.headerActionsNode && (
+          <BookerModalButton
+            variant='solid'
+            colorPalette='gray'
+            flexShrink={0}
+            display={{ base: 'none', md: 'inline-flex' }}
+          >
+            {upgradeLabel}
+          </BookerModalButton>
+        )}
       </Flex>
       {layout?.headerActionsNode &&
         createPortal(

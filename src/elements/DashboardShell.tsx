@@ -24,9 +24,12 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
   const { t } = useTranslation()
   const { pathname } = useLocation()
 
-  // Close the mobile drawer when the screen size changes
+  // Close the mobile drawer and clear the header actions slot when leaving mobile
   useEffect(() => {
-    if (!isMobile) onClose()
+    if (!isMobile) {
+      onClose()
+      setHeaderActionsNode(null)
+    }
   }, [isMobile])
 
   // Close the mobile drawer after navigating to another section
@@ -64,7 +67,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
               </IconButton>
               {/* Slot for a page's top-right action (e.g. the integrator "Upgrade plan" button),
                   portaled here so it aligns with the sidebar toggle on mobile. */}
-              <Flex ref={setHeaderActionsNode} alignItems='center' gap={2} />
+              <Flex ref={isMobile ? setHeaderActionsNode : undefined} alignItems='center' gap={2} />
             </Flex>
             <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
           </Flex>
