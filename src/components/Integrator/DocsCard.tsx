@@ -1,4 +1,4 @@
-import { HStack, Icon, LinkOverlay, Text } from '@chakra-ui/react'
+import { HStack, Icon, LinkBox, LinkOverlay, Text } from '@chakra-ui/react'
 import { IconType } from 'react-icons'
 import { LuArrowUpRight } from 'react-icons/lu'
 import { DashboardBox } from '~components/Dashboard/Contents'
@@ -16,7 +16,7 @@ export type DocsCardProps = {
  */
 export const DocsCard = ({ href, icon, title, description }: DocsCardProps) => (
   <DashboardBox
-    position='relative'
+    as={LinkBox}
     gap={3}
     justifyContent='flex-start'
     transition='border-color 0.15s'
