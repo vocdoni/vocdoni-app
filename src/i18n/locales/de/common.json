@@ -798,12 +798,11 @@
       "subtitle": "Erstelle und verwalte API-Schlüssel, um programmatisch auf die API zuzugreifen.",
       "title": "API-Schlüssel"
     },
-    "change_plan": "Plan upgraden",
     "configuration": {
       "subtitle": "Verwalte dein Abonnement und erhalte Support.",
       "title": "Konfiguration"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Abbrechen",
       "confirm": "Konto erstellen",
       "description": "Ein neues Integrator-Konto im kostenlosen Plan wird erstellt und als deine aktive Organisation festgelegt.",
@@ -859,7 +858,7 @@
       "votes": "Abgegebene Stimmen",
       "voting_processes": "Erstellte Abstimmungsprozesse"
     },
-    "setting_up_org": "Integrator-Konto wird eingerichtet …",
+    "setting_up_account": "Integrator-Konto wird eingerichtet …",
     "signin_subtitle": "Greife auf dein Integrator-Dashboard zu.",
     "signin_title": "Anmelden",
     "signup_subtitle": "Melde dich an, um Organisationen als Integrator zu verwalten.",
@@ -871,7 +870,8 @@
       "inactive": "Inaktiv",
       "portal_error": "Das Abrechnungsportal konnte nicht geöffnet werden",
       "unavailable": "Abonnementdetails sind nicht verfügbar"
-    }
+    },
+    "upgrade_plan": "Plan upgraden"
   },
   "internal_server_error": "Interner Serverfehler",
   "invalid_promo_code": "Ungültiger Aktionscode",

@@ -806,12 +806,11 @@
       "subtitle": "Crea i gestiona claus API per accedir a l'API de manera programàtica.",
       "title": "Claus API"
     },
-    "change_plan": "Millorar el pla",
     "configuration": {
       "subtitle": "Gestiona la teva subscripció i obtén suport.",
       "title": "Configuració"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Cancel·lar",
       "confirm": "Crear el compte",
       "description": "Es crearà un compte d'integrador nou en el pla gratuït i s'establirà com la teva organització activa.",
@@ -867,7 +866,7 @@
       "votes": "Vots emesos",
       "voting_processes": "Processos de votació creats"
     },
-    "setting_up_org": "Configurant el teu compte d'integrador…",
+    "setting_up_account": "Configurant el teu compte d'integrador…",
     "signin_subtitle": "Accedeix al teu tauler d'integrador.",
     "signin_title": "Iniciar sessió",
     "signup_subtitle": "Registra't per gestionar organitzacions com a integrador.",
@@ -879,7 +878,8 @@
       "inactive": "Inactiva",
       "portal_error": "No s'ha pogut obrir el portal de facturació",
       "unavailable": "Els detalls de la subscripció no estan disponibles"
-    }
+    },
+    "upgrade_plan": "Millorar el pla"
   },
   "internal_server_error": "Error intern del servidor",
   "invalid_promo_code": "Codi de promoció no vàlid",

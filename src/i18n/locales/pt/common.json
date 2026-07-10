@@ -806,12 +806,11 @@
       "subtitle": "Cria e gere chaves de API para aceder à API de forma programática.",
       "title": "Chaves de API"
     },
-    "change_plan": "Melhorar o plano",
     "configuration": {
       "subtitle": "Gerir a tua subscrição e pedir apoio.",
       "title": "Configuração"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Cancelar",
       "confirm": "Criar conta",
       "description": "Será criada uma nova conta de integrador no plano grátis e definida como a tua organização ativa.",
@@ -867,7 +866,7 @@
       "votes": "Votos emitidos",
       "voting_processes": "Processos de votação criados"
     },
-    "setting_up_org": "A preparar a tua conta de integrador…",
+    "setting_up_account": "A preparar a tua conta de integrador…",
     "signin_subtitle": "Acede ao teu Dashboard de integrador.",
     "signin_title": "Iniciar sessão",
     "signup_subtitle": "Regista-te para gerir organizações como integrador.",
@@ -879,7 +878,8 @@
       "inactive": "Inativo",
       "portal_error": "Não foi possível abrir o portal de faturação",
       "unavailable": "Os detalhes da subscrição não estão disponíveis"
-    }
+    },
+    "upgrade_plan": "Melhorar o plano"
   },
   "internal_server_error": "Erro interno do servidor",
   "invalid_promo_code": "Código promocional inválido",

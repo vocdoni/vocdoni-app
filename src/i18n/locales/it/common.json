@@ -806,12 +806,11 @@
       "subtitle": "Crea e gestisci chiavi API per accedere all'API in modo programmatico.",
       "title": "Chiavi API"
     },
-    "change_plan": "Migliora il piano",
     "configuration": {
       "subtitle": "Gestisci il tuo abbonamento e ottieni supporto.",
       "title": "Configurazione"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Annulla",
       "confirm": "Crea account",
       "description": "Verrà creato un nuovo account integratore con il piano gratuito e verrà impostato come la tua organizzazione attiva.",
@@ -867,7 +866,7 @@
       "votes": "Voti espressi",
       "voting_processes": "Processi di voto creati"
     },
-    "setting_up_org": "Configurazione del tuo account integratore in corso…",
+    "setting_up_account": "Configurazione del tuo account integratore in corso…",
     "signin_subtitle": "Accedi alla tua dashboard dell'integratore.",
     "signin_title": "Accedi",
     "signup_subtitle": "Registrati per gestire organizzazioni come integratore.",
@@ -879,7 +878,8 @@
       "inactive": "Inattivo",
       "portal_error": "Impossibile aprire il portale di fatturazione",
       "unavailable": "Dettagli dell'abbonamento non disponibili"
-    }
+    },
+    "upgrade_plan": "Migliora il piano"
   },
   "internal_server_error": "Errore interno del server",
   "invalid_promo_code": "Codice promozione non valido",

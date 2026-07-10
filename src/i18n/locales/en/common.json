@@ -798,12 +798,11 @@
       "subtitle": "Create and manage API keys to access the API programmatically.",
       "title": "API keys"
     },
-    "change_plan": "Upgrade plan",
     "configuration": {
       "subtitle": "Manage your subscription and get support.",
       "title": "Configuration"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Cancel",
       "confirm": "Create account",
       "description": "A new integrator account on the free plan will be created and set as your active organization.",
@@ -859,7 +858,7 @@
       "votes": "Votes cast",
       "voting_processes": "Voting processes created"
     },
-    "setting_up_org": "Setting up your integrator account…",
+    "setting_up_account": "Setting up your integrator account…",
     "signin_subtitle": "Access your integrator dashboard.",
     "signin_title": "Sign in",
     "signup_subtitle": "Sign up to manage organizations as an integrator.",
@@ -871,7 +870,8 @@
       "inactive": "Inactive",
       "portal_error": "Could not open the billing portal",
       "unavailable": "Subscription details are unavailable"
-    }
+    },
+    "upgrade_plan": "Upgrade plan"
   },
   "internal_server_error": "Internal server error",
   "invalid_promo_code": "Invalid promotion code",

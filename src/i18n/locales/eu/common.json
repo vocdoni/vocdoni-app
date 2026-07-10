@@ -798,12 +798,11 @@
       "subtitle": "Sortu eta kudeatu APIren gakoak APIa programatikoki atzitzeko.",
       "title": "APIren gakoak"
     },
-    "change_plan": "Hobetu plana",
     "configuration": {
       "subtitle": "Kudeatu zure harpidetzea eta lortu laguntza.",
       "title": "Konfigurazioa"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Utzi",
       "confirm": "Sortu kontua",
       "description": "Integrator kontu berri bat sortuko da dohaineko planean eta zure erakunde aktibo gisa ezarriko da.",
@@ -859,7 +858,7 @@
       "votes": "Emandako botoak",
       "voting_processes": "Sortutako boto-emate prozesuak"
     },
-    "setting_up_org": "Zure integrator kontua prestatzen…",
+    "setting_up_account": "Zure integrator kontua prestatzen…",
     "signin_subtitle": "Sartu zure integrator dashboarda.",
     "signin_title": "Sartu",
     "signup_subtitle": "Izena eman integrator gisa erakundeak kudeatzeko.",
@@ -871,7 +870,8 @@
       "inactive": "Inaktibo",
       "portal_error": "Ezin da fakturazio portala ireki",
       "unavailable": "Harpidetzaren xehetasunak ez daude erabilgarri"
-    }
+    },
+    "upgrade_plan": "Hobetu plana"
   },
   "internal_server_error": "Zerbitzariaren barne-errorea",
   "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",

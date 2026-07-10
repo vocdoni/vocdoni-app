@@ -44,7 +44,7 @@ const NotIntegratorNotice = () => {
     } catch (err) {
       toast({
         type: 'error',
-        title: t('integrators.create_org.error', { defaultValue: 'Could not create the integrator account' }),
+        title: t('integrators.create_account.error', { defaultValue: 'Could not create the integrator account' }),
         description: getApiErrorMessage(err),
       })
     }
@@ -72,8 +72,8 @@ const NotIntegratorNotice = () => {
       </Button>
 
       <DeleteModal
-        title={t('integrators.create_org.title', { defaultValue: 'Create a free integrator account?' })}
-        subtitle={t('integrators.create_org.description', {
+        title={t('integrators.create_account.title', { defaultValue: 'Create a free integrator account?' })}
+        subtitle={t('integrators.create_account.description', {
           defaultValue:
             'A new integrator account on the free plan will be created and set as your active organization.',
         })}
@@ -87,7 +87,9 @@ const NotIntegratorNotice = () => {
         {hasMultipleOrgs && (
           <Stack gap={2} mt={4}>
             <Text fontSize='sm' fontWeight={600}>
-              {t('integrators.create_org.switch_instead', { defaultValue: 'Or switch to an existing organization' })}
+              {t('integrators.create_account.switch_instead', {
+                defaultValue: 'Or switch to an existing organization',
+              })}
             </Text>
             <Stack gap={1} maxH='160px' overflowY='auto'>
               {organizations.map(({ organization, isIntegrator }) => (
@@ -117,10 +119,10 @@ const NotIntegratorNotice = () => {
 
         <Flex justifyContent='flex-end' mt={4} gap={2}>
           <Button variant='outline' disabled={provision.isPending} onClick={() => setOpen(false)}>
-            {t('integrators.create_org.cancel', { defaultValue: 'Cancel' })}
+            {t('integrators.create_account.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button loading={provision.isPending} onClick={onCreate}>
-            {t('integrators.create_org.confirm', { defaultValue: 'Create account' })}
+            {t('integrators.create_account.confirm', { defaultValue: 'Create account' })}
           </Button>
         </Flex>
       </DeleteModal>

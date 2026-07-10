@@ -72,7 +72,7 @@ const IntegratorSubscriptionTab = () => {
         </Stack>
         <Flex gap={2} wrap='wrap'>
           <BookerModalButton variant='solid' colorPalette='gray'>
-            {t('integrators.change_plan', { defaultValue: 'Upgrade plan' })}
+            {t('integrators.upgrade_plan', { defaultValue: 'Upgrade plan' })}
           </BookerModalButton>
           {isPaid && (
             <Button variant='outline' onClick={openPortal} loading={portal.isPending}>

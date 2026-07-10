@@ -92,7 +92,7 @@ const ProvisioningState = () => {
       <Stack align='center' gap={3}>
         <Loading minHeight={1} />
         <Text fontSize='sm' color='gray.500'>
-          {t('integrators.setting_up_org', { defaultValue: 'Setting up your integrator account…' })}
+          {t('integrators.setting_up_account', { defaultValue: 'Setting up your integrator account…' })}
         </Text>
       </Stack>
     </Center>

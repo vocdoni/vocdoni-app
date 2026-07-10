@@ -806,12 +806,11 @@
       "subtitle": "Créez et gérez des clés API pour accéder à l'API par programmation.",
       "title": "Clés API"
     },
-    "change_plan": "Passer au plan supérieur",
     "configuration": {
       "subtitle": "Gérez votre abonnement et obtenez du support.",
       "title": "Configuration"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Annuler",
       "confirm": "Créer le compte",
       "description": "Un nouveau compte intégrateur au plan gratuit sera créé et défini comme votre organisation active.",
@@ -867,7 +866,7 @@
       "votes": "Votes exprimés",
       "voting_processes": "Processus de vote créés"
     },
-    "setting_up_org": "Configuration de votre compte intégrateur…",
+    "setting_up_account": "Configuration de votre compte intégrateur…",
     "signin_subtitle": "Accédez à votre tableau de bord d'intégrateur.",
     "signin_title": "Se connecter",
     "signup_subtitle": "Inscrivez-vous pour gérer les organisations en tant qu'intégrateur.",
@@ -879,7 +878,8 @@
       "inactive": "Inactif",
       "portal_error": "Impossible d'ouvrir le portail de facturation",
       "unavailable": "Les détails de l'abonnement ne sont pas disponibles"
-    }
+    },
+    "upgrade_plan": "Passer au plan supérieur"
   },
   "internal_server_error": "Erreur interne du serveur",
   "invalid_promo_code": "Code promotionnel invalide",
