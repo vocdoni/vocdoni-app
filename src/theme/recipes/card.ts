@@ -148,6 +148,30 @@ export const Card = defineSlotRecipe({
           bgColor: 'bg.panel',
         },
       },
+      'data-list-item': {
+        root: {
+          w: 'full',
+          bgColor: 'transparent',
+          border: '1px solid',
+          borderColor: 'border.dashboard',
+          borderRadius: 'sm',
+          p: 4,
+          gap: 2,
+        },
+        header: {
+          p: 0,
+          flexDirection: 'row',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 2,
+        },
+        body: {
+          p: 0,
+          gap: 1,
+          fontSize: 'sm',
+          color: 'texts.subtle',
+        },
+      },
     },
   },
 })
