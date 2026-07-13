@@ -138,7 +138,7 @@ const SharedCensusHomeContent = () => {
       <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
       {canViewProcesses && (
         <Box w='90%'>
-          <Text alignSelf='start' mb={10} as='h3' fontWeight='bold' fontSize='2xl' mt='-30px'>
+          <Text alignSelf='start' mb={10} as='h3' fontWeight='bold' fontSize='2xl' mt={-7.5}>
             {t('shared_census.section_title', { defaultValue: 'Elections' })}
           </Text>
           <Flex gap={5} flexDirection={{ base: 'column' }}>
@@ -152,7 +152,7 @@ const SharedCensusHomeContent = () => {
       )}
       <LogoutButton />
       {canViewProcesses && (
-        <Text mt='50px' maxW='800px' textAlign='center'>
+        <Text mt={12.5} maxW='800px' textAlign='center'>
           {t('shared_census.instructions.vote', {
             defaultValue:
               'Select the election to open a new window with the voting instructions. Once your vote is submitted, close the window to return here.',
