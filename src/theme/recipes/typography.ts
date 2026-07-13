@@ -58,13 +58,6 @@ export const link = defineRecipe({
           textDecoration: 'none',
         },
       },
-      breadcrumb: {
-        color: 'dashboard.breadcrumb',
-        textDecoration: 'none',
-        _hover: {
-          color: 'black',
-        },
-      },
       icon: {
         display: 'flex',
         justifyContent: 'center',
