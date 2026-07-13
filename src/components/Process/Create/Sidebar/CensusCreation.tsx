@@ -2,9 +2,6 @@ import {
   AlertRoot as Alert,
   AlertDescription,
   Box,
-  FieldErrorText,
-  FieldLabel,
-  FieldRoot,
   HStack,
   Input,
   Link,
@@ -23,6 +20,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { Select } from '~components/Form/Select'
+import { Field } from '~components/ui/Field'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { CensusCsvManager } from '~components/Process/Census/Spreadsheet'
 import { CensusWeb3Addresses } from '~components/Process/Census/Web3'
@@ -84,10 +82,13 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
   }, [isFetching])
 
   return (
-    <FieldRoot invalid={!!errors.groupId}>
-      <FieldLabel>
+    <Field
+      invalid={!!errors.groupId}
+      label={
         <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
-      </FieldLabel>
+      }
+      errorText={errors.groupId?.message?.toString()}
+    >
       <Controller
         control={control}
         name='groupId'
@@ -124,8 +125,7 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
           )
         }}
       />
-      <FieldErrorText>{errors.groupId?.message?.toString()}</FieldErrorText>
-    </FieldRoot>
+    </Field>
   )
 }
 
@@ -170,7 +170,7 @@ const GroupCensusCreation = () => {
         </Alert>
       )}
 
-      <FieldRoot invalid={!!errors.census}>
+      <Field invalid={!!errors.census} errorText={errors.census?.message?.toString()}>
         <Input
           type='hidden'
           {...register('census', {
@@ -180,8 +180,7 @@ const GroupCensusCreation = () => {
             },
           })}
         />
-        <FieldErrorText>{errors.census?.message?.toString()}</FieldErrorText>
-      </FieldRoot>
+      </Field>
     </Box>
   )
 }

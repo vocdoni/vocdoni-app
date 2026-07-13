@@ -106,6 +106,11 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
       <Text fontWeight='medium'>{t('csp.step1.subtitle', { defaultValue: 'Enter the verification code' })}</Text>
       <form onSubmit={handleSubmit(onSubmit)}>
         <VStack gap={5} align='stretch'>
+          {/*
+            Kept on raw Chakra Field parts: this renders the error ABOVE an always-visible
+            helper text under the PIN input. `~components/ui/Field` hardcodes helper→error
+            order, so migrating would swap the visual order here.
+          */}
           <FieldRoot invalid={!!errors.code}>
             <Controller
               control={control}

@@ -7,9 +7,6 @@ import {
   CheckboxHiddenInput,
   CheckboxLabel,
   CheckboxRoot,
-  FieldHelperText,
-  FieldLabel,
-  FieldRoot,
   Input,
   Link,
   Stack,
@@ -21,6 +18,7 @@ import { PublishedElection } from '@vocdoni/sdk'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { Field } from '~components/ui/Field'
 import { useAppEnv } from '~src/app-env'
 import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
@@ -183,24 +181,28 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
         <Stack gap={4}>
           {/* Render auth fields */}
           {authFields.map((field) => (
-            <FieldRoot key={field} invalid={!!errors[field]} required>
-              <FieldLabel>{getFieldLabel(field)}</FieldLabel>
+            <Field key={field} invalid={!!errors[field]} required label={getFieldLabel(field)}>
               <Input {...register(field, { required: true })} type={getFieldType(field)} />
-            </FieldRoot>
+            </Field>
           ))}
 
           {/* Render 2FA field */}
           {is2Factor && (
-            <FieldRoot invalid={!!errors.contact} required>
-              <FieldLabel>{get2FaFieldLabel()}</FieldLabel>
+            <Field
+              invalid={!!errors.contact}
+              required
+              label={get2FaFieldLabel()}
+              helperText={
+                <>
+                  <Text as='span' fontWeight='bold'>
+                    {t('csp.important', { defaultValue: 'Important' })}:
+                  </Text>{' '}
+                  {t('csp.contact_match_help', 'Must match the one registered in the system')}
+                </>
+              }
+            >
               <Input {...register('contact', { required: true })} type='text' />
-              <FieldHelperText>
-                <Text as='span' fontWeight='bold'>
-                  {t('csp.important', { defaultValue: 'Important' })}:
-                </Text>{' '}
-                {t('csp.contact_match_help', 'Must match the one registered in the system')}
-              </FieldHelperText>
-            </FieldRoot>
+            </Field>
           )}
 
           {auth.isError && (
@@ -210,7 +212,7 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
             </Alert>
           )}
 
-          <FieldRoot required>
+          <Field required>
             <CheckboxRoot>
               <CheckboxHiddenInput />
               <CheckboxControl />
@@ -228,7 +230,7 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
                 </Trans>
               </CheckboxLabel>
             </CheckboxRoot>
-          </FieldRoot>
+          </Field>
 
           <Button
             type='submit'
