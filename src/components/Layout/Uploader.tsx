@@ -13,16 +13,14 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react'
-import { useMutation } from '@tanstack/react-query'
 import { DropzoneInputProps, DropzoneRootProps, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { BiTrash } from 'react-icons/bi'
 import { LuUpload } from 'react-icons/lu'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { Field } from '~components/ui/Field'
+import { useUploadFile } from '~queries/storage'
 
 export type UploaderProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T) => T
@@ -35,21 +33,6 @@ export type UploaderProps = {
 type ImageUploaderProps = {
   name: string
 } & Pick<BoxProps, 'w' | 'h' | 'borderTopRadius'>
-
-const useUploadFile = () => {
-  const { bearedFetch } = useAuth()
-  return useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData()
-      formData.append('file1', file)
-      const response = await bearedFetch<{ urls: string[] }>(ApiEndpoints.Storage, {
-        method: 'POST',
-        body: formData,
-      })
-      return response.urls[0]
-    },
-  })
-}
 
 export const AvatarUploader = (props: FieldRootProps) => {
   const { t } = useTranslation()

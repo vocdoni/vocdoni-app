@@ -1,12 +1,10 @@
 import { Box, Button, Flex, Link, Text } from '@chakra-ui/react'
-import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { NavLink, useNavigate, useOutletContext } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
-import { api, ApiEndpoints, getApiErrorMessage, UnverifiedApiError } from '~components/Auth/api'
-import { ILoginParams } from '~components/Auth/authQueries'
+import { getApiErrorMessage, UnverifiedApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { VerificationPending } from '~components/Auth/Verify'
 import InputBasic from '~components/Form/InputBasic'
@@ -14,6 +12,7 @@ import InputPassword from '~components/Form/InputPassword'
 import { OrSeparator } from '~components/Layout/Separators'
 import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
+import { ILoginParams, useResendVerificationCode, useVerificationCodeStatus } from '~queries/auth'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import GoogleAuth from './GoogleAuth'
@@ -21,25 +20,6 @@ import GoogleAuth from './GoogleAuth'
 type FormData = {
   keepLogedIn: boolean
 } & ILoginParams
-
-const useVerificationCodeStatus = () =>
-  useMutation({
-    mutationFn: async (email: string) => {
-      return await api<{ email: string; expiration: string; valid: boolean }>(
-        `${ApiEndpoints.VerifyCode}?email=${encodeURIComponent(email)}`
-      )
-    },
-  })
-
-const useResendVerificationCode = () =>
-  useMutation({
-    mutationFn: async (email: string) => {
-      await api(ApiEndpoints.VerifyCode, {
-        method: 'POST',
-        body: { email },
-      })
-    },
-  })
 
 type SignInProps = {
   email?: string

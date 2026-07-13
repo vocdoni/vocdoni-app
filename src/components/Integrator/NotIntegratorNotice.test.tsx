@@ -41,7 +41,7 @@ vi.mock('~components/Dashboard/Menu/useSelectOrganization', () => ({
   useSelectOrganization: vi.fn(() => selectOrganization),
 }))
 
-vi.mock('~components/Dashboard/Menu/useOrganizationNames', () => ({
+vi.mock('~queries/organization', () => ({
   useOrganizationNames: vi.fn(() => ({ data: {} })),
 }))
 
