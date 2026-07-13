@@ -6,6 +6,7 @@
   "actions": {
     "cancel": "Cancelar",
     "cancel_description": "A cancelar «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e anulará todos os votos já emitidos.",
+    "confirm": "Confirmar",
     "continue": "Retomar imediatamente o processo, caso tenha sido pausado",
     "continue_description": "A retomar o processo de votação «{{ election.title.default }}»…",
     "create_first_vote": "Ver todos os processos",

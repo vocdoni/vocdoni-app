@@ -6,6 +6,7 @@
   "actions": {
     "cancel": "Abbrechen",
     "cancel_description": "\"{{ election.title.default }}\" wird abgebrochen...\n\nAchtung: Diese Aktion ist unwiderruflich und bricht alle bisherigen Stimmen ab",
+    "confirm": "Bestätigen",
     "continue": "Prozess sofort fortsetzen, falls er pausiert wurde",
     "continue_description": "Abstimmungsprozess \"{{ election.title.default }}\" wird fortgesetzt...",
     "create_first_vote": "Alle Prozesse anzeigen",
