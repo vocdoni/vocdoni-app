@@ -525,9 +525,8 @@ const ProcessViewSidebar = () => {
 const SettingsField = ({ subtext, icon, text }: { subtext?: string; icon: typeof LuCalendar; text: ReactNode }) => (
   <Box display='flex' gap={2} flex='1 1 0' minW={0} alignItems='center'>
     <Box
-      color='gray.600'
-      bg='gray.100'
-      _dark={{ bg: 'brand.700', color: 'gray.400' }}
+      color='fg.muted'
+      bg='bg.muted'
       display='flex'
       alignItems='center'
       justifyContent='center'

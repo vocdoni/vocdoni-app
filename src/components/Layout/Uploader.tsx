@@ -145,7 +145,7 @@ export const AvatarUploader = (props: FormControlProps) => {
             <Box
               w='128px'
               h='128px'
-              backgroundColor='gray.200'
+              backgroundColor='bg.emphasized'
               cursor='pointer'
               borderRadius='full'
               border='2px solid'

@@ -138,7 +138,7 @@ const SharedCensusHomeContent = () => {
       <Box>{election && !isAdmin && <CensusConnectButton />}</Box>
       {canViewProcesses && (
         <Box w='90%'>
-          <Text alignSelf='start' mb={10} as='h3' fontWeight='bold' fontSize='22px' style={{ marginTop: '-30px' }}>
+          <Text alignSelf='start' mb={10} as='h3' fontWeight='bold' fontSize='2xl' mt={-7.5}>
             {t('shared_census.section_title', { defaultValue: 'Elections' })}
           </Text>
           <Flex gap={5} flexDirection={{ base: 'column' }}>
@@ -152,7 +152,7 @@ const SharedCensusHomeContent = () => {
       )}
       <LogoutButton />
       {canViewProcesses && (
-        <Text style={{ marginTop: '50px', maxWidth: '800px', textAlign: 'center' }}>
+        <Text mt={12.5} maxW='800px' textAlign='center'>
           {t('shared_census.instructions.vote', {
             defaultValue:
               'Select the election to open a new window with the voting instructions. Once your vote is submitted, close the window to return here.',
@@ -160,7 +160,7 @@ const SharedCensusHomeContent = () => {
         </Text>
       )}
       {!canViewProcesses && (
-        <Text style={{ textAlign: 'center' }}>
+        <Text textAlign='center'>
           {t('shared_census.instructions.login', {
             defaultValue: 'To access the election press "Identify".',
           })}
@@ -199,9 +199,6 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
         textAlign='center'
         fontWeight='bold'
         boxShadow='lg'
-        _dark={{
-          boxShadow: '0 10px 15px -3px #343434,0 4px 6px -2px #444',
-        }}
         _hover={{
           bgColor: 'gray.500',
         }}
@@ -215,14 +212,14 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
           target={!isAdmin ? '_blank' : undefined}
           rel={!isAdmin ? 'noopener noreferrer' : undefined}
         >
-          <Box fontSize='18px' display='flex' alignItems='center' p={4}>
-            <Box as='span' mr={2} position='absolute' left={2} top={2} color='gray.400'>
+          <Box fontSize='lg' display='flex' alignItems='center' p={4}>
+            <Box as='span' mr={2} position='absolute' left={2} top={2} color='fg.subtle'>
               {index + 1}
             </Box>
-            <ElectionTitle fontSize='18px' mb={0} />
+            <ElectionTitle fontSize='lg' mb={0} />
             <ElectionStatusBadge position='absolute' top={1} right={1} />
             {voted && (
-              <Text fontSize='14px' color='green.400' position='absolute' bottom={0} right={1}>
+              <Text fontSize='sm' color='green.400' position='absolute' bottom={0} right={1}>
                 {t('shared_census.voted', { defaultValue: 'You already voted' })}
               </Text>
             )}

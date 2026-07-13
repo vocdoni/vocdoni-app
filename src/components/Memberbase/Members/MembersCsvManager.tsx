@@ -151,7 +151,7 @@ export const MembersCsvManager = () => {
             </Link>
           </Button>
           {!visibleColumns.length && (
-            <Text fontSize='sm' color='gray.500' mt={1}>
+            <Text fontSize='sm' color='fg.muted' mt={1}>
               {t('memberbase.importer.select_at_least_one_column', {
                 defaultValue: 'Select at least one column to download the template.',
               })}

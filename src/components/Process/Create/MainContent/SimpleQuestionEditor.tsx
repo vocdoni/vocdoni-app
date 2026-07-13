@@ -113,15 +113,15 @@ const SortableOption = ({
             cursor={isDragging ? 'grabbing' : 'grab'}
             display='flex'
             alignItems='center'
-            color='gray.400'
-            _hover={{ color: 'gray.600' }}
+            color='fg.subtle'
+            _hover={{ color: 'fg.muted' }}
           >
             <Icon as={LuGripVertical} size='sm' />
           </Box>
         )}
 
         {questionType === SelectorTypes.Single ? (
-          <Box data-choice-control boxSize={4} border='1px solid' borderColor='gray.300' borderRadius='full' />
+          <Box data-choice-control boxSize={4} border='1px solid' borderColor='border.emphasized' borderRadius='full' />
         ) : (
           <Checkbox.Root checked={false} readOnly tabIndex={-1}>
             <Checkbox.HiddenInput />

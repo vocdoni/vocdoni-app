@@ -125,7 +125,7 @@ const SupportTicketForm = () => {
         <Heading size='md' mb={2}>
           {t('form.support.open_ticket', { defaultValue: 'Open a Support Ticket' })}
         </Heading>
-        <Text fontSize='sm' color='gray.500' mb={6}>
+        <Text fontSize='sm' color='fg.muted' mb={6}>
           {t('form.support.subtitle', {
             defaultValue: 'Submit a ticket and our support team will get back to you as soon as possible.',
           })}
@@ -185,7 +185,7 @@ const PhoneSupportCard = ({ isLocked }) => {
       <Stack gap={4} mb={6}>
         <Flex p={4} borderRadius='md' bg='dashboard.menu' align='flex-start'>
           <Box
-            bg='gray.200'
+            bg='bg.emphasized'
             borderRadius='full'
             fontWeight='bold'
             fontSize='sm'
@@ -218,7 +218,7 @@ const PhoneSupportCard = ({ isLocked }) => {
 
         <Flex p={4} borderRadius='md' bg='dashboard.menu' align='flex-start'>
           <Box
-            bg='gray.200'
+            bg='bg.emphasized'
             borderRadius='full'
             fontWeight='bold'
             fontSize='sm'

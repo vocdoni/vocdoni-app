@@ -66,7 +66,7 @@ const ExtendedQuestionEditor = ({
         onClick={() => append({ option: '', description: '' })}
         borderStyle='dashed'
         cursor='pointer'
-        _hover={{ bg: 'gray.100', _dark: { bg: 'gray.800' } }}
+        _hover={{ bg: 'bg.muted' }}
       >
         <VStack justify='center' align='center' height='100%'>
           <Icon as={LuPlus} boxSize={6} />
@@ -115,8 +115,8 @@ const SortableExtendedOption = ({
             zIndex='contents'
             p={1}
             borderRadius='md'
-            color='gray.400'
-            _hover={{ color: 'gray.200', bg: 'gray.600', _dark: { bg: 'gray.700' } }}
+            color='fg.subtle'
+            _hover={{ color: 'fg.muted', bg: 'bg.muted' }}
           >
             <Icon as={LuGripVertical} size='sm' />
           </Box>

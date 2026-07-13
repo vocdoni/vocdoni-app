@@ -36,8 +36,6 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
   const { t } = useTranslation()
   const selected: Mode = theme === 'light' || theme === 'dark' || theme === 'system' ? theme : 'system'
 
-  const iconBg = useColorModeValue('gray.100', 'gray.700')
-
   const modes: { mode: Mode; label: string; icon: IconType }[] = [
     { mode: 'system', label: t('system', 'System'), icon: LuMonitor },
     { mode: 'light', label: t('light', 'Light'), icon: LuSun },
@@ -60,7 +58,7 @@ export const ThemeToggleGroup = (props: ButtonGroupProps) => {
             aria-label={label}
             onClick={() => setTheme(mode)}
             aria-pressed={selected === mode}
-            bg={selected === mode ? iconBg : undefined}
+            bg={selected === mode ? 'bg.muted' : undefined}
             variant='ghost'
             borderRadius='sm'
             size='xs'

@@ -77,7 +77,7 @@ const UsageRow = ({ icon, label, current, max, tooltip, isSoftLimit, color }: Us
         </HStack>
       </Flex>
       <Progress.Root value={displayPercentage} size='sm' colorPalette={progressColor} shape='full'>
-        <Progress.Track bg='gray.200' _dark={{ bg: 'gray.600' }}>
+        <Progress.Track bg='bg.emphasized'>
           <Progress.Range borderRadius='full' />
         </Progress.Track>
       </Progress.Root>

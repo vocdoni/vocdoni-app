@@ -86,8 +86,8 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
               display='flex'
               alignItems='flex-start'
               pt={2}
-              color='gray.400'
-              _hover={{ color: 'gray.600' }}
+              color='fg.subtle'
+              _hover={{ color: 'fg.muted' }}
             >
               <Icon as={LuGripVertical} />
             </Box>
