@@ -18,7 +18,8 @@ vi.mock('~components/Auth/useAuth', () => ({
   }),
 }))
 
-vi.mock('~components/Process/Create', () => ({
+vi.mock('~queries/processes', async () => ({
+  ...(await vi.importActual<typeof import('~queries/processes')>('~queries/processes')),
   useCreateProcess: () => ({
     mutateAsync: vi.fn(),
   }),

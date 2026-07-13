@@ -4,7 +4,7 @@ import React from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
 import { mockUseOrganization } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { useDeleteDraft } from './drafts'
+import { useDeleteDraft } from '~queries/processes'
 
 const toastSpy = vi.fn()
 const bearedFetchMock = vi.fn().mockResolvedValue(undefined)

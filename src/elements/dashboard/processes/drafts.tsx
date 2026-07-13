@@ -13,88 +13,20 @@ import {
   Progress,
   Table,
 } from '@chakra-ui/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient, useOrganization } from '@vocdoni/react-components'
+import { useQueryClient } from '@tanstack/react-query'
+import { useClient } from '@vocdoni/react-components'
 import { RoutedPaginationProvider } from '@vocdoni/react-components/pagination'
 import { ensure0x } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router-dom'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
-import { useCreateProcess } from '~components/Process/Create'
-import { Process } from '~components/Process/Create/common'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
-import { useUrlPagination } from '~queries/members'
+import { useCreateProcess, useDeleteDraft, useDrafts } from '~queries/processes'
+import type { Draft } from '~queries/processes'
 import { Routes } from '~routes'
-
-type Draft = {
-  id: string
-  metadata: Process
-}
-
-type DraftsResponse = {
-  processes: Draft[]
-  pagination: {
-    totalItems: number
-    currentPage: number
-    lastPage: number
-    previousPage: number | null
-    nextPage: number | null
-  }
-}
-
-const useDrafts = () => {
-  const { bearedFetch } = useAuth()
-  const { organization } = useOrganization()
-  const { page, limit } = useUrlPagination()
-
-  const baseUrl = ApiEndpoints.OrganizationDrafts.replace('{address}', organization?.address)
-  const fetchUrl = `${baseUrl}?page=${page}&limit=${limit}`
-
-  return useQuery({
-    queryKey: [...QueryKeys.organization.drafts(organization?.address), page, limit],
-    enabled: !!organization?.address,
-    queryFn: () => bearedFetch<DraftsResponse>(fetchUrl),
-  })
-}
-
-export const useDeleteDraft = () => {
-  const { t } = useTranslation()
-  const { bearedFetch } = useAuth()
-  const { organization } = useOrganization()
-  const queryClient = useQueryClient()
-  const toast = useToast()
-
-  return useMutation<void, unknown, { draftId: string; silent?: boolean }>({
-    mutationKey: QueryKeys.organization.drafts(organization?.address),
-    mutationFn: ({ draftId }: { draftId: string; silent?: boolean }) => {
-      const deleteUrl = ApiEndpoints.OrganizationProcess.replace('{processId}', draftId)
-      return bearedFetch<void>(deleteUrl, {
-        method: 'DELETE',
-      })
-    },
-    onSuccess: (_data, variables) => {
-      if (!variables?.silent) {
-        toast({
-          title: t('drafts.deleted_draft', {
-            defaultValue: 'Draft deleted successfully',
-          }),
-          type: 'success',
-          duration: 3000,
-          closable: true,
-        })
-      }
-      queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.drafts(organization?.address),
-        exact: false,
-      })
-    },
-  })
-}
 
 const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   const { t } = useTranslation()

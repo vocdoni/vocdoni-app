@@ -27,33 +27,10 @@ vi.mock('~components/Auth/Subscription', () => ({
   }),
 }))
 
-vi.mock('../Create', () => ({
+vi.mock('~queries/processes', () => ({
   useCreateProcess: () => ({
     mutateAsync: mockMutateAsync,
   }),
-  defaultProcessValues: {
-    title: '',
-    description: '',
-    autoStart: true,
-    startDate: '',
-    startTime: '',
-    endDate: '',
-    endTime: '',
-    extendedInfo: false,
-    questionType: 'single-choice',
-    questions: [],
-    maxNumberOfChoices: null,
-    minNumberOfChoices: null,
-    resultVisibility: 'hidden',
-    weightedVote: false,
-    voterPrivacy: 'public',
-    groupId: '',
-    census: null,
-    censusType: 'csp',
-    streamUri: '',
-    addresses: [],
-    spreadsheet: null,
-  },
 }))
 
 vi.mock('react-i18next', () => ({

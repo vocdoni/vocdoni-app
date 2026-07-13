@@ -1,105 +1,16 @@
 import { Badge, Button, CloseButton, Dialog, Flex, Heading, Portal, Tabs, Text, useDisclosure } from '@chakra-ui/react'
-import { useMutation } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-components'
-import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import { getApiErrorMessage } from '~components/Auth/api'
 import { useToast } from '~components/Toast'
+import { useCreateCensus, usePublishCensus, useValidateGroup } from '~queries/census'
 import { Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
 import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
 import { TwoFactorForm } from './TwoFactorForm'
 import { getTwoFaFields, StepCompletionState, VoterAuthFormData } from './utils'
 import { ValidationError, ValidationErrorsAlert } from './ValidationErrorsAlert'
-
-type ValidateGroupArgs = {
-  groupId: string
-  authFields?: string[]
-  twoFaFields?: string[]
-}
-
-const useValidateGroup = () => {
-  const { organization } = useOrganization()
-  const { bearedFetch } = useAuth()
-
-  return useMutation({
-    mutationFn: async ({ groupId, authFields, twoFaFields }: ValidateGroupArgs) => {
-      return await bearedFetch<{ valid: boolean }>(
-        ApiEndpoints.OrganizationGroupValidate.replace('{address}', organization?.address).replace(
-          '{groupId}',
-          groupId
-        ),
-        {
-          method: 'POST',
-          body: {
-            authFields,
-            twoFaFields,
-          },
-        }
-      )
-    },
-  })
-}
-
-const useCreateCensus = () => {
-  const { bearedFetch } = useAuth()
-  const { organization } = useOrganization()
-
-  return useMutation({
-    mutationFn: async () => {
-      return await bearedFetch<{ id: string }>(ApiEndpoints.OrganizationCensuses, {
-        method: 'POST',
-        body: {
-          orgAddress: ensure0x(organization?.address),
-        },
-      })
-    },
-  })
-}
-
-type PublishGroupCensusResponse = {
-  root: string
-  size: number
-  uri: string
-}
-
-type PublishCensusRequest = {
-  authFields: string[]
-  twoFaFields: string[]
-  weighted?: boolean
-}
-
-type PublishCensusArgs = PublishCensusRequest & {
-  censusId: string
-  groupId: string
-}
-
-const usePublishCensus = () => {
-  const { bearedFetch } = useAuth()
-
-  return useMutation({
-    mutationFn: async ({ censusId, groupId, authFields, twoFaFields, weighted }: PublishCensusArgs) => {
-      const body: PublishCensusRequest = {
-        authFields,
-        twoFaFields,
-        weighted,
-      }
-
-      const endpoint = ApiEndpoints.OrganizationCensusPublish.replace('{censusId}', censusId).replace(
-        '{groupId}',
-        groupId
-      )
-
-      return await bearedFetch<PublishGroupCensusResponse>(endpoint, {
-        method: 'POST',
-        body,
-      })
-    },
-  })
-}
 
 export const VoterAuthentication = () => {
   const { t } = useTranslation()
