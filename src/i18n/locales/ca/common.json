@@ -6,6 +6,7 @@
   "actions": {
     "cancel": "Cancel·la",
     "cancel_description": "Cancel·lant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i cancel·larà els vots que s'hagin emès.",
+    "confirm": "Confirma",
     "continue": "Reobre el procés immediatament, si s'ha pausat",
     "continue_description": "Reobrint el procés de votació \"{{ election.title.default }}\"",
     "create_first_vote": "Mostra tots els processos",
