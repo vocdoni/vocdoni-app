@@ -1,8 +1,9 @@
-import { Box, Button, Dialog, FieldRoot as FormControl, HStack, Switch, Text } from '@chakra-ui/react'
+import { Box, Button, Dialog, HStack, Switch, Text } from '@chakra-ui/react'
 import { useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Select } from '~components/Form/Select'
+import { Field } from '~components/ui/Field'
 import { DefaultQuestions, SelectorTypes } from '../common'
 
 interface SelectOption {
@@ -87,7 +88,7 @@ export const QuestionType = () => {
         </Text>
       </Box>
       <HStack gap={4} flexDir={{ base: 'column', sm: 'row' }} alignItems={{ base: 'start', sm: 'center' }}>
-        <FormControl display='flex' flexDir='row'>
+        <Field display='flex' flexDir='row'>
           <Controller
             name='extendedInfo'
             control={control}
@@ -107,7 +108,7 @@ export const QuestionType = () => {
               </Switch.Root>
             )}
           />
-        </FormControl>
+        </Field>
         <Box>
           <Controller
             control={control}

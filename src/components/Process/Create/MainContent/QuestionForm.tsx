@@ -1,14 +1,4 @@
-import {
-  Box,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  HStack,
-  Icon,
-  IconButton,
-  Input,
-  Text,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, HStack, Icon, IconButton, Input, Text, VStack } from '@chakra-ui/react'
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { restrictToParentElement } from '@dnd-kit/modifiers'
 import {
@@ -25,6 +15,7 @@ import { LuGripVertical, LuX } from 'react-icons/lu'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
+import { Field } from '~components/ui/Field'
 import { Process, SelectorTypes } from '../common'
 import ExtendedQuestionEditor from './ExtendedQuestionEditor'
 import SelectionLimits from './SelectionLimits'
@@ -101,7 +92,10 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                 total: questions.length,
               })}
             </Text>
-            <FormControl invalid={!!errors.questions?.[index]?.title}>
+            <Field
+              invalid={!!errors.questions?.[index]?.title}
+              errorText={errors.questions?.[index]?.title?.message?.toString()}
+            >
               <Input
                 placeholder={
                   placeholders[activeTemplate]?.questions?.[index]?.title ??
@@ -114,8 +108,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                   required: t('form.error.required', 'This field is required'),
                 })}
               />
-              <FormErrorMessage>{errors.questions?.[index]?.title?.message?.toString()}</FormErrorMessage>
-            </FormControl>
+            </Field>
             <Controller
               name={`questions.${index}.description`}
               control={control}

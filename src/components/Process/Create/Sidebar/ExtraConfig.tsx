@@ -1,19 +1,9 @@
-import {
-  Box,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
-  Icon,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, Icon, TooltipContent, TooltipPositioner, TooltipRoot, TooltipTrigger, VStack } from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCircleHelp } from 'react-icons/lu'
 import { Select } from '~components/Form/Select'
+import { Field } from '~components/ui/Field'
 import { useValidations } from '~utils/validation'
 
 type SelectOption<T = string> = {
@@ -44,10 +34,11 @@ export const ExtraConfig = () => {
     <VStack align='stretch' gap={4}>
       {/* Result visibility */}
       <Box>
-        <FormControl invalid={!!errors.resultVisibility}>
-          <FormLabel>
-            <Trans i18nKey='process_create.result_visibility.title'>Result visibility</Trans>
-          </FormLabel>
+        <Field
+          invalid={!!errors.resultVisibility}
+          label={<Trans i18nKey='process_create.result_visibility.title'>Result visibility</Trans>}
+          errorText={errors.resultVisibility?.message?.toString()}
+        >
           <Controller
             control={control}
             name='resultVisibility'
@@ -61,27 +52,32 @@ export const ExtraConfig = () => {
               />
             )}
           />
-          <FormErrorMessage>{errors.resultVisibility?.message?.toString()}</FormErrorMessage>
-        </FormControl>
+        </Field>
       </Box>
       <Box>
-        <FormControl invalid={!!errors.weightedVote}>
-          <FormLabel display='flex' alignItems='center'>
-            <Trans i18nKey='process_create.weight.title'>Voting power</Trans>
-            <TooltipRoot positioning={{ placement: 'top' }}>
-              <TooltipTrigger asChild>
-                <Box as='span' display='inline-flex' ml={1} cursor='help' color='texts.subtle'>
-                  <Icon as={LuCircleHelp} />
-                </Box>
-              </TooltipTrigger>
-              <TooltipPositioner>
-                <TooltipContent fontSize='sm'>
-                  Set whether votes are equal for each eligible voter or weighted according to the memberbase "Vote
-                  power" field.
-                </TooltipContent>
-              </TooltipPositioner>
-            </TooltipRoot>
-          </FormLabel>
+        <Field
+          invalid={!!errors.weightedVote}
+          labelProps={{ display: 'flex', alignItems: 'center' }}
+          label={
+            <>
+              <Trans i18nKey='process_create.weight.title'>Voting power</Trans>
+              <TooltipRoot positioning={{ placement: 'top' }}>
+                <TooltipTrigger asChild>
+                  <Box as='span' display='inline-flex' ml={1} cursor='help' color='texts.subtle'>
+                    <Icon as={LuCircleHelp} />
+                  </Box>
+                </TooltipTrigger>
+                <TooltipPositioner>
+                  <TooltipContent fontSize='sm'>
+                    Set whether votes are equal for each eligible voter or weighted according to the memberbase "Vote
+                    power" field.
+                  </TooltipContent>
+                </TooltipPositioner>
+              </TooltipRoot>
+            </>
+          }
+          errorText={errors.weightedVote?.message?.toString()}
+        >
           <Controller
             control={control}
             name='weightedVote'
@@ -94,8 +90,7 @@ export const ExtraConfig = () => {
               />
             )}
           />
-          <FormErrorMessage>{errors.weightedVote?.message?.toString()}</FormErrorMessage>
-        </FormControl>
+        </Field>
       </Box>
     </VStack>
   )

@@ -6,9 +6,6 @@ import {
   AccordionItemTrigger,
   AccordionRoot,
   Box,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
   Input,
   Text,
 } from '@chakra-ui/react'
@@ -16,6 +13,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
 import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
+import { Field } from '~components/ui/Field'
 import { SubscriptionPermission } from '~constants'
 import type { Process } from './common'
 
@@ -44,10 +42,11 @@ export const LiveStreamingInput = () => {
             <SubscriptionLockedContent permissionType={SubscriptionPermission.LiveStreaming}>
               {({ isLocked }) => (
                 <>
-                  <FormControl invalid={!!errors.streamUri}>
-                    <FormLabel>
-                      <Trans i18nKey='process_create.youtube.title'>Live streaming video</Trans>
-                    </FormLabel>
+                  <Field
+                    invalid={!!errors.streamUri}
+                    label={<Trans i18nKey='process_create.youtube.title'>Live streaming video</Trans>}
+                    errorText={errors.streamUri?.message?.toString()}
+                  >
                     <Controller
                       control={methods.control}
                       name='streamUri'
@@ -66,8 +65,7 @@ export const LiveStreamingInput = () => {
                         />
                       )}
                     />
-                    <FormErrorMessage>{errors.streamUri?.message?.toString()}</FormErrorMessage>
-                  </FormControl>
+                  </Field>
                   {streamUri && <ReactPlayer src={streamUri} controls />}
                 </>
               )}

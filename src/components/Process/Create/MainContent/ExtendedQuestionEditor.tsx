@@ -1,15 +1,4 @@
-import {
-  Box,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  Icon,
-  IconButton,
-  Input,
-  SimpleGrid,
-  Text,
-  useSlotRecipe,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, Icon, IconButton, Input, SimpleGrid, Text, useSlotRecipe, VStack } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -19,6 +8,7 @@ import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { ImageUploader } from '~components/Layout/Uploader'
 import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
+import { Field } from '~components/ui/Field'
 
 const ExtendedQuestionEditor = ({
   index,
@@ -144,7 +134,10 @@ const SortableExtendedOption = ({
         </Box>
         <Box data-choice-body>
           {/* Title */}
-          <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
+          <Field
+            invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}
+            errorText={errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
+          >
             <Input
               variant='borderless'
               placeholder={
@@ -160,10 +153,7 @@ const SortableExtendedOption = ({
                 required: t('form.error.required', 'This field is required'),
               })}
             />
-            <FormErrorMessage>
-              {errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
-            </FormErrorMessage>
-          </FormControl>
+          </Field>
           {/* Description */}
           <Controller
             name={`questions.${questionIndex}.options.${optionIndex}.description`}

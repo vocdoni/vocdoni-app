@@ -3,9 +3,6 @@ import {
   AlertDescription,
   AlertIndicator,
   Box,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
   HStack,
   Input,
   Link,
@@ -17,6 +14,7 @@ import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
+import { Field } from '~components/ui/Field'
 import { SubscriptionPermission } from '~constants'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
@@ -133,10 +131,13 @@ export const BasicConfig = () => {
 
       {!autoStart && (
         <>
-          <FormControl invalid={!!errors.startDate || !!errors.startTime} mb={2}>
-            <FormLabel htmlFor='startDate'>
-              <Trans i18nKey='process_create.start_datetime'>Start date and time</Trans>
-            </FormLabel>
+          <Field
+            invalid={!!errors.startDate || !!errors.startTime}
+            mb={2}
+            label={<Trans i18nKey='process_create.start_datetime'>Start date and time</Trans>}
+            labelProps={{ htmlFor: 'startDate' }}
+            errorText={errors.startDate?.message?.toString() || errors.startTime?.message?.toString()}
+          >
             <HStack>
               <Box flex='1'>
                 <Input
@@ -160,18 +161,18 @@ export const BasicConfig = () => {
                 />
               </Box>
             </HStack>
-            <FormErrorMessage>
-              {errors.startDate?.message?.toString() || errors.startTime?.message?.toString()}
-            </FormErrorMessage>
-          </FormControl>
+          </Field>
         </>
       )}
 
       {/* End date and time */}
-      <FormControl invalid={!!errors.endDate || !!errors.endTime} mb={2}>
-        <FormLabel htmlFor='endDate'>
-          <Trans i18nKey='process_create.end_datetime'>End date and time</Trans>
-        </FormLabel>
+      <Field
+        invalid={!!errors.endDate || !!errors.endTime}
+        mb={2}
+        label={<Trans i18nKey='process_create.end_datetime'>End date and time</Trans>}
+        labelProps={{ htmlFor: 'endDate' }}
+        errorText={errors.endDate?.message?.toString() || errors.endTime?.message?.toString()}
+      >
         <HStack gap={4} align='start'>
           <Box flex='1'>
             <Input
@@ -206,10 +207,7 @@ export const BasicConfig = () => {
             />
           </Box>
         </HStack>
-        <FormErrorMessage>
-          {errors.endDate?.message?.toString() || errors.endTime?.message?.toString()}
-        </FormErrorMessage>
-      </FormControl>
+      </Field>
 
       {durationExceeded && (
         <Alert status='error'>

@@ -1,23 +1,11 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  HStack,
-  Icon,
-  IconButton,
-  Input,
-  Text,
-  useSlotRecipe,
-  VStack,
-} from '@chakra-ui/react'
+import { Box, Button, Checkbox, HStack, Icon, IconButton, Input, Text, useSlotRecipe, VStack } from '@chakra-ui/react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuGripVertical, LuPlus, LuX } from 'react-icons/lu'
 import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
+import { Field } from '~components/ui/Field'
 import { SelectorTypes } from '../common'
 
 const SimpleQuestionEditor = ({
@@ -131,7 +119,10 @@ const SortableOption = ({
           </Checkbox.Root>
         )}
         <Box data-choice-body>
-          <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
+          <Field
+            invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}
+            errorText={errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
+          >
             <Input
               placeholder={
                 placeholders[activeTemplate]?.questions?.[questionIndex]?.options?.[optionIndex]?.option ??
@@ -143,10 +134,7 @@ const SortableOption = ({
                 required: t('form.error.required', 'This field is required'),
               })}
             />
-            <FormErrorMessage>
-              {errors.questions?.[questionIndex]?.options?.[optionIndex]?.option?.message?.toString()}
-            </FormErrorMessage>
-          </FormControl>
+          </Field>
         </Box>
         {fieldsLength > 2 && (
           <IconButton

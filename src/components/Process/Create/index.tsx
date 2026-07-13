@@ -3,8 +3,6 @@ import {
   Button,
   ButtonGroup,
   Flex,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
   HStack,
   Icon,
   IconButton,
@@ -56,6 +54,7 @@ import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { Web3Address } from '~components/Process/Census/Web3'
 import { useToast } from '~components/Toast'
+import { Field } from '~components/ui/Field'
 import { SubscriptionPermission } from '~constants'
 import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
 import { QueryKeys } from '~queries/keys'
@@ -972,7 +971,10 @@ const ProcessCreateView = () => {
             {/* Title, Video, and Description */}
             <VStack as='header' align='stretch' gap={4}>
               <TemplateButtons />
-              <FormControl invalid={!!methods.formState.errors.title}>
+              <Field
+                invalid={!!methods.formState.errors.title}
+                errorText={methods.formState.errors.title?.message?.toString()}
+              >
                 <Input
                   variant='borderless'
                   placeholder={
@@ -987,8 +989,7 @@ const ProcessCreateView = () => {
                     required: t('form.error.required', 'This field is required'),
                   })}
                 />
-                <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
-              </FormControl>
+              </Field>
 
               {/* Live streaming video URL */}
               <LiveStreamingInput />
