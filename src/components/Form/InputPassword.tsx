@@ -1,16 +1,10 @@
-import {
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
-  Icon,
-  Input,
-  InputGroup,
-} from '@chakra-ui/react'
+import { Icon, Input, InputGroup } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { MdOutlineRemoveRedEye } from 'react-icons/md'
 import { RiEyeCloseLine } from 'react-icons/ri'
+import { Field } from '~components/ui/Field'
 
 export interface InputPasswordProps {
   formValue: string
@@ -52,12 +46,14 @@ const InputPassword = ({
   }
 
   return (
-    <FormControl invalid={!!errors[formValue]} required={required}>
-      {label && (
-        <FormLabel fontSize='sm' fontWeight='medium'>
-          {label}
-        </FormLabel>
-      )}
+    <Field
+      label={label}
+      required={required}
+      invalid={!!errors[formValue]}
+      labelProps={{ fontWeight: 'medium' }}
+      errorTextProps={{ mt: 2 }}
+      errorText={errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
+    >
       <InputGroup
         endElement={
           <Icon
@@ -70,10 +66,7 @@ const InputPassword = ({
       >
         <Input {...register(formValue, validationRules)} type={inputType} placeholder={placeholder} required={false} />
       </InputGroup>
-      <FormErrorMessage mt={2}>
-        {errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
-      </FormErrorMessage>
-    </FormControl>
+    </Field>
   )
 }
 
