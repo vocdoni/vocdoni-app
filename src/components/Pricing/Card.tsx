@@ -53,7 +53,6 @@ const PricingCard = ({
   const { pathname } = useLocation()
   const commonButtonProps: ButtonProps = {
     variant: isCurrentPlan ? 'outline' : 'solid',
-    colorScheme: 'black',
     disabled: isDisabled || isCurrentPlan,
     size: 'sm',
     w: 'full',

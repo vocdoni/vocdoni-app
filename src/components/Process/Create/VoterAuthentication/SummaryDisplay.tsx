@@ -86,7 +86,7 @@ export const SummaryDisplay = () => {
   const { subtext, alert } = getSecurityLevelMessages(level)
 
   return (
-    <Box border='1px solid' borderColor='table.border' borderRadius='md' p={5} bg='background.raised'>
+    <Box border='1px solid' borderColor='table.border' borderRadius='md' p={5} bg='bg.subtle'>
       <Stack gap={4}>
         <Text fontWeight='bold'>
           {t('voter_auth.summary_title', { defaultValue: 'Authentication Configuration Summary' })}

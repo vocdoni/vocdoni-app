@@ -9,7 +9,7 @@ const pricingCard = {
     position: 'relative',
     border: '1px solid',
     borderRadius: 'md',
-    bgColor: 'card.pricing.bd',
+    bgColor: 'card.pricing.bg',
     p: 6,
     flex: 1,
   },
@@ -110,11 +110,8 @@ export const Card = defineSlotRecipe({
             textAlign: 'center',
             fontSize: '12px',
             fontWeight: 'bold',
-            color: 'home.description.light',
+            color: 'fg.muted',
             marginTop: '12px',
-            _dark: {
-              color: 'home.description.dark',
-            },
           },
         },
       },
@@ -140,21 +137,13 @@ export const Card = defineSlotRecipe({
         },
         body: {
           p: 0,
-          color: 'home.description.light',
+          color: 'fg.muted',
           fontSize: 'xl',
-
-          _dark: {
-            color: 'home.description.dark',
-          },
         },
       },
       'no-elections': {
         root: {
-          bgColor: 'bg_secondary.light',
-
-          _dark: {
-            bgColor: 'bg_secondary.dark',
-          },
+          bgColor: 'bg.panel',
         },
       },
     },

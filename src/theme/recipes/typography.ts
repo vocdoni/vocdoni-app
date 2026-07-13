@@ -71,7 +71,7 @@ export const link = defineRecipe({
       },
       footer: {
         textDecoration: 'none',
-        color: 'process_create.footer_link',
+        color: 'fg.muted',
         _hover: {
           textDecoration: 'underline',
         },

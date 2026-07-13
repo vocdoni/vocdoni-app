@@ -66,11 +66,9 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   border: {
+    // @deprecated: use the chakra built-in `border` token directly
     dashboard: {
-      value: {
-        _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
-      },
+      value: '{colors.border}',
     },
     pagination: {
       active: {
@@ -149,13 +147,10 @@ export const colors = defineSemanticTokens.colors({
       value: '{colors.gray.500}',
     },
   },
-  // @deprecated: to be removed in favor of border.dashboard
+  // @deprecated: use the chakra built-in `border` token directly
   table: {
     border: {
-      value: {
-        _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
-      },
+      value: '{colors.border}',
     },
   },
   tabs: {

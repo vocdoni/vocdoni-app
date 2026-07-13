@@ -960,21 +960,10 @@ const ProcessCreateView = () => {
                 >
                   <Icon as={LuSettings} />
                 </IconButton>
-                <Button
-                  type='submit'
-                  colorPalette='black'
-                  alignSelf='flex-end'
-                  loading={methods.formState.isSubmitting}
-                >
+                <Button type='submit' alignSelf='flex-end' loading={methods.formState.isSubmitting}>
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
-                <Button
-                  type='button'
-                  colorPalette='black'
-                  variant='outline'
-                  onClick={handleManualSave}
-                  loading={isSaving}
-                >
+                <Button type='button' variant='outline' onClick={handleManualSave} loading={isSaving}>
                   <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
                 </Button>
               </ButtonGroup>
