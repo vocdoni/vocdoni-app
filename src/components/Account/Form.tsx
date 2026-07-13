@@ -1,14 +1,4 @@
-import {
-  Button,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
-  HStack,
-  Icon,
-  Input,
-  Text,
-  VStack,
-} from '@chakra-ui/react'
+import { Button, HStack, Icon, Input, Text, VStack } from '@chakra-ui/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { linkSaasOAuth } from '@vocdoni/rainbowkit-wallets'
 import { useMemo, useState } from 'react'
@@ -18,6 +8,7 @@ import { BsGoogle, BsLink } from 'react-icons/bs'
 import { api, ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
+import { Field } from '~components/ui/Field'
 import { OAuthProvider, OAuthProviders } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { useAppEnv } from '~src/app-env'
@@ -170,34 +161,42 @@ const AccountForm = ({ profile }: { profile?: User }) => {
       </Text>
       <VStack gap={8} align='stretch'>
         <HStack>
-          <FormControl invalid={!!errors.firstName}>
-            <FormLabel fontSize={'14px'}>{t('name', { defaultValue: 'Name' })}</FormLabel>
+          <Field
+            invalid={!!errors.firstName}
+            label={t('name', { defaultValue: 'Name' })}
+            labelProps={{ fontSize: '14px' }}
+            errorText={errors.firstName?.message}
+          >
             <Input
               {...register('firstName', {
                 required: t('form.error.field_is_required'),
               })}
             />
-            <FormErrorMessage>{errors.firstName?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl invalid={!!errors.lastName}>
-            <FormLabel fontSize={'14px'}>{t('lastname', { defaultValue: 'Last name' })}</FormLabel>
+          </Field>
+          <Field
+            invalid={!!errors.lastName}
+            label={t('lastname', { defaultValue: 'Last name' })}
+            labelProps={{ fontSize: '14px' }}
+            errorText={errors.lastName?.message}
+          >
             <Input
               {...register('lastName', {
                 required: t('form.error.field_is_required'),
               })}
             />
-            <FormErrorMessage>{errors.lastName?.message}</FormErrorMessage>
-          </FormControl>
+          </Field>
         </HStack>
 
-        <FormControl invalid={!!errors.email}>
-          <FormLabel fontSize={'14px'}>{t('email', { defaultValue: 'Email' })}</FormLabel>
+        <Field
+          invalid={!!errors.email}
+          label={t('email', { defaultValue: 'Email' })}
+          labelProps={{ fontSize: '14px' }}
+          errorText={errors.email?.message}
+        >
           <Input {...register('email')} disabled type='email' />
-          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
-        </FormControl>
+        </Field>
 
-        <FormControl>
-          <FormLabel fontSize={'14px'}>{t('password', { defaultValue: 'Password' })}</FormLabel>
+        <Field label={t('password', { defaultValue: 'Password' })} labelProps={{ fontSize: '14px' }}>
           {hasPassword ? (
             <HStack gap={2}>
               <Input placeholder={'• • • • • • • •'} type='password' disabled />
@@ -214,7 +213,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
               {t('password_request.action', { defaultValue: 'Request password change' })}
             </Button>
           )}
-        </FormControl>
+        </Field>
 
         <VStack gap={3} align='stretch'>
           <Text fontSize={'14px'} fontWeight='600'>

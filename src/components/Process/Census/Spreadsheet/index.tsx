@@ -1,10 +1,11 @@
-import { FieldRoot as FormControl, FieldErrorText as FormErrorMessage, Link, Text } from '@chakra-ui/react'
+import { Link, Text } from '@chakra-ui/react'
 import { useCallback, useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useSubscription } from '~components/Auth/Subscription'
 import Uploader from '~components/Layout/Uploader'
+import { Field } from '~components/ui/Field'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { enforceCsvRowLimit } from '~components/Spreadsheet/limits'
 import { CsvPreview } from '~components/Spreadsheet/Preview'
@@ -94,7 +95,12 @@ export const CensusCsvManager = () => {
         })}
       </Text>
 
-      <FormControl invalid={!!errors?.spreadsheet} display={manager?.data?.length ? 'none' : 'block'}>
+      <Field
+        invalid={!!errors?.spreadsheet}
+        display={manager?.data?.length ? 'none' : 'block'}
+        errorText={errors?.spreadsheet?.message?.toString()}
+        errorTextProps={{ display: 'flex', justifyContent: 'center' }}
+      >
         <input
           type='hidden'
           {...register('spreadsheet', {
@@ -102,10 +108,7 @@ export const CensusCsvManager = () => {
           })}
         />
         <Uploader getInputProps={getInputProps} getRootProps={getRootProps} isDragActive={isDragActive} />{' '}
-        <FormErrorMessage display='flex' justifyContent='center'>
-          {errors?.spreadsheet?.message?.toString()}
-        </FormErrorMessage>
-      </FormControl>
+      </Field>
       <Text fontSize='xs' color='texts.subtle'>
         <Trans
           i18nKey='form.process_create.spreadsheet.download_template'

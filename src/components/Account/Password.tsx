@@ -1,12 +1,4 @@
-import {
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
-  IconButton,
-  Input,
-  useDisclosure,
-  VStack,
-} from '@chakra-ui/react'
+import { IconButton, Input, useDisclosure, VStack } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -16,6 +8,7 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ModalForm, useModalForm } from '~components/Form/ModalForm'
 import { useToast } from '~components/Toast'
+import { Field } from '~components/ui/Field'
 
 interface PasswordFormData {
   oldPassword: string
@@ -92,19 +85,24 @@ const PasswordForm = ({ onSuccess }: PasswordFormProps) => {
       ref={formRef}
     >
       <VStack gap={6} align='stretch'>
-        <FormControl invalid={!!errors.oldPassword}>
-          <FormLabel>{t('password_update.old.label', { defaultValue: 'Current Password' })}</FormLabel>
+        <Field
+          invalid={!!errors.oldPassword}
+          label={t('password_update.old.label', { defaultValue: 'Current Password' })}
+          errorText={errors.oldPassword?.message}
+        >
           <Input
             type='password'
             {...register('oldPassword', {
               required: t('password_update.old.required', { defaultValue: 'Current password is required' }),
             })}
           />
-          <FormErrorMessage>{errors.oldPassword?.message}</FormErrorMessage>
-        </FormControl>
+        </Field>
 
-        <FormControl invalid={!!errors.newPassword}>
-          <FormLabel>{t('password_update.new.label', { defaultValue: 'New Password' })}</FormLabel>
+        <Field
+          invalid={!!errors.newPassword}
+          label={t('password_update.new.label', { defaultValue: 'New Password' })}
+          errorText={errors.newPassword?.message}
+        >
           <Input
             type='password'
             {...register('newPassword', {
@@ -115,8 +113,7 @@ const PasswordForm = ({ onSuccess }: PasswordFormProps) => {
               },
             })}
           />
-          <FormErrorMessage>{errors.newPassword?.message}</FormErrorMessage>
-        </FormControl>
+        </Field>
       </VStack>
     </form>
   )

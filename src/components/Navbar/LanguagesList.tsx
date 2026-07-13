@@ -2,8 +2,6 @@ import {
   Box,
   Button,
   Flex,
-  FieldRoot as FormControl,
-  FieldLabel as FormLabel,
   Icon,
   MenuContent,
   MenuItem,
@@ -18,6 +16,7 @@ import { FaGlobeAmericas } from 'react-icons/fa'
 import { LuCheck } from 'react-icons/lu'
 import { RiArrowDownSLine, RiArrowUpSLine } from 'react-icons/ri'
 import { Select } from '~components/Form/Select'
+import { Field } from '~components/ui/Field'
 import { navigateToPublicLanguage, usePublicLanguageRouting } from '~i18n/usePublicLanguageRouting'
 import { useLanguagesEnv } from '~src/app-env'
 import { languagesListSelectStyles } from '~theme/selectStyles'
@@ -156,11 +155,16 @@ export const LanguageListDashboard = ({ ...props }) => {
   const longestLabelLength = languageOptions.reduce((max, opt) => Math.max(max, opt.label.length), 0)
 
   return (
-    <FormControl w='full' display='flex' justifyContent='space-between' alignItems='center' flexDir='row' {...props}>
-      <FormLabel fontSize={'14px'} m='0'>
-        {t('form.select_language', { defaultValue: 'Language' })}
-      </FormLabel>
-
+    <Field
+      w='full'
+      display='flex'
+      justifyContent='space-between'
+      alignItems='center'
+      flexDir='row'
+      {...props}
+      label={t('form.select_language', { defaultValue: 'Language' })}
+      labelProps={{ fontSize: '14px', m: '0' }}
+    >
       <Select
         options={languageOptions}
         value={selectedLanguage}
@@ -185,6 +189,6 @@ export const LanguageListDashboard = ({ ...props }) => {
         )}
         chakraStyles={languagesListSelectStyles(longestLabelLength)}
       />
-    </FormControl>
+    </Field>
   )
 }

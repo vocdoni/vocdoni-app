@@ -1,17 +1,9 @@
-import {
-  AlertRoot as Alert,
-  Box,
-  Flex,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
-  Icon,
-  Text,
-} from '@chakra-ui/react'
+import { AlertRoot as Alert, Box, Flex, Icon, Text } from '@chakra-ui/react'
 import { Props as SelectProps, chakraComponents } from 'chakra-react-select'
 import { Controller, type ControllerProps, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuEye, LuKey, LuUserRoundCog, LuUsers } from 'react-icons/lu'
+import { Field } from '~components/ui/Field'
 import { Role, useOrganizationTypes, useRoles } from '~src/queries/organization'
 import { Select } from '../Form/Select'
 
@@ -59,12 +51,16 @@ export const SelectCustom = ({
   }
 
   return (
-    <FormControl invalid={!!errors[name]} required={required}>
-      {label && (
-        <FormLabel htmlFor={name} display='flex' ms={1} fontSize='sm' fontWeight='500' mb={2}>
-          {label}
-        </FormLabel>
-      )}
+    <Field
+      invalid={!!errors[name]}
+      required={required}
+      label={label}
+      labelProps={{ htmlFor: name, display: 'flex', ms: 1, fontSize: 'sm', fontWeight: '500', mb: 2 }}
+      errorText={
+        getErrorMessage(errors[name]) || t('form.error.generic', { defaultValue: 'Error performing the operation' })
+      }
+      errorTextProps={{ mt: 2 }}
+    >
       <Controller
         {...controller}
         name={name}
@@ -101,10 +97,7 @@ export const SelectCustom = ({
           />
         )}
       />
-      <FormErrorMessage mt={2}>
-        {getErrorMessage(errors[name]) || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
-      </FormErrorMessage>
-    </FormControl>
+    </Field>
   )
 }
 

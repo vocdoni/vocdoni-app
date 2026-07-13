@@ -2,8 +2,6 @@ import {
   Box,
   Button,
   Flex,
-  FieldRoot as FormControl,
-  FieldLabel as FormLabel,
   Heading,
   Icon,
   Progress,
@@ -27,6 +25,7 @@ import InputBasic from '~components/Form/InputBasic'
 import { IssueTypeSelector, SelectOptionType } from '~components/Layout/SaasSelector'
 import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
 import { useToast } from '~components/Toast'
+import { Field } from '~components/ui/Field'
 import { SubscriptionPermission } from '~constants'
 import { useAppEnv } from '~src/app-env'
 import { maskValue } from '~utils/strings'
@@ -140,13 +139,12 @@ const SupportTicketForm = () => {
             required
           />
           <IssueTypeSelector name='type' required />
-          <FormControl required>
-            <FormLabel>{t('form.support.description', { defaultValue: 'Description' })}</FormLabel>
+          <Field required label={t('form.support.description', { defaultValue: 'Description' })}>
             <Textarea
               {...register('description')}
               placeholder={t('form.support.description_placeholder', { defaultValue: 'Describe your issue in detail' })}
             />
-          </FormControl>
+          </Field>
           <Button type='submit' mt={4}>
             {t('form.support.submit_ticket', { defaultValue: 'Submit Ticket' })}
           </Button>

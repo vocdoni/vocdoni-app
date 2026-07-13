@@ -3,8 +3,6 @@ import {
   Box,
   Button,
   Flex,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
   HStack,
   Icon,
   IconButton,
@@ -24,6 +22,7 @@ import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardSection, SidebarSubtitle } from '~components/Dashboard/Contents'
 import Uploader from '~components/Layout/Uploader'
 import { enforceCsvRowLimit } from '~components/Spreadsheet/limits'
+import { Field } from '~components/ui/Field'
 import { fieldMapErrorMessage } from '~constants'
 import { CensusTypes } from './CensusType'
 import { Web3CensusSpreadsheetManager } from './Spreadsheet/Web3CensusSpreadsheetManager'
@@ -140,7 +139,10 @@ export const CensusWeb3Addresses = () => {
 
           return (
             <Flex gap={2} key={field.id}>
-              <FormControl invalid={!!errors.addresses?.[index]?.address}>
+              <Field
+                invalid={!!errors.addresses?.[index]?.address}
+                errorText={fieldMapErrorMessage(errors, `addresses.${index}.address`)}
+              >
                 <InputGroup
                   endElement={isValidAddress(addressValue) ? <Icon as={LuCheck} color='green.400' /> : undefined}
                 >
@@ -161,8 +163,7 @@ export const CensusWeb3Addresses = () => {
                     placeholder='0x000...000'
                   />
                 </InputGroup>
-                <FormErrorMessage>{fieldMapErrorMessage(errors, `addresses.${index}.address`)}</FormErrorMessage>
-              </FormControl>
+              </Field>
 
               {weighted && (
                 <Controller
@@ -217,10 +218,9 @@ export const CensusWeb3Addresses = () => {
           })}
         </AbsoluteCenter>
       </Box>
-      <FormControl invalid={!!fileErr}>
+      <Field invalid={!!fileErr} errorText={fileErr}>
         <Uploader getInputProps={getInputProps} getRootProps={getRootProps} isDragActive={isDragActive} />
-        <FormErrorMessage>{fileErr}</FormErrorMessage>
-      </FormControl>
+      </Field>
       <Text color='texts.subtle' fontSize='xs'>
         {weighted
           ? t('form.process_create.web3.csv_format_weighted', {

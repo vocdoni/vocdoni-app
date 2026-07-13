@@ -1,9 +1,9 @@
-import { FieldRoot as FormControl, FieldErrorText as FormErrorMessage, FieldLabel as FormLabel } from '@chakra-ui/react'
 import { GroupBase, Props } from 'chakra-react-select'
 import countries from 'country-flag-emoji-json'
 import { useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
+import { Field } from '~components/ui/Field'
 import { Select } from './Select'
 
 type OptionType = {
@@ -56,10 +56,14 @@ export const CountrySelector = ({ ...props }: Omit<SelectProps, 'options'>) => {
   }, [])
 
   return (
-    <FormControl invalid={!!errors?.country} required={true}>
-      <FormLabel htmlFor='country'>
-        <Trans i18nKey='country_selector.selector_label'>Country</Trans>
-      </FormLabel>
+    <Field
+      invalid={!!errors?.country}
+      required={true}
+      label={<Trans i18nKey='country_selector.selector_label'>Country</Trans>}
+      labelProps={{ htmlFor: 'country' }}
+      errorText={errors?.country?.message.toString()}
+      errorTextProps={{ mt: 2 }}
+    >
       <Controller
         name='country'
         control={control}
@@ -78,7 +82,6 @@ export const CountrySelector = ({ ...props }: Omit<SelectProps, 'options'>) => {
           />
         )}
       />
-      <FormErrorMessage mt={2}>{errors?.country?.message.toString()}</FormErrorMessage>
-    </FormControl>
+    </Field>
   )
 }

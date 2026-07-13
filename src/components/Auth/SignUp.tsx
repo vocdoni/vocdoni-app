@@ -5,8 +5,6 @@ import {
   CheckboxLabel,
   CheckboxRoot,
   Flex,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
   Link,
   Text,
 } from '@chakra-ui/react'
@@ -21,6 +19,7 @@ import { VerificationPending } from '~components/Auth/Verify'
 import { default as InputBasic } from '~components/Form/InputBasic'
 import InputPassword from '~components/Form/InputPassword'
 import { OrSeparator } from '~components/Layout/Separators'
+import { Field } from '~components/ui/Field'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { useAppEnv } from '~src/app-env'
 import { useSignupFromInvite } from '~src/queries/account'
@@ -169,7 +168,7 @@ const SignUp = ({
                 },
               }}
             />
-            <FormControl as='fieldset'>
+            <Field as='fieldset' errorText={errors?.terms?.message.toString()}>
               <Controller
                 control={control}
                 name='promotions'
@@ -188,9 +187,8 @@ const SignUp = ({
                   </CheckboxRoot>
                 )}
               />
-              <FormErrorMessage>{errors?.terms?.message.toString()}</FormErrorMessage>
-            </FormControl>
-            <FormControl as='fieldset' invalid={!!errors?.terms}>
+            </Field>
+            <Field as='fieldset' invalid={!!errors?.terms} errorText={errors?.terms?.message.toString()}>
               <Controller
                 control={control}
                 name='terms'
@@ -227,8 +225,7 @@ const SignUp = ({
                   </CheckboxRoot>
                 )}
               />
-              <FormErrorMessage>{errors?.terms?.message.toString()}</FormErrorMessage>
-            </FormControl>
+            </Field>
           </Flex>
           <Button loading={isPending} type='submit' w='100%'>
             {t('signup_create_account')}
