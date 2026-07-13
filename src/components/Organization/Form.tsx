@@ -1,10 +1,11 @@
-import { Box, FieldRoot as FormControl, FieldLabel as FormLabel, Text, VStack } from '@chakra-ui/react'
+import { Box, Text, VStack } from '@chakra-ui/react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import Editor from '~components/Editor'
 import { CountrySelector } from '~components/Form/CountrySelector'
 import InputBasic from '~components/Form/InputBasic'
 import { MembershipSizeSelector, OrganizationTypeSelector } from '~components/Layout/SaasSelector'
+import { Field } from '~components/ui/Field'
 
 export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
   const { t } = useTranslation()
@@ -22,8 +23,7 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
       />
       {!minified && (
         <>
-          <FormControl>
-            <FormLabel>{t('description', { defaultValue: 'Description' })}</FormLabel>
+          <Field label={t('description', { defaultValue: 'Description' })}>
             <Controller
               name='description'
               control={control}
@@ -37,7 +37,7 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
                 />
               )}
             />
-          </FormControl>
+          </Field>
           <InputBasic
             formValue='website'
             label={t('website', { defaultValue: 'Website' })}

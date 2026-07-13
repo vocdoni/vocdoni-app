@@ -1,23 +1,11 @@
-import {
-  Button,
-  Drawer,
-  Flex,
-  FieldRoot as FormControl,
-  FieldErrorText as FormErrorMessage,
-  FieldHelperText as FormHelperText,
-  FieldLabel as FormLabel,
-  Input,
-  NumberInput,
-  Stack,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { Button, Drawer, Flex, Input, NumberInput, Stack, Text, useDisclosure } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { Field } from '~components/ui/Field'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
 import { useTable } from '../TableProvider'
@@ -251,8 +239,22 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                   const isWeighted = col.id === 'weight'
 
                   return (
-                    <FormControl key={col.id} invalid={!!methods.formState.errors[col.id]}>
-                      <FormLabel>{col.label}</FormLabel>
+                    <Field
+                      key={col.id}
+                      invalid={!!methods.formState.errors[col.id]}
+                      label={col.label}
+                      helperText={
+                        isPhone &&
+                        hadPhone &&
+                        t('memberbase.form.phone_warning', {
+                          defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
+                        })
+                      }
+                      errorText={
+                        methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'
+                      }
+                      errorTextProps={{ mt: 2 }}
+                    >
                       {isWeighted ? (
                         <Controller
                           name={col.id}
@@ -284,17 +286,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                           required={false} // we don't want HTML5 validation
                         />
                       )}
-                      {isPhone && hadPhone && (
-                        <FormHelperText>
-                          {t('memberbase.form.phone_warning', {
-                            defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
-                          })}
-                        </FormHelperText>
-                      )}
-                      <FormErrorMessage mt={2}>
-                        {methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'}
-                      </FormErrorMessage>
-                    </FormControl>
+                    </Field>
                   )
                 })}
               </Stack>

@@ -2,9 +2,6 @@ import {
   Box,
   Button,
   Card,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
-  FieldRoot as FormControl,
   CheckboxControl,
   CheckboxHiddenInput,
   CheckboxRoot,
@@ -41,6 +38,7 @@ import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { PaginatedTableFooter } from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
+import { Field } from '~components/ui/Field'
 import { Routes } from '~routes'
 import { Group, useDeleteGroup, useGroupMembers, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { TableProvider, useTable } from './TableProvider'
@@ -262,18 +260,18 @@ const EditGroupDrawer = ({ group, isOpen, onClose }: EditGroupDrawerProps) => {
                     setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
                   }}
                 />
-                <FormControl invalid={!!formState.errors.description}>
-                  <FormLabel>
-                    {t('members.table.group_description', { defaultValue: 'Description (Optional)' })}
-                  </FormLabel>
+                <Field
+                  invalid={!!formState.errors.description}
+                  label={t('members.table.group_description', { defaultValue: 'Description (Optional)' })}
+                  errorText={formState.errors.description?.message?.toString()}
+                >
                   <Textarea
                     {...register('description')}
                     placeholder={t('members.table.group_description_placeholder', {
                       defaultValue: 'Enter a brief description of the group',
                     })}
                   />
-                  <FormErrorMessage>{formState.errors.description?.message?.toString()}</FormErrorMessage>
-                </FormControl>
+                </Field>
               </Drawer.Body>
               <Flex justifyContent='flex-end' gap={2} p={4}>
                 <Button variant='outline' onClick={onClose}>

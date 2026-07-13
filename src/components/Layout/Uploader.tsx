@@ -5,11 +5,8 @@ import {
   Box,
   BoxProps,
   Button,
+  FieldRootProps,
   Flex,
-  FieldRoot as FormControl,
-  FieldRootProps as FormControlProps,
-  FieldErrorText as FormErrorMessage,
-  FieldLabel as FormLabel,
   Icon,
   IconButton,
   Image,
@@ -25,6 +22,7 @@ import { LuUpload } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
+import { Field } from '~components/ui/Field'
 
 export type UploaderProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T) => T
@@ -53,7 +51,7 @@ const useUploadFile = () => {
   })
 }
 
-export const AvatarUploader = (props: FormControlProps) => {
+export const AvatarUploader = (props: FieldRootProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const {
@@ -107,8 +105,12 @@ export const AvatarUploader = (props: FormControlProps) => {
   })
 
   return (
-    <FormControl invalid={!!errors?.avatar} {...props}>
-      <FormLabel>{t('avatar.label', { defaultValue: 'Logo/Avatar' })}</FormLabel>
+    <Field
+      invalid={!!errors?.avatar}
+      {...props}
+      label={t('avatar.label', { defaultValue: 'Logo/Avatar' })}
+      errorText={errors?.avatar?.message?.toString()}
+    >
       <Box borderRadius='full' px={6}>
         {avatar ? (
           <Box position='relative' borderRadius='full' w='128px' h='128px'>
@@ -165,8 +167,7 @@ export const AvatarUploader = (props: FormControlProps) => {
           </Flex>
         )}
       </Box>
-      <FormErrorMessage>{errors?.avatar?.message?.toString()}</FormErrorMessage>
-    </FormControl>
+    </Field>
   )
 }
 
@@ -220,7 +221,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
   })
 
   return (
-    <FormControl invalid={!!errors?.[name]}>
+    <Field invalid={!!errors?.[name]} errorText={errors?.[name]?.message?.toString()}>
       <Flex direction='column' gap={2} align='center' w='full'>
         {value ? (
           <Flex
@@ -258,8 +259,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
           </Flex>
         )}
       </Flex>
-      <FormErrorMessage>{errors?.[name]?.message?.toString()}</FormErrorMessage>
-    </FormControl>
+    </Field>
   )
 }
 
