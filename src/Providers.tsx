@@ -21,7 +21,7 @@ import {
   normalizePublicLanguageCandidate,
   persistPublicLanguagePreferenceClient,
 } from '~i18n/public-language'
-import { uiScaffoldComponents } from '~theme/react-components'
+import { uiScaffoldComponents } from '~components/scaffold'
 import { AppEnvProvider, normalizeLanguages, useAppEnv } from './app-env'
 import { buildAppEnv } from './app-env-build'
 import { configureApiBaseUrl } from './components/Auth/api'

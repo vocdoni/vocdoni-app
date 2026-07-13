@@ -1,5 +1,5 @@
 import { defineRecipe, defineSlotRecipe } from '@chakra-ui/react'
-import { paginationAnatomy } from '~theme/react-components/anatomy/pagination'
+import { paginationAnatomy } from '~theme/anatomy/pagination'
 
 export const Pagination = defineSlotRecipe({
   slots: paginationAnatomy,

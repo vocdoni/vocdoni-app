@@ -1,5 +1,5 @@
 import { defineSlotRecipe } from '@chakra-ui/react'
-import { confirmAnatomy } from '~theme/react-components/anatomy/election'
+import { confirmAnatomy } from '~theme/anatomy/election'
 
 const baseStyle = {
   header: {
