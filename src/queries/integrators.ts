@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
 import { ensure0x, type MultiLanguage } from '@vocdoni/sdk'
+import { useTranslation } from 'react-i18next'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
@@ -120,6 +121,17 @@ export type CreateApiKeyBody = {
 }
 
 export type CreatedApiKey = ApiKey & { secret: string }
+
+export const useStatus = () => {
+  const { t } = useTranslation()
+  return (k: ApiKey): { label: string; palette: string } => {
+    if (k.revoked)
+      return { label: t('integrators.api_keys.status_revoked', { defaultValue: 'Revoked' }), palette: 'red' }
+    if (k.expiresAt && new Date(k.expiresAt).getTime() < Date.now())
+      return { label: t('integrators.api_keys.status_expired', { defaultValue: 'Expired' }), palette: 'orange' }
+    return { label: t('integrators.api_keys.status_active', { defaultValue: 'Active' }), palette: 'green' }
+  }
+}
 
 /** API keys owned by the selected organization (GET /organizations/{address}/apikeys, admin only). */
 export const useApiKeys = () => {

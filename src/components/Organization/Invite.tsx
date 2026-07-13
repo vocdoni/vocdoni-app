@@ -10,7 +10,7 @@ import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { useInviteMemberMutation } from '~src/queries/organization'
 import { useCallbackContext } from '~utils/callback-provider'
-import { useAllUsers } from './Team'
+import { useAllUsers } from '~queries/team'
 
 // Invite form component
 const InviteForm = () => {

@@ -13,7 +13,7 @@ vi.mock('~components/Pricing/use-pricing-modal', () => ({
   }),
 }))
 
-vi.mock('./Team', () => ({
+vi.mock('~queries/team', () => ({
   useAllUsers: () => ({
     users: [],
     isLoading: false,

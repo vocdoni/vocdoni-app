@@ -1,9 +1,18 @@
-import { DefinedInitialDataOptions, QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  DefinedInitialDataOptions,
+  QueryKey,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
+import { useClient } from '@vocdoni/react-components'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api, ApiEndpoints, ApiError, getApiErrorMessage, UnauthorizedApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useConnectionToast } from '~components/Layout/ConnectionToast'
+import type { OrganizationData } from '~components/Organization/AccountTypes'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from './keys'
 
@@ -162,6 +171,23 @@ type InviteAcceptRequestBody = {
     lastName: string
     password: string
   }
+}
+
+export const useSaasOrganization = ({
+  options,
+}: {
+  options?: Omit<UseQueryOptions<OrganizationData>, 'queryKey' | 'queryFn'>
+} = {}) => {
+  const { bearedFetch } = useAuth()
+  const { account } = useClient()
+
+  return useQuery({
+    queryKey: QueryKeys.organization.info(account?.address),
+    refetchOnWindowFocus: false,
+    queryFn: () => bearedFetch<OrganizationData>(ApiEndpoints.Organization.replace('{address}', account?.address)),
+    enabled: !!account?.address,
+    ...options,
+  })
 }
 
 interface UpdatePasswordParams {

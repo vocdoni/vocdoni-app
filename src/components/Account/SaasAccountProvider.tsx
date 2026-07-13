@@ -1,27 +1,7 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
 import { createContext, ReactNode, useCallback, useContext } from 'react'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
 import { OrganizationData } from '~components/Organization/AccountTypes'
-import { QueryKeys } from '~src/queries/keys'
-
-const useSaasOrganization = ({
-  options,
-}: {
-  options?: Omit<UseQueryOptions<OrganizationData>, 'queryKey' | 'queryFn'>
-} = {}) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-
-  return useQuery({
-    queryKey: QueryKeys.organization.info(account?.address),
-    refetchOnWindowFocus: false,
-    queryFn: () => bearedFetch<OrganizationData>(ApiEndpoints.Organization.replace('{address}', account?.address)),
-    enabled: !!account?.address,
-    ...options,
-  })
-}
+import { useSaasOrganization } from '~src/queries/account'
 
 export const useSaasAccount = () => {
   const context = useContext(SaasAccountContext)

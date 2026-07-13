@@ -8,6 +8,10 @@ vi.mock('~src/queries/integrators', () => ({
   useApiKeys: vi.fn(),
   useRevokeApiKey: vi.fn(() => ({ mutateAsync: revokeMutateAsync, isPending: false })),
   useCreateApiKey: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+  useStatus: () => (k: ApiKey) => ({
+    label: k.revoked ? 'Revoked' : k.expiresAt && new Date(k.expiresAt).getTime() < Date.now() ? 'Expired' : 'Active',
+    palette: k.revoked ? 'red' : 'green',
+  }),
 }))
 
 import { useApiKeys } from '~src/queries/integrators'

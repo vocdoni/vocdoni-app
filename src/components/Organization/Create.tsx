@@ -1,9 +1,7 @@
 import { Button, Flex, FlexProps, Link, Text } from '@chakra-ui/react'
 import { useToast } from '~components/Toast'
 
-import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { enforceHexPrefix, useClient } from '@vocdoni/react-components'
-import { Account, RemoteSigner } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -11,77 +9,18 @@ import { Link as ReactRouterLink, To, useNavigate } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { LocalStorageKeys, useAuthProvider } from '~components/Auth/useAuthProvider'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
-import { OrganizationMetaKeys, OrganizationMetaResponse, SetupStepIds } from '~queries/organization'
-import { useAppEnv } from '~src/app-env'
-import { QueryKeys } from '~src/queries/keys'
+import {
+  OrganizationMetaKeys,
+  OrganizationMetaResponse,
+  SetupStepIds,
+  useOrganizationCreate,
+} from '~queries/organization'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
 
 type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country'>
-
-type OrganizationCreateResponse = {
-  address: string
-  account: Account
-  signer: RemoteSigner
-  client: ReturnType<typeof useClient>['client']
-}
-
-const useOrganizationCreate = (
-  options?: Omit<UseMutationOptions<OrganizationCreateResponse, Error, FormData>, 'mutationFn'>
-) => {
-  const { bearedFetch } = useAuth()
-  const { client, setSigner, signer: csigner } = useClient()
-  const { bearer, signerRefresh } = useAuthProvider()
-  const qclient = useQueryClient()
-  const { SAAS_URL } = useAppEnv()
-
-  return useMutation<OrganizationCreateResponse, Error, FormData>({
-    mutationFn: async (values: FormData) => {
-      // Create account on the saas to generate new priv keys
-      const { address }: { address: string } = await bearedFetch(ApiEndpoints.Organizations, {
-        body: {
-          name: values.name,
-          website: values.website,
-          description: values.description,
-          size: values.size,
-          country: values.country,
-          type: values.type,
-        },
-        method: 'POST',
-      })
-
-      const signer = new RemoteSigner({
-        url: SAAS_URL,
-        token: bearer,
-      })
-
-      signer.address = address
-      client.wallet = signer
-
-      const account = new Account({
-        name: typeof values.name === 'object' ? values.name.default : values.name,
-        description: typeof values.description === 'object' ? values.description.default : values.description,
-      })
-
-      await client.createAccount({ account })
-
-      localStorage.setItem(LocalStorageKeys.SignerAddress, address)
-      qclient.invalidateQueries({ queryKey: QueryKeys.profile })
-
-      // Refresh the signer if it was already set
-      if (csigner !== null) {
-        setSigner(signer)
-        await signerRefresh()
-      }
-
-      return { address, account, signer, client }
-    },
-    ...options,
-  })
-}
 
 export const OrganizationCreate = ({
   canSkip,
