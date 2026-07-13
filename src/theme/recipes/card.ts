@@ -118,7 +118,9 @@ export const Card = defineSlotRecipe({
       faqs: {
         root: {
           borderRadius: 'none',
-          borderBottom: '1px solid rgb(229, 229, 229)',
+          borderBottomWidth: '1px',
+          borderBottomStyle: 'solid',
+          borderBottomColor: 'border',
           backgroundColor: 'transparent',
           py: { base: 6, lg: 8 },
 
@@ -126,7 +128,7 @@ export const Card = defineSlotRecipe({
             border: 'none',
           },
           '&:nth-last-of-type(2)': {
-            borderBottom: { base: '1px solid rgb(229, 229, 229)', lg: 'none' },
+            borderBottomWidth: { base: '1px', lg: '0' },
           },
         },
         header: {

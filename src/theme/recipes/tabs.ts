@@ -24,7 +24,7 @@ const settings = {
     _selected: {
       bgColor: 'tabs.tab.active.bg',
       color: 'tabs.tab.active.color',
-      boxShadow: '0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a',
+      boxShadow: 'xs',
     },
   },
   content: {

@@ -128,7 +128,7 @@ export const ElectionResults = defineSlotRecipe({
     choiceTitle: {
       gridColumn: '1',
       zIndex: 'sidebar',
-      color: 'black',
+      color: 'fg',
       pl: 2,
       fontSize: 'sm',
       minW: 0,
@@ -141,7 +141,7 @@ export const ElectionResults = defineSlotRecipe({
       alignItems: 'center',
       pr: 2,
       fontSize: 'sm',
-      color: 'black',
+      color: 'fg',
     },
     question: {
       width: 'full',
@@ -173,12 +173,12 @@ export const resultsProgressRecipe = defineSlotRecipe({
     },
     track: {
       h: '100%',
-      bg: 'gray.100',
+      bg: { base: 'gray.100', _dark: 'gray.800' },
       borderRadius: 'inherit',
     },
     range: {
       h: '100%',
-      bg: 'gray.400',
+      bg: { base: 'gray.400', _dark: 'gray.500' },
       borderRadius: 'inherit',
     },
   },
