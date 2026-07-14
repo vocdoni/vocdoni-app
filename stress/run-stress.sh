@@ -11,7 +11,7 @@
 # Options (all optional; sensible defaults):
 #   --cpus N          container CPU limit           (default 1)
 #   --memory M        container memory limit         (default 512m)
-#   --path P          request path to hammer         (default /en/ — SPA, no backend)
+#   --path P          request path to hammer         (default /en — SPA, no backend)
 #   --levels "L..."   space-separated concurrency levels
 #                                                    (default "50 100 250 500 1000 1500 2000 3000")
 #   --duration S      seconds per level              (default 20)
@@ -163,7 +163,8 @@ for c in $LEVELS; do
 
   if [[ -z "$JSON" ]]; then
     log "!! No result from loadgen at concurrency $c (generator or connection failure)."
-    JSON='{}'
+    CRASH_LEVEL="$c"
+    break
   fi
   echo "$JSON" >>"$JSONL"
 
