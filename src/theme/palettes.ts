@@ -15,6 +15,11 @@ type PaletteInput = {
   ink: { h: number; c: number }
   /** accent color for links/highlights, light and dark mode variants */
   accent: { light: string; lightHover: string; dark: string; darkHover: string }
+  /**
+   * "Easier on the eyes": warm, lower-glare surfaces (off-white instead of
+   * near-white) and slightly softened text contrast for the light mode.
+   */
+  soft?: boolean
 }
 
 export type Palette = {
@@ -26,17 +31,24 @@ export type Palette = {
   dark: Record<string, string>
 }
 
-const build = ({ id, label, surface: s, ink, accent }: PaletteInput): Palette => {
+const build = ({ id, label, surface: s, ink, accent, soft = false }: PaletteInput): Palette => {
   const inkAt = (l: number, alpha?: number) =>
     alpha ? `oklch(${l} ${ink.c} ${ink.h} / ${alpha})` : `oklch(${l} ${ink.c} ${ink.h})`
   const surfaceAt = (l: number, cMult = 1) => `oklch(${l} ${s.c * cMult} ${s.h})`
   const lightText = (alpha?: number) => (alpha ? `oklch(0.95 0.012 ${s.h} / ${alpha})` : `oklch(0.95 0.012 ${s.h})`)
 
+  // "soft" palettes drop the light surfaces off pure white and ease the text
+  // contrast down a notch, so the whole UI is gentler to look at.
+  const L = soft
+    ? { bg: 0.972, menu: 0.95, auth: 0.925, t50: 0.978, g200: 0.9 }
+    : { bg: 0.988, menu: 0.962, auth: 0.936, t50: 0.988, g200: 0.911 }
+  const tL = soft ? 0.3 : 0.24 // light-mode text lightness
+
   // Constants shared by both modes (raw brand/gray ramps don't mode-switch)
   const constants = {
-    '--pal-t50': surfaceAt(0.988), // brand.200 / gray.50
-    '--pal-ghost': surfaceAt(0.962, 2), // brand.50 / gray.100 / menu tint
-    '--pal-ghost-2': surfaceAt(0.936, 3), // brand.100 / muted panels
+    '--pal-t50': surfaceAt(L.t50), // brand.200 / gray.50
+    '--pal-ghost': surfaceAt(L.menu, 2), // brand.50 / gray.100 / menu tint
+    '--pal-ghost-2': surfaceAt(L.auth, 3), // brand.100 / muted panels
     '--pal-ink20': inkAt(0.24, 0.2),
     '--pal-solid': inkAt(0.24),
     '--pal-solid-hover': inkAt(0.32),
@@ -45,7 +57,7 @@ const build = ({ id, label, surface: s, ink, accent }: PaletteInput): Palette =>
     '--pal-dark-2': `oklch(0.235 0.012 ${ink.h})`, // dark auth bg
     '--pal-dark-menu': `oklch(0.25 0.013 ${ink.h})`, // dark sidebar/menu
     '--pal-dark-3': `oklch(0.34 0.016 ${ink.h})`, // dark muted bg
-    '--pal-g200': surfaceAt(0.911, 2),
+    '--pal-g200': surfaceAt(L.g200, 2),
     '--pal-g400': inkAt(0.72),
     '--pal-g500': inkAt(0.55),
     '--pal-g600': inkAt(0.45),
@@ -56,17 +68,17 @@ const build = ({ id, label, surface: s, ink, accent }: PaletteInput): Palette =>
   return {
     id,
     label,
-    swatch: { bg: surfaceAt(0.962, 2), accent: accent.light },
+    swatch: { bg: surfaceAt(L.menu, 2), accent: accent.light },
     light: {
       ...constants,
-      '--pal-bg': surfaceAt(0.988),
-      '--pal-menu': surfaceAt(0.962, 2),
-      '--pal-auth-bg': surfaceAt(0.936, 3),
-      '--pal-text': inkAt(0.24),
-      '--pal-text-strong': inkAt(0.24),
-      '--pal-text-64': inkAt(0.24, 0.64),
-      '--pal-placeholder': inkAt(0.24, 0.55),
-      '--pal-hairline': inkAt(0.24, 0.1),
+      '--pal-bg': surfaceAt(L.bg),
+      '--pal-menu': surfaceAt(L.menu, 2),
+      '--pal-auth-bg': surfaceAt(L.auth, 3),
+      '--pal-text': inkAt(tL),
+      '--pal-text-strong': inkAt(tL),
+      '--pal-text-64': inkAt(tL, 0.64),
+      '--pal-placeholder': inkAt(tL, 0.55),
+      '--pal-hairline': inkAt(tL, 0.1),
       '--pal-accent': accent.light,
       '--pal-accent-hover': accent.lightHover,
     },
@@ -246,6 +258,59 @@ export const palettes: Palette[] = [
       lightHover: 'oklch(0.42 0.095 45)',
       dark: 'oklch(0.66 0.1 45)',
       darkHover: 'oklch(0.73 0.095 45)',
+    },
+  }),
+  // Softer, lower-glare set — warm off-white surfaces, gentler contrast
+  build({
+    id: 'sepia',
+    label: 'Sepia',
+    soft: true,
+    surface: { h: 75, c: 0.022 },
+    ink: { h: 55, c: 0.02 },
+    accent: {
+      light: 'oklch(0.5 0.08 65)',
+      lightHover: 'oklch(0.44 0.075 65)',
+      dark: 'oklch(0.72 0.08 70)',
+      darkHover: 'oklch(0.78 0.075 70)',
+    },
+  }),
+  build({
+    id: 'linen',
+    label: 'Linen',
+    soft: true,
+    surface: { h: 95, c: 0.018 },
+    ink: { h: 110, c: 0.016 },
+    accent: {
+      light: 'oklch(0.48 0.055 145)',
+      lightHover: 'oklch(0.42 0.05 145)',
+      dark: 'oklch(0.68 0.055 145)',
+      darkHover: 'oklch(0.74 0.05 145)',
+    },
+  }),
+  build({
+    id: 'dusk',
+    label: 'Dusk',
+    soft: true,
+    surface: { h: 250, c: 0.012 },
+    ink: { h: 255, c: 0.018 },
+    accent: {
+      light: 'oklch(0.5 0.06 250)',
+      lightHover: 'oklch(0.44 0.055 250)',
+      dark: 'oklch(0.7 0.06 250)',
+      darkHover: 'oklch(0.76 0.055 250)',
+    },
+  }),
+  build({
+    id: 'fog',
+    label: 'Fog',
+    soft: true,
+    surface: { h: 265, c: 0.01 },
+    ink: { h: 265, c: 0.012 },
+    accent: {
+      light: 'oklch(0.5 0.06 275)',
+      lightHover: 'oklch(0.44 0.055 275)',
+      dark: 'oklch(0.7 0.06 275)',
+      darkHover: 'oklch(0.76 0.055 275)',
     },
   }),
 ]
