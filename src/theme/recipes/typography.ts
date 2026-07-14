@@ -31,18 +31,13 @@ export const heading = defineRecipe({
 
 export const link = defineRecipe({
   base: {
-    color: 'oklch(0.47 0.085 158)',
+    // Palette vars already switch between light/dark modes
+    color: 'var(--pal-accent)',
     textDecoration: 'underline',
     textDecorationThickness: 'from-font',
     textUnderlineOffset: '0.15em',
-    _dark: {
-      color: 'oklch(0.62 0.09 158)',
-      _hover: {
-        color: 'oklch(0.7 0.09 158)',
-      },
-    },
     _hover: {
-      color: 'oklch(0.4 0.08 158)',
+      color: 'var(--pal-accent-hover)',
     },
   },
   variants: {

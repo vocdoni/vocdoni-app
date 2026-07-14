@@ -24,6 +24,7 @@ import { Routes } from '~src/router/routes'
 import { DashboardBookerModalButton } from '../Booker'
 import { DashboardMenuConfig } from './menus'
 import { DashboardMenuOptions } from './Options'
+import PaletteSwitcher from './PaletteSwitcher'
 import UserProfile from './UserProfile'
 
 const DashboardMenu = ({
@@ -202,6 +203,7 @@ const DashboardMenuContent = ({
       </Box>
       <Box mt='auto'>
         {menu.tutorial && <SidebarTutorial />}
+        <PaletteSwitcher />
         <UserProfile />
       </Box>
     </>

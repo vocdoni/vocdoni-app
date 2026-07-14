@@ -1,10 +1,12 @@
 import { createSystem, defaultConfig } from '@chakra-ui/react'
+import { paletteGlobalCss } from './palettes'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import tokens from './tokens'
 
 export const system = createSystem(defaultConfig, {
   globalCss: {
+    ...paletteGlobalCss(),
     html: {
       colorPalette: 'gray',
       // Warm editorial experiment: real values for the previously-undefined shadow vars
