@@ -44,3 +44,6 @@ yarn.lock
 
 # Local Netlify folder
 .netlify
+
+# Claude Code personal settings
+.claude/settings.local.json
