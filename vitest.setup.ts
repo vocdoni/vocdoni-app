@@ -40,6 +40,18 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   }
 })
 
+// The integrator-sdk client hook (`useApiClient`) re-exports react-providers' `useClient`.
+// Stub only that hook so components reading the SAAS client render without a real ClientProvider;
+// tests drive it via `setReactProvidersMock({ useClient })`. Everything else stays real.
+vi.mock('@vocdoni/react-providers', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-providers')>()
+  const { getReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
+  return {
+    ...actual,
+    useClient: getReactProvidersMock().useClient,
+  }
+})
+
 vi.mock('@vocdoni/react-components/pagination', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components/pagination')>()
   const { getReactProvidersMock } = await import('./src/test-utils-react-providers-mock')

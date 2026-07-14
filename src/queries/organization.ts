@@ -1,12 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
-import {
-  AccountData,
-  ensure0x,
-  FetchElectionsParameters,
-  FetchElectionsParametersWithPagination,
-  VocdoniSDKClient,
-} from '@vocdoni/sdk'
+import type { ElectionStatus } from '@vocdoni/api-types'
+import type { VocdoniApiClient } from '@vocdoni/api-client'
+import { AccountData, ensure0x, FetchElectionsParameters, FetchElectionsParametersWithPagination } from '@vocdoni/sdk'
+import { toLegacyElectionList } from '~queries/election-adapter'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { LuCalendar, LuFileSpreadsheet, LuUsers, LuVote } from 'react-icons/lu'
@@ -79,20 +76,35 @@ type InviteData = {
   role: string
 }
 
+// The dashboard "ended" tab filters by the legacy `RESULTS` status, which the SAAS status union
+// no longer has (results now live on an `ENDED` election). Map it (and the other legacy names)
+// onto the SAAS `ElectionStatus` before querying.
+const LIST_STATUS_MAP: Record<string, ElectionStatus> = {
+  ongoing: 'READY',
+  ready: 'READY',
+  results: 'ENDED',
+  ended: 'ENDED',
+  paused: 'PAUSED',
+  canceled: 'CANCELED',
+  upcoming: 'UPCOMING',
+}
+
 export const paginatedElectionsQuery = (
   address: string | undefined,
-  client: VocdoniSDKClient,
+  client: VocdoniApiClient,
   params: PaginatedElectionsParams
 ) => ({
   enabled: !!address,
   queryKey: QueryKeys.organization.elections(address, params),
-  queryFn: async () =>
-    client.fetchElections({
+  queryFn: async () => {
+    const result = await client.elections.list({
       organizationId: address,
       page: params.page ? Number(params.page) - 1 : 0,
-      status: params.status?.toUpperCase() as FetchElectionsParameters['status'],
-      limit: params.limit,
-    }),
+      pageSize: params.limit,
+      status: params.status ? LIST_STATUS_MAP[params.status.toLowerCase()] : undefined,
+    })
+    return toLegacyElectionList(result)
+  },
 })
 
 export const useOrganizationMeta = () => {

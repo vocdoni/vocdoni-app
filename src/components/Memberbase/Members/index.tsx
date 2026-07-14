@@ -23,7 +23,8 @@ import {
   WrapItem,
 } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient, useOrganization } from '@vocdoni/react-components'
+import { useOrganization } from '@vocdoni/react-components'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { useState } from 'react'
@@ -217,7 +218,7 @@ const ACTIVE_PROCESS_STATUSES = [ElectionStatus.ONGOING, ElectionStatus.UPCOMING
 const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { client } = useClient()
+  const { client } = useApiClient()
   const { currentAddress } = useAuth()
   const [selectedProcess, setSelectedProcess] = useState<{ id: string; title: string } | null>(null)
   const { selectedRows, resetSelectedRows } = useTable()

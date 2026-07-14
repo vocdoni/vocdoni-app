@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
+import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { useElection } from '@vocdoni/react-components'
-import type { VocdoniSDKClient } from '@vocdoni/sdk'
 import { CensusType, PublishedElection } from '@vocdoni/sdk'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -86,13 +86,13 @@ const BUNDLE_ID_REGEX = /\/process\/bundle\/([^/?#]+)/
 
 /**
  * Resolves the SaaS census id for a process. SaaS member-based censuses are not referenced directly on
- * the vochain election: the election's census URL points to its process bundle, whose `census.id` is the
- * SaaS census id we can append members to. So we fetch the election from the vochain to read its census
+ * the election: the election's census URL points to its process bundle, whose `census.id` is the
+ * SaaS census id we can append members to. So we fetch the election from the SAAS API to read its census
  * URL, then fetch the bundle to read the census id.
  *
  * Returns `undefined` for processes that are not backed by a SaaS member census (e.g. spreadsheet/web3).
  */
-export const useProcessCensusId = (client: VocdoniSDKClient, processId?: string, enabled: boolean = true) => {
+export const useProcessCensusId = (client: VocdoniApiClient, processId?: string, enabled: boolean = true) => {
   const { bearedFetch } = useAuth()
 
   return useQuery<string | undefined, Error>({
@@ -100,8 +100,8 @@ export const useProcessCensusId = (client: VocdoniSDKClient, processId?: string,
     enabled: enabled && !!processId,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const election = await client.fetchElection(processId)
-      const bundleId = election.census?.censusURI?.match(BUNDLE_ID_REGEX)?.[1]
+      const election = await client.elections.get(processId!)
+      const bundleId = election.census?.uri?.match(BUNDLE_ID_REGEX)?.[1]
       if (!bundleId) return undefined
 
       const bundle = await bearedFetch<ProcessBundleResponse>(

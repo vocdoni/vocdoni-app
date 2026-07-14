@@ -1,7 +1,7 @@
-import type { Election as SaasElection } from '@vocdoni/api-types'
+import type { Election as SaasElection, PaginatedElections } from '@vocdoni/api-types'
 import { ElectionResultsTypeNames, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { describe, expect, it } from 'vitest'
-import { toPublishedElection } from './election-adapter'
+import { toLegacyElectionList, toPublishedElection } from './election-adapter'
 
 const baseElection = (overrides: Partial<SaasElection> = {}): SaasElection => ({
   id: 'mongoid',
@@ -152,5 +152,38 @@ describe('toPublishedElection', () => {
       expect(election.census.censusURI).toBe('ipfs://census')
       expect(election.census.size).toBe(100)
     })
+  })
+})
+
+describe('toLegacyElectionList', () => {
+  const page = (overrides: Partial<PaginatedElections> = {}): PaginatedElections => ({
+    elections: [baseElection({ id: 'a' }), baseElection({ id: 'b' })],
+    total: 25,
+    page: 1,
+    pageSize: 10,
+    ...overrides,
+  })
+
+  it('adapts every election and preserves order', () => {
+    const list = toLegacyElectionList(page())
+
+    expect(list.elections).toHaveLength(2)
+    expect(list.elections.every((e) => e instanceof PublishedElection)).toBe(true)
+    expect(list.elections.map((e) => e.id)).toEqual(['a', 'b'])
+  })
+
+  it('derives 0-indexed pagination with previous/next links', () => {
+    const { pagination } = toLegacyElectionList(page())
+
+    expect(pagination.totalItems).toBe(25)
+    expect(pagination.currentPage).toBe(1)
+    expect(pagination.lastPage).toBe(2) // ceil(25/10) - 1
+    expect(pagination.previousPage).toBe(0)
+    expect(pagination.nextPage).toBe(2)
+  })
+
+  it('nulls previous on the first page and next on the last page', () => {
+    expect(toLegacyElectionList(page({ page: 0 })).pagination.previousPage).toBeNull()
+    expect(toLegacyElectionList(page({ page: 2 })).pagination.nextPage).toBeNull()
   })
 })

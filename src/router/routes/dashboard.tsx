@@ -1,8 +1,9 @@
 // These aren't lazy loaded since they are main layouts and related components
 import { useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { Fragment, lazy } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
+import { toPublishedElection } from '~queries/election-adapter'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
@@ -43,7 +44,7 @@ export const shouldRevalidateDashboardProcess = ({
 
 export const useDashboardRoutes = () => {
   const queryClient = useQueryClient()
-  const { client } = useClient()
+  const { client } = useApiClient()
   const { currentAddress } = useAuth()
 
   return {
@@ -108,7 +109,8 @@ export const useDashboardRoutes = () => {
                         <DashboardProcessView />
                       </SuspenseLoader>
                     ),
-                    loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
+                    loader: async ({ params }: { params: Params<string> }) =>
+                      toPublishedElection(await client.elections.get(params.id!)),
                     shouldRevalidate: shouldRevalidateDashboardProcess,
                     errorElement: <Error />,
                     children: [

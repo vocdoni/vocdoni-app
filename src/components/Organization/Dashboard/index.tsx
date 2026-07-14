@@ -16,14 +16,9 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { useQuery } from '@tanstack/react-query'
-import {
-  ElectionProvider,
-  ElectionStatusBadge,
-  ElectionTitle,
-  useClient,
-  useOrganization,
-} from '@vocdoni/react-components'
+import { ElectionProvider, ElectionStatusBadge, ElectionTitle, useOrganization } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { format } from 'date-fns'
 import { Trans, useTranslation } from 'react-i18next'
@@ -285,7 +280,7 @@ const OrganizationProcesses = () => {
 
 const Processes = () => {
   const { t } = useTranslation()
-  const { client } = useClient()
+  const { client } = useApiClient()
   const { organization } = useOrganization()
   const { currentAddress } = useAuth()
 
