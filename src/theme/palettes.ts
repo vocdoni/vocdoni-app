@@ -207,19 +207,6 @@ export const palettes: Palette[] = [
   }),
   // Softer, lower-glare set — warm off-white surfaces, gentler contrast
   build({
-    id: 'sepia',
-    label: 'Sepia',
-    soft: true,
-    surface: { h: 75, c: 0.022 },
-    ink: { h: 55, c: 0.02 },
-    accent: {
-      light: 'oklch(0.5 0.08 65)',
-      lightHover: 'oklch(0.44 0.075 65)',
-      dark: 'oklch(0.72 0.08 70)',
-      darkHover: 'oklch(0.78 0.075 70)',
-    },
-  }),
-  build({
     id: 'linen',
     label: 'Linen',
     soft: true,
