@@ -9,7 +9,6 @@ import {
   Icon,
   Link,
   Portal,
-  Spinner,
   TabsContent,
   TabsContentGroup,
   TabsList,
@@ -20,17 +19,13 @@ import {
   TooltipPositioner,
   TooltipRoot,
   TooltipTrigger,
-  VStack,
 } from '@chakra-ui/react'
-import {
-  ElectionQuestions,
-  ElectionResults,
-  environment,
-  useClient,
-  useElection,
-  useOrganization,
-} from '@vocdoni/react-components'
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
+import { hasResults } from '@vocdoni/api-client'
+import { BallotType, inferBallotType } from '@vocdoni/ballot'
+import { ElectionResultsTypeNames } from '@vocdoni/sdk'
+import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiErrorWarningLine } from 'react-icons/ri'
@@ -47,6 +42,14 @@ import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
 import { useVotingMethodLabel } from './resultTypeLabels'
+
+const BALLOT_TO_RESULTS_TYPE_NAME: Record<BallotType, ElectionResultsTypeNames> = {
+  [BallotType.SingleChoice]: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
+  [BallotType.MultiChoice]: ElectionResultsTypeNames.MULTIPLE_CHOICE,
+  [BallotType.Approval]: ElectionResultsTypeNames.APPROVAL,
+  [BallotType.Budget]: ElectionResultsTypeNames.BUDGET,
+  [BallotType.Quadratic]: ElectionResultsTypeNames.QUADRATIC,
+}
 
 type ProcessInfoCardProps = {
   label: string
@@ -72,15 +75,15 @@ export const ProcessInfoCard = ({ label, description, ...props }: ProcessInfoCar
 
 const VotingMethod = () => {
   const { t } = useTranslation()
-  const { election, isWeighted } = useElection()
-
-  if (!election) return null
-  if (!(election instanceof PublishedElection)) return null
-
-  const votingMethod = useVotingMethodLabel(election.resultsType?.name, {
+  const { election } = useElection()
+  const isWeighted = election?.census?.weighted ?? false
+  const resultsTypeName = election ? BALLOT_TO_RESULTS_TYPE_NAME[inferBallotType(election)] : undefined
+  const votingMethod = useVotingMethodLabel(resultsTypeName, {
     weighted: isWeighted,
     defaultValue: t('process.voting_method.unknown', { defaultValue: 'Unknown' }),
   })
+
+  if (!election) return null
 
   return <>{votingMethod}</>
 }
@@ -89,16 +92,17 @@ const ProcessInfoPanel = () => {
   const { t } = useTranslation()
   const language = usePublicLanguage()
   const { election } = useElection()
-  const { organization, loaded } = useOrganization()
+  const { organization, loading } = useOrganization()
   const { currentAddress } = useAuth()
   // For CSP elections the actual census size comes from the bundle, not from `maxCensusSize`
   // (which only caps how many voters may vote). See useCensusSize.
   const { size: censusSize } = useCensusSize()
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!election) return null
 
-  const showOrgInformation = !loaded || (loaded && organization?.account?.name)
-  const showTotalCensusSize = censusSize > 0 && !!election?.maxCensusSize && election.maxCensusSize < censusSize
+  const showOrgInformation = loading || !!organization?.name?.default
+  const maxCensusSize = election?.census?.size ?? 0
+  const showTotalCensusSize = censusSize > 0 && !!maxCensusSize && maxCensusSize < censusSize
 
   return (
     <Flex
@@ -112,7 +116,7 @@ const ProcessInfoPanel = () => {
       h='fit-content'
     >
       <Box flexDir='row' display='flex' justifyContent='space-between' w={{ xl: 'full' }}>
-        {election?.status !== ElectionStatus.CANCELED ? (
+        {election?.status !== 'CANCELED' ? (
           <ProcessDate />
         ) : (
           <Text color='process.canceled' fontWeight='bold'>
@@ -133,7 +137,7 @@ const ProcessInfoPanel = () => {
                 <Text>
                   {t('process.total_census_size', {
                     censusSize,
-                    maxCensusSize: election?.maxCensusSize,
+                    maxCensusSize,
                   })}
                 </Text>
               </TooltipTrigger>
@@ -141,11 +145,8 @@ const ProcessInfoPanel = () => {
                 <TooltipContent>
                   {t('process.total_census_size_tooltip', {
                     censusSize,
-                    maxCensusSize: election?.maxCensusSize,
-                    percent:
-                      censusSize && election?.maxCensusSize
-                        ? Math.round((election?.maxCensusSize / censusSize) * 100)
-                        : 0,
+                    maxCensusSize,
+                    percent: censusSize && maxCensusSize ? Math.round((maxCensusSize / censusSize) * 100) : 0,
                   })}
                 </TooltipContent>
               </TooltipPositioner>
@@ -166,7 +167,7 @@ const ProcessInfoPanel = () => {
         }
       />
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
-      {election?.status === ElectionStatus.PAUSED && election?.organizationId !== currentAddress && (
+      {election?.status === 'PAUSED' && election?.organizationId !== currentAddress && (
         <Flex
           color='process.paused'
           _dark={{ color: 'white' }}
@@ -194,7 +195,7 @@ const ProcessInfoPanel = () => {
 
 export const ProcessView = () => {
   const { t } = useTranslation()
-  const { election, voted, isAbleToVote } = useElection()
+  const { election, hasVoted } = useElection()
   // Close ineligible CSP sessions so the UI offers "Identify" instead of "Logout".
   useCspSessionGuard()
   const videoRef = useRef<HTMLDivElement>(null)
@@ -206,7 +207,7 @@ export const ProcessView = () => {
 
   // If the election is finished, show the results tab
   useEffect(() => {
-    if (election instanceof PublishedElection && election?.status === ElectionStatus.RESULTS) {
+    if (election && hasResults(election)) {
       setTabValue('results')
     }
   }, [election])
@@ -242,10 +243,10 @@ export const ProcessView = () => {
 
   // If the user has voted, move the focus to the top of the election
   useEffect(() => {
-    if (voted) {
+    if (hasVoted) {
       electionRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }, [voted])
+  }, [hasVoted])
 
   return (
     <Grid
@@ -272,7 +273,7 @@ export const ProcessView = () => {
           >
             <TabsList w='full'>
               <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
-              {election instanceof PublishedElection && election?.status !== ElectionStatus.CANCELED && (
+              {election && election.status !== 'CANCELED' && (
                 <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>
               )}
             </TabsList>
@@ -297,7 +298,7 @@ export const ProcessView = () => {
                   <VoteButton setQuestionsTab={setQuestionsTab} />
                 </Box>
               </TabsContent>
-              {election instanceof PublishedElection && election?.status !== ElectionStatus.CANCELED && (
+              {election && election.status !== 'CANCELED' && (
                 <TabsContent value='results' p={0}>
                   <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
                     <ElectionResults />
@@ -321,26 +322,21 @@ export const ProcessView = () => {
 const SuccessVoteModal = () => {
   const { t } = useTranslation()
   const [isOpen, setOpen] = useState(false)
-  const { votesLeft, election, voted } = useElection()
-  const { env } = useClient()
-
-  const [vLeft, setVLeft] = useState<number>(0)
+  const { election, hasVoted, voteId } = useElection()
+  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+  const prevHasVotedRef = useRef(false)
 
   useEffect(() => {
-    if (!vLeft && votesLeft >= 0) {
-      setVLeft(votesLeft)
-    }
-
-    if (vLeft && votesLeft < vLeft) {
-      setVLeft(votesLeft)
+    if (hasVoted && !prevHasVotedRef.current) {
       setOpen(true)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [votesLeft, vLeft])
+    prevHasVotedRef.current = hasVoted
+  }, [hasVoted])
 
-  if (!election || !voted || !(election instanceof PublishedElection)) return null
+  if (!election || !hasVoted) return null
 
-  const verify = environment.verifyVote(env, voted)
+  const verify = voteId ? `${explorerUrl}/verify/${voteId}` : explorerUrl
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={({ open }) => setOpen(open)}>
@@ -375,25 +371,7 @@ const SuccessVoteModal = () => {
   )
 }
 
-const VotingVoteModal = () => {
-  const { t } = useTranslation()
-  const {
-    loading: { voting },
-  } = useElection()
-
-  return (
-    <Dialog.Root open={voting} onOpenChange={() => {}} closeOnEscape={false} closeOnInteractOutside={false}>
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content>
-          <Dialog.Body>
-            <VStack>
-              <Spinner color='process.spinner' mb={5} w={10} h={10} />
-            </VStack>
-            <Text textAlign='center'>{t('process.voting')}</Text>
-          </Dialog.Body>
-        </Dialog.Content>
-      </Dialog.Positioner>
-    </Dialog.Root>
-  )
-}
+// VotingVoteModal: the v2 ElectionContextValue exposes loading as a flat boolean,
+// not as { voting: boolean }. The voting-in-progress overlay is owned by the
+// voting flow components (Aside/VoteButton) which are deferred to a later refactor.
+const VotingVoteModal = () => null

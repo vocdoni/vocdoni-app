@@ -1,18 +1,12 @@
 import { Button, Flex, Link, Text } from '@chakra-ui/react'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import {
-  VoteButton as CVoteButton,
-  environment,
-  SpreadsheetAccess,
-  useClient,
-  useElection,
-  VoteWeight,
-} from '@vocdoni/react-components'
+import { VoteButton as CVoteButton, SpreadsheetAccess, useElection, VoteWeight } from '@vocdoni/react-components'
 import { CensusType, dotobject, ElectionStatus, formatUnits, InvalidElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { CensusMeta, CensusTypes } from './Census/CensusType'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
@@ -31,8 +25,8 @@ const ProcessAside = () => {
     loading: { voting, census: loadingCensus },
     loaded: { census: loadedCensus },
   } = useElection()
-  const { env } = useClient()
   const appEnv = useAppEnv()
+  const explorerUrl = getVocdoniClientConfig(appEnv.VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
 
   if (election instanceof InvalidElection) return null
 
@@ -161,7 +155,7 @@ const ProcessAside = () => {
           )}
           {voted !== null && voted.length > 0 && (
             <Link css={{ _hover: { textDecoration: 'underline' } }} asChild whiteSpace='nowrap'>
-              <RouterAwareLink to={environment.verifyVote(env, voted)} target='_blank' rel='noreferrer'>
+              <RouterAwareLink to={`${explorerUrl}/verify/${voted}`} target='_blank' rel='noreferrer'>
                 {t('aside.verify_vote_on_explorer')}
               </RouterAwareLink>
             </Link>

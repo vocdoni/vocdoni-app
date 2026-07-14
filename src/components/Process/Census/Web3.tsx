@@ -14,7 +14,7 @@ import {
   Separator,
   Text,
 } from '@chakra-ui/react'
-import { enforceHexPrefix, errorToString } from '@vocdoni/react-components'
+import { errorToString } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
@@ -61,7 +61,7 @@ export const CensusWeb3Addresses = () => {
 
   useEffect(() => {
     if (currentAddress && addresses.length === 0) {
-      setValue('addresses', [{ address: enforceHexPrefix(currentAddress), weight: 1 }])
+      setValue('addresses', [{ address: currentAddress, weight: 1 }])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAddress, addresses, censusType])
@@ -85,7 +85,7 @@ export const CensusWeb3Addresses = () => {
       spreadsheet.data.forEach((row, idx) => {
         const [raw] = row
         if (!raw) return
-        const addr = enforceHexPrefix(raw)
+        const addr = raw
 
         append(
           {

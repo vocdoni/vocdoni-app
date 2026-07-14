@@ -1,5 +1,5 @@
 import { ElectionProvider, OrganizationProvider, useOrganization } from '@vocdoni/react-components'
-import { PublishedElection } from '@vocdoni/sdk'
+import type { Election } from '@vocdoni/api-types'
 import { useEffect } from 'react'
 import { generatePath, useLoaderData, useNavigate } from 'react-router-dom'
 import { ProcessView } from '~components/Process/Dashboard/ProcessView'
@@ -7,7 +7,7 @@ import { Routes } from '~src/router/routes'
 
 const DashboardProcessViewElement = () => {
   const { organization } = useOrganization()
-  const election = useLoaderData() as PublishedElection
+  const election = useLoaderData() as Election
   const navigate = useNavigate()
 
   // Redirect to processes list when current organization does not own this process
@@ -19,24 +19,8 @@ const DashboardProcessViewElement = () => {
   }, [organization, election, navigate])
 
   return (
-    <OrganizationProvider id={election.organizationId}>
-      {/*
-        The election is pre-fetched from the SAAS API by the route loader and adapted to a
-        PublishedElection. Freeze the provider's own query (staleTime Infinity + no polling) so it
-        serves that adapted data and never re-fetches through the legacy Vochain client, which would
-        both hit the chain and clobber the adapter's synthesized status/results.
-      */}
-      <ElectionProvider
-        election={election}
-        id={election.id}
-        fetchCensus
-        queryOptions={{
-          staleTime: Infinity,
-          refetchInterval: false,
-          refetchOnMount: false,
-          refetchOnReconnect: false,
-        }}
-      >
+    <OrganizationProvider address={election.organizationId}>
+      <ElectionProvider id={election.id}>
         <ProcessView />
       </ElectionProvider>
     </OrganizationProvider>

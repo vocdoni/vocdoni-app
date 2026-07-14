@@ -4,30 +4,28 @@ import {
   ElectionProvider,
   ElectionStatusBadge,
   ElectionTitle,
-  enforceHexPrefix,
   useElection,
 } from '@vocdoni/react-components'
-import { ElectionStatus, InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import type { Election } from '@vocdoni/api-types'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { RouterAwareLink } from '~components/RouterAwareLink'
-import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { ManageProcessLink } from './ManageProcessLink'
 import { ProcessDateInline } from './Date'
 
 interface Props {
-  election: PublishedElection
+  election: Election
 }
 
 const ProcessCardDetailed = ({ election }: Props) => {
   return (
-    <ElectionProvider election={election}>
+    <ElectionProvider id={election.id}>
       <Card.Root>
         <Card.Body>
-          <ProcessCardLink>
+          <ProcessCardLink election={election}>
             <ProcessDetailedCardTitle />
             <Box>
               <ElectionStatusBadge />
@@ -46,16 +44,15 @@ const ProcessCardDetailed = ({ election }: Props) => {
   )
 }
 
-const ProcessCardLink = ({ children }: PropsWithChildren) => {
-  const { election } = useElection()
+const ProcessCardLink = ({ children, election }: PropsWithChildren<{ election: Election }>) => {
   const language = usePublicLanguage()
 
-  if (election instanceof InvalidElection || !election?.id) {
+  if (!election?.id) {
     return <>{children}</>
   }
 
   const publicProcessPath = getPublicProcessPath({
-    id: enforceHexPrefix(election.id),
+    id: election.address ?? election.id,
     language,
   })
 
@@ -65,19 +62,15 @@ const ProcessCardLink = ({ children }: PropsWithChildren) => {
 export default ProcessCardDetailed
 
 const ProcessDetailedCreationDate = () => {
-  const { election } = useElection()
-  const { format } = useDateFns()
-
-  if (election instanceof InvalidElection || !election?.creationTime) return null
-
-  return <Text>{format(new Date(election.creationTime), 'PPP')}</Text>
+  // Creation time is not available in the new Election type; omit this field.
+  return null
 }
 
 const ProcessDetailedCardTitle = () => {
   const { election } = useElection()
   const { t } = useTranslation()
 
-  if (election instanceof InvalidElection) {
+  if (!election) {
     return (
       <Text fontStyle='italic' color='error'>
         {t('process.is_invalid')}
@@ -93,13 +86,13 @@ const ProcessDetailedCardDescription = () => {
   const { t } = useTranslation()
   const { ReadMoreMarkdownWrapper } = useReadMoreMarkdown(100)
 
-  if (election instanceof InvalidElection) {
+  if (!election) {
     return null
   }
 
   return (
     <>
-      {election?.status !== ElectionStatus.CANCELED ? (
+      {election?.status !== 'CANCELED' ? (
         <ReadMoreMarkdownWrapper>
           <ElectionDescription />
         </ReadMoreMarkdownWrapper>
@@ -116,11 +109,11 @@ const ProcessDetailedCardFooter = () => {
   const { t } = useTranslation()
   const { election } = useElection()
 
-  if (election instanceof InvalidElection) {
+  if (!election) {
     return null
   }
 
-  if (election?.status === ElectionStatus.CANCELED) return null
+  if (election?.status === 'CANCELED') return null
 
   return (
     <Box>

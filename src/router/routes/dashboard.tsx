@@ -2,7 +2,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Fragment, lazy } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
-import { toPublishedElection } from '~queries/election-adapter'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
 import Error from '~elements/Error'
@@ -109,8 +108,11 @@ export const useDashboardRoutes = () => {
                         <DashboardProcessView />
                       </SuspenseLoader>
                     ),
-                    loader: async ({ params }: { params: Params<string> }) =>
-                      toPublishedElection(await client.elections.get(params.id!)),
+                    loader: async ({ params }: { params: Params<string> }) => {
+                      const rawElection = await client.elections.get(params.id!)
+                      queryClient.setQueryData(['election', rawElection.id], rawElection)
+                      return rawElection
+                    },
                     shouldRevalidate: shouldRevalidateDashboardProcess,
                     errorElement: <Error />,
                     children: [

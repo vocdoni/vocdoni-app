@@ -18,7 +18,7 @@ describe('LegalNotice', () => {
     setReactProvidersMock({
       useOrganization: () => ({
         organization: {
-          account: { name: { default: 'Esquerra republicana' } },
+          name: { default: 'Esquerra republicana' },
           address: '0xabc',
         },
       }),
@@ -36,7 +36,6 @@ describe('LegalNotice', () => {
     setReactProvidersMock({
       useOrganization: () => ({
         organization: {
-          account: {},
           address: '0xabc',
         },
       }),

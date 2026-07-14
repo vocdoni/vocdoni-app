@@ -1,4 +1,5 @@
 import { Box, HStack, List, useRecipe } from '@chakra-ui/react'
+import type { JSX } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 
 export enum SecurityLevels {

@@ -29,7 +29,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { PaginationProvider, usePagination } from '@vocdoni/react-components/pagination'
+import { PaginationProvider, usePagination } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'

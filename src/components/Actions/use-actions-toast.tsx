@@ -10,7 +10,7 @@ let activeErrorKey: string | undefined
 const isTranslationKey = (value: string) => /^[a-z0-9_.-]+$/i.test(value) && value.includes('.')
 
 export const useActionsToast = () => {
-  const toastRef = useRef<string | undefined>()
+  const toastRef = useRef<string | undefined>(undefined)
   const { info, error } = useActions()
   const { election } = useElection()
   const toast = useToast()

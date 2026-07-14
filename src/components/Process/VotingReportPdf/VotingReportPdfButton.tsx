@@ -1,12 +1,14 @@
 import { Button, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import * as ReactPDF from '@react-pdf/renderer'
-import { useClient, useOrganization } from '@vocdoni/react-components'
+import { useOrganization } from '@vocdoni/react-components'
 import { ElectionStatus, PublishedElection, type InvalidElection } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuFileDown } from 'react-icons/lu'
 
 import { useToast } from '~components/Toast'
+import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 
 import {
   buildCertificateData,
@@ -42,8 +44,9 @@ const sanitizeFileName = (value: string) =>
 export const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { client } = useClient()
   const { organization } = useOrganization()
+  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const electionContext = useOptionalElectionContext()
   const report = getReportContext(electionContext, election)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -60,8 +63,8 @@ export const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
       const data = buildCertificateData({
         report,
         t,
-        organizationName: organization?.account?.name?.default,
-        explorerUrl: client?.explorerUrl,
+        organizationName: organization?.name?.default,
+        explorerUrl,
         censusBundle,
         now: new Date(),
       })

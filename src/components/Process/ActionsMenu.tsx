@@ -1,6 +1,6 @@
 import { Icon, IconButton, Menu, type MenuContentProps } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import { ElectionStatus, InvalidElection } from '@vocdoni/sdk'
+import { hasResults, isLive } from '@vocdoni/api-client'
 import { ElementType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCog } from 'react-icons/fa'
@@ -15,10 +15,9 @@ export const ActionsMenu = (props: MenuContentProps) => {
 
   if (
     !election ||
-    election instanceof InvalidElection ||
     election?.organizationId !== currentAddress ||
     // canceled and ended elections cannot be acted upon
-    [ElectionStatus.CANCELED, ElectionStatus.ENDED, ElectionStatus.RESULTS].includes(election.status)
+    [election.status === 'CANCELED', election.status === 'ENDED', hasResults(election)].some(Boolean)
   ) {
     return null
   }
@@ -44,11 +43,11 @@ const ActionsMenuList = (props: MenuContentProps) => {
   const { election } = useElection()
   const { loading, pause, resume, end, cancel, disabled } = useActions()
 
-  if (!election || election instanceof InvalidElection) return null
+  if (!election) return null
 
   return (
     <Menu.Content p={0} {...props}>
-      {election.status === ElectionStatus.PAUSED && (
+      {election.status === 'PAUSED' && (
         <Menu.Item
           value='resume'
           aria-label={t('process_actions.start')}
@@ -59,7 +58,7 @@ const ActionsMenuList = (props: MenuContentProps) => {
           {t('process_actions.start')}
         </Menu.Item>
       )}
-      {election.status === ElectionStatus.ONGOING && (
+      {isLive(election) && (
         <Menu.Item
           value='pause'
           aria-label={t('process_actions.start')}

@@ -28,7 +28,7 @@ describe('Process view', () => {
     setReactProvidersMock({
       useOrganization: () => ({
         organization: {
-          account: { name: { default: 'Esquerra republicana' } },
+          name: { default: 'Esquerra republicana' },
           address: '0xabc',
         },
       }),

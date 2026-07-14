@@ -81,7 +81,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
 const DashboardLayoutProviders = (props: PropsWithChildren) => {
   const { organization } = useSaasAccount()
   return (
-    <OrganizationProvider organization={organization}>
+    <OrganizationProvider address={organization?.address}>
       <PricingModalProvider {...props} />
     </OrganizationProvider>
   )

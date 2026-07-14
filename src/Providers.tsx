@@ -1,12 +1,11 @@
-import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ComponentsProvider, useClient } from '@vocdoni/react-components'
+import { ComponentsProvider } from '@vocdoni/react-components'
 import { AuthProvider as SdkAuthProvider } from '@vocdoni/react-providers'
 import { setDefaultOptions } from 'date-fns'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import { usePageContext } from 'vike-react/usePageContext'
-import { useWalletClient, WagmiProvider } from 'wagmi'
+import { WagmiProvider } from 'wagmi'
 import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
 import { AnalyticsProvider } from '~components/AnalyticsProvider'
 import { UnauthorizedApiError } from '~components/Auth/api'
@@ -15,7 +14,7 @@ import { SubscriptionProvider } from '~components/Auth/Subscription'
 import { CookieConsent } from '~components/Cookies/CookieConsent'
 import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
-import { walletClientToSigner } from '~constants/wagmi-adapters'
+import { ToastProvider } from '~components/Toast'
 import { ApiClientProvider, AUTH_STORAGE_KEY } from '~src/providers/ApiClientProvider'
 import { LanguageRoutingContext } from '~i18n/LanguageRoutingContext'
 import {
@@ -31,8 +30,6 @@ import { configureApiBaseUrl } from './components/Auth/api'
 import { wagmiConfig } from './constants/rainbow'
 import { createPageI18nInstance, getBaseI18n } from './i18n'
 import { datesLocale } from './i18n/locales'
-import { getVocdoniClientConfig } from './providers/vocdoni-client-config'
-import { ClientProvider } from './providers/VocdoniClientProvider'
 import { RoutesProvider } from './router/Router'
 import { RainbowKitTheme, Theme } from './theme/Theme'
 
@@ -200,13 +197,8 @@ const SaasProviders = ({ children }: PropsWithChildren<{}>) => (
 )
 
 const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
-  const { data } = useWalletClient()
   const { i18n } = useTranslation()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
   const locale = datesLocale(i18n.language)
-  const { clientEnv } = useMemo(() => getVocdoniClientConfig(VOCDONI_ENVIRONMENT), [VOCDONI_ENVIRONMENT])
-
-  const signer = data ? walletClientToSigner(data) : null
 
   useEffect(() => {
     setDefaultOptions({ locale })
@@ -215,7 +207,7 @@ const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
   return (
     <RainbowKitTheme>
       <ComponentsProvider components={uiScaffoldComponents}>
-        <ClientProvider env={clientEnv} signer={signer as Signer}>
+        <ToastProvider>
           <ConnectionToastProvider>
             <ApiClientProvider>
               <SaasProviders>
@@ -226,7 +218,7 @@ const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
               </SaasProviders>
             </ApiClientProvider>
           </ConnectionToastProvider>
-        </ClientProvider>
+        </ToastProvider>
       </ComponentsProvider>
     </RainbowKitTheme>
   )

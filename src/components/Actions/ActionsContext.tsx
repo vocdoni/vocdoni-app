@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { queryKeys, useElection } from '@vocdoni/react-components'
+import { useElection } from '@vocdoni/react-components'
 import type { SetElectionStatusRequest } from '@vocdoni/api-types'
 import { PublishedElection } from '@vocdoni/sdk'
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
@@ -65,7 +65,7 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
       try {
         await client.elections.setStatusAndWait(id, { status })
         const refreshed = toPublishedElection(await client.elections.get(id))
-        queryClient.setQueryData(queryKeys.election.byId(id), refreshed)
+        queryClient.setQueryData(['election', id], refreshed)
         setInfo(null)
       } catch (e) {
         setInfo(null)

@@ -369,7 +369,7 @@ const Processes = () => {
         if (!(election instanceof PublishedElection)) return null
 
         return (
-          <ElectionProvider election={election} id={election.id} key={election.id}>
+          <ElectionProvider id={election.id} key={election.id}>
             <Flex align='center'>
               <Box flex='1' minW={0} mr={4}>
                 <Link asChild variant='unstyled' fontWeight='500' display='block'>

@@ -49,12 +49,16 @@ vi.mock('@chakra-ui/react', async () => {
   }
 })
 
-vi.mock('@vocdoni/react-components/pagination', () => ({
-  RoutedPagination: () => <div>Pagination</div>,
-  Pagination: () => <div>Pagination</div>,
-  usePagination: () => ({ pagination: null, initialPage: 1 }),
-  useRoutedPagination: () => mockUseRoutedPagination(),
-}))
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  return {
+    ...actual,
+    RoutedPagination: () => <div>Pagination</div>,
+    Pagination: () => <div>Pagination</div>,
+    usePagination: () => ({ pagination: null, initialPage: 1 }),
+    useRoutedPagination: () => mockUseRoutedPagination(),
+  }
+})
 
 vi.mock('./RowsPerPageSelect', () => ({
   default: () => <div>RowsPerPageSelect</div>,

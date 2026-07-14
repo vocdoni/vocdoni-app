@@ -1,18 +1,12 @@
 import { Box, Text } from '@chakra-ui/react'
-import { Pagination, RoutedPagination, usePagination, useRoutedPagination } from '@vocdoni/react-components/pagination'
+import { Pagination, RoutedPagination, usePagination, useRoutedPagination } from '@vocdoni/react-components'
 import { Trans } from 'react-i18next'
 import RowsPerPageSelect from './RowsPerPageSelect'
 
-const getCurrentPage = (currentPage, lastPage) => {
-  return Math.min(currentPage, lastPage)
-}
-
 const RoutedPaginatedTableFooter = () => {
-  const { pagination, initialPage } = useRoutedPagination()
+  const { pagination, initialPage, page: currentPage } = useRoutedPagination()
 
   if (!pagination) return null
-
-  const currentPage = getCurrentPage(pagination.currentPage, pagination.lastPage)
 
   const page = initialPage === 0 ? currentPage + 1 : currentPage
   const total = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage
@@ -44,11 +38,9 @@ const RoutedPaginatedTableFooter = () => {
 }
 
 export const PaginatedTableFooter = () => {
-  const { pagination, initialPage } = usePagination()
+  const { pagination, initialPage, page: currentPage } = usePagination()
 
   if (!pagination) return null
-
-  const currentPage = getCurrentPage(pagination.currentPage, pagination.lastPage)
 
   const page = initialPage === 0 ? currentPage + 1 : currentPage
   const total = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage

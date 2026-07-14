@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { enforceHexPrefix } from '@vocdoni/react-components'
 import { dotobject } from '@vocdoni/sdk'
 import { ReactNode, createContext, useContext, useMemo } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
@@ -55,11 +54,9 @@ const SubscriptionProviderComponent: React.FC<{ children: ReactNode }> = ({ chil
     isFetching,
     error,
   } = useQuery({
-    queryKey: QueryKeys.organization.subscription(currentAddress && enforceHexPrefix(currentAddress)),
+    queryKey: QueryKeys.organization.subscription(currentAddress),
     queryFn: () =>
-      bearedFetch<SubscriptionType>(
-        ApiEndpoints.OrganizationSubscription.replace('{address}', enforceHexPrefix(currentAddress!))
-      ),
+      bearedFetch<SubscriptionType>(ApiEndpoints.OrganizationSubscription.replace('{address}', currentAddress!)),
     // Cache for 15 minutes
     staleTime: 15 * 60 * 1000,
     enabled: !!currentAddress,

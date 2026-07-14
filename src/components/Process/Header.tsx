@@ -4,9 +4,10 @@ import {
   ElectionSchedule,
   ElectionStatusBadge,
   ElectionTitle,
+  getElectionDescription,
   useElection,
 } from '@vocdoni/react-components'
-import { PublishedElection, Strategy } from '@vocdoni/sdk'
+import type { Strategy } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
 import { ShareModalButton } from '~components/Share'
@@ -17,7 +18,7 @@ const ProcessHeader = () => {
   const { election } = useElection()
   const { ReadMoreMarkdownWrapper, ReadMoreMarkdownButton } = useReadMoreMarkdown(600, 20)
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!election) return null
 
   return (
     <>
@@ -26,7 +27,13 @@ const ProcessHeader = () => {
           <AspectRatio ratio={3 / 1} maxH='300px'>
             <Image
               src={election?.header}
-              alt={election.title?.default || ''}
+              alt={
+                election.title
+                  ? typeof election.title === 'string'
+                    ? election.title
+                    : (election.title.default ?? '')
+                  : ''
+              }
               w='100%'
               h='100%'
               objectFit='cover'
@@ -80,7 +87,7 @@ const ProcessHeader = () => {
           </Box>
         </Flex>
         <Flex flexDirection='column'>
-          {!election?.description?.default.length && <Text color='fg.muted'>{t('process.no_description')}</Text>}
+          {!getElectionDescription(election)?.length && <Text color='fg.muted'>{t('process.no_description')}</Text>}
           <Box className='md-sizes'>
             <ReadMoreMarkdownWrapper>
               <ElectionDescription mb={0} fontSize='lg' lineHeight={1.5} color='fg.muted' />
@@ -97,11 +104,11 @@ const GitcoinStrategyInfo = () => {
   const { t } = useTranslation()
   const { election } = useElection()
 
-  if (!election || !(election instanceof PublishedElection) || !election?.meta?.strategy) {
+  if (!election || !election?.meta?.strategy) {
     return null
   }
 
-  const strategy: Strategy = election.get('strategy')
+  const strategy = election.meta.strategy as unknown as Strategy
   const score = strategy.tokens['GPS'].minBalance
   const firstParenthesesMatch = strategy.predicate.match(/\(([^)]+)\)/)
   let unionTypeString: string | null = null

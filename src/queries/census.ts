@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { useElection } from '@vocdoni/react-components'
-import { CensusType, PublishedElection } from '@vocdoni/sdk'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~queries/keys'
@@ -50,20 +49,18 @@ export const useCensusBundle = (censusURI?: string) => {
   })
 }
 
-// For CSP (bundle-based) elections `maxCensusSize` is the maximum number of voters allowed to vote, not
-// the actual census size. The real size lives in the bundle JSON pointed at by `census.censusURI`.
-// For any other census type the size is already populated on `election.census.size`, so we just fall
-// back to it (and ultimately to `maxCensusSize` when neither is available).
+// For CSP (bundle-based) elections `census.size` represents the maximum number of voters allowed to vote.
+// The real size lives in the bundle JSON pointed at by `census.uri`.
+// For any other census type the size is already populated on `election.census.size`, so we fall back to it.
 export const useCensusSize = () => {
   const { election } = useElection()
 
-  const isPublished = election instanceof PublishedElection
-  const isCsp = isPublished && election.census?.type === CensusType.CSP
-  const bundleURI = isCsp ? election.census.censusURI : undefined
+  const isCsp = !!election && election.census?.type === 'csp'
+  const bundleURI = isCsp ? election.census?.uri : undefined
 
   const { data: bundle, isLoading } = useCensusBundle(bundleURI)
 
-  const fallback = isPublished ? (election.census?.size ?? election.maxCensusSize ?? 0) : 0
+  const fallback = election ? (election.census?.size ?? 0) : 0
   const size = bundle?.census?.size ?? fallback
 
   return { size, isLoading: !!bundleURI && isLoading }

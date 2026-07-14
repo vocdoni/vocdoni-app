@@ -108,6 +108,7 @@ function createMockElection(
       },
     ],
     electionType: { secretUntilTheEnd: false },
+    voteType: { maxCount: 1, maxValue: 2, uniqueChoices: true, maxVoteOverwrites: 0, costExponent: 0 },
     resultsType: {
       name: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
       properties: {},
@@ -608,17 +609,8 @@ describe('useCloneAsDraft', () => {
     })
 
     it('should preserve weighted voting when cloning a weighted election', async () => {
-      mockElection = createMockElection([{ title: 'Option 1' }])
+      mockElection = createMockElection([{ title: 'Option 1' }], { census: { weighted: true } } as any)
       mockMutateAsync.mockResolvedValue('draft-123')
-
-      setReactProvidersMock({
-        useElection: () =>
-          mockUseElection({
-            election: mockElection,
-            isWeighted: true,
-            client: { explorerUrl: 'https://explorer.example.com' },
-          }),
-      })
 
       const { result } = renderHook(() => useCloneAsDraft())
 
@@ -638,16 +630,10 @@ describe('useCloneAsDraft', () => {
     })
 
     it('should preserve multi-choice settings and limits when cloning a multi-choice election', async () => {
+      // For inferBallotType to return MultiChoice: maxCount > 1, maxValue != 0, maxValue != 1 || uniqueChoices.
+      // api-types Election has no minCount field; minNumberOfChoices defaults to 0.
       mockElection = createMockElection([{ title: 'Option 1' }, { title: 'Option 2' }, { title: 'Option 3' }], {
-        resultsType: {
-          name: ElectionResultsTypeNames.MULTIPLE_CHOICE,
-          properties: {
-            numChoices: {
-              min: 1,
-              max: 2,
-            },
-          },
-        } as PublishedElection['resultsType'],
+        voteType: { maxCount: 2, maxValue: 3, uniqueChoices: false, maxVoteOverwrites: 0, costExponent: 0 },
       })
       mockMutateAsync.mockResolvedValue('draft-123')
 
@@ -662,7 +648,7 @@ describe('useCloneAsDraft', () => {
           expect.objectContaining({
             metadata: expect.objectContaining({
               questionType: ElectionResultsTypeNames.MULTIPLE_CHOICE,
-              minNumberOfChoices: 1,
+              minNumberOfChoices: 0,
               maxNumberOfChoices: 2,
             }),
           })

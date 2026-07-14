@@ -27,7 +27,7 @@ import {
   useRecipe,
   useSlotRecipe,
 } from '@chakra-ui/react'
-import { type ComponentsPartialDefinition, defineComponent } from '@vocdoni/react-components'
+import { type ComponentsPartialDefinition, defineComponent, getElectionTitle } from '@vocdoni/react-components'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
@@ -343,7 +343,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       return (
         <>
           <Dialog.Header css={styles.header} flexDirection='column'>
-            <Heading variant='header'>{election.title.default}</Heading>
+            <Heading variant='header'>{getElectionTitle(election)}</Heading>
             <Text variant='subheader'>
               {t('process.spreadsheet.confirm.election_title', {
                 defaultValue: 'Your vote has been recorded for:',

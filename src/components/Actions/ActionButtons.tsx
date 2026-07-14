@@ -1,6 +1,7 @@
 import { Button, type ButtonProps } from '@chakra-ui/react'
 import { useConfirm, useElection } from '@vocdoni/react-components'
-import { areEqualHexStrings, ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { areEqualHexStrings } from '@vocdoni/sdk'
+import { hasResults, isLive, isUpcoming } from '@vocdoni/api-client'
 import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '~components/Auth/useAuth'
@@ -17,22 +18,12 @@ export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ chil
   } = useActions()
   const { t } = useTranslation()
 
-  if (
-    !election ||
-    !(election instanceof PublishedElection) ||
-    !areEqualHexStrings(election.organizationId, currentAddress)
-  ) {
+  if (!election || !areEqualHexStrings(election.organizationId, currentAddress)) {
     return null
   }
 
   return (
-    <Button
-      ref={ref}
-      loading={loading}
-      onClick={resume}
-      disabled={disabled || election.status !== ElectionStatus.PAUSED}
-      {...props}
-    >
+    <Button ref={ref} loading={loading} onClick={resume} disabled={disabled || election.status !== 'PAUSED'} {...props}>
       {children ?? t('actions.continue')}
     </Button>
   )
@@ -49,22 +40,12 @@ export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ childre
   } = useActions()
   const { t } = useTranslation()
 
-  if (
-    !election ||
-    !(election instanceof PublishedElection) ||
-    !areEqualHexStrings(election.organizationId, currentAddress)
-  ) {
+  if (!election || !areEqualHexStrings(election.organizationId, currentAddress)) {
     return null
   }
 
   return (
-    <Button
-      ref={ref}
-      loading={loading}
-      onClick={pause}
-      disabled={disabled || election.status !== ElectionStatus.ONGOING}
-      {...props}
-    >
+    <Button ref={ref} loading={loading} onClick={pause} disabled={disabled || !isLive(election)} {...props}>
       {children ?? t('actions.pause')}
     </Button>
   )
@@ -97,11 +78,7 @@ export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children,
     }
   }
 
-  if (
-    !election ||
-    !(election instanceof PublishedElection) ||
-    !areEqualHexStrings(election.organizationId, currentAddress)
-  ) {
+  if (!election || !areEqualHexStrings(election.organizationId, currentAddress)) {
     return null
   }
 
@@ -112,9 +89,10 @@ export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children,
       onClick={handle}
       disabled={
         disabled ||
-        [ElectionStatus.RESULTS, ElectionStatus.ENDED, ElectionStatus.CANCELED, ElectionStatus.UPCOMING].includes(
-          election.status
-        )
+        hasResults(election) ||
+        election.status === 'ENDED' ||
+        election.status === 'CANCELED' ||
+        isUpcoming(election)
       }
       {...props}
     >
@@ -150,11 +128,7 @@ export const ActionCancel = forwardRef<HTMLButtonElement, ButtonProps>(({ childr
     }
   }
 
-  if (
-    !election ||
-    !(election instanceof PublishedElection) ||
-    !areEqualHexStrings(election.organizationId, currentAddress)
-  ) {
+  if (!election || !areEqualHexStrings(election.organizationId, currentAddress)) {
     return null
   }
 
@@ -163,9 +137,7 @@ export const ActionCancel = forwardRef<HTMLButtonElement, ButtonProps>(({ childr
       ref={ref}
       loading={loading}
       onClick={handle}
-      disabled={
-        disabled || [ElectionStatus.CANCELED, ElectionStatus.ENDED, ElectionStatus.RESULTS].includes(election.status)
-      }
+      disabled={disabled || election.status === 'CANCELED' || election.status === 'ENDED' || hasResults(election)}
       {...props}
     >
       {children ?? t('actions.cancel')}

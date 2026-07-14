@@ -1,4 +1,4 @@
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { PublishedElection } from '@vocdoni/sdk'
 import type { ReactNode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -7,7 +7,7 @@ import { getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from
 const navigateSpy = vi.fn()
 let currentPathname = '/admin/process/0xabc'
 let currentElectionId = '0xabc'
-let currentElectionStatus = ElectionStatus.RESULTS
+let currentElectionStatus = 'ENDED'
 
 vi.mock('@vocdoni/sdk', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
@@ -62,16 +62,18 @@ vi.mock('~components/Actions', () => ({
   ActionCancel: ({ children }: { children: ReactNode }) => <button>{children}</button>,
 }))
 
-const createPublishedElection = (id: string, status: ElectionStatus) =>
+const createPublishedElection = (id: string, status: string) =>
   Object.assign(new PublishedElection({} as never), {
     id,
     status,
+    finalResults: status === 'ENDED',
     title: { default: 'Test election' },
     description: { default: 'Description' },
     startDate: new Date('2026-01-01T10:00:00Z'),
     endDate: new Date('2026-01-02T10:00:00Z'),
     electionType: { secretUntilTheEnd: false },
-    voteType: { maxVoteOverwrites: 0 },
+    voteType: { maxVoteOverwrites: 0, maxValue: 1, maxCount: 1, costExponent: 0, uniqueChoices: false },
+    questions: [],
     voteCount: 10,
     census: { size: 25 },
     maxCensusSize: 25,
@@ -110,7 +112,7 @@ describe('ProcessView navigation', () => {
     navigateSpy.mockReset()
     currentPathname = '/admin/process/0xabc'
     currentElectionId = '0xabc'
-    currentElectionStatus = ElectionStatus.RESULTS
+    currentElectionStatus = 'ENDED'
   })
 
   it('redirects the base route to results when election results are already available', async () => {

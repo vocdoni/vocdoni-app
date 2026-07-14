@@ -36,8 +36,8 @@ export const BasicConfig = () => {
     setValue,
     clearErrors,
   } = useFormContext()
-  const startDateRef = useRef<HTMLInputElement | null>()
-  const endDateRef = useRef<HTMLInputElement | null>()
+  const startDateRef = useRef<HTMLInputElement | null>(null)
+  const endDateRef = useRef<HTMLInputElement | null>(null)
   const [min, setMin] = useState<Date>(new Date())
 
   const autoStart = watch('autoStart')

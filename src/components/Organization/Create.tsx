@@ -2,7 +2,6 @@ import { Button, Flex, FlexProps, Link, Text } from '@chakra-ui/react'
 import { useToast } from '~components/Toast'
 
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix } from '@vocdoni/react-components'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -92,17 +91,14 @@ export const OrganizationCreate = ({
       })
       try {
         // Mark organizationDetails step as done (can't use org hook here because org is not created yet)
-        await bearedFetch<OrganizationMetaResponse>(
-          ApiEndpoints.OrganizationMeta.replace('{address}', enforceHexPrefix(address)),
-          {
-            method: 'PUT',
-            body: {
-              meta: {
-                [OrganizationMetaKeys.completedSteps]: [SetupStepIds.organizationDetails],
-              },
+        await bearedFetch<OrganizationMetaResponse>(ApiEndpoints.OrganizationMeta.replace('{address}', address), {
+          method: 'PUT',
+          body: {
+            meta: {
+              [OrganizationMetaKeys.completedSteps]: [SetupStepIds.organizationDetails],
             },
-          }
-        )
+          },
+        })
       } catch (e) {
         console.warn('Error marking organizationDetails step as done', e)
         toast({

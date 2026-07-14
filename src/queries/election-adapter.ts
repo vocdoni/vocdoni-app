@@ -210,7 +210,7 @@ const toPublishedElectionParameters = (election: SaasElection): IPublishedElecti
   creationTime: '',
   metadataURL: '',
   resultsType: toResultsType(election),
-  raw: {},
+  raw: { address: election.address },
   title: toMultiLanguage(election.title),
   description: election.description ? toMultiLanguage(election.description) : undefined,
   header: election.header,

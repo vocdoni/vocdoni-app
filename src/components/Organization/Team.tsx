@@ -23,7 +23,6 @@ import {
   useRadioGroupContext,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
-import { enforceHexPrefix } from '@vocdoni/react-components'
 import { formatDistanceToNow } from 'date-fns'
 import { ComponentProps, ReactNode, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -134,9 +133,8 @@ export const useUsers = ({
 } = {}) => {
   const { bearedFetch, currentAddress } = useAuth()
   return useQuery({
-    queryKey: QueryKeys.organization.users(enforceHexPrefix(currentAddress)),
-    queryFn: () =>
-      bearedFetch<UsersResponse>(ApiEndpoints.OrganizationUsers.replace('{address}', enforceHexPrefix(currentAddress))),
+    queryKey: QueryKeys.organization.users(currentAddress),
+    queryFn: () => bearedFetch<UsersResponse>(ApiEndpoints.OrganizationUsers.replace('{address}', currentAddress)),
     ...options,
     select: (data) => data.users,
   })
@@ -150,11 +148,9 @@ export const usePendingUsers = ({
 } = {}) => {
   const { bearedFetch, currentAddress } = useAuth()
   return useQuery({
-    queryKey: QueryKeys.organization.pendingUsers(enforceHexPrefix(currentAddress)),
+    queryKey: QueryKeys.organization.pendingUsers(currentAddress),
     queryFn: () =>
-      bearedFetch<PendingUsersResponse>(
-        ApiEndpoints.OrganizationPendingUsers.replace('{address}', enforceHexPrefix(currentAddress))
-      ),
+      bearedFetch<PendingUsersResponse>(ApiEndpoints.OrganizationPendingUsers.replace('{address}', currentAddress)),
     ...options,
     select: (data) => data.pending,
   })
@@ -185,7 +181,7 @@ const useUpdateRole = () => {
   return useMutation<void, Error, UpdateRoleParams>({
     mutationFn: async ({ id, body }) =>
       await bearedFetch<void>(
-        ApiEndpoints.OrganizationUser.replace('{address}', enforceHexPrefix(currentAddress)).replace('{userId}', id),
+        ApiEndpoints.OrganizationUser.replace('{address}', currentAddress).replace('{userId}', id),
         {
           method: 'PUT',
           body,
@@ -206,10 +202,7 @@ const useCancelInvitation = () => {
   return useMutation<void, Error, string>({
     mutationFn: async (id) =>
       await bearedFetch<void>(
-        ApiEndpoints.OrganizationPendingUser.replace('{address}', enforceHexPrefix(currentAddress)).replace(
-          '{inviteId}',
-          id
-        ),
+        ApiEndpoints.OrganizationPendingUser.replace('{address}', currentAddress).replace('{inviteId}', id),
         { method: 'DELETE' }
       ),
     onSuccess: () => {
@@ -226,10 +219,7 @@ const useResendInvitationMutation = () => {
   return useMutation<void, Error, string>({
     mutationFn: async (id) =>
       await bearedFetch<void>(
-        ApiEndpoints.OrganizationPendingUser.replace('{address}', enforceHexPrefix(currentAddress)).replace(
-          '{inviteId}',
-          id
-        ),
+        ApiEndpoints.OrganizationPendingUser.replace('{address}', currentAddress).replace('{inviteId}', id),
         {
           method: 'PUT',
         }

@@ -52,19 +52,6 @@ vi.mock('@vocdoni/react-providers', async (importOriginal) => {
   }
 })
 
-vi.mock('@vocdoni/react-components/pagination', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/react-components/pagination')>()
-  const { getReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
-  const mock = getReactProvidersMock()
-  return {
-    ...actual,
-    usePagination: mock.usePagination,
-    useRoutedPagination: mock.useRoutedPagination,
-    PaginationProvider: mock.PaginationProvider ?? actual.PaginationProvider,
-    RoutedPaginationProvider: mock.RoutedPaginationProvider ?? actual.RoutedPaginationProvider,
-  }
-})
-
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
     lng: 'en',

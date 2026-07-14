@@ -1,7 +1,6 @@
 import { Flex } from '@chakra-ui/react'
-import { useOrganization } from '@vocdoni/react-components'
-import { RoutedPaginationProvider } from '@vocdoni/react-components/pagination'
-import { ElectionListWithPagination } from '@vocdoni/sdk'
+import { RoutedPaginationProvider, useOrganization } from '@vocdoni/react-components'
+import type { PaginatedElections } from '@vocdoni/api-types'
 import { useTranslation } from 'react-i18next'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { NoResultsFiltering } from '~components/Layout/NoResultsFiltering'
@@ -9,7 +8,7 @@ import ProcessesTable from '../../Process/Dashboard/ProcessesTable'
 import NoElections from '../NoElections'
 
 type VotingsListProps = {
-  data: ElectionListWithPagination
+  data: PaginatedElections
   status?: string
 }
 
@@ -22,8 +21,10 @@ const Votings = ({ path, data, status }: VotingsProps) => {
 
   if (!organization) return null
 
+  const pagination = { lastPage: Math.max(0, Math.ceil(data.total / data.pageSize) - 1), totalItems: data.total }
+
   return (
-    <RoutedPaginationProvider path={path} pagination={data.pagination}>
+    <RoutedPaginationProvider path={path} pagination={pagination}>
       <VotingsList data={data} status={status} />
     </RoutedPaginationProvider>
   )

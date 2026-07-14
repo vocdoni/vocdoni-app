@@ -895,8 +895,10 @@ export const getReportContext = (
 
   return {
     election,
-    isWeighted: contextElection ? electionContext?.isWeighted : undefined,
-    participation: contextElection ? electionContext?.participation : undefined,
-    turnout: contextElection ? electionContext?.turnout : undefined,
+    // isWeighted, participation, and turnout are not available in ElectionContextValue v2;
+    // resolveReportIsWeighted / getFallbackParticipation will be used as fallbacks.
+    isWeighted: undefined,
+    participation: undefined,
+    turnout: undefined,
   }
 }

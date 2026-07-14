@@ -14,7 +14,6 @@ import {
   TooltipTrigger,
 } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import { CensusType, PublishedElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -71,9 +70,9 @@ const valueForField = (participant: CensusParticipant, field: string, fallback: 
 export const CensusSearch = () => {
   const { election } = useElection()
 
-  const isCsp = election instanceof PublishedElection && election.census.type === CensusType.CSP
-  const censusURI = isCsp ? election.census.censusURI : undefined
-  const processID = election instanceof PublishedElection ? election.id : undefined
+  const isCsp = !!election && election.census?.type === 'csp'
+  const censusURI = isCsp ? election.census?.uri : undefined
+  const processID = election?.id
 
   const { data: bundle, isError: bundleError } = useCensusBundle(censusURI)
 

@@ -1,4 +1,8 @@
-import { walletFromRow } from '@vocdoni/react-components'
+// walletFromRow was removed from @vocdoni/react-components v2; derive the wallet via ethers directly
+import { keccak256 } from '@ethersproject/keccak256'
+import { toUtf8Bytes } from '@ethersproject/strings'
+import { Wallet } from '@ethersproject/wallet'
+const walletFromRow = (salt: string, data: string[]) => new Wallet(keccak256(toUtf8Bytes([salt, ...data].join(','))))
 import { ErrorType, SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import ErrorRowLength from './errors/ErrorRowLength'
 import ErrorWeightType from './errors/ErrorWeightType'

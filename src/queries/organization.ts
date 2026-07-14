@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
+import { useOrganization } from '@vocdoni/react-components'
 import type { ElectionStatus } from '@vocdoni/api-types'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { AccountData, ensure0x, FetchElectionsParameters, FetchElectionsParametersWithPagination } from '@vocdoni/sdk'
@@ -120,7 +120,7 @@ export const useOrganizationMeta = () => {
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const response = await bearedFetch<OrganizationMetaResponse>(
-        ApiEndpoints.OrganizationMeta.replace('{address}', enforceHexPrefix(organization.address))
+        ApiEndpoints.OrganizationMeta.replace('{address}', organization.address)
       )
       return response.meta
     },
@@ -133,7 +133,7 @@ export const useOrganizationMeta = () => {
         ...partialMeta,
       }
       await bearedFetch<OrganizationMetaResponse>(
-        ApiEndpoints.OrganizationMeta.replace('{address}', enforceHexPrefix(organization.address)),
+        ApiEndpoints.OrganizationMeta.replace('{address}', organization.address),
         {
           method: 'PUT',
           body: { meta: newMeta },
@@ -149,7 +149,7 @@ export const useOrganizationMeta = () => {
 
   const deleteMeta = useMutation<void, Error, string[]>({
     mutationFn: async (keys: string[]) => {
-      await bearedFetch(ApiEndpoints.OrganizationMeta.replace('{address}', enforceHexPrefix(organization.address)), {
+      await bearedFetch(ApiEndpoints.OrganizationMeta.replace('{address}', organization.address), {
         method: 'DELETE',
         body: {
           keys,
@@ -158,7 +158,7 @@ export const useOrganizationMeta = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.meta(enforceHexPrefix(organization.address)),
+        queryKey: QueryKeys.organization.meta(organization.address),
       })
     },
   })

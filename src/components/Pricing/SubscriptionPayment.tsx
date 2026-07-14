@@ -8,7 +8,6 @@ import {
 } from '@stripe/react-stripe-js/checkout'
 import { loadStripe, Stripe, StripeCheckoutOptions } from '@stripe/stripe-js'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -162,8 +161,7 @@ const CheckoutForm = ({ onComplete, sessionId }: CheckoutFormProps) => {
 }
 
 export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: SubscriptionPaymentProps) => {
-  const { bearedFetch } = useAuth()
-  const { signer } = useClient()
+  const { bearedFetch, currentAddress } = useAuth()
   const { t, i18n } = useTranslation()
   const { subscription } = useSubscription()
   const { mutateAsync: checkSubscription } = useUpdateSubscription()
@@ -186,7 +184,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
   const queryClient = useQueryClient()
 
   const fetchClientSecret = useCallback(async () => {
-    if (!signer) {
+    if (!currentAddress) {
       toast({
         type: 'error',
         title: t('error.title', { defaultValue: 'Error' }),
@@ -196,7 +194,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
       return null
     }
 
-    const signerAddress = await signer.getAddress()
+    const signerAddress = currentAddress
     if (signerAddress) {
       const body = {
         lookupKey,
@@ -227,7 +225,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
         })
     }
     return await Promise.resolve('')
-  }, [signer, bearedFetch, lookupKey, i18n.resolvedLanguage, toast, t, onClose])
+  }, [currentAddress, bearedFetch, lookupKey, i18n.resolvedLanguage, toast, t, onClose])
 
   const onComplete = async () => {
     let nsub = await checkSubscription()

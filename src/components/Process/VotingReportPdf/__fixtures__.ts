@@ -65,5 +65,5 @@ export const collectTextContent = (node: ReactNode): string[] => {
     return collectTextContent(Component(props))
   }
 
-  return collectTextContent(props.children)
+  return collectTextContent((props as { children?: ReactNode }).children)
 }
