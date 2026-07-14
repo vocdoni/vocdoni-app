@@ -27,7 +27,7 @@ export const colors = {
   },
 
   dashboardMenu: {
-    light: { value: 'var(--pal-ghost)' },
+    light: { value: 'var(--pal-menu)' },
     dark: { value: 'var(--pal-dark-menu)' },
   },
 

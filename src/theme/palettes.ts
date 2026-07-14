@@ -21,12 +21,14 @@ type PaletteInput = {
    */
   soft?: boolean
   /** Exact lightness overrides for pixel-matching a reference design */
-  levels?: Partial<{ bg: number; menu: number; auth: number; t50: number; g200: number; text: number }>
+  levels?: Partial<{ bg: number; menu: number; ghost: number; auth: number; t50: number; g200: number; text: number }>
   /**
    * Vivid status/accent ramps (saturated alerts, buttons, progress bars).
    * Default is muted, institution-friendly chroma.
    */
   vivid?: boolean
+  /** Solid accent pill for the active nav item (defaults to `vivid`) */
+  navSolid?: boolean
 }
 
 /**
@@ -58,10 +60,21 @@ export type Palette = {
   dark: Record<string, string>
 }
 
-const build = ({ id, label, surface: s, ink, accent, soft = false, levels, vivid = false }: PaletteInput): Palette => {
+const build = ({
+  id,
+  label,
+  surface: s,
+  ink,
+  accent,
+  soft = false,
+  levels,
+  vivid = false,
+  navSolid = vivid,
+}: PaletteInput): Palette => {
   const inkAt = (l: number, alpha?: number) =>
     alpha ? `oklch(${l} ${ink.c} ${ink.h} / ${alpha})` : `oklch(${l} ${ink.c} ${ink.h})`
-  const surfaceAt = (l: number, cMult = 1) => `oklch(${l} ${s.c * cMult} ${s.h})`
+  // Chroma clamps to 0 at (near-)white so L=1 surfaces render pure #fff
+  const surfaceAt = (l: number, cMult = 1) => `oklch(${l} ${l >= 0.999 ? 0 : s.c * cMult} ${s.h})`
   const lightText = (alpha?: number) => (alpha ? `oklch(0.95 0.012 ${s.h} / ${alpha})` : `oklch(0.95 0.012 ${s.h})`)
 
   // "soft" palettes drop the light surfaces off pure white and ease the text
@@ -77,7 +90,7 @@ const build = ({ id, label, surface: s, ink, accent, soft = false, levels, vivid
   // Constants shared by both modes (raw brand/gray ramps don't mode-switch)
   const constants = {
     '--pal-t50': surfaceAt(L.t50), // brand.200 / gray.50
-    '--pal-ghost': surfaceAt(L.menu, 2), // brand.50 / gray.100 / menu tint
+    '--pal-ghost': surfaceAt(L.ghost ?? L.menu, 2), // brand.50 / gray.100 / hover fills
     '--pal-ghost-2': surfaceAt(L.auth, 3), // brand.100 / muted panels
     '--pal-ink20': inkAt(0.24, 0.2),
     '--pal-solid': inkAt(0.24),
@@ -119,8 +132,8 @@ const build = ({ id, label, surface: s, ink, accent, soft = false, levels, vivid
       '--pal-accent': accent.light,
       '--pal-accent-hover': accent.lightHover,
       '--pal-accent-soft': `color-mix(in oklab, ${accent.light} 12%, transparent)`,
-      '--pal-nav-active-bg': vivid ? accent.light : `color-mix(in oklab, ${accent.light} 12%, transparent)`,
-      '--pal-nav-active-fg': vivid ? 'white' : accent.light,
+      '--pal-nav-active-bg': navSolid ? accent.light : `color-mix(in oklab, ${accent.light} 12%, transparent)`,
+      '--pal-nav-active-fg': navSolid ? 'white' : accent.light,
     },
     dark: {
       ...constants,
@@ -135,8 +148,8 @@ const build = ({ id, label, surface: s, ink, accent, soft = false, levels, vivid
       '--pal-accent': accent.dark,
       '--pal-accent-hover': accent.darkHover,
       '--pal-accent-soft': `color-mix(in oklab, ${accent.dark} 16%, transparent)`,
-      '--pal-nav-active-bg': vivid ? accent.light : `color-mix(in oklab, ${accent.dark} 16%, transparent)`,
-      '--pal-nav-active-fg': vivid ? 'white' : accent.dark,
+      '--pal-nav-active-bg': navSolid ? accent.light : `color-mix(in oklab, ${accent.dark} 16%, transparent)`,
+      '--pal-nav-active-fg': navSolid ? 'white' : accent.dark,
     },
   }
 }
@@ -288,6 +301,24 @@ export const palettes: Palette[] = [
       lightHover: 'oklch(0.53 0.215 255)',
       dark: 'oklch(0.64 0.19 255)',
       darkHover: 'oklch(0.7 0.18 255)',
+    },
+  }),
+  // Matched to the "Acme Inc" reference screenshot: white sidebar, light
+  // cool-gray content background, white cards, soft blue accent used as a
+  // light wash on the active nav item. Vivid status ramps like the reference.
+  build({
+    id: 'cloud',
+    label: 'Cloud',
+    vivid: true,
+    navSolid: false,
+    surface: { h: 250, c: 0.003 },
+    ink: { h: 250, c: 0.01 },
+    levels: { bg: 0.963, menu: 1, ghost: 0.955, auth: 0.945, t50: 1, g200: 0.915, text: 0.22 },
+    accent: {
+      light: 'oklch(0.61 0.185 260)',
+      lightHover: 'oklch(0.55 0.18 260)',
+      dark: 'oklch(0.68 0.17 258)',
+      darkHover: 'oklch(0.74 0.16 258)',
     },
   }),
 ]
