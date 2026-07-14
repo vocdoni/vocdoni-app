@@ -31,13 +31,14 @@ export const heading = defineRecipe({
 
 export const link = defineRecipe({
   base: {
-    // Palette vars already switch between light/dark modes
-    color: 'var(--pal-accent)',
+    // Ink-colored links (editorial style) — accent is reserved for controls
+    // and highlights, never for content links. Vars switch light/dark modes.
+    color: 'var(--pal-text-strong)',
     textDecoration: 'underline',
     textDecorationThickness: 'from-font',
     textUnderlineOffset: '0.15em',
     _hover: {
-      color: 'var(--pal-accent-hover)',
+      color: 'var(--pal-text-64)',
     },
   },
   variants: {

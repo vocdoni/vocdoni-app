@@ -30,4 +30,18 @@ export const colors = {
     light: { value: 'var(--pal-ghost)' },
     dark: { value: 'var(--pal-dark-menu)' },
   },
+
+  // Status ramps (alerts, progress, badges…): palette-tuned via vars so each
+  // demo palette controls how muted or vivid they are
+  ...Object.fromEntries(
+    ['red', 'orange', 'green', 'blue', 'purple'].map((name) => [
+      name,
+      Object.fromEntries(
+        ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'].map((stop) => [
+          stop,
+          { value: `var(--pal-${name}-${stop})` },
+        ])
+      ),
+    ])
+  ),
 }

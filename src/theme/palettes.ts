@@ -22,7 +22,32 @@ type PaletteInput = {
   soft?: boolean
   /** Exact lightness overrides for pixel-matching a reference design */
   levels?: Partial<{ bg: number; menu: number; auth: number; t50: number; g200: number; text: number }>
+  /**
+   * Vivid status/accent ramps (saturated alerts, buttons, progress bars).
+   * Default is muted, institution-friendly chroma.
+   */
+  vivid?: boolean
 }
+
+/**
+ * Status ramps consumed by Chakra's default component styling (alerts,
+ * progress bars, badges, buttons via colorPalette). One ramp per Chakra
+ * color name, hue fixed, chroma scaled per palette (muted vs vivid).
+ */
+const STATUS_HUES: Record<string, number> = { red: 27, orange: 55, green: 150, blue: 245, purple: 300 }
+const RAMP_STOPS: Array<[stop: string, l: number, cFactor: number]> = [
+  ['50', 0.97, 0.15],
+  ['100', 0.94, 0.25],
+  ['200', 0.89, 0.4],
+  ['300', 0.82, 0.6],
+  ['400', 0.72, 0.85],
+  ['500', 0.6, 1],
+  ['600', 0.51, 1],
+  ['700', 0.44, 0.9],
+  ['800', 0.38, 0.75],
+  ['900', 0.31, 0.55],
+  ['950', 0.25, 0.4],
+]
 
 export type Palette = {
   id: string
@@ -33,7 +58,7 @@ export type Palette = {
   dark: Record<string, string>
 }
 
-const build = ({ id, label, surface: s, ink, accent, soft = false, levels }: PaletteInput): Palette => {
+const build = ({ id, label, surface: s, ink, accent, soft = false, levels, vivid = false }: PaletteInput): Palette => {
   const inkAt = (l: number, alpha?: number) =>
     alpha ? `oklch(${l} ${ink.c} ${ink.h} / ${alpha})` : `oklch(${l} ${ink.c} ${ink.h})`
   const surfaceAt = (l: number, cMult = 1) => `oklch(${l} ${s.c * cMult} ${s.h})`
@@ -68,6 +93,13 @@ const build = ({ id, label, surface: s, ink, accent, soft = false, levels }: Pal
     '--pal-g600': inkAt(0.45),
     '--pal-g700': inkAt(0.35),
     '--pal-g800': inkAt(0.27),
+    // Status ramps: muted for institutional palettes, saturated when vivid
+    ...Object.fromEntries(
+      Object.entries(STATUS_HUES).flatMap(([name, hue]) => {
+        const maxC = vivid ? 0.19 : 0.11
+        return RAMP_STOPS.map(([stop, l, cFactor]) => [`--pal-${name}-${stop}`, `oklch(${l} ${maxC * cFactor} ${hue})`])
+      })
+    ),
   }
 
   return {
@@ -86,6 +118,9 @@ const build = ({ id, label, surface: s, ink, accent, soft = false, levels }: Pal
       '--pal-hairline': inkAt(tL, 0.1),
       '--pal-accent': accent.light,
       '--pal-accent-hover': accent.lightHover,
+      '--pal-accent-soft': `color-mix(in oklab, ${accent.light} 12%, transparent)`,
+      '--pal-nav-active-bg': vivid ? accent.light : `color-mix(in oklab, ${accent.light} 12%, transparent)`,
+      '--pal-nav-active-fg': vivid ? 'white' : accent.light,
     },
     dark: {
       ...constants,
@@ -99,6 +134,9 @@ const build = ({ id, label, surface: s, ink, accent, soft = false, levels }: Pal
       '--pal-hairline': 'oklch(1 0 0 / 0.1)',
       '--pal-accent': accent.dark,
       '--pal-accent-hover': accent.darkHover,
+      '--pal-accent-soft': `color-mix(in oklab, ${accent.dark} 16%, transparent)`,
+      '--pal-nav-active-bg': vivid ? accent.light : `color-mix(in oklab, ${accent.dark} 16%, transparent)`,
+      '--pal-nav-active-fg': vivid ? 'white' : accent.dark,
     },
   }
 }
@@ -241,6 +279,7 @@ export const palettes: Palette[] = [
   build({
     id: 'azure',
     label: 'Azure',
+    vivid: true,
     surface: { h: 255, c: 0.001 },
     ink: { h: 255, c: 0.006 },
     levels: { bg: 0.997, menu: 0.961, auth: 0.944, t50: 1, g200: 0.92, text: 0.22 },
