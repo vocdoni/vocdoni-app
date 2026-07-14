@@ -20,6 +20,8 @@ type PaletteInput = {
    * near-white) and slightly softened text contrast for the light mode.
    */
   soft?: boolean
+  /** Exact lightness overrides for pixel-matching a reference design */
+  levels?: Partial<{ bg: number; menu: number; auth: number; t50: number; g200: number; text: number }>
 }
 
 export type Palette = {
@@ -31,7 +33,7 @@ export type Palette = {
   dark: Record<string, string>
 }
 
-const build = ({ id, label, surface: s, ink, accent, soft = false }: PaletteInput): Palette => {
+const build = ({ id, label, surface: s, ink, accent, soft = false, levels }: PaletteInput): Palette => {
   const inkAt = (l: number, alpha?: number) =>
     alpha ? `oklch(${l} ${ink.c} ${ink.h} / ${alpha})` : `oklch(${l} ${ink.c} ${ink.h})`
   const surfaceAt = (l: number, cMult = 1) => `oklch(${l} ${s.c * cMult} ${s.h})`
@@ -39,10 +41,13 @@ const build = ({ id, label, surface: s, ink, accent, soft = false }: PaletteInpu
 
   // "soft" palettes drop the light surfaces off pure white and ease the text
   // contrast down a notch, so the whole UI is gentler to look at.
-  const L = soft
-    ? { bg: 0.972, menu: 0.95, auth: 0.925, t50: 0.978, g200: 0.9 }
-    : { bg: 0.988, menu: 0.962, auth: 0.936, t50: 0.988, g200: 0.911 }
-  const tL = soft ? 0.3 : 0.24 // light-mode text lightness
+  const L = {
+    ...(soft
+      ? { bg: 0.972, menu: 0.95, auth: 0.925, t50: 0.978, g200: 0.9 }
+      : { bg: 0.988, menu: 0.962, auth: 0.936, t50: 0.988, g200: 0.911 }),
+    ...levels,
+  }
+  const tL = levels?.text ?? (soft ? 0.3 : 0.24) // light-mode text lightness
 
   // Constants shared by both modes (raw brand/gray ramps don't mode-switch)
   const constants = {
@@ -227,18 +232,20 @@ export const palettes: Palette[] = [
       darkHover: 'oklch(0.74 0.05 145)',
     },
   }),
-  // Inspired by Littlebird: warm cream paper surface, gentle fresh-green accent
+  // Matched to the reference screenshots: quiet warm ivory (~#F8F6F1 bg,
+  // ~#ECE9E0 tint), soft warm-black text, fresh green kept to small accents
   build({
-    id: 'littlebird',
-    label: 'Littlebird',
+    id: 'smooth',
+    label: 'Smooth',
     soft: true,
-    surface: { h: 85, c: 0.024 },
-    ink: { h: 70, c: 0.018 },
+    surface: { h: 95, c: 0.006 },
+    ink: { h: 95, c: 0.01 },
+    levels: { bg: 0.977, menu: 0.938, auth: 0.92, t50: 0.982, g200: 0.9, text: 0.27 },
     accent: {
-      light: 'oklch(0.5 0.08 150)',
-      lightHover: 'oklch(0.44 0.075 150)',
-      dark: 'oklch(0.7 0.08 150)',
-      darkHover: 'oklch(0.76 0.075 150)',
+      light: 'oklch(0.52 0.1 152)',
+      lightHover: 'oklch(0.46 0.095 152)',
+      dark: 'oklch(0.7 0.09 152)',
+      darkHover: 'oklch(0.76 0.085 152)',
     },
   }),
 ]
