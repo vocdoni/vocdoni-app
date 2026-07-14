@@ -235,6 +235,22 @@ export const palettes: Palette[] = [
       darkHover: 'oklch(0.76 0.085 152)',
     },
   }),
+  // Matched to the "Noma" reference screenshot: pure white content panel,
+  // light neutral-gray sidebar (~#F2F2F2), near-black text, vivid iOS-style
+  // blue accent (~#007AFF)
+  build({
+    id: 'azure',
+    label: 'Azure',
+    surface: { h: 255, c: 0.001 },
+    ink: { h: 255, c: 0.006 },
+    levels: { bg: 0.997, menu: 0.961, auth: 0.944, t50: 1, g200: 0.92, text: 0.22 },
+    accent: {
+      light: 'oklch(0.59 0.225 255)',
+      lightHover: 'oklch(0.53 0.215 255)',
+      dark: 'oklch(0.64 0.19 255)',
+      darkHover: 'oklch(0.7 0.18 255)',
+    },
+  }),
 ]
 
 export const DEFAULT_PALETTE = palettes[0]
