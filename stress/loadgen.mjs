@@ -107,7 +107,7 @@ function freshStats() {
     bytes: 0,
     statusBuckets: {}, // "2xx" -> count, plus exact non-2xx codes
     errors: {}, // error code/type -> count
-    latencies: [], // ms, successful responses only
+    latencies: [], // ms, all completed HTTP responses (including non-2xx)
   }
 }
 let stats = freshStats()
@@ -252,7 +252,7 @@ async function main() {
     `\n  c=${result.concurrency} keepalive=${result.keepalive} dur=${result.durationSeconds}s\n` +
       `  requests=${result.requests}  rps=${result.rps}  ok=${result.ok2xx}  3xx=${result.redirect3xx}  non2xx=${result.non2xx}  errors=${result.errors}  (fail ${pct.toFixed(2)}%)\n` +
       `  latency ms: min=${result.latencyMs.min} avg=${result.latencyMs.avg} p50=${result.latencyMs.p50} p90=${result.latencyMs.p90} p99=${result.latencyMs.p99} max=${result.latencyMs.max}\n` +
-      (errorCount ? `  errorBreakdown: ${JSON.stringify(result.errors)}\n` : '') +
+      (errorCount ? `  errorBreakdown: ${JSON.stringify(result.errorBreakdown)}\n` : '') +
       (non2xx > 0 ? `  statusBuckets: ${JSON.stringify(result.statusBuckets)}\n` : '')
   )
   process.stdout.write('RESULT_JSON ' + JSON.stringify(result) + '\n')
