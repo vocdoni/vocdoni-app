@@ -44,9 +44,6 @@ const DashboardMenu = ({
     <>
       {/* Sidebar for large screens */}
       <Box
-        borderRight='1px solid'
-        borderRightColor='table.border'
-        bgColor='dashboard.menu'
         display={{ base: 'none', md: 'flex' }}
         flexDirection='column'
         position='sticky'
