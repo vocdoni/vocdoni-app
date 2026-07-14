@@ -64,6 +64,11 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   card: {
+    // Generic elevated card surface (dashboard boxes). Flat with the canvas in
+    // most palettes; a distinct lighter surface where a palette opts in (Cloud).
+    surface: {
+      value: 'var(--pal-card)',
+    },
     pricing: {
       bg: {
         value: {

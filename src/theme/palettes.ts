@@ -21,7 +21,17 @@ type PaletteInput = {
    */
   soft?: boolean
   /** Exact lightness overrides for pixel-matching a reference design */
-  levels?: Partial<{ bg: number; menu: number; ghost: number; auth: number; t50: number; g200: number; text: number }>
+  levels?: Partial<{
+    bg: number
+    menu: number
+    ghost: number
+    auth: number
+    t50: number
+    g200: number
+    text: number
+    /** Card surface lightness; defaults to `bg` so cards sit flat on the canvas */
+    card: number
+  }>
   /**
    * Vivid status/accent ramps (saturated alerts, buttons, progress bars).
    * Default is muted, institution-friendly chroma.
@@ -124,6 +134,9 @@ const build = ({
       '--pal-bg': surfaceAt(L.bg),
       '--pal-menu': surfaceAt(L.menu, 2),
       '--pal-auth-bg': surfaceAt(L.auth, 3),
+      // Card surface: equals the canvas by default (flat), lifts to a lighter
+      // surface when a palette sets `levels.card` (e.g. white cards on gray).
+      '--pal-card': surfaceAt(levels?.card ?? L.bg),
       '--pal-text': inkAt(tL),
       '--pal-text-strong': inkAt(tL),
       '--pal-text-64': inkAt(tL, 0.64),
@@ -140,6 +153,8 @@ const build = ({
       '--pal-bg': `oklch(0.22 0.012 ${ink.h})`,
       '--pal-menu': `oklch(0.25 0.013 ${ink.h})`,
       '--pal-auth-bg': `oklch(0.235 0.012 ${ink.h})`,
+      // Dark cards stay flat on the dark canvas (no elevation change)
+      '--pal-card': `oklch(0.22 0.012 ${ink.h})`,
       '--pal-text': lightText(),
       '--pal-text-strong': lightText(0.8),
       '--pal-text-64': lightText(0.66),
@@ -313,7 +328,7 @@ export const palettes: Palette[] = [
     navSolid: false,
     surface: { h: 250, c: 0.003 },
     ink: { h: 250, c: 0.01 },
-    levels: { bg: 0.963, menu: 1, ghost: 0.955, auth: 0.945, t50: 1, g200: 0.915, text: 0.22 },
+    levels: { bg: 0.963, menu: 1, ghost: 0.955, auth: 0.945, t50: 1, g200: 0.915, text: 0.22, card: 1 },
     accent: {
       light: 'oklch(0.61 0.185 260)',
       lightHover: 'oklch(0.55 0.18 260)',

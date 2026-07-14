@@ -10,6 +10,7 @@ export const DashboardBox = (props: BoxProps) => (
   <Box
     borderRadius='md'
     border='1px solid'
+    bg='card.surface'
     _dark={{ borderColor: 'brand.700' }}
     _light={{ borderColor: 'gray.200' }}
     p={4}
