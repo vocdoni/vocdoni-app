@@ -21,7 +21,7 @@ const Votings = ({ path, data, status }: VotingsProps) => {
 
   if (!organization) return null
 
-  const pagination = { lastPage: Math.max(0, Math.ceil(data.total / data.pageSize) - 1), totalItems: data.total }
+  const pagination = { lastPage: Math.ceil(data.total / data.pageSize), totalItems: data.total }
 
   return (
     <RoutedPaginationProvider path={path} pagination={pagination}>

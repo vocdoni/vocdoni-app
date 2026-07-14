@@ -1,10 +1,9 @@
-import type { Election as SaasElection, LocalizedInput, PaginatedElections } from '@vocdoni/api-types'
+import type { Election as SaasElection, LocalizedInput } from '@vocdoni/api-types'
 import { BallotType, decodeResults, inferBallotType, multichoiceReservesAbstain } from '@vocdoni/ballot'
 import {
   type AllElectionStatus,
   CensusType,
   type Census,
-  type ElectionListWithPagination,
   type ElectionResultsType,
   ElectionResultsTypeNames,
   ElectionStatus,
@@ -29,25 +28,6 @@ import {
 export const toPublishedElection = (election: SaasElection): PublishedElection =>
   PublishedElection.build(toPublishedElectionParameters(election))
 
-/**
- * Adapts a SAAS `PaginatedElections` page into the legacy `ElectionListWithPagination` shape the
- * dashboard votings list (and its `RoutedPaginationProvider`) consumes. Pages are 0-indexed, to
- * match the existing `page - 1` convention in the loaders.
- */
-export const toLegacyElectionList = (page: PaginatedElections): ElectionListWithPagination => {
-  const { elections, total, page: currentPage, pageSize } = page
-  const lastPage = pageSize > 0 ? Math.max(0, Math.ceil(total / pageSize) - 1) : 0
-  return {
-    elections: elections.map(toPublishedElection),
-    pagination: {
-      totalItems: total,
-      currentPage,
-      lastPage,
-      previousPage: currentPage > 0 ? currentPage - 1 : null,
-      nextPage: currentPage < lastPage ? currentPage + 1 : null,
-    },
-  }
-}
 
 const BALLOT_TO_RESULTS_TYPE: Record<BallotType, ElectionResultsTypeNames> = {
   [BallotType.SingleChoice]: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,

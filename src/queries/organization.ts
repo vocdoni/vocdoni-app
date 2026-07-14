@@ -3,7 +3,6 @@ import { useOrganization } from '@vocdoni/react-components'
 import type { ElectionStatus } from '@vocdoni/api-types'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { AccountData, ensure0x, FetchElectionsParameters, FetchElectionsParametersWithPagination } from '@vocdoni/sdk'
-import { toLegacyElectionList } from '~queries/election-adapter'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { LuCalendar, LuFileSpreadsheet, LuUsers, LuVote } from 'react-icons/lu'
@@ -99,11 +98,11 @@ export const paginatedElectionsQuery = (
   queryFn: async () => {
     const result = await client.elections.list({
       organizationId: address,
-      page: params.page ? Number(params.page) - 1 : 0,
+      page: params.page ? Number(params.page) : 1,
       pageSize: params.limit,
       status: params.status ? LIST_STATUS_MAP[params.status.toLowerCase()] : undefined,
     })
-    return toLegacyElectionList(result)
+    return result
   },
 })
 
