@@ -4,8 +4,8 @@ import { colors } from './colors'
 const sidebarWidth = '350px'
 
 const fonts = defineTokens.fonts({
-  body: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
-  heading: { value: `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif` },
+  body: { value: `'Hanken Grotesk Variable', -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif` },
+  heading: { value: `'Fraunces Variable', Georgia, serif` },
   mono: { value: `'Menlo', monospace` },
 })
 
@@ -19,13 +19,13 @@ const fontWeights = defineTokens.fontWeights({
 const radii = defineTokens.radii({
   none: { value: '0rem' },
   xxs: { value: '2px' },
-  xs: { value: '4px' },
-  sm: { value: '6px' },
-  md: { value: '8px' },
-  lg: { value: '10px' },
-  xl: { value: '12px' },
-  '2xl': { value: '16px' },
-  '3xl': { value: '20px' },
+  xs: { value: '6px' },
+  sm: { value: '8px' },
+  md: { value: '10px' },
+  lg: { value: '14px' },
+  xl: { value: '16px' },
+  '2xl': { value: '20px' },
+  '3xl': { value: '24px' },
   '4xl': { value: '24px' },
   full: { value: '9999px' },
 })

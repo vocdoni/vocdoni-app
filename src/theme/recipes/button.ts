@@ -25,6 +25,8 @@ const listmenu = defineStyle({
   borderRadius: 'sm',
   _active: {
     fontWeight: 'bold',
+    bg: 'var(--pal-nav-active-bg)',
+    color: 'var(--pal-nav-active-fg)',
   },
   _hover: {
     bg: 'gray.100',

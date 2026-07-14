@@ -6,6 +6,8 @@ import { rainbowStyles } from '~theme'
 import { ColorModeProvider, useColorMode } from '~theme/color-mode'
 import { system } from '~theme/system'
 
+import '@fontsource-variable/fraunces/index.css'
+import '@fontsource-variable/hanken-grotesk/index.css'
 import '@fontsource/inter/300.css'
 import '@fontsource/inter/400.css'
 import '@fontsource/inter/500.css'

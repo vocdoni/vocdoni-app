@@ -8,32 +8,20 @@ import { defineSemanticTokens } from '@chakra-ui/react'
 const chakra = {
   body: {
     bg: {
-      value: {
-        _light: '{colors.white}',
-        _dark: '{colors.brand.650}',
-      },
+      value: 'var(--pal-bg)',
     },
   },
 }
 
 const texts = {
   primary: {
-    value: {
-      _light: '{colors.brand.500}',
-      _dark: '{colors.white}',
-    },
+    value: 'var(--pal-text)',
   },
   subtle: {
-    value: {
-      _light: '{colors.gray.500}',
-      _dark: '{colors.gray.400}',
-    },
+    value: 'var(--pal-text-64)',
   },
   dark: {
-    value: {
-      _light: '{colors.gray.600}',
-      _dark: '{colors.gray.500}',
-    },
+    value: 'var(--pal-text-strong)',
   },
 }
 
@@ -48,29 +36,23 @@ export const colors = defineSemanticTokens.colors({
   },
   auth: {
     bg: {
-      value: {
-        _light: '{colors.gray.50}',
-        _dark: '{colors.brand.550}',
-      },
+      value: 'var(--pal-auth-bg)',
     },
     card: {
       bg: {
         value: {
-          _light: '{colors.white}',
+          _light: 'var(--pal-t50)',
           _dark: '{colors.brand.500}',
         },
       },
       border: {
-        value: '{colors.gray.200}',
+        value: 'var(--pal-hairline)',
       },
     },
   },
   border: {
     dashboard: {
-      value: {
-        _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
-      },
+      value: 'var(--pal-hairline)',
     },
     pagination: {
       active: {
@@ -82,16 +64,21 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   card: {
+    // Generic elevated card surface (dashboard boxes). Flat with the canvas in
+    // most palettes; a distinct lighter surface where a palette opts in (Cloud).
+    surface: {
+      value: 'var(--pal-card)',
+    },
     pricing: {
       bg: {
         value: {
-          _light: '{colors.white}',
+          _light: 'var(--pal-t50)',
           _dark: '{colors.brand.650}',
         },
       },
       border: {
         value: {
-          _light: '{colors.gray.200}',
+          _light: 'var(--pal-hairline)',
           _dark: '{colors.brand.700}',
         },
       },
@@ -146,36 +133,30 @@ export const colors = defineSemanticTokens.colors({
   },
   input: {
     placeholder: {
-      value: '{colors.gray.500}',
+      value: 'var(--pal-placeholder)',
     },
   },
   // @deprecated: to be removed in favor of border.dashboard
   table: {
     border: {
-      value: {
-        _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
-      },
+      value: 'var(--pal-hairline)',
     },
   },
   tabs: {
     tab: {
       color: {
-        value: {
-          _light: '{colors.gray.500}',
-          _dark: '{colors.gray.400}',
-        },
+        value: 'var(--pal-text-64)',
       },
       active: {
         color: {
           value: {
             _light: '{colors.brand.500}',
-            _dark: '{colors.white}',
+            _dark: 'var(--pal-text)',
           },
         },
         bg: {
           value: {
-            _light: '{colors.white}',
+            _light: 'var(--pal-t50)',
             _dark: '{colors.brand.500}',
           },
         },
@@ -183,7 +164,7 @@ export const colors = defineSemanticTokens.colors({
     },
     bg: {
       value: {
-        _light: '{colors.gray.100}',
+        _light: 'var(--pal-auth-bg)',
         _dark: '{colors.brand.700}',
       },
     },

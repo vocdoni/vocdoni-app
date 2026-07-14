@@ -1,31 +1,47 @@
+// Warm editorial experiment: every value is a palette var (see palettes.ts)
+// so the demo palette switcher can swap them at runtime.
 export const colors = {
   brand: {
     // comments refer to (unused) button styles
-    50: { value: '#e5e5e5' }, // ghost hover (light)
-    100: { value: '#cccccc' }, // hover (light)
-    200: { value: '#fafafa' }, // outline hover / ghost active (light)
-    300: { value: '#bbbbbb' }, // outline active (light)
-    500: { value: '#000000' }, // base solid
-    550: { value: '#262626' }, // custom (auth bg)
-    600: { value: '#353535' }, // solid hover
-    650: { value: '#0a0a0a' }, // custom
-    700: { value: '#2e2e2e' }, // solid active
-    800: { value: '#3f3f3f' }, // link active (dark)
+    50: { value: 'var(--pal-ghost)' }, // ghost hover (light)
+    100: { value: 'var(--pal-ghost-2)' }, // hover (light)
+    200: { value: 'var(--pal-t50)' }, // outline hover / ghost active (light)
+    300: { value: 'var(--pal-ink20)' }, // outline active (light)
+    500: { value: 'var(--pal-solid)' }, // base solid — ink
+    550: { value: 'var(--pal-dark-2)' }, // custom (auth bg) — dark surface
+    600: { value: 'var(--pal-solid-hover)' }, // solid hover
+    650: { value: 'var(--pal-dark-1)' }, // custom — dark body bg
+    700: { value: 'var(--pal-solid-active)' }, // solid active
+    800: { value: 'var(--pal-dark-3)' }, // link active (dark)
   },
 
   gray: {
-    50: { value: '#fcfcfc' },
-    100: { value: 'whitesmoke' },
-    200: { value: '#e4e4e7' },
-    400: { value: '#b2b2b2' },
-    500: { value: '#737373' },
-    600: { value: '#52525b' },
-    700: { value: '#3f3f46' },
-    800: { value: '#27272a' },
+    50: { value: 'var(--pal-t50)' },
+    100: { value: 'var(--pal-ghost)' },
+    200: { value: 'var(--pal-g200)' },
+    400: { value: 'var(--pal-g400)' },
+    500: { value: 'var(--pal-g500)' },
+    600: { value: 'var(--pal-g600)' },
+    700: { value: 'var(--pal-g700)' },
+    800: { value: 'var(--pal-g800)' },
   },
 
   dashboardMenu: {
-    light: { value: '#fbfbfb' },
-    dark: { value: '#18181b' },
+    light: { value: 'var(--pal-menu)' },
+    dark: { value: 'var(--pal-dark-menu)' },
   },
+
+  // Status ramps (alerts, progress, badges…): palette-tuned via vars so each
+  // demo palette controls how muted or vivid they are
+  ...Object.fromEntries(
+    ['red', 'orange', 'green', 'blue', 'purple'].map((name) => [
+      name,
+      Object.fromEntries(
+        ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'].map((stop) => [
+          stop,
+          { value: `var(--pal-${name}-${stop})` },
+        ])
+      ),
+    ])
+  ),
 }

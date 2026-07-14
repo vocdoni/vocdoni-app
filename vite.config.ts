@@ -39,6 +39,7 @@ const viteconfig = ({ mode }: { mode: string }) => {
     // command and its parser rejects unknown flags like `--host`/`--port`.
     server: {
       host: true,
+      port: process.env.DEV_PORT ? Number(process.env.DEV_PORT) : undefined,
     },
     build: {
       outDir,

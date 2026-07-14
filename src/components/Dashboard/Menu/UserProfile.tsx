@@ -57,7 +57,7 @@ const UserProfile = () => {
           gap={2}
           w='full'
           colorPalette='gray'
-          variant='subtle'
+          variant='ghost'
           justifyContent='start'
           borderRadius='none'
           mt={2}

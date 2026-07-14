@@ -32,7 +32,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
   return (
     <DashboardLayoutContext.Provider value={{ reduced: reducedValue }}>
       <DashboardLayoutProviders>
-        <Flex minH='100svh' w='full' _dark={{ bg: 'brand.650' }} maxW='max-window-width' margin='0 auto'>
+        <Flex minH='100svh' w='full' bg='dashboard.menu' maxW='max-window-width' margin='0 auto'>
           {/* Sidebar for large screens */}
           <DashboardMenu
             isOpen={isOpen}
@@ -41,7 +41,19 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
             menu={menu}
           />
 
-          <Flex flex='1 1 0' flexDirection='column' minW={0}>
+          {/* Inset content panel: floats on the sidebar background with its own border and radius */}
+          <Flex
+            flex='1 1 0'
+            flexDirection='column'
+            minW={0}
+            m={{ base: 1.5, md: 2 }}
+            ml={{ base: 1.5, md: 0 }}
+            bg='chakra.body.bg'
+            borderRadius='2xl'
+            border='1px solid'
+            borderColor='table.border'
+            boxShadow='var(--box-shadow)'
+          >
             <AnnouncementBanner />
             <Flex alignItems='center' px={4} pt={3} pb={2} display={{ base: 'flex', md: 'none' }} gap={2}>
               <IconButton aria-label={t('menu.open')} colorPalette='gray' variant='subtle' size='xs' onClick={onOpen}>
