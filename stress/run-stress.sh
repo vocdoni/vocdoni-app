@@ -212,7 +212,11 @@ else
 fi
 log "Peak CPU / memory sampled during the run (from docker stats):"
 peak_cpu=$(grep -oE 'cpu=[0-9.]+' "$STATS_LOG" 2>/dev/null | sed 's/cpu=//' | sort -n | tail -1)
-peak_mem=$(grep -oE 'mem=[0-9.]+MiB' "$STATS_LOG" 2>/dev/null | sed 's/mem=//; s/MiB//' | sort -n | tail -1)
+peak_mem=$(grep -oE 'mem=[0-9.]+(MiB|GiB|KiB)' "$STATS_LOG" 2>/dev/null | sed 's/mem=//' | awk '{
+  if (/GiB$/) { sub(/GiB$/, ""); printf "%.1f\n", $0 * 1024 }
+  else if (/KiB$/) { sub(/KiB$/, ""); printf "%.1f\n", $0 / 1024 }
+  else { sub(/MiB$/, ""); print $0 }
+}' | sort -n | tail -1)
 log "  peak CPU: ${peak_cpu:-?}% of one core   peak mem: ${peak_mem:-?} MiB / ${MEMORY}"
 log "OOM-killed: $(docker inspect -f '{{.State.OOMKilled}}' "$CONTAINER" 2>/dev/null || echo '?')   Restarts: $(container_restarts)   Exited: $(docker inspect -f '{{.State.Status}}' "$CONTAINER" 2>/dev/null || echo '?')"
 log "\nArtifacts:"

@@ -26,7 +26,7 @@ stress/run-stress.sh --cpus 1 --memory 512m
 stress/run-stress.sh --skip-build --memory 1024m --image vocdoni-ui-stress:latest
 
 # Custom ramp against a specific path, new connection per request
-stress/run-stress.sh --path /en/ --levels "100 500 1000 2000" --no-keepalive
+stress/run-stress.sh --path /en --levels "100 500 1000 2000" --no-keepalive
 ```
 
 Run a single level by hand against an already-running server:
