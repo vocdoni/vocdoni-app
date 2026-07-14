@@ -129,18 +129,6 @@ export const palettes: Palette[] = [
     },
   }),
   build({
-    id: 'petrol',
-    label: 'Petrol',
-    surface: { h: 215, c: 0.007 },
-    ink: { h: 225, c: 0.016 },
-    accent: {
-      light: 'oklch(0.45 0.085 205)',
-      lightHover: 'oklch(0.38 0.08 205)',
-      dark: 'oklch(0.65 0.08 200)',
-      darkHover: 'oklch(0.72 0.08 200)',
-    },
-  }),
-  build({
     id: 'burgundy',
     label: 'Burgundy',
     surface: { h: 75, c: 0.008 },
@@ -165,18 +153,6 @@ export const palettes: Palette[] = [
     },
   }),
   build({
-    id: 'sage',
-    label: 'Sage',
-    surface: { h: 140, c: 0.006 },
-    ink: { h: 150, c: 0.014 },
-    accent: {
-      light: 'oklch(0.42 0.07 150)',
-      lightHover: 'oklch(0.36 0.065 150)',
-      dark: 'oklch(0.66 0.07 150)',
-      darkHover: 'oklch(0.73 0.07 150)',
-    },
-  }),
-  build({
     id: 'iris',
     label: 'Iris',
     surface: { h: 290, c: 0.005 },
@@ -189,18 +165,6 @@ export const palettes: Palette[] = [
     },
   }),
   build({
-    id: 'slate',
-    label: 'Slate',
-    surface: { h: 240, c: 0.006 },
-    ink: { h: 245, c: 0.014 },
-    accent: {
-      light: 'oklch(0.45 0.07 235)',
-      lightHover: 'oklch(0.38 0.065 235)',
-      dark: 'oklch(0.68 0.07 235)',
-      darkHover: 'oklch(0.75 0.065 235)',
-    },
-  }),
-  build({
     id: 'bronze',
     label: 'Bronze',
     surface: { h: 85, c: 0.01 },
@@ -210,30 +174,6 @@ export const palettes: Palette[] = [
       lightHover: 'oklch(0.43 0.085 75)',
       dark: 'oklch(0.72 0.09 80)',
       darkHover: 'oklch(0.78 0.085 80)',
-    },
-  }),
-  build({
-    id: 'teal',
-    label: 'Teal',
-    surface: { h: 190, c: 0.006 },
-    ink: { h: 200, c: 0.014 },
-    accent: {
-      light: 'oklch(0.46 0.08 185)',
-      lightHover: 'oklch(0.4 0.075 185)',
-      dark: 'oklch(0.66 0.08 185)',
-      darkHover: 'oklch(0.73 0.075 185)',
-    },
-  }),
-  build({
-    id: 'plum',
-    label: 'Plum',
-    surface: { h: 340, c: 0.006 },
-    ink: { h: 345, c: 0.014 },
-    accent: {
-      light: 'oklch(0.42 0.11 350)',
-      lightHover: 'oklch(0.36 0.105 350)',
-      dark: 'oklch(0.66 0.11 350)',
-      darkHover: 'oklch(0.73 0.1 350)',
     },
   }),
   build({
@@ -287,30 +227,18 @@ export const palettes: Palette[] = [
       darkHover: 'oklch(0.74 0.05 145)',
     },
   }),
+  // Inspired by Littlebird: warm cream paper surface, gentle fresh-green accent
   build({
-    id: 'dusk',
-    label: 'Dusk',
+    id: 'littlebird',
+    label: 'Littlebird',
     soft: true,
-    surface: { h: 250, c: 0.012 },
-    ink: { h: 255, c: 0.018 },
+    surface: { h: 85, c: 0.024 },
+    ink: { h: 70, c: 0.018 },
     accent: {
-      light: 'oklch(0.5 0.06 250)',
-      lightHover: 'oklch(0.44 0.055 250)',
-      dark: 'oklch(0.7 0.06 250)',
-      darkHover: 'oklch(0.76 0.055 250)',
-    },
-  }),
-  build({
-    id: 'fog',
-    label: 'Fog',
-    soft: true,
-    surface: { h: 265, c: 0.01 },
-    ink: { h: 265, c: 0.012 },
-    accent: {
-      light: 'oklch(0.5 0.06 275)',
-      lightHover: 'oklch(0.44 0.055 275)',
-      dark: 'oklch(0.7 0.06 275)',
-      darkHover: 'oklch(0.76 0.055 275)',
+      light: 'oklch(0.5 0.08 150)',
+      lightHover: 'oklch(0.44 0.075 150)',
+      dark: 'oklch(0.7 0.08 150)',
+      darkHover: 'oklch(0.76 0.075 150)',
     },
   }),
 ]
