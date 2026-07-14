@@ -1,7 +1,8 @@
-import { useActions, useElection } from '@vocdoni/react-components'
+import { useElection } from '@vocdoni/react-components'
 import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { useActions } from './ActionsContext'
 
 let activeInfoKey: string | undefined
 let activeErrorKey: string | undefined

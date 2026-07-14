@@ -1,11 +1,12 @@
 import { Icon, IconButton, Menu, type MenuContentProps } from '@chakra-ui/react'
-import { useActions, useElection } from '@vocdoni/react-components'
+import { useElection } from '@vocdoni/react-components'
 import { ElectionStatus, InvalidElection } from '@vocdoni/sdk'
 import { ElementType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCog } from 'react-icons/fa'
 import { RiCloseCircleLine, RiPauseCircleLine, RiPlayCircleLine, RiStopCircleLine } from 'react-icons/ri'
 import { ActionsProvider } from '~components/Actions'
+import { useActions } from '~components/Actions/ActionsContext'
 import { useAuth } from '~components/Auth/useAuth'
 
 export const ActionsMenu = (props: MenuContentProps) => {
