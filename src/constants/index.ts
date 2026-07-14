@@ -6,6 +6,11 @@ export const TwoFACodePrice = {
   sms: 0.015,
 } as const
 
+// Document title for the whole /integrators section. Titles are not translated
+// anywhere in the app (the default comes from the APP_TITLE env var), so this
+// stays a plain constant for consistency.
+export const IntegratorsPageTitle = 'Vocdoni API - Integrate secure digital voting easily'
+
 export const OAuthProviders = ['google'] as const
 export type OAuthProvider = (typeof OAuthProviders)[number]
 

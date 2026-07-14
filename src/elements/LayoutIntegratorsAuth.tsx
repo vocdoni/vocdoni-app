@@ -3,12 +3,15 @@ import { useState } from 'react'
 import { Trans } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { Outlet, Link as RouterLink, useLocation } from 'react-router-dom'
+import { IntegratorsPageTitle } from '~constants'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~routes'
+import { useDocumentTitle } from '~utils/use-document-title'
 
 // Single-column auth layout for the integrators app. Mirrors LayoutAuth's card styling but
 // drops the testimonials column — integrators get a focused, single-column experience.
 const LayoutIntegratorsAuth = () => {
+  useDocumentTitle(IntegratorsPageTitle)
   const [title, setTitle] = useState<string | null>(null)
   const [subtitle, setSubtitle] = useState<string | null>(null)
   const { pathname } = useLocation()

@@ -39,6 +39,11 @@ const viteconfig = ({ mode }: { mode: string }) => {
     // command and its parser rejects unknown flags like `--host`/`--port`.
     server: {
       host: true,
+      // Same reason as `host`: the port can only be set here, so honor an optional
+      // DEV_PORT env override (e.g. `DEV_PORT=5199 pnpm dev`) for machines where
+      // the default port is already taken by another app.
+      port: process.env.DEV_PORT ? Number(process.env.DEV_PORT) : undefined,
+      strictPort: Boolean(process.env.DEV_PORT),
     },
     build: {
       outDir,
