@@ -36,6 +36,7 @@
     "@vocdoni/api-client": "link:../integrator-sdk/packages/api-client",
     "@vocdoni/api-types": "link:../integrator-sdk/packages/api-types",
     "@vocdoni/api-voting": "link:../integrator-sdk/packages/api-voting",
+    "@vocdoni/ballot": "link:../integrator-sdk/packages/ballot",
     "@vocdoni/rainbowkit-wallets": "^1.0.0-beta.4",
     "@vocdoni/react-components": "^1.1.1",
     "@vocdoni/react-providers": "link:../integrator-sdk/packages/react-providers",
