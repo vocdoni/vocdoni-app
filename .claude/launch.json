@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vocdoni-app",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["DEV_PORT=5299", "pnpm", "dev"],
+      "port": 5299,
+      "autoPort": false
+    }
+  ]
+}

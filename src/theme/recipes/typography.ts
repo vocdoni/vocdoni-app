@@ -12,11 +12,16 @@ const sidebarSubtitle = {
 export const heading = defineRecipe({
   base: {
     fontWeight: 'bold',
+    letterSpacing: '-0.03em',
+    lineHeight: 1.02,
+    // Fraunces variable axes: SOFT rounds the serifs, WONK off
+    fontVariationSettings: "'SOFT' 100, 'WONK' 0",
   },
   variants: {
     variant: {
       header: {
-        fontWeight: 'extrabold',
+        // Single-weight display serif: never heavier than 400
+        fontWeight: 'bold',
       },
       ['sidebar-title']: sidebarTitle,
       ['sidebar-subtitle']: sidebarSubtitle,
@@ -26,18 +31,18 @@ export const heading = defineRecipe({
 
 export const link = defineRecipe({
   base: {
-    color: 'gray.800',
+    color: 'oklch(0.47 0.085 158)',
     textDecoration: 'underline',
     textDecorationThickness: 'from-font',
     textUnderlineOffset: '0.15em',
     _dark: {
-      color: 'gray.400',
+      color: 'oklch(0.62 0.09 158)',
       _hover: {
-        color: 'gray.200',
+        color: 'oklch(0.7 0.09 158)',
       },
     },
     _hover: {
-      color: 'gray.500',
+      color: 'oklch(0.4 0.08 158)',
     },
   },
   variants: {

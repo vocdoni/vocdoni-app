@@ -9,7 +9,7 @@ const chakra = {
   body: {
     bg: {
       value: {
-        _light: '{colors.white}',
+        _light: 'oklch(0.988 0.011 97)',
         _dark: '{colors.brand.650}',
       },
     },
@@ -19,20 +19,20 @@ const chakra = {
 const texts = {
   primary: {
     value: {
-      _light: '{colors.brand.500}',
-      _dark: '{colors.white}',
+      _light: 'oklch(0.24 0.013 106)',
+      _dark: 'oklch(0.95 0.012 97)',
     },
   },
   subtle: {
     value: {
-      _light: '{colors.gray.500}',
-      _dark: '{colors.gray.400}',
+      _light: 'oklch(0.24 0.013 106 / 0.64)',
+      _dark: 'oklch(0.95 0.012 97 / 0.66)',
     },
   },
   dark: {
     value: {
-      _light: '{colors.gray.600}',
-      _dark: '{colors.gray.500}',
+      _light: 'oklch(0.24 0.013 106)',
+      _dark: 'oklch(0.95 0.012 97 / 0.8)',
     },
   },
 }
@@ -49,27 +49,27 @@ export const colors = defineSemanticTokens.colors({
   auth: {
     bg: {
       value: {
-        _light: '{colors.gray.50}',
+        _light: 'oklch(0.936 0.033 97)',
         _dark: '{colors.brand.550}',
       },
     },
     card: {
       bg: {
         value: {
-          _light: '{colors.white}',
+          _light: 'oklch(0.988 0.011 97)',
           _dark: '{colors.brand.500}',
         },
       },
       border: {
-        value: '{colors.gray.200}',
+        value: 'oklch(0.24 0.013 106 / 0.1)',
       },
     },
   },
   border: {
     dashboard: {
       value: {
-        _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
+        _light: 'oklch(0.24 0.013 106 / 0.1)',
+        _dark: 'oklch(1 0 0 / 0.1)',
       },
     },
     pagination: {
@@ -85,13 +85,13 @@ export const colors = defineSemanticTokens.colors({
     pricing: {
       bg: {
         value: {
-          _light: '{colors.white}',
+          _light: 'oklch(0.988 0.011 97)',
           _dark: '{colors.brand.650}',
         },
       },
       border: {
         value: {
-          _light: '{colors.gray.200}',
+          _light: 'oklch(0.24 0.013 106 / 0.1)',
           _dark: '{colors.brand.700}',
         },
       },
@@ -146,15 +146,18 @@ export const colors = defineSemanticTokens.colors({
   },
   input: {
     placeholder: {
-      value: '{colors.gray.500}',
+      value: {
+        _light: 'oklch(0.24 0.013 106 / 0.55)',
+        _dark: 'oklch(0.95 0.012 97 / 0.5)',
+      },
     },
   },
   // @deprecated: to be removed in favor of border.dashboard
   table: {
     border: {
       value: {
-        _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
+        _light: 'oklch(0.24 0.013 106 / 0.1)',
+        _dark: 'oklch(1 0 0 / 0.1)',
       },
     },
   },
@@ -162,20 +165,20 @@ export const colors = defineSemanticTokens.colors({
     tab: {
       color: {
         value: {
-          _light: '{colors.gray.500}',
-          _dark: '{colors.gray.400}',
+          _light: 'oklch(0.24 0.013 106 / 0.64)',
+          _dark: 'oklch(0.95 0.012 97 / 0.66)',
         },
       },
       active: {
         color: {
           value: {
             _light: '{colors.brand.500}',
-            _dark: '{colors.white}',
+            _dark: 'oklch(0.95 0.012 97)',
           },
         },
         bg: {
           value: {
-            _light: '{colors.white}',
+            _light: 'oklch(0.988 0.011 97)',
             _dark: '{colors.brand.500}',
           },
         },
@@ -183,7 +186,7 @@ export const colors = defineSemanticTokens.colors({
     },
     bg: {
       value: {
-        _light: '{colors.gray.100}',
+        _light: 'oklch(0.936 0.033 97)',
         _dark: '{colors.brand.700}',
       },
     },
