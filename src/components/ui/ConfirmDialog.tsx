@@ -21,8 +21,10 @@ export interface ConfirmDialogProps extends Omit<DialogRootProps, 'children'> {
  * so consumers stop hand-rolling the identical `<Flex justifyContent='flex-end'>` + outline
  * Cancel + red confirm button that every `DeleteModal` call site repeats.
  *
- * For imperative confirm flows (call `confirm()` inside a handler) use `useConfirm` /
- * `ConfirmActionModal` instead — this is the JSX-rendered counterpart.
+ * Use this (not `useConfirm`) when the confirmed action is async: `useConfirm` closes the
+ * dialog the moment the user clicks, before the mutation runs. Here the caller controls
+ * `open` and closes it in `onSuccess`, so the confirm button can show `loading` state and
+ * the dialog stays in context if the operation fails.
  */
 export const ConfirmDialog = ({
   title,
