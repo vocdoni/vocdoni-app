@@ -97,9 +97,9 @@ export const paginatedElectionsQuery = (
   queryKey: QueryKeys.organization.elections(address, params),
   queryFn: async () => {
     const result = await client.elections.list({
-      organizationId: address,
+      orgAddress: address,
       page: params.page ? Number(params.page) : 1,
-      pageSize: params.limit,
+      limit: params.limit,
       status: params.status ? LIST_STATUS_MAP[params.status.toLowerCase()] : undefined,
     })
     return result
