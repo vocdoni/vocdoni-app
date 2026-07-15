@@ -1,4 +1,9 @@
+import { electionQueryKeys } from '@vocdoni/react-components'
+
 export const QueryKeys = {
+  // Keys the @vocdoni/react-providers ElectionProvider reads through — use these to
+  // pre-seed or invalidate the election/results queries it observes.
+  election: electionQueryKeys,
   organization: {
     elections: (address?: string, params?: { page?: number; status?: string }) =>
       ['organizations', 'elections', address, params].filter(Boolean),

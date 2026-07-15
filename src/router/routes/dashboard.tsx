@@ -6,6 +6,7 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
+import { QueryKeys } from '~queries/keys'
 import { paginatedElectionsQuery } from '~queries/organization'
 import OrganizationProtectedRoute from '~src/router/OrganizationProtectedRoute'
 import ProtectedRoutes from '~src/router/ProtectedRoutes'
@@ -110,7 +111,8 @@ export const useDashboardRoutes = () => {
                     ),
                     loader: async ({ params }: { params: Params<string> }) => {
                       const rawElection = await client.elections.get(params.id!)
-                      queryClient.setQueryData(['election', rawElection.id], rawElection)
+                      // Pre-seed the ElectionProvider query so the view renders without re-fetching
+                      queryClient.setQueryData(QueryKeys.election.election(rawElection.id), rawElection)
                       return rawElection
                     },
                     shouldRevalidate: shouldRevalidateDashboardProcess,
@@ -146,7 +148,7 @@ export const useDashboardRoutes = () => {
                           const mergedParams = { ...queryParams, ...params }
 
                           return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(currentAddress, client, mergedParams)
+                            paginatedElectionsQuery(currentAddress, client, mergedParams, queryClient)
                           )
                         },
                       },
@@ -164,7 +166,7 @@ export const useDashboardRoutes = () => {
                           const mergedParams = { ...queryParams, ...params }
 
                           return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(currentAddress, client, mergedParams)
+                            paginatedElectionsQuery(currentAddress, client, mergedParams, queryClient)
                           )
                         },
                       },

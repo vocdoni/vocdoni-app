@@ -1,8 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import type { ElectionStatus } from '@vocdoni/api-types'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
-import { AccountData, ensure0x, FetchElectionsParameters, FetchElectionsParametersWithPagination } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { LuCalendar, LuFileSpreadsheet, LuUsers, LuVote } from 'react-icons/lu'
@@ -44,9 +43,10 @@ export type OrganizationMetaResponse = {
 
 type OrganizationSteps = SetupStepId[]
 
-type PaginatedElectionsParams = Partial<Pick<FetchElectionsParametersWithPagination, 'limit'>> & {
+type PaginatedElectionsParams = {
   page?: number
-  status?: FetchElectionsParameters['status']
+  limit?: number
+  status?: string
 }
 
 type SetupChecklistItem = {
@@ -91,7 +91,8 @@ const LIST_STATUS_MAP: Record<string, ElectionStatus> = {
 export const paginatedElectionsQuery = (
   address: string | undefined,
   client: VocdoniApiClient,
-  params: PaginatedElectionsParams
+  params: PaginatedElectionsParams,
+  queryClient?: QueryClient
 ) => ({
   enabled: !!address,
   queryKey: QueryKeys.organization.elections(address, params),
@@ -102,6 +103,13 @@ export const paginatedElectionsQuery = (
       limit: params.limit,
       status: params.status ? LIST_STATUS_MAP[params.status.toLowerCase()] : undefined,
     })
+    // Pre-seed each process into the ElectionProvider query so per-row providers
+    // (ProcessesTable, dashboard cards) render from cache instead of re-fetching.
+    if (queryClient) {
+      result.processes.forEach((process) => {
+        queryClient.setQueryData(QueryKeys.election.election(process.id), process)
+      })
+    }
     return result
   },
 })
@@ -328,7 +336,7 @@ export const useInviteMemberMutation = () => {
 
   return useMutation({
     mutationFn: async (body: InviteData) =>
-      await bearedFetch(ApiEndpoints.OrganizationUsers.replace('{address}', ensure0x(organization.address)), {
+      await bearedFetch(ApiEndpoints.OrganizationUsers.replace('{address}', organization.address), {
         method: 'POST',
         body,
       }),
@@ -347,10 +355,7 @@ export const useRemoveUserMutation = () => {
   return useMutation({
     mutationFn: async (id: number) =>
       await bearedFetch(
-        ApiEndpoints.OrganizationUser.replace('{address}', ensure0x(organization.address)).replace(
-          '{userId}',
-          String(id)
-        ),
+        ApiEndpoints.OrganizationUser.replace('{address}', organization.address).replace('{userId}', String(id)),
         { method: 'DELETE' }
       ),
     onSuccess: () => {
