@@ -278,7 +278,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
       gap={5}
       p={10}
       border='1px dashed'
-      borderColor={isDragActive ? 'gray.focusRing' : 'table.border'}
+      borderColor={isDragActive ? 'border.emphasized' : 'table.border'}
       cursor='pointer'
       borderRadius={12}
       {...getRootProps()}
