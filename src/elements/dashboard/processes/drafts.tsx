@@ -20,7 +20,6 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { RoutedPaginationProvider } from '@vocdoni/react-components'
-import { ensure0x } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router-dom'
@@ -216,7 +215,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
     try {
       const clonedDraftId = await createProcess.mutateAsync({
         metadata: draft.metadata,
-        orgAddress: ensure0x(currentAddress),
+        orgAddress: currentAddress,
       })
       toast({
         title: t('drafts.cloned_draft', {
@@ -336,7 +335,7 @@ const Drafts = () => {
   }
 
   return (
-    <RoutedPaginationProvider initialPage={1} path={Routes.dashboard.processes.drafts} pagination={pagination}>
+    <RoutedPaginationProvider path={Routes.dashboard.processes.drafts} pagination={pagination}>
       {showAlert && (
         <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
       )}

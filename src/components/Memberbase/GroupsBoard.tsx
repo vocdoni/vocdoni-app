@@ -581,7 +581,7 @@ const GroupMembersDisplay = ({ group, isOpen }: GroupMembersProps) => {
   const pagination = data.pagination
 
   return (
-    <PaginationProvider initialPage={initialPage} pagination={pagination}>
+    <PaginationProvider pagination={pagination}>
       <GroupMembersWithPagination group={group} isOpen={isOpen} />
     </PaginationProvider>
   )

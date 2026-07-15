@@ -4,12 +4,11 @@ import { Trans } from 'react-i18next'
 import RowsPerPageSelect from './RowsPerPageSelect'
 
 const RoutedPaginatedTableFooter = () => {
-  const { pagination, initialPage, page: currentPage } = useRoutedPagination()
+  const { pagination, page } = useRoutedPagination()
 
   if (!pagination) return null
 
-  const page = initialPage === 0 ? currentPage + 1 : currentPage
-  const total = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage
+  const total = pagination.lastPage
 
   return (
     <Box
@@ -38,12 +37,11 @@ const RoutedPaginatedTableFooter = () => {
 }
 
 export const PaginatedTableFooter = () => {
-  const { pagination, initialPage, page: currentPage } = usePagination()
+  const { pagination, page } = usePagination()
 
   if (!pagination) return null
 
-  const page = initialPage === 0 ? currentPage + 1 : currentPage
-  const total = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage
+  const total = pagination.lastPage
 
   return (
     <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5} justifyContent='space-between'>
