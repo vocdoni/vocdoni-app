@@ -75,7 +75,7 @@ const EditOrganization = () => {
     }
 
     try {
-      await mutateAsync({ ...organization, ...newInfo })
+      await mutateAsync(newInfo)
       await setStepDoneAsync(SetupStepIds.organizationDetails)
       toast({
         title: t('edit_saas_profile.edited_successfully', { defaultValue: 'Updated successfully' }),
