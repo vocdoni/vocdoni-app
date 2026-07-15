@@ -94,7 +94,7 @@ const Tutorial = () => {
             </Progress.Track>
           </Progress.Root>
         ) : !subscription ? (
-          <Text color='gray.500' mb={4}>
+          <Text color='fg.muted' mb={4}>
             {t('dashboard.welcome.no_subscription', {
               defaultValue: 'No subscription available. Please create an organization to activate your plan.',
             })}
@@ -102,7 +102,7 @@ const Tutorial = () => {
         ) : (
           subscription &&
           isPlanNamed(subscription.plan, PlanName.Free) && (
-            <Text color='gray.500' mb={4}>
+            <Text color='fg.muted' mb={4}>
               <Trans i18nKey='plan.free'>
                 <strong>You're on the Free Plan</strong>, which already lets you launch votes. If you need more
                 features, higher limits or specific options, explore the paid plans and try them for free.
@@ -110,13 +110,13 @@ const Tutorial = () => {
             </Text>
           )
         )}
-        <Text color='gray.500' mb={4}>
+        <Text color='fg.muted' mb={4}>
           <Trans i18nKey='plan.encouragement'>
             Launching a vote is simple, and participants can join from anywhere. Strong guarantees at a lower cost have
             made Vocdoni a trusted choice for hundreds of municipalities, associations, political parties and companies.
           </Trans>
         </Text>
-        <Text color='gray.500' mb={4}>
+        <Text color='fg.muted' mb={4}>
           {t('plan.special_needs', {
             defaultValue: 'Need help or something specific? Schedule a call.',
           })}
@@ -168,8 +168,8 @@ const Setup = () => {
         boxShadow='xl'
         zIndex='overlay'
         border='1px solid'
-        _light={{ borderColor: 'gray.200', bgColor: 'white' }}
-        _dark={{ borderColor: 'brand.700', bgColor: 'brand.650' }}
+        borderColor='border'
+        bgColor='bg.panel'
       >
         <Accordion.Root defaultValue={['setup']} collapsible border='none'>
           <Accordion.Item value='setup' border='none' alignItems='center'>
@@ -268,7 +268,7 @@ const OrganizationProcesses = () => {
           <Text fontWeight='bold' mb={1.5} size='2xl'>
             {t('dashboard.welcome.recent_voting_title', { defaultValue: 'Recent voting processes' })}
           </Text>
-          <Text color='gray.500' fontSize='sm'>
+          <Text color='fg.muted' fontSize='sm'>
             {t('dashboard.welcome.recent_voting_description', {
               defaultValue: "Your organization's latest voting activities",
             })}
@@ -404,12 +404,12 @@ const Processes = () => {
           alignItems='center'
           gap={3}
           fontSize='sm'
-          color='black'
+          color='fg'
           fontWeight='medium'
           textDecoration='none'
           _hover={{
             textDecoration: 'underline',
-            color: 'black',
+            color: 'fg',
           }}
         >
           <ReactRouterLink to={generatePath(Routes.dashboard.processes.base)}>
@@ -433,7 +433,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
           defaultValue: 'Quick actions',
         })}
       </Text>
-      <Text color='gray.500' fontSize='sm' mb={6}>
+      <Text color='fg.muted' fontSize='sm' mb={6}>
         {t('dashboard.welcome.common_tasks_actions', {
           defaultValue: 'Common tasks and actions',
         })}

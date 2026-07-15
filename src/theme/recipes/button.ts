@@ -27,10 +27,7 @@ const listmenu = defineStyle({
     fontWeight: 'bold',
   },
   _hover: {
-    bg: 'gray.100',
-    _dark: {
-      bg: 'gray.700',
-    },
+    bg: 'bg.muted',
   },
 })
 
@@ -43,10 +40,7 @@ const profilemenu = defineStyle({
   justifyContent: 'start',
   bg: 'transparent',
   _hover: {
-    bg: 'gray.100',
-    _dark: {
-      bg: 'gray.700',
-    },
+    bg: 'bg.muted',
   },
 })
 

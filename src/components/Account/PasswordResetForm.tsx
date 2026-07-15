@@ -102,7 +102,7 @@ const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ code, email, sign
             validate: (value) => value === methods.getValues('newPassword') || t('passwords_do_not_match'),
           }}
         />
-        <Button type='submit' fontSize='sm' colorPalette='black' fontWeight='500' w='100%' h={50}>
+        <Button type='submit' fontSize='sm' fontWeight='500' w='100%' h={50}>
           <Trans i18nKey='reset_password_button'>Reset Password</Trans>
         </Button>
       </Flex>

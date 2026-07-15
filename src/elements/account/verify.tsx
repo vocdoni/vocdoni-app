@@ -35,10 +35,10 @@ const Verify = () => {
     return (
       <Flex direction='column'>
         <Box me='auto'>
-          <Heading fontSize='36px' mb='10px'>
+          <Heading fontSize='4xl' mb={2.5}>
             {t('verify.invalid_verification', { defaultValue: 'Invalid verification request' })}
           </Heading>
-          <Text mb='36px' ms='4px' color={'verify_subtitle'} fontWeight='400' fontSize='md'>
+          <Text mb={9} ms={1} color='fg.muted' fontWeight='400' fontSize='md'>
             {t('verify.missing_email', {
               defaultValue: 'No email address provided for verification',
             })}

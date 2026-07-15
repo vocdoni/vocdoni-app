@@ -16,9 +16,9 @@ export function WhatsAppButton({ noExpand }: WhatsAppButtonProps) {
     <Button
       asChild
       role='group'
-      bg='#25D366'
+      bg='whatsapp.500'
       color='white'
-      _hover={{ bg: '#20BA5A' }}
+      _hover={{ bg: 'whatsapp.600' }}
       px='4'
       display='inline-flex'
       alignItems='center'

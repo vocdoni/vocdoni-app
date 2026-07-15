@@ -254,6 +254,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
       appearance: {
         theme: colorMode === 'dark' ? ('night' as const) : ('stripe' as const),
         variables: {
+          // Stripe renders in an iframe, so theme CSS vars are unreachable; raw values mirror the `bg` token
           colorBackground: colorMode === 'dark' ? '#0a0a0a' : 'white',
         },
       },

@@ -26,7 +26,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
           <Link href='https://www.vocdoni.io' target='_blank' rel='noopener noreferrer' display='inline-block'>
             <Image src={vcdLogo} w='125px' mb='12px' filter={invert} alt={t('vocdoni_logo')} />
           </Link>
-          <Text fontSize='16px' lineHeight='28px'>
+          <Text fontSize='md' lineHeight={1.75}>
             {t('footer.footer_subtitle')}
           </Text>
         </Box>
@@ -46,7 +46,7 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
               gap={{ base: '0px', xl: '90px' }}
               w='full'
             >
-              <Text fontWeight='bold' fontSize='18px' lineHeight='21px' mb='16px' display='none'>
+              <Text fontWeight='bold' fontSize='lg' lineHeight={1.15} mb={4} display='none'>
                 {t('footer.company')}
               </Text>
               <Link
@@ -88,14 +88,15 @@ const Footer = ({ simplified }: { simplified?: boolean }) => {
         justifyContent='space-between'
         alignItems='center'
         py='12px'
-        borderTop='1px solid rgb(229, 229, 229)'
+        borderTop='1px solid'
+        borderTopColor='border'
       >
         <Text as='span' textAlign='center'>
           <Trans
             i18nKey='footer.terms_and_privacy'
             components={{
-              link1: <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' color='gray' />,
-              link2: <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' color='gray' />,
+              link1: <Link href={termsOfServiceUrl} target='_blank' rel='noopener noreferrer' color='fg.muted' />,
+              link2: <Link href={privacyPolicyUrl} target='_blank' rel='noopener noreferrer' color='fg.muted' />,
             }}
           />
         </Text>

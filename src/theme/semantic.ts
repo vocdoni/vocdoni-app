@@ -5,43 +5,42 @@ import { defineSemanticTokens } from '@chakra-ui/react'
  * https://v2.chakra-ui.com/docs/styled-system/semantic-tokens
  */
 
+// @deprecated: use the chakra built-in `bg` token directly
 const chakra = {
   body: {
     bg: {
-      value: {
-        _light: '{colors.white}',
-        _dark: '{colors.brand.650}',
-      },
+      value: '{colors.bg}',
     },
   },
 }
 
+// @deprecated: use the chakra built-in `fg`/`fg.muted` tokens directly
 const texts = {
   primary: {
-    value: {
-      _light: '{colors.brand.500}',
-      _dark: '{colors.white}',
-    },
+    value: '{colors.fg}',
   },
   subtle: {
-    value: {
-      _light: '{colors.gray.500}',
-      _dark: '{colors.gray.400}',
-    },
+    value: '{colors.fg.muted}',
   },
   dark: {
-    value: {
-      _light: '{colors.gray.600}',
-      _dark: '{colors.gray.500}',
-    },
+    value: '{colors.fg.muted}',
   },
 }
 
 export const colors = defineSemanticTokens.colors({
   chakra,
+  // Overrides of the chakra built-in semantic scale — the canonical vocabulary
+  // for surfaces and text (bg, bg.subtle, bg.muted, fg, fg.muted, border, …)
   bg: {
+    DEFAULT: {
+      value: {
+        _light: '{colors.white}',
+        _dark: '{colors.brand.650}',
+      },
+    },
     muted: {
       value: {
+        _light: '{colors.gray.100}',
         _dark: '{colors.brand.800}',
       },
     },
@@ -66,11 +65,9 @@ export const colors = defineSemanticTokens.colors({
     },
   },
   border: {
+    // @deprecated: use the chakra built-in `border` token directly
     dashboard: {
-      value: {
-        _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
-      },
+      value: '{colors.border}',
     },
     pagination: {
       active: {
@@ -149,13 +146,10 @@ export const colors = defineSemanticTokens.colors({
       value: '{colors.gray.500}',
     },
   },
-  // @deprecated: to be removed in favor of border.dashboard
+  // @deprecated: use the chakra built-in `border` token directly
   table: {
     border: {
-      value: {
-        _light: '{colors.gray.200}',
-        _dark: '{colors.gray.800}',
-      },
+      value: '{colors.border}',
     },
   },
   tabs: {

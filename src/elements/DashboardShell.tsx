@@ -32,7 +32,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
   return (
     <DashboardLayoutContext.Provider value={{ reduced: reducedValue }}>
       <DashboardLayoutProviders>
-        <Flex minH='100svh' w='full' _dark={{ bg: 'brand.650' }} maxW='max-window-width' margin='0 auto'>
+        <Flex minH='100svh' w='full' bg='bg' maxW='max-window-width' margin='0 auto'>
           {/* Sidebar for large screens */}
           <DashboardMenu
             isOpen={isOpen}

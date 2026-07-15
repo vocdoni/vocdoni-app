@@ -253,11 +253,11 @@ const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }:
       disabled={disabled}
       border='1px solid'
       borderRadius='md'
-      borderColor={isSelected && 'gray.400'}
+      borderColor={isSelected ? 'border.emphasized' : undefined}
       p={2}
       cursor={disabled ? 'not-allowed' : 'pointer'}
       opacity={disabled ? 0.6 : 1}
-      _hover={!disabled ? { borderColor: 'gray.400' } : undefined}
+      _hover={!disabled ? { borderColor: 'border.emphasized' } : undefined}
       {...props}
     >
       <RadioGroup.ItemHiddenInput />

@@ -145,7 +145,7 @@ export const AvatarUploader = (props: FormControlProps) => {
             <Box
               w='128px'
               h='128px'
-              backgroundColor='gray.200'
+              backgroundColor='bg.emphasized'
               cursor='pointer'
               borderRadius='full'
               border='2px solid'
@@ -278,7 +278,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
       gap={5}
       p={10}
       border='1px dashed'
-      borderColor={isDragActive ? 'input.drag_and_drop.border_active' : 'table.border'}
+      borderColor={isDragActive ? 'border.emphasized' : 'table.border'}
       cursor='pointer'
       borderRadius={12}
       {...getRootProps()}
@@ -297,7 +297,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
             <Trans
               i18nKey='uploader.click_or_drag_and_drop'
               components={{
-                click: <Text as='span' color='input.drag_and_drop.text' />,
+                click: <Text as='span' color='fg' />,
                 formats: <Text as='span' fontSize='sm' color='texts.subtle' />,
               }}
               values={{ formats }}

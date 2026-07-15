@@ -5,7 +5,7 @@ import { IconType } from 'react-icons'
 export type ShareButtonProps = { url: string; caption: string } & ShareIconProps
 
 interface ShareIconProps {
-  variant?: 'footer' | 'breadcrumb' | 'icon' | 'underline' | 'plain'
+  variant?: 'footer' | 'icon' | 'underline' | 'plain'
   w?: number
   h?: number
 }

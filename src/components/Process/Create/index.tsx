@@ -934,7 +934,7 @@ const ProcessCreateView = () => {
             {/* Top bar with draft status and sidebar toggle */}
             <HStack position='sticky' top='0px' p={2} bg='chakra.body.bg' zIndex='contents'>
               {effectiveDraftId && (
-                <Box px={3} py={1} borderRadius='full' bg='gray.100' _dark={{ bg: 'whiteAlpha.200' }} fontSize='sm'>
+                <Box px={3} py={1} borderRadius='full' bg='bg.muted' fontSize='sm'>
                   <Trans i18nKey='process.create.status.draft'>Draft</Trans>
                 </Box>
               )}
@@ -960,21 +960,10 @@ const ProcessCreateView = () => {
                 >
                   <Icon as={LuSettings} />
                 </IconButton>
-                <Button
-                  type='submit'
-                  colorPalette='black'
-                  alignSelf='flex-end'
-                  loading={methods.formState.isSubmitting}
-                >
+                <Button type='submit' alignSelf='flex-end' loading={methods.formState.isSubmitting}>
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
-                <Button
-                  type='button'
-                  colorPalette='black'
-                  variant='outline'
-                  onClick={handleManualSave}
-                  loading={isSaving}
-                >
+                <Button type='button' variant='outline' onClick={handleManualSave} loading={isSaving}>
                   <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
                 </Button>
               </ButtonGroup>

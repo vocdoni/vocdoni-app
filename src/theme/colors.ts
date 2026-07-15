@@ -13,19 +13,25 @@ export const colors = {
     800: { value: '#3f3f3f' }, // link active (dark)
   },
 
+  // Partial override of chakra's default gray scale — only the shades that
+  // differ from the defaults; the rest (200, 300, 600-950) merge through.
   gray: {
     50: { value: '#fcfcfc' },
     100: { value: 'whitesmoke' },
-    200: { value: '#e4e4e7' },
     400: { value: '#b2b2b2' },
     500: { value: '#737373' },
-    600: { value: '#52525b' },
-    700: { value: '#3f3f46' },
-    800: { value: '#27272a' },
   },
 
   dashboardMenu: {
     light: { value: '#fbfbfb' },
     dark: { value: '#18181b' },
   },
+
+  whatsapp: {
+    500: { value: '#25D366' },
+    600: { value: '#20BA5A' },
+  },
+
+  // Translucent so it works over both color modes
+  separator: { value: 'rgba(135, 140, 189, 0.3)' },
 }

@@ -80,15 +80,13 @@ const ProcessHeader = () => {
           </Box>
         </Flex>
         <Flex flexDirection='column'>
-          {!election?.description?.default.length && (
-            <Text color='process.description'>{t('process.no_description')}</Text>
-          )}
+          {!election?.description?.default.length && <Text color='fg.muted'>{t('process.no_description')}</Text>}
           <Box className='md-sizes'>
-            <ReadMoreMarkdownWrapper toDark='var(--chakra-colors-process-read_more_dark)'>
-              <ElectionDescription mb={0} fontSize='lg' lineHeight={1.5} color='process.description' />
+            <ReadMoreMarkdownWrapper>
+              <ElectionDescription mb={0} fontSize='lg' lineHeight={1.5} color='fg.muted' />
             </ReadMoreMarkdownWrapper>
           </Box>
-          <ReadMoreMarkdownButton colorPalette='primary' alignSelf='center' />
+          <ReadMoreMarkdownButton alignSelf='center' />
         </Flex>
       </Flex>
     </>
