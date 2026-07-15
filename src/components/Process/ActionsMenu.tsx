@@ -1,6 +1,5 @@
 import { Icon, IconButton, Menu, type MenuContentProps } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import { hasResults, isLive } from '@vocdoni/api-client'
 import { ElementType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCog } from 'react-icons/fa'
@@ -8,16 +7,17 @@ import { RiCloseCircleLine, RiPauseCircleLine, RiPlayCircleLine, RiStopCircleLin
 import { ActionsProvider } from '~components/Actions'
 import { useActions } from '~components/Actions/ActionsContext'
 import { useAuth } from '~components/Auth/useAuth'
+import { sameAddress } from '~utils/address'
 
 export const ActionsMenu = (props: MenuContentProps) => {
   const { currentAddress } = useAuth()
-  const { election } = useElection()
+  const { election, status } = useElection()
 
   if (
     !election ||
-    election?.organizationId !== currentAddress ||
+    !sameAddress(election.orgAddress, currentAddress) ||
     // canceled and ended elections cannot be acted upon
-    [election.status === 'CANCELED', election.status === 'ENDED', hasResults(election)].some(Boolean)
+    ['CANCELED', 'ENDED', 'RESULTS'].includes(status ?? '')
   ) {
     return null
   }
@@ -40,14 +40,14 @@ export const ActionsMenu = (props: MenuContentProps) => {
 
 const ActionsMenuList = (props: MenuContentProps) => {
   const { t } = useTranslation()
-  const { election } = useElection()
+  const { election, status } = useElection()
   const { loading, pause, resume, end, cancel, disabled } = useActions()
 
   if (!election) return null
 
   return (
     <Menu.Content p={0} {...props}>
-      {election.status === 'PAUSED' && (
+      {status === 'PAUSED' && (
         <Menu.Item
           value='resume'
           aria-label={t('process_actions.start')}
@@ -58,7 +58,7 @@ const ActionsMenuList = (props: MenuContentProps) => {
           {t('process_actions.start')}
         </Menu.Item>
       )}
-      {isLive(election) && (
+      {status === 'ONGOING' && (
         <Menu.Item
           value='pause'
           aria-label={t('process_actions.start')}

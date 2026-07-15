@@ -1,11 +1,11 @@
 import { Button, Card } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
-import { areEqualHexStrings } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '~components/Auth/useAuth'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import { EmptyState } from '~components/ui/EmptyState'
 import { Routes } from '~src/router/routes'
+import { sameAddress } from '~utils/address'
 import { generatePath } from 'react-router-dom'
 import empty from '/assets/illustrations/2.png'
 
@@ -13,7 +13,7 @@ const NoElections = () => {
   const { t } = useTranslation()
   const { currentAddress } = useAuth()
   const { organization } = useOrganization()
-  const isOwner = areEqualHexStrings(currentAddress, organization?.address)
+  const isOwner = sameAddress(currentAddress, organization?.address)
 
   return (
     <Card.Root variant='no-elections' minH='100%'>

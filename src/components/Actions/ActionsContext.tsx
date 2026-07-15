@@ -1,9 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useElection } from '@vocdoni/react-components'
 import type { SetElectionStatusRequest } from '@vocdoni/api-types'
-import { PublishedElection } from '@vocdoni/sdk'
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import { toPublishedElection } from '~queries/election-adapter'
+import { QueryKeys } from '~queries/keys'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 
 type ActionKey = 'continue' | 'pause' | 'end' | 'cancel'
@@ -40,9 +39,9 @@ const ACTION_CONFIG: Record<ActionKey, { status: SetElectionStatusRequest['statu
  * the same shape (`resume`/`pause`/`end`/`cancel`, per-action `loading`, `disabled`, `info`/`error`)
  * so the existing action buttons/menu and the toast bridge consume it unchanged.
  *
- * On success it refreshes the election in place by writing the freshly fetched + adapted election
- * onto the react-components election query, which the (frozen) ElectionProvider observes — so the UI
- * reflects the new status without re-fetching through the Vochain client.
+ * On success it refreshes the election in place by writing the freshly fetched process onto the
+ * election query the ElectionProvider observes (and invalidating its results query), so the UI
+ * reflects the new per-question statuses without waiting for a background refetch.
  */
 export const ActionsProvider = ({ children }: { children: ReactNode }) => {
   const { client } = useApiClient()
@@ -54,7 +53,7 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
 
   const value = useMemo<ActionsContextValue>(() => {
     const run = async (key: ActionKey) => {
-      if (!(election instanceof PublishedElection)) return
+      if (!election?.id) return
       const { id } = election
       const { status, description } = ACTION_CONFIG[key]
 
@@ -63,9 +62,13 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
       setInfo({ title: 'actions.waiting_title', description })
 
       try {
-        await client.elections.setStatusAndWait(id, { status })
-        const refreshed = toPublishedElection(await client.elections.get(id))
-        queryClient.setQueryData(['election', id], refreshed)
+        // Status changes go through the questions endpoint: each question is its own
+        // on-chain election. An empty question list targets every published question.
+        const { jobId } = await client.elections.bulkSetQuestionStatus(id, { status })
+        await client.jobs.waitFor(jobId)
+        const refreshed = await client.elections.get(id)
+        queryClient.setQueryData(QueryKeys.election.election(id), refreshed)
+        queryClient.invalidateQueries({ queryKey: QueryKeys.election.results(id) })
         setInfo(null)
       } catch (e) {
         setInfo(null)
