@@ -34,8 +34,8 @@ export const EmptyState = ({
   ...rest
 }: EmptyStateProps) => (
   <Box display='flex' flexDirection='column' alignItems='center' textAlign='center' gap={3} {...rest}>
-    {icon && <Icon as={icon} boxSize={12} color='fg.muted' />}
-    {image && <Image src={image} alt={imageAlt} _dark={{ filter: 'invert(70%)' }} {...imageProps} />}
+    {icon && !image && <Icon as={icon} boxSize={12} color='fg.muted' />}
+    {image && <Image src={image} alt={imageAlt ?? ''} _dark={{ filter: 'invert(70%)' }} {...imageProps} />}
     <Text fontWeight='bold' fontSize='lg'>
       {title}
     </Text>
