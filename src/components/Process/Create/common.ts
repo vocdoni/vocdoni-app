@@ -1,12 +1,11 @@
-import { ElectionResultsTypeNames } from '@vocdoni/sdk'
 import { CensusSpreadsheetManager } from '~components/Process/Census/Spreadsheet/CensusSpreadsheetManager'
 import { Web3Address } from '~components/Process/Census/Web3'
 import { CensusTypes } from '../Census/CensusType'
 import { TwoFAMethod } from './VoterAuthentication/utils'
 
 export enum SelectorTypes {
-  Multiple = ElectionResultsTypeNames.MULTIPLE_CHOICE,
-  Single = ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
+  Single = 'singleChoice',
+  Multiple = 'multiChoice',
 }
 
 export type DefaultQuestionsType = Record<SelectorTypes, Question>

@@ -16,22 +16,17 @@ import {
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalStorage } from '@uidotdev/usehooks'
-import { useClient, useOrganization } from '@vocdoni/react-components'
-import {
-  AccountData,
-  ArchivedAccountData,
-  Census,
-  CspCensus,
-  Election,
-  ElectionCreationSteps,
-  ensure0x,
-  IElectionParameters,
-  IQuestion,
-  MultiChoiceElection,
-  PlainCensus,
-  UnpublishedElection,
-  WeightedCensus,
-} from '@vocdoni/sdk'
+import { useOrganization } from '@vocdoni/react-components'
+import type {
+  BallotProtocol,
+  CensusSpec,
+  Choice,
+  CreateVotingProcessRequest,
+  OrgMemberAuthField,
+  OrgMemberTwoFaField,
+  VotingProcessQuestionRequest,
+} from '@vocdoni/api-types'
+import { ensure0x } from '@vocdoni/sdk'
 import { addDays, parse } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -50,11 +45,11 @@ import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
 import { ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
-import { Web3Address } from '~components/Process/Census/Web3'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
@@ -62,12 +57,13 @@ import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
-import { CensusMeta, CensusTypes } from '../Census/CensusType'
+import { CensusTypes } from '../Census/CensusType'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { useProcessTemplates } from './TemplateProvider'
 import { defaultProcessValues, Option, Process, SelectorTypes, TemplateConfigs, TemplateTypes } from './common'
+import { getTwoFaFields } from './VoterAuthentication/utils'
 
 type ConfirmOnNavigateOptions = {
   isDirty: boolean
@@ -97,9 +93,6 @@ type UpdateProcessRequest = {
 }
 
 export const saveTimeoutMs = 30000
-
-export const isAccountData = (account: AccountData | ArchivedAccountData): account is AccountData =>
-  'electionIndex' in account
 
 export const useConfirmOnNavigate = ({
   isDirty,
@@ -462,21 +455,6 @@ const LeaveConfirmationModal = ({
   )
 }
 
-const useProcessBundle = () => {
-  const { bearedFetch } = useAuth()
-  return useMutation({
-    mutationFn: async ({ censusId, processes }: { censusId: string; processes?: string[] }) => {
-      return await bearedFetch<{ uri: string; root: string }>(ApiEndpoints.ProcessBundle, {
-        method: 'POST',
-        body: {
-          censusId,
-          processes,
-        },
-      })
-    },
-  })
-}
-
 export const useCreateProcess = () => {
   const { bearedFetch } = useAuth()
 
@@ -502,90 +480,105 @@ const useUpdateProcess = () => {
   })
 }
 
-export const useFormToElectionMapper = () => {
+const buildCensusSpec = (form: Process): CensusSpec => {
+  switch (form.censusType) {
+    case CensusTypes.CSP: {
+      const spec: CensusSpec = { groupId: form.groupId || undefined, weighted: form.weightedVote || undefined }
+      if (form.census?.credentials?.length) {
+        spec.authFields = form.census.credentials as OrgMemberAuthField[]
+      }
+      if (form.census?.use2FA && form.census?.use2FAMethod) {
+        spec.twoFaFields = getTwoFaFields(form.census.use2FAMethod) as OrgMemberTwoFaField[]
+      }
+      return spec
+    }
+    case CensusTypes.Spreadsheet:
+      return { groupId: form.groupId || undefined, weighted: form.weightedVote || undefined }
+    case CensusTypes.Web3:
+      return { memberIds: form.addresses?.map((a) => a.address), weighted: form.weightedVote || undefined }
+    default:
+      return {}
+  }
+}
+
+export const useFormToVotingProcessRequest = () => {
   const { permission } = useSubscription()
+  const { organization } = useOrganization()
 
-  const parseLocalDateTime = (dateStr?: string, timeStr?: string) => {
+  const parseLocalDateTime = (dateStr?: string, timeStr?: string): string | undefined => {
     if (!dateStr || !timeStr) return undefined
-
-    return parse(`${dateStr} ${timeStr}`, 'yyyy-MM-dd HH:mm', new Date())
+    return parse(`${dateStr} ${timeStr}`, 'yyyy-MM-dd HH:mm', new Date()).toISOString()
   }
 
-  const getMaxCensusSize = (form: Process, census: Census) => {
-    switch (form.censusType) {
-      case CensusTypes.Spreadsheet:
-      case CensusTypes.Web3:
-        return form.addresses?.length ?? census?.size
-      case CensusTypes.CSP:
-      default:
-        return form.census?.size ?? census?.size
-    }
-  }
+  return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequest => {
+    const parsedStart = form.autoStart ? undefined : parseLocalDateTime(form.startDate, form.startTime)
+    const startRef = parsedStart ? new Date(parsedStart) : new Date()
+    const endDate =
+      form.endDate && form.endTime ? parseLocalDateTime(form.endDate, form.endTime) : addDays(startRef, 1).toISOString()
 
-  return (form: Process, census: Census): UnpublishedElection | MultiChoiceElection => {
-    const start = form.autoStart ? new Date() : parseLocalDateTime(form.startDate, form.startTime)
-    const startDate = form.autoStart ? undefined : parseLocalDateTime(form.startDate, form.startTime)
-    const endDate = form.endDate && form.endTime ? parseLocalDateTime(form.endDate, form.endTime) : addDays(start, 1)
+    const secretUntilTheEnd = form.resultVisibility === 'hidden'
+    const maxVoteOverwrites = form.censusType === CensusTypes.CSP ? 0 : 10
+    const isMultiChoice = form.questionType === SelectorTypes.Multiple
 
-    let base: IElectionParameters = {
-      census,
-      title: form.title,
-      description: form.description,
-      electionType: {
-        secretUntilTheEnd: Boolean(form.resultVisibility === 'hidden'),
-      },
-      maxCensusSize: getMaxCensusSize(form, census),
-      questions: form.questions.map(
-        (question) =>
-          ({
-            title: { default: question.title },
-            description: { default: question.description },
-            choices: question.options.map((q: Option, i: number) => {
-              const choice: IQuestion['choices'][number] = {
-                title: { default: q.option },
-                value: i,
-              }
+    const questions: VotingProcessQuestionRequest[] = form.questions.map((question) => {
+      const choices: Choice[] = question.options.map((q: Option, i: number) => ({
+        title: { default: q.option },
+        value: i,
+      }))
 
-              // Only include meta when extendedInfo is enabled
-              if (form.extendedInfo) {
-                choice.meta = {
-                  description: q.description,
-                  image: { default: q.image },
-                }
-              }
+      const metadata: Record<string, unknown> | undefined = form.extendedInfo
+        ? {
+            choices: question.options.map((q, i) => ({ value: i, description: q.description, image: q.image })),
+          }
+        : undefined
 
-              return choice
-            }),
-          }) as IQuestion
-      ),
-      startDate,
+      const commonProtocol: Omit<BallotProtocol, 'maxCount' | 'maxValue' | 'maxTotalCost' | 'uniqueValues'> = {
+        costExponent: 1,
+        costFromWeight: false,
+        maxVoteOverwrites,
+      }
+
+      if (isMultiChoice) {
+        const maxChoices = (form.maxNumberOfChoices ?? 0) > 0 ? form.maxNumberOfChoices! : question.options.length
+        return {
+          title: { default: question.title },
+          description: question.description ? { default: question.description } : undefined,
+          choices,
+          type: 'multiChoice',
+          typeSetup: { maxChoices, minChoices: form.minNumberOfChoices ?? 0, uniqueChoices: true },
+          ballotProtocol: { ...commonProtocol, maxCount: maxChoices, maxValue: 1, maxTotalCost: maxChoices, uniqueValues: true },
+          secretUntilTheEnd,
+          metadata,
+        }
+      }
+
+      return {
+        title: { default: question.title },
+        description: question.description ? { default: question.description } : undefined,
+        choices,
+        type: 'singleChoice',
+        ballotProtocol: {
+          ...commonProtocol,
+          maxCount: 1,
+          maxValue: question.options.length - 1,
+          maxTotalCost: 1,
+          uniqueValues: false,
+        },
+        secretUntilTheEnd,
+        metadata,
+      }
+    })
+
+    return {
+      orgAddress: organization?.address ?? '',
+      title: { default: form.title },
+      description: form.description ? { default: form.description } : undefined,
+      startDate: parsedStart,
       endDate,
-      voteType: {
-        maxVoteOverwrites: form.censusType === CensusTypes.CSP ? 0 : 10,
-      },
-      streamUri: permission(SubscriptionPermission.LiveStreaming) ? form.streamUri : undefined,
-      temporarySecretIdentity:
-        form.censusType === CensusTypes.Spreadsheet && Boolean(form.voterPrivacy === 'anonymous'),
-      meta: {
-        generated: 'ui-scaffold',
-        app: 'vocdoni',
-        census: {
-          type: form.censusType,
-          fields: form.spreadsheet?.header ?? undefined,
-        } as CensusMeta,
-      },
+      streamUri: permission(SubscriptionPermission.LiveStreaming) ? form.streamUri || undefined : undefined,
+      census: censusSpec,
+      questions,
     }
-
-    if (form.questionType === SelectorTypes.Multiple) {
-      return MultiChoiceElection.from({
-        ...base,
-        canAbstain: false,
-        maxNumberOfChoices: form.maxNumberOfChoices > 0 ? form.maxNumberOfChoices : form.questions[0].options.length,
-        minNumberOfChoices: form.minNumberOfChoices ?? 0,
-      })
-    }
-
-    return Election.from(base)
   }
 }
 
@@ -626,13 +619,12 @@ const ProcessCreateView = () => {
   const [isLeaveConfirmationOpen, setLeaveConfirmationOpen] = useState(false)
   const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
-  const { client } = useClient()
+  const { client: apiClient } = useApiClient()
   const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
   const { setStepDoneAsync } = useOrganizationSetup()
-  const processBundleMutation = useProcessBundle()
   const { trackPlausibleEvent } = useAnalytics()
-  const formToElectionMapper = useFormToElectionMapper()
+  const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
   // Confirm navigation if form is dirty
   const { isSamePath, cancel, proceed, resetSamePath, saveCooldown } = useConfirmOnNavigate({
@@ -737,90 +729,12 @@ const ProcessCreateView = () => {
     }
   }
 
-  const getCensus = async (form: Process, salt: string): Promise<Census> => {
-    if (form.censusType === 'spreadsheet') {
-      form.addresses = (await form.spreadsheet?.generateWallets(salt)) as Web3Address[]
-    }
-    let census = null
-    switch (form.censusType) {
-      case CensusTypes.CSP:
-        if (!form.census?.id) {
-          throw new Error(
-            t('process_create.census_missing', { defaultValue: 'Census data is missing for Memberbase census type' })
-          )
-        }
-
-        const nextElectionId = await client.electionService.nextElectionId(
-          organization.address,
-          formToElectionMapper(form, new CspCensus('0x23', document.location.href))
-        )
-        const bundledProcess = await processBundleMutation.mutateAsync({
-          censusId: form.census?.id,
-          processes: [nextElectionId],
-        })
-        census = new CspCensus(bundledProcess.root, bundledProcess.uri)
-
-        return census
-      case CensusTypes.Spreadsheet:
-      case CensusTypes.Web3:
-        if (form.weightedVote) {
-          census = new WeightedCensus()
-          const addresses = form.addresses.map(({ address, weight }) => ({
-            key: address,
-            weight: BigInt(weight),
-          }))
-
-          census.add(addresses)
-
-          return census
-        }
-        census = new PlainCensus()
-        const addresses = form.addresses.map(({ address }) => address)
-        census.add(addresses)
-
-        return census
-      default:
-        throw new Error(
-          t('process_create.census_type_not_allowed', {
-            type: form.censusType,
-            defaultValue: 'Census type {{type}} not allowed',
-          })
-        )
-    }
-  }
-
   const onSubmit = async (form: Process) => {
     try {
-      const account = await client.fetchAccountInfo()
-      if (!account.address) {
-        throw new Error(t('process_create.no_account_address', { defaultValue: 'No account address found.' }))
-      }
-      if (!isAccountData(account) || isNaN(account.electionIndex)) {
-        throw new Error(
-          t('process_create.no_election_index', { defaultValue: 'No election index found for the account.' })
-        )
-      }
-      const saltOwner = organization.address || account.address
-      const salt = await client.electionService.getElectionSalt(saltOwner, account.electionIndex)
-
-      const census = await getCensus(form, salt)
-      const election = formToElectionMapper(form, census)
-
-      if (form.censusType === CensusTypes.Spreadsheet) {
-        ;(election as any).meta = (election as any).meta || {}
-        ;(election as any).meta.census = {
-          ...((election as any).meta.census || {}),
-          salt,
-        }
-      }
-
-      let electionId: string | null = null
-      for await (const step of client.createElectionSteps(election)) {
-        if (step.key === ElectionCreationSteps.DONE) {
-          electionId = step.electionId
-          break
-        }
-      }
+      const censusSpec = buildCensusSpec(form)
+      const request = formToVotingProcessRequest(form, censusSpec)
+      const draftId = await apiClient.elections.create(request)
+      await apiClient.elections.publishAndWait(draftId)
 
       await setStepDoneAsync(SetupStepIds.firstVoteCreation)
 
@@ -832,7 +746,7 @@ const ProcessCreateView = () => {
       // navigation. The key omits the pagination params so every paginated/status
       // variant is evicted.
       queryClient.removeQueries({
-        queryKey: QueryKeys.organization.elections(account.address),
+        queryKey: QueryKeys.organization.elections(organization?.address),
       })
 
       trackPlausibleEvent({ name: AnalyticsEvents.ProcessCreated })
@@ -846,8 +760,8 @@ const ProcessCreateView = () => {
 
       methods.reset(defaultProcessValues)
 
-      const targetPath = electionId
-        ? generatePath(Routes.dashboard.process, { id: electionId })
+      const targetPath = draftId
+        ? generatePath(Routes.dashboard.process, { id: draftId })
         : Routes.dashboard.processes.all
 
       if (effectiveDraftId) {
