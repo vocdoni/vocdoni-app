@@ -496,7 +496,7 @@ const RemoveUserModal = ({ open, onOpenChange, user }: ActiveUserModalProps) => 
         name: `${user.info.firstName} ${user.info.lastName}`,
       })}
       open={open}
-      onOpenChange={({ open }) => onOpenChange({ open })}
+      onOpenChange={onOpenChange}
       cancelText={t('team.remove_member.cancel', { defaultValue: 'Cancel' })}
       confirmText={t('team.remove_member.confirm', { defaultValue: 'Remove' })}
       loading={removeUser.isPending}
@@ -541,7 +541,7 @@ const CancelInvitationModal = ({ open, onOpenChange, user }: PendingUserModalPro
         defaultValue: 'This will cancel the invitation. The person will not be able to join your organization.',
       })}
       open={open}
-      onOpenChange={({ open }) => onOpenChange({ open })}
+      onOpenChange={onOpenChange}
       cancelText={t('team.cancel_invitation.cancel', { defaultValue: 'Cancel' })}
       confirmText={t('team.cancel_invitation.confirm', { defaultValue: 'Cancel invitation' })}
       loading={cancelInvitation.isPending}
