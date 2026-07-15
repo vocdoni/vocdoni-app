@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { ElectionResultsTypeNames, InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import { mockUseElection } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { useCloneAsDraft } from './use-clone-as-draft'
@@ -9,7 +9,7 @@ const mockNavigate = vi.fn()
 const mockToast = vi.fn()
 const mockMutateAsync = vi.fn()
 const mockPermission = vi.fn()
-let mockElection: PublishedElection | InvalidElection | null = null
+let mockElection: VotingProcessResponse | null = null
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
@@ -67,54 +67,64 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: vi.fn() },
 }))
 
-// Helper function to create mock elections
-function createMockElection(
-  choices: Array<{
-    title: string
-    description?: string
-    image?: string
-  }>,
-  overrides: Partial<
-    PublishedElection & {
-      minNumberOfChoices?: number
-      maxNumberOfChoices?: number
-    }
-  > = {}
-): PublishedElection {
+type MockChoice = {
+  title: string
+  description?: string
+  image?: string
+}
+
+const SINGLE_CHOICE_PROTOCOL = {
+  costExponent: 1,
+  costFromWeight: false,
+  maxVoteOverwrites: 0,
+  maxCount: 1,
+  maxValue: 1,
+  maxTotalCost: 1,
+  uniqueValues: false,
+}
+
+// Builds a question in the new voting-process shape. Per-choice extended info lives in
+// `question.metadata.choices`, exactly as the create flow stores it.
+function createMockQuestion(
+  choices: MockChoice[],
+  overrides: Partial<VotingProcessQuestion> = {}
+): VotingProcessQuestion {
+  const hasMeta = choices.some((c) => c.description !== undefined || c.image !== undefined)
   return {
-    id: '0x1234567890abcdef',
-    organizationId: '0xorganization',
+    id: 'question-1',
+    parentProcessId: 'process-1',
+    title: { default: 'Test Question' },
+    description: { default: 'Question Description' },
+    choices: choices.map((choice, index) => ({ title: { default: choice.title }, value: index })),
+    ballotProtocol: SINGLE_CHOICE_PROTOCOL,
+    type: 'singleChoice',
+    secretUntilTheEnd: false,
+    status: 'ENDED',
+    metadata: hasMeta
+      ? { choices: choices.map((c, index) => ({ value: index, description: c.description, image: c.image })) }
+      : undefined,
+    ...overrides,
+  }
+}
+
+// Helper function to create mock voting processes
+function createMockElection(
+  choices: MockChoice[],
+  overrides: Partial<VotingProcessResponse> = {},
+  questionOverrides: Partial<VotingProcessQuestion> = {}
+): VotingProcessResponse {
+  return {
+    id: 'process-1',
+    orgAddress: '0xorganization',
     title: { default: 'Test Election' },
     description: { default: 'Test Description' },
-    status: 'ENDED',
-    startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-01-31'),
-    voteCount: 100,
-    questions: [
-      {
-        title: { default: 'Test Question' },
-        description: { default: 'Question Description' },
-        choices: choices.map((choice, index) => ({
-          title: { default: choice.title },
-          value: index,
-          meta:
-            choice.description !== undefined || choice.image !== undefined
-              ? {
-                  ...(choice.description !== undefined && { description: choice.description }),
-                  ...(choice.image !== undefined && { image: { default: choice.image } }),
-                }
-              : undefined,
-        })),
-      },
-    ],
-    electionType: { secretUntilTheEnd: false },
-    voteType: { maxCount: 1, maxValue: 2, uniqueChoices: true, maxVoteOverwrites: 0, costExponent: 0 },
-    resultsType: {
-      name: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
-      properties: {},
-    },
+    startDate: '2024-01-01T00:00:00Z',
+    endDate: '2024-01-31T00:00:00Z',
+    published: true,
+    census: {},
+    questions: [createMockQuestion(choices, questionOverrides)],
     ...overrides,
-  } as unknown as PublishedElection
+  }
 }
 
 describe('useCloneAsDraft', () => {
@@ -390,7 +400,7 @@ describe('useCloneAsDraft', () => {
       })
     })
 
-    it('should map option image as undefined when meta.image is not defined', async () => {
+    it('should map option image as undefined when metadata has no image', async () => {
       mockElection = createMockElection([{ title: 'Option 1' }]) // No image at all
 
       mockMutateAsync.mockResolvedValue('draft-123')
@@ -473,8 +483,7 @@ describe('useCloneAsDraft', () => {
 
   describe('basic field mapping', () => {
     it('should map election title correctly', async () => {
-      mockElection = createMockElection([{ title: 'Option 1' }])
-      mockElection.title.default = 'Custom Election Title'
+      mockElection = createMockElection([{ title: 'Option 1' }], { title: { default: 'Custom Election Title' } })
 
       mockMutateAsync.mockResolvedValue('draft-123')
 
@@ -496,8 +505,7 @@ describe('useCloneAsDraft', () => {
     })
 
     it('should map election description correctly', async () => {
-      mockElection = createMockElection([{ title: 'Option 1' }])
-      mockElection.description.default = 'Custom Description'
+      mockElection = createMockElection([{ title: 'Option 1' }], { description: { default: 'Custom Description' } })
 
       mockMutateAsync.mockResolvedValue('draft-123')
 
@@ -518,10 +526,8 @@ describe('useCloneAsDraft', () => {
       })
     })
 
-    it('should map organization ID correctly with ensure0x', async () => {
-      mockElection = createMockElection([{ title: 'Option 1' }])
-      // @ts-expect-error Testing purposes
-      mockElection.organizationId = 'abc123' // Without 0x prefix
+    it('should pass the process orgAddress through as the draft owner', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }], { orgAddress: '0xabc123' })
 
       mockMutateAsync.mockResolvedValue('draft-123')
 
@@ -534,7 +540,7 @@ describe('useCloneAsDraft', () => {
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith(
           expect.objectContaining({
-            orgAddress: '0xabc123', // Should have 0x prefix
+            orgAddress: '0xabc123',
           })
         )
       })
@@ -568,29 +574,19 @@ describe('useCloneAsDraft', () => {
     })
 
     it('should map multiple questions correctly', async () => {
-      mockElection = {
-        id: '0x1234567890abcdef',
-        organizationId: '0xorganization',
-        title: { default: 'Test Election' },
-        description: { default: 'Test Description' },
-        status: 'ENDED',
-        startDate: new Date('2024-01-01'),
-        endDate: new Date('2024-01-31'),
-        voteCount: 100,
-        questions: [
-          {
-            title: { default: 'Question 1' },
-            description: { default: 'Description 1' },
-            choices: [{ title: { default: 'Q1 Option 1' }, value: 0 }],
-          },
-          {
-            title: { default: 'Question 2' },
-            description: { default: 'Description 2' },
-            choices: [{ title: { default: 'Q2 Option 1' }, value: 0 }],
-          },
-        ],
-        electionType: { secretUntilTheEnd: false },
-      } as PublishedElection
+      mockElection = createMockElection([{ title: 'Q1 Option 1' }])
+      mockElection.questions = [
+        createMockQuestion([{ title: 'Q1 Option 1' }], {
+          id: 'question-1',
+          title: { default: 'Question 1' },
+          description: { default: 'Description 1' },
+        }),
+        createMockQuestion([{ title: 'Q2 Option 1' }], {
+          id: 'question-2',
+          title: { default: 'Question 2' },
+          description: { default: 'Description 2' },
+        }),
+      ]
 
       mockMutateAsync.mockResolvedValue('draft-123')
 
@@ -609,7 +605,7 @@ describe('useCloneAsDraft', () => {
     })
 
     it('should preserve weighted voting when cloning a weighted election', async () => {
-      mockElection = createMockElection([{ title: 'Option 1' }], { census: { weighted: true } } as any)
+      mockElection = createMockElection([{ title: 'Option 1' }], { census: { weighted: true } })
       mockMutateAsync.mockResolvedValue('draft-123')
 
       const { result } = renderHook(() => useCloneAsDraft())
@@ -630,11 +626,23 @@ describe('useCloneAsDraft', () => {
     })
 
     it('should preserve multi-choice settings and limits when cloning a multi-choice election', async () => {
-      // For inferBallotType to return MultiChoice: maxCount > 1, maxValue != 0, maxValue != 1 || uniqueChoices.
-      // api-types Election has no minCount field; minNumberOfChoices defaults to 0.
-      mockElection = createMockElection([{ title: 'Option 1' }, { title: 'Option 2' }, { title: 'Option 3' }], {
-        voteType: { maxCount: 2, maxValue: 3, uniqueChoices: false, maxVoteOverwrites: 0, costExponent: 0 },
-      })
+      mockElection = createMockElection(
+        [{ title: 'Option 1' }, { title: 'Option 2' }, { title: 'Option 3' }],
+        {},
+        {
+          type: 'multiChoice',
+          typeSetup: { minChoices: 0, maxChoices: 2, uniqueChoices: true },
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: false,
+            maxVoteOverwrites: 0,
+            maxCount: 2,
+            maxValue: 1,
+            maxTotalCost: 2,
+            uniqueValues: true,
+          },
+        }
+      )
       mockMutateAsync.mockResolvedValue('draft-123')
 
       const { result } = renderHook(() => useCloneAsDraft())
@@ -647,9 +655,30 @@ describe('useCloneAsDraft', () => {
         expect(mockMutateAsync).toHaveBeenCalledWith(
           expect.objectContaining({
             metadata: expect.objectContaining({
-              questionType: ElectionResultsTypeNames.MULTIPLE_CHOICE,
+              questionType: 'multiChoice',
               minNumberOfChoices: 0,
               maxNumberOfChoices: 2,
+            }),
+          })
+        )
+      })
+    })
+
+    it('should preserve hidden results when any question is secret until the end', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }], {}, { secretUntilTheEnd: true })
+      mockMutateAsync.mockResolvedValue('draft-123')
+
+      const { result } = renderHook(() => useCloneAsDraft())
+
+      await act(async () => {
+        await result.current.cloneAsDraft()
+      })
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith(
+          expect.objectContaining({
+            metadata: expect.objectContaining({
+              resultVisibility: 'hidden',
             }),
           })
         )
@@ -746,10 +775,9 @@ describe('useCloneAsDraft', () => {
   })
 
   describe('edge cases', () => {
-    it('should return early for InvalidElection', async () => {
-      // Create a mock PublishedElection first, then wrap it as InvalidElection
-      const mockPublishedElection = createMockElection([{ title: 'Option 1' }])
-      mockElection = new InvalidElection(mockPublishedElection)
+    it('should return early when the process has no questions', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }])
+      mockElection.questions = []
 
       const { result } = renderHook(() => useCloneAsDraft())
 
@@ -772,31 +800,8 @@ describe('useCloneAsDraft', () => {
       expect(mockMutateAsync).not.toHaveBeenCalled()
     })
 
-    it('should handle meta object without image property', async () => {
-      mockElection = {
-        id: '0x1234567890abcdef',
-        organizationId: '0xorganization',
-        title: { default: 'Test Election' },
-        description: { default: 'Test Description' },
-        status: 'ENDED',
-        startDate: new Date('2024-01-01'),
-        endDate: new Date('2024-01-31'),
-        voteCount: 100,
-        questions: [
-          {
-            title: { default: 'Test Question' },
-            description: { default: 'Question Description' },
-            choices: [
-              {
-                title: { default: 'Option 1' },
-                value: 0,
-                meta: { someOtherProperty: 'value' } as any, // No description, no image
-              },
-            ],
-          },
-        ],
-        electionType: { secretUntilTheEnd: false },
-      } as PublishedElection
+    it('should handle question metadata without a choices list', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }], {}, { metadata: { someOtherProperty: 'value' } })
 
       mockMutateAsync.mockResolvedValue('draft-123')
 
@@ -809,6 +814,7 @@ describe('useCloneAsDraft', () => {
       await waitFor(() => {
         const call = mockMutateAsync.mock.calls[0][0]
         expect(call.metadata.questions[0].options[0].image).toBeUndefined()
+        expect(call.metadata.extendedInfo).toBe(false)
       })
     })
   })

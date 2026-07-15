@@ -1,7 +1,6 @@
 import { useElection } from '@vocdoni/react-components'
-import type { LocalizedInput } from '@vocdoni/api-types'
-import { BallotType, inferBallotType } from '@vocdoni/ballot'
-import { ElectionResultsTypeNames, ensure0x, InvalidElection } from '@vocdoni/sdk'
+import { isSecretUntilTheEnd } from '@vocdoni/api-client'
+import type { LocalizedInput, VotingProcessQuestion } from '@vocdoni/api-types'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, useNavigate } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -11,23 +10,15 @@ import { Routes } from '~src/router/routes'
 import { useCreateProcess } from '../Create'
 import { defaultProcessValues, SelectorTypes } from '../Create/common'
 
-const BALLOT_TO_RESULTS_TYPE_NAME: Record<BallotType, ElectionResultsTypeNames> = {
-  [BallotType.SingleChoice]: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
-  [BallotType.MultiChoice]: ElectionResultsTypeNames.MULTIPLE_CHOICE,
-  [BallotType.Approval]: ElectionResultsTypeNames.APPROVAL,
-  [BallotType.Budget]: ElectionResultsTypeNames.BUDGET,
-  [BallotType.Quadratic]: ElectionResultsTypeNames.QUADRATIC,
-}
-
 /** Resolve a LocalizedInput (string | Record<string,string>) to a plain string. */
 const localStr = (v?: LocalizedInput): string => (typeof v === 'string' ? v : (v?.default ?? ''))
 
-/** Shape of the SAAS-stored per-choice metadata (optional extension of api-types Choice). */
-type ChoiceWithMeta = {
-  meta?: {
-    description?: string
-    image?: { default?: string }
-  }
+/** Per-choice extended info the create flow stores under `question.metadata.choices`. */
+type ChoiceMeta = { value: number; description?: string; image?: string }
+
+const choiceMetas = (question: VotingProcessQuestion): ChoiceMeta[] => {
+  const choices = question.metadata?.choices
+  return Array.isArray(choices) ? (choices as ChoiceMeta[]) : []
 }
 
 export const useCloneAsDraft = () => {
@@ -40,32 +31,31 @@ export const useCloneAsDraft = () => {
   const limit = permission(SubscriptionPermission.Drafts)
 
   const cloneAsDraft = async () => {
-    if (!election) return
+    if (!election?.id || !election.questions?.length) return
 
-    // InvalidElection instances (SDK draft state) have no questions/voteType
-    if (election instanceof InvalidElection) return
+    // The create flow only produces uniform singleChoice/multiChoice processes, so the
+    // first question determines the selector type of the cloned draft.
+    const firstQuestion = election.questions[0]
+    const questionType = firstQuestion.type === SelectorTypes.Multiple ? SelectorTypes.Multiple : SelectorTypes.Single
 
-    // Guard: if voteType or questions are missing (edge-case mocks / malformed data), default to single-choice
-    const ballot = election.voteType && election.questions ? inferBallotType(election) : BallotType.SingleChoice
-    const resultsTypeName = BALLOT_TO_RESULTS_TYPE_NAME[ballot]
-    const questionType =
-      resultsTypeName === ElectionResultsTypeNames.MULTIPLE_CHOICE ? SelectorTypes.Multiple : SelectorTypes.Single
-
-    // For multiple choice: derive limits from voteType
+    // For multiple choice: derive limits from the question type setup (ballotProtocol as fallback)
     const choiceLimits =
-      questionType === SelectorTypes.Multiple ? { min: 0, max: election.voteType?.maxCount ?? 0 } : undefined
+      questionType === SelectorTypes.Multiple
+        ? {
+            min: firstQuestion.typeSetup?.minChoices ?? 0,
+            max: firstQuestion.typeSetup?.maxChoices ?? firstQuestion.ballotProtocol?.maxCount ?? 0,
+          }
+        : undefined
 
     const isWeighted = election.census?.weighted ?? false
 
-    // Extended info: true when any choice has a non-empty description or image in its SAAS meta
-    const extendedInfo = (election.questions ?? []).some((q) =>
-      q.choices.some((c) => {
-        const m = (c as unknown as ChoiceWithMeta).meta
-        return (
-          (typeof m?.description === 'string' && m.description.length > 0) ||
-          (typeof m?.image?.default === 'string' && m.image.default.length > 0)
-        )
-      })
+    // Extended info: true when any choice has a non-empty description or image in its metadata
+    const extendedInfo = election.questions.some((q) =>
+      choiceMetas(q).some(
+        (m) =>
+          (typeof m.description === 'string' && m.description.length > 0) ||
+          (typeof m.image === 'string' && m.image.length > 0)
+      )
     )
 
     const metadata = {
@@ -76,21 +66,20 @@ export const useCloneAsDraft = () => {
       questionType,
       minNumberOfChoices: questionType === SelectorTypes.Multiple ? (choiceLimits?.min ?? 0) : null,
       maxNumberOfChoices:
-        questionType === SelectorTypes.Multiple
-          ? (choiceLimits?.max ?? election.questions?.[0]?.choices.length ?? null)
-          : null,
-      resultVisibility: election.electionType.secretUntilTheEnd ? ('hidden' as const) : ('live' as const),
+        questionType === SelectorTypes.Multiple ? (choiceLimits?.max ?? firstQuestion.choices.length ?? null) : null,
+      resultVisibility: isSecretUntilTheEnd(election) ? ('hidden' as const) : ('live' as const),
       weightedVote: Boolean(isWeighted),
-      questions: (election.questions ?? []).map((question) => {
+      questions: election.questions.map((question) => {
+        const metas = choiceMetas(question)
         return {
           title: localStr(question.title),
           description: localStr(question.description),
           options: question.choices.map((option) => {
-            const m = (option as unknown as ChoiceWithMeta).meta
+            const m = metas.find((entry) => entry.value === option.value)
             return {
               option: localStr(option.title),
               description: m?.description !== undefined ? m.description : undefined,
-              image: m?.image?.default !== undefined ? m.image.default : undefined,
+              image: m?.image !== undefined ? m.image : undefined,
             }
           }),
         }
@@ -100,7 +89,7 @@ export const useCloneAsDraft = () => {
     try {
       const clonedDraftId = await createProcess.mutateAsync({
         metadata,
-        orgAddress: ensure0x(election.organizationId),
+        orgAddress: election.orgAddress,
       })
 
       toast({
