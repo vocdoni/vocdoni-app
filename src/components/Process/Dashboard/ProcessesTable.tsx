@@ -6,9 +6,8 @@ import {
   QuestionsTypeBadge,
   useElection,
 } from '@vocdoni/react-components'
-import { hasResults, isLive } from '@vocdoni/api-client'
-import type { Election } from '@vocdoni/api-types'
-import { ensure0x } from '@vocdoni/sdk'
+import { hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router-dom'
@@ -23,7 +22,7 @@ import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuI
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 type ProcessesListProps = {
-  processes?: Election[]
+  processes?: VotingProcessResponse[]
 }
 
 const ProcessesTable = ({ processes }: ProcessesListProps) => {
@@ -66,19 +65,23 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
 }
 
 const ProcessRow = () => {
-  const { election } = useElection()
+  const { election, status, results } = useElection()
   const { format } = useDateFns()
   const { t } = useTranslation()
 
   if (!election) return null
 
-  const title = getElectionTitle(election) ?? election.id
+  const title = getElectionTitle(election) || election.id
+  // Live results are visible while the vote runs (or right after it ends) unless the
+  // process hides tallies until the end; final results show once they're computed.
+  const resultsVisible =
+    hasResults(election) || ((status === 'ENDED' || status === 'ONGOING') && !isSecretUntilTheEnd(election))
 
   return (
     <Table.Row position='relative'>
       <Table.Cell>
         <Link asChild title={title}>
-          <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+          <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
             <Text w='full' maxW='500px' size='sm' truncate>
               {title}
             </Text>
@@ -93,10 +96,9 @@ const ProcessRow = () => {
       <Table.Cell>
         <ElectionStatusBadge size='sm' />
       </Table.Cell>
-      <Table.Cell textAlign='end'>{election.voteCount}</Table.Cell>
+      <Table.Cell textAlign='end'>{processVoteCount(results)}</Table.Cell>
       <Table.Cell>
-        {hasResults(election) ||
-        ((election.status === 'ENDED' || isLive(election)) && !election.electionType.secretUntilTheEnd) ? (
+        {resultsVisible ? (
           <Tag.Root colorPalette='gray' variant='solid' size='sm'>
             <Tag.Label>
               <Trans i18nKey='process_list.results_live'>Live</Trans>
@@ -127,9 +129,13 @@ const ProcessContextMenu = () => {
   if (!election) return null
 
   const publicProcessPath = getPublicProcessPath({
-    id: ensure0x(election.id),
+    id: election.id,
     language: publicLanguage,
   })
+
+  // The explorer knows on-chain (Vochain) process ids; each question is its own
+  // on-chain election, so link the first question's upstream id.
+  const explorerProcessId = election.questions[0]?.upstreamId
 
   return (
     <Menu.Root>
@@ -142,7 +148,7 @@ const ProcessContextMenu = () => {
         <MenuPositioner>
           <Menu.Content>
             <Menu.Item value='more-info' asChild>
-              <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+              <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
                 <Icon as={LuInfo} boxSize={4} />
                 <Trans i18nKey='process_context.more_info'>More info</Trans>
               </RouterLink>
@@ -153,12 +159,14 @@ const ProcessContextMenu = () => {
                 <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
               </a>
             </Menu.Item>
-            <Menu.Item value='explorer' asChild>
-              <a href={`${explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
-                <Icon as={LuSearch} boxSize={4} />
-                <Trans i18nKey='process_context.explorer'>Explorer</Trans>
-              </a>
-            </Menu.Item>
+            {explorerProcessId && (
+              <Menu.Item value='explorer' asChild>
+                <a href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
+                  <Icon as={LuSearch} boxSize={4} />
+                  <Trans i18nKey='process_context.explorer'>Explorer</Trans>
+                </a>
+              </Menu.Item>
+            )}
             <VotingReportPdfMenuItem election={election as unknown as Record<string, unknown>} />
             <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
               <Icon as={LuCopy} boxSize={4} />

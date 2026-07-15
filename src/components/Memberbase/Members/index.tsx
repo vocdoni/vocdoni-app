@@ -23,10 +23,11 @@ import {
   WrapItem,
 } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useOrganization } from '@vocdoni/react-components'
+import { getElectionTitle, useOrganization } from '@vocdoni/react-components'
+import { computeProcessStatus } from '@vocdoni/api-client'
+import type { QuestionStatus } from '@vocdoni/api-types'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -213,7 +214,7 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
   )
 }
 
-const ACTIVE_PROCESS_STATUSES = [ElectionStatus.ONGOING, ElectionStatus.UPCOMING, ElectionStatus.PAUSED]
+const ACTIVE_PROCESS_STATUSES: QuestionStatus[] = ['ONGOING', 'UPCOMING', 'PAUSED']
 
 const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerProps) => {
   const { t } = useTranslation()
@@ -230,10 +231,9 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
     enabled: electionsQuery.enabled && isOpen,
   })
 
-  const processes = (elections?.elections ?? [])
-    .filter((election): election is PublishedElection => election instanceof PublishedElection)
-    .filter((election) => ACTIVE_PROCESS_STATUSES.includes(election.status as ElectionStatus))
-    .map((election) => ({ id: election.id, title: election.title?.default || election.id }))
+  const processes = (elections?.processes ?? [])
+    .filter((election) => ACTIVE_PROCESS_STATUSES.includes(computeProcessStatus(election.questions)))
+    .map((election) => ({ id: election.id, title: getElectionTitle(election) || election.id }))
 
   const {
     data: censusId,

@@ -1,5 +1,4 @@
 import { Tabs } from '@chakra-ui/react'
-import { ElectionStatus } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { generatePath, matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
@@ -16,7 +15,8 @@ const OrganizationVotings = () => {
     },
     {
       label: t('ended_processes', { defaultValue: 'Ended' }),
-      route: generatePath(Routes.dashboard.processes.ended, { page: 1, status: ElectionStatus.RESULTS }),
+      // Legacy status name kept in the route; the list query maps it onto the SAAS status union
+      route: generatePath(Routes.dashboard.processes.ended, { page: 1, status: 'RESULTS' }),
     },
     {
       label: t('draft_processes', { defaultValue: 'Drafts' }),
