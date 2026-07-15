@@ -64,8 +64,8 @@ const checkColorValue = (value: string, path: string, violations: Violation[]) =
   // Composite CSS values (gradients, shorthands) are covered by the raw-literal scan
   if (value.includes(' ') || value.includes('(')) return
   const base = value.split('/')[0] // strip opacity modifier (e.g. gray.500/40)
-  const candidate = isTokenPath(base) ? base : base
-  if (!colorTokenExists(candidate)) {
+  if (!isTokenPath(base)) return
+  if (!colorTokenExists(base)) {
     violations.push({ path, value, reason: 'color token not found in the built system' })
   }
 }
