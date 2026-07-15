@@ -21,7 +21,7 @@ import { LuCircleHelp, LuSearch } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
-import { useCensusBundle } from '~queries/census'
+import { processCensusInfo, useCensusBundle } from '~queries/census'
 import { CensusParticipant, useParticipantsCheck } from '~queries/participants'
 
 // Maps a census credential field to a human label. Unknown fields fall back to their raw key.
@@ -69,9 +69,10 @@ const valueForField = (participant: CensusParticipant, field: string, fallback: 
 // the section is actually shown.
 export const CensusSearch = () => {
   const { election } = useElection()
+  const census = processCensusInfo(election?.census)
 
-  const isCsp = !!election && election.census?.type === 'csp'
-  const censusURI = isCsp ? election.census?.uri : undefined
+  const isCsp = census?.type === 'csp'
+  const censusURI = isCsp ? census?.uri : undefined
   const processID = election?.id
 
   const { data: bundle, isError: bundleError } = useCensusBundle(censusURI)

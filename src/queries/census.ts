@@ -1,9 +1,26 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
+import type { CensusSpec } from '@vocdoni/api-types'
 import { useElection } from '@vocdoni/react-components'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~queries/keys'
+
+/**
+ * Census fields the admin UI needs but `GET /processes/{id}` does not expose yet: the
+ * backend's census spec only carries auth fields / weighted, dropping the census type,
+ * published uri and size. Modeled as optional extras so CSP census features (search,
+ * real census size) degrade gracefully until the backend exposes them — see the
+ * integrator-sdk GAPS.md entry "CensusSpec carries no census identity".
+ */
+export type ProcessCensusInfo = CensusSpec & {
+  type?: string
+  uri?: string
+  size?: number
+}
+
+export const processCensusInfo = (census?: CensusSpec): ProcessCensusInfo | undefined =>
+  census as ProcessCensusInfo | undefined
 
 export type CensusBundleData = {
   id: string
@@ -54,13 +71,14 @@ export const useCensusBundle = (censusURI?: string) => {
 // For any other census type the size is already populated on `election.census.size`, so we fall back to it.
 export const useCensusSize = () => {
   const { election } = useElection()
+  const census = processCensusInfo(election?.census)
 
-  const isCsp = !!election && election.census?.type === 'csp'
-  const bundleURI = isCsp ? election.census?.uri : undefined
+  const isCsp = census?.type === 'csp'
+  const bundleURI = isCsp ? census?.uri : undefined
 
   const { data: bundle, isLoading } = useCensusBundle(bundleURI)
 
-  const fallback = election ? (election.census?.size ?? 0) : 0
+  const fallback = census?.size ?? 0
   const size = bundle?.census?.size ?? fallback
 
   return { size, isLoading: !!bundleURI && isLoading }
@@ -98,7 +116,7 @@ export const useProcessCensusId = (client: VocdoniApiClient, processId?: string,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const election = await client.elections.get(processId!)
-      const bundleId = election.census?.uri?.match(BUNDLE_ID_REGEX)?.[1]
+      const bundleId = processCensusInfo(election.census)?.uri?.match(BUNDLE_ID_REGEX)?.[1]
       if (!bundleId) return undefined
 
       const bundle = await bearedFetch<ProcessBundleResponse>(

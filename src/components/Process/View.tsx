@@ -22,8 +22,7 @@ import {
 } from '@chakra-ui/react'
 import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
 import { hasResults } from '@vocdoni/api-client'
-import { BallotType, inferBallotType } from '@vocdoni/ballot'
-import { ElectionResultsTypeNames } from '@vocdoni/sdk'
+import { inferQuestionBallotType } from '@vocdoni/ballot'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ReactNode, useEffect, useRef, useState } from 'react'
@@ -42,14 +41,6 @@ import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
 import { useVotingMethodLabel } from './resultTypeLabels'
-
-const BALLOT_TO_RESULTS_TYPE_NAME: Record<BallotType, ElectionResultsTypeNames> = {
-  [BallotType.SingleChoice]: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
-  [BallotType.MultiChoice]: ElectionResultsTypeNames.MULTIPLE_CHOICE,
-  [BallotType.Approval]: ElectionResultsTypeNames.APPROVAL,
-  [BallotType.Budget]: ElectionResultsTypeNames.BUDGET,
-  [BallotType.Quadratic]: ElectionResultsTypeNames.QUADRATIC,
-}
 
 type ProcessInfoCardProps = {
   label: string
@@ -77,8 +68,9 @@ const VotingMethod = () => {
   const { t } = useTranslation()
   const { election } = useElection()
   const isWeighted = election?.census?.weighted ?? false
-  const resultsTypeName = election ? BALLOT_TO_RESULTS_TYPE_NAME[inferBallotType(election)] : undefined
-  const votingMethod = useVotingMethodLabel(resultsTypeName, {
+  const firstQuestion = election?.questions[0]
+  const ballotType = firstQuestion ? inferQuestionBallotType(firstQuestion) : undefined
+  const votingMethod = useVotingMethodLabel(ballotType, {
     weighted: isWeighted,
     defaultValue: t('process.voting_method.unknown', { defaultValue: 'Unknown' }),
   })
