@@ -1,7 +1,8 @@
-import { Box, Button, Card, Flex, Image, Text } from '@chakra-ui/react'
+import { Button, Card, Flex, Text } from '@chakra-ui/react'
 import { Trans } from 'react-i18next'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import { DashboardContents } from '~components/Dashboard/Contents'
+import { EmptyState } from '~components/ui/EmptyState'
 import { Routes } from '~src/router/routes'
 import empty from '/assets/illustrations/9.png'
 
@@ -15,14 +16,13 @@ export const NoOrganizations = () => {
       </Button>
       <Card.Root variant='no-elections' minH='100%' maxW='650' mx='auto'>
         <Card.Body>
-          <Flex justifyContent={'center'}>
-            <Image src={empty} _dark={{ filter: 'invert(70%)' }} />
-          </Flex>
-          <Box>
-            <Text fontWeight='600' fontSize='lg' m='20px 0px'>
+          <EmptyState
+            image={empty}
+            title={
               <Trans i18nKey='organization.no_organization_title'>You don't belong to any organization yet!</Trans>
-            </Text>
-            <Text mb='20px'>
+            }
+          >
+            <Text>
               <Trans i18nKey='new_organization.description1' components={{ span: <Text as='span' fontWeight='600' /> }}>
                 Set up your{' '}
                 <Text as='span' fontWeight='bold'>
@@ -31,17 +31,17 @@ export const NoOrganizations = () => {
                 and start creating voting processes to engage with your community.
               </Trans>
             </Text>
-            <Text mb='20px'>
+            <Text>
               <Trans i18nKey='new_organization.onboarding'>
                 If your organization is already on Vocdoni, ask its administrator to invite you.
               </Trans>
             </Text>
-          </Box>
-          <Button mt='40px' w='100%' asChild>
-            <ReactRouterLink to={Routes.dashboard.organizationCreate}>
-              <Trans i18nKey='create_org.create_button'>Create your organization</Trans>
-            </ReactRouterLink>
-          </Button>
+            <Button mt={4} w='100%' asChild>
+              <ReactRouterLink to={Routes.dashboard.organizationCreate}>
+                <Trans i18nKey='create_org.create_button'>Create your organization</Trans>
+              </ReactRouterLink>
+            </Button>
+          </EmptyState>
         </Card.Body>
       </Card.Root>
     </Flex>

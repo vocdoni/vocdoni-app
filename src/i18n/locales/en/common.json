@@ -6,6 +6,7 @@
   "actions": {
     "cancel": "Cancel",
     "cancel_description": "Canceling \"{{ election.title.default }}\"...\n\nAttention: this action is irreversible and will cancel all the previous votes on it",
+    "confirm": "Confirm",
     "continue": "Resume the process immediately, in case it has been paused",
     "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
     "create_first_vote": "View all processes",

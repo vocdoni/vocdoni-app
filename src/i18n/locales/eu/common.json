@@ -6,6 +6,7 @@
   "actions": {
     "cancel": "Utzi",
     "cancel_description": "«{{ election.title.default }}» bertan behera uzten...\n\nKontuz: ekintza hau ezin da desegin eta emandako boto guztiak baliogabetuko ditu.",
+    "confirm": "Berretsi",
     "continue": "Prozesuari berehala berrekin, etenda bazegoen.",
     "continue_description": "«{{ election.title.default }}» bozketa-prozesuari berrekiten...",
     "create_first_vote": "Ikusi prozesu guztiak",
