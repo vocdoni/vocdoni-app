@@ -1,12 +1,8 @@
-import { Button, Dialog, Flex, Icon, IconButton, Portal, Text, useBreakpointValue } from '@chakra-ui/react'
-import { useLocalStorage } from '@uidotdev/usehooks'
-import { useFormContext } from 'react-hook-form'
+import { Flex, Icon, IconButton, useBreakpointValue } from '@chakra-ui/react'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuSettings, LuX } from 'react-icons/lu'
+import { LuX } from 'react-icons/lu'
 import { Sidebar, SidebarContents, SidebarSubtitle, SidebarTitle } from '~components/Dashboard/Contents'
 import { useSidebarVisibility } from '~components/Dashboard/SidebarContext'
-import { CensusTypes } from '~components/Process/Census/CensusType'
-import { Process } from '../common'
 import { BasicConfig } from './BasicConfig'
 import CensusCreation from './CensusCreation'
 import { ExtraConfig } from './ExtraConfig'
@@ -14,17 +10,7 @@ import { ExtraConfig } from './ExtraConfig'
 export const CreateSidebar = () => {
   const { t } = useTranslation()
   const isMobile = useBreakpointValue({ base: true, md: false })
-  const [showExtraCensusMethods, setShowExtraCensusMethods] = useLocalStorage('showExtraCensusMethods', false)
-  const { setValue } = useFormContext<Process>()
   const { showSidebar, closeSidebar } = useSidebarVisibility()
-
-  const handleToggleExtraMethods = () => {
-    if (showExtraCensusMethods) {
-      // make sure we switch back to Group census if we are disabling extra methods
-      setValue('censusType', CensusTypes.CSP)
-    }
-    setShowExtraCensusMethods(!showExtraCensusMethods)
-  }
 
   return (
     <Sidebar show={showSidebar}>
@@ -58,66 +44,13 @@ export const CreateSidebar = () => {
         </SidebarSubtitle>
         <ExtraConfig />
 
-        <Flex
-          borderTop='1px solid'
-          borderColor='table.border'
-          mt={4}
-          pt={4}
-          justifyContent='space-between'
-          alignItems='center'
-        >
+        <Flex borderTop='1px solid' borderColor='table.border' mt={4} pt={4}>
           <SidebarSubtitle m={0}>
             <Trans i18nKey='process_create.census_creation'>Census Creation</Trans>
           </SidebarSubtitle>
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <IconButton
-                aria-label={t('process_create.census.settings', 'Census settings')}
-                variant='ghost'
-                size='sm'
-                _hover={{ bg: 'bg.muted' }}
-              >
-                <Icon as={LuSettings} />
-              </IconButton>
-            </Dialog.Trigger>
-            <Portal>
-              <Dialog.Backdrop />
-              <Dialog.Positioner>
-                <Dialog.Content>
-                  <Dialog.CloseTrigger />
-                  <Dialog.Header display='flex' flexDirection='column' alignItems='flex-start' gap={1}>
-                    <Dialog.Title>
-                      {t('process_create.census.extra_methods.modal_title', 'Extra census methods')}
-                    </Dialog.Title>
-                    <Text fontSize='sm' color='texts.subtle'>
-                      {showExtraCensusMethods
-                        ? t(
-                            'process_create.census.extra_methods.disable_description',
-                            'Do you want to disable extra census methods? This will hide the Spreadsheet and Web3 options and show only the Group method.'
-                          )
-                        : t(
-                            'process_create.census.extra_methods.enable_description',
-                            'Do you want to enable extra census methods? This will show additional options like Spreadsheet and Web3 census creation.'
-                          )}
-                    </Text>
-                  </Dialog.Header>
-                  <Dialog.Footer>
-                    <Dialog.ActionTrigger asChild>
-                      <Button variant='ghost'>{t('common.cancel', 'Cancel')}</Button>
-                    </Dialog.ActionTrigger>
-                    <Dialog.ActionTrigger asChild>
-                      <Button onClick={handleToggleExtraMethods}>
-                        {showExtraCensusMethods ? t('common.disable', 'Disable') : t('common.enable', 'Enable')}
-                      </Button>
-                    </Dialog.ActionTrigger>
-                  </Dialog.Footer>
-                </Dialog.Content>
-              </Dialog.Positioner>
-            </Portal>
-          </Dialog.Root>
         </Flex>
 
-        <CensusCreation showExtraMethods={showExtraCensusMethods} />
+        <CensusCreation />
       </SidebarContents>
     </Sidebar>
   )

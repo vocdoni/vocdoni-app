@@ -110,8 +110,6 @@
     "cancel": "Cancelar",
     "close_drawer": "Fechar painel",
     "confirm": "Confirmar",
-    "disable": "Desativar",
-    "enable": "Ativar",
     "home": "Início",
     "next": "Seguinte",
     "retry": "Tenta de novo"
@@ -305,9 +303,6 @@
   "ended_processes": "Terminados",
   "enter_promo_code": "Introduzir código",
   "error": {
-    "invalid_cell_data": "Algumas linhas não contêm endereços corretos: {{rows,list(style:short)}}",
-    "invalid_row_length": "Corrige as linhas {{rows,list(style: short)}} do documento e carrega-o novamente",
-    "invalid_weight_type": "Era esperado um peso na primeira coluna nas linhas {{rows,list(style:short)}}, mas foram encontrados dados inesperados",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar os perfis",
     "loading_types": "Erro ao carregar os tipos de organização",
@@ -413,8 +408,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Endereço já em uso",
-      "address_pattern": "Apenas são permitidos endereços hexadecimais (ex.: 0x031101A…)",
       "census_config_required": "Configura as definições de autenticação da lista de participantes.",
       "email_invalid": "Endereço de email inválido",
       "field_is_required": "Este campo é obrigatório",
@@ -432,40 +425,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Adicionar",
-        "remove_address": "Remover endereço"
-      },
       "error_deleting_draft_title": "Erro ao eliminar o rascunho",
       "error_title": "Erro ao criar o processo",
-      "spreadsheet": {
-        "download_template": "Não tens um ficheiro CSV? <a>Transfere template.csv</a>, preenche-o e carrega-o.",
-        "preview": {
-          "success_description": "Será pedido ao utilizador que se autentique com:",
-          "success_title": "Ficheiro carregado com sucesso",
-          "upload_new_list": "Carregar uma nova lista de votantes"
-        },
-        "template": {
-          "email": "Email",
-          "firstname": "Nome próprio",
-          "lastname": "Apelido",
-          "weight": "Peso"
-        },
-        "upload_description": "Carrega um ficheiro CSV com os participantes. Cada coluna será usada como uma credencial que o votante terá de utilizar para se autenticar. A primeira linha conterá os títulos dessa credencial."
-      },
       "success_description": "A redirecionar-te para a página do processo de votação…",
-      "success_title": "Processo de votação criado com sucesso",
-      "web3": {
-        "census_description": "Adiciona endereços de carteira que terão direito a votar. Podes adicioná-los individualmente ou carregar um ficheiro CSV.",
-        "census_summary_description_one": "<b>{{count}} endereço</b> terá direito a votar",
-        "census_summary_description_many": "",
-        "census_summary_description_other": "<b>{{count}} endereços</b> terão direito a votar",
-        "census_summary_title": "Resumo da lista de participantes",
-        "csv_format": "O ficheiro CSV deve conter os endereços de carteira na primeira coluna.",
-        "csv_format_weighted": "O ficheiro CSV deve conter os pesos na primeira coluna e os endereços de carteira na segunda coluna.",
-        "upload_csv": "OU CARREGAR CSV",
-        "wallet_addresses": "Endereços de carteira"
-      }
+      "success_title": "Processo de votação criado com sucesso"
     },
     "select_language": "Idioma",
     "support": {
@@ -1476,7 +1439,6 @@
     "total_census_size": "{{maxCensusSize}} votantes autorizados num total de {{censusSize}} na lista de participantes",
     "total_census_size_tooltip": "O número máximo de votantes autorizados está limitado a {{maxCensusSize}} de uma lista de participantes de {{censusSize}} ({{percent}}% do total). Apenas os primeiros {{maxCensusSize}} votantes podem votar.",
     "voters": "Votantes",
-    "voting": "Estamos a processar o teu voto. Este processo demorará alguns segundos. Não feches nem atualizes esta página.",
     "voting_method": {
       "approval": "Aprovação",
       "budget": "Afetação de orçamento",
@@ -1505,29 +1467,14 @@
     "auto_start": "Iniciar imediatamente",
     "basic_configuration": "Configuração básica",
     "census": {
-      "extra_methods": {
-        "disable_description": "Pretendes desativar os métodos adicionais de lista de participantes? Isto irá ocultar as opções de Folha de cálculo e Web3 e mostrar apenas o método de Grupo.",
-        "enable_description": "Pretendes ativar os métodos adicionais de lista de participantes? Isto mostrará opções adicionais como a criação da lista de participantes via Folha de cálculo e Web3.",
-        "modal_title": "Métodos adicionais de lista de participantes"
-      },
       "group": {
-        "label": "Grupo",
         "no_groups": "Para iniciar uma votação, tens primeiro de criar um grupo de votantes elegíveis a partir da tua base de membros. <1>Cria um aqui</1>."
       },
       "memberbase": {
         "label": "Seleciona um grupo de membros para criar a lista de participantes"
-      },
-      "settings": "Definições da lista de participantes",
-      "spreadsheet": {
-        "label": "Folha de cálculo"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Criação da lista de participantes",
-    "census_missing": "Faltam dados da lista de participantes para o tipo «Base de membros»",
-    "census_type_not_allowed": "Tipo de lista de participantes {{type}} não permitido",
     "end_datetime": "Data e hora de fim",
     "extra_configuration": "Configuração adicional",
     "group": {
@@ -1537,8 +1484,6 @@
       "scroll_to_load": "Desce para carregar mais…"
     },
     "new_option": "Adicionar uma nova opção",
-    "no_account_address": "Não foi encontrado nenhum endereço de conta.",
-    "no_election_index": "Não foi encontrado nenhum índice de votação para a conta.",
     "option": {
       "description_placeholder": "Descrição (opcional)",
       "placeholder": "Opção {{number}}",
@@ -1590,8 +1535,6 @@
       "two_fa_disabled": "Desativada: não foi configurada verificação de identidade adicional neste processo de votação.",
       "two_fa_enabled": "Ativada: os votantes confirmam a sua identidade com um código de utilização única enviado para os seus dispositivos pessoais.",
       "voter_access_source": "Origem do acesso do votante",
-      "voter_access_source_spreadsheet": "Os votantes acedem com credenciais derivadas da folha de cálculo carregada pela organização.",
-      "voter_access_source_web3": "Os votantes acedem com o endereço de carteira incluído na lista de participantes Web3.",
       "voter_access_source_weighted": "A elegibilidade é verificada com base na lista de participantes ponderada fornecida pela organização para este processo."
     },
     "census": {
@@ -1607,9 +1550,7 @@
     "census_type": {
       "anonymous": "Lista de participantes anónima",
       "csp": "Lista de participantes CSP",
-      "spreadsheet": "Folha de cálculo",
       "unknown": "Não disponível",
-      "web3": "Web3",
       "weighted": "Lista de participantes ponderada"
     },
     "disclaimer": {
@@ -1834,9 +1775,7 @@
   "signup_subtitle": "Introduz as tuas informações para começar",
   "signup_title": "Criar conta",
   "spreadsheet": {
-    "access_button": "Identificar-se",
-    "close": "Fechar",
-    "modal_title": "Autenticação"
+    "access_button": "Identificar-se"
   },
   "start_date": "Data de início",
   "start_time": "Hora de início",
@@ -2021,7 +1960,6 @@
     "level_strong": "Forte",
     "level_weak": "Fraco",
     "no_group_description": "Seleciona primeiro um grupo para configurar a autenticação.",
-    "save_failed": "Falha ao configurar a autenticação dos votantes",
     "security_level": "Boa segurança",
     "security_recommendation_1": "Para uma melhor segurança, recomendamos selecionar pelo menos 2 credenciais.",
     "security_recommendation_2_one": "Selecionaste {{ count }} credencial, o que oferece uma boa segurança aos teus votantes.",

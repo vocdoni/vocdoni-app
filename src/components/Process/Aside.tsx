@@ -1,13 +1,13 @@
 import { Button, Flex, Link, Text } from '@chakra-ui/react'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { VoteButton as CVoteButton, SpreadsheetAccess, useElection, VoteWeight } from '@vocdoni/react-components'
+import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
 import { CensusType, dotobject, ElectionStatus, formatUnits, InvalidElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
-import { CensusMeta, CensusTypes } from './Census/CensusType'
+import { CensusMeta } from './Census/CensusType'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
 
@@ -31,7 +31,7 @@ const ProcessAside = () => {
   if (election instanceof InvalidElection) return null
 
   const census: CensusMeta = dotobject(election?.meta || {}, 'census')
-  const isWalletCensus = !['spreadsheet', 'csp'].includes(census?.type)
+  const isWalletCensus = census?.type !== 'csp'
   const syncingCensus = connected && isWalletCensus && !isInCensus && (loadingCensus || !loadedCensus)
 
   const renderVoteMenu =
@@ -176,19 +176,16 @@ export const CensusConnectButton = () => {
     return null
   }
 
-  const census: CensusMeta = dotobject(election?.meta || {}, 'census')
   const isCSP = election.census.type === CensusType.CSP
-  const isSpreadsheet = census?.type === CensusTypes.Spreadsheet
 
   return (
     <>
-      {!isCSP && !isSpreadsheet && !connected && (
+      {!isCSP && !connected && (
         <Button onClick={openConnectModal} w='full'>
           {t('menu.connect').toString()}
         </Button>
       )}
       {isCSP && !connected && <CspAuth />}
-      {isSpreadsheet && !connected && <SpreadsheetAccess />}
     </>
   )
 }
@@ -209,7 +206,7 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
   }
 
   const census: CensusMeta = dotobject(election?.meta || {}, 'census')
-  const isWalletCensus = !['spreadsheet', 'csp'].includes(census?.type)
+  const isWalletCensus = census?.type !== 'csp'
   const syncingCensus = connected && isWalletCensus && !isInCensus && (loadingCensus || !loadedCensus)
   const hideVote = connected && !syncingCensus && !isAbleToVote
 

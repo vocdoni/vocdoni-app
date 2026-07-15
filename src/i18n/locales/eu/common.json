@@ -107,8 +107,6 @@
     "cancel": "Utzi",
     "close_drawer": "Itxi panela",
     "confirm": "Berretsi",
-    "disable": "Desgaitu",
-    "enable": "Gaitu",
     "home": "Hasiera",
     "next": "Hurrengoa",
     "retry": "Berriro saiatu"
@@ -302,9 +300,6 @@
   "ended_processes": "Amaituak",
   "enter_promo_code": "Sartu sustapen-kodea",
   "error": {
-    "invalid_cell_data": "Errenkada batzuek ez dute helbide zuzenik: {{rows,list(style:short)}}",
-    "invalid_row_length": "Zuzendu dokumentuko {{rows,list(style: short)}} lerroak eta kargatu berriro",
-    "invalid_weight_type": "Lehen zutabean pisu bat espero zen {{rows,list(style:short)}} lerroetan, baina ustekabeko datuak aurkitu dira",
     "loading_page": "Errorea orrialdea kargatzean",
     "loading_roles": "Errorea rolak kargatzean",
     "loading_types": "Errorea motak kargatzean",
@@ -410,8 +405,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Helbidea jada erabilita",
-      "address_pattern": "Helbide hamaseitarrak baino ez dira onartzen (adib. 0x031101A...)",
       "census_config_required": "Konfiguratu erroldaren autentifikazio-ezarpenak.",
       "email_invalid": "Posta elektronikoaren helbidea ez da baliozkoa",
       "field_is_required": "Eremu hau bete beharrekoa da",
@@ -429,39 +422,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Gehitu",
-        "remove_address": "Kendu helbidea"
-      },
       "error_deleting_draft_title": "Errorea zirriborroa ezabatzean",
       "error_title": "Errorea prozesua sortzean",
-      "spreadsheet": {
-        "download_template": "Ez duzu CSV fitxategirik? <a>Deskargatu template.csv</a>, bete eta kargatu.",
-        "preview": {
-          "success_description": "Erabiltzaileari hauekin autentifikatzeko eskatuko zaio:",
-          "success_title": "Fitxategia behar bezala kargatu da",
-          "upload_new_list": "Kargatu hautesle-zerrenda berria"
-        },
-        "template": {
-          "email": "Posta elektronikoa",
-          "firstname": "Izena",
-          "lastname": "Abizenak",
-          "weight": "Pisua"
-        },
-        "upload_description": "Kargatu CSV fitxategi bat parte-hartzaileekin. Zutabe bakoitza kredentzial gisa erabiliko da, hautesleak autentifikatzeko erabili beharko duena. Lehen errenkadak kredentzial horien izenburuak izango ditu."
-      },
       "success_description": "Bozketa-prozesuaren orrialdera birbideratzen...",
-      "success_title": "Bozketa-prozesua behar bezala sortu da",
-      "web3": {
-        "census_description": "Gehitu bozkatu ahal izango duten Web3 helbideak. Banaka gehi ditzakezu edo CSV fitxategi bat kargatu.",
-        "census_summary_description_one": "<b>Web3 helbide bat</b> bozkatu ahal izango du",
-        "census_summary_description_other": "<b>{{count}}</b> Web3 helbide bozkatu ahal izango dute",
-        "census_summary_title": "Erroldaren laburpena",
-        "csv_format": "CSV fitxategiak Web3 helbideak izan behar ditu lehen zutabean.",
-        "csv_format_weighted": "CSV fitxategiak pisuak izan behar ditu lehen zutabean eta Web3 helbideak bigarren zutabean.",
-        "upload_csv": "EDO KARGATU CSV",
-        "wallet_addresses": "Web3 helbideak"
-      }
+      "success_title": "Bozketa-prozesua behar bezala sortu da"
     },
     "select_language": "Hizkuntza",
     "support": {
@@ -1450,7 +1414,6 @@
     "total_census_size": "{{maxCensusSize}} boto-emaile onartuak guztira {{censusSize}} dituen erroldan",
     "total_census_size_tooltip": "Onartutako gehienezko boto-emaile kopurua {{maxCensusSize}}era mugatuta dago, {{censusSize}} dituen errolda batean (% {{percent}} guztira). Lehen {{maxCensusSize}}ek soilik bozkatu ahal izango dute.",
     "voters": "Boto-emaileak",
-    "voting": "Zure botoa prozesatzen ari gara. Honek segundo batzuk iraungo ditu. Ez itxi edo eguneratu orrialde hau.",
     "voting_method": {
       "approval": "Onarpena",
       "budget": "Aurrekontu-esleipena",
@@ -1479,29 +1442,14 @@
     "auto_start": "Hasi berehala",
     "basic_configuration": "Oinarrizko konfigurazioa",
     "census": {
-      "extra_methods": {
-        "disable_description": "Errolda-metodo osagarriak desgaitu nahi dituzu? Honek Kalkulu-orria eta Web3 aukerak ezkutatuko ditu eta Talde metodoa bakarrik erakutsiko du.",
-        "enable_description": "Errolda-metodo osagarriak gaitu nahi dituzu? Honek Kalkulu-orria eta Web3 errolda-sorrera bezalako aukera osagarriak erakutsiko ditu.",
-        "modal_title": "Errolda-metodo osagarriak"
-      },
       "group": {
-        "label": "Taldea",
         "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },
       "memberbase": {
         "label": "Hautatu kide-talde bat errolda sortzeko"
-      },
-      "settings": "Erroldaren konfigurazioa",
-      "spreadsheet": {
-        "label": "Kalkulu-orria"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Erroldaren sorrera",
-    "census_missing": "Errolda-datuak falta dira Kide-oinarri errolda motarako",
-    "census_type_not_allowed": "{{type}} errolda mota ez da onartzen",
     "end_datetime": "Amaiera-data eta -ordua",
     "extra_configuration": "Konfigurazio aurreratua",
     "group": {
@@ -1511,8 +1459,6 @@
       "scroll_to_load": "Gehiago kargatzeko korritu..."
     },
     "new_option": "Gehitu aukera berria",
-    "no_account_address": "Ez da kontuaren helbiderik aurkitu.",
-    "no_election_index": "Ez da kontuarentzat hauteskunde-indizerik aurkitu.",
     "option": {
       "description_placeholder": "Deskribapena (aukerakoa)",
       "placeholder": "{{number}}. aukera",
@@ -1564,8 +1510,6 @@
       "two_fa_disabled": "Desgaituta: ez da identitatearen egiaztapen gehigarririk konfiguratu boto-emate-prozesu honetan",
       "two_fa_enabled": "Gaituta: boto-emaileek beren nortasuna ziurtatzen dute kode bakarreko mezua bidaltzean haien gailu pertsonaletara.",
       "voter_access_source": "Boto-emaileen sarbide-iturria",
-      "voter_access_source_spreadsheet": "Boto-emaileek erakundeak igotako orria oinarri duten erroldeko datuekin sartzen dira.",
-      "voter_access_source_web3": "Boto-emaileek Web3 erroldean agertzen diren wallet helbideekin sartzen dira.",
       "voter_access_source_weighted": "Eskubidea prozesu honetarako erakundeak emandako errolde haztatuarekin egiaztatzen da."
     },
     "census": {
@@ -1581,9 +1525,7 @@
     "census_type": {
       "anonymous": "Erakundearen errolda anonimoa",
       "csp": "Kideen erroldea",
-      "spreadsheet": "Erakundeak emandako orriko errolda",
       "unknown": "Ez dago eskuragarri",
-      "web3": "Erakundeak emandako Web3 wallet errolda",
       "weighted": "Erakundearen errolde haztatua"
     },
     "disclaimer": {
@@ -1807,9 +1749,7 @@
   "signup_subtitle": "Sartu zure informazioa hasteko",
   "signup_title": "Izen-ematea",
   "spreadsheet": {
-    "access_button": "Identifikatu",
-    "close": "Itxi",
-    "modal_title": "Autentifikazioa"
+    "access_button": "Identifikatu"
   },
   "start_date": "Hasiera-data",
   "start_time": "Hasiera-ordua",
@@ -1993,7 +1933,6 @@
     "level_strong": "Indartsua",
     "level_weak": "Ahula",
     "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
-    "save_failed": "Ezin izan da hautesleen autentifikazioa konfiguratu",
     "security_level": "Segurtasun ona",
     "security_recommendation_1": "Segurtasun handiagorako, gutxienez 2 kredentzial hautatzea gomendatzen dugu.",
     "security_recommendation_2_one": "{{ count }} kredentzial hautatu duzu, eta horrek segurtasun ona eskaintzen die zure hautesleei.",

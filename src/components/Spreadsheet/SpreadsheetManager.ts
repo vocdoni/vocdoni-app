@@ -1,6 +1,6 @@
 import { read, utils, WorkBook } from 'xlsx'
-import ErrorMissingData from '~components/Process/Census/Spreadsheet/errors/ErrorMissingData'
-import ErrorMissingHeader from '~components/Process/Census/Spreadsheet/errors/ErrorMissingHeader'
+import ErrorMissingData from './errors/ErrorMissingData'
+import ErrorMissingHeader from './errors/ErrorMissingHeader'
 
 export enum ErrorType {
   InvalidRowLength,

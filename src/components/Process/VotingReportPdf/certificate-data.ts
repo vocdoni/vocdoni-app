@@ -14,7 +14,7 @@ import { type TFunction } from 'i18next'
 // we define a compatible local alias so this component accepts ElectionLike from useElection().
 type ElectionLike = PublishedElection | InvalidElection | Record<string, unknown>
 
-type ReportCensusType = 'csp' | 'spreadsheet' | 'web3' | 'weighted' | 'anonymous' | 'unknown'
+type ReportCensusType = 'csp' | 'weighted' | 'anonymous' | 'unknown'
 
 type CensusMetadata = {
   type?: string
@@ -196,10 +196,6 @@ const normalizeReportCensusType = (value?: string | null): ReportCensusType => {
   switch (value) {
     case 'csp':
       return 'csp'
-    case 'spreadsheet':
-      return 'spreadsheet'
-    case 'web3':
-      return 'web3'
     case CensusType.WEIGHTED:
       return 'weighted'
     case CensusType.ANONYMOUS:
@@ -221,14 +217,6 @@ const humanizeCensusType = (t: TFunction, censusType?: ReportCensusType | null) 
   switch (censusType) {
     case 'csp':
       return t('process_pdf.census_type.csp', { defaultValue: 'Memberbase credentials census' })
-    case 'spreadsheet':
-      return t('process_pdf.census_type.spreadsheet', {
-        defaultValue: 'Spreadsheet census provided by the organization',
-      })
-    case 'web3':
-      return t('process_pdf.census_type.web3', {
-        defaultValue: 'Web3 wallet census provided by the organization',
-      })
     case 'weighted':
       return t('process_pdf.census_type.weighted', {
         defaultValue: 'Organization-provided weighted census',
@@ -244,15 +232,6 @@ const humanizeCensusType = (t: TFunction, censusType?: ReportCensusType | null) 
 
 const getVoterAccessSourceDescription = (t: TFunction, censusType: ReportCensusType, fallback: string) => {
   switch (censusType) {
-    case 'spreadsheet':
-      return t('process_pdf.authentication.voter_access_source_spreadsheet', {
-        defaultValue:
-          'Voters access with credentials derived from the spreadsheet census uploaded by the organization.',
-      })
-    case 'web3':
-      return t('process_pdf.authentication.voter_access_source_web3', {
-        defaultValue: 'Voters access with the wallet address included in the Web3 census.',
-      })
     case 'weighted':
     case 'anonymous':
       return t('process_pdf.authentication.voter_access_source_weighted', {

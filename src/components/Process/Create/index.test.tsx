@@ -82,8 +82,6 @@ describe('useFormToVotingProcessRequest', () => {
       census: null,
       censusType: CensusTypes.CSP,
       streamUri: '',
-      addresses: [],
-      spreadsheet: null,
       weightedVote: false,
     }
   })
@@ -159,10 +157,7 @@ describe('useFormToVotingProcessRequest', () => {
 
     it('parses endDate/endTime as ISO string', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
-      const req = result.current(
-        { ...mockForm, endDate: '2025-06-20', endTime: '18:00' },
-        buildCensusSpec()
-      )
+      const req = result.current({ ...mockForm, endDate: '2025-06-20', endTime: '18:00' }, buildCensusSpec())
       const d = new Date(req.endDate!)
       expect(d.getFullYear()).toBe(2025)
       expect(d.getMonth()).toBe(5)
@@ -226,22 +221,10 @@ describe('useFormToVotingProcessRequest', () => {
       expect(bp.maxValue).toBe(1) // 2 options → maxValue = 1
     })
 
-    it('sets maxVoteOverwrites 0 for CSP census', () => {
+    it('sets maxVoteOverwrites to 0', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
-      const req = result.current({ ...mockForm, censusType: CensusTypes.CSP }, buildCensusSpec())
+      const req = result.current(mockForm, buildCensusSpec())
       expect(req.questions[0].ballotProtocol!.maxVoteOverwrites).toBe(0)
-    })
-
-    it('sets maxVoteOverwrites 10 for Spreadsheet census', () => {
-      const { result } = renderHook(() => useFormToVotingProcessRequest())
-      const req = result.current({ ...mockForm, censusType: CensusTypes.Spreadsheet }, buildCensusSpec())
-      expect(req.questions[0].ballotProtocol!.maxVoteOverwrites).toBe(10)
-    })
-
-    it('sets maxVoteOverwrites 10 for Web3 census', () => {
-      const { result } = renderHook(() => useFormToVotingProcessRequest())
-      const req = result.current({ ...mockForm, censusType: CensusTypes.Web3 }, buildCensusSpec())
-      expect(req.questions[0].ballotProtocol!.maxVoteOverwrites).toBe(10)
     })
   })
 
@@ -264,7 +247,13 @@ describe('useFormToVotingProcessRequest', () => {
           questionType: SelectorTypes.Multiple,
           maxNumberOfChoices: 0,
           minNumberOfChoices: 0,
-          questions: [{ title: 'Q', description: '', options: [{ option: 'A' }, { option: 'B' }, { option: 'C' }, { option: 'D' }] }],
+          questions: [
+            {
+              title: 'Q',
+              description: '',
+              options: [{ option: 'A' }, { option: 'B' }, { option: 'C' }, { option: 'D' }],
+            },
+          ],
         },
         buildCensusSpec()
       )

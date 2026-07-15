@@ -2,15 +2,9 @@ import { ElectionStatus } from '@vocdoni/sdk'
 import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessAside, { VoteButton } from './Aside'
-import { CensusTypes } from './Census/CensusType'
 
 vi.mock('@rainbow-me/rainbowkit', () => ({
   useConnectModal: () => ({ openConnectModal: vi.fn() }),
-}))
-
-vi.mock('wagmi', () => ({
-  useAccount: () => ({ isConnected: false }),
-  useDisconnect: () => ({ disconnect: vi.fn() }),
 }))
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
@@ -20,7 +14,6 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...actual,
     ...getReactProvidersMock(),
     VoteButton: (props: any) => <button {...props}>Vote</button>,
-    SpreadsheetAccess: () => <div>Spreadsheet</div>,
     VoteWeight: () => <div>Weight</div>,
     environment: { verifyVote: () => '/verify' },
   }
@@ -44,7 +37,7 @@ describe('ProcessAside', () => {
             electionType: { anonymous: false, secretUntilTheEnd: false },
             questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
             voteCount: 3,
-            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
+            census: { type: 'token', weight: 3, size: 3 },
             voteType: { maxVoteOverwrites: 0 },
             meta: {},
           },
@@ -89,7 +82,7 @@ describe('ProcessAside', () => {
             electionType: { anonymous: false, secretUntilTheEnd: false },
             questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
             voteCount: 3,
-            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
+            census: { type: 'token', weight: 3, size: 3 },
             voteType: { maxVoteOverwrites: 0 },
             meta: {},
           },
@@ -122,7 +115,7 @@ describe('ProcessAside', () => {
             electionType: { anonymous: false, secretUntilTheEnd: false },
             questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
             voteCount: 3,
-            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
+            census: { type: 'token', weight: 3, size: 3 },
             voteType: { maxVoteOverwrites: 0 },
             meta: {},
           },
@@ -155,7 +148,7 @@ describe('ProcessAside', () => {
             electionType: { anonymous: false, secretUntilTheEnd: false },
             questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
             voteCount: 3,
-            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
+            census: { type: 'token', weight: 3, size: 3 },
             voteType: { maxVoteOverwrites: 0 },
             meta: {},
           },

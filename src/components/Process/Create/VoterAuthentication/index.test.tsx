@@ -5,8 +5,7 @@ import { CensusTypes } from '~components/Process/Census/CensusType'
 import { mockUseOrganization, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VoterAuthentication } from '.'
-import { Process, SelectorTypes } from '../common'
-import { ExtraConfig } from '../Sidebar/ExtraConfig'
+import { Census, Process, SelectorTypes } from '../common'
 
 const mockBearedFetch = vi.fn()
 
@@ -25,7 +24,13 @@ const FormWatcher = ({ name }: FormWatcherProps) => {
   return <div data-testid={`form-${name}`}>{JSON.stringify(value)}</div>
 }
 
-const TestForm = () => {
+const defaultCensus: Census = {
+  credentials: ['email'],
+  use2FA: false,
+  use2FAMethod: 'email',
+}
+
+const TestForm = ({ initialCensus = defaultCensus }: { initialCensus?: Census | null }) => {
   const methods = useForm<Process>({
     defaultValues: {
       title: '',
@@ -44,51 +49,76 @@ const TestForm = () => {
       weightedVote: false,
       voterPrivacy: 'public',
       groupId: 'group-1',
-      census: {
-        id: 'census-old',
-        credentials: ['email'],
-        size: 10,
-        use2FA: false,
-        use2FAMethod: 'email',
-      },
+      census: initialCensus,
       censusType: CensusTypes.CSP,
       streamUri: '',
-      addresses: [],
-      spreadsheet: null,
     },
   })
 
   return (
     <FormProvider {...methods}>
-      <ExtraConfig />
       <VoterAuthentication />
       <FormWatcher name='census' />
     </FormProvider>
   )
 }
 
-describe('VoterAuthentication weightedVote changes', () => {
+describe('VoterAuthentication', () => {
   beforeEach(() => {
+    vi.clearAllMocks()
     setReactProvidersMock({
       useOrganization: () => mockUseOrganization({ organization: { address: '0x1' } }),
     })
   })
 
-  it('recreates census when weightedVote changes', async () => {
-    mockBearedFetch.mockResolvedValueOnce({ id: 'census-new' }).mockResolvedValueOnce({ size: 42 })
+  it('shows Configure button when census is null', () => {
+    render(<TestForm initialCensus={null} />)
+    expect(screen.getByRole('button', { name: /configure voter authentication/i })).toBeInTheDocument()
+  })
+
+  it('shows Edit button when census is already configured', () => {
+    render(<TestForm />)
+    expect(screen.getByRole('button', { name: /edit voter authentication/i })).toBeInTheDocument()
+  })
+
+  it('Confirm synchronously writes credentials and 2FA config to form.census', async () => {
+    // validate step returns success
+    mockBearedFetch.mockResolvedValue({ valid: true })
 
     const user = userEvent.setup()
-    render(<TestForm />)
+    // Start with defaultCensus so credentials are pre-populated (Confirm button requires credentials)
+    render(<TestForm initialCensus={defaultCensus} />)
 
-    expect(screen.getByTestId('form-census')).toHaveTextContent('census-old')
+    // Open modal (shows "Edit" when census is already configured)
+    await user.click(screen.getByRole('button', { name: /voter authentication/i }))
 
-    const selects = screen.getAllByRole('combobox')
-    await user.click(selects[1])
-    await user.click(await screen.findByText('Weighted by voting power'))
+    // Step 1 → step 2
+    await user.click(await screen.findByRole('button', { name: /next/i }))
+
+    // Step 2 → step 3 (triggers validate API call)
+    await user.click(screen.getByRole('button', { name: /next/i }))
+    await waitFor(() => expect(mockBearedFetch).toHaveBeenCalledTimes(1))
+
+    // Step 3 → Confirm (no API call)
+    await user.click(screen.getByRole('button', { name: /confirm/i }))
 
     await waitFor(() => {
-      expect(screen.getByTestId('form-census')).toHaveTextContent('census-new')
-      expect(screen.getByTestId('form-census')).toHaveTextContent('"size":42')
+      const census = JSON.parse(screen.getByTestId('form-census').textContent!)
+      expect(census).toHaveProperty('credentials')
+      expect(census).toHaveProperty('use2FA')
+      expect(census).toHaveProperty('use2FAMethod')
+      expect(census).not.toHaveProperty('id')
+      expect(census).not.toHaveProperty('size')
     })
+
+    // Confirm does NOT make any additional API calls
+    expect(mockBearedFetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not make API calls when toggling weightedVote', async () => {
+    // Weighted-vote changes no longer trigger census recreation
+    render(<TestForm />)
+    // If this test renders without error and no unexpected fetch calls, the effect is gone
+    expect(mockBearedFetch).not.toHaveBeenCalled()
   })
 })

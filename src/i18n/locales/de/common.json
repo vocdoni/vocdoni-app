@@ -107,8 +107,6 @@
     "cancel": "Abbrechen",
     "close_drawer": "Seitenleiste schließen",
     "confirm": "Bestätigen",
-    "disable": "Deaktivieren",
-    "enable": "Aktivieren",
     "home": "Startseite",
     "next": "Weiter",
     "retry": "Nochmal versuchen"
@@ -302,9 +300,6 @@
   "ended_processes": "Beendet",
   "enter_promo_code": "Code eingeben",
   "error": {
-    "invalid_cell_data": "Einige Zeilen enthalten keine gültigen Adressen: {{rows,list(style:short)}}",
-    "invalid_row_length": "Korrigiere die Dokumentzeilen {{rows,list(style: short)}} und lade es erneut hoch",
-    "invalid_weight_type": "In Zeilen {{rows,list(style:short)}} wird ein Stimmgewicht in der ersten Spalte erwartet, aber es wurden unerwartete Daten gefunden",
     "loading_page": "Fehler beim Laden der Seite",
     "loading_roles": "Fehler beim Laden der Rollen",
     "loading_types": "Fehler beim Laden der Organisationstypen",
@@ -410,8 +405,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Adresse wird bereits verwendet",
-      "address_pattern": "Nur Hex-Adressen sind erlaubt (z. B. 0x031101A...)",
       "census_config_required": "Bitte konfiguriere die Authentifizierungseinstellungen für die Teilnehmerliste.",
       "email_invalid": "Ungültige E-Mail-Adresse",
       "field_is_required": "Dieses Feld ist erforderlich",
@@ -429,39 +422,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Hinzufügen",
-        "remove_address": "Adresse entfernen"
-      },
       "error_deleting_draft_title": "Fehler beim Löschen des Entwurfs",
       "error_title": "Fehler beim Erstellen des Prozesses",
-      "spreadsheet": {
-        "download_template": "Du hast keine CSV-Datei? <a>Vorlage template.csv herunterladen</a>, ausfüllen und hochladen.",
-        "preview": {
-          "success_description": "Die Benutzerin oder der Benutzer wird zur Authentifizierung mit folgenden Daten aufgefordert:",
-          "success_title": "Datei erfolgreich hochgeladen",
-          "upload_new_list": "Neue Wählerliste hochladen"
-        },
-        "template": {
-          "email": "E-Mail",
-          "firstname": "Vorname",
-          "lastname": "Nachname",
-          "weight": "Gewicht"
-        },
-        "upload_description": "Lade eine CSV-Datei mit den Teilnehmenden hoch. Jede Spalte wird als Anmeldedaten verwendet, mit denen sich die Wählenden authentifizieren müssen. Die erste Zeile enthält die Bezeichnungen dieser Anmeldedaten."
-      },
       "success_description": "Du wirst zur Seite des Abstimmungsprozesses weitergeleitet...",
-      "success_title": "Abstimmungsprozess erfolgreich erstellt",
-      "web3": {
-        "census_description": "Füge Wallet-Adressen hinzu, die abstimmen dürfen. Du kannst sie einzeln eingeben oder eine CSV-Datei hochladen.",
-        "census_summary_description_one": "<b>{{count}} Adresse</b> ist stimmberechtigt",
-        "census_summary_description_other": "<b>{{count}} Adressen</b> sind stimmberechtigt",
-        "census_summary_title": "Zusammenfassung der Teilnehmerliste",
-        "csv_format": "Die CSV-Datei muss Wallet-Adressen in der ersten Spalte enthalten.",
-        "csv_format_weighted": "Die CSV-Datei muss Gewichte in der ersten Spalte und Wallet-Adressen in der zweiten Spalte enthalten.",
-        "upload_csv": "ODER CSV HOCHLADEN",
-        "wallet_addresses": "Wallet-Adressen"
-      }
+      "success_title": "Abstimmungsprozess erfolgreich erstellt"
     },
     "select_language": "Sprache",
     "support": {
@@ -1450,7 +1414,6 @@
     "total_census_size": "{{maxCensusSize}} zugelassene Wählende von {{censusSize}} gesamt in der Teilnehmerliste",
     "total_census_size_tooltip": "Die maximale Anzahl zugelassener Wählenden ist auf {{maxCensusSize}} aus einer Teilnehmerliste von {{censusSize}} begrenzt ({{percent}}% der Gesamtzahl). Nur die ersten {{maxCensusSize}} Wählenden können abstimmen.",
     "voters": "Wählende",
-    "voting": "Deine Stimme wird verarbeitet. Das dauert einige Sekunden. Bitte schließe oder aktualisiere diese Seite nicht.",
     "voting_method": {
       "approval": "Zustimmung",
       "budget": "Budgetverteilung",
@@ -1479,29 +1442,14 @@
     "auto_start": "Sofort starten",
     "basic_configuration": "Grundkonfiguration",
     "census": {
-      "extra_methods": {
-        "disable_description": "Möchtest du die zusätzlichen Teilnehmerlisten-Methoden deaktivieren? Dadurch werden die Optionen „Tabelle\" und „Web3\" ausgeblendet und nur die Gruppen-Methode angezeigt.",
-        "enable_description": "Möchtest du die zusätzlichen Teilnehmerlisten-Methoden aktivieren? Dadurch werden weitere Optionen wie die Erstellung per Tabelle oder Web3 angezeigt.",
-        "modal_title": "Zusätzliche Teilnehmerlisten-Methoden"
-      },
       "group": {
-        "label": "Gruppe",
         "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
       },
       "memberbase": {
         "label": "Wähle eine Mitgliedergruppe aus, um die Teilnehmerliste zu erstellen"
-      },
-      "settings": "Einstellungen der Teilnehmerliste",
-      "spreadsheet": {
-        "label": "Tabellenkalkulation"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Erstellung der Teilnehmerliste",
-    "census_missing": "Teilnehmerlisten-Daten fehlen für den Mitgliedergruppen-Typ",
-    "census_type_not_allowed": "Teilnehmerlisten-Typ {{type}} ist nicht zulässig",
     "end_datetime": "Enddatum und -uhrzeit",
     "extra_configuration": "Zusätzliche Konfiguration",
     "group": {
@@ -1511,8 +1459,6 @@
       "scroll_to_load": "Scrollen, um mehr zu laden…"
     },
     "new_option": "Neue Option hinzufügen",
-    "no_account_address": "Keine Kontoadresse gefunden.",
-    "no_election_index": "Kein Abstimmungsindex für das Konto gefunden.",
     "option": {
       "description_placeholder": "Beschreibung (optional)",
       "placeholder": "Option {{number}}",
@@ -1564,8 +1510,6 @@
       "two_fa_disabled": "Deaktiviert: In diesem Abstimmungsprozess wurde keine zusätzliche Identitätsprüfung konfiguriert.",
       "two_fa_enabled": "Aktiviert: Wählende bestätigen ihre Identität mit einem Einmalcode, der an ihre persönlichen Geräte gesendet wird.",
       "voter_access_source": "Zugangsberechtigung der Wählenden",
-      "voter_access_source_spreadsheet": "Wählende melden sich mit Zugangsdaten an, die aus der von der Organisation hochgeladenen Tabellen-Teilnehmerliste abgeleitet sind.",
-      "voter_access_source_web3": "Wählende melden sich mit der in der Web3-Teilnehmerliste enthaltenen Wallet-Adresse an.",
       "voter_access_source_weighted": "Die Berechtigung wird anhand der von der Organisation bereitgestellten gewichteten Teilnehmerliste für diesen Prozess geprüft."
     },
     "census": {
@@ -1581,9 +1525,7 @@
     "census_type": {
       "anonymous": "Geheime gewichtete Teilnehmerliste",
       "csp": "CSP-Teilnehmerliste",
-      "spreadsheet": "Von der Organisation bereitgestellte Tabellen-Teilnehmerliste",
       "unknown": "Nicht verfügbar",
-      "web3": "Von der Organisation bereitgestellte Web3-Wallet-Teilnehmerliste",
       "weighted": "Gewichtete Teilnehmerliste"
     },
     "disclaimer": {
@@ -1807,9 +1749,7 @@
   "signup_subtitle": "Gib deine Daten ein, um loszulegen",
   "signup_title": "Registrieren",
   "spreadsheet": {
-    "access_button": "Identifizieren",
-    "close": "Schließen",
-    "modal_title": "Authentifizierung"
+    "access_button": "Identifizieren"
   },
   "start_date": "Startdatum",
   "start_time": "Startzeit",
@@ -1993,7 +1933,6 @@
     "level_strong": "Stark",
     "level_weak": "Schwach",
     "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
-    "save_failed": "Authentifizierung der Wählenden konnte nicht konfiguriert werden",
     "security_level": "Gute Sicherheit",
     "security_recommendation_1": "Für mehr Sicherheit empfehlen wir, mindestens 2 Zugangsdaten auszuwählen.",
     "security_recommendation_2_one": "Du hast {{ count }} Zugangsdatum ausgewählt, was deinen Wählenden gute Sicherheit bietet.",

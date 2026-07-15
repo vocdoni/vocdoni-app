@@ -110,8 +110,6 @@
     "cancel": "Annuler",
     "close_drawer": "Fermer le panneau",
     "confirm": "Confirmer",
-    "disable": "Désactiver",
-    "enable": "Activer",
     "home": "Accueil",
     "next": "Suivant",
     "retry": "Réessayer"
@@ -305,9 +303,6 @@
   "ended_processes": "Terminés",
   "enter_promo_code": "Saisir le code",
   "error": {
-    "invalid_cell_data": "Certaines lignes ne contiennent pas d'adresses correctes : {{rows,list(style:short)}}",
-    "invalid_row_length": "Corrigez les lignes du document {{rows,list(style: short)}} et chargez-le à nouveau",
-    "invalid_weight_type": "Un poids était attendu dans la première colonne aux lignes {{rows,list(style:short)}}, mais des données inattendues ont été trouvées",
     "loading_page": "Erreur lors du chargement de la page",
     "loading_roles": "Erreur lors du chargement des rôles",
     "loading_types": "Erreur lors du chargement des types d'organisation",
@@ -413,8 +408,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Adresse déjà utilisée",
-      "address_pattern": "Seules les adresses hexadécimales sont autorisées (par ex. 0x031101A…)",
       "census_config_required": "Configurez les paramètres d'authentification de la liste électorale.",
       "email_invalid": "Adresse e-mail invalide",
       "field_is_required": "Ce champ est obligatoire",
@@ -432,40 +425,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Ajouter",
-        "remove_address": "Supprimer l'adresse"
-      },
       "error_deleting_draft_title": "Erreur lors de la suppression du brouillon",
       "error_title": "Erreur lors de la création du processus",
-      "spreadsheet": {
-        "download_template": "Vous n'avez pas de fichier CSV ? <a>Téléchargez template.csv</a>, remplissez-le et chargez-le.",
-        "preview": {
-          "success_description": "Il sera demandé à l'utilisateur de s'authentifier avec :",
-          "success_title": "Fichier chargé avec succès",
-          "upload_new_list": "Charger une nouvelle liste d'électeurs"
-        },
-        "template": {
-          "email": "E-mail",
-          "firstname": "Prénom",
-          "lastname": "Nom",
-          "weight": "Poids"
-        },
-        "upload_description": "Chargez un fichier CSV contenant les participants. Chaque colonne sera utilisée comme une donnée d'identification que l'électeur devra fournir pour s'authentifier. La première ligne contiendra les intitulés de ces données."
-      },
       "success_description": "Redirection vers la page du processus de vote…",
-      "success_title": "Processus de vote créé avec succès",
-      "web3": {
-        "census_description": "Ajoutez des adresses de portefeuille autorisées à voter. Vous pouvez les ajouter une à une ou charger un fichier CSV.",
-        "census_summary_description_one": "<b>{{count}} adresse</b> sera autorisée à voter",
-        "census_summary_description_many": "",
-        "census_summary_description_other": "<b>{{count}} adresses</b> seront autorisées à voter",
-        "census_summary_title": "Récapitulatif de la liste électorale",
-        "csv_format": "Le fichier CSV doit contenir les adresses de portefeuille dans la première colonne.",
-        "csv_format_weighted": "Le fichier CSV doit contenir les poids dans la première colonne et les adresses de portefeuille dans la deuxième colonne.",
-        "upload_csv": "OU CHARGER UN CSV",
-        "wallet_addresses": "Adresses de portefeuille"
-      }
+      "success_title": "Processus de vote créé avec succès"
     },
     "select_language": "Langue",
     "support": {
@@ -1476,7 +1439,6 @@
     "total_census_size": "{{maxCensusSize}} électeurs autorisés sur {{censusSize}} au total dans la liste",
     "total_census_size_tooltip": "Le nombre maximum d'électeurs autorisés est limité à {{maxCensusSize}} sur une liste de {{censusSize}} ({{percent}} % du total). Seuls les {{maxCensusSize}} premiers électeurs peuvent voter.",
     "voters": "Électeurs",
-    "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",
     "voting_method": {
       "approval": "Approbation",
       "budget": "Allocation budgétaire",
@@ -1505,29 +1467,14 @@
     "auto_start": "Démarrer immédiatement",
     "basic_configuration": "Configuration de base",
     "census": {
-      "extra_methods": {
-        "disable_description": "Voulez-vous désactiver les méthodes de liste électorale supplémentaires ? Cela masquera les options Tableur et Web3 et n'affichera que la méthode Groupe.",
-        "enable_description": "Voulez-vous activer les méthodes de liste électorale supplémentaires ? Cela affichera des options supplémentaires comme la création de liste via Tableur et Web3.",
-        "modal_title": "Méthodes de liste électorale supplémentaires"
-      },
       "group": {
-        "label": "Groupe",
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
       },
       "memberbase": {
         "label": "Sélectionnez un groupe de membres pour créer la liste électorale"
-      },
-      "settings": "Paramètres de la liste électorale",
-      "spreadsheet": {
-        "label": "Tableur"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Création de la liste électorale",
-    "census_missing": "Données de liste électorale manquantes pour le type de liste « Base de membres »",
-    "census_type_not_allowed": "Type de liste électorale {{type}} non autorisé",
     "end_datetime": "Date et heure de fin",
     "extra_configuration": "Configuration supplémentaire",
     "group": {
@@ -1537,8 +1484,6 @@
       "scroll_to_load": "Faites défiler pour en charger davantage…"
     },
     "new_option": "Ajouter une nouvelle option",
-    "no_account_address": "Aucune adresse de compte trouvée.",
-    "no_election_index": "Aucun index d'élection trouvé pour le compte.",
     "option": {
       "description_placeholder": "Description (facultatif)",
       "placeholder": "Option {{number}}",
@@ -1590,8 +1535,6 @@
       "two_fa_disabled": "Désactivée : aucune vérification d'identité supplémentaire n'a été configurée pour ce processus de vote",
       "two_fa_enabled": "Activée : les électeurs confirment leur identité à l'aide d'un code à usage unique envoyé sur leurs appareils personnels.",
       "voter_access_source": "Source d'accès des électeurs",
-      "voter_access_source_spreadsheet": "Les électeurs accèdent à l'aide d'identifiants dérivés de la liste électorale importée par l'organisation sous forme de feuille de calcul.",
-      "voter_access_source_web3": "Les électeurs accèdent à l'aide de l'adresse de portefeuille incluse dans la liste électorale Web3.",
       "voter_access_source_weighted": "L'éligibilité est vérifiée par rapport à la liste électorale pondérée fournie par l'organisation pour ce processus."
     },
     "census": {
@@ -1607,9 +1550,7 @@
     "census_type": {
       "anonymous": "Liste électorale anonyme fournie par l'organisation",
       "csp": "Liste électorale CSP",
-      "spreadsheet": "Liste électorale (feuille de calcul) fournie par l'organisation",
       "unknown": "Non disponible",
-      "web3": "Liste électorale Web3 (portefeuilles) fournie par l'organisation",
       "weighted": "Liste électorale pondérée"
     },
     "disclaimer": {
@@ -1834,9 +1775,7 @@
   "signup_subtitle": "Saisissez vos informations pour commencer",
   "signup_title": "S'inscrire",
   "spreadsheet": {
-    "access_button": "S'identifier",
-    "close": "Fermer",
-    "modal_title": "Authentification"
+    "access_button": "S'identifier"
   },
   "start_date": "Date de début",
   "start_time": "Heure de début",
@@ -2021,7 +1960,6 @@
     "level_strong": "Fort",
     "level_weak": "Faible",
     "no_group_description": "Veuillez d'abord sélectionner un groupe pour configurer l'authentification.",
-    "save_failed": "Échec de la configuration de l'authentification des électeurs",
     "security_level": "Bonne sécurité",
     "security_recommendation_1": "Pour une meilleure sécurité, nous recommandons de sélectionner au moins 2 identifiants.",
     "security_recommendation_2_one": "Vous avez sélectionné {{ count }} identifiant, ce qui offre une bonne sécurité pour vos électeurs.",

@@ -1,12 +1,7 @@
-import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
+import { CensusType } from '@vocdoni/sdk'
+import { mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { CensusTypes } from './Census/CensusType'
 import LogoutButton from './LogoutButton'
-
-vi.mock('wagmi', () => ({
-  useAccount: () => ({ isConnected: false }),
-  useDisconnect: () => ({ disconnect: vi.fn() }),
-}))
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
@@ -27,17 +22,16 @@ describe('LogoutButton', () => {
       useElection: () =>
         mockUseElection({
           election: {
-            census: { type: CensusTypes.Web3 },
-            meta: { census: { type: 'spreadsheet' } },
+            census: { type: CensusType.CSP },
+            meta: {},
           },
           connected: true,
           clearClient: vi.fn(),
         }),
-      useClient: () => mockUseClient({ clear: vi.fn() }),
     })
   })
 
-  it('renders logout button when connected to spreadsheet census', () => {
+  it('renders logout button when connected', () => {
     render(<LogoutButton />)
     expect(screen.getByText('logout')).toBeInTheDocument()
   })

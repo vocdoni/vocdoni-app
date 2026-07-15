@@ -17,7 +17,6 @@ import {
   QuestionsEmpty,
   QuestionsTip,
   QuestionsTypeBadge,
-  SpreadsheetAccess,
   Voted,
   VoteWeight,
 } from './election'
@@ -83,7 +82,6 @@ export const slotRecipes: Record<string, SlotRecipeDefinition> = {
   QuestionsEmpty,
   QuestionsTip,
   QuestionsTypeBadge,
-  SpreadsheetAccess,
   steps: Stepper,
   Voted,
   VoteWeight,

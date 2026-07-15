@@ -16,8 +16,6 @@ import {
   Icon,
   Image,
   type ImageProps,
-  Input,
-  Portal,
   Progress,
   Skeleton,
   Tag,
@@ -475,122 +473,6 @@ export const electionComponents: ComponentsPartialDefinition = {
       </Box>
     )
   }),
-  SpreadsheetAccess: defineComponent<'SpreadsheetAccess', BoxProps>(
-    ({
-      connected,
-      loading,
-      formError,
-      title,
-      open,
-      onOpen,
-      onClose,
-      onLogout,
-      onSubmit,
-      fields,
-      anonymousField,
-      extraFields,
-      ...props
-    }) => {
-      const recipe = useSlotRecipe({ key: 'SpreadsheetAccess' })
-      const styles = recipe()
-      const { t } = useTranslation()
-
-      if (connected) {
-        return (
-          <Button css={styles.disconnect} onClick={onLogout} disabled={loading}>
-            {t('logout')}
-          </Button>
-        )
-      }
-
-      return (
-        <Dialog.Root
-          open={open}
-          onOpenChange={({ open: isOpen }) => {
-            if (loading && !isOpen) return
-            if (isOpen) {
-              onOpen()
-            } else {
-              onClose()
-            }
-          }}
-        >
-          <Dialog.Trigger asChild>
-            <Button css={styles.button} disabled={loading}>
-              {t('spreadsheet.access_button')}
-            </Button>
-          </Dialog.Trigger>
-          <Portal>
-            <Dialog.Backdrop css={styles.overlay} />
-            <Dialog.Positioner>
-              <Dialog.Content css={styles.content} {...props}>
-                <form
-                  onSubmit={(event) => {
-                    onSubmit(event)
-                  }}
-                >
-                  <Dialog.Header css={styles.header}>{title || t('spreadsheet.modal_title')}</Dialog.Header>
-                  <Dialog.CloseTrigger asChild>
-                    <CloseButton disabled={loading} css={styles.top_close} />
-                  </Dialog.CloseTrigger>
-                  <Dialog.Body css={styles.body}>
-                    {fields.map((field) => (
-                      <Field.Root key={field.id} invalid={Boolean(field.error)} css={styles.control}>
-                        <Field.Label css={styles.label}>{field.label}</Field.Label>
-                        <Input
-                          {...field.inputProps}
-                          {...field.inputAttrs}
-                          css={styles.input}
-                          disabled={loading}
-                          type={field.inputAttrs?.type || 'text'}
-                        />
-                        {field.error ? (
-                          <Field.ErrorText css={styles.error}>{field.error}</Field.ErrorText>
-                        ) : field.description ? (
-                          <Field.HelperText css={styles.helper}>{field.description}</Field.HelperText>
-                        ) : null}
-                      </Field.Root>
-                    ))}
-                    {anonymousField ? (
-                      <Field.Root invalid={Boolean(anonymousField.error)} css={styles.sik_control}>
-                        <Field.Label css={styles.label}>{anonymousField.label}</Field.Label>
-                        <Input
-                          {...anonymousField.inputProps}
-                          {...anonymousField.inputAttrs}
-                          css={styles.input}
-                          disabled={loading}
-                          type={anonymousField.inputAttrs?.type || 'text'}
-                        />
-                        {anonymousField.error ? (
-                          <Field.ErrorText css={styles.error}>{anonymousField.error}</Field.ErrorText>
-                        ) : anonymousField.description ? (
-                          <Field.HelperText css={styles.helper}>{anonymousField.description}</Field.HelperText>
-                        ) : null}
-                      </Field.Root>
-                    ) : null}
-                    {formError ? (
-                      <Field.Root invalid css={styles.control}>
-                        <Field.ErrorText css={styles.error}>{formError}</Field.ErrorText>
-                      </Field.Root>
-                    ) : null}
-                    {extraFields}
-                  </Dialog.Body>
-                  <Dialog.Footer css={styles.footer}>
-                    <Button type='button' variant='ghost' onClick={onClose} css={styles.close} disabled={loading}>
-                      {t('spreadsheet.close')}
-                    </Button>
-                    <Button type='submit' disabled={loading} loading={loading} css={styles.submit}>
-                      {t('spreadsheet.access_button')}
-                    </Button>
-                  </Dialog.Footer>
-                </form>
-              </Dialog.Content>
-            </Dialog.Positioner>
-          </Portal>
-        </Dialog.Root>
-      )
-    }
-  ),
   ElectionActions: defineComponent<'ElectionActions', FlexProps>(({ actions, ...props }) => (
     <Flex gap={2} {...props}>
       {actions}

@@ -7,7 +7,6 @@ import {
   questionTipAnatomy,
   questionTypeBadgeAnatomy,
   resultsAnatomy,
-  spreadsheetAccessAnatomy,
   votedAnatomy,
   voteWeightAnatomy,
 } from '~theme/react-components/anatomy/election'
@@ -397,19 +396,6 @@ export const QuestionsTypeBadge = defineSlotRecipe({
       fontWeight: 'bold',
     },
     tooltip: {},
-  },
-})
-
-export const SpreadsheetAccess = defineSlotRecipe({
-  slots: spreadsheetAccessAnatomy,
-  base: {
-    button: {
-      w: 'full',
-    },
-    close: {
-      display: 'none',
-    },
-    control: { mb: 5 },
   },
 })
 

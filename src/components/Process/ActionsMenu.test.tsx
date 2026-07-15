@@ -25,7 +25,7 @@ describe('ActionsMenu', () => {
   beforeEach(() => {
     setAuthMock({ currentAddress: '0xabc' })
     setReactProvidersMock({
-      useElection: () => mockUseElection({ election: { organizationId: '0xabc', status: 'ONGOING' } }),
+      useElection: () => mockUseElection({ election: { organizationId: '0xabc', status: 'ONGOING', questions: [] } }),
       useActions: () => ({ loading: { continue: false, pause: false, end: false, cancel: false } }),
     })
   })

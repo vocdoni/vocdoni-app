@@ -28,7 +28,6 @@ import {
 export const toPublishedElection = (election: SaasElection): PublishedElection =>
   PublishedElection.build(toPublishedElectionParameters(election))
 
-
 const BALLOT_TO_RESULTS_TYPE: Record<BallotType, ElectionResultsTypeNames> = {
   [BallotType.SingleChoice]: ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
   [BallotType.MultiChoice]: ElectionResultsTypeNames.MULTIPLE_CHOICE,

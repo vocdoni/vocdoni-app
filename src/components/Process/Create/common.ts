@@ -1,5 +1,3 @@
-import { CensusSpreadsheetManager } from '~components/Process/Census/Spreadsheet/CensusSpreadsheetManager'
-import { Web3Address } from '~components/Process/Census/Web3'
 import { CensusTypes } from '../Census/CensusType'
 import { TwoFAMethod } from './VoterAuthentication/utils'
 
@@ -31,9 +29,7 @@ type Question = {
 }
 
 export type Census = {
-  id: string
   credentials: string[]
-  size: number
   use2FA: boolean
   use2FAMethod: TwoFAMethod
 }
@@ -58,9 +54,7 @@ export type Process = {
   census?: Census | null
   censusType: CensusTypes
   streamUri?: string
-  addresses?: Web3Address[]
   draft?: boolean
-  spreadsheet?: CensusSpreadsheetManager | null
 }
 
 export const DefaultQuestions: DefaultQuestionsType = {
@@ -96,8 +90,6 @@ export const defaultProcessValues: Process = {
   census: null,
   censusType: CensusTypes.CSP,
   streamUri: '',
-  addresses: [],
-  spreadsheet: null,
 }
 
 export const TemplateConfigs: Record<TemplateTypes, TemplateConfig> = {

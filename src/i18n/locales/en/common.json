@@ -107,8 +107,6 @@
     "cancel": "Cancel",
     "close_drawer": "Close drawer",
     "confirm": "Confirm",
-    "disable": "Disable",
-    "enable": "Enable",
     "home": "Home",
     "next": "Next",
     "retry": "Try again"
@@ -302,9 +300,6 @@
   "ended_processes": "Ended",
   "enter_promo_code": "Enter code",
   "error": {
-    "invalid_cell_data": "Some rows do not contain correct addresses: {{rows,list(style:short)}}",
-    "invalid_row_length": "Correct document lines {{rows,list(style: short)}} and load it again",
-    "invalid_weight_type": "Expecting weight in first column at lines {{rows,list(style:short)}}, but found unexpected data",
     "loading_page": "Error loading the page",
     "loading_roles": "Error loading roles",
     "loading_types": "Error loading organization types",
@@ -410,8 +405,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Address already in use",
-      "address_pattern": "Only hex addresses are allowed (e.g 0x031101A...)",
       "census_config_required": "Please configure the census authentication settings.",
       "email_invalid": "Invalid email address",
       "field_is_required": "This field is required",
@@ -429,39 +422,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Add",
-        "remove_address": "Remove address"
-      },
       "error_deleting_draft_title": "Error deleting draft",
       "error_title": "Error creating process",
-      "spreadsheet": {
-        "download_template": "You don't have a CSV file? <a>Download template.csv</a>, fill it and upload it.",
-        "preview": {
-          "success_description": "The user will be asked to authenticate with:",
-          "success_title": "File uploaded successfully",
-          "upload_new_list": "Upload a new list of voters"
-        },
-        "template": {
-          "email": "Email",
-          "firstname": "First name",
-          "lastname": "Last name",
-          "weight": "Weight"
-        },
-        "upload_description": "Upload a CSV file with the participants. Each column will be used as a credential that the voter will have to use to authenticate. The first row will be the titles of that credential."
-      },
       "success_description": "Redirecting you to the voting process page...",
-      "success_title": "Voting process successfully created",
-      "web3": {
-        "census_description": "Add wallet addresses that will be eligible to vote. You can add them individually or upload a CSV file.",
-        "census_summary_description_one": "<b>{{count}} address</b> will be eligible to vote",
-        "census_summary_description_other": "<b>{{count}} addresses</b> will be eligible to vote",
-        "census_summary_title": "Census Summary",
-        "csv_format": "CSV file should contain wallet addresses in the first column.",
-        "csv_format_weighted": "CSV file should contain weights in the first column and wallet addresses in the second column.",
-        "upload_csv": "OR UPLOAD CSV",
-        "wallet_addresses": "Wallet Addresses"
-      }
+      "success_title": "Voting process successfully created"
     },
     "select_language": "Language",
     "support": {
@@ -1450,7 +1414,6 @@
     "total_census_size": "{{maxCensusSize}} allowed voters of {{censusSize}} total in census",
     "total_census_size_tooltip": "The maximum number of voters allowed is limited to {{maxCensusSize}} from a census of {{censusSize}} ({{percent}}% of the total). Only the first {{maxCensusSize}} voters can vote.",
     "voters": "Voters",
-    "voting": "We are processing your vote. This process will take a few seconds. Please do not close or refresh this page.",
     "voting_method": {
       "approval": "Approval",
       "budget": "Budget allocation",
@@ -1479,29 +1442,14 @@
     "auto_start": "Start immediately",
     "basic_configuration": "Basic configuration",
     "census": {
-      "extra_methods": {
-        "disable_description": "Do you want to disable extra census methods? This will hide the Spreadsheet and Web3 options and show only the Group method.",
-        "enable_description": "Do you want to enable extra census methods? This will show additional options like Spreadsheet and Web3 census creation.",
-        "modal_title": "Extra census methods"
-      },
       "group": {
-        "label": "Group",
         "no_groups": "To start a vote, you first need to create a group of eligible voters from your memberbase. <1>Create one here</1>."
       },
       "memberbase": {
         "label": "Select a group of members to create the census"
-      },
-      "settings": "Census settings",
-      "spreadsheet": {
-        "label": "Spreadsheet"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Census creation",
-    "census_missing": "Census data is missing for Memberbase census type",
-    "census_type_not_allowed": "Census type {{type}} not allowed",
     "end_datetime": "End date and time",
     "extra_configuration": "Extra configuration",
     "group": {
@@ -1511,8 +1459,6 @@
       "scroll_to_load": "Scroll to load more..."
     },
     "new_option": "Add a new option",
-    "no_account_address": "No account address found.",
-    "no_election_index": "No election index found for the account.",
     "option": {
       "description_placeholder": "Description (optional)",
       "placeholder": "Option {{number}}",
@@ -1564,8 +1510,6 @@
       "two_fa_disabled": "Disabled: no additional identity check has been configured in this voting process",
       "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code sent to their personal devices.",
       "voter_access_source": "Voter access source",
-      "voter_access_source_spreadsheet": "Voters access with credentials derived from the spreadsheet census uploaded by the organization.",
-      "voter_access_source_web3": "Voters access with the wallet address included in the Web3 census.",
       "voter_access_source_weighted": "Eligibility is checked against the organization-provided weighted census for this process."
     },
     "census": {
@@ -1581,9 +1525,7 @@
     "census_type": {
       "anonymous": "Anonymous organization-provided census",
       "csp": "Memberbase credentials census",
-      "spreadsheet": "Spreadsheet census provided by the organization",
       "unknown": "Not available",
-      "web3": "Web3 wallet census provided by the organization",
       "weighted": "Organization-provided weighted census"
     },
     "disclaimer": {
@@ -1807,9 +1749,7 @@
   "signup_subtitle": "Enter your information to get started",
   "signup_title": "Sign up",
   "spreadsheet": {
-    "access_button": "Identify",
-    "close": "Close",
-    "modal_title": "Authentication"
+    "access_button": "Identify"
   },
   "start_date": "Start date",
   "start_time": "Start time",
@@ -1993,7 +1933,6 @@
     "level_strong": "Strong",
     "level_weak": "Weak",
     "no_group_description": "Please select a group first to configure authentication.",
-    "save_failed": "Failed to configure voter authentication",
     "security_level": "Good security",
     "security_recommendation_1": "For better security, we recommend selecting at least 2 credentials.",
     "security_recommendation_2_one": "You've selected {{ count }} credentials, which provides good security for your voters.",

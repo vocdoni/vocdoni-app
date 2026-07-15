@@ -105,7 +105,7 @@ describe('VotingReportPdfButton', () => {
     clickSpy.mockRestore()
   })
 
-  it('does not fetch the census bundle when metadata identifies a spreadsheet census', async () => {
+  it('does not fetch the census bundle when metadata census type is not csp', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(
         JSON.stringify({
@@ -127,7 +127,7 @@ describe('VotingReportPdfButton', () => {
       },
       meta: {
         census: {
-          type: 'spreadsheet',
+          type: 'unknown',
         },
       },
     })
@@ -173,7 +173,7 @@ describe('VotingReportPdfButton', () => {
       },
       meta: {
         census: {
-          type: 'spreadsheet',
+          type: 'unknown',
         },
       },
     })

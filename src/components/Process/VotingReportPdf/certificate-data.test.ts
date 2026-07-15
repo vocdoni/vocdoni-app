@@ -150,8 +150,6 @@ describe('buildCertificateData', () => {
   it('uses metadata census type for the authentication method before sdk census type', () => {
     const cases = [
       ['csp', CensusType.WEIGHTED, 'Memberbase credentials census'],
-      ['spreadsheet', CensusType.CSP, 'Spreadsheet census provided by the organization'],
-      ['web3', CensusType.CSP, 'Web3 wallet census provided by the organization'],
       ['unknown', CensusType.CSP, 'Not available'],
     ] as const
 
@@ -196,7 +194,7 @@ describe('buildCertificateData', () => {
       },
       meta: {
         census: {
-          type: 'web3',
+          type: 'unknown',
         },
       },
     })
@@ -226,12 +224,13 @@ describe('buildCertificateData', () => {
         meta: {
           census: {
             fields: ['email'],
+            // no type — should fall back to meta.census.type
           },
         },
       },
       meta: {
         census: {
-          type: 'web3',
+          type: 'csp',
         },
       },
     })
@@ -243,50 +242,9 @@ describe('buildCertificateData', () => {
     })
 
     expect(data.authentication.find((field) => field.label === 'Authentication method')?.value).toBe(
-      'Web3 wallet census provided by the organization'
+      'Memberbase credentials census'
     )
-    expect(data.authentication.find((field) => field.label === 'Voter access source')?.value).toBe(
-      'Voters access with the wallet address included in the Web3 census.'
-    )
-  })
-
-  it('shows spreadsheet and web3 access as census-source authentication instead of credential checks', () => {
-    const cases = [
-      [
-        'spreadsheet',
-        'Spreadsheet census provided by the organization',
-        'Voters access with credentials derived from the spreadsheet census uploaded by the organization.',
-      ],
-      [
-        'web3',
-        'Web3 wallet census provided by the organization',
-        'Voters access with the wallet address included in the Web3 census.',
-      ],
-    ] as const
-
-    cases.forEach(([censusType, expectedMethod, expectedSource]) => {
-      const election = Object.assign(createElection(), {
-        census: {
-          size: 100,
-          type: CensusType.CSP,
-        },
-        meta: {
-          census: {
-            type: censusType,
-          },
-        },
-      })
-
-      const data = buildCertificateData({
-        report: createReport(election),
-        t: translate,
-        now: new Date('2026-01-03T10:00:00Z'),
-      })
-
-      expect(data.authentication.find((field) => field.label === 'Authentication method')?.value).toBe(expectedMethod)
-      expect(data.authentication.find((field) => field.label === 'Voter access source')?.value).toBe(expectedSource)
-      expect(data.authentication.find((field) => field.label === 'Additional identity check')).toBeUndefined()
-    })
+    expect(data.authentication.find((field) => field.label === 'Required voter credentials')?.value).toBe('Email')
   })
 
   it('separates voter participation from weighted voting-power totals', () => {
@@ -298,9 +256,6 @@ describe('buildCertificateData', () => {
         weight: 2000,
       },
       meta: {
-        census: {
-          type: 'web3',
-        },
         token: {
           decimals: 2,
         },

@@ -57,7 +57,6 @@ import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
-import { CensusTypes } from '../Census/CensusType'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
@@ -481,24 +480,14 @@ const useUpdateProcess = () => {
 }
 
 const buildCensusSpec = (form: Process): CensusSpec => {
-  switch (form.censusType) {
-    case CensusTypes.CSP: {
-      const spec: CensusSpec = { groupId: form.groupId || undefined, weighted: form.weightedVote || undefined }
-      if (form.census?.credentials?.length) {
-        spec.authFields = form.census.credentials as OrgMemberAuthField[]
-      }
-      if (form.census?.use2FA && form.census?.use2FAMethod) {
-        spec.twoFaFields = getTwoFaFields(form.census.use2FAMethod) as OrgMemberTwoFaField[]
-      }
-      return spec
-    }
-    case CensusTypes.Spreadsheet:
-      return { groupId: form.groupId || undefined, weighted: form.weightedVote || undefined }
-    case CensusTypes.Web3:
-      return { memberIds: form.addresses?.map((a) => a.address), weighted: form.weightedVote || undefined }
-    default:
-      return {}
+  const spec: CensusSpec = { groupId: form.groupId || undefined, weighted: form.weightedVote || undefined }
+  if (form.census?.credentials?.length) {
+    spec.authFields = form.census.credentials as OrgMemberAuthField[]
   }
+  if (form.census?.use2FA && form.census?.use2FAMethod) {
+    spec.twoFaFields = getTwoFaFields(form.census.use2FAMethod) as OrgMemberTwoFaField[]
+  }
+  return spec
 }
 
 export const useFormToVotingProcessRequest = () => {
@@ -517,7 +506,7 @@ export const useFormToVotingProcessRequest = () => {
       form.endDate && form.endTime ? parseLocalDateTime(form.endDate, form.endTime) : addDays(startRef, 1).toISOString()
 
     const secretUntilTheEnd = form.resultVisibility === 'hidden'
-    const maxVoteOverwrites = form.censusType === CensusTypes.CSP ? 0 : 10
+    const maxVoteOverwrites = 0
     const isMultiChoice = form.questionType === SelectorTypes.Multiple
 
     const questions: VotingProcessQuestionRequest[] = form.questions.map((question) => {
@@ -546,7 +535,13 @@ export const useFormToVotingProcessRequest = () => {
           choices,
           type: 'multiChoice',
           typeSetup: { maxChoices, minChoices: form.minNumberOfChoices ?? 0, uniqueChoices: true },
-          ballotProtocol: { ...commonProtocol, maxCount: maxChoices, maxValue: 1, maxTotalCost: maxChoices, uniqueValues: true },
+          ballotProtocol: {
+            ...commonProtocol,
+            maxCount: maxChoices,
+            maxValue: 1,
+            maxTotalCost: maxChoices,
+            uniqueValues: true,
+          },
           secretUntilTheEnd,
           metadata,
         }
@@ -796,8 +791,6 @@ const ProcessCreateView = () => {
     const sidebarFieldKeys = [
       'groupId',
       'census',
-      'spreadsheet',
-      'addresses',
       'resultVisibility',
       'weightedVote',
       'endDate',
