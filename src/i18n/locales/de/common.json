@@ -543,6 +543,10 @@
     "load_more": "Mehr laden",
     "no_groups": "Keine Gruppen gefunden"
   },
+  "head": {
+    "description": "Erstelle, verwalte und integriere sichere, Ende-zu-Ende-verifizierbare Abstimmungen mit Vocdoni. Eine flexible Plattform für Organisationen, Regierungen und Entwickler für vertrauenswürdige digitale Abstimmungen und Entscheidungsprozesse.",
+    "title": "Vocdoni | Sichere & überprüfbare Abstimmungsinfrastruktur"
+  },
   "home": {
     "clients_title": "Von über 100 Organisationen vertraut",
     "faqs": {

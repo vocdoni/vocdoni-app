@@ -160,7 +160,9 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     CUSTOM_ORGANIZATION_DOMAINS: resolveCustomOrganizationDomains(env.CUSTOM_ORGANIZATION_DOMAINS),
     PROCESS_IDS: env.PROCESS_IDS || '',
     DEFAULT_CENSUS_SIZE: Number(env.DEFAULT_CENSUS_SIZE) || 5000,
-    title: env.APP_TITLE || 'Vocdoni - Digital voting SaaS platform',
+    // Only set when explicitly configured: consumers fall back to the
+    // localized default title (see src/pages/shared/defaultHeadMeta.ts).
+    title: env.APP_TITLE || undefined,
     APP_URL: env.APP_URL,
     STRIPE_PUBLIC_KEY: env.STRIPE_PUBLIC_KEY,
     SAAS_URL: trimTrailingSlash(env.SAAS_URL || 'https://saas-api-dev.vocdoni.net'),

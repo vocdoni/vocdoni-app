@@ -550,6 +550,10 @@
     "load_more": "Charger plus",
     "no_groups": "Aucun groupe trouvé"
   },
+  "head": {
+    "description": "Créez, gérez et intégrez des élections sécurisées et vérifiables de bout en bout avec Vocdoni. Une plateforme flexible pour les organisations, les gouvernements et les développeurs, pour un vote numérique et une prise de décision fiables.",
+    "title": "Vocdoni | Infrastructure de vote sécurisée et vérifiable"
+  },
   "home": {
     "clients_title": "Plus de 100 organisations nous font confiance",
     "faqs": {

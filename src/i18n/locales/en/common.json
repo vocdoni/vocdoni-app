@@ -543,6 +543,10 @@
     "load_more": "Load more",
     "no_groups": "No groups found"
   },
+  "head": {
+    "description": "Build, manage, and integrate secure, e2e verifiable elections with Vocdoni. A flexible platform for organizations, governments, and developers to power trusted digital voting and decision-making.",
+    "title": "Vocdoni | Secure & verifiable voting infrastructure"
+  },
   "home": {
     "clients_title": "Trusted by 100+ organizations",
     "faqs": {

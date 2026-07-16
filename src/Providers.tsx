@@ -21,6 +21,7 @@ import {
   normalizePublicLanguageCandidate,
   persistPublicLanguagePreferenceClient,
 } from '~i18n/public-language'
+import { getDefaultTitleForLanguage } from '~src/pages/shared/defaultHeadMeta'
 import { uiScaffoldComponents } from '~theme/react-components'
 import { AppEnvProvider, normalizeLanguages, useAppEnv } from './app-env'
 import { buildAppEnv } from './app-env-build'
@@ -64,6 +65,12 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
   const supportedLanguages = useMemo(() => Object.keys(normalizeLanguages(appEnv.LANGUAGES)), [appEnv.LANGUAGES])
 
   const [language, setLanguageState] = useState(initialLanguage)
+
+  // In-place language switches (pushState, no Vike navigation) never re-run the
+  // +title hook, so keep the document title in the active language ourselves.
+  useEffect(() => {
+    document.title = getDefaultTitleForLanguage(language, appEnv.title)
+  }, [language, appEnv.title])
 
   // Keep the active language in sync with the URL on browser back/forward across
   // localized prefixes, so the router basename and i18n follow the address bar.

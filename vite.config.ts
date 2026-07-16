@@ -28,10 +28,6 @@ const viteconfig = ({ mode }: { mode: string }) => {
     console.warn('Unable to resolve git commit hash for HTML template injection.')
   }
 
-  // Only used as the static <title> of the SPA shell template; the live title is
-  // driven at runtime through AppEnv/Vike head.
-  const title = process.env.APP_TITLE || 'Vocdoni - Digital voting SaaS platform'
-
   return defineConfig({
     base,
     // Expose the dev server on the local network (equivalent to `--host`).
@@ -57,7 +53,6 @@ const viteconfig = ({ mode }: { mode: string }) => {
         inject: {
           data: {
             commit: commit.trim(),
-            title,
           },
         },
       }),

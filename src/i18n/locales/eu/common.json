@@ -543,6 +543,10 @@
     "load_more": "Kargatu gehiago",
     "no_groups": "Ez da talderik aurkitu"
   },
+  "head": {
+    "description": "Sortu, kudeatu eta integratu hauteskunde seguruak eta muturretik muturrera egiaztagarriak Vocdonirekin. Plataforma malgua erakunde, gobernu eta garatzaileentzat, konfiantzazko boto-emate digitala eta erabakiak hartzea bultzatzeko.",
+    "title": "Vocdoni | Boto-emate azpiegitura segurua eta egiaztagarria"
+  },
   "home": {
     "clients_title": "100 erakunde baino gehiagok konfiantza dute gugan",
     "faqs": {
