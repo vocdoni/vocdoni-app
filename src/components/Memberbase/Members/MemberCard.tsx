@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Member } from '~src/queries/members'
 import { useTable } from '../TableProvider'
-import { maskIfNeeded } from './index'
+import { maskIfNeeded } from './maskIfNeeded'
 
 type MemberCardProps = {
   member: Member

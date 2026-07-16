@@ -55,6 +55,7 @@ import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
 import { MemberManager } from './Manager'
+import { maskIfNeeded } from './maskIfNeeded'
 import MemberCard from './MemberCard'
 
 enum DeleteModes {
@@ -111,14 +112,6 @@ type MemberTableItemProps = {
   openDeleteSelected: () => void
   onAddToGroup: () => void
   onAddToCensus: () => void
-}
-
-const maskedFields = new Set<string>(['phone'])
-
-export const maskIfNeeded = (fieldId: string, value: string): string => {
-  if (!maskedFields.has(fieldId)) return value
-  if (!value) return ''
-  return '*********'
 }
 
 const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerProps) => {
