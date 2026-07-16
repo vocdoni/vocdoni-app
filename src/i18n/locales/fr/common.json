@@ -1488,8 +1488,8 @@
     "cancel": "Annuler le processus",
     "continue": "Continuer",
     "end": "Clôturer le vote",
-    "pause": "Mettre en pause",
-    "start": "Démarrer/Reprendre"
+    "manage": "",
+    "pause": "Mettre en pause"
   },
   "process_context": {
     "clone_as_draft": "Cloner comme brouillon",

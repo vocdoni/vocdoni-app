@@ -226,7 +226,7 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
           </Box>
         </ReactRouterLink>
       </Link>
-      {isAdmin && <ActionsMenu />}
+      <ActionsMenu />
     </Flex>
   )
 }

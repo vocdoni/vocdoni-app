@@ -1462,8 +1462,8 @@
     "cancel": "Prozess abbrechen",
     "continue": "Weiter",
     "end": "Abstimmung beenden",
-    "pause": "Pausieren",
-    "start": "Starten/Fortsetzen"
+    "manage": "",
+    "pause": "Pausieren"
   },
   "process_context": {
     "clone_as_draft": "Als Entwurf klonen",

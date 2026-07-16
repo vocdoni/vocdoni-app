@@ -1,12 +1,12 @@
 {
   "balance": "{{ balance }} VOC tokens",
   "actions": {
-    "cancel_description": "Cancel·lant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i cancel·larà els vots que s'hagin emès.",
+    "cancel_description": "Atenció: cancel·lar \"{{ election.title.default }}\" no es pot desfer i anul·larà tots els vots emesos.",
     "cancel": "Cancel·la",
     "cancel_button": "Cancel",
     "continue_description": "Reobrint el procés de votació \"{{ election.title.default }}\"",
     "continue": "Reobre el procés immediatament, si s'ha pausat",
-    "end_description": "Finalitzant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i els votants no podran emetre nous vots.",
+    "end_description": "Atenció: finalitzar \"{{ election.title.default }}\" no es pot desfer i els votants ja no podran votar.",
     "end": "Finalitza immediatament el procés, impedint que es presentin nous vots, i mostra els resultats de votació (precaució: no es pot desfer)",
     "error_title": "S'ha produït algun error en executar la transacció",
     "pause_description": "Pausant el procés de votació \"{{ election.title.default }}\"...",

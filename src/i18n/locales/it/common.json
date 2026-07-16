@@ -5,7 +5,7 @@
   },
   "actions": {
     "cancel": "Annulla",
-    "cancel_description": "Annullamento di \"{{ election.title.default }}\"...\n\nAttenzione: questa azione è irreversibile e annullerà tutti i voti precedenti",
+    "cancel_description": "Attenzione: annullare \"{{ election.title.default }}\" è irreversibile e annullerà tutti i voti precedenti.",
     "confirm": "Conferma",
     "continue": "Riprendi immediatamente il processo, nel caso fosse stato messo in pausa",
     "continue_description": "Ripresa del processo di voto \"{{ election.title.default }}\"...",
@@ -13,7 +13,7 @@
     "create_new_vote": "Crea nuova votazione",
     "edit": "Modifica",
     "end": "Termina immediatamente il processo, impedendo l'invio di nuovi voti e mostrando i risultati (attenzione: non può essere annullato)",
-    "end_description": "Chiusura del processo di voto \"{{ election.title.default }}\"...\n\nAttenzione: questa azione è irreversibile e i votanti non potranno più votare.",
+    "end_description": "Attenzione: chiudere \"{{ election.title.default }}\" è irreversibile e i votanti non potranno più votare.",
     "error_title": "Si è verificato un errore durante l'esecuzione della transazione",
     "manage_team": "Gestisci team",
     "more": "Altre opzioni",
@@ -1488,8 +1488,8 @@
     "cancel": "Annulla processo",
     "continue": "Continua",
     "end": "Termina votazione",
-    "pause": "Pausa",
-    "start": "Avvia/Riprendi"
+    "manage": "Gestisci nella dashboard",
+    "pause": "Pausa"
   },
   "process_context": {
     "clone_as_draft": "Clona come bozza",

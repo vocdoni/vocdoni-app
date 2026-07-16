@@ -5,7 +5,7 @@
   },
   "actions": {
     "cancel": "Cancel·la",
-    "cancel_description": "Cancel·lant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i cancel·larà els vots que s'hagin emès.",
+    "cancel_description": "Atenció: cancel·lar \"{{ election.title.default }}\" no es pot desfer i anul·larà tots els vots emesos.",
     "confirm": "Confirma",
     "continue": "Reobre el procés immediatament, si s'ha pausat",
     "continue_description": "Reobrint el procés de votació \"{{ election.title.default }}\"",
@@ -13,7 +13,7 @@
     "create_new_vote": "Crea una nova votació",
     "edit": "Edita",
     "end": "Finalitza immediatament el procés, impedint que es presentin nous vots, i mostra els resultats de votació (precaució: no es pot desfer)",
-    "end_description": "Finalitzant el procés de votació \"{{ election.title.default }}\"...\n\nAtenció: aquesta acció no es pot desfer i els votants no podran emetre nous vots.",
+    "end_description": "Atenció: finalitzar \"{{ election.title.default }}\" no es pot desfer i els votants ja no podran votar.",
     "error_title": "S'ha produït algun error en executar la transacció",
     "manage_team": "Gestiona l'equip",
     "more": "Més opcions",
@@ -1488,8 +1488,8 @@
     "cancel": "Cancel·la",
     "continue": "Continua",
     "end": "Finalitza el procés",
-    "pause": "Pausa",
-    "start": "Inicia/Continua"
+    "manage": "Gestiona al tauler",
+    "pause": "Pausa"
   },
   "process_context": {
     "clone_as_draft": "Clona com a esborrany",
