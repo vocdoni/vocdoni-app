@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event'
 import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import type { ReactNode } from 'react'
 import { fireEvent, mockUseElection, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessesTable from './ProcessesTable'
 
 vi.mock('@vocdoni/sdk', async (importOriginal) => {
@@ -60,6 +60,12 @@ describe('ProcessesTable', () => {
         }),
       useRoutedPagination: () => ({ pagination: null, initialPage: 1 }),
     })
+  })
+
+  // setReactProvidersMock mutates a module-level singleton; reset it so provider
+  // overrides never leak into other suites (the global setup also resets, belt-and-suspenders).
+  afterEach(() => {
+    resetReactProvidersMock()
   })
 
   it('renders election title', () => {

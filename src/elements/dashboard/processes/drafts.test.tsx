@@ -3,7 +3,7 @@ import { act, renderHook } from '@testing-library/react'
 import React from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
 import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { DraftsTable, useDeleteDraft } from './drafts'
 
 const toastSpy = vi.fn()
@@ -31,6 +31,12 @@ const createWrapper = (queryClient: QueryClient) => {
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
 }
+
+// setReactProvidersMock mutates a module-level singleton; reset it so provider
+// overrides never leak into other suites (the global setup also resets, belt-and-suspenders).
+afterEach(() => {
+  resetReactProvidersMock()
+})
 
 describe('useDeleteDraft', () => {
   beforeEach(() => {
