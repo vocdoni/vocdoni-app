@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { render, screen } from '~src/test-utils'
 import { TableProvider } from '../TableProvider'
 import MembersTable from './index'
