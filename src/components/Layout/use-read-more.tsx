@@ -29,9 +29,10 @@ export const useReadMoreMarkdown = (containerMaxHeightPx: number, tantPerCentGra
 
   const ReadMoreMarkdownWrapper = ({
     children,
-    from = 'var(--chakra-colors-read_more-from)',
-    toLight = 'var(--chakra-colors-read_more-to-light)',
-    toDark = 'var(--chakra-colors-read_more-to-dark)',
+    from = 'transparent',
+    // `bg` is a semantic token, so a single CSS var resolves per color mode
+    toLight = 'var(--chakra-colors-bg)',
+    toDark = 'var(--chakra-colors-bg)',
     ...props
   }: ReadMoreMarkdownWrapperProps) => {
     return (
@@ -63,7 +64,7 @@ export const useReadMoreMarkdown = (containerMaxHeightPx: number, tantPerCentGra
   }
   const ReadMoreMarkdownButton = ({ ...props }: any) =>
     isTruncated ? (
-      <Button onClick={handleReadMore} color='read_more' {...props}>
+      <Button onClick={handleReadMore} {...props}>
         {readMore ? t('use_read_more.read_more') : t('use_read_more.read_less')}
       </Button>
     ) : null

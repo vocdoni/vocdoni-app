@@ -1,10 +1,10 @@
 import { Flex, IconButton, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { OrganizationProvider, useClient } from '@vocdoni/react-components'
-import React, { PropsWithChildren, useEffect } from 'react'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuPanelLeft } from 'react-icons/lu'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import DashboardMenu from '~components/Dashboard/Menu'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
@@ -20,19 +20,29 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
   const { open: isOpen, onOpen, onClose } = useDisclosure()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const [reduced, setReduced] = useLocalStorage(LocalStorageKeys.DashboardMenuReduced, false)
+  const [headerActionsNode, setHeaderActionsNode] = useState<HTMLDivElement | null>(null)
   const { t } = useTranslation()
+  const { pathname } = useLocation()
 
-  // Close the mobile drawer when the screen size changes
+  // Close the mobile drawer and clear the header actions slot when leaving mobile
   useEffect(() => {
-    if (!isMobile) onClose()
+    if (!isMobile) {
+      onClose()
+      setHeaderActionsNode(null)
+    }
   }, [isMobile])
+
+  // Close the mobile drawer after navigating to another section
+  useEffect(() => {
+    onClose()
+  }, [pathname])
 
   const reducedValue = reduced && !isMobile
 
   return (
-    <DashboardLayoutContext.Provider value={{ reduced: reducedValue }}>
+    <DashboardLayoutContext.Provider value={{ reduced: reducedValue, headerActionsNode }}>
       <DashboardLayoutProviders>
-        <Flex minH='100svh' w='full' _dark={{ bg: 'brand.650' }} maxW='max-window-width' margin='0 auto'>
+        <Flex minH='100svh' w='full' bg='bg' maxW='max-window-width' margin='0 auto'>
           {/* Sidebar for large screens */}
           <DashboardMenu
             isOpen={isOpen}
@@ -43,10 +53,21 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
 
           <Flex flex='1 1 0' flexDirection='column' minW={0}>
             <AnnouncementBanner />
-            <Flex alignItems='center' px={4} pt={3} pb={2} display={{ base: 'flex', md: 'none' }} gap={2}>
+            <Flex
+              alignItems='center'
+              justifyContent='space-between'
+              px={4}
+              pt={3}
+              pb={2}
+              display={{ base: 'flex', md: 'none' }}
+              gap={2}
+            >
               <IconButton aria-label={t('menu.open')} colorPalette='gray' variant='subtle' size='xs' onClick={onOpen}>
                 <LuPanelLeft />
               </IconButton>
+              {/* Slot for a page's top-right action (e.g. the integrator "Upgrade plan" button),
+                  portaled here so it aligns with the sidebar toggle on mobile. */}
+              <Flex ref={isMobile ? setHeaderActionsNode : undefined} alignItems='center' gap={2} />
             </Flex>
             <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
           </Flex>

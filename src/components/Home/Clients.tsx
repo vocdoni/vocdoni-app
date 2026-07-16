@@ -16,7 +16,7 @@ const Clients = (props: BoxProps) => {
 
   return (
     <Box {...props}>
-      <Text textAlign='center' mb={10} fontFamily='basier' fontSize={'lg'} fontWeight='400'>
+      <Text textAlign='center' mb={10} fontSize={'lg'} fontWeight='400'>
         {t('home.clients_title')}
       </Text>
       <ClientsGrid />

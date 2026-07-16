@@ -38,7 +38,7 @@ const LayoutIntegratorsAuth = () => {
                 </Heading>
               )}
               {subtitle && (
-                <Text color='gray.500' fontSize='sm'>
+                <Text color='fg.muted' fontSize='sm'>
                   {subtitle}
                 </Text>
               )}

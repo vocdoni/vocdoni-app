@@ -1,6 +1,7 @@
 import {
   Alert,
   Badge,
+  Box,
   Button,
   Center,
   Code,
@@ -8,15 +9,18 @@ import {
   HStack,
   Icon,
   IconButton,
+  SimpleGrid,
   Spinner,
   Stack,
   Table,
   Text,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuTrash2 } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
+import { DashboardBox } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
@@ -39,12 +43,80 @@ const useStatus = () => {
   }
 }
 
+/**
+ * Mobile presentation of a single key: identity (label + status + revoke) first, then the prefix
+ * and wrapped scope badges, with the low-priority dates in a compact grid at the bottom. Avoids
+ * the two-axis scrolling a 7-column table forces on small screens.
+ */
+const ApiKeyCard = ({
+  apiKey: k,
+  status,
+  revokeDisabled,
+  onRevoke,
+}: {
+  apiKey: ApiKey
+  status: { label: string; palette: string }
+  revokeDisabled: boolean
+  onRevoke: () => void
+}) => {
+  const { t } = useTranslation()
+
+  return (
+    <DashboardBox gap={3} justifyContent='flex-start' flexWrap='nowrap'>
+      <Flex align='center' gap={2}>
+        <Text fontWeight='bold' truncate>
+          {k.label}
+        </Text>
+        <Badge colorPalette={status.palette} variant='subtle' flexShrink={0}>
+          {status.label}
+        </Badge>
+        <IconButton
+          aria-label={t('integrators.api_keys.revoke', { defaultValue: 'Revoke key' })}
+          variant='ghost'
+          size='xs'
+          color='fg.error'
+          ml='auto'
+          disabled={revokeDisabled}
+          onClick={onRevoke}
+        >
+          <Icon as={LuTrash2} />
+        </IconButton>
+      </Flex>
+      <Box opacity={k.revoked ? 0.6 : 1}>
+        <Code>{k.prefix}…</Code>
+        <HStack gap={1} wrap='wrap' mt={3}>
+          {k.scopes.map((sc) => (
+            <Badge key={sc} variant='subtle'>
+              {sc}
+            </Badge>
+          ))}
+        </HStack>
+        <SimpleGrid columns={2} gap={2} mt={3} pt={3} borderTop='1px solid' borderColor='table.border'>
+          <Box>
+            <Text fontSize='xs' color='texts.subtle'>
+              {t('integrators.api_keys.last_used', { defaultValue: 'Last used' })}
+            </Text>
+            <Text fontSize='sm'>{formatDate(k.lastUsedAt)}</Text>
+          </Box>
+          <Box>
+            <Text fontSize='xs' color='texts.subtle'>
+              {t('integrators.api_keys.expires', { defaultValue: 'Expires' })}
+            </Text>
+            <Text fontSize='sm'>{formatDate(k.expiresAt)}</Text>
+          </Box>
+        </SimpleGrid>
+      </Box>
+    </DashboardBox>
+  )
+}
+
 const ApiKeysPanel = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const keys = useApiKeys()
   const revoke = useRevokeApiKey()
   const status = useStatus()
+  const isMobile = useBreakpointValue({ base: true, md: false })
   const [keyToRevoke, setKeyToRevoke] = useState<ApiKey | null>(null)
 
   const onRevoke = async () => {
@@ -108,6 +180,19 @@ const ApiKeysPanel = () => {
             </Alert.Description>
           </Alert.Content>
         </Alert.Root>
+      ) : isMobile ? (
+        // Stacked cards on small screens: the 7-column table overflows horizontally on mobile.
+        <Stack gap={3}>
+          {list.map((k) => (
+            <ApiKeyCard
+              key={k.id}
+              apiKey={k}
+              status={status(k)}
+              revokeDisabled={k.revoked || revoke.isPending}
+              onRevoke={() => setKeyToRevoke(k)}
+            />
+          ))}
+        </Stack>
       ) : (
         <Table.ScrollArea borderWidth='1px' borderRadius='md'>
           <Table.Root variant='outline'>

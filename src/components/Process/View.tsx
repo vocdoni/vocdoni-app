@@ -137,7 +137,7 @@ const ProcessInfoPanel = () => {
                 </Text>
               </TooltipTrigger>
               <TooltipPositioner>
-                <TooltipContent bg='primary.600' color='white'>
+                <TooltipContent>
                   {t('process.total_census_size_tooltip', {
                     censusSize,
                     maxCensusSize: election?.maxCensusSize,

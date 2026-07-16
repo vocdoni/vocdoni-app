@@ -33,7 +33,8 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { roleIcons } from '~components/Layout/SaasSelector'
-import DeleteModal from '~components/Modal/DeleteModal'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
+import { EmptyState } from '~components/ui/EmptyState'
 import { useToast } from '~components/Toast'
 import { useProfile } from '~src/queries/account'
 import { QueryKeys } from '~src/queries/keys'
@@ -253,11 +254,11 @@ const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }:
       disabled={disabled}
       border='1px solid'
       borderRadius='md'
-      borderColor={isSelected && 'gray.400'}
+      borderColor={isSelected ? 'border.emphasized' : undefined}
       p={2}
       cursor={disabled ? 'not-allowed' : 'pointer'}
       opacity={disabled ? 0.6 : 1}
-      _hover={!disabled ? { borderColor: 'gray.400' } : undefined}
+      _hover={!disabled ? { borderColor: 'border.emphasized' } : undefined}
       {...props}
     >
       <RadioGroup.ItemHiddenInput />
@@ -488,24 +489,19 @@ const RemoveUserModal = ({ open, onOpenChange, user }: ActiveUserModalProps) => 
   }
 
   return (
-    <DeleteModal
+    <ConfirmDialog
       title={t('team.remove_member.title', { defaultValue: 'Are you sure?' })}
-      subtitle={t('team.remove_member.confirmation', {
+      description={t('team.remove_member.confirmation', {
         defaultValue: 'This will remove {{name}} from your team. They will no longer have access to your organization.',
         name: `${user.info.firstName} ${user.info.lastName}`,
       })}
       open={open}
-      onOpenChange={({ open }) => onOpenChange({ open })}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onClose}>
-          {t('team.remove_member.cancel', { defaultValue: 'Cancel' })}
-        </Button>
-        <Button loading={removeUser.isPending} colorPalette='red' onClick={removeUserHandler}>
-          {t('team.remove_member.confirm', { defaultValue: 'Remove' })}
-        </Button>
-      </Flex>
-    </DeleteModal>
+      onOpenChange={onOpenChange}
+      cancelText={t('team.remove_member.cancel', { defaultValue: 'Cancel' })}
+      confirmText={t('team.remove_member.confirm', { defaultValue: 'Remove' })}
+      loading={removeUser.isPending}
+      onConfirm={removeUserHandler}
+    />
   )
 }
 
@@ -539,23 +535,18 @@ const CancelInvitationModal = ({ open, onOpenChange, user }: PendingUserModalPro
   }
 
   return (
-    <DeleteModal
+    <ConfirmDialog
       title={t('team.cancel_invitation.title', { defaultValue: 'Are you sure?' })}
-      subtitle={t('team.cancel_invitation.confirmation', {
+      description={t('team.cancel_invitation.confirmation', {
         defaultValue: 'This will cancel the invitation. The person will not be able to join your organization.',
       })}
       open={open}
-      onOpenChange={({ open }) => onOpenChange({ open })}
-    >
-      <Flex justifyContent='flex-end' mt={4} gap={2}>
-        <Button variant='outline' onClick={onClose}>
-          {t('team.cancel_invitation.cancel', { defaultValue: 'Cancel' })}
-        </Button>
-        <Button loading={cancelInvitation.isPending} colorPalette='red' onClick={cancelInvitationHandler}>
-          {t('team.cancel_invitation.confirm', { defaultValue: 'Cancel invitation' })}
-        </Button>
-      </Flex>
-    </DeleteModal>
+      onOpenChange={onOpenChange}
+      cancelText={t('team.cancel_invitation.cancel', { defaultValue: 'Cancel' })}
+      confirmText={t('team.cancel_invitation.confirm', { defaultValue: 'Cancel invitation' })}
+      loading={cancelInvitation.isPending}
+      onConfirm={cancelInvitationHandler}
+    />
   )
 }
 
@@ -707,22 +698,19 @@ const UsersEmpty = () => {
   const { t } = useTranslation()
 
   return (
-    <Flex alignItems='center' p={10} gap={6} flexDirection='column'>
-      <Flex alignItems='center' flexDirection='column'>
-        <Icon as={LuUserPlus} boxSize={20} color='texts.subtle' />
-        <Text fontSize='lg' fontWeight='bold'>
-          {t('team.only_one_member.title', { defaultValue: "You're the only team member of this organization" })}
-        </Text>
-        <Text color='texts.subtle'>
-          {t('team.only_one_member.subtitle', {
-            defaultValue: 'Add team members to collaborate on your organization',
-          })}
-        </Text>
-      </Flex>
+    <EmptyState
+      icon={LuUserPlus}
+      title={t('team.only_one_member.title', { defaultValue: "You're the only team member of this organization" })}
+      description={t('team.only_one_member.subtitle', {
+        defaultValue: 'Add team members to collaborate on your organization',
+      })}
+      p={10}
+      gap={6}
+    >
       <InviteToTeamModal leftIcon={<Icon mr={2} as={LuPlus} />} whiteSpace='normal'>
         {t('team.only_one_member.add_team_member', { defaultValue: 'Add team member' })}
       </InviteToTeamModal>
-    </Flex>
+    </EmptyState>
   )
 }
 

@@ -165,7 +165,7 @@ const AccountForm = ({ profile }: { profile?: User }) => {
       <Text fontSize={'2xl'} fontWeight='bold' mb={1.5}>
         {t('account.title', { defaultValue: 'Account Information' })}
       </Text>
-      <Text fontSize={'sm'} color={'rgb(115, 115, 115)'} mb={6}>
+      <Text fontSize={'sm'} color='fg.muted' mb={6}>
         {t('account.subtitle', { defaultValue: 'Update your account details and personal information' })}{' '}
       </Text>
       <VStack gap={8} align='stretch'>

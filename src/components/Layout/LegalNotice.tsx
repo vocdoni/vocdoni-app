@@ -15,7 +15,9 @@ const LegalNoticeContent = () => {
       maxW='6xl'
       mx='auto'
       color='texts.subtle'
-      style={{ fontSize: '0.875rem', lineHeight: '1.75rem', textAlign: 'center' }}
+      fontSize='sm'
+      lineHeight={2}
+      textAlign='center'
     >
       <Text as='p'>
         <Trans
@@ -23,7 +25,7 @@ const LegalNoticeContent = () => {
           defaults='To ensure a secure, verifiable and transparent vote, <strong>{{orgName}}</strong> uses the Vocdoni platform, which protects participants’ privacy at all times. More information at'
           values={{ orgName }}
           components={{
-            strong: <Box as='strong' color='texts.default' fontWeight='semibold' />,
+            strong: <Box as='strong' color='fg' fontWeight='semibold' />,
           }}
         />{' '}
         <Link href='https://vocdoni.io/' target='_blank' rel='noopener noreferrer' textDecor='underline'>

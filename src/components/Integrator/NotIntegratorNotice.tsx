@@ -44,7 +44,7 @@ const NotIntegratorNotice = () => {
     } catch (err) {
       toast({
         type: 'error',
-        title: t('integrators.create_org.error', { defaultValue: 'Could not create the organization' }),
+        title: t('integrators.create_account.error', { defaultValue: 'Could not create the integrator account' }),
         description: getApiErrorMessage(err),
       })
     }
@@ -61,21 +61,21 @@ const NotIntegratorNotice = () => {
           <Alert.Description>
             {t('integrators.not_integrator.description', {
               defaultValue:
-                'The selected organization is not an integrator. Create a free integrator organization to unlock this dashboard — no manual approval needed.',
+                'The selected organization is not an integrator. Create a free integrator account to unlock this dashboard. No manual approval is needed.',
             })}
           </Alert.Description>
         </Alert.Content>
       </Alert.Root>
 
       <Button onClick={() => setOpen(true)}>
-        {t('integrators.not_integrator.cta', { defaultValue: 'Create a free integrator organization' })}
+        {t('integrators.not_integrator.cta', { defaultValue: 'Create a free integrator account' })}
       </Button>
 
       <DeleteModal
-        title={t('integrators.create_org.title', { defaultValue: 'Create a free integrator organization?' })}
-        subtitle={t('integrators.create_org.description', {
+        title={t('integrators.create_account.title', { defaultValue: 'Create a free integrator account?' })}
+        subtitle={t('integrators.create_account.description', {
           defaultValue:
-            'A new organization on the free integrator plan will be created on your account and set as your active organization.',
+            'A new integrator account on the free plan will be created and set as your active organization.',
         })}
         open={open}
         // While the org is being created, keep the modal locked: block ESC and outside clicks so the
@@ -87,7 +87,9 @@ const NotIntegratorNotice = () => {
         {hasMultipleOrgs && (
           <Stack gap={2} mt={4}>
             <Text fontSize='sm' fontWeight={600}>
-              {t('integrators.create_org.switch_instead', { defaultValue: 'Or switch to an existing organization' })}
+              {t('integrators.create_account.switch_instead', {
+                defaultValue: 'Or switch to an existing organization',
+              })}
             </Text>
             <Stack gap={1} maxH='160px' overflowY='auto'>
               {organizations.map(({ organization, isIntegrator }) => (
@@ -117,10 +119,10 @@ const NotIntegratorNotice = () => {
 
         <Flex justifyContent='flex-end' mt={4} gap={2}>
           <Button variant='outline' disabled={provision.isPending} onClick={() => setOpen(false)}>
-            {t('integrators.create_org.cancel', { defaultValue: 'Cancel' })}
+            {t('integrators.create_account.cancel', { defaultValue: 'Cancel' })}
           </Button>
           <Button loading={provision.isPending} onClick={onCreate}>
-            {t('integrators.create_org.confirm', { defaultValue: 'Create organization' })}
+            {t('integrators.create_account.confirm', { defaultValue: 'Create account' })}
           </Button>
         </Flex>
       </DeleteModal>

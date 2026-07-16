@@ -201,7 +201,6 @@ const Faqs = (props: BoxProps) => {
           fontWeight='bold'
           textAlign='center'
           mb='10px'
-          fontFamily='basier'
         >
           {t('home.faqs.title')}
         </Text>
@@ -209,10 +208,9 @@ const Faqs = (props: BoxProps) => {
           mb='60px'
           maxW={{ base: '100%', sm: '70%', md: '80%', lg: '840px' }}
           mx='auto'
-          fontFamily='basier'
-          fontSize='20px'
-          color='home.description'
-          lineHeight='28px'
+          fontSize='xl'
+          color='fg.muted'
+          lineHeight={1.4}
           textAlign='center'
         >
           {t('home.faqs.subtitle')}

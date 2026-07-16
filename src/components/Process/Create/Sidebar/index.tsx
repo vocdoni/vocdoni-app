@@ -75,7 +75,7 @@ export const CreateSidebar = () => {
                 aria-label={t('process_create.census.settings', 'Census settings')}
                 variant='ghost'
                 size='sm'
-                _hover={{ bg: 'gray.100', _dark: { bg: 'whiteAlpha.200' } }}
+                _hover={{ bg: 'bg.muted' }}
               >
                 <Icon as={LuSettings} />
               </IconButton>

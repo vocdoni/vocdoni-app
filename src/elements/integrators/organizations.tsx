@@ -1,8 +1,9 @@
-import { Alert, ButtonGroup, Center, Flex, IconButton, Spinner, Text } from '@chakra-ui/react'
+import { Alert, ButtonGroup, Center, Flex, IconButton, SimpleGrid, Spinner, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
+import { LuBookOpen, LuChevronLeft, LuChevronRight } from 'react-icons/lu'
 import { DashboardCardHeader, DashboardContents } from '~components/Dashboard/Contents'
+import { DocsCard } from '~components/Integrator/DocsCard'
 import { ManagedOrganizationsTable } from '~components/Integrator/ManagedOrganizationsTable'
 import { useManagedOrganizations } from '~src/queries/integrators'
 
@@ -44,19 +45,33 @@ const IntegratorManagedOrganizations = () => {
           </Alert.Content>
         </Alert.Root>
       ) : organizations.length === 0 ? (
-        <Alert.Root status='info'>
-          <Alert.Indicator />
-          <Alert.Content>
-            <Alert.Title>
-              {t('integrators.managed.empty_title', { defaultValue: 'No managed organizations yet' })}
-            </Alert.Title>
-            <Alert.Description>
-              {t('integrators.managed.empty_description', {
-                defaultValue: 'Organizations you provision for your customers will appear here.',
+        <Flex direction='column' gap={4}>
+          <Alert.Root status='info'>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>
+                {t('integrators.managed.empty_title', { defaultValue: 'No organizations yet' })}
+              </Alert.Title>
+              <Alert.Description>
+                {t('integrators.managed.empty_description', {
+                  defaultValue:
+                    'Organizations are created through the API, not from this dashboard. Once you provision your first organization it will appear here.',
+                })}
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+          {/* Docs shortcut shown only until the first organization exists */}
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={4}>
+            <DocsCard
+              href='https://vocdoni.io/en/developers/docs/organizations#creating-an-organization'
+              icon={LuBookOpen}
+              title={t('integrators.managed.docs_card_title', { defaultValue: 'Creating an organization' })}
+              description={t('integrators.managed.docs_card_description', {
+                defaultValue: 'Learn how to create and manage organizations programmatically through the API.',
               })}
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Root>
+            />
+          </SimpleGrid>
+        </Flex>
       ) : (
         <Flex direction='column' gap={4}>
           <ManagedOrganizationsTable organizations={organizations} />

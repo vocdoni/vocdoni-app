@@ -6,6 +6,7 @@
   "actions": {
     "cancel": "Annulla",
     "cancel_description": "Annullamento di \"{{ election.title.default }}\"...\n\nAttenzione: questa azione è irreversibile e annullerà tutti i voti precedenti",
+    "confirm": "Conferma",
     "continue": "Riprendi immediatamente il processo, nel caso fosse stato messo in pausa",
     "continue_description": "Ripresa del processo di voto \"{{ election.title.default }}\"...",
     "create_first_vote": "Visualizza tutti i processi",
@@ -809,25 +810,24 @@
       "subtitle": "Crea e gestisci chiavi API per accedere all'API in modo programmatico.",
       "title": "Chiavi API"
     },
-    "change_plan": "Cambia piano",
     "configuration": {
       "subtitle": "Gestisci il tuo abbonamento e ottieni supporto.",
       "title": "Configurazione"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Annulla",
-      "confirm": "Crea organizzazione",
-      "description": "Una nuova organizzazione nel piano integratore gratuito sarà creata nel tuo account e impostata come organizzazione attiva.",
-      "error": "Non è stato possibile creare l'organizzazione",
+      "confirm": "Crea account",
+      "description": "Verrà creato un nuovo account integratore con il piano gratuito e verrà impostato come la tua organizzazione attiva.",
+      "error": "Impossibile creare l'account integratore",
       "switch_instead": "Oppure passa a un'organizzazione esistente",
-      "title": "Creare un'organizzazione integratore gratuita?"
+      "title": "Creare un account integratore gratuito?"
     },
     "docs": {
       "api_description": "Un'API REST per gestire elezioni: organizzazioni, membri, censimenti, processi, risultati e lavori asincroni.",
-      "api_title": "API SaaS",
-      "quickstart_description": "Esegui un'elezione completa da inizio a fine (crea un'organizzazione, costruisci un censimento, apri un processo e leggi il conteggio) in poche chiamate API.",
+      "api_title": "Riferimento API",
+      "quickstart_description": "Esegui un'elezione completa da inizio a fine con poche chiamate API: crea un'organizzazione, costruisci un censimento, apri un processo e leggi il conteggio.",
       "quickstart_title": "Guida rapida",
-      "sdk_description": "L'SDK TypeScript aggiunge il voto lato client alla tua app (autenticazione CSP, codifica della scheda elettorale e firma del voto) tutto attraverso l'API SaaS.",
+      "sdk_description": "L'SDK TypeScript aggiunge il voto lato client alla tua app tramite l'API: autenticazione CSP, codifica della scheda elettorale e firma del voto.",
       "sdk_title": "SDK",
       "subtitle": "Guide e riferimenti per iniziare a sviluppare con Vocdoni.",
       "title": "Documentazione"
@@ -835,9 +835,11 @@
     "managed": {
       "active": "Attiva",
       "created": "Creata",
+      "docs_card_description": "Scopri come creare e gestire organizzazioni in modo programmatico tramite l'API.",
+      "docs_card_title": "Creare un'organizzazione",
       "emails": "Email",
-      "empty_description": "Le organizzazioni che fornisci ai tuoi clienti compariranno qui.",
-      "empty_title": "Nessuna organizzazione gestita ancora",
+      "empty_description": "Le organizzazioni si creano tramite l'API, non da questa dashboard. Quando creerai la tua prima organizzazione, apparirà qui.",
+      "empty_title": "Ancora nessuna organizzazione",
       "error": "Impossibile caricare le organizzazioni",
       "inactive": "Inattiva",
       "organization": "Organizzazione",
@@ -849,26 +851,26 @@
       "title": "Organizzazioni gestite"
     },
     "not_integrator": {
-      "cta": "Crea un'organizzazione integratore gratuita",
-      "description": "L'organizzazione selezionata non è un integratore. Crea un'organizzazione integratore gratuita per sbloccare questa dashboard (nessuna approvazione manuale necessaria).",
+      "cta": "Crea un account integratore gratuito",
+      "description": "L'organizzazione selezionata non è un integratore. Crea un account integratore gratuito per sbloccare questa dashboard. Non è necessaria alcuna approvazione manuale.",
       "title": "Questa organizzazione non è ancora un integratore"
     },
     "overview": "Panoramica",
     "overview_error": "Impossibile caricare la quota dell'integratore",
     "overview_subtitle": "La tua quota di integratore e l'uso attuale.",
     "overview_title": "Panoramica",
-    "provision_failed": "Non siamo riusciti a configurare la tua organizzazione.",
+    "provision_failed": "Non siamo riusciti a configurare il tuo account integratore.",
     "quota": {
-      "emails": "Email utilizzate",
+      "emails": "Verifiche dei votanti via email",
       "limit_reached": "Limite raggiunto",
-      "managed_orgs": "Organizzazioni gestite",
-      "sms": "SMS utilizzati",
+      "managed_orgs": "Organizzazioni create",
+      "sms": "Verifiche dei votanti via SMS",
       "unlimited": "Illimitato",
       "used": "utilizzati",
-      "votes": "Voti emessi",
-      "voting_processes": "Processi di voto"
+      "votes": "Voti espressi",
+      "voting_processes": "Processi di voto creati"
     },
-    "setting_up_org": "Configurazione della tua organizzazione in corso…",
+    "setting_up_account": "Configurazione del tuo account integratore in corso…",
     "signin_subtitle": "Accedi alla tua dashboard dell'integratore.",
     "signin_title": "Accedi",
     "signup_subtitle": "Registrati per gestire organizzazioni come integratore.",
@@ -880,7 +882,8 @@
       "inactive": "Inattivo",
       "portal_error": "Impossibile aprire il portale di fatturazione",
       "unavailable": "Dettagli dell'abbonamento non disponibili"
-    }
+    },
+    "upgrade_plan": "Migliora il piano"
   },
   "internal_server_error": "Errore interno del server",
   "invalid_promo_code": "Codice promozione non valido",

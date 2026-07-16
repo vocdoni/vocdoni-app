@@ -147,6 +147,6 @@ describe('IntegratorOrgGuard', () => {
     renderGuard()
 
     expect(mutate).toHaveBeenCalledTimes(1)
-    expect(screen.getByText('Setting up your organization…')).toBeInTheDocument()
+    expect(screen.getByText('Setting up your integrator account…')).toBeInTheDocument()
   })
 })

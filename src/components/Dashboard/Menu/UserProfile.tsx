@@ -81,12 +81,12 @@ const UserProfile = () => {
                 <Text fontWeight='light' fontSize='sm' lineHeight={1} maxW='var(--size)' truncate>
                   {profile.firstName}
                 </Text>
-                <Text fontWeight='light' fontSize='xs' lineHeight={1} color='gray.500' maxW='var(--size)' truncate>
+                <Text fontWeight='light' fontSize='xs' lineHeight={1} color='fg.muted' maxW='var(--size)' truncate>
                   {organization?.account?.name?.default}
                 </Text>
               </Flex>
             )}
-            {!reduced && <Icon as={LuChevronsUpDown} color='gray.500' ml='auto' />}
+            {!reduced && <Icon as={LuChevronsUpDown} color='fg.muted' ml='auto' />}
           </Flex>
         </Button>
       </Popover.Trigger>
