@@ -1,4 +1,4 @@
-import { Button, Icon } from '@chakra-ui/react'
+import { Icon, IconButton } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
 import { areEqualHexStrings, ensure0x, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
@@ -31,14 +31,15 @@ export const ManageProcessLink = () => {
 
   if (!isOrgMember) return null
 
+  const manageLabel = t('process_actions.manage', { defaultValue: 'Manage in dashboard' })
+
   return (
-    <Button asChild variant='surface' size='xs'>
+    <IconButton asChild variant='surface' size='xs' title={manageLabel} aria-label={manageLabel}>
       {/* RouterAwareLink keeps client-side navigation when rendered inside the SPA (home / org
           pages) and falls back to a plain anchor on the SSR voting page, which has no router. */}
       <RouterAwareLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
         <Icon as={FaCog} />
-        {t('process_actions.manage', { defaultValue: 'Manage in dashboard' })}
       </RouterAwareLink>
-    </Button>
+    </IconButton>
   )
 }
