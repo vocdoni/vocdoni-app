@@ -30,7 +30,7 @@ const viteconfig = ({ mode }: { mode: string }) => {
 
   // Only used as the static <title> of the SPA shell template; the live title is
   // driven at runtime through AppEnv/Vike head.
-  const title = process.env.APP_TITLE || 'Vocdoni - Digital voting SaaS platform'
+  const title = process.env.APP_TITLE || 'Vocdoni | Secure & verifiable voting infrastructure'
 
   return defineConfig({
     base,

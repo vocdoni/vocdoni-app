@@ -1,6 +1,6 @@
 import type { PageContext } from 'vike/types'
 
-const DEFAULT_TITLE = 'Vocdoni - Digital voting SaaS platform'
+const DEFAULT_TITLE = 'Vocdoni | Secure & verifiable voting infrastructure'
 
 // Global, runtime-configurable document title (APP_TITLE). Pages with their own
 // +title.ts override this. Vike requires runtime logic like this to live in a
