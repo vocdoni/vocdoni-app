@@ -5,7 +5,7 @@
   },
   "actions": {
     "cancel": "Cancel",
-    "cancel_description": "Canceling \"{{ election.title.default }}\"...\n\nAttention: this action is irreversible and will cancel all the previous votes on it",
+    "cancel_description": "Attention: canceling \"{{ election.title.default }}\" is irreversible and will discard all previous votes.",
     "confirm": "Confirm",
     "continue": "Resume the process immediately, in case it has been paused",
     "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
@@ -13,7 +13,7 @@
     "create_new_vote": "Create new vote",
     "edit": "Edit",
     "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
-    "end_description": "Ending \"{{ election.title.default }}\" voting process...\n\nAttention: this action is irreversible and voters will no longer be able to vote.",
+    "end_description": "Attention: ending \"{{ election.title.default }}\" is irreversible — voters will no longer be able to vote.",
     "error_title": "There was some error while executing the transaction",
     "manage_team": "Manage team",
     "more": "More options",
@@ -1462,8 +1462,8 @@
     "cancel": "Cancel process",
     "continue": "Continue",
     "end": "End voting",
-    "pause": "Pause",
-    "start": "Start/Resume"
+    "manage": "Manage in dashboard",
+    "pause": "Pause"
   },
   "process_context": {
     "clone_as_draft": "Clone as draft",

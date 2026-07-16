@@ -5,7 +5,7 @@
   },
   "actions": {
     "cancel": "Cancelar",
-    "cancel_description": "Cancelando «{{ election.title.default }}»...\n\nAtención: esta acción es irreversible y anulará todos los votos emitidos.",
+    "cancel_description": "Atención: cancelar «{{ election.title.default }}» es irreversible y anulará todos los votos emitidos.",
     "confirm": "Confirmar",
     "continue": "Reanudar el proceso de inmediato, en caso de que haya sido pausado.",
     "continue_description": "Reanudando el proceso de votación «{{ election.title.default }}»...",
@@ -13,7 +13,7 @@
     "create_new_vote": "Crear nueva votación",
     "edit": "Editar",
     "end": "Finalizar el proceso de inmediato, impidiendo la emisión de nuevos votos y mostrando los resultados de la votación (precaución: no se puede revertir).",
-    "end_description": "Finalizando el proceso de votación «{{ election.title.default }}»...\n\nAtención: esta acción es irreversible y los electores ya no podrán votar.",
+    "end_description": "Atención: finalizar «{{ election.title.default }}» es irreversible y los electores ya no podrán votar.",
     "error_title": "Se ha producido un error al ejecutar la transacción",
     "manage_team": "Gestionar equipo",
     "more": "Más opciones",
@@ -1488,8 +1488,8 @@
     "cancel": "Cancelar proceso",
     "continue": "Continuar",
     "end": "Finalizar votación",
-    "pause": "Pausar",
-    "start": "Iniciar/Reanudar"
+    "manage": "Gestionar en el panel",
+    "pause": "Pausar"
   },
   "process_context": {
     "clone_as_draft": "Clonar como borrador",

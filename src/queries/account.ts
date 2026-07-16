@@ -1,4 +1,4 @@
-import { DefinedInitialDataOptions, QueryKey, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { QueryKey, UndefinedInitialDataOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api, ApiEndpoints, ApiError, getApiErrorMessage, UnauthorizedApiError } from '~components/Auth/api'
@@ -60,12 +60,12 @@ export interface AuthResponse {
 }
 
 export const useProfile = (
-  options?: Omit<DefinedInitialDataOptions<User, Error, User, QueryKey>, 'queryKey' | 'queryFn'>
+  options?: Omit<UndefinedInitialDataOptions<User, Error, User, QueryKey>, 'queryKey' | 'queryFn'>
 ) => {
   const { bearedFetch } = useAuth()
   const { recordFailure, recordSuccess } = useConnectionToast()
 
-  const query = useQuery<User>({
+  const query = useQuery<User, Error, User, QueryKey>({
     ...options,
     queryKey: QueryKeys.profile,
     refetchOnWindowFocus: false,

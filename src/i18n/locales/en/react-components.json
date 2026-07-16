@@ -1,12 +1,12 @@
 {
   "balance": "{{ balance }} VOC tokens",
   "actions": {
-    "cancel_description": "Canceling \"{{ election.title.default }}\"...\n\nAttention: this action is irreversible and will cancel all the previous votes on it",
+    "cancel_description": "Attention: canceling \"{{ election.title.default }}\" is irreversible and will discard all previous votes.",
     "cancel": "Cancel",
     "cancel_button": "Cancel",
     "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
     "continue": "Resume the process immediately, in case it has been paused",
-    "end_description": "Ending \"{{ election.title.default }}\" voting process...\n\nAttention: this action is irreversible and voters will no longer be able to vote.",
+    "end_description": "Attention: ending \"{{ election.title.default }}\" is irreversible — voters will no longer be able to vote.",
     "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
     "error_title": "There was some error while executing the transaction",
     "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",

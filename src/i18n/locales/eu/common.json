@@ -1462,8 +1462,8 @@
     "cancel": "Bertan behera utzi prozesua",
     "continue": "Jarraitu",
     "end": "Amaitu bozketa",
-    "pause": "Pausatu",
-    "start": "Hasi/Berrekin"
+    "manage": "Kudeatu panelean",
+    "pause": "Pausatu"
   },
   "process_context": {
     "clone_as_draft": "Klonatu zirriborro gisa",

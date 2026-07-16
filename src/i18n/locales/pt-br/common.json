@@ -1488,8 +1488,8 @@
     "cancel": "Cancelar processo",
     "continue": "Continuar",
     "end": "Encerrar votação",
-    "pause": "Pausar",
-    "start": "Iniciar/Retomar"
+    "manage": "Gerenciar no painel",
+    "pause": "Pausar"
   },
   "process_context": {
     "clone_as_draft": "Clonar como rascunho",

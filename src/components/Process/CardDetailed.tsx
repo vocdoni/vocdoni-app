@@ -15,7 +15,7 @@ import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
-import { ActionsMenu } from './ActionsMenu'
+import { ManageProcessLink } from './ManageProcessLink'
 import { ProcessDateInline } from './Date'
 
 interface Props {
@@ -35,7 +35,7 @@ const ProcessCardDetailed = ({ election }: Props) => {
             </Box>
           </ProcessCardLink>
           <ProcessDetailedCardDescription />
-          <ActionsMenu />
+          <ManageProcessLink />
         </Card.Body>
 
         <Card.Footer>

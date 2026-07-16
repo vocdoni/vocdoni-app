@@ -71,8 +71,8 @@ vi.mock('react-i18next', async (importOriginal) => {
   }
 })
 
-vi.mock('~components/Process/ActionsMenu', () => ({
-  ActionsMenu: () => <div>ActionsMenu</div>,
+vi.mock('~components/Process/ManageProcessLink', () => ({
+  ManageProcessLink: () => <div>ManageProcessLink</div>,
 }))
 
 vi.mock('~components/Process/Aside', () => ({
