@@ -7,17 +7,13 @@ describe('getVocdoniClientConfig', () => {
     vi.resetModules()
   })
 
-  it('rewrites the dev environment to the one-dev api endpoint', async () => {
+  it('resolves the dev environment to the SDK dev defaults', async () => {
     process.env.VOCDONI_ENVIRONMENT = 'dev'
 
     const { getVocdoniClientConfig } = await import('./vocdoni-client-config')
 
     expect(getVocdoniClientConfig()).toEqual({
       clientEnv: EnvOptions.DEV,
-      options: {
-        api_url: 'https://one-dev.vocdoni.net/v2',
-      },
-      explorerUrl: 'https://one-dev.explorer.vote',
     })
   })
 })
