@@ -1,4 +1,5 @@
 import {
+  Card,
   HStack,
   Icon,
   IconButton,
@@ -11,7 +12,10 @@ import {
   MenuTrigger,
   Portal,
   Progress,
+  Stack,
   Table,
+  Text,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useClient, useOrganization } from '@vocdoni/react-components'
@@ -96,8 +100,20 @@ export const useDeleteDraft = () => {
   })
 }
 
-const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
+export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   const { t } = useTranslation()
+  const isMobile = useBreakpointValue({ base: true, md: false })
+
+  if (isMobile) {
+    return (
+      <Stack gap={3} w='full'>
+        {drafts.map((draft) => (
+          <DraftCard key={draft.id} draft={draft} />
+        ))}
+        <RoutedPaginatedTableFooter />
+      </Stack>
+    )
+  }
 
   return (
     <Table.ScrollArea border='1px solid' borderColor='table.border' borderRadius='sm'>
@@ -150,6 +166,40 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
         <DraftsContextMenu draft={draft} />
       </Table.Cell>
     </Table.Row>
+  )
+}
+
+const DraftCard = ({ draft }: { draft: Draft }) => {
+  const { t } = useTranslation()
+  const notDefined = t('drafts.not_defined', { defaultValue: 'Not defined yet' })
+
+  return (
+    <Card.Root variant='data-list-item'>
+      <Card.Header>
+        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='medium'>
+          <RouterLink
+            to={{
+              pathname: generatePath(Routes.processes.create),
+              search: createSearchParams({ draftId: draft.id }).toString(),
+            }}
+          >
+            <Text lineClamp={2}>{draft.metadata?.title || notDefined}</Text>
+          </RouterLink>
+        </Link>
+        <DraftsContextMenu draft={draft} />
+      </Card.Header>
+      <Card.Body>
+        <Text>
+          {t('process_list.start_date', { defaultValue: 'Start date' })}: {draft.metadata?.startDate || notDefined}
+        </Text>
+        <Text>
+          {t('process_list.end_date', { defaultValue: 'End date' })}: {draft.metadata?.endDate || notDefined}
+        </Text>
+        <Text>
+          {t('process_list.type', { defaultValue: 'Type' })}: {draft.metadata?.questionType || notDefined}
+        </Text>
+      </Card.Body>
+    </Card.Root>
   )
 }
 

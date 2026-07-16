@@ -1,4 +1,19 @@
-import { Box, Icon, IconButton, Link, Menu, MenuPositioner, Portal, Table, Tag, Text } from '@chakra-ui/react'
+import {
+  Box,
+  Card,
+  HStack,
+  Icon,
+  IconButton,
+  Link,
+  Menu,
+  MenuPositioner,
+  Portal,
+  Stack,
+  Table,
+  Tag,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react'
 import { ElectionProvider, ElectionStatusBadge, QuestionsTypeBadge, useElection } from '@vocdoni/react-components'
 import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
@@ -20,6 +35,25 @@ type ProcessesListProps = {
 
 const ProcessesTable = ({ processes }: ProcessesListProps) => {
   const { t } = useTranslation()
+  const isMobile = useBreakpointValue({ base: true, md: false })
+
+  const rows =
+    processes &&
+    !!processes.length &&
+    processes?.map((election) => (
+      <ElectionProvider election={election} id={election.id} key={election.id}>
+        {isMobile ? <ProcessCard /> : <ProcessRow />}
+      </ElectionProvider>
+    ))
+
+  if (isMobile) {
+    return (
+      <Stack gap={3} w='full'>
+        {rows}
+        <RoutedPaginatedTableFooter />
+      </Stack>
+    )
+  }
 
   return (
     <Box border='1px solid' borderColor='table.border' borderRadius='sm' w='full'>
@@ -39,21 +73,76 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
               <Table.ColumnHeader>&nbsp;</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
-          <Table.Body>
-            {processes &&
-              !!processes.length &&
-              processes?.map((election) => (
-                <ElectionProvider election={election} id={election.id} key={election.id}>
-                  <ProcessRow />
-                </ElectionProvider>
-              ))}
-          </Table.Body>
+          <Table.Body>{rows}</Table.Body>
           <Table.Caption>
             <RoutedPaginatedTableFooter />
           </Table.Caption>
         </Table.Root>
       </Table.ScrollArea>
     </Box>
+  )
+}
+
+const ProcessResultsTag = () => {
+  const { election } = useElection()
+
+  if (!election || election instanceof InvalidElection) return null
+
+  return ElectionStatus.RESULTS === election.status ||
+    ([ElectionStatus.ENDED, ElectionStatus.ONGOING].includes(election.status) &&
+      !election.electionType.secretUntilTheEnd) ? (
+    <Tag.Root colorPalette='gray' variant='solid' size='sm'>
+      <Tag.Label>
+        <Trans i18nKey='process_list.results_live'>Live</Trans>
+      </Tag.Label>
+    </Tag.Root>
+  ) : (
+    <Tag.Root colorPalette='gray' variant='surface' size='sm'>
+      <Tag.Label>
+        <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
+      </Tag.Label>
+    </Tag.Root>
+  )
+}
+
+const ProcessCard = () => {
+  const { election } = useElection()
+  const { format } = useDateFns()
+  const { t } = useTranslation()
+
+  if (!election || election instanceof InvalidElection) return null
+
+  return (
+    <Card.Root variant='data-list-item'>
+      <Card.Header>
+        <Link asChild title={election.title.default}>
+          <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+            <Text fontWeight='medium' lineClamp={2}>
+              {election.title.default}
+            </Text>
+          </RouterLink>
+        </Link>
+        <ProcessContextMenu />
+      </Card.Header>
+      <Card.Body>
+        <HStack flexWrap='wrap' gap={2}>
+          <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+          <ElectionStatusBadge size='sm' />
+          <ProcessResultsTag />
+        </HStack>
+        <Text>
+          {t('process_list.start_date', { defaultValue: 'Start date' })}:{' '}
+          {format(election.startDate, t('organization.date_format'))}
+        </Text>
+        <Text>
+          {t('process_list.end_date', { defaultValue: 'End date' })}:{' '}
+          {format(election.endDate, t('organization.date_format'))}
+        </Text>
+        <Text>
+          {t('process_list.recount', { defaultValue: 'Recount' })}: {election.voteCount}
+        </Text>
+      </Card.Body>
+    </Card.Root>
   )
 }
 
@@ -85,21 +174,7 @@ const ProcessRow = () => {
       </Table.Cell>
       <Table.Cell textAlign='end'>{election.voteCount}</Table.Cell>
       <Table.Cell>
-        {ElectionStatus.RESULTS === election.status ||
-        ([ElectionStatus.ENDED, ElectionStatus.ONGOING].includes(election.status) &&
-          !election.electionType.secretUntilTheEnd) ? (
-          <Tag.Root colorPalette='gray' variant='solid' size='sm'>
-            <Tag.Label>
-              <Trans i18nKey='process_list.results_live'>Live</Trans>
-            </Tag.Label>
-          </Tag.Root>
-        ) : (
-          <Tag.Root colorPalette='gray' variant='surface' size='sm'>
-            <Tag.Label>
-              <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
-            </Tag.Label>
-          </Tag.Root>
-        )}
+        <ProcessResultsTag />
       </Table.Cell>
       <Table.Cell textAlign='end'>
         <ProcessContextMenu />

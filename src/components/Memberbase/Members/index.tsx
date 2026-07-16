@@ -12,10 +12,12 @@ import {
   InputGroup,
   Menu,
   Progress,
+  Stack,
   Switch,
   Table,
   Tag,
   Text,
+  useBreakpointValue,
   useDisclosure,
   Wrap,
   WrapItem,
@@ -53,6 +55,8 @@ import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
 import { MemberManager } from './Manager'
+import { maskIfNeeded } from './maskIfNeeded'
+import MemberCard from './MemberCard'
 
 enum DeleteModes {
   SELECTED = 'selected',
@@ -108,14 +112,6 @@ type MemberTableItemProps = {
   openDeleteSelected: () => void
   onAddToGroup: () => void
   onAddToCensus: () => void
-}
-
-const maskedFields = new Set<string>(['phone'])
-
-export const maskIfNeeded = (fieldId: string, value: string): string => {
-  if (!maskedFields.has(fieldId)) return value
-  if (!value) return ''
-  return '*********'
 }
 
 const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerProps) => {
@@ -726,27 +722,62 @@ const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: Member
   )
 }
 
-const EmptyMembers = () => {
+const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
+  const { data = [], isLoading, isFetching } = useTable()
+  const isLoadingOrImporting = isLoading || isFetching
+  const isEmpty = data.length === 0 && !isLoadingOrImporting
+
+  if (isEmpty) return <EmptyMembersMessage />
+
+  return (
+    <Stack gap={3}>
+      {data.map((member) => (
+        <MemberCard
+          key={member.id}
+          member={member}
+          actions={
+            <MemberActions
+              member={member}
+              onDelete={() => openDeleteSelected(member)}
+              onAddToGroup={() => onAddToGroup(member)}
+              onAddToCensus={() => onAddToCensus(member)}
+            />
+          }
+        />
+      ))}
+    </Stack>
+  )
+}
+
+const EmptyMembersMessage = () => {
   const { t } = useTranslation()
-  const { columns, error } = useTable()
+  const { error } = useTable()
   const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
+
+  return (
+    <Flex justify='center' align='center' height='150px'>
+      <Text color='texts.subtle' fontSize='sm'>
+        {debouncedSearch
+          ? t('members.table.no_filter_results', {
+              defaultValue: 'No members matching these attributes',
+            })
+          : error
+            ? error.message.toString()
+            : t('members.table.no_results', {
+                defaultValue: 'No members found',
+              })}
+      </Text>
+    </Flex>
+  )
+}
+
+const EmptyMembers = () => {
+  const { columns } = useTable()
 
   return (
     <Table.Row>
       <Table.Cell colSpan={columns.filter((c) => c.visible).length + 2}>
-        <Flex justify='center' align='center' height='150px'>
-          <Text color='texts.subtle' fontSize='sm'>
-            {debouncedSearch
-              ? t('members.table.no_filter_results', {
-                  defaultValue: 'No members matching these attributes',
-                })
-              : error
-                ? error.message.toString()
-                : t('members.table.no_results', {
-                    defaultValue: 'No members found',
-                  })}
-          </Text>
-        </Flex>
+        <EmptyMembersMessage />
       </Table.Cell>
     </Table.Row>
   )
@@ -876,6 +907,7 @@ const MembersTable = () => {
   const { isLoading, isFetching, allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } =
     useTable()
   const isLoadingOrImporting = isLoading || isFetching
+  const isMobile = useBreakpointValue({ base: true, md: false })
 
   const openDeleteSelected = (member?: Member) => {
     setDeleteMode(DeleteModes.SELECTED)
@@ -939,39 +971,65 @@ const MembersTable = () => {
             </Progress.Track>
           </Progress.Root>
         )}
-        <Table.ScrollArea>
-          <Table.Root variant='outline'>
-            <Table.Header>
-              <Table.Row>
-                <Table.ColumnHeader width='50px'>
-                  <Checkbox.Root
-                    checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
-                    onCheckedChange={({ checked }) => toggleAll(checked === true)}
-                  >
-                    <Checkbox.HiddenInput />
-                    <Checkbox.Control />
-                  </Checkbox.Root>
-                </Table.ColumnHeader>
-                {columns
-                  .filter((col) => col.visible)
-                  .map((col) => (
-                    <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
-                  ))}
-                <Table.ColumnHeader width='50px'>
-                  <ColumnManager />
-                </Table.ColumnHeader>
-              </Table.Row>
-            </Table.Header>
-            <MembersList
+        {isMobile ? (
+          <Box p={4}>
+            <Flex justify='space-between' align='center' mb={3}>
+              <Checkbox.Root
+                checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
+                onCheckedChange={({ checked }) => toggleAll(checked === true)}
+              >
+                <Checkbox.HiddenInput />
+                <Checkbox.Control />
+                <Checkbox.Label fontWeight='normal'>
+                  {t('members.table.select_all', { defaultValue: 'Select all' })}
+                </Checkbox.Label>
+              </Checkbox.Root>
+              <ColumnManager />
+            </Flex>
+            <MembersCardList
               openDeleteSelected={openDeleteSelected}
               onAddToGroup={openAddToGroup}
               onAddToCensus={openAddToCensus}
             />
-            <Table.Caption p={4}>
+            <Box pt={4}>
               <RoutedPaginatedTableFooter />
-            </Table.Caption>
-          </Table.Root>
-        </Table.ScrollArea>
+            </Box>
+          </Box>
+        ) : (
+          <Table.ScrollArea>
+            <Table.Root variant='outline'>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader width='50px'>
+                    <Checkbox.Root
+                      checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
+                      onCheckedChange={({ checked }) => toggleAll(checked === true)}
+                    >
+                      <Checkbox.HiddenInput />
+                      <Checkbox.Control />
+                    </Checkbox.Root>
+                  </Table.ColumnHeader>
+                  {columns
+                    .filter((col) => col.visible)
+                    .map((col) => (
+                      <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
+                    ))}
+                  <Table.ColumnHeader width='50px'>
+                    <ColumnManager />
+                  </Table.ColumnHeader>
+                </Table.Row>
+              </Table.Header>
+              <MembersList
+                openDeleteSelected={openDeleteSelected}
+                onAddToGroup={openAddToGroup}
+                onAddToCensus={openAddToCensus}
+              />
+              <Table.Caption p={4}>
+                <RoutedPaginatedTableFooter />
+              </Table.Caption>
+            </Table.Root>
+          </Table.ScrollArea>
+        )}
       </Box>
       <DeleteMemberModal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)} mode={deleteMode} />
       <AddMembersToGroupDrawer isOpen={isAddToGroupOpen} onClose={onAddToGroupClose} />
