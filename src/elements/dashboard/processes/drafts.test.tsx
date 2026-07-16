@@ -2,9 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook } from '@testing-library/react'
 import React from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
-import { mockUseOrganization } from '~src/test-utils'
+import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { useDeleteDraft } from './drafts'
+import { DraftsTable, useDeleteDraft } from './drafts'
 
 const toastSpy = vi.fn()
 const bearedFetchMock = vi.fn().mockResolvedValue(undefined)
@@ -15,16 +15,15 @@ vi.mock('~components/Auth/useAuth', () => ({
   }),
 }))
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (_key: string, opts?: Record<string, string>) => opts?.defaultValue ?? _key,
-  }),
-  Trans: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  initReactI18next: { type: '3rdParty', init: vi.fn() },
+// DraftsContextMenu (rendered by both the card and the row) pulls in the create-process
+// wizard; stub it so the list layout tests stay focused on the mobile/desktop branch.
+vi.mock('~components/Process/Create', () => ({
+  useCreateProcess: () => ({ mutateAsync: vi.fn() }),
 }))
 
 vi.mock('~components/Toast', () => ({
   useToast: () => toastSpy,
+  ToastProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }))
 
 const createWrapper = (queryClient: QueryClient) => {
@@ -79,5 +78,68 @@ describe('useDeleteDraft', () => {
 
     await expect(result.current.mutateAsync({ draftId: 'draft-3' })).rejects.toThrow(error)
     expect(toastSpy).not.toHaveBeenCalled()
+  })
+})
+
+describe('DraftsTable layout', () => {
+  const draft = {
+    id: 'draft-1',
+    metadata: {
+      title: 'My draft',
+      startDate: '2026-01-01',
+      endDate: '2026-01-02',
+      questionType: 'single',
+    },
+  } as any
+
+  // The global matchMedia stub matches nothing, so useBreakpointValue resolves the `base` value
+  // and the list renders stacked cards instead of the desktop table.
+  it('renders stacked cards without a table on mobile', () => {
+    render(
+      <TestMemoryRouter>
+        <DraftsTable drafts={[draft]} />
+      </TestMemoryRouter>
+    )
+
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.queryByRole('columnheader')).not.toBeInTheDocument()
+    // Card view renders the dates as inline labelled lines ("Start date: …").
+    expect(screen.getByText(/start date:/i)).toBeInTheDocument()
+    expect(screen.getByText(/end date:/i)).toBeInTheDocument()
+  })
+
+  it('renders the table with column headers on desktop widths', () => {
+    // Pretend every media query matches (jsdom has no layout), so useBreakpointValue resolves
+    // the `md` value and the table branch renders instead of the mobile cards.
+    const original = window.matchMedia
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    })
+
+    try {
+      render(
+        <TestMemoryRouter>
+          <DraftsTable drafts={[draft]} />
+        </TestMemoryRouter>
+      )
+
+      expect(screen.getByRole('table')).toBeInTheDocument()
+      expect(screen.getByRole('columnheader', { name: 'Start date' })).toBeInTheDocument()
+      expect(screen.getByRole('columnheader', { name: 'End date' })).toBeInTheDocument()
+      // The inline "Start date:" card lines are specific to the mobile view.
+      expect(screen.queryByText(/start date:/i)).not.toBeInTheDocument()
+    } finally {
+      Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
+    }
   })
 })

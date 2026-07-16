@@ -100,7 +100,7 @@ export const useDeleteDraft = () => {
   })
 }
 
-const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
+export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   const { t } = useTranslation()
   const isMobile = useBreakpointValue({ base: true, md: false })
 
