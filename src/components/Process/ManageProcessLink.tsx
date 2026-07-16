@@ -13,12 +13,14 @@ import { Routes } from '~routes'
  * not the org signer, so those actions never worked here). Instead it links members of the
  * process' organization to the dashboard's process view, where the real controls live.
  */
-export const ActionsMenu = () => {
+export const ManageProcessLink = () => {
   const { t } = useTranslation()
   const { election } = useElection()
   const { isAuthenticated } = useAuth()
-  // Only members of an org can see it, so skip the request entirely for anonymous voters.
-  const { data: profile } = useProfile({ enabled: isAuthenticated })
+  const hasElection = !!election && !(election instanceof InvalidElection)
+  // Only members of an org can see it, so skip the request for anonymous voters and until a valid
+  // election is loaded (the component renders nothing in those cases anyway).
+  const { data: profile } = useProfile({ enabled: isAuthenticated && hasElection })
 
   if (!election || election instanceof InvalidElection) return null
 

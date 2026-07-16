@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import Editor from '~components/Editor'
-import { ActionsMenu } from '~components/Process/ActionsMenu'
+import { ManageProcessLink } from '~components/Process/ManageProcessLink'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
@@ -226,7 +226,7 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
           </Box>
         </ReactRouterLink>
       </Link>
-      <ActionsMenu />
+      <ManageProcessLink />
     </Flex>
   )
 }

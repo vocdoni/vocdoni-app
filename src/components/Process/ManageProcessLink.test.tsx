@@ -14,7 +14,7 @@ vi.mock('~components/Auth/useAuth', () => ({
   useAuth: vi.fn(() => ({ isAuthenticated: true })),
 }))
 
-// Mock the same specifier the component imports (see ActionsMenu.tsx), so the mock
+// Mock the same specifier the component imports (see ManageProcessLink.tsx), so the mock
 // doesn't silently rely on `~src`/`~` alias resolution matching.
 vi.mock('~queries/account', () => ({
   useProfile: vi.fn(() => ({ data: undefined })),
@@ -22,14 +22,14 @@ vi.mock('~queries/account', () => ({
 
 import { useAuth } from '~components/Auth/useAuth'
 import { useProfile } from '~queries/account'
-import { ActionsMenu } from './ActionsMenu'
+import { ManageProcessLink } from './ManageProcessLink'
 
 const mockProfileOrgs = (addresses: string[]) =>
   vi.mocked(useProfile).mockReturnValue({
     data: { organizations: addresses.map((address) => ({ role: 'admin', organization: { address } })) },
   } as any)
 
-describe('ActionsMenu', () => {
+describe('ManageProcessLink', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: true } as any)
@@ -41,7 +41,7 @@ describe('ActionsMenu', () => {
   it('links members of the process organization to the dashboard process view', () => {
     mockProfileOrgs(['0xabc'])
 
-    render(<ActionsMenu />)
+    render(<ManageProcessLink />)
 
     const link = screen.getByRole('link', { name: 'Manage in dashboard' })
     expect(link).toHaveAttribute('href', '/admin/process/0xdeadbeef')
@@ -50,7 +50,7 @@ describe('ActionsMenu', () => {
   it('renders nothing when the user is not a member of the process organization', () => {
     mockProfileOrgs(['0xother'])
 
-    render(<ActionsMenu />)
+    render(<ManageProcessLink />)
 
     expect(screen.queryByRole('link', { name: 'Manage in dashboard' })).not.toBeInTheDocument()
   })
@@ -58,7 +58,7 @@ describe('ActionsMenu', () => {
   it('skips the profile query and renders nothing for unauthenticated visitors', () => {
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false } as any)
 
-    render(<ActionsMenu />)
+    render(<ManageProcessLink />)
 
     expect(useProfile).toHaveBeenCalledWith({ enabled: false })
     expect(screen.queryByRole('link', { name: 'Manage in dashboard' })).not.toBeInTheDocument()

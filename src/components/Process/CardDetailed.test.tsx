@@ -25,8 +25,8 @@ vi.mock('~components/Layout/use-read-more', () => ({
   }),
 }))
 
-vi.mock('./ActionsMenu', () => ({
-  ActionsMenu: () => <button>Actions</button>,
+vi.mock('./ManageProcessLink', () => ({
+  ManageProcessLink: () => <button>Actions</button>,
 }))
 
 vi.mock('./Date', () => ({

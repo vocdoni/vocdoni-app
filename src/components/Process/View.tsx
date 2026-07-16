@@ -38,7 +38,7 @@ import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { getPublicProcessSummaryPath } from '~src/ssr/public-pages'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
-import { ActionsMenu } from './ActionsMenu'
+import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
 import { useCspSessionGuard } from './CSP/use-csp-session-guard'
 import { CreatedBy } from './CreatedBy'
@@ -118,7 +118,7 @@ const ProcessInfoPanel = () => {
             {t('process.status.canceled')}
           </Text>
         )}
-        <ActionsMenu />
+        <ManageProcessLink />
       </Box>
       {election?.electionType.anonymous && (
         <ProcessInfoCard label={t('process.is_anonymous.title')} description={t('process.is_anonymous.description')} />
