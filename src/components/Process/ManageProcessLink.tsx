@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { FaCog } from 'react-icons/fa'
 import { generatePath } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
+import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useProfile } from '~queries/account'
 import { Routes } from '~routes'
 
@@ -32,11 +33,12 @@ export const ManageProcessLink = () => {
 
   return (
     <Button asChild variant='surface' size='xs'>
-      {/* Plain anchor (not a router Link): the public process view renders without a router context. */}
-      <a href={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+      {/* RouterAwareLink keeps client-side navigation when rendered inside the SPA (home / org
+          pages) and falls back to a plain anchor on the SSR voting page, which has no router. */}
+      <RouterAwareLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
         <Icon as={FaCog} />
         {t('process_actions.manage', { defaultValue: 'Manage in dashboard' })}
-      </a>
+      </RouterAwareLink>
     </Button>
   )
 }
