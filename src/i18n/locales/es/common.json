@@ -806,25 +806,24 @@
       "subtitle": "Crea y gestiona claves API para acceder a la API de manera programática.",
       "title": "Claves API"
     },
-    "change_plan": "Cambiar plan",
     "configuration": {
       "subtitle": "Gestiona tu suscripción y obtén soporte.",
       "title": "Configuración"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Cancelar",
-      "confirm": "Crear organización",
-      "description": "Se creará una nueva organización en el plan integrador gratuito en tu cuenta y se establecerá como tu organización activa.",
-      "error": "No se pudo crear la organización",
+      "confirm": "Crear cuenta",
+      "description": "Se creará una nueva cuenta de integrador en el plan gratuito y se establecerá como tu organización activa.",
+      "error": "No se pudo crear la cuenta de integrador",
       "switch_instead": "O cambia a una organización existente",
-      "title": "¿Crear una organización integradora gratuita?"
+      "title": "¿Crear una cuenta de integrador gratuita?"
     },
     "docs": {
       "api_description": "Una API REST para ejecutar elecciones gestionadas: organizaciones, miembros, censos, procesos, resultados y trabajos asíncronos.",
-      "api_title": "SaaS API",
-      "quickstart_description": "Ejecuta una elección completa de principio a fin (crea una org, construye un censo, abre un proceso y lee el recuento) en unas pocas llamadas de API.",
+      "api_title": "Referencia de la API",
+      "quickstart_description": "Ejecuta una elección completa de principio a fin con unas pocas llamadas de API: crea una organización, construye un censo, abre un proceso y lee el recuento.",
       "quickstart_title": "Inicio rápido",
-      "sdk_description": "El SDK de TypeScript añade votación del lado del cliente a tu aplicación (autenticación CSP, codificación de papeletas y firma de votos) a través de la API SaaS.",
+      "sdk_description": "El SDK de TypeScript añade votación del lado del cliente a tu aplicación a través de la API: autenticación CSP, codificación de papeletas y firma de votos.",
       "sdk_title": "SDK",
       "subtitle": "Guías y referencias para empezar a construir con Vocdoni.",
       "title": "Documentación"
@@ -832,9 +831,11 @@
     "managed": {
       "active": "Activo",
       "created": "Creado",
+      "docs_card_description": "Aprende a crear y gestionar organizaciones de forma programática a través de la API.",
+      "docs_card_title": "Crear una organización",
       "emails": "Correos electrónicos",
-      "empty_description": "Las organizaciones que aprovisionas para tus clientes aparecerán aquí.",
-      "empty_title": "Aún no hay organizaciones gestionadas",
+      "empty_description": "Las organizaciones se crean a través de la API, no desde este panel. Cuando crees tu primera organización, aparecerá aquí.",
+      "empty_title": "Aún no hay organizaciones",
       "error": "No se pudieron cargar las organizaciones",
       "inactive": "Inactivo",
       "organization": "Organización",
@@ -846,26 +847,26 @@
       "title": "Organizaciones gestionadas"
     },
     "not_integrator": {
-      "cta": "Crear una organización integradora gratuita",
-      "description": "La organización seleccionada no es una integradora. Crea una organización integradora gratuita para desbloquear este panel (no se requiere aprobación manual).",
+      "cta": "Crear una cuenta de integrador gratuita",
+      "description": "La organización seleccionada no es una integradora. Crea una cuenta de integrador gratuita para desbloquear este panel. No se requiere aprobación manual.",
       "title": "Esta organización aún no es una integradora"
     },
     "overview": "Resumen",
     "overview_error": "No se pudo cargar la cuota de integrador",
     "overview_subtitle": "Tu cuota de integrador y uso actual.",
     "overview_title": "Resumen",
-    "provision_failed": "No pudimos configurar tu organización.",
+    "provision_failed": "No pudimos configurar tu cuenta de integrador.",
     "quota": {
-      "emails": "Correos electrónicos utilizados",
+      "emails": "Verificaciones de votantes por correo electrónico",
       "limit_reached": "Límite alcanzado",
-      "managed_orgs": "Organizaciones gestionadas",
-      "sms": "SMS utilizados",
+      "managed_orgs": "Organizaciones creadas",
+      "sms": "Verificaciones de votantes por SMS",
       "unlimited": "Ilimitado",
       "used": "utilizado",
       "votes": "Votos emitidos",
-      "voting_processes": "Procesos de votación"
+      "voting_processes": "Procesos de votación creados"
     },
-    "setting_up_org": "Configurando tu organización…",
+    "setting_up_account": "Configurando tu cuenta de integrador…",
     "signin_subtitle": "Accede a tu panel de integrador.",
     "signin_title": "Iniciar sesión",
     "signup_subtitle": "Regístrate para gestionar organizaciones como integrador.",
@@ -877,7 +878,8 @@
       "inactive": "Inactiva",
       "portal_error": "No se pudo abrir el portal de facturación",
       "unavailable": "Los detalles de la suscripción no están disponibles"
-    }
+    },
+    "upgrade_plan": "Mejorar plan"
   },
   "internal_server_error": "Error interno del servidor",
   "invalid_promo_code": "Código promocional no válido",

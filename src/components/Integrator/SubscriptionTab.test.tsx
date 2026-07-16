@@ -21,7 +21,7 @@ const mockSub = (overrides = {}) => vi.mocked(useSubscription).mockReturnValue({
 describe('IntegratorSubscriptionTab', () => {
   beforeEach(() => vi.clearAllMocks())
 
-  it('shows the current plan, status and a Change plan action', () => {
+  it('shows the current plan, status and an Upgrade plan action', () => {
     mockSub({
       subscription: {
         plan: { name: 'Free', default: true, monthlyPrice: 0, yearlyPrice: 0 },
@@ -33,7 +33,7 @@ describe('IntegratorSubscriptionTab', () => {
 
     expect(screen.getByText('Free')).toBeInTheDocument()
     expect(screen.getByText('Active')).toBeInTheDocument()
-    expect(screen.getByText('Change plan')).toBeInTheDocument()
+    expect(screen.getByText('Upgrade plan')).toBeInTheDocument()
     // Free plan: no billing portal button
     expect(screen.queryByText('Billing details')).not.toBeInTheDocument()
   })

@@ -798,25 +798,24 @@
       "subtitle": "Sortu eta kudeatu APIren gakoak APIa programatikoki atzitzeko.",
       "title": "APIren gakoak"
     },
-    "change_plan": "Aldatu plana",
     "configuration": {
       "subtitle": "Kudeatu zure harpidetzea eta lortu laguntza.",
       "title": "Konfigurazioa"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Utzi",
-      "confirm": "Sortu erakundea",
-      "description": "Zure kontuan integrador plano librean erakunde berri bat sortuko da eta aktibo gisa ezarriko da.",
-      "error": "Ezin izan da erakundea sortu",
+      "confirm": "Sortu kontua",
+      "description": "Integrator kontu berri bat sortuko da dohaineko planean eta zure erakunde aktibo gisa ezarriko da.",
+      "error": "Ezin izan da integrator kontua sortu",
       "switch_instead": "Edo aldatu dagoen erakunde baten",
-      "title": "Integrador erakunde askea sortu?"
+      "title": "Dohaineko integrator kontua sortu?"
     },
     "docs": {
       "api_description": "REST API bat kudeaturiko hauteskundeak exekutatzeko: erakundeak, kideak, erroldetak, prozesuak, emaitzak eta asinkro lanak.",
-      "api_title": "SaaS API",
-      "quickstart_description": "Hauteskunde osoa exekutatu (erakunde bat sortu, erroldeta bat sortu, prozesua ireki eta emaitzak irakurri) gutxi batzuen API deiekin.",
+      "api_title": "API erreferentzia",
+      "quickstart_description": "Exekutatu hauteskunde oso bat hasieratik amaierara API dei gutxi batzuekin: sortu erakunde bat, eraiki errolda bat, ireki prozesu bat eta irakurri emaitzak.",
       "quickstart_title": "Quickstart",
-      "sdk_description": "TypeScript SDK-ak zure aplikazioari botogintza alde-kliente bidezko funtzionalitatea gehitzen dio (CSP autentifikazioa, boto-kodifikazioa eta botoen sinadura) SaaS API baten bidez.",
+      "sdk_description": "TypeScript SDK-ak bezero aldeko botoa gehitzen dio zure aplikazioari APIaren bidez: CSP autentifikazioa, boto-kodifikazioa eta botoen sinadura.",
       "sdk_title": "SDK",
       "subtitle": "Gidak eta erreferentziak Vocdoni erabiliz eraikitzen hastzeko.",
       "title": "Dokumentazioa"
@@ -824,9 +823,11 @@
     "managed": {
       "active": "Aktibo",
       "created": "Sortua",
+      "docs_card_description": "Ikasi nola sortu eta kudeatu erakundeak programatikoki APIaren bidez.",
+      "docs_card_title": "Erakunde bat sortzea",
       "emails": "Emailak",
-      "empty_description": "Zure bezeroarentzat hornidurako erakundeak hemen agertuko dira.",
-      "empty_title": "Ez dago kudeaturiko erakunderik oraindik",
+      "empty_description": "Erakundeak APIaren bidez sortzen dira, ez panel honetatik. Zure lehen erakundea sortzen duzunean, hemen agertuko da.",
+      "empty_title": "Ez dago erakunderik oraindik",
       "error": "Ezin izan da erakundeak kargatu",
       "inactive": "Inaktibo",
       "organization": "Erakundea",
@@ -838,26 +839,26 @@
       "title": "Kudeaturiko erakundeak"
     },
     "not_integrator": {
-      "cta": "Sortu dohaineko integrator erakundea",
-      "description": "Hautatutako erakundea ez da integradorea. Sortu dohaineko integrator erakundea dashboard hau desblokeatzeko - eskuzko baimenaren beharrik ez.",
+      "cta": "Sortu dohaineko integrator kontua",
+      "description": "Hautatutako erakundea ez da integradorea. Sortu dohaineko integrator kontua panel hau desblokeatzeko. Ez da eskuzko baimenik behar.",
       "title": "Erakundea ez da oraindik integradorea"
     },
     "overview": "Gainbegirada",
     "overview_error": "Ezin izan da integrator kuota kargatu",
     "overview_subtitle": "Zure integrator kuota eta uneko erabilpena.",
     "overview_title": "Gainbegirada",
-    "provision_failed": "Ezin izan dugu zure erakundea konfiguratu.",
+    "provision_failed": "Ezin izan dugu zure integrator kontua konfiguratu.",
     "quota": {
-      "emails": "Erabilitako emailak",
+      "emails": "Boto-emaileen egiaztapenak email bidez",
       "limit_reached": "Muga heldu da",
-      "managed_orgs": "Kudeaturiko erakundeak",
-      "sms": "Erabilitako SMS",
+      "managed_orgs": "Sortutako erakundeak",
+      "sms": "Boto-emaileen egiaztapenak SMS bidez",
       "unlimited": "Mugarik gabe",
       "used": "erabilia",
-      "votes": "Emitutako botoak",
-      "voting_processes": "Boto-ematearen prozesuak"
+      "votes": "Emandako botoak",
+      "voting_processes": "Sortutako boto-emate prozesuak"
     },
-    "setting_up_org": "Zure erakundea prestatzen…",
+    "setting_up_account": "Zure integrator kontua prestatzen…",
     "signin_subtitle": "Sartu zure integrator dashboarda.",
     "signin_title": "Sartu",
     "signup_subtitle": "Izena eman integrator gisa erakundeak kudeatzeko.",
@@ -869,7 +870,8 @@
       "inactive": "Inaktibo",
       "portal_error": "Ezin da fakturazio portala ireki",
       "unavailable": "Harpidetzaren xehetasunak ez daude erabilgarri"
-    }
+    },
+    "upgrade_plan": "Hobetu plana"
   },
   "internal_server_error": "Zerbitzariaren barne-errorea",
   "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",

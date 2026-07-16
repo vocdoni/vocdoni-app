@@ -806,25 +806,24 @@
       "subtitle": "Crea i gestiona claus API per accedir a l'API de manera programàtica.",
       "title": "Claus API"
     },
-    "change_plan": "Canviar pla",
     "configuration": {
       "subtitle": "Gestiona la teva subscripció i obtén suport.",
       "title": "Configuració"
     },
-    "create_org": {
+    "create_account": {
       "cancel": "Cancel·lar",
-      "confirm": "Crear organització",
-      "description": "Es crearà una nova organització en el pla d'integrador gratuït al teu compte i s'establirà com la teva organització activa.",
-      "error": "No s'ha pogut crear l'organització",
+      "confirm": "Crear el compte",
+      "description": "Es crearà un compte d'integrador nou en el pla gratuït i s'establirà com la teva organització activa.",
+      "error": "No s'ha pogut crear el compte d'integrador",
       "switch_instead": "O canvia a una organització existent",
-      "title": "Crear una organització integradora gratuïta?"
+      "title": "Crear un compte d'integrador gratuït?"
     },
     "docs": {
       "api_description": "Una API REST per executar eleccions gestionades: organitzacions, membres, censos, processos, resultats i tasques asíncrones.",
-      "api_title": "API SaaS",
-      "quickstart_description": "Executa una elecció completa de principi a fi: crea una organització, construeix un cens, obre un procés i llegeix el recompte, tot en poques crides d'API.",
+      "api_title": "Referència de l'API",
+      "quickstart_description": "Executa una elecció completa de principi a fi amb poques crides d'API: crea una organització, construeix un cens, obre un procés i llegeix el recompte.",
       "quickstart_title": "Inici ràpid",
-      "sdk_description": "El SDK de TypeScript afegeix votació del costat del client a la teva aplicació: autenticació CSP, codificació del vot i signatura del vot, tot a través de l'API SaaS.",
+      "sdk_description": "El SDK de TypeScript afegeix votació del costat del client a la teva aplicació a través de l'API: autenticació CSP, codificació del vot i signatura del vot.",
       "sdk_title": "SDK",
       "subtitle": "Guies i referències per començar a construir amb Vocdoni.",
       "title": "Documentació"
@@ -832,9 +831,11 @@
     "managed": {
       "active": "Activa",
       "created": "Creada",
+      "docs_card_description": "Aprèn a crear i gestionar organitzacions de manera programàtica a través de l'API.",
+      "docs_card_title": "Crear una organització",
       "emails": "Correus electrònics",
-      "empty_description": "Les organitzacions que proporciones als teus clients apareixeran aquí.",
-      "empty_title": "Cap organització gestionada encara",
+      "empty_description": "Les organitzacions es creen a través de l'API, no des d'aquest tauler. Quan creïs la teva primera organització, apareixerà aquí.",
+      "empty_title": "Encara no hi ha organitzacions",
       "error": "No s'han pogut carregar les organitzacions",
       "inactive": "Inactiva",
       "organization": "Organització",
@@ -846,26 +847,26 @@
       "title": "Organitzacions gestionades"
     },
     "not_integrator": {
-      "cta": "Crea una organització integradora gratuïta",
-      "description": "L'organització seleccionada no és integradora. Crea una organització integradora gratuïta per desbloquejar aquest tauler (sense aprovació manual).",
+      "cta": "Crea un compte d'integrador gratuït",
+      "description": "L'organització seleccionada no és integradora. Crea un compte d'integrador gratuït per desbloquejar aquest tauler. No cal cap aprovació manual.",
       "title": "Aquesta organització encara no és integradora"
     },
     "overview": "Vista general",
     "overview_error": "No s'ha pogut carregar la quota d'integrador",
     "overview_subtitle": "La teva quota d'integrador i l'ús actual.",
     "overview_title": "Vista general",
-    "provision_failed": "No hem pogut configurar la teva organització.",
+    "provision_failed": "No hem pogut configurar el teu compte d'integrador.",
     "quota": {
-      "emails": "Correus electrònics usats",
+      "emails": "Verificacions de votants per correu electrònic",
       "limit_reached": "Límit assolit",
-      "managed_orgs": "Organitzacions gestionades",
-      "sms": "SMS usats",
+      "managed_orgs": "Organitzacions creades",
+      "sms": "Verificacions de votants per SMS",
       "unlimited": "Il·limitat",
       "used": "usats",
       "votes": "Vots emesos",
-      "voting_processes": "Processos de votació"
+      "voting_processes": "Processos de votació creats"
     },
-    "setting_up_org": "Configurant la teva organització…",
+    "setting_up_account": "Configurant el teu compte d'integrador…",
     "signin_subtitle": "Accedeix al teu tauler d'integrador.",
     "signin_title": "Iniciar sessió",
     "signup_subtitle": "Registra't per gestionar organitzacions com a integrador.",
@@ -877,7 +878,8 @@
       "inactive": "Inactiva",
       "portal_error": "No s'ha pogut obrir el portal de facturació",
       "unavailable": "Els detalls de la subscripció no estan disponibles"
-    }
+    },
+    "upgrade_plan": "Millorar el pla"
   },
   "internal_server_error": "Error intern del servidor",
   "invalid_promo_code": "Codi de promoció no vàlid",

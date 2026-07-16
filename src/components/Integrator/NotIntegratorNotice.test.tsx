@@ -74,13 +74,13 @@ describe('NotIntegratorNotice', () => {
 
     render(<NotIntegratorNotice />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator organization' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator account' }))
 
     // Confirmation dialog opens without provisioning yet.
-    expect(await screen.findByText('Create a free integrator organization?')).toBeInTheDocument()
+    expect(await screen.findByText('Create a free integrator account?')).toBeInTheDocument()
     expect(provisionMutateAsync).not.toHaveBeenCalled()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Create organization' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create account' }))
 
     await waitFor(() => expect(provisionMutateAsync).toHaveBeenCalledTimes(1))
     expect(localStorage.getItem('signerAddress')).toBe('0xnew')
@@ -92,10 +92,10 @@ describe('NotIntegratorNotice', () => {
 
     render(<NotIntegratorNotice />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator organization' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator account' }))
     fireEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
 
-    await waitFor(() => expect(screen.queryByText('Create a free integrator organization?')).not.toBeInTheDocument())
+    await waitFor(() => expect(screen.queryByText('Create a free integrator account?')).not.toBeInTheDocument())
     expect(provisionMutateAsync).not.toHaveBeenCalled()
   })
 
@@ -103,15 +103,15 @@ describe('NotIntegratorNotice', () => {
     mockProfile(['0xa'])
 
     const { unmount } = render(<NotIntegratorNotice />)
-    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator organization' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator account' }))
 
-    await screen.findByText('Create a free integrator organization?')
+    await screen.findByText('Create a free integrator account?')
     expect(screen.queryByText('Or switch to an existing organization')).not.toBeInTheDocument()
     unmount()
 
     mockProfile(['0xa', '0xb'])
     render(<NotIntegratorNotice />)
-    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator organization' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator account' }))
 
     expect(await screen.findByText('Or switch to an existing organization')).toBeInTheDocument()
   })
@@ -124,9 +124,9 @@ describe('NotIntegratorNotice', () => {
     } as any)
 
     render(<NotIntegratorNotice />)
-    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator organization' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator account' }))
 
-    await screen.findByText('Create a free integrator organization?')
+    await screen.findByText('Create a free integrator account?')
 
     // Dialog can't be dismissed via ESC or outside interaction while the request is in-flight.
     expect(deleteModalProps.closeOnEscape).toBe(false)
