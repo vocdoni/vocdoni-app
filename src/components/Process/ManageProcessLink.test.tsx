@@ -55,8 +55,10 @@ describe('ManageProcessLink', () => {
     expect(screen.queryByRole('link', { name: 'Manage in dashboard' })).not.toBeInTheDocument()
   })
 
-  it('skips the profile query and renders nothing for unauthenticated visitors', () => {
+  it('renders nothing for unauthenticated visitors even with a matching cached profile', () => {
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false } as any)
+    // A disabled query still hands back cached data, so simulate a stale membership match.
+    mockProfileOrgs(['0xabc'])
 
     render(<ManageProcessLink />)
 

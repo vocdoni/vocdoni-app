@@ -25,9 +25,13 @@ export const ManageProcessLink = () => {
 
   if (!election || election instanceof InvalidElection) return null
 
-  const isOrgMember = profile?.organizations?.some((membership) =>
-    areEqualHexStrings(membership.organization.address, election.organizationId)
-  )
+  // Gate on isAuthenticated too, not just the query `enabled`: a disabled query still returns
+  // cached profile data, so a logged-out visitor could otherwise keep a stale membership match.
+  const isOrgMember =
+    isAuthenticated &&
+    profile?.organizations?.some((membership) =>
+      areEqualHexStrings(membership.organization.address, election.organizationId)
+    )
 
   if (!isOrgMember) return null
 
