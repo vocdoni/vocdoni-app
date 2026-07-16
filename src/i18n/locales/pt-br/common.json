@@ -1488,7 +1488,7 @@
     "cancel": "Cancelar processo",
     "continue": "Continuar",
     "end": "Encerrar votação",
-    "manage": "",
+    "manage": "Gerenciar no painel",
     "pause": "Pausar"
   },
   "process_context": {

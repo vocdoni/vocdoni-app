@@ -1488,7 +1488,7 @@
     "cancel": "Annuler le processus",
     "continue": "Continuer",
     "end": "Clôturer le vote",
-    "manage": "",
+    "manage": "Gérer dans le tableau de bord",
     "pause": "Mettre en pause"
   },
   "process_context": {

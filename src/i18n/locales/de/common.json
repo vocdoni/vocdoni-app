@@ -1462,7 +1462,7 @@
     "cancel": "Prozess abbrechen",
     "continue": "Weiter",
     "end": "Abstimmung beenden",
-    "manage": "",
+    "manage": "Im Dashboard verwalten",
     "pause": "Pausieren"
   },
   "process_context": {
