@@ -23,10 +23,10 @@ const MemberCard = ({ member, actions, selectable = true }: MemberCardProps) => 
     <Card.Root variant='data-list-item'>
       <Card.Header>
         <Flex gap={3} alignItems='center' minW={0}>
-          {selectable && (
+          {selectable && member.id && (
             <Checkbox.Root
               checked={isSelected(member.id)}
-              onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
+              onCheckedChange={({ checked }) => toggleOne(member.id!, checked === true)}
               aria-label={t('members.table.select_member', { defaultValue: 'Select {{name}}', name: alias })}
             >
               <Checkbox.HiddenInput />
