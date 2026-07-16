@@ -14,11 +14,14 @@ vi.mock('~components/Auth/useAuth', () => ({
   useAuth: vi.fn(() => ({ isAuthenticated: true })),
 }))
 
-vi.mock('~src/queries/account', () => ({
-  useProfile: vi.fn(),
+// Mock the same specifier the component imports (see ActionsMenu.tsx), so the mock
+// doesn't silently rely on `~src`/`~` alias resolution matching.
+vi.mock('~queries/account', () => ({
+  useProfile: vi.fn(() => ({ data: undefined })),
 }))
 
-import { useProfile } from '~src/queries/account'
+import { useAuth } from '~components/Auth/useAuth'
+import { useProfile } from '~queries/account'
 import { ActionsMenu } from './ActionsMenu'
 
 const mockProfileOrgs = (addresses: string[]) =>
@@ -29,6 +32,7 @@ const mockProfileOrgs = (addresses: string[]) =>
 describe('ActionsMenu', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(useAuth).mockReturnValue({ isAuthenticated: true } as any)
     setReactProvidersMock({
       useElection: () => mockUseElection({ election: { id: 'deadbeef', organizationId: '0xabc', status: 'ONGOING' } }),
     })
@@ -51,11 +55,12 @@ describe('ActionsMenu', () => {
     expect(screen.queryByRole('link', { name: 'Manage in dashboard' })).not.toBeInTheDocument()
   })
 
-  it('renders nothing for anonymous visitors (no profile)', () => {
-    vi.mocked(useProfile).mockReturnValue({ data: undefined } as any)
+  it('skips the profile query and renders nothing for unauthenticated visitors', () => {
+    vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false } as any)
 
     render(<ActionsMenu />)
 
+    expect(useProfile).toHaveBeenCalledWith({ enabled: false })
     expect(screen.queryByRole('link', { name: 'Manage in dashboard' })).not.toBeInTheDocument()
   })
 })
