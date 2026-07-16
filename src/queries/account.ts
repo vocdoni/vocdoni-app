@@ -65,7 +65,7 @@ export const useProfile = (
   const { bearedFetch } = useAuth()
   const { recordFailure, recordSuccess } = useConnectionToast()
 
-  const query = useQuery<User>({
+  const query = useQuery<User, Error, User, QueryKey>({
     ...options,
     queryKey: QueryKeys.profile,
     refetchOnWindowFocus: false,
