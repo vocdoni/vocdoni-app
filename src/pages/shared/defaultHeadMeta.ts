@@ -8,17 +8,22 @@ const resolveLanguage = (pageContext: PageContext) => {
   return typeof language === 'string' && language ? language : undefined
 }
 
-// The defaultValue literals below are the source (en) copy and must stay
-// inline so `pnpm translations` can extract them.
+// The source (en) copy lives in src/i18n/locales/en/common.json; the
+// defaultValue literals below are only a runtime fallback and must be kept in
+// sync with it.
 export const getDefaultTitleForLanguage = (language: string | undefined, appEnvTitle: string | undefined) =>
-  appEnvTitle ?? i18n.t('head.title', 'Vocdoni | Secure & verifiable voting infrastructure', { lng: language })
+  appEnvTitle ??
+  i18n.t('head.title', {
+    lng: language,
+    defaultValue: 'Vocdoni | Secure & verifiable voting infrastructure',
+  })
 
 export const getDefaultPageTitle = (pageContext: PageContext) =>
   getDefaultTitleForLanguage(resolveLanguage(pageContext), pageContext.globalContext.appEnv?.title)
 
 export const getDefaultPageDescription = (pageContext: PageContext) =>
-  i18n.t(
-    'head.description',
-    'Build, manage, and integrate secure, e2e verifiable elections with Vocdoni. A flexible platform for organizations, governments, and developers to power trusted digital voting and decision-making.',
-    { lng: resolveLanguage(pageContext) }
-  )
+  i18n.t('head.description', {
+    lng: resolveLanguage(pageContext),
+    defaultValue:
+      'Build, manage, and integrate secure, e2e verifiable elections with Vocdoni. A flexible platform for organizations, governments, and developers to power trusted digital voting and decision-making.',
+  })
