@@ -19,8 +19,6 @@ const PageMetaHead = ({ meta, structuredData = [] }: PageMetaHeadProps) => {
         <meta key={locale} property='og:locale:alternate' content={locale} />
       ))}
       <meta property='og:type' content={meta.openGraph.type} />
-      <meta property='og:title' content={meta.openGraph.title} />
-      <meta property='og:description' content={meta.openGraph.description} />
       <meta property='og:image' content={meta.openGraph.image} />
       <meta property='og:site_name' content={meta.openGraph.siteName} />
       {meta.openGraph.url ? <meta property='og:url' content={meta.openGraph.url} /> : null}
