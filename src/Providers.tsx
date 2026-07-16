@@ -1,6 +1,6 @@
 import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ComponentsProvider, useClient } from '@vocdoni/react-components'
+import { ComponentsProvider } from '@vocdoni/react-components'
 import { setDefaultOptions } from 'date-fns'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { I18nextProvider, useTranslation } from 'react-i18next'
@@ -188,31 +188,12 @@ const SaasProviders = ({ children }: PropsWithChildren<{}>) => (
   </AuthProvider>
 )
 
-// ClientOptions has no explorerUrl field, so the dev explorer override resolved
-// in getVocdoniClientConfig can't be passed to ClientProvider. Apply it onto the
-// provider's client instance (the one the "Open in explorer" links read via
-// useClient) after creation, mirroring createVocdoniSdkClient.
-const ExplorerUrlSync = ({ explorerUrl }: { explorerUrl?: string }) => {
-  const { client } = useClient()
-
-  useEffect(() => {
-    if (explorerUrl && client) {
-      client.explorerUrl = explorerUrl
-    }
-  }, [client, explorerUrl])
-
-  return null
-}
-
 const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
   const { data } = useWalletClient()
   const { i18n } = useTranslation()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
   const locale = datesLocale(i18n.language)
-  const { clientEnv, options, explorerUrl } = useMemo(
-    () => getVocdoniClientConfig(VOCDONI_ENVIRONMENT),
-    [VOCDONI_ENVIRONMENT]
-  )
+  const { clientEnv } = useMemo(() => getVocdoniClientConfig(VOCDONI_ENVIRONMENT), [VOCDONI_ENVIRONMENT])
 
   const signer = data ? walletClientToSigner(data) : null
 
@@ -223,8 +204,7 @@ const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
   return (
     <RainbowKitTheme>
       <ComponentsProvider components={uiScaffoldComponents}>
-        <ClientProvider env={clientEnv} signer={signer as Signer} options={options}>
-          <ExplorerUrlSync explorerUrl={explorerUrl} />
+        <ClientProvider env={clientEnv} signer={signer as Signer}>
           <ConnectionToastProvider>
             <SaasProviders>
               <AnalyticsProvider>

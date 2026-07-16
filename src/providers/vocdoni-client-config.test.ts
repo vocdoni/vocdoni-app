@@ -1,23 +1,24 @@
 import { EnvOptions } from '@vocdoni/sdk'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
+
+import { getVocdoniClientConfig } from './vocdoni-client-config'
 
 describe('getVocdoniClientConfig', () => {
-  afterEach(() => {
-    delete process.env.VOCDONI_ENVIRONMENT
-    vi.resetModules()
+  it('resolves the dev environment to the SDK dev defaults', () => {
+    expect(getVocdoniClientConfig('dev')).toEqual({
+      clientEnv: EnvOptions.DEV,
+    })
   })
 
-  it('rewrites the dev environment to the one-dev api endpoint', async () => {
-    process.env.VOCDONI_ENVIRONMENT = 'dev'
+  it('resolves the prod environment to the SDK prod defaults', () => {
+    expect(getVocdoniClientConfig('prod')).toEqual({
+      clientEnv: EnvOptions.PROD,
+    })
+  })
 
-    const { getVocdoniClientConfig } = await import('./vocdoni-client-config')
-
+  it('defaults to the SDK dev environment', () => {
     expect(getVocdoniClientConfig()).toEqual({
       clientEnv: EnvOptions.DEV,
-      options: {
-        api_url: 'https://one-dev.vocdoni.net/v2',
-      },
-      explorerUrl: 'https://one-dev.explorer.vote',
     })
   })
 })

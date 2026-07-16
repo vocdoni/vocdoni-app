@@ -5,7 +5,7 @@ import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { serializePublicPageErrorDetails } from '~src/ssr/public-pages'
 
 export default async function data(pageContext: PageContextServer) {
-  const { clientEnv, options } = getVocdoniClientConfig(getServerAppEnv().VOCDONI_ENVIRONMENT)
+  const { clientEnv } = getVocdoniClientConfig(getServerAppEnv().VOCDONI_ENVIRONMENT)
 
   try {
     return await loadProcessPublicPageData(pageContext)
@@ -14,7 +14,6 @@ export default async function data(pageContext: PageContextServer) {
       routeParams: pageContext.routeParams,
       urlPathname: pageContext.urlPathname,
       clientEnv,
-      clientOptions: options,
       error: serializePublicPageErrorDetails(error),
     })
 
