@@ -164,6 +164,23 @@ type InviteAcceptRequestBody = {
   }
 }
 
+interface UpdatePasswordParams {
+  oldPassword: string
+  newPassword: string
+}
+
+export const useUpdatePassword = () => {
+  const { bearedFetch } = useAuth()
+
+  return useMutation<void, Error, UpdatePasswordParams>({
+    mutationFn: (params) =>
+      bearedFetch<void>(ApiEndpoints.Password, {
+        method: 'PUT',
+        body: params,
+      }),
+  })
+}
+
 export const useSignupFromInvite = (address: string) => {
   const toast = useToast()
   const { t } = useTranslation()

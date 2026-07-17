@@ -1,22 +1,17 @@
 import { Progress, Box, Button, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wrap } from '@chakra-ui/react'
-import { dotobject } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { LuLock, LuSparkles } from 'react-icons/lu'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
 import { PlanFeaturesTranslationKeys } from '~components/Pricing/Features'
-import { usePlans, usePlanTranslations } from '~components/Pricing/Plans'
+import { usePlanTranslations } from '~components/Pricing/Plans'
 import { SubscriptionPermission } from '~constants'
+import { useGetPlansWithFeature } from '~queries/plans'
 import { Routes } from '~src/router/routes'
 
 type SubscriptionLockedContentProps = {
   children: (args: { isLocked: boolean }) => React.ReactNode
   permissionType: SubscriptionPermission
-}
-
-const useGetPlansWithFeature = (feature: SubscriptionPermission) => {
-  const { data: plans = [] } = usePlans()
-  return plans.filter((plan) => dotobject(plan, feature))
 }
 
 export const SubscriptionLockedContent = ({ children, permissionType }: SubscriptionLockedContentProps) => {

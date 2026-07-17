@@ -17,7 +17,7 @@ import { Link as ReactRouterLink } from 'react-router-dom'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { Routes } from '~routes'
 import { Organization, useProfile } from '~src/queries/account'
-import { useOrganizationNames } from './useOrganizationNames'
+import { useOrganizationNames } from '~queries/organization'
 import { useSelectOrganization } from './useSelectOrganization'
 
 type SelectOption = {

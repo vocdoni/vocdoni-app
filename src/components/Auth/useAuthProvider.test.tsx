@@ -27,7 +27,7 @@ vi.mock('@vocdoni/sdk', async (importOriginal) => {
   }
 })
 
-vi.mock('~components/Auth/authQueries', () => ({
+vi.mock('~queries/auth', () => ({
   useLogin: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useRegister: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useVerifyMail: () => ({ mutateAsync: vi.fn(), isPending: false }),

@@ -7,37 +7,18 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react'
-import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuPencil } from 'react-icons/lu'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
 import { ModalForm, useModalForm } from '~components/Form/ModalForm'
 import { useToast } from '~components/Toast'
+import { useUpdatePassword } from '~queries/account'
 
 interface PasswordFormData {
   oldPassword: string
   newPassword: string
   confirmPassword: string
-}
-
-interface UpdatePasswordParams {
-  oldPassword: string
-  newPassword: string
-}
-
-const useUpdatePassword = () => {
-  const { bearedFetch } = useAuth()
-
-  return useMutation<void, Error, UpdatePasswordParams>({
-    mutationFn: (params) =>
-      bearedFetch<void>(ApiEndpoints.Password, {
-        method: 'PUT',
-        body: params,
-      }),
-  })
 }
 
 interface PasswordFormProps {

@@ -98,7 +98,7 @@ vi.mock('~components/Auth/useAuth', () => ({
   }),
 }))
 
-vi.mock('~components/Auth/authQueries', () => ({
+vi.mock('~queries/auth', () => ({
   useResendVerificationMail: () => ({
     mutate: vi.fn(),
     isPending: false,

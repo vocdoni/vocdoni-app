@@ -13,7 +13,7 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate, useOutletContext } from 'react-router-dom'
-import { useResendVerificationMail } from '~components/Auth/authQueries'
+import { useResendVerificationMail } from '~queries/auth'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
