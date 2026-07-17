@@ -2,6 +2,7 @@ import {
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
+  FieldRequiredIndicator,
   Input,
   InputProps,
   SystemStyleObject,
@@ -40,7 +41,12 @@ const InputBasic = ({
 
   return (
     <FormControl invalid={!!errors[formValue]} required={required}>
-      {label && <FormLabel css={labelStyles}>{label}</FormLabel>}
+      {label && (
+        <FormLabel css={labelStyles}>
+          {label}
+          <FieldRequiredIndicator />
+        </FormLabel>
+      )}
       <Input
         {...register(formValue, validationRules)}
         {...props}

@@ -2,6 +2,7 @@ import {
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
+  FieldRequiredIndicator,
   Icon,
   Input,
   InputGroup,
@@ -56,6 +57,7 @@ const InputPassword = ({
       {label && (
         <FormLabel fontSize='sm' fontWeight='medium'>
           {label}
+          <FieldRequiredIndicator />
         </FormLabel>
       )}
       <InputGroup

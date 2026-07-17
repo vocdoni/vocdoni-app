@@ -18,4 +18,24 @@ describe('InputBasic', () => {
     expect(screen.getByText('Name')).toBeInTheDocument()
     expect(screen.getByRole('textbox')).toBeInTheDocument()
   })
+
+  it('renders the required indicator when required', () => {
+    const { container } = render(
+      <Wrapper>
+        <InputBasic formValue='name' label='Name' required />
+      </Wrapper>
+    )
+
+    expect(container.querySelector('.chakra-field__requiredIndicator')).toBeInTheDocument()
+  })
+
+  it('does not render the required indicator when not required', () => {
+    const { container } = render(
+      <Wrapper>
+        <InputBasic formValue='name' label='Name' />
+      </Wrapper>
+    )
+
+    expect(container.querySelector('.chakra-field__requiredIndicator')).not.toBeInTheDocument()
+  })
 })
