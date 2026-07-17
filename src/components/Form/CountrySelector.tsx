@@ -81,6 +81,7 @@ export const CountrySelector = ({ ...props }: Omit<SelectProps, 'options'>) => {
             isClearable={false}
             {...props}
             isRequired={false} // we don't want HTML5 validation
+            inputId='country' // associates the FormLabel's htmlFor with react-select's inner input
           />
         )}
       />

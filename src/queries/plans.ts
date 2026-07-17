@@ -55,8 +55,8 @@ export const usePlans = () => {
   return useQuery({
     queryKey: QueryKeys.plans,
     queryFn: () => bearedFetch<Plan[]>(ApiEndpoints.Plans),
-    // Sort by price
-    select: (data) => data.sort((a, b) => a.yearlyPrice - b.yearlyPrice),
+    // Sort by price (on a copy — sorting in place would mutate the cached array)
+    select: (data) => [...data].sort((a, b) => a.yearlyPrice - b.yearlyPrice),
     // Cache for 20 minutes
     staleTime: 20 * 60 * 1000,
   })
