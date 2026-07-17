@@ -51,6 +51,7 @@ const InputBasic = ({
         {...register(formValue, validationRules)}
         {...props}
         required={false} // we don't want HTML5 validation
+        aria-required={required || undefined} // ...but assistive tech should still know the field is required
       />
       <FormErrorMessage mt={2}>
         {errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
