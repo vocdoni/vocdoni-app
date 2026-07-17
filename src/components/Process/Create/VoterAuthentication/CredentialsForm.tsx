@@ -16,7 +16,7 @@ import {
 import { Controller, useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuCheck, LuInfo } from 'react-icons/lu'
-import { useMemberColumns } from '~elements/dashboard/memberbase/members'
+import { useMemberColumns } from '~components/Memberbase/useMemberColumns'
 
 export const CredentialsForm = () => {
   const { t } = useTranslation()

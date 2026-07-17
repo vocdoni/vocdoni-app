@@ -5,8 +5,8 @@ import { createSearchParams, generatePath, useNavigate } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
+import { useCreateProcess } from '~queries/processes'
 import { Routes } from '~src/router/routes'
-import { useCreateProcess } from '../Create'
 import { defaultProcessValues, SelectorTypes } from '../Create/common'
 
 export const useCloneAsDraft = () => {

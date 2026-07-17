@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { useElection } from '@vocdoni/react-components'
+import { useElection, useOrganization } from '@vocdoni/react-components'
 import type { VocdoniSDKClient } from '@vocdoni/sdk'
-import { CensusType, PublishedElection } from '@vocdoni/sdk'
+import { CensusType, ensure0x, PublishedElection } from '@vocdoni/sdk'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~queries/keys'
@@ -125,5 +125,91 @@ export const useAddCensusParticipants = () => {
         method: 'POST',
         body: { memberIds },
       }),
+  })
+}
+
+type ValidateGroupArgs = {
+  groupId: string
+  authFields?: string[]
+  twoFaFields?: string[]
+}
+
+export const useValidateGroup = () => {
+  const { organization } = useOrganization()
+  const { bearedFetch } = useAuth()
+
+  return useMutation({
+    mutationFn: async ({ groupId, authFields, twoFaFields }: ValidateGroupArgs) => {
+      return await bearedFetch<{ valid: boolean }>(
+        ApiEndpoints.OrganizationGroupValidate.replace('{address}', organization?.address).replace(
+          '{groupId}',
+          groupId
+        ),
+        {
+          method: 'POST',
+          body: {
+            authFields,
+            twoFaFields,
+          },
+        }
+      )
+    },
+  })
+}
+
+export const useCreateCensus = () => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+
+  return useMutation({
+    mutationFn: async () => {
+      return await bearedFetch<{ id: string }>(ApiEndpoints.OrganizationCensuses, {
+        method: 'POST',
+        body: {
+          orgAddress: ensure0x(organization?.address),
+        },
+      })
+    },
+  })
+}
+
+type PublishGroupCensusResponse = {
+  root: string
+  size: number
+  uri: string
+}
+
+type PublishCensusRequest = {
+  authFields: string[]
+  twoFaFields: string[]
+  weighted?: boolean
+}
+
+type PublishCensusArgs = PublishCensusRequest & {
+  censusId: string
+  groupId: string
+}
+
+export const usePublishCensus = () => {
+  const { bearedFetch } = useAuth()
+
+  return useMutation({
+    mutationFn: async ({ censusId, groupId, authFields, twoFaFields, weighted }: PublishCensusArgs) => {
+      const body: PublishCensusRequest = {
+        authFields,
+        twoFaFields,
+        weighted,
+      }
+
+      const endpoint = ApiEndpoints.OrganizationCensusPublish.replace('{censusId}', censusId).replace(
+        '{groupId}',
+        groupId
+      )
+
+      return await bearedFetch<PublishGroupCensusResponse>(endpoint, {
+        method: 'POST',
+        body,
+      })
+    },
   })
 }

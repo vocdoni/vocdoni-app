@@ -37,8 +37,12 @@ vi.mock('~src/queries/organization', () => ({
   useOrganizationSetup: () => ({}),
 }))
 
-vi.mock('~elements/dashboard/processes/drafts', () => ({
+vi.mock('~queries/processes', () => ({
   useDeleteDraft: () => ({}),
+  useCreateProcess: () => ({}),
+  useUpdateProcess: () => ({}),
+  useProcessBundle: () => ({}),
+  useDraft: () => ({}),
 }))
 
 vi.mock('./TemplateProvider', () => ({
