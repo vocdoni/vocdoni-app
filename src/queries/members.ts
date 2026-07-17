@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '@vocdoni/sdk'
 import { useOutletContext, useParams, useSearchParams } from 'react-router-dom'
@@ -88,6 +88,7 @@ export const useAddMembers = (isAsync: boolean = false) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
   const { setStepDone } = useOrganizationSetup()
+  const queryClient = useQueryClient()
 
   const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', enforceHexPrefix(organization.address))
   const fetchUrl = `${baseUrl}?async=${isAsync}`
@@ -98,6 +99,7 @@ export const useAddMembers = (isAsync: boolean = false) => {
       await bearedFetch<AddMembersResponse>(fetchUrl, { body: { members }, method: 'POST' }),
     onSuccess: () => {
       setStepDone(SetupStepIds.memberbaseUpload)
+      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.members(organization?.address) })
     },
   })
 }
@@ -105,6 +107,7 @@ export const useAddMembers = (isAsync: boolean = false) => {
 export const useEditMember = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
+  const queryClient = useQueryClient()
 
   const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', enforceHexPrefix(organization.address))
 
@@ -112,12 +115,16 @@ export const useEditMember = () => {
     mutationKey: QueryKeys.organization.members(organization?.address),
     mutationFn: async ({ id, ...member }) =>
       await bearedFetch<void>(baseUrl, { body: { id, ...member }, method: 'PUT' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.members(organization?.address) })
+    },
   })
 }
 
 export const useDeleteMembers = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
+  const queryClient = useQueryClient()
 
   return useMutation<void, Error, MembersData>({
     mutationKey: QueryKeys.organization.members(organization?.address),
@@ -129,6 +136,9 @@ export const useDeleteMembers = () => {
           method: 'DELETE',
         }
       ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.organization.members(organization?.address) })
+    },
   })
 }
 

@@ -152,7 +152,7 @@ export const useOrganizationMeta = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.meta(enforceHexPrefix(organization.address)),
+        queryKey: QueryKeys.organization.meta(organization?.address),
       })
     },
   })
