@@ -14,32 +14,23 @@ import {
   Textarea,
   VStack,
 } from '@chakra-ui/react'
-import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuInfo } from 'react-icons/lu'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
 import InputBasic from '~components/Form/InputBasic'
 import { IssueTypeSelector, SelectOptionType } from '~components/Layout/SaasSelector'
 import { SubscriptionLockedContent } from '~components/Layout/SubscriptionLockedContent'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
+import { useSendSupportTicket } from '~queries/organization'
 import { useAppEnv } from '~src/app-env'
 import { maskValue } from '~utils/strings'
 
 type FormData = {
   title: string
   type: SelectOptionType
-  description: string
-}
-
-type SupportTicket = {
-  title: string
-  type: string
   description: string
 }
 
@@ -71,20 +62,6 @@ const OrganizationSupport = () => {
       </SimpleGrid>
     </DashboardBox>
   )
-}
-
-const useSendSupportTicket = (options?: Omit<UseMutationOptions<void, Error, SupportTicket>, 'mutationFn'>) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-
-  return useMutation<void, Error, SupportTicket>({
-    mutationFn: (params: SupportTicket) =>
-      bearedFetch<void>(ApiEndpoints.OrganizationsSupport.replace('{address}', account?.address), {
-        body: params,
-        method: 'POST',
-      }),
-    ...options,
-  })
 }
 
 const SupportTicketForm = () => {

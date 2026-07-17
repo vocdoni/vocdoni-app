@@ -1,42 +1,19 @@
 import { Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
-import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
 import { Account } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { HSeparator } from '~components/Layout/Separators'
 import { AvatarUploader } from '~components/Layout/Uploader'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { useToast } from '~components/Toast'
-import { QueryKeys } from '~src/queries/keys'
-import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
+import { SetupStepIds, useOrganizationEdit, useOrganizationSetup } from '~src/queries/organization'
 import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
 
 type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country'>
-
-const useOrganizationEdit = (options?: Omit<UseMutationOptions<void, Error, CreateOrgParams>, 'mutationFn'>) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const client = useQueryClient()
-  return useMutation<void, Error, CreateOrgParams>({
-    mutationFn: (params: CreateOrgParams) =>
-      bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', account?.address), {
-        body: params,
-        method: 'PUT',
-      }),
-    ...options,
-    onSuccess: () => {
-      client.invalidateQueries({
-        queryKey: QueryKeys.organization.info(),
-      })
-    },
-  })
-}
 
 const EditOrganization = () => {
   const toast = useToast()
