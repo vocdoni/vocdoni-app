@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
 import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
-import { LoginResponse, useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
+import { LoginResponse, useLogin, useRegister, useVerifyMail } from '~queries/auth'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
 

@@ -2,6 +2,7 @@ import {
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
+  FieldRequiredIndicator,
   Input,
   InputProps,
   SystemStyleObject,
@@ -40,11 +41,17 @@ const InputBasic = ({
 
   return (
     <FormControl invalid={!!errors[formValue]} required={required}>
-      {label && <FormLabel css={labelStyles}>{label}</FormLabel>}
+      {label && (
+        <FormLabel css={labelStyles}>
+          {label}
+          <FieldRequiredIndicator />
+        </FormLabel>
+      )}
       <Input
         {...register(formValue, validationRules)}
         {...props}
         required={false} // we don't want HTML5 validation
+        aria-required={required || undefined} // ...but assistive tech should still know the field is required
       />
       <FormErrorMessage mt={2}>
         {errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}

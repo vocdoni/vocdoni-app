@@ -60,3 +60,22 @@ export const useResendVerificationMail = (
     ...options,
   })
 }
+
+export const useVerificationCodeStatus = () =>
+  useMutation({
+    mutationFn: async (email: string) => {
+      return await api<{ email: string; expiration: string; valid: boolean }>(
+        `${ApiEndpoints.VerifyCode}?email=${encodeURIComponent(email)}`
+      )
+    },
+  })
+
+export const useResendVerificationCode = () =>
+  useMutation({
+    mutationFn: async (email: string) => {
+      await api(ApiEndpoints.VerifyCode, {
+        method: 'POST',
+        body: { email },
+      })
+    },
+  })

@@ -14,7 +14,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useClient, useOrganization } from '@vocdoni/react-components'
 import {
@@ -48,8 +48,7 @@ import {
 } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
-import { ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import { ApiError, ErrorCode } from '~components/Auth/api'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
@@ -57,8 +56,8 @@ import DeleteModal from '~components/Modal/DeleteModal'
 import { Web3Address } from '~components/Process/Census/Web3'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
-import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
 import { QueryKeys } from '~queries/keys'
+import { useCreateProcess, useDeleteDraft, useDraft, useProcessBundle, useUpdateProcess } from '~queries/processes'
 import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
@@ -84,16 +83,6 @@ type LeaveConfirmationModalProps = {
   onLeave: () => void
   onResetSamePath: () => void
   isSamePath: boolean
-}
-
-type CreateProcessRequest = {
-  metadata: Process
-  orgAddress: string
-}
-
-type UpdateProcessRequest = {
-  processId: string
-  body: CreateProcessRequest
 }
 
 export const saveTimeoutMs = 30000
@@ -462,46 +451,6 @@ const LeaveConfirmationModal = ({
   )
 }
 
-const useProcessBundle = () => {
-  const { bearedFetch } = useAuth()
-  return useMutation({
-    mutationFn: async ({ censusId, processes }: { censusId: string; processes?: string[] }) => {
-      return await bearedFetch<{ uri: string; root: string }>(ApiEndpoints.ProcessBundle, {
-        method: 'POST',
-        body: {
-          censusId,
-          processes,
-        },
-      })
-    },
-  })
-}
-
-export const useCreateProcess = () => {
-  const { bearedFetch } = useAuth()
-
-  return useMutation<string, Error, CreateProcessRequest>({
-    mutationFn: async (body) => {
-      return await bearedFetch(ApiEndpoints.OrganizationProcesses, {
-        method: 'POST',
-        body,
-      })
-    },
-  })
-}
-
-const useUpdateProcess = () => {
-  const { bearedFetch } = useAuth()
-  return useMutation<void, Error, UpdateProcessRequest>({
-    mutationFn: async ({ processId, body }) => {
-      return await bearedFetch(ApiEndpoints.OrganizationProcess.replace('{processId}', processId), {
-        method: 'PUT',
-        body,
-      })
-    },
-  })
-}
-
 export const useFormToElectionMapper = () => {
   const { permission } = useSubscription()
 
@@ -587,19 +536,6 @@ export const useFormToElectionMapper = () => {
 
     return Election.from(base)
   }
-}
-
-export const useDraft = (draftId?: string | null) => {
-  const { bearedFetch } = useAuth()
-
-  return useQuery<{ metadata: Process }, Error>({
-    queryKey: ['draft', draftId],
-    enabled: !!draftId,
-    queryFn: async () => {
-      return bearedFetch(ApiEndpoints.OrganizationProcess.replace('{processId}', draftId!))
-    },
-    refetchOnWindowFocus: false,
-  })
 }
 
 const ProcessCreateView = () => {

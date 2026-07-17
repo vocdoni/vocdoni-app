@@ -22,48 +22,29 @@ import {
   useDisclosure,
   useRadioGroupContext,
 } from '@chakra-ui/react'
-import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
-import { enforceHexPrefix, useClient } from '@vocdoni/react-components'
 import { formatDistanceToNow } from 'date-fns'
 import { ComponentProps, ReactNode, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuEllipsis, LuMail, LuPlus, LuRefreshCw, LuUserCog, LuUserPlus } from 'react-icons/lu'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { roleIcons } from '~components/Layout/SaasSelector'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { EmptyState } from '~components/ui/EmptyState'
 import { useToast } from '~components/Toast'
 import { useProfile } from '~src/queries/account'
-import { QueryKeys } from '~src/queries/keys'
 import { Role, useRemoveUserMutation, useRoles } from '~src/queries/organization'
+import {
+  ActiveUser,
+  PendingUser,
+  UpdateRoleBody,
+  useAllUsers,
+  useCancelInvitation,
+  useResendInvitationMutation,
+  User,
+  useUpdateRole,
+} from '~queries/team'
 import { InviteToTeamModal } from './Invite'
-
-// Define types
-type UserInfo = {
-  id: number
-  email: string
-  firstName: string
-  lastName: string
-}
-
-type ActiveUser = {
-  info: UserInfo
-  role: string
-  expiration?: string
-}
-
-type PendingUser = {
-  id: string
-  email: string
-  role: string
-  expiration?: string
-  info?: undefined
-}
-
-type User = ActiveUser | PendingUser
 
 const isActiveUser = (user: User): user is ActiveUser => !!user.info
 
@@ -74,15 +55,6 @@ type UserModalProps<T extends User> = {
 type ActiveUserModalProps = UserModalProps<ActiveUser>
 type PendingUserModalProps = UserModalProps<PendingUser>
 type ChangeRoleDialogProps = ActiveUserModalProps
-
-type UpdateRoleBody = {
-  role: string
-}
-
-type UpdateRoleParams = {
-  id: string
-  body: UpdateRoleBody
-}
 
 type ChangeRoleFormProps = {
   user: ActiveUser
@@ -97,14 +69,6 @@ type RoleRadioProps = ComponentProps<typeof RadioGroup.Item> & {
 
 type RoleRadioGroupProps = {
   currentRole: string
-}
-
-type UsersResponse = {
-  users: User[]
-}
-
-type PendingUsersResponse = {
-  pending: PendingUser[]
 }
 
 type UserActionsProps = {
@@ -124,124 +88,6 @@ type ActiveUserActionsProps = {
 
 type UsersListProps = {
   users: User[]
-}
-
-// Fetch hook for organization users
-export const useUsers = ({
-  options,
-}: {
-  options?: Omit<UseQueryOptions<UsersResponse>, 'queryKey' | 'queryFn'>
-} = {}) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  return useQuery({
-    queryKey: QueryKeys.organization.users(enforceHexPrefix(account?.address)),
-    queryFn: () =>
-      bearedFetch<UsersResponse>(
-        ApiEndpoints.OrganizationUsers.replace('{address}', enforceHexPrefix(account?.address))
-      ),
-    ...options,
-    select: (data) => data.users,
-  })
-}
-
-// Fetch hook for pending users
-export const usePendingUsers = ({
-  options,
-}: {
-  options?: Omit<UseQueryOptions<PendingUsersResponse>, 'queryKey' | 'queryFn'>
-} = {}) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  return useQuery({
-    queryKey: QueryKeys.organization.pendingUsers(enforceHexPrefix(account?.address)),
-    queryFn: () =>
-      bearedFetch<PendingUsersResponse>(
-        ApiEndpoints.OrganizationPendingUsers.replace('{address}', enforceHexPrefix(account?.address))
-      ),
-    ...options,
-    select: (data) => data.pending,
-  })
-}
-
-export const useAllUsers = () => {
-  const { data: usersData, isLoading: usersLoading, isError: isUsersError, error: usersError } = useUsers()
-
-  const {
-    data: pendingData,
-    isLoading: pendingLoading,
-    isError: pendingError,
-    error: pendingFetchError,
-  } = usePendingUsers()
-
-  return {
-    users: [...(usersData || []), ...(pendingData || [])],
-    isLoading: usersLoading || pendingLoading,
-    isError: isUsersError || pendingError,
-    error: usersError || pendingFetchError,
-  }
-}
-
-const useUpdateRole = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const client = useQueryClient()
-
-  return useMutation<void, Error, UpdateRoleParams>({
-    mutationFn: async ({ id, body }) =>
-      await bearedFetch<void>(
-        ApiEndpoints.OrganizationUser.replace('{address}', enforceHexPrefix(account?.address)).replace('{userId}', id),
-        {
-          method: 'PUT',
-          body,
-        }
-      ),
-    onSuccess: () => {
-      client.invalidateQueries({
-        queryKey: QueryKeys.organization.users(),
-      })
-    },
-  })
-}
-
-const useCancelInvitation = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const client = useQueryClient()
-
-  return useMutation<void, Error, string>({
-    mutationFn: async (id) =>
-      await bearedFetch<void>(
-        ApiEndpoints.OrganizationPendingUser.replace('{address}', enforceHexPrefix(account?.address)).replace(
-          '{inviteId}',
-          id
-        ),
-        { method: 'DELETE' }
-      ),
-    onSuccess: () => {
-      client.invalidateQueries({
-        queryKey: QueryKeys.organization.pendingUsers(),
-      })
-    },
-  })
-}
-
-const useResendInvitationMutation = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-
-  return useMutation<void, Error, string>({
-    mutationFn: async (id) =>
-      await bearedFetch<void>(
-        ApiEndpoints.OrganizationPendingUser.replace('{address}', enforceHexPrefix(account?.address)).replace(
-          '{inviteId}',
-          id
-        ),
-        {
-          method: 'PUT',
-        }
-      ),
-  })
 }
 
 const RoleRadio = ({ fieldName: title, description, value, disabled, ...props }: RoleRadioProps) => {

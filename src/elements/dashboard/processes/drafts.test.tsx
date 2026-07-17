@@ -4,7 +4,8 @@ import React from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
 import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { DraftsTable, useDeleteDraft } from './drafts'
+import { useDeleteDraft } from '~queries/processes'
+import { DraftsTable } from './drafts'
 
 const toastSpy = vi.fn()
 const bearedFetchMock = vi.fn().mockResolvedValue(undefined)
@@ -16,8 +17,10 @@ vi.mock('~components/Auth/useAuth', () => ({
 }))
 
 // DraftsContextMenu (rendered by both the card and the row) pulls in the create-process
-// wizard; stub it so the list layout tests stay focused on the mobile/desktop branch.
-vi.mock('~components/Process/Create', () => ({
+// wizard; stub useCreateProcess so the list layout tests stay focused on the mobile/desktop
+// branch, while keeping the real useDeleteDraft for the hook tests below.
+vi.mock('~queries/processes', async () => ({
+  ...(await vi.importActual<typeof import('~queries/processes')>('~queries/processes')),
   useCreateProcess: () => ({ mutateAsync: vi.fn() }),
 }))
 

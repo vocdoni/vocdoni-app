@@ -2,6 +2,7 @@ import {
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
   FieldLabel as FormLabel,
+  FieldRequiredIndicator,
   Icon,
   Input,
   InputGroup,
@@ -56,6 +57,7 @@ const InputPassword = ({
       {label && (
         <FormLabel fontSize='sm' fontWeight='medium'>
           {label}
+          <FieldRequiredIndicator />
         </FormLabel>
       )}
       <InputGroup
@@ -68,7 +70,13 @@ const InputPassword = ({
         }
         endElementProps={{ display: 'flex', alignItems: 'center' }}
       >
-        <Input {...register(formValue, validationRules)} type={inputType} placeholder={placeholder} required={false} />
+        <Input
+          {...register(formValue, validationRules)}
+          type={inputType}
+          placeholder={placeholder}
+          required={false} // we don't want HTML5 validation
+          aria-required={required || undefined} // ...but assistive tech should still know the field is required
+        />
       </InputGroup>
       <FormErrorMessage mt={2}>
         {errorMessage || t('form.error.generic', { defaultValue: 'Error performing the operation' })}

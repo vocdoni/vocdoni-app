@@ -23,24 +23,13 @@ import { getApiErrorMessage } from '~components/Auth/api'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
-import { ApiKey, useApiKeys, useRevokeApiKey } from '~src/queries/integrators'
+import { ApiKey, useApiKeys, useRevokeApiKey, useStatus } from '~src/queries/integrators'
 import { CreateApiKeyButton } from './CreateApiKeyModal'
 
 const formatDate = (value?: string) => {
   if (!value) return '—'
   const d = new Date(value)
   return isNaN(d.getTime()) ? value : d.toLocaleDateString()
-}
-
-const useStatus = () => {
-  const { t } = useTranslation()
-  return (k: ApiKey): { label: string; palette: string } => {
-    if (k.revoked)
-      return { label: t('integrators.api_keys.status_revoked', { defaultValue: 'Revoked' }), palette: 'red' }
-    if (k.expiresAt && new Date(k.expiresAt).getTime() < Date.now())
-      return { label: t('integrators.api_keys.status_expired', { defaultValue: 'Expired' }), palette: 'orange' }
-    return { label: t('integrators.api_keys.status_active', { defaultValue: 'Active' }), palette: 'green' }
-  }
 }
 
 /**

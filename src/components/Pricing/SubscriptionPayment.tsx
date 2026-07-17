@@ -7,19 +7,19 @@ import {
   useCheckout,
 } from '@stripe/react-stripe-js/checkout'
 import { loadStripe, Stripe, StripeCheckoutOptions } from '@stripe/stripe-js'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useClient } from '@vocdoni/react-components'
-import { ensure0x } from '@vocdoni/sdk'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
-import { SubscriptionType, useSubscription } from '~components/Auth/Subscription'
+import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
 import { QueryKeys } from '~src/queries/keys'
+import { useUpdateSubscription } from '~queries/stripe'
 import { useColorMode } from '~theme/color-mode'
 import { AnalyticsEvents } from '~utils/analytics'
 import { OrderSummary } from './OrderSummary'
@@ -34,16 +34,6 @@ export type SubscriptionPaymentData = {
 type CheckoutResponse = {
   clientSecret: string
   sessionId: string
-}
-
-const useUpdateSubscription = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-
-  return useMutation<SubscriptionType>({
-    mutationFn: async () =>
-      await bearedFetch(ApiEndpoints.OrganizationSubscription.replace('{address}', ensure0x(account?.address))),
-  })
 }
 
 type SubscriptionPaymentProps = SubscriptionPaymentData & {

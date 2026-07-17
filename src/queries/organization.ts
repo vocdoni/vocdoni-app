@@ -1,10 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
+import { useMutation, UseMutationOptions, useQuery, useQueryClient } from '@tanstack/react-query'
+import { enforceHexPrefix, useClient, useOrganization } from '@vocdoni/react-components'
 import {
+  Account,
   AccountData,
   ensure0x,
   FetchElectionsParameters,
   FetchElectionsParametersWithPagination,
+  RemoteSigner,
   VocdoniSDKClient,
 } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
@@ -13,6 +15,10 @@ import { LuCalendar, LuFileSpreadsheet, LuUsers, LuVote } from 'react-icons/lu'
 import { generatePath } from 'react-router-dom'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { LocalStorageKeys, useAuthProvider } from '~components/Auth/useAuthProvider'
+import type { CreateOrgParams } from '~components/Organization/AccountTypes'
+import type { PrivateOrgFormData } from '~components/Organization/Form'
+import { useAppEnv } from '~src/app-env'
 import { Routes } from '~routes'
 import { QueryKeys } from './keys'
 
@@ -146,7 +152,7 @@ export const useOrganizationMeta = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.meta(enforceHexPrefix(organization.address)),
+        queryKey: QueryKeys.organization.meta(organization?.address),
       })
     },
   })
@@ -328,6 +334,33 @@ export const useInviteMemberMutation = () => {
   })
 }
 
+/**
+ * Resolves on-chain display names for the given organization addresses, falling back to the raw
+ * address when a name can't be fetched. Shared by the sidebar OrganizationSwitcher and the
+ * integrator switch-org modal.
+ */
+export const useOrganizationNames = (addresses: string[]) => {
+  const { client } = useClient()
+
+  return useQuery({
+    queryKey: [...QueryKeys.organization.names, ...addresses],
+    queryFn: async () => {
+      const names: Record<string, string> = {}
+      for (const address of addresses) {
+        try {
+          const data = await client.fetchAccountInfo(address)
+          names[address] = data?.account?.name?.default || address
+        } catch (error) {
+          console.error('Error fetching organization name:', error)
+          names[address] = address
+        }
+      }
+      return names
+    },
+    enabled: addresses.length > 0,
+  })
+}
+
 export const useRemoveUserMutation = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
@@ -346,5 +379,107 @@ export const useRemoveUserMutation = () => {
       // Invalidate queries to refresh member and pending member lists
       queryClient.invalidateQueries({ queryKey: QueryKeys.organization.users() })
     },
+  })
+}
+
+export const useOrganizationEdit = (options?: Omit<UseMutationOptions<void, Error, CreateOrgParams>, 'mutationFn'>) => {
+  const { bearedFetch } = useAuth()
+  const { account } = useClient()
+  const client = useQueryClient()
+  return useMutation<void, Error, CreateOrgParams>({
+    mutationFn: (params: CreateOrgParams) =>
+      bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', account?.address), {
+        body: params,
+        method: 'PUT',
+      }),
+    ...options,
+    onSuccess: () => {
+      client.invalidateQueries({
+        queryKey: QueryKeys.organization.info(),
+      })
+    },
+  })
+}
+
+type OrganizationCreateFormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country'>
+
+type OrganizationCreateResponse = {
+  address: string
+  account: Account
+  signer: RemoteSigner
+  client: ReturnType<typeof useClient>['client']
+}
+
+export const useOrganizationCreate = (
+  options?: Omit<UseMutationOptions<OrganizationCreateResponse, Error, OrganizationCreateFormData>, 'mutationFn'>
+) => {
+  const { bearedFetch } = useAuth()
+  const { client, setSigner, signer: csigner } = useClient()
+  const { bearer, signerRefresh } = useAuthProvider()
+  const qclient = useQueryClient()
+  const { SAAS_URL } = useAppEnv()
+
+  return useMutation<OrganizationCreateResponse, Error, OrganizationCreateFormData>({
+    mutationFn: async (values: OrganizationCreateFormData) => {
+      // Create account on the saas to generate new priv keys
+      const { address }: { address: string } = await bearedFetch(ApiEndpoints.Organizations, {
+        body: {
+          name: values.name,
+          website: values.website,
+          description: values.description,
+          size: values.size,
+          country: values.country,
+          type: values.type,
+        },
+        method: 'POST',
+      })
+
+      const signer = new RemoteSigner({
+        url: SAAS_URL,
+        token: bearer,
+      })
+
+      signer.address = address
+      client.wallet = signer
+
+      const account = new Account({
+        name: typeof values.name === 'object' ? values.name.default : values.name,
+        description: typeof values.description === 'object' ? values.description.default : values.description,
+      })
+
+      await client.createAccount({ account })
+
+      localStorage.setItem(LocalStorageKeys.SignerAddress, address)
+      qclient.invalidateQueries({ queryKey: QueryKeys.profile })
+
+      // Refresh the signer if it was already set
+      if (csigner !== null) {
+        setSigner(signer)
+        await signerRefresh()
+      }
+
+      return { address, account, signer, client }
+    },
+    ...options,
+  })
+}
+
+type SupportTicket = {
+  title: string
+  type: string
+  description: string
+}
+
+export const useSendSupportTicket = (options?: Omit<UseMutationOptions<void, Error, SupportTicket>, 'mutationFn'>) => {
+  const { bearedFetch } = useAuth()
+  const { account } = useClient()
+
+  return useMutation<void, Error, SupportTicket>({
+    mutationFn: (params: SupportTicket) =>
+      bearedFetch<void>(ApiEndpoints.OrganizationsSupport.replace('{address}', account?.address), {
+        body: params,
+        method: 'POST',
+      }),
+    ...options,
   })
 }
