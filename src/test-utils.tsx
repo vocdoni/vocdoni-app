@@ -19,7 +19,7 @@ import { ToastProvider as BaseToastProvider } from '~components/Toast'
 import { AppEnvProvider } from '~src/app-env'
 import { buildAppEnv, type AppEnv } from '~src/app-env-build'
 import { ColorModeProvider } from '~theme/color-mode'
-import { uiScaffoldComponents } from '~theme/react-components'
+import { uiScaffoldComponents } from '~components/scaffold'
 import { system } from '~theme/system'
 
 type TestI18nOptions = {

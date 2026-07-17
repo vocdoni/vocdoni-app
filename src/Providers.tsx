@@ -22,7 +22,7 @@ import {
   persistPublicLanguagePreferenceClient,
 } from '~i18n/public-language'
 import { getDefaultTitleForLanguage } from '~src/pages/shared/defaultHeadMeta'
-import { uiScaffoldComponents } from '~theme/react-components'
+import { uiScaffoldComponents } from '~components/scaffold'
 import { AppEnvProvider, normalizeLanguages, useAppEnv } from './app-env'
 import { buildAppEnv } from './app-env-build'
 import { configureApiBaseUrl } from './components/Auth/api'

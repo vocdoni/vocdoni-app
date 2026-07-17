@@ -10,7 +10,7 @@ import {
   spreadsheetAccessAnatomy,
   votedAnatomy,
   voteWeightAnatomy,
-} from '~theme/react-components/anatomy/election'
+} from '~theme/anatomy/election'
 
 export const ElectionDescription = defineRecipe({
   base: {
