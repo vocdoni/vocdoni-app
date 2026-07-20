@@ -29,9 +29,9 @@ export enum ApiEndpoints {
   // the session (or an API key), so no organization address is passed in the URL.
   Integrator = 'integrator',
   ManagedOrganizations = 'integrator/organizations',
-  // API keys (saas-backend#535)
-  APIKeys = 'organizations/{address}/apikeys',
-  APIKey = 'organizations/{address}/apikeys/{keyID}',
+  // API keys (saas-backend#535, moved under /integrator by saas-backend#582)
+  APIKeys = 'integrator/organizations/{orgAddress}/apikeys',
+  APIKey = 'integrator/organizations/{orgAddress}/apikeys/{keyId}',
 }
 
 export enum ErrorCode {
