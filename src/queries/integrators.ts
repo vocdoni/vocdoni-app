@@ -121,7 +121,7 @@ export type CreateApiKeyBody = {
 
 export type CreatedApiKey = ApiKey & { secret: string }
 
-/** API keys owned by the selected organization (GET /organizations/{address}/apikeys, admin only). */
+/** API keys owned by the selected organization (GET /integrator/organizations/{orgAddress}/apikeys, admin only). */
 export const useApiKeys = () => {
   const { bearedFetch } = useAuth()
   const { account } = useClient()
@@ -132,7 +132,7 @@ export const useApiKeys = () => {
     enabled: !!address,
     queryFn: () =>
       bearedFetch<{ apiKeys: ApiKey[] }>(
-        ApiEndpoints.OrganizationApiKeys.replace('{address}', ensure0x(address as string))
+        ApiEndpoints.OrganizationApiKeys.replace('{orgAddress}', ensure0x(address as string))
       ).then((d) => d.apiKeys ?? []),
   })
 }
@@ -146,10 +146,13 @@ export const useCreateApiKey = () => {
 
   return useMutation<CreatedApiKey, Error, CreateApiKeyBody>({
     mutationFn: (body) =>
-      bearedFetch<CreatedApiKey>(ApiEndpoints.OrganizationApiKeys.replace('{address}', ensure0x(address as string)), {
-        method: 'POST',
-        body,
-      }),
+      bearedFetch<CreatedApiKey>(
+        ApiEndpoints.OrganizationApiKeys.replace('{orgAddress}', ensure0x(address as string)),
+        {
+          method: 'POST',
+          body,
+        }
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(address) })
     },
@@ -166,7 +169,7 @@ export const useRevokeApiKey = () => {
   return useMutation<void, Error, { id: string }>({
     mutationFn: ({ id }) =>
       bearedFetch<void>(
-        ApiEndpoints.OrganizationApiKey.replace('{address}', ensure0x(address as string)).replace('{keyID}', id),
+        ApiEndpoints.OrganizationApiKey.replace('{orgAddress}', ensure0x(address as string)).replace('{keyId}', id),
         { method: 'DELETE' }
       ),
     onSuccess: () => {
