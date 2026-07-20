@@ -44,7 +44,7 @@ export const useApiKeys = () => {
     queryKey: QueryKeys.organization.apikeys(address),
     enabled: !!address,
     queryFn: () =>
-      bearedFetch<{ apiKeys: ApiKey[] }>(ApiEndpoints.APIKeys.replace('{address}', ensure0x(address!))).then(
+      bearedFetch<{ apiKeys: ApiKey[] }>(ApiEndpoints.APIKeys.replace('{orgAddress}', ensure0x(address!))).then(
         (d) => d.apiKeys ?? []
       ),
   })
@@ -58,7 +58,7 @@ export const useCreateApiKey = () => {
 
   return useMutation<CreatedApiKey, Error, CreateApiKeyBody>({
     mutationFn: (body) =>
-      bearedFetch<CreatedApiKey>(ApiEndpoints.APIKeys.replace('{address}', ensure0x(address!)), {
+      bearedFetch<CreatedApiKey>(ApiEndpoints.APIKeys.replace('{orgAddress}', ensure0x(address!)), {
         method: 'POST',
         body,
       }),
@@ -76,7 +76,7 @@ export const useRevokeApiKey = () => {
 
   return useMutation<void, Error, { id: string }>({
     mutationFn: ({ id }) =>
-      bearedFetch<void>(ApiEndpoints.APIKey.replace('{address}', ensure0x(address!)).replace('{keyID}', id), {
+      bearedFetch<void>(ApiEndpoints.APIKey.replace('{orgAddress}', ensure0x(address!)).replace('{keyId}', id), {
         method: 'DELETE',
       }),
     onSuccess: () => {
