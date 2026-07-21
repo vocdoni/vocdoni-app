@@ -1,3 +1,4 @@
+import type { ImportJob } from '~src/queries/members'
 import { mockUseOrganization, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ImportProgress } from './Import'
@@ -10,7 +11,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
   }
 })
 
-let mockJobData: Record<string, unknown> = {
+let mockJobData: ImportJob = {
   jobId: 'job-1',
   type: 'org_members',
   status: 'completed',
