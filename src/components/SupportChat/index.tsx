@@ -1,4 +1,4 @@
-import { CloseButton, Flex, Icon, IconButton, Presence, Text } from '@chakra-ui/react'
+import { chakra, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
 import { useClient } from '@vocdoni/react-components'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -66,8 +66,8 @@ const SupportChatWidget = () => {
           animationDuration='moderate'
           _motionReduce={{ animation: 'none' }}
         >
-          <Text
-            as='button'
+          <chakra.button
+            type='button'
             fontSize='sm'
             fontWeight='medium'
             cursor='pointer'
@@ -75,7 +75,7 @@ const SupportChatWidget = () => {
             aria-label={t('support_chat.launcher_label', { defaultValue: 'Open support chat' })}
           >
             {t('support_chat.teaser', { defaultValue: 'Do you need help?' })}
-          </Text>
+          </chakra.button>
           <CloseButton
             size='2xs'
             onClick={dismissTeaser}

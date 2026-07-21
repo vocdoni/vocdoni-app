@@ -14,11 +14,16 @@ export const useSendSupportTicket = (options?: Omit<UseMutationOptions<void, Err
   const { account } = useClient()
 
   return useMutation<void, Error, SupportTicket>({
-    mutationFn: (params: SupportTicket) =>
-      bearedFetch<void>(ApiEndpoints.OrganizationsSupport.replace('{address}', account?.address), {
+    mutationFn: (params: SupportTicket) => {
+      // Fail fast rather than POSTing to organizations/undefined/ticket
+      if (!account?.address) {
+        return Promise.reject(new Error('Cannot send support ticket: no organization account available'))
+      }
+      return bearedFetch<void>(ApiEndpoints.OrganizationsSupport.replace('{address}', account.address), {
         body: params,
         method: 'POST',
-      }),
+      })
+    },
     ...options,
   })
 }
