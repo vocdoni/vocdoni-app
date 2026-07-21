@@ -433,6 +433,7 @@
       "custom_request": "Richiesta personalizzata",
       "description": "Descrizione",
       "description_placeholder": "Descrivi il problema in dettaglio",
+      "no_organization": "La tua organizzazione non è ancora pronta. Riprova tra un momento.",
       "open_ticket": "Apri un ticket di supporto",
       "other": "Altro",
       "selector_label": "Tipo di problema",

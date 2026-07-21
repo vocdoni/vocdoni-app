@@ -431,6 +431,7 @@
       "custom_request": "Custom request",
       "description": "Description",
       "description_placeholder": "Describe your issue in detail",
+      "no_organization": "Your organization is not ready yet. Please try again in a moment.",
       "open_ticket": "Open a Support Ticket",
       "other": "Other",
       "selector_label": "Type of Issue",

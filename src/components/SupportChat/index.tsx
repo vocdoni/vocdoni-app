@@ -65,14 +65,9 @@ const SupportChatWidget = () => {
           animationDuration='moderate'
           _motionReduce={{ animation: 'none' }}
         >
-          <chakra.button
-            type='button'
-            fontSize='sm'
-            fontWeight='medium'
-            cursor='pointer'
-            onClick={openChat}
-            aria-label={t('support_chat.launcher_label', { defaultValue: 'Open support chat' })}
-          >
+          {/* No aria-label: the visible teaser text is the accessible name, and
+              must not collide with the launcher's "Open support chat" */}
+          <chakra.button type='button' fontSize='sm' fontWeight='medium' cursor='pointer' onClick={openChat}>
             {t('support_chat.teaser', { defaultValue: 'Do you need help?' })}
           </chakra.button>
           <CloseButton

@@ -433,6 +433,7 @@
       "custom_request": "Sol·licitud personalitzada",
       "description": "Descripció",
       "description_placeholder": "Descriu el teu problema amb detall",
+      "no_organization": "La teva organització encara no està a punt. Torna-ho a provar d'aquí a un moment.",
       "open_ticket": "Obre una sol·licitud de suport",
       "other": "Altres",
       "selector_label": "Tipus de problema",

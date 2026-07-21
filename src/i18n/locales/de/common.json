@@ -431,6 +431,7 @@
       "custom_request": "Sonderwunsch",
       "description": "Beschreibung",
       "description_placeholder": "Beschreibe dein Problem im Detail",
+      "no_organization": "Deine Organisation ist noch nicht bereit. Bitte versuche es gleich noch einmal.",
       "open_ticket": "Support-Ticket öffnen",
       "other": "Sonstiges",
       "selector_label": "Art des Problems",

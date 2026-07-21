@@ -433,6 +433,7 @@
       "custom_request": "Solicitud personalizada",
       "description": "Descripción",
       "description_placeholder": "Describe tu incidencia con detalle",
+      "no_organization": "Tu organización aún no está lista. Vuelve a intentarlo en un momento.",
       "open_ticket": "Abrir una solicitud de soporte",
       "other": "Otro",
       "selector_label": "Tipo de incidencia",

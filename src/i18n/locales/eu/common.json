@@ -431,6 +431,7 @@
       "custom_request": "Eskaera pertsonalizatua",
       "description": "Deskribapena",
       "description_placeholder": "Deskribatu zure intzidentzia xehetasunez",
+      "no_organization": "Zure erakundea oraindik ez dago prest. Saiatu berriro laster.",
       "open_ticket": "Ireki laguntza-eskaera",
       "other": "Bestelakoak",
       "selector_label": "Intzidentzia mota",

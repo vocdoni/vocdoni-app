@@ -433,6 +433,7 @@
       "custom_request": "Pedido personalizado",
       "description": "Descrição",
       "description_placeholder": "Descreve o teu problema em detalhe",
+      "no_organization": "A tua organização ainda não está pronta. Tenta novamente daqui a pouco.",
       "open_ticket": "Abrir um pedido de apoio",
       "other": "Outro",
       "selector_label": "Tipo de problema",
