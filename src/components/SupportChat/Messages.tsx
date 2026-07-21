@@ -1,14 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react'
 import { keyframes } from '@emotion/react'
-
-export type ChatMessage = {
-  id: string
-  from: 'support' | 'user'
-  text: string
-  isError?: boolean
-  // 'contact' bubbles render the book-a-call / WhatsApp buttons underneath
-  kind?: 'contact'
-}
+import { ChatMessage } from './useSupportChat'
 
 const dotBounce = keyframes({
   '0%, 60%, 100%': { transform: 'translateY(0)', opacity: 0.4 },

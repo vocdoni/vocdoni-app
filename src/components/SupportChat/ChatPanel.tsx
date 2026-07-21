@@ -5,8 +5,8 @@ import { LuCalendar, LuCheck, LuHeadset, LuSend } from 'react-icons/lu'
 import { MdOutlineWhatsapp } from 'react-icons/md'
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import { useAppEnv } from '~src/app-env'
-import { ChatMessage, MessageBubble, TypingIndicator } from './Messages'
-import { ChatPhase } from './useSupportChat'
+import { MessageBubble, TypingIndicator } from './Messages'
+import { ChatMessage, ChatPhase } from './useSupportChat'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform)
 const SEND_SHORTCUT = IS_MAC ? '⌘+Enter' : 'Ctrl+Enter'

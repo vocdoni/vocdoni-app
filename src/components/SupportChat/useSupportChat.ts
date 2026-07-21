@@ -7,7 +7,8 @@ import { SupportTicket, useSendSupportTicket } from '~src/queries/support'
 
 export type ChatPhase = 'greeting' | 'idle' | 'ask_name' | 'sending' | 'sent' | 'error'
 
-type Message = {
+// Single shared message shape, also consumed by Messages.tsx and ChatPanel.tsx
+export type ChatMessage = {
   id: string
   from: 'support' | 'user'
   text: string
@@ -41,7 +42,7 @@ export const useSupportChat = () => {
 
   const [open, setOpen] = useState(false)
   const [phase, setPhase] = useState<ChatPhase>('greeting')
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<ChatMessage[]>([])
   const [typing, setTyping] = useState(false)
   const [providedName, setProvidedName] = useState('')
 
@@ -82,7 +83,7 @@ export const useSupportChat = () => {
     setTeaserDismissed(true)
   }
 
-  const pushMessage = (from: Message['from'], text: string, extra?: Pick<Message, 'isError' | 'kind'>) => {
+  const pushMessage = (from: ChatMessage['from'], text: string, extra?: Pick<ChatMessage, 'isError' | 'kind'>) => {
     messageIdRef.current += 1
     setMessages((prev) => [...prev, { id: `msg-${messageIdRef.current}`, from, text, ...extra }])
   }
