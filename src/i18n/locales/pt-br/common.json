@@ -1084,7 +1084,6 @@
     "avatar_alt": "Imagem do avatar da organização {{ name }}",
     "create_org": "Criar organização",
     "create_org_failed": "Falha ao criar a organização",
-    "create_org_step_update_failed": "Falha ao atualizar o status da etapa de configuração da organização",
     "create_org_success": "Organização criada com sucesso",
     "dashboard": "Painel",
     "date_format": "d MMM y",
@@ -1130,14 +1129,6 @@
       "title": "Membros da equipe"
     },
     "title": "Configurações de {{organization}}"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Agende uma chamada gratuita com nossos especialistas",
-      "first_vote_creation": "Crie sua primeira votação",
-      "memberbase_upload": "Envie sua base de membros",
-      "organization_details": "Configure os dados da sua organização"
-    }
   },
   "organizations": "Organizações ({{ numOrgs }})",
   "other_details": "Outros detalhes",
@@ -1722,11 +1713,6 @@
   },
   "send_invitation": "Enviar convite",
   "settings": "Configurações",
-  "setup": {
-    "progress": "Seu progresso",
-    "title": "Conclua sua configuração",
-    "toggle_panel": "Mostrar/ocultar painel"
-  },
   "share": {
     "copy": "Copiar",
     "election_share_btn_text": "Compartilhar",
@@ -1780,6 +1766,32 @@
   },
   "subtotal": "Subtotal",
   "support": "Suporte",
+  "support_chat": {
+    "ask_name": "",
+    "book_call": "",
+    "close_label": "",
+    "confirmation": "",
+    "confirmation_no_name": "",
+    "contact_options": "",
+    "error": "",
+    "greeting": "",
+    "greeting_intro": "",
+    "greeting_no_name": "",
+    "header_subtitle": "",
+    "header_title": "",
+    "input_placeholder": "",
+    "launcher_label": "",
+    "messages_label": "",
+    "new_request": "",
+    "new_request_prompt": "",
+    "retry": "",
+    "send_hint": "",
+    "send_label": "",
+    "sent_status": "",
+    "teaser": "",
+    "teaser_dismiss": "",
+    "whatsapp": ""
+  },
   "switch_mode": "Alternar para o modo {{ mode }}",
   "switch_organization": "Trocar de organização",
   "system": "Sistema",

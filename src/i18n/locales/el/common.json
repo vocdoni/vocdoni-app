@@ -1066,7 +1066,6 @@
     "avatar_alt": "Εικόνα άβαταρ του οργανισμού {{ name }}",
     "create_org": "Δημιουργία οργανισμού",
     "create_org_failed": "Αποτυχία δημιουργίας οργανισμού",
-    "create_org_step_update_failed": "Αποτυχία ενημέρωσης της κατάστασης του βήματος ρύθμισης του οργανισμού",
     "create_org_success": "Ο οργανισμός δημιουργήθηκε με επιτυχία",
     "dashboard": "Πίνακας ελέγχου",
     "date_format": "d MMM y",
@@ -1112,14 +1111,6 @@
       "title": "Μέλη ομάδας"
     },
     "title": "Ρυθμίσεις {{organization}}"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Κλείστε μια δωρεάν κλήση με τους ειδικούς μας",
-      "first_vote_creation": "Δημιουργήστε την πρώτη σας ψηφοφορία",
-      "memberbase_upload": "Ανεβάστε το μητρώο μελών σας",
-      "organization_details": "Ρυθμίστε τα στοιχεία του οργανισμού σας"
-    }
   },
   "organizations": "Οργανισμοί ({{ numOrgs }})",
   "other_details": "Άλλες λεπτομέρειες",
@@ -1697,11 +1688,6 @@
   },
   "send_invitation": "Αποστολή πρόσκλησης",
   "settings": "Ρυθμίσεις",
-  "setup": {
-    "progress": "Η πρόοδός σας",
-    "title": "Ολοκληρώστε τη ρύθμιση",
-    "toggle_panel": "setup.toggle_panel"
-  },
   "share": {
     "copy": "Αντιγραφή",
     "election_share_btn_text": "Κοινοποίηση",
@@ -1755,6 +1741,32 @@
   },
   "subtotal": "Μερικό σύνολο",
   "support": "Υποστήριξη",
+  "support_chat": {
+    "ask_name": "",
+    "book_call": "",
+    "close_label": "",
+    "confirmation": "",
+    "confirmation_no_name": "",
+    "contact_options": "",
+    "error": "",
+    "greeting": "",
+    "greeting_intro": "",
+    "greeting_no_name": "",
+    "header_subtitle": "",
+    "header_title": "",
+    "input_placeholder": "",
+    "launcher_label": "",
+    "messages_label": "",
+    "new_request": "",
+    "new_request_prompt": "",
+    "retry": "",
+    "send_hint": "",
+    "send_label": "",
+    "sent_status": "",
+    "teaser": "",
+    "teaser_dismiss": "",
+    "whatsapp": ""
+  },
   "switch_mode": "Μετάβαση σε λειτουργία {{ mode }}",
   "switch_organization": "Αλλαγή οργανισμού",
   "system": "Σύστημα",

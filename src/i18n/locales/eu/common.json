@@ -1066,7 +1066,6 @@
     "avatar_alt": "{{ name }} erakundearen avatarra",
     "create_org": "Sortu erakundea",
     "create_org_failed": "Errorea erakundea sortzean",
-    "create_org_step_update_failed": "Errorea erakundea konfiguratzeko urratsaren egoera eguneratzean",
     "create_org_success": "Erakundea behar bezala sortu da",
     "dashboard": "Panela",
     "date_format": "y MMM d",
@@ -1112,14 +1111,6 @@
       "title": "Taldeko kideak"
     },
     "title": "{{organization}} konfigurazioa"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Antolatu doako dei bat gure adituekin",
-      "first_vote_creation": "Sortu zure lehen bozketa",
-      "memberbase_upload": "Kargatu zure kide-oinarria",
-      "organization_details": "Konfiguratu zure erakundearen xehetasunak"
-    }
   },
   "organizations": "Erakundeak ({{ numOrgs }})",
   "other_details": "Bestelako xehetasunak",
@@ -1697,11 +1688,6 @@
   },
   "send_invitation": "Bidali gonbidapena",
   "settings": "Ezarpenak",
-  "setup": {
-    "progress": "Zure aurrerapena",
-    "title": "Osatu konfigurazioa",
-    "toggle_panel": "Txandakatu panela"
-  },
   "share": {
     "copy": "Kopiatu",
     "election_share_btn_text": "Partekatu",
@@ -1755,6 +1741,32 @@
   },
   "subtotal": "Azpitotala",
   "support": "Laguntza",
+  "support_chat": {
+    "ask_name": "",
+    "book_call": "",
+    "close_label": "",
+    "confirmation": "",
+    "confirmation_no_name": "",
+    "contact_options": "",
+    "error": "",
+    "greeting": "",
+    "greeting_intro": "",
+    "greeting_no_name": "",
+    "header_subtitle": "",
+    "header_title": "",
+    "input_placeholder": "",
+    "launcher_label": "",
+    "messages_label": "",
+    "new_request": "",
+    "new_request_prompt": "",
+    "retry": "",
+    "send_hint": "",
+    "send_label": "",
+    "sent_status": "",
+    "teaser": "",
+    "teaser_dismiss": "",
+    "whatsapp": ""
+  },
   "switch_mode": "Aldatu {{ mode }} modura",
   "switch_organization": "Aldatu erakundea",
   "system": "Sistema",

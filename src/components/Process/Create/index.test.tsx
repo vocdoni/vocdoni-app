@@ -29,11 +29,6 @@ vi.mock('~components/Auth/useAuth', () => ({
   }),
 }))
 
-vi.mock('~src/queries/organization', () => ({
-  SetupStepIds: {},
-  useOrganizationSetup: () => ({}),
-}))
-
 vi.mock('~elements/dashboard/processes/drafts', () => ({
   useDeleteDraft: () => ({}),
 }))

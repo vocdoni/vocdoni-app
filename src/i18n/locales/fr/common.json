@@ -1084,7 +1084,6 @@
     "avatar_alt": "Avatar de l'organisation {{ name }}",
     "create_org": "Créer une organisation",
     "create_org_failed": "Échec de la création de l'organisation",
-    "create_org_step_update_failed": "Échec de la mise à jour du statut de l'étape de configuration de l'organisation",
     "create_org_success": "Organisation créée avec succès",
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
@@ -1130,14 +1129,6 @@
       "title": "Membres de l'équipe"
     },
     "title": "Paramètres de {{organization}}"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Réservez un appel gratuit avec nos experts",
-      "first_vote_creation": "Créez votre premier vote",
-      "memberbase_upload": "Chargez votre base de membres",
-      "organization_details": "Configurez les informations de votre organisation"
-    }
   },
   "organizations": "Organisations ({{ numOrgs }})",
   "other_details": "Autres détails",
@@ -1722,11 +1713,6 @@
   },
   "send_invitation": "Envoyer l'invitation",
   "settings": "Paramètres",
-  "setup": {
-    "progress": "Votre progression",
-    "title": "Terminez votre configuration",
-    "toggle_panel": "Afficher/masquer le panneau"
-  },
   "share": {
     "copy": "Copier",
     "election_share_btn_text": "Partager",
@@ -1780,6 +1766,32 @@
   },
   "subtotal": "Sous-total",
   "support": "Assistance",
+  "support_chat": {
+    "ask_name": "",
+    "book_call": "",
+    "close_label": "",
+    "confirmation": "",
+    "confirmation_no_name": "",
+    "contact_options": "",
+    "error": "",
+    "greeting": "",
+    "greeting_intro": "",
+    "greeting_no_name": "",
+    "header_subtitle": "",
+    "header_title": "",
+    "input_placeholder": "",
+    "launcher_label": "",
+    "messages_label": "",
+    "new_request": "",
+    "new_request_prompt": "",
+    "retry": "",
+    "send_hint": "",
+    "send_label": "",
+    "sent_status": "",
+    "teaser": "",
+    "teaser_dismiss": "",
+    "whatsapp": ""
+  },
   "switch_mode": "Passer en mode {{ mode }}",
   "switch_organization": "Changer d'organisation",
   "system": "Système",

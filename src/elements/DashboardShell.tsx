@@ -10,6 +10,7 @@ import DashboardMenu from '~components/Dashboard/Menu'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
+import SupportChat from '~components/SupportChat'
 import { LocalStorageKeys } from '~constants'
 import { DashboardLayoutContext, DashboardOutletContext } from '~elements/DashboardLayoutContext'
 
@@ -72,6 +73,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
             </Flex>
             <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
           </Flex>
+          <SupportChat />
         </Flex>
       </DashboardLayoutProviders>
     </DashboardLayoutContext.Provider>

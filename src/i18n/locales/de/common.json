@@ -1066,7 +1066,6 @@
     "avatar_alt": "Avatarbild der Organisation {{ name }}",
     "create_org": "Organisation erstellen",
     "create_org_failed": "Organisation konnte nicht erstellt werden",
-    "create_org_step_update_failed": "Einrichtungsschritt konnte nicht aktualisiert werden",
     "create_org_success": "Organisation erfolgreich erstellt",
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
@@ -1112,14 +1111,6 @@
       "title": "Teammitglieder"
     },
     "title": "{{organization}} Einstellungen"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Kostenloses Expertengespräch buchen",
-      "first_vote_creation": "Erste Abstimmung erstellen",
-      "memberbase_upload": "Mitgliederbasis hochladen",
-      "organization_details": "Organisationsdetails einrichten"
-    }
   },
   "organizations": "Organisationen ({{ numOrgs }})",
   "other_details": "Weitere Details",
@@ -1697,11 +1688,6 @@
   },
   "send_invitation": "Einladung senden",
   "settings": "Einstellungen",
-  "setup": {
-    "progress": "Dein Fortschritt",
-    "title": "Einrichtung abschließen",
-    "toggle_panel": "setup.toggle_panel"
-  },
   "share": {
     "copy": "Kopieren",
     "election_share_btn_text": "Teilen",
@@ -1755,6 +1741,32 @@
   },
   "subtotal": "Zwischensumme",
   "support": "Support",
+  "support_chat": {
+    "ask_name": "",
+    "book_call": "",
+    "close_label": "",
+    "confirmation": "",
+    "confirmation_no_name": "",
+    "contact_options": "",
+    "error": "",
+    "greeting": "",
+    "greeting_intro": "",
+    "greeting_no_name": "",
+    "header_subtitle": "",
+    "header_title": "",
+    "input_placeholder": "",
+    "launcher_label": "",
+    "messages_label": "",
+    "new_request": "",
+    "new_request_prompt": "",
+    "retry": "",
+    "send_hint": "",
+    "send_label": "",
+    "sent_status": "",
+    "teaser": "",
+    "teaser_dismiss": "",
+    "whatsapp": ""
+  },
   "switch_mode": "Zum {{ mode }}-Modus wechseln",
   "switch_organization": "Organisation wechseln",
   "system": "System",

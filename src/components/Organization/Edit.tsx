@@ -12,7 +12,6 @@ import { HSeparator } from '~components/Layout/Separators'
 import { AvatarUploader } from '~components/Layout/Uploader'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { useToast } from '~components/Toast'
-import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
 
 // The form field is named `avatar` (shared AvatarUploader + read-side adapter shape),
@@ -51,7 +50,6 @@ const EditOrganization = () => {
   const { t } = useTranslation()
   const [isPending, setPending] = useState(false)
   const { organization } = useSaasAccount()
-  const { setStepDoneAsync } = useOrganizationSetup()
   const { mutateAsync } = useOrganizationEdit()
 
   const methods = useForm<FormData>({
@@ -87,7 +85,6 @@ const EditOrganization = () => {
 
     try {
       await mutateAsync(newInfo)
-      await setStepDoneAsync(SetupStepIds.organizationDetails)
       toast({
         title: t('edit_saas_profile.edited_successfully', { defaultValue: 'Updated successfully' }),
         type: 'success',
