@@ -103,10 +103,6 @@ export const MembersCsvManager = () => {
     onDrop,
     multiple: false,
     accept: SpreadsheetManager.AcceptedTypes.reduce((prev, curr) => ({ ...prev, [curr]: [] }), {}),
-    // The FS Access API picker returns focus outside the drawer, which Chakra's
-    // dismissable layer treats as an outside interaction and closes the drawer.
-    // Falling back to the hidden <input> keeps focus inside the drawer content.
-    useFsAccessApi: false,
   })
   const [visibleColumns, setVisibleColumns] = useState<string[]>(['name', 'surname', 'email'])
   const handleColumnChange = (value: string[]) => setVisibleColumns(value)

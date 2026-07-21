@@ -495,6 +495,9 @@ export const ImportMembers = () => {
       onOpenChange={({ open }) => (open ? onOpen() : onClose())}
       finalFocusEl={btnRef ? () => btnRef.current : undefined}
       size='md'
+      // The native file picker blurs the window and Zag's dismissable layer reads
+      // the focus return as an outside interaction, closing the drawer mid-import.
+      closeOnInteractOutside={false}
     >
       <Drawer.Backdrop />
       <Drawer.Trigger asChild>
