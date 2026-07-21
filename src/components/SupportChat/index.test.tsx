@@ -229,6 +229,17 @@ describe('SupportChat', () => {
     expect(lastTicket().description).toBe('Second request\n\n— Jane Doe')
   })
 
+  it('falls back to a generic confirmation when the profile has no email', async () => {
+    profileMock = { firstName: 'Jane', lastName: 'Doe' }
+    render(<SupportChat />)
+    await openChat()
+    await playGreeting()
+    await sendMessage('No email on file')
+
+    expect(screen.getByText(/we'll reply by email as soon as possible/)).toBeInTheDocument()
+    expect(screen.queryByText(/undefined/)).not.toBeInTheDocument()
+  })
+
   it('truncates long multiline messages into the ticket title', async () => {
     const longLine = 'a'.repeat(100)
     render(<SupportChat />)

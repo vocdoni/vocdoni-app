@@ -1771,6 +1771,7 @@
     "book_call": "Marcar uma chamada",
     "close_label": "Fechar o chat de apoio",
     "confirmation": "Obrigado, {{name}}! Recebemos a tua mensagem e responderemos para {{email}} assim que possível.",
+    "confirmation_generic": "Obrigado! Recebemos a tua mensagem e responderemos por email assim que possível.",
     "confirmation_no_name": "Obrigado! Recebemos a tua mensagem e responderemos para {{email}} assim que possível.",
     "contact_options": "Preferes falar? Também podes marcar uma chamada com a nossa equipa ou escrever-nos pelo WhatsApp.",
     "error": "Lamentamos — não foi possível enviar a tua mensagem. Tenta novamente.",

@@ -55,6 +55,11 @@ export const useSupportChat = () => {
   const lastTicketRef = useRef<SupportTicket | null>(null)
   const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const messageIdRef = useRef(0)
+  // Delayed callbacks (greeting, confirmation) must read the latest profile,
+  // not the snapshot captured when they were scheduled — the profile query may
+  // resolve in between.
+  const profileRef = useRef(profile)
+  profileRef.current = profile
 
   const profileName = [profile?.firstName, profile?.lastName].filter(Boolean).join(' ')
   const name = profileName || providedName
@@ -89,12 +94,13 @@ export const useSupportChat = () => {
     greetedRef.current = true
     setTyping(true)
     schedule(() => {
+      const firstName = profileRef.current?.firstName
       pushMessage(
         'support',
-        profile?.firstName
+        firstName
           ? t('support_chat.greeting', {
               defaultValue: 'Hi {{name}}, welcome to Vocdoni support!',
-              name: profile.firstName,
+              name: firstName,
             })
           : t('support_chat.greeting_no_name', { defaultValue: 'Hi there, welcome to Vocdoni support!' })
       )
@@ -134,24 +140,35 @@ export const useSupportChat = () => {
     setPhase('sending')
     setTyping(true)
     try {
-      // The minimum delay keeps the typing indicator from flashing on fast responses
-      await Promise.all([sendTicket(ticket), delay(MIN_SENDING_DELAY)])
+      // The minimum delay keeps the typing indicator from flashing on fast
+      // responses; allSettled (rather than all) applies it to failures too
+      const [sendResult] = await Promise.allSettled([sendTicket(ticket), delay(MIN_SENDING_DELAY)])
+      if (sendResult.status === 'rejected') {
+        throw sendResult.reason
+      }
       setTyping(false)
-      pushMessage(
-        'support',
-        senderName
-          ? t('support_chat.confirmation', {
-              defaultValue:
-                "Thanks, {{name}}! We've received your message and we'll get back to you at {{email}} as soon as possible.",
-              name: senderName.split(' ')[0],
-              email: profile?.email,
-            })
-          : t('support_chat.confirmation_no_name', {
-              defaultValue:
-                "Thanks! We've received your message and we'll get back to you at {{email}} as soon as possible.",
-              email: profile?.email,
-            })
-      )
+      const email = profileRef.current?.email
+      let confirmation: string
+      if (senderName && email) {
+        confirmation = t('support_chat.confirmation', {
+          defaultValue:
+            "Thanks, {{name}}! We've received your message and we'll get back to you at {{email}} as soon as possible.",
+          name: senderName.split(' ')[0],
+          email,
+        })
+      } else if (email) {
+        confirmation = t('support_chat.confirmation_no_name', {
+          defaultValue:
+            "Thanks! We've received your message and we'll get back to you at {{email}} as soon as possible.",
+          email,
+        })
+      } else {
+        // No known email address (profile still loading) — keep it generic
+        confirmation = t('support_chat.confirmation_generic', {
+          defaultValue: "Thanks! We've received your message and we'll reply by email as soon as possible.",
+        })
+      }
+      pushMessage('support', confirmation)
       setPhase('sent')
     } catch {
       setTyping(false)

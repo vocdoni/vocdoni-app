@@ -1771,6 +1771,7 @@
     "book_call": "Programa una trucada",
     "close_label": "Tanca el xat de suport",
     "confirmation": "Gràcies, {{name}}! Hem rebut el teu missatge i et respondrem a {{email}} tan aviat com sigui possible.",
+    "confirmation_generic": "Gràcies! Hem rebut el teu missatge i et respondrem per correu electrònic tan aviat com sigui possible.",
     "confirmation_no_name": "Gràcies! Hem rebut el teu missatge i et respondrem a {{email}} tan aviat com sigui possible.",
     "contact_options": "Prefereixes parlar? També pots programar una trucada amb el nostre equip o escriure'ns per WhatsApp.",
     "error": "Ho sentim, no hem pogut enviar el teu missatge. Torna-ho a provar.",

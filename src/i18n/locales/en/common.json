@@ -1746,6 +1746,7 @@
     "book_call": "Book a call",
     "close_label": "Close support chat",
     "confirmation": "Thanks, {{name}}! We've received your message and we'll get back to you at {{email}} as soon as possible.",
+    "confirmation_generic": "Thanks! We've received your message and we'll reply by email as soon as possible.",
     "confirmation_no_name": "Thanks! We've received your message and we'll get back to you at {{email}} as soon as possible.",
     "contact_options": "Prefer to talk? You can also book a call with our team or message us on WhatsApp.",
     "error": "Sorry — we couldn't send your message. Please try again.",

@@ -1771,6 +1771,7 @@
     "book_call": "Réserver un appel",
     "close_label": "Fermer le chat d'assistance",
     "confirmation": "Merci, {{name}} ! Nous avons bien reçu votre message et nous vous répondrons à {{email}} dès que possible.",
+    "confirmation_generic": "Merci ! Nous avons bien reçu votre message et nous vous répondrons par e-mail dès que possible.",
     "confirmation_no_name": "Merci ! Nous avons bien reçu votre message et nous vous répondrons à {{email}} dès que possible.",
     "contact_options": "Vous préférez échanger de vive voix ? Vous pouvez aussi réserver un appel avec notre équipe ou nous écrire sur WhatsApp.",
     "error": "Désolé — l'envoi de votre message a échoué. Réessayez.",

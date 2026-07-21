@@ -1771,6 +1771,7 @@
     "book_call": "Agendar uma chamada",
     "close_label": "Fechar o chat de suporte",
     "confirmation": "Obrigado, {{name}}! Recebemos a sua mensagem e responderemos para {{email}} o mais breve possível.",
+    "confirmation_generic": "Obrigado! Recebemos a sua mensagem e responderemos por email o mais breve possível.",
     "confirmation_no_name": "Obrigado! Recebemos a sua mensagem e responderemos para {{email}} o mais breve possível.",
     "contact_options": "Prefere conversar? Você também pode agendar uma chamada com a nossa equipe ou nos escrever pelo WhatsApp.",
     "error": "Desculpe — não foi possível enviar a sua mensagem. Tente novamente.",

@@ -1771,6 +1771,7 @@
     "book_call": "Programar una llamada",
     "close_label": "Cerrar el chat de soporte",
     "confirmation": "¡Gracias, {{name}}! Hemos recibido tu mensaje y te responderemos a {{email}} lo antes posible.",
+    "confirmation_generic": "¡Gracias! Hemos recibido tu mensaje y te responderemos por correo electrónico lo antes posible.",
     "confirmation_no_name": "¡Gracias! Hemos recibido tu mensaje y te responderemos a {{email}} lo antes posible.",
     "contact_options": "¿Prefieres hablar? También puedes programar una llamada con nuestro equipo o escribirnos por WhatsApp.",
     "error": "Lo sentimos, no hemos podido enviar tu mensaje. Vuelve a intentarlo.",

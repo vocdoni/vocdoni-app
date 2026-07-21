@@ -1746,6 +1746,7 @@
     "book_call": "Deia programatu",
     "close_label": "Itxi laguntza-txata",
     "confirmation": "Eskerrik asko, {{name}}! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu {{email}} helbidean.",
+    "confirmation_generic": "Eskerrik asko! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu posta elektronikoz.",
     "confirmation_no_name": "Eskerrik asko! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu {{email}} helbidean.",
     "contact_options": "Nahiago duzu hitz egin? Gure taldearekin deia programatu edo WhatsApp bidez idatzi ere egin dezakezu.",
     "error": "Sentitzen dugu — ezin izan dugu zure mezua bidali. Saiatu berriro.",

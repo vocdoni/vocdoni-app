@@ -1771,6 +1771,7 @@
     "book_call": "Prenota una chiamata",
     "close_label": "Chiudi la chat di supporto",
     "confirmation": "Grazie, {{name}}! Abbiamo ricevuto il tuo messaggio e ti risponderemo a {{email}} il prima possibile.",
+    "confirmation_generic": "Grazie! Abbiamo ricevuto il tuo messaggio e ti risponderemo via email il prima possibile.",
     "confirmation_no_name": "Grazie! Abbiamo ricevuto il tuo messaggio e ti risponderemo a {{email}} il prima possibile.",
     "contact_options": "Preferisci parlare? Puoi anche prenotare una chiamata con il nostro team o scriverci su WhatsApp.",
     "error": "Siamo spiacenti, non siamo riusciti a inviare il tuo messaggio. Riprova.",

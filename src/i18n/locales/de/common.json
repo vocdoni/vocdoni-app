@@ -1746,6 +1746,7 @@
     "book_call": "Anruf buchen",
     "close_label": "Support-Chat schließen",
     "confirmation": "Danke, {{name}}! Wir haben deine Nachricht erhalten und melden uns so bald wie möglich unter {{email}}.",
+    "confirmation_generic": "Danke! Wir haben deine Nachricht erhalten und antworten so bald wie möglich per E-Mail.",
     "confirmation_no_name": "Danke! Wir haben deine Nachricht erhalten und melden uns so bald wie möglich unter {{email}}.",
     "contact_options": "Lieber persönlich sprechen? Du kannst auch einen Anruf mit unserem Team buchen oder uns über WhatsApp schreiben.",
     "error": "Entschuldige — deine Nachricht konnte nicht gesendet werden. Bitte versuche es erneut.",

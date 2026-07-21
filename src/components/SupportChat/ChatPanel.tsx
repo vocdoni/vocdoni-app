@@ -192,17 +192,10 @@ export const ChatPanel = ({
       )}
 
       {isSent ? (
-        <Flex
-          role='status'
-          align='center'
-          justify='space-between'
-          gap={3}
-          px={4}
-          py={3}
-          borderTopWidth='1px'
-          borderColor='border'
-        >
-          <Flex align='center' gap={1.5} fontSize='xs' color='fg.muted' minW={0}>
+        <Flex align='center' justify='space-between' gap={3} px={4} py={3} borderTopWidth='1px' borderColor='border'>
+          {/* role='status' sits on the non-interactive text only — a live region
+              must not contain the button next to it */}
+          <Flex role='status' align='center' gap={1.5} fontSize='xs' color='fg.muted' minW={0}>
             <Icon as={LuCheck} boxSize={3.5} flexShrink={0} />
             <Text fontSize='xs'>
               {t('support_chat.sent_status', { defaultValue: "Request sent — we'll reply by email" })}

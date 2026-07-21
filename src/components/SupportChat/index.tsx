@@ -46,7 +46,6 @@ const SupportChatWidget = () => {
     <>
       {teaserVisible && !open && (
         <Flex
-          role='status'
           position='fixed'
           bottom={24}
           right={6}
