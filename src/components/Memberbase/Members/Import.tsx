@@ -102,14 +102,15 @@ export const ImportProgress = () => {
   const { data, isError } = useImportJobProgress()
 
   const [progress, setProgress] = useState(0)
-  const isComplete = data?.progress === 100
+  const isComplete = data?.status === 'completed'
+  const hasFailed = isError || data?.status === 'failed'
   const hasErrors = data?.errors?.length > 0
 
   useEffect(() => {
-    if (data?.progress === undefined || isComplete) return
+    if (!data || isComplete || hasFailed) return
 
     let interval: NodeJS.Timeout
-    const current = data.progress
+    const current = data.result?.progress ?? 0
     const target = current + PROGRESS_INCREMENT
 
     interval = setInterval(() => {
@@ -122,7 +123,7 @@ export const ImportProgress = () => {
     setProgress(current)
 
     return () => clearInterval(interval)
-  }, [data?.progress, isComplete])
+  }, [data?.result?.progress, isComplete, hasFailed])
 
   const { open: isErrorModalOpen, onOpen: onOpenErrors, onClose: onCloseErrors } = useDisclosure()
 
@@ -133,14 +134,14 @@ export const ImportProgress = () => {
         exact: false,
       })
     }
-  }, [data?.progress, queryClient, organization.address, isComplete])
+  }, [queryClient, organization.address, isComplete])
 
   const closeAlert = () => setJobId(null)
 
   const getStatus = () => {
     if (isComplete && hasErrors) return 'warning'
     if (isComplete) return 'success'
-    if (isError) return 'error'
+    if (hasFailed) return 'error'
     return 'info'
   }
 
@@ -151,7 +152,7 @@ export const ImportProgress = () => {
       return (
         <Trans i18nKey='import_progress.success_title' defaults='Your member data has been imported successfully.' />
       )
-    if (isError) return <Trans i18nKey='import_progress.error_title' defaults='Import Error' />
+    if (hasFailed) return <Trans i18nKey='import_progress.error_title' defaults='Import Error' />
 
     return <Trans i18nKey='import_progress.title' defaults='Memberbase Import in Progress' />
   }
@@ -185,7 +186,7 @@ export const ImportProgress = () => {
       )
     }
 
-    if (isError) {
+    if (hasFailed) {
       return (
         <Text>
           {t('import_progress.error_description', {
@@ -494,6 +495,9 @@ export const ImportMembers = () => {
       onOpenChange={({ open }) => (open ? onOpen() : onClose())}
       finalFocusEl={btnRef ? () => btnRef.current : undefined}
       size='md'
+      // The native file picker blurs the window and Zag's dismissable layer reads
+      // the focus return as an outside interaction, closing the drawer mid-import.
+      closeOnInteractOutside={false}
     >
       <Drawer.Backdrop />
       <Drawer.Trigger asChild>

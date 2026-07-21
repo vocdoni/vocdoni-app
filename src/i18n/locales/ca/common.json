@@ -981,7 +981,7 @@
       "subtitle": "Descarrega una plantilla o importa el teu propi fitxer CSV, XLS o XLSX per afegir membres.",
       "title": "Importar membres",
       "warning": {
-        "subtitle": "La informació de les columnes que no es mapeïn no s'importarà.",
+        "subtitle": "La informació de les columnes que no es relacionin no s'importarà.",
         "title": "Avís"
       }
     },
