@@ -41,11 +41,18 @@ type PaginatedMembersProps = {
   showAll?: boolean
 }
 
-type JobResponse = {
-  progress: number
-  added: number
-  total: number
+export type ImportJobStatus = 'pending' | 'completed' | 'failed'
+
+export type ImportJob = {
+  jobId: string
+  type: string
+  status: ImportJobStatus
   errors?: string[]
+  result?: {
+    added?: number
+    progress?: number
+    total?: number
+  }
 }
 
 type MembersData = {
@@ -137,20 +144,19 @@ export const useImportJobProgress = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
 
-  const url = ApiEndpoints.OrganizationMembersImport.replace(
-    '{address}',
-    enforceHexPrefix(organization.address)
-  ).replace('{jobId}', jobId)
+  // Authenticated so the response includes per-row import `errors`, which are
+  // stripped for anonymous requests.
+  const url = ApiEndpoints.Job.replace('{jobId}', jobId)
 
   return useQuery({
     enabled: Boolean(jobId),
     queryKey: QueryKeys.organization.membersImportProgress(organization.address, jobId),
-    queryFn: () => bearedFetch<JobResponse>(url),
+    queryFn: () => bearedFetch<ImportJob>(url),
     retry: false,
     refetchInterval: (query) => {
       const { data, status } = query.state
       if (status === 'error') return false
-      if (!data || data.progress < 100) return 2000
+      if (!data || data.status === 'pending') return 2000
       return false
     },
     refetchOnWindowFocus: false,
