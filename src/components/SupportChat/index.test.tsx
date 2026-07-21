@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '~src/test-utils'
+import { act, fireEvent, render, screen, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import SupportChat from './index'
 
@@ -267,6 +267,49 @@ describe('SupportChat', () => {
     expect(lastTicket().title).toBe('[Chat] I need help with a vote')
     expect(lastTicket().description).toBe('I need help with a vote\n\n— Ada')
     expect(screen.getByText(/Thanks, Ada! We've received your message/)).toBeInTheDocument()
+  })
+
+  it('ignores extra sends while the name prompt is pending', async () => {
+    profileMock = { email: 'anon@example.com' }
+    render(<SupportChat />)
+    await openChat()
+    await playGreeting()
+
+    const input = screen.getByPlaceholderText('Describe your request…')
+    fireEvent.change(input, { target: { value: 'First attempt' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Send message' }))
+    // Try to send again before the name prompt appears
+    fireEvent.change(input, { target: { value: 'Second attempt' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Send message' }))
+    fireEvent.keyDown(input, { key: 'Enter', ctrlKey: true })
+    await advance(1_000)
+
+    expect(screen.getAllByText(/what's your name\?/)).toHaveLength(1)
+    // The blocked draft stays in the textarea but never becomes a message bubble
+    const conversation = screen.getByLabelText('Support conversation')
+    expect(within(conversation).queryByText('Second attempt')).not.toBeInTheDocument()
+
+    await sendMessage('Ada')
+    expect(lastTicket().description).toBe('First attempt\n\n— Ada')
+  })
+
+  it('skips the name prompt when the profile loads a name during the wait', async () => {
+    profileMock = null
+    const { rerender } = render(<SupportChat />)
+    await openChat()
+    await playGreeting()
+
+    fireEvent.change(screen.getByPlaceholderText('Describe your request…'), { target: { value: 'Late profile' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Send message' }))
+
+    profileMock = { firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com' }
+    rerender(<SupportChat />)
+    await advance(2_000)
+
+    expect(screen.queryByText(/what's your name\?/)).not.toBeInTheDocument()
+    expect(bearedFetchMock).toHaveBeenCalledTimes(1)
+    expect(lastTicket().description).toBe('Late profile\n\n— Jane Doe')
+    expect(screen.getByText(/Thanks, Jane! We've received your message/)).toBeInTheDocument()
   })
 
   it('shows an in-conversation error and retries the same ticket successfully', async () => {

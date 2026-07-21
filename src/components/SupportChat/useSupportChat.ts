@@ -191,10 +191,20 @@ export const useSupportChat = () => {
       return
     }
     if (!name) {
-      // Hold the message until we know who we're talking to
+      // Hold the message until we know who we're talking to. Phase moves to
+      // 'sending' right away so extra sends during the prompt delay are
+      // ignored instead of re-scheduling prompts and overwriting the message.
       pendingMessageRef.current = trimmed
+      setPhase('sending')
       setTyping(true)
       schedule(() => {
+        const loadedProfile = profileRef.current
+        const loadedName = [loadedProfile?.firstName, loadedProfile?.lastName].filter(Boolean).join(' ')
+        if (loadedName) {
+          // The profile finished loading while we waited: no need to ask
+          submitTicket(buildTicket(pendingMessageRef.current, loadedName), loadedName)
+          return
+        }
         pushMessage('support', t('support_chat.ask_name', { defaultValue: "Before we send that — what's your name?" }))
         setTyping(false)
         setPhase('ask_name')
