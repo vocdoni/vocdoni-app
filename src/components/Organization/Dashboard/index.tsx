@@ -26,7 +26,7 @@ import {
 import { processVoteCount } from '@vocdoni/api-client'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
-import { format } from 'date-fns'
+import { useDateFns } from '~i18n/use-date-fns'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
@@ -406,6 +406,7 @@ const Processes = () => {
 
 const RecentProcess = () => {
   const { t } = useTranslation()
+  const { format } = useDateFns()
   const { election, results } = useElection()
 
   if (!election) return null
@@ -421,7 +422,7 @@ const RecentProcess = () => {
         <Text fontSize='sm' color='texts.subtle' truncate>
           {t('election.ends_on', {
             defaultValue: 'Ends on {{date}}',
-            date: format(new Date(election.endDate), t('organization.date_format')),
+            date: format(election.endDate, t('organization.date_format')),
           })}
         </Text>
       </Box>

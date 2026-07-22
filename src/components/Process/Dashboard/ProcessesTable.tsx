@@ -88,8 +88,8 @@ const ProcessRow = () => {
           </RouterLink>
         </Link>
       </Table.Cell>
-      <Table.Cell>{format(new Date(election.startDate), t('organization.date_format'))}</Table.Cell>
-      <Table.Cell>{format(new Date(election.endDate), t('organization.date_format'))}</Table.Cell>
+      <Table.Cell>{format(election.startDate, t('organization.date_format'))}</Table.Cell>
+      <Table.Cell>{format(election.endDate, t('organization.date_format'))}</Table.Cell>
       <Table.Cell>
         <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
       </Table.Cell>

@@ -39,7 +39,7 @@ import {
 } from '@vocdoni/react-components'
 import { hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import { inferQuestionBallotType } from '@vocdoni/ballot'
-import { format as formatDate } from 'date-fns'
+import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { forwardRef, ReactNode, useEffect, useRef } from 'react'
@@ -122,6 +122,7 @@ export const ProcessView = () => (
 
 const ProcessViewContent = () => {
   const { t } = useTranslation()
+  const { format: formatDate } = useDateFns()
   const { showSidebar, toggleSidebar } = useSidebarVisibility()
   const { election, status } = useElection()
   const id = election?.id ?? ''
@@ -209,32 +210,22 @@ const ProcessViewContent = () => {
               <SettingsField
                 icon={LuCalendar}
                 text={t('start_date', 'Start date')}
-                subtext={
-                  election &&
-                  formatDate(new Date(election.startDate), t('dashboard.process_view.date_format', 'MMMM do, y'))
-                }
+                subtext={election && formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))}
               />
               <SettingsField
                 icon={LuClock}
                 text={t('start_time', 'Start time')}
-                subtext={
-                  election && formatDate(new Date(election.startDate), t('dashboard.process_view.time_format', 'p'))
-                }
+                subtext={election && formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))}
               />
               <SettingsField
                 icon={LuCalendar}
                 text={t('end_date', 'End date')}
-                subtext={
-                  election &&
-                  formatDate(new Date(election.endDate), t('dashboard.process_view.date_format', 'MMMM do, y'))
-                }
+                subtext={election && formatDate(election.endDate, t('dashboard.process_view.date_format', 'MMMM do, y'))}
               />
               <SettingsField
                 icon={LuClock}
                 text={t('end_time', 'End time')}
-                subtext={
-                  election && formatDate(new Date(election.endDate), t('dashboard.process_view.time_format', 'p'))
-                }
+                subtext={election && formatDate(election.endDate, t('dashboard.process_view.time_format', 'p'))}
               />
             </SimpleGrid>
           </DashboardBox>
