@@ -15,7 +15,10 @@ import { QueryKeys } from '~src/queries/keys'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
 
-type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country'>
+// The form field is named `avatar` (shared AvatarUploader + read-side adapter shape),
+// but it maps to the API `logo` field on submit, so it is omitted from the derived body
+// type and re-added here as the form-only field.
+type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country' | 'logo'> & { avatar: string }
 
 const useOrganizationEdit = (options?: Omit<UseMutationOptions<void, Error, CreateOrgParams>, 'mutationFn'>) => {
   const { bearedFetch, currentAddress } = useAuth()
@@ -66,7 +69,7 @@ const EditOrganization = () => {
     const newInfo: CreateOrgParams = {
       name: values.name,
       description: values.description,
-      avatar: values.avatar,
+      logo: values.avatar,
       header: values.header,
       website: values.website,
       size: values.size,

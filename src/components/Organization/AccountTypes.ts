@@ -19,6 +19,10 @@ export type SaasOrganizationData = {
 export type OrganizationData = SaasOrganizationData & AccountData
 
 export type CreateOrgParams = Partial<
-  Pick<IAccount, 'name' | 'description' | 'avatar' | 'header'> &
-    Omit<SaasOrganizationData, 'active' | 'address' | 'createdAt'>
+  Pick<IAccount, 'name' | 'description' | 'header'> & {
+    // The SaaS API stores the organization branding image under `logo` (was `avatar`
+    // on the old on-chain account). A plain string is accepted and stored as
+    // `{ default: value }`. See @vocdoni/api-types `CreateOrganizationRequest`.
+    logo: string
+  } & Omit<SaasOrganizationData, 'active' | 'address' | 'createdAt'>
 >
