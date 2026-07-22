@@ -206,10 +206,10 @@ describe('useFormToVotingProcessRequest', () => {
   })
 
   describe('single-choice ballot protocol', () => {
-    it('sets type to singleChoice', () => {
+    it('sets type to singlechoice', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current({ ...mockForm, questionType: SelectorTypes.Single }, buildCensusSpec())
-      expect(req.questions[0].type).toBe('singleChoice')
+      expect(req.questions[0].type).toBe('singlechoice')
       expect(req.questions[0].typeSetup).toBeUndefined()
     })
 
@@ -229,13 +229,13 @@ describe('useFormToVotingProcessRequest', () => {
   })
 
   describe('multi-choice ballot protocol', () => {
-    it('sets type to multiChoice with typeSetup', () => {
+    it('sets type to multichoice with typeSetup', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current(
         { ...mockForm, questionType: SelectorTypes.Multiple, maxNumberOfChoices: 2, minNumberOfChoices: 1 },
         buildCensusSpec()
       )
-      expect(req.questions[0].type).toBe('multiChoice')
+      expect(req.questions[0].type).toBe('multichoice')
       expect(req.questions[0].typeSetup).toEqual({ maxChoices: 2, minChoices: 1, uniqueChoices: true })
     })
 

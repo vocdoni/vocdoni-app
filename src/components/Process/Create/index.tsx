@@ -533,7 +533,7 @@ export const useFormToVotingProcessRequest = () => {
           title: { default: question.title },
           description: question.description ? { default: question.description } : undefined,
           choices,
-          type: 'multiChoice',
+          type: 'multichoice',
           typeSetup: { maxChoices, minChoices: form.minNumberOfChoices ?? 0, uniqueChoices: true },
           ballotProtocol: {
             ...commonProtocol,
@@ -551,7 +551,7 @@ export const useFormToVotingProcessRequest = () => {
         title: { default: question.title },
         description: question.description ? { default: question.description } : undefined,
         choices,
-        type: 'singleChoice',
+        type: 'singlechoice',
         ballotProtocol: {
           ...commonProtocol,
           maxCount: 1,
