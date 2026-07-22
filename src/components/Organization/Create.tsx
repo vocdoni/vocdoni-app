@@ -9,7 +9,7 @@ import { Link as ReactRouterLink, To, useNavigate } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { LocalStorageKeys, useAuthProvider } from '~components/Auth/useAuthProvider'
+import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { OrganizationMetaKeys, OrganizationMetaResponse, SetupStepIds } from '~queries/organization'
 import { QueryKeys } from '~src/queries/keys'
@@ -26,8 +26,13 @@ type OrganizationCreateResponse = {
 const useOrganizationCreate = (
   options?: Omit<UseMutationOptions<OrganizationCreateResponse, Error, FormData>, 'mutationFn'>
 ) => {
-  const { bearedFetch } = useAuth()
-  const { refreshAddresses } = useAuthProvider()
+  // Read refreshAddresses from the AuthContext rather than calling useAuthProvider()
+  // again: a second useAuthProvider instance registers its own observer on the
+  // `auth/addresses` query, and when that query is in error state (users with no
+  // organization get a 404) the observer's retry-on-mount refetch re-renders the
+  // top-level AuthProvider, which rebuilds the router and remounts this component
+  // in an endless loop.
+  const { bearedFetch, refreshAddresses } = useAuth()
   const qclient = useQueryClient()
 
   return useMutation<OrganizationCreateResponse, Error, FormData>({
