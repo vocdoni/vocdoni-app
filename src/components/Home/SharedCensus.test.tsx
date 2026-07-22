@@ -58,7 +58,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...getReactProvidersMock(),
     ElectionTitle: () => <div>ElectionTitle</div>,
     ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
-    OrganizationImage: ({ alt }: { alt?: string }) => <img src='' alt={alt || 'OrganizationImage'} />,
+    OrganizationImage: ({ alt }: { alt?: string }) => <img alt={alt || 'OrganizationImage'} />,
   }
 })
 
