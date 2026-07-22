@@ -7,6 +7,8 @@ const ChakraInternalActionsProvider = ({ children }: { children: ReactNode }) =>
   return <>{children}</>
 }
 
+// useConfirm() calls under this provider resolve through the app-wide ConfirmProvider
+// mounted in AppRuntimeProviders.
 export const ActionsProvider = ({ children }: { children: ReactNode }) => (
   <SaasActionsProvider>
     <ChakraInternalActionsProvider>{children}</ChakraInternalActionsProvider>

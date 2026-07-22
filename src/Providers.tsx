@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ComponentsProvider } from '@vocdoni/react-components'
+import { ComponentsProvider, ConfirmProvider } from '@vocdoni/react-components'
 import { AuthProvider as SdkAuthProvider } from '@vocdoni/react-providers'
 import { setDefaultOptions } from 'date-fns'
 import { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
@@ -207,18 +207,24 @@ const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
   return (
     <RainbowKitTheme>
       <ComponentsProvider components={uiScaffoldComponents}>
-        <ToastProvider>
-          <ConnectionToastProvider>
-            <ApiClientProvider>
-              <SaasProviders>
-                <AnalyticsProvider>
-                  <CookieConsent />
-                  {children}
-                </AnalyticsProvider>
-              </SaasProviders>
-            </ApiClientProvider>
-          </ConnectionToastProvider>
-        </ToastProvider>
+        {/* App-owned components (ActionButtons, ConfirmActionModal) call useConfirm
+            outside any react-components auto-mounted provider, so one is needed for
+            the whole tree. It must sit inside ComponentsProvider because the confirm
+            modal renders through the themed component slots. */}
+        <ConfirmProvider>
+          <ToastProvider>
+            <ConnectionToastProvider>
+              <ApiClientProvider>
+                <SaasProviders>
+                  <AnalyticsProvider>
+                    <CookieConsent />
+                    {children}
+                  </AnalyticsProvider>
+                </SaasProviders>
+              </ApiClientProvider>
+            </ConnectionToastProvider>
+          </ToastProvider>
+        </ConfirmProvider>
       </ComponentsProvider>
     </RainbowKitTheme>
   )
