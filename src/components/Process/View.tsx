@@ -15,10 +15,6 @@ import {
   TabsRoot,
   TabsTrigger,
   Text,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
 } from '@chakra-ui/react'
 import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
 import { hasResults } from '@vocdoni/api-client'
@@ -86,15 +82,11 @@ const ProcessInfoPanel = () => {
   const { election } = useElection()
   const { organization, loading } = useOrganization()
   const { currentAddress } = useAuth()
-  // For CSP elections the actual census size comes from the bundle, not from `maxCensusSize`
-  // (which only caps how many voters may vote). See useCensusSize.
   const { size: censusSize } = useCensusSize()
 
   if (!election) return null
 
   const showOrgInformation = loading || !!organization?.name?.default
-  const maxCensusSize = election?.census?.size ?? 0
-  const showTotalCensusSize = censusSize > 0 && !!maxCensusSize && maxCensusSize < censusSize
 
   return (
     <Flex
@@ -123,31 +115,9 @@ const ProcessInfoPanel = () => {
       <ProcessInfoCard
         label={t('process.census')}
         description={
-          showTotalCensusSize ? (
-            <TooltipRoot positioning={{ placement: 'top' }}>
-              <TooltipTrigger asChild>
-                <Text>
-                  {t('process.total_census_size', {
-                    censusSize,
-                    maxCensusSize,
-                  })}
-                </Text>
-              </TooltipTrigger>
-              <TooltipPositioner>
-                <TooltipContent>
-                  {t('process.total_census_size_tooltip', {
-                    censusSize,
-                    maxCensusSize,
-                    percent: censusSize && maxCensusSize ? Math.round((maxCensusSize / censusSize) * 100) : 0,
-                  })}
-                </TooltipContent>
-              </TooltipPositioner>
-            </TooltipRoot>
-          ) : (
-            <Text color='texts.subtle' fontSize='sm'>
-              {t('process.people_in_census', { count: censusSize })}
-            </Text>
-          )
+          <Text color='texts.subtle' fontSize='sm'>
+            {t('process.people_in_census', { count: censusSize })}
+          </Text>
         }
       />
       <ProcessInfoCard

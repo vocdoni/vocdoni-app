@@ -49,7 +49,7 @@ import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
-import { useAddCensusParticipants, useProcessCensusId } from '~src/queries/census'
+import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useDeleteMembers, usePaginatedMembers } from '~src/queries/members'
@@ -235,23 +235,16 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
     .filter((election) => ACTIVE_PROCESS_STATUSES.includes(computeProcessStatus(election.questions)))
     .map((election) => ({ id: election.id, title: getElectionTitle(election) || election.id }))
 
-  const {
-    data: censusId,
-    isLoading: isLoadingCensus,
-    isError: isCensusError,
-    error: censusError,
-  } = useProcessCensusId(client, selectedProcess?.id, isOpen)
-
   const handleClose = () => {
     setSelectedProcess(null)
     onClose()
   }
 
   const handleAddToCensus = () => {
-    if (!censusId) return
+    if (!selectedProcess) return
 
     addCensusParticipants.mutate(
-      { censusId, memberIds: selectedRows.map((row) => row.id) },
+      { processId: selectedProcess.id, memberIds: selectedRows.map((row) => row.id) },
       {
         onSuccess: (response) => {
           toast({
@@ -328,7 +321,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
               onChange={(option) => setSelectedProcess(option)}
             />
 
-            {selectedProcess && !isCensusError && censusId && (
+            {selectedProcess && (
               <Text fontSize='sm' color='texts.subtle'>
                 {t('members.table.add_to_census_confirmation', {
                   defaultValue: 'You will add {{count}} member to the "{{process}}" process census.',
@@ -339,21 +332,12 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
               </Text>
             )}
 
-            {selectedProcess && (isCensusError || (!isLoadingCensus && !censusId)) && (
-              <Text fontSize='sm' color='red.400'>
-                {t('members.table.add_to_census_no_census', {
-                  defaultValue: 'Could not resolve a census for this process.',
-                })}
-                {censusError?.message ? ` (${censusError.message})` : ''}
-              </Text>
-            )}
-
             <Button
               onClick={handleAddToCensus}
               mt={2}
               width='100%'
               loading={addCensusParticipants.isPending}
-              disabled={!selectedProcess || !censusId || isLoadingCensus || selectedRows.length === 0}
+              disabled={!selectedProcess || selectedRows.length === 0}
             >
               {t('members.table.add_to_census_button', {
                 defaultValue: 'Add {{count}} member',

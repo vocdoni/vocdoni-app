@@ -94,7 +94,8 @@
       "not_voted": "Não votou",
       "placeholder": "Pesquisar lista de participantes…",
       "title": "Verificar participantes",
-      "voted": "Votou"
+      "voted": "Votou",
+      "voted_partial": "Votou {{voted}}/{{total}}"
     }
   },
   "census_size": "Número de participantes",

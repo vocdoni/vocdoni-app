@@ -91,7 +91,8 @@
       "not_voted": "Botoa eman gabe",
       "placeholder": "Bilatu erroldean…",
       "title": "Egiaztatu parte-hartzaileak",
-      "voted": "Botoa emana"
+      "voted": "Botoa emana",
+      "voted_partial": "Botoa emana {{voted}}/{{total}}"
     }
   },
   "census_size": "Erroldeko tamaina",

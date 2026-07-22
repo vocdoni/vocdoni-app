@@ -94,7 +94,8 @@
       "not_voted": "N'a pas voté",
       "placeholder": "Rechercher dans la liste électorale…",
       "title": "Vérifier les participants",
-      "voted": "A voté"
+      "voted": "A voté",
+      "voted_partial": "A voté {{voted}}/{{total}}"
     }
   },
   "census_size": "Nombre d'inscrits",

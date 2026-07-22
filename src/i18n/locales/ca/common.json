@@ -94,7 +94,8 @@
       "not_voted": "No ha votat",
       "placeholder": "Cerca al cens…",
       "title": "Comprova els participants",
-      "voted": "Ha votat"
+      "voted": "Ha votat",
+      "voted_partial": "Ha votat {{voted}}/{{total}}"
     }
   },
   "census_size": "Mida del cens",

@@ -1,26 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import type { VocdoniApiClient } from '@vocdoni/api-client'
-import type { CensusSpec } from '@vocdoni/api-types'
 import { useElection } from '@vocdoni/react-components'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from '~queries/keys'
-
-/**
- * Census fields the admin UI needs but `GET /processes/{id}` does not expose yet: the
- * backend's census spec only carries auth fields / weighted, dropping the census type,
- * published uri and size. Modeled as optional extras so CSP census features (search,
- * real census size) degrade gracefully until the backend exposes them — see the
- * integrator-sdk GAPS.md entry "CensusSpec carries no census identity".
- */
-export type ProcessCensusInfo = CensusSpec & {
-  type?: string
-  uri?: string
-  size?: number
-}
-
-export const processCensusInfo = (census?: CensusSpec): ProcessCensusInfo | undefined =>
-  census as ProcessCensusInfo | undefined
 
 export type CensusBundleData = {
   id: string
@@ -66,79 +47,25 @@ export const useCensusBundle = (censusURI?: string) => {
   })
 }
 
-// For CSP (bundle-based) elections `census.size` represents the maximum number of voters allowed to vote.
-// The real size lives in the bundle JSON pointed at by `census.uri`.
-// For any other census type the size is already populated on `election.census.size`, so we fall back to it.
+// The process read carries the census member count directly (`census.size`, response-only;
+// for a published process it equals the on-chain maxCensusSize). The backend serializes it
+// with omitempty, so an absent field means an empty census.
 export const useCensusSize = () => {
   const { election } = useElection()
-  const census = processCensusInfo(election?.census)
-
-  const isCsp = census?.type === 'csp'
-  const bundleURI = isCsp ? census?.uri : undefined
-
-  const { data: bundle, isLoading } = useCensusBundle(bundleURI)
-
-  const fallback = census?.size ?? 0
-  const size = bundle?.census?.size ?? fallback
-
-  return { size, isLoading: !!bundleURI && isLoading }
-}
-
-export type ProcessBundleResponse = {
-  census?: {
-    id: string
-  }
-}
-
-export type AddCensusParticipantsResponse = {
-  added: number
-  jobId?: string
-  errors?: string[]
-}
-
-// The election's census URL points to its process bundle, e.g. `.../process/bundle/{bundleId}`.
-const BUNDLE_ID_REGEX = /\/process\/bundle\/([^/?#]+)/
-
-/**
- * Resolves the SaaS census id for a process. SaaS member-based censuses are not referenced directly on
- * the election: the election's census URL points to its process bundle, whose `census.id` is the
- * SaaS census id we can append members to. So we fetch the election from the SAAS API to read its census
- * URL, then fetch the bundle to read the census id.
- *
- * Returns `undefined` for processes that are not backed by a SaaS member census (e.g. spreadsheet/web3).
- */
-export const useProcessCensusId = (client: VocdoniApiClient, processId?: string, enabled: boolean = true) => {
-  const { bearedFetch } = useAuth()
-
-  return useQuery<string | undefined, Error>({
-    queryKey: QueryKeys.process.census(processId),
-    enabled: enabled && !!processId,
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const election = await client.elections.get(processId!)
-      const bundleId = processCensusInfo(election.census)?.uri?.match(BUNDLE_ID_REGEX)?.[1]
-      if (!bundleId) return undefined
-
-      const bundle = await bearedFetch<ProcessBundleResponse>(
-        ApiEndpoints.ProcessBundleId.replace('{bundleId}', bundleId)
-      )
-      return bundle.census?.id
-    },
-  })
+  return { size: election?.census?.size ?? 0 }
 }
 
 /**
- * Appends existing organization members to a census (append-only: members already present are
- * skipped by the backend).
+ * Appends existing organization members to a published process's census via
+ * `PUT /processes/{id}/census` (append-only: members already present are skipped by the
+ * backend). The response's `jobId`, when present, tracks the async on-chain maxCensusSize
+ * bump — the members are already in the census when it resolves.
  */
 export const useAddCensusParticipants = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
   return useMutation({
-    mutationFn: ({ censusId, memberIds }: { censusId: string; memberIds: string[] }) =>
-      bearedFetch<AddCensusParticipantsResponse>(ApiEndpoints.Census.replace('{censusId}', censusId), {
-        method: 'POST',
-        body: { memberIds },
-      }),
+    mutationFn: ({ processId, memberIds }: { processId: string; memberIds: string[] }) =>
+      client.elections.addCensusMembers(processId, memberIds),
   })
 }

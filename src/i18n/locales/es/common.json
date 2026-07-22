@@ -94,7 +94,8 @@
       "not_voted": "No ha votado",
       "placeholder": "Buscar en el censo…",
       "title": "Comprobar participantes",
-      "voted": "Ha votado"
+      "voted": "Ha votado",
+      "voted_partial": "Ha votado {{voted}}/{{total}}"
     }
   },
   "census_size": "Tamaño del censo",
