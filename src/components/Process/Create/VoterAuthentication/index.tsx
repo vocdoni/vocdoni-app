@@ -208,16 +208,19 @@ export const VoterAuthentication = () => {
                 <CloseButton />
               </Dialog.CloseTrigger>
               <Dialog.Header>
-                <Dialog.Title>
+                {/* Dialog.Title renders an <h2> itself, so the styled Heading must BE the
+                    title element (asChild) rather than nest inside it, and the subheader
+                    paragraph cannot live inside a heading at all. */}
+                <Dialog.Title asChild>
                   <Heading variant='header'>
                     {t('voter_auth.title', { defaultValue: 'Configure Voter Authentication' })}
                   </Heading>
-                  <Text variant='subheader'>
-                    {t('voter_auth.description', {
-                      defaultValue: 'Set up how voters will authenticate to participate in this voting process.',
-                    })}
-                  </Text>
                 </Dialog.Title>
+                <Text variant='subheader'>
+                  {t('voter_auth.description', {
+                    defaultValue: 'Set up how voters will authenticate to participate in this voting process.',
+                  })}
+                </Text>
               </Dialog.Header>
               <Dialog.Body>
                 <FormProvider {...voterAuthForm}>
