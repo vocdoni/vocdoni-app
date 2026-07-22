@@ -972,7 +972,6 @@
       "add_to_census_confirmation_other": "Du fügst {{count}} Mitglieder zur Teilnehmerliste des Prozesses \"{{process}}\" hinzu.",
       "add_to_census_description": "Wähle einen aktiven Abstimmungsprozess aus, zu dessen Teilnehmerliste die Mitglieder hinzugefügt werden sollen.",
       "add_to_census_error": "Fehler beim Hinzufügen der Mitglieder zur Teilnehmerliste",
-      "add_to_census_no_census": "Für diesen Prozess konnte keine Teilnehmerliste ermittelt werden.",
       "add_to_census_partial": "Einige Mitglieder konnten nicht hinzugefügt werden.",
       "add_to_census_success_one": "{{count}} Mitglied zur Teilnehmerliste hinzugefügt",
       "add_to_census_success_other": "{{count}} Mitglieder zur Teilnehmerliste hinzugefügt",
@@ -1412,8 +1411,6 @@
         "title": "Titel der Bürgerhaushalt-Abstimmung"
       }
     },
-    "total_census_size": "{{maxCensusSize}} zugelassene Wählende von {{censusSize}} gesamt in der Teilnehmerliste",
-    "total_census_size_tooltip": "Die maximale Anzahl zugelassener Wählenden ist auf {{maxCensusSize}} aus einer Teilnehmerliste von {{censusSize}} begrenzt ({{percent}}% der Gesamtzahl). Nur die ersten {{maxCensusSize}} Wählenden können abstimmen.",
     "voters": "Wählende",
     "voting_method": {
       "approval": "Zustimmung",
@@ -1509,9 +1506,7 @@
       "method": "Authentifizierungsmethode",
       "two_fa": "Zwei-Faktor-Authentifizierung",
       "two_fa_disabled": "Deaktiviert: In diesem Abstimmungsprozess wurde keine zusätzliche Identitätsprüfung konfiguriert.",
-      "two_fa_enabled": "Aktiviert: Wählende bestätigen ihre Identität mit einem Einmalcode, der an ihre persönlichen Geräte gesendet wird.",
-      "voter_access_source": "Zugangsberechtigung der Wählenden",
-      "voter_access_source_weighted": "Die Berechtigung wird anhand der von der Organisation bereitgestellten gewichteten Teilnehmerliste für diesen Prozess geprüft."
+      "two_fa_enabled": "Aktiviert: Wählende bestätigen ihre Identität mit einem Einmalcode, der an ihre persönlichen Geräte gesendet wird."
     },
     "census": {
       "counting_basis": "Auszählungsgrundlage",
@@ -1524,10 +1519,7 @@
       "weighted_participation": "Gewichtete Beteiligung"
     },
     "census_type": {
-      "anonymous": "Geheime gewichtete Teilnehmerliste",
-      "csp": "CSP-Teilnehmerliste",
-      "unknown": "Nicht verfügbar",
-      "weighted": "Gewichtete Teilnehmerliste"
+      "csp": "CSP-Teilnehmerliste"
     },
     "disclaimer": {
       "bullet_1": "Es stellt keine rechtliche Zertifizierung des Abstimmungsprozesses dar.",
@@ -1567,8 +1559,6 @@
     "download_error": "PDF-Bericht konnte nicht erstellt werden",
     "downloading": "PDF wird erstellt",
     "general": {
-      "census_reference": "Teilnehmerlisten-Referenz",
-      "census_reference_helper": "Öffentliche Referenz, die die für diesen Abstimmungsprozess verwendete Teilnehmerliste identifiziert. Sie enthält keine personenbezogenen Daten der Wählenden und gibt diese nicht preis.",
       "event_name": "Veranstaltungsname",
       "network": "Netzwerk",
       "organization": "Organisation",
@@ -1602,9 +1592,9 @@
       "explorer": "Verifizierungs-Explorer",
       "paragraph": "Alle Prozessdaten wurden in einer blockchain-basierten Infrastruktur gespeichert und können über den folgenden öffentlichen Explorer unabhängig überprüft werden:",
       "procedure_title": "Verifizierungsverfahren",
+      "question_n": "",
       "step_1": "Öffne den Link zum Verifizierungs-Explorer. Diese Seite enthält das öffentliche technische Protokoll des Abstimmungsprozesses.",
       "step_2": "Prüfe, ob die Prozess-ID im Explorer mit der Prozess-ID in diesem Bericht übereinstimmt. Dies bestätigt, dass sich beide Dokumente auf denselben Abstimmungsprozess beziehen.",
-      "step_3": "Prüfe, ob die im Explorer angezeigte Teilnehmerlisten-Referenz mit der Referenz in diesem Bericht übereinstimmt. Dies bestätigt, dass die mit dem Prozess verknüpfte Teilnehmerliste dieselbe ist.",
       "step_4": "Prüfe, ob die Anzahl der erfassten Stimmzettel mit den in diesem Bericht angezeigten Beteiligungsdaten übereinstimmt.",
       "step_5": "Vergleiche das abschließende Auszählungsergebnis im Explorer mit den Stimmzahl- oder gewichteten Stimmgewicht-Ergebnissen in diesem Bericht.",
       "step_6": "Für eine tiefere technische Prüfung kann ein Prüfer die öffentlichen Aufzeichnungen im Detail einsehen oder die Auszählung neu berechnen, um sicherzustellen, dass die erfassten Stimmzettel und Endergebnisse übereinstimmen."

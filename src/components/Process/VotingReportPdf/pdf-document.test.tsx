@@ -1,9 +1,8 @@
-import { CensusType, PublishedElection } from '@vocdoni/sdk'
 import { type ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VotingReportPdfButton } from './VotingReportPdfButton'
-import { collectTextContent, createElection, createElectionWithResults } from './__fixtures__'
+import { PROCESS_ID, collectTextContent, createElection, createQuestionResults, createResults } from './__fixtures__'
 
 const mockModule = vi.hoisted(() => ({
   pdfSpy: vi.fn(),
@@ -46,17 +45,6 @@ vi.mock('@chakra-ui/react', async (importOriginal) => {
       ...actual.Menu,
       Item: ({ children, ...props }: { children: ReactNode }) => <actual.Button {...props}>{children}</actual.Button>,
     },
-  }
-})
-
-vi.mock('@vocdoni/sdk', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
-
-  class MockPublishedElection {}
-
-  return {
-    ...actual,
-    PublishedElection: MockPublishedElection,
   }
 })
 
@@ -155,7 +143,7 @@ describe('VotingCertificateDocument', () => {
     })
     expect(processName.props.children).toBe('Annual vote')
     const subtitle = headerChildren[3] as { props: { children: ReactNode } }
-    expect(subtitle.props.children).toBe('Process ID: 0x1234')
+    expect(subtitle.props.children).toBe(`Process ID: ${PROCESS_ID}`)
     expect(subtitle.props.children).not.toContain('Report issued on')
     const coverIntroPanel = coverContentChildren[1] as { props: { style?: Record<string, unknown> } }
     expect(coverIntroPanel.props.style).toMatchObject({
@@ -313,7 +301,7 @@ describe('VotingCertificateDocument', () => {
         }),
       },
     })
-    expect(votingProcessIntroChildren[2]).toContain('consisted of 0 questions.')
+    expect(votingProcessIntroChildren[2]).toContain('consisted of 1 questions.')
     const fifthPage = pages[4] as { props: { children: ReactNode } }
     const fifthPageChildren = Array.isArray(fifthPage.props.children)
       ? fifthPage.props.children
@@ -412,7 +400,11 @@ describe('VotingCertificateDocument', () => {
   })
 
   it('renders all result rows with colored bars', async () => {
-    render(<VotingReportPdfButton election={createElectionWithResults()} />)
+    setReactProvidersMock({
+      useClient: () => ({ client: { elections: { getResults: vi.fn().mockResolvedValue(createResults()) } } }),
+    })
+
+    render(<VotingReportPdfButton election={createElection()} />)
 
     fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
 
@@ -516,28 +508,20 @@ describe('VotingCertificateDocument', () => {
   })
 
   it('renders weighted question cards with voting-power result columns', async () => {
-    const weightedElection = Object.assign(createElection(), {
-      voteCount: 2,
-      census: {
-        size: 3,
-        type: CensusType.WEIGHTED,
-        weight: 2000,
-      },
-      meta: {
-        token: {
-          decimals: 2,
+    const weightedElection = createElection({
+      census: { size: 3, weighted: true, authFields: ['memberNumber'] },
+    })
+    setReactProvidersMock({
+      useClient: () => ({
+        client: {
+          elections: {
+            getResults: vi
+              .fn()
+              .mockResolvedValue(createResults({ questions: [createQuestionResults({ voteCount: 2 })] })),
+          },
         },
-      },
-      questions: [
-        {
-          title: { default: 'Weighted board proposal' },
-          choices: [
-            { title: { default: 'Approve' }, results: 700 },
-            { title: { default: 'Reject' }, results: 300 },
-          ],
-        },
-      ],
-    }) as PublishedElection
+      }),
+    })
 
     render(<VotingReportPdfButton election={weightedElection} />)
 
@@ -556,8 +540,9 @@ describe('VotingCertificateDocument', () => {
     expect(documentText).toContain('10 voting power')
     expect(documentText.filter((text) => text === 'Submitted ballots').length).toBeGreaterThan(0)
     expect(documentText).toContain('2 ballots')
+    // The census total weight is not exposed by the API yet (saas-backend#595)
     expect(documentText.filter((text) => text === 'Total eligible voting power').length).toBeGreaterThan(0)
-    expect(documentText).toContain('20 voting power')
+    expect(documentText).not.toContain('20 voting power')
     expect(documentText.filter((text) => text === 'Voting power').length).toBeGreaterThan(0)
     expect(documentText).toContain('Share of cast power')
     expect(documentText).toContain('Share of eligible power')

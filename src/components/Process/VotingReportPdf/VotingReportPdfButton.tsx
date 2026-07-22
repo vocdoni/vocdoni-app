@@ -1,7 +1,6 @@
 import { Button, HStack, Icon, Link, Text } from '@chakra-ui/react'
 import * as ReactPDF from '@react-pdf/renderer'
 import { useOrganization } from '@vocdoni/react-components'
-import { ElectionStatus, PublishedElection, type InvalidElection } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuFileDown } from 'react-icons/lu'
@@ -9,30 +8,25 @@ import { LuFileDown } from 'react-icons/lu'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 
 import {
   buildCertificateData,
-  fetchCensusBundle,
+  fetchProcessResults,
+  getDefaultText,
   getReportContext,
-  isCspReportCensus,
-  resolveCensusMetadata,
-  resolveReportCensusType,
   useOptionalElectionContext,
+  type ElectionLike,
 } from './certificate-data'
 import { VotingCertificateDocument } from './pdf-document'
 
+export { canDownloadVotingReport, type ElectionLike } from './certificate-data'
+
 const { pdf } = ReactPDF
 
-export type ElectionLike = PublishedElection | InvalidElection | Record<string, unknown>
-
 export type VotingReportPdfProps = {
-  election?: ElectionLike | null
+  election?: ElectionLike
 }
-
-const downloadableElectionStatuses = new Set([ElectionStatus.RESULTS, ElectionStatus.ENDED, ElectionStatus.CANCELED])
-
-export const canDownloadVotingReport = (election?: ElectionLike | null) =>
-  election instanceof PublishedElection && downloadableElectionStatuses.has(election.status)
 
 const sanitizeFileName = (value: string) =>
   value
@@ -41,10 +35,11 @@ const sanitizeFileName = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-export const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
+export const useVotingReportPdfDownload = (election?: ElectionLike) => {
   const { t } = useTranslation()
   const toast = useToast()
   const { organization } = useOrganization()
+  const { client } = useApiClient()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
   const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const electionContext = useOptionalElectionContext()
@@ -57,15 +52,13 @@ export const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
     setIsGenerating(true)
     try {
       const { election } = report
-      const censusMeta = resolveCensusMetadata(election)
-      const censusType = resolveReportCensusType(election, censusMeta)
-      const censusBundle = isCspReportCensus(censusType) ? await fetchCensusBundle(election.census.censusURI) : null
+      const results = report.results ?? (await fetchProcessResults(client, election.id))
       const data = buildCertificateData({
-        report,
+        election,
+        results,
         t,
-        organizationName: organization?.name?.default,
+        organizationName: getDefaultText(organization?.name) || undefined,
         explorerUrl,
-        censusBundle,
         now: new Date(),
       })
 
@@ -88,7 +81,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike | null) => {
       const url = URL.createObjectURL(blob)
       const anchor = document.createElement('a')
       anchor.href = url
-      anchor.download = `${sanitizeFileName(election.title.default || 'voting-certificate')}-${sanitizeFileName(election.id)}.pdf`
+      anchor.download = `${sanitizeFileName(getDefaultText(election.title) || 'voting-certificate')}-${sanitizeFileName(election.id)}.pdf`
       anchor.rel = 'noopener noreferrer'
       document.body.appendChild(anchor)
       anchor.click()
@@ -113,7 +106,7 @@ export const VotingReportPdfButton = ({ election }: VotingReportPdfProps) => {
   const { t } = useTranslation()
   const { download, isGenerating, report } = useVotingReportPdfDownload(election)
 
-  if (!canDownloadVotingReport(report?.election)) return null
+  if (!report) return null
 
   return (
     <Button

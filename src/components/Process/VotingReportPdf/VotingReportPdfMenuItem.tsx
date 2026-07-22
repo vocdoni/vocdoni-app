@@ -2,17 +2,17 @@ import { Icon, Menu, Spinner } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuFileDown } from 'react-icons/lu'
 
-import { type ElectionLike, canDownloadVotingReport, useVotingReportPdfDownload } from './VotingReportPdfButton'
+import { type ElectionLike, useVotingReportPdfDownload } from './VotingReportPdfButton'
 
 type VotingReportPdfProps = {
-  election?: ElectionLike | null
+  election?: ElectionLike
 }
 
 export const VotingReportPdfMenuItem = ({ election }: VotingReportPdfProps) => {
   const { t } = useTranslation()
   const { download, isGenerating, report } = useVotingReportPdfDownload(election)
 
-  if (!canDownloadVotingReport(report?.election)) return null
+  if (!report) return null
 
   return (
     <Menu.Item value='download-pdf' onClick={download} disabled={isGenerating}>

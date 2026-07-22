@@ -1,8 +1,7 @@
-import { CensusType } from '@vocdoni/sdk'
-import { type ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VotingReportPdfButton } from './VotingReportPdfButton'
-import { createElection } from './__fixtures__'
+import { PROCESS_ID, createElection, createQuestion, createResults } from './__fixtures__'
 
 const mockModule = vi.hoisted(() => ({
   pdfToBlob: vi.fn(),
@@ -40,46 +39,21 @@ vi.mock('~components/Toast', async (importOriginal) => {
   }
 })
 
-vi.mock('@chakra-ui/react', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@chakra-ui/react')>()
-  return {
-    ...actual,
-    Menu: {
-      ...actual.Menu,
-      Item: ({ children, ...props }: { children: ReactNode }) => <actual.Button {...props}>{children}</actual.Button>,
-    },
-  }
-})
-
-vi.mock('@vocdoni/sdk', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
-
-  class MockPublishedElection {}
-
-  return {
-    ...actual,
-    PublishedElection: MockPublishedElection,
-  }
-})
-
 describe('VotingReportPdfButton', () => {
   const { pdfToBlob, pdfSpy } = mockModule
-  let realCreateElement = document.createElement.bind(document)
-  let toastSpy: ReturnType<typeof vi.fn>
+  const realCreateElement = document.createElement.bind(document)
 
   beforeEach(() => {
     pdfToBlob.mockReset()
     pdfSpy.mockReset()
-    toastSpy = vi.fn()
   })
 
-  afterEach(() => {
-    pdfSpy.mockReset()
-    toastSpy.mockReset()
-  })
-
-  it('downloads a pdf when the button is clicked', async () => {
+  it('downloads a pdf built from the fetched results when the button is clicked', async () => {
     pdfToBlob.mockResolvedValue(new Blob(['pdf']))
+    const getResults = vi.fn().mockResolvedValue(createResults())
+    setReactProvidersMock({
+      useClient: () => ({ client: { elections: { getResults } } }),
+    })
     const election = createElection()
     const anchor = realCreateElement('a')
     const clickSpy = vi.spyOn(anchor, 'click').mockImplementation(() => undefined)
@@ -96,7 +70,37 @@ describe('VotingReportPdfButton', () => {
     await waitFor(() => {
       expect(pdfSpy).toHaveBeenCalled()
       expect(clickSpy).toHaveBeenCalled()
-      expect(anchor.download).toBe('annual-vote-0x1234.pdf')
+      expect(anchor.download).toBe(`annual-vote-${PROCESS_ID}.pdf`)
+    })
+    expect(getResults).toHaveBeenCalledWith(PROCESS_ID)
+
+    createElementSpy.mockRestore()
+    createObjectUrlSpy.mockRestore()
+    revokeObjectUrlSpy.mockRestore()
+    clickSpy.mockRestore()
+  })
+
+  it('still generates the report when the results endpoint has nothing to return', async () => {
+    pdfToBlob.mockResolvedValue(new Blob(['pdf']))
+    const getResults = vi.fn().mockRejectedValue(new Error('no results yet'))
+    setReactProvidersMock({
+      useClient: () => ({ client: { elections: { getResults } } }),
+    })
+    const anchor = realCreateElement('a')
+    const clickSpy = vi.spyOn(anchor, 'click').mockImplementation(() => undefined)
+    const createObjectUrlSpy = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:report')
+    const revokeObjectUrlSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined)
+    const createElementSpy = vi
+      .spyOn(document, 'createElement')
+      .mockImplementation((tagName) => (tagName === 'a' ? anchor : realCreateElement(tagName)))
+
+    render(<VotingReportPdfButton election={createElection()} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
+
+    await waitFor(() => {
+      expect(pdfSpy).toHaveBeenCalled()
+      expect(clickSpy).toHaveBeenCalled()
     })
 
     createElementSpy.mockRestore()
@@ -105,87 +109,11 @@ describe('VotingReportPdfButton', () => {
     clickSpy.mockRestore()
   })
 
-  it('does not fetch the census bundle when metadata census type is not csp', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          census: {
-            published: { uri: 'https://example.test/census', root: 'root-hash' },
-            authFields: ['email'],
-            twoFaFields: [],
-          },
-        }),
-        { status: 200 }
-      ) as Response
-    )
+  it('renders nothing while the voting process is still ongoing', () => {
+    const ongoingElection = createElection({ questions: [createQuestion({ status: 'ONGOING' })] })
 
-    const election = Object.assign(createElection(), {
-      census: {
-        size: 100,
-        type: 'csp',
-        censusURI: 'https://example.test/census-bundle',
-      },
-      meta: {
-        census: {
-          type: 'unknown',
-        },
-      },
-    })
+    render(<VotingReportPdfButton election={ongoingElection} />)
 
-    render(<VotingReportPdfButton election={election} />)
-
-    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
-
-    await waitFor(() => {
-      expect(pdfSpy).toHaveBeenCalled()
-    })
-    expect(fetchSpy).not.toHaveBeenCalled()
-
-    fetchSpy.mockRestore()
-  })
-
-  it('fetches the census bundle when wrapped metadata identifies a csp census', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          census: {
-            published: { uri: 'https://example.test/census', root: 'root-hash' },
-            authFields: ['email'],
-            twoFaFields: [],
-          },
-        }),
-        { status: 200 }
-      ) as Response
-    )
-
-    const election = Object.assign(createElection(), {
-      census: {
-        size: 100,
-        type: CensusType.WEIGHTED,
-        censusURI: 'https://example.test/census-bundle',
-      },
-      metadata: {
-        meta: {
-          census: {
-            type: 'csp',
-          },
-        },
-      },
-      meta: {
-        census: {
-          type: 'unknown',
-        },
-      },
-    })
-
-    render(<VotingReportPdfButton election={election} />)
-
-    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
-
-    await waitFor(() => {
-      expect(fetchSpy).toHaveBeenCalledWith('https://example.test/census-bundle')
-    })
-
-    fetchSpy.mockRestore()
+    expect(screen.queryByRole('button', { name: /election report \(pdf\)/i })).toBeNull()
   })
 })

@@ -1,14 +1,11 @@
-import { ElectionStatus } from '@vocdoni/sdk'
 import { type ReactNode } from 'react'
 import { render, screen } from '~src/test-utils'
 import { VotingReportPdfButton } from './VotingReportPdfButton'
 import { VotingReportPdfMenuItem } from './VotingReportPdfMenuItem'
-import { createElection } from './__fixtures__'
+import { createElection, createQuestion } from './__fixtures__'
 
 vi.mock('@react-pdf/renderer', () => ({
-  pdf: vi.fn((document) => {
-    return { toBlob: vi.fn() }
-  }),
+  pdf: vi.fn(() => ({ toBlob: vi.fn() })),
   Document: ({ children }: { children: import('react').ReactNode }) => <div>{children}</div>,
   Image: ({ src, alt }: { src?: string; alt?: string }) => (
     <img src={typeof src === 'string' ? src : undefined} alt={alt ?? 'image'} />
@@ -36,17 +33,6 @@ vi.mock('@chakra-ui/react', async (importOriginal) => {
   }
 })
 
-vi.mock('@vocdoni/sdk', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
-
-  class MockPublishedElection {}
-
-  return {
-    ...actual,
-    PublishedElection: MockPublishedElection,
-  }
-})
-
 describe('VotingReportPdfMenuItem', () => {
   it('renders the download action in the menu', () => {
     render(<VotingReportPdfMenuItem election={createElection()} />)
@@ -55,9 +41,7 @@ describe('VotingReportPdfMenuItem', () => {
   })
 
   it('hides the download action while the voting process is still ongoing', () => {
-    const ongoingElection = Object.assign(createElection(), {
-      status: ElectionStatus.ONGOING,
-    })
+    const ongoingElection = createElection({ questions: [createQuestion({ status: 'ONGOING' })] })
 
     render(
       <>

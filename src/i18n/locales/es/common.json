@@ -984,7 +984,6 @@
       "add_to_census_confirmation_other": "Añadirás {{count}} miembros al censo del proceso \"{{process}}\".",
       "add_to_census_description": "Selecciona un proceso de votación activo para añadir los miembros a su censo.",
       "add_to_census_error": "Error al añadir miembros al censo",
-      "add_to_census_no_census": "No se ha podido resolver un censo para este proceso.",
       "add_to_census_partial": "No se pudieron añadir algunos miembros.",
       "add_to_census_success_one": "{{count}} miembro añadido al censo",
       "add_to_census_success_many": "",
@@ -1437,8 +1436,6 @@
         "title": "Título de presupuestos participativos"
       }
     },
-    "total_census_size": "{{maxCensusSize}} votantes permitidos de un total de {{censusSize}} en el censo",
-    "total_census_size_tooltip": "El número máximo de votantes permitido está limitado a {{maxCensusSize}} de un censo de {{censusSize}} ({{percent}}% del total). Solo los primeros {{maxCensusSize}} podrán votar.",
     "voters": "Votantes",
     "voting_method": {
       "approval": "Aprobación",
@@ -1534,9 +1531,7 @@
       "method": "Método de autenticación",
       "two_fa": "Comprobación adicional de identidad",
       "two_fa_disabled": "Desactivada: no se ha configurado ninguna comprobación adicional de identidad en este proceso de votación",
-      "two_fa_enabled": "Activada: los votantes confirman su identidad con un código de un solo uso enviado a sus dispositivos personales.",
-      "voter_access_source": "Origen del acceso del votante",
-      "voter_access_source_weighted": "La elegibilidad se comprueba contra el censo ponderado proporcionado por la organización para este proceso."
+      "two_fa_enabled": "Activada: los votantes confirman su identidad con un código de un solo uso enviado a sus dispositivos personales."
     },
     "census": {
       "counting_basis": "Base de recuento",
@@ -1549,10 +1544,7 @@
       "weighted_participation": "Participación ponderada"
     },
     "census_type": {
-      "anonymous": "Censo anónimo proporcionado por la organización",
-      "csp": "Censo de credenciales de la base de miembros",
-      "unknown": "No disponible",
-      "weighted": "Censo ponderado proporcionado por la organización"
+      "csp": "Censo de credenciales de la base de miembros"
     },
     "disclaimer": {
       "bullet_1": "No constituye una certificación legal del proceso de votación.",
@@ -1592,8 +1584,6 @@
     "download_error": "No se ha podido generar el informe PDF",
     "downloading": "Generando PDF",
     "general": {
-      "census_reference": "Referencia del censo",
-      "census_reference_helper": "Referencia pública que identifica el censo utilizado para este proceso de votación. No incluye ni revela datos personales de los votantes.",
       "event_name": "Nombre del evento",
       "network": "Infraestructura",
       "organization": "Organización",
@@ -1627,9 +1617,9 @@
       "explorer": "Ver en el explorador de verificación",
       "paragraph": "Todos los datos del proceso han quedado registrados en una infraestructura basada en blockchain y pueden verificarse de forma independiente a través del siguiente explorador público:",
       "procedure_title": "Procedimiento de verificación",
-      "step_1": "Abre el enlace del explorador de verificación. Esta página contiene el registro técnico público del proceso de votación.",
-      "step_2": "Comprueba que el ID del proceso en el explorador es idéntico al ID del proceso de este informe. Esto confirma que ambos documentos hacen referencia al mismo proceso de votación.",
-      "step_3": "Comprueba que la referencia del censo que se muestra en el explorador coincide con la referencia de este informe. Esto confirma que la lista de votantes elegibles vinculada al proceso es la misma.",
+      "question_n": "Pregunta {{number}}",
+      "step_1": "Abre el enlace del explorador de verificación de cada pregunta. Cada página contiene el registro técnico público de esa parte del proceso de votación.",
+      "step_2": "Comprueba que cada página enlazada muestra la misma pregunta y las mismas opciones que este informe. Esto confirma que el informe hace referencia a los mismos procesos de votación registrados en la blockchain.",
       "step_4": "Comprueba que el número de papeletas registradas coincide con los datos de participación que se muestran en este informe.",
       "step_5": "Compara el recuento final del explorador con los resultados por número de papeletas o por poder de voto ponderado que se muestran en este informe.",
       "step_6": "Para una auditoría técnica más profunda, un auditor puede inspeccionar los registros públicos con más detalle o recalcular el recuento para confirmar que las papeletas registradas y los resultados finales son coherentes."

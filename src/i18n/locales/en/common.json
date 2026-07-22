@@ -972,7 +972,6 @@
       "add_to_census_confirmation_other": "You will add {{count}} members to the \"{{process}}\" process census.",
       "add_to_census_description": "Select an active voting process to add the members to its census.",
       "add_to_census_error": "Error adding members to the census",
-      "add_to_census_no_census": "Could not resolve a census for this process.",
       "add_to_census_partial": "Some members could not be added.",
       "add_to_census_success_one": "{{count}} member added to the census",
       "add_to_census_success_other": "{{count}} members added to the census",
@@ -1412,8 +1411,6 @@
         "title": "Participatory Budgeting Title"
       }
     },
-    "total_census_size": "{{maxCensusSize}} allowed voters of {{censusSize}} total in census",
-    "total_census_size_tooltip": "The maximum number of voters allowed is limited to {{maxCensusSize}} from a census of {{censusSize}} ({{percent}}% of the total). Only the first {{maxCensusSize}} voters can vote.",
     "voters": "Voters",
     "voting_method": {
       "approval": "Approval",
@@ -1509,9 +1506,7 @@
       "method": "Authentication method",
       "two_fa": "Additional identity check",
       "two_fa_disabled": "Disabled: no additional identity check has been configured in this voting process",
-      "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code sent to their personal devices.",
-      "voter_access_source": "Voter access source",
-      "voter_access_source_weighted": "Eligibility is checked against the organization-provided weighted census for this process."
+      "two_fa_enabled": "Enabled: voters confirm their identity with a one-time code sent to their personal devices."
     },
     "census": {
       "counting_basis": "Counting basis",
@@ -1524,10 +1519,7 @@
       "weighted_participation": "Weighted participation"
     },
     "census_type": {
-      "anonymous": "Anonymous organization-provided census",
-      "csp": "Memberbase credentials census",
-      "unknown": "Not available",
-      "weighted": "Organization-provided weighted census"
+      "csp": "Memberbase credentials census"
     },
     "disclaimer": {
       "bullet_1": "It does not constitute legal certification of the voting process.",
@@ -1567,8 +1559,6 @@
     "download_error": "Could not generate the PDF report",
     "downloading": "Generating PDF",
     "general": {
-      "census_reference": "Census reference",
-      "census_reference_helper": "Public reference that identifies the census used for this voting process. It does not include or reveal voters’ personal data.",
       "event_name": "Event name",
       "network": "Infrastructure",
       "organization": "Organization",
@@ -1602,9 +1592,9 @@
       "explorer": "View in verification explorer",
       "paragraph": "All process data has been recorded on a blockchain-based infrastructure and may be independently verified through the following public explorer:",
       "procedure_title": "Verification Procedure",
-      "step_1": "Open the verification explorer link. This page contains the public technical record of the voting process.",
-      "step_2": "Check that the Process ID in the explorer is identical to the Process ID in this report. This confirms that both documents refer to the same voting process.",
-      "step_3": "Check that the census reference shown in the explorer matches the reference in this report. This confirms that the eligible voter list linked to the process is the same.",
+      "question_n": "Question {{number}}",
+      "step_1": "Open the verification explorer link of each question. Each page contains the public technical record of that part of the voting process.",
+      "step_2": "Check that each linked page shows the same question and choices as this report. This confirms that the report refers to the same on-chain voting processes.",
       "step_4": "Check that the number of recorded ballots matches the participation data shown in this report.",
       "step_5": "Compare the final tally in the explorer with the ballot-count or weighted voting-power results shown in this report.",
       "step_6": "For a deeper technical audit, an auditor may inspect the public records in more detail or recompute the tally to confirm that the recorded ballots and final results are consistent."

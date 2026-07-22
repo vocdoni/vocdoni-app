@@ -972,7 +972,6 @@
       "add_to_census_confirmation_other": "«{{process}}» prozesuaren erroldara {{count}} kide gehituko dituzu.",
       "add_to_census_description": "Hautatu boto-prozesu aktibo bat kideak bere erroldara gehitzeko.",
       "add_to_census_error": "Errorea kideak erroldara gehitzean",
-      "add_to_census_no_census": "Ezin izan da prozesu honetarako errolda zehaztu.",
       "add_to_census_partial": "Kide batzuk ezin izan dira gehitu.",
       "add_to_census_success_one": "{{count}} kide erroldara gehitu da",
       "add_to_census_success_other": "{{count}} kide erroldara gehitu dira",
@@ -1412,8 +1411,6 @@
         "title": "Aurrekontu parte-hartzaileen izenburua"
       }
     },
-    "total_census_size": "{{maxCensusSize}} boto-emaile onartuak guztira {{censusSize}} dituen erroldan",
-    "total_census_size_tooltip": "Onartutako gehienezko boto-emaile kopurua {{maxCensusSize}}era mugatuta dago, {{censusSize}} dituen errolda batean (% {{percent}} guztira). Lehen {{maxCensusSize}}ek soilik bozkatu ahal izango dute.",
     "voters": "Boto-emaileak",
     "voting_method": {
       "approval": "Onarpena",
@@ -1509,9 +1506,7 @@
       "method": "Autentifikazio-metodoa",
       "two_fa": "Identitatearen egiaztapen gehigarria",
       "two_fa_disabled": "Desgaituta: ez da identitatearen egiaztapen gehigarririk konfiguratu boto-emate-prozesu honetan",
-      "two_fa_enabled": "Gaituta: boto-emaileek beren nortasuna ziurtatzen dute kode bakarreko mezua bidaltzean haien gailu pertsonaletara.",
-      "voter_access_source": "Boto-emaileen sarbide-iturria",
-      "voter_access_source_weighted": "Eskubidea prozesu honetarako erakundeak emandako errolde haztatuarekin egiaztatzen da."
+      "two_fa_enabled": "Gaituta: boto-emaileek beren nortasuna ziurtatzen dute kode bakarreko mezua bidaltzean haien gailu pertsonaletara."
     },
     "census": {
       "counting_basis": "Zenbaketaren oinarria",
@@ -1524,10 +1519,7 @@
       "weighted_participation": "Ponderatutako parte-hartzea"
     },
     "census_type": {
-      "anonymous": "Erakundearen errolda anonimoa",
-      "csp": "Kideen erroldea",
-      "unknown": "Ez dago eskuragarri",
-      "weighted": "Erakundearen errolde haztatua"
+      "csp": "Kideen erroldea"
     },
     "disclaimer": {
       "bullet_1": "Ez du bozketa-prozesuaren legezko ziurtagiria eratzen.",
@@ -1567,8 +1559,6 @@
     "download_error": "Ezin izan da PDF txostena sortu",
     "downloading": "PDFa sortzen",
     "general": {
-      "census_reference": "Erroldearen erreferentzia",
-      "census_reference_helper": "Publikoan identifikatutako erreferentzia, bozketa-prozesu honetan erabilitako erroldea zehazteko. Ez du boto-emaileen datu pertsonalik sartzen edo azaleratzen.",
       "event_name": "Gertaeraren izena",
       "network": "Azpiegitura",
       "organization": "Erakundea",
@@ -1602,9 +1592,9 @@
       "explorer": "Ikusi egiaztapen esploratzailean",
       "paragraph": "Prozesuaren datu guztiak blockchain azpiegituran inskribatuta daude eta independenteki egiazta daitezke hurrengo esploratzaile publikoaren bidez:",
       "procedure_title": "Egiaztapen-prozedura",
+      "question_n": "",
       "step_1": "Ireki egiaztapen esploratzailearen esteka. Orrialde honek bozketa-prozesuaren erregistro tekniko publikoa du.",
       "step_2": "Egiaztatu esploratzaileko Prozesu IDa txosteneko Prozesu IDarekin bat datorrela. Horrek ziurtatzen du bi dokumentuak bozketa-prozesu bera aipatzen dutela.",
-      "step_3": "Egiaztatu esploratzailean erakusten den erroldearen erreferentzia txostenean agertzen denarekin bat datorrela. Horrek ziurtatzen du prozesuari lotutako boto-emaileen zerrenda berdina dela.",
       "step_4": "Egiaztatu erregistratutako papereten kopurua txostenean agertzen den parte-hartze-daturekin bat datorrela.",
       "step_5": "Konparatu esploratzaileko azken zenbaketaren emaitzak txostenean erakusten diren papereta-kontaketa edo boto-pisua pisatutako emaitzekin.",
       "step_6": "Tekniko auditu sakonago baterako, auditore batek erregistro publikoak xehetasun gehiagotan azter ditzake edo birkalkulatu zenbaketaren emaitzak ziurtatzeko erregistratutako paperetak eta azken emaitzak koherenteak direla."

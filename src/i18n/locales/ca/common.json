@@ -984,7 +984,6 @@
       "add_to_census_confirmation_other": "Afegiràs {{count}} membres al cens del procés \"{{process}}\".",
       "add_to_census_description": "Selecciona un procés de votació actiu per afegir-hi els membres al seu cens.",
       "add_to_census_error": "Error en afegir membres al cens",
-      "add_to_census_no_census": "No s'ha pogut resoldre un cens per a aquest procés.",
       "add_to_census_partial": "No s'han pogut afegir alguns membres.",
       "add_to_census_success_one": "{{count}} membre afegit al cens",
       "add_to_census_success_many": "",
@@ -1437,8 +1436,6 @@
         "title": "Títol del pressupost participatiu"
       }
     },
-    "total_census_size": "{{maxCensusSize}} electors permesos de {{censusSize}} totals en el cens",
-    "total_census_size_tooltip": "El nombre màxim d'electors permesos està limitat a {{maxCensusSize}} d'un cens de {{censusSize}} ({{percent}}% del total). Només els primers {{maxCensusSize}} electors poden votar.",
     "voters": "Votants",
     "voting_method": {
       "approval": "Aprovació",
@@ -1534,9 +1531,7 @@
       "method": "Mètode d'autenticació",
       "two_fa": "Comprovació addicional d'identitat",
       "two_fa_disabled": "Desactivada: no s'ha configurat cap comprovació addicional d'identitat en aquest procés de votació",
-      "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús enviat als seus dispositius personals.",
-      "voter_access_source": "Origen de l'accés del votant",
-      "voter_access_source_weighted": "L'elegibilitat es comprova contra el cens ponderat proporcionat per l'organització per a aquest procés."
+      "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús enviat als seus dispositius personals."
     },
     "census": {
       "counting_basis": "Base de recompte",
@@ -1549,10 +1544,7 @@
       "weighted_participation": "Participació ponderada"
     },
     "census_type": {
-      "anonymous": "Cens anònim proporcionat per l'organització",
-      "csp": "Cens de credencials de la base de membres",
-      "unknown": "No disponible",
-      "weighted": "Cens ponderat proporcionat per l'organització"
+      "csp": "Cens de credencials de la base de membres"
     },
     "disclaimer": {
       "bullet_1": "No constitueix una certificació legal del procés de votació.",
@@ -1592,8 +1584,6 @@
     "download_error": "No s'ha pogut generar l'informe PDF",
     "downloading": "S'està generant el PDF",
     "general": {
-      "census_reference": "Referència del cens",
-      "census_reference_helper": "Referència pública que identifica el cens utilitzat per a aquest procés de votació. No inclou ni revela dades personals dels votants.",
       "event_name": "Nom de l'esdeveniment",
       "network": "Infraestructura",
       "organization": "Organització",
@@ -1627,9 +1617,9 @@
       "explorer": "Veure a l'explorador de verificació",
       "paragraph": "Totes les dades del procés han quedat registrades en una infraestructura basada en blockchain i es poden verificar de manera independent mitjançant l'explorador públic següent:",
       "procedure_title": "Procediment de verificació",
-      "step_1": "Obre l'enllaç de l'explorador de verificació. Aquesta pàgina conté el registre tècnic públic del procés de votació.",
-      "step_2": "Comprova que l'ID del procés a l'explorador és idèntic a l'ID del procés d'aquest informe. Això confirma que tots dos documents fan referència al mateix procés de votació.",
-      "step_3": "Comprova que la referència del cens que es mostra a l'explorador coincideix amb la referència d'aquest informe. Això confirma que la llista de votants elegibles vinculada al procés és la mateixa.",
+      "question_n": "Pregunta {{number}}",
+      "step_1": "Obre l'enllaç de l'explorador de verificació de cada pregunta. Cada pàgina conté el registre tècnic públic d'aquesta part del procés de votació.",
+      "step_2": "Comprova que cada pàgina enllaçada mostra la mateixa pregunta i les mateixes opcions que aquest informe. Això confirma que l'informe fa referència als mateixos processos de votació registrats a la blockchain.",
       "step_4": "Comprova que el nombre de paperetes registrades coincideix amb les dades de participació que es mostren en aquest informe.",
       "step_5": "Compara el recompte final de l'explorador amb els resultats per nombre de paperetes o per poder de vot ponderat que es mostren en aquest informe.",
       "step_6": "Per a una auditoria tècnica més profunda, un auditor pot inspeccionar els registres públics amb més detall o tornar a calcular el recompte per confirmar que les paperetes registrades i els resultats finals són coherents."

@@ -210,7 +210,9 @@ const ProcessViewContent = () => {
               <SettingsField
                 icon={LuCalendar}
                 text={t('start_date', 'Start date')}
-                subtext={election && formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))}
+                subtext={
+                  election && formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
+                }
               />
               <SettingsField
                 icon={LuClock}
@@ -220,7 +222,9 @@ const ProcessViewContent = () => {
               <SettingsField
                 icon={LuCalendar}
                 text={t('end_date', 'End date')}
-                subtext={election && formatDate(election.endDate, t('dashboard.process_view.date_format', 'MMMM do, y'))}
+                subtext={
+                  election && formatDate(election.endDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
+                }
               />
               <SettingsField
                 icon={LuClock}
@@ -514,7 +518,7 @@ const ProcessViewSidebar = () => {
               </Link>
             </Button>
           )}
-          <VotingReportPdfButton election={election as unknown as Record<string, unknown>} />
+          <VotingReportPdfButton election={election} />
         </VStack>
       </SidebarContents>
     </Sidebar>

@@ -984,7 +984,6 @@
       "add_to_census_confirmation_other": "Você adicionará {{count}} membros à lista de participantes do processo \"{{process}}\".",
       "add_to_census_description": "Selecione um processo de votação ativo para adicionar os membros à sua lista de participantes.",
       "add_to_census_error": "Erro ao adicionar os membros à lista de participantes",
-      "add_to_census_no_census": "Não foi possível determinar uma lista de participantes para este processo.",
       "add_to_census_partial": "Não foi possível adicionar alguns membros.",
       "add_to_census_success_one": "{{count}} membro adicionado à lista de participantes",
       "add_to_census_success_many": "",
@@ -1437,8 +1436,6 @@
         "title": "Título do orçamento participativo"
       }
     },
-    "total_census_size": "{{maxCensusSize}} eleitores permitidos de um total de {{censusSize}} na lista de participantes",
-    "total_census_size_tooltip": "O número máximo de eleitores permitidos está limitado a {{maxCensusSize}} de uma lista de participantes de {{censusSize}} ({{percent}}% do total). Somente os primeiros {{maxCensusSize}} eleitores poderão votar.",
     "voters": "Eleitores",
     "voting_method": {
       "approval": "Aprovação",
@@ -1534,9 +1531,7 @@
       "method": "Método de autenticação",
       "two_fa": "Verificação adicional de identidade",
       "two_fa_disabled": "Desativado: nenhuma verificação adicional de identidade foi configurada neste processo de votação.",
-      "two_fa_enabled": "Ativado: os eleitores confirmam sua identidade com um código de uso único enviado aos seus dispositivos pessoais.",
-      "voter_access_source": "Fonte de acesso do eleitor",
-      "voter_access_source_weighted": "A elegibilidade é verificada na lista de participantes ponderada fornecida pela organização para este processo."
+      "two_fa_enabled": "Ativado: os eleitores confirmam sua identidade com um código de uso único enviado aos seus dispositivos pessoais."
     },
     "census": {
       "counting_basis": "Base de contagem",
@@ -1549,10 +1544,7 @@
       "weighted_participation": "Participação ponderada"
     },
     "census_type": {
-      "anonymous": "Lista de participantes anônima fornecida pela organização",
-      "csp": "Lista de participantes CSP",
-      "unknown": "Não disponível",
-      "weighted": "Lista de participantes ponderada fornecida pela organização"
+      "csp": "Lista de participantes CSP"
     },
     "disclaimer": {
       "bullet_1": "Não constitui certificação legal do processo de votação.",
@@ -1592,8 +1584,6 @@
     "download_error": "Não foi possível gerar o relatório em PDF",
     "downloading": "Gerando PDF",
     "general": {
-      "census_reference": "Referência da lista de participantes",
-      "census_reference_helper": "Referência pública que identifica a lista de participantes utilizada neste processo de votação. Não inclui nem revela dados pessoais dos eleitores.",
       "event_name": "Nome do evento",
       "network": "Infraestrutura",
       "organization": "Organização",
@@ -1627,9 +1617,9 @@
       "explorer": "Ver no Explorer de verificação",
       "paragraph": "Todos os dados do processo foram registrados em uma infraestrutura baseada em blockchain e podem ser verificados de forma independente por meio do seguinte Explorer público:",
       "procedure_title": "Procedimento de verificação",
+      "question_n": "",
       "step_1": "Abrir o link do Explorer de verificação. Esta página contém o registro técnico público do processo de votação.",
       "step_2": "Verificar se o ID do processo no Explorer é idêntico ao ID do processo neste relatório. Isso confirma que ambos os documentos se referem ao mesmo processo de votação.",
-      "step_3": "Verificar se a referência da lista de participantes exibida no Explorer corresponde à referência neste relatório. Isso confirma que a lista de eleitores elegíveis vinculada ao processo é a mesma.",
       "step_4": "Verificar se o número de cédulas registradas corresponde aos dados de participação apresentados neste relatório.",
       "step_5": "Comparar a apuração final no Explorer com os resultados de contagem de votos ou de votação ponderada apresentados neste relatório.",
       "step_6": "Para uma auditoria técnica mais aprofundada, o auditor pode inspecionar os registros públicos com mais detalhes ou recalcular a apuração para confirmar que as cédulas registradas e os resultados finais são consistentes."

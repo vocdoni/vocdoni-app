@@ -984,7 +984,6 @@
       "add_to_census_confirmation_other": "Vous allez ajouter {{count}} membres à la liste électorale du processus « {{process}} ».",
       "add_to_census_description": "Sélectionnez un processus de vote actif pour ajouter les membres à sa liste électorale.",
       "add_to_census_error": "Erreur lors de l'ajout des membres à la liste électorale",
-      "add_to_census_no_census": "Impossible de déterminer une liste électorale pour ce processus.",
       "add_to_census_partial": "Certains membres n'ont pas pu être ajoutés.",
       "add_to_census_success_one": "{{count}} membre ajouté à la liste électorale",
       "add_to_census_success_many": "",
@@ -1437,8 +1436,6 @@
         "title": "Titre du budget participatif"
       }
     },
-    "total_census_size": "{{maxCensusSize}} électeurs autorisés sur {{censusSize}} au total dans la liste",
-    "total_census_size_tooltip": "Le nombre maximum d'électeurs autorisés est limité à {{maxCensusSize}} sur une liste de {{censusSize}} ({{percent}} % du total). Seuls les {{maxCensusSize}} premiers électeurs peuvent voter.",
     "voters": "Électeurs",
     "voting_method": {
       "approval": "Approbation",
@@ -1534,9 +1531,7 @@
       "method": "Méthode d'authentification",
       "two_fa": "Vérification d'identité supplémentaire",
       "two_fa_disabled": "Désactivée : aucune vérification d'identité supplémentaire n'a été configurée pour ce processus de vote",
-      "two_fa_enabled": "Activée : les électeurs confirment leur identité à l'aide d'un code à usage unique envoyé sur leurs appareils personnels.",
-      "voter_access_source": "Source d'accès des électeurs",
-      "voter_access_source_weighted": "L'éligibilité est vérifiée par rapport à la liste électorale pondérée fournie par l'organisation pour ce processus."
+      "two_fa_enabled": "Activée : les électeurs confirment leur identité à l'aide d'un code à usage unique envoyé sur leurs appareils personnels."
     },
     "census": {
       "counting_basis": "Base de comptage",
@@ -1549,10 +1544,7 @@
       "weighted_participation": "Participation pondérée"
     },
     "census_type": {
-      "anonymous": "Liste électorale anonyme fournie par l'organisation",
-      "csp": "Liste électorale CSP",
-      "unknown": "Non disponible",
-      "weighted": "Liste électorale pondérée"
+      "csp": "Liste électorale CSP"
     },
     "disclaimer": {
       "bullet_1": "Elle ne constitue pas une certification légale du processus de vote.",
@@ -1592,8 +1584,6 @@
     "download_error": "Impossible de générer le rapport PDF",
     "downloading": "Génération du PDF en cours",
     "general": {
-      "census_reference": "Référence de la liste électorale",
-      "census_reference_helper": "Référence publique identifiant la liste électorale utilisée pour ce processus de vote. Elle ne contient ni ne révèle les données personnelles des électeurs.",
       "event_name": "Nom de l'événement",
       "network": "Infrastructure",
       "organization": "Organisation",
@@ -1627,9 +1617,9 @@
       "explorer": "Explorer de vérification",
       "paragraph": "Toutes les données du processus ont été enregistrées sur une infrastructure basée sur la blockchain et peuvent être vérifiées de manière indépendante via l'explorateur public suivant :",
       "procedure_title": "Procédure de vérification",
+      "question_n": "",
       "step_1": "Ouvrez le lien de l'Explorer de vérification. Cette page contient l'enregistrement technique public du processus de vote.",
       "step_2": "Vérifiez que l'identifiant du processus affiché dans l'Explorer est identique à celui indiqué dans ce rapport. Cela confirme que les deux documents font référence au même processus de vote.",
-      "step_3": "Vérifiez que la référence de la liste électorale affichée dans l'Explorer correspond à celle de ce rapport. Cela confirme que la liste des électeurs éligibles associée au processus est la même.",
       "step_4": "Vérifiez que le nombre de bulletins enregistrés correspond aux données de participation indiquées dans ce rapport.",
       "step_5": "Comparez le décompte final dans l'Explorer avec les résultats exprimés en nombre de bulletins ou en poids de vote pondéré présentés dans ce rapport.",
       "step_6": "Pour un audit technique plus approfondi, un auditeur peut examiner les enregistrements publics plus en détail ou recalculer le décompte afin de confirmer la cohérence entre les bulletins enregistrés et les résultats finaux."
