@@ -1,4 +1,19 @@
-import { Box, Icon, IconButton, Link, Menu, MenuPositioner, Portal, Table, Tag, Text } from '@chakra-ui/react'
+import {
+  Box,
+  Card,
+  HStack,
+  Icon,
+  IconButton,
+  Link,
+  Menu,
+  MenuPositioner,
+  Portal,
+  Stack,
+  Table,
+  Tag,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react'
 import {
   ElectionProvider,
   ElectionStatusBadge,
@@ -27,6 +42,25 @@ type ProcessesListProps = {
 
 const ProcessesTable = ({ processes }: ProcessesListProps) => {
   const { t } = useTranslation()
+  const isMobile = useBreakpointValue({ base: true, md: false })
+
+  const rows =
+    processes &&
+    !!processes.length &&
+    processes?.map((election) => (
+      <ElectionProvider id={election.id} key={election.id}>
+        {isMobile ? <ProcessCard /> : <ProcessRow />}
+      </ElectionProvider>
+    ))
+
+  if (isMobile) {
+    return (
+      <Stack gap={3} w='full'>
+        {rows}
+        <RoutedPaginatedTableFooter />
+      </Stack>
+    )
+  }
 
   return (
     <Box border='1px solid' borderColor='table.border' borderRadius='sm' w='full'>
@@ -46,15 +80,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
               <Table.ColumnHeader>&nbsp;</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
-          <Table.Body>
-            {processes &&
-              !!processes.length &&
-              processes?.map((election) => (
-                <ElectionProvider id={election.id} key={election.id}>
-                  <ProcessRow />
-                </ElectionProvider>
-              ))}
-          </Table.Body>
+          <Table.Body>{rows}</Table.Body>
           <Table.Caption>
             <RoutedPaginatedTableFooter />
           </Table.Caption>
@@ -64,18 +90,82 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
   )
 }
 
-const ProcessRow = () => {
-  const { election, status, results } = useElection()
+const ProcessResultsTag = () => {
+  const { election, status } = useElection()
+
+  if (!election) return null
+
+  // Live results are visible while the vote runs (or right after it ends) unless the
+  // process hides tallies until the end; final results show once they're computed.
+  const resultsVisible =
+    hasResults(election) || ((status === 'ENDED' || status === 'ONGOING') && !isSecretUntilTheEnd(election))
+
+  return resultsVisible ? (
+    <Tag.Root colorPalette='gray' variant='solid' size='sm'>
+      <Tag.Label>
+        <Trans i18nKey='process_list.results_live'>Live</Trans>
+      </Tag.Label>
+    </Tag.Root>
+  ) : (
+    <Tag.Root colorPalette='gray' variant='surface' size='sm'>
+      <Tag.Label>
+        <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
+      </Tag.Label>
+    </Tag.Root>
+  )
+}
+
+const ProcessCard = () => {
+  const { election, results } = useElection()
   const { format } = useDateFns()
   const { t } = useTranslation()
 
   if (!election) return null
 
   const title = getElectionTitle(election) || election.id
-  // Live results are visible while the vote runs (or right after it ends) unless the
-  // process hides tallies until the end; final results show once they're computed.
-  const resultsVisible =
-    hasResults(election) || ((status === 'ENDED' || status === 'ONGOING') && !isSecretUntilTheEnd(election))
+
+  return (
+    <Card.Root variant='data-list-item'>
+      <Card.Header>
+        <Link asChild title={title}>
+          <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
+            <Text fontWeight='medium' lineClamp={2}>
+              {title}
+            </Text>
+          </RouterLink>
+        </Link>
+        <ProcessContextMenu />
+      </Card.Header>
+      <Card.Body>
+        <HStack flexWrap='wrap' gap={2}>
+          <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+          <ElectionStatusBadge size='sm' />
+          <ProcessResultsTag />
+        </HStack>
+        <Text>
+          {t('process_list.start_date', { defaultValue: 'Start date' })}:{' '}
+          {format(election.startDate, t('organization.date_format'))}
+        </Text>
+        <Text>
+          {t('process_list.end_date', { defaultValue: 'End date' })}:{' '}
+          {format(election.endDate, t('organization.date_format'))}
+        </Text>
+        <Text>
+          {t('process_list.recount', { defaultValue: 'Recount' })}: {processVoteCount(results)}
+        </Text>
+      </Card.Body>
+    </Card.Root>
+  )
+}
+
+const ProcessRow = () => {
+  const { election, results } = useElection()
+  const { format } = useDateFns()
+  const { t } = useTranslation()
+
+  if (!election) return null
+
+  const title = getElectionTitle(election) || election.id
 
   return (
     <Table.Row position='relative'>
@@ -98,19 +188,7 @@ const ProcessRow = () => {
       </Table.Cell>
       <Table.Cell textAlign='end'>{processVoteCount(results)}</Table.Cell>
       <Table.Cell>
-        {resultsVisible ? (
-          <Tag.Root colorPalette='gray' variant='solid' size='sm'>
-            <Tag.Label>
-              <Trans i18nKey='process_list.results_live'>Live</Trans>
-            </Tag.Label>
-          </Tag.Root>
-        ) : (
-          <Tag.Root colorPalette='gray' variant='surface' size='sm'>
-            <Tag.Label>
-              <Trans i18nKey='process_list.not_yet'>Not yet</Trans>
-            </Tag.Label>
-          </Tag.Root>
-        )}
+        <ProcessResultsTag />
       </Table.Cell>
       <Table.Cell textAlign='end'>
         <ProcessContextMenu />

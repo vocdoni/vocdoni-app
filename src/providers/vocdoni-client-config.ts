@@ -6,8 +6,12 @@ import { EnvOptions, VocdoniSDKClient } from '@vocdoni/sdk'
 export const getVocdoniClientConfig = (environment: string = 'dev') => {
   const normalizedEnvironment = environment.toLowerCase()
   const clientEnv: EnvOptions = normalizedEnvironment === 'prod' ? EnvOptions.PROD : EnvOptions.DEV
+  // Explorer base matching the SDK's own default for each env (what the legacy
+  // client exposed as `client.explorerUrl`) — kept here so signer-free code can
+  // build explorer links without instantiating a client.
+  const explorerUrl = clientEnv === EnvOptions.PROD ? 'https://explorer.vote' : 'https://dev.explorer.vote'
 
-  return { clientEnv }
+  return { clientEnv, explorerUrl }
 }
 
 export const createVocdoniSdkClient = (environment?: string) => {
