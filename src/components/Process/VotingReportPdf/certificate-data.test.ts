@@ -6,7 +6,7 @@ import {
   createResults,
   translate,
 } from './__fixtures__'
-import { buildCertificateData, canDownloadVotingReport } from './certificate-data'
+import { buildCertificateData, canDownloadVotingReport, resolveReportElection } from './certificate-data'
 
 const plainT = ((key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? key) as never
 
@@ -235,7 +235,7 @@ describe('buildCertificateData', () => {
 
     const data = buildCertificateData({
       election,
-      results: createResults({ questions: [createQuestionResults({ status: 'ENDED', finalResults: false })] }),
+      results: createResults({ questions: [createQuestionResults({ finalResults: false })] }),
       t: translate,
       now: new Date('2026-01-03T10:00:00Z'),
     })
@@ -338,7 +338,7 @@ describe('buildCertificateData', () => {
 
   it('separates voter participation from weighted voting-power totals', () => {
     const election = createElection({
-      census: { size: 3, weighted: true, authFields: ['memberNumber'] },
+      census: { size: 3, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
     })
     const results = createResults({
       questions: [createQuestionResults({ voteCount: 2, results: [['7', '3']] })],
@@ -355,14 +355,9 @@ describe('buildCertificateData', () => {
     expect(data.censusParticipation.find((field) => field.label === 'Submitted ballots')?.value).toBe('2')
     expect(data.censusParticipation.find((field) => field.label === 'Voter participation')?.value).toBe('66.67%')
     expect(data.censusParticipation.find((field) => field.label === 'Counting basis')?.value).toBe('Weighted voting')
-    // The API does not expose the census total weight yet (saas-backend#595)
-    expect(data.censusParticipation.find((field) => field.label === 'Total eligible voting power')?.value).toBe(
-      'Not available'
-    )
+    expect(data.censusParticipation.find((field) => field.label === 'Total eligible voting power')?.value).toBe('20')
     expect(data.censusParticipation.find((field) => field.label === 'Voting power used')?.value).toBe('10')
-    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe(
-      'Not available'
-    )
+    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe('50.00%')
     expect(data.resultValueLabel).toBe('Voting power')
     expect(data.questionTotalLabel).toBe('Voting power used')
     expect(data.votingProcessQuestions[0]).toMatchObject({
@@ -370,7 +365,7 @@ describe('buildCertificateData', () => {
       countingBasisLabel: 'Weighted voting',
       submittedBallots: '2',
       votingPowerUsed: '10',
-      eligibleVotingPower: 'Not available',
+      eligibleVotingPower: '20',
       isWeighted: true,
       votingMethod: 'Single choice with weighted voting',
       choices: [
@@ -380,6 +375,7 @@ describe('buildCertificateData', () => {
           votingPower: '7',
           percentage: '70.0%',
           castPowerPercentage: '70.0%',
+          eligiblePowerPercentage: '35.0%',
           numericVotes: 7,
         },
         {
@@ -388,17 +384,42 @@ describe('buildCertificateData', () => {
           votingPower: '3',
           percentage: '30.0%',
           castPowerPercentage: '30.0%',
+          eligiblePowerPercentage: '15.0%',
           numericVotes: 3,
         },
       ],
     })
-    expect(data.votingProcessQuestions[0].choices[0].eligiblePowerPercentage).toBeUndefined()
     expect(data.votingProcessQuestions[0].choices[0].ballotCount).toBeUndefined()
+  })
+
+  it('degrades weighted power values to not-available when totalWeight is absent (list reads)', () => {
+    const election = createElection({
+      census: { size: 3, weighted: true, authFields: ['memberNumber'] },
+    })
+    const results = createResults({
+      questions: [createQuestionResults({ voteCount: 2, results: [['7', '3']] })],
+    })
+
+    const data = buildCertificateData({
+      election,
+      results,
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.censusParticipation.find((field) => field.label === 'Total eligible voting power')?.value).toBe(
+      'Not available'
+    )
+    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe(
+      'Not available'
+    )
+    expect(data.votingProcessQuestions[0].eligibleVotingPower).toBe('Not available')
+    expect(data.votingProcessQuestions[0].choices[0].eligiblePowerPercentage).toBeUndefined()
   })
 
   it('summarizes multi-question voting power as a range in section 4', () => {
     const election = createElection({
-      census: { size: 5, weighted: true },
+      census: { size: 5, weighted: true, totalWeight: 20 },
       questions: [
         createQuestion({ title: { default: 'First weighted proposal' } }),
         createQuestion({ id: 'question-2', title: { default: 'Second weighted proposal' } }),
@@ -419,13 +440,45 @@ describe('buildCertificateData', () => {
     })
 
     expect(data.censusParticipation.find((field) => field.label === 'Voting power used')?.value).toBe('5 - 10')
+    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe(
+      '25.00% - 50.00%'
+    )
     expect(data.votingProcessQuestions[1]).toMatchObject({
       totalVotes: '5',
       votingPowerUsed: '5',
+      eligibleVotingPower: '20',
       choices: [
-        { name: 'Approve', votingPower: '2', castPowerPercentage: '40.0%' },
-        { name: 'Reject', votingPower: '3', castPowerPercentage: '60.0%' },
+        { name: 'Approve', votingPower: '2', castPowerPercentage: '40.0%', eligiblePowerPercentage: '10.0%' },
+        { name: 'Reject', votingPower: '3', castPowerPercentage: '60.0%', eligiblePowerPercentage: '15.0%' },
       ],
     })
+  })
+})
+
+describe('resolveReportElection', () => {
+  it('re-fetches the detail read for a weighted census missing totalWeight', async () => {
+    const listElection = createElection({ census: { size: 3, weighted: true } })
+    const detailElection = createElection({ census: { size: 3, weighted: true, totalWeight: 20 } })
+    const get = vi.fn().mockResolvedValue(detailElection)
+
+    await expect(resolveReportElection({ elections: { get } }, listElection)).resolves.toBe(detailElection)
+    expect(get).toHaveBeenCalledWith(listElection.id)
+  })
+
+  it('skips the fetch when totalWeight is present or the census is not weighted', async () => {
+    const get = vi.fn()
+    const weighted = createElection({ census: { size: 3, weighted: true, totalWeight: 20 } })
+    const plain = createElection()
+
+    await expect(resolveReportElection({ elections: { get } }, weighted)).resolves.toBe(weighted)
+    await expect(resolveReportElection({ elections: { get } }, plain)).resolves.toBe(plain)
+    expect(get).not.toHaveBeenCalled()
+  })
+
+  it('falls back to the given election when the fetch fails', async () => {
+    const listElection = createElection({ census: { size: 3, weighted: true } })
+    const get = vi.fn().mockRejectedValue(new Error('offline'))
+
+    await expect(resolveReportElection({ elections: { get } }, listElection)).resolves.toBe(listElection)
   })
 })

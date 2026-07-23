@@ -15,6 +15,7 @@ import {
   fetchProcessResults,
   getDefaultText,
   getReportContext,
+  resolveReportElection,
   useOptionalElectionContext,
   type ElectionLike,
 } from './certificate-data'
@@ -51,7 +52,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
 
     setIsGenerating(true)
     try {
-      const { election } = report
+      const election = await resolveReportElection(client, report.election)
       const results = report.results ?? (await fetchProcessResults(client, election.id))
       const data = buildCertificateData({
         election,

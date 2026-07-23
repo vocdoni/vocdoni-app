@@ -509,7 +509,7 @@ describe('VotingCertificateDocument', () => {
 
   it('renders weighted question cards with voting-power result columns', async () => {
     const weightedElection = createElection({
-      census: { size: 3, weighted: true, authFields: ['memberNumber'] },
+      census: { size: 3, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
     })
     setReactProvidersMock({
       useClient: () => ({
@@ -540,9 +540,8 @@ describe('VotingCertificateDocument', () => {
     expect(documentText).toContain('10 voting power')
     expect(documentText.filter((text) => text === 'Submitted ballots').length).toBeGreaterThan(0)
     expect(documentText).toContain('2 ballots')
-    // The census total weight is not exposed by the API yet (saas-backend#595)
     expect(documentText.filter((text) => text === 'Total eligible voting power').length).toBeGreaterThan(0)
-    expect(documentText).not.toContain('20 voting power')
+    expect(documentText).toContain('20 voting power')
     expect(documentText.filter((text) => text === 'Voting power').length).toBeGreaterThan(0)
     expect(documentText).toContain('Share of cast power')
     expect(documentText).toContain('Share of eligible power')

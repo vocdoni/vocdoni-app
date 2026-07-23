@@ -55,10 +55,7 @@ export const createQuestionResults = (
 ): VotingProcessQuestionResults => ({
   questionId: 'question-1',
   upstreamId: 'f39c69dabbf5335bd7d53130ad823a71b7ba9834',
-  status: 'RESULTS',
   voteCount: 10,
-  startDate: '2026-01-01T10:00:00Z',
-  endDate: '2026-01-02T10:00:00Z',
   finalResults: true,
   // Single-choice histogram: one row, one column per choice value → 7 Approve, 3 Reject
   results: [['7', '3']],

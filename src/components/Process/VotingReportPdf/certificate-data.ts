@@ -19,9 +19,10 @@ import { type TFunction } from 'i18next'
 /** Anything callers may hand us as an election: a typed process response or an untyped record. */
 export type ElectionLike = VotingProcessResponse | Record<string, unknown> | null | undefined
 
-/** Minimal client surface needed to fetch results — matches `useApiClient().client.elections`. */
-type ResultsClientLike = {
+/** Minimal client surface the report needs — matches `useApiClient().client.elections`. */
+type ReportClientLike = {
   elections?: {
+    get?: (id: string) => Promise<VotingProcessResponse>
     getResults?: (id: string) => Promise<VotingProcessResultsResponse>
   }
 } | null
@@ -281,9 +282,10 @@ export const buildCertificateData = ({
   const hiddenResultFieldValue = t('process_pdf.results.hidden_field', {
     defaultValue: 'Hidden until final results',
   })
-  // The census total weight is not exposed by the API yet (saas-backend#595);
-  // wire it here (CensusSpec.totalWeight) once it lands.
-  const totalEligibleVotingPowerValue: number | null = null
+  // Whole-census total voting weight (Σ member weights, saas-backend#595). Response-only
+  // and absent on aggregation failure or list reads — absent renders as "Not available"
+  // rather than a wrong denominator (resolveReportElection re-fetches the detail for list rows).
+  const totalEligibleVotingPowerValue = election.census?.totalWeight ?? null
   const totalEligibleVotingPower =
     totalEligibleVotingPowerValue === null ? notAvailableLabel : String(totalEligibleVotingPowerValue)
   const questionVotingPowerTotals = election.questions.map((question) => {
@@ -531,7 +533,7 @@ export const buildCertificateData = ({
             const percentageLabel = formatDecodedPercentage(percentage, notAvailableLabel)
             const eligiblePowerPercentage =
               isWeighted && votes !== null && totalEligibleVotingPowerValue
-                ? formatPercentageValue(calculatePercentage(votes, totalEligibleVotingPowerValue))
+                ? `${calculatePercentage(votes, totalEligibleVotingPowerValue).toFixed(1)}%`
                 : undefined
 
             return {
@@ -633,13 +635,31 @@ export const buildCertificateData = ({
 
 /** Fetch the per-question results; the route is public but 404s while there are no tallies. */
 export const fetchProcessResults = async (
-  client: ResultsClientLike,
+  client: ReportClientLike,
   processId: string
 ): Promise<VotingProcessResultsResponse | null> => {
   try {
     return (await client?.elections?.getResults?.(processId)) ?? null
   } catch {
     return null
+  }
+}
+
+/**
+ * List reads omit `census.totalWeight` (only `GET /processes/{id}` carries it), so a report
+ * triggered from a list row would lose the weighted eligible-power values — re-fetch the
+ * detail read for weighted censuses missing it. Falls back to the given election on failure.
+ */
+export const resolveReportElection = async (
+  client: ReportClientLike,
+  election: PublishedVotingProcessResponse
+): Promise<PublishedVotingProcessResponse> => {
+  if (!election.census?.weighted || typeof election.census.totalWeight === 'number') return election
+  try {
+    const fresh = await client?.elections?.get?.(election.id)
+    return fresh && canDownloadVotingReport(fresh) ? fresh : election
+  } catch {
+    return election
   }
 }
 
