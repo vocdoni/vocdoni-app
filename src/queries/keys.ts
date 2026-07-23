@@ -1,9 +1,10 @@
-import { electionQueryKeys } from '@vocdoni/react-components'
+import { processQueryKeys } from '@vocdoni/react-components'
 
 export const QueryKeys = {
-  // Keys the @vocdoni/react-providers ElectionProvider reads through — use these to
-  // pre-seed or invalidate the election/results queries it observes.
-  election: electionQueryKeys,
+  // Keys the @vocdoni/react-providers ElectionProvider and ProcessProvider read
+  // through (shared cache namespace: process(id) / results(id)) — use these to
+  // pre-seed or invalidate the process/results queries they observe.
+  election: processQueryKeys,
   organization: {
     elections: (address?: string, params?: { page?: number; status?: string }) =>
       ['organizations', 'elections', address, params].filter(Boolean),

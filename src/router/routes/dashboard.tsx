@@ -112,7 +112,7 @@ export const useDashboardRoutes = () => {
                     loader: async ({ params }: { params: Params<string> }) => {
                       const rawElection = await client.elections.get(params.id!)
                       // Pre-seed the ElectionProvider query so the view renders without re-fetching
-                      queryClient.setQueryData(QueryKeys.election.election(rawElection.id), rawElection)
+                      queryClient.setQueryData(QueryKeys.election.process(rawElection.id), rawElection)
                       return rawElection
                     },
                     shouldRevalidate: shouldRevalidateDashboardProcess,

@@ -67,7 +67,7 @@ export const ActionsProvider = ({ children }: { children: ReactNode }) => {
         const { jobId } = await client.elections.bulkSetQuestionStatus(id, { status })
         await client.jobs.waitFor(jobId)
         const refreshed = await client.elections.get(id)
-        queryClient.setQueryData(QueryKeys.election.election(id), refreshed)
+        queryClient.setQueryData(QueryKeys.election.process(id), refreshed)
         queryClient.invalidateQueries({ queryKey: QueryKeys.election.results(id) })
         setInfo(null)
       } catch (e) {

@@ -107,7 +107,7 @@ export const paginatedElectionsQuery = (
     // (ProcessesTable, dashboard cards) render from cache instead of re-fetching.
     if (queryClient) {
       result.processes.forEach((process) => {
-        queryClient.setQueryData(QueryKeys.election.election(process.id), process)
+        queryClient.setQueryData(QueryKeys.election.process(process.id), process)
       })
     }
     return result

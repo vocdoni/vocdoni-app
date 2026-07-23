@@ -108,26 +108,26 @@ importers:
         specifier: ^0.1.4
         version: 0.1.4(@types/react@19.2.17)(react@19.2.7)
       '@vocdoni/api-client':
-        specifier: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/api-client
-        version: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/api-client
+        specifier: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/api-client
+        version: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/api-client
       '@vocdoni/api-types':
-        specifier: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/api-types
-        version: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/api-types
+        specifier: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/api-types
+        version: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/api-types
       '@vocdoni/api-voting':
-        specifier: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/api-voting
-        version: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/api-voting
+        specifier: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/api-voting
+        version: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/api-voting
       '@vocdoni/ballot':
-        specifier: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/ballot
-        version: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/ballot
+        specifier: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/ballot
+        version: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/ballot
       '@vocdoni/rainbowkit-wallets':
         specifier: ^1.0.0-beta.4
         version: 1.0.0-beta.4(d469549390ca0dc4315daa225c4ed1a4)
       '@vocdoni/react-components':
-        specifier: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/react-components
-        version: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/react-components
+        specifier: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/react-components
+        version: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/react-components
       '@vocdoni/react-providers':
-        specifier: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/react-providers
-        version: link:../../../integrator-sdk/.worktrees/feat+vochain-dettachment/packages/react-providers
+        specifier: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/react-providers
+        version: link:../../../integrator-sdk/.worktrees/feature-feat-voting/packages/react-providers
       '@vocdoni/sdk':
         specifier: ~0.9.3
         version: 0.9.3(bufferutil@4.1.0)(size-limit@8.2.6)(utf-8-validate@5.0.10)
