@@ -99,12 +99,19 @@ export const useAuthProvider = () => {
   })
   const addresses = useMemo(() => addressesData?.addresses ?? [], [addressesData])
 
-  const [currentAddress, setCurrentAddress] = useState<string | undefined>(
-    () => getStorageItem(LocalStorageKeys.SignerAddress) ?? undefined
-  )
+  // `currentAddress` must never surface a value that hasn't been checked against the
+  // logged-in account's address list: the stored SignerAddress key survives logout (by
+  // design, see `logout` below) so it can belong to a *previous* user on this browser.
+  // Seeding it here as the initial state used to expose that stale value to every
+  // address-keyed query (org info, subscription, ...) for the whole window until the
+  // `auth/addresses` query resolved. Start unset instead; `applySelection` below is the
+  // only place allowed to set it, and it only runs once the address list is known.
+  const [currentAddress, setCurrentAddress] = useState<string | undefined>(undefined)
 
   // Pick the active address from an address list: prefer the stored selection when it is
   // still owned by the user, otherwise fall back to the first one. Persists the choice.
+  // Only called once the address list for the current session is known, so the address it
+  // sets has always been validated as belonging to the logged-in account.
   const applySelection = useCallback((list: string[]) => {
     if (!list.length) {
       setCurrentAddress(undefined)
