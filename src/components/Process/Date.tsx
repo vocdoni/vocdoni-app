@@ -4,10 +4,11 @@ import { isUpcoming } from '@vocdoni/api-client'
 import { useTranslation } from 'react-i18next'
 import { ProcessInfoCard } from './View'
 
-const getStatusLabel = (t: ReturnType<typeof useTranslation>['t'], status: string, upcoming: boolean) => {
+const getStatusLabel = (t: ReturnType<typeof useTranslation>['t'], status: string | null, upcoming: boolean) => {
   if (upcoming) return t('process.date.starts')
   switch (status) {
     case 'ENDED':
+    case 'RESULTS':
       return t('process.date.ended')
     case 'CANCELED':
       return t('process.status.canceled')
@@ -17,17 +18,17 @@ const getStatusLabel = (t: ReturnType<typeof useTranslation>['t'], status: strin
 }
 
 export const ProcessDate = () => {
-  const { election } = useElection()
+  const { election, status } = useElection()
   const { t } = useTranslation()
 
   if (!election || !election?.startDate) return null
-  if (election.status === 'CANCELED') return null
+  if (status === 'CANCELED') return null
 
   const startDate = new Date(election.startDate)
   const endDate = new Date(election.endDate)
   const upcoming = isUpcoming(election)
   const target = upcoming ? startDate : endDate
-  const statusText = getStatusLabel(t, election.status, upcoming)
+  const statusText = getStatusLabel(t, status, upcoming)
 
   return (
     <ProcessInfoCard
@@ -39,7 +40,7 @@ export const ProcessDate = () => {
 }
 
 export const ProcessDateInline = () => {
-  const { election } = useElection()
+  const { election, status } = useElection()
   const { t } = useTranslation()
 
   if (!election || !election?.startDate) return null
@@ -48,12 +49,12 @@ export const ProcessDateInline = () => {
   const endDate = new Date(election.endDate)
   const upcoming = isUpcoming(election)
   const target = upcoming ? startDate : endDate
-  const status = getStatusLabel(t, election.status, upcoming)
+  const statusLabel = getStatusLabel(t, status, upcoming)
 
   return (
     <Text>
       {t('process.date.relative_inline', {
-        status,
+        status: statusLabel,
         date: target,
       })}
     </Text>

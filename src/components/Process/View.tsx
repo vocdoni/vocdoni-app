@@ -28,6 +28,7 @@ import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { getPublicProcessSummaryPath } from '~src/ssr/public-pages'
 import { useAuth } from '~components/Auth/useAuth'
+import { sameAddress } from '~utils/address'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
@@ -79,7 +80,7 @@ const VotingMethod = () => {
 const ProcessInfoPanel = () => {
   const { t } = useTranslation()
   const language = usePublicLanguage()
-  const { election } = useElection()
+  const { election, status } = useElection()
   const { organization, loading } = useOrganization()
   const { currentAddress } = useAuth()
   const { size: censusSize } = useCensusSize()
@@ -100,7 +101,7 @@ const ProcessInfoPanel = () => {
       h='fit-content'
     >
       <Box flexDir='row' display='flex' justifyContent='space-between' w={{ xl: 'full' }}>
-        {election?.status !== 'CANCELED' ? (
+        {status !== 'CANCELED' ? (
           <ProcessDate />
         ) : (
           <Text color='process.canceled' fontWeight='bold'>
@@ -129,7 +130,7 @@ const ProcessInfoPanel = () => {
         }
       />
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
-      {election?.status === 'PAUSED' && election?.organizationId !== currentAddress && (
+      {status === 'PAUSED' && !sameAddress(election?.orgAddress, currentAddress) && (
         <Flex
           color='process.paused'
           _dark={{ color: 'white' }}
@@ -157,7 +158,7 @@ const ProcessInfoPanel = () => {
 
 export const ProcessView = () => {
   const { t } = useTranslation()
-  const { election, hasVoted } = useElection()
+  const { election, hasVoted, status } = useElection()
   // Close ineligible CSP sessions so the UI offers "Identify" instead of "Logout".
   useCspSessionGuard()
   const videoRef = useRef<HTMLDivElement>(null)
@@ -235,9 +236,7 @@ export const ProcessView = () => {
           >
             <TabsList w='full'>
               <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
-              {election && election.status !== 'CANCELED' && (
-                <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>
-              )}
+              {election && status !== 'CANCELED' && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
             </TabsList>
             <TabsContentGroup mt={6}>
               <TabsContent value='questions' p={0}>
@@ -260,7 +259,7 @@ export const ProcessView = () => {
                   <VoteButton setQuestionsTab={setQuestionsTab} />
                 </Box>
               </TabsContent>
-              {election && election.status !== 'CANCELED' && (
+              {election && status !== 'CANCELED' && (
                 <TabsContent value='results' p={0}>
                   <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
                     <ElectionResults />
