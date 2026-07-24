@@ -61,7 +61,7 @@ const ActionsMenuList = (props: MenuContentProps) => {
       {status === 'ONGOING' && (
         <Menu.Item
           value='pause'
-          aria-label={t('process_actions.start')}
+          aria-label={t('process_actions.pause')}
           onClick={pause}
           disabled={disabled || loading.pause}
         >
@@ -69,14 +69,14 @@ const ActionsMenuList = (props: MenuContentProps) => {
           {t('process_actions.pause')}
         </Menu.Item>
       )}
-      <Menu.Item value='end' aria-label={t('process_actions.start')} onClick={end} disabled={disabled || loading.end}>
+      <Menu.Item value='end' aria-label={t('process_actions.end')} onClick={end} disabled={disabled || loading.end}>
         <ActionIcon icon={RiStopCircleLine} />
         {t('process_actions.end')}
       </Menu.Item>
       <Menu.Separator m={1} />
       <Menu.Item
         value='cancel'
-        aria-label={t('process_actions.start')}
+        aria-label={t('process_actions.cancel')}
         onClick={cancel}
         disabled={disabled || loading.cancel}
       >
