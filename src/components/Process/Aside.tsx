@@ -1,65 +1,35 @@
 import { Button, Flex, Link, Text } from '@chakra-ui/react'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
-import { CensusType, dotobject, ElectionStatus, formatUnits, InvalidElection } from '@vocdoni/sdk'
+import { isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import type { QuestionStatus } from '@vocdoni/api-types'
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
-import { CensusMeta } from './Census/CensusType'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
 
-const results = (result: number, decimals?: number) =>
-  decimals ? parseInt(formatUnits(BigInt(result), decimals), 10) : result
-
 const ProcessAside = () => {
   const { t } = useTranslation()
-  const {
-    election,
-    connected,
-    isInCensus,
-    voted,
-    votesLeft,
-    loading: { voting, census: loadingCensus },
-    loaded: { census: loadedCensus },
-  } = useElection()
+  const { election, status, results, connected, isInCensus, hasVoted, voteId } = useElection()
   const appEnv = useAppEnv()
   const explorerUrl = getVocdoniClientConfig(appEnv.VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
 
-  if (election instanceof InvalidElection) return null
+  if (!election) return null
 
-  const census: CensusMeta = dotobject(election?.meta || {}, 'census')
-  const isWalletCensus = census?.type !== 'csp'
-  const syncingCensus = connected && isWalletCensus && !isInCensus && (loadingCensus || !loadedCensus)
+  // The v2 context has no per-question "votes left to overwrite" counter and its
+  // vote() skips questions already marked as voted regardless of overwrite settings,
+  // so the previous "you can still correct your vote N times" messaging can't be
+  // reproduced honestly here; it's dropped until the voting flow gets its own v2
+  // refactor (see the matching note on `VotingVoteModal` in Process/View.tsx).
+  const renderVoteMenu = hasVoted
 
-  const renderVoteMenu =
-    voted ||
-    (voting && election?.electionType.anonymous) ||
-    (hasOverwriteEnabled(election) && isInCensus && votesLeft > 0 && voted)
+  const showVoters = status !== 'CANCELED' && status !== 'UPCOMING' && !appEnv.HIDE_VOTER_COUNT
+  const showVotes = !isSecretUntilTheEnd(election) && status !== 'UPCOMING' && !appEnv.HIDE_VOTER_COUNT
 
-  const showVoters =
-    election?.status !== ElectionStatus.CANCELED &&
-    election?.status !== ElectionStatus.UPCOMING &&
-    !(election?.electionType.anonymous && voting) &&
-    !appEnv.HIDE_VOTER_COUNT
-  const showVotes =
-    !election?.electionType.secretUntilTheEnd &&
-    election?.status !== ElectionStatus.UPCOMING &&
-    !appEnv.HIDE_VOTER_COUNT
-
-  let votes = 0
-  if (election && showVotes && election?.questions.length) {
-    const decimals = (election.meta as any)?.token?.decimals || 0
-    // It just has to check the first question to get the total of votes.
-    const question = election?.questions[0]
-    const totalsAbstain = 'numAbstains' in question ? Number(question.numAbstains) : 0
-    votes = question.choices.reduce((acc, curr) => acc + Number(curr.results), totalsAbstain)
-    votes = results(votes, decimals)
-  }
-
-  const votersCount = election?.voteCount
+  const votes = processVoteCount(results)
 
   return (
     <Flex direction='column' border='1px solid' borderRadius='lg' borderColor='table.border' p={4} gap={2}>
@@ -73,9 +43,7 @@ const ProcessAside = () => {
         p={4}
       >
         <Text textAlign='center' fontSize='xl' textTransform='uppercase'>
-          {election?.electionType.anonymous && voting
-            ? t('aside.submitting')
-            : getStatusText(t, election?.status).toUpperCase()}
+          {getStatusText(t, status).toUpperCase()}
         </Text>
 
         {showVoters && !showVotes && (
@@ -86,7 +54,7 @@ const ProcessAside = () => {
                 span: <Text as='span' fontWeight='bold' fontSize='3xl' lineHeight={1} />,
                 text: <Text fontSize='xl' lineHeight={1.3} />,
               }}
-              count={votersCount}
+              count={votes}
             />
           </Flex>
         )}
@@ -103,59 +71,36 @@ const ProcessAside = () => {
                 count={votes}
               />
             </Flex>
-            {showVoters && votersCount !== votes && (
-              <Flex direction={'row'} justifyContent='center' alignItems='center'>
-                {'('}
-                <Trans
-                  i18nKey='aside.votes'
-                  components={{
-                    span: <Text as='span' fontWeight='bold' fontSize='md' lineHeight={1} mr={2} />,
-                    text: <Text fontSize='md' lineHeight={1.3} />,
-                  }}
-                  count={election?.voteCount}
-                />
-                {')'}
-              </Flex>
-            )}
           </Flex>
         )}
       </Flex>
       {connected ? <LogoutButton /> : <CensusConnectButton />}
-      {connected && isWalletCensus && !isInCensus && !syncingCensus && (
+      {/* The v2 context doesn't expose a separate "membership check in flight" loading
+          flag (unlike the old loading.census/loaded.census pair), so this may flash
+          briefly right after connecting, before isInCensus resolves. */}
+      {connected && !isInCensus && (
         <Text textAlign='center' fontSize='sm'>
           {t('aside.is_not_in_census')}
         </Text>
       )}
 
-      {/* Vote menu: verify vote, votes left, voting anonymous advice... */}
+      {/* Vote menu: verify vote on the explorer once cast. */}
       {renderVoteMenu && (
         <Flex flexDirection='column' alignItems='center' gap={3} w='full'>
-          {voted !== null && voted.length > 0 && (
-            <Text
-              fontWeight='extrabold'
-              fontSize='sm'
-              css={{
-                color: 'green.500',
-                _dark: { color: 'green.300' },
-              }}
-              textAlign='center'
-            >
-              {t('aside.has_already_voted').toString()}
-            </Text>
-          )}
-          {voting && election?.electionType.anonymous && (
-            <Text fontSize='sm' textAlign='center' whiteSpace='pre-line'>
-              {t('aside.voting_anonymous_advice')}
-            </Text>
-          )}
-          {hasOverwriteEnabled(election) && isInCensus && votesLeft > 0 && voted && (
-            <Text fontSize='sm' color='texts.subtle' textAlign='center'>
-              {t('aside.overwrite_votes_left', { count: votesLeft })}
-            </Text>
-          )}
-          {voted !== null && voted.length > 0 && (
+          <Text
+            fontWeight='extrabold'
+            fontSize='sm'
+            css={{
+              color: 'green.500',
+              _dark: { color: 'green.300' },
+            }}
+            textAlign='center'
+          >
+            {t('aside.has_already_voted').toString()}
+          </Text>
+          {voteId && (
             <Link css={{ _hover: { textDecoration: 'underline' } }} asChild whiteSpace='nowrap'>
-              <RouterAwareLink to={`${explorerUrl}/verify/${voted}`} target='_blank' rel='noreferrer'>
+              <RouterAwareLink to={`${explorerUrl}/verify/${voteId}`} target='_blank' rel='noreferrer'>
                 {t('aside.verify_vote_on_explorer')}
               </RouterAwareLink>
             </Link>
@@ -169,14 +114,20 @@ const ProcessAside = () => {
 export const CensusConnectButton = () => {
   const { t } = useTranslation()
 
-  const { election, connected } = useElection()
+  const { election, status, connected } = useElection()
   const { openConnectModal } = useConnectModal()
 
-  if (election instanceof InvalidElection || election?.status === ElectionStatus.CANCELED) {
+  if (!election || status === 'CANCELED') {
     return null
   }
 
-  const isCSP = election.census.type === CensusType.CSP
+  // The v2 CensusSpec carries no wallet-vs-CSP discriminator — every new-model
+  // census is member/CSP-backed (see CensusSpec's doc comment in @vocdoni/api-types).
+  // The CSP identify flow (CspAuth/Step0/Step1/use-csp-session-guard) still talks to
+  // the legacy @vocdoni/sdk CSP client rather than the v2 auth0/auth1/check API, so
+  // switching this branch over is deferred to that flow's own migration; keep the
+  // wallet-connect fallback as the safe default until then.
+  const isCSP = false
 
   return (
     <>
@@ -191,24 +142,18 @@ export const CensusConnectButton = () => {
 }
 
 export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () => void }) => {
-  const {
-    election,
-    connected,
-    isWeighted,
-    isAbleToVote,
-    isInCensus,
-    loading: { census: loadingCensus },
-    loaded: { census: loadedCensus },
-  } = useElection()
+  const { election, status, connected, isAbleToVote } = useElection()
 
-  if (election instanceof InvalidElection || election?.status === ElectionStatus.CANCELED) {
+  if (!election || status === 'CANCELED') {
     return null
   }
 
-  const census: CensusMeta = dotobject(election?.meta || {}, 'census')
-  const isWalletCensus = census?.type !== 'csp'
-  const syncingCensus = connected && isWalletCensus && !isInCensus && (loadingCensus || !loadedCensus)
-  const hideVote = connected && !syncingCensus && !isAbleToVote
+  const isWeighted = election.census?.weighted === true
+  // isAbleToVote already folds in connected/isInCensus/hasVoted, so a connected
+  // voter who can't vote (not a member, or already voted) hides the button outright
+  // rather than showing it disabled — the v2 context has no separate "still
+  // checking membership" flag to keep it visible-but-disabled during that window.
+  const hideVote = connected && !isAbleToVote
 
   if (hideVote) {
     return null
@@ -229,18 +174,7 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
         <CensusConnectButton />
       ) : (
         <>
-          <CVoteButton
-            w='100%'
-            fontSize='lg'
-            height='50px'
-            onClick={setQuestionsTab}
-            disabled={syncingCensus}
-            css={{
-              '&::disabled': {
-                opacity: '0.8',
-              },
-            }}
-          />
+          <CVoteButton w='100%' fontSize='lg' height='50px' onClick={setQuestionsTab} />
           {isWeighted && <VoteWeight />}
         </>
       )}
@@ -248,22 +182,16 @@ export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () 
   )
 }
 
-const hasOverwriteEnabled = (election?: { voteType?: { maxVoteOverwrites?: number } } | null): boolean =>
-  typeof election !== 'undefined' &&
-  election !== null &&
-  typeof election.voteType.maxVoteOverwrites !== 'undefined' &&
-  election.voteType.maxVoteOverwrites > 0
-
-const getStatusText = (t: TFunction<string, string>, electionStatus: ElectionStatus | undefined) => {
-  switch (electionStatus) {
-    case ElectionStatus.UPCOMING:
+const getStatusText = (t: TFunction<string, string>, status: QuestionStatus | null) => {
+  switch (status) {
+    case 'UPCOMING':
       return t('process.status.upcoming')
-    case ElectionStatus.PAUSED:
-    case ElectionStatus.ONGOING:
+    case 'PAUSED':
+    case 'ONGOING':
       return t('process.status.active')
-    case ElectionStatus.ENDED:
-    case ElectionStatus.CANCELED:
-    case ElectionStatus.RESULTS:
+    case 'ENDED':
+    case 'CANCELED':
+    case 'RESULTS':
       return t('process.status.ended')
     default:
       return t('process.status.unknown')
