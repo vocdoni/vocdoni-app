@@ -21,6 +21,10 @@ const choiceMetas = (question: VotingProcessQuestion): ChoiceMeta[] => {
   return Array.isArray(choices) ? (choices as ChoiceMeta[]) : []
 }
 
+// `VotingProcessQuestion.type` is stored using the API's canonical lowercase names
+// (VOTING_PROCESS_QUESTION_TYPES), not the app's camelCase SelectorTypes.
+const MULTICHOICE_QUESTION_TYPE: VotingProcessQuestion['type'] = 'multichoice'
+
 export const useCloneAsDraft = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -33,10 +37,11 @@ export const useCloneAsDraft = () => {
   const cloneAsDraft = async () => {
     if (!election?.id || !election.questions?.length) return
 
-    // The create flow only produces uniform singleChoice/multiChoice processes, so the
+    // The create flow only produces uniform singlechoice/multichoice processes, so the
     // first question determines the selector type of the cloned draft.
     const firstQuestion = election.questions[0]
-    const questionType = firstQuestion.type === SelectorTypes.Multiple ? SelectorTypes.Multiple : SelectorTypes.Single
+    const questionType =
+      firstQuestion.type === MULTICHOICE_QUESTION_TYPE ? SelectorTypes.Multiple : SelectorTypes.Single
 
     // For multiple choice: derive limits from the question type setup (ballotProtocol as fallback)
     const choiceLimits =

@@ -97,7 +97,7 @@ function createMockQuestion(
     description: { default: 'Question Description' },
     choices: choices.map((choice, index) => ({ title: { default: choice.title }, value: index })),
     ballotProtocol: SINGLE_CHOICE_PROTOCOL,
-    type: 'singleChoice',
+    type: 'singlechoice',
     secretUntilTheEnd: false,
     status: 'ENDED',
     metadata: hasMeta
@@ -630,7 +630,7 @@ describe('useCloneAsDraft', () => {
         [{ title: 'Option 1' }, { title: 'Option 2' }, { title: 'Option 3' }],
         {},
         {
-          type: 'multiChoice',
+          type: 'multichoice',
           typeSetup: { minChoices: 0, maxChoices: 2, uniqueChoices: true },
           ballotProtocol: {
             costExponent: 1,
@@ -658,6 +658,45 @@ describe('useCloneAsDraft', () => {
               questionType: 'multiChoice',
               minNumberOfChoices: 0,
               maxNumberOfChoices: 2,
+            }),
+          })
+        )
+      })
+    })
+
+    it('should fall back to ballotProtocol.maxCount when typeSetup is missing on a multi-choice election', async () => {
+      mockElection = createMockElection(
+        [{ title: 'Option 1' }, { title: 'Option 2' }, { title: 'Option 3' }],
+        {},
+        {
+          type: 'multichoice',
+          typeSetup: undefined,
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: false,
+            maxVoteOverwrites: 0,
+            maxCount: 3,
+            maxValue: 1,
+            maxTotalCost: 3,
+            uniqueValues: true,
+          },
+        }
+      )
+      mockMutateAsync.mockResolvedValue('draft-123')
+
+      const { result } = renderHook(() => useCloneAsDraft())
+
+      await act(async () => {
+        await result.current.cloneAsDraft()
+      })
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith(
+          expect.objectContaining({
+            metadata: expect.objectContaining({
+              questionType: 'multiChoice',
+              minNumberOfChoices: 0,
+              maxNumberOfChoices: 3,
             }),
           })
         )
