@@ -89,4 +89,18 @@ describe('RoutedPaginatedTableFooter', () => {
     expect(controls).toHaveAttribute('data-flex-direction', 'row')
     expect(controls).toHaveAttribute('data-flex-wrap', 'wrap')
   })
+
+  it('clamps an out-of-range page to the last available page', () => {
+    mockUseRoutedPagination.mockReturnValue({
+      page: 9,
+      pagination: {
+        currentPage: 9,
+        lastPage: 3,
+      },
+    })
+
+    render(<RoutedPaginatedTableFooter />)
+
+    expect(screen.getByText('Page 3 of 3')).toBeInTheDocument()
+  })
 })
