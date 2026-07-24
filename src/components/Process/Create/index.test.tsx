@@ -205,7 +205,7 @@ describe('useFormToVotingProcessRequest', () => {
     })
   })
 
-  describe('single-choice ballot protocol', () => {
+  describe('single-choice question', () => {
     it('sets type to singlechoice', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current({ ...mockForm, questionType: SelectorTypes.Single }, buildCensusSpec())
@@ -213,22 +213,14 @@ describe('useFormToVotingProcessRequest', () => {
       expect(req.questions[0].typeSetup).toBeUndefined()
     })
 
-    it('sets maxCount 1, maxValue = options.length - 1', () => {
+    it('does not send a ballotProtocol, letting the backend derive it from type', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current(mockForm, buildCensusSpec())
-      const bp = req.questions[0].ballotProtocol!
-      expect(bp.maxCount).toBe(1)
-      expect(bp.maxValue).toBe(1) // 2 options → maxValue = 1
-    })
-
-    it('sets maxVoteOverwrites to 0', () => {
-      const { result } = renderHook(() => useFormToVotingProcessRequest())
-      const req = result.current(mockForm, buildCensusSpec())
-      expect(req.questions[0].ballotProtocol!.maxVoteOverwrites).toBe(0)
+      expect(req.questions[0].ballotProtocol).toBeUndefined()
     })
   })
 
-  describe('multi-choice ballot protocol', () => {
+  describe('multi-choice question', () => {
     it('sets type to multichoice with typeSetup', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current(
@@ -258,18 +250,15 @@ describe('useFormToVotingProcessRequest', () => {
         buildCensusSpec()
       )
       expect(req.questions[0].typeSetup!.maxChoices).toBe(4)
-      expect(req.questions[0].ballotProtocol!.maxCount).toBe(4)
     })
 
-    it('sets maxValue 1 and uniqueValues true for multiChoice', () => {
+    it('does not send a ballotProtocol, letting the backend derive it from type/typeSetup', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current(
         { ...mockForm, questionType: SelectorTypes.Multiple, maxNumberOfChoices: 2, minNumberOfChoices: 0 },
         buildCensusSpec()
       )
-      const bp = req.questions[0].ballotProtocol!
-      expect(bp.maxValue).toBe(1)
-      expect(bp.uniqueValues).toBe(true)
+      expect(req.questions[0].ballotProtocol).toBeUndefined()
     })
   })
 

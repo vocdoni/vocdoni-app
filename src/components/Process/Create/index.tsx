@@ -18,7 +18,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useOrganization } from '@vocdoni/react-components'
 import type {
-  BallotProtocol,
   CensusSpec,
   Choice,
   CreateVotingProcessRequest,
@@ -506,7 +505,6 @@ export const useFormToVotingProcessRequest = () => {
       form.endDate && form.endTime ? parseLocalDateTime(form.endDate, form.endTime) : addDays(startRef, 1).toISOString()
 
     const secretUntilTheEnd = form.resultVisibility === 'hidden'
-    const maxVoteOverwrites = 0
     const isMultiChoice = form.questionType === SelectorTypes.Multiple
 
     const questions: VotingProcessQuestionRequest[] = form.questions.map((question) => {
@@ -521,12 +519,6 @@ export const useFormToVotingProcessRequest = () => {
           }
         : undefined
 
-      const commonProtocol: Omit<BallotProtocol, 'maxCount' | 'maxValue' | 'maxTotalCost' | 'uniqueValues'> = {
-        costExponent: 1,
-        costFromWeight: false,
-        maxVoteOverwrites,
-      }
-
       if (isMultiChoice) {
         const maxChoices = (form.maxNumberOfChoices ?? 0) > 0 ? form.maxNumberOfChoices! : question.options.length
         return {
@@ -535,13 +527,6 @@ export const useFormToVotingProcessRequest = () => {
           choices,
           type: 'multichoice',
           typeSetup: { maxChoices, minChoices: form.minNumberOfChoices ?? 0, uniqueChoices: true },
-          ballotProtocol: {
-            ...commonProtocol,
-            maxCount: maxChoices,
-            maxValue: 1,
-            maxTotalCost: maxChoices,
-            uniqueValues: true,
-          },
           secretUntilTheEnd,
           metadata,
         }
@@ -552,13 +537,6 @@ export const useFormToVotingProcessRequest = () => {
         description: question.description ? { default: question.description } : undefined,
         choices,
         type: 'singlechoice',
-        ballotProtocol: {
-          ...commonProtocol,
-          maxCount: 1,
-          maxValue: question.options.length - 1,
-          maxTotalCost: 1,
-          uniqueValues: false,
-        },
         secretUntilTheEnd,
         metadata,
       }
