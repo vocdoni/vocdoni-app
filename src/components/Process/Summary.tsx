@@ -13,7 +13,8 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { ElectionResults, getElectionTitle, useElection } from '@vocdoni/react-components'
-import { hasResults, isUpcoming } from '@vocdoni/api-client'
+import { hasResults, isSecretUntilTheEnd, isUpcoming, processVoteCount } from '@vocdoni/api-client'
+import type { QuestionStatus } from '@vocdoni/api-types'
 import { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -34,10 +35,10 @@ const useTimeLeft = (target?: Date) => {
   return Math.max(0, target.getTime() - now.getTime())
 }
 
-const statusLabel = (t: TFunction, status?: string, finalResults?: boolean) => {
-  if (!status) return t('process.status.active')
-  if (status === 'ENDED' && finalResults) return t('process.results')
+const statusLabel = (t: TFunction, status: QuestionStatus | null) => {
   switch (status) {
+    case 'RESULTS':
+      return t('process.results')
     case 'ENDED':
       return t('process.status.ended')
     case 'CANCELED':
@@ -46,14 +47,16 @@ const statusLabel = (t: TFunction, status?: string, finalResults?: boolean) => {
       return t('process.status.paused')
     case 'UPCOMING':
       return t('process.status.upcoming')
+    case 'PROCESS_UNKNOWN':
+      return t('process.status.unknown')
     default:
       return t('process.status.active')
   }
 }
 
-type CountdownStatProps = { target?: Date; upcoming: boolean; status?: string; finalResults?: boolean }
+type CountdownStatProps = { target?: Date; upcoming: boolean; status: QuestionStatus | null }
 
-const CountdownStat = ({ target, upcoming, status, finalResults }: CountdownStatProps) => {
+const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   const { t } = useTranslation()
   const left = useTimeLeft(target)
 
@@ -61,7 +64,7 @@ const CountdownStat = ({ target, upcoming, status, finalResults }: CountdownStat
   if (left <= 0) {
     return (
       <Badge colorPalette='gray' size='md' fontWeight='bold' fontSize='lg' alignSelf='end'>
-        {statusLabel(t, status, finalResults)}
+        {statusLabel(t, status)}
       </Badge>
     )
   }
@@ -85,12 +88,12 @@ const CountdownStat = ({ target, upcoming, status, finalResults }: CountdownStat
 
 const ParticipationCard = () => {
   const { t, i18n } = useTranslation()
-  const { election } = useElection()
+  const { election, results, status } = useElection()
   const { size: census } = useCensusSize()
 
   if (!election) return null
 
-  const voteCount = election.voteCount ?? 0
+  const voteCount = processVoteCount(results)
   const percent = census > 0 ? (voteCount / census) * 100 : 0
   const upcoming = isUpcoming(election)
   const startDate = new Date(election.startDate)
@@ -122,12 +125,7 @@ const ParticipationCard = () => {
               {getElectionTitle(election)}
             </Heading>
           </Box>
-          <CountdownStat
-            target={target}
-            upcoming={upcoming}
-            status={election.status}
-            finalResults={election.finalResults}
-          />
+          <CountdownStat target={target} upcoming={upcoming} status={status} />
         </Flex>
 
         <Box>
@@ -192,12 +190,12 @@ const Indicator = ({ label, value, accent }: IndicatorProps) => (
 
 const KeyIndicators = () => {
   const { t, i18n } = useTranslation()
-  const { election } = useElection()
+  const { election, results } = useElection()
   const { size: census } = useCensusSize()
 
   if (!election) return null
 
-  const voteCount = election.voteCount ?? 0
+  const voteCount = processVoteCount(results)
   const percent = census > 0 ? (voteCount / census) * 100 : 0
   const nf = (value: number, fractionDigits = 0) =>
     new Intl.NumberFormat(i18n.language, {
@@ -229,7 +227,7 @@ const ResultsNotice = () => {
   if (!election) return null
 
   const electionHasResults = hasResults(election)
-  const isEncrypted = election.electionType?.secretUntilTheEnd
+  const isEncrypted = isSecretUntilTheEnd(election)
 
   // Show the actual results once published, otherwise the "encrypted until close" notice.
   // When results are neither published nor encrypted there's nothing to show here yet.
