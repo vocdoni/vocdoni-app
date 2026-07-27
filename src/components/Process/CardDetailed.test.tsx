@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Election } from '@vocdoni/api-types'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -48,24 +48,17 @@ describe('ProcessCardDetailed', () => {
   })
 
   it('links organization process cards to the canonical localized public process URL', async () => {
-    const election: Election = {
+    const election: VotingProcessResponse = {
       id: '0xprocess',
-      organizationId: '0xabc',
+      orgAddress: 'abc',
       title: { default: 'Board election 2026' },
       description: { default: 'Vote for the next board members.' },
-      status: 'READY',
-      electionType: {
-        anonymous: false,
-        interruptible: true,
-        dynamicCensus: false,
-        secretUntilTheEnd: false,
-      },
-      census: null as any,
+      census: {},
       questions: [],
-      voteCount: 0,
-      finalResults: false,
-      manuallyEnded: false,
-    } as unknown as Election
+      published: true,
+      startDate: '2026-01-01T00:00:00.000Z',
+      endDate: '2026-01-02T00:00:00.000Z',
+    }
 
     renderWithProviders(<ProcessCardDetailed election={election} />)
 

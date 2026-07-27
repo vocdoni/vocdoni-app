@@ -7,7 +7,7 @@ import {
   useElection,
 } from '@vocdoni/react-components'
 import { processVoteCount } from '@vocdoni/api-client'
-import type { Election } from '@vocdoni/api-types'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
@@ -18,7 +18,7 @@ import { ManageProcessLink } from './ManageProcessLink'
 import { ProcessDateInline } from './Date'
 
 interface Props {
-  election: Election
+  election: VotingProcessResponse
 }
 
 const ProcessCardDetailed = ({ election }: Props) => {
@@ -45,7 +45,7 @@ const ProcessCardDetailed = ({ election }: Props) => {
   )
 }
 
-const ProcessCardLink = ({ children, election }: PropsWithChildren<{ election: Election }>) => {
+const ProcessCardLink = ({ children, election }: PropsWithChildren<{ election: VotingProcessResponse }>) => {
   const language = usePublicLanguage()
 
   if (!election?.id) {
@@ -53,7 +53,7 @@ const ProcessCardLink = ({ children, election }: PropsWithChildren<{ election: E
   }
 
   const publicProcessPath = getPublicProcessPath({
-    id: election.address ?? election.id,
+    id: election.id,
     language,
   })
 
