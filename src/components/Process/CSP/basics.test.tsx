@@ -9,7 +9,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
   return {
     ...actual,
-    useProcess: () => ({ auth0 }),
+    useElectionAuth: () => ({ auth0 }),
   }
 })
 

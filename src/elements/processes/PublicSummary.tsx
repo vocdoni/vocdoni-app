@@ -13,7 +13,12 @@ type PublicProcessSummaryViewProps = {
 const PublicProcessSummaryView = ({ id, election, organizationAddress }: PublicProcessSummaryViewProps) => {
   return (
     <OrganizationProvider address={organizationAddress}>
-      <ElectionProvider id={id} election={election}>
+      <ElectionProvider
+        id={id}
+        election={election}
+        queryOptions={{ refetchInterval: 30_000 }}
+        resultsQueryOptions={{ refetchInterval: 30_000 }}
+      >
         <ProcessSummaryComponent />
         <LegalNotice />
       </ElectionProvider>

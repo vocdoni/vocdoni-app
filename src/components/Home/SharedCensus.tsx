@@ -5,7 +5,6 @@ import {
   ElectionTitle,
   OrganizationImage,
   OrganizationProvider,
-  ProcessProvider,
   useElection,
 } from '@vocdoni/react-components'
 import { ReactNode } from 'react'
@@ -34,16 +33,15 @@ const SharedCensus = () => {
     return null
   }
 
-  // The first process anchors the page: its census drives the identify flow and
-  // its organization brands the header. ProcessProvider holds that CSP session.
+  // The first process anchors the page: its census drives the identify flow
+  // (the ElectionProvider hosts that CSP session) and its organization brands
+  // the header.
   return (
-    <ProcessProvider id={processIds[0]}>
-      <ElectionProvider id={processIds[0]}>
-        <SharedCensusOrganizationBoundary>
-          <SharedCensusHomeContent />
-        </SharedCensusOrganizationBoundary>
-      </ElectionProvider>
-    </ProcessProvider>
+    <ElectionProvider id={processIds[0]}>
+      <SharedCensusOrganizationBoundary>
+        <SharedCensusHomeContent />
+      </SharedCensusOrganizationBoundary>
+    </ElectionProvider>
   )
 }
 
@@ -149,11 +147,9 @@ const SharedCensusHomeContent = () => {
           </Text>
           <Flex gap={5} flexDirection={{ base: 'column' }}>
             {processIds.map((processId, index) => (
-              <ProcessProvider id={processId} key={processId}>
-                <ElectionProvider id={processId}>
-                  <ElectionItemList isAdmin={isAdmin} index={index} />
-                </ElectionProvider>
-              </ProcessProvider>
+              <ElectionProvider id={processId} key={processId} queryOptions={{ refetchInterval: 15_000 }}>
+                <ElectionItemList isAdmin={isAdmin} index={index} />
+              </ElectionProvider>
             ))}
           </Flex>
         </Box>

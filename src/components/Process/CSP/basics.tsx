@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
-import { useProcess } from '@vocdoni/react-components'
+import { useElectionAuth } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 
 export type CensusData = {
@@ -67,7 +67,7 @@ const useTranslateCspError = () => {
 // Step 0 — identify the participant against the process census. For auth-only
 // censuses (no 2FA fields) the provider already marks the voter connected.
 export const useCspAuth0 = () => {
-  const { auth0 } = useProcess()
+  const { auth0 } = useElectionAuth()
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, AuthRequest>({
@@ -83,7 +83,7 @@ export const useCspAuth0 = () => {
 
 // Step 1 — confirm the 2FA challenge (OTP); marks the voter connected.
 export const useCspAuth1 = () => {
-  const { auth1 } = useProcess()
+  const { auth1 } = useElectionAuth()
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, string>({
@@ -99,7 +99,7 @@ export const useCspAuth1 = () => {
 
 // Resend the pending 2FA challenge to the voter's contact.
 export const useCspResend = () => {
-  const { resend } = useProcess()
+  const { resend } = useElectionAuth()
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, ResendChallengePayload>({

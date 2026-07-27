@@ -158,7 +158,7 @@ export const ProcessView = () => {
   const { t } = useTranslation()
   const { election, hasVoted, status } = useElection()
   // No CSP session guard needed in v2: process auth tokens live in memory, scoped
-  // to their ProcessProvider, so a stale session from another election can't leak in.
+  // to their ElectionProvider, so a stale session from another election can't leak in.
   const videoRef = useRef<HTMLDivElement>(null)
   const electionRef = useRef<HTMLDivElement>(null)
   const [tabValue, setTabValue] = useState<'questions' | 'results'>('questions')

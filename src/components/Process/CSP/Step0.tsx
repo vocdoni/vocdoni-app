@@ -97,8 +97,8 @@ export const Step0Base = () => {
     }
 
     try {
-      // The process session (ProcessProvider) stores the auth token; we only keep
-      // the contact info so step 1 can resend the challenge.
+      // The voter session (ElectionProvider's auth context) stores the auth token;
+      // we only keep the contact info so step 1 can resend the challenge.
       await auth.mutateAsync(form)
 
       setAuthData((prev) => ({

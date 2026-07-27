@@ -21,7 +21,6 @@ vi.mock('~components/Layout/LegalNotice', () => ({
 vi.mock('@vocdoni/react-components', () => ({
   OrganizationProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  ProcessProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useOrganization: () => ({
     organization: {
       name: {
