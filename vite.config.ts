@@ -35,7 +35,11 @@ const viteconfig = ({ mode }: { mode: string }) => {
       // consumed via pnpm `link:`, so their symlinked node_modules would otherwise
       // resolve their own React (19) instead of the app's (18), triggering the classic
       // "invalid hook call" duplicate-React error. Force a single React/react-dom copy.
-      dedupe: ['react', 'react-dom'],
+      // Same for @tanstack/react-query: the SDK providers' useQuery must observe the
+      // app's QueryClient context — a second module instance would mean a separate
+      // (empty) cache and "No QueryClient set" errors, exactly what peerDependencies
+      // guarantee for the published packages.
+      dedupe: ['react', 'react-dom', '@tanstack/react-query'],
     },
     // Expose the dev server on the local network (equivalent to `--host`).
     // It is set here rather than on the CLI because Vike intercepts the vite
