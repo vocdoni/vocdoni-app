@@ -6,6 +6,7 @@ import {
   ElectionTitle,
   useElection,
 } from '@vocdoni/react-components'
+import { processVoteCount } from '@vocdoni/api-client'
 import type { Election } from '@vocdoni/api-types'
 import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -82,7 +83,7 @@ const ProcessDetailedCardTitle = () => {
 }
 
 const ProcessDetailedCardDescription = () => {
-  const { election } = useElection()
+  const { election, status } = useElection()
   const { t } = useTranslation()
   const { ReadMoreMarkdownWrapper } = useReadMoreMarkdown(100)
 
@@ -92,7 +93,7 @@ const ProcessDetailedCardDescription = () => {
 
   return (
     <>
-      {election?.status !== 'CANCELED' ? (
+      {status !== 'CANCELED' ? (
         <ReadMoreMarkdownWrapper>
           <ElectionDescription />
         </ReadMoreMarkdownWrapper>
@@ -107,13 +108,13 @@ const ProcessDetailedCardDescription = () => {
 
 const ProcessDetailedCardFooter = () => {
   const { t } = useTranslation()
-  const { election } = useElection()
+  const { election, status, results } = useElection()
 
   if (!election) {
     return null
   }
 
-  if (election?.status === 'CANCELED') return null
+  if (status === 'CANCELED') return null
 
   return (
     <Box>
@@ -122,7 +123,7 @@ const ProcessDetailedCardFooter = () => {
       </Box>
       <Box>
         <Text>{t('process.voters')}</Text>
-        <Text>{election?.voteCount}</Text>
+        <Text>{processVoteCount(results)}</Text>
       </Box>
     </Box>
   )
