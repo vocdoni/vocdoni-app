@@ -110,9 +110,8 @@ const ProcessInfoPanel = () => {
         )}
         <ManageProcessLink />
       </Box>
-      {election?.electionType.anonymous && (
-        <ProcessInfoCard label={t('process.is_anonymous.title')} description={t('process.is_anonymous.description')} />
-      )}
+      {/* The v2 process model carries no anonymous/electionType flag, so the
+          "anonymous process" info card is gone with the legacy model. */}
       <ProcessInfoCard
         label={t('process.census')}
         description={
