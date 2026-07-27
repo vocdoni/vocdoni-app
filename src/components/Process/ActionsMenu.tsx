@@ -50,12 +50,12 @@ const ActionsMenuList = (props: MenuContentProps) => {
       {status === 'PAUSED' && (
         <Menu.Item
           value='resume'
-          aria-label={t('process_actions.start')}
+          aria-label={t('process_actions.continue')}
           onClick={resume}
           disabled={disabled || loading.continue}
         >
           <ActionIcon icon={RiPlayCircleLine} />
-          {t('process_actions.start')}
+          {t('process_actions.continue')}
         </Menu.Item>
       )}
       {status === 'ONGOING' && (
