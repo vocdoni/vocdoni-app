@@ -23,8 +23,7 @@ vi.mock('react-router-dom', async () => {
 
 const getDefaultElectionState = () => ({
   loading: false,
-  loaded: true,
-  election: { organizationId: 'org-1' },
+  election: { id: 'id-1', orgAddress: 'org-1' },
   connected: false,
 })
 
@@ -45,10 +44,6 @@ const states = {
   client: getDefaultClientState(),
   organization: getDefaultOrganizationState().organization,
 }
-
-vi.mock('@vocdoni/sdk', () => ({
-  InvalidElection: class InvalidElection {},
-}))
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()

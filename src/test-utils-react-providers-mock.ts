@@ -13,6 +13,7 @@ const defaultMock: ReactProvidersMock = {
     loaded: { account: true },
   }),
   useElection: () => ({ election: null, connected: false, loading: {}, errors: {} }),
+  useProcess: () => ({ process: null, connected: false, authToken: null }),
   useOrganization: () => ({ organization: null }),
   useActions: () => ({ info: null, error: null }),
   usePagination: () => ({ page: 1, total: 1, limit: 10, setPage: () => undefined }),
@@ -20,6 +21,7 @@ const defaultMock: ReactProvidersMock = {
   PaginationProvider: ({ children }: { children: ReactNode }) => children as any,
   RoutedPaginationProvider: ({ children }: { children: ReactNode }) => children as any,
   ElectionProvider: ({ children }: { children: ReactNode }) => children as any,
+  ProcessProvider: ({ children }: { children: ReactNode }) => children as any,
   OrganizationProvider: ({ children }: { children: ReactNode }) => children as any,
 }
 
@@ -69,6 +71,7 @@ const resolveMock = (key: string) => (currentMock[key] ?? defaultMock[key]) as a
 export const getReactProvidersMock = () => ({
   useClient: (...args: any[]) => resolveMock('useClient')(...args),
   useElection: (...args: any[]) => resolveMock('useElection')(...args),
+  useProcess: (...args: any[]) => resolveMock('useProcess')(...args),
   useOrganization: (...args: any[]) => resolveMock('useOrganization')(...args),
   useActions: (...args: any[]) => resolveMock('useActions')(...args),
   usePagination: (...args: any[]) => resolveMock('usePagination')(...args),
@@ -76,5 +79,6 @@ export const getReactProvidersMock = () => ({
   PaginationProvider: (props: any) => resolveMock('PaginationProvider')(props),
   RoutedPaginationProvider: (props: any) => resolveMock('RoutedPaginationProvider')(props),
   ElectionProvider: (props: any) => resolveMock('ElectionProvider')(props),
+  ProcessProvider: (props: any) => resolveMock('ProcessProvider')(props),
   OrganizationProvider: (props: any) => resolveMock('OrganizationProvider')(props),
 })
