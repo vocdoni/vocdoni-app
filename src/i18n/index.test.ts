@@ -22,4 +22,14 @@ describe('createPageI18nInstance', () => {
     expect(instance.t('menu.login')).toBe('Login')
     expect(instance.t('statuses.ongoing', { ns: 'react-components' })).toBe('Ongoing')
   })
+
+  it('translates the SaaS READY status in every locale (deep merge over the SDK bundle)', async () => {
+    const { createPageI18nInstance } = await import('./index')
+
+    // `ready` is the SaaS wire name for a running process; the badge renders
+    // `statuses.ready` when the backend emits it, so it must resolve everywhere.
+    expect(createPageI18nInstance('en').t('statuses.ready', { ns: 'react-components' })).toBe('Ongoing')
+    expect(createPageI18nInstance('es').t('statuses.ready', { ns: 'react-components' })).toBe('En curso')
+    expect(createPageI18nInstance('ca').t('statuses.ready', { ns: 'react-components' })).toBe('En curs')
+  })
 })
