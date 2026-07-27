@@ -1,13 +1,10 @@
-import { PublishedElection } from '@vocdoni/sdk'
 import { describe, expect, it } from 'vitest'
 import { buildOrganizationStructuredData, buildProcessStructuredData } from './publicPageSchema'
 
 const organization = {
   address: '0xabc',
-  account: {
-    name: { default: 'Vocdoni Association', ca: 'Associació Vocdoni' },
-    description: { default: 'A digital voting organization for tests.' },
-  },
+  name: { default: 'Vocdoni Association', ca: 'Associació Vocdoni' },
+  description: { default: 'A digital voting organization for tests.' },
 } as const
 
 const processMeta = {
@@ -60,20 +57,17 @@ describe('publicPageSchema', () => {
   })
 
   it('builds process structured data with organization breadcrumbs', () => {
-    const election = new PublishedElection({
+    const election = {
       id: '0xprocess',
-      organizationId: '0xabc',
+      orgAddress: 'abc',
       title: { default: 'Board election 2026', ca: 'Elecció del consell 2026' },
       description: { default: 'Vote for the next board members.', ca: 'Vota pels nous membres del consell.' },
-      electionType: {
-        anonymous: false,
-        interruptible: true,
-        dynamicCensus: false,
-        secretUntilTheEnd: false,
-      },
-      census: null,
+      census: {},
       questions: [],
-    } as any)
+      published: true,
+      startDate: '2026-01-01T00:00:00.000Z',
+      endDate: '2026-01-02T00:00:00.000Z',
+    } as any
 
     const [webPageSchema, breadcrumbSchema] = buildProcessStructuredData({
       election,

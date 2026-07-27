@@ -1,4 +1,4 @@
-import { PublishedElection } from '@vocdoni/sdk'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { getPublicOrganizationPath, type OrganizationData, type PublicMeta } from '~src/ssr/public-pages'
 
 type StructuredData = Record<string, unknown>
@@ -40,7 +40,7 @@ export const buildOrganizationStructuredData = ({
 }): StructuredData[] => {
   if (!meta.canonicalUrl) return []
 
-  const name = getLocalizedText(organization.account?.name, meta.language) || organization.address
+  const name = getLocalizedText(organization.name, meta.language) || organization.address
   const description = meta.description
 
   return [
@@ -80,7 +80,7 @@ export const buildProcessStructuredData = ({
   organization,
   meta,
 }: {
-  election: PublishedElection
+  election: VotingProcessResponse
   organization?: OrganizationData
   meta: PublicMeta
 }): StructuredData[] => {
@@ -88,7 +88,7 @@ export const buildProcessStructuredData = ({
 
   const processName =
     getLocalizedText(election.title as Record<string, string | undefined> | undefined, meta.language) || election.id
-  const organizationName = getLocalizedText(organization?.account?.name, meta.language) || organization?.address
+  const organizationName = getLocalizedText(organization?.name, meta.language) || organization?.address
   const origin = getPageOrigin(meta.canonicalUrl)
   const organizationUrl =
     origin && organization?.address

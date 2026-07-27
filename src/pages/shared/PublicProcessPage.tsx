@@ -1,4 +1,4 @@
-import { PublishedElection } from '@vocdoni/sdk'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useData } from 'vike-react/useData'
 import { usePageContext } from 'vike-react/usePageContext'
 import PublicLayout from '~elements/PublicLayout'
@@ -10,7 +10,7 @@ import type { OrganizationData, PublicMeta } from '~src/ssr/public-pages'
 
 type ProcessPageData = {
   id: string
-  election: PublishedElection
+  election: VotingProcessResponse
   organization: OrganizationData
   meta: PublicMeta
 }
@@ -32,7 +32,7 @@ export default function PublicProcessPage() {
         enableChat={false}
         showDashboardButton={false}
       >
-        <PublicProcessView id={data.id} election={data.election} organization={data.organization} />
+        <PublicProcessView id={data.id} election={data.election} organizationAddress={data.organization?.address} />
       </PublicLayout>
     </AppProviders>
   )

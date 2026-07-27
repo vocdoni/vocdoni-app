@@ -1,6 +1,7 @@
-import { EnvOptions, VocdoniSDKClient } from '@vocdoni/sdk'
+import { VocdoniApiClient } from '@vocdoni/api-client'
+import { EnvOptions } from '@vocdoni/sdk'
 
-// Resolves the Vocdoni SDK client configuration from the runtime environment.
+// Resolves the Vocdoni client configuration from the runtime environment.
 // The environment string is provided by the caller — React code passes
 // useAppEnv().VOCDONI_ENVIRONMENT; server code passes getServerAppEnv().VOCDONI_ENVIRONMENT.
 export const getVocdoniClientConfig = (environment: string = 'dev') => {
@@ -14,10 +15,5 @@ export const getVocdoniClientConfig = (environment: string = 'dev') => {
   return { clientEnv, explorerUrl }
 }
 
-export const createVocdoniSdkClient = (environment?: string) => {
-  const { clientEnv } = getVocdoniClientConfig(environment)
-
-  return new VocdoniSDKClient({
-    env: clientEnv,
-  })
-}
+// Unauthenticated v2 SaaS client for server-side (SSR) public page loads.
+export const createVocdoniApiClient = (apiUrl: string) => new VocdoniApiClient({ apiUrl })

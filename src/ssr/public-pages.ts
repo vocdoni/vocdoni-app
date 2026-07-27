@@ -1,11 +1,7 @@
-import {
-  ErrAccountNotFound,
-  ErrAddressMalformed,
-  ErrCantParseElectionID,
-  ErrElectionNotFound,
-  PublishedElection,
-} from '@vocdoni/sdk'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import type { Organization, Pagination, VotingProcessResponse } from '@vocdoni/api-types'
 import { getDefaultPublicLanguage, normalizePublicLanguageCandidate } from '~i18n/public-language'
+import { ensureAddressPrefix } from '~utils/address'
 
 type PublicLanguageAlternate = {
   hrefLang: string
@@ -14,24 +10,13 @@ type PublicLanguageAlternate = {
 
 type LocalizedText = Record<string, string | undefined>
 
-type OrganizationData = {
-  address: string
-  account?: {
-    name?: LocalizedText
-    description?: LocalizedText
-    avatar?: string
-  }
-}
+// The public pages consume the v2 SaaS organization shape directly
+// (name/description/logo are locale maps at the top level).
+type OrganizationData = Organization
 
 type ElectionsPageData = {
-  elections: unknown[]
-  pagination: {
-    totalItems?: number
-    previousPage?: number | null
-    currentPage: number
-    nextPage?: number | null
-    lastPage: number
-  }
+  elections: VotingProcessResponse[]
+  pagination: Pagination
 }
 
 type PublicMeta = {
@@ -58,10 +43,18 @@ type PublicMeta = {
   }
 }
 
+// Structural subset of the v2 VocdoniApiClient the public pages need.
 type PublicPageClient = {
-  fetchAccountInfo(address?: string): Promise<OrganizationData>
-  fetchElections(input: { organizationId: string; page: number }): Promise<ElectionsPageData>
-  fetchElection(id?: string): Promise<PublishedElection>
+  organizations: {
+    get(address: string): Promise<Organization>
+  }
+  elections: {
+    get(id: string): Promise<VotingProcessResponse>
+    list(params: {
+      orgAddress?: string
+      page?: number
+    }): Promise<{ processes: VotingProcessResponse[]; pagination: Pagination }>
+  }
 }
 
 const serializeUnknown = (value: unknown): unknown => {
@@ -114,6 +107,26 @@ const getLocalizedText = (value: LocalizedText | undefined, language: string) =>
     .find(Boolean)
 
   return firstValue ?? ''
+}
+// Same locale-map resolution but without the markdown/HTML sanitization, for
+// values that must survive verbatim (e.g. the organization logo URL).
+const getLocalizedRawText = (value: LocalizedText | undefined, language: string) => {
+  if (!value) return ''
+
+  const exactLanguage = trimText(value[language])
+  if (exactLanguage) return exactLanguage
+
+  const baseMatch = trimText(value[language.split('-')[0]])
+  if (baseMatch) return baseMatch
+
+  const defaultValue = trimText(value.default)
+  if (defaultValue) return defaultValue
+
+  return (
+    Object.values(value)
+      .map((entry) => trimText(entry))
+      .find(Boolean) ?? ''
+  )
 }
 const withBrandSuffix = (value: string) => `${value} | ${publicSiteName}`
 const buildShortDescription = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' — ')
@@ -301,11 +314,11 @@ export const buildOrganizationMeta = ({
   language: string
   alternates: PublicLanguageAlternate[]
 }): PublicMeta => {
-  const displayName = getLocalizedText(organization.account?.name, language) || organization.address
+  const displayName = getLocalizedText(organization.name, language) || organization.address
   const description =
-    buildMetaDescription(getLocalizedText(organization.account?.description, language), displayName) || displayName
+    buildMetaDescription(getLocalizedText(organization.description, language), displayName) || displayName
 
-  const socialImage = buildSocialImageUrl(organization.account?.avatar, canonicalUrl)
+  const socialImage = buildSocialImageUrl(getLocalizedRawText(organization.logo, language) || undefined, canonicalUrl)
   const title = buildMetaTitle(displayName)
 
   return {
@@ -340,14 +353,14 @@ export const buildProcessMeta = ({
   language,
   alternates,
 }: {
-  election: PublishedElection
+  election: VotingProcessResponse
   organization?: OrganizationData
   canonicalUrl?: string
   language: string
   alternates: PublicLanguageAlternate[]
 }): PublicMeta => {
   const electionTitle = getLocalizedText(election.title as LocalizedText | undefined, language) || election.id
-  const organizationName = getLocalizedText(organization?.account?.name, language)
+  const organizationName = getLocalizedText(organization?.name, language)
   const description =
     buildMetaDescription(
       getLocalizedText(election.description as LocalizedText | undefined, language),
@@ -355,7 +368,7 @@ export const buildProcessMeta = ({
       organizationName
     ) || electionTitle
 
-  const socialImage = buildSocialImageUrl(organization?.account?.avatar, canonicalUrl)
+  const socialImage = buildSocialImageUrl(getLocalizedRawText(organization?.logo, language) || undefined, canonicalUrl)
   const title = buildMetaTitle(electionTitle, organizationName)
 
   return {
@@ -396,13 +409,14 @@ export const loadOrganizationPageData = async ({
   language: string
   alternates: PublicLanguageAlternate[]
 }) => {
-  const organization = await client.fetchAccountInfo(address)
-  const electionsPage = await client.fetchElections({ organizationId: organization.address, page: 0 })
+  const organization = await client.organizations.get(address)
+  // SAAS list pages are 1-based.
+  const { processes, pagination } = await client.elections.list({ orgAddress: organization.address, page: 1 })
 
   return {
     address,
     organization,
-    electionsPage,
+    electionsPage: { elections: processes, pagination } satisfies ElectionsPageData,
     meta: buildOrganizationMeta({ organization, canonicalUrl, language, alternates }),
   }
 }
@@ -420,8 +434,9 @@ export const loadProcessPageData = async ({
   language: string
   alternates: PublicLanguageAlternate[]
 }) => {
-  const election = await client.fetchElection(id)
-  const organization = await client.fetchAccountInfo(election.organizationId)
+  const election = await client.elections.get(id)
+  // Process reads return orgAddress unprefixed; the organization endpoint wants 0x.
+  const organization = await client.organizations.get(ensureAddressPrefix(election.orgAddress))
 
   return {
     id,
@@ -431,11 +446,10 @@ export const loadProcessPageData = async ({
   }
 }
 
+// The SaaS API answers unknown ids/addresses with 404 and malformed ones with
+// 400 — both should render the public 404 page rather than a server error.
 export const isPublicPageNotFoundError = (error: unknown) =>
-  error instanceof ErrElectionNotFound ||
-  error instanceof ErrCantParseElectionID ||
-  error instanceof ErrAddressMalformed ||
-  error instanceof ErrAccountNotFound
+  error instanceof VocdoniApiError && (error.status === 404 || error.status === 400)
 
 export const serializePublicPageErrorDetails = (error: unknown) => {
   if (!(error instanceof Error)) {

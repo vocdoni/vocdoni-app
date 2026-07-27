@@ -1,11 +1,11 @@
-import { PublishedElection } from '@vocdoni/sdk'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useData } from 'vike-react/useData'
 import PageMetaHead from '~src/pages/shared/PageMetaHead'
 import { buildProcessStructuredData } from '~src/pages/shared/publicPageSchema'
 import type { OrganizationData, PublicMeta } from '~src/ssr/public-pages'
 
 type ProcessPageData = {
-  election: PublishedElection
+  election: VotingProcessResponse
   organization: OrganizationData
   meta: PublicMeta
 }

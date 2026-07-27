@@ -1,4 +1,4 @@
-import { ErrAccountNotFound, ErrElectionNotFound, PublishedElection } from '@vocdoni/sdk'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import {
   buildOrganizationMeta,
   buildProcessMeta,
@@ -19,62 +19,61 @@ import {
 } from './public-pages'
 
 type MockClient = {
-  fetchAccountInfo: ReturnType<typeof vi.fn>
-  fetchElections: ReturnType<typeof vi.fn>
-  fetchElection: ReturnType<typeof vi.fn>
+  organizations: { get: ReturnType<typeof vi.fn> }
+  elections: { get: ReturnType<typeof vi.fn>; list: ReturnType<typeof vi.fn> }
 }
+
+const createMockClient = (overrides: Partial<{ organizationsGet: any; electionsGet: any; electionsList: any }> = {}) =>
+  ({
+    organizations: { get: overrides.organizationsGet ?? vi.fn() },
+    elections: {
+      get: overrides.electionsGet ?? vi.fn(),
+      list: overrides.electionsList ?? vi.fn(),
+    },
+  }) satisfies MockClient
 
 const createOrganization = (overrides: Record<string, unknown> = {}) =>
   ({
     address: '0xabc',
-    account: {
-      name: { default: 'Vocdoni Association' },
-      description: { default: 'A digital voting organization for tests.' },
-    },
+    name: { default: 'Vocdoni Association' },
+    description: { default: 'A digital voting organization for tests.' },
     ...overrides,
   }) as any
 
 const createElection = (overrides: Record<string, unknown> = {}) =>
-  new PublishedElection({
+  ({
     id: '0xprocess',
-    organizationId: '0xabc',
+    orgAddress: 'abc',
     title: { default: 'Board election 2026' },
     description: { default: 'Vote for the next board members.' },
-    status: 'READY',
-    startDate: new Date('2026-01-01T00:00:00.000Z'),
-    endDate: new Date('2026-01-02T00:00:00.000Z'),
-    electionType: {
-      anonymous: false,
-      interruptible: true,
-      dynamicCensus: false,
-      secretUntilTheEnd: false,
-    },
-    census: null,
+    census: {},
     questions: [],
+    published: true,
+    startDate: '2026-01-01T00:00:00.000Z',
+    endDate: '2026-01-02T00:00:00.000Z',
     ...overrides,
-  } as any)
+  }) as any
 
-const createPaginatedElections = () =>
+const createProcessList = () =>
   ({
-    elections: [createElection()],
+    processes: [createElection()],
     pagination: {
       totalItems: 1,
       previousPage: null,
-      currentPage: 0,
+      currentPage: 1,
       nextPage: null,
-      lastPage: 0,
+      lastPage: 1,
     },
   }) as any
 
 describe('loadOrganizationPageData', () => {
   it('loads the organization and the first elections page', async () => {
     const organization = createOrganization()
-    const elections = createPaginatedElections()
-    const client: MockClient = {
-      fetchAccountInfo: vi.fn().mockResolvedValue(organization),
-      fetchElections: vi.fn().mockResolvedValue(elections),
-      fetchElection: vi.fn(),
-    }
+    const list = createProcessList()
+    const client = createMockClient({
+      organizationsGet: vi.fn().mockResolvedValue(organization),
+      electionsList: vi.fn().mockResolvedValue(list),
+    })
 
     const pageData = await loadOrganizationPageData({
       client: client as any,
@@ -84,11 +83,11 @@ describe('loadOrganizationPageData', () => {
       alternates: [],
     })
 
-    expect(client.fetchAccountInfo).toHaveBeenCalledWith('0xabc')
-    expect(client.fetchElections).toHaveBeenCalledWith({ organizationId: '0xabc', page: 0 })
+    expect(client.organizations.get).toHaveBeenCalledWith('0xabc')
+    expect(client.elections.list).toHaveBeenCalledWith({ orgAddress: '0xabc', page: 1 })
     expect(pageData.address).toBe('0xabc')
     expect(pageData.organization).toBe(organization)
-    expect(pageData.electionsPage).toBe(elections)
+    expect(pageData.electionsPage).toEqual({ elections: list.processes, pagination: list.pagination })
     expect(pageData.meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
   })
 })
@@ -97,11 +96,10 @@ describe('loadProcessPageData', () => {
   it('loads the election and related organization', async () => {
     const election = createElection()
     const organization = createOrganization()
-    const client: MockClient = {
-      fetchAccountInfo: vi.fn().mockResolvedValue(organization),
-      fetchElections: vi.fn(),
-      fetchElection: vi.fn().mockResolvedValue(election),
-    }
+    const client = createMockClient({
+      organizationsGet: vi.fn().mockResolvedValue(organization),
+      electionsGet: vi.fn().mockResolvedValue(election),
+    })
 
     const pageData = await loadProcessPageData({
       client: client as any,
@@ -111,8 +109,8 @@ describe('loadProcessPageData', () => {
       alternates: [],
     })
 
-    expect(client.fetchElection).toHaveBeenCalledWith('0xprocess')
-    expect(client.fetchAccountInfo).toHaveBeenCalledWith('0xabc')
+    expect(client.elections.get).toHaveBeenCalledWith('0xprocess')
+    expect(client.organizations.get).toHaveBeenCalledWith('0xabc')
     expect(pageData.id).toBe('0xprocess')
     expect(pageData.election).toBe(election)
     expect(pageData.organization).toBe(organization)
@@ -211,7 +209,8 @@ describe('metadata builders', () => {
     const meta = buildOrganizationMeta({
       organization: createOrganization({
         address: '0xfallback',
-        account: { name: { default: 'Fallback Org' }, description: { default: '' } },
+        name: { default: 'Fallback Org' },
+        description: { default: '' },
       }),
       language: 'en',
       alternates: [],
@@ -226,7 +225,8 @@ describe('metadata builders', () => {
     const meta = buildOrganizationMeta({
       organization: createOrganization({
         address: '0xfallback',
-        account: { name: { default: '' }, description: { default: '' } },
+        name: { default: '' },
+        description: { default: '' },
       }),
       language: 'en',
       alternates: [],
@@ -270,10 +270,8 @@ describe('metadata builders', () => {
         description: { default: 'Vote for the next board members.', ca: 'Vota pels nous membres del consell.' },
       }),
       organization: createOrganization({
-        account: {
-          name: { default: 'Vocdoni Association', ca: 'Associació Vocdoni' },
-          description: { default: 'A digital voting organization for tests.', ca: 'Una organització de vot digital.' },
-        },
+        name: { default: 'Vocdoni Association', ca: 'Associació Vocdoni' },
+        description: { default: 'A digital voting organization for tests.', ca: 'Una organització de vot digital.' },
       }),
       language: 'ca',
       alternates: [],
@@ -457,9 +455,10 @@ describe('public language helpers', () => {
 })
 
 describe('isPublicPageNotFoundError', () => {
-  it('recognizes SDK public-page not-found errors', () => {
-    expect(isPublicPageNotFoundError(new ErrElectionNotFound())).toBe(true)
-    expect(isPublicPageNotFoundError(new ErrAccountNotFound())).toBe(true)
+  it('recognizes SaaS not-found and malformed-id errors', () => {
+    expect(isPublicPageNotFoundError(new VocdoniApiError(404, {}, 'process not found'))).toBe(true)
+    expect(isPublicPageNotFoundError(new VocdoniApiError(400, {}, 'invalid id'))).toBe(true)
+    expect(isPublicPageNotFoundError(new VocdoniApiError(500, {}, 'boom'))).toBe(false)
     expect(isPublicPageNotFoundError(new Error('other error'))).toBe(false)
   })
 })

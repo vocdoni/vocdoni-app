@@ -1,7 +1,7 @@
-import { ErrAccountNotFound, ErrCantParseElectionID } from '@vocdoni/sdk'
+import { VocdoniApiError } from '@vocdoni/api-client'
 
-const { createVocdoniSdkClient } = vi.hoisted(() => ({
-  createVocdoniSdkClient: vi.fn(),
+const { createVocdoniApiClient } = vi.hoisted(() => ({
+  createVocdoniApiClient: vi.fn(),
 }))
 
 vi.mock('~src/app-env-server', () => ({
@@ -10,18 +10,19 @@ vi.mock('~src/app-env-server', () => ({
   getServerAppEnv: () => ({
     LANGUAGES: { en: 'English', ca: 'Catalan' },
     APP_URL: process.env.APP_URL,
+    SAAS_URL: 'https://saas-api.example.test',
   }),
 }))
 
 vi.mock('~src/providers/vocdoni-client-config', () => ({
-  createVocdoniSdkClient,
+  createVocdoniApiClient,
 }))
 
 import { loadOrganizationPublicPageData, loadProcessPublicPageData } from './publicPageData'
 
 describe('public page data loaders', () => {
   beforeEach(() => {
-    createVocdoniSdkClient.mockReset()
+    createVocdoniApiClient.mockReset()
   })
 
   afterEach(() => {
@@ -29,10 +30,9 @@ describe('public page data loaders', () => {
   })
 
   it('renders a 404 when the organization does not exist', async () => {
-    createVocdoniSdkClient.mockReturnValue({
-      fetchAccountInfo: vi.fn().mockRejectedValue(new ErrAccountNotFound()),
-      fetchElections: vi.fn(),
-      fetchElection: vi.fn(),
+    createVocdoniApiClient.mockReturnValue({
+      organizations: { get: vi.fn().mockRejectedValue(new VocdoniApiError(404, {}, 'account not found')) },
+      elections: { get: vi.fn(), list: vi.fn() },
     })
 
     try {
@@ -48,10 +48,12 @@ describe('public page data loaders', () => {
   })
 
   it('renders a 404 when the process id is malformed', async () => {
-    createVocdoniSdkClient.mockReturnValue({
-      fetchAccountInfo: vi.fn(),
-      fetchElections: vi.fn(),
-      fetchElection: vi.fn().mockRejectedValue(new ErrCantParseElectionID()),
+    createVocdoniApiClient.mockReturnValue({
+      organizations: { get: vi.fn() },
+      elections: {
+        get: vi.fn().mockRejectedValue(new VocdoniApiError(400, {}, 'cannot parse electionId')),
+        list: vi.fn(),
+      },
     })
 
     try {
@@ -69,10 +71,9 @@ describe('public page data loaders', () => {
   it('keeps non-not-found errors untouched', async () => {
     const upstreamError = new Error('upstream failed')
 
-    createVocdoniSdkClient.mockReturnValue({
-      fetchAccountInfo: vi.fn(),
-      fetchElections: vi.fn(),
-      fetchElection: vi.fn().mockRejectedValue(upstreamError),
+    createVocdoniApiClient.mockReturnValue({
+      organizations: { get: vi.fn() },
+      elections: { get: vi.fn().mockRejectedValue(upstreamError), list: vi.fn() },
     })
 
     await expect(
@@ -86,22 +87,24 @@ describe('public page data loaders', () => {
   it('prefers APP_URL over request headers when building public URLs', async () => {
     process.env.APP_URL = 'https://app.vocdoni.io'
 
-    createVocdoniSdkClient.mockReturnValue({
-      fetchAccountInfo: vi.fn().mockResolvedValue({
-        address: '0xorganization',
-        account: {
+    createVocdoniApiClient.mockReturnValue({
+      organizations: {
+        get: vi.fn().mockResolvedValue({
+          address: '0xorganization',
           name: { en: 'Example Org' },
           description: { en: 'Example description' },
-        },
-      }),
-      fetchElections: vi.fn().mockResolvedValue({
-        elections: [],
-        pagination: {
-          currentPage: 0,
-          lastPage: 0,
-        },
-      }),
-      fetchElection: vi.fn(),
+        }),
+      },
+      elections: {
+        get: vi.fn(),
+        list: vi.fn().mockResolvedValue({
+          processes: [],
+          pagination: {
+            currentPage: 1,
+            lastPage: 1,
+          },
+        }),
+      },
     })
 
     const result = await loadOrganizationPublicPageData({
