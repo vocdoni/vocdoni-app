@@ -1,5 +1,5 @@
 import { useClient } from '@vocdoni/react-components'
-import { VocdoniSDKClient } from '@vocdoni/sdk'
+import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { lazy } from 'react'
 import { Params } from 'react-router-dom'
 // These aren't lazy loaded since they are main layouts and related components
@@ -14,7 +14,7 @@ const Process = lazy(() => import('~elements/processes/view'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
 const PlansPublicPage = lazy(() => import('~elements/plans'))
 
-const RootElements = (client: VocdoniSDKClient) => [
+const RootElements = (client: VocdoniApiClient) => [
   {
     path: Routes.processes.view,
     id: 'process-view',
@@ -24,7 +24,7 @@ const RootElements = (client: VocdoniSDKClient) => [
         <Process />
       </SuspenseLoader>
     ),
-    loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
+    loader: async ({ params }: { params: Params<string> }) => client.elections.get(params.id!),
     errorElement: <ErrorElement />,
   },
   {
@@ -34,7 +34,7 @@ const RootElements = (client: VocdoniSDKClient) => [
         <OrganizationView />
       </SuspenseLoader>
     ),
-    loader: async ({ params }: { params: Params<string> }) => client.fetchAccountInfo(params.address),
+    loader: async ({ params }: { params: Params<string> }) => client.organizations.get(params.address!),
     errorElement: <ErrorElement />,
   },
   {

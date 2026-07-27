@@ -7,3 +7,9 @@ const normalizeAddress = (address: string) => address.toLowerCase().replace(/^0x
  */
 export const sameAddress = (a?: string | null, b?: string | null): boolean =>
   !!a && !!b && normalizeAddress(a) === normalizeAddress(b)
+
+/**
+ * Lowercase `0x`-prefixed form of a hex address, for endpoints that expect the
+ * prefix (orgs/auth) when the value came from a SAAS process read (unprefixed).
+ */
+export const ensureAddressPrefix = (address: string) => `0x${normalizeAddress(address)}`

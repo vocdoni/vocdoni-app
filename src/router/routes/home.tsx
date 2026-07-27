@@ -33,7 +33,7 @@ export const useHomeRoute = () => {
       element: <SuspenseLoader>{homeContent}</SuspenseLoader>,
       loader: async () => {
         if (domainForHost) {
-          return client.fetchAccountInfo(domainForHost)
+          return client.organizations.get(domainForHost)
         }
         return null
       },

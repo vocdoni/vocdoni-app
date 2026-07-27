@@ -1,11 +1,11 @@
-import { AccountData } from '@vocdoni/sdk'
+import type { Organization } from '@vocdoni/api-types'
 import { useLoaderData } from 'react-router-dom'
 import PublicOrganizationPage from './PublicPage'
 
-const Organization = () => {
-  const organization = useLoaderData() as AccountData
+const OrganizationView = () => {
+  const organization = useLoaderData() as Organization
 
-  return <PublicOrganizationPage organization={organization as any} />
+  return <PublicOrganizationPage organization={organization} />
 }
 
-export default Organization
+export default OrganizationView

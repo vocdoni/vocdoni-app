@@ -1,13 +1,20 @@
-import { PublishedElection } from '@vocdoni/sdk'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useLoaderData } from 'react-router-dom'
+import { ensureAddressPrefix } from '~utils/address'
 import PublicProcessPage from './PublicPage'
 
 const Process = () => {
-  const election = useLoaderData() as PublishedElection
+  const election = useLoaderData() as VotingProcessResponse
 
-  // From a react-router loader the election is a live PublishedElection instance,
-  // so its `id` getter works here (unlike the Vike SSR-serialized path).
-  return <PublicProcessPage id={election.id} election={election} />
+  // The process read returns orgAddress unprefixed; the organization endpoints
+  // expect the 0x-prefixed form.
+  return (
+    <PublicProcessPage
+      id={election.id}
+      election={election}
+      organizationAddress={election.orgAddress ? ensureAddressPrefix(election.orgAddress) : undefined}
+    />
+  )
 }
 
 export default Process
