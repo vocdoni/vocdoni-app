@@ -1,4 +1,4 @@
-import { ElectionProvider, OrganizationProvider } from '@vocdoni/react-components'
+import { ElectionProvider, OrganizationProvider, ProcessProvider } from '@vocdoni/react-components'
 import { PublishedElection } from '@vocdoni/sdk'
 import LegalNotice from '~components/Layout/LegalNotice'
 import { ProcessView as ProcessViewComponent } from '~components/Process/View'
@@ -33,10 +33,15 @@ const PublicProcessPage = ({ id, election, organization }: PublicProcessPageProp
         vochain-oriented @vocdoni/sdk client, which can't be swapped for the v2 SaaS
         client without a wider SSR/data-loading migration — see the fix summary.
       */}
-      <ElectionProvider id={id}>
-        <ProcessViewComponent />
-        <LegalNotice />
-      </ElectionProvider>
+      {/* ProcessProvider holds the per-process CSP voter session (auth0/auth1/check/sign);
+          the nested ElectionProvider reuses it for membership checks and voting. Same id →
+          both resolve through a single react-query fetch. */}
+      <ProcessProvider id={id}>
+        <ElectionProvider id={id}>
+          <ProcessViewComponent />
+          <LegalNotice />
+        </ElectionProvider>
+      </ProcessProvider>
     </OrganizationProvider>
   )
 }

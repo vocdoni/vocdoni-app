@@ -1,4 +1,4 @@
-import { CensusType } from '@vocdoni/sdk'
+import userEvent from '@testing-library/user-event'
 import { mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import LogoutButton from './LogoutButton'
@@ -12,21 +12,16 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   }
 })
 
-vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ logout: vi.fn() }),
-}))
-
 describe('LogoutButton', () => {
+  const clearVoter = vi.fn()
+
   beforeEach(() => {
+    clearVoter.mockReset()
     setReactProvidersMock({
       useElection: () =>
         mockUseElection({
-          election: {
-            census: { type: CensusType.CSP },
-            meta: {},
-          },
           connected: true,
-          clearClient: vi.fn(),
+          clearVoter,
         }),
     })
   })
@@ -34,5 +29,24 @@ describe('LogoutButton', () => {
   it('renders logout button when connected', () => {
     render(<LogoutButton />)
     expect(screen.getByText('logout')).toBeInTheDocument()
+  })
+
+  it('clears the voter session on click', async () => {
+    const user = userEvent.setup()
+    render(<LogoutButton />)
+
+    await user.click(screen.getByText('logout'))
+
+    expect(clearVoter).toHaveBeenCalled()
+  })
+
+  it('renders nothing when not connected', () => {
+    setReactProvidersMock({
+      useElection: () => mockUseElection({ connected: false }),
+    })
+
+    render(<LogoutButton />)
+
+    expect(screen.queryByText('logout')).not.toBeInTheDocument()
   })
 })

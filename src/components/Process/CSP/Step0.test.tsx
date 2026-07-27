@@ -1,6 +1,4 @@
-import type { PublishedElection } from '@vocdoni/sdk'
-import { mockUseElection, render } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { render } from '~src/test-utils'
 import { Step0Base } from './Step0'
 
 vi.mock('./CSPStepsProvider', () => ({
@@ -13,7 +11,7 @@ vi.mock('./CSPStepsProvider', () => ({
 }))
 
 vi.mock('./basics', () => ({
-  useTwoFactorAuth: () => ({
+  useCspAuth0: () => ({
     mutateAsync: vi.fn(),
     isPending: false,
     isError: false,
@@ -21,20 +19,8 @@ vi.mock('./basics', () => ({
 }))
 
 describe('Step0Base', () => {
-  beforeEach(() => {
-    setReactProvidersMock({
-      useElection: () =>
-        mockUseElection({
-          actions: {
-            csp1: vi.fn(),
-          },
-        }),
-    })
-  })
-
   it('renders the authenticate button', () => {
-    const election = {} as PublishedElection
-    const { getByRole } = render(<Step0Base election={election} />)
+    const { getByRole } = render(<Step0Base />)
 
     expect(getByRole('button', { name: 'Authenticate' })).toBeTruthy()
   })

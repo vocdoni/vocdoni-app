@@ -1,18 +1,13 @@
 import { Button, CloseButton, Dialog, Portal } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { Trans, useTranslation } from 'react-i18next'
-import { useCensusBundle } from '~queries/census'
 import { CspAuthProvider, useCspAuthContext } from './CSPStepsProvider'
 import { Step0Base } from './Step0'
 import { Step1Base } from './Step1'
 
 export const CspAuthModal = () => {
   const { t } = useTranslation()
-  const { election } = useElection()
   const { currentStep } = useCspAuthContext()
-
-  if (election instanceof InvalidElection) return null
 
   return (
     <Dialog.Root size='sm'>
@@ -33,13 +28,7 @@ export const CspAuthModal = () => {
                 <Trans i18nKey='csp.step1.title'>Authentication</Trans>
               </Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body>
-              {currentStep === 0 ? (
-                <Step0Base election={election as PublishedElection} />
-              ) : (
-                <Step1Base election={election as PublishedElection} />
-              )}
-            </Dialog.Body>
+            <Dialog.Body>{currentStep === 0 ? <Step0Base /> : <Step1Base />}</Dialog.Body>
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>
@@ -49,25 +38,18 @@ export const CspAuthModal = () => {
 
 export const CspAuth = () => {
   const { election } = useElection()
-  const {
-    data: censusData,
-    isLoading,
-    error,
-  } = useCensusBundle(election instanceof PublishedElection ? election.census.censusURI : undefined)
 
-  if (election instanceof InvalidElection) return null
-  if (isLoading) return <div>Loading census data...</div>
-  if (error) return <div>Error loading census data: {error.message}</div>
+  if (!election) return null
 
-  const processedCensusData = censusData
-    ? {
-        authFields: censusData.census.authFields,
-        twoFaFields: censusData.census.twoFaFields,
-      }
-    : null
-
+  // The v2 process read carries the census auth configuration inline
+  // (CensusSpec.authFields/twoFaFields) — no separate census bundle fetch.
   return (
-    <CspAuthProvider censusData={processedCensusData}>
+    <CspAuthProvider
+      censusData={{
+        authFields: election.census?.authFields ?? [],
+        twoFaFields: election.census?.twoFaFields ?? [],
+      }}
+    >
       <CspAuthModal />
     </CspAuthProvider>
   )

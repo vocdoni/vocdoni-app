@@ -2,10 +2,6 @@ import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessAside, { VoteButton } from './Aside'
 
-vi.mock('@rainbow-me/rainbowkit', () => ({
-  useConnectModal: () => ({ openConnectModal: vi.fn() }),
-}))
-
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
   const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
@@ -20,10 +16,6 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
 
 vi.mock('./CSP/CSPAuthModal', () => ({
   CspAuth: () => <div>CSP</div>,
-}))
-
-vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ logout: vi.fn() }),
 }))
 
 // Minimal v2 VotingProcessResponse-shaped election: only the fields Aside.tsx
@@ -53,14 +45,14 @@ describe('ProcessAside', () => {
     })
   })
 
-  it('renders status and connect button', () => {
+  it('renders status and the CSP identify flow', () => {
     render(<ProcessAside />)
 
     expect(screen.getByText('PROCESS.STATUS.ACTIVE')).toBeInTheDocument()
-    expect(screen.getByText('menu.connect')).toBeInTheDocument()
+    expect(screen.getByText('CSP')).toBeInTheDocument()
   })
 
-  it('shows login in sidebar and floating CTA when disconnected', () => {
+  it('shows the identify flow in sidebar and floating CTA when disconnected', () => {
     render(
       <>
         <ProcessAside />
@@ -68,7 +60,7 @@ describe('ProcessAside', () => {
       </>
     )
 
-    expect(screen.getAllByText('menu.connect')).toHaveLength(2)
+    expect(screen.getAllByText('CSP')).toHaveLength(2)
     expect(screen.queryByText('logout')).not.toBeInTheDocument()
     expect(screen.queryByText('Vote')).not.toBeInTheDocument()
   })
@@ -97,7 +89,7 @@ describe('ProcessAside', () => {
 
     expect(screen.getByText('logout')).toBeInTheDocument()
     expect(screen.getByText('aside.is_not_in_census')).toBeInTheDocument()
-    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
     expect(screen.queryByText('Vote')).not.toBeInTheDocument()
   })
 
@@ -125,7 +117,7 @@ describe('ProcessAside', () => {
 
     expect(screen.getByText('logout')).toBeInTheDocument()
     expect(screen.getByText('Vote')).toBeEnabled()
-    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
   })
 
   it('shows sidebar logout and hides floating vote when connected and ineligible (already voted)', () => {
@@ -152,7 +144,7 @@ describe('ProcessAside', () => {
 
     expect(screen.getByText('logout')).toBeInTheDocument()
     expect(screen.queryByText('Vote')).not.toBeInTheDocument()
-    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
   })
 
   it('shows the has-voted message and the explorer verify link once the voter has cast a vote', () => {

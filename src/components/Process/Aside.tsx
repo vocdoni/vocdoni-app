@@ -1,5 +1,4 @@
-import { Button, Flex, Link, Text } from '@chakra-ui/react'
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { Flex, Link, Text } from '@chakra-ui/react'
 import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
 import { isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -112,33 +111,17 @@ const ProcessAside = () => {
 }
 
 export const CensusConnectButton = () => {
-  const { t } = useTranslation()
-
   const { election, status, connected } = useElection()
-  const { openConnectModal } = useConnectModal()
 
-  if (!election || status === 'CANCELED') {
+  if (!election || status === 'CANCELED' || connected) {
     return null
   }
 
-  // The v2 CensusSpec carries no wallet-vs-CSP discriminator — every new-model
-  // census is member/CSP-backed (see CensusSpec's doc comment in @vocdoni/api-types).
-  // The CSP identify flow (CspAuth/Step0/Step1/use-csp-session-guard) still talks to
-  // the legacy @vocdoni/sdk CSP client rather than the v2 auth0/auth1/check API, so
-  // switching this branch over is deferred to that flow's own migration; keep the
-  // wallet-connect fallback as the safe default until then.
-  const isCSP = false
-
-  return (
-    <>
-      {!isCSP && !connected && (
-        <Button onClick={openConnectModal} w='full'>
-          {t('menu.connect').toString()}
-        </Button>
-      )}
-      {isCSP && !connected && <CspAuth />}
-    </>
-  )
+  // Every v2 census is member/CSP-backed (see CensusSpec's doc comment in
+  // @vocdoni/api-types), so identifying against the process CSP (auth0/auth1)
+  // is the only way into a voting session — the legacy wallet-connect entry
+  // point is gone with the remote-signer model.
+  return <CspAuth />
 }
 
 export const VoteButton = ({ setQuestionsTab, ...props }: { setQuestionsTab: () => void }) => {

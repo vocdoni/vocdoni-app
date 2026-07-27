@@ -13,25 +13,20 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { useElection } from '@vocdoni/react-components'
-import { PublishedElection } from '@vocdoni/sdk'
 import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useCspAuthContext } from './CSPStepsProvider'
-import { useResendChallenge, useTwoFactorAuth } from './basics'
+import { useCspAuth1, useCspResend } from './basics'
 
 // Define the form data structure
 type CSPStep1FormData = {
   code: string[]
 }
 
-export const Step1Base = ({ election }: { election: PublishedElection }) => {
+export const Step1Base = () => {
   const { authData } = useCspAuthContext()
-  const resend = useResendChallenge(election)
-  const {
-    actions: { csp1 },
-  } = useElection()
+  const resend = useCspResend()
   const { t } = useTranslation()
   const toast = useToast()
   const {
@@ -43,12 +38,13 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
       code: Array.from({ length: 6 }, () => ''),
     },
   })
-  const auth = useTwoFactorAuth<1>(election, 1)
+  const auth = useCspAuth1()
 
   const handleResend = async () => {
     try {
+      // The pending auth token lives in the process session; only the contact
+      // destination is ours to provide.
       await resend.mutateAsync({
-        authToken: authData.authToken,
         email: authData.email,
         phone: authData.phone,
       })
@@ -75,12 +71,10 @@ export const Step1Base = ({ election }: { election: PublishedElection }) => {
     const code = values.code.join('')
 
     try {
-      const { authToken } = await auth.mutateAsync({
-        authToken: authData.authToken,
-        authData: [code],
-      })
+      // auth1 verifies the challenge and marks the voter connected in the
+      // process session — no token juggling on our side.
+      await auth.mutateAsync(code)
 
-      csp1(authToken)
       toast({
         title: t('csp.auth_success', { defaultValue: 'Authentication successful' }),
         type: 'success',

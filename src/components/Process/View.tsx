@@ -32,7 +32,6 @@ import { sameAddress } from '~utils/address'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
-import { useCspSessionGuard } from './CSP/use-csp-session-guard'
 import { CreatedBy } from './CreatedBy'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
@@ -158,8 +157,8 @@ const ProcessInfoPanel = () => {
 export const ProcessView = () => {
   const { t } = useTranslation()
   const { election, hasVoted, status } = useElection()
-  // Close ineligible CSP sessions so the UI offers "Identify" instead of "Logout".
-  useCspSessionGuard()
+  // No CSP session guard needed in v2: process auth tokens live in memory, scoped
+  // to their ProcessProvider, so a stale session from another election can't leak in.
   const videoRef = useRef<HTMLDivElement>(null)
   const electionRef = useRef<HTMLDivElement>(null)
   const [tabValue, setTabValue] = useState<'questions' | 'results'>('questions')

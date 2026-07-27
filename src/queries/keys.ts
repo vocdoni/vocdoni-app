@@ -23,9 +23,6 @@ export const QueryKeys = {
     groups: (address?: string) => ['organizations', 'groups', address].filter(Boolean),
     apikeys: (address?: string) => ['organizations', 'apikeys', address].filter(Boolean),
   },
-  census: {
-    bundle: (censusURI?: string) => ['census', 'bundle', censusURI].filter(Boolean),
-  },
   process: {
     participants: (processId?: string, field?: string, value?: string) =>
       ['process', 'participants', processId, field, value].filter(Boolean),
