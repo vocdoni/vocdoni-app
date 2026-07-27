@@ -1,6 +1,6 @@
 import type { PageContext } from 'vike/types'
 import { normalizeLanguages } from '~src/app-env'
-import { getPublicLocalizedProcessSummaryRouteMatch } from '~src/ssr/public-pages'
+import { getPublicLocalizedProcessSummaryRouteMatch } from '~src/ssr/public-routes'
 
 export default (pageContext: PageContext) =>
   getPublicLocalizedProcessSummaryRouteMatch({

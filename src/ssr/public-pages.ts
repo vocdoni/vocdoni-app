@@ -193,75 +193,6 @@ export const getLocalizedPublicRedirectTarget = ({
   })
 }
 
-export const getPublicLocalizedOrganizationRouteMatch = ({
-  urlPathname,
-  supportedLanguages,
-}: {
-  urlPathname: string
-  supportedLanguages: string[]
-}) => {
-  const match = urlPathname.match(/^\/([^/]+)\/organization\/([^/]+)\/?$/)
-
-  if (!match) return false
-
-  const [, lang, address] = match
-
-  if (!supportedLanguages.includes(lang)) return false
-
-  return {
-    routeParams: {
-      lang,
-      address,
-    },
-  }
-}
-
-export const getPublicLocalizedProcessRouteMatch = ({
-  urlPathname,
-  supportedLanguages,
-}: {
-  urlPathname: string
-  supportedLanguages: string[]
-}) => {
-  const match = urlPathname.match(/^\/([^/]+)\/processes\/([^/]+)\/?$/)
-
-  if (!match) return false
-
-  const [, lang, id] = match
-
-  if (!supportedLanguages.includes(lang)) return false
-
-  return {
-    routeParams: {
-      lang,
-      id,
-    },
-  }
-}
-
-export const getPublicLocalizedProcessSummaryRouteMatch = ({
-  urlPathname,
-  supportedLanguages,
-}: {
-  urlPathname: string
-  supportedLanguages: string[]
-}) => {
-  const match = urlPathname.match(/^\/([^/]+)\/processes\/([^/]+)\/summary\/?$/)
-
-  if (!match) return false
-
-  const [, lang, id] = match
-
-  if (!supportedLanguages.includes(lang)) return false
-
-  return {
-    routeParams: {
-      lang,
-      id,
-    },
-  }
-}
-
 export const getPublicOrganizationPath = ({ address, language }: { address: string; language: string }) =>
   `/${language}/organization/${address}`
 
@@ -468,6 +399,12 @@ export const serializePublicPageErrorDetails = (error: unknown) => {
 
   return details
 }
+
+export {
+  getPublicLocalizedOrganizationRouteMatch,
+  getPublicLocalizedProcessRouteMatch,
+  getPublicLocalizedProcessSummaryRouteMatch,
+} from './public-routes'
 
 export { getDefaultPublicLanguage, normalizePublicLanguageCandidate }
 
