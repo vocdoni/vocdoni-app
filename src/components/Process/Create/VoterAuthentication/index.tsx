@@ -1,11 +1,13 @@
 import { Badge, Button, CloseButton, Dialog, Flex, Heading, Portal, Tabs, Text, useDisclosure } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import type { OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import { getApiErrorMessage } from '~components/Auth/api'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
@@ -14,32 +16,29 @@ import { TwoFactorForm } from './TwoFactorForm'
 import { getTwoFaFields, StepCompletionState, VoterAuthFormData } from './utils'
 import { ValidationError, ValidationErrorsAlert } from './ValidationErrorsAlert'
 
-type ValidateGroupArgs = {
+type ValidateCensusArgs = {
   groupId: string
   authFields?: string[]
   twoFaFields?: string[]
 }
 
-const useValidateGroup = () => {
+// Pre-flight check of the census the process will be created with: the chosen
+// credentials must be unique and complete across the target members (the group
+// when one is selected, otherwise the whole organization).
+const useValidateCensus = () => {
   const { organization } = useOrganization()
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
   return useMutation({
-    mutationFn: async ({ groupId, authFields, twoFaFields }: ValidateGroupArgs) => {
-      return await bearedFetch<{ valid: boolean }>(
-        ApiEndpoints.OrganizationGroupValidate.replace('{address}', organization?.address).replace(
-          '{groupId}',
-          groupId
-        ),
-        {
-          method: 'POST',
-          body: {
-            authFields,
-            twoFaFields,
-          },
-        }
-      )
-    },
+    mutationFn: ({ groupId, authFields, twoFaFields }: ValidateCensusArgs) =>
+      client.elections.validateCensus({
+        orgAddress: organization?.address ?? '',
+        census: {
+          groupId: groupId || undefined,
+          authFields: authFields as OrgMemberAuthField[],
+          twoFaFields: twoFaFields as OrgMemberTwoFaField[],
+        },
+      }),
   })
 }
 
@@ -63,7 +62,7 @@ export const VoterAuthentication = () => {
     },
   })
 
-  const validateGroupMutation = useValidateGroup()
+  const validateCensusMutation = useValidateCensus()
 
   const groupId = mainForm.watch('groupId')
   const census = mainForm.watch('census')
@@ -102,7 +101,7 @@ export const VoterAuthentication = () => {
         const currentFormData = voterAuthForm.getValues()
         const twoFaFields = currentFormData.use2FA ? getTwoFaFields(currentFormData.use2FAMethod) : []
 
-        await validateGroupMutation.mutateAsync({
+        await validateCensusMutation.mutateAsync({
           groupId,
           authFields: currentFormData.credentials,
           twoFaFields,
@@ -110,7 +109,8 @@ export const VoterAuthentication = () => {
 
         setActiveTabIndex(2)
       } catch (error) {
-        setValidationError(error.apiError as ValidationError)
+        // The offending member ids ride on the API error body.
+        setValidationError((error instanceof VocdoniApiError ? error.body : error?.apiError) as ValidationError)
         const errorMessage =
           getApiErrorMessage(error) ?? t('voter_auth.validation_failed', { defaultValue: 'Validation failed' })
         toast({
@@ -159,7 +159,7 @@ export const VoterAuthentication = () => {
     }
   }
 
-  const isLoading = validateGroupMutation.isPending
+  const isLoading = validateCensusMutation.isPending
 
   return (
     <>

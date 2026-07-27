@@ -17,6 +17,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { useOrganization } from '@vocdoni/react-components'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import type {
   CensusSpec,
   Choice,
@@ -25,7 +26,6 @@ import type {
   OrgMemberTwoFaField,
   VotingProcessQuestionRequest,
 } from '@vocdoni/api-types'
-import { ensure0x } from '@vocdoni/sdk'
 import { addDays, parse } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -42,8 +42,7 @@ import {
 } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
-import { ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import { ApiError, ErrorCode } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
@@ -51,7 +50,6 @@ import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
-import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
 import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
@@ -61,6 +59,7 @@ import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { useProcessTemplates } from './TemplateProvider'
 import { defaultProcessValues, Option, Process, SelectorTypes, TemplateConfigs, TemplateTypes } from './common'
+import { votingProcessToForm } from './draft-mapping'
 import { getTwoFaFields } from './VoterAuthentication/utils'
 
 type ConfirmOnNavigateOptions = {
@@ -80,15 +79,18 @@ type LeaveConfirmationModalProps = {
   isSamePath: boolean
 }
 
-type CreateProcessRequest = {
-  metadata: Process
-  orgAddress: string
-}
-
 type UpdateProcessRequest = {
   processId: string
-  body: CreateProcessRequest
+  body: CreateVotingProcessRequest
 }
+
+/**
+ * The draft limit is reported by the SaaS API either through the app's own
+ * `api()` wrapper or through the integrator-sdk client, depending on the call.
+ */
+const isDraftLimitError = (error: unknown) =>
+  (error instanceof ApiError && error.apiError?.code === ErrorCode.DraftLimitReached) ||
+  (error instanceof VocdoniApiError && error.code === ErrorCode.DraftLimitReached)
 
 export const saveTimeoutMs = 30000
 
@@ -211,9 +213,9 @@ export const useFormDraftSaver = (
   storeDraftId: (id: string | null) => void,
   saveCooldown?: (ms: number) => void
 ) => {
-  const { currentAddress } = useAuth()
   const createProcess = useCreateProcess()
   const updateProcess = useUpdateProcess()
+  const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const skipNextSaveRef = useRef(false)
   const [draftLimitReached, setDraftLimitReached] = useState(false)
 
@@ -232,17 +234,14 @@ export const useFormDraftSaver = (
       if (isAutoSave && draftLimitReached) return 'limit-reached'
 
       try {
+        // A draft is an unpublished process, so it is saved through the same
+        // structured create/update requests the publish step uses.
         const form = getValues()
+        const body = formToVotingProcessRequest(form, buildCensusSpec(form))
         if (draftId) {
-          await updateProcess.mutateAsync({
-            processId: draftId,
-            body: { metadata: form, orgAddress: ensure0x(currentAddress) },
-          })
+          await updateProcess.mutateAsync({ processId: draftId, body })
         } else {
-          const draftProcessId = await createProcess.mutateAsync({
-            metadata: form,
-            orgAddress: ensure0x(currentAddress),
-          })
+          const draftProcessId = await createProcess.mutateAsync(body)
           storeDraftId(draftProcessId)
         }
         saveCooldown?.(saveTimeoutMs)
@@ -250,7 +249,7 @@ export const useFormDraftSaver = (
         return 'saved'
       } catch (e) {
         // Check if it's a draft limit error
-        if (e instanceof ApiError && e.apiError?.code === ErrorCode.DraftLimitReached) {
+        if (isDraftLimitError(e)) {
           setDraftLimitReached(true)
           // Silently fail for auto-save, throw for manual save
           if (isAutoSave) {
@@ -271,7 +270,7 @@ export const useFormDraftSaver = (
       draftLimitReached,
       getValues,
       draftId,
-      currentAddress,
+      formToVotingProcessRequest,
       updateProcess,
       createProcess,
       storeDraftId,
@@ -454,31 +453,22 @@ const LeaveConfirmationModal = ({
 }
 
 export const useCreateProcess = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
-  return useMutation<string, Error, CreateProcessRequest>({
-    mutationFn: async (body) => {
-      return await bearedFetch(ApiEndpoints.OrganizationProcesses, {
-        method: 'POST',
-        body,
-      })
-    },
+  return useMutation<string, Error, CreateVotingProcessRequest>({
+    mutationFn: (request) => client.elections.create(request),
   })
 }
 
 const useUpdateProcess = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
+
   return useMutation<void, Error, UpdateProcessRequest>({
-    mutationFn: async ({ processId, body }) => {
-      return await bearedFetch(ApiEndpoints.OrganizationProcess.replace('{processId}', processId), {
-        method: 'PUT',
-        body,
-      })
-    },
+    mutationFn: ({ processId, body }) => client.elections.update(processId, body),
   })
 }
 
-const buildCensusSpec = (form: Process): CensusSpec => {
+export const buildCensusSpec = (form: Process): CensusSpec => {
   const spec: CensusSpec = { groupId: form.groupId || undefined, weighted: form.weightedVote || undefined }
   if (form.census?.credentials?.length) {
     spec.authFields = form.census.credentials as OrgMemberAuthField[]
@@ -556,13 +546,20 @@ export const useFormToVotingProcessRequest = () => {
 }
 
 export const useDraft = (draftId?: string | null) => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
-  return useQuery<{ metadata: Process }, Error>({
+  return useQuery<Process | null, Error>({
     queryKey: ['draft', draftId],
     enabled: !!draftId,
     queryFn: async () => {
-      return bearedFetch(ApiEndpoints.OrganizationProcess.replace('{processId}', draftId!))
+      try {
+        return votingProcessToForm(await client.elections.get(draftId!))
+      } catch (error) {
+        // A stale draft id (deleted elsewhere, or left over from the legacy
+        // draft store) must not break the wizard: fall back to a blank form.
+        if (error instanceof VocdoniApiError && error.status === 404) return null
+        throw error
+      }
     },
     refetchOnWindowFocus: false,
   })
@@ -577,7 +574,8 @@ const ProcessCreateView = () => {
   const [searchParams] = useSearchParams()
   const draftId = searchParams.get('draftId')
   const [storedDraftId, storeDraftId] = useLocalStorage('draft-id', null)
-  const deleteDraft = useDeleteDraft()
+  const createProcess = useCreateProcess()
+  const updateProcess = useUpdateProcess()
   const navigate = useNavigate()
   const location = useLocation()
   const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
@@ -623,7 +621,7 @@ const ProcessCreateView = () => {
     setNextId(Date.now().toString())
     if (!formDraft) return
 
-    Object.entries(formDraft.metadata).forEach(([key, value]) => {
+    Object.entries(formDraft).forEach(([key, value]) => {
       if (key === 'groupId' && groupId) return
       methods.setValue(key as keyof Process, value as Process[keyof Process], { shouldDirty: true })
     })
@@ -644,7 +642,7 @@ const ProcessCreateView = () => {
     const limit = permission(SubscriptionPermission.Drafts)
     let description = error instanceof Error ? error.message : String(error)
 
-    if (error instanceof ApiError && error.apiError?.code === ErrorCode.DraftLimitReached) {
+    if (isDraftLimitError(error)) {
       description = t('process.create.limit_reached.message', {
         defaultValue:
           "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
@@ -706,8 +704,12 @@ const ProcessCreateView = () => {
     try {
       const censusSpec = buildCensusSpec(form)
       const request = formToVotingProcessRequest(form, censusSpec)
-      const draftId = await apiClient.elections.create(request)
-      await apiClient.elections.publishAndWait(draftId)
+      // The draft is the process: publish the one we have been saving instead of
+      // creating a second one and leaving the draft orphaned behind it.
+      const processId = effectiveDraftId
+        ? await updateProcess.mutateAsync({ processId: effectiveDraftId, body: request }).then(() => effectiveDraftId)
+        : await createProcess.mutateAsync(request)
+      await apiClient.elections.publishAndWait(processId)
 
       await setStepDoneAsync(SetupStepIds.firstVoteCreation)
 
@@ -733,16 +735,11 @@ const ProcessCreateView = () => {
 
       methods.reset(defaultProcessValues)
 
-      const targetPath = draftId
-        ? generatePath(Routes.dashboard.process, { id: draftId })
-        : Routes.dashboard.processes.all
+      // The stored draft id now points at a published process, so drop it —
+      // deleting it would delete the vote we just published.
+      storeDraftId(null)
 
-      if (effectiveDraftId) {
-        await deleteDraft.mutateAsync({ draftId: effectiveDraftId, silent: true })
-        localStorage.removeItem('draft-id')
-      }
-
-      navigate(targetPath)
+      navigate(generatePath(Routes.dashboard.process, { id: processId }))
     } catch (error) {
       console.error('Error creating election:', error)
 

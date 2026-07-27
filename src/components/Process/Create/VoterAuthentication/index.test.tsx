@@ -7,12 +7,12 @@ import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VoterAuthentication } from '.'
 import { Census, Process, SelectorTypes } from '../common'
 
-const mockBearedFetch = vi.fn()
+const mockValidateCensus = vi.fn()
 
-vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({
-    bearedFetch: mockBearedFetch,
-  }),
+// Partial mock: AllProviders (used by render) still mounts the real ApiClientProvider.
+vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
+  useApiClient: () => ({ client: { elections: { validateCensus: mockValidateCensus } } }),
 }))
 
 type FormWatcherProps = { name: keyof Process }
@@ -83,7 +83,7 @@ describe('VoterAuthentication', () => {
 
   it('Confirm synchronously writes credentials and 2FA config to form.census', async () => {
     // validate step returns success
-    mockBearedFetch.mockResolvedValue({ valid: true })
+    mockValidateCensus.mockResolvedValue({ valid: true })
 
     const user = userEvent.setup()
     // Start with defaultCensus so credentials are pre-populated (Confirm button requires credentials)
@@ -97,7 +97,12 @@ describe('VoterAuthentication', () => {
 
     // Step 2 → step 3 (triggers validate API call)
     await user.click(screen.getByRole('button', { name: /next/i }))
-    await waitFor(() => expect(mockBearedFetch).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockValidateCensus).toHaveBeenCalledTimes(1))
+    // The census is validated as the process will create it: org + census spec.
+    expect(mockValidateCensus).toHaveBeenCalledWith({
+      orgAddress: '0x1',
+      census: { groupId: 'group-1', authFields: ['email'], twoFaFields: [] },
+    })
 
     // Step 3 → Confirm (no API call)
     await user.click(screen.getByRole('button', { name: /confirm/i }))
@@ -112,13 +117,13 @@ describe('VoterAuthentication', () => {
     })
 
     // Confirm does NOT make any additional API calls
-    expect(mockBearedFetch).toHaveBeenCalledTimes(1)
+    expect(mockValidateCensus).toHaveBeenCalledTimes(1)
   })
 
   it('does not make API calls when toggling weightedVote', async () => {
     // Weighted-vote changes no longer trigger census recreation
     render(<TestForm />)
     // If this test renders without error and no unexpected fetch calls, the effect is gone
-    expect(mockBearedFetch).not.toHaveBeenCalled()
+    expect(mockValidateCensus).not.toHaveBeenCalled()
   })
 })
