@@ -47,18 +47,13 @@
   "aside": {
     "has_already_voted": "Seu voto foi registrado corretamente",
     "is_not_in_census": "Você não está na lista de participantes",
-    "overwrite_votes_left_one": "Você pode corrigir seu voto uma vez.",
-    "overwrite_votes_left_many": "",
-    "overwrite_votes_left_other": "Você pode corrigir seu voto até {{ count }} vezes.",
-    "submitting": "Enviando",
     "verify_vote_on_explorer": "Verifique seu voto no Explorer",
     "votes_one": "<span>1</span> <text>eleitor</text>",
     "votes_many": "",
     "votes_other": "<span>{{ count }}</span> <text>eleitores</text>",
     "votes_weight_one": "<span>1</span> <text>voto</text>",
     "votes_weight_many": "",
-    "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>",
-    "voting_anonymous_advice": "Aguarde enquanto a mágica do anonimato acontece 🪄.\nEsse processo pode levar alguns minutos; não feche a janela."
+    "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
   },
   "avatar": {
     "label": "Avatar da organização"

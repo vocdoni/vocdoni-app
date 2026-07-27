@@ -47,18 +47,13 @@
   "aside": {
     "has_already_voted": "El teu vot s'ha registrat correctament",
     "is_not_in_census": "No estàs en el cens",
-    "overwrite_votes_left_one": "Pots corregir el teu vot una vegada.",
-    "overwrite_votes_left_many": "",
-    "overwrite_votes_left_other": "Pots corregir el teu vot {{ count }} vegades.",
-    "submitting": "Enviant",
     "verify_vote_on_explorer": "Verifica el vot a l'explorador",
     "votes_one": "<span>1</span> <text>votant</text>",
     "votes_many": "",
     "votes_other": "<span>{{ count }}</span> <text>votants</text>",
     "votes_weight_one": "<span>1</span> <text>vot</text>",
     "votes_weight_many": "",
-    "votes_weight_other": "<span>{{ count }}</span> <text>vots</text>",
-    "voting_anonymous_advice": "Si us plau, espera mentre la màgia té lloc 🪄.\nAixò pot trigar uns minuts; no tanquis la finestra."
+    "votes_weight_other": "<span>{{ count }}</span> <text>vots</text>"
   },
   "avatar": {
     "label": "Avatar de l'organització"

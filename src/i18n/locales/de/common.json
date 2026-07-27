@@ -47,15 +47,11 @@
   "aside": {
     "has_already_voted": "Deine Stimme wurde erfolgreich abgegeben",
     "is_not_in_census": "Du bist nicht in der Teilnehmerliste",
-    "overwrite_votes_left_one": "Du kannst deine Stimme einmal korrigieren.",
-    "overwrite_votes_left_other": "Du kannst deine Stimme bis zu {{ count }} Mal korrigieren.",
-    "submitting": "Wird übermittelt",
     "verify_vote_on_explorer": "Stimme im Explorer überprüfen",
     "votes_one": "<span>1</span> <text>Wählende Person</text>",
     "votes_other": "<span>{{ count }}</span> <text>Wählende Personen</text>",
     "votes_weight_one": "<span>1</span> <text>Stimme</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>Stimmen</text>",
-    "voting_anonymous_advice": "Bitte warte, während die geheime Abstimmung verarbeitet wird 🪄.\nDies kann einige Minuten dauern – schließe das Fenster nicht."
+    "votes_weight_other": "<span>{{ count }}</span> <text>Stimmen</text>"
   },
   "avatar": {
     "label": "Organisations-Avatar"

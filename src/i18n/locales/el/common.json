@@ -47,15 +47,11 @@
   "aside": {
     "has_already_voted": "Η ψήφος σας έχει καταχωρηθεί σωστά",
     "is_not_in_census": "Δεν ανήκετε στο μητρώο ψηφοφόρων",
-    "overwrite_votes_left_one": "Μπορείτε να διορθώσετε την ψήφο σας μία φορά.",
-    "overwrite_votes_left_other": "Μπορείτε να διορθώσετε την ψήφο σας έως {{ count }} φορές.",
-    "submitting": "Υποβολή",
     "verify_vote_on_explorer": "Επαλήθευση της ψήφου σας στον explorer",
     "votes_one": "<span>1</span> <text>ψηφοφόρος</text>",
     "votes_other": "<span>{{ count }}</span> <text>ψηφοφόροι</text>",
     "votes_weight_one": "<span>1</span> <text>ψήφος</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>ψήφοι</text>",
-    "voting_anonymous_advice": "Περιμένετε όσο ολοκληρώνεται η ανώνυμη διαδικασία 🪄.\nΜπορεί να διαρκέσει μερικά λεπτά. Μην κλείσετε το παράθυρο."
+    "votes_weight_other": "<span>{{ count }}</span> <text>ψήφοι</text>"
   },
   "avatar": {
     "label": "Εικόνα προφίλ οργανισμού"

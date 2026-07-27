@@ -47,15 +47,11 @@
   "aside": {
     "has_already_voted": "Zure botoa behar bezala eman da",
     "is_not_in_census": "Ez zaude erroldan",
-    "overwrite_votes_left_one": "Behin zuzen dezakezu zure botoa.",
-    "overwrite_votes_left_other": "{{ count }} aldiz zuzen dezakezu zure botoa.",
-    "submitting": "Bidaltzen",
     "verify_vote_on_explorer": "Egiaztatu zure botoa esploratzailean",
     "votes_one": "<span>1</span> <text>boto-emaile</text>",
     "votes_other": "<span>{{ count }}</span> <text>boto-emaile</text>",
     "votes_weight_one": "<span>1</span> <text>boto</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>boto</text>",
-    "voting_anonymous_advice": "Itxaron, mesedez, magia gertatzen den bitartean 🪄.\nProzesu honek minutu batzuk iraun ditzake; ez itxi leihoa."
+    "votes_weight_other": "<span>{{ count }}</span> <text>boto</text>"
   },
   "avatar": {
     "label": "Erakundearen avatarra"
