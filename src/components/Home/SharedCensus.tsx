@@ -54,7 +54,7 @@ const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode })
     return <>{children}</>
   }
 
-  return <OrganizationProvider address={organizationAddress}>{children}</OrganizationProvider>
+  return <OrganizationProvider id={organizationAddress}>{children}</OrganizationProvider>
 }
 
 const SharedCensusHomeContent = () => {

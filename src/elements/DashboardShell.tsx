@@ -81,7 +81,9 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
 const DashboardLayoutProviders = (props: PropsWithChildren) => {
   const { organization } = useSaasAccount()
   return (
-    <OrganizationProvider address={organization?.address}>
+    // Only the id: useSaasAccount()'s organization is the app's `.account`-nested
+    // adapter shape, not a v2 Organization, so it must not seed the provider cache.
+    <OrganizationProvider id={organization?.address}>
       <PricingModalProvider {...props} />
     </OrganizationProvider>
   )

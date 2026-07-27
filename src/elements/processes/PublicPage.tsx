@@ -12,7 +12,7 @@ type PublicProcessPageProps = {
 
 const PublicProcessPage = ({ id, election, organizationAddress }: PublicProcessPageProps) => {
   return (
-    <OrganizationProvider address={organizationAddress}>
+    <OrganizationProvider id={organizationAddress}>
       {/* The ElectionProvider hosts the election data, results and the voter's
           CSP auth session; poll both reads so an open tab tracks status changes
           and live tallies. */}

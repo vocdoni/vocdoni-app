@@ -12,7 +12,7 @@ type PublicProcessSummaryViewProps = {
 
 const PublicProcessSummaryView = ({ id, election, organizationAddress }: PublicProcessSummaryViewProps) => {
   return (
-    <OrganizationProvider address={organizationAddress}>
+    <OrganizationProvider id={organizationAddress}>
       <ElectionProvider
         id={id}
         election={election}
