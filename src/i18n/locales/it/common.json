@@ -1421,6 +1421,7 @@
       }
     },
     "voters": "Votanti",
+    "voting": "Stiamo elaborando il tuo voto. Questo processo richiederà alcuni secondi. Non chiudere o aggiornare questa pagina.",
     "voting_method": {
       "approval": "Voto per approvazione",
       "budget": "Bilancio partecipativo",

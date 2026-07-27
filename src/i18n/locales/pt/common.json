@@ -1421,6 +1421,7 @@
       }
     },
     "voters": "Votantes",
+    "voting": "Estamos a processar o teu voto. Este processo demorará alguns segundos. Não feches nem atualizes esta página.",
     "voting_method": {
       "approval": "Aprovação",
       "budget": "Afetação de orçamento",

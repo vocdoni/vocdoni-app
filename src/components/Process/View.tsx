@@ -9,12 +9,14 @@ import {
   Icon,
   Link,
   Portal,
+  Spinner,
   TabsContent,
   TabsContentGroup,
   TabsList,
   TabsRoot,
   TabsTrigger,
   Text,
+  VStack,
 } from '@chakra-ui/react'
 import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
 import { hasResults } from '@vocdoni/api-client'
@@ -330,7 +332,25 @@ const SuccessVoteModal = () => {
   )
 }
 
-// VotingVoteModal: the v2 ElectionContextValue exposes loading as a flat boolean,
-// not as { voting: boolean }. The voting-in-progress overlay is owned by the
-// voting flow components (Aside/VoteButton) which are deferred to a later refactor.
-const VotingVoteModal = () => null
+// Blocking overlay while the vote submits (CSP sign + relay + job wait per
+// question — potentially long). Keyed on the provider's vote-in-flight flag.
+const VotingVoteModal = () => {
+  const { t } = useTranslation()
+  const { voting } = useElection()
+
+  return (
+    <Dialog.Root open={voting} onOpenChange={() => {}} closeOnEscape={false} closeOnInteractOutside={false}>
+      <Dialog.Backdrop />
+      <Dialog.Positioner>
+        <Dialog.Content>
+          <Dialog.Body>
+            <VStack>
+              <Spinner color='process.spinner' mb={5} w={10} h={10} />
+            </VStack>
+            <Text textAlign='center'>{t('process.voting')}</Text>
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Positioner>
+    </Dialog.Root>
+  )
+}

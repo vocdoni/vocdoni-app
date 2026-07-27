@@ -1397,6 +1397,7 @@
       }
     },
     "voters": "Voters",
+    "voting": "We are processing your vote. This process will take a few seconds. Please do not close or refresh this page.",
     "voting_method": {
       "approval": "Approval",
       "budget": "Budget allocation",

@@ -1421,6 +1421,7 @@
       }
     },
     "voters": "Votants",
+    "voting": "Estem processant el teu vot. Aquest procés trigarà uns segons. Si us plau, no tanquis ni actualitzis aquesta pàgina.",
     "voting_method": {
       "approval": "Aprovació",
       "budget": "Assignació pressupostària",

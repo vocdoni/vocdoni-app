@@ -1421,6 +1421,7 @@
       }
     },
     "voters": "Électeurs",
+    "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",
     "voting_method": {
       "approval": "Approbation",
       "budget": "Allocation budgétaire",

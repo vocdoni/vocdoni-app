@@ -1397,6 +1397,7 @@
       }
     },
     "voters": "Wählende",
+    "voting": "Deine Stimme wird verarbeitet. Das dauert einige Sekunden. Bitte schließe oder aktualisiere diese Seite nicht.",
     "voting_method": {
       "approval": "Zustimmung",
       "budget": "Budgetverteilung",

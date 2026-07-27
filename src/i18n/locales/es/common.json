@@ -1421,6 +1421,7 @@
       }
     },
     "voters": "Votantes",
+    "voting": "Estamos procesando tu voto. Este proceso tardará unos segundos. No cierres ni actualices esta página.",
     "voting_method": {
       "approval": "Aprobación",
       "budget": "Asignación presupuestaria",
