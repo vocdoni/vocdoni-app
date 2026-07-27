@@ -1019,7 +1019,6 @@
   "menu": {
     "burger_aria_label": "user menu",
     "collapse": "Collapse menu",
-    "connect": "Connect",
     "create": "Create Process",
     "dashboard": "Dashboard",
     "expand": "Expand menu",
@@ -1305,16 +1304,6 @@
       "starts": "Starts"
     },
     "extended_info": "Extended info",
-    "gitcoin": {
-      "all_of_them": "(All of them)",
-      "gps_score": "Gitcoin Passport Score: Min. score {{score}}",
-      "needed_stamps": "Needed Stamps",
-      "one_of_them": "(At least one of them)"
-    },
-    "is_anonymous": {
-      "description": "Anonymous voting",
-      "title": "Privacy"
-    },
     "is_invalid": "This process has wrong data, thus making it invalid",
     "no_description": "No description provided",
     "people_in_census_one": "One voter",

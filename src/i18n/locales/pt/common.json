@@ -1036,7 +1036,6 @@
   "menu": {
     "burger_aria_label": "menu de utilizador",
     "collapse": "Recolher menu",
-    "connect": "Ligar",
     "create": "Criar processo",
     "dashboard": "Dashboard",
     "expand": "Expandir menu",
@@ -1327,16 +1326,6 @@
       "starts": "Começa"
     },
     "extended_info": "Informações detalhadas",
-    "gitcoin": {
-      "all_of_them": "(Todos)",
-      "gps_score": "Pontuação Gitcoin Passport: pontuação mín. {{score}}",
-      "needed_stamps": "Selos necessários",
-      "one_of_them": "(Pelo menos um deles)"
-    },
-    "is_anonymous": {
-      "description": "Votação anónima",
-      "title": "Privacidade"
-    },
     "is_invalid": "Este processo contém dados incorretos, sendo por isso inválido",
     "no_description": "Não foi fornecida descrição",
     "people_in_census_one": "Um votante",

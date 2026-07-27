@@ -1019,7 +1019,6 @@
   "menu": {
     "burger_aria_label": "Benutzermenü",
     "collapse": "Menü einklappen",
-    "connect": "Verbinden",
     "create": "Abstimmung erstellen",
     "dashboard": "Dashboard",
     "expand": "Menü ausklappen",
@@ -1305,16 +1304,6 @@
       "starts": "Beginnt"
     },
     "extended_info": "Erweiterte Infos",
-    "gitcoin": {
-      "all_of_them": "(Alle davon)",
-      "gps_score": "Gitcoin Passport Score: Mindestpunktzahl {{score}}",
-      "needed_stamps": "Benötigte Stamps",
-      "one_of_them": "(Mindestens einer davon)"
-    },
-    "is_anonymous": {
-      "description": "Geheime Abstimmung",
-      "title": "Datenschutz"
-    },
     "is_invalid": "Dieser Prozess enthält fehlerhafte Daten und ist daher ungültig",
     "no_description": "Keine Beschreibung vorhanden",
     "people_in_census_one": "Ein Wähler",

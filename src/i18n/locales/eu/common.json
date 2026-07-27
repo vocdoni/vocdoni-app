@@ -1019,7 +1019,6 @@
   "menu": {
     "burger_aria_label": "erabiltzaile-menua",
     "collapse": "Tolestu menua",
-    "connect": "Konektatu",
     "create": "Sortu prozesua",
     "dashboard": "Panela",
     "expand": "Zabaldu menua",
@@ -1305,16 +1304,6 @@
       "starts": "Hasiera"
     },
     "extended_info": "Informazio zabaldua",
-    "gitcoin": {
-      "all_of_them": "(Guztiak)",
-      "gps_score": "Gitcoin Passport puntuazioa: gutx. {{score}}",
-      "needed_stamps": "Beharrezko zigiluak",
-      "one_of_them": "(Gutxienez bat)"
-    },
-    "is_anonymous": {
-      "description": "Boto sekretua",
-      "title": "Pribatutasuna"
-    },
     "is_invalid": "Prozesu honek datu okerrak ditu eta, beraz, ez da baliozkoa",
     "no_description": "Ez da deskribapenik eman",
     "people_in_census_one": "Boto-emaile bat",
