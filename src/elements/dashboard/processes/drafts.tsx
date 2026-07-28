@@ -45,18 +45,16 @@ const useDrafts = () => {
   return useQuery({
     queryKey: [...QueryKeys.organization.drafts(organization?.address), page, limit],
     enabled: !!organization?.address,
-    queryFn: async () => {
-      const { processes, pagination } = await client.elections.list({
+    // `published: false` is the drafts-only view; it requires a Manager/Admin
+    // session (401 otherwise) and must not be combined with a status filter,
+    // which never matches a draft's not-yet-on-chain questions.
+    queryFn: () =>
+      client.elections.list({
         orgAddress: organization!.address,
+        published: false,
         page,
         limit,
-      })
-
-      // `GET /processes` has no drafts-only filter yet (the backend team is adding
-      // one), so drafts are separated here. Note the page counts still describe the
-      // unfiltered list until that lands.
-      return { processes: processes.filter((process) => !process.published), pagination }
-    },
+      }),
   })
 }
 
