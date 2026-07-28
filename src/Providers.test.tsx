@@ -54,16 +54,24 @@ describe('Providers', () => {
     vi.clearAllMocks()
   })
 
+  // Mounting this pulls in the whole provider graph (wagmi, rainbowkit, chakra,
+  // every locale bundle), which on a loaded machine takes well over the default
+  // timeout. Timing out here used to cascade into the test below: the abandoned
+  // render kept settling and its language detection landed mid-assertion.
   it('mounts without crashing', async () => {
     const { Providers } = await import('./Providers')
     const { container } = render(<Providers />)
     expect(container).toBeTruthy()
-  }, 10000)
+  }, 30000)
 
   it('does not overwrite the persisted preferred language when rendering a public page in english', async () => {
-    window.localStorage.setItem('i18nextLng', 'ca')
-
+    // Import before seeding the preference: `~i18n` builds its detector-backed
+    // singleton at import time, and that detection caches a language. Seeding
+    // afterwards keeps this test independent of whether an earlier test already
+    // paid for the import.
     const { AppProviders } = await import('./Providers')
+
+    window.localStorage.setItem('i18nextLng', 'ca')
 
     render(
       <AppProviders language='en'>
