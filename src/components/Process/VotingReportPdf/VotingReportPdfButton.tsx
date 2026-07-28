@@ -9,6 +9,7 @@ import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useApiClient } from '~src/providers/ApiClientProvider'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
 import {
   buildCertificateData,
@@ -88,6 +89,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
       anchor.click()
       anchor.remove()
       window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+      trackAnalyticsEvent({ name: AnalyticsEvents.PdfReportDownloaded, props: { election_id: election.id } })
     } catch {
       toast({
         title: t('process_pdf.download_error', { defaultValue: 'Could not generate the PDF report' }),

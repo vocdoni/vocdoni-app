@@ -5,8 +5,15 @@ import { forwardRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '~components/Auth/useAuth'
 import { sameAddress } from '~utils/address'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useActions } from './ActionsContext'
 import { ConfirmActionModal } from './ConfirmActionModal'
+
+const trackProcessAction = (action: string, election: { id?: string } | null | undefined) =>
+  trackAnalyticsEvent({
+    name: AnalyticsEvents.ProcessAction,
+    props: { action, election_id: election?.id ?? 'unknown' },
+  })
 
 export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ children, ...props }, ref) => {
   const { currentAddress } = useAuth()
@@ -23,7 +30,16 @@ export const ActionContinue = forwardRef<HTMLButtonElement, ButtonProps>(({ chil
   }
 
   return (
-    <Button ref={ref} loading={loading} onClick={resume} disabled={disabled || status !== 'PAUSED'} {...props}>
+    <Button
+      ref={ref}
+      loading={loading}
+      onClick={() => {
+        trackProcessAction('resume', election)
+        return resume()
+      }}
+      disabled={disabled || status !== 'PAUSED'}
+      {...props}
+    >
       {children ?? t('actions.continue')}
     </Button>
   )
@@ -45,7 +61,16 @@ export const ActionPause = forwardRef<HTMLButtonElement, ButtonProps>(({ childre
   }
 
   return (
-    <Button ref={ref} loading={loading} onClick={pause} disabled={disabled || status !== 'ONGOING'} {...props}>
+    <Button
+      ref={ref}
+      loading={loading}
+      onClick={() => {
+        trackProcessAction('pause', election)
+        return pause()
+      }}
+      disabled={disabled || status !== 'ONGOING'}
+      {...props}
+    >
       {children ?? t('actions.pause')}
     </Button>
   )
@@ -74,6 +99,7 @@ export const ActionEnd = forwardRef<HTMLButtonElement, ButtonProps>(({ children,
         />
       )
     ) {
+      trackProcessAction('end', election)
       await end()
     }
   }
@@ -118,6 +144,7 @@ export const ActionCancel = forwardRef<HTMLButtonElement, ButtonProps>(({ childr
         />
       )
     ) {
+      trackProcessAction('cancel', election)
       await cancel()
     }
   }

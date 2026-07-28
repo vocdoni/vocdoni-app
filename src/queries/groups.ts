@@ -5,6 +5,7 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~src/queries/keys'
 import { Member } from '~src/queries/members'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
 export type Group = {
   id: string
@@ -77,7 +78,11 @@ export const useCreateGroup = () => {
         body,
       })
     },
-    onSuccess: () => {
+    onSuccess: (_data, body) => {
+      trackAnalyticsEvent({
+        name: AnalyticsEvents.MemberGroupCreated,
+        props: { group_size: body?.memberIDs?.length ?? 0 },
+      })
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.groups(organization.address),
       })
@@ -100,6 +105,7 @@ export const useDeleteGroup = () => {
       )
     },
     onSuccess: () => {
+      trackAnalyticsEvent({ name: AnalyticsEvents.MemberGroupDeleted })
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.groups(organization.address),
         exact: false,

@@ -10,16 +10,36 @@ type TagManagerArgs = {
 }
 
 export const AnalyticsEvents = {
+  // Legacy events keep their original names so Plausible/GTM history stays
+  // continuous; PostHog receives them renamed via posthogEventNames below.
   AccountSignup: 'Signup',
   OrganizationCreated: 'OrganizationCreated',
   UserLoggedIn: 'LoggedIn',
   ProcessCreated: 'ProcessCreated',
   SubscriptionSuccessful: 'SubscriptionSuccessful',
+  // Newer events use snake_case in every sink
+  CheckoutStarted: 'checkout_started',
+  BillingPortalOpened: 'billing_portal_opened',
+  PaywallViewed: 'paywall_viewed',
+  FeatureBlocked: 'feature_blocked',
+  ProcessCreationFailed: 'process_creation_failed',
+  ProcessTemplateSelected: 'process_template_selected',
+  ProcessAction: 'process_action',
+  ProcessResultsViewed: 'process_results_viewed',
+  MembersImportStarted: 'members_import_started',
+  MembersImportCompleted: 'members_import_completed',
+  MemberGroupCreated: 'member_group_created',
+  MemberGroupDeleted: 'member_group_deleted',
+  CensusConfigured: 'census_configured',
+  OnboardingStepCompleted: 'onboarding_step_completed',
+  TeamMemberInvited: 'team_member_invited',
+  TeamMemberRemoved: 'team_member_removed',
+  PdfReportDownloaded: 'pdf_report_downloaded',
 } as const
 
 export interface AnalyticsEvent {
   name: (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents]
-  props?: Record<string, string>
+  props?: Record<string, string | number | boolean>
 }
 
 let plausibleInitialized = false
@@ -106,7 +126,10 @@ export const trackPlausibleEvent = (event: AnalyticsEvent): void => {
 
   void loadPlausibleModule()
     .then(({ track }) => {
-      track(event.name, { props: event.props })
+      // Plausible only accepts string custom property values
+      const props =
+        event.props && Object.fromEntries(Object.entries(event.props).map(([key, value]) => [key, String(value)]))
+      track(event.name, { props })
     })
     .catch((error) => {
       console.error('Failed to track Plausible event:', error)
@@ -129,6 +152,15 @@ export const trackGTMEvent = (event: AnalyticsEvent): void => {
     .catch((error) => {
       console.error('Failed to track GTM event:', error)
     })
+}
+
+// Fans an event out to every configured sink. Safe to call from hooks or query
+// files without the AnalyticsProvider context: every sink silently no-ops until
+// it has been initialized.
+export const trackAnalyticsEvent = (event: AnalyticsEvent): void => {
+  trackPlausibleEvent(event)
+  trackGTMEvent(event)
+  trackPosthogEvent(event)
 }
 
 // --- PostHog ---

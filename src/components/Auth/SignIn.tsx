@@ -60,7 +60,7 @@ const SignIn = ({
   const toast = useToast()
   const navigate = useNavigate()
   const { setTitle, setSubtitle } = useOutletContext<AuthOutletContextType>()
-  const { trackPlausibleEvent } = useAnalytics()
+  const { trackEvent } = useAnalytics()
   const methods = useForm<FormData>({
     defaultValues: { email: emailProp },
   })
@@ -90,7 +90,7 @@ const SignIn = ({
   const onSubmit = async (data: FormData) => {
     await login(data)
       .then(() => {
-        trackPlausibleEvent({ name: AnalyticsEvents.UserLoggedIn })
+        trackEvent({ name: AnalyticsEvents.UserLoggedIn, props: { method: 'password' } })
         const redirect = localStorage.getItem('redirectTo')
         localStorage.removeItem('redirectTo')
         navigate(redirect || successRoute)

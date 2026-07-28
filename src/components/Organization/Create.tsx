@@ -80,12 +80,19 @@ export const OrganizationCreate = ({
   const [isPending, setIsPending] = useState(false)
   const methods = useForm<FormData>()
   const { handleSubmit } = methods
-  const { trackPlausibleEvent } = useAnalytics()
+  const { trackEvent } = useAnalytics()
   const { bearedFetch } = useAuth()
 
   const { mutateAsync: createOrganization } = useOrganizationCreate({
-    onSuccess: async ({ address }) => {
-      trackPlausibleEvent({ name: AnalyticsEvents.OrganizationCreated })
+    onSuccess: async ({ address }, values) => {
+      trackEvent({
+        name: AnalyticsEvents.OrganizationCreated,
+        props: {
+          org_type: values.type || 'unknown',
+          org_size: values.size || 'unknown',
+          org_country: values.country || 'unknown',
+        },
+      })
       toast({
         title: t('organization.create_org_success', {
           defaultValue: 'Organization created successfully',

@@ -7,7 +7,6 @@ import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent } from '~components/Cooki
 import { useProfile } from '~queries/account'
 import { useAppEnv } from '~src/app-env'
 import {
-  AnalyticsEvent,
   applyPosthogConsent,
   identifyPosthogUser,
   initializeGTM,
@@ -17,6 +16,7 @@ import {
   registerPosthogSuperProperties,
   resetPosthogUser,
   setPosthogOrganization,
+  trackAnalyticsEvent,
   trackGTMEvent,
   trackPlausibleEvent,
   trackPosthogEvent,
@@ -129,14 +129,8 @@ const useAnalyticsProvider = () => {
     subscription,
   ])
 
-  const trackEvent = (event: AnalyticsEvent) => {
-    trackPlausibleEvent(event)
-    trackGTMEvent(event)
-    trackPosthogEvent(event)
-  }
-
   return {
-    trackEvent,
+    trackEvent: trackAnalyticsEvent,
     trackPlausibleEvent,
     trackGTMEvent,
     trackPosthogEvent,
