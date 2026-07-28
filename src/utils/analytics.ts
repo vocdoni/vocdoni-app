@@ -281,6 +281,7 @@ export const initializePosthog = ({ key, host, analyticsClientId, consent }: Pos
       if (analyticsClientId) {
         posthog.register({ client: analyticsClientId })
       }
+      attachPosthogFlagBridge(posthog)
       posthogInitialized = true
     })
     .catch((error) => {
@@ -370,6 +371,48 @@ export const setPosthogOrganization = (address: string, props?: Record<string, u
     .catch((error) => {
       console.error('Failed to set PostHog organization group:', error)
     })
+}
+
+// --- Feature flags ---
+// Listeners may register before PostHog has initialized (children effects run
+// before the provider effect); they are held here and bridged once the SDK is
+// ready, so `useFeatureFlag` works regardless of mount order.
+
+type FlagListener = (isEnabled: (flag: string) => boolean | undefined) => void
+
+const posthogFlagListeners = new Set<FlagListener>()
+let posthogFlagBridgeAttached = false
+
+const attachPosthogFlagBridge = (posthog: (typeof import('posthog-js'))['default']): void => {
+  if (posthogFlagBridgeAttached) return
+  posthogFlagBridgeAttached = true
+
+  posthog.onFeatureFlags(() => {
+    for (const listener of posthogFlagListeners) {
+      listener((flag) => posthog.isFeatureEnabled(flag))
+    }
+  })
+}
+
+export const onPosthogFeatureFlags = (listener: FlagListener): (() => void) => {
+  posthogFlagListeners.add(listener)
+
+  // Late subscribers get the current values right away
+  if (posthogInitialized && canUseBrowserAnalytics()) {
+    void loadPosthogModule()
+      .then(({ default: posthog }) => {
+        if (posthogFlagListeners.has(listener)) {
+          listener((flag) => posthog.isFeatureEnabled(flag))
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to read PostHog feature flags:', error)
+      })
+  }
+
+  return () => {
+    posthogFlagListeners.delete(listener)
+  }
 }
 
 // Session replay is opt-in twice over: it only ever runs for authenticated

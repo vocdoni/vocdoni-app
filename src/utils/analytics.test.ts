@@ -27,6 +27,8 @@ const mockPosthog = {
   has_opted_out_capturing: vi.fn(() => false),
   startSessionRecording: vi.fn(),
   stopSessionRecording: vi.fn(),
+  onFeatureFlags: vi.fn((_cb: () => void) => () => {}),
+  isFeatureEnabled: vi.fn((_flag: string): boolean | undefined => undefined),
 }
 
 vi.mock('posthog-js', () => ({
@@ -433,6 +435,56 @@ describe('posthog session recording', () => {
 
     setPosthogSessionRecording(false)
     await vi.waitFor(() => expect(mockPosthog.stopSessionRecording).toHaveBeenCalledTimes(1))
+  })
+})
+
+describe('posthog feature flags', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    Object.values(mockPosthog).forEach((fn) => fn.mockClear())
+    mockPosthog.has_opted_out_capturing.mockReturnValue(false)
+    mockPosthog.onFeatureFlags.mockImplementation(() => () => {})
+    window.history.pushState({}, '', '/')
+  })
+
+  it('notifies listeners registered before initialization once flags load', async () => {
+    let flagsLoadedCallback: (() => void) | undefined
+    mockPosthog.onFeatureFlags.mockImplementation((cb: () => void) => {
+      flagsLoadedCallback = cb
+      return () => {}
+    })
+    mockPosthog.isFeatureEnabled.mockImplementation((flag: string) => flag === 'new-dashboard')
+
+    const { initializePosthog, onPosthogFeatureFlags } = await import('./analytics')
+
+    const seen: Array<boolean | undefined> = []
+    onPosthogFeatureFlags((isEnabled) => seen.push(isEnabled('new-dashboard')))
+
+    initializePosthog({ key: 'phc_test', consent: null })
+    await vi.waitFor(() => expect(mockPosthog.onFeatureFlags).toHaveBeenCalledTimes(1))
+
+    flagsLoadedCallback?.()
+    expect(seen).toEqual([true])
+  })
+
+  it('stops notifying after unsubscribe', async () => {
+    let flagsLoadedCallback: (() => void) | undefined
+    mockPosthog.onFeatureFlags.mockImplementation((cb: () => void) => {
+      flagsLoadedCallback = cb
+      return () => {}
+    })
+
+    const { initializePosthog, onPosthogFeatureFlags } = await import('./analytics')
+
+    const listener = vi.fn()
+    const unsubscribe = onPosthogFeatureFlags(listener)
+
+    initializePosthog({ key: 'phc_test', consent: null })
+    await vi.waitFor(() => expect(mockPosthog.onFeatureFlags).toHaveBeenCalledTimes(1))
+
+    unsubscribe()
+    flagsLoadedCallback?.()
+    expect(listener).not.toHaveBeenCalled()
   })
 })
 

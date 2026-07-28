@@ -11,4 +11,6 @@ export default {
   has_opted_out_capturing: () => false,
   startSessionRecording: () => {},
   stopSessionRecording: () => {},
+  onFeatureFlags: () => () => {},
+  isFeatureEnabled: () => undefined,
 }
