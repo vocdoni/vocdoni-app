@@ -1420,6 +1420,12 @@
         "title": "Titolo Bilancio Partecipativo"
       }
     },
+    "vote_failed": {
+      "close": "Chiudi",
+      "none": "Nessuna risposta è stata registrata. Riprova.",
+      "partial": "Alcune risposte non sono state registrate. Vota di nuovo per inviare le restanti.",
+      "title": "Non è stato possibile inviare il tuo voto"
+    },
     "voters": "Votanti",
     "voting": "Stiamo elaborando il tuo voto. Questo processo richiederà alcuni secondi. Non chiudere o aggiornare questa pagina.",
     "voting_method": {
@@ -1431,6 +1437,7 @@
       "unknown": "Sconosciuto",
       "weighted_format": "{{base}} con voto ponderato"
     },
+    "voting_progress": "{{confirmed}} di {{total}} domande confermate",
     "voting_type": "Metodo di voto"
   },
   "process_actions": {

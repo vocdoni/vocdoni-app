@@ -332,23 +332,88 @@ const SuccessVoteModal = () => {
   )
 }
 
-// Blocking overlay while the vote submits (CSP sign + relay + job wait per
-// question — potentially long). Keyed on the provider's vote-in-flight flag.
-const VotingVoteModal = () => {
+/**
+ * Overlay covering the whole vote submission. Every question of the process is
+ * its own on-chain election, so a multi-question vote confirms one question at a
+ * time even though the envelopes are relayed as a single batch — show that
+ * progress rather than an opaque spinner.
+ *
+ * It also owns the failure state: the vote is submitted by the SDK's question
+ * form, so a failure would otherwise surface nowhere at all. The batch is
+ * accepted or rejected as a unit, so a rejected relay means nothing was cast and
+ * the voter can simply vote again; only a chain-level failure can leave some
+ * questions cast, and voting again then sends just the remaining ones.
+ */
+export const VotingVoteModal = () => {
   const { t } = useTranslation()
-  const { voting } = useElection()
+  const { election, voting, voteStatus } = useElection()
+  const [dismissedFailure, setDismissedFailure] = useState(false)
+
+  const statuses = Object.values(voteStatus)
+  const total = election?.questions.length ?? 0
+  const confirmed = statuses.filter((questionStatus) => questionStatus === 'confirmed').length
+  const failed = statuses.some((questionStatus) => questionStatus === 'failed')
+  const showFailure = !voting && failed && !dismissedFailure
+
+  // A new attempt clears the previous failure.
+  useEffect(() => {
+    if (voting) setDismissedFailure(false)
+  }, [voting])
 
   return (
-    <Dialog.Root open={voting} onOpenChange={() => {}} closeOnEscape={false} closeOnInteractOutside={false}>
+    <Dialog.Root
+      open={voting || showFailure}
+      onOpenChange={({ open }) => {
+        if (!open) setDismissedFailure(true)
+      }}
+      closeOnEscape={showFailure}
+      closeOnInteractOutside={showFailure}
+    >
       <Dialog.Backdrop />
       <Dialog.Positioner>
         <Dialog.Content>
           <Dialog.Body>
-            <VStack>
-              <Spinner color='process.spinner' mb={5} w={10} h={10} />
-            </VStack>
-            <Text textAlign='center'>{t('process.voting')}</Text>
+            {showFailure ? (
+              <>
+                <Text textAlign='center' fontWeight='bold' mb={2}>
+                  {t('process.vote_failed.title', { defaultValue: 'Your vote could not be cast' })}
+                </Text>
+                <Text textAlign='center'>
+                  {confirmed > 0
+                    ? t('process.vote_failed.partial', {
+                        defaultValue: 'Some answers were not registered. Vote again to send the remaining ones.',
+                      })
+                    : t('process.vote_failed.none', {
+                        defaultValue: 'No answer was registered. Please try again.',
+                      })}
+                </Text>
+              </>
+            ) : (
+              <>
+                <VStack>
+                  <Spinner color='process.spinner' mb={5} w={10} h={10} />
+                </VStack>
+                <Text textAlign='center'>{t('process.voting')}</Text>
+                {/* A single-question process would only ever read "0 of 1". */}
+                {total > 1 && (
+                  <Text textAlign='center' fontSize='sm' color='texts.subtle' mt={2}>
+                    {t('process.voting_progress', {
+                      defaultValue: '{{confirmed}} of {{total}} questions confirmed',
+                      confirmed,
+                      total,
+                    })}
+                  </Text>
+                )}
+              </>
+            )}
           </Dialog.Body>
+          {showFailure && (
+            <Dialog.Footer>
+              <Button onClick={() => setDismissedFailure(true)}>
+                {t('process.vote_failed.close', { defaultValue: 'Close' })}
+              </Button>
+            </Dialog.Footer>
+          )}
         </Dialog.Content>
       </Dialog.Positioner>
     </Dialog.Root>

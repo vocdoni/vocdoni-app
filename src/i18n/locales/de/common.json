@@ -1396,6 +1396,12 @@
         "title": "Titel der Bürgerhaushalt-Abstimmung"
       }
     },
+    "vote_failed": {
+      "close": "Schließen",
+      "none": "Es wurde keine Antwort registriert. Bitte versuche es erneut.",
+      "partial": "Einige Antworten wurden nicht registriert. Stimme erneut ab, um die übrigen zu senden.",
+      "title": "Deine Stimme konnte nicht abgegeben werden"
+    },
     "voters": "Wählende",
     "voting": "Deine Stimme wird verarbeitet. Das dauert einige Sekunden. Bitte schließe oder aktualisiere diese Seite nicht.",
     "voting_method": {
@@ -1407,6 +1413,7 @@
       "unknown": "Unbekannt",
       "weighted_format": "Gewichtet {{ base, lowercase }}"
     },
+    "voting_progress": "{{confirmed}} von {{total}} Fragen bestätigt",
     "voting_type": "Abstimmungsmethode"
   },
   "process_actions": {

@@ -1420,6 +1420,12 @@
         "title": "Titre du budget participatif"
       }
     },
+    "vote_failed": {
+      "close": "Fermer",
+      "none": "Aucune réponse n’a été enregistrée. Réessayez.",
+      "partial": "Certaines réponses n’ont pas été enregistrées. Votez à nouveau pour envoyer les restantes.",
+      "title": "Votre vote n’a pas pu être enregistré"
+    },
     "voters": "Électeurs",
     "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",
     "voting_method": {
@@ -1431,6 +1437,7 @@
       "unknown": "Inconnu",
       "weighted_format": "{{ base, lowercase }} pondéré"
     },
+    "voting_progress": "{{confirmed}} sur {{total}} questions confirmées",
     "voting_type": "Méthode de vote"
   },
   "process_actions": {

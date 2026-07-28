@@ -1420,6 +1420,12 @@
         "title": "Título do orçamento participativo"
       }
     },
+    "vote_failed": {
+      "close": "Fechar",
+      "none": "Não foi registada nenhuma resposta. Tenta novamente.",
+      "partial": "Algumas respostas não foram registadas. Vota novamente para enviar as restantes.",
+      "title": "Não foi possível emitir o teu voto"
+    },
     "voters": "Votantes",
     "voting": "Estamos a processar o teu voto. Este processo demorará alguns segundos. Não feches nem atualizes esta página.",
     "voting_method": {
@@ -1431,6 +1437,7 @@
       "unknown": "Desconhecido",
       "weighted_format": "{{ base, lowercase }} ponderado"
     },
+    "voting_progress": "{{confirmed}} de {{total}} perguntas confirmadas",
     "voting_type": "Método de votação"
   },
   "process_actions": {

@@ -1396,6 +1396,12 @@
         "title": "Participatory Budgeting Title"
       }
     },
+    "vote_failed": {
+      "close": "Close",
+      "none": "No answer was registered. Please try again.",
+      "partial": "Some answers were not registered. Vote again to send the remaining ones.",
+      "title": "Your vote could not be cast"
+    },
     "voters": "Voters",
     "voting": "We are processing your vote. This process will take a few seconds. Please do not close or refresh this page.",
     "voting_method": {
@@ -1407,6 +1413,7 @@
       "unknown": "Unknown",
       "weighted_format": "Weighted {{ base, lowercase }}"
     },
+    "voting_progress": "{{confirmed}} of {{total}} questions confirmed",
     "voting_type": "Voting method"
   },
   "process_actions": {

@@ -41,10 +41,9 @@ const twoFaMethodOf = (fields: readonly string[]): TwoFAMethod | undefined => {
  * Rehydrates the create-wizard form from a stored process (a draft, or a
  * published process being cloned).
  *
- * Lossy by design: `censusType` and `voterPrivacy` are wizard-only leftovers with
- * no v2 counterpart, and the census `groupId` is write-only in the API (it is
- * accepted on create/update but never returned on reads), so a restored draft
- * falls back to the organization-wide census unless the route supplies a group.
+ * Lossy by design: `censusType` and `voterPrivacy` are wizard-only leftovers
+ * with no v2 counterpart. The census `groupId` does round-trip (saas-backend#606)
+ * and is absent, rather than a zero id, for an organization-wide census.
  */
 export const votingProcessToForm = (process: VotingProcessResponse): Process => {
   const questions = process.questions ?? []
@@ -82,6 +81,7 @@ export const votingProcessToForm = (process: VotingProcessResponse): Process => 
       : null,
     resultVisibility: isSecretUntilTheEnd(process) ? 'hidden' : 'live',
     weightedVote: process.census?.weighted ?? false,
+    groupId: process.census?.groupId ?? defaultProcessValues.groupId,
     census: authFields.length
       ? {
           credentials: [...authFields],
@@ -145,6 +145,9 @@ export const votingProcessToCreateRequest = (
     weighted: process.census?.weighted,
     authFields: process.census?.authFields,
     twoFaFields: process.census?.twoFaFields,
+    // Absent for an organization-wide census, which is exactly what we want to
+    // send back for one.
+    groupId: process.census?.groupId,
   },
   questions: (process.questions ?? []).map(questionToRequest),
 })

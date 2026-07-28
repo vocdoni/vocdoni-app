@@ -1396,6 +1396,12 @@
         "title": "Aurrekontu parte-hartzaileen izenburua"
       }
     },
+    "vote_failed": {
+      "close": "Itxi",
+      "none": "Ez da erantzunik erregistratu. Saiatu berriro.",
+      "partial": "Erantzun batzuk ez dira erregistratu. Bozkatu berriro gainerakoak bidaltzeko.",
+      "title": "Ezin izan da zure botoa eman"
+    },
     "voters": "Boto-emaileak",
     "voting": "Zure botoa prozesatzen ari gara. Honek segundo batzuk iraungo ditu. Ez itxi edo eguneratu orrialde hau.",
     "voting_method": {
@@ -1407,6 +1413,7 @@
       "unknown": "Ezezaguna",
       "weighted_format": "{{base}} haztatua"
     },
+    "voting_progress": "{{total}} galderatik {{confirmed}} berretsita",
     "voting_type": "Bozketa-metodoa"
   },
   "process_actions": {

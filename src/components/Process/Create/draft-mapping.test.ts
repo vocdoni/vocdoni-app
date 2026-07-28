@@ -205,6 +205,14 @@ describe('votingProcessToForm', () => {
     it('leaves the credentials unset when the census has none', () => {
       expect(votingProcessToForm(process()).census).toBeNull()
     })
+
+    it('restores the member group the census targeted', () => {
+      expect(votingProcessToForm(process({ census: { groupId: 'group-1' } })).groupId).toBe('group-1')
+    })
+
+    it('targets no group for an organization-wide census', () => {
+      expect(votingProcessToForm(process()).groupId).toBe('')
+    })
   })
 
   it('hides the results when a question is secret until the end', () => {
@@ -225,6 +233,12 @@ describe('votingProcessToCreateRequest', () => {
     expect(request.startDate).toBeUndefined()
     expect(request.endDate).toBeUndefined()
     expect(request.orgAddress).toBe('0xorg')
+  })
+
+  it('keeps the census group so the copy targets the same members', () => {
+    const request = votingProcessToCreateRequest(process({ census: { groupId: 'group-1' } }), '0xorg')
+
+    expect(request.census?.groupId).toBe('group-1')
   })
 
   it('keeps the named question type and its setup', () => {

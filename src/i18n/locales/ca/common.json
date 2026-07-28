@@ -1420,6 +1420,12 @@
         "title": "Títol del pressupost participatiu"
       }
     },
+    "vote_failed": {
+      "close": "Tanca",
+      "none": "No s’ha registrat cap resposta. Torna-ho a provar.",
+      "partial": "Algunes respostes no s’han registrat. Torna a votar per enviar les restants.",
+      "title": "No s’ha pogut emetre el teu vot"
+    },
     "voters": "Votants",
     "voting": "Estem processant el teu vot. Aquest procés trigarà uns segons. Si us plau, no tanquis ni actualitzis aquesta pàgina.",
     "voting_method": {
@@ -1431,6 +1437,7 @@
       "unknown": "Desconegut",
       "weighted_format": "{{base}} amb vot ponderat"
     },
+    "voting_progress": "{{confirmed}} de {{total}} preguntes confirmades",
     "voting_type": "Mètode de votació"
   },
   "process_actions": {

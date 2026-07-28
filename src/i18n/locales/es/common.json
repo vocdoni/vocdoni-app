@@ -1420,6 +1420,12 @@
         "title": "Título de presupuestos participativos"
       }
     },
+    "vote_failed": {
+      "close": "Cerrar",
+      "none": "No se ha registrado ninguna respuesta. Inténtalo de nuevo.",
+      "partial": "Algunas respuestas no se han registrado. Vuelve a votar para enviar las restantes.",
+      "title": "No se ha podido emitir tu voto"
+    },
     "voters": "Votantes",
     "voting": "Estamos procesando tu voto. Este proceso tardará unos segundos. No cierres ni actualices esta página.",
     "voting_method": {
@@ -1431,6 +1437,7 @@
       "unknown": "Desconocido",
       "weighted_format": "{{base}} con voto ponderado"
     },
+    "voting_progress": "{{confirmed}} de {{total}} preguntas confirmadas",
     "voting_type": "Método de votación"
   },
   "process_actions": {
