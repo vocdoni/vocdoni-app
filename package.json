@@ -89,6 +89,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
+    "posthog:insights": "node scripts/posthog-insights.mjs",
     "knip": "knip"
   },
   "eslintConfig": {

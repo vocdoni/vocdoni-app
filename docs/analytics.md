@@ -84,17 +84,47 @@ const enabled = useFeatureFlag('new-dashboard') // undefined until flags load �
    **session replay** products; set replay **sampling** to ~50% initially (free tier: 5K replays/mo).
 3. Surveys: target dashboard routes only (`/admin/*`) — never `/processes/*`.
 4. Add PostHog to the privacy policy / subprocessor list (legal, outside this repo).
-5. Suggested dashboards:
-   - **Org acquisition** — `organization_created` per week, broken down by `org_type` / `org_plan` / `client`.
-   - **Activation funnel** — `account_signed_up` → `organization_created` → `members_import_completed` →
-     `process_created` (+ time-to-value); `onboarding_step_completed` breakdown.
-   - **Engagement** — weekly active organizations (unique `org_address`), `process_created` per org.
-   - **Monetization** — `paywall_viewed` → `checkout_started` → `subscription_completed` conversion;
-     `feature_blocked` by `feature`.
-   - **Election operations** — `process_created` by `census_type`, `process_action`, turnout via
-     `process_results_viewed` (`turnout_pct`).
+5. Dashboards: run `pnpm posthog:insights` (see below) instead of clicking them together.
 6. Free-tier quotas: 1M events, 5K replays, 1M flag requests per month. Voting pages emit nothing, so
    volume is admin-driven. Set billing limits per product as a guardrail.
+
+## Dashboards & funnels (provisioned from code)
+
+`scripts/posthog-insights.mjs` creates the dashboards and insights through the PostHog API, so they are
+reviewable in git and reproducible across projects. It matches objects **by name**, so re-running updates
+them in place rather than duplicating.
+
+```bash
+POSTHOG_PERSONAL_API_KEY=phx_… pnpm posthog:insights --dry-run   # print the plan
+POSTHOG_PERSONAL_API_KEY=phx_… pnpm posthog:insights             # apply
+```
+
+The key is a **personal** API key (<https://eu.posthog.com/settings/user-api-keys>) with `insight:write`,
+`dashboard:write` and `group:read`. The `phc_…` project key the app ships with is write-only for events
+and cannot create insights. `POSTHOG_PROJECT_ID` is optional (first accessible project by default);
+`POSTHOG_API_HOST` defaults to `https://eu.posthog.com` — the app host, not the `eu.i.posthog.com`
+ingestion host.
+
+What it provisions:
+
+| Dashboard | Insights |
+| --- | --- |
+| **Activation** | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed |
+| **Monetization** | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan |
+| **Elections & engagement** | wizard funnel `process_template_selected` → `census_published` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type` |
+
+Two things make these worth more than the PostHog defaults:
+
+- **Organization-level aggregation.** Every funnel that starts after an org exists sets
+  `aggregation_group_type_index` to the `organization` group, so conversion counts organizations, not
+  seats — several colleagues sharing one journey no longer inflate the numerator. The script resolves the
+  index from `/api/projects/:id/groups_types/`; if the group does not exist yet (it appears with the first
+  group event), it warns and falls back to person aggregation, so re-run it once real traffic has landed.
+- **Real conversion windows.** Checkout gets 7 days, activation 30, wizard failures 1 hour — an unbounded
+  window makes every funnel look better than it is.
+
+Edit the `buildPlan` function to change a funnel; the query shapes follow PostHog's `FunnelsQuery` /
+`TrendsQuery` schema.
 
 ## Follow-up: server-side events (saas-backend)
 
