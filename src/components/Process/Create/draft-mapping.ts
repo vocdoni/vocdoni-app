@@ -47,17 +47,9 @@ const twoFaMethodOf = (fields: readonly string[]): TwoFAMethod | undefined => {
  */
 export const votingProcessToForm = (process: VotingProcessResponse): Process => {
   const questions = process.questions ?? []
-  const [first] = questions
-  const questionType = first?.type === MULTICHOICE_QUESTION_TYPE ? SelectorTypes.Multiple : SelectorTypes.Single
-  const isMultiChoice = questionType === SelectorTypes.Multiple
 
   const startDate = process.startDate ? new Date(process.startDate) : undefined
   const endDate = process.endDate ? new Date(process.endDate) : undefined
-
-  // Extended info is on when any choice carries a description or an image.
-  const extendedInfo = questions.some((question) =>
-    choiceMetas(question).some((meta) => !!meta.description || !!meta.image)
-  )
 
   const authFields = process.census?.authFields ?? []
   const twoFaFields = process.census?.twoFaFields ?? []
@@ -73,12 +65,6 @@ export const votingProcessToForm = (process: VotingProcessResponse): Process => 
     endDate: endDate ? format(endDate, 'yyyy-MM-dd') : '',
     endTime: endDate ? format(endDate, 'HH:mm') : '',
     streamUri: process.streamUri ?? '',
-    extendedInfo,
-    questionType,
-    minNumberOfChoices: isMultiChoice ? (first?.typeSetup?.minChoices ?? 0) : null,
-    maxNumberOfChoices: isMultiChoice
-      ? (first?.typeSetup?.maxChoices ?? first?.ballotProtocol?.maxCount ?? first?.choices?.length ?? null)
-      : null,
     resultVisibility: isSecretUntilTheEnd(process) ? 'hidden' : 'live',
     weightedVote: process.census?.weighted ?? false,
     groupId: process.census?.groupId ?? defaultProcessValues.groupId,
@@ -94,10 +80,22 @@ export const votingProcessToForm = (process: VotingProcessResponse): Process => 
     questions: questions.length
       ? questions.map((question) => {
           const metas = choiceMetas(question)
+          const isMultiChoice = question.type === MULTICHOICE_QUESTION_TYPE
 
           return {
             title: localStr(question.title),
             description: localStr(question.description),
+            type: isMultiChoice ? SelectorTypes.Multiple : SelectorTypes.Single,
+            // Extended info is on when any of its choices carries a description
+            // or an image.
+            extendedInfo: metas.some((meta) => !!meta.description || !!meta.image),
+            minNumberOfChoices: isMultiChoice ? (question.typeSetup?.minChoices ?? 0) : null,
+            maxNumberOfChoices: isMultiChoice
+              ? (question.typeSetup?.maxChoices ??
+                question.ballotProtocol?.maxCount ??
+                question.choices?.length ??
+                null)
+              : null,
             options: (question.choices ?? []).map((choice) => {
               const meta = metas.find((entry) => entry.value === choice.value)
 

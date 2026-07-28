@@ -130,6 +130,5 @@ describe('AnalyticsEvents export', () => {
     expect(events.UserLoggedIn).toBe('LoggedIn')
     expect(events.ProcessCreated).toBe('ProcessCreated')
     expect(events.SubscriptionSuccessful).toBe('SubscriptionSuccessful')
-    expect(events.TriedMultiquestionMultichoice).toBe('MMAttempt')
   })
 })

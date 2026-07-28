@@ -495,7 +495,6 @@ export const useFormToVotingProcessRequest = () => {
       form.endDate && form.endTime ? parseLocalDateTime(form.endDate, form.endTime) : addDays(startRef, 1).toISOString()
 
     const secretUntilTheEnd = form.resultVisibility === 'hidden'
-    const isMultiChoice = form.questionType === SelectorTypes.Multiple
 
     const questions: VotingProcessQuestionRequest[] = form.questions.map((question) => {
       const choices: Choice[] = question.options.map((q: Option, i: number) => ({
@@ -503,20 +502,21 @@ export const useFormToVotingProcessRequest = () => {
         value: i,
       }))
 
-      const metadata: Record<string, unknown> | undefined = form.extendedInfo
+      const metadata: Record<string, unknown> | undefined = question.extendedInfo
         ? {
             choices: question.options.map((q, i) => ({ value: i, description: q.description, image: q.image })),
           }
         : undefined
 
-      if (isMultiChoice) {
-        const maxChoices = (form.maxNumberOfChoices ?? 0) > 0 ? form.maxNumberOfChoices! : question.options.length
+      if (question.type === SelectorTypes.Multiple) {
+        const maxChoices =
+          (question.maxNumberOfChoices ?? 0) > 0 ? question.maxNumberOfChoices! : question.options.length
         return {
           title: { default: question.title },
           description: question.description ? { default: question.description } : undefined,
           choices,
           type: 'multichoice',
-          typeSetup: { maxChoices, minChoices: form.minNumberOfChoices ?? 0, uniqueChoices: true },
+          typeSetup: { maxChoices, minChoices: question.minNumberOfChoices ?? 0, uniqueChoices: true },
           secretUntilTheEnd,
           metadata,
         }

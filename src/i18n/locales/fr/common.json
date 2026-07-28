@@ -103,7 +103,6 @@
   "color_mode_switcher": "Changer de mode d'affichage",
   "common": {
     "back": "Retour",
-    "cancel": "Annuler",
     "close_drawer": "Fermer le panneau",
     "confirm": "Confirmer",
     "home": "Accueil",
@@ -263,7 +262,10 @@
     "empty_description": "Créez un brouillon pour commencer.",
     "load_error": "Impossible de charger les brouillons",
     "load_error_description": "Réessayez.",
-    "not_defined": "Pas encore défini"
+    "not_defined": "Pas encore défini",
+    "question_type": {
+      "mixed": "Mixte"
+    }
   },
   "drawer": {
     "close": "Fermer le panneau"
@@ -1282,12 +1284,6 @@
       },
       "question": {
         "add": "Ajouter une question",
-        "add_multiple": {
-          "cancel_button": "Annuler",
-          "contact_button": "Contactez-nous",
-          "description": "La création de processus comportant plus d'une question à choix multiple n'est pas disponible pour le moment. Si vous avez besoin de ce type de processus, veuillez nous contacter.",
-          "title": "Les processus à choix multiples avec plusieurs questions ne sont pas encore disponibles"
-        },
         "delete": {
           "cancel_button": "Annuler",
           "delete_button": "Supprimer",
@@ -1332,14 +1328,9 @@
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} électeurs",
     "question_type": {
-      "confirm": {
-        "subtitle": "Le choix multiple n'autorise qu'une seule question. Le changement ne conservera que votre première question et écartera les autres.",
-        "title": "Voulez-vous passer au choix multiple ?"
-      },
-      "description": "Cela s'applique à toutes les questions de ce processus de vote",
+      "label": "Type de question",
       "multiple": "Choix multiple",
-      "single": "Choix unique",
-      "title": "Type de question"
+      "single": "Choix unique"
     },
     "questions": "Questions",
     "results": "Résultats",

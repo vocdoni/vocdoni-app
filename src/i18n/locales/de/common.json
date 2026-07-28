@@ -101,7 +101,6 @@
   "color_mode_switcher": "Farbmodus-Umschalter",
   "common": {
     "back": "Zurück",
-    "cancel": "Abbrechen",
     "close_drawer": "Seitenleiste schließen",
     "confirm": "Bestätigen",
     "home": "Startseite",
@@ -261,7 +260,10 @@
     "empty_description": "Erstelle einen Entwurf, um loszulegen.",
     "load_error": "Entwürfe konnten nicht geladen werden",
     "load_error_description": "Bitte versuche es erneut.",
-    "not_defined": "Noch nicht festgelegt"
+    "not_defined": "Noch nicht festgelegt",
+    "question_type": {
+      "mixed": "Gemischt"
+    }
   },
   "drawer": {
     "close": "Seitenleiste schließen"
@@ -1260,12 +1262,6 @@
       },
       "question": {
         "add": "Frage hinzufügen",
-        "add_multiple": {
-          "cancel_button": "Abbrechen",
-          "contact_button": "Kontaktiere uns",
-          "description": "Das Erstellen von Abstimmungen mit mehr als einer Multiple-Choice-Frage ist derzeit nicht verfügbar. Wenn du diese Art von Abstimmung benötigst, kontaktiere uns bitte.",
-          "title": "Mehrere Multiple-Choice-Fragen sind noch nicht verfügbar"
-        },
         "delete": {
           "cancel_button": "Abbrechen",
           "delete_button": "Löschen",
@@ -1309,14 +1305,9 @@
     "people_in_census_one": "Ein Wähler",
     "people_in_census_other": "{{ count }} Wählende",
     "question_type": {
-      "confirm": {
-        "subtitle": "Mehrfachauswahl erlaubt nur eine Frage. Beim Wechsel wird nur deine erste Frage behalten, alle anderen werden verworfen.",
-        "title": "Möchtest du zur Mehrfachauswahl wechseln?"
-      },
-      "description": "Dies gilt für alle Fragen in diesem Abstimmungsprozess",
+      "label": "Fragetyp",
       "multiple": "Mehrfachauswahl",
-      "single": "Einfachauswahl",
-      "title": "Fragentyp"
+      "single": "Einfachauswahl"
     },
     "questions": "Fragen",
     "results": "Ergebnisse",

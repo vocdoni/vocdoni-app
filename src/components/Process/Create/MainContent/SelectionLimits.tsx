@@ -9,26 +9,28 @@ import { SelectorTypes } from '../common'
 const SelectionLimits = ({ index }) => {
   const { control, setValue, watch } = useFormContext()
   const { t } = useTranslation()
-  const questionType = watch('questionType')
+  const questionType = watch(`questions.${index}.type`)
   const fields = watch(`questions.${index}.options`)
-  const min = watch('minNumberOfChoices')
-  const max = watch('maxNumberOfChoices')
+  const minName = `questions.${index}.minNumberOfChoices` as const
+  const maxName = `questions.${index}.maxNumberOfChoices` as const
+  const min = watch(minName)
+  const max = watch(maxName)
   const total = fields.length
   const options = fields.map((_, i) => ({ value: i + 1, label: `${i + 1}` }))
 
   useEffect(() => {
     // Ensure max is not less than min
     if (min && max && max < min) {
-      setValue(`maxNumberOfChoices`, min)
+      setValue(maxName, min)
     }
     // Ensure min and max do not exceed total options
     if (min > total) {
-      setValue('minNumberOfChoices', total)
+      setValue(minName, total)
     }
     if (max > total) {
-      setValue('maxNumberOfChoices', total)
+      setValue(maxName, total)
     }
-  }, [min, max, total, index, setValue])
+  }, [min, max, total, minName, maxName, setValue])
 
   if (questionType === SelectorTypes.Single) return null
 
@@ -44,7 +46,7 @@ const SelectionLimits = ({ index }) => {
           components={{
             min: (
               <Controller
-                name='minNumberOfChoices'
+                name={minName}
                 control={control}
                 render={({ field, fieldState }) => {
                   const selectedOption = options.find((opt) => opt.value === field.value)
@@ -68,7 +70,7 @@ const SelectionLimits = ({ index }) => {
             ),
             max: (
               <Controller
-                name='maxNumberOfChoices'
+                name={maxName}
                 control={control}
                 rules={{
                   required: false,

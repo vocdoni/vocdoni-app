@@ -28,6 +28,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useCreateProcess } from '~components/Process/Create'
+import { Process, SelectorTypes } from '~components/Process/Create/common'
 import { votingProcessToCreateRequest, votingProcessToForm } from '~components/Process/Create/draft-mapping'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
@@ -126,8 +127,24 @@ export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   )
 }
 
+/** A process can mix question types, so the list reports the shared one, or "Mixed". */
+const useQuestionTypeLabel = () => {
+  const { t } = useTranslation()
+
+  return (questions: Process['questions']) => {
+    const types = new Set(questions.map((question) => question.type))
+
+    if (types.size > 1) return t('drafts.question_type.mixed', { defaultValue: 'Mixed' })
+    if (types.has(SelectorTypes.Multiple))
+      return t('process.question_type.multiple', { defaultValue: 'Multiple choice' })
+
+    return t('process.question_type.single', { defaultValue: 'Single choice' })
+  }
+}
+
 const DraftsRow = ({ draft }: { draft: Draft }) => {
   const { t } = useTranslation()
+  const questionTypeLabel = useQuestionTypeLabel()
   const metadata = votingProcessToForm(draft)
 
   return (
@@ -146,7 +163,7 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
       </Table.Cell>
       <Table.Cell>{metadata.startDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Table.Cell>
       <Table.Cell>{metadata.endDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Table.Cell>
-      <Table.Cell>{metadata.questionType || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Table.Cell>
+      <Table.Cell>{questionTypeLabel(metadata.questions)}</Table.Cell>
       <Table.Cell textAlign='end'>
         <DraftsContextMenu draft={draft} />
       </Table.Cell>
@@ -156,6 +173,7 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
 
 const DraftCard = ({ draft }: { draft: Draft }) => {
   const { t } = useTranslation()
+  const questionTypeLabel = useQuestionTypeLabel()
   const notDefined = t('drafts.not_defined', { defaultValue: 'Not defined yet' })
   const metadata = votingProcessToForm(draft)
 
@@ -182,7 +200,7 @@ const DraftCard = ({ draft }: { draft: Draft }) => {
           {t('process_list.end_date', { defaultValue: 'End date' })}: {metadata.endDate || notDefined}
         </Text>
         <Text>
-          {t('process_list.type', { defaultValue: 'Type' })}: {metadata.questionType || notDefined}
+          {t('process_list.type', { defaultValue: 'Type' })}: {questionTypeLabel(metadata.questions)}
         </Text>
       </Card.Body>
     </Card.Root>

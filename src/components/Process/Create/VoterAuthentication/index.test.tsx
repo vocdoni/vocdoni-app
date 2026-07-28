@@ -5,7 +5,7 @@ import { CensusTypes } from '~components/Process/Census/CensusType'
 import { mockUseOrganization, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VoterAuthentication } from '.'
-import { Census, Process, SelectorTypes } from '../common'
+import { Census, defaultQuestion, Process } from '../common'
 
 const mockValidateCensus = vi.fn()
 
@@ -40,11 +40,7 @@ const TestForm = ({ initialCensus = defaultCensus }: { initialCensus?: Census | 
       startTime: '',
       endDate: '',
       endTime: '',
-      extendedInfo: false,
-      questionType: SelectorTypes.Single,
-      questions: [{ title: '', description: '', options: [{ option: '' }, { option: '' }] }],
-      maxNumberOfChoices: null,
-      minNumberOfChoices: null,
+      questions: [defaultQuestion],
       resultVisibility: 'hidden',
       weightedVote: false,
       voterPrivacy: 'public',

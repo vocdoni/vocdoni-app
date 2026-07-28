@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react'
 import type { CreateVotingProcessRequest } from '@vocdoni/api-types'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
-import { Process, SelectorTypes } from './common'
+import { defaultQuestion, Process, SelectorTypes } from './common'
 import { useFormToVotingProcessRequest } from './index'
 
 const mockPermission = vi.fn()
@@ -65,17 +65,14 @@ describe('useFormToVotingProcessRequest', () => {
       startTime: '',
       endDate: '2025-12-31',
       endTime: '23:59',
-      extendedInfo: false,
-      questionType: SelectorTypes.Single,
       questions: [
         {
+          ...defaultQuestion,
           title: 'Test Question',
           description: 'Question description',
           options: [{ option: 'Option A' }, { option: 'Option B' }],
         },
       ],
-      maxNumberOfChoices: null,
-      minNumberOfChoices: null,
       resultVisibility: 'hidden',
       voterPrivacy: 'public',
       groupId: 'test-group-id',
@@ -193,8 +190,8 @@ describe('useFormToVotingProcessRequest', () => {
         {
           ...mockForm,
           questions: [
-            { title: 'Q1', description: 'D1', options: [{ option: 'A' }, { option: 'B' }] },
-            { title: 'Q2', description: 'D2', options: [{ option: 'C' }, { option: 'D' }] },
+            { ...defaultQuestion, title: 'Q1', description: 'D1', options: [{ option: 'A' }, { option: 'B' }] },
+            { ...defaultQuestion, title: 'Q2', description: 'D2', options: [{ option: 'C' }, { option: 'D' }] },
           ],
         },
         buildCensusSpec()
@@ -208,7 +205,7 @@ describe('useFormToVotingProcessRequest', () => {
   describe('single-choice question', () => {
     it('sets type to singlechoice', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
-      const req = result.current({ ...mockForm, questionType: SelectorTypes.Single }, buildCensusSpec())
+      const req = result.current(mockForm, buildCensusSpec())
       expect(req.questions[0].type).toBe('singlechoice')
       expect(req.questions[0].typeSetup).toBeUndefined()
     })
@@ -221,10 +218,18 @@ describe('useFormToVotingProcessRequest', () => {
   })
 
   describe('multi-choice question', () => {
+    const multiChoice = (overrides: Partial<Process['questions'][number]> = {}) => ({
+      ...defaultQuestion,
+      title: 'Q',
+      options: [{ option: 'A' }, { option: 'B' }],
+      type: SelectorTypes.Multiple,
+      ...overrides,
+    })
+
     it('sets type to multichoice with typeSetup', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current(
-        { ...mockForm, questionType: SelectorTypes.Multiple, maxNumberOfChoices: 2, minNumberOfChoices: 1 },
+        { ...mockForm, questions: [multiChoice({ maxNumberOfChoices: 2, minNumberOfChoices: 1 })] },
         buildCensusSpec()
       )
       expect(req.questions[0].type).toBe('multichoice')
@@ -236,15 +241,12 @@ describe('useFormToVotingProcessRequest', () => {
       const req = result.current(
         {
           ...mockForm,
-          questionType: SelectorTypes.Multiple,
-          maxNumberOfChoices: 0,
-          minNumberOfChoices: 0,
           questions: [
-            {
-              title: 'Q',
-              description: '',
+            multiChoice({
+              maxNumberOfChoices: 0,
+              minNumberOfChoices: 0,
               options: [{ option: 'A' }, { option: 'B' }, { option: 'C' }, { option: 'D' }],
-            },
+            }),
           ],
         },
         buildCensusSpec()
@@ -255,10 +257,28 @@ describe('useFormToVotingProcessRequest', () => {
     it('does not send a ballotProtocol, letting the backend derive it from type/typeSetup', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
       const req = result.current(
-        { ...mockForm, questionType: SelectorTypes.Multiple, maxNumberOfChoices: 2, minNumberOfChoices: 0 },
+        { ...mockForm, questions: [multiChoice({ maxNumberOfChoices: 2, minNumberOfChoices: 0 })] },
         buildCensusSpec()
       )
       expect(req.questions[0].ballotProtocol).toBeUndefined()
+    })
+
+    it('types and limits each question on its own', () => {
+      const { result } = renderHook(() => useFormToVotingProcessRequest())
+      const req = result.current(
+        {
+          ...mockForm,
+          questions: [
+            { ...defaultQuestion, title: 'Q1', options: [{ option: 'A' }, { option: 'B' }] },
+            multiChoice({ title: 'Q2', maxNumberOfChoices: 2, minNumberOfChoices: 1 }),
+          ],
+        },
+        buildCensusSpec()
+      )
+
+      expect(req.questions.map((question) => question.type)).toEqual(['singlechoice', 'multichoice'])
+      expect(req.questions[0].typeSetup).toBeUndefined()
+      expect(req.questions[1].typeSetup).toEqual({ maxChoices: 2, minChoices: 1, uniqueChoices: true })
     })
   })
 
@@ -268,11 +288,12 @@ describe('useFormToVotingProcessRequest', () => {
       const req = result.current(
         {
           ...mockForm,
-          extendedInfo: true,
           questions: [
             {
+              ...defaultQuestion,
               title: 'Q',
               description: 'D',
+              extendedInfo: true,
               options: [{ option: 'A', description: 'Opt desc', image: 'https://img.example/a.png' }],
             },
           ],
@@ -286,8 +307,25 @@ describe('useFormToVotingProcessRequest', () => {
 
     it('omits metadata when extendedInfo is false', () => {
       const { result } = renderHook(() => useFormToVotingProcessRequest())
-      const req = result.current({ ...mockForm, extendedInfo: false }, buildCensusSpec())
+      const req = result.current(mockForm, buildCensusSpec())
       expect(req.questions[0].metadata).toBeUndefined()
+    })
+
+    it('only sends metadata for the questions that enabled it', () => {
+      const { result } = renderHook(() => useFormToVotingProcessRequest())
+      const req = result.current(
+        {
+          ...mockForm,
+          questions: [
+            { ...defaultQuestion, title: 'Q1', extendedInfo: true, options: [{ option: 'A', description: 'Why' }] },
+            { ...defaultQuestion, title: 'Q2', options: [{ option: 'B' }] },
+          ],
+        },
+        buildCensusSpec()
+      )
+
+      expect(req.questions[0].metadata).toBeDefined()
+      expect(req.questions[1].metadata).toBeUndefined()
     })
   })
 

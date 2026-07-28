@@ -103,7 +103,6 @@
   "color_mode_switcher": "Commutador de mode de color",
   "common": {
     "back": "Enrere",
-    "cancel": "Cancel·la",
     "close_drawer": "Tanca el panell lateral",
     "confirm": "Confirma",
     "home": "Inici",
@@ -263,7 +262,10 @@
     "empty_description": "Crea un esborrany per començar.",
     "load_error": "No s'han pogut carregar els esborranys",
     "load_error_description": "Torna-ho a provar.",
-    "not_defined": "No definit encara"
+    "not_defined": "No definit encara",
+    "question_type": {
+      "mixed": "Mixt"
+    }
   },
   "drawer": {
     "close": "Tanca el panell lateral"
@@ -1282,12 +1284,6 @@
       },
       "question": {
         "add": "Afegeix una pregunta",
-        "add_multiple": {
-          "cancel_button": "Cancel·la",
-          "contact_button": "Contacta'ns",
-          "description": "La creació de processos amb més d'una pregunta de selecció múltiple no està disponible actualment. Si necessites aquest tipus de procés, si us plau, contacta amb nosaltres.",
-          "title": "Els processos de selecció múltiple amb diverses preguntes no estan disponibles actualment."
-        },
         "delete": {
           "cancel_button": "Cancel·la",
           "delete_button": "Elimina",
@@ -1332,14 +1328,9 @@
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} votants",
     "question_type": {
-      "confirm": {
-        "subtitle": "Els processos de selecció múltiple només permeten una pregunta. Canviar mantindrà només la vostra primera pregunta i descartarà la resta.",
-        "title": "Voleu canviar a Selecció múltiple?"
-      },
-      "description": "Això aplica a totes les preguntes d'aquest procés.",
+      "label": "Tipus de pregunta",
       "multiple": "Elecció múltiple",
-      "single": "Elecció simple",
-      "title": "Tipus de Pregunta"
+      "single": "Elecció simple"
     },
     "questions": "Preguntes",
     "results": "Resultats",

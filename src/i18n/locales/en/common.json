@@ -101,7 +101,6 @@
   "color_mode_switcher": "Color mode switcher",
   "common": {
     "back": "Back",
-    "cancel": "Cancel",
     "close_drawer": "Close drawer",
     "confirm": "Confirm",
     "home": "Home",
@@ -261,7 +260,10 @@
     "empty_description": "Create a draft to get started.",
     "load_error": "Unable to load drafts",
     "load_error_description": "Please try again.",
-    "not_defined": "Not defined yet"
+    "not_defined": "Not defined yet",
+    "question_type": {
+      "mixed": "Mixed"
+    }
   },
   "drawer": {
     "close": "Close drawer"
@@ -1260,12 +1262,6 @@
       },
       "question": {
         "add": "Add question",
-        "add_multiple": {
-          "cancel_button": "Cancel",
-          "contact_button": "Contact Us",
-          "description": "Creating processes with more than one multiple-choice question is currently not available. If you need this type of process, please contact us.",
-          "title": "Multi-question multiple-choice is not available yet"
-        },
         "delete": {
           "cancel_button": "Cancel",
           "delete_button": "Delete",
@@ -1309,14 +1305,9 @@
     "people_in_census_one": "One voter",
     "people_in_census_other": "{{ count }} voters",
     "question_type": {
-      "confirm": {
-        "subtitle": "Multiple-choice allows only one question. Switching will keep only your first question and discard the rest.",
-        "title": "Do you want to switch to Multiple choice?"
-      },
-      "description": "This applies to all questions in this voting process",
+      "label": "Question type",
       "multiple": "Multiple choice",
-      "single": "Single choice",
-      "title": "Question Type"
+      "single": "Single choice"
     },
     "questions": "Questions",
     "results": "Results",

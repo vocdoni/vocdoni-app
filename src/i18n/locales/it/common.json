@@ -103,7 +103,6 @@
   "color_mode_switcher": "Selettore modalità colore",
   "common": {
     "back": "Indietro",
-    "cancel": "Annulla",
     "close_drawer": "Chiudi cassetto",
     "confirm": "Conferma",
     "home": "Home",
@@ -263,7 +262,10 @@
     "empty_description": "Crea una bozza per iniziare.",
     "load_error": "Impossibile caricare le bozze",
     "load_error_description": "Riprova.",
-    "not_defined": "Non ancora definito"
+    "not_defined": "Non ancora definito",
+    "question_type": {
+      "mixed": "Misto"
+    }
   },
   "drawer": {
     "close": "Chiudi cassetto"
@@ -1282,12 +1284,6 @@
       },
       "question": {
         "add": "Aggiungi domanda",
-        "add_multiple": {
-          "cancel_button": "Annulla",
-          "contact_button": "Contattaci",
-          "description": "La creazione di processi con più di una domanda a scelta multipla non è attualmente disponibile. Se hai bisogno di questo tipo di processo, contattaci.",
-          "title": "La scelta multipla a più domande non è ancora disponibile"
-        },
         "delete": {
           "cancel_button": "Annulla",
           "delete_button": "Elimina",
@@ -1332,14 +1328,9 @@
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} votanti",
     "question_type": {
-      "confirm": {
-        "subtitle": "La scelta multipla consente solo una domanda. Cambiando si manterrà solo la prima domanda e si scarterà il resto.",
-        "title": "Vuoi passare alla Scelta multipla?"
-      },
-      "description": "Questo si applica a tutte le domande in questo processo di voto",
+      "label": "Tipo di domanda",
       "multiple": "Scelta multipla",
-      "single": "Scelta singola",
-      "title": "Tipo di domanda"
+      "single": "Scelta singola"
     },
     "questions": "Domande",
     "results": "Risultati",

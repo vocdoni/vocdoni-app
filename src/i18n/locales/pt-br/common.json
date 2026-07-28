@@ -103,7 +103,6 @@
   "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
-    "cancel": "Cancelar",
     "close_drawer": "Fechar painel",
     "confirm": "Confirmar",
     "home": "Início",
@@ -263,7 +262,10 @@
     "empty_description": "Crie um rascunho para começar.",
     "load_error": "Não foi possível carregar os rascunhos",
     "load_error_description": "Tente novamente.",
-    "not_defined": "Ainda não definido"
+    "not_defined": "Ainda não definido",
+    "question_type": {
+      "mixed": "Misto"
+    }
   },
   "drawer": {
     "close": "Fechar painel"
@@ -1282,12 +1284,6 @@
       },
       "question": {
         "add": "Adicionar pergunta",
-        "add_multiple": {
-          "cancel_button": "Cancelar",
-          "contact_button": "Fale conosco",
-          "description": "No momento, não é possível criar processos com mais de uma pergunta de múltipla escolha. Se precisar desse tipo de processo, entre em contato conosco.",
-          "title": "Múltiplas perguntas de múltipla escolha ainda não estão disponíveis"
-        },
         "delete": {
           "cancel_button": "Cancelar",
           "delete_button": "Excluir",
@@ -1332,14 +1328,9 @@
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} eleitores",
     "question_type": {
-      "confirm": {
-        "subtitle": "A múltipla escolha permite apenas uma pergunta. Se você trocar, somente a primeira pergunta será mantida e as demais serão descartadas.",
-        "title": "Deseja mudar para múltipla escolha?"
-      },
-      "description": "Isso se aplica a todas as perguntas deste processo de votação",
+      "label": "Tipo de pergunta",
       "multiple": "Múltipla escolha",
-      "single": "Escolha única",
-      "title": "Tipo de pergunta"
+      "single": "Escolha única"
     },
     "questions": "Perguntas",
     "results": "Resultados",

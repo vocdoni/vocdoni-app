@@ -56,6 +56,10 @@ describe('votingProcessToForm', () => {
       {
         title: 'Question title',
         description: 'Question description',
+        type: SelectorTypes.Single,
+        extendedInfo: false,
+        minNumberOfChoices: null,
+        maxNumberOfChoices: null,
         options: [
           { option: 'Option 1', description: undefined, image: undefined },
           { option: 'Option 2', description: undefined, image: undefined },
@@ -66,7 +70,7 @@ describe('votingProcessToForm', () => {
 
   describe('extended info', () => {
     it('is off when no choice carries a description or an image', () => {
-      expect(votingProcessToForm(process()).extendedInfo).toBe(false)
+      expect(votingProcessToForm(process()).questions[0].extendedInfo).toBe(false)
     })
 
     it.each([
@@ -75,7 +79,7 @@ describe('votingProcessToForm', () => {
     ])('is on when a choice carries %s', (_label, choice) => {
       const form = votingProcessToForm(process({ questions: [question([choice, { title: 'Option 2' }])] }))
 
-      expect(form.extendedInfo).toBe(true)
+      expect(form.questions[0].extendedInfo).toBe(true)
     })
 
     it.each([
@@ -84,7 +88,20 @@ describe('votingProcessToForm', () => {
     ])('stays off when the only %s is empty', (_label, choice) => {
       const form = votingProcessToForm(process({ questions: [question([choice, { title: 'Option 2' }])] }))
 
-      expect(form.extendedInfo).toBe(false)
+      expect(form.questions[0].extendedInfo).toBe(false)
+    })
+
+    it('is restored per question', () => {
+      const form = votingProcessToForm(
+        process({
+          questions: [
+            question([{ title: 'Option 1', description: 'Why' }]),
+            question([{ title: 'Option 1' }], { id: 'question-2' }),
+          ],
+        })
+      )
+
+      expect(form.questions.map((q) => q.extendedInfo)).toEqual([true, false])
     })
 
     it('maps each choice back to its own description and image', () => {
@@ -110,22 +127,22 @@ describe('votingProcessToForm', () => {
         process({ questions: [question([{ title: 'Option 1' }], { metadata: { something: 'else' } })] })
       )
 
-      expect(form.extendedInfo).toBe(false)
+      expect(form.questions[0].extendedInfo).toBe(false)
       expect(form.questions[0].options).toEqual([{ option: 'Option 1', description: undefined, image: undefined }])
     })
   })
 
   describe('question type', () => {
-    it('maps a single-choice process without choice limits', () => {
-      const form = votingProcessToForm(process())
+    it('maps a single-choice question without choice limits', () => {
+      const [first] = votingProcessToForm(process()).questions
 
-      expect(form.questionType).toBe(SelectorTypes.Single)
-      expect(form.minNumberOfChoices).toBeNull()
-      expect(form.maxNumberOfChoices).toBeNull()
+      expect(first.type).toBe(SelectorTypes.Single)
+      expect(first.minNumberOfChoices).toBeNull()
+      expect(first.maxNumberOfChoices).toBeNull()
     })
 
-    it('maps a multi-choice process with its limits', () => {
-      const form = votingProcessToForm(
+    it('maps a multi-choice question with its limits', () => {
+      const [first] = votingProcessToForm(
         process({
           questions: [
             question([{ title: 'A' }, { title: 'B' }, { title: 'C' }], {
@@ -134,15 +151,34 @@ describe('votingProcessToForm', () => {
             }),
           ],
         })
+      ).questions
+
+      expect(first.type).toBe(SelectorTypes.Multiple)
+      expect(first.minNumberOfChoices).toBe(1)
+      expect(first.maxNumberOfChoices).toBe(2)
+    })
+
+    it('keeps every question on its own type and limits', () => {
+      const form = votingProcessToForm(
+        process({
+          questions: [
+            question([{ title: 'A' }, { title: 'B' }]),
+            question([{ title: 'A' }, { title: 'B' }, { title: 'C' }], {
+              id: 'question-2',
+              type: 'multichoice',
+              typeSetup: { maxChoices: 3, minChoices: 2, uniqueChoices: true },
+            }),
+          ],
+        })
       )
 
-      expect(form.questionType).toBe(SelectorTypes.Multiple)
-      expect(form.minNumberOfChoices).toBe(1)
-      expect(form.maxNumberOfChoices).toBe(2)
+      expect(form.questions.map((q) => q.type)).toEqual([SelectorTypes.Single, SelectorTypes.Multiple])
+      expect(form.questions.map((q) => q.minNumberOfChoices)).toEqual([null, 2])
+      expect(form.questions.map((q) => q.maxNumberOfChoices)).toEqual([null, 3])
     })
 
     it('falls back to the ballot protocol max count when the type setup is missing', () => {
-      const form = votingProcessToForm(
+      const [first] = votingProcessToForm(
         process({
           questions: [
             question([{ title: 'A' }, { title: 'B' }], {
@@ -152,9 +188,9 @@ describe('votingProcessToForm', () => {
             }),
           ],
         })
-      )
+      ).questions
 
-      expect(form.maxNumberOfChoices).toBe(2)
+      expect(first.maxNumberOfChoices).toBe(2)
     })
   })
 

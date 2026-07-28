@@ -101,7 +101,6 @@
   "color_mode_switcher": "Aldatu kolore-modua",
   "common": {
     "back": "Atzera",
-    "cancel": "Utzi",
     "close_drawer": "Itxi panela",
     "confirm": "Berretsi",
     "home": "Hasiera",
@@ -261,7 +260,10 @@
     "empty_description": "Sortu zirriborro bat hasteko.",
     "load_error": "Ezin izan dira zirriborroak kargatu",
     "load_error_description": "Saiatu berriro.",
-    "not_defined": "Oraindik definitu gabe"
+    "not_defined": "Oraindik definitu gabe",
+    "question_type": {
+      "mixed": "Nahasia"
+    }
   },
   "drawer": {
     "close": "Itxi panela"
@@ -1260,12 +1262,6 @@
       },
       "question": {
         "add": "Gehitu galdera",
-        "add_multiple": {
-          "cancel_button": "Utzi",
-          "contact_button": "Jarri harremanetan",
-          "description": "Gaur egun ez da posible aukera anitzeko galdera bat baino gehiago dituzten prozesuak sortzea. Mota honetako prozesua behar baduzu, jarri gurekin harremanetan.",
-          "title": "Hainbat aukera anitzeko galdera oraindik ez dago eskuragarri"
-        },
         "delete": {
           "cancel_button": "Utzi",
           "delete_button": "Ezabatu",
@@ -1309,14 +1305,9 @@
     "people_in_census_one": "Boto-emaile bat",
     "people_in_census_other": "{{ count }} boto-emaile",
     "question_type": {
-      "confirm": {
-        "subtitle": "Aukera anitzak galdera bakar bat baino ez du onartzen. Aldatuz gero, lehena bakarrik mantenduko da eta gainerakoak baztertuko dira.",
-        "title": "Aukera anitzera aldatu nahi duzu?"
-      },
-      "description": "Hau bozketa-prozesu honetako galdera guztiei aplikatzen zaie",
+      "label": "Galdera mota",
       "multiple": "Aukera anitza",
-      "single": "Aukera bakarra",
-      "title": "Galdera mota"
+      "single": "Aukera bakarra"
     },
     "questions": "Galderak",
     "results": "Emaitzak",
