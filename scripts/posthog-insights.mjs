@@ -175,6 +175,14 @@ const buildPlan = (orgIndex) => {
           breakdown: 'step',
           display: 'ActionsBar',
         }),
+        trend({
+          name: 'Organizations created (by name)',
+          description:
+            'Who signed up, by name. `org_name` rides on the creation event itself, since the group profile is only registered once the organization has been fetched.',
+          series: [event('organization_created')],
+          breakdown: 'org_name',
+          display: 'ActionsTable',
+        }),
       ],
     },
     {
@@ -218,8 +226,8 @@ const buildPlan = (orgIndex) => {
         funnel({
           name: 'Election wizard · template → census → created → results',
           description:
-            'The creation flow in order: a template is picked, the census is published mid-wizard, the process is created, and results are opened later. Organization-level.',
-          steps: ['process_template_selected', 'census_published', 'process_created', 'process_results_viewed'],
+            'The creation flow in order: a template is picked, voter authentication (the census) is configured mid-wizard, the process is created, and results are opened later. Organization-level.',
+          steps: ['process_template_selected', 'census_configured', 'process_created', 'process_results_viewed'],
           groupTypeIndex: byOrg,
         }),
         funnel({
@@ -229,6 +237,14 @@ const buildPlan = (orgIndex) => {
           groupTypeIndex: byOrg,
           windowInterval: 1,
           windowUnit: 'hour',
+        }),
+        trend({
+          name: 'Most active organizations (by name)',
+          description:
+            'Elections created per organization, named. Reads off the `org_name` super property, which is on every event, so it works without the group analytics add-on.',
+          series: [event('process_created')],
+          breakdown: 'org_name',
+          display: 'ActionsTable',
         }),
         trend({
           name: 'Weekly active organizations',

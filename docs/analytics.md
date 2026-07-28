@@ -55,10 +55,10 @@ keep their historical strings for Plausible/GTM and are renamed to snake_case fo
 contain voter identifiers, ballot content, emails, or tokens.
 
 Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organization_created`,
-`process_created`, `subscription_completed`, `multiquestion_multichoice_attempted`, `checkout_started`,
+`process_created`, `subscription_completed`, `checkout_started`,
 `billing_portal_opened`, `paywall_viewed`, `feature_blocked`, `process_creation_failed`,
 `process_template_selected`, `process_action`, `process_results_viewed`, `members_import_started`,
-`members_import_completed`, `member_group_created`, `member_group_deleted`, `census_published`,
+`members_import_completed`, `member_group_created`, `member_group_deleted`, `census_configured`,
 `onboarding_step_completed`, `team_member_invited`, `team_member_removed`, `pdf_report_downloaded`.
 
 Organization-level BI: every session registers `org_address`/`org_name`/`org_plan` super properties, and
@@ -116,9 +116,9 @@ What it provisions:
 
 | Dashboard | Insights |
 | --- | --- |
-| **Activation** | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed |
+| **Activation** | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name |
 | **Monetization** | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan |
-| **Elections & engagement** | wizard funnel `process_template_selected` → `census_published` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type` |
+| **Elections & engagement** | wizard funnel `process_template_selected` → `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type` |
 
 Two things make these worth more than the PostHog defaults:
 
