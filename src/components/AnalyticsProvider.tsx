@@ -1,16 +1,48 @@
-import { createContext, PropsWithChildren, useContext, useEffect } from 'react'
+import { createContext, PropsWithChildren, useContext, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useSaasAccount } from '~components/Account/SaasAccountProvider'
+import { useSubscription } from '~components/Auth/Subscription'
+import { useAuth } from '~components/Auth/useAuth'
+import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent } from '~components/Cookies/utils'
+import { useProfile } from '~queries/account'
 import { useAppEnv } from '~src/app-env'
 import {
   AnalyticsEvent,
+  applyPosthogConsent,
+  identifyPosthogUser,
   initializeGTM,
   initializePlausible,
+  initializePosthog,
+  PosthogConsent,
+  registerPosthogSuperProperties,
+  resetPosthogUser,
+  setPosthogOrganization,
   trackGTMEvent,
   trackPlausibleEvent,
+  trackPosthogEvent,
 } from '~utils/analytics'
 
 const useAnalyticsProvider = () => {
-  const { GTM_CONTAINER_ID: gtmContainerId, PLAUSIBLE_DOMAIN: plausibleDomain, ANALYTICS_CLIENT_ID } = useAppEnv()
+  const {
+    GTM_CONTAINER_ID: gtmContainerId,
+    PLAUSIBLE_DOMAIN: plausibleDomain,
+    POSTHOG_KEY: posthogKey,
+    POSTHOG_HOST: posthogHost,
+    ANALYTICS_CLIENT_ID,
+  } = useAppEnv()
   const analyticsClientId = ANALYTICS_CLIENT_ID?.trim() || undefined
+  const { isAuthenticated } = useAuth()
+  const { data: profile } = useProfile({ enabled: isAuthenticated })
+  const { organization } = useSaasAccount()
+  const { subscription } = useSubscription()
+  const { i18n } = useTranslation()
+  const [consent, setConsent] = useState<PosthogConsent>(() => getCookieConsent() as PosthogConsent)
+
+  useEffect(() => {
+    const syncConsent = () => setConsent(getCookieConsent() as PosthogConsent)
+    window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
+    return () => window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
+  }, [])
 
   useEffect(() => {
     if (plausibleDomain) {
@@ -20,17 +52,94 @@ const useAnalyticsProvider = () => {
     if (gtmContainerId && window.location.pathname === '/') {
       initializeGTM({ gtmId: gtmContainerId }, analyticsClientId)
     }
-  }, [gtmContainerId, plausibleDomain, analyticsClientId])
+
+    if (posthogKey) {
+      initializePosthog({ key: posthogKey, host: posthogHost, analyticsClientId, consent })
+    }
+  }, [gtmContainerId, plausibleDomain, posthogKey, posthogHost, analyticsClientId, consent])
+
+  useEffect(() => {
+    applyPosthogConsent(consent)
+  }, [consent])
+
+  // Keep the interface locale attached to every event
+  useEffect(() => {
+    const locale = i18n.resolvedLanguage || i18n.language
+    if (locale) {
+      registerPosthogSuperProperties({ locale })
+    }
+  }, [i18n.resolvedLanguage, i18n.language])
+
+  // Identify dashboard users only after explicit cookie consent; anonymous
+  // visitors and voters never get a person profile.
+  const identifiedRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (consent !== 'accepted' || !profile?.id || identifiedRef.current === profile.id) return
+
+    identifyPosthogUser(profile.id, {
+      email: profile.email,
+      first_name: profile.firstName,
+      last_name: profile.lastName,
+      organizations_count: profile.organizations?.length,
+    })
+    identifiedRef.current = profile.id
+  }, [consent, profile])
+
+  // Unlink the device from the user on logout
+  const wasAuthenticatedRef = useRef(false)
+  useEffect(() => {
+    if (wasAuthenticatedRef.current && !isAuthenticated) {
+      resetPosthogUser()
+      identifiedRef.current = null
+    }
+    wasAuthenticatedRef.current = isAuthenticated
+  }, [isAuthenticated])
+
+  // Organization-level BI: group profile plus super properties so insights can
+  // break down by organization/plan even without the group analytics add-on.
+  useEffect(() => {
+    if (!organization?.address) return
+
+    setPosthogOrganization(organization.address, {
+      type: organization.type,
+      country: organization.country,
+      size: organization.size,
+      created_at: organization.createdAt,
+      plan_id: subscription?.subscriptionDetails?.planId,
+      plan_name: subscription?.plan?.name,
+      subscription_active: subscription?.subscriptionDetails?.active,
+      renewal_date: subscription?.subscriptionDetails?.renewalDate,
+      max_census_size: subscription?.subscriptionDetails?.maxCensusSize,
+      usage_processes: subscription?.usage?.processes,
+      usage_users: subscription?.usage?.users,
+      usage_sub_orgs: subscription?.usage?.subOrgs,
+      usage_sent_emails: subscription?.usage?.sentEmails,
+      usage_sent_sms: subscription?.usage?.sentSMS,
+    })
+    registerPosthogSuperProperties({
+      org_address: organization.address,
+      org_plan: subscription?.plan?.name,
+    })
+  }, [
+    organization?.address,
+    organization?.type,
+    organization?.country,
+    organization?.size,
+    organization?.createdAt,
+    subscription,
+  ])
 
   const trackEvent = (event: AnalyticsEvent) => {
     trackPlausibleEvent(event)
     trackGTMEvent(event)
+    trackPosthogEvent(event)
   }
 
   return {
     trackEvent,
     trackPlausibleEvent,
     trackGTMEvent,
+    trackPosthogEvent,
   }
 }
 
