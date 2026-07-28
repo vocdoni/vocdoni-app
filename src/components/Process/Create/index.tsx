@@ -218,6 +218,19 @@ export const useFormDraftSaver = (
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const skipNextSaveRef = useRef(false)
   const [draftLimitReached, setDraftLimitReached] = useState(false)
+  // Saving a draft replaces its whole question set server-side (the API deletes
+  // the stored questions and inserts the ones it receives), so two writes in
+  // flight at once can interleave and leave a duplicated question behind. Every
+  // write goes through this queue, one at a time.
+  const pendingWriteRef = useRef<Promise<unknown> | null>(null)
+  // The id the next write must target, tracked outside React state so a write
+  // queued before a re-render still updates the draft its predecessor created
+  // instead of creating a second one.
+  const draftIdRef = useRef(draftId)
+
+  useEffect(() => {
+    draftIdRef.current = draftId
+  }, [draftId])
 
   const isCreating = createProcess.isPending
   const isUpdating = updateProcess.isPending
@@ -227,23 +240,44 @@ export const useFormDraftSaver = (
     skipNextSaveRef.current = skip
   }
 
+  const enqueueWrite = useCallback(<T,>(write: () => Promise<T>): Promise<T> => {
+    const run = (pendingWriteRef.current ?? Promise.resolve()).then(write, write)
+    const settled = run.then(
+      () => undefined,
+      () => undefined
+    )
+    pendingWriteRef.current = settled
+    void settled.then(() => {
+      if (pendingWriteRef.current === settled) pendingWriteRef.current = null
+    })
+    return run
+  }, [])
+
   const saveDraft = useCallback(
     async (isAutoSave = true) => {
       if (!isDirty || skipNextSaveRef.current) return 'skipped'
       // Prevent repeated auto-save attempts once the draft limit is reached
       if (isAutoSave && draftLimitReached) return 'limit-reached'
+      // Auto-saves fire on every blur: queueing one behind another only sends
+      // the same values twice, and the interval picks up whatever changed
+      // while a write was running.
+      if (isAutoSave && pendingWriteRef.current) return 'skipped'
 
       try {
         // A draft is an unpublished process, so it is saved through the same
-        // structured create/update requests the publish step uses.
-        const form = getValues()
-        const body = formToVotingProcessRequest(form, buildCensusSpec(form))
-        if (draftId) {
-          await updateProcess.mutateAsync({ processId: draftId, body })
-        } else {
+        // structured create/update requests the publish step uses. The values
+        // are read when the write runs, not when it is queued, so a save that
+        // waited for its turn still sends the latest form.
+        await enqueueWrite(async () => {
+          const form = getValues()
+          const body = formToVotingProcessRequest(form, buildCensusSpec(form))
+          if (draftIdRef.current) {
+            return updateProcess.mutateAsync({ processId: draftIdRef.current, body })
+          }
           const draftProcessId = await createProcess.mutateAsync(body)
+          draftIdRef.current = draftProcessId
           storeDraftId(draftProcessId)
-        }
+        })
         saveCooldown?.(saveTimeoutMs)
         setDraftLimitReached(false)
         return 'saved'
@@ -269,7 +303,7 @@ export const useFormDraftSaver = (
       isDirty,
       draftLimitReached,
       getValues,
-      draftId,
+      enqueueWrite,
       formToVotingProcessRequest,
       updateProcess,
       createProcess,
@@ -304,7 +338,7 @@ export const useFormDraftSaver = (
     return () => clearInterval(id)
   }, [saveDraft])
 
-  return { saveDraft, isSaving, skipSave, draftLimitReached }
+  return { saveDraft, isSaving, skipSave, draftLimitReached, enqueueWrite }
 }
 
 const TemplateButtons = () => {
@@ -605,7 +639,7 @@ const ProcessCreateView = () => {
     onOpen: openConfirmationModal,
     onClose: () => setLeaveConfirmationOpen(false),
   })
-  const { saveDraft, isSaving, skipSave } = useFormDraftSaver(
+  const { saveDraft, isSaving, skipSave, enqueueWrite } = useFormDraftSaver(
     isDirty,
     methods.getValues,
     effectiveDraftId,
@@ -701,14 +735,20 @@ const ProcessCreateView = () => {
   }
 
   const onSubmit = async (form: Process) => {
+    // Clicking publish blurs whatever field was focused, which fires an
+    // auto-save: stop it, and queue this write behind any save still running,
+    // so the draft is never rewritten by two requests at once.
+    skipSave(true)
     try {
       const censusSpec = buildCensusSpec(form)
       const request = formToVotingProcessRequest(form, censusSpec)
       // The draft is the process: publish the one we have been saving instead of
       // creating a second one and leaving the draft orphaned behind it.
       const processId = effectiveDraftId
-        ? await updateProcess.mutateAsync({ processId: effectiveDraftId, body: request }).then(() => effectiveDraftId)
-        : await createProcess.mutateAsync(request)
+        ? await enqueueWrite(() =>
+            updateProcess.mutateAsync({ processId: effectiveDraftId, body: request }).then(() => effectiveDraftId)
+          )
+        : await enqueueWrite(() => createProcess.mutateAsync(request))
       await apiClient.elections.publishAndWait(processId)
 
       await setStepDoneAsync(SetupStepIds.firstVoteCreation)
@@ -742,6 +782,9 @@ const ProcessCreateView = () => {
       navigate(generatePath(Routes.dashboard.process, { id: processId }))
     } catch (error) {
       console.error('Error creating election:', error)
+      // The draft is still a draft: let it keep auto-saving while the user fixes
+      // whatever went wrong.
+      skipSave(false)
 
       toast({
         title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
