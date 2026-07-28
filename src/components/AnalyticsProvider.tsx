@@ -17,6 +17,7 @@ import {
   resetPosthogUser,
   setPosthogOrganization,
   setPosthogSessionRecording,
+  toPosthogConsent,
   trackAnalyticsEvent,
   trackGTMEvent,
   trackPlausibleEvent,
@@ -37,10 +38,10 @@ const useAnalyticsProvider = () => {
   const { organization } = useSaasAccount()
   const { subscription } = useSubscription()
   const { i18n } = useTranslation()
-  const [consent, setConsent] = useState<PosthogConsent>(() => getCookieConsent() as PosthogConsent)
+  const [consent, setConsent] = useState<PosthogConsent>(() => toPosthogConsent(getCookieConsent()))
 
   useEffect(() => {
-    const syncConsent = () => setConsent(getCookieConsent() as PosthogConsent)
+    const syncConsent = () => setConsent(toPosthogConsent(getCookieConsent()))
     window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
     return () => window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
   }, [])

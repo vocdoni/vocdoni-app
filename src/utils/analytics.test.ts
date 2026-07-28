@@ -368,6 +368,44 @@ describe('posthog initialization', () => {
     await vi.waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Failed to initialize PostHog:', expect.any(Error)))
     consoleSpy.mockRestore()
   })
+
+  // A failed init used to latch the "already started" guard forever, so a
+  // transient failure disabled analytics until a full page reload.
+  it('retries on a later attempt when the first init fails', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    mockPosthog.init.mockImplementationOnce(() => {
+      throw new Error('PostHog init failed')
+    })
+    const { initializePosthog } = await import('./analytics')
+
+    initializePosthog({ key: 'phc_test', consent: null })
+    await vi.waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Failed to initialize PostHog:', expect.any(Error)))
+
+    initializePosthog({ key: 'phc_test', consent: null })
+
+    await vi.waitFor(() => expect(mockPosthog.init).toHaveBeenCalledTimes(2))
+    consoleSpy.mockRestore()
+  })
+})
+
+describe('toPosthogConsent', () => {
+  it('keeps the two explicit choices', async () => {
+    const { toPosthogConsent } = await import('./analytics')
+
+    expect(toPosthogConsent('accepted')).toBe('accepted')
+    expect(toPosthogConsent('rejected')).toBe('rejected')
+  })
+
+  // The value comes from localStorage, so it may be absent or hand-edited.
+  it('treats anything else as no decision', async () => {
+    const { toPosthogConsent } = await import('./analytics')
+
+    expect(toPosthogConsent(null)).toBeNull()
+    expect(toPosthogConsent(undefined)).toBeNull()
+    expect(toPosthogConsent('true')).toBeNull()
+    expect(toPosthogConsent('Accepted')).toBeNull()
+    expect(toPosthogConsent('')).toBeNull()
+  })
 })
 
 describe('posthog event tracking', () => {

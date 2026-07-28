@@ -167,6 +167,12 @@ export const trackAnalyticsEvent = (event: AnalyticsEvent): void => {
 
 export type PosthogConsent = 'accepted' | 'rejected' | null
 
+// The consent choice lives in localStorage, so it is user-editable and may hold
+// anything. Anything that is not an explicit choice is treated as "no decision
+// yet" (cookieless, anonymous) rather than being trusted as one.
+export const toPosthogConsent = (value: string | null | undefined): PosthogConsent =>
+  value === 'accepted' || value === 'rejected' ? value : null
+
 type PosthogInitConfig = {
   key: string
   host?: string
@@ -263,7 +269,13 @@ let posthogInitialized = false
 let posthogModulePromise: Promise<typeof import('posthog-js')> | null = null
 
 const loadPosthogModule = () => {
-  posthogModulePromise ??= import('posthog-js')
+  // A rejected promise must not stay cached: a transient chunk-load failure
+  // would otherwise keep PostHog dead for the rest of the session, since every
+  // later caller would await the same rejection.
+  posthogModulePromise ??= import('posthog-js').catch((error) => {
+    posthogModulePromise = null
+    throw error
+  })
   return posthogModulePromise
 }
 
@@ -299,6 +311,9 @@ export const initializePosthog = ({ key, host, analyticsClientId, consent }: Pos
       posthogInitialized = true
     })
     .catch((error) => {
+      // Release the guard so a later attempt (consent change, remount) can
+      // retry instead of leaving analytics permanently disabled.
+      posthogInitStarted = false
       console.error('Failed to initialize PostHog:', error)
     })
 }
