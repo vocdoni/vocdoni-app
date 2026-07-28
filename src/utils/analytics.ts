@@ -185,6 +185,19 @@ export const isVotingPath = (pathname: string): boolean => VOTING_PATH_REGEX.tes
 // password-reset links carry tokens) and must never reach analytics.
 const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code']
 
+// Session replay masks every input value (`maskAllInputs`), which would also
+// hide fields we do want to read back — the organization name in settings being
+// the one case. Opt a field back in by adding `data-ph-unmask` to it (or to any
+// ancestor). Passwords are never unmasked, whatever the markup says.
+export const POSTHOG_UNMASK_ATTRIBUTE = 'data-ph-unmask'
+
+export const posthogMaskInput = (text: string, element?: HTMLElement): string => {
+  const masked = '*'.repeat(text.length)
+  if (!element) return masked
+  if (element instanceof HTMLInputElement && element.type === 'password') return masked
+  return element.closest(`[${POSTHOG_UNMASK_ATTRIBUTE}]`) ? text : masked
+}
+
 export const sanitizeAnalyticsUrl = (url: string): string => {
   try {
     const parsed = new URL(url)
@@ -274,6 +287,7 @@ export const initializePosthog = ({ key, host, analyticsClientId, consent }: Pos
         disable_session_recording: true,
         session_recording: {
           maskAllInputs: true,
+          maskInputFn: posthogMaskInput,
         },
         capture_exceptions: true,
         before_send: posthogBeforeSend,

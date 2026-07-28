@@ -187,6 +187,46 @@ describe('posthog url sanitization', () => {
   })
 })
 
+describe('posthog session replay input masking', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    document.body.innerHTML = ''
+  })
+
+  it('masks input values by default', async () => {
+    const { posthogMaskInput } = await import('./analytics')
+
+    const input = document.createElement('input')
+    document.body.appendChild(input)
+
+    expect(posthogMaskInput('ada@lovelace.org', input)).toBe('****************')
+    expect(posthogMaskInput('anything')).toBe('********')
+  })
+
+  it('keeps values readable inside a data-ph-unmask subtree', async () => {
+    const { posthogMaskInput, POSTHOG_UNMASK_ATTRIBUTE } = await import('./analytics')
+
+    const wrapper = document.createElement('div')
+    wrapper.setAttribute(POSTHOG_UNMASK_ATTRIBUTE, '')
+    const input = document.createElement('input')
+    wrapper.appendChild(input)
+    document.body.appendChild(wrapper)
+
+    expect(posthogMaskInput('Vocdoni Association', input)).toBe('Vocdoni Association')
+  })
+
+  it('never unmasks passwords, even inside a data-ph-unmask subtree', async () => {
+    const { posthogMaskInput, POSTHOG_UNMASK_ATTRIBUTE } = await import('./analytics')
+
+    const input = document.createElement('input')
+    input.type = 'password'
+    input.setAttribute(POSTHOG_UNMASK_ATTRIBUTE, '')
+    document.body.appendChild(input)
+
+    expect(posthogMaskInput('hunter2', input)).toBe('*******')
+  })
+})
+
 describe('posthog before_send guard', () => {
   beforeEach(() => {
     vi.resetModules()
@@ -266,7 +306,7 @@ describe('posthog initialization', () => {
     expect(config.persistence).toBe('memory')
     expect(config.person_profiles).toBe('identified_only')
     expect(config.disable_session_recording).toBe(true)
-    expect(config.session_recording).toEqual({ maskAllInputs: true })
+    expect(config.session_recording).toEqual({ maskAllInputs: true, maskInputFn: expect.any(Function) })
     expect(config.capture_exceptions).toBe(true)
   })
 

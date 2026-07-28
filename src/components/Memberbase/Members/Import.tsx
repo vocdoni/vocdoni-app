@@ -282,7 +282,15 @@ export const ImportProgress = () => {
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <List.Root display='flex' flexDirection='column' gap={2} pl={4} listStyleType='disc'>
+              {/* ph-no-capture: import errors quote the offending CSV rows */}
+              <List.Root
+                display='flex'
+                flexDirection='column'
+                gap={2}
+                pl={4}
+                listStyleType='disc'
+                className='ph-no-capture'
+              >
                 {data?.errors?.map((error, i) => (
                   <List.Item key={i} whiteSpace='pre-wrap' fontSize='sm'>
                     {error}

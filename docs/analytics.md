@@ -33,6 +33,18 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
    `$current_url`/`$referrer`; exception payloads get email addresses redacted.
 4. **Session replay** only for authenticated users who accepted consent, with `maskAllInputs`; ballot
    content carries `.ph-no-capture` as defense in depth.
+5. **Memberbase PII is never recorded.** Every surface that renders a member record carries
+   `.ph-no-capture`, so rrweb skips the subtree entirely (text *and* attributes): member table cells
+   (`Memberbase/Members/index.tsx`), member cards (`MemberCard.tsx` — the checkbox `aria-label`
+   embeds the member name, so the whole card is excluded), group member table cells
+   (`GroupsBoard.tsx`), and the CSV import error list (`Members/Import.tsx`), which quotes offending
+   rows. Member search and the add/edit member form are covered by `maskAllInputs`. Surrounding
+   chrome — tabs, headings, buttons, counts, group names — stays visible, so replays remain usable.
+   **When adding a component that renders member fields, add `className='ph-no-capture'` to it.**
+6. **Opting a field back in.** `maskAllInputs` hides every input value, including ones that are not
+   personal data. `posthogMaskInput` (wired as `maskInputFn`) restores the value for inputs inside a
+   `data-ph-unmask` subtree; passwords are never restored. The only current use is the organization
+   name in Settings → Organization details (`Organization/Form.tsx`).
 
 ## Tracking events
 

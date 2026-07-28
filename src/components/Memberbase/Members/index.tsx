@@ -787,7 +787,10 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
       {columns
         .filter((column) => column.visible)
         .map((column) => (
-          <Table.Cell key={column.id}>{maskIfNeeded(column.id, member[column.id])}</Table.Cell>
+          // ph-no-capture: member data is never recorded in session replays
+          <Table.Cell key={column.id} className='ph-no-capture'>
+            {maskIfNeeded(column.id, member[column.id])}
+          </Table.Cell>
         ))}
       <Table.Cell>
         <MemberActions
