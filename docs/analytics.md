@@ -103,4 +103,15 @@ POSTHOG_KEY=phc_yourdevkey pnpm dev
 - Accept the banner: `ph_*` storage appears; after login, the person is identified and events carry
   `$groups.organization`.
 - Reject the banner: network silence. Logout: `posthog.reset()` (new anonymous id).
-- `posthog.debug()` in the console prints every captured event.
+
+Two gotchas when verifying:
+
+- **`window.posthog` is always `undefined`.** The SDK is imported as an ES module, not injected via the
+  `<script>` snippet, so it is never attached to `window`. Do not use it to tell whether PostHog loaded
+  (it looks identical on voting and non-voting pages), and `posthog.debug()` is not available in the
+  console. Use the **Network tab filtered on `posthog`** instead — that is the reliable signal.
+- **Headless browsers capture nothing.** posthog-js drops every event when its internal `_is_bot()` check
+  is true, which includes Playwright/Puppeteer even with a spoofed user agent and `navigator.webdriver`.
+  The SDK still initializes and still calls `/flags/`, so it looks alive while `before_send` is never
+  reached and no `/e/` request is ever made. Automated end-to-end checks need `opt_out_useragent_filter:
+  true` set temporarily, or a headed real browser.
