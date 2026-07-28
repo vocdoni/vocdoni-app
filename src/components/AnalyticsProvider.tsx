@@ -107,6 +107,9 @@ const useAnalyticsProvider = () => {
     if (!organization?.address) return
 
     setPosthogOrganization(organization.address, {
+      // PostHog labels a group by its `name` property; without it every
+      // organization shows up as a bare address in insights and group lists.
+      name: organization.account?.name?.default,
       type: organization.type,
       country: organization.country,
       size: organization.size,
@@ -124,10 +127,15 @@ const useAnalyticsProvider = () => {
     })
     registerPosthogSuperProperties({
       org_address: organization.address,
+      // Duplicated from the group profile on purpose: group properties are only
+      // queryable with the group analytics add-on, whereas a super property
+      // lands on every event and can always be broken down by.
+      org_name: organization.account?.name?.default,
       org_plan: subscription?.plan?.name,
     })
   }, [
     organization?.address,
+    organization?.account?.name?.default,
     organization?.type,
     organization?.country,
     organization?.size,

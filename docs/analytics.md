@@ -61,9 +61,16 @@ Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organi
 `members_import_completed`, `member_group_created`, `member_group_deleted`, `census_published`,
 `onboarding_step_completed`, `team_member_invited`, `team_member_removed`, `pdf_report_downloaded`.
 
-Organization-level BI: every session registers `org_address`/`org_plan` super properties, and the
-`organization` group profile carries plan, type, country, size, usage counters, and renewal date
-(see `AnalyticsProvider`).
+Organization-level BI: every session registers `org_address`/`org_name`/`org_plan` super properties, and
+the `organization` group profile carries name, plan, type, country, size, usage counters, and renewal
+date (see `AnalyticsProvider`).
+
+The group's `name` property is what PostHog uses to label a group — without it every organization renders
+as a bare `0x…` address. It is duplicated as the `org_name` super property because group properties are
+only queryable with the group analytics add-on, whereas super properties land on every event.
+`organization_created` also carries `org_name`/`org_address` directly, since it fires before the group
+profile has been registered. Organization names are business data, not personal data; note that a
+one-person organization may still be named after its owner.
 
 ## Feature flags
 

@@ -88,6 +88,11 @@ export const OrganizationCreate = ({
       trackEvent({
         name: AnalyticsEvents.OrganizationCreated,
         props: {
+          // The group profile and `org_name` super property are only registered
+          // once the organization has been fetched, which is after this event
+          // fires — so the creation event carries the name itself.
+          org_name: values.name || 'unknown',
+          org_address: address,
           org_type: values.type || 'unknown',
           org_size: values.size || 'unknown',
           org_country: values.country || 'unknown',
