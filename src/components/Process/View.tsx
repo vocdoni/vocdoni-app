@@ -248,6 +248,9 @@ export const ProcessView = () => {
                   borderColor='table.border'
                   borderRadius='md'
                   scrollMarginTop='70px'
+                  // Ballot content must never appear in analytics/session replays,
+                  // even when an org admin previews the process from the dashboard
+                  className='ph-no-capture'
                 >
                   <ElectionQuestions
                     onInvalid={(args) => {
@@ -304,7 +307,8 @@ const SuccessVoteModal = () => {
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          {/* Contains the vote verification link (vote id) — never capture it */}
+          <Dialog.Content className='ph-no-capture'>
             <Dialog.CloseTrigger />
             <Dialog.Header display='flex' flexDirection='column'>
               <Dialog.Title>{t('process.success_modal.title')}</Dialog.Title>

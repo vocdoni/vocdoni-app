@@ -201,6 +201,8 @@ export const sanitizeAnalyticsUrl = (url: string): string => {
   }
 }
 
+const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
+
 export const posthogBeforeSend = (event: CaptureResult | null): CaptureResult | null => {
   if (!event) return null
 
@@ -220,6 +222,22 @@ export const posthogBeforeSend = (event: CaptureResult | null): CaptureResult | 
   }
   if (typeof event.properties?.$referrer === 'string') {
     event.properties.$referrer = sanitizeAnalyticsUrl(event.properties.$referrer)
+  }
+
+  // Error tracking: strip email addresses from exception payloads
+  if (event.event === '$exception') {
+    for (const key of ['$exception_message', '$exception_list'] as const) {
+      const value = event.properties?.[key]
+      if (typeof value === 'string') {
+        event.properties[key] = value.replace(EMAIL_REGEX, '[redacted-email]')
+      } else if (value !== undefined) {
+        try {
+          event.properties[key] = JSON.parse(JSON.stringify(value).replace(EMAIL_REGEX, '[redacted-email]'))
+        } catch {
+          // leave the payload untouched if it cannot be serialized
+        }
+      }
+    }
   }
 
   return event
@@ -252,7 +270,12 @@ export const initializePosthog = ({ key, host, analyticsClientId, consent }: Pos
         person_profiles: 'identified_only',
         // Cookieless until the user accepts the cookie banner
         persistence: consent === 'accepted' ? 'localStorage+cookie' : 'memory',
+        // Recording is started explicitly, only for consented dashboard users
         disable_session_recording: true,
+        session_recording: {
+          maskAllInputs: true,
+        },
+        capture_exceptions: true,
         before_send: posthogBeforeSend,
       })
       if (analyticsClientId) {
@@ -300,6 +323,7 @@ export const applyPosthogConsent = (consent: PosthogConsent): void => {
           posthog.opt_in_capturing()
         }
       } else if (consent === 'rejected') {
+        posthog.stopSessionRecording()
         posthog.opt_out_capturing()
         posthog.set_config({ persistence: 'memory' })
       }
@@ -345,6 +369,26 @@ export const setPosthogOrganization = (address: string, props?: Record<string, u
     })
     .catch((error) => {
       console.error('Failed to set PostHog organization group:', error)
+    })
+}
+
+// Session replay is opt-in twice over: it only ever runs for authenticated
+// dashboard users who accepted the cookie banner, and voting routes are
+// excluded at the before_send layer regardless.
+export const setPosthogSessionRecording = (enabled: boolean): void => {
+  if (!posthogInitStarted) return
+  if (!canUseBrowserAnalytics()) return
+
+  void loadPosthogModule()
+    .then(({ default: posthog }) => {
+      if (enabled) {
+        posthog.startSessionRecording()
+      } else {
+        posthog.stopSessionRecording()
+      }
+    })
+    .catch((error) => {
+      console.error('Failed to toggle PostHog session recording:', error)
     })
 }
 

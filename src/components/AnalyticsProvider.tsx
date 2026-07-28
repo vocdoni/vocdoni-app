@@ -16,6 +16,7 @@ import {
   registerPosthogSuperProperties,
   resetPosthogUser,
   setPosthogOrganization,
+  setPosthogSessionRecording,
   trackAnalyticsEvent,
   trackGTMEvent,
   trackPlausibleEvent,
@@ -61,6 +62,11 @@ const useAnalyticsProvider = () => {
   useEffect(() => {
     applyPosthogConsent(consent)
   }, [consent])
+
+  // Session replay only for consented, authenticated dashboard users
+  useEffect(() => {
+    setPosthogSessionRecording(consent === 'accepted' && isAuthenticated)
+  }, [consent, isAuthenticated])
 
   // Keep the interface locale attached to every event
   useEffect(() => {

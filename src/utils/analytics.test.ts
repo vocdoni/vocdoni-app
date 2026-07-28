@@ -25,6 +25,8 @@ const mockPosthog = {
   opt_in_capturing: vi.fn(),
   opt_out_capturing: vi.fn(),
   has_opted_out_capturing: vi.fn(() => false),
+  startSessionRecording: vi.fn(),
+  stopSessionRecording: vi.fn(),
 }
 
 vi.mock('posthog-js', () => ({
@@ -224,6 +226,22 @@ describe('posthog before_send guard', () => {
 
     expect(posthogBeforeSend(null)).toBeNull()
   })
+
+  it('redacts email addresses from exception payloads', async () => {
+    const { posthogBeforeSend } = await import('./analytics')
+
+    const event = {
+      event: '$exception',
+      properties: {
+        $current_url: 'https://app.vocdoni.io/admin',
+        $exception_message: 'Failed to invite someone@example.com to the team',
+        $exception_list: [{ value: 'someone@example.com not found' }],
+      },
+    }
+    const result = posthogBeforeSend(event as any)
+    expect(result?.properties?.$exception_message).toBe('Failed to invite [redacted-email] to the team')
+    expect(result?.properties?.$exception_list).toEqual([{ value: '[redacted-email] not found' }])
+  })
 })
 
 describe('posthog initialization', () => {
@@ -246,6 +264,8 @@ describe('posthog initialization', () => {
     expect(config.persistence).toBe('memory')
     expect(config.person_profiles).toBe('identified_only')
     expect(config.disable_session_recording).toBe(true)
+    expect(config.session_recording).toEqual({ maskAllInputs: true })
+    expect(config.capture_exceptions).toBe(true)
   })
 
   it('initializes with cookie persistence when consent was already accepted', async () => {
@@ -383,6 +403,36 @@ describe('posthog consent lifecycle', () => {
 
     await vi.waitFor(() => expect(mockPosthog.opt_out_capturing).toHaveBeenCalledTimes(1))
     expect(mockPosthog.set_config).toHaveBeenCalledWith({ persistence: 'memory' })
+    expect(mockPosthog.stopSessionRecording).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('posthog session recording', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    Object.values(mockPosthog).forEach((fn) => fn.mockClear())
+    mockPosthog.has_opted_out_capturing.mockReturnValue(false)
+    window.history.pushState({}, '', '/')
+  })
+
+  it('does nothing before initialization', async () => {
+    const { setPosthogSessionRecording } = await import('./analytics')
+
+    setPosthogSessionRecording(true)
+
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(mockPosthog.startSessionRecording).not.toHaveBeenCalled()
+  })
+
+  it('starts and stops recording after initialization', async () => {
+    const { initializePosthog, setPosthogSessionRecording } = await import('./analytics')
+
+    initializePosthog({ key: 'phc_test', consent: 'accepted' })
+    setPosthogSessionRecording(true)
+    await vi.waitFor(() => expect(mockPosthog.startSessionRecording).toHaveBeenCalledTimes(1))
+
+    setPosthogSessionRecording(false)
+    await vi.waitFor(() => expect(mockPosthog.stopSessionRecording).toHaveBeenCalledTimes(1))
   })
 })
 
