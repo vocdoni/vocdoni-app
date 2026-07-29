@@ -102,6 +102,10 @@ export const paginatedElectionsQuery = (
       page: params.page ? Number(params.page) : 1,
       limit: params.limit,
       status: params.status ? LIST_STATUS_MAP[params.status.toLowerCase()] : undefined,
+      // These lists are about published elections — drafts have their own tab and
+      // their own query. Without this the API defaults a manager to every process
+      // of the organization, drafts included.
+      published: true,
     })
     // Pre-seed each process into the ElectionProvider query so per-row providers
     // (ProcessesTable, dashboard cards) render from cache instead of re-fetching.
