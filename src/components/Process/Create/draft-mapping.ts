@@ -86,9 +86,14 @@ export const votingProcessToForm = (process: VotingProcessResponse): Process => 
             title: localStr(question.title),
             description: localStr(question.description),
             type: isMultiChoice ? SelectorTypes.Multiple : SelectorTypes.Single,
-            // Extended info is on when any of its choices carries a description
-            // or an image.
-            extendedInfo: metas.some((meta) => !!meta.description || !!meta.image),
+            // The presence of the metadata block is the signal, not its contents:
+            // the wizard writes `metadata.choices` whenever the toggle is on, and
+            // an entry whose description and image are still empty serializes to
+            // just `{ value }`. Inferring the flag from the contents therefore
+            // lost the toggle on any question the user enabled but hadn't filled
+            // in yet. Cloned published processes only carry `metadata.choices`
+            // when the wizard wrote them, so this stays correct there too.
+            extendedInfo: metas.length > 0,
             minNumberOfChoices: isMultiChoice ? (question.typeSetup?.minChoices ?? 0) : null,
             maxNumberOfChoices: isMultiChoice
               ? (question.typeSetup?.maxChoices ??

@@ -85,10 +85,26 @@ describe('votingProcessToForm', () => {
     it.each([
       ['description', { title: 'Option 1', description: '' }],
       ['image', { title: 'Option 1', image: '' }],
-    ])('stays off when the only %s is empty', (_label, choice) => {
+    ])('stays on when the stored %s is empty', (_label, choice) => {
+      // The wizard only writes `metadata.choices` when the toggle is on, so the
+      // block being there is the signal — its contents may still be empty.
       const form = votingProcessToForm(process({ questions: [question([choice, { title: 'Option 2' }])] }))
 
-      expect(form.questions[0].extendedInfo).toBe(false)
+      expect(form.questions[0].extendedInfo).toBe(true)
+    })
+
+    it('survives a round-trip of a toggle enabled but not yet filled in', () => {
+      // Enabling the toggle without typing anything emits
+      // `{ value, description: undefined, image: undefined }`, and JSON drops the
+      // undefined members — so what comes back is a bare `{ value }`. Inferring
+      // the flag from the contents lost the toggle on reload.
+      const enabledButEmpty = question([{ title: 'Option 1' }], {
+        metadata: { choices: [{ value: 0, description: undefined, image: undefined }] },
+      })
+      const stored = JSON.parse(JSON.stringify(enabledButEmpty))
+
+      expect(stored.metadata.choices).toEqual([{ value: 0 }])
+      expect(votingProcessToForm(process({ questions: [stored] })).questions[0].extendedInfo).toBe(true)
     })
 
     it('is restored per question', () => {
