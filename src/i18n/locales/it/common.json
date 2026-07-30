@@ -1105,7 +1105,10 @@
     "organization": "Dettagli organizzazione",
     "title": {
       "read_more": "Espandi titolo"
-    }
+    },
+    "unavailable_description": "Qualcosa è andato storto durante la lettura delle tue organizzazioni. Di solito è temporaneo: riprova.",
+    "unavailable_retry": "Riprova",
+    "unavailable_title": "Non siamo riusciti a caricare le tue organizzazioni"
   },
   "organization_settings": {
     "phone_support": {

@@ -1087,7 +1087,10 @@
     "organization": "Organisationsdetails",
     "title": {
       "read_more": "Titel ausklappen"
-    }
+    },
+    "unavailable_description": "",
+    "unavailable_retry": "",
+    "unavailable_title": ""
   },
   "organization_settings": {
     "phone_support": {

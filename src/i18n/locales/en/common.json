@@ -1087,7 +1087,10 @@
     "organization": "Organization details",
     "title": {
       "read_more": "Expand title"
-    }
+    },
+    "unavailable_description": "Something went wrong while reading your organizations. This is usually temporary — please try again.",
+    "unavailable_retry": "Try again",
+    "unavailable_title": "We couldn't load your organizations"
   },
   "organization_settings": {
     "phone_support": {

@@ -1087,7 +1087,10 @@
     "organization": "Erakundearen xehetasunak",
     "title": {
       "read_more": "Zabaldu izenburua"
-    }
+    },
+    "unavailable_description": "",
+    "unavailable_retry": "",
+    "unavailable_title": ""
   },
   "organization_settings": {
     "phone_support": {

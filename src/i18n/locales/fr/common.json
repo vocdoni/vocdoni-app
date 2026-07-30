@@ -1105,7 +1105,10 @@
     "organization": "Détails de l'organisation",
     "title": {
       "read_more": "Développer le titre"
-    }
+    },
+    "unavailable_description": "",
+    "unavailable_retry": "",
+    "unavailable_title": ""
   },
   "organization_settings": {
     "phone_support": {

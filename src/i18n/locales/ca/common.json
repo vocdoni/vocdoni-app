@@ -1105,7 +1105,10 @@
     "organization": "Detalls de l'organització",
     "title": {
       "read_more": "Expandir títol"
-    }
+    },
+    "unavailable_description": "Alguna cosa ha fallat en llegir les teves organitzacions. Sol ser temporal: torna-ho a provar.",
+    "unavailable_retry": "Torna-ho a provar",
+    "unavailable_title": "No hem pogut carregar les teves organitzacions"
   },
   "organization_settings": {
     "phone_support": {

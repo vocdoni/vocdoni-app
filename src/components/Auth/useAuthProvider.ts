@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { AuthStorageKeys, clearAuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { useAuth as useSdkAuth } from '@vocdoni/react-providers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -14,6 +15,12 @@ export enum LocalStorageKeys {
   // The organization address the session is currently acting as (multi-org accounts).
   SignerAddress = 'signerAddress',
 }
+
+/**
+ * Whether the API answered with a 4xx, i.e. a definitive "no" rather than a
+ * failure to reach it. Retrying those only delays the answer.
+ */
+const isClientError = (error: unknown) => error instanceof VocdoniApiError && error.status >= 400 && error.status < 500
 
 const getStorageItem = (key: string) => (typeof localStorage === 'undefined' ? null : localStorage.getItem(key))
 const setStorageItem = (key: string, value: string) => {
@@ -77,12 +84,19 @@ export const useAuthProvider = () => {
   const {
     data: addressesData,
     isLoading: addressesLoading,
+    error: addressesError,
     refetch: refetchAddresses,
   } = useQuery({
     queryKey: ['auth', 'addresses', bearer],
     queryFn: () => apiClient.auth.addresses(),
     enabled: !!bearer,
-    retry: false,
+    // "This account owns no organizations" and "we could not find out" must not
+    // collapse into the same outcome: the first sends the user to onboarding,
+    // the second is a transient failure. The API answers the first with a 4xx,
+    // so those resolve immediately; a 5xx or a dropped connection is retried,
+    // and if it still fails `addressesError` lets consumers say so instead of
+    // showing an org-owning user the "you have no organizations" screen.
+    retry: (failureCount, error) => failureCount < 2 && !isClientError(error),
     // A user with no organization yet legitimately has no addresses; don't surface it.
     throwOnError: false,
   })
@@ -158,6 +172,9 @@ export const useAuthProvider = () => {
     addresses,
     currentAddress,
     refreshAddresses,
+    // Set only when the address list could not be read at all (after retries).
+    // Distinguishes "this account owns no organizations" from "we don't know".
+    addressesError,
     // Inject a session obtained out-of-band (OAuth). Reads token + expiry from the
     // rainbowkit storage the OAuth wallet wrote.
     setSession,
