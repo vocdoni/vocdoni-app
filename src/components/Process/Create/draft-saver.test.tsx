@@ -83,7 +83,7 @@ describe('useFormDraftSaver', () => {
     const { result } = renderSaver('draft-1')
 
     const saving = result.current.saveDraft(false)
-    const publishing = result.current.enqueueWrite(() => update('draft-1', { published: true }))
+    const publishing = result.current.writeDraft(() => ({ published: true }) as never)
 
     await waitFor(() => expect(update).toHaveBeenCalledTimes(1))
     expect(update).not.toHaveBeenCalledWith('draft-1', { published: true })
@@ -129,5 +129,27 @@ describe('useFormDraftSaver', () => {
     // creating a second draft behind its back.
     expect(update).toHaveBeenCalledTimes(1)
     expect(update).toHaveBeenCalledWith('draft-1', expect.anything())
+  })
+
+  it('publishes the draft an in-flight auto-save is creating instead of a second one', async () => {
+    const inFlight = deferred()
+    create.mockReturnValueOnce(inFlight.promise.then(() => 'draft-1'))
+    const { result, storeDraftId } = renderSaver(null)
+
+    // Clicking Publish blurs the focused field first, so the auto-save starts
+    // creating the draft...
+    const autoSaving = result.current.saveDraft(true)
+    // ...and the click submits before that round-trip resolves, so the render
+    // closure still sees no draft id. Deciding create-vs-update from it here
+    // would publish a second process and orphan the one being created.
+    const publishing = result.current.writeDraft(() => ({ published: true }) as never)
+
+    inFlight.resolve()
+    const [, publishedId] = await Promise.all([autoSaving, publishing])
+
+    expect(create).toHaveBeenCalledTimes(1)
+    expect(storeDraftId).toHaveBeenCalledWith('draft-1')
+    expect(publishedId).toBe('draft-1')
+    expect(update).toHaveBeenCalledWith('draft-1', { published: true })
   })
 })

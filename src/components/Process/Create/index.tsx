@@ -254,6 +254,31 @@ export const useFormDraftSaver = (
     return run
   }, [])
 
+  // The single write path for a draft, used by both auto-save and publish.
+  // Create-vs-update is decided *inside* the queued callback, against the ref:
+  // deciding it in a render closure means a write queued while a previous
+  // `createProcess` is still in flight sees a stale null id and creates a
+  // second process, orphaning the first. `getBody` is called when the write
+  // runs, not when it is queued, so a save that waited its turn still sends
+  // the latest form. Resolves with the draft id the write landed on.
+  const writeDraft = useCallback(
+    (getBody: () => CreateVotingProcessRequest) =>
+      enqueueWrite(async () => {
+        const body = getBody()
+        if (draftIdRef.current) {
+          await updateProcess.mutateAsync({ processId: draftIdRef.current, body })
+          return draftIdRef.current
+        }
+        const draftProcessId = await createProcess.mutateAsync(body)
+        // Record the new id before returning: a publish that fails after this
+        // point must keep updating this draft instead of leaking another one.
+        draftIdRef.current = draftProcessId
+        storeDraftId(draftProcessId)
+        return draftProcessId
+      }),
+    [enqueueWrite, updateProcess, createProcess, storeDraftId]
+  )
+
   const saveDraft = useCallback(
     async (isAutoSave = true) => {
       if (!isDirty || skipNextSaveRef.current) return 'skipped'
@@ -272,15 +297,9 @@ export const useFormDraftSaver = (
         // structured create/update requests the publish step uses. The values
         // are read when the write runs, not when it is queued, so a save that
         // waited for its turn still sends the latest form.
-        await enqueueWrite(async () => {
+        await writeDraft(() => {
           const form = getValues()
-          const body = formToVotingProcessRequest(form, buildCensusSpec(form))
-          if (draftIdRef.current) {
-            return updateProcess.mutateAsync({ processId: draftIdRef.current, body })
-          }
-          const draftProcessId = await createProcess.mutateAsync(body)
-          draftIdRef.current = draftProcessId
-          storeDraftId(draftProcessId)
+          return formToVotingProcessRequest(form, buildCensusSpec(form))
         })
         saveCooldown?.(saveTimeoutMs)
         setDraftLimitReached(false)
@@ -303,18 +322,7 @@ export const useFormDraftSaver = (
         throw e
       }
     },
-    [
-      isDirty,
-      draftLimitReached,
-      organization?.address,
-      getValues,
-      enqueueWrite,
-      formToVotingProcessRequest,
-      updateProcess,
-      createProcess,
-      storeDraftId,
-      saveCooldown,
-    ]
+    [isDirty, draftLimitReached, organization?.address, getValues, writeDraft, formToVotingProcessRequest, saveCooldown]
   )
 
   useEffect(() => {
@@ -343,7 +351,7 @@ export const useFormDraftSaver = (
     return () => clearInterval(id)
   }, [saveDraft])
 
-  return { saveDraft, isSaving, skipSave, draftLimitReached, enqueueWrite }
+  return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft }
 }
 
 const TemplateButtons = () => {
@@ -620,8 +628,6 @@ const ProcessCreateView = () => {
   const [searchParams] = useSearchParams()
   const draftId = searchParams.get('draftId')
   const [storedDraftId, storeDraftId] = useLocalStorage('draft-id', null)
-  const createProcess = useCreateProcess()
-  const updateProcess = useUpdateProcess()
   const navigate = useNavigate()
   const location = useLocation()
   const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
@@ -651,7 +657,7 @@ const ProcessCreateView = () => {
     onOpen: openConfirmationModal,
     onClose: () => setLeaveConfirmationOpen(false),
   })
-  const { saveDraft, isSaving, skipSave, enqueueWrite } = useFormDraftSaver(
+  const { saveDraft, isSaving, skipSave, writeDraft } = useFormDraftSaver(
     isDirty,
     methods.getValues,
     effectiveDraftId,
@@ -755,12 +761,11 @@ const ProcessCreateView = () => {
       const censusSpec = buildCensusSpec(form)
       const request = formToVotingProcessRequest(form, censusSpec)
       // The draft is the process: publish the one we have been saving instead of
-      // creating a second one and leaving the draft orphaned behind it.
-      const processId = effectiveDraftId
-        ? await enqueueWrite(() =>
-            updateProcess.mutateAsync({ processId: effectiveDraftId, body: request }).then(() => effectiveDraftId)
-          )
-        : await enqueueWrite(() => createProcess.mutateAsync(request))
+      // creating a second one and leaving the draft orphaned behind it. Going
+      // through `writeDraft` is what makes that hold — it resolves the draft id
+      // inside the queue, so a blur auto-save still in flight is updated rather
+      // than raced.
+      const processId = await writeDraft(() => request)
       await apiClient.elections.publishAndWait(processId)
 
       await setStepDoneAsync(SetupStepIds.firstVoteCreation)
