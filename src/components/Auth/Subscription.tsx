@@ -55,8 +55,14 @@ const SubscriptionProviderComponent: React.FC<{ children: ReactNode }> = ({ chil
     error,
   } = useQuery({
     queryKey: QueryKeys.organization.subscription(currentAddress),
-    queryFn: () =>
-      bearedFetch<SubscriptionType>(ApiEndpoints.OrganizationSubscription.replace('{address}', currentAddress!)),
+    // `enabled` already gates on the address; the local guard keeps a manual refetch
+    // from building a URL with "undefined" in it.
+    queryFn: () => {
+      if (!currentAddress) {
+        throw new Error('No organization address selected')
+      }
+      return bearedFetch<SubscriptionType>(ApiEndpoints.OrganizationSubscription.replace('{address}', currentAddress))
+    },
     // Cache for 15 minutes
     staleTime: 15 * 60 * 1000,
     enabled: !!currentAddress,

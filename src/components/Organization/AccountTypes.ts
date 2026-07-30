@@ -1,4 +1,5 @@
-import { AccountData, IAccount } from '@vocdoni/sdk'
+import type { MultilingualText, Organization } from '@vocdoni/api-types'
+import { IAccount } from '@vocdoni/sdk'
 
 export type SaasOrganizationData = {
   active: boolean
@@ -16,7 +17,28 @@ export type SaasOrganizationData = {
   website: string
 }
 
-export type OrganizationData = SaasOrganizationData & AccountData
+/**
+ * The `.account`-nested display fields the org display components (Header,
+ * Process/View, CreatedBy, LegalNotice) read. Mirrors the old on-chain `Account`
+ * metadata shape so those components keep working while the public/SSR org path
+ * still supplies it from the vochain side.
+ */
+export type OrganizationAccount = {
+  name: MultilingualText
+  description: MultilingualText
+  avatar: string
+  header: string
+}
+
+/**
+ * The SAAS organization plus the legacy `.account` nesting, as produced by
+ * `toOrganizationData` in SaasAccountProvider. `address` is undefined until the
+ * session resolves an organization address (or the org info loads).
+ */
+export type OrganizationData = Omit<Organization, 'address'> & {
+  address?: string
+  account: OrganizationAccount
+}
 
 export type CreateOrgParams = Partial<
   Pick<IAccount, 'name' | 'description' | 'header'> & {

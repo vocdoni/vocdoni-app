@@ -17,17 +17,16 @@ const emptyMultilingual = { default: '' }
 // the shared components working in both contexts. Delete it together with that migration.
 // (SAAS has no separate header/avatar — branding is `logo` + `color` — so `avatar` maps
 // to `logo.default` and `header` is left empty here.)
-const toOrganizationData = (info: Organization | undefined, address: string | undefined): OrganizationData =>
-  ({
-    ...info,
-    address: info?.address ?? address,
-    account: {
-      name: info?.name ?? emptyMultilingual,
-      description: info?.description ?? emptyMultilingual,
-      avatar: info?.logo?.default ?? '',
-      header: '',
-    },
-  }) as unknown as OrganizationData
+export const toOrganizationData = (info: Organization | undefined, address: string | undefined): OrganizationData => ({
+  ...info,
+  address: info?.address ?? address,
+  account: {
+    name: info?.name ?? emptyMultilingual,
+    description: info?.description ?? emptyMultilingual,
+    avatar: info?.logo?.default ?? '',
+    header: '',
+  },
+})
 
 const useSaasOrganization = ({
   options,
@@ -40,7 +39,15 @@ const useSaasOrganization = ({
   return useQuery({
     queryKey: QueryKeys.organization.info(currentAddress),
     refetchOnWindowFocus: false,
-    queryFn: () => client.organizations.get(currentAddress!),
+    // `enabled` already gates on the address, but keep the guard local so a manual
+    // `refetch()` before the address resolves fails loudly instead of hitting the API
+    // with "undefined" in the path.
+    queryFn: () => {
+      if (!currentAddress) {
+        throw new Error('No organization address selected')
+      }
+      return client.organizations.get(currentAddress)
+    },
     enabled: !!currentAddress,
     ...options,
   })

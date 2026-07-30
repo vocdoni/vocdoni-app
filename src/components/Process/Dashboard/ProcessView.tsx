@@ -101,7 +101,7 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
 
   if (!election) return null
 
-  const streamUri = (election as unknown as Record<string, unknown>).streamUri as string | undefined
+  const { streamUri } = election
 
   if (!streamUri) return null
 

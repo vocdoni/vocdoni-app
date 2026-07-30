@@ -24,11 +24,15 @@ const useOrganizationEdit = (options?: Omit<UseMutationOptions<void, Error, Crea
   const { bearedFetch, currentAddress } = useAuth()
   const client = useQueryClient()
   return useMutation<void, Error, CreateOrgParams>({
-    mutationFn: (params: CreateOrgParams) =>
-      bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', currentAddress!), {
+    mutationFn: (params: CreateOrgParams) => {
+      if (!currentAddress) {
+        return Promise.reject(new Error('No organization address selected'))
+      }
+      return bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', currentAddress), {
         body: params,
         method: 'PUT',
-      }),
+      })
+    },
     ...options,
     onSuccess: () => {
       client.invalidateQueries({

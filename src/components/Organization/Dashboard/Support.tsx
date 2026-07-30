@@ -236,7 +236,7 @@ const PhoneSupportCard = ({ isLocked }) => {
               })}
             </Text>
             <Text fontFamily='mono' color='texts.subtle'>
-              {maskValue(organization.address, isLocked)}
+              {maskValue(organization.address ?? '', isLocked)}
             </Text>
             <Text fontSize='sm' color='texts.dark'>
               {t('organization_settings.phone_support.organization_id_description', {
