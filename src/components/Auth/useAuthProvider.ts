@@ -11,33 +11,21 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import { sameAddress } from '~utils/address'
 
 export enum LocalStorageKeys {
-  // Flags a "keep me logged in" session so the auto-refresh effect below renews the
-  // token as it nears expiry. The token/expiry themselves live under the react-providers
-  // AuthProvider keys (see AUTH_STORAGE_KEY), not here.
-  RenewSession = 'authRenewSession',
   // The organization address the session is currently acting as (multi-org accounts).
   SignerAddress = 'signerAddress',
 }
-
-// One week in milliseconds
-const OneWeek = 7 * 24 * 60 * 60 * 1000
 
 const getStorageItem = (key: string) => (typeof localStorage === 'undefined' ? null : localStorage.getItem(key))
 const setStorageItem = (key: string, value: string) => {
   if (typeof localStorage === 'undefined') return
   localStorage.setItem(key, value)
 }
-const removeStorageItem = (key: string) => {
-  if (typeof localStorage === 'undefined') return
-  localStorage.removeItem(key)
-}
-
 export const useAuthProvider = () => {
   // Token lifecycle (token, expiry, persistence, refresh, logout) is owned by the
   // react-providers AuthProvider. This hook layers the app-specific pieces on top:
-  // register/verify/password REST, OAuth token injection, session renewal, the active
-  // organization address (formerly resolved through the SDK RemoteSigner) and routing.
-  const { token: bearer, expiry, isAuthenticated, setSession, refresh: sdkRefresh, logout: sdkLogout } = useSdkAuth()
+  // register/verify/password REST, OAuth token injection, the active organization
+  // address (formerly resolved through the SDK RemoteSigner) and routing.
+  const { token: bearer, expiry, isAuthenticated, setSession, logout: sdkLogout } = useSdkAuth()
   const { client: apiClient } = useApiClient()
   const toast = useToast()
   const { disconnect } = useDisconnect()
@@ -142,7 +130,6 @@ export const useAuthProvider = () => {
 
   const logout = useCallback(() => {
     clearAuthStorageKeys()
-    removeStorageItem(LocalStorageKeys.RenewSession)
     sdkLogout()
     setCurrentAddress(undefined)
     disconnect()
@@ -153,46 +140,6 @@ export const useAuthProvider = () => {
     // refreshAddresses overwrites it when a different user doesn't own that address.
     queryClient.clear()
   }, [disconnect, queryClient, sdkLogout])
-
-  const refreshToken = useCallback(async () => {
-    try {
-      await sdkRefresh()
-    } catch (e) {
-      toast({
-        type: 'error',
-        title: t('session_expired', { defaultValue: 'Session expired' }),
-        description: t('session_expired_description', {
-          defaultValue: 'Session may have been expired and it could not be refreshed, please login again',
-        }),
-      })
-      logout()
-      throw e
-    }
-  }, [logout, sdkRefresh, t, toast])
-
-  // Handle token refresh for "keep me logged in" sessions.
-  useEffect(() => {
-    if (!bearer) return
-
-    const renewSession = getStorageItem(LocalStorageKeys.RenewSession)
-
-    if (!expiry || !renewSession) return
-
-    const expiryDate = new Date(expiry)
-    const now = new Date()
-    const timeUntilExpiry = expiryDate.getTime() - now.getTime()
-
-    // If token is expired, logout
-    if (timeUntilExpiry <= 0) {
-      logout()
-      return
-    }
-
-    // If token expires in less than a week, refresh it
-    if (timeUntilExpiry <= OneWeek) {
-      refreshToken()
-    }
-  }, [bearer, expiry, logout, refreshToken])
 
   const isAuthLoading = useMemo(() => isAuthenticated && addressesLoading, [isAuthenticated, addressesLoading])
 

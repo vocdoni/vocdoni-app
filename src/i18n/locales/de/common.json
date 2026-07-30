@@ -1687,8 +1687,6 @@
     "platform": "Plattform"
   },
   "send_invitation": "Einladung senden",
-  "session_expired": "Sitzung abgelaufen",
-  "session_expired_description": "Die Sitzung ist möglicherweise abgelaufen und konnte nicht erneuert werden. Bitte melde dich erneut an.",
   "settings": "Einstellungen",
   "setup": {
     "progress": "Dein Fortschritt",

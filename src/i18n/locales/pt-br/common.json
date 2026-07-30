@@ -1712,8 +1712,6 @@
     "platform": "Plataforma"
   },
   "send_invitation": "Enviar convite",
-  "session_expired": "Sessão expirada",
-  "session_expired_description": "A sessão pode ter expirado e não foi possível renová-la, faça login novamente",
   "settings": "Configurações",
   "setup": {
     "progress": "Seu progresso",

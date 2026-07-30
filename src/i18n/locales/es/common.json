@@ -1712,8 +1712,6 @@
     "platform": "Plataforma"
   },
   "send_invitation": "Enviar invitación",
-  "session_expired": "Sesión caducada",
-  "session_expired_description": "La sesión ha caducado o no se ha podido renovar, inicia sesión de nuevo",
   "settings": "Configuración",
   "setup": {
     "progress": "Tu progreso",

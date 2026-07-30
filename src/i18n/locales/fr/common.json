@@ -1712,8 +1712,6 @@
     "platform": "Plateforme"
   },
   "send_invitation": "Envoyer l'invitation",
-  "session_expired": "Session expirée",
-  "session_expired_description": "La session a peut-être expiré et n'a pas pu être renouvelée, veuillez vous reconnecter",
   "settings": "Paramètres",
   "setup": {
     "progress": "Votre progression",

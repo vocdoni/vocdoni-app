@@ -50,7 +50,6 @@ describe('useAuthProvider logout', () => {
     localStorage.setItem('auth.token', 'token')
     localStorage.setItem('auth.expiry', 'expiry')
     localStorage.setItem(AuthStorageKeys.Registered, 'true')
-    localStorage.setItem('authRenewSession', 'true')
 
     const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
 
@@ -61,7 +60,6 @@ describe('useAuthProvider logout', () => {
     expect(localStorage.getItem('auth.token')).toBeFalsy()
     expect(localStorage.getItem('auth.expiry')).toBeFalsy()
     expect(localStorage.getItem(AuthStorageKeys.Registered)).toBeFalsy()
-    expect(localStorage.getItem('authRenewSession')).toBeFalsy()
     expect(disconnectMock).toHaveBeenCalled()
   })
 

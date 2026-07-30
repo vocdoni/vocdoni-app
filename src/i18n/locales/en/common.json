@@ -1687,8 +1687,6 @@
     "platform": "Platform"
   },
   "send_invitation": "Send invitation",
-  "session_expired": "Session expired",
-  "session_expired_description": "Session may have been expired and it could not be refreshed, please login again",
   "settings": "Settings",
   "setup": {
     "progress": "Your progress",
