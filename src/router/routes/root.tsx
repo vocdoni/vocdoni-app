@@ -1,10 +1,10 @@
-import { useClient } from '@vocdoni/react-components'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { lazy } from 'react'
 import { Params } from 'react-router-dom'
 // These aren't lazy loaded since they are main layouts and related components
 import ErrorElement from '~elements/Error'
 import Layout from '~elements/Layout'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { Routes } from '.'
 import { SuspenseLoader } from '../SuspenseLoader'
 
@@ -57,7 +57,7 @@ const RootElements = (client: VocdoniApiClient) => [
 ]
 
 export const useRootRoutes = () => {
-  const { client } = useClient()
+  const { client } = useApiClient()
 
   return {
     path: Routes.root,

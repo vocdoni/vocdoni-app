@@ -11,11 +11,12 @@ import {
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
-import { useClient, useOrganization } from '@vocdoni/react-components'
+import { useOrganization } from '@vocdoni/react-components'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ElectionsPageData } from '~src/ssr/public-pages'
 import { useAuth } from '~components/Auth/useAuth'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from '~queries/keys'
 import { sameAddress } from '~utils/address'
 import ProcessCardDetailed from '../Process/CardDetailed'
@@ -28,7 +29,7 @@ type OrganizationViewProps = {
 
 const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
   const { t } = useTranslation()
-  const { client } = useClient()
+  const { client } = useApiClient()
   const queryClient = useQueryClient()
   const { currentAddress } = useAuth()
   const { organization, fetch } = useOrganization()
