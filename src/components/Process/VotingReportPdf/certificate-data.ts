@@ -188,6 +188,26 @@ const formatPercentageRange = (values: number[], fallback: string) => {
   return min === max ? formatPercentageValue(min) : `${formatPercentageValue(min)} - ${formatPercentageValue(max)}`
 }
 
+/**
+ * How many histogram columns one ballot contributes to. The decoded results have
+ * one field per pick slot and every ballot fills all of them — slots the voter
+ * left unused land in the abstain sentinel — so the column total is
+ * `slots x cast voting power`, not the cast power itself. Single-choice
+ * questions have exactly one slot, which is why the two only coincide there.
+ */
+const getBallotPickSlots = (question: VotingProcessQuestion): number => {
+  if (inferQuestionBallotType(question) !== BallotType.MultiChoice) return 1
+  const slots = question.typeSetup?.maxChoices ?? question.ballotProtocol?.maxCount
+  return slots && slots > 0 ? slots : 1
+}
+
+/** Voting power actually cast on a question, recovered from its decoded histogram. */
+const getCastVotingPower = (question: VotingProcessQuestion, decoded: DecodedQuestionResults | undefined) => {
+  if (!decoded) return null
+  const columnTotal = decoded.reduce((acc, entry) => acc + entry.votes, 0)
+  return columnTotal / getBallotPickSlots(question)
+}
+
 const getVotingMethod = (question: VotingProcessQuestion, t: TFunction, isWeighted: boolean) => {
   const base =
     inferQuestionBallotType(question) === BallotType.MultiChoice
@@ -288,10 +308,9 @@ export const buildCertificateData = ({
   const totalEligibleVotingPowerValue = election.census?.totalWeight ?? null
   const totalEligibleVotingPower =
     totalEligibleVotingPowerValue === null ? notAvailableLabel : String(totalEligibleVotingPowerValue)
-  const questionVotingPowerTotals = election.questions.map((question) => {
-    const decoded = decodedByQuestionId.get(question.id)
-    return decoded ? decoded.reduce((acc, entry) => acc + entry.votes, 0) : null
-  })
+  const questionVotingPowerTotals = election.questions.map((question) =>
+    getCastVotingPower(question, decodedByQuestionId.get(question.id))
+  )
   const knownQuestionTotals = questionVotingPowerTotals.filter((value): value is number => value !== null)
   const votingPowerUsed = hasHiddenResults
     ? hiddenResultFieldValue
@@ -512,7 +531,7 @@ export const buildCertificateData = ({
           const decoded = decodedByQuestionId.get(question.id)
           const decodedChoices = decoded?.filter((entry) => entry.choice !== 'abstain')
           const abstainEntry = decoded?.find((entry) => entry.choice === 'abstain')
-          const questionTotal = decoded ? decoded.reduce((acc, entry) => acc + entry.votes, 0) : null
+          const questionTotal = getCastVotingPower(question, decoded)
 
           const choiceRows = question.choices.map((choice, choiceIndex) => ({
             name: getDefaultText(choice.title) || notAvailableLabel,

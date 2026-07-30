@@ -392,6 +392,63 @@ describe('buildCertificateData', () => {
     expect(data.votingProcessQuestions[0].choices[0].ballotCount).toBeUndefined()
   })
 
+  it('divides the multichoice histogram by its pick slots before reporting weighted power', () => {
+    // Weighted census totalling 20; two voters of weight 7 and 3 each cast one
+    // ballot picking a single option on a 2-slot multichoice question. Each
+    // ballot fills both slots (the unused one lands in abstain), so the columns
+    // total 20 — twice the 10 of voting power actually cast. Reporting the raw
+    // column total renders 100% participation for what is really 50%.
+    const election = createElection({
+      census: { size: 2, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
+      questions: [
+        createQuestion({
+          title: { default: 'Pick priorities' },
+          type: 'multichoice',
+          ballotProtocol: {
+            costExponent: 1,
+            costFromWeight: false,
+            maxCount: 2,
+            maxTotalCost: 0,
+            maxValue: 2,
+            maxVoteOverwrites: 0,
+            uniqueValues: true,
+          },
+          choices: [
+            { title: { default: 'Climate' }, value: 0 },
+            { title: { default: 'Housing' }, value: 1 },
+          ],
+        }),
+      ],
+    })
+    const results = createResults({
+      questions: [
+        createQuestionResults({
+          voteCount: 2,
+          results: [
+            ['7', '3', '0'],
+            ['0', '0', '10'],
+          ],
+        }),
+      ],
+    })
+
+    const data = buildCertificateData({
+      election,
+      results,
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.censusParticipation.find((field) => field.label === 'Voting power used')?.value).toBe('10')
+    expect(data.censusParticipation.find((field) => field.label === 'Weighted participation')?.value).toBe('50.00%')
+    expect(data.votingProcessQuestions[0]).toMatchObject({
+      totalVotes: '10',
+      votingPowerUsed: '10',
+      eligibleVotingPower: '20',
+      votingMethod: 'Multiple choice with weighted voting',
+    })
+  })
+
   it('degrades weighted power values to not-available when totalWeight is absent (list reads)', () => {
     const election = createElection({
       census: { size: 3, weighted: true, authFields: ['memberNumber'] },
