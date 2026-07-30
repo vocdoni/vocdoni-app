@@ -216,6 +216,7 @@ export const useFormDraftSaver = (
   const createProcess = useCreateProcess()
   const updateProcess = useUpdateProcess()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
+  const { organization } = useOrganization()
   const skipNextSaveRef = useRef(false)
   const [draftLimitReached, setDraftLimitReached] = useState(false)
   // Saving a draft replaces its whole question set server-side (the API deletes
@@ -256,6 +257,9 @@ export const useFormDraftSaver = (
   const saveDraft = useCallback(
     async (isAutoSave = true) => {
       if (!isDirty || skipNextSaveRef.current) return 'skipped'
+      // A draft can't be created without its owner org: wait for the address to resolve
+      // instead of firing a request the API would reject.
+      if (!organization?.address) return 'skipped'
       // Prevent repeated auto-save attempts once the draft limit is reached
       if (isAutoSave && draftLimitReached) return 'limit-reached'
       // Auto-saves fire on every blur: queueing one behind another only sends
@@ -302,6 +306,7 @@ export const useFormDraftSaver = (
     [
       isDirty,
       draftLimitReached,
+      organization?.address,
       getValues,
       enqueueWrite,
       formToVotingProcessRequest,
@@ -523,6 +528,13 @@ export const useFormToVotingProcessRequest = () => {
   }
 
   return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequest => {
+    // The SAAS API rejects processes without an owner org. Draft saves are skipped and
+    // the publish/save buttons are disabled until the address resolves, so reaching this
+    // guard means a caller bypassed those checks.
+    if (!organization?.address) {
+      throw new Error('Organization address is not available yet')
+    }
+
     const parsedStart = form.autoStart ? undefined : parseLocalDateTime(form.startDate, form.startTime)
     const startRef = parsedStart ? new Date(parsedStart) : new Date()
     const endDate =
@@ -567,7 +579,7 @@ export const useFormToVotingProcessRequest = () => {
     })
 
     return {
-      orgAddress: organization?.address ?? '',
+      orgAddress: organization.address,
       title: { default: form.title },
       description: form.description ? { default: form.description } : undefined,
       startDate: parsedStart,
@@ -885,10 +897,22 @@ const ProcessCreateView = () => {
                 >
                   <Icon as={LuSettings} />
                 </IconButton>
-                <Button type='submit' alignSelf='flex-end' loading={methods.formState.isSubmitting}>
+                {/* Both writes need the owner org address; keep them disabled until it resolves. */}
+                <Button
+                  type='submit'
+                  alignSelf='flex-end'
+                  loading={methods.formState.isSubmitting}
+                  disabled={!organization?.address}
+                >
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
-                <Button type='button' variant='outline' onClick={handleManualSave} loading={isSaving}>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={handleManualSave}
+                  loading={isSaving}
+                  disabled={!organization?.address}
+                >
                   <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
                 </Button>
               </ButtonGroup>
