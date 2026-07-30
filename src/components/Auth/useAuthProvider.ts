@@ -8,6 +8,7 @@ import { api, ApiEndpoints, ApiParams } from '~components/Auth/api'
 import { useLogin, useRegister, useVerifyMail } from '~components/Auth/authQueries'
 import { useToast } from '~components/Toast'
 import { useApiClient } from '~src/providers/ApiClientProvider'
+import { sameAddress } from '~utils/address'
 
 export enum LocalStorageKeys {
   // Flags a "keep me logged in" session so the auto-refresh effect below renews the
@@ -117,8 +118,11 @@ export const useAuthProvider = () => {
       setCurrentAddress(undefined)
       return
     }
+    // Normalized comparison: the stored value may differ from the API list in case or
+    // `0x` prefix (checksummed wallets, unprefixed SAAS reads). Always persist and
+    // expose the canonical value from the list, not the stored variant.
     const stored = getStorageItem(LocalStorageKeys.SignerAddress)
-    const selected = stored && list.includes(stored) ? stored : list[0]
+    const selected = (stored && list.find((address) => sameAddress(address, stored))) || list[0]
     setStorageItem(LocalStorageKeys.SignerAddress, selected)
     setCurrentAddress(selected)
   }, [])
