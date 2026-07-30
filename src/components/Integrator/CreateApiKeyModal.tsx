@@ -20,6 +20,7 @@ import { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import { LuKey } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
+import { useAuth } from '~components/Auth/useAuth'
 import { API_KEY_SCOPES, CreatedApiKey, useCreateApiKey } from '~src/queries/integrators'
 
 // Keys default to full access; the admin can untick scopes to narrow them.
@@ -76,6 +77,7 @@ export const CreateApiKeyButton = () => {
   const [created, setCreated] = useState<CreatedApiKey | null>(null)
   const [error, setError] = useState<string | null>(null)
   const create = useCreateApiKey()
+  const { currentAddress } = useAuth()
 
   const reset = () => {
     setLabel('')
@@ -118,7 +120,8 @@ export const CreateApiKeyButton = () => {
   return (
     <Dialog.Root open={open} onOpenChange={(e) => (e.open ? setOpen(true) : close())} placement='center' size='lg'>
       <Dialog.Trigger asChild>
-        <Button size='sm'>
+        {/* Creating scopes the request to the active org, so keep it shut until one is selected. */}
+        <Button size='sm' disabled={!currentAddress}>
           <Icon as={LuKey} />
           {t('integrators.api_keys.create', { defaultValue: 'Create API key' })}
         </Button>

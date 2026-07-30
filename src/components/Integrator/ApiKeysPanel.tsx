@@ -20,6 +20,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuTrash2 } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
+import { useAuth } from '~components/Auth/useAuth'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
@@ -115,6 +116,7 @@ const ApiKeysPanel = () => {
   const toast = useToast()
   const keys = useApiKeys()
   const revoke = useRevokeApiKey()
+  const { currentAddress } = useAuth()
   const status = useStatus()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const [keyToRevoke, setKeyToRevoke] = useState<ApiKey | null>(null)
@@ -188,7 +190,7 @@ const ApiKeysPanel = () => {
               key={k.id}
               apiKey={k}
               status={status(k)}
-              revokeDisabled={k.revoked || revoke.isPending}
+              revokeDisabled={k.revoked || revoke.isPending || !currentAddress}
               onRevoke={() => setKeyToRevoke(k)}
             />
           ))}
@@ -246,7 +248,7 @@ const ApiKeysPanel = () => {
                         variant='ghost'
                         size='sm'
                         color='fg.error'
-                        disabled={k.revoked || revoke.isPending}
+                        disabled={k.revoked || revoke.isPending || !currentAddress}
                         onClick={() => setKeyToRevoke(k)}
                       >
                         <Icon as={LuTrash2} />
