@@ -570,7 +570,11 @@ export const useFormToVotingProcessRequest = () => {
           description: question.description ? { default: question.description } : undefined,
           choices,
           type: 'multichoice',
-          typeSetup: { maxChoices, minChoices: question.minNumberOfChoices ?? 0, uniqueChoices: true },
+          // uniqueChoices must stay false on multichoice: the backend derives the
+          // dense 0/1 layout (one field per choice) and maps this flag onto the
+          // on-chain uniqueValues, which would discard every multi-selection
+          // ballot at tally — the API rejects the combination since ballot 1.0.0.
+          typeSetup: { maxChoices, minChoices: question.minNumberOfChoices ?? 0, uniqueChoices: false },
           secretUntilTheEnd,
           metadata,
         }

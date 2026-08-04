@@ -122,8 +122,17 @@ const questionToRequest = (question: VotingProcessQuestion): VotingProcessQuesti
   choices: question.choices,
   // A question needs either a named type or a raw ballot protocol; backend-derived
   // questions can come back with an empty type, so fall back to their protocol.
+  // uniqueChoices must be false on multichoice (the API rejects it since ballot
+  // 1.0.0) — sanitize it here so clones of processes created before the fix
+  // don't re-send the broken flag.
   ...(question.type
-    ? { type: question.type as VotingProcessQuestionType, typeSetup: question.typeSetup }
+    ? {
+        type: question.type as VotingProcessQuestionType,
+        typeSetup:
+          question.type === 'multichoice' && question.typeSetup
+            ? { ...question.typeSetup, uniqueChoices: false }
+            : question.typeSetup,
+      }
     : { ballotProtocol: question.ballotProtocol }),
   secretUntilTheEnd: question.secretUntilTheEnd,
   metadata: question.metadata,

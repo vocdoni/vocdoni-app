@@ -293,7 +293,7 @@ describe('votingProcessToCreateRequest', () => {
     expect(request.census?.groupId).toBe('group-1')
   })
 
-  it('keeps the named question type and its setup', () => {
+  it('keeps the named question type and sanitizes uniqueChoices on multichoice', () => {
     const request = votingProcessToCreateRequest(
       process({
         questions: [
@@ -308,7 +308,9 @@ describe('votingProcessToCreateRequest', () => {
 
     expect(request.questions[0]).toMatchObject({
       type: 'multichoice',
-      typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: true },
+      // uniqueChoices is forced to false: the API rejects it on multichoice
+      // (unsatisfiable dense 0/1 ballot), so clones of pre-fix processes are sanitized.
+      typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: false },
     })
     expect(request.questions[0].ballotProtocol).toBeUndefined()
   })

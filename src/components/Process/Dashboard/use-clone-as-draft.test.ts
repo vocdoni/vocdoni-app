@@ -203,7 +203,8 @@ describe('useCloneAsDraft', () => {
 
       expect(clonedRequest().questions[0]).toMatchObject({
         type: 'multichoice',
-        typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: true },
+        // uniqueChoices sanitized to false even when the source process carried true.
+        typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: false },
       })
     })
 

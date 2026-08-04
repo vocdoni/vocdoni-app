@@ -233,7 +233,7 @@ describe('useFormToVotingProcessRequest', () => {
         buildCensusSpec()
       )
       expect(req.questions[0].type).toBe('multichoice')
-      expect(req.questions[0].typeSetup).toEqual({ maxChoices: 2, minChoices: 1, uniqueChoices: true })
+      expect(req.questions[0].typeSetup).toEqual({ maxChoices: 2, minChoices: 1, uniqueChoices: false })
     })
 
     it('uses options.length as maxChoices when maxNumberOfChoices is 0', () => {
@@ -278,7 +278,7 @@ describe('useFormToVotingProcessRequest', () => {
 
       expect(req.questions.map((question) => question.type)).toEqual(['singlechoice', 'multichoice'])
       expect(req.questions[0].typeSetup).toBeUndefined()
-      expect(req.questions[1].typeSetup).toEqual({ maxChoices: 2, minChoices: 1, uniqueChoices: true })
+      expect(req.questions[1].typeSetup).toEqual({ maxChoices: 2, minChoices: 1, uniqueChoices: false })
     })
   })
 
