@@ -1,4 +1,3 @@
-import { useClient } from '@vocdoni/react-components'
 import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
 import { Loading } from '~src/router/SuspenseLoader'
@@ -12,14 +11,10 @@ type AccountProtectedRouteProps = {
 
 const AccountProtectedRoute = ({ signInRoute = Routes.auth.signIn }: AccountProtectedRouteProps) => {
   const context = useOutletContext()
-  const {
-    loaded: { account: fetchLoaded },
-    loading: { account: fetchLoading },
-  } = useClient()
   const { isAuthenticated, isAuthLoading } = useAuth()
   const { pathname } = useLocation()
 
-  if ((!fetchLoaded && fetchLoading) || isAuthLoading) {
+  if (isAuthLoading) {
     return <Loading />
   }
 

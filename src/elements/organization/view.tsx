@@ -1,11 +1,23 @@
-import { AccountData } from '@vocdoni/sdk'
+import type { Organization } from '@vocdoni/api-types'
 import { useLoaderData } from 'react-router-dom'
+import ArchiveOrganizationView from '~components/Organization/Archive/View'
+import type { LegacyElectionsPage, LegacyOrganization } from '~src/legacy/vochain-archive'
 import PublicOrganizationPage from './PublicPage'
 
-const Organization = () => {
-  const organization = useLoaderData() as AccountData
+type OrganizationRouteData =
+  | { era: 'saas'; organization: Organization }
+  | { era: 'archive'; legacyOrganization: LegacyOrganization; legacyElectionsPage: LegacyElectionsPage }
 
-  return <PublicOrganizationPage organization={organization as any} />
+const OrganizationView = () => {
+  const data = useLoaderData() as OrganizationRouteData
+
+  if (data.era === 'archive') {
+    return (
+      <ArchiveOrganizationView organization={data.legacyOrganization} initialElectionsPage={data.legacyElectionsPage} />
+    )
+  }
+
+  return <PublicOrganizationPage organization={data.organization} />
 }
 
-export default Organization
+export default OrganizationView

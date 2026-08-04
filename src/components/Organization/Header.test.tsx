@@ -1,3 +1,4 @@
+import React from 'react'
 import { mockUseClient, mockUseOrganization, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import OrganizationHeader from './Header'
@@ -9,9 +10,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...actual,
     ...getReactProvidersMock(),
     OrganizationImage: ({ alt }: { alt?: string }) => <img alt={alt ?? 'OrganizationImage'} />,
-    OrganizationName: ({ as: Tag = 'p', title }: { as?: keyof JSX.IntrinsicElements; title?: string }) => (
-      <Tag>{title}</Tag>
-    ),
+    OrganizationName: ({ as: Tag = 'p', title }: { as?: React.ElementType; title?: string }) => <Tag>{title}</Tag>,
     OrganizationDescription: () => <p>OrganizationDescription</p>,
   }
 })
@@ -32,7 +31,7 @@ describe('OrganizationHeader', () => {
     setReactProvidersMock({
       useOrganization: () =>
         mockUseOrganization({
-          organization: { account: { name: { default: 'Test Org' } }, address: '0x123' },
+          organization: { name: { default: 'Test Org' }, address: '0x123' },
         }),
       useClient: () => mockUseClient({ account: { address: '0x123' } }),
     })

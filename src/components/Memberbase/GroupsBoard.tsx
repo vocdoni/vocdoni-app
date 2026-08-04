@@ -29,7 +29,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { PaginationProvider, usePagination } from '@vocdoni/react-components/pagination'
+import { PaginationProvider, usePagination } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -581,7 +581,7 @@ const GroupMembersDisplay = ({ group, isOpen }: GroupMembersProps) => {
   const pagination = data.pagination
 
   return (
-    <PaginationProvider initialPage={initialPage} pagination={pagination}>
+    <PaginationProvider pagination={pagination}>
       <GroupMembersWithPagination group={group} isOpen={isOpen} />
     </PaginationProvider>
   )

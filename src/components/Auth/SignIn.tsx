@@ -18,9 +18,7 @@ import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import GoogleAuth from './GoogleAuth'
 
-type FormData = {
-  keepLogedIn: boolean
-} & ILoginParams
+type FormData = ILoginParams
 
 const useVerificationCodeStatus = () =>
   useMutation({

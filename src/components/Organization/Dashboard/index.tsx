@@ -15,16 +15,18 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ElectionProvider,
   ElectionStatusBadge,
   ElectionTitle,
-  useClient,
+  useElection,
   useOrganization,
 } from '@vocdoni/react-components'
-import { PublishedElection } from '@vocdoni/sdk'
-import { format } from 'date-fns'
+import { processVoteCount } from '@vocdoni/api-client'
+import { useApiClient } from '~src/providers/ApiClientProvider'
+import { useAuth } from '~components/Auth/useAuth'
+import { useDateFns } from '~i18n/use-date-fns'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
@@ -284,10 +286,12 @@ const OrganizationProcesses = () => {
 
 const Processes = () => {
   const { t } = useTranslation()
-  const { client, account } = useClient()
+  const { client } = useApiClient()
   const { organization } = useOrganization()
+  const { currentAddress } = useAuth()
+  const queryClient = useQueryClient()
 
-  const { queryKey, queryFn } = paginatedElectionsQuery(account, client, {})
+  const { queryKey, queryFn } = paginatedElectionsQuery(currentAddress, client, {}, queryClient)
 
   const {
     data: elections,
@@ -342,7 +346,7 @@ const Processes = () => {
     )
   }
 
-  if (!elections?.elections?.length) {
+  if (!elections?.processes?.length) {
     return (
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
         <ListStateAlert
@@ -368,35 +372,11 @@ const Processes = () => {
 
   return (
     <Flex flexDir='column' gap={4} flex='1'>
-      {elections.elections.map((election) => {
-        if (!(election instanceof PublishedElection)) return null
-
-        return (
-          <ElectionProvider election={election} id={election.id} key={election.id}>
-            <Flex align='center'>
-              <Box flex='1' minW={0} mr={4}>
-                <Link asChild variant='unstyled' fontWeight='500' display='block'>
-                  <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-                    <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' truncate />
-                  </ReactRouterLink>
-                </Link>
-                <Text fontSize='sm' color='texts.subtle' truncate>
-                  {t('election.ends_on', {
-                    defaultValue: 'Ends on {{date}}',
-                    date: format(election.endDate, t('organization.date_format')),
-                  })}
-                </Text>
-              </Box>
-              <Flex align='center' gap={2} flexShrink={0}>
-                <ElectionStatusBadge />
-                <Text fontWeight='bold' fontSize={{ base: 'sm', md: 'md' }} whiteSpace='nowrap'>
-                  {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: election.voteCount })}
-                </Text>
-              </Flex>
-            </Flex>
-          </ElectionProvider>
-        )
-      })}
+      {elections.processes.map((election) => (
+        <ElectionProvider id={election.id} key={election.id}>
+          <RecentProcess />
+        </ElectionProvider>
+      ))}
       <Flex justify='flex-end' mt={4}>
         <Link
           asChild
@@ -419,6 +399,38 @@ const Processes = () => {
             <Icon as={LuArrowUpRight} boxSize={4} />
           </ReactRouterLink>
         </Link>
+      </Flex>
+    </Flex>
+  )
+}
+
+const RecentProcess = () => {
+  const { t } = useTranslation()
+  const { format } = useDateFns()
+  const { election, results } = useElection()
+
+  if (!election) return null
+
+  return (
+    <Flex align='center'>
+      <Box flex='1' minW={0} mr={4}>
+        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='500' display='block'>
+          <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
+            <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' truncate />
+          </ReactRouterLink>
+        </Link>
+        <Text fontSize='sm' color='texts.subtle' truncate>
+          {t('election.ends_on', {
+            defaultValue: 'Ends on {{date}}',
+            date: format(election.endDate, t('organization.date_format')),
+          })}
+        </Text>
+      </Box>
+      <Flex align='center' gap={2} flexShrink={0}>
+        <ElectionStatusBadge />
+        <Text fontWeight='bold' fontSize={{ base: 'sm', md: 'md' }} whiteSpace='nowrap'>
+          {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: processVoteCount(results) })}
+        </Text>
       </Flex>
     </Flex>
   )

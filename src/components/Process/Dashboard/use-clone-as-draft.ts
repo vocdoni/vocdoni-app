@@ -1,5 +1,4 @@
 import { useElection } from '@vocdoni/react-components'
-import { ElectionResultsTypeNames, ensure0x, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { createSearchParams, generatePath, useNavigate } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -7,62 +6,22 @@ import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { Routes } from '~src/router/routes'
 import { useCreateProcess } from '../Create'
-import { defaultProcessValues, SelectorTypes } from '../Create/common'
+import { votingProcessToCreateRequest } from '../Create/draft-mapping'
 
 export const useCloneAsDraft = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const toast = useToast()
-  const { election, isWeighted } = useElection()
+  const { election } = useElection()
   const createProcess = useCreateProcess()
   const { permission } = useSubscription()
   const limit = permission(SubscriptionPermission.Drafts)
 
   const cloneAsDraft = async () => {
-    if (!election || election instanceof InvalidElection) return
-
-    const extendedInfo = election.questions.some((question) =>
-      question.choices.some(({ meta }) => meta && (meta.description || meta.image?.default))
-    )
-    const questionType =
-      election.resultsType?.name === ElectionResultsTypeNames.MULTIPLE_CHOICE
-        ? SelectorTypes.Multiple
-        : SelectorTypes.Single
-    const choiceLimits = (
-      election.resultsType?.properties as { numChoices?: { min?: number; max?: number } } | undefined
-    )?.numChoices
-
-    const metadata = {
-      ...defaultProcessValues,
-      title: election.title.default,
-      description: election.description.default,
-      extendedInfo,
-      questionType,
-      minNumberOfChoices: questionType === SelectorTypes.Multiple ? (choiceLimits?.min ?? 0) : null,
-      maxNumberOfChoices:
-        questionType === SelectorTypes.Multiple
-          ? (choiceLimits?.max ?? election.questions[0]?.choices.length ?? null)
-          : null,
-      resultVisibility: election.electionType.secretUntilTheEnd ? ('hidden' as const) : ('live' as const),
-      weightedVote: Boolean(isWeighted),
-      questions: election.questions.map((question) => {
-        return {
-          title: question.title.default,
-          description: question.description.default,
-          options: question.choices.map((option) => ({
-            option: option.title.default,
-            description: option.meta?.description,
-            image: option.meta?.image?.default,
-          })),
-        }
-      }),
-    }
+    if (!election?.id || !election.questions?.length) return
 
     try {
-      const clonedDraftId = await createProcess.mutateAsync({
-        metadata,
-        orgAddress: ensure0x(election.organizationId),
-      })
+      const clonedDraftId = await createProcess.mutateAsync(votingProcessToCreateRequest(election, election.orgAddress))
 
       toast({
         title: t('drafts.cloned_draft', {

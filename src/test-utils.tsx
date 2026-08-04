@@ -2,6 +2,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, RenderOptions } from '@testing-library/react'
 import { ComponentsProvider, ConfirmProvider } from '@vocdoni/react-components'
+import { AuthProvider as SdkAuthProvider } from '@vocdoni/react-providers'
 import i18n, { type Resource } from 'i18next'
 import { ComponentType, ReactElement, ReactNode } from 'react'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
@@ -16,6 +17,7 @@ import {
 import { configureApiBaseUrl } from '~components/Auth/api'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { ToastProvider as BaseToastProvider } from '~components/Toast'
+import { ApiClientProvider, AUTH_STORAGE_KEY } from '~src/providers/ApiClientProvider'
 import { AppEnvProvider } from '~src/app-env'
 import { buildAppEnv, type AppEnv } from '~src/app-env-build'
 import { ColorModeProvider } from '~theme/color-mode'
@@ -145,13 +147,17 @@ export function AllProviders({
         <ChakraProvider value={system}>
           <I18nextProvider i18n={i18nInstance}>
             <QueryClientProvider client={queryClient}>
-              <TestToastProvider>
-                <ComponentsProvider components={uiScaffoldComponents}>
-                  <ConfirmProvider>
-                    <ConnectionToastProvider>{content}</ConnectionToastProvider>
-                  </ConfirmProvider>
-                </ComponentsProvider>
-              </TestToastProvider>
+              <ApiClientProvider>
+                <SdkAuthProvider storageKey={AUTH_STORAGE_KEY}>
+                  <TestToastProvider>
+                    <ComponentsProvider components={uiScaffoldComponents}>
+                      <ConfirmProvider>
+                        <ConnectionToastProvider>{content}</ConnectionToastProvider>
+                      </ConfirmProvider>
+                    </ComponentsProvider>
+                  </TestToastProvider>
+                </SdkAuthProvider>
+              </ApiClientProvider>
             </QueryClientProvider>
           </I18nextProvider>
         </ChakraProvider>

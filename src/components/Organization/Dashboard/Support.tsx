@@ -15,7 +15,6 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuInfo } from 'react-icons/lu'
@@ -74,12 +73,11 @@ const OrganizationSupport = () => {
 }
 
 const useSendSupportTicket = (options?: Omit<UseMutationOptions<void, Error, SupportTicket>, 'mutationFn'>) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
+  const { bearedFetch, currentAddress } = useAuth()
 
   return useMutation<void, Error, SupportTicket>({
     mutationFn: (params: SupportTicket) =>
-      bearedFetch<void>(ApiEndpoints.OrganizationsSupport.replace('{address}', account?.address), {
+      bearedFetch<void>(ApiEndpoints.OrganizationsSupport.replace('{address}', currentAddress), {
         body: params,
         method: 'POST',
       }),
@@ -238,7 +236,7 @@ const PhoneSupportCard = ({ isLocked }) => {
               })}
             </Text>
             <Text fontFamily='mono' color='texts.subtle'>
-              {maskValue(organization.address, isLocked)}
+              {maskValue(organization.address ?? '', isLocked)}
             </Text>
             <Text fontSize='sm' color='texts.dark'>
               {t('organization_settings.phone_support.organization_id_description', {

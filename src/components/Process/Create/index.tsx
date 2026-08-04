@@ -16,22 +16,16 @@ import {
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalStorage } from '@uidotdev/usehooks'
-import { useClient, useOrganization } from '@vocdoni/react-components'
-import {
-  AccountData,
-  ArchivedAccountData,
-  Census,
-  CspCensus,
-  Election,
-  ElectionCreationSteps,
-  ensure0x,
-  IElectionParameters,
-  IQuestion,
-  MultiChoiceElection,
-  PlainCensus,
-  UnpublishedElection,
-  WeightedCensus,
-} from '@vocdoni/sdk'
+import { useOrganization } from '@vocdoni/react-components'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import type {
+  CensusSpec,
+  Choice,
+  CreateVotingProcessRequest,
+  OrgMemberAuthField,
+  OrgMemberTwoFaField,
+  VotingProcessQuestionRequest,
+} from '@vocdoni/api-types'
 import { addDays, parse } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -48,26 +42,25 @@ import {
 } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
-import { ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import { ApiError, ErrorCode } from '~components/Auth/api'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
-import { Web3Address } from '~components/Process/Census/Web3'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
-import { useDeleteDraft } from '~elements/dashboard/processes/drafts'
 import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
-import { CensusMeta, CensusTypes } from '../Census/CensusType'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { useProcessTemplates } from './TemplateProvider'
 import { defaultProcessValues, Option, Process, SelectorTypes, TemplateConfigs, TemplateTypes } from './common'
+import { votingProcessToForm } from './draft-mapping'
+import { getTwoFaFields } from './VoterAuthentication/utils'
 
 type ConfirmOnNavigateOptions = {
   isDirty: boolean
@@ -86,20 +79,20 @@ type LeaveConfirmationModalProps = {
   isSamePath: boolean
 }
 
-type CreateProcessRequest = {
-  metadata: Process
-  orgAddress: string
-}
-
 type UpdateProcessRequest = {
   processId: string
-  body: CreateProcessRequest
+  body: CreateVotingProcessRequest
 }
 
-export const saveTimeoutMs = 30000
+/**
+ * The draft limit is reported by the SaaS API either through the app's own
+ * `api()` wrapper or through the integrator-sdk client, depending on the call.
+ */
+const isDraftLimitError = (error: unknown) =>
+  (error instanceof ApiError && error.apiError?.code === ErrorCode.DraftLimitReached) ||
+  (error instanceof VocdoniApiError && error.code === ErrorCode.DraftLimitReached)
 
-export const isAccountData = (account: AccountData | ArchivedAccountData): account is AccountData =>
-  'electionIndex' in account
+export const saveTimeoutMs = 30000
 
 export const useConfirmOnNavigate = ({
   isDirty,
@@ -220,11 +213,25 @@ export const useFormDraftSaver = (
   storeDraftId: (id: string | null) => void,
   saveCooldown?: (ms: number) => void
 ) => {
-  const { account } = useClient()
   const createProcess = useCreateProcess()
   const updateProcess = useUpdateProcess()
+  const formToVotingProcessRequest = useFormToVotingProcessRequest()
+  const { organization } = useOrganization()
   const skipNextSaveRef = useRef(false)
   const [draftLimitReached, setDraftLimitReached] = useState(false)
+  // Saving a draft replaces its whole question set server-side (the API deletes
+  // the stored questions and inserts the ones it receives), so two writes in
+  // flight at once can interleave and leave a duplicated question behind. Every
+  // write goes through this queue, one at a time.
+  const pendingWriteRef = useRef<Promise<unknown> | null>(null)
+  // The id the next write must target, tracked outside React state so a write
+  // queued before a re-render still updates the draft its predecessor created
+  // instead of creating a second one.
+  const draftIdRef = useRef(draftId)
+
+  useEffect(() => {
+    draftIdRef.current = draftId
+  }, [draftId])
 
   const isCreating = createProcess.isPending
   const isUpdating = updateProcess.isPending
@@ -234,32 +241,72 @@ export const useFormDraftSaver = (
     skipNextSaveRef.current = skip
   }
 
+  const enqueueWrite = useCallback(<T,>(write: () => Promise<T>): Promise<T> => {
+    const run = (pendingWriteRef.current ?? Promise.resolve()).then(write, write)
+    const settled = run.then(
+      () => undefined,
+      () => undefined
+    )
+    pendingWriteRef.current = settled
+    void settled.then(() => {
+      if (pendingWriteRef.current === settled) pendingWriteRef.current = null
+    })
+    return run
+  }, [])
+
+  // The single write path for a draft, used by both auto-save and publish.
+  // Create-vs-update is decided *inside* the queued callback, against the ref:
+  // deciding it in a render closure means a write queued while a previous
+  // `createProcess` is still in flight sees a stale null id and creates a
+  // second process, orphaning the first. `getBody` is called when the write
+  // runs, not when it is queued, so a save that waited its turn still sends
+  // the latest form. Resolves with the draft id the write landed on.
+  const writeDraft = useCallback(
+    (getBody: () => CreateVotingProcessRequest) =>
+      enqueueWrite(async () => {
+        const body = getBody()
+        if (draftIdRef.current) {
+          await updateProcess.mutateAsync({ processId: draftIdRef.current, body })
+          return draftIdRef.current
+        }
+        const draftProcessId = await createProcess.mutateAsync(body)
+        // Record the new id before returning: a publish that fails after this
+        // point must keep updating this draft instead of leaking another one.
+        draftIdRef.current = draftProcessId
+        storeDraftId(draftProcessId)
+        return draftProcessId
+      }),
+    [enqueueWrite, updateProcess, createProcess, storeDraftId]
+  )
+
   const saveDraft = useCallback(
     async (isAutoSave = true) => {
       if (!isDirty || skipNextSaveRef.current) return 'skipped'
+      // A draft can't be created without its owner org: wait for the address to resolve
+      // instead of firing a request the API would reject.
+      if (!organization?.address) return 'skipped'
       // Prevent repeated auto-save attempts once the draft limit is reached
       if (isAutoSave && draftLimitReached) return 'limit-reached'
+      // Auto-saves fire on every blur: queueing one behind another only sends
+      // the same values twice, and the interval picks up whatever changed
+      // while a write was running.
+      if (isAutoSave && pendingWriteRef.current) return 'skipped'
 
       try {
-        const form = getValues()
-        if (draftId) {
-          await updateProcess.mutateAsync({
-            processId: draftId,
-            body: { metadata: form, orgAddress: ensure0x(account?.address) },
-          })
-        } else {
-          const draftProcessId = await createProcess.mutateAsync({
-            metadata: form,
-            orgAddress: ensure0x(account?.address),
-          })
-          storeDraftId(draftProcessId)
-        }
+        // A draft is an unpublished process, so it is saved through the same
+        // structured create/update requests the publish step uses. The values
+        // are read when the write runs, not when it is queued, so a save that
+        // waited for its turn still sends the latest form.
+        await writeDraft(() => {
+          const form = getValues()
+          return formToVotingProcessRequest(form, buildCensusSpec(form))
+        })
         saveCooldown?.(saveTimeoutMs)
         setDraftLimitReached(false)
         return 'saved'
       } catch (e) {
         // Check if it's a draft limit error
-        if (e instanceof ApiError && e.apiError?.code === ErrorCode.DraftLimitReached) {
+        if (isDraftLimitError(e)) {
           setDraftLimitReached(true)
           // Silently fail for auto-save, throw for manual save
           if (isAutoSave) {
@@ -275,17 +322,7 @@ export const useFormDraftSaver = (
         throw e
       }
     },
-    [
-      isDirty,
-      draftLimitReached,
-      getValues,
-      draftId,
-      account?.address,
-      updateProcess,
-      createProcess,
-      storeDraftId,
-      saveCooldown,
-    ]
+    [isDirty, draftLimitReached, organization?.address, getValues, writeDraft, formToVotingProcessRequest, saveCooldown]
   )
 
   useEffect(() => {
@@ -314,7 +351,7 @@ export const useFormDraftSaver = (
     return () => clearInterval(id)
   }, [saveDraft])
 
-  return { saveDraft, isSaving, skipSave, draftLimitReached }
+  return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft }
 }
 
 const TemplateButtons = () => {
@@ -462,141 +499,125 @@ const LeaveConfirmationModal = ({
   )
 }
 
-const useProcessBundle = () => {
-  const { bearedFetch } = useAuth()
-  return useMutation({
-    mutationFn: async ({ censusId, processes }: { censusId: string; processes?: string[] }) => {
-      return await bearedFetch<{ uri: string; root: string }>(ApiEndpoints.ProcessBundle, {
-        method: 'POST',
-        body: {
-          censusId,
-          processes,
-        },
-      })
-    },
-  })
-}
-
 export const useCreateProcess = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
-  return useMutation<string, Error, CreateProcessRequest>({
-    mutationFn: async (body) => {
-      return await bearedFetch(ApiEndpoints.OrganizationProcesses, {
-        method: 'POST',
-        body,
-      })
-    },
+  return useMutation<string, Error, CreateVotingProcessRequest>({
+    mutationFn: (request) => client.elections.create(request),
   })
 }
 
 const useUpdateProcess = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
+
   return useMutation<void, Error, UpdateProcessRequest>({
-    mutationFn: async ({ processId, body }) => {
-      return await bearedFetch(ApiEndpoints.OrganizationProcess.replace('{processId}', processId), {
-        method: 'PUT',
-        body,
-      })
-    },
+    mutationFn: ({ processId, body }) => client.elections.update(processId, body),
   })
 }
 
-export const useFormToElectionMapper = () => {
+export const buildCensusSpec = (form: Process): CensusSpec => {
+  const spec: CensusSpec = { groupId: form.groupId || undefined, weighted: form.weightedVote || undefined }
+  if (form.census?.credentials?.length) {
+    spec.authFields = form.census.credentials as OrgMemberAuthField[]
+  }
+  if (form.census?.use2FA && form.census?.use2FAMethod) {
+    spec.twoFaFields = getTwoFaFields(form.census.use2FAMethod) as OrgMemberTwoFaField[]
+  }
+  return spec
+}
+
+export const useFormToVotingProcessRequest = () => {
   const { permission } = useSubscription()
+  const { organization } = useOrganization()
 
-  const parseLocalDateTime = (dateStr?: string, timeStr?: string) => {
+  const parseLocalDateTime = (dateStr?: string, timeStr?: string): string | undefined => {
     if (!dateStr || !timeStr) return undefined
-
-    return parse(`${dateStr} ${timeStr}`, 'yyyy-MM-dd HH:mm', new Date())
+    return parse(`${dateStr} ${timeStr}`, 'yyyy-MM-dd HH:mm', new Date()).toISOString()
   }
 
-  const getMaxCensusSize = (form: Process, census: Census) => {
-    switch (form.censusType) {
-      case CensusTypes.Spreadsheet:
-      case CensusTypes.Web3:
-        return form.addresses?.length ?? census?.size
-      case CensusTypes.CSP:
-      default:
-        return form.census?.size ?? census?.size
+  return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequest => {
+    // The SAAS API rejects processes without an owner org. Draft saves are skipped and
+    // the publish/save buttons are disabled until the address resolves, so reaching this
+    // guard means a caller bypassed those checks.
+    if (!organization?.address) {
+      throw new Error('Organization address is not available yet')
     }
-  }
 
-  return (form: Process, census: Census): UnpublishedElection | MultiChoiceElection => {
-    const start = form.autoStart ? new Date() : parseLocalDateTime(form.startDate, form.startTime)
-    const startDate = form.autoStart ? undefined : parseLocalDateTime(form.startDate, form.startTime)
-    const endDate = form.endDate && form.endTime ? parseLocalDateTime(form.endDate, form.endTime) : addDays(start, 1)
+    const parsedStart = form.autoStart ? undefined : parseLocalDateTime(form.startDate, form.startTime)
+    const startRef = parsedStart ? new Date(parsedStart) : new Date()
+    const endDate =
+      form.endDate && form.endTime ? parseLocalDateTime(form.endDate, form.endTime) : addDays(startRef, 1).toISOString()
 
-    let base: IElectionParameters = {
-      census,
-      title: form.title,
-      description: form.description,
-      electionType: {
-        secretUntilTheEnd: Boolean(form.resultVisibility === 'hidden'),
-      },
-      maxCensusSize: getMaxCensusSize(form, census),
-      questions: form.questions.map(
-        (question) =>
-          ({
-            title: { default: question.title },
-            description: { default: question.description },
-            choices: question.options.map((q: Option, i: number) => {
-              const choice: IQuestion['choices'][number] = {
-                title: { default: q.option },
-                value: i,
-              }
+    const secretUntilTheEnd = form.resultVisibility === 'hidden'
 
-              // Only include meta when extendedInfo is enabled
-              if (form.extendedInfo) {
-                choice.meta = {
-                  description: q.description,
-                  image: { default: q.image },
-                }
-              }
+    const questions: VotingProcessQuestionRequest[] = form.questions.map((question) => {
+      const choices: Choice[] = question.options.map((q: Option, i: number) => ({
+        title: { default: q.option },
+        value: i,
+      }))
 
-              return choice
-            }),
-          }) as IQuestion
-      ),
-      startDate,
+      const metadata: Record<string, unknown> | undefined = question.extendedInfo
+        ? {
+            choices: question.options.map((q, i) => ({ value: i, description: q.description, image: q.image })),
+          }
+        : undefined
+
+      if (question.type === SelectorTypes.Multiple) {
+        const maxChoices =
+          (question.maxNumberOfChoices ?? 0) > 0 ? question.maxNumberOfChoices! : question.options.length
+        return {
+          title: { default: question.title },
+          description: question.description ? { default: question.description } : undefined,
+          choices,
+          type: 'multichoice',
+          // uniqueChoices must stay false on multichoice: the backend derives the
+          // dense 0/1 layout (one field per choice) and maps this flag onto the
+          // on-chain uniqueValues, which would discard every multi-selection
+          // ballot at tally — the API rejects the combination since ballot 1.0.0.
+          typeSetup: { maxChoices, minChoices: question.minNumberOfChoices ?? 0, uniqueChoices: false },
+          secretUntilTheEnd,
+          metadata,
+        }
+      }
+
+      return {
+        title: { default: question.title },
+        description: question.description ? { default: question.description } : undefined,
+        choices,
+        type: 'singlechoice',
+        secretUntilTheEnd,
+        metadata,
+      }
+    })
+
+    return {
+      orgAddress: organization.address,
+      title: { default: form.title },
+      description: form.description ? { default: form.description } : undefined,
+      startDate: parsedStart,
       endDate,
-      voteType: {
-        maxVoteOverwrites: form.censusType === CensusTypes.CSP ? 0 : 10,
-      },
-      streamUri: permission(SubscriptionPermission.LiveStreaming) ? form.streamUri : undefined,
-      temporarySecretIdentity:
-        form.censusType === CensusTypes.Spreadsheet && Boolean(form.voterPrivacy === 'anonymous'),
-      meta: {
-        generated: 'ui-scaffold',
-        app: 'vocdoni',
-        census: {
-          type: form.censusType,
-          fields: form.spreadsheet?.header ?? undefined,
-        } as CensusMeta,
-      },
+      streamUri: permission(SubscriptionPermission.LiveStreaming) ? form.streamUri || undefined : undefined,
+      census: censusSpec,
+      questions,
     }
-
-    if (form.questionType === SelectorTypes.Multiple) {
-      return MultiChoiceElection.from({
-        ...base,
-        canAbstain: false,
-        maxNumberOfChoices: form.maxNumberOfChoices > 0 ? form.maxNumberOfChoices : form.questions[0].options.length,
-        minNumberOfChoices: form.minNumberOfChoices ?? 0,
-      })
-    }
-
-    return Election.from(base)
   }
 }
 
 export const useDraft = (draftId?: string | null) => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
-  return useQuery<{ metadata: Process }, Error>({
+  return useQuery<Process | null, Error>({
     queryKey: ['draft', draftId],
     enabled: !!draftId,
     queryFn: async () => {
-      return bearedFetch(ApiEndpoints.OrganizationProcess.replace('{processId}', draftId!))
+      try {
+        return votingProcessToForm(await client.elections.get(draftId!))
+      } catch (error) {
+        // A stale draft id (deleted elsewhere, or left over from the legacy
+        // draft store) must not break the wizard: fall back to a blank form.
+        if (error instanceof VocdoniApiError && error.status === 404) return null
+        throw error
+      }
     },
     refetchOnWindowFocus: false,
   })
@@ -611,7 +632,6 @@ const ProcessCreateView = () => {
   const [searchParams] = useSearchParams()
   const draftId = searchParams.get('draftId')
   const [storedDraftId, storeDraftId] = useLocalStorage('draft-id', null)
-  const deleteDraft = useDeleteDraft()
   const navigate = useNavigate()
   const location = useLocation()
   const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
@@ -626,13 +646,12 @@ const ProcessCreateView = () => {
   const [isLeaveConfirmationOpen, setLeaveConfirmationOpen] = useState(false)
   const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
-  const { client } = useClient()
+  const { client: apiClient } = useApiClient()
   const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
   const { setStepDoneAsync } = useOrganizationSetup()
-  const processBundleMutation = useProcessBundle()
   const { trackPlausibleEvent } = useAnalytics()
-  const formToElectionMapper = useFormToElectionMapper()
+  const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
   // Confirm navigation if form is dirty
   const { isSamePath, cancel, proceed, resetSamePath, saveCooldown } = useConfirmOnNavigate({
@@ -642,7 +661,7 @@ const ProcessCreateView = () => {
     onOpen: openConfirmationModal,
     onClose: () => setLeaveConfirmationOpen(false),
   })
-  const { saveDraft, isSaving, skipSave } = useFormDraftSaver(
+  const { saveDraft, isSaving, skipSave, writeDraft } = useFormDraftSaver(
     isDirty,
     methods.getValues,
     effectiveDraftId,
@@ -658,7 +677,7 @@ const ProcessCreateView = () => {
     setNextId(Date.now().toString())
     if (!formDraft) return
 
-    Object.entries(formDraft.metadata).forEach(([key, value]) => {
+    Object.entries(formDraft).forEach(([key, value]) => {
       if (key === 'groupId' && groupId) return
       methods.setValue(key as keyof Process, value as Process[keyof Process], { shouldDirty: true })
     })
@@ -679,7 +698,7 @@ const ProcessCreateView = () => {
     const limit = permission(SubscriptionPermission.Drafts)
     let description = error instanceof Error ? error.message : String(error)
 
-    if (error instanceof ApiError && error.apiError?.code === ErrorCode.DraftLimitReached) {
+    if (isDraftLimitError(error)) {
       description = t('process.create.limit_reached.message', {
         defaultValue:
           "You've reached your limit of {{ count }} drafts. To save this draft, delete an existing draft or upgrade your plan.",
@@ -737,90 +756,21 @@ const ProcessCreateView = () => {
     }
   }
 
-  const getCensus = async (form: Process, salt: string): Promise<Census> => {
-    if (form.censusType === 'spreadsheet') {
-      form.addresses = (await form.spreadsheet?.generateWallets(salt)) as Web3Address[]
-    }
-    let census = null
-    switch (form.censusType) {
-      case CensusTypes.CSP:
-        if (!form.census?.id) {
-          throw new Error(
-            t('process_create.census_missing', { defaultValue: 'Census data is missing for Memberbase census type' })
-          )
-        }
-
-        const nextElectionId = await client.electionService.nextElectionId(
-          organization.address,
-          formToElectionMapper(form, new CspCensus('0x23', document.location.href))
-        )
-        const bundledProcess = await processBundleMutation.mutateAsync({
-          censusId: form.census?.id,
-          processes: [nextElectionId],
-        })
-        census = new CspCensus(bundledProcess.root, bundledProcess.uri)
-
-        return census
-      case CensusTypes.Spreadsheet:
-      case CensusTypes.Web3:
-        if (form.weightedVote) {
-          census = new WeightedCensus()
-          const addresses = form.addresses.map(({ address, weight }) => ({
-            key: address,
-            weight: BigInt(weight),
-          }))
-
-          census.add(addresses)
-
-          return census
-        }
-        census = new PlainCensus()
-        const addresses = form.addresses.map(({ address }) => address)
-        census.add(addresses)
-
-        return census
-      default:
-        throw new Error(
-          t('process_create.census_type_not_allowed', {
-            type: form.censusType,
-            defaultValue: 'Census type {{type}} not allowed',
-          })
-        )
-    }
-  }
-
   const onSubmit = async (form: Process) => {
+    // Clicking publish blurs whatever field was focused, which fires an
+    // auto-save: stop it, and queue this write behind any save still running,
+    // so the draft is never rewritten by two requests at once.
+    skipSave(true)
     try {
-      const account = await client.fetchAccountInfo()
-      if (!account.address) {
-        throw new Error(t('process_create.no_account_address', { defaultValue: 'No account address found.' }))
-      }
-      if (!isAccountData(account) || isNaN(account.electionIndex)) {
-        throw new Error(
-          t('process_create.no_election_index', { defaultValue: 'No election index found for the account.' })
-        )
-      }
-      const saltOwner = organization.address || account.address
-      const salt = await client.electionService.getElectionSalt(saltOwner, account.electionIndex)
-
-      const census = await getCensus(form, salt)
-      const election = formToElectionMapper(form, census)
-
-      if (form.censusType === CensusTypes.Spreadsheet) {
-        ;(election as any).meta = (election as any).meta || {}
-        ;(election as any).meta.census = {
-          ...((election as any).meta.census || {}),
-          salt,
-        }
-      }
-
-      let electionId: string | null = null
-      for await (const step of client.createElectionSteps(election)) {
-        if (step.key === ElectionCreationSteps.DONE) {
-          electionId = step.electionId
-          break
-        }
-      }
+      const censusSpec = buildCensusSpec(form)
+      const request = formToVotingProcessRequest(form, censusSpec)
+      // The draft is the process: publish the one we have been saving instead of
+      // creating a second one and leaving the draft orphaned behind it. Going
+      // through `writeDraft` is what makes that hold — it resolves the draft id
+      // inside the queue, so a blur auto-save still in flight is updated rather
+      // than raced.
+      const processId = await writeDraft(() => request)
+      await apiClient.elections.publishAndWait(processId)
 
       await setStepDoneAsync(SetupStepIds.firstVoteCreation)
 
@@ -832,7 +782,7 @@ const ProcessCreateView = () => {
       // navigation. The key omits the pagination params so every paginated/status
       // variant is evicted.
       queryClient.removeQueries({
-        queryKey: QueryKeys.organization.elections(account.address),
+        queryKey: QueryKeys.organization.elections(organization?.address),
       })
 
       trackPlausibleEvent({ name: AnalyticsEvents.ProcessCreated })
@@ -846,18 +796,16 @@ const ProcessCreateView = () => {
 
       methods.reset(defaultProcessValues)
 
-      const targetPath = electionId
-        ? generatePath(Routes.dashboard.process, { id: electionId })
-        : Routes.dashboard.processes.all
+      // The stored draft id now points at a published process, so drop it —
+      // deleting it would delete the vote we just published.
+      storeDraftId(null)
 
-      if (effectiveDraftId) {
-        await deleteDraft.mutateAsync({ draftId: effectiveDraftId, silent: true })
-        localStorage.removeItem('draft-id')
-      }
-
-      navigate(targetPath)
+      navigate(generatePath(Routes.dashboard.process, { id: processId }))
     } catch (error) {
       console.error('Error creating election:', error)
+      // The draft is still a draft: let it keep auto-saving while the user fixes
+      // whatever went wrong.
+      skipSave(false)
 
       toast({
         title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
@@ -882,8 +830,6 @@ const ProcessCreateView = () => {
     const sidebarFieldKeys = [
       'groupId',
       'census',
-      'spreadsheet',
-      'addresses',
       'resultVisibility',
       'weightedVote',
       'endDate',
@@ -960,10 +906,22 @@ const ProcessCreateView = () => {
                 >
                   <Icon as={LuSettings} />
                 </IconButton>
-                <Button type='submit' alignSelf='flex-end' loading={methods.formState.isSubmitting}>
+                {/* Both writes need the owner org address; keep them disabled until it resolves. */}
+                <Button
+                  type='submit'
+                  alignSelf='flex-end'
+                  loading={methods.formState.isSubmitting}
+                  disabled={!organization?.address}
+                >
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
-                <Button type='button' variant='outline' onClick={handleManualSave} loading={isSaving}>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={handleManualSave}
+                  loading={isSaving}
+                  disabled={!organization?.address}
+                >
                   <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
                 </Button>
               </ButtonGroup>

@@ -16,28 +16,23 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import { useElection } from '@vocdoni/react-components'
-import { PublishedElection } from '@vocdoni/sdk'
 import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
-import { CSPStep0FormData, CSPStep0RequestData, useTwoFactorAuth } from './basics'
+import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0 } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
 
-export const Step0Base = ({ election }: { election: PublishedElection }) => {
+export const Step0Base = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const { setCurrentStep, setAuthData, authFields, twoFaFields } = useCspAuthContext()
-  const {
-    actions: { csp1 },
-  } = useElection()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<CSPStep0FormData>()
-  const auth = useTwoFactorAuth<0>(election, 0)
+  const auth = useCspAuth0()
   const is2Factor = twoFaFields.length > 0
 
   const appEnv = useAppEnv()
@@ -102,12 +97,12 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
     }
 
     try {
-      const { authToken } = await auth.mutateAsync(form)
+      // The voter session (ElectionProvider's auth context) stores the auth token;
+      // we only keep the contact info so step 1 can resend the challenge.
+      await auth.mutateAsync(form)
 
-      // Store auth token and contact info in global context
       setAuthData((prev) => ({
         ...prev,
-        authToken,
         ...(form.email && { email: form.email }),
         ...(form.phone && { phone: form.phone }),
       }))
@@ -125,14 +120,13 @@ export const Step0Base = ({ election }: { election: PublishedElection }) => {
         })
         setCurrentStep(1)
       } else {
-        // No 2FA - complete authentication directly using the same method as Step 1
+        // No 2FA - auth0 already verified the token and marked the voter connected
         toast({
           title: t('csp.auth_success', { defaultValue: 'Authentication successful' }),
           type: 'success',
           duration: 3000,
           isClosable: true,
         })
-        csp1(authToken)
       }
     } catch (error) {
       const errorMessage =

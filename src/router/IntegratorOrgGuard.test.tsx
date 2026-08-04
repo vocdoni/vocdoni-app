@@ -53,7 +53,7 @@ const renderGuard = () =>
   )
 
 const mockAuth = (overrides = {}) =>
-  ({ isAuthenticated: true, isAuthLoading: false, signerRefresh: vi.fn(), ...overrides }) as any
+  ({ isAuthenticated: true, isAuthLoading: false, refreshAddresses: vi.fn(), ...overrides }) as any
 
 const mockProfile = (orgs: Array<{ isIntegrator?: boolean; address?: string }>) =>
   ({
@@ -148,5 +148,19 @@ describe('IntegratorOrgGuard', () => {
 
     expect(mutate).toHaveBeenCalledTimes(1)
     expect(screen.getByText('Setting up your integrator account…')).toBeInTheDocument()
+  })
+
+  it('points the session at the provisioned org and refreshes the address list on success', () => {
+    const refreshAddresses = vi.fn()
+    vi.mocked(useAuth).mockReturnValue(mockAuth({ refreshAddresses }))
+    vi.mocked(useProfile).mockReturnValue(mockProfile([]))
+    vi.mocked(useProvisionIntegratorOrganization).mockReturnValue(
+      mockProvision({ isIdle: false, isSuccess: true, data: { address: '0xprovisioned' } })
+    )
+
+    renderGuard()
+
+    expect(localStorage.getItem('signerAddress')).toBe('0xprovisioned')
+    expect(refreshAddresses).toHaveBeenCalledTimes(1)
   })
 })

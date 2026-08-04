@@ -1,10 +1,12 @@
 // These aren't lazy loaded since they are main layouts and related components
 import { useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { Fragment, lazy } from 'react'
+import { useAuth } from '~components/Auth/useAuth'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
+import { QueryKeys } from '~queries/keys'
 import { paginatedElectionsQuery } from '~queries/organization'
 import OrganizationProtectedRoute from '~src/router/OrganizationProtectedRoute'
 import ProtectedRoutes from '~src/router/ProtectedRoutes'
@@ -42,7 +44,8 @@ export const shouldRevalidateDashboardProcess = ({
 
 export const useDashboardRoutes = () => {
   const queryClient = useQueryClient()
-  const { client, account } = useClient()
+  const { client } = useApiClient()
+  const { currentAddress } = useAuth()
 
   return {
     element: (
@@ -106,7 +109,12 @@ export const useDashboardRoutes = () => {
                         <DashboardProcessView />
                       </SuspenseLoader>
                     ),
-                    loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
+                    loader: async ({ params }: { params: Params<string> }) => {
+                      const rawElection = await client.elections.get(params.id!)
+                      // Pre-seed the ElectionProvider query so the view renders without re-fetching
+                      queryClient.setQueryData(QueryKeys.election.process(rawElection.id), rawElection)
+                      return rawElection
+                    },
                     shouldRevalidate: shouldRevalidateDashboardProcess,
                     errorElement: <Error />,
                     children: [
@@ -140,7 +148,7 @@ export const useDashboardRoutes = () => {
                           const mergedParams = { ...queryParams, ...params }
 
                           return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(account, client, mergedParams)
+                            paginatedElectionsQuery(currentAddress, client, mergedParams, queryClient)
                           )
                         },
                       },
@@ -158,7 +166,7 @@ export const useDashboardRoutes = () => {
                           const mergedParams = { ...queryParams, ...params }
 
                           return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(account, client, mergedParams)
+                            paginatedElectionsQuery(currentAddress, client, mergedParams, queryClient)
                           )
                         },
                       },

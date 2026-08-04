@@ -2,8 +2,6 @@ import { Button, Flex, FlexProps, Link, Text } from '@chakra-ui/react'
 import { useToast } from '~components/Toast'
 
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix, useClient } from '@vocdoni/react-components'
-import { Account, RemoteSigner } from '@vocdoni/sdk'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -11,10 +9,9 @@ import { Link as ReactRouterLink, To, useNavigate } from 'react-router-dom'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { LocalStorageKeys, useAuthProvider } from '~components/Auth/useAuthProvider'
+import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { OrganizationMetaKeys, OrganizationMetaResponse, SetupStepIds } from '~queries/organization'
-import { useAppEnv } from '~src/app-env'
 import { QueryKeys } from '~src/queries/keys'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
@@ -24,23 +21,25 @@ type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'co
 
 type OrganizationCreateResponse = {
   address: string
-  account: Account
-  signer: RemoteSigner
-  client: ReturnType<typeof useClient>['client']
 }
 
 const useOrganizationCreate = (
   options?: Omit<UseMutationOptions<OrganizationCreateResponse, Error, FormData>, 'mutationFn'>
 ) => {
-  const { bearedFetch } = useAuth()
-  const { client, setSigner, signer: csigner } = useClient()
-  const { bearer, signerRefresh } = useAuthProvider()
+  // Read refreshAddresses from the AuthContext rather than calling useAuthProvider()
+  // again: a second useAuthProvider instance registers its own observer on the
+  // `auth/addresses` query, and when that query is in error state (users with no
+  // organization get a 404) the observer's retry-on-mount refetch re-renders the
+  // top-level AuthProvider, which rebuilds the router and remounts this component
+  // in an endless loop.
+  const { bearedFetch, refreshAddresses } = useAuth()
   const qclient = useQueryClient()
-  const { SAAS_URL } = useAppEnv()
 
   return useMutation<OrganizationCreateResponse, Error, FormData>({
     mutationFn: async (values: FormData) => {
-      // Create account on the saas to generate new priv keys
+      // Create the organization on the SaaS. `provisionAccount` tells the backend to
+      // provision the on-chain account server-side, replacing the former client-side
+      // RemoteSigner `createAccount` step.
       const { address }: { address: string } = await bearedFetch(ApiEndpoints.Organizations, {
         body: {
           name: values.name,
@@ -49,35 +48,17 @@ const useOrganizationCreate = (
           size: values.size,
           country: values.country,
           type: values.type,
+          provisionAccount: true,
         },
         method: 'POST',
       })
 
-      const signer = new RemoteSigner({
-        url: SAAS_URL,
-        token: bearer,
-      })
-
-      signer.address = address
-      client.wallet = signer
-
-      const account = new Account({
-        name: typeof values.name === 'object' ? values.name.default : values.name,
-        description: typeof values.description === 'object' ? values.description.default : values.description,
-      })
-
-      await client.createAccount({ account })
-
       localStorage.setItem(LocalStorageKeys.SignerAddress, address)
       qclient.invalidateQueries({ queryKey: QueryKeys.profile })
+      // Make the freshly created org the active one and refresh dependent queries.
+      await refreshAddresses()
 
-      // Refresh the signer if it was already set
-      if (csigner !== null) {
-        setSigner(signer)
-        await signerRefresh()
-      }
-
-      return { address, account, signer, client }
+      return { address }
     },
     ...options,
   })
@@ -98,7 +79,6 @@ export const OrganizationCreate = ({
   const navigate = useNavigate()
   const [isPending, setIsPending] = useState(false)
   const methods = useForm<FormData>()
-  const { fetchAccount } = useClient()
   const { handleSubmit } = methods
   const { trackPlausibleEvent } = useAnalytics()
   const { bearedFetch } = useAuth()
@@ -116,17 +96,14 @@ export const OrganizationCreate = ({
       })
       try {
         // Mark organizationDetails step as done (can't use org hook here because org is not created yet)
-        await bearedFetch<OrganizationMetaResponse>(
-          ApiEndpoints.OrganizationMeta.replace('{address}', enforceHexPrefix(address)),
-          {
-            method: 'PUT',
-            body: {
-              meta: {
-                [OrganizationMetaKeys.completedSteps]: [SetupStepIds.organizationDetails],
-              },
+        await bearedFetch<OrganizationMetaResponse>(ApiEndpoints.OrganizationMeta.replace('{address}', address), {
+          method: 'PUT',
+          body: {
+            meta: {
+              [OrganizationMetaKeys.completedSteps]: [SetupStepIds.organizationDetails],
             },
-          }
-        )
+          },
+        })
       } catch (e) {
         console.warn('Error marking organizationDetails step as done', e)
         toast({
@@ -140,9 +117,6 @@ export const OrganizationCreate = ({
         })
       }
       navigate(onSuccessRoute)
-      setTimeout(async () => {
-        await fetchAccount()
-      }, 50)
     },
     onError: (error) => {
       toast({

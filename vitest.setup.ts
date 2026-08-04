@@ -19,6 +19,18 @@ function createToastMock() {
 
 vi.mock('~components/Toast', createToastMock)
 
+// The app auth hook is globally stubbed so components that only read the active org
+// address (currentAddress) render without wiring the whole AuthProvider tree. Tests that
+// exercise auth behavior mock this module themselves (file-level vi.mock takes precedence).
+vi.mock('~components/Auth/useAuth', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./src/components/Auth/useAuth')>()
+  const { getAuthMock } = await import('./src/test-utils-react-providers-mock')
+  return {
+    ...actual,
+    useAuth: () => getAuthMock(),
+  }
+})
+
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   const { getReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
@@ -28,16 +40,15 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   }
 })
 
-vi.mock('@vocdoni/react-components/pagination', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/react-components/pagination')>()
+// The integrator-sdk client hook (`useApiClient`) re-exports react-providers' `useClient`.
+// Stub only that hook so components reading the SAAS client render without a real ClientProvider;
+// tests drive it via `setReactProvidersMock({ useClient })`. Everything else stays real.
+vi.mock('@vocdoni/react-providers', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-providers')>()
   const { getReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
-  const mock = getReactProvidersMock()
   return {
     ...actual,
-    usePagination: mock.usePagination,
-    useRoutedPagination: mock.useRoutedPagination,
-    PaginationProvider: mock.PaginationProvider ?? actual.PaginationProvider,
-    RoutedPaginationProvider: mock.RoutedPaginationProvider ?? actual.RoutedPaginationProvider,
+    useClient: getReactProvidersMock().useClient,
   }
 })
 
@@ -55,8 +66,9 @@ if (!i18n.isInitialized) {
 // Cleanup after each test
 afterEach(async () => {
   cleanup()
-  const { resetReactProvidersMock } = await import('./src/test-utils-react-providers-mock')
+  const { resetReactProvidersMock, resetAuthMock } = await import('./src/test-utils-react-providers-mock')
   resetReactProvidersMock()
+  resetAuthMock()
 })
 
 // Mock environment variables

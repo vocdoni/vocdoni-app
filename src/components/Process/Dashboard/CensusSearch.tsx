@@ -14,7 +14,6 @@ import {
   TooltipTrigger,
 } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import { CensusType, PublishedElection } from '@vocdoni/sdk'
 import { TFunction } from 'i18next'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -22,8 +21,12 @@ import { LuCircleHelp, LuSearch } from 'react-icons/lu'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { SidebarSubtitle } from '~components/Dashboard/Contents'
 import { Select } from '~components/Form/Select'
-import { useCensusBundle } from '~queries/census'
-import { CensusParticipant, useParticipantsCheck } from '~queries/participants'
+import {
+  isParticipantLookupField,
+  ProcessParticipantEntry,
+  ProcessParticipantLookupField,
+  useProcessParticipants,
+} from '~queries/participants'
 
 // Maps a census credential field to a human label. Unknown fields fall back to their raw key.
 const fieldLabel = (t: TFunction, field: string) => {
@@ -49,55 +52,71 @@ const fieldLabel = (t: TFunction, field: string) => {
 
 // Shows the value of the searched credential next to the name. The response only carries a subset of
 // member fields, so credentials not present in it (e.g. phone, nationalId) fall back to the typed value.
-const valueForField = (participant: CensusParticipant, field: string, fallback: string) => {
+const valueForField = (participant: ProcessParticipantEntry, field: string, fallback: string) => {
   switch (field) {
-    case 'name':
-      return participant.name
-    case 'surname':
-      return participant.surname
     case 'email':
-      return participant.email
+      return participant.email ?? fallback
     case 'memberNumber':
-      return participant.memberNumber
+      return participant.memberNumber ?? fallback
     default:
       return fallback
   }
 }
 
-// Gate: only CSP/bundle censuses can be searched. The bundle (fetched from the census URI) confirms the
-// census is bundle-backed, yields the bundleId, and lists the credentials voters authenticate with, which
-// drive the search-field options. The auth-dependent lookup lives in the inner panel so it only runs once
+// The credentials voters authenticate with (census.authFields/twoFaFields) drive the search-field
+// options, intersected with the fields the admin lookup endpoint can actually query by (it rejects
+// name/surname/birthDate). The auth-dependent lookup lives in the inner panel so it only runs once
 // the section is actually shown.
 export const CensusSearch = () => {
   const { election } = useElection()
+  const processID = election?.id
 
-  const isCsp = election instanceof PublishedElection && election.census.type === CensusType.CSP
-  const censusURI = isCsp ? election.census.censusURI : undefined
-  const processID = election instanceof PublishedElection ? election.id : undefined
-
-  const { data: bundle, isError: bundleError } = useCensusBundle(censusURI)
-
-  // The credentials voters use to authenticate in this process are the fields we can search by.
   const options = useMemo(() => {
-    const fields = [...(bundle?.census.authFields ?? []), ...(bundle?.census.twoFaFields ?? [])]
-    return Array.from(new Set(fields))
-  }, [bundle])
+    const fields = [...(election?.census?.authFields ?? []), ...(election?.census?.twoFaFields ?? [])]
+    return Array.from(new Set(fields)).filter(isParticipantLookupField)
+  }, [election?.census])
 
-  if (!isCsp || bundleError || !bundle || !processID || options.length === 0) return null
+  if (!processID || options.length === 0) return null
 
-  return <CensusSearchPanel bundleId={bundle.id} processID={processID} options={options} />
+  return <CensusSearchPanel processID={processID} options={options} />
+}
+
+// Voted status across the process's questions: each question is its own on-chain election, so a
+// voter may have cast some questions and not others. A single question renders a plain
+// Voted/Not voted badge; multi-question processes show the voted fraction when it's partial.
+const VotedBadge = ({ participant }: { participant: ProcessParticipantEntry }) => {
+  const { t } = useTranslation()
+
+  const total = participant.questions.length
+  const voted = participant.questions.filter((question) => question.hasVoted).length
+
+  if (voted > 0 && voted < total) {
+    return (
+      <Badge colorPalette='orange' flexShrink={0}>
+        {t('census.search.voted_partial', { defaultValue: 'Voted {{voted}}/{{total}}', voted, total })}
+      </Badge>
+    )
+  }
+
+  const hasVoted = total > 0 && voted === total
+  return (
+    <Badge colorPalette={hasVoted ? 'green' : 'gray'} flexShrink={0}>
+      {hasVoted
+        ? t('census.search.voted', { defaultValue: 'Voted' })
+        : t('census.search.not_voted', { defaultValue: 'Not voted' })}
+    </Badge>
+  )
 }
 
 type CensusSearchPanelProps = {
-  bundleId: string
   processID: string
-  options: string[]
+  options: ProcessParticipantLookupField[]
 }
 
-const CensusSearchPanel = ({ bundleId, processID, options }: CensusSearchPanelProps) => {
+const CensusSearchPanel = ({ processID, options }: CensusSearchPanelProps) => {
   const { t } = useTranslation()
 
-  const [fieldName, setFieldName] = useState<string | null>(null)
+  const [fieldName, setFieldName] = useState<ProcessParticipantLookupField | null>(null)
   const selectedField = fieldName && options.includes(fieldName) ? fieldName : options[0]
 
   const [search, setSearch] = useState('')
@@ -108,15 +127,14 @@ const CensusSearchPanel = ({ bundleId, processID, options }: CensusSearchPanelPr
     return () => clearTimeout(timer)
   }, [search])
 
-  const { data, error, isError, isLoading } = useParticipantsCheck({
-    bundleId,
-    processID,
-    fieldName: selectedField,
+  const { data, error, isError, isLoading } = useProcessParticipants({
+    processId: processID,
+    field: selectedField,
     value: debouncedSearch,
   })
 
   const hasSearch = debouncedSearch.trim().length > 0
-  const participants = hasSearch ? (data?.participants ?? []) : []
+  const participants = hasSearch ? (data ?? []) : []
 
   const fieldOptions = options.map((field) => ({ label: fieldLabel(t, field), value: field }))
   const selectedOption = fieldOptions.find((option) => option.value === selectedField) ?? null
@@ -161,7 +179,7 @@ const CensusSearchPanel = ({ bundleId, processID, options }: CensusSearchPanelPr
         styles={{ menuPortal: (base) => ({ ...base, zIndex: 1600 }) }}
         options={fieldOptions}
         value={selectedOption}
-        onChange={(option: { value: string } | null) => option && setFieldName(option.value)}
+        onChange={(option: { value: ProcessParticipantLookupField } | null) => option && setFieldName(option.value)}
         aria-label={t('census.search.field_selector', { defaultValue: 'Search field' })}
       />
       <InputGroup endElement={<Icon as={LuSearch} color='fg.muted' />}>
@@ -210,11 +228,7 @@ const CensusSearchPanel = ({ bundleId, processID, options }: CensusSearchPanelPr
                       {valueForField(participant, selectedField, debouncedSearch.trim())}
                     </Text>
                   </Box>
-                  <Badge colorPalette={participant.hasVoted ? 'green' : 'gray'} flexShrink={0}>
-                    {participant.hasVoted
-                      ? t('census.search.voted', { defaultValue: 'Voted' })
-                      : t('census.search.not_voted', { defaultValue: 'Not voted' })}
-                  </Badge>
+                  <VotedBadge participant={participant} />
                 </Box>
               ))}
             </Box>

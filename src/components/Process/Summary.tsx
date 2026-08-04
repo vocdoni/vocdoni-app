@@ -12,8 +12,9 @@ import {
   Stat,
   Text,
 } from '@chakra-ui/react'
-import { ElectionResults, useElection } from '@vocdoni/react-components'
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { ElectionResults, getElectionTitle, useElection } from '@vocdoni/react-components'
+import { hasResults, isSecretUntilTheEnd, isUpcoming, processVoteCount } from '@vocdoni/api-client'
+import type { QuestionStatus } from '@vocdoni/api-types'
 import { TFunction } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -34,26 +35,28 @@ const useTimeLeft = (target?: Date) => {
   return Math.max(0, target.getTime() - now.getTime())
 }
 
-const statusLabel = (t: TFunction, status?: ElectionStatus) => {
+const statusLabel = (t: TFunction, status: QuestionStatus | null) => {
   switch (status) {
-    case ElectionStatus.RESULTS:
+    case 'RESULTS':
       return t('process.results')
-    case ElectionStatus.ENDED:
+    case 'ENDED':
       return t('process.status.ended')
-    case ElectionStatus.CANCELED:
+    case 'CANCELED':
       return t('process.status.canceled')
-    case ElectionStatus.PAUSED:
+    case 'PAUSED':
       return t('process.status.paused')
-    case ElectionStatus.UPCOMING:
+    case 'UPCOMING':
       return t('process.status.upcoming')
+    case 'PROCESS_UNKNOWN':
+      return t('process.status.unknown')
     default:
       return t('process.status.active')
   }
 }
 
-type CountdownStatProps = { target?: Date; isUpcoming: boolean; status?: ElectionStatus }
+type CountdownStatProps = { target?: Date; upcoming: boolean; status: QuestionStatus | null }
 
-const CountdownStat = ({ target, isUpcoming, status }: CountdownStatProps) => {
+const CountdownStat = ({ target, upcoming, status }: CountdownStatProps) => {
   const { t } = useTranslation()
   const left = useTimeLeft(target)
 
@@ -74,7 +77,7 @@ const CountdownStat = ({ target, isUpcoming, status }: CountdownStatProps) => {
   return (
     <Stat.Root flex='0 0 auto' alignItems='end'>
       <Stat.Label color='texts.subtle' textTransform='uppercase' fontSize='xs' letterSpacing='wide'>
-        {isUpcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
+        {upcoming ? t('process.summary.time_until_start') : t('process.summary.time_remaining')}
       </Stat.Label>
       <Badge colorPalette='green' size='md' fontWeight='bold' fontSize='lg'>
         {t('process.summary.countdown', { days, hours: pad(hours), minutes: pad(minutes) })}
@@ -85,15 +88,17 @@ const CountdownStat = ({ target, isUpcoming, status }: CountdownStatProps) => {
 
 const ParticipationCard = () => {
   const { t, i18n } = useTranslation()
-  const { election } = useElection()
+  const { election, results, status } = useElection()
   const { size: census } = useCensusSize()
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!election) return null
 
-  const voteCount = election.voteCount ?? 0
+  const voteCount = processVoteCount(results)
   const percent = census > 0 ? (voteCount / census) * 100 : 0
-  const isUpcoming = election.status === ElectionStatus.UPCOMING
-  const target = isUpcoming ? election.startDate : election.endDate
+  const upcoming = isUpcoming(election)
+  const startDate = new Date(election.startDate)
+  const endDate = new Date(election.endDate)
+  const target = upcoming ? startDate : endDate
   const nf = (value: number, fractionDigits = 0) =>
     new Intl.NumberFormat(i18n.language, {
       maximumFractionDigits: fractionDigits,
@@ -117,10 +122,10 @@ const ParticipationCard = () => {
         <Flex justify='space-between' align='start' gap={4} wrap='wrap'>
           <Box flex='1' minW='0'>
             <Heading as='h1' size='2xl' lineHeight={1.1}>
-              {election.title?.default}
+              {getElectionTitle(election)}
             </Heading>
           </Box>
-          <CountdownStat target={target} isUpcoming={isUpcoming} status={election.status} />
+          <CountdownStat target={target} upcoming={upcoming} status={status} />
         </Flex>
 
         <Box>
@@ -151,7 +156,7 @@ const ParticipationCard = () => {
               {t('process.summary.start_label')}
             </Stat.Label>
             <Stat.ValueText fontSize='md' fontWeight='bold'>
-              {datetime(election.startDate)}
+              {datetime(startDate)}
             </Stat.ValueText>
           </Stat.Root>
           <Stat.Root>
@@ -159,7 +164,7 @@ const ParticipationCard = () => {
               {t('process.summary.end_label')}
             </Stat.Label>
             <Stat.ValueText fontSize='md' fontWeight='bold'>
-              {datetime(election.endDate)}
+              {datetime(endDate)}
             </Stat.ValueText>
           </Stat.Root>
         </SimpleGrid>
@@ -185,12 +190,12 @@ const Indicator = ({ label, value, accent }: IndicatorProps) => (
 
 const KeyIndicators = () => {
   const { t, i18n } = useTranslation()
-  const { election } = useElection()
+  const { election, results } = useElection()
   const { size: census } = useCensusSize()
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!election) return null
 
-  const voteCount = election.voteCount ?? 0
+  const voteCount = processVoteCount(results)
   const percent = census > 0 ? (voteCount / census) * 100 : 0
   const nf = (value: number, fractionDigits = 0) =>
     new Intl.NumberFormat(i18n.language, {
@@ -219,19 +224,18 @@ const ResultsNotice = () => {
   const { t, i18n } = useTranslation()
   const { election } = useElection()
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!election) return null
 
-  const hasResults = election.status === ElectionStatus.RESULTS
-  const isEncrypted = election.electionType?.secretUntilTheEnd
+  const electionHasResults = hasResults(election)
+  const isEncrypted = isSecretUntilTheEnd(election)
 
   // Show the actual results once published, otherwise the "encrypted until close" notice.
   // When results are neither published nor encrypted there's nothing to show here yet.
-  if (!hasResults && !isEncrypted) return null
+  if (!electionHasResults && !isEncrypted) return null
 
+  const endDate = new Date(election.endDate)
   const closeDate = election.endDate
-    ? new Intl.DateTimeFormat(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' }).format(
-        election.endDate
-      )
+    ? new Intl.DateTimeFormat(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' }).format(endDate)
     : ''
 
   return (
@@ -242,7 +246,7 @@ const ResultsNotice = () => {
         </Heading>
         <Separator flex='1' />
       </Flex>
-      {hasResults ? (
+      {electionHasResults ? (
         <Card.Root size='lg'>
           <Card.Body>
             <ElectionResults />
@@ -331,7 +335,7 @@ const CertifiedTech = () => {
 const ProcessSummary = () => {
   const { election } = useElection()
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!election) return null
 
   return (
     <Flex direction='column' gap={8} mx='auto' w='full' maxW='breakpoint-lg' py={6}>

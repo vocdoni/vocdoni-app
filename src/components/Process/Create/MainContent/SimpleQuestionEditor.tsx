@@ -38,7 +38,7 @@ const SimpleQuestionEditor = ({
     formState: { errors },
     watch,
   } = useFormContext()
-  const questionType = watch('questionType')
+  const questionType = watch(`questions.${index}.type`)
   const choiceRecipe = useSlotRecipe({ key: 'QuestionChoice' })
   const cardStyles = choiceRecipe({ context: 'plain', layout: 'list' })
 

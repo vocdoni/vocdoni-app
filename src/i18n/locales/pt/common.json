@@ -47,18 +47,12 @@
   "aside": {
     "has_already_voted": "O teu voto foi registado corretamente",
     "is_not_in_census": "Não constas da lista de participantes",
-    "overwrite_votes_left_one": "Podes corrigir o teu voto uma vez.",
-    "overwrite_votes_left_many": "",
-    "overwrite_votes_left_other": "Podes corrigir o teu voto até {{ count }} vezes.",
-    "submitting": "A enviar",
-    "verify_vote_on_explorer": "Verifica o teu voto no Explorer",
     "votes_one": "<span>1</span> <text>votante</text>",
     "votes_many": "",
     "votes_other": "<span>{{ count }}</span> <text>votantes</text>",
     "votes_weight_one": "<span>1</span> <text>voto</text>",
     "votes_weight_many": "",
-    "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>",
-    "voting_anonymous_advice": "Aguarda enquanto a magia do anonimato acontece 🪄.\nIsto pode demorar vários minutos; não feches a janela."
+    "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
   },
   "avatar": {
     "label": "Avatar da organização"
@@ -94,7 +88,8 @@
       "not_voted": "Não votou",
       "placeholder": "Introduz os dados do votante…",
       "title": "Pesquisar na lista de participantes",
-      "voted": "Votou"
+      "voted": "Votou",
+      "voted_partial": "Votou {{voted}}/{{total}}"
     }
   },
   "census_size": "Número de participantes",
@@ -107,11 +102,8 @@
   "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
-    "cancel": "Cancelar",
     "close_drawer": "Fechar painel",
     "confirm": "Confirmar",
-    "disable": "Desativar",
-    "enable": "Ativar",
     "home": "Início",
     "next": "Seguinte",
     "retry": "Tenta de novo"
@@ -269,7 +261,10 @@
     "empty_description": "Cria um rascunho para começar.",
     "load_error": "Não foi possível carregar os rascunhos",
     "load_error_description": "Tenta novamente.",
-    "not_defined": "Ainda não definido"
+    "not_defined": "Ainda não definido",
+    "question_type": {
+      "mixed": "Misto"
+    }
   },
   "drawer": {
     "close": "Fechar painel"
@@ -305,9 +300,6 @@
   "ended_processes": "Terminados",
   "enter_promo_code": "Introduzir código",
   "error": {
-    "invalid_cell_data": "Algumas linhas não contêm endereços corretos: {{rows,list(style:short)}}",
-    "invalid_row_length": "Corrige as linhas {{rows,list(style: short)}} do documento e carrega-o novamente",
-    "invalid_weight_type": "Era esperado um peso na primeira coluna nas linhas {{rows,list(style:short)}}, mas foram encontrados dados inesperados",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar os perfis",
     "loading_types": "Erro ao carregar os tipos de organização",
@@ -413,8 +405,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Endereço já em uso",
-      "address_pattern": "Apenas são permitidos endereços hexadecimais (ex.: 0x031101A…)",
       "census_config_required": "Configura as definições de autenticação da lista de participantes.",
       "email_invalid": "Endereço de email inválido",
       "field_is_required": "Este campo é obrigatório",
@@ -432,40 +422,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Adicionar",
-        "remove_address": "Remover endereço"
-      },
       "error_deleting_draft_title": "Erro ao eliminar o rascunho",
       "error_title": "Erro ao criar o processo",
-      "spreadsheet": {
-        "download_template": "Não tens um ficheiro CSV? <a>Transfere template.csv</a>, preenche-o e carrega-o.",
-        "preview": {
-          "success_description": "Será pedido ao utilizador que se autentique com:",
-          "success_title": "Ficheiro carregado com sucesso",
-          "upload_new_list": "Carregar uma nova lista de votantes"
-        },
-        "template": {
-          "email": "Email",
-          "firstname": "Nome próprio",
-          "lastname": "Apelido",
-          "weight": "Peso"
-        },
-        "upload_description": "Carrega um ficheiro CSV com os participantes. Cada coluna será usada como uma credencial que o votante terá de utilizar para se autenticar. A primeira linha conterá os títulos dessa credencial."
-      },
       "success_description": "A redirecionar-te para a página do processo de votação…",
-      "success_title": "Processo de votação criado com sucesso",
-      "web3": {
-        "census_description": "Adiciona endereços de carteira que terão direito a votar. Podes adicioná-los individualmente ou carregar um ficheiro CSV.",
-        "census_summary_description_one": "<b>{{count}} endereço</b> terá direito a votar",
-        "census_summary_description_many": "",
-        "census_summary_description_other": "<b>{{count}} endereços</b> terão direito a votar",
-        "census_summary_title": "Resumo da lista de participantes",
-        "csv_format": "O ficheiro CSV deve conter os endereços de carteira na primeira coluna.",
-        "csv_format_weighted": "O ficheiro CSV deve conter os pesos na primeira coluna e os endereços de carteira na segunda coluna.",
-        "upload_csv": "OU CARREGAR CSV",
-        "wallet_addresses": "Endereços de carteira"
-      }
+      "success_title": "Processo de votação criado com sucesso"
     },
     "select_language": "Idioma",
     "support": {
@@ -1020,7 +980,6 @@
       "add_to_census_confirmation_other": "Vais adicionar {{count}} membros à lista de participantes do processo «{{process}}».",
       "add_to_census_description": "Seleciona um processo de votação ativo para adicionar os membros à respetiva lista de participantes.",
       "add_to_census_error": "Erro ao adicionar os membros à lista de participantes",
-      "add_to_census_no_census": "Não foi possível determinar uma lista de participantes para este processo.",
       "add_to_census_partial": "Não foi possível adicionar alguns membros.",
       "add_to_census_success_one": "{{count}} membro adicionado à lista de participantes",
       "add_to_census_success_many": "",
@@ -1078,7 +1037,6 @@
   "menu": {
     "burger_aria_label": "menu de utilizador",
     "collapse": "Recolher menu",
-    "connect": "Ligar",
     "create": "Criar processo",
     "dashboard": "Dashboard",
     "expand": "Expandir menu",
@@ -1134,19 +1092,24 @@
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Votações",
+    "elections_list": "Processos de votação",
     "elections_list_empty": {
       "alt": "Imagem que ilustra que a organização está vazia",
       "description": "Enquanto organizador, podes conceber processos de votação à medida da tua comunidade. Estes procedimentos oferecem grande flexibilidade, permitindo opções como uma lista de participantes em que os votantes se autenticam com dados personalizados (nome de utilizador, palavra-passe e data de nascimento), um sistema baseado em tokens que permite a participação de todos os detentores de tokens ou uma lista branca que utiliza endereços de carteira para a elegibilidade.",
       "not_owner": "Esta organização ainda não tem processos de votação",
       "title": "Cria o teu primeiro processo de votação"
     },
+    "elections_list_load_more": "Carregar mais",
     "max_census": "Participantes máx. por votação",
     "max_processes": "Votações por ano¹",
     "no_organization_title": "Ainda não pertences a nenhuma organização!",
     "organization": "Dados da organização",
     "title": {
       "read_more": "Expandir título"
-    }
+    },
+    "unavailable_description": "",
+    "unavailable_retry": "",
+    "unavailable_title": ""
   },
   "organization_settings": {
     "phone_support": {
@@ -1325,12 +1288,6 @@
       },
       "question": {
         "add": "Adicionar pergunta",
-        "add_multiple": {
-          "cancel_button": "Cancelar",
-          "contact_button": "Contacta-nos",
-          "description": "A criação de processos com mais do que uma pergunta de escolha múltipla não está disponível neste momento. Se precisares deste tipo de processo, contacta-nos.",
-          "title": "Os processos com várias perguntas de escolha múltipla ainda não estão disponíveis"
-        },
         "delete": {
           "cancel_button": "Cancelar",
           "delete_button": "Eliminar",
@@ -1369,30 +1326,15 @@
       "starts": "Começa"
     },
     "extended_info": "Informações detalhadas",
-    "gitcoin": {
-      "all_of_them": "(Todos)",
-      "gps_score": "Pontuação Gitcoin Passport: pontuação mín. {{score}}",
-      "needed_stamps": "Selos necessários",
-      "one_of_them": "(Pelo menos um deles)"
-    },
-    "is_anonymous": {
-      "description": "Votação anónima",
-      "title": "Privacidade"
-    },
     "is_invalid": "Este processo contém dados incorretos, sendo por isso inválido",
     "no_description": "Não foi fornecida descrição",
     "people_in_census_one": "Um votante",
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} votantes",
     "question_type": {
-      "confirm": {
-        "subtitle": "A escolha múltipla só permite uma pergunta. Se mudar, manter-se-á apenas a primeira pergunta e as restantes serão descartadas.",
-        "title": "Queres mudar para escolha múltipla?"
-      },
-      "description": "Isto aplica-se a todas as perguntas deste processo de votação",
+      "label": "Tipo de pergunta",
       "multiple": "Escolha múltipla",
-      "single": "Escolha única",
-      "title": "Tipo de pergunta"
+      "single": "Escolha única"
     },
     "questions": "Perguntas",
     "results": "Resultados",
@@ -1408,6 +1350,7 @@
       "ended": "Terminado",
       "paused": "Processo em pausa",
       "paused_description": "Não é possível votar de momento",
+      "results": "Resultados disponíveis",
       "unknown": "Desconhecido",
       "upcoming": "Por iniciar"
     },
@@ -1473,8 +1416,12 @@
         "title": "Título do orçamento participativo"
       }
     },
-    "total_census_size": "{{maxCensusSize}} votantes autorizados num total de {{censusSize}} na lista de participantes",
-    "total_census_size_tooltip": "O número máximo de votantes autorizados está limitado a {{maxCensusSize}} de uma lista de participantes de {{censusSize}} ({{percent}}% do total). Apenas os primeiros {{maxCensusSize}} votantes podem votar.",
+    "vote_failed": {
+      "close": "Fechar",
+      "none": "Não foi registada nenhuma resposta. Tenta novamente.",
+      "partial": "Algumas respostas não foram registadas. Vota novamente para enviar as restantes.",
+      "title": "Não foi possível emitir o teu voto"
+    },
     "voters": "Votantes",
     "voting": "Estamos a processar o teu voto. Este processo demorará alguns segundos. Não feches nem atualizes esta página.",
     "voting_method": {
@@ -1486,6 +1433,7 @@
       "unknown": "Desconhecido",
       "weighted_format": "{{ base, lowercase }} ponderado"
     },
+    "voting_progress": "{{confirmed}} de {{total}} perguntas confirmadas",
     "voting_type": "Método de votação"
   },
   "process_actions": {
@@ -1505,29 +1453,14 @@
     "auto_start": "Iniciar imediatamente",
     "basic_configuration": "Configuração básica",
     "census": {
-      "extra_methods": {
-        "disable_description": "Pretendes desativar os métodos adicionais de lista de participantes? Isto irá ocultar as opções de Folha de cálculo e Web3 e mostrar apenas o método de Grupo.",
-        "enable_description": "Pretendes ativar os métodos adicionais de lista de participantes? Isto mostrará opções adicionais como a criação da lista de participantes via Folha de cálculo e Web3.",
-        "modal_title": "Métodos adicionais de lista de participantes"
-      },
       "group": {
-        "label": "Grupo",
         "no_groups": "Para iniciar uma votação, tens primeiro de criar um grupo de votantes elegíveis a partir da tua base de membros. <1>Cria um aqui</1>."
       },
       "memberbase": {
         "label": "Seleciona um grupo de membros para criar a lista de participantes"
-      },
-      "settings": "Definições da lista de participantes",
-      "spreadsheet": {
-        "label": "Folha de cálculo"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Criação da lista de participantes",
-    "census_missing": "Faltam dados da lista de participantes para o tipo «Base de membros»",
-    "census_type_not_allowed": "Tipo de lista de participantes {{type}} não permitido",
     "end_datetime": "Data e hora de fim",
     "extra_configuration": "Configuração adicional",
     "group": {
@@ -1537,8 +1470,6 @@
       "scroll_to_load": "Desce para carregar mais…"
     },
     "new_option": "Adicionar uma nova opção",
-    "no_account_address": "Não foi encontrado nenhum endereço de conta.",
-    "no_election_index": "Não foi encontrado nenhum índice de votação para a conta.",
     "option": {
       "description_placeholder": "Descrição (opcional)",
       "placeholder": "Opção {{number}}",
@@ -1588,11 +1519,7 @@
       "method": "Método de autenticação",
       "two_fa": "Autenticação 2FA",
       "two_fa_disabled": "Desativada: não foi configurada verificação de identidade adicional neste processo de votação.",
-      "two_fa_enabled": "Ativada: os votantes confirmam a sua identidade com um código de utilização única enviado para os seus dispositivos pessoais.",
-      "voter_access_source": "Origem do acesso do votante",
-      "voter_access_source_spreadsheet": "Os votantes acedem com credenciais derivadas da folha de cálculo carregada pela organização.",
-      "voter_access_source_web3": "Os votantes acedem com o endereço de carteira incluído na lista de participantes Web3.",
-      "voter_access_source_weighted": "A elegibilidade é verificada com base na lista de participantes ponderada fornecida pela organização para este processo."
+      "two_fa_enabled": "Ativada: os votantes confirmam a sua identidade com um código de utilização única enviado para os seus dispositivos pessoais."
     },
     "census": {
       "counting_basis": "Base de contagem",
@@ -1605,12 +1532,7 @@
       "weighted_participation": "Participação ponderada"
     },
     "census_type": {
-      "anonymous": "Lista de participantes anónima",
-      "csp": "Lista de participantes CSP",
-      "spreadsheet": "Folha de cálculo",
-      "unknown": "Não disponível",
-      "web3": "Web3",
-      "weighted": "Lista de participantes ponderada"
+      "csp": "Lista de participantes CSP"
     },
     "disclaimer": {
       "bullet_1": "Não constitui certificação legal do processo de votação.",
@@ -1650,8 +1572,6 @@
     "download_error": "Não foi possível gerar o relatório PDF",
     "downloading": "A gerar o PDF",
     "general": {
-      "census_reference": "Referência da lista de participantes",
-      "census_reference_helper": "Referência pública que identifica a lista de participantes utilizada neste processo de votação. Não inclui nem revela dados pessoais dos votantes.",
       "event_name": "Nome do evento",
       "network": "Infraestrutura",
       "organization": "Organização",
@@ -1685,9 +1605,9 @@
       "explorer": "Ver no explorador de verificação",
       "paragraph": "Todos os dados do processo foram registados numa infraestrutura baseada em blockchain e podem ser verificados de forma independente através do seguinte Explorer público:",
       "procedure_title": "Procedimento de verificação",
+      "question_n": "Pergunta {{number}}",
       "step_1": "Abre o link do explorador de verificação. Esta página contém o registo técnico público do processo de votação.",
       "step_2": "Verifica que o ID do processo no explorador é idêntico ao ID do processo neste relatório. Isto confirma que ambos os documentos se referem ao mesmo processo de votação.",
-      "step_3": "Verifica que a referência da lista de participantes apresentada no explorador corresponde à referência neste relatório. Isto confirma que a lista de votantes associada ao processo é a mesma.",
       "step_4": "Verifica que o número de boletins registados corresponde aos dados de participação apresentados neste relatório.",
       "step_5": "Compara os resultados finais no explorador com os resultados por contagem de boletins ou por peso de voto ponderado apresentados neste relatório.",
       "step_6": "Para uma auditoria técnica mais aprofundada, um auditor pode inspecionar os registos públicos com mais detalhe ou recalcular os resultados para confirmar que os boletins registados e os resultados finais são consistentes."
@@ -1744,6 +1664,11 @@
   },
   "promo_code": "Código promocional",
   "promo_code_required": "O código promocional é obrigatório",
+  "public_process": {
+    "no_tally": "Sem contagem",
+    "verify": "Verifique no explorador da blockchain:",
+    "verify_process": "Ver processo"
+  },
   "questions_and_results": "Perguntas e resultados",
   "registration_failed": "Falha no registo",
   "registration_successful": "Registo concluído com sucesso",
@@ -1797,8 +1722,6 @@
     "platform": "Plataforma"
   },
   "send_invitation": "Enviar convite",
-  "session_expired": "Sessão expirada",
-  "session_expired_description": "A sessão pode ter expirado e não foi possível renová-la, inicia sessão novamente",
   "settings": "Definições",
   "setup": {
     "progress": "O teu progresso",
@@ -1834,9 +1757,7 @@
   "signup_subtitle": "Introduz as tuas informações para começar",
   "signup_title": "Criar conta",
   "spreadsheet": {
-    "access_button": "Identificar-se",
-    "close": "Fechar",
-    "modal_title": "Autenticação"
+    "access_button": "Identificar-se"
   },
   "start_date": "Data de início",
   "start_time": "Hora de início",
@@ -2021,7 +1942,6 @@
     "level_strong": "Forte",
     "level_weak": "Fraco",
     "no_group_description": "Seleciona primeiro um grupo para configurar a autenticação.",
-    "save_failed": "Falha ao configurar a autenticação dos votantes",
     "security_level": "Boa segurança",
     "security_recommendation_1": "Para uma melhor segurança, recomendamos selecionar pelo menos 2 credenciais.",
     "security_recommendation_2_one": "Selecionaste {{ count }} credencial, o que oferece uma boa segurança aos teus votantes.",

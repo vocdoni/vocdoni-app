@@ -52,10 +52,16 @@ describe('DraftsContextMenu', () => {
     const { container } = render(
       <TestMemoryRouter>
         <DraftsContextMenu
-          draft={{
-            id: 'draft-1',
-            metadata: { title: 'Draft title' } as any,
-          }}
+          draft={
+            {
+              id: 'draft-1',
+              orgAddress: 'org',
+              published: false,
+              title: { default: 'Draft title' },
+              census: {},
+              questions: [],
+            } as any
+          }
         />
       </TestMemoryRouter>
     )

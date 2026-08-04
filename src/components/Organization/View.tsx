@@ -9,11 +9,16 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react'
-import { useClient, useOrganization } from '@vocdoni/react-components'
-import { areEqualHexStrings, InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import { useQueryClient } from '@tanstack/react-query'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
+import { useOrganization } from '@vocdoni/react-components'
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ElectionsPageData } from '~src/ssr/public-pages'
+import { useAuth } from '~components/Auth/useAuth'
+import { useApiClient } from '~src/providers/ApiClientProvider'
+import { QueryKeys } from '~queries/keys'
+import { sameAddress } from '~utils/address'
 import ProcessCardDetailed from '../Process/CardDetailed'
 import Header from './Header'
 import NoElections from './NoElections'
@@ -24,16 +29,18 @@ type OrganizationViewProps = {
 
 const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
   const { t } = useTranslation()
-  const { client, account } = useClient()
+  const { client } = useApiClient()
+  const queryClient = useQueryClient()
+  const { currentAddress } = useAuth()
   const { organization, fetch } = useOrganization()
 
-  const initialElections = (initialElectionsPage?.elections ?? []) as (PublishedElection | InvalidElection)[]
+  const initialElections = (initialElectionsPage?.elections ?? []) as VotingProcessResponse[]
   const isFinishedFromInitialPage =
     !!initialElectionsPage &&
     (!initialElections.length ||
       initialElectionsPage.pagination.currentPage === initialElectionsPage.pagination.lastPage)
 
-  const [electionsList, setElectionsList] = useState<(PublishedElection | InvalidElection)[]>(initialElections)
+  const [electionsList, setElectionsList] = useState<VotingProcessResponse[]>(initialElections)
   const [loading, setLoading] = useState<boolean>(false)
   const [loaded, setLoaded] = useState<boolean>(!!initialElectionsPage)
   const [error, setError] = useState<string>()
@@ -42,49 +49,59 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
   // otherwise, the observer is not assigned and the intersection is not triggered
   const [refObserver, setRefObserver] = useState<HTMLDivElement | null>(null)
 
-  const [page, setPage] = useState<number>(initialElectionsPage ? 1 : -1)
+  // SAAS list pages are 1-based; 0 is the "nothing requested yet" sentinel.
+  const [page, setPage] = useState<number>(initialElectionsPage ? 1 : 0)
   const previousOrganizationAddressRef = useRef<string | undefined>(organization?.address)
   useObserver(refObserver, setPage, setRefObserver)
 
   // refetch account info in case it changes in client (i.e. when editing the account profile in this same page)
   useEffect(() => {
     // only re-fetch if account is the same as the one rendered, otherwise it will load incorrect data
-    if (!areEqualHexStrings(account?.address, organization?.address)) return
+    if (!sameAddress(currentAddress, organization?.address)) return
 
     fetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [currentAddress])
 
-  // resets fields on account change
+  // resets fields on account change; also kicks off the first fetch once the
+  // organization resolves in the client-rendered (no SSR page) path
   useEffect(() => {
     if (previousOrganizationAddressRef.current === organization?.address) return
 
+    const isFirstResolution = previousOrganizationAddressRef.current === undefined
     previousOrganizationAddressRef.current = organization?.address
+
+    // The SSR page already seeded page 1 for this organization; don't discard it.
+    if (isFirstResolution && initialElectionsPage) return
+
     setElectionsList([])
     setFinished(isFinishedFromInitialPage)
-    setPage(0)
+    setPage(1)
     setLoaded(false)
     setLoading(false)
   }, [initialElectionsPage, isFinishedFromInitialPage, organization?.address])
 
   // loads elections. Note the load trigger is done via useObserver using a layer visibility.
   useEffect(() => {
-    if (finished || loading || !client || page === -1 || error || !organization?.address) return
+    if (finished || loading || page === 0 || error || !organization?.address) return
 
     setLoading(true)
 
-    client
-      .fetchElections({ organizationId: organization.address, page })
+    client.elections
+      .list({ orgAddress: organization.address, page })
       .then((res) => {
-        const elections = res.elections
-        if (!res || (res && (!elections.length || res.pagination.currentPage === res.pagination.lastPage))) {
+        const processes = res.processes
+        if (!processes.length || res.pagination.currentPage === res.pagination.lastPage) {
           setFinished(true)
         }
 
-        setElectionsList((prev: (PublishedElection | InvalidElection)[]) => {
-          if (prev) return [...prev, ...elections]
-          return elections
+        // Pre-seed each process into the ElectionProvider query so the per-card
+        // providers render from cache instead of re-fetching.
+        processes.forEach((process) => {
+          queryClient.setQueryData(QueryKeys.election.process(process.id), process)
         })
+
+        setElectionsList((prev) => [...prev, ...processes])
       })
       .catch((err) => {
         console.error('fetch elections error', err)
@@ -107,7 +124,7 @@ const OrganizationView = ({ initialElectionsPage }: OrganizationViewProps) => {
       </Text>
 
       <Grid templateColumns='repeat(auto-fill, minmax(350px, 1fr))' columnGap={{ base: 3, lg: 4 }} rowGap={12}>
-        {electionsList?.map((election: any, idx: number) => (
+        {electionsList?.map((election, idx) => (
           <GridItem key={idx} display='flex' justifyContent='center' alignItems='start'>
             <ProcessCardDetailed election={election} />
           </GridItem>

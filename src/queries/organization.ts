@@ -1,12 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
-import {
-  AccountData,
-  ensure0x,
-  FetchElectionsParameters,
-  FetchElectionsParametersWithPagination,
-  VocdoniSDKClient,
-} from '@vocdoni/sdk'
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
+import { useOrganization } from '@vocdoni/react-components'
+import type { ElectionStatus } from '@vocdoni/api-types'
+import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { LuCalendar, LuFileSpreadsheet, LuUsers, LuVote } from 'react-icons/lu'
@@ -48,9 +43,10 @@ export type OrganizationMetaResponse = {
 
 type OrganizationSteps = SetupStepId[]
 
-type PaginatedElectionsParams = Partial<Pick<FetchElectionsParametersWithPagination, 'limit'>> & {
+type PaginatedElectionsParams = {
   page?: number
-  status?: FetchElectionsParameters['status']
+  limit?: number
+  status?: string
 }
 
 type SetupChecklistItem = {
@@ -79,20 +75,47 @@ type InviteData = {
   role: string
 }
 
+// The dashboard "ended" tab filters by the legacy `RESULTS` status, which the SAAS status union
+// no longer has (results now live on an `ENDED` election). Map it (and the other legacy names)
+// onto the SAAS `ElectionStatus` before querying.
+const LIST_STATUS_MAP: Record<string, ElectionStatus> = {
+  ongoing: 'READY',
+  ready: 'READY',
+  results: 'ENDED',
+  ended: 'ENDED',
+  paused: 'PAUSED',
+  canceled: 'CANCELED',
+  upcoming: 'UPCOMING',
+}
+
 export const paginatedElectionsQuery = (
-  account: AccountData,
-  client: VocdoniSDKClient,
-  params: PaginatedElectionsParams
+  address: string | undefined,
+  client: VocdoniApiClient,
+  params: PaginatedElectionsParams,
+  queryClient?: QueryClient
 ) => ({
-  enabled: !!account?.address,
-  queryKey: QueryKeys.organization.elections(account?.address, params),
-  queryFn: async () =>
-    client.fetchElections({
-      organizationId: account?.address,
-      page: params.page ? Number(params.page) - 1 : 0,
-      status: params.status?.toUpperCase() as FetchElectionsParameters['status'],
+  enabled: !!address,
+  queryKey: QueryKeys.organization.elections(address, params),
+  queryFn: async () => {
+    const result = await client.elections.list({
+      orgAddress: address,
+      page: params.page ? Number(params.page) : 1,
       limit: params.limit,
-    }),
+      status: params.status ? LIST_STATUS_MAP[params.status.toLowerCase()] : undefined,
+      // These lists are about published elections — drafts have their own tab and
+      // their own query. Without this the API defaults a manager to every process
+      // of the organization, drafts included.
+      published: true,
+    })
+    // Pre-seed each process into the ElectionProvider query so per-row providers
+    // (ProcessesTable, dashboard cards) render from cache instead of re-fetching.
+    if (queryClient) {
+      result.processes.forEach((process) => {
+        queryClient.setQueryData(QueryKeys.election.process(process.id), process)
+      })
+    }
+    return result
+  },
 })
 
 export const useOrganizationMeta = () => {
@@ -108,7 +131,7 @@ export const useOrganizationMeta = () => {
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const response = await bearedFetch<OrganizationMetaResponse>(
-        ApiEndpoints.OrganizationMeta.replace('{address}', enforceHexPrefix(organization.address))
+        ApiEndpoints.OrganizationMeta.replace('{address}', organization.address)
       )
       return response.meta
     },
@@ -121,7 +144,7 @@ export const useOrganizationMeta = () => {
         ...partialMeta,
       }
       await bearedFetch<OrganizationMetaResponse>(
-        ApiEndpoints.OrganizationMeta.replace('{address}', enforceHexPrefix(organization.address)),
+        ApiEndpoints.OrganizationMeta.replace('{address}', organization.address),
         {
           method: 'PUT',
           body: { meta: newMeta },
@@ -137,7 +160,7 @@ export const useOrganizationMeta = () => {
 
   const deleteMeta = useMutation<void, Error, string[]>({
     mutationFn: async (keys: string[]) => {
-      await bearedFetch(ApiEndpoints.OrganizationMeta.replace('{address}', enforceHexPrefix(organization.address)), {
+      await bearedFetch(ApiEndpoints.OrganizationMeta.replace('{address}', organization.address), {
         method: 'DELETE',
         body: {
           keys,
@@ -146,7 +169,7 @@ export const useOrganizationMeta = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.meta(enforceHexPrefix(organization.address)),
+        queryKey: QueryKeys.organization.meta(organization.address),
       })
     },
   })
@@ -317,7 +340,7 @@ export const useInviteMemberMutation = () => {
 
   return useMutation({
     mutationFn: async (body: InviteData) =>
-      await bearedFetch(ApiEndpoints.OrganizationUsers.replace('{address}', ensure0x(organization.address)), {
+      await bearedFetch(ApiEndpoints.OrganizationUsers.replace('{address}', organization.address), {
         method: 'POST',
         body,
       }),
@@ -336,10 +359,7 @@ export const useRemoveUserMutation = () => {
   return useMutation({
     mutationFn: async (id: number) =>
       await bearedFetch(
-        ApiEndpoints.OrganizationUser.replace('{address}', ensure0x(organization.address)).replace(
-          '{userId}',
-          String(id)
-        ),
+        ApiEndpoints.OrganizationUser.replace('{address}', organization.address).replace('{userId}', String(id)),
         { method: 'DELETE' }
       ),
     onSuccess: () => {

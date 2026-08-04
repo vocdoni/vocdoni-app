@@ -1,4 +1,4 @@
-import { dotobject } from '@vocdoni/sdk'
+import { dotobject } from '~utils/objects'
 import { FieldErrors, FieldValues } from 'react-hook-form'
 
 export const TwoFACodePrice = {

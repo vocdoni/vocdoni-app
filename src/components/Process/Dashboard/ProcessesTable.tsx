@@ -14,8 +14,15 @@ import {
   Text,
   useBreakpointValue,
 } from '@chakra-ui/react'
-import { ElectionProvider, ElectionStatusBadge, QuestionsTypeBadge, useElection } from '@vocdoni/react-components'
-import { ElectionStatus, ensure0x, InvalidElection, PublishedElection } from '@vocdoni/sdk'
+import {
+  ElectionProvider,
+  ElectionStatusBadge,
+  getElectionTitle,
+  QuestionsTypeBadge,
+  useElection,
+} from '@vocdoni/react-components'
+import { hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router-dom'
@@ -23,14 +30,14 @@ import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFoo
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
+import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
-type Election = PublishedElection | InvalidElection
-
 type ProcessesListProps = {
-  processes?: Election[]
+  processes?: VotingProcessResponse[]
 }
 
 const ProcessesTable = ({ processes }: ProcessesListProps) => {
@@ -41,7 +48,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
     processes &&
     !!processes.length &&
     processes?.map((election) => (
-      <ElectionProvider election={election} id={election.id} key={election.id}>
+      <ElectionProvider id={election.id} key={election.id}>
         {isMobile ? <ProcessCard /> : <ProcessRow />}
       </ElectionProvider>
     ))
@@ -84,13 +91,16 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
 }
 
 const ProcessResultsTag = () => {
-  const { election } = useElection()
+  const { election, status } = useElection()
 
-  if (!election || election instanceof InvalidElection) return null
+  if (!election) return null
 
-  return ElectionStatus.RESULTS === election.status ||
-    ([ElectionStatus.ENDED, ElectionStatus.ONGOING].includes(election.status) &&
-      !election.electionType.secretUntilTheEnd) ? (
+  // Live results are visible while the vote runs (or right after it ends) unless the
+  // process hides tallies until the end; final results show once they're computed.
+  const resultsVisible =
+    hasResults(election) || ((status === 'ENDED' || status === 'ONGOING') && !isSecretUntilTheEnd(election))
+
+  return resultsVisible ? (
     <Tag.Root colorPalette='gray' variant='solid' size='sm'>
       <Tag.Label>
         <Trans i18nKey='process_list.results_live'>Live</Trans>
@@ -106,19 +116,21 @@ const ProcessResultsTag = () => {
 }
 
 const ProcessCard = () => {
-  const { election } = useElection()
+  const { election, results } = useElection()
   const { format } = useDateFns()
   const { t } = useTranslation()
 
-  if (!election || election instanceof InvalidElection) return null
+  if (!election) return null
+
+  const title = getElectionTitle(election) || election.id
 
   return (
     <Card.Root variant='data-list-item'>
       <Card.Header>
-        <Link asChild title={election.title.default}>
-          <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+        <Link asChild title={title}>
+          <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
             <Text fontWeight='medium' lineClamp={2}>
-              {election.title.default}
+              {title}
             </Text>
           </RouterLink>
         </Link>
@@ -139,7 +151,7 @@ const ProcessCard = () => {
           {format(election.endDate, t('organization.date_format'))}
         </Text>
         <Text>
-          {t('process_list.recount', { defaultValue: 'Recount' })}: {election.voteCount}
+          {t('process_list.recount', { defaultValue: 'Recount' })}: {processVoteCount(results)}
         </Text>
       </Card.Body>
     </Card.Root>
@@ -147,19 +159,21 @@ const ProcessCard = () => {
 }
 
 const ProcessRow = () => {
-  const { election } = useElection()
+  const { election, results } = useElection()
   const { format } = useDateFns()
   const { t } = useTranslation()
 
-  if (!election || election instanceof InvalidElection) return null
+  if (!election) return null
+
+  const title = getElectionTitle(election) || election.id
 
   return (
     <Table.Row position='relative'>
       <Table.Cell>
-        <Link asChild title={election.title.default}>
-          <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+        <Link asChild title={title}>
+          <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
             <Text w='full' maxW='500px' size='sm' truncate>
-              {election.title.default}
+              {title}
             </Text>
           </RouterLink>
         </Link>
@@ -172,7 +186,7 @@ const ProcessRow = () => {
       <Table.Cell>
         <ElectionStatusBadge size='sm' />
       </Table.Cell>
-      <Table.Cell textAlign='end'>{election.voteCount}</Table.Cell>
+      <Table.Cell textAlign='end'>{processVoteCount(results)}</Table.Cell>
       <Table.Cell>
         <ProcessResultsTag />
       </Table.Cell>
@@ -184,16 +198,22 @@ const ProcessRow = () => {
 }
 
 const ProcessContextMenu = () => {
-  const { election, client } = useElection()
+  const { election } = useElection()
   const { cloneAsDraft } = useCloneAsDraft()
   const publicLanguage = usePublicLanguage()
+  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
 
-  if (!election || election instanceof InvalidElection) return null
+  if (!election) return null
 
   const publicProcessPath = getPublicProcessPath({
-    id: ensure0x(election.id),
+    id: election.id,
     language: publicLanguage,
   })
+
+  // The explorer knows on-chain (Vochain) process ids; each question is its own
+  // on-chain election, so link the first question's upstream id.
+  const explorerProcessId = election.questions[0]?.upstreamId
 
   return (
     <Menu.Root>
@@ -206,7 +226,7 @@ const ProcessContextMenu = () => {
         <MenuPositioner>
           <Menu.Content>
             <Menu.Item value='more-info' asChild>
-              <RouterLink to={generatePath(Routes.dashboard.process, { id: ensure0x(election.id) })}>
+              <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
                 <Icon as={LuInfo} boxSize={4} />
                 <Trans i18nKey='process_context.more_info'>More info</Trans>
               </RouterLink>
@@ -217,12 +237,14 @@ const ProcessContextMenu = () => {
                 <Trans i18nKey='process_context.public_voting_page'>Public voting page</Trans>
               </a>
             </Menu.Item>
-            <Menu.Item value='explorer' asChild>
-              <a href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
-                <Icon as={LuSearch} boxSize={4} />
-                <Trans i18nKey='process_context.explorer'>Explorer</Trans>
-              </a>
-            </Menu.Item>
+            {explorerProcessId && (
+              <Menu.Item value='explorer' asChild>
+                <a href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
+                  <Icon as={LuSearch} boxSize={4} />
+                  <Trans i18nKey='process_context.explorer'>Explorer</Trans>
+                </a>
+              </Menu.Item>
+            )}
             <VotingReportPdfMenuItem election={election} />
             <Menu.Item value='clone-draft' onClick={cloneAsDraft}>
               <Icon as={LuCopy} boxSize={4} />

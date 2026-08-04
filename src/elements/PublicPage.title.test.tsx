@@ -1,4 +1,3 @@
-import { PublishedElection } from '@vocdoni/sdk'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -24,10 +23,8 @@ vi.mock('@vocdoni/react-components', () => ({
   ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   useOrganization: () => ({
     organization: {
-      account: {
-        name: {
-          default: 'Acme Org',
-        },
+      name: {
+        default: 'Acme Org',
       },
       address: '0xabc',
     },
@@ -47,7 +44,7 @@ describe('SSR public pages title handling', () => {
 
     render(
       <PublicOrganizationPage
-        organization={{ address: '0xabc', account: { name: { default: 'Acme Org' } } } as any}
+        organization={{ address: '0xabc', name: { default: 'Acme Org' } } as any}
         initialElectionsPage={{ items: [] } as any}
       />
     )
@@ -60,11 +57,7 @@ describe('SSR public pages title handling', () => {
     document.title = 'Initial title'
 
     render(
-      <PublicProcessPage
-        id='0x0'
-        election={new PublishedElection({} as any)}
-        organization={{ address: '0xabc' } as any}
-      />
+      <PublicProcessPage id='0x0' election={{ id: '0x0', orgAddress: 'abc' } as any} organizationAddress='0xabc' />
     )
 
     expect(screen.getByText('process-view')).toBeInTheDocument()

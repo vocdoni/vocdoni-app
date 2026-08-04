@@ -28,7 +28,7 @@ describe('Process view', () => {
     setReactProvidersMock({
       useOrganization: () => ({
         organization: {
-          account: { name: { default: 'Esquerra republicana' } },
+          name: { default: 'Esquerra republicana' },
           address: '0xabc',
         },
       }),
@@ -44,7 +44,7 @@ describe('Process view', () => {
         {
           path: '/processes/:id',
           id: 'process-view',
-          loader: async () => ({ organizationId: '0xabc' }),
+          loader: async () => ({ era: 'saas', election: { id: '123', orgAddress: 'abc' } }),
           element: <Process />,
         },
       ],

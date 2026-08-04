@@ -5,19 +5,19 @@ import {
   ElectionTitle,
   OrganizationImage,
   OrganizationProvider,
-  useClient,
   useElection,
 } from '@vocdoni/react-components'
-import { InvalidElection, PublishedElection } from '@vocdoni/sdk'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
 import { Link as ReactRouterLink } from 'react-router-dom'
 import Editor from '~components/Editor'
+import { useAuth } from '~components/Auth/useAuth'
 import { ManageProcessLink } from '~components/Process/ManageProcessLink'
 import { CensusConnectButton } from '~components/Process/Aside'
 import LogoutButton from '~components/Process/LogoutButton'
 import { useAppEnv, useLanguagesEnv } from '~src/app-env'
+import { ensureAddressPrefix, sameAddress } from '~utils/address'
 
 export const parseProcessIds = (value: string | undefined) =>
   (value || '')
@@ -33,6 +33,9 @@ const SharedCensus = () => {
     return null
   }
 
+  // The first process anchors the page: its census drives the identify flow
+  // (the ElectionProvider hosts that CSP session) and its organization brands
+  // the header.
   return (
     <ElectionProvider id={processIds[0]}>
       <SharedCensusOrganizationBoundary>
@@ -44,21 +47,22 @@ const SharedCensus = () => {
 
 const SharedCensusOrganizationBoundary = ({ children }: { children: ReactNode }) => {
   const { election } = useElection()
-  const organizationId = (election as PublishedElection | undefined)?.organizationId
+  // Process reads return orgAddress unprefixed; the organization API expects 0x.
+  const organizationAddress = election?.orgAddress ? ensureAddressPrefix(election.orgAddress) : undefined
 
-  if (!organizationId) {
+  if (!organizationAddress) {
     return <>{children}</>
   }
 
-  return <OrganizationProvider id={organizationId}>{children}</OrganizationProvider>
+  return <OrganizationProvider id={organizationAddress}>{children}</OrganizationProvider>
 }
 
 const SharedCensusHomeContent = () => {
   const { t, i18n } = useTranslation()
-  const { loading, loaded, election, connected } = useElection()
-  const { account, connected: aconnected } = useClient()
+  const { loading, election, connected } = useElection()
+  const { currentAddress, isAuthenticated } = useAuth()
 
-  const isAdmin = aconnected && account?.address === (election as PublishedElection)?.organizationId
+  const isAdmin = isAuthenticated && sameAddress(currentAddress, election?.orgAddress)
   const canViewProcesses = connected || isAdmin
   const appEnv = useAppEnv()
   const processIds = parseProcessIds(appEnv.PROCESS_IDS)
@@ -108,12 +112,12 @@ const SharedCensusHomeContent = () => {
     .filter(Boolean)
     .join('\n\n')
 
-  if (!election || election instanceof InvalidElection) {
-    return null
+  if (loading && !election) {
+    return <Spinner />
   }
 
-  if (loading && !loaded) {
-    return <Spinner />
+  if (!election) {
+    return null
   }
 
   return (
@@ -143,7 +147,7 @@ const SharedCensusHomeContent = () => {
           </Text>
           <Flex gap={5} flexDirection={{ base: 'column' }}>
             {processIds.map((processId, index) => (
-              <ElectionProvider id={processId} key={processId} queryOptions={{ refetchInterval: 15_000 }} fetchCensus>
+              <ElectionProvider id={processId} key={processId} queryOptions={{ refetchInterval: 15_000 }}>
                 <ElectionItemList isAdmin={isAdmin} index={index} />
               </ElectionProvider>
             ))}
@@ -180,7 +184,10 @@ const SharedCensusHomeContent = () => {
 }
 
 const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number }) => {
-  const { election, voted } = useElection()
+  // hasVoted resolves through this process's own CSP session; each process keeps
+  // its own in-memory session, so it stays false here until the voter identifies
+  // against this process (the voting window runs its own identify flow).
+  const { election, hasVoted } = useElection()
   const { t } = useTranslation()
 
   return (
@@ -218,7 +225,7 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
             </Box>
             <ElectionTitle fontSize='lg' mb={0} />
             <ElectionStatusBadge position='absolute' top={1} right={1} />
-            {voted && (
+            {hasVoted && (
               <Text fontSize='sm' color='green.400' position='absolute' bottom={0} right={1}>
                 {t('shared_census.voted', { defaultValue: 'You already voted' })}
               </Text>

@@ -25,7 +25,6 @@ describe('OrganizationUsers', () => {
       useClient: () =>
         mockUseClient({
           account: { address: '0xabc' },
-          enforceHexPrefix: (value: string) => value,
         }),
     })
   })

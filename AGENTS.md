@@ -61,7 +61,7 @@
 - Keep commits scoped to one concern and use imperative summaries.
 - PR descriptions should explain what changed, why, and how it was verified.
 
-## Agent Working Rules (Codex)
+## Agent Working Rules
 - Treat this file as execution guidance for repository tasks.
 - Before finishing any code change, always run `pnpm lint` and `pnpm test`.
 - When text keys/locales are touched, also run `pnpm translations` before completion.

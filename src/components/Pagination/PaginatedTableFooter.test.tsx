@@ -49,12 +49,16 @@ vi.mock('@chakra-ui/react', async () => {
   }
 })
 
-vi.mock('@vocdoni/react-components/pagination', () => ({
-  RoutedPagination: () => <div>Pagination</div>,
-  Pagination: () => <div>Pagination</div>,
-  usePagination: () => ({ pagination: null, initialPage: 1 }),
-  useRoutedPagination: () => mockUseRoutedPagination(),
-}))
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  return {
+    ...actual,
+    RoutedPagination: () => <div>Pagination</div>,
+    Pagination: () => <div>Pagination</div>,
+    usePagination: () => ({ pagination: null, initialPage: 1 }),
+    useRoutedPagination: () => mockUseRoutedPagination(),
+  }
+})
 
 vi.mock('./RowsPerPageSelect', () => ({
   default: () => <div>RowsPerPageSelect</div>,
@@ -84,5 +88,19 @@ describe('RoutedPaginatedTableFooter', () => {
     expect(root).toHaveAttribute('data-flex-wrap', 'wrap')
     expect(controls).toHaveAttribute('data-flex-direction', 'row')
     expect(controls).toHaveAttribute('data-flex-wrap', 'wrap')
+  })
+
+  it('clamps an out-of-range page to the last available page', () => {
+    mockUseRoutedPagination.mockReturnValue({
+      page: 9,
+      pagination: {
+        currentPage: 9,
+        lastPage: 3,
+      },
+    })
+
+    render(<RoutedPaginatedTableFooter />)
+
+    expect(screen.getByText('Page 3 of 3')).toBeInTheDocument()
   })
 })

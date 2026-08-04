@@ -34,6 +34,25 @@ type DebugOptions = {
 
 export const shouldEnableI18nDebug = ({ isDev, isTestEnv, isBrowser }: DebugOptions) => isDev && !isTestEnv && isBrowser
 
+// Deep-merges the app's per-locale react-components overrides over the SDK's
+// bundled resources. A shallow spread would replace whole sections (e.g. the
+// app's `statuses` object silently dropping SDK-provided keys like
+// `statuses.ready`), so nested objects are merged key by key instead.
+const deepMergeResources = (base: Record<string, any>, override: Record<string, any>): Record<string, any> => {
+  const merged = { ...base }
+
+  for (const [key, value] of Object.entries(override)) {
+    const baseValue = merged[key]
+    if (value && baseValue && typeof value === 'object' && typeof baseValue === 'object' && !Array.isArray(value)) {
+      merged[key] = deepMergeResources(baseValue, value)
+    } else {
+      merged[key] = value
+    }
+  }
+
+  return merged
+}
+
 const resources = Object.fromEntries(
   allLanguages.map((lang) => {
     const componentResources = reactComponentsResources[lang as keyof typeof reactComponentsResources]
@@ -42,10 +61,10 @@ const resources = Object.fromEntries(
       lang,
       {
         common: translations[lang] ?? {},
-        [reactComponentsNamespace]: {
-          ...(componentResources?.[reactComponentsNamespace] ?? {}),
-          ...(reactComponentsTranslations[lang] ?? {}),
-        },
+        [reactComponentsNamespace]: deepMergeResources(
+          componentResources?.[reactComponentsNamespace] ?? {},
+          reactComponentsTranslations[lang] ?? {}
+        ),
       },
     ]
   })

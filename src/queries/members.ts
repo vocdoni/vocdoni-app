@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
-import { PaginationResponse } from '@vocdoni/sdk'
+import { useOrganization } from '@vocdoni/react-components'
+import { PaginationResponse } from '~src/queries/pagination'
 import { useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -81,7 +81,7 @@ export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedM
   const effectivePage = showAll ? 1 : page
   const effectiveLimit = showAll ? 0 : limit
 
-  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', enforceHexPrefix(organization?.address))
+  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)
   const fetchUrl = `${baseUrl}?page=${effectivePage}&limit=${effectiveLimit}&search=${search}`
 
   return useQuery<MembersResponse, Error, PaginatedMembers>({
@@ -96,7 +96,7 @@ export const useAddMembers = (isAsync: boolean = false) => {
   const { organization } = useOrganization()
   const { setStepDone } = useOrganizationSetup()
 
-  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', enforceHexPrefix(organization.address))
+  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization.address)
   const fetchUrl = `${baseUrl}?async=${isAsync}`
 
   return useMutation<AddMembersResponse, Error, Record<string, any>>({
@@ -113,7 +113,7 @@ export const useEditMember = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
 
-  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', enforceHexPrefix(organization.address))
+  const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization.address)
 
   return useMutation<void, Error, EditMemberPayload>({
     mutationKey: QueryKeys.organization.members(organization?.address),
@@ -129,13 +129,10 @@ export const useDeleteMembers = () => {
   return useMutation<void, Error, MembersData>({
     mutationKey: QueryKeys.organization.members(organization?.address),
     mutationFn: async (body: MembersData) =>
-      await bearedFetch<void>(
-        ApiEndpoints.OrganizationMembers.replace('{address}', enforceHexPrefix(organization.address)),
-        {
-          body,
-          method: 'DELETE',
-        }
-      ),
+      await bearedFetch<void>(ApiEndpoints.OrganizationMembers.replace('{address}', organization.address), {
+        body,
+        method: 'DELETE',
+      }),
   })
 }
 

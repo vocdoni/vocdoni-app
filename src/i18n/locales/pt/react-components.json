@@ -1,51 +1,50 @@
 {
-  "balance": "{{ balance }} tokens VOC",
   "actions": {
-    "cancel_description": "A cancelar «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e anulará todos os votos já emitidos.",
     "cancel": "Cancelar",
     "cancel_button": "Cancelar",
-    "continue_description": "A retomar o processo de votação «{{ election.title.default }}»…",
+    "cancel_description": "A cancelar «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e anulará todos os votos já emitidos.",
     "continue": "Retomar imediatamente o processo, caso tenha sido pausado",
-    "end_description": "A terminar o processo de votação «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e os votantes deixarão de poder votar.",
+    "continue_description": "A retomar o processo de votação «{{ election.title.default }}»…",
     "end": "Termina imediatamente o processo, impedindo a submissão de novos votos e mostrando os resultados (atenção: a ação é irreversível)",
+    "end_description": "A terminar o processo de votação «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e os votantes deixarão de poder votar.",
     "error_title": "Ocorreu um erro ao executar a transação",
-    "pause_description": "A pausar o processo de votação «{{ election.title.default }}»…",
     "pause": "Pausa temporariamente o processo de votação até que seja retomado manualmente. Enquanto estiver em pausa, os votantes não podem votar.",
+    "pause_description": "A pausar o processo de votação «{{ election.title.default }}»…",
     "waiting_title": "A aguardar a confirmação da transação…"
   },
+  "balance": "{{ balance }} tokens VOC",
   "confirm": {
-    "title": "Confirmar",
     "cancel": "Cancelar",
-    "confirm": "Confirmar voto",
+    "cancel_button": "Cancelar",
     "cancel_process_button": "Cancelar votação",
     "cancel_process_title": "Cancelar votação",
-    "end_process_title": "Terminar votação",
+    "confirm": "Confirmar voto",
     "end_process_button": "Terminar votação",
-    "cancel_button": "Cancelar"
+    "end_process_title": "Terminar votação",
+    "title": "Confirmar"
   },
   "empty": "Aparentemente, este processo não tem perguntas",
   "errors": {
+    "not_voted_in_ended_election": "Assinaste mas não votaste nesta votação já terminada.",
     "unauthorized": "Sem autorização para votar",
-    "wrong_data_title": "Dados incorretos",
     "wrong_data_description": "Os dados indicados não estão corretos",
-    "not_voted_in_ended_election": "Assinaste mas não votaste nesta votação já terminada."
+    "wrong_data_title": "Dados incorretos"
+  },
+  "pagination": {
+    "next": "Seguinte",
+    "page_placeholder": "Página",
+    "previous": "Anterior",
+    "total_results": "A mostrar um total de {{ count }} resultados"
   },
   "question_types": {
-    "approval_tooltip": "O voto por aprovação permite votar em todas as opções que quiseres. Vence a opção com mais votos. É uma forma simples de mostrar apoio a todas as alternativas que aprovas.",
     "approval_title": "Voto por aprovação",
-    "singlechoice_title": "Escolha única {{ weighted }}",
-    "multichoice_tooltip": "O voto de escolha múltipla permite votar em até {{maxcount}} opções (definidas pelo organizador). Vence a opção com mais votos.",
-    "multichoice_title": "Voto de escolha múltipla {{ weighted }}",
+    "approval_tooltip": "O voto por aprovação permite votar em todas as opções que quiseres. Vence a opção com mais votos. É uma forma simples de mostrar apoio a todas as alternativas que aprovas.",
     "multichoice_desc": "Selecionaste {{selected}} opções de um máximo de {{maxcount}}",
     "multichoice_desc_abstain": " (ou abster-se)",
+    "multichoice_title": "Voto de escolha múltipla {{ weighted }}",
+    "multichoice_tooltip": "O voto de escolha múltipla permite votar em até {{maxcount}} opções (definidas pelo organizador). Vence a opção com mais votos.",
+    "singlechoice_title": "Escolha única {{ weighted }}",
     "weighted_voting": "ponderado"
-  },
-  "schedule": {
-    "from_begin_to_end": "Votação de {{ begin }} a {{ end }}",
-    "ended": "Terminado {{ distance }}",
-    "paused_start": "Começa {{ distance }}",
-    "paused_end": "Termina {{ distance }}",
-    "created": "Criado {{ distance }}"
   },
   "results": {
     "date_format": "PPpp",
@@ -53,40 +52,42 @@
     "title": "Resultados de «{{ title }}»",
     "votes": "{{votes}} votos ({{ percent }})"
   },
-  "statuses": {
-    "canceled": "Cancelada",
-    "ended": "Terminada",
-    "ongoing": "Em curso",
-    "paused": "Em pausa",
-    "results": "Resultados",
-    "upcoming": "Por iniciar",
-    "process_unknown": "Desconhecido",
-    "invalid": "Inválida"
+  "schedule": {
+    "created": "Criado {{ distance }}",
+    "ended": "Terminado {{ distance }}",
+    "from_begin_to_end": "Votação de {{ begin }} a {{ end }}",
+    "paused_end": "Termina {{ distance }}",
+    "paused_start": "Começa {{ distance }}"
   },
   "spreadsheet": {
     "access_button": "Identificar-se",
-    "anon_sik_label": "Define uma palavra-passe para o teu voto",
     "anon_sik_helper": "Isto garante o anonimato do voto",
+    "anon_sik_label": "Define uma palavra-passe para o teu voto",
     "close": "Fechar",
     "logout": "Terminar sessão",
     "modal_title": "Autenticação"
   },
-  "pagination": {
-    "page_placeholder": "Página",
-    "total_results": "A mostrar um total de {{ count }} resultados",
-    "previous": "Anterior",
-    "next": "Seguinte"
+  "statuses": {
+    "canceled": "Cancelada",
+    "ended": "Terminada",
+    "invalid": "Inválida",
+    "ongoing": "Em curso",
+    "paused": "Em pausa",
+    "process_unknown": "Desconhecido",
+    "ready": "Em curso",
+    "results": "Resultados",
+    "upcoming": "Por iniciar"
   },
   "validation": {
-    "required": "Este campo é obrigatório",
-    "min_length": "Este campo deve ter pelo menos {{ min }} caracteres",
+    "at_least_one": "Seleciona pelo menos uma opção",
     "choices_count": "Seleciona {{ count }} opções",
-    "at_least_one": "Seleciona pelo menos uma opção"
+    "min_length": "Este campo deve ter pelo menos {{ min }} caracteres",
+    "required": "Este campo é obrigatório"
   },
   "vote": {
     "abstain": "Abster-se",
-    "button_update": "Alterar o meu voto",
     "button": "Votar",
+    "button_update": "Alterar o meu voto",
     "confirm": "Confirma as tuas escolhas:",
     "sign": "Assina primeiro",
     "voted_description": "Para verificares o teu voto, podes utilizar este identificador único: {{ id }}",

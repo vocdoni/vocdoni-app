@@ -47,15 +47,10 @@
   "aside": {
     "has_already_voted": "Deine Stimme wurde erfolgreich abgegeben",
     "is_not_in_census": "Du bist nicht in der Teilnehmerliste",
-    "overwrite_votes_left_one": "Du kannst deine Stimme einmal korrigieren.",
-    "overwrite_votes_left_other": "Du kannst deine Stimme bis zu {{ count }} Mal korrigieren.",
-    "submitting": "Wird übermittelt",
-    "verify_vote_on_explorer": "Stimme im Explorer überprüfen",
     "votes_one": "<span>1</span> <text>Wählende Person</text>",
     "votes_other": "<span>{{ count }}</span> <text>Wählende Personen</text>",
     "votes_weight_one": "<span>1</span> <text>Stimme</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>Stimmen</text>",
-    "voting_anonymous_advice": "Bitte warte, während die geheime Abstimmung verarbeitet wird 🪄.\nDies kann einige Minuten dauern – schließe das Fenster nicht."
+    "votes_weight_other": "<span>{{ count }}</span> <text>Stimmen</text>"
   },
   "avatar": {
     "label": "Organisations-Avatar"
@@ -91,7 +86,8 @@
       "not_voted": "Nicht abgestimmt",
       "placeholder": "Teilnehmerliste durchsuchen…",
       "title": "Teilnehmer prüfen",
-      "voted": "Abgestimmt"
+      "voted": "Abgestimmt",
+      "voted_partial": "Abgestimmt {{voted}}/{{total}}"
     }
   },
   "census_size": "Teilnehmerzahl",
@@ -104,11 +100,8 @@
   "color_mode_switcher": "Farbmodus-Umschalter",
   "common": {
     "back": "Zurück",
-    "cancel": "Abbrechen",
     "close_drawer": "Seitenleiste schließen",
     "confirm": "Bestätigen",
-    "disable": "Deaktivieren",
-    "enable": "Aktivieren",
     "home": "Startseite",
     "next": "Weiter",
     "retry": "Nochmal versuchen"
@@ -266,7 +259,10 @@
     "empty_description": "Erstelle einen Entwurf, um loszulegen.",
     "load_error": "Entwürfe konnten nicht geladen werden",
     "load_error_description": "Bitte versuche es erneut.",
-    "not_defined": "Noch nicht festgelegt"
+    "not_defined": "Noch nicht festgelegt",
+    "question_type": {
+      "mixed": "Gemischt"
+    }
   },
   "drawer": {
     "close": "Seitenleiste schließen"
@@ -302,9 +298,6 @@
   "ended_processes": "Beendet",
   "enter_promo_code": "Code eingeben",
   "error": {
-    "invalid_cell_data": "Einige Zeilen enthalten keine gültigen Adressen: {{rows,list(style:short)}}",
-    "invalid_row_length": "Korrigiere die Dokumentzeilen {{rows,list(style: short)}} und lade es erneut hoch",
-    "invalid_weight_type": "In Zeilen {{rows,list(style:short)}} wird ein Stimmgewicht in der ersten Spalte erwartet, aber es wurden unerwartete Daten gefunden",
     "loading_page": "Fehler beim Laden der Seite",
     "loading_roles": "Fehler beim Laden der Rollen",
     "loading_types": "Fehler beim Laden der Organisationstypen",
@@ -410,8 +403,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Adresse wird bereits verwendet",
-      "address_pattern": "Nur Hex-Adressen sind erlaubt (z. B. 0x031101A...)",
       "census_config_required": "Bitte konfiguriere die Authentifizierungseinstellungen für die Teilnehmerliste.",
       "email_invalid": "Ungültige E-Mail-Adresse",
       "field_is_required": "Dieses Feld ist erforderlich",
@@ -429,39 +420,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Hinzufügen",
-        "remove_address": "Adresse entfernen"
-      },
       "error_deleting_draft_title": "Fehler beim Löschen des Entwurfs",
       "error_title": "Fehler beim Erstellen des Prozesses",
-      "spreadsheet": {
-        "download_template": "Du hast keine CSV-Datei? <a>Vorlage template.csv herunterladen</a>, ausfüllen und hochladen.",
-        "preview": {
-          "success_description": "Die Benutzerin oder der Benutzer wird zur Authentifizierung mit folgenden Daten aufgefordert:",
-          "success_title": "Datei erfolgreich hochgeladen",
-          "upload_new_list": "Neue Wählerliste hochladen"
-        },
-        "template": {
-          "email": "E-Mail",
-          "firstname": "Vorname",
-          "lastname": "Nachname",
-          "weight": "Gewicht"
-        },
-        "upload_description": "Lade eine CSV-Datei mit den Teilnehmenden hoch. Jede Spalte wird als Anmeldedaten verwendet, mit denen sich die Wählenden authentifizieren müssen. Die erste Zeile enthält die Bezeichnungen dieser Anmeldedaten."
-      },
       "success_description": "Du wirst zur Seite des Abstimmungsprozesses weitergeleitet...",
-      "success_title": "Abstimmungsprozess erfolgreich erstellt",
-      "web3": {
-        "census_description": "Füge Wallet-Adressen hinzu, die abstimmen dürfen. Du kannst sie einzeln eingeben oder eine CSV-Datei hochladen.",
-        "census_summary_description_one": "<b>{{count}} Adresse</b> ist stimmberechtigt",
-        "census_summary_description_other": "<b>{{count}} Adressen</b> sind stimmberechtigt",
-        "census_summary_title": "Zusammenfassung der Teilnehmerliste",
-        "csv_format": "Die CSV-Datei muss Wallet-Adressen in der ersten Spalte enthalten.",
-        "csv_format_weighted": "Die CSV-Datei muss Gewichte in der ersten Spalte und Wallet-Adressen in der zweiten Spalte enthalten.",
-        "upload_csv": "ODER CSV HOCHLADEN",
-        "wallet_addresses": "Wallet-Adressen"
-      }
+      "success_title": "Abstimmungsprozess erfolgreich erstellt"
     },
     "select_language": "Sprache",
     "support": {
@@ -1007,7 +969,6 @@
       "add_to_census_confirmation_other": "Du fügst {{count}} Mitglieder zur Teilnehmerliste des Prozesses \"{{process}}\" hinzu.",
       "add_to_census_description": "Wähle einen aktiven Abstimmungsprozess aus, zu dessen Teilnehmerliste die Mitglieder hinzugefügt werden sollen.",
       "add_to_census_error": "Fehler beim Hinzufügen der Mitglieder zur Teilnehmerliste",
-      "add_to_census_no_census": "Für diesen Prozess konnte keine Teilnehmerliste ermittelt werden.",
       "add_to_census_partial": "Einige Mitglieder konnten nicht hinzugefügt werden.",
       "add_to_census_success_one": "{{count}} Mitglied zur Teilnehmerliste hinzugefügt",
       "add_to_census_success_other": "{{count}} Mitglieder zur Teilnehmerliste hinzugefügt",
@@ -1059,7 +1020,6 @@
   "menu": {
     "burger_aria_label": "Benutzermenü",
     "collapse": "Menü einklappen",
-    "connect": "Verbinden",
     "create": "Abstimmung erstellen",
     "dashboard": "Dashboard",
     "expand": "Menü ausklappen",
@@ -1114,19 +1074,24 @@
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Abstimmungen",
+    "elections_list": "Abstimmungsprozesse",
     "elections_list_empty": {
       "alt": "Bild, das eine leere Organisation darstellt",
       "description": "Als Organisator kannst du maßgeschneiderte Abstimmungsprozesse für deine Community gestalten. Diese Prozesse bieten große Flexibilität – etwa eine Teilnehmerliste, bei der sich Wählende mit eigenen Daten (z. B. Benutzername, Passwort und Geburtsdatum) authentifizieren, ein tokenbasiertes System, das allen Tokenhaltern die Teilnahme ermöglicht, oder eine Whitelist, die Wallet-Adressen zur Teilnahmeberechtigung nutzt.",
       "not_owner": "Diese Organisation hat noch keine Abstimmungsprozesse",
       "title": "Erstelle deinen ersten Abstimmungsprozess"
     },
+    "elections_list_load_more": "Mehr laden",
     "max_census": "Max. Teilnehmerzahl pro Abstimmung",
     "max_processes": "Abstimmungen pro Jahr¹",
     "no_organization_title": "Du gehörst noch keiner Organisation an!",
     "organization": "Organisationsdetails",
     "title": {
       "read_more": "Titel ausklappen"
-    }
+    },
+    "unavailable_description": "",
+    "unavailable_retry": "",
+    "unavailable_title": ""
   },
   "organization_settings": {
     "phone_support": {
@@ -1301,12 +1266,6 @@
       },
       "question": {
         "add": "Frage hinzufügen",
-        "add_multiple": {
-          "cancel_button": "Abbrechen",
-          "contact_button": "Kontaktiere uns",
-          "description": "Das Erstellen von Abstimmungen mit mehr als einer Multiple-Choice-Frage ist derzeit nicht verfügbar. Wenn du diese Art von Abstimmung benötigst, kontaktiere uns bitte.",
-          "title": "Mehrere Multiple-Choice-Fragen sind noch nicht verfügbar"
-        },
         "delete": {
           "cancel_button": "Abbrechen",
           "delete_button": "Löschen",
@@ -1345,29 +1304,14 @@
       "starts": "Beginnt"
     },
     "extended_info": "Erweiterte Infos",
-    "gitcoin": {
-      "all_of_them": "(Alle davon)",
-      "gps_score": "Gitcoin Passport Score: Mindestpunktzahl {{score}}",
-      "needed_stamps": "Benötigte Stamps",
-      "one_of_them": "(Mindestens einer davon)"
-    },
-    "is_anonymous": {
-      "description": "Geheime Abstimmung",
-      "title": "Datenschutz"
-    },
     "is_invalid": "Dieser Prozess enthält fehlerhafte Daten und ist daher ungültig",
     "no_description": "Keine Beschreibung vorhanden",
     "people_in_census_one": "Ein Wähler",
     "people_in_census_other": "{{ count }} Wählende",
     "question_type": {
-      "confirm": {
-        "subtitle": "Mehrfachauswahl erlaubt nur eine Frage. Beim Wechsel wird nur deine erste Frage behalten, alle anderen werden verworfen.",
-        "title": "Möchtest du zur Mehrfachauswahl wechseln?"
-      },
-      "description": "Dies gilt für alle Fragen in diesem Abstimmungsprozess",
+      "label": "Fragetyp",
       "multiple": "Mehrfachauswahl",
-      "single": "Einfachauswahl",
-      "title": "Fragentyp"
+      "single": "Einfachauswahl"
     },
     "questions": "Fragen",
     "results": "Ergebnisse",
@@ -1383,6 +1327,7 @@
       "ended": "Beendet",
       "paused": "Prozess pausiert",
       "paused_description": "Abstimmen ist gerade nicht möglich",
+      "results": "Ergebnisse verfügbar",
       "unknown": "Unbekannt",
       "upcoming": "Bevorstehend"
     },
@@ -1447,8 +1392,12 @@
         "title": "Titel der Bürgerhaushalt-Abstimmung"
       }
     },
-    "total_census_size": "{{maxCensusSize}} zugelassene Wählende von {{censusSize}} gesamt in der Teilnehmerliste",
-    "total_census_size_tooltip": "Die maximale Anzahl zugelassener Wählenden ist auf {{maxCensusSize}} aus einer Teilnehmerliste von {{censusSize}} begrenzt ({{percent}}% der Gesamtzahl). Nur die ersten {{maxCensusSize}} Wählenden können abstimmen.",
+    "vote_failed": {
+      "close": "Schließen",
+      "none": "Es wurde keine Antwort registriert. Bitte versuche es erneut.",
+      "partial": "Einige Antworten wurden nicht registriert. Stimme erneut ab, um die übrigen zu senden.",
+      "title": "Deine Stimme konnte nicht abgegeben werden"
+    },
     "voters": "Wählende",
     "voting": "Deine Stimme wird verarbeitet. Das dauert einige Sekunden. Bitte schließe oder aktualisiere diese Seite nicht.",
     "voting_method": {
@@ -1460,6 +1409,7 @@
       "unknown": "Unbekannt",
       "weighted_format": "Gewichtet {{ base, lowercase }}"
     },
+    "voting_progress": "{{confirmed}} von {{total}} Fragen bestätigt",
     "voting_type": "Abstimmungsmethode"
   },
   "process_actions": {
@@ -1479,29 +1429,14 @@
     "auto_start": "Sofort starten",
     "basic_configuration": "Grundkonfiguration",
     "census": {
-      "extra_methods": {
-        "disable_description": "Möchtest du die zusätzlichen Teilnehmerlisten-Methoden deaktivieren? Dadurch werden die Optionen „Tabelle\" und „Web3\" ausgeblendet und nur die Gruppen-Methode angezeigt.",
-        "enable_description": "Möchtest du die zusätzlichen Teilnehmerlisten-Methoden aktivieren? Dadurch werden weitere Optionen wie die Erstellung per Tabelle oder Web3 angezeigt.",
-        "modal_title": "Zusätzliche Teilnehmerlisten-Methoden"
-      },
       "group": {
-        "label": "Gruppe",
         "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
       },
       "memberbase": {
         "label": "Wähle eine Mitgliedergruppe aus, um die Teilnehmerliste zu erstellen"
-      },
-      "settings": "Einstellungen der Teilnehmerliste",
-      "spreadsheet": {
-        "label": "Tabellenkalkulation"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Erstellung der Teilnehmerliste",
-    "census_missing": "Teilnehmerlisten-Daten fehlen für den Mitgliedergruppen-Typ",
-    "census_type_not_allowed": "Teilnehmerlisten-Typ {{type}} ist nicht zulässig",
     "end_datetime": "Enddatum und -uhrzeit",
     "extra_configuration": "Zusätzliche Konfiguration",
     "group": {
@@ -1511,8 +1446,6 @@
       "scroll_to_load": "Scrollen, um mehr zu laden…"
     },
     "new_option": "Neue Option hinzufügen",
-    "no_account_address": "Keine Kontoadresse gefunden.",
-    "no_election_index": "Kein Abstimmungsindex für das Konto gefunden.",
     "option": {
       "description_placeholder": "Beschreibung (optional)",
       "placeholder": "Option {{number}}",
@@ -1562,11 +1495,7 @@
       "method": "Authentifizierungsmethode",
       "two_fa": "Zwei-Faktor-Authentifizierung",
       "two_fa_disabled": "Deaktiviert: In diesem Abstimmungsprozess wurde keine zusätzliche Identitätsprüfung konfiguriert.",
-      "two_fa_enabled": "Aktiviert: Wählende bestätigen ihre Identität mit einem Einmalcode, der an ihre persönlichen Geräte gesendet wird.",
-      "voter_access_source": "Zugangsberechtigung der Wählenden",
-      "voter_access_source_spreadsheet": "Wählende melden sich mit Zugangsdaten an, die aus der von der Organisation hochgeladenen Tabellen-Teilnehmerliste abgeleitet sind.",
-      "voter_access_source_web3": "Wählende melden sich mit der in der Web3-Teilnehmerliste enthaltenen Wallet-Adresse an.",
-      "voter_access_source_weighted": "Die Berechtigung wird anhand der von der Organisation bereitgestellten gewichteten Teilnehmerliste für diesen Prozess geprüft."
+      "two_fa_enabled": "Aktiviert: Wählende bestätigen ihre Identität mit einem Einmalcode, der an ihre persönlichen Geräte gesendet wird."
     },
     "census": {
       "counting_basis": "Auszählungsgrundlage",
@@ -1579,12 +1508,7 @@
       "weighted_participation": "Gewichtete Beteiligung"
     },
     "census_type": {
-      "anonymous": "Geheime gewichtete Teilnehmerliste",
-      "csp": "CSP-Teilnehmerliste",
-      "spreadsheet": "Von der Organisation bereitgestellte Tabellen-Teilnehmerliste",
-      "unknown": "Nicht verfügbar",
-      "web3": "Von der Organisation bereitgestellte Web3-Wallet-Teilnehmerliste",
-      "weighted": "Gewichtete Teilnehmerliste"
+      "csp": "CSP-Teilnehmerliste"
     },
     "disclaimer": {
       "bullet_1": "Es stellt keine rechtliche Zertifizierung des Abstimmungsprozesses dar.",
@@ -1624,8 +1548,6 @@
     "download_error": "PDF-Bericht konnte nicht erstellt werden",
     "downloading": "PDF wird erstellt",
     "general": {
-      "census_reference": "Teilnehmerlisten-Referenz",
-      "census_reference_helper": "Öffentliche Referenz, die die für diesen Abstimmungsprozess verwendete Teilnehmerliste identifiziert. Sie enthält keine personenbezogenen Daten der Wählenden und gibt diese nicht preis.",
       "event_name": "Veranstaltungsname",
       "network": "Netzwerk",
       "organization": "Organisation",
@@ -1659,9 +1581,9 @@
       "explorer": "Verifizierungs-Explorer",
       "paragraph": "Alle Prozessdaten wurden in einer blockchain-basierten Infrastruktur gespeichert und können über den folgenden öffentlichen Explorer unabhängig überprüft werden:",
       "procedure_title": "Verifizierungsverfahren",
+      "question_n": "Frage {{number}}",
       "step_1": "Öffne den Link zum Verifizierungs-Explorer. Diese Seite enthält das öffentliche technische Protokoll des Abstimmungsprozesses.",
       "step_2": "Prüfe, ob die Prozess-ID im Explorer mit der Prozess-ID in diesem Bericht übereinstimmt. Dies bestätigt, dass sich beide Dokumente auf denselben Abstimmungsprozess beziehen.",
-      "step_3": "Prüfe, ob die im Explorer angezeigte Teilnehmerlisten-Referenz mit der Referenz in diesem Bericht übereinstimmt. Dies bestätigt, dass die mit dem Prozess verknüpfte Teilnehmerliste dieselbe ist.",
       "step_4": "Prüfe, ob die Anzahl der erfassten Stimmzettel mit den in diesem Bericht angezeigten Beteiligungsdaten übereinstimmt.",
       "step_5": "Vergleiche das abschließende Auszählungsergebnis im Explorer mit den Stimmzahl- oder gewichteten Stimmgewicht-Ergebnissen in diesem Bericht.",
       "step_6": "Für eine tiefere technische Prüfung kann ein Prüfer die öffentlichen Aufzeichnungen im Detail einsehen oder die Auszählung neu berechnen, um sicherzustellen, dass die erfassten Stimmzettel und Endergebnisse übereinstimmen."
@@ -1717,6 +1639,11 @@
   },
   "promo_code": "Aktionscode",
   "promo_code_required": "Aktionscode ist erforderlich",
+  "public_process": {
+    "no_tally": "Keine Auszählung",
+    "verify": "Auf dem Blockchain-Explorer überprüfen:",
+    "verify_process": "Prozess ansehen"
+  },
   "questions_and_results": "Fragen und Ergebnisse",
   "registration_failed": "Registrierung fehlgeschlagen",
   "registration_successful": "Registrierung erfolgreich",
@@ -1770,8 +1697,6 @@
     "platform": "Plattform"
   },
   "send_invitation": "Einladung senden",
-  "session_expired": "Sitzung abgelaufen",
-  "session_expired_description": "Die Sitzung ist möglicherweise abgelaufen und konnte nicht erneuert werden. Bitte melde dich erneut an.",
   "settings": "Einstellungen",
   "setup": {
     "progress": "Dein Fortschritt",
@@ -1807,9 +1732,7 @@
   "signup_subtitle": "Gib deine Daten ein, um loszulegen",
   "signup_title": "Registrieren",
   "spreadsheet": {
-    "access_button": "Identifizieren",
-    "close": "Schließen",
-    "modal_title": "Authentifizierung"
+    "access_button": "Identifizieren"
   },
   "start_date": "Startdatum",
   "start_time": "Startzeit",
@@ -1993,7 +1916,6 @@
     "level_strong": "Stark",
     "level_weak": "Schwach",
     "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
-    "save_failed": "Authentifizierung der Wählenden konnte nicht konfiguriert werden",
     "security_level": "Gute Sicherheit",
     "security_recommendation_1": "Für mehr Sicherheit empfehlen wir, mindestens 2 Zugangsdaten auszuwählen.",
     "security_recommendation_2_one": "Du hast {{ count }} Zugangsdatum ausgewählt, was deinen Wählenden gute Sicherheit bietet.",

@@ -47,18 +47,12 @@
   "aside": {
     "has_already_voted": "Seu voto foi registrado corretamente",
     "is_not_in_census": "Você não está na lista de participantes",
-    "overwrite_votes_left_one": "Você pode corrigir seu voto uma vez.",
-    "overwrite_votes_left_many": "",
-    "overwrite_votes_left_other": "Você pode corrigir seu voto até {{ count }} vezes.",
-    "submitting": "Enviando",
-    "verify_vote_on_explorer": "Verifique seu voto no Explorer",
     "votes_one": "<span>1</span> <text>eleitor</text>",
     "votes_many": "",
     "votes_other": "<span>{{ count }}</span> <text>eleitores</text>",
     "votes_weight_one": "<span>1</span> <text>voto</text>",
     "votes_weight_many": "",
-    "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>",
-    "voting_anonymous_advice": "Aguarde enquanto a mágica do anonimato acontece 🪄.\nEsse processo pode levar alguns minutos; não feche a janela."
+    "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
   },
   "avatar": {
     "label": "Avatar da organização"
@@ -94,7 +88,8 @@
       "not_voted": "Não votou",
       "placeholder": "Pesquisar lista de participantes…",
       "title": "Verificar participantes",
-      "voted": "Votou"
+      "voted": "Votou",
+      "voted_partial": "Votou {{voted}}/{{total}}"
     }
   },
   "census_size": "Número de participantes",
@@ -107,11 +102,8 @@
   "color_mode_switcher": "Alternar modo de cor",
   "common": {
     "back": "Voltar",
-    "cancel": "Cancelar",
     "close_drawer": "Fechar painel",
     "confirm": "Confirmar",
-    "disable": "Desativar",
-    "enable": "Ativar",
     "home": "Início",
     "next": "Próximo",
     "retry": "Tente novamente"
@@ -269,7 +261,10 @@
     "empty_description": "Crie um rascunho para começar.",
     "load_error": "Não foi possível carregar os rascunhos",
     "load_error_description": "Tente novamente.",
-    "not_defined": "Ainda não definido"
+    "not_defined": "Ainda não definido",
+    "question_type": {
+      "mixed": "Misto"
+    }
   },
   "drawer": {
     "close": "Fechar painel"
@@ -305,9 +300,6 @@
   "ended_processes": "Encerrados",
   "enter_promo_code": "Inserir código",
   "error": {
-    "invalid_cell_data": "Algumas linhas não contêm endereços válidos: {{rows,list(style:short)}}",
-    "invalid_row_length": "Corrija as linhas {{rows,list(style: short)}} do documento e carregue-o novamente",
-    "invalid_weight_type": "Era esperado um peso na primeira coluna nas linhas {{rows,list(style:short)}}, mas foram encontrados dados inesperados",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar as funções",
     "loading_types": "Erro ao carregar os tipos de organização",
@@ -413,8 +405,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Endereço já está em uso",
-      "address_pattern": "Apenas endereços hexadecimais são permitidos (ex.: 0x031101A...)",
       "census_config_required": "Configure as configurações de autenticação da lista de participantes.",
       "email_invalid": "Endereço de e-mail inválido",
       "field_is_required": "Este campo é obrigatório",
@@ -432,40 +422,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Adicionar",
-        "remove_address": "Remover endereço"
-      },
       "error_deleting_draft_title": "Erro ao excluir o rascunho",
       "error_title": "Erro ao criar o processo",
-      "spreadsheet": {
-        "download_template": "Não tem um arquivo CSV? <a>Baixe o template.csv</a>, preencha-o e envie.",
-        "preview": {
-          "success_description": "O usuário precisará se autenticar com:",
-          "success_title": "Arquivo enviado com sucesso",
-          "upload_new_list": "Enviar uma nova lista de eleitores"
-        },
-        "template": {
-          "email": "E-mail",
-          "firstname": "Nome",
-          "lastname": "Sobrenome",
-          "weight": "Peso"
-        },
-        "upload_description": "Envie um arquivo CSV com os participantes. Cada coluna será usada como uma credencial que o eleitor deverá utilizar para se autenticar. A primeira linha conterá os títulos dessas credenciais."
-      },
       "success_description": "Redirecionando para a página do processo de votação...",
-      "success_title": "Processo de votação criado com sucesso",
-      "web3": {
-        "census_description": "Adicione endereços de carteira que poderão votar. Você pode adicioná-los individualmente ou enviar um arquivo CSV.",
-        "census_summary_description_one": "<b>{{count}} endereço</b> poderá votar",
-        "census_summary_description_many": "",
-        "census_summary_description_other": "<b>{{count}} endereços</b> poderão votar",
-        "census_summary_title": "Resumo da lista de participantes",
-        "csv_format": "O arquivo CSV deve conter os endereços de carteira na primeira coluna.",
-        "csv_format_weighted": "O arquivo CSV deve conter os pesos na primeira coluna e os endereços de carteira na segunda coluna.",
-        "upload_csv": "OU ENVIAR CSV",
-        "wallet_addresses": "Endereços de carteira"
-      }
+      "success_title": "Processo de votação criado com sucesso"
     },
     "select_language": "Idioma",
     "support": {
@@ -1020,7 +980,6 @@
       "add_to_census_confirmation_other": "Você adicionará {{count}} membros à lista de participantes do processo \"{{process}}\".",
       "add_to_census_description": "Selecione um processo de votação ativo para adicionar os membros à sua lista de participantes.",
       "add_to_census_error": "Erro ao adicionar os membros à lista de participantes",
-      "add_to_census_no_census": "Não foi possível determinar uma lista de participantes para este processo.",
       "add_to_census_partial": "Não foi possível adicionar alguns membros.",
       "add_to_census_success_one": "{{count}} membro adicionado à lista de participantes",
       "add_to_census_success_many": "",
@@ -1078,7 +1037,6 @@
   "menu": {
     "burger_aria_label": "menu do usuário",
     "collapse": "Recolher menu",
-    "connect": "Conectar",
     "create": "Criar processo",
     "dashboard": "Painel",
     "expand": "Expandir menu",
@@ -1134,19 +1092,24 @@
     "dashboard": "Painel",
     "date_format": "d MMM y",
     "elections": "Votações",
+    "elections_list": "Processos de votação",
     "elections_list_empty": {
       "alt": "Imagem ilustrando que a organização está vazia",
       "description": "Como organizador, você tem a capacidade de criar processos de votação personalizados para a sua comunidade. Esses processos oferecem grande flexibilidade, permitindo opções como um censo em que os eleitores se autenticam com dados personalizados (como nome de usuário, senha e data de nascimento), um sistema baseado em tokens que permite a participação de todos os detentores de tokens, ou uma lista de permissões que usa endereços de carteira como critério de elegibilidade.",
       "not_owner": "Esta organização ainda não tem processos de votação",
       "title": "Crie seu primeiro processo de votação"
     },
+    "elections_list_load_more": "Carregar mais",
     "max_census": "Máximo de participantes por votação",
     "max_processes": "Votações por ano¹",
     "no_organization_title": "Você ainda não pertence a nenhuma organização!",
     "organization": "Detalhes da organização",
     "title": {
       "read_more": "Expandir título"
-    }
+    },
+    "unavailable_description": "",
+    "unavailable_retry": "",
+    "unavailable_title": ""
   },
   "organization_settings": {
     "phone_support": {
@@ -1325,12 +1288,6 @@
       },
       "question": {
         "add": "Adicionar pergunta",
-        "add_multiple": {
-          "cancel_button": "Cancelar",
-          "contact_button": "Fale conosco",
-          "description": "No momento, não é possível criar processos com mais de uma pergunta de múltipla escolha. Se precisar desse tipo de processo, entre em contato conosco.",
-          "title": "Múltiplas perguntas de múltipla escolha ainda não estão disponíveis"
-        },
         "delete": {
           "cancel_button": "Cancelar",
           "delete_button": "Excluir",
@@ -1369,30 +1326,15 @@
       "starts": "Começa"
     },
     "extended_info": "Informações detalhadas",
-    "gitcoin": {
-      "all_of_them": "(Todos)",
-      "gps_score": "Pontuação do Gitcoin Passport: mín. {{score}}",
-      "needed_stamps": "Selos necessários",
-      "one_of_them": "(Pelo menos um deles)"
-    },
-    "is_anonymous": {
-      "description": "Votação anônima",
-      "title": "Privacidade"
-    },
     "is_invalid": "Este processo contém dados incorretos e, por isso, é inválido",
     "no_description": "Nenhuma descrição fornecida",
     "people_in_census_one": "Um eleitor",
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} eleitores",
     "question_type": {
-      "confirm": {
-        "subtitle": "A múltipla escolha permite apenas uma pergunta. Se você trocar, somente a primeira pergunta será mantida e as demais serão descartadas.",
-        "title": "Deseja mudar para múltipla escolha?"
-      },
-      "description": "Isso se aplica a todas as perguntas deste processo de votação",
+      "label": "Tipo de pergunta",
       "multiple": "Múltipla escolha",
-      "single": "Escolha única",
-      "title": "Tipo de pergunta"
+      "single": "Escolha única"
     },
     "questions": "Perguntas",
     "results": "Resultados",
@@ -1408,6 +1350,7 @@
       "ended": "Encerrado",
       "paused": "Processo pausado",
       "paused_description": "A votação não está disponível no momento",
+      "results": "Resultados disponíveis",
       "unknown": "Desconhecido",
       "upcoming": "Em breve"
     },
@@ -1473,8 +1416,12 @@
         "title": "Título do orçamento participativo"
       }
     },
-    "total_census_size": "{{maxCensusSize}} eleitores permitidos de um total de {{censusSize}} na lista de participantes",
-    "total_census_size_tooltip": "O número máximo de eleitores permitidos está limitado a {{maxCensusSize}} de uma lista de participantes de {{censusSize}} ({{percent}}% do total). Somente os primeiros {{maxCensusSize}} eleitores poderão votar.",
+    "vote_failed": {
+      "close": "Fechar",
+      "none": "Nenhuma resposta foi registrada. Tente novamente.",
+      "partial": "Algumas respostas não foram registradas. Vote novamente para enviar as restantes.",
+      "title": "Não foi possível registrar seu voto"
+    },
     "voters": "Eleitores",
     "voting": "Estamos processando seu voto. Esse processo levará alguns segundos. Não feche nem atualize esta página.",
     "voting_method": {
@@ -1486,6 +1433,7 @@
       "unknown": "Desconhecido",
       "weighted_format": "{{ base, lowercase }} ponderado"
     },
+    "voting_progress": "{{confirmed}} de {{total}} perguntas confirmadas",
     "voting_type": "Método de votação"
   },
   "process_actions": {
@@ -1505,29 +1453,14 @@
     "auto_start": "Iniciar imediatamente",
     "basic_configuration": "Configuração básica",
     "census": {
-      "extra_methods": {
-        "disable_description": "Deseja desativar os métodos de censo adicionais? Isso ocultará as opções de Planilha e Web3 e exibirá apenas o método de Grupo.",
-        "enable_description": "Deseja ativar os métodos de censo adicionais? Isso exibirá opções adicionais como Planilha e criação de censo Web3.",
-        "modal_title": "Métodos de censo adicionais"
-      },
       "group": {
-        "label": "Grupo",
         "no_groups": "Para iniciar uma votação, você precisa primeiro criar um grupo de eleitores elegíveis a partir da sua base de membros. <1>Crie um aqui</1>."
       },
       "memberbase": {
         "label": "Selecione um grupo de membros para criar o censo"
-      },
-      "settings": "Configurações do censo",
-      "spreadsheet": {
-        "label": "Planilha"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Criação do censo",
-    "census_missing": "Dados do censo ausentes para o tipo de censo Base de membros",
-    "census_type_not_allowed": "Tipo de censo {{type}} não permitido",
     "end_datetime": "Data e hora de término",
     "extra_configuration": "Configuração adicional",
     "group": {
@@ -1537,8 +1470,6 @@
       "scroll_to_load": "Role para carregar mais..."
     },
     "new_option": "Adicionar uma nova opção",
-    "no_account_address": "Nenhum endereço de conta encontrado.",
-    "no_election_index": "Nenhum índice de eleição encontrado para a conta.",
     "option": {
       "description_placeholder": "Descrição (opcional)",
       "placeholder": "Opção {{number}}",
@@ -1588,11 +1519,7 @@
       "method": "Método de autenticação",
       "two_fa": "Verificação adicional de identidade",
       "two_fa_disabled": "Desativado: nenhuma verificação adicional de identidade foi configurada neste processo de votação.",
-      "two_fa_enabled": "Ativado: os eleitores confirmam sua identidade com um código de uso único enviado aos seus dispositivos pessoais.",
-      "voter_access_source": "Fonte de acesso do eleitor",
-      "voter_access_source_spreadsheet": "Os eleitores acessam com credenciais derivadas da lista de participantes em planilha enviada pela organização.",
-      "voter_access_source_web3": "Os eleitores acessam com o endereço de carteira incluído na lista de participantes Web3.",
-      "voter_access_source_weighted": "A elegibilidade é verificada na lista de participantes ponderada fornecida pela organização para este processo."
+      "two_fa_enabled": "Ativado: os eleitores confirmam sua identidade com um código de uso único enviado aos seus dispositivos pessoais."
     },
     "census": {
       "counting_basis": "Base de contagem",
@@ -1605,12 +1532,7 @@
       "weighted_participation": "Participação ponderada"
     },
     "census_type": {
-      "anonymous": "Lista de participantes anônima fornecida pela organização",
-      "csp": "Lista de participantes CSP",
-      "spreadsheet": "Lista de participantes em planilha fornecida pela organização",
-      "unknown": "Não disponível",
-      "web3": "Lista de participantes Web3 fornecida pela organização",
-      "weighted": "Lista de participantes ponderada fornecida pela organização"
+      "csp": "Lista de participantes CSP"
     },
     "disclaimer": {
       "bullet_1": "Não constitui certificação legal do processo de votação.",
@@ -1650,8 +1572,6 @@
     "download_error": "Não foi possível gerar o relatório em PDF",
     "downloading": "Gerando PDF",
     "general": {
-      "census_reference": "Referência da lista de participantes",
-      "census_reference_helper": "Referência pública que identifica a lista de participantes utilizada neste processo de votação. Não inclui nem revela dados pessoais dos eleitores.",
       "event_name": "Nome do evento",
       "network": "Infraestrutura",
       "organization": "Organização",
@@ -1685,9 +1605,9 @@
       "explorer": "Ver no Explorer de verificação",
       "paragraph": "Todos os dados do processo foram registrados em uma infraestrutura baseada em blockchain e podem ser verificados de forma independente por meio do seguinte Explorer público:",
       "procedure_title": "Procedimento de verificação",
+      "question_n": "Pergunta {{number}}",
       "step_1": "Abrir o link do Explorer de verificação. Esta página contém o registro técnico público do processo de votação.",
       "step_2": "Verificar se o ID do processo no Explorer é idêntico ao ID do processo neste relatório. Isso confirma que ambos os documentos se referem ao mesmo processo de votação.",
-      "step_3": "Verificar se a referência da lista de participantes exibida no Explorer corresponde à referência neste relatório. Isso confirma que a lista de eleitores elegíveis vinculada ao processo é a mesma.",
       "step_4": "Verificar se o número de cédulas registradas corresponde aos dados de participação apresentados neste relatório.",
       "step_5": "Comparar a apuração final no Explorer com os resultados de contagem de votos ou de votação ponderada apresentados neste relatório.",
       "step_6": "Para uma auditoria técnica mais aprofundada, o auditor pode inspecionar os registros públicos com mais detalhes ou recalcular a apuração para confirmar que as cédulas registradas e os resultados finais são consistentes."
@@ -1744,6 +1664,11 @@
   },
   "promo_code": "Código promocional",
   "promo_code_required": "O código promocional é obrigatório",
+  "public_process": {
+    "no_tally": "Sem contagem",
+    "verify": "Verifique no explorador da blockchain:",
+    "verify_process": "Ver processo"
+  },
   "questions_and_results": "Perguntas e resultados",
   "registration_failed": "Falha no cadastro",
   "registration_successful": "Cadastro realizado com sucesso",
@@ -1797,8 +1722,6 @@
     "platform": "Plataforma"
   },
   "send_invitation": "Enviar convite",
-  "session_expired": "Sessão expirada",
-  "session_expired_description": "A sessão pode ter expirado e não foi possível renová-la, faça login novamente",
   "settings": "Configurações",
   "setup": {
     "progress": "Seu progresso",
@@ -1834,9 +1757,7 @@
   "signup_subtitle": "Insira suas informações para começar",
   "signup_title": "Cadastre-se",
   "spreadsheet": {
-    "access_button": "Identificar-se",
-    "close": "Fechar",
-    "modal_title": "Autenticação"
+    "access_button": "Identificar-se"
   },
   "start_date": "Data de início",
   "start_time": "Horário de início",
@@ -2021,7 +1942,6 @@
     "level_strong": "Forte",
     "level_weak": "Fraco",
     "no_group_description": "Selecione um grupo primeiro para configurar a autenticação.",
-    "save_failed": "Falha ao configurar a autenticação de eleitores",
     "security_level": "Boa segurança",
     "security_recommendation_1": "Para maior segurança, recomendamos selecionar pelo menos 2 credenciais.",
     "security_recommendation_2_one": "Você selecionou {{ count }} credencial, o que oferece boa segurança para seus eleitores.",

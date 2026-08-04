@@ -3,7 +3,6 @@ import {
   OrganizationImage as Avatar,
   OrganizationDescription,
   OrganizationName,
-  useClient,
   useOrganization,
 } from '@vocdoni/react-components'
 import { useEffect, useRef, useState } from 'react'
@@ -16,7 +15,6 @@ import fallback from '/assets/default-avatar.png'
 const OrganizationHeader = () => {
   const { t } = useTranslation()
   const { organization } = useOrganization()
-  const { account } = useClient()
 
   const { ReadMoreMarkdownWrapper, ReadMoreMarkdownButton } = useReadMoreMarkdown(600, 20)
 
@@ -36,7 +34,7 @@ const OrganizationHeader = () => {
             mx='auto'
             fallbackSrc={fallback}
             alt={t('organization.avatar_alt', {
-              name: organization?.account.name.default || organization?.address,
+              name: organization?.name?.default || organization?.address,
             }).toString()}
           />
         </AspectRatio>
@@ -79,7 +77,7 @@ const OrganizationHeader = () => {
               as='h1'
               fontSize={32}
               lineHeight={1.5}
-              title={organization?.account.name.default || organization?.address}
+              title={organization?.name?.default || organization?.address}
               maxW={{ base: '250px', sm: '300px', md: '450px', lg: '500px', xl: '650px' }}
             />
             <Box>

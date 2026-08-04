@@ -1,16 +1,22 @@
 import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { Routes } from '~src/router/routes'
 import { render, waitFor } from '~src/test-utils'
-const setBearerMock = vi.fn()
-const updateSignerMock = vi.fn()
+import { setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
+import GoogleAuth from './GoogleAuth'
+
 const disconnectMock = vi.fn()
 const navigateMock = vi.fn()
 
-vi.mock('./useAuth', () => ({
-  useAuth: () => ({
-    setBearer: setBearerMock,
-    updateSigner: updateSignerMock,
-  }),
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => getAuthMock(),
+}))
+
+vi.mock('~components/Auth/useAuthProvider', () => ({
+  readOAuthSession: () => {
+    const token = localStorage.getItem(AuthStorageKeys.Token)
+    const expiry = localStorage.getItem(AuthStorageKeys.Expiry)
+    return token ? { token, expiry } : null
+  },
 }))
 
 vi.mock('wagmi', async () => {
@@ -38,22 +44,37 @@ describe('GoogleAuth', () => {
   })
 
   it('redirects OAuth signups to organization create', async () => {
+    const setSessionMock = vi.fn()
+    const refreshAddressesMock = vi.fn()
+    setAuthMock({ setSession: setSessionMock, refreshAddresses: refreshAddressesMock })
+
     localStorage.setItem(AuthStorageKeys.Token, 'token-123')
+    localStorage.setItem(AuthStorageKeys.Expiry, 'expiry-123')
     localStorage.setItem(AuthStorageKeys.Registered, 'true')
 
-    const { default: GoogleAuth } = await import('./GoogleAuth')
     render(<GoogleAuth />)
 
     await waitFor(() => {
+      expect(setSessionMock).toHaveBeenCalledWith({ token: 'token-123', expiry: 'expiry-123' })
+      expect(refreshAddressesMock).toHaveBeenCalled()
       expect(navigateMock).toHaveBeenCalledWith(Routes.auth.organizationCreate)
     })
   })
 
   it('does not redirect when login is not a signup', async () => {
-    localStorage.setItem(AuthStorageKeys.Token, 'token-123')
+    const setSessionMock = vi.fn()
+    const refreshAddressesMock = vi.fn()
+    setAuthMock({ setSession: setSessionMock, refreshAddresses: refreshAddressesMock })
 
-    const { default: GoogleAuth } = await import('./GoogleAuth')
+    localStorage.setItem(AuthStorageKeys.Token, 'token-123')
+    localStorage.setItem(AuthStorageKeys.Expiry, 'expiry-123')
+
     render(<GoogleAuth />)
+
+    await waitFor(() => {
+      expect(setSessionMock).toHaveBeenCalledWith({ token: 'token-123', expiry: 'expiry-123' })
+      expect(refreshAddressesMock).toHaveBeenCalled()
+    })
 
     expect(navigateMock).not.toHaveBeenCalled()
   })

@@ -1,4 +1,14 @@
+import { electionQueryKeys } from '@vocdoni/react-components'
+
 export const QueryKeys = {
+  // Keys the @vocdoni/react-providers ElectionProvider reads through (shared
+  // cache namespace: ['process', id] / ['process-results', id]) — use these to
+  // pre-seed or invalidate the process/results queries it observes. Kept under
+  // the app's historical process/results names.
+  election: {
+    process: electionQueryKeys.election,
+    results: electionQueryKeys.results,
+  },
   organization: {
     elections: (address?: string, params?: { page?: number; status?: string }) =>
       ['organizations', 'elections', address, params].filter(Boolean),
@@ -17,13 +27,9 @@ export const QueryKeys = {
     groups: (address?: string) => ['organizations', 'groups', address].filter(Boolean),
     apikeys: (address?: string) => ['organizations', 'apikeys', address].filter(Boolean),
   },
-  census: {
-    bundle: (censusURI?: string) => ['census', 'bundle', censusURI].filter(Boolean),
-  },
   process: {
-    census: (processId?: string) => ['process', 'census', processId].filter(Boolean),
-    participantsCheck: (bundleId?: string, processID?: string, fieldName?: string, value?: string) =>
-      ['process', 'participantsCheck', bundleId, processID, fieldName, value].filter(Boolean),
+    participants: (processId?: string, field?: string, value?: string) =>
+      ['process', 'participants', processId, field, value].filter(Boolean),
   },
   integrator: {
     info: (address?: string) => ['integrator', 'info', address].filter(Boolean),

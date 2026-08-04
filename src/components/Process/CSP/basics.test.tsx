@@ -1,12 +1,17 @@
 import { renderHook } from '@testing-library/react'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { AllProviders } from '~src/test-utils'
-import { useTwoFactorAuth } from './basics'
+import { useCspAuth0 } from './basics'
 
-const process = {
-  census: {
-    censusURI: 'https://census.example.test',
-  },
-} as any
+const { auth0 } = vi.hoisted(() => ({ auth0: vi.fn() }))
+
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
+  return {
+    ...actual,
+    useElectionAuth: () => ({ auth0 }),
+  }
+})
 
 const messages = {
   participantNotFound: 'The voter is not listed in the census, or the provided credentials are incorrect.',
@@ -14,38 +19,40 @@ const messages = {
   zeroVotingWeight: "You don't have enough voting power to access the election.",
 }
 
-const mockFetchError = (code: number, error = 'server error') => {
-  const fetchMock = vi.fn().mockResolvedValue({
-    ok: false,
-    json: vi.fn().mockResolvedValue({ code, error }),
-  })
-  vi.stubGlobal('fetch', fetchMock)
-  return fetchMock
+const mockAuthError = (code: number, error = 'server error') => {
+  auth0.mockRejectedValue(new VocdoniApiError(400, { code, error }, error, code))
 }
 
-afterEach(() => {
-  vi.unstubAllGlobals()
+beforeEach(() => {
+  auth0.mockReset()
 })
 
-describe('useTwoFactorAuth errors', () => {
+describe('useCspAuth0 errors', () => {
   it('maps 40029 to participant not found message', async () => {
-    mockFetchError(40029)
-    const { result } = renderHook(() => useTwoFactorAuth(process, 0), { wrapper: AllProviders })
+    mockAuthError(40029)
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
 
     await expect(result.current.mutateAsync({})).rejects.toThrow(messages.participantNotFound)
   })
 
   it('maps 40103 to requests on cooldown message', async () => {
-    mockFetchError(40103)
-    const { result } = renderHook(() => useTwoFactorAuth(process, 0), { wrapper: AllProviders })
+    mockAuthError(40103)
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
 
     await expect(result.current.mutateAsync({})).rejects.toThrow(messages.requestsOnCooldown)
   })
 
   it('maps 40801 to zero voting weight message', async () => {
-    mockFetchError(40801)
-    const { result } = renderHook(() => useTwoFactorAuth(process, 0), { wrapper: AllProviders })
+    mockAuthError(40801)
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
 
     await expect(result.current.mutateAsync({})).rejects.toThrow(messages.zeroVotingWeight)
+  })
+
+  it('keeps the API message for unmapped codes', async () => {
+    mockAuthError(50000, 'unexpected failure')
+    const { result } = renderHook(() => useCspAuth0(), { wrapper: AllProviders })
+
+    await expect(result.current.mutateAsync({})).rejects.toThrow('unexpected failure')
   })
 })

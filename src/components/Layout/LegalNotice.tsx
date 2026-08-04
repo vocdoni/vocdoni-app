@@ -4,7 +4,7 @@ import { Trans } from 'react-i18next'
 
 const LegalNoticeContent = () => {
   const { organization } = useOrganization()
-  const orgName = organization?.account?.name?.default || organization?.address
+  const orgName = organization?.name?.default || organization?.address
 
   if (!orgName) return null
 

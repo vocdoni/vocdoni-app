@@ -1,4 +1,4 @@
-import { ElectionResultsTypeNames } from '@vocdoni/sdk'
+import { BallotType } from '@vocdoni/ballot'
 import { useTranslation } from 'react-i18next'
 
 type ResultTypeConfig = {
@@ -6,24 +6,24 @@ type ResultTypeConfig = {
   defaultValue: string
 }
 
-const RESULT_TYPE_CONFIG: Record<ElectionResultsTypeNames, ResultTypeConfig> = {
-  [ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION]: {
+const RESULT_TYPE_CONFIG: Record<BallotType, ResultTypeConfig> = {
+  [BallotType.SingleChoice]: {
     key: 'process.voting_method.single_choice',
     defaultValue: 'Single choice',
   },
-  [ElectionResultsTypeNames.MULTIPLE_CHOICE]: {
+  [BallotType.MultiChoice]: {
     key: 'process.voting_method.multiple_choice',
     defaultValue: 'Multiple choice',
   },
-  [ElectionResultsTypeNames.APPROVAL]: {
+  [BallotType.Approval]: {
     key: 'process.voting_method.approval',
     defaultValue: 'Approval voting',
   },
-  [ElectionResultsTypeNames.BUDGET]: {
+  [BallotType.Budget]: {
     key: 'process.voting_method.budget',
     defaultValue: 'Budget allocation',
   },
-  [ElectionResultsTypeNames.QUADRATIC]: {
+  [BallotType.Quadratic]: {
     key: 'process.voting_method.quadratic',
     defaultValue: 'Quadratic voting',
   },
@@ -35,10 +35,10 @@ const RESULT_TYPE_CONFIG: Record<ElectionResultsTypeNames, ResultTypeConfig> = {
 // t('process.voting_method.budget', { defaultValue: 'Budget allocation' })
 // t('process.voting_method.quadratic', { defaultValue: 'Quadratic voting' })
 
-export const useResultTypeLabel = (type?: ElectionResultsTypeNames | null, defaultValue = '') => {
+export const useResultTypeLabel = (type?: BallotType | null, defaultValue = '') => {
   const { t } = useTranslation()
 
-  if (!type) return defaultValue
+  if (type == null) return defaultValue
 
   const config = RESULT_TYPE_CONFIG[type]
   if (!config) return defaultValue
@@ -49,7 +49,7 @@ export const useResultTypeLabel = (type?: ElectionResultsTypeNames | null, defau
 }
 
 export const useVotingMethodLabel = (
-  type?: ElectionResultsTypeNames | null,
+  type?: BallotType | null,
   opts?: { weighted?: boolean; defaultValue?: string }
 ) => {
   const { t } = useTranslation()

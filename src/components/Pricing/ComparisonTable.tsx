@@ -1,5 +1,5 @@
 import { chakra, Flex, Icon, Progress, Separator, Table, Text, Tooltip } from '@chakra-ui/react'
-import { dotobject } from '@vocdoni/sdk'
+import { dotobject } from '~utils/objects'
 import { forwardRef, isValidElement } from 'react'
 import { Trans } from 'react-i18next'
 import {

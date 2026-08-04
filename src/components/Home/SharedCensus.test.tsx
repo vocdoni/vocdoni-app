@@ -4,7 +4,11 @@ import { Route, Routes } from 'react-router-dom'
 import SimpleLayout from '~elements/SimpleLayout'
 import type { AppEnv } from '~src/app-env-build'
 import { act, render, TestMemoryRouter } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
+
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => getAuthMock(),
+}))
 
 // Runtime env override applied to the test provider; mutated per test.
 let appEnvOverride: Partial<AppEnv> = {}
@@ -19,8 +23,7 @@ vi.mock('react-router-dom', async () => {
 
 const getDefaultElectionState = () => ({
   loading: false,
-  loaded: true,
-  election: { organizationId: 'org-1' },
+  election: { id: 'id-1', orgAddress: 'org-1' },
   connected: false,
 })
 
@@ -42,10 +45,6 @@ const states = {
   organization: getDefaultOrganizationState().organization,
 }
 
-vi.mock('@vocdoni/sdk', () => ({
-  InvalidElection: class InvalidElection {},
-}))
-
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
   const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
@@ -54,7 +53,7 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...getReactProvidersMock(),
     ElectionTitle: () => <div>ElectionTitle</div>,
     ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
-    OrganizationImage: ({ alt }: { alt?: string }) => <img src='' alt={alt || 'OrganizationImage'} />,
+    OrganizationImage: ({ alt }: { alt?: string }) => <img alt={alt || 'OrganizationImage'} />,
   }
 })
 
@@ -166,6 +165,7 @@ describe('SharedCensus', () => {
       useClient: () => states.client,
       useOrganization: () => ({ organization: states.organization }),
     })
+    setAuthMock({ isAuthenticated: false, currentAddress: undefined })
   })
 
   afterEach(() => {
@@ -213,7 +213,7 @@ describe('SharedCensus', () => {
     editorValues.length = 0
     states.election.connected = true
     states.client.connected = true
-    states.client.account = { address: 'org-1' }
+    setAuthMock({ isAuthenticated: true, currentAddress: 'org-1' })
 
     const { default: SharedCensus } = await import('./SharedCensus')
     const { getByTestId, queryByText } = await renderSharedCensus(<SharedCensus />)
@@ -238,7 +238,7 @@ describe('SharedCensus', () => {
     }
     editorValues.length = 0
     states.client.connected = false
-    states.client.account = { address: 'user-1' }
+    setAuthMock({ isAuthenticated: false, currentAddress: undefined })
 
     const { default: SharedCensus } = await import('./SharedCensus')
     const { rerender } = await renderSharedCensus(<SharedCensus />)
@@ -247,7 +247,7 @@ describe('SharedCensus', () => {
 
     states.election.connected = true
     states.client.connected = true
-    states.client.account = { address: 'org-1' }
+    setAuthMock({ isAuthenticated: true, currentAddress: 'org-1' })
 
     rerender(<SharedCensus />)
 
@@ -294,6 +294,7 @@ describe('SharedCensus', () => {
     appEnvOverride = { ...appEnvOverride, STREAM_URL: 'https://www.youtube.com/embed/test' }
     states.election.connected = true
     states.client.connected = true
+    setAuthMock({ isAuthenticated: true, currentAddress: 'org-1' })
     editorValues.length = 0
 
     const { default: SharedCensus } = await import('./SharedCensus')
@@ -308,6 +309,7 @@ describe('SharedCensus', () => {
     appEnvOverride = { ...appEnvOverride, STREAM_URL: 'https://www.youtube.com/embed/test-only' }
     states.election.connected = true
     states.client.connected = true
+    setAuthMock({ isAuthenticated: true, currentAddress: 'org-1' })
     editorValues.length = 0
 
     const { default: SharedCensus } = await import('./SharedCensus')

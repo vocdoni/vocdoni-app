@@ -1,5 +1,6 @@
 import { Button, Icon } from '@chakra-ui/react'
 import { AuthStorageKeys, saasOAuthWallet } from '@vocdoni/rainbowkit-wallets'
+import { readOAuthSession } from '~components/Auth/useAuthProvider'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BsGoogle } from 'react-icons/bs'
@@ -11,7 +12,7 @@ import { Routes } from '~src/router/routes'
 import { useAuth } from './useAuth'
 
 const GoogleAuth = () => {
-  const { setBearer, updateSigner } = useAuth()
+  const { setSession, refreshAddresses } = useAuth()
   const appEnv = useAppEnv()
   const navigate = useNavigate()
   const { isConnected, connector } = useAccount()
@@ -39,9 +40,13 @@ const GoogleAuth = () => {
       return
     }
     if (isConnected && connector?.id === 'google') {
-      const token = localStorage.getItem(AuthStorageKeys.Token)
-      setBearer(token)
-      updateSigner(token)
+      // The OAuth wallet persists the token (and expiry) under the rainbowkit keys;
+      // inject it into the react-providers session and resolve the org address(es).
+      const session = readOAuthSession()
+      if (session) {
+        setSession(session)
+        refreshAddresses()
+      }
       const registered = localStorage.getItem(AuthStorageKeys.Registered)
       const isRegistered = registered === 'true' || registered === '1' || (registered as unknown) === true
       if (isRegistered) {

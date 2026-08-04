@@ -16,8 +16,7 @@ import {
   Icon,
   Image,
   type ImageProps,
-  Input,
-  Portal,
+  Link,
   Progress,
   Skeleton,
   Tag,
@@ -27,11 +26,18 @@ import {
   useRecipe,
   useSlotRecipe,
 } from '@chakra-ui/react'
-import { type ComponentsPartialDefinition, defineComponent } from '@vocdoni/react-components'
+import {
+  type ComponentsPartialDefinition,
+  defineComponent,
+  getElectionTitle,
+  useReactComponentsLocalize,
+} from '@vocdoni/react-components'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
 import { Markdown } from '~components/ui/Markdown'
+import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { resultsProgressRecipe } from '~theme/recipes/election'
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
@@ -343,7 +349,7 @@ export const electionComponents: ComponentsPartialDefinition = {
       return (
         <>
           <Dialog.Header css={styles.header} flexDirection='column'>
-            <Heading variant='header'>{election.title.default}</Heading>
+            <Heading variant='header'>{getElectionTitle(election)}</Heading>
             <Text variant='subheader'>
               {t('process.spreadsheet.confirm.election_title', {
                 defaultValue: 'Your vote has been recorded for:',
@@ -396,10 +402,40 @@ export const electionComponents: ComponentsPartialDefinition = {
       )
     }
   ),
-  Voted: defineComponent<'Voted', AlertRootProps>(({ title, description, ...props }) => {
+  Voted: defineComponent<'Voted', AlertRootProps>(({ title, description, votes, ...props }) => {
     const recipe = useSlotRecipe({ key: 'Voted' })
     const styles = recipe()
     const { t } = useTranslation()
+    const localize = useReactComponentsLocalize()
+    const { VOCDONI_ENVIRONMENT } = useAppEnv()
+    const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+
+    // The SDK-joined `description` runs every vote line together inline and
+    // linkifies the bare nullifier as the href, so rebuild the lines from
+    // `votes`: one paragraph per voted question, with the vote id linking to
+    // the explorer verifier.
+    const linkifyToExplorer = (text: string, id: string) => {
+      const parts = text.split(id)
+      if (parts.length < 2) return text
+
+      return parts.flatMap((part, index) =>
+        index < parts.length - 1
+          ? [
+              part,
+              <Link
+                key={`verify-${index}`}
+                href={`${explorerUrl}/verify/${id}`}
+                target='_blank'
+                rel='noreferrer'
+                wordBreak='break-all'
+                css={{ textDecoration: 'underline' }}
+              >
+                {id}
+              </Link>,
+            ]
+          : [part]
+      )
+    }
 
     return (
       <Alert.Root
@@ -414,7 +450,20 @@ export const electionComponents: ComponentsPartialDefinition = {
       >
         <Alert.Indicator css={styles.icon} />
         <Alert.Title css={styles.title}>{t('vote.voted_title')}</Alert.Title>
-        <Alert.Description css={styles.description}>{description}</Alert.Description>
+        <Alert.Description css={styles.description} display='flex' flexDirection='column' gap={1}>
+          {votes.map((vote, index) => {
+            const line =
+              votes.length === 1 || !vote.questionTitle
+                ? localize('vote.voted_description', { id: vote.voteId })
+                : localize('vote.voted_question_description', {
+                    title: vote.questionTitle,
+                    id: vote.voteId,
+                    defaultValue: `Your vote id for "${vote.questionTitle}" is ${vote.voteId}.`,
+                  })
+
+            return <Text key={vote.questionId || index}>{linkifyToExplorer(line, vote.voteId)}</Text>
+          })}
+        </Alert.Description>
       </Alert.Root>
     )
   }),
@@ -475,122 +524,6 @@ export const electionComponents: ComponentsPartialDefinition = {
       </Box>
     )
   }),
-  SpreadsheetAccess: defineComponent<'SpreadsheetAccess', BoxProps>(
-    ({
-      connected,
-      loading,
-      formError,
-      title,
-      open,
-      onOpen,
-      onClose,
-      onLogout,
-      onSubmit,
-      fields,
-      anonymousField,
-      extraFields,
-      ...props
-    }) => {
-      const recipe = useSlotRecipe({ key: 'SpreadsheetAccess' })
-      const styles = recipe()
-      const { t } = useTranslation()
-
-      if (connected) {
-        return (
-          <Button css={styles.disconnect} onClick={onLogout} disabled={loading}>
-            {t('logout')}
-          </Button>
-        )
-      }
-
-      return (
-        <Dialog.Root
-          open={open}
-          onOpenChange={({ open: isOpen }) => {
-            if (loading && !isOpen) return
-            if (isOpen) {
-              onOpen()
-            } else {
-              onClose()
-            }
-          }}
-        >
-          <Dialog.Trigger asChild>
-            <Button css={styles.button} disabled={loading}>
-              {t('spreadsheet.access_button')}
-            </Button>
-          </Dialog.Trigger>
-          <Portal>
-            <Dialog.Backdrop css={styles.overlay} />
-            <Dialog.Positioner>
-              <Dialog.Content css={styles.content} {...props}>
-                <form
-                  onSubmit={(event) => {
-                    onSubmit(event)
-                  }}
-                >
-                  <Dialog.Header css={styles.header}>{title || t('spreadsheet.modal_title')}</Dialog.Header>
-                  <Dialog.CloseTrigger asChild>
-                    <CloseButton disabled={loading} css={styles.top_close} />
-                  </Dialog.CloseTrigger>
-                  <Dialog.Body css={styles.body}>
-                    {fields.map((field) => (
-                      <Field.Root key={field.id} invalid={Boolean(field.error)} css={styles.control}>
-                        <Field.Label css={styles.label}>{field.label}</Field.Label>
-                        <Input
-                          {...field.inputProps}
-                          {...field.inputAttrs}
-                          css={styles.input}
-                          disabled={loading}
-                          type={field.inputAttrs?.type || 'text'}
-                        />
-                        {field.error ? (
-                          <Field.ErrorText css={styles.error}>{field.error}</Field.ErrorText>
-                        ) : field.description ? (
-                          <Field.HelperText css={styles.helper}>{field.description}</Field.HelperText>
-                        ) : null}
-                      </Field.Root>
-                    ))}
-                    {anonymousField ? (
-                      <Field.Root invalid={Boolean(anonymousField.error)} css={styles.sik_control}>
-                        <Field.Label css={styles.label}>{anonymousField.label}</Field.Label>
-                        <Input
-                          {...anonymousField.inputProps}
-                          {...anonymousField.inputAttrs}
-                          css={styles.input}
-                          disabled={loading}
-                          type={anonymousField.inputAttrs?.type || 'text'}
-                        />
-                        {anonymousField.error ? (
-                          <Field.ErrorText css={styles.error}>{anonymousField.error}</Field.ErrorText>
-                        ) : anonymousField.description ? (
-                          <Field.HelperText css={styles.helper}>{anonymousField.description}</Field.HelperText>
-                        ) : null}
-                      </Field.Root>
-                    ) : null}
-                    {formError ? (
-                      <Field.Root invalid css={styles.control}>
-                        <Field.ErrorText css={styles.error}>{formError}</Field.ErrorText>
-                      </Field.Root>
-                    ) : null}
-                    {extraFields}
-                  </Dialog.Body>
-                  <Dialog.Footer css={styles.footer}>
-                    <Button type='button' variant='ghost' onClick={onClose} css={styles.close} disabled={loading}>
-                      {t('spreadsheet.close')}
-                    </Button>
-                    <Button type='submit' disabled={loading} loading={loading} css={styles.submit}>
-                      {t('spreadsheet.access_button')}
-                    </Button>
-                  </Dialog.Footer>
-                </form>
-              </Dialog.Content>
-            </Dialog.Positioner>
-          </Portal>
-        </Dialog.Root>
-      )
-    }
-  ),
   ElectionActions: defineComponent<'ElectionActions', FlexProps>(({ actions, ...props }) => (
     <Flex gap={2} {...props}>
       {actions}

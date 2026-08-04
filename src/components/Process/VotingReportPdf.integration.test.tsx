@@ -1,37 +1,15 @@
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { createElection, createResults } from './VotingReportPdf/__fixtures__'
 import { VotingReportPdfButton } from './VotingReportPdf/VotingReportPdfButton'
-
-vi.mock('@vocdoni/sdk', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
-
-  class MockPublishedElection {}
-
-  return {
-    ...actual,
-    PublishedElection: MockPublishedElection,
-  }
-})
 
 const realCreateElement = document.createElement.bind(document)
 
-const createElection = () =>
-  Object.assign(new PublishedElection({} as never), {
-    id: '0x1234',
-    title: { default: 'Annual vote' },
-    status: ElectionStatus.RESULTS,
-    startDate: new Date('2026-01-01T10:00:00Z'),
-    endDate: new Date('2026-01-02T10:00:00Z'),
-    voteCount: 42,
-    census: { size: 100 },
-    maxCensusSize: 100,
-    electionType: { secretUntilTheEnd: false },
-    resultsType: undefined,
-    questions: [],
-  }) as PublishedElection
-
 describe('VotingReportPdf integration', () => {
   it('downloads a pdf without throwing when using the real renderer', async () => {
+    setReactProvidersMock({
+      useClient: () => ({ client: { elections: { getResults: vi.fn().mockResolvedValue(createResults()) } } }),
+    })
     const election = createElection()
     const anchor = realCreateElement('a')
     const clickSpy = vi.spyOn(anchor, 'click').mockImplementation(() => undefined)

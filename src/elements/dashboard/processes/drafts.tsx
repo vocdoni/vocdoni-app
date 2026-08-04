@@ -18,69 +18,57 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient, useOrganization } from '@vocdoni/react-components'
-import { RoutedPaginationProvider } from '@vocdoni/react-components/pagination'
-import { ensure0x } from '@vocdoni/sdk'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
+import { useOrganization } from '@vocdoni/react-components'
+import { RoutedPaginationProvider } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router-dom'
-import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useCreateProcess } from '~components/Process/Create'
-import { Process } from '~components/Process/Create/common'
+import { Process, SelectorTypes } from '~components/Process/Create/common'
+import { votingProcessToCreateRequest, votingProcessToForm } from '~components/Process/Create/draft-mapping'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
 import { Routes } from '~routes'
 
-type Draft = {
-  id: string
-  metadata: Process
-}
-
-type DraftsResponse = {
-  processes: Draft[]
-  pagination: {
-    totalItems: number
-    currentPage: number
-    lastPage: number
-    previousPage: number | null
-    nextPage: number | null
-  }
-}
+type Draft = VotingProcessResponse
 
 const useDrafts = () => {
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
   const { organization } = useOrganization()
   const { page, limit } = useUrlPagination()
-
-  const baseUrl = ApiEndpoints.OrganizationDrafts.replace('{address}', organization?.address)
-  const fetchUrl = `${baseUrl}?page=${page}&limit=${limit}`
 
   return useQuery({
     queryKey: [...QueryKeys.organization.drafts(organization?.address), page, limit],
     enabled: !!organization?.address,
-    queryFn: () => bearedFetch<DraftsResponse>(fetchUrl),
+    // `published: false` is the drafts-only view; it requires a Manager/Admin
+    // session (401 otherwise) and must not be combined with a status filter,
+    // which never matches a draft's not-yet-on-chain questions.
+    queryFn: () =>
+      client.elections.list({
+        orgAddress: organization!.address,
+        published: false,
+        page,
+        limit,
+      }),
   })
 }
 
 export const useDeleteDraft = () => {
   const { t } = useTranslation()
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
   const toast = useToast()
 
   return useMutation<void, unknown, { draftId: string; silent?: boolean }>({
     mutationKey: QueryKeys.organization.drafts(organization?.address),
-    mutationFn: ({ draftId }: { draftId: string; silent?: boolean }) => {
-      const deleteUrl = ApiEndpoints.OrganizationProcess.replace('{processId}', draftId)
-      return bearedFetch<void>(deleteUrl, {
-        method: 'DELETE',
-      })
-    },
+    mutationFn: ({ draftId }: { draftId: string; silent?: boolean }) => client.elections.delete(draftId),
     onSuccess: (_data, variables) => {
       if (!variables?.silent) {
         toast({
@@ -139,8 +127,26 @@ export const DraftsTable = ({ drafts }: { drafts: Draft[] }) => {
   )
 }
 
+/** A process can mix question types, so the list reports the shared one, or "Mixed". */
+const useQuestionTypeLabel = () => {
+  const { t } = useTranslation()
+
+  return (questions: Process['questions']) => {
+    const types = new Set(questions.map((question) => question.type))
+
+    if (types.size > 1) return t('drafts.question_type.mixed', { defaultValue: 'Mixed' })
+    if (types.has(SelectorTypes.Multiple))
+      return t('process.question_type.multiple', { defaultValue: 'Multiple choice' })
+
+    return t('process.question_type.single', { defaultValue: 'Single choice' })
+  }
+}
+
 const DraftsRow = ({ draft }: { draft: Draft }) => {
   const { t } = useTranslation()
+  const questionTypeLabel = useQuestionTypeLabel()
+  const metadata = votingProcessToForm(draft)
+
   return (
     <Table.Row key={draft.id} position='relative'>
       <Table.Cell>
@@ -151,17 +157,13 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
               search: createSearchParams({ draftId: draft.id }).toString(),
             }}
           >
-            {draft.metadata?.title || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
+            {metadata.title || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
           </RouterLink>
         </Link>
       </Table.Cell>
-      <Table.Cell>
-        {draft.metadata?.startDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
-      </Table.Cell>
-      <Table.Cell>{draft.metadata?.endDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Table.Cell>
-      <Table.Cell>
-        {draft.metadata?.questionType || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}
-      </Table.Cell>
+      <Table.Cell>{metadata.startDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Table.Cell>
+      <Table.Cell>{metadata.endDate || t('drafts.not_defined', { defaultValue: 'Not defined yet' })}</Table.Cell>
+      <Table.Cell>{questionTypeLabel(metadata.questions)}</Table.Cell>
       <Table.Cell textAlign='end'>
         <DraftsContextMenu draft={draft} />
       </Table.Cell>
@@ -171,7 +173,9 @@ const DraftsRow = ({ draft }: { draft: Draft }) => {
 
 const DraftCard = ({ draft }: { draft: Draft }) => {
   const { t } = useTranslation()
+  const questionTypeLabel = useQuestionTypeLabel()
   const notDefined = t('drafts.not_defined', { defaultValue: 'Not defined yet' })
+  const metadata = votingProcessToForm(draft)
 
   return (
     <Card.Root variant='data-list-item'>
@@ -183,20 +187,20 @@ const DraftCard = ({ draft }: { draft: Draft }) => {
               search: createSearchParams({ draftId: draft.id }).toString(),
             }}
           >
-            <Text lineClamp={2}>{draft.metadata?.title || notDefined}</Text>
+            <Text lineClamp={2}>{metadata.title || notDefined}</Text>
           </RouterLink>
         </Link>
         <DraftsContextMenu draft={draft} />
       </Card.Header>
       <Card.Body>
         <Text>
-          {t('process_list.start_date', { defaultValue: 'Start date' })}: {draft.metadata?.startDate || notDefined}
+          {t('process_list.start_date', { defaultValue: 'Start date' })}: {metadata.startDate || notDefined}
         </Text>
         <Text>
-          {t('process_list.end_date', { defaultValue: 'End date' })}: {draft.metadata?.endDate || notDefined}
+          {t('process_list.end_date', { defaultValue: 'End date' })}: {metadata.endDate || notDefined}
         </Text>
         <Text>
-          {t('process_list.type', { defaultValue: 'Type' })}: {draft.metadata?.questionType || notDefined}
+          {t('process_list.type', { defaultValue: 'Type' })}: {questionTypeLabel(metadata.questions)}
         </Text>
       </Card.Body>
     </Card.Root>
@@ -209,15 +213,12 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
   const toast = useToast()
   const deleteDraftMutation = useDeleteDraft()
   const createProcess = useCreateProcess()
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const navigate = useNavigate()
 
   const cloneDraft = async () => {
     try {
-      const clonedDraftId = await createProcess.mutateAsync({
-        metadata: draft.metadata,
-        orgAddress: ensure0x(account?.address),
-      })
+      const clonedDraftId = await createProcess.mutateAsync(votingProcessToCreateRequest(draft, currentAddress))
       toast({
         title: t('drafts.cloned_draft', {
           defaultValue: 'Draft cloned successfully',
@@ -227,7 +228,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
         closable: true,
       })
       queryClient.invalidateQueries({
-        queryKey: QueryKeys.organization.drafts(account?.address),
+        queryKey: QueryKeys.organization.drafts(currentAddress),
         exact: false,
       })
       navigate(
@@ -336,7 +337,7 @@ const Drafts = () => {
   }
 
   return (
-    <RoutedPaginationProvider initialPage={1} path={Routes.dashboard.processes.drafts} pagination={pagination}>
+    <RoutedPaginationProvider path={Routes.dashboard.processes.drafts} pagination={pagination}>
       {showAlert && (
         <ListStateAlert show status={hasError ? 'error' : 'info'} title={alertTitle} description={alertDescription} />
       )}

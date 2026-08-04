@@ -1,4 +1,5 @@
-import { ErrAccountNotFound, ErrElectionNotFound, PublishedElection } from '@vocdoni/sdk'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import { VochainNotFoundError } from '~src/legacy/vochain-archive'
 import {
   buildOrganizationMeta,
   buildProcessMeta,
@@ -19,62 +20,61 @@ import {
 } from './public-pages'
 
 type MockClient = {
-  fetchAccountInfo: ReturnType<typeof vi.fn>
-  fetchElections: ReturnType<typeof vi.fn>
-  fetchElection: ReturnType<typeof vi.fn>
+  organizations: { get: ReturnType<typeof vi.fn> }
+  elections: { get: ReturnType<typeof vi.fn>; list: ReturnType<typeof vi.fn> }
 }
+
+const createMockClient = (overrides: Partial<{ organizationsGet: any; electionsGet: any; electionsList: any }> = {}) =>
+  ({
+    organizations: { get: overrides.organizationsGet ?? vi.fn() },
+    elections: {
+      get: overrides.electionsGet ?? vi.fn(),
+      list: overrides.electionsList ?? vi.fn(),
+    },
+  }) satisfies MockClient
 
 const createOrganization = (overrides: Record<string, unknown> = {}) =>
   ({
     address: '0xabc',
-    account: {
-      name: { default: 'Vocdoni Association' },
-      description: { default: 'A digital voting organization for tests.' },
-    },
+    name: { default: 'Vocdoni Association' },
+    description: { default: 'A digital voting organization for tests.' },
     ...overrides,
   }) as any
 
 const createElection = (overrides: Record<string, unknown> = {}) =>
-  new PublishedElection({
+  ({
     id: '0xprocess',
-    organizationId: '0xabc',
+    orgAddress: 'abc',
     title: { default: 'Board election 2026' },
     description: { default: 'Vote for the next board members.' },
-    status: 'READY',
-    startDate: new Date('2026-01-01T00:00:00.000Z'),
-    endDate: new Date('2026-01-02T00:00:00.000Z'),
-    electionType: {
-      anonymous: false,
-      interruptible: true,
-      dynamicCensus: false,
-      secretUntilTheEnd: false,
-    },
-    census: null,
+    census: {},
     questions: [],
+    published: true,
+    startDate: '2026-01-01T00:00:00.000Z',
+    endDate: '2026-01-02T00:00:00.000Z',
     ...overrides,
-  } as any)
+  }) as any
 
-const createPaginatedElections = () =>
+const createProcessList = () =>
   ({
-    elections: [createElection()],
+    processes: [createElection()],
     pagination: {
       totalItems: 1,
       previousPage: null,
-      currentPage: 0,
+      currentPage: 1,
       nextPage: null,
-      lastPage: 0,
+      lastPage: 1,
     },
   }) as any
 
 describe('loadOrganizationPageData', () => {
   it('loads the organization and the first elections page', async () => {
     const organization = createOrganization()
-    const elections = createPaginatedElections()
-    const client: MockClient = {
-      fetchAccountInfo: vi.fn().mockResolvedValue(organization),
-      fetchElections: vi.fn().mockResolvedValue(elections),
-      fetchElection: vi.fn(),
-    }
+    const list = createProcessList()
+    const client = createMockClient({
+      organizationsGet: vi.fn().mockResolvedValue(organization),
+      electionsList: vi.fn().mockResolvedValue(list),
+    })
 
     const pageData = await loadOrganizationPageData({
       client: client as any,
@@ -84,12 +84,67 @@ describe('loadOrganizationPageData', () => {
       alternates: [],
     })
 
-    expect(client.fetchAccountInfo).toHaveBeenCalledWith('0xabc')
-    expect(client.fetchElections).toHaveBeenCalledWith({ organizationId: '0xabc', page: 0 })
+    expect(client.organizations.get).toHaveBeenCalledWith('0xabc')
+    expect(client.elections.list).toHaveBeenCalledWith({ orgAddress: '0xabc', page: 1 })
+    expect(pageData.era).toBe('saas')
     expect(pageData.address).toBe('0xabc')
+    if (pageData.era !== 'saas') throw new Error('expected saas era')
     expect(pageData.organization).toBe(organization)
-    expect(pageData.electionsPage).toBe(elections)
+    expect(pageData.electionsPage).toEqual({ elections: list.processes, pagination: list.pagination })
     expect(pageData.meta.canonicalUrl).toBe('https://app.example.org/organization/0xabc')
+  })
+
+  it('falls back to the vochain archive when the SaaS API does not know the address', async () => {
+    const address = '0x3d500f14d30d468baee8f4125b02e93697d5d5ee'
+    const client = createMockClient({
+      organizationsGet: vi.fn().mockRejectedValue(new VocdoniApiError(404, {}, 'organization not found')),
+    })
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+      const url = String(input)
+      if (url.includes('/elections/page/')) {
+        return new Response(
+          JSON.stringify({ elections: [], pagination: { totalItems: 0, currentPage: 0, lastPage: 0 } }),
+          { status: 200 }
+        ) as Response
+      }
+      return new Response(
+        JSON.stringify({ address: address.slice(2), metadata: { name: { default: 'Legacy Org' } } }),
+        { status: 200 }
+      ) as Response
+    })
+
+    try {
+      const pageData = await loadOrganizationPageData({
+        client: client as any,
+        vochainGateway: 'https://gateway.test/v2',
+        address,
+        language: 'en',
+        alternates: [],
+      })
+
+      expect(pageData.era).toBe('archive')
+      if (pageData.era !== 'archive') throw new Error('expected archive era')
+      expect(pageData.legacyOrganization.account?.name).toEqual({ default: 'Legacy Org' })
+      expect(pageData.legacyElectionsPage.elections).toEqual([])
+      expect(pageData.meta.title).toContain('Legacy Org')
+    } finally {
+      fetchSpy.mockRestore()
+    }
+  })
+
+  it('rethrows SaaS not-found errors when no archive gateway is configured', async () => {
+    const client = createMockClient({
+      organizationsGet: vi.fn().mockRejectedValue(new VocdoniApiError(404, {}, 'organization not found')),
+    })
+
+    await expect(
+      loadOrganizationPageData({
+        client: client as any,
+        address: '0xabc',
+        language: 'en',
+        alternates: [],
+      })
+    ).rejects.toThrow('organization not found')
   })
 })
 
@@ -97,11 +152,10 @@ describe('loadProcessPageData', () => {
   it('loads the election and related organization', async () => {
     const election = createElection()
     const organization = createOrganization()
-    const client: MockClient = {
-      fetchAccountInfo: vi.fn().mockResolvedValue(organization),
-      fetchElections: vi.fn(),
-      fetchElection: vi.fn().mockResolvedValue(election),
-    }
+    const client = createMockClient({
+      organizationsGet: vi.fn().mockResolvedValue(organization),
+      electionsGet: vi.fn().mockResolvedValue(election),
+    })
 
     const pageData = await loadProcessPageData({
       client: client as any,
@@ -111,12 +165,82 @@ describe('loadProcessPageData', () => {
       alternates: [],
     })
 
-    expect(client.fetchElection).toHaveBeenCalledWith('0xprocess')
-    expect(client.fetchAccountInfo).toHaveBeenCalledWith('0xabc')
+    expect(client.elections.get).toHaveBeenCalledWith('0xprocess')
+    expect(client.organizations.get).toHaveBeenCalledWith('0xabc')
+    expect(pageData.era).toBe('saas')
     expect(pageData.id).toBe('0xprocess')
+    if (pageData.era !== 'saas') throw new Error('expected saas era')
     expect(pageData.election).toBe(election)
     expect(pageData.organization).toBe(organization)
     expect(pageData.meta.title).toContain('Board election 2026')
+  })
+
+  it('resolves 64-hex vochain ids against the archive without touching the SaaS API', async () => {
+    const legacyId = '6b342d99f2183d500f14d30d468baee8f4125b02e93697d5d5ee02000000004c'
+    const client = createMockClient()
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+      const url = String(input)
+      if (url.includes('/accounts/')) {
+        return new Response(
+          JSON.stringify({
+            address: '3d500f14d30d468baee8f4125b02e93697d5d5ee',
+            metadata: { name: { default: 'Legacy Org' } },
+          }),
+          { status: 200 }
+        ) as Response
+      }
+      return new Response(
+        JSON.stringify({
+          electionId: legacyId,
+          organizationId: '3d500f14d30d468baee8f4125b02e93697d5d5ee',
+          status: 'RESULTS',
+          startDate: '2026-01-21T22:47:56Z',
+          endDate: '2026-02-19T19:47:47Z',
+          voteCount: 10,
+          finalResults: true,
+          chainId: 'vocdoni/LTS/1.2',
+          result: [['7', '3']],
+          census: { maxCensusSize: 200 },
+          voteMode: { encryptedVotes: false, uniqueValues: false, costFromWeight: false },
+          tallyMode: { maxCount: 1, maxValue: 1, maxVoteOverwrites: 0, maxTotalCost: 0, costExponent: 1 },
+          metadata: {
+            title: { default: 'Legacy annual vote' },
+            description: { default: 'A finished legacy process' },
+            media: {},
+            questions: [
+              {
+                title: { default: 'Board continuity' },
+                choices: [
+                  { title: { default: 'Approve' }, value: 0 },
+                  { title: { default: 'Reject' }, value: 1 },
+                ],
+              },
+            ],
+          },
+        }),
+        { status: 200 }
+      ) as Response
+    })
+
+    try {
+      const pageData = await loadProcessPageData({
+        client: client as any,
+        vochainGateway: 'https://gateway.test/v2',
+        id: legacyId,
+        language: 'en',
+        alternates: [],
+      })
+
+      expect(client.elections.get).not.toHaveBeenCalled()
+      expect(pageData.era).toBe('archive')
+      if (pageData.era !== 'archive') throw new Error('expected archive era')
+      expect(pageData.legacyElection.title).toEqual({ default: 'Legacy annual vote' })
+      expect(pageData.legacyOrganization?.account?.name).toEqual({ default: 'Legacy Org' })
+      expect(pageData.meta.title).toContain('Legacy annual vote')
+      expect(pageData.meta.title).toContain('Legacy Org')
+    } finally {
+      fetchSpy.mockRestore()
+    }
   })
 })
 
@@ -211,7 +335,8 @@ describe('metadata builders', () => {
     const meta = buildOrganizationMeta({
       organization: createOrganization({
         address: '0xfallback',
-        account: { name: { default: 'Fallback Org' }, description: { default: '' } },
+        name: { default: 'Fallback Org' },
+        description: { default: '' },
       }),
       language: 'en',
       alternates: [],
@@ -226,7 +351,8 @@ describe('metadata builders', () => {
     const meta = buildOrganizationMeta({
       organization: createOrganization({
         address: '0xfallback',
-        account: { name: { default: '' }, description: { default: '' } },
+        name: { default: '' },
+        description: { default: '' },
       }),
       language: 'en',
       alternates: [],
@@ -270,10 +396,8 @@ describe('metadata builders', () => {
         description: { default: 'Vote for the next board members.', ca: 'Vota pels nous membres del consell.' },
       }),
       organization: createOrganization({
-        account: {
-          name: { default: 'Vocdoni Association', ca: 'Associació Vocdoni' },
-          description: { default: 'A digital voting organization for tests.', ca: 'Una organització de vot digital.' },
-        },
+        name: { default: 'Vocdoni Association', ca: 'Associació Vocdoni' },
+        description: { default: 'A digital voting organization for tests.', ca: 'Una organització de vot digital.' },
       }),
       language: 'ca',
       alternates: [],
@@ -457,9 +581,11 @@ describe('public language helpers', () => {
 })
 
 describe('isPublicPageNotFoundError', () => {
-  it('recognizes SDK public-page not-found errors', () => {
-    expect(isPublicPageNotFoundError(new ErrElectionNotFound())).toBe(true)
-    expect(isPublicPageNotFoundError(new ErrAccountNotFound())).toBe(true)
+  it('recognizes archive and SaaS not-found errors', () => {
+    expect(isPublicPageNotFoundError(new VocdoniApiError(404, {}, 'process not found'))).toBe(true)
+    expect(isPublicPageNotFoundError(new VocdoniApiError(400, {}, 'invalid id'))).toBe(true)
+    expect(isPublicPageNotFoundError(new VochainNotFoundError('election 0xdead'))).toBe(true)
+    expect(isPublicPageNotFoundError(new VocdoniApiError(500, {}, 'boom'))).toBe(false)
     expect(isPublicPageNotFoundError(new Error('other error'))).toBe(false)
   })
 })

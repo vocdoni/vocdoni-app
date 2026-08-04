@@ -1,21 +1,20 @@
 import { Box, Text } from '@chakra-ui/react'
-import { Pagination, RoutedPagination, usePagination, useRoutedPagination } from '@vocdoni/react-components/pagination'
+import { Pagination, RoutedPagination, usePagination, useRoutedPagination } from '@vocdoni/react-components'
 import { Trans } from 'react-i18next'
 import RowsPerPageSelect from './RowsPerPageSelect'
 
-const getCurrentPage = (currentPage, lastPage) => {
-  return Math.min(currentPage, lastPage)
-}
+// Clamp the displayed page to the known last page, guarding against a
+// stale/out-of-range page (e.g. a bookmarked ?page=9 of a list that now has
+// fewer pages) while lastPage is still 0/undefined during loading.
+const getCurrentPage = (page: number, lastPage: number) => (lastPage ? Math.max(1, Math.min(page, lastPage)) : page)
 
 const RoutedPaginatedTableFooter = () => {
-  const { pagination, initialPage } = useRoutedPagination()
+  const { pagination, page } = useRoutedPagination()
 
   if (!pagination) return null
 
-  const currentPage = getCurrentPage(pagination.currentPage, pagination.lastPage)
-
-  const page = initialPage === 0 ? currentPage + 1 : currentPage
-  const total = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage
+  const total = pagination.lastPage
+  const currentPage = getCurrentPage(page, total)
 
   return (
     <Box
@@ -29,8 +28,8 @@ const RoutedPaginatedTableFooter = () => {
       <RowsPerPageSelect />
       <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5}>
         <Text fontSize='sm'>
-          <Trans i18nKey='pagination.page_out_of' values={{ page, total }}>
-            Page {{ page }} of {{ total }}
+          <Trans i18nKey='pagination.page_out_of' values={{ page: currentPage, total }}>
+            Page {{ page: currentPage }} of {{ total }}
           </Trans>
         </Text>
         <RoutedPagination
@@ -44,21 +43,19 @@ const RoutedPaginatedTableFooter = () => {
 }
 
 export const PaginatedTableFooter = () => {
-  const { pagination, initialPage } = usePagination()
+  const { pagination, page } = usePagination()
 
   if (!pagination) return null
 
-  const currentPage = getCurrentPage(pagination.currentPage, pagination.lastPage)
-
-  const page = initialPage === 0 ? currentPage + 1 : currentPage
-  const total = initialPage === 0 ? pagination.lastPage + 1 : pagination.lastPage
+  const total = pagination.lastPage
+  const currentPage = getCurrentPage(page, total)
 
   return (
     <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5} justifyContent='space-between'>
       <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5}>
         <Text fontSize='sm'>
-          <Trans i18nKey='pagination.page_out_of' values={{ page, total }}>
-            Page {{ page }} of {{ total }}
+          <Trans i18nKey='pagination.page_out_of' values={{ page: currentPage, total }}>
+            Page {{ page: currentPage }} of {{ total }}
           </Trans>
         </Text>
         <Pagination pagination={pagination} buttonProps={{ size: 'xs', colorScheme: 'gray', variant: 'outline' }} />
