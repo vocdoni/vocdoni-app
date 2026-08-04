@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { dotobject } from '@vocdoni/sdk'
+import { dotobject } from '~utils/objects'
 import { ReactNode, createContext, useContext, useMemo } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
 import type { Plan } from '~components/Pricing/Plans'

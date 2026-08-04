@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
-import { PaginationResponse } from '@vocdoni/sdk'
+import { PaginationResponse } from '~src/queries/pagination'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~src/queries/keys'

@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
-import { PaginationResponse } from '@vocdoni/sdk'
+import { PaginationResponse } from '~src/queries/pagination'
 import { useOutletContext, useParams, useSearchParams } from 'react-router-dom'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'

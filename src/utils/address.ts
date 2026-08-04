@@ -1,5 +1,8 @@
 const normalizeAddress = (address: string) => address.toLowerCase().replace(/^0x/, '')
 
+/** Prefix a hex string with `0x` when missing, preserving case (replaces the legacy SDK's `ensure0x`). */
+export const ensure0x = (value: string): string => (value.startsWith('0x') ? value : `0x${value}`)
+
 /**
  * Case-insensitive hex address comparison, tolerant of a missing `0x` prefix
  * (SAAS process reads return `orgAddress` unprefixed while orgs/auth endpoints

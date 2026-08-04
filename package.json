@@ -40,7 +40,6 @@
     "@vocdoni/rainbowkit-wallets": "^1.0.0",
     "@vocdoni/react-components": "^2.1.0",
     "@vocdoni/react-providers": "^2.1.0",
-    "@vocdoni/sdk": "~0.9.3",
     "@wagmi/core": "^2.22.1",
     "chakra-react-select": "^6.1.1",
     "country-flag-emoji-json": "^2.0.0",

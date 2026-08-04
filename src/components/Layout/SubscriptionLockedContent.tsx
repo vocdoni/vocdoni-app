@@ -1,5 +1,5 @@
 import { Progress, Box, Button, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wrap } from '@chakra-ui/react'
-import { dotobject } from '@vocdoni/sdk'
+import { dotobject } from '~utils/objects'
 import { useTranslation } from 'react-i18next'
 import { LuLock, LuSparkles } from 'react-icons/lu'
 import { generatePath, Link as ReactRouterLink } from 'react-router-dom'

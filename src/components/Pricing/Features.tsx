@@ -1,5 +1,5 @@
 import { Flex, TagLabel, TagRoot, Text } from '@chakra-ui/react'
-import { dotobject } from '@vocdoni/sdk'
+import { dotobject } from '~utils/objects'
 import { Trans, useTranslation } from 'react-i18next'
 import { BooleanIcon } from '~components/Layout/BooleanIcon'
 import { isPlanNamed, PlanName, SubscriptionPermission } from '~constants'

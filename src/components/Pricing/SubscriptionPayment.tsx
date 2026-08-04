@@ -8,7 +8,7 @@ import {
 } from '@stripe/react-stripe-js/checkout'
 import { loadStripe, Stripe, StripeCheckoutOptions } from '@stripe/stripe-js'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { ensure0x } from '@vocdoni/sdk'
+import { ensure0x } from '~utils/address'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'

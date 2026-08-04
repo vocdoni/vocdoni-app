@@ -1,6 +1,5 @@
 import { Icon, IconButton } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import { ensure0x, InvalidElection } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { FaCog } from 'react-icons/fa'
 import { generatePath } from 'react-router-dom'
@@ -8,7 +7,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useProfile } from '~queries/account'
 import { Routes } from '~routes'
-import { sameAddress } from '~utils/address'
+import { ensure0x, sameAddress } from '~utils/address'
 
 /**
  * Admin shortcut shown on public process pages: it does not manage the process inline (a voter is
@@ -19,12 +18,11 @@ export const ManageProcessLink = () => {
   const { t } = useTranslation()
   const { election } = useElection()
   const { isAuthenticated } = useAuth()
-  const hasElection = !!election && !(election instanceof InvalidElection)
-  // Only members of an org can see it, so skip the request for anonymous voters and until a valid
+  // Only members of an org can see it, so skip the request for anonymous voters and until the
   // election is loaded (the component renders nothing in those cases anyway).
-  const { data: profile } = useProfile({ enabled: isAuthenticated && hasElection })
+  const { data: profile } = useProfile({ enabled: isAuthenticated && !!election })
 
-  if (!election || election instanceof InvalidElection) return null
+  if (!election) return null
 
   // The public pages still serve legacy elections (organizationId, 0x-prefixed) while the
   // dashboard serves the new process model (orgAddress, unprefixed) — tolerate both.
