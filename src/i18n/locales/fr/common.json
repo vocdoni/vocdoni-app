@@ -47,7 +47,6 @@
   "aside": {
     "has_already_voted": "Votre vote a bien été enregistré",
     "is_not_in_census": "Vous ne figurez pas sur la liste électorale",
-    "verify_vote_on_explorer": "Vérifier votre vote sur l'Explorer",
     "votes_one": "<span>1</span> <text>votant</text>",
     "votes_many": "",
     "votes_other": "<span>{{ count }}</span> <text>votants</text>",

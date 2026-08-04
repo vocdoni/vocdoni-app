@@ -47,7 +47,6 @@
   "aside": {
     "has_already_voted": "Η ψήφος σας έχει καταχωρηθεί σωστά",
     "is_not_in_census": "Δεν ανήκετε στο μητρώο ψηφοφόρων",
-    "verify_vote_on_explorer": "Επαλήθευση της ψήφου σας στον explorer",
     "votes_one": "<span>1</span> <text>ψηφοφόρος</text>",
     "votes_other": "<span>{{ count }}</span> <text>ψηφοφόροι</text>",
     "votes_weight_one": "<span>1</span> <text>ψήφος</text>",

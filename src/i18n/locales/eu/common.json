@@ -47,7 +47,6 @@
   "aside": {
     "has_already_voted": "Zure botoa behar bezala eman da",
     "is_not_in_census": "Ez zaude erroldan",
-    "verify_vote_on_explorer": "Egiaztatu zure botoa esploratzailean",
     "votes_one": "<span>1</span> <text>boto-emaile</text>",
     "votes_other": "<span>{{ count }}</span> <text>boto-emaile</text>",
     "votes_weight_one": "<span>1</span> <text>boto</text>",

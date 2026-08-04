@@ -1,20 +1,17 @@
-import { Flex, Link, Text } from '@chakra-ui/react'
+import { Flex, Text } from '@chakra-ui/react'
 import { VoteButton as CVoteButton, useElection, VoteWeight } from '@vocdoni/react-components'
 import { isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
 import { TFunction } from 'i18next'
 import { Trans, useTranslation } from 'react-i18next'
-import { RouterAwareLink } from '~components/RouterAwareLink'
 import { useAppEnv } from '~src/app-env'
-import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { CspAuth } from './CSP/CSPAuthModal'
 import LogoutButton from './LogoutButton'
 
 const ProcessAside = () => {
   const { t } = useTranslation()
-  const { election, status, results, connected, isInCensus, hasVoted, voteId } = useElection()
+  const { election, status, results, connected, isInCensus, hasVoted } = useElection()
   const appEnv = useAppEnv()
-  const explorerUrl = getVocdoniClientConfig(appEnv.VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
 
   if (!election) return null
 
@@ -83,7 +80,8 @@ const ProcessAside = () => {
         </Text>
       )}
 
-      {/* Vote menu: verify vote on the explorer once cast. */}
+      {/* The explorer verify links live on the Voted notice (one per question,
+          each with its own vote id) — the aside only confirms the vote landed. */}
       {renderVoteMenu && (
         <Flex flexDirection='column' alignItems='center' gap={3} w='full'>
           <Text
@@ -97,13 +95,6 @@ const ProcessAside = () => {
           >
             {t('aside.has_already_voted').toString()}
           </Text>
-          {voteId && (
-            <Link css={{ _hover: { textDecoration: 'underline' } }} asChild whiteSpace='nowrap'>
-              <RouterAwareLink to={`${explorerUrl}/verify/${voteId}`} target='_blank' rel='noreferrer'>
-                {t('aside.verify_vote_on_explorer')}
-              </RouterAwareLink>
-            </Link>
-          )}
         </Flex>
       )}
     </Flex>

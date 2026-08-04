@@ -47,7 +47,6 @@
   "aside": {
     "has_already_voted": "Deine Stimme wurde erfolgreich abgegeben",
     "is_not_in_census": "Du bist nicht in der Teilnehmerliste",
-    "verify_vote_on_explorer": "Stimme im Explorer überprüfen",
     "votes_one": "<span>1</span> <text>Wählende Person</text>",
     "votes_other": "<span>{{ count }}</span> <text>Wählende Personen</text>",
     "votes_weight_one": "<span>1</span> <text>Stimme</text>",

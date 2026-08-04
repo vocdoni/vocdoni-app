@@ -47,7 +47,6 @@
   "aside": {
     "has_already_voted": "O teu voto foi registado corretamente",
     "is_not_in_census": "Não constas da lista de participantes",
-    "verify_vote_on_explorer": "Verifica o teu voto no Explorer",
     "votes_one": "<span>1</span> <text>votante</text>",
     "votes_many": "",
     "votes_other": "<span>{{ count }}</span> <text>votantes</text>",

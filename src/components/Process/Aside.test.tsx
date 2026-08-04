@@ -147,7 +147,7 @@ describe('ProcessAside', () => {
     expect(screen.queryByText('CSP')).not.toBeInTheDocument()
   })
 
-  it('shows the has-voted message and the explorer verify link once the voter has cast a vote', () => {
+  it('shows the has-voted message without the explorer link once the voter has cast a vote', () => {
     setReactProvidersMock({
       useElection: () =>
         mockUseElection({
@@ -165,6 +165,7 @@ describe('ProcessAside', () => {
     render(<ProcessAside />)
 
     expect(screen.getByText('aside.has_already_voted')).toBeInTheDocument()
-    expect(screen.getByText('aside.verify_vote_on_explorer')).toBeInTheDocument()
+    // The explorer verify links moved to the Voted notice (one per question).
+    expect(screen.queryByText('aside.verify_vote_on_explorer')).not.toBeInTheDocument()
   })
 })
