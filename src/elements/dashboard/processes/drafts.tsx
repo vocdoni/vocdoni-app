@@ -30,6 +30,7 @@ import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFoo
 import { useCreateProcess } from '~components/Process/Create'
 import { Process, SelectorTypes } from '~components/Process/Create/common'
 import { votingProcessToCreateRequest, votingProcessToForm } from '~components/Process/Create/draft-mapping'
+import { clearStoredDraftId } from '~components/Process/Create/draft-storage'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
@@ -252,7 +253,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
 
   const deleteDraft = () => {
     deleteDraftMutation.mutate({ draftId: draft.id })
-    localStorage.removeItem('draft-id')
+    clearStoredDraftId(currentAddress, draft.id)
   }
 
   return (

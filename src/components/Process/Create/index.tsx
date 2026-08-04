@@ -15,7 +15,6 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useLocalStorage } from '@uidotdev/usehooks'
 import { useOrganization } from '@vocdoni/react-components'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type {
@@ -55,6 +54,7 @@ import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
+import { useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { useProcessTemplates } from './TemplateProvider'
@@ -631,7 +631,6 @@ const ProcessCreateView = () => {
   const { groupId } = useParams()
   const [searchParams] = useSearchParams()
   const draftId = searchParams.get('draftId')
-  const [storedDraftId, storeDraftId] = useLocalStorage('draft-id', null)
   const navigate = useNavigate()
   const location = useLocation()
   const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
@@ -647,6 +646,9 @@ const ProcessCreateView = () => {
   const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
   const { client: apiClient } = useApiClient()
+  // Draft ids are stored scoped to the acting organization so switching orgs never
+  // resumes (and tries to update) a draft owned by a different org
+  const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
   const { setStepDoneAsync } = useOrganizationSetup()
