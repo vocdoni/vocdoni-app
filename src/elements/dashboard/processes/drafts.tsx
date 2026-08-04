@@ -71,6 +71,9 @@ export const useDeleteDraft = () => {
     mutationKey: QueryKeys.organization.drafts(organization?.address),
     mutationFn: ({ draftId }: { draftId: string; silent?: boolean }) => client.elections.delete(draftId),
     onSuccess: (_data, variables) => {
+      // Only forget the resumable draft pointer once the server actually deleted
+      // it, and only when it points at this draft
+      clearStoredDraftId(organization?.address, variables.draftId)
       if (!variables?.silent) {
         toast({
           title: t('drafts.deleted_draft', {
@@ -253,7 +256,6 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
 
   const deleteDraft = () => {
     deleteDraftMutation.mutate({ draftId: draft.id })
-    clearStoredDraftId(currentAddress, draft.id)
   }
 
   return (

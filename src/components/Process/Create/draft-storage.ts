@@ -25,7 +25,9 @@ const readDraftIds = (): Record<string, string> => {
 
 export const getStoredDraftId = (address?: string | null): string | null => {
   const key = normalizeAddress(address)
-  return key ? (readDraftIds()[key] ?? null) : null
+  const draftId = key ? readDraftIds()[key] : null
+  // Guard against hand-edited/corrupted entries holding non-string values
+  return typeof draftId === 'string' ? draftId : null
 }
 
 export const storeDraftId = (address: string | null | undefined, draftId: string | null): void => {

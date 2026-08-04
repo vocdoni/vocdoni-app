@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook } from '@testing-library/react'
 import React from 'react'
+import { getStoredDraftId, storeDraftId } from '~components/Process/Create/draft-storage'
 import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { DraftsTable, useDeleteDraft } from './drafts'
@@ -45,6 +46,7 @@ describe('useDeleteDraft', () => {
   beforeEach(() => {
     deleteElectionMock.mockClear()
     toastSpy.mockClear()
+    localStorage.clear()
     setReactProvidersMock({
       useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
     })
@@ -85,6 +87,40 @@ describe('useDeleteDraft', () => {
 
     await expect(result.current.mutateAsync({ draftId: 'draft-3' })).rejects.toThrow(error)
     expect(toastSpy).not.toHaveBeenCalled()
+  })
+
+  it('clears the stored draft id after a successful delete', async () => {
+    storeDraftId('0xorg', 'draft-1')
+    const queryClient = new QueryClient()
+    const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
+
+    await act(async () => {
+      await result.current.mutateAsync({ draftId: 'draft-1' })
+    })
+
+    expect(getStoredDraftId('0xorg')).toBeNull()
+  })
+
+  it('keeps the stored draft id when the delete fails', async () => {
+    storeDraftId('0xorg', 'draft-1')
+    deleteElectionMock.mockRejectedValueOnce(new Error('boom'))
+    const queryClient = new QueryClient()
+    const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
+
+    await expect(result.current.mutateAsync({ draftId: 'draft-1' })).rejects.toThrow()
+    expect(getStoredDraftId('0xorg')).toBe('draft-1')
+  })
+
+  it('keeps the stored draft id when deleting a different draft', async () => {
+    storeDraftId('0xorg', 'draft-1')
+    const queryClient = new QueryClient()
+    const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
+
+    await act(async () => {
+      await result.current.mutateAsync({ draftId: 'draft-2' })
+    })
+
+    expect(getStoredDraftId('0xorg')).toBe('draft-1')
   })
 })
 

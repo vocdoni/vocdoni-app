@@ -70,6 +70,11 @@ describe('draft-storage', () => {
       storeDraftId(OrgA, 'draft-1')
       expect(getStoredDraftId(OrgA)).toBe('draft-1')
     })
+
+    it('ignores non-string values in stored contents', () => {
+      localStorage.setItem(DraftIdsStorageKey, JSON.stringify({ [OrgA]: 0 }))
+      expect(getStoredDraftId(OrgA)).toBeNull()
+    })
   })
 
   describe('clearStoredDraftId', () => {
