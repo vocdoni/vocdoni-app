@@ -16,6 +16,7 @@ import {
   Icon,
   Image,
   type ImageProps,
+  Link,
   Progress,
   Skeleton,
   Tag,
@@ -25,11 +26,18 @@ import {
   useRecipe,
   useSlotRecipe,
 } from '@chakra-ui/react'
-import { type ComponentsPartialDefinition, defineComponent, getElectionTitle } from '@vocdoni/react-components'
+import {
+  type ComponentsPartialDefinition,
+  defineComponent,
+  getElectionTitle,
+  useReactComponentsLocalize,
+} from '@vocdoni/react-components'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
 import { Markdown } from '~components/ui/Markdown'
+import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { resultsProgressRecipe } from '~theme/recipes/election'
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
@@ -394,10 +402,40 @@ export const electionComponents: ComponentsPartialDefinition = {
       )
     }
   ),
-  Voted: defineComponent<'Voted', AlertRootProps>(({ title, description, ...props }) => {
+  Voted: defineComponent<'Voted', AlertRootProps>(({ title, description, votes, ...props }) => {
     const recipe = useSlotRecipe({ key: 'Voted' })
     const styles = recipe()
     const { t } = useTranslation()
+    const localize = useReactComponentsLocalize()
+    const { VOCDONI_ENVIRONMENT } = useAppEnv()
+    const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+
+    // The SDK-joined `description` runs every vote line together inline and
+    // linkifies the bare nullifier as the href, so rebuild the lines from
+    // `votes`: one paragraph per voted question, with the vote id linking to
+    // the explorer verifier.
+    const linkifyToExplorer = (text: string, id: string) => {
+      const parts = text.split(id)
+      if (parts.length < 2) return text
+
+      return parts.flatMap((part, index) =>
+        index < parts.length - 1
+          ? [
+              part,
+              <Link
+                key={`verify-${index}`}
+                href={`${explorerUrl}/verify/${id}`}
+                target='_blank'
+                rel='noreferrer'
+                wordBreak='break-all'
+                css={{ textDecoration: 'underline' }}
+              >
+                {id}
+              </Link>,
+            ]
+          : [part]
+      )
+    }
 
     return (
       <Alert.Root
@@ -412,7 +450,20 @@ export const electionComponents: ComponentsPartialDefinition = {
       >
         <Alert.Indicator css={styles.icon} />
         <Alert.Title css={styles.title}>{t('vote.voted_title')}</Alert.Title>
-        <Alert.Description css={styles.description}>{description}</Alert.Description>
+        <Alert.Description css={styles.description} display='flex' flexDirection='column' gap={1}>
+          {votes.map((vote, index) => {
+            const line =
+              votes.length === 1 || !vote.questionTitle
+                ? localize('vote.voted_description', { id: vote.voteId })
+                : localize('vote.voted_question_description', {
+                    title: vote.questionTitle,
+                    id: vote.voteId,
+                    defaultValue: `Your vote id for "${vote.questionTitle}" is ${vote.voteId}.`,
+                  })
+
+            return <Text key={vote.questionId || index}>{linkifyToExplorer(line, vote.voteId)}</Text>
+          })}
+        </Alert.Description>
       </Alert.Root>
     )
   }),
