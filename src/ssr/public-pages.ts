@@ -1,6 +1,16 @@
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { Organization, Pagination, VotingProcessResponse } from '@vocdoni/api-types'
 import { getDefaultPublicLanguage, normalizePublicLanguageCandidate } from '~i18n/public-language'
+import {
+  fetchLegacyElection,
+  fetchLegacyOrganization,
+  fetchLegacyOrganizationElections,
+  isLegacyProcessId,
+  VochainNotFoundError,
+  type LegacyElection,
+  type LegacyElectionsPage,
+  type LegacyOrganization,
+} from '~src/legacy/vochain-archive'
 import { ensureAddressPrefix } from '~utils/address'
 
 type PublicLanguageAlternate = {
@@ -18,6 +28,71 @@ type ElectionsPageData = {
   elections: VotingProcessResponse[]
   pagination: Pagination
 }
+
+// Structural sources for the meta builders, satisfied by the v2 SaaS shapes
+// and by adapters over the vochain archive shapes (legacy era).
+type ProcessMetaSource = {
+  id: string
+  title?: LocalizedText
+  description?: LocalizedText
+}
+
+type OrganizationMetaSource = {
+  address: string
+  name?: LocalizedText
+  description?: LocalizedText
+  logo?: LocalizedText
+}
+
+export const legacyOrganizationToMetaSource = (organization?: LegacyOrganization): OrganizationMetaSource | undefined =>
+  organization && {
+    address: organization.address,
+    name: organization.account?.name,
+    description: organization.account?.description,
+    logo: organization.account?.avatar ? { default: organization.account.avatar } : undefined,
+  }
+
+/**
+ * Public process page data, era-discriminated by the process id shape:
+ * 64-hex vochain ids resolve against the read-only archive (finished legacy
+ * elections), 24-hex Mongo ObjectIDs against the SaaS API.
+ */
+type PublicProcessPageData =
+  | {
+      era: 'saas'
+      id: string
+      election: VotingProcessResponse
+      organization: OrganizationData
+      meta: PublicMeta
+    }
+  | {
+      era: 'archive'
+      id: string
+      legacyElection: LegacyElection
+      legacyOrganization?: LegacyOrganization
+      meta: PublicMeta
+    }
+
+/**
+ * Public organization page data. Organization addresses look the same in both
+ * eras, so the SaaS API is authoritative and the archive only serves addresses
+ * the SaaS API doesn't know (legacy-only organizations).
+ */
+type PublicOrganizationPageData =
+  | {
+      era: 'saas'
+      address: string
+      organization: OrganizationData
+      electionsPage: ElectionsPageData
+      meta: PublicMeta
+    }
+  | {
+      era: 'archive'
+      address: string
+      legacyOrganization: LegacyOrganization
+      legacyElectionsPage: LegacyElectionsPage
+      meta: PublicMeta
+    }
 
 type PublicMeta = {
   title: string
@@ -240,7 +315,7 @@ export const buildOrganizationMeta = ({
   language,
   alternates,
 }: {
-  organization: OrganizationData
+  organization: OrganizationMetaSource
   canonicalUrl?: string
   language: string
   alternates: PublicLanguageAlternate[]
@@ -284,20 +359,17 @@ export const buildProcessMeta = ({
   language,
   alternates,
 }: {
-  election: VotingProcessResponse
-  organization?: OrganizationData
+  election: ProcessMetaSource
+  organization?: OrganizationMetaSource
   canonicalUrl?: string
   language: string
   alternates: PublicLanguageAlternate[]
 }): PublicMeta => {
-  const electionTitle = getLocalizedText(election.title as LocalizedText | undefined, language) || election.id
+  const electionTitle = getLocalizedText(election.title, language) || election.id
   const organizationName = getLocalizedText(organization?.name, language)
   const description =
-    buildMetaDescription(
-      getLocalizedText(election.description as LocalizedText | undefined, language),
-      electionTitle,
-      organizationName
-    ) || electionTitle
+    buildMetaDescription(getLocalizedText(election.description, language), electionTitle, organizationName) ||
+    electionTitle
 
   const socialImage = buildSocialImageUrl(getLocalizedRawText(organization?.logo, language) || undefined, canonicalUrl)
   const title = buildMetaTitle(electionTitle, organizationName)
@@ -327,49 +399,103 @@ export const buildProcessMeta = ({
   }
 }
 
+const isSaasNotFoundError = (error: unknown) =>
+  error instanceof VocdoniApiError && (error.status === 404 || error.status === 400)
+
 export const loadOrganizationPageData = async ({
   client,
+  vochainGateway,
   address,
   canonicalUrl,
   language,
   alternates,
 }: {
   client: PublicPageClient
+  /** When set, SaaS-unknown addresses fall back to the read-only vochain archive. */
+  vochainGateway?: string
   address: string
   canonicalUrl?: string
   language: string
   alternates: PublicLanguageAlternate[]
-}) => {
-  const organization = await client.organizations.get(address)
-  // SAAS list pages are 1-based.
-  const { processes, pagination } = await client.elections.list({ orgAddress: organization.address, page: 1 })
+}): Promise<PublicOrganizationPageData> => {
+  try {
+    const organization = await client.organizations.get(address)
+    // SAAS list pages are 1-based.
+    const { processes, pagination } = await client.elections.list({ orgAddress: organization.address, page: 1 })
+
+    return {
+      era: 'saas',
+      address,
+      organization,
+      electionsPage: { elections: processes, pagination } satisfies ElectionsPageData,
+      meta: buildOrganizationMeta({ organization, canonicalUrl, language, alternates }),
+    }
+  } catch (error) {
+    if (!vochainGateway || !isSaasNotFoundError(error)) throw error
+  }
+
+  // Organization addresses look the same in both eras, so the archive serves
+  // the addresses the SaaS API doesn't know (legacy-only organizations).
+  const legacyOrganization = await fetchLegacyOrganization(vochainGateway, address)
+  const legacyElectionsPage = await fetchLegacyOrganizationElections(vochainGateway, legacyOrganization.address, 0)
 
   return {
+    era: 'archive',
     address,
-    organization,
-    electionsPage: { elections: processes, pagination } satisfies ElectionsPageData,
-    meta: buildOrganizationMeta({ organization, canonicalUrl, language, alternates }),
+    legacyOrganization,
+    legacyElectionsPage,
+    meta: buildOrganizationMeta({
+      organization: legacyOrganizationToMetaSource(legacyOrganization)!,
+      canonicalUrl,
+      language,
+      alternates,
+    }),
   }
 }
 
 export const loadProcessPageData = async ({
   client,
+  vochainGateway,
   id,
   canonicalUrl,
   language,
   alternates,
 }: {
   client: PublicPageClient
+  /** When set, 64-hex vochain ids resolve against the read-only archive. */
+  vochainGateway?: string
   id: string
   canonicalUrl?: string
   language: string
   alternates: PublicLanguageAlternate[]
-}) => {
+}): Promise<PublicProcessPageData> => {
+  if (vochainGateway && isLegacyProcessId(id)) {
+    const legacyElection = await fetchLegacyElection(vochainGateway, id)
+    const legacyOrganization = await fetchLegacyOrganization(vochainGateway, legacyElection.organizationId).catch(
+      () => undefined
+    )
+
+    return {
+      era: 'archive',
+      id,
+      legacyElection,
+      legacyOrganization,
+      meta: buildProcessMeta({
+        election: legacyElection,
+        organization: legacyOrganizationToMetaSource(legacyOrganization),
+        canonicalUrl,
+        language,
+        alternates,
+      }),
+    }
+  }
+
   const election = await client.elections.get(id)
   // Process reads return orgAddress unprefixed; the organization endpoint wants 0x.
   const organization = await client.organizations.get(ensureAddressPrefix(election.orgAddress))
 
   return {
+    era: 'saas',
     id,
     election,
     organization,
@@ -378,9 +504,10 @@ export const loadProcessPageData = async ({
 }
 
 // The SaaS API answers unknown ids/addresses with 404 and malformed ones with
-// 400 — both should render the public 404 page rather than a server error.
+// 400, and the archive throws VochainNotFoundError for ids the gateway doesn't
+// know — all should render the public 404 page rather than a server error.
 export const isPublicPageNotFoundError = (error: unknown) =>
-  error instanceof VocdoniApiError && (error.status === 404 || error.status === 400)
+  isSaasNotFoundError(error) || error instanceof VochainNotFoundError
 
 export const serializePublicPageErrorDetails = (error: unknown) => {
   if (!(error instanceof Error)) {
@@ -408,4 +535,14 @@ export {
 
 export { getDefaultPublicLanguage, normalizePublicLanguageCandidate }
 
-export type { ElectionsPageData, OrganizationData, PublicLanguageAlternate, PublicMeta, PublicPageClient }
+export type {
+  ElectionsPageData,
+  OrganizationData,
+  OrganizationMetaSource,
+  ProcessMetaSource,
+  PublicLanguageAlternate,
+  PublicMeta,
+  PublicOrganizationPageData,
+  PublicPageClient,
+  PublicProcessPageData,
+}

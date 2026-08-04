@@ -1,9 +1,9 @@
 import { Flex, Text } from '@chakra-ui/react'
-import { ErrAccountNotFound, ErrAddressMalformed, ErrCantParseElectionID, ErrElectionNotFound } from '@vocdoni/sdk'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useRouteError } from 'react-router-dom'
 import { RiErrorWarningLine } from 'react-icons/ri'
 import { useAuth } from '~components/Auth/useAuth'
+import { isPublicPageNotFoundError } from '~src/ssr/public-pages'
 import { getNotFoundReturnPath, NotFoundView } from './NotFound'
 
 export type ErrorViewProps = {
@@ -13,11 +13,8 @@ export type ErrorViewProps = {
   returnHomeHref?: string
 }
 
-export const isNotFoundError = (error: unknown) =>
-  error instanceof ErrElectionNotFound ||
-  error instanceof ErrCantParseElectionID ||
-  error instanceof ErrAddressMalformed ||
-  error instanceof ErrAccountNotFound
+// SaaS 404/400 responses and archive VochainNotFoundError both mean "not found".
+export const isNotFoundError = isPublicPageNotFoundError
 
 export const ErrorView = ({ isNotFound = false, message, onReturnHome, returnHomeHref }: ErrorViewProps) => {
   const { t } = useTranslation()

@@ -1093,12 +1093,14 @@
     "dashboard": "Tauler de control",
     "date_format": "d MMM y",
     "elections": "Votacions",
+    "elections_list": "Processos de votació",
     "elections_list_empty": {
       "alt": "Imatge que il·lustra que l'organització és buida",
       "description": "Com a organitzador, tens la capacitat de crear processos de votació personalitzats per a la teva comunitat. Aquests processos ofereixen una àmplia gamma de flexibilitat, incloent opcions com un cens on els votants han d'autenticar-se utilitzant dades personalitzades (com ara nom d'usuari, contrasenya i data de naixement), un sistema basat en tokens que permet la participació de tots els titulars de tokens o una llista blanca que utilitza adreces de cartera per determinar l'elegibilitat.",
       "not_owner": "Aquesta organització encara no té votacions.",
       "title": "Crea la teva primera votació"
     },
+    "elections_list_load_more": "Carrega’n més",
     "max_census": "Cens màxim per votació",
     "max_processes": "Votacions per any¹",
     "no_organization_title": "Encara no pertanys a cap organització!",
@@ -1349,6 +1351,7 @@
       "ended": "Finalitzat",
       "paused": "Procés en pausa",
       "paused_description": "No és possible votar ara mateix.",
+      "results": "Resultats disponibles",
       "unknown": "Desconegut",
       "upcoming": "Previst"
     },
@@ -1662,6 +1665,11 @@
   },
   "promo_code": "Codi promocional",
   "promo_code_required": "Cal introduir un codi",
+  "public_process": {
+    "no_tally": "Sense recompte",
+    "verify": "Verifica a l’explorador de la blockchain:",
+    "verify_process": "Veure el procés"
+  },
   "questions_and_results": "Preguntes i resultats",
   "registration_failed": "El registre ha fallat",
   "registration_successful": "Registre completat correctament",

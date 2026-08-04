@@ -1,6 +1,7 @@
 import { render } from 'vike/abort'
 import type { PageContextServer } from 'vike/types'
 import { getServerAppEnv } from '~src/app-env-server'
+import { getVochainGatewayUrl } from '~src/legacy/vochain-archive'
 import { createVocdoniApiClient } from '~src/providers/vocdoni-client-config'
 import {
   getPublicLanguageAlternates,
@@ -71,6 +72,7 @@ const renderNotFoundIfNeeded = (error: unknown) => {
 
 export const loadOrganizationPublicPageData = async (pageContext: PageContextServer) => {
   const client = createVocdoniApiClient(getServerAppEnv().SAAS_URL!)
+  const vochainGateway = getVochainGatewayUrl(getServerAppEnv().VOCDONI_ENVIRONMENT)
   const origin = resolvePublicOrigin(pageContext)
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
   const address = pageContext.routeParams.address
@@ -87,6 +89,7 @@ export const loadOrganizationPublicPageData = async (pageContext: PageContextSer
   try {
     return await loadOrganizationPageData({
       client,
+      vochainGateway,
       address,
       language,
       canonicalUrl: origin ? `${origin}${pathnameByLanguage[language]}` : undefined,
@@ -105,6 +108,7 @@ type ProcessPathBuilder = (params: { id: string; language: string }) => string
 
 const loadProcessPublicPageDataWith = async (pageContext: PageContextServer, buildPath: ProcessPathBuilder) => {
   const client = createVocdoniApiClient(getServerAppEnv().SAAS_URL!)
+  const vochainGateway = getVochainGatewayUrl(getServerAppEnv().VOCDONI_ENVIRONMENT)
   const origin = resolvePublicOrigin(pageContext)
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
   const id = pageContext.routeParams.id
@@ -121,6 +125,7 @@ const loadProcessPublicPageDataWith = async (pageContext: PageContextServer, bui
   try {
     return await loadProcessPageData({
       client,
+      vochainGateway,
       id,
       language,
       canonicalUrl: origin ? `${origin}${pathnameByLanguage[language]}` : undefined,

@@ -1,10 +1,21 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useLoaderData } from 'react-router-dom'
+import type { LegacyElection } from '~src/legacy/vochain-archive'
 import { ensureAddressPrefix } from '~utils/address'
 import PublicProcessPage from './PublicPage'
 
+type ProcessRouteData =
+  | { era: 'saas'; election: VotingProcessResponse }
+  | { era: 'archive'; legacyElection: LegacyElection }
+
 const Process = () => {
-  const election = useLoaderData() as VotingProcessResponse
+  const data = useLoaderData() as ProcessRouteData
+
+  if (data.era === 'archive') {
+    return <PublicProcessPage id={data.legacyElection.id} legacyElection={data.legacyElection} />
+  }
+
+  const { election } = data
 
   // The process read returns orgAddress unprefixed; the organization endpoints
   // expect the 0x-prefixed form.

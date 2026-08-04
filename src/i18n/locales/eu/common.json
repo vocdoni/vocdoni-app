@@ -1075,12 +1075,14 @@
     "dashboard": "Panela",
     "date_format": "y MMM d",
     "elections": "Bozketak",
+    "elections_list": "Bozketa-prozesuak",
     "elections_list_empty": {
       "alt": "Erakundea hutsik dagoela erakusten duen irudia",
       "description": "Antolatzaile gisa, zure komunitateari egokitutako bozketa-prozesuak diseinatzeko gaitasuna duzu. Prozedura hauek malgutasun handia eskaintzen dute: hautesleek datu pertsonalizatuekin (erabiltzaile-izena, pasahitza eta jaiotegunarekin, kasu) autentifikatzen diren errolda, token guztien jabeei parte hartzeko aukera ematen dien token-sistema, edo Web3 helbideak hautagarritasun-irizpide gisa erabiltzen dituen zerrenda zuria.",
       "not_owner": "Erakunde honek oraindik ez du bozketa-prozesurik",
       "title": "Sortu zure lehen bozketa-prozesua"
     },
+    "elections_list_load_more": "Kargatu gehiago",
     "max_census": "Bozketako gehienezko errolda",
     "max_processes": "Bozketak urteko¹",
     "no_organization_title": "Oraindik ez zara erakunde batekoa!",
@@ -1326,6 +1328,7 @@
       "ended": "Amaitua",
       "paused": "Prozesua etenda",
       "paused_description": "Bozketa une honetan ez dago eskuragarri",
+      "results": "Emaitzak eskuragarri",
       "unknown": "Ezezaguna",
       "upcoming": "Datorrena"
     },
@@ -1579,7 +1582,7 @@
       "explorer": "Ikusi egiaztapen esploratzailean",
       "paragraph": "Prozesuaren datu guztiak blockchain azpiegituran inskribatuta daude eta independenteki egiazta daitezke hurrengo esploratzaile publikoaren bidez:",
       "procedure_title": "Egiaztapen-prozedura",
-      "question_n": "",
+      "question_n": "{{number}}. galdera",
       "step_1": "Ireki egiaztapen esploratzailearen esteka. Orrialde honek bozketa-prozesuaren erregistro tekniko publikoa du.",
       "step_2": "Egiaztatu esploratzaileko Prozesu IDa txosteneko Prozesu IDarekin bat datorrela. Horrek ziurtatzen du bi dokumentuak bozketa-prozesu bera aipatzen dutela.",
       "step_4": "Egiaztatu erregistratutako papereten kopurua txostenean agertzen den parte-hartze-daturekin bat datorrela.",
@@ -1637,6 +1640,11 @@
   },
   "promo_code": "Sustapen-kodea",
   "promo_code_required": "Kodea bete beharrekoa da",
+  "public_process": {
+    "no_tally": "Zenbaketarik ez",
+    "verify": "Egiaztatu blockchain esploratzailean:",
+    "verify_process": "Ikusi prozesua"
+  },
   "questions_and_results": "Galderak eta emaitzak",
   "registration_failed": "Errorea izen-ematean",
   "registration_successful": "Izen-ematea behar bezala egin da",

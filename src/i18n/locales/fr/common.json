@@ -1093,12 +1093,14 @@
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Votes",
+    "elections_list": "Processus de vote",
     "elections_list_empty": {
       "alt": "Image illustrant que l'organisation est vide",
       "description": "En tant qu'organisateur, vous pouvez concevoir des processus de vote sur mesure pour votre communauté. Ces procédures offrent une grande flexibilité et permettent par exemple une liste électorale où les électeurs s'authentifient avec des données personnalisées (nom d'utilisateur, mot de passe, date de naissance), un système basé sur des jetons permettant à tous les détenteurs de jetons de participer, ou une liste blanche s'appuyant sur des adresses de portefeuille pour l'éligibilité.",
       "not_owner": "Cette organisation n'a pas encore de processus de vote",
       "title": "Créez votre premier processus de vote"
     },
+    "elections_list_load_more": "Charger plus",
     "max_census": "Liste électorale maximale par vote",
     "max_processes": "Votes par an¹",
     "no_organization_title": "Vous n'appartenez encore à aucune organisation !",
@@ -1349,6 +1351,7 @@
       "ended": "Terminé",
       "paused": "Processus en pause",
       "paused_description": "Le vote n'est pas possible pour le moment",
+      "results": "Résultats disponibles",
       "unknown": "Inconnu",
       "upcoming": "À venir"
     },
@@ -1603,7 +1606,7 @@
       "explorer": "Explorer de vérification",
       "paragraph": "Toutes les données du processus ont été enregistrées sur une infrastructure basée sur la blockchain et peuvent être vérifiées de manière indépendante via l'explorateur public suivant :",
       "procedure_title": "Procédure de vérification",
-      "question_n": "",
+      "question_n": "Question {{number}}",
       "step_1": "Ouvrez le lien de l'Explorer de vérification. Cette page contient l'enregistrement technique public du processus de vote.",
       "step_2": "Vérifiez que l'identifiant du processus affiché dans l'Explorer est identique à celui indiqué dans ce rapport. Cela confirme que les deux documents font référence au même processus de vote.",
       "step_4": "Vérifiez que le nombre de bulletins enregistrés correspond aux données de participation indiquées dans ce rapport.",
@@ -1662,6 +1665,11 @@
   },
   "promo_code": "Code promotionnel",
   "promo_code_required": "Le code promotionnel est obligatoire",
+  "public_process": {
+    "no_tally": "Pas de décompte",
+    "verify": "Vérifiez sur l’explorateur de la blockchain :",
+    "verify_process": "Voir le processus"
+  },
   "questions_and_results": "Questions et résultats",
   "registration_failed": "Échec de l'inscription",
   "registration_successful": "Inscription réussie",

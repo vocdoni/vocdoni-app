@@ -1093,12 +1093,14 @@
     "dashboard": "Painel",
     "date_format": "d MMM y",
     "elections": "Votações",
+    "elections_list": "Processos de votação",
     "elections_list_empty": {
       "alt": "Imagem ilustrando que a organização está vazia",
       "description": "Como organizador, você tem a capacidade de criar processos de votação personalizados para a sua comunidade. Esses processos oferecem grande flexibilidade, permitindo opções como um censo em que os eleitores se autenticam com dados personalizados (como nome de usuário, senha e data de nascimento), um sistema baseado em tokens que permite a participação de todos os detentores de tokens, ou uma lista de permissões que usa endereços de carteira como critério de elegibilidade.",
       "not_owner": "Esta organização ainda não tem processos de votação",
       "title": "Crie seu primeiro processo de votação"
     },
+    "elections_list_load_more": "Carregar mais",
     "max_census": "Máximo de participantes por votação",
     "max_processes": "Votações por ano¹",
     "no_organization_title": "Você ainda não pertence a nenhuma organização!",
@@ -1349,6 +1351,7 @@
       "ended": "Encerrado",
       "paused": "Processo pausado",
       "paused_description": "A votação não está disponível no momento",
+      "results": "Resultados disponíveis",
       "unknown": "Desconhecido",
       "upcoming": "Em breve"
     },
@@ -1603,7 +1606,7 @@
       "explorer": "Ver no Explorer de verificação",
       "paragraph": "Todos os dados do processo foram registrados em uma infraestrutura baseada em blockchain e podem ser verificados de forma independente por meio do seguinte Explorer público:",
       "procedure_title": "Procedimento de verificação",
-      "question_n": "",
+      "question_n": "Pergunta {{number}}",
       "step_1": "Abrir o link do Explorer de verificação. Esta página contém o registro técnico público do processo de votação.",
       "step_2": "Verificar se o ID do processo no Explorer é idêntico ao ID do processo neste relatório. Isso confirma que ambos os documentos se referem ao mesmo processo de votação.",
       "step_4": "Verificar se o número de cédulas registradas corresponde aos dados de participação apresentados neste relatório.",
@@ -1662,6 +1665,11 @@
   },
   "promo_code": "Código promocional",
   "promo_code_required": "O código promocional é obrigatório",
+  "public_process": {
+    "no_tally": "Sem contagem",
+    "verify": "Verifique no explorador da blockchain:",
+    "verify_process": "Ver processo"
+  },
   "questions_and_results": "Perguntas e resultados",
   "registration_failed": "Falha no cadastro",
   "registration_successful": "Cadastro realizado com sucesso",

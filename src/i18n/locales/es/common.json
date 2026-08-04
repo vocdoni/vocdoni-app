@@ -1093,12 +1093,14 @@
     "dashboard": "Panel",
     "date_format": "d MMM y",
     "elections": "Votaciones",
+    "elections_list": "Procesos de votación",
     "elections_list_empty": {
       "alt": "Imagen que ilustra que la organización está vacía",
       "description": "Como organizador, tienes la capacidad de diseñar procesos de votación adaptados a tu comunidad. Estos procedimientos ofrecen una gran flexibilidad, permitiendo opciones como un censo en el que los votantes se autentican con datos personalizados (como nombre de usuario, contraseña y fecha de nacimiento), un sistema basado en tokens que permite participar a todos los poseedores de tokens, o una lista blanca que usa direcciones Web3 como criterio de elegibilidad.",
       "not_owner": "Esta organización aún no tiene procesos de votación",
       "title": "Crea tu primer proceso de votación"
     },
+    "elections_list_load_more": "Cargar más",
     "max_census": "Censo máximo por votación",
     "max_processes": "Votaciones por año¹",
     "no_organization_title": "¡Aún no perteneces a ninguna organización!",
@@ -1349,6 +1351,7 @@
       "ended": "Finalizado",
       "paused": "Proceso en pausa",
       "paused_description": "La votación no está disponible en este momento",
+      "results": "Resultados disponibles",
       "unknown": "Desconocido",
       "upcoming": "Próximo"
     },
@@ -1662,6 +1665,11 @@
   },
   "promo_code": "Código promocional",
   "promo_code_required": "El código es obligatorio",
+  "public_process": {
+    "no_tally": "Sin recuento",
+    "verify": "Verifica en el explorador de la blockchain:",
+    "verify_process": "Ver proceso"
+  },
   "questions_and_results": "Preguntas y resultados",
   "registration_failed": "Error en el registro",
   "registration_successful": "Registro realizado correctamente",

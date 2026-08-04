@@ -1075,12 +1075,14 @@
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Votings",
+    "elections_list": "Voting processes",
     "elections_list_empty": {
       "alt": "Image illustrating that the organization is empty",
       "description": "As an organizer, you have the capability to design tailored voting processes for your community. These procedures provide extensive flexibility, allowing options such as a census where voters authenticate using custom data (such as username, password, and birthday), a token-based system enabling all tokenholders to participate, or a whitelist that uses wallet addresses for eligibility.",
       "not_owner": "This organization has no voting processes yet",
       "title": "Create your first voting process"
     },
+    "elections_list_load_more": "Load more",
     "max_census": "Max census per vote",
     "max_processes": "Votes per year¹",
     "no_organization_title": "You don't belong to any organization yet!",
@@ -1326,6 +1328,7 @@
       "ended": "Ended",
       "paused": "Process paused",
       "paused_description": "Voting is not possible right now",
+      "results": "Results available",
       "unknown": "Unknown",
       "upcoming": "Upcoming"
     },
@@ -1637,6 +1640,11 @@
   },
   "promo_code": "Promotion Code",
   "promo_code_required": "Promotion code is required",
+  "public_process": {
+    "no_tally": "No tally",
+    "verify": "Verify on the blockchain explorer:",
+    "verify_process": "View process"
+  },
   "questions_and_results": "Questions and results",
   "registration_failed": "Registration failed",
   "registration_successful": "Registration successful",

@@ -1075,12 +1075,14 @@
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Abstimmungen",
+    "elections_list": "Abstimmungsprozesse",
     "elections_list_empty": {
       "alt": "Bild, das eine leere Organisation darstellt",
       "description": "Als Organisator kannst du maßgeschneiderte Abstimmungsprozesse für deine Community gestalten. Diese Prozesse bieten große Flexibilität – etwa eine Teilnehmerliste, bei der sich Wählende mit eigenen Daten (z. B. Benutzername, Passwort und Geburtsdatum) authentifizieren, ein tokenbasiertes System, das allen Tokenhaltern die Teilnahme ermöglicht, oder eine Whitelist, die Wallet-Adressen zur Teilnahmeberechtigung nutzt.",
       "not_owner": "Diese Organisation hat noch keine Abstimmungsprozesse",
       "title": "Erstelle deinen ersten Abstimmungsprozess"
     },
+    "elections_list_load_more": "Mehr laden",
     "max_census": "Max. Teilnehmerzahl pro Abstimmung",
     "max_processes": "Abstimmungen pro Jahr¹",
     "no_organization_title": "Du gehörst noch keiner Organisation an!",
@@ -1326,6 +1328,7 @@
       "ended": "Beendet",
       "paused": "Prozess pausiert",
       "paused_description": "Abstimmen ist gerade nicht möglich",
+      "results": "Ergebnisse verfügbar",
       "unknown": "Unbekannt",
       "upcoming": "Bevorstehend"
     },
@@ -1579,7 +1582,7 @@
       "explorer": "Verifizierungs-Explorer",
       "paragraph": "Alle Prozessdaten wurden in einer blockchain-basierten Infrastruktur gespeichert und können über den folgenden öffentlichen Explorer unabhängig überprüft werden:",
       "procedure_title": "Verifizierungsverfahren",
-      "question_n": "",
+      "question_n": "Frage {{number}}",
       "step_1": "Öffne den Link zum Verifizierungs-Explorer. Diese Seite enthält das öffentliche technische Protokoll des Abstimmungsprozesses.",
       "step_2": "Prüfe, ob die Prozess-ID im Explorer mit der Prozess-ID in diesem Bericht übereinstimmt. Dies bestätigt, dass sich beide Dokumente auf denselben Abstimmungsprozess beziehen.",
       "step_4": "Prüfe, ob die Anzahl der erfassten Stimmzettel mit den in diesem Bericht angezeigten Beteiligungsdaten übereinstimmt.",
@@ -1637,6 +1640,11 @@
   },
   "promo_code": "Aktionscode",
   "promo_code_required": "Aktionscode ist erforderlich",
+  "public_process": {
+    "no_tally": "Keine Auszählung",
+    "verify": "Auf dem Blockchain-Explorer überprüfen:",
+    "verify_process": "Prozess ansehen"
+  },
   "questions_and_results": "Fragen und Ergebnisse",
   "registration_failed": "Registrierung fehlgeschlagen",
   "registration_successful": "Registrierung erfolgreich",

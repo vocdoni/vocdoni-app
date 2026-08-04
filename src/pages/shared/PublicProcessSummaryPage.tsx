@@ -1,4 +1,3 @@
-import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useData } from 'vike-react/useData'
 import { usePageContext } from 'vike-react/usePageContext'
 import PublicLayout from '~elements/PublicLayout'
@@ -6,17 +5,10 @@ import PublicProcessSummaryView from '~elements/processes/PublicSummary'
 import { AppProviders } from '~src/Providers'
 import { getPublicLanguageLinksFromMeta } from '~src/pages/shared/publicPageData'
 import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
-import type { OrganizationData, PublicMeta } from '~src/ssr/public-pages'
-
-type ProcessPageData = {
-  id: string
-  election: VotingProcessResponse
-  organization: OrganizationData
-  meta: PublicMeta
-}
+import type { PublicProcessPageData } from '~src/ssr/public-pages'
 
 export default function PublicProcessSummaryPage() {
-  const data = useData<ProcessPageData>()
+  const data = useData<PublicProcessPageData>()
   const pageContext = usePageContext()
   const pathname = pageContext.urlPathname
 
@@ -32,11 +24,15 @@ export default function PublicProcessSummaryPage() {
         enableChat={false}
         showDashboardButton={false}
       >
-        <PublicProcessSummaryView
-          id={data.id}
-          election={data.election}
-          organizationAddress={data.organization?.address}
-        />
+        {data.era === 'archive' ? (
+          <PublicProcessSummaryView id={data.id} legacyElection={data.legacyElection} />
+        ) : (
+          <PublicProcessSummaryView
+            id={data.id}
+            election={data.election}
+            organizationAddress={data.organization?.address}
+          />
+        )}
       </PublicLayout>
     </AppProviders>
   )

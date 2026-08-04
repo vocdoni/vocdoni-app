@@ -29,11 +29,16 @@ describe('public page data loaders', () => {
     delete process.env.APP_URL
   })
 
-  it('renders a 404 when the organization does not exist', async () => {
+  it('renders a 404 when neither the SaaS API nor the archive know the organization', async () => {
     createVocdoniApiClient.mockReturnValue({
       organizations: { get: vi.fn().mockRejectedValue(new VocdoniApiError(404, {}, 'account not found')) },
       elections: { get: vi.fn(), list: vi.fn() },
     })
+    // SaaS-unknown addresses fall back to the vochain archive; a gateway miss
+    // must still render the public 404.
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response(JSON.stringify({ error: 'account not found' }), { status: 404 }) as Response)
 
     try {
       await loadOrganizationPublicPageData({
@@ -43,7 +48,9 @@ describe('public page data loaders', () => {
       throw new Error('Expected loadOrganizationPublicPageData() to throw')
     } catch (error) {
       expect((error as any)._pageContextAbort.abortStatusCode).toBe(404)
-      expect((error as any)._pageContextAbort.abortReason).toBe('account not found')
+      expect((error as any)._pageContextAbort.abortReason).toContain('not found')
+    } finally {
+      fetchSpy.mockRestore()
     }
   })
 

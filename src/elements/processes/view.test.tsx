@@ -44,7 +44,7 @@ describe('Process view', () => {
         {
           path: '/processes/:id',
           id: 'process-view',
-          loader: async () => ({ id: '123', orgAddress: 'abc' }),
+          loader: async () => ({ era: 'saas', election: { id: '123', orgAddress: 'abc' } }),
           element: <Process />,
         },
       ],

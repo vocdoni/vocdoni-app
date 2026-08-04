@@ -1093,12 +1093,14 @@
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Votações",
+    "elections_list": "Processos de votação",
     "elections_list_empty": {
       "alt": "Imagem que ilustra que a organização está vazia",
       "description": "Enquanto organizador, podes conceber processos de votação à medida da tua comunidade. Estes procedimentos oferecem grande flexibilidade, permitindo opções como uma lista de participantes em que os votantes se autenticam com dados personalizados (nome de utilizador, palavra-passe e data de nascimento), um sistema baseado em tokens que permite a participação de todos os detentores de tokens ou uma lista branca que utiliza endereços de carteira para a elegibilidade.",
       "not_owner": "Esta organização ainda não tem processos de votação",
       "title": "Cria o teu primeiro processo de votação"
     },
+    "elections_list_load_more": "Carregar mais",
     "max_census": "Participantes máx. por votação",
     "max_processes": "Votações por ano¹",
     "no_organization_title": "Ainda não pertences a nenhuma organização!",
@@ -1349,6 +1351,7 @@
       "ended": "Terminado",
       "paused": "Processo em pausa",
       "paused_description": "Não é possível votar de momento",
+      "results": "Resultados disponíveis",
       "unknown": "Desconhecido",
       "upcoming": "Por iniciar"
     },
@@ -1603,7 +1606,7 @@
       "explorer": "Ver no explorador de verificação",
       "paragraph": "Todos os dados do processo foram registados numa infraestrutura baseada em blockchain e podem ser verificados de forma independente através do seguinte Explorer público:",
       "procedure_title": "Procedimento de verificação",
-      "question_n": "",
+      "question_n": "Pergunta {{number}}",
       "step_1": "Abre o link do explorador de verificação. Esta página contém o registo técnico público do processo de votação.",
       "step_2": "Verifica que o ID do processo no explorador é idêntico ao ID do processo neste relatório. Isto confirma que ambos os documentos se referem ao mesmo processo de votação.",
       "step_4": "Verifica que o número de boletins registados corresponde aos dados de participação apresentados neste relatório.",
@@ -1662,6 +1665,11 @@
   },
   "promo_code": "Código promocional",
   "promo_code_required": "O código promocional é obrigatório",
+  "public_process": {
+    "no_tally": "Sem contagem",
+    "verify": "Verifique no explorador da blockchain:",
+    "verify_process": "Ver processo"
+  },
   "questions_and_results": "Perguntas e resultados",
   "registration_failed": "Falha no registo",
   "registration_successful": "Registo concluído com sucesso",
