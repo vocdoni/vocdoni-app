@@ -45,4 +45,28 @@ describe('LegalNotice', () => {
 
     expect(screen.getByText('0xabc')).toBeInTheDocument()
   })
+
+  it('renders from the orgName prop without reading the organization context', () => {
+    setReactProvidersMock({
+      useOrganization: () => {
+        throw new Error('useOrganization() must be used inside <OrganizationProvider>')
+      },
+    })
+
+    render(<LegalNotice orgName='Legacy org' />)
+
+    expect(screen.getByText('Legacy org')).toBeInTheDocument()
+  })
+
+  it('renders nothing when the orgName prop is empty', () => {
+    setReactProvidersMock({
+      useOrganization: () => {
+        throw new Error('useOrganization() must be used inside <OrganizationProvider>')
+      },
+    })
+
+    render(<LegalNotice orgName='' />)
+
+    expect(screen.queryByTestId('layout-legal-notice')).not.toBeInTheDocument()
+  })
 })

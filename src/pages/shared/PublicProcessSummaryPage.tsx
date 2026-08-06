@@ -25,7 +25,11 @@ export default function PublicProcessSummaryPage() {
         showDashboardButton={false}
       >
         {data.era === 'archive' ? (
-          <PublicProcessSummaryView id={data.id} legacyElection={data.legacyElection} />
+          <PublicProcessSummaryView
+            id={data.id}
+            legacyElection={data.legacyElection}
+            legacyOrganization={data.legacyOrganization}
+          />
         ) : (
           <PublicProcessSummaryView
             id={data.id}

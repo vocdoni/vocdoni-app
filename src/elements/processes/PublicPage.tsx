@@ -3,7 +3,8 @@ import { ElectionProvider, OrganizationProvider } from '@vocdoni/react-component
 import LegalNotice from '~components/Layout/LegalNotice'
 import ArchiveProcessView from '~components/Process/Archive/View'
 import { ProcessView as ProcessViewComponent } from '~components/Process/View'
-import type { LegacyElection } from '~src/legacy/vochain-archive'
+import { useLocalizedText } from '~src/legacy/use-localized-text'
+import type { LegacyElection, LegacyOrganization } from '~src/legacy/vochain-archive'
 
 type PublicProcessPageProps = {
   id: string
@@ -12,14 +13,27 @@ type PublicProcessPageProps = {
   organizationAddress?: string
   /** Archive-era (64-hex vochain id) election: rendered read-only, no providers needed. */
   legacyElection?: LegacyElection
+  legacyOrganization?: LegacyOrganization
 }
 
-const PublicProcessPage = ({ id, election, organizationAddress, legacyElection }: PublicProcessPageProps) => {
+const PublicProcessPage = ({
+  id,
+  election,
+  organizationAddress,
+  legacyElection,
+  legacyOrganization,
+}: PublicProcessPageProps) => {
+  const localize = useLocalizedText()
+
   if (legacyElection) {
+    // No OrganizationProvider in the archive era: feed the legal notice directly.
+    const orgName =
+      localize(legacyOrganization?.account?.name) || legacyOrganization?.address || legacyElection.organizationId
+
     return (
       <>
         <ArchiveProcessView election={legacyElection} />
-        <LegalNotice />
+        <LegalNotice orgName={orgName} />
       </>
     )
   }

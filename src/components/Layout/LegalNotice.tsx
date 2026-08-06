@@ -2,10 +2,7 @@ import { Box, Link, Text } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { Trans } from 'react-i18next'
 
-const LegalNoticeContent = () => {
-  const { organization } = useOrganization()
-  const orgName = organization?.name?.default || organization?.address
-
+const LegalNoticeContent = ({ orgName }: { orgName?: string }) => {
   if (!orgName) return null
 
   return (
@@ -37,8 +34,21 @@ const LegalNoticeContent = () => {
   )
 }
 
-const LegalNotice = () => {
-  return <LegalNoticeContent />
+const ProviderLegalNotice = () => {
+  const { organization } = useOrganization()
+
+  return <LegalNoticeContent orgName={organization?.name?.default || organization?.address} />
+}
+
+type LegalNoticeProps = {
+  /** Renders without an OrganizationProvider (archive-era pages); falsy values render nothing. */
+  orgName?: string
+}
+
+const LegalNotice = ({ orgName }: LegalNoticeProps) => {
+  if (orgName !== undefined) return <LegalNoticeContent orgName={orgName} />
+
+  return <ProviderLegalNotice />
 }
 
 export default LegalNotice
