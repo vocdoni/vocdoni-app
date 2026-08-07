@@ -787,7 +787,6 @@
       "title": "Dokumentation"
     },
     "managed": {
-      "active": "Aktiv",
       "created": "Erstellt",
       "docs_card_description": "Erfahre, wie du Organisationen programmatisch über die API erstellst und verwaltest.",
       "docs_card_title": "Eine Organisation erstellen",
@@ -795,12 +794,10 @@
       "empty_description": "Organisationen werden über die API erstellt, nicht über dieses Dashboard. Sobald du deine erste Organisation anlegst, erscheint sie hier.",
       "empty_title": "Noch keine Organisationen",
       "error": "Organisationen konnten nicht geladen werden",
-      "inactive": "Inaktiv",
       "organization": "Organisation",
       "pagination": "Seite {{page}} von {{total}} · {{items}} insgesamt",
       "processes": "Prozesse",
       "sms": "SMS",
-      "status": "Status",
       "subtitle": "Organisationen, die du im Namen deiner Kunden verwaltest.",
       "title": "Verwaltete Organisationen"
     },

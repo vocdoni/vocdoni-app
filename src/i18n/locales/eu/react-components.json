@@ -26,6 +26,7 @@
   "empty": "Badirudi prozesu honek ez duela galderarik",
   "errors": {
     "not_voted_in_ended_election": "Sinatu duzu, baina ez duzu botorik eman amaitu den bozketa honetan.",
+    "question_not_votable": "Galdera honek ezin ditu botoak onartu: bere aukeretako bat erregistroak gorde ezin duen moduan konfiguratu zen. Zure botoa ez da eman. Jarri harremanetan erakundearekin.",
     "unauthorized": "Ez duzu bozkatzeko baimenik",
     "wrong_data_description": "Emandako datuak ez dira zuzenak",
     "wrong_data_title": "Datu okerrak"

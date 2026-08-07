@@ -11,6 +11,7 @@ import {
   BallotType,
   decodeQuestionResults,
   inferQuestionBallotType,
+  questionReservesAbstain,
   type DecodedQuestionResults,
 } from '@vocdoni/ballot'
 import { useElection } from '@vocdoni/react-components'
@@ -530,7 +531,17 @@ export const buildCertificateData = ({
           const questionResults = questionsResults.get(question.id)
           const decoded = decodedByQuestionId.get(question.id)
           const decodedChoices = decoded?.filter((entry) => entry.choice !== 'abstain')
-          const abstainEntry = decoded?.find((entry) => entry.choice === 'abstain')
+          // `decodeQuestionResults` always appends an abstain bucket for pick-slot
+          // multichoice, even when the protocol reserves no sentinel headroom and the
+          // count is therefore structurally stuck at zero. Mirror the rule
+          // `<ElectionResults />` applies so the report and the UI agree on the row
+          // count: keep the bucket only when abstaining is possible, or when the tally
+          // says it actually happened.
+          const decodedAbstain = decoded?.find((entry) => entry.choice === 'abstain')
+          const abstainEntry =
+            decodedAbstain && (questionReservesAbstain(question) || decodedAbstain.votes > 0)
+              ? decodedAbstain
+              : undefined
           const questionTotal = getCastVotingPower(question, decoded)
 
           const choiceRows = question.choices.map((choice, choiceIndex) => ({

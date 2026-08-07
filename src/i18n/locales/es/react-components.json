@@ -26,6 +26,7 @@
   "empty": "Aparentemente este proceso no tiene preguntas",
   "errors": {
     "not_voted_in_ended_election": "Has firmado pero no has votado en esta elección finalizada.",
+    "question_not_votable": "Esta pregunta no puede aceptar votos: una de sus opciones se configuró de una forma que el registro no puede almacenar. Tu voto no se ha emitido. Ponte en contacto con la organización.",
     "unauthorized": "No autorizado para votar",
     "wrong_data_description": "Los datos especificados no son correctos",
     "wrong_data_title": "Datos incorrectos"

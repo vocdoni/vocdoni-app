@@ -147,6 +147,13 @@ type RawElection = {
     description?: LocalizedText
     media?: { header?: string }
     questions?: RawQuestion[]
+    /**
+     * Legacy election type as declared by the creator (`multiple-choice`, `approval`,
+     * `budget-based`, …). Authoritative for decoding: at `maxValue === 1` a two-option
+     * pick-slot multichoice and a dense approval ballot have byte-identical protocol
+     * shapes, so the declared name is the only thing that tells them apart.
+     */
+    type?: { name?: string; properties?: Record<string, unknown> }
   }
 }
 
@@ -200,6 +207,10 @@ const decodeLegacyResults = (raw: RawElection): DecodedQuestionResults[] | null 
 
   try {
     return decodeResults({
+      // The declared type takes precedence over the reconstructed protocol shape
+      // (@vocdoni/ballot reads it from `meta.type.name`); the gateway serves it at
+      // `metadata.type`.
+      meta: { type: raw.metadata?.type },
       questions: questions.map((question) => ({
         title: { default: '' },
         choices: (question.choices ?? []).map((choice, index) => ({

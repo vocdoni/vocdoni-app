@@ -787,7 +787,6 @@
       "title": "Documentation"
     },
     "managed": {
-      "active": "Active",
       "created": "Created",
       "docs_card_description": "Learn how to create and manage organizations programmatically through the API.",
       "docs_card_title": "Creating an organization",
@@ -795,12 +794,10 @@
       "empty_description": "Organizations are created through the API, not from this dashboard. Once you provision your first organization it will appear here.",
       "empty_title": "No organizations yet",
       "error": "Unable to load organizations",
-      "inactive": "Inactive",
       "organization": "Organization",
       "pagination": "Page {{page}} of {{total}} · {{items}} total",
       "processes": "Processes",
       "sms": "SMS",
-      "status": "Status",
       "subtitle": "Organizations you manage on behalf of your customers.",
       "title": "Managed organizations"
     },

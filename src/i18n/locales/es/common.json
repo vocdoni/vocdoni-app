@@ -793,7 +793,6 @@
       "title": "Documentación"
     },
     "managed": {
-      "active": "Activo",
       "created": "Creado",
       "docs_card_description": "Aprende a crear y gestionar organizaciones de forma programática a través de la API.",
       "docs_card_title": "Crear una organización",
@@ -801,12 +800,10 @@
       "empty_description": "Las organizaciones se crean a través de la API, no desde este panel. Cuando crees tu primera organización, aparecerá aquí.",
       "empty_title": "Aún no hay organizaciones",
       "error": "No se pudieron cargar las organizaciones",
-      "inactive": "Inactivo",
       "organization": "Organización",
       "pagination": "Página {{page}} de {{total}} · {{items}} en total",
       "processes": "Procesos",
       "sms": "SMS",
-      "status": "Estado",
       "subtitle": "Organizaciones que gestionas en nombre de tus clientes.",
       "title": "Organizaciones gestionadas"
     },

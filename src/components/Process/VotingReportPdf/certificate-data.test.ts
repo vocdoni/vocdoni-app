@@ -336,6 +336,52 @@ describe('buildCertificateData', () => {
     ])
   })
 
+  it('drops the abstain bucket when the protocol reserves no sentinel headroom', () => {
+    // maxValue 1 over 2 choices leaves no value above the last choice, so there is no
+    // column an abstention could ever land in — the decoder still appends the bucket,
+    // but reporting a structural zero as if voters had abstained would be a lie.
+    const noAbstainQuestion = createQuestion({
+      title: { default: 'Pick priorities' },
+      type: 'multichoice',
+      ballotProtocol: {
+        costExponent: 1,
+        costFromWeight: false,
+        maxCount: 2,
+        maxTotalCost: 0,
+        maxValue: 1,
+        maxVoteOverwrites: 0,
+        uniqueValues: true,
+      },
+      choices: [
+        { title: { default: 'Climate' }, value: 0 },
+        { title: { default: 'Housing' }, value: 1 },
+      ],
+    })
+    const results = createResults({
+      questions: [
+        createQuestionResults({
+          voteCount: 10,
+          results: [
+            ['6', '4'],
+            ['4', '6'],
+          ],
+        }),
+      ],
+    })
+
+    const data = buildCertificateData({
+      election: createElection({ questions: [noAbstainQuestion] }),
+      results,
+      t: translate,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.votingProcessQuestions[0].choices).toEqual([
+      { name: 'Climate', votes: '10', percentage: '50.0%', numericVotes: 10 },
+      { name: 'Housing', votes: '10', percentage: '50.0%', numericVotes: 10 },
+    ])
+  })
+
   it('separates voter participation from weighted voting-power totals', () => {
     const election = createElection({
       census: { size: 3, weighted: true, totalWeight: 20, authFields: ['memberNumber'] },
