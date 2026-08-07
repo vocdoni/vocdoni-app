@@ -351,7 +351,23 @@ export const useFormDraftSaver = (
     return () => clearInterval(id)
   }, [saveDraft])
 
-  return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft }
+  // Publishing turns the draft into a process, so the stored pointer must be
+  // dropped: a later "delete draft" following it would delete the vote we just
+  // published. Only when it actually points at *this* draft though — publishing
+  // one opened straight from the drafts list (`?draftId=`) must not forget an
+  // unrelated resumable draft. Reads storage rather than the `draftId` prop:
+  // on the create path the id is stored inside the write queue, after the
+  // caller's render closure was captured, so the prop is stale (null) here.
+  const clearPublishedDraftId = useCallback(
+    (processId: string) => {
+      if (getStoredDraftId(organization?.address) === processId) {
+        storeDraftId(null)
+      }
+    },
+    [organization?.address, storeDraftId]
+  )
+
+  return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft, clearPublishedDraftId }
 }
 
 const TemplateButtons = () => {
@@ -663,7 +679,7 @@ const ProcessCreateView = () => {
     onOpen: openConfirmationModal,
     onClose: () => setLeaveConfirmationOpen(false),
   })
-  const { saveDraft, isSaving, skipSave, writeDraft } = useFormDraftSaver(
+  const { saveDraft, isSaving, skipSave, writeDraft, clearPublishedDraftId } = useFormDraftSaver(
     isDirty,
     methods.getValues,
     effectiveDraftId,
@@ -798,15 +814,7 @@ const ProcessCreateView = () => {
 
       methods.reset(defaultProcessValues)
 
-      // The stored draft id now points at a published process, so drop it —
-      // deleting it would delete the vote we just published. Only when it
-      // actually points at *this* draft though: publishing a draft opened
-      // straight from the drafts list (`?draftId=`) must not forget an
-      // unrelated resumable draft. Read from storage rather than the hook
-      // state, which is stale here when `writeDraft` just created the draft.
-      if (getStoredDraftId(organization?.address) === processId) {
-        storeDraftId(null)
-      }
+      clearPublishedDraftId(processId)
 
       navigate(generatePath(Routes.dashboard.process, { id: processId }))
     } catch (error) {
