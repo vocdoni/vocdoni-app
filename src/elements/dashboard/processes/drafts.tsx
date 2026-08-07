@@ -30,6 +30,7 @@ import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFoo
 import { useCreateProcess } from '~components/Process/Create'
 import { Process, SelectorTypes } from '~components/Process/Create/common'
 import { votingProcessToCreateRequest, votingProcessToForm } from '~components/Process/Create/draft-mapping'
+import { clearStoredDraftId } from '~components/Process/Create/draft-storage'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
@@ -70,6 +71,9 @@ export const useDeleteDraft = () => {
     mutationKey: QueryKeys.organization.drafts(organization?.address),
     mutationFn: ({ draftId }: { draftId: string; silent?: boolean }) => client.elections.delete(draftId),
     onSuccess: (_data, variables) => {
+      // Only forget the resumable draft pointer once the server actually deleted
+      // it, and only when it points at this draft
+      clearStoredDraftId(organization?.address, variables.draftId)
       if (!variables?.silent) {
         toast({
           title: t('drafts.deleted_draft', {
@@ -252,7 +256,6 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
 
   const deleteDraft = () => {
     deleteDraftMutation.mutate({ draftId: draft.id })
-    localStorage.removeItem('draft-id')
   }
 
   return (

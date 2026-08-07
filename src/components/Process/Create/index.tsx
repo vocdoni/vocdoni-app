@@ -15,7 +15,6 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useLocalStorage } from '@uidotdev/usehooks'
 import { useOrganization } from '@vocdoni/react-components'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type {
@@ -55,6 +54,7 @@ import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
+import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { useProcessTemplates } from './TemplateProvider'
@@ -351,7 +351,23 @@ export const useFormDraftSaver = (
     return () => clearInterval(id)
   }, [saveDraft])
 
-  return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft }
+  // Publishing turns the draft into a process, so the stored pointer must be
+  // dropped: a later "delete draft" following it would delete the vote we just
+  // published. Only when it actually points at *this* draft though — publishing
+  // one opened straight from the drafts list (`?draftId=`) must not forget an
+  // unrelated resumable draft. Reads storage rather than the `draftId` prop:
+  // on the create path the id is stored inside the write queue, after the
+  // caller's render closure was captured, so the prop is stale (null) here.
+  const clearPublishedDraftId = useCallback(
+    (processId: string) => {
+      if (getStoredDraftId(organization?.address) === processId) {
+        storeDraftId(null)
+      }
+    },
+    [organization?.address, storeDraftId]
+  )
+
+  return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft, clearPublishedDraftId }
 }
 
 const TemplateButtons = () => {
@@ -631,7 +647,6 @@ const ProcessCreateView = () => {
   const { groupId } = useParams()
   const [searchParams] = useSearchParams()
   const draftId = searchParams.get('draftId')
-  const [storedDraftId, storeDraftId] = useLocalStorage('draft-id', null)
   const navigate = useNavigate()
   const location = useLocation()
   const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
@@ -647,6 +662,9 @@ const ProcessCreateView = () => {
   const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
   const { client: apiClient } = useApiClient()
+  // Draft ids are stored scoped to the acting organization so switching orgs never
+  // resumes (and tries to update) a draft owned by a different org
+  const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
   const { setStepDoneAsync } = useOrganizationSetup()
@@ -661,7 +679,7 @@ const ProcessCreateView = () => {
     onOpen: openConfirmationModal,
     onClose: () => setLeaveConfirmationOpen(false),
   })
-  const { saveDraft, isSaving, skipSave, writeDraft } = useFormDraftSaver(
+  const { saveDraft, isSaving, skipSave, writeDraft, clearPublishedDraftId } = useFormDraftSaver(
     isDirty,
     methods.getValues,
     effectiveDraftId,
@@ -796,9 +814,7 @@ const ProcessCreateView = () => {
 
       methods.reset(defaultProcessValues)
 
-      // The stored draft id now points at a published process, so drop it —
-      // deleting it would delete the vote we just published.
-      storeDraftId(null)
+      clearPublishedDraftId(processId)
 
       navigate(generatePath(Routes.dashboard.process, { id: processId }))
     } catch (error) {

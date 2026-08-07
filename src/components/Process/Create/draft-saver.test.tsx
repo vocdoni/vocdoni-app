@@ -4,6 +4,7 @@ import { createTestQueryClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultProcessValues, Process } from './common'
+import { getStoredDraftId, storeDraftId as persistDraftId } from './draft-storage'
 import { useFormDraftSaver } from './index'
 
 const create = vi.fn()
@@ -55,8 +56,17 @@ const form: Process = {
   censusType: CensusTypes.CSP,
 }
 
-const renderSaver = (draftId: string | null = null) => {
-  const storeDraftId = vi.fn()
+const orgAddress = '0xorgaddr'
+
+/**
+ * `persist` mirrors what the real `useStoredDraftId` setter does — writing
+ * through to localStorage — so tests can exercise the storage-backed paths
+ * instead of only asserting on the spy.
+ */
+const renderSaver = (draftId: string | null = null, { persist = false }: { persist?: boolean } = {}) => {
+  const storeDraftId = vi.fn((id: string | null) => {
+    if (persist) persistDraftId(orgAddress, id)
+  })
   const queryClient = createTestQueryClient()
   const { result } = renderHook(() => useFormDraftSaver(true, () => form, draftId, storeDraftId), {
     wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
@@ -68,8 +78,9 @@ const renderSaver = (draftId: string | null = null) => {
 describe('useFormDraftSaver', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.clear()
     setReactProvidersMock({
-      useOrganization: vi.fn().mockReturnValue({ organization: { address: '0xorgaddr' } }),
+      useOrganization: vi.fn().mockReturnValue({ organization: { address: orgAddress } }),
     })
     create.mockResolvedValue('draft-1')
     update.mockResolvedValue(undefined)
@@ -151,5 +162,58 @@ describe('useFormDraftSaver', () => {
     expect(storeDraftId).toHaveBeenCalledWith('draft-1')
     expect(publishedId).toBe('draft-1')
     expect(update).toHaveBeenCalledWith('draft-1', { published: true })
+  })
+
+  describe('clearPublishedDraftId', () => {
+    it('drops the stored id when it points at the published draft', () => {
+      persistDraftId(orgAddress, 'draft-1')
+      const { result, storeDraftId } = renderSaver('draft-1', { persist: true })
+
+      result.current.clearPublishedDraftId('draft-1')
+
+      expect(storeDraftId).toHaveBeenCalledWith(null)
+      expect(getStoredDraftId(orgAddress)).toBeNull()
+    })
+
+    it('keeps a stored id pointing at a different draft', () => {
+      // Opening a draft from the drafts list (`?draftId=`) publishes it without
+      // ever repointing storage, so publishing must not forget the draft the
+      // create form would otherwise resume.
+      persistDraftId(orgAddress, 'draft-other')
+      const { result, storeDraftId } = renderSaver('draft-1', { persist: true })
+
+      result.current.clearPublishedDraftId('draft-1')
+
+      expect(storeDraftId).not.toHaveBeenCalled()
+      expect(getStoredDraftId(orgAddress)).toBe('draft-other')
+    })
+
+    it('drops the id the write queue stored during this same publish', async () => {
+      // The create path stores the new id inside the queued write, after the
+      // caller's render closure was captured — so the `draftId` prop is still
+      // null here. Deciding against it instead of storage would leave the
+      // pointer aimed at a published process, which a later draft delete would
+      // then delete.
+      const { result, storeDraftId } = renderSaver(null, { persist: true })
+
+      const publishedId = await result.current.writeDraft(() => ({ published: true }) as never)
+      expect(getStoredDraftId(orgAddress)).toBe('draft-1')
+
+      result.current.clearPublishedDraftId(publishedId)
+
+      expect(storeDraftId).toHaveBeenLastCalledWith(null)
+      expect(getStoredDraftId(orgAddress)).toBeNull()
+    })
+
+    it('leaves other organizations untouched', () => {
+      persistDraftId('0xotherorg', 'draft-1')
+      persistDraftId(orgAddress, 'draft-1')
+      const { result } = renderSaver('draft-1', { persist: true })
+
+      result.current.clearPublishedDraftId('draft-1')
+
+      expect(getStoredDraftId(orgAddress)).toBeNull()
+      expect(getStoredDraftId('0xotherorg')).toBe('draft-1')
+    })
   })
 })
