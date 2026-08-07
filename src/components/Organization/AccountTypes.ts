@@ -1,7 +1,6 @@
 import type { MultilingualText, Organization } from '@vocdoni/api-types'
 
 export type SaasOrganizationData = {
-  active: boolean
   address: string
   color: string
   country: string
@@ -48,5 +47,5 @@ export type CreateOrgParams = Partial<
     // on the old on-chain account). A plain string is accepted and stored as
     // `{ default: value }`. See @vocdoni/api-types `CreateOrganizationRequest`.
     logo: string
-  } & Omit<SaasOrganizationData, 'active' | 'address' | 'createdAt'>
+  } & Omit<SaasOrganizationData, 'address' | 'createdAt'>
 >

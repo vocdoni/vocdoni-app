@@ -793,7 +793,6 @@
       "title": "Documentació"
     },
     "managed": {
-      "active": "Activa",
       "created": "Creada",
       "docs_card_description": "Aprèn a crear i gestionar organitzacions de manera programàtica a través de l'API.",
       "docs_card_title": "Crear una organització",
@@ -801,12 +800,10 @@
       "empty_description": "Les organitzacions es creen a través de l'API, no des d'aquest tauler. Quan creïs la teva primera organització, apareixerà aquí.",
       "empty_title": "Encara no hi ha organitzacions",
       "error": "No s'han pogut carregar les organitzacions",
-      "inactive": "Inactiva",
       "organization": "Organització",
       "pagination": "Pàgina {{page}} de {{total}} · {{items}} total",
       "processes": "Processos",
       "sms": "SMS",
-      "status": "Estat",
       "subtitle": "Organitzacions que gestions en nom dels teus clients.",
       "title": "Organitzacions gestionades"
     },

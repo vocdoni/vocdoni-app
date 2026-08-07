@@ -26,6 +26,7 @@
   "empty": "Sembra che questo processo non abbia domande",
   "errors": {
     "not_voted_in_ended_election": "Hai firmato ma non hai votato in questa elezione terminata.",
+    "question_not_votable": "Questa domanda non può accettare voti: una delle sue opzioni è stata configurata in un modo che il registro non può memorizzare. Il tuo voto non è stato espresso. Contatta l'organizzazione.",
     "unauthorized": "Non autorizzato a votare",
     "wrong_data_description": "I dati specificati non sono corretti",
     "wrong_data_title": "Dati errati"

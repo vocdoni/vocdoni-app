@@ -26,6 +26,7 @@
   "empty": "Dieser Prozess enthält offenbar keine Fragen",
   "errors": {
     "not_voted_in_ended_election": "Sie haben unterzeichnet, aber in dieser bereits beendeten Wahl nicht abgestimmt.",
+    "question_not_votable": "Diese Frage kann keine Stimmen annehmen: Eine ihrer Optionen wurde so eingerichtet, dass das Register sie nicht erfassen kann. Ihre Stimme wurde nicht abgegeben. Bitte wenden Sie sich an die Organisation.",
     "unauthorized": "Nicht zur Abstimmung berechtigt",
     "wrong_data_description": "Die angegebenen Daten sind nicht korrekt",
     "wrong_data_title": "Falsche Daten"

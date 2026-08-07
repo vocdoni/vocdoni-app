@@ -26,6 +26,7 @@
   "empty": "Ce processus ne contient apparemment aucune question",
   "errors": {
     "not_voted_in_ended_election": "Vous avez signé mais vous n'avez pas voté à cette élection terminée.",
+    "question_not_votable": "Cette question ne peut pas accepter de votes : l'une de ses options a été configurée d'une manière que le registre ne peut pas enregistrer. Votre vote n'a pas été émis. Veuillez contacter l'organisation.",
     "unauthorized": "Non autorisé à voter",
     "wrong_data_description": "Les données fournies ne sont pas correctes",
     "wrong_data_title": "Données incorrectes"

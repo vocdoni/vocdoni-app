@@ -26,6 +26,7 @@
   "empty": "Apparently this process has no questions",
   "errors": {
     "not_voted_in_ended_election": "You signed but did not vote in this ended election.",
+    "question_not_votable": "This question can't accept votes: one of its options was set up in a way the ledger can't record. Your vote has not been cast. Please contact the organizer.",
     "unauthorized": "Not authorized to vote",
     "wrong_data_description": "The specified data is not correct",
     "wrong_data_title": "Wrong data"

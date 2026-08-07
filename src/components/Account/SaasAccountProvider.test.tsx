@@ -13,7 +13,6 @@ const saasOrganization: Organization = {
   type: 'nonprofit',
   country: 'ES',
   timezone: 'Europe/Madrid',
-  active: true,
   createdAt: '2024-05-01T10:00:00Z',
 }
 
@@ -31,7 +30,6 @@ describe('toOrganizationData', () => {
 
     expect(data.address).toBe(saasOrganization.address)
     expect(data.website).toBe('https://vocdoni.io')
-    expect(data.active).toBe(true)
     expect(data.size).toBe('11-50')
     expect(data.type).toBe('nonprofit')
     expect(data.country).toBe('ES')
@@ -53,7 +51,6 @@ describe('toOrganizationData', () => {
       avatar: '',
       header: '',
     })
-    // No info yet: activity is unknown, not false.
-    expect(data.active).toBeUndefined()
+    expect(data.website).toBeUndefined()
   })
 })

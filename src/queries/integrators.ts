@@ -62,7 +62,6 @@ export type OrganizationCounters = {
 // creation; the rest mirror the backend OrganizationInfo fields we surface.
 export type ManagedOrganization = {
   address: string
-  active: boolean
   counters?: OrganizationCounters
   createdAt: string
   name?: MultilingualText

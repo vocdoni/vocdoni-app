@@ -26,6 +26,7 @@
   "empty": "Aparentemente, este processo não tem perguntas",
   "errors": {
     "not_voted_in_ended_election": "Assinaste mas não votaste nesta votação já terminada.",
+    "question_not_votable": "Esta pergunta não pode aceitar votos: uma das suas opções foi configurada de uma forma que o registo não consegue guardar. O teu voto não foi submetido. Contacta a organização.",
     "unauthorized": "Sem autorização para votar",
     "wrong_data_description": "Os dados indicados não estão corretos",
     "wrong_data_title": "Dados incorretos"

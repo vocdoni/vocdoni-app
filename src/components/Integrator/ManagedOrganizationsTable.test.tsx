@@ -7,7 +7,6 @@ const org = (overrides: Partial<ManagedOrganization> = {}): ManagedOrganization 
   website: '',
   createdAt: '2025-01-15T00:00:00Z',
   type: 'others',
-  active: true,
   ...overrides,
 })
 
@@ -27,21 +26,18 @@ describe('ManagedOrganizationsTable', () => {
     expect(screen.getByText('Acme')).toBeInTheDocument()
     expect(screen.getByText('0x123456…5678')).toBeInTheDocument()
     expect(screen.getByText('7')).toBeInTheDocument()
-    expect(screen.getByText('Active')).toBeInTheDocument()
   })
 
   it('falls back to the website when the org has no name', () => {
-    render(<ManagedOrganizationsTable organizations={[org({ website: 'https://example.com', active: false })]} />)
+    render(<ManagedOrganizationsTable organizations={[org({ website: 'https://example.com' })]} />)
 
     expect(screen.getByText('https://example.com')).toBeInTheDocument()
     expect(screen.getByText('0x123456…5678')).toBeInTheDocument()
-    expect(screen.getByText('Inactive')).toBeInTheDocument()
   })
 
   it('falls back to the address when the org has no name and no website', () => {
-    render(<ManagedOrganizationsTable organizations={[org({ active: false })]} />)
+    render(<ManagedOrganizationsTable organizations={[org()]} />)
 
     expect(screen.getByText('0x123456…5678')).toBeInTheDocument()
-    expect(screen.getByText('Inactive')).toBeInTheDocument()
   })
 })

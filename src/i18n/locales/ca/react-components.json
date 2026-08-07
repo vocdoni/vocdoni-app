@@ -26,6 +26,7 @@
   "empty": "Sembla que aquest procés no té preguntes",
   "errors": {
     "not_voted_in_ended_election": "Has signat però no has votat en aquesta elecció finalitzada.",
+    "question_not_votable": "Aquesta pregunta no pot acceptar vots: una de les seves opcions es va configurar d'una manera que el registre no pot desar. El teu vot no s'ha emès. Posa't en contacte amb l'organització.",
     "unauthorized": "No autoritzat per votar",
     "wrong_data_description": "Les dades especificades no són correctes",
     "wrong_data_title": "Dades incorrectes"

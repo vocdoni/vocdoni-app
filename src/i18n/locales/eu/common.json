@@ -787,7 +787,6 @@
       "title": "Dokumentazioa"
     },
     "managed": {
-      "active": "Aktibo",
       "created": "Sortua",
       "docs_card_description": "Ikasi nola sortu eta kudeatu erakundeak programatikoki APIaren bidez.",
       "docs_card_title": "Erakunde bat sortzea",
@@ -795,12 +794,10 @@
       "empty_description": "Erakundeak APIaren bidez sortzen dira, ez panel honetatik. Zure lehen erakundea sortzen duzunean, hemen agertuko da.",
       "empty_title": "Ez dago erakunderik oraindik",
       "error": "Ezin izan da erakundeak kargatu",
-      "inactive": "Inaktibo",
       "organization": "Erakundea",
       "pagination": "{{page}} orria {{total}} guztitik · {{items}} guztira",
       "processes": "Prozesuak",
       "sms": "SMS",
-      "status": "Egoera",
       "subtitle": "Zure bezeroaren ordez kudeaturiko erakundeak.",
       "title": "Kudeaturiko erakundeak"
     },
