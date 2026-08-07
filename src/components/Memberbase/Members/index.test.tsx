@@ -115,3 +115,44 @@ describe('MembersTable layout', () => {
     }
   })
 })
+
+// Session replay must never record memberbase PII: rrweb skips any subtree
+// carrying `ph-no-capture`, so every element rendering a member field has to sit
+// inside one. See docs/analytics.md.
+describe('MembersTable session replay exclusion', () => {
+  it('keeps member cards out of replays on mobile', () => {
+    renderMembers()
+
+    expect(screen.getByText('Ada Lovelace').closest('.ph-no-capture')).not.toBeNull()
+    expect(screen.getByText('ada@example.test', { exact: false }).closest('.ph-no-capture')).not.toBeNull()
+  })
+
+  it('keeps member table cells out of replays on desktop', () => {
+    const original = window.matchMedia
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    })
+
+    try {
+      renderMembers()
+
+      for (const value of ['Ada', 'Lovelace', 'ada@example.test', 'Alan', 'Turing', 'alan@example.test']) {
+        expect(screen.getByRole('cell', { name: value }).closest('.ph-no-capture')).not.toBeNull()
+      }
+      // Column headers are field names, not member data — they stay visible.
+      expect(screen.getByRole('columnheader', { name: 'Email' }).closest('.ph-no-capture')).toBeNull()
+    } finally {
+      Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
+    }
+  })
+})

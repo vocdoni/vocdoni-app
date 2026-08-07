@@ -80,12 +80,24 @@ export const OrganizationCreate = ({
   const [isPending, setIsPending] = useState(false)
   const methods = useForm<FormData>()
   const { handleSubmit } = methods
-  const { trackPlausibleEvent } = useAnalytics()
+  const { trackEvent } = useAnalytics()
   const { bearedFetch } = useAuth()
 
   const { mutateAsync: createOrganization } = useOrganizationCreate({
-    onSuccess: async ({ address }) => {
-      trackPlausibleEvent({ name: AnalyticsEvents.OrganizationCreated })
+    onSuccess: async ({ address }, values) => {
+      trackEvent({
+        name: AnalyticsEvents.OrganizationCreated,
+        props: {
+          // The group profile and `org_name` super property are only registered
+          // once the organization has been fetched, which is after this event
+          // fires — so the creation event carries the name itself.
+          org_name: values.name || 'unknown',
+          org_address: address,
+          org_type: values.type || 'unknown',
+          org_size: values.size || 'unknown',
+          org_country: values.country || 'unknown',
+        },
+      })
       toast({
         title: t('organization.create_org_success', {
           defaultValue: 'Organization created successfully',

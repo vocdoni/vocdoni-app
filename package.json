@@ -52,6 +52,7 @@
     "lexical": "^0.34.0",
     "lru-cache": "^11.2.4",
     "next-themes": "^0.4.6",
+    "posthog-js": "^1.407.3",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-dropzone": "^14.3.8",
@@ -88,6 +89,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
+    "posthog:insights": "node scripts/posthog-insights.mjs",
     "knip": "knip"
   },
   "eslintConfig": {

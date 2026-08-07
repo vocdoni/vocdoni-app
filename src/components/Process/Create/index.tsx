@@ -377,10 +377,12 @@ const TemplateButtons = () => {
   const [isTemplateModalOpen, setTemplateModalOpen] = useState(false)
   const reset = useSafeReset()
   const pendingTemplateRef = useRef<TemplateTypes | null>(null)
+  const { trackEvent } = useAnalytics()
 
   const applyTemplate = (templateId: TemplateTypes) => {
     const config = TemplateConfigs[templateId]
     const previousFormValues = methods.getValues()
+    trackEvent({ name: AnalyticsEvents.ProcessTemplateSelected, props: { template: templateId } })
     setActiveTemplate(templateId)
     reset({
       ...previousFormValues,
@@ -668,7 +670,7 @@ const ProcessCreateView = () => {
   const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
   const { setStepDoneAsync } = useOrganizationSetup()
-  const { trackPlausibleEvent } = useAnalytics()
+  const { trackEvent } = useAnalytics()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
   // Confirm navigation if form is dirty
@@ -803,7 +805,16 @@ const ProcessCreateView = () => {
         queryKey: QueryKeys.organization.elections(organization?.address),
       })
 
-      trackPlausibleEvent({ name: AnalyticsEvents.ProcessCreated })
+      trackEvent({
+        name: AnalyticsEvents.ProcessCreated,
+        props: {
+          census_type: form.censusType,
+          weighted: !!form.weightedVote,
+          question_count: form.questions?.length ?? 0,
+          template: activeTemplate || 'none',
+          from_draft: !!effectiveDraftId,
+        },
+      })
 
       toast({
         title: t('form.process_create.success_title'),
@@ -855,6 +866,14 @@ const ProcessCreateView = () => {
     ]
 
     const hasSidebarErrors = sidebarFieldKeys.some((key) => key in errors)
+
+    trackEvent({
+      name: AnalyticsEvents.ProcessCreationFailed,
+      props: {
+        failed_fields: Object.keys(errors).join(','),
+        sidebar_errors: hasSidebarErrors,
+      },
+    })
 
     if (hasSidebarErrors) {
       openSidebar()

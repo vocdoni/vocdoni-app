@@ -9,7 +9,8 @@ import { Trans, useTranslation } from 'react-i18next'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
-import { Process } from '../common'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { Census, Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
 import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
 import { TwoFactorForm } from './TwoFactorForm'
@@ -41,6 +42,11 @@ const useValidateCensus = () => {
       }),
   })
 }
+
+// Order-insensitive identity of an auth configuration, used to tell an actual
+// change from a no-op re-confirm. Credentials are a set, not a sequence.
+const censusConfigSignature = (config: Census) =>
+  JSON.stringify([[...(config.credentials ?? [])].sort(), !!config.use2FA, config.use2FAMethod ?? 'none'])
 
 export const VoterAuthentication = () => {
   const { t } = useTranslation()
@@ -124,11 +130,26 @@ export const VoterAuthentication = () => {
     } else {
       // Step 3 (Confirm): save auth config to form — census is created by the backend during process publish
       const currentFormData = voterAuthForm.getValues()
-      mainForm.setValue('census', {
+      const nextCensus: Census = {
         credentials: currentFormData.credentials,
         use2FA: currentFormData.use2FA,
         use2FAMethod: currentFormData.use2FAMethod ?? 'email',
-      })
+      }
+      // The modal doubles as the "Edit" entry point, so a confirm that changes
+      // nothing must not report a fresh configuration — otherwise every reopen
+      // inflates the count.
+      const configChanged = !census || censusConfigSignature(census) !== censusConfigSignature(nextCensus)
+      mainForm.setValue('census', nextCensus)
+      if (configChanged) {
+        trackAnalyticsEvent({
+          name: AnalyticsEvents.CensusConfigured,
+          props: {
+            auth_fields_count: nextCensus.credentials?.length ?? 0,
+            two_fa: !!nextCensus.use2FA,
+            two_fa_method: nextCensus.use2FAMethod ?? 'none',
+          },
+        })
+      }
       setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
       toast({
         title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),

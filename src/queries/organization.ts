@@ -9,6 +9,7 @@ import { generatePath } from 'react-router-dom'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { Routes } from '~routes'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { QueryKeys } from './keys'
 
 export enum SetupStepIds {
@@ -235,11 +236,13 @@ export const useOrganizationSetup = () => {
 
   const setStepDone = (stepId: SetupStepId) => {
     if (hasStepDone(stepId)) return
+    trackAnalyticsEvent({ name: AnalyticsEvents.OnboardingStepCompleted, props: { step: stepId } })
     updateMeta({ completedSteps: [...new Set([...completedSteps, stepId])] })
   }
 
   const setStepDoneAsync = async (stepId: SetupStepId) => {
     if (hasStepDone(stepId)) return
+    trackAnalyticsEvent({ name: AnalyticsEvents.OnboardingStepCompleted, props: { step: stepId } })
     await updateMetaAsync({ completedSteps: [...new Set([...completedSteps, stepId])] })
   }
 
@@ -344,7 +347,8 @@ export const useInviteMemberMutation = () => {
         method: 'POST',
         body,
       }),
-    onSuccess: () => {
+    onSuccess: (_data, body) => {
+      trackAnalyticsEvent({ name: AnalyticsEvents.TeamMemberInvited, props: { role: body?.role ?? 'unknown' } })
       // Invalidate queries to refresh member and pending member lists
       queryClient.invalidateQueries({ queryKey: QueryKeys.organization.users() })
     },
@@ -363,6 +367,7 @@ export const useRemoveUserMutation = () => {
         { method: 'DELETE' }
       ),
     onSuccess: () => {
+      trackAnalyticsEvent({ name: AnalyticsEvents.TeamMemberRemoved })
       // Invalidate queries to refresh member and pending member lists
       queryClient.invalidateQueries({ queryKey: QueryKeys.organization.users() })
     },

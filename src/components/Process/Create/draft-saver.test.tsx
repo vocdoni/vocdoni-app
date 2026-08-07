@@ -15,7 +15,7 @@ vi.mock('~components/Auth/Subscription', () => ({
 }))
 
 vi.mock('~components/AnalyticsProvider', () => ({
-  useAnalytics: () => ({ track: vi.fn(), trackPlausibleEvent: vi.fn() }),
+  useAnalytics: () => ({ track: vi.fn(), trackEvent: vi.fn(), trackPlausibleEvent: vi.fn() }),
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({

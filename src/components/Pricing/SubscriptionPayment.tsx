@@ -166,7 +166,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
   const { subscription } = useSubscription()
   const { mutateAsync: checkSubscription } = useUpdateSubscription()
   const toast = useToast()
-  const { trackPlausibleEvent } = useAnalytics()
+  const { trackEvent } = useAnalytics()
   const { colorMode } = useColorMode()
   const stripePublicKey = useAppEnv().STRIPE_PUBLIC_KEY
 
@@ -202,6 +202,10 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
         address: signerAddress,
         locale: i18n.resolvedLanguage,
       }
+      trackEvent({
+        name: AnalyticsEvents.CheckoutStarted,
+        props: { lookup_key: String(lookupKey), billing_period: String(billingPeriod) },
+      })
       // Create a Checkout Session
       return await bearedFetch<CheckoutResponse>(ApiEndpoints.SubscriptionCheckout, {
         method: 'POST',
@@ -225,7 +229,7 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
         })
     }
     return await Promise.resolve('')
-  }, [currentAddress, bearedFetch, lookupKey, i18n.resolvedLanguage, toast, t, onClose])
+  }, [currentAddress, bearedFetch, lookupKey, billingPeriod, i18n.resolvedLanguage, toast, t, onClose, trackEvent])
 
   const onComplete = async () => {
     let nsub = await checkSubscription()
@@ -239,8 +243,14 @@ export const SubscriptionPayment = ({ lookupKey, billingPeriod, onClose }: Subsc
       nsub = await checkSubscription()
     }
     await queryClient.invalidateQueries({ queryKey: QueryKeys.organization.subscription() })
-    trackPlausibleEvent({
+    trackEvent({
       name: AnalyticsEvents.SubscriptionSuccessful,
+      props: {
+        lookup_key: String(lookupKey),
+        billing_period: String(billingPeriod),
+        previous_plan: subscription.plan.name,
+        new_plan: nsub.plan.name,
+      },
     })
     onClose()
   }

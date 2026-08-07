@@ -29,7 +29,7 @@ export default defineConfig({
     },
     server: {
       deps: {
-        inline: ['@plausible-analytics/tracker', 'react-gtm-module'],
+        inline: ['@plausible-analytics/tracker', 'react-gtm-module', 'posthog-js'],
       },
     },
   },
@@ -38,6 +38,7 @@ export default defineConfig({
       // Mock problematic packages for testing
       '@plausible-analytics/tracker': path.resolve(__dirname, './src/__mocks__/@plausible-analytics/tracker.ts'),
       'react-gtm-module': path.resolve(__dirname, './src/__mocks__/react-gtm-module.ts'),
+      'posthog-js': path.resolve(__dirname, './src/__mocks__/posthog-js.ts'),
     },
   },
 })

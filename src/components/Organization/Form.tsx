@@ -19,6 +19,8 @@ export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
           defaultValue: "Enter your organization's email",
         })}
         required
+        // Organization name is not personal data and stays readable in session replays
+        data-ph-unmask=''
       />
       {!minified && (
         <>

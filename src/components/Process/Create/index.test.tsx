@@ -19,7 +19,7 @@ vi.mock('~utils/analytics', () => ({
 
 vi.mock('~components/AnalyticsProvider', () => ({
   useAnalytics: () => ({
-    track: vi.fn(),
+    trackEvent: vi.fn(),
   }),
 }))
 

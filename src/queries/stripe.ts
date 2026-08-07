@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { ensure0x } from '~utils/address'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
 export const usePortalSession = () => {
   const { bearedFetch, currentAddress } = useAuth()
@@ -11,5 +12,8 @@ export const usePortalSession = () => {
       bearedFetch<{ portalURL: string }>(
         ApiEndpoints.SubscriptionPortal.replace('{address}', ensure0x(currentAddress))
       ),
+    onSuccess: () => {
+      trackAnalyticsEvent({ name: AnalyticsEvents.BillingPortalOpened })
+    },
   })
 }

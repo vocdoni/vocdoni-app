@@ -453,7 +453,10 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
                       </CheckboxRoot>
                     </Table.Cell>
                     {columns.map((column) => (
-                      <Table.Cell key={column.id}>{member[column.id]}</Table.Cell>
+                      // ph-no-capture: member data is never recorded in session replays
+                      <Table.Cell key={column.id} className='ph-no-capture'>
+                        {member[column.id]}
+                      </Table.Cell>
                     ))}
                   </Table.Row>
                 ))}

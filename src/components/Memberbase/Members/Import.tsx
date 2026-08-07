@@ -38,6 +38,7 @@ import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { MembersCsvManager } from './MembersCsvManager'
@@ -135,6 +136,22 @@ export const ImportProgress = () => {
       })
     }
   }, [queryClient, organization.address, isComplete])
+
+  // Track the async job outcome once per job
+  const trackedJobRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!jobId || trackedJobRef.current === jobId || (!isComplete && !hasFailed)) return
+    trackedJobRef.current = jobId
+    trackAnalyticsEvent({
+      name: AnalyticsEvents.MembersImportCompleted,
+      props: {
+        status: hasFailed ? 'failed' : 'completed',
+        added: data?.result?.added ?? 0,
+        total: data?.result?.total ?? 0,
+        error_count: data?.errors?.length ?? 0,
+      },
+    })
+  }, [jobId, isComplete, hasFailed, data])
 
   const closeAlert = () => setJobId(null)
 
@@ -265,7 +282,15 @@ export const ImportProgress = () => {
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <List.Root display='flex' flexDirection='column' gap={2} pl={4} listStyleType='disc'>
+              {/* ph-no-capture: import errors quote the offending CSV rows */}
+              <List.Root
+                display='flex'
+                flexDirection='column'
+                gap={2}
+                pl={4}
+                listStyleType='disc'
+                className='ph-no-capture'
+              >
                 {data?.errors?.map((error, i) => (
                   <List.Item key={i} whiteSpace='pre-wrap' fontSize='sm'>
                     {error}
@@ -473,6 +498,7 @@ export const ImportMembers = () => {
     const finalData = mapSpreadsheetData(parsedRows, columnMapping)
 
     try {
+      trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportStarted, props: { total_rows: finalData.length } })
       const data = await addMembers.mutateAsync(finalData)
       setJobId(data?.jobId)
       setColumnMapping({})

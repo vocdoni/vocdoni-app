@@ -79,6 +79,7 @@ import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
@@ -124,7 +125,8 @@ const ProcessViewContent = () => {
   const { t } = useTranslation()
   const { format: formatDate } = useDateFns()
   const { showSidebar, toggleSidebar } = useSidebarVisibility()
-  const { election, status } = useElection()
+  const { election, results, status } = useElection()
+  const { size: censusSize } = useCensusSize()
   const id = election?.id ?? ''
   const location = useLocation()
   const navigate = useNavigate()
@@ -160,6 +162,25 @@ const ProcessViewContent = () => {
       navigate(getProcessViewPathForTab(id, 'questions'), { replace: true })
     }
   }, [tabValue, showResultsTab, navigate, id])
+
+  // Election-level participation BI, captured admin-side only (voters are never tracked)
+  const trackedResultsElectionRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (tabValue !== 'results' || !showResultsTab || trackedResultsElectionRef.current === id) return
+    if (!election?.published) return
+    trackedResultsElectionRef.current = id
+    const voteCount = processVoteCount(results)
+    trackAnalyticsEvent({
+      name: AnalyticsEvents.ProcessResultsViewed,
+      props: {
+        election_id: id,
+        status: status ?? 'unknown',
+        vote_count: voteCount,
+        census_size: censusSize,
+        turnout_pct: censusSize ? Math.round((voteCount / censusSize) * 100) : 0,
+      },
+    })
+  }, [tabValue, showResultsTab, id, election, results, status, censusSize])
 
   return (
     <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
