@@ -1,4 +1,4 @@
-import LegalNotice from './LegalNotice'
+import LegalNotice, { StaticLegalNotice } from './LegalNotice'
 import { render, screen } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 
@@ -46,27 +46,32 @@ describe('LegalNotice', () => {
     expect(screen.getByText('0xabc')).toBeInTheDocument()
   })
 
-  it('renders from the orgName prop without reading the organization context', () => {
-    setReactProvidersMock({
-      useOrganization: () => {
-        throw new Error('useOrganization() must be used inside <OrganizationProvider>')
-      },
+  describe('StaticLegalNotice', () => {
+    beforeEach(() => {
+      // The real hook throws outside its provider: the static variant must never reach it.
+      setReactProvidersMock({
+        useOrganization: () => {
+          throw new Error('useOrganization() must be used inside <OrganizationProvider>')
+        },
+      })
     })
 
-    render(<LegalNotice orgName='Legacy org' />)
+    it('renders from the orgName prop without reading the organization context', () => {
+      render(<StaticLegalNotice orgName='Legacy org' />)
 
-    expect(screen.getByText('Legacy org')).toBeInTheDocument()
-  })
-
-  it('renders nothing when the orgName prop is empty', () => {
-    setReactProvidersMock({
-      useOrganization: () => {
-        throw new Error('useOrganization() must be used inside <OrganizationProvider>')
-      },
+      expect(screen.getByText('Legacy org')).toBeInTheDocument()
     })
 
-    render(<LegalNotice orgName='' />)
+    it('renders nothing when orgName is empty', () => {
+      render(<StaticLegalNotice orgName='' />)
 
-    expect(screen.queryByTestId('layout-legal-notice')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('layout-legal-notice')).not.toBeInTheDocument()
+    })
+
+    it('renders nothing when orgName is undefined', () => {
+      render(<StaticLegalNotice orgName={undefined} />)
+
+      expect(screen.queryByTestId('layout-legal-notice')).not.toBeInTheDocument()
+    })
   })
 })

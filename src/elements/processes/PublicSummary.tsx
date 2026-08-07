@@ -1,6 +1,6 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { ElectionProvider, OrganizationProvider } from '@vocdoni/react-components'
-import LegalNotice from '~components/Layout/LegalNotice'
+import LegalNotice, { StaticLegalNotice } from '~components/Layout/LegalNotice'
 import ArchiveProcessView from '~components/Process/Archive/View'
 import { ProcessSummary as ProcessSummaryComponent } from '~components/Process/Summary'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
@@ -33,7 +33,7 @@ const PublicProcessSummaryView = ({
     return (
       <>
         <ArchiveProcessView election={legacyElection} />
-        <LegalNotice orgName={orgName} />
+        <StaticLegalNotice orgName={orgName} />
       </>
     )
   }
