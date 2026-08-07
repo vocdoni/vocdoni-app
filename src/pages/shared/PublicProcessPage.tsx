@@ -25,7 +25,11 @@ export default function PublicProcessPage() {
         showDashboardButton={false}
       >
         {data.era === 'archive' ? (
-          <PublicProcessView id={data.id} legacyElection={data.legacyElection} />
+          <PublicProcessView
+            id={data.id}
+            legacyElection={data.legacyElection}
+            legacyOrganization={data.legacyOrganization}
+          />
         ) : (
           <PublicProcessView id={data.id} election={data.election} organizationAddress={data.organization?.address} />
         )}

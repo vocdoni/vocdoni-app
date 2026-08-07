@@ -40,7 +40,12 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
       const id = params.id!
 
       if (isLegacyProcessId(id)) {
-        return { era: 'archive', legacyElection: await fetchLegacyElection(vochainGateway, id) } as const
+        const legacyElection = await fetchLegacyElection(vochainGateway, id)
+        const legacyOrganization = await fetchLegacyOrganization(vochainGateway, legacyElection.organizationId).catch(
+          () => undefined
+        )
+
+        return { era: 'archive', legacyElection, legacyOrganization } as const
       }
 
       return { era: 'saas', election: await client.elections.get(id) } as const
