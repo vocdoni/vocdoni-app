@@ -54,7 +54,7 @@ import { Routes } from '~routes'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
-import { useStoredDraftId } from './draft-storage'
+import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { useProcessTemplates } from './TemplateProvider'
@@ -799,8 +799,14 @@ const ProcessCreateView = () => {
       methods.reset(defaultProcessValues)
 
       // The stored draft id now points at a published process, so drop it —
-      // deleting it would delete the vote we just published.
-      storeDraftId(null)
+      // deleting it would delete the vote we just published. Only when it
+      // actually points at *this* draft though: publishing a draft opened
+      // straight from the drafts list (`?draftId=`) must not forget an
+      // unrelated resumable draft. Read from storage rather than the hook
+      // state, which is stale here when `writeDraft` just created the draft.
+      if (getStoredDraftId(organization?.address) === processId) {
+        storeDraftId(null)
+      }
 
       navigate(generatePath(Routes.dashboard.process, { id: processId }))
     } catch (error) {
