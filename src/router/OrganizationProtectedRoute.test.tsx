@@ -1,3 +1,4 @@
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { screen } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 import { useAuth } from '~components/Auth/useAuth'
@@ -41,6 +42,21 @@ describe('OrganizationProtectedRoute', () => {
     renderGuard()
 
     expect(screen.getByText("You don't belong to any organization yet!")).toBeInTheDocument()
+  })
+
+  it('onboards a freshly verified account, whose address lookup 404s with "user has no organizations"', () => {
+    // /auth/addresses answers 404 {"error":"user has no organizations","code":40012} for a brand
+    // new account, so "no organizations" arrives as an error and must not read as a failed lookup.
+    vi.mocked(useAuth).mockReturnValue(
+      mockAuth({
+        addressesError: new VocdoniApiError(404, { code: 40012 }, 'user has no organizations', 40012),
+      })
+    )
+
+    renderGuard()
+
+    expect(screen.getByText("You don't belong to any organization yet!")).toBeInTheDocument()
+    expect(screen.queryByText("We couldn't load your organizations")).not.toBeInTheDocument()
   })
 
   it('reports a failed address lookup instead of claiming there are no organizations', () => {
