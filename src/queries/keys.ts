@@ -10,8 +10,15 @@ export const QueryKeys = {
     results: electionQueryKeys.results,
   },
   organization: {
-    elections: (address?: string, params?: { page?: number; status?: string }) =>
-      ['organizations', 'elections', address, params].filter(Boolean),
+    // The address stays in the key even when it is undefined: dropping it collapses an
+    // addressless read onto a shorter key that another call shape can also produce, so an
+    // addressless failure would surface in a query that never asked for it.
+    elections: (address?: string, params?: { page?: number; status?: string }) => [
+      'organizations',
+      'elections',
+      address ?? null,
+      params ?? null,
+    ],
     info: (address?: string) => ['organizations', 'info', address].filter(Boolean),
     users: (address?: string) => ['organizations', 'users', address].filter(Boolean),
     names: ['organizations', 'names'],

@@ -20,7 +20,8 @@ export enum LocalStorageKeys {
  * Whether the API answered with a 4xx, i.e. a definitive "no" rather than a
  * failure to reach it. Retrying those only delays the answer.
  */
-const isClientError = (error: unknown) => error instanceof VocdoniApiError && error.status >= 400 && error.status < 500
+export const isClientError = (error: unknown) =>
+  error instanceof VocdoniApiError && error.status >= 400 && error.status < 500
 
 const getStorageItem = (key: string) => (typeof localStorage === 'undefined' ? null : localStorage.getItem(key))
 const setStorageItem = (key: string, value: string) => {

@@ -314,21 +314,9 @@ const Processes = () => {
     )
   }
 
-  if (isError) {
-    return (
-      <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
-        <ListStateAlert
-          show
-          status='error'
-          title={t('dashboard.welcome.error_loading_processes', {
-            defaultValue: 'Error loading voting processes',
-          })}
-          description={error instanceof Error ? error.message : undefined}
-        />
-      </Flex>
-    )
-  }
-
+  // Checked before the error state on purpose: with no organization this query never ran, and
+  // any error on its cache entry belongs to something else. Reporting it would replace the only
+  // way forward — the button that creates the missing organization.
   if (!organization) {
     return (
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
@@ -342,6 +330,21 @@ const Processes = () => {
             })}
           </ReactRouterLink>
         </Button>
+      </Flex>
+    )
+  }
+
+  if (isError) {
+    return (
+      <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
+        <ListStateAlert
+          show
+          status='error'
+          title={t('dashboard.welcome.error_loading_processes', {
+            defaultValue: 'Error loading voting processes',
+          })}
+          description={error instanceof Error ? error.message : undefined}
+        />
       </Flex>
     )
   }
