@@ -9,11 +9,13 @@ vi.mock('~components/Auth/useAuth', () => ({
 
 const useOrganizationSetupMock = vi.fn()
 
+let electionsQueryState: any = { data: null, isLoading: false, isError: false, error: null }
+
 vi.mock('@tanstack/react-query', async () => {
   const actual = await vi.importActual<any>('@tanstack/react-query')
   return {
     ...actual,
-    useQuery: () => ({ data: null, isLoading: false, isError: false, error: null }),
+    useQuery: () => electionsQueryState,
   }
 })
 
@@ -65,11 +67,35 @@ vi.mock('./UsageLimits', () => ({
 
 describe('OrganizationDashboard', () => {
   beforeEach(() => {
+    electionsQueryState = { data: null, isLoading: false, isError: false, error: null }
     setAuthMock({ currentAddress: '0xabc' })
     setReactProvidersMock({
       ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
       useOrganization: () => mockUseOrganization({ organization: null }),
     })
+  })
+
+  it('offers to create an organization even when the shared elections cache holds an error', () => {
+    // The elections cache entry is keyed per organization, but the /admin/processes loaders can
+    // leave it in an error state for an account that has no organization at all. A disabled
+    // useQuery still reports that cached error, and showing it here hides the only way forward.
+    useOrganizationSetupMock.mockReturnValue({ checklist: [], progress: 0, isStepsAccordionOpen: false })
+    setAuthMock({ currentAddress: undefined })
+    electionsQueryState = {
+      data: null,
+      isLoading: false,
+      isError: true,
+      error: new Error('invalid URL parameter: missing orgAddress'),
+    }
+
+    render(
+      <TestMemoryRouter>
+        <OrganizationDashboard />
+      </TestMemoryRouter>
+    )
+
+    expect(screen.getByText('Create your first organization')).toBeInTheDocument()
+    expect(screen.queryByText('Error loading voting processes')).not.toBeInTheDocument()
   })
 
   it('renders dashboard header', () => {

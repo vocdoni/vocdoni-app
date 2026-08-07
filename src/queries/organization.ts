@@ -98,6 +98,13 @@ export const paginatedElectionsQuery = (
   enabled: !!address,
   queryKey: QueryKeys.organization.elections(address, params),
   queryFn: async () => {
+    // `enabled` above only guards useQuery. The /admin/processes loaders read this through
+    // ensureQueryData, which ignores it, so keep the guard here too: without an address the
+    // SaaS rejects the call with 400 "invalid URL parameter: missing orgAddress" and the
+    // failure would be cached against a key no organization owns.
+    if (!address) {
+      throw new Error('Cannot list elections with no organization address selected')
+    }
     const result = await client.elections.list({
       orgAddress: address,
       page: params.page ? Number(params.page) : 1,
