@@ -39,6 +39,8 @@
       "decidim": "Decidim-Logo",
       "esquerra": "Esquerra Republicana de Catalunya-Logo",
       "omnium": "Òmnium Cultural-Logo",
+      "org_logo": "",
+      "testimonial_portrait": "",
       "ticanoia": "TIC Anoia-Logo"
     }
   },
@@ -51,6 +53,20 @@
     "votes_other": "<span>{{ count }}</span> <text>Wählende Personen</text>",
     "votes_weight_one": "<span>1</span> <text>Stimme</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>Stimmen</text>"
+  },
+  "auth": {
+    "verticals": {
+      "generic": {
+        "headline": "",
+        "label": "",
+        "trust_bar": ""
+      },
+      "professional_associations": {
+        "headline": "",
+        "label": "",
+        "trust_bar": ""
+      }
+    }
   },
   "avatar": {
     "label": "Organisations-Avatar"
@@ -1814,19 +1830,73 @@
   },
   "terms_of_service": "Nutzungsbedingungen",
   "testimonials": {
+    "aguicat": {
+      "company": "Associació de Guies Habilitats de Catalunya",
+      "position": "IT-Verantwortliche",
+      "text": "Den gesamten Wahlprozess vorzubereiten und alle Werkzeuge für die Versammlung an einem Ort zu bündeln, war einfach, intuitiv und klar. Selbst in einer wenig technikaffinen Branche erreichten wir eine hohe Beteiligung - besonders geschätzt wurde, vorab abstimmen zu können, ohne persönlich anwesend zu sein."
+    },
+    "arxivers": {
+      "company": "Associació d'Arxivers de Catalunya",
+      "position": "Sekretärin",
+      "text": "Mitgliedern ein sicheres und zuverlässiges Wahlsystem zu bieten, ist essenziell, besonders in Pandemiezeiten. Vocdoni hat uns ein einfach zu bedienendes Werkzeug an die Hand gegeben, das den Wahlprozess vereinfacht und die Beteiligung gesteigert hat."
+    },
+    "ati": {
+      "company": "ATI Friuli Venezia Giulia",
+      "position": "Präsident",
+      "text": "Als Associazione Termotecnica Italiana, Sektion Friuli Venezia Giulia, haben wir uns entschieden, unsere Governance zu digitalisieren, um Fachleuten die Teilnahme zu erleichtern. Vocdoni erwies sich als ideale Lösung und überzeugte durch Einfachheit, Kosten und Garantien."
+    },
     "bellpuig": {
       "company": "Stadtrat Bellpuig",
       "position": "Bürgermeister",
       "text": "Wir haben uns für Vocdoni entschieden, weil wir glauben, dass dies die Zukunft echter Abstimmungen jeder Art ist. Elektronisches Abstimmen steht allen offen und macht den Abstimmungsprozess für Bürgerinnen und Bürger einfacher."
     },
+    "bisbal": {
+      "company": "Stadtrat von La Bisbal d'Empordà",
+      "position": "Beauftragter für Bürgerbeteiligung",
+      "text": "Vocdoni hat unsere Abstimmung Bisbalenc/a de l'Any unterstützt, die Bürgerbeteiligung erhöht und für Transparenz, Sicherheit und sofortige Ergebnisse auf der Blockchain gesorgt. Wir haben Sicherheit, Skalierbarkeit, universelle Verifizierbarkeit und Flexibilität geschätzt."
+    },
     "ceec": {
       "position": "CEO",
       "text": "Wir haben uns für Vocdoni entschieden, weil es eine sichere, zuverlässige und transparente Beteiligung aller unserer Mitglieder an unserer Jahreshauptversammlung gewährleistet."
+    },
+    "coib": {
+      "company": "Pflegekammer von Barcelona",
+      "position": "Projektleiter",
+      "text": "Bei der Pflegekammer von Barcelona vertrauen wir Vocdoni für alle unsere Beteiligungsprozesse. So stellen wir sicher, dass Mitglieder ihr Recht von überall ausüben können. Besonders schätzen wir die sofortige Auszählung, die einfache Bedienung und den schnellen, wirksamen technischen Support - das macht den gesamten Prozess agil, transparent und zuverlässig."
     },
     "eic": {
       "company": "Enginyers Industrials de Catalunya",
       "position": "IT-Leiter",
       "text": "Vocdoni bietet uns ein einfaches, sicheres, geheimes und skalierbares Abstimmungssystem, das vollständig in unsere institutionelle Umgebung integriert ist. Wir werden ihrer Lösung sicherlich weiterhin vertrauen."
+    },
+    "erc": {
+      "position": "Nationalsekretärin für Mitgliedschaft, Antirepressionskampf und emotionales Wohlbefinden",
+      "text": "Wir vertrauen seit Jahren auf Vocdoni, weil es uns ein sicheres, prüfbares und einfach zu nutzendes System bietet, das es uns ermöglicht, digitale Abstimmungen mit allen Garantien und angepasst an die Bedürfnisse unserer Organisation durchzuführen."
+    },
+    "granollers": {
+      "position": "Kommunikationsverantwortliche(r)",
+      "text": "Bei «Granollers Primàries» verstehen wir digitale Beteiligung als ein Schlüsselinstrument zur Erweiterung und Erleichterung der Bürgerbeteiligung. Deshalb suchten wir eine Plattform, die Neutralität, Transparenz und höchste Sicherheit bei Abstimmungsprozessen gewährleistet. Vocdoni bietet all das, und deshalb haben wir es für unsere Vorwahlen gewählt und planen, es auch bei zukünftigen Konsultationen einzusetzen."
+    },
+    "icoes": {
+      "company": "Pflegekammer von Sevilla",
+      "position": "Präsident",
+      "text": "Die Digitalisierung unserer Abstimmungen mit Vocdoni hat den gesamten Wahlprozess effizienter gemacht. Wir konnten die Beteiligung deutlich erleichtern, besonders für Mitglieder, die nicht reisen konnten, und gleichzeitig ein agiles und zuverlässiges System aufrechterhalten."
+    },
+    "intersindical": {
+      "position": "Sprecher/in des Bildungssektors",
+      "text": "Bei La Intersindical sind wir der Überzeugung, dass Entscheidungen, die das gesamte Lehrpersonal betreffen, von den Lehrenden selbst getroffen werden müssen. Deshalb brauchten wir ein Werkzeug, das einen transparenten, neutralen und überprüfbaren Prozess garantiert. Mit Vocdoni konnten wir diese Entscheidung an fast 100.000 Fachleute herantragen mit der Gewissheit, dass sowohl das Verfahren als auch das Ergebnis vollständig verlässlich sein würden."
+    },
+    "omnium": {
+      "position": "Geschäftsführerin",
+      "text": "Bei Òmnium Cultural haben wir auf ein sicheres und verifizierbares Wahlsystem gesetzt, mit dem wir unsere satzungsmäßigen Versammlungen mit allen Garantien durchführen können."
+    },
+    "plataforma": {
+      "position": "Direktorin",
+      "text": "Mit Vocdoni können wir Abstimmungen mit Mitgliedern aus allen katalanischsprachigen Gebieten zu gleichen Bedingungen durchführen. Die sofortige Auszählung vereinfacht unsere Versammlungen und sorgt für volle Transparenz."
+    },
+    "ustec": {
+      "position": "Mitglied des nationalen Sekretariats",
+      "text": "Mit Vocdoni fanden wir eine sehr gute Lösung, da es eine neutrale und überprüfbare Infrastruktur ist, die sowohl die Integrität der Auszählung als auch die Privatsphäre der Wählenden gewährleistet. So konnte jede Lehrkraft nur einmal sicher und anonym abstimmen."
     }
   },
   "theme": "Design",

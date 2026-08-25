@@ -63,6 +63,21 @@ export const colors = defineSemanticTokens.colors({
         value: '{colors.gray.200}',
       },
     },
+    // The showcase panel is dark in both color modes — it sits over a vertical accent
+    // gradient, so its foreground doesn't flip with the theme.
+    showcase: {
+      fg: {
+        DEFAULT: {
+          value: '{colors.white}',
+        },
+        muted: {
+          value: '{colors.gray.400}',
+        },
+      },
+      ring: {
+        value: '{colors.separator}',
+      },
+    },
   },
   border: {
     // @deprecated: use the chakra built-in `border` token directly

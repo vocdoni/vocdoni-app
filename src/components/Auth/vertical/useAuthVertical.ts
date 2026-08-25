@@ -1,0 +1,92 @@
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { AUTH_VERTICAL_PARAM, GenericVertical, resolveVerticalSlug, type VerticalSlug } from '~constants/verticals'
+import { useVerticalCopy } from './copy'
+import { GenericLogos, getTrustLogos, MinVerticalLogos } from './logos'
+import { GenericAccent, VerticalRegistry } from './registry'
+import { useAuthTestimonials } from './testimonials'
+import type { ResolvedVertical } from './types'
+
+const StorageKey = 'auth.vertical'
+
+/**
+ * Session, not local: the branding belongs to this visit. It exists because the query string is
+ * lost twice in the auth flow — the `navigate(Routes.auth.verify)` after signup, and the Google
+ * OAuth round-trip. Storage can throw (private mode, disabled cookies); a missing vertical is not
+ * worth breaking a login over.
+ */
+const readStoredVertical = (): VerticalSlug | null => {
+  try {
+    return resolveVerticalSlug(window.sessionStorage.getItem(StorageKey))
+  } catch {
+    return null
+  }
+}
+
+const storeVertical = (slug: VerticalSlug) => {
+  try {
+    window.sessionStorage.setItem(StorageKey, slug)
+  } catch {
+    /* not worth breaking a login over */
+  }
+}
+
+/**
+ * The vertical for the current visit, from `?type=` or, failing that, from earlier in the session.
+ * `null` means the generic experience.
+ */
+export const useVerticalSlug = (): VerticalSlug | null => {
+  const [searchParams] = useSearchParams()
+  const fromUrl = resolveVerticalSlug(searchParams.get(AUTH_VERTICAL_PARAM))
+  // Read once, at mount: once the URL carries a vertical it always wins.
+  const [stored] = useState(readStoredVertical)
+
+  useEffect(() => {
+    if (fromUrl) storeVertical(fromUrl)
+  }, [fromUrl])
+
+  return fromUrl ?? stored
+}
+
+/**
+ * Everything the auth chrome needs to render for the current vertical.
+ *
+ * Degrades independently for testimonials and logos, so a half-populated vertical never has to
+ * misrepresent itself:
+ * - testimonials: the vertical's own quotes, else the full mixed pool — always attributed to the
+ *   real organization either way;
+ * - logos: the vertical's own set if it has enough of them, else the generic mix *and* the generic
+ *   trust-bar sentence. Claiming "many professional associations trust it" under a row of city
+ *   councils would be worse than saying nothing.
+ *
+ * The headline, label and accent are always vertical-specific: they cost nothing and never lie.
+ */
+export const useAuthVertical = (): ResolvedVertical => {
+  const slug = useVerticalSlug()
+  const testimonials = useAuthTestimonials()
+  const copyMap = useVerticalCopy()
+
+  // A stable seed rather than a stable testimonial: the pool is rebuilt on every language change,
+  // and re-rolling the quote mid-session (or mid-signup flow) would be jarring.
+  const [seed] = useState(Math.random)
+
+  const content = slug ? VerticalRegistry[slug] : undefined
+  const copy = (slug && copyMap[slug]) || copyMap[GenericVertical]
+
+  const pool = slug ? testimonials.filter((testimonial) => testimonial.verticals.includes(slug)) : testimonials
+  const candidates = pool.length ? pool : testimonials
+  const testimonial = candidates.length ? candidates[Math.floor(seed * candidates.length)] : null
+
+  const usesGenericLogos = !content || content.logos.length < MinVerticalLogos
+  const logos = getTrustLogos(usesGenericLogos ? GenericLogos : content.logos)
+
+  return {
+    key: slug ?? GenericVertical,
+    isGeneric: !slug,
+    accent: content?.accent ?? GenericAccent,
+    copy: usesGenericLogos ? { ...copy, trustBar: copyMap[GenericVertical].trustBar } : copy,
+    testimonial,
+    logos,
+    usesGenericLogos,
+  }
+}

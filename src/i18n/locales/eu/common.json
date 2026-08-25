@@ -39,6 +39,8 @@
       "decidim": "Decidimen logotipoa",
       "esquerra": "Esquerra Republicana de Catalunyaren logotipoa",
       "omnium": "Òmnium Culturalen logotipoa",
+      "org_logo": "",
+      "testimonial_portrait": "",
       "ticanoia": "TIC Anoiaren logotipoa"
     }
   },
@@ -51,6 +53,20 @@
     "votes_other": "<span>{{ count }}</span> <text>boto-emaile</text>",
     "votes_weight_one": "<span>1</span> <text>boto</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>boto</text>"
+  },
+  "auth": {
+    "verticals": {
+      "generic": {
+        "headline": "",
+        "label": "",
+        "trust_bar": ""
+      },
+      "professional_associations": {
+        "headline": "",
+        "label": "",
+        "trust_bar": ""
+      }
+    }
   },
   "avatar": {
     "label": "Erakundearen avatarra"
@@ -1814,19 +1830,73 @@
   },
   "terms_of_service": "Zerbitzu-baldintzak",
   "testimonials": {
+    "aguicat": {
+      "company": "Associació de Guies Habilitats de Catalunya",
+      "position": "IT arduraduna",
+      "text": "Boto-ematearen prozesu osoa prestatzea eta batzarrarentzako tresna guztiak zentralizatzea erraza, intuitiboa eta argia izan zen. Teknologia gutxi ezagutzen duten sektore batean egonda ere, parte-hartze handia lortu genuen: pertsonek, batez ere, pertsonalki joan beharrik gabe aurretik botoa eman ahal izatea baloratu zuten."
+    },
+    "arxivers": {
+      "company": "Associació d'Arxivers de Catalunya",
+      "position": "Idazkaria",
+      "text": "Kideei seguru eta fidagarria den boto-emate-sistema bat eskaintzea funtsezkoa da, are gehiago pandemia garaian. Vocdoni-k erabiltzeko erraza den tresna bat eman zigun; horrek boto-ematearen prozesua sinplifikatu eta parte-hartzea handitu zuen."
+    },
+    "ati": {
+      "company": "ATI Friuli Venezia Giulia",
+      "position": "Lehendakaria",
+      "text": "Associazione Termotecnica Italiana elkarteko Friuli Venezia Giulia atalean, gure gobernantza digitalizatzea erabaki genuen, profesionalek parte hartzea errazagoa izan zedin. Vocdoni irtenbide ideal gisa nabarmendu zen, bere sinpletasunagatik, kostuengatik eta bermeengatik."
+    },
     "bellpuig": {
       "company": "Bellpuigeko Udala",
       "position": "Alkatea",
       "text": "Vocdoni aukeratu genuen edozein motatako benetako hauteskundeek izan beharko luketenaren etorkizuna dela uste dugulako. Boto elektronikoa guztion eskura dago eta prozesua errazten die herritarrei."
     },
+    "bisbal": {
+      "company": "La Bisbal d'Empordàko Udaletxea",
+      "position": "Herritarren parte-hartzerako arduraduna",
+      "text": "Vocdoni-k gure Bisbalenc/a de l'Any bozketa bultzatu zuen, herritarren parte-hartzea handituz eta blockchain-ean gardentasuna, segurtasuna eta berehalako emaitzak eskainiz. Bere segurtasuna, eskalagarritasuna, egiaztagarritasun unibertsala eta malgutasuna baloratu ditugu."
+    },
     "ceec": {
       "position": "Zuzendari nagusia",
       "text": "Vocdoni aukeratu genuen gure kide guztientzat parte-hartze segurua, fidagarria eta gardena bermatzen duelako gure Urteko Batzar Nagusian."
+    },
+    "coib": {
+      "company": "Bartzelonako Erizainen Elkargo Ofiziala",
+      "position": "Proiektuen arduraduna",
+      "text": "Bartzelonako Erizainen Elkargo Ofizialean, Vocdoni-n konfiantza dugu gure parte-hartze prozesu guztietarako, kideek beren eskubideak edozein lekutatik baliatu ahal izan ditzaten bermatuz. Bereziki baloratzen dugu botoen berehalako zenbaketa, sistemaren sinpletasuna eta laguntza teknikoaren erantzun eta orientazio azkar eta eraginkorra; horrek prozesu osoa arin, garden eta fidagarri bihurtzen du."
     },
     "eic": {
       "company": "Enginyers Industrials de Catalunya",
       "position": "IT zuzendaria",
       "text": "Vocdonik bozketa-sistema sinple, segurua, anonimoa eta eskalagarria eskaintzen digu, gure erakunde-ingurunean guztiz integratuta. Inolako zalantzarik gabe, beren konponbidean konfiantza izaten jarraituko dugu."
+    },
+    "erc": {
+      "position": "Kideen, borroka antirrepresiboaren eta ongizate emozionalaren idazkari nazionala",
+      "text": "Urteak daramatzagu Vocdoni-n konfiantza izaten, sistema seguru, auditagarri eta erabiltzeko erraza eskaintzen baitigu, gure erakundearen beharretara egokituta eta berme guztiekin boto digitalak antolatzeko aukera ematen diguna."
+    },
+    "granollers": {
+      "position": "Komunikazio arduraduna",
+      "text": "«Granollers Primàries»n, parte-hartze digitala herritarren parte-hartzea zabaltzeko eta errazteko funtsezko tresnatzat ulertzen dugu. Horregatik, boto-emate prozesuetan neutraltasuna, gardentasuna eta segurtasunik handiena bermatzen zituen plataforma baten bila ginen. Vocdoni-k hori guztia eskaintzen du, eta horregatik hautatu genuen gure primarioetarako, eta etorkizuneko kontsultetan erabiltzen jarraitzea aurreikusten dugu."
+    },
+    "icoes": {
+      "company": "Sevillako Erizaintzako Elkargo Ofiziala",
+      "position": "Lehendakaria",
+      "text": "Vocdoni-rekin boto-ematea digitalizatu izana, hauteskunde-prozesu osoa eraginkorrago bihurtu du. Parte-hartzea askoz errazagoa egin dugu, batez ere bidaiatu ezin zuten kideentzat, aldi berean sistema arin eta fidagarriari eutsiz."
+    },
+    "intersindical": {
+      "position": "Hezkuntza sektoriaren bozeramailea",
+      "text": "La Intersindical-en uste dugu irakasle kolektibo osoa ukitzen duten erabakiak irakasleak beraiek hartu behar dituztela. Horregatik, prozesu garden, neutral eta egiaztagarri bat bermatuko zuen tresna bat behar genuen. Vocdoni-rekin erabaki hau ia 100.000 profesionaletara helarazi ahal izan genuen, prozedura zein emaitza erabat fidagarriak izango zirela ziurtasunarekin."
+    },
+    "omnium": {
+      "position": "Kudeatzaile exekutiboa",
+      "text": "Òmnium Culturalen, seguru eta egiaztagarri den boto-emate-sistema batean apustu egin genuen; horri esker gure estatutuko batzarrak berme guztiekin egin ahal izango ditugu."
+    },
+    "plataforma": {
+      "position": "Zuzendaria",
+      "text": "Vocdoni-k aukera ematen digu Katalanez hitz egiten den lurralde guztietako kideekin botoak berdintasunezko baldintzetan egiteko. Berehalako zenbaketarekin, gure batzarrak errazten dira eta gardentasun osoa bermatzen da."
+    },
+    "ustec": {
+      "position": "Idazkaritza nazionaleko kidea",
+      "text": "Vocdonirekin irtenbide oso ona aurkitu genuen, azpiegitura neutral eta egiaztagarria izanik, zenbaketaren osotasuna zein boto-emaileen pribatutasuna bermatzen baitzituen. Horri esker, irakasle bakoitzak behin bakarrik bozka zezakeen, modu seguru eta anonimoan."
     }
   },
   "theme": "Gaia",
