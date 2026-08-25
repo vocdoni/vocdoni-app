@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { useAuthRoutes, useCreateOrganizationRoutes } from './routes/auth'
 import { useDashboardRoutes } from './routes/dashboard'
@@ -37,9 +37,21 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
     [resolvedBasename]
   )
 
-  // createBrowserRouter().initialize() attaches popstate and pagehide listeners that only
-  // dispose() releases — the previous per-render recreation leaked a pair on every render.
-  useEffect(() => () => router.dispose(), [router])
+  // Dispose the router we just replaced — a language switch is the only thing that
+  // replaces one — so its popstate/pagehide listeners go away with it.
+  //
+  // Deliberately not an unmount cleanup: React can run an effect's cleanup and then re-run
+  // the effect on the same component instance, and vike-react wraps every page in
+  // StrictMode, which does exactly that on mount. useMemo keeps the same router across it,
+  // so disposing there would abort the in-flight initial navigation (dispose() aborts the
+  // pending navigation controller) and hand the second mount a dead router that never
+  // initializes — a blank page on every route with a loader.
+  const previousRouter = useRef(router)
+  useEffect(() => {
+    if (previousRouter.current === router) return
+    previousRouter.current.dispose()
+    previousRouter.current = router
+  }, [router])
 
   // Key by basename so a language switch — the only time the basename changes — remounts
   // the router to adopt the new prefix, since RouterProvider keeps the first router's

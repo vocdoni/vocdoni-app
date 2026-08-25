@@ -75,12 +75,16 @@ describe('RoutesProvider', () => {
     expect(dispose).toHaveBeenCalledTimes(1)
   })
 
-  it('disposes the router on unmount', async () => {
+  // Disposing on unmount looks tidy but breaks the app: React re-runs an effect on the
+  // same instance after its cleanup (StrictMode, which vike-react enables everywhere), and
+  // useMemo hands that second run the same router. Disposing would abort its in-flight
+  // initial navigation, leaving every loader route blank.
+  it('does not dispose the router it is still using when an effect cleanup runs', async () => {
     const { RoutesProvider } = await import('./Router')
 
     const { unmount } = render(<RoutesProvider basename='/en' />)
     unmount()
 
-    expect(dispose).toHaveBeenCalledTimes(1)
+    expect(dispose).not.toHaveBeenCalled()
   })
 })
