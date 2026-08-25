@@ -1,12 +1,12 @@
 import { act, fireEvent, render, screen, within } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { getAuthMock, resetAuthMock, setAuthMock } from '~src/test-utils-react-providers-mock'
 import SupportChat from './index'
 
 const bearedFetchMock = vi.fn()
 let profileMock: Record<string, unknown> | null = null
 
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ bearedFetch: bearedFetchMock }),
+  useAuth: () => getAuthMock(),
 }))
 
 vi.mock('~src/queries/account', () => ({
@@ -17,15 +17,6 @@ vi.mock('@calcom/embed-react', () => ({
   default: () => <div>CalEmbed</div>,
   getCalApi: vi.fn(async () => vi.fn()),
 }))
-
-vi.mock('@vocdoni/react-components', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
-  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
-  return {
-    ...actual,
-    ...getReactProvidersMock(),
-  }
-})
 
 const advance = async (ms: number) => {
   await act(async () => {
@@ -61,10 +52,9 @@ describe('SupportChat', () => {
     localStorage.clear()
     sessionStorage.clear()
     bearedFetchMock.mockReset().mockResolvedValue(undefined)
+    resetAuthMock()
     profileMock = { firstName: 'Jane', lastName: 'Doe', email: 'jane@example.com' }
-    setReactProvidersMock({
-      useClient: () => ({ connected: true, account: { address: '0x123' }, client: {} }),
-    })
+    setAuthMock({ currentAddress: '0x123', bearedFetch: bearedFetchMock })
   })
 
   afterEach(() => {
@@ -72,7 +62,7 @@ describe('SupportChat', () => {
   })
 
   it('renders nothing without an account', () => {
-    setReactProvidersMock({ useClient: () => ({ connected: false, account: null, client: {} }) })
+    setAuthMock({ currentAddress: undefined })
     render(<SupportChat />)
     expect(screen.queryByRole('button', { name: 'Open support chat' })).not.toBeInTheDocument()
   })

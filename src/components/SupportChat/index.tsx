@@ -1,8 +1,8 @@
 import { chakra, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
-import { useClient } from '@vocdoni/react-components'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuMessageCircle, LuX } from 'react-icons/lu'
+import { useAuth } from '~components/Auth/useAuth'
 import { ChatPanel } from './ChatPanel'
 import { useSupportChat } from './useSupportChat'
 
@@ -13,9 +13,9 @@ import { useSupportChat } from './useSupportChat'
  * tickets require an explicit "Start a new request".
  */
 const SupportChat = () => {
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
 
-  if (!account?.address) return null
+  if (!currentAddress) return null
 
   return <SupportChatWidget />
 }

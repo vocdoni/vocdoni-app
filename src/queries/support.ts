@@ -1,5 +1,4 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
@@ -12,14 +11,13 @@ export type SupportTicket = {
 
 export const useSendSupportTicket = (options?: Omit<UseMutationOptions<void, Error, SupportTicket>, 'mutationFn'>) => {
   const { t } = useTranslation()
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
+  const { bearedFetch, currentAddress } = useAuth()
 
   return useMutation<void, Error, SupportTicket>({
     mutationFn: (params: SupportTicket) => {
       // Fail fast rather than POSTing to organizations/undefined/ticket. The
       // message can surface in user-facing toasts, so keep it localized.
-      if (!account?.address) {
+      if (!currentAddress) {
         return Promise.reject(
           new Error(
             t('form.support.no_organization', {
@@ -28,7 +26,7 @@ export const useSendSupportTicket = (options?: Omit<UseMutationOptions<void, Err
           )
         )
       }
-      return bearedFetch<void>(ApiEndpoints.OrganizationsSupport.replace('{address}', account.address), {
+      return bearedFetch<void>(ApiEndpoints.OrganizationsSupport.replace('{address}', currentAddress), {
         body: params,
         method: 'POST',
       })
