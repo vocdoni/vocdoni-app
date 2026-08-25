@@ -19,7 +19,9 @@ export const QueryKeys = {
       address ?? null,
       params ?? null,
     ],
-    info: (address?: string) => ['organizations', 'info', address].filter(Boolean),
+    // No `info` key here on purpose: the organization read is owned by react-providers and
+    // keyed through its exported `organizationQueryKeys.organization(address)`. Adding an
+    // app-local one again would split the cache and fetch the same endpoint twice.
     users: (address?: string) => ['organizations', 'users', address].filter(Boolean),
     names: ['organizations', 'names'],
     pendingUsers: (address?: string) => ['organizations', 'users', 'pending', address].filter(Boolean),
