@@ -5,7 +5,7 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuPanelLeft } from 'react-icons/lu'
 import { Outlet, useLocation } from 'react-router-dom'
-import { useSaasAccount } from '~components/Account/SaasAccountProvider'
+import { useAuth } from '~components/Auth/useAuth'
 import DashboardMenu from '~components/Dashboard/Menu'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
@@ -79,11 +79,16 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
 }
 
 const DashboardLayoutProviders = (props: PropsWithChildren) => {
-  const { organization } = useSaasAccount()
+  const { currentAddress } = useAuth()
   return (
-    // Only the id: useSaasAccount()'s organization is the app's `.account`-nested
-    // adapter shape, not a v2 Organization, so it must not seed the provider cache.
-    <OrganizationProvider id={organization?.address}>
+    // Only the id: useSaasAccount()'s organization is the app's `.account`-nested adapter
+    // shape, not a v2 Organization, so it must not seed the provider cache.
+    //
+    // The id is the session address rather than useSaasAccount()'s (which prefers the
+    // API-reported one): both this provider and useSaasOrganization key their query by
+    // address, so feeding them the same value is what keeps them on a single cache entry
+    // even when the API echoes the address back in a different case.
+    <OrganizationProvider id={currentAddress}>
       <PricingModalProvider {...props} />
     </OrganizationProvider>
   )

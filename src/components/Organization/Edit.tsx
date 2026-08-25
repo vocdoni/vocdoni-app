@@ -1,5 +1,6 @@
 import { Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
+import { organizationQueryKeys } from '@vocdoni/react-components'
 import { useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +12,6 @@ import { HSeparator } from '~components/Layout/Separators'
 import { AvatarUploader } from '~components/Layout/Uploader'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { useToast } from '~components/Toast'
-import { QueryKeys } from '~src/queries/keys'
 import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
 
@@ -35,8 +35,12 @@ const useOrganizationEdit = (options?: Omit<UseMutationOptions<void, Error, Crea
     },
     ...options,
     onSuccess: () => {
+      // Invalidating the shared organization entry refreshes both readers at once: this
+      // used to invalidate an app-only key, leaving the react-providers OrganizationProvider
+      // (which feeds the dashboard header and org display components) showing stale data
+      // until something else remounted it.
       client.invalidateQueries({
-        queryKey: QueryKeys.organization.info(),
+        queryKey: organizationQueryKeys.organization(currentAddress),
       })
     },
   })

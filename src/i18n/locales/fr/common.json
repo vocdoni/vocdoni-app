@@ -1652,6 +1652,8 @@
   "processes": {
     "empty": "Aucun processus de vote trouvé",
     "empty_description": "Créez un processus de vote pour commencer.",
+    "load_error": "Impossible de charger les processus de vote",
+    "load_error_description": "Réessayez.",
     "no_results": "Aucun résultat pour ce filtre",
     "no_results_description": "Essayez d'ajuster vos filtres."
   },

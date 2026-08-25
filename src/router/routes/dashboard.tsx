@@ -1,16 +1,13 @@
 // These aren't lazy loaded since they are main layouts and related components
 import { useQueryClient } from '@tanstack/react-query'
 import { Fragment, lazy } from 'react'
-import { useAuth } from '~components/Auth/useAuth'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
+import { generatePath, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
 import { QueryKeys } from '~queries/keys'
-import { paginatedElectionsQuery } from '~queries/organization'
 import OrganizationProtectedRoute from '~src/router/OrganizationProtectedRoute'
 import ProtectedRoutes from '~src/router/ProtectedRoutes'
-import { getPaginationParams } from '~utils/pagination'
 import { Routes } from '.'
 import AccountProtectedRoute from '../AccountProtectedRoute'
 import OrganizationTypeGuard from '../OrganizationTypeGuard'
@@ -45,7 +42,6 @@ export const shouldRevalidateDashboardProcess = ({
 export const useDashboardRoutes = () => {
   const queryClient = useQueryClient()
   const { client } = useApiClient()
-  const { currentAddress } = useAuth()
 
   return {
     element: (
@@ -141,16 +137,6 @@ export const useDashboardRoutes = () => {
                             <AllProcesses />
                           </SuspenseLoader>
                         ),
-                        loader: async ({ params, request }: LoaderFunctionArgs) => {
-                          const url = new URL(request.url)
-                          const queryParams = getPaginationParams(url.searchParams)
-                          // we want our route params to override the query params
-                          const mergedParams = { ...queryParams, ...params }
-
-                          return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(currentAddress, client, mergedParams, queryClient)
-                          )
-                        },
                       },
                       {
                         path: Routes.dashboard.processes.ended,
@@ -159,16 +145,6 @@ export const useDashboardRoutes = () => {
                             <EndedProcesses />
                           </SuspenseLoader>
                         ),
-                        loader: async ({ params, request }: LoaderFunctionArgs) => {
-                          const url = new URL(request.url)
-                          const queryParams = getPaginationParams(url.searchParams)
-                          // we want our route params to override the query params
-                          const mergedParams = { ...queryParams, ...params }
-
-                          return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(currentAddress, client, mergedParams, queryClient)
-                          )
-                        },
                       },
                       {
                         path: Routes.dashboard.processes.drafts,

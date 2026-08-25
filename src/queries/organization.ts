@@ -1,15 +1,17 @@
-import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import type { ElectionStatus } from '@vocdoni/api-types'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { useTranslation } from 'react-i18next'
 import { IconType } from 'react-icons'
 import { LuCalendar, LuFileSpreadsheet, LuUsers, LuVote } from 'react-icons/lu'
-import { generatePath } from 'react-router-dom'
+import { generatePath, useParams, useSearchParams } from 'react-router-dom'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { Routes } from '~routes'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { getPaginationParams } from '~utils/pagination'
 import { QueryKeys } from './keys'
 
 export enum SetupStepIds {
@@ -98,10 +100,10 @@ export const paginatedElectionsQuery = (
   enabled: !!address,
   queryKey: QueryKeys.organization.elections(address, params),
   queryFn: async () => {
-    // `enabled` above only guards useQuery. The /admin/processes loaders read this through
-    // ensureQueryData, which ignores it, so keep the guard here too: without an address the
-    // SaaS rejects the call with 400 "invalid URL parameter: missing orgAddress" and the
-    // failure would be cached against a key no organization owns.
+    // `enabled` above only guards the query while it is mounted; a manual `refetch()`
+    // ignores it. Keep the guard here too: without an address the SaaS rejects the call
+    // with 400 "invalid URL parameter: missing orgAddress" and the failure would be
+    // cached against a key no organization owns.
     if (!address) {
       throw new Error('Cannot list elections with no organization address selected')
     }
@@ -125,6 +127,37 @@ export const paginatedElectionsQuery = (
     return result
   },
 })
+
+/**
+ * The dashboard elections list, keyed by the active organization address.
+ *
+ * This deliberately subscribes rather than reading the cache once through a route loader.
+ * `currentAddress` resolves asynchronously (the auth/addresses query) and changes when the
+ * user switches organization; a loader is a one-shot function baked into a route object and
+ * cannot notice either, which is what forced the router to be recreated on every render
+ * (#1746). As a query, `enabled` does the waiting and a changed address changes the key.
+ */
+export const usePaginatedElections = () => {
+  const { currentAddress } = useAuth()
+  const { client } = useApiClient()
+  const queryClient = useQueryClient()
+  const params = useParams()
+  const [searchParams] = useSearchParams()
+
+  // Same merge the route loaders did, and it reads `params` from the same route match, so
+  // the resulting filters are unchanged: query string first, route params on top. An
+  // optional segment that didn't match is simply absent from `params` (React Router
+  // expands `:page?/:status?` into separate branches), so `?page=`/`?status=` still apply
+  // when the path omits them. `limit` has no default — only `?limit=` sets it.
+  const mergedParams = { ...getPaginationParams(searchParams), ...params }
+
+  return useQuery({
+    ...paginatedElectionsQuery(currentAddress, client, mergedParams, queryClient),
+    // Keep the previous page on screen while the next one loads, matching what the
+    // blocking loader used to do (it left the old list rendered until data arrived).
+    placeholderData: keepPreviousData,
+  })
+}
 
 export const useOrganizationMeta = () => {
   const { bearedFetch } = useAuth()

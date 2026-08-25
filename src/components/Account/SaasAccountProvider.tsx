@@ -1,10 +1,10 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import type { Organization } from '@vocdoni/api-types'
+import { organizationQueryKeys } from '@vocdoni/react-components'
 import { createContext, ReactNode, useCallback, useContext } from 'react'
 import { useAuth } from '~components/Auth/useAuth'
 import { OrganizationData } from '~components/Organization/AccountTypes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { QueryKeys } from '~src/queries/keys'
 
 const emptyMultilingual = { default: '' }
 
@@ -37,7 +37,11 @@ const useSaasOrganization = ({
   const { client } = useApiClient()
 
   return useQuery({
-    queryKey: QueryKeys.organization.info(currentAddress),
+    // The react-providers `OrganizationProvider` mounted in DashboardShell reads the very
+    // same `GET /organizations/{address}`. Use its key (exported for exactly this) so both
+    // share one cache entry and one request instead of racing under divergent keys — and so
+    // an invalidation reaches both.
+    queryKey: organizationQueryKeys.organization(currentAddress),
     refetchOnWindowFocus: false,
     // `enabled` already gates on the address, but keep the guard local so a manual
     // `refetch()` before the address resolves fails loudly instead of hitting the API
