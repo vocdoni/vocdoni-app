@@ -84,8 +84,13 @@ export const useSupportChat = () => {
   }
 
   const pushMessage = (from: ChatMessage['from'], text: string, extra?: Pick<ChatMessage, 'isError' | 'kind'>) => {
+    // Read the counter here, not inside the updater: React defers and batches
+    // updaters, so an updater that reads `messageIdRef.current` sees whatever the
+    // ref has reached by flush time. Two pushes in one batch would then both
+    // render with the last id and collide as React keys.
     messageIdRef.current += 1
-    setMessages((prev) => [...prev, { id: `msg-${messageIdRef.current}`, from, text, ...extra }])
+    const id = `msg-${messageIdRef.current}`
+    setMessages((prev) => [...prev, { id, from, text, ...extra }])
   }
 
   const openChat = () => {
