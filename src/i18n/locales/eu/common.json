@@ -1627,6 +1627,8 @@
   "processes": {
     "empty": "Ez da bozketa-prozesurik aurkitu",
     "empty_description": "Sortu bozketa-prozesu bat hasteko.",
+    "load_error": "Ezin izan dira bozketa-prozesuak kargatu",
+    "load_error_description": "Saiatu berriro.",
     "no_results": "Ez dago iragazki honentzat emaitzarik",
     "no_results_description": "Saiatu iragazkiak doitzen."
   },

@@ -1652,6 +1652,8 @@
   "processes": {
     "empty": "No s'han trobat processos de votació",
     "empty_description": "Crea un procés de votació per començar.",
+    "load_error": "No s'han pogut carregar els processos de votació",
+    "load_error_description": "Torna-ho a provar.",
     "no_results": "No hi ha resultats per a aquest filtre",
     "no_results_description": "Prova d'ajustar els filtres."
   },

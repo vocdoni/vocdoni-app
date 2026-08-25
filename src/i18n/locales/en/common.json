@@ -1627,6 +1627,8 @@
   "processes": {
     "empty": "No voting processes found",
     "empty_description": "Create a voting process to get started.",
+    "load_error": "Unable to load voting processes",
+    "load_error_description": "Please try again.",
     "no_results": "No results for this filter",
     "no_results_description": "Try adjusting your filters."
   },

@@ -1627,6 +1627,8 @@
   "processes": {
     "empty": "Keine Abstimmungsprozesse gefunden",
     "empty_description": "Erstelle einen Abstimmungsprozess, um zu beginnen.",
+    "load_error": "Abstimmungsprozesse konnten nicht geladen werden",
+    "load_error_description": "Bitte versuche es erneut.",
     "no_results": "Keine Ergebnisse für diesen Filter",
     "no_results_description": "Passe deine Filter an."
   },
