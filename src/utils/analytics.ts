@@ -31,7 +31,6 @@ export const AnalyticsEvents = {
   MemberGroupCreated: 'member_group_created',
   MemberGroupDeleted: 'member_group_deleted',
   CensusConfigured: 'census_configured',
-  OnboardingStepCompleted: 'onboarding_step_completed',
   TeamMemberInvited: 'team_member_invited',
   TeamMemberRemoved: 'team_member_removed',
   PdfReportDownloaded: 'pdf_report_downloaded',

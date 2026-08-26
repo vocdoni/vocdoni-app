@@ -433,6 +433,7 @@
       "custom_request": "Pedido personalizado",
       "description": "Descrição",
       "description_placeholder": "Descreve o teu problema em detalhe",
+      "no_organization": "A tua organização ainda não está pronta. Tenta novamente daqui a pouco.",
       "open_ticket": "Abrir um pedido de apoio",
       "other": "Outro",
       "selector_label": "Tipo de problema",
@@ -1084,7 +1085,6 @@
     "avatar_alt": "Imagem do avatar da organização {{ name }}",
     "create_org": "Criar organização",
     "create_org_failed": "Falha ao criar a organização",
-    "create_org_step_update_failed": "Falha ao atualizar o estado do passo de configuração da organização",
     "create_org_success": "Organização criada com sucesso",
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
@@ -1130,14 +1130,6 @@
       "title": "Membros da equipa"
     },
     "title": "Definições de {{organization}}"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Marca uma chamada gratuita com os nossos especialistas",
-      "first_vote_creation": "Cria a tua primeira votação",
-      "memberbase_upload": "Carrega a tua base de membros",
-      "organization_details": "Configura os dados da tua organização"
-    }
   },
   "organizations": "Organizações ({{ numOrgs }})",
   "other_details": "Outros dados",
@@ -1722,11 +1714,6 @@
   },
   "send_invitation": "Enviar convite",
   "settings": "Definições",
-  "setup": {
-    "progress": "O teu progresso",
-    "title": "Conclui a configuração",
-    "toggle_panel": "Mostrar/ocultar painel"
-  },
   "share": {
     "copy": "Copiar",
     "election_share_btn_text": "Partilhar",
@@ -1780,6 +1767,33 @@
   },
   "subtotal": "Subtotal",
   "support": "Apoio",
+  "support_chat": {
+    "ask_name": "Antes de enviar — como te chamas?",
+    "book_call": "Marcar uma chamada",
+    "close_label": "Fechar o chat de apoio",
+    "confirmation": "Obrigado, {{name}}! Recebemos a tua mensagem e responderemos para {{email}} assim que possível.",
+    "confirmation_generic": "Obrigado! Recebemos a tua mensagem e responderemos por email assim que possível.",
+    "confirmation_no_name": "Obrigado! Recebemos a tua mensagem e responderemos para {{email}} assim que possível.",
+    "contact_options": "Preferes falar? Também podes marcar uma chamada com a nossa equipa ou escrever-nos pelo WhatsApp.",
+    "error": "Lamentamos — não foi possível enviar a tua mensagem. Tenta novamente.",
+    "greeting": "Olá {{name}}, bem-vindo ao apoio da Vocdoni!",
+    "greeting_intro": "Se precisas de ajuda com a plataforma, queres saber como iniciar uma votação, tens um pedido sobre um processo de votação ou precisas de apoio, descreve-o numa única mensagem aqui em baixo e responderemos por email.",
+    "greeting_no_name": "Olá, bem-vindo ao apoio da Vocdoni!",
+    "header_subtitle": "Responderemos por email",
+    "header_title": "Apoio Vocdoni",
+    "input_placeholder": "Descreve o teu pedido…",
+    "launcher_label": "Abrir o chat de apoio",
+    "messages_label": "Conversa de apoio",
+    "new_request": "Novo pedido",
+    "new_request_prompt": "Em que mais te podemos ajudar?",
+    "retry": "Tentar novamente",
+    "send_hint": "Quando terminares, envia com o botão de enviar ou {{shortcut}}.",
+    "send_label": "Enviar mensagem",
+    "sent_status": "Pedido enviado — responderemos por email",
+    "teaser": "Precisas de ajuda?",
+    "teaser_dismiss": "Dispensar",
+    "whatsapp": "Falar pelo WhatsApp"
+  },
   "switch_mode": "Mudar para o modo {{ mode }}",
   "switch_organization": "Mudar de organização",
   "system": "Sistema",

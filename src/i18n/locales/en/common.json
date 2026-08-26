@@ -431,6 +431,7 @@
       "custom_request": "Custom request",
       "description": "Description",
       "description_placeholder": "Describe your issue in detail",
+      "no_organization": "Your organization is not ready yet. Please try again in a moment.",
       "open_ticket": "Open a Support Ticket",
       "other": "Other",
       "selector_label": "Type of Issue",
@@ -1066,7 +1067,6 @@
     "avatar_alt": "Avatar image of {{ name }} organization",
     "create_org": "Create organization",
     "create_org_failed": "Failed to create organization",
-    "create_org_step_update_failed": "Failed to update organization setup step status",
     "create_org_success": "Organization created successfully",
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
@@ -1112,14 +1112,6 @@
       "title": "Team members"
     },
     "title": "{{organization}} Settings"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Book a free call with our experts",
-      "first_vote_creation": "Create your first vote",
-      "memberbase_upload": "Upload your memberbase",
-      "organization_details": "Set up your organization details"
-    }
   },
   "organizations": "Organizations ({{ numOrgs }})",
   "other_details": "Other details",
@@ -1697,11 +1689,6 @@
   },
   "send_invitation": "Send invitation",
   "settings": "Settings",
-  "setup": {
-    "progress": "Your progress",
-    "title": "Complete your setup",
-    "toggle_panel": "setup.toggle_panel"
-  },
   "share": {
     "copy": "Copy",
     "election_share_btn_text": "Share",
@@ -1755,6 +1742,33 @@
   },
   "subtotal": "Subtotal",
   "support": "Support",
+  "support_chat": {
+    "ask_name": "Before we send that — what's your name?",
+    "book_call": "Book a call",
+    "close_label": "Close support chat",
+    "confirmation": "Thanks, {{name}}! We've received your message and we'll get back to you at {{email}} as soon as possible.",
+    "confirmation_generic": "Thanks! We've received your message and we'll reply by email as soon as possible.",
+    "confirmation_no_name": "Thanks! We've received your message and we'll get back to you at {{email}} as soon as possible.",
+    "contact_options": "Prefer to talk? You can also book a call with our team or message us on WhatsApp.",
+    "error": "Sorry — we couldn't send your message. Please try again.",
+    "greeting": "Hi {{name}}, welcome to Vocdoni support!",
+    "greeting_intro": "If you need help with the platform, want to know how to start a vote, have a request for a voting process, or need support of any kind — describe it in a single message below and we'll get back to you by email.",
+    "greeting_no_name": "Hi there, welcome to Vocdoni support!",
+    "header_subtitle": "We'll get back to you by email",
+    "header_title": "Vocdoni Support",
+    "input_placeholder": "Describe your request…",
+    "launcher_label": "Open support chat",
+    "messages_label": "Support conversation",
+    "new_request": "Start a new request",
+    "new_request_prompt": "What else can we help you with?",
+    "retry": "Try again",
+    "send_hint": "When you're done, send with the send button or {{shortcut}}.",
+    "send_label": "Send message",
+    "sent_status": "Request sent — we'll reply by email",
+    "teaser": "Do you need help?",
+    "teaser_dismiss": "Dismiss",
+    "whatsapp": "Chat on WhatsApp"
+  },
   "switch_mode": "Switch to {{ mode }} mode",
   "switch_organization": "Switch organization",
   "system": "System",

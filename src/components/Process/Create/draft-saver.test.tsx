@@ -22,11 +22,6 @@ vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({ bearedFetch: vi.fn() }),
 }))
 
-vi.mock('~src/queries/organization', () => ({
-  SetupStepIds: {},
-  useOrganizationSetup: () => ({}),
-}))
-
 vi.mock('~elements/dashboard/processes/drafts', () => ({
   useDeleteDraft: () => ({}),
 }))

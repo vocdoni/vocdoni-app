@@ -11,7 +11,6 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
-import { OrganizationMetaKeys, OrganizationMetaResponse, SetupStepIds } from '~queries/organization'
 import { QueryKeys } from '~src/queries/keys'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
@@ -81,7 +80,6 @@ export const OrganizationCreate = ({
   const methods = useForm<FormData>()
   const { handleSubmit } = methods
   const { trackEvent } = useAnalytics()
-  const { bearedFetch } = useAuth()
 
   const { mutateAsync: createOrganization } = useOrganizationCreate({
     onSuccess: async ({ address }, values) => {
@@ -106,28 +104,6 @@ export const OrganizationCreate = ({
         duration: 5000,
         isClosable: true,
       })
-      try {
-        // Mark organizationDetails step as done (can't use org hook here because org is not created yet)
-        await bearedFetch<OrganizationMetaResponse>(ApiEndpoints.OrganizationMeta.replace('{address}', address), {
-          method: 'PUT',
-          body: {
-            meta: {
-              [OrganizationMetaKeys.completedSteps]: [SetupStepIds.organizationDetails],
-            },
-          },
-        })
-      } catch (e) {
-        console.warn('Error marking organizationDetails step as done', e)
-        toast({
-          title: t('organization.create_org_step_update_failed', {
-            defaultValue: 'Failed to update organization setup step status',
-          }),
-          description: e.message,
-          type: 'warning',
-          duration: 5000,
-          isClosable: true,
-        })
-      }
       navigate(onSuccessRoute)
     },
     onError: (error) => {

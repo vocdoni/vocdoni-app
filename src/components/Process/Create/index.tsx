@@ -51,7 +51,6 @@ import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
-import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
@@ -669,7 +668,6 @@ const ProcessCreateView = () => {
   const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
-  const { setStepDoneAsync } = useOrganizationSetup()
   const { trackEvent } = useAnalytics()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
@@ -791,8 +789,6 @@ const ProcessCreateView = () => {
       // than raced.
       const processId = await writeDraft(() => request)
       await apiClient.elections.publishAndWait(processId)
-
-      await setStepDoneAsync(SetupStepIds.firstVoteCreation)
 
       // Drop the cached elections pages so the processes index reflects the new
       // vote without a full page refresh. The index loads through a route loader

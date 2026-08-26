@@ -78,6 +78,12 @@ export const LocalStorageKeys = {
   DashboardMenuReduced: 'dashboard.menu.reduced',
 } as const
 
+export const SessionStorageKeys = {
+  // Suppressed per browser session, so a returning user sees the "Do you need
+  // help?" nudge again on their next visit rather than never again.
+  SupportChatTeaserDismissed: 'support.chat.teaser.dismissed',
+} as const
+
 /**
  * Given an object of react-hook-form errors, returns the specified mapped field error message.
  *

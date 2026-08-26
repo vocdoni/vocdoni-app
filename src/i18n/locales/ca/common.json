@@ -433,6 +433,7 @@
       "custom_request": "Sol·licitud personalitzada",
       "description": "Descripció",
       "description_placeholder": "Descriu el teu problema amb detall",
+      "no_organization": "La teva organització encara no està a punt. Torna-ho a provar d'aquí a un moment.",
       "open_ticket": "Obre una sol·licitud de suport",
       "other": "Altres",
       "selector_label": "Tipus de problema",
@@ -1084,7 +1085,6 @@
     "avatar_alt": "Imatge d'avatar de l'organització {{ name }}",
     "create_org": "Crear organització",
     "create_org_failed": "No s'ha pogut crear l'organització",
-    "create_org_step_update_failed": "No s'ha pogut actualitzar l'estat del pas de configuració de l'organització",
     "create_org_success": "Organització creada correctament",
     "dashboard": "Tauler de control",
     "date_format": "d MMM y",
@@ -1130,14 +1130,6 @@
       "title": "Membres de l'equip"
     },
     "title": "Configuració de {{organization}}"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Reserva una trucada gratuïta amb els nostres experts",
-      "first_vote_creation": "Crea la teva primera votació",
-      "memberbase_upload": "Puja la teva base de membres",
-      "organization_details": "Configura els detalls de la teva organització"
-    }
   },
   "organizations": "Organitzacions ({{ numOrgs }})",
   "other_details": "Altres detalls",
@@ -1722,11 +1714,6 @@
   },
   "send_invitation": "Envia una invitació",
   "settings": "Configuració",
-  "setup": {
-    "progress": "El teu progrés",
-    "title": "Completa la configuració",
-    "toggle_panel": "Commuta el panell"
-  },
   "share": {
     "copy": "Copia",
     "election_share_btn_text": "Comparteix",
@@ -1780,6 +1767,33 @@
   },
   "subtotal": "Subtotal",
   "support": "Suport",
+  "support_chat": {
+    "ask_name": "Abans d'enviar-ho, com et dius?",
+    "book_call": "Programa una trucada",
+    "close_label": "Tanca el xat de suport",
+    "confirmation": "Gràcies, {{name}}! Hem rebut el teu missatge i et respondrem a {{email}} tan aviat com sigui possible.",
+    "confirmation_generic": "Gràcies! Hem rebut el teu missatge i et respondrem per correu electrònic tan aviat com sigui possible.",
+    "confirmation_no_name": "Gràcies! Hem rebut el teu missatge i et respondrem a {{email}} tan aviat com sigui possible.",
+    "contact_options": "Prefereixes parlar? També pots programar una trucada amb el nostre equip o escriure'ns per WhatsApp.",
+    "error": "Ho sentim, no hem pogut enviar el teu missatge. Torna-ho a provar.",
+    "greeting": "Hola, {{name}}! Et donem la benvinguda al suport de Vocdoni.",
+    "greeting_intro": "Si necessites ajuda amb la plataforma, vols saber com iniciar una votació, tens una petició sobre un procés de votació o necessites suport, descriu-ho en un únic missatge aquí sota i et respondrem per correu electrònic.",
+    "greeting_no_name": "Hola! Et donem la benvinguda al suport de Vocdoni.",
+    "header_subtitle": "Et respondrem per correu electrònic",
+    "header_title": "Suport de Vocdoni",
+    "input_placeholder": "Descriu la teva sol·licitud…",
+    "launcher_label": "Obre el xat de suport",
+    "messages_label": "Conversa de suport",
+    "new_request": "Nova sol·licitud",
+    "new_request_prompt": "En què més et podem ajudar?",
+    "retry": "Torna-ho a provar",
+    "send_hint": "Quan acabis, envia el missatge amb el botó d'enviar o {{shortcut}}.",
+    "send_label": "Envia el missatge",
+    "sent_status": "Sol·licitud enviada, et respondrem per correu electrònic",
+    "teaser": "Necessites ajuda?",
+    "teaser_dismiss": "Descarta",
+    "whatsapp": "Parla per WhatsApp"
+  },
   "switch_mode": "Canvia al mode {{ mode }}",
   "switch_organization": "Canvia d'organització",
   "system": "Sistema",

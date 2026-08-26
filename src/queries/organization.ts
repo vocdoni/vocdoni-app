@@ -2,40 +2,20 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient, type QueryClie
 import { useOrganization } from '@vocdoni/react-components'
 import type { ElectionStatus } from '@vocdoni/api-types'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
-import { useTranslation } from 'react-i18next'
-import { IconType } from 'react-icons'
-import { LuCalendar, LuFileSpreadsheet, LuUsers, LuVote } from 'react-icons/lu'
-import { generatePath, useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { Routes } from '~routes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { getPaginationParams } from '~utils/pagination'
 import { QueryKeys } from './keys'
 
-export enum SetupStepIds {
-  organizationDetails = 'organizationDetails',
-  memberbaseUpload = 'memberbaseUpload',
-  firstVoteCreation = 'firstVoteCreation',
-  expertCallBooking = 'expertCallBooking',
-}
-
-export enum CheckboxTypes {
-  route = 'route',
-  modal = 'modal',
-}
-
 export enum OrganizationMetaKeys {
-  completedSteps = 'completedSteps',
   dashboardTutorial = 'isDashboardTutorialClosed',
   sidebarTutorial = 'isSidebarTutorialClosed',
 }
 
-type SetupStepId = `${SetupStepIds}`
-
 export type OrganizationMeta = {
-  [OrganizationMetaKeys.completedSteps]?: SetupStepId[]
   [OrganizationMetaKeys.dashboardTutorial]?: boolean
   [OrganizationMetaKeys.sidebarTutorial]?: boolean
 }
@@ -44,21 +24,10 @@ export type OrganizationMetaResponse = {
   meta: OrganizationMeta
 }
 
-type OrganizationSteps = SetupStepId[]
-
 type PaginatedElectionsParams = {
   page?: number
   limit?: number
   status?: string
-}
-
-type SetupChecklistItem = {
-  id: SetupStepId
-  label: string
-  to?: string
-  icon: IconType
-  completed?: boolean
-  type?: CheckboxTypes
 }
 
 export type Role = {
@@ -264,87 +233,6 @@ export const useTutorials = () => {
     closeDashboardTutorial,
     resetTutorials,
     canUseMeta,
-  }
-}
-
-export const useOrganizationSetup = () => {
-  const { t } = useTranslation()
-  const { meta, hasOrganization, updateMeta, updateMetaAsync } = useOrganizationMeta()
-  const completedSteps: OrganizationSteps = meta?.[OrganizationMetaKeys.completedSteps] || []
-
-  const hasStepDone = (stepId: SetupStepId): boolean => completedSteps.includes(stepId)
-
-  const setStepDone = (stepId: SetupStepId) => {
-    if (hasStepDone(stepId)) return
-    trackAnalyticsEvent({ name: AnalyticsEvents.OnboardingStepCompleted, props: { step: stepId } })
-    updateMeta({ completedSteps: [...new Set([...completedSteps, stepId])] })
-  }
-
-  const setStepDoneAsync = async (stepId: SetupStepId) => {
-    if (hasStepDone(stepId)) return
-    trackAnalyticsEvent({ name: AnalyticsEvents.OnboardingStepCompleted, props: { step: stepId } })
-    await updateMetaAsync({ completedSteps: [...new Set([...completedSteps, stepId])] })
-  }
-
-  const unsetStepDone = (stepId: SetupStepId) => {
-    const updated = completedSteps.filter((id) => id !== stepId)
-    updateMeta({ completedSteps: updated })
-  }
-
-  const unsetStepDoneAsync = async (stepId: SetupStepId) => {
-    const updated = completedSteps.filter((id) => id !== stepId)
-    await updateMetaAsync({ completedSteps: updated })
-  }
-
-  const rawChecklist: SetupChecklistItem[] = [
-    {
-      id: SetupStepIds.organizationDetails,
-      label: t('organization_setup.setup_steps.organization_details', {
-        defaultValue: 'Set up your organization details',
-      }),
-      to: Routes.dashboard.settings.organization,
-      type: CheckboxTypes.route,
-      icon: LuUsers,
-    },
-    {
-      id: SetupStepIds.memberbaseUpload,
-      label: t('organization_setup.setup_steps.memberbase_upload', { defaultValue: 'Upload your memberbase' }),
-      to: generatePath(Routes.dashboard.memberbase.members, { page: 1 }),
-      type: CheckboxTypes.route,
-      icon: LuFileSpreadsheet,
-    },
-    {
-      id: SetupStepIds.firstVoteCreation,
-      label: t('organization_setup.setup_steps.first_vote_creation', { defaultValue: 'Create your first vote' }),
-      to: generatePath(Routes.processes.create),
-      type: CheckboxTypes.route,
-      icon: LuVote,
-    },
-    {
-      id: SetupStepIds.expertCallBooking,
-      label: t('organization_setup.setup_steps.expert_call_booking', {
-        defaultValue: 'Book a free call with our experts',
-      }),
-      type: CheckboxTypes.modal,
-      icon: LuCalendar,
-    },
-  ]
-
-  const checklist = rawChecklist.map((item) => ({ ...item, completed: hasStepDone(item.id) }))
-  const progress = checklist.length ? (checklist.filter((item) => item.completed).length / checklist.length) * 100 : 0
-  const allStepsDone = checklist.every((item) => item.completed)
-  const isStepsAccordionOpen = !allStepsDone && hasOrganization
-
-  return {
-    checklist,
-    progress,
-    completedSteps,
-    isStepsAccordionOpen,
-    hasStepDone,
-    setStepDone,
-    setStepDoneAsync,
-    unsetStepDone,
-    unsetStepDoneAsync,
   }
 }
 

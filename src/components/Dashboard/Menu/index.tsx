@@ -21,7 +21,7 @@ import { VocdoniLogo } from '~components/Layout/Logo'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useTutorials } from '~src/queries/organization'
 import { Routes } from '~src/router/routes'
-import { DashboardBookerModalButton } from '../Booker'
+import { BookerModalButton } from '../Booker'
 import { DashboardMenuConfig } from './menus'
 import { DashboardMenuOptions } from './Options'
 import UserProfile from './UserProfile'
@@ -116,7 +116,7 @@ const SidebarTutorial = () => {
           defaultValue: 'Do you need some help with your first voting process? Watch this tutorial or schedule a call.',
         })}
       </Text>
-      <DashboardBookerModalButton variant='solid' colorPalette='gray' w='full' />
+      <BookerModalButton variant='solid' colorPalette='gray' w='full' />
     </DashboardBox>
   )
 }

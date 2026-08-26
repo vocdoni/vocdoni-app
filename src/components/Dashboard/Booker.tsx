@@ -3,7 +3,6 @@ import { Button, ButtonProps, CloseButton, Dialog, HStack, Icon, Portal, Text } 
 import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCalendar } from 'react-icons/lu'
-import { SetupStepIds, useOrganizationSetup } from '~queries/organization'
 import { useAppEnv } from '~src/app-env'
 import { useColorMode } from '~theme/color-mode'
 
@@ -91,18 +90,5 @@ export const BookerModalButton = ({
         </Dialog.Positioner>
       </Portal>
     </Dialog.Root>
-  )
-}
-
-export const DashboardBookerModalButton = (props: BookerModalButtonProps) => {
-  const { setStepDone } = useOrganizationSetup()
-
-  return (
-    <BookerModalButton
-      callback={() => {
-        setStepDone(SetupStepIds.expertCallBooking)
-      }}
-      {...props}
-    />
   )
 }

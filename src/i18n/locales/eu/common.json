@@ -431,6 +431,7 @@
       "custom_request": "Eskaera pertsonalizatua",
       "description": "Deskribapena",
       "description_placeholder": "Deskribatu zure intzidentzia xehetasunez",
+      "no_organization": "Zure erakundea oraindik ez dago prest. Saiatu berriro laster.",
       "open_ticket": "Ireki laguntza-eskaera",
       "other": "Bestelakoak",
       "selector_label": "Intzidentzia mota",
@@ -1066,7 +1067,6 @@
     "avatar_alt": "{{ name }} erakundearen avatarra",
     "create_org": "Sortu erakundea",
     "create_org_failed": "Errorea erakundea sortzean",
-    "create_org_step_update_failed": "Errorea erakundea konfiguratzeko urratsaren egoera eguneratzean",
     "create_org_success": "Erakundea behar bezala sortu da",
     "dashboard": "Panela",
     "date_format": "y MMM d",
@@ -1112,14 +1112,6 @@
       "title": "Taldeko kideak"
     },
     "title": "{{organization}} konfigurazioa"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Antolatu doako dei bat gure adituekin",
-      "first_vote_creation": "Sortu zure lehen bozketa",
-      "memberbase_upload": "Kargatu zure kide-oinarria",
-      "organization_details": "Konfiguratu zure erakundearen xehetasunak"
-    }
   },
   "organizations": "Erakundeak ({{ numOrgs }})",
   "other_details": "Bestelako xehetasunak",
@@ -1697,11 +1689,6 @@
   },
   "send_invitation": "Bidali gonbidapena",
   "settings": "Ezarpenak",
-  "setup": {
-    "progress": "Zure aurrerapena",
-    "title": "Osatu konfigurazioa",
-    "toggle_panel": "Txandakatu panela"
-  },
   "share": {
     "copy": "Kopiatu",
     "election_share_btn_text": "Partekatu",
@@ -1755,6 +1742,33 @@
   },
   "subtotal": "Azpitotala",
   "support": "Laguntza",
+  "support_chat": {
+    "ask_name": "Bidali aurretik — nola duzu izena?",
+    "book_call": "Deia programatu",
+    "close_label": "Itxi laguntza-txata",
+    "confirmation": "Eskerrik asko, {{name}}! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu {{email}} helbidean.",
+    "confirmation_generic": "Eskerrik asko! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu posta elektronikoz.",
+    "confirmation_no_name": "Eskerrik asko! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu {{email}} helbidean.",
+    "contact_options": "Nahiago duzu hitz egin? Gure taldearekin deia programatu edo WhatsApp bidez idatzi ere egin dezakezu.",
+    "error": "Sentitzen dugu — ezin izan dugu zure mezua bidali. Saiatu berriro.",
+    "greeting": "Kaixo {{name}}, ongi etorri Vocdoniren laguntzara!",
+    "greeting_intro": "Plataformarekin laguntza behar baduzu, botazio bat nola hasi jakin nahi baduzu, botazio-prozesu bati buruzko eskaera baduzu edo laguntza behar baduzu, azaldu mezu bakar batean hemen behean eta posta elektronikoz erantzungo dizugu.",
+    "greeting_no_name": "Kaixo, ongi etorri Vocdoniren laguntzara!",
+    "header_subtitle": "Posta elektronikoz erantzungo dizugu",
+    "header_title": "Vocdoniren laguntza",
+    "input_placeholder": "Deskribatu zure eskaera…",
+    "launcher_label": "Ireki laguntza-txata",
+    "messages_label": "Laguntza-elkarrizketa",
+    "new_request": "Eskaera berria",
+    "new_request_prompt": "Zertan lagundu diezazukegu gehiago?",
+    "retry": "Saiatu berriro",
+    "send_hint": "Amaitzen duzunean, bidali bidaltzeko botoiarekin edo {{shortcut}}.",
+    "send_label": "Bidali mezua",
+    "sent_status": "Eskaera bidalita — posta elektronikoz erantzungo dizugu",
+    "teaser": "Laguntza behar duzu?",
+    "teaser_dismiss": "Baztertu",
+    "whatsapp": "Idatzi WhatsApp bidez"
+  },
   "switch_mode": "Aldatu {{ mode }} modura",
   "switch_organization": "Aldatu erakundea",
   "system": "Sistema",

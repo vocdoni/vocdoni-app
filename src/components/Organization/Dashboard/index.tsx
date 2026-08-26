@@ -1,20 +1,4 @@
-import {
-  Accordion,
-  AspectRatio,
-  Box,
-  Button,
-  Checkbox,
-  CloseButton,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Link,
-  Progress,
-  Stack,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react'
+import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Progress, Text } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ElectionProvider,
@@ -28,21 +12,19 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
+import { LuArrowUpRight, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
-import { generatePath, Link as ReactRouterLink, useNavigate } from 'react-router-dom'
+import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
 import { useSubscription } from '~components/Auth/Subscription'
-import { DashboardBookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Contents'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
-import InvertedAccordionIcon from '~components/Layout/InvertedAccordionIcon'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { isPlanNamed, PlanName } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
-import { CheckboxTypes, paginatedElectionsQuery, useOrganizationSetup } from '~src/queries/organization'
+import { paginatedElectionsQuery } from '~src/queries/organization'
 import { UsageLimits } from './UsageLimits'
 
 const OrganizationDashboard = () => {
@@ -63,7 +45,6 @@ const OrganizationDashboard = () => {
         {organization && <QuickActions flex='1 1 40%' />}
       </Flex>
       <OrganizationProcesses />
-      <Setup />
     </>
   )
 }
@@ -148,115 +129,6 @@ const Tutorial = () => {
         </AspectRatio>
       </Flex>
     </DashboardBox>
-  )
-}
-
-const Setup = () => {
-  const { t } = useTranslation()
-  const { open: isOpen, onClose } = useDisclosure({ defaultOpen: true })
-  const { checklist, progress, isStepsAccordionOpen } = useOrganizationSetup()
-  const navigate = useNavigate()
-
-  return (
-    isStepsAccordionOpen &&
-    isOpen && (
-      <Box
-        position='fixed'
-        bottom={6}
-        right={6}
-        p={0}
-        w='xs'
-        borderRadius='2xl'
-        boxShadow='xl'
-        zIndex='overlay'
-        border='1px solid'
-        borderColor='border'
-        bgColor='bg.panel'
-      >
-        <Accordion.Root defaultValue={['setup']} collapsible border='none'>
-          <Accordion.Item value='setup' border='none' alignItems='center'>
-            <Accordion.ItemTrigger as='div' px={4} gap={0} justifyContent='space-between'>
-              <Flex gap={2} alignItems='center'>
-                <Icon as={LuCheck} boxSize={5} />
-                <Text fontWeight='bold'>
-                  {t('setup.title', {
-                    defaultValue: 'Complete your setup',
-                  })}
-                </Text>
-              </Flex>
-              <Flex justifySelf='end'>
-                <Accordion.ItemIndicator asChild>
-                  <IconButton variant='unstyled' colorPalette='gray' aria-label={t('setup.toggle_panel')} size='xs'>
-                    <InvertedAccordionIcon />
-                  </IconButton>
-                </Accordion.ItemIndicator>
-                <CloseButton onClick={onClose} size='xs' />
-              </Flex>
-            </Accordion.ItemTrigger>
-            <Accordion.ItemContent>
-              <Accordion.ItemBody p={0}>
-                <Flex flexDirection='column' px={4} py={2}>
-                  <Flex justify='space-between' align='center'>
-                    <Text fontSize='xs'>{t('setup.progress', { defaultValue: 'Your progress' })}</Text>
-                    <Text fontSize='xs'>{Math.round(progress)}%</Text>
-                  </Flex>
-                  <Progress.Root value={progress} colorPalette='gray' size='sm' borderRadius='md'>
-                    <Progress.Track borderRadius='0'>
-                      <Progress.Range />
-                    </Progress.Track>
-                  </Progress.Root>
-                </Flex>
-                <Stack gap={3} direction='column' p={3} pt={2}>
-                  {checklist.map((checkbox) => {
-                    const type = checkbox.type || CheckboxTypes.route
-                    if (type === CheckboxTypes.modal) {
-                      return (
-                        <DashboardBookerModalButton
-                          key={checkbox.id}
-                          trigger={
-                            <Box w='full'>
-                              <Checkbox.Root colorPalette='gray' checked={checkbox.completed} size='sm' p={2}>
-                                <Checkbox.HiddenInput />
-                                <Checkbox.Control />
-                                <Checkbox.Label>
-                                  <HStack ml={1} gap={2} align='center'>
-                                    <Icon as={checkbox.icon} boxSize={4} />
-                                    <Text fontSize='sm'>{checkbox.label}</Text>
-                                  </HStack>
-                                </Checkbox.Label>
-                              </Checkbox.Root>
-                            </Box>
-                          }
-                        />
-                      )
-                    }
-                    return (
-                      <Checkbox.Root
-                        key={checkbox.id}
-                        colorPalette='gray'
-                        checked={checkbox.completed}
-                        size='sm'
-                        p={2}
-                        onClick={() => navigate(checkbox.to)}
-                      >
-                        <Checkbox.HiddenInput />
-                        <Checkbox.Control />
-                        <Checkbox.Label>
-                          <HStack ml={1} gap={2} align='center'>
-                            <Icon as={checkbox.icon} boxSize={4} />
-                            <Text fontSize='sm'>{checkbox.label}</Text>
-                          </HStack>
-                        </Checkbox.Label>
-                      </Checkbox.Root>
-                    )
-                  })}
-                </Stack>
-              </Accordion.ItemBody>
-            </Accordion.ItemContent>
-          </Accordion.Item>
-        </Accordion.Root>
-      </Box>
-    )
   )
 }
 
