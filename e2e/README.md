@@ -125,10 +125,15 @@ a break anywhere along that chain fails here.
 
 ## CI
 
-`.github/workflows/integration.yml` runs this on every PR, on pushes to
-`develop`, and nightly. It is deliberately separate from `test.yml`: the stack
-tracks `ghcr.io/vocdoni/{saas-backend,vocdoni-node}:main`, so a red run here
-often means "upstream moved" rather than "this repo is broken", and that must
-not gate the normal lint/unit/build job. The workflow prints the resolved image
-digests so such a run is reproducible locally, and uploads the Playwright report
-(with traces and video) plus all container logs on failure.
+`.github/workflows/integration.yml` runs this on pushes to `develop` and on
+pull requests targeting `stage` or `main` — the merge into the integration
+branch, and the two promotions that actually reach users. Feature PRs into
+`develop` do not run it (they are covered by `test.yml`); use
+**Run workflow** on the Actions tab to trigger it by hand on any branch.
+
+It is deliberately separate from `test.yml`: the stack tracks
+`ghcr.io/vocdoni/{saas-backend,vocdoni-node}:main`, so a red run here often
+means "upstream moved" rather than "this repo is broken", and that must not gate
+the normal lint/unit/build job. The workflow prints the resolved image digests so
+such a run is reproducible locally, and uploads the Playwright report (with
+traces and video) plus all container logs on failure.

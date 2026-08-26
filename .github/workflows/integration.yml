@@ -8,15 +8,19 @@ name: Integration
 # moving upstream images and a live chain, so a red run often means "upstream
 # moved" rather than "this repo is broken". That must not gate the normal
 # lint/unit/build job.
+#
+# Where it runs, and why: on every merge into `develop` (the integration point,
+# where a break should surface), and on pull requests promoting `develop`
+# onward to `stage` or to `main` (production) — the two moments where shipping
+# a broken email/2FA journey would actually reach users. Feature PRs targeting
+# `develop` deliberately do NOT run it: they are already covered by test.yml,
+# and this job costs several minutes and a live chain.
 on:
   push:
     branches: [develop]
-  schedule:
-    # Off-hour and off-:00 on purpose — nothing here needs to coincide with the
-    # hourly stampede on GitHub's scheduler.
-    - cron: '43 3 * * *'
-  workflow_dispatch:
   pull_request:
+    branches: [stage, main]
+  workflow_dispatch:
 
 concurrency:
   group: integration-${{ github.ref }}
