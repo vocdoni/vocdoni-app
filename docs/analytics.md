@@ -141,12 +141,12 @@ ingestion host.
 
 What it provisions:
 
-| Dashboard                  | Insights                                                                                                                                                                                                                                                                                                                                  |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name                                                                                                                                                                                 |
-| **Monetization**           | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan                                                                                                                                                                                                          |
-| **Elections & engagement** | wizard funnel `process_template_selected` → `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type`                                                                                                                                                |
-| **Web → app**              | website visit → CTA → signup → org → first election (by first-touch campaign); which vertical converts; blog and learn article → signup; sales assist `demo_requested` → `demo_booked` → subscription; marketing-sourced revenue; activation by locale; revenue by first-touch channel; event volume by `site`; CTA clicks by `page_type` |
+| Dashboard                  | Insights                                                                                                                                                                                                                                                                                                                                                            |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name                                                                                                                                                                                                           |
+| **Monetization**           | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan                                                                                                                                                                                                                                    |
+| **Elections & engagement** | wizard funnel `process_template_selected` → `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type`                                                                                                                                                                          |
+| **Web → app**              | website visit → CTA → signup → org → first election (by first-touch campaign); which vertical converts; blog and learn article → signup; docs → integrator signup; sales assist `demo_requested` → `demo_booked` → subscription; marketing-sourced revenue; activation by locale; revenue by first-touch channel; event volume by `site`; CTA clicks by `page_type` |
 
 The **Web → app** dashboard is the one that needs both properties in the project. Every funnel on it
 stays **person-level**: the app funnels aggregate by the `organization` group, which is right for them,
@@ -158,12 +158,14 @@ touch rather than the app URL someone happened to land on.
 Run it once real cross-site traffic has landed; breakdowns on an empty project resolve to nothing and
 read as a broken dashboard.
 
-The docs → integrator funnel is absent for the same reason and no other: `platform.vocdoni.io` is not a
-separate property to onboard, it is this same deployment served under a second domain onto
-`/integrators`. It therefore already carries PostHog, and already shares the `.vocdoni.io` consent and
-`distinct_id` cookies, so a `docs_page_viewed` → `cta_clicked` (`target: 'platform'`) → integrator
-signup funnel only needs the events to exist. Note that `site` is `app` on both domains: integrator
-traffic is told apart by `$host` or by the `/integrators` path, not by `site`.
+`platform.vocdoni.io` needs no onboarding as a separate property: it is this same deployment served
+under a second domain onto `/integrators`, so it already carries PostHog and already shares the
+`.vocdoni.io` consent and `distinct_id` cookies. The docs → integrator funnel therefore works today.
+Its last step matches `account_signed_up` on `$pathname` containing `/integrators` rather than on
+`$host`, because those routes are reachable under both domains and integrator signup reuses
+`~components/Auth/SignUp` — so it emits the same `account_signed_up` as a regular signup, with nothing
+but the path to tell them apart. For the same reason `site` is `app` on both domains; integrator
+traffic is separated by path, not by `site`.
 
 Two things make the rest worth more than the PostHog defaults:
 

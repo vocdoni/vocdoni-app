@@ -58,10 +58,10 @@ const apiList = async (path) => {
 const event = (name, extra = {}) => ({ kind: 'EventsNode', event: name, name, ...extra })
 
 /** An event step narrowed to one property value, e.g. only pageviews on the marketing site. */
-const eventWhere = (name, key, value, label) =>
+const eventWhere = (name, key, value, label, operator = 'exact') =>
   event(name, {
     ...(label ? { custom_name: label } : {}),
-    properties: [{ key, value, operator: 'exact', type: 'event' }],
+    properties: [{ key, value, operator, type: 'event' }],
   })
 
 /**
@@ -301,6 +301,18 @@ const buildPlan = (orgIndex) => {
             'organization_created',
           ],
           breakdown: 'locale',
+        }),
+        funnel({
+          name: 'Web → app · docs to integrator signup',
+          description:
+            'platform.vocdoni.io is this app under a second domain, onto /integrators, so integrator signups already land in this project. The last step matches on $pathname rather than $host, because the same routes are reachable on app.vocdoni.io too. 14-day window: reading the docs and deciding to build is not a same-session decision.',
+          steps: [
+            'docs_page_viewed',
+            eventWhere('cta_clicked', 'target', 'platform', 'CTA into the integrator dashboard'),
+            eventWhere('account_signed_up', '$pathname', '/integrators', 'Integrator signup', 'icontains'),
+          ],
+          windowInterval: 14,
+          breakdown: 'slug',
         }),
         trend({
           name: 'Revenue by first-touch channel',
