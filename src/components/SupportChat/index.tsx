@@ -70,9 +70,14 @@ const SupportChatWidget = () => {
           <chakra.button type='button' fontSize='sm' fontWeight='medium' cursor='pointer' onClick={openChat}>
             {t('support_chat.teaser', { defaultValue: 'Do you need help?' })}
           </chakra.button>
+          {/* Dismissing unmounts the teaser, so hand focus back to the launcher
+              instead of dropping it on <body> */}
           <CloseButton
             size='2xs'
-            onClick={dismissTeaser}
+            onClick={() => {
+              dismissTeaser()
+              launcherRef.current?.focus()
+            }}
             aria-label={t('support_chat.teaser_dismiss', { defaultValue: 'Dismiss' })}
           />
         </Flex>
@@ -121,7 +126,8 @@ const SupportChatWidget = () => {
             : t('support_chat.launcher_label', { defaultValue: 'Open support chat' })
         }
         aria-expanded={open}
-        aria-controls='support-chat-panel'
+        // The panel is lazily mounted, so only reference it once it exists
+        aria-controls={open ? 'support-chat-panel' : undefined}
         onClick={open ? close : openChat}
         transition='transform 0.15s'
         _hover={{ transform: 'scale(1.06)' }}
