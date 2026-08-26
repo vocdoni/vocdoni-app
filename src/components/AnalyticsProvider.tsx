@@ -69,12 +69,14 @@ const useAnalyticsProvider = () => {
     setPosthogSessionRecording(consent === 'accepted' && isAuthenticated)
   }, [consent, isAuthenticated])
 
-  // Keep the interface locale attached to every event
+  // Keep the interface locale attached to every event, and mark which property
+  // the event came from: this app and vocdoni.io report into a single PostHog
+  // project (the free plan allows one, and PostHog cannot query across
+  // projects), so `site` is what separates them in a filter. It is more durable
+  // than `$host`, which changes with preview hosts and custom domains.
   useEffect(() => {
     const locale = i18n.resolvedLanguage || i18n.language
-    if (locale) {
-      registerPosthogSuperProperties({ locale })
-    }
+    registerPosthogSuperProperties({ site: 'app', ...(locale ? { locale } : {}) })
   }, [i18n.resolvedLanguage, i18n.language])
 
   // Identify dashboard users only after explicit cookie consent; anonymous

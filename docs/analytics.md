@@ -7,9 +7,9 @@ Plausible/GTM are kept for continuity.
 
 ## Configuration (runtime env)
 
-| Variable | Meaning |
-| --- | --- |
-| `POSTHOG_KEY` | PostHog project API key (`phc_…`). **Unset = PostHog fully disabled** (nothing is loaded). Set it in production only. |
+| Variable       | Meaning                                                                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POSTHOG_KEY`  | PostHog project API key (`phc_…`). **Unset = PostHog fully disabled** (nothing is loaded). Set it in production only.                       |
 | `POSTHOG_HOST` | Defaults to `https://eu.i.posthog.com` (EU data residency). Point it at a reverse proxy later to mitigate ad-blockers without code changes. |
 
 Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image works across environments.
@@ -23,8 +23,8 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
      Voters never download the SDK.
    - `posthogBeforeSend` returns `null` for **any** event (pageviews, autocapture, replay snapshots,
      exceptions) whose URL is a voting route — covers admins SPA-navigating into a process view.
-   Consequently there are **no voter-side events** in the taxonomy; election participation BI comes from
-   admin-side events (`process_results_viewed`) and, later, the backend.
+     Consequently there are **no voter-side events** in the taxonomy; election participation BI comes from
+     admin-side events (`process_results_viewed`) and, later, the backend.
 2. **Cookieless until consent.** Before the cookie banner is accepted, PostHog runs with
    `persistence: 'memory'` (no cookies/localStorage) and anonymous events only
    (`person_profiles: 'identified_only'`). On accept: persistence upgrades and dashboard users are
@@ -34,7 +34,7 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
 4. **Session replay** only for authenticated users who accepted consent, with `maskAllInputs`; ballot
    content carries `.ph-no-capture` as defense in depth.
 5. **Memberbase PII is never recorded.** Every surface that renders a member record carries
-   `.ph-no-capture`, so rrweb skips the subtree entirely (text *and* attributes): member table cells
+   `.ph-no-capture`, so rrweb skips the subtree entirely (text _and_ attributes): member table cells
    (`Memberbase/Members/index.tsx`), member cards (`MemberCard.tsx` — the checkbox `aria-label`
    embeds the member name, so the whole card is excluded), group member table cells
    (`GroupsBoard.tsx`), and the CSV import error list (`Members/Import.tsx`), which quotes offending
@@ -45,6 +45,33 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
    personal data. `posthogMaskInput` (wired as `maskInputFn`) restores the value for inputs inside a
    `data-ph-unmask` subtree; passwords are never restored. The only current use is the organization
    name in Settings → Organization details (`Organization/Form.tsx`).
+
+## One project, two sites
+
+`vocdoni.io` (the marketing site, a separate repo) reports into **the same PostHog project** as this
+app. That is not a convenience: the free plan allows exactly one project, and PostHog cannot query
+across projects, so sharing one is the only way a funnel can start on a landing page and end at a
+subscription. Both sites ship the same `phc_…` key.
+
+What makes the two halves join up is a single `distinct_id` surviving the hop between subdomains:
+
+- posthog-js writes its persistence cookie with `cross_subdomain_cookie` (default `true` for
+  `vocdoni.io`), so the cookie is scoped to `.vocdoni.io`. The cookie name is derived from the project
+  token, and both sites use the same token, so they read and write the same cookie.
+- That only works while **both** sites run with cookie persistence, which only happens once consent is
+  known. So the consent choice itself lives in a cookie on `.vocdoni.io`
+  (`src/components/Cookies/utils.ts`), not in localStorage, which is per-origin. A per-origin choice
+  would leave this app in "no decision yet" for a visitor who already accepted on the website: it would
+  start in memory persistence, ignore the shared cookie, mint a fresh anonymous id, and every
+  website → app funnel would silently report near-zero. A pre-existing localStorage choice is migrated
+  on first read, so nobody is asked twice.
+- `identify()` on signup then merges that shared anonymous id into the person, so marketing pageviews
+  from before the account existed land in the same person's timeline.
+
+Events from the two sites are told apart by the `site` super property (`app` here, `web` on the
+marketing site), which is more durable than `$host` across preview hosts and custom domains.
+
+**Both sites must ship the consent cookie together.** Shipping only one leaves the bridge half-built.
 
 ## Tracking events
 
@@ -114,10 +141,10 @@ ingestion host.
 
 What it provisions:
 
-| Dashboard | Insights |
-| --- | --- |
-| **Activation** | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name |
-| **Monetization** | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan |
+| Dashboard                  | Insights                                                                                                                                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name                                  |
+| **Monetization**           | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan                                                           |
 | **Elections & engagement** | wizard funnel `process_template_selected` → `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type` |
 
 Two things make these worth more than the PostHog defaults:
@@ -163,4 +190,4 @@ Two gotchas when verifying:
   is true, which includes Playwright/Puppeteer even with a spoofed user agent and `navigator.webdriver`.
   The SDK still initializes and still calls `/flags/`, so it looks alive while `before_send` is never
   reached and no `/e/` request is ever made. Automated end-to-end checks need `opt_out_useragent_filter:
-  true` set temporarily, or a headed real browser.
+true` set temporarily, or a headed real browser.
