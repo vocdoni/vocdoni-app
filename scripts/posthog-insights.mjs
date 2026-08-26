@@ -169,13 +169,6 @@ const buildPlan = (orgIndex) => {
           groupTypeIndex: byOrg,
         }),
         trend({
-          name: 'Onboarding steps completed',
-          description: 'Which setup checklist steps organizations actually finish. Drop-offs show the weakest step.',
-          series: [event('onboarding_step_completed', orgMath)],
-          breakdown: 'step',
-          display: 'ActionsBar',
-        }),
-        trend({
           name: 'Organizations created (by name)',
           description:
             'Who signed up, by name. `org_name` rides on the creation event itself, since the group profile is only registered once the organization has been fetched.',
