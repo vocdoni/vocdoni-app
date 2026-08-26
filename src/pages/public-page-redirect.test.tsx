@@ -29,6 +29,15 @@ vi.mock('~elements/organization/PublicPage', () => ({
   default: () => <div>organization-page</div>,
 }))
 
+// Only reachable through `era === 'archive'`, which no test here exercises - but
+// the import is paid for regardless, and it drags in ~components/Editor and the
+// whole of Lexical. Left unmocked it made this file's second test ~17x slower
+// than the others and pushed it over vitest's 5s timeout under full-suite load.
+vi.mock('~components/Organization/Archive/View', () => ({
+  default: () => <div>archive-organization-page</div>,
+  ArchiveOrganizationView: () => <div>archive-organization-page</div>,
+}))
+
 vi.mock('~src/pages/shared/publicPageRedirect', () => ({
   usePreferredPublicLanguageRedirect,
 }))
