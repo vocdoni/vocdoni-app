@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    // NOT vitest/globals: the e2e suite imports `test`/`expect` from
+    // @playwright/test explicitly, and pulling vitest's globals in here would
+    // let a typo resolve against the wrong test runner's types.
+    "types": ["node"],
+    "noEmit": true
+  },
+  "include": ["**/*.ts", "../playwright.config.ts"]
+}

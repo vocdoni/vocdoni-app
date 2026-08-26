@@ -368,7 +368,10 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
                 <FormLabel htmlFor={id}>{label}</FormLabel>
                 <Box>
                   <Select
-                    id={id}
+                    // `inputId`, not `id`: react-select puts `id` on its
+                    // container div, which the FormLabel's htmlFor above cannot
+                    // label. This puts it on the actual input instead.
+                    inputId={id}
                     name={id}
                     options={getAvailableOptions(id)}
                     onChange={(selectedOption) =>
@@ -527,7 +530,10 @@ export const ImportMembers = () => {
     >
       <Drawer.Backdrop />
       <Drawer.Trigger asChild>
-        <Button ref={btnRef} variant='outline'>
+        {/* data-testid: the accessible name ("Import") is a prefix of the
+            drawer's own submit ("Import Data"), so the e2e suite has no
+            unambiguous copy-free handle for this trigger. */}
+        <Button ref={btnRef} variant='outline' data-testid='members-import-open'>
           <Icon as={LuUpload} />
           {t('memberbase.importer.button', { defaultValue: 'Import' })}
         </Button>

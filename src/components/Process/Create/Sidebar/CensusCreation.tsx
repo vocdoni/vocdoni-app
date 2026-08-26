@@ -94,6 +94,9 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
           const selected = groups?.find((g) => g.id === field.value) ?? null
           return (
             <Select
+              // Stable handle for the group combobox (labelled by the
+              // FieldLabel above, which Chakra wires up by id).
+              inputId='groupId'
               options={groups ?? []}
               value={selected}
               getOptionLabel={(option) =>

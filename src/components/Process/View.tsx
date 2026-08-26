@@ -308,7 +308,9 @@ const SuccessVoteModal = () => {
         <Dialog.Backdrop />
         <Dialog.Positioner>
           {/* Contains the vote verification link (vote id) — never capture it */}
-          <Dialog.Content className='ph-no-capture'>
+          {/* data-testid: this modal is the confirmation the e2e voting flow
+              asserts on, and its only other handle is a translated title. */}
+          <Dialog.Content className='ph-no-capture' data-testid='vote-success-modal'>
             <Dialog.CloseTrigger />
             <Dialog.Header display='flex' flexDirection='column'>
               <Dialog.Title>{t('process.success_modal.title')}</Dialog.Title>

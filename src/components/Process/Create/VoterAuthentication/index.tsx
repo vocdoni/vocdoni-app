@@ -286,10 +286,15 @@ export const VoterAuthentication = () => {
                 <Button variant='ghost' onClick={handlePrevious}>
                   {t('common.back', 'Back')}
                 </Button>
+                {/* data-testid: this one button is both "Next" and "Confirm"
+                    depending on the step, and the tab triggers stay disabled
+                    until their step is completed — so the e2e suite has no
+                    copy-free way to advance the modal. */}
                 <Button
                   onClick={handleNext}
                   loading={isLoading}
                   disabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
+                  data-testid='voter-auth-next'
                 >
                   {activeTabIndex === 2 ? t('common.confirm', 'Confirm') : t('common.next', 'Next')}
                 </Button>

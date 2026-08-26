@@ -45,7 +45,7 @@ export const ExtraConfig = () => {
       {/* Result visibility */}
       <Box>
         <FormControl invalid={!!errors.resultVisibility}>
-          <FormLabel>
+          <FormLabel htmlFor='resultVisibility'>
             <Trans i18nKey='process_create.result_visibility.title'>Result visibility</Trans>
           </FormLabel>
           <Controller
@@ -54,6 +54,7 @@ export const ExtraConfig = () => {
             rules={{ required }}
             render={({ field }) => (
               <Select
+                inputId='resultVisibility'
                 value={resultVisibilityOptions.find((opt) => opt.value === field.value)}
                 onChange={(opt) => field.onChange(opt.value)}
                 options={resultVisibilityOptions}
@@ -66,7 +67,7 @@ export const ExtraConfig = () => {
       </Box>
       <Box>
         <FormControl invalid={!!errors.weightedVote}>
-          <FormLabel display='flex' alignItems='center'>
+          <FormLabel htmlFor='weightedVote' display='flex' alignItems='center'>
             <Trans i18nKey='process_create.weight.title'>Voting power</Trans>
             <TooltipRoot positioning={{ placement: 'top' }}>
               <TooltipTrigger asChild>
@@ -87,6 +88,7 @@ export const ExtraConfig = () => {
             name='weightedVote'
             render={({ field }) => (
               <Select
+                inputId='weightedVote'
                 value={weightOptions.find((opt) => opt.value === field.value)}
                 onChange={(opt) => field.onChange(opt.value)}
                 options={weightOptions}

@@ -12,7 +12,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    exclude: ['.worktrees', 'node_modules', 'dist'],
+    // `e2e` holds the Playwright suite. Its specs are `*.e2e.ts`, which already
+    // falls outside vitest's default `**/*.{test,spec}.*` glob — this is a
+    // belt-and-braces guard so a future `*.test.ts` helper in there can never
+    // be picked up by the unit run (it would try to launch a browser).
+    exclude: ['.worktrees', 'node_modules', 'dist', 'e2e'],
     setupFiles: './vitest.setup.ts',
     css: true,
     coverage: {

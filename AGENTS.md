@@ -22,6 +22,7 @@
 - `pnpm test`: run all Vitest tests once.
 - `pnpm test:watch`: run tests in watch mode.
 - `pnpm test:coverage`: generate coverage reports.
+- `pnpm test:e2e:stack`: boot the disposable backend and run the Playwright end-to-end suite (needs docker).
 - `pnpm translations`: extract i18n keys from source code and update locale files.
 - `pnpm chakra:typegen`: regenerate Chakra typings after theme/system changes.
 
@@ -44,6 +45,20 @@
 - Prefer behavior-focused tests over implementation-detail assertions.
 - Keep tests close to the module being validated.
 - Run targeted tests while iterating (example: `pnpm test src/queries/groups.test.ts`).
+
+### End-to-end tests
+- `e2e/` holds a Playwright suite (`*.e2e.ts`) that drives a real browser against a disposable
+  full backend (mongo + vocone + saas-backend + MailHog, see `integration/`). Read
+  `e2e/README.md` before touching it.
+- It is deliberately **not** part of `pnpm test`, which stays fast and unit-only. Run it with
+  `pnpm test:e2e:stack` (needs docker); it takes a few minutes.
+- It covers what only this app owns: the OTP signup journey and the CSP + email-2FA voter
+  journey. The generic voting lifecycle is covered upstream in integrator-sdk — don't duplicate
+  it here.
+- While the stack is up, every email the backend sends is browsable at `localhost:8025`. This is
+  the practical way to debug 2FA/verification flows by hand.
+- Prefer structural selectors (`name`, `data-value`, `button[type="submit"]`) over translated
+  copy. Add a `data-testid` in `src/` only when there is no such handle, and comment why.
 
 ## Internal Dependencies Context
 - This repository depends on maintained Vocdoni packages; changes may require validating upstream behavior.

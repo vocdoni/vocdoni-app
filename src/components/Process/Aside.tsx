@@ -42,8 +42,12 @@ const ProcessAside = () => {
           {getStatusText(t, status).toUpperCase()}
         </Text>
 
+        {/* data-testid on both branches: the count is interpolated into a
+            pluralized <Trans>, so the e2e suite has no way to read it without
+            depending on the translated sentence around it. Exactly one of the
+            two renders at a time, so the id stays unique. */}
         {showVoters && !showVotes && (
-          <Flex direction={'row'} justifyContent='center' alignItems='center' gap={2}>
+          <Flex direction={'row'} justifyContent='center' alignItems='center' gap={2} data-testid='process-vote-count'>
             <Trans
               i18nKey='aside.votes'
               components={{
@@ -56,7 +60,7 @@ const ProcessAside = () => {
         )}
 
         {showVotes && (
-          <Flex direction='column' justifyContent='center' alignItems='center' gap={2}>
+          <Flex direction='column' justifyContent='center' alignItems='center' gap={2} data-testid='process-vote-count'>
             <Flex direction={'row'} justifyContent='center' alignItems='center' gap={2}>
               <Trans
                 i18nKey='aside.votes_weight'
