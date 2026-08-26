@@ -57,6 +57,13 @@ const apiList = async (path) => {
 
 const event = (name, extra = {}) => ({ kind: 'EventsNode', event: name, name, ...extra })
 
+/** An event step narrowed to one property value, e.g. only pageviews on the marketing site. */
+const eventWhere = (name, key, value, label) =>
+  event(name, {
+    ...(label ? { custom_name: label } : {}),
+    properties: [{ key, value, operator: 'exact', type: 'event' }],
+  })
+
 /**
  * `aggregation_group_type_index` makes a funnel count organizations instead of
  * people — the right unit for a B2B product, where several colleagues share one
@@ -71,6 +78,7 @@ const funnel = ({
   windowUnit = 'day',
   vizType = 'steps',
   breakdown = null,
+  breakdownType = 'event',
   dateFrom = '-90d',
   extraFilter = {},
 }) => ({
@@ -84,7 +92,7 @@ const funnel = ({
       dateRange: { date_from: dateFrom },
       filterTestAccounts: true,
       ...(groupTypeIndex === null ? {} : { aggregation_group_type_index: groupTypeIndex }),
-      ...(breakdown ? { breakdownFilter: { breakdown, breakdown_type: 'event' } } : {}),
+      ...(breakdown ? { breakdownFilter: { breakdown, breakdown_type: breakdownType } } : {}),
       funnelsFilter: {
         funnelOrderType: 'ordered',
         funnelVizType: vizType,
@@ -206,6 +214,117 @@ const buildPlan = (orgIndex) => {
           description: 'How often each plan hits a wall — sustained pressure on one plan is a packaging signal.',
           series: [event('feature_blocked', orgMath)],
           breakdown: 'plan',
+          display: 'ActionsBar',
+        }),
+      ],
+    },
+    {
+      dashboard: {
+        name: 'Vocdoni · Web → app',
+        description:
+          'What the marketing site actually produces. vocdoni.io and this app report into one PostHog project, so these funnels can cross the domain boundary.',
+      },
+      // Every funnel here stays person-level. The existing app funnels aggregate
+      // by the `organization` group, which is right for them — but a website
+      // visitor has no organization yet, so group aggregation would drop step
+      // one and make the funnel look broken rather than empty.
+      insights: [
+        funnel({
+          name: 'Web → app · website visit to first election',
+          description:
+            "The headline number: what share of website traffic ends in a published election. Broken down by the campaign that produced the first visit — because the anonymous id is created on the website, `$initial_utm_source` records the website's first touch, not the app's landing URL.",
+          steps: [
+            eventWhere('$pageview', '$host', 'vocdoni.io', 'Pageview on vocdoni.io'),
+            eventWhere('cta_clicked', 'target', 'app', 'CTA into the app'),
+            'account_signed_up',
+            'organization_created',
+            'process_created',
+          ],
+          breakdown: '$initial_utm_source',
+          breakdownType: 'person',
+        }),
+        funnel({
+          name: 'Web → app · which vertical converts',
+          description:
+            'Ten solution pages compete for the same effort. This ranks them by customers produced rather than sessions received, and the two rankings are rarely the same.',
+          steps: ['solution_page_viewed', 'cta_clicked', 'account_signed_up', 'process_created'],
+          breakdown: 'vertical',
+        }),
+        funnel({
+          name: 'Web → app · blog post to signup',
+          description:
+            'Which article pays for itself. The 7-day window is deliberately tight: content that converts a month later is really being credited to something else.',
+          steps: ['blog_post_viewed', 'cta_clicked', 'account_signed_up'],
+          windowInterval: 7,
+          breakdown: 'slug',
+        }),
+        funnel({
+          name: 'Web → app · learn article to signup',
+          description:
+            'The same question for the evergreen guides, which have a different intent profile from the blog. Separate from the blog funnel because a funnel step is a single event.',
+          steps: ['learn_article_viewed', 'cta_clicked', 'account_signed_up'],
+          windowInterval: 7,
+          breakdown: 'slug',
+        }),
+        funnel({
+          name: 'Web → app · sales assist',
+          description:
+            'Puts a conversion rate on the Cal.com booking flow and, at the last step, a value on a booked call. A wide gap between requested and booked points at the booking widget itself.',
+          steps: ['demo_requested', 'demo_booked', 'account_signed_up', 'subscription_completed'],
+          windowInterval: 90,
+          breakdown: 'location',
+        }),
+        funnel({
+          name: 'Web → app · marketing-sourced revenue',
+          description:
+            'The money question, end to end, attributed to the campaign that started the journey rather than to the app URL the visitor happened to land on.',
+          steps: [
+            eventWhere('$pageview', '$host', 'vocdoni.io', 'Pageview on vocdoni.io'),
+            'account_signed_up',
+            'process_created',
+            'paywall_viewed',
+            'checkout_started',
+            'subscription_completed',
+          ],
+          windowInterval: 90,
+          breakdown: '$initial_utm_source',
+          breakdownType: 'person',
+        }),
+        funnel({
+          name: 'Web → app · activation by locale',
+          description:
+            'Eleven locales are maintained under a strict translation guardrail. This is what that investment returns per language; a locale converting far below its traffic share is usually a copy problem, not a demand problem.',
+          steps: [
+            eventWhere('$pageview', '$host', 'vocdoni.io', 'Pageview on vocdoni.io'),
+            'cta_clicked',
+            'account_signed_up',
+            'organization_created',
+          ],
+          breakdown: 'locale',
+        }),
+        trend({
+          name: 'Revenue by first-touch channel',
+          description:
+            'Subscriptions attributed to the campaign that produced the very first visit. Needs no tagging discipline beyond UTMs on inbound links.',
+          series: [event('subscription_completed')],
+          breakdown: '$initial_utm_source',
+          breakdownType: 'person',
+          display: 'ActionsTable',
+        }),
+        trend({
+          name: 'Event volume by site',
+          description:
+            'Both properties share one project and one 1M/month allowance. This is the split, and the early warning if the website starts eating the budget.',
+          series: [event(null, { name: 'All events' })],
+          breakdown: 'site',
+          display: 'ActionsBar',
+        }),
+        trend({
+          name: 'CTA clicks by page type',
+          description:
+            'Where intent actually happens on the marketing site. Reads off the `page_type` property, which is resolved at click time from the route.',
+          series: [event('cta_clicked')],
+          breakdown: 'page_type',
           display: 'ActionsBar',
         }),
       ],
