@@ -16,13 +16,21 @@ The app under test is **not** part of the stack — it runs on the host
 ## Usage
 
 ```bash
-scripts/integration-stack.sh up     # start + seed the default plan
+scripts/integration-stack.sh up     # start + seed the default plan, leave it running
 scripts/integration-stack.sh down   # tear down, dropping volumes
-scripts/integration-stack.sh run    # up, build the app, run the e2e suite
+scripts/integration-stack.sh run    # up, build the app, run the e2e suite, then stop
 ```
 
+`up` leaves the stack running — that is its job: iterate against it and browse
+the inbox. `run` is one-shot and stops the containers when it finishes, *unless*
+the suite failed (the logs and inbox are the evidence you need) or
+`INTEGRATION_KEEP_STACK` is set. It stops with `down`, not `down -v`, so the
+cached circuit artifacts survive for a fast next boot; `down` is the explicit
+full clean.
+
 Ports are overridable with `INTEGRATION_HOST_PORT`, `INTEGRATION_MAILHOG_PORT`
-and `INTEGRATION_APP_PORT`.
+and `INTEGRATION_APP_PORT`. Re-running `up` against a stack that is already
+running just reuses it.
 
 To point the app at it:
 

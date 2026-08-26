@@ -11,12 +11,17 @@
 # Usage:
 #   scripts/integration-stack.sh up    # start the stack and seed the default plan
 #   scripts/integration-stack.sh down  # tear the stack down (drops volumes)
-#   scripts/integration-stack.sh run   # up, then build and run the e2e suite
+#   scripts/integration-stack.sh run   # up, build, run the e2e suite, then stop
+#
+# `up` leaves the stack running (that is its job — iterate against it, browse
+# the inbox). `run` is one-shot and stops the containers when it is done, unless
+# the suite failed or INTEGRATION_KEEP_STACK is set.
 #
 # Env:
 #   INTEGRATION_HOST_PORT    host port the saas-backend API is published on (default 8080)
 #   INTEGRATION_MAILHOG_PORT host port the MailHog HTTP API is published on (default 8025)
 #   INTEGRATION_APP_PORT     host port the app under test is served on (default 3000)
+#   INTEGRATION_KEEP_STACK   set to any value to make `run` leave the stack up
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -90,14 +95,26 @@ wait_url_ready() {
   done
 }
 
+# True when this project's own containers are already running. `compose up -d`
+# is idempotent, so the point of asking is the port check below: without this,
+# re-running `up` on a live stack reports "port 8080 already in use" and blames
+# an unrelated process, when the process holding it is ours.
+stack_is_running() {
+  [ -n "$(compose ps -q api 2>/dev/null)" ]
+}
+
 cmd_up() {
-  if ! port_is_free "$INTEGRATION_HOST_PORT"; then
-    echo "ERROR: host port $INTEGRATION_HOST_PORT is already in use. Set INTEGRATION_HOST_PORT to a free port and retry, e.g. INTEGRATION_HOST_PORT=$((INTEGRATION_HOST_PORT + 10000))." >&2
-    exit 1
-  fi
-  if ! port_is_free "$INTEGRATION_MAILHOG_PORT"; then
-    echo "ERROR: host port $INTEGRATION_MAILHOG_PORT is already in use. Set INTEGRATION_MAILHOG_PORT to a free port and retry." >&2
-    exit 1
+  if stack_is_running; then
+    echo "== stack is already running; reusing it" >&2
+  else
+    if ! port_is_free "$INTEGRATION_HOST_PORT"; then
+      echo "ERROR: host port $INTEGRATION_HOST_PORT is already in use by something else. Set INTEGRATION_HOST_PORT to a free port and retry, e.g. INTEGRATION_HOST_PORT=$((INTEGRATION_HOST_PORT + 10000))." >&2
+      exit 1
+    fi
+    if ! port_is_free "$INTEGRATION_MAILHOG_PORT"; then
+      echo "ERROR: host port $INTEGRATION_MAILHOG_PORT is already in use by something else. Set INTEGRATION_MAILHOG_PORT to a free port and retry." >&2
+      exit 1
+    fi
   fi
 
   echo "== starting stack" >&2
@@ -125,14 +142,20 @@ cmd_up() {
     echo "ERROR: GET $INTEGRATION_API_URL/plans did not respond — the api container is not serving. This is NOT a seed problem; check the api logs." >&2
     exit 1
   fi
-  PLANS_COUNT=$(printf '%s' "$PLANS_JSON" | python3 -c "
-import sys, json
-try:
-    d = json.load(sys.stdin)
-except Exception:
-    print(0)
-else:
-    print(len(d) if isinstance(d, list) else 0)
+  # Parsed with node, not python3: node is already a hard requirement of this
+  # repo (this script ends by running pnpm), so this adds no new dependency —
+  # whereas python3 is not guaranteed on a contributor's machine.
+  PLANS_COUNT=$(printf '%s' "$PLANS_JSON" | node -e "
+let raw = ''
+process.stdin.on('data', (chunk) => (raw += chunk))
+process.stdin.on('end', () => {
+  try {
+    const parsed = JSON.parse(raw)
+    console.log(Array.isArray(parsed) ? parsed.length : 0)
+  } catch {
+    console.log(0)
+  }
+})
 " 2>/dev/null || echo 0)
   if [ "${PLANS_COUNT:-0}" -lt 1 ] 2>/dev/null; then
     echo "plan seed did not take — check db.Plan bson tags against integration/seed-plan.js" >&2
@@ -172,7 +195,33 @@ cmd_run() {
   # The suite runs against the production SSR bundle (`pnpm serve:ssr`, booted by
   # Playwright's webServer), so it needs a build first.
   pnpm build
-  pnpm test:e2e
+
+  local status=0
+  pnpm test:e2e || status=$?
+
+  # `run` is the one-shot command, so it cleans up after itself rather than
+  # leaving four containers running on a laptop. Two deliberate exceptions:
+  #
+  #  - On failure the stack stays UP. The inbox and the container logs are the
+  #    evidence you need to diagnose a failed run, and tearing them down would
+  #    destroy exactly that.
+  #  - It stops with `compose down`, NOT `down -v`. Keeping the volume preserves
+  #    vocone's cached zk circuit artifacts, so the next boot skips a slow (and
+  #    known-flaky) download. `scripts/integration-stack.sh down` is the explicit
+  #    full clean, and is what CI uses.
+  if [ -n "${INTEGRATION_KEEP_STACK:-}" ]; then
+    echo "== INTEGRATION_KEEP_STACK set — leaving the stack up. Inbox: $INTEGRATION_MAILHOG_URL" >&2
+  elif [ "$status" -ne 0 ]; then
+    echo "== suite FAILED — leaving the stack up so you can inspect it:" >&2
+    echo "     inbox: $INTEGRATION_MAILHOG_URL" >&2
+    echo "     logs:  docker compose -f integration/docker-compose.ci.yml logs api" >&2
+    echo "     stop:  scripts/integration-stack.sh down" >&2
+  else
+    echo "== suite passed — stopping containers (volumes kept for a fast next boot)" >&2
+    compose down
+  fi
+
+  return "$status"
 }
 
 case "${1:-}" in

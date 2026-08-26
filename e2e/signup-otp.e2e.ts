@@ -1,7 +1,20 @@
 import { TEST_PASSWORD, uniqueEmail } from './helpers/data'
 import { createOrganization } from './helpers/flows'
 import { checkCheckbox, expect, fillPinInput, test } from './helpers/fixtures'
-import { extractCode, extractLink, MailSubjects, waitForEmail } from './helpers/mailhog'
+import { extractCode, extractLink, MailSubjects, waitForCode, waitForEmail } from './helpers/mailhog'
+
+/**
+ * Same length and shape as the input, guaranteed to differ: advances the first
+ * character to the next one in its own class (digit → digit, letter → letter),
+ * so the result stays a plausible code the form will accept and submit.
+ */
+const rotateFirstCharacter = (code: string): string => {
+  const [first, ...rest] = code
+  const next = /[0-9]/.test(first)
+    ? String((Number(first) + 1) % 10)
+    : String.fromCharCode(first === 'z' ? 'a'.charCodeAt(0) : first.charCodeAt(0) + 1)
+  return [next, ...rest].join('')
+}
 
 /**
  * Flow 1 — signup with an emailed OTP.
@@ -63,11 +76,24 @@ test.describe('signup with email verification', () => {
     await page.fill('input[name="email"]', email)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await checkCheckbox(page.locator('fieldset').filter({ has: page.locator('input[name="terms"]') }))
+
+    const submittedAt = new Date()
     await page.locator('form button[type="submit"]').click()
     await page.waitForURL(/\/account\/verify/)
 
-    // Six characters that cannot be the real code (which is hex).
-    await fillPinInput(page.locator('body'), 'zzzzzz')
+    // Derive the wrong code from the real one rather than hard-coding a string
+    // like 'zzzzzz'. Today's codes are 6 hex characters, so a non-hex string
+    // could never collide — but that is an unpublished backend detail
+    // (util.RandomHex(3)), and this stays correct if the alphabet ever widens.
+    const realCode = await waitForCode({
+      to: email,
+      subject: MailSubjects.accountVerification,
+      since: submittedAt,
+    })
+    const wrongCode = rotateFirstCharacter(realCode)
+    expect(wrongCode).not.toBe(realCode)
+
+    await fillPinInput(page.locator('body'), wrongCode)
 
     // The negative case matters as much as the happy one: without it, a verify
     // endpoint that accepted anything would still pass the test above.

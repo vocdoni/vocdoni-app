@@ -1,4 +1,4 @@
-import { makeMembers } from './helpers/data'
+import { makeMembers, uniqueEmail } from './helpers/data'
 import {
   authenticateVoterWithOtp,
   castVote,
@@ -108,7 +108,13 @@ test.describe('voting with a CSP + email 2FA census', () => {
     const voter = await voterContext.newPage()
 
     try {
-      const stranger = { ...members[0], memberNumber: '000000-not-a-member' }
+      // A genuinely unique address, NOT a member's. Two reasons: it matches
+      // what is being tested (an outsider, not a member typing the wrong
+      // number), and the inbox check below has no `since` filter, so a stale
+      // OTP for a reused address would fail it. `makeMembers` seeds addresses
+      // from the last 6 digits of Date.now(), which repeats every ~16 minutes
+      // against the same MailHog inbox.
+      const stranger = { memberNumber: '000000-not-a-member', email: uniqueEmail('stranger') }
       await voter.goto(`/processes/${processId}`)
 
       const dialog = await openIdentifyModal(voter)

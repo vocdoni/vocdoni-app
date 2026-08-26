@@ -27,14 +27,24 @@ export type TestMember = {
  * auth field the voting flow authenticates with, `email` the 2FA channel the
  * OTP is sent to — both must be unique across the organization or the census
  * validation step in the create wizard rejects the configuration.
+ *
+ * `seed` scopes `memberNumber`, which only has to be unique *within* the
+ * organization (each spec creates a fresh one). Addresses get their own random
+ * run token instead: they share one long-lived MailHog inbox across every run
+ * on a given stack, and callers pass a seed derived from the low digits of
+ * `Date.now()`, which repeats roughly every 16 minutes. A repeat would leave a
+ * previous run's OTP sitting in the inbox under the same address.
  */
-export const makeMembers = (count: number, seed: string): TestMember[] =>
-  Array.from({ length: count }, (_, index) => ({
+export const makeMembers = (count: number, seed: string): TestMember[] => {
+  const runToken = `${Date.now().toString(36)}${Math.floor(Math.random() * 1e6).toString(36)}`
+
+  return Array.from({ length: count }, (_, index) => ({
     name: `Voter${index + 1}`,
     surname: 'Test',
-    email: `member-${seed}-${index + 1}@test.local`,
+    email: `member-${runToken}-${index + 1}@test.local`,
     memberNumber: `${seed}${index + 1}`,
   }))
+}
 
 /** The members as a CSV buffer, matching the importer's expected header names. */
 export const membersCsv = (members: TestMember[]): Buffer => {

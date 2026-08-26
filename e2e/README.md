@@ -22,17 +22,25 @@ codes out of it programmatically, and **you can browse it at
 
 ## Running
 
-The one-liner — boots the stack, seeds it, builds the app and runs the suite:
+The one-liner — boots the stack, seeds it, builds the app, runs the suite, and
+stops the containers again:
 
 ```bash
 pnpm test:e2e:stack
 ```
 
-Tear it down afterwards:
+It cleans up after itself, with two deliberate exceptions:
 
-```bash
-scripts/integration-stack.sh down
-```
+- **If the suite fails, the stack stays up**, and it tells you so. The inbox and
+  the container logs are the evidence you need to diagnose the failure; tearing
+  them down would destroy exactly that. Stop it with
+  `scripts/integration-stack.sh down` when you are done.
+- **It stops containers but keeps volumes**, so vocone's cached zk circuit
+  artifacts survive and the next boot skips a slow, known-flaky download.
+  `scripts/integration-stack.sh down` is the explicit full clean (`down -v`),
+  and is what CI uses.
+
+Set `INTEGRATION_KEEP_STACK=1` to always leave it running.
 
 To iterate (keep one stack, run the suite repeatedly):
 
