@@ -89,6 +89,16 @@ describe('getCookieConsent', () => {
     expect(getCookieConsent()).toBe('rejected')
   })
 
+  it('refreshes the mirror when the other site changed the choice', () => {
+    // vocdoni.io can only write the shared cookie; this origin's localStorage
+    // would otherwise keep a revoked decision alive across a rollback.
+    setCookieConsent(true)
+    document.cookie = 'vocdoni-cookie-consent=rejected; Path=/'
+
+    expect(getCookieConsent()).toBe('rejected')
+    expect(localStorage.getItem('vocdoni-cookie-consent')).toBe('rejected')
+  })
+
   it('returns null when no choice has been made', () => {
     expect(getCookieConsent()).toBeNull()
   })

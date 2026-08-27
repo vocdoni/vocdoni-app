@@ -77,15 +77,24 @@ function readLegacyConsent(): string | null {
   }
 }
 
+/**
+ * Mirrored, never read first: keeps a rollback of either site working, since
+ * the previous implementation only ever looked at localStorage.
+ *
+ * The write is conditional because consent is read while rendering, so this
+ * runs far more often than the choice actually changes.
+ */
+function mirrorConsent(value: string): void {
+  try {
+    if (localStorage.getItem(CONSENT_KEY) !== value) localStorage.setItem(CONSENT_KEY, value)
+  } catch {
+    // The cookie is the source of truth; losing the mirror is harmless.
+  }
+}
+
 function writeConsent(value: string): void {
   document.cookie = buildConsentCookie(value, window.location.hostname, window.location.protocol)
-  try {
-    // Mirrored, not read first: keeps a rollback of either site working, since
-    // the previous implementation only ever looked at localStorage.
-    localStorage.setItem(CONSENT_KEY, value)
-  } catch {
-    // The cookie above is the source of truth; losing the mirror is harmless.
-  }
+  mirrorConsent(value)
 }
 
 /**
@@ -96,7 +105,13 @@ export function getCookieConsent(): string | null {
   if (typeof window === 'undefined') return null
 
   const fromCookie = normalizeConsent(readConsentCookie(document.cookie))
-  if (fromCookie) return fromCookie
+  if (fromCookie) {
+    // The choice may have been changed on the other site, which can only write
+    // the shared cookie - this origin's mirror would otherwise stay stale, and
+    // a rollback here would then reinstate a decision the visitor has revoked.
+    mirrorConsent(fromCookie)
+    return fromCookie
+  }
 
   // Choices made before the shared cookie existed live in localStorage. Honour
   // one once and promote it, so nobody who already decided is asked again.
