@@ -209,5 +209,5 @@ Two gotchas when verifying:
 - **Headless browsers capture nothing.** posthog-js drops every event when its internal `_is_bot()` check
   is true, which includes Playwright/Puppeteer even with a spoofed user agent and `navigator.webdriver`.
   The SDK still initializes and still calls `/flags/`, so it looks alive while `before_send` is never
-  reached and no `/e/` request is ever made. Automated end-to-end checks need `opt_out_useragent_filter:
-true` set temporarily, or a headed real browser.
+  reached and no `/e/` request is ever made. Automated end-to-end checks need
+  `opt_out_useragent_filter: true` set temporarily, or a headed real browser.

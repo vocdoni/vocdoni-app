@@ -41,6 +41,15 @@ export function buildConsentCookie(value: string, hostname: string, protocol: st
   ].join('; ')
 }
 
+/**
+ * Only the two values this app writes count as a decision. Anything else - a
+ * hand-edited cookie, a value left by some other tool on the shared domain - is
+ * treated as "not decided yet" rather than propagated across `.vocdoni.io`.
+ */
+function normalizeConsent(value: string | null): string | null {
+  return value === CONSENT_ACCEPTED || value === CONSENT_REJECTED ? value : null
+}
+
 export function readConsentCookie(cookie: string | undefined): string | null {
   if (!cookie) return null
 
@@ -48,7 +57,13 @@ export function readConsentCookie(cookie: string | undefined): string | null {
     const separator = entry.indexOf('=')
     if (separator === -1) continue
     if (entry.slice(0, separator).trim() !== CONSENT_KEY) continue
-    return decodeURIComponent(entry.slice(separator + 1).trim()) || null
+    try {
+      return decodeURIComponent(entry.slice(separator + 1).trim()) || null
+    } catch {
+      // A malformed percent-escape must not throw: consent is read while
+      // rendering, so an unhandled URIError would take the app down.
+      return null
+    }
   }
   return null
 }
@@ -80,12 +95,12 @@ function writeConsent(value: string): void {
 export function getCookieConsent(): string | null {
   if (typeof window === 'undefined') return null
 
-  const fromCookie = readConsentCookie(document.cookie)
+  const fromCookie = normalizeConsent(readConsentCookie(document.cookie))
   if (fromCookie) return fromCookie
 
   // Choices made before the shared cookie existed live in localStorage. Honour
   // one once and promote it, so nobody who already decided is asked again.
-  const legacy = readLegacyConsent()
+  const legacy = normalizeConsent(readLegacyConsent())
   if (legacy) writeConsent(legacy)
   return legacy
 }

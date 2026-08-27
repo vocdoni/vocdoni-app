@@ -53,6 +53,11 @@ describe('readConsentCookie', () => {
     expect(readConsentCookie(undefined)).toBeNull()
     expect(readConsentCookie('foo=1')).toBeNull()
   })
+
+  it('survives a malformed percent-escape instead of throwing', () => {
+    // Consent is read while rendering, so a URIError here would take the app down.
+    expect(readConsentCookie('vocdoni-cookie-consent=%E0%A4%A')).toBeNull()
+  })
 })
 
 describe('getCookieConsent', () => {
@@ -86,5 +91,20 @@ describe('getCookieConsent', () => {
 
   it('returns null when no choice has been made', () => {
     expect(getCookieConsent()).toBeNull()
+  })
+
+  it('ignores an unrecognised legacy value rather than promoting it to the shared cookie', () => {
+    localStorage.setItem('vocdoni-cookie-consent', 'true')
+
+    expect(getCookieConsent()).toBeNull()
+    expect(document.cookie).not.toContain('vocdoni-cookie-consent=true')
+  })
+
+  it('ignores an unrecognised cookie value and repairs it from a valid legacy choice', () => {
+    document.cookie = 'vocdoni-cookie-consent=true; Path=/'
+    localStorage.setItem('vocdoni-cookie-consent', 'accepted')
+
+    expect(getCookieConsent()).toBe('accepted')
+    expect(readConsentCookie(document.cookie)).toBe('accepted')
   })
 })
