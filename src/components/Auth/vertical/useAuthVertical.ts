@@ -37,7 +37,8 @@ const storeVertical = (slug: VerticalSlug) => {
  */
 export const useVerticalSlug = (): VerticalSlug | null => {
   const [searchParams] = useSearchParams()
-  const fromUrl = resolveVerticalSlug(searchParams.get(AUTH_VERTICAL_PARAM))
+  const raw = searchParams.get(AUTH_VERTICAL_PARAM)
+  const fromUrl = resolveVerticalSlug(raw)
   // Read once, at mount: once the URL carries a vertical it always wins.
   const [stored] = useState(readStoredVertical)
 
@@ -45,7 +46,11 @@ export const useVerticalSlug = (): VerticalSlug | null => {
     if (fromUrl) storeVertical(fromUrl)
   }, [fromUrl])
 
-  return fromUrl ?? stored
+  // The stored vertical is there to survive the param being *lost*, not to answer one that is
+  // present and names something we don't have. `?type=banana` asks for a vertical we can't serve;
+  // showing whichever one the previous screen happened to use would be guessing. Only an absent
+  // param falls back.
+  return fromUrl ?? (raw ? null : stored)
 }
 
 /**

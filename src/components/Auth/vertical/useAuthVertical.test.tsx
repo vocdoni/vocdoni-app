@@ -75,6 +75,14 @@ describe('useAuthVertical', () => {
     expect(result.current.key).toBe('professional-associations')
   })
 
+  it('degrades an invalid param to generic rather than reusing the stored vertical', () => {
+    renderAt('/account/signin?type=professional-associations')
+
+    const { result } = renderAt('/account/signin?type=banana')
+
+    expect(result.current.key).toBe('generic')
+  })
+
   it('lets the url override a stale stored vertical', () => {
     renderAt('/account/signin?type=professional-associations')
 

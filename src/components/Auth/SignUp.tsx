@@ -26,6 +26,7 @@ import { useAppEnv } from '~src/app-env'
 import { useSignupFromInvite } from '~src/queries/account'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
+import { withParam } from '~utils/url'
 import GoogleAuth from './GoogleAuth'
 
 export type InviteFields = {
@@ -141,7 +142,7 @@ const SignUp = ({
 
   // normally registered accounts need verification (separate verify page)
   if (registeredEmail) {
-    return <Navigate to={`${afterRegisterRoute}?email=${encodeURIComponent(registeredEmail)}`} replace />
+    return <Navigate to={withParam(afterRegisterRoute, 'email', registeredEmail)} replace />
   }
 
   // registration succeeded but the effect above hasn't staged the redirect yet
