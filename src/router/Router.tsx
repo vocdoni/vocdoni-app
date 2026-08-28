@@ -1,10 +1,20 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { flushSync } from 'react-dom'
+import { createBrowserRouter, RouterProvider, type RouterProviderProps } from 'react-router'
 import { useAuthRoutes, useCreateOrganizationRoutes } from './routes/auth'
 import { useDashboardRoutes } from './routes/dashboard'
 import { useIntegratorsAuthRoutes, useIntegratorsRoutes } from './routes/integrators'
 import { useHomeRoute } from './routes/home'
 import { useRootRoutes } from './routes/root'
+
+// What the `react-router/dom` RouterProvider would pre-bind (it wants a void-returning
+// signature, hence the wrapper). We pass it ourselves and import everything from the main
+// entry because loading both entries resolves them to different builds (ESM vs CJS) under
+// vitest — two module instances whose React contexts don't match, so every router hook
+// under the provider throws.
+const reactDomFlushSync: RouterProviderProps['flushSync'] = (fn) => {
+  flushSync(fn)
+}
 
 export const RoutesProvider = ({ basename }: { basename?: string }) => {
   const home = useHomeRoute()
@@ -32,14 +42,6 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
     () =>
       createBrowserRouter([home, root, auth, dashboard, integrators, integratorsAuth, createOrganizationRoute], {
         basename: resolvedBasename,
-        // v7 semantics, opted into ahead of the v7 package swap (reactrouter.com/upgrading/v6)
-        future: {
-          v7_relativeSplatPath: true,
-          v7_fetcherPersist: true,
-          v7_normalizeFormMethod: true,
-          v7_partialHydration: true,
-          v7_skipActionErrorRevalidation: true,
-        },
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [resolvedBasename]
@@ -64,5 +66,5 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
   // Key by basename so a language switch — the only time the basename changes — remounts
   // the router to adopt the new prefix, since RouterProvider keeps the first router's
   // state and won't re-init from a changed `router` prop.
-  return <RouterProvider key={resolvedBasename} router={router} future={{ v7_startTransition: true }} />
+  return <RouterProvider key={resolvedBasename} router={router} flushSync={reactDomFlushSync} />
 }

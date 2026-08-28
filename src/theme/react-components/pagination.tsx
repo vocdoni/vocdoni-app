@@ -11,7 +11,7 @@ import {
   type TextProps,
 } from '@chakra-ui/react'
 import { defineComponent, type ComponentsPartialDefinition } from '@vocdoni/react-components'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 
 export const paginationComponents: ComponentsPartialDefinition = {
   PaginationContainer: defineComponent<'PaginationContainer', FlexProps>(({ items, ...props }) => {

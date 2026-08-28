@@ -1,7 +1,7 @@
 import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
 import QueryDataLayout from '~components/Layout/QueryDataLayout'

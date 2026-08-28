@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router'
 import { Routes } from './routes'
 import { Loading } from '~src/router/SuspenseLoader'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'

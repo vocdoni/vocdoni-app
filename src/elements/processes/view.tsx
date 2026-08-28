@@ -1,5 +1,5 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData } from 'react-router'
 import type { LegacyElection, LegacyOrganization } from '~src/legacy/vochain-archive'
 import { ensureAddressPrefix } from '~utils/address'
 import PublicProcessPage from './PublicPage'

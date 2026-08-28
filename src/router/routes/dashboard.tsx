@@ -2,7 +2,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { Fragment, lazy } from 'react'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { generatePath, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
+import { generatePath, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
 import { QueryKeys } from '~queries/keys'
@@ -170,7 +170,7 @@ export const useDashboardRoutes = () => {
                       {
                         index: true,
                         element: (
-                          <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: 1 })} replace />
+                          <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: '1' })} replace />
                         ),
                       },
                       {

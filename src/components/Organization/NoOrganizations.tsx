@@ -1,6 +1,6 @@
 import { Button, Card, Flex, Text } from '@chakra-ui/react'
 import { Trans } from 'react-i18next'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink } from 'react-router'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { EmptyState } from '~components/ui/EmptyState'
 import { Routes } from '~src/router/routes'

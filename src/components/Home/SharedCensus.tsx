@@ -10,7 +10,7 @@ import {
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactPlayer from 'react-player'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink } from 'react-router'
 import Editor from '~components/Editor'
 import { useAuth } from '~components/Auth/useAuth'
 import { ManageProcessLink } from '~components/Process/ManageProcessLink'

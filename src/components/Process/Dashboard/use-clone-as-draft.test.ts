@@ -11,7 +11,7 @@ const mockMutateAsync = vi.fn()
 const mockPermission = vi.fn()
 let mockElection: VotingProcessResponse | null = null
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router', () => ({
   useNavigate: () => mockNavigate,
   generatePath: vi.fn((path: string) => path.replace(':page', '1')),
   createSearchParams: vi.fn((params: any) => new URLSearchParams(params)),

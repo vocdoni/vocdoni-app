@@ -1,6 +1,6 @@
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { screen } from '@testing-library/react'
-import { Route, Routes as RouterRoutes } from 'react-router-dom'
+import { Route, Routes as RouterRoutes } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { renderWithProviders, TestMemoryRouter } from '~src/test-utils'
 import NonLoggedRoute from './NonLoggedRoute'

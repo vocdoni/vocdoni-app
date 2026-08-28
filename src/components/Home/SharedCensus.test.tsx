@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router'
 import SimpleLayout from '~elements/SimpleLayout'
 import type { AppEnv } from '~src/app-env-build'
 import { act, render, TestMemoryRouter } from '~src/test-utils'
@@ -13,8 +13,8 @@ vi.mock('~components/Auth/useAuth', () => ({
 // Runtime env override applied to the test provider; mutated per test.
 let appEnvOverride: Partial<AppEnv> = {}
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual<typeof import('react-router')>('react-router')
   return {
     ...actual,
     ScrollRestoration: () => null,

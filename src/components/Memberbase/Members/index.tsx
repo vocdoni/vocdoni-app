@@ -42,7 +42,7 @@ import {
   LuUsers,
   LuX,
 } from 'react-icons/lu'
-import { generatePath, useNavigate, useOutletContext } from 'react-router-dom'
+import { generatePath, useNavigate, useOutletContext } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
 import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
@@ -832,7 +832,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         duration: 3000,
         isClosable: true,
       })
-      navigate(generatePath(Routes.dashboard.memberbase.members, { page: 1 }))
+      navigate(generatePath(Routes.dashboard.memberbase.members, { page: '1' }))
       onClose()
       await queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.members(organization?.address),

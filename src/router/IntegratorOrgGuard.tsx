@@ -1,7 +1,7 @@
 import { Button, Center, Stack, Text } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useProfile } from '~src/queries/account'

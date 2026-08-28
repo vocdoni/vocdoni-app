@@ -15,7 +15,7 @@ import {
 import { useContext } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPanelLeft, LuPlus } from 'react-icons/lu'
-import { generatePath, Link as ReactRouterLink, Link as RouterLink } from 'react-router-dom'
+import { generatePath, Link as ReactRouterLink, Link as RouterLink } from 'react-router'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { VocdoniLogo } from '~components/Layout/Logo'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'

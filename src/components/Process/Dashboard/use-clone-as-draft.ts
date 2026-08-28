@@ -1,6 +1,6 @@
 import { useElection } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
-import { createSearchParams, generatePath, useNavigate } from 'react-router-dom'
+import { createSearchParams, generatePath, useNavigate } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
@@ -34,7 +34,7 @@ export const useCloneAsDraft = () => {
 
       navigate(
         {
-          pathname: generatePath(Routes.processes.create, { page: 1 }),
+          pathname: generatePath(Routes.processes.create, { page: '1' }),
           search: createSearchParams({ draftId: clonedDraftId }).toString(),
         },
         { replace: true }

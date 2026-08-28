@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react'
 import type { ReactNode } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router'
 import Layout from '~elements/Layout'
 import SimpleLayout from '~elements/SimpleLayout'
 import { AppEnvProvider } from '~src/app-env'

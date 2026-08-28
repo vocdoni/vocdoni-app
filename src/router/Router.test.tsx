@@ -4,7 +4,7 @@ const dispose = vi.fn()
 let created = 0
 const createBrowserRouter = vi.fn(() => ({ id: `router-${++created}`, dispose }))
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router', () => ({
   createBrowserRouter,
   RouterProvider: ({ router }: { router: { id: string } }) => <div data-testid='router-provider'>{router.id}</div>,
 }))

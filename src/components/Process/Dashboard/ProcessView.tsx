@@ -63,7 +63,7 @@ import {
   LuX,
 } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
-import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom'
+import { generatePath, matchPath, useLocation, useNavigate } from 'react-router'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
 import {
   DashboardBox,

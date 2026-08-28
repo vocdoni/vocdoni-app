@@ -3,8 +3,8 @@ import { mockUseOrganization, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ImportProgress } from './Import'
 
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router-dom')>()
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>()
   return {
     ...actual,
     useOutletContext: () => ({ jobId: 'job-1', setJobId: vi.fn() }),

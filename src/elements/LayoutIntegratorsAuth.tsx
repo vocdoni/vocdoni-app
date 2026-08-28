@@ -2,7 +2,7 @@ import { Box, Flex, Heading, Icon, Link, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { Trans } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
-import { Outlet, Link as RouterLink, useLocation } from 'react-router-dom'
+import { Outlet, Link as RouterLink, useLocation } from 'react-router'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~routes'
 

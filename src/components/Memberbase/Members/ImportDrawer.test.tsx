@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event'
 import { render } from '~src/test-utils'
 import { ImportMembers } from './Import'
 
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router-dom')>()
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>()
   return {
     ...actual,
     useOutletContext: () => ({ jobId: null, setJobId: vi.fn() }),

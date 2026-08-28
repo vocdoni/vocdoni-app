@@ -15,7 +15,7 @@ import {
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { SubscriptionPermission } from '~constants'
 import { useDateFns } from '~i18n/use-date-fns'

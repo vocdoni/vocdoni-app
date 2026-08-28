@@ -23,7 +23,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { RoutedPaginationProvider } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuPencil, LuTrash } from 'react-icons/lu'
-import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router-dom'
+import { createSearchParams, generatePath, Link as RouterLink, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
@@ -237,7 +237,7 @@ export const DraftsContextMenu = ({ draft }: { draft: Draft }) => {
       })
       navigate(
         {
-          pathname: generatePath(Routes.processes.create, { page: 1 }),
+          pathname: generatePath(Routes.processes.create, { page: '1' }),
           search: createSearchParams({ draftId: clonedDraftId }).toString(),
         },
         { replace: true }

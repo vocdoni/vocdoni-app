@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOutletContext, useSearchParams } from 'react-router-dom'
+import { useOutletContext, useSearchParams } from 'react-router'
 import PasswordResetForm from '~components/Account/PasswordResetForm'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 

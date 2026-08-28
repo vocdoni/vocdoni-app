@@ -1,7 +1,7 @@
 import { Button, ButtonProps, Flex } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { generatePath } from 'react-router-dom'
+import { generatePath } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
 import Logo from '~components/Layout/Logo'

@@ -1,4 +1,4 @@
-import { Outlet, useOutletContext } from 'react-router-dom'
+import { Outlet, useOutletContext } from 'react-router'
 import { useAccountHealthTools } from '~components/Account/use-account-health-tools'
 import { NoOrganizationsPage } from '~components/Organization/NoOrganizations'
 import { OrganizationsUnavailablePage } from '~components/Organization/OrganizationsUnavailable'

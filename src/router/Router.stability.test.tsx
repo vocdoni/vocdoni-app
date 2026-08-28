@@ -1,8 +1,8 @@
 import { act, render, screen } from '@testing-library/react'
 import { StrictMode, useState } from 'react'
-import { useLoaderData, useNavigate, type NavigateFunction } from 'react-router-dom'
+import { useLoaderData, useNavigate, type NavigateFunction } from 'react-router'
 
-// Deliberately NOT mocking react-router-dom here: this file exercises the real
+// Deliberately NOT mocking react-router here: this file exercises the real
 // RouterProvider, whose rendered location comes from a `useState(router.state)`
 // seeded once from the first router it ever received. That is the mechanism
 // behind #1746, so a mock would test nothing.

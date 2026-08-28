@@ -5,7 +5,7 @@ import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as ReactRouterLink, To, useNavigate } from 'react-router-dom'
+import { Link as ReactRouterLink, To, useNavigate } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'

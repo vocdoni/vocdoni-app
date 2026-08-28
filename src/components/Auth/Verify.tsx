@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router'
 import { useResendVerificationMail } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'

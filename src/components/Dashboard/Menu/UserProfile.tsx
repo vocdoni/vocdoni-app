@@ -14,7 +14,7 @@ import {
 import { useContext, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuBuilding, LuChevronLeft, LuChevronRight, LuChevronsUpDown, LuLogOut, LuUserPen } from 'react-icons/lu'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink } from 'react-router'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { ThemeToggleGroup } from '~components/Layout/ColorModeSwitcher'

@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Navigate, NavLink, useOutletContext } from 'react-router-dom'
+import { Navigate, NavLink, useOutletContext } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { IRegisterParams } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'

@@ -1,5 +1,5 @@
 import { lazy, useMemo } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router'
 import { parseProcessIds } from '~components/Home/SharedCensus'
 import Layout from '~elements/Layout'
 import SimpleLayout from '~elements/SimpleLayout'
