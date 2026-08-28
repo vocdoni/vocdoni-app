@@ -198,7 +198,14 @@ const routerFutureFlags = {
 export function createTestMemoryRouter(routes: RouteObject[], opts?: Parameters<typeof createMemoryRouter>[1]) {
   return createMemoryRouter(routes, {
     ...opts,
-    future: { v7_relativeSplatPath: true, ...opts?.future },
+    future: {
+      v7_relativeSplatPath: true,
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_skipActionErrorRevalidation: true,
+      ...opts?.future,
+    },
   })
 }
 

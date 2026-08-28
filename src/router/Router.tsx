@@ -32,6 +32,14 @@ export const RoutesProvider = ({ basename }: { basename?: string }) => {
     () =>
       createBrowserRouter([home, root, auth, dashboard, integrators, integratorsAuth, createOrganizationRoute], {
         basename: resolvedBasename,
+        // v7 semantics, opted into ahead of the v7 package swap (reactrouter.com/upgrading/v6)
+        future: {
+          v7_relativeSplatPath: true,
+          v7_fetcherPersist: true,
+          v7_normalizeFormMethod: true,
+          v7_partialHydration: true,
+          v7_skipActionErrorRevalidation: true,
+        },
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [resolvedBasename]

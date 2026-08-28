@@ -43,9 +43,7 @@ describe('RoutesProvider', () => {
 
     render(<RoutesProvider basename='/en' />)
 
-    expect(createBrowserRouter).toHaveBeenCalledWith(expect.any(Array), {
-      basename: '/en',
-    })
+    expect(createBrowserRouter).toHaveBeenCalledWith(expect.any(Array), expect.objectContaining({ basename: '/en' }))
   })
 
   // Recreating the router per render is what made navigation update the URL but not the
@@ -70,7 +68,10 @@ describe('RoutesProvider', () => {
     rerender(<RoutesProvider basename='/es' />)
 
     expect(createBrowserRouter).toHaveBeenCalledTimes(2)
-    expect(createBrowserRouter).toHaveBeenLastCalledWith(expect.any(Array), { basename: '/es' })
+    expect(createBrowserRouter).toHaveBeenLastCalledWith(
+      expect.any(Array),
+      expect.objectContaining({ basename: '/es' })
+    )
     // The superseded router owns popstate/pagehide listeners only dispose() releases.
     expect(dispose).toHaveBeenCalledTimes(1)
   })
