@@ -1,0 +1,9 @@
+# Security floors for transitive dependencies (GitHub Dependabot alerts).
+# Only add entries here when a dependent actually pins a vulnerable range;
+# if every dependent's own range admits the patched version, a lockfile
+# refresh is enough and an override would just mask upstream reality.
+overrides:
+  # @ethersproject/providers pins ws 8.18.0 exact (ethers v5 is final and
+  # will never bump), viem pins 8.18.3 exact, engine.io-client allows only
+  # ~8.18.3 — all below the 8.21.0 security fix (GHSA alerts #181/#211).
+  'ws@^8': ^8.21.0
