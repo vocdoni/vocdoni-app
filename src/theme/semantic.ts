@@ -63,8 +63,8 @@ export const colors = defineSemanticTokens.colors({
         value: '{colors.gray.200}',
       },
     },
-    // The showcase panel is dark in both color modes — it sits over a vertical accent
-    // gradient, so its foreground doesn't flip with the theme.
+    // The showcase panel is dark in both color modes — it sits on a deep vertical accent
+    // tone, so its foreground doesn't flip with the theme.
     showcase: {
       fg: {
         DEFAULT: {
@@ -76,6 +76,27 @@ export const colors = defineSemanticTokens.colors({
       },
       ring: {
         value: '{colors.separator}',
+      },
+      // Hairline between the quote and its attribution. Neutral white alpha rather than
+      // `separator`, which is faintly blue and reads as a tint of its own on a coloured panel.
+      rule: {
+        value: 'rgba(255, 255, 255, 0.16)',
+      },
+    },
+    // Tile the customer logos sit on, in the showcase panel and in the trust bar alike. Light in
+    // both color modes on purpose: several logos are dark artwork on a transparent background and
+    // disappear on a dark surface.
+    logo: {
+      tile: {
+        bg: {
+          value: '{colors.white}',
+        },
+        border: {
+          value: {
+            _light: '{colors.gray.200}',
+            _dark: '{colors.separator}',
+          },
+        },
       },
     },
   },

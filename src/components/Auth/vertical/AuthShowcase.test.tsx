@@ -37,37 +37,35 @@ const buildVertical = (overrides: Partial<ResolvedVertical> = {}): ResolvedVerti
 const hidden = { hidden: true } as const
 
 describe('AuthShowcase', () => {
-  it('renders the vertical label and headline', () => {
+  it('labels the quote with the vertical sector instead of a marketing headline', () => {
     render(<AuthShowcase vertical={buildVertical()} />)
 
     expect(screen.getByText('Professional associations')).toBeInTheDocument()
-    expect(
-      screen.getByRole('heading', { name: 'Every member votes, wherever they are', ...hidden })
-    ).toBeInTheDocument()
+    expect(screen.queryByText('Every member votes, wherever they are')).not.toBeInTheDocument()
   })
 
   it('renders the quote and its attribution', () => {
     render(<AuthShowcase vertical={buildVertical()} />)
 
     expect(screen.getByText(testimonial.quote)).toBeInTheDocument()
-    expect(screen.getByText(/Ada Lovelace, President @ Analytical Society/)).toBeInTheDocument()
+    expect(screen.getByText('Ada Lovelace')).toBeInTheDocument()
+    expect(screen.getByText(/President · Analytical Society/)).toBeInTheDocument()
   })
 
-  it('shows the organization logo when there is no portrait', () => {
+  it('shows the organization logo beside the attribution', () => {
     render(<AuthShowcase vertical={buildVertical()} />)
 
     expect(screen.getByRole('img', { name: /Col·legi Oficial.* logo/, ...hidden })).toBeInTheDocument()
-    expect(screen.queryByRole('img', { name: /Portrait of/, ...hidden })).not.toBeInTheDocument()
   })
 
-  it('shows the portrait when the organization has one', () => {
+  it('never renders the author portrait, even for the organizations that have one', () => {
     render(
       <AuthShowcase
         vertical={buildVertical({ testimonial: { ...testimonial, portrait: '/assets/testimonials/eic.png' } })}
       />
     )
 
-    expect(screen.getByRole('img', { name: 'Portrait of Ada Lovelace', ...hidden })).toBeInTheDocument()
+    expect(screen.queryByRole('img', { name: /Portrait of/, ...hidden })).not.toBeInTheDocument()
   })
 
   it('renders the headline alone when there is no testimonial', () => {

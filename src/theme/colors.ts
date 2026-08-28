@@ -23,20 +23,23 @@ export const colors = {
   },
 
   // Accents for the per-vertical auth showcase (see src/components/Auth/vertical).
-  // Each scale only carries the four shades the panel uses: 200/300 for text on the
-  // dark panel, 500 for the blurred glow, 700 as the gradient anchor.
+  // 900 is the panel surface: a deep, desaturated tone, dark enough to carry white type at
+  // roughly 13:1. 200/300 are text on it, 500 and 700 are kept for callers that want a
+  // brighter step of the same hue.
   verticals: {
     generic: {
       200: { value: '#ddd6fe' },
       300: { value: '#c4b5fd' },
       500: { value: '#8b5cf6' },
       700: { value: '#4c1d95' },
+      900: { value: '#251a42' },
     },
     professional: {
       200: { value: '#bae6fd' },
       300: { value: '#7dd3fc' },
       500: { value: '#0ea5e9' },
       700: { value: '#0c4a6e' },
+      900: { value: '#0c2e3e' },
     },
   },
 
