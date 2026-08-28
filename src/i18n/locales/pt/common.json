@@ -39,7 +39,7 @@
       "decidim": "Logótipo do Decidim",
       "esquerra": "Logótipo da Esquerra Republicana de Catalunya",
       "omnium": "Logótipo da Òmnium Cultural",
-      "org_logo": "",
+      "org_logo": "Logótipo de {{org}}",
       "ticanoia": "Logótipo da TIC Anoia"
     }
   },
@@ -57,15 +57,70 @@
   },
   "auth": {
     "verticals": {
+      "associations": {
+        "headline": "Assembleias em que os teus sócios podem confiar",
+        "label": "Associações",
+        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias gerais, votações para a direção e consultas aos sócios seguras para a tua associação. Muitas já confiam nele exatamente para isto:"
+      },
+      "chambers": {
+        "headline": "Votações que os teus membros podem auditar",
+        "label": "Câmaras de comércio",
+        "trust_bar": "O Vocdoni é a plataforma para realizar votações em plenário, renovações da direção e consultas seguras às empresas da tua câmara. Muitas já confiam nele exatamente para isto:"
+      },
+      "cooperatives": {
+        "headline": "Uma pessoa, um voto, verificável por todos",
+        "label": "Cooperativas",
+        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias gerais, votações para o conselho de administração e consultas aos cooperantes seguras para a tua cooperativa. Muitas já confiam nele exatamente para isto:"
+      },
+      "federations": {
+        "headline": "Um voto por entidade membro, contado à vista de todos",
+        "label": "Federações",
+        "trust_bar": "O Vocdoni é a plataforma para realizar congressos, votações para a direção e votações ponderadas seguras entre as entidades da tua federação. Muitas já confiam nele exatamente para isto:"
+      },
+      "first_nations": {
+        "headline": "Decisões comunitárias que cada membro pode verificar",
+        "label": "Primeiras Nações",
+        "trust_bar": "O Vocdoni é a plataforma para realizar votações comunitárias, votações de ratificação e consultas aos membros seguras para a tua Nação. Muitas já confiam nele exatamente para isto:"
+      },
       "generic": {
-        "headline": "",
-        "label": "",
-        "trust_bar": ""
+        "headline": "Decisões que os teus membros podem verificar",
+        "label": "Votação digital",
+        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias, votações e consultas seguras. Já confiam nele organizações de todos os setores:"
+      },
+      "ngos": {
+        "headline": "Assembleias estatutárias com todas as garantias",
+        "label": "ONG",
+        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias estatutárias, votações para a direção e consultas aos sócios seguras para a tua organização. Muitas já confiam nele exatamente para isto:"
+      },
+      "political_parties": {
+        "headline": "Primárias que os teus militantes podem verificar",
+        "label": "Partidos políticos",
+        "trust_bar": "O Vocdoni é a plataforma para realizar primárias, congressos e referendos internos seguros para os militantes do teu partido. Muitos já confiam nele exatamente para isto:"
       },
       "professional_associations": {
-        "headline": "",
-        "label": "",
-        "trust_bar": ""
+        "headline": "Todos os membros votam, estejam onde estiverem",
+        "label": "Ordens profissionais",
+        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias gerais, votações para a direção e consultas seguras aos membros da tua ordem profissional. Muitas já confiam nele exatamente para isto:"
+      },
+      "public_administration": {
+        "headline": "Participação que os cidadãos podem verificar",
+        "label": "Administração pública",
+        "trust_bar": "O Vocdoni é a plataforma para realizar orçamentos participativos, consultas aos cidadãos e referendos locais seguros. Muitas administrações públicas já confiam nele exatamente para isto:"
+      },
+      "sports_clubs": {
+        "headline": "Votações para a direção que os teus sócios podem confirmar",
+        "label": "Clubes desportivos",
+        "trust_bar": "O Vocdoni é a plataforma para realizar votações para a direção, assembleias gerais e consultas aos sócios seguras para o teu clube. Muitos já confiam nele exatamente para isto:"
+      },
+      "trade_unions": {
+        "headline": "Todos os trabalhadores votam, a partir de onde estiverem",
+        "label": "Sindicatos",
+        "trust_bar": "O Vocdoni é a plataforma para realizar congressos, votações nos locais de trabalho e votações de greve seguras para os teus associados. Muitos já confiam nele exatamente para isto:"
+      },
+      "universities_schools": {
+        "headline": "Votações que toda a comunidade pode verificar",
+        "label": "Universidades e escolas",
+        "trust_bar": "O Vocdoni é a plataforma para realizar votações para os órgãos de governo, votações das associações de estudantes e consultas à comunidade seguras. Muitas já confiam nele exatamente para isto:"
       }
     }
   },

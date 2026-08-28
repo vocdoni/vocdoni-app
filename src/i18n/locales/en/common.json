@@ -55,15 +55,70 @@
   },
   "auth": {
     "verticals": {
+      "associations": {
+        "headline": "Assemblies your members can trust",
+        "label": "Associations",
+        "trust_bar": "Vocdoni is the platform to run secure general assemblies, board elections and member consultations for your association. Many already trust it for exactly this:"
+      },
+      "chambers": {
+        "headline": "Elections your members can audit",
+        "label": "Chambers of commerce",
+        "trust_bar": "Vocdoni is the platform to run secure plenary elections, board renewals and consultations for the businesses in your chamber. Many already trust it for exactly this:"
+      },
+      "cooperatives": {
+        "headline": "One member, one vote, verifiable by all",
+        "label": "Cooperatives",
+        "trust_bar": "Vocdoni is the platform to run secure general assemblies, board elections and member consultations for your cooperative. Many already trust it for exactly this:"
+      },
+      "federations": {
+        "headline": "One vote per member organization, counted in the open",
+        "label": "Federations",
+        "trust_bar": "Vocdoni is the platform to run secure congresses, board elections and weighted votes across the organizations in your federation. Many already trust it for exactly this:"
+      },
+      "first_nations": {
+        "headline": "Community decisions every member can verify",
+        "label": "First Nations",
+        "trust_bar": "Vocdoni is the platform to run secure community elections, ratification votes and member consultations for your Nation. Many already trust it for exactly this:"
+      },
       "generic": {
         "headline": "Decisions your members can verify",
         "label": "Digital voting",
         "trust_bar": "Vocdoni is the platform to run secure assemblies, elections and consultations. Organizations across every sector already trust it:"
       },
+      "ngos": {
+        "headline": "Statutory assemblies with every guarantee",
+        "label": "NGOs",
+        "trust_bar": "Vocdoni is the platform to run secure statutory assemblies, board elections and member consultations for your organization. Many already trust it for exactly this:"
+      },
+      "political_parties": {
+        "headline": "Primaries your members can verify",
+        "label": "Political parties",
+        "trust_bar": "Vocdoni is the platform to run secure primaries, congresses and internal referendums for the members of your party. Many already trust it for exactly this:"
+      },
       "professional_associations": {
         "headline": "Every member votes, wherever they are",
         "label": "Professional associations",
         "trust_bar": "Vocdoni is the platform to run secure AGMs, board elections and consultations for the members of your professional association. Many already trust it for exactly this:"
+      },
+      "public_administration": {
+        "headline": "Participation your citizens can verify",
+        "label": "Public administration",
+        "trust_bar": "Vocdoni is the platform to run secure participatory budgets, citizen consultations and local referendums. Many public administrations already trust it for exactly this:"
+      },
+      "sports_clubs": {
+        "headline": "Board elections your members can check",
+        "label": "Sports clubs",
+        "trust_bar": "Vocdoni is the platform to run secure board elections, general assemblies and member consultations for your club. Many already trust it for exactly this:"
+      },
+      "trade_unions": {
+        "headline": "Every worker votes, from anywhere",
+        "label": "Trade unions",
+        "trust_bar": "Vocdoni is the platform to run secure congresses, workplace ballots and strike votes for your members. Many already trust it for exactly this:"
+      },
+      "universities_schools": {
+        "headline": "Elections your whole community can verify",
+        "label": "Universities and schools",
+        "trust_bar": "Vocdoni is the platform to run secure governing body elections, student council votes and community consultations. Many already trust it for exactly this:"
       }
     }
   },
