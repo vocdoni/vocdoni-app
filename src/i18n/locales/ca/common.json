@@ -62,65 +62,15 @@
         "label": "Associacions",
         "trust_bar": "Vocdoni és la plataforma per fer assemblees generals, eleccions a junta i consultes als socis segures per a la teva associació. Moltes ja hi confien exactament per això:"
       },
-      "chambers": {
-        "headline": "Eleccions que els teus membres poden auditar",
-        "label": "Cambres de comerç",
-        "trust_bar": "Vocdoni és la plataforma per fer eleccions al ple, renovacions de junta i consultes segures per a les empreses de la teva cambra. Moltes ja hi confien exactament per això:"
-      },
-      "cooperatives": {
-        "headline": "Una persona, un vot, verificable per tothom",
-        "label": "Cooperatives",
-        "trust_bar": "Vocdoni és la plataforma per fer assemblees generals, eleccions a consell rector i consultes als socis segures per a la teva cooperativa. Moltes ja hi confien exactament per això:"
-      },
-      "federations": {
-        "headline": "Un vot per entitat membre, comptat a la vista de tothom",
-        "label": "Federacions",
-        "trust_bar": "Vocdoni és la plataforma per fer congressos, eleccions a junta i votacions ponderades segures entre les entitats de la teva federació. Moltes ja hi confien exactament per això:"
-      },
-      "first_nations": {
-        "headline": "Decisions comunitàries que cada membre pot verificar",
-        "label": "Primeres Nacions",
-        "trust_bar": "Vocdoni és la plataforma per fer eleccions comunitàries, votacions de ratificació i consultes als membres segures per a la teva Nació. Moltes ja hi confien exactament per això:"
-      },
       "generic": {
         "headline": "Decisions que els teus membres poden verificar",
-        "label": "Votació digital",
+        "label": "Casos d'èxit",
         "trust_bar": "Vocdoni és la plataforma per fer assemblees, eleccions i consultes segures. Ja hi confien organitzacions de tots els sectors:"
-      },
-      "ngos": {
-        "headline": "Assemblees estatutàries amb totes les garanties",
-        "label": "ONG",
-        "trust_bar": "Vocdoni és la plataforma per fer assemblees estatutàries, eleccions a junta i consultes als socis segures per a la teva organització. Moltes ja hi confien exactament per això:"
-      },
-      "political_parties": {
-        "headline": "Primàries que els teus militants poden verificar",
-        "label": "Partits polítics",
-        "trust_bar": "Vocdoni és la plataforma per fer primàries, congressos i referèndums interns segurs per als militants del teu partit. Molts ja hi confien exactament per això:"
       },
       "professional_associations": {
         "headline": "Tots els col·legiats voten, siguin on siguin",
         "label": "Col·legis professionals",
         "trust_bar": "Vocdoni és la plataforma per fer assemblees generals, eleccions a junta i consultes segures per als col·legiats del teu col·legi professional. Molts ja hi confien exactament per això:"
-      },
-      "public_administration": {
-        "headline": "Participació que la ciutadania pot verificar",
-        "label": "Administració pública",
-        "trust_bar": "Vocdoni és la plataforma per fer pressupostos participatius, consultes ciutadanes i referèndums locals segurs. Moltes administracions públiques ja hi confien exactament per això:"
-      },
-      "sports_clubs": {
-        "headline": "Eleccions a junta que els teus socis poden comprovar",
-        "label": "Clubs esportius",
-        "trust_bar": "Vocdoni és la plataforma per fer eleccions a junta, assemblees generals i consultes als socis segures per al teu club. Molts ja hi confien exactament per això:"
-      },
-      "trade_unions": {
-        "headline": "Tots els treballadors voten, des d'on siguin",
-        "label": "Sindicats",
-        "trust_bar": "Vocdoni és la plataforma per fer congressos, votacions als centres de treball i votacions de vaga segures per als teus afiliats. Molts ja hi confien exactament per això:"
-      },
-      "universities_schools": {
-        "headline": "Eleccions que tota la comunitat pot verificar",
-        "label": "Universitats i escoles",
-        "trust_bar": "Vocdoni és la plataforma per fer eleccions als òrgans de govern, votacions del consell d'estudiants i consultes a la comunitat segures. Moltes ja hi confien exactament per això:"
       }
     }
   },

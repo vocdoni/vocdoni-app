@@ -60,65 +60,15 @@
         "label": "Elkarteak",
         "trust_bar": "Vocdoni batzar nagusiak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan egiteko plataforma da, zure elkartearentzat. Askok konfiantza dute jada bertan horretarako:"
       },
-      "chambers": {
-        "headline": "Zure kideek auditatu ditzaketen hauteskundeak",
-        "label": "Merkataritza-ganberak",
-        "trust_bar": "Vocdoni osoko bilkurako hauteskundeak, zuzendaritza-berritzeak eta kontsultak modu seguruan egiteko plataforma da, zure ganberako enpresentzat. Askok konfiantza dute jada bertan horretarako:"
-      },
-      "cooperatives": {
-        "headline": "Pertsona bat, boto bat, denek egiaztatzeko moduan",
-        "label": "Kooperatibak",
-        "trust_bar": "Vocdoni batzar nagusiak, errektore-kontseiluko hauteskundeak eta bazkideen kontsultak modu seguruan egiteko plataforma da, zure kooperatibarentzat. Askok konfiantza dute jada bertan horretarako:"
-      },
-      "federations": {
-        "headline": "Boto bat kide bakoitzeko, denen bistan zenbatuta",
-        "label": "Federazioak",
-        "trust_bar": "Vocdoni kongresuak, zuzendaritza-hauteskundeak eta bozketa haztatuak modu seguruan egiteko plataforma da, zure federazioko erakundeen artean. Askok konfiantza dute jada bertan horretarako:"
-      },
-      "first_nations": {
-        "headline": "Kide bakoitzak egiazta ditzakeen komunitate-erabakiak",
-        "label": "Lehen Nazioak",
-        "trust_bar": "Vocdoni komunitate-hauteskundeak, berrespen-bozketak eta kideen kontsultak modu seguruan egiteko plataforma da, zure Nazioarentzat. Askok konfiantza dute jada bertan horretarako:"
-      },
       "generic": {
         "headline": "Zure kideek egiazta ditzaketen erabakiak",
-        "label": "Bozketa digitala",
+        "label": "Arrakasta-kasuak",
         "trust_bar": "Vocdoni batzarrak, hauteskundeak eta kontsultak modu seguruan egiteko plataforma da. Sektore guztietako erakundeek konfiantza dute jada bertan:"
-      },
-      "ngos": {
-        "headline": "Estatutuetako batzarrak berme guztiekin",
-        "label": "GKE",
-        "trust_bar": "Vocdoni estatutuetako batzarrak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan egiteko plataforma da, zure erakundearentzat. Askok konfiantza dute jada bertan horretarako:"
-      },
-      "political_parties": {
-        "headline": "Zure militanteek egiazta ditzaketen primarioak",
-        "label": "Alderdi politikoak",
-        "trust_bar": "Vocdoni primarioak, kongresuak eta barne-erreferendumak modu seguruan egiteko plataforma da, zure alderdiko militanteentzat. Askok konfiantza dute jada bertan horretarako:"
       },
       "professional_associations": {
         "headline": "Kide guztiek bozkatzen dute, non daudela ere",
         "label": "Elkargo profesionalak",
         "trust_bar": "Vocdoni batzar nagusiak, zuzendaritza-hauteskundeak eta kontsultak modu seguruan egiteko plataforma da, zure elkargo profesionaleko kideentzat. Askok konfiantza dute jada bertan horretarako:"
-      },
-      "public_administration": {
-        "headline": "Herritarrek egiazta dezaketen parte-hartzea",
-        "label": "Administrazio publikoa",
-        "trust_bar": "Vocdoni aurrekontu parte-hartzaileak, herritarren kontsultak eta tokiko erreferendumak modu seguruan egiteko plataforma da. Administrazio publiko askok konfiantza dute jada bertan horretarako:"
-      },
-      "sports_clubs": {
-        "headline": "Zure bazkideek egiazta ditzaketen zuzendaritza-hauteskundeak",
-        "label": "Kirol klubak",
-        "trust_bar": "Vocdoni zuzendaritza-hauteskundeak, batzar nagusiak eta bazkideen kontsultak modu seguruan egiteko plataforma da, zure klubarentzat. Askok konfiantza dute jada bertan horretarako:"
-      },
-      "trade_unions": {
-        "headline": "Langile guztiek bozkatzen dute, edonondik",
-        "label": "Sindikatuak",
-        "trust_bar": "Vocdoni kongresuak, lantokietako bozketak eta greba-bozketak modu seguruan egiteko plataforma da, zure afiliatuentzat. Askok konfiantza dute jada bertan horretarako:"
-      },
-      "universities_schools": {
-        "headline": "Komunitate osoak egiazta ditzakeen hauteskundeak",
-        "label": "Unibertsitateak eta ikastetxeak",
-        "trust_bar": "Vocdoni gobernu-organoetako hauteskundeak, ikasle-kontseiluko bozketak eta komunitatearen kontsultak modu seguruan egiteko plataforma da. Askok konfiantza dute jada bertan horretarako:"
       }
     }
   },

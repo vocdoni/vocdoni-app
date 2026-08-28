@@ -60,65 +60,15 @@
         "label": "Vereine",
         "trust_bar": "Vocdoni ist die Plattform für sichere Mitgliederversammlungen, Vorstandswahlen und Mitgliederbefragungen für deinen Verein. Viele vertrauen bereits genau dafür darauf:"
       },
-      "chambers": {
-        "headline": "Wahlen, die deine Mitglieder prüfen können",
-        "label": "Industrie- und Handelskammern",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Vollversammlungswahlen, Vorstandsneuwahlen und Befragungen für die Unternehmen deiner Kammer. Viele vertrauen bereits genau dafür darauf:"
-      },
-      "cooperatives": {
-        "headline": "Eine Person, eine Stimme, für alle überprüfbar",
-        "label": "Genossenschaften",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Generalversammlungen, Vorstandswahlen und Mitgliederbefragungen für deine Genossenschaft. Viele vertrauen bereits genau dafür darauf:"
-      },
-      "federations": {
-        "headline": "Eine Stimme pro Mitgliedsorganisation, offen ausgezählt",
-        "label": "Verbände",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Kongresse, Vorstandswahlen und gewichtete Abstimmungen zwischen den Organisationen deines Verbands. Viele vertrauen bereits genau dafür darauf:"
-      },
-      "first_nations": {
-        "headline": "Gemeinschaftsentscheidungen, die jedes Mitglied überprüfen kann",
-        "label": "First Nations",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Gemeinschaftswahlen, Ratifizierungsabstimmungen und Mitgliederbefragungen für deine Nation. Viele vertrauen bereits genau dafür darauf:"
-      },
       "generic": {
         "headline": "Entscheidungen, die deine Mitglieder überprüfen können",
-        "label": "Digitale Abstimmungen",
+        "label": "Erfolgsgeschichten",
         "trust_bar": "Vocdoni ist die Plattform für sichere Versammlungen, Wahlen und Befragungen. Organisationen aus allen Branchen vertrauen bereits darauf:"
-      },
-      "ngos": {
-        "headline": "Satzungsgemäße Versammlungen mit allen Garantien",
-        "label": "NGOs",
-        "trust_bar": "Vocdoni ist die Plattform für sichere satzungsgemäße Versammlungen, Vorstandswahlen und Mitgliederbefragungen für deine Organisation. Viele vertrauen bereits genau dafür darauf:"
-      },
-      "political_parties": {
-        "headline": "Urwahlen, die deine Mitglieder überprüfen können",
-        "label": "Politische Parteien",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Urwahlen, Parteitage und interne Mitgliederentscheide für die Mitglieder deiner Partei. Viele vertrauen bereits genau dafür darauf:"
       },
       "professional_associations": {
         "headline": "Jedes Mitglied stimmt ab, wo auch immer es ist",
         "label": "Berufskammern",
         "trust_bar": "Vocdoni ist die Plattform für sichere Mitgliederversammlungen, Vorstandswahlen und Befragungen für die Mitglieder deiner Berufskammer. Viele vertrauen bereits genau dafür darauf:"
-      },
-      "public_administration": {
-        "headline": "Beteiligung, die deine Bürgerinnen und Bürger überprüfen können",
-        "label": "Öffentliche Verwaltung",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Bürgerhaushalte, Bürgerbefragungen und kommunale Entscheide. Viele öffentliche Verwaltungen vertrauen bereits genau dafür darauf:"
-      },
-      "sports_clubs": {
-        "headline": "Vorstandswahlen, die deine Mitglieder nachprüfen können",
-        "label": "Sportvereine",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Vorstandswahlen, Mitgliederversammlungen und Mitgliederbefragungen für deinen Verein. Viele vertrauen bereits genau dafür darauf:"
-      },
-      "trade_unions": {
-        "headline": "Alle Beschäftigten stimmen ab, von überall",
-        "label": "Gewerkschaften",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Gewerkschaftstage, betriebliche Abstimmungen und Urabstimmungen für deine Mitglieder. Viele vertrauen bereits genau dafür darauf:"
-      },
-      "universities_schools": {
-        "headline": "Wahlen, die deine gesamte Gemeinschaft überprüfen kann",
-        "label": "Hochschulen und Schulen",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Gremienwahlen, Abstimmungen der Studierendenvertretung und Befragungen der Hochschulgemeinschaft. Viele vertrauen bereits genau dafür darauf:"
       }
     }
   },

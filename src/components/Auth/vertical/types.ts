@@ -35,7 +35,7 @@ export type VerticalCopy = {
   trustBar: string
 }
 
-/** Every vertical has copy; `generic` additionally covers a visitor who arrived with no `?type=`. */
+/** Copy is only written for the verticals we have real customers for; the rest fall back to `generic`. */
 export type VerticalCopyMap = Record<typeof GenericVertical, VerticalCopy> & Partial<Record<VerticalSlug, VerticalCopy>>
 
 export type VerticalContent = {

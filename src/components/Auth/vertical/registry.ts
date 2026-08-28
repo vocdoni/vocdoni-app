@@ -26,8 +26,4 @@ export const VerticalRegistry: Partial<Record<VerticalSlug, VerticalContent>> = 
     accent: GenericAccent,
     logos: ['omnium', 'cec', 'plataforma', 'arxivers', 'aguicat'],
   },
-  'public-administration': {
-    accent: GenericAccent,
-    logos: ['bellpuig', 'bisbal', 'bcn'],
-  },
 }
