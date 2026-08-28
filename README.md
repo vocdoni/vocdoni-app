@@ -29,7 +29,7 @@
     |
     <a href="https://law.mit.edu/pub/remotevotingintheageofcryptography/release/1">MIT Law Publication</a>
     |
-    <a href="https://chat.vocdoni.io">Contact Us</a>
+    <a href="https://vocdoni.io/contact">Contact Us</a>
     <br />
     <h3>Key Repositories</h3>
     <a href="https://github.com/vocdoni/vocdoni-app">Vocdoni App</a>
