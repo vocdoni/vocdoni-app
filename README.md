@@ -1,13 +1,13 @@
 <p align="center" width="100%">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://developer.vocdoni.io/img/vocdoni_logotype_full_blank.svg" />
-      <source media="(prefers-color-scheme: light)" srcset="https://developer.vocdoni.io/img/vocdoni_logotype_full_white.svg" />
-      <img alt="Star History Chart" src="https://developer.vocdoni.io/img/vocdoni_logotype_full_white.svg" />
+      <source media="(prefers-color-scheme: dark)" srcset="public/assets/logo-classic-white.svg" />
+      <source media="(prefers-color-scheme: light)" srcset="public/assets/logo-classic.svg" />
+      <img alt="Vocdoni logo" src="public/assets/logo-classic.svg" />
   </picture>
 </p>
 
 <p align="center" width="100%">
-    <a href="https://github.com/vocdoni/vocdoni-app/commits/main/"><img src="https://img.shields.io/github/commit-activity/m/vocdoni/vocdoni-app" /></a>
+    <a href="https://github.com/vocdoni/vocdoni-app/commits/develop/"><img src="https://img.shields.io/github/commit-activity/m/vocdoni/vocdoni-app" /></a>
     <a href="https://github.com/vocdoni/vocdoni-app/issues"><img src="https://img.shields.io/github/issues/vocdoni/vocdoni-app" /></a>
     <a href="https://chat.vocdoni.io"><img src="https://img.shields.io/badge/discord-join%20chat-blue.svg" /></a>
     <a href="https://twitter.com/vocdoni"><img src="https://img.shields.io/twitter/follow/vocdoni.svg?style=social&label=Follow" /></a>
@@ -18,7 +18,7 @@
     Our main aim is a trustless voting system where anyone can speak their voice and where everything is auditable. <br />
     We are engineering building blocks for a permissionless, private and censorship resistant democracy.
     <br />
-    <a href="https://developer.vocdoni.io/"><strong>Explore the developer portal »</strong></a>
+    <a href="https://vocdoni.io/developers"><strong>Explore the developer portal »</strong></a>
     <br />
     <h3>More About Us</h3>
     <a href="https://vocdoni.io">Vocdoni Website</a>
@@ -29,21 +29,19 @@
     |
     <a href="https://law.mit.edu/pub/remotevotingintheageofcryptography/release/1">MIT Law Publication</a>
     |
-    <a href="https://chat.vocdoni.io">Contact Us</a>
+    <a href="https://vocdoni.io/contact">Contact Us</a>
     <br />
     <h3>Key Repositories</h3>
+    <a href="https://github.com/vocdoni/vocdoni-app">Vocdoni App</a>
+    |
     <a href="https://github.com/vocdoni/vocdoni-node">Vocdoni Node</a>
     |
-    <a href="https://github.com/vocdoni/vocdoni-sdk/">Vocdoni SDK</a>
-    |
-    <a href="https://github.com/vocdoni/ui-components">UI Components</a>
-    |
-    <a href="https://github.com/vocdoni/census3">Census3</a>
+    <a href="https://github.com/vocdoni/vocdoni-integrator-sdk">Vocdoni Integrator SDK</a>
   </div>
 
 # vocdoni-app
 
-Vocdoni App is a React application that uses the [Vocdoni SDK](https://developer.vocdoni.io/sdk) and [UI Components library](https://developer.vocdoni.io/ui-components) to provide a user interface for the Vocdoni voting protocol.
+Vocdoni App is a React application that uses the [Vocdoni Integrator SDK](https://github.com/vocdoni/vocdoni-integrator-sdk) (including its react-components and react-providers packages) to provide a user interface for the Vocdoni voting protocol.
 It is built with [Vite](https://vitejs.dev/guide/) and [Vike](https://vike.dev/), and is deployed at https://app.vocdoni.io/.
 
 ### Table of Contents
