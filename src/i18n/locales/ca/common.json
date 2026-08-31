@@ -62,35 +62,35 @@
     "verticals": {
       "associations": {
         "label": "Associacions",
-        "trust_bar": "Vocdoni és la plataforma per fer assemblees generals, eleccions a junta i consultes als socis segures per a la teva associació. Moltes ja hi confien exactament per això:"
+        "trust_bar": "Assemblees generals, eleccions a junta i consultes als socis segures. Les associacions ja confien en Vocdoni:"
       },
       "generic": {
         "label": "Casos d'èxit",
-        "trust_bar": "Vocdoni és la plataforma per fer assemblees, eleccions i consultes segures. Ja hi confien organitzacions de tots els sectors:"
+        "trust_bar": "Assemblees, eleccions i consultes segures. Ja confien en Vocdoni organitzacions de tots els sectors:"
       },
       "ngos": {
         "label": "ONG i entitats sense ànim de lucre",
-        "trust_bar": "Vocdoni és la plataforma per fer assemblees, eleccions a junta i consultes als socis segures per a la teva entitat sense ànim de lucre. Moltes organitzacions que treballen pel bé comú ja hi confien exactament per això:"
+        "trust_bar": "Assemblees, eleccions a junta i consultes als socis segures. Les entitats sense ànim de lucre ja confien en Vocdoni:"
       },
       "political_parties": {
         "label": "Partits polítics",
-        "trust_bar": "Vocdoni és la plataforma per fer primàries, eleccions a la direcció i consultes internes segures per al teu partit. Molts ja hi confien exactament per això:"
+        "trust_bar": "Primàries, eleccions a la direcció i consultes internes segures. Els partits ja confien en Vocdoni:"
       },
       "professional_associations": {
         "label": "Col·legis professionals",
-        "trust_bar": "Vocdoni és la plataforma per fer assemblees generals, eleccions a junta i consultes segures per als col·legiats del teu col·legi professional. Molts ja hi confien exactament per això:"
+        "trust_bar": "Assemblees generals, eleccions a junta i consultes segures. Els col·legis professionals ja confien en Vocdoni:"
       },
       "public_administration": {
         "label": "Administració pública",
-        "trust_bar": "Vocdoni és la plataforma per fer pressupostos participatius, consultes ciutadanes i referèndums segurs per al teu municipi. Moltes administracions públiques ja hi confien exactament per això:"
+        "trust_bar": "Pressupostos participatius, consultes ciutadanes i referèndums segurs. Les administracions públiques ja confien en Vocdoni:"
       },
       "sports_clubs": {
         "label": "Clubs esportius",
-        "trust_bar": "Vocdoni és la plataforma per fer eleccions a la junta, assemblees generals i consultes als socis segures per al teu club. Molts clubs i federacions ja hi confien exactament per això:"
+        "trust_bar": "Eleccions a la junta, assemblees generals i consultes als socis segures. Els clubs i federacions ja confien en Vocdoni:"
       },
       "trade_unions": {
         "label": "Sindicats",
-        "trust_bar": "Vocdoni és la plataforma per fer votacions de vaga, votacions de conveni i eleccions a la direcció segures per al teu sindicat. Molts ja hi confien exactament per això:"
+        "trust_bar": "Votacions de vaga, de conveni i eleccions a la direcció segures. Els sindicats ja confien en Vocdoni:"
       }
     }
   },

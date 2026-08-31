@@ -50,19 +50,19 @@ describe('LayoutAuth', () => {
   it('shows the generic trust bar with no vertical', () => {
     renderAt('/account/signin')
 
-    expect(screen.getByText(/Organizations across every sector already trust it/)).toBeInTheDocument()
+    expect(screen.getByText(/Organizations in every sector already trust Vocdoni/)).toBeInTheDocument()
     expect(screen.getAllByRole('img').length).toBeGreaterThan(0)
   })
 
   it('shows the vertical trust bar for a populated vertical', () => {
     renderAt('/account/signin?type=professional-associations')
 
-    expect(screen.getByText(/members of your professional association/)).toBeInTheDocument()
+    expect(screen.getByText(/Professional associations already trust Vocdoni/)).toBeInTheDocument()
   })
 
   it('degrades an unknown vertical to the generic trust bar', () => {
     renderAt('/account/signin?type=banana')
 
-    expect(screen.getByText(/Organizations across every sector already trust it/)).toBeInTheDocument()
+    expect(screen.getByText(/Organizations in every sector already trust Vocdoni/)).toBeInTheDocument()
   })
 })

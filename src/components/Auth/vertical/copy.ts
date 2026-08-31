@@ -36,7 +36,7 @@ export const useVerticalCopy = (): VerticalCopyMap => {
       label: t('auth.verticals.generic.label', { defaultValue: 'Success stories' }),
       trustBar: t('auth.verticals.generic.trust_bar', {
         defaultValue:
-          'Vocdoni is the platform to run secure assemblies, elections and consultations. Organizations across every sector already trust it:',
+          'Secure assemblies, elections and consultations. Organizations in every sector already trust Vocdoni:',
       }),
     },
     'professional-associations': {
@@ -45,49 +45,48 @@ export const useVerticalCopy = (): VerticalCopyMap => {
       }),
       trustBar: t('auth.verticals.professional_associations.trust_bar', {
         defaultValue:
-          'Vocdoni is the platform to run secure AGMs, board elections and consultations for the members of your professional association. Many already trust it for exactly this:',
+          'Secure AGMs, board elections and member consultations. Professional associations already trust Vocdoni:',
       }),
     },
     associations: {
       label: t('auth.verticals.associations.label', { defaultValue: 'Associations' }),
       trustBar: t('auth.verticals.associations.trust_bar', {
         defaultValue:
-          'Vocdoni is the platform to run secure general assemblies, board elections and member consultations for your association. Many already trust it for exactly this:',
+          'Secure general assemblies, board elections and member consultations. Associations already trust Vocdoni:',
       }),
     },
     ngos: {
       label: t('auth.verticals.ngos.label', { defaultValue: 'NGOs and non-profits' }),
       trustBar: t('auth.verticals.ngos.trust_bar', {
-        defaultValue:
-          'Vocdoni is the platform to run secure assemblies, board elections and member consultations for your non-profit. Organizations working for the common good already trust it for exactly this:',
+        defaultValue: 'Secure assemblies, board elections and member consultations. Non-profits already trust Vocdoni:',
       }),
     },
     'public-administration': {
       label: t('auth.verticals.public_administration.label', { defaultValue: 'Public administration' }),
       trustBar: t('auth.verticals.public_administration.trust_bar', {
         defaultValue:
-          'Vocdoni is the platform to run secure participatory budgets, citizen consultations and referendums for your municipality. Public administrations already trust it for exactly this:',
+          'Secure participatory budgets, citizen consultations and referendums. Public administrations already trust Vocdoni:',
       }),
     },
     'political-parties': {
       label: t('auth.verticals.political_parties.label', { defaultValue: 'Political parties' }),
       trustBar: t('auth.verticals.political_parties.trust_bar', {
         defaultValue:
-          'Vocdoni is the platform to run secure primaries, leadership elections and internal consultations for your party. Parties already trust it for exactly this:',
+          'Secure primaries, leadership elections and internal consultations. Parties already trust Vocdoni:',
       }),
     },
     'trade-unions': {
       label: t('auth.verticals.trade_unions.label', { defaultValue: 'Trade unions' }),
       trustBar: t('auth.verticals.trade_unions.trust_bar', {
         defaultValue:
-          'Vocdoni is the platform to run secure strike ballots, collective agreement votes and leadership elections for your union. Unions already trust it for exactly this:',
+          'Secure strike ballots, collective agreement votes and leadership elections. Unions already trust Vocdoni:',
       }),
     },
     'sports-clubs': {
       label: t('auth.verticals.sports_clubs.label', { defaultValue: 'Sports clubs' }),
       trustBar: t('auth.verticals.sports_clubs.trust_bar', {
         defaultValue:
-          'Vocdoni is the platform to run secure club elections, general assemblies and member consultations for your club. Clubs and federations already trust it for exactly this:',
+          'Secure club elections, general assemblies and member consultations. Clubs and federations already trust Vocdoni:',
       }),
     },
   }

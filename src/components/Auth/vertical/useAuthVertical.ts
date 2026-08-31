@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
 import { AUTH_VERTICAL_PARAM, GenericVertical, resolveVerticalSlug, type VerticalSlug } from '~constants/verticals'
 import { useVerticalCopy } from './copy'
-import { GenericLogos, getTrustLogos, MinVerticalLogos } from './logos'
+import { GenericLogos, getTrustLogos, getWithheldLogos, MinVerticalLogos } from './logos'
 import { GenericAccent, VerticalRegistry } from './registry'
 import { useAuthTestimonials } from './testimonials'
 import type { ResolvedVertical } from './types'
@@ -68,8 +69,10 @@ export const useVerticalSlug = (): VerticalSlug | null => {
  * The label and accent are always vertical-specific: they cost nothing and never lie.
  */
 export const useAuthVertical = (): ResolvedVertical => {
+  const { i18n } = useTranslation()
   const slug = useVerticalSlug()
-  const testimonials = useAuthTestimonials()
+  const withheld = getWithheldLogos(i18n.resolvedLanguage ?? i18n.language)
+  const testimonials = useAuthTestimonials().filter((testimonial) => !withheld.has(testimonial.logo))
   const copyMap = useVerticalCopy()
 
   // A stable seed rather than a stable testimonial: the pool is rebuilt on every language change,
@@ -83,8 +86,9 @@ export const useAuthVertical = (): ResolvedVertical => {
   const candidates = pool.length ? pool : testimonials
   const testimonial = candidates.length ? candidates[Math.floor(seed * candidates.length)] : null
 
-  const usesGenericLogos = !content || content.logos.length < MinVerticalLogos
-  const logos = getTrustLogos(usesGenericLogos ? GenericLogos : content.logos)
+  const ownLogos = (content?.logos ?? []).filter((id) => !withheld.has(id))
+  const usesGenericLogos = ownLogos.length < MinVerticalLogos
+  const logos = getTrustLogos(usesGenericLogos ? GenericLogos.filter((id) => !withheld.has(id)) : ownLogos)
 
   return {
     key: slug ?? GenericVertical,

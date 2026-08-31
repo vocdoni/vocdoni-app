@@ -60,35 +60,35 @@
     "verticals": {
       "associations": {
         "label": "Vereine",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Mitgliederversammlungen, Vorstandswahlen und Mitgliederbefragungen für deinen Verein. Viele vertrauen bereits genau dafür darauf:"
+        "trust_bar": "Sichere Mitgliederversammlungen, Vorstandswahlen und Mitgliederbefragungen. Vereine vertrauen bereits Vocdoni:"
       },
       "generic": {
         "label": "Erfolgsgeschichten",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Versammlungen, Wahlen und Befragungen. Organisationen aus allen Branchen vertrauen bereits darauf:"
+        "trust_bar": "Sichere Versammlungen, Wahlen und Befragungen. Organisationen aus allen Branchen vertrauen bereits Vocdoni:"
       },
       "ngos": {
         "label": "NGOs und gemeinnützige Organisationen",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Versammlungen, Vorstandswahlen und Mitgliederbefragungen für deine gemeinnützige Organisation. Viele Organisationen, die sich für das Gemeinwohl einsetzen, vertrauen bereits genau dafür darauf:"
+        "trust_bar": "Sichere Versammlungen, Vorstandswahlen und Mitgliederbefragungen. Gemeinnützige Organisationen vertrauen bereits Vocdoni:"
       },
       "political_parties": {
         "label": "Politische Parteien",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Vorwahlen, Vorstandswahlen und interne Befragungen für deine Partei. Viele vertrauen bereits genau dafür darauf:"
+        "trust_bar": "Sichere Vorwahlen, Vorstandswahlen und interne Befragungen. Parteien vertrauen bereits Vocdoni:"
       },
       "professional_associations": {
         "label": "Berufskammern",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Mitgliederversammlungen, Vorstandswahlen und Befragungen für die Mitglieder deiner Berufskammer. Viele vertrauen bereits genau dafür darauf:"
+        "trust_bar": "Sichere Mitgliederversammlungen, Vorstandswahlen und Befragungen. Berufskammern vertrauen bereits Vocdoni:"
       },
       "public_administration": {
         "label": "Öffentliche Verwaltung",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Bürgerhaushalte, Bürgerbefragungen und Referenden für deine Kommune. Viele öffentliche Verwaltungen vertrauen bereits genau dafür darauf:"
+        "trust_bar": "Sichere Bürgerhaushalte, Bürgerbefragungen und Referenden. Öffentliche Verwaltungen vertrauen bereits Vocdoni:"
       },
       "sports_clubs": {
         "label": "Sportvereine",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Vorstandswahlen, Mitgliederversammlungen und Mitgliederbefragungen für deinen Sportverein. Viele Vereine und Verbände vertrauen bereits genau dafür darauf:"
+        "trust_bar": "Sichere Vorstandswahlen, Mitgliederversammlungen und Befragungen. Vereine und Verbände vertrauen bereits Vocdoni:"
       },
       "trade_unions": {
         "label": "Gewerkschaften",
-        "trust_bar": "Vocdoni ist die Plattform für sichere Urabstimmungen, Tarifabstimmungen und Vorstandswahlen für deine Gewerkschaft. Viele vertrauen bereits genau dafür darauf:"
+        "trust_bar": "Sichere Urabstimmungen, Tarifabstimmungen und Vorstandswahlen. Gewerkschaften vertrauen bereits Vocdoni:"
       }
     }
   },

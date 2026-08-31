@@ -60,35 +60,35 @@
     "verticals": {
       "associations": {
         "label": "Associations",
-        "trust_bar": "Vocdoni is the platform to run secure general assemblies, board elections and member consultations for your association. Many already trust it for exactly this:"
+        "trust_bar": "Secure general assemblies, board elections and member consultations. Associations already trust Vocdoni:"
       },
       "generic": {
         "label": "Success stories",
-        "trust_bar": "Vocdoni is the platform to run secure assemblies, elections and consultations. Organizations across every sector already trust it:"
+        "trust_bar": "Secure assemblies, elections and consultations. Organizations in every sector already trust Vocdoni:"
       },
       "ngos": {
         "label": "NGOs and non-profits",
-        "trust_bar": "Vocdoni is the platform to run secure assemblies, board elections and member consultations for your non-profit. Organizations working for the common good already trust it for exactly this:"
+        "trust_bar": "Secure assemblies, board elections and member consultations. Non-profits already trust Vocdoni:"
       },
       "political_parties": {
         "label": "Political parties",
-        "trust_bar": "Vocdoni is the platform to run secure primaries, leadership elections and internal consultations for your party. Parties already trust it for exactly this:"
+        "trust_bar": "Secure primaries, leadership elections and internal consultations. Parties already trust Vocdoni:"
       },
       "professional_associations": {
         "label": "Professional associations",
-        "trust_bar": "Vocdoni is the platform to run secure AGMs, board elections and consultations for the members of your professional association. Many already trust it for exactly this:"
+        "trust_bar": "Secure AGMs, board elections and member consultations. Professional associations already trust Vocdoni:"
       },
       "public_administration": {
         "label": "Public administration",
-        "trust_bar": "Vocdoni is the platform to run secure participatory budgets, citizen consultations and referendums for your municipality. Public administrations already trust it for exactly this:"
+        "trust_bar": "Secure participatory budgets, citizen consultations and referendums. Public administrations already trust Vocdoni:"
       },
       "sports_clubs": {
         "label": "Sports clubs",
-        "trust_bar": "Vocdoni is the platform to run secure club elections, general assemblies and member consultations for your club. Clubs and federations already trust it for exactly this:"
+        "trust_bar": "Secure club elections, general assemblies and member consultations. Clubs and federations already trust Vocdoni:"
       },
       "trade_unions": {
         "label": "Trade unions",
-        "trust_bar": "Vocdoni is the platform to run secure strike ballots, collective agreement votes and leadership elections for your union. Unions already trust it for exactly this:"
+        "trust_bar": "Secure strike ballots, collective agreement votes and leadership elections. Unions already trust Vocdoni:"
       }
     }
   },

@@ -60,35 +60,35 @@
     "verticals": {
       "associations": {
         "label": "Elkarteak",
-        "trust_bar": "Vocdoni batzar nagusiak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan egiteko plataforma da, zure elkartearentzat. Askok konfiantza dute jada bertan horretarako:"
+        "trust_bar": "Batzar nagusiak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan. Elkarteek konfiantza dute jada bertan:"
       },
       "generic": {
         "label": "Arrakasta-kasuak",
-        "trust_bar": "Vocdoni batzarrak, hauteskundeak eta kontsultak modu seguruan egiteko plataforma da. Sektore guztietako erakundeek konfiantza dute jada bertan:"
+        "trust_bar": "Batzarrak, hauteskundeak eta kontsultak modu seguruan. Sektore guztietako erakundeek konfiantza dute jada bertan:"
       },
       "ngos": {
         "label": "GKEak eta irabazi-asmorik gabeko erakundeak",
-        "trust_bar": "Vocdoni batzarrak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan egiteko plataforma da, zure irabazi-asmorik gabeko erakundearentzat. Guztion onerako lan egiten duten erakunde askok konfiantza dute jada bertan horretarako:"
+        "trust_bar": "Batzarrak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan. GKEek konfiantza dute jada bertan:"
       },
       "political_parties": {
         "label": "Alderdi politikoak",
-        "trust_bar": "Vocdoni primarioak, zuzendaritza-hauteskundeak eta barne-kontsultak modu seguruan egiteko plataforma da, zure alderdiarentzat. Askok konfiantza dute jada bertan horretarako:"
+        "trust_bar": "Primarioak, zuzendaritza-hauteskundeak eta barne-kontsultak modu seguruan. Alderdiek konfiantza dute jada bertan:"
       },
       "professional_associations": {
         "label": "Elkargo profesionalak",
-        "trust_bar": "Vocdoni batzar nagusiak, zuzendaritza-hauteskundeak eta kontsultak modu seguruan egiteko plataforma da, zure elkargo profesionaleko kideentzat. Askok konfiantza dute jada bertan horretarako:"
+        "trust_bar": "Batzar nagusiak, zuzendaritza-hauteskundeak eta kontsultak modu seguruan. Elkargo profesionalek konfiantza dute jada bertan:"
       },
       "public_administration": {
         "label": "Administrazio publikoa",
-        "trust_bar": "Vocdoni aurrekontu parte-hartzaileak, herritarren kontsultak eta erreferendumak modu seguruan egiteko plataforma da, zure udalerrirako. Administrazio publiko askok konfiantza dute jada bertan horretarako:"
+        "trust_bar": "Aurrekontu parte-hartzaileak, herritarren kontsultak eta erreferendumak modu seguruan. Administrazio publikoek konfiantza dute jada bertan:"
       },
       "sports_clubs": {
         "label": "Kirol klubak",
-        "trust_bar": "Vocdoni zuzendaritza-hauteskundeak, batzar nagusiak eta bazkideen kontsultak modu seguruan egiteko plataforma da, zure kirol klubarentzat. Klub eta federazio askok konfiantza dute jada bertan horretarako:"
+        "trust_bar": "Zuzendaritza-hauteskundeak, batzar nagusiak eta bazkideen kontsultak modu seguruan. Klubek eta federazioek konfiantza dute jada bertan:"
       },
       "trade_unions": {
         "label": "Sindikatuak",
-        "trust_bar": "Vocdoni greba-bozketak, hitzarmen kolektiboen bozketak eta zuzendaritza-hauteskundeak modu seguruan egiteko plataforma da, zure sindikatuarentzat. Askok konfiantza dute jada bertan horretarako:"
+        "trust_bar": "Greba-bozketak, hitzarmen kolektiboenak eta zuzendaritza-hauteskundeak modu seguruan. Sindikatuek konfiantza dute jada bertan:"
       }
     }
   },

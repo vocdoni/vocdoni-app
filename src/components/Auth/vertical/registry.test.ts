@@ -5,7 +5,8 @@ import { VerticalSlugs } from '~constants/verticals'
 import { renderHook } from '~src/test-utils'
 import { system } from '~theme/system'
 import { useVerticalCopy } from './copy'
-import { GenericLogos, MinVerticalLogos, TrustLogos } from './logos'
+import { baseLanguages } from '~i18n/languages'
+import { GenericLogos, getWithheldLogos, MinVerticalLogos, TrustLogos } from './logos'
 import { GenericAccent, VerticalRegistry } from './registry'
 import { useAuthTestimonials } from './testimonials'
 
@@ -37,11 +38,28 @@ describe('trust logos', () => {
   })
 
   it('has a generic pool big enough to stand on its own', () => {
+    // The generic row is the only social proof a visitor with no `?type=` sees, so it carries the
+    // whole catalogue. The floor is well above what the narrow breakpoints show on purpose: it is
+    // the desktop row that has to look like a customer list rather than a handful of logos.
+    expect(GenericLogos.length).toBeGreaterThanOrEqual(14)
     expect(GenericLogos.length).toBeGreaterThanOrEqual(MinVerticalLogos)
     for (const id of GenericLogos) {
       expect(TrustLogos, `unknown logo id in GenericLogos: "${id}"`).toHaveProperty(id)
     }
     expect(new Set(GenericLogos).size).toBe(GenericLogos.length)
+  })
+
+  // Leaving a customer out of the cross-sector row buys nothing — it is the row shown when we have
+  // no sector to speak to, so it should name everyone we can.
+  it('puts the whole catalogue in the generic row', () => {
+    expect(new Set(GenericLogos)).toEqual(new Set(Object.keys(TrustLogos)))
+  })
+
+  it('keeps the generic row at fourteen logos or more in every language', () => {
+    for (const language of Object.keys(baseLanguages)) {
+      const shown = GenericLogos.filter((id) => !getWithheldLogos(language).has(id))
+      expect(shown.length, `"${language}" shows only ${shown.length} logos`).toBeGreaterThanOrEqual(14)
+    }
   })
 })
 

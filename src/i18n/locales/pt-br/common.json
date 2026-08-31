@@ -62,35 +62,35 @@
     "verticals": {
       "associations": {
         "label": "Associações",
-        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias gerais, eleições de diretoria e consultas aos associados seguras para a sua associação. Muitas já confiam nele exatamente para isso:"
+        "trust_bar": "Assembleias gerais, eleições de diretoria e consultas aos associados seguras. As associações já confiam no Vocdoni:"
       },
       "generic": {
         "label": "Casos de sucesso",
-        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias, eleições e consultas seguras. Organizações de todos os setores já confiam nele:"
+        "trust_bar": "Assembleias, eleições e consultas seguras. Organizações de todos os setores já confiam no Vocdoni:"
       },
       "ngos": {
         "label": "ONGs e organizações sem fins lucrativos",
-        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias, eleições de diretoria e consultas aos associados seguras para a sua organização sem fins lucrativos. Muitas organizações que trabalham pelo bem comum já confiam nele exatamente para isso:"
+        "trust_bar": "Assembleias, eleições de diretoria e consultas aos associados seguras. As organizações sem fins lucrativos já confiam no Vocdoni:"
       },
       "political_parties": {
         "label": "Partidos políticos",
-        "trust_bar": "O Vocdoni é a plataforma para realizar prévias, eleições de diretoria e consultas internas seguras para o seu partido. Muitos já confiam nele exatamente para isso:"
+        "trust_bar": "Prévias, eleições de diretoria e consultas internas seguras. Os partidos já confiam no Vocdoni:"
       },
       "professional_associations": {
         "label": "Conselhos profissionais",
-        "trust_bar": "O Vocdoni é a plataforma para realizar assembleias gerais, eleições de diretoria e consultas seguras para os inscritos no seu conselho profissional. Muitos já confiam nele exatamente para isso:"
+        "trust_bar": "Assembleias gerais, eleições de diretoria e consultas seguras. Os conselhos profissionais já confiam no Vocdoni:"
       },
       "public_administration": {
         "label": "Administração pública",
-        "trust_bar": "O Vocdoni é a plataforma para realizar orçamentos participativos, consultas públicas e referendos seguros para o seu município. Muitas administrações públicas já confiam nele exatamente para isso:"
+        "trust_bar": "Orçamentos participativos, consultas públicas e referendos seguros. As administrações públicas já confiam no Vocdoni:"
       },
       "sports_clubs": {
         "label": "Clubes esportivos",
-        "trust_bar": "O Vocdoni é a plataforma para realizar eleições de diretoria, assembleias gerais e consultas aos associados seguras para o seu clube. Muitos clubes e federações já confiam nele exatamente para isso:"
+        "trust_bar": "Eleições de diretoria, assembleias gerais e consultas aos associados seguras. Os clubes e federações já confiam no Vocdoni:"
       },
       "trade_unions": {
         "label": "Sindicatos",
-        "trust_bar": "O Vocdoni é a plataforma para realizar votações de greve, votações de acordo coletivo e eleições de diretoria seguras para o seu sindicato. Muitos já confiam nele exatamente para isso:"
+        "trust_bar": "Votações de greve, de acordo coletivo e eleições de diretoria seguras. Os sindicatos já confiam no Vocdoni:"
       }
     }
   },

@@ -28,7 +28,7 @@ describe('useAuthVertical', () => {
     expect(result.current.usesGenericLogos).toBe(false)
     expect(result.current.logos.map((logo) => logo.id)).toEqual(professional.logos)
     expect(result.current.testimonial?.verticals).toContain('professional-associations')
-    expect(result.current.copy.trustBar).toContain('professional association')
+    expect(result.current.copy.trustBar).toMatch(/professional associations/i)
   })
 
   it('falls back to the generic experience with no param', () => {
@@ -47,7 +47,7 @@ describe('useAuthVertical', () => {
       const { result } = renderAt(`/account/signin?type=${encodeURIComponent(value)}`)
 
       expect(result.current.key).toBe('generic')
-      expect(result.current.copy.trustBar).toContain('every sector')
+      expect(result.current.copy.trustBar).toMatch(/every sector/i)
     }
   })
 
@@ -64,7 +64,7 @@ describe('useAuthVertical', () => {
 
     expect(result.current.key).toBe('cooperatives')
     expect(result.current.usesGenericLogos).toBe(true)
-    expect(result.current.copy.trustBar).toContain('every sector')
+    expect(result.current.copy.trustBar).toMatch(/every sector/i)
   })
 
   // The counterpart: a vertical with customers of its own shows them, however few. Two names from
@@ -75,7 +75,7 @@ describe('useAuthVertical', () => {
     expect(result.current.key).toBe('trade-unions')
     expect(result.current.usesGenericLogos).toBe(false)
     expect(result.current.logos.map((logo) => logo.id)).toEqual(['intersindical', 'ustec'])
-    expect(result.current.copy.trustBar).toContain('union')
+    expect(result.current.copy.trustBar).toMatch(/unions/i)
     expect(result.current.testimonial?.verticals).toContain('trade-unions')
   })
 
