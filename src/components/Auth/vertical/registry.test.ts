@@ -133,7 +133,13 @@ describe('vertical registry', () => {
    * endorsement, so a logo without a quote is fine — but nothing else can vouch for the pairing,
    * so it is named here deliberately rather than inferred.
    */
-  const UnquotedCustomers: Record<string, string> = { bcn: 'public-administration', barca: 'sports-clubs' }
+  const UnquotedCustomers: Record<string, string> = {
+    bcn: 'public-administration',
+    berga: 'public-administration',
+    barca: 'sports-clubs',
+    alhora: 'political-parties',
+    partit_pirata: 'political-parties',
+  }
 
   // What keeps a row honest now that length is not the gate: a sector's row may only name that
   // sector's own customers. Borrowing one would make the sentence above it claim a sector trusts us

@@ -33,8 +33,8 @@ export const VerticalRegistry: Partial<Record<VerticalSlug, VerticalContent>> = 
   },
   'public-administration': {
     accent: GenericAccent,
-    // Barcelona is a customer without a quote of its own — see `UnquotedCustomers` in the test.
-    logos: ['bcn', 'bellpuig', 'bisbal'],
+    // Barcelona and Berga are customers without quotes of their own — see the test.
+    logos: ['bcn', 'bellpuig', 'bisbal', 'berga'],
   },
   ngos: {
     accent: GenericAccent,
@@ -42,7 +42,8 @@ export const VerticalRegistry: Partial<Record<VerticalSlug, VerticalContent>> = 
   },
   'political-parties': {
     accent: GenericAccent,
-    logos: ['erc', 'granollers'],
+    // Alhora and the Partit Pirata are customers without quotes of their own — see the test.
+    logos: ['erc', 'granollers', 'alhora', 'partit_pirata'],
   },
   'trade-unions': {
     accent: GenericAccent,

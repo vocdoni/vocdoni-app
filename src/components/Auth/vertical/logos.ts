@@ -22,7 +22,10 @@ export const TrustLogos: Record<string, TrustLogo> = {
   bellpuig: { id: 'bellpuig', src: logoSrc('bellpuig'), name: 'Ajuntament de Bellpuig' },
   bisbal: { id: 'bisbal', src: logoSrc('bisbal'), name: "Ajuntament de la Bisbal d'Empordà" },
   bcn: { id: 'bcn', src: logoSrc('bcn'), name: 'Ajuntament de Barcelona' },
+  berga: { id: 'berga', src: logoSrc('berga'), name: 'Ajuntament de Berga' },
   erc: { id: 'erc', src: logoSrc('erc'), name: 'Esquerra Republicana' },
+  alhora: { id: 'alhora', src: logoSrc('alhora'), name: 'Alhora' },
+  partit_pirata: { id: 'partit_pirata', src: logoSrc('partit_pirata'), name: 'Partit Pirata' },
   granollers: { id: 'granollers', src: logoSrc('granollers'), name: 'Granollers Primàries' },
   intersindical: { id: 'intersindical', src: logoSrc('intersindical'), name: 'La Intersindical' },
   ustec: { id: 'ustec', src: logoSrc('ustec'), name: 'USTEC·STEs (IAC)' },
@@ -59,7 +62,10 @@ export const GenericLogos = [
   'ati',
   'bisbal',
   'bellpuig',
+  'berga',
   'arxivers',
+  'partit_pirata',
+  'alhora',
   'granollers',
   'aguicat',
 ] as const
@@ -73,7 +79,7 @@ export const GenericLogos = [
 export const MinVerticalLogos = 1
 
 const WithheldByLanguage: Record<string, readonly string[]> = {
-  es: ['omnium', 'plataforma', 'granollers'],
+  es: ['omnium', 'plataforma'],
 }
 
 /** Customer ids not shown for the given language. */

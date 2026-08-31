@@ -2,8 +2,13 @@ import { Flex, Image, Stack, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import type { ResolvedVertical } from './types'
 
-/** Logos beyond this are dropped at the narrower breakpoints rather than wrapped onto a second row. */
-const VisibleLogos = { base: 5, md: 8 }
+/**
+ * Logos beyond this are dropped rather than wrapped onto a second row — including at `lg`, where the
+ * cap is what the column fits on one line at this tile size. The catalogue is ordered by
+ * recognition, so the row is trimmed from the least recognisable end; anything cut here still
+ * appears in its own sector's row.
+ */
+const VisibleLogos = { base: 5, md: 8, lg: 18 }
 
 /**
  * Social proof under the login card, at every breakpoint — on mobile the showcase panel is hidden,
@@ -34,7 +39,7 @@ const AuthTrustBar = ({ vertical }: { vertical: ResolvedVertical }) => {
       <Text fontSize='xs' lineHeight='1.6' color='fg.muted' textAlign={{ base: 'center', md: 'left' }}>
         {copy.trustBar}
       </Text>
-      <Flex gap={2} wrap='wrap' justify={{ base: 'center', md: 'flex-start' }}>
+      <Flex gap={1.5} wrap='wrap' justify={{ base: 'center', md: 'flex-start' }}>
         {logos.map((logo, index) => (
           <Image
             key={logo.id}
@@ -44,7 +49,7 @@ const AuthTrustBar = ({ vertical }: { vertical: ResolvedVertical }) => {
             display={{
               base: index < VisibleLogos.base ? 'block' : 'none',
               md: index < VisibleLogos.md ? 'block' : 'none',
-              lg: 'block',
+              lg: index < VisibleLogos.lg ? 'block' : 'none',
             }}
             boxSize={{ base: '48px', md: '52px' }}
             flexShrink={0}
