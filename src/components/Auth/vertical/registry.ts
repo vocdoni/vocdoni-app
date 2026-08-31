@@ -50,6 +50,7 @@ export const VerticalRegistry: Partial<Record<VerticalSlug, VerticalContent>> = 
   },
   'sports-clubs': {
     accent: GenericAccent,
-    logos: ['cec'],
+    // Barcelona is a customer without a quote of its own — see `UnquotedCustomers` in the test.
+    logos: ['barca', 'cec'],
   },
 }

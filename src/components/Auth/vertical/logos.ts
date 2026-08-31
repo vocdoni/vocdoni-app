@@ -15,6 +15,7 @@ export const TrustLogos: Record<string, TrustLogo> = {
   ati: { id: 'ati', src: logoSrc('ati'), name: 'Associazione Termotecnica Italiana' },
   arxivers: { id: 'arxivers', src: logoSrc('arxivers'), name: "Associació d'Arxivers de Catalunya" },
   aguicat: { id: 'aguicat', src: logoSrc('aguicat'), name: 'AGUICAT' },
+  barca: { id: 'barca', src: logoSrc('barca'), name: 'Futbol Club Barcelona' },
   cec: { id: 'cec', src: logoSrc('cec'), name: 'Centre Excursionista de Catalunya' },
   omnium: { id: 'omnium', src: logoSrc('omnium'), name: 'Òmnium Cultural' },
   plataforma: { id: 'plataforma', src: logoSrc('plataforma'), name: 'Plataforma per la Llengua' },
