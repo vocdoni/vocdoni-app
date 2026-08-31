@@ -66,7 +66,11 @@ export const useVerticalSlug = (): VerticalSlug | null => {
  *   of city councils would be worse than saying nothing, and a short row of the sector's own names
  *   says more than a long one borrowed from everyone else.
  *
- * The label and accent are always vertical-specific: they cost nothing and never lie.
+ * The label and accent are vertical-specific wherever the vertical has an entry of its own. The
+ * allow-list is deliberately wider than the content: `cooperatives`, `federations`, `chambers`,
+ * `universities-schools` and `first-nations` resolve, so a marketing link to one is never broken,
+ * but with no copy and no registry entry they fall back to the generic label and accent along with
+ * everything else.
  */
 export const useAuthVertical = (): ResolvedVertical => {
   const { i18n } = useTranslation()

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { renderHook, TestMemoryRouter } from '~src/test-utils'
+import { useVerticalCopy } from './copy'
 import { GenericLogos } from './logos'
 import { GenericAccent, VerticalRegistry } from './registry'
 import { useAuthVertical } from './useAuthVertical'
@@ -13,6 +14,7 @@ const renderAt = (path: string) =>
   })
 
 const professional = VerticalRegistry['professional-associations']!
+const genericCopy = renderHook(() => useVerticalCopy()).result.current.generic
 
 beforeEach(() => {
   window.sessionStorage.clear()
@@ -65,6 +67,9 @@ describe('useAuthVertical', () => {
     expect(result.current.key).toBe('cooperatives')
     expect(result.current.usesGenericLogos).toBe(true)
     expect(result.current.copy.trustBar).toMatch(/every sector/i)
+    // The eyebrow and accent fall back too — nothing on the panel names a sector we cannot back
+    expect(result.current.copy.label).toBe(genericCopy.label)
+    expect(result.current.accent).toBe(GenericAccent)
   })
 
   // The counterpart: a vertical with customers of its own shows them, however few. Two names from
