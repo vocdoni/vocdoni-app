@@ -11,7 +11,6 @@ const buildVertical = (overrides: Partial<ResolvedVertical> = {}): ResolvedVerti
   accent: GenericAccent,
   copy: {
     label: 'Professional associations',
-    headline: 'Every member votes, wherever they are',
     trustBar: 'Many professional associations already trust it:',
   },
   testimonial: null,

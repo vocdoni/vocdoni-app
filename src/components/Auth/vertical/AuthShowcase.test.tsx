@@ -20,7 +20,6 @@ const buildVertical = (overrides: Partial<ResolvedVertical> = {}): ResolvedVerti
   accent: GenericAccent,
   copy: {
     label: 'Professional associations',
-    headline: 'Every member votes, wherever they are',
     trustBar: 'Many already trust it:',
   },
   testimonial,
@@ -41,7 +40,7 @@ describe('AuthShowcase', () => {
     render(<AuthShowcase vertical={buildVertical()} />)
 
     expect(screen.getByText('Professional associations')).toBeInTheDocument()
-    expect(screen.queryByText('Every member votes, wherever they are')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', hidden)).not.toBeInTheDocument()
   })
 
   it('renders the quote and its attribution', () => {
@@ -68,12 +67,12 @@ describe('AuthShowcase', () => {
     expect(screen.queryByRole('img', { name: /Portrait of/, ...hidden })).not.toBeInTheDocument()
   })
 
-  it('renders the headline alone when there is no testimonial', () => {
+  // Reachable only with the whole testimonial pool gone, so the fallback is one sentence rather
+  // than a per-vertical headline — this asserts the panel still says something in that state.
+  it('falls back to a single headline when there is no testimonial', () => {
     render(<AuthShowcase vertical={buildVertical({ testimonial: null })} />)
 
-    expect(
-      screen.getByRole('heading', { name: 'Every member votes, wherever they are', ...hidden })
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Decisions your members can verify', ...hidden })).toBeInTheDocument()
     expect(screen.queryAllByRole('img', hidden)).toHaveLength(0)
   })
 })

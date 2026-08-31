@@ -26,11 +26,10 @@ export type AuthTestimonial = {
   portraitPosition?: string
 }
 
+/** Both fields render: the eyebrow above the quote, and the sentence above the logo row. */
 export type VerticalCopy = {
   /** Short sector name, used as the showcase eyebrow. */
   label: string
-  /** Showcase headline. */
-  headline: string
   /** Trust bar sentence introducing the logo row. Ends with a colon. */
   trustBar: string
 }

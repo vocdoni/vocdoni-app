@@ -78,8 +78,8 @@ describe('testimonials', () => {
     }
   })
 
-  // The showcase picks a quote by vertical but takes the headline from `copy.ts`. A sector-specific
-  // quote under the generic headline is the half-personalized state this pairing exists to prevent.
+  // The showcase picks a quote by vertical but takes the eyebrow from `copy.ts`. A sector-specific
+  // quote under the generic eyebrow is the half-personalized state this pairing exists to prevent.
   it('has copy for every vertical it can show a quote for', () => {
     for (const vertical of new Set(testimonials.flatMap((t) => t.verticals))) {
       expect(copy, `"${vertical}" has a testimonial but no copy`).toHaveProperty(vertical)
@@ -123,7 +123,7 @@ describe('vertical registry', () => {
 
 describe('vertical copy', () => {
   it('always has the generic fallback filled in', () => {
-    for (const field of ['label', 'headline', 'trustBar'] as const) {
+    for (const field of ['label', 'trustBar'] as const) {
       expect(copy.generic[field].trim()).not.toBe('')
     }
   })

@@ -56,44 +56,39 @@
     "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
   },
   "auth": {
+    "showcase": {
+      "fallback_headline": "Decisiones que tus miembros pueden verificar"
+    },
     "verticals": {
       "associations": {
-        "headline": "Asambleas en las que tus socios pueden confiar",
         "label": "Asociaciones",
         "trust_bar": "Vocdoni es la plataforma para celebrar asambleas generales, elecciones a junta y consultas a los socios seguras para tu asociación. Muchas ya confían en ella exactamente para esto:"
       },
       "generic": {
-        "headline": "Decisiones que tus miembros pueden verificar",
         "label": "Casos de éxito",
         "trust_bar": "Vocdoni es la plataforma para celebrar asambleas, elecciones y consultas seguras. Ya confían en ella organizaciones de todos los sectores:"
       },
       "ngos": {
-        "headline": "Una gobernanza en la que tu comunidad puede confiar",
         "label": "ONG y entidades sin ánimo de lucro",
         "trust_bar": "Vocdoni es la plataforma para celebrar asambleas, elecciones a junta y consultas a los socios seguras para tu entidad sin ánimo de lucro. Muchas organizaciones que trabajan por el bien común ya confían en ella exactamente para esto:"
       },
       "political_parties": {
-        "headline": "Primarias que tus militantes pueden verificar",
         "label": "Partidos políticos",
         "trust_bar": "Vocdoni es la plataforma para celebrar primarias, elecciones a la dirección y consultas internas seguras para tu partido. Muchos ya confían en ella exactamente para esto:"
       },
       "professional_associations": {
-        "headline": "Todos los colegiados votan, estén donde estén",
         "label": "Colegios profesionales",
         "trust_bar": "Vocdoni es la plataforma para celebrar asambleas generales, elecciones a junta y consultas seguras para los colegiados de tu colegio profesional. Muchos ya confían en ella exactamente para esto:"
       },
       "public_administration": {
-        "headline": "Una participación que tus vecinos pueden verificar",
         "label": "Administración pública",
         "trust_bar": "Vocdoni es la plataforma para celebrar presupuestos participativos, consultas ciudadanas y referéndums seguros para tu municipio. Muchas administraciones públicas ya confían en ella exactamente para esto:"
       },
       "sports_clubs": {
-        "headline": "Decisiones del club en las que participa cada socio",
         "label": "Clubes deportivos",
         "trust_bar": "Vocdoni es la plataforma para celebrar elecciones a la junta, asambleas generales y consultas a los socios seguras para tu club. Muchos clubes y federaciones ya confían en ella exactamente para esto:"
       },
       "trade_unions": {
-        "headline": "Votaciones en las que cada trabajador puede confiar",
         "label": "Sindicatos",
         "trust_bar": "Vocdoni es la plataforma para celebrar votaciones de huelga, votaciones de convenio y elecciones a la dirección seguras para tu sindicato. Muchos ya confían en ella exactamente para esto:"
       }

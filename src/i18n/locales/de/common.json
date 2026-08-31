@@ -54,44 +54,39 @@
     "votes_weight_other": "<span>{{ count }}</span> <text>Stimmen</text>"
   },
   "auth": {
+    "showcase": {
+      "fallback_headline": "Entscheidungen, die deine Mitglieder überprüfen können"
+    },
     "verticals": {
       "associations": {
-        "headline": "Versammlungen, auf die sich deine Mitglieder verlassen können",
         "label": "Vereine",
         "trust_bar": "Vocdoni ist die Plattform für sichere Mitgliederversammlungen, Vorstandswahlen und Mitgliederbefragungen für deinen Verein. Viele vertrauen bereits genau dafür darauf:"
       },
       "generic": {
-        "headline": "Entscheidungen, die deine Mitglieder überprüfen können",
         "label": "Erfolgsgeschichten",
         "trust_bar": "Vocdoni ist die Plattform für sichere Versammlungen, Wahlen und Befragungen. Organisationen aus allen Branchen vertrauen bereits darauf:"
       },
       "ngos": {
-        "headline": "Entscheidungen, denen deine Gemeinschaft vertrauen kann",
         "label": "NGOs und gemeinnützige Organisationen",
         "trust_bar": "Vocdoni ist die Plattform für sichere Versammlungen, Vorstandswahlen und Mitgliederbefragungen für deine gemeinnützige Organisation. Viele Organisationen, die sich für das Gemeinwohl einsetzen, vertrauen bereits genau dafür darauf:"
       },
       "political_parties": {
-        "headline": "Vorwahlen, die deine Mitglieder überprüfen können",
         "label": "Politische Parteien",
         "trust_bar": "Vocdoni ist die Plattform für sichere Vorwahlen, Vorstandswahlen und interne Befragungen für deine Partei. Viele vertrauen bereits genau dafür darauf:"
       },
       "professional_associations": {
-        "headline": "Jedes Mitglied stimmt ab, wo auch immer es ist",
         "label": "Berufskammern",
         "trust_bar": "Vocdoni ist die Plattform für sichere Mitgliederversammlungen, Vorstandswahlen und Befragungen für die Mitglieder deiner Berufskammer. Viele vertrauen bereits genau dafür darauf:"
       },
       "public_administration": {
-        "headline": "Beteiligung, die deine Bürgerinnen und Bürger überprüfen können",
         "label": "Öffentliche Verwaltung",
         "trust_bar": "Vocdoni ist die Plattform für sichere Bürgerhaushalte, Bürgerbefragungen und Referenden für deine Kommune. Viele öffentliche Verwaltungen vertrauen bereits genau dafür darauf:"
       },
       "sports_clubs": {
-        "headline": "Vereinsentscheidungen, an denen jedes Mitglied teilnimmt",
         "label": "Sportvereine",
         "trust_bar": "Vocdoni ist die Plattform für sichere Vorstandswahlen, Mitgliederversammlungen und Mitgliederbefragungen für deinen Sportverein. Viele Vereine und Verbände vertrauen bereits genau dafür darauf:"
       },
       "trade_unions": {
-        "headline": "Abstimmungen, auf die sich alle Beschäftigten verlassen können",
         "label": "Gewerkschaften",
         "trust_bar": "Vocdoni ist die Plattform für sichere Urabstimmungen, Tarifabstimmungen und Vorstandswahlen für deine Gewerkschaft. Viele vertrauen bereits genau dafür darauf:"
       }

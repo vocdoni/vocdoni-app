@@ -70,8 +70,10 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
       )}
 
       {!testimonial ? (
-        // Unreachable in practice — the pool only empties if every testimonial is dropped — but the
-        // panel still needs something to say when it happens.
+        // Reached only if every testimonial is dropped: a vertical with none of its own borrows the
+        // whole pool rather than emptying. One sentence, not a per-vertical one — a state that needs
+        // the entire quote library gone has nothing sector-specific left to say, and eight
+        // translated variants of it would be eight nobody can ever see.
         <Heading
           size={{ md: 'md', lg: 'lg' }}
           fontWeight='bolder'
@@ -79,7 +81,7 @@ const AuthShowcase = ({ vertical }: { vertical: ResolvedVertical }) => {
           maxW='20ch'
           color='auth.showcase.fg'
         >
-          {copy.headline}
+          {t('auth.showcase.fallback_headline', { defaultValue: 'Decisions your members can verify' })}
         </Heading>
       ) : (
         <Stack as='figure' position='relative' m={0} gap={{ md: 5, lg: 7 }} minW={0}>

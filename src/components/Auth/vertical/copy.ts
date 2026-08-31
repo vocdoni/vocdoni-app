@@ -11,9 +11,13 @@ import type { VerticalCopyMap } from './types'
  *
  * Every vertical we can put a real customer quote behind gets an entry — `registry.test.ts` holds
  * that line, so a new testimonial for an unwritten sector fails the suite rather than shipping a
- * sector-specific quote under a generic headline. Verticals with no customer of their own keep
+ * sector-specific quote under the generic eyebrow. Verticals with no customer of their own keep
  * falling back to `generic` and render the ordinary login page copy, which never claims anything
  * sector-specific.
+ *
+ * Both fields here render. There is deliberately no headline: with a real quote on the panel, the
+ * quote is the headline, and the showcase's empty state is a single sentence that owns itself (see
+ * `AuthShowcase`) rather than a per-vertical one nothing can reach.
  *
  * Writing the copy is not the same as claiming the sector trusts us: the trust bar below still
  * degrades on its own. A vertical without enough logos of its own borrows the generic row *and* the
@@ -31,9 +35,6 @@ export const useVerticalCopy = (): VerticalCopyMap => {
   return {
     generic: {
       label: t('auth.verticals.generic.label', { defaultValue: 'Success stories' }),
-      headline: t('auth.verticals.generic.headline', {
-        defaultValue: 'Decisions your members can verify',
-      }),
       trustBar: t('auth.verticals.generic.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure assemblies, elections and consultations. Organizations across every sector already trust it:',
@@ -43,9 +44,6 @@ export const useVerticalCopy = (): VerticalCopyMap => {
       label: t('auth.verticals.professional_associations.label', {
         defaultValue: 'Professional associations',
       }),
-      headline: t('auth.verticals.professional_associations.headline', {
-        defaultValue: 'Every member votes, wherever they are',
-      }),
       trustBar: t('auth.verticals.professional_associations.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure AGMs, board elections and consultations for the members of your professional association. Many already trust it for exactly this:',
@@ -53,9 +51,6 @@ export const useVerticalCopy = (): VerticalCopyMap => {
     },
     associations: {
       label: t('auth.verticals.associations.label', { defaultValue: 'Associations' }),
-      headline: t('auth.verticals.associations.headline', {
-        defaultValue: 'Assemblies your members can trust',
-      }),
       trustBar: t('auth.verticals.associations.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure general assemblies, board elections and member consultations for your association. Many already trust it for exactly this:',
@@ -63,9 +58,6 @@ export const useVerticalCopy = (): VerticalCopyMap => {
     },
     ngos: {
       label: t('auth.verticals.ngos.label', { defaultValue: 'NGOs and non-profits' }),
-      headline: t('auth.verticals.ngos.headline', {
-        defaultValue: 'Governance your community can trust',
-      }),
       trustBar: t('auth.verticals.ngos.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure assemblies, board elections and member consultations for your non-profit. Organizations working for the common good already trust it for exactly this:',
@@ -73,9 +65,6 @@ export const useVerticalCopy = (): VerticalCopyMap => {
     },
     'public-administration': {
       label: t('auth.verticals.public_administration.label', { defaultValue: 'Public administration' }),
-      headline: t('auth.verticals.public_administration.headline', {
-        defaultValue: 'Participation your residents can verify',
-      }),
       trustBar: t('auth.verticals.public_administration.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure participatory budgets, citizen consultations and referendums for your municipality. Public administrations already trust it for exactly this:',
@@ -83,9 +72,6 @@ export const useVerticalCopy = (): VerticalCopyMap => {
     },
     'political-parties': {
       label: t('auth.verticals.political_parties.label', { defaultValue: 'Political parties' }),
-      headline: t('auth.verticals.political_parties.headline', {
-        defaultValue: 'Primaries your members can verify',
-      }),
       trustBar: t('auth.verticals.political_parties.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure primaries, leadership elections and internal consultations for your party. Parties already trust it for exactly this:',
@@ -93,9 +79,6 @@ export const useVerticalCopy = (): VerticalCopyMap => {
     },
     'trade-unions': {
       label: t('auth.verticals.trade_unions.label', { defaultValue: 'Trade unions' }),
-      headline: t('auth.verticals.trade_unions.headline', {
-        defaultValue: 'Ballots every worker can trust',
-      }),
       trustBar: t('auth.verticals.trade_unions.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure strike ballots, collective agreement votes and leadership elections for your union. Unions already trust it for exactly this:',
@@ -103,9 +86,6 @@ export const useVerticalCopy = (): VerticalCopyMap => {
     },
     'sports-clubs': {
       label: t('auth.verticals.sports_clubs.label', { defaultValue: 'Sports clubs' }),
-      headline: t('auth.verticals.sports_clubs.headline', {
-        defaultValue: 'Club decisions every member can join',
-      }),
       trustBar: t('auth.verticals.sports_clubs.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure club elections, general assemblies and member consultations for your club. Clubs and federations already trust it for exactly this:',

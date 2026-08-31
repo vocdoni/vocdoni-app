@@ -64,7 +64,7 @@ export const useVerticalSlug = (): VerticalSlug | null => {
  *   trust-bar sentence. Claiming "many professional associations trust it" under a row of city
  *   councils would be worse than saying nothing.
  *
- * The headline, label and accent are always vertical-specific: they cost nothing and never lie.
+ * The label and accent are always vertical-specific: they cost nothing and never lie.
  */
 export const useAuthVertical = (): ResolvedVertical => {
   const slug = useVerticalSlug()
