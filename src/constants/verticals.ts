@@ -10,6 +10,8 @@
  * derive an i18n key, asset path or class name from the raw param — only from the resolved slug.
  */
 
+import { withParam } from '~utils/url'
+
 /** Query param carrying the vertical across the auth screens. */
 export const AUTH_VERTICAL_PARAM = 'type'
 
@@ -102,13 +104,9 @@ export const resolveVerticalSlug = (raw?: string | null): VerticalSlug | null =>
 /**
  * Appends the vertical to an in-app path, preserving any params the path already carries.
  * Used to keep the branding when navigating between auth screens (signin -> signup -> recovery).
+ *
+ * Delegates to `withParam` so query building lives in one place: this used to carry its own copy of
+ * it, which is exactly how the two drift apart.
  */
-export const withVerticalParam = (path: string, slug?: VerticalSlug | null): string => {
-  if (!slug) return path
-
-  const [pathname, search = ''] = path.split('?')
-  const params = new URLSearchParams(search)
-  params.set(AUTH_VERTICAL_PARAM, slug)
-
-  return `${pathname}?${params.toString()}`
-}
+export const withVerticalParam = (path: string, slug?: VerticalSlug | null): string =>
+  slug ? withParam(path, AUTH_VERTICAL_PARAM, slug) : path

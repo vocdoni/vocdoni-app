@@ -58,6 +58,10 @@ describe('withVerticalParam', () => {
     expect(withVerticalParam('/account/signup', 'ngos')).toBe('/account/signup?type=ngos')
   })
 
+  it('keeps the fragment last', () => {
+    expect(withVerticalParam('/account/signin#form', 'ngos')).toBe('/account/signin?type=ngos#form')
+  })
+
   it('preserves existing params and overrides a stale vertical', () => {
     expect(withVerticalParam('/account/signup?email=a%40b.com', 'ngos')).toBe(
       '/account/signup?email=a%40b.com&type=ngos'

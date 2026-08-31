@@ -18,4 +18,17 @@ describe('withParam', () => {
   it('overwrites a parameter of the same name', () => {
     expect(withParam('/x?email=old%40b.com', 'email', 'new@b.com')).toBe('/x?email=new%40b.com')
   })
+
+  // A query written after `#` is part of the fragment, so the parameter would never be read back.
+  it('keeps the fragment last', () => {
+    expect(withParam('/x#top', 'email', 'a@b.com')).toBe('/x?email=a%40b.com#top')
+  })
+
+  it('keeps the fragment last when the path already has params', () => {
+    expect(withParam('/x?type=ngos#top', 'email', 'a@b.com')).toBe('/x?type=ngos&email=a%40b.com#top')
+  })
+
+  it('does not mistake a question mark inside the fragment for a query', () => {
+    expect(withParam('/x#a?b', 'email', 'a@b.com')).toBe('/x?email=a%40b.com#a?b')
+  })
 })
