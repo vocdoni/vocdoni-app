@@ -65,10 +65,35 @@
         "label": "Success stories",
         "trust_bar": "Vocdoni is the platform to run secure assemblies, elections and consultations. Organizations across every sector already trust it:"
       },
+      "ngos": {
+        "headline": "Governance your community can trust",
+        "label": "NGOs and non-profits",
+        "trust_bar": "Vocdoni is the platform to run secure assemblies, board elections and member consultations for your non-profit. Organizations working for the common good already trust it for exactly this:"
+      },
+      "political_parties": {
+        "headline": "Primaries your members can verify",
+        "label": "Political parties",
+        "trust_bar": "Vocdoni is the platform to run secure primaries, leadership elections and internal consultations for your party. Parties already trust it for exactly this:"
+      },
       "professional_associations": {
         "headline": "Every member votes, wherever they are",
         "label": "Professional associations",
         "trust_bar": "Vocdoni is the platform to run secure AGMs, board elections and consultations for the members of your professional association. Many already trust it for exactly this:"
+      },
+      "public_administration": {
+        "headline": "Participation your residents can verify",
+        "label": "Public administration",
+        "trust_bar": "Vocdoni is the platform to run secure participatory budgets, citizen consultations and referendums for your municipality. Public administrations already trust it for exactly this:"
+      },
+      "sports_clubs": {
+        "headline": "Club decisions every member can join",
+        "label": "Sports clubs",
+        "trust_bar": "Vocdoni is the platform to run secure club elections, general assemblies and member consultations for your club. Clubs and federations already trust it for exactly this:"
+      },
+      "trade_unions": {
+        "headline": "Ballots every worker can trust",
+        "label": "Trade unions",
+        "trust_bar": "Vocdoni is the platform to run secure strike ballots, collective agreement votes and leadership elections for your union. Unions already trust it for exactly this:"
       }
     }
   },

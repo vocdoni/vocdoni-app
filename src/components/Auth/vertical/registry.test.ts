@@ -78,6 +78,14 @@ describe('testimonials', () => {
     }
   })
 
+  // The showcase picks a quote by vertical but takes the headline from `copy.ts`. A sector-specific
+  // quote under the generic headline is the half-personalized state this pairing exists to prevent.
+  it('has copy for every vertical it can show a quote for', () => {
+    for (const vertical of new Set(testimonials.flatMap((t) => t.verticals))) {
+      expect(copy, `"${vertical}" has a testimonial but no copy`).toHaveProperty(vertical)
+    }
+  })
+
   it('keeps a testimonial available for every vertical we have registered', () => {
     for (const slug of Object.keys(VerticalRegistry)) {
       const pool = testimonials.filter((t) => t.verticals.includes(slug as never))

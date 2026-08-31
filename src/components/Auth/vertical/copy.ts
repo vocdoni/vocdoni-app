@@ -9,10 +9,17 @@ import type { VerticalCopyMap } from './types'
  * vertical slug silently works in development, where the default value is inline, and ships empty
  * in all 10 locales. Write the record out by hand; TypeScript is what keeps it complete.
  *
- * Only the verticals we have real customers for get an entry. Everything else falls back to
- * `generic` (see `useAuthVertical`) and renders the ordinary login page copy, which never claims
- * anything sector-specific. Naming a sector we have nothing to show for would be an empty promise,
- * so a vertical earns its copy at the same time it earns its logos.
+ * Every vertical we can put a real customer quote behind gets an entry — `registry.test.ts` holds
+ * that line, so a new testimonial for an unwritten sector fails the suite rather than shipping a
+ * sector-specific quote under a generic headline. Verticals with no customer of their own keep
+ * falling back to `generic` and render the ordinary login page copy, which never claims anything
+ * sector-specific.
+ *
+ * Writing the copy is not the same as claiming the sector trusts us: the trust bar below still
+ * degrades on its own. A vertical without enough logos of its own borrows the generic row *and* the
+ * generic sentence (see `useAuthVertical`), so the sector-specific sentence here only ever appears
+ * over that sector's own logos. It is written ahead of the logos on purpose — the day a third
+ * customer logo lands, the sentence is already translated in all 10 locales.
  *
  * The trust bar names the processes that sector actually runs — AGMs and board elections for
  * professional associations, participatory budgets and referendums for public administration — so it
@@ -52,6 +59,56 @@ export const useVerticalCopy = (): VerticalCopyMap => {
       trustBar: t('auth.verticals.associations.trust_bar', {
         defaultValue:
           'Vocdoni is the platform to run secure general assemblies, board elections and member consultations for your association. Many already trust it for exactly this:',
+      }),
+    },
+    ngos: {
+      label: t('auth.verticals.ngos.label', { defaultValue: 'NGOs and non-profits' }),
+      headline: t('auth.verticals.ngos.headline', {
+        defaultValue: 'Governance your community can trust',
+      }),
+      trustBar: t('auth.verticals.ngos.trust_bar', {
+        defaultValue:
+          'Vocdoni is the platform to run secure assemblies, board elections and member consultations for your non-profit. Organizations working for the common good already trust it for exactly this:',
+      }),
+    },
+    'public-administration': {
+      label: t('auth.verticals.public_administration.label', { defaultValue: 'Public administration' }),
+      headline: t('auth.verticals.public_administration.headline', {
+        defaultValue: 'Participation your residents can verify',
+      }),
+      trustBar: t('auth.verticals.public_administration.trust_bar', {
+        defaultValue:
+          'Vocdoni is the platform to run secure participatory budgets, citizen consultations and referendums for your municipality. Public administrations already trust it for exactly this:',
+      }),
+    },
+    'political-parties': {
+      label: t('auth.verticals.political_parties.label', { defaultValue: 'Political parties' }),
+      headline: t('auth.verticals.political_parties.headline', {
+        defaultValue: 'Primaries your members can verify',
+      }),
+      trustBar: t('auth.verticals.political_parties.trust_bar', {
+        defaultValue:
+          'Vocdoni is the platform to run secure primaries, leadership elections and internal consultations for your party. Parties already trust it for exactly this:',
+      }),
+    },
+    'trade-unions': {
+      label: t('auth.verticals.trade_unions.label', { defaultValue: 'Trade unions' }),
+      headline: t('auth.verticals.trade_unions.headline', {
+        defaultValue: 'Ballots every worker can trust',
+      }),
+      trustBar: t('auth.verticals.trade_unions.trust_bar', {
+        defaultValue:
+          'Vocdoni is the platform to run secure strike ballots, collective agreement votes and leadership elections for your union. Unions already trust it for exactly this:',
+      }),
+    },
+    'sports-clubs': {
+      label: t('auth.verticals.sports_clubs.label', { defaultValue: 'Sports clubs' }),
+      headline: t('auth.verticals.sports_clubs.headline', {
+        defaultValue: 'Club decisions every member can join',
+      }),
+      trustBar: t('auth.verticals.sports_clubs.trust_bar', {
+        defaultValue:
+          'Vocdoni is the platform to run secure club elections, general assemblies and member consultations for your club. Clubs and federations already trust it for exactly this:',
       }),
     },
   }

@@ -67,10 +67,35 @@
         "label": "Storie di successo",
         "trust_bar": "Vocdoni è la piattaforma per svolgere assemblee, elezioni e consultazioni sicure. Si affidano già a Vocdoni organizzazioni di ogni settore:"
       },
+      "ngos": {
+        "headline": "Una governance di cui la tua comunità si può fidare",
+        "label": "ONG e non profit",
+        "trust_bar": "Vocdoni è la piattaforma per svolgere assemblee, elezioni del consiglio direttivo e consultazioni dei soci sicure per la tua organizzazione non profit. Molte organizzazioni che operano per il bene comune si affidano già a Vocdoni proprio per questo:"
+      },
+      "political_parties": {
+        "headline": "Primarie che i tuoi iscritti possono verificare",
+        "label": "Partiti politici",
+        "trust_bar": "Vocdoni è la piattaforma per svolgere primarie, elezioni della dirigenza e consultazioni interne sicure per il tuo partito. Molti si affidano già a Vocdoni proprio per questo:"
+      },
       "professional_associations": {
         "headline": "Ogni iscritto vota, ovunque si trovi",
         "label": "Ordini professionali",
         "trust_bar": "Vocdoni è la piattaforma per svolgere assemblee generali, elezioni del consiglio e consultazioni sicure per gli iscritti al tuo ordine professionale. Molti si affidano già a Vocdoni proprio per questo:"
+      },
+      "public_administration": {
+        "headline": "Una partecipazione che i tuoi cittadini possono verificare",
+        "label": "Pubblica amministrazione",
+        "trust_bar": "Vocdoni è la piattaforma per svolgere bilanci partecipativi, consultazioni cittadine e referendum sicuri per il tuo comune. Molte pubbliche amministrazioni si affidano già a Vocdoni proprio per questo:"
+      },
+      "sports_clubs": {
+        "headline": "Decisioni del club a cui partecipa ogni socio",
+        "label": "Società sportive",
+        "trust_bar": "Vocdoni è la piattaforma per svolgere elezioni del consiglio direttivo, assemblee generali e consultazioni dei soci sicure per la tua società sportiva. Molte società e federazioni si affidano già a Vocdoni proprio per questo:"
+      },
+      "trade_unions": {
+        "headline": "Votazioni di cui ogni lavoratore si può fidare",
+        "label": "Sindacati",
+        "trust_bar": "Vocdoni è la piattaforma per svolgere votazioni di sciopero, votazioni sui contratti collettivi ed elezioni della dirigenza sicure per il tuo sindacato. Molti si affidano già a Vocdoni proprio per questo:"
       }
     }
   },
