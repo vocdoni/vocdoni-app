@@ -60,7 +60,8 @@ export const useVerticalSlug = (): VerticalSlug | null => {
  * Degrades independently for testimonials and logos, so a half-populated vertical never has to
  * misrepresent itself:
  * - testimonials: the vertical's own quotes, else the full mixed pool — always attributed to the
- *   real organization either way;
+ *   real organization either way, and the eyebrow degrades with them. A borrowed quote under a
+ *   sector eyebrow would read as that sector saying it;
  * - logos: the vertical's own set if it has one at all, however short, else the generic mix *and*
  *   the generic trust-bar sentence. Claiming "many professional associations trust it" under a row
  *   of city councils would be worse than saying nothing, and a short row of the sector's own names
@@ -89,6 +90,8 @@ export const useAuthVertical = (): ResolvedVertical => {
   const pool = slug ? testimonials.filter((testimonial) => testimonial.verticals.includes(slug)) : testimonials
   const candidates = pool.length ? pool : testimonials
   const testimonial = candidates.length ? candidates[Math.floor(seed * candidates.length)] : null
+  // Nothing of this sector's own left to quote, so the panel is showing someone else's words
+  const usesGenericTestimonial = Boolean(slug) && pool.length === 0
 
   const ownLogos = (content?.logos ?? []).filter((id) => !withheld.has(id))
   const usesGenericLogos = ownLogos.length < MinVerticalLogos
@@ -98,7 +101,11 @@ export const useAuthVertical = (): ResolvedVertical => {
     key: slug ?? GenericVertical,
     isGeneric: !slug,
     accent: content?.accent ?? GenericAccent,
-    copy: usesGenericLogos ? { ...copy, trustBar: copyMap[GenericVertical].trustBar } : copy,
+    copy: {
+      ...copy,
+      label: usesGenericTestimonial ? copyMap[GenericVertical].label : copy.label,
+      trustBar: usesGenericLogos ? copyMap[GenericVertical].trustBar : copy.trustBar,
+    },
     testimonial,
     logos,
     usesGenericLogos,

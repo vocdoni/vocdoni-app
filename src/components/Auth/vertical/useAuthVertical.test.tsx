@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { VerticalSlugs } from '~constants/verticals'
 import { renderHook, TestMemoryRouter } from '~src/test-utils'
 import { useVerticalCopy } from './copy'
 import { GenericLogos } from './logos'
@@ -70,6 +71,20 @@ describe('useAuthVertical', () => {
     // The eyebrow and accent fall back too — nothing on the panel names a sector we cannot back
     expect(result.current.copy.label).toBe(genericCopy.label)
     expect(result.current.accent).toBe(GenericAccent)
+  })
+
+  // The eyebrow sits directly above the quote, so it reads as attribution. Whenever the panel had
+  // nothing of this sector's own to quote and borrowed from the wider pool, the eyebrow has to let
+  // go with it — otherwise another sector's words appear under this one's name.
+  it('never labels a borrowed quote with a sector', () => {
+    for (const slug of VerticalSlugs) {
+      const { result } = renderAt(`/account/signin?type=${slug}`)
+      const borrowed = !result.current.testimonial?.verticals.includes(slug)
+
+      if (borrowed) {
+        expect(result.current.copy.label, `"${slug}" names a sector over a borrowed quote`).toBe(genericCopy.label)
+      }
+    }
   })
 
   // The counterpart: a vertical with customers of its own shows them, however few. Two names from
