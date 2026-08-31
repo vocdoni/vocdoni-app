@@ -20,10 +20,9 @@ import type { VerticalCopyMap } from './types'
  * `AuthShowcase`) rather than a per-vertical one nothing can reach.
  *
  * Writing the copy is not the same as claiming the sector trusts us: the trust bar below still
- * degrades on its own. A vertical without enough logos of its own borrows the generic row *and* the
+ * degrades on its own. A vertical with no customers of its own borrows the generic row *and* the
  * generic sentence (see `useAuthVertical`), so the sector-specific sentence here only ever appears
- * over that sector's own logos. It is written ahead of the logos on purpose — the day a third
- * customer logo lands, the sentence is already translated in all 10 locales.
+ * over that sector's own logos — however few of them there are.
  *
  * The trust bar names the processes that sector actually runs — AGMs and board elections for
  * professional associations, participatory budgets and referendums for public administration — so it

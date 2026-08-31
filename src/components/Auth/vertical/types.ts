@@ -53,9 +53,9 @@ export type ResolvedVertical = {
   testimonial: AuthTestimonial | null
   logos: TrustLogo[]
   /**
-   * True when the vertical has too few logos of its own and borrowed the generic set. The trust
-   * bar then uses the generic sentence — claiming a sector trusts us under someone else's logos
-   * would not be true.
+   * True when the vertical has no logos of its own and borrowed the generic set. The trust bar then
+   * uses the generic sentence — claiming a sector trusts us under someone else's logos would not be
+   * true.
    */
   usesGenericLogos: boolean
 }

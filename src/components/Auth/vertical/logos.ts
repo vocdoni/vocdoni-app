@@ -45,8 +45,13 @@ export const GenericLogos = [
   'icoes',
 ] as const
 
-/** Minimum logos a vertical needs to show its own set — two lonely logos read worse than none. */
-export const MinVerticalLogos = 3
+/**
+ * Minimum logos a vertical needs to show its own set. One is enough: a sector's real customer, named
+ * under a sentence about that sector, beats a longer row borrowed from everyone else. What keeps the
+ * row honest is that every logo in it belongs to the vertical (see `registry.test.ts`), not its
+ * length.
+ */
+export const MinVerticalLogos = 1
 
 export const getTrustLogos = (ids: readonly string[]): TrustLogo[] =>
   ids.map((id) => TrustLogos[id]).filter((logo): logo is TrustLogo => Boolean(logo))

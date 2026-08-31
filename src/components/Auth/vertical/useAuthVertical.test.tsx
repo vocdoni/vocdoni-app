@@ -57,13 +57,25 @@ describe('useAuthVertical', () => {
     expect(result.current.key).toBe('professional-associations')
   })
 
-  it('keeps a vertical with no logos of its own on the generic sentence', () => {
-    // trade-unions has quotes but is not in the registry yet
+  // cooperatives resolves but has no customer of its own, so it borrows both the quote pool and the
+  // logo row — and takes the generic sentence with them rather than claiming the sector trusts us.
+  it('keeps a vertical with no customers of its own on the generic row and sentence', () => {
+    const { result } = renderAt('/account/signin?type=cooperatives')
+
+    expect(result.current.key).toBe('cooperatives')
+    expect(result.current.usesGenericLogos).toBe(true)
+    expect(result.current.copy.trustBar).toContain('every sector')
+  })
+
+  // The counterpart: a vertical with customers of its own shows them, however few. Two names from
+  // the sector under a sentence about that sector beat ten borrowed from everyone else.
+  it('gives a vertical with customers of its own its logo row and sentence', () => {
     const { result } = renderAt('/account/signin?type=trade-unions')
 
     expect(result.current.key).toBe('trade-unions')
-    expect(result.current.usesGenericLogos).toBe(true)
-    expect(result.current.copy.trustBar).toContain('every sector')
+    expect(result.current.usesGenericLogos).toBe(false)
+    expect(result.current.logos.map((logo) => logo.id)).toEqual(['intersindical', 'ustec'])
+    expect(result.current.copy.trustBar).toContain('union')
     expect(result.current.testimonial?.verticals).toContain('trade-unions')
   })
 

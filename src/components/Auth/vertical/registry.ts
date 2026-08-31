@@ -7,10 +7,15 @@ export const GenericAccent = 'verticals.generic'
 /**
  * Per-vertical branding and logo set.
  *
- * A vertical only belongs here once we have real content for it — an entry with borrowed logos
- * would make the trust bar claim a sector trusts us on someone else's behalf. Missing verticals
- * still resolve; they render the generic experience (see `useAuthVertical`), so adding one later is
- * a single entry plus its copy in `copy.ts`.
+ * Every vertical with customers of its own belongs here, and its row holds only those customers —
+ * an entry with borrowed logos would make the trust bar claim a sector trusts us on someone else's
+ * behalf. That is the invariant `registry.test.ts` enforces: each logo must belong to an
+ * organization that vertical can actually point to. Verticals with no customer yet still resolve;
+ * they render the generic experience (see `useAuthVertical`), so adding one later is a single entry
+ * plus its copy in `copy.ts`.
+ *
+ * Row length follows from the customer list rather than a target: sports clubs currently have one.
+ * A short row of the sector's own names says something true; a padded one does not.
  *
  * `accent` is a base token in `colors.verticals.*`. The showcase now derives its surface from the
  * quoted organization's own logo (see `~theme/logoTones`), so the accent survives only as the
@@ -28,6 +33,23 @@ export const VerticalRegistry: Partial<Record<VerticalSlug, VerticalContent>> = 
   },
   'public-administration': {
     accent: GenericAccent,
-    logos: ['bellpuig', 'bisbal', 'bcn'],
+    // Barcelona is a customer without a quote of its own — see `UnquotedCustomers` in the test.
+    logos: ['bcn', 'bellpuig', 'bisbal'],
+  },
+  ngos: {
+    accent: GenericAccent,
+    logos: ['omnium', 'plataforma'],
+  },
+  'political-parties': {
+    accent: GenericAccent,
+    logos: ['erc', 'granollers'],
+  },
+  'trade-unions': {
+    accent: GenericAccent,
+    logos: ['intersindical', 'ustec'],
+  },
+  'sports-clubs': {
+    accent: GenericAccent,
+    logos: ['cec'],
   },
 }

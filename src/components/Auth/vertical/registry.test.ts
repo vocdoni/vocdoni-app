@@ -110,6 +110,26 @@ describe('vertical registry', () => {
     }
   })
 
+  /**
+   * Customers we show a logo for but hold no quote from. The trust bar is a customer list, not an
+   * endorsement, so a logo without a quote is fine — but nothing else can vouch for the pairing,
+   * so it is named here deliberately rather than inferred.
+   */
+  const UnquotedCustomers: Record<string, string> = { bcn: 'public-administration' }
+
+  // What keeps a row honest now that length is not the gate: a sector's row may only name that
+  // sector's own customers. Borrowing one would make the sentence above it claim a sector trusts us
+  // on someone else's behalf.
+  it('only shows a vertical logos that belong to it', () => {
+    for (const [slug, content] of Object.entries(VerticalRegistry)) {
+      const own = new Set(testimonials.filter((t) => t.verticals.includes(slug as never)).map((t) => t.logo))
+      for (const id of content.logos) {
+        const vouched = own.has(id) || UnquotedCustomers[id] === slug
+        expect(vouched, `"${id}" is in the "${slug}" row but nothing ties it to that vertical`).toBe(true)
+      }
+    }
+  })
+
   it('resolves every accent shade the showcase reads', () => {
     const accents = [GenericAccent, ...Object.values(VerticalRegistry).map((content) => content.accent)]
     for (const accent of accents) {

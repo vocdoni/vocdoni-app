@@ -60,9 +60,10 @@ export const useVerticalSlug = (): VerticalSlug | null => {
  * misrepresent itself:
  * - testimonials: the vertical's own quotes, else the full mixed pool — always attributed to the
  *   real organization either way;
- * - logos: the vertical's own set if it has enough of them, else the generic mix *and* the generic
- *   trust-bar sentence. Claiming "many professional associations trust it" under a row of city
- *   councils would be worse than saying nothing.
+ * - logos: the vertical's own set if it has one at all, however short, else the generic mix *and*
+ *   the generic trust-bar sentence. Claiming "many professional associations trust it" under a row
+ *   of city councils would be worse than saying nothing, and a short row of the sector's own names
+ *   says more than a long one borrowed from everyone else.
  *
  * The label and accent are always vertical-specific: they cost nothing and never lie.
  */
