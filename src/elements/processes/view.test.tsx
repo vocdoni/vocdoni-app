@@ -22,11 +22,6 @@ vi.mock('~components/Process/Archive/View', () => ({
   default: () => <div>Archive view content</div>,
 }))
 
-const routerFutureFlags = {
-  v7_startTransition: true,
-  v7_relativeSplatPath: true,
-} as const
-
 describe('Process view', () => {
   beforeEach(() => {
     resetReactProvidersMock()
@@ -55,7 +50,6 @@ describe('Process view', () => {
       ],
       {
         initialEntries: ['/processes/123'],
-        future: routerFutureFlags,
       }
     )
 
@@ -94,7 +88,6 @@ describe('Process view', () => {
       ],
       {
         initialEntries: [`/processes/${legacyId}`],
-        future: routerFutureFlags,
       }
     )
 
@@ -116,7 +109,6 @@ describe('Process view', () => {
       ],
       {
         initialEntries: ['/organization/0xabc'],
-        future: routerFutureFlags,
       }
     )
 

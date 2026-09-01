@@ -1,7 +1,7 @@
 import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { generatePath, Outlet, useLocation, useNavigate } from 'react-router'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
@@ -31,7 +31,7 @@ export const MemberbaseTabs = () => {
   const menuItems = [
     {
       label: t('memberbase.members.title', { defaultValue: 'Members' }),
-      route: generatePath(Routes.dashboard.memberbase.members, { page: 1 }),
+      route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
     },
     { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
   ]

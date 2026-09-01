@@ -1,7 +1,7 @@
 import { RoutedPaginationProvider } from '@vocdoni/react-components'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { MemberbaseTabsContext } from '~components/Memberbase'
 import MembersTable from '~components/Memberbase/Members'

@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router-dom'
+import { Navigate, Outlet, useLocation, useOutletContext } from 'react-router'
 import { useAccountHealthTools } from '~components/Account/use-account-health-tools'
 import { useAuth } from '~components/Auth/useAuth'
 import { Loading } from '~src/router/SuspenseLoader'

@@ -1,6 +1,6 @@
 import { Tabs } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, matchPath, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { generatePath, matchPath, Outlet, useLocation, useNavigate } from 'react-router'
 import { DashboardContents, Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
 
@@ -11,16 +11,16 @@ const OrganizationVotings = () => {
   const menuItems = [
     {
       label: t('all_processes', { defaultValue: 'All' }),
-      route: generatePath(Routes.dashboard.processes.all, { page: 1 }),
+      route: generatePath(Routes.dashboard.processes.all, { page: '1' }),
     },
     {
       label: t('ended_processes', { defaultValue: 'Ended' }),
       // Legacy status name kept in the route; the list query maps it onto the SAAS status union
-      route: generatePath(Routes.dashboard.processes.ended, { page: 1, status: 'RESULTS' }),
+      route: generatePath(Routes.dashboard.processes.ended, { page: '1', status: 'RESULTS' }),
     },
     {
       label: t('draft_processes', { defaultValue: 'Drafts' }),
-      route: generatePath(Routes.dashboard.processes.drafts, { page: 1 }),
+      route: generatePath(Routes.dashboard.processes.drafts, { page: '1' }),
     },
   ]
 

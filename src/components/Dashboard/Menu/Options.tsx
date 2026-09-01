@@ -1,6 +1,6 @@
 import { Box, Flex, List, Text } from '@chakra-ui/react'
 import { useContext } from 'react'
-import { matchPath, useLocation } from 'react-router-dom'
+import { matchPath, useLocation } from 'react-router'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { DashboardMenuItemButton } from './Item'
 import { DashboardMenuSection } from './menus'

@@ -1,6 +1,6 @@
 // Integrators private app - separate dashboard for integrator organizations
 import { lazy } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router'
 import OrganizationSupport from '~components/Organization/Dashboard/Support'
 import Error from '~elements/Error'
 import LayoutIntegrators from '~elements/LayoutIntegrators'

@@ -19,7 +19,7 @@ import {
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { LuInfo, LuMail, LuMessageSquare, LuUsers, LuVote } from 'react-icons/lu'
-import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
+import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
 import { TwoFACodePrice } from '~constants'

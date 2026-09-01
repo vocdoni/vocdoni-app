@@ -1,6 +1,6 @@
 import { VocdoniApiError, type VocdoniApiClient } from '@vocdoni/api-client'
 import { lazy } from 'react'
-import { Params } from 'react-router-dom'
+import { Params } from 'react-router'
 // These aren't lazy loaded since they are main layouts and related components
 import ErrorElement from '~elements/Error'
 import Layout from '~elements/Layout'

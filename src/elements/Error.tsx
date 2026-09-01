@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate, useRouteError } from 'react-router-dom'
+import { useLocation, useNavigate, useRouteError } from 'react-router'
 import { RiErrorWarningLine } from 'react-icons/ri'
 import { useAuth } from '~components/Auth/useAuth'
 import { isPublicPageNotFoundError } from '~src/ssr/public-pages'

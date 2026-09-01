@@ -1,5 +1,5 @@
 import { type ComponentPropsWithoutRef, forwardRef } from 'react'
-import { Link as ReactRouterLink, useInRouterContext } from 'react-router-dom'
+import { Link as ReactRouterLink, useInRouterContext } from 'react-router'
 
 type RouterAwareLinkProps = Omit<ComponentPropsWithoutRef<'a'>, 'href'> & {
   to: string

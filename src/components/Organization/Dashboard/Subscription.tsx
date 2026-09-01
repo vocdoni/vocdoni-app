@@ -2,7 +2,7 @@ import { AlertRoot as Alert, AlertDescription, Button, Flex, Link, Progress, Tex
 import { isBefore, isValid, parseISO } from 'date-fns'
 import { ReactNode, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
 import { ComparisonTable } from '~components/Pricing/ComparisonTable'

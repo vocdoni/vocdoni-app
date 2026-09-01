@@ -1,6 +1,6 @@
 import { Button, ButtonProps, HStack, Text } from '@chakra-ui/react'
 import { ReactNode } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { Routes } from '~src/router/routes'
 

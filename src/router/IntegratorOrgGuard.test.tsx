@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { render, screen } from '@testing-library/react'
-import { Route, Routes as RouterRoutes } from 'react-router-dom'
+import { Route, Routes as RouterRoutes } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { TestMemoryRouter } from '~src/test-utils'
 import { system } from '~theme/system'

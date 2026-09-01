@@ -1,7 +1,7 @@
 import { ElectionProvider, useOrganization } from '@vocdoni/react-components'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useEffect } from 'react'
-import { generatePath, useLoaderData, useNavigate } from 'react-router-dom'
+import { generatePath, useLoaderData, useNavigate } from 'react-router'
 import { ProcessView } from '~components/Process/Dashboard/ProcessView'
 import { Routes } from '~src/router/routes'
 import { sameAddress } from '~utils/address'
@@ -15,7 +15,7 @@ const DashboardProcessViewElement = () => {
   useEffect(() => {
     if (!organization || !election) return
     if (!sameAddress(organization.address, election.orgAddress)) {
-      return navigate(generatePath(Routes.dashboard.processes.all, { page: 1 }), { replace: true })
+      navigate(generatePath(Routes.dashboard.processes.all, { page: '1' }), { replace: true })
     }
   }, [organization, election, navigate])
 

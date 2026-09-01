@@ -25,7 +25,7 @@ import { hasResults, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
-import { generatePath, Link as RouterLink } from 'react-router-dom'
+import { generatePath, Link as RouterLink } from 'react-router'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'

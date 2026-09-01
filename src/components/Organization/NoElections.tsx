@@ -6,7 +6,7 @@ import { RouterAwareLink } from '~components/RouterAwareLink'
 import { EmptyState } from '~components/ui/EmptyState'
 import { Routes } from '~src/router/routes'
 import { sameAddress } from '~utils/address'
-import { generatePath } from 'react-router-dom'
+import { generatePath } from 'react-router'
 import empty from '/assets/illustrations/2.png'
 
 const NoElections = () => {

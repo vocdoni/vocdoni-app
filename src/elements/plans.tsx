@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react'
 import { useEffect, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import Clients from '~components/Home/Clients'
 import Faqs from '~components/Home/Faqs'
 import { ComparisonTable } from '~components/Pricing/ComparisonTable'

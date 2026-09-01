@@ -1,5 +1,5 @@
 import type { Organization } from '@vocdoni/api-types'
-import { useLoaderData } from 'react-router-dom'
+import { useLoaderData } from 'react-router'
 import ArchiveOrganizationView from '~components/Organization/Archive/View'
 import type { LegacyElectionsPage, LegacyOrganization } from '~src/legacy/vochain-archive'
 import PublicOrganizationPage from './PublicPage'
