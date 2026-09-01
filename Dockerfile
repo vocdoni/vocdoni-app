@@ -3,7 +3,7 @@ ARG VOCDONI_ENVIRONMENT
 ENV VOCDONI_ENVIRONMENT=$VOCDONI_ENVIRONMENT
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN corepack enable && corepack prepare pnpm@10.16.1 --activate
 RUN pnpm install --frozen-lockfile --ignore-scripts
 
