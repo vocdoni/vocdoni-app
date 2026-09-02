@@ -40,10 +40,17 @@
   "question_types": {
     "approval_title": "Votación aprobatoria",
     "approval_tooltip": "La votación aprobatoria permite votar tantas opciones como se desee. Gana la opción con más votos. Es una forma sencilla de mostrar apoyo a todas las alternativas que apruebes.",
+    "budget_title": "Votación por presupuesto {{ weighted }}",
+    "budget_tooltip": "La votación por presupuesto te permite repartir puntos entre las opciones. Ganan las opciones con más puntos.",
     "multichoice_desc": "Has seleccionado {{selected}} opciones de un máximo de {{maxcount}}",
     "multichoice_desc_abstain": " (o abstenerse)",
     "multichoice_title": "Votación de elección múltiple {{ weighted }}",
     "multichoice_tooltip": "La votación de elección múltiple permite seleccionar hasta {{maxcount}} opciones (definidas por la persona organizadora). Gana la opción con más votos.",
+    "quadratic_title": "Votación cuadrática {{ weighted }}",
+    "quadratic_tooltip": "La votación cuadrática te permite repartir créditos entre las opciones, donde cada voto adicional a una opción cuesta más. Ganan las opciones con más votos.",
+    "ranked_desc": "Has ordenado {{selected}} de {{maxcount}} opciones",
+    "ranked_title": "Votación por orden de preferencia {{ weighted }}",
+    "ranked_tooltip": "La votación por orden de preferencia te pide ordenar las {{maxcount}} opciones, de tu favorita a la que menos prefieras. Cada posición vale puntos y gana la opción con más puntos.",
     "singlechoice_title": "Votación de elección simple {{ weighted }}",
     "weighted_voting": "ponderada"
   },
@@ -82,7 +89,9 @@
   "validation": {
     "at_least_one": "Selecciona al menos una opción",
     "choices_count": "Selecciona {{ count }} opciones",
+    "choices_range": "Selecciona entre {{ min }} y {{ max }} opciones",
     "min_length": "Este campo debe tener al menos {{ min }} caracteres",
+    "rank_all": "Ordena las {{ count }} opciones",
     "required": "Este campo es obligatorio"
   },
   "vote": {
@@ -90,8 +99,10 @@
     "button": "Votar",
     "button_update": "Cambiar mi voto",
     "confirm": "Confirma tus opciones:",
+    "rank_position": "#{{ position }}",
     "sign": "Firmar primero",
     "voted_description": "Para verificar tu voto, puedes usar este identificador único: {{ id }}",
+    "voted_question_description": "El identificador de tu voto para «{{ title }}» es {{ id }}.",
     "voted_title": "¡Tu voto se ha emitido correctamente!",
     "weight": "Tu poder de voto es: "
   }

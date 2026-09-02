@@ -103,26 +103,26 @@ importers:
         specifier: ^0.1.4
         version: 0.1.4(@types/react@19.2.17)(react@19.2.7)
       '@vocdoni/api-client':
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^2.0.0
+        version: 2.0.0
       '@vocdoni/api-types':
-        specifier: ^1.2.0
-        version: 1.2.0
+        specifier: ^2.0.0
+        version: 2.0.0
       '@vocdoni/api-voting':
-        specifier: ^1.0.1
-        version: 1.0.1
-      '@vocdoni/ballot':
         specifier: ^1.1.0
         version: 1.1.0
+      '@vocdoni/ballot':
+        specifier: ^1.2.0
+        version: 1.2.0
       '@vocdoni/rainbowkit-wallets':
         specifier: ^1.0.0
         version: 1.0.0(d469549390ca0dc4315daa225c4ed1a4)
       '@vocdoni/react-components':
-        specifier: ^2.1.2
-        version: 2.1.2(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-types@1.2.0)(@vocdoni/ballot@1.1.0)(@vocdoni/react-providers@2.2.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@1.2.1)(@vocdoni/api-types@1.2.0)(@vocdoni/api-voting@1.0.1)(react@19.2.7))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-router-dom@7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
+        specifier: ^3.0.0
+        version: 3.0.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-types@2.0.0)(@vocdoni/ballot@1.2.0)(@vocdoni/react-providers@3.0.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.0.0)(@vocdoni/api-types@2.0.0)(@vocdoni/api-voting@1.1.0)(react@19.2.7))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-router-dom@7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@vocdoni/react-providers':
-        specifier: ^2.2.0
-        version: 2.2.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@1.2.1)(@vocdoni/api-types@1.2.0)(@vocdoni/api-voting@1.0.1)(react@19.2.7)
+        specifier: ^3.0.0
+        version: 3.0.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.0.0)(@vocdoni/api-types@2.0.0)(@vocdoni/api-voting@1.1.0)(react@19.2.7)
       '@wagmi/core':
         specifier: ^2.22.1
         version: 2.22.1(@tanstack/query-core@5.90.16)(@types/react@19.2.17)(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))
@@ -2673,20 +2673,20 @@ packages:
   '@vitest/utils@4.1.11':
     resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
 
-  '@vocdoni/api-client@1.2.1':
-    resolution: {integrity: sha512-cSbGp+OnV5DC2NDTVYn40BmCo3WBhA392/DPL20W4ZH4Qd8FnV6OiSBHtlr39flDNIXp157nIUIMIZ1Z6bJD2Q==}
+  '@vocdoni/api-client@2.0.0':
+    resolution: {integrity: sha512-EMLfLuQomXebBZ/xKbunzxluMY2rV+1ao3WLp5rRldDuR1NiUcs2F+F1P7utL9YEyyLBLxmXru8EpZcPptDA0w==}
 
-  '@vocdoni/api-types@1.2.0':
-    resolution: {integrity: sha512-QAeRYHIs89GaN+tp/TzC09m252ravYfyJwH9Mbfx1zp83Z0sF2FhmMOf2ivIydkrtO1cs8jMq7b3Yha4mrZa8g==}
+  '@vocdoni/api-types@2.0.0':
+    resolution: {integrity: sha512-7GuJsaw2hEgwiIgVOuhM4mMzGOgOu9DV9ePe62Tnz7pXsEPCVmOSf8aFru//UVcDcgv3KbOWvB/ngpT57DNczA==}
 
-  '@vocdoni/api-voting@1.0.1':
-    resolution: {integrity: sha512-0NhKQiPbwUGTNqisemGwkb+Jr6m+BRwviadpCi53RVzwRYCSz872TswWMWm/ut18qn+q8sxTSIL7F3a0963Nbg==}
+  '@vocdoni/api-voting@1.1.0':
+    resolution: {integrity: sha512-tQSn0d+q7mj8SNJo/ewdSDPcKvqUYSK/1eezdJUU9kjYqFZMpdDSO84iCGNGIhOKdmE4qUl2Y2fcBIowVetfGA==}
 
-  '@vocdoni/ballot@1.1.0':
-    resolution: {integrity: sha512-meP+XZ3OKOVfYuAKrx5PfNnFie65dZckQFL/j9oJgt3NA0U+zfg9WIAGohPlQY1xKjBSCjhzzpjT4pcsYSIIgA==}
+  '@vocdoni/ballot@1.2.0':
+    resolution: {integrity: sha512-Kokvup9XN8wvn3jjoLqTvpbFbAqk0PP9O9/iM/9EGq1IvfLN3GlgbzxwY4oAepp20DkUORrbp9OBc2gSohAnvw==}
 
-  '@vocdoni/proto@1.15.13':
-    resolution: {integrity: sha512-kuTnQd2Nr6hooAv6eApQNqMDZt8JA3QiM1F42X4pW2hPe7uha7HgyMk2zaBTvZVX7E3kd5E9JbGMq51QmFWACw==}
+  '@vocdoni/proto@1.15.14':
+    resolution: {integrity: sha512-Tz+Bk+cOYgo7ofjUEemlAFwhVa7mg/T+4cJyh0ulqGJJLGGLuxUPbzx2BkXPySno7S6CNZGizefC5YYE/UHeLw==}
 
   '@vocdoni/rainbowkit-wallets@1.0.0':
     resolution: {integrity: sha512-xAiKeOhI1SpzhrmyTGVPX+Zj7/ImHbuwY0kg+L8FTDMbaqem/bYk3/h4ujvxaI7hNne+TXcT6pbAU281ssj1Kg==}
@@ -2699,13 +2699,13 @@ packages:
       viem: ^2.37.1
       wagmi: ^2.16.9
 
-  '@vocdoni/react-components@2.1.2':
-    resolution: {integrity: sha512-U6D4Ne29d+L6jjmok2qHyubp/isYCr0now4jkFpmQxTrcFp1kj5K2uubu+iGzjydJ+Or9g6SeQ355O1HezlTvw==}
+  '@vocdoni/react-components@3.0.0':
+    resolution: {integrity: sha512-hCqrz6dY18Ot/uqPqp+2nReHnmYjDKoWLQ5wekA9r5Sjn6xGjn4mv2aCUgLMJV05yOhVcAvcOCE2+O0AVpplfQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
-      '@vocdoni/api-types': ^1.2.0
+      '@vocdoni/api-types': ^2.0.0
       '@vocdoni/ballot': '>=0.1.2 <2'
-      '@vocdoni/react-providers': ^2.2.0
+      '@vocdoni/react-providers': ^3.0.0
       date-fns: ^4.1.0
       i18next: ^25.0.0
       react: '>=18.0.0'
@@ -2715,13 +2715,13 @@ packages:
       react-router-dom:
         optional: true
 
-  '@vocdoni/react-providers@2.2.0':
-    resolution: {integrity: sha512-LJlQpgCjRZMXt3at5ZkDdojtOhvD13BEe+OIXhwAriOAAGNqBRH7FtUpkePvP6+eycbRiVuvIY8/uPTvBQN9VQ==}
+  '@vocdoni/react-providers@3.0.0':
+    resolution: {integrity: sha512-4jPXi6UZ6nyADhO6XM6+pgftgKRLbyhR/Dic+I+f2Hwm0Oev0+QHHGWiK0Jja4P9t8i2qDUGJS7TM8k6HOLWCg==}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
-      '@vocdoni/api-client': ^1.2.1
-      '@vocdoni/api-types': ^1.2.0
-      '@vocdoni/api-voting': '>=0.1.2 <2'
+      '@vocdoni/api-client': ^2.0.0
+      '@vocdoni/api-types': ^2.0.0
+      '@vocdoni/api-voting': '>=1.1.0 <2'
       react: '>=18.0.0'
 
   '@wagmi/connectors@6.2.0':
@@ -9975,27 +9975,27 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.1
 
-  '@vocdoni/api-client@1.2.1':
+  '@vocdoni/api-client@2.0.0':
     dependencies:
-      '@vocdoni/api-types': 1.2.0
-      '@vocdoni/ballot': 1.1.0
+      '@vocdoni/api-types': 2.0.0
+      '@vocdoni/ballot': 1.2.0
       up-fetch: 2.6.0
 
-  '@vocdoni/api-types@1.2.0': {}
+  '@vocdoni/api-types@2.0.0': {}
 
-  '@vocdoni/api-voting@1.0.1':
+  '@vocdoni/api-voting@1.1.0':
     dependencies:
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
-      '@vocdoni/api-types': 1.2.0
-      '@vocdoni/proto': 1.15.13
+      '@vocdoni/api-types': 2.0.0
+      '@vocdoni/proto': 1.15.14
       tweetnacl: 1.0.3
 
-  '@vocdoni/ballot@1.1.0':
+  '@vocdoni/ballot@1.2.0':
     dependencies:
-      '@vocdoni/api-types': 1.2.0
+      '@vocdoni/api-types': 2.0.0
 
-  '@vocdoni/proto@1.15.13':
+  '@vocdoni/proto@1.15.14':
     dependencies:
       long: 5.3.2
       protobufjs: 7.6.6
@@ -10012,12 +10012,12 @@ snapshots:
       viem: 2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5)
       wagmi: 2.19.5(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.7))(@types/react@19.2.17)(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@19.2.7)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5)
 
-  '@vocdoni/react-components@2.1.2(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-types@1.2.0)(@vocdoni/ballot@1.1.0)(@vocdoni/react-providers@2.2.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@1.2.1)(@vocdoni/api-types@1.2.0)(@vocdoni/api-voting@1.0.1)(react@19.2.7))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-router-dom@7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
+  '@vocdoni/react-components@3.0.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-types@2.0.0)(@vocdoni/ballot@1.2.0)(@vocdoni/react-providers@3.0.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.0.0)(@vocdoni/api-types@2.0.0)(@vocdoni/api-voting@1.1.0)(react@19.2.7))(date-fns@4.1.0)(i18next@25.8.13(typescript@5.9.3))(react-i18next@16.5.4(i18next@25.8.13(typescript@5.9.3))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(react-router-dom@7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@tanstack/react-query': 5.90.16(react@19.2.7)
-      '@vocdoni/api-types': 1.2.0
-      '@vocdoni/ballot': 1.1.0
-      '@vocdoni/react-providers': 2.2.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@1.2.1)(@vocdoni/api-types@1.2.0)(@vocdoni/api-voting@1.0.1)(react@19.2.7)
+      '@vocdoni/api-types': 2.0.0
+      '@vocdoni/ballot': 1.2.0
+      '@vocdoni/react-providers': 3.0.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.0.0)(@vocdoni/api-types@2.0.0)(@vocdoni/api-voting@1.1.0)(react@19.2.7)
       date-fns: 4.1.0
       i18next: 25.8.13(typescript@5.9.3)
       latinize: 0.5.0
@@ -10027,12 +10027,12 @@ snapshots:
     optionalDependencies:
       react-router-dom: 7.18.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
 
-  '@vocdoni/react-providers@2.2.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@1.2.1)(@vocdoni/api-types@1.2.0)(@vocdoni/api-voting@1.0.1)(react@19.2.7)':
+  '@vocdoni/react-providers@3.0.0(@tanstack/react-query@5.90.16(react@19.2.7))(@vocdoni/api-client@2.0.0)(@vocdoni/api-types@2.0.0)(@vocdoni/api-voting@1.1.0)(react@19.2.7)':
     dependencies:
       '@tanstack/react-query': 5.90.16(react@19.2.7)
-      '@vocdoni/api-client': 1.2.1
-      '@vocdoni/api-types': 1.2.0
-      '@vocdoni/api-voting': 1.0.1
+      '@vocdoni/api-client': 2.0.0
+      '@vocdoni/api-types': 2.0.0
+      '@vocdoni/api-voting': 1.1.0
       react: 19.2.7
 
   '@wagmi/connectors@6.2.0(@tanstack/react-query@5.90.16(react@19.2.7))(@types/react@19.2.17)(@wagmi/core@2.22.1(@tanstack/query-core@5.90.16)(@types/react@19.2.17)(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5)))(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.4.0(react@19.2.7))(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(wagmi@2.19.5(@tanstack/query-core@5.90.16)(@tanstack/react-query@5.90.16(react@19.2.7))(@types/react@19.2.17)(bufferutil@4.1.0)(encoding@0.1.13)(fastestsmallesttextencoderdecoder@1.0.22)(react@19.2.7)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.43.5(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.5))(zod@4.3.5))(zod@4.3.5)':

@@ -40,10 +40,17 @@
   "question_types": {
     "approval_title": "Onarpen-bozketa",
     "approval_tooltip": "Onarpen-bozketak nahi adina aukera bozkatzeko aukera ematen dizu. Boto gehien jasotzen dituena izango da garaile. Onartzen dituzun aukera guztiei zure laguntza erakusteko modu erraza da.",
+    "budget_title": "Aurrekontu-bozketa {{ weighted }}",
+    "budget_tooltip": "Aurrekontu-bozketak puntuak aukeren artean banatzeko aukera ematen dizu. Puntu gehien dituzten aukerak izango dira garaile.",
     "multichoice_desc": "{{selected}} aukera hautatu dituzu gehienez {{maxcount}} aukeratan",
     "multichoice_desc_abstain": " (edo abstentzioa)",
     "multichoice_title": "Aukera anitza {{ weighted }}",
     "multichoice_tooltip": "Aukera anitzeko bozketak {{maxcount}} aukera bozkatzeko aukera ematen dizu (antolatzaileak ezarrita). Boto gehien jasotzen dituena izango da garaile.",
+    "quadratic_title": "Bozketa koadratikoa {{ weighted }}",
+    "quadratic_tooltip": "Bozketa koadratikoak kredituak aukeren artean banatzeko aukera ematen dizu; aukera bati emandako boto gehigarri bakoitzak kostu handiagoa du. Boto gehien dituzten aukerak izango dira garaile.",
+    "ranked_desc": "{{maxcount}} aukeretatik {{selected}} ordenatu dituzu",
+    "ranked_title": "Lehentasun-bozketa {{ weighted }}",
+    "ranked_tooltip": "Lehentasun-bozketak {{maxcount}} aukera guztiak ordenatzeko eskatzen dizu, gogokoenetik gutxien gustatzen zaizunera. Posizio bakoitzak puntuak balio ditu, eta puntu gehien dituen aukera izango da garaile.",
     "singlechoice_title": "Aukera bakarra {{ weighted }}",
     "weighted_voting": "haztatua"
   },
@@ -82,7 +89,9 @@
   "validation": {
     "at_least_one": "Hautatu gutxienez aukera bat",
     "choices_count": "Hautatu {{ count }} aukera",
+    "choices_range": "Hautatu {{ min }} eta {{ max }} aukera artean",
     "min_length": "Eremu honek gutxienez {{ min }} karaktere izan behar ditu",
+    "rank_all": "Ordenatu {{ count }} aukera guztiak",
     "required": "Eremu hau bete beharrekoa da"
   },
   "vote": {
@@ -90,8 +99,10 @@
     "button": "Bozkatu",
     "button_update": "Aldatu nire botoa",
     "confirm": "Berretsi zure aukerak:",
+    "rank_position": "#{{ position }}",
     "sign": "Sinatu lehenik",
     "voted_description": "Zure botoa egiaztatzeko, identifikatzaile bakar hau erabil dezakezu: {{ id }}",
+    "voted_question_description": "«{{ title }}» galderarako zure botoaren identifikatzailea {{ id }} da.",
     "voted_title": "Zure botoa behar bezala erregistratu da!",
     "weight": "Zure botoaren pisua: "
   }

@@ -1394,6 +1394,7 @@
       "budget": "Budget allocation",
       "multiple_choice": "Multiple choice",
       "quadratic": "Quadratic",
+      "ranked": "Ranked voting",
       "single_choice": "Single choice",
       "unknown": "Unknown",
       "weighted_format": "Weighted {{ base, lowercase }}"

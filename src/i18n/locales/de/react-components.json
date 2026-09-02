@@ -40,10 +40,17 @@
   "question_types": {
     "approval_title": "Zustimmungswahl",
     "approval_tooltip": "Bei der Zustimmungswahl können Sie für so viele Optionen stimmen, wie Sie möchten. Die Option mit den meisten Stimmen gewinnt. Eine einfache Möglichkeit, alle von Ihnen befürworteten Optionen zu unterstützen.",
+    "budget_title": "Budget-Abstimmung {{ weighted }}",
+    "budget_tooltip": "Bei der Budget-Abstimmung können Sie Punkte auf die Optionen verteilen. Die Optionen mit den meisten Punkten gewinnen.",
     "multichoice_desc": "Sie haben {{selected}} Optionen aus maximal {{maxcount}} ausgewählt",
     "multichoice_desc_abstain": " (oder enthalten)",
     "multichoice_title": "Mehrfachauswahl {{ weighted }}",
     "multichoice_tooltip": "Bei der Mehrfachauswahl können Sie für bis zu {{maxcount}} Optionen stimmen (festgelegt vom Veranstalter). Die Option mit den meisten Stimmen gewinnt.",
+    "quadratic_title": "Quadratische Abstimmung {{ weighted }}",
+    "quadratic_tooltip": "Bei der quadratischen Abstimmung können Sie Guthaben auf die Optionen verteilen, wobei jede zusätzliche Stimme für eine Option mehr kostet. Die Optionen mit den meisten Stimmen gewinnen.",
+    "ranked_desc": "Sie haben {{selected}} von {{maxcount}} Optionen eingeordnet",
+    "ranked_title": "Rangfolge-Abstimmung {{ weighted }}",
+    "ranked_tooltip": "Bei der Rangfolge-Abstimmung ordnen Sie alle {{maxcount}} Optionen, von Ihrem Favoriten bis zum am wenigsten bevorzugten. Jede Position ist Punkte wert, und die Option mit den meisten Punkten gewinnt.",
     "singlechoice_title": "Einfachauswahl {{ weighted }}",
     "weighted_voting": "gewichtet"
   },
@@ -82,7 +89,9 @@
   "validation": {
     "at_least_one": "Wählen Sie mindestens eine Option aus",
     "choices_count": "Wählen Sie {{ count }} Optionen aus",
+    "choices_range": "Wählen Sie zwischen {{ min }} und {{ max }} Optionen aus",
     "min_length": "Dieses Feld muss mindestens {{ min }} Zeichen lang sein",
+    "rank_all": "Ordnen Sie alle {{ count }} Optionen ein",
     "required": "Dieses Feld ist erforderlich"
   },
   "vote": {
@@ -90,8 +99,10 @@
     "button": "Abstimmen",
     "button_update": "Meine Stimme ändern",
     "confirm": "Bitte bestätigen Sie Ihre Auswahl:",
+    "rank_position": "#{{ position }}",
     "sign": "Zuerst unterzeichnen",
     "voted_description": "Zur Überprüfung Ihrer Stimme können Sie diese eindeutige Kennung verwenden: {{ id }}",
+    "voted_question_description": "Die Kennung Ihrer Stimme für „{{ title }}“ lautet {{ id }}.",
     "voted_title": "Ihre Stimme wurde erfolgreich abgegeben!",
     "weight": "Ihr Stimmgewicht beträgt: "
   }

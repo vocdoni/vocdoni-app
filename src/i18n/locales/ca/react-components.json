@@ -40,10 +40,17 @@
   "question_types": {
     "approval_title": "Vot d'aprovació",
     "approval_tooltip": "El vot d'aprovació et permet votar tantes opcions com vulguis. Guanya la que rep més vots. És una manera senzilla de mostrar suport a totes les opcions que aproves.",
+    "budget_title": "Vot per pressupost {{ weighted }}",
+    "budget_tooltip": "El vot per pressupost et permet repartir punts entre les opcions. Guanyen les opcions amb més punts.",
     "multichoice_desc": "Has seleccionat {{selected}} opcions d'un màxim de {{maxcount}}",
     "multichoice_desc_abstain": " (o abstenir-se)",
     "multichoice_title": "Vot multiresposta {{ weighted }}",
     "multichoice_tooltip": "El vot multiresposta et permet votar fins a {{maxcount}} opcions (definit per l'organitzador de la votació). Guanya la que rep més vots.",
+    "quadratic_title": "Vot quadràtic {{ weighted }}",
+    "quadratic_tooltip": "El vot quadràtic et permet repartir crèdits entre les opcions, on cada vot addicional a una opció costa més. Guanyen les opcions amb més vots.",
+    "ranked_desc": "Has ordenat {{selected}} de {{maxcount}} opcions",
+    "ranked_title": "Vot per ordre de preferència {{ weighted }}",
+    "ranked_tooltip": "El vot per ordre de preferència et demana ordenar totes les {{maxcount}} opcions, de la teva preferida a la que menys. Cada posició val punts i guanya l'opció amb més punts.",
     "singlechoice_title": "Vot d'elecció simple {{ weighted }}",
     "weighted_voting": "ponderat"
   },
@@ -82,7 +89,9 @@
   "validation": {
     "at_least_one": "Selecciona com a mínim una opció",
     "choices_count": "Selecciona {{ count }} opcions",
+    "choices_range": "Selecciona entre {{ min }} i {{ max }} opcions",
     "min_length": "Aquest camp ha de tenir com a mínim {{ min }} caràcters",
+    "rank_all": "Ordena les {{ count }} opcions",
     "required": "Aquest camp és obligatori"
   },
   "vote": {
@@ -90,8 +99,10 @@
     "button": "Vota",
     "button_update": "Canviar el meu vot",
     "confirm": "Confirma les teves seleccions:",
+    "rank_position": "#{{ position }}",
     "sign": "Signa abans de votar",
     "voted_description": "Per verificar el teu vot, pots utilitzar aquesta identificació única: {{ id }}",
+    "voted_question_description": "L'identificador del teu vot per a «{{ title }}» és {{ id }}.",
     "voted_title": "El teu vot s'ha registrat amb èxit!",
     "weight": "El teu poder de vot és: "
   }

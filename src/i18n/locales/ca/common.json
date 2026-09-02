@@ -1418,6 +1418,7 @@
       "budget": "Assignació pressupostària",
       "multiple_choice": "Elecció múltiple",
       "quadratic": "Quadràtic",
+      "ranked": "Ordre de preferència",
       "single_choice": "Elecció simple",
       "unknown": "Desconegut",
       "weighted_format": "{{base}} amb vot ponderat"
