@@ -154,13 +154,14 @@ describe('vertical registry', () => {
     }
   })
 
-  it('resolves every accent shade the showcase reads', () => {
+  // The showcase reads exactly one accent shade — the `.900` surface it falls back to when a logo
+  // has no `LogoTones` entry (see `AuthShowcase`). Guarding shades nothing reads would let a
+  // missing `.900` ship a panel with no colour behind white type.
+  it('resolves the accent surface the showcase falls back to', () => {
     const accents = [GenericAccent, ...Object.values(VerticalRegistry).map((content) => content.accent)]
     for (const accent of accents) {
-      for (const shade of [200, 300, 500, 700]) {
-        const token = `colors.${accent}.${shade}`
-        expect(system.tokens.getByName(token), `dangling token: ${token}`).toBeDefined()
-      }
+      const token = `colors.${accent}.900`
+      expect(system.tokens.getByName(token), `dangling token: ${token}`).toBeDefined()
     }
   })
 })
