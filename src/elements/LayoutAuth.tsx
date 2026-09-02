@@ -47,9 +47,10 @@ const LayoutAuth = () => {
           minH={{ md: '34rem', lg: '38rem' }}
           _light={{ border: '1px solid', borderColor: 'auth.card.border' }}
           borderRadius='sm'
-          // Clips the showcase panel to the rounded corners, and keeps a long quote or a long email
-          // from stretching either column past its share of the row.
-          overflow='hidden'
+          // No `overflow='hidden'` here: it would also clip the form column's dropdown menus — the
+          // create-organization screen renders chakra-react-select menus without a portal, and a
+          // clipped ancestor cuts them off at the card edge. The showcase panel rounds and clips
+          // its own corners instead (see `AuthShowcase`).
           bgColor='auth.card.bg'
         >
           <Flex
