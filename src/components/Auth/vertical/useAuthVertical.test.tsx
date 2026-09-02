@@ -149,4 +149,24 @@ describe('useAuthVertical', () => {
     expect(result.current.vertical.key).toBe('professional-associations')
   })
 
+  // The seed picks over the language-independent list, so a locale switch that withholds *other*
+  // quotes must not re-roll the one on screen.
+  it('keeps the quote steady across a language switch when the pick survives it', async () => {
+    // The test instance only carries `en`; `resolvedLanguage` only moves to a language with at least
+    // one translation, and without it the withheld filter would never engage.
+    i18n.addResourceBundle('es', 'common', { language_probe: 'es' })
+    // 0.7 lands past the two es-withheld quotes (indexes 7 and 8), on one no language withholds —
+    // the case that must hold steady. Indexing a withheld-filtered list instead would shift this
+    // pick on a switch to Spanish, because the list shrinks by two below it.
+    vi.spyOn(Math, 'random').mockReturnValue(0.7)
+    const { result } = renderAt('/account/signin')
+    const before = result.current.testimonial?.logo
+    expect(before).toBeDefined()
+
+    await act(async () => {
+      await i18n.changeLanguage('es')
+    })
+
+    expect(result.current.testimonial?.logo).toBe(before)
+  })
 })

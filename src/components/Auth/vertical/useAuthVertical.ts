@@ -7,7 +7,7 @@ import { useVerticalCopy } from './copy'
 import { GenericLogos, getTrustLogos, getWithheldLogos, MinVerticalLogos } from './logos'
 import { GenericAccent, VerticalRegistry } from './registry'
 import { useAuthTestimonials } from './testimonials'
-import type { ResolvedVertical } from './types'
+import type { AuthTestimonial, ResolvedVertical } from './types'
 
 const StorageKey = SessionStorageKeys.AuthVertical
 
@@ -81,7 +81,7 @@ export const useAuthVertical = (): ResolvedVertical => {
   const { i18n } = useTranslation()
   const slug = useVerticalSlug()
   const withheld = getWithheldLogos(i18n.resolvedLanguage ?? i18n.language)
-  const testimonials = useAuthTestimonials().filter((testimonial) => !withheld.has(testimonial.logo))
+  const testimonials = useAuthTestimonials()
   const copyMap = useVerticalCopy()
 
   // A stable seed rather than a stable testimonial: the pool is rebuilt on every language change,
@@ -91,11 +91,24 @@ export const useAuthVertical = (): ResolvedVertical => {
   const content = slug ? VerticalRegistry[slug] : undefined
   const copy = (slug && copyMap[slug]) || copyMap[GenericVertical]
 
+  // Seeded over the language-independent list, then walked forward past withheld entries. Filtering
+  // the withheld quotes out *first* would shrink the list on a locale switch and re-index every
+  // quote — the mid-flow re-roll the stable seed exists to prevent. This way a language change only
+  // moves the picks that landed on a quote that language cannot show, and moves them predictably to
+  // the next one that it can.
+  const pickShown = (candidates: readonly AuthTestimonial[]): AuthTestimonial | null => {
+    for (let step = 0; step < candidates.length; step++) {
+      const candidate = candidates[(Math.floor(seed * candidates.length) + step) % candidates.length]
+      if (!withheld.has(candidate.logo)) return candidate
+    }
+    return null
+  }
+
   const pool = slug ? testimonials.filter((testimonial) => testimonial.verticals.includes(slug)) : testimonials
-  const candidates = pool.length ? pool : testimonials
-  const testimonial = candidates.length ? candidates[Math.floor(seed * candidates.length)] : null
+  const ownTestimonial = pickShown(pool)
+  const testimonial = ownTestimonial ?? pickShown(testimonials)
   // Nothing of this sector's own left to quote, so the panel is showing someone else's words
-  const usesGenericTestimonial = Boolean(slug) && pool.length === 0
+  const usesGenericTestimonial = Boolean(slug) && !ownTestimonial
 
   const ownLogos = (content?.logos ?? []).filter((id) => !withheld.has(id))
   const usesGenericLogos = ownLogos.length < MinVerticalLogos
