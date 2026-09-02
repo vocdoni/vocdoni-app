@@ -64,6 +64,13 @@ const eventWhere = (name, key, value, label, operator = 'exact') =>
     properties: [{ key, value, operator, type: 'event' }],
   })
 
+// Shared first step of the cross-site funnels. Anchored on `$host` (always
+// present) rather than the `site` super property because `site: 'web'` only
+// exists once the marketing repo ships its registration — migrate this to
+// `site = 'web'` at that point, and it will also stop under-counting if the
+// website ever serves under www. or a custom domain.
+const webPageview = eventWhere('$pageview', '$host', 'vocdoni.io', 'Pageview on vocdoni.io')
+
 /**
  * `aggregation_group_type_index` makes a funnel count organizations instead of
  * people — the right unit for a B2B product, where several colleagues share one
@@ -234,7 +241,7 @@ const buildPlan = (orgIndex) => {
           description:
             "The headline number: what share of website traffic ends in a published election. Broken down by the campaign that produced the first visit — because the anonymous id is created on the website, `$initial_utm_source` records the website's first touch, not the app's landing URL.",
           steps: [
-            eventWhere('$pageview', '$host', 'vocdoni.io', 'Pageview on vocdoni.io'),
+            webPageview,
             eventWhere('cta_clicked', 'target', 'app', 'CTA into the app'),
             'account_signed_up',
             'organization_created',
@@ -279,7 +286,7 @@ const buildPlan = (orgIndex) => {
           description:
             'The money question, end to end, attributed to the campaign that started the journey rather than to the app URL the visitor happened to land on.',
           steps: [
-            eventWhere('$pageview', '$host', 'vocdoni.io', 'Pageview on vocdoni.io'),
+            webPageview,
             'account_signed_up',
             'process_created',
             'paywall_viewed',
@@ -295,7 +302,7 @@ const buildPlan = (orgIndex) => {
           description:
             'Eleven locales are maintained under a strict translation guardrail. This is what that investment returns per language; a locale converting far below its traffic share is usually a copy problem, not a demand problem.',
           steps: [
-            eventWhere('$pageview', '$host', 'vocdoni.io', 'Pageview on vocdoni.io'),
+            webPageview,
             'cta_clicked',
             'account_signed_up',
             'organization_created',
