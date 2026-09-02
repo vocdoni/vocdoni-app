@@ -16,9 +16,11 @@ export type AuthOutletContextType = {
  * Chrome shared by every auth screen (sign in, sign up, verify, recovery, password reset, create
  * organization).
  *
- * The form column is deliberately untouched by the vertical: only the showcase panel beside it and
- * the trust bar below it react to `?type=` (see `~components/Auth/vertical`), so the auth flows
- * rendered into the outlet know nothing about verticals.
+ * What the vertical changes is the chrome, not the flows: only the showcase panel beside the form
+ * column and the trust bar below it render differently per `?type=` (see `~components/Auth/vertical`).
+ * The route elements in the outlet do read the slug — but solely to keep the param on their outbound
+ * links; nothing they say or render varies with it, and the form components they wrap just receive
+ * route strings.
  */
 const LayoutAuth = () => {
   const [title, setTitle] = useState<string | null>(null)
