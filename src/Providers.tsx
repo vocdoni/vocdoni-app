@@ -27,11 +27,11 @@ import { uiScaffoldComponents } from '~theme/react-components'
 import { AppEnvProvider, normalizeLanguages, useAppEnv } from './app-env'
 import { buildAppEnv } from './app-env-build'
 import { configureApiBaseUrl } from './components/Auth/api'
-import { wagmiConfig } from './constants/rainbow'
+import { wagmiConfig } from './constants/wagmi'
 import { createPageI18nInstance, getBaseI18n } from './i18n'
 import { datesLocale } from './i18n/locales'
 import { RoutesProvider } from './router/Router'
-import { RainbowKitTheme, Theme } from './theme/Theme'
+import { Theme } from './theme/Theme'
 
 export const createAppQueryClient = () =>
   new QueryClient({
@@ -205,27 +205,25 @@ const AppRuntimeProviders = ({ children }: PropsWithChildren) => {
   }, [locale])
 
   return (
-    <RainbowKitTheme>
-      <ComponentsProvider components={uiScaffoldComponents}>
-        {/* App-owned components (ActionButtons, ConfirmActionModal) call useConfirm
-            outside any react-components auto-mounted provider, so one is needed for
-            the whole tree. It must sit inside ComponentsProvider because the confirm
-            modal renders through the themed component slots. */}
-        <ConfirmProvider>
-          <ToastProvider>
-            <ConnectionToastProvider>
-              <ApiClientProvider>
-                <SaasProviders>
-                  <AnalyticsProvider>
-                    <CookieConsent />
-                    {children}
-                  </AnalyticsProvider>
-                </SaasProviders>
-              </ApiClientProvider>
-            </ConnectionToastProvider>
-          </ToastProvider>
-        </ConfirmProvider>
-      </ComponentsProvider>
-    </RainbowKitTheme>
+    <ComponentsProvider components={uiScaffoldComponents}>
+      {/* App-owned components (ActionButtons, ConfirmActionModal) call useConfirm
+          outside any react-components auto-mounted provider, so one is needed for
+          the whole tree. It must sit inside ComponentsProvider because the confirm
+          modal renders through the themed component slots. */}
+      <ConfirmProvider>
+        <ToastProvider>
+          <ConnectionToastProvider>
+            <ApiClientProvider>
+              <SaasProviders>
+                <AnalyticsProvider>
+                  <CookieConsent />
+                  {children}
+                </AnalyticsProvider>
+              </SaasProviders>
+            </ApiClientProvider>
+          </ConnectionToastProvider>
+        </ToastProvider>
+      </ConfirmProvider>
+    </ComponentsProvider>
   )
 }

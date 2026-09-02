@@ -8,13 +8,7 @@ vi.mock('wagmi', () => ({
   useDisconnect: () => ({ disconnect: vi.fn() }),
 }))
 
-vi.mock('@rainbow-me/rainbowkit', () => ({
-  RainbowKitProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  lightTheme: () => ({}),
-  darkTheme: () => ({}),
-}))
-
-vi.mock('./constants/rainbow', () => ({
+vi.mock('./constants/wagmi', () => ({
   wagmiConfig: {},
 }))
 
@@ -54,7 +48,7 @@ describe('Providers', () => {
     vi.clearAllMocks()
   })
 
-  // Mounting this pulls in the whole provider graph (wagmi, rainbowkit, chakra,
+  // Mounting this pulls in the whole provider graph (wagmi, chakra,
   // every locale bundle), which on a loaded machine takes well over the default
   // timeout. Timing out here used to cascade into the test below: the abandoned
   // render kept settling and its language detection landed mid-assertion.

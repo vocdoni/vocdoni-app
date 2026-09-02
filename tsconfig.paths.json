@@ -9,7 +9,6 @@
       "~i18n": ["i18n/index.ts"],
       "~i18n/*": ["i18n/*"],
       "~routes": ["router/routes/index.ts"],
-      "~theme": ["theme/index.ts"],
       "~theme/*" : ["theme/*"],
       "~queries/*": ["queries/*"],
       "~utils/*": ["utils/*"],
