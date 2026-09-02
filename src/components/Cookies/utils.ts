@@ -1,10 +1,20 @@
 import TagManager from 'react-gtm-module'
+import { readCookieValues } from '~utils/cookies'
 
 const CONSENT_KEY = 'vocdoni-cookie-consent'
 const CONSENT_ACCEPTED = 'accepted'
 const CONSENT_REJECTED = 'rejected'
+/**
+ * Set alongside the localStorage mirror the first time a value passes through
+ * the cookie era. An absent cookie next to a marked mirror means the cookie
+ * expired or was deliberately removed (a withdrawal), NOT a pre-migration
+ * choice - so it must never be promoted back to the shared domain.
+ */
+const CONSENT_MIGRATED_KEY = 'vocdoni-cookie-consent-migrated'
 const CONSENT_MAX_AGE_SECONDS = 60 * 60 * 24 * 365
 export const COOKIE_CONSENT_CHANGE_EVENT = 'vocdoni-cookie-consent-change'
+
+export type ConsentValue = typeof CONSENT_ACCEPTED | typeof CONSENT_REJECTED
 
 /**
  * The registrable domain the app shares with the marketing site. The consent
@@ -46,24 +56,18 @@ export function buildConsentCookie(value: string, hostname: string, protocol: st
  * hand-edited cookie, a value left by some other tool on the shared domain - is
  * treated as "not decided yet" rather than propagated across `.vocdoni.io`.
  */
-function normalizeConsent(value: string | null): string | null {
+function normalizeConsent(value: string | null): ConsentValue | null {
   return value === CONSENT_ACCEPTED || value === CONSENT_REJECTED ? value : null
 }
 
-export function readConsentCookie(cookie: string | undefined): string | null {
-  if (!cookie) return null
-
-  for (const entry of cookie.split(';')) {
-    const separator = entry.indexOf('=')
-    if (separator === -1) continue
-    if (entry.slice(0, separator).trim() !== CONSENT_KEY) continue
-    try {
-      return decodeURIComponent(entry.slice(separator + 1).trim()) || null
-    } catch {
-      // A malformed percent-escape must not throw: consent is read while
-      // rendering, so an unhandled URIError would take the app down.
-      return null
-    }
+export function readConsentCookie(cookie: string | undefined): ConsentValue | null {
+  // Duplicate names are possible: a junk host-only cookie on this subdomain
+  // would coexist with the real `Domain=.vocdoni.io` one, in an order we don't
+  // control, and a `Domain=` write can never replace a host-only cookie. So
+  // return the first *recognised* decision rather than the first entry.
+  for (const value of readCookieValues(cookie, CONSENT_KEY)) {
+    const consent = normalizeConsent(value)
+    if (consent) return consent
   }
   return null
 }
@@ -87,8 +91,20 @@ function readLegacyConsent(): string | null {
 function mirrorConsent(value: string): void {
   try {
     if (localStorage.getItem(CONSENT_KEY) !== value) localStorage.setItem(CONSENT_KEY, value)
+    // Mark the mirror as cookie-era, so a later cookie deletion/expiry is
+    // honoured as a withdrawal instead of resurrecting this value.
+    if (localStorage.getItem(CONSENT_MIGRATED_KEY) === null) localStorage.setItem(CONSENT_MIGRATED_KEY, '1')
   } catch {
     // The cookie is the source of truth; losing the mirror is harmless.
+  }
+}
+
+function hasMigratedConsent(): boolean {
+  try {
+    return localStorage.getItem(CONSENT_MIGRATED_KEY) !== null
+  } catch {
+    // If storage is unreadable the mirror is too, so the question is moot.
+    return false
   }
 }
 
@@ -101,10 +117,10 @@ function writeConsent(value: string): void {
  * Get the current cookie consent status
  * @returns 'accepted', 'rejected', or null if no choice has been made
  */
-export function getCookieConsent(): string | null {
+export function getCookieConsent(): ConsentValue | null {
   if (typeof window === 'undefined') return null
 
-  const fromCookie = normalizeConsent(readConsentCookie(document.cookie))
+  const fromCookie = readConsentCookie(document.cookie)
   if (fromCookie) {
     // The choice may have been changed on the other site, which can only write
     // the shared cookie - this origin's mirror would otherwise stay stale, and
@@ -113,10 +129,17 @@ export function getCookieConsent(): string | null {
     return fromCookie
   }
 
+  const legacy = normalizeConsent(readLegacyConsent())
+  if (!legacy) return null
+
+  // A cookie-era mirror with the cookie gone means it expired or was removed
+  // (clearing cookies is a legitimate withdrawal); re-ask instead of silently
+  // re-minting a domain-wide cookie the visitor may have revoked.
+  if (hasMigratedConsent()) return null
+
   // Choices made before the shared cookie existed live in localStorage. Honour
   // one once and promote it, so nobody who already decided is asked again.
-  const legacy = normalizeConsent(readLegacyConsent())
-  if (legacy) writeConsent(legacy)
+  writeConsent(legacy)
   return legacy
 }
 
@@ -131,13 +154,45 @@ export function setCookieConsent(accepted: boolean): void {
 }
 
 /**
+ * The shared cookie has a second writer - vocdoni.io - and nothing in this
+ * document fires when that site changes the choice. Re-read whenever the tab
+ * regains focus/visibility and dispatch the regular change event when the
+ * decision differs, so consumers (analytics, chat) honour a cross-site
+ * revocation without waiting for a full reload.
+ * @returns a cleanup function removing the listeners
+ */
+export function watchCrossSiteConsent(): () => void {
+  if (typeof window === 'undefined') return () => {}
+
+  let known = getCookieConsent()
+  const remember = () => {
+    known = getCookieConsent()
+  }
+  const recheck = () => {
+    const current = getCookieConsent()
+    if (current === known) return
+    known = current
+    window.dispatchEvent(new Event(COOKIE_CONSENT_CHANGE_EVENT))
+  }
+
+  // Keep `known` in step with this origin's own writes, so a local decision
+  // doesn't produce a spurious change event on the next refocus.
+  window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, remember)
+  window.addEventListener('focus', recheck)
+  document.addEventListener('visibilitychange', recheck)
+  return () => {
+    window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, remember)
+    window.removeEventListener('focus', recheck)
+    document.removeEventListener('visibilitychange', recheck)
+  }
+}
+
+/**
  * Check if the user has made a cookie consent choice
  * @returns true if user has accepted or rejected, false if no choice made
  */
 export function hasCookieConsent(): boolean {
-  if (typeof window === 'undefined') return false
-  const consent = getCookieConsent()
-  return consent === CONSENT_ACCEPTED || consent === CONSENT_REJECTED
+  return getCookieConsent() !== null
 }
 
 export function hasAcceptedCookieConsent(): boolean {

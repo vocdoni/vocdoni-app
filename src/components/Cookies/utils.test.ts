@@ -1,5 +1,13 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { buildConsentCookie, consentCookieDomain, getCookieConsent, readConsentCookie, setCookieConsent } from './utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  buildConsentCookie,
+  consentCookieDomain,
+  COOKIE_CONSENT_CHANGE_EVENT,
+  getCookieConsent,
+  readConsentCookie,
+  setCookieConsent,
+  watchCrossSiteConsent,
+} from './utils'
 
 const clearConsentCookie = () => {
   document.cookie = 'vocdoni-cookie-consent=; Path=/; Max-Age=0'
@@ -57,6 +65,12 @@ describe('readConsentCookie', () => {
   it('survives a malformed percent-escape instead of throwing', () => {
     // Consent is read while rendering, so a URIError here would take the app down.
     expect(readConsentCookie('vocdoni-cookie-consent=%E0%A4%A')).toBeNull()
+  })
+
+  it('skips an unrecognised duplicate so it cannot shadow the real decision', () => {
+    // A junk host-only cookie can precede the Domain=.vocdoni.io one in the
+    // header, and a Domain= write can never replace a host-only cookie.
+    expect(readConsentCookie('vocdoni-cookie-consent=true; vocdoni-cookie-consent=accepted')).toBe('accepted')
   })
 })
 
@@ -116,5 +130,55 @@ describe('getCookieConsent', () => {
 
     expect(getCookieConsent()).toBe('accepted')
     expect(readConsentCookie(document.cookie)).toBe('accepted')
+  })
+
+  it('does not resurrect a decision after the shared cookie is deleted', () => {
+    // Clearing cookies is a legitimate consent withdrawal (and Safari expires
+    // script-written cookies on its own); the localStorage mirror must not
+    // silently re-mint the domain-wide cookie.
+    setCookieConsent(true)
+    clearConsentCookie()
+
+    expect(getCookieConsent()).toBeNull()
+    expect(document.cookie).not.toContain('vocdoni-cookie-consent=accepted')
+  })
+})
+
+describe('watchCrossSiteConsent', () => {
+  beforeEach(() => {
+    clearConsentCookie()
+    localStorage.clear()
+  })
+
+  it('dispatches the change event when the other site changed the cookie', () => {
+    // vocdoni.io can only write the shared cookie; without this, a revocation
+    // made over there would keep tracking alive here until a full reload.
+    setCookieConsent(true)
+    const unwatch = watchCrossSiteConsent()
+    const listener = vi.fn()
+    window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, listener)
+
+    document.cookie = 'vocdoni-cookie-consent=rejected; Path=/'
+    window.dispatchEvent(new Event('focus'))
+
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(getCookieConsent()).toBe('rejected')
+
+    window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, listener)
+    unwatch()
+  })
+
+  it('stays quiet when nothing changed on refocus', () => {
+    setCookieConsent(true)
+    const unwatch = watchCrossSiteConsent()
+    const listener = vi.fn()
+    window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, listener)
+
+    window.dispatchEvent(new Event('focus'))
+
+    expect(listener).not.toHaveBeenCalled()
+
+    window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, listener)
+    unwatch()
   })
 })
