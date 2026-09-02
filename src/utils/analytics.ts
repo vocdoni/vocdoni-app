@@ -166,12 +166,6 @@ export const trackAnalyticsEvent = (event: AnalyticsEvent): void => {
 
 export type PosthogConsent = 'accepted' | 'rejected' | null
 
-// The consent choice lives in localStorage, so it is user-editable and may hold
-// anything. Anything that is not an explicit choice is treated as "no decision
-// yet" (cookieless, anonymous) rather than being trusted as one.
-export const toPosthogConsent = (value: string | null | undefined): PosthogConsent =>
-  value === 'accepted' || value === 'rejected' ? value : null
-
 type PosthogInitConfig = {
   key: string
   host?: string
@@ -303,6 +297,11 @@ export const initializePosthog = ({ key, host, analyticsClientId, consent }: Pos
         capture_exceptions: true,
         before_send: posthogBeforeSend,
       })
+      // `site` separates this app's events from vocdoni.io's in the shared
+      // PostHog project. Registered here, not in a React effect, so it lands
+      // on every init path - including a retry after a failed chunk load,
+      // which no effect re-runs for.
+      posthog.register({ site: 'app' })
       if (analyticsClientId) {
         posthog.register({ client: analyticsClientId })
       }

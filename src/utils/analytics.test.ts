@@ -328,6 +328,16 @@ describe('posthog initialization', () => {
     await vi.waitFor(() => expect(mockPosthog.register).toHaveBeenCalledWith({ client: 'client-1' }))
   })
 
+  // `site` separates this app's events from vocdoni.io's in the shared PostHog
+  // project; registering it at init (not in a React effect) means no init path
+  // — including a retry after a failed chunk load — can miss it.
+  it('registers the site marker at init', async () => {
+    const { initializePosthog } = await import('./analytics')
+
+    initializePosthog({ key: 'phc_test', consent: null })
+    await vi.waitFor(() => expect(mockPosthog.register).toHaveBeenCalledWith({ site: 'app' }))
+  })
+
   it('does not initialize without a key or when consent was rejected', async () => {
     const { initializePosthog } = await import('./analytics')
 
@@ -385,26 +395,6 @@ describe('posthog initialization', () => {
 
     await vi.waitFor(() => expect(mockPosthog.init).toHaveBeenCalledTimes(2))
     consoleSpy.mockRestore()
-  })
-})
-
-describe('toPosthogConsent', () => {
-  it('keeps the two explicit choices', async () => {
-    const { toPosthogConsent } = await import('./analytics')
-
-    expect(toPosthogConsent('accepted')).toBe('accepted')
-    expect(toPosthogConsent('rejected')).toBe('rejected')
-  })
-
-  // The value comes from localStorage, so it may be absent or hand-edited.
-  it('treats anything else as no decision', async () => {
-    const { toPosthogConsent } = await import('./analytics')
-
-    expect(toPosthogConsent(null)).toBeNull()
-    expect(toPosthogConsent(undefined)).toBeNull()
-    expect(toPosthogConsent('true')).toBeNull()
-    expect(toPosthogConsent('Accepted')).toBeNull()
-    expect(toPosthogConsent('')).toBeNull()
   })
 })
 

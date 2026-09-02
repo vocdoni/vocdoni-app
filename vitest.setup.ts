@@ -66,6 +66,18 @@ if (!i18n.isInitialized) {
 // Cleanup after each test
 afterEach(async () => {
   cleanup()
+  // jsdom keeps `document.cookie` for the whole file. The cookie consent choice
+  // now lives in a cookie (shared with vocdoni.io), so without this a decision
+  // made in one test leaks into the next.
+  for (const entry of document.cookie.split(';')) {
+    const name = entry.split('=')[0].trim()
+    if (name) document.cookie = `${name}=; Path=/; Max-Age=0`
+  }
+  // Clearing the cookie is not enough: setCookieConsent also mirrors the choice
+  // into localStorage, and getCookieConsent would promote that mirror straight
+  // back into a fresh cookie in the next test.
+  localStorage.removeItem('vocdoni-cookie-consent')
+  localStorage.removeItem('vocdoni-cookie-consent-migrated')
   const { resetReactProvidersMock, resetAuthMock } = await import('./src/test-utils-react-providers-mock')
   resetReactProvidersMock()
   resetAuthMock()
