@@ -39,6 +39,7 @@
       "decidim": "Logo Decidim",
       "esquerra": "Logo Esquerra Republicana de Catalunya",
       "omnium": "Logo Òmnium Cultural",
+      "org_logo": "Logo di {{org}}",
       "ticanoia": "Logo TIC Anoia"
     }
   },
@@ -53,6 +54,45 @@
     "votes_weight_one": "<span>1</span> <text>voto</text>",
     "votes_weight_many": "",
     "votes_weight_other": "<span>{{ count }}</span> <text>voti</text>"
+  },
+  "auth": {
+    "showcase": {
+      "fallback_headline": "Decisioni che i tuoi membri possono verificare"
+    },
+    "verticals": {
+      "associations": {
+        "label": "Associazioni",
+        "trust_bar": "Assemblee generali, elezioni del consiglio direttivo e consultazioni dei soci sicure. Le associazioni si affidano già a Vocdoni:"
+      },
+      "generic": {
+        "label": "Storie di successo",
+        "trust_bar": "Assemblee, elezioni e consultazioni sicure. Si affidano già a Vocdoni organizzazioni di ogni settore:"
+      },
+      "ngos": {
+        "label": "ONG e non profit",
+        "trust_bar": "Assemblee, elezioni del consiglio e consultazioni dei soci sicure. Le organizzazioni non profit si affidano già a Vocdoni:"
+      },
+      "political_parties": {
+        "label": "Partiti politici",
+        "trust_bar": "Primarie, elezioni della dirigenza e consultazioni interne sicure. I partiti si affidano già a Vocdoni:"
+      },
+      "professional_associations": {
+        "label": "Ordini professionali",
+        "trust_bar": "Assemblee generali, elezioni del consiglio e consultazioni sicure. Gli ordini professionali si affidano già a Vocdoni:"
+      },
+      "public_administration": {
+        "label": "Pubblica amministrazione",
+        "trust_bar": "Bilanci partecipativi, consultazioni cittadine e referendum sicuri. Le pubbliche amministrazioni si affidano già a Vocdoni:"
+      },
+      "sports_clubs": {
+        "label": "Società sportive",
+        "trust_bar": "Elezioni del consiglio direttivo, assemblee generali e consultazioni dei soci sicure. Le società sportive si affidano già a Vocdoni:"
+      },
+      "trade_unions": {
+        "label": "Sindacati",
+        "trust_bar": "Votazioni di sciopero, sui contratti collettivi ed elezioni della dirigenza sicure. I sindacati si affidano già a Vocdoni:"
+      }
+    }
   },
   "avatar": {
     "label": "Avatar dell'organizzazione"
@@ -1839,19 +1879,73 @@
   },
   "terms_of_service": "Termini di servizio",
   "testimonials": {
+    "aguicat": {
+      "company": "Associació de Guies Habilitats de Catalunya",
+      "position": "Responsabile IT",
+      "text": "Preparare l'intero processo di voto e centralizzare tutti gli strumenti per l'assemblea è stato facile, intuitivo e chiaro. Anche in un settore poco tecnologico, abbiamo ottenuto un'alta partecipazione - le persone hanno apprezzato in particolare la possibilità di votare in anticipo senza presentarsi di persona."
+    },
+    "arxivers": {
+      "company": "Associació d'Arxivers de Catalunya",
+      "position": "Segretaria",
+      "text": "Offrire ai soci un sistema di voto sicuro e affidabile è essenziale, soprattutto in tempi di pandemia. Vocdoni ci ha dato uno strumento facile da usare che ha semplificato il processo di voto e ha aumentato la partecipazione."
+    },
+    "ati": {
+      "company": "ATI Friuli Venezia Giulia",
+      "position": "Presidente",
+      "text": "Come Associazione Termotecnica Italiana, sezione Friuli Venezia Giulia, abbiamo scelto di digitalizzare la nostra governance per facilitare la partecipazione dei professionisti. Vocdoni si è affermata come la soluzione ideale, distinguendosi per semplicità, costi e garanzie."
+    },
     "bellpuig": {
       "company": "Consiglio Comunale di Bellpuig",
       "position": "Sindaco",
       "text": "Abbiamo scelto Vocdoni perché crediamo che questo sia il futuro di come dovrebbero essere le vere elezioni di qualsiasi tipo. Il voto elettronico è aperto a tutti e rende il processo di voto più semplice per i cittadini."
     },
+    "bisbal": {
+      "company": "Comune di La Bisbal d'Empordà",
+      "position": "Funzionario per la partecipazione civica",
+      "text": "Vocdoni ha sostenuto la nostra votazione Bisbalenc/a de l'Any, aumentando la partecipazione dei cittadini e portando trasparenza, sicurezza e risultati immediati su blockchain. Abbiamo apprezzato sicurezza, scalabilità, verificabilità universale e flessibilità."
+    },
     "ceec": {
       "position": "CEO",
       "text": "Abbiamo scelto Vocdoni perché garantisce una partecipazione sicura, affidabile e trasparente per tutti i nostri membri nella nostra Assemblea Generale Annuale."
+    },
+    "coib": {
+      "company": "Ordine Professionale degli Infermieri di Barcellona",
+      "position": "Responsabile progetti",
+      "text": "All'Ordine Professionale degli Infermieri di Barcellona ci affidiamo a Vocdoni per tutti i nostri processi partecipativi, garantendo che gli iscritti possano esercitare i propri diritti da qualsiasi luogo. Apprezziamo in particolare l'immediatezza nel conteggio dei voti, la semplicità del sistema e la risposta rapida ed efficace dell'assistenza tecnica, che rende l'intero processo agile, trasparente e affidabile."
     },
     "eic": {
       "company": "Enginyers Industrials de Catalunya",
       "position": "Direttore IT",
       "text": "Vocdoni ci fornisce un sistema di voto facile, sicuro, anonimo e scalabile, completamente integrato nel nostro ambiente istituzionale. Continueremo sicuramente a fidarci della loro soluzione."
+    },
+    "erc": {
+      "position": "Segretaria Nazionale per l'Adesione, la Lotta Antirepressiva e il Benessere Emotivo",
+      "text": "Da anni ci affidiamo a Vocdoni perché ci offre un sistema sicuro, verificabile e facile da usare, che ci permette di organizzare votazioni digitali con tutte le garanzie e adattate alle esigenze della nostra organizzazione."
+    },
+    "granollers": {
+      "position": "Responsabile della comunicazione",
+      "text": "Da «Granollers Primàries» intendiamo la partecipazione digitale come uno strumento chiave per ampliare e facilitare la partecipazione dei cittadini. Per questo cercavamo una piattaforma che garantisse neutralità, trasparenza e la massima sicurezza nei processi di voto. Vocdoni offre tutto questo ed è per questo motivo che l'abbiamo scelto per le nostre primarie e contiamo di continuare a utilizzarla in future consultazioni."
+    },
+    "icoes": {
+      "company": "Ordine Professionale degli Infermieri di Siviglia",
+      "position": "Presidente",
+      "text": "La digitalizzazione delle nostre votazioni con Vocdoni ha reso più efficiente l'intero processo elettorale. Siamo riusciti a facilitare enormemente la partecipazione, soprattutto degli iscritti che non potevano spostarsi, mantenendo allo stesso tempo un sistema agile e affidabile."
+    },
+    "intersindical": {
+      "position": "Portavoce del settore educazione",
+      "text": "A La Intersindical crediamo che le decisioni che riguardano l'intero corpo docente debbano essere prese dagli insegnanti stessi. Per questo avevamo bisogno di uno strumento che garantisse un processo trasparente, neutrale e verificabile. Con Vocdoni siamo riusciti a portare questa decisione a quasi 100.000 professionisti con la certezza che sia la procedura che il risultato sarebbero stati pienamente affidabili."
+    },
+    "omnium": {
+      "position": "Direttrice esecutiva",
+      "text": "In Òmnium Cultural abbiamo puntato su un sistema di voto sicuro e verificabile che ci permettesse di tenere le nostre assemblee statutarie con tutte le garanzie."
+    },
+    "plataforma": {
+      "position": "Direttrice",
+      "text": "Vocdoni ci permette di tenere votazioni con membri di tutti i territori di lingua catalana a parità di condizioni. Il conteggio istantaneo semplifica le nostre assemblee e garantisce piena trasparenza."
+    },
+    "ustec": {
+      "position": "Membro del segretariato nazionale",
+      "text": "Con Vocdoni abbiamo trovato un'ottima soluzione, essendo un'infrastruttura neutrale e verificabile che garantiva sia l'integrità del conteggio sia la privacy dei votanti. Questo permetteva a ogni docente di votare una sola volta, in modo sicuro e anonimo."
     }
   },
   "theme": "Tema",

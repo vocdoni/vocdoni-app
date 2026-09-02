@@ -82,6 +82,9 @@ export const SessionStorageKeys = {
   // Suppressed per browser session, so a returning user sees the "Do you need
   // help?" nudge again on their next visit rather than never again.
   SupportChatTeaserDismissed: 'support.chat.teaser.dismissed',
+  // The auth vertical (`?type=`) for the visit, so the branding survives navigations that drop
+  // the query string — see `~components/Auth/vertical/useAuthVertical`.
+  AuthVertical: 'auth.vertical',
 } as const
 
 /**

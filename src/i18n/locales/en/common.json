@@ -39,6 +39,7 @@
       "decidim": "Decidim logo",
       "esquerra": "Esquerra Republicana de Catalunya logo",
       "omnium": "Òmnium Cultural logo",
+      "org_logo": "{{org}} logo",
       "ticanoia": "TIC Anoia logo"
     }
   },
@@ -51,6 +52,45 @@
     "votes_other": "<span>{{ count }}</span> <text>voters</text>",
     "votes_weight_one": "<span>1</span> <text>vote</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>votes</text>"
+  },
+  "auth": {
+    "showcase": {
+      "fallback_headline": "Decisions your members can verify"
+    },
+    "verticals": {
+      "associations": {
+        "label": "Associations",
+        "trust_bar": "Secure general assemblies, board elections and member consultations. Associations already trust Vocdoni:"
+      },
+      "generic": {
+        "label": "Success stories",
+        "trust_bar": "Secure assemblies, elections and consultations. Organizations in every sector already trust Vocdoni:"
+      },
+      "ngos": {
+        "label": "NGOs and non-profits",
+        "trust_bar": "Secure assemblies, board elections and member consultations. Non-profits already trust Vocdoni:"
+      },
+      "political_parties": {
+        "label": "Political parties",
+        "trust_bar": "Secure primaries, leadership elections and internal consultations. Parties already trust Vocdoni:"
+      },
+      "professional_associations": {
+        "label": "Professional associations",
+        "trust_bar": "Secure AGMs, board elections and member consultations. Professional associations already trust Vocdoni:"
+      },
+      "public_administration": {
+        "label": "Public administration",
+        "trust_bar": "Secure participatory budgets, citizen consultations and referendums. Public administrations already trust Vocdoni:"
+      },
+      "sports_clubs": {
+        "label": "Sports clubs",
+        "trust_bar": "Secure club elections, general assemblies and member consultations. Clubs and federations already trust Vocdoni:"
+      },
+      "trade_unions": {
+        "label": "Trade unions",
+        "trust_bar": "Secure strike ballots, collective agreement votes and leadership elections. Unions already trust Vocdoni:"
+      }
+    }
   },
   "avatar": {
     "label": "Organization Avatar"
@@ -1814,19 +1854,73 @@
   },
   "terms_of_service": "Terms of Service",
   "testimonials": {
+    "aguicat": {
+      "company": "Associació de Guies Habilitats de Catalunya",
+      "position": "IT Responsible",
+      "text": "Setting up the entire voting process and centralizing all the tools for the assembly was easy, intuitive, and clear. Even in a sector that is not very tech-savvy, we got strong participation - people especially valued being able to vote in advance without attending in person."
+    },
+    "arxivers": {
+      "company": "Associació d'Arxivers de Catalunya",
+      "position": "Secretary",
+      "text": "Offering members a secure and reliable voting system is essential, especially during a pandemic. Vocdoni gave us an easy-to-use tool that simplified the voting process and boosted participation."
+    },
+    "ati": {
+      "company": "ATI Friuli Venezia Giulia",
+      "position": "President",
+      "text": "As Associazione Termotecnica Italiana, Friuli Venezia Giulia section, we chose to digitize our governance to make it easier for professionals to participate. Vocdoni stood out as the ideal solution for its simplicity, costs, and guarantees."
+    },
     "bellpuig": {
       "company": "Bellpuig City Council",
       "position": "Mayor",
       "text": "We chose Vocdoni because we believe this is the future of what real elections of any kind should be. Electronic voting is open to everyone and makes the voting process easier for citizens."
     },
+    "bisbal": {
+      "company": "La Bisbal d'Empordà City Council",
+      "position": "Civic Participation Officer",
+      "text": "Vocdoni powered our Bisbalenc/a de l'Any vote, boosting citizen participation and delivering transparency, security, and instant results on blockchain. We valued its security, scalability, universal verifiability, and flexibility."
+    },
     "ceec": {
       "position": "CEO",
       "text": "We chose Vocdoni because it guarantees secure, reliable, and transparent participation for all our members in our Annual General Meeting."
+    },
+    "coib": {
+      "company": "Official College of Nurses of Barcelona",
+      "position": "Head of projects",
+      "text": "At the Official College of Nurses of Barcelona, we trust Vocdoni for all our participatory processes, ensuring members can exercise their rights from anywhere. We especially value the immediate vote count, the simplicity of the system, and the fast, effective response and guidance from its technical support, which makes the entire process agile, transparent, and reliable."
     },
     "eic": {
       "company": "Enginyers Industrials de Catalunya",
       "position": "IT Director",
       "text": "Vocdoni provides us with an easy, secure, anonymous, scalable voting system that is fully integrated into our institutional environment. We will certainly continue to trust their solution."
+    },
+    "erc": {
+      "position": "National Secretary of Membership, Anti-repressive Struggle and Emotional Well-being",
+      "text": "We have been trusting Vocdoni for years because it offers us a secure, auditable and easy-to-use system that allows us to organise digital votes with all guarantees and adapted to the needs of our organisation."
+    },
+    "granollers": {
+      "position": "Communications officer",
+      "text": "At «Granollers Primàries» we understand digital participation as a key tool to expand and facilitate citizen participation. That is why we were looking for a platform that guaranteed neutrality, transparency and the highest security in voting processes. Vocdoni offers all of this, and that is why we chose it for our primaries and plan to continue using it in future consultations."
+    },
+    "icoes": {
+      "company": "Official College of Nursing of Seville",
+      "position": "President",
+      "text": "Digitizing our voting with Vocdoni has made the entire electoral process more efficient. We have made participation much easier, especially for members who could not travel, while maintaining an agile and reliable system."
+    },
+    "intersindical": {
+      "position": "Spokesperson for the education sector",
+      "text": "At La Intersindical we believe that decisions affecting the entire teaching collective must be made by teachers themselves. That is why we needed a tool that guaranteed a transparent, neutral, and verifiable process. With Vocdoni we were able to bring this decision to nearly 100,000 professionals with the assurance that both the procedure and the result would be fully reliable."
+    },
+    "omnium": {
+      "position": "Executive Manager",
+      "text": "At Òmnium Cultural we bet on a secure and verifiable voting system that would allow us to hold our statutory assemblies with all guarantees."
+    },
+    "plataforma": {
+      "position": "Director",
+      "text": "Vocdoni lets us hold votes with members across all Catalan-speaking territories on equal terms. Instant counting simplifies our assemblies and ensures full transparency."
+    },
+    "ustec": {
+      "position": "Member of the national secretariat",
+      "text": "With Vocdoni we found a very good solution, being a neutral and verifiable infrastructure that guaranteed both the integrity of the count and the privacy of voters. This allowed every teacher to vote only once, securely and anonymously."
     }
   },
   "theme": "Theme",

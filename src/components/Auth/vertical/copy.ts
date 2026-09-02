@@ -1,0 +1,93 @@
+import { useTranslation } from 'react-i18next'
+import type { VerticalCopyMap } from './types'
+
+/**
+ * Per-vertical copy for the auth showcase panel and trust bar.
+ *
+ * ⚠️ Every key here MUST be a string literal with a `defaultValue`. `pnpm translations`
+ * (i18next-cli) extracts keys by static analysis, so a key built from a template literal and the
+ * vertical slug silently works in development, where the default value is inline, and ships empty
+ * in all 10 locales. Write the record out by hand; TypeScript is what keeps it complete.
+ *
+ * Every vertical we can put a real customer quote behind gets an entry — `registry.test.ts` holds
+ * that line, so a new testimonial for an unwritten sector fails the suite rather than shipping a
+ * sector-specific quote under the generic eyebrow. Verticals with no customer of their own keep
+ * falling back to `generic` and render the ordinary login page copy, which never claims anything
+ * sector-specific.
+ *
+ * Both fields here render. There is deliberately no headline: with a real quote on the panel, the
+ * quote is the headline, and the showcase's empty state is a single sentence that owns itself (see
+ * `AuthShowcase`) rather than a per-vertical one nothing can reach.
+ *
+ * Writing the copy is not the same as claiming the sector trusts us: the trust bar below still
+ * degrades on its own. A vertical with no customers of its own borrows the generic row *and* the
+ * generic sentence (see `useAuthVertical`), so the sector-specific sentence here only ever appears
+ * over that sector's own logos — however few of them there are.
+ *
+ * The trust bar names the processes that sector actually runs — AGMs and board elections for
+ * professional associations, participatory budgets and referendums for public administration — so it
+ * has to be written per vertical rather than interpolated.
+ */
+export const useVerticalCopy = (): VerticalCopyMap => {
+  const { t } = useTranslation()
+
+  return {
+    generic: {
+      label: t('auth.verticals.generic.label', { defaultValue: 'Success stories' }),
+      trustBar: t('auth.verticals.generic.trust_bar', {
+        defaultValue:
+          'Secure assemblies, elections and consultations. Organizations in every sector already trust Vocdoni:',
+      }),
+    },
+    'professional-associations': {
+      label: t('auth.verticals.professional_associations.label', {
+        defaultValue: 'Professional associations',
+      }),
+      trustBar: t('auth.verticals.professional_associations.trust_bar', {
+        defaultValue:
+          'Secure AGMs, board elections and member consultations. Professional associations already trust Vocdoni:',
+      }),
+    },
+    associations: {
+      label: t('auth.verticals.associations.label', { defaultValue: 'Associations' }),
+      trustBar: t('auth.verticals.associations.trust_bar', {
+        defaultValue:
+          'Secure general assemblies, board elections and member consultations. Associations already trust Vocdoni:',
+      }),
+    },
+    ngos: {
+      label: t('auth.verticals.ngos.label', { defaultValue: 'NGOs and non-profits' }),
+      trustBar: t('auth.verticals.ngos.trust_bar', {
+        defaultValue: 'Secure assemblies, board elections and member consultations. Non-profits already trust Vocdoni:',
+      }),
+    },
+    'public-administration': {
+      label: t('auth.verticals.public_administration.label', { defaultValue: 'Public administration' }),
+      trustBar: t('auth.verticals.public_administration.trust_bar', {
+        defaultValue:
+          'Secure participatory budgets, citizen consultations and referendums. Public administrations already trust Vocdoni:',
+      }),
+    },
+    'political-parties': {
+      label: t('auth.verticals.political_parties.label', { defaultValue: 'Political parties' }),
+      trustBar: t('auth.verticals.political_parties.trust_bar', {
+        defaultValue:
+          'Secure primaries, leadership elections and internal consultations. Parties already trust Vocdoni:',
+      }),
+    },
+    'trade-unions': {
+      label: t('auth.verticals.trade_unions.label', { defaultValue: 'Trade unions' }),
+      trustBar: t('auth.verticals.trade_unions.trust_bar', {
+        defaultValue:
+          'Secure strike ballots, collective agreement votes and leadership elections. Unions already trust Vocdoni:',
+      }),
+    },
+    'sports-clubs': {
+      label: t('auth.verticals.sports_clubs.label', { defaultValue: 'Sports clubs' }),
+      trustBar: t('auth.verticals.sports_clubs.trust_bar', {
+        defaultValue:
+          'Secure club elections, general assemblies and member consultations. Clubs and federations already trust Vocdoni:',
+      }),
+    },
+  }
+}
