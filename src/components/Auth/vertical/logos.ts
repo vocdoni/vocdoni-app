@@ -84,8 +84,12 @@ const WithheldByLanguage: Record<string, readonly string[]> = {
 }
 
 /** Customer ids not shown for the given language. */
-export const getWithheldLogos = (language?: string): ReadonlySet<string> =>
-  new Set(WithheldByLanguage[(language ?? '').toLowerCase()] ?? [])
+export const getWithheldLogos = (language?: string): ReadonlySet<string> => {
+  // `Object.hasOwn`, not a bare index: the language string comes from i18next and an inherited
+  // member (`constructor`, `valueOf`) would slip past `?? []`. Same guard as `resolveVerticalSlug`.
+  const key = (language ?? '').toLowerCase()
+  return new Set(Object.hasOwn(WithheldByLanguage, key) ? WithheldByLanguage[key] : [])
+}
 
 export const getTrustLogos = (ids: readonly string[]): TrustLogo[] =>
   ids.map((id) => TrustLogos[id]).filter((logo): logo is TrustLogo => Boolean(logo))
