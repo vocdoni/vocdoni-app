@@ -3,7 +3,8 @@ import { useState } from 'react'
 import { Trans } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { Outlet, Link as RouterLink, useLocation } from 'react-router'
-import { AuthShowcase, AuthTrustBar, useAuthVertical } from '~components/Auth/vertical'
+import { AuthShowcase, AuthTrustBar, useAuthVertical, useVerticalSlug } from '~components/Auth/vertical'
+import { withVerticalParam } from '~constants/verticals'
 import { Routes } from '~routes'
 
 export type AuthOutletContextType = {
@@ -23,6 +24,7 @@ const LayoutAuth = () => {
   const [title, setTitle] = useState<string | null>(null)
   const [subtitle, setSubtitle] = useState<string | null>(null)
   const vertical = useAuthVertical()
+  const slug = useVerticalSlug()
   const { pathname } = useLocation()
   const isSignin = pathname === Routes.auth.signIn
 
@@ -30,7 +32,9 @@ const LayoutAuth = () => {
     <Flex justifyContent='center' minH='100dvh' p={{ base: 6, md: 10 }}>
       <Flex w='full' maxW={{ base: 'md', md: '4xl', lg: '6xl' }} flexDir='column' gap={2} my='auto'>
         <Link asChild display='flex' alignItems='center' alignSelf='start'>
-          <RouterLink to={isSignin ? Routes.vocdoni : Routes.auth.signIn}>
+          {/* The sign-in link carries the vertical like every other auth link; the home link is the
+              marketing site and takes no param. */}
+          <RouterLink to={isSignin ? Routes.vocdoni : withVerticalParam(Routes.auth.signIn, slug)}>
             <Icon as={LuArrowLeft} />
             {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
           </RouterLink>

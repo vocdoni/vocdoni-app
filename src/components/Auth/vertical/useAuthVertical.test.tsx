@@ -1,7 +1,9 @@
+import i18n from 'i18next'
 import { ReactNode } from 'react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { useNavigate } from 'react-router'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VerticalSlugs } from '~constants/verticals'
-import { renderHook, TestMemoryRouter } from '~src/test-utils'
+import { act, renderHook, TestMemoryRouter } from '~src/test-utils'
 import { useVerticalCopy } from './copy'
 import { GenericLogos } from './logos'
 import { GenericAccent, VerticalRegistry } from './registry'
@@ -19,6 +21,11 @@ const genericCopy = renderHook(() => useVerticalCopy()).result.current.generic
 
 beforeEach(() => {
   window.sessionStorage.clear()
+})
+
+afterEach(async () => {
+  vi.restoreAllMocks()
+  if (i18n.language !== 'en') await i18n.changeLanguage('en')
 })
 
 describe('useAuthVertical', () => {
@@ -122,4 +129,24 @@ describe('useAuthVertical', () => {
 
     expect(result.current.key).toBe('trade-unions')
   })
+
+  // The auth layout mounts once and survives every in-app navigation, so the stored fallback has to
+  // be read per render — a mount-time snapshot is forever the value from before the visitor arrived,
+  // and the layout would drop to generic the moment a navigation loses the param.
+  it('keeps the vertical on a caller that outlives the navigation that drops the param', async () => {
+    const { result } = renderHook(() => ({ vertical: useAuthVertical(), navigate: useNavigate() }), {
+      wrapper: ({ children }: { children: ReactNode }) => (
+        <TestMemoryRouter initialEntries={['/account/signup?type=professional-associations']}>
+          {children}
+        </TestMemoryRouter>
+      ),
+    })
+
+    expect(result.current.vertical.key).toBe('professional-associations')
+
+    await act(async () => result.current.navigate('/account/signin'))
+
+    expect(result.current.vertical.key).toBe('professional-associations')
+  })
+
 })

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router'
+import { SessionStorageKeys } from '~constants'
 import { AUTH_VERTICAL_PARAM, GenericVertical, resolveVerticalSlug, type VerticalSlug } from '~constants/verticals'
 import { useVerticalCopy } from './copy'
 import { GenericLogos, getTrustLogos, getWithheldLogos, MinVerticalLogos } from './logos'
@@ -8,7 +9,7 @@ import { GenericAccent, VerticalRegistry } from './registry'
 import { useAuthTestimonials } from './testimonials'
 import type { ResolvedVertical } from './types'
 
-const StorageKey = 'auth.vertical'
+const StorageKey = SessionStorageKeys.AuthVertical
 
 /**
  * Session, not local: the branding belongs to this visit. It exists because the query string is
@@ -40,8 +41,6 @@ export const useVerticalSlug = (): VerticalSlug | null => {
   const [searchParams] = useSearchParams()
   const raw = searchParams.get(AUTH_VERTICAL_PARAM)
   const fromUrl = resolveVerticalSlug(raw)
-  // Read once, at mount: once the URL carries a vertical it always wins.
-  const [stored] = useState(readStoredVertical)
 
   useEffect(() => {
     if (fromUrl) storeVertical(fromUrl)
@@ -51,7 +50,12 @@ export const useVerticalSlug = (): VerticalSlug | null => {
   // present and names something we don't have. `?type=banana` asks for a vertical we can't serve;
   // showing whichever one the previous screen happened to use would be guessing. Only an absent
   // param falls back.
-  return fromUrl ?? (raw ? null : stored)
+  //
+  // Read per render, not snapshotted at mount: `LayoutAuth` calls this and outlives the whole auth
+  // flow, so a mount-time copy is forever the value from before the visitor arrived — the layout
+  // would drop to generic on the first in-app navigation while the freshly-mounted screen beside it
+  // reads the current value, splitting one page between two verticals.
+  return fromUrl ?? (raw ? null : readStoredVertical())
 }
 
 /**
