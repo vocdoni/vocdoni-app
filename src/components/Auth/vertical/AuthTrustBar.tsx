@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next'
 import type { ResolvedVertical } from './types'
 
 /**
- * Logos beyond this are dropped rather than wrapped onto a second row — including at `lg`, where the
- * cap is what the column fits on one line at this tile size. The catalogue is ordered by
- * recognition, so the row is trimmed from the least recognisable end; anything cut here still
- * appears in its own sector's row.
+ * Logos beyond this are dropped rather than paged. Each cap is what fills a single line at that
+ * breakpoint's design width, but the caps don't enforce a single line: the container wraps, so at a
+ * width just past a breakpoint the visible logos flow onto a second row rather than clipping or
+ * overflowing the card. The catalogue is ordered by recognition, so the row is trimmed from the
+ * least recognisable end; anything cut here still appears in its own sector's row.
  */
 const VisibleLogos = { base: 5, md: 8, lg: 18 }
 
@@ -46,6 +47,10 @@ const AuthTrustBar = ({ vertical }: { vertical: ResolvedVertical }) => {
             src={logo.src}
             alt={t('alt.images.org_logo', { defaultValue: '{{org}} logo', org: logo.name })}
             title={logo.name}
+            // Lazy so the breakpoint cap below actually saves bandwidth: a `display: none` image
+            // still downloads eagerly, but a lazy one has no box to intersect the viewport with, so
+            // a phone fetches the five tiles it shows, not the whole catalogue.
+            loading='lazy'
             display={{
               base: index < VisibleLogos.base ? 'block' : 'none',
               md: index < VisibleLogos.md ? 'block' : 'none',

@@ -33,16 +33,16 @@ export const TrustLogos: Record<string, TrustLogo> = {
 
 /**
  * Logos shown when there is no vertical (plain app.vocdoni.io) or when a vertical doesn't have one
- * of its own. A cross-sector mix, and the whole catalogue rather than a selection: this row is the
- * only social proof a visitor with no `?type=` ever sees, so leaving a customer out of it buys
- * nothing.
+ * of its own. A cross-sector mix, and the whole catalogue rather than a hand-picked selection: this
+ * row is the only social proof a visitor with no `?type=` ever sees. What each breakpoint actually
+ * shows is capped by `VisibleLogos`, so ordering — not membership — is the editorial decision here.
  *
  * Ordered by recognition, then by sector spread, because the row is truncated from the right at the
  * narrow breakpoints (see `VisibleLogos`) — position is what decides whether a logo is seen at all.
  * The first five carry mobile and are deliberately five different sectors: a club, a city, a
  * cultural association, a professional body and a party. The next three complete the tablet row
  * with a union, an engineering body and a historic club. Everything after that is desktop-only,
- * where the full row fits.
+ * up to the cap.
  */
 export const GenericLogos = [
   // Recognised on sight, five sectors — this is the mobile row
@@ -55,7 +55,8 @@ export const GenericLogos = [
   'intersindical',
   'eic',
   'cec',
-  // Desktop
+  // Desktop — capped at 18 (see `VisibleLogos`), so the last entries past that only surface when
+  // the withheld filter shortens the list. They still lead their own sector's rows.
   'plataforma',
   'icoes',
   'ustec',
