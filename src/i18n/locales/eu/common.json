@@ -1434,6 +1434,7 @@
       "budget": "Aurrekontu-esleipena",
       "multiple_choice": "Aukera anitza",
       "quadratic": "Koadratikoa",
+      "ranked": "Lehentasun-ordena",
       "single_choice": "Aukera bakarra",
       "unknown": "Ezezaguna",
       "weighted_format": "{{base}} haztatua"

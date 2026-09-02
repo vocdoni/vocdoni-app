@@ -27,6 +27,10 @@ const RESULT_TYPE_CONFIG: Record<BallotType, ResultTypeConfig> = {
     key: 'process.voting_method.quadratic',
     defaultValue: 'Quadratic voting',
   },
+  [BallotType.Ranked]: {
+    key: 'process.voting_method.ranked',
+    defaultValue: 'Ranked voting',
+  },
 }
 
 // t('process.voting_method.single_choice', { defaultValue: 'Single choice' })
@@ -34,6 +38,7 @@ const RESULT_TYPE_CONFIG: Record<BallotType, ResultTypeConfig> = {
 // t('process.voting_method.approval', { defaultValue: 'Approval voting' })
 // t('process.voting_method.budget', { defaultValue: 'Budget allocation' })
 // t('process.voting_method.quadratic', { defaultValue: 'Quadratic voting' })
+// t('process.voting_method.ranked', { defaultValue: 'Ranked voting' })
 
 export const useResultTypeLabel = (type?: BallotType | null, defaultValue = '') => {
   const { t } = useTranslation()

@@ -1458,6 +1458,7 @@
       "budget": "Bilancio partecipativo",
       "multiple_choice": "Scelta multipla",
       "quadratic": "Voto quadratico",
+      "ranked": "Voto per ordine di preferenza",
       "single_choice": "Scelta singola",
       "unknown": "Sconosciuto",
       "weighted_format": "{{base}} con voto ponderato"

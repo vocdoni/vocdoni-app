@@ -1458,6 +1458,7 @@
       "budget": "Allocation budgétaire",
       "multiple_choice": "Choix multiple",
       "quadratic": "Quadratique",
+      "ranked": "Classement",
       "single_choice": "Choix unique",
       "unknown": "Inconnu",
       "weighted_format": "{{ base, lowercase }} pondéré"

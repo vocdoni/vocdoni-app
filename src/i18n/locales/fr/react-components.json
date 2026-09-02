@@ -40,10 +40,17 @@
   "question_types": {
     "approval_title": "Vote par approbation",
     "approval_tooltip": "Le vote par approbation permet de voter pour autant d'options que vous le souhaitez. Celle qui obtient le plus de voix l'emporte. C'est une manière simple de soutenir toutes les options que vous approuvez.",
+    "budget_title": "Vote par budget {{ weighted }}",
+    "budget_tooltip": "Le vote par budget vous permet de répartir des points entre les options. Les options qui obtiennent le plus de points l'emportent.",
     "multichoice_desc": "Vous avez sélectionné {{selected}} options sur un maximum de {{maxcount}}",
     "multichoice_desc_abstain": " (ou abstention)",
     "multichoice_title": "Vote à choix multiple {{ weighted }}",
     "multichoice_tooltip": "Le vote à choix multiple permet de sélectionner jusqu'à {{maxcount}} options (définies par l'organisateur). Celle qui obtient le plus de voix l'emporte.",
+    "quadratic_title": "Vote quadratique {{ weighted }}",
+    "quadratic_tooltip": "Le vote quadratique vous permet de répartir des crédits entre les options, chaque voix supplémentaire pour une option coûtant davantage. Les options qui obtiennent le plus de voix l'emportent.",
+    "ranked_desc": "Vous avez classé {{selected}} options sur {{maxcount}}",
+    "ranked_title": "Vote par classement {{ weighted }}",
+    "ranked_tooltip": "Le vote par classement vous demande d'ordonner les {{maxcount}} options, de votre préférée à celle que vous aimez le moins. Chaque position vaut des points, et l'option qui obtient le plus de points l'emporte.",
     "singlechoice_title": "Choix unique {{ weighted }}",
     "weighted_voting": "pondéré"
   },
@@ -82,7 +89,9 @@
   "validation": {
     "at_least_one": "Sélectionnez au moins une option",
     "choices_count": "Sélectionnez {{ count }} choix",
+    "choices_range": "Sélectionnez entre {{ min }} et {{ max }} options",
     "min_length": "Ce champ doit contenir au moins {{ min }} caractères",
+    "rank_all": "Classez les {{ count }} options",
     "required": "Ce champ est obligatoire"
   },
   "vote": {
@@ -90,8 +99,10 @@
     "button": "Voter",
     "button_update": "Modifier mon vote",
     "confirm": "Veuillez confirmer vos choix :",
+    "rank_position": "#{{ position }}",
     "sign": "Signer d'abord",
     "voted_description": "Pour vérifier votre vote, vous pouvez utiliser cet identifiant unique : {{ id }}",
+    "voted_question_description": "L'identifiant de votre vote pour « {{ title }} » est {{ id }}.",
     "voted_title": "Votre vote a été enregistré avec succès !",
     "weight": "Votre poids de vote est de : "
   }

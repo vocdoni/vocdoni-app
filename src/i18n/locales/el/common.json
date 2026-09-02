@@ -1434,6 +1434,7 @@
       "budget": "Κατανομή προϋπολογισμού",
       "multiple_choice": "Πολλαπλή επιλογή",
       "quadratic": "Τετραγωνική",
+      "ranked": "Κατάταξη",
       "single_choice": "Μία επιλογή",
       "unknown": "Άγνωστο",
       "weighted_format": "Σταθμισμένη {{ base, lowercase }}"

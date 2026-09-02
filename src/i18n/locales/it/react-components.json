@@ -40,10 +40,17 @@
   "question_types": {
     "approval_title": "Voto di approvazione",
     "approval_tooltip": "Il voto di approvazione permette di votare per tutte le opzioni desiderate. Quella con più voti vince. È un modo semplice per mostrare supporto per tutte le scelte approvate.",
+    "budget_title": "Voto a budget {{ weighted }}",
+    "budget_tooltip": "Il voto a budget ti permette di distribuire punti tra le opzioni. Vincono le opzioni con più punti.",
     "multichoice_desc": "Selezionate {{selected}} opzioni su un massimo di {{maxcount}}",
     "multichoice_desc_abstain": " (o astensione)",
     "multichoice_title": "Voto a scelta multipla {{ weighted }}",
     "multichoice_tooltip": "Il voto a scelta multipla permette di votare fino a {{maxcount}} opzioni (definite dall'organizzatore). Quella con più voti vince.",
+    "quadratic_title": "Voto quadratico {{ weighted }}",
+    "quadratic_tooltip": "Il voto quadratico ti permette di distribuire crediti tra le opzioni, dove ogni voto aggiuntivo per un'opzione costa di più. Vincono le opzioni con più voti.",
+    "ranked_desc": "Hai ordinato {{selected}} opzioni su {{maxcount}}",
+    "ranked_title": "Voto per ordine di preferenza {{ weighted }}",
+    "ranked_tooltip": "Il voto per ordine di preferenza ti chiede di ordinare tutte le {{maxcount}} opzioni, dalla tua preferita alla meno gradita. Ogni posizione vale punti e vince l'opzione con più punti.",
     "singlechoice_title": "Scelta singola {{ weighted }}",
     "weighted_voting": "Voto ponderato"
   },
@@ -82,7 +89,9 @@
   "validation": {
     "at_least_one": "Seleziona almeno un'opzione",
     "choices_count": "Seleziona {{ count }} opzioni",
+    "choices_range": "Seleziona tra {{ min }} e {{ max }} opzioni",
     "min_length": "Questo campo deve contenere almeno {{ min }} caratteri",
+    "rank_all": "Ordina tutte le {{ count }} opzioni",
     "required": "Questo campo è obbligatorio"
   },
   "vote": {
@@ -90,8 +99,10 @@
     "button": "Vota",
     "button_update": "Modifica il mio voto",
     "confirm": "Confermare le scelte:",
+    "rank_position": "#{{ position }}",
     "sign": "Firma prima",
     "voted_description": "Per verificare il voto, è possibile utilizzare questo identificatore univoco: {{ id }}",
+    "voted_question_description": "L'identificatore del tuo voto per \"{{ title }}\" è {{ id }}.",
     "voted_title": "Voto espresso con successo!",
     "weight": "Il tuo potere di voto è: "
   }

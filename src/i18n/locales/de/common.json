@@ -1434,6 +1434,7 @@
       "budget": "Budgetverteilung",
       "multiple_choice": "Mehrfachauswahl",
       "quadratic": "Quadratisch",
+      "ranked": "Rangfolge",
       "single_choice": "Einzelauswahl",
       "unknown": "Unbekannt",
       "weighted_format": "Gewichtet {{ base, lowercase }}"
