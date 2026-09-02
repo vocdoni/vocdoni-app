@@ -23,7 +23,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const logoDir = join(root, 'public/assets/verticals/logos')
 const target = join(root, 'src/theme/logoTones.ts')
 
-/** webp -> BMP via sips, then parse the pixel array directly. Returns { width, height, rgba }. */
+/** webp -> BMP via sips, then parse the pixels directly. Returns a row-major array of [r,g,b,a]. */
 const decode = (file, work) => {
   const bmp = join(work, 'f.bmp')
   execFileSync('sips', ['-s', 'format', 'bmp', file, '--out', bmp], { stdio: 'ignore' })
