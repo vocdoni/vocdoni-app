@@ -152,7 +152,7 @@ const SignUp = ({
 
   // accounts coming from invites don't need verification
   if (inviteSignup.isSuccess) {
-    return <Navigate to={Routes.auth.signIn} replace />
+    return <Navigate to={signInRoute} replace />
   }
 
   return (

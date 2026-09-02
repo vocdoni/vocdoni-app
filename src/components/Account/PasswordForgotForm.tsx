@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { useToast } from '~components/Toast'
 import { Routes } from '~src/router/routes'
+import { withParam } from '~utils/url'
 import { api, ApiEndpoints } from '../Auth/api'
 
 type ForgotPasswordFormValues = {
@@ -50,7 +51,7 @@ const PasswordForgotForm: React.FC<PasswordForgotFormProps> = ({ resetRoute = Ro
           duration: 3000,
           closable: true,
         })
-        navigate(`${resetRoute}?email=${encodeURIComponent(data.email)}`)
+        navigate(withParam(resetRoute, 'email', data.email))
       },
       onError: (error) => {
         // we actually should not have errors except for internal server errors
