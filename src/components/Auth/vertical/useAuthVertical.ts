@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { AUTH_VERTICAL_PARAM, GenericVertical, resolveVerticalSlug, type VerticalSlug } from '~constants/verticals'
 import { useVerticalCopy } from './copy'
 import { GenericLogos, getTrustLogos, getWithheldLogos, MinVerticalLogos } from './logos'

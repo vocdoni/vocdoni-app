@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createTestMemoryRouter, render, screen, TestRouterProvider } from '~src/test-utils'
 import { Routes } from '~routes'
