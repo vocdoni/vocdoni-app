@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useSaasAccount } from '~components/Account/SaasAccountProvider'
 import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
-import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent } from '~components/Cookies/utils'
+import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent, watchCrossSiteConsent } from '~components/Cookies/utils'
 import { useProfile } from '~queries/account'
 import { useAppEnv } from '~src/app-env'
 import {
@@ -17,7 +17,6 @@ import {
   resetPosthogUser,
   setPosthogOrganization,
   setPosthogSessionRecording,
-  toPosthogConsent,
   trackAnalyticsEvent,
   trackGTMEvent,
   trackPlausibleEvent,
@@ -38,12 +37,18 @@ const useAnalyticsProvider = () => {
   const { organization } = useSaasAccount()
   const { subscription } = useSubscription()
   const { i18n } = useTranslation()
-  const [consent, setConsent] = useState<PosthogConsent>(() => toPosthogConsent(getCookieConsent()))
+  const [consent, setConsent] = useState<PosthogConsent>(() => getCookieConsent())
 
   useEffect(() => {
-    const syncConsent = () => setConsent(toPosthogConsent(getCookieConsent()))
+    const syncConsent = () => setConsent(getCookieConsent())
     window.addEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
-    return () => window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
+    // The consent cookie has a second writer (vocdoni.io); re-check it on
+    // refocus so a revocation made over there stops tracking here mid-session.
+    const unwatch = watchCrossSiteConsent()
+    return () => {
+      window.removeEventListener(COOKIE_CONSENT_CHANGE_EVENT, syncConsent)
+      unwatch()
+    }
   }, [])
 
   useEffect(() => {
@@ -69,14 +74,15 @@ const useAnalyticsProvider = () => {
     setPosthogSessionRecording(consent === 'accepted' && isAuthenticated)
   }, [consent, isAuthenticated])
 
-  // Keep the interface locale attached to every event, and mark which property
-  // the event came from: this app and vocdoni.io report into a single PostHog
-  // project (the free plan allows one, and PostHog cannot query across
-  // projects), so `site` is what separates them in a filter. It is more durable
-  // than `$host`, which changes with preview hosts and custom domains.
+  // Keep the interface locale attached to every event. The `site` super
+  // property that separates this app from vocdoni.io in the shared PostHog
+  // project is registered inside initializePosthog, so it cannot miss an init
+  // retry the way an effect with i18n-only deps would.
   useEffect(() => {
     const locale = i18n.resolvedLanguage || i18n.language
-    registerPosthogSuperProperties({ site: 'app', ...(locale ? { locale } : {}) })
+    if (locale) {
+      registerPosthogSuperProperties({ locale })
+    }
   }, [i18n.resolvedLanguage, i18n.language])
 
   // Identify dashboard users only after explicit cookie consent; anonymous
