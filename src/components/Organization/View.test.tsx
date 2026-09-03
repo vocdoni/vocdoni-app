@@ -1,7 +1,11 @@
-import { PublishedElection } from '@vocdoni/sdk'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { render, screen } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import OrganizationView from './View'
+
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => getAuthMock(),
+}))
 
 vi.mock('./Header', () => ({
   default: () => <div>Organization header</div>,
@@ -12,42 +16,37 @@ vi.mock('./NoElections', () => ({
 }))
 
 vi.mock('../Process/CardDetailed', () => ({
-  default: ({ election }: { election: PublishedElection }) => <div>{election.title.default}</div>,
+  default: ({ election }: { election: VotingProcessResponse }) => <div>{election.title.default}</div>,
 }))
 
-const createElection = (id: string) =>
-  new PublishedElection({
-    id,
-    organizationId: '0xabc',
-    title: { default: `Election ${id}` },
-    description: { default: '' },
-    status: 'READY',
-    startDate: new Date('2026-01-01T00:00:00.000Z'),
-    endDate: new Date('2026-01-02T00:00:00.000Z'),
-    electionType: {
-      anonymous: false,
-      interruptible: true,
-      dynamicCensus: false,
-      secretUntilTheEnd: false,
-    },
-    census: null,
-    questions: [],
-  } as any)
+const createElection = (id: string): VotingProcessResponse => ({
+  id,
+  orgAddress: 'abc',
+  title: { default: `Election ${id}` },
+  description: { default: '' },
+  census: {},
+  questions: [],
+  published: true,
+  startDate: '2026-01-01T00:00:00.000Z',
+  endDate: '2026-01-02T00:00:00.000Z',
+})
 
 describe('OrganizationView', () => {
-  it('renders the server-provided first elections page without refetching page 0 on mount', () => {
-    const fetchElections = vi.fn()
+  it('renders the server-provided first elections page without refetching page 1 on mount', () => {
+    const list = vi.fn()
 
+    setAuthMock({ currentAddress: '0xabc' })
     setReactProvidersMock({
       useClient: () => ({
         connected: false,
         account: null,
-        client: { fetchElections },
+        client: { elections: { list } },
       }),
       useOrganization: () => ({
         organization: {
           address: '0xabc',
-          account: { name: { default: 'Vocdoni Association' }, description: { default: '' } },
+          name: { default: 'Vocdoni Association' },
+          description: { default: '' },
         },
         fetch: vi.fn(),
       }),
@@ -60,9 +59,9 @@ describe('OrganizationView', () => {
           pagination: {
             totalItems: 1,
             previousPage: null,
-            currentPage: 0,
+            currentPage: 1,
             nextPage: null,
-            lastPage: 0,
+            lastPage: 1,
           },
         }}
       />
@@ -70,6 +69,6 @@ describe('OrganizationView', () => {
 
     expect(screen.getByText('Organization header')).toBeInTheDocument()
     expect(screen.getByText('Election 0x1')).toBeInTheDocument()
-    expect(fetchElections).not.toHaveBeenCalled()
+    expect(list).not.toHaveBeenCalled()
   })
 })

@@ -1,4 +1,4 @@
-import { Badge, Code, Stack, Table, Text } from '@chakra-ui/react'
+import { Code, Stack, Table, Text } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
 import { ManagedOrganization } from '~src/queries/integrators'
 
@@ -34,7 +34,6 @@ export const ManagedOrganizationsTable = ({ organizations }: { organizations: Ma
               {t('integrators.managed.emails', { defaultValue: 'Emails' })}
             </Table.ColumnHeader>
             <Table.ColumnHeader>{t('integrators.managed.created', { defaultValue: 'Created' })}</Table.ColumnHeader>
-            <Table.ColumnHeader>{t('integrators.managed.status', { defaultValue: 'Status' })}</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -58,13 +57,6 @@ export const ManagedOrganizationsTable = ({ organizations }: { organizations: Ma
                 <Table.Cell textAlign='end'>{formatCount(org.counters?.sentSMS)}</Table.Cell>
                 <Table.Cell textAlign='end'>{formatCount(org.counters?.sentEmails)}</Table.Cell>
                 <Table.Cell>{formatDate(org.createdAt)}</Table.Cell>
-                <Table.Cell>
-                  <Badge colorPalette={org.active ? 'green' : 'gray'} variant='subtle'>
-                    {org.active
-                      ? t('integrators.managed.active', { defaultValue: 'Active' })
-                      : t('integrators.managed.inactive', { defaultValue: 'Inactive' })}
-                  </Badge>
-                </Table.Cell>
               </Table.Row>
             )
           })}

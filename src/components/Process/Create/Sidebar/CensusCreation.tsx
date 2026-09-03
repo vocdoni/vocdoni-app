@@ -9,11 +9,6 @@ import {
   Input,
   Link,
   Spinner,
-  TabsContent,
-  TabsContentGroup,
-  TabsList,
-  TabsRoot,
-  TabsTrigger,
   Text,
 } from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
@@ -21,11 +16,9 @@ import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuUsers } from 'react-icons/lu'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { Link as ReactRouterLink } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { CensusTypes } from '~components/Process/Census/CensusType'
-import { CensusCsvManager } from '~components/Process/Census/Spreadsheet'
-import { CensusWeb3Addresses } from '~components/Process/Census/Web3'
 import { Routes } from '~routes'
 import { Group, useGroups } from '~src/queries/groups'
 import { VoterAuthentication } from '../VoterAuthentication'
@@ -101,6 +94,9 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
           const selected = groups?.find((g) => g.id === field.value) ?? null
           return (
             <Select
+              // Stable handle for the group combobox (labelled by the
+              // FieldLabel above, which Chakra wires up by id).
+              inputId='groupId'
               options={groups ?? []}
               value={selected}
               getOptionLabel={(option) =>
@@ -186,12 +182,9 @@ const GroupCensusCreation = () => {
   )
 }
 
-const CensusCreation = ({ showExtraMethods }: { showExtraMethods: boolean }) => {
-  const { t } = useTranslation()
+const CensusCreation = () => {
   const { setValue, watch } = useFormContext()
   const censusType = watch('censusType')
-
-  const currentValue = censusType || CensusTypes.CSP
 
   // Set default census type to Memberbase (Group) if not set
   useEffect(() => {
@@ -200,58 +193,7 @@ const CensusCreation = ({ showExtraMethods }: { showExtraMethods: boolean }) => 
     }
   }, [censusType, setValue])
 
-  const handleTabChange = (nextType: CensusTypes) => {
-    const prevType = watch('censusType')
-
-    if (nextType === prevType) return
-
-    switch (prevType) {
-      case CensusTypes.CSP:
-        setValue('groupId', '')
-        break
-      case CensusTypes.Web3:
-        setValue('addresses', [])
-        break
-      case CensusTypes.Spreadsheet:
-        setValue('spreadsheet', undefined)
-        break
-    }
-
-    setValue('censusType', nextType)
-  }
-
-  // If extra methods are not enabled, show only the Group selection
-  if (!showExtraMethods) {
-    return <GroupCensusCreation />
-  }
-
-  // If extra methods are enabled, show the full tab system
-  return (
-    <TabsRoot value={currentValue} onValueChange={({ value }) => handleTabChange(value as CensusTypes)} fitted>
-      <TabsList w='full'>
-        <TabsTrigger value={CensusTypes.CSP}>
-          {t('process_create.census.group.label', { defaultValue: 'Group' })}
-        </TabsTrigger>
-        <TabsTrigger value={CensusTypes.Spreadsheet}>
-          {t('process_create.census.spreadsheet.label', { defaultValue: 'Spreadsheet' })}
-        </TabsTrigger>
-        <TabsTrigger value={CensusTypes.Web3}>
-          {t('process_create.census.web3.label', { defaultValue: 'Web3' })}
-        </TabsTrigger>
-      </TabsList>
-      <TabsContentGroup>
-        <TabsContent value={CensusTypes.CSP} px={0}>
-          <GroupCensusCreation />
-        </TabsContent>
-        <TabsContent value={CensusTypes.Spreadsheet} px={0} display='flex' flexDirection='column' gap={4}>
-          <CensusCsvManager />
-        </TabsContent>
-        <TabsContent value={CensusTypes.Web3} px={0} display='flex' flexDirection='column' gap={4}>
-          <CensusWeb3Addresses />
-        </TabsContent>
-      </TabsContentGroup>
-    </TabsRoot>
-  )
+  return <GroupCensusCreation />
 }
 
 export default CensusCreation

@@ -1,4 +1,5 @@
-import { PublishedElection } from '@vocdoni/sdk'
+import React from 'react'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { screen } from '@testing-library/react'
 import { renderWithProviders } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -13,9 +14,8 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...getReactProvidersMock(),
     ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     ElectionStatusBadge: () => <div>Status</div>,
-    ElectionTitle: ({ as: Tag = 'p' }: { as?: keyof JSX.IntrinsicElements }) => <Tag>Election title</Tag>,
+    ElectionTitle: ({ as: Tag = 'p' }: { as?: React.ElementType }) => <Tag>Election title</Tag>,
     ElectionDescription: () => <div>Election description</div>,
-    enforceHexPrefix: (value: string) => (value.startsWith('0x') ? value : `0x${value}`),
   }
 })
 
@@ -48,21 +48,17 @@ describe('ProcessCardDetailed', () => {
   })
 
   it('links organization process cards to the canonical localized public process URL', async () => {
-    const election = new PublishedElection({
+    const election: VotingProcessResponse = {
       id: '0xprocess',
-      organizationId: '0xabc',
+      orgAddress: 'abc',
       title: { default: 'Board election 2026' },
       description: { default: 'Vote for the next board members.' },
-      status: 'READY',
-      electionType: {
-        anonymous: false,
-        interruptible: true,
-        dynamicCensus: false,
-        secretUntilTheEnd: false,
-      },
-      census: null,
+      census: {},
       questions: [],
-    } as any)
+      published: true,
+      startDate: '2026-01-01T00:00:00.000Z',
+      endDate: '2026-01-02T00:00:00.000Z',
+    }
 
     renderWithProviders(<ProcessCardDetailed election={election} />)
 

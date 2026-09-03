@@ -12,7 +12,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    exclude: ['.worktrees', 'node_modules', 'dist'],
+    // `e2e` holds the Playwright suite. Its specs are `*.e2e.ts`, which already
+    // falls outside vitest's default `**/*.{test,spec}.*` glob — this is a
+    // belt-and-braces guard so a future `*.test.ts` helper in there can never
+    // be picked up by the unit run (it would try to launch a browser).
+    exclude: ['.worktrees', 'node_modules', 'dist', 'e2e'],
     setupFiles: './vitest.setup.ts',
     css: true,
     coverage: {
@@ -29,7 +33,7 @@ export default defineConfig({
     },
     server: {
       deps: {
-        inline: ['@plausible-analytics/tracker', 'react-gtm-module'],
+        inline: ['@plausible-analytics/tracker', 'react-gtm-module', 'posthog-js'],
       },
     },
   },
@@ -38,6 +42,7 @@ export default defineConfig({
       // Mock problematic packages for testing
       '@plausible-analytics/tracker': path.resolve(__dirname, './src/__mocks__/@plausible-analytics/tracker.ts'),
       'react-gtm-module': path.resolve(__dirname, './src/__mocks__/react-gtm-module.ts'),
+      'posthog-js': path.resolve(__dirname, './src/__mocks__/posthog-js.ts'),
     },
   },
 })

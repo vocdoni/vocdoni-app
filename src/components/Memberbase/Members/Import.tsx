@@ -32,12 +32,13 @@ import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
 import { MembersCsvManager } from './MembersCsvManager'
@@ -135,6 +136,22 @@ export const ImportProgress = () => {
       })
     }
   }, [queryClient, organization.address, isComplete])
+
+  // Track the async job outcome once per job
+  const trackedJobRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!jobId || trackedJobRef.current === jobId || (!isComplete && !hasFailed)) return
+    trackedJobRef.current = jobId
+    trackAnalyticsEvent({
+      name: AnalyticsEvents.MembersImportCompleted,
+      props: {
+        status: hasFailed ? 'failed' : 'completed',
+        added: data?.result?.added ?? 0,
+        total: data?.result?.total ?? 0,
+        error_count: data?.errors?.length ?? 0,
+      },
+    })
+  }, [jobId, isComplete, hasFailed, data])
 
   const closeAlert = () => setJobId(null)
 
@@ -265,7 +282,15 @@ export const ImportProgress = () => {
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <List.Root display='flex' flexDirection='column' gap={2} pl={4} listStyleType='disc'>
+              {/* ph-no-capture: import errors quote the offending CSV rows */}
+              <List.Root
+                display='flex'
+                flexDirection='column'
+                gap={2}
+                pl={4}
+                listStyleType='disc'
+                className='ph-no-capture'
+              >
                 {data?.errors?.map((error, i) => (
                   <List.Item key={i} whiteSpace='pre-wrap' fontSize='sm'>
                     {error}
@@ -343,7 +368,10 @@ const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapper
                 <FormLabel htmlFor={id}>{label}</FormLabel>
                 <Box>
                   <Select
-                    id={id}
+                    // `inputId`, not `id`: react-select puts `id` on its
+                    // container div, which the FormLabel's htmlFor above cannot
+                    // label. This puts it on the actual input instead.
+                    inputId={id}
                     name={id}
                     options={getAvailableOptions(id)}
                     onChange={(selectedOption) =>
@@ -473,6 +501,7 @@ export const ImportMembers = () => {
     const finalData = mapSpreadsheetData(parsedRows, columnMapping)
 
     try {
+      trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportStarted, props: { total_rows: finalData.length } })
       const data = await addMembers.mutateAsync(finalData)
       setJobId(data?.jobId)
       setColumnMapping({})
@@ -501,7 +530,10 @@ export const ImportMembers = () => {
     >
       <Drawer.Backdrop />
       <Drawer.Trigger asChild>
-        <Button ref={btnRef} variant='outline'>
+        {/* data-testid: the accessible name ("Import") is a prefix of the
+            drawer's own submit ("Import Data"), so the e2e suite has no
+            unambiguous copy-free handle for this trigger. */}
+        <Button ref={btnRef} variant='outline' data-testid='members-import-open'>
           <Icon as={LuUpload} />
           {t('memberbase.importer.button', { defaultValue: 'Import' })}
         </Button>

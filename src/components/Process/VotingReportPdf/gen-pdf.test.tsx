@@ -1,22 +1,19 @@
 /**
- * PDF generator for manual inspection.
+ * PDF generator for manual inspection, driven by the SaaS API (new-model processes).
  * Usage:
- *   PROCESS_ID=<id> VOCDONI_ENV=dev|stg|prod pnpm vitest run src/.../gen-pdf.test.tsx
+ *   PROCESS_ID=<mongoId> AUTH_TOKEN=<jwt> [SAAS_URL=https://saas-api-dev.vocdoni.net] \
+ *     pnpm vitest run src/components/Process/VotingReportPdf/gen-pdf.test.tsx
+ * Alternatively pass AUTH_EMAIL/AUTH_PASSWORD to log in instead of AUTH_TOKEN.
+ * The process read is Bearer-authed; results are public.
  * Output: /tmp/gen-<id>.pdf  +  printed section-5 data summary
  */
-import { describe, it } from 'vitest'
 import * as ReactPDF from '@react-pdf/renderer'
+import { VocdoniApiClient } from '@vocdoni/api-client'
 import fs from 'fs'
-import { VocdoniSDKClient, EnvOptions, PublishedElection } from '@vocdoni/sdk'
 import i18next from 'i18next'
+import { describe, it } from 'vitest'
+import { buildCertificateData, canDownloadVotingReport, fetchProcessResults } from './certificate-data'
 import { VotingCertificateDocument } from './pdf-document'
-import {
-  buildCertificateData,
-  resolveCensusMetadata,
-  resolveReportCensusType,
-  isCspReportCensus,
-  fetchCensusBundle,
-} from './certificate-data'
 
 const { pdf } = ReactPDF
 
@@ -29,44 +26,52 @@ const collect = (s: any): Promise<Buffer> =>
   })
 
 const PROCESS_ID = process.env.PROCESS_ID ?? ''
-const ENV_KEY = (process.env.VOCDONI_ENV ?? 'prod').toUpperCase() as keyof typeof EnvOptions
-const API_URL = process.env.VOCDONI_API_URL // optional override, e.g. https://one-dev.vocdoni.net/v2
+const SAAS_URL = process.env.SAAS_URL ?? 'https://saas-api-dev.vocdoni.net'
+const EXPLORER_URL = process.env.EXPLORER_URL ?? 'https://one-dev.explorer.vote'
+
+const resolveToken = async (): Promise<string | undefined> => {
+  if (process.env.AUTH_TOKEN) return process.env.AUTH_TOKEN
+  if (process.env.AUTH_EMAIL && process.env.AUTH_PASSWORD) {
+    const anonymous = new VocdoniApiClient({ apiUrl: SAAS_URL })
+    const session = await anonymous.auth.login(process.env.AUTH_EMAIL, process.env.AUTH_PASSWORD)
+    return session.token
+  }
+  return undefined
+}
 
 describe.skipIf(!PROCESS_ID)('PDF generator', () => {
   it(`generates PDF for ${PROCESS_ID}`, async () => {
     if (!i18next.isInitialized) await i18next.init({ lng: 'en', resources: {} })
     const t = i18next.t.bind(i18next) as any
 
-    const client = new VocdoniSDKClient({
-      env: EnvOptions[ENV_KEY] ?? EnvOptions.PROD,
-      ...(API_URL ? { api_url: API_URL } : {}),
-    })
-    const election = (await client.fetchElection(PROCESS_ID)) as PublishedElection
+    const authToken = await resolveToken()
+    const client = new VocdoniApiClient({ apiUrl: SAAS_URL, authToken })
+
+    const election = await client.elections.get(PROCESS_ID)
+    const results = await fetchProcessResults(client, PROCESS_ID)
 
     console.log('\n=== Election ===')
     console.log('Title       :', election.title?.default)
-    console.log('Status      :', election.status)
-    console.log('voteCount   :', election.voteCount)
-    console.log('Census type :', election.census?.type)
+    console.log('Published   :', election.published)
     console.log('Census size :', election.census?.size)
-    console.log('Census weight:', (election.census as any)?.weight)
-    console.log('ResultsType :', JSON.stringify(election.resultsType))
-    console.log('Results     :', JSON.stringify(election.results))
-    console.log('Meta        :', JSON.stringify(election.meta))
+    console.log('Weighted    :', election.census?.weighted)
+    console.log('Auth fields :', JSON.stringify(election.census?.authFields))
+    console.log('2FA fields  :', JSON.stringify(election.census?.twoFaFields))
+    console.log('Chain id    :', election.chainId)
     console.log('Questions   :', election.questions.length)
+    console.log('Statuses    :', election.questions.map((q) => q.status).join(', '))
+    console.log('Results     :', JSON.stringify(results))
 
-    const censusMeta = resolveCensusMetadata(election)
-    const censusType = resolveReportCensusType(election, censusMeta)
-    const censusBundle = isCspReportCensus(censusType)
-      ? await fetchCensusBundle((election.census as any)?.censusURI)
-      : null
+    if (!canDownloadVotingReport(election)) {
+      throw new Error('process is not in a downloadable state (published + ENDED/CANCELED/RESULTS)')
+    }
 
     const data = buildCertificateData({
-      report: { election },
+      election,
+      results,
       t,
       organizationName: undefined,
-      explorerUrl: `https://dev.explorer.vote`,
-      censusBundle,
+      explorerUrl: EXPLORER_URL,
       now: new Date(),
     })
 

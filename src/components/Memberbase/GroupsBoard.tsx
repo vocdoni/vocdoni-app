@@ -29,12 +29,12 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react'
-import { PaginationProvider, usePagination } from '@vocdoni/react-components/pagination'
+import { PaginationProvider, usePagination } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCalendar, LuClock, LuEllipsis, LuEye, LuPencil, LuTrash, LuUsers, LuVote } from 'react-icons/lu'
-import { generatePath, useNavigate } from 'react-router-dom'
+import { generatePath, useNavigate } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
@@ -453,7 +453,10 @@ const GroupMembersTable = ({ groupId, group }: { groupId: string; group: Group }
                       </CheckboxRoot>
                     </Table.Cell>
                     {columns.map((column) => (
-                      <Table.Cell key={column.id}>{member[column.id]}</Table.Cell>
+                      // ph-no-capture: member data is never recorded in session replays
+                      <Table.Cell key={column.id} className='ph-no-capture'>
+                        {member[column.id]}
+                      </Table.Cell>
                     ))}
                   </Table.Row>
                 ))}
@@ -581,7 +584,7 @@ const GroupMembersDisplay = ({ group, isOpen }: GroupMembersProps) => {
   const pagination = data.pagination
 
   return (
-    <PaginationProvider initialPage={initialPage} pagination={pagination}>
+    <PaginationProvider pagination={pagination}>
       <GroupMembersWithPagination group={group} isOpen={isOpen} />
     </PaginationProvider>
   )

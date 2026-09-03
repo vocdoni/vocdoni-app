@@ -1,17 +1,19 @@
 import { useMutation } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
-import { ensure0x } from '@vocdoni/sdk'
+import { ensure0x } from '~utils/address'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
 export const usePortalSession = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
+  const { bearedFetch, currentAddress } = useAuth()
 
   return useMutation({
     mutationFn: () =>
       bearedFetch<{ portalURL: string }>(
-        ApiEndpoints.SubscriptionPortal.replace('{address}', ensure0x(account?.address))
+        ApiEndpoints.SubscriptionPortal.replace('{address}', ensure0x(currentAddress))
       ),
+    onSuccess: () => {
+      trackAnalyticsEvent({ name: AnalyticsEvents.BillingPortalOpened })
+    },
   })
 }

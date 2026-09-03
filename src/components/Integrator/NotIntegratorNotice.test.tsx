@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
+import { setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 
 const provisionMutateAsync = vi.fn()
-const signerRefresh = vi.fn()
 const selectOrganization = vi.fn()
 
 vi.mock('~src/queries/account', () => ({
@@ -30,7 +30,7 @@ vi.mock('~components/Modal/DeleteModal', () => ({
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: vi.fn(() => ({ signerRefresh })),
+  useAuth: () => getAuthMock(),
 }))
 
 vi.mock('~components/Auth/useAuthProvider', () => ({
@@ -72,6 +72,9 @@ describe('NotIntegratorNotice', () => {
     mockProfile(['0xregular'])
     provisionMutateAsync.mockResolvedValue({ address: '0xnew' })
 
+    const refreshAddressesMock = vi.fn()
+    setAuthMock({ refreshAddresses: refreshAddressesMock })
+
     render(<NotIntegratorNotice />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Create a free integrator account' }))
@@ -84,7 +87,7 @@ describe('NotIntegratorNotice', () => {
 
     await waitFor(() => expect(provisionMutateAsync).toHaveBeenCalledTimes(1))
     expect(localStorage.getItem('signerAddress')).toBe('0xnew')
-    expect(signerRefresh).toHaveBeenCalled()
+    expect(refreshAddressesMock).toHaveBeenCalled()
   })
 
   it('does not provision when the confirmation is cancelled', async () => {

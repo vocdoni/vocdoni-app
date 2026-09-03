@@ -1,8 +1,6 @@
 import type { ChangeEvent, ReactNode } from 'react'
-import type { PublishedElection } from '@vocdoni/sdk'
 import userEvent from '@testing-library/user-event'
-import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
-import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { render, screen, waitFor } from '~src/test-utils'
 import { Step1Base } from './Step1'
 
 vi.mock('@chakra-ui/react', async () => {
@@ -101,7 +99,6 @@ const getPinInputs = () => screen.getAllByRole<HTMLInputElement>('textbox', { na
 vi.mock('./CSPStepsProvider', () => ({
   useCspAuthContext: () => ({
     authData: {
-      authToken: 'token',
       email: 'user@example.com',
       phone: '+34600000000',
     },
@@ -109,12 +106,12 @@ vi.mock('./CSPStepsProvider', () => ({
 }))
 
 vi.mock('./basics', () => ({
-  useTwoFactorAuth: () => ({
+  useCspAuth1: () => ({
     mutateAsync,
     isPending: false,
     isError: false,
   }),
-  useResendChallenge: () => ({
+  useCspResend: () => ({
     mutateAsync: resendMutateAsync,
     isPending: false,
   }),
@@ -123,31 +120,19 @@ vi.mock('./basics', () => ({
 describe('Step1Base', () => {
   beforeEach(() => {
     mutateAsync.mockReset()
-    mutateAsync.mockResolvedValue({ authToken: 'next-token' })
+    mutateAsync.mockResolvedValue(undefined)
     resendMutateAsync.mockReset()
     resendMutateAsync.mockResolvedValue(undefined)
-
-    setReactProvidersMock({
-      useElection: () =>
-        mockUseElection({
-          actions: {
-            csp1: vi.fn(),
-          },
-        }),
-    })
   })
 
   it('renders the authenticate button', async () => {
-    const election = {} as PublishedElection
-    const { findByRole } = render(<Step1Base election={election} />)
+    const { findByRole } = render(<Step1Base />)
 
     expect(await findByRole('button', { name: 'Authenticate' })).toBeTruthy()
   })
 
   it('renders the updated 2FA copy', () => {
-    const election = {} as PublishedElection
-
-    render(<Step1Base election={election} />)
+    render(<Step1Base />)
 
     expect(screen.getByText('Enter the verification code')).toBeInTheDocument()
     expect(
@@ -162,10 +147,9 @@ describe('Step1Base', () => {
   })
 
   it('does not render undefined values when pasting the pin code', async () => {
-    const election = {} as PublishedElection
     const user = userEvent.setup()
 
-    render(<Step1Base election={election} />)
+    render(<Step1Base />)
 
     const pinInputs = getPinInputs()
     expect(pinInputs).toHaveLength(6)
@@ -183,10 +167,9 @@ describe('Step1Base', () => {
   })
 
   it('submits the full code when digits are entered sequentially', async () => {
-    const election = {} as PublishedElection
     const user = userEvent.setup()
 
-    render(<Step1Base election={election} />)
+    render(<Step1Base />)
 
     const pinInputs = getPinInputs()
     expect(pinInputs).toHaveLength(6)
@@ -197,18 +180,14 @@ describe('Step1Base', () => {
     }
 
     await waitFor(() => {
-      expect(mutateAsync).toHaveBeenCalledWith({
-        authToken: 'token',
-        authData: ['123456'],
-      })
+      expect(mutateAsync).toHaveBeenCalledWith('123456')
     })
   })
 
   it('preserves the deleted position instead of compacting the remaining digits', async () => {
-    const election = {} as PublishedElection
     const user = userEvent.setup()
 
-    render(<Step1Base election={election} />)
+    render(<Step1Base />)
 
     const pinInputs = getPinInputs()
 
@@ -228,17 +207,15 @@ describe('Step1Base', () => {
     })
   })
 
-  it('calls resend.mutateAsync with authToken and contact info when the resend button is clicked', async () => {
-    const election = {} as PublishedElection
+  it('calls resend.mutateAsync with the contact info when the resend button is clicked', async () => {
     const user = userEvent.setup()
 
-    render(<Step1Base election={election} />)
+    render(<Step1Base />)
 
     await user.click(screen.getByRole('button', { name: 'Resend it' }))
 
     await waitFor(() => {
       expect(resendMutateAsync).toHaveBeenCalledWith({
-        authToken: 'token',
         email: 'user@example.com',
         phone: '+34600000000',
       })
@@ -246,10 +223,9 @@ describe('Step1Base', () => {
   })
 
   it('shows a success toast when the resend succeeds', async () => {
-    const election = {} as PublishedElection
     const user = userEvent.setup()
 
-    render(<Step1Base election={election} />)
+    render(<Step1Base />)
 
     await user.click(screen.getByRole('button', { name: 'Resend it' }))
 
@@ -261,10 +237,9 @@ describe('Step1Base', () => {
   it('shows an error toast when the resend fails', async () => {
     resendMutateAsync.mockRejectedValue(new Error('Network error'))
 
-    const election = {} as PublishedElection
     const user = userEvent.setup()
 
-    render(<Step1Base election={election} />)
+    render(<Step1Base />)
 
     await user.click(screen.getByRole('button', { name: 'Resend it' }))
 

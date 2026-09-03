@@ -35,8 +35,7 @@ vi.mock('~components/Process/Create/TemplateProvider', () => ({
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const form = useForm({
     defaultValues: {
-      questionType: SelectorTypes.Single,
-      questions: [{ options: [{ option: 'A' }, { option: 'B' }] }],
+      questions: [{ type: SelectorTypes.Single, options: [{ option: 'A' }, { option: 'B' }] }],
     },
   })
   return <FormProvider {...form}>{children}</FormProvider>

@@ -1,18 +1,22 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook } from '@testing-library/react'
 import React from 'react'
-import { ApiEndpoints } from '~components/Auth/api'
+import { getStoredDraftId, storeDraftId } from '~components/Process/Create/draft-storage'
 import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { DraftsTable, useDeleteDraft } from './drafts'
 
 const toastSpy = vi.fn()
-const bearedFetchMock = vi.fn().mockResolvedValue(undefined)
+const deleteElectionMock = vi.fn().mockResolvedValue(undefined)
 
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({
-    bearedFetch: bearedFetchMock,
-  }),
+  useAuth: () => ({ currentAddress: '0xorg' }),
+}))
+
+// Partial mock: AllProviders (used by render) still mounts the real ApiClientProvider.
+vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
+  useApiClient: () => ({ client: { elections: { delete: deleteElectionMock } } }),
 }))
 
 // DraftsContextMenu (rendered by both the card and the row) pulls in the create-process
@@ -40,8 +44,9 @@ afterEach(() => {
 
 describe('useDeleteDraft', () => {
   beforeEach(() => {
-    bearedFetchMock.mockClear()
+    deleteElectionMock.mockClear()
     toastSpy.mockClear()
+    localStorage.clear()
     setReactProvidersMock({
       useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
     })
@@ -56,9 +61,7 @@ describe('useDeleteDraft', () => {
       await result.current.mutateAsync({ draftId: 'draft-1' })
     })
 
-    expect(bearedFetchMock).toHaveBeenCalledWith(ApiEndpoints.OrganizationProcess.replace('{processId}', 'draft-1'), {
-      method: 'DELETE',
-    })
+    expect(deleteElectionMock).toHaveBeenCalledWith('draft-1')
     expect(toastSpy).toHaveBeenCalled()
     expect(invalidateSpy).toHaveBeenCalled()
   })
@@ -79,23 +82,59 @@ describe('useDeleteDraft', () => {
   it('propagates errors without showing a success toast', async () => {
     const queryClient = new QueryClient()
     const error = new Error('boom')
-    bearedFetchMock.mockRejectedValueOnce(error)
+    deleteElectionMock.mockRejectedValueOnce(error)
     const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
 
     await expect(result.current.mutateAsync({ draftId: 'draft-3' })).rejects.toThrow(error)
     expect(toastSpy).not.toHaveBeenCalled()
   })
+
+  it('clears the stored draft id after a successful delete', async () => {
+    storeDraftId('0xorg', 'draft-1')
+    const queryClient = new QueryClient()
+    const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
+
+    await act(async () => {
+      await result.current.mutateAsync({ draftId: 'draft-1' })
+    })
+
+    expect(getStoredDraftId('0xorg')).toBeNull()
+  })
+
+  it('keeps the stored draft id when the delete fails', async () => {
+    storeDraftId('0xorg', 'draft-1')
+    deleteElectionMock.mockRejectedValueOnce(new Error('boom'))
+    const queryClient = new QueryClient()
+    const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
+
+    await expect(result.current.mutateAsync({ draftId: 'draft-1' })).rejects.toThrow()
+    expect(getStoredDraftId('0xorg')).toBe('draft-1')
+  })
+
+  it('keeps the stored draft id when deleting a different draft', async () => {
+    storeDraftId('0xorg', 'draft-1')
+    const queryClient = new QueryClient()
+    const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
+
+    await act(async () => {
+      await result.current.mutateAsync({ draftId: 'draft-2' })
+    })
+
+    expect(getStoredDraftId('0xorg')).toBe('draft-1')
+  })
 })
 
 describe('DraftsTable layout', () => {
+  // An unpublished process, as `GET /processes` returns it.
   const draft = {
     id: 'draft-1',
-    metadata: {
-      title: 'My draft',
-      startDate: '2026-01-01',
-      endDate: '2026-01-02',
-      questionType: 'single',
-    },
+    orgAddress: 'org',
+    published: false,
+    title: { default: 'My draft' },
+    startDate: '2026-01-01T09:00:00Z',
+    endDate: '2026-01-02T09:00:00Z',
+    census: {},
+    questions: [{ title: { default: 'Q' }, choices: [], type: 'singlechoice' }],
   } as any
 
   // The global matchMedia stub matches nothing, so useBreakpointValue resolves the `base` value

@@ -22,7 +22,7 @@ const NotIntegratorNotice = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const { data: profile } = useProfile()
-  const { signerRefresh } = useAuth()
+  const { refreshAddresses } = useAuth()
   const provision = useProvisionIntegratorOrganization()
   const selectOrganization = useSelectOrganization()
   const [open, setOpen] = useState(false)
@@ -36,10 +36,10 @@ const NotIntegratorNotice = () => {
   const onCreate = async () => {
     try {
       const { address } = await provision.mutateAsync()
-      // Point the SDK client/account at the freshly provisioned org so the guard re-evaluates and
-      // renders the real dashboard (mirrors IntegratorOrgGuard's post-provision effect).
+      // Point the session at the freshly provisioned org so the guard re-evaluates and renders the
+      // real dashboard (mirrors IntegratorOrgGuard's post-provision effect).
       localStorage.setItem(LocalStorageKeys.SignerAddress, address)
-      await signerRefresh()
+      await refreshAddresses()
       setOpen(false)
     } catch (err) {
       toast({

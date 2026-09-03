@@ -1,105 +1,52 @@
 import { Badge, Button, CloseButton, Dialog, Flex, Heading, Portal, Tabs, Text, useDisclosure } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import type { OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
-import { ensure0x } from '@vocdoni/sdk'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { ApiEndpoints, getApiErrorMessage } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import { getApiErrorMessage } from '~components/Auth/api'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
-import { Process } from '../common'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { Census, Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
 import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
 import { TwoFactorForm } from './TwoFactorForm'
 import { getTwoFaFields, StepCompletionState, VoterAuthFormData } from './utils'
 import { ValidationError, ValidationErrorsAlert } from './ValidationErrorsAlert'
 
-type ValidateGroupArgs = {
+type ValidateCensusArgs = {
   groupId: string
   authFields?: string[]
   twoFaFields?: string[]
 }
 
-const useValidateGroup = () => {
+// Pre-flight check of the census the process will be created with: the chosen
+// credentials must be unique and complete across the target members (the group
+// when one is selected, otherwise the whole organization).
+const useValidateCensus = () => {
   const { organization } = useOrganization()
-  const { bearedFetch } = useAuth()
+  const { client } = useApiClient()
 
   return useMutation({
-    mutationFn: async ({ groupId, authFields, twoFaFields }: ValidateGroupArgs) => {
-      return await bearedFetch<{ valid: boolean }>(
-        ApiEndpoints.OrganizationGroupValidate.replace('{address}', organization?.address).replace(
-          '{groupId}',
-          groupId
-        ),
-        {
-          method: 'POST',
-          body: {
-            authFields,
-            twoFaFields,
-          },
-        }
-      )
-    },
-  })
-}
-
-const useCreateCensus = () => {
-  const { bearedFetch } = useAuth()
-  const { organization } = useOrganization()
-
-  return useMutation({
-    mutationFn: async () => {
-      return await bearedFetch<{ id: string }>(ApiEndpoints.OrganizationCensuses, {
-        method: 'POST',
-        body: {
-          orgAddress: ensure0x(organization?.address),
+    mutationFn: ({ groupId, authFields, twoFaFields }: ValidateCensusArgs) =>
+      client.elections.validateCensus({
+        orgAddress: organization?.address ?? '',
+        census: {
+          groupId: groupId || undefined,
+          authFields: authFields as OrgMemberAuthField[],
+          twoFaFields: twoFaFields as OrgMemberTwoFaField[],
         },
-      })
-    },
+      }),
   })
 }
 
-type PublishGroupCensusResponse = {
-  root: string
-  size: number
-  uri: string
-}
-
-type PublishCensusRequest = {
-  authFields: string[]
-  twoFaFields: string[]
-  weighted?: boolean
-}
-
-type PublishCensusArgs = PublishCensusRequest & {
-  censusId: string
-  groupId: string
-}
-
-const usePublishCensus = () => {
-  const { bearedFetch } = useAuth()
-
-  return useMutation({
-    mutationFn: async ({ censusId, groupId, authFields, twoFaFields, weighted }: PublishCensusArgs) => {
-      const body: PublishCensusRequest = {
-        authFields,
-        twoFaFields,
-        weighted,
-      }
-
-      const endpoint = ApiEndpoints.OrganizationCensusPublish.replace('{censusId}', censusId).replace(
-        '{groupId}',
-        groupId
-      )
-
-      return await bearedFetch<PublishGroupCensusResponse>(endpoint, {
-        method: 'POST',
-        body,
-      })
-    },
-  })
-}
+// Order-insensitive identity of an auth configuration, used to tell an actual
+// change from a no-op re-confirm. Credentials are a set, not a sequence.
+const censusConfigSignature = (config: Census) =>
+  JSON.stringify([[...(config.credentials ?? [])].sort(), !!config.use2FA, config.use2FAMethod ?? 'none'])
 
 export const VoterAuthentication = () => {
   const { t } = useTranslation()
@@ -121,21 +68,16 @@ export const VoterAuthentication = () => {
     },
   })
 
-  const validateGroupMutation = useValidateGroup()
-  const createCensusMutation = useCreateCensus()
-  const publishCensusMutation = usePublishCensus()
+  const validateCensusMutation = useValidateCensus()
 
   const groupId = mainForm.watch('groupId')
   const census = mainForm.watch('census')
-  const weighted = mainForm.watch('weightedVote')
   const formData = voterAuthForm.watch()
   const hasNoCredentialsSelected = !formData?.credentials?.length && !formData?.use2FA
-  const prevWeightedRef = useRef(weighted)
-  const recreateInFlightRef = useRef(false)
   const tabValues = ['credentials', 'twoFactor', 'summary'] as const
   const activeTabValue = tabValues[activeTabIndex] ?? tabValues[0]
 
-  // Sync form values with stored census data
+  // Sync form values with stored census data when modal re-opens
   useEffect(() => {
     if (census) {
       voterAuthForm.setValue('credentials', census.credentials)
@@ -151,78 +93,21 @@ export const VoterAuthentication = () => {
       step2Completed: false,
     })
     setValidationError(null)
-    // clear possible main form census validation errors
     mainForm.clearErrors('census')
   }, [mainForm])
 
-  const createAndPublishCensus = useCallback(
-    async (currentWeighted: boolean) => {
-      const currentFormData = voterAuthForm.getValues()
-      const twoFaFields = currentFormData.use2FA ? getTwoFaFields(currentFormData.use2FAMethod) : []
-
-      const { id: censusId } = await createCensusMutation.mutateAsync()
-      const { size: maxCensusSize } = await publishCensusMutation.mutateAsync({
-        censusId,
-        groupId,
-        authFields: currentFormData.credentials,
-        twoFaFields,
-        weighted: currentWeighted,
-      })
-
-      mainForm.setValue('census', {
-        id: censusId,
-        credentials: currentFormData.credentials,
-        use2FA: currentFormData.use2FA,
-        use2FAMethod: currentFormData.use2FAMethod ?? null,
-        size: maxCensusSize,
-      })
-    },
-    [createCensusMutation, publishCensusMutation, voterAuthForm, groupId, mainForm]
-  )
-
-  useEffect(() => {
-    if (prevWeightedRef.current === weighted) return
-    prevWeightedRef.current = weighted
-
-    if (!mainForm.getValues('census') || !groupId || recreateInFlightRef.current) return
-
-    recreateInFlightRef.current = true
-    mainForm.setValue('census', null)
-
-    createAndPublishCensus(weighted)
-      .catch((error) => {
-        setValidationError(error.apiError as ValidationError)
-        const errorMessage =
-          getApiErrorMessage(error) ??
-          t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' })
-        toast({
-          title: t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }),
-          description: errorMessage,
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        })
-      })
-      .finally(() => {
-        recreateInFlightRef.current = false
-      })
-  }, [weighted, groupId, mainForm, createAndPublishCensus, t, toast])
-
   const handleNext = async () => {
     if (activeTabIndex === 0) {
-      // Step 1 → Step 2: Simple navigation
       setStepCompletion((prev) => ({ ...prev, step1Completed: true }))
       setActiveTabIndex(1)
     } else if (activeTabIndex === 1) {
-      // Step 2 → Step 3: Validate data
       setValidationError(null)
 
       try {
         const currentFormData = voterAuthForm.getValues()
         const twoFaFields = currentFormData.use2FA ? getTwoFaFields(currentFormData.use2FAMethod) : []
 
-        // Validate the group configuration
-        await validateGroupMutation.mutateAsync({
+        await validateCensusMutation.mutateAsync({
           groupId,
           authFields: currentFormData.credentials,
           twoFaFields,
@@ -230,7 +115,8 @@ export const VoterAuthentication = () => {
 
         setActiveTabIndex(2)
       } catch (error) {
-        setValidationError(error.apiError as ValidationError)
+        // The offending member ids ride on the API error body.
+        setValidationError((error instanceof VocdoniApiError ? error.body : error?.apiError) as ValidationError)
         const errorMessage =
           getApiErrorMessage(error) ?? t('voter_auth.validation_failed', { defaultValue: 'Validation failed' })
         toast({
@@ -242,36 +128,41 @@ export const VoterAuthentication = () => {
         })
       }
     } else {
-      try {
-        // Step 3: Create and publish census
-        await createAndPublishCensus(weighted)
-        setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
-        toast({
-          title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),
-          type: 'success',
-          duration: 3000,
-          isClosable: true,
-        })
-        onClose()
-        resetForm()
-      } catch (error) {
-        setValidationError(error.apiError as ValidationError)
-        const errorMessage =
-          getApiErrorMessage(error) ??
-          t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' })
-        toast({
-          title: t('voter_auth.save_failed', { defaultValue: 'Failed to configure voter authentication' }),
-          description: errorMessage,
-          type: 'error',
-          duration: 3000,
-          isClosable: true,
+      // Step 3 (Confirm): save auth config to form — census is created by the backend during process publish
+      const currentFormData = voterAuthForm.getValues()
+      const nextCensus: Census = {
+        credentials: currentFormData.credentials,
+        use2FA: currentFormData.use2FA,
+        use2FAMethod: currentFormData.use2FAMethod ?? 'email',
+      }
+      // The modal doubles as the "Edit" entry point, so a confirm that changes
+      // nothing must not report a fresh configuration — otherwise every reopen
+      // inflates the count.
+      const configChanged = !census || censusConfigSignature(census) !== censusConfigSignature(nextCensus)
+      mainForm.setValue('census', nextCensus)
+      if (configChanged) {
+        trackAnalyticsEvent({
+          name: AnalyticsEvents.CensusConfigured,
+          props: {
+            auth_fields_count: nextCensus.credentials?.length ?? 0,
+            two_fa: !!nextCensus.use2FA,
+            two_fa_method: nextCensus.use2FAMethod ?? 'none',
+          },
         })
       }
+      setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
+      toast({
+        title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),
+        type: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+      onClose()
+      resetForm()
     }
   }
 
   const handleTabChange = (index: number) => {
-    // Allow navigation to any completed step or the next available step
     if (index === 0) {
       setActiveTabIndex(0)
     } else if (index === 1 && stepCompletion.step1Completed) {
@@ -289,7 +180,7 @@ export const VoterAuthentication = () => {
     }
   }
 
-  const isLoading = validateGroupMutation.isPending || createCensusMutation.isPending || publishCensusMutation.isPending
+  const isLoading = validateCensusMutation.isPending
 
   return (
     <>
@@ -338,16 +229,19 @@ export const VoterAuthentication = () => {
                 <CloseButton />
               </Dialog.CloseTrigger>
               <Dialog.Header>
-                <Dialog.Title>
+                {/* Dialog.Title renders an <h2> itself, so the styled Heading must BE the
+                    title element (asChild) rather than nest inside it, and the subheader
+                    paragraph cannot live inside a heading at all. */}
+                <Dialog.Title asChild>
                   <Heading variant='header'>
                     {t('voter_auth.title', { defaultValue: 'Configure Voter Authentication' })}
                   </Heading>
-                  <Text variant='subheader'>
-                    {t('voter_auth.description', {
-                      defaultValue: 'Set up how voters will authenticate to participate in this voting process.',
-                    })}
-                  </Text>
                 </Dialog.Title>
+                <Text variant='subheader'>
+                  {t('voter_auth.description', {
+                    defaultValue: 'Set up how voters will authenticate to participate in this voting process.',
+                  })}
+                </Text>
               </Dialog.Header>
               <Dialog.Body>
                 <FormProvider {...voterAuthForm}>
@@ -392,10 +286,15 @@ export const VoterAuthentication = () => {
                 <Button variant='ghost' onClick={handlePrevious}>
                   {t('common.back', 'Back')}
                 </Button>
+                {/* data-testid: this one button is both "Next" and "Confirm"
+                    depending on the step, and the tab triggers stay disabled
+                    until their step is completed — so the e2e suite has no
+                    copy-free way to advance the modal. */}
                 <Button
                   onClick={handleNext}
                   loading={isLoading}
                   disabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
+                  data-testid='voter-auth-next'
                 >
                   {activeTabIndex === 2 ? t('common.confirm', 'Confirm') : t('common.next', 'Next')}
                 </Button>

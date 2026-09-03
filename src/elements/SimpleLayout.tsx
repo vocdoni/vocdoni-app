@@ -1,6 +1,6 @@
 import { Box, Flex, HStack } from '@chakra-ui/react'
 import { ReactNode, useState } from 'react'
-import { Outlet, ScrollRestoration } from 'react-router-dom'
+import { Outlet, ScrollRestoration } from 'react-router'
 import { ColorModeSwitcher } from '~components/Layout/ColorModeSwitcher'
 import CrispChat from '~components/Layout/CrispChat'
 import Footer from '~components/Layout/Footer'

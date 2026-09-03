@@ -1,45 +1,36 @@
-import { useElection } from '@vocdoni/react-components'
+import { computeProcessStatus, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import type {
+  MultiLangString,
+  PublishedVotingProcessResponse,
+  QuestionStatus,
+  VotingProcessQuestion,
+  VotingProcessResponse,
+  VotingProcessResultsResponse,
+} from '@vocdoni/api-types'
 import {
-  CensusType,
-  dotobject,
-  ElectionResultsTypeNames,
-  ElectionStatus,
-  formatUnits,
-  type InvalidElection,
-  PublishedElection,
-} from '@vocdoni/sdk'
+  BallotType,
+  decodeQuestionResults,
+  inferQuestionBallotType,
+  questionReservesAbstain,
+  type DecodedQuestionResults,
+} from '@vocdoni/ballot'
+import { useElection } from '@vocdoni/react-components'
 import { type TFunction } from 'i18next'
 
-// SerializedElection (Record<string, any>) is an internal react-components type not exported;
-// we define a compatible local alias so this component accepts ElectionLike from useElection().
-type ElectionLike = PublishedElection | InvalidElection | Record<string, unknown>
+/** Anything callers may hand us as an election: a typed process response or an untyped record. */
+export type ElectionLike = VotingProcessResponse | Record<string, unknown> | null | undefined
 
-type ReportCensusType = 'csp' | 'spreadsheet' | 'web3' | 'weighted' | 'anonymous' | 'unknown'
-
-type CensusMetadata = {
-  type?: string
-  fields?: string[]
-  salt?: string
-}
+/** Minimal client surface the report needs — matches `useApiClient().client.elections`. */
+type ReportClientLike = {
+  elections?: {
+    get?: (id: string) => Promise<VotingProcessResponse>
+    getResults?: (id: string) => Promise<VotingProcessResultsResponse>
+  }
+} | null
 
 type ElectionReportContext = {
-  election: PublishedElection
-  isWeighted?: boolean
-  participation?: number
-  turnout?: number
-}
-
-type CensusBundleData = {
-  census: {
-    published?: {
-      uri?: string
-      root?: string
-    }
-    authFields?: string[]
-    twoFaFields?: string[]
-    type?: string
-    weighted?: boolean
-  }
+  election: PublishedVotingProcessResponse
+  results: VotingProcessResultsResponse | null
 }
 
 export type CertificateField = {
@@ -101,27 +92,42 @@ export type CertificateData = {
   disclaimerBullets: string[]
 }
 
-const sanitizeFileName = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-
-const downloadableElectionStatuses = new Set([ElectionStatus.RESULTS, ElectionStatus.ENDED, ElectionStatus.CANCELED])
-
-const canDownloadVotingReport = (election?: ElectionLike | null) =>
-  election instanceof PublishedElection && downloadableElectionStatuses.has(election.status)
-
 export const notAvailable = (t: TFunction) => t('process_pdf.not_available', { defaultValue: 'Not available' })
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
+export const isVotingProcess = (value: unknown): value is VotingProcessResponse =>
+  isRecord(value) &&
+  typeof value.id === 'string' &&
+  typeof value.published === 'boolean' &&
+  Array.isArray(value.questions)
+
+const downloadableProcessStatuses = new Set<QuestionStatus>(['ENDED', 'CANCELED', 'RESULTS'])
+
+/** The report only makes sense once the process is published and no longer accepting votes. */
+export const canDownloadVotingReport = (election?: ElectionLike): election is PublishedVotingProcessResponse =>
+  isVotingProcess(election) &&
+  election.published &&
+  downloadableProcessStatuses.has(computeProcessStatus(election.questions))
+
+/** SaaS multilingual strings key by locale with `default` as the fallback; older data may miss it. */
+export const getDefaultText = (value?: MultiLangString | string | null): string => {
+  if (!value) return ''
+  if (typeof value === 'string') return value
+  return value.default ?? Object.values(value).find((entry) => typeof entry === 'string' && entry) ?? ''
+}
+
 const isLongDenseValue = (value: string) => value.length >= 40 && !/\s/.test(value)
 
 export const shouldStackFieldValue = (value: string) => /^https?:\/\//i.test(value) || isLongDenseValue(value)
 export const formatPdfFieldValue = (value: string) => value
+
+const parseDate = (value?: string | null) => {
+  if (!value) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date
+}
 
 const formatUtcDateTime = (date?: Date | null) =>
   date ? `${date.toISOString().slice(0, 16).replace('T', ' ')} UTC` : null
@@ -157,215 +163,13 @@ const getIdentityFieldLabel = (field: string, t: TFunction) => {
   }
 }
 
-const getNestedRecord = (source: unknown, path: string[]) => {
-  const value = path.reduce<unknown>((current, key) => (isRecord(current) ? current[key] : undefined), source)
-  return isRecord(value) ? value : undefined
-}
-
-const normalizeCensusMetadata = (value?: Record<string, unknown>): CensusMetadata | undefined => {
-  if (!value) return undefined
-
-  const rawFields = value.fields
-  const hasFields = Array.isArray(rawFields)
-  const fields = hasFields ? rawFields.filter((field): field is string => typeof field === 'string') : undefined
-  const type = typeof value.type === 'string' ? value.type : undefined
-  const salt = typeof value.salt === 'string' ? value.salt : undefined
-
-  if (!type && !hasFields && !salt) return undefined
-
-  return { type, fields, salt }
-}
-
-export const resolveCensusMetadata = (election: PublishedElection): CensusMetadata | undefined => {
-  const wrappedMetadata = normalizeCensusMetadata(getNestedRecord(election, ['metadata', 'meta', 'census']))
-  const normalizedMetadata = normalizeCensusMetadata(
-    dotobject(election.meta || {}, 'census') as Record<string, unknown>
-  )
-
-  if (!wrappedMetadata) return normalizedMetadata
-  if (!normalizedMetadata) return wrappedMetadata
-
-  return {
-    type: wrappedMetadata.type ?? normalizedMetadata.type,
-    fields: typeof wrappedMetadata.fields === 'undefined' ? normalizedMetadata.fields : wrappedMetadata.fields,
-    salt: wrappedMetadata.salt ?? normalizedMetadata.salt,
-  }
-}
-
-const normalizeReportCensusType = (value?: string | null): ReportCensusType => {
-  switch (value) {
-    case 'csp':
-      return 'csp'
-    case 'spreadsheet':
-      return 'spreadsheet'
-    case 'web3':
-      return 'web3'
-    case CensusType.WEIGHTED:
-      return 'weighted'
-    case CensusType.ANONYMOUS:
-      return 'anonymous'
-    default:
-      return 'unknown'
-  }
-}
-
-export const resolveReportCensusType = (election: PublishedElection, censusMeta?: CensusMetadata): ReportCensusType => {
-  if (censusMeta?.type) return normalizeReportCensusType(censusMeta.type)
-
-  return normalizeReportCensusType(election.census?.type)
-}
-
-export const isCspReportCensus = (censusType: ReportCensusType) => censusType === 'csp'
-
-const humanizeCensusType = (t: TFunction, censusType?: ReportCensusType | null) => {
-  switch (censusType) {
-    case 'csp':
-      return t('process_pdf.census_type.csp', { defaultValue: 'Memberbase credentials census' })
-    case 'spreadsheet':
-      return t('process_pdf.census_type.spreadsheet', {
-        defaultValue: 'Spreadsheet census provided by the organization',
-      })
-    case 'web3':
-      return t('process_pdf.census_type.web3', {
-        defaultValue: 'Web3 wallet census provided by the organization',
-      })
-    case 'weighted':
-      return t('process_pdf.census_type.weighted', {
-        defaultValue: 'Organization-provided weighted census',
-      })
-    case 'anonymous':
-      return t('process_pdf.census_type.anonymous', {
-        defaultValue: 'Anonymous organization-provided census',
-      })
-    default:
-      return t('process_pdf.census_type.unknown', { defaultValue: 'Not available' })
-  }
-}
-
-const getVoterAccessSourceDescription = (t: TFunction, censusType: ReportCensusType, fallback: string) => {
-  switch (censusType) {
-    case 'spreadsheet':
-      return t('process_pdf.authentication.voter_access_source_spreadsheet', {
-        defaultValue:
-          'Voters access with credentials derived from the spreadsheet census uploaded by the organization.',
-      })
-    case 'web3':
-      return t('process_pdf.authentication.voter_access_source_web3', {
-        defaultValue: 'Voters access with the wallet address included in the Web3 census.',
-      })
-    case 'weighted':
-    case 'anonymous':
-      return t('process_pdf.authentication.voter_access_source_weighted', {
-        defaultValue: 'Eligibility is checked against the organization-provided weighted census for this process.',
-      })
-    default:
-      return fallback
-  }
-}
-
-const formatMaybeString = (value?: string | number | null, fallback?: string) => {
-  if (value === null || typeof value === 'undefined' || value === '') return fallback ?? ''
-  return String(value)
-}
-
-const getNumericValue = (value: unknown) => {
-  if (typeof value === 'bigint') return Number(value)
-
-  const numericValue = Number(value)
-  return Number.isFinite(numericValue) ? numericValue : null
-}
-
-const formatResultAmount = (value: unknown, decimals: number) => {
-  const numericValue = getNumericValue(value)
-  if (numericValue === null) return null
-
-  if (!decimals) return numericValue
-
-  try {
-    const formattedValue = Number(formatUnits(BigInt(numericValue), decimals))
-    return Number.isFinite(formattedValue) ? formattedValue : numericValue
-  } catch {
-    return numericValue
-  }
-}
-
-const formatNumber = (value: unknown, fallback: string, decimals = 0) => {
-  const numericValue = formatResultAmount(value, decimals)
-  if (numericValue === null) return fallback
-
-  return String(numericValue)
-}
-
-const getCensusSize = (election: PublishedElection) => Number(election.census?.size ?? election.maxCensusSize ?? 0)
-
-const getElectionWeight = (election: PublishedElection) =>
-  getNumericValue((election.census as unknown as Record<string, unknown> | undefined)?.weight)
-
-const getFallbackIsWeighted = (election: PublishedElection) => {
-  const weight = getElectionWeight(election)
-  const size = getCensusSize(election)
-
-  return weight !== null && Number.isFinite(size) && weight !== size
-}
-
-const resolveReportIsWeighted = (report: ElectionReportContext, censusBundle?: CensusBundleData | null) => {
-  if (report.isWeighted === true) return true
-  if (censusBundle?.census.weighted === true) return true
-
-  return getFallbackIsWeighted(report.election)
-}
-
 const calculatePercentage = (numerator: number, denominator: number) =>
   denominator > 0 ? Math.round((numerator / denominator) * 10000) / 100 : 0
 
-const formatPercentage = (numerator: number, denominator: number) =>
-  denominator > 0 ? `${((numerator / denominator) * 100).toFixed(1)}%` : '0.0%'
-
 const formatPercentageValue = (value: number) => `${value.toFixed(2)}%`
 
-const getFallbackParticipation = (election: PublishedElection) =>
-  calculatePercentage(Number(election.voteCount ?? 0), getCensusSize(election))
-
-const getQuestionChoiceRawResult = (election: PublishedElection, questionIndex: number, choiceIndex: number) => {
-  const question = election.questions[questionIndex]
-  const choice = question?.choices[choiceIndex]
-
-  return choice?.results ?? election.results?.[questionIndex]?.[choiceIndex] ?? 0
-}
-
-const shouldIncludeAbstainChoice = (election: PublishedElection) =>
-  election.resultsType?.name === ElectionResultsTypeNames.MULTIPLE_CHOICE &&
-  Boolean((election.resultsType.properties as { canAbstain?: boolean } | undefined)?.canAbstain)
-
-const getQuestionRawResults = (election: PublishedElection, questionIndex: number) => {
-  const question = election.questions[questionIndex]
-  if (!question) return []
-
-  const results = question.choices.map((choice, choiceIndex) => ({
-    title: choice.title.default,
-    result: getQuestionChoiceRawResult(election, questionIndex, choiceIndex),
-  }))
-
-  if (shouldIncludeAbstainChoice(election)) {
-    results.push({
-      title: 'abstain',
-      result: 'numAbstains' in question ? question.numAbstains : 0,
-    })
-  }
-
-  return results
-}
-
-const getQuestionRawTotal = (election: PublishedElection, questionIndex: number) =>
-  getQuestionRawResults(election, questionIndex)
-    .map(({ result }) => getNumericValue(result) ?? 0)
-    .reduce((acc, vote) => acc + vote, 0)
-
-const getQuestionResultsTotal = (election: PublishedElection, questionIndex: number, decimals: number) =>
-  formatResultAmount(getQuestionRawTotal(election, questionIndex), decimals) ?? 0
-
-const getQuestionResultTotals = (election: PublishedElection, decimals: number) =>
-  election.questions.map((_, questionIndex) => getQuestionResultsTotal(election, questionIndex, decimals))
+const formatDecodedPercentage = (percentage: number | null, fallback: string) =>
+  percentage === null ? fallback : `${percentage.toFixed(1)}%`
 
 const formatNumberRange = (values: number[], fallback: string) => {
   const numericValues = values.filter((value) => Number.isFinite(value))
@@ -385,69 +189,29 @@ const formatPercentageRange = (values: number[], fallback: string) => {
   return min === max ? formatPercentageValue(min) : `${formatPercentageValue(min)} - ${formatPercentageValue(max)}`
 }
 
-const getTotalEligibleVotingPower = (election: PublishedElection, decimals: number) =>
-  formatResultAmount((election.census as unknown as Record<string, unknown> | undefined)?.weight, decimals)
-
-const getQuestionChoices = (
-  election: PublishedElection,
-  questionIndex: number,
-  notAvailableLabel: string,
-  decimals: number,
-  abstainLabel: string,
-  isWeighted: boolean,
-  totalEligibleVotingPower: number | null
-) => {
-  const question = election.questions[questionIndex]
-  const totalForQuestion = getQuestionResultsTotal(election, questionIndex, decimals)
-
-  const choiceResults = question.choices.map((choice, choiceIndex) => ({
-    name: choice.title.default,
-    rawVotes: getQuestionChoiceRawResult(election, questionIndex, choiceIndex),
-  }))
-
-  if (shouldIncludeAbstainChoice(election)) {
-    choiceResults.push({
-      name: abstainLabel,
-      rawVotes: 'numAbstains' in question ? question.numAbstains : 0,
-    })
-  }
-
-  const choices = choiceResults.map(({ name, rawVotes }) => {
-    const numericVotes = formatResultAmount(rawVotes, decimals)
-    const hasNumericVotes = Number.isFinite(numericVotes)
-    const votes = hasNumericVotes
-      ? String(numericVotes)
-      : formatMaybeString(rawVotes as string | number | null, notAvailableLabel)
-    const percentage =
-      hasNumericVotes && totalForQuestion > 0
-        ? formatPercentage(Number(numericVotes), totalForQuestion)
-        : notAvailableLabel
-    const eligiblePowerPercentage =
-      isWeighted && hasNumericVotes && totalEligibleVotingPower
-        ? formatPercentage(Number(numericVotes), totalEligibleVotingPower)
-        : undefined
-
-    return {
-      name,
-      votes,
-      percentage,
-      numericVotes: hasNumericVotes ? Number(numericVotes) : null,
-      ...(isWeighted
-        ? {
-            votingPower: votes,
-            castPowerPercentage: percentage,
-            eligiblePowerPercentage,
-          }
-        : {}),
-    }
-  })
-
-  return choices
+/**
+ * How many histogram columns one ballot contributes to. The decoded results have
+ * one field per pick slot and every ballot fills all of them — slots the voter
+ * left unused land in the abstain sentinel — so the column total is
+ * `slots x cast voting power`, not the cast power itself. Single-choice
+ * questions have exactly one slot, which is why the two only coincide there.
+ */
+const getBallotPickSlots = (question: VotingProcessQuestion): number => {
+  if (inferQuestionBallotType(question) !== BallotType.MultiChoice) return 1
+  const slots = question.typeSetup?.maxChoices ?? question.ballotProtocol?.maxCount
+  return slots && slots > 0 ? slots : 1
 }
 
-const getVotingMethod = (election: PublishedElection, t: TFunction, isWeighted: boolean) => {
+/** Voting power actually cast on a question, recovered from its decoded histogram. */
+const getCastVotingPower = (question: VotingProcessQuestion, decoded: DecodedQuestionResults | undefined) => {
+  if (!decoded) return null
+  const columnTotal = decoded.reduce((acc, entry) => acc + entry.votes, 0)
+  return columnTotal / getBallotPickSlots(question)
+}
+
+const getVotingMethod = (question: VotingProcessQuestion, t: TFunction, isWeighted: boolean) => {
   const base =
-    election.resultsType?.name === ElectionResultsTypeNames.MULTIPLE_CHOICE
+    inferQuestionBallotType(question) === BallotType.MultiChoice
       ? t('process.question_type.multiple', { defaultValue: 'Multiple choice' })
       : t('process.question_type.single', { defaultValue: 'Single choice' })
 
@@ -459,10 +223,13 @@ const getVotingMethod = (election: PublishedElection, t: TFunction, isWeighted: 
     : base
 }
 
-const getVoteOverwriteStatus = (election: PublishedElection, t: TFunction) => {
-  const maxVoteOverwrites = election.voteType?.maxVoteOverwrites
+const getVoteOverwriteStatus = (election: PublishedVotingProcessResponse, t: TFunction) => {
+  const maxVoteOverwrites = election.questions.reduce(
+    (max, question) => Math.max(max, question.ballotProtocol?.maxVoteOverwrites ?? 0),
+    0
+  )
 
-  return typeof maxVoteOverwrites === 'number' && maxVoteOverwrites > 0
+  return maxVoteOverwrites > 0
     ? t('process_pdf.vote_overwrite_enabled', {
         defaultValue: 'Enabled, up to {{votes}} vote overwrites per voter',
         votes: maxVoteOverwrites,
@@ -470,93 +237,89 @@ const getVoteOverwriteStatus = (election: PublishedElection, t: TFunction) => {
     : t('process_pdf.vote_overwrite_disabled', { defaultValue: 'Disabled' })
 }
 
-const getCensusReference = (election: PublishedElection, censusBundle?: CensusBundleData | null) => {
-  const census = election.census as unknown as Record<string, unknown> | undefined
-
-  return (
-    censusBundle?.census.published?.root ??
-    (typeof census?.root === 'string' ? census.root : null) ??
-    (typeof census?._root === 'string' ? census._root : null) ??
-    (typeof census?.censusId === 'string' ? census.censusId : null) ??
-    (typeof census?._censusId === 'string' ? census._censusId : null) ??
-    (typeof census?.censusURI === 'string' ? census.censusURI : null) ??
-    (typeof census?._censusURI === 'string' ? census._censusURI : null) ??
-    null
-  )
-}
-
 export const buildCertificateData = ({
-  report,
+  election,
+  results,
   t,
   organizationName,
   explorerUrl,
-  censusBundle,
   now,
 }: {
-  report: ElectionReportContext
+  election: PublishedVotingProcessResponse
+  results: VotingProcessResultsResponse | null
   t: TFunction
   organizationName?: string
   explorerUrl?: string
-  censusBundle?: CensusBundleData | null
   now: Date
 }): CertificateData => {
-  const { election } = report
   const notAvailableLabel = notAvailable(t)
-  const eventReference = election.title.default?.trim() || election.id
+  const eventReference = getDefaultText(election.title).trim() || election.id
   const issueDate = formatUtcDate(now) ?? notAvailableLabel
   const issueTime = formatUtcTime(now) ?? notAvailableLabel
-  const startDatetime = formatUtcDateTime(election.startDate) ?? notAvailableLabel
-  const endDatetime = formatUtcDateTime(election.endDate) ?? notAvailableLabel
-  const verificationExplorerLink = explorerUrl ? `${explorerUrl}/process/${election.id}` : notAvailableLabel
-  const count = election.voteCount ?? 0
-  const resultDecimals = Number((election.meta as { token?: { decimals?: number } } | undefined)?.token?.decimals ?? 0)
-  const censusMeta = resolveCensusMetadata(election)
-  const censusType = resolveReportCensusType(election, censusMeta)
-  const isWeighted = resolveReportIsWeighted(report, censusBundle)
-  const censusFields = censusBundle?.census.authFields ?? censusMeta?.fields ?? []
-  const twoFaFields = censusBundle?.census.twoFaFields ?? []
-  const authenticationMethod = humanizeCensusType(t, censusType)
+  const startDatetime = formatUtcDateTime(parseDate(election.startDate)) ?? notAvailableLabel
+  const endDatetime = formatUtcDateTime(parseDate(election.endDate)) ?? notAvailableLabel
+
+  // Ballots cast: per-question counts from the results endpoint; the process-level
+  // figure is the max across questions (every voter votes every question).
+  const questionsResults = new Map((results?.questions ?? []).map((entry) => [entry.questionId, entry]))
+  const count = results ? processVoteCount(results) : null
+
+  // Decode each question's on-chain histogram into per-choice tallies (plus the
+  // unified abstain bucket for multichoice questions).
+  const decodedByQuestionId = new Map<string, DecodedQuestionResults>()
+  for (const question of election.questions) {
+    const questionResults = questionsResults.get(question.id)
+    if (questionResults?.results?.length) {
+      decodedByQuestionId.set(question.id, decodeQuestionResults(question, questionResults.results))
+    }
+  }
+
+  // Every new-model census is CSP-backed (Memberbase credentials); its identity
+  // and 2FA requirements come inline on the process read.
+  const censusAuthFields: string[] = election.census?.authFields ?? []
+  const censusTwoFaFields: string[] = election.census?.twoFaFields ?? []
+  const isWeighted = election.census?.weighted === true
+  const eligibleVoters = election.census?.size ?? 0
+  const authenticationMethod = t('process_pdf.census_type.csp', { defaultValue: 'Memberbase credentials census' })
   const identitySource =
-    censusFields.length > 0
-      ? censusFields.map((field) => getIdentityFieldLabel(field, t)).join(', ')
+    censusAuthFields.length > 0
+      ? censusAuthFields.map((field) => getIdentityFieldLabel(field, t)).join(', ')
       : notAvailableLabel
   const twoFaEnabledDisabled =
-    censusBundle === null
-      ? notAvailableLabel
-      : twoFaFields.length > 0
-        ? t('process_pdf.authentication.two_fa_enabled', {
-            defaultValue: 'Enabled: voters confirm their identity with a one-time code sent to their personal devices.',
-          })
-        : t('process_pdf.authentication.two_fa_disabled', {
-            defaultValue: 'Disabled: no additional identity check has been configured in this voting process',
-          })
+    censusTwoFaFields.length > 0
+      ? t('process_pdf.authentication.two_fa_enabled', {
+          defaultValue: 'Enabled: voters confirm their identity with a one-time code sent to their personal devices.',
+        })
+      : t('process_pdf.authentication.two_fa_disabled', {
+          defaultValue: 'Disabled: no additional identity check has been configured in this voting process',
+        })
   const blockchainNetwork = election.chainId || notAvailableLabel
-  const censusReference = getCensusReference(election, censusBundle) ?? notAvailableLabel
-  const resultsVisibility = election.electionType?.secretUntilTheEnd
+  const resultsVisibility = isSecretUntilTheEnd(election)
     ? t('results_state.hidden_until_end', { defaultValue: 'Hidden until the end' })
     : t('results_state.live_results', { defaultValue: 'Live results' })
-  const eligibleVoters = getCensusSize(election)
   const totalEligibleParticipants = String(eligibleVoters)
-  const participationPercentage = (report.participation ?? getFallbackParticipation(election)).toFixed(2)
-  const hasHiddenResults = Boolean(
-    election.electionType?.secretUntilTheEnd && election.status !== ElectionStatus.RESULTS
-  )
+  const participationPercentage = count === null ? null : calculatePercentage(count, eligibleVoters).toFixed(2)
+  const hasHiddenResults = isSecretUntilTheEnd(election) && computeProcessStatus(election.questions) !== 'RESULTS'
   const hiddenResultFieldValue = t('process_pdf.results.hidden_field', {
     defaultValue: 'Hidden until final results',
   })
-  const totalEligibleVotingPowerValue = getTotalEligibleVotingPower(election, resultDecimals)
+  // Whole-census total voting weight (Σ member weights, saas-backend#595). Response-only
+  // and absent on aggregation failure or list reads — absent renders as "Not available"
+  // rather than a wrong denominator (resolveReportElection re-fetches the detail for list rows).
+  const totalEligibleVotingPowerValue = election.census?.totalWeight ?? null
   const totalEligibleVotingPower =
     totalEligibleVotingPowerValue === null ? notAvailableLabel : String(totalEligibleVotingPowerValue)
-  const questionVotingPowerTotals = getQuestionResultTotals(election, resultDecimals)
+  const questionVotingPowerTotals = election.questions.map((question) =>
+    getCastVotingPower(question, decodedByQuestionId.get(question.id))
+  )
+  const knownQuestionTotals = questionVotingPowerTotals.filter((value): value is number => value !== null)
   const votingPowerUsed = hasHiddenResults
     ? hiddenResultFieldValue
-    : formatNumberRange(questionVotingPowerTotals, notAvailableLabel)
+    : formatNumberRange(knownQuestionTotals, notAvailableLabel)
   const weightedParticipationValues =
     totalEligibleVotingPowerValue === null
       ? []
-      : questionVotingPowerTotals.map((questionTotal) =>
-          calculatePercentage(questionTotal, totalEligibleVotingPowerValue)
-        )
+      : knownQuestionTotals.map((questionTotal) => calculatePercentage(questionTotal, totalEligibleVotingPowerValue))
   const weightedParticipation = hasHiddenResults
     ? hiddenResultFieldValue
     : formatPercentageRange(weightedParticipationValues, notAvailableLabel)
@@ -574,31 +337,43 @@ export const buildCertificateData = ({
       label: t('process_pdf.authentication.method', { defaultValue: 'Authentication method' }),
       value: authenticationMethod,
     },
-    ...(isCspReportCensus(censusType)
-      ? [
-          {
-            label: t('process_pdf.authentication.identity_source', { defaultValue: 'Required voter credentials' }),
-            value: identitySource,
-          },
-          {
-            label: t('process_pdf.authentication.two_fa', { defaultValue: 'Additional identity check' }),
-            value: twoFaEnabledDisabled,
-          },
-        ]
-      : [
-          {
-            label: t('process_pdf.authentication.voter_access_source', { defaultValue: 'Voter access source' }),
-            value: getVoterAccessSourceDescription(t, censusType, notAvailableLabel),
-          },
-        ]),
+    {
+      label: t('process_pdf.authentication.identity_source', { defaultValue: 'Required voter credentials' }),
+      value: identitySource,
+    },
+    {
+      label: t('process_pdf.authentication.two_fa', { defaultValue: 'Additional identity check' }),
+      value: twoFaEnabledDisabled,
+    },
   ]
+
+  // Each question is its own on-chain (Vochain) process; the explorer only knows
+  // those ids, so verification links go per question.
+  const questionExplorerLabel = t('process_pdf.verification.explorer', {
+    defaultValue: 'View in verification explorer',
+  })
+  const questionsWithUpstreamId = election.questions.filter((question) => question.upstreamId)
+  const verification: CertificateField[] =
+    explorerUrl && questionsWithUpstreamId.length > 0
+      ? questionsWithUpstreamId.map((question, index) => ({
+          label:
+            questionsWithUpstreamId.length > 1
+              ? `${questionExplorerLabel} — ${t('process_pdf.verification.question_n', {
+                  defaultValue: 'Question {{number}}',
+                  number: index + 1,
+                })}`
+              : questionExplorerLabel,
+          value: `${explorerUrl}/process/${question.upstreamId}`,
+          kind: 'link' as const,
+        }))
+      : [{ label: questionExplorerLabel, value: notAvailableLabel, kind: 'link' as const }]
 
   return {
     eventReference,
     processId: election.id,
     issueDate,
     issueTime,
-    organizationName: organizationName || election.organizationId || notAvailableLabel,
+    organizationName: organizationName || election.orgAddress || notAvailableLabel,
     eventName: eventReference,
     blockchainNetwork,
     notAvailableLabel,
@@ -654,14 +429,6 @@ export const buildCertificateData = ({
             'Unique public identifier of this voting process. It can be used to find and verify the process in the voting infrastructure.',
         }),
       },
-      {
-        label: t('process_pdf.general.census_reference', { defaultValue: 'Census reference' }),
-        value: censusReference,
-        helperText: t('process_pdf.general.census_reference_helper', {
-          defaultValue:
-            'Public reference that identifies the census used for this voting process. It does not include or reveal voters\u2019 personal data.',
-        }),
-      },
     ],
     authentication,
     votingSystemParagraphs: [
@@ -691,7 +458,7 @@ export const buildCertificateData = ({
       }),
       t('process_pdf.voting_system.bullet_2', {
         defaultValue:
-          'A census reference that identifies the eligible voter list without revealing voters\u2019 personal data',
+          'A census reference that identifies the eligible voter list without revealing voters’ personal data',
       }),
       t('process_pdf.voting_system.bullet_3', {
         defaultValue: 'Cryptographic mechanisms that protect ballot secrecy and voter privacy',
@@ -709,7 +476,7 @@ export const buildCertificateData = ({
     censusParticipation: [
       {
         label: t('process_pdf.census.source', { defaultValue: 'Census source' }),
-        value: humanizeCensusType(t, censusType),
+        value: authenticationMethod,
       },
       {
         label: t('process_pdf.census.eligible_voters', { defaultValue: 'Eligible voters' }),
@@ -717,11 +484,11 @@ export const buildCertificateData = ({
       },
       {
         label: t('process_pdf.turnout.submitted_ballots', { defaultValue: 'Submitted ballots' }),
-        value: String(count),
+        value: count === null ? notAvailableLabel : String(count),
       },
       {
         label: t('process_pdf.turnout.voter_participation', { defaultValue: 'Voter participation' }),
-        value: `${participationPercentage}%`,
+        value: participationPercentage === null ? notAvailableLabel : `${participationPercentage}%`,
       },
       {
         label: t('process_pdf.census.counting_basis', { defaultValue: 'Counting basis' }),
@@ -760,26 +527,68 @@ export const buildCertificateData = ({
     }),
     votingProcessQuestions: hasHiddenResults
       ? []
-      : election.questions.map((question, questionIndex) => {
-          const choices = getQuestionChoices(
-            election,
-            questionIndex,
-            notAvailableLabel,
-            resultDecimals,
-            t('process_pdf.voting_process.card.abstain', { defaultValue: 'Abstain' }),
-            isWeighted,
-            totalEligibleVotingPowerValue
-          )
-          const questionTotal = getQuestionResultsTotal(election, questionIndex, resultDecimals)
+      : election.questions.map((question) => {
+          const questionResults = questionsResults.get(question.id)
+          const decoded = decodedByQuestionId.get(question.id)
+          const decodedChoices = decoded?.filter((entry) => entry.choice !== 'abstain')
+          // `decodeQuestionResults` always appends an abstain bucket for pick-slot
+          // multichoice, even when the protocol reserves no sentinel headroom and the
+          // count is therefore structurally stuck at zero. Mirror the rule
+          // `<ElectionResults />` applies so the report and the UI agree on the row
+          // count: keep the bucket only when abstaining is possible, or when the tally
+          // says it actually happened.
+          const decodedAbstain = decoded?.find((entry) => entry.choice === 'abstain')
+          const abstainEntry =
+            decodedAbstain && (questionReservesAbstain(question) || decodedAbstain.votes > 0)
+              ? decodedAbstain
+              : undefined
+          const questionTotal = getCastVotingPower(question, decoded)
+
+          const choiceRows = question.choices.map((choice, choiceIndex) => ({
+            name: getDefaultText(choice.title) || notAvailableLabel,
+            votes: decodedChoices?.[choiceIndex]?.votes ?? null,
+            percentage: decodedChoices?.[choiceIndex]?.percentage ?? null,
+          }))
+
+          if (abstainEntry) {
+            choiceRows.push({
+              name: t('process_pdf.voting_process.card.abstain', { defaultValue: 'Abstain' }),
+              votes: abstainEntry.votes,
+              percentage: abstainEntry.percentage,
+            })
+          }
+
+          const choices: CertificateChoice[] = choiceRows.map(({ name, votes, percentage }) => {
+            const votesLabel = votes === null ? notAvailableLabel : String(votes)
+            const percentageLabel = formatDecodedPercentage(percentage, notAvailableLabel)
+            const eligiblePowerPercentage =
+              isWeighted && votes !== null && totalEligibleVotingPowerValue
+                ? `${calculatePercentage(votes, totalEligibleVotingPowerValue).toFixed(1)}%`
+                : undefined
+
+            return {
+              name,
+              votes: votesLabel,
+              percentage: percentageLabel,
+              numericVotes: votes,
+              ...(isWeighted
+                ? {
+                    votingPower: votesLabel,
+                    castPowerPercentage: percentageLabel,
+                    eligiblePowerPercentage,
+                  }
+                : {}),
+            }
+          })
 
           return {
-            question: question.title.default || notAvailableLabel,
+            question: getDefaultText(question.title) || notAvailableLabel,
             choices,
-            totalVotes: String(questionTotal),
-            votingMethod: getVotingMethod(election, t, isWeighted),
+            totalVotes: questionTotal === null ? notAvailableLabel : String(questionTotal),
+            votingMethod: getVotingMethod(question, t, isWeighted),
             countingBasisLabel,
-            submittedBallots: String(count),
-            votingPowerUsed: String(questionTotal),
+            submittedBallots: questionResults ? String(questionResults.voteCount ?? 0) : notAvailableLabel,
+            votingPowerUsed: questionTotal === null ? notAvailableLabel : String(questionTotal),
             eligibleVotingPower: totalEligibleVotingPower,
             isWeighted,
           }
@@ -792,25 +601,15 @@ export const buildCertificateData = ({
           defaultValue: 'Results are hidden until the process reaches the final results stage.',
         })
       : undefined,
-    verification: [
-      {
-        label: t('process_pdf.verification.explorer', { defaultValue: 'View in verification explorer' }),
-        value: verificationExplorerLink,
-        kind: 'link',
-      },
-    ],
+    verification,
     verificationProcedures: [
       t('process_pdf.verification.step_1', {
         defaultValue:
-          'Open the verification explorer link. This page contains the public technical record of the voting process.',
+          'Open the verification explorer link of each question. Each page contains the public technical record of that part of the voting process.',
       }),
       t('process_pdf.verification.step_2', {
         defaultValue:
-          'Check that the Process ID in the explorer is identical to the Process ID in this report. This confirms that both documents refer to the same voting process.',
-      }),
-      t('process_pdf.verification.step_3', {
-        defaultValue:
-          'Check that the census reference shown in the explorer matches the reference in this report. This confirms that the eligible voter list linked to the process is the same.',
+          'Check that each linked page shows the same question and choices as this report. This confirms that the report refers to the same on-chain voting processes.',
       }),
       t('process_pdf.verification.step_4', {
         defaultValue: 'Check that the number of recorded ballots matches the participation data shown in this report.',
@@ -864,15 +663,33 @@ export const buildCertificateData = ({
   }
 }
 
-export const fetchCensusBundle = async (censusURI?: string | null) => {
-  if (!censusURI) return null
-
+/** Fetch the per-question results; the route is public but 404s while there are no tallies. */
+export const fetchProcessResults = async (
+  client: ReportClientLike,
+  processId: string
+): Promise<VotingProcessResultsResponse | null> => {
   try {
-    const response = await fetch(censusURI)
-    if (!response.ok) return null
-    return (await response.json()) as CensusBundleData
+    return (await client?.elections?.getResults?.(processId)) ?? null
   } catch {
     return null
+  }
+}
+
+/**
+ * List reads omit `census.totalWeight` (only `GET /processes/{id}` carries it), so a report
+ * triggered from a list row would lose the weighted eligible-power values — re-fetch the
+ * detail read for weighted censuses missing it. Falls back to the given election on failure.
+ */
+export const resolveReportElection = async (
+  client: ReportClientLike,
+  election: PublishedVotingProcessResponse
+): Promise<PublishedVotingProcessResponse> => {
+  if (!election.census?.weighted || typeof election.census.totalWeight === 'number') return election
+  try {
+    const fresh = await client?.elections?.get?.(election.id)
+    return fresh && canDownloadVotingReport(fresh) ? fresh : election
+  } catch {
+    return election
   }
 }
 
@@ -886,17 +703,17 @@ export const useOptionalElectionContext = () => {
 
 export const getReportContext = (
   electionContext: ReturnType<typeof useOptionalElectionContext>,
-  fallbackElection?: ElectionLike | null
+  fallbackElection?: ElectionLike
 ): ElectionReportContext | null => {
-  const contextElection = electionContext?.election instanceof PublishedElection ? electionContext.election : undefined
-  const election = contextElection ?? (fallbackElection instanceof PublishedElection ? fallbackElection : undefined)
+  const contextElection = isVotingProcess(electionContext?.election) ? electionContext.election : undefined
+  const election = contextElection ?? (isVotingProcess(fallbackElection) ? fallbackElection : undefined)
 
-  if (!election) return null
+  if (!canDownloadVotingReport(election)) return null
 
   return {
     election,
-    isWeighted: contextElection ? electionContext?.isWeighted : undefined,
-    participation: contextElection ? electionContext?.participation : undefined,
-    turnout: contextElection ? electionContext?.turnout : undefined,
+    // Reuse the results the election context already fetched; without a context
+    // (e.g. list rows) they are fetched at download time instead.
+    results: (contextElection && electionContext?.results) || null,
   }
 }

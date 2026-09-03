@@ -1,0 +1,132 @@
+name: vocdoni-app-integration
+
+# Disposable stack for the Playwright end-to-end suite in e2e/: a fresh mongo, a
+# vocone (single-node vochain) instance, the saas-backend API and a MailHog inbox,
+# wired together with published images so CI needs no build step. The app under
+# test is NOT part of this stack — it runs on the host (`pnpm serve:ssr`) so the
+# suite exercises the same server bundle we ship. See integration/README.md and
+# scripts/integration-stack.sh for how to drive it.
+#
+# SOURCE OF TRUTH: this file is vendored from integrator-sdk's
+# integration/docker-compose.ci.yml. Both consume the same moving `:main` images,
+# so when saas-backend or vocdoni-node changes its startup contract, re-sync from
+# there rather than rediscovering the fix.
+
+services:
+  mongo:
+    image: mongo:7
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=vocdoni
+      - MONGO_INITDB_DATABASE=saasdb
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping')"]
+      interval: 3s
+      retries: 20
+
+  vocone:
+    platform: linux/amd64
+    image: ghcr.io/vocdoni/vocdoni-node:main
+    entrypoint: /app/voconed
+    environment:
+      VOCONED_DIR: /app/run
+      VOCONED_PORT: 9090
+      VOCONED_URLPATH: /v2
+      VOCONED_BLOCKPERIOD: 1
+      VOCONED_BLOCKSIZE: 2000
+      VOCONED_LOGLEVEL: info
+      VOCONED_ENABLEFAUCETWITHAMOUNT: 100000
+      VOCONED_CHAINID: dev
+      VOCONED_TXCOSTS: 2
+      VOCONED_SETTXCOSTS: 'true'
+    volumes:
+      # Caches the zk circuit artifacts downloaded on first boot, so repeated
+      # local `up` cycles skip the download entirely. `down -v` drops it, so CI
+      # (which always tears down with -v) still pays a cold download each run.
+      - vocone_run:/app/run
+    # voconed fetches its zk circuit artifacts over the network during startup
+    # and dies if that download times out:
+    #   FTL could not create base application: cannot load zk circuit:
+    #   error downloading 'census_proving_key.zkey' artifact: context deadline exceeded
+    # It is a known-flaky fetch — saas-backend's own scripts/circuits/main.go
+    # retries it 5 times with backoff for the same reason. A restart policy makes
+    # a transient failure self-heal within the healthcheck window instead of
+    # failing the whole job.
+    restart: on-failure
+    # Deliberately very generous. `api` gates on this via
+    # depends_on/service_healthy, so `docker compose up -d` aborts with
+    # "dependency failed to start" the moment the retries run out.
+    #
+    # The number that drives the sizing is voconed's OWN deadline on the circuit
+    # download: 300s. A window shorter than that cannot survive even one
+    # slow-but-recoverable fetch. 60s + 120x3s = ~420s covers a full 300s attempt
+    # plus the restart above and part of a second attempt.
+    #
+    # This costs nothing when the chain comes up fast (typical: well under 60s
+    # on a native runner). It only spends time when it is already going wrong,
+    # and the job's timeout-minutes is the real backstop. Do not tighten it.
+    healthcheck:
+      test: ['CMD', 'curl', '-sf', 'http://localhost:9090/v2/chain/info']
+      interval: 3s
+      retries: 120
+      start_period: 60s
+
+  # MailHog shares the api container's network namespace instead of getting
+  # its own service address. This lets us set VOCDONI_SMTPSERVER=127.0.0.1:
+  # saas-backend's SMTP config only allows credential-less mail delivery when
+  # the server is localhost/127.0.0.1 (notifications/smtp/smtp.go), and Go's
+  # net/smtp refuses PlainAuth over an unencrypted connection otherwise. This
+  # is the same trick saas-backend's own dev compose uses with `fakesmtp`;
+  # MailHog is swapped in here because it exposes a readable HTTP inbox.
+  #
+  # That inbox is the whole point of this stack for us: every verification code
+  # and every CSP 2FA OTP the backend sends is both assertable from the e2e
+  # suite (e2e/helpers/mailhog.ts) and browsable by a human at localhost:8025.
+  mailhog:
+    image: mailhog/mailhog
+    network_mode: 'service:api'
+    depends_on:
+      - api
+
+  api:
+    platform: linux/amd64
+    image: ghcr.io/vocdoni/saas-backend:main
+    environment:
+      VOCDONI_SERVERURL: http://localhost:${INTEGRATION_HOST_PORT:-8080}
+      VOCDONI_HOST: 0.0.0.0
+      VOCDONI_PORT: 8080
+      VOCDONI_SECRET: supersecret
+      # The app under test, served on the host by `pnpm serve:ssr`. This is what
+      # the backend interpolates into the {{.Link}} of every email it sends
+      # (verification, password reset, invites), so a link the suite follows —
+      # or a human clicks in MailHog — lands on the app we are testing.
+      VOCDONI_WEBURL: http://localhost:${INTEGRATION_APP_PORT:-3000}
+      VOCDONI_VOCDONIAPI: http://vocone:9090/v2
+      VOCDONI_PRIVATEKEY: b7f1b2e6ecbd52e5f2a3b0f0c1d2e3f4a5b6c7d8e9fa0b1c2d3e4f5a6b7c8d9e
+      VOCDONI_FULLTRANSPARENTMODE: 'false'
+      # Dummy values: cmd/service/main.go requires both non-empty at startup
+      # (log.Fatalf otherwise) even though the Stripe service is never
+      # constructed in this stack — nothing here exercises billing.
+      VOCDONI_STRIPEAPISECRET: sk_test_dummy
+      VOCDONI_STRIPEWEBHOOKSECRET: whsec_dummy
+      VOCDONI_OAUTHSERVICEURL: http://oauth.invalid
+      VOCDONI_MONGOURL: mongodb://root:vocdoni@mongo:27017/
+      VOCDONI_MONGODB: saasdb
+      VOCDONI_SMTPSERVER: 127.0.0.1
+      VOCDONI_SMTPPORT: 1025
+      # Deliberately no VOCDONI_SMTPUSERNAME/VOCDONI_SMTPPASSWORD — setting
+      # them makes Go's net/smtp attempt PlainAuth, which it refuses over an
+      # unencrypted connection. See the mailhog comment above.
+      VOCDONI_EMAILFROMADDRESS: admin@test.local
+      VOCDONI_EMAILFROMNAME: Vocdoni
+    ports:
+      - '${INTEGRATION_HOST_PORT:-8080}:8080'
+      - '${INTEGRATION_MAILHOG_PORT:-8025}:8025'
+    depends_on:
+      mongo:
+        condition: service_healthy
+      vocone:
+        condition: service_healthy
+
+volumes:
+  vocone_run: {}

@@ -1,51 +1,58 @@
 {
-  "balance": "{{ balance }} VOC tokens",
   "actions": {
-    "cancel_description": "Attention: canceling \"{{ election.title.default }}\" is irreversible and will discard all previous votes.",
     "cancel": "Cancel",
     "cancel_button": "Cancel",
-    "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
+    "cancel_description": "Attention: canceling \"{{ election.title.default }}\" is irreversible and will discard all previous votes.",
     "continue": "Resume the process immediately, in case it has been paused",
-    "end_description": "Attention: ending \"{{ election.title.default }}\" is irreversible — voters will no longer be able to vote.",
+    "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
     "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
+    "end_description": "Attention: ending \"{{ election.title.default }}\" is irreversible — voters will no longer be able to vote.",
     "error_title": "There was some error while executing the transaction",
-    "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",
     "pause": "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
+    "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",
     "waiting_title": "Waiting for transaction confirmation..."
   },
+  "balance": "{{ balance }} VOC tokens",
   "confirm": {
-    "title": "Confirm",
     "cancel": "Cancel",
-    "confirm": "Confirm Vote",
+    "cancel_button": "Cancel",
     "cancel_process_button": "Cancel Vote",
     "cancel_process_title": "Cancel Vote",
-    "end_process_title": "End Vote",
+    "confirm": "Confirm Vote",
     "end_process_button": "End Vote",
-    "cancel_button": "Cancel"
+    "end_process_title": "End Vote",
+    "title": "Confirm"
   },
   "empty": "Apparently this process has no questions",
   "errors": {
+    "not_voted_in_ended_election": "You signed but did not vote in this ended election.",
+    "question_not_votable": "This question can't accept votes: one of its options was set up in a way the ledger can't record. Your vote has not been cast. Please contact the organizer.",
     "unauthorized": "Not authorized to vote",
-    "wrong_data_title": "Wrong data",
     "wrong_data_description": "The specified data is not correct",
-    "not_voted_in_ended_election": "You signed but did not vote in this ended election."
+    "wrong_data_title": "Wrong data"
+  },
+  "pagination": {
+    "next": "Next",
+    "page_placeholder": "Page",
+    "previous": "Previous",
+    "total_results": "Showing a total of {{ count }} results"
   },
   "question_types": {
-    "approval_tooltip": "Approval voting lets you vote for as many options as you like. The one with the most votes wins. It's a simple way to show your support for all the choices you approve of.",
     "approval_title": "Approval Voting",
-    "singlechoice_title": "Single Choice {{ weighted }}",
-    "multichoice_tooltip": "Multichoice voting lets you vote for up to {{maxcount}} options (defined by the voting organizer). The one with the most votes wins.",
-    "multichoice_title": "Multichoice Voting {{ weighted }}",
+    "approval_tooltip": "Approval voting lets you vote for as many options as you like. The one with the most votes wins. It's a simple way to show your support for all the choices you approve of.",
+    "budget_title": "Budget Voting {{ weighted }}",
+    "budget_tooltip": "Budget voting lets you distribute points across the options. The options with the most points win.",
     "multichoice_desc": "You selected {{selected}} options from a maximum of {{maxcount}}",
     "multichoice_desc_abstain": " (or abstain)",
+    "multichoice_title": "Multichoice Voting {{ weighted }}",
+    "multichoice_tooltip": "Multichoice voting lets you vote for up to {{maxcount}} options (defined by the voting organizer). The one with the most votes wins.",
+    "quadratic_title": "Quadratic Voting {{ weighted }}",
+    "quadratic_tooltip": "Quadratic voting lets you distribute credits across the options, where each additional vote for an option costs more. The options with the most votes win.",
+    "ranked_desc": "You ranked {{selected}} of {{maxcount}} options",
+    "ranked_title": "Ranked Voting {{ weighted }}",
+    "ranked_tooltip": "Ranked voting asks you to order all {{maxcount}} options, from your favourite to your least favourite. Each position is worth points, and the option with the most points wins.",
+    "singlechoice_title": "Single Choice {{ weighted }}",
     "weighted_voting": "Weighted Voting"
-  },
-  "schedule": {
-    "from_begin_to_end": "Voting from {{ begin }} to {{ end }}",
-    "ended": "Ended {{ distance }}",
-    "paused_start": "Starts {{ distance }}",
-    "paused_end": "Ends {{ distance }}",
-    "created": "Created {{ distance }}"
   },
   "results": {
     "date_format": "PPpp",
@@ -53,43 +60,49 @@
     "title": "Results for \"{{ title }}\"",
     "votes": "{{votes}} votes ({{ percent }})"
   },
-  "statuses": {
-    "canceled": "Canceled",
-    "ended": "Ended",
-    "ongoing": "Ongoing",
-    "paused": "Paused",
-    "results": "Results",
-    "upcoming": "Upcoming",
-    "process_unknown": "Unknown",
-    "invalid": "Invalid"
+  "schedule": {
+    "created": "Created {{ distance }}",
+    "ended": "Ended {{ distance }}",
+    "from_begin_to_end": "Voting from {{ begin }} to {{ end }}",
+    "paused_end": "Ends {{ distance }}",
+    "paused_start": "Starts {{ distance }}"
   },
   "spreadsheet": {
     "access_button": "Identify",
-    "anon_sik_label": "Define a password for your vote",
     "anon_sik_helper": "This ensures the vote to be anonymous",
+    "anon_sik_label": "Define a password for your vote",
     "close": "Close",
     "logout": "Logout",
     "modal_title": "Authentication"
   },
-  "pagination": {
-    "page_placeholder": "Page",
-    "total_results": "Showing a total of {{ count }} results",
-    "previous": "Previous",
-    "next": "Next"
+  "statuses": {
+    "canceled": "Canceled",
+    "ended": "Ended",
+    "invalid": "Invalid",
+    "ongoing": "Ongoing",
+    "paused": "Paused",
+    "process_unknown": "Unknown",
+    "ready": "Ongoing",
+    "results": "Results",
+    "upcoming": "Upcoming"
   },
   "validation": {
-    "required": "This field is required",
-    "min_length": "This field must be at least {{ min }} characters long",
+    "at_least_one": "Select at least one option",
     "choices_count": "Select {{ count }} choices",
-    "at_least_one": "Select at least one option"
+    "choices_range": "Select between {{ min }} and {{ max }} options",
+    "min_length": "This field must be at least {{ min }} characters long",
+    "rank_all": "Rank all {{ count }} options",
+    "required": "This field is required"
   },
   "vote": {
     "abstain": "Abstain",
-    "button_update": "Change my vote",
     "button": "Vote",
+    "button_update": "Change my vote",
     "confirm": "Please confirm your choices:",
+    "rank_position": "#{{ position }}",
     "sign": "Sign first",
     "voted_description": "To verify your vote, you can use this unique identifier: {{ id }}",
+    "voted_question_description": "Your vote id for \"{{ title }}\" is {{ id }}.",
     "voted_title": "Your vote was successfully cast!",
     "weight": "Your voting power is: "
   }

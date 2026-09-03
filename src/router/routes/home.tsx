@@ -1,17 +1,17 @@
-import { useClient } from '@vocdoni/react-components'
 import { lazy, useMemo } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router'
 import { parseProcessIds } from '~components/Home/SharedCensus'
 import Layout from '~elements/Layout'
 import SimpleLayout from '~elements/SimpleLayout'
 import { useAppEnv, useCustomOrganizationDomains } from '~src/app-env'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { SuspenseLoader } from '../SuspenseLoader'
 
 const SharedCensus = lazy(() => import('~components/Home/SharedCensus'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
 
 export const useHomeRoute = () => {
-  const { client } = useClient()
+  const { client } = useApiClient()
   const { PROCESS_IDS } = useAppEnv()
   const domains = useCustomOrganizationDomains()
   const sharedCensusProcessIds = useMemo(() => parseProcessIds(PROCESS_IDS), [PROCESS_IDS])
@@ -33,7 +33,7 @@ export const useHomeRoute = () => {
       element: <SuspenseLoader>{homeContent}</SuspenseLoader>,
       loader: async () => {
         if (domainForHost) {
-          return client.fetchAccountInfo(domainForHost)
+          return client.organizations.get(domainForHost)
         }
         return null
       },

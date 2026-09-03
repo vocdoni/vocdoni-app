@@ -2,10 +2,11 @@ import { Box, Link, Text } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { Trans } from 'react-i18next'
 
-const LegalNoticeContent = () => {
-  const { organization } = useOrganization()
-  const orgName = organization?.account?.name?.default || organization?.address
-
+/**
+ * Legal notice that never reads the organization context — for pages rendered without an
+ * `OrganizationProvider` (archive-era). Renders nothing when `orgName` is empty.
+ */
+export const StaticLegalNotice = ({ orgName }: { orgName?: string }) => {
   if (!orgName) return null
 
   return (
@@ -37,8 +38,14 @@ const LegalNoticeContent = () => {
   )
 }
 
+/**
+ * Reads the organization from its provider. Must be rendered inside an `OrganizationProvider`
+ * — `useOrganization()` throws otherwise. Pages without one use {@link StaticLegalNotice}.
+ */
 const LegalNotice = () => {
-  return <LegalNoticeContent />
+  const { organization } = useOrganization()
+
+  return <StaticLegalNotice orgName={organization?.name?.default || organization?.address} />
 }
 
 export default LegalNotice

@@ -1,8 +1,7 @@
-import { FetchElectionsParameters, FetchElectionsParametersWithPagination } from '@vocdoni/sdk'
-
-type KnownPaginationParams = Partial<Pick<FetchElectionsParametersWithPagination, 'limit'>> & {
-  status?: FetchElectionsParameters['status']
+type KnownPaginationParams = {
   page?: number
+  limit?: number
+  status?: string
 }
 
 export const getPaginationParams = (searchParams: URLSearchParams): KnownPaginationParams => {
@@ -11,8 +10,7 @@ export const getPaginationParams = (searchParams: URLSearchParams): KnownPaginat
   // Handle known pagination parameters
   if (searchParams.has('page')) result.page = Number(searchParams.get('page'))
   if (searchParams.has('limit')) result.limit = Number(searchParams.get('limit'))
-  if (searchParams.has('status'))
-    result.status = searchParams.get('status')?.toUpperCase() as FetchElectionsParameters['status']
+  if (searchParams.has('status')) result.status = searchParams.get('status')?.toUpperCase()
 
   return result
 }

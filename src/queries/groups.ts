@@ -1,10 +1,11 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { enforceHexPrefix, useOrganization } from '@vocdoni/react-components'
-import { PaginationResponse } from '@vocdoni/sdk'
+import { useOrganization } from '@vocdoni/react-components'
+import { PaginationResponse } from '~src/queries/pagination'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~src/queries/keys'
 import { Member } from '~src/queries/members'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
 export type Group = {
   id: string
@@ -57,7 +58,7 @@ export const useGroups = (limit: number = 6) => {
     initialPageParam: 1,
     queryFn: ({ pageParam = 1 }) =>
       bearedFetch<GroupsResponse>(
-        ApiEndpoints.OrganizationGroups.replace('{address}', enforceHexPrefix(organization?.address)) +
+        ApiEndpoints.OrganizationGroups.replace('{address}', organization?.address) +
           `?page=${pageParam}&limit=${limit}`
       ),
     getNextPageParam: (lastPage) => getNextGroupsPageParam(lastPage),
@@ -72,12 +73,16 @@ export const useCreateGroup = () => {
 
   return useMutation({
     mutationFn: async (body: GroupData) => {
-      await bearedFetch(ApiEndpoints.OrganizationGroups.replace('{address}', enforceHexPrefix(organization.address)), {
+      await bearedFetch(ApiEndpoints.OrganizationGroups.replace('{address}', organization.address), {
         method: 'POST',
         body,
       })
     },
-    onSuccess: () => {
+    onSuccess: (_data, body) => {
+      trackAnalyticsEvent({
+        name: AnalyticsEvents.MemberGroupCreated,
+        props: { group_size: body?.memberIDs?.length ?? 0 },
+      })
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.groups(organization.address),
       })
@@ -93,16 +98,14 @@ export const useDeleteGroup = () => {
   return useMutation({
     mutationFn: async (groupId: string) => {
       await bearedFetch<void>(
-        ApiEndpoints.OrganizationGroup.replace('{address}', enforceHexPrefix(organization.address)).replace(
-          '{groupId}',
-          groupId
-        ),
+        ApiEndpoints.OrganizationGroup.replace('{address}', organization.address).replace('{groupId}', groupId),
         {
           method: 'DELETE',
         }
       )
     },
     onSuccess: () => {
+      trackAnalyticsEvent({ name: AnalyticsEvents.MemberGroupDeleted })
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.groups(organization.address),
         exact: false,
@@ -115,10 +118,10 @@ export const useGroupMembers = (groupId: string, page, isOpen: boolean = false) 
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
 
-  const baseUrl = ApiEndpoints.OrganizationGroupMembers.replace(
-    '{address}',
-    enforceHexPrefix(organization?.address)
-  ).replace('{groupId}', groupId)
+  const baseUrl = ApiEndpoints.OrganizationGroupMembers.replace('{address}', organization?.address).replace(
+    '{groupId}',
+    groupId
+  )
   const fetchUrl = `${baseUrl}?page=${page}`
 
   return useQuery<GroupMembers, Error, GroupMembersQueryData>({
@@ -137,10 +140,7 @@ export const useUpdateGroup = () => {
   return useMutation({
     mutationFn: async ({ groupId, body }: { groupId: string; body: UpdateGroupData }) => {
       await bearedFetch(
-        ApiEndpoints.OrganizationGroup.replace('{address}', enforceHexPrefix(organization.address)).replace(
-          '{groupId}',
-          groupId
-        ),
+        ApiEndpoints.OrganizationGroup.replace('{address}', organization.address).replace('{groupId}', groupId),
         {
           method: 'PUT',
           body,

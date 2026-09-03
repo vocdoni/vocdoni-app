@@ -1,14 +1,13 @@
 // These aren't lazy loaded since they are main layouts and related components
 import { useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
 import { Fragment, lazy } from 'react'
-import { generatePath, LoaderFunctionArgs, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router-dom'
+import { useApiClient } from '~src/providers/ApiClientProvider'
+import { generatePath, Navigate, Params, ShouldRevalidateFunctionArgs } from 'react-router'
 import Error from '~elements/Error'
 import LayoutDashboard from '~elements/LayoutDashboard'
-import { paginatedElectionsQuery } from '~queries/organization'
+import { QueryKeys } from '~queries/keys'
 import OrganizationProtectedRoute from '~src/router/OrganizationProtectedRoute'
 import ProtectedRoutes from '~src/router/ProtectedRoutes'
-import { getPaginationParams } from '~utils/pagination'
 import { Routes } from '.'
 import AccountProtectedRoute from '../AccountProtectedRoute'
 import OrganizationTypeGuard from '../OrganizationTypeGuard'
@@ -42,7 +41,7 @@ export const shouldRevalidateDashboardProcess = ({
 
 export const useDashboardRoutes = () => {
   const queryClient = useQueryClient()
-  const { client, account } = useClient()
+  const { client } = useApiClient()
 
   return {
     element: (
@@ -106,7 +105,12 @@ export const useDashboardRoutes = () => {
                         <DashboardProcessView />
                       </SuspenseLoader>
                     ),
-                    loader: async ({ params }: { params: Params<string> }) => client.fetchElection(params.id),
+                    loader: async ({ params }: { params: Params<string> }) => {
+                      const rawElection = await client.elections.get(params.id!)
+                      // Pre-seed the ElectionProvider query so the view renders without re-fetching
+                      queryClient.setQueryData(QueryKeys.election.process(rawElection.id), rawElection)
+                      return rawElection
+                    },
                     shouldRevalidate: shouldRevalidateDashboardProcess,
                     errorElement: <Error />,
                     children: [
@@ -133,16 +137,6 @@ export const useDashboardRoutes = () => {
                             <AllProcesses />
                           </SuspenseLoader>
                         ),
-                        loader: async ({ params, request }: LoaderFunctionArgs) => {
-                          const url = new URL(request.url)
-                          const queryParams = getPaginationParams(url.searchParams)
-                          // we want our route params to override the query params
-                          const mergedParams = { ...queryParams, ...params }
-
-                          return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(account, client, mergedParams)
-                          )
-                        },
                       },
                       {
                         path: Routes.dashboard.processes.ended,
@@ -151,16 +145,6 @@ export const useDashboardRoutes = () => {
                             <EndedProcesses />
                           </SuspenseLoader>
                         ),
-                        loader: async ({ params, request }: LoaderFunctionArgs) => {
-                          const url = new URL(request.url)
-                          const queryParams = getPaginationParams(url.searchParams)
-                          // we want our route params to override the query params
-                          const mergedParams = { ...queryParams, ...params }
-
-                          return await queryClient.ensureQueryData(
-                            paginatedElectionsQuery(account, client, mergedParams)
-                          )
-                        },
                       },
                       {
                         path: Routes.dashboard.processes.drafts,
@@ -186,7 +170,7 @@ export const useDashboardRoutes = () => {
                       {
                         index: true,
                         element: (
-                          <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: 1 })} replace />
+                          <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: '1' })} replace />
                         ),
                       },
                       {

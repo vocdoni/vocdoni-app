@@ -66,6 +66,9 @@ export const CountrySelector = ({ ...props }: Omit<SelectProps, 'options'>) => {
         rules={{ required: t('form.error.field_is_required') }}
         render={({ field }) => (
           <Select
+            // Matches the FormLabel's htmlFor='country' above; react-select
+            // would otherwise generate a random id and leave the label orphaned.
+            inputId='country'
             options={data}
             value={data.find((opt) => opt.value === field.value)}
             getOptionLabel={(option) => `${(option as CountryOptionType).flag} ${option.label}`}

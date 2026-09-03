@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { To } from 'react-router-dom'
+import { To } from 'react-router'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { OrganizationCreate } from '~components/Organization/Create'
 import { Routes } from '~src/router/routes'

@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, Flex, HStack, Icon, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Flex, HStack, Icon, Text, VStack } from '@chakra-ui/react'
 import {
   closestCenter,
   DndContext,
@@ -14,15 +14,9 @@ import { useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuPlus } from 'react-icons/lu'
-import { Link } from 'react-router-dom'
-import { useAnalytics } from '~components/AnalyticsProvider'
-import { DashboardSection } from '~components/Dashboard/Contents'
 import DeleteModal from '~components/Modal/DeleteModal'
-import { Routes } from '~routes'
-import { AnalyticsEvents } from '~utils/analytics'
-import { DefaultQuestions, SelectorTypes } from '../common'
+import { defaultQuestion } from '../common'
 import { QuestionForm } from './QuestionForm'
-import { QuestionType } from './QuestionType'
 
 const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
   const { t } = useTranslation()
@@ -48,62 +42,14 @@ const DeleteQuestionModal = ({ open, onOpenChange, removeQuestion }) => {
   )
 }
 
-const AddMultipleQuestionModal = ({ open, onOpenChange }) => {
-  const { t } = useTranslation()
-
-  return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content>
-          <Dialog.Header>
-            <Dialog.Title>
-              {t('process.create.question.add_multiple.title', {
-                defaultValue: 'Multi-question multiple-choice is not available yet',
-              })}
-              <Box fontSize='sm' color='texts.subtle'>
-                {t('process.create.question.add_multiple.description', {
-                  defaultValue:
-                    'Creating processes with more than one multiple-choice question is currently not available. If you need this type of process, please contact us.',
-                })}
-              </Box>
-            </Dialog.Title>
-          </Dialog.Header>
-          <Dialog.Footer>
-            <Dialog.ActionTrigger asChild>
-              <Button
-                variant='outline'
-                aria-label={t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
-              >
-                {t('process.create.question.add_multiple.cancel_button', { defaultValue: 'Cancel' })}
-              </Button>
-            </Dialog.ActionTrigger>
-            <Button
-              asChild
-              aria-label={t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
-            >
-              <Link to={Routes.dashboard.settings.support}>
-                {t('process.create.question.add_multiple.contact_button', { defaultValue: 'Contact Us' })}
-              </Link>
-            </Button>
-          </Dialog.Footer>
-        </Dialog.Content>
-      </Dialog.Positioner>
-    </Dialog.Root>
-  )
-}
-
 export const Questions = () => {
-  const { trackPlausibleEvent } = useAnalytics()
-  const { control, watch } = useFormContext()
+  const { control } = useFormContext()
   const [isDeleteQuestionModalOpen, setDeleteQuestionModalOpen] = useState(false)
-  const [isAddMultipleQuestionsOpen, setAddMultipleQuestionsOpen] = useState(false)
   const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(null)
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: 'questions',
   })
-  const questionType = watch('questionType')
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -112,14 +58,7 @@ export const Questions = () => {
     })
   )
 
-  const addQuestion = () => {
-    if (questionType === SelectorTypes.Single) {
-      append(DefaultQuestions[questionType])
-    } else {
-      trackPlausibleEvent({ name: AnalyticsEvents.TriedMultiquestionMultichoice })
-      setAddMultipleQuestionsOpen(true)
-    }
-  }
+  const addQuestion = () => append(defaultQuestion)
 
   const removeQuestion = (index) => {
     remove(index)
@@ -147,10 +86,6 @@ export const Questions = () => {
 
   return (
     <VStack align='stretch' gap={4}>
-      <DashboardSection>
-        <QuestionType />
-      </DashboardSection>
-
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -179,10 +114,6 @@ export const Questions = () => {
           </Text>
         </HStack>
       </Button>
-      <AddMultipleQuestionModal
-        open={isAddMultipleQuestionsOpen}
-        onOpenChange={({ open }) => setAddMultipleQuestionsOpen(open)}
-      />
     </VStack>
   )
 }

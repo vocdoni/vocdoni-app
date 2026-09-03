@@ -1,3 +1,5 @@
+import { readCookie } from '~utils/cookies'
+
 export const PUBLIC_LANGUAGE_STORAGE_KEY = 'i18nextLng'
 export const PUBLIC_LANGUAGE_COOKIE_KEY = 'vocdoni-public-language'
 const PUBLIC_LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
@@ -50,19 +52,6 @@ export const persistPublicLanguage = (
   return normalizedLanguage
 }
 
-const readCookieValue = (cookie: string | undefined, key: string) => {
-  if (!cookie) return null
-
-  const entry = cookie
-    .split(';')
-    .map((segment) => segment.trim())
-    .find((segment) => segment.startsWith(`${key}=`))
-
-  if (!entry) return null
-
-  return decodeURIComponent(entry.slice(key.length + 1))
-}
-
 const buildPublicLanguageCookie = ({ language, secure }: { language: string; secure: boolean }) =>
   `${PUBLIC_LANGUAGE_COOKIE_KEY}=${encodeURIComponent(language)}; Max-Age=${PUBLIC_LANGUAGE_COOKIE_MAX_AGE}; Path=/; SameSite=Lax${secure ? '; Secure' : ''}`
 
@@ -76,7 +65,7 @@ export const getPublicLanguageFromCookie = ({
   supportedLanguages: string[]
   cookie?: string
 }) => {
-  const cookieLanguage = readCookieValue(cookie, PUBLIC_LANGUAGE_COOKIE_KEY)
+  const cookieLanguage = readCookie(cookie, PUBLIC_LANGUAGE_COOKIE_KEY)
 
   return cookieLanguage ? normalizePublicLanguageCandidate(cookieLanguage, supportedLanguages) : null
 }

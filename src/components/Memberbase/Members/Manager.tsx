@@ -25,7 +25,7 @@ import { useTable } from '../TableProvider'
 type MemberFormData = Record<string, string>
 
 type MemberManagerProps = {
-  control?: React.ReactElement
+  control?: React.ReactElement<Record<string, unknown>>
   member?: Partial<Member> | null
   open?: boolean
   onOpenChange?: (open: boolean) => void

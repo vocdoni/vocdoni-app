@@ -4,8 +4,8 @@ import { mockUseClient, mockUseOrganization, render, screen, TestMemoryRouter } 
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { DraftsContextMenu } from './drafts'
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom')
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual<typeof import('react-router')>('react-router')
   return {
     ...actual,
     useNavigate: () => vi.fn(),
@@ -52,10 +52,16 @@ describe('DraftsContextMenu', () => {
     const { container } = render(
       <TestMemoryRouter>
         <DraftsContextMenu
-          draft={{
-            id: 'draft-1',
-            metadata: { title: 'Draft title' } as any,
-          }}
+          draft={
+            {
+              id: 'draft-1',
+              orgAddress: 'org',
+              published: false,
+              title: { default: 'Draft title' },
+              census: {},
+              questions: [],
+            } as any
+          }
         />
       </TestMemoryRouter>
     )

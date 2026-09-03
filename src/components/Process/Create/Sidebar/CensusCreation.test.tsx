@@ -19,7 +19,7 @@ const CensusCreationHarness = () => {
   return (
     <TestMemoryRouter>
       <FormProvider {...methods}>
-        <CensusCreation showExtraMethods={false} />
+        <CensusCreation />
       </FormProvider>
     </TestMemoryRouter>
   )

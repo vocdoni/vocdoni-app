@@ -1,0 +1,117 @@
+name: Integration
+
+# Runs the Playwright end-to-end suite (e2e/) against a disposable
+# mongo + vocone + saas-backend + MailHog stack (integration/docker-compose.ci.yml),
+# built from published `:main` images.
+#
+# Deliberately separate from .github/workflows/test.yml: this job consumes two
+# moving upstream images and a live chain, so a red run often means "upstream
+# moved" rather than "this repo is broken". That must not gate the normal
+# lint/unit/build job.
+#
+# Where it runs, and why: on every merge into `develop` (the integration point,
+# where a break should surface), and on pull requests promoting `develop`
+# onward to `stage` or to `main` (production) — the two moments where shipping
+# a broken email/2FA journey would actually reach users. Feature PRs targeting
+# `develop` deliberately do NOT run it: they are already covered by test.yml,
+# and this job costs several minutes and a live chain.
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [stage, main]
+  workflow_dispatch:
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: End-to-end suite
+    runs-on: ubuntu-latest
+    # The suite publishes real on-chain processes and casts real votes, and
+    # vocone's first boot downloads its zk circuit artifacts. Budget for that.
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Print resolved image digests
+        # `:main` is tracked deliberately, so a green run can go red with no
+        # change in this repo. Printing the digests makes such a run
+        # reproducible locally and tells you immediately that upstream moved.
+        run: |
+          docker pull ghcr.io/vocdoni/vocdoni-node:main
+          docker pull ghcr.io/vocdoni/saas-backend:main
+          docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/vocdoni-node:main
+          docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/saas-backend:main
+
+      - name: Start stack
+        run: scripts/integration-stack.sh up
+
+      - name: Build app against the stack
+        # SAAS_URL is read by the SSR server at boot, not baked in here, but the
+        # build must exist before Playwright's webServer can serve it.
+        run: pnpm build
+        env:
+          SAAS_URL: http://localhost:8080
+          APP_URL: http://localhost:3000
+          VOCDONI_ENVIRONMENT: dev
+
+      - name: Run end-to-end suite
+        run: pnpm test:e2e
+        env:
+          SAAS_URL: http://localhost:8080
+          MAILHOG_URL: http://localhost:8025
+          APP_URL: http://localhost:3000
+
+      - name: Collect container logs
+        if: failure()
+        run: |
+          mkdir -p /tmp/integration-logs
+          for service in api vocone mongo mailhog; do
+            docker compose -f integration/docker-compose.ci.yml logs --no-color "$service" \
+              > "/tmp/integration-logs/$service.log" 2>&1 || true
+          done
+
+      - name: Upload container logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-container-logs
+          path: /tmp/integration-logs
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          # The HTML report embeds the traces, screenshots and videos captured
+          # on failure — the only practical way to debug a browser journey that
+          # only breaks on CI.
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
+
+      - name: Tear down stack
+        if: always()
+        run: scripts/integration-stack.sh down

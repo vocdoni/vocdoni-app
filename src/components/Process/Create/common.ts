@@ -1,15 +1,10 @@
-import { ElectionResultsTypeNames } from '@vocdoni/sdk'
-import { CensusSpreadsheetManager } from '~components/Process/Census/Spreadsheet/CensusSpreadsheetManager'
-import { Web3Address } from '~components/Process/Census/Web3'
 import { CensusTypes } from '../Census/CensusType'
 import { TwoFAMethod } from './VoterAuthentication/utils'
 
 export enum SelectorTypes {
-  Multiple = ElectionResultsTypeNames.MULTIPLE_CHOICE,
-  Single = ElectionResultsTypeNames.SINGLE_CHOICE_MULTIQUESTION,
+  Single = 'singleChoice',
+  Multiple = 'multiChoice',
 }
-
-export type DefaultQuestionsType = Record<SelectorTypes, Question>
 
 export enum TemplateTypes {
   AnnualGeneralMeeting = 'annual_general_meeting',
@@ -25,16 +20,23 @@ export interface Option {
   image?: string
 }
 
-type Question = {
+/**
+ * Every question carries its own type, presentation and choice limits, so a
+ * single process can mix single- and multiple-choice questions (each question
+ * becomes its own on-chain election).
+ */
+export type Question = {
   title: string
   description: string
   options: Option[]
+  type: SelectorTypes
+  extendedInfo: boolean
+  maxNumberOfChoices: number | null
+  minNumberOfChoices: number | null
 }
 
 export type Census = {
-  id: string
   credentials: string[]
-  size: number
   use2FA: boolean
   use2FAMethod: TwoFAMethod
 }
@@ -47,11 +49,7 @@ export type Process = {
   startTime: string
   endDate: string
   endTime: string
-  extendedInfo: boolean
-  questionType: SelectorTypes
   questions: Question[]
-  maxNumberOfChoices: number | null
-  minNumberOfChoices: number | null
   resultVisibility: 'live' | 'hidden'
   weightedVote: boolean
   voterPrivacy: 'public' | 'anonymous'
@@ -59,22 +57,17 @@ export type Process = {
   census?: Census | null
   censusType: CensusTypes
   streamUri?: string
-  addresses?: Web3Address[]
   draft?: boolean
-  spreadsheet?: CensusSpreadsheetManager | null
 }
 
-export const DefaultQuestions: DefaultQuestionsType = {
-  [SelectorTypes.Single]: {
-    title: '',
-    description: '',
-    options: [{ option: '' }, { option: '' }],
-  },
-  [SelectorTypes.Multiple]: {
-    title: '',
-    description: '',
-    options: [{ option: '' }, { option: '' }],
-  },
+export const defaultQuestion: Question = {
+  title: '',
+  description: '',
+  options: [{ option: '' }, { option: '' }],
+  type: SelectorTypes.Single,
+  extendedInfo: false,
+  maxNumberOfChoices: null,
+  minNumberOfChoices: null,
 }
 
 export const defaultProcessValues: Process = {
@@ -85,11 +78,7 @@ export const defaultProcessValues: Process = {
   startTime: '',
   endDate: '',
   endTime: '',
-  extendedInfo: false,
-  questionType: SelectorTypes.Single,
-  questions: [DefaultQuestions[SelectorTypes.Single]],
-  maxNumberOfChoices: null,
-  minNumberOfChoices: null,
+  questions: [defaultQuestion],
   resultVisibility: 'hidden',
   weightedVote: false,
   voterPrivacy: 'public',
@@ -97,42 +86,31 @@ export const defaultProcessValues: Process = {
   census: null,
   censusType: CensusTypes.CSP,
   streamUri: '',
-  addresses: [],
-  spreadsheet: null,
 }
 
 export const TemplateConfigs: Record<TemplateTypes, TemplateConfig> = {
   [TemplateTypes.AnnualGeneralMeeting]: {
-    questionType: SelectorTypes.Single,
-    extendedInfo: false,
-    questions: [
-      { title: '', description: '', options: [{ option: '' }, { option: '' }] },
-      { title: '', description: '', options: [{ option: '' }, { option: '' }] },
-      { title: '', description: '', options: [{ option: '' }, { option: '' }] },
-    ],
+    questions: [{ ...defaultQuestion }, { ...defaultQuestion }, { ...defaultQuestion }],
   },
   [TemplateTypes.Election]: {
-    questionType: SelectorTypes.Multiple,
-    extendedInfo: false,
-    minNumberOfChoices: 1,
-    maxNumberOfChoices: 3,
     questions: [
       {
-        title: '',
-        description: '',
+        ...defaultQuestion,
+        type: SelectorTypes.Multiple,
+        minNumberOfChoices: 1,
+        maxNumberOfChoices: 3,
         options: [{ option: '' }, { option: '' }, { option: '' }],
       },
     ],
   },
   [TemplateTypes.ParticipatoryBudgeting]: {
-    questionType: SelectorTypes.Multiple,
-    extendedInfo: true,
-    minNumberOfChoices: 1,
-    maxNumberOfChoices: 3,
     questions: [
       {
-        title: '',
-        description: '',
+        ...defaultQuestion,
+        type: SelectorTypes.Multiple,
+        extendedInfo: true,
+        minNumberOfChoices: 1,
+        maxNumberOfChoices: 3,
         options: [
           { option: '', description: '' },
           { option: '', description: '' },

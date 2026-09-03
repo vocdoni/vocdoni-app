@@ -15,7 +15,7 @@ import {
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { SubscriptionPermission } from '~constants'
 import { useDateFns } from '~i18n/use-date-fns'
@@ -36,8 +36,8 @@ export const BasicConfig = () => {
     setValue,
     clearErrors,
   } = useFormContext()
-  const startDateRef = useRef<HTMLInputElement | null>()
-  const endDateRef = useRef<HTMLInputElement | null>()
+  const startDateRef = useRef<HTMLInputElement | null>(null)
+  const endDateRef = useRef<HTMLInputElement | null>(null)
   const [min, setMin] = useState<Date>(new Date())
 
   const autoStart = watch('autoStart')

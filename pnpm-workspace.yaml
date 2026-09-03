@@ -1,0 +1,17 @@
+# Security floors for transitive dependencies (GitHub Dependabot alerts).
+# Only add entries here when a dependent actually pins a vulnerable range;
+# if every dependent's own range admits the patched version, a lockfile
+# refresh is enough and an override would just mask upstream reality.
+overrides:
+  # @ethersproject/providers pins ws 8.18.0 exact (ethers v5 is final and
+  # will never bump), viem pins 8.18.3 exact, engine.io-client allows only
+  # ~8.18.3 — all below the 8.21.0 security fix (GHSA alerts #181/#211).
+  'ws@^8': ^8.21.0
+  # query-string 7.1.3 (declared by @walletconnect/utils 2.21.x) pins
+  # decode-uri-component ^0.2.2, below the 0.5.0 DoS fix (GHSA-vcc3-ghjq-m6fr,
+  # alert #252). 0.5.0 is ESM-only, which would break query-string's CJS
+  # `require()` — but a full node_modules sweep shows nothing ever imports
+  # query-string at runtime (walletconnect declares it without using it, and
+  # dropped it in 2.24.0), so the jump is safe. Drop this once the
+  # wagmi/rainbowkit stack pulls @walletconnect/* >= 2.24.
+  'decode-uri-component@<0.5.0': ^0.5.0

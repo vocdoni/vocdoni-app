@@ -1,7 +1,7 @@
 import { Box, Text } from '@chakra-ui/react'
 import { GroupBase, Props } from 'chakra-react-select'
 import { useTranslation } from 'react-i18next'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import { Select } from '~components/Form/Select'
 
 const rowsPerPageOptions = [

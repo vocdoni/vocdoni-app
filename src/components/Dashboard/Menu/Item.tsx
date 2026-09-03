@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from '@chakra-ui/react'
 import { ForwardedRef, forwardRef } from 'react'
-import { Link as ReactRouterLink, generatePath } from 'react-router-dom'
+import { Link as ReactRouterLink, generatePath } from 'react-router'
 
 export type DashboardMenuItem = {
   label: string

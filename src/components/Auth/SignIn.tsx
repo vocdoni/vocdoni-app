@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { NavLink, useNavigate, useOutletContext } from 'react-router-dom'
+import { NavLink, useNavigate, useOutletContext } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { api, ApiEndpoints, getApiErrorMessage, UnverifiedApiError } from '~components/Auth/api'
 import { ILoginParams } from '~components/Auth/authQueries'
@@ -18,9 +18,7 @@ import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import GoogleAuth from './GoogleAuth'
 
-type FormData = {
-  keepLogedIn: boolean
-} & ILoginParams
+type FormData = ILoginParams
 
 const useVerificationCodeStatus = () =>
   useMutation({
@@ -62,7 +60,7 @@ const SignIn = ({
   const toast = useToast()
   const navigate = useNavigate()
   const { setTitle, setSubtitle } = useOutletContext<AuthOutletContextType>()
-  const { trackPlausibleEvent } = useAnalytics()
+  const { trackEvent } = useAnalytics()
   const methods = useForm<FormData>({
     defaultValues: { email: emailProp },
   })
@@ -92,7 +90,7 @@ const SignIn = ({
   const onSubmit = async (data: FormData) => {
     await login(data)
       .then(() => {
-        trackPlausibleEvent({ name: AnalyticsEvents.UserLoggedIn })
+        trackEvent({ name: AnalyticsEvents.UserLoggedIn, props: { method: 'password' } })
         const redirect = localStorage.getItem('redirectTo')
         localStorage.removeItem('redirectTo')
         navigate(redirect || successRoute)

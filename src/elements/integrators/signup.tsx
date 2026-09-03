@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router'
 import SignUp from '~components/Auth/SignUp'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~routes'

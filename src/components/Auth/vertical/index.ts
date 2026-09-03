@@ -1,0 +1,8 @@
+export { default as AuthShowcase } from './AuthShowcase'
+export { default as AuthTrustBar } from './AuthTrustBar'
+export { useVerticalCopy } from './copy'
+export { GenericLogos, getTrustLogos, MinVerticalLogos, TrustLogos } from './logos'
+export { GenericAccent, VerticalRegistry } from './registry'
+export { useAuthTestimonials } from './testimonials'
+export type { AuthTestimonial, ResolvedVertical, TrustLogo, VerticalContent, VerticalCopy } from './types'
+export { useAuthVertical, useVerticalSlug } from './useAuthVertical'

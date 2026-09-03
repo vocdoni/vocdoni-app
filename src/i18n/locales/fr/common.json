@@ -39,6 +39,7 @@
       "decidim": "Logo Decidim",
       "esquerra": "Logo Esquerra Republicana de Catalunya",
       "omnium": "Logo Òmnium Cultural",
+      "org_logo": "Logo de {{org}}",
       "ticanoia": "Logo TIC Anoia"
     }
   },
@@ -47,18 +48,51 @@
   "aside": {
     "has_already_voted": "Votre vote a bien été enregistré",
     "is_not_in_census": "Vous ne figurez pas sur la liste électorale",
-    "overwrite_votes_left_one": "Vous pouvez corriger votre vote une fois.",
-    "overwrite_votes_left_many": "",
-    "overwrite_votes_left_other": "Vous pouvez corriger votre vote jusqu'à {{ count }} fois.",
-    "submitting": "Envoi en cours",
-    "verify_vote_on_explorer": "Vérifier votre vote sur l'Explorer",
     "votes_one": "<span>1</span> <text>votant</text>",
     "votes_many": "",
     "votes_other": "<span>{{ count }}</span> <text>votants</text>",
     "votes_weight_one": "<span>1</span> <text>voix</text>",
     "votes_weight_many": "",
-    "votes_weight_other": "<span>{{ count }}</span> <text>voix</text>",
-    "voting_anonymous_advice": "Veuillez patienter pendant que la magie de l'anonymat opère 🪄.\nCela peut prendre plusieurs minutes ; ne fermez pas la fenêtre."
+    "votes_weight_other": "<span>{{ count }}</span> <text>voix</text>"
+  },
+  "auth": {
+    "showcase": {
+      "fallback_headline": "Des décisions que vos membres peuvent vérifier"
+    },
+    "verticals": {
+      "associations": {
+        "label": "Associations",
+        "trust_bar": "Assemblées générales, élections au conseil et consultations des membres sécurisées. Les associations font déjà confiance à Vocdoni :"
+      },
+      "generic": {
+        "label": "Témoignages clients",
+        "trust_bar": "Assemblées, élections et consultations sécurisées. Des organisations de tous les secteurs font déjà confiance à Vocdoni :"
+      },
+      "ngos": {
+        "label": "ONG et associations à but non lucratif",
+        "trust_bar": "Assemblées, élections au conseil et consultations des membres sécurisées. Les organisations à but non lucratif font déjà confiance à Vocdoni :"
+      },
+      "political_parties": {
+        "label": "Partis politiques",
+        "trust_bar": "Primaires, élections à la direction et consultations internes sécurisées. Les partis font déjà confiance à Vocdoni :"
+      },
+      "professional_associations": {
+        "label": "Ordres professionnels",
+        "trust_bar": "Assemblées générales, élections au conseil et consultations sécurisées. Les ordres professionnels font déjà confiance à Vocdoni :"
+      },
+      "public_administration": {
+        "label": "Administration publique",
+        "trust_bar": "Budgets participatifs, consultations citoyennes et référendums sécurisés. Les administrations publiques font déjà confiance à Vocdoni :"
+      },
+      "sports_clubs": {
+        "label": "Clubs sportifs",
+        "trust_bar": "Élections au bureau, assemblées générales et consultations des membres sécurisées. Les clubs et fédérations font déjà confiance à Vocdoni :"
+      },
+      "trade_unions": {
+        "label": "Syndicats",
+        "trust_bar": "Votes de grève, sur les conventions collectives et élections à la direction sécurisés. Les syndicats font déjà confiance à Vocdoni :"
+      }
+    }
   },
   "avatar": {
     "label": "Avatar de l'organisation"
@@ -94,7 +128,8 @@
       "not_voted": "N'a pas voté",
       "placeholder": "Rechercher dans la liste électorale…",
       "title": "Vérifier les participants",
-      "voted": "A voté"
+      "voted": "A voté",
+      "voted_partial": "A voté {{voted}}/{{total}}"
     }
   },
   "census_size": "Nombre d'inscrits",
@@ -107,11 +142,8 @@
   "color_mode_switcher": "Changer de mode d'affichage",
   "common": {
     "back": "Retour",
-    "cancel": "Annuler",
     "close_drawer": "Fermer le panneau",
     "confirm": "Confirmer",
-    "disable": "Désactiver",
-    "enable": "Activer",
     "home": "Accueil",
     "next": "Suivant",
     "retry": "Réessayer"
@@ -269,7 +301,10 @@
     "empty_description": "Créez un brouillon pour commencer.",
     "load_error": "Impossible de charger les brouillons",
     "load_error_description": "Réessayez.",
-    "not_defined": "Pas encore défini"
+    "not_defined": "Pas encore défini",
+    "question_type": {
+      "mixed": "Mixte"
+    }
   },
   "drawer": {
     "close": "Fermer le panneau"
@@ -305,9 +340,6 @@
   "ended_processes": "Terminés",
   "enter_promo_code": "Saisir le code",
   "error": {
-    "invalid_cell_data": "Certaines lignes ne contiennent pas d'adresses correctes : {{rows,list(style:short)}}",
-    "invalid_row_length": "Corrigez les lignes du document {{rows,list(style: short)}} et chargez-le à nouveau",
-    "invalid_weight_type": "Un poids était attendu dans la première colonne aux lignes {{rows,list(style:short)}}, mais des données inattendues ont été trouvées",
     "loading_page": "Erreur lors du chargement de la page",
     "loading_roles": "Erreur lors du chargement des rôles",
     "loading_types": "Erreur lors du chargement des types d'organisation",
@@ -413,8 +445,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Adresse déjà utilisée",
-      "address_pattern": "Seules les adresses hexadécimales sont autorisées (par ex. 0x031101A…)",
       "census_config_required": "Configurez les paramètres d'authentification de la liste électorale.",
       "email_invalid": "Adresse e-mail invalide",
       "field_is_required": "Ce champ est obligatoire",
@@ -432,40 +462,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Ajouter",
-        "remove_address": "Supprimer l'adresse"
-      },
       "error_deleting_draft_title": "Erreur lors de la suppression du brouillon",
       "error_title": "Erreur lors de la création du processus",
-      "spreadsheet": {
-        "download_template": "Vous n'avez pas de fichier CSV ? <a>Téléchargez template.csv</a>, remplissez-le et chargez-le.",
-        "preview": {
-          "success_description": "Il sera demandé à l'utilisateur de s'authentifier avec :",
-          "success_title": "Fichier chargé avec succès",
-          "upload_new_list": "Charger une nouvelle liste d'électeurs"
-        },
-        "template": {
-          "email": "E-mail",
-          "firstname": "Prénom",
-          "lastname": "Nom",
-          "weight": "Poids"
-        },
-        "upload_description": "Chargez un fichier CSV contenant les participants. Chaque colonne sera utilisée comme une donnée d'identification que l'électeur devra fournir pour s'authentifier. La première ligne contiendra les intitulés de ces données."
-      },
       "success_description": "Redirection vers la page du processus de vote…",
-      "success_title": "Processus de vote créé avec succès",
-      "web3": {
-        "census_description": "Ajoutez des adresses de portefeuille autorisées à voter. Vous pouvez les ajouter une à une ou charger un fichier CSV.",
-        "census_summary_description_one": "<b>{{count}} adresse</b> sera autorisée à voter",
-        "census_summary_description_many": "",
-        "census_summary_description_other": "<b>{{count}} adresses</b> seront autorisées à voter",
-        "census_summary_title": "Récapitulatif de la liste électorale",
-        "csv_format": "Le fichier CSV doit contenir les adresses de portefeuille dans la première colonne.",
-        "csv_format_weighted": "Le fichier CSV doit contenir les poids dans la première colonne et les adresses de portefeuille dans la deuxième colonne.",
-        "upload_csv": "OU CHARGER UN CSV",
-        "wallet_addresses": "Adresses de portefeuille"
-      }
+      "success_title": "Processus de vote créé avec succès"
     },
     "select_language": "Langue",
     "support": {
@@ -473,6 +473,7 @@
       "custom_request": "Demande personnalisée",
       "description": "Description",
       "description_placeholder": "Décrivez votre problème en détail",
+      "no_organization": "Votre organisation n'est pas encore prête. Réessayez dans un instant.",
       "open_ticket": "Ouvrir un ticket d'assistance",
       "other": "Autre",
       "selector_label": "Type de problème",
@@ -833,7 +834,6 @@
       "title": "Documentation"
     },
     "managed": {
-      "active": "Actif",
       "created": "Créé",
       "docs_card_description": "Découvrez comment créer et gérer des organisations par programmation via l'API.",
       "docs_card_title": "Créer une organisation",
@@ -841,12 +841,10 @@
       "empty_description": "Les organisations sont créées via l'API, pas depuis ce tableau de bord. Dès que vous créerez votre première organisation, elle apparaîtra ici.",
       "empty_title": "Aucune organisation pour le moment",
       "error": "Impossible de charger les organisations",
-      "inactive": "Inactif",
       "organization": "Organisation",
       "pagination": "Page {{page}} sur {{total}} · {{items}} au total",
       "processes": "Processus",
       "sms": "SMS",
-      "status": "Statut",
       "subtitle": "Organisations que vous gérez pour le compte de vos clients.",
       "title": "Organisations gérées"
     },
@@ -1020,7 +1018,6 @@
       "add_to_census_confirmation_other": "Vous allez ajouter {{count}} membres à la liste électorale du processus « {{process}} ».",
       "add_to_census_description": "Sélectionnez un processus de vote actif pour ajouter les membres à sa liste électorale.",
       "add_to_census_error": "Erreur lors de l'ajout des membres à la liste électorale",
-      "add_to_census_no_census": "Impossible de déterminer une liste électorale pour ce processus.",
       "add_to_census_partial": "Certains membres n'ont pas pu être ajoutés.",
       "add_to_census_success_one": "{{count}} membre ajouté à la liste électorale",
       "add_to_census_success_many": "",
@@ -1078,7 +1075,6 @@
   "menu": {
     "burger_aria_label": "menu utilisateur",
     "collapse": "Réduire le menu",
-    "connect": "Se connecter",
     "create": "Créer un processus",
     "dashboard": "Dashboard",
     "expand": "Développer le menu",
@@ -1129,24 +1125,28 @@
     "avatar_alt": "Avatar de l'organisation {{ name }}",
     "create_org": "Créer une organisation",
     "create_org_failed": "Échec de la création de l'organisation",
-    "create_org_step_update_failed": "Échec de la mise à jour du statut de l'étape de configuration de l'organisation",
     "create_org_success": "Organisation créée avec succès",
     "dashboard": "Dashboard",
     "date_format": "d MMM y",
     "elections": "Votes",
+    "elections_list": "Processus de vote",
     "elections_list_empty": {
       "alt": "Image illustrant que l'organisation est vide",
       "description": "En tant qu'organisateur, vous pouvez concevoir des processus de vote sur mesure pour votre communauté. Ces procédures offrent une grande flexibilité et permettent par exemple une liste électorale où les électeurs s'authentifient avec des données personnalisées (nom d'utilisateur, mot de passe, date de naissance), un système basé sur des jetons permettant à tous les détenteurs de jetons de participer, ou une liste blanche s'appuyant sur des adresses de portefeuille pour l'éligibilité.",
       "not_owner": "Cette organisation n'a pas encore de processus de vote",
       "title": "Créez votre premier processus de vote"
     },
+    "elections_list_load_more": "Charger plus",
     "max_census": "Liste électorale maximale par vote",
     "max_processes": "Votes par an¹",
     "no_organization_title": "Vous n'appartenez encore à aucune organisation !",
     "organization": "Détails de l'organisation",
     "title": {
       "read_more": "Développer le titre"
-    }
+    },
+    "unavailable_description": "",
+    "unavailable_retry": "",
+    "unavailable_title": ""
   },
   "organization_settings": {
     "phone_support": {
@@ -1170,14 +1170,6 @@
       "title": "Membres de l'équipe"
     },
     "title": "Paramètres de {{organization}}"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Réservez un appel gratuit avec nos experts",
-      "first_vote_creation": "Créez votre premier vote",
-      "memberbase_upload": "Chargez votre base de membres",
-      "organization_details": "Configurez les informations de votre organisation"
-    }
   },
   "organizations": "Organisations ({{ numOrgs }})",
   "other_details": "Autres détails",
@@ -1325,12 +1317,6 @@
       },
       "question": {
         "add": "Ajouter une question",
-        "add_multiple": {
-          "cancel_button": "Annuler",
-          "contact_button": "Contactez-nous",
-          "description": "La création de processus comportant plus d'une question à choix multiple n'est pas disponible pour le moment. Si vous avez besoin de ce type de processus, veuillez nous contacter.",
-          "title": "Les processus à choix multiples avec plusieurs questions ne sont pas encore disponibles"
-        },
         "delete": {
           "cancel_button": "Annuler",
           "delete_button": "Supprimer",
@@ -1369,30 +1355,15 @@
       "starts": "Commence"
     },
     "extended_info": "Informations détaillées",
-    "gitcoin": {
-      "all_of_them": "(Tous)",
-      "gps_score": "Score Gitcoin Passport : score min. {{score}}",
-      "needed_stamps": "Tampons requis",
-      "one_of_them": "(Au moins l'un d'eux)"
-    },
-    "is_anonymous": {
-      "description": "Vote anonyme",
-      "title": "Confidentialité"
-    },
     "is_invalid": "Ce processus contient des données erronées et est donc invalide",
     "no_description": "Aucune description fournie",
     "people_in_census_one": "Un électeur",
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} électeurs",
     "question_type": {
-      "confirm": {
-        "subtitle": "Le choix multiple n'autorise qu'une seule question. Le changement ne conservera que votre première question et écartera les autres.",
-        "title": "Voulez-vous passer au choix multiple ?"
-      },
-      "description": "Cela s'applique à toutes les questions de ce processus de vote",
+      "label": "Type de question",
       "multiple": "Choix multiple",
-      "single": "Choix unique",
-      "title": "Type de question"
+      "single": "Choix unique"
     },
     "questions": "Questions",
     "results": "Résultats",
@@ -1408,6 +1379,7 @@
       "ended": "Terminé",
       "paused": "Processus en pause",
       "paused_description": "Le vote n'est pas possible pour le moment",
+      "results": "Résultats disponibles",
       "unknown": "Inconnu",
       "upcoming": "À venir"
     },
@@ -1473,8 +1445,12 @@
         "title": "Titre du budget participatif"
       }
     },
-    "total_census_size": "{{maxCensusSize}} électeurs autorisés sur {{censusSize}} au total dans la liste",
-    "total_census_size_tooltip": "Le nombre maximum d'électeurs autorisés est limité à {{maxCensusSize}} sur une liste de {{censusSize}} ({{percent}} % du total). Seuls les {{maxCensusSize}} premiers électeurs peuvent voter.",
+    "vote_failed": {
+      "close": "Fermer",
+      "none": "Aucune réponse n’a été enregistrée. Réessayez.",
+      "partial": "Certaines réponses n’ont pas été enregistrées. Votez à nouveau pour envoyer les restantes.",
+      "title": "Votre vote n’a pas pu être enregistré"
+    },
     "voters": "Électeurs",
     "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",
     "voting_method": {
@@ -1482,10 +1458,12 @@
       "budget": "Allocation budgétaire",
       "multiple_choice": "Choix multiple",
       "quadratic": "Quadratique",
+      "ranked": "Classement",
       "single_choice": "Choix unique",
       "unknown": "Inconnu",
       "weighted_format": "{{ base, lowercase }} pondéré"
     },
+    "voting_progress": "{{confirmed}} sur {{total}} questions confirmées",
     "voting_type": "Méthode de vote"
   },
   "process_actions": {
@@ -1505,29 +1483,14 @@
     "auto_start": "Démarrer immédiatement",
     "basic_configuration": "Configuration de base",
     "census": {
-      "extra_methods": {
-        "disable_description": "Voulez-vous désactiver les méthodes de liste électorale supplémentaires ? Cela masquera les options Tableur et Web3 et n'affichera que la méthode Groupe.",
-        "enable_description": "Voulez-vous activer les méthodes de liste électorale supplémentaires ? Cela affichera des options supplémentaires comme la création de liste via Tableur et Web3.",
-        "modal_title": "Méthodes de liste électorale supplémentaires"
-      },
       "group": {
-        "label": "Groupe",
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
       },
       "memberbase": {
         "label": "Sélectionnez un groupe de membres pour créer la liste électorale"
-      },
-      "settings": "Paramètres de la liste électorale",
-      "spreadsheet": {
-        "label": "Tableur"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Création de la liste électorale",
-    "census_missing": "Données de liste électorale manquantes pour le type de liste « Base de membres »",
-    "census_type_not_allowed": "Type de liste électorale {{type}} non autorisé",
     "end_datetime": "Date et heure de fin",
     "extra_configuration": "Configuration supplémentaire",
     "group": {
@@ -1537,8 +1500,6 @@
       "scroll_to_load": "Faites défiler pour en charger davantage…"
     },
     "new_option": "Ajouter une nouvelle option",
-    "no_account_address": "Aucune adresse de compte trouvée.",
-    "no_election_index": "Aucun index d'élection trouvé pour le compte.",
     "option": {
       "description_placeholder": "Description (facultatif)",
       "placeholder": "Option {{number}}",
@@ -1588,11 +1549,7 @@
       "method": "Méthode d'authentification",
       "two_fa": "Vérification d'identité supplémentaire",
       "two_fa_disabled": "Désactivée : aucune vérification d'identité supplémentaire n'a été configurée pour ce processus de vote",
-      "two_fa_enabled": "Activée : les électeurs confirment leur identité à l'aide d'un code à usage unique envoyé sur leurs appareils personnels.",
-      "voter_access_source": "Source d'accès des électeurs",
-      "voter_access_source_spreadsheet": "Les électeurs accèdent à l'aide d'identifiants dérivés de la liste électorale importée par l'organisation sous forme de feuille de calcul.",
-      "voter_access_source_web3": "Les électeurs accèdent à l'aide de l'adresse de portefeuille incluse dans la liste électorale Web3.",
-      "voter_access_source_weighted": "L'éligibilité est vérifiée par rapport à la liste électorale pondérée fournie par l'organisation pour ce processus."
+      "two_fa_enabled": "Activée : les électeurs confirment leur identité à l'aide d'un code à usage unique envoyé sur leurs appareils personnels."
     },
     "census": {
       "counting_basis": "Base de comptage",
@@ -1605,12 +1562,7 @@
       "weighted_participation": "Participation pondérée"
     },
     "census_type": {
-      "anonymous": "Liste électorale anonyme fournie par l'organisation",
-      "csp": "Liste électorale CSP",
-      "spreadsheet": "Liste électorale (feuille de calcul) fournie par l'organisation",
-      "unknown": "Non disponible",
-      "web3": "Liste électorale Web3 (portefeuilles) fournie par l'organisation",
-      "weighted": "Liste électorale pondérée"
+      "csp": "Liste électorale CSP"
     },
     "disclaimer": {
       "bullet_1": "Elle ne constitue pas une certification légale du processus de vote.",
@@ -1650,8 +1602,6 @@
     "download_error": "Impossible de générer le rapport PDF",
     "downloading": "Génération du PDF en cours",
     "general": {
-      "census_reference": "Référence de la liste électorale",
-      "census_reference_helper": "Référence publique identifiant la liste électorale utilisée pour ce processus de vote. Elle ne contient ni ne révèle les données personnelles des électeurs.",
       "event_name": "Nom de l'événement",
       "network": "Infrastructure",
       "organization": "Organisation",
@@ -1685,9 +1635,9 @@
       "explorer": "Explorer de vérification",
       "paragraph": "Toutes les données du processus ont été enregistrées sur une infrastructure basée sur la blockchain et peuvent être vérifiées de manière indépendante via l'explorateur public suivant :",
       "procedure_title": "Procédure de vérification",
+      "question_n": "Question {{number}}",
       "step_1": "Ouvrez le lien de l'Explorer de vérification. Cette page contient l'enregistrement technique public du processus de vote.",
       "step_2": "Vérifiez que l'identifiant du processus affiché dans l'Explorer est identique à celui indiqué dans ce rapport. Cela confirme que les deux documents font référence au même processus de vote.",
-      "step_3": "Vérifiez que la référence de la liste électorale affichée dans l'Explorer correspond à celle de ce rapport. Cela confirme que la liste des électeurs éligibles associée au processus est la même.",
       "step_4": "Vérifiez que le nombre de bulletins enregistrés correspond aux données de participation indiquées dans ce rapport.",
       "step_5": "Comparez le décompte final dans l'Explorer avec les résultats exprimés en nombre de bulletins ou en poids de vote pondéré présentés dans ce rapport.",
       "step_6": "Pour un audit technique plus approfondi, un auditeur peut examiner les enregistrements publics plus en détail ou recalculer le décompte afin de confirmer la cohérence entre les bulletins enregistrés et les résultats finaux."
@@ -1735,6 +1685,8 @@
   "processes": {
     "empty": "Aucun processus de vote trouvé",
     "empty_description": "Créez un processus de vote pour commencer.",
+    "load_error": "Impossible de charger les processus de vote",
+    "load_error_description": "Réessayez.",
     "no_results": "Aucun résultat pour ce filtre",
     "no_results_description": "Essayez d'ajuster vos filtres."
   },
@@ -1744,6 +1696,11 @@
   },
   "promo_code": "Code promotionnel",
   "promo_code_required": "Le code promotionnel est obligatoire",
+  "public_process": {
+    "no_tally": "Pas de décompte",
+    "verify": "Vérifiez sur l’explorateur de la blockchain :",
+    "verify_process": "Voir le processus"
+  },
   "questions_and_results": "Questions et résultats",
   "registration_failed": "Échec de l'inscription",
   "registration_successful": "Inscription réussie",
@@ -1797,14 +1754,7 @@
     "platform": "Plateforme"
   },
   "send_invitation": "Envoyer l'invitation",
-  "session_expired": "Session expirée",
-  "session_expired_description": "La session a peut-être expiré et n'a pas pu être renouvelée, veuillez vous reconnecter",
   "settings": "Paramètres",
-  "setup": {
-    "progress": "Votre progression",
-    "title": "Terminez votre configuration",
-    "toggle_panel": "Afficher/masquer le panneau"
-  },
   "share": {
     "copy": "Copier",
     "election_share_btn_text": "Partager",
@@ -1834,9 +1784,7 @@
   "signup_subtitle": "Saisissez vos informations pour commencer",
   "signup_title": "S'inscrire",
   "spreadsheet": {
-    "access_button": "S'identifier",
-    "close": "Fermer",
-    "modal_title": "Authentification"
+    "access_button": "S'identifier"
   },
   "start_date": "Date de début",
   "start_time": "Heure de début",
@@ -1860,6 +1808,33 @@
   },
   "subtotal": "Sous-total",
   "support": "Assistance",
+  "support_chat": {
+    "ask_name": "Avant d'envoyer — quel est votre nom ?",
+    "book_call": "Réserver un appel",
+    "close_label": "Fermer le chat d'assistance",
+    "confirmation": "Merci, {{name}} ! Nous avons bien reçu votre message et nous vous répondrons à {{email}} dès que possible.",
+    "confirmation_generic": "Merci ! Nous avons bien reçu votre message et nous vous répondrons par e-mail dès que possible.",
+    "confirmation_no_name": "Merci ! Nous avons bien reçu votre message et nous vous répondrons à {{email}} dès que possible.",
+    "contact_options": "Vous préférez échanger de vive voix ? Vous pouvez aussi réserver un appel avec notre équipe ou nous écrire sur WhatsApp.",
+    "error": "Désolé — l'envoi de votre message a échoué. Réessayez.",
+    "greeting": "Bonjour {{name}}, bienvenue sur l'assistance Vocdoni !",
+    "greeting_intro": "Si vous avez besoin d'aide avec la plateforme, souhaitez savoir comment lancer un vote, avez une demande concernant un processus de vote ou avez besoin d'assistance, décrivez-le en un seul message ci-dessous et nous vous répondrons par e-mail.",
+    "greeting_no_name": "Bonjour, bienvenue sur l'assistance Vocdoni !",
+    "header_subtitle": "Nous vous répondrons par e-mail",
+    "header_title": "Assistance Vocdoni",
+    "input_placeholder": "Décrivez votre demande…",
+    "launcher_label": "Ouvrir le chat d'assistance",
+    "messages_label": "Conversation d'assistance",
+    "new_request": "Nouvelle demande",
+    "new_request_prompt": "Que pouvons-nous faire d'autre pour vous ?",
+    "retry": "Réessayer",
+    "send_hint": "Une fois terminé, envoyez avec le bouton d'envoi ou {{shortcut}}.",
+    "send_label": "Envoyer le message",
+    "sent_status": "Demande envoyée — nous répondrons par e-mail",
+    "teaser": "Besoin d'aide ?",
+    "teaser_dismiss": "Ignorer",
+    "whatsapp": "Discuter sur WhatsApp"
+  },
   "switch_mode": "Passer en mode {{ mode }}",
   "switch_organization": "Changer d'organisation",
   "system": "Système",
@@ -1905,19 +1880,73 @@
   },
   "terms_of_service": "Conditions d'utilisation",
   "testimonials": {
+    "aguicat": {
+      "company": "Associació de Guies Habilitats de Catalunya",
+      "position": "Responsable informatique",
+      "text": "Préparer l'ensemble du processus de vote et centraliser tous les outils pour l'assemblée a été facile, intuitif et clair. Même dans un secteur peu technologique, nous avons obtenu une forte participation - les gens ont particulièrement apprécié de pouvoir voter à l'avance sans se déplacer."
+    },
+    "arxivers": {
+      "company": "Associació d'Arxivers de Catalunya",
+      "position": "Secrétaire",
+      "text": "Offrir aux membres un système de vote sûr et fiable est essentiel, surtout en période de pandémie. Vocdoni nous a fourni un outil facile à utiliser qui a simplifié le processus de vote et stimulé la participation."
+    },
+    "ati": {
+      "company": "ATI Friuli Venezia Giulia",
+      "position": "Président",
+      "text": "En tant qu'Associazione Termotecnica Italiana, section Friuli Venezia Giulia, nous avons choisi de numériser notre gouvernance afin de faciliter la participation des professionnels. Vocdoni s'est imposée comme la solution idéale, se distinguant par sa simplicité, ses coûts et ses garanties."
+    },
     "bellpuig": {
       "company": "Mairie de Bellpuig",
       "position": "Maire",
       "text": "Nous avons choisi Vocdoni car nous croyons que c'est l'avenir de toute véritable élection. Le vote électronique est ouvert à tous et facilite le processus de vote pour les citoyens."
     },
+    "bisbal": {
+      "company": "Mairie de La Bisbal d'Empordà",
+      "position": "Chargé de la participation citoyenne",
+      "text": "Vocdoni a porté notre vote Bisbalenc/a de l'Any, augmentant la participation citoyenne et apportant transparence, sécurité et résultats instantanés sur la blockchain. Nous avons apprécié sa sécurité, son évolutivité, sa vérifiabilité universelle et sa flexibilité."
+    },
     "ceec": {
       "position": "Directeur général",
       "text": "Nous avons choisi Vocdoni car il garantit une participation sûre, fiable et transparente pour tous nos membres lors de notre assemblée générale annuelle."
+    },
+    "coib": {
+      "company": "Ordre officiel des infirmiers de Barcelone",
+      "position": "Responsable de projets",
+      "text": "À l'Ordre officiel des infirmiers de Barcelone, nous faisons confiance à Vocdoni pour l'ensemble de nos processus participatifs, en garantissant que les membres puissent exercer leur droit depuis n'importe où. Nous apprécions tout particulièrement l'instantanéité du décompte, la simplicité du système et la réactivité ainsi que l'accompagnement efficaces du support technique, qui rendent l'ensemble du processus agile, transparent et fiable."
     },
     "eic": {
       "company": "Enginyers Industrials de Catalunya",
       "position": "Directeur informatique",
       "text": "Vocdoni nous offre un système de vote facile, sûr, anonyme et évolutif, parfaitement intégré à notre environnement institutionnel. Nous continuerons à coup sûr à faire confiance à leur solution."
+    },
+    "erc": {
+      "position": "Secrétaire nationale de l'Adhésion, de la Lutte Antirépressive et du Bien-être Émotionnel",
+      "text": "Nous faisons confiance à Vocdoni depuis des années car il nous offre un système sécurisé, vérifiable et facile à utiliser, qui nous permet d'organiser des votes numériques avec toutes les garanties et adaptés aux besoins de notre organisation."
+    },
+    "granollers": {
+      "position": "Responsable de la communication",
+      "text": "Chez «Granollers Primàries», nous comprenons la participation numérique comme un outil clé pour élargir et faciliter la participation citoyenne. C'est pourquoi nous cherchions une plateforme garantissant neutralité, transparence et sécurité maximale dans les processus de vote. Vocdoni offre tout cela et c'est pour cette raison que nous l'avons choisi pour nos primaires et prévoyons de continuer à l'utiliser dans de futures consultations."
+    },
+    "icoes": {
+      "company": "Ordre officiel des infirmiers de Séville",
+      "position": "Président",
+      "text": "La numérisation de nos votes avec Vocdoni a amélioré l'efficacité de l'ensemble du processus électoral. Nous avons grandement facilité la participation, en particulier pour les membres qui ne pouvaient pas se déplacer, tout en maintenant un système agile et fiable."
+    },
+    "intersindical": {
+      "position": "Porte-parole du secteur éducation",
+      "text": "À La Intersindical, nous estimons que les décisions qui concernent l'ensemble du corps enseignant doivent être prises par les enseignants eux-mêmes. C'est pourquoi nous avions besoin d'un outil garantissant un processus transparent, neutre et vérifiable. Avec Vocdoni, nous avons pu soumettre cette décision à près de 100 000 professionnels avec la garantie que la procédure et le résultat seraient entièrement fiables."
+    },
+    "omnium": {
+      "position": "Directrice exécutive",
+      "text": "À Òmnium Cultural, nous avons misé sur un système de vote sûr et vérifiable nous permettant de tenir nos assemblées statutaires avec toutes les garanties."
+    },
+    "plataforma": {
+      "position": "Directrice",
+      "text": "Vocdoni nous permet d'organiser des votes avec des membres de tous les territoires de langue catalane à égalité de conditions. Le décompte instantané simplifie nos assemblées et garantit une transparence totale."
+    },
+    "ustec": {
+      "position": "Membre du secrétariat national",
+      "text": "Avec Vocdoni, nous avons trouvé une très bonne solution, une infrastructure neutre et vérifiable qui garantissait à la fois l'intégrité du décompte et la confidentialité des votants. Cela permettait à chaque enseignant de voter une seule fois, de manière sûre et anonyme."
     }
   },
   "theme": "Thème",
@@ -2021,7 +2050,6 @@
     "level_strong": "Fort",
     "level_weak": "Faible",
     "no_group_description": "Veuillez d'abord sélectionner un groupe pour configurer l'authentification.",
-    "save_failed": "Échec de la configuration de l'authentification des électeurs",
     "security_level": "Bonne sécurité",
     "security_recommendation_1": "Pour une meilleure sécurité, nous recommandons de sélectionner au moins 2 identifiants.",
     "security_recommendation_2_one": "Vous avez sélectionné {{ count }} identifiant, ce qui offre une bonne sécurité pour vos électeurs.",

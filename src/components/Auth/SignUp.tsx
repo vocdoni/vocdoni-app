@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Navigate, NavLink, useOutletContext } from 'react-router-dom'
+import { Navigate, NavLink, useOutletContext } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { IRegisterParams } from '~components/Auth/authQueries'
 import { useAuth } from '~components/Auth/useAuth'
@@ -26,6 +26,7 @@ import { useAppEnv } from '~src/app-env'
 import { useSignupFromInvite } from '~src/queries/account'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
+import { withParam } from '~utils/url'
 import GoogleAuth from './GoogleAuth'
 
 export type InviteFields = {
@@ -63,7 +64,7 @@ const SignUp = ({
   const { register: signup } = useAuth()
   const inviteSignup = useSignupFromInvite(invite?.address)
   const { setTitle, setSubtitle } = useOutletContext<AuthOutletContextType>()
-  const { trackPlausibleEvent } = useAnalytics()
+  const { trackEvent } = useAnalytics()
 
   const methods = useForm<FormData>({
     defaultValues: {
@@ -80,6 +81,9 @@ const SignUp = ({
   const email = watch('email')
   // Holds the email being verified once registration succeeds in inline-verify mode.
   const [verifyingEmail, setVerifyingEmail] = useState<string | null>(null)
+  // Holds the email once registration succeeds in the regular flow, so tracking and the
+  // mutation reset can run in an effect instead of during render (StrictMode double-fires).
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null)
 
   // Both mutations surface their own errors via toast (see useAuthProvider's
   // register and useSignupFromInvite), so we only track the pending state here.
@@ -112,27 +116,43 @@ const SignUp = ({
   // registration succeeds so the verify form below can render without leaving the page.
   useEffect(() => {
     if (verifyInline && signup.isSuccess && !verifyingEmail) {
-      trackPlausibleEvent({ name: AnalyticsEvents.AccountSignup })
+      trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'password' } })
       setVerifyingEmail(email)
       signup.reset()
     }
-  }, [verifyInline, signup.isSuccess, verifyingEmail, email, trackPlausibleEvent, signup])
+  }, [verifyInline, signup.isSuccess, verifyingEmail, email, trackEvent, signup])
+
+  useEffect(() => {
+    if (!verifyInline && signup.isSuccess && !registeredEmail) {
+      trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'password' } })
+      setRegisteredEmail(email)
+      signup.reset()
+    }
+  }, [verifyInline, signup.isSuccess, registeredEmail, email, trackEvent, signup])
+
+  useEffect(() => {
+    if (inviteSignup.isSuccess) {
+      trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'invite' } })
+    }
+  }, [inviteSignup.isSuccess, trackEvent])
 
   if (verifyInline && (signup.isSuccess || verifyingEmail)) {
     return <VerificationPending email={verifyingEmail ?? email} nextRoute={verifyNextRoute} />
   }
 
   // normally registered accounts need verification (separate verify page)
+  if (registeredEmail) {
+    return <Navigate to={withParam(afterRegisterRoute, 'email', registeredEmail)} replace />
+  }
+
+  // registration succeeded but the effect above hasn't staged the redirect yet
   if (signup.isSuccess) {
-    trackPlausibleEvent({ name: AnalyticsEvents.AccountSignup })
-    signup.reset()
-    return <Navigate to={`${afterRegisterRoute}?email=${encodeURIComponent(email)}`} replace />
+    return null
   }
 
   // accounts coming from invites don't need verification
   if (inviteSignup.isSuccess) {
-    trackPlausibleEvent({ name: AnalyticsEvents.AccountSignup })
-    return <Navigate to={Routes.auth.signIn} replace />
+    return <Navigate to={signInRoute} replace />
   }
 
   return (

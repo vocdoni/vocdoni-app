@@ -2,9 +2,11 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, RenderOptions } from '@testing-library/react'
 import { ComponentsProvider, ConfirmProvider } from '@vocdoni/react-components'
+import { AuthProvider as SdkAuthProvider } from '@vocdoni/react-providers'
 import i18n, { type Resource } from 'i18next'
 import { ComponentType, ReactElement, ReactNode } from 'react'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
+import { flushSync } from 'react-dom'
 import {
   createMemoryRouter,
   MemoryRouter,
@@ -12,10 +14,11 @@ import {
   type MemoryRouterProps,
   type RouteObject,
   type RouterProviderProps,
-} from 'react-router-dom'
+} from 'react-router'
 import { configureApiBaseUrl } from '~components/Auth/api'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { ToastProvider as BaseToastProvider } from '~components/Toast'
+import { ApiClientProvider, AUTH_STORAGE_KEY } from '~src/providers/ApiClientProvider'
 import { AppEnvProvider } from '~src/app-env'
 import { buildAppEnv, type AppEnv } from '~src/app-env-build'
 import { ColorModeProvider } from '~theme/color-mode'
@@ -145,13 +148,17 @@ export function AllProviders({
         <ChakraProvider value={system}>
           <I18nextProvider i18n={i18nInstance}>
             <QueryClientProvider client={queryClient}>
-              <TestToastProvider>
-                <ComponentsProvider components={uiScaffoldComponents}>
-                  <ConfirmProvider>
-                    <ConnectionToastProvider>{content}</ConnectionToastProvider>
-                  </ConfirmProvider>
-                </ComponentsProvider>
-              </TestToastProvider>
+              <ApiClientProvider>
+                <SdkAuthProvider storageKey={AUTH_STORAGE_KEY}>
+                  <TestToastProvider>
+                    <ComponentsProvider components={uiScaffoldComponents}>
+                      <ConfirmProvider>
+                        <ConnectionToastProvider>{content}</ConnectionToastProvider>
+                      </ConfirmProvider>
+                    </ComponentsProvider>
+                  </TestToastProvider>
+                </SdkAuthProvider>
+              </ApiClientProvider>
             </QueryClientProvider>
           </I18nextProvider>
         </ChakraProvider>
@@ -184,28 +191,24 @@ export function renderWithProviders(ui: ReactElement, options?: RenderWithProvid
   }
 }
 
-const routerFutureFlags = {
-  v7_startTransition: true,
-  v7_relativeSplatPath: true,
-} as const
-
+// v7 made the v6 future-flag semantics the default, so these helpers are now thin
+// wrappers kept so test files don't need churn — and so the RouterProvider setup
+// (main-entry import + explicit flushSync, mirroring src/router/Router.tsx) lives
+// in one place. See Router.tsx for why the `react-router/dom` entry is avoided.
 export function createTestMemoryRouter(routes: RouteObject[], opts?: Parameters<typeof createMemoryRouter>[1]) {
-  return createMemoryRouter(routes, {
-    ...opts,
-    future: { v7_relativeSplatPath: true, ...opts?.future },
-  })
+  return createMemoryRouter(routes, opts)
 }
 
-export function TestRouterProvider({ future, ...props }: RouterProviderProps) {
-  return <RouterProvider {...props} future={{ v7_startTransition: true, ...future }} />
+const reactDomFlushSync: RouterProviderProps['flushSync'] = (fn) => {
+  flushSync(fn)
 }
 
-export function TestMemoryRouter({ children, future, ...props }: MemoryRouterProps) {
-  return (
-    <MemoryRouter {...props} future={{ ...routerFutureFlags, ...future }}>
-      {children}
-    </MemoryRouter>
-  )
+export function TestRouterProvider(props: RouterProviderProps) {
+  return <RouterProvider flushSync={reactDomFlushSync} {...props} />
+}
+
+export function TestMemoryRouter({ children, ...props }: MemoryRouterProps) {
+  return <MemoryRouter {...props}>{children}</MemoryRouter>
 }
 
 // Re-export everything from testing-library

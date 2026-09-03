@@ -22,6 +22,27 @@ export const colors = {
     500: { value: '#737373' },
   },
 
+  // Accents for the per-vertical auth showcase (see src/components/Auth/vertical).
+  // 900 is the panel surface: a deep, desaturated tone, dark enough to carry white type at
+  // roughly 13:1. 200/300 are text on it, 500 and 700 are kept for callers that want a
+  // brighter step of the same hue.
+  verticals: {
+    generic: {
+      200: { value: '#ddd6fe' },
+      300: { value: '#c4b5fd' },
+      500: { value: '#8b5cf6' },
+      700: { value: '#4c1d95' },
+      900: { value: '#251a42' },
+    },
+    professional: {
+      200: { value: '#bae6fd' },
+      300: { value: '#7dd3fc' },
+      500: { value: '#0ea5e9' },
+      700: { value: '#0c4a6e' },
+      900: { value: '#0c2e3e' },
+    },
+  },
+
   dashboardMenu: {
     light: { value: '#fbfbfb' },
     dark: { value: '#18181b' },

@@ -1,8 +1,27 @@
+import { electionQueryKeys } from '@vocdoni/react-components'
+
 export const QueryKeys = {
+  // Keys the @vocdoni/react-providers ElectionProvider reads through (shared
+  // cache namespace: ['process', id] / ['process-results', id]) — use these to
+  // pre-seed or invalidate the process/results queries it observes. Kept under
+  // the app's historical process/results names.
+  election: {
+    process: electionQueryKeys.election,
+    results: electionQueryKeys.results,
+  },
   organization: {
-    elections: (address?: string, params?: { page?: number; status?: string }) =>
-      ['organizations', 'elections', address, params].filter(Boolean),
-    info: (address?: string) => ['organizations', 'info', address].filter(Boolean),
+    // The address stays in the key even when it is undefined: dropping it collapses an
+    // addressless read onto a shorter key that another call shape can also produce, so an
+    // addressless failure would surface in a query that never asked for it.
+    elections: (address?: string, params?: { page?: number; status?: string }) => [
+      'organizations',
+      'elections',
+      address ?? null,
+      params ?? null,
+    ],
+    // No `info` key here on purpose: the organization read is owned by react-providers and
+    // keyed through its exported `organizationQueryKeys.organization(address)`. Adding an
+    // app-local one again would split the cache and fetch the same endpoint twice.
     users: (address?: string) => ['organizations', 'users', address].filter(Boolean),
     names: ['organizations', 'names'],
     pendingUsers: (address?: string) => ['organizations', 'users', 'pending', address].filter(Boolean),
@@ -17,13 +36,9 @@ export const QueryKeys = {
     groups: (address?: string) => ['organizations', 'groups', address].filter(Boolean),
     apikeys: (address?: string) => ['organizations', 'apikeys', address].filter(Boolean),
   },
-  census: {
-    bundle: (censusURI?: string) => ['census', 'bundle', censusURI].filter(Boolean),
-  },
   process: {
-    census: (processId?: string) => ['process', 'census', processId].filter(Boolean),
-    participantsCheck: (bundleId?: string, processID?: string, fieldName?: string, value?: string) =>
-      ['process', 'participantsCheck', bundleId, processID, fieldName, value].filter(Boolean),
+    participants: (processId?: string, field?: string, value?: string) =>
+      ['process', 'participants', processId, field, value].filter(Boolean),
   },
   integrator: {
     info: (address?: string) => ['integrator', 'info', address].filter(Boolean),

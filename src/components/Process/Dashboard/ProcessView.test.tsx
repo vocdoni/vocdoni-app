@@ -1,4 +1,4 @@
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -7,21 +7,10 @@ import { getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from
 const navigateSpy = vi.fn()
 let currentPathname = '/admin/process/0xabc'
 let currentElectionId = '0xabc'
-let currentElectionStatus = ElectionStatus.RESULTS
+let currentElectionStatus: QuestionStatus = 'RESULTS'
 
-vi.mock('@vocdoni/sdk', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
-
-  class MockPublishedElection {}
-
-  return {
-    ...actual,
-    PublishedElection: MockPublishedElection,
-  }
-})
-
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router-dom')>()
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>()
   return {
     ...actual,
     useNavigate: () => navigateSpy,
@@ -62,22 +51,38 @@ vi.mock('~components/Actions', () => ({
   ActionCancel: ({ children }: { children: ReactNode }) => <button>{children}</button>,
 }))
 
-const createPublishedElection = (id: string, status: ElectionStatus) =>
-  Object.assign(new PublishedElection({} as never), {
-    id,
-    status,
-    title: { default: 'Test election' },
-    description: { default: 'Description' },
-    startDate: new Date('2026-01-01T10:00:00Z'),
-    endDate: new Date('2026-01-02T10:00:00Z'),
-    electionType: { secretUntilTheEnd: false },
-    voteType: { maxVoteOverwrites: 0 },
-    voteCount: 10,
-    census: { size: 25 },
-    maxCensusSize: 25,
-    streamUri: undefined,
-    resultsType: undefined,
-  }) as PublishedElection
+// New-model process: the per-question status drives both the derived process status and
+// hasResults(), which is what triggers the default redirect to the results tab.
+const createProcess = (id: string, status: QuestionStatus): VotingProcessResponse => ({
+  id,
+  orgAddress: '0xorg',
+  title: { default: 'Test election' },
+  description: { default: 'Description' },
+  startDate: '2026-01-01T10:00:00Z',
+  endDate: '2026-01-02T10:00:00Z',
+  published: true,
+  census: {},
+  questions: [
+    {
+      id: `${id}-q1`,
+      parentProcessId: id,
+      title: { default: 'Question' },
+      choices: [{ title: { default: 'Choice' }, value: 0 }],
+      ballotProtocol: {
+        costExponent: 1,
+        costFromWeight: false,
+        maxVoteOverwrites: 0,
+        maxCount: 1,
+        maxValue: 1,
+        maxTotalCost: 1,
+        uniqueValues: false,
+      },
+      type: 'singleChoice',
+      secretUntilTheEnd: false,
+      status,
+    },
+  ],
+})
 
 describe('ProcessView route helpers', () => {
   it('uses questions as default tab for base process route', () => {
@@ -110,7 +115,7 @@ describe('ProcessView navigation', () => {
     navigateSpy.mockReset()
     currentPathname = '/admin/process/0xabc'
     currentElectionId = '0xabc'
-    currentElectionStatus = ElectionStatus.RESULTS
+    currentElectionStatus = 'RESULTS'
   })
 
   it('redirects the base route to results when election results are already available', async () => {
@@ -118,8 +123,10 @@ describe('ProcessView navigation', () => {
       ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
       useElection: () => ({
         id: currentElectionId,
-        election: createPublishedElection(currentElectionId, currentElectionStatus),
-        participation: 50,
+        election: createProcess(currentElectionId, currentElectionStatus),
+        status: currentElectionStatus,
+        results: null,
+        loading: false,
         client: { explorerUrl: 'https://example.test' },
       }),
     })
@@ -134,7 +141,8 @@ describe('ProcessView navigation', () => {
       expect(navigateSpy).toHaveBeenCalledWith('/admin/process/0xabc/results', { replace: true })
     })
 
-    expect(screen.getByRole('button', { name: /election report \(pdf\)/i })).toBeInTheDocument()
+    // Sidebar control panel is rendered alongside the redirect
+    expect(screen.getByRole('button', { name: /end/i })).toBeInTheDocument()
   })
 
   it('does not force results again after the user comes back manually to questions', async () => {
@@ -142,8 +150,10 @@ describe('ProcessView navigation', () => {
       ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
       useElection: () => ({
         id: currentElectionId,
-        election: createPublishedElection(currentElectionId, currentElectionStatus),
-        participation: 50,
+        election: createProcess(currentElectionId, currentElectionStatus),
+        status: currentElectionStatus,
+        results: null,
+        loading: false,
         client: { explorerUrl: 'https://example.test' },
       }),
     })
@@ -185,8 +195,10 @@ describe('ProcessView navigation', () => {
       ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
       useElection: () => ({
         id: currentElectionId,
-        election: createPublishedElection(currentElectionId, currentElectionStatus),
-        participation: 50,
+        election: createProcess(currentElectionId, currentElectionStatus),
+        status: currentElectionStatus,
+        results: null,
+        loading: false,
         client: { explorerUrl: 'https://example.test' },
       }),
     })

@@ -1,48 +1,42 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { ApiEndpoints } from '~components/Auth/api'
-import { useAuth } from '~components/Auth/useAuth'
+import type { ProcessParticipantEntry, ProcessParticipantLookupField } from '@vocdoni/api-types'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from './keys'
 
-// The credential field a member is looked up by. This is whichever field the census uses for voter
-// authentication (e.g. memberNumber, email, name, surname), so it is intentionally a free string.
-export type ParticipantFieldName = string
+export type { ProcessParticipantEntry, ProcessParticipantLookupField }
 
-export type CensusParticipant = {
-  memberId: string
-  name: string
-  surname: string
-  email: string
-  memberNumber: string
-  hasVoted: boolean
-}
+// The credential fields the admin participants lookup accepts. Narrower than the census
+// authFields: name/surname/birthDate are census auth credentials but not queryable.
+export const PARTICIPANT_LOOKUP_FIELDS: ProcessParticipantLookupField[] = [
+  'email',
+  'phone',
+  'memberNumber',
+  'nationalId',
+]
 
-type ParticipantsCheckResponse = {
-  participants: CensusParticipant[]
-}
+export const isParticipantLookupField = (field: string): field is ProcessParticipantLookupField =>
+  (PARTICIPANT_LOOKUP_FIELDS as string[]).includes(field)
 
-type UseParticipantsCheckParams = {
-  bundleId?: string
-  processID?: string
-  fieldName: ParticipantFieldName
+type UseProcessParticipantsParams = {
+  processId?: string
+  field: ProcessParticipantLookupField
   value: string
 }
 
 // Polls the backend every 5 seconds while the search box has text. The query key encodes every
 // input, so identical searches dedupe, slow responses can only land in their own key's cache (never
 // overwriting a newer search), and the polling timer is cleaned up automatically on unmount.
-export const useParticipantsCheck = ({ bundleId, processID, fieldName, value }: UseParticipantsCheckParams) => {
-  const { bearedFetch } = useAuth()
+export const useProcessParticipants = ({ processId, field, value }: UseProcessParticipantsParams) => {
+  const { client } = useApiClient()
   const trimmed = value.trim()
-  const url = ApiEndpoints.ProcessBundleParticipantsCheck.replace('{bundleId}', bundleId ?? '')
 
-  return useQuery<ParticipantsCheckResponse, Error>({
-    queryKey: QueryKeys.process.participantsCheck(bundleId, processID, fieldName, trimmed),
-    queryFn: () =>
-      bearedFetch<ParticipantsCheckResponse>(url, {
-        method: 'POST',
-        body: { fieldName, value: trimmed, processID },
-      }),
-    enabled: Boolean(bundleId) && Boolean(processID) && trimmed.length > 0,
+  return useQuery<ProcessParticipantEntry[], Error>({
+    queryKey: QueryKeys.process.participants(processId, field, trimmed),
+    queryFn: async () => {
+      const res = await client.elections.participants(processId!, { field, value: trimmed })
+      return res.participants
+    },
+    enabled: Boolean(processId) && trimmed.length > 0,
     retry: false,
     placeholderData: keepPreviousData,
     refetchOnWindowFocus: false,

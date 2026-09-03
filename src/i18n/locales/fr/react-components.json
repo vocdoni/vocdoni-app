@@ -1,51 +1,58 @@
 {
-  "balance": "{{ balance }} jetons VOC",
   "actions": {
-    "cancel_description": "Annulation de « {{ election.title.default }} »…\n\nAttention : cette action est irréversible et annulera tous les votes déjà émis.",
     "cancel": "Annuler",
     "cancel_button": "Annuler",
-    "continue_description": "Reprise du processus de vote « {{ election.title.default }} »…",
+    "cancel_description": "Annulation de « {{ election.title.default }} »…\n\nAttention : cette action est irréversible et annulera tous les votes déjà émis.",
     "continue": "Reprendre immédiatement le processus s'il a été mis en pause",
-    "end_description": "Clôture du processus de vote « {{ election.title.default }} »…\n\nAttention : cette action est irréversible et les électeurs ne pourront plus voter.",
+    "continue_description": "Reprise du processus de vote « {{ election.title.default }} »…",
     "end": "Clôt immédiatement le processus, empêche l'envoi de nouveaux votes et affiche les résultats (attention : action irréversible)",
+    "end_description": "Clôture du processus de vote « {{ election.title.default }} »…\n\nAttention : cette action est irréversible et les électeurs ne pourront plus voter.",
     "error_title": "Une erreur est survenue lors de l'exécution de la transaction",
-    "pause_description": "Mise en pause du processus de vote « {{ election.title.default }} »…",
     "pause": "Met temporairement le processus de vote en pause, jusqu'à reprise manuelle. Pendant la pause, les électeurs ne peuvent pas voter.",
+    "pause_description": "Mise en pause du processus de vote « {{ election.title.default }} »…",
     "waiting_title": "En attente de la confirmation de la transaction…"
   },
+  "balance": "{{ balance }} jetons VOC",
   "confirm": {
-    "title": "Confirmer",
     "cancel": "Annuler",
-    "confirm": "Confirmer le vote",
+    "cancel_button": "Annuler",
     "cancel_process_button": "Annuler le vote",
     "cancel_process_title": "Annuler le vote",
-    "end_process_title": "Clôturer le vote",
+    "confirm": "Confirmer le vote",
     "end_process_button": "Clôturer le vote",
-    "cancel_button": "Annuler"
+    "end_process_title": "Clôturer le vote",
+    "title": "Confirmer"
   },
   "empty": "Ce processus ne contient apparemment aucune question",
   "errors": {
+    "not_voted_in_ended_election": "Vous avez signé mais vous n'avez pas voté à cette élection terminée.",
+    "question_not_votable": "Cette question ne peut pas accepter de votes : l'une de ses options a été configurée d'une manière que le registre ne peut pas enregistrer. Votre vote n'a pas été émis. Veuillez contacter l'organisation.",
     "unauthorized": "Non autorisé à voter",
-    "wrong_data_title": "Données incorrectes",
     "wrong_data_description": "Les données fournies ne sont pas correctes",
-    "not_voted_in_ended_election": "Vous avez signé mais vous n'avez pas voté à cette élection terminée."
+    "wrong_data_title": "Données incorrectes"
+  },
+  "pagination": {
+    "next": "Suivant",
+    "page_placeholder": "Page",
+    "previous": "Précédent",
+    "total_results": "Affichage d'un total de {{ count }} résultats"
   },
   "question_types": {
-    "approval_tooltip": "Le vote par approbation permet de voter pour autant d'options que vous le souhaitez. Celle qui obtient le plus de voix l'emporte. C'est une manière simple de soutenir toutes les options que vous approuvez.",
     "approval_title": "Vote par approbation",
-    "singlechoice_title": "Choix unique {{ weighted }}",
-    "multichoice_tooltip": "Le vote à choix multiple permet de sélectionner jusqu'à {{maxcount}} options (définies par l'organisateur). Celle qui obtient le plus de voix l'emporte.",
-    "multichoice_title": "Vote à choix multiple {{ weighted }}",
+    "approval_tooltip": "Le vote par approbation permet de voter pour autant d'options que vous le souhaitez. Celle qui obtient le plus de voix l'emporte. C'est une manière simple de soutenir toutes les options que vous approuvez.",
+    "budget_title": "Vote par budget {{ weighted }}",
+    "budget_tooltip": "Le vote par budget vous permet de répartir des points entre les options. Les options qui obtiennent le plus de points l'emportent.",
     "multichoice_desc": "Vous avez sélectionné {{selected}} options sur un maximum de {{maxcount}}",
     "multichoice_desc_abstain": " (ou abstention)",
+    "multichoice_title": "Vote à choix multiple {{ weighted }}",
+    "multichoice_tooltip": "Le vote à choix multiple permet de sélectionner jusqu'à {{maxcount}} options (définies par l'organisateur). Celle qui obtient le plus de voix l'emporte.",
+    "quadratic_title": "Vote quadratique {{ weighted }}",
+    "quadratic_tooltip": "Le vote quadratique vous permet de répartir des crédits entre les options, chaque voix supplémentaire pour une option coûtant davantage. Les options qui obtiennent le plus de voix l'emportent.",
+    "ranked_desc": "Vous avez classé {{selected}} options sur {{maxcount}}",
+    "ranked_title": "Vote par classement {{ weighted }}",
+    "ranked_tooltip": "Le vote par classement vous demande d'ordonner les {{maxcount}} options, de votre préférée à celle que vous aimez le moins. Chaque position vaut des points, et l'option qui obtient le plus de points l'emporte.",
+    "singlechoice_title": "Choix unique {{ weighted }}",
     "weighted_voting": "pondéré"
-  },
-  "schedule": {
-    "from_begin_to_end": "Vote du {{ begin }} au {{ end }}",
-    "ended": "Terminé {{ distance }}",
-    "paused_start": "Commence {{ distance }}",
-    "paused_end": "Se termine {{ distance }}",
-    "created": "Créé {{ distance }}"
   },
   "results": {
     "date_format": "PPpp",
@@ -53,43 +60,49 @@
     "title": "Résultats de « {{ title }} »",
     "votes": "{{votes}} voix ({{ percent }})"
   },
-  "statuses": {
-    "canceled": "Annulé",
-    "ended": "Terminé",
-    "ongoing": "En cours",
-    "paused": "En pause",
-    "results": "Résultats",
-    "upcoming": "À venir",
-    "process_unknown": "Inconnu",
-    "invalid": "Invalide"
+  "schedule": {
+    "created": "Créé {{ distance }}",
+    "ended": "Terminé {{ distance }}",
+    "from_begin_to_end": "Vote du {{ begin }} au {{ end }}",
+    "paused_end": "Se termine {{ distance }}",
+    "paused_start": "Commence {{ distance }}"
   },
   "spreadsheet": {
     "access_button": "S'identifier",
-    "anon_sik_label": "Définissez un mot de passe pour votre vote",
     "anon_sik_helper": "Cela garantit l'anonymat du vote",
+    "anon_sik_label": "Définissez un mot de passe pour votre vote",
     "close": "Fermer",
     "logout": "Se déconnecter",
     "modal_title": "Authentification"
   },
-  "pagination": {
-    "page_placeholder": "Page",
-    "total_results": "Affichage d'un total de {{ count }} résultats",
-    "previous": "Précédent",
-    "next": "Suivant"
+  "statuses": {
+    "canceled": "Annulé",
+    "ended": "Terminé",
+    "invalid": "Invalide",
+    "ongoing": "En cours",
+    "paused": "En pause",
+    "process_unknown": "Inconnu",
+    "ready": "En cours",
+    "results": "Résultats",
+    "upcoming": "À venir"
   },
   "validation": {
-    "required": "Ce champ est obligatoire",
-    "min_length": "Ce champ doit contenir au moins {{ min }} caractères",
+    "at_least_one": "Sélectionnez au moins une option",
     "choices_count": "Sélectionnez {{ count }} choix",
-    "at_least_one": "Sélectionnez au moins une option"
+    "choices_range": "Sélectionnez entre {{ min }} et {{ max }} options",
+    "min_length": "Ce champ doit contenir au moins {{ min }} caractères",
+    "rank_all": "Classez les {{ count }} options",
+    "required": "Ce champ est obligatoire"
   },
   "vote": {
     "abstain": "S'abstenir",
-    "button_update": "Modifier mon vote",
     "button": "Voter",
+    "button_update": "Modifier mon vote",
     "confirm": "Veuillez confirmer vos choix :",
+    "rank_position": "#{{ position }}",
     "sign": "Signer d'abord",
     "voted_description": "Pour vérifier votre vote, vous pouvez utiliser cet identifiant unique : {{ id }}",
+    "voted_question_description": "L'identifiant de votre vote pour « {{ title }} » est {{ id }}.",
     "voted_title": "Votre vote a été enregistré avec succès !",
     "weight": "Votre poids de vote est de : "
   }

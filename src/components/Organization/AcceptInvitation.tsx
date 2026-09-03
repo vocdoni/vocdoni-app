@@ -2,7 +2,7 @@ import { AlertRoot as Alert, AlertDescription, AlertIndicator, Button, Flex, Spi
 import { useMutation } from '@tanstack/react-query'
 import { ReactNode, useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { generatePath, Link as RouterLink, useNavigate, useOutletContext } from 'react-router-dom'
+import { generatePath, Link as RouterLink, useNavigate, useOutletContext } from 'react-router'
 import { api, ApiEndpoints, ApiError, ErrorCode } from '~components/Auth/api'
 import SignUp, { InviteFields } from '~components/Auth/SignUp'
 import { useToast } from '~components/Toast'

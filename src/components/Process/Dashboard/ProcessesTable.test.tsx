@@ -1,20 +1,9 @@
 import userEvent from '@testing-library/user-event'
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
 import type { ReactNode } from 'react'
 import { fireEvent, mockUseElection, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { createElection, createQuestion } from '../VotingReportPdf/__fixtures__'
 import ProcessesTable from './ProcessesTable'
-
-vi.mock('@vocdoni/sdk', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@vocdoni/sdk')>()
-
-  class MockPublishedElection {}
-
-  return {
-    ...actual,
-    PublishedElection: MockPublishedElection,
-  }
-})
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
@@ -27,17 +16,11 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
   }
 })
 
-const election = Object.assign(new PublishedElection({} as never), {
+const election = createElection({
   id: '0x1',
   title: { default: 'Test Election' },
-  startDate: new Date('2026-01-01T00:00:00Z'),
-  endDate: new Date('2026-01-02T00:00:00Z'),
-  status: ElectionStatus.ONGOING,
-  electionType: { secretUntilTheEnd: false },
-  voteCount: 5,
   census: { size: 10 },
-  maxCensusSize: 10,
-  questions: [],
+  questions: [createQuestion({ status: 'ONGOING' })],
 })
 
 vi.mock('~i18n/use-date-fns', () => ({
@@ -78,9 +61,7 @@ describe('ProcessesTable', () => {
   })
 
   it('shows the pdf download action in the row menu', async () => {
-    const endedElection = Object.assign(new PublishedElection({} as never), election, {
-      status: ElectionStatus.RESULTS,
-    })
+    const endedElection = { ...election, questions: [createQuestion({ status: 'RESULTS' })] }
     setReactProvidersMock({
       ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
       useElection: () =>

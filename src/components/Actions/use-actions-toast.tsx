@@ -1,7 +1,8 @@
-import { useActions, useElection } from '@vocdoni/react-components'
+import { useElection } from '@vocdoni/react-components'
 import { useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { useActions } from './ActionsContext'
 
 let activeInfoKey: string | undefined
 let activeErrorKey: string | undefined
@@ -9,7 +10,7 @@ let activeErrorKey: string | undefined
 const isTranslationKey = (value: string) => /^[a-z0-9_.-]+$/i.test(value) && value.includes('.')
 
 export const useActionsToast = () => {
-  const toastRef = useRef<string | undefined>()
+  const toastRef = useRef<string | undefined>(undefined)
   const { info, error } = useActions()
   const { election } = useElection()
   const toast = useToast()

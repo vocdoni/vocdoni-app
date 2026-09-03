@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 import {
   AlertRoot as Alert,
   Box,
@@ -72,6 +73,10 @@ export const SelectCustom = ({
         rules={{ required: required ? t('form.error.field_is_required') : false }}
         render={({ field }) => (
           <Select
+            // Gives the rendered combobox input `id={name}`, which is what the
+            // FormLabel's htmlFor above points at — without it the label is
+            // attached to nothing (react-select generates its own random id).
+            inputId={name}
             placeholder={t('form.choose_an_option', { defaultValue: 'Choose an option' })}
             getOptionLabel={(option: SelectOptionType) => {
               // If no label is set for the current option, find the corresponding label in the options array

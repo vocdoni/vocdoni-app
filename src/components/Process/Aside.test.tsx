@@ -1,17 +1,6 @@
-import { ElectionStatus } from '@vocdoni/sdk'
 import { mockUseClient, mockUseElection, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import ProcessAside, { VoteButton } from './Aside'
-import { CensusTypes } from './Census/CensusType'
-
-vi.mock('@rainbow-me/rainbowkit', () => ({
-  useConnectModal: () => ({ openConnectModal: vi.fn() }),
-}))
-
-vi.mock('wagmi', () => ({
-  useAccount: () => ({ isConnected: false }),
-  useDisconnect: () => ({ disconnect: vi.fn() }),
-}))
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
@@ -20,7 +9,6 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...actual,
     ...getReactProvidersMock(),
     VoteButton: (props: any) => <button {...props}>Vote</button>,
-    SpreadsheetAccess: () => <div>Spreadsheet</div>,
     VoteWeight: () => <div>Weight</div>,
     environment: { verifyVote: () => '/verify' },
   }
@@ -30,29 +18,26 @@ vi.mock('./CSP/CSPAuthModal', () => ({
   CspAuth: () => <div>CSP</div>,
 }))
 
-vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ logout: vi.fn() }),
-}))
+// Minimal v2 VotingProcessResponse-shaped election: only the fields Aside.tsx
+// actually reads (census.weighted, questions[].secretUntilTheEnd).
+const baseElection = {
+  id: 'p1',
+  census: { weighted: false },
+  questions: [{ secretUntilTheEnd: false }],
+}
+const baseResults = { id: 'p1', questions: [{ questionId: 'p1-q1', voteCount: 3 }] }
 
 describe('ProcessAside', () => {
   beforeEach(() => {
     setReactProvidersMock({
       useElection: () =>
         mockUseElection({
-          election: {
-            status: ElectionStatus.ONGOING,
-            electionType: { anonymous: false, secretUntilTheEnd: false },
-            questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
-            voteCount: 3,
-            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
-            voteType: { maxVoteOverwrites: 0 },
-            meta: {},
-          },
+          election: baseElection,
+          status: 'ONGOING',
+          results: baseResults,
           isInCensus: true,
-          voted: null,
-          votesLeft: 0,
-          loading: { voting: false, census: false },
-          loaded: { census: true },
+          hasVoted: false,
+          voteId: null,
           isAbleToVote: true,
           connected: false,
         }),
@@ -60,14 +45,14 @@ describe('ProcessAside', () => {
     })
   })
 
-  it('renders status and connect button', () => {
+  it('renders status and the CSP identify flow', () => {
     render(<ProcessAside />)
 
     expect(screen.getByText('PROCESS.STATUS.ACTIVE')).toBeInTheDocument()
-    expect(screen.getByText('menu.connect')).toBeInTheDocument()
+    expect(screen.getByText('CSP')).toBeInTheDocument()
   })
 
-  it('shows login in sidebar and floating CTA when disconnected', () => {
+  it('shows the identify flow in sidebar and floating CTA when disconnected', () => {
     render(
       <>
         <ProcessAside />
@@ -75,28 +60,22 @@ describe('ProcessAside', () => {
       </>
     )
 
-    expect(screen.getAllByText('menu.connect')).toHaveLength(2)
+    expect(screen.getAllByText('CSP')).toHaveLength(2)
     expect(screen.queryByText('logout')).not.toBeInTheDocument()
     expect(screen.queryByText('Vote')).not.toBeInTheDocument()
   })
 
-  it('shows sidebar logout and disabled vote while connected and census is syncing', () => {
+  it('shows sidebar logout and hides floating vote while connected and not yet a census member', () => {
     setReactProvidersMock({
       useElection: () =>
         mockUseElection({
-          election: {
-            status: ElectionStatus.ONGOING,
-            electionType: { anonymous: false, secretUntilTheEnd: false },
-            questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
-            voteCount: 3,
-            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
-            voteType: { maxVoteOverwrites: 0 },
-            meta: {},
-          },
+          election: baseElection,
+          status: 'ONGOING',
+          results: baseResults,
           isInCensus: false,
+          hasVoted: false,
+          voteId: null,
           isAbleToVote: false,
-          loading: { voting: false, census: true },
-          loaded: { census: false },
           connected: true,
         }),
     })
@@ -109,27 +88,22 @@ describe('ProcessAside', () => {
     )
 
     expect(screen.getByText('logout')).toBeInTheDocument()
-    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
-    expect(screen.getByText('Vote')).toBeDisabled()
+    expect(screen.getByText('aside.is_not_in_census')).toBeInTheDocument()
+    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
+    expect(screen.queryByText('Vote')).not.toBeInTheDocument()
   })
 
   it('shows sidebar logout and enabled vote when connected and eligible', () => {
     setReactProvidersMock({
       useElection: () =>
         mockUseElection({
-          election: {
-            status: ElectionStatus.ONGOING,
-            electionType: { anonymous: false, secretUntilTheEnd: false },
-            questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
-            voteCount: 3,
-            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
-            voteType: { maxVoteOverwrites: 0 },
-            meta: {},
-          },
+          election: baseElection,
+          status: 'ONGOING',
+          results: baseResults,
           isInCensus: true,
+          hasVoted: false,
+          voteId: null,
           isAbleToVote: true,
-          loading: { voting: false, census: false },
-          loaded: { census: true },
           connected: true,
         }),
     })
@@ -143,26 +117,20 @@ describe('ProcessAside', () => {
 
     expect(screen.getByText('logout')).toBeInTheDocument()
     expect(screen.getByText('Vote')).toBeEnabled()
-    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
   })
 
-  it('shows sidebar logout and hides floating vote when connected and ineligible', () => {
+  it('shows sidebar logout and hides floating vote when connected and ineligible (already voted)', () => {
     setReactProvidersMock({
       useElection: () =>
         mockUseElection({
-          election: {
-            status: ElectionStatus.ONGOING,
-            electionType: { anonymous: false, secretUntilTheEnd: false },
-            questions: [{ choices: [{ results: 1 }, { results: 2 }] }],
-            voteCount: 3,
-            census: { type: CensusTypes.Web3, weight: 3, size: 3 },
-            voteType: { maxVoteOverwrites: 0 },
-            meta: {},
-          },
-          isInCensus: false,
+          election: baseElection,
+          status: 'ONGOING',
+          results: baseResults,
+          isInCensus: true,
+          hasVoted: true,
+          voteId: 'vote-123',
           isAbleToVote: false,
-          loading: { voting: false, census: false },
-          loaded: { census: true },
           connected: true,
         }),
     })
@@ -176,6 +144,28 @@ describe('ProcessAside', () => {
 
     expect(screen.getByText('logout')).toBeInTheDocument()
     expect(screen.queryByText('Vote')).not.toBeInTheDocument()
-    expect(screen.queryByText('menu.connect')).not.toBeInTheDocument()
+    expect(screen.queryByText('CSP')).not.toBeInTheDocument()
+  })
+
+  it('shows the has-voted message without the explorer link once the voter has cast a vote', () => {
+    setReactProvidersMock({
+      useElection: () =>
+        mockUseElection({
+          election: baseElection,
+          status: 'ONGOING',
+          results: baseResults,
+          isInCensus: true,
+          hasVoted: true,
+          voteId: 'vote-123',
+          isAbleToVote: false,
+          connected: true,
+        }),
+    })
+
+    render(<ProcessAside />)
+
+    expect(screen.getByText('aside.has_already_voted')).toBeInTheDocument()
+    // The explorer verify links moved to the Voted notice (one per question).
+    expect(screen.queryByText('aside.verify_vote_on_explorer')).not.toBeInTheDocument()
   })
 })

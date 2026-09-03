@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
-import { ensure0x, type MultiLanguage } from '@vocdoni/sdk'
+import type { MultilingualText } from '@vocdoni/api-types'
+import { ensure0x } from '~utils/address'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
@@ -62,11 +62,10 @@ export type OrganizationCounters = {
 // creation; the rest mirror the backend OrganizationInfo fields we surface.
 export type ManagedOrganization = {
   address: string
-  active: boolean
   counters?: OrganizationCounters
   createdAt: string
-  name?: MultiLanguage<string>
-  description?: MultiLanguage<string>
+  name?: MultilingualText
+  description?: MultilingualText
   type: string
   website: string
 }
@@ -121,38 +120,46 @@ export type CreateApiKeyBody = {
 
 export type CreatedApiKey = ApiKey & { secret: string }
 
+/**
+ * `currentAddress` is undefined until the session resolves the address list, so every
+ * api-key call has to handle its absence. Rejecting with a real message beats casting
+ * it to `string` and letting `ensure0x` throw an opaque TypeError from inside the
+ * mutation, where it surfaces to the user as a failed action rather than an
+ * unavailable one.
+ */
+const noAddressSelected = () => Promise.reject(new Error('No organization address selected'))
+
 /** API keys owned by the selected organization (GET /integrator/organizations/{orgAddress}/apikeys, admin only). */
 export const useApiKeys = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const address = account?.address
+  const { bearedFetch, currentAddress } = useAuth()
+  const address = currentAddress
 
   return useQuery<ApiKey[]>({
     queryKey: QueryKeys.organization.apikeys(address),
     enabled: !!address,
-    queryFn: () =>
-      bearedFetch<{ apiKeys: ApiKey[] }>(
-        ApiEndpoints.OrganizationApiKeys.replace('{orgAddress}', ensure0x(address as string))
-      ).then((d) => d.apiKeys ?? []),
+    queryFn: () => {
+      if (!address) return noAddressSelected()
+      return bearedFetch<{ apiKeys: ApiKey[] }>(
+        ApiEndpoints.OrganizationApiKeys.replace('{orgAddress}', ensure0x(address))
+      ).then((d) => d.apiKeys ?? [])
+    },
   })
 }
 
 /** Create an API key. The returned secret is shown only once. */
 export const useCreateApiKey = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const address = account?.address
+  const { bearedFetch, currentAddress } = useAuth()
+  const address = currentAddress
   const queryClient = useQueryClient()
 
   return useMutation<CreatedApiKey, Error, CreateApiKeyBody>({
-    mutationFn: (body) =>
-      bearedFetch<CreatedApiKey>(
-        ApiEndpoints.OrganizationApiKeys.replace('{orgAddress}', ensure0x(address as string)),
-        {
-          method: 'POST',
-          body,
-        }
-      ),
+    mutationFn: (body) => {
+      if (!address) return noAddressSelected()
+      return bearedFetch<CreatedApiKey>(ApiEndpoints.OrganizationApiKeys.replace('{orgAddress}', ensure0x(address)), {
+        method: 'POST',
+        body,
+      })
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(address) })
     },
@@ -161,17 +168,18 @@ export const useCreateApiKey = () => {
 
 /** Revoke (permanently disable) an API key. */
 export const useRevokeApiKey = () => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
-  const address = account?.address
+  const { bearedFetch, currentAddress } = useAuth()
+  const address = currentAddress
   const queryClient = useQueryClient()
 
   return useMutation<void, Error, { id: string }>({
-    mutationFn: ({ id }) =>
-      bearedFetch<void>(
-        ApiEndpoints.OrganizationApiKey.replace('{orgAddress}', ensure0x(address as string)).replace('{keyId}', id),
+    mutationFn: ({ id }) => {
+      if (!address) return noAddressSelected()
+      return bearedFetch<void>(
+        ApiEndpoints.OrganizationApiKey.replace('{orgAddress}', ensure0x(address)).replace('{keyId}', id),
         { method: 'DELETE' }
-      ),
+      )
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.organization.apikeys(address) })
     },

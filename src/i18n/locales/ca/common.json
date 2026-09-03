@@ -39,6 +39,7 @@
       "decidim": "logo Decidim",
       "esquerra": "logo Esquerra Republicana de Catalunya",
       "omnium": "logo Òmnium Cultural",
+      "org_logo": "Logotip de {{org}}",
       "ticanoia": "logo TIC Anoia"
     }
   },
@@ -47,18 +48,51 @@
   "aside": {
     "has_already_voted": "El teu vot s'ha registrat correctament",
     "is_not_in_census": "No estàs en el cens",
-    "overwrite_votes_left_one": "Pots corregir el teu vot una vegada.",
-    "overwrite_votes_left_many": "",
-    "overwrite_votes_left_other": "Pots corregir el teu vot {{ count }} vegades.",
-    "submitting": "Enviant",
-    "verify_vote_on_explorer": "Verifica el vot a l'explorador",
     "votes_one": "<span>1</span> <text>votant</text>",
     "votes_many": "",
     "votes_other": "<span>{{ count }}</span> <text>votants</text>",
     "votes_weight_one": "<span>1</span> <text>vot</text>",
     "votes_weight_many": "",
-    "votes_weight_other": "<span>{{ count }}</span> <text>vots</text>",
-    "voting_anonymous_advice": "Si us plau, espera mentre la màgia té lloc 🪄.\nAixò pot trigar uns minuts; no tanquis la finestra."
+    "votes_weight_other": "<span>{{ count }}</span> <text>vots</text>"
+  },
+  "auth": {
+    "showcase": {
+      "fallback_headline": "Decisions que els teus membres poden verificar"
+    },
+    "verticals": {
+      "associations": {
+        "label": "Associacions",
+        "trust_bar": "Assemblees generals, eleccions a junta i consultes als socis segures. Les associacions ja confien en Vocdoni:"
+      },
+      "generic": {
+        "label": "Casos d'èxit",
+        "trust_bar": "Assemblees, eleccions i consultes segures. Ja confien en Vocdoni organitzacions de tots els sectors:"
+      },
+      "ngos": {
+        "label": "ONG i entitats sense ànim de lucre",
+        "trust_bar": "Assemblees, eleccions a junta i consultes als socis segures. Les entitats sense ànim de lucre ja confien en Vocdoni:"
+      },
+      "political_parties": {
+        "label": "Partits polítics",
+        "trust_bar": "Primàries, eleccions a la direcció i consultes internes segures. Els partits ja confien en Vocdoni:"
+      },
+      "professional_associations": {
+        "label": "Col·legis professionals",
+        "trust_bar": "Assemblees generals, eleccions a junta i consultes segures. Els col·legis professionals ja confien en Vocdoni:"
+      },
+      "public_administration": {
+        "label": "Administració pública",
+        "trust_bar": "Pressupostos participatius, consultes ciutadanes i referèndums segurs. Les administracions públiques ja confien en Vocdoni:"
+      },
+      "sports_clubs": {
+        "label": "Clubs esportius",
+        "trust_bar": "Eleccions a la junta, assemblees generals i consultes als socis segures. Els clubs i federacions ja confien en Vocdoni:"
+      },
+      "trade_unions": {
+        "label": "Sindicats",
+        "trust_bar": "Votacions de vaga, de conveni i eleccions a la direcció segures. Els sindicats ja confien en Vocdoni:"
+      }
+    }
   },
   "avatar": {
     "label": "Avatar de l'organització"
@@ -94,7 +128,8 @@
       "not_voted": "No ha votat",
       "placeholder": "Cerca al cens…",
       "title": "Comprova els participants",
-      "voted": "Ha votat"
+      "voted": "Ha votat",
+      "voted_partial": "Ha votat {{voted}}/{{total}}"
     }
   },
   "census_size": "Mida del cens",
@@ -107,11 +142,8 @@
   "color_mode_switcher": "Commutador de mode de color",
   "common": {
     "back": "Enrere",
-    "cancel": "Cancel·la",
     "close_drawer": "Tanca el panell lateral",
     "confirm": "Confirma",
-    "disable": "Desactiva",
-    "enable": "Activa",
     "home": "Inici",
     "next": "Següent",
     "retry": "Torna-ho a intentar"
@@ -269,7 +301,10 @@
     "empty_description": "Crea un esborrany per començar.",
     "load_error": "No s'han pogut carregar els esborranys",
     "load_error_description": "Torna-ho a provar.",
-    "not_defined": "No definit encara"
+    "not_defined": "No definit encara",
+    "question_type": {
+      "mixed": "Mixt"
+    }
   },
   "drawer": {
     "close": "Tanca el panell lateral"
@@ -305,9 +340,6 @@
   "ended_processes": "Acabats",
   "enter_promo_code": "Introdueix el codi",
   "error": {
-    "invalid_cell_data": "Algunes fileres no contenen adreces correctes: {{rows, list}}",
-    "invalid_row_length": "Corregeix les línies {{rows, list}} del document i torna a carregar-lo",
-    "invalid_weight_type": "S'esperava trobar el pes a la primera col·lumna a les línies {{rows, list}}, però s'han trobat dades inesperades",
     "loading_page": "Càrrega de pàgina errònia",
     "loading_roles": "Error carregant rols",
     "loading_types": "Error carregant tipus",
@@ -413,8 +445,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Aquesta adreça ja és al cens",
-      "address_pattern": "Només s'admeten adreces hexadecimals (p. ex. 0x031101A...)",
       "census_config_required": "Si us plau, configura com s'autenticaran els votants",
       "email_invalid": "Adreça de correu electrònic no vàlida",
       "field_is_required": "Aquest camp és obligatori",
@@ -432,40 +462,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Afegir",
-        "remove_address": "Elimina l'adreça"
-      },
       "error_deleting_draft_title": "Error eliminant l'esborrany",
       "error_title": "Error creant el procés",
-      "spreadsheet": {
-        "download_template": "No tens un fitxer CSV? <a>Descarrega template.csv</a>, omple'l i puja'l.",
-        "preview": {
-          "success_description": "Es demanarà a l'usuari que s'autentiqui amb:",
-          "success_title": "Fitxer pujat correctament",
-          "upload_new_list": "Puja una nova llista de votants"
-        },
-        "template": {
-          "email": "Correu electrònic",
-          "firstname": "Nom",
-          "lastname": "Cognoms",
-          "weight": "Pes"
-        },
-        "upload_description": "Puja un fitxer CSV amb els participants. Cada columna s'utilitzarà com una credencial que el votant haurà de fer servir per autenticar-se. La primera fila seran els títols d'aquesta credencial."
-      },
       "success_description": "Redirigint-te a la pàgina del procés de votació...",
-      "success_title": "Procés de votació creat amb èxit",
-      "web3": {
-        "census_description": "Afegeix les adreces de cartera que tindran dret a vot. Pots afegir-les individualment o pujar un fitxer CSV.",
-        "census_summary_description_one": "<b>una adreça</b> tindrà dret a vot",
-        "census_summary_description_many": "",
-        "census_summary_description_other": "<b>{{count}} adreces</b> tindran dret a vot",
-        "census_summary_title": "Resum del cens",
-        "csv_format": "El fitxer CSV ha de contenir les adreces Web3 a la primera columna.",
-        "csv_format_weighted": "El fitxer CSV ha de contenir els pesos a la primera columna i les adreces Web3 a la segona columna.",
-        "upload_csv": "O PUJA CSV",
-        "wallet_addresses": "Adreces Web3"
-      }
+      "success_title": "Procés de votació creat amb èxit"
     },
     "select_language": "Idioma",
     "support": {
@@ -473,6 +473,7 @@
       "custom_request": "Sol·licitud personalitzada",
       "description": "Descripció",
       "description_placeholder": "Descriu el teu problema amb detall",
+      "no_organization": "La teva organització encara no està a punt. Torna-ho a provar d'aquí a un moment.",
       "open_ticket": "Obre una sol·licitud de suport",
       "other": "Altres",
       "selector_label": "Tipus de problema",
@@ -833,7 +834,6 @@
       "title": "Documentació"
     },
     "managed": {
-      "active": "Activa",
       "created": "Creada",
       "docs_card_description": "Aprèn a crear i gestionar organitzacions de manera programàtica a través de l'API.",
       "docs_card_title": "Crear una organització",
@@ -841,12 +841,10 @@
       "empty_description": "Les organitzacions es creen a través de l'API, no des d'aquest tauler. Quan creïs la teva primera organització, apareixerà aquí.",
       "empty_title": "Encara no hi ha organitzacions",
       "error": "No s'han pogut carregar les organitzacions",
-      "inactive": "Inactiva",
       "organization": "Organització",
       "pagination": "Pàgina {{page}} de {{total}} · {{items}} total",
       "processes": "Processos",
       "sms": "SMS",
-      "status": "Estat",
       "subtitle": "Organitzacions que gestions en nom dels teus clients.",
       "title": "Organitzacions gestionades"
     },
@@ -1020,7 +1018,6 @@
       "add_to_census_confirmation_other": "Afegiràs {{count}} membres al cens del procés \"{{process}}\".",
       "add_to_census_description": "Selecciona un procés de votació actiu per afegir-hi els membres al seu cens.",
       "add_to_census_error": "Error en afegir membres al cens",
-      "add_to_census_no_census": "No s'ha pogut resoldre un cens per a aquest procés.",
       "add_to_census_partial": "No s'han pogut afegir alguns membres.",
       "add_to_census_success_one": "{{count}} membre afegit al cens",
       "add_to_census_success_many": "",
@@ -1078,7 +1075,6 @@
   "menu": {
     "burger_aria_label": "menú d'usuari",
     "collapse": "Contraure menú",
-    "connect": "Connectar",
     "create": "Crear Procés",
     "dashboard": "Dashboard",
     "expand": "Expandir menú",
@@ -1129,24 +1125,28 @@
     "avatar_alt": "Imatge d'avatar de l'organització {{ name }}",
     "create_org": "Crear organització",
     "create_org_failed": "No s'ha pogut crear l'organització",
-    "create_org_step_update_failed": "No s'ha pogut actualitzar l'estat del pas de configuració de l'organització",
     "create_org_success": "Organització creada correctament",
     "dashboard": "Tauler de control",
     "date_format": "d MMM y",
     "elections": "Votacions",
+    "elections_list": "Processos de votació",
     "elections_list_empty": {
       "alt": "Imatge que il·lustra que l'organització és buida",
       "description": "Com a organitzador, tens la capacitat de crear processos de votació personalitzats per a la teva comunitat. Aquests processos ofereixen una àmplia gamma de flexibilitat, incloent opcions com un cens on els votants han d'autenticar-se utilitzant dades personalitzades (com ara nom d'usuari, contrasenya i data de naixement), un sistema basat en tokens que permet la participació de tots els titulars de tokens o una llista blanca que utilitza adreces de cartera per determinar l'elegibilitat.",
       "not_owner": "Aquesta organització encara no té votacions.",
       "title": "Crea la teva primera votació"
     },
+    "elections_list_load_more": "Carrega’n més",
     "max_census": "Cens màxim per votació",
     "max_processes": "Votacions per any¹",
     "no_organization_title": "Encara no pertanys a cap organització!",
     "organization": "Detalls de l'organització",
     "title": {
       "read_more": "Expandir títol"
-    }
+    },
+    "unavailable_description": "Alguna cosa ha fallat en llegir les teves organitzacions. Sol ser temporal: torna-ho a provar.",
+    "unavailable_retry": "Torna-ho a provar",
+    "unavailable_title": "No hem pogut carregar les teves organitzacions"
   },
   "organization_settings": {
     "phone_support": {
@@ -1170,14 +1170,6 @@
       "title": "Membres de l'equip"
     },
     "title": "Configuració de {{organization}}"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Reserva una trucada gratuïta amb els nostres experts",
-      "first_vote_creation": "Crea la teva primera votació",
-      "memberbase_upload": "Puja la teva base de membres",
-      "organization_details": "Configura els detalls de la teva organització"
-    }
   },
   "organizations": "Organitzacions ({{ numOrgs }})",
   "other_details": "Altres detalls",
@@ -1325,12 +1317,6 @@
       },
       "question": {
         "add": "Afegeix una pregunta",
-        "add_multiple": {
-          "cancel_button": "Cancel·la",
-          "contact_button": "Contacta'ns",
-          "description": "La creació de processos amb més d'una pregunta de selecció múltiple no està disponible actualment. Si necessites aquest tipus de procés, si us plau, contacta amb nosaltres.",
-          "title": "Els processos de selecció múltiple amb diverses preguntes no estan disponibles actualment."
-        },
         "delete": {
           "cancel_button": "Cancel·la",
           "delete_button": "Elimina",
@@ -1369,30 +1355,15 @@
       "starts": "Comença el procés"
     },
     "extended_info": "Informació ampliada",
-    "gitcoin": {
-      "all_of_them": "(Tots ells)",
-      "gps_score": "Gitcoin Passport Score: Puntuació mínima {{score}}",
-      "needed_stamps": "Stamps necessaris",
-      "one_of_them": "(Almenys un d'ells)"
-    },
-    "is_anonymous": {
-      "description": "Votació anònima",
-      "title": "Anònim"
-    },
     "is_invalid": "Aquest procés té dades no vàlides i per tant no pot carregar-se",
     "no_description": "No hi ha cap descripció proporcionada",
     "people_in_census_one": "Un votant",
     "people_in_census_many": "",
     "people_in_census_other": "{{ count }} votants",
     "question_type": {
-      "confirm": {
-        "subtitle": "Els processos de selecció múltiple només permeten una pregunta. Canviar mantindrà només la vostra primera pregunta i descartarà la resta.",
-        "title": "Voleu canviar a Selecció múltiple?"
-      },
-      "description": "Això aplica a totes les preguntes d'aquest procés.",
+      "label": "Tipus de pregunta",
       "multiple": "Elecció múltiple",
-      "single": "Elecció simple",
-      "title": "Tipus de Pregunta"
+      "single": "Elecció simple"
     },
     "questions": "Preguntes",
     "results": "Resultats",
@@ -1408,6 +1379,7 @@
       "ended": "Finalitzat",
       "paused": "Procés en pausa",
       "paused_description": "No és possible votar ara mateix.",
+      "results": "Resultats disponibles",
       "unknown": "Desconegut",
       "upcoming": "Previst"
     },
@@ -1473,8 +1445,12 @@
         "title": "Títol del pressupost participatiu"
       }
     },
-    "total_census_size": "{{maxCensusSize}} electors permesos de {{censusSize}} totals en el cens",
-    "total_census_size_tooltip": "El nombre màxim d'electors permesos està limitat a {{maxCensusSize}} d'un cens de {{censusSize}} ({{percent}}% del total). Només els primers {{maxCensusSize}} electors poden votar.",
+    "vote_failed": {
+      "close": "Tanca",
+      "none": "No s’ha registrat cap resposta. Torna-ho a provar.",
+      "partial": "Algunes respostes no s’han registrat. Torna a votar per enviar les restants.",
+      "title": "No s’ha pogut emetre el teu vot"
+    },
     "voters": "Votants",
     "voting": "Estem processant el teu vot. Aquest procés trigarà uns segons. Si us plau, no tanquis ni actualitzis aquesta pàgina.",
     "voting_method": {
@@ -1482,10 +1458,12 @@
       "budget": "Assignació pressupostària",
       "multiple_choice": "Elecció múltiple",
       "quadratic": "Quadràtic",
+      "ranked": "Ordre de preferència",
       "single_choice": "Elecció simple",
       "unknown": "Desconegut",
       "weighted_format": "{{base}} amb vot ponderat"
     },
+    "voting_progress": "{{confirmed}} de {{total}} preguntes confirmades",
     "voting_type": "Mètode de votació"
   },
   "process_actions": {
@@ -1505,29 +1483,14 @@
     "auto_start": "Comença immediatament",
     "basic_configuration": "Configuració bàsica",
     "census": {
-      "extra_methods": {
-        "disable_description": "Vols desactivar els mètodes de cens addicionals? Això ocultarà les opcions de Full de càlcul i Web3 i només mostrarà el mètode de Grup.",
-        "enable_description": "Vols activar els mètodes de cens addicionals? Això mostrarà opcions addicionals com la creació de cens amb Full de càlcul i Web3.",
-        "modal_title": "Mètodes de cens addicionals"
-      },
       "group": {
-        "label": "Grup",
         "no_groups": "Per començar una votació, primer has de crear un grup de votants elegibles a partir de la teva base de membres. <1>Crea'n un aquí</1>."
       },
       "memberbase": {
         "label": "Selecciona un grup de membres per crear el cens"
-      },
-      "settings": "Configuració del cens",
-      "spreadsheet": {
-        "label": "Full de càlcul"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Creació del cens",
-    "census_missing": "Falten dades del cens per al tipus de cens de la base de membres",
-    "census_type_not_allowed": "El tipus de cens {{type}} no està permès",
     "end_datetime": "Data i hora de finalització",
     "extra_configuration": "Configuració addicional",
     "group": {
@@ -1537,8 +1500,6 @@
       "scroll_to_load": "Desplaça't per carregar-ne més..."
     },
     "new_option": "Afegeix una opció",
-    "no_account_address": "No s'ha trobat cap adreça de compte.",
-    "no_election_index": "No s'ha trobat cap índex de votació per al compte.",
     "option": {
       "description_placeholder": "Descripció (opcional)",
       "placeholder": "Opció {{number}}",
@@ -1588,11 +1549,7 @@
       "method": "Mètode d'autenticació",
       "two_fa": "Comprovació addicional d'identitat",
       "two_fa_disabled": "Desactivada: no s'ha configurat cap comprovació addicional d'identitat en aquest procés de votació",
-      "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús enviat als seus dispositius personals.",
-      "voter_access_source": "Origen de l'accés del votant",
-      "voter_access_source_spreadsheet": "Els votants accedeixen amb credencials derivades del cens de full de càlcul carregat per l'organització.",
-      "voter_access_source_web3": "Els votants accedeixen amb l'adreça de cartera inclosa en el cens Web3.",
-      "voter_access_source_weighted": "L'elegibilitat es comprova contra el cens ponderat proporcionat per l'organització per a aquest procés."
+      "two_fa_enabled": "Activada: els votants confirmen la seva identitat amb un codi d'un sol ús enviat als seus dispositius personals."
     },
     "census": {
       "counting_basis": "Base de recompte",
@@ -1605,12 +1562,7 @@
       "weighted_participation": "Participació ponderada"
     },
     "census_type": {
-      "anonymous": "Cens anònim proporcionat per l'organització",
-      "csp": "Cens de credencials de la base de membres",
-      "spreadsheet": "Cens de full de càlcul proporcionat per l'organització",
-      "unknown": "No disponible",
-      "web3": "Cens de carteres Web3 proporcionat per l'organització",
-      "weighted": "Cens ponderat proporcionat per l'organització"
+      "csp": "Cens de credencials de la base de membres"
     },
     "disclaimer": {
       "bullet_1": "No constitueix una certificació legal del procés de votació.",
@@ -1650,8 +1602,6 @@
     "download_error": "No s'ha pogut generar l'informe PDF",
     "downloading": "S'està generant el PDF",
     "general": {
-      "census_reference": "Referència del cens",
-      "census_reference_helper": "Referència pública que identifica el cens utilitzat per a aquest procés de votació. No inclou ni revela dades personals dels votants.",
       "event_name": "Nom de l'esdeveniment",
       "network": "Infraestructura",
       "organization": "Organització",
@@ -1685,9 +1635,9 @@
       "explorer": "Veure a l'explorador de verificació",
       "paragraph": "Totes les dades del procés han quedat registrades en una infraestructura basada en blockchain i es poden verificar de manera independent mitjançant l'explorador públic següent:",
       "procedure_title": "Procediment de verificació",
-      "step_1": "Obre l'enllaç de l'explorador de verificació. Aquesta pàgina conté el registre tècnic públic del procés de votació.",
-      "step_2": "Comprova que l'ID del procés a l'explorador és idèntic a l'ID del procés d'aquest informe. Això confirma que tots dos documents fan referència al mateix procés de votació.",
-      "step_3": "Comprova que la referència del cens que es mostra a l'explorador coincideix amb la referència d'aquest informe. Això confirma que la llista de votants elegibles vinculada al procés és la mateixa.",
+      "question_n": "Pregunta {{number}}",
+      "step_1": "Obre l'enllaç de l'explorador de verificació de cada pregunta. Cada pàgina conté el registre tècnic públic d'aquesta part del procés de votació.",
+      "step_2": "Comprova que cada pàgina enllaçada mostra la mateixa pregunta i les mateixes opcions que aquest informe. Això confirma que l'informe fa referència als mateixos processos de votació registrats a la blockchain.",
       "step_4": "Comprova que el nombre de paperetes registrades coincideix amb les dades de participació que es mostren en aquest informe.",
       "step_5": "Compara el recompte final de l'explorador amb els resultats per nombre de paperetes o per poder de vot ponderat que es mostren en aquest informe.",
       "step_6": "Per a una auditoria tècnica més profunda, un auditor pot inspeccionar els registres públics amb més detall o tornar a calcular el recompte per confirmar que les paperetes registrades i els resultats finals són coherents."
@@ -1735,6 +1685,8 @@
   "processes": {
     "empty": "No s'han trobat processos de votació",
     "empty_description": "Crea un procés de votació per començar.",
+    "load_error": "No s'han pogut carregar els processos de votació",
+    "load_error_description": "Torna-ho a provar.",
     "no_results": "No hi ha resultats per a aquest filtre",
     "no_results_description": "Prova d'ajustar els filtres."
   },
@@ -1744,6 +1696,11 @@
   },
   "promo_code": "Codi promocional",
   "promo_code_required": "Cal introduir un codi",
+  "public_process": {
+    "no_tally": "Sense recompte",
+    "verify": "Verifica a l’explorador de la blockchain:",
+    "verify_process": "Veure el procés"
+  },
   "questions_and_results": "Preguntes i resultats",
   "registration_failed": "El registre ha fallat",
   "registration_successful": "Registre completat correctament",
@@ -1797,14 +1754,7 @@
     "platform": "Plataforma"
   },
   "send_invitation": "Envia una invitació",
-  "session_expired": "Sessió caducada",
-  "session_expired_description": "La sessió pot haver caducat i no s'ha pogut renovar, si us plau inicia sessió de nou",
   "settings": "Configuració",
-  "setup": {
-    "progress": "El teu progrés",
-    "title": "Completa la configuració",
-    "toggle_panel": "Commuta el panell"
-  },
   "share": {
     "copy": "Copia",
     "election_share_btn_text": "Comparteix",
@@ -1834,9 +1784,7 @@
   "signup_subtitle": "Continua per accedir al teu compte",
   "signup_title": "Crea un compte",
   "spreadsheet": {
-    "access_button": "Identificar-se",
-    "close": "Tanca",
-    "modal_title": "Autenticació"
+    "access_button": "Identificar-se"
   },
   "start_date": "Data d'inici",
   "start_time": "Hora d'inici",
@@ -1860,6 +1808,33 @@
   },
   "subtotal": "Subtotal",
   "support": "Suport",
+  "support_chat": {
+    "ask_name": "Abans d'enviar-ho, com et dius?",
+    "book_call": "Programa una trucada",
+    "close_label": "Tanca el xat de suport",
+    "confirmation": "Gràcies, {{name}}! Hem rebut el teu missatge i et respondrem a {{email}} tan aviat com sigui possible.",
+    "confirmation_generic": "Gràcies! Hem rebut el teu missatge i et respondrem per correu electrònic tan aviat com sigui possible.",
+    "confirmation_no_name": "Gràcies! Hem rebut el teu missatge i et respondrem a {{email}} tan aviat com sigui possible.",
+    "contact_options": "Prefereixes parlar? També pots programar una trucada amb el nostre equip o escriure'ns per WhatsApp.",
+    "error": "Ho sentim, no hem pogut enviar el teu missatge. Torna-ho a provar.",
+    "greeting": "Hola, {{name}}! Et donem la benvinguda al suport de Vocdoni.",
+    "greeting_intro": "Si necessites ajuda amb la plataforma, vols saber com iniciar una votació, tens una petició sobre un procés de votació o necessites suport, descriu-ho en un únic missatge aquí sota i et respondrem per correu electrònic.",
+    "greeting_no_name": "Hola! Et donem la benvinguda al suport de Vocdoni.",
+    "header_subtitle": "Et respondrem per correu electrònic",
+    "header_title": "Suport de Vocdoni",
+    "input_placeholder": "Descriu la teva sol·licitud…",
+    "launcher_label": "Obre el xat de suport",
+    "messages_label": "Conversa de suport",
+    "new_request": "Nova sol·licitud",
+    "new_request_prompt": "En què més et podem ajudar?",
+    "retry": "Torna-ho a provar",
+    "send_hint": "Quan acabis, envia el missatge amb el botó d'enviar o {{shortcut}}.",
+    "send_label": "Envia el missatge",
+    "sent_status": "Sol·licitud enviada, et respondrem per correu electrònic",
+    "teaser": "Necessites ajuda?",
+    "teaser_dismiss": "Descarta",
+    "whatsapp": "Parla per WhatsApp"
+  },
   "switch_mode": "Canvia al mode {{ mode }}",
   "switch_organization": "Canvia d'organització",
   "system": "Sistema",
@@ -1905,19 +1880,73 @@
   },
   "terms_of_service": "Termes del Servei",
   "testimonials": {
+    "aguicat": {
+      "company": "Associació de Guies Habilitats de Catalunya",
+      "position": "Responsable de TI",
+      "text": "Preparar tot el procés de votació i centralitzar totes les eines per a l'assemblea va ser fàcil, intuïtiu i clar. Fins i tot en un sector poc tecnològic, vam obtenir una participació elevada - la gent va valorar especialment poder votar amb antelació sense assistir-hi presencialment."
+    },
+    "arxivers": {
+      "company": "Associació d'Arxivers de Catalunya",
+      "position": "Secretària",
+      "text": "Oferir als socis un sistema de votació segur i fiable és essencial, especialment durant una pandèmia. Vocdoni ens va proporcionar una eina fàcil d'utilitzar que va simplificar el procés de votació i va impulsar la participació."
+    },
+    "ati": {
+      "company": "ATI Friuli Venezia Giulia",
+      "position": "President",
+      "text": "Com a Associazione Termotecnica Italiana, secció Friuli Venezia Giulia, vam escollir digitalitzar la nostra governança per facilitar la participació dels professionals. Vocdoni es va consolidar com la solució ideal, destacant per la seva simplicitat, costos i garanties."
+    },
     "bellpuig": {
       "company": "Ajuntament de Bellpuig",
       "position": "Batlle",
       "text": "Vam escollir Vocdoni perquè estem convençuts que representa el futur de qualsevol procés electoral. El vot electrònic obre la participació a tothom i fa que votar sigui molt més fàcil per a la ciutadania."
     },
+    "bisbal": {
+      "company": "Ajuntament de la Bisbal d'Empordà",
+      "position": "Tècnic de participació ciutadana",
+      "text": "Vocdoni va impulsar la nostra votació bisbalenc/a de l'any, augmentant la participació ciutadana i aportant transparència, seguretat i resultats instantanis a la blockchain. En valorem la seguretat, l'escalabilitat, la verificabilitat universal i la flexibilitat."
+    },
     "ceec": {
       "position": "Director",
       "text": "Vam triar Vocdoni perquè garanteix la participació segura, fiable i transparent de tots els nostres membres a la nostra Assemblea General."
+    },
+    "coib": {
+      "company": "Col·legi Oficial d'Infermeres i Infermers de Barcelona",
+      "position": "Cap de projectes",
+      "text": "Al Col·legi Oficial d'Infermeres i Infermers de Barcelona confiem en Vocdoni per a tots els nostres processos participatius, garantint que les col·legiades puguin exercir el seu dret des de qualsevol lloc. Valorem especialment la immediatesa en el recompte dels vots, la simplicitat del sistema, i la ràpida i eficaç resposta i acompanyament del seu suport tècnic, cosa que fa que tot el procés sigui àgil, transparent i fiable."
     },
     "eic": {
       "company": "Enginyers Industrials de Catalunya",
       "position": "Director de l'Àrea tecnològica",
       "text": "Vocdoni ens ofereix un sistema de votació fàcil, segur, anònim i escalable, totalment integrat en el nostre entorn institucional. Sens dubte, continuarem confiant en la seva solució."
+    },
+    "erc": {
+      "position": "Secretària Nacional d'Afiliació, Lluita Antirepressiva i Benestar Emocional",
+      "text": "Fa anys que confiem en Vocdoni perquè ens ofereix un sistema segur, auditable i fàcil d'utilitzar, que ens permet organitzar votacions digitals amb totes les garanties i adaptades a les necessitats de la nostra organització."
+    },
+    "granollers": {
+      "position": "Responsable de comunicació",
+      "text": "Des de «Granollers Primàries» entenem la participació digital com una eina clau per ampliar i facilitar la participació ciutadana. Per això buscàvem una plataforma que garantís neutralitat, transparència i la màxima seguretat en els processos de votació. Vocdoni ofereix tot això i és per aquest motiu que l'hem escollit per a les nostres primàries i comptem continuar utilitzant-la en futures consultes."
+    },
+    "icoes": {
+      "company": "Col·legi Oficial d'Infermeria de Sevilla",
+      "position": "President",
+      "text": "La digitalització de les nostres votacions amb Vocdoni ha millorat l'eficiència de tot el procés electoral. Hem aconseguit facilitar enormement la participació, especialment dels col·legiats que no es podien desplaçar, mantenint alhora un sistema àgil i fiable."
+    },
+    "intersindical": {
+      "position": "Portaveu de la sectorial d'educació",
+      "text": "A La Intersindical entenem que les decisions que afecten tot el col·lectiu docent han de ser preses pels mateixos docents. Per això necessitàvem una eina que garantís un procés transparent, neutral i verificable. Amb Vocdoni vam poder fer arribar aquesta decisió a prop de 100.000 professionals amb la seguretat que tant el procediment com el resultat serien plenament fiables."
+    },
+    "omnium": {
+      "position": "Directora executiva",
+      "text": "A Òmnium Cultural vam apostar per un sistema de votació segur i verificable que ens permetés celebrar les nostres assemblees estatutàries amb totes les garanties."
+    },
+    "plataforma": {
+      "position": "Directora",
+      "text": "Vocdoni ens permet fer votacions amb membres de tots els territoris de parla catalana en igualtat de condicions. El recompte instantani simplifica les nostres assemblees i garanteix la transparència total."
+    },
+    "ustec": {
+      "position": "Membre del secretariat nacional",
+      "text": "Amb Vocdoni vam trobar una molt bona solució, en ser una infraestructura neutral i verificable que garantia tant la integritat del recompte com la privacitat dels votants. Això permetia que cada docent votés una sola vegada de forma segura i anònima."
     }
   },
   "theme": "Tema",
@@ -2021,7 +2050,6 @@
     "level_strong": "Fort",
     "level_weak": "Feble",
     "no_group_description": "Si us plau, selecciona primer un grup per configurar l'autenticació.",
-    "save_failed": "No s'ha pogut configurar l'autenticació de votants",
     "security_level": "Bona seguretat",
     "security_recommendation_1": "Per a una millor seguretat, recomanem seleccionar almenys 2 credencials.",
     "security_recommendation_2_one": "Has seleccionat {{ count }} credencials, cosa que proporciona bona seguretat als teus votants.",

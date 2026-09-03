@@ -1,3 +1,4 @@
+import type { JSX } from 'react'
 import { Card, HStack, Icon, IconButton, Input, Link } from '@chakra-ui/react'
 import { $createLinkNode, $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'

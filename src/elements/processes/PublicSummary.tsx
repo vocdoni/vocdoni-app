@@ -1,31 +1,50 @@
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { ElectionProvider, OrganizationProvider } from '@vocdoni/react-components'
-import { PublishedElection } from '@vocdoni/sdk'
-import LegalNotice from '~components/Layout/LegalNotice'
+import LegalNotice, { StaticLegalNotice } from '~components/Layout/LegalNotice'
+import ArchiveProcessView from '~components/Process/Archive/View'
 import { ProcessSummary as ProcessSummaryComponent } from '~components/Process/Summary'
-import type { OrganizationData } from '~src/ssr/public-pages'
+import { useLocalizedText } from '~src/legacy/use-localized-text'
+import type { LegacyElection, LegacyOrganization } from '~src/legacy/vochain-archive'
 
 type PublicProcessSummaryViewProps = {
   id: string
-  election: PublishedElection
-  organization?: OrganizationData
+  /** Prefetched process (SSR/route loader) — rendered immediately, still refetchable. */
+  election?: VotingProcessResponse
+  organizationAddress?: string
+  /** Archive-era (64-hex vochain id) election: rendered read-only, no providers needed. */
+  legacyElection?: LegacyElection
+  legacyOrganization?: LegacyOrganization
 }
 
-const PublicProcessSummaryView = ({ id, election, organization }: PublicProcessSummaryViewProps) => {
-  const organizationProviderProps = organization
-    ? { organization: organization as any }
-    : { id: election.organizationId }
+const PublicProcessSummaryView = ({
+  id,
+  election,
+  organizationAddress,
+  legacyElection,
+  legacyOrganization,
+}: PublicProcessSummaryViewProps) => {
+  const localize = useLocalizedText()
+
+  if (legacyElection) {
+    // No OrganizationProvider in the archive era: feed the legal notice directly.
+    const orgName =
+      localize(legacyOrganization?.account?.name) || legacyOrganization?.address || legacyElection.organizationId
+
+    return (
+      <>
+        <ArchiveProcessView election={legacyElection} />
+        <StaticLegalNotice orgName={orgName} />
+      </>
+    )
+  }
 
   return (
-    <OrganizationProvider {...organizationProviderProps}>
+    <OrganizationProvider id={organizationAddress}>
       <ElectionProvider
-        election={election}
-        // The election comes from Vike SSR serialization, which drops the SDK's
-        // `id` getter (only `_id` survives), so `election.id` is undefined here.
-        // Use the route-param id so the provider query is enabled and refetches.
         id={id}
-        queryOptions={{
-          refetchInterval: 30_000,
-        }}
+        election={election}
+        queryOptions={{ refetchInterval: 30_000 }}
+        resultsQueryOptions={{ refetchInterval: 30_000 }}
       >
         <ProcessSummaryComponent />
         <LegalNotice />

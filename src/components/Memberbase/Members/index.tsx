@@ -23,8 +23,11 @@ import {
   WrapItem,
 } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useClient, useOrganization } from '@vocdoni/react-components'
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { getElectionTitle, useOrganization } from '@vocdoni/react-components'
+import { computeProcessStatus } from '@vocdoni/api-client'
+import type { QuestionStatus } from '@vocdoni/api-types'
+import { useApiClient } from '~src/providers/ApiClientProvider'
+import { useAuth } from '~components/Auth/useAuth'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -39,14 +42,14 @@ import {
   LuUsers,
   LuX,
 } from 'react-icons/lu'
-import { generatePath, useNavigate, useOutletContext } from 'react-router-dom'
+import { generatePath, useNavigate, useOutletContext } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
 import DeleteModal, { DeleteModalProps } from '~components/Modal/DeleteModal'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
-import { useAddCensusParticipants, useProcessCensusId } from '~src/queries/census'
+import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useDeleteMembers, usePaginatedMembers } from '~src/queries/members'
@@ -211,33 +214,26 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
   )
 }
 
-const ACTIVE_PROCESS_STATUSES = [ElectionStatus.ONGOING, ElectionStatus.UPCOMING, ElectionStatus.PAUSED]
+const ACTIVE_PROCESS_STATUSES: QuestionStatus[] = ['ONGOING', 'UPCOMING', 'PAUSED']
 
 const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerProps) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { client, account } = useClient()
+  const { client } = useApiClient()
+  const { currentAddress } = useAuth()
   const [selectedProcess, setSelectedProcess] = useState<{ id: string; title: string } | null>(null)
   const { selectedRows, resetSelectedRows } = useTable()
   const addCensusParticipants = useAddCensusParticipants()
 
-  const electionsQuery = paginatedElectionsQuery(account, client, { limit: 100 })
+  const electionsQuery = paginatedElectionsQuery(currentAddress, client, { limit: 100 })
   const { data: elections, isLoading: isLoadingElections } = useQuery({
     ...electionsQuery,
     enabled: electionsQuery.enabled && isOpen,
   })
 
-  const processes = (elections?.elections ?? [])
-    .filter((election): election is PublishedElection => election instanceof PublishedElection)
-    .filter((election) => ACTIVE_PROCESS_STATUSES.includes(election.status as ElectionStatus))
-    .map((election) => ({ id: election.id, title: election.title?.default || election.id }))
-
-  const {
-    data: censusId,
-    isLoading: isLoadingCensus,
-    isError: isCensusError,
-    error: censusError,
-  } = useProcessCensusId(client, selectedProcess?.id, isOpen)
+  const processes = (elections?.processes ?? [])
+    .filter((election) => ACTIVE_PROCESS_STATUSES.includes(computeProcessStatus(election.questions)))
+    .map((election) => ({ id: election.id, title: getElectionTitle(election) || election.id }))
 
   const handleClose = () => {
     setSelectedProcess(null)
@@ -245,10 +241,10 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
   }
 
   const handleAddToCensus = () => {
-    if (!censusId) return
+    if (!selectedProcess) return
 
     addCensusParticipants.mutate(
-      { censusId, memberIds: selectedRows.map((row) => row.id) },
+      { processId: selectedProcess.id, memberIds: selectedRows.map((row) => row.id) },
       {
         onSuccess: (response) => {
           toast({
@@ -325,7 +321,7 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
               onChange={(option) => setSelectedProcess(option)}
             />
 
-            {selectedProcess && !isCensusError && censusId && (
+            {selectedProcess && (
               <Text fontSize='sm' color='texts.subtle'>
                 {t('members.table.add_to_census_confirmation', {
                   defaultValue: 'You will add {{count}} member to the "{{process}}" process census.',
@@ -336,21 +332,12 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
               </Text>
             )}
 
-            {selectedProcess && (isCensusError || (!isLoadingCensus && !censusId)) && (
-              <Text fontSize='sm' color='red.400'>
-                {t('members.table.add_to_census_no_census', {
-                  defaultValue: 'Could not resolve a census for this process.',
-                })}
-                {censusError?.message ? ` (${censusError.message})` : ''}
-              </Text>
-            )}
-
             <Button
               onClick={handleAddToCensus}
               mt={2}
               width='100%'
               loading={addCensusParticipants.isPending}
-              disabled={!selectedProcess || !censusId || isLoadingCensus || selectedRows.length === 0}
+              disabled={!selectedProcess || selectedRows.length === 0}
             >
               {t('members.table.add_to_census_button', {
                 defaultValue: 'Add {{count}} member',
@@ -800,7 +787,10 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
       {columns
         .filter((column) => column.visible)
         .map((column) => (
-          <Table.Cell key={column.id}>{maskIfNeeded(column.id, member[column.id])}</Table.Cell>
+          // ph-no-capture: member data is never recorded in session replays
+          <Table.Cell key={column.id} className='ph-no-capture'>
+            {maskIfNeeded(column.id, member[column.id])}
+          </Table.Cell>
         ))}
       <Table.Cell>
         <MemberActions
@@ -842,7 +832,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         duration: 3000,
         isClosable: true,
       })
-      navigate(generatePath(Routes.dashboard.memberbase.members, { page: 1 }))
+      navigate(generatePath(Routes.dashboard.memberbase.members, { page: '1' }))
       onClose()
       await queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.members(organization?.address),

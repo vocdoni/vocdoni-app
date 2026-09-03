@@ -39,6 +39,7 @@
       "decidim": "Decidimen logotipoa",
       "esquerra": "Esquerra Republicana de Catalunyaren logotipoa",
       "omnium": "Òmnium Culturalen logotipoa",
+      "org_logo": "{{org}} erakundearen logotipoa",
       "ticanoia": "TIC Anoiaren logotipoa"
     }
   },
@@ -47,15 +48,49 @@
   "aside": {
     "has_already_voted": "Zure botoa behar bezala eman da",
     "is_not_in_census": "Ez zaude erroldan",
-    "overwrite_votes_left_one": "Behin zuzen dezakezu zure botoa.",
-    "overwrite_votes_left_other": "{{ count }} aldiz zuzen dezakezu zure botoa.",
-    "submitting": "Bidaltzen",
-    "verify_vote_on_explorer": "Egiaztatu zure botoa esploratzailean",
     "votes_one": "<span>1</span> <text>boto-emaile</text>",
     "votes_other": "<span>{{ count }}</span> <text>boto-emaile</text>",
     "votes_weight_one": "<span>1</span> <text>boto</text>",
-    "votes_weight_other": "<span>{{ count }}</span> <text>boto</text>",
-    "voting_anonymous_advice": "Itxaron, mesedez, magia gertatzen den bitartean 🪄.\nProzesu honek minutu batzuk iraun ditzake; ez itxi leihoa."
+    "votes_weight_other": "<span>{{ count }}</span> <text>boto</text>"
+  },
+  "auth": {
+    "showcase": {
+      "fallback_headline": "Zure kideek egiazta ditzaketen erabakiak"
+    },
+    "verticals": {
+      "associations": {
+        "label": "Elkarteak",
+        "trust_bar": "Batzar nagusiak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan. Elkarteek konfiantza dute jada bertan:"
+      },
+      "generic": {
+        "label": "Arrakasta-kasuak",
+        "trust_bar": "Batzarrak, hauteskundeak eta kontsultak modu seguruan. Sektore guztietako erakundeek konfiantza dute jada bertan:"
+      },
+      "ngos": {
+        "label": "GKEak eta irabazi-asmorik gabeko erakundeak",
+        "trust_bar": "Batzarrak, zuzendaritza-hauteskundeak eta bazkideen kontsultak modu seguruan. GKEek konfiantza dute jada bertan:"
+      },
+      "political_parties": {
+        "label": "Alderdi politikoak",
+        "trust_bar": "Primarioak, zuzendaritza-hauteskundeak eta barne-kontsultak modu seguruan. Alderdiek konfiantza dute jada bertan:"
+      },
+      "professional_associations": {
+        "label": "Elkargo profesionalak",
+        "trust_bar": "Batzar nagusiak, zuzendaritza-hauteskundeak eta kontsultak modu seguruan. Elkargo profesionalek konfiantza dute jada bertan:"
+      },
+      "public_administration": {
+        "label": "Administrazio publikoa",
+        "trust_bar": "Aurrekontu parte-hartzaileak, herritarren kontsultak eta erreferendumak modu seguruan. Administrazio publikoek konfiantza dute jada bertan:"
+      },
+      "sports_clubs": {
+        "label": "Kirol klubak",
+        "trust_bar": "Zuzendaritza-hauteskundeak, batzar nagusiak eta bazkideen kontsultak modu seguruan. Klubek eta federazioek konfiantza dute jada bertan:"
+      },
+      "trade_unions": {
+        "label": "Sindikatuak",
+        "trust_bar": "Greba-bozketak, hitzarmen kolektiboenak eta zuzendaritza-hauteskundeak modu seguruan. Sindikatuek konfiantza dute jada bertan:"
+      }
+    }
   },
   "avatar": {
     "label": "Erakundearen avatarra"
@@ -91,7 +126,8 @@
       "not_voted": "Botoa eman gabe",
       "placeholder": "Bilatu erroldean…",
       "title": "Egiaztatu parte-hartzaileak",
-      "voted": "Botoa emana"
+      "voted": "Botoa emana",
+      "voted_partial": "Botoa emana {{voted}}/{{total}}"
     }
   },
   "census_size": "Erroldeko tamaina",
@@ -104,11 +140,8 @@
   "color_mode_switcher": "Aldatu kolore-modua",
   "common": {
     "back": "Atzera",
-    "cancel": "Utzi",
     "close_drawer": "Itxi panela",
     "confirm": "Berretsi",
-    "disable": "Desgaitu",
-    "enable": "Gaitu",
     "home": "Hasiera",
     "next": "Hurrengoa",
     "retry": "Berriro saiatu"
@@ -266,7 +299,10 @@
     "empty_description": "Sortu zirriborro bat hasteko.",
     "load_error": "Ezin izan dira zirriborroak kargatu",
     "load_error_description": "Saiatu berriro.",
-    "not_defined": "Oraindik definitu gabe"
+    "not_defined": "Oraindik definitu gabe",
+    "question_type": {
+      "mixed": "Nahasia"
+    }
   },
   "drawer": {
     "close": "Itxi panela"
@@ -302,9 +338,6 @@
   "ended_processes": "Amaituak",
   "enter_promo_code": "Sartu sustapen-kodea",
   "error": {
-    "invalid_cell_data": "Errenkada batzuek ez dute helbide zuzenik: {{rows,list(style:short)}}",
-    "invalid_row_length": "Zuzendu dokumentuko {{rows,list(style: short)}} lerroak eta kargatu berriro",
-    "invalid_weight_type": "Lehen zutabean pisu bat espero zen {{rows,list(style:short)}} lerroetan, baina ustekabeko datuak aurkitu dira",
     "loading_page": "Errorea orrialdea kargatzean",
     "loading_roles": "Errorea rolak kargatzean",
     "loading_types": "Errorea motak kargatzean",
@@ -410,8 +443,6 @@
       }
     },
     "error": {
-      "address_already_in_use": "Helbidea jada erabilita",
-      "address_pattern": "Helbide hamaseitarrak baino ez dira onartzen (adib. 0x031101A...)",
       "census_config_required": "Konfiguratu erroldaren autentifikazio-ezarpenak.",
       "email_invalid": "Posta elektronikoaren helbidea ez da baliozkoa",
       "field_is_required": "Eremu hau bete beharrekoa da",
@@ -429,39 +460,10 @@
       }
     },
     "process_create": {
-      "census": {
-        "add_button": "Gehitu",
-        "remove_address": "Kendu helbidea"
-      },
       "error_deleting_draft_title": "Errorea zirriborroa ezabatzean",
       "error_title": "Errorea prozesua sortzean",
-      "spreadsheet": {
-        "download_template": "Ez duzu CSV fitxategirik? <a>Deskargatu template.csv</a>, bete eta kargatu.",
-        "preview": {
-          "success_description": "Erabiltzaileari hauekin autentifikatzeko eskatuko zaio:",
-          "success_title": "Fitxategia behar bezala kargatu da",
-          "upload_new_list": "Kargatu hautesle-zerrenda berria"
-        },
-        "template": {
-          "email": "Posta elektronikoa",
-          "firstname": "Izena",
-          "lastname": "Abizenak",
-          "weight": "Pisua"
-        },
-        "upload_description": "Kargatu CSV fitxategi bat parte-hartzaileekin. Zutabe bakoitza kredentzial gisa erabiliko da, hautesleak autentifikatzeko erabili beharko duena. Lehen errenkadak kredentzial horien izenburuak izango ditu."
-      },
       "success_description": "Bozketa-prozesuaren orrialdera birbideratzen...",
-      "success_title": "Bozketa-prozesua behar bezala sortu da",
-      "web3": {
-        "census_description": "Gehitu bozkatu ahal izango duten Web3 helbideak. Banaka gehi ditzakezu edo CSV fitxategi bat kargatu.",
-        "census_summary_description_one": "<b>Web3 helbide bat</b> bozkatu ahal izango du",
-        "census_summary_description_other": "<b>{{count}}</b> Web3 helbide bozkatu ahal izango dute",
-        "census_summary_title": "Erroldaren laburpena",
-        "csv_format": "CSV fitxategiak Web3 helbideak izan behar ditu lehen zutabean.",
-        "csv_format_weighted": "CSV fitxategiak pisuak izan behar ditu lehen zutabean eta Web3 helbideak bigarren zutabean.",
-        "upload_csv": "EDO KARGATU CSV",
-        "wallet_addresses": "Web3 helbideak"
-      }
+      "success_title": "Bozketa-prozesua behar bezala sortu da"
     },
     "select_language": "Hizkuntza",
     "support": {
@@ -469,6 +471,7 @@
       "custom_request": "Eskaera pertsonalizatua",
       "description": "Deskribapena",
       "description_placeholder": "Deskribatu zure intzidentzia xehetasunez",
+      "no_organization": "Zure erakundea oraindik ez dago prest. Saiatu berriro laster.",
       "open_ticket": "Ireki laguntza-eskaera",
       "other": "Bestelakoak",
       "selector_label": "Intzidentzia mota",
@@ -825,7 +828,6 @@
       "title": "Dokumentazioa"
     },
     "managed": {
-      "active": "Aktibo",
       "created": "Sortua",
       "docs_card_description": "Ikasi nola sortu eta kudeatu erakundeak programatikoki APIaren bidez.",
       "docs_card_title": "Erakunde bat sortzea",
@@ -833,12 +835,10 @@
       "empty_description": "Erakundeak APIaren bidez sortzen dira, ez panel honetatik. Zure lehen erakundea sortzen duzunean, hemen agertuko da.",
       "empty_title": "Ez dago erakunderik oraindik",
       "error": "Ezin izan da erakundeak kargatu",
-      "inactive": "Inaktibo",
       "organization": "Erakundea",
       "pagination": "{{page}} orria {{total}} guztitik · {{items}} guztira",
       "processes": "Prozesuak",
       "sms": "SMS",
-      "status": "Egoera",
       "subtitle": "Zure bezeroaren ordez kudeaturiko erakundeak.",
       "title": "Kudeaturiko erakundeak"
     },
@@ -1007,7 +1007,6 @@
       "add_to_census_confirmation_other": "«{{process}}» prozesuaren erroldara {{count}} kide gehituko dituzu.",
       "add_to_census_description": "Hautatu boto-prozesu aktibo bat kideak bere erroldara gehitzeko.",
       "add_to_census_error": "Errorea kideak erroldara gehitzean",
-      "add_to_census_no_census": "Ezin izan da prozesu honetarako errolda zehaztu.",
       "add_to_census_partial": "Kide batzuk ezin izan dira gehitu.",
       "add_to_census_success_one": "{{count}} kide erroldara gehitu da",
       "add_to_census_success_other": "{{count}} kide erroldara gehitu dira",
@@ -1059,7 +1058,6 @@
   "menu": {
     "burger_aria_label": "erabiltzaile-menua",
     "collapse": "Tolestu menua",
-    "connect": "Konektatu",
     "create": "Sortu prozesua",
     "dashboard": "Panela",
     "expand": "Zabaldu menua",
@@ -1109,24 +1107,28 @@
     "avatar_alt": "{{ name }} erakundearen avatarra",
     "create_org": "Sortu erakundea",
     "create_org_failed": "Errorea erakundea sortzean",
-    "create_org_step_update_failed": "Errorea erakundea konfiguratzeko urratsaren egoera eguneratzean",
     "create_org_success": "Erakundea behar bezala sortu da",
     "dashboard": "Panela",
     "date_format": "y MMM d",
     "elections": "Bozketak",
+    "elections_list": "Bozketa-prozesuak",
     "elections_list_empty": {
       "alt": "Erakundea hutsik dagoela erakusten duen irudia",
       "description": "Antolatzaile gisa, zure komunitateari egokitutako bozketa-prozesuak diseinatzeko gaitasuna duzu. Prozedura hauek malgutasun handia eskaintzen dute: hautesleek datu pertsonalizatuekin (erabiltzaile-izena, pasahitza eta jaiotegunarekin, kasu) autentifikatzen diren errolda, token guztien jabeei parte hartzeko aukera ematen dien token-sistema, edo Web3 helbideak hautagarritasun-irizpide gisa erabiltzen dituen zerrenda zuria.",
       "not_owner": "Erakunde honek oraindik ez du bozketa-prozesurik",
       "title": "Sortu zure lehen bozketa-prozesua"
     },
+    "elections_list_load_more": "Kargatu gehiago",
     "max_census": "Bozketako gehienezko errolda",
     "max_processes": "Bozketak urteko¹",
     "no_organization_title": "Oraindik ez zara erakunde batekoa!",
     "organization": "Erakundearen xehetasunak",
     "title": {
       "read_more": "Zabaldu izenburua"
-    }
+    },
+    "unavailable_description": "",
+    "unavailable_retry": "",
+    "unavailable_title": ""
   },
   "organization_settings": {
     "phone_support": {
@@ -1150,14 +1152,6 @@
       "title": "Taldeko kideak"
     },
     "title": "{{organization}} konfigurazioa"
-  },
-  "organization_setup": {
-    "setup_steps": {
-      "expert_call_booking": "Antolatu doako dei bat gure adituekin",
-      "first_vote_creation": "Sortu zure lehen bozketa",
-      "memberbase_upload": "Kargatu zure kide-oinarria",
-      "organization_details": "Konfiguratu zure erakundearen xehetasunak"
-    }
   },
   "organizations": "Erakundeak ({{ numOrgs }})",
   "other_details": "Bestelako xehetasunak",
@@ -1301,12 +1295,6 @@
       },
       "question": {
         "add": "Gehitu galdera",
-        "add_multiple": {
-          "cancel_button": "Utzi",
-          "contact_button": "Jarri harremanetan",
-          "description": "Gaur egun ez da posible aukera anitzeko galdera bat baino gehiago dituzten prozesuak sortzea. Mota honetako prozesua behar baduzu, jarri gurekin harremanetan.",
-          "title": "Hainbat aukera anitzeko galdera oraindik ez dago eskuragarri"
-        },
         "delete": {
           "cancel_button": "Utzi",
           "delete_button": "Ezabatu",
@@ -1345,29 +1333,14 @@
       "starts": "Hasiera"
     },
     "extended_info": "Informazio zabaldua",
-    "gitcoin": {
-      "all_of_them": "(Guztiak)",
-      "gps_score": "Gitcoin Passport puntuazioa: gutx. {{score}}",
-      "needed_stamps": "Beharrezko zigiluak",
-      "one_of_them": "(Gutxienez bat)"
-    },
-    "is_anonymous": {
-      "description": "Boto sekretua",
-      "title": "Pribatutasuna"
-    },
     "is_invalid": "Prozesu honek datu okerrak ditu eta, beraz, ez da baliozkoa",
     "no_description": "Ez da deskribapenik eman",
     "people_in_census_one": "Boto-emaile bat",
     "people_in_census_other": "{{ count }} boto-emaile",
     "question_type": {
-      "confirm": {
-        "subtitle": "Aukera anitzak galdera bakar bat baino ez du onartzen. Aldatuz gero, lehena bakarrik mantenduko da eta gainerakoak baztertuko dira.",
-        "title": "Aukera anitzera aldatu nahi duzu?"
-      },
-      "description": "Hau bozketa-prozesu honetako galdera guztiei aplikatzen zaie",
+      "label": "Galdera mota",
       "multiple": "Aukera anitza",
-      "single": "Aukera bakarra",
-      "title": "Galdera mota"
+      "single": "Aukera bakarra"
     },
     "questions": "Galderak",
     "results": "Emaitzak",
@@ -1383,6 +1356,7 @@
       "ended": "Amaitua",
       "paused": "Prozesua etenda",
       "paused_description": "Bozketa une honetan ez dago eskuragarri",
+      "results": "Emaitzak eskuragarri",
       "unknown": "Ezezaguna",
       "upcoming": "Datorrena"
     },
@@ -1447,8 +1421,12 @@
         "title": "Aurrekontu parte-hartzaileen izenburua"
       }
     },
-    "total_census_size": "{{maxCensusSize}} boto-emaile onartuak guztira {{censusSize}} dituen erroldan",
-    "total_census_size_tooltip": "Onartutako gehienezko boto-emaile kopurua {{maxCensusSize}}era mugatuta dago, {{censusSize}} dituen errolda batean (% {{percent}} guztira). Lehen {{maxCensusSize}}ek soilik bozkatu ahal izango dute.",
+    "vote_failed": {
+      "close": "Itxi",
+      "none": "Ez da erantzunik erregistratu. Saiatu berriro.",
+      "partial": "Erantzun batzuk ez dira erregistratu. Bozkatu berriro gainerakoak bidaltzeko.",
+      "title": "Ezin izan da zure botoa eman"
+    },
     "voters": "Boto-emaileak",
     "voting": "Zure botoa prozesatzen ari gara. Honek segundo batzuk iraungo ditu. Ez itxi edo eguneratu orrialde hau.",
     "voting_method": {
@@ -1456,10 +1434,12 @@
       "budget": "Aurrekontu-esleipena",
       "multiple_choice": "Aukera anitza",
       "quadratic": "Koadratikoa",
+      "ranked": "Lehentasun-ordena",
       "single_choice": "Aukera bakarra",
       "unknown": "Ezezaguna",
       "weighted_format": "{{base}} haztatua"
     },
+    "voting_progress": "{{total}} galderatik {{confirmed}} berretsita",
     "voting_type": "Bozketa-metodoa"
   },
   "process_actions": {
@@ -1479,29 +1459,14 @@
     "auto_start": "Hasi berehala",
     "basic_configuration": "Oinarrizko konfigurazioa",
     "census": {
-      "extra_methods": {
-        "disable_description": "Errolda-metodo osagarriak desgaitu nahi dituzu? Honek Kalkulu-orria eta Web3 aukerak ezkutatuko ditu eta Talde metodoa bakarrik erakutsiko du.",
-        "enable_description": "Errolda-metodo osagarriak gaitu nahi dituzu? Honek Kalkulu-orria eta Web3 errolda-sorrera bezalako aukera osagarriak erakutsiko ditu.",
-        "modal_title": "Errolda-metodo osagarriak"
-      },
       "group": {
-        "label": "Taldea",
         "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },
       "memberbase": {
         "label": "Hautatu kide-talde bat errolda sortzeko"
-      },
-      "settings": "Erroldaren konfigurazioa",
-      "spreadsheet": {
-        "label": "Kalkulu-orria"
-      },
-      "web3": {
-        "label": "Web3"
       }
     },
     "census_creation": "Erroldaren sorrera",
-    "census_missing": "Errolda-datuak falta dira Kide-oinarri errolda motarako",
-    "census_type_not_allowed": "{{type}} errolda mota ez da onartzen",
     "end_datetime": "Amaiera-data eta -ordua",
     "extra_configuration": "Konfigurazio aurreratua",
     "group": {
@@ -1511,8 +1476,6 @@
       "scroll_to_load": "Gehiago kargatzeko korritu..."
     },
     "new_option": "Gehitu aukera berria",
-    "no_account_address": "Ez da kontuaren helbiderik aurkitu.",
-    "no_election_index": "Ez da kontuarentzat hauteskunde-indizerik aurkitu.",
     "option": {
       "description_placeholder": "Deskribapena (aukerakoa)",
       "placeholder": "{{number}}. aukera",
@@ -1562,11 +1525,7 @@
       "method": "Autentifikazio-metodoa",
       "two_fa": "Identitatearen egiaztapen gehigarria",
       "two_fa_disabled": "Desgaituta: ez da identitatearen egiaztapen gehigarririk konfiguratu boto-emate-prozesu honetan",
-      "two_fa_enabled": "Gaituta: boto-emaileek beren nortasuna ziurtatzen dute kode bakarreko mezua bidaltzean haien gailu pertsonaletara.",
-      "voter_access_source": "Boto-emaileen sarbide-iturria",
-      "voter_access_source_spreadsheet": "Boto-emaileek erakundeak igotako orria oinarri duten erroldeko datuekin sartzen dira.",
-      "voter_access_source_web3": "Boto-emaileek Web3 erroldean agertzen diren wallet helbideekin sartzen dira.",
-      "voter_access_source_weighted": "Eskubidea prozesu honetarako erakundeak emandako errolde haztatuarekin egiaztatzen da."
+      "two_fa_enabled": "Gaituta: boto-emaileek beren nortasuna ziurtatzen dute kode bakarreko mezua bidaltzean haien gailu pertsonaletara."
     },
     "census": {
       "counting_basis": "Zenbaketaren oinarria",
@@ -1579,12 +1538,7 @@
       "weighted_participation": "Ponderatutako parte-hartzea"
     },
     "census_type": {
-      "anonymous": "Erakundearen errolda anonimoa",
-      "csp": "Kideen erroldea",
-      "spreadsheet": "Erakundeak emandako orriko errolda",
-      "unknown": "Ez dago eskuragarri",
-      "web3": "Erakundeak emandako Web3 wallet errolda",
-      "weighted": "Erakundearen errolde haztatua"
+      "csp": "Kideen erroldea"
     },
     "disclaimer": {
       "bullet_1": "Ez du bozketa-prozesuaren legezko ziurtagiria eratzen.",
@@ -1624,8 +1578,6 @@
     "download_error": "Ezin izan da PDF txostena sortu",
     "downloading": "PDFa sortzen",
     "general": {
-      "census_reference": "Erroldearen erreferentzia",
-      "census_reference_helper": "Publikoan identifikatutako erreferentzia, bozketa-prozesu honetan erabilitako erroldea zehazteko. Ez du boto-emaileen datu pertsonalik sartzen edo azaleratzen.",
       "event_name": "Gertaeraren izena",
       "network": "Azpiegitura",
       "organization": "Erakundea",
@@ -1659,9 +1611,9 @@
       "explorer": "Ikusi egiaztapen esploratzailean",
       "paragraph": "Prozesuaren datu guztiak blockchain azpiegituran inskribatuta daude eta independenteki egiazta daitezke hurrengo esploratzaile publikoaren bidez:",
       "procedure_title": "Egiaztapen-prozedura",
+      "question_n": "{{number}}. galdera",
       "step_1": "Ireki egiaztapen esploratzailearen esteka. Orrialde honek bozketa-prozesuaren erregistro tekniko publikoa du.",
       "step_2": "Egiaztatu esploratzaileko Prozesu IDa txosteneko Prozesu IDarekin bat datorrela. Horrek ziurtatzen du bi dokumentuak bozketa-prozesu bera aipatzen dutela.",
-      "step_3": "Egiaztatu esploratzailean erakusten den erroldearen erreferentzia txostenean agertzen denarekin bat datorrela. Horrek ziurtatzen du prozesuari lotutako boto-emaileen zerrenda berdina dela.",
       "step_4": "Egiaztatu erregistratutako papereten kopurua txostenean agertzen den parte-hartze-daturekin bat datorrela.",
       "step_5": "Konparatu esploratzaileko azken zenbaketaren emaitzak txostenean erakusten diren papereta-kontaketa edo boto-pisua pisatutako emaitzekin.",
       "step_6": "Tekniko auditu sakonago baterako, auditore batek erregistro publikoak xehetasun gehiagotan azter ditzake edo birkalkulatu zenbaketaren emaitzak ziurtatzeko erregistratutako paperetak eta azken emaitzak koherenteak direla."
@@ -1708,6 +1660,8 @@
   "processes": {
     "empty": "Ez da bozketa-prozesurik aurkitu",
     "empty_description": "Sortu bozketa-prozesu bat hasteko.",
+    "load_error": "Ezin izan dira bozketa-prozesuak kargatu",
+    "load_error_description": "Saiatu berriro.",
     "no_results": "Ez dago iragazki honentzat emaitzarik",
     "no_results_description": "Saiatu iragazkiak doitzen."
   },
@@ -1717,6 +1671,11 @@
   },
   "promo_code": "Sustapen-kodea",
   "promo_code_required": "Kodea bete beharrekoa da",
+  "public_process": {
+    "no_tally": "Zenbaketarik ez",
+    "verify": "Egiaztatu blockchain esploratzailean:",
+    "verify_process": "Ikusi prozesua"
+  },
   "questions_and_results": "Galderak eta emaitzak",
   "registration_failed": "Errorea izen-ematean",
   "registration_successful": "Izen-ematea behar bezala egin da",
@@ -1770,14 +1729,7 @@
     "platform": "Plataforma"
   },
   "send_invitation": "Bidali gonbidapena",
-  "session_expired": "Saioa iraungita",
-  "session_expired_description": "Saioa iraungi da edo ezin izan da berritu, hasi saioa berriro",
   "settings": "Ezarpenak",
-  "setup": {
-    "progress": "Zure aurrerapena",
-    "title": "Osatu konfigurazioa",
-    "toggle_panel": "Txandakatu panela"
-  },
   "share": {
     "copy": "Kopiatu",
     "election_share_btn_text": "Partekatu",
@@ -1807,9 +1759,7 @@
   "signup_subtitle": "Sartu zure informazioa hasteko",
   "signup_title": "Izen-ematea",
   "spreadsheet": {
-    "access_button": "Identifikatu",
-    "close": "Itxi",
-    "modal_title": "Autentifikazioa"
+    "access_button": "Identifikatu"
   },
   "start_date": "Hasiera-data",
   "start_time": "Hasiera-ordua",
@@ -1833,6 +1783,33 @@
   },
   "subtotal": "Azpitotala",
   "support": "Laguntza",
+  "support_chat": {
+    "ask_name": "Bidali aurretik — nola duzu izena?",
+    "book_call": "Deia programatu",
+    "close_label": "Itxi laguntza-txata",
+    "confirmation": "Eskerrik asko, {{name}}! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu {{email}} helbidean.",
+    "confirmation_generic": "Eskerrik asko! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu posta elektronikoz.",
+    "confirmation_no_name": "Eskerrik asko! Zure mezua jaso dugu eta lehenbailehen erantzungo dizugu {{email}} helbidean.",
+    "contact_options": "Nahiago duzu hitz egin? Gure taldearekin deia programatu edo WhatsApp bidez idatzi ere egin dezakezu.",
+    "error": "Sentitzen dugu — ezin izan dugu zure mezua bidali. Saiatu berriro.",
+    "greeting": "Kaixo {{name}}, ongi etorri Vocdoniren laguntzara!",
+    "greeting_intro": "Plataformarekin laguntza behar baduzu, botazio bat nola hasi jakin nahi baduzu, botazio-prozesu bati buruzko eskaera baduzu edo laguntza behar baduzu, azaldu mezu bakar batean hemen behean eta posta elektronikoz erantzungo dizugu.",
+    "greeting_no_name": "Kaixo, ongi etorri Vocdoniren laguntzara!",
+    "header_subtitle": "Posta elektronikoz erantzungo dizugu",
+    "header_title": "Vocdoniren laguntza",
+    "input_placeholder": "Deskribatu zure eskaera…",
+    "launcher_label": "Ireki laguntza-txata",
+    "messages_label": "Laguntza-elkarrizketa",
+    "new_request": "Eskaera berria",
+    "new_request_prompt": "Zertan lagundu diezazukegu gehiago?",
+    "retry": "Saiatu berriro",
+    "send_hint": "Amaitzen duzunean, bidali bidaltzeko botoiarekin edo {{shortcut}}.",
+    "send_label": "Bidali mezua",
+    "sent_status": "Eskaera bidalita — posta elektronikoz erantzungo dizugu",
+    "teaser": "Laguntza behar duzu?",
+    "teaser_dismiss": "Baztertu",
+    "whatsapp": "Idatzi WhatsApp bidez"
+  },
   "switch_mode": "Aldatu {{ mode }} modura",
   "switch_organization": "Aldatu erakundea",
   "system": "Sistema",
@@ -1878,19 +1855,73 @@
   },
   "terms_of_service": "Zerbitzu-baldintzak",
   "testimonials": {
+    "aguicat": {
+      "company": "Associació de Guies Habilitats de Catalunya",
+      "position": "IT arduraduna",
+      "text": "Boto-ematearen prozesu osoa prestatzea eta batzarrarentzako tresna guztiak zentralizatzea erraza, intuitiboa eta argia izan zen. Teknologia gutxi ezagutzen duten sektore batean egonda ere, parte-hartze handia lortu genuen: pertsonek, batez ere, pertsonalki joan beharrik gabe aurretik botoa eman ahal izatea baloratu zuten."
+    },
+    "arxivers": {
+      "company": "Associació d'Arxivers de Catalunya",
+      "position": "Idazkaria",
+      "text": "Kideei seguru eta fidagarria den boto-emate-sistema bat eskaintzea funtsezkoa da, are gehiago pandemia garaian. Vocdoni-k erabiltzeko erraza den tresna bat eman zigun; horrek boto-ematearen prozesua sinplifikatu eta parte-hartzea handitu zuen."
+    },
+    "ati": {
+      "company": "ATI Friuli Venezia Giulia",
+      "position": "Lehendakaria",
+      "text": "Associazione Termotecnica Italiana elkarteko Friuli Venezia Giulia atalean, gure gobernantza digitalizatzea erabaki genuen, profesionalek parte hartzea errazagoa izan zedin. Vocdoni irtenbide ideal gisa nabarmendu zen, bere sinpletasunagatik, kostuengatik eta bermeengatik."
+    },
     "bellpuig": {
       "company": "Bellpuigeko Udala",
       "position": "Alkatea",
       "text": "Vocdoni aukeratu genuen edozein motatako benetako hauteskundeek izan beharko luketenaren etorkizuna dela uste dugulako. Boto elektronikoa guztion eskura dago eta prozesua errazten die herritarrei."
     },
+    "bisbal": {
+      "company": "La Bisbal d'Empordàko Udaletxea",
+      "position": "Herritarren parte-hartzerako arduraduna",
+      "text": "Vocdoni-k gure Bisbalenc/a de l'Any bozketa bultzatu zuen, herritarren parte-hartzea handituz eta blockchain-ean gardentasuna, segurtasuna eta berehalako emaitzak eskainiz. Bere segurtasuna, eskalagarritasuna, egiaztagarritasun unibertsala eta malgutasuna baloratu ditugu."
+    },
     "ceec": {
       "position": "Zuzendari nagusia",
       "text": "Vocdoni aukeratu genuen gure kide guztientzat parte-hartze segurua, fidagarria eta gardena bermatzen duelako gure Urteko Batzar Nagusian."
+    },
+    "coib": {
+      "company": "Bartzelonako Erizainen Elkargo Ofiziala",
+      "position": "Proiektuen arduraduna",
+      "text": "Bartzelonako Erizainen Elkargo Ofizialean, Vocdoni-n konfiantza dugu gure parte-hartze prozesu guztietarako, kideek beren eskubideak edozein lekutatik baliatu ahal izan ditzaten bermatuz. Bereziki baloratzen dugu botoen berehalako zenbaketa, sistemaren sinpletasuna eta laguntza teknikoaren erantzun eta orientazio azkar eta eraginkorra; horrek prozesu osoa arin, garden eta fidagarri bihurtzen du."
     },
     "eic": {
       "company": "Enginyers Industrials de Catalunya",
       "position": "IT zuzendaria",
       "text": "Vocdonik bozketa-sistema sinple, segurua, anonimoa eta eskalagarria eskaintzen digu, gure erakunde-ingurunean guztiz integratuta. Inolako zalantzarik gabe, beren konponbidean konfiantza izaten jarraituko dugu."
+    },
+    "erc": {
+      "position": "Kideen, borroka antirrepresiboaren eta ongizate emozionalaren idazkari nazionala",
+      "text": "Urteak daramatzagu Vocdoni-n konfiantza izaten, sistema seguru, auditagarri eta erabiltzeko erraza eskaintzen baitigu, gure erakundearen beharretara egokituta eta berme guztiekin boto digitalak antolatzeko aukera ematen diguna."
+    },
+    "granollers": {
+      "position": "Komunikazio arduraduna",
+      "text": "«Granollers Primàries»n, parte-hartze digitala herritarren parte-hartzea zabaltzeko eta errazteko funtsezko tresnatzat ulertzen dugu. Horregatik, boto-emate prozesuetan neutraltasuna, gardentasuna eta segurtasunik handiena bermatzen zituen plataforma baten bila ginen. Vocdoni-k hori guztia eskaintzen du, eta horregatik hautatu genuen gure primarioetarako, eta etorkizuneko kontsultetan erabiltzen jarraitzea aurreikusten dugu."
+    },
+    "icoes": {
+      "company": "Sevillako Erizaintzako Elkargo Ofiziala",
+      "position": "Lehendakaria",
+      "text": "Vocdoni-rekin boto-ematea digitalizatu izana, hauteskunde-prozesu osoa eraginkorrago bihurtu du. Parte-hartzea askoz errazagoa egin dugu, batez ere bidaiatu ezin zuten kideentzat, aldi berean sistema arin eta fidagarriari eutsiz."
+    },
+    "intersindical": {
+      "position": "Hezkuntza sektoriaren bozeramailea",
+      "text": "La Intersindical-en uste dugu irakasle kolektibo osoa ukitzen duten erabakiak irakasleak beraiek hartu behar dituztela. Horregatik, prozesu garden, neutral eta egiaztagarri bat bermatuko zuen tresna bat behar genuen. Vocdoni-rekin erabaki hau ia 100.000 profesionaletara helarazi ahal izan genuen, prozedura zein emaitza erabat fidagarriak izango zirela ziurtasunarekin."
+    },
+    "omnium": {
+      "position": "Kudeatzaile exekutiboa",
+      "text": "Òmnium Culturalen, seguru eta egiaztagarri den boto-emate-sistema batean apustu egin genuen; horri esker gure estatutuko batzarrak berme guztiekin egin ahal izango ditugu."
+    },
+    "plataforma": {
+      "position": "Zuzendaria",
+      "text": "Vocdoni-k aukera ematen digu Katalanez hitz egiten den lurralde guztietako kideekin botoak berdintasunezko baldintzetan egiteko. Berehalako zenbaketarekin, gure batzarrak errazten dira eta gardentasun osoa bermatzen da."
+    },
+    "ustec": {
+      "position": "Idazkaritza nazionaleko kidea",
+      "text": "Vocdonirekin irtenbide oso ona aurkitu genuen, azpiegitura neutral eta egiaztagarria izanik, zenbaketaren osotasuna zein boto-emaileen pribatutasuna bermatzen baitzituen. Horri esker, irakasle bakoitzak behin bakarrik bozka zezakeen, modu seguru eta anonimoan."
     }
   },
   "theme": "Gaia",
@@ -1993,7 +2024,6 @@
     "level_strong": "Indartsua",
     "level_weak": "Ahula",
     "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
-    "save_failed": "Ezin izan da hautesleen autentifikazioa konfiguratu",
     "security_level": "Segurtasun ona",
     "security_recommendation_1": "Segurtasun handiagorako, gutxienez 2 kredentzial hautatzea gomendatzen dugu.",
     "security_recommendation_2_one": "{{ count }} kredentzial hautatu duzu, eta horrek segurtasun ona eskaintzen die zure hautesleei.",

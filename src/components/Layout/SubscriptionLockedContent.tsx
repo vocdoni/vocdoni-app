@@ -1,13 +1,16 @@
 import { Progress, Box, Button, HStack, Icon, Stack, TagLabel, TagRoot, Text, Wrap } from '@chakra-ui/react'
-import { dotobject } from '@vocdoni/sdk'
+import { dotobject } from '~utils/objects'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuLock, LuSparkles } from 'react-icons/lu'
-import { generatePath, Link as ReactRouterLink } from 'react-router-dom'
+import { generatePath, Link as ReactRouterLink } from 'react-router'
+import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
 import { PlanFeaturesTranslationKeys } from '~components/Pricing/Features'
 import { usePlans, usePlanTranslations } from '~components/Pricing/Plans'
 import { SubscriptionPermission } from '~constants'
 import { Routes } from '~src/router/routes'
+import { AnalyticsEvents } from '~utils/analytics'
 
 type SubscriptionLockedContentProps = {
   children: (args: { isLocked: boolean }) => React.ReactNode
@@ -28,6 +31,15 @@ export const SubscriptionLockedContent = ({ children, permissionType }: Subscrip
   const permissionName = t(PlanFeaturesTranslationKeys[permissionType])
   const hasPermission = permission(permissionType)
   const isLocked = !hasPermission
+  const { trackEvent } = useAnalytics()
+
+  useEffect(() => {
+    if (loading || hasPermission) return
+    trackEvent({
+      name: AnalyticsEvents.FeatureBlocked,
+      props: { feature: permissionType, plan: subscription?.plan?.name ?? 'unknown' },
+    })
+  }, [loading, hasPermission, permissionType, subscription?.plan?.name, trackEvent])
 
   if (loading) {
     return (

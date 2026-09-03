@@ -1,17 +1,18 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, type Dispatch, type SetStateAction } from 'react'
 import { AuthFieldType, CensusData, TwoFaFieldType } from './basics'
 
-type CspAuthStep = {
-  step: number
-  name: string
+// Contact info captured at step 0 so step 1 can resend the challenge. The auth
+// tokens themselves live in the ProcessProvider session, not here.
+export type CspAuthData = {
+  email?: string
+  phone?: string
 }
 
 type CspAuthContextState = {
-  steps: CspAuthStep[]
   currentStep: number
   setCurrentStep: (step: number) => void
-  authData: Record<string, any>
-  setAuthData: (data: Record<string, any>) => void
+  authData: CspAuthData
+  setAuthData: Dispatch<SetStateAction<CspAuthData>>
   censusData: CensusData | null
   authFields: AuthFieldType[]
   twoFaFields: TwoFaFieldType[]
@@ -26,26 +27,21 @@ export const CspAuthProvider = ({
   children: React.ReactNode
   censusData?: CensusData | null
 }) => {
-  const [steps] = useState<CspAuthStep[]>([
-    { step: 0, name: 'Step 0' },
-    { step: 1, name: 'Step 1' },
-  ])
   const [currentStep, setCurrentStep] = useState(0)
-  const [authData, setAuthData] = useState<Record<string, any>>({})
+  const [authData, setAuthData] = useState<CspAuthData>({})
 
   // Process census data to determine auth fields
-  const authFields = (censusData?.authFields || []) as AuthFieldType[]
-  const twoFaFields = (censusData?.twoFaFields || []) as TwoFaFieldType[]
+  const authFields = censusData?.authFields || []
+  const twoFaFields = censusData?.twoFaFields || []
 
   return (
     <CspAuthContext.Provider
       value={{
-        steps,
         currentStep,
         setCurrentStep,
         authData,
         setAuthData,
-        censusData,
+        censusData: censusData ?? null,
         authFields,
         twoFaFields,
       }}

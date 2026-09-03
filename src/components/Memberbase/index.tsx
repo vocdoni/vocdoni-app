@@ -1,9 +1,9 @@
 import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
-import { useClient } from '@vocdoni/react-components'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { generatePath, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { generatePath, Outlet, useLocation, useNavigate } from 'react-router'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
+import { useAuth } from '~components/Auth/useAuth'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
 import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
@@ -21,17 +21,17 @@ export type JobId = string | null
 
 export const MemberbaseTabs = () => {
   const { t } = useTranslation()
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const accountId = account?.address || localStorage.getItem(LocalStorageKeys.SignerAddress)
+  const accountId = currentAddress || localStorage.getItem(LocalStorageKeys.SignerAddress)
   const [jobId, setJobIdState] = useState<JobId>(() => getStoredImportJobId(accountId))
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState(search)
   const menuItems = [
     {
       label: t('memberbase.members.title', { defaultValue: 'Members' }),
-      route: generatePath(Routes.dashboard.memberbase.members, { page: 1 }),
+      route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
     },
     { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
   ]

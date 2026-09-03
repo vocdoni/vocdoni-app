@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 import { renderHook } from '@testing-library/react'
-import { matchRoutes } from 'react-router-dom'
+import { matchRoutes } from 'react-router'
 import { Routes } from '.'
 import { mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'

@@ -8,6 +8,10 @@ const mockUseOrganization = vi.fn()
 const mockUseClient = vi.fn()
 const mockUseToast = vi.fn()
 
+vi.mock('~src/app-env', () => ({
+  useAppEnv: () => ({ VOCDONI_ENVIRONMENT: 'dev' }),
+}))
+
 vi.mock('~components/Toast', () => ({
   useToast: () => mockUseToast,
 }))
@@ -23,7 +27,6 @@ describe('AddressBtn', () => {
     setReactProvidersMock({
       useOrganization: () => mockUseOrganization(),
       useClient: () => mockUseClient(),
-      enforceHexPrefix: (value: string | undefined) => value,
     })
   })
 
@@ -31,9 +34,7 @@ describe('AddressBtn', () => {
     mockUseOrganization.mockReturnValue({
       organization: { address: '0x1234567890abcdef' },
     })
-    mockUseClient.mockReturnValue({
-      client: { explorerUrl: 'https://explorer.test' },
-    })
+    mockUseClient.mockReturnValue({ client: {} })
 
     render(
       <ChakraProvider value={system}>

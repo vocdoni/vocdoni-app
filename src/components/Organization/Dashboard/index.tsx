@@ -1,46 +1,30 @@
-import {
-  Accordion,
-  AspectRatio,
-  Box,
-  Button,
-  Checkbox,
-  CloseButton,
-  Flex,
-  HStack,
-  Icon,
-  IconButton,
-  Link,
-  Progress,
-  Stack,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react'
-import { useQuery } from '@tanstack/react-query'
+import { AspectRatio, Box, Button, Flex, HStack, Icon, Link, Progress, Text } from '@chakra-ui/react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ElectionProvider,
   ElectionStatusBadge,
   ElectionTitle,
-  useClient,
+  useElection,
   useOrganization,
 } from '@vocdoni/react-components'
-import { PublishedElection } from '@vocdoni/sdk'
-import { format } from 'date-fns'
+import { processVoteCount } from '@vocdoni/api-client'
+import { useApiClient } from '~src/providers/ApiClientProvider'
+import { useAuth } from '~components/Auth/useAuth'
+import { useDateFns } from '~i18n/use-date-fns'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuArrowUpRight, LuCheck, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
+import { LuArrowUpRight, LuPlus, LuUsers, LuVote } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
-import { generatePath, Link as ReactRouterLink, useNavigate } from 'react-router-dom'
+import { generatePath, Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
-import { DashboardBookerModalButton } from '~components/Dashboard/Booker'
 import { DashboardBox, Heading, SubHeading } from '~components/Dashboard/Contents'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
-import InvertedAccordionIcon from '~components/Layout/InvertedAccordionIcon'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { isPlanNamed, PlanName } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
-import { CheckboxTypes, paginatedElectionsQuery, useOrganizationSetup } from '~src/queries/organization'
+import { paginatedElectionsQuery } from '~src/queries/organization'
 import { UsageLimits } from './UsageLimits'
 
 const OrganizationDashboard = () => {
@@ -61,7 +45,6 @@ const OrganizationDashboard = () => {
         {organization && <QuickActions flex='1 1 40%' />}
       </Flex>
       <OrganizationProcesses />
-      <Setup />
     </>
   )
 }
@@ -149,115 +132,6 @@ const Tutorial = () => {
   )
 }
 
-const Setup = () => {
-  const { t } = useTranslation()
-  const { open: isOpen, onClose } = useDisclosure({ defaultOpen: true })
-  const { checklist, progress, isStepsAccordionOpen } = useOrganizationSetup()
-  const navigate = useNavigate()
-
-  return (
-    isStepsAccordionOpen &&
-    isOpen && (
-      <Box
-        position='fixed'
-        bottom={6}
-        right={6}
-        p={0}
-        w='xs'
-        borderRadius='2xl'
-        boxShadow='xl'
-        zIndex='overlay'
-        border='1px solid'
-        borderColor='border'
-        bgColor='bg.panel'
-      >
-        <Accordion.Root defaultValue={['setup']} collapsible border='none'>
-          <Accordion.Item value='setup' border='none' alignItems='center'>
-            <Accordion.ItemTrigger as='div' px={4} gap={0} justifyContent='space-between'>
-              <Flex gap={2} alignItems='center'>
-                <Icon as={LuCheck} boxSize={5} />
-                <Text fontWeight='bold'>
-                  {t('setup.title', {
-                    defaultValue: 'Complete your setup',
-                  })}
-                </Text>
-              </Flex>
-              <Flex justifySelf='end'>
-                <Accordion.ItemIndicator asChild>
-                  <IconButton variant='unstyled' colorPalette='gray' aria-label={t('setup.toggle_panel')} size='xs'>
-                    <InvertedAccordionIcon />
-                  </IconButton>
-                </Accordion.ItemIndicator>
-                <CloseButton onClick={onClose} size='xs' />
-              </Flex>
-            </Accordion.ItemTrigger>
-            <Accordion.ItemContent>
-              <Accordion.ItemBody p={0}>
-                <Flex flexDirection='column' px={4} py={2}>
-                  <Flex justify='space-between' align='center'>
-                    <Text fontSize='xs'>{t('setup.progress', { defaultValue: 'Your progress' })}</Text>
-                    <Text fontSize='xs'>{Math.round(progress)}%</Text>
-                  </Flex>
-                  <Progress.Root value={progress} colorPalette='gray' size='sm' borderRadius='md'>
-                    <Progress.Track borderRadius='0'>
-                      <Progress.Range />
-                    </Progress.Track>
-                  </Progress.Root>
-                </Flex>
-                <Stack gap={3} direction='column' p={3} pt={2}>
-                  {checklist.map((checkbox) => {
-                    const type = checkbox.type || CheckboxTypes.route
-                    if (type === CheckboxTypes.modal) {
-                      return (
-                        <DashboardBookerModalButton
-                          key={checkbox.id}
-                          trigger={
-                            <Box w='full'>
-                              <Checkbox.Root colorPalette='gray' checked={checkbox.completed} size='sm' p={2}>
-                                <Checkbox.HiddenInput />
-                                <Checkbox.Control />
-                                <Checkbox.Label>
-                                  <HStack ml={1} gap={2} align='center'>
-                                    <Icon as={checkbox.icon} boxSize={4} />
-                                    <Text fontSize='sm'>{checkbox.label}</Text>
-                                  </HStack>
-                                </Checkbox.Label>
-                              </Checkbox.Root>
-                            </Box>
-                          }
-                        />
-                      )
-                    }
-                    return (
-                      <Checkbox.Root
-                        key={checkbox.id}
-                        colorPalette='gray'
-                        checked={checkbox.completed}
-                        size='sm'
-                        p={2}
-                        onClick={() => navigate(checkbox.to)}
-                      >
-                        <Checkbox.HiddenInput />
-                        <Checkbox.Control />
-                        <Checkbox.Label>
-                          <HStack ml={1} gap={2} align='center'>
-                            <Icon as={checkbox.icon} boxSize={4} />
-                            <Text fontSize='sm'>{checkbox.label}</Text>
-                          </HStack>
-                        </Checkbox.Label>
-                      </Checkbox.Root>
-                    )
-                  })}
-                </Stack>
-              </Accordion.ItemBody>
-            </Accordion.ItemContent>
-          </Accordion.Item>
-        </Accordion.Root>
-      </Box>
-    )
-  )
-}
-
 const OrganizationProcesses = () => {
   const { t } = useTranslation()
 
@@ -284,10 +158,12 @@ const OrganizationProcesses = () => {
 
 const Processes = () => {
   const { t } = useTranslation()
-  const { client, account } = useClient()
+  const { client } = useApiClient()
   const { organization } = useOrganization()
+  const { currentAddress } = useAuth()
+  const queryClient = useQueryClient()
 
-  const { queryKey, queryFn } = paginatedElectionsQuery(account, client, {})
+  const { queryKey, queryFn } = paginatedElectionsQuery(currentAddress, client, {}, queryClient)
 
   const {
     data: elections,
@@ -310,21 +186,9 @@ const Processes = () => {
     )
   }
 
-  if (isError) {
-    return (
-      <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
-        <ListStateAlert
-          show
-          status='error'
-          title={t('dashboard.welcome.error_loading_processes', {
-            defaultValue: 'Error loading voting processes',
-          })}
-          description={error instanceof Error ? error.message : undefined}
-        />
-      </Flex>
-    )
-  }
-
+  // Checked before the error state on purpose: with no organization this query never ran, and
+  // any error on its cache entry belongs to something else. Reporting it would replace the only
+  // way forward — the button that creates the missing organization.
   if (!organization) {
     return (
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
@@ -342,7 +206,22 @@ const Processes = () => {
     )
   }
 
-  if (!elections?.elections?.length) {
+  if (isError) {
+    return (
+      <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
+        <ListStateAlert
+          show
+          status='error'
+          title={t('dashboard.welcome.error_loading_processes', {
+            defaultValue: 'Error loading voting processes',
+          })}
+          description={error instanceof Error ? error.message : undefined}
+        />
+      </Flex>
+    )
+  }
+
+  if (!elections?.processes?.length) {
     return (
       <Flex flexGrow={1} flexDir='column' justify='center' align='center' gap={4}>
         <ListStateAlert
@@ -368,35 +247,11 @@ const Processes = () => {
 
   return (
     <Flex flexDir='column' gap={4} flex='1'>
-      {elections.elections.map((election) => {
-        if (!(election instanceof PublishedElection)) return null
-
-        return (
-          <ElectionProvider election={election} id={election.id} key={election.id}>
-            <Flex align='center'>
-              <Box flex='1' minW={0} mr={4}>
-                <Link asChild variant='unstyled' fontWeight='500' display='block'>
-                  <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-                    <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' truncate />
-                  </ReactRouterLink>
-                </Link>
-                <Text fontSize='sm' color='texts.subtle' truncate>
-                  {t('election.ends_on', {
-                    defaultValue: 'Ends on {{date}}',
-                    date: format(election.endDate, t('organization.date_format')),
-                  })}
-                </Text>
-              </Box>
-              <Flex align='center' gap={2} flexShrink={0}>
-                <ElectionStatusBadge />
-                <Text fontWeight='bold' fontSize={{ base: 'sm', md: 'md' }} whiteSpace='nowrap'>
-                  {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: election.voteCount })}
-                </Text>
-              </Flex>
-            </Flex>
-          </ElectionProvider>
-        )
-      })}
+      {elections.processes.map((election) => (
+        <ElectionProvider id={election.id} key={election.id}>
+          <RecentProcess />
+        </ElectionProvider>
+      ))}
       <Flex justify='flex-end' mt={4}>
         <Link
           asChild
@@ -419,6 +274,38 @@ const Processes = () => {
             <Icon as={LuArrowUpRight} boxSize={4} />
           </ReactRouterLink>
         </Link>
+      </Flex>
+    </Flex>
+  )
+}
+
+const RecentProcess = () => {
+  const { t } = useTranslation()
+  const { format } = useDateFns()
+  const { election, results } = useElection()
+
+  if (!election) return null
+
+  return (
+    <Flex align='center'>
+      <Box flex='1' minW={0} mr={4}>
+        <Link asChild _hover={{ textDecoration: 'underline' }} fontWeight='500' display='block'>
+          <ReactRouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
+            <ElectionTitle mb={0} fontSize='md' textAlign='left' fontWeight='500' truncate />
+          </ReactRouterLink>
+        </Link>
+        <Text fontSize='sm' color='texts.subtle' truncate>
+          {t('election.ends_on', {
+            defaultValue: 'Ends on {{date}}',
+            date: format(election.endDate, t('organization.date_format')),
+          })}
+        </Text>
+      </Box>
+      <Flex align='center' gap={2} flexShrink={0}>
+        <ElectionStatusBadge />
+        <Text fontWeight='bold' fontSize={{ base: 'sm', md: 'md' }} whiteSpace='nowrap'>
+          {t('election.total_votes', { defaultValue: '{{totalVotes}} votes', totalVotes: processVoteCount(results) })}
+        </Text>
       </Flex>
     </Flex>
   )

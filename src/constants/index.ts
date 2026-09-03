@@ -1,4 +1,4 @@
-import { dotobject } from '@vocdoni/sdk'
+import { dotobject } from '~utils/objects'
 import { FieldErrors, FieldValues } from 'react-hook-form'
 
 export const TwoFACodePrice = {
@@ -76,6 +76,15 @@ export const getPlanKey = (plan: { name?: string } | null | undefined): PlanName
 
 export const LocalStorageKeys = {
   DashboardMenuReduced: 'dashboard.menu.reduced',
+} as const
+
+export const SessionStorageKeys = {
+  // Suppressed per browser session, so a returning user sees the "Do you need
+  // help?" nudge again on their next visit rather than never again.
+  SupportChatTeaserDismissed: 'support.chat.teaser.dismissed',
+  // The auth vertical (`?type=`) for the visit, so the branding survives navigations that drop
+  // the query string — see `~components/Auth/vertical/useAuthVertical`.
+  AuthVertical: 'auth.vertical',
 } as const
 
 /**

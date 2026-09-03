@@ -10,6 +10,12 @@ vi.mock('~src/queries/integrators', () => ({
   useCreateApiKey: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
 }))
 
+// The panel gates its write controls on the active org address.
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: vi.fn(() => ({ currentAddress: '0x123' })),
+}))
+
+import { useAuth } from '~components/Auth/useAuth'
 import { useApiKeys } from '~src/queries/integrators'
 import ApiKeysPanel from './ApiKeysPanel'
 
@@ -28,7 +34,10 @@ const mockKeys = (overrides = {}) =>
   vi.mocked(useApiKeys).mockReturnValue({ data: undefined, isLoading: false, error: null, ...overrides } as any)
 
 describe('ApiKeysPanel', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.mocked(useAuth).mockReturnValue({ currentAddress: '0x123' } as never)
+  })
 
   it('lists API keys with prefix, scopes and status', () => {
     mockKeys({ data: [key()] })
@@ -113,6 +122,17 @@ describe('ApiKeysPanel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Revoke' }))
 
     await waitFor(() => expect(revokeMutateAsync).toHaveBeenCalledWith({ id: 'k1' }))
+  })
+
+  it('disables revoking until an organization address is resolved', () => {
+    // Firing the mutation without one only produces an opaque error, so the
+    // action is unavailable rather than failing.
+    vi.mocked(useAuth).mockReturnValue({ currentAddress: undefined } as never)
+    mockKeys({ data: [key()] })
+
+    render(<ApiKeysPanel />)
+
+    expect(screen.getByLabelText('Revoke key')).toBeDisabled()
   })
 
   it('does not revoke when the confirmation is cancelled', async () => {

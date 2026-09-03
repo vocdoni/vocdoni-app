@@ -1,7 +1,6 @@
 import { Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react'
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { useClient } from '@vocdoni/react-components'
-import { Account } from '@vocdoni/sdk'
+import { organizationQueryKeys } from '@vocdoni/react-components'
 import { useState } from 'react'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -13,26 +12,34 @@ import { HSeparator } from '~components/Layout/Separators'
 import { AvatarUploader } from '~components/Layout/Uploader'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { useToast } from '~components/Toast'
-import { QueryKeys } from '~src/queries/keys'
-import { SetupStepIds, useOrganizationSetup } from '~src/queries/organization'
 import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
 
-type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country'>
+// The form field is named `avatar` (shared AvatarUploader + read-side adapter shape),
+// but it maps to the API `logo` field on submit, so it is omitted from the derived body
+// type and re-added here as the form-only field.
+type FormData = PrivateOrgFormData & Omit<CreateOrgParams, 'size' | 'type' | 'country' | 'logo'> & { avatar: string }
 
 const useOrganizationEdit = (options?: Omit<UseMutationOptions<void, Error, CreateOrgParams>, 'mutationFn'>) => {
-  const { bearedFetch } = useAuth()
-  const { account } = useClient()
+  const { bearedFetch, currentAddress } = useAuth()
   const client = useQueryClient()
   return useMutation<void, Error, CreateOrgParams>({
-    mutationFn: (params: CreateOrgParams) =>
-      bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', account?.address), {
+    mutationFn: (params: CreateOrgParams) => {
+      if (!currentAddress) {
+        return Promise.reject(new Error('No organization address selected'))
+      }
+      return bearedFetch<void>(ApiEndpoints.Organization.replace('{address}', currentAddress), {
         body: params,
         method: 'PUT',
-      }),
+      })
+    },
     ...options,
     onSuccess: () => {
+      // Invalidating the shared organization entry refreshes both readers at once: this
+      // used to invalidate an app-only key, leaving the react-providers OrganizationProvider
+      // (which feeds the dashboard header and org display components) showing stale data
+      // until something else remounted it.
       client.invalidateQueries({
-        queryKey: QueryKeys.organization.info(),
+        queryKey: organizationQueryKeys.organization(currentAddress),
       })
     },
   })
@@ -42,9 +49,7 @@ const EditOrganization = () => {
   const toast = useToast()
   const { t } = useTranslation()
   const [isPending, setPending] = useState(false)
-  const { updateAccount } = useClient()
   const { organization } = useSaasAccount()
-  const { setStepDoneAsync } = useOrganizationSetup()
   const { mutateAsync } = useOrganizationEdit()
 
   const methods = useForm<FormData>({
@@ -64,7 +69,14 @@ const EditOrganization = () => {
 
   const onSubmit: SubmitHandler<FormData> = async (values: FormData) => {
     setPending(true)
+    // Profile metadata (name/description/avatar) is now persisted through the SaaS
+    // organization endpoint; the backend provisions the on-chain account server-side,
+    // so there is no client-side on-chain account update anymore.
     const newInfo: CreateOrgParams = {
+      name: values.name,
+      description: values.description,
+      logo: values.avatar,
+      header: values.header,
       website: values.website,
       size: values.size,
       type: values.type,
@@ -72,13 +84,7 @@ const EditOrganization = () => {
     }
 
     try {
-      await mutateAsync({ ...organization, ...newInfo })
-      const newAccount = new Account({ ...organization?.account, ...values })
-      // Check if account changed before trying to update
-      if (JSON.stringify(newAccount.generateMetadata()) !== JSON.stringify(organization?.account.generateMetadata())) {
-        await updateAccount(newAccount)
-      }
-      await setStepDoneAsync(SetupStepIds.organizationDetails)
+      await mutateAsync(newInfo)
       toast({
         title: t('edit_saas_profile.edited_successfully', { defaultValue: 'Updated successfully' }),
         type: 'success',

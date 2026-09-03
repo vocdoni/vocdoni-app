@@ -37,8 +37,11 @@ import {
   ElectionTitle,
   useElection,
 } from '@vocdoni/react-components'
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
-import { format as formatDate } from 'date-fns'
+import { hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
+import { inferQuestionBallotType } from '@vocdoni/ballot'
+import { useDateFns } from '~i18n/use-date-fns'
+import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { forwardRef, ReactNode, useEffect, useRef } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import {
@@ -60,7 +63,7 @@ import {
   LuX,
 } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
-import { generatePath, matchPath, useLocation, useNavigate } from 'react-router-dom'
+import { generatePath, matchPath, useLocation, useNavigate } from 'react-router'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
 import {
   DashboardBox,
@@ -76,6 +79,7 @@ import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
@@ -98,7 +102,7 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
 
   if (!election) return null
 
-  const streamUri = election instanceof PublishedElection ? election.streamUri : undefined
+  const { streamUri } = election
 
   if (!streamUri) return null
 
@@ -119,13 +123,16 @@ export const ProcessView = () => (
 
 const ProcessViewContent = () => {
   const { t } = useTranslation()
+  const { format: formatDate } = useDateFns()
   const { showSidebar, toggleSidebar } = useSidebarVisibility()
-  const { id, election } = useElection()
+  const { election, results, status } = useElection()
+  const { size: censusSize } = useCensusSize()
+  const id = election?.id ?? ''
   const location = useLocation()
   const navigate = useNavigate()
   const tabValue = getProcessViewTabFromPath(location.pathname)
-  const showResultsTab = election instanceof PublishedElection && election.status !== ElectionStatus.CANCELED
-  const shouldOpenResultsByDefault = election instanceof PublishedElection && election.status === ElectionStatus.RESULTS
+  const showResultsTab = !!election && status !== 'CANCELED'
+  const shouldOpenResultsByDefault = !!election && hasResults(election)
   const hasResolvedInitialTabRef = useRef(false)
   const resolvedInitialTabElectionIdRef = useRef<string | null>(null)
 
@@ -155,6 +162,25 @@ const ProcessViewContent = () => {
       navigate(getProcessViewPathForTab(id, 'questions'), { replace: true })
     }
   }, [tabValue, showResultsTab, navigate, id])
+
+  // Election-level participation BI, captured admin-side only (voters are never tracked)
+  const trackedResultsElectionRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (tabValue !== 'results' || !showResultsTab || trackedResultsElectionRef.current === id) return
+    if (!election?.published) return
+    trackedResultsElectionRef.current = id
+    const voteCount = processVoteCount(results)
+    trackAnalyticsEvent({
+      name: AnalyticsEvents.ProcessResultsViewed,
+      props: {
+        election_id: id,
+        status: status ?? 'unknown',
+        vote_count: voteCount,
+        census_size: censusSize,
+        turnout_pct: censusSize ? Math.round((voteCount / censusSize) * 100) : 0,
+      },
+    })
+  }, [tabValue, showResultsTab, id, election, results, status, censusSize])
 
   return (
     <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
@@ -206,33 +232,25 @@ const ProcessViewContent = () => {
                 icon={LuCalendar}
                 text={t('start_date', 'Start date')}
                 subtext={
-                  election instanceof PublishedElection &&
-                  formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
+                  election && formatDate(election.startDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
                 }
               />
               <SettingsField
                 icon={LuClock}
                 text={t('start_time', 'Start time')}
-                subtext={
-                  election instanceof PublishedElection &&
-                  formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))
-                }
+                subtext={election && formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))}
               />
               <SettingsField
                 icon={LuCalendar}
                 text={t('end_date', 'End date')}
                 subtext={
-                  election instanceof PublishedElection &&
-                  formatDate(election.endDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
+                  election && formatDate(election.endDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
                 }
               />
               <SettingsField
                 icon={LuClock}
                 text={t('end_time', 'End time')}
-                subtext={
-                  election instanceof PublishedElection &&
-                  formatDate(election.endDate, t('dashboard.process_view.time_format', 'p'))
-                }
+                subtext={election && formatDate(election.endDate, t('dashboard.process_view.time_format', 'p'))}
               />
             </SimpleGrid>
           </DashboardBox>
@@ -315,16 +333,16 @@ const ResultsStateBadge = (props: BadgeProps) => {
   const { election } = useElection()
   const { t } = useTranslation()
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!election) return null
 
-  if ([ElectionStatus.ONGOING, ElectionStatus.RESULTS].includes(election.status)) {
+  if (isLive(election) || hasResults(election)) {
     let color = 'blue'
     let text = t('results_state.live_results', 'Live results')
     let tooltip = t(
       'results_state.live_results_tooltip',
       'This voting process shows live results. However, it is still in progress, so the results may change before the vote ends.'
     )
-    if (election.status === ElectionStatus.ONGOING && election.electionType.secretUntilTheEnd) {
+    if (isLive(election) && isSecretUntilTheEnd(election)) {
       color = 'orange'
       text = t('results_state.secret_until_end', 'Awaiting results')
       tooltip = t(
@@ -332,7 +350,7 @@ const ResultsStateBadge = (props: BadgeProps) => {
         'Results are hidden and will only be available once voting ends'
       )
     }
-    if (election.status === ElectionStatus.RESULTS) {
+    if (hasResults(election)) {
       color = 'green'
       text = t('results_state.results_available', 'Results available')
       tooltip = null
@@ -360,19 +378,21 @@ const ResultsStateBadge = (props: BadgeProps) => {
 }
 
 const ProcessViewSidebar = () => {
-  const { election, client } = useElection()
+  const { election, results, status } = useElection()
   const { t } = useTranslation()
+  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   // The hook's `participation`/census size fall back to `maxCensusSize` for CSP elections, which is the
   // allowed-voters cap rather than the real census size. Recompute both from the actual census size.
   const { size: censusSize } = useCensusSize()
-  const voteCount = (election instanceof PublishedElection && election.voteCount) || 0
+  const voteCount = processVoteCount(results)
   const participation = censusSize > 0 ? Math.round((voteCount / censusSize) * 1e4) / 100 : 0
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { showSidebar, closeSidebar } = useSidebarVisibility()
-  const resultTypeLabel = useResultTypeLabel(
-    election instanceof PublishedElection ? election.resultsType?.name : undefined,
-    ''
-  )
+  const firstQuestion = election?.questions[0]
+  const resultTypeLabel = useResultTypeLabel(firstQuestion ? inferQuestionBallotType(firstQuestion) : undefined, '')
+  // The explorer only knows on-chain (Vochain) ids; each question is its own on-chain election
+  const explorerProcessId = firstQuestion?.upstreamId
 
   return (
     <Sidebar show={showSidebar}>
@@ -400,7 +420,7 @@ const ProcessViewSidebar = () => {
             <Trans i18nKey='control_panel'>Control panel</Trans>
           </SidebarSubtitle>
           <ActionsProvider>
-            {election instanceof PublishedElection && election.status === ElectionStatus.ONGOING && (
+            {election && isLive(election) && (
               <ActionPause variant='outline' aria-label={t('process_actions.pause', { defaultValue: 'Pause' })}>
                 <ControlIcon as={LuPause} color='orange.400' />
                 <Text as='span' flex={1} textAlign='left' fontSize='sm'>
@@ -408,7 +428,7 @@ const ProcessViewSidebar = () => {
                 </Text>
               </ActionPause>
             )}
-            {election instanceof PublishedElection && election.status === ElectionStatus.PAUSED && (
+            {election && status === 'PAUSED' && (
               <ActionContinue
                 variant='outline'
                 aria-label={t('process_actions.continue', { defaultValue: 'Continue' })}
@@ -478,26 +498,28 @@ const ProcessViewSidebar = () => {
           <SettingsField
             icon={LuVote}
             text={t('results_type.title', 'Results type')}
-            subtext={election instanceof PublishedElection && resultTypeLabel}
+            subtext={resultTypeLabel || undefined}
           />
           <SettingsField
             icon={LuEye}
             text={t('result_visibility', 'Results visibility')}
             subtext={
-              election instanceof PublishedElection &&
-              (election.electionType.secretUntilTheEnd
-                ? t('results_state.hidden_until_end', 'Hidden until the end')
-                : t('results_state.live_results', 'Live results'))
+              election
+                ? isSecretUntilTheEnd(election)
+                  ? t('results_state.hidden_until_end', 'Hidden until the end')
+                  : t('results_state.live_results', 'Live results')
+                : undefined
             }
           />
           <SettingsField
             icon={LuRotateCw}
             text={t('vote_overwrite', 'Vote overwrite')}
             subtext={
-              election instanceof PublishedElection &&
-              (election.voteType.maxVoteOverwrites
-                ? t('results_state.enabled', 'Enabled')
-                : t('results_state.not_enabled', 'Not enabled'))
+              election
+                ? firstQuestion?.ballotProtocol?.maxVoteOverwrites
+                  ? t('results_state.enabled', 'Enabled')
+                  : t('results_state.not_enabled', 'Not enabled')
+                : undefined
             }
           />
 
@@ -505,17 +527,19 @@ const ProcessViewSidebar = () => {
           <SidebarSubtitle>
             <Trans i18nKey='additional_actions'>Additional actions</Trans>
           </SidebarSubtitle>
-          <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
-            <Link href={`${client.explorerUrl}/process/${election.id}`} target='_blank' rel='noopener noreferrer'>
-              <HStack gap={2}>
-                <Icon as={LuSearch} />
-                <Text as='span'>
-                  <Trans i18nKey='view_in_explorer'>View in explorer</Trans>
-                </Text>
-              </HStack>
-            </Link>
-          </Button>
-          <VotingReportPdfButton election={election instanceof PublishedElection ? election : null} />
+          {explorerProcessId && (
+            <Button asChild variant='outline' colorPalette='gray' w='full' size='sm' justifyContent='start'>
+              <Link href={`${explorerUrl}/process/${explorerProcessId}`} target='_blank' rel='noopener noreferrer'>
+                <HStack gap={2}>
+                  <Icon as={LuSearch} />
+                  <Text as='span'>
+                    <Trans i18nKey='view_in_explorer'>View in explorer</Trans>
+                  </Text>
+                </HStack>
+              </Link>
+            </Button>
+          )}
+          <VotingReportPdfButton election={election} />
         </VStack>
       </SidebarContents>
     </Sidebar>

@@ -9,7 +9,9 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react'
-import { enforceHexPrefix, useClient, useOrganization } from '@vocdoni/react-components'
+import { useOrganization } from '@vocdoni/react-components'
+import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useTranslation } from 'react-i18next'
 import { HiOutlineEllipsisHorizontalCircle } from 'react-icons/hi2'
 import { RiExternalLinkLine, RiFileCopyLine } from 'react-icons/ri'
@@ -19,11 +21,12 @@ import { addressTextOverflow } from '~constants'
 const AddressBtn = ({ ...props }) => {
   const { t } = useTranslation()
   const { organization } = useOrganization()
-  const { client } = useClient()
+  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const toast = useToast()
   const { copy } = useClipboard({ value: organization?.address ?? '' })
 
-  const address = enforceHexPrefix(organization?.address)
+  const address = organization?.address
 
   return (
     <MenuRoot {...props}>
@@ -57,7 +60,7 @@ const AddressBtn = ({ ...props }) => {
 
           <MenuItem value='open-explorer' asChild>
             <Button
-              onClick={() => window.open(`${client.explorerUrl}/organization/${address}`, '_blank')}
+              onClick={() => window.open(`${explorerUrl}/organization/${address}`, '_blank')}
               display='flex'
               justifyContent='start'
               alignItems='center'

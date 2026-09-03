@@ -1,14 +1,16 @@
 import { Flex, IconButton, useBreakpointValue, useDisclosure } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
-import { OrganizationProvider, useClient } from '@vocdoni/react-components'
+import { OrganizationProvider } from '@vocdoni/react-components'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuPanelLeft } from 'react-icons/lu'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router'
+import { useAuth } from '~components/Auth/useAuth'
 import DashboardMenu from '~components/Dashboard/Menu'
 import { DashboardMenuConfig } from '~components/Dashboard/Menu/menus'
 import AnnouncementBanner from '~components/Layout/AnnouncementBanner'
 import { PricingModalProvider } from '~components/Pricing/PricingModalProvider'
+import SupportChat from '~components/SupportChat'
 import { LocalStorageKeys } from '~constants'
 import { DashboardLayoutContext, DashboardOutletContext } from '~elements/DashboardLayoutContext'
 
@@ -71,6 +73,7 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
             </Flex>
             <Outlet context={{ reduced: reducedValue } satisfies DashboardOutletContext} />
           </Flex>
+          <SupportChat />
         </Flex>
       </DashboardLayoutProviders>
     </DashboardLayoutContext.Provider>
@@ -78,9 +81,16 @@ const DashboardShell: React.FC<{ menu: DashboardMenuConfig }> = ({ menu }) => {
 }
 
 const DashboardLayoutProviders = (props: PropsWithChildren) => {
-  const { account } = useClient()
+  const { currentAddress } = useAuth()
   return (
-    <OrganizationProvider organization={account}>
+    // Only the id: useSaasAccount()'s organization is the app's `.account`-nested adapter
+    // shape, not a v2 Organization, so it must not seed the provider cache.
+    //
+    // The id is the session address rather than useSaasAccount()'s (which prefers the
+    // API-reported one): both this provider and useSaasOrganization key their query by
+    // address, so feeding them the same value is what keeps them on a single cache entry
+    // even when the API echoes the address back in a different case.
+    <OrganizationProvider id={currentAddress}>
       <PricingModalProvider {...props} />
     </OrganizationProvider>
   )

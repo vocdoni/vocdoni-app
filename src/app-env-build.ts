@@ -19,6 +19,8 @@ export type AppEnv = {
   VIDEO_TUTORIAL?: Record<string, string>
   GTM_CONTAINER_ID?: string
   PLAUSIBLE_DOMAIN?: string
+  POSTHOG_KEY?: string
+  POSTHOG_HOST?: string
   VOCDONI_CONTACT_EMAIL?: string
   ANNOUNCEMENT?: string
   APP_URL?: string
@@ -172,6 +174,8 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     VIDEO_TUTORIAL: resolveVideoTutorials(env.VIDEO_TUTORIAL),
     GTM_CONTAINER_ID: env.GTM_CONTAINER_ID,
     PLAUSIBLE_DOMAIN: env.PLAUSIBLE_DOMAIN,
+    POSTHOG_KEY: env.POSTHOG_KEY,
+    POSTHOG_HOST: trimTrailingSlash(env.POSTHOG_HOST || 'https://eu.i.posthog.com'),
     VOCDONI_CONTACT_EMAIL: env.VOCDONI_CONTACT_EMAIL || 'hello@vocdoni.io',
     ANNOUNCEMENT: env.ANNOUNCEMENT,
     PRIVACY_POLICY_URL: trimTrailingSlash(env.PRIVACY_POLICY_URL || 'https://vocdoni.io/privacy'),

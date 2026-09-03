@@ -16,31 +16,24 @@ import {
   TabsRoot,
   TabsTrigger,
   Text,
-  TooltipContent,
-  TooltipPositioner,
-  TooltipRoot,
-  TooltipTrigger,
   VStack,
 } from '@chakra-ui/react'
-import {
-  ElectionQuestions,
-  ElectionResults,
-  environment,
-  useClient,
-  useElection,
-  useOrganization,
-} from '@vocdoni/react-components'
-import { ElectionStatus, PublishedElection } from '@vocdoni/sdk'
+import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
+import { hasResults } from '@vocdoni/api-client'
+import { inferQuestionBallotType } from '@vocdoni/ballot'
+import { useAppEnv } from '~src/app-env'
+import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiErrorWarningLine } from 'react-icons/ri'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { getPublicProcessSummaryPath } from '~src/ssr/public-pages'
+import { useAuth } from '~components/Auth/useAuth'
+import { sameAddress } from '~utils/address'
 import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
-import { useCspSessionGuard } from './CSP/use-csp-session-guard'
 import { CreatedBy } from './CreatedBy'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
@@ -71,15 +64,16 @@ export const ProcessInfoCard = ({ label, description, ...props }: ProcessInfoCar
 
 const VotingMethod = () => {
   const { t } = useTranslation()
-  const { election, isWeighted } = useElection()
-
-  if (!election) return null
-  if (!(election instanceof PublishedElection)) return null
-
-  const votingMethod = useVotingMethodLabel(election.resultsType?.name, {
+  const { election } = useElection()
+  const isWeighted = election?.census?.weighted ?? false
+  const firstQuestion = election?.questions[0]
+  const ballotType = firstQuestion ? inferQuestionBallotType(firstQuestion) : undefined
+  const votingMethod = useVotingMethodLabel(ballotType, {
     weighted: isWeighted,
     defaultValue: t('process.voting_method.unknown', { defaultValue: 'Unknown' }),
   })
+
+  if (!election) return null
 
   return <>{votingMethod}</>
 }
@@ -87,17 +81,14 @@ const VotingMethod = () => {
 const ProcessInfoPanel = () => {
   const { t } = useTranslation()
   const language = usePublicLanguage()
-  const { election } = useElection()
-  const { organization, loaded } = useOrganization()
-  const { account } = useClient()
-  // For CSP elections the actual census size comes from the bundle, not from `maxCensusSize`
-  // (which only caps how many voters may vote). See useCensusSize.
+  const { election, status } = useElection()
+  const { organization, loading } = useOrganization()
+  const { currentAddress } = useAuth()
   const { size: censusSize } = useCensusSize()
 
-  if (!(election instanceof PublishedElection)) return null
+  if (!election) return null
 
-  const showOrgInformation = !loaded || (loaded && organization?.account?.name)
-  const showTotalCensusSize = censusSize > 0 && !!election?.maxCensusSize && election.maxCensusSize < censusSize
+  const showOrgInformation = loading || !!organization?.name?.default
 
   return (
     <Flex
@@ -111,7 +102,7 @@ const ProcessInfoPanel = () => {
       h='fit-content'
     >
       <Box flexDir='row' display='flex' justifyContent='space-between' w={{ xl: 'full' }}>
-        {election?.status !== ElectionStatus.CANCELED ? (
+        {status !== 'CANCELED' ? (
           <ProcessDate />
         ) : (
           <Text color='process.canceled' fontWeight='bold'>
@@ -120,40 +111,14 @@ const ProcessInfoPanel = () => {
         )}
         <ManageProcessLink />
       </Box>
-      {election?.electionType.anonymous && (
-        <ProcessInfoCard label={t('process.is_anonymous.title')} description={t('process.is_anonymous.description')} />
-      )}
+      {/* The v2 process model carries no anonymous/electionType flag, so the
+          "anonymous process" info card is gone with the legacy model. */}
       <ProcessInfoCard
         label={t('process.census')}
         description={
-          showTotalCensusSize ? (
-            <TooltipRoot positioning={{ placement: 'top' }}>
-              <TooltipTrigger asChild>
-                <Text>
-                  {t('process.total_census_size', {
-                    censusSize,
-                    maxCensusSize: election?.maxCensusSize,
-                  })}
-                </Text>
-              </TooltipTrigger>
-              <TooltipPositioner>
-                <TooltipContent>
-                  {t('process.total_census_size_tooltip', {
-                    censusSize,
-                    maxCensusSize: election?.maxCensusSize,
-                    percent:
-                      censusSize && election?.maxCensusSize
-                        ? Math.round((election?.maxCensusSize / censusSize) * 100)
-                        : 0,
-                  })}
-                </TooltipContent>
-              </TooltipPositioner>
-            </TooltipRoot>
-          ) : (
-            <Text color='texts.subtle' fontSize='sm'>
-              {t('process.people_in_census', { count: censusSize })}
-            </Text>
-          )
+          <Text color='texts.subtle' fontSize='sm'>
+            {t('process.people_in_census', { count: censusSize })}
+          </Text>
         }
       />
       <ProcessInfoCard
@@ -165,7 +130,7 @@ const ProcessInfoPanel = () => {
         }
       />
       {showOrgInformation && <ProcessInfoCard label={t('process.created_by')} description={<CreatedBy />} />}
-      {election?.status === ElectionStatus.PAUSED && election?.organizationId !== account?.address && (
+      {status === 'PAUSED' && !sameAddress(election?.orgAddress, currentAddress) && (
         <Flex
           color='process.paused'
           _dark={{ color: 'white' }}
@@ -193,9 +158,9 @@ const ProcessInfoPanel = () => {
 
 export const ProcessView = () => {
   const { t } = useTranslation()
-  const { election, voted, isAbleToVote } = useElection()
-  // Close ineligible CSP sessions so the UI offers "Identify" instead of "Logout".
-  useCspSessionGuard()
+  const { election, hasVoted, status } = useElection()
+  // No CSP session guard needed in v2: process auth tokens live in memory, scoped
+  // to their ElectionProvider, so a stale session from another election can't leak in.
   const videoRef = useRef<HTMLDivElement>(null)
   const electionRef = useRef<HTMLDivElement>(null)
   const [tabValue, setTabValue] = useState<'questions' | 'results'>('questions')
@@ -205,7 +170,7 @@ export const ProcessView = () => {
 
   // If the election is finished, show the results tab
   useEffect(() => {
-    if (election instanceof PublishedElection && election?.status === ElectionStatus.RESULTS) {
+    if (election && hasResults(election)) {
       setTabValue('results')
     }
   }, [election])
@@ -241,10 +206,10 @@ export const ProcessView = () => {
 
   // If the user has voted, move the focus to the top of the election
   useEffect(() => {
-    if (voted) {
+    if (hasVoted) {
       electionRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }, [voted])
+  }, [hasVoted])
 
   return (
     <Grid
@@ -271,9 +236,7 @@ export const ProcessView = () => {
           >
             <TabsList w='full'>
               <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
-              {election instanceof PublishedElection && election?.status !== ElectionStatus.CANCELED && (
-                <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>
-              )}
+              {election && status !== 'CANCELED' && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
             </TabsList>
             <TabsContentGroup mt={6}>
               <TabsContent value='questions' p={0}>
@@ -285,6 +248,9 @@ export const ProcessView = () => {
                   borderColor='table.border'
                   borderRadius='md'
                   scrollMarginTop='70px'
+                  // Ballot content must never appear in analytics/session replays,
+                  // even when an org admin previews the process from the dashboard
+                  className='ph-no-capture'
                 >
                   <ElectionQuestions
                     onInvalid={(args) => {
@@ -296,7 +262,7 @@ export const ProcessView = () => {
                   <VoteButton setQuestionsTab={setQuestionsTab} />
                 </Box>
               </TabsContent>
-              {election instanceof PublishedElection && election?.status !== ElectionStatus.CANCELED && (
+              {election && status !== 'CANCELED' && (
                 <TabsContent value='results' p={0}>
                   <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
                     <ElectionResults />
@@ -320,33 +286,31 @@ export const ProcessView = () => {
 const SuccessVoteModal = () => {
   const { t } = useTranslation()
   const [isOpen, setOpen] = useState(false)
-  const { votesLeft, election, voted } = useElection()
-  const { env } = useClient()
-
-  const [vLeft, setVLeft] = useState<number>(0)
+  const { election, hasVoted, voteId } = useElection()
+  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
+  const prevHasVotedRef = useRef(false)
 
   useEffect(() => {
-    if (!vLeft && votesLeft >= 0) {
-      setVLeft(votesLeft)
-    }
-
-    if (vLeft && votesLeft < vLeft) {
-      setVLeft(votesLeft)
+    if (hasVoted && !prevHasVotedRef.current) {
       setOpen(true)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [votesLeft, vLeft])
+    prevHasVotedRef.current = hasVoted
+  }, [hasVoted])
 
-  if (!election || !voted || !(election instanceof PublishedElection)) return null
+  if (!election || !hasVoted) return null
 
-  const verify = environment.verifyVote(env, voted)
+  const verify = voteId ? `${explorerUrl}/verify/${voteId}` : explorerUrl
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={({ open }) => setOpen(open)}>
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          {/* Contains the vote verification link (vote id) — never capture it */}
+          {/* data-testid: this modal is the confirmation the e2e voting flow
+              asserts on, and its only other handle is a translated title. */}
+          <Dialog.Content className='ph-no-capture' data-testid='vote-success-modal'>
             <Dialog.CloseTrigger />
             <Dialog.Header display='flex' flexDirection='column'>
               <Dialog.Title>{t('process.success_modal.title')}</Dialog.Title>
@@ -374,23 +338,88 @@ const SuccessVoteModal = () => {
   )
 }
 
-const VotingVoteModal = () => {
+/**
+ * Overlay covering the whole vote submission. Every question of the process is
+ * its own on-chain election, so a multi-question vote confirms one question at a
+ * time even though the envelopes are relayed as a single batch — show that
+ * progress rather than an opaque spinner.
+ *
+ * It also owns the failure state: the vote is submitted by the SDK's question
+ * form, so a failure would otherwise surface nowhere at all. The batch is
+ * accepted or rejected as a unit, so a rejected relay means nothing was cast and
+ * the voter can simply vote again; only a chain-level failure can leave some
+ * questions cast, and voting again then sends just the remaining ones.
+ */
+export const VotingVoteModal = () => {
   const { t } = useTranslation()
-  const {
-    loading: { voting },
-  } = useElection()
+  const { election, voting, voteStatus } = useElection()
+  const [dismissedFailure, setDismissedFailure] = useState(false)
+
+  const statuses = Object.values(voteStatus)
+  const total = election?.questions.length ?? 0
+  const confirmed = statuses.filter((questionStatus) => questionStatus === 'confirmed').length
+  const failed = statuses.some((questionStatus) => questionStatus === 'failed')
+  const showFailure = !voting && failed && !dismissedFailure
+
+  // A new attempt clears the previous failure.
+  useEffect(() => {
+    if (voting) setDismissedFailure(false)
+  }, [voting])
 
   return (
-    <Dialog.Root open={voting} onOpenChange={() => {}} closeOnEscape={false} closeOnInteractOutside={false}>
+    <Dialog.Root
+      open={voting || showFailure}
+      onOpenChange={({ open }) => {
+        if (!open) setDismissedFailure(true)
+      }}
+      closeOnEscape={showFailure}
+      closeOnInteractOutside={showFailure}
+    >
       <Dialog.Backdrop />
       <Dialog.Positioner>
         <Dialog.Content>
           <Dialog.Body>
-            <VStack>
-              <Spinner color='process.spinner' mb={5} w={10} h={10} />
-            </VStack>
-            <Text textAlign='center'>{t('process.voting')}</Text>
+            {showFailure ? (
+              <>
+                <Text textAlign='center' fontWeight='bold' mb={2}>
+                  {t('process.vote_failed.title', { defaultValue: 'Your vote could not be cast' })}
+                </Text>
+                <Text textAlign='center'>
+                  {confirmed > 0
+                    ? t('process.vote_failed.partial', {
+                        defaultValue: 'Some answers were not registered. Vote again to send the remaining ones.',
+                      })
+                    : t('process.vote_failed.none', {
+                        defaultValue: 'No answer was registered. Please try again.',
+                      })}
+                </Text>
+              </>
+            ) : (
+              <>
+                <VStack>
+                  <Spinner color='process.spinner' mb={5} w={10} h={10} />
+                </VStack>
+                <Text textAlign='center'>{t('process.voting')}</Text>
+                {/* A single-question process would only ever read "0 of 1". */}
+                {total > 1 && (
+                  <Text textAlign='center' fontSize='sm' color='texts.subtle' mt={2}>
+                    {t('process.voting_progress', {
+                      defaultValue: '{{confirmed}} of {{total}} questions confirmed',
+                      confirmed,
+                      total,
+                    })}
+                  </Text>
+                )}
+              </>
+            )}
           </Dialog.Body>
+          {showFailure && (
+            <Dialog.Footer>
+              <Button onClick={() => setDismissedFailure(true)}>
+                {t('process.vote_failed.close', { defaultValue: 'Close' })}
+              </Button>
+            </Dialog.Footer>
+          )}
         </Dialog.Content>
       </Dialog.Positioner>
     </Dialog.Root>
