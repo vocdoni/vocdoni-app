@@ -15,3 +15,8 @@ overrides:
   # dropped it in 2.24.0), so the jump is safe. Drop this once the
   # wagmi/rainbowkit stack pulls @walletconnect/* >= 2.24.
   'decode-uri-component@<0.5.0': ^0.5.0
+  # @coinbase/cdp-sdk 1.55.0 pins axios 1.16.0 exact, below the 1.18.0 fix for
+  # GHSA-gcfj-64vw-6mp9 (high, inherited-proxy leak via interceptor config
+  # cloning) plus several moderate prototype-pollution/DoS advisories. Drop this
+  # once @coinbase/cdp-sdk pins axios >= 1.18.0.
+  axios: ^1.18.0
