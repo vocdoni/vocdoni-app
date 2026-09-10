@@ -136,5 +136,10 @@
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^5.0.0"
   },
-  "packageManager": "pnpm@10.16.1"
+  "packageManager": "pnpm@10.16.1",
+  "pnpm": {
+    "overrides": {
+      "axios": "^1.18.0"
+    }
+  }
 }
