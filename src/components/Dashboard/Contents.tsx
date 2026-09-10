@@ -83,9 +83,15 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
     top={0}
     bottom={0}
     zIndex={10}
-    transition='transform 0.2s ease, opacity 0.2s ease'
+    transition='transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease'
     transform={show ? 'translateX(0)' : 'translateX(100%)'}
     opacity={show ? 1 : 0}
+    // Closed, `opacity: 0` alone would leave the panel focusable and announced.
+    // `visibility` (transitioned, so it still slides out) fixes that everywhere
+    // except react-select, which forces `visibility: visible` back on its own
+    // input wrapper — hence `inert` too, which nothing inside can override.
+    visibility={show ? 'visible' : 'hidden'}
+    inert={!show}
     pointerEvents={show ? 'auto' : 'none'}
   >
     <Box

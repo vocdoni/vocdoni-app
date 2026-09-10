@@ -52,6 +52,15 @@ pnpm test:e2e -- --headed                # watch it happen
 pnpm test:e2e:ui                         # Playwright's UI mode
 ```
 
+Every spec runs twice, once per project in `playwright.config.ts`: `chromium`
+and `mobile-chrome` (the `Pixel 7` preset — 412x839, `isMobile`, `hasTouch`, on
+chromium). Both are part of the same `pnpm test:e2e`; add
+`--project=mobile-chrome` to iterate on one.
+
+Below `md` the create wizard's Settings panel is a drawer that starts closed
+and, open, covers the Publish button — `flows.ts` opens and closes it around
+that block, and no-ops at `md` and up.
+
 Playwright starts the app itself (`pnpm serve:ssr` on `:3000`) via its
 `webServer` config, so a build must exist first. `SAAS_URL` is read by the SSR
 server at boot — the same build works against any backend, with no rebuild.
@@ -116,7 +125,10 @@ a break anywhere along that chain fails here.
 - **Prefer structural selectors over copy.** Form inputs carry `name`
   attributes (react-hook-form), Chakra tabs carry `data-value`, choice radios
   carry their ballot `value`, and a form's primary action is
-  `button[type="submit"]`. Reach for `data-testid` only where none of those
+  `button[type="submit"]`.
+- **Do not read a closed panel's state from a field inside it.** react-select
+  forces `visibility: visible` on its own input, so its comboboxes report as
+  visible even inside a hidden sidebar. Assert on the panel. Reach for `data-testid` only where none of those
   exist — each one in `src/` is commented with why.
 - **Always pass `since:` to `waitForEmail`.** Without it a re-run can settle for
   a stale code still sitting in the inbox.
@@ -142,8 +154,8 @@ a break anywhere along that chain fails here.
 
 ## CI
 
-`.github/workflows/integration.yml` runs this on pushes to `develop` and on
-pull requests targeting `stage` or `main` — the merge into the integration
+`.github/workflows/integration.yml` runs this — both projects — on pushes to
+`develop` and on pull requests targeting `stage` or `main` — the merge into the integration
 branch, and the two promotions that actually reach users. Feature PRs into
 `develop` do not run it (they are covered by `test.yml`); use
 **Run workflow** on the Actions tab to trigger it by hand on any branch.

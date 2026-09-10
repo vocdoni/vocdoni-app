@@ -19,7 +19,10 @@ export const CreateSidebar = () => {
           <Trans i18nKey='process_create.settings'>Settings</Trans>
         </SidebarTitle>
         {isMobile && (
+          /* data-testid: same reason as the toggle in Create/index.tsx. The open
+             drawer covers the Publish button, so the suite must close it. */
           <IconButton
+            data-testid='wizard-settings-close'
             aria-label={t('drawer.close', { defaultValue: 'Close drawer' })}
             variant='ghost'
             size='sm'
