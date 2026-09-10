@@ -13,6 +13,7 @@ vi.mock('@tanstack/react-query', () => ({
 
 vi.mock('../SuspenseLoader', () => ({
   SuspenseLoader: ({ children }: { children: React.ReactNode }) => children ?? Fragment,
+  Loading: () => null,
 }))
 
 describe('integrators routes', () => {

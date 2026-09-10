@@ -25,7 +25,9 @@ vi.mock('./routes/dashboard', () => ({
     path: '/dashboard/:id',
     element: <Loaded />,
     // A route whose initial navigation is still in flight when effects first run —
-    // the shape of every real loader route (/admin/process/:id, /processes/:id, ...).
+    // the shape of every real loader route (/admin/process/:id, /processes/:id, ...),
+    // hydrate fallback included.
+    HydrateFallback: () => <div>LOADING</div>,
     loader: async () => {
       await new Promise((resolve) => setTimeout(resolve, 10))
       return 'LOADED'

@@ -133,6 +133,14 @@ Object.defineProperty(globalThis, 'localStorage', {
   writable: true,
 })
 
+// jsdom leaves window.scrollTo unimplemented and logs a "Not implemented" error the
+// moment anything calls it — react-router's <ScrollRestoration /> does, on every
+// navigation. Same class of gap as matchMedia/ResizeObserver above, so stub it the same way.
+Object.defineProperty(window, 'scrollTo', {
+  value: () => {},
+  writable: true,
+})
+
 class ResizeObserverMock {
   observe() {}
   unobserve() {}

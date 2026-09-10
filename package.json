@@ -123,8 +123,8 @@
     "@types/react-dom": "^19.2.3",
     "@types/react-gtm-module": "^2.0.4",
     "@vitejs/plugin-react": "^4.7.0",
-    "@vitest/coverage-v8": "^4.1.11",
-    "@vitest/ui": "^4.1.11",
+    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/ui": "^5.0.0",
     "i18next-cli": "^1.71.3",
     "jsdom": "^27.4.0",
     "knip": "^5.83.0",
@@ -134,7 +134,7 @@
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-svgr": "^4.5.0",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.0"
   },
   "packageManager": "pnpm@10.16.1"
 }

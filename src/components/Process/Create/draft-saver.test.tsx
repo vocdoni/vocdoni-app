@@ -1,5 +1,5 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { createTestQueryClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
@@ -95,8 +95,11 @@ describe('useFormDraftSaver', () => {
     expect(update).not.toHaveBeenCalledWith('draft-1', { published: true })
 
     inFlight.resolve()
-    await saving
-    await publishing
+    // Settling the writes runs saveDraft's tail, which resets the draft-limit state.
+    await act(async () => {
+      await saving
+      await publishing
+    })
 
     expect(update).toHaveBeenCalledTimes(2)
     expect(update).toHaveBeenLastCalledWith('draft-1', { published: true })
@@ -113,7 +116,9 @@ describe('useFormDraftSaver', () => {
     await expect(result.current.saveDraft(true)).resolves.toBe('skipped')
 
     inFlight.resolve()
-    await saving
+    await act(async () => {
+      await saving
+    })
     expect(update).toHaveBeenCalledTimes(1)
   })
 

@@ -25,7 +25,13 @@ beforeEach(() => {
 
 afterEach(async () => {
   vi.restoreAllMocks()
-  if (i18n.language !== 'en') await i18n.changeLanguage('en')
+  // Still-mounted hooks are subscribed to i18next, so the reset re-renders them. It runs
+  // before Testing Library's cleanup, hence the act wrapper.
+  if (i18n.language !== 'en') {
+    await act(async () => {
+      await i18n.changeLanguage('en')
+    })
+  }
 })
 
 describe('useAuthVertical', () => {

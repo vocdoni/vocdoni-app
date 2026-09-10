@@ -1,5 +1,6 @@
+import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm } from 'react-hook-form'
-import { fireEvent, render, screen } from '~src/test-utils'
+import { render, screen } from '~src/test-utils'
 import { defaultProcessValues, defaultQuestion, Process, SelectorTypes } from '../common'
 import { QuestionSettings } from './QuestionSettings'
 
@@ -35,11 +36,13 @@ describe('QuestionSettings', () => {
     expect(screen.getByText('Multiple choice')).toBeInTheDocument()
   })
 
-  it('toggles extended info for a single question', () => {
+  it('toggles extended info for a single question', async () => {
     render(<QuestionSettingsHarness questions={[{ ...defaultQuestion }, { ...defaultQuestion }]} />)
     const [first, second] = screen.getAllByRole('checkbox', { name: 'Extended info' })
 
-    fireEvent.click(first)
+    // The switch is an Ark UI machine feeding a react-hook-form `Controller`: the
+    // resulting form update lands a tick after the click, so it needs awaiting.
+    await userEvent.click(first)
 
     expect(first).toBeChecked()
     expect(second).not.toBeChecked()

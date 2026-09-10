@@ -27,6 +27,7 @@ vi.mock('~components/Home/SharedCensus', () => ({
 vi.mock('~elements/organization/view', () => ({ default: () => <div>OrganizationView</div> }))
 vi.mock('../SuspenseLoader', () => ({
   SuspenseLoader: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  Loading: () => null,
 }))
 
 const wrapperFor = (processIds: string) => {

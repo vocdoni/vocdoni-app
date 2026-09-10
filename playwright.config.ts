@@ -46,6 +46,13 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      // The same specs again, emulated as a phone: most voters are on one, and
+      // the app is a different UI below `md`. Pixel rather than iPhone because
+      // its `defaultBrowserType` is chromium — no second browser download in CI.
+      name: 'mobile-chrome',
+      use: { ...devices['Pixel 7'] },
+    },
   ],
   webServer: {
     // Serves dist/, so `pnpm build` must have run first (integration-stack.sh

@@ -15,8 +15,6 @@ vi.mock('~components/Toast', () => ({
 }))
 
 describe('ShareModalButton', () => {
-  const originalDocument = globalThis.document
-  const originalNavigator = globalThis.navigator
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
@@ -24,10 +22,12 @@ describe('ShareModalButton', () => {
   })
 
   afterEach(() => {
+    // `vi.unstubAllGlobals()` restores document/navigator via their original property
+    // descriptors. Do not reassign `globalThis.document` by hand here: since vitest 5,
+    // DOM global assignments propagate to the underlying jsdom window, whose `document`
+    // is a getter-only accessor, so the write throws.
     vi.unstubAllGlobals()
     consoleErrorSpy.mockRestore()
-    globalThis.document = originalDocument
-    globalThis.navigator = originalNavigator
   })
 
   it('renders on the server without browser globals', () => {

@@ -938,7 +938,11 @@ const ProcessCreateView = () => {
                     <Icon as={LuRotateCcw} />
                   </IconButton>
                 )}
+                {/* data-testid: icon-only, so its only other handle is a
+                    translated aria-label — and below `md` the e2e suite must
+                    open this drawer before it can reach any setting. */}
                 <IconButton
+                  data-testid='wizard-settings-toggle'
                   aria-label={t('dashboard.actions.toggle_sidebar', {
                     defaultValue: 'Toggle sidebar',
                   })}

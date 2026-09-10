@@ -44,6 +44,9 @@ describe('Process view', () => {
         {
           path: '/processes/:id',
           id: 'process-view',
+          // Mirrors the real route: without a hydrate fallback react-router renders
+          // nothing while the loader runs, and warns about it.
+          HydrateFallback: () => null,
           loader: async () => ({ era: 'saas', election: { id: '123', orgAddress: 'abc' } }),
           element: <Process />,
         },
@@ -79,6 +82,7 @@ describe('Process view', () => {
         {
           path: '/processes/:id',
           id: 'process-view',
+          HydrateFallback: () => null,
           loader: async () => ({ era: 'saas', election: { id: '123', orgAddress: 'abc' } }),
           element: <Process />,
         },
@@ -109,6 +113,7 @@ describe('Process view', () => {
         {
           path: '/processes/:id',
           id: 'process-view',
+          HydrateFallback: () => null,
           loader: async () => ({ era: 'saas', election: { id: '123', orgAddress: 'abc' } }),
           element: <Process />,
         },
@@ -138,6 +143,7 @@ describe('Process view', () => {
         {
           path: '/processes/:id',
           id: 'process-view',
+          HydrateFallback: () => null,
           loader: async () => ({
             era: 'archive',
             legacyElection: { id: legacyId, organizationId: 'df48fb84a39242adec0f72812132d5ec0886c454' },
@@ -166,6 +172,7 @@ describe('Process view', () => {
       [
         {
           path: '/organization/:address',
+          HydrateFallback: () => null,
           loader: async () => ({ address: '0xabc' }),
           element: <div>Organization page</div>,
         },
