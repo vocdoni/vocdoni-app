@@ -148,8 +148,10 @@ describe('ProcessView navigation', () => {
       expect(navigateSpy).toHaveBeenCalledWith('/admin/process/0xabc/results', { replace: true })
     })
 
-    // Sidebar control panel is rendered alongside the redirect
-    expect(screen.getByRole('button', { name: /end/i })).toBeInTheDocument()
+    // The redirect does not unmount the sidebar control panel. By text, not
+    // role+name: jsdom cannot measure, so the sidebar is closed (hence hidden),
+    // and accessible names skip text inside a hidden subtree.
+    expect(screen.getByText('End vote')).toBeInTheDocument()
   })
 
   it('does not force results again after the user comes back manually to questions', async () => {
