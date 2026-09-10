@@ -119,6 +119,41 @@ export const importMembers = async (page: Page, members: TestMember[]): Promise<
   await expect(page.getByText(first.email, { exact: false })).toBeVisible({ timeout: 120_000 })
 }
 
+/**
+ * Narrower than Chakra's `md` breakpoint — the same question the components
+ * ask. Read from the viewport, not the project name, so adding or renaming a
+ * device project cannot break it.
+ */
+const isMobileViewport = (page: Page): boolean => (page.viewportSize()?.width ?? Number.POSITIVE_INFINITY) < 768
+
+/**
+ * The wizard's Settings panel, identified by a field only it contains.
+ *
+ * Assert open/closed here, never on a field inside it: react-select forces
+ * `visibility: visible` on its own input, so every combobox in the panel still
+ * reports as visible while it is shut.
+ */
+const wizardSettings = (page: Page): Locator => page.locator('aside').filter({ has: page.locator('#resultVisibility') })
+
+/**
+ * Opens the Settings panel when it is a drawer. No-op at `md` and up, where it
+ * is a docked sidebar that is always open.
+ */
+const openWizardSettings = async (page: Page): Promise<void> => {
+  if (!isMobileViewport(page)) return
+
+  await page.getByTestId('wizard-settings-toggle').click()
+  await expect(wizardSettings(page)).toBeVisible()
+}
+
+/** Closes it again: open, the drawer covers the top bar, Publish included. */
+const closeWizardSettings = async (page: Page): Promise<void> => {
+  if (!isMobileViewport(page)) return
+
+  await page.getByTestId('wizard-settings-close').click()
+  await expect(wizardSettings(page)).toBeHidden()
+}
+
 export type ChoiceSpec = {
   label: string
   /** Filled through the extended-info editor; requires `extendedInfo` on the question. */
@@ -233,6 +268,9 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   // obvious message instead of at the publish step's validation errors.
   await expect(page.locator('input[name="questions.0.title"]')).toHaveValue(spec.questions[0].title)
 
+  // Everything up to the publish click lives in the Settings panel.
+  await openWizardSettings(page)
+
   // Live results, not the "hidden until the end" default: a secret process
   // seals ballots with per-question encryption keys the keykeepers only publish
   // after publication, which is a different feature with its own timing. This
@@ -290,6 +328,8 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   // credentials must be unique and complete across the group) before closing.
   await advance.click()
   await expect(dialog).toBeHidden({ timeout: 60_000 })
+
+  await closeWizardSettings(page)
 
   await page.getByRole('button', { name: /^Publish$/ }).click()
 

@@ -4,6 +4,10 @@ name: Integration
 # mongo + vocone + saas-backend + MailHog stack (integration/docker-compose.ci.yml),
 # built from published `:main` images.
 #
+# `pnpm test:e2e` runs every project in playwright.config.ts, so this covers both
+# the desktop (`chromium`) and the emulated-phone (`mobile-chrome`) passes. Adding
+# a project needs no change here.
+#
 # Deliberately separate from .github/workflows/test.yml: this job consumes two
 # moving upstream images and a live chain, so a red run often means "upstream
 # moved" rather than "this repo is broken". That must not gate the normal
@@ -31,8 +35,9 @@ jobs:
     name: End-to-end suite
     runs-on: ubuntu-latest
     # The suite publishes real on-chain processes and casts real votes, and
-    # vocone's first boot downloads its zk circuit artifacts. Budget for that.
-    timeout-minutes: 30
+    # vocone's first boot downloads its zk circuit artifacts. Budget for that —
+    # and note every journey now runs twice, desktop and mobile.
+    timeout-minutes: 45
     permissions:
       contents: read
     steps:
@@ -76,7 +81,7 @@ jobs:
           APP_URL: http://localhost:3000
           VOCDONI_ENVIRONMENT: dev
 
-      - name: Run end-to-end suite
+      - name: Run end-to-end suite (desktop + mobile)
         run: pnpm test:e2e
         env:
           SAAS_URL: http://localhost:8080
