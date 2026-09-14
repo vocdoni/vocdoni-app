@@ -66,6 +66,12 @@ export const createOrganization = async (page: Page, name: string): Promise<void
   await page.locator('#type').click()
   await page.getByRole('option').first().click()
   await selectComboboxOption(page, page.locator('#country'), /Spain/)
+  // Picking Spain auto-infers Spanish as the org's communications language, and the
+  // backend sends org-scoped emails (CSP 2FA, invites) in that language regardless of
+  // the request's lang param. Pin English explicitly so every MailSubjects assertion
+  // stays valid — and to exercise the manual-override path (a user pick must survive
+  // the country inference).
+  await selectComboboxOption(page, page.locator('#defaultLang'), 'English')
 
   await page.locator('form button[type="submit"]').click()
 
