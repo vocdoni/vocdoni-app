@@ -60,6 +60,7 @@ const EditOrganization = () => {
       size: organization?.size ?? '',
       type: organization?.type ?? '',
       country: organization?.country,
+      defaultLang: organization?.defaultLang || 'en',
       avatar: organization?.account.avatar || '',
       header: organization?.account.header || '',
     },
@@ -81,6 +82,7 @@ const EditOrganization = () => {
       size: values.size,
       type: values.type,
       country: values.country,
+      defaultLang: values.defaultLang,
     }
 
     try {

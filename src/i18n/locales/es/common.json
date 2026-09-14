@@ -279,6 +279,10 @@
       "title": "Panel"
     }
   },
+  "default_language": {
+    "selector_helper": "Todas las comunicaciones con tus usuarios serán en este idioma.",
+    "selector_label": "Idioma de las comunicaciones"
+  },
   "delete": {
     "cancel_button": "Cancelar",
     "confirm_description": "Para eliminar tu cuenta, ponte en contacto con nuestro equipo de soporte.",
@@ -342,6 +346,7 @@
   "ended_processes": "Finalizados",
   "enter_promo_code": "Introduce el código promocional",
   "error": {
+    "loading_languages": "Error cargando idiomas",
     "loading_page": "Error al cargar la página",
     "loading_roles": "Error cargando roles",
     "loading_types": "Error cargando tipos",

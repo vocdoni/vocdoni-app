@@ -279,6 +279,10 @@
       "title": "Painel"
     }
   },
+  "default_language": {
+    "selector_helper": "Toda a comunicação com os seus usuários será neste idioma.",
+    "selector_label": "Idioma das comunicações"
+  },
   "delete": {
     "cancel_button": "Cancelar",
     "confirm_description": "Para excluir sua conta, entre em contato com nossa equipe de suporte.",
@@ -342,6 +346,7 @@
   "ended_processes": "Encerrados",
   "enter_promo_code": "Inserir código",
   "error": {
+    "loading_languages": "Erro ao carregar os idiomas",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar as funções",
     "loading_types": "Erro ao carregar os tipos de organização",

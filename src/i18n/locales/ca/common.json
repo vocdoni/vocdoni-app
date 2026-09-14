@@ -279,6 +279,10 @@
       "title": "Tauler de control"
     }
   },
+  "default_language": {
+    "selector_helper": "Totes les comunicacions amb els teus usuaris seran en aquest idioma.",
+    "selector_label": "Idioma de les comunicacions"
+  },
   "delete": {
     "cancel_button": "Cancel·la",
     "confirm_description": "Per eliminar el teu compte, si us plau contacta amb el nostre equip de suport.",
@@ -342,6 +346,7 @@
   "ended_processes": "Acabats",
   "enter_promo_code": "Introdueix el codi",
   "error": {
+    "loading_languages": "Error carregant idiomes",
     "loading_page": "Càrrega de pàgina errònia",
     "loading_roles": "Error carregant rols",
     "loading_types": "Error carregant tipus",

@@ -2,7 +2,7 @@ import { Button, Flex, FlexProps, Link, Text } from '@chakra-ui/react'
 import { useToast } from '~components/Toast'
 
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as ReactRouterLink, To, useNavigate } from 'react-router'
@@ -11,7 +11,9 @@ import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
+import { inferOrgLanguage } from '~constants'
 import { QueryKeys } from '~src/queries/keys'
+import { useOrganizationLanguages } from '~src/queries/organization'
 import { Routes } from '~src/router/routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import { PrivateOrgForm, PrivateOrgFormData, PublicOrgForm } from './Form'
@@ -47,6 +49,7 @@ const useOrganizationCreate = (
           size: values.size,
           country: values.country,
           type: values.type,
+          defaultLang: values.defaultLang,
           provisionAccount: true,
         },
         method: 'POST',
@@ -81,6 +84,16 @@ export const OrganizationCreate = ({
   const { handleSubmit } = methods
   const { trackEvent } = useAnalytics()
 
+  // Infer the notification language from the selected country until the user
+  // picks one manually (the selector marks the field dirty on user picks)
+  const { data: orgLanguages } = useOrganizationLanguages()
+  const country = methods.watch('country')
+  useEffect(() => {
+    if (orgLanguages && !methods.getFieldState('defaultLang').isDirty) {
+      methods.setValue('defaultLang', inferOrgLanguage(country, orgLanguages))
+    }
+  }, [country, orgLanguages])
+
   const { mutateAsync: createOrganization } = useOrganizationCreate({
     onSuccess: async ({ address }, values) => {
       trackEvent({
@@ -94,6 +107,7 @@ export const OrganizationCreate = ({
           org_type: values.type || 'unknown',
           org_size: values.size || 'unknown',
           org_country: values.country || 'unknown',
+          org_default_lang: values.defaultLang || 'unknown',
         },
       })
       toast({

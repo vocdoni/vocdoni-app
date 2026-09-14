@@ -277,6 +277,10 @@
       "title": "Panela"
     }
   },
+  "default_language": {
+    "selector_helper": "Zure erabiltzaileekiko komunikazio guztia hizkuntza honetan izango da.",
+    "selector_label": "Komunikazioen hizkuntza"
+  },
   "delete": {
     "cancel_button": "Utzi",
     "confirm_description": "Zure kontua ezabatzeko, jarri harremanetan gure laguntza-taldearekin.",
@@ -340,6 +344,7 @@
   "ended_processes": "Amaituak",
   "enter_promo_code": "Sartu sustapen-kodea",
   "error": {
+    "loading_languages": "Errorea hizkuntzak kargatzean",
     "loading_page": "Errorea orrialdea kargatzean",
     "loading_roles": "Errorea rolak kargatzean",
     "loading_types": "Errorea motak kargatzean",

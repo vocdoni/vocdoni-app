@@ -279,6 +279,10 @@
       "title": "Dashboard"
     }
   },
+  "default_language": {
+    "selector_helper": "Tutte le comunicazioni con i tuoi utenti saranno in questa lingua.",
+    "selector_label": "Lingua delle comunicazioni"
+  },
   "delete": {
     "cancel_button": "Annulla",
     "confirm_description": "Per eliminare l'account, contatta il nostro team di supporto.",
@@ -342,6 +346,7 @@
   "ended_processes": "Terminati",
   "enter_promo_code": "Inserisci codice",
   "error": {
+    "loading_languages": "Errore durante il caricamento delle lingue",
     "loading_page": "Errore durante il caricamento della pagina",
     "loading_roles": "Errore durante il caricamento dei ruoli",
     "loading_types": "Errore durante il caricamento dei tipi",

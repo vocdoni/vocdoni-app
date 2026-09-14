@@ -28,6 +28,7 @@ export enum ApiEndpoints {
   OrganizationPendingUsers = 'organizations/{address}/users/pending',
   OrganizationPendingUser = 'organizations/{address}/users/pending/{inviteId}',
   Organizations = 'organizations',
+  OrganizationsLanguages = 'organizations/languages',
   OrganizationsRoles = 'organizations/roles',
   OrganizationsTypes = 'organizations/types',
   OrganizationSubscription = 'organizations/{address}/subscription',

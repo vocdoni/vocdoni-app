@@ -264,6 +264,20 @@ export const useOrganizationTypes = () => {
   })
 }
 
+// Shape of GET /organizations/languages: the languages the backend accepts as an
+// organization defaultLang, plus the default used when none applies.
+export type OrganizationLanguages = { languages: string[]; default: string }
+
+export const useOrganizationLanguages = () => {
+  const { bearedFetch } = useAuth()
+
+  return useQuery({
+    queryKey: QueryKeys.organization.languages,
+    queryFn: () => bearedFetch<OrganizationLanguages>(ApiEndpoints.OrganizationsLanguages),
+    staleTime: 60 * 60 * 1000,
+  })
+}
+
 export const useInviteMemberMutation = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()

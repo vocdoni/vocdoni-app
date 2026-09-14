@@ -4,7 +4,11 @@ import { useTranslation } from 'react-i18next'
 import Editor from '~components/Editor'
 import { CountrySelector } from '~components/Form/CountrySelector'
 import InputBasic from '~components/Form/InputBasic'
-import { MembershipSizeSelector, OrganizationTypeSelector } from '~components/Layout/SaasSelector'
+import {
+  DefaultLanguageSelector,
+  MembershipSizeSelector,
+  OrganizationTypeSelector,
+} from '~components/Layout/SaasSelector'
 
 export const PublicOrgForm = ({ minified }: { minified?: boolean }) => {
   const { t } = useTranslation()
@@ -57,6 +61,7 @@ export type PrivateOrgFormData = {
   size: string
   type: string
   country: string
+  defaultLang: string
 }
 
 export const PrivateOrgForm = ({ minified }: { minified?: boolean }) => {
@@ -79,6 +84,7 @@ export const PrivateOrgForm = ({ minified }: { minified?: boolean }) => {
       <MembershipSizeSelector name='size' required />
       <OrganizationTypeSelector name='type' required />
       <CountrySelector name='country' />
+      <DefaultLanguageSelector name='defaultLang' />
     </>
   )
 }
