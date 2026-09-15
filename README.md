@@ -92,6 +92,12 @@ there, here's a list of variables you can use:
 - `BUILD_PATH` Specifies the destination of built files.
 - `CUSTOM_ORGANIZATION_DOMAINS` A JSON.stringified object of custom domains mapped to organization ids, to
   replace the homepage with their profile page.
+- `PRIMARY_COLOR` the accent color of the app as a `#rgb` or `#rrggbb` hex value (e.g. `#1a73e8`). A full
+  palette (tints, shades, text and focus-ring colors) is generated from it and applied to buttons, form
+  controls, tabs and highlights in both color modes. Filled surfaces use the exact color wherever it reads at
+  3:1 against the page background and the closest readable shade otherwise (a very dark color in dark mode, a
+  very pale one in light mode). Unset, the app keeps its stock black accent. It is read at runtime, so a single
+  build/image can be recolored with `docker run -e PRIMARY_COLOR=...`.
 
 You can also start the app by prefixing these vars instead of defining your
 custom `.env` file:

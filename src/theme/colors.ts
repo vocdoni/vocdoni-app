@@ -1,5 +1,13 @@
+// Default accent when PRIMARY_COLOR is not configured. The `brand` scale is
+// generated from the configured color at system creation (see system.ts), so it
+// is deliberately absent from this static map.
+export const DEFAULT_PRIMARY_COLOR = '#000000'
+
 export const colors = {
-  brand: {
+  // Neutral near-black scale used for dark-mode surfaces (page, cards, menus)
+  // and the default black accent. Kept separate from `brand` on purpose: a
+  // configured PRIMARY_COLOR must recolor the accent, never tint the surfaces.
+  ink: {
     // comments refer to (unused) button styles
     50: { value: '#e5e5e5' }, // ghost hover (light)
     100: { value: '#cccccc' }, // hover (light)

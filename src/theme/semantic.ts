@@ -35,13 +35,13 @@ export const colors = defineSemanticTokens.colors({
     DEFAULT: {
       value: {
         _light: '{colors.white}',
-        _dark: '{colors.brand.650}',
+        _dark: '{colors.ink.650}',
       },
     },
     muted: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.brand.800}',
+        _dark: '{colors.ink.800}',
       },
     },
   },
@@ -49,14 +49,14 @@ export const colors = defineSemanticTokens.colors({
     bg: {
       value: {
         _light: '{colors.gray.50}',
-        _dark: '{colors.brand.550}',
+        _dark: '{colors.ink.550}',
       },
     },
     card: {
       bg: {
         value: {
           _light: '{colors.white}',
-          _dark: '{colors.brand.500}',
+          _dark: '{colors.ink.500}',
         },
       },
       border: {
@@ -119,20 +119,20 @@ export const colors = defineSemanticTokens.colors({
       bg: {
         value: {
           _light: '{colors.white}',
-          _dark: '{colors.brand.650}',
+          _dark: '{colors.ink.650}',
         },
       },
       border: {
         value: {
           _light: '{colors.gray.200}',
-          _dark: '{colors.brand.700}',
+          _dark: '{colors.ink.700}',
         },
       },
       current: {
         bg: {
           value: {
             _light: '{colors.gray.100}',
-            _dark: '{colors.brand.600}',
+            _dark: '{colors.ink.600}',
           },
         },
         color: {
@@ -206,7 +206,7 @@ export const colors = defineSemanticTokens.colors({
         bg: {
           value: {
             _light: '{colors.white}',
-            _dark: '{colors.brand.500}',
+            _dark: '{colors.ink.500}',
           },
         },
       },
@@ -214,7 +214,7 @@ export const colors = defineSemanticTokens.colors({
     bg: {
       value: {
         _light: '{colors.gray.100}',
-        _dark: '{colors.brand.700}',
+        _dark: '{colors.ink.700}',
       },
     },
   },
