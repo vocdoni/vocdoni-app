@@ -65,6 +65,19 @@ describe('buildAppEnv', () => {
     vi.restoreAllMocks()
   })
 
+  it('normalizes PRIMARY_COLOR and drops anything that is not a hex color', () => {
+    expect(buildAppEnv({}).PRIMARY_COLOR).toBeUndefined()
+    expect(buildAppEnv({ PRIMARY_COLOR: '' }).PRIMARY_COLOR).toBeUndefined()
+    expect(buildAppEnv({ PRIMARY_COLOR: '#1A73E8' }).PRIMARY_COLOR).toBe('#1a73e8')
+    expect(buildAppEnv({ PRIMARY_COLOR: 'abc' }).PRIMARY_COLOR).toBe('#aabbcc')
+
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    expect(buildAppEnv({ PRIMARY_COLOR: 'blue' }).PRIMARY_COLOR).toBeUndefined()
+    expect(buildAppEnv({ PRIMARY_COLOR: 'rgb(0, 0, 0)' }).PRIMARY_COLOR).toBeUndefined()
+    expect(warn).toHaveBeenCalledTimes(2)
+    vi.restoreAllMocks()
+  })
+
   it('validates STREAM_URL', () => {
     expect(buildAppEnv({ STREAM_URL: 'https://youtube.com/embed/x' }).STREAM_URL).toBe('https://youtube.com/embed/x')
 

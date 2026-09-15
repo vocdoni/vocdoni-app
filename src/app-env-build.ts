@@ -1,4 +1,5 @@
 import { resolveLanguagesSlice } from '~i18n/languages'
+import { normalizeHexColor } from '~theme/palette'
 
 /**
  * Shape of the public runtime configuration exposed to the app. Resolved on the
@@ -36,6 +37,7 @@ export type AppEnv = {
   SHARED_CENSUS_POST_TEXT?: Record<string, string> | string
   STREAM_URL?: string
   HIDE_VOTER_COUNT?: boolean
+  PRIMARY_COLOR?: string
 }
 
 type AppEnvObject = AppEnv
@@ -143,6 +145,24 @@ const resolveStreamUrl = (value: string | undefined): string | undefined => {
   }
 }
 
+// PRIMARY_COLOR drives the generated `brand` palette (see src/theme/system.ts).
+// Only `#rgb` / `#rrggbb` values are accepted; anything else is logged and
+// dropped so the app falls back to its stock (black) accent instead of feeding
+// the palette generator garbage.
+const resolvePrimaryColor = (value: string | undefined): string | undefined => {
+  if (!value) {
+    return undefined
+  }
+
+  const normalized = normalizeHexColor(value)
+  if (!normalized) {
+    console.warn(`PRIMARY_COLOR must be a hex color like #1a73e8 (got "${value}"). Ignoring.`)
+    return undefined
+  }
+
+  return normalized
+}
+
 /**
  * Resolves the public application environment from a raw env source (e.g.
  * `process.env`). This used to run only at build time and was inlined into the
@@ -206,5 +226,6 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
       defaultLanguage
     ),
     STREAM_URL: resolveStreamUrl(env.STREAM_URL),
+    PRIMARY_COLOR: resolvePrimaryColor(env.PRIMARY_COLOR),
   }
 }

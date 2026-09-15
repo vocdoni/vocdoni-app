@@ -1,8 +1,10 @@
+import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
+import { PALETTE_SLOTS } from './palette'
 import { resultsProgressRecipe } from './recipes/election'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
-import { system } from './system'
+import { createAppSystem, getAppSystem, system } from './system'
 
 /**
  * Guards the theme against dangling references, which chakra silently ignores
@@ -46,7 +48,11 @@ const ALL_RECIPES: Record<string, unknown> = { ...recipes, ...slotRecipes, resul
 
 const isTokenPath = (value: string) => /^[a-zA-Z][\w-]*(\.[\w-]+)+$/.test(value)
 
-const colorTokenExists = (path: string) => system.tokens.getByName(`colors.${path}`) !== undefined
+// Also exercised against a system built for a configured PRIMARY_COLOR, so the
+// generated brand scale and its semantic slots are held to the same bar.
+const BRANDED = createAppSystem('#1a73e8')
+
+const colorTokenExists = (path: string, sys = system) => sys.tokens.getByName(`colors.${path}`) !== undefined
 
 const isSelectorKey = (key: string) => /[&@:\[\] >~+*=,.]/.test(key)
 
@@ -147,12 +153,15 @@ describe('theme system integrity', () => {
     expect(violations, `\n${formatViolations(violations)}`).toEqual([])
   })
 
-  it('semantic tokens only reference tokens that exist', () => {
+  it.each([
+    ['stock', system],
+    ['branded', BRANDED],
+  ])('semantic tokens only reference tokens that exist (%s system)', (_name, sys) => {
     const violations: Violation[] = []
     const visit = (node: unknown, path: string) => {
       if (typeof node === 'string') {
         for (const match of node.matchAll(/\{([\w.-]+)\}/g)) {
-          if (system.tokens.getByName(match[1]) === undefined) {
+          if (sys.tokens.getByName(match[1]) === undefined) {
             violations.push({ path, value: match[1], reason: 'referenced token not found' })
           }
         }
@@ -163,6 +172,62 @@ describe('theme system integrity', () => {
       }
     }
     visit(semanticTokens, 'semanticTokens')
+    // The generated brand slots are not part of the static semantic map; check them here.
+    for (const slot of PALETTE_SLOTS) {
+      visit(sys.tokens.getByName(`colors.brand.${slot}`)?.extensions?.conditions, `brand.${slot}`)
+    }
     expect(violations, `\n${formatViolations(violations)}`).toEqual([])
+  })
+
+  // The generated palette has to be slot-complete, not just dangling-free: a
+  // missing slot fails silently (chakra's outline recipes `var()`-fallback to
+  // `muted`), so compare against the slots chakra defines for its own palettes.
+  it.each([
+    ['stock', system],
+    ['branded', BRANDED],
+  ])('brand defines every slot chakra defines for its own palettes (%s system)', (_name, sys) => {
+    const chakraSlots = Object.keys(defaultConfig.theme?.semanticTokens?.colors?.gray ?? {})
+    expect(chakraSlots.length).toBeGreaterThan(0)
+    const missing = chakraSlots.filter((slot) => !colorTokenExists(`brand.${slot}`, sys))
+    expect(missing, `brand is missing chakra palette slots: ${missing.join(', ')}`).toEqual([])
+  })
+})
+
+describe('PRIMARY_COLOR-driven system', () => {
+  const conditions = (sys: typeof system, name: string) =>
+    sys.tokens.getByName(`colors.${name}`)?.extensions?.conditions as Record<string, string> | undefined
+
+  it('keeps the stock look when no color is configured: gray palette, black brand', () => {
+    expect(system.tokens.getByName('colors.brand.500')?.value).toBe('#000000')
+    expect(system._config.globalCss?.html).toMatchObject({ colorPalette: 'gray' })
+  })
+
+  it('generates the brand scale and slots from the configured color and makes brand the global palette', () => {
+    expect(BRANDED.tokens.getByName('colors.brand.500')?.value).toBe('#1a73e8')
+    expect(BRANDED._config.globalCss?.html).toMatchObject({ colorPalette: 'brand' })
+    for (const step of [50, 100, 200, 300, 400, 600, 700, 800, 900, 950]) {
+      expect(colorTokenExists(`brand.${step}`, BRANDED), `brand.${step}`).toBe(true)
+    }
+    expect(conditions(BRANDED, 'brand.solid')).toEqual({ _light: '{colors.brand.500}', _dark: '{colors.brand.500}' })
+    expect(conditions(BRANDED, 'brand.contrast')).toEqual({ _light: '#ffffff', _dark: '#ffffff' })
+    expect(conditions(BRANDED, 'brand.fg')).toEqual({ _light: '{colors.brand.700}', _dark: '{colors.brand.300}' })
+  })
+
+  it('leaves dark-mode surfaces on the neutral ink scale rather than tinting them', () => {
+    expect(conditions(BRANDED, 'bg')).toEqual({ _light: '{colors.white}', _dark: '{colors.ink.650}' })
+    expect(BRANDED.tokens.getByName('colors.ink.650')?.value).toBe('#0a0a0a')
+  })
+
+  it('treats an invalid color as unset', () => {
+    const sys = createAppSystem('not-a-color')
+    expect(sys.tokens.getByName('colors.brand.500')?.value).toBe('#000000')
+    expect(sys._config.globalCss?.html).toMatchObject({ colorPalette: 'gray' })
+  })
+
+  it('memoizes systems per normalized color', () => {
+    expect(getAppSystem()).toBe(system)
+    expect(getAppSystem(undefined)).toBe(system)
+    expect(getAppSystem('#1A73E8')).toBe(getAppSystem('1a73e8'))
+    expect(getAppSystem('#1a73e8')).not.toBe(system)
   })
 })
