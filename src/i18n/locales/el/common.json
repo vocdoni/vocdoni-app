@@ -1363,7 +1363,6 @@
     },
     "questions": "Ερωτήσεις",
     "results": "Αποτελέσματα",
-    "share_title": "Κοινοποίηση στο {{ network }}",
     "spreadsheet": {
       "confirm": {
         "election_title": "Η ψήφος σας θα καταγραφεί για:"
@@ -1759,14 +1758,6 @@
   },
   "send_invitation": "Αποστολή πρόσκλησης",
   "settings": "Ρυθμίσεις",
-  "share": {
-    "copy": "Αντιγραφή",
-    "election_share_btn_text": "Κοινοποίηση",
-    "election_share_text": "Δείτε αυτή την εκλογή!",
-    "icon_title": "σύνδεσμος κοινοποίησης",
-    "mail_subject": "Πλατφόρμα ψηφοφορίας",
-    "modal_title": "Κοινοποίηση με φίλους"
-  },
   "shared_census": {
     "instructions": {
       "identification": "Θα ζητήσουμε τα στοιχεία ταυτοποίησής σας. Στη συνέχεια, μπορείτε να υποβάλετε την ψήφο σας με ασφάλεια.",

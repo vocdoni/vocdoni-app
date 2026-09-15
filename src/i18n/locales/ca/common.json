@@ -1386,7 +1386,6 @@
     },
     "questions": "Preguntes",
     "results": "Resultats",
-    "share_title": "Comparteix a {{ network }}",
     "spreadsheet": {
       "confirm": {
         "election_title": "El teu vot quedarà enregistrat així:"
@@ -1784,14 +1783,6 @@
   },
   "send_invitation": "Envia una invitació",
   "settings": "Configuració",
-  "share": {
-    "copy": "Copia",
-    "election_share_btn_text": "Comparteix",
-    "election_share_text": "Mira aquesta elecció!",
-    "icon_title": "compartir enllaç",
-    "mail_subject": "Plataforma de votació",
-    "modal_title": "Comparteix amb amics"
-  },
   "shared_census": {
     "instructions": {
       "identification": "Et demanarem la teva identificació. Després, podràs emetre el teu vot de forma segura.",

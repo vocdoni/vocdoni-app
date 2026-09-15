@@ -1363,7 +1363,6 @@
     },
     "questions": "Fragen",
     "results": "Ergebnisse",
-    "share_title": "Auf {{ network }} teilen",
     "spreadsheet": {
       "confirm": {
         "election_title": "Deine Stimme wird erfasst für:"
@@ -1759,14 +1758,6 @@
   },
   "send_invitation": "Einladung senden",
   "settings": "Einstellungen",
-  "share": {
-    "copy": "Kopieren",
-    "election_share_btn_text": "Teilen",
-    "election_share_text": "Schau dir diese Abstimmung an!",
-    "icon_title": "Link teilen",
-    "mail_subject": "Abstimmungsplattform",
-    "modal_title": "Mit Freunden teilen"
-  },
   "shared_census": {
     "instructions": {
       "identification": "Wir werden dich nach deiner Identifikation fragen. Danach kannst du deine Stimme sicher abgeben.",

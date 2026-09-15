@@ -1386,7 +1386,6 @@
     },
     "questions": "Perguntas",
     "results": "Resultados",
-    "share_title": "Compartilhar em {{ network }}",
     "spreadsheet": {
       "confirm": {
         "election_title": "Seu voto será registrado para:"
@@ -1784,14 +1783,6 @@
   },
   "send_invitation": "Enviar convite",
   "settings": "Configurações",
-  "share": {
-    "copy": "Copiar",
-    "election_share_btn_text": "Compartilhar",
-    "election_share_text": "Veja esta eleição!",
-    "icon_title": "link para compartilhar",
-    "mail_subject": "Plataforma de votação",
-    "modal_title": "Compartilhar com amigos"
-  },
   "shared_census": {
     "instructions": {
       "identification": "Solicitaremos sua identificação. Em seguida, você poderá votar com segurança.",

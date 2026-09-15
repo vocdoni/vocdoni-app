@@ -1363,7 +1363,6 @@
     },
     "questions": "Galderak",
     "results": "Emaitzak",
-    "share_title": "Partekatu {{ network }}-en",
     "spreadsheet": {
       "confirm": {
         "election_title": "Zure botoa honentzat erregistratuko da:"
@@ -1759,14 +1758,6 @@
   },
   "send_invitation": "Bidali gonbidapena",
   "settings": "Ezarpenak",
-  "share": {
-    "copy": "Kopiatu",
-    "election_share_btn_text": "Partekatu",
-    "election_share_text": "Begiratu bozketa hau!",
-    "icon_title": "partekatzeko esteka",
-    "mail_subject": "Bozketa-plataforma",
-    "modal_title": "Partekatu beste pertsonekin"
-  },
   "shared_census": {
     "instructions": {
       "identification": "Identifikatzeko eskatuko dizugu. Ondoren, modu seguruan eman ahal izango duzu zure botoa.",
