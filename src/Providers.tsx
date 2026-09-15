@@ -24,8 +24,7 @@ import {
 } from '~i18n/public-language'
 import { getDefaultTitleForLanguage } from '~src/pages/shared/defaultHeadMeta'
 import { uiScaffoldComponents } from '~theme/react-components'
-import { AppEnvProvider, normalizeLanguages, useAppEnv } from './app-env'
-import { buildAppEnv } from './app-env-build'
+import { AppEnvProvider, normalizeLanguages, resolveAppEnv, useAppEnv } from './app-env'
 import { configureApiBaseUrl } from './components/Auth/api'
 import { wagmiConfig } from './constants/rainbow'
 import { createPageI18nInstance, getBaseI18n } from './i18n'
@@ -60,7 +59,7 @@ export const Providers = ({ basename, language }: { basename?: string; language?
 
 const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) => {
   const pageContext = usePageContext()
-  const appEnv = pageContext?.globalContext?.appEnv ?? buildAppEnv({})
+  const appEnv = resolveAppEnv(pageContext?.globalContext?.appEnv)
   const supportedLanguages = useMemo(() => Object.keys(normalizeLanguages(appEnv.LANGUAGES)), [appEnv.LANGUAGES])
 
   const [language, setLanguageState] = useState(initialLanguage)
@@ -139,10 +138,11 @@ export const AppProviders = ({
   language,
 }: PropsWithChildren<{ queryClient?: QueryClient; language?: string }>) => {
   // Runtime env comes from Vike's globalContext (resolved on the server, passed
-  // to the client). Fall back to defaults if it isn't available (e.g. an
-  // unexpected render outside the Vike runtime).
+  // to the client). resolveAppEnv falls back to defaults if it isn't available
+  // (e.g. an unexpected render outside the Vike runtime) and warns, so broken
+  // passToClient wiring cannot revert every env var in silence.
   const pageContext = usePageContext()
-  const appEnv = pageContext?.globalContext?.appEnv ?? buildAppEnv({})
+  const appEnv = resolveAppEnv(pageContext?.globalContext?.appEnv)
 
   // Inject the runtime SaaS URL into the imperative API client (it can't use hooks).
   configureApiBaseUrl(appEnv.SAAS_URL)

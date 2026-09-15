@@ -1,5 +1,5 @@
 import { createContext, useContext, type PropsWithChildren, type ReactNode } from 'react'
-import type { AppEnv } from './app-env-build'
+import { buildAppEnv, type AppEnv } from './app-env-build'
 
 const isStringRecord = (value: unknown): value is Record<string, string> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -21,6 +21,34 @@ export const normalizeLanguages = (value: AppEnv['LANGUAGES']): Record<string, s
   }
 
   return isStringRecord(value) && Object.keys(value).length > 0 ? value : DEFAULT_LANGUAGES
+}
+
+let warnedMissingAppEnv = false
+
+/**
+ * Resolves the runtime env coming from Vike's globalContext.
+ *
+ * The defaults fallback keeps an unexpected render outside the Vike runtime
+ * working, but in a real deployment a missing `appEnv` means the server ->
+ * client wiring broke and *every* runtime setting silently reverted to its
+ * default (PRIMARY_COLOR, SAAS_URL, LANGUAGES...). That degrades quietly and
+ * looks like a styling bug, so say it out loud once per process instead.
+ */
+export const resolveAppEnv = (appEnv: AppEnv | undefined): AppEnv => {
+  if (appEnv) {
+    return appEnv
+  }
+
+  if (!warnedMissingAppEnv) {
+    warnedMissingAppEnv = true
+    console.warn(
+      'appEnv is missing from Vike globalContext: falling back to defaults, so PRIMARY_COLOR, ' +
+        'SAAS_URL, LANGUAGES and every other runtime env var are being ignored. Check ' +
+        'passToClient in src/pages/+config.ts and src/pages/+onCreateGlobalContext.server.ts.'
+    )
+  }
+
+  return buildAppEnv({})
 }
 
 const AppEnvContext = createContext<AppEnv | null>(null)
