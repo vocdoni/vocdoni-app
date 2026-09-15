@@ -131,18 +131,39 @@ const pickReadableStep = (scale: PaletteScale, candidates: Array<keyof PaletteSc
   candidates.find((step) => contrastRatio(scale[step], background) >= MIN_SURFACE_CONTRAST) ??
   candidates[candidates.length - 1]
 
+// WCAG AA minimum for normal-size text (4.5:1). Labels on a filled surface are
+// text, so they are held to this bar rather than the 3:1 non-text one.
+const MIN_TEXT_CONTRAST = 4.5
+
 // Text color for a filled surface of the given color. White is preferred as
-// long as it clears the 3:1 bar: raw luminance would pick black on most mid
-// tones (a mid blue scores 4.6 for black vs 4.5 for white), which is not what
+// long as it clears the text bar: raw luminance would pick black on most mid
+// tones (a mid blue scores 4.66 for black vs 4.51 for white), which is not what
 // any design system does with its brand buttons. Black only when white can't.
+//
+// This always yields at least 4.5:1: the two ratios multiply to exactly 21
+// (1.05/(L+0.05) * (L+0.05)/0.05), so whenever white falls below 4.5 black is
+// necessarily above 21/4.5 = 4.67.
 export const contrastColor = (hex: string): '#ffffff' | '#000000' =>
-  contrastRatio(hex, '#ffffff') >= MIN_SURFACE_CONTRAST ? '#ffffff' : '#000000'
+  contrastRatio(hex, '#ffffff') >= MIN_TEXT_CONTRAST ? '#ffffff' : '#000000'
 
 export type PaletteSemanticSlot = { _light: string; _dark: string }
-export type PaletteSemanticTokens = Record<
-  'solid' | 'contrast' | 'fg' | 'muted' | 'subtle' | 'emphasized' | 'focusRing',
-  PaletteSemanticSlot
->
+
+// Every slot chakra defines for its own palettes. `border` is easy to miss and
+// has no loud failure: chakra's outline recipes read `colorPalette.border` with
+// a silent `var()` fallback to `colorPalette.muted`, so omitting it degrades
+// outline controls to a near-white hairline instead of erroring.
+export const PALETTE_SLOTS = [
+  'solid',
+  'contrast',
+  'fg',
+  'muted',
+  'subtle',
+  'emphasized',
+  'focusRing',
+  'border',
+] as const
+
+export type PaletteSemanticTokens = Record<(typeof PALETTE_SLOTS)[number], PaletteSemanticSlot>
 
 type Backgrounds = { light: string; dark: string }
 
@@ -152,8 +173,13 @@ type Backgrounds = { light: string; dark: string }
  * emphasized 300/700). `solid` differs on purpose: it is the exact configured
  * color (500) unless that is unreadable on the page background of a color
  * mode — a near-black brand on the dark surface, a pale one on white — in
- * which case it walks the scale until it is. `contrast` follows whichever
- * step `solid` ended on.
+ * which case it walks the scale until it is. `contrast` follows whichever step
+ * `solid` ended on.
+ *
+ * `focusRing` and `border` reuse those same steps rather than chakra's fixed
+ * 500/400: both have to stay visible against the page, which 500 guarantees for
+ * chakra's hand-tuned mid-tone palettes but not for an arbitrary brand (a navy
+ * focus ring on the dark page reads at 1.15:1, a pale one on white at 1.27:1).
  */
 export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Backgrounds): PaletteSemanticTokens => {
   const lightSolid = pickReadableStep(scale, LIGHT_SOLID_STEPS, backgrounds.light)
@@ -167,6 +193,7 @@ export const generateBrandSemanticTokens = (scale: PaletteScale, backgrounds: Ba
     muted: { _light: ref(200), _dark: ref(800) },
     subtle: { _light: ref(100), _dark: ref(900) },
     emphasized: { _light: ref(300), _dark: ref(700) },
-    focusRing: { _light: ref(500), _dark: ref(500) },
+    focusRing: { _light: ref(lightSolid), _dark: ref(darkSolid) },
+    border: { _light: ref(lightSolid), _dark: ref(darkSolid) },
   }
 }

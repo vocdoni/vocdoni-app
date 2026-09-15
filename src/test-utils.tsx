@@ -23,7 +23,7 @@ import { AppEnvProvider } from '~src/app-env'
 import { buildAppEnv, type AppEnv } from '~src/app-env-build'
 import { ColorModeProvider } from '~theme/color-mode'
 import { uiScaffoldComponents } from '~theme/react-components'
-import { system } from '~theme/system'
+import { getAppSystem } from '~theme/system'
 
 type TestI18nOptions = {
   resources: Resource
@@ -145,7 +145,7 @@ export function AllProviders({
   return (
     <AppEnvProvider value={env}>
       <ColorModeProvider>
-        <ChakraProvider value={system}>
+        <ChakraProvider value={getAppSystem(env.PRIMARY_COLOR)}>
           <I18nextProvider i18n={i18nInstance}>
             <QueryClientProvider client={queryClient}>
               <ApiClientProvider>

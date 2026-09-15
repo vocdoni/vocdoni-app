@@ -1,4 +1,6 @@
+import { defaultConfig } from '@chakra-ui/react'
 import { describe, expect, it } from 'vitest'
+import { PALETTE_SLOTS } from './palette'
 import { resultsProgressRecipe } from './recipes/election'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
@@ -171,10 +173,23 @@ describe('theme system integrity', () => {
     }
     visit(semanticTokens, 'semanticTokens')
     // The generated brand slots are not part of the static semantic map; check them here.
-    for (const slot of ['solid', 'contrast', 'fg', 'muted', 'subtle', 'emphasized', 'focusRing']) {
+    for (const slot of PALETTE_SLOTS) {
       visit(sys.tokens.getByName(`colors.brand.${slot}`)?.extensions?.conditions, `brand.${slot}`)
     }
     expect(violations, `\n${formatViolations(violations)}`).toEqual([])
+  })
+
+  // The generated palette has to be slot-complete, not just dangling-free: a
+  // missing slot fails silently (chakra's outline recipes `var()`-fallback to
+  // `muted`), so compare against the slots chakra defines for its own palettes.
+  it.each([
+    ['stock', system],
+    ['branded', BRANDED],
+  ])('brand defines every slot chakra defines for its own palettes (%s system)', (_name, sys) => {
+    const chakraSlots = Object.keys(defaultConfig.theme?.semanticTokens?.colors?.gray ?? {})
+    expect(chakraSlots.length).toBeGreaterThan(0)
+    const missing = chakraSlots.filter((slot) => !colorTokenExists(`brand.${slot}`, sys))
+    expect(missing, `brand is missing chakra palette slots: ${missing.join(', ')}`).toEqual([])
   })
 })
 

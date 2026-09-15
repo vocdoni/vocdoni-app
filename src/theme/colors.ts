@@ -64,3 +64,9 @@ export const colors = {
   // Translucent so it works over both color modes
   separator: { value: 'rgba(135, 140, 189, 0.3)' },
 }
+
+// The page backgrounds a generated brand palette must stay readable against —
+// the two sides of the `bg` semantic token (see semantic.ts). Defined here, next
+// to the `ink` scale it reads from, so the palette generator, the theme and the
+// tests all measure contrast against the background the app actually paints.
+export const PAGE_BACKGROUNDS = { light: '#ffffff', dark: colors.ink[650].value }

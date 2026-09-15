@@ -135,9 +135,14 @@ export const colors = defineSemanticTokens.colors({
             _dark: '{colors.ink.600}',
           },
         },
+        // Accent tokens read the generated `brand.fg` / `brand.solid` /
+        // `brand.contrast` slots rather than the raw 500 step: 500 is the exact
+        // configured PRIMARY_COLOR, which carries no readability guarantee (a
+        // pale brand renders this label at ~1.3:1 on white). With no
+        // PRIMARY_COLOR these resolve to the same black/white as before.
         color: {
           value: {
-            _light: '{colors.brand.500}',
+            _light: '{colors.brand.fg}',
             _dark: '{colors.white}',
           },
         },
@@ -149,20 +154,23 @@ export const colors = defineSemanticTokens.colors({
         badge: {
           bg: {
             value: {
-              _light: '{colors.brand.500}',
+              _light: '{colors.brand.solid}',
               _dark: '{colors.white}',
             },
           },
           color: {
             value: {
-              _light: '{colors.white}',
-              _dark: '{colors.brand.500}',
+              _light: '{colors.brand.contrast}',
+              // The dark-mode badge is a *white* chip, so its label needs the
+              // light-surface accent step (700), not the raw 500: a pale brand
+              // at 500 reads ~1.3:1 on white. Still black without PRIMARY_COLOR.
+              _dark: '{colors.brand.700}',
             },
           },
         },
         border: {
           value: {
-            _light: '{colors.brand.500}',
+            _light: '{colors.brand.solid}',
             _dark: '{colors.white}',
           },
         },
@@ -197,9 +205,11 @@ export const colors = defineSemanticTokens.colors({
         },
       },
       active: {
+        // `brand.fg`, not the raw 500: the active tab label sits on white, and
+        // an arbitrary PRIMARY_COLOR at 500 carries no contrast guarantee there.
         color: {
           value: {
-            _light: '{colors.brand.500}',
+            _light: '{colors.brand.fg}',
             _dark: '{colors.white}',
           },
         },

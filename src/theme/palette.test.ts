@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { PAGE_BACKGROUNDS } from './colors'
 import {
   contrastColor,
   contrastRatio,
@@ -10,8 +11,9 @@ import {
 
 const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const
 
-// Page backgrounds as in system.ts: white and the dark-mode `ink.650` surface.
-const BACKGROUNDS = { light: '#ffffff', dark: '#0a0a0a' }
+// The real page backgrounds, not a copy: these tests are the readability
+// guarantee, so they have to measure against what the app actually paints.
+const BACKGROUNDS = PAGE_BACKGROUNDS
 
 const luminanceOf = (hex: string) => contrastRatio(hex, '#000000')
 
@@ -68,6 +70,25 @@ describe('contrastColor', () => {
     expect(contrastColor('#ffe600')).toBe('#000000')
     expect(contrastColor('#ffffff')).toBe('#000000')
   })
+
+  // The 3:1 non-text bar would pass white here even though black reads twice as
+  // well; labels are text, so they are held to AA's 4.5:1.
+  it('falls back to black when white does not clear the 4.5:1 text bar', () => {
+    for (const hex of ['#ff578d', '#ce8027', '#25d366', '#8bc34a', '#ff6600']) {
+      const picked = contrastColor(hex)
+      expect(picked, hex).toBe('#000000')
+      expect(contrastRatio(hex, picked), hex).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it('always clears 4.5:1, whatever the surface color', () => {
+    for (let i = 0; i < 2000; i++) {
+      const hex = `#${Math.floor(Math.random() * 0x1000000)
+        .toString(16)
+        .padStart(6, '0')}`
+      expect(contrastRatio(hex, contrastColor(hex)), hex).toBeGreaterThanOrEqual(4.5)
+    }
+  })
 })
 
 describe('generateBrandSemanticTokens', () => {
@@ -79,8 +100,22 @@ describe('generateBrandSemanticTokens', () => {
     expect(tokens.muted).toEqual({ _light: '{colors.brand.200}', _dark: '{colors.brand.800}' })
     expect(tokens.subtle).toEqual({ _light: '{colors.brand.100}', _dark: '{colors.brand.900}' })
     expect(tokens.emphasized).toEqual({ _light: '{colors.brand.300}', _dark: '{colors.brand.700}' })
-    expect(tokens.focusRing).toEqual({ _light: '{colors.brand.500}', _dark: '{colors.brand.500}' })
   })
+
+  // focusRing and border are the two slots that must stay *visible against the
+  // page*, so they follow the same readable step `solid` lands on rather than
+  // chakra's fixed 500 (which is only safe for its own hand-tuned palettes).
+  it.each(['#1a73e8', '#ffe600', '#0b1a3a', '#000000', '#ffffff'])(
+    'keeps the focus ring and outline border readable against the page for %s',
+    (base) => {
+      const scale = generatePaletteScale(base)
+      const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
+      for (const slot of [tokens.focusRing, tokens.border]) {
+        expect(contrastRatio(scale[stepOf(slot._light)], BACKGROUNDS.light)).toBeGreaterThanOrEqual(3)
+        expect(contrastRatio(scale[stepOf(slot._dark)], BACKGROUNDS.dark)).toBeGreaterThanOrEqual(3)
+      }
+    }
+  )
 
   it('uses the exact color for solid surfaces when it reads on both backgrounds', () => {
     const tokens = generateBrandSemanticTokens(generatePaletteScale('#1a73e8'), BACKGROUNDS)
@@ -104,11 +139,23 @@ describe('generateBrandSemanticTokens', () => {
     expect(contrastRatio(scale[stepOf(tokens.solid._light)], BACKGROUNDS.light)).toBeGreaterThanOrEqual(3)
   })
 
-  it('derives the contrast text color from the step solid actually landed on', () => {
+  // Asserts the ratio, not `contrast === contrastColor(solid)` — that form is
+  // tautological and passed even while light-mode labels sat at 3.0:1.
+  it.each(['#1a73e8', '#ffe600', '#ff578d', '#25d366', '#000000', '#ffffff'])(
+    'pairs solid with a label that clears the 4.5:1 text bar for %s',
+    (base) => {
+      const scale = generatePaletteScale(base)
+      const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
+      expect(contrastRatio(scale[stepOf(tokens.solid._light)], tokens.contrast._light)).toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(scale[stepOf(tokens.solid._dark)], tokens.contrast._dark)).toBeGreaterThanOrEqual(4.5)
+    }
+  )
+
+  it('flips the label to black on a pale solid', () => {
     const scale = generatePaletteScale('#ffe600')
     const tokens = generateBrandSemanticTokens(scale, BACKGROUNDS)
-    // Light mode walked down to a dark olive: white text. Dark mode kept the yellow: black text.
-    expect(tokens.contrast._light).toBe(contrastColor(scale[stepOf(tokens.solid._light)]))
+    // Dark mode keeps the yellow at 500, so the label has to go black.
+    expect(tokens.solid._dark).toBe('{colors.brand.500}')
     expect(tokens.contrast._dark).toBe('#000000')
   })
 })

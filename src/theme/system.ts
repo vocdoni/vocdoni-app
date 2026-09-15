@@ -1,13 +1,9 @@
 import { createSystem, defaultConfig, defineSemanticTokens, defineTokens } from '@chakra-ui/react'
-import { colors, DEFAULT_PRIMARY_COLOR } from './colors'
+import { DEFAULT_PRIMARY_COLOR, PAGE_BACKGROUNDS } from './colors'
 import { generateBrandSemanticTokens, generatePaletteScale, normalizeHexColor } from './palette'
 import { recipes, slotRecipes } from './recipes'
 import semanticTokens from './semantic'
 import tokens from './tokens'
-
-// Page backgrounds the generated `brand.solid` slot must stay readable against
-// (see semantic.ts `bg`): white in light mode, ink.650 in dark mode.
-const PAGE_BACKGROUNDS = { light: '#ffffff', dark: colors.ink[650].value }
 
 /**
  * Builds the chakra system for a given primary/accent color.
