@@ -84,7 +84,7 @@ export const PrivateOrgForm = ({ minified }: { minified?: boolean }) => {
       <MembershipSizeSelector name='size' required />
       <OrganizationTypeSelector name='type' required />
       <CountrySelector name='country' />
-      <DefaultLanguageSelector name='defaultLang' />
+      <DefaultLanguageSelector name='defaultLang' required />
     </>
   )
 }
