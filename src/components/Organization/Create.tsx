@@ -86,7 +86,7 @@ export const OrganizationCreate = ({
 
   // Infer the notification language from the selected country until the user
   // picks one manually (the selector marks the field dirty on user picks)
-  const { data: orgLanguages } = useOrganizationLanguages()
+  const { data: orgLanguages, isLoading: isLoadingLanguages } = useOrganizationLanguages()
   const country = methods.watch('country')
   useEffect(() => {
     if (orgLanguages && !methods.getFieldState('defaultLang').isDirty) {
@@ -171,6 +171,10 @@ export const OrganizationCreate = ({
           form='process-create-form'
           type='submit'
           loading={isPending}
+          // Until the languages arrive, defaultLang is still unset and would be
+          // dropped from the request. Once the query settles either way (the
+          // selector shows an error instead on failure) the form is submittable.
+          disabled={isLoadingLanguages}
           aria-label={t('organization.create_org', { defaultValue: 'Create organization' })}
         >
           {t('organization.create_org')}
