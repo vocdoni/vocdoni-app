@@ -67,6 +67,8 @@
 ## Rendering Architecture
 - The app is no longer a pure SPA.
 - Vike owns SSR for `/organization/:address` and `/processes/:id`.
+- The app root (`/` and `/:lang`) is also SSR, but only when `HOME_PROCESS_ID` is set: it then renders
+  that process' voting page (`src/pages/home-process/`). Unset, the root stays with the SPA catch-all.
 - The rest of the app remains client-rendered behind the Vike SPA catch-all page.
 - Keep this split incremental: do not move unrelated routes to SSR unless explicitly requested.
 - For public SSR pages, prefer Vike `+data`, `+Head`, and page metadata over client-side document mutations.

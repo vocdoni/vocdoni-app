@@ -10,6 +10,7 @@ export type AppEnv = {
   VOCDONI_ENVIRONMENT?: string
   CUSTOM_ORGANIZATION_DOMAINS?: Record<string, string>
   PROCESS_IDS?: string
+  HOME_PROCESS_ID?: string
   DEFAULT_CENSUS_SIZE?: number
   title?: string
   STRIPE_PUBLIC_KEY?: string
@@ -163,6 +164,12 @@ const resolvePrimaryColor = (value: string | undefined): string | undefined => {
   return normalized
 }
 
+// HOME_PROCESS_ID turns the app root into the voting page of a single process
+// (see src/pages/home-process/). Only the id is validated for emptiness here —
+// whether it resolves to an existing process is answered by the SaaS API at
+// request time, which renders the public 404 page like any other unknown id.
+const resolveHomeProcessId = (value: string | undefined): string | undefined => value?.trim() || undefined
+
 /**
  * Resolves the public application environment from a raw env source (e.g.
  * `process.env`). This used to run only at build time and was inlined into the
@@ -181,6 +188,7 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     VOCDONI_ENVIRONMENT: env.VOCDONI_ENVIRONMENT || 'dev',
     CUSTOM_ORGANIZATION_DOMAINS: resolveCustomOrganizationDomains(env.CUSTOM_ORGANIZATION_DOMAINS),
     PROCESS_IDS: env.PROCESS_IDS || '',
+    HOME_PROCESS_ID: resolveHomeProcessId(env.HOME_PROCESS_ID),
     DEFAULT_CENSUS_SIZE: Number(env.DEFAULT_CENSUS_SIZE) || 5000,
     // Only set when explicitly configured: consumers fall back to the
     // localized default title (see src/pages/shared/defaultHeadMeta.ts).

@@ -277,6 +277,12 @@ export const getPublicProcessPath = ({ id, language }: { id: string; language: s
 export const getPublicProcessSummaryPath = ({ id, language }: { id: string; language: string }) =>
   `/${language}/processes/${id}/summary`
 
+// The single-process homepage (HOME_PROCESS_ID) lives at the localized root, so
+// its canonical/alternate URLs are the roots themselves rather than the
+// /processes/:id ones. This keeps the language switcher on the homepage instead
+// of dropping the visitor onto the standalone process page.
+export const getHomeProcessPath = ({ language }: { language: string }) => `/${language}`
+
 export const getPublicLanguageAlternates = ({
   languages,
   pathnameByLanguage,
@@ -528,6 +534,7 @@ export const serializePublicPageErrorDetails = (error: unknown) => {
 }
 
 export {
+  getHomeProcessRouteMatch,
   getPublicLocalizedOrganizationRouteMatch,
   getPublicLocalizedProcessRouteMatch,
   getPublicLocalizedProcessSummaryRouteMatch,

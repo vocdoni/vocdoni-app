@@ -72,3 +72,50 @@ export const getPublicLocalizedProcessSummaryRouteMatch = ({
     },
   }
 }
+
+/**
+ * Matches the app root against the single-process homepage (HOME_PROCESS_ID).
+ *
+ * Both the bare root (`/`) and every localized root (`/en`, `/es`, …) are
+ * claimed, so the process page is what a visitor gets before and after the
+ * client-side language redirect. Returns false when no process id is
+ * configured, which leaves the root to the SPA catch-all exactly as before.
+ */
+export const getHomeProcessRouteMatch = ({
+  urlPathname,
+  supportedLanguages,
+  homeProcessId,
+}: {
+  urlPathname: string
+  supportedLanguages: string[]
+  homeProcessId?: string
+}) => {
+  const id = homeProcessId?.trim()
+
+  if (!id) return false
+
+  const normalizedPathname = urlPathname.replace(/\/+$/, '') || '/'
+
+  if (normalizedPathname === '/') {
+    return {
+      routeParams: {
+        id,
+      },
+    }
+  }
+
+  const match = normalizedPathname.match(/^\/([^/]+)$/)
+
+  if (!match) return false
+
+  const [, lang] = match
+
+  if (!supportedLanguages.includes(lang)) return false
+
+  return {
+    routeParams: {
+      lang,
+      id,
+    },
+  }
+}

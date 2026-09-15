@@ -18,7 +18,11 @@ vi.mock('~src/providers/vocdoni-client-config', () => ({
   createVocdoniApiClient,
 }))
 
-import { loadOrganizationPublicPageData, loadProcessPublicPageData } from './publicPageData'
+import {
+  loadHomeProcessPublicPageData,
+  loadOrganizationPublicPageData,
+  loadProcessPublicPageData,
+} from './publicPageData'
 
 describe('public page data loaders', () => {
   beforeEach(() => {
@@ -89,6 +93,40 @@ describe('public page data loaders', () => {
         headers: { host: 'app.example.org', 'x-forwarded-proto': 'https' },
       } as any)
     ).rejects.toBe(upstreamError)
+  })
+
+  it('anchors the home process page on the roots rather than the process URLs', async () => {
+    process.env.APP_URL = 'https://app.vocdoni.io'
+
+    createVocdoniApiClient.mockReturnValue({
+      organizations: {
+        get: vi.fn().mockResolvedValue({
+          address: '0xorganization',
+          name: { en: 'Example Org' },
+        }),
+      },
+      elections: {
+        get: vi.fn().mockResolvedValue({
+          id: '0xprocess',
+          orgAddress: 'organization',
+          title: { en: 'Board election 2026' },
+          description: { en: 'Vote for the next board members.' },
+        }),
+        list: vi.fn(),
+      },
+    })
+
+    const result = await loadHomeProcessPublicPageData({
+      routeParams: { lang: 'ca', id: '0xprocess' },
+      headers: { host: 'app.example.org', 'x-forwarded-proto': 'https' },
+    } as any)
+
+    // Metadata describes the process, but the canonical/alternate URLs are the
+    // roots the process is actually served at.
+    expect(result.meta.title).toContain('Board election 2026')
+    expect(result.meta.canonicalUrl).toBe('https://app.vocdoni.io/ca')
+    expect(result.meta.alternates).toContainEqual({ hrefLang: 'en', href: 'https://app.vocdoni.io/en' })
+    expect(result.meta.alternates).toContainEqual({ hrefLang: 'x-default', href: 'https://app.vocdoni.io/en' })
   })
 
   it('prefers APP_URL over request headers when building public URLs', async () => {
