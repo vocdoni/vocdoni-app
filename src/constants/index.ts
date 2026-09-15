@@ -116,30 +116,6 @@ export const addressTextOverflow = (address: string, length: number | null = 4) 
   return `${address.substring(0, length + 2)}...${address.substring(address.length - length, address.length)}`
 }
 
-// ISO 3166-1 alpha-2 → preferred org notification language: Spanish-speaking
-// countries → es, Andorra → ca. Countries without an entry get the API default.
-const langByCountry: Record<string, string> = {
-  AD: 'ca',
-  ...Object.fromEntries(
-    // prettier-ignore
-    ['AR', 'BO', 'CL', 'CO', 'CR', 'CU', 'DO', 'EC', 'ES', 'GQ', 'GT', 'HN', 'MX', 'NI', 'PA', 'PE', 'PR', 'PY', 'SV', 'UY', 'VE']
-      .map((c) => [c, 'es'])
-  ),
-}
-
-/**
- * Infers the org defaultLang from the selected country, clamped to the
- * languages served by GET /organizations/languages (its `default` when the
- * country has no supported preference).
- */
-export const inferOrgLanguage = (
-  country: string | undefined,
-  { languages, default: fallback }: { languages: string[]; default: string }
-): string => {
-  const lang = langByCountry[country ?? '']
-  return lang && languages.includes(lang) ? lang : fallback
-}
-
 /**
  * RecursivePartial is quite self-explanatory.. it's a recursive Partial type
  */
