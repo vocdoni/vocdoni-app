@@ -35,14 +35,19 @@ const renderCreate = () =>
     </TestMemoryRouter>
   )
 
-const selectOption = async (user: ReturnType<typeof userEvent.setup>, inputId: string, option: RegExp | string) => {
-  await user.click(document.querySelector(`#${inputId}`)!)
+// The selectors are chakra-react-select comboboxes labelled through their FormLabel
+const selectOption = async (
+  user: ReturnType<typeof userEvent.setup>,
+  label: RegExp | string,
+  option: RegExp | string
+) => {
+  await user.click(screen.getByRole('combobox', { name: label }))
+  // By text rather than role+name: a name query walks every one of the ~250 country options
   await user.click(await screen.findByText(option))
 }
 
-// react-select structure: valueContainer > (singleValue text + inputContainer > input),
-// so the input's grandparent holds the selected value's text
-const languageValue = () => document.querySelector('#defaultLang')!.parentElement!.parentElement!.textContent
+// The picked language is the only place its native name is rendered once the menu closes
+const expectLanguage = (name: string) => waitFor(() => expect(screen.getByText(name)).toBeInTheDocument())
 
 describe('OrganizationCreate defaultLang inference', () => {
   beforeEach(() => {
@@ -51,21 +56,21 @@ describe('OrganizationCreate defaultLang inference', () => {
 
   it('defaults to the API default language', async () => {
     renderCreate()
-    await waitFor(() => expect(languageValue()).toContain('English'))
+    await expectLanguage('English')
   })
 
   it('infers the language from the selected country', async () => {
     const user = userEvent.setup()
     renderCreate()
 
-    await selectOption(user, 'country', /Spain/)
-    await waitFor(() => expect(languageValue()).toContain('Español'))
+    await selectOption(user, /country/i, /Spain/)
+    await expectLanguage('Español')
 
-    await selectOption(user, 'country', /Andorra/)
-    await waitFor(() => expect(languageValue()).toContain('Català'))
+    await selectOption(user, /country/i, /Andorra/)
+    await expectLanguage('Català')
 
-    await selectOption(user, 'country', /Germany/)
-    await waitFor(() => expect(languageValue()).toContain('English'))
+    await selectOption(user, /country/i, /Germany/)
+    await expectLanguage('English')
   })
 
   it('falls back to the API default when the inferred language is not served', async () => {
@@ -73,17 +78,17 @@ describe('OrganizationCreate defaultLang inference', () => {
     const user = userEvent.setup()
     renderCreate()
 
-    await selectOption(user, 'country', /Spain/)
-    await waitFor(() => expect(languageValue()).toContain('English'))
+    await selectOption(user, /country/i, /Spain/)
+    await expectLanguage('English')
   })
 
   it('keeps a manually picked language when the country changes', async () => {
     const user = userEvent.setup()
     renderCreate()
 
-    await selectOption(user, 'defaultLang', 'Català')
-    await selectOption(user, 'country', /Spain/)
+    await selectOption(user, /communications language/i, 'Català')
+    await selectOption(user, /country/i, /Spain/)
 
-    await waitFor(() => expect(languageValue()).toContain('Català'))
+    await expectLanguage('Català')
   })
 })
