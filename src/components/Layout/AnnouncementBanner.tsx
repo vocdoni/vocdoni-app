@@ -1,6 +1,6 @@
 import { AlertRoot as Alert, AlertDescription, CloseButton, HStack } from '@chakra-ui/react'
 import { useLocalStorage } from '@uidotdev/usehooks'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'
 
@@ -46,7 +46,25 @@ const parseAnnouncement = (raw: string | undefined): AnnouncementBannerContents 
   }
 }
 
+/**
+ * The banner is dismissed through localStorage, and `useLocalStorage` throws
+ * outright when rendered on the server. The banner sits on the app root, which
+ * is server-rendered whenever HOME_PROCESS_ID turns it into a process page, so
+ * the storage-backed part is mounted only after hydration. Nothing is lost by
+ * skipping the server pass: the dismissed flag only exists on the client, so a
+ * server-rendered banner would flash for everyone who already closed it.
+ */
 const AnnouncementBanner = ({ limited = false }: { limited?: boolean }) => {
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => setHydrated(true), [])
+
+  if (!hydrated) return null
+
+  return <DismissibleAnnouncementBanner limited={limited} />
+}
+
+const DismissibleAnnouncementBanner = ({ limited }: { limited?: boolean }) => {
   const { i18n } = useTranslation()
   const rawAnnouncement = useAppEnv().ANNOUNCEMENT
   // Parse (and possibly warn) once per raw value instead of on every render.

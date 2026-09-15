@@ -4,6 +4,7 @@ import { getServerAppEnv } from '~src/app-env-server'
 import { getVochainGatewayUrl } from '~src/legacy/vochain-archive'
 import { createVocdoniApiClient } from '~src/providers/vocdoni-client-config'
 import {
+  getHomeProcessPath,
   getPublicLanguageAlternates,
   getPublicOrganizationPath,
   getPublicProcessPath,
@@ -145,3 +146,8 @@ export const loadProcessPublicPageData = (pageContext: PageContextServer) =>
 
 export const loadProcessSummaryPublicPageData = (pageContext: PageContextServer) =>
   loadProcessPublicPageDataWith(pageContext, getPublicProcessSummaryPath)
+
+// Same process data as /:lang/processes/:id, but with the root as its canonical
+// and alternate URLs — the process is *the* homepage of this deployment.
+export const loadHomeProcessPublicPageData = (pageContext: PageContextServer) =>
+  loadProcessPublicPageDataWith(pageContext, getHomeProcessPath)

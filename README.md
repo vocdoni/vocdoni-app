@@ -78,6 +78,7 @@ Relevant entry points:
 
 - `src/pages/organization/@address/` for the SSR organization page
 - `src/pages/processes/@id/` for the SSR process page
+- `src/pages/home-process/` for the SSR single-process homepage (only when `HOME_PROCESS_ID` is set)
 - `src/pages/@catchAll/` for the SPA catch-all page
 - `src/router/` for the client-side React Router application
 
@@ -92,6 +93,12 @@ there, here's a list of variables you can use:
 - `BUILD_PATH` Specifies the destination of built files.
 - `CUSTOM_ORGANIZATION_DOMAINS` A JSON.stringified object of custom domains mapped to organization ids, to
   replace the homepage with their profile page.
+- `HOME_PROCESS_ID` a single process id that turns the app root into that process' voting page — the same
+  view served at `/<lang>/processes/<id>`, server-rendered by Vike. Both `/` and every localized root
+  (`/en`, `/es`, …) render it, and its `<title>`, description, canonical URL, `hreflang` alternates and
+  structured data all describe that process, with the roots as its canonical URLs. Unset, the root keeps
+  behaving exactly as before. It is read at runtime, so a single build/image can be pointed at a process
+  with `docker run -e HOME_PROCESS_ID=...`.
 - `PRIMARY_COLOR` the accent color of the app as a `#rgb` or `#rrggbb` hex value (e.g. `#1a73e8`). A full
   palette (tints, shades, text and focus-ring colors) is generated from it and applied to buttons, form
   controls, tabs and highlights in both color modes. Filled surfaces use the exact color wherever it reads at

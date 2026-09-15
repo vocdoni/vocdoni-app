@@ -28,6 +28,12 @@ describe('buildAppEnv', () => {
     expect(env.DEFAULT_CENSUS_SIZE).toBe(12000)
   })
 
+  it('resolves HOME_PROCESS_ID, treating blank values as unset', () => {
+    expect(buildAppEnv({}).HOME_PROCESS_ID).toBeUndefined()
+    expect(buildAppEnv({ HOME_PROCESS_ID: '   ' }).HOME_PROCESS_ID).toBeUndefined()
+    expect(buildAppEnv({ HOME_PROCESS_ID: ' 0xprocess ' }).HOME_PROCESS_ID).toBe('0xprocess')
+  })
+
   it('trims trailing slashes from url values', () => {
     const env = buildAppEnv({
       SAAS_URL: 'https://saas-api.example.com/',
