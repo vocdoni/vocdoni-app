@@ -26,7 +26,6 @@ export const CountrySelector = ({ ...props }: Omit<SelectProps, 'options'>) => {
   const {
     control,
     formState: { errors },
-    setValue,
   } = useFormContext()
 
   const data = useMemo<CountryOptionType[]>(() => {
@@ -72,9 +71,7 @@ export const CountrySelector = ({ ...props }: Omit<SelectProps, 'options'>) => {
             options={data}
             value={data.find((opt) => opt.value === field.value)}
             getOptionLabel={(option) => `${(option as CountryOptionType).flag} ${option.label}`}
-            onChange={(selectedOption) => {
-              setValue('country', selectedOption?.value ?? '')
-            }}
+            onChange={(selectedOption) => field.onChange(selectedOption?.value ?? '')}
             isClearable={false}
             {...props}
             isRequired={false} // we don't want HTML5 validation

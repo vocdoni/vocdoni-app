@@ -52,7 +52,6 @@ export const SelectCustom = ({
   const {
     control,
     formState: { errors },
-    setValue,
   } = useFormContext()
 
   // Function to extract and format error messages
@@ -100,15 +99,11 @@ export const SelectCustom = ({
                 ? ((rest.options as SelectOptionType[] | undefined)?.find((opt) => opt?.value === field.value) ?? null)
                 : field.value
             }
-            onChange={(selectedOption) => {
-              // shouldDirty lets callers distinguish a user pick from a programmatic
-              // setValue (e.g. the country→language inference in OrganizationCreate)
-              if (valueMode === 'value') {
-                setValue(name, selectedOption?.value ?? '', { shouldDirty: true, shouldTouch: true })
-                return
-              }
-              setValue(name, selectedOption, { shouldDirty: true, shouldTouch: true })
-            }}
+            // Going through the controller (rather than setValue) marks the field dirty
+            // and validates per the form's mode, like any other controlled input
+            onChange={(selectedOption) =>
+              field.onChange(valueMode === 'value' ? (selectedOption?.value ?? '') : selectedOption)
+            }
           />
         )}
       />
