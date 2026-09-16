@@ -1363,7 +1363,6 @@
     },
     "questions": "Questions",
     "results": "Results",
-    "share_title": "Share on {{ network }}",
     "spreadsheet": {
       "confirm": {
         "election_title": "Your vote will be recorded for:"
@@ -1759,14 +1758,6 @@
   },
   "send_invitation": "Send invitation",
   "settings": "Settings",
-  "share": {
-    "copy": "Copy",
-    "election_share_btn_text": "Share",
-    "election_share_text": "Look at this election!",
-    "icon_title": "share link",
-    "mail_subject": "Voting platform",
-    "modal_title": "Share with friends"
-  },
   "shared_census": {
     "instructions": {
       "identification": "We will ask for your identification. Afterwards, you can cast your vote securely.",
