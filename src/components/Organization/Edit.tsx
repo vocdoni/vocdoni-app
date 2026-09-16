@@ -60,6 +60,10 @@ const EditOrganization = () => {
       size: organization?.size ?? '',
       type: organization?.type ?? '',
       country: organization?.country,
+      // Orgs predating defaultLang come back without it. Left empty rather than seeded,
+      // so saving unrelated details cannot silently pin their notifications; the
+      // selector is required, so the admin picks explicitly.
+      defaultLang: organization?.defaultLang ?? '',
       avatar: organization?.account.avatar || '',
       header: organization?.account.header || '',
     },
@@ -81,6 +85,7 @@ const EditOrganization = () => {
       size: values.size,
       type: values.type,
       country: values.country,
+      defaultLang: values.defaultLang,
     }
 
     try {

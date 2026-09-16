@@ -6,7 +6,9 @@ const defaultMock: ReactProvidersMock = {
   useClient: () => ({
     connected: false,
     account: null,
-    client: {},
+    // `setLang` is a no-op stub: ApiClientProvider registers the UI language on
+    // the real client, and component tests mount against this stub instead.
+    client: { setLang: () => undefined },
     fetchAccount: () => undefined,
     errors: { fetch: null },
     loading: { fetch: false, account: false },

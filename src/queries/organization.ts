@@ -3,7 +3,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import type { ElectionStatus } from '@vocdoni/api-types'
 import type { VocdoniApiClient } from '@vocdoni/api-client'
 import { useParams, useSearchParams } from 'react-router'
-import { ApiEndpoints } from '~components/Auth/api'
+import { ApiEndpoints, ApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
@@ -261,6 +261,23 @@ export const useOrganizationTypes = () => {
     },
     staleTime: 60 * 60 * 1000,
     select: (data) => data.sort((a, b) => a.name.localeCompare(b.name)),
+  })
+}
+
+// Shape of GET /organizations/languages: the languages the backend accepts as an
+// organization defaultLang, plus the default used when none applies.
+export type OrganizationLanguages = { languages: string[]; default: string }
+
+export const useOrganizationLanguages = () => {
+  const { bearedFetch } = useAuth()
+
+  return useQuery({
+    queryKey: QueryKeys.organization.languages,
+    queryFn: () => bearedFetch<OrganizationLanguages>(ApiEndpoints.OrganizationsLanguages),
+    staleTime: 60 * 60 * 1000,
+    // A 404 means the backend predates this endpoint; retrying only delays the
+    // selector's error state (and the submit button it gates) by several seconds
+    retry: (failureCount, error) => !(error instanceof ApiError && error.response?.status === 404) && failureCount < 3,
   })
 }
 

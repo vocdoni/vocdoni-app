@@ -5,8 +5,10 @@ export type SaasOrganizationData = {
   color: string
   country: string
   createdAt: string
+  // Fallback language for notifications sent on behalf of the org (en/es/ca,
+  // served by GET /organizations/languages)
+  defaultLang: string
   header: string
-  language: string
   parent: string
   size: string
   subdomain: string
@@ -36,6 +38,9 @@ export type OrganizationAccount = {
 export type OrganizationData = Omit<Organization, 'address'> & {
   address?: string
   account: OrganizationAccount
+  // Not yet in @vocdoni/api-types' Organization — remove once it regenerates
+  // from the swagger that includes defaultLang (saas-backend#676)
+  defaultLang?: string
 }
 
 export type CreateOrgParams = Partial<

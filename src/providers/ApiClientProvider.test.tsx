@@ -1,6 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
 import { AuthProvider as SdkAuthProvider, useAuth as useSdkAuth } from '@vocdoni/react-providers'
+import i18next from 'i18next'
 import type { ReactNode } from 'react'
+import { I18nextProvider, initReactI18next } from 'react-i18next'
 import { AppEnvProvider } from '~src/app-env'
 import { buildAppEnv } from '~src/app-env-build'
 import { ApiClientProvider, AUTH_STORAGE_KEY, useApiClient } from '~src/providers/ApiClientProvider'
@@ -26,6 +28,14 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 const authorizationOfLastRequest = (fetchSpy: ReturnType<typeof vi.spyOn>) => {
   const [, init] = fetchSpy.mock.calls.at(-1) as [RequestInfo, RequestInit | undefined]
   return new Headers(init?.headers).get('Authorization')
+}
+
+// The SDK dispatches a Request object, so read the URL off it rather than the
+// first argument's string form.
+const langOfLastRequest = (fetchSpy: ReturnType<typeof vi.spyOn>) => {
+  const [input] = fetchSpy.mock.calls.at(-1) as [RequestInfo, RequestInit | undefined]
+  const url = typeof input === 'string' ? input : (input as Request).url
+  return new URL(url).searchParams.get('lang')
 }
 
 describe('ApiClientProvider + SdkAuthProvider token wiring', () => {
@@ -81,5 +91,77 @@ describe('ApiClientProvider + SdkAuthProvider token wiring', () => {
 
     await result.current.api.client.auth.addresses()
     expect(authorizationOfLastRequest(fetchSpy)).toBeNull()
+  })
+})
+
+describe('ApiClientProvider language wiring', () => {
+  let fetchSpy: ReturnType<typeof vi.spyOn>
+
+  // A tree-local i18n instance, mirroring the per-page instance AppProviders
+  // renders localized routes with.
+  const createInstance = async (lng: string) => {
+    const instance = i18next.createInstance()
+    await instance.use(initReactI18next).init({
+      lng,
+      fallbackLng: 'en',
+      supportedLngs: ['en', 'es', 'ca'],
+      lowerCaseLng: true,
+      resources: { en: {}, es: {}, ca: {} },
+      initAsync: false,
+    })
+    return instance
+  }
+
+  const languageWrapper =
+    (instance: Awaited<ReturnType<typeof createInstance>>) =>
+    ({ children }: { children: ReactNode }) => (
+      <AppEnvProvider value={buildAppEnv({})}>
+        <I18nextProvider i18n={instance}>
+          <ApiClientProvider>{children}</ApiClientProvider>
+        </I18nextProvider>
+      </AppEnvProvider>
+    )
+
+  beforeEach(() => {
+    localStorage.clear()
+    fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(jsonResponse({ addresses: [] }))
+  })
+
+  afterEach(() => {
+    fetchSpy.mockRestore()
+  })
+
+  it('sends the rendered language on API client requests', async () => {
+    const instance = await createInstance('es')
+    const { result } = renderHook(() => useApiClient(), { wrapper: languageWrapper(instance) })
+
+    await result.current.client.auth.addresses()
+
+    expect(langOfLastRequest(fetchSpy)).toBe('es')
+  })
+
+  it('follows an in-place language switch without rebuilding the client', async () => {
+    // ClientProvider memoizes the client on apiUrl, so the instance survives a
+    // language switch: a value registered once would go stale, a getter does not.
+    const instance = await createInstance('es')
+    const { result } = renderHook(() => useApiClient(), { wrapper: languageWrapper(instance) })
+    const clientBefore = result.current.client
+
+    await act(async () => {
+      await instance.changeLanguage('ca')
+    })
+    await result.current.client.auth.addresses()
+
+    expect(result.current.client).toBe(clientBefore)
+    expect(langOfLastRequest(fetchSpy)).toBe('ca')
+  })
+
+  it('reports the supported base code for a region variant the app does not translate', async () => {
+    const instance = await createInstance('es-AR')
+    const { result } = renderHook(() => useApiClient(), { wrapper: languageWrapper(instance) })
+
+    await result.current.client.auth.addresses()
+
+    expect(langOfLastRequest(fetchSpy)).toBe('es')
   })
 })

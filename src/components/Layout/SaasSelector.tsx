@@ -5,6 +5,7 @@ import {
   Flex,
   FieldRoot as FormControl,
   FieldErrorText as FormErrorMessage,
+  FieldHelperText as FormHelperText,
   FieldLabel as FormLabel,
   Icon,
   Text,
@@ -13,7 +14,8 @@ import { Props as SelectProps, chakraComponents } from 'chakra-react-select'
 import { Controller, type ControllerProps, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuEye, LuKey, LuUserRoundCog, LuUsers } from 'react-icons/lu'
-import { Role, useOrganizationTypes, useRoles } from '~src/queries/organization'
+import { baseLanguages } from '~i18n/languages'
+import { Role, useOrganizationLanguages, useOrganizationTypes, useRoles } from '~src/queries/organization'
 import { Select } from '../Form/Select'
 
 export type SelectOptionType = {
@@ -29,6 +31,7 @@ export type RoleOptionType = SelectOptionType & {
 export type SelectCustomProps = {
   name: string
   label?: string
+  helper?: string
   required?: boolean
   controller?: Omit<ControllerProps, 'render' | 'name'>
   valueMode?: 'option' | 'value'
@@ -37,6 +40,7 @@ export type SelectCustomProps = {
 export const SelectCustom = ({
   name,
   label,
+  helper,
   placeholder,
   required = false,
   controller,
@@ -48,7 +52,6 @@ export const SelectCustom = ({
   const {
     control,
     formState: { errors },
-    setValue,
   } = useFormContext()
 
   // Function to extract and format error messages
@@ -96,16 +99,15 @@ export const SelectCustom = ({
                 ? ((rest.options as SelectOptionType[] | undefined)?.find((opt) => opt?.value === field.value) ?? null)
                 : field.value
             }
-            onChange={(selectedOption) => {
-              if (valueMode === 'value') {
-                setValue(name, selectedOption?.value ?? '')
-                return
-              }
-              setValue(name, selectedOption)
-            }}
+            // Going through the controller (rather than setValue) marks the field dirty
+            // and validates per the form's mode, like any other controlled input
+            onChange={(selectedOption) =>
+              field.onChange(valueMode === 'value' ? (selectedOption?.value ?? '') : selectedOption)
+            }
           />
         )}
       />
+      {helper && <FormHelperText>{helper}</FormHelperText>}
       <FormErrorMessage mt={2}>
         {getErrorMessage(errors[name]) || t('form.error.generic', { defaultValue: 'Error performing the operation' })}
       </FormErrorMessage>
@@ -152,6 +154,36 @@ export const MembershipSizeSelector = ({ defaultValue, ...props }: Omit<SelectCu
     <SelectCustom
       options={listSizes}
       label={t('membership_size.selector_label', { defaultValue: 'Membership Size' })}
+      valueMode='value'
+      {...props}
+    />
+  )
+}
+
+export const DefaultLanguageSelector = (props: Omit<SelectCustomProps, 'options'>) => {
+  const { t } = useTranslation()
+  const { data, isLoading, isError, error } = useOrganizationLanguages()
+  // Native names for known codes, the raw code for anything the UI doesn't know
+  const options: SelectOptionType[] = (data?.languages ?? []).map((code) => ({
+    label: (baseLanguages as Record<string, string>)[code] ?? code,
+    value: code,
+  }))
+
+  if (isError)
+    return (
+      <Alert status='error'>
+        {error?.message || t('error.loading_languages', { defaultValue: 'Error loading languages' })}
+      </Alert>
+    )
+
+  return (
+    <SelectCustom
+      isLoading={isLoading}
+      options={options}
+      label={t('default_language.selector_label', { defaultValue: 'Communications language' })}
+      helper={t('default_language.selector_helper', {
+        defaultValue: "Default language for communications with your users, used when a user hasn't set their own.",
+      })}
       valueMode='value'
       {...props}
     />

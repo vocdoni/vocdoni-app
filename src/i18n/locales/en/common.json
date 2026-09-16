@@ -277,6 +277,10 @@
       "title": "Dashboard"
     }
   },
+  "default_language": {
+    "selector_helper": "Default language for communications with your users, used when a user hasn't set their own.",
+    "selector_label": "Communications language"
+  },
   "delete": {
     "cancel_button": "Cancel",
     "confirm_description": "To delete your account, please contact our support team.",
@@ -340,6 +344,7 @@
   "ended_processes": "Ended",
   "enter_promo_code": "Enter code",
   "error": {
+    "loading_languages": "Error loading languages",
     "loading_page": "Error loading the page",
     "loading_roles": "Error loading roles",
     "loading_types": "Error loading organization types",

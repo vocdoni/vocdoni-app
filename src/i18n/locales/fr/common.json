@@ -279,6 +279,10 @@
       "title": "Tableau de bord"
     }
   },
+  "default_language": {
+    "selector_helper": "Langue par défaut des communications avec vos utilisateurs, lorsqu'ils n'en ont pas défini une.",
+    "selector_label": "Langue des communications"
+  },
   "delete": {
     "cancel_button": "Annuler",
     "confirm_description": "Pour supprimer votre compte, contactez notre équipe d'assistance.",
@@ -342,6 +346,7 @@
   "ended_processes": "Terminés",
   "enter_promo_code": "Saisir le code",
   "error": {
+    "loading_languages": "Erreur lors du chargement des langues",
     "loading_page": "Erreur lors du chargement de la page",
     "loading_roles": "Erreur lors du chargement des rôles",
     "loading_types": "Erreur lors du chargement des types d'organisation",

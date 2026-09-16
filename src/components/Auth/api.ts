@@ -1,4 +1,5 @@
 import i18n from '~i18n'
+import { getActiveLanguage } from '~i18n/active-language'
 
 type MethodTypes = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
@@ -28,6 +29,7 @@ export enum ApiEndpoints {
   OrganizationPendingUsers = 'organizations/{address}/users/pending',
   OrganizationPendingUser = 'organizations/{address}/users/pending/{inviteId}',
   Organizations = 'organizations',
+  OrganizationsLanguages = 'organizations/languages',
   OrganizationsRoles = 'organizations/roles',
   OrganizationsTypes = 'organizations/types',
   OrganizationSubscription = 'organizations/{address}/subscription',
@@ -118,10 +120,15 @@ export const api = <T>(
   }
   // Format body if it's an object (and not FormData)
   const formatted = isFormData || typeof body === 'string' ? body : JSON.stringify(body)
-  // Append lang query param
+  // Backend-rendered mail follows this param. Prefer the instance the React tree
+  // registered: localized routes use a per-page one, and only it follows an in-place
+  // switch; the module singleton covers callers outside a rendered tree.
   const [basePath, queryString] = path.split('?', 2)
   const params = new URLSearchParams(queryString || '')
-  params.set('lang', i18n.language)
+  const lang = getActiveLanguage() ?? i18n.language
+  if (lang) {
+    params.set('lang', lang)
+  }
   path = `${basePath}?${params.toString()}`
 
   // Fail loudly if the base URL was never injected (e.g. a non-Vike render or a

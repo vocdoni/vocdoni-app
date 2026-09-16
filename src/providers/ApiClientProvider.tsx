@@ -1,5 +1,7 @@
 import { ClientProvider, useClient } from '@vocdoni/react-providers'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { resolveActiveLanguage } from '~i18n/active-language'
 import { useAppEnv } from '~src/app-env'
 
 // Base key the react-providers AuthProvider persists the session under: it writes
@@ -12,6 +14,18 @@ export const AUTH_STORAGE_KEY = 'auth'
 // bearer written by the AuthProvider (login / setSession). SSR-safe.
 const readToken = () => (typeof localStorage === 'undefined' ? null : localStorage.getItem(`${AUTH_STORAGE_KEY}.token`))
 
+/** Tells the SaaS client which language to render its own content in, above all the
+ * CSP's 2FA email and SMS. A getter, not a value: the client is memoized on apiUrl and
+ * survives a language switch. Optional because tests stub `useClient` with bare objects. */
+const ApiClientLanguage = ({ children }: PropsWithChildren) => {
+  const { client } = useClient()
+  const { i18n } = useTranslation()
+
+  useMemo(() => client?.setLang?.(() => resolveActiveLanguage(i18n)), [client, i18n])
+
+  return <>{children}</>
+}
+
 /**
  * Mounts the new integrator-sdk `VocdoniApiClient` (from @vocdoni/react-providers)
  * for the whole authenticated app. Exposed through `useApiClient()` to avoid the
@@ -22,7 +36,7 @@ export const ApiClientProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <ClientProvider apiUrl={SAAS_URL} authToken={readToken}>
-      {children}
+      <ApiClientLanguage>{children}</ApiClientLanguage>
     </ClientProvider>
   )
 }

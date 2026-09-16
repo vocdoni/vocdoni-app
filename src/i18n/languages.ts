@@ -1,3 +1,5 @@
+import type { OrganizationLanguages } from '~src/queries/organization'
+
 export const baseLanguages = {
   ca: 'Català',
   de: 'Deutsch',
@@ -68,6 +70,42 @@ export const resolveLanguagesSlice = (rawValue?: string): Record<string, string>
     },
     {} as Record<string, string>
   )
+}
+
+// ISO 3166-1 alpha-2 codes whose organizations get Spanish notifications by default
+const spanishSpeakingCountries = new Set([
+  'AR',
+  'BO',
+  'CL',
+  'CO',
+  'CR',
+  'CU',
+  'DO',
+  'EC',
+  'ES',
+  'GQ',
+  'GT',
+  'HN',
+  'MX',
+  'NI',
+  'PA',
+  'PE',
+  'PR',
+  'PY',
+  'SV',
+  'UY',
+  'VE',
+])
+
+/** Infers an org's notification language from its country: Spanish-speaking → es,
+ * Andorra → ca, anything else the API default. Clamped to the languages the backend
+ * serves, so a preference it has no templates for falls back too. */
+export const inferOrgLanguage = (
+  country: string | undefined,
+  { languages, default: fallback }: OrganizationLanguages
+): string => {
+  const lang = country === 'AD' ? 'ca' : country && spanishSpeakingCountries.has(country) ? 'es' : undefined
+  return lang && languages.includes(lang) ? lang : fallback
 }
 
 export default Object.keys(baseLanguages)

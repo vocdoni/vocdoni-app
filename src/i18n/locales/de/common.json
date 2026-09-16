@@ -277,6 +277,10 @@
       "title": "Dashboard"
     }
   },
+  "default_language": {
+    "selector_helper": "Standardsprache für die Kommunikation mit deinen Nutzern, wenn sie selbst keine festgelegt haben.",
+    "selector_label": "Kommunikationssprache"
+  },
   "delete": {
     "cancel_button": "Abbrechen",
     "confirm_description": "Um dein Konto zu löschen, wende dich bitte an unser Support-Team.",
@@ -340,6 +344,7 @@
   "ended_processes": "Beendet",
   "enter_promo_code": "Code eingeben",
   "error": {
+    "loading_languages": "Fehler beim Laden der Sprachen",
     "loading_page": "Fehler beim Laden der Seite",
     "loading_roles": "Fehler beim Laden der Rollen",
     "loading_types": "Fehler beim Laden der Organisationstypen",

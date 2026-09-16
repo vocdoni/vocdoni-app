@@ -67,7 +67,17 @@ export const createOrganization = async (page: Page, name: string): Promise<void
   await page.getByRole('option').first().click()
   await selectComboboxOption(page, page.locator('#country'), /Spain/)
 
-  await page.locator('form button[type="submit"]').click()
+  // Spain infers Spanish, and org-scoped emails follow the org's language rather than
+  // the request's, so pin English to keep the MailSubjects assertions valid. The submit
+  // button gates on the language query; a backend without that endpoint shows an alert.
+  const submit = page.locator('form button[type="submit"]')
+  await expect(submit).toBeEnabled()
+  const languageField = page.locator('#defaultLang')
+  if (await languageField.count()) {
+    await selectComboboxOption(page, languageField, 'English')
+  }
+
+  await submit.click()
 
   // Provisioning the on-chain account happens server-side during this request.
   await page.waitForURL(/\/admin/, { timeout: 120_000 })
