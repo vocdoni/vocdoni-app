@@ -53,6 +53,32 @@ describe('Logo', () => {
     expect(screen.queryByAltText('Acme logo')).toBeNull()
   })
 
+  // The <img> ships in the server-rendered markup, so a broken URL can fail
+  // before React hydrates: that error event fires with no listener attached and
+  // never reaches onError, which would leave a broken image in the header for
+  // good. jsdom never loads images, so stub the "already settled, nothing
+  // decoded" state a browser reports after such a failure and assert the load is
+  // replayed — that replay is what lets onError fire at all in this case.
+  it('replays an image load that already settled before hydration', async () => {
+    const setAttribute = vi.spyOn(HTMLImageElement.prototype, 'setAttribute')
+    const srcWrites = () => setAttribute.mock.calls.filter(([name]) => name === 'src').length
+    const organization = { src: 'https://cdn/broken.png', name: 'Acme' }
+
+    try {
+      const { unmount } = await renderLogo(<Logo organization={organization} />)
+      const baseline = srcWrites()
+      unmount()
+      setAttribute.mockClear()
+
+      vi.spyOn(HTMLImageElement.prototype, 'complete', 'get').mockReturnValue(true)
+      await renderLogo(<Logo organization={organization} />)
+
+      expect(srcWrites()).toBe(baseline + 1)
+    } finally {
+      vi.restoreAllMocks()
+    }
+  })
+
   it('keeps linking to the app root', async () => {
     await renderLogo(<Logo organization={{ src: 'https://cdn/acme.png', name: 'Acme' }} />)
 
