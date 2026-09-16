@@ -63,31 +63,48 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ ! "$LEVELS" =~ [^[:space:]] ]]; then
+  printf '%s\n' 'At least one concurrency level is required.' >&2
+  exit 1
+fi
+
 mkdir -p "$RESULTS_DIR"
 SUMMARY="$RESULTS_DIR/summary-$RUN_ID.txt"
 JSONL="$RESULTS_DIR/results-$RUN_ID.jsonl"
 STATS_LOG="$RESULTS_DIR/dockerstats-$RUN_ID.log"
+LOADGEN_OUT="$RESULTS_DIR/loadgen-$RUN_ID.out"
 
 log() { echo -e "$*" | tee -a "$SUMMARY"; }
 
 cleanup() {
-  # Stop the docker stats streamer if running.
-  [[ -n "${STATS_PID:-}" ]] && kill "$STATS_PID" >/dev/null 2>&1
+  # A signal to the parent must also stop its active build/load generator.
+  for pid in "${BUILD_PID:-}" "${LOADGEN_PID:-}" "${STATS_PID:-}"; do
+    if [[ -n "$pid" ]]; then
+      kill "$pid" >/dev/null 2>&1 || true
+      wait "$pid" 2>/dev/null || true
+    fi
+  done
   if [[ "$KEEP" -eq 0 ]]; then
     docker rm -f "$CONTAINER" >/dev/null 2>&1
   else
     log "\nContainer left running as: $CONTAINER (port $HOST_PORT)"
   fi
 }
-trap cleanup EXIT INT TERM
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 # --- build ------------------------------------------------------------------
 if [[ "$SKIP_BUILD" -eq 0 ]]; then
   log "==> Building image $IMAGE (this can take a few minutes)…"
-  if ! docker build -t "$IMAGE" "$REPO_DIR" >>"$RESULTS_DIR/build-$RUN_ID.log" 2>&1; then
+  docker build -t "$IMAGE" "$REPO_DIR" >>"$RESULTS_DIR/build-$RUN_ID.log" 2>&1 &
+  BUILD_PID=$!
+  if ! wait "$BUILD_PID"; then
+    BUILD_PID=""
     log "!! Build failed. See $RESULTS_DIR/build-$RUN_ID.log"
     exit 1
   fi
+  BUILD_PID=""
 else
   log "==> Skipping build, using existing image $IMAGE"
 fi
@@ -95,11 +112,14 @@ fi
 # --- run container ----------------------------------------------------------
 log "==> Starting container: cpus=$CPUS memory=$MEMORY port=$HOST_PORT"
 docker rm -f "$CONTAINER" >/dev/null 2>&1
-docker run -d --name "$CONTAINER" \
+if ! docker run -d --name "$CONTAINER" \
   --cpus="$CPUS" --memory="$MEMORY" --memory-swap="$MEMORY" \
   -e NODE_ENV=production -e PORT=3000 \
   -p "$HOST_PORT:3000" \
-  "$IMAGE" >/dev/null
+  "$IMAGE" >/dev/null; then
+  log "!! Container failed to start. Check the Docker error above (including host port availability)."
+  exit 1
+fi
 
 # --- wait for readiness -----------------------------------------------------
 BASE="http://localhost:$HOST_PORT"
@@ -110,18 +130,21 @@ for i in $(seq 1 60); do
   if [[ "$code" =~ ^(200|301|302|307|308)$ ]]; then
     ready=1
     log "    ready after ${i}s (HTTP $code)"
+    if [[ "$code" == 3* ]]; then
+      log "!! Target returns a redirect. Redirects are not followed; use the canonical path to measure rendering."
+    fi
     break
   fi
   if ! docker ps --format '{{.Names}}' | grep -q "^$CONTAINER$"; then
     log "!! Container exited during startup. Logs:"
-    docker logs "$CONTAINER" 2>&1 | tail -30 | tee -a "$SUMMARY"
+    docker logs --tail 30 "$CONTAINER" 2>&1 | tee -a "$SUMMARY"
     exit 1
   fi
   sleep 1
 done
 if [[ "$ready" -eq 0 ]]; then
   log "!! Server did not become ready in 60s. Logs:"
-  docker logs "$CONTAINER" 2>&1 | tail -30 | tee -a "$SUMMARY"
+  docker logs --tail 30 "$CONTAINER" 2>&1 | tee -a "$SUMMARY"
   exit 1
 fi
 
@@ -145,67 +168,100 @@ log "\n================ STRESS RAMP ================"
 log "target: $BASE$REQ_PATH   keepalive: $([[ $KEEPALIVE -eq 1 ]] && echo yes || echo no)"
 log "levels: $LEVELS   duration: ${DURATION}s   warmup: ${WARMUP}s"
 log "============================================\n"
-printf '%-8s %-9s %-8s %-8s %-8s %-9s %-9s %-8s\n' \
-  "conc" "rps" "ok" "non2xx" "errors" "p90(ms)" "p99(ms)" "verdict" | tee -a "$SUMMARY"
+printf '%-8s %-9s %-8s %-8s %-8s %-8s %-9s %-9s %-8s\n' \
+  "conc" "rps" "ok" "3xx" "non2xx" "errors" "p90(ms)" "p99(ms)" "verdict" | tee -a "$SUMMARY"
 
 CRASH_LEVEL=""
+LAST_LEVEL=""
+RUN_ERROR=""
 for c in $LEVELS; do
   if ! container_alive; then
-    log "!! Container is no longer running before level $c — it crashed at the previous level."
+    if [[ -n "$LAST_LEVEL" ]]; then
+      CRASH_LEVEL="$LAST_LEVEL"
+      log "!! Container is no longer running before level $c — it crashed after level $LAST_LEVEL."
+    else
+      RUN_ERROR="Container stopped before any concurrency level was tested."
+    fi
     break
   fi
   restarts_before=$(container_restarts)
+  LAST_LEVEL="$c"
 
-  OUT=$(node "$SCRIPT_DIR/loadgen.mjs" --url "$BASE$REQ_PATH" \
+  node "$SCRIPT_DIR/loadgen.mjs" --url "$BASE$REQ_PATH" \
     --concurrency "$c" --duration "$DURATION" --warmup "$WARMUP" $KA_FLAG \
-    --label "c$c" 2>>"$RESULTS_DIR/loadgen-$RUN_ID.err")
-  JSON=$(printf '%s\n' "$OUT" | grep '^RESULT_JSON ' | sed 's/^RESULT_JSON //')
+    --label "c$c" >"$LOADGEN_OUT" 2>>"$RESULTS_DIR/loadgen-$RUN_ID.err" &
+  LOADGEN_PID=$!
+  if ! wait "$LOADGEN_PID"; then
+    LOADGEN_PID=""
+    RUN_ERROR="Load generator failed at concurrency $c. See $RESULTS_DIR/loadgen-$RUN_ID.err"
+    break
+  fi
+  LOADGEN_PID=""
+  JSON=$(sed -n 's/^RESULT_JSON //p' "$LOADGEN_OUT")
 
   if [[ -z "$JSON" ]]; then
-    log "!! No result from loadgen at concurrency $c (generator or connection failure)."
-    CRASH_LEVEL="$c"
+    RUN_ERROR="No result from load generator at concurrency $c."
     break
   fi
   echo "$JSON" >>"$JSONL"
 
   restarts_after=$(container_restarts)
-  read -r rps ok non2xx errors p90 p99 failpct <<<"$(printf '%s' "$JSON" | node -e '
+  if ! METRICS=$(printf '%s' "$JSON" | node -e '
     let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{
-      try{const j=JSON.parse(s);
-        const fail=(j.errors||0)+Math.max(0,j.non2xx||0);
-        const pct=j.requests?fail/j.requests*100:0;
-        console.log([j.rps||0,j.ok2xx||0,j.non2xx||0,j.errors||0,
-          (j.latencyMs&&j.latencyMs.p90)||0,(j.latencyMs&&j.latencyMs.p99)||0,
-          pct.toFixed(2)].join(" "));
-      }catch(e){console.log("0 0 0 0 0 0 100");}
-    });')"
-
-  # Verdict: OK if <1% failures and container stable; DEGRADED if some failures;
-  # CRASH if container died/restarted or failures are severe (>=10%).
-  verdict="OK"
-  crashed=0
-  if ! container_alive; then verdict="DOWN"; crashed=1
-  elif [[ "$restarts_after" != "$restarts_before" ]]; then verdict="RESTARTED"; crashed=1
-  elif awk "BEGIN{exit !($failpct >= 10)}"; then verdict="CRASH"; crashed=1
-  elif awk "BEGIN{exit !($failpct >= 1)}"; then verdict="DEGRADED"
+      try {
+        const j=JSON.parse(s);
+        const values=[j.rps,j.ok2xx,j.redirect3xx,j.non2xx,j.errors,j.latencyMs?.p90,j.latencyMs?.p99];
+        if (!Number.isSafeInteger(j.requests) || j.requests <= 0 ||
+            values.some(v=>!Number.isFinite(v) || v < 0)) {
+          throw new Error("Missing, invalid, or empty measurement");
+        }
+        const localErrors=["EMFILE","ENFILE","EADDRNOTAVAIL","ENOBUFS","ENOMEM"];
+        const exhausted=localErrors.filter(code=>(j.errorBreakdown?.[code] || 0) > 0);
+        if (exhausted.length) throw new Error("Load generator resource exhaustion: " + exhausted.join(", "));
+        const pct=(j.errors+j.non2xx)/j.requests*100;
+        // Classify the original value, not a display-rounded percentage.
+        const verdict=pct >= 10 ? "CRASH" : pct >= 1 ? "DEGRADED" : "OK";
+        console.log([...values,verdict].join(" "));
+      } catch(e) {
+        console.error(e.message);
+        process.exitCode=1;
+      }
+    });' 2>>"$RESULTS_DIR/loadgen-$RUN_ID.err"); then
+    RUN_ERROR="Invalid benchmark at concurrency $c. See $RESULTS_DIR/loadgen-$RUN_ID.err"
+    break
   fi
+  read -r rps ok redirects non2xx errors p90 p99 verdict <<<"$METRICS"
 
-  printf '%-8s %-9s %-8s %-8s %-8s %-9s %-9s %-8s\n' \
-    "$c" "$rps" "$ok" "$non2xx" "$errors" "$p90" "$p99" "$verdict" | tee -a "$SUMMARY"
+  # Container death/restarts override the unrounded HTTP failure verdict.
+  if ! container_alive; then verdict="DOWN"
+  elif [[ "$restarts_after" != "$restarts_before" ]]; then verdict="RESTARTED"
+  fi
+  crashed=0
+  [[ "$verdict" =~ ^(DOWN|RESTARTED|CRASH)$ ]] && crashed=1
+
+  printf '%-8s %-9s %-8s %-8s %-8s %-8s %-9s %-9s %-8s\n' \
+    "$c" "$rps" "$ok" "$redirects" "$non2xx" "$errors" "$p90" "$p99" "$verdict" | tee -a "$SUMMARY"
 
   if [[ "$crashed" -eq 1 ]]; then
     CRASH_LEVEL="$c"
     log "\n!! Server started failing at concurrency = $c (verdict: $verdict)."
     log "   Recent container logs:"
-    docker logs "$CONTAINER" 2>&1 | tail -20 | sed 's/^/     /' | tee -a "$SUMMARY"
+    docker logs --tail 20 "$CONTAINER" 2>&1 | sed 's/^/     /' | tee -a "$SUMMARY"
     break
   fi
 
-  sleep 3 # let the server settle between levels
+  sleep 3 # let the server settle between levels, including after the final level
+  if ! container_alive; then
+    CRASH_LEVEL="$c"
+    log "!! Container died during cooldown after concurrency $c."
+    break
+  fi
 done
 
 log "\n================ RESULT ================"
-if [[ -n "$CRASH_LEVEL" ]]; then
+if [[ -n "$RUN_ERROR" ]]; then
+  log "!! Invalid benchmark: $RUN_ERROR"
+elif [[ -n "$CRASH_LEVEL" ]]; then
   log "First failing concurrency level: $CRASH_LEVEL"
 else
   log "Server survived all tested levels: $LEVELS"
@@ -224,3 +280,5 @@ log "  summary : $SUMMARY"
 log "  results : $JSONL"
 log "  dstats  : $STATS_LOG"
 log "========================================"
+
+if [[ -n "$RUN_ERROR" ]]; then exit 1; fi
