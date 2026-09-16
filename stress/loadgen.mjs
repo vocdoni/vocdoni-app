@@ -109,7 +109,6 @@ const requestOptions = {
 // ---------------------------------------------------------------------------
 function freshStats() {
   return {
-    sent: 0,
     completed: 0,
     bytes: 0,
     statusBuckets: {}, // "2xx" -> count, plus exact non-2xx codes
@@ -139,7 +138,9 @@ function recordError(err) {
 function doRequest() {
   return new Promise((resolve) => {
     const start = process.hrtime.bigint()
-    stats.sent++
+    // Preserve phase ownership across the warmup reset: a cold request must
+    // not become a measured request just because it completes after warmup.
+    const measuredRequest = measuring
     // Each request has exactly ONE terminal outcome. Once settled, any further
     // events (e.g. the 'error' that req.destroy() triggers after a timeout) are
     // ignored — otherwise a single timeout would be double-counted as both
@@ -149,8 +150,8 @@ function doRequest() {
       if (settled) return
       settled = true
       clearTimeout(requestTimer)
-      stats.completed++
-      if (measuring) {
+      if (measuredRequest) {
+        stats.completed++
         if (outcome.ok) {
           stats.bytes += outcome.len
           recordStatus(outcome.statusCode)

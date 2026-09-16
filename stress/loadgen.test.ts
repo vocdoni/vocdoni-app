@@ -96,6 +96,38 @@ describe('load generator CLI', () => {
     expect(measured.errors).toBe(0)
   })
 
+  it('excludes a warmup failure that completes after measurement starts', async () => {
+    let requests = 0
+    const url = await listen((_request, response) => {
+      if (++requests === 1) {
+        setTimeout(() => {
+          response.statusCode = 500
+          response.end('cold start')
+        }, 150)
+      } else {
+        response.end('ok')
+      }
+    })
+    const output = await run(['--url', url, '--concurrency', '1', '--warmup', '0.05', '--duration', '0.3'])
+    expect(output.code).toBe(0)
+    const measured = result(output.stdout)
+    expect(measured.ok2xx).toBeGreaterThan(0)
+    expect(measured.non2xx).toBe(0)
+    expect(measured.requests).toBe(measured.ok2xx)
+    expect(measured.statusBuckets['500']).toBeUndefined()
+  })
+
+  it('reports no measured requests when only an in-flight warmup request completes', async () => {
+    const url = await listen((_request, response) => setTimeout(() => response.end('ok'), 150))
+    const output = await run(['--url', url, '--concurrency', '1', '--warmup', '0.05', '--duration', '0.02'])
+    expect(output.code).toBe(0)
+    const measured = result(output.stdout)
+    expect(measured.requests).toBe(0)
+    expect(measured.ok2xx).toBe(0)
+    expect(measured.rps).toBe(0)
+    expect(measured.latencyMs.max).toBe(0)
+  })
+
   it('clears completed-request deadlines before reusing keep-alive sockets', async () => {
     const url = await listen((_request, response) => setTimeout(() => response.end('ok'), 10))
     const output = await run(['--url', url, '--concurrency', '1', '--duration', '0.3', '--timeout', '100'])
