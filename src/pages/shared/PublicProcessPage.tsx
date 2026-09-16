@@ -3,8 +3,9 @@ import { usePageContext } from 'vike-react/usePageContext'
 import PublicLayout from '~elements/PublicLayout'
 import PublicProcessView from '~elements/processes/PublicPage'
 import { AppProviders } from '~src/Providers'
-import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
+import { getHeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
 import { getPublicLanguageLinksFromMeta } from '~src/pages/shared/publicPageData'
+import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
 import type { PublicProcessPageData } from '~src/ssr/public-pages'
 
 export default function PublicProcessPage() {
@@ -23,6 +24,7 @@ export default function PublicProcessPage() {
         publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}
         enableChat={false}
         showDashboardButton={false}
+        organizationLogo={getHeaderOrganizationLogo(data)}
       >
         {data.era === 'archive' ? (
           <PublicProcessView

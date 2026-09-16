@@ -1,20 +1,70 @@
-import { chakra, type HTMLChakraProps, Flex } from '@chakra-ui/react'
+import { chakra, type HTMLChakraProps, Flex, Image } from '@chakra-ui/react'
+import { useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RouterAwareLink } from '~components/RouterAwareLink'
+import type { HeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
 import { useColorModeValue } from '~theme/color-mode'
 import { Logo as LogoImage, LogoMbl } from '~theme/icons'
 
+type LogoProps = {
+  /**
+   * Organization branding to show instead of the Vocdoni logo (SHOW_ORG_LOGO).
+   * Unset — or an image that fails to load — keeps the Vocdoni logo.
+   */
+  organization?: HeaderOrganizationLogo
+}
+
 // This Logo should be updated to use VocdoniLogo or simply deprecated.
-const Logo = () => {
+const Logo = ({ organization }: LogoProps) => {
   const invert = useColorModeValue('invert(0%)', 'invert(100%)')
+  const { t } = useTranslation()
+  // The src is server-rendered, so a broken URL only shows up on the client:
+  // fall back to the Vocdoni logo rather than leaving a broken image behind.
+  // Remembering *which* src failed (rather than a boolean plus an effect to
+  // reset it) means a different logo is retried on the spot, with no frame of
+  // Vocdoni logo in between.
+  const [failedSrc, setFailedSrc] = useState<string>()
+  const src = organization?.src
+
+  // The <img> ships in the server-rendered markup, so a broken URL can fail
+  // before React hydrates — that error event happens with no listener attached
+  // and is lost, leaving a broken image in the header forever. Re-check on
+  // mount: a completed image with no intrinsic width either failed or is a
+  // viewBox-only SVG (which also reports 0), and those cannot be told apart, so
+  // replay the load instead of guessing. A genuinely broken URL fails again,
+  // this time through onError.
+  const replayLoadIfAlreadySettled = useCallback((node: HTMLImageElement | null) => {
+    if (node?.complete && node.naturalWidth === 0) {
+      node.setAttribute('src', node.src)
+    }
+  }, [])
 
   return (
     <RouterAwareLink to='/'>
-      <Flex alignItems='center' gap={2} display={{ base: 'none', lg: 'flex' }} filter={invert}>
-        <LogoImage />
-      </Flex>
-      <Flex alignItems='center' gap={2} display={{ base: 'flex', lg: 'none' }} filter={invert}>
-        <LogoMbl />
-      </Flex>
+      {organization && src !== failedSrc ? (
+        <Image
+          ref={replayLoadIfAlreadySettled}
+          src={organization.src}
+          alt={
+            organization.name
+              ? t('alt.images.org_logo', { defaultValue: '{{org}} logo', org: organization.name })
+              : t('alt.images.organization_logo', { defaultValue: 'Organization logo' })
+          }
+          h={{ base: 8, lg: 10 }}
+          maxW={{ base: '140px', lg: '180px' }}
+          objectFit='contain'
+          onError={() => setFailedSrc(src)}
+        />
+      ) : (
+        <>
+          <Flex alignItems='center' gap={2} display={{ base: 'none', lg: 'flex' }} filter={invert}>
+            <LogoImage />
+          </Flex>
+          <Flex alignItems='center' gap={2} display={{ base: 'flex', lg: 'none' }} filter={invert}>
+            <LogoMbl />
+          </Flex>
+        </>
+      )}
     </RouterAwareLink>
   )
 }

@@ -3,6 +3,7 @@ import { usePageContext } from 'vike-react/usePageContext'
 import PublicLayout from '~elements/PublicLayout'
 import PublicProcessSummaryView from '~elements/processes/PublicSummary'
 import { AppProviders } from '~src/Providers'
+import { getHeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
 import { getPublicLanguageLinksFromMeta } from '~src/pages/shared/publicPageData'
 import { usePreferredPublicLanguageRedirect } from '~src/pages/shared/publicPageRedirect'
 import type { PublicProcessPageData } from '~src/ssr/public-pages'
@@ -23,6 +24,7 @@ export default function PublicProcessSummaryPage() {
         publicLanguageLinks={getPublicLanguageLinksFromMeta(data.meta)}
         enableChat={false}
         showDashboardButton={false}
+        organizationLogo={getHeaderOrganizationLogo(data)}
       >
         {data.era === 'archive' ? (
           <PublicProcessSummaryView

@@ -105,6 +105,13 @@ there, here's a list of variables you can use:
   3:1 against the page background and the closest readable shade otherwise (a very dark color in dark mode, a
   very pale one in light mode). Unset, the app keeps its stock black accent. It is read at runtime, so a single
   build/image can be recolored with `docker run -e PRIMARY_COLOR=...`.
+- `SHOW_ORG_LOGO` set it to `true` to brand the header of process pages with the logo of the organization
+  that created the process, instead of the Vocdoni logo. It applies to the public voting page
+  (`/<lang>/processes/<id>`), its summary (`/<lang>/processes/<id>/summary`) and the `HOME_PROCESS_ID`
+  root, which render that logo server-side — there is no client-side swap. Pages with no process behind
+  them (the dashboard, auth, pricing…) keep the Vocdoni logo, and so does an organization that has no logo
+  set or whose logo URL fails to load. Only the header is affected: the footer logo is always Vocdoni. It is
+  read at runtime, so a single build/image can be branded with `docker run -e SHOW_ORG_LOGO=true`.
 
 You can also start the app by prefixing these vars instead of defining your
 custom `.env` file:

@@ -40,6 +40,7 @@
       "esquerra": "Logotipo de Esquerra Republicana de Catalunya",
       "omnium": "Logotipo de Òmnium Cultural",
       "org_logo": "Logotipo de {{org}}",
+      "organization_logo": "Logotipo de la organización",
       "ticanoia": "Logotipo de TIC Anoia"
     }
   },
