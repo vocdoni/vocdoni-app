@@ -278,7 +278,7 @@
     }
   },
   "default_language": {
-    "selector_helper": "Die gesamte Kommunikation mit deinen Nutzern erfolgt in dieser Sprache.",
+    "selector_helper": "Standardsprache für die Kommunikation mit deinen Nutzern, wenn sie selbst keine festgelegt haben.",
     "selector_label": "Kommunikationssprache"
   },
   "delete": {

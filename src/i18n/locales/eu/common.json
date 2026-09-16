@@ -278,7 +278,7 @@
     }
   },
   "default_language": {
-    "selector_helper": "Zure erabiltzaileekiko komunikazio guztia hizkuntza honetan izango da.",
+    "selector_helper": "Zure erabiltzaileekiko komunikazioen hizkuntza lehenetsia, erabiltzaileak berea zehaztu ez duenean.",
     "selector_label": "Komunikazioen hizkuntza"
   },
   "delete": {

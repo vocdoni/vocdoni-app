@@ -280,7 +280,7 @@
     }
   },
   "default_language": {
-    "selector_helper": "Totes les comunicacions amb els teus usuaris seran en aquest idioma.",
+    "selector_helper": "Idioma per defecte de les comunicacions amb els teus usuaris, quan no n'hagin definit cap.",
     "selector_label": "Idioma de les comunicacions"
   },
   "delete": {

@@ -278,7 +278,7 @@
     }
   },
   "default_language": {
-    "selector_helper": "All communication with your users will be in this language.",
+    "selector_helper": "Default language for communications with your users, used when a user hasn't set their own.",
     "selector_label": "Communications language"
   },
   "delete": {

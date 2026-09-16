@@ -280,7 +280,7 @@
     }
   },
   "default_language": {
-    "selector_helper": "Toutes les communications avec vos utilisateurs se feront dans cette langue.",
+    "selector_helper": "Langue par défaut des communications avec vos utilisateurs, lorsqu'ils n'en ont pas défini une.",
     "selector_label": "Langue des communications"
   },
   "delete": {

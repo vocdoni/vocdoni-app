@@ -182,7 +182,7 @@ export const DefaultLanguageSelector = (props: Omit<SelectCustomProps, 'options'
       options={options}
       label={t('default_language.selector_label', { defaultValue: 'Communications language' })}
       helper={t('default_language.selector_helper', {
-        defaultValue: 'All communication with your users will be in this language.',
+        defaultValue: "Default language for communications with your users, used when a user hasn't set their own.",
       })}
       valueMode='value'
       {...props}
