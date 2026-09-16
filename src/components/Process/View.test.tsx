@@ -15,11 +15,12 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
 describe('AnonymityInfoCard', () => {
   const TRACKED = /no vote can be traced back to a voter/i
 
-  it('explains the mode and the mechanism behind an anonymous process', () => {
+  it('names the mode of an anonymous process, without the mechanism behind it', () => {
     render(<AnonymityInfoCard anonymous />)
 
     expect(screen.getByText('Anonymous vote')).toBeInTheDocument()
-    expect(screen.getByText(/blind signature/i)).toBeInTheDocument()
+    // The blind-signature detail belongs to the dashboard and the PDF report, not the voter sidebar.
+    expect(screen.queryByText(/blind signature/i)).toBeNull()
   })
 
   it('states the mode exactly once', () => {
@@ -31,7 +32,7 @@ describe('AnonymityInfoCard', () => {
     expect(screen.getAllByText(TRACKED)).toHaveLength(1)
   })
 
-  it('names no mechanism for a private process', () => {
+  it('names the mode of a private process', () => {
     render(<AnonymityInfoCard anonymous={false} />)
 
     expect(screen.getByText('Private vote')).toBeInTheDocument()

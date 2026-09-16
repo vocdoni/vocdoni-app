@@ -1479,11 +1479,8 @@
       "multiple_choice": "Choix multiple",
       "quadratic": "Quadratique",
       "ranked": "Classement",
-      "single_choice": "Choix unique",
-      "unknown": "Inconnu",
-      "weighted_format": "{{ base, lowercase }} pondéré"
-    },
-    "voting_type": "Méthode de vote"
+      "single_choice": "Choix unique"
+    }
   },
   "process_actions": {
     "cancel": "Annuler le processus",

@@ -20,7 +20,6 @@ import {
 } from '@chakra-ui/react'
 import { ElectionQuestions, ElectionResults, useElection, useOrganization } from '@vocdoni/react-components'
 import { hasResults } from '@vocdoni/api-client'
-import { inferQuestionBallotType } from '@vocdoni/ballot'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { ReactNode, useEffect, useRef, useState } from 'react'
@@ -39,7 +38,6 @@ import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
 import { useAnonymityLabels } from './anonymityLabels'
-import { useVotingMethodLabel } from './resultTypeLabels'
 
 type ProcessInfoCardProps = {
   label: string
@@ -66,45 +64,18 @@ export const ProcessInfoCard = ({ label, description, ...props }: ProcessInfoCar
 /**
  * The same two words and the same one sentence the organizer chose from in the
  * builder — a voter and their organizer read the same promise.
+ *
+ * Only the mode sentence is shown here: the mechanism behind it (blind
+ * signature) is detail for the organizer's dashboard and the PDF report, not
+ * for the voter's sidebar.
+ *
+ * `description` is rendered exactly once on this page on purpose: the e2e suite matches that
+ * sentence with a strict single-match `getByText`, and repeating it would fail the run.
  */
 export const AnonymityInfoCard = ({ anonymous }: { anonymous?: boolean }) => {
-  const { title, description, mechanismDescription } = useAnonymityLabels(anonymous)
+  const { title, description } = useAnonymityLabels(anonymous)
 
-  // `description` is rendered exactly once on this page on purpose: the e2e suite matches that
-  // sentence with a strict single-match `getByText`, and repeating it would fail the run.
-  if (!mechanismDescription) return <ProcessInfoCard label={title} description={description} />
-
-  return (
-    <ProcessInfoCard
-      label={title}
-      description={
-        <>
-          <Text color='texts.subtle' fontSize='sm'>
-            {description}
-          </Text>
-          <Text color='texts.subtle' fontSize='sm' mt={1}>
-            {mechanismDescription}
-          </Text>
-        </>
-      }
-    />
-  )
-}
-
-const VotingMethod = () => {
-  const { t } = useTranslation()
-  const { election } = useElection()
-  const isWeighted = election?.census?.weighted ?? false
-  const firstQuestion = election?.questions[0]
-  const ballotType = firstQuestion ? inferQuestionBallotType(firstQuestion) : undefined
-  const votingMethod = useVotingMethodLabel(ballotType, {
-    weighted: isWeighted,
-    defaultValue: t('process.voting_method.unknown', { defaultValue: 'Unknown' }),
-  })
-
-  if (!election) return null
-
-  return <>{votingMethod}</>
+  return <ProcessInfoCard label={title} description={description} />
 }
 
 const ProcessInfoPanel = () => {
@@ -146,14 +117,6 @@ const ProcessInfoPanel = () => {
         description={
           <Text color='texts.subtle' fontSize='sm'>
             {t('process.people_in_census', { count: censusSize })}
-          </Text>
-        }
-      />
-      <ProcessInfoCard
-        label={t('process.voting_type', { defaultValue: 'Voting method' })}
-        description={
-          <Text size='sm' color='texts.subtle'>
-            <VotingMethod />
           </Text>
         }
       />

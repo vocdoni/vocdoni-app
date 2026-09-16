@@ -1479,11 +1479,8 @@
       "multiple_choice": "Elecció múltiple",
       "quadratic": "Quadràtic",
       "ranked": "Ordre de preferència",
-      "single_choice": "Elecció simple",
-      "unknown": "Desconegut",
-      "weighted_format": "{{base}} amb vot ponderat"
-    },
-    "voting_type": "Mètode de votació"
+      "single_choice": "Elecció simple"
+    }
   },
   "process_actions": {
     "cancel": "Cancel·la",
