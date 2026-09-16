@@ -33,6 +33,39 @@ describe('public page data loaders', () => {
     delete process.env.APP_URL
   })
 
+  it('builds the organization client with the language the request asked for', async () => {
+    // The API renders anything it produces on our behalf in this language, so an
+    // SSR client that never received one would fall back to the backend default.
+    createVocdoniApiClient.mockReturnValue({
+      organizations: { get: vi.fn().mockResolvedValue({ address: '0xorg', account: {} }) },
+      elections: { get: vi.fn(), list: vi.fn().mockResolvedValue({ processes: [], pagination: {} }) },
+    })
+
+    await loadOrganizationPublicPageData({
+      routeParams: { lang: 'ca', address: '0xorg' },
+      headers: { host: 'app.example.org', 'x-forwarded-proto': 'https' },
+    } as any)
+
+    expect(createVocdoniApiClient).toHaveBeenCalledWith('https://saas-api.example.test', 'ca')
+  })
+
+  it('builds the process client with the language the request asked for', async () => {
+    createVocdoniApiClient.mockReturnValue({
+      organizations: { get: vi.fn().mockResolvedValue({ address: '0xorg', account: {} }) },
+      elections: {
+        get: vi.fn().mockResolvedValue({ id: 'abc', address: '0xproc', orgAddress: 'org', questions: [] }),
+        list: vi.fn(),
+      },
+    })
+
+    await loadProcessPublicPageData({
+      routeParams: { lang: 'ca', id: 'abc' },
+      headers: { host: 'app.example.org', 'x-forwarded-proto': 'https' },
+    } as any)
+
+    expect(createVocdoniApiClient).toHaveBeenCalledWith('https://saas-api.example.test', 'ca')
+  })
+
   it('renders a 404 when neither the SaaS API nor the archive know the organization', async () => {
     createVocdoniApiClient.mockReturnValue({
       organizations: { get: vi.fn().mockRejectedValue(new VocdoniApiError(404, {}, 'account not found')) },
