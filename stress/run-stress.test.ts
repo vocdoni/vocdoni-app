@@ -57,10 +57,18 @@ if (args[0] === 'run') {
 } else if (args[0] === 'inspect') {
   console.log(args.includes('{{.RestartCount}}') ? '0' : 'false');
 } else if (args[0] === 'stats') {
+  fs.appendFileSync(root + '/stats-requests', JSON.stringify(args) + '\\n');
   console.log('fixture cpu=10% mem=20MiB / 512MiB (4%) net=0B / 0B pids=1');
+  if (!args.includes('--no-stream')) {
+    fs.writeFileSync(root + '/stats-pid', String(process.pid));
+    setInterval(() => {}, 1000);
+  }
 } else if (args[0] === 'logs') {
   fs.writeFileSync(root + '/log-request', JSON.stringify(args));
 }
+`,
+    date: `${prelude}
+console.log('20260916-120000');
 `,
     curl: `${prelude}
 fs.writeFileSync(root + '/readiness-requested', 'yes');
@@ -108,6 +116,30 @@ if (args[0].endsWith('/loadgen.mjs')) {
 }
 
 describe('stress ramp orchestration', () => {
+  it('isolates container names and artifacts for invocations with the same timestamp', async () => {
+    const runs = await Promise.all([harness(), harness()])
+    const outputs = await Promise.all(runs.map((run) => run.completed))
+    outputs.forEach((output) => expect(output.code).toBe(0))
+    const names = await Promise.all(runs.map((run) => readFile(path.join(run.root, 'container'), 'utf8')))
+    expect(names[0]).not.toBe(names[1])
+    const summaries = outputs.map((output) => path.basename(output.stdout.match(/summary : (.+)/)![1]))
+    expect(summaries[0]).not.toBe(summaries[1])
+  })
+
+  it('uses one streaming stats collector and terminates it on exit', async () => {
+    const run = await harness()
+    const output = await run.completed
+    expect(output.code).toBe(0)
+    const requests = (await readFile(path.join(run.root, 'stats-requests'), 'utf8'))
+      .trim()
+      .split('\n')
+      .map((line) => JSON.parse(line) as string[])
+    expect(requests).toHaveLength(1)
+    expect(requests[0]).not.toContain('--no-stream')
+    const pid = Number(await readFile(path.join(run.root, 'stats-pid'), 'utf8'))
+    expect(() => process.kill(pid, 0)).toThrow()
+  })
+
   it('aborts a failed container startup before accepting another service readiness', async () => {
     const run = await harness('startup-failure')
     const output = await run.completed

@@ -41,8 +41,6 @@ HOST_PORT=3000
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 RESULTS_DIR="$SCRIPT_DIR/results"
-RUN_ID="$(date +%Y%m%d-%H%M%S)"
-CONTAINER="vocdoni-ui-stress-$RUN_ID"
 
 # --- arg parsing ------------------------------------------------------------
 while [[ $# -gt 0 ]]; do
@@ -68,7 +66,12 @@ if [[ ! "$LEVELS" =~ [^[:space:]] ]]; then
   exit 1
 fi
 
-mkdir -p "$RESULTS_DIR"
+mkdir -p "$RESULTS_DIR" || exit 1
+# Reserve a unique namespace for both artifacts and the container, even when
+# multiple configurations start within the same second.
+RESULTS_DIR=$(mktemp -d "$RESULTS_DIR/$(date +%Y%m%d-%H%M%S)-XXXXXX") || exit 1
+RUN_ID="${RESULTS_DIR##*/}"
+CONTAINER="vocdoni-ui-stress-$RUN_ID"
 SUMMARY="$RESULTS_DIR/summary-$RUN_ID.txt"
 JSONL="$RESULTS_DIR/results-$RUN_ID.jsonl"
 STATS_LOG="$RESULTS_DIR/dockerstats-$RUN_ID.log"
@@ -111,7 +114,6 @@ fi
 
 # --- run container ----------------------------------------------------------
 log "==> Starting container: cpus=$CPUS memory=$MEMORY port=$HOST_PORT"
-docker rm -f "$CONTAINER" >/dev/null 2>&1
 if ! docker run -d --name "$CONTAINER" \
   --cpus="$CPUS" --memory="$MEMORY" --memory-swap="$MEMORY" \
   -e NODE_ENV=production -e PORT=3000 \
@@ -149,12 +151,10 @@ if [[ "$ready" -eq 0 ]]; then
 fi
 
 # Stream container resource usage in the background for the whole run.
-( while true; do
-    docker stats --no-stream --format \
-      '{{.Name}} cpu={{.CPUPerc}} mem={{.MemUsage}} ({{.MemPerc}}) net={{.NetIO}} pids={{.PIDs}}' \
-      "$CONTAINER" 2>/dev/null | sed "s/^/$(date +%H:%M:%S) /"
-    sleep 2
-  done ) >>"$STATS_LOG" 2>&1 &
+# Track Docker itself so cleanup also stops the collector when --keep is used.
+docker stats --no-trunc --format \
+  '{{.Name}} cpu={{.CPUPerc}} mem={{.MemUsage}} ({{.MemPerc}}) net={{.NetIO}} pids={{.PIDs}}' \
+  "$CONTAINER" >>"$STATS_LOG" 2>&1 &
 STATS_PID=$!
 
 # --- helper: liveness / restart detection -----------------------------------
@@ -257,6 +257,11 @@ for c in $LEVELS; do
     break
   fi
 done
+
+# Finish the log before extracting peaks, rather than reading a moving stream.
+kill "$STATS_PID" >/dev/null 2>&1 || true
+wait "$STATS_PID" 2>/dev/null || true
+STATS_PID=""
 
 log "\n================ RESULT ================"
 if [[ -n "$RUN_ERROR" ]]; then

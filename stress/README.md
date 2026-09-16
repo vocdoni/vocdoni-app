@@ -47,9 +47,10 @@ available.
 
 ## Output
 
-Everything lands in `stress/results/`:
+Each invocation reserves a unique `stress/results/<run-id>/` directory. The run
+ID combines a timestamp with a random suffix, keeping concurrent runs isolated:
 
-- `summary-<ts>.txt` — the ramp table and verdict
-- `results-<ts>.jsonl` — one JSON result per concurrency level
-- `dockerstats-<ts>.log` — container CPU/mem/net sampled every 2s
-- `build-<ts>.log` — docker build output
+- `summary-<run-id>.txt` — the ramp table and verdict
+- `results-<run-id>.jsonl` — one JSON result per concurrency level
+- `dockerstats-<run-id>.log` — container CPU/mem/net from a continuous Docker stats stream
+- `build-<run-id>.log` — docker build output
