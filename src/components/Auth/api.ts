@@ -1,4 +1,5 @@
 import i18n from '~i18n'
+import { getActiveLanguage } from '~i18n/active-language'
 
 type MethodTypes = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
@@ -119,10 +120,18 @@ export const api = <T>(
   }
   // Format body if it's an object (and not FormData)
   const formatted = isFormData || typeof body === 'string' ? body : JSON.stringify(body)
-  // Append lang query param
+  // Append lang query param, so anything the backend renders for us (above all
+  // the verification and invitation emails) is written in the language the user
+  // is reading. Prefer the instance the React tree registered: on localized
+  // routes that is a per-page instance, and only it follows an in-place language
+  // switch. The module singleton is the fallback for imperative callers running
+  // outside a rendered tree (tests, scripts).
   const [basePath, queryString] = path.split('?', 2)
   const params = new URLSearchParams(queryString || '')
-  params.set('lang', i18n.language)
+  const lang = getActiveLanguage() ?? i18n.language
+  if (lang) {
+    params.set('lang', lang)
+  }
   path = `${basePath}?${params.toString()}`
 
   // Fail loudly if the base URL was never injected (e.g. a non-Vike render or a

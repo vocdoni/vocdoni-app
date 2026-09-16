@@ -16,6 +16,7 @@ import { hasAcceptedCookieConsent } from '~components/Cookies/utils'
 import { ConnectionToastProvider } from '~components/Layout/ConnectionToast'
 import { ToastProvider } from '~components/Toast'
 import { ApiClientProvider, AUTH_STORAGE_KEY } from '~src/providers/ApiClientProvider'
+import { setActiveI18n } from '~i18n/active-language'
 import { LanguageRoutingContext } from '~i18n/LanguageRoutingContext'
 import {
   localizePublicPath,
@@ -170,6 +171,12 @@ export const AppProviders = ({
       i18nInstance.changeLanguage(language)
     }
   }, [language, i18nInstance])
+
+  // Point the imperative api() layer at the instance this tree renders with, the
+  // same way the SaaS base URL is injected above. Registered during render, not
+  // in an effect, so the first request a child fires already carries the right
+  // language.
+  setActiveI18n(i18nInstance)
 
   return (
     <AppEnvProvider value={appEnv}>
