@@ -6,13 +6,20 @@ import Footer from '~components/Layout/Footer'
 import Navbar from '~components/Navbar'
 import { stripPublicLanguagePrefix } from '~i18n/public-language'
 import { Routes } from '~routes'
-import { useLanguagesEnv } from '~src/app-env'
+import { useAppEnv, useLanguagesEnv } from '~src/app-env'
+import type { HeaderOrganizationLogo } from '~src/pages/shared/headerOrganizationLogo'
 
 type PublicLayoutProps = PropsWithChildren<{
   pathname: string
   publicLanguageLinks?: Record<string, string>
   enableChat?: boolean
   showDashboardButton?: boolean
+  /**
+   * Organization branding of the process this page shows, when it has one. Only
+   * honored while SHOW_ORG_LOGO is on, and only for the header — the footer logo
+   * stays Vocdoni in every deployment.
+   */
+  organizationLogo?: HeaderOrganizationLogo
 }>
 
 const PublicLayout = ({
@@ -20,8 +27,10 @@ const PublicLayout = ({
   publicLanguageLinks,
   enableChat = true,
   showDashboardButton = true,
+  organizationLogo,
   children,
 }: PublicLayoutProps) => {
+  const { SHOW_ORG_LOGO } = useAppEnv()
   const normalizedPathname = stripPublicLanguagePrefix(pathname, Object.keys(useLanguagesEnv()))
   const isOrganizationPage = normalizedPathname === '/organization' || normalizedPathname.includes('/organization/')
   const showLimitedAnnouncementBanner = [Routes.root, Routes.plans].includes(normalizedPathname)
@@ -39,7 +48,11 @@ const PublicLayout = ({
         maxW='navbar'
         mx='auto'
       >
-        <Navbar publicLanguageLinks={publicLanguageLinks} showDashboardButton={showDashboardButton} />
+        <Navbar
+          publicLanguageLinks={publicLanguageLinks}
+          showDashboardButton={showDashboardButton}
+          organizationLogo={SHOW_ORG_LOGO ? organizationLogo : undefined}
+        />
       </HStack>
       {enableChat ? <CrispChat /> : null}
       {showLimitedAnnouncementBanner && <AnnouncementBanner limited />}

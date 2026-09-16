@@ -28,6 +28,13 @@ describe('buildAppEnv', () => {
     expect(env.DEFAULT_CENSUS_SIZE).toBe(12000)
   })
 
+  it('only enables SHOW_ORG_LOGO for the exact string "true"', () => {
+    expect(buildAppEnv({}).SHOW_ORG_LOGO).toBe(false)
+    expect(buildAppEnv({ SHOW_ORG_LOGO: 'true' }).SHOW_ORG_LOGO).toBe(true)
+    expect(buildAppEnv({ SHOW_ORG_LOGO: 'false' }).SHOW_ORG_LOGO).toBe(false)
+    expect(buildAppEnv({ SHOW_ORG_LOGO: '1' }).SHOW_ORG_LOGO).toBe(false)
+  })
+
   it('resolves HOME_PROCESS_ID, treating blank values as unset', () => {
     expect(buildAppEnv({}).HOME_PROCESS_ID).toBeUndefined()
     expect(buildAppEnv({ HOME_PROCESS_ID: '   ' }).HOME_PROCESS_ID).toBeUndefined()
