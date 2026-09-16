@@ -4,20 +4,12 @@ import { AppEnvProvider } from '~src/app-env'
 import { buildAppEnv } from '~src/app-env-build'
 import { Theme } from './Theme'
 
-const themeState = {
-  resolvedTheme: undefined as string | undefined,
-  setTheme: vi.fn(),
-}
-
 vi.mock('next-themes', () => ({
   ThemeProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
-  useTheme: () => themeState,
 }))
 
 describe('Theme', () => {
   beforeEach(() => {
-    themeState.resolvedTheme = undefined
-    themeState.setTheme.mockReset()
     document.documentElement.className = ''
     document.documentElement.style.colorScheme = ''
   })
