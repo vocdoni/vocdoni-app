@@ -14,9 +14,6 @@ export const getVocdoniClientConfig = (environment: string = 'dev') => {
   return { clientEnv, explorerUrl }
 }
 
-// Unauthenticated v2 SaaS client for server-side (SSR) public page loads.
-// `lang` tells the API which language to render anything it produces on our
-// behalf in; it is a plain value rather than a getter because each SSR request
-// builds its own client and the request's language never changes under it.
-// Left unset, the backend applies its own fallback.
+// Unauthenticated v2 SaaS client for SSR public page loads. `lang` is a plain value,
+// not a getter: each request builds its own client and its language never changes.
 export const createVocdoniApiClient = (apiUrl: string, lang?: string) => new VocdoniApiClient({ apiUrl, lang })

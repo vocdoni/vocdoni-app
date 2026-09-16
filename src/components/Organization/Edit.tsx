@@ -60,10 +60,9 @@ const EditOrganization = () => {
       size: organization?.size ?? '',
       type: organization?.type ?? '',
       country: organization?.country,
-      // Organizations created before defaultLang existed come back without it. Leaving
-      // the field empty (rather than seeding a guess) means saving unrelated details
-      // cannot silently pin their notifications to one language: the selector is
-      // required, so the admin picks one explicitly.
+      // Orgs predating defaultLang come back without it. Left empty rather than seeded,
+      // so saving unrelated details cannot silently pin their notifications; the
+      // selector is required, so the admin picks explicitly.
       defaultLang: organization?.defaultLang ?? '',
       avatar: organization?.account.avatar || '',
       header: organization?.account.header || '',

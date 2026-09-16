@@ -14,26 +14,9 @@ export const AUTH_STORAGE_KEY = 'auth'
 // bearer written by the AuthProvider (login / setSession). SSR-safe.
 const readToken = () => (typeof localStorage === 'undefined' ? null : localStorage.getItem(`${AUTH_STORAGE_KEY}.token`))
 
-/**
- * Tells the SaaS client which language to render its own content in — above all
- * the OTP email and SMS the CSP sends during the voter auth flow, which until now
- * always arrived in the backend's fallback language whatever the UI showed.
- *
- * The language is registered as a getter, which the SDK resolves on every
- * request, so switching language in place picks it up with no further work. That
- * matters because ClientProvider memoizes the client on `apiUrl` alone: the
- * instance survives a language switch, and a value passed once would go stale.
- *
- * Registered during render rather than in an effect, mirroring how the SaaS base
- * URL is injected in AppProviders, so a request a child fires on mount already
- * carries the language. Assigning the getter is idempotent.
- *
- * The call is optional because component tests stub `useClient` with bare objects
- * rather than mounting a real client, and they should not have to know this
- * provider exists. The wiring that matters is asserted against a real client in
- * ApiClientProvider.test.tsx, so an SDK rename still fails loudly there rather
- * than silently dropping the language.
- */
+/** Tells the SaaS client which language to render its own content in, above all the
+ * CSP's 2FA email and SMS. A getter, not a value: the client is memoized on apiUrl and
+ * survives a language switch. Optional because tests stub `useClient` with bare objects. */
 const ApiClientLanguage = ({ children }: PropsWithChildren) => {
   const { client } = useClient()
   const { i18n } = useTranslation()

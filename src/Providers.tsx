@@ -172,10 +172,8 @@ export const AppProviders = ({
     }
   }, [language, i18nInstance])
 
-  // Point the imperative api() layer at the instance this tree renders with, the
-  // same way the SaaS base URL is injected above. Registered during render, not
-  // in an effect, so the first request a child fires already carries the right
-  // language.
+  // Point the imperative api() layer at this tree's instance. During render, not in
+  // an effect, so the first request a child fires already carries the language.
   setActiveI18n(i18nInstance)
 
   return (

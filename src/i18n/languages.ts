@@ -97,12 +97,9 @@ const spanishSpeakingCountries = new Set([
   'VE',
 ])
 
-/**
- * Infers an organization's notification language from its country: Spanish-speaking
- * countries → es, Andorra → ca, anything else → the API default. Clamped to the
- * languages served by GET /organizations/languages, so a preference the backend has
- * no templates for falls back to its default as well.
- */
+/** Infers an org's notification language from its country: Spanish-speaking → es,
+ * Andorra → ca, anything else the API default. Clamped to the languages the backend
+ * serves, so a preference it has no templates for falls back too. */
 export const inferOrgLanguage = (
   country: string | undefined,
   { languages, default: fallback }: OrganizationLanguages

@@ -67,17 +67,9 @@ export const createOrganization = async (page: Page, name: string): Promise<void
   await page.getByRole('option').first().click()
   await selectComboboxOption(page, page.locator('#country'), /Spain/)
 
-  // Picking Spain auto-infers Spanish as the org's communications language, and the
-  // backend sends org-scoped emails (CSP 2FA, invites) in that language regardless of
-  // the request's lang param. Pin English explicitly so every MailSubjects assertion
-  // stays valid — and to exercise the manual-override path (a user pick must survive
-  // the country inference).
-  //
-  // The language list loads asynchronously and the submit button stays disabled until
-  // that query settles, so waiting on the button is waiting on the list. A backend that
-  // predates GET /organizations/languages replaces the selector with an error alert:
-  // skip the pick then — such a backend has no per-org language either, so its emails
-  // follow the request's lang param and the English assertions still hold.
+  // Spain infers Spanish, and org-scoped emails follow the org's language rather than
+  // the request's, so pin English to keep the MailSubjects assertions valid. The submit
+  // button gates on the language query; a backend without that endpoint shows an alert.
   const submit = page.locator('form button[type="submit"]')
   await expect(submit).toBeEnabled()
   const languageField = page.locator('#defaultLang')
