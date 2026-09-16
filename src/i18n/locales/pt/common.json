@@ -1479,11 +1479,8 @@
       "multiple_choice": "Escolha múltipla",
       "quadratic": "Quadrático",
       "ranked": "Ordem de preferência",
-      "single_choice": "Escolha única",
-      "unknown": "Desconhecido",
-      "weighted_format": "{{ base, lowercase }} ponderado"
-    },
-    "voting_type": "Método de votação"
+      "single_choice": "Escolha única"
+    }
   },
   "process_actions": {
     "cancel": "Cancelar processo",

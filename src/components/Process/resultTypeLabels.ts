@@ -52,19 +52,3 @@ export const useResultTypeLabel = (type?: BallotType | null, defaultValue = '') 
     defaultValue: config.defaultValue ?? defaultValue,
   })
 }
-
-export const useVotingMethodLabel = (
-  type?: BallotType | null,
-  opts?: { weighted?: boolean; defaultValue?: string }
-) => {
-  const { t } = useTranslation()
-
-  const base = useResultTypeLabel(type, opts?.defaultValue ?? '')
-
-  if (!opts?.weighted) return base
-
-  return t('process.voting_method.weighted_format', {
-    base,
-    defaultValue: '{{base}} with weighted voting',
-  })
-}

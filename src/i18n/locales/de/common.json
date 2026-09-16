@@ -1455,11 +1455,8 @@
       "multiple_choice": "Mehrfachauswahl",
       "quadratic": "Quadratisch",
       "ranked": "Rangfolge",
-      "single_choice": "Einzelauswahl",
-      "unknown": "Unbekannt",
-      "weighted_format": "Gewichtet {{ base, lowercase }}"
-    },
-    "voting_type": "Abstimmungsmethode"
+      "single_choice": "Einzelauswahl"
+    }
   },
   "process_actions": {
     "cancel": "Prozess abbrechen",
