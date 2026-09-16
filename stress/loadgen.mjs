@@ -66,6 +66,18 @@ function parseArgs(argv) {
     }
   }
   if (!args.url) throw new Error('--url is required')
+  if (!Number.isSafeInteger(args.concurrency) || args.concurrency <= 0) {
+    throw new Error('--concurrency must be a positive integer')
+  }
+  for (const name of ['duration', 'timeout', 'warmup']) {
+    if (!Number.isFinite(args[name]) || (name === 'warmup' ? args[name] < 0 : args[name] <= 0)) {
+      throw new Error(`--${name} must be a finite ${name === 'warmup' ? 'nonnegative' : 'positive'} number`)
+    }
+  }
+  // Node clamps overflowing timers to 1ms, which would silently invalidate a run.
+  if (args.timeout > 2 ** 31 - 1 || args.warmup * 1000 > 2 ** 31 - 1) {
+    throw new Error('--timeout and --warmup must fit within the Node.js timer limit (2147483647ms)')
+  }
   return args
 }
 
@@ -85,16 +97,11 @@ const agent = new (isHttps ? https.Agent : http.Agent)({
 const requestOptions = {
   agent,
   method: 'GET',
-  hostname: target.hostname,
-  port: target.port || (isHttps ? 443 : 80),
-  path: target.pathname + target.search,
   headers: {
-    host: target.host,
     'user-agent': 'vocdoni-loadgen/1.0',
     accept: '*/*',
     connection: args.keepalive ? 'keep-alive' : 'close',
   },
-  timeout: args.timeout,
 }
 
 // ---------------------------------------------------------------------------
@@ -141,6 +148,7 @@ function doRequest() {
     const settle = (outcome) => {
       if (settled) return
       settled = true
+      clearTimeout(requestTimer)
       stats.completed++
       if (measuring) {
         if (outcome.ok) {
@@ -154,7 +162,7 @@ function doRequest() {
       resolve()
     }
 
-    const req = client.request(requestOptions, (res) => {
+    const req = client.request(target, requestOptions, (res) => {
       let len = 0
       res.on('data', (chunk) => {
         len += chunk.length
@@ -169,10 +177,12 @@ function doRequest() {
       })
     })
 
-    req.on('timeout', () => {
+    // Bound the whole request, including connection time and streaming bodies,
+    // rather than resetting the budget whenever the socket receives data.
+    const requestTimer = setTimeout(() => {
       req.destroy()
       settle({ ok: false, err: { code: 'ETIMEDOUT' } })
-    })
+    }, args.timeout)
     req.on('error', (err) => {
       settle({ ok: false, err })
     })
@@ -214,7 +224,7 @@ async function main() {
   await Promise.all(workers)
 
   const measuredSeconds = Math.max(0.001, (Date.now() - measureStartAt) / 1000)
-  const sorted = stats.latencies.slice().sort((a, b) => a - b)
+  const sorted = stats.latencies.sort((a, b) => a - b)
   const sum = sorted.reduce((s, v) => s + v, 0)
   const ok = stats.statusBuckets['2xx'] || 0
   const redirects = stats.statusBuckets['3xx'] || 0
