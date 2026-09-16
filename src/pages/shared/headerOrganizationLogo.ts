@@ -1,5 +1,6 @@
 import type { LocalizedText } from '~src/legacy/vochain-archive'
 import type { PublicProcessPageData } from '~src/ssr/public-pages'
+import { getLocalizedRawText } from '~utils/localized-text'
 
 /**
  * The organization branding the header needs when SHOW_ORG_LOGO is on: an image
@@ -11,17 +12,11 @@ export type HeaderOrganizationLogo = {
 }
 
 /**
- * Resolves a locale map against the page language, falling back the same way the
- * SSR meta builders do (exact language -> base language -> `default` -> first
- * non-empty entry) so the header agrees with the rest of the page.
+ * Same locale-map resolution the SSR meta builders use, so the header agrees
+ * with the rest of the page, mapped to `undefined` for "nothing to show".
  */
-const localize = (value: LocalizedText | undefined, language: string): string | undefined => {
-  if (!value) return undefined
-
-  const candidates = [value[language], value[language.split('-')[0]], value.default, ...Object.values(value)]
-
-  return candidates.map((entry) => entry?.trim()).find(Boolean)
-}
+const localize = (value: LocalizedText | undefined, language: string): string | undefined =>
+  getLocalizedRawText(value, language) || undefined
 
 /**
  * Picks the organization logo to show in the header of a process page, for both

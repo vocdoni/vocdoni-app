@@ -12,6 +12,7 @@ import {
   type LegacyOrganization,
 } from '~src/legacy/vochain-archive'
 import { ensureAddressPrefix } from '~utils/address'
+import { getLocalizedRawText } from '~utils/localized-text'
 
 type PublicLanguageAlternate = {
   hrefLang: string
@@ -182,26 +183,6 @@ const getLocalizedText = (value: LocalizedText | undefined, language: string) =>
     .find(Boolean)
 
   return firstValue ?? ''
-}
-// Same locale-map resolution but without the markdown/HTML sanitization, for
-// values that must survive verbatim (e.g. the organization logo URL).
-const getLocalizedRawText = (value: LocalizedText | undefined, language: string) => {
-  if (!value) return ''
-
-  const exactLanguage = trimText(value[language])
-  if (exactLanguage) return exactLanguage
-
-  const baseMatch = trimText(value[language.split('-')[0]])
-  if (baseMatch) return baseMatch
-
-  const defaultValue = trimText(value.default)
-  if (defaultValue) return defaultValue
-
-  return (
-    Object.values(value)
-      .map((entry) => trimText(entry))
-      .find(Boolean) ?? ''
-  )
 }
 const withBrandSuffix = (value: string) => `${value} | ${publicSiteName}`
 const buildShortDescription = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' — ')
