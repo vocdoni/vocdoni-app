@@ -313,7 +313,9 @@ export const posthogBeforeSend = (
   if (event.event === '$exception') {
     if (isScannerRejection(event)) return null
 
-    for (const key of ['$exception_message', '$exception_list'] as const) {
+    // Same key set `isScannerRejection` inspects: anything worth reading for a
+    // message is worth stripping emails from.
+    for (const key of ['$exception_message', '$exception_values', '$exception_list'] as const) {
       const value = event.properties?.[key]
       if (typeof value === 'string') {
         event.properties[key] = value.replace(EMAIL_REGEX, '[redacted-email]')

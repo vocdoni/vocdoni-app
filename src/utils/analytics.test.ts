@@ -348,11 +348,13 @@ describe('posthog before_send guard', () => {
       properties: {
         $current_url: 'https://app.vocdoni.io/admin',
         $exception_message: 'Failed to invite someone@example.com to the team',
+        $exception_values: ['someone@example.com could not be reached'],
         $exception_list: [{ value: 'someone@example.com not found' }],
       },
     }
     const result = posthogBeforeSend(event as any)
     expect(result?.properties?.$exception_message).toBe('Failed to invite [redacted-email] to the team')
+    expect(result?.properties?.$exception_values).toEqual(['[redacted-email] could not be reached'])
     expect(result?.properties?.$exception_list).toEqual([{ value: '[redacted-email] not found' }])
   })
 
