@@ -402,7 +402,13 @@ describe('posthog before_send guard', () => {
       event: '$exception',
       properties: {
         $current_url: 'https://app.vocdoni.io/admin',
+        // `$exception_list` is the shape posthog-js actually sends; keep
+        // `$exception_values` alongside it so both branches of the filter are
+        // exercised by the negative case too.
         $exception_values: ['Non-Error promise rejection captured with value: [object Object]'],
+        $exception_list: [
+          { type: 'UnhandledRejection', value: 'Non-Error promise rejection captured with value: [object Object]' },
+        ],
       },
     }
 
