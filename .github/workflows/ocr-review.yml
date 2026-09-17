@@ -3,6 +3,11 @@ name: OCR review
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
+    # Release PRs (develop -> stage -> main/lts) carry a diff far too large to
+    # review, and their contents have already been reviewed on the way in.
+    branches-ignore:
+      - stage
+      - main
 
 permissions:
   contents: read
