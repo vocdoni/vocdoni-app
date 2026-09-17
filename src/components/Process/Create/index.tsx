@@ -151,19 +151,26 @@ export const useConfirmOnNavigate = ({
     onClose()
   }
 
+  // `reset` and `proceed` only exist while the blocker is in the `blocked`
+  // state — react-router types them `undefined` in `unblocked` and `proceeding`.
+  // The dialog outlives that state: it can still emit a close after an autosave
+  // snoozed the blocker and the effect above already reset it, and
+  // `discardAndLeave` turns a throw here into a misleading "Error deleting
+  // draft" toast. Calling them optionally makes the late call a no-op instead of
+  // a TypeError.
   const cancel = () => {
     closeAll()
-    blocker.reset()
+    blocker.reset?.()
   }
 
   const proceed = () => {
     isProceedingRef.current = true
     closeAll()
-    blocker.proceed()
+    blocker.proceed?.()
 
     setTimeout(() => {
       isProceedingRef.current = false
-      blocker.reset()
+      blocker.reset?.()
     }, 0)
   }
 
