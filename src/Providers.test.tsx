@@ -108,21 +108,27 @@ describe('Providers', () => {
 
   it('keeps the HTML language and native translations in sync across language switches and history', async () => {
     const { Providers } = await import('./Providers')
-    routesProviderStub = LanguageProbe
     const previousLanguage = document.documentElement.lang
     const previousUrl = window.location.href
     const previousPreference = window.localStorage.getItem('i18nextLng')
-    document.documentElement.lang = 'en'
-    window.history.replaceState(null, '', '/pt/admin/processes/create')
-
-    const { unmount } = render(<Providers language='pt' />)
+    // Everything that mutates shared state (the stub, the <html> lang, the URL) has to
+    // happen inside the try: a throw before it would leak into every later test in the
+    // file, and the abandoned render would keep settling mid-assertion (see above).
+    let unmount: (() => void) | undefined
     try {
+      routesProviderStub = LanguageProbe
+      document.documentElement.lang = 'en'
+      window.history.replaceState(null, '', '/pt/admin/processes/create')
+      ;({ unmount } = render(<Providers language='pt' />))
+
       expect(document.documentElement.lang).toBe('pt')
-      expect(screen.getByLabelText('Active language')).toHaveTextContent('pt')
+      // Exact match: `toHaveTextContent('pt')` also passes for `pt-br`, which is the
+      // very confusion this guards against.
+      expect(screen.getByLabelText('Active language')).toHaveTextContent(/^pt$/)
 
       fireEvent.click(screen.getByRole('button', { name: 'Switch language' }))
       expect(document.documentElement.lang).toBe('ca')
-      expect(screen.getByLabelText('Active language')).toHaveTextContent('ca')
+      expect(screen.getByLabelText('Active language')).toHaveTextContent(/^ca$/)
       expect(window.location.pathname).toBe('/ca/admin/processes/create')
 
       act(() => {
@@ -130,9 +136,9 @@ describe('Providers', () => {
         window.dispatchEvent(new PopStateEvent('popstate'))
       })
       expect(document.documentElement.lang).toBe('pt')
-      expect(screen.getByLabelText('Active language')).toHaveTextContent('pt')
+      expect(screen.getByLabelText('Active language')).toHaveTextContent(/^pt$/)
     } finally {
-      unmount()
+      unmount?.()
       routesProviderStub = null
       document.documentElement.lang = previousLanguage
       window.history.replaceState(null, '', previousUrl)
