@@ -1,5 +1,20 @@
-import { render } from '@testing-library/react'
-import type { ReactNode } from 'react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
+import { useContext, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
+import { LanguageRoutingContext } from '~i18n/LanguageRoutingContext'
+
+vi.mock('./router/Router', () => ({
+  RoutesProvider: () => {
+    const routing = useContext(LanguageRoutingContext)
+    const { i18n } = useTranslation()
+    return (
+      <>
+        <output aria-label='Active language'>{i18n.resolvedLanguage}</output>
+        <button onClick={() => routing?.setLanguage('ca')}>Switch language</button>
+      </>
+    )
+  },
+}))
 
 vi.mock('wagmi', () => ({
   WagmiProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -74,5 +89,38 @@ describe('Providers', () => {
     )
 
     expect(window.localStorage.getItem('i18nextLng')).toBe('ca')
+  })
+
+  it('keeps the HTML language and native translations in sync across language switches and history', async () => {
+    const { Providers } = await import('./Providers')
+    const previousLanguage = document.documentElement.lang
+    const previousUrl = window.location.href
+    const previousPreference = window.localStorage.getItem('i18nextLng')
+    document.documentElement.lang = 'en'
+    window.history.replaceState(null, '', '/pt/admin/processes/create')
+
+    const { unmount } = render(<Providers language='pt' />)
+    try {
+      expect(document.documentElement.lang).toBe('pt')
+      expect(screen.getByLabelText('Active language')).toHaveTextContent('pt')
+
+      fireEvent.click(screen.getByRole('button', { name: 'Switch language' }))
+      expect(document.documentElement.lang).toBe('ca')
+      expect(screen.getByLabelText('Active language')).toHaveTextContent('ca')
+      expect(window.location.pathname).toBe('/ca/admin/processes/create')
+
+      act(() => {
+        window.history.replaceState(null, '', '/pt/admin/processes/create')
+        window.dispatchEvent(new PopStateEvent('popstate'))
+      })
+      expect(document.documentElement.lang).toBe('pt')
+      expect(screen.getByLabelText('Active language')).toHaveTextContent('pt')
+    } finally {
+      unmount()
+      document.documentElement.lang = previousLanguage
+      window.history.replaceState(null, '', previousUrl)
+      if (previousPreference === null) window.localStorage.removeItem('i18nextLng')
+      else window.localStorage.setItem('i18nextLng', previousPreference)
+    }
   })
 })

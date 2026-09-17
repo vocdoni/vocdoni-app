@@ -10,4 +10,12 @@ describe('vike page config', () => {
 
     expect(config.passToClient).toContain('appEnv')
   })
+
+  it('opts the document out of browser translation before React mounts', async () => {
+    const { default: config } = await import('./+config')
+
+    expect(config).toMatchObject({
+      htmlAttributes: { translate: 'no', class: 'notranslate' },
+    })
+  })
 })
