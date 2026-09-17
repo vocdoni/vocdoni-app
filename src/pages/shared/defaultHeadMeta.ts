@@ -3,7 +3,10 @@ import i18n from '~i18n'
 
 // Localized routes carry the language as a route param; everything else (the
 // legacy unprefixed catch-all) falls back to the i18n instance's language.
-const resolveLanguage = (pageContext: PageContext) => {
+// Exported because +lang.ts derives `<html lang>` from the very same param: two
+// copies of this would let the document language drift from the localized
+// <title>/<meta description> below.
+export const resolveRouteLanguage = (pageContext: Pick<PageContext, 'routeParams'>) => {
   const language = pageContext.routeParams?.lang
   return typeof language === 'string' && language ? language : undefined
 }
@@ -19,11 +22,11 @@ export const getDefaultTitleForLanguage = (language: string | undefined, appEnvT
   })
 
 export const getDefaultPageTitle = (pageContext: PageContext) =>
-  getDefaultTitleForLanguage(resolveLanguage(pageContext), pageContext.globalContext.appEnv?.title)
+  getDefaultTitleForLanguage(resolveRouteLanguage(pageContext), pageContext.globalContext.appEnv?.title)
 
 export const getDefaultPageDescription = (pageContext: PageContext) =>
   i18n.t('head.description', {
-    lng: resolveLanguage(pageContext),
+    lng: resolveRouteLanguage(pageContext),
     defaultValue:
       'Build, manage, and integrate secure, e2e verifiable elections with Vocdoni. A flexible platform for organizations, governments, and developers to power trusted digital voting and decision-making.',
   })
