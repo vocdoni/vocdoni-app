@@ -3,18 +3,33 @@ import { useContext, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LanguageRoutingContext } from '~i18n/LanguageRoutingContext'
 
-vi.mock('./router/Router', () => ({
-  RoutesProvider: () => {
-    const routing = useContext(LanguageRoutingContext)
-    const { i18n } = useTranslation()
-    return (
-      <>
-        <output aria-label='Active language'>{i18n.resolvedLanguage}</output>
-        <button onClick={() => routing?.setLanguage('ca')}>Switch language</button>
-      </>
-    )
-  },
-}))
+// The language-switch test needs a RoutesProvider it can drive, but `mounts without
+// crashing` below is the only place the *real* route tree gets smoke-tested (see #1746:
+// a broken router/route module only shows up when it is actually mounted). So the mock
+// forwards to the real provider unless a test opts into the probe.
+let routesProviderStub: (() => ReactNode) | null = null
+
+vi.mock('./router/Router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./router/Router')>()
+  return {
+    ...actual,
+    RoutesProvider: (props: { basename?: string }) => {
+      const Stub = routesProviderStub
+      return Stub ? <Stub /> : <actual.RoutesProvider {...props} />
+    },
+  }
+})
+
+const LanguageProbe = () => {
+  const routing = useContext(LanguageRoutingContext)
+  const { i18n } = useTranslation()
+  return (
+    <>
+      <output aria-label='Active language'>{i18n.resolvedLanguage}</output>
+      <button onClick={() => routing?.setLanguage('ca')}>Switch language</button>
+    </>
+  )
+}
 
 vi.mock('wagmi', () => ({
   WagmiProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -93,6 +108,7 @@ describe('Providers', () => {
 
   it('keeps the HTML language and native translations in sync across language switches and history', async () => {
     const { Providers } = await import('./Providers')
+    routesProviderStub = LanguageProbe
     const previousLanguage = document.documentElement.lang
     const previousUrl = window.location.href
     const previousPreference = window.localStorage.getItem('i18nextLng')
@@ -117,6 +133,7 @@ describe('Providers', () => {
       expect(screen.getByLabelText('Active language')).toHaveTextContent('pt')
     } finally {
       unmount()
+      routesProviderStub = null
       document.documentElement.lang = previousLanguage
       window.history.replaceState(null, '', previousUrl)
       if (previousPreference === null) window.localStorage.removeItem('i18nextLng')
