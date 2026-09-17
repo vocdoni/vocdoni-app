@@ -1,4 +1,5 @@
 import type { CaptureResult } from 'posthog-js'
+import { getHomeProcessRouteMatch } from '~src/ssr/public-routes'
 
 type PlausibleConfig = {
   domain: string
@@ -166,19 +167,49 @@ export const trackAnalyticsEvent = (event: AnalyticsEvent): void => {
 
 export type PosthogConsent = 'accepted' | 'rejected' | null
 
-type PosthogInitConfig = {
+type VotingRouteConfig = {
+  homeProcessId?: string
+  supportedLanguages?: string[]
+}
+
+type PosthogInitConfig = VotingRouteConfig & {
   key: string
   host?: string
   analyticsClientId?: string
   consent: PosthogConsent
 }
 
-// Voters must never be tracked: matches public voting routes (`/processes/:id`
-// and `/processes/:id/summary`, with or without a `/:lang` prefix) where PostHog
-// is neither loaded nor allowed to emit a single event.
+// Include the optional voting homepage using the same matcher as Vike, so the
+// privacy boundary follows runtime configuration rather than just the URL shape.
 const VOTING_PATH_REGEX = /^\/([a-z]{2}(-[a-z]{2})?\/)?processes\/[^/]+/
 
-export const isVotingPath = (pathname: string): boolean => VOTING_PATH_REGEX.test(pathname)
+export const isVotingPath = (
+  pathname: string,
+  { homeProcessId, supportedLanguages = [] }: VotingRouteConfig = {}
+): boolean => {
+  // Vike matches decoded segments, whereas window.location.pathname is encoded.
+  // Preserve encoded slashes so decoding cannot introduce new route segments.
+  const decodedPathname = pathname
+    .split('/')
+    .map((segment) => {
+      try {
+        return decodeURIComponent(segment).replace(/\//g, '%2F')
+      } catch {
+        return segment
+      }
+    })
+    .join('/')
+
+  const language = decodedPathname.split('/')[1]
+  const publicPathname = supportedLanguages.includes(language)
+    ? decodedPathname.slice(language.length + 1)
+    : decodedPathname
+
+  return (
+    VOTING_PATH_REGEX.test(publicPathname) ||
+    Boolean(getHomeProcessRouteMatch({ urlPathname: decodedPathname, homeProcessId, supportedLanguages }))
+  )
+}
 
 // Query params that may carry PII (signup redirects carry `?email=`,
 // password-reset links carry tokens) and must never reach analytics.
@@ -215,19 +246,23 @@ export const sanitizeAnalyticsUrl = (url: string): string => {
 
 const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
 
-export const posthogBeforeSend = (event: CaptureResult | null): CaptureResult | null => {
+export const posthogBeforeSend = (
+  event: CaptureResult | null,
+  votingRoutes: VotingRouteConfig = {}
+): CaptureResult | null => {
   if (!event) return null
+  if (canUseBrowserAnalytics() && isVotingPath(window.location.pathname, votingRoutes)) return null
 
   const currentUrl = event.properties?.$current_url
-  let pathname = canUseBrowserAnalytics() ? window.location.pathname : ''
+  let pathname = ''
   if (typeof currentUrl === 'string') {
     try {
       pathname = new URL(currentUrl).pathname
     } catch {
-      // keep the window pathname fallback
+      // The browser pathname has already been checked above.
     }
   }
-  if (isVotingPath(pathname)) return null
+  if (pathname && isVotingPath(pathname, votingRoutes)) return null
 
   if (typeof currentUrl === 'string') {
     event.properties.$current_url = sanitizeAnalyticsUrl(currentUrl)
@@ -272,16 +307,27 @@ const loadPosthogModule = () => {
   return posthogModulePromise
 }
 
-export const initializePosthog = ({ key, host, analyticsClientId, consent }: PosthogInitConfig): void => {
+export const initializePosthog = ({
+  key,
+  host,
+  analyticsClientId,
+  consent,
+  ...votingRoutes
+}: PosthogInitConfig): void => {
   if (posthogInitStarted) return
   if (!canUseBrowserAnalytics()) return
   if (!key || consent === 'rejected') return
-  if (isVotingPath(window.location.pathname)) return
+  if (isVotingPath(window.location.pathname, votingRoutes)) return
 
   posthogInitStarted = true
 
   void loadPosthogModule()
     .then(({ default: posthog }) => {
+      // Navigation may have changed the privacy boundary while the chunk loaded.
+      if (isVotingPath(window.location.pathname, votingRoutes)) {
+        posthogInitStarted = false
+        return
+      }
       posthog.init(key, {
         api_host: host || 'https://eu.i.posthog.com',
         defaults: '2026-06-25',
@@ -295,7 +341,7 @@ export const initializePosthog = ({ key, host, analyticsClientId, consent }: Pos
           maskInputFn: posthogMaskInput,
         },
         capture_exceptions: true,
-        before_send: posthogBeforeSend,
+        before_send: (event) => posthogBeforeSend(event, votingRoutes),
       })
       // `site` separates this app's events from vocdoni.io's in the shared
       // PostHog project. Registered here, not in a React effect, so it lands
@@ -332,6 +378,7 @@ export const trackPosthogEvent = (event: AnalyticsEvent): void => {
 
   void loadPosthogModule()
     .then(({ default: posthog }) => {
+      if (!posthogInitialized) return
       posthog.capture(posthogEventNames[event.name] ?? event.name, event.props)
     })
     .catch((error) => {
@@ -345,6 +392,7 @@ export const applyPosthogConsent = (consent: PosthogConsent): void => {
 
   void loadPosthogModule()
     .then(({ default: posthog }) => {
+      if (!posthogInitialized) return
       if (consent === 'accepted') {
         posthog.set_config({ persistence: 'localStorage+cookie' })
         if (posthog.has_opted_out_capturing()) {
@@ -367,6 +415,7 @@ export const identifyPosthogUser = (id: string, props?: Record<string, unknown>)
 
   void loadPosthogModule()
     .then(({ default: posthog }) => {
+      if (!posthogInitialized) return
       posthog.identify(id, props)
     })
     .catch((error) => {
@@ -380,6 +429,7 @@ export const resetPosthogUser = (): void => {
 
   void loadPosthogModule()
     .then(({ default: posthog }) => {
+      if (!posthogInitialized) return
       posthog.reset()
     })
     .catch((error) => {
@@ -393,6 +443,7 @@ export const setPosthogOrganization = (address: string, props?: Record<string, u
 
   void loadPosthogModule()
     .then(({ default: posthog }) => {
+      if (!posthogInitialized) return
       posthog.group('organization', address, props)
     })
     .catch((error) => {
@@ -428,6 +479,7 @@ export const onPosthogFeatureFlags = (listener: FlagListener): (() => void) => {
   if (posthogInitialized && canUseBrowserAnalytics()) {
     void loadPosthogModule()
       .then(({ default: posthog }) => {
+        if (!posthogInitialized) return
         if (posthogFlagListeners.has(listener)) {
           listener((flag) => posthog.isFeatureEnabled(flag))
         }
@@ -451,6 +503,7 @@ export const setPosthogSessionRecording = (enabled: boolean): void => {
 
   void loadPosthogModule()
     .then(({ default: posthog }) => {
+      if (!posthogInitialized) return
       if (enabled) {
         posthog.startSessionRecording()
       } else {
@@ -468,6 +521,7 @@ export const registerPosthogSuperProperties = (props: Record<string, unknown>): 
 
   void loadPosthogModule()
     .then(({ default: posthog }) => {
+      if (!posthogInitialized) return
       posthog.register(props)
     })
     .catch((error) => {

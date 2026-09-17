@@ -23,7 +23,10 @@ vi.mock('~utils/analytics', async (importOriginal) => {
   }
 })
 
-vi.mock('~src/app-env', () => ({ useAppEnv: () => ({ POSTHOG_KEY: 'phc_test' }) }))
+vi.mock('~src/app-env', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~src/app-env')>()),
+  useAppEnv: () => ({ POSTHOG_KEY: 'phc_test', HOME_PROCESS_ID: '0x1234', LANGUAGES: { ca: 'Català' } }),
+}))
 vi.mock('~components/Auth/useAuth', () => ({ useAuth: () => ({ isAuthenticated: true }) }))
 vi.mock('~queries/account', () => ({ useProfile: () => ({ data: undefined }) }))
 vi.mock('~components/Auth/Subscription', () => ({ useSubscription: () => ({ subscription: undefined }) }))
@@ -65,6 +68,14 @@ describe('AnalyticsProvider organization reporting', () => {
       expect.objectContaining({ org_address: '0xabc', org_name: 'Acme Coop' })
     )
   })
+})
+
+it('passes runtime voting-homepage configuration to the PostHog guard', () => {
+  render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+
+  expect(initializePosthog).toHaveBeenCalledWith(
+    expect.objectContaining({ homeProcessId: '0x1234', supportedLanguages: ['ca'] })
+  )
 })
 
 describe('AnalyticsProvider consent handling', () => {

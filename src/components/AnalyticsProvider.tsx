@@ -5,7 +5,7 @@ import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent, watchCrossSiteConsent } from '~components/Cookies/utils'
 import { useProfile } from '~queries/account'
-import { useAppEnv } from '~src/app-env'
+import { normalizeLanguages, useAppEnv } from '~src/app-env'
 import {
   applyPosthogConsent,
   identifyPosthogUser,
@@ -30,6 +30,8 @@ const useAnalyticsProvider = () => {
     POSTHOG_KEY: posthogKey,
     POSTHOG_HOST: posthogHost,
     ANALYTICS_CLIENT_ID,
+    HOME_PROCESS_ID: homeProcessId,
+    LANGUAGES: languages,
   } = useAppEnv()
   const analyticsClientId = ANALYTICS_CLIENT_ID?.trim() || undefined
   const { isAuthenticated } = useAuth()
@@ -61,9 +63,16 @@ const useAnalyticsProvider = () => {
     }
 
     if (posthogKey) {
-      initializePosthog({ key: posthogKey, host: posthogHost, analyticsClientId, consent })
+      initializePosthog({
+        key: posthogKey,
+        host: posthogHost,
+        analyticsClientId,
+        consent,
+        homeProcessId,
+        supportedLanguages: Object.keys(normalizeLanguages(languages)),
+      })
     }
-  }, [gtmContainerId, plausibleDomain, posthogKey, posthogHost, analyticsClientId, consent])
+  }, [gtmContainerId, plausibleDomain, posthogKey, posthogHost, analyticsClientId, consent, homeProcessId, languages])
 
   useEffect(() => {
     applyPosthogConsent(consent)

@@ -1,16 +1,14 @@
 import { VocdoniApiError, type VocdoniApiClient } from '@vocdoni/api-client'
 import { lazy } from 'react'
-import { Params } from 'react-router'
+import { Params, redirectDocument, type LoaderFunctionArgs } from 'react-router'
 // These aren't lazy loaded since they are main layouts and related components
 import ErrorElement from '~elements/Error'
 import Layout from '~elements/Layout'
 import { useAppEnv } from '~src/app-env'
 import {
-  fetchLegacyElection,
   fetchLegacyOrganization,
   fetchLegacyOrganizationElections,
   getVochainGatewayUrl,
-  isLegacyProcessId,
 } from '~src/legacy/vochain-archive'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { Routes } from '.'
@@ -18,7 +16,6 @@ import { Loading, SuspenseLoader } from '../SuspenseLoader'
 
 // elements / pages
 const NotFound = lazy(() => import('~elements/NotFound'))
-const Process = lazy(() => import('~elements/processes/view'))
 const OrganizationView = lazy(() => import('~elements/organization/view'))
 const PlansPublicPage = lazy(() => import('~elements/plans'))
 
@@ -30,29 +27,10 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
     path: Routes.processes.view,
     id: 'process-view',
     handle: { hideNavbar: true },
-    element: (
-      <SuspenseLoader>
-        <Process />
-      </SuspenseLoader>
-    ),
-    // Shown while the loader below runs on a cold load of this URL; without it react-router
-    // renders nothing at all (and says so in the console).
+    // A ballot must not inherit the dashboard's running analytics SDK. Hand it
+    // to Vike in a fresh document, just like a direct public-page visit.
+    loader: ({ request }: LoaderFunctionArgs) => redirectDocument(request.url),
     HydrateFallback: Loading,
-    // 64-hex vochain ids resolve against the read-only archive; Mongo ids against the SaaS API.
-    loader: async ({ params }: { params: Params<string> }) => {
-      const id = params.id!
-
-      if (isLegacyProcessId(id)) {
-        const legacyElection = await fetchLegacyElection(vochainGateway, id)
-        const legacyOrganization = await fetchLegacyOrganization(vochainGateway, legacyElection.organizationId).catch(
-          () => undefined
-        )
-
-        return { era: 'archive', legacyElection, legacyOrganization } as const
-      }
-
-      return { era: 'saas', election: await client.elections.get(id) } as const
-    },
     errorElement: <ErrorElement />,
   },
   {
