@@ -216,6 +216,11 @@ const ElectionItemList = ({ isAdmin, index }: { isAdmin: boolean; index: number 
       >
         <ReactRouterLink
           to={`/processes/${election?.id}/${window.location.hash}`}
+          // The ballot is a server-routed Vike document (the SPA route only
+          // redirects there). Going through react-router would run that loader,
+          // and react-router strips the fragment from the loader request, so the
+          // shared-census hash carried in this link would be dropped.
+          reloadDocument
           target={!isAdmin ? '_blank' : undefined}
           rel={!isAdmin ? 'noopener noreferrer' : undefined}
         >
