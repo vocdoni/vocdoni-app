@@ -66,8 +66,9 @@ const LocalizedProviders = ({ initialLanguage }: { initialLanguage: string }) =>
   const [language, setLanguageState] = useState(initialLanguage)
 
   // In-place language switches (pushState, no Vike navigation) never re-run the
-  // +title hook, so keep the document title in the active language ourselves.
+  // +title/+lang hooks, so keep the document metadata in the active language ourselves.
   useEffect(() => {
+    document.documentElement.lang = language
     document.title = getDefaultTitleForLanguage(language, appEnv.title)
   }, [language, appEnv.title])
 
