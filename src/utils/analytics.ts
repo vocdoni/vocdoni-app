@@ -255,6 +255,35 @@ export const sanitizeAnalyticsUrl = (url: string): string => {
 
 const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
 
+// Microsoft Outlook's Safe Links scanner opens every link we mail out in a
+// headless Chromium, injects a bridge object into the page and rejects a promise
+// with a bare string. It reaches us as an unhandled rejection with no stack and
+// no real user behind it, so it is dropped instead of tracked.
+//
+// Matched on the Id/MethodName/ParamCount triple — the numbers differ per hit,
+// the shape does not — rather than on "Non-Error promise rejection captured",
+// which is also how genuine bugs that reject a non-Error arrive.
+const SCANNER_REJECTION_REGEX = /Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+/
+
+const isScannerRejection = (event: CaptureResult): boolean => {
+  for (const key of ['$exception_message', '$exception_values', '$exception_list'] as const) {
+    const value = event.properties?.[key]
+    if (value === undefined || value === null) continue
+    let text: string
+    if (typeof value === 'string') {
+      text = value
+    } else {
+      try {
+        text = JSON.stringify(value)
+      } catch {
+        continue
+      }
+    }
+    if (SCANNER_REJECTION_REGEX.test(text)) return true
+  }
+  return false
+}
+
 export const posthogBeforeSend = (
   event: CaptureResult | null,
   votingRoutes: VotingRouteConfig = {}
@@ -282,6 +311,8 @@ export const posthogBeforeSend = (
 
   // Error tracking: strip email addresses from exception payloads
   if (event.event === '$exception') {
+    if (isScannerRejection(event)) return null
+
     for (const key of ['$exception_message', '$exception_list'] as const) {
       const value = event.properties?.[key]
       if (typeof value === 'string') {

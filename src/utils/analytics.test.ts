@@ -355,6 +355,73 @@ describe('posthog before_send guard', () => {
     expect(result?.properties?.$exception_message).toBe('Failed to invite [redacted-email] to the team')
     expect(result?.properties?.$exception_list).toEqual([{ value: '[redacted-email] not found' }])
   })
+
+  // Outlook's Safe Links scanner crawls every link we mail out and rejects a
+  // promise with a bare string; it is bot traffic, not a user-facing failure.
+  it('drops the Safe Links scanner rejection', async () => {
+    const { posthogBeforeSend } = await import('./analytics')
+
+    const event = {
+      event: '$exception',
+      properties: {
+        $current_url: 'https://app.vocdoni.io/en/organization/0xabc',
+        $exception_values: [
+          'Non-Error promise rejection captured with value: Object Not Found Matching Id:1, MethodName:update, ParamCount:4',
+        ],
+        $exception_list: [
+          {
+            type: 'UnhandledRejection',
+            value:
+              'Non-Error promise rejection captured with value: Object Not Found Matching Id:1, MethodName:update, ParamCount:4',
+          },
+        ],
+      },
+    }
+
+    expect(posthogBeforeSend(event as any)).toBeNull()
+  })
+
+  it('drops the scanner rejection whatever the id and method it reports', async () => {
+    const { posthogBeforeSend } = await import('./analytics')
+
+    const event = {
+      event: '$exception',
+      properties: {
+        $exception_message:
+          'Non-Error promise rejection captured with value: Object Not Found Matching Id:7, MethodName:simulateEvent, ParamCount:2',
+      },
+    }
+
+    expect(posthogBeforeSend(event as any)).toBeNull()
+  })
+
+  it('keeps genuine non-Error rejections, which share the generic prefix', async () => {
+    const { posthogBeforeSend } = await import('./analytics')
+
+    const event = {
+      event: '$exception',
+      properties: {
+        $current_url: 'https://app.vocdoni.io/admin',
+        $exception_values: ['Non-Error promise rejection captured with value: [object Object]'],
+      },
+    }
+
+    expect(posthogBeforeSend(event as any)).not.toBeNull()
+  })
+
+  it('keeps non-exception events that happen to mention the scanner string', async () => {
+    const { posthogBeforeSend } = await import('./analytics')
+
+    const event = {
+      event: 'process_created',
+      properties: {
+        $current_url: 'https://app.vocdoni.io/admin',
+        $exception_message: 'Object Not Found Matching Id:1, MethodName:update, ParamCount:4',
+      },
+    }
+
+    expect(posthogBeforeSend(event as any)).not.toBeNull()
+  })
 })
 
 describe('posthog initialization', () => {
