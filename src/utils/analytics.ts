@@ -312,6 +312,25 @@ const loadPosthogModule = () => {
   return posthogModulePromise
 }
 
+type Posthog = (typeof import('posthog-js'))['default']
+
+// Shared body of every helper below: `posthogInitStarted` gates the synchronous
+// path and `posthogInitialized` the asynchronous one, so nothing reaches the SDK
+// when initialization never ran or was canceled by the voting-route guard.
+const withPosthog = (errorMessage: string, run: (posthog: Posthog) => void): void => {
+  if (!posthogInitStarted) return
+  if (!canUseBrowserAnalytics()) return
+
+  void loadPosthogModule()
+    .then(({ default: posthog }) => {
+      if (!posthogInitialized) return
+      run(posthog)
+    })
+    .catch((error) => {
+      console.error(errorMessage, error)
+    })
+}
+
 export const initializePosthog = ({
   key,
   host,
@@ -378,82 +397,42 @@ const posthogEventNames: Record<string, string> = {
 }
 
 export const trackPosthogEvent = (event: AnalyticsEvent): void => {
-  if (!posthogInitStarted) return
-  if (!canUseBrowserAnalytics()) return
-
-  void loadPosthogModule()
-    .then(({ default: posthog }) => {
-      if (!posthogInitialized) return
-      posthog.capture(posthogEventNames[event.name] ?? event.name, event.props)
-    })
-    .catch((error) => {
-      console.error('Failed to track PostHog event:', error)
-    })
+  withPosthog('Failed to track PostHog event:', (posthog) => {
+    posthog.capture(posthogEventNames[event.name] ?? event.name, event.props)
+  })
 }
 
 export const applyPosthogConsent = (consent: PosthogConsent): void => {
-  if (!posthogInitStarted) return
-  if (!canUseBrowserAnalytics()) return
-
-  void loadPosthogModule()
-    .then(({ default: posthog }) => {
-      if (!posthogInitialized) return
-      if (consent === 'accepted') {
-        posthog.set_config({ persistence: 'localStorage+cookie' })
-        if (posthog.has_opted_out_capturing()) {
-          posthog.opt_in_capturing()
-        }
-      } else if (consent === 'rejected') {
-        posthog.stopSessionRecording()
-        posthog.opt_out_capturing()
-        posthog.set_config({ persistence: 'memory' })
+  withPosthog('Failed to apply PostHog consent:', (posthog) => {
+    if (consent === 'accepted') {
+      posthog.set_config({ persistence: 'localStorage+cookie' })
+      if (posthog.has_opted_out_capturing()) {
+        posthog.opt_in_capturing()
       }
-    })
-    .catch((error) => {
-      console.error('Failed to apply PostHog consent:', error)
-    })
+    } else if (consent === 'rejected') {
+      posthog.stopSessionRecording()
+      posthog.opt_out_capturing()
+      posthog.set_config({ persistence: 'memory' })
+    }
+  })
 }
 
 export const identifyPosthogUser = (id: string, props?: Record<string, unknown>): void => {
-  if (!posthogInitStarted) return
-  if (!canUseBrowserAnalytics()) return
-
-  void loadPosthogModule()
-    .then(({ default: posthog }) => {
-      if (!posthogInitialized) return
-      posthog.identify(id, props)
-    })
-    .catch((error) => {
-      console.error('Failed to identify PostHog user:', error)
-    })
+  withPosthog('Failed to identify PostHog user:', (posthog) => {
+    posthog.identify(id, props)
+  })
 }
 
 export const resetPosthogUser = (): void => {
-  if (!posthogInitStarted) return
-  if (!canUseBrowserAnalytics()) return
-
-  void loadPosthogModule()
-    .then(({ default: posthog }) => {
-      if (!posthogInitialized) return
-      posthog.reset()
-    })
-    .catch((error) => {
-      console.error('Failed to reset PostHog user:', error)
-    })
+  withPosthog('Failed to reset PostHog user:', (posthog) => {
+    posthog.reset()
+  })
 }
 
 export const setPosthogOrganization = (address: string, props?: Record<string, unknown>): void => {
-  if (!posthogInitStarted) return
-  if (!canUseBrowserAnalytics()) return
-
-  void loadPosthogModule()
-    .then(({ default: posthog }) => {
-      if (!posthogInitialized) return
-      posthog.group('organization', address, props)
-    })
-    .catch((error) => {
-      console.error('Failed to set PostHog organization group:', error)
-    })
+  withPosthog('Failed to set PostHog organization group:', (posthog) => {
+    posthog.group('organization', address, props)
+  })
 }
 
 // --- Feature flags ---
@@ -466,7 +445,7 @@ type FlagListener = (isEnabled: (flag: string) => boolean | undefined) => void
 const posthogFlagListeners = new Set<FlagListener>()
 let posthogFlagBridgeAttached = false
 
-const attachPosthogFlagBridge = (posthog: (typeof import('posthog-js'))['default']): void => {
+const attachPosthogFlagBridge = (posthog: Posthog): void => {
   if (posthogFlagBridgeAttached) return
   posthogFlagBridgeAttached = true
 
@@ -503,33 +482,17 @@ export const onPosthogFeatureFlags = (listener: FlagListener): (() => void) => {
 // dashboard users who accepted the cookie banner, and voting routes are
 // excluded at the before_send layer regardless.
 export const setPosthogSessionRecording = (enabled: boolean): void => {
-  if (!posthogInitStarted) return
-  if (!canUseBrowserAnalytics()) return
-
-  void loadPosthogModule()
-    .then(({ default: posthog }) => {
-      if (!posthogInitialized) return
-      if (enabled) {
-        posthog.startSessionRecording()
-      } else {
-        posthog.stopSessionRecording()
-      }
-    })
-    .catch((error) => {
-      console.error('Failed to toggle PostHog session recording:', error)
-    })
+  withPosthog('Failed to toggle PostHog session recording:', (posthog) => {
+    if (enabled) {
+      posthog.startSessionRecording()
+    } else {
+      posthog.stopSessionRecording()
+    }
+  })
 }
 
 export const registerPosthogSuperProperties = (props: Record<string, unknown>): void => {
-  if (!posthogInitStarted) return
-  if (!canUseBrowserAnalytics()) return
-
-  void loadPosthogModule()
-    .then(({ default: posthog }) => {
-      if (!posthogInitialized) return
-      posthog.register(props)
-    })
-    .catch((error) => {
-      console.error('Failed to register PostHog super properties:', error)
-    })
+  withPosthog('Failed to register PostHog super properties:', (posthog) => {
+    posthog.register(props)
+  })
 }
