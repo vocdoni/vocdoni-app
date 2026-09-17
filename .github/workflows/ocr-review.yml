@@ -3,8 +3,11 @@ name: OCR review
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
-    # Release PRs (develop -> stage -> main/lts) carry a diff far too large to
-    # review, and their contents have already been reviewed on the way in.
+    # Filters on the PR base branch. Release PRs (develop -> stage -> main, the
+    # lts deployment) carry a diff far too large to review, and their contents
+    # were already reviewed on the way into develop. Hotfix PRs raised straight
+    # against stage or main are skipped too, as a deliberate trade-off for
+    # keeping the rule a plain base-branch filter.
     branches-ignore:
       - stage
       - main
