@@ -471,6 +471,28 @@ describe('useConfirmOnNavigate', () => {
       }
     })
 
+    // `discardAndLeave` wipes the form and forgets the draft id on the way out.
+    // It may only do that when the navigation was really released, so `proceed`
+    // has to report the no-op rather than swallow it.
+    it('proceed() reports that it released no navigation', () => {
+      vi.useFakeTimers()
+      try {
+        const { result } = renderConfirm(unblockedBlocker())
+        let released: boolean | undefined
+
+        act(() => {
+          released = result.current.proceed()
+        })
+        expect(released).toBe(false)
+
+        act(() => {
+          vi.runAllTimers()
+        })
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
     it('resetSamePath() still runs its callback', () => {
       const { result } = renderConfirm(unblockedBlocker())
       const onReset = vi.fn()
@@ -496,7 +518,11 @@ describe('useConfirmOnNavigate', () => {
         const blocker = blockedBlocker()
         const { result } = renderConfirm(blocker)
 
-        act(() => result.current.proceed())
+        let released: boolean | undefined
+        act(() => {
+          released = result.current.proceed()
+        })
+        expect(released).toBe(true)
         expect(blocker.proceed).toHaveBeenCalledTimes(1)
 
         act(() => {

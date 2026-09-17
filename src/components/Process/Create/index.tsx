@@ -163,15 +163,21 @@ export const useConfirmOnNavigate = ({
     blocker.reset?.()
   }
 
+  // Returns whether the pending navigation was actually released, so callers
+  // that destroy state on the way out (see `discardAndLeave`) can tell a real
+  // departure from a late no-op call that leaves the user on the page.
   const proceed = () => {
     isProceedingRef.current = true
     closeAll()
+    const released = typeof blocker.proceed === 'function'
     blocker.proceed?.()
 
     setTimeout(() => {
       isProceedingRef.current = false
       blocker.reset?.()
     }, 0)
+
+    return released
   }
 
   const resetSamePath = (cb?: () => void) => {
@@ -777,7 +783,12 @@ const ProcessCreateView = () => {
 
   const discardAndLeave = () => {
     try {
-      proceed()
+      // Discard only once the navigation is actually released. When the blocker
+      // has already left the `blocked` state, `proceed()` is a no-op and the
+      // user stays here — wiping the form and forgetting the draft id in that
+      // case loses their work and orphans the draft the next save would
+      // duplicate.
+      if (!proceed()) return
       reset()
       storeDraftId(null)
     } catch (error) {
