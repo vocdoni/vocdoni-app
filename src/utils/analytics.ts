@@ -179,10 +179,15 @@ type PosthogInitConfig = VotingRouteConfig & {
   consent: PosthogConsent
 }
 
-// Include the optional voting homepage using the same matcher as Vike, so the
-// privacy boundary follows runtime configuration rather than just the URL shape.
+// Voters must never be tracked: matches the public voting routes whose shape is
+// fixed (`/processes/:id` and `/processes/:id/summary`, with or without a
+// `/:lang` prefix) where PostHog is neither loaded nor allowed to emit a single
+// event.
 const VOTING_PATH_REGEX = /^\/([a-z]{2}(-[a-z]{2})?\/)?processes\/[^/]+/
 
+// Also covers the optional voting homepage (`/` and `/:lang` when HOME_PROCESS_ID
+// is set) through the very matcher Vike routes it with, so the privacy boundary
+// follows runtime configuration instead of the URL shape alone.
 export const isVotingPath = (
   pathname: string,
   { homeProcessId, supportedLanguages = [] }: VotingRouteConfig = {}
