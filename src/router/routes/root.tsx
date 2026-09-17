@@ -29,6 +29,12 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
     handle: { hideNavbar: true },
     // A ballot must not inherit the dashboard's running analytics SDK. Hand it
     // to Vike in a fresh document, just like a direct public-page visit.
+    //
+    // Caveat: react-router builds the loader request from `stripHashFromPath`,
+    // so `request.url` carries no fragment and this redirect drops it. The
+    // shared-census ballot hash is load-bearing, so link to a ballot with
+    // `reloadDocument` (see Home/SharedCensus) instead of relying on this
+    // loader whenever the URL carries one.
     loader: ({ request }: LoaderFunctionArgs) => redirectDocument(request.url),
     HydrateFallback: Loading,
     errorElement: <ErrorElement />,
