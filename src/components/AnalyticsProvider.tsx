@@ -12,6 +12,7 @@ import {
   initializeGTM,
   initializePlausible,
   initializePosthog,
+  isVotingPath,
   PosthogConsent,
   registerPosthogSuperProperties,
   resetPosthogUser,
@@ -54,6 +55,16 @@ const useAnalyticsProvider = () => {
   }, [])
 
   useEffect(() => {
+    // This provider also mounts on the public voting pages (PublicProcessPage
+    // renders AppProviders), so the privacy boundary has to gate *every*
+    // app-owned sink, not just PostHog: Plausible's init auto-captures a ballot
+    // pageview, and the GTM condition below (`/`) is only ever true on the
+    // HOME_PROCESS_ID voting homepage, which would inject the container into a
+    // ballot. Voting pages are always fresh documents, so checking once at
+    // mount is enough.
+    const votingRoutes = { homeProcessId, supportedLanguages: Object.keys(normalizeLanguages(languages)) }
+    if (isVotingPath(window.location.pathname, votingRoutes)) return
+
     if (plausibleDomain) {
       initializePlausible({ domain: plausibleDomain }, analyticsClientId)
     }
@@ -68,8 +79,7 @@ const useAnalyticsProvider = () => {
         host: posthogHost,
         analyticsClientId,
         consent,
-        homeProcessId,
-        supportedLanguages: Object.keys(normalizeLanguages(languages)),
+        ...votingRoutes,
       })
     }
   }, [gtmContainerId, plausibleDomain, posthogKey, posthogHost, analyticsClientId, consent, homeProcessId, languages])
