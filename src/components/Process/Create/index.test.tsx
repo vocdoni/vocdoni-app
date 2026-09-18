@@ -548,10 +548,8 @@ describe('useConfirmOnNavigate', () => {
     })
   })
 
-  // The "Save and leave" race: the click's draft write queues behind an
-  // in-flight auto-save, whose completion snoozes the blocker and resets the
-  // pending navigation before `proceed()` runs. `proceed` must then re-issue
-  // the destination itself or the user is silently left on the page.
+  // "Save and leave" race: an in-flight auto-save completes first, snoozes the blocker
+  // and resets the pending navigation, so `proceed` has to re-issue the destination.
   describe('when an auto-save reset the blocker mid-save', () => {
     const renderTrackingLocation = (blocker: Blocker) => {
       const paths: string[] = []
@@ -605,11 +603,7 @@ describe('useConfirmOnNavigate', () => {
       expect(paths.at(-1)).toBe('/admin/processes')
     })
 
-    // `handleSaveAndLeave` awaits its draft write before calling `proceed`, so
-    // the `proceed` it runs was rendered while the blocker was still blocked.
-    // That stale object keeps a `proceed` function, and react-router throws
-    // "Invalid blocker state transition: unblocked -> proceeding" if it is
-    // called after the reset — the fallback has to read the live blocker.
+    // `handleSaveAndLeave` calls the `proceed` rendered before the reset; the stale blocker throws.
     it('re-issues the destination from a closure captured before the reset', async () => {
       const blocked = blockedBlocker('/admin/processes')
       blocked.proceed.mockImplementation(() => {

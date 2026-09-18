@@ -50,10 +50,9 @@ app.use((req, res, next) => {
   if (isViteInternalPath(req.path)) {
     return res.status(404).end()
   }
-  // Static files are served above (express.static in production, Vite's
-  // middleware in dev). Anything still carrying a file extension here does not
-  // exist, so answer 404 rather than letting the `*` catch-all page render an
-  // HTML document under an asset URL — see static-asset-guard.mjs.
+  // Static files were served above. Anything still carrying a file extension is
+  // a missing asset: answer 404 instead of letting the catch-all page render HTML
+  // under an asset URL (see static-asset-guard.mjs).
   if (isStaticAssetPath(req.path)) {
     res.setHeader('Cache-Control', 'no-store')
     return res.status(404).end()

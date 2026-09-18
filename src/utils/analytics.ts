@@ -255,14 +255,9 @@ export const sanitizeAnalyticsUrl = (url: string): string => {
 
 const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
 
-// Microsoft Outlook's Safe Links scanner opens every link we mail out in a
-// headless Chromium, injects a bridge object into the page and rejects a promise
-// with a bare string. It reaches us as an unhandled rejection with no stack and
-// no real user behind it, so it is dropped instead of tracked.
-//
-// Matched on the Id/MethodName/ParamCount triple — the numbers differ per hit,
-// the shape does not — rather than on "Non-Error promise rejection captured",
-// which is also how genuine bugs that reject a non-Error arrive.
+// Outlook's Safe Links scanner opens mailed links in a headless browser and rejects a
+// promise with a bare string: bot traffic, not a user error. Matched on the shape of the
+// Id/MethodName/ParamCount triple, which genuine non-Error rejections do not share.
 const SCANNER_REJECTION_REGEX = /Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+/
 
 // The exception payload keys that carry a message: anything worth reading for

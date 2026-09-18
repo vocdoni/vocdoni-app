@@ -1,28 +1,9 @@
-/**
- * Predicate for requests that can only be satisfied by a file on disk, and so
- * must never fall through to the Vike renderer.
- *
- * The catch-all page route (src/pages/@catchAll/+route.ts) matches `*`, so any
- * asset the static server could not resolve — a client running stale HTML across
- * a deploy, a stray source-map fetch, a scanner guessing filenames — is answered
- * with the SPA document at `200 text/html`. Browsers reject that as
- * "'text/html' is not a valid JavaScript MIME type" (reported alongside an opaque
- * "Script error."), and source-map fetches fail parsing HTML as JSON. Answering
- * 404 keeps the failure honest and keeps HTML documents out of shared caches
- * under asset URLs.
- *
- * Matching is by extension rather than by an `/assets/` prefix so it also covers
- * `public/` files and holds whatever `base` the build was made with. No app route
- * carries a file extension: path segments are language codes, hex addresses and
- * base64url identifiers, none of which contain a dot. The one rendered response
- * that does is Vike's, exempted below.
- */
+// Requests only a file on disk can satisfy. Without this the `*` catch-all answers a
+// missing asset with the SPA document as `200 text/html`, which browsers reject as an
+// invalid script MIME type. Matched by extension: no app route segment carries a dot.
 
-/**
- * Vike's Client Routing fetches page data from `<pathname>/index.pageContext.json`.
- * That is rendered on demand, not a file on disk, so it has to reach the renderer —
- * 404ing it breaks client-side navigation between the SSR public pages.
- */
+// Vike Client Routing fetches page data from `<pathname>/index.pageContext.json`.
+// It is rendered on demand, not a file, so it must reach the renderer.
 const VIKE_PAGE_CONTEXT_SUFFIX = '.pageContext.json'
 
 const STATIC_EXTENSIONS = new Set([
@@ -70,20 +51,15 @@ const STATIC_EXTENSIONS = new Set([
 export function isStaticAssetPath(pathname) {
   if (typeof pathname !== 'string') return false
 
-  // `express.static` decodes the pathname before resolving the file on disk,
-  // while `req.path` keeps the raw percent escapes, so an encoded dot or
-  // extension ("/assets/missing%2Ejs") would slip past the checks below and
-  // reach the renderer as an HTML document. Decode once — the same single
-  // pass `express.static` applies.
+  // `express.static` decodes the pathname before resolving files while `req.path`
+  // keeps the raw escapes, so an encoded dot ("/assets/missing%2Ejs") would slip
+  // past the checks below. Decode once, as `express.static` does.
   let decoded
   try {
     decoded = decodeURIComponent(pathname)
   } catch {
-    // Malformed escapes ("%.js") cannot be an app route — their segments are
-    // language codes, hex addresses and base64url ids, none of which carry a
-    // "%". `express.static` does not stop them either: with its default
-    // `fallthrough` it swallows the 400 and calls `next()`, and dev mode never
-    // runs it at all. Fail toward the 404 rather than the renderer.
+    // Malformed escapes ("%.js") cannot be an app route, and `express.static` lets
+    // them fall through to `next()` rather than answering 400. Prefer the 404.
     return true
   }
 

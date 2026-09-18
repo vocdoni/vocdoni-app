@@ -115,19 +115,9 @@ export const useConfirmOnNavigate = ({
   const nextPath = blocker.location ? createPath(blocker.location) : null
   const isSamePath = nextPath === null || nextPath === currentPath
 
-  // Where a blocked navigation was headed, and the page it started from. A
-  // "Save and leave" click waits for its queued draft write, and an auto-save
-  // landing in between calls `saveCooldown`: the snooze un-blocks, and the
-  // effect below resets the still-pending navigation. By the time `proceed`
-  // runs there is nothing left for react-router to release, so it re-issues
-  // the recorded destination itself (see `proceed`).
-  //
-  // `proceed` and `cancel` run from closures rendered before that reset — the
-  // save-and-leave click awaits its write first — so they read the blocker and
-  // the location through refs rather than the render they were created in. The
-  // stale blocked object still carries a `proceed` function, and calling it
-  // once the router has reset the blocker throws react-router's
-  // "Invalid blocker state transition: unblocked -> proceeding".
+  // A "Save and leave" click awaits its draft write; an auto-save landing meanwhile
+  // snoozes the blocker and the effect below resets the pending navigation. The refs
+  // let `proceed` re-issue that destination and act on the live blocker, not a stale one.
   const pendingLocationRef = useRef<Location | null>(null)
   const blockedFromRef = useRef<string | null>(null)
   const blockerRef = useRef(blocker)
@@ -178,13 +168,9 @@ export const useConfirmOnNavigate = ({
     onClose()
   }
 
-  // `reset` and `proceed` only exist while the blocker is in the `blocked`
-  // state — react-router types them `undefined` in `unblocked` and `proceeding`.
-  // The dialog outlives that state: it can still emit a close after an autosave
-  // snoozed the blocker and the effect above already reset it, and
-  // `discardAndLeave` turns a throw here into a misleading "Error deleting
-  // draft" toast. Calling them optionally makes the late call a no-op instead of
-  // a TypeError.
+  // `reset`/`proceed` are `undefined` outside the `blocked` state, and the dialog can
+  // still close after an autosave snoozed the blocker. Optional calls make that late
+  // call a no-op instead of a TypeError surfacing as an "Error deleting draft" toast.
   const cancel = () => {
     closeAll()
     blockerRef.current.reset?.()
@@ -202,11 +188,9 @@ export const useConfirmOnNavigate = ({
     let left = typeof current.proceed === 'function'
     current.proceed?.()
 
-    // Nothing left to release — typically the auto-save race described at the
-    // refs above, where the reset already cancelled the user's navigation.
-    // Re-issue the destination they picked, unless they moved on themselves
-    // while the save was in flight: navigating them then would hijack a
-    // deliberate new location, and a same-path "navigation" is a no-op.
+    // Nothing was released (the auto-save race above): re-issue the destination the
+    // user picked, unless they navigated elsewhere themselves in the meantime or it
+    // is the current path already.
     const pending = pendingLocationRef.current
     const pendingPath = pending ? createPath(pending) : null
     if (
@@ -830,11 +814,8 @@ const ProcessCreateView = () => {
 
   const discardAndLeave = () => {
     try {
-      // Discard only once the navigation is actually released. When the blocker
-      // has already left the `blocked` state, `proceed()` is a no-op and the
-      // user stays here — wiping the form and forgetting the draft id in that
-      // case loses their work and orphans the draft the next save would
-      // duplicate.
+      // Only wipe the form and forget the draft id once the navigation is really
+      // released; a no-op `proceed()` leaves the user here with their work intact.
       if (!proceed()) return
       reset()
       storeDraftId(null)
