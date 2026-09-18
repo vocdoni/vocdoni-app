@@ -1,9 +1,4 @@
-import type { Config } from 'vike/types'
+import { analyticsIsolatedConfig } from '../../../shared/analyticsIsolatedConfig'
 
-export default {
-  // A fresh document prevents dashboard analytics from surviving into a ballot.
-  // The summary page inherits this boundary too.
-  clientRouting: false,
-  // Vike's server-routing runtime doesn't compute this during hydration.
-  passToClient: ['urlPathname'],
-} satisfies Config
+// The summary page inherits this boundary too.
+export default analyticsIsolatedConfig

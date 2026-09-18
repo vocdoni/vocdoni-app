@@ -1,8 +1,4 @@
-import type { Config } from 'vike/types'
+import { analyticsIsolatedConfig } from '../shared/analyticsIsolatedConfig'
 
-export default {
-  // The configured voting homepage needs the same isolation as /processes/:id.
-  clientRouting: false,
-  // Vike's server-routing runtime doesn't compute this during hydration.
-  passToClient: ['urlPathname'],
-} satisfies Config
+// The configured voting homepage needs the same isolation as /processes/:id.
+export default analyticsIsolatedConfig
