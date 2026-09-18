@@ -605,6 +605,70 @@ describe('useConfirmOnNavigate', () => {
       expect(paths.at(-1)).toBe('/admin/processes')
     })
 
+    // `handleSaveAndLeave` awaits its draft write before calling `proceed`, so
+    // the `proceed` it runs was rendered while the blocker was still blocked.
+    // That stale object keeps a `proceed` function, and react-router throws
+    // "Invalid blocker state transition: unblocked -> proceeding" if it is
+    // called after the reset — the fallback has to read the live blocker.
+    it('re-issues the destination from a closure captured before the reset', async () => {
+      const blocked = blockedBlocker('/admin/processes')
+      blocked.proceed.mockImplementation(() => {
+        throw new Error('Invalid blocker state transition: unblocked -> proceeding')
+      })
+      const { paths, result, rerender } = renderTrackingLocation(blocked)
+      const proceed = result.current.proceed
+
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      let left: boolean | undefined
+      await act(async () => {
+        left = proceed()
+      })
+
+      expect(blocked.proceed).not.toHaveBeenCalled()
+      expect(left).toBe(true)
+      expect(paths.at(-1)).toBe('/admin/processes')
+    })
+
+    it('carries the blocked location state through the re-issued navigation', async () => {
+      const blocked = blockedBlocker('/admin/processes')
+      blocked.location.state = { from: 'create' }
+      const states: unknown[] = []
+      const StateProbe = () => {
+        states.push(useLocation().state)
+        return null
+      }
+      mockUseBlocker.mockReturnValue(blocked)
+      const { result, rerender } = renderHook(
+        () =>
+          useConfirmOnNavigate({
+            isDirty: true,
+            isSubmitting: false,
+            isSubmitSuccessful: false,
+            onOpen: vi.fn(),
+            onClose: vi.fn(),
+          }),
+        {
+          wrapper: ({ children }: PropsWithChildren) => (
+            <TestMemoryRouter initialEntries={['/admin/processes/create']}>
+              <StateProbe />
+              {children}
+            </TestMemoryRouter>
+          ),
+        }
+      )
+
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      await act(async () => {
+        result.current.proceed()
+      })
+
+      expect(states.at(-1)).toEqual({ from: 'create' })
+    })
+
     it('does not hijack a user who already moved on mid-save', async () => {
       const { paths, navigateRef, result, rerender } = renderTrackingLocation(blockedBlocker('/admin/processes'))
 

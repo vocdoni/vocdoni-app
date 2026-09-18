@@ -38,6 +38,7 @@ import {
   useNavigate,
   useParams,
   useSearchParams,
+  type Location,
 } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -119,11 +120,18 @@ export const useConfirmOnNavigate = ({
   // landing in between calls `saveCooldown`: the snooze un-blocks, and the
   // effect below resets the still-pending navigation. By the time `proceed`
   // runs there is nothing left for react-router to release, so it re-issues
-  // the recorded destination itself (see `proceed`). The `currentPath` ref
-  // gives it the live location — `proceed` may run from a closure rendered
-  // before the user moved on.
-  const pendingPathRef = useRef<string | null>(null)
+  // the recorded destination itself (see `proceed`).
+  //
+  // `proceed` and `cancel` run from closures rendered before that reset — the
+  // save-and-leave click awaits its write first — so they read the blocker and
+  // the location through refs rather than the render they were created in. The
+  // stale blocked object still carries a `proceed` function, and calling it
+  // once the router has reset the blocker throws react-router's
+  // "Invalid blocker state transition: unblocked -> proceeding".
+  const pendingLocationRef = useRef<Location | null>(null)
   const blockedFromRef = useRef<string | null>(null)
+  const blockerRef = useRef(blocker)
+  blockerRef.current = blocker
   const currentPathRef = useRef(currentPath)
   currentPathRef.current = currentPath
 
@@ -140,7 +148,7 @@ export const useConfirmOnNavigate = ({
     }
 
     if (blocker.state === 'blocked' && blocker.location) {
-      pendingPathRef.current = createPath(blocker.location)
+      pendingLocationRef.current = blocker.location
       blockedFromRef.current = currentPath
     }
 
@@ -179,7 +187,7 @@ export const useConfirmOnNavigate = ({
   // a TypeError.
   const cancel = () => {
     closeAll()
-    blocker.reset?.()
+    blockerRef.current.reset?.()
   }
 
   // Returns whether the pending navigation was actually released, so callers
@@ -188,29 +196,32 @@ export const useConfirmOnNavigate = ({
   const proceed = () => {
     isProceedingRef.current = true
     closeAll()
-    const released = typeof blocker.proceed === 'function'
-    blocker.proceed?.()
+    // Pin the live blocker: the deferred reset below must act on the object
+    // that was released, not on whatever the router hands out later.
+    const current = blockerRef.current
+    let left = typeof current.proceed === 'function'
+    current.proceed?.()
 
-    let left = released
     // Nothing left to release — typically the auto-save race described at the
     // refs above, where the reset already cancelled the user's navigation.
     // Re-issue the destination they picked, unless they moved on themselves
     // while the save was in flight: navigating them then would hijack a
     // deliberate new location, and a same-path "navigation" is a no-op.
-    const pendingPath = pendingPathRef.current
+    const pending = pendingLocationRef.current
+    const pendingPath = pending ? createPath(pending) : null
     if (
       !left &&
       pendingPath &&
       blockedFromRef.current === currentPathRef.current &&
       pendingPath !== currentPathRef.current
     ) {
-      navigate(pendingPath)
+      navigate(pendingPath, { state: pending.state })
       left = true
     }
 
     setTimeout(() => {
       isProceedingRef.current = false
-      blocker.reset?.()
+      current.reset?.()
     }, 0)
 
     return left
