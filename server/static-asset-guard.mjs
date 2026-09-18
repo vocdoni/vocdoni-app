@@ -70,9 +70,25 @@ const STATIC_EXTENSIONS = new Set([
 export function isStaticAssetPath(pathname) {
   if (typeof pathname !== 'string') return false
 
-  if (pathname.endsWith(VIKE_PAGE_CONTEXT_SUFFIX)) return false
+  // `express.static` decodes the pathname before resolving the file on disk,
+  // while `req.path` keeps the raw percent escapes, so an encoded dot or
+  // extension ("/assets/missing%2Ejs") would slip past the checks below and
+  // reach the renderer as an HTML document. Decode once — the same single
+  // pass `express.static` applies.
+  let decoded
+  try {
+    decoded = decodeURIComponent(pathname)
+  } catch {
+    // Malformed escapes ("%.js") cannot be an app route — their segments are
+    // language codes, hex addresses and base64url ids, none of which carry a
+    // "%" — and `express.static` already answered 400 before we run, so fail
+    // toward the 404 rather than the renderer.
+    return true
+  }
 
-  const filename = pathname.slice(pathname.lastIndexOf('/') + 1)
+  if (decoded.endsWith(VIKE_PAGE_CONTEXT_SUFFIX)) return false
+
+  const filename = decoded.slice(decoded.lastIndexOf('/') + 1)
   const dot = filename.lastIndexOf('.')
   // `dot <= 0` also rejects dotfiles ("/.env"), which are probes rather than assets
   if (dot <= 0 || dot === filename.length - 1) return false

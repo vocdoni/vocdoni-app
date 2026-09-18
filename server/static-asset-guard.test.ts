@@ -33,6 +33,19 @@ describe('isStaticAssetPath', () => {
     it('holds for a non-root base URL', () => {
       expect(isStaticAssetPath('/app/assets/chunks/chunk-Cg13UnLT.js')).toBe(true)
     })
+
+    // `express.static` decodes before resolving files, so these are missing
+    // assets there too; the raw `req.path` must not let them reach the renderer.
+    it('matches percent-encoded dots and extension characters', () => {
+      expect(isStaticAssetPath('/assets/missing%2Ejs')).toBe(true)
+      expect(isStaticAssetPath('/assets/missing.%6As')).toBe(true)
+      expect(isStaticAssetPath('/assets/missing%2Ejs%2Emap')).toBe(true)
+    })
+
+    it('answers malformed escapes with the 404 rather than the renderer', () => {
+      expect(isStaticAssetPath('/assets/missing%.js')).toBe(true)
+      expect(isStaticAssetPath('/scan%')).toBe(true)
+    })
   })
 
   describe('page paths (should return false)', () => {
@@ -77,6 +90,10 @@ describe('isStaticAssetPath', () => {
       expect(isStaticAssetPath('/en/organization/0xabc/index.pageContext.json')).toBe(false)
       expect(isStaticAssetPath('/index.pageContext.json')).toBe(false)
       expect(isStaticAssetPath('/ca/processes/0xdef/summary/index.pageContext.json')).toBe(false)
+    })
+
+    it('still allows Vike page-context data requests with encoded dots', () => {
+      expect(isStaticAssetPath('/en/organization/0xabc/index.pageContext%2Ejson')).toBe(false)
     })
 
     it('tolerates a non-string input', () => {
