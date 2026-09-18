@@ -265,8 +265,14 @@ const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
 // which is also how genuine bugs that reject a non-Error arrive.
 const SCANNER_REJECTION_REGEX = /Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+/
 
+// The exception payload keys both the scanner filter and the email redaction
+// below walk, kept as one constant so they cannot drift apart: a key added to
+// the redaction but not the filter lets scanner noise through, while the
+// reverse lets un-redacted emails leak.
+const EXCEPTION_PAYLOAD_KEYS = ['$exception_message', '$exception_values', '$exception_list'] as const
+
 const isScannerRejection = (event: CaptureResult): boolean => {
-  for (const key of ['$exception_message', '$exception_values', '$exception_list'] as const) {
+  for (const key of EXCEPTION_PAYLOAD_KEYS) {
     const value = event.properties?.[key]
     if (value === undefined || value === null) continue
     let text: string
@@ -313,9 +319,9 @@ export const posthogBeforeSend = (
   if (event.event === '$exception') {
     if (isScannerRejection(event)) return null
 
-    // Same key set `isScannerRejection` inspects: anything worth reading for a
-    // message is worth stripping emails from.
-    for (const key of ['$exception_message', '$exception_values', '$exception_list'] as const) {
+    // Same key set `isScannerRejection` inspects (`EXCEPTION_PAYLOAD_KEYS`):
+    // anything worth reading for a message is worth stripping emails from.
+    for (const key of EXCEPTION_PAYLOAD_KEYS) {
       const value = event.properties?.[key]
       if (typeof value === 'string') {
         event.properties[key] = value.replace(EMAIL_REGEX, '[redacted-email]')
