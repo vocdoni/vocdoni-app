@@ -265,30 +265,9 @@ const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
 // which is also how genuine bugs that reject a non-Error arrive.
 const SCANNER_REJECTION_REGEX = /Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+/
 
-// The exception payload keys both the scanner filter and the email redaction
-// below walk, kept as one constant so they cannot drift apart: a key added to
-// the redaction but not the filter lets scanner noise through, while the
-// reverse lets un-redacted emails leak.
+// The exception payload keys that carry a message: anything worth reading for
+// the scanner filter is worth stripping emails from, so both run in one pass.
 const EXCEPTION_PAYLOAD_KEYS = ['$exception_message', '$exception_values', '$exception_list'] as const
-
-const isScannerRejection = (event: CaptureResult): boolean => {
-  for (const key of EXCEPTION_PAYLOAD_KEYS) {
-    const value = event.properties?.[key]
-    if (value === undefined || value === null) continue
-    let text: string
-    if (typeof value === 'string') {
-      text = value
-    } else {
-      try {
-        text = JSON.stringify(value)
-      } catch {
-        continue
-      }
-    }
-    if (SCANNER_REJECTION_REGEX.test(text)) return true
-  }
-  return false
-}
 
 export const posthogBeforeSend = (
   event: CaptureResult | null,
@@ -315,22 +294,20 @@ export const posthogBeforeSend = (
     event.properties.$referrer = sanitizeAnalyticsUrl(event.properties.$referrer)
   }
 
-  // Error tracking: strip email addresses from exception payloads
+  // Error tracking: drop scanner noise, then strip email addresses from what
+  // remains. Each payload is serialized once and used for both.
   if (event.event === '$exception') {
-    if (isScannerRejection(event)) return null
-
-    // Same key set `isScannerRejection` inspects (`EXCEPTION_PAYLOAD_KEYS`):
-    // anything worth reading for a message is worth stripping emails from.
     for (const key of EXCEPTION_PAYLOAD_KEYS) {
       const value = event.properties?.[key]
-      if (typeof value === 'string') {
-        event.properties[key] = value.replace(EMAIL_REGEX, '[redacted-email]')
-      } else if (value !== undefined) {
-        try {
-          event.properties[key] = JSON.parse(JSON.stringify(value).replace(EMAIL_REGEX, '[redacted-email]'))
-        } catch {
-          // leave the payload untouched if it cannot be serialized
-        }
+      if (value === undefined) continue
+      const isString = typeof value === 'string'
+      try {
+        const text: string = isString ? value : JSON.stringify(value)
+        if (SCANNER_REJECTION_REGEX.test(text)) return null
+        const redacted = text.replace(EMAIL_REGEX, '[redacted-email]')
+        event.properties[key] = isString ? redacted : JSON.parse(redacted)
+      } catch {
+        // leave the payload untouched if it cannot be serialized
       }
     }
   }

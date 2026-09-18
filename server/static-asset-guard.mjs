@@ -81,8 +81,9 @@ export function isStaticAssetPath(pathname) {
   } catch {
     // Malformed escapes ("%.js") cannot be an app route — their segments are
     // language codes, hex addresses and base64url ids, none of which carry a
-    // "%" — and `express.static` already answered 400 before we run, so fail
-    // toward the 404 rather than the renderer.
+    // "%". `express.static` does not stop them either: with its default
+    // `fallthrough` it swallows the 400 and calls `next()`, and dev mode never
+    // runs it at all. Fail toward the 404 rather than the renderer.
     return true
   }
 
