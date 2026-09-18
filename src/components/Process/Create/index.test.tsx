@@ -1,11 +1,22 @@
-import { renderHook } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 import type { CreateVotingProcessRequest } from '@vocdoni/api-types'
+import type { PropsWithChildren } from 'react'
+import type { Blocker } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
+import { TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultQuestion, Process, SelectorTypes } from './common'
-import { buildCensusSpec, useFormToVotingProcessRequest } from './index'
+import { buildCensusSpec, useConfirmOnNavigate, useFormToVotingProcessRequest } from './index'
 
 const mockPermission = vi.fn()
+
+const { mockUseBlocker } = vi.hoisted(() => ({ mockUseBlocker: vi.fn() }))
+
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-router')>()),
+  useBlocker: () => mockUseBlocker(),
+}))
 
 vi.mock('~components/Auth/Subscription', () => ({
   useSubscription: () => ({
@@ -392,6 +403,299 @@ describe('useFormToVotingProcessRequest', () => {
       expect(req).toHaveProperty('title')
       expect(req).toHaveProperty('questions')
       expect(Array.isArray(req.questions)).toBe(true)
+    })
+  })
+})
+
+describe('useConfirmOnNavigate', () => {
+  // react-router types `reset`/`proceed` as `undefined` outside the `blocked`
+  // state. Calling them there threw `TypeError: reset is not a function` on
+  // /admin/processes/create in production.
+  const unblockedBlocker = (): Blocker => ({
+    state: 'unblocked',
+    reset: undefined,
+    proceed: undefined,
+    location: undefined,
+  })
+
+  const blockedBlocker = (pathname = '/admin/processes') =>
+    ({
+      state: 'blocked',
+      reset: vi.fn(),
+      proceed: vi.fn(),
+      location: { pathname, search: '', hash: '', state: null, key: 'test' },
+    }) as unknown as Blocker & { reset: ReturnType<typeof vi.fn>; proceed: ReturnType<typeof vi.fn> }
+
+  const wrapper = ({ children }: PropsWithChildren) => (
+    <TestMemoryRouter initialEntries={['/admin/processes/create']}>{children}</TestMemoryRouter>
+  )
+
+  const renderConfirm = (blocker: Blocker) => {
+    mockUseBlocker.mockReturnValue(blocker)
+    return renderHook(
+      () =>
+        useConfirmOnNavigate({
+          isDirty: true,
+          isSubmitting: false,
+          isSubmitSuccessful: false,
+          onOpen: vi.fn(),
+          onClose: vi.fn(),
+        }),
+      { wrapper }
+    )
+  }
+
+  beforeEach(() => {
+    mockUseBlocker.mockReset()
+  })
+
+  describe('when the blocker is no longer blocked', () => {
+    it('cancel() does not throw', () => {
+      const { result } = renderConfirm(unblockedBlocker())
+
+      expect(() => act(() => result.current.cancel())).not.toThrow()
+    })
+
+    it('proceed() does not throw, including its deferred reset', () => {
+      vi.useFakeTimers()
+      try {
+        const { result } = renderConfirm(unblockedBlocker())
+
+        expect(() => {
+          act(() => result.current.proceed())
+          act(() => {
+            vi.runAllTimers()
+          })
+        }).not.toThrow()
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    // `discardAndLeave` wipes the form and forgets the draft id on the way out.
+    // It may only do that when the navigation was really released, so `proceed`
+    // has to report the no-op rather than swallow it.
+    it('proceed() reports that it released no navigation', () => {
+      vi.useFakeTimers()
+      try {
+        const { result } = renderConfirm(unblockedBlocker())
+        let released: boolean | undefined
+
+        act(() => {
+          released = result.current.proceed()
+        })
+        expect(released).toBe(false)
+
+        act(() => {
+          vi.runAllTimers()
+        })
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it('resetSamePath() still runs its callback', () => {
+      const { result } = renderConfirm(unblockedBlocker())
+      const onReset = vi.fn()
+
+      expect(() => act(() => result.current.resetSamePath(onReset))).not.toThrow()
+      expect(onReset).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('when the blocker is blocked', () => {
+    it('cancel() resets the blocker', () => {
+      const blocker = blockedBlocker()
+      const { result } = renderConfirm(blocker)
+
+      act(() => result.current.cancel())
+
+      expect(blocker.reset).toHaveBeenCalledTimes(1)
+    })
+
+    it('proceed() lets the navigation through and resets afterwards', () => {
+      vi.useFakeTimers()
+      try {
+        const blocker = blockedBlocker()
+        const { result } = renderConfirm(blocker)
+
+        let released: boolean | undefined
+        act(() => {
+          released = result.current.proceed()
+        })
+        expect(released).toBe(true)
+        expect(blocker.proceed).toHaveBeenCalledTimes(1)
+
+        act(() => {
+          vi.runAllTimers()
+        })
+        expect(blocker.reset).toHaveBeenCalledTimes(1)
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it('reports a navigation to the current path as the same path', () => {
+      const { result } = renderConfirm(blockedBlocker('/admin/processes/create'))
+
+      expect(result.current.isSamePath).toBe(true)
+    })
+
+    it('reports a navigation elsewhere as a different path', () => {
+      const { result } = renderConfirm(blockedBlocker('/admin/processes'))
+
+      expect(result.current.isSamePath).toBe(false)
+    })
+  })
+
+  // "Save and leave" race: an in-flight auto-save completes first, snoozes the blocker
+  // and resets the pending navigation, so `proceed` has to re-issue the destination.
+  describe('when an auto-save reset the blocker mid-save', () => {
+    const renderTrackingLocation = (blocker: Blocker) => {
+      const paths: string[] = []
+      const navigateRef: { current: null | ((to: string) => void) } = { current: null }
+
+      const Probe = () => {
+        const { pathname } = useLocation()
+        const navigate = useNavigate()
+        paths.push(pathname)
+        navigateRef.current = (to) => navigate(to)
+        return null
+      }
+
+      mockUseBlocker.mockReturnValue(blocker)
+      const rendered = renderHook(
+        () =>
+          useConfirmOnNavigate({
+            isDirty: true,
+            isSubmitting: false,
+            isSubmitSuccessful: false,
+            onOpen: vi.fn(),
+            onClose: vi.fn(),
+          }),
+        {
+          wrapper: ({ children }: PropsWithChildren) => (
+            <TestMemoryRouter initialEntries={['/admin/processes/create']}>
+              <Probe />
+              {children}
+            </TestMemoryRouter>
+          ),
+        }
+      )
+
+      return { paths, navigateRef, ...rendered }
+    }
+
+    it('re-issues the cancelled destination, reporting the user as leaving', async () => {
+      const { paths, result, rerender } = renderTrackingLocation(blockedBlocker('/admin/processes'))
+
+      // The queued auto-save lands: the snooze un-blocks and the effect resets
+      // the pending navigation before the manual save's `proceed()` runs.
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      let left: boolean | undefined
+      await act(async () => {
+        left = result.current.proceed()
+      })
+
+      expect(left).toBe(true)
+      expect(paths.at(-1)).toBe('/admin/processes')
+    })
+
+    // `handleSaveAndLeave` calls the `proceed` rendered before the reset; the stale blocker throws.
+    it('re-issues the destination from a closure captured before the reset', async () => {
+      const blocked = blockedBlocker('/admin/processes')
+      blocked.proceed.mockImplementation(() => {
+        throw new Error('Invalid blocker state transition: unblocked -> proceeding')
+      })
+      const { paths, result, rerender } = renderTrackingLocation(blocked)
+      const proceed = result.current.proceed
+
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      let left: boolean | undefined
+      await act(async () => {
+        left = proceed()
+      })
+
+      expect(blocked.proceed).not.toHaveBeenCalled()
+      expect(left).toBe(true)
+      expect(paths.at(-1)).toBe('/admin/processes')
+    })
+
+    it('carries the blocked location state through the re-issued navigation', async () => {
+      const blocked = blockedBlocker('/admin/processes')
+      blocked.location.state = { from: 'create' }
+      const states: unknown[] = []
+      const StateProbe = () => {
+        states.push(useLocation().state)
+        return null
+      }
+      mockUseBlocker.mockReturnValue(blocked)
+      const { result, rerender } = renderHook(
+        () =>
+          useConfirmOnNavigate({
+            isDirty: true,
+            isSubmitting: false,
+            isSubmitSuccessful: false,
+            onOpen: vi.fn(),
+            onClose: vi.fn(),
+          }),
+        {
+          wrapper: ({ children }: PropsWithChildren) => (
+            <TestMemoryRouter initialEntries={['/admin/processes/create']}>
+              <StateProbe />
+              {children}
+            </TestMemoryRouter>
+          ),
+        }
+      )
+
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      await act(async () => {
+        result.current.proceed()
+      })
+
+      expect(states.at(-1)).toEqual({ from: 'create' })
+    })
+
+    it('does not hijack a user who already moved on mid-save', async () => {
+      const { paths, navigateRef, result, rerender } = renderTrackingLocation(blockedBlocker('/admin/processes'))
+
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      // The save is still in flight, but the user navigates elsewhere themselves.
+      await act(async () => {
+        navigateRef.current?.('/drafts')
+      })
+
+      let left: boolean | undefined
+      await act(async () => {
+        left = result.current.proceed()
+      })
+
+      expect(left).toBe(false)
+      expect(paths.at(-1)).toBe('/drafts')
+    })
+
+    it('treats a pending navigation to the current path as a no-op', async () => {
+      const { paths, result, rerender } = renderTrackingLocation(blockedBlocker('/admin/processes/create'))
+
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      let left: boolean | undefined
+      await act(async () => {
+        left = result.current.proceed()
+      })
+
+      expect(left).toBe(false)
+      expect(paths.at(-1)).toBe('/admin/processes/create')
     })
   })
 })

@@ -38,6 +38,7 @@ import {
   useNavigate,
   useParams,
   useSearchParams,
+  type Location,
 } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -109,9 +110,22 @@ export const useConfirmOnNavigate = ({
   const isOpenRef = useRef(false)
   const isProceedingRef = useRef(false)
 
+  const navigate = useNavigate()
   const { pathname: currentPath } = useLocation()
   const nextPath = blocker.location ? createPath(blocker.location) : null
   const isSamePath = nextPath === null || nextPath === currentPath
+
+  // A "Save and leave" click awaits its draft write; an auto-save landing meanwhile
+  // snoozes the blocker and the effect below resets the pending navigation. The refs
+  // let `proceed` re-issue that destination and act on the live blocker, not a stale one.
+  const pendingLocationRef = useRef<Location | null>(null)
+  const blockedFromRef = useRef<string | null>(null)
+  const blockerRef = useRef(blocker)
+  const currentPathRef = useRef(currentPath)
+  useEffect(() => {
+    blockerRef.current = blocker
+    currentPathRef.current = currentPath
+  }, [blocker, currentPath])
 
   useEffect(() => {
     if (!shouldBlock) {
@@ -125,6 +139,11 @@ export const useConfirmOnNavigate = ({
       return
     }
 
+    if (blocker.state === 'blocked' && blocker.location) {
+      pendingLocationRef.current = blocker.location
+      blockedFromRef.current = currentPath
+    }
+
     if (blocker.state === 'blocked' && !isOpenRef.current && !isProceedingRef.current) {
       isOpenRef.current = true
       onOpen()
@@ -134,7 +153,7 @@ export const useConfirmOnNavigate = ({
       isOpenRef.current = false
       onClose()
     }
-  }, [blocker.state, shouldBlock, onOpen, onClose])
+  }, [blocker.state, shouldBlock, currentPath, onOpen, onClose])
 
   // Reset snooze when time is up
   useEffect(() => {
@@ -151,20 +170,47 @@ export const useConfirmOnNavigate = ({
     onClose()
   }
 
+  // `reset`/`proceed` are `undefined` outside the `blocked` state, and the dialog can
+  // still close after an autosave snoozed the blocker. Optional calls make that late
+  // call a no-op instead of a TypeError surfacing as an "Error deleting draft" toast.
   const cancel = () => {
     closeAll()
-    blocker.reset()
+    blockerRef.current.reset?.()
   }
 
+  // Returns whether the pending navigation was actually released, so callers
+  // that destroy state on the way out (see `discardAndLeave`) can tell a real
+  // departure from a late no-op call that leaves the user on the page.
   const proceed = () => {
     isProceedingRef.current = true
     closeAll()
-    blocker.proceed()
+    // Pin the live blocker: the deferred reset below must act on the object
+    // that was released, not on whatever the router hands out later.
+    const current = blockerRef.current
+    let left = typeof current.proceed === 'function'
+    current.proceed?.()
+
+    // Nothing was released (the auto-save race above): re-issue the destination the
+    // user picked, unless they navigated elsewhere themselves in the meantime or it
+    // is the current path already.
+    const pending = pendingLocationRef.current
+    const pendingPath = pending ? createPath(pending) : null
+    if (
+      !left &&
+      pendingPath &&
+      blockedFromRef.current === currentPathRef.current &&
+      pendingPath !== currentPathRef.current
+    ) {
+      navigate(pendingPath, { state: pending.state })
+      left = true
+    }
 
     setTimeout(() => {
       isProceedingRef.current = false
-      blocker.reset()
+      current.reset?.()
     }, 0)
+
+    return left
   }
 
   const resetSamePath = (cb?: () => void) => {
@@ -770,7 +816,9 @@ const ProcessCreateView = () => {
 
   const discardAndLeave = () => {
     try {
-      proceed()
+      // Only wipe the form and forget the draft id once the navigation is really
+      // released; a no-op `proceed()` leaves the user here with their work intact.
+      if (!proceed()) return
       reset()
       storeDraftId(null)
     } catch (error) {

@@ -255,6 +255,15 @@ export const sanitizeAnalyticsUrl = (url: string): string => {
 
 const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
 
+// Outlook's Safe Links scanner opens mailed links in a headless browser and rejects a
+// promise with a bare string: bot traffic, not a user error. Matched on the shape of the
+// Id/MethodName/ParamCount triple, which genuine non-Error rejections do not share.
+const SCANNER_REJECTION_REGEX = /Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+/
+
+// The exception payload keys that carry a message: anything worth reading for
+// the scanner filter is worth stripping emails from, so both run in one pass.
+const EXCEPTION_PAYLOAD_KEYS = ['$exception_message', '$exception_values', '$exception_list'] as const
+
 export const posthogBeforeSend = (
   event: CaptureResult | null,
   votingRoutes: VotingRouteConfig = {}
@@ -280,18 +289,20 @@ export const posthogBeforeSend = (
     event.properties.$referrer = sanitizeAnalyticsUrl(event.properties.$referrer)
   }
 
-  // Error tracking: strip email addresses from exception payloads
+  // Error tracking: drop scanner noise, then strip email addresses from what
+  // remains. Each payload is serialized once and used for both.
   if (event.event === '$exception') {
-    for (const key of ['$exception_message', '$exception_list'] as const) {
+    for (const key of EXCEPTION_PAYLOAD_KEYS) {
       const value = event.properties?.[key]
-      if (typeof value === 'string') {
-        event.properties[key] = value.replace(EMAIL_REGEX, '[redacted-email]')
-      } else if (value !== undefined) {
-        try {
-          event.properties[key] = JSON.parse(JSON.stringify(value).replace(EMAIL_REGEX, '[redacted-email]'))
-        } catch {
-          // leave the payload untouched if it cannot be serialized
-        }
+      if (value === undefined) continue
+      const isString = typeof value === 'string'
+      try {
+        const text: string = isString ? value : JSON.stringify(value)
+        if (SCANNER_REJECTION_REGEX.test(text)) return null
+        const redacted = text.replace(EMAIL_REGEX, '[redacted-email]')
+        event.properties[key] = isString ? redacted : JSON.parse(redacted)
+      } catch {
+        // leave the payload untouched if it cannot be serialized
       }
     }
   }

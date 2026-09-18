@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createDevMiddleware, renderPage } from 'vike/server'
 import { getSupportedPublicLanguagesFromEnv, resolvePublicLanguageRedirect } from './public-language-routing.mjs'
 import { createSsrCacheMiddleware } from './ssr-cache.mjs'
+import { isStaticAssetPath } from './static-asset-guard.mjs'
 import { isViteInternalPath } from './vite-path-guard.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -47,6 +48,13 @@ app.use((req, res, next) => {
   // Block Vite-internal dev-only URL patterns that should never reach production
   // These are common security scanner probes and Vite internal paths
   if (isViteInternalPath(req.path)) {
+    return res.status(404).end()
+  }
+  // Static files were served above. Anything still carrying a file extension is
+  // a missing asset: answer 404 instead of letting the catch-all page render HTML
+  // under an asset URL (see static-asset-guard.mjs).
+  if (isStaticAssetPath(req.path)) {
+    res.setHeader('Cache-Control', 'no-store')
     return res.status(404).end()
   }
   const redirectTarget = resolvePublicLanguageRedirect({
