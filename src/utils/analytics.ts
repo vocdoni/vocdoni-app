@@ -1,5 +1,9 @@
 import type { CaptureResult } from 'posthog-js'
-import { getHomeProcessRouteMatch } from '~src/ssr/public-routes'
+import {
+  getHomeProcessRouteMatch,
+  getPublicLocalizedProcessRouteMatch,
+  getPublicLocalizedProcessSummaryRouteMatch,
+} from '~src/ssr/public-routes'
 
 type PlausibleConfig = {
   domain: string
@@ -179,22 +183,15 @@ type PosthogInitConfig = VotingRouteConfig & {
   consent: PosthogConsent
 }
 
-// Voters must never be tracked: matches the public voting routes whose shape is
-// fixed (`/processes/:id` and `/processes/:id/summary`, with or without a
-// `/:lang` prefix) where PostHog is neither loaded nor allowed to emit a single
-// event.
+// Voters must never be tracked. The fixed URL shape (`/processes/:id` and
+// `/processes/:id/summary`, bare or behind a two-letter `/:lang` prefix) is
+// matched directly, so the guard holds even without runtime configuration.
 const VOTING_PATH_REGEX = /^\/([a-z]{2}(-[a-z]{2})?\/)?processes\/[^/]+/
 
-// Also covers the optional voting homepage (`/` and `/:lang` when HOME_PROCESS_ID
-// is set) through the very matcher Vike routes it with, so the privacy boundary
-// follows runtime configuration instead of the URL shape alone.
-export const isVotingPath = (
-  pathname: string,
-  { homeProcessId, supportedLanguages = [] }: VotingRouteConfig = {}
-): boolean => {
-  // Vike matches decoded segments, whereas window.location.pathname is encoded.
-  // Preserve encoded slashes so decoding cannot introduce new route segments.
-  const decodedPathname = pathname
+// Vike matches decoded segments, whereas window.location.pathname is encoded.
+// Encoded slashes are preserved so decoding cannot introduce new route segments.
+const decodePathnameSegments = (pathname: string): string =>
+  pathname
     .split('/')
     .map((segment) => {
       try {
@@ -205,14 +202,21 @@ export const isVotingPath = (
     })
     .join('/')
 
-  const language = decodedPathname.split('/')[1]
-  const publicPathname = supportedLanguages.includes(language)
-    ? decodedPathname.slice(language.length + 1)
-    : decodedPathname
+// The runtime-configured routes (any supported language prefix, and the
+// optional voting homepage at `/` and `/:lang` when HOME_PROCESS_ID is set) go
+// through the very matchers Vike routes them with, so the privacy boundary
+// follows runtime configuration instead of the URL shape alone.
+export const isVotingPath = (
+  pathname: string,
+  { homeProcessId, supportedLanguages = [] }: VotingRouteConfig = {}
+): boolean => {
+  const localized = { urlPathname: decodePathnameSegments(pathname), supportedLanguages }
 
   return (
-    VOTING_PATH_REGEX.test(publicPathname) ||
-    Boolean(getHomeProcessRouteMatch({ urlPathname: decodedPathname, homeProcessId, supportedLanguages }))
+    VOTING_PATH_REGEX.test(localized.urlPathname) ||
+    Boolean(getPublicLocalizedProcessRouteMatch(localized)) ||
+    Boolean(getPublicLocalizedProcessSummaryRouteMatch(localized)) ||
+    Boolean(getHomeProcessRouteMatch({ ...localized, homeProcessId }))
   )
 }
 
