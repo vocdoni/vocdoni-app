@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react'
 import type { CreateVotingProcessRequest } from '@vocdoni/api-types'
 import type { PropsWithChildren } from 'react'
 import type { Blocker } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
@@ -544,6 +545,99 @@ describe('useConfirmOnNavigate', () => {
       const { result } = renderConfirm(blockedBlocker('/admin/processes'))
 
       expect(result.current.isSamePath).toBe(false)
+    })
+  })
+
+  // The "Save and leave" race: the click's draft write queues behind an
+  // in-flight auto-save, whose completion snoozes the blocker and resets the
+  // pending navigation before `proceed()` runs. `proceed` must then re-issue
+  // the destination itself or the user is silently left on the page.
+  describe('when an auto-save reset the blocker mid-save', () => {
+    const renderTrackingLocation = (blocker: Blocker) => {
+      const paths: string[] = []
+      const navigateRef: { current: null | ((to: string) => void) } = { current: null }
+
+      const Probe = () => {
+        const { pathname } = useLocation()
+        const navigate = useNavigate()
+        paths.push(pathname)
+        navigateRef.current = (to) => navigate(to)
+        return null
+      }
+
+      mockUseBlocker.mockReturnValue(blocker)
+      const rendered = renderHook(
+        () =>
+          useConfirmOnNavigate({
+            isDirty: true,
+            isSubmitting: false,
+            isSubmitSuccessful: false,
+            onOpen: vi.fn(),
+            onClose: vi.fn(),
+          }),
+        {
+          wrapper: ({ children }: PropsWithChildren) => (
+            <TestMemoryRouter initialEntries={['/admin/processes/create']}>
+              <Probe />
+              {children}
+            </TestMemoryRouter>
+          ),
+        }
+      )
+
+      return { paths, navigateRef, ...rendered }
+    }
+
+    it('re-issues the cancelled destination, reporting the user as leaving', async () => {
+      const { paths, result, rerender } = renderTrackingLocation(blockedBlocker('/admin/processes'))
+
+      // The queued auto-save lands: the snooze un-blocks and the effect resets
+      // the pending navigation before the manual save's `proceed()` runs.
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      let left: boolean | undefined
+      await act(async () => {
+        left = result.current.proceed()
+      })
+
+      expect(left).toBe(true)
+      expect(paths.at(-1)).toBe('/admin/processes')
+    })
+
+    it('does not hijack a user who already moved on mid-save', async () => {
+      const { paths, navigateRef, result, rerender } = renderTrackingLocation(blockedBlocker('/admin/processes'))
+
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      // The save is still in flight, but the user navigates elsewhere themselves.
+      await act(async () => {
+        navigateRef.current?.('/drafts')
+      })
+
+      let left: boolean | undefined
+      await act(async () => {
+        left = result.current.proceed()
+      })
+
+      expect(left).toBe(false)
+      expect(paths.at(-1)).toBe('/drafts')
+    })
+
+    it('treats a pending navigation to the current path as a no-op', async () => {
+      const { paths, result, rerender } = renderTrackingLocation(blockedBlocker('/admin/processes/create'))
+
+      mockUseBlocker.mockReturnValue(unblockedBlocker())
+      rerender()
+
+      let left: boolean | undefined
+      await act(async () => {
+        left = result.current.proceed()
+      })
+
+      expect(left).toBe(false)
+      expect(paths.at(-1)).toBe('/admin/processes/create')
     })
   })
 })

@@ -109,9 +109,23 @@ export const useConfirmOnNavigate = ({
   const isOpenRef = useRef(false)
   const isProceedingRef = useRef(false)
 
+  const navigate = useNavigate()
   const { pathname: currentPath } = useLocation()
   const nextPath = blocker.location ? createPath(blocker.location) : null
   const isSamePath = nextPath === null || nextPath === currentPath
+
+  // Where a blocked navigation was headed, and the page it started from. A
+  // "Save and leave" click waits for its queued draft write, and an auto-save
+  // landing in between calls `saveCooldown`: the snooze un-blocks, and the
+  // effect below resets the still-pending navigation. By the time `proceed`
+  // runs there is nothing left for react-router to release, so it re-issues
+  // the recorded destination itself (see `proceed`). The `currentPath` ref
+  // gives it the live location — `proceed` may run from a closure rendered
+  // before the user moved on.
+  const pendingPathRef = useRef<string | null>(null)
+  const blockedFromRef = useRef<string | null>(null)
+  const currentPathRef = useRef(currentPath)
+  currentPathRef.current = currentPath
 
   useEffect(() => {
     if (!shouldBlock) {
@@ -125,6 +139,11 @@ export const useConfirmOnNavigate = ({
       return
     }
 
+    if (blocker.state === 'blocked' && blocker.location) {
+      pendingPathRef.current = createPath(blocker.location)
+      blockedFromRef.current = currentPath
+    }
+
     if (blocker.state === 'blocked' && !isOpenRef.current && !isProceedingRef.current) {
       isOpenRef.current = true
       onOpen()
@@ -134,7 +153,7 @@ export const useConfirmOnNavigate = ({
       isOpenRef.current = false
       onClose()
     }
-  }, [blocker.state, shouldBlock, onOpen, onClose])
+  }, [blocker.state, shouldBlock, currentPath, onOpen, onClose])
 
   // Reset snooze when time is up
   useEffect(() => {
@@ -172,12 +191,29 @@ export const useConfirmOnNavigate = ({
     const released = typeof blocker.proceed === 'function'
     blocker.proceed?.()
 
+    let left = released
+    // Nothing left to release — typically the auto-save race described at the
+    // refs above, where the reset already cancelled the user's navigation.
+    // Re-issue the destination they picked, unless they moved on themselves
+    // while the save was in flight: navigating them then would hijack a
+    // deliberate new location, and a same-path "navigation" is a no-op.
+    const pendingPath = pendingPathRef.current
+    if (
+      !left &&
+      pendingPath &&
+      blockedFromRef.current === currentPathRef.current &&
+      pendingPath !== currentPathRef.current
+    ) {
+      navigate(pendingPath)
+      left = true
+    }
+
     setTimeout(() => {
       isProceedingRef.current = false
       blocker.reset?.()
     }, 0)
 
-    return released
+    return left
   }
 
   const resetSamePath = (cb?: () => void) => {
