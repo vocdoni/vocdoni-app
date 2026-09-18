@@ -26,7 +26,6 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
   {
     path: Routes.processes.view,
     id: 'process-view',
-    handle: { hideNavbar: true },
     // A ballot must not inherit the dashboard's running analytics SDK. Hand it
     // to Vike in a fresh document, just like a direct public-page visit.
     //
@@ -36,8 +35,6 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
     // `reloadDocument` (see Home/SharedCensus) instead of relying on this
     // loader whenever the URL carries one.
     loader: ({ request }: LoaderFunctionArgs) => redirectDocument(request.url),
-    HydrateFallback: Loading,
-    errorElement: <ErrorElement />,
   },
   {
     path: Routes.organization,

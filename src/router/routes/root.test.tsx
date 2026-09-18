@@ -1,31 +1,37 @@
 import { renderHook } from '@testing-library/react'
-import type { LoaderFunction, LoaderFunctionArgs } from 'react-router'
+import type { LoaderFunctionArgs } from 'react-router'
+import { Routes } from '.'
 import { useRootRoutes } from './root'
 
-vi.mock('~elements/Layout', () => ({ default: () => null }))
-vi.mock('~elements/Error', () => ({ default: () => null }))
+vi.mock('~src/providers/ApiClientProvider', () => ({ useApiClient: () => ({ client: {} }) }))
 vi.mock('~src/app-env', () => ({ useAppEnv: () => ({ VOCDONI_ENVIRONMENT: 'dev' }) }))
 
-const getElection = vi.fn().mockResolvedValue({ id: '0x1234' })
-vi.mock('~src/providers/ApiClientProvider', () => ({
-  useApiClient: () => ({ client: { elections: { get: getElection } } }),
-}))
-
-it('leaves the SPA document before rendering a public ballot', async () => {
+const ballotRoute = () => {
   const { result } = renderHook(() => useRootRoutes())
-  const route = result.current.children.find((route) => route.path === '/processes/:id')!
-  const url = 'https://app.vocdoni.io/ca/processes/0x1234?foo=bar'
-  const response = await (route.loader as LoaderFunction)({
-    request: new Request(url),
-    url: new URL(url),
-    pattern: '/processes/:id',
-    params: { id: '0x1234' },
-    context: {},
-  } as LoaderFunctionArgs)
+  return result.current.children.find((route) => route.path === Routes.processes.view)!
+}
 
-  expect(response).toBeInstanceOf(Response)
-  expect((response as Response).headers.get('Location')).toBe(url)
-  expect((response as Response).headers.get('X-Remix-Reload-Document')).toBe('true')
-  expect(getElection).not.toHaveBeenCalled()
-  expect(route.element).toBeUndefined()
+describe('the ballot route', () => {
+  // A ballot must never render inside the dashboard document: the loader
+  // hands the very same URL to Vike as a full document load.
+  it('redirects the document to the same URL', async () => {
+    const request = new Request('https://app.test/processes/0x1234?foo=bar')
+
+    const response = (await ballotRoute().loader!({ request } as LoaderFunctionArgs)) as Response
+
+    expect(response.status).toBe(302)
+    expect(response.headers.get('Location')).toBe('https://app.test/processes/0x1234?foo=bar')
+    expect(response.headers.get('X-Remix-Reload-Document')).toBe('true')
+  })
+
+  // The redirect cannot throw and the SPA never cold-boots here, so anything
+  // renderable on the route would be dead weight that implies otherwise.
+  it('is loader-only', () => {
+    const route = ballotRoute()
+
+    expect(route.element).toBeUndefined()
+    expect(route.errorElement).toBeUndefined()
+    expect(route.HydrateFallback).toBeUndefined()
+    expect(route.handle).toBeUndefined()
+  })
 })
