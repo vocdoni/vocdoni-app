@@ -151,6 +151,53 @@ describe('posthog voting-path detection', () => {
     expect(isVotingPath('/pt-br/processes/0x1234/summary')).toBe(true)
   })
 
+  it.each(['/ca/%70rocesses/0x1234', '/%63a/processes/0x1234', '/%63a'])(
+    'excludes decoded voting routes at %s',
+    async (pathname) => {
+      const { isVotingPath } = await import('./analytics')
+
+      expect(isVotingPath(pathname, { homeProcessId: '0x1234', supportedLanguages: ['ca'] })).toBe(true)
+    }
+  )
+
+  it.each(['/fil/processes/0x1234', '/zh-hant/processes/0x1234/summary'])(
+    'excludes voting routes in runtime-supported locales at %s',
+    async (pathname) => {
+      const { isVotingPath } = await import('./analytics')
+
+      expect(isVotingPath(pathname, { supportedLanguages: ['fil', 'zh-hant'] })).toBe(true)
+    }
+  )
+
+  it('does not treat an encoded slash as a route separator', async () => {
+    const { isVotingPath } = await import('./analytics')
+
+    expect(isVotingPath('/ca%2Fprocesses/0x1234')).toBe(false)
+  })
+
+  it('does not throw on malformed URL encoding', async () => {
+    const { isVotingPath } = await import('./analytics')
+
+    expect(isVotingPath('/ca/processes/%')).toBe(true)
+    expect(isVotingPath('/bad%')).toBe(false)
+  })
+
+  it.each(['/', '/ca', '/ca/', '/pt-br/'])('matches the configured voting homepage at %s', async (pathname) => {
+    const { isVotingPath } = await import('./analytics')
+
+    expect(isVotingPath(pathname, { homeProcessId: '0x1234', supportedLanguages: ['ca', 'pt-br'] })).toBe(true)
+  })
+
+  it('does not exclude unrelated pages or an unconfigured homepage', async () => {
+    const { isVotingPath } = await import('./analytics')
+    const home = { homeProcessId: '0x1234', supportedLanguages: ['ca'] }
+
+    expect(isVotingPath('/admin', home)).toBe(false)
+    expect(isVotingPath('/ca/plans', home)).toBe(false)
+    expect(isVotingPath('/unknown', home)).toBe(false)
+    expect(isVotingPath('/ca', { ...home, homeProcessId: '  ' })).toBe(false)
+  })
+
   it('does not match non-voting routes', async () => {
     const { isVotingPath } = await import('./analytics')
 
@@ -246,6 +293,30 @@ describe('posthog before_send guard', () => {
     window.history.pushState({}, '', '/processes/0x1234')
     const event = { event: '$snapshot', properties: {} }
     expect(posthogBeforeSend(event as any)).toBeNull()
+  })
+
+  it('drops stale dashboard events while the browser is on a voting route', async () => {
+    const { posthogBeforeSend } = await import('./analytics')
+
+    window.history.pushState({}, '', '/processes/0x1234')
+    const event = { event: '$pageleave', properties: { $current_url: 'https://app.vocdoni.io/admin' } }
+    expect(posthogBeforeSend(event as any)).toBeNull()
+  })
+
+  it('drops events on the configured voting homepage', async () => {
+    const { posthogBeforeSend } = await import('./analytics')
+
+    window.history.pushState({}, '', '/ca/')
+    const event = { event: '$snapshot', properties: {} }
+    expect(posthogBeforeSend(event as any, { homeProcessId: '0x1234', supportedLanguages: ['ca'] })).toBeNull()
+  })
+
+  it('keeps dashboard events without a URL when a voting homepage is configured', async () => {
+    const { posthogBeforeSend } = await import('./analytics')
+
+    window.history.pushState({}, '', '/admin')
+    const event = { event: '$snapshot', properties: {} }
+    expect(posthogBeforeSend(event as any, { homeProcessId: '0x1234', supportedLanguages: ['ca'] })).toBe(event)
   })
 
   it('sanitizes urls on allowed events', async () => {
@@ -356,6 +427,66 @@ describe('posthog initialization', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 0))
     expect(mockPosthog.init).not.toHaveBeenCalled()
+  })
+
+  it.each(['/', '/ca/'])('never initializes on the configured voting homepage at %s', async (pathname) => {
+    const { initializePosthog } = await import('./analytics')
+
+    window.history.pushState({}, '', pathname)
+    initializePosthog({
+      key: 'phc_test',
+      consent: 'accepted',
+      homeProcessId: '0x1234',
+      supportedLanguages: ['ca'],
+    })
+
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(mockPosthog.init).not.toHaveBeenCalled()
+  })
+
+  it('cancels initialization when navigation reaches a ballot while the SDK loads', async () => {
+    const { initializePosthog } = await import('./analytics')
+
+    initializePosthog({ key: 'phc_test', consent: 'accepted' })
+    window.history.pushState({}, '', '/ca/processes/0x1234')
+
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(mockPosthog.init).not.toHaveBeenCalled()
+
+    window.history.pushState({}, '', '/admin')
+    initializePosthog({ key: 'phc_test', consent: 'accepted' })
+    await vi.waitFor(() => expect(mockPosthog.init).toHaveBeenCalledTimes(1))
+  })
+
+  it('does not call the SDK through queued helpers after canceling initialization', async () => {
+    const analytics = await import('./analytics')
+
+    analytics.initializePosthog({ key: 'phc_test', consent: 'accepted' })
+    analytics.trackPosthogEvent({ name: 'Signup' })
+    analytics.applyPosthogConsent('accepted')
+    analytics.identifyPosthogUser('user-1')
+    analytics.resetPosthogUser()
+    analytics.setPosthogOrganization('0xabc')
+    analytics.setPosthogSessionRecording(true)
+    analytics.registerPosthogSuperProperties({ locale: 'ca' })
+    window.history.pushState({}, '', '/ca/processes/0x1234')
+
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    for (const method of Object.values(mockPosthog)) {
+      expect(method).not.toHaveBeenCalled()
+    }
+  })
+
+  it('keeps the configured homepage excluded by the SDK event filter', async () => {
+    const { initializePosthog } = await import('./analytics')
+
+    window.history.pushState({}, '', '/admin')
+    initializePosthog({ key: 'phc_test', consent: null, homeProcessId: '0x1234', supportedLanguages: ['ca'] })
+    await vi.waitFor(() => expect(mockPosthog.init).toHaveBeenCalledTimes(1))
+
+    const [, config] = mockPosthog.init.mock.calls[0]
+    const event = { event: '$pageview', properties: { $current_url: 'https://app.vocdoni.io/ca' } }
+    expect(config.before_send(event)).toBeNull()
   })
 
   it('only initializes once', async () => {

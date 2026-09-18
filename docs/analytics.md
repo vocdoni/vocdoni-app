@@ -16,15 +16,25 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
 
 ## Privacy model
 
-1. **Voters are never tracked — zero events on voting routes.** Two independent layers in
-   `src/utils/analytics.ts`:
-   - `initializePosthog` refuses to load the SDK when `window.location.pathname` matches
-     `isVotingPath` (`/processes/:id`, `/processes/:id/summary`, with or without a language prefix).
-     Voters never download the SDK.
-   - `posthogBeforeSend` returns `null` for **any** event (pageviews, autocapture, replay snapshots,
-     exceptions) whose URL is a voting route — covers admins SPA-navigating into a process view.
-     Consequently there are **no voter-side events** in the taxonomy; election participation BI comes from
-     admin-side events (`process_results_viewed`) and, later, the backend.
+1. **No analytics sink is initialized on public voting pages.** The boundary covers `/processes/:id`,
+   `/processes/:id/summary` (with or without a language prefix), and `/` / `/:lang` when
+   `HOME_PROCESS_ID` configures a voting homepage:
+   - Voting pages use Vike server routing (`clientRouting: false`), including the summary page.
+     React Router's process loader also redirects to a fresh document. An existing dashboard SDK
+     therefore cannot survive into the ballot. This deliberately avoids relying on PostHog's
+     best-effort `shutdown()`, which flushes queued requests rather than guaranteeing total teardown.
+   - `initializePosthog` refuses to import the SDK on voting paths, using the same runtime-configured
+     homepage matcher as Vike. It checks again after the asynchronous import; queued helpers do
+     nothing if initialization was canceled.
+   - `posthogBeforeSend` remains defense in depth: it drops events if either the browser's current
+     path or the event URL is a voting path, including events carrying an older dashboard URL.
+   - `AnalyticsProvider` also mounts on the public voting pages (`PublicProcessPage` renders
+     `AppProviders`), so its init effect bails out on a voting path before *any* sink starts —
+     Plausible's `init` would otherwise auto-capture a ballot pageview, and the GTM branch (`/`) is
+     only ever reached on the `HOME_PROCESS_ID` voting homepage.
+   Consequently there are **no voter-side events** in the taxonomy; election participation BI
+   comes from admin-side events (`process_results_viewed`) and, later, the backend. These guards cover
+   the sinks this app owns, not third-party tags configured in an external GTM container.
 2. **Cookieless until consent.** Before the cookie banner is accepted, PostHog runs with
    `persistence: 'memory'` (no cookies/localStorage) and anonymous events only
    (`person_profiles: 'identified_only'`). On accept: persistence upgrades and dashboard users are

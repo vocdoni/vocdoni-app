@@ -1,4 +1,4 @@
-import { createContext, useContext, type PropsWithChildren, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, type PropsWithChildren, type ReactNode } from 'react'
 import { buildAppEnv, type AppEnv } from './app-env-build'
 
 const isStringRecord = (value: unknown): value is Record<string, string> =>
@@ -70,7 +70,12 @@ export const useAppEnv = (): AppEnv => {
   return value
 }
 
-export const useLanguagesEnv = (): Record<string, string> => normalizeLanguages(useAppEnv().LANGUAGES)
+export const useLanguagesEnv = (): Record<string, string> => {
+  const { LANGUAGES } = useAppEnv()
+  // A JSON-string LANGUAGES value parses into a fresh object on every call;
+  // memoize so callers can safely use the map as a hook dependency.
+  return useMemo(() => normalizeLanguages(LANGUAGES), [LANGUAGES])
+}
 
 export const useCustomOrganizationDomains = (): Record<string, string> => {
   const { CUSTOM_ORGANIZATION_DOMAINS } = useAppEnv()

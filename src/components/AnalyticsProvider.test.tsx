@@ -6,13 +6,15 @@ import { AnalyticsProvider } from './AnalyticsProvider'
 const setPosthogOrganization = vi.fn()
 const registerPosthogSuperProperties = vi.fn()
 const initializePosthog = vi.fn()
+const initializePlausible = vi.fn()
+const initializeGTM = vi.fn()
 
 vi.mock('~utils/analytics', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~utils/analytics')>()
   return {
     ...actual,
-    initializePlausible: vi.fn(),
-    initializeGTM: vi.fn(),
+    initializePlausible: (...args: unknown[]) => initializePlausible(...args),
+    initializeGTM: (...args: unknown[]) => initializeGTM(...args),
     initializePosthog: (...args: unknown[]) => initializePosthog(...args),
     applyPosthogConsent: vi.fn(),
     identifyPosthogUser: vi.fn(),
@@ -23,7 +25,23 @@ vi.mock('~utils/analytics', async (importOriginal) => {
   }
 })
 
-vi.mock('~src/app-env', () => ({ useAppEnv: () => ({ POSTHOG_KEY: 'phc_test' }) }))
+const appEnv = vi.hoisted(() => ({
+  POSTHOG_KEY: 'phc_test',
+  PLAUSIBLE_DOMAIN: 'app.vocdoni.io',
+  GTM_CONTAINER_ID: 'GTM-TEST',
+  HOME_PROCESS_ID: '0x1234',
+  LANGUAGES: { ca: 'Català' },
+}))
+
+vi.mock('~src/app-env', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~src/app-env')>()
+  return {
+    ...actual,
+    useAppEnv: () => appEnv,
+    // The real hook reads the module-internal useAppEnv, not the stub above.
+    useLanguagesEnv: () => actual.normalizeLanguages(appEnv.LANGUAGES),
+  }
+})
 vi.mock('~components/Auth/useAuth', () => ({ useAuth: () => ({ isAuthenticated: true }) }))
 vi.mock('~queries/account', () => ({ useProfile: () => ({ data: undefined }) }))
 vi.mock('~components/Auth/Subscription', () => ({ useSubscription: () => ({ subscription: undefined }) }))
@@ -39,6 +57,13 @@ vi.mock('~components/Account/SaasAccountProvider', () => ({
     },
   }),
 }))
+
+// jsdom starts at `/`, which the mocked HOME_PROCESS_ID turns into the voting
+// homepage — where the provider must initialize nothing. Every test below
+// exercises the dashboard, so put the document on a dashboard path first.
+beforeEach(() => {
+  window.history.pushState({}, '', '/admin')
+})
 
 describe('AnalyticsProvider organization reporting', () => {
   beforeEach(() => {
@@ -66,6 +91,49 @@ describe('AnalyticsProvider organization reporting', () => {
     )
   })
 })
+
+it('passes runtime voting-homepage configuration to the PostHog guard', () => {
+  render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+
+  expect(initializePosthog).toHaveBeenCalledWith(
+    expect.objectContaining({ homeProcessId: '0x1234', supportedLanguages: ['ca'] })
+  )
+})
+
+// The init effect keys on the languages map; a per-render dependency would
+// restart every sink on each render of the dashboard tree.
+it('does not restart the analytics sinks when the provider re-renders', () => {
+  initializePosthog.mockClear()
+  initializePlausible.mockClear()
+  const { rerender } = render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+
+  rerender(<AnalyticsProvider>{null}</AnalyticsProvider>)
+
+  expect(initializePosthog).toHaveBeenCalledTimes(1)
+  expect(initializePlausible).toHaveBeenCalledTimes(1)
+})
+
+// The provider mounts on the public voting pages too, so no sink may start
+// there — not just PostHog.
+describe.each(['/ca/processes/0x1234', '/ca/processes/0x1234/summary', '/', '/ca'])(
+  'AnalyticsProvider on the voting page %s',
+  (pathname) => {
+    beforeEach(() => {
+      initializePosthog.mockClear()
+      initializePlausible.mockClear()
+      initializeGTM.mockClear()
+      window.history.pushState({}, '', pathname)
+    })
+
+    it('initializes no analytics sink', () => {
+      render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+
+      expect(initializePosthog).not.toHaveBeenCalled()
+      expect(initializePlausible).not.toHaveBeenCalled()
+      expect(initializeGTM).not.toHaveBeenCalled()
+    })
+  }
+)
 
 describe('AnalyticsProvider consent handling', () => {
   beforeEach(() => {

@@ -5,13 +5,14 @@ import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent, watchCrossSiteConsent } from '~components/Cookies/utils'
 import { useProfile } from '~queries/account'
-import { useAppEnv } from '~src/app-env'
+import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import {
   applyPosthogConsent,
   identifyPosthogUser,
   initializeGTM,
   initializePlausible,
   initializePosthog,
+  isVotingPath,
   PosthogConsent,
   registerPosthogSuperProperties,
   resetPosthogUser,
@@ -30,7 +31,9 @@ const useAnalyticsProvider = () => {
     POSTHOG_KEY: posthogKey,
     POSTHOG_HOST: posthogHost,
     ANALYTICS_CLIENT_ID,
+    HOME_PROCESS_ID: homeProcessId,
   } = useAppEnv()
+  const languagesMap = useLanguagesEnv()
   const analyticsClientId = ANALYTICS_CLIENT_ID?.trim() || undefined
   const { isAuthenticated } = useAuth()
   const { data: profile } = useProfile({ enabled: isAuthenticated })
@@ -52,6 +55,16 @@ const useAnalyticsProvider = () => {
   }, [])
 
   useEffect(() => {
+    // This provider also mounts on the public voting pages (PublicProcessPage
+    // renders AppProviders), so the privacy boundary has to gate *every*
+    // app-owned sink, not just PostHog: Plausible's init auto-captures a ballot
+    // pageview, and the GTM condition below (`/`) is only ever true on the
+    // HOME_PROCESS_ID voting homepage, which would inject the container into a
+    // ballot. Voting pages are always fresh documents, so checking once at
+    // mount is enough.
+    const votingRoutes = { homeProcessId, supportedLanguages: Object.keys(languagesMap) }
+    if (isVotingPath(window.location.pathname, votingRoutes)) return
+
     if (plausibleDomain) {
       initializePlausible({ domain: plausibleDomain }, analyticsClientId)
     }
@@ -61,9 +74,24 @@ const useAnalyticsProvider = () => {
     }
 
     if (posthogKey) {
-      initializePosthog({ key: posthogKey, host: posthogHost, analyticsClientId, consent })
+      initializePosthog({
+        key: posthogKey,
+        host: posthogHost,
+        analyticsClientId,
+        consent,
+        ...votingRoutes,
+      })
     }
-  }, [gtmContainerId, plausibleDomain, posthogKey, posthogHost, analyticsClientId, consent])
+  }, [
+    gtmContainerId,
+    plausibleDomain,
+    posthogKey,
+    posthogHost,
+    analyticsClientId,
+    consent,
+    homeProcessId,
+    languagesMap,
+  ])
 
   useEffect(() => {
     applyPosthogConsent(consent)
