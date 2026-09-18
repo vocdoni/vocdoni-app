@@ -5,7 +5,7 @@ import { useSubscription } from '~components/Auth/Subscription'
 import { useAuth } from '~components/Auth/useAuth'
 import { COOKIE_CONSENT_CHANGE_EVENT, getCookieConsent, watchCrossSiteConsent } from '~components/Cookies/utils'
 import { useProfile } from '~queries/account'
-import { normalizeLanguages, useAppEnv } from '~src/app-env'
+import { useAppEnv, useLanguagesEnv } from '~src/app-env'
 import {
   applyPosthogConsent,
   identifyPosthogUser,
@@ -32,8 +32,8 @@ const useAnalyticsProvider = () => {
     POSTHOG_HOST: posthogHost,
     ANALYTICS_CLIENT_ID,
     HOME_PROCESS_ID: homeProcessId,
-    LANGUAGES: languages,
   } = useAppEnv()
+  const languagesMap = useLanguagesEnv()
   const analyticsClientId = ANALYTICS_CLIENT_ID?.trim() || undefined
   const { isAuthenticated } = useAuth()
   const { data: profile } = useProfile({ enabled: isAuthenticated })
@@ -62,7 +62,7 @@ const useAnalyticsProvider = () => {
     // HOME_PROCESS_ID voting homepage, which would inject the container into a
     // ballot. Voting pages are always fresh documents, so checking once at
     // mount is enough.
-    const votingRoutes = { homeProcessId, supportedLanguages: Object.keys(normalizeLanguages(languages)) }
+    const votingRoutes = { homeProcessId, supportedLanguages: Object.keys(languagesMap) }
     if (isVotingPath(window.location.pathname, votingRoutes)) return
 
     if (plausibleDomain) {
@@ -82,7 +82,16 @@ const useAnalyticsProvider = () => {
         ...votingRoutes,
       })
     }
-  }, [gtmContainerId, plausibleDomain, posthogKey, posthogHost, analyticsClientId, consent, homeProcessId, languages])
+  }, [
+    gtmContainerId,
+    plausibleDomain,
+    posthogKey,
+    posthogHost,
+    analyticsClientId,
+    consent,
+    homeProcessId,
+    languagesMap,
+  ])
 
   useEffect(() => {
     applyPosthogConsent(consent)

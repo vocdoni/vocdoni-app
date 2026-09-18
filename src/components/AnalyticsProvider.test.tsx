@@ -25,16 +25,23 @@ vi.mock('~utils/analytics', async (importOriginal) => {
   }
 })
 
-vi.mock('~src/app-env', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('~src/app-env')>()),
-  useAppEnv: () => ({
-    POSTHOG_KEY: 'phc_test',
-    PLAUSIBLE_DOMAIN: 'app.vocdoni.io',
-    GTM_CONTAINER_ID: 'GTM-TEST',
-    HOME_PROCESS_ID: '0x1234',
-    LANGUAGES: { ca: 'Català' },
-  }),
+const appEnv = vi.hoisted(() => ({
+  POSTHOG_KEY: 'phc_test',
+  PLAUSIBLE_DOMAIN: 'app.vocdoni.io',
+  GTM_CONTAINER_ID: 'GTM-TEST',
+  HOME_PROCESS_ID: '0x1234',
+  LANGUAGES: { ca: 'Català' },
 }))
+
+vi.mock('~src/app-env', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~src/app-env')>()
+  return {
+    ...actual,
+    useAppEnv: () => appEnv,
+    // The real hook reads the module-internal useAppEnv, not the stub above.
+    useLanguagesEnv: () => actual.normalizeLanguages(appEnv.LANGUAGES),
+  }
+})
 vi.mock('~components/Auth/useAuth', () => ({ useAuth: () => ({ isAuthenticated: true }) }))
 vi.mock('~queries/account', () => ({ useProfile: () => ({ data: undefined }) }))
 vi.mock('~components/Auth/Subscription', () => ({ useSubscription: () => ({ subscription: undefined }) }))
@@ -91,6 +98,19 @@ it('passes runtime voting-homepage configuration to the PostHog guard', () => {
   expect(initializePosthog).toHaveBeenCalledWith(
     expect.objectContaining({ homeProcessId: '0x1234', supportedLanguages: ['ca'] })
   )
+})
+
+// The init effect keys on the languages map; a per-render dependency would
+// restart every sink on each render of the dashboard tree.
+it('does not restart the analytics sinks when the provider re-renders', () => {
+  initializePosthog.mockClear()
+  initializePlausible.mockClear()
+  const { rerender } = render(<AnalyticsProvider>{null}</AnalyticsProvider>)
+
+  rerender(<AnalyticsProvider>{null}</AnalyticsProvider>)
+
+  expect(initializePosthog).toHaveBeenCalledTimes(1)
+  expect(initializePlausible).toHaveBeenCalledTimes(1)
 })
 
 // The provider mounts on the public voting pages too, so no sink may start
