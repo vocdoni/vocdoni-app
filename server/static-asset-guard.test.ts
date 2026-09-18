@@ -46,6 +46,18 @@ describe('isStaticAssetPath', () => {
       expect(isStaticAssetPath('/assets/missing%.js')).toBe(true)
       expect(isStaticAssetPath('/scan%')).toBe(true)
     })
+
+    it('answers dotfile probes with the 404 rather than the renderer', () => {
+      expect(isStaticAssetPath('/.env')).toBe(true)
+      expect(isStaticAssetPath('/.git/config')).toBe(true)
+      expect(isStaticAssetPath('/.well-known/security.txt')).toBe(true)
+    })
+
+    it('matches less common media and archive types', () => {
+      expect(isStaticAssetPath('/assets/clip.mov')).toBe(true)
+      expect(isStaticAssetPath('/assets/photo.heic')).toBe(true)
+      expect(isStaticAssetPath('/assets/bundle.tar.gz')).toBe(true)
+    })
   })
 
   describe('page paths (should return false)', () => {
@@ -70,10 +82,6 @@ describe('isStaticAssetPath', () => {
 
     it('does not treat an unknown extension as an asset', () => {
       expect(isStaticAssetPath('/en/organization/0xabc.eth')).toBe(false)
-    })
-
-    it('does not treat a dotfile probe as an asset', () => {
-      expect(isStaticAssetPath('/.env')).toBe(false)
     })
 
     it('ignores a trailing dot with no extension', () => {

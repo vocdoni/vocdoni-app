@@ -29,6 +29,10 @@ const STATIC_EXTENSIONS = new Set([
   'svg',
   'webp',
   'avif',
+  'bmp',
+  'tif',
+  'tiff',
+  'heic',
   // fonts
   'woff',
   'woff2',
@@ -41,7 +45,12 @@ const STATIC_EXTENSIONS = new Set([
   'mp4',
   'webm',
   'wav',
+  'mov',
+  'm4a',
+  'aac',
+  'flac',
   'zip',
+  'gz',
 ])
 
 /**
@@ -65,9 +74,11 @@ export function isStaticAssetPath(pathname) {
 
   if (decoded.endsWith(VIKE_PAGE_CONTEXT_SUFFIX)) return false
 
+  // Dotfile probes ("/.env", "/.git/config") are not app routes: 404 them too.
+  if (decoded.split('/').some((segment) => segment.startsWith('.'))) return true
+
   const filename = decoded.slice(decoded.lastIndexOf('/') + 1)
   const dot = filename.lastIndexOf('.')
-  // `dot <= 0` also rejects dotfiles ("/.env"), which are probes rather than assets
   if (dot <= 0 || dot === filename.length - 1) return false
 
   return STATIC_EXTENSIONS.has(filename.slice(dot + 1).toLowerCase())
