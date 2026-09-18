@@ -121,9 +121,11 @@ export const useConfirmOnNavigate = ({
   const pendingLocationRef = useRef<Location | null>(null)
   const blockedFromRef = useRef<string | null>(null)
   const blockerRef = useRef(blocker)
-  blockerRef.current = blocker
   const currentPathRef = useRef(currentPath)
-  currentPathRef.current = currentPath
+  useEffect(() => {
+    blockerRef.current = blocker
+    currentPathRef.current = currentPath
+  }, [blocker, currentPath])
 
   useEffect(() => {
     if (!shouldBlock) {
