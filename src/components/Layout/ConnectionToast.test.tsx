@@ -1,28 +1,28 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { act, renderHook, waitFor } from '@testing-library/react'
-import i18n from 'i18next'
+import type { i18n as I18n } from 'i18next'
 import { ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
+import { createTestI18n } from '~src/test-utils'
 import { ColorModeProvider } from '~theme/color-mode'
 import { system } from '~theme/system'
 import { ConnectionToastProvider, useConnectionToast } from './ConnectionToast'
 
-// Initialize i18n for tests
-i18n.init({
-  lng: 'en',
-  fallbackLng: 'en',
-  defaultNS: 'common',
-  showSupportNotice: false,
-  resources: {
-    en: {
-      common: {
-        'connection.error_title': 'Connection issues detected',
-        'connection.error_description': 'Unable to reach the server',
-        'connection.restored_title': 'Connection restored',
-        'connection.restored_description': 'You are back online',
+let i18n: I18n
+
+beforeAll(async () => {
+  i18n = await createTestI18n({
+    resources: {
+      en: {
+        common: {
+          'connection.error_title': 'Connection issues detected',
+          'connection.error_description': 'Unable to reach the server',
+          'connection.restored_title': 'Connection restored',
+          'connection.restored_description': 'You are back online',
+        },
       },
     },
-  },
+  })
 })
 
 // Mock Chakra UI toast
