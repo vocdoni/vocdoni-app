@@ -17,7 +17,6 @@ import { CSS } from '@dnd-kit/utilities'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuGripVertical, LuPlus, LuX } from 'react-icons/lu'
-import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
 import { SelectorTypes } from '../common'
 
 const SimpleQuestionEditor = ({
@@ -32,7 +31,6 @@ const SimpleQuestionEditor = ({
   remove: any
 }) => {
   const { t } = useTranslation()
-  const { activeTemplate, placeholders } = useProcessTemplates()
   const {
     register,
     formState: { errors },
@@ -54,8 +52,6 @@ const SimpleQuestionEditor = ({
           questionType={questionType}
           fieldsLength={questionOptions.length}
           onRemove={() => remove(optionIndex)}
-          placeholders={placeholders}
-          activeTemplate={activeTemplate}
           register={register}
           errors={errors}
           t={t}
@@ -88,8 +84,6 @@ const SortableOption = ({
   questionType,
   fieldsLength,
   onRemove,
-  placeholders,
-  activeTemplate,
   register,
   errors,
   t,
@@ -133,12 +127,9 @@ const SortableOption = ({
         <Box data-choice-body>
           <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
             <Input
-              placeholder={
-                placeholders[activeTemplate]?.questions?.[questionIndex]?.options?.[optionIndex]?.option ??
-                t('process_create.option.placeholder', 'Option {{number}}', {
-                  number: optionIndex + 1,
-                })
-              }
+              placeholder={t('process_create.option.placeholder', 'Option {{number}}', {
+                number: optionIndex + 1,
+              })}
               {...register(`questions.${questionIndex}.options.${optionIndex}.option`, {
                 required: t('form.error.required', 'This field is required'),
               })}

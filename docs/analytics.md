@@ -94,7 +94,7 @@ contain voter identifiers, ballot content, emails, or tokens.
 Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organization_created`,
 `process_created`, `subscription_completed`, `checkout_started`,
 `billing_portal_opened`, `paywall_viewed`, `feature_blocked`, `process_creation_failed`,
-`process_template_selected`, `process_action`, `process_results_viewed`, `members_import_started`,
+`process_action`, `process_results_viewed`, `members_import_started`,
 `members_import_completed`, `member_group_created`, `member_group_deleted`, `census_configured`,
 `team_member_invited`, `team_member_removed`, `pdf_report_downloaded`.
 
@@ -155,7 +155,7 @@ What it provisions:
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name                                                                                                                                                                                                           |
 | **Monetization**           | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan                                                                                                                                                                                                                                    |
-| **Elections & engagement** | wizard funnel `process_template_selected` → `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type`                                                                                                                                                                          |
+| **Elections & engagement** | wizard funnel `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type`                                                                                                                                                                                                        |
 | **Web → app**              | website visit → CTA → signup → org → first election (by first-touch campaign); which vertical converts; blog and learn article → signup; docs → integrator signup; sales assist `demo_requested` → `demo_booked` → subscription; marketing-sourced revenue; activation by locale; revenue by first-touch channel; event volume by `site`; CTA clicks by `page_type` |
 
 The **Web → app** dashboard is the one that needs both properties in the project. Every funnel on it

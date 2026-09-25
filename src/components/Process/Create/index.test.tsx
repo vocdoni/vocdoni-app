@@ -44,10 +44,6 @@ vi.mock('~elements/dashboard/processes/drafts', () => ({
   useDeleteDraft: () => ({}),
 }))
 
-vi.mock('./TemplateProvider', () => ({
-  useProcessTemplates: () => ({}),
-}))
-
 vi.mock('~src/providers/ApiClientProvider', () => ({
   useApiClient: vi.fn(),
 }))

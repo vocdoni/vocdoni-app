@@ -414,14 +414,12 @@
       "overwrite": "Wählende können ihre Stimme vor Ende des Abstimmungszeitraums ändern. Diese Funktion hilft, Fehler zu vermeiden und Zwang zu verhindern, indem Wählende ihre Auswahl korrigieren können.",
       "single": "Wählende können nur eine Option aus den verfügbaren Auswahlmöglichkeiten auswählen. Perfekt für Abstimmungen und einfache Ja/Nein-Entscheidungen.",
       "team_members": "Lade Teammitglieder ein und weise rollenbasierte Berechtigungen zu, damit du deine Organisation mühelos verwalten kannst.",
-      "templates": "Mit unseren Vorlagen ist es ganz einfach, mit fertigen Setups für Hauptversammlungen, Wahlen und partizipative Budgetplanung zu starten (und vieles mehr kommt noch).",
       "uptime": "Wir garantieren eine Verfügbarkeit von 99,99 %, in den kostenpflichtigen Plänen wird dies vertraglich mit Garantien abgesichert."
     },
     "total_orgs": "Verfügbare Unterorganisationen insgesamt",
     "total_users": "Verfügbare Benutzer insgesamt",
     "uptime": "99,99 % Verfügbarkeit",
     "uptime_guaranteed": "Garantiert ({{suffix}})",
-    "vote_templates": "Einfach zu verwendende Vorlagen für alle Abstimmungsmethoden",
     "weighted": "Gewichtete Abstimmung",
     "white_label": "White-Label (kein Vocdoni-Branding)"
   },
@@ -1295,12 +1293,6 @@
         "publish": "Veröffentlichen",
         "save_draft": "Speichern"
       },
-      "change_template": {
-        "cancel": "Abbrechen",
-        "change": "Vorlage ändern",
-        "message": "Du hast nicht gespeicherte Änderungen. Möchtest du die Vorlage wirklich wechseln?",
-        "title": "Vorlage ändern"
-      },
       "description": {
         "placeholder": "Beschreibung hinzufügen…",
         "title": "Titel des Abstimmungsprozesses"
@@ -1326,9 +1318,6 @@
           "description": "Bist du sicher, dass du diese Frage löschen möchtest?",
           "title": "Frage löschen"
         },
-        "description": {
-          "placeholder": "Beschreibung der Frage hier eingeben (optional)..."
-        },
         "question_number": "Frage {{index}} von {{total}}"
       },
       "save_draft_error": {
@@ -1341,12 +1330,6 @@
       },
       "status": {
         "draft": "Entwurf"
-      },
-      "template": {
-        "annual_general_meeting": "Jahreshauptversammlung",
-        "election": "Wahl",
-        "participatory_budgeting": "Partizipatives Budget",
-        "title": "Mit einer Vorlage beginnen..."
       }
     },
     "created_by": "Erstellt von",
@@ -1413,39 +1396,6 @@
       "view_summary": "Prozess verfolgen",
       "votes_cast_one": "{{votes}} Stimme abgegeben",
       "votes_cast_other": "{{votes}} Stimmen abgegeben"
-    },
-    "template": {
-      "annual_general_meeting": {
-        "description": "Beschreibung deiner Jahreshauptversammlung eingeben (optional)",
-        "q1": {
-          "description": "Stimmst du dem vorgeschlagenen Budget für das nächste Geschäftsjahr zu?",
-          "option_1": "Ja",
-          "option_2": "Nein",
-          "title": "Jahresbudget genehmigen"
-        },
-        "q2": {
-          "description": "Wähle die neuen Mitglieder des Vorstands.",
-          "option_1": "Kandidat A",
-          "option_2": "Kandidat B",
-          "title": "Neue Vorstandsmitglieder wählen"
-        },
-        "title": "Titel der Jahreshauptversammlung"
-      },
-      "election": {
-        "description": "Beschreibung für deinen Abstimmungsprozess eingeben (optional).",
-        "q1": {
-          "description": "Wähle den besten Kandidaten, der deine Interessen vertritt.",
-          "option_1": "Kandidat A",
-          "option_2": "Kandidat B",
-          "option_3": "Kandidat C",
-          "title": "Wer soll der nächste Vorsitzende sein?"
-        },
-        "title": "Titel des Abstimmungsprozesses"
-      },
-      "participatory_budgeting": {
-        "description": "Beschreibung zur Budgetverteilung (optional)",
-        "title": "Titel der Bürgerhaushalt-Abstimmung"
-      }
     },
     "vote_failed": {
       "close": "Schließen",

@@ -25,13 +25,6 @@ vi.mock('react-i18next', async () => {
   }
 })
 
-vi.mock('~components/Process/Create/TemplateProvider', () => ({
-  useProcessTemplates: () => ({
-    activeTemplate: 'default',
-    placeholders: {},
-  }),
-}))
-
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   const form = useForm({
     defaultValues: {

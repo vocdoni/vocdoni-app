@@ -41,13 +41,6 @@ vi.mock('react-i18next', async () => {
   }
 })
 
-vi.mock('~components/Process/Create/TemplateProvider', () => ({
-  useProcessTemplates: () => ({
-    activeTemplate: 'default',
-    placeholders: {},
-  }),
-}))
-
 vi.mock('~components/Editor', () => ({
   default: () => <div data-testid='editor' />,
 }))

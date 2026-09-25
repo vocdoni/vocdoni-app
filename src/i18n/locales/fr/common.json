@@ -416,14 +416,12 @@
       "overwrite": "Les électeurs peuvent modifier leur vote avant la fin de la période de vote. Cette fonctionnalité permet d'éviter les erreurs et la coercition en autorisant les électeurs à corriger leurs choix.",
       "single": "Les électeurs ne peuvent sélectionner qu'une seule option parmi celles disponibles. Parfait pour des élections et des décisions simples par oui/non.",
       "team_members": "Invitez des membres de l'équipe et attribuez-leur des autorisations basées sur les rôles pour gérer votre organisation sans effort",
-      "templates": "Avec nos modèles, il est très facile de démarrer grâce à des configurations prêtes à l'emploi pour les AGO, les élections et le budget participatif (et bien plus à venir).",
       "uptime": "Nous garantissons une disponibilité de 99,99 %, mais elle n'est contractuellement garantie que dans les forfaits payants."
     },
     "total_orgs": "Total des sous-organisations disponibles",
     "total_users": "Total des utilisateurs disponibles",
     "uptime": "99,99 % de disponibilité",
     "uptime_guaranteed": "Garantie ({{suffix}})",
-    "vote_templates": "Modèles faciles à utiliser pour toutes les méthodes de vote",
     "weighted": "Vote pondéré",
     "white_label": "Marque blanche (sans branding Vocdoni)"
   },
@@ -1316,12 +1314,6 @@
         "publish": "Publier",
         "save_draft": "Enregistrer"
       },
-      "change_template": {
-        "cancel": "Annuler",
-        "change": "Changer de modèle",
-        "message": "Vous avez des modifications non enregistrées. Voulez-vous vraiment changer de modèle ?",
-        "title": "Changer de modèle"
-      },
       "description": {
         "placeholder": "Ajouter une description…",
         "title": "Titre du processus de vote"
@@ -1348,9 +1340,6 @@
           "description": "Voulez-vous vraiment supprimer cette question ?",
           "title": "Supprimer la question"
         },
-        "description": {
-          "placeholder": "Ajoutez ici la description de la question (facultatif)…"
-        },
         "question_number": "Question {{index}} sur {{total}}"
       },
       "save_draft_error": {
@@ -1363,12 +1352,6 @@
       },
       "status": {
         "draft": "Brouillon"
-      },
-      "template": {
-        "annual_general_meeting": "Assemblée générale annuelle",
-        "election": "Élection",
-        "participatory_budgeting": "Budget participatif",
-        "title": "Commencez avec un modèle…"
       }
     },
     "created_by": "Créé par",
@@ -1437,39 +1420,6 @@
       "votes_cast_one": "{{votes}} vote exprimé",
       "votes_cast_many": "",
       "votes_cast_other": "{{votes}} votes exprimés"
-    },
-    "template": {
-      "annual_general_meeting": {
-        "description": "Configurez la description de votre assemblée générale annuelle (facultatif)",
-        "q1": {
-          "description": "Approuvez-vous le budget proposé pour le prochain exercice ?",
-          "option_1": "Oui",
-          "option_2": "Non",
-          "title": "Approuver le budget annuel"
-        },
-        "q2": {
-          "description": "Choisissez les nouveaux membres du conseil d'administration.",
-          "option_1": "Candidat A",
-          "option_2": "Candidat B",
-          "title": "Élire les nouveaux membres du conseil"
-        },
-        "title": "Titre de l'assemblée générale annuelle"
-      },
-      "election": {
-        "description": "Définissez une description (facultative) pour votre processus électoral.",
-        "q1": {
-          "description": "Choisissez le meilleur candidat pour représenter vos intérêts.",
-          "option_1": "Candidat A",
-          "option_2": "Candidat B",
-          "option_3": "Candidat C",
-          "title": "Qui devrait être le prochain président ?"
-        },
-        "title": "Titre du processus électoral"
-      },
-      "participatory_budgeting": {
-        "description": "Description (facultative) de la prise de décision sur l'allocation budgétaire",
-        "title": "Titre du budget participatif"
-      }
     },
     "vote_failed": {
       "close": "Fermer",

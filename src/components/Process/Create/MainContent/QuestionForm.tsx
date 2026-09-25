@@ -25,7 +25,6 @@ import { useTranslation } from 'react-i18next'
 import { LuGripVertical, LuX } from 'react-icons/lu'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
-import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
 import { Process, SelectorTypes } from '../common'
 import ExtendedQuestionEditor from './ExtendedQuestionEditor'
 import { QuestionSettings } from './QuestionSettings'
@@ -40,7 +39,6 @@ interface QuestionFormProps {
 
 export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps) => {
   const { t } = useTranslation()
-  const { activeTemplate, placeholders } = useProcessTemplates()
   const {
     register,
     formState: { errors },
@@ -130,10 +128,7 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
               </Text>
               <FormControl invalid={!!errors.questions?.[index]?.title}>
                 <Input
-                  placeholder={
-                    placeholders[activeTemplate]?.questions?.[index]?.title ??
-                    t('process_create.question.title.placeholder', 'Add a title to the question')
-                  }
+                  placeholder={t('process_create.question.title.placeholder', 'Add a title to the question')}
                   variant='borderless'
                   fontSize='lg'
                   fontWeight='bold'
@@ -150,13 +145,10 @@ export const QuestionForm = ({ index, onRemove, questionId }: QuestionFormProps)
                   <Editor
                     onChange={field.onChange}
                     variant='borderless'
-                    placeholder={
-                      placeholders[activeTemplate]?.questions?.[index]?.description ??
-                      t(
-                        'process_create.question.description.placeholder',
-                        'Add the description of the question here (optional)...'
-                      )
-                    }
+                    placeholder={t(
+                      'process_create.question.description.placeholder',
+                      'Add the description of the question here (optional)...'
+                    )}
                     defaultValue={field.value}
                   />
                 )}

@@ -6,14 +6,6 @@ export enum SelectorTypes {
   Multiple = 'multiChoice',
 }
 
-export enum TemplateTypes {
-  AnnualGeneralMeeting = 'annual_general_meeting',
-  Election = 'election',
-  ParticipatoryBudgeting = 'participatory_budgeting',
-}
-
-export type TemplateConfig = Partial<Process>
-
 export interface Option {
   option: string
   description?: string
@@ -86,37 +78,4 @@ export const defaultProcessValues: Process = {
   census: null,
   censusType: CensusTypes.CSP,
   streamUri: '',
-}
-
-export const TemplateConfigs: Record<TemplateTypes, TemplateConfig> = {
-  [TemplateTypes.AnnualGeneralMeeting]: {
-    questions: [{ ...defaultQuestion }, { ...defaultQuestion }, { ...defaultQuestion }],
-  },
-  [TemplateTypes.Election]: {
-    questions: [
-      {
-        ...defaultQuestion,
-        type: SelectorTypes.Multiple,
-        minNumberOfChoices: 1,
-        maxNumberOfChoices: 3,
-        options: [{ option: '' }, { option: '' }, { option: '' }],
-      },
-    ],
-  },
-  [TemplateTypes.ParticipatoryBudgeting]: {
-    questions: [
-      {
-        ...defaultQuestion,
-        type: SelectorTypes.Multiple,
-        extendedInfo: true,
-        minNumberOfChoices: 1,
-        maxNumberOfChoices: 3,
-        options: [
-          { option: '', description: '' },
-          { option: '', description: '' },
-          { option: '', description: '' },
-        ],
-      },
-    ],
-  },
 }

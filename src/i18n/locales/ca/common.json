@@ -416,14 +416,12 @@
       "overwrite": "Els votants poden canviar el seu vot abans que acabi el període de votació. Aquesta funcionalitat ajuda a evitar errors i prevenir la coerció permetent als votants corregir les seves tries.",
       "single": "Els votants només poden seleccionar una opció de les opcions disponibles. Perfecte per a eleccions i decisions simples de sí/no.",
       "team_members": "Convida membres de l'equip i assigna permisos basats en rols per poder gestionar fàcilment la teva organització",
-      "templates": "Amb les nostres plantilles és molt fàcil començar amb configuracions ja preparades per a assemblees generals anuals, eleccions i pressupostos participatius (i molt més properament).",
       "uptime": "Garantim un 99.99% de temps actiu, però només en els plans de pagament aquests són exigits per contracte amb garanties."
     },
     "total_orgs": "Sub-organitzacions disponibles",
     "total_users": "Total d'usuaris disponibles",
     "uptime": "99.99% de temps actiu",
     "uptime_guaranteed": "Garantit ({{suffix}})",
-    "vote_templates": "Plantilles fàcils d'usar per a tots els mètodes de votació",
     "weighted": "Amb pes",
     "white_label": "Marca blanca"
   },
@@ -1316,12 +1314,6 @@
         "publish": "Publica",
         "save_draft": "Desa"
       },
-      "change_template": {
-        "cancel": "Cancel·la",
-        "change": "Canvia Plantilla",
-        "message": "Tens missatges sense desar. Segur que vols canviar de plantilla?",
-        "title": "Canviar Plantilla"
-      },
       "description": {
         "placeholder": "Afegir una descripció...",
         "title": "Títol del Procés de Votació"
@@ -1348,9 +1340,6 @@
           "description": "Segur que vols eliminar aquesta pregunta?",
           "title": "Eliminar pregunta"
         },
-        "description": {
-          "placeholder": "Afegeix aquí la descripció de la pregunta (opcional)..."
-        },
         "question_number": "Pregunta {{index}} de {{total}}"
       },
       "save_draft_error": {
@@ -1363,12 +1352,6 @@
       },
       "status": {
         "draft": "Esborrany"
-      },
-      "template": {
-        "annual_general_meeting": "Assemblea general anual",
-        "election": "Elecció",
-        "participatory_budgeting": "Pressupost participatiu",
-        "title": "Comença amb una plantilla..."
       }
     },
     "created_by": "Creat per",
@@ -1437,39 +1420,6 @@
       "votes_cast_one": "{{votes}} vot emès",
       "votes_cast_many": "",
       "votes_cast_other": "{{votes}} vots emesos"
-    },
-    "template": {
-      "annual_general_meeting": {
-        "description": "Configura la descripció de la teva assemblea general anual (opcional)",
-        "q1": {
-          "description": "Aproves el pressupost proposat per al proper exercici fiscal?",
-          "option_1": "Sí",
-          "option_2": "No",
-          "title": "Aprovar el pressupost anual"
-        },
-        "q2": {
-          "description": "Tria els nous membres del consell d'administració.",
-          "option_1": "Candidat A",
-          "option_2": "Candidat B",
-          "title": "Elegir nous membres del consell"
-        },
-        "title": "Títol de l'assemblea general anual"
-      },
-      "election": {
-        "description": "Defineix una descripció (opcional) per al teu procés electoral.",
-        "q1": {
-          "description": "Tria el millor candidat per representar els teus interessos.",
-          "option_1": "Candidat A",
-          "option_2": "Candidat B",
-          "option_3": "Candidat C",
-          "title": "Qui hauria de ser el proper president?"
-        },
-        "title": "Títol del procés electoral"
-      },
-      "participatory_budgeting": {
-        "description": "Descripció (opcional) de la presa de decisions sobre l'assignació pressupostària",
-        "title": "Títol del pressupost participatiu"
-      }
     },
     "vote_failed": {
       "close": "Tanca",

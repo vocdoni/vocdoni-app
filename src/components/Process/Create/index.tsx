@@ -11,7 +11,6 @@ import {
   Input,
   Progress,
   Spacer,
-  Text,
   VStack,
 } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -57,8 +56,7 @@ import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
-import { useProcessTemplates } from './TemplateProvider'
-import { defaultProcessValues, Option, Process, SelectorTypes, TemplateConfigs, TemplateTypes } from './common'
+import { defaultProcessValues, Option, Process, SelectorTypes } from './common'
 import { votingProcessToForm } from './draft-mapping'
 import { getTwoFaFields } from './VoterAuthentication/utils'
 
@@ -235,20 +233,16 @@ export const useSafeReset = (externalReset?) => {
     // If useFormContext fails, it means we are not in a FormProvider context so we use the external reset
   }
 
-  return useCallback(
-    (overrides: Partial<Process> = {}) => {
-      const resetFn = externalReset ?? contextReset
+  return useCallback(() => {
+    const resetFn = externalReset ?? contextReset
 
-      if (!resetFn) return
+    if (!resetFn) return
 
-      resetFn({
-        ...defaultProcessValues,
-        ...overrides,
-        groupId: groupId ?? '',
-      })
-    },
-    [externalReset, contextReset, groupId]
-  )
+    resetFn({
+      ...defaultProcessValues,
+      groupId: groupId ?? '',
+    })
+  }, [externalReset, contextReset, groupId])
 }
 
 export const useFormDraftSaver = (
@@ -413,104 +407,6 @@ export const useFormDraftSaver = (
   )
 
   return { saveDraft, isSaving, skipSave, draftLimitReached, writeDraft, clearPublishedDraftId }
-}
-
-const TemplateButtons = () => {
-  const { t } = useTranslation()
-  const methods = useFormContext<Process>()
-  const { activeTemplate, setActiveTemplate } = useProcessTemplates()
-  const [isTemplateModalOpen, setTemplateModalOpen] = useState(false)
-  const reset = useSafeReset()
-  const pendingTemplateRef = useRef<TemplateTypes | null>(null)
-  const { trackEvent } = useAnalytics()
-
-  const applyTemplate = (templateId: TemplateTypes) => {
-    const config = TemplateConfigs[templateId]
-    const previousFormValues = methods.getValues()
-    trackEvent({ name: AnalyticsEvents.ProcessTemplateSelected, props: { template: templateId } })
-    setActiveTemplate(templateId)
-    reset({
-      ...previousFormValues,
-      ...config,
-    })
-  }
-
-  const handleTemplateClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const template = e.currentTarget.dataset.template as TemplateTypes
-    if (!template) return
-
-    if (activeTemplate === template) {
-      setTemplateModalOpen(false)
-      return
-    }
-
-    if (!methods.formState.isDirty) {
-      applyTemplate(template)
-    } else {
-      pendingTemplateRef.current = template
-      setTemplateModalOpen(true)
-    }
-  }
-
-  const handleConfirm = () => {
-    if (pendingTemplateRef.current) {
-      applyTemplate(pendingTemplateRef.current)
-      pendingTemplateRef.current = null
-    }
-    setTemplateModalOpen(false)
-  }
-
-  const handleCancel = () => {
-    pendingTemplateRef.current = null
-    setTemplateModalOpen(false)
-  }
-
-  return (
-    <>
-      <Text fontSize='sm' color='texts.subtle'>
-        {t('process.create.template.title', { defaultValue: 'Get started with a template...' })}
-      </Text>
-      <HStack gap={2} flexWrap='wrap'>
-        <Button
-          variant='outline'
-          size='sm'
-          data-template={TemplateTypes.AnnualGeneralMeeting}
-          onClick={handleTemplateClick}
-        >
-          {t('process.create.template.annual_general_meeting', 'Annual General Meeting')}
-        </Button>
-        <Button variant='outline' size='sm' data-template={TemplateTypes.Election} onClick={handleTemplateClick}>
-          {t('process.create.template.election', 'Election')}
-        </Button>
-        <Button
-          variant='outline'
-          size='sm'
-          data-template={TemplateTypes.ParticipatoryBudgeting}
-          onClick={handleTemplateClick}
-        >
-          {t('process.create.template.participatory_budgeting', 'Participatory Budgeting')}
-        </Button>
-      </HStack>
-
-      <DeleteModal
-        title={t('process.create.change_template.title', 'Change Template')}
-        subtitle={t('process.create.change_template.message', {
-          defaultValue: 'You have unsaved changes. Are you sure you want to switch templates?',
-        })}
-        open={isTemplateModalOpen}
-        onOpenChange={({ open }) => setTemplateModalOpen(open)}
-      >
-        <Flex justifyContent='flex-end' mt={4} gap={2}>
-          <Button variant='outline' onClick={handleCancel}>
-            {t('process.create.change_template.cancel', 'Cancel')}
-          </Button>
-          <Button colorPalette='red' onClick={handleConfirm}>
-            {t('process.create.change_template.change', 'Change Template')}
-          </Button>
-        </Flex>
-      </DeleteModal>
-    </>
-  )
 }
 
 const LeaveConfirmationModal = ({
@@ -713,7 +609,6 @@ const ProcessCreateView = () => {
     },
   })
   const reset = useSafeReset(methods.reset)
-  const { activeTemplate, placeholders, setActiveTemplate } = useProcessTemplates()
   const [isLeaveConfirmationOpen, setLeaveConfirmationOpen] = useState(false)
   const openConfirmationModal = () => setLeaveConfirmationOpen(true)
   const { organization } = useOrganization()
@@ -757,7 +652,6 @@ const ProcessCreateView = () => {
   }, [formDraft, groupId, methods])
 
   const resetForm = () => {
-    setActiveTemplate(null)
     reset()
     skipSave(true)
     queueMicrotask(() => {
@@ -865,7 +759,6 @@ const ProcessCreateView = () => {
           weighted: !!form.weightedVote,
           anonymous: !!form.anonymousVoting,
           question_count: form.questions?.length ?? 0,
-          template: activeTemplate || 'none',
           from_draft: !!effectiveDraftId,
         },
       })
@@ -1022,16 +915,12 @@ const ProcessCreateView = () => {
 
             {/* Title, Video, and Description */}
             <VStack as='header' align='stretch' gap={4}>
-              <TemplateButtons />
               <FormControl invalid={!!methods.formState.errors.title}>
                 <Input
                   variant='borderless'
-                  placeholder={
-                    placeholders[activeTemplate]?.title ??
-                    t('process.create.description.title', {
-                      defaultValue: 'Voting Process Title',
-                    })
-                  }
+                  placeholder={t('process.create.description.title', {
+                    defaultValue: 'Voting Process Title',
+                  })}
                   size='2xl'
                   fontWeight='bold'
                   {...methods.register('title', {
@@ -1051,10 +940,7 @@ const ProcessCreateView = () => {
                     key={nextId}
                     onChange={field.onChange}
                     variant='borderless'
-                    placeholder={
-                      placeholders[activeTemplate]?.description ??
-                      t('process.create.description.placeholder', 'Add a description...')
-                    }
+                    placeholder={t('process.create.description.placeholder', 'Add a description...')}
                     defaultValue={field.value}
                   />
                 )}
