@@ -20,6 +20,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router'
 import { Select } from '~components/Form/Select'
+import { useToast } from '~components/Toast'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { Routes } from '~routes'
 import { Group, useGroups } from '~src/queries/groups'
@@ -107,14 +108,37 @@ export type GroupSelectProps = {
 
 export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: GroupSelectProps) => {
   const { t } = useTranslation()
+  const toast = useToast()
   const {
     watch,
     control,
+    getValues,
+    setValue,
     formState: { errors },
   } = useFormContext()
   const censusType = watch('censusType')
   const groupId = watch('groupId')
   const [hasFetchedScroll, setHasFetchedScroll] = useState(false)
+
+  // Voter authentication is validated against the group it was set up for, so a
+  // different group voids it. Only a user pick lands here: a draft restores both
+  // fields with setValue and keeps its census. The dialog keeps the previous
+  // choices ticked, so confirming them again for the new group is quick.
+  const changeGroup = (nextGroupId: string, onChange: (value: string) => void) => {
+    if (nextGroupId !== getValues('groupId') && getValues('census')) {
+      setValue('census', null, { shouldDirty: true })
+      toast({
+        title: t('process_create.census.auth_reset.title', { defaultValue: 'Voter authentication was reset' }),
+        description: t('process_create.census.auth_reset.description', {
+          defaultValue: 'It was checked against the previous group. Your choices are kept: confirm them for this one.',
+        }),
+        type: 'info',
+        duration: 6000,
+        closable: true,
+      })
+    }
+    onChange(nextGroupId)
+  }
 
   const CustomMenuList = (props) => {
     return (
@@ -166,7 +190,7 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
               getOptionValue={(option) => option.id}
               placeholder={t('process_create.group.select', 'Select group')}
               isLoading={isFetching}
-              onChange={(option) => field.onChange(option?.id ?? '')}
+              onChange={(option) => changeGroup(option?.id ?? '', field.onChange)}
               formatOptionLabel={(option, meta) => formatGroupOptionLabel(option, meta)}
               onMenuScrollToBottom={async () => {
                 if (hasNextPage && !hasFetchedScroll) {
