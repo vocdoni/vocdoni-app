@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useIsMutating, useMutation } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useElectionAuth } from '@vocdoni/react-components'
@@ -81,12 +81,17 @@ export const useCspAuth0 = () => {
   })
 }
 
+// Keyed so the in-flight state outlives the dialog that started it: closing the
+// modal unmounts Step1 (and its mutation observer), but not the request.
+const cspAuth1MutationKey = ['csp', 'auth1']
+
 // Step 1 — confirm the 2FA challenge (OTP); marks the voter connected.
 export const useCspAuth1 = () => {
   const { auth1 } = useElectionAuth()
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, string>({
+    mutationKey: cspAuth1MutationKey,
     mutationFn: async (code) => {
       try {
         await auth1(code)
@@ -96,6 +101,10 @@ export const useCspAuth1 = () => {
     },
   })
 }
+
+// true while any OTP verification is in flight, whichever Identify dialog (open
+// or already closed) submitted it.
+export const useCspAuth1Pending = () => useIsMutating({ mutationKey: cspAuth1MutationKey }) > 0
 
 // Resend the pending 2FA challenge to the voter's contact.
 export const useCspResend = () => {
