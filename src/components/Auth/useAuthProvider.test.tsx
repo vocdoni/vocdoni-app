@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { AuthStorageKeys } from '@vocdoni/rainbowkit-wallets'
 import { ReactNode } from 'react'
 import { AllProviders } from '~src/test-utils'
@@ -129,5 +130,42 @@ describe('useAuthProvider currentAddress', () => {
     await waitFor(() => expect(result.current.isAuthLoading).toBe(false))
 
     expect(result.current.currentAddress).toBeUndefined()
+  })
+})
+
+describe('useAuthProvider with a stored token the backend rejects', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    localStorage.clear()
+    addressesMock.mockReset()
+  })
+
+  it('logs out when the session probe answers 401, instead of staying authenticated', async () => {
+    // The token/user no longer exists server-side. Staying "authenticated" with a token every
+    // request rejects left the guards flipping between the loading screen and the dashboard
+    // forever; the only way out was clearing localStorage by hand.
+    localStorage.setItem('auth.token', 'revoked-token')
+    localStorage.setItem('auth.expiry', '2099-01-01T00:00:00Z')
+    addressesMock.mockRejectedValue(new VocdoniApiError(401, {}, 'authentication required', 40001))
+
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+
+    await waitFor(() => expect(result.current.isAuthenticated).toBe(false))
+
+    expect(result.current.isAuthLoading).toBe(false)
+    expect(localStorage.getItem('auth.token')).toBeFalsy()
+    expect(addressesMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the session when the backend fails for reasons unrelated to the token', async () => {
+    localStorage.setItem('auth.token', 'token')
+    addressesMock.mockRejectedValue(new VocdoniApiError(500, {}, 'internal server error'))
+
+    const { result } = renderHook(() => useAuthProvider(), { wrapper: AllProviders })
+
+    await waitFor(() => expect(result.current.addressesError).toBeTruthy(), { timeout: 10_000 })
+
+    expect(result.current.isAuthenticated).toBe(true)
+    expect(localStorage.getItem('auth.token')).toBe('token')
   })
 })
