@@ -4,7 +4,7 @@ import { PaginationResponse } from '~src/queries/pagination'
 import { useOutletContext, useParams, useSearchParams } from 'react-router'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import { MemberbaseTabsContext } from '~components/Memberbase'
+import type { MemberbaseTabsContext } from '~components/Memberbase'
 import { QueryKeys } from './keys'
 
 export type Member = {
@@ -21,12 +21,6 @@ export type Member = {
 }
 
 export type MembersResponse = {
-  members: Member[]
-  page: number
-  pages: number
-}
-
-type PaginatedMembers = {
   members: Member[]
 } & PaginationResponse
 
@@ -83,7 +77,7 @@ export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedM
   const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)
   const fetchUrl = `${baseUrl}?page=${effectivePage}&limit=${effectiveLimit}&search=${search}`
 
-  return useQuery<MembersResponse, Error, PaginatedMembers>({
+  return useQuery<MembersResponse, Error>({
     queryKey: [...QueryKeys.organization.members(organization?.address), effectivePage, effectiveLimit, search],
     enabled: !!organization?.address,
     queryFn: () => bearedFetch<MembersResponse>(fetchUrl),

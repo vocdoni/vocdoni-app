@@ -1056,6 +1056,10 @@
       "select_process": "Hautatu prozesua",
       "selected_one": "Hautatuta: <strong>Kide bat</strong>",
       "selected_other": "Hautatuta: <strong>{{count}} kide</strong>",
+      "showing_members_one": "",
+      "showing_members_other": "",
+      "showing_results_one": "",
+      "showing_results_other": "",
       "toggle_column": "Txandakatu {{column}} zutabea"
     }
   },

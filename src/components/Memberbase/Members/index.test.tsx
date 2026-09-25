@@ -1,6 +1,11 @@
+import type { ReactNode } from 'react'
+import { MemoryRouter } from 'react-router'
 import { render, screen } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { TableProvider } from '../TableProvider'
 import MembersTable from './index'
+
+const outletContext = vi.hoisted(() => ({ debouncedSearch: '' }))
 
 // MembersTable mounts filters, drawers and the delete modal that hit member/group
 // queries on render; stub them so the test stays focused on the breakpoint swap.
@@ -15,6 +20,14 @@ vi.mock('~src/queries/members', async (importOriginal) => {
     usePaginatedMembers: () => ({ data: { members: [], pagination: {} }, isLoading: false, isFetching: false }),
     useDeleteMembers: () => ({ mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false }),
   }
+})
+
+// The page buttons read react-components' own pagination context, which the shared provider
+// mocks don't feed; the range summary under test only needs `useRoutedPagination`.
+vi.mock('@vocdoni/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@vocdoni/react-components')>()
+  const { getReactProvidersMock } = await import('~src/test-utils-react-providers-mock')
+  return { ...actual, ...getReactProvidersMock(), RoutedPagination: () => null }
 })
 
 vi.mock('~src/queries/groups', async (importOriginal) => {
@@ -45,7 +58,7 @@ vi.mock('react-router', async (importOriginal) => {
       search: '',
       setSearch: vi.fn(),
       submitSearch: vi.fn(),
-      debouncedSearch: '',
+      debouncedSearch: outletContext.debouncedSearch,
       jobId: null,
       setJobId: vi.fn(),
     }),
@@ -154,5 +167,51 @@ describe('MembersTable session replay exclusion', () => {
     } finally {
       Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
     }
+  })
+})
+
+describe('MembersTable range summary', () => {
+  const mockPagination = (page: number, totalItems: number) =>
+    setReactProvidersMock({
+      useRoutedPagination: () => ({ page, pagination: { lastPage: Math.ceil(totalItems / 10), totalItems } }),
+    })
+
+  const renderWithRouter = (url: string) =>
+    render(
+      <TableProvider data={members} initialColumns={columns}>
+        <MembersTable />
+      </TableProvider>,
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <MemoryRouter initialEntries={[url]}>{children}</MemoryRouter>
+        ),
+      }
+    )
+
+  afterEach(() => {
+    outletContext.debouncedSearch = ''
+  })
+
+  it('shows the rows on screen out of the whole memberbase, locale formatted', () => {
+    mockPagination(1, 1234)
+    renderWithRouter('/admin/memberbase/members/1')
+
+    expect(screen.getByText('Showing 1–2 of 1,234 members')).toBeInTheDocument()
+  })
+
+  it('offsets the range by the current page and rows per page', () => {
+    mockPagination(3, 42)
+    renderWithRouter('/admin/memberbase/members/3?limit=20')
+
+    expect(screen.getByText('Showing 41–42 of 42 members')).toBeInTheDocument()
+  })
+
+  it('counts search results instead of members while searching', () => {
+    outletContext.debouncedSearch = 'a'
+    mockPagination(1, 2)
+    renderWithRouter('/admin/memberbase/members/1')
+
+    expect(screen.getByText('Showing 1–2 of 2 results')).toBeInTheDocument()
+    expect(screen.queryByText(/of 2 members/)).not.toBeInTheDocument()
   })
 })

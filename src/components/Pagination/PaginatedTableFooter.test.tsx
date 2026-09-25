@@ -103,4 +103,10 @@ describe('RoutedPaginatedTableFooter', () => {
 
     expect(screen.getByText('Page 3 of 3')).toBeInTheDocument()
   })
+
+  it('renders an optional summary before the page indicator', () => {
+    render(<RoutedPaginatedTableFooter summary={<span>Showing 1–10 of 25 members</span>} />)
+
+    expect(screen.getByText('Showing 1–10 of 25 members')).toBeInTheDocument()
+  })
 })
