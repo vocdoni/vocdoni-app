@@ -32,9 +32,6 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import {
-  LuArrowDown,
-  LuArrowUp,
-  LuArrowUpDown,
   LuEllipsis,
   LuListPlus,
   LuPlus,
@@ -45,6 +42,7 @@ import {
   LuUsers,
   LuX,
 } from 'react-icons/lu'
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa6'
 import { generatePath, useNavigate, useOutletContext } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
@@ -780,12 +778,14 @@ const EmptyMembers = () => {
   )
 }
 
+// The caret for the active direction is drawn at full strength, the other one stays faint.
+const sortCaretStyle = (active: boolean) =>
+  active ? { color: 'texts.primary' } : { color: 'texts.subtle', opacity: 0.5 }
+
 const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: MemberSortField }) => {
   const { t } = useTranslation()
   const { sort, toggleSort } = useUrlMemberSort()
   const order = sort?.sortBy === field ? sort.sortOrder : null
-  const SortIcon = order === 'asc' ? LuArrowUp : order === 'desc' ? LuArrowDown : LuArrowUpDown
-
   return (
     // aria-sort goes on the active column only, as the ARIA spec recommends.
     <Table.ColumnHeader aria-sort={order ? (order === 'asc' ? 'ascending' : 'descending') : undefined}>
@@ -796,11 +796,16 @@ const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: M
         h='auto'
         minW={0}
         fontWeight='inherit'
+        color='inherit'
+        gap={1}
         onClick={() => toggleSort(field)}
         title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
       >
         {column.label}
-        <Icon as={SortIcon} aria-hidden color={order ? undefined : 'texts.subtle'} />
+        <Flex direction='column' aria-hidden gap={0} lineHeight={0} ms={0.5}>
+          <Icon as={FaCaretUp} boxSize={3} mb='-3.5px' {...sortCaretStyle(order === 'asc')} />
+          <Icon as={FaCaretDown} boxSize={3} mt='-3.5px' {...sortCaretStyle(order === 'desc')} />
+        </Flex>
       </Button>
     </Table.ColumnHeader>
   )
