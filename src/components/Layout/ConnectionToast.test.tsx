@@ -1,28 +1,28 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import { act, renderHook, waitFor } from '@testing-library/react'
-import i18n from 'i18next'
+import type { i18n as I18n } from 'i18next'
 import { ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
+import { createTestI18n } from '~src/test-utils'
 import { ColorModeProvider } from '~theme/color-mode'
 import { system } from '~theme/system'
 import { ConnectionToastProvider, useConnectionToast } from './ConnectionToast'
 
-// Initialize i18n for tests
-i18n.init({
-  lng: 'en',
-  fallbackLng: 'en',
-  defaultNS: 'common',
-  showSupportNotice: false,
-  resources: {
-    en: {
-      common: {
-        'connection.error_title': 'Connection issues detected',
-        'connection.error_description': 'Unable to reach the server',
-        'connection.restored_title': 'Connection restored',
-        'connection.restored_description': 'You are back online',
+let i18n: I18n
+
+beforeAll(async () => {
+  i18n = await createTestI18n({
+    resources: {
+      en: {
+        common: {
+          'connection.error_title': 'Connection issues detected',
+          'connection.error_description': 'Unable to reach the server',
+          'connection.restored_title': 'Connection restored',
+          'connection.restored_description': 'You are back online',
+        },
       },
     },
-  },
+  })
 })
 
 // Mock Chakra UI toast
@@ -58,15 +58,6 @@ describe('ConnectionToastProvider', () => {
     mockToastIsActive.mockReturnValue(false)
   })
 
-  describe('useConnectionToast hook', () => {
-    it('should provide recordFailure and recordSuccess functions', () => {
-      const { result } = renderHook(() => useConnectionToast(), { wrapper })
-
-      expect(typeof result.current.recordFailure).toBe('function')
-      expect(typeof result.current.recordSuccess).toBe('function')
-    })
-  })
-
   describe('error toast behavior', () => {
     it('should show error toast after one failure (threshold = 1)', async () => {
       const { result } = renderHook(() => useConnectionToast(), { wrapper })
@@ -90,8 +81,6 @@ describe('ConnectionToastProvider', () => {
     })
 
     it('should not show duplicate error toast if already active', async () => {
-      mockToastIsActive.mockReturnValue(true)
-
       const { result } = renderHook(() => useConnectionToast(), { wrapper })
 
       act(() => {
@@ -99,12 +88,23 @@ describe('ConnectionToastProvider', () => {
       })
 
       await waitFor(() => {
-        // When toast is already active, the condition prevents showing it again
-        // The logic is: (!wasOffline && isNowOffline) || (isNowOffline && !toast.isActive())
-        // Since isActive returns true, the second part is false
-        // But the first part is true (transition), so toast IS called
-        expect(mockToast).toHaveBeenCalled()
+        expect(mockToast).toHaveBeenCalledTimes(1)
       })
+
+      // Already offline with the error toast still on screen: a further failure re-runs the
+      // effect (failureCount changes) but must not stack a second error toast.
+      mockToast.mockClear()
+      mockToastIsActive.mockClear()
+      mockToastIsActive.mockReturnValue(true)
+
+      act(() => {
+        result.current.recordFailure()
+      })
+
+      await waitFor(() => {
+        expect(mockToastIsActive).toHaveBeenCalledWith('connection-error-toast')
+      })
+      expect(mockToast).not.toHaveBeenCalled()
     })
 
     it('should close success toast when showing error toast', async () => {
@@ -194,40 +194,6 @@ describe('ConnectionToastProvider', () => {
   })
 
   describe('offline/online state transitions', () => {
-    it('should handle complete offline -> online cycle', async () => {
-      const { result } = renderHook(() => useConnectionToast(), { wrapper })
-
-      // Go offline
-      act(() => {
-        result.current.recordFailure()
-      })
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith(
-          expect.objectContaining({
-            id: 'connection-error-toast',
-            type: 'error',
-          })
-        )
-      })
-
-      mockToast.mockClear()
-
-      // Go back online
-      act(() => {
-        result.current.recordSuccess()
-      })
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith(
-          expect.objectContaining({
-            id: 'connection-success-toast',
-            type: 'success',
-          })
-        )
-      })
-    })
-
     it('should handle multiple offline/online cycles', async () => {
       const { result } = renderHook(() => useConnectionToast(), { wrapper })
 

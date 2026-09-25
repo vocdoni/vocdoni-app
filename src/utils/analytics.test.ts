@@ -210,27 +210,53 @@ describe('posthog voting-path detection', () => {
   })
 })
 
+// The privacy filters are private to analytics.ts; reach them the way posthog-js does,
+// through the config initializePosthog hands to posthog.init. Init runs from a dashboard
+// path because it deliberately refuses to start on a voting route.
+const posthogConfigFromInit = async (votingRoutes: { homeProcessId?: string; supportedLanguages?: string[] } = {}) => {
+  const { initializePosthog } = await import('./analytics')
+  const pathname = window.location.pathname
+  window.history.pushState({}, '', '/admin')
+  mockPosthog.init.mockClear()
+  initializePosthog({ key: 'phc_test', consent: null, ...votingRoutes })
+  await vi.waitFor(() => expect(mockPosthog.init).toHaveBeenCalledTimes(1))
+  window.history.pushState({}, '', pathname)
+  return mockPosthog.init.mock.calls[0][1]
+}
+
+const beforeSendFromInit = async (votingRoutes?: { homeProcessId?: string; supportedLanguages?: string[] }) =>
+  (await posthogConfigFromInit(votingRoutes)).before_send as (event: any) => any
+
+const maskInputFromInit = async () =>
+  (await posthogConfigFromInit()).session_recording.maskInputFn as (text: string, element?: HTMLElement) => string
+
 describe('posthog url sanitization', () => {
   beforeEach(() => {
     vi.resetModules()
   })
 
-  it('strips sensitive query params from urls', async () => {
-    const { sanitizeAnalyticsUrl } = await import('./analytics')
+  const sanitizerFromInit = async () => {
+    const beforeSend = await beforeSendFromInit()
+    return (url: string) =>
+      beforeSend({ event: '$pageview', properties: { $current_url: url } })?.properties.$current_url
+  }
 
-    expect(sanitizeAnalyticsUrl('https://app.vocdoni.io/account/verify?email=a%40b.com&code=1234&foo=bar')).toBe(
+  it('strips sensitive query params from urls', async () => {
+    const sanitize = await sanitizerFromInit()
+
+    expect(sanitize('https://app.vocdoni.io/account/verify?email=a%40b.com&code=1234&foo=bar')).toBe(
       'https://app.vocdoni.io/account/verify?foo=bar'
     )
-    expect(sanitizeAnalyticsUrl('https://app.vocdoni.io/account/password/reset?token=secret')).toBe(
+    expect(sanitize('https://app.vocdoni.io/account/password/reset?token=secret')).toBe(
       'https://app.vocdoni.io/account/password/reset'
     )
   })
 
   it('leaves clean or unparseable urls untouched', async () => {
-    const { sanitizeAnalyticsUrl } = await import('./analytics')
+    const sanitize = await sanitizerFromInit()
 
-    expect(sanitizeAnalyticsUrl('https://app.vocdoni.io/admin?page=2')).toBe('https://app.vocdoni.io/admin?page=2')
-    expect(sanitizeAnalyticsUrl('not a url')).toBe('not a url')
+    expect(sanitize('https://app.vocdoni.io/admin?page=2')).toBe('https://app.vocdoni.io/admin?page=2')
+    expect(sanitize('not a url')).toBe('not a url')
   })
 })
 
@@ -241,7 +267,7 @@ describe('posthog session replay input masking', () => {
   })
 
   it('masks input values by default', async () => {
-    const { posthogMaskInput } = await import('./analytics')
+    const posthogMaskInput = await maskInputFromInit()
 
     const input = document.createElement('input')
     document.body.appendChild(input)
@@ -251,10 +277,10 @@ describe('posthog session replay input masking', () => {
   })
 
   it('keeps values readable inside a data-ph-unmask subtree', async () => {
-    const { posthogMaskInput, POSTHOG_UNMASK_ATTRIBUTE } = await import('./analytics')
+    const posthogMaskInput = await maskInputFromInit()
 
     const wrapper = document.createElement('div')
-    wrapper.setAttribute(POSTHOG_UNMASK_ATTRIBUTE, '')
+    wrapper.setAttribute('data-ph-unmask', '')
     const input = document.createElement('input')
     wrapper.appendChild(input)
     document.body.appendChild(wrapper)
@@ -263,11 +289,11 @@ describe('posthog session replay input masking', () => {
   })
 
   it('never unmasks passwords, even inside a data-ph-unmask subtree', async () => {
-    const { posthogMaskInput, POSTHOG_UNMASK_ATTRIBUTE } = await import('./analytics')
+    const posthogMaskInput = await maskInputFromInit()
 
     const input = document.createElement('input')
     input.type = 'password'
-    input.setAttribute(POSTHOG_UNMASK_ATTRIBUTE, '')
+    input.setAttribute('data-ph-unmask', '')
     document.body.appendChild(input)
 
     expect(posthogMaskInput('hunter2', input)).toBe('*******')
@@ -281,46 +307,46 @@ describe('posthog before_send guard', () => {
   })
 
   it('drops any event captured on a voting route', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     const event = { event: '$pageview', properties: { $current_url: 'https://app.vocdoni.io/es/processes/0x1234' } }
-    expect(posthogBeforeSend(event as any)).toBeNull()
+    expect(posthogBeforeSend(event)).toBeNull()
   })
 
   it('drops events without a url when the window is on a voting route', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     window.history.pushState({}, '', '/processes/0x1234')
     const event = { event: '$snapshot', properties: {} }
-    expect(posthogBeforeSend(event as any)).toBeNull()
+    expect(posthogBeforeSend(event)).toBeNull()
   })
 
   it('drops stale dashboard events while the browser is on a voting route', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     window.history.pushState({}, '', '/processes/0x1234')
     const event = { event: '$pageleave', properties: { $current_url: 'https://app.vocdoni.io/admin' } }
-    expect(posthogBeforeSend(event as any)).toBeNull()
+    expect(posthogBeforeSend(event)).toBeNull()
   })
 
   it('drops events on the configured voting homepage', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit({ homeProcessId: '0x1234', supportedLanguages: ['ca'] })
 
     window.history.pushState({}, '', '/ca/')
     const event = { event: '$snapshot', properties: {} }
-    expect(posthogBeforeSend(event as any, { homeProcessId: '0x1234', supportedLanguages: ['ca'] })).toBeNull()
+    expect(posthogBeforeSend(event)).toBeNull()
   })
 
   it('keeps dashboard events without a URL when a voting homepage is configured', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit({ homeProcessId: '0x1234', supportedLanguages: ['ca'] })
 
     window.history.pushState({}, '', '/admin')
     const event = { event: '$snapshot', properties: {} }
-    expect(posthogBeforeSend(event as any, { homeProcessId: '0x1234', supportedLanguages: ['ca'] })).toBe(event)
+    expect(posthogBeforeSend(event)).toBe(event)
   })
 
   it('sanitizes urls on allowed events', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     const event = {
       event: '$pageview',
@@ -329,19 +355,19 @@ describe('posthog before_send guard', () => {
         $referrer: 'https://app.vocdoni.io/account/signup?email=a%40b.com',
       },
     }
-    const result = posthogBeforeSend(event as any)
+    const result = posthogBeforeSend(event)
     expect(result?.properties?.$current_url).toBe('https://app.vocdoni.io/account/verify')
     expect(result?.properties?.$referrer).toBe('https://app.vocdoni.io/account/signup')
   })
 
   it('returns null for null events', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     expect(posthogBeforeSend(null)).toBeNull()
   })
 
   it('redacts email addresses from exception payloads', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     const event = {
       event: '$exception',
@@ -352,7 +378,7 @@ describe('posthog before_send guard', () => {
         $exception_list: [{ value: 'someone@example.com not found' }],
       },
     }
-    const result = posthogBeforeSend(event as any)
+    const result = posthogBeforeSend(event)
     expect(result?.properties?.$exception_message).toBe('Failed to invite [redacted-email] to the team')
     expect(result?.properties?.$exception_values).toEqual(['[redacted-email] could not be reached'])
     expect(result?.properties?.$exception_list).toEqual([{ value: '[redacted-email] not found' }])
@@ -361,7 +387,7 @@ describe('posthog before_send guard', () => {
   // Outlook's Safe Links scanner crawls every link we mail out and rejects a
   // promise with a bare string; it is bot traffic, not a user-facing failure.
   it('drops the Safe Links scanner rejection', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     const event = {
       event: '$exception',
@@ -380,11 +406,11 @@ describe('posthog before_send guard', () => {
       },
     }
 
-    expect(posthogBeforeSend(event as any)).toBeNull()
+    expect(posthogBeforeSend(event)).toBeNull()
   })
 
   it('drops the scanner rejection whatever the id and method it reports', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     const event = {
       event: '$exception',
@@ -394,11 +420,11 @@ describe('posthog before_send guard', () => {
       },
     }
 
-    expect(posthogBeforeSend(event as any)).toBeNull()
+    expect(posthogBeforeSend(event)).toBeNull()
   })
 
   it('keeps genuine non-Error rejections, which share the generic prefix', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     const event = {
       event: '$exception',
@@ -414,11 +440,11 @@ describe('posthog before_send guard', () => {
       },
     }
 
-    expect(posthogBeforeSend(event as any)).not.toBeNull()
+    expect(posthogBeforeSend(event)).not.toBeNull()
   })
 
   it('keeps non-exception events that happen to mention the scanner string', async () => {
-    const { posthogBeforeSend } = await import('./analytics')
+    const posthogBeforeSend = await beforeSendFromInit()
 
     const event = {
       event: 'process_created',
@@ -428,7 +454,7 @@ describe('posthog before_send guard', () => {
       },
     }
 
-    expect(posthogBeforeSend(event as any)).not.toBeNull()
+    expect(posthogBeforeSend(event)).not.toBeNull()
   })
 })
 

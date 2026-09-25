@@ -2,13 +2,9 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
-import { resolveLanguagesSlice } from './vite/language-env'
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
-  define: {
-    'import.meta.env.LANGUAGES': JSON.stringify(resolveLanguagesSlice(process.env.LANGUAGES)),
-  },
   test: {
     globals: true,
     environment: 'jsdom',

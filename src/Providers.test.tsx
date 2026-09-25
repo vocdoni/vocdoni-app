@@ -31,6 +31,15 @@ const LanguageProbe = () => {
   )
 }
 
+// What Vike hands the client: the runtime env resolved on the server (see
+// +onCreateGlobalContext.server.ts). Without it AppProviders falls back to defaults
+// and warns that the passToClient wiring is broken.
+vi.mock('vike-react/usePageContext', async () => {
+  const { buildAppEnv } = await import('./app-env-build')
+  const pageContext = { globalContext: { appEnv: buildAppEnv({}) } }
+  return { usePageContext: () => pageContext }
+})
+
 vi.mock('wagmi', () => ({
   WagmiProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
   useAccount: () => ({ address: undefined }),
@@ -84,8 +93,7 @@ describe('Providers', () => {
   // render kept settling and its language detection landed mid-assertion.
   it('mounts without crashing', async () => {
     const { Providers } = await import('./Providers')
-    const { container } = render(<Providers />)
-    expect(container).toBeTruthy()
+    expect(() => render(<Providers />)).not.toThrow()
   }, 30000)
 
   it('does not overwrite the persisted preferred language when rendering a public page in english', async () => {

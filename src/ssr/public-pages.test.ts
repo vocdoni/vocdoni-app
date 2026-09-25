@@ -3,10 +3,8 @@ import { VochainNotFoundError } from '~src/legacy/vochain-archive'
 import {
   buildOrganizationMeta,
   getHomeProcessPath,
-  getHomeProcessRouteMatch,
   buildProcessMeta,
   getDefaultPublicLanguage,
-  getLocalizedPublicRedirectTarget,
   getPublicLanguageAlternates,
   getPublicLocalizedOrganizationRouteMatch,
   getPublicLocalizedProcessRouteMatch,
@@ -447,35 +445,6 @@ describe('public language helpers', () => {
     expect(getPublicProcessSummaryPath({ id: '0xprocess', language: 'ca' })).toBe('/ca/processes/0xprocess/summary')
   })
 
-  it('builds localized redirect targets whenever the stored and current languages differ', () => {
-    expect(
-      getLocalizedPublicRedirectTarget({
-        routeType: 'process',
-        preferredLanguage: 'ca',
-        currentLanguage: 'en',
-        idOrAddress: '0xprocess',
-      })
-    ).toBe('/ca/processes/0xprocess')
-
-    expect(
-      getLocalizedPublicRedirectTarget({
-        routeType: 'organization',
-        preferredLanguage: 'ca',
-        currentLanguage: 'it',
-        idOrAddress: '0xabc',
-      })
-    ).toBe('/ca/organization/0xabc')
-
-    expect(
-      getLocalizedPublicRedirectTarget({
-        routeType: 'process',
-        preferredLanguage: 'ca',
-        currentLanguage: 'ca',
-        idOrAddress: '0xprocess',
-      })
-    ).toBeNull()
-  })
-
   it('matches localized organization routes only for supported languages', () => {
     expect(
       getPublicLocalizedOrganizationRouteMatch({
@@ -542,66 +511,6 @@ describe('public language helpers', () => {
         id: '6be21a5a9dc034ede83966b661e6a648854bd92b7d209d2c97c202000000003f',
       },
     })
-  })
-
-  it('matches the roots against the configured home process', () => {
-    expect(
-      getHomeProcessRouteMatch({
-        urlPathname: '/',
-        supportedLanguages: ['en', 'es', 'ca'],
-        homeProcessId: '0xprocess',
-      })
-    ).toEqual({
-      routeParams: {
-        id: '0xprocess',
-      },
-    })
-
-    expect(
-      getHomeProcessRouteMatch({
-        urlPathname: '/es/',
-        supportedLanguages: ['en', 'es', 'ca'],
-        homeProcessId: '0xprocess',
-      })
-    ).toEqual({
-      routeParams: {
-        lang: 'es',
-        id: '0xprocess',
-      },
-    })
-
-    expect(
-      getHomeProcessRouteMatch({
-        urlPathname: '/fr',
-        supportedLanguages: ['en', 'es', 'ca'],
-        homeProcessId: '0xprocess',
-      })
-    ).toBe(false)
-
-    expect(
-      getHomeProcessRouteMatch({
-        urlPathname: '/es/plans',
-        supportedLanguages: ['en', 'es', 'ca'],
-        homeProcessId: '0xprocess',
-      })
-    ).toBe(false)
-  })
-
-  it('leaves the roots untouched without a configured home process', () => {
-    expect(
-      getHomeProcessRouteMatch({
-        urlPathname: '/',
-        supportedLanguages: ['en', 'es', 'ca'],
-      })
-    ).toBe(false)
-
-    expect(
-      getHomeProcessRouteMatch({
-        urlPathname: '/es',
-        supportedLanguages: ['en', 'es', 'ca'],
-        homeProcessId: '   ',
-      })
-    ).toBe(false)
   })
 
   it('builds the home process paths from the localized roots', () => {

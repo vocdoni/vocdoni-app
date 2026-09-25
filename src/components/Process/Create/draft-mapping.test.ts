@@ -338,4 +338,67 @@ describe('votingProcessToCreateRequest', () => {
     expect(request.questions[0].type).toBeUndefined()
     expect(request.questions[0].ballotProtocol).toEqual(BALLOT_PROTOCOL)
   })
+
+  it('copies the process texts and every question with its choices', () => {
+    const request = votingProcessToCreateRequest(
+      process({
+        questions: [
+          question([{ title: 'A' }, { title: 'B' }], { title: { default: 'First' } }),
+          question([{ title: 'C' }], { title: { default: 'Second' } }),
+        ],
+      }),
+      '0xorg'
+    )
+
+    expect(request).toMatchObject({
+      title: { default: 'Process title' },
+      description: { default: 'Process description' },
+      questions: [
+        {
+          title: { default: 'First' },
+          description: { default: 'Question description' },
+          choices: [
+            { title: { default: 'A' }, value: 0 },
+            { title: { default: 'B' }, value: 1 },
+          ],
+        },
+        { title: { default: 'Second' }, choices: [{ title: { default: 'C' }, value: 0 }] },
+      ],
+    })
+    expect(request.questions).toHaveLength(2)
+  })
+
+  it('carries the per-choice extended info through the question metadata', () => {
+    const request = votingProcessToCreateRequest(
+      process({
+        questions: [
+          question([
+            { title: 'Option 1', description: 'Why option 1', image: 'https://example.com/1.png' },
+            { title: 'Option 2' },
+          ]),
+        ],
+      }),
+      '0xorg'
+    )
+
+    expect(request.questions[0].metadata).toEqual({
+      choices: [
+        { value: 0, description: 'Why option 1', image: 'https://example.com/1.png' },
+        { value: 1, description: undefined, image: undefined },
+      ],
+    })
+  })
+
+  it('keeps the census weighting, credentials and two-factor fields, and question secrecy', () => {
+    const request = votingProcessToCreateRequest(
+      process({
+        census: { weighted: true, authFields: ['memberNumber'], twoFaFields: ['email'] },
+        questions: [question([{ title: 'A' }], { secretUntilTheEnd: true })],
+      }),
+      '0xorg'
+    )
+
+    expect(request.census).toMatchObject({ weighted: true, authFields: ['memberNumber'], twoFaFields: ['email'] })
+    expect(request.questions[0].secretUntilTheEnd).toBe(true)
+  })
 })

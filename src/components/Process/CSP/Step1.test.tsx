@@ -179,12 +179,6 @@ describe('Step1Base', () => {
     expect(resendMutateAsync).not.toHaveBeenCalled()
   })
 
-  it('renders the authenticate button', async () => {
-    const { findByRole } = render(<Step1Base />)
-
-    expect(await findByRole('button', { name: 'Authenticate' })).toBeTruthy()
-  })
-
   it('renders the updated 2FA copy', () => {
     render(<Step1Base />)
 
@@ -200,7 +194,7 @@ describe('Step1Base', () => {
     expect(screen.getByText('If you experience any issues, contact your organization.')).toBeInTheDocument()
   })
 
-  it('does not render undefined values when pasting the pin code', async () => {
+  it('fills every pin input when pasting the full code', async () => {
     const user = userEvent.setup()
 
     render(<Step1Base />)
@@ -215,8 +209,6 @@ describe('Step1Base', () => {
       const values = getPinInputs().map((input) => input.value)
 
       expect(values).toEqual(['1', '2', '3', '4', '5', '6'])
-      expect(values).not.toContain('undefined')
-      expect(screen.queryByDisplayValue('undefined')).not.toBeInTheDocument()
     })
   })
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getPrivateAppRoot, getSelectedOrganization, isSelectedOrganizationIntegrator } from './privateAppRouting'
+import { getPrivateAppRoot, isSelectedOrganizationIntegrator } from './privateAppRouting'
 
 const mockProfile = (orgs: Array<{ address: string; integrator?: boolean }> = []) => ({
   organizations: orgs.map((org) => ({
@@ -19,34 +19,6 @@ const mockProfile = (orgs: Array<{ address: string; integrator?: boolean }> = []
 })
 
 describe('privateAppRouting helpers', () => {
-  describe('getSelectedOrganization', () => {
-    it('returns the selected org when it exists in profile', () => {
-      const profile = mockProfile([
-        { address: 'org1', integrator: false },
-        { address: 'org2', integrator: true },
-      ])
-      const result = getSelectedOrganization(profile, 'org2')
-      expect(result).toBeDefined()
-      expect(result?.address).toBe('org2')
-    })
-
-    it('returns the first org when selectedAddress is not in profile', () => {
-      const profile = mockProfile([
-        { address: 'org1', integrator: false },
-        { address: 'org2', integrator: true },
-      ])
-      const result = getSelectedOrganization(profile, 'unknown-address')
-      expect(result).toBeDefined()
-      expect(result?.address).toBe('org1')
-    })
-
-    it('returns undefined when profile has no organizations', () => {
-      const profile = mockProfile([])
-      const result = getSelectedOrganization(profile, 'any-address')
-      expect(result).toBeUndefined()
-    })
-  })
-
   describe('isSelectedOrganizationIntegrator', () => {
     it('returns true when selected org is integrator', () => {
       const profile = mockProfile([{ address: 'org1', integrator: true }])

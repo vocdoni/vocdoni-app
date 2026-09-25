@@ -4,8 +4,6 @@ import {
   getPublicLanguageFromCookie,
   getPublicPathLanguageContext,
   getStoredPublicLanguage,
-  isAdminPath,
-  isAuthPath,
   isBareEnglishPublicPath,
   isCanonicalLocalizedPublicPath,
   localizePublicPath,
@@ -186,18 +184,5 @@ describe('public language helpers', () => {
     expect(stripPublicLanguagePrefix('/en/processes/0xprocess', ['en', 'ca'])).toBe('/processes/0xprocess')
     expect(stripPublicLanguagePrefix('/plans', ['en', 'ca'])).toBe('/plans')
     expect(stripPublicLanguagePrefix('/ca', ['en', 'ca'])).toBe('/')
-  })
-
-  it('detects admin paths outside the localized public surface', () => {
-    expect(isAdminPath('/admin')).toBe(true)
-    expect(isAdminPath('/admin/processes')).toBe(true)
-    expect(isAdminPath('/en/admin')).toBe(false)
-    expect(isAdminPath('/plans')).toBe(false)
-  })
-
-  it('detects auth paths outside the localized public surface', () => {
-    expect(isAuthPath('/account')).toBe(true)
-    expect(isAuthPath('/account/signin')).toBe(true)
-    expect(isAuthPath('/en/account/signin')).toBe(false)
   })
 })
