@@ -93,8 +93,7 @@ vi.mock('@chakra-ui/react', async () => {
 
 const mutateAsync = vi.fn()
 const resendMutateAsync = vi.fn()
-const setCurrentStep = vi.fn()
-const setAuthData = vi.fn()
+const resetFlow = vi.fn()
 
 const getPinInputs = () => screen.getAllByRole<HTMLInputElement>('textbox', { name: /pin code \d of 6/i })
 
@@ -104,8 +103,7 @@ vi.mock('./CSPStepsProvider', () => ({
       email: 'user@example.com',
       phone: '+34600000000',
     },
-    setAuthData,
-    setCurrentStep,
+    resetFlow,
   }),
 }))
 
@@ -127,8 +125,7 @@ describe('Step1Base', () => {
     mutateAsync.mockResolvedValue(undefined)
     resendMutateAsync.mockReset()
     resendMutateAsync.mockResolvedValue(undefined)
-    setCurrentStep.mockReset()
-    setAuthData.mockReset()
+    resetFlow.mockReset()
   })
 
   it('goes back to step 0 and drops the stored contact when starting over', async () => {
@@ -138,8 +135,7 @@ describe('Step1Base', () => {
 
     await user.click(screen.getByRole('button', { name: 'Start over' }))
 
-    expect(setAuthData).toHaveBeenCalledWith({})
-    expect(setCurrentStep).toHaveBeenCalledWith(0)
+    expect(resetFlow).toHaveBeenCalledTimes(1)
     expect(mutateAsync).not.toHaveBeenCalled()
   })
 

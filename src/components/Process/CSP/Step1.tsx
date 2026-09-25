@@ -25,7 +25,7 @@ type CSPStep1FormData = {
 }
 
 export const Step1Base = () => {
-  const { authData, setAuthData, setCurrentStep } = useCspAuthContext()
+  const { authData, resetFlow } = useCspAuthContext()
   const resend = useCspResend()
   const { t } = useTranslation()
   const toast = useToast()
@@ -181,10 +181,10 @@ export const Step1Base = () => {
                         <Button
                           variant='link'
                           verticalAlign='unset'
-                          onClick={() => {
-                            setAuthData({})
-                            setCurrentStep(0)
-                          }}
+                          // Starting over mid-verification would let the in-flight
+                          // code still connect the voter behind the reset.
+                          disabled={auth.isPending}
+                          onClick={resetFlow}
                         />
                       ),
                     }}

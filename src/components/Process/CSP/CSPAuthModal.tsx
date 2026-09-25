@@ -65,7 +65,9 @@ export const CspAuth = () => {
 
   if (!election) return null
 
-  if (session) return <CspAuthModal />
+  // Only reuse a session scoped to this same process: a CspAuth under a nested
+  // ElectionProvider must not borrow another process' census fields and step.
+  if (session?.processId === election.id) return <CspAuthModal />
 
   return (
     <CspAuthSession>

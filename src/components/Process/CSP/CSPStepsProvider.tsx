@@ -17,6 +17,10 @@ type CspAuthContextState = {
   censusData: CensusData | null
   authFields: AuthFieldType[]
   twoFaFields: TwoFaFieldType[]
+  // The process this flow authenticates against.
+  processId?: string
+  // Back to step 0 with no stored contact.
+  resetFlow: () => void
 }
 
 const CspAuthContext = createContext<CspAuthContextState | undefined>(undefined)
@@ -63,6 +67,8 @@ export const CspAuthProvider = ({
     // Process census data to determine auth fields
     authFields: censusData?.authFields || [],
     twoFaFields: censusData?.twoFaFields || [],
+    processId,
+    resetFlow,
   }
 
   return <CspAuthContext.Provider value={value}>{children}</CspAuthContext.Provider>
@@ -73,7 +79,7 @@ export const CspAuthProvider = ({
 export const useOptionalCspAuthContext = () => useContext(CspAuthContext)
 
 export const useCspAuthContext = () => {
-  const context = useContext(CspAuthContext)
+  const context = useOptionalCspAuthContext()
   if (!context) {
     throw new Error('useCspAuthContext must be used within an CspAuthProvider')
   }
