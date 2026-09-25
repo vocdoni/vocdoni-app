@@ -11,6 +11,8 @@ type TableProviderProps = {
   error?: Error | null
   isLoading?: boolean
   isFetching?: boolean
+  // True while the rows are the previous page/sort, kept on screen until the new ones arrive.
+  isPlaceholderData?: boolean
   initialColumns: TableColumn[]
   children: ReactNode
 }
@@ -58,6 +60,7 @@ const useTableProvider = ({
   error = null,
   isLoading = false,
   isFetching = false,
+  isPlaceholderData = false,
   initialColumns,
 }: Omit<TableProviderProps, 'children'>) => {
   const [selectedRows, setSelectedRows] = useState<SelectedRow[]>([])
@@ -116,6 +119,7 @@ const useTableProvider = ({
     error,
     isLoading,
     isFetching,
+    isPlaceholderData,
     selectedRows,
     allVisibleSelected,
     someSelected,
@@ -137,10 +141,11 @@ export const TableProvider = ({
   error = null,
   isLoading = false,
   isFetching = false,
+  isPlaceholderData = false,
   initialColumns,
   children,
 }: TableProviderProps) => {
-  const value = useTableProvider({ data, error, isLoading, isFetching, initialColumns })
+  const value = useTableProvider({ data, error, isLoading, isFetching, isPlaceholderData, initialColumns })
 
   return <TableContext.Provider value={value}>{children}</TableContext.Provider>
 }

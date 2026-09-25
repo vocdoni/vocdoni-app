@@ -68,10 +68,13 @@ const columns = [
   { id: 'weight', label: 'Voting power (Weight)', visible: true },
 ]
 
-const renderMembers = (url = '/admin/memberbase/members/1') =>
+const renderMembers = (
+  url = '/admin/memberbase/members/1',
+  state: { isFetching?: boolean; isPlaceholderData?: boolean } = {}
+) =>
   render(
     <TestMemoryRouter initialEntries={[url]}>
-      <TableProvider data={members} initialColumns={columns}>
+      <TableProvider data={members} initialColumns={columns} {...state}>
         <MembersTable />
       </TableProvider>
     </TestMemoryRouter>
@@ -227,6 +230,17 @@ describe('MembersTable column sorting', () => {
     expect(screen.getByRole('columnheader', { name: 'Email' })).toHaveAttribute('aria-sort', 'descending')
     fireEvent.click(sortButton('Email'))
     expect(navigateMock).toHaveBeenLastCalledWith('/admin/memberbase/members/1?limit=30')
+  })
+
+  it('keeps the current rows in place, marked busy, while a new sort loads', () => {
+    renderMembers('/admin/memberbase/members/1?sortBy=name&sortOrder=asc', {
+      isFetching: true,
+      isPlaceholderData: true,
+    })
+
+    // The rows stay in place (no progress bar pushing the table down), only marked as busy.
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    expect(screen.getByRole('cell', { name: 'Ada' }).closest('tbody')).toHaveAttribute('aria-busy', 'true')
   })
 
   it('switches to another column ascending (single-column sort)', () => {

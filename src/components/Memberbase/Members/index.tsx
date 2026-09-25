@@ -11,7 +11,7 @@ import {
   Input,
   InputGroup,
   Menu,
-  Progress,
+  Spinner,
   Stack,
   Switch,
   Table,
@@ -695,12 +695,14 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
 }
 
 const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching } = useTable()
+  const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isEmpty = data.length === 0 && !isLoadingOrImporting
   return (
-    <Table.Body>
-      {isEmpty ? (
+    <Table.Body {...placeholderRowsStyle(isPlaceholderData)}>
+      {isLoading && !data.length ? (
+        <MembersLoadingRow />
+      ) : isEmpty ? (
         <EmptyMembers />
       ) : (
         data.map((member) => (
@@ -718,14 +720,15 @@ const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: Member
 }
 
 const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching } = useTable()
+  const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isEmpty = data.length === 0 && !isLoadingOrImporting
 
+  if (isLoading && !data.length) return <MembersLoading />
   if (isEmpty) return <EmptyMembersMessage />
 
   return (
-    <Stack gap={3}>
+    <Stack gap={3} {...placeholderRowsStyle(isPlaceholderData)}>
       {data.map((member) => (
         <MemberCard
           key={member.id}
@@ -763,6 +766,32 @@ const EmptyMembersMessage = () => {
               })}
       </Text>
     </Flex>
+  )
+}
+
+// While the next page or sort loads, the previous rows stay in place but faded, so the table
+// gives feedback without changing height.
+const placeholderRowsStyle = (isPlaceholderData: boolean) => ({
+  'aria-busy': isPlaceholderData || undefined,
+  opacity: isPlaceholderData ? 0.5 : 1,
+  transition: 'opacity 0.15s ease-out',
+})
+
+const MembersLoading = () => (
+  <Flex justify='center' align='center' height='150px'>
+    <Spinner size='sm' color='texts.subtle' />
+  </Flex>
+)
+
+const MembersLoadingRow = () => {
+  const { columns } = useTable()
+
+  return (
+    <Table.Row>
+      <Table.Cell colSpan={columns.filter((c) => c.visible).length + 2}>
+        <MembersLoading />
+      </Table.Cell>
+    </Table.Row>
   )
 }
 
@@ -935,9 +964,7 @@ const MembersTable = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
-  const { isLoading, isFetching, allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } =
-    useTable()
-  const isLoadingOrImporting = isLoading || isFetching
+  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } = useTable()
   const isMobile = useBreakpointValue({ base: true, md: false })
 
   const openDeleteSelected = (member?: Member) => {
@@ -995,13 +1022,6 @@ const MembersTable = () => {
             />
           </Flex>
         </Flex>
-        {isLoadingOrImporting && (
-          <Progress.Root size='xs' value={null}>
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
-        )}
         {isMobile ? (
           <Box p={4}>
             <Flex justify='space-between' align='center' mb={3}>

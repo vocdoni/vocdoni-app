@@ -148,6 +148,10 @@ export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedM
     ],
     enabled: !!organization?.address,
     queryFn: () => bearedFetch<MembersResponse>(fetchUrl),
+    // Keep showing the current rows while another page, sort or search loads, so the table doesn't
+    // collapse and jump. Only within the same organization, never another org's members.
+    placeholderData: (previousData, previousQuery) =>
+      previousQuery?.queryKey.includes(organization?.address) ? previousData : undefined,
   })
 }
 
