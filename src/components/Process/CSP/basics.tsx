@@ -64,6 +64,11 @@ const useTranslateCspError = () => {
   }
 }
 
+// Both auth steps are keyed under one prefix so their in-flight state outlives
+// the dialog that started them: closing the modal unmounts the step (and its
+// mutation observer), but not the request.
+const cspAuthMutationKey = ['csp', 'auth']
+
 // Step 0 — identify the participant against the process census. For auth-only
 // censuses (no 2FA fields) the provider already marks the voter connected.
 export const useCspAuth0 = () => {
@@ -71,6 +76,7 @@ export const useCspAuth0 = () => {
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, AuthRequest>({
+    mutationKey: [...cspAuthMutationKey, 0],
     mutationFn: async (participant) => {
       try {
         await auth0(participant)
@@ -81,17 +87,13 @@ export const useCspAuth0 = () => {
   })
 }
 
-// Keyed so the in-flight state outlives the dialog that started it: closing the
-// modal unmounts Step1 (and its mutation observer), but not the request.
-const cspAuth1MutationKey = ['csp', 'auth1']
-
 // Step 1 — confirm the 2FA challenge (OTP); marks the voter connected.
 export const useCspAuth1 = () => {
   const { auth1 } = useElectionAuth()
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, string>({
-    mutationKey: cspAuth1MutationKey,
+    mutationKey: [...cspAuthMutationKey, 1],
     mutationFn: async (code) => {
       try {
         await auth1(code)
@@ -102,9 +104,10 @@ export const useCspAuth1 = () => {
   })
 }
 
-// true while any OTP verification is in flight, whichever Identify dialog (open
-// or already closed) submitted it.
-export const useCspAuth1Pending = () => useIsMutating({ mutationKey: cspAuth1MutationKey }) > 0
+// true while any auth step (identify or OTP) is in flight, whichever Identify
+// dialog (open or already closed) submitted it. The flow is shared by every
+// button, so a late completion would move it under whichever dialog is open.
+export const useCspAuthPending = () => useIsMutating({ mutationKey: cspAuthMutationKey }) > 0
 
 // Resend the pending 2FA challenge to the voter's contact.
 export const useCspResend = () => {

@@ -114,7 +114,7 @@ vi.mock('./basics', () => ({
     isPending: false,
     isError: false,
   }),
-  useCspAuth1Pending: () => verification.pending,
+  useCspAuthPending: () => verification.pending,
   useCspResend: () => ({
     mutateAsync: resendMutateAsync,
     isPending: false,

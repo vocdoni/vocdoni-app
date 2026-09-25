@@ -17,7 +17,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useCspAuthContext } from './CSPStepsProvider'
-import { useCspAuth1, useCspAuth1Pending, useCspResend } from './basics'
+import { useCspAuth1, useCspAuthPending, useCspResend } from './basics'
 
 // Define the form data structure
 type CSPStep1FormData = {
@@ -39,7 +39,7 @@ export const Step1Base = () => {
     },
   })
   const auth = useCspAuth1()
-  const verifying = useCspAuth1Pending()
+  const authPending = useCspAuthPending()
 
   const handleResend = async () => {
     try {
@@ -182,11 +182,12 @@ export const Step1Base = () => {
                         <Button
                           variant='link'
                           verticalAlign='unset'
-                          // Starting over mid-verification would let the in-flight
-                          // code still connect the voter behind the reset. Not
-                          // auth.isPending: that belongs to this dialog instance,
-                          // and the request may come from a closed one.
-                          disabled={verifying}
+                          // Starting over mid-request would let the in-flight
+                          // step still connect the voter or move the flow behind
+                          // the reset. Not auth.isPending: that belongs to this
+                          // dialog instance, and the request may come from a
+                          // closed one.
+                          disabled={authPending}
                           onClick={resetFlow}
                         />
                       ),

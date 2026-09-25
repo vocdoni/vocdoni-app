@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
-import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0 } from './basics'
+import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0, useCspAuthPending } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
 
 export const Step0Base = () => {
@@ -33,6 +33,9 @@ export const Step0Base = () => {
     formState: { errors },
   } = useForm<CSPStep0FormData>()
   const auth = useCspAuth0()
+  // Shared across dialogs: an identify request sent from an Identify button that
+  // was closed mid-request must block a second one from the other button.
+  const authPending = useCspAuthPending()
   const is2Factor = twoFaFields.length > 0
 
   const appEnv = useAppEnv()
@@ -227,7 +230,7 @@ export const Step0Base = () => {
           <Button
             type='submit'
             w='full'
-            loading={auth.isPending}
+            loading={authPending}
             mt={2}
             aria-label={
               is2Factor
