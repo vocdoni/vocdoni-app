@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react'
 import { render, screen } from '~src/test-utils'
-import { VotingReportPdfButton } from './VotingReportPdfButton'
 import { VotingReportPdfMenuItem } from './VotingReportPdfMenuItem'
 import { createElection, createQuestion } from './__fixtures__'
 
@@ -43,12 +42,7 @@ describe('VotingReportPdfMenuItem', () => {
   it('hides the download action while the voting process is still ongoing', () => {
     const ongoingElection = createElection({ questions: [createQuestion({ status: 'ONGOING' })] })
 
-    render(
-      <>
-        <VotingReportPdfButton election={ongoingElection} />
-        <VotingReportPdfMenuItem election={ongoingElection} />
-      </>
-    )
+    render(<VotingReportPdfMenuItem election={ongoingElection} />)
 
     expect(screen.queryByRole('button', { name: /election report \(pdf\)/i })).toBeNull()
   })

@@ -92,26 +92,16 @@ const createProcess = (id: string, status: QuestionStatus, anonymous = false): V
 })
 
 describe('ProcessView route helpers', () => {
-  it('uses questions as default tab for base process route', () => {
-    expect(getProcessViewTabFromPath('/admin/process/0xabc')).toBe('questions')
+  it.each([
+    ['/admin/process/0xabc', 'questions'],
+    ['/admin/process/0xabc/', 'questions'],
+    ['/admin/process/0xabc/results', 'results'],
+    ['/admin/process/0xabc/results/', 'results'],
+  ])('maps %s to the %s tab', (pathname, tab) => {
+    expect(getProcessViewTabFromPath(pathname)).toBe(tab)
   })
 
-  it('uses questions as default tab for base process route with trailing slash', () => {
-    expect(getProcessViewTabFromPath('/admin/process/0xabc/')).toBe('questions')
-  })
-
-  it('uses results tab when path ends with /results', () => {
-    expect(getProcessViewTabFromPath('/admin/process/0xabc/results')).toBe('results')
-  })
-
-  it('uses results tab when path ends with /results and trailing slash', () => {
-    expect(getProcessViewTabFromPath('/admin/process/0xabc/results/')).toBe('results')
-  })
-
-  it('builds results route from the declared dashboard results route', () => {
-    expect(getProcessViewPathForTab('0xabc', 'results')).toBe('/admin/process/0xabc/results')
-  })
-
+  // The results path is asserted through the navigation tests below.
   it('builds questions route from the declared dashboard process route', () => {
     expect(getProcessViewPathForTab('0xabc', 'questions')).toBe('/admin/process/0xabc')
   })

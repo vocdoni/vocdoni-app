@@ -27,6 +27,13 @@ describe('single-process homepage route', () => {
         id: '0xprocess',
       },
     })
+
+    expect(route(makeContext('/es/', '0xprocess'))).toEqual({
+      routeParams: {
+        lang: 'es',
+        id: '0xprocess',
+      },
+    })
   })
 
   it('never matches when HOME_PROCESS_ID is unset', async () => {
@@ -34,6 +41,8 @@ describe('single-process homepage route', () => {
 
     expect(route(makeContext('/'))).toBe(false)
     expect(route(makeContext('/en'))).toBe(false)
+    // A blank env value counts as unset.
+    expect(route(makeContext('/en', '   '))).toBe(false)
   })
 
   it('leaves every non-root path alone', async () => {
