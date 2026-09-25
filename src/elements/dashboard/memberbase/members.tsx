@@ -65,7 +65,7 @@ const Members = () => {
   const { t } = useTranslation()
   const columns = useMemberColumns()
   const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
-  const { data, isLoading, isFetching, error } = usePaginatedMembers({ search: debouncedSearch })
+  const { data, isLoading, isFetching, isPlaceholderData, error } = usePaginatedMembers({ search: debouncedSearch })
 
   const members = data?.members || []
   const pagination = data?.pagination || {
@@ -97,7 +97,14 @@ const Members = () => {
         })
 
   return (
-    <TableProvider data={members} initialColumns={columns} isLoading={isLoading} isFetching={isFetching} error={error}>
+    <TableProvider
+      data={members}
+      initialColumns={columns}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      isPlaceholderData={isPlaceholderData}
+      error={error}
+    >
       <RoutedPaginationProvider path={Routes.dashboard.memberbase.members} pagination={pagination}>
         {showAlert && <ListStateAlert show status={alertStatus} title={alertTitle} description={alertDescription} />}
         <MembersTable />
