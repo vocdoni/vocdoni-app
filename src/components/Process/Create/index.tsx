@@ -27,6 +27,7 @@ import type {
 } from '@vocdoni/api-types'
 import { addDays, parse } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuRotateCcw, LuSettings } from 'react-icons/lu'
@@ -60,7 +61,9 @@ import { CreateSidebar } from './Sidebar'
 import { useProcessTemplates } from './TemplateProvider'
 import { defaultProcessValues, Option, Process, SelectorTypes, TemplateConfigs, TemplateTypes } from './common'
 import { votingProcessToForm } from './draft-mapping'
+import { useCensusSetupToast } from './useCensusSetupToast'
 import { getTwoFaFields } from './VoterAuthentication/utils'
+import { VoterAuthDialogProvider } from './VoterAuthentication/VoterAuthDialogContext'
 
 type ConfirmOnNavigateOptions = {
   isDirty: boolean
@@ -706,6 +709,7 @@ const ProcessCreateView = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
+  const showCensusSetupToast = useCensusSetupToast()
   const methods = useForm<Process>({
     defaultValues: {
       ...defaultProcessValues,
@@ -930,8 +934,13 @@ const ProcessCreateView = () => {
     })
 
     if (hasSidebarErrors) {
-      openSidebar()
+      // Commit the drawer before returning: react-hook-form focuses the first
+      // failing field right after this handler, and a closed (inert) drawer
+      // can't take focus, so on mobile the failing setting never got it.
+      flushSync(openSidebar)
     }
+
+    showCensusSetupToast(errors)
   }
 
   if (!formDraftLoaded) {
@@ -1080,7 +1089,9 @@ const ProcessCreateView = () => {
 
 export const ProcessCreate = () => (
   <SidebarVisibilityProvider>
-    <ProcessCreateView />
+    <VoterAuthDialogProvider>
+      <ProcessCreateView />
+    </VoterAuthDialogProvider>
   </SidebarVisibilityProvider>
 )
 

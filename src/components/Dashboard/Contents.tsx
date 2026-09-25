@@ -83,11 +83,18 @@ export const Sidebar = ({ show, ...props }: SidebarProps) => (
     top={0}
     bottom={0}
     zIndex={10}
-    transition='transform 0.2s ease, opacity 0.2s ease, visibility 0.2s ease'
+    // `visibility` flips at once on open and waits out the slide on close: an
+    // opening panel must take focus straight away (a blocked publish moves it to
+    // the failing setting), and a transitioned one stays hidden for a while.
+    transition={
+      show
+        ? 'transform 0.2s ease, opacity 0.2s ease, visibility 0s'
+        : 'transform 0.2s ease, opacity 0.2s ease, visibility 0s linear 0.2s'
+    }
     transform={show ? 'translateX(0)' : 'translateX(100%)'}
     opacity={show ? 1 : 0}
     // Closed, `opacity: 0` alone would leave the panel focusable and announced.
-    // `visibility` (transitioned, so it still slides out) fixes that everywhere
+    // `visibility` (delayed on close, so it still slides out) fixes that everywhere
     // except react-select, which forces `visibility: visible` back on its own
     // input wrapper — hence `inert` too, which nothing inside can override.
     visibility={show ? 'visible' : 'hidden'}

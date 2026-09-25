@@ -1509,11 +1509,29 @@
     "auto_start": "Démarrer immédiatement",
     "basic_configuration": "Configuration de base",
     "census": {
+      "auth_missing": {
+        "action": "Configurer",
+        "description": "Choisissez comment les électeurs s'identifieront, puis publiez à nouveau.",
+        "title": "L'authentification des électeurs n'est pas configurée"
+      },
       "group": {
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
       },
+      "group_missing": {
+        "description": "Sélectionnez un groupe de membres et configurez l'authentification des électeurs, puis publiez à nouveau.",
+        "title": "Choisissez qui peut voter"
+      },
       "memberbase": {
         "label": "Sélectionnez un groupe de membres pour créer la liste électorale"
+      },
+      "status": {
+        "ready": "Prête",
+        "steps_left_one": "{{ count }} étape restante",
+        "steps_left_many": "{{ count }} étapes restantes",
+        "steps_left_other": "{{ count }} étapes restantes"
+      },
+      "voter_auth": {
+        "label": "Définissez comment les électeurs prouvent leur identité"
       }
     },
     "census_creation": "Création de la liste électorale",
@@ -2076,6 +2094,11 @@
     "level_strong": "Fort",
     "level_weak": "Faible",
     "no_group_description": "Veuillez d'abord sélectionner un groupe pour configurer l'authentification.",
+    "pending": {
+      "description": "Choisissez les données de membre que les électeurs doivent saisir pour voter, comme leur pièce d'identité ou leur numéro d'adhérent.",
+      "error_title": "Indispensable pour publier",
+      "title": "Obligatoire avant la publication"
+    },
     "security_level": "Bonne sécurité",
     "security_recommendation_1": "Pour une meilleure sécurité, nous recommandons de sélectionner au moins 2 identifiants.",
     "security_recommendation_2_one": "Vous avez sélectionné {{ count }} identifiant, ce qui offre une bonne sécurité pour vos électeurs.",

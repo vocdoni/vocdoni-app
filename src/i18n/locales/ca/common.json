@@ -1509,11 +1509,29 @@
     "auto_start": "Comença immediatament",
     "basic_configuration": "Configuració bàsica",
     "census": {
+      "auth_missing": {
+        "action": "Configura",
+        "description": "Tria com s'identificaran els votants i torna a publicar.",
+        "title": "L'autenticació dels votants no està configurada"
+      },
       "group": {
         "no_groups": "Per començar una votació, primer has de crear un grup de votants elegibles a partir de la teva base de membres. <1>Crea'n un aquí</1>."
       },
+      "group_missing": {
+        "description": "Selecciona un grup de membres, configura l'autenticació dels votants i torna a publicar.",
+        "title": "Tria qui pot votar"
+      },
       "memberbase": {
         "label": "Selecciona un grup de membres per crear el cens"
+      },
+      "status": {
+        "ready": "A punt",
+        "steps_left_one": "Falta {{ count }} pas",
+        "steps_left_many": "Falten {{ count }} passos",
+        "steps_left_other": "Falten {{ count }} passos"
+      },
+      "voter_auth": {
+        "label": "Defineix com demostraran els votants qui són"
       }
     },
     "census_creation": "Creació del cens",
@@ -2076,6 +2094,11 @@
     "level_strong": "Fort",
     "level_weak": "Feble",
     "no_group_description": "Si us plau, selecciona primer un grup per configurar l'autenticació.",
+    "pending": {
+      "description": "Tria quines dades de membre hauran d'introduir els votants per votar, com ara el document d'identitat o el número de soci.",
+      "error_title": "Ho necessites per publicar",
+      "title": "Obligatori abans de publicar"
+    },
     "security_level": "Bona seguretat",
     "security_recommendation_1": "Per a una millor seguretat, recomanem seleccionar almenys 2 credencials.",
     "security_recommendation_2_one": "Has seleccionat {{ count }} credencials, cosa que proporciona bona seguretat als teus votants.",

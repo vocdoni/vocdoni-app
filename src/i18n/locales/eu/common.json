@@ -1485,11 +1485,28 @@
     "auto_start": "Hasi berehala",
     "basic_configuration": "Oinarrizko konfigurazioa",
     "census": {
+      "auth_missing": {
+        "action": "Konfiguratu",
+        "description": "Aukeratu hautesleak nola identifikatuko diren, eta argitaratu berriro.",
+        "title": "Hautesleen autentifikazioa ez dago konfiguratuta"
+      },
       "group": {
         "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },
+      "group_missing": {
+        "description": "Hautatu kide-talde bat, konfiguratu hautesleen autentifikazioa eta argitaratu berriro.",
+        "title": "Aukeratu nork bozka dezakeen"
+      },
       "memberbase": {
         "label": "Hautatu kide-talde bat errolda sortzeko"
+      },
+      "status": {
+        "ready": "Prest",
+        "steps_left_one": "{{ count }} urrats falta da",
+        "steps_left_other": "{{ count }} urrats falta dira"
+      },
+      "voter_auth": {
+        "label": "Zehaztu hautesleek nola frogatuko duten nor diren"
       }
     },
     "census_creation": "Erroldaren sorrera",
@@ -2050,6 +2067,11 @@
     "level_strong": "Indartsua",
     "level_weak": "Ahula",
     "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
+    "pending": {
+      "description": "Aukeratu hautesleek bozkatzeko zein kide-datu sartu behar dituzten, adibidez NANa edo kide-zenbakia.",
+      "error_title": "Hau behar duzu argitaratzeko",
+      "title": "Argitaratu aurretik beharrezkoa"
+    },
     "security_level": "Segurtasun ona",
     "security_recommendation_1": "Segurtasun handiagorako, gutxienez 2 kredentzial hautatzea gomendatzen dugu.",
     "security_recommendation_2_one": "{{ count }} kredentzial hautatu duzu, eta horrek segurtasun ona eskaintzen die zure hautesleei.",
