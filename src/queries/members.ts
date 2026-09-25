@@ -1,10 +1,11 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '~src/queries/pagination'
-import { useOutletContext, useParams, useSearchParams } from 'react-router'
+import { generatePath, useNavigate, useOutletContext, useParams, useSearchParams } from 'react-router'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { MemberbaseTabsContext } from '~components/Memberbase'
+import { Routes } from '~routes'
 import { QueryKeys } from './keys'
 
 export type Member = {
@@ -72,19 +73,79 @@ export const useUrlPagination = () => {
   }
 }
 
+// Member fields the backend can order the list by (`sortBy` query param).
+export const MEMBER_SORT_FIELDS = ['name', 'surname', 'email', 'memberNumber'] as const
+
+export type MemberSortField = (typeof MEMBER_SORT_FIELDS)[number]
+
+export type SortOrder = 'asc' | 'desc'
+
+export type MemberSort = {
+  sortBy: MemberSortField
+  sortOrder: SortOrder
+} | null
+
+export const isMemberSortField = (value: unknown): value is MemberSortField =>
+  MEMBER_SORT_FIELDS.includes(value as MemberSortField)
+
+// Header click cycle: asc -> desc -> unsorted. A different column always starts at asc.
+export const nextMemberSort = (current: MemberSort, field: MemberSortField): MemberSort => {
+  if (current?.sortBy !== field) return { sortBy: field, sortOrder: 'asc' }
+  if (current.sortOrder === 'asc') return { sortBy: field, sortOrder: 'desc' }
+  return null
+}
+
+// The member sort lives in the URL next to `limit`; unknown values are ignored so a
+// hand-edited URL falls back to the server's default order instead of a 400.
+export const useUrlMemberSort = () => {
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const sortBy = searchParams.get('sortBy')
+  const sortOrder: SortOrder = searchParams.get('sortOrder') === 'desc' ? 'desc' : 'asc'
+  const sort: MemberSort = isMemberSortField(sortBy) ? { sortBy, sortOrder } : null
+
+  const toggleSort = (field: MemberSortField) => {
+    const next = nextMemberSort(sort, field)
+    const params = new URLSearchParams(searchParams)
+    if (next) {
+      params.set('sortBy', next.sortBy)
+      params.set('sortOrder', next.sortOrder)
+    } else {
+      params.delete('sortBy')
+      params.delete('sortOrder')
+    }
+    const query = params.toString()
+    // A new order invalidates the current page, so go back to the first one.
+    navigate(`${generatePath(Routes.dashboard.memberbase.members, { page: '1' })}${query ? `?${query}` : ''}`)
+  }
+
+  return { sort, toggleSort }
+}
+
 export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedMembersProps) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
   const { page, limit } = useUrlPagination()
+  const { sort: urlSort } = useUrlMemberSort()
 
   const effectivePage = showAll ? 1 : page
   const effectiveLimit = showAll ? 0 : limit
+  // showAll callers only need totals or the full set, so skip the sort to share one cached query.
+  const sort = showAll ? null : urlSort
 
   const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)
-  const fetchUrl = `${baseUrl}?page=${effectivePage}&limit=${effectiveLimit}&search=${search}`
+  const sortQuery = sort ? `&sortBy=${sort.sortBy}&sortOrder=${sort.sortOrder}` : ''
+  const fetchUrl = `${baseUrl}?page=${effectivePage}&limit=${effectiveLimit}&search=${search}${sortQuery}`
 
   return useQuery<MembersResponse, Error, PaginatedMembers>({
-    queryKey: [...QueryKeys.organization.members(organization?.address), effectivePage, effectiveLimit, search],
+    queryKey: [
+      ...QueryKeys.organization.members(organization?.address),
+      effectivePage,
+      effectiveLimit,
+      search,
+      sort?.sortBy ?? null,
+      sort?.sortOrder ?? null,
+    ],
     enabled: !!organization?.address,
     queryFn: () => bearedFetch<MembersResponse>(fetchUrl),
   })

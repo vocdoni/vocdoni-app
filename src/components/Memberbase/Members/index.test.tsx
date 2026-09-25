@@ -1,4 +1,4 @@
-import { render, screen } from '~src/test-utils'
+import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { TableProvider } from '../TableProvider'
 import MembersTable from './index'
 
@@ -36,11 +36,13 @@ vi.mock('./Manager', () => ({
   MemberManager: () => null,
 }))
 
+const navigateMock = vi.hoisted(() => vi.fn())
+
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
   return {
     ...actual,
-    useNavigate: () => vi.fn(),
+    useNavigate: () => navigateMock,
     useOutletContext: () => ({
       search: '',
       setSearch: vi.fn(),
@@ -61,13 +63,18 @@ const columns = [
   { id: 'name', label: 'First Name', visible: true },
   { id: 'surname', label: 'Last Name', visible: true },
   { id: 'email', label: 'Email', visible: true },
+  { id: 'phone', label: 'Phone', visible: true },
+  { id: 'memberNumber', label: 'Member Number', visible: true },
+  { id: 'weight', label: 'Voting power (Weight)', visible: true },
 ]
 
-const renderMembers = () =>
+const renderMembers = (url = '/admin/memberbase/members/1') =>
   render(
-    <TableProvider data={members} initialColumns={columns}>
-      <MembersTable />
-    </TableProvider>
+    <TestMemoryRouter initialEntries={[url]}>
+      <TableProvider data={members} initialColumns={columns}>
+        <MembersTable />
+      </TableProvider>
+    </TestMemoryRouter>
   )
 
 describe('MembersTable layout', () => {
@@ -154,5 +161,79 @@ describe('MembersTable session replay exclusion', () => {
     } finally {
       Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
     }
+  })
+})
+
+describe('MembersTable column sorting', () => {
+  const original = window.matchMedia
+
+  beforeEach(() => {
+    navigateMock.mockClear()
+    // Desktop widths, so the table headers render (see the layout tests above).
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    })
+  })
+
+  afterEach(() => {
+    Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
+  })
+
+  const sortButton = (label: string) => screen.queryByRole('button', { name: label })
+
+  it('only makes first name, last name, email and member number sortable', () => {
+    renderMembers()
+
+    for (const label of ['First Name', 'Last Name', 'Email', 'Member Number']) {
+      expect(sortButton(label)).toBeInTheDocument()
+    }
+    for (const label of ['Phone', 'Voting power (Weight)']) {
+      expect(screen.getByRole('columnheader', { name: label })).toBeInTheDocument()
+      expect(sortButton(label)).not.toBeInTheDocument()
+    }
+    // Nothing is sorted by default, so no header claims a sort direction.
+    for (const header of screen.getAllByRole('columnheader')) {
+      expect(header).not.toHaveAttribute('aria-sort')
+    }
+  })
+
+  it('sorts an unsorted column ascending, back on page 1 and keeping other params', () => {
+    renderMembers('/admin/memberbase/members/3?limit=20')
+
+    fireEvent.click(sortButton('Last Name'))
+
+    expect(navigateMock).toHaveBeenCalledWith('/admin/memberbase/members/1?limit=20&sortBy=surname&sortOrder=asc')
+  })
+
+  it('marks the active column and cycles it asc -> desc -> unsorted', () => {
+    const { unmount } = renderMembers('/admin/memberbase/members/2?sortBy=email&sortOrder=asc')
+
+    expect(screen.getByRole('columnheader', { name: 'Email' })).toHaveAttribute('aria-sort', 'ascending')
+    fireEvent.click(sortButton('Email'))
+    expect(navigateMock).toHaveBeenLastCalledWith('/admin/memberbase/members/1?sortBy=email&sortOrder=desc')
+    unmount()
+
+    renderMembers('/admin/memberbase/members/2?limit=30&sortBy=email&sortOrder=desc')
+    expect(screen.getByRole('columnheader', { name: 'Email' })).toHaveAttribute('aria-sort', 'descending')
+    fireEvent.click(sortButton('Email'))
+    expect(navigateMock).toHaveBeenLastCalledWith('/admin/memberbase/members/1?limit=30')
+  })
+
+  it('switches to another column ascending (single-column sort)', () => {
+    renderMembers('/admin/memberbase/members/1?sortBy=name&sortOrder=desc')
+
+    fireEvent.click(sortButton('Member Number'))
+
+    expect(navigateMock).toHaveBeenCalledWith('/admin/memberbase/members/1?sortBy=memberNumber&sortOrder=asc')
   })
 })

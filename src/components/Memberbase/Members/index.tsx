@@ -32,6 +32,9 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import {
+  LuArrowDown,
+  LuArrowUp,
+  LuArrowUpDown,
   LuEllipsis,
   LuListPlus,
   LuPlus,
@@ -52,10 +55,17 @@ import { Routes } from '~routes'
 import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
-import { Member, useDeleteMembers, usePaginatedMembers } from '~src/queries/members'
+import {
+  isMemberSortField,
+  Member,
+  MemberSortField,
+  useDeleteMembers,
+  usePaginatedMembers,
+  useUrlMemberSort,
+} from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { MemberbaseTabsContext } from '..'
-import { useTable } from '../TableProvider'
+import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
 import { MemberManager } from './Manager'
 import { maskIfNeeded } from './maskIfNeeded'
@@ -770,6 +780,32 @@ const EmptyMembers = () => {
   )
 }
 
+const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: MemberSortField }) => {
+  const { t } = useTranslation()
+  const { sort, toggleSort } = useUrlMemberSort()
+  const order = sort?.sortBy === field ? sort.sortOrder : null
+  const SortIcon = order === 'asc' ? LuArrowUp : order === 'desc' ? LuArrowDown : LuArrowUpDown
+
+  return (
+    // aria-sort goes on the active column only, as the ARIA spec recommends.
+    <Table.ColumnHeader aria-sort={order ? (order === 'asc' ? 'ascending' : 'descending') : undefined}>
+      <Button
+        variant='plain'
+        size='sm'
+        px={0}
+        h='auto'
+        minW={0}
+        fontWeight='inherit'
+        onClick={() => toggleSort(field)}
+        title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
+      >
+        {column.label}
+        <Icon as={SortIcon} aria-hidden color={order ? undefined : 'texts.subtle'} />
+      </Button>
+    </Table.ColumnHeader>
+  )
+}
+
 const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
   const { isSelected, toggleOne, columns } = useTable()
 
@@ -1001,9 +1037,13 @@ const MembersTable = () => {
                   </Table.ColumnHeader>
                   {columns
                     .filter((col) => col.visible)
-                    .map((col) => (
-                      <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
-                    ))}
+                    .map((col) =>
+                      isMemberSortField(col.id) ? (
+                        <SortableColumnHeader key={col.id} column={col} field={col.id} />
+                      ) : (
+                        <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
+                      )
+                    )}
                   <Table.ColumnHeader width='50px'>
                     <ColumnManager />
                   </Table.ColumnHeader>

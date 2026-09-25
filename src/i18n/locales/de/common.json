@@ -1056,6 +1056,7 @@
       "select_process": "Prozess auswählen",
       "selected_one": "Ausgewählt: <strong>{{count}} Mitglied</strong>",
       "selected_other": "Ausgewählt: <strong>{{count}} Mitglieder</strong>",
+      "sort_by": "Nach {{column}} sortieren",
       "toggle_column": "Spalte {{column}} ein-/ausblenden"
     }
   },
