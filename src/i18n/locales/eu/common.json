@@ -224,6 +224,7 @@
       "resend_failed": "Errorea kodea berbidaltzean",
       "resend_success": "Kodea behar bezala berbidali da",
       "resend_text": "Ez duzu kodea jaso? <resendBtn>Bidali berriro</resendBtn>",
+      "start_over_text": "Datu okerrak? <restartBtn>Hasi berriro</restartBtn>",
       "subtitle": "Sartu egiaztapen-kodea",
       "title": "Autentifikazioa",
       "validation": {

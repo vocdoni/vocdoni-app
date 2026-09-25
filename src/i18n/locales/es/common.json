@@ -226,6 +226,7 @@
       "resend_failed": "Error al reenviar el código",
       "resend_success": "Código reenviado correctamente",
       "resend_text": "¿No has recibido el código? <resendBtn>Vuelve a enviarlo</resendBtn>",
+      "start_over_text": "¿Datos incorrectos? <restartBtn>Vuelve a empezar</restartBtn>",
       "subtitle": "Introduce el código de verificación",
       "title": "Autenticación",
       "validation": {

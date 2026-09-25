@@ -1,7 +1,8 @@
 import { Button, CloseButton, Dialog, Portal } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
+import type { ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { CspAuthProvider, useCspAuthContext } from './CSPStepsProvider'
+import { CspAuthProvider, useCspAuthContext, useOptionalCspAuthContext } from './CSPStepsProvider'
 import { Step0Base } from './Step0'
 import { Step1Base } from './Step1'
 
@@ -36,21 +37,41 @@ export const CspAuthModal = () => {
   )
 }
 
-export const CspAuth = () => {
+// Scopes one identify flow to its children. Mount it around every Identify
+// button of a page so they all resume the same step: with one provider per
+// button, closing the OTP modal and reopening it from a different button
+// restarted the flow from scratch.
+export const CspAuthSession = ({ children }: { children: ReactNode }) => {
   const { election } = useElection()
-
-  if (!election) return null
 
   // The v2 process read carries the census auth configuration inline
   // (CensusSpec.authFields/twoFaFields) — no separate census bundle fetch.
+  const census = election?.census
+  const censusData = census ? { authFields: census.authFields ?? [], twoFaFields: census.twoFaFields ?? [] } : null
+
+  // Always mount the provider, even before the process loads: swapping it in
+  // conditionally would change the element type around `children` and remount
+  // the whole wrapped page once the election arrives.
   return (
-    <CspAuthProvider
-      censusData={{
-        authFields: election.census?.authFields ?? [],
-        twoFaFields: election.census?.twoFaFields ?? [],
-      }}
-    >
-      <CspAuthModal />
+    <CspAuthProvider censusData={censusData} processId={election?.id}>
+      {children}
     </CspAuthProvider>
+  )
+}
+
+export const CspAuth = () => {
+  const { election } = useElection()
+  const session = useOptionalCspAuthContext()
+
+  if (!election) return null
+
+  // Only reuse a session scoped to this same process: a CspAuth under a nested
+  // ElectionProvider must not borrow another process' census fields and step.
+  if (session?.processId === election.id) return <CspAuthModal />
+
+  return (
+    <CspAuthSession>
+      <CspAuthModal />
+    </CspAuthSession>
   )
 }

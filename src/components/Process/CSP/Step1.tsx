@@ -17,7 +17,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useCspAuthContext } from './CSPStepsProvider'
-import { useCspAuth1, useCspResend } from './basics'
+import { useCspAuth1, useCspAuthPending, useCspResend, useIsCspAuthBusy } from './basics'
 
 // Define the form data structure
 type CSPStep1FormData = {
@@ -25,7 +25,7 @@ type CSPStep1FormData = {
 }
 
 export const Step1Base = () => {
-  const { authData } = useCspAuthContext()
+  const { authData, resetFlow } = useCspAuthContext()
   const resend = useCspResend()
   const { t } = useTranslation()
   const toast = useToast()
@@ -39,8 +39,14 @@ export const Step1Base = () => {
     },
   })
   const auth = useCspAuth1()
+  // Shared across dialogs: a request may come from an Identify button that was
+  // closed mid-request, so this dialog's own isPending flags aren't enough.
+  const authPending = useCspAuthPending()
+  const isAuthBusy = useIsCspAuthBusy()
 
   const handleResend = async () => {
+    if (isAuthBusy()) return
+
     try {
       // The pending auth token lives in the process session; only the contact
       // destination is ours to provide.
@@ -68,6 +74,9 @@ export const Step1Base = () => {
   }
 
   const onSubmit = async (values: CSPStep1FormData) => {
+    // Also guards the PIN auto-submit, which bypasses the disabled button.
+    if (isAuthBusy()) return
+
     const code = values.code.join('')
 
     try {
@@ -163,7 +172,32 @@ export const Step1Base = () => {
                           variant='link'
                           verticalAlign='unset'
                           loading={resend.isPending}
+                          disabled={authPending}
                           onClick={handleResend}
+                        />
+                      ),
+                    }}
+                  />
+                </Text>
+                {/* Every Identify button on the page resumes this step, so this
+                    is the only way back to step 0 short of a reload (e.g. a
+                    mistyped contact, or a challenge that expired). */}
+                <Text>
+                  <Trans
+                    i18nKey='csp.step1.start_over_text'
+                    defaults='Wrong details? <restartBtn>Start over</restartBtn>'
+                    components={{
+                      restartBtn: (
+                        <Button
+                          variant='link'
+                          verticalAlign='unset'
+                          // Starting over mid-request would let the in-flight
+                          // step still connect the voter or move the flow behind
+                          // the reset. Not auth.isPending: that belongs to this
+                          // dialog instance, and the request may come from a
+                          // closed one.
+                          disabled={authPending}
+                          onClick={resetFlow}
                         />
                       ),
                     }}
@@ -179,7 +213,7 @@ export const Step1Base = () => {
             </Alert>
           )}
 
-          <Button type='submit' w='full' loading={auth.isPending}>
+          <Button type='submit' w='full' loading={authPending}>
             {t('csp.authenticate', { defaultValue: 'Authenticate' })}
           </Button>
           <Text fontSize='sm' color='texts.subtle'>

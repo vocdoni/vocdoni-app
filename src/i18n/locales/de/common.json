@@ -224,6 +224,7 @@
       "resend_failed": "Code erneut senden fehlgeschlagen",
       "resend_success": "Code erfolgreich erneut gesendet",
       "resend_text": "Code nicht erhalten? <resendBtn>Erneut senden</resendBtn>",
+      "start_over_text": "Falsche Angaben? <restartBtn>Neu beginnen</restartBtn>",
       "subtitle": "Bestätigungscode eingeben",
       "title": "Authentifizierung",
       "validation": {

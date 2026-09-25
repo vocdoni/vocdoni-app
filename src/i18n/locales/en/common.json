@@ -224,6 +224,7 @@
       "resend_failed": "Failed to resend code",
       "resend_success": "Code resent successfully",
       "resend_text": "Didn't receive the code? <resendBtn>Resend it</resendBtn>",
+      "start_over_text": "Wrong details? <restartBtn>Start over</restartBtn>",
       "subtitle": "Enter the verification code",
       "title": "Authentication",
       "validation": {

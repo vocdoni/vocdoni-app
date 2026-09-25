@@ -93,6 +93,8 @@ vi.mock('@chakra-ui/react', async () => {
 
 const mutateAsync = vi.fn()
 const resendMutateAsync = vi.fn()
+const resetFlow = vi.fn()
+const verification = { pending: false }
 
 const getPinInputs = () => screen.getAllByRole<HTMLInputElement>('textbox', { name: /pin code \d of 6/i })
 
@@ -102,6 +104,7 @@ vi.mock('./CSPStepsProvider', () => ({
       email: 'user@example.com',
       phone: '+34600000000',
     },
+    resetFlow,
   }),
 }))
 
@@ -111,6 +114,8 @@ vi.mock('./basics', () => ({
     isPending: false,
     isError: false,
   }),
+  useCspAuthPending: () => verification.pending,
+  useIsCspAuthBusy: () => () => verification.pending,
   useCspResend: () => ({
     mutateAsync: resendMutateAsync,
     isPending: false,
@@ -123,6 +128,55 @@ describe('Step1Base', () => {
     mutateAsync.mockResolvedValue(undefined)
     resendMutateAsync.mockReset()
     resendMutateAsync.mockResolvedValue(undefined)
+    resetFlow.mockReset()
+    verification.pending = false
+  })
+
+  it('goes back to step 0 and drops the stored contact when starting over', async () => {
+    const user = userEvent.setup()
+
+    render(<Step1Base />)
+
+    await user.click(screen.getByRole('button', { name: 'Start over' }))
+
+    expect(resetFlow).toHaveBeenCalledTimes(1)
+    expect(mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it('does not start over while a code verification is in flight', () => {
+    // Pending state comes from the shared mutation cache, not this instance:
+    // the code may have been submitted from a dialog that is already closed.
+    verification.pending = true
+
+    render(<Step1Base />)
+
+    expect(screen.getByRole('button', { name: 'Start over' })).toBeDisabled()
+  })
+
+  it('sends no second code or resend while a request from any dialog is in flight', async () => {
+    const user = userEvent.setup()
+    verification.pending = true
+
+    const { container } = render(<Step1Base />)
+
+    // While loading, the submit shows a spinner in place of its label.
+    expect(container.querySelector('button[type="submit"]')).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Resend it' })).toBeDisabled()
+
+    // The PIN auto-submits on the sixth digit, bypassing the disabled button.
+    const pinInputs = getPinInputs()
+    await user.click(pinInputs[0])
+    await user.paste('123456')
+
+    await waitFor(() =>
+      expect(
+        getPinInputs()
+          .map((input) => input.value)
+          .join('')
+      ).toBe('123456')
+    )
+    expect(mutateAsync).not.toHaveBeenCalled()
+    expect(resendMutateAsync).not.toHaveBeenCalled()
   })
 
   it('renders the authenticate button', async () => {

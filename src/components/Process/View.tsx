@@ -34,6 +34,7 @@ import { BallotBoxAnimated } from '../Layout/BallotBoxAnimated'
 import { ManageProcessLink } from './ManageProcessLink'
 import ProcessAside, { VoteButton } from './Aside'
 import { CreatedBy } from './CreatedBy'
+import { CspAuthSession } from './CSP/CSPAuthModal'
 import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
@@ -203,74 +204,78 @@ export const ProcessView = () => {
   }, [hasVoted])
 
   return (
-    <Grid
-      templateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
-      gap={10}
-      alignItems='start'
-      mx='auto'
-      minW={{ base: 'full', xl: 'voting.contents.min' }}
-      maxW='voting.contents.max'
-    >
-      <GridItem>
-        <Flex direction='column' gap={4}>
-          <Header />
+    // One identify flow for the whole page: the floating Identify button and
+    // the sidebar one must resume the same step.
+    <CspAuthSession>
+      <Grid
+        templateColumns={{ base: '1fr', xl: 'minmax(0,1fr) var(--chakra-sizes-voting-sidebar)' }}
+        gap={10}
+        alignItems='start'
+        mx='auto'
+        minW={{ base: 'full', xl: 'voting.contents.min' }}
+        maxW='voting.contents.max'
+      >
+        <GridItem>
+          <Flex direction='column' gap={4}>
+            <Header />
 
-          <ElectionVideo ref={videoRef} />
+            <ElectionVideo ref={videoRef} />
 
-          <TabsRoot
-            fitted
-            order={{ base: 2, xl: 1 }}
-            value={tabValue}
-            onValueChange={({ value }) => setTabValue(value as 'questions' | 'results')}
-            flex={{ xl: '0 0 75%' }}
-            w='full'
-          >
-            <TabsList w='full'>
-              <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
-              {election && status !== 'CANCELED' && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
-            </TabsList>
-            <TabsContentGroup mt={6}>
-              <TabsContent value='questions' p={0}>
-                <Box
-                  ref={electionRef}
-                  p={6}
-                  mt={6}
-                  border='1px solid'
-                  borderColor='table.border'
-                  borderRadius='md'
-                  scrollMarginTop='70px'
-                  // Ballot content must never appear in analytics/session replays,
-                  // even when an org admin previews the process from the dashboard
-                  className='ph-no-capture'
-                >
-                  <ElectionQuestions
-                    onInvalid={(args) => {
-                      setFormErrors(args)
-                    }}
-                  />
-                </Box>
-                <Box position='sticky' bottom={0} left={0} pb={1} pt={1}>
-                  <VoteButton setQuestionsTab={setQuestionsTab} />
-                </Box>
-              </TabsContent>
-              {election && status !== 'CANCELED' && (
-                <TabsContent value='results' p={0}>
-                  <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                    <ElectionResults />
+            <TabsRoot
+              fitted
+              order={{ base: 2, xl: 1 }}
+              value={tabValue}
+              onValueChange={({ value }) => setTabValue(value as 'questions' | 'results')}
+              flex={{ xl: '0 0 75%' }}
+              w='full'
+            >
+              <TabsList w='full'>
+                <TabsTrigger value='questions'>{t('process.questions')}</TabsTrigger>
+                {election && status !== 'CANCELED' && <TabsTrigger value='results'>{t('process.results')}</TabsTrigger>}
+              </TabsList>
+              <TabsContentGroup mt={6}>
+                <TabsContent value='questions' p={0}>
+                  <Box
+                    ref={electionRef}
+                    p={6}
+                    mt={6}
+                    border='1px solid'
+                    borderColor='table.border'
+                    borderRadius='md'
+                    scrollMarginTop='70px'
+                    // Ballot content must never appear in analytics/session replays,
+                    // even when an org admin previews the process from the dashboard
+                    className='ph-no-capture'
+                  >
+                    <ElectionQuestions
+                      onInvalid={(args) => {
+                        setFormErrors(args)
+                      }}
+                    />
+                  </Box>
+                  <Box position='sticky' bottom={0} left={0} pb={1} pt={1}>
+                    <VoteButton setQuestionsTab={setQuestionsTab} />
                   </Box>
                 </TabsContent>
-              )}
-            </TabsContentGroup>
-          </TabsRoot>
-        </Flex>
-      </GridItem>
-      <GridItem display='grid' gap={6}>
-        <ProcessInfoPanel />
-        <ProcessAside />
-      </GridItem>
-      <VotingVoteModal />
-      <SuccessVoteModal />
-    </Grid>
+                {election && status !== 'CANCELED' && (
+                  <TabsContent value='results' p={0}>
+                    <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
+                      <ElectionResults />
+                    </Box>
+                  </TabsContent>
+                )}
+              </TabsContentGroup>
+            </TabsRoot>
+          </Flex>
+        </GridItem>
+        <GridItem display='grid' gap={6}>
+          <ProcessInfoPanel />
+          <ProcessAside />
+        </GridItem>
+        <VotingVoteModal />
+        <SuccessVoteModal />
+      </Grid>
+    </CspAuthSession>
   )
 }
 

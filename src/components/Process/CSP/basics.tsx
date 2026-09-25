@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useElectionAuth } from '@vocdoni/react-components'
@@ -64,6 +64,11 @@ const useTranslateCspError = () => {
   }
 }
 
+// Both auth steps are keyed under one prefix so their in-flight state outlives
+// the dialog that started them: closing the modal unmounts the step (and its
+// mutation observer), but not the request.
+const cspAuthMutationKey = ['csp', 'auth']
+
 // Step 0 — identify the participant against the process census. For auth-only
 // censuses (no 2FA fields) the provider already marks the voter connected.
 export const useCspAuth0 = () => {
@@ -71,6 +76,7 @@ export const useCspAuth0 = () => {
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, AuthRequest>({
+    mutationKey: [...cspAuthMutationKey, 0],
     mutationFn: async (participant) => {
       try {
         await auth0(participant)
@@ -87,6 +93,7 @@ export const useCspAuth1 = () => {
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, string>({
+    mutationKey: [...cspAuthMutationKey, 1],
     mutationFn: async (code) => {
       try {
         await auth1(code)
@@ -97,12 +104,25 @@ export const useCspAuth1 = () => {
   })
 }
 
+// true while any auth request (identify, OTP or resend) is in flight, whichever
+// Identify dialog (open or already closed) sent it. The flow is shared by every
+// button, so a late completion would move it under whichever dialog is open.
+export const useCspAuthPending = () => useIsMutating({ mutationKey: cspAuthMutationKey }) > 0
+
+// Same check, read at call time: handlers such as the PIN auto-submit may run
+// before the render that would reflect a request just sent.
+export const useIsCspAuthBusy = () => {
+  const client = useQueryClient()
+  return () => client.isMutating({ mutationKey: cspAuthMutationKey }) > 0
+}
+
 // Resend the pending 2FA challenge to the voter's contact.
 export const useCspResend = () => {
   const { resend } = useElectionAuth()
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, ResendChallengePayload>({
+    mutationKey: [...cspAuthMutationKey, 'resend'],
     mutationFn: async (contact) => {
       try {
         await resend(contact)
