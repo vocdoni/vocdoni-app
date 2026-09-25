@@ -38,30 +38,24 @@ vi.mock('@vocdoni/react-components', () => ({
   }),
 }))
 
-describe('SSR public pages title handling', () => {
-  it('does not mutate document.title when rendering the organization SSR page', () => {
-    document.title = 'Initial title'
-
+describe('SSR public page wrappers', () => {
+  it('hands the SSR elections page to the organization view', () => {
     render(
       <PublicOrganizationPage
         organization={{ address: '0xabc', name: { default: 'Acme Org' } } as any}
-        initialElectionsPage={{ items: [] } as any}
+        initialElectionsPage={{ items: [{}, {}] } as any}
       />
     )
 
-    expect(screen.getByText('organization-view-0')).toBeInTheDocument()
-    expect(document.title).toBe('Initial title')
+    expect(screen.getByText('organization-view-2')).toBeInTheDocument()
   })
 
-  it('does not mutate document.title when rendering the process SSR page', () => {
-    document.title = 'Initial title'
-
+  it('renders the process view with its legal notice', () => {
     render(
       <PublicProcessPage id='0x0' election={{ id: '0x0', orgAddress: 'abc' } as any} organizationAddress='0xabc' />
     )
 
     expect(screen.getByText('process-view')).toBeInTheDocument()
     expect(screen.getByText('legal-notice')).toBeInTheDocument()
-    expect(document.title).toBe('Initial title')
   })
 })

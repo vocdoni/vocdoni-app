@@ -84,8 +84,7 @@ describe('Providers', () => {
   // render kept settling and its language detection landed mid-assertion.
   it('mounts without crashing', async () => {
     const { Providers } = await import('./Providers')
-    const { container } = render(<Providers />)
-    expect(container).toBeTruthy()
+    expect(() => render(<Providers />)).not.toThrow()
   }, 30000)
 
   it('does not overwrite the persisted preferred language when rendering a public page in english', async () => {

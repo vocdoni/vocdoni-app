@@ -1,4 +1,3 @@
-import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
 
 describe('importJobStorage', () => {
@@ -41,10 +40,10 @@ describe('importJobStorage', () => {
     expect(localStorage.getItem('memberbaseImportJobId')).toBe('legacy-job-id')
   })
 
-  it('uses signerAddress from localStorage as account identity in practice', () => {
-    localStorage.setItem(LocalStorageKeys.SignerAddress, '0xABC')
-    setStoredImportJobId('job-2', '0xabc')
+  // Callers pass the signer address, whose casing (checksummed or not) varies by source.
+  it('matches account ids regardless of case and surrounding whitespace', () => {
+    setStoredImportJobId('job-2', '0xABC')
 
-    expect(getStoredImportJobId('0xabc')).toBe('job-2')
+    expect(getStoredImportJobId(' 0xabc ')).toBe('job-2')
   })
 })
