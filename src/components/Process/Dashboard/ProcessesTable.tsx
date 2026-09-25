@@ -26,6 +26,7 @@ import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router'
+import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
@@ -48,9 +49,13 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
     processes &&
     !!processes.length &&
     processes?.map((election) => (
-      <ElectionProvider id={election.id} key={election.id}>
-        {isMobile ? <ProcessCard /> : <ProcessRow />}
-      </ElectionProvider>
+      // One process the UI cannot render must not take the whole list down with it.
+      <ErrorBoundary
+        key={election.id}
+        fallback={isMobile ? <ProcessCardFallback process={election} /> : <ProcessRowFallback process={election} />}
+      >
+        <ElectionProvider id={election.id}>{isMobile ? <ProcessCard /> : <ProcessRow />}</ElectionProvider>
+      </ErrorBoundary>
     ))
 
   if (isMobile) {
@@ -89,6 +94,46 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
     </Box>
   )
 }
+
+// The badge infers the ballot type, which throws for questions that state neither a type nor a
+// ballot protocol — e.g. the read-only projection of a legacy multiple-choice election. The row
+// is still worth showing without it.
+const ProcessTypeBadge = () => (
+  <ErrorBoundary fallback={null}>
+    <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+  </ErrorBoundary>
+)
+
+const ProcessTitleLink = ({ process }: { process: VotingProcessResponse }) => {
+  const title = getElectionTitle(process) || process.id
+
+  return (
+    <Link asChild title={title}>
+      <RouterLink to={generatePath(Routes.dashboard.process, { id: process.id })}>
+        <Text w='full' maxW='500px' size='sm' truncate>
+          {title}
+        </Text>
+      </RouterLink>
+    </Link>
+  )
+}
+
+const ProcessRowFallback = ({ process }: { process: VotingProcessResponse }) => (
+  <Table.Row>
+    <Table.Cell>
+      <ProcessTitleLink process={process} />
+    </Table.Cell>
+    <Table.Cell colSpan={7} />
+  </Table.Row>
+)
+
+const ProcessCardFallback = ({ process }: { process: VotingProcessResponse }) => (
+  <Card.Root variant='data-list-item'>
+    <Card.Header>
+      <ProcessTitleLink process={process} />
+    </Card.Header>
+  </Card.Root>
+)
 
 const ProcessResultsTag = () => {
   const { election, status } = useElection()
@@ -138,7 +183,7 @@ const ProcessCard = () => {
       </Card.Header>
       <Card.Body>
         <HStack flexWrap='wrap' gap={2}>
-          <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+          <ProcessTypeBadge />
           <ElectionStatusBadge size='sm' />
           <ProcessResultsTag />
         </HStack>
@@ -165,23 +210,15 @@ const ProcessRow = () => {
 
   if (!election) return null
 
-  const title = getElectionTitle(election) || election.id
-
   return (
     <Table.Row position='relative'>
       <Table.Cell>
-        <Link asChild title={title}>
-          <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-            <Text w='full' maxW='500px' size='sm' truncate>
-              {title}
-            </Text>
-          </RouterLink>
-        </Link>
+        <ProcessTitleLink process={election} />
       </Table.Cell>
       <Table.Cell>{format(election.startDate, t('organization.date_format'))}</Table.Cell>
       <Table.Cell>{format(election.endDate, t('organization.date_format'))}</Table.Cell>
       <Table.Cell>
-        <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+        <ProcessTypeBadge />
       </Table.Cell>
       <Table.Cell>
         <ElectionStatusBadge size='sm' />

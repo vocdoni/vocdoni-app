@@ -1,4 +1,4 @@
-import { BallotType } from '@vocdoni/ballot'
+import { BallotType, inferQuestionBallotType } from '@vocdoni/ballot'
 import { useTranslation } from 'react-i18next'
 
 type ResultTypeConfig = {
@@ -39,6 +39,21 @@ const RESULT_TYPE_CONFIG: Record<BallotType, ResultTypeConfig> = {
 // t('process.voting_method.budget', { defaultValue: 'Budget allocation' })
 // t('process.voting_method.quadratic', { defaultValue: 'Quadratic voting' })
 // t('process.voting_method.ranked', { defaultValue: 'Ranked voting' })
+
+/**
+ * The question's ballot type, or `undefined` when it cannot be inferred: a question that states
+ * neither a type nor a ballot protocol (e.g. the read-only projection of a legacy multiple-choice
+ * election) makes `inferQuestionBallotType` throw, and a label is not worth crashing a page over.
+ */
+export const inferQuestionBallotTypeOrUndefined = (
+  question: Parameters<typeof inferQuestionBallotType>[0]
+): BallotType | undefined => {
+  try {
+    return inferQuestionBallotType(question)
+  } catch {
+    return undefined
+  }
+}
 
 export const useResultTypeLabel = (type?: BallotType | null, defaultValue = '') => {
   const { t } = useTranslation()

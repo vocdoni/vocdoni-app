@@ -38,7 +38,6 @@ import {
   useElection,
 } from '@vocdoni/react-components'
 import { hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
-import { inferQuestionBallotType } from '@vocdoni/ballot'
 import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
@@ -83,7 +82,7 @@ import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useAnonymityLabels } from '../anonymityLabels'
-import { useResultTypeLabel } from '../resultTypeLabels'
+import { inferQuestionBallotTypeOrUndefined, useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
 
@@ -401,7 +400,10 @@ const ProcessViewSidebar = () => {
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { showSidebar, closeSidebar } = useSidebarVisibility()
   const firstQuestion = election?.questions[0]
-  const resultTypeLabel = useResultTypeLabel(firstQuestion ? inferQuestionBallotType(firstQuestion) : undefined, '')
+  const resultTypeLabel = useResultTypeLabel(
+    firstQuestion ? inferQuestionBallotTypeOrUndefined(firstQuestion) : undefined,
+    ''
+  )
   const { short: anonymityLabel, mechanismDescription: anonymityMechanism } = useAnonymityLabels(
     election?.census?.anonymous
   )
