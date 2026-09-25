@@ -12,6 +12,7 @@ import {
   Table,
   Tag,
   Text,
+  type TextProps,
   useBreakpointValue,
 } from '@chakra-ui/react'
 import {
@@ -34,6 +35,7 @@ import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { inferQuestionBallotTypeOrUndefined } from '../resultTypeLabels'
 import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
@@ -97,22 +99,32 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
 
 // The badge infers the ballot type, which throws for questions that state neither a type nor a
 // ballot protocol — e.g. the read-only projection of a legacy multiple-choice election. The row
-// is still worth showing without it.
-const ProcessTypeBadge = () => (
-  <ErrorBoundary fallback={null}>
-    <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
-  </ErrorBoundary>
-)
+// is still worth showing without it, so such a question gets no badge.
+const ProcessTypeBadge = () => {
+  const { election } = useElection()
+  const question = election?.questions[0]
 
-const ProcessTitleLink = ({ process }: { process: VotingProcessResponse }) => {
+  if (question && !inferQuestionBallotTypeOrUndefined(question)) return null
+
+  return <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+}
+
+const rowTitleProps: TextProps = { w: 'full', maxW: '500px', size: 'sm', truncate: true }
+const cardTitleProps: TextProps = { fontWeight: 'medium', lineClamp: 2 }
+
+const ProcessTitleLink = ({
+  process,
+  textProps = rowTitleProps,
+}: {
+  process: VotingProcessResponse
+  textProps?: TextProps
+}) => {
   const title = getElectionTitle(process) || process.id
 
   return (
     <Link asChild title={title}>
       <RouterLink to={generatePath(Routes.dashboard.process, { id: process.id })}>
-        <Text w='full' maxW='500px' size='sm' truncate>
-          {title}
-        </Text>
+        <Text {...textProps}>{title}</Text>
       </RouterLink>
     </Link>
   )
@@ -130,7 +142,7 @@ const ProcessRowFallback = ({ process }: { process: VotingProcessResponse }) => 
 const ProcessCardFallback = ({ process }: { process: VotingProcessResponse }) => (
   <Card.Root variant='data-list-item'>
     <Card.Header>
-      <ProcessTitleLink process={process} />
+      <ProcessTitleLink process={process} textProps={cardTitleProps} />
     </Card.Header>
   </Card.Root>
 )
@@ -167,18 +179,10 @@ const ProcessCard = () => {
 
   if (!election) return null
 
-  const title = getElectionTitle(election) || election.id
-
   return (
     <Card.Root variant='data-list-item'>
       <Card.Header>
-        <Link asChild title={title}>
-          <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-            <Text fontWeight='medium' lineClamp={2}>
-              {title}
-            </Text>
-          </RouterLink>
-        </Link>
+        <ProcessTitleLink process={election} textProps={cardTitleProps} />
         <ProcessContextMenu />
       </Card.Header>
       <Card.Body>
