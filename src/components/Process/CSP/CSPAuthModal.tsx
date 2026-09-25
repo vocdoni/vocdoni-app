@@ -1,7 +1,8 @@
 import { Button, CloseButton, Dialog, Portal } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
+import type { ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { CspAuthProvider, useCspAuthContext } from './CSPStepsProvider'
+import { CspAuthProvider, useCspAuthContext, useOptionalCspAuthContext } from './CSPStepsProvider'
 import { Step0Base } from './Step0'
 import { Step1Base } from './Step1'
 
@@ -36,10 +37,14 @@ export const CspAuthModal = () => {
   )
 }
 
-export const CspAuth = () => {
+// Scopes one identify flow to its children. Mount it around every Identify
+// button of a page so they all resume the same step: with one provider per
+// button, closing the OTP modal and reopening it from a different button
+// restarted the flow from scratch.
+export const CspAuthSession = ({ children }: { children: ReactNode }) => {
   const { election } = useElection()
 
-  if (!election) return null
+  if (!election) return <>{children}</>
 
   // The v2 process read carries the census auth configuration inline
   // (CensusSpec.authFields/twoFaFields) — no separate census bundle fetch.
@@ -50,7 +55,22 @@ export const CspAuth = () => {
         twoFaFields: election.census?.twoFaFields ?? [],
       }}
     >
-      <CspAuthModal />
+      {children}
     </CspAuthProvider>
+  )
+}
+
+export const CspAuth = () => {
+  const { election } = useElection()
+  const session = useOptionalCspAuthContext()
+
+  if (!election) return null
+
+  if (session) return <CspAuthModal />
+
+  return (
+    <CspAuthSession>
+      <CspAuthModal />
+    </CspAuthSession>
   )
 }

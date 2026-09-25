@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, type Dispatch, type SetStateAction } from 'react'
+import { useElectionAuth } from '@vocdoni/react-components'
+import { createContext, useContext, useEffect, useState, type Dispatch, type SetStateAction } from 'react'
 import { AuthFieldType, CensusData, TwoFaFieldType } from './basics'
 
 // Contact info captured at step 0 so step 1 can resend the challenge. The auth
@@ -29,6 +30,16 @@ export const CspAuthProvider = ({
 }) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [authData, setAuthData] = useState<CspAuthData>({})
+  const { connected } = useElectionAuth()
+
+  // A single provider may outlive one identify flow (it's shared by every
+  // Identify button on the process page), so once the flow completes start the
+  // next one from scratch: after a logout, step 1 would point at a cleared token.
+  useEffect(() => {
+    if (!connected) return
+    setCurrentStep(0)
+    setAuthData({})
+  }, [connected])
 
   // Process census data to determine auth fields
   const authFields = censusData?.authFields || []
@@ -50,6 +61,10 @@ export const CspAuthProvider = ({
     </CspAuthContext.Provider>
   )
 }
+
+// Lets CspAuth reuse a provider mounted higher up, so several Identify buttons
+// on the same page share one flow instead of each keeping its own step.
+export const useOptionalCspAuthContext = () => useContext(CspAuthContext)
 
 export const useCspAuthContext = () => {
   const context = useContext(CspAuthContext)
