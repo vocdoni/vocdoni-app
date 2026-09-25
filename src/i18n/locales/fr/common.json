@@ -1087,6 +1087,7 @@
       "showing_results_one": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} résultat",
       "showing_results_many": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} résultats",
       "showing_results_other": "Affichage de {{from, number}}–{{to, number}} sur {{count, number}} résultats",
+      "sort_by": "Trier par {{column}}",
       "toggle_column": "Afficher/masquer la colonne {{column}}"
     }
   },

@@ -1068,6 +1068,7 @@
       "showing_members_other": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} μέλη",
       "showing_results_one": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} αποτέλεσμα",
       "showing_results_other": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} αποτελέσματα",
+      "sort_by": "Ταξινόμηση κατά {{column}}",
       "toggle_column": "Εναλλαγή στήλης {{column}}"
     }
   },
