@@ -2,7 +2,10 @@ name: OCR review
 
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened, ready_for_review]
+    # Opt-in: the review only runs when a maintainer applies the `ocr-review`
+    # label. Pushes to an already-labeled PR do not re-run it; remove and re-add
+    # the label to request a fresh review.
+    types: [labeled]
     # Filters on the PR base branch. Release PRs (develop -> stage -> main, the
     # lts deployment) carry a diff far too large to review, and their contents
     # were already reviewed on the way into develop. Hotfix PRs raised straight
@@ -17,12 +20,19 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: ocr-${{ github.event.pull_request.number }}
+  # Every label added to a PR triggers this workflow. Only `ocr-review` events
+  # share the per-PR group, so adding an unrelated label cannot cancel a review
+  # that is already running.
+  group: >-
+    ${{ github.event.label.name == 'ocr-review'
+    && format('ocr-{0}', github.event.pull_request.number)
+    || format('ocr-skip-{0}', github.run_id) }}
   cancel-in-progress: true
 
 jobs:
   review:
     if: >-
+      github.event.label.name == 'ocr-review' &&
       !github.event.pull_request.draft &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.pull_request.user.type != 'Bot'
