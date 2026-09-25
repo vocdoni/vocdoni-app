@@ -1,6 +1,7 @@
 import type { VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
-import { SelectorTypes } from './common'
+import { defaultProcessValues, SelectorTypes } from './common'
 import { votingProcessToCreateRequest, votingProcessToForm } from './draft-mapping'
+import { buildCensusSpec } from '.'
 
 const BALLOT_PROTOCOL = {
   costExponent: 1,
@@ -256,6 +257,25 @@ describe('votingProcessToForm', () => {
 
     it('leaves the credentials unset when the census has none', () => {
       expect(votingProcessToForm(process()).census).toBeNull()
+    })
+
+    // The auth dialog confirms a two-factor-only setup; reloading it as unset
+    // blocked publishing a draft that was ready.
+    it.each([
+      [['email'], 'email'],
+      [['phone'], 'sms'],
+      [['email', 'phone'], 'voter_choice'],
+    ] as const)('restores a two-factor-only census from %s', (twoFaFields, method) => {
+      const form = votingProcessToForm(process({ census: { authFields: [], twoFaFields: [...twoFaFields] } as any }))
+
+      expect(form.census).toEqual({ credentials: [], use2FA: true, use2FAMethod: method })
+    })
+
+    it('round-trips a two-factor-only census through the census spec', () => {
+      const census = { credentials: [], use2FA: true, use2FAMethod: 'sms' as const }
+      const spec = buildCensusSpec({ ...defaultProcessValues, groupId: 'group-1', census })
+
+      expect(votingProcessToForm(process({ census: spec as any })).census).toEqual(census)
     })
 
     it('restores anonymous voting', () => {
