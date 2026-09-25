@@ -1514,6 +1514,10 @@
         "description": "Tria com s'identificaran els votants i torna a publicar.",
         "title": "L'autenticació dels votants no està configurada"
       },
+      "auth_reset": {
+        "description": "Es va comprovar amb el grup anterior. Conservem les teves opcions: confirma-les per a aquest.",
+        "title": "S'ha restablert l'autenticació dels votants"
+      },
       "group": {
         "no_groups": "Per començar una votació, primer has de crear un grup de votants elegibles a partir de la teva base de membres. <1>Crea'n un aquí</1>."
       },

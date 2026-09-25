@@ -1490,6 +1490,10 @@
         "description": "Lege fest, wie sich Wählende identifizieren, und veröffentliche dann erneut.",
         "title": "Wähler-Authentifizierung ist nicht eingerichtet"
       },
+      "auth_reset": {
+        "description": "Sie wurde mit der vorherigen Gruppe geprüft. Deine Auswahl bleibt erhalten: Bestätige sie für diese Gruppe.",
+        "title": "Wähler-Authentifizierung wurde zurückgesetzt"
+      },
       "group": {
         "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
       },

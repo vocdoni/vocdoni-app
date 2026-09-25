@@ -1490,6 +1490,10 @@
         "description": "Aukeratu hautesleak nola identifikatuko diren, eta argitaratu berriro.",
         "title": "Hautesleen autentifikazioa ez dago konfiguratuta"
       },
+      "auth_reset": {
+        "description": "Aurreko taldearekin egiaztatu zen. Zure aukerak gordeta daude: berretsi talde honetarako.",
+        "title": "Hautesleen autentifikazioa berrezarri da"
+      },
       "group": {
         "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },

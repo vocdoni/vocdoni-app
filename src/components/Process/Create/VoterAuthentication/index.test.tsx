@@ -75,6 +75,10 @@ const TestForm = ({
       <button type='button' onClick={() => methods.handleSubmit(() => {})()}>
         Publish
       </button>
+      {/* Stands in for a group change, which voids the configured census. */}
+      <button type='button' onClick={() => methods.setValue('census', null)}>
+        Reset census
+      </button>
     </FormProvider>
   )
 }
@@ -126,6 +130,19 @@ describe('VoterAuthentication', () => {
     await waitFor(() =>
       expect(within(notice).getByRole('button', { name: /configure voter authentication/i })).toHaveFocus()
     )
+  })
+
+  it('keeps the previous choices ticked after the census is reset', async () => {
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={{ ...defaultCensus, credentials: ['memberNumber'] }} />)
+
+    await user.click(screen.getByRole('button', { name: /reset census/i }))
+    await user.click(
+      within(screen.getByRole('status')).getByRole('button', { name: /configure voter authentication/i })
+    )
+
+    const dialog = await screen.findByRole('dialog')
+    expect(dialog.querySelector('input[value="memberNumber"]')).toBeChecked()
   })
 
   it('opens from outside through the shared dialog state', async () => {

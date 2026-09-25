@@ -1514,6 +1514,10 @@
         "description": "Escolha como os eleitores vão se identificar e publique novamente.",
         "title": "A autenticação de eleitores não está configurada"
       },
+      "auth_reset": {
+        "description": "Ela foi verificada com o grupo anterior. Suas escolhas foram mantidas: confirme-as para este.",
+        "title": "A autenticação de eleitores foi redefinida"
+      },
       "group": {
         "no_groups": "Para iniciar uma votação, você precisa primeiro criar um grupo de eleitores elegíveis a partir da sua base de membros. <1>Crie um aqui</1>."
       },

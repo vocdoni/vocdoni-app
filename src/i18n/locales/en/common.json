@@ -1490,6 +1490,10 @@
         "description": "Choose how voters will identify themselves, then publish again.",
         "title": "Voter authentication isn't set up"
       },
+      "auth_reset": {
+        "description": "It was checked against the previous group. Your choices are kept: confirm them for this one.",
+        "title": "Voter authentication was reset"
+      },
       "group": {
         "no_groups": "To start a vote, you first need to create a group of eligible voters from your memberbase. <1>Create one here</1>."
       },

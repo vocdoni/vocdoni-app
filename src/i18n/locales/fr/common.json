@@ -1514,6 +1514,10 @@
         "description": "Choisissez comment les électeurs s'identifieront, puis publiez à nouveau.",
         "title": "L'authentification des électeurs n'est pas configurée"
       },
+      "auth_reset": {
+        "description": "Elle avait été vérifiée pour le groupe précédent. Vos choix sont conservés : confirmez-les pour celui-ci.",
+        "title": "L'authentification des électeurs a été réinitialisée"
+      },
       "group": {
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
       },

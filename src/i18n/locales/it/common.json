@@ -1514,6 +1514,10 @@
         "description": "Scegli come si identificheranno i votanti, poi pubblica di nuovo.",
         "title": "L'autenticazione dei votanti non è configurata"
       },
+      "auth_reset": {
+        "description": "Era stata verificata con il gruppo precedente. Le tue scelte sono conservate: confermale per questo.",
+        "title": "L'autenticazione dei votanti è stata reimpostata"
+      },
       "group": {
         "no_groups": "Per avviare una votazione, devi prima creare un gruppo di votanti idonei dal tuo database membri. <1>Creane uno qui</1>."
       },
