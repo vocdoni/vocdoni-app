@@ -4,11 +4,14 @@ import {
   AlertIndicator,
   AlertTitle,
   Box,
+  Link,
   List,
   Stack,
   Text,
 } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
+import { LuExternalLink } from 'react-icons/lu'
+import { Routes } from '~routes'
 
 export type ValidationErrorData = {
   memberIds: string[]
@@ -77,6 +80,14 @@ export const ValidationErrorsAlert = ({ validationError }: { validationError: Va
                 })}
               </List.Item>
             </List.Root>
+
+            {/* A new tab keeps this vote in progress while the data is fixed.
+                A plain href rather than a router link: a new tab loads the app
+                from scratch either way. */}
+            <Link href={Routes.dashboard.memberbase.base} target='_blank' rel='noopener' fontWeight='semibold'>
+              {t('voter_auth.validation_review_members', { defaultValue: 'Review members' })}
+              <LuExternalLink />
+            </Link>
           </Stack>
         </AlertDescription>
       </Box>

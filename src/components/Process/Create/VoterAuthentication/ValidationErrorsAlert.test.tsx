@@ -22,4 +22,20 @@ describe('ValidationErrorsAlert', () => {
     expect(screen.getByText('1 users missing required fields')).toBeInTheDocument()
     expect(screen.getByText('1 duplicated users')).toBeInTheDocument()
   })
+
+  it('links to the memberbase in a new tab so the vote in progress stays open', () => {
+    render(
+      <ValidationErrorsAlert
+        validationError={{
+          error: 'Validation failed',
+          code: 400,
+          data: { memberIds: ['1', '2'], duplicates: ['1'], missingData: [] },
+        }}
+      />
+    )
+
+    const link = screen.getByRole('link', { name: /review members/i })
+    expect(link).toHaveAttribute('href', '/admin/memberbase')
+    expect(link).toHaveAttribute('target', '_blank')
+  })
 })
