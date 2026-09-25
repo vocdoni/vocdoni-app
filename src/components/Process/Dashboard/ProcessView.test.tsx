@@ -328,7 +328,7 @@ describe('ProcessView questions', () => {
         </TestMemoryRouter>
       )
 
-      expect(await screen.findByText('Error loading the page')).toBeInTheDocument()
+      expect(await screen.findByText('This section could not be loaded')).toBeInTheDocument()
       expect(screen.getByText('ElectionTitle')).toBeInTheDocument()
     } finally {
       consoleError.mockRestore()

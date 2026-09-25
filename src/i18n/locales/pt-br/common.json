@@ -350,6 +350,7 @@
     "loading_languages": "Erro ao carregar os idiomas",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar as funções",
+    "loading_section": "Não foi possível carregar esta seção",
     "loading_types": "Erro ao carregar os tipos de organização",
     "missing_data": "A planilha não contém dados.",
     "missing_header": "A planilha não possui cabeçalho.",

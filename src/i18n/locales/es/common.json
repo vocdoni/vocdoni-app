@@ -350,6 +350,7 @@
     "loading_languages": "Error cargando idiomas",
     "loading_page": "Error al cargar la página",
     "loading_roles": "Error cargando roles",
+    "loading_section": "No se ha podido cargar esta sección",
     "loading_types": "Error cargando tipos",
     "missing_data": "La hoja de cálculo no contiene datos.",
     "missing_header": "La hoja de cálculo no tiene encabezado.",

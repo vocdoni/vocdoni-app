@@ -189,7 +189,7 @@ const ProcessViewContent = () => {
   // The questions and results render through the ballot type, which cannot be inferred for some
   // legacy processes: such a section degrades on its own instead of taking the page down.
   const sectionFallback = (
-    <Text color='texts.subtle'>{t('error.loading_page', { defaultValue: 'Error loading the page' })}</Text>
+    <Text color='texts.subtle'>{t('error.loading_section', { defaultValue: 'This section could not be loaded' })}</Text>
   )
 
   return (

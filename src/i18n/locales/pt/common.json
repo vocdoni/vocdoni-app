@@ -350,6 +350,7 @@
     "loading_languages": "Erro ao carregar os idiomas",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar os perfis",
+    "loading_section": "Não foi possível carregar esta secção",
     "loading_types": "Erro ao carregar os tipos de organização",
     "missing_data": "A folha de cálculo não tem dados.",
     "missing_header": "A folha de cálculo não tem cabeçalho.",
