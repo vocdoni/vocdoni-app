@@ -90,8 +90,6 @@ describe('ConnectionToastProvider', () => {
     })
 
     it('should not show duplicate error toast if already active', async () => {
-      mockToastIsActive.mockReturnValue(true)
-
       const { result } = renderHook(() => useConnectionToast(), { wrapper })
 
       act(() => {
@@ -99,12 +97,23 @@ describe('ConnectionToastProvider', () => {
       })
 
       await waitFor(() => {
-        // When toast is already active, the condition prevents showing it again
-        // The logic is: (!wasOffline && isNowOffline) || (isNowOffline && !toast.isActive())
-        // Since isActive returns true, the second part is false
-        // But the first part is true (transition), so toast IS called
-        expect(mockToast).toHaveBeenCalled()
+        expect(mockToast).toHaveBeenCalledTimes(1)
       })
+
+      // Already offline with the error toast still on screen: a further failure re-runs the
+      // effect (failureCount changes) but must not stack a second error toast.
+      mockToast.mockClear()
+      mockToastIsActive.mockClear()
+      mockToastIsActive.mockReturnValue(true)
+
+      act(() => {
+        result.current.recordFailure()
+      })
+
+      await waitFor(() => {
+        expect(mockToastIsActive).toHaveBeenCalledWith('connection-error-toast')
+      })
+      expect(mockToast).not.toHaveBeenCalled()
     })
 
     it('should close success toast when showing error toast', async () => {
