@@ -1,12 +1,14 @@
 import {
   AlertRoot as Alert,
   AlertDescription,
+  Badge,
   Box,
   FieldErrorText,
   FieldLabel,
   FieldRoot,
+  Flex,
+  FlexProps,
   HStack,
-  Input,
   Link,
   Spinner,
   Text,
@@ -15,7 +17,7 @@ import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuUsers } from 'react-icons/lu'
+import { LuCheck, LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { CensusTypes } from '~components/Process/Census/CensusType'
@@ -25,6 +27,61 @@ import { VoterAuthentication } from '../VoterAuthentication'
 import { Process } from '../common'
 
 type GroupsQuery = ReturnType<typeof useGroups>
+
+type StepStatus = 'idle' | 'current' | 'error' | 'done'
+
+const stepMarkerStyles: Record<StepStatus, FlexProps> = {
+  idle: { borderColor: 'border.emphasized', color: 'fg.muted' },
+  current: { borderColor: 'orange.solid', color: 'orange.fg' },
+  error: { borderColor: 'red.solid', color: 'red.fg' },
+  done: { borderColor: 'green.solid', bg: 'green.solid', color: 'green.contrast' },
+}
+
+// Numbers the census' two parts (group, then voter authentication) so picking a
+// group doesn't read as the whole job. Decorative: the section badge and the
+// pending notice carry the same status in words.
+const StepMarker = ({ step, status }: { step: number; status: StepStatus }) => (
+  <Flex
+    as='span'
+    aria-hidden
+    boxSize={4.5}
+    mt='1px'
+    flexShrink={0}
+    align='center'
+    justify='center'
+    borderRadius='full'
+    borderWidth='1.5px'
+    fontSize='2xs'
+    fontWeight='bold'
+    {...stepMarkerStyles[status]}
+  >
+    {status === 'done' ? <LuCheck /> : step}
+  </Flex>
+)
+
+// Headline status of the census for the sidebar section title: how many of its
+// two steps are still missing, or ready once both are done.
+export const CensusStatusBadge = () => {
+  const { t } = useTranslation()
+  const { watch } = useFormContext<Process>()
+  const groupId = watch('groupId')
+  const census = watch('census')
+  const stepsLeft = (groupId ? 0 : 1) + (census ? 0 : 1)
+
+  if (!stepsLeft) {
+    return <Badge colorPalette='green'>{t('process_create.census.status.ready', { defaultValue: 'Ready' })}</Badge>
+  }
+
+  return (
+    <Badge colorPalette='orange'>
+      {t('process_create.census.status.steps_left', {
+        defaultValue_one: '{{ count }} step left',
+        defaultValue_other: '{{ count }} steps left',
+        count: stepsLeft,
+      })}
+    </Badge>
+  )
+}
 
 type GroupOptionLabelContext = {
   context: 'menu' | 'value'
@@ -56,6 +113,7 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
     formState: { errors },
   } = useFormContext()
   const censusType = watch('censusType')
+  const groupId = watch('groupId')
   const [hasFetchedScroll, setHasFetchedScroll] = useState(false)
 
   const CustomMenuList = (props) => {
@@ -78,7 +136,8 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
 
   return (
     <FieldRoot invalid={!!errors.groupId}>
-      <FieldLabel>
+      <FieldLabel gap={2} alignItems='flex-start'>
+        <StepMarker step={1} status={groupId ? 'done' : errors.groupId ? 'error' : 'idle'} />
         <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
       </FieldLabel>
       <Controller
@@ -94,6 +153,8 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
           const selected = groups?.find((g) => g.id === field.value) ?? null
           return (
             <Select
+              // Lets a blocked publish focus the combobox when no group is picked.
+              ref={field.ref}
               // Stable handle for the group combobox (labelled by the
               // FieldLabel above, which Chakra wires up by id).
               inputId='groupId'
@@ -128,12 +189,13 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
 const GroupCensusCreation = () => {
   const { t } = useTranslation()
   const {
-    register,
     watch,
     formState: { errors },
   } = useFormContext<Process>()
-  const censusType = watch('censusType')
+  const groupId = watch('groupId')
+  const census = watch('census')
   const { data: groups, fetchNextPage, hasNextPage, isFetching } = useGroups(6)
+  const voterAuthStatus: StepStatus = census ? 'done' : !groupId ? 'idle' : errors.census ? 'error' : 'current'
 
   const TLink = ({ children }) => (
     <Link asChild textDecoration='underline'>
@@ -151,7 +213,14 @@ const GroupCensusCreation = () => {
             hasNextPage={hasNextPage}
             isFetching={isFetching}
           />
-          <VoterAuthentication />
+          <Flex direction='column' gap={1.5}>
+            {/* Styled after the group field's label above, so both steps read alike. */}
+            <HStack gap={2} align='flex-start' textStyle='sm' fontWeight='medium'>
+              <StepMarker step={2} status={voterAuthStatus} />
+              {t('process_create.census.voter_auth.label', { defaultValue: 'Set how voters prove who they are' })}
+            </HStack>
+            <VoterAuthentication />
+          </Flex>
         </>
       )}
 
@@ -165,19 +234,6 @@ const GroupCensusCreation = () => {
           </AlertDescription>
         </Alert>
       )}
-
-      <FieldRoot invalid={!!errors.census}>
-        <Input
-          type='hidden'
-          {...register('census', {
-            required: {
-              value: censusType === CensusTypes.CSP,
-              message: t('form.error.census_config_required', 'Please configure the census authentication settings.'),
-            },
-          })}
-        />
-        <FieldErrorText>{errors.census?.message?.toString()}</FieldErrorText>
-      </FieldRoot>
     </Box>
   )
 }

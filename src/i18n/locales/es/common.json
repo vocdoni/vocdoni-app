@@ -1467,11 +1467,29 @@
     "auto_start": "Iniciar de inmediato",
     "basic_configuration": "Configuración básica",
     "census": {
+      "auth_missing": {
+        "action": "Configurar",
+        "description": "Elige cómo se identificarán los votantes y vuelve a publicar.",
+        "title": "La autenticación de votantes no está configurada"
+      },
       "group": {
         "no_groups": "Para iniciar una votación, primero necesitas crear un grupo de votantes con derecho a voto a partir de tu base de miembros. <1>Créalo aquí</1>."
       },
+      "group_missing": {
+        "description": "Selecciona un grupo de miembros, configura la autenticación de votantes y vuelve a publicar.",
+        "title": "Elige quién puede votar"
+      },
       "memberbase": {
         "label": "Selecciona un grupo de miembros para crear el censo"
+      },
+      "status": {
+        "ready": "Listo",
+        "steps_left_one": "Falta {{ count }} paso",
+        "steps_left_many": "Faltan {{ count }} pasos",
+        "steps_left_other": "Faltan {{ count }} pasos"
+      },
+      "voter_auth": {
+        "label": "Define cómo demostrarán los votantes quiénes son"
       }
     },
     "census_creation": "Creación de censo",
@@ -2034,6 +2052,11 @@
     "level_strong": "Fuerte",
     "level_weak": "Débil",
     "no_group_description": "Selecciona primero un grupo para configurar la autenticación.",
+    "pending": {
+      "description": "Elige qué datos de miembro deben introducir los votantes para votar, como su DNI o su número de miembro.",
+      "error_title": "Lo necesitas para publicar",
+      "title": "Obligatorio antes de publicar"
+    },
     "security_level": "Buena seguridad",
     "security_recommendation_1": "Para una mayor seguridad, recomendamos seleccionar al menos 2 credenciales.",
     "security_recommendation_2_one": "Has seleccionado {{ count }} credenciales, lo que proporciona una buena seguridad para tus votantes.",

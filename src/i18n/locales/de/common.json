@@ -1441,11 +1441,28 @@
     "auto_start": "Sofort starten",
     "basic_configuration": "Grundkonfiguration",
     "census": {
+      "auth_missing": {
+        "action": "Einrichten",
+        "description": "Lege fest, wie sich Wählende identifizieren, und veröffentliche dann erneut.",
+        "title": "Wähler-Authentifizierung ist nicht eingerichtet"
+      },
       "group": {
         "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
       },
+      "group_missing": {
+        "description": "Wähle eine Mitgliedergruppe aus, richte die Wähler-Authentifizierung ein und veröffentliche dann erneut.",
+        "title": "Wähle aus, wer abstimmen darf"
+      },
       "memberbase": {
         "label": "Wähle eine Mitgliedergruppe aus, um die Teilnehmerliste zu erstellen"
+      },
+      "status": {
+        "ready": "Bereit",
+        "steps_left_one": "Noch {{ count }} Schritt",
+        "steps_left_other": "Noch {{ count }} Schritte"
+      },
+      "voter_auth": {
+        "label": "Lege fest, wie Wählende nachweisen, wer sie sind"
       }
     },
     "census_creation": "Erstellung der Teilnehmerliste",
@@ -2006,6 +2023,11 @@
     "level_strong": "Stark",
     "level_weak": "Schwach",
     "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
+    "pending": {
+      "description": "Wähle aus, welche Mitgliedsdaten Wählende zur Stimmabgabe eingeben müssen, z. B. ihre Ausweis- oder Mitgliedsnummer.",
+      "error_title": "Das brauchst du zum Veröffentlichen",
+      "title": "Vor dem Veröffentlichen erforderlich"
+    },
     "security_level": "Gute Sicherheit",
     "security_recommendation_1": "Für mehr Sicherheit empfehlen wir, mindestens 2 Zugangsdaten auszuwählen.",
     "security_recommendation_2_one": "Du hast {{ count }} Zugangsdatum ausgewählt, was deinen Wählenden gute Sicherheit bietet.",

@@ -2,10 +2,11 @@ import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { CensusTypes } from '~components/Process/Census/CensusType'
-import { mockUseOrganization, render, screen, waitFor } from '~src/test-utils'
+import { mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VoterAuthentication } from '.'
 import { Census, defaultQuestion, Process } from '../common'
+import { useVoterAuthDialog, VoterAuthDialogProvider } from './VoterAuthDialogContext'
 
 const mockValidateCensus = vi.fn()
 const mockTrackAnalyticsEvent = vi.fn()
@@ -40,9 +41,11 @@ const defaultCensus: Census = {
 const TestForm = ({
   initialCensus = defaultCensus,
   anonymousVoting = false,
+  groupId = 'group-1',
 }: {
   initialCensus?: Census | null
   anonymousVoting?: boolean
+  groupId?: string
 }) => {
   const methods = useForm<Process>({
     defaultValues: {
@@ -57,7 +60,7 @@ const TestForm = ({
       resultVisibility: 'hidden',
       weightedVote: false,
       anonymousVoting,
-      groupId: 'group-1',
+      groupId,
       census: initialCensus,
       censusType: CensusTypes.CSP,
       streamUri: '',
@@ -68,6 +71,10 @@ const TestForm = ({
     <FormProvider {...methods}>
       <VoterAuthentication />
       <FormWatcher name='census' />
+      {/* Stands in for the create view's Publish: runs the main form's validation. */}
+      <button type='button' onClick={() => methods.handleSubmit(() => {})()}>
+        Publish
+      </button>
     </FormProvider>
   )
 }
@@ -88,6 +95,59 @@ describe('VoterAuthentication', () => {
   it('shows Edit button when census is already configured', () => {
     render(<TestForm />)
     expect(screen.getByRole('button', { name: /edit voter authentication/i })).toBeInTheDocument()
+  })
+
+  it('flags voter authentication as still required once a group is picked', () => {
+    render(<TestForm initialCensus={null} />)
+
+    const notice = screen.getByRole('status')
+    expect(notice).toHaveTextContent(/required before publishing/i)
+    expect(within(notice).getByRole('button', { name: /configure voter authentication/i })).toBeEnabled()
+  })
+
+  it('shows no pending notice before a group is picked or once configured', () => {
+    const { unmount } = render(<TestForm initialCensus={null} groupId='' />)
+    expect(screen.queryByText(/required before publishing/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /configure voter authentication/i })).toBeDisabled()
+    unmount()
+
+    render(<TestForm />)
+    expect(screen.queryByText(/required before publishing/i)).not.toBeInTheDocument()
+  })
+
+  it('turns the notice into an error and focuses its button when a publish is blocked on it', async () => {
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />)
+
+    await user.click(screen.getByRole('button', { name: /publish/i }))
+
+    const notice = await screen.findByRole('alert')
+    expect(notice).toHaveTextContent(/you need this to publish/i)
+    await waitFor(() =>
+      expect(within(notice).getByRole('button', { name: /configure voter authentication/i })).toHaveFocus()
+    )
+  })
+
+  it('opens from outside through the shared dialog state', async () => {
+    const OpenFromOutside = () => {
+      const { onOpen } = useVoterAuthDialog()
+      return (
+        <button type='button' onClick={onOpen}>
+          Set it up
+        </button>
+      )
+    }
+    const user = userEvent.setup()
+    render(
+      <VoterAuthDialogProvider>
+        <TestForm initialCensus={null} />
+        <OpenFromOutside />
+      </VoterAuthDialogProvider>
+    )
+
+    await user.click(screen.getByRole('button', { name: /set it up/i }))
+
+    expect(await screen.findByRole('dialog')).toBeInTheDocument()
   })
 
   it('Confirm synchronously writes credentials and 2FA config to form.census', async () => {
