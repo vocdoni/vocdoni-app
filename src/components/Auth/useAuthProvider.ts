@@ -156,6 +156,18 @@ export const useAuthProvider = () => {
     queryClient.clear()
   }, [disconnect, queryClient, sdkLogout])
 
+  // The stored token is trusted blindly on load (`isAuthenticated` is just "a token exists"),
+  // so the address list doubles as the session probe. The backend only answers it with a 401
+  // when its auth middleware rejects the token itself (revoked, expired, user gone), so drop
+  // the dead session here. Staying "authenticated" with a token every request rejects leaves
+  // the guards stuck on the loading screen. Other 401s are not a signal: the API also uses
+  // them for per-resource permission denials, which must not log anyone out.
+  useEffect(() => {
+    if (bearer && addressesError instanceof VocdoniApiError && addressesError.status === 401) {
+      logout()
+    }
+  }, [addressesError, bearer, logout])
+
   const isAuthLoading = useMemo(() => isAuthenticated && addressesLoading, [isAuthenticated, addressesLoading])
 
   return {
