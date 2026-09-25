@@ -443,6 +443,14 @@ export const resetPosthogUser = (): void => {
   })
 }
 
+// Errors a React error boundary contains never reach `window.onerror`, so
+// `capture_exceptions` alone would never see them: they are reported here.
+export const capturePosthogException = (error: unknown, props?: Record<string, unknown>): void => {
+  withPosthog('Failed to capture PostHog exception:', (posthog) => {
+    posthog.captureException(error, props)
+  })
+}
+
 export const setPosthogOrganization = (address: string, props?: Record<string, unknown>): void => {
   withPosthog('Failed to set PostHog organization group:', (posthog) => {
     posthog.group('organization', address, props)

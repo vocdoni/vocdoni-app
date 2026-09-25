@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { capturePosthogException } from '~utils/analytics'
 
 type ErrorBoundaryProps = {
   children: ReactNode
@@ -22,8 +23,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    // Swallowed errors stay visible in the console (and in whatever captures it).
-    console.error(error, info.componentStack)
+    // React already logs caught errors to the console; error tracking only hooks uncaught ones.
+    capturePosthogException(error, { component_stack: info.componentStack })
   }
 
   render() {
