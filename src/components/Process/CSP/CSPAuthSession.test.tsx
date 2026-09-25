@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
 import { render, screen, waitFor, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CspAuth, CspAuthSession } from './CSPAuthModal'
@@ -95,6 +96,59 @@ describe('CspAuthSession', () => {
     )
 
     await user.click(screen.getAllByRole('button', { name: /login/i })[0])
+    expect(screen.getByRole('button', { name: 'send code' })).toBeInTheDocument()
+    expect(screen.queryByText('Step 1')).not.toBeInTheDocument()
+  })
+
+  it('keeps the wrapped page mounted when the process finishes loading', async () => {
+    const user = userEvent.setup()
+    const Counter = () => {
+      const [count, setCount] = useState(0)
+      return <button onClick={() => setCount((c) => c + 1)}>clicked {count}</button>
+    }
+
+    setReactProvidersMock({
+      useElection: () => ({ election: null, connected: false }),
+      useElectionAuth: () => ({ connected: false, authToken: null, weight: null }),
+    })
+    const { rerender } = render(
+      <CspAuthSession>
+        <Counter />
+      </CspAuthSession>
+    )
+    await user.click(screen.getByRole('button', { name: 'clicked 0' }))
+
+    setConnected(false)
+    rerender(
+      <CspAuthSession>
+        <Counter />
+      </CspAuthSession>
+    )
+
+    expect(screen.getByRole('button', { name: 'clicked 1' })).toBeInTheDocument()
+  })
+
+  it('starts from scratch when the page switches to another process', async () => {
+    const user = userEvent.setup()
+
+    const { rerender } = render(
+      <CspAuthSession>
+        <TwoButtons />
+      </CspAuthSession>
+    )
+
+    await requestCodeAndClose(user)
+
+    setReactProvidersMock({
+      useElection: () => ({ election: { ...election, id: 'p2' }, connected: false }),
+    })
+    rerender(
+      <CspAuthSession>
+        <TwoButtons />
+      </CspAuthSession>
+    )
+
+    await user.click(screen.getAllByRole('button', { name: /login/i })[1])
     expect(screen.getByRole('button', { name: 'send code' })).toBeInTheDocument()
     expect(screen.queryByText('Step 1')).not.toBeInTheDocument()
   })
