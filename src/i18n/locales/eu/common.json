@@ -415,14 +415,12 @@
       "overwrite": "Hautesleek beren botoa alda dezakete bozketa-aldia amaitu aurretik. Funtzionalitate honek erroreak saihesten eta bortxa eragozten laguntzen du, hautesleei beren aukerak zuzentzeko aukera emanez.",
       "single": "Hautesleek aukera bakarra hauta dezakete eskuragarri dauden aukeren artean. Ezin hobea hauteskunde eta bai/ez erabaki sinpleentzat.",
       "team_members": "Gonbidatu taldeko kideak eta esleitu rolean oinarritutako baimenak zure erakundea erraz kudeatu ahal izateko.",
-      "templates": "Gure txantiloiekin oso erraza da urteko batzar nagusi, hauteskunde eta aurrekontu parte-hartzaileetarako (eta laster gehiagorako) prest dauden konfigurazioekin hastea.",
       "uptime": "% 99,99ko jardun-denbora bermatzen dugu, baina ordainpeko planetan soilik bermatzen da kontratuz."
     },
     "total_orgs": "Eskuragarri dauden azpierakundeak guztira",
     "total_users": "Eskuragarri dauden erabiltzaileak guztira",
     "uptime": "% 99,99ko jardun-denbora",
     "uptime_guaranteed": "Bermatua ({{suffix}})",
-    "vote_templates": "Erabilerraza diren txantiloiak bozketa-metodo guztietarako",
     "weighted": "Ponderatutako botazioa",
     "white_label": "Marka zuria"
   },
@@ -1300,12 +1298,6 @@
         "publish": "Argitaratu",
         "save_draft": "Gorde"
       },
-      "change_template": {
-        "cancel": "Utzi",
-        "change": "Aldatu txantiloia",
-        "message": "Gorde gabeko aldaketak dituzu. Ziur zaude txantiloia aldatu nahi duzula?",
-        "title": "Aldatu txantiloia"
-      },
       "description": {
         "placeholder": "Gehitu deskribapena...",
         "title": "Prozesuaren izenburua"
@@ -1331,9 +1323,6 @@
           "description": "Ziur zaude galdera hau ezabatu nahi duzula?",
           "title": "Ezabatu galdera"
         },
-        "description": {
-          "placeholder": "Gehitu hemen galderaren deskribapena (aukerakoa)..."
-        },
         "question_number": "{{index}}. galdera, guztira {{total}}"
       },
       "save_draft_error": {
@@ -1346,12 +1335,6 @@
       },
       "status": {
         "draft": "Zirriborroa"
-      },
-      "template": {
-        "annual_general_meeting": "Urteko Batzar Nagusia",
-        "election": "Hauteskundea",
-        "participatory_budgeting": "Aurrekontu parte-hartzaileak",
-        "title": "Hasi txantiloi batekin..."
       }
     },
     "created_by": "Sortzailea",
@@ -1418,39 +1401,6 @@
       "view_summary": "Jarraitu prozesua",
       "votes_cast_one": "{{votes}} boto eman da",
       "votes_cast_other": "{{votes}} boto eman dira"
-    },
-    "template": {
-      "annual_general_meeting": {
-        "description": "Konfiguratu zure urteko batzar nagusiaren deskribapena (aukerakoa)",
-        "q1": {
-          "description": "Onartzen al duzu hurrengo ekitaldi fiskalerako proposatutako aurrekontua?",
-          "option_1": "Bai",
-          "option_2": "Ez",
-          "title": "Onartu urteko aurrekontua"
-        },
-        "q2": {
-          "description": "Aukeratu administrazio-kontseiluko kide berriak.",
-          "option_1": "A hautagaia",
-          "option_2": "B hautagaia",
-          "title": "Aukeratu kontseilari berriak"
-        },
-        "title": "Urteko Batzar Nagusiaren izenburua"
-      },
-      "election": {
-        "description": "Definitu zure hauteskunde-prozesuaren deskribapena (aukerakoa).",
-        "q1": {
-          "description": "Aukeratu zure interesak ordezkatzeko hautagairik onena.",
-          "option_1": "A hautagaia",
-          "option_2": "B hautagaia",
-          "option_3": "C hautagaia",
-          "title": "Nor izan beharko litzateke hurrengo presidentea?"
-        },
-        "title": "Hauteskunde-prozesuaren izenburua"
-      },
-      "participatory_budgeting": {
-        "description": "Aurrekontuaren esleipenari buruzko erabakiaren deskribapena (aukerakoa)",
-        "title": "Aurrekontu parte-hartzaileen izenburua"
-      }
     },
     "vote_failed": {
       "close": "Itxi",

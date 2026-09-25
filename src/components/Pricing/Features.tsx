@@ -104,14 +104,6 @@ export const CategorizedSpecs: Record<string, FeatureSpec[]> = {
   votingTypes: [
     planFeature(SubscriptionPermission.SingleVoting, 'features.single', 'features.tooltips.single'),
     planFeature(SubscriptionPermission.MultipleVoting, 'features.multiple', 'features.tooltips.multiple'),
-    staticFeature(
-      'templates',
-      'features.vote_templates',
-      {
-        available: () => true,
-      },
-      'features.tooltips.templates'
-    ),
   ],
   memberbaseManagement: [
     staticFeature(
@@ -310,7 +302,6 @@ export const isFeatureAvailable = (
 // t('organization.max_census', { defaultValue: 'Max census per vote' })
 // t('organization.max_processes', { defaultValue: 'Votes per year¹' })
 // t('features.participatory_budgeting', { defaultValue: 'Participatory budgeting' })
-// t('features.vote_templates', { defaultValue: 'Easy-to-use templates for all voting methods' })
 // t('features.memberbase_all_in_one_management', { defaultValue: 'All-in-one memberbase management' })
 // t('features.basic_branding', { defaultValue: 'Basic branding' })
 // t('features.email_notifications', { defaultValue: 'Email notifications to voters' })
@@ -342,7 +333,6 @@ export const isFeatureAvailable = (
 // t('features.tooltips.team_members', { defaultValue: 'Invite team members and assign role-based permissions so you can effortlessly manage your organization's governance.'})
 // t('features.tooltips.single', { defaultValue: 'Voters can select only one option from the available choices. Perfect for elections and simple yes/no decisions.'})
 // t('features.tooltips.multiple', { defaultValue: 'Voters can select multiple options from the available choices. Ideal for surveys and decisions where multiple selections are allowed.'})
-// t('features.tooltips.templates', { defaultValue: 'With our templates, it\'s so easy to start with ready-made setups for AGMs, Elections, and Participatory budgeting (and much more to come).'})
 // t('features.tooltips.memberbase_all_in_one', { defaultValue: 'Import your memberbase to create groups of eligible voters and manage voting permissions in a really easy way.'})
 // t('features.tooltips.anonymous', { defaultValue: 'This is an optional feature that organizers can choose. When enabled, votes are completely anonymous - not even we can know who voted for a specific option. Alternatively, organizers can choose to encrypt results until the vote ends, or make the vote completely public.'})
 // t('features.tooltips.overwrite', { defaultValue: 'Voters can change their vote before the voting period ends. This feature helps avoid mistakes and prevents coercion by allowing voters to correct their choices.'})

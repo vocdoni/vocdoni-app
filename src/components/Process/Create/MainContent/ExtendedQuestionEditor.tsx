@@ -18,7 +18,6 @@ import { LuGripVertical, LuPlus, LuTrash2 } from 'react-icons/lu'
 import { DashboardBox } from '~components/Dashboard/Contents'
 import Editor from '~components/Editor'
 import { ImageUploader } from '~components/Layout/Uploader'
-import { useProcessTemplates } from '~components/Process/Create/TemplateProvider'
 
 const ExtendedQuestionEditor = ({
   index,
@@ -32,7 +31,6 @@ const ExtendedQuestionEditor = ({
   remove: any
 }) => {
   const { t } = useTranslation()
-  const { activeTemplate, placeholders } = useProcessTemplates()
   const {
     register,
     formState: { errors },
@@ -52,8 +50,6 @@ const ExtendedQuestionEditor = ({
           questionIndex={index}
           fieldsLength={questionOptions.length}
           onRemove={() => remove(optionIndex)}
-          placeholders={placeholders}
-          activeTemplate={activeTemplate}
           register={register}
           errors={errors}
           control={control}
@@ -85,8 +81,6 @@ const SortableExtendedOption = ({
   questionIndex,
   fieldsLength,
   onRemove,
-  placeholders,
-  activeTemplate,
   register,
   errors,
   control,
@@ -147,12 +141,9 @@ const SortableExtendedOption = ({
           <FormControl invalid={!!errors.questions?.[questionIndex]?.options?.[optionIndex]?.option}>
             <Input
               variant='borderless'
-              placeholder={
-                placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.option ??
-                t('process_create.option.placeholder', 'Option {{number}}', {
-                  number: optionIndex + 1,
-                })
-              }
+              placeholder={t('process_create.option.placeholder', 'Option {{number}}', {
+                number: optionIndex + 1,
+              })}
               fontWeight='semibold'
               fontSize='md'
               _placeholder={{ fontWeight: 'semibold' }}
@@ -172,10 +163,7 @@ const SortableExtendedOption = ({
               <Editor
                 onChange={field.onChange}
                 variant='borderless'
-                placeholder={
-                  placeholders[activeTemplate]?.questions?.[questionIndex].options?.[optionIndex]?.description ??
-                  t('process_create.option.description_placeholder', 'Project description')
-                }
+                placeholder={t('process_create.option.description_placeholder', 'Project description')}
                 defaultValue={field.value}
               />
             )}

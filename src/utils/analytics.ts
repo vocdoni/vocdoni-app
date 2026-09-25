@@ -28,7 +28,6 @@ export const AnalyticsEvents = {
   PaywallViewed: 'paywall_viewed',
   FeatureBlocked: 'feature_blocked',
   ProcessCreationFailed: 'process_creation_failed',
-  ProcessTemplateSelected: 'process_template_selected',
   ProcessAction: 'process_action',
   ProcessResultsViewed: 'process_results_viewed',
   MembersImportStarted: 'members_import_started',

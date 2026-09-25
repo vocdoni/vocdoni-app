@@ -18,10 +18,6 @@ vi.mock('@dnd-kit/sortable', async (importOriginal) => {
   }
 })
 
-vi.mock('~components/Process/Create/TemplateProvider', () => ({
-  useProcessTemplates: () => ({ activeTemplate: 'default', placeholders: {} }),
-}))
-
 vi.mock('~components/Editor', () => ({
   default: () => <div data-testid='editor' />,
 }))

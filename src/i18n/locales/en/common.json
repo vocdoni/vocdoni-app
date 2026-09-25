@@ -415,14 +415,12 @@
       "overwrite": "Voters can change their vote before the voting period ends. This feature helps avoid mistakes and prevents coercion by allowing voters to correct their choices.",
       "single": "Voters can select only one option from the available choices. Perfect for elections and simple yes/no decisions.",
       "team_members": "Invite team members and assign role-based permissions so you can effortlessly manage your organization",
-      "templates": "With our templates, it's so easy to start with ready-made setups for AGMs, Elections, and Participatory budgeting (and much more to come).",
       "uptime": "We guarantee a 99.99% uptime, but only in the paid plans these are enforced by contract with warranties."
     },
     "total_orgs": "Total available sub-organizations",
     "total_users": "Total available users",
     "uptime": "99.99% Uptime",
     "uptime_guaranteed": "Guaranteed ({{suffix}})",
-    "vote_templates": "Easy-to-use templates for all voting methods",
     "weighted": "Weighted voting",
     "white_label": "White-label (no vocdoni branding)"
   },
@@ -1300,12 +1298,6 @@
         "publish": "Publish",
         "save_draft": "Save"
       },
-      "change_template": {
-        "cancel": "Cancel",
-        "change": "Change Template",
-        "message": "You have unsaved changes. Are you sure you want to switch templates?",
-        "title": "Change Template"
-      },
       "description": {
         "placeholder": "Add a description...",
         "title": "Voting Process Title"
@@ -1331,9 +1323,6 @@
           "description": "Are you sure you want to delete this question?",
           "title": "Delete Question"
         },
-        "description": {
-          "placeholder": "Add the description of the question here (optional)..."
-        },
         "question_number": "Question {{index}} of {{total}}"
       },
       "save_draft_error": {
@@ -1346,12 +1335,6 @@
       },
       "status": {
         "draft": "Draft"
-      },
-      "template": {
-        "annual_general_meeting": "Annual General Meeting",
-        "election": "Election",
-        "participatory_budgeting": "Participatory Budgeting",
-        "title": "Get started with a template..."
       }
     },
     "created_by": "Created by",
@@ -1418,39 +1401,6 @@
       "view_summary": "Follow the process",
       "votes_cast_one": "{{votes}} vote cast",
       "votes_cast_other": "{{votes}} votes cast"
-    },
-    "template": {
-      "annual_general_meeting": {
-        "description": "Set up your annual general meeting description (optional)",
-        "q1": {
-          "description": "Do you approve the proposed budget for the next fiscal year?",
-          "option_1": "Yes",
-          "option_2": "No",
-          "title": "Approve the annual budget"
-        },
-        "q2": {
-          "description": "Choose the new members for the board of directors.",
-          "option_1": "Candidate A",
-          "option_2": "Candidate B",
-          "title": "Elect new board members"
-        },
-        "title": "Annual General Meeting Title"
-      },
-      "election": {
-        "description": "Define a description (optional) for your election process.",
-        "q1": {
-          "description": "Choose the best candidate to represent your interests.",
-          "option_1": "Candidate A",
-          "option_2": "Candidate B",
-          "option_3": "Candidate C",
-          "title": "Who should be the next president?"
-        },
-        "title": "Election Process Title"
-      },
-      "participatory_budgeting": {
-        "description": "Budget allocation decision-making (optional) description",
-        "title": "Participatory Budgeting Title"
-      }
     },
     "vote_failed": {
       "close": "Close",

@@ -417,14 +417,12 @@
       "overwrite": "Los votantes pueden cambiar su voto antes de que termine el período de votación. Esta funcionalidad ayuda a evitar errores y prevenir la coerción permitiendo a los votantes corregir sus opciones.",
       "single": "Los votantes solo pueden seleccionar una opción de las opciones disponibles. Perfecto para elecciones y decisiones simples de sí/no.",
       "team_members": "Invita miembros del equipo y asigna permisos basados en roles para poder gestionar fácilmente tu organización",
-      "templates": "Con nuestras plantillas es muy fácil empezar con configuraciones ya preparadas para asambleas generales anuales, elecciones y presupuestos participativos (y mucho más próximamente).",
       "uptime": "Garantizamos un 99.99% de tiempo activo, pero solo en los planes de pago estos se exigen por contrato con garantías."
     },
     "total_orgs": "Total de suborganizaciones disponibles",
     "total_users": "Total de usuarios disponibles",
     "uptime": "99.99% de tiempo activo",
     "uptime_guaranteed": "Garantizado ({{suffix}})",
-    "vote_templates": "Plantillas fáciles de usar para todos los métodos de votación",
     "weighted": "Votación ponderada",
     "white_label": "Marca blanca"
   },
@@ -1323,12 +1321,6 @@
         "publish": "Publicar",
         "save_draft": "Guardar"
       },
-      "change_template": {
-        "cancel": "Cancelar",
-        "change": "Cambiar plantilla",
-        "message": "Tienes cambios sin guardar. ¿Seguro que quieres cambiar de plantilla?",
-        "title": "Cambiar plantilla"
-      },
       "description": {
         "placeholder": "Añade una descripción...",
         "title": "Título del proceso de votación"
@@ -1355,9 +1347,6 @@
           "description": "¿Seguro que quieres eliminar esta pregunta?",
           "title": "Eliminar pregunta"
         },
-        "description": {
-          "placeholder": "Añade aquí la descripción de la pregunta (opcional)..."
-        },
         "question_number": "Pregunta {{index}} de {{total}}"
       },
       "save_draft_error": {
@@ -1370,12 +1359,6 @@
       },
       "status": {
         "draft": "Borrador"
-      },
-      "template": {
-        "annual_general_meeting": "Asamblea General Anual",
-        "election": "Elección",
-        "participatory_budgeting": "Presupuestos participativos",
-        "title": "Comienza con una plantilla..."
       }
     },
     "created_by": "Creado por",
@@ -1444,39 +1427,6 @@
       "votes_cast_one": "{{votes}} voto emitido",
       "votes_cast_many": "",
       "votes_cast_other": "{{votes}} votos emitidos"
-    },
-    "template": {
-      "annual_general_meeting": {
-        "description": "Configura la descripción de tu asamblea general anual (opcional)",
-        "q1": {
-          "description": "¿Apruebas el presupuesto propuesto para el próximo ejercicio fiscal?",
-          "option_1": "Sí",
-          "option_2": "No",
-          "title": "Aprobar el presupuesto anual"
-        },
-        "q2": {
-          "description": "Elige a los nuevos miembros del consejo de administración.",
-          "option_1": "Candidato A",
-          "option_2": "Candidato B",
-          "title": "Elegir nuevos consejeros"
-        },
-        "title": "Título de la Asamblea General Anual"
-      },
-      "election": {
-        "description": "Define una descripción (opcional) para tu proceso electoral.",
-        "q1": {
-          "description": "Elige al mejor candidato para representar tus intereses.",
-          "option_1": "Candidato A",
-          "option_2": "Candidato B",
-          "option_3": "Candidato C",
-          "title": "¿Quién debería ser el próximo presidente?"
-        },
-        "title": "Título del proceso electoral"
-      },
-      "participatory_budgeting": {
-        "description": "Descripción de la decisión de asignación presupuestaria (opcional)",
-        "title": "Título de presupuestos participativos"
-      }
     },
     "vote_failed": {
       "close": "Cerrar",

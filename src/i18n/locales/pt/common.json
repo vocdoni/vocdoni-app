@@ -417,14 +417,12 @@
       "overwrite": "Os votantes podem alterar o seu voto antes do fim do período de votação. Esta funcionalidade ajuda a evitar erros e a prevenir coerção, permitindo que os votantes corrijam as suas escolhas.",
       "single": "Os votantes só podem selecionar uma opção entre as disponíveis. Ideal para eleições e decisões simples de sim/não.",
       "team_members": "Convida membros da equipa e atribui permissões baseadas em perfis para gerir a tua organização sem esforço",
-      "templates": "Com os nossos modelos é muito fácil começar com configurações prontas a usar para AGO, eleições e orçamentos participativos (e muito mais em breve).",
       "uptime": "Garantimos uma disponibilidade de 99,99%, mas só nos planos pagos isso é assegurado por contrato com garantias."
     },
     "total_orgs": "Total de suborganizações disponíveis",
     "total_users": "Total de utilizadores disponíveis",
     "uptime": "99,99% de disponibilidade",
     "uptime_guaranteed": "Garantida ({{suffix}})",
-    "vote_templates": "Modelos fáceis de usar para todos os métodos de votação",
     "weighted": "Votação ponderada",
     "white_label": "Marca branca (sem branding Vocdoni)"
   },
@@ -1323,12 +1321,6 @@
         "publish": "Publicar",
         "save_draft": "Guardar"
       },
-      "change_template": {
-        "cancel": "Cancelar",
-        "change": "Mudar de modelo",
-        "message": "Tens alterações por guardar. Tens a certeza de que pretendes mudar de modelo?",
-        "title": "Mudar de modelo"
-      },
       "description": {
         "placeholder": "Adicionar uma descrição…",
         "title": "Título do processo de votação"
@@ -1355,9 +1347,6 @@
           "description": "Tens a certeza de que queres eliminar esta pergunta?",
           "title": "Eliminar pergunta"
         },
-        "description": {
-          "placeholder": "Adiciona aqui a descrição da pergunta (opcional)…"
-        },
         "question_number": "Pergunta {{index}} de {{total}}"
       },
       "save_draft_error": {
@@ -1370,12 +1359,6 @@
       },
       "status": {
         "draft": "Rascunho"
-      },
-      "template": {
-        "annual_general_meeting": "Assembleia geral anual",
-        "election": "Eleição",
-        "participatory_budgeting": "Orçamento participativo",
-        "title": "Começa com um modelo…"
       }
     },
     "created_by": "Criado por",
@@ -1444,39 +1427,6 @@
       "votes_cast_one": "{{votes}} voto emitido",
       "votes_cast_many": "",
       "votes_cast_other": "{{votes}} votos emitidos"
-    },
-    "template": {
-      "annual_general_meeting": {
-        "description": "Configura a descrição da tua assembleia geral anual (opcional)",
-        "q1": {
-          "description": "Aprovas o orçamento proposto para o próximo exercício?",
-          "option_1": "Sim",
-          "option_2": "Não",
-          "title": "Aprovar o orçamento anual"
-        },
-        "q2": {
-          "description": "Escolhe os novos membros do conselho de administração.",
-          "option_1": "Candidato A",
-          "option_2": "Candidato B",
-          "title": "Eleger novos membros do conselho"
-        },
-        "title": "Título da assembleia geral anual"
-      },
-      "election": {
-        "description": "Define uma descrição (opcional) para o teu processo eleitoral.",
-        "q1": {
-          "description": "Escolhe o melhor candidato para representar os teus interesses.",
-          "option_1": "Candidato A",
-          "option_2": "Candidato B",
-          "option_3": "Candidato C",
-          "title": "Quem deve ser o próximo presidente?"
-        },
-        "title": "Título do processo eleitoral"
-      },
-      "participatory_budgeting": {
-        "description": "Descrição (opcional) da decisão de afetação do orçamento",
-        "title": "Título do orçamento participativo"
-      }
     },
     "vote_failed": {
       "close": "Fechar",
