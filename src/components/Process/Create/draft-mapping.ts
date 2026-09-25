@@ -69,13 +69,16 @@ export const votingProcessToForm = (process: VotingProcessResponse): Process => 
     weightedVote: process.census?.weighted ?? false,
     anonymousVoting: process.census?.anonymous ?? false,
     groupId: process.census?.groupId ?? defaultProcessValues.groupId,
-    census: authFields.length
-      ? {
-          credentials: [...authFields],
-          use2FA: twoFaFields.length > 0,
-          use2FAMethod: twoFaMethod ?? 'email',
-        }
-      : defaultProcessValues.census,
+    // Two-factor alone is a complete configuration (the auth dialog confirms it
+    // without credentials), so either half restores it.
+    census:
+      authFields.length || twoFaMethod
+        ? {
+            credentials: [...authFields],
+            use2FA: twoFaFields.length > 0,
+            use2FAMethod: twoFaMethod ?? 'email',
+          }
+        : defaultProcessValues.census,
     // A process always has at least one question (the API rejects an empty list),
     // but keep the wizard's default question rather than rendering an empty form.
     questions: questions.length
