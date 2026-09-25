@@ -224,6 +224,7 @@
       "resend_failed": "Η επαναποστολή του κωδικού απέτυχε",
       "resend_success": "Ο κωδικός εστάλη ξανά με επιτυχία",
       "resend_text": "Δεν λάβατε τον κωδικό; <resendBtn>Στείλτε τον ξανά</resendBtn>",
+      "start_over_text": "Λάθος στοιχεία; <restartBtn>Ξεκινήστε από την αρχή</restartBtn>",
       "subtitle": "Πληκτρολογήστε τον κωδικό επαλήθευσης",
       "title": "Ταυτοποίηση",
       "validation": {

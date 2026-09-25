@@ -25,7 +25,7 @@ type CSPStep1FormData = {
 }
 
 export const Step1Base = () => {
-  const { authData } = useCspAuthContext()
+  const { authData, setAuthData, setCurrentStep } = useCspAuthContext()
   const resend = useCspResend()
   const { t } = useTranslation()
   const toast = useToast()
@@ -164,6 +164,27 @@ export const Step1Base = () => {
                           verticalAlign='unset'
                           loading={resend.isPending}
                           onClick={handleResend}
+                        />
+                      ),
+                    }}
+                  />
+                </Text>
+                {/* Every Identify button on the page resumes this step, so this
+                    is the only way back to step 0 short of a reload (e.g. a
+                    mistyped contact, or a challenge that expired). */}
+                <Text>
+                  <Trans
+                    i18nKey='csp.step1.start_over_text'
+                    defaults='Wrong details? <restartBtn>Start over</restartBtn>'
+                    components={{
+                      restartBtn: (
+                        <Button
+                          variant='link'
+                          verticalAlign='unset'
+                          onClick={() => {
+                            setAuthData({})
+                            setCurrentStep(0)
+                          }}
                         />
                       ),
                     }}

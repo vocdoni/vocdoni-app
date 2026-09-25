@@ -226,6 +226,7 @@
       "resend_failed": "No s'ha pogut tornar a enviar el codi",
       "resend_success": "Codi tornat a enviar correctament",
       "resend_text": "No has rebut el codi? <resendBtn>Torna a enviar-lo</resendBtn>",
+      "start_over_text": "Dades incorrectes? <restartBtn>Torna a començar</restartBtn>",
       "subtitle": "Introdueix el codi de verificació",
       "title": "Autenticació",
       "validation": {
