@@ -325,7 +325,7 @@ const ProcessViewContent = () => {
               <TabsContentGroup mt={6}>
                 <TabsContent value='questions' p={0}>
                   <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                    <ErrorBoundary fallback={sectionFallback}>
+                    <ErrorBoundary fallback={sectionFallback} resetKeys={[election]}>
                       <ElectionQuestions />
                     </ErrorBoundary>
                   </Box>
@@ -333,7 +333,7 @@ const ProcessViewContent = () => {
                 {showResultsTab && (
                   <TabsContent value='results' p={0}>
                     <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                      <ErrorBoundary fallback={sectionFallback}>
+                      <ErrorBoundary fallback={sectionFallback} resetKeys={[election, results]}>
                         <ElectionResults />
                       </ErrorBoundary>
                     </Box>
