@@ -63,6 +63,20 @@ describe('buildCensusSpec', () => {
   it('omits the flag for a private ballot rather than sending false', () => {
     expect(buildCensusSpec(form()).anonymous).toBeUndefined()
   })
+
+  // Saving a group without credentials makes the backend build a voter list in
+  // which every voter collides, failing the whole draft save.
+  it('leaves the group out until voter authentication is set up', () => {
+    expect(buildCensusSpec(form()).groupId).toBeUndefined()
+  })
+
+  it('sends the group with the voter authentication once it is set up', () => {
+    const spec = buildCensusSpec(
+      form({ census: { credentials: ['memberNumber'], use2FA: true, use2FAMethod: 'email' } })
+    )
+
+    expect(spec).toMatchObject({ groupId: 'g1', authFields: ['memberNumber'], twoFaFields: ['email'] })
+  })
 })
 
 describe('useFormToVotingProcessRequest', () => {

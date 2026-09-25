@@ -2099,6 +2099,7 @@
     "validation_failed": "Balidazioak huts egin du",
     "validation_missing_data_one": "Eremu beharrezkorik gabe {{count}} erabiltzaile",
     "validation_missing_data_other": "Eremu beharrezkorik gabe {{count}} erabiltzaile",
+    "validation_review_members": "Berrikusi kideak",
     "validation_summary": "Balidazioak huts egin du erabiltzaile batzuentzat.",
     "validation_total_one": "Guztira {{count}} erabiltzaile",
     "validation_total_other": "Guztira {{count}} erabiltzaile",

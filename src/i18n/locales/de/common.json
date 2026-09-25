@@ -2099,6 +2099,7 @@
     "validation_failed": "Validierung fehlgeschlagen",
     "validation_missing_data_one": "{{count}} Nutzer mit fehlenden Pflichtfeldern",
     "validation_missing_data_other": "{{count}} Nutzer mit fehlenden Pflichtfeldern",
+    "validation_review_members": "Mitglieder prüfen",
     "validation_summary": "Validierung für einige Nutzer fehlgeschlagen.",
     "validation_total_one": "{{count}} Nutzer insgesamt",
     "validation_total_other": "{{count}} Nutzer insgesamt",

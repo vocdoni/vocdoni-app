@@ -2099,6 +2099,7 @@
     "validation_failed": "Validation failed",
     "validation_missing_data_one": "{{count}} users missing required fields",
     "validation_missing_data_other": "{{count}} users missing required fields",
+    "validation_review_members": "Review members",
     "validation_summary": "Validation failed for some users.",
     "validation_total_one": "{{count}} users total",
     "validation_total_other": "{{count}} users total",

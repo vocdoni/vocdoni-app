@@ -2130,6 +2130,7 @@
     "validation_missing_data_one": "{{count}} utenti con campi obbligatori mancanti",
     "validation_missing_data_many": "",
     "validation_missing_data_other": "{{count}} utenti con campi obbligatori mancanti",
+    "validation_review_members": "Controlla i membri",
     "validation_summary": "Convalida fallita per alcuni utenti.",
     "validation_total_one": "{{count}} utenti totali",
     "validation_total_many": "",

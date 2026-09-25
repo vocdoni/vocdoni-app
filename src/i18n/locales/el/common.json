@@ -2099,6 +2099,7 @@
     "validation_failed": "Η επικύρωση απέτυχε",
     "validation_missing_data_one": "{{count}} χρήστης χωρίς απαιτούμενα πεδία",
     "validation_missing_data_other": "{{count}} χρήστες χωρίς απαιτούμενα πεδία",
+    "validation_review_members": "Ελέγξτε τα μέλη",
     "validation_summary": "Η επικύρωση απέτυχε για ορισμένους χρήστες.",
     "validation_total_one": "{{count}} χρήστης συνολικά",
     "validation_total_other": "{{count}} χρήστες συνολικά",

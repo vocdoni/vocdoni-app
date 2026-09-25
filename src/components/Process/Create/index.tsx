@@ -583,7 +583,11 @@ const useUpdateProcess = () => {
 
 export const buildCensusSpec = (form: Process): CensusSpec => {
   const spec: CensusSpec = {
-    groupId: form.groupId || undefined,
+    // The backend builds the group's voter list on every save, keyed on the
+    // voters' credentials. Without them every voter collides and the save fails,
+    // so a draft only commits to its group once authentication is set up.
+    // Publishing requires it anyway, so this only ever affects drafts.
+    groupId: (form.census && form.groupId) || undefined,
     weighted: form.weightedVote || undefined,
     // Blind-CSP census: omitted rather than sent as `false`, matching how the
     // other optional flags are built here.
@@ -755,7 +759,10 @@ const ProcessCreateView = () => {
     if (!formDraft) return
 
     Object.entries(formDraft).forEach(([key, value]) => {
-      if (key === 'groupId' && groupId) return
+      // A draft only stores its group once voter authentication is set up (see
+      // buildCensusSpec), so a missing one means "not saved yet", not "none":
+      // the draft read that follows the first save must not clear a picked group.
+      if (key === 'groupId' && (groupId || !value)) return
       methods.setValue(key as keyof Process, value as Process[keyof Process], { shouldDirty: true })
     })
   }, [formDraft, groupId, methods])

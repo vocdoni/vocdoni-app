@@ -2130,6 +2130,7 @@
     "validation_missing_data_one": "{{count}} usuarios sin campos obligatorios",
     "validation_missing_data_many": "",
     "validation_missing_data_other": "{{count}} usuarios sin campos obligatorios",
+    "validation_review_members": "Revisa los miembros",
     "validation_summary": "La validación ha fallado para algunos usuarios.",
     "validation_total_one": "{{count}} usuarios en total",
     "validation_total_many": "",
