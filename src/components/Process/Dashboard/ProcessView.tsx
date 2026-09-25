@@ -38,7 +38,6 @@ import {
   useElection,
 } from '@vocdoni/react-components'
 import { hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
-import { inferQuestionBallotType } from '@vocdoni/ballot'
 import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
@@ -76,6 +75,7 @@ import {
   SidebarTitle,
 } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
+import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { useProcessEarlyEndDate } from '~queries/process-end-date'
@@ -83,7 +83,7 @@ import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useAnonymityLabels } from '../anonymityLabels'
-import { useResultTypeLabel } from '../resultTypeLabels'
+import { inferQuestionBallotTypeOrUndefined, useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
 import { CensusSearch } from './CensusSearch'
 
@@ -185,6 +185,12 @@ const ProcessViewContent = () => {
       },
     })
   }, [tabValue, showResultsTab, id, election, results, status, censusSize])
+
+  // The questions and results render through the ballot type, which cannot be inferred for some
+  // legacy processes: such a section degrades on its own instead of taking the page down.
+  const sectionFallback = (
+    <Text color='texts.subtle'>{t('error.loading_section', { defaultValue: 'This section could not be loaded' })}</Text>
+  )
 
   return (
     <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
@@ -319,13 +325,17 @@ const ProcessViewContent = () => {
               <TabsContentGroup mt={6}>
                 <TabsContent value='questions' p={0}>
                   <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                    <ElectionQuestions />
+                    <ErrorBoundary fallback={sectionFallback} resetKeys={[election]}>
+                      <ElectionQuestions />
+                    </ErrorBoundary>
                   </Box>
                 </TabsContent>
                 {showResultsTab && (
                   <TabsContent value='results' p={0}>
                     <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                      <ElectionResults />
+                      <ErrorBoundary fallback={sectionFallback} resetKeys={[election, results]}>
+                        <ElectionResults />
+                      </ErrorBoundary>
                     </Box>
                   </TabsContent>
                 )}
@@ -401,7 +411,10 @@ const ProcessViewSidebar = () => {
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { showSidebar, closeSidebar } = useSidebarVisibility()
   const firstQuestion = election?.questions[0]
-  const resultTypeLabel = useResultTypeLabel(firstQuestion ? inferQuestionBallotType(firstQuestion) : undefined, '')
+  const resultTypeLabel = useResultTypeLabel(
+    firstQuestion ? inferQuestionBallotTypeOrUndefined(firstQuestion) : undefined,
+    ''
+  )
   const { short: anonymityLabel, mechanismDescription: anonymityMechanism } = useAnonymityLabels(
     election?.census?.anonymous
   )

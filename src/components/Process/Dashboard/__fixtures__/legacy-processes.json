@@ -1,0 +1,151 @@
+{
+  "processes": [
+    {
+      "id": "690e1e8b2035563c86664907",
+      "orgAddress": "08e42f4f97f32930c3e579f53494304a3aca365c",
+      "published": true,
+      "census": {
+        "weighted": false,
+        "authFields": ["name", "surname"],
+        "groupId": "690e1e7c2035563c86664905",
+        "size": 4,
+        "totalWeight": 4
+      },
+      "title": {
+        "default": "Tria on destinar els fons per a les obres"
+      },
+      "description": {
+        "default": ""
+      },
+      "startDate": "2025-11-07T16:30:03Z",
+      "endDate": "2025-11-10T21:22:03Z",
+      "questions": [
+        {
+          "id": "33a0c93b068faee308277157",
+          "parentProcessId": "690e1e8b2035563c86664907",
+          "title": {
+            "default": "Quins dels següents projectes voldries que es duguessin a terme?"
+          },
+          "description": {
+            "default": ""
+          },
+          "choices": [
+            {
+              "title": {
+                "default": "Teular el garatge"
+              },
+              "value": 0
+            },
+            {
+              "title": {
+                "default": "Teular la casa sencera"
+              },
+              "value": 1
+            },
+            {
+              "title": {
+                "default": "Pagar la hipoteca"
+              },
+              "value": 2
+            }
+          ],
+          "type": "",
+          "typeSetup": {
+            "minChoices": 0,
+            "maxChoices": 0,
+            "uniqueChoices": false,
+            "budget": 0,
+            "costExponent": 0
+          },
+          "secretUntilTheEnd": true,
+          "upstreamId": "6b342d99f21808e42f4f97f32930c3e579f53494304a3aca365c030c00000001",
+          "status": "RESULTS",
+          "results": {
+            "voteCount": 0,
+            "maxVoters": 1,
+            "finalResults": true,
+            "results": [
+              ["0", "0", "0"],
+              ["0", "0", "0"],
+              ["0", "0", "0"]
+            ]
+          }
+        }
+      ],
+      "chainId": "vocdoni/LTS/1.2",
+      "legacy": true
+    },
+    {
+      "id": "6a2193a24c782c3753d1599b",
+      "orgAddress": "08e42f4f97f32930c3e579f53494304a3aca365c",
+      "published": true,
+      "census": {
+        "weighted": false,
+        "authFields": ["name"],
+        "twoFaFields": ["email"],
+        "groupId": "6a0c369c4705cd481582e1fd",
+        "size": 2,
+        "totalWeight": 2
+      },
+      "title": {
+        "default": "What are your favorite candidates?"
+      },
+      "description": {
+        "default": ""
+      },
+      "startDate": "2026-06-04T15:02:57Z",
+      "endDate": "2026-06-17T20:22:00Z",
+      "questions": [
+        {
+          "id": "c8332d1147910a71d7022c7a",
+          "parentProcessId": "6a2193a24c782c3753d1599b",
+          "title": {
+            "default": "What are your favorite candidates?"
+          },
+          "description": {
+            "default": ""
+          },
+          "choices": [
+            {
+              "title": {
+                "default": "Linus Torvalds"
+              },
+              "value": 0
+            },
+            {
+              "title": {
+                "default": "Tux"
+              },
+              "value": 1
+            },
+            {
+              "title": {
+                "default": "Arnold Schwarzenegger"
+              },
+              "value": 2
+            }
+          ],
+          "type": "singlechoice",
+          "typeSetup": {
+            "minChoices": 0,
+            "maxChoices": 0,
+            "uniqueChoices": false,
+            "budget": 0,
+            "costExponent": 0
+          },
+          "secretUntilTheEnd": false,
+          "upstreamId": "6b342d99f21808e42f4f97f32930c3e579f53494304a3aca365c030000000003",
+          "status": "RESULTS",
+          "results": {
+            "voteCount": 1,
+            "maxVoters": 2,
+            "finalResults": true,
+            "results": [["0", "1", "0"]]
+          }
+        }
+      ],
+      "chainId": "vocdoni/LTS/1.2",
+      "legacy": true
+    }
+  ]
+}

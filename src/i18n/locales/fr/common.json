@@ -350,6 +350,7 @@
     "loading_languages": "Erreur lors du chargement des langues",
     "loading_page": "Erreur lors du chargement de la page",
     "loading_roles": "Erreur lors du chargement des rôles",
+    "loading_section": "Impossible de charger cette section",
     "loading_types": "Erreur lors du chargement des types d'organisation",
     "missing_data": "Le tableur ne contient aucune donnée.",
     "missing_header": "Le tableur ne contient pas d'en-tête.",

@@ -350,6 +350,7 @@
     "loading_languages": "Errore durante il caricamento delle lingue",
     "loading_page": "Errore durante il caricamento della pagina",
     "loading_roles": "Errore durante il caricamento dei ruoli",
+    "loading_section": "Impossibile caricare questa sezione",
     "loading_types": "Errore durante il caricamento dei tipi",
     "missing_data": "Il foglio di calcolo non ha dati.",
     "missing_header": "Il foglio di calcolo non ha intestazione.",

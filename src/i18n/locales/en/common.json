@@ -348,6 +348,7 @@
     "loading_languages": "Error loading languages",
     "loading_page": "Error loading the page",
     "loading_roles": "Error loading roles",
+    "loading_section": "This section could not be loaded",
     "loading_types": "Error loading organization types",
     "missing_data": "Spreadsheet has no data.",
     "missing_header": "Spreadsheet has no header.",

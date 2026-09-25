@@ -350,6 +350,7 @@
     "loading_languages": "Error carregant idiomes",
     "loading_page": "Càrrega de pàgina errònia",
     "loading_roles": "Error carregant rols",
+    "loading_section": "No s'ha pogut carregar aquesta secció",
     "loading_types": "Error carregant tipus",
     "missing_data": "El full de càlcul no té dades.",
     "missing_header": "El full de càlcul no té capçalera.",

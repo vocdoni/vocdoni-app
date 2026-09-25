@@ -8,6 +8,8 @@ const navigateSpy = vi.fn()
 let currentPathname = '/admin/process/0xabc'
 let currentElectionId = '0xabc'
 let currentElectionStatus: QuestionStatus = 'RESULTS'
+let questionsThrow = false
+let resultsThrow = false
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
@@ -32,8 +34,15 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...actual,
     ...getReactProvidersMock(),
     ElectionDescription: () => <div>ElectionDescription</div>,
-    ElectionQuestions: () => <div>ElectionQuestions</div>,
-    ElectionResults: () => <div>ElectionResults</div>,
+    ElectionQuestions: () => {
+      // like the real one for a question whose ballot type cannot be inferred
+      if (questionsThrow) throw new Error('cannot infer ballot type')
+      return <div>ElectionQuestions</div>
+    },
+    ElectionResults: () => {
+      if (resultsThrow) throw new Error('cannot infer ballot type')
+      return <div>ElectionResults</div>
+    },
     ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
     ElectionTitle: () => <div>ElectionTitle</div>,
   }
@@ -292,6 +301,74 @@ describe('ProcessView schedule', () => {
 
     expect(await screen.findByText('End date')).toBeInTheDocument()
     expect(screen.queryByText(/actual end/i)).toBeNull()
+  })
+})
+
+describe('ProcessView questions', () => {
+  afterEach(() => {
+    questionsThrow = false
+    resultsThrow = false
+  })
+
+  it('keeps the page up when the results cannot render', async () => {
+    resultsThrow = true
+    currentPathname = '/admin/process/0xabc/results'
+    setReactProvidersMock({
+      ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+      useElection: () => ({
+        id: '0xabc',
+        election: createProcess('0xabc', 'RESULTS'),
+        status: 'RESULTS',
+        results: null,
+        loading: false,
+        client: { explorerUrl: 'https://example.test' },
+      }),
+    })
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      render(
+        <TestMemoryRouter initialEntries={['/admin/process/0xabc/results']}>
+          <ProcessView />
+        </TestMemoryRouter>
+      )
+
+      expect(await screen.findByText('This section could not be loaded')).toBeInTheDocument()
+      expect(screen.getByText('ElectionTitle')).toBeInTheDocument()
+    } finally {
+      consoleError.mockRestore()
+      currentPathname = '/admin/process/0xabc'
+    }
+  })
+
+  it('keeps the page up when the questions cannot render', async () => {
+    questionsThrow = true
+    currentPathname = '/admin/process/0xabc'
+    setReactProvidersMock({
+      ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+      useElection: () => ({
+        id: '0xabc',
+        election: createProcess('0xabc', 'ONGOING'),
+        status: 'ONGOING',
+        results: null,
+        loading: false,
+        client: { explorerUrl: 'https://example.test' },
+      }),
+    })
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      render(
+        <TestMemoryRouter initialEntries={['/admin/process/0xabc']}>
+          <ProcessView />
+        </TestMemoryRouter>
+      )
+
+      expect(await screen.findByText('This section could not be loaded')).toBeInTheDocument()
+      expect(screen.getByText('ElectionTitle')).toBeInTheDocument()
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 })
 

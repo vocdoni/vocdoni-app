@@ -12,6 +12,7 @@ import {
   Table,
   Tag,
   Text,
+  type TextProps,
   useBreakpointValue,
 } from '@chakra-ui/react'
 import {
@@ -26,6 +27,7 @@ import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCopy, LuEllipsisVertical, LuExternalLink, LuInfo, LuSearch } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router'
+import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
@@ -33,6 +35,7 @@ import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
+import { inferQuestionBallotTypeOrUndefined } from '../resultTypeLabels'
 import { VotingReportPdfMenuItem } from '../VotingReportPdf/VotingReportPdfMenuItem'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
@@ -48,9 +51,14 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
     processes &&
     !!processes.length &&
     processes?.map((election) => (
-      <ElectionProvider id={election.id} key={election.id}>
-        {isMobile ? <ProcessCard /> : <ProcessRow />}
-      </ElectionProvider>
+      // One process the UI cannot render must not take the whole list down with it.
+      <ErrorBoundary
+        key={election.id}
+        resetKeys={[election]}
+        fallback={isMobile ? <ProcessCardFallback process={election} /> : <ProcessRowFallback process={election} />}
+      >
+        <ElectionProvider id={election.id}>{isMobile ? <ProcessCard /> : <ProcessRow />}</ElectionProvider>
+      </ErrorBoundary>
     ))
 
   if (isMobile) {
@@ -90,6 +98,56 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
   )
 }
 
+// The badge infers the ballot type, which throws for questions that state neither a type nor a
+// ballot protocol — e.g. the read-only projection of a legacy multiple-choice election. The row
+// is still worth showing without it, so such a question gets no badge.
+const ProcessTypeBadge = () => {
+  const { election } = useElection()
+  const question = election?.questions[0]
+
+  if (question && !inferQuestionBallotTypeOrUndefined(question)) return null
+
+  return <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+}
+
+const rowTitleProps: TextProps = { w: 'full', maxW: '500px', size: 'sm', truncate: true }
+const cardTitleProps: TextProps = { fontWeight: 'medium', lineClamp: 2 }
+
+const ProcessTitleLink = ({
+  process,
+  textProps = rowTitleProps,
+}: {
+  process: VotingProcessResponse
+  textProps?: TextProps
+}) => {
+  const title = getElectionTitle(process) || process.id
+
+  return (
+    <Link asChild title={title}>
+      <RouterLink to={generatePath(Routes.dashboard.process, { id: process.id })}>
+        <Text {...textProps}>{title}</Text>
+      </RouterLink>
+    </Link>
+  )
+}
+
+const ProcessRowFallback = ({ process }: { process: VotingProcessResponse }) => (
+  <Table.Row>
+    <Table.Cell>
+      <ProcessTitleLink process={process} />
+    </Table.Cell>
+    <Table.Cell colSpan={7} />
+  </Table.Row>
+)
+
+const ProcessCardFallback = ({ process }: { process: VotingProcessResponse }) => (
+  <Card.Root variant='data-list-item'>
+    <Card.Header>
+      <ProcessTitleLink process={process} textProps={cardTitleProps} />
+    </Card.Header>
+  </Card.Root>
+)
+
 const ProcessResultsTag = () => {
   const { election, status } = useElection()
 
@@ -122,23 +180,15 @@ const ProcessCard = () => {
 
   if (!election) return null
 
-  const title = getElectionTitle(election) || election.id
-
   return (
     <Card.Root variant='data-list-item'>
       <Card.Header>
-        <Link asChild title={title}>
-          <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-            <Text fontWeight='medium' lineClamp={2}>
-              {title}
-            </Text>
-          </RouterLink>
-        </Link>
+        <ProcessTitleLink process={election} textProps={cardTitleProps} />
         <ProcessContextMenu />
       </Card.Header>
       <Card.Body>
         <HStack flexWrap='wrap' gap={2}>
-          <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+          <ProcessTypeBadge />
           <ElectionStatusBadge size='sm' />
           <ProcessResultsTag />
         </HStack>
@@ -165,23 +215,15 @@ const ProcessRow = () => {
 
   if (!election) return null
 
-  const title = getElectionTitle(election) || election.id
-
   return (
     <Table.Row position='relative'>
       <Table.Cell>
-        <Link asChild title={title}>
-          <RouterLink to={generatePath(Routes.dashboard.process, { id: election.id })}>
-            <Text w='full' maxW='500px' size='sm' truncate>
-              {title}
-            </Text>
-          </RouterLink>
-        </Link>
+        <ProcessTitleLink process={election} />
       </Table.Cell>
       <Table.Cell>{format(election.startDate, t('organization.date_format'))}</Table.Cell>
       <Table.Cell>{format(election.endDate, t('organization.date_format'))}</Table.Cell>
       <Table.Cell>
-        <QuestionsTypeBadge css={{ '& label': { fontWeight: 'normal' } }} />
+        <ProcessTypeBadge />
       </Table.Cell>
       <Table.Cell>
         <ElectionStatusBadge size='sm' />
