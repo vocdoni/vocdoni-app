@@ -263,7 +263,3 @@ export const localizePublicPath = ({
 
   return `/${language}${normalizedPathname}`
 }
-
-export const isAdminPath = (pathname: string) => pathname === '/admin' || pathname.startsWith('/admin/')
-
-export const isAuthPath = (pathname: string) => pathname === '/account' || pathname.startsWith('/account/')

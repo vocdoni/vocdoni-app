@@ -6,7 +6,6 @@ import {
   getHomeProcessRouteMatch,
   buildProcessMeta,
   getDefaultPublicLanguage,
-  getLocalizedPublicRedirectTarget,
   getPublicLanguageAlternates,
   getPublicLocalizedOrganizationRouteMatch,
   getPublicLocalizedProcessRouteMatch,
@@ -445,35 +444,6 @@ describe('public language helpers', () => {
     expect(getPublicProcessPath({ id: '0xprocess', language: 'ca' })).toBe('/ca/processes/0xprocess')
     expect(getPublicProcessSummaryPath({ id: '0xprocess', language: 'en' })).toBe('/en/processes/0xprocess/summary')
     expect(getPublicProcessSummaryPath({ id: '0xprocess', language: 'ca' })).toBe('/ca/processes/0xprocess/summary')
-  })
-
-  it('builds localized redirect targets whenever the stored and current languages differ', () => {
-    expect(
-      getLocalizedPublicRedirectTarget({
-        routeType: 'process',
-        preferredLanguage: 'ca',
-        currentLanguage: 'en',
-        idOrAddress: '0xprocess',
-      })
-    ).toBe('/ca/processes/0xprocess')
-
-    expect(
-      getLocalizedPublicRedirectTarget({
-        routeType: 'organization',
-        preferredLanguage: 'ca',
-        currentLanguage: 'it',
-        idOrAddress: '0xabc',
-      })
-    ).toBe('/ca/organization/0xabc')
-
-    expect(
-      getLocalizedPublicRedirectTarget({
-        routeType: 'process',
-        preferredLanguage: 'ca',
-        currentLanguage: 'ca',
-        idOrAddress: '0xprocess',
-      })
-    ).toBeNull()
   })
 
   it('matches localized organization routes only for supported languages', () => {

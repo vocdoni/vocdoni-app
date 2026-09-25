@@ -9,16 +9,6 @@ export interface Profile {
 }
 
 /**
- * Returns the selected organization from profile by address, or the first org if not found.
- */
-export const getSelectedOrganization = (profile: Profile | null, selectedAddress: string): Organization | undefined => {
-  if (!profile?.organizations) return undefined
-
-  const selectedOrg = profile.organizations.find((org) => org.organization.address === selectedAddress)
-  return selectedOrg?.organization ?? profile.organizations[0]?.organization
-}
-
-/**
  * Returns true if the selected membership (or first one as fallback) is an integrator. The flag
  * lives on the membership wrapper, not the nested organization (see UserRole).
  */
