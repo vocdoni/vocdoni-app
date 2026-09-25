@@ -54,6 +54,7 @@ const ProcessesTable = ({ processes }: ProcessesListProps) => {
       // One process the UI cannot render must not take the whole list down with it.
       <ErrorBoundary
         key={election.id}
+        resetKeys={[election]}
         fallback={isMobile ? <ProcessCardFallback process={election} /> : <ProcessRowFallback process={election} />}
       >
         <ElectionProvider id={election.id}>{isMobile ? <ProcessCard /> : <ProcessRow />}</ElectionProvider>
