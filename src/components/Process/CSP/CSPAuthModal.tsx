@@ -1,6 +1,6 @@
 import { Button, CloseButton, Dialog, Portal } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
-import { useMemo, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { CspAuthProvider, useCspAuthContext, useOptionalCspAuthContext } from './CSPStepsProvider'
 import { Step0Base } from './Step0'
@@ -43,14 +43,11 @@ export const CspAuthModal = () => {
 // restarted the flow from scratch.
 export const CspAuthSession = ({ children }: { children: ReactNode }) => {
   const { election } = useElection()
-  const census = election?.census
 
   // The v2 process read carries the census auth configuration inline
   // (CensusSpec.authFields/twoFaFields) — no separate census bundle fetch.
-  const censusData = useMemo(
-    () => (census ? { authFields: census.authFields ?? [], twoFaFields: census.twoFaFields ?? [] } : null),
-    [census]
-  )
+  const census = election?.census
+  const censusData = census ? { authFields: census.authFields ?? [], twoFaFields: census.twoFaFields ?? [] } : null
 
   // Always mount the provider, even before the process loads: swapping it in
   // conditionally would change the element type around `children` and remount
