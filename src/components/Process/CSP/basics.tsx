@@ -1,4 +1,4 @@
-import { useIsMutating, useMutation } from '@tanstack/react-query'
+import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useElectionAuth } from '@vocdoni/react-components'
@@ -104,10 +104,17 @@ export const useCspAuth1 = () => {
   })
 }
 
-// true while any auth step (identify or OTP) is in flight, whichever Identify
-// dialog (open or already closed) submitted it. The flow is shared by every
+// true while any auth request (identify, OTP or resend) is in flight, whichever
+// Identify dialog (open or already closed) sent it. The flow is shared by every
 // button, so a late completion would move it under whichever dialog is open.
 export const useCspAuthPending = () => useIsMutating({ mutationKey: cspAuthMutationKey }) > 0
+
+// Same check, read at call time: handlers such as the PIN auto-submit may run
+// before the render that would reflect a request just sent.
+export const useIsCspAuthBusy = () => {
+  const client = useQueryClient()
+  return () => client.isMutating({ mutationKey: cspAuthMutationKey }) > 0
+}
 
 // Resend the pending 2FA challenge to the voter's contact.
 export const useCspResend = () => {
@@ -115,6 +122,7 @@ export const useCspResend = () => {
   const translateError = useTranslateCspError()
 
   return useMutation<void, Error, ResendChallengePayload>({
+    mutationKey: [...cspAuthMutationKey, 'resend'],
     mutationFn: async (contact) => {
       try {
         await resend(contact)

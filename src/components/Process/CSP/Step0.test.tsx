@@ -19,6 +19,7 @@ vi.mock('./basics', () => ({
     isError: false,
   }),
   useCspAuthPending: () => pending.value,
+  useIsCspAuthBusy: () => () => pending.value,
 }))
 
 describe('Step0Base', () => {

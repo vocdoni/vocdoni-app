@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useAppEnv } from '~src/app-env'
-import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0, useCspAuthPending } from './basics'
+import { CSPStep0FormData, CSPStep0RequestData, useCspAuth0, useCspAuthPending, useIsCspAuthBusy } from './basics'
 import { useCspAuthContext } from './CSPStepsProvider'
 
 export const Step0Base = () => {
@@ -36,6 +36,7 @@ export const Step0Base = () => {
   // Shared across dialogs: an identify request sent from an Identify button that
   // was closed mid-request must block a second one from the other button.
   const authPending = useCspAuthPending()
+  const isAuthBusy = useIsCspAuthBusy()
   const is2Factor = twoFaFields.length > 0
 
   const appEnv = useAppEnv()
@@ -44,6 +45,8 @@ export const Step0Base = () => {
   const crispWebsiteId = appEnv.CRISP_WEBSITE_ID
 
   const onSubmit = async (values: CSPStep0FormData) => {
+    if (isAuthBusy()) return
+
     const trimmed: CSPStep0FormData = Object.fromEntries(
       Object.entries(values).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
     )

@@ -115,6 +115,7 @@ vi.mock('./basics', () => ({
     isError: false,
   }),
   useCspAuthPending: () => verification.pending,
+  useIsCspAuthBusy: () => () => verification.pending,
   useCspResend: () => ({
     mutateAsync: resendMutateAsync,
     isPending: false,
@@ -150,6 +151,32 @@ describe('Step1Base', () => {
     render(<Step1Base />)
 
     expect(screen.getByRole('button', { name: 'Start over' })).toBeDisabled()
+  })
+
+  it('sends no second code or resend while a request from any dialog is in flight', async () => {
+    const user = userEvent.setup()
+    verification.pending = true
+
+    const { container } = render(<Step1Base />)
+
+    // While loading, the submit shows a spinner in place of its label.
+    expect(container.querySelector('button[type="submit"]')).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Resend it' })).toBeDisabled()
+
+    // The PIN auto-submits on the sixth digit, bypassing the disabled button.
+    const pinInputs = getPinInputs()
+    await user.click(pinInputs[0])
+    await user.paste('123456')
+
+    await waitFor(() =>
+      expect(
+        getPinInputs()
+          .map((input) => input.value)
+          .join('')
+      ).toBe('123456')
+    )
+    expect(mutateAsync).not.toHaveBeenCalled()
+    expect(resendMutateAsync).not.toHaveBeenCalled()
   })
 
   it('renders the authenticate button', async () => {

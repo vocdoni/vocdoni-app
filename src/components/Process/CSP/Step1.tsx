@@ -17,7 +17,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useCspAuthContext } from './CSPStepsProvider'
-import { useCspAuth1, useCspAuthPending, useCspResend } from './basics'
+import { useCspAuth1, useCspAuthPending, useCspResend, useIsCspAuthBusy } from './basics'
 
 // Define the form data structure
 type CSPStep1FormData = {
@@ -39,9 +39,14 @@ export const Step1Base = () => {
     },
   })
   const auth = useCspAuth1()
+  // Shared across dialogs: a request may come from an Identify button that was
+  // closed mid-request, so this dialog's own isPending flags aren't enough.
   const authPending = useCspAuthPending()
+  const isAuthBusy = useIsCspAuthBusy()
 
   const handleResend = async () => {
+    if (isAuthBusy()) return
+
     try {
       // The pending auth token lives in the process session; only the contact
       // destination is ours to provide.
@@ -69,6 +74,9 @@ export const Step1Base = () => {
   }
 
   const onSubmit = async (values: CSPStep1FormData) => {
+    // Also guards the PIN auto-submit, which bypasses the disabled button.
+    if (isAuthBusy()) return
+
     const code = values.code.join('')
 
     try {
@@ -164,6 +172,7 @@ export const Step1Base = () => {
                           variant='link'
                           verticalAlign='unset'
                           loading={resend.isPending}
+                          disabled={authPending}
                           onClick={handleResend}
                         />
                       ),
@@ -204,7 +213,7 @@ export const Step1Base = () => {
             </Alert>
           )}
 
-          <Button type='submit' w='full' loading={auth.isPending}>
+          <Button type='submit' w='full' loading={authPending}>
             {t('csp.authenticate', { defaultValue: 'Authenticate' })}
           </Button>
           <Text fontSize='sm' color='texts.subtle'>
