@@ -8,6 +8,7 @@ const navigateSpy = vi.fn()
 let currentPathname = '/admin/process/0xabc'
 let currentElectionId = '0xabc'
 let currentElectionStatus: QuestionStatus = 'RESULTS'
+let questionsThrow = false
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
@@ -32,7 +33,11 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ...actual,
     ...getReactProvidersMock(),
     ElectionDescription: () => <div>ElectionDescription</div>,
-    ElectionQuestions: () => <div>ElectionQuestions</div>,
+    ElectionQuestions: () => {
+      // like the real one for a question whose ballot type cannot be inferred
+      if (questionsThrow) throw new Error('cannot infer ballot type')
+      return <div>ElectionQuestions</div>
+    },
     ElectionResults: () => <div>ElectionResults</div>,
     ElectionStatusBadge: () => <div>ElectionStatusBadge</div>,
     ElectionTitle: () => <div>ElectionTitle</div>,
@@ -292,6 +297,42 @@ describe('ProcessView schedule', () => {
 
     expect(await screen.findByText('End date')).toBeInTheDocument()
     expect(screen.queryByText(/actual end/i)).toBeNull()
+  })
+})
+
+describe('ProcessView questions', () => {
+  afterEach(() => {
+    questionsThrow = false
+  })
+
+  it('keeps the page up when the questions cannot render', async () => {
+    questionsThrow = true
+    currentPathname = '/admin/process/0xabc'
+    setReactProvidersMock({
+      ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+      useElection: () => ({
+        id: '0xabc',
+        election: createProcess('0xabc', 'ONGOING'),
+        status: 'ONGOING',
+        results: null,
+        loading: false,
+        client: { explorerUrl: 'https://example.test' },
+      }),
+    })
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      render(
+        <TestMemoryRouter initialEntries={['/admin/process/0xabc']}>
+          <ProcessView />
+        </TestMemoryRouter>
+      )
+
+      expect(await screen.findByText('Error loading the page')).toBeInTheDocument()
+      expect(screen.getByText('ElectionTitle')).toBeInTheDocument()
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 })
 

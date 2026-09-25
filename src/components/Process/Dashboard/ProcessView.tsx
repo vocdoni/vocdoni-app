@@ -75,6 +75,7 @@ import {
   SidebarTitle,
 } from '~components/Dashboard/Contents'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
+import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
 import { useProcessEarlyEndDate } from '~queries/process-end-date'
@@ -184,6 +185,12 @@ const ProcessViewContent = () => {
       },
     })
   }, [tabValue, showResultsTab, id, election, results, status, censusSize])
+
+  // The questions and results render through the ballot type, which cannot be inferred for some
+  // legacy processes: such a section degrades on its own instead of taking the page down.
+  const sectionFallback = (
+    <Text color='texts.subtle'>{t('error.loading_page', { defaultValue: 'Error loading the page' })}</Text>
+  )
 
   return (
     <Box position='relative' w='full' minH='100dvh' overflow='hidden'>
@@ -318,13 +325,17 @@ const ProcessViewContent = () => {
               <TabsContentGroup mt={6}>
                 <TabsContent value='questions' p={0}>
                   <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                    <ElectionQuestions />
+                    <ErrorBoundary fallback={sectionFallback}>
+                      <ElectionQuestions />
+                    </ErrorBoundary>
                   </Box>
                 </TabsContent>
                 {showResultsTab && (
                   <TabsContent value='results' p={0}>
                     <Box p={6} border='1px solid' borderColor='table.border' borderRadius='md'>
-                      <ElectionResults />
+                      <ErrorBoundary fallback={sectionFallback}>
+                        <ElectionResults />
+                      </ErrorBoundary>
                     </Box>
                   </TabsContent>
                 )}
