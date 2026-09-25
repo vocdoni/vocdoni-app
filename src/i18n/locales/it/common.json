@@ -1073,6 +1073,7 @@
       "selected_one": "Selezionato: <strong>{{count}} membro</strong>",
       "selected_many": "",
       "selected_other": "Selezionati: <strong>{{count}} membri</strong>",
+      "sort_by": "Ordina per {{column}}",
       "toggle_column": "Attiva/disattiva colonna {{column}}"
     }
   },

@@ -11,7 +11,7 @@ import {
   Input,
   InputGroup,
   Menu,
-  Progress,
+  Spinner,
   Stack,
   Switch,
   Table,
@@ -42,6 +42,7 @@ import {
   LuUsers,
   LuX,
 } from 'react-icons/lu'
+import { FaCaretDown, FaCaretUp } from 'react-icons/fa6'
 import { generatePath, useNavigate, useOutletContext } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
@@ -52,10 +53,17 @@ import { Routes } from '~routes'
 import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
-import { Member, useDeleteMembers, usePaginatedMembers } from '~src/queries/members'
+import {
+  isMemberSortField,
+  Member,
+  MemberSortField,
+  useDeleteMembers,
+  usePaginatedMembers,
+  useUrlMemberSort,
+} from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { MemberbaseTabsContext } from '..'
-import { useTable } from '../TableProvider'
+import { TableColumn, useTable } from '../TableProvider'
 import { ImportMembers, ImportProgress } from './Import'
 import { MemberManager } from './Manager'
 import { maskIfNeeded } from './maskIfNeeded'
@@ -687,12 +695,14 @@ const MemberBulkActions = ({ onDelete, onAddToGroup, onAddToCensus }: MemberBulk
 }
 
 const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching } = useTable()
+  const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isEmpty = data.length === 0 && !isLoadingOrImporting
   return (
-    <Table.Body>
-      {isEmpty ? (
+    <Table.Body {...placeholderRowsStyle(isPlaceholderData)}>
+      {isLoading && !data.length ? (
+        <MembersLoadingRow />
+      ) : isEmpty ? (
         <EmptyMembers />
       ) : (
         data.map((member) => (
@@ -710,14 +720,15 @@ const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: Member
 }
 
 const MembersCardList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: MembersListProps) => {
-  const { data = [], isLoading, isFetching } = useTable()
+  const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isEmpty = data.length === 0 && !isLoadingOrImporting
 
+  if (isLoading && !data.length) return <MembersLoading />
   if (isEmpty) return <EmptyMembersMessage />
 
   return (
-    <Stack gap={3}>
+    <Stack gap={3} {...placeholderRowsStyle(isPlaceholderData)}>
       {data.map((member) => (
         <MemberCard
           key={member.id}
@@ -758,6 +769,32 @@ const EmptyMembersMessage = () => {
   )
 }
 
+// While the next page or sort loads, the previous rows stay in place but faded, so the table
+// gives feedback without changing height.
+const placeholderRowsStyle = (isPlaceholderData: boolean) => ({
+  'aria-busy': isPlaceholderData || undefined,
+  opacity: isPlaceholderData ? 0.5 : 1,
+  transition: 'opacity 0.15s ease-out',
+})
+
+const MembersLoading = () => (
+  <Flex justify='center' align='center' height='150px'>
+    <Spinner size='sm' color='texts.subtle' />
+  </Flex>
+)
+
+const MembersLoadingRow = () => {
+  const { columns } = useTable()
+
+  return (
+    <Table.Row>
+      <Table.Cell colSpan={columns.filter((c) => c.visible).length + 2}>
+        <MembersLoading />
+      </Table.Cell>
+    </Table.Row>
+  )
+}
+
 const EmptyMembers = () => {
   const { columns } = useTable()
 
@@ -767,6 +804,39 @@ const EmptyMembers = () => {
         <EmptyMembersMessage />
       </Table.Cell>
     </Table.Row>
+  )
+}
+
+// The caret for the active direction is drawn at full strength, the other one stays faint.
+const sortCaretStyle = (active: boolean) =>
+  active ? { color: 'texts.primary' } : { color: 'texts.subtle', opacity: 0.5 }
+
+const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: MemberSortField }) => {
+  const { t } = useTranslation()
+  const { sort, toggleSort } = useUrlMemberSort()
+  const order = sort?.sortBy === field ? sort.sortOrder : null
+  return (
+    // aria-sort goes on the active column only, as the ARIA spec recommends.
+    <Table.ColumnHeader aria-sort={order ? (order === 'asc' ? 'ascending' : 'descending') : undefined}>
+      <Button
+        variant='plain'
+        size='sm'
+        px={0}
+        h='auto'
+        minW={0}
+        fontWeight='inherit'
+        color='inherit'
+        gap={1}
+        onClick={() => toggleSort(field)}
+        title={t('members.table.sort_by', { defaultValue: 'Sort by {{column}}', column: column.label })}
+      >
+        {column.label}
+        <Flex direction='column' aria-hidden gap={0} lineHeight={0} ms={0.5}>
+          <Icon as={FaCaretUp} boxSize={3} mb='-3.5px' {...sortCaretStyle(order === 'asc')} />
+          <Icon as={FaCaretDown} boxSize={3} mt='-3.5px' {...sortCaretStyle(order === 'desc')} />
+        </Flex>
+      </Button>
+    </Table.ColumnHeader>
   )
 }
 
@@ -894,9 +964,7 @@ const MembersTable = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
-  const { isLoading, isFetching, allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } =
-    useTable()
-  const isLoadingOrImporting = isLoading || isFetching
+  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } = useTable()
   const isMobile = useBreakpointValue({ base: true, md: false })
 
   const openDeleteSelected = (member?: Member) => {
@@ -954,13 +1022,6 @@ const MembersTable = () => {
             />
           </Flex>
         </Flex>
-        {isLoadingOrImporting && (
-          <Progress.Root size='xs' value={null}>
-            <Progress.Track>
-              <Progress.Range />
-            </Progress.Track>
-          </Progress.Root>
-        )}
         {isMobile ? (
           <Box p={4}>
             <Flex justify='space-between' align='center' mb={3}>
@@ -1001,9 +1062,13 @@ const MembersTable = () => {
                   </Table.ColumnHeader>
                   {columns
                     .filter((col) => col.visible)
-                    .map((col) => (
-                      <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
-                    ))}
+                    .map((col) =>
+                      isMemberSortField(col.id) ? (
+                        <SortableColumnHeader key={col.id} column={col} field={col.id} />
+                      ) : (
+                        <Table.ColumnHeader key={col.id}>{col.label}</Table.ColumnHeader>
+                      )
+                    )}
                   <Table.ColumnHeader width='50px'>
                     <ColumnManager />
                   </Table.ColumnHeader>

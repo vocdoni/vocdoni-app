@@ -1056,6 +1056,7 @@
       "select_process": "Select process",
       "selected_one": "Selected: <strong>{{count}} member</strong>",
       "selected_other": "Selected: <strong>{{count}} members</strong>",
+      "sort_by": "Sort by {{column}}",
       "toggle_column": "Toggle column {{column}}"
     }
   },
