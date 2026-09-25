@@ -1073,6 +1073,12 @@
       "selected_one": "Seleccionat: <strong>{{count}} membre</strong>",
       "selected_many": "",
       "selected_other": "Seleccionats: <strong>{{count}} membres</strong>",
+      "showing_members_one": "Mostrant {{from, number}}–{{to, number}} d'{{count, number}} membre",
+      "showing_members_many": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} membres",
+      "showing_members_other": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} membres",
+      "showing_results_one": "Mostrant {{from, number}}–{{to, number}} d'{{count, number}} resultat",
+      "showing_results_many": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} resultats",
+      "showing_results_other": "Mostrant {{from, number}}–{{to, number}} de {{count, number}} resultats",
       "toggle_column": "Commuta la columna {{column}}"
     }
   },

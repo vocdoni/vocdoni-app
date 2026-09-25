@@ -1056,6 +1056,10 @@
       "select_process": "Select process",
       "selected_one": "Selected: <strong>{{count}} member</strong>",
       "selected_other": "Selected: <strong>{{count}} members</strong>",
+      "showing_members_one": "Showing {{from, number}}–{{to, number}} of {{count, number}} member",
+      "showing_members_other": "Showing {{from, number}}–{{to, number}} of {{count, number}} members",
+      "showing_results_one": "Showing {{from, number}}–{{to, number}} of {{count, number}} result",
+      "showing_results_other": "Showing {{from, number}}–{{to, number}} of {{count, number}} results",
       "toggle_column": "Toggle column {{column}}"
     }
   },

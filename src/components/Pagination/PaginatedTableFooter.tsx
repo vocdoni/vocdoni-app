@@ -1,5 +1,6 @@
 import { Box, Text } from '@chakra-ui/react'
 import { Pagination, RoutedPagination, usePagination, useRoutedPagination } from '@vocdoni/react-components'
+import type { ReactNode } from 'react'
 import { Trans } from 'react-i18next'
 import RowsPerPageSelect from './RowsPerPageSelect'
 
@@ -8,7 +9,12 @@ import RowsPerPageSelect from './RowsPerPageSelect'
 // fewer pages) while lastPage is still 0/undefined during loading.
 const getCurrentPage = (page: number, lastPage: number) => (lastPage ? Math.max(1, Math.min(page, lastPage)) : page)
 
-const RoutedPaginatedTableFooter = () => {
+type RoutedPaginatedTableFooterProps = {
+  // Optional context rendered before the page indicator, e.g. the range of rows on screen.
+  summary?: ReactNode
+}
+
+const RoutedPaginatedTableFooter = ({ summary }: RoutedPaginatedTableFooterProps) => {
   const { pagination, page } = useRoutedPagination()
 
   if (!pagination) return null
@@ -27,6 +33,7 @@ const RoutedPaginatedTableFooter = () => {
     >
       <RowsPerPageSelect />
       <Box display='flex' flexDirection='row' flexWrap='wrap' alignItems='center' gap={5}>
+        {summary}
         <Text fontSize='sm'>
           <Trans i18nKey='pagination.page_out_of' values={{ page: currentPage, total }}>
             Page {{ page: currentPage }} of {{ total }}

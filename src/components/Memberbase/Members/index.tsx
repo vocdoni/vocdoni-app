@@ -23,7 +23,7 @@ import {
   WrapItem,
 } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { getElectionTitle, useOrganization } from '@vocdoni/react-components'
+import { getElectionTitle, useOrganization, useRoutedPagination } from '@vocdoni/react-components'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
 import { useApiClient } from '~src/providers/ApiClientProvider'
@@ -52,7 +52,7 @@ import { Routes } from '~routes'
 import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
-import { Member, useDeleteMembers, usePaginatedMembers } from '~src/queries/members'
+import { Member, useDeleteMembers, usePaginatedMembers, useUrlPagination } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
@@ -888,6 +888,42 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
   )
 }
 
+// Range of rows on screen. Its total follows the active search, so the copy switches to
+// "results" while searching; the whole memberbase size lives in the Members tab badge.
+const MembersRangeSummary = () => {
+  const { t } = useTranslation()
+  const { debouncedSearch } = useOutletContext<MemberbaseTabsContext>()
+  const { page, pagination } = useRoutedPagination()
+  const { limit } = useUrlPagination()
+  const { data } = useTable()
+  const count = pagination?.totalItems
+
+  if (!count || !data.length) return null
+
+  const from = (page - 1) * limit + 1
+  const to = from + data.length - 1
+
+  return (
+    <Text fontSize='sm'>
+      {debouncedSearch
+        ? t('members.table.showing_results', {
+            defaultValue: 'Showing {{from, number}}–{{to, number}} of {{count, number}} result',
+            defaultValue_other: 'Showing {{from, number}}–{{to, number}} of {{count, number}} results',
+            count,
+            from,
+            to,
+          })
+        : t('members.table.showing_members', {
+            defaultValue: 'Showing {{from, number}}–{{to, number}} of {{count, number}} member',
+            defaultValue_other: 'Showing {{from, number}}–{{to, number}} of {{count, number}} members',
+            count,
+            from,
+            to,
+          })}
+    </Text>
+  )
+}
+
 const MembersTable = () => {
   const { t } = useTranslation()
   const [deleteMode, setDeleteMode] = useState<DeleteModes>(DeleteModes.SELECTED)
@@ -982,7 +1018,7 @@ const MembersTable = () => {
               onAddToCensus={openAddToCensus}
             />
             <Box pt={4}>
-              <RoutedPaginatedTableFooter />
+              <RoutedPaginatedTableFooter summary={<MembersRangeSummary />} />
             </Box>
           </Box>
         ) : (
@@ -1015,7 +1051,7 @@ const MembersTable = () => {
                 onAddToCensus={openAddToCensus}
               />
               <Table.Caption p={4}>
-                <RoutedPaginatedTableFooter />
+                <RoutedPaginatedTableFooter summary={<MembersRangeSummary />} />
               </Table.Caption>
             </Table.Root>
           </Table.ScrollArea>

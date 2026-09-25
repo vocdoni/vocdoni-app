@@ -1073,6 +1073,12 @@
       "selected_one": "Selecionado: <strong>{{count}} membro</strong>",
       "selected_many": "",
       "selected_other": "Selecionados: <strong>{{count}} membros</strong>",
+      "showing_members_one": "",
+      "showing_members_many": "",
+      "showing_members_other": "",
+      "showing_results_one": "",
+      "showing_results_many": "",
+      "showing_results_other": "",
       "toggle_column": "Mostrar/ocultar coluna {{column}}"
     }
   },

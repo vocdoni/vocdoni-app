@@ -1,4 +1,4 @@
-import { TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
+import { Badge, TabsList, TabsRoot, TabsTrigger } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { generatePath, Outlet, useLocation, useNavigate } from 'react-router'
@@ -6,6 +6,7 @@ import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
+import { usePaginatedMembers } from '~src/queries/members'
 import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
 
 export type MemberbaseTabsContext = {
@@ -19,8 +20,14 @@ export type MemberbaseTabsContext = {
 
 export type JobId = string | null
 
+type MenuItem = {
+  label: string
+  route: string
+  count?: number
+}
+
 export const MemberbaseTabs = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { currentAddress } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -28,10 +35,14 @@ export const MemberbaseTabs = () => {
   const [jobId, setJobIdState] = useState<JobId>(() => getStoredImportJobId(accountId))
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState(search)
-  const menuItems = [
+  // Unfiltered total: this query never carries the search term, so the badge keeps showing the
+  // whole memberbase while the table is filtered.
+  const { data: allMembersData } = usePaginatedMembers({ showAll: true })
+  const menuItems: MenuItem[] = [
     {
       label: t('memberbase.members.title', { defaultValue: 'Members' }),
       route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
+      count: allMembersData?.pagination?.totalItems,
     },
     { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
   ]
@@ -84,6 +95,17 @@ export const MemberbaseTabs = () => {
           {menuItems.map((item) => (
             <TabsTrigger key={item.route} value={item.route}>
               {item.label}
+              {item.count !== undefined && (
+                <Badge
+                  colorPalette='gray'
+                  variant='subtle'
+                  borderRadius='full'
+                  px={1.5}
+                  fontVariantNumeric='tabular-nums'
+                >
+                  {item.count.toLocaleString(i18n.resolvedLanguage)}
+                </Badge>
+              )}
             </TabsTrigger>
           ))}
         </TabsList>
