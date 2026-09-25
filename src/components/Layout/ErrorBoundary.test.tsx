@@ -79,4 +79,27 @@ describe('ErrorBoundary', () => {
       consoleError.mockRestore()
     }
   })
+
+  it('reports an error once, not again on every retry that fails the same way', () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+    vi.mocked(capturePosthogException).mockClear()
+
+    try {
+      const { rerender } = render(
+        <ErrorBoundary fallback={<span>fallback</span>} resetKeys={['a']}>
+          <Throws />
+        </ErrorBoundary>
+      )
+      rerender(
+        <ErrorBoundary fallback={<span>fallback</span>} resetKeys={['b']}>
+          <Throws />
+        </ErrorBoundary>
+      )
+
+      expect(screen.getByText('fallback')).toBeInTheDocument()
+      expect(capturePosthogException).toHaveBeenCalledTimes(1)
+    } finally {
+      consoleError.mockRestore()
+    }
+  })
 })

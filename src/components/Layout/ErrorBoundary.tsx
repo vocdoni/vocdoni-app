@@ -38,7 +38,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
   }
 
+  // A reset retries children that may well fail the same way again (e.g. on every 30s poll that
+  // brings new data), so each boundary reports a given error once rather than on every retry.
+  private reportedMessage: string | undefined
+
   componentDidCatch(error: Error, info: ErrorInfo) {
+    const message = error instanceof Error ? error.message : String(error)
+    if (message === this.reportedMessage) return
+    this.reportedMessage = message
     // React already logs caught errors to the console; error tracking only hooks uncaught ones.
     capturePosthogException(error, { component_stack: info.componentStack })
   }
