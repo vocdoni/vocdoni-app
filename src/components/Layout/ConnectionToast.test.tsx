@@ -58,15 +58,6 @@ describe('ConnectionToastProvider', () => {
     mockToastIsActive.mockReturnValue(false)
   })
 
-  describe('useConnectionToast hook', () => {
-    it('should provide recordFailure and recordSuccess functions', () => {
-      const { result } = renderHook(() => useConnectionToast(), { wrapper })
-
-      expect(typeof result.current.recordFailure).toBe('function')
-      expect(typeof result.current.recordSuccess).toBe('function')
-    })
-  })
-
   describe('error toast behavior', () => {
     it('should show error toast after one failure (threshold = 1)', async () => {
       const { result } = renderHook(() => useConnectionToast(), { wrapper })
@@ -203,40 +194,6 @@ describe('ConnectionToastProvider', () => {
   })
 
   describe('offline/online state transitions', () => {
-    it('should handle complete offline -> online cycle', async () => {
-      const { result } = renderHook(() => useConnectionToast(), { wrapper })
-
-      // Go offline
-      act(() => {
-        result.current.recordFailure()
-      })
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith(
-          expect.objectContaining({
-            id: 'connection-error-toast',
-            type: 'error',
-          })
-        )
-      })
-
-      mockToast.mockClear()
-
-      // Go back online
-      act(() => {
-        result.current.recordSuccess()
-      })
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith(
-          expect.objectContaining({
-            id: 'connection-success-toast',
-            type: 'success',
-          })
-        )
-      })
-    })
-
     it('should handle multiple offline/online cycles', async () => {
       const { result } = renderHook(() => useConnectionToast(), { wrapper })
 

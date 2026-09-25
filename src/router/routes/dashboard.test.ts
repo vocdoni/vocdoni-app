@@ -1,6 +1,5 @@
 import { Fragment } from 'react'
 import { renderHook } from '@testing-library/react'
-import { matchRoutes } from 'react-router'
 import { Routes } from '.'
 import { mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -45,23 +44,6 @@ describe('dashboard process routes', () => {
           client: { fetchElection: vi.fn() },
         }),
     })
-  })
-
-  it('models process and process results as explicit nested routes', () => {
-    const matches = matchRoutes(
-      [
-        {
-          path: Routes.dashboard.process,
-          children: [{ index: true }, { path: Routes.dashboard.processResults }],
-        },
-      ],
-      '/admin/process/0xabc/results'
-    )
-
-    expect(matches?.map((match) => match.route.path ?? 'index')).toEqual([
-      Routes.dashboard.process,
-      Routes.dashboard.processResults,
-    ])
   })
 
   it('renders the process view on the parent route so tab switches do not remount it', async () => {

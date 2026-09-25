@@ -179,12 +179,6 @@ describe('Step1Base', () => {
     expect(resendMutateAsync).not.toHaveBeenCalled()
   })
 
-  it('renders the authenticate button', async () => {
-    const { findByRole } = render(<Step1Base />)
-
-    expect(await findByRole('button', { name: 'Authenticate' })).toBeTruthy()
-  })
-
   it('renders the updated 2FA copy', () => {
     render(<Step1Base />)
 

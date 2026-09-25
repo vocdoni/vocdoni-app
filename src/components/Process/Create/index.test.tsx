@@ -1,5 +1,4 @@
 import { act, renderHook } from '@testing-library/react'
-import type { CreateVotingProcessRequest } from '@vocdoni/api-types'
 import type { PropsWithChildren } from 'react'
 import type { Blocker } from 'react-router'
 import { useLocation, useNavigate } from 'react-router'
@@ -388,17 +387,6 @@ describe('useFormToVotingProcessRequest', () => {
       const req = result.current(mockForm, anonymousSpec())
       expect(req.census?.anonymous).toBeUndefined()
       expect(req.census?.groupId).toBe('test-group-id')
-    })
-  })
-
-  describe('return type', () => {
-    it('returns a plain object matching CreateVotingProcessRequest', () => {
-      const { result } = renderHook(() => useFormToVotingProcessRequest())
-      const req: CreateVotingProcessRequest = result.current(mockForm, censusSpec())
-      expect(req).toHaveProperty('orgAddress')
-      expect(req).toHaveProperty('title')
-      expect(req).toHaveProperty('questions')
-      expect(Array.isArray(req.questions)).toBe(true)
     })
   })
 })

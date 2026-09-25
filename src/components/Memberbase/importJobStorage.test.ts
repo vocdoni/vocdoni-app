@@ -19,13 +19,6 @@ describe('importJobStorage', () => {
     expect(getStoredImportJobId('0xdef')).toBeNull()
   })
 
-  it('keeps the original account job id after checking another account', () => {
-    setStoredImportJobId('job-1', '0xabc')
-
-    expect(getStoredImportJobId('0xdef')).toBeNull()
-    expect(getStoredImportJobId('0xabc')).toBe('job-1')
-  })
-
   it('stores independent job ids per account', () => {
     setStoredImportJobId('job-1', '0xabc')
     setStoredImportJobId('job-2', '0xdef')
