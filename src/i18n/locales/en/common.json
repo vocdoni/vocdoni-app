@@ -143,9 +143,7 @@
   "common": {
     "back": "Back",
     "close_drawer": "Close drawer",
-    "confirm": "Confirm",
     "home": "Home",
-    "next": "Next",
     "retry": "Try again"
   },
   "confirm": {
@@ -211,10 +209,10 @@
       "email": "Email",
       "email_or_phone": "Email or Phone",
       "memberNumber": "Member Number",
-      "name": "Name",
+      "name": "First Name",
       "nationalId": "National ID",
       "phone": "Phone",
-      "surname": "Surname"
+      "surname": "Last Name"
     },
     "important": "Important",
     "receive_code": "Receive Code",
@@ -884,7 +882,6 @@
     },
     "upgrade_plan": "Upgrade plan"
   },
-  "internal_server_error": "Internal server error",
   "invalid_promo_code": "Invalid promotion code",
   "invite": {
     "account_not_verified": "Your account is not verified. Please verify your account to continue.",
@@ -1967,72 +1964,91 @@
   "vote_overwrite": "Vote overwrite",
   "voter_anonymity": "Voter anonymity",
   "voter_auth": {
-    "2fa_badge": "2FA",
-    "2fa_description": "Add an extra layer of security by requiring voters to verify their identity",
-    "2fa_email": "<email /> Email verification",
-    "2fa_email_description": "Voters will receive a verification code via email",
-    "2fa_enable": "Enable Two-Factor Authentication",
-    "2fa_method_title": "Select verification method",
-    "2fa_security_description": "Two-factor authentication significantly increases the security of your voting process by ensuring only authorized members can vote.",
-    "2fa_security_title": "Enhanced Security",
-    "2fa_sms": "<phone /> SMS verification",
-    "2fa_sms_description": "Voters will receive a verification code via SMS",
-    "2fa_voter_choice": "<email /> or <phone /> Voter's choice",
-    "2fa_voter_choice_description": "Voters can choose their preferred verification method",
     "anonymity": "Ballot anonymity: {{ mode }}",
     "button": {
       "configure": "Configure Voter Authentication",
       "edit": "Edit Voter Authentication"
     },
-    "configured": "Voter authentication configured",
-    "configured_auth": "Voter Authentication",
-    "credentials": "Credentials",
-    "description": "Set up how voters will authenticate to participate in this voting process.",
-    "email": "Via email verification",
-    "guarantees": "Authentication Guarantees",
-    "guarantees_mid_description_intro": "Your configuration provides mid-level authentication guarantees with 3 credentials.",
-    "guarantees_mid_list_1": "Enable two-factor authentication for strong guarantees",
-    "guarantees_mid_title": "Mid-Level Authentication Guarantees",
-    "guarantees_strong_description": "Your configuration provides strong authentication guarantees with two-factor verification.",
-    "guarantees_strong_title": "Strong Authentication Guarantees",
-    "guarantees_sub_mid": "Mid-level authentication guarantees with 3 credentials but no two-factor verification.",
-    "guarantees_sub_strong": "Strong authentication guarantees with two-factor verification enabled.",
-    "guarantees_sub_weak": "Basic authentication guarantees with 1 credential and no two-factor verification.",
-    "guarantees_weak_description_intro": "Your current configuration provides minimal authentication guarantees. We strongly recommend:",
-    "guarantees_weak_list_1": "Add more credentials (aim for 2) for better identity verification",
-    "guarantees_weak_list_2": "Enable two-factor authentication for an additional verification layer",
-    "guarantees_weak_title": "Weak Authentication Guarantees",
-    "level_mid": "Mid",
-    "level_strong": "Strong",
-    "level_weak": "Weak",
+    "code": {
+      "description": "Before voting, we send a 6-digit code to the voter's email or phone. It proves they own it, so nobody can vote with someone else's details.",
+      "email_description": "Sent to the email in your member list.",
+      "email_label": "Email",
+      "heading": "2. Also send a one-time code?",
+      "none": "No code",
+      "none_description": "Voters sign in with their details only.",
+      "sms_description": "Sent to the phone number in your member list.",
+      "sms_label": "SMS",
+      "voter_choice": "Email or SMS",
+      "voter_choice_description": "Each voter picks where to receive it."
+    },
+    "details": {
+      "description": "Pick up to {{max}} details from your member list. What voters type must match it exactly.",
+      "heading": "1. What will voters type?",
+      "optional": "Optional if you send a one-time code: voters can then sign in with the code alone."
+    },
+    "level": {
+      "basic": "Basic",
+      "good": "Good",
+      "strong": "Strong",
+      "unset": "Not set"
+    },
+    "modal": {
+      "group_summary_one": "{{group}} · {{count}} member",
+      "group_summary_other": "{{group}} · {{count}} members",
+      "title": "How will voters sign in?"
+    },
     "no_group_description": "Please select a group first to configure authentication.",
-    "security_level": "Good security",
-    "security_recommendation_1": "For better security, we recommend selecting at least 2 credentials.",
-    "security_recommendation_2_one": "You've selected {{ count }} credentials, which provides good security for your voters.",
-    "security_recommendation_2_other": "You've selected {{ count }} credentials, which provides good security for your voters.",
-    "security_recommendation_title": "Security recommendation",
-    "select_credentials": "Select required credentials for voter authentication",
-    "select_credentials_description": "Choose the fields voters must provide to authenticate. Select up to 3 for the best balance of security and ease of use. If you plan to use only email or phone for 2FA, skip this step and click Next to set it up",
-    "selected_credentials_count_one": "{{ count }}/3 credentials selected",
-    "selected_credentials_count_other": "{{ count }}/3 credentials selected",
-    "sms": "Via SMS verification",
-    "summary": "Summary",
-    "summary_2fa_enable": "Two-Factor Authentication",
-    "summary_2fa_enabled": "Enabled",
-    "summary_credentials": "Required Credentials",
-    "summary_title": "Authentication Configuration Summary",
-    "title": "Configure Voter Authentication",
-    "two_factor": "Two-Factor",
-    "validation_duplicates_one": "{{count}} duplicated users",
-    "validation_duplicates_other": "{{count}} duplicated users",
-    "validation_error_title": "Validation Error",
-    "validation_failed": "Validation failed",
-    "validation_missing_data_one": "{{count}} users missing required fields",
-    "validation_missing_data_other": "{{count}} users missing required fields",
-    "validation_summary": "Validation failed for some users.",
-    "validation_total_one": "{{count}} users total",
-    "validation_total_other": "{{count}} users total",
-    "voters_choice": "Voter's choice"
+    "preview": {
+      "first_step": "First step",
+      "second_step": "Second step",
+      "title": "What voters will see"
+    },
+    "protection": {
+      "basic_risk": "Anyone who knows these details could vote in a member's place.",
+      "good_code_risk": "Anyone who can open a member's email or phone could vote in their place.",
+      "good_details_risk": "Someone would need several private details to vote in a member's place.",
+      "label": "Protection",
+      "strong": "Someone would need a member's details and their email or phone to vote in their place.",
+      "unset": "Choose at least one detail or a code."
+    },
+    "sample": {
+      "birthDate": "03/14/1979",
+      "email": "laura@example.org",
+      "memberNumber": "00482",
+      "name": "Laura",
+      "nationalId": "12345678Z",
+      "phone": "+1 555 010 0100",
+      "surname": "Smith"
+    },
+    "save": {
+      "submit": "Save",
+      "unchecked": "Saved, but we couldn't check your member list"
+    },
+    "saved": "Sign-in settings saved",
+    "status": {
+      "both_contacts": "both {{contacts}}",
+      "checking": "Checking your member list…",
+      "duplicated_members_one": "{{count}} member shares the same {{fields}} as another, so they can't be told apart.",
+      "duplicated_members_other": "{{count}} members share the same {{fields}}, so they can't be told apart.",
+      "empty": "Choose at least one detail or a code.",
+      "fix": "Fix your member list",
+      "missing_members_one": "{{count}} member is missing {{fields}}.",
+      "missing_members_other": "{{count}} members are missing {{fields}}.",
+      "retry": "Check again",
+      "unavailable": "We couldn't check your member list. You can still save.",
+      "valid": "All members can sign in.",
+      "valid_count_one": "The only member in this group can sign in.",
+      "valid_count_other": "All {{count}} members can sign in."
+    },
+    "summary": {
+      "code_choice": "One-time code by email or SMS",
+      "code_email": "One-time code by email",
+      "code_none": "No one-time code",
+      "code_sms": "One-time code by SMS",
+      "details": "Voters type: {{fields}}",
+      "member_list_mismatch": "These settings don't fit your member list. Edit them to see why.",
+      "title": "Voter sign-in"
+    }
   },
   "voting_link": {
     "description": "Share this link with your voters to participate in the voting process",

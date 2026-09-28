@@ -143,9 +143,7 @@
   "common": {
     "back": "Zurück",
     "close_drawer": "Seitenleiste schließen",
-    "confirm": "Bestätigen",
     "home": "Startseite",
-    "next": "Weiter",
     "retry": "Nochmal versuchen"
   },
   "confirm": {
@@ -884,7 +882,6 @@
     },
     "upgrade_plan": "Plan upgraden"
   },
-  "internal_server_error": "Interner Serverfehler",
   "invalid_promo_code": "Ungültiger Aktionscode",
   "invite": {
     "account_not_verified": "Dein Konto ist nicht verifiziert. Bitte verifiziere dein Konto, um fortzufahren.",
@@ -1967,72 +1964,91 @@
   "vote_overwrite": "Stimme überschreiben",
   "voter_anonymity": "",
   "voter_auth": {
-    "2fa_badge": "2FA",
-    "2fa_description": "Erhöhe die Sicherheit, indem Wählende ihre Identität bestätigen müssen",
-    "2fa_email": "<email /> E-Mail-Verifizierung",
-    "2fa_email_description": "Wählende erhalten einen Bestätigungscode per E-Mail",
-    "2fa_enable": "Zwei-Faktor-Authentifizierung aktivieren",
-    "2fa_method_title": "Verifizierungsmethode auswählen",
-    "2fa_security_description": "Die Zwei-Faktor-Authentifizierung erhöht die Sicherheit deines Abstimmungsprozesses erheblich, indem sichergestellt wird, dass nur berechtigte Mitglieder abstimmen können.",
-    "2fa_security_title": "Erhöhte Sicherheit",
-    "2fa_sms": "<phone /> SMS-Verifizierung",
-    "2fa_sms_description": "Wählende erhalten einen Bestätigungscode per SMS",
-    "2fa_voter_choice": "<email /> oder <phone /> Wahl der Wählenden",
-    "2fa_voter_choice_description": "Wählende können ihre bevorzugte Verifizierungsmethode wählen",
     "anonymity": "",
     "button": {
       "configure": "Wähler-Authentifizierung konfigurieren",
       "edit": "Wähler-Authentifizierung bearbeiten"
     },
-    "configured": "Wähler-Authentifizierung konfiguriert",
-    "configured_auth": "Wähler-Authentifizierung",
-    "credentials": "Zugangsdaten",
-    "description": "Lege fest, wie sich Wählende authentifizieren, um an diesem Abstimmungsprozess teilzunehmen.",
-    "email": "Per E-Mail-Verifizierung",
-    "guarantees": "Authentifizierungsgarantien",
-    "guarantees_mid_description_intro": "Deine Konfiguration bietet mittlere Authentifizierungsgarantien mit 3 Zugangsdaten.",
-    "guarantees_mid_list_1": "Zwei-Faktor-Authentifizierung für starke Garantien aktivieren",
-    "guarantees_mid_title": "Mittlere Authentifizierungsgarantien",
-    "guarantees_strong_description": "Deine Konfiguration bietet starke Authentifizierungsgarantien mit Zwei-Faktor-Verifizierung.",
-    "guarantees_strong_title": "Starke Authentifizierungsgarantien",
-    "guarantees_sub_mid": "Mittlere Authentifizierungsgarantien mit 3 Zugangsdaten, aber ohne Zwei-Faktor-Verifizierung.",
-    "guarantees_sub_strong": "Starke Authentifizierungsgarantien mit aktivierter Zwei-Faktor-Verifizierung.",
-    "guarantees_sub_weak": "Grundlegende Authentifizierungsgarantien mit 1 Zugangsdatum und ohne Zwei-Faktor-Verifizierung.",
-    "guarantees_weak_description_intro": "Deine aktuelle Konfiguration bietet minimale Authentifizierungsgarantien. Wir empfehlen dringend:",
-    "guarantees_weak_list_1": "Weitere Zugangsdaten hinzufügen (Ziel: 2) für bessere Identitätsprüfung",
-    "guarantees_weak_list_2": "Zwei-Faktor-Authentifizierung für eine zusätzliche Verifizierungsebene aktivieren",
-    "guarantees_weak_title": "Schwache Authentifizierungsgarantien",
-    "level_mid": "Mittel",
-    "level_strong": "Stark",
-    "level_weak": "Schwach",
+    "code": {
+      "description": "",
+      "email_description": "",
+      "email_label": "",
+      "heading": "",
+      "none": "",
+      "none_description": "",
+      "sms_description": "",
+      "sms_label": "",
+      "voter_choice": "",
+      "voter_choice_description": ""
+    },
+    "details": {
+      "description": "",
+      "heading": "",
+      "optional": ""
+    },
+    "level": {
+      "basic": "",
+      "good": "",
+      "strong": "",
+      "unset": ""
+    },
+    "modal": {
+      "group_summary_one": "",
+      "group_summary_other": "",
+      "title": ""
+    },
     "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
-    "security_level": "Gute Sicherheit",
-    "security_recommendation_1": "Für mehr Sicherheit empfehlen wir, mindestens 2 Zugangsdaten auszuwählen.",
-    "security_recommendation_2_one": "Du hast {{ count }} Zugangsdatum ausgewählt, was deinen Wählenden gute Sicherheit bietet.",
-    "security_recommendation_2_other": "Du hast {{ count }} Zugangsdaten ausgewählt, was deinen Wählenden gute Sicherheit bietet.",
-    "security_recommendation_title": "Sicherheitsempfehlung",
-    "select_credentials": "Erforderliche Zugangsdaten für die Authentifizierung der Wählenden auswählen",
-    "select_credentials_description": "Wähle die Felder aus, die Wählende zur Authentifizierung angeben müssen. Bis zu 3 Felder bieten das beste Verhältnis aus Sicherheit und Benutzerfreundlichkeit. Wenn du nur E-Mail oder Telefon für die Zwei-Faktor-Authentifizierung nutzen möchtest, überspringe diesen Schritt und klicke auf Weiter.",
-    "selected_credentials_count_one": "{{ count }}/3 Zugangsdatum ausgewählt",
-    "selected_credentials_count_other": "{{ count }}/3 Zugangsdaten ausgewählt",
-    "sms": "Per SMS-Verifizierung",
-    "summary": "Zusammenfassung",
-    "summary_2fa_enable": "Zwei-Faktor-Authentifizierung",
-    "summary_2fa_enabled": "Aktiviert",
-    "summary_credentials": "Erforderliche Zugangsdaten",
-    "summary_title": "Zusammenfassung der Authentifizierungskonfiguration",
-    "title": "Authentifizierung der Wählenden konfigurieren",
-    "two_factor": "Zwei-Faktor",
-    "validation_duplicates_one": "{{count}} doppelter Nutzer",
-    "validation_duplicates_other": "{{count}} doppelte Nutzer",
-    "validation_error_title": "Validierungsfehler",
-    "validation_failed": "Validierung fehlgeschlagen",
-    "validation_missing_data_one": "{{count}} Nutzer mit fehlenden Pflichtfeldern",
-    "validation_missing_data_other": "{{count}} Nutzer mit fehlenden Pflichtfeldern",
-    "validation_summary": "Validierung für einige Nutzer fehlgeschlagen.",
-    "validation_total_one": "{{count}} Nutzer insgesamt",
-    "validation_total_other": "{{count}} Nutzer insgesamt",
-    "voters_choice": "Wahl der Wählenden"
+    "preview": {
+      "first_step": "",
+      "second_step": "",
+      "title": ""
+    },
+    "protection": {
+      "basic_risk": "",
+      "good_code_risk": "",
+      "good_details_risk": "",
+      "label": "",
+      "strong": "",
+      "unset": ""
+    },
+    "sample": {
+      "birthDate": "",
+      "email": "",
+      "memberNumber": "",
+      "name": "",
+      "nationalId": "",
+      "phone": "",
+      "surname": ""
+    },
+    "save": {
+      "submit": "",
+      "unchecked": ""
+    },
+    "saved": "",
+    "status": {
+      "both_contacts": "",
+      "checking": "",
+      "duplicated_members_one": "",
+      "duplicated_members_other": "",
+      "empty": "",
+      "fix": "",
+      "missing_members_one": "",
+      "missing_members_other": "",
+      "retry": "",
+      "unavailable": "",
+      "valid": "",
+      "valid_count_one": "",
+      "valid_count_other": ""
+    },
+    "summary": {
+      "code_choice": "",
+      "code_email": "",
+      "code_none": "",
+      "code_sms": "",
+      "details": "",
+      "member_list_mismatch": "",
+      "title": ""
+    }
   },
   "voting_link": {
     "description": "Teile diesen Link mit deinen Wählenden, um an der Abstimmung teilzunehmen",

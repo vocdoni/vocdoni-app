@@ -16,14 +16,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { VocdoniApiError } from '@vocdoni/api-client'
-import type {
-  CensusSpec,
-  Choice,
-  CreateVotingProcessRequest,
-  OrgMemberAuthField,
-  OrgMemberTwoFaField,
-  VotingProcessQuestionRequest,
-} from '@vocdoni/api-types'
+import type { CensusSpec, Choice, CreateVotingProcessRequest, VotingProcessQuestionRequest } from '@vocdoni/api-types'
 import { addDays, parse } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -58,7 +51,9 @@ import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { defaultProcessValues, Option, Process, SelectorTypes } from './common'
 import { votingProcessToForm } from './draft-mapping'
-import { getTwoFaFields } from './VoterAuthentication/utils'
+import { buildCensusSpec } from './census-spec'
+
+export { buildCensusSpec }
 
 type ConfirmOnNavigateOptions = {
   isDirty: boolean
@@ -472,23 +467,6 @@ const useUpdateProcess = () => {
   return useMutation<void, Error, UpdateProcessRequest>({
     mutationFn: ({ processId, body }) => client.elections.update(processId, body),
   })
-}
-
-export const buildCensusSpec = (form: Process): CensusSpec => {
-  const spec: CensusSpec = {
-    groupId: form.groupId || undefined,
-    weighted: form.weightedVote || undefined,
-    // Blind-CSP census: omitted rather than sent as `false`, matching how the
-    // other optional flags are built here.
-    anonymous: form.anonymousVoting || undefined,
-  }
-  if (form.census?.credentials?.length) {
-    spec.authFields = form.census.credentials as OrgMemberAuthField[]
-  }
-  if (form.census?.use2FA && form.census?.use2FAMethod) {
-    spec.twoFaFields = getTwoFaFields(form.census.use2FAMethod) as OrgMemberTwoFaField[]
-  }
-  return spec
 }
 
 export const useFormToVotingProcessRequest = () => {

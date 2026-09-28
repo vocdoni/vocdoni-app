@@ -1,254 +1,84 @@
-import {
-  Badge,
-  Button,
-  CloseButton,
-  Dialog,
-  Flex,
-  Heading,
-  HStack,
-  Icon,
-  Portal,
-  Tabs,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react'
-import { useMutation } from '@tanstack/react-query'
-import { VocdoniApiError } from '@vocdoni/api-client'
-import type { OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
-import { useOrganization } from '@vocdoni/react-components'
-import { useCallback, useEffect, useState } from 'react'
-import { FormProvider, useForm, useFormContext } from 'react-hook-form'
+import { Button, CloseButton, Dialog, Portal, Text, useDisclosure } from '@chakra-ui/react'
+import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuUnlink } from 'react-icons/lu'
-import { useAnonymityLabels } from '~components/Process/anonymityLabels'
-import { getApiErrorMessage } from '~components/Auth/api'
-import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
+import type { Group } from '~src/queries/groups'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { buildCensusSpec } from '../census-spec'
 import { Census, Process } from '../common'
-import { CredentialsForm } from './CredentialsForm'
-import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
-import { TwoFactorForm } from './TwoFactorForm'
-import { getTwoFaFields, StepCompletionState, VoterAuthFormData } from './utils'
-import { ValidationError, ValidationErrorsAlert } from './ValidationErrorsAlert'
+import { AuthSummary } from './AuthSummary'
+import { useCensusCheck } from './useCensusCheck'
+import { censusConfigSignature } from './utils'
+import { VoterAuthForm } from './VoterAuthForm'
 
-type ValidateCensusArgs = {
-  groupId: string
-  authFields?: string[]
-  twoFaFields?: string[]
-  anonymous?: boolean
-}
-
-// Pre-flight check of the census the process will be created with: the chosen
-// credentials must be unique and complete across the target members (the group
-// when one is selected, otherwise the whole organization).
-const useValidateCensus = () => {
-  const { organization } = useOrganization()
-  const { client } = useApiClient()
-
-  return useMutation({
-    mutationFn: ({ groupId, authFields, twoFaFields, anonymous }: ValidateCensusArgs) =>
-      client.elections.validateCensus({
-        orgAddress: organization?.address ?? '',
-        census: {
-          groupId: groupId || undefined,
-          authFields: authFields as OrgMemberAuthField[],
-          twoFaFields: twoFaFields as OrgMemberTwoFaField[],
-          // The anonymity choice lives in the settings sidebar, but it is part
-          // of the census spec the backend will receive, so validate it too.
-          anonymous: anonymous || undefined,
-        },
-      }),
-  })
-}
-
-// Order-insensitive identity of an auth configuration, used to tell an actual
-// change from a no-op re-confirm. Credentials are a set, not a sequence.
-const censusConfigSignature = (config: Census) =>
-  JSON.stringify([[...(config.credentials ?? [])].sort(), !!config.use2FA, config.use2FAMethod ?? 'none'])
-
-export const VoterAuthentication = () => {
+export const VoterAuthentication = ({ group }: { group?: Group | null }) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const mainForm = useFormContext<Process>()
+  const { watch, setValue } = useFormContext<Process>()
   const { open: isOpen, onOpen, onClose } = useDisclosure()
-  const [activeTabIndex, setActiveTabIndex] = useState(0)
-  const [validationError, setValidationError] = useState<ValidationError | null>(null)
-  const [stepCompletion, setStepCompletion] = useState<StepCompletionState>({
-    step1Completed: false,
-    step2Completed: false,
+
+  const [groupId, census, anonymousVoting, weightedVote] = watch([
+    'groupId',
+    'census',
+    'anonymousVoting',
+    'weightedVote',
+  ])
+
+  // The saved settings were validated against the group, anonymity and
+  // weighting of that moment; this re-checks them whenever any of those change.
+  // Same cache as the dialog's own check, so an unchanged census costs nothing.
+  const savedCheck = useCensusCheck(buildCensusSpec({ groupId, anonymousVoting, weightedVote, census }), {
+    enabled: !!census && !!groupId,
   })
 
-  const voterAuthForm = useForm<VoterAuthFormData>({
-    defaultValues: {
-      credentials: [],
-      use2FA: false,
-      use2FAMethod: 'email',
-    },
-  })
-
-  const validateCensusMutation = useValidateCensus()
-
-  const groupId = mainForm.watch('groupId')
-  const census = mainForm.watch('census')
-  const anonymousVoting = mainForm.watch('anonymousVoting')
-  const anonymityLabel = useAnonymityLabels(anonymousVoting).title
-  const formData = voterAuthForm.watch()
-  const hasNoCredentialsSelected = !formData?.credentials?.length && !formData?.use2FA
-  const tabValues = ['credentials', 'twoFactor', 'summary'] as const
-  const activeTabValue = tabValues[activeTabIndex] ?? tabValues[0]
-
-  // Sync form values with stored census data when modal re-opens
-  useEffect(() => {
-    if (census) {
-      voterAuthForm.setValue('credentials', census.credentials)
-      voterAuthForm.setValue('use2FA', census.use2FA)
-      voterAuthForm.setValue('use2FAMethod', census.use2FAMethod)
-    }
-  }, [census])
-
-  const resetForm = useCallback(() => {
-    setActiveTabIndex(0)
-    setStepCompletion({
-      step1Completed: false,
-      step2Completed: false,
-    })
-    setValidationError(null)
-    mainForm.clearErrors('census')
-  }, [mainForm])
-
-  const handleNext = async () => {
-    if (activeTabIndex === 0) {
-      setStepCompletion((prev) => ({ ...prev, step1Completed: true }))
-      setActiveTabIndex(1)
-    } else if (activeTabIndex === 1) {
-      setValidationError(null)
-
-      try {
-        const currentFormData = voterAuthForm.getValues()
-        const twoFaFields = currentFormData.use2FA ? getTwoFaFields(currentFormData.use2FAMethod) : []
-
-        await validateCensusMutation.mutateAsync({
-          groupId,
-          authFields: currentFormData.credentials,
-          twoFaFields,
-          anonymous: anonymousVoting,
-        })
-
-        setActiveTabIndex(2)
-      } catch (error) {
-        // The offending member ids ride on the API error body.
-        setValidationError((error instanceof VocdoniApiError ? error.body : error?.apiError) as ValidationError)
-        const errorMessage =
-          getApiErrorMessage(error) ?? t('voter_auth.validation_failed', { defaultValue: 'Validation failed' })
-        toast({
-          title: t('voter_auth.validation_failed', { defaultValue: 'Validation failed' }),
-          description: errorMessage,
-          type: 'error',
-          duration: 3000,
-          isClosable: true,
-        })
-      }
-    } else {
-      // Step 3 (Confirm): save auth config to form — census is created by the backend during process publish
-      const currentFormData = voterAuthForm.getValues()
-      const nextCensus: Census = {
-        credentials: currentFormData.credentials,
-        use2FA: currentFormData.use2FA,
-        use2FAMethod: currentFormData.use2FAMethod ?? 'email',
-      }
-      // The modal doubles as the "Edit" entry point, so a confirm that changes
-      // nothing must not report a fresh configuration — otherwise every reopen
-      // inflates the count.
-      const configChanged = !census || censusConfigSignature(census) !== censusConfigSignature(nextCensus)
-      mainForm.setValue('census', nextCensus)
-      if (configChanged) {
-        trackAnalyticsEvent({
-          name: AnalyticsEvents.CensusConfigured,
-          props: {
-            auth_fields_count: nextCensus.credentials?.length ?? 0,
-            two_fa: !!nextCensus.use2FA,
-            two_fa_method: nextCensus.use2FAMethod ?? 'none',
-          },
-        })
-      }
-      setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
-      toast({
-        title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),
-        type: 'success',
-        duration: 3000,
-        isClosable: true,
+  const handleSave = (next: Census) => {
+    // The dialog doubles as the "Edit" entry point, so a save that changes
+    // nothing must not report a fresh configuration.
+    const changed = !census || censusConfigSignature(census) !== censusConfigSignature(next)
+    setValue('census', next, { shouldDirty: true, shouldValidate: true })
+    if (changed) {
+      trackAnalyticsEvent({
+        name: AnalyticsEvents.CensusConfigured,
+        props: {
+          auth_fields_count: next.credentials.length,
+          two_fa: next.use2FA,
+          two_fa_method: next.use2FA ? next.use2FAMethod : 'none',
+        },
       })
-      onClose()
-      resetForm()
     }
+    toast({
+      title: t('voter_auth.saved', { defaultValue: 'Sign-in settings saved' }),
+      type: 'success',
+      duration: 3000,
+      isClosable: true,
+    })
+    onClose()
   }
-
-  const handleTabChange = (index: number) => {
-    if (index === 0) {
-      setActiveTabIndex(0)
-    } else if (index === 1 && stepCompletion.step1Completed) {
-      setActiveTabIndex(1)
-    } else if (index === 2 && stepCompletion.step2Completed) {
-      setActiveTabIndex(2)
-    }
-  }
-
-  const handlePrevious = () => {
-    if (activeTabIndex > 0) {
-      setActiveTabIndex(activeTabIndex - 1)
-    } else {
-      onClose()
-    }
-  }
-
-  const isLoading = validateCensusMutation.isPending
 
   return (
     <>
-      {census && (
-        <Flex p={4} direction='column' border='1px solid' borderColor='table.border' borderRadius='md' gap={2}>
-          <Flex justify='space-between'>
-            <Text fontWeight='semibold'>
-              {t('voter_auth.configured_auth', {
-                defaultValue: 'Voter Authentication',
-              })}
-            </Text>
-            {census?.use2FA && (
-              <Badge fontSize='xs'>
-                <Trans i18nKey='voter_auth.2fa_badge'>2FA</Trans>
-              </Badge>
-            )}
-          </Flex>
-          <CredentialsOverview
-            credentials={census?.credentials}
-            use2FA={census?.use2FA}
-            use2FAMethod={census?.use2FAMethod}
-          />
-          {/* Neutral, and deliberately outside the credentials list and the
-              guarantees framing: anonymity is a different axis from how strongly
-              a voter is identified, not a further rung of it. Set in the
-              settings sidebar, echoed here so the census reads whole. */}
-          <HStack gap={2}>
-            <Icon as={LuUnlink} color='texts.subtle' />
-            <Text fontSize='sm' color='texts.subtle'>
-              {t('voter_auth.anonymity', {
-                defaultValue: 'Ballot anonymity: {{ mode }}',
-                mode: anonymityLabel,
-              })}
-            </Text>
-          </HStack>
-        </Flex>
-      )}
+      {census && <AuthSummary census={census} anonymousVoting={anonymousVoting} checkStatus={savedCheck.status} />}
       <Dialog.Root
         open={isOpen}
-        onOpenChange={(details) => {
-          if (details.open) onOpen()
-          else onClose()
-        }}
+        onOpenChange={(details) => (details.open ? onOpen() : onClose())}
+        size={{ base: 'full', md: 'xl' }}
+        placement='center'
+        scrollBehavior='inside'
+        // Mounted only while open: closing the dialog discards unsaved edits,
+        // and the next opening starts again from the saved settings.
+        lazyMount
+        unmountOnExit
       >
         <Dialog.Trigger asChild>
-          <Button disabled={!groupId} colorPalette='gray' w='full'>
+          {/* Once configured, editing is secondary to the summary above it. */}
+          <Button
+            disabled={!groupId}
+            colorPalette='gray'
+            w={census ? 'auto' : 'full'}
+            variant={census ? 'outline' : 'solid'}
+            size={census ? 'sm' : 'md'}
+            alignSelf={census ? 'start' : undefined}
+          >
             {census ? (
               <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
             ) : (
@@ -259,87 +89,25 @@ export const VoterAuthentication = () => {
         <Portal>
           <Dialog.Backdrop />
           <Dialog.Positioner>
-            <Dialog.Content>
+            {/* The phone-sized 'full' variant sets these; undo them from md up or
+                the desktop dialog stretches to the whole viewport height. */}
+            <Dialog.Content
+              maxW={{ md: '52rem' }}
+              minH={{ md: 'auto' }}
+              borderRadius={{ md: 'l3' }}
+              mx={{ md: 4 }}
+              overflow='hidden'
+            >
               <Dialog.CloseTrigger asChild>
                 <CloseButton />
               </Dialog.CloseTrigger>
-              <Dialog.Header>
-                {/* Dialog.Title renders an <h2> itself, so the styled Heading must BE the
-                    title element (asChild) rather than nest inside it, and the subheader
-                    paragraph cannot live inside a heading at all. */}
-                <Dialog.Title asChild>
-                  <Heading variant='header'>
-                    {t('voter_auth.title', { defaultValue: 'Configure Voter Authentication' })}
-                  </Heading>
-                </Dialog.Title>
-                <Text variant='subheader'>
-                  {t('voter_auth.description', {
-                    defaultValue: 'Set up how voters will authenticate to participate in this voting process.',
-                  })}
-                </Text>
-              </Dialog.Header>
-              <Dialog.Body>
-                <FormProvider {...voterAuthForm}>
-                  <ValidationErrorsAlert validationError={validationError} />
-                  <Tabs.Root value={activeTabValue} onValueChange={({ value }) => handleTabChange(tabValues[value])}>
-                    <Tabs.List w='full'>
-                      <Tabs.Trigger value={tabValues[0]} flex='1' justifyContent='center'>
-                        <Trans i18nKey='voter_auth.credentials'>Credentials</Trans>
-                      </Tabs.Trigger>
-                      <Tabs.Trigger
-                        value={tabValues[1]}
-                        flex='1'
-                        disabled={!stepCompletion.step1Completed}
-                        justifyContent='center'
-                      >
-                        <Trans i18nKey='voter_auth.two_factor'>Two-Factor</Trans>
-                      </Tabs.Trigger>
-                      <Tabs.Trigger
-                        value={tabValues[2]}
-                        flex='1'
-                        disabled={!stepCompletion.step2Completed || hasNoCredentialsSelected}
-                        justifyContent='center'
-                      >
-                        <Trans i18nKey='voter_auth.summary'>Summary</Trans>
-                      </Tabs.Trigger>
-                    </Tabs.List>
-                    <Tabs.ContentGroup>
-                      <Tabs.Content value={tabValues[0]} px={0} pb={0}>
-                        <CredentialsForm />
-                      </Tabs.Content>
-                      <Tabs.Content value={tabValues[1]} px={0} pb={0}>
-                        <TwoFactorForm />
-                      </Tabs.Content>
-                      <Tabs.Content value={tabValues[2]}>
-                        <SummaryDisplay />
-                      </Tabs.Content>
-                    </Tabs.ContentGroup>
-                  </Tabs.Root>
-                </FormProvider>
-              </Dialog.Body>
-              <Dialog.Footer>
-                <Button variant='ghost' onClick={handlePrevious}>
-                  {t('common.back', 'Back')}
-                </Button>
-                {/* data-testid: this one button is both "Next" and "Confirm"
-                    depending on the step, and the tab triggers stay disabled
-                    until their step is completed — so the e2e suite has no
-                    copy-free way to advance the modal. */}
-                <Button
-                  onClick={handleNext}
-                  loading={isLoading}
-                  disabled={activeTabIndex === 2 ? hasNoCredentialsSelected : false}
-                  data-testid='voter-auth-next'
-                >
-                  {activeTabIndex === 2 ? t('common.confirm', 'Confirm') : t('common.next', 'Next')}
-                </Button>
-              </Dialog.Footer>
+              <VoterAuthForm census={census} group={group} onCancel={onClose} onSave={handleSave} />
             </Dialog.Content>
           </Dialog.Positioner>
         </Portal>
       </Dialog.Root>
       {!groupId && (
-        <Text color='texts.subtle' fontSize='xs'>
+        <Text color='fg.muted' fontSize='xs'>
           {t('voter_auth.no_group_description', {
             defaultValue: 'Please select a group first to configure authentication.',
           })}
