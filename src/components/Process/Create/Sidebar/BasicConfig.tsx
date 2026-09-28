@@ -12,7 +12,7 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { MutableRefObject, useEffect, useRef, useState } from 'react'
+import { MutableRefObject, ReactNode, useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router'
@@ -22,6 +22,14 @@ import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
 
 const DateFormatHtml = 'yyyy-MM-dd'
+
+// Trans replaces its component's children with the translated text, so the RouterLink must live
+// inside a wrapper; passed inline, `asChild` would be left without a child and Chakra would throw.
+const SupportLink = ({ children }: { children?: ReactNode }) => (
+  <Link asChild>
+    <RouterLink to={Routes.dashboard.settings.support}>{children}</RouterLink>
+  </Link>
+)
 
 export const BasicConfig = () => {
   const { t } = useTranslation()
@@ -218,13 +226,7 @@ export const BasicConfig = () => {
             <Trans
               i18nKey='calendar.max_duration_exceeded'
               values={{ maxDuration }}
-              components={{
-                a: (
-                  <Link asChild>
-                    <RouterLink to={Routes.dashboard.settings.support} />
-                  </Link>
-                ),
-              }}
+              components={{ a: <SupportLink /> }}
               defaults="Duration exceeds your plan's {{ maxDuration }}-day limit. Reduce the voting length, or <a>contact us</a> if you need more days."
             />
           </AlertDescription>
