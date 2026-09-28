@@ -42,6 +42,9 @@ export const useDraft = (draftId?: string | null) => {
         throw error
       }
     },
+    // Read fresh every time an editing session opens it, never refetched into a form being edited
+    refetchOnMount: 'always',
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 }

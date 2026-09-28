@@ -54,16 +54,23 @@ const orgAddress = '0xorgaddr'
  * through to localStorage — so tests can exercise the storage-backed paths
  * instead of only asserting on the spy.
  */
-const renderSaver = (draftId: string | null = null, { persist = false }: { persist?: boolean } = {}) => {
+const renderSaver = (
+  draftId: string | null = null,
+  { persist = false, values = form }: { persist?: boolean; values?: Process } = {}
+) => {
   const storeDraftId = vi.fn((id: string | null) => {
     if (persist) persistDraftId(orgAddress, id)
   })
+  const onSaved = vi.fn()
   const queryClient = createTestQueryClient()
-  const { result } = renderHook(() => useFormDraftSaver(true, () => form, draftId, storeDraftId), {
-    wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
-  })
+  const { result } = renderHook(
+    () => useFormDraftSaver(true, () => values, draftId, storeDraftId, undefined, onSaved),
+    {
+      wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
+    }
+  )
 
-  return { result, storeDraftId }
+  return { result, storeDraftId, onSaved }
 }
 
 describe('useFormDraftSaver', () => {
@@ -158,6 +165,43 @@ describe('useFormDraftSaver', () => {
     expect(storeDraftId).toHaveBeenCalledWith('draft-1')
     expect(publishedId).toBe('draft-1')
     expect(update).toHaveBeenCalledWith('draft-1', { published: true })
+  })
+
+  it('does not create a draft for a vote without a title yet', async () => {
+    const { result, storeDraftId } = renderSaver(null, { values: { ...form, title: '  ' } })
+
+    let outcome: string | undefined
+    await act(async () => {
+      outcome = await result.current.saveDraft(false)
+    })
+
+    expect(outcome).toBe('untitled')
+    expect(create).not.toHaveBeenCalled()
+    expect(storeDraftId).not.toHaveBeenCalled()
+  })
+
+  it('keeps saving an existing draft even after its title is cleared', async () => {
+    const { result } = renderSaver('draft-1', { values: { ...form, title: '' } })
+
+    await act(async () => {
+      await result.current.saveDraft(false)
+    })
+
+    expect(update).toHaveBeenCalledTimes(1)
+  })
+
+  it('reports what a save sent and when it landed', async () => {
+    const { result, storeDraftId, onSaved } = renderSaver()
+    expect(result.current.lastSavedAt).toBeNull()
+
+    await act(async () => {
+      await result.current.saveDraft(false)
+    })
+
+    expect(storeDraftId).toHaveBeenCalledWith('draft-1')
+    expect(onSaved).toHaveBeenCalledWith(form)
+    expect(result.current.lastSavedAt).toBeInstanceOf(Date)
+    expect(result.current.saveFailed).toBe(false)
   })
 
   describe('clearPublishedDraftId', () => {

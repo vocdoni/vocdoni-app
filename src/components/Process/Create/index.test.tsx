@@ -14,7 +14,7 @@ const { mockUseBlocker } = vi.hoisted(() => ({ mockUseBlocker: vi.fn() }))
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal<typeof import('react-router')>()),
-  useBlocker: () => mockUseBlocker(),
+  useBlocker: (shouldBlock: unknown) => mockUseBlocker(shouldBlock),
 }))
 
 vi.mock('~components/Auth/Subscription', () => ({
@@ -431,6 +431,14 @@ describe('useConfirmOnNavigate', () => {
 
   beforeEach(() => {
     mockUseBlocker.mockReset()
+  })
+
+  it("lets the editor's own URL changes through without asking", () => {
+    renderConfirm(unblockedBlocker())
+    const shouldBlock = mockUseBlocker.mock.calls.at(-1)?.[0] as (args: { nextLocation: { state: unknown } }) => boolean
+
+    expect(shouldBlock({ nextLocation: { state: null } })).toBe(true)
+    expect(shouldBlock({ nextLocation: { state: { editorNav: true } } })).toBe(false)
   })
 
   describe('when the blocker is no longer blocked', () => {

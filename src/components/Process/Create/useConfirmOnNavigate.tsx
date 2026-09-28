@@ -1,5 +1,5 @@
 import { Button, Flex, Spacer } from '@chakra-ui/react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createPath, useBlocker, useLocation, useNavigate, type Location } from 'react-router'
 import DeleteModal from '~components/Modal/DeleteModal'
@@ -19,6 +19,8 @@ type LeaveConfirmationModalProps = {
   onLeave: () => void
   onResetSamePath: () => void
   isSamePath: boolean
+  // A vote without a title can't be saved as a draft yet, so leaving can only discard it
+  canSave?: boolean
 }
 
 export const useConfirmOnNavigate = ({
@@ -32,7 +34,15 @@ export const useConfirmOnNavigate = ({
   const isSnoozed = snoozeUntil !== null && Date.now() < snoozeUntil
 
   const shouldBlock = isDirty && !isSubmitting && !isSubmitSuccessful && !isSnoozed
-  const blocker = useBlocker(shouldBlock)
+  // The editor moves its own URL along (a new draft's id lands in `?draftId`): that is not
+  // leaving the page, so it must never ask to save first
+  const blocker = useBlocker(
+    useCallback(
+      ({ nextLocation }: { nextLocation: Location }) =>
+        shouldBlock && !(nextLocation.state as { editorNav?: boolean } | null)?.editorNav,
+      [shouldBlock]
+    )
+  )
 
   const isOpenRef = useRef(false)
   const isProceedingRef = useRef(false)
@@ -159,6 +169,7 @@ export const LeaveConfirmationModal = ({
   onResetSamePath,
   onSaveAndLeave,
   isSamePath,
+  canSave = true,
 }: LeaveConfirmationModalProps) => {
   const { t } = useTranslation()
 
@@ -191,9 +202,11 @@ export const LeaveConfirmationModal = ({
             <Button colorPalette='red' onClick={onLeave}>
               {t('process.create.leave_confirmation.leave', { defaultValue: 'Leave without saving' })}
             </Button>
-            <Button onClick={onSaveAndLeave}>
-              {t('process.create.leave_confirmation.save_and_leave', { defaultValue: 'Save and leave' })}
-            </Button>
+            {canSave && (
+              <Button onClick={onSaveAndLeave}>
+                {t('process.create.leave_confirmation.save_and_leave', { defaultValue: 'Save and leave' })}
+              </Button>
+            )}
           </>
         )}
       </Flex>
