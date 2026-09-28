@@ -6,6 +6,13 @@ import { PROCESS_ID, createElection, createQuestion, createQuestionResults, crea
 const mockModule = vi.hoisted(() => ({
   pdfToBlob: vi.fn(),
   pdfSpy: vi.fn(),
+  trackAnalyticsEvent: vi.fn(),
+}))
+
+// Partial mock: keep the real AnalyticsEvents taxonomy, intercept only the sink.
+vi.mock('~utils/analytics', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/analytics')>()),
+  trackAnalyticsEvent: mockModule.trackAnalyticsEvent,
 }))
 
 vi.mock('@react-pdf/renderer', () => ({
@@ -46,6 +53,7 @@ describe('VotingReportPdfButton', () => {
   beforeEach(() => {
     pdfToBlob.mockReset()
     pdfSpy.mockReset()
+    mockModule.trackAnalyticsEvent.mockReset()
   })
 
   it('downloads a pdf built from the fetched results when the button is clicked', async () => {
@@ -107,6 +115,27 @@ describe('VotingReportPdfButton', () => {
     createObjectUrlSpy.mockRestore()
     revokeObjectUrlSpy.mockRestore()
     clickSpy.mockRestore()
+  })
+
+  it('tracks a report that could not be generated', async () => {
+    pdfToBlob.mockRejectedValue(new TypeError('font failed to load'))
+    setReactProvidersMock({
+      useClient: () => ({ client: { elections: { getResults: vi.fn().mockResolvedValue(createResults()) } } }),
+    })
+
+    render(<VotingReportPdfButton election={createElection()} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /election report \(pdf\)/i }))
+
+    await waitFor(() => {
+      expect(mockModule.trackAnalyticsEvent).toHaveBeenCalledWith({
+        name: 'pdf_report_failed',
+        props: { election_id: PROCESS_ID, error_name: 'TypeError' },
+      })
+    })
+    expect(mockModule.trackAnalyticsEvent).not.toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'pdf_report_downloaded' })
+    )
   })
 
   it('re-reads the process and its tallies instead of certifying the election context copies', async () => {
