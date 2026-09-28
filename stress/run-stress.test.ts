@@ -31,6 +31,12 @@ const successfulResult = {
   latencyMs: { min: 1, avg: 1, p50: 1, p90: 1, p99: 1, max: 1 },
 }
 
+// Every faked command below is a Node script, so one run starts about ten Node processes.
+// Process startup varies a lot (Node 26 starts ~2.5x slower than 22, and the full suite loads
+// the machine), so waits are generous deadlines rather than tight budgets. The fixtures finish
+// in well under a second when things are fast; the deadline only matters when a run hangs.
+const RUN_TIMEOUT_MS = 15000
+
 // Keep the real orchestration and JSON parser; replace Docker/network/process
 // boundaries so startup, crashes and resource failures need no Docker daemon.
 async function harness(scenario = '', measurement = successfulResult, levels = '1') {
@@ -100,7 +106,7 @@ if (args[0].endsWith('/loadgen.mjs')) {
       'bash',
       [path.join(root, 'stress/run-stress.sh'), '--skip-build', '--levels', levels, '--keep'],
       {
-        timeout: 4000,
+        timeout: RUN_TIMEOUT_MS,
         env: {
           ...process.env,
           PATH: `${bin}:${process.env.PATH}`,
@@ -115,7 +121,7 @@ if (args[0].endsWith('/loadgen.mjs')) {
   return { root, child: child!, completed }
 }
 
-describe('stress ramp orchestration', () => {
+describe('stress ramp orchestration', { timeout: RUN_TIMEOUT_MS + 5000 }, () => {
   it('isolates container names and artifacts for invocations with the same timestamp', async () => {
     const runs = await Promise.all([harness(), harness()])
     const outputs = await Promise.all(runs.map((run) => run.completed))
@@ -243,8 +249,10 @@ describe('stress ramp orchestration', () => {
 
   it('terminates on SIGTERM instead of continuing subsequent levels', async () => {
     const run = await harness('signal', successfulResult, '1 2')
-    for (let i = 0; i < 100 && !existsSync(path.join(run.root, 'loadgen-started')); i++) await delay(10)
-    expect(existsSync(path.join(run.root, 'loadgen-started'))).toBe(true)
+    const loadgenStarted = path.join(run.root, 'loadgen-started')
+    const deadline = Date.now() + RUN_TIMEOUT_MS
+    while (!existsSync(loadgenStarted) && Date.now() < deadline) await delay(10)
+    expect(existsSync(loadgenStarted)).toBe(true)
     run.child.kill('SIGTERM')
     const output = await run.completed
     expect(output.code).toBe(143)
