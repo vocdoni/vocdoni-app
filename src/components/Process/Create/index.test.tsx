@@ -23,14 +23,10 @@ vi.mock('~components/Auth/Subscription', () => ({
   }),
 }))
 
-vi.mock('~utils/analytics', () => ({
-  AnalyticsEvent: {},
-}))
-
-vi.mock('~components/AnalyticsProvider', () => ({
-  useAnalytics: () => ({
-    trackEvent: vi.fn(),
-  }),
+// Keep the real AnalyticsEvents taxonomy the form reads, silence only the sink.
+vi.mock('~utils/analytics', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/analytics')>()),
+  trackAnalyticsEvent: vi.fn(),
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({

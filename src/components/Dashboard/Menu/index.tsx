@@ -20,6 +20,7 @@ import { DashboardBox } from '~components/Dashboard/Contents'
 import { VocdoniLogo } from '~components/Layout/Logo'
 import { DashboardLayoutContext } from '~elements/DashboardLayoutContext'
 import { useTutorials } from '~src/queries/organization'
+import { processCreateLinkState } from '~components/Process/Create/source'
 import { Routes } from '~src/router/routes'
 import { BookerModalButton } from '../Booker'
 import { DashboardMenuConfig } from './menus'
@@ -188,7 +189,7 @@ const DashboardMenuContent = ({
         </Flex>
         {menu.newVote && (
           <Button asChild w='full' minW={0} mt={'8px'} mb={'32px'} size={'xs'}>
-            <RouterLink to={generatePath(Routes.processes.create)}>
+            <RouterLink to={generatePath(Routes.processes.create)} state={processCreateLinkState('menu')}>
               <HStack gap={reduced ? 0 : 2}>
                 <Icon as={LuPlus} boxSize={4} />
                 {!reduced && (
