@@ -347,6 +347,9 @@
   "ended_processes": "Terminati",
   "enter_promo_code": "Inserisci codice",
   "error": {
+    "crash_description": "Ricarica la pagina o torna alla dashboard.",
+    "crash_title": "Qualcosa è andato storto",
+    "go_to_dashboard": "Vai alla dashboard",
     "loading_languages": "Errore durante il caricamento delle lingue",
     "loading_page": "Errore durante il caricamento della pagina",
     "loading_roles": "Errore durante il caricamento dei ruoli",
@@ -356,6 +359,7 @@
     "missing_header": "Il foglio di calcolo non ha intestazione.",
     "not_found": "Pagina non trovata",
     "not_found_description": "La pagina che stai cercando non esiste o è stata spostata.",
+    "reload": "Ricarica",
     "return_to_home": "Torna alla home",
     "title": "Errore"
   },

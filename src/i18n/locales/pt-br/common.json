@@ -347,6 +347,9 @@
   "ended_processes": "Encerrados",
   "enter_promo_code": "Inserir código",
   "error": {
+    "crash_description": "Recarregue a página ou volte ao painel.",
+    "crash_title": "Algo deu errado",
+    "go_to_dashboard": "Ir para o painel",
     "loading_languages": "Erro ao carregar os idiomas",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar as funções",
@@ -356,6 +359,7 @@
     "missing_header": "A planilha não possui cabeçalho.",
     "not_found": "Página não encontrada",
     "not_found_description": "A página que você está procurando não existe ou foi movida.",
+    "reload": "Recarregar",
     "return_to_home": "Voltar ao início",
     "title": "Erro"
   },

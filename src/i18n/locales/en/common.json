@@ -345,6 +345,9 @@
   "ended_processes": "Ended",
   "enter_promo_code": "Enter code",
   "error": {
+    "crash_description": "Reload the page or go back to the dashboard.",
+    "crash_title": "Something went wrong",
+    "go_to_dashboard": "Go to dashboard",
     "loading_languages": "Error loading languages",
     "loading_page": "Error loading the page",
     "loading_roles": "Error loading roles",
@@ -354,6 +357,7 @@
     "missing_header": "Spreadsheet has no header.",
     "not_found": "Page Not Found",
     "not_found_description": "The page you're looking for does not exist or has been moved.",
+    "reload": "Reload",
     "return_to_home": "Back to home",
     "title": "Error"
   },
