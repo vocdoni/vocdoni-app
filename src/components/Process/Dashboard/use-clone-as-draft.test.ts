@@ -236,7 +236,8 @@ describe('useCloneAsDraft', () => {
       expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ type: 'success' }))
       expect(mockNavigate).toHaveBeenCalledWith(
         expect.objectContaining({ search: expect.stringContaining('draftId=draft-123') }),
-        { replace: true }
+        // Tells the create form's `process_create_started` it was opened by a clone
+        { replace: true, state: { processCreateSource: 'clone' } }
       )
     })
   })
