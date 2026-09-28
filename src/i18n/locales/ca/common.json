@@ -967,7 +967,7 @@
       "title": "Grups"
     },
     "import_file": {
-      "subtitle": "Importa el teu fitxer CSV, XLS o XLSX amb les dades dels membres. Assegura't que les capçaleres de les columnes coincideixin amb la plantilla per fer un mapatge correcte.",
+      "subtitle": "Importa el teu fitxer CSV, XLS, XLSX o ODS amb les dades dels membres. Assegura't que les capçaleres de les columnes coincideixin amb la plantilla per fer un mapatge correcte.",
       "title": "Importar fitxer"
     },
     "importer": {
@@ -992,7 +992,7 @@
       "reset": "Restableix la importació",
       "select_at_least_one_column": "Selecciona almenys una columna per descarregar la plantilla.",
       "submit": "Importa dades",
-      "subtitle": "Descarrega una plantilla o importa el teu propi fitxer CSV, XLS o XLSX per afegir membres.",
+      "subtitle": "Descarrega una plantilla o importa el teu propi fitxer CSV, XLS, XLSX o ODS per afegir membres.",
       "title": "Importar membres",
       "warning": {
         "subtitle": "La informació de les columnes que no es relacionin no s'importarà.",

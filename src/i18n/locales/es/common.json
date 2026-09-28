@@ -967,7 +967,7 @@
       "title": "Grupos"
     },
     "import_file": {
-      "subtitle": "Importa tu archivo CSV, XLS o XLSX con los datos de los miembros. Asegúrate de que los encabezados de columna coincidan con la plantilla para una asignación correcta.",
+      "subtitle": "Importa tu archivo CSV, XLS, XLSX o ODS con los datos de los miembros. Asegúrate de que los encabezados de columna coincidan con la plantilla para una asignación correcta.",
       "title": "Importar archivo"
     },
     "importer": {
@@ -992,7 +992,7 @@
       "reset": "Restablecer importación",
       "select_at_least_one_column": "Selecciona al menos una columna para descargar la plantilla.",
       "submit": "Importar datos",
-      "subtitle": "Descarga una plantilla o importa tu propio archivo CSV, XLS o XLSX para añadir miembros.",
+      "subtitle": "Descarga una plantilla o importa tu propio archivo CSV, XLS, XLSX o ODS para añadir miembros.",
       "title": "Importar miembros",
       "warning": {
         "subtitle": "La información de las columnas que no se asignen no se importará.",

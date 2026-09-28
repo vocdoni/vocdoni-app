@@ -958,7 +958,7 @@
       "title": "Taldeak"
     },
     "import_file": {
-      "subtitle": "Inportatu zure CSV, XLS edo XLSX fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
+      "subtitle": "Inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
       "title": "Inportatu fitxategia"
     },
     "importer": {
@@ -983,7 +983,7 @@
       "reset": "Berrezarri inportazioa",
       "select_at_least_one_column": "Hautatu gutxienez zutabe bat txantiloia deskargatzeko.",
       "submit": "Inportatu datuak",
-      "subtitle": "Deskargatu txantiloi bat edo inportatu zure CSV, XLS edo XLSX fitxategia kideak gehitzeko.",
+      "subtitle": "Deskargatu txantiloi bat edo inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideak gehitzeko.",
       "title": "Inportatu kideak",
       "warning": {
         "subtitle": "Ez da esleitzen ez diren zutabeen informazioa inportatuko.",

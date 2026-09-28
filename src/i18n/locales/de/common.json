@@ -958,7 +958,7 @@
       "title": "Gruppen"
     },
     "import_file": {
-      "subtitle": "Importiere deine CSV-, XLS- oder XLSX-Datei mit Mitgliederdaten. Stelle sicher, dass die Spaltenüberschriften mit der Vorlage übereinstimmen.",
+      "subtitle": "Importiere deine CSV-, XLS-, XLSX- oder ODS-Datei mit Mitgliederdaten. Stelle sicher, dass die Spaltenüberschriften mit der Vorlage übereinstimmen.",
       "title": "Datei importieren"
     },
     "importer": {
@@ -983,7 +983,7 @@
       "reset": "Import zurücksetzen",
       "select_at_least_one_column": "Wähle mindestens eine Spalte aus, um die Vorlage herunterzuladen.",
       "submit": "Daten importieren",
-      "subtitle": "Lade eine Vorlage herunter oder importiere deine eigene CSV-, XLS- oder XLSX-Datei, um Mitglieder hinzuzufügen.",
+      "subtitle": "Lade eine Vorlage herunter oder importiere deine eigene CSV-, XLS-, XLSX- oder ODS-Datei, um Mitglieder hinzuzufügen.",
       "title": "Mitglieder importieren",
       "warning": {
         "subtitle": "Die Informationen nicht zugeordneter Spalten werden nicht importiert.",

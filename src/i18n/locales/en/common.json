@@ -958,7 +958,7 @@
       "title": "Groups"
     },
     "import_file": {
-      "subtitle": "Import your CSV, XLS, or XLSX file containing member data. Ensure column headers match the template for accurate mapping.",
+      "subtitle": "Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.",
       "title": "Import File"
     },
     "importer": {
@@ -983,7 +983,7 @@
       "reset": "Reset Import",
       "select_at_least_one_column": "Select at least one column to download the template.",
       "submit": "Import Data",
-      "subtitle": "Download a template or import your own CSV, XLS, or XLSX file to add members.",
+      "subtitle": "Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.",
       "title": "Import Members",
       "warning": {
         "subtitle": "The information of columns that are not mapped will not be imported.",

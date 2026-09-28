@@ -194,7 +194,7 @@ export const MembersCsvManager = () => {
           <Text color='texts.subtle' fontSize='sm'>
             {t('memberbase.import_file.subtitle', {
               defaultValue:
-                'Import your CSV, XLS, or XLSX file containing member data. Ensure column headers match the template for accurate mapping.',
+                'Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.',
             })}
           </Text>
           <Uploader getInputProps={getInputProps} getRootProps={getRootProps} isDragActive={isDragActive} />

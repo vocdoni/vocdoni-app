@@ -967,7 +967,7 @@
       "title": "Groupes"
     },
     "import_file": {
-      "subtitle": "Importez votre fichier CSV, XLS ou XLSX contenant les données des membres. Assurez-vous que les en-têtes de colonnes correspondent au modèle pour une correspondance exacte.",
+      "subtitle": "Importez votre fichier CSV, XLS, XLSX ou ODS contenant les données des membres. Assurez-vous que les en-têtes de colonnes correspondent au modèle pour une correspondance exacte.",
       "title": "Importer un fichier"
     },
     "importer": {
@@ -992,7 +992,7 @@
       "reset": "Réinitialiser l'importation",
       "select_at_least_one_column": "Sélectionnez au moins une colonne pour télécharger le modèle.",
       "submit": "Importer les données",
-      "subtitle": "Téléchargez un modèle ou importez votre propre fichier CSV, XLS ou XLSX pour ajouter des membres.",
+      "subtitle": "Téléchargez un modèle ou importez votre propre fichier CSV, XLS, XLSX ou ODS pour ajouter des membres.",
       "title": "Importer des membres",
       "warning": {
         "subtitle": "Les informations des colonnes non associées ne seront pas importées.",

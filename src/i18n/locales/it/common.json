@@ -967,7 +967,7 @@
       "title": "Gruppi"
     },
     "import_file": {
-      "subtitle": "Importa il file CSV, XLS o XLSX contenente i dati dei membri. Assicurati che le intestazioni delle colonne corrispondano al modello per una mappatura accurata.",
+      "subtitle": "Importa il file CSV, XLS, XLSX o ODS contenente i dati dei membri. Assicurati che le intestazioni delle colonne corrispondano al modello per una mappatura accurata.",
       "title": "Importa file"
     },
     "importer": {
@@ -992,7 +992,7 @@
       "reset": "Reimposta importazione",
       "select_at_least_one_column": "Seleziona almeno una colonna per scaricare il modello.",
       "submit": "Importa dati",
-      "subtitle": "Scarica un modello o importa il tuo file CSV, XLS o XLSX per aggiungere membri.",
+      "subtitle": "Scarica un modello o importa il tuo file CSV, XLS, XLSX o ODS per aggiungere membri.",
       "title": "Importa membri",
       "warning": {
         "subtitle": "Le informazioni delle colonne non mappate non verranno importate.",
