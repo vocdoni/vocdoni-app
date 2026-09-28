@@ -309,7 +309,7 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   await page.getByRole('button', { name: /Configure Voter Authentication/i }).click()
   const dialog = page.getByRole('dialog')
 
-  // Tab 1 — credentials. The checkbox `value` is the API field name, so this
+  // What voters type. The checkbox card `value` is the API field name, so this
   // does not depend on the translated label.
   await checkCheckbox(
     dialog
@@ -318,25 +318,17 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   )
   await expect(dialog.locator('input[value="memberNumber"]')).toBeChecked()
 
-  // The tab triggers are disabled until their step is completed, so the modal
-  // is advanced with its footer button — the same path a user takes. It is
-  // "Next" on the first two steps and "Confirm" on the last.
-  const advance = dialog.getByTestId('voter-auth-next')
-  await advance.click()
-
-  // Tab 2 — 2FA. `use2FAMethod` already defaults to 'email', so enabling the
-  // switch is the whole configuration.
-  await expect(dialog.locator('[data-scope="tabs"][data-part="trigger"][data-value="twoFactor"]')).toHaveAttribute(
-    'data-selected',
-    ''
-  )
-  await toggleSwitch(dialog)
+  // The one-time code, a radio card group whose item values are the method
+  // names ('none' | 'email' | 'sms' | 'voter_choice').
+  await dialog
+    .locator('[data-scope="radio-group"][data-part="item"]')
+    .filter({ has: page.locator('input[value="email"]') })
+    .click()
   await expect(dialog.locator('input[value="email"]')).toBeChecked()
-  await advance.click()
 
-  // Tab 3 — summary. Confirming runs the backend census validation (the chosen
-  // credentials must be unique and complete across the group) before closing.
-  await advance.click()
+  // Saving runs the backend census validation (the chosen credentials must be
+  // unique and complete across the group) before closing.
+  await dialog.getByTestId('voter-auth-save').click()
   await expect(dialog).toBeHidden({ timeout: 60_000 })
 
   await closeWizardSettings(page)
