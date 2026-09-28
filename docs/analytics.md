@@ -93,10 +93,29 @@ contain voter identifiers, ballot content, emails, or tokens.
 
 Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organization_created`,
 `process_created`, `subscription_completed`, `checkout_started`,
-`billing_portal_opened`, `paywall_viewed`, `feature_blocked`, `process_creation_failed`,
-`process_action`, `process_results_viewed`, `members_import_started`,
-`members_import_completed`, `member_group_created`, `member_group_deleted`, `census_configured`,
-`team_member_invited`, `team_member_removed`, `pdf_report_downloaded`.
+`billing_portal_opened`, `paywall_viewed`, `feature_blocked`, `process_create_started`,
+`process_creation_failed`, `draft_saved`, `draft_save_failed`, `draft_resumed`, `draft_discarded`,
+`process_action`, `process_dashboard_viewed`, `process_results_viewed`, `voting_link_copied`,
+`members_import_started`, `members_import_completed`, `members_import_failed`, `member_group_created`,
+`member_group_deleted`, `census_configured`, `team_member_invited`, `team_member_removed`,
+`pdf_report_downloaded`, `pdf_report_failed`.
+
+The admin journey, in the order it happens:
+
+- **Create-vote form.** `process_create_started` (`source`: where the form was opened from, passed as
+  React Router state; `direct` when there is none) opens a funnel that every submit ends in either
+  `process_creation_failed` (`stage` validation/publish, `first_error_path` such as
+  `questions.0.options.2.option`, `attempt`) or `process_created` (vote shape, `voter_auth`,
+  `time_to_publish_s`, `failed_attempts`).
+- **Drafts.** `draft_saved` / `draft_save_failed` carry the `trigger` (auto/manual/leave) and, on
+  failure, the HTTP `status` and backend `error_code`. Auto-save runs every 30 s and on every blur, so
+  it is only tracked when its outcome changes. `draft_resumed` / `draft_discarded` carry `age_days`,
+  read from the draft's ObjectID since drafts have no timestamps.
+- **Member imports.** `members_import_failed` (`reason`: rejected_file / missing_header /
+  missing_data / parse_error) and `members_import_completed` carry `file_type` and `encoding`
+  (`non-utf-8` flags legacy exports that SheetJS silently garbles).
+- **After publishing.** Voting pages are untracked, so `voting_link_copied` is the in-app sign that a
+  vote is being distributed; `process_dashboard_viewed` carries the lifecycle `status`.
 
 Organization-level BI: every session registers `org_address`/`org_name`/`org_plan` super properties, and
 the `organization` group profile carries name, plan, type, country, size, usage counters, and renewal
@@ -153,9 +172,9 @@ What it provisions:
 
 | Dashboard                  | Insights                                                                                                                                                                                                                                                                                                                                                            |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; onboarding steps completed; organizations created by name                                                                                                                                                                                                           |
+| **Activation**             | signup → org → first election (steps, time-to-convert, weekly trend); memberbase import funnel; import failures by `reason`; onboarding steps completed; organizations created by name                                                                                                                                                                              |
 | **Monetization**           | paywall → checkout → subscription (broken down by `source`); blocked feature → upgrade (by `feature`); paywall exposure per plan                                                                                                                                                                                                                                    |
-| **Elections & engagement** | wizard funnel `census_configured` → `process_created` → `process_results_viewed`; created vs failed; weekly active organizations; elections by `census_type`                                                                                                                                                                                                        |
+| **Elections & engagement** | wizard funnel `process_create_started` → `census_configured` → `process_created` → `process_results_viewed`; started vs failed; which errors (`first_error_path`) block publishing; created → link copied → results; draft save failures by `status`; weekly active organizations; elections by `census_type`                                                       |
 | **Web → app**              | website visit → CTA → signup → org → first election (by first-touch campaign); which vertical converts; blog and learn article → signup; docs → integrator signup; sales assist `demo_requested` → `demo_booked` → subscription; marketing-sourced revenue; activation by locale; revenue by first-touch channel; event volume by `site`; CTA clicks by `page_type` |
 
 The **Web → app** dashboard is the one that needs both properties in the project. Every funnel on it

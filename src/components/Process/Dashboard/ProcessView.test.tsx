@@ -1,6 +1,6 @@
 import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 import type { ReactNode } from 'react'
-import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
+import { fireEvent, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { getProcessViewPathForTab, getProcessViewTabFromPath, ProcessView } from './ProcessView'
 
@@ -10,6 +10,13 @@ let currentElectionId = '0xabc'
 let currentElectionStatus: QuestionStatus = 'RESULTS'
 let questionsThrow = false
 let resultsThrow = false
+const mockTrackAnalyticsEvent = vi.fn()
+
+// Partial mock: keep the real AnalyticsEvents taxonomy, intercept only the sink.
+vi.mock('~utils/analytics', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/analytics')>()),
+  trackAnalyticsEvent: (...args: unknown[]) => mockTrackAnalyticsEvent(...args),
+}))
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
@@ -423,5 +430,81 @@ describe('ProcessView voting settings', () => {
     const label = await screen.findByText('Voter anonymity')
 
     expect(label.closest('[data-part="trigger"]')).toBeNull()
+  })
+})
+
+describe('ProcessView analytics', () => {
+  const dashboardViews = () =>
+    mockTrackAnalyticsEvent.mock.calls.filter(([event]) => event.name === 'process_dashboard_viewed')
+
+  const renderProcess = () => {
+    setReactProvidersMock({
+      ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+      useElection: () => ({
+        id: currentElectionId,
+        election: createProcess(currentElectionId, currentElectionStatus),
+        status: currentElectionStatus,
+        results: null,
+        loading: false,
+        client: { explorerUrl: 'https://example.test' },
+      }),
+    })
+
+    return render(
+      <TestMemoryRouter initialEntries={[currentPathname]}>
+        <ProcessView />
+      </TestMemoryRouter>
+    )
+  }
+
+  beforeEach(() => {
+    mockTrackAnalyticsEvent.mockClear()
+    currentPathname = '/admin/process/0xabc'
+    currentElectionId = '0xabc'
+    currentElectionStatus = 'UPCOMING'
+  })
+
+  it('tracks one dashboard view per process, with its lifecycle stage', async () => {
+    const { rerender } = renderProcess()
+
+    await waitFor(() => expect(dashboardViews()).toHaveLength(1))
+    expect(dashboardViews()[0][0]).toEqual({
+      name: 'process_dashboard_viewed',
+      props: { election_id: '0xabc', status: 'upcoming' },
+    })
+
+    // The status flips on its own at the start date: still the same visit
+    currentElectionStatus = 'ONGOING'
+    rerender(
+      <TestMemoryRouter initialEntries={['/admin/process/0xabc']}>
+        <ProcessView />
+      </TestMemoryRouter>
+    )
+    expect(dashboardViews()).toHaveLength(1)
+
+    currentElectionId = '0xdef'
+    currentPathname = '/admin/process/0xdef'
+    currentElectionStatus = 'PAUSED'
+    rerender(
+      <TestMemoryRouter initialEntries={['/admin/process/0xdef']}>
+        <ProcessView />
+      </TestMemoryRouter>
+    )
+
+    await waitFor(() => expect(dashboardViews()).toHaveLength(2))
+    expect(dashboardViews()[1][0].props).toEqual({ election_id: '0xdef', status: 'live' })
+  })
+
+  it('tracks copying the voting link', async () => {
+    Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })
+    renderProcess()
+
+    // By title: the control panel is an off-canvas sidebar, hidden from role queries
+    fireEvent.click(await screen.findByTitle('Copy'))
+
+    expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
+      name: 'voting_link_copied',
+      props: { election_id: '0xabc' },
+    })
   })
 })

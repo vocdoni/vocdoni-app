@@ -39,7 +39,6 @@ import {
   useSearchParams,
   type Location,
 } from 'react-router'
-import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
 import { ApiError, ErrorCode } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
@@ -51,13 +50,15 @@ import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
-import { AnalyticsEvents } from '~utils/analytics'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
 import { defaultProcessValues, Option, Process, SelectorTypes } from './common'
+import { getApiErrorProps } from './analytics'
 import { votingProcessToForm } from './draft-mapping'
+import { useProcessCreateAnalytics } from './use-process-create-analytics'
 import { getTwoFaFields } from './VoterAuthentication/utils'
 
 type ConfirmOnNavigateOptions = {
@@ -91,6 +92,9 @@ const isDraftLimitError = (error: unknown) =>
   (error instanceof VocdoniApiError && error.code === ErrorCode.DraftLimitReached)
 
 export const saveTimeoutMs = 30000
+
+/** What started a draft save: the background auto-save, the Save button, or "save and leave". */
+export type DraftSaveTrigger = 'auto' | 'manual' | 'leave'
 
 export const useConfirmOnNavigate = ({
   isDirty,
@@ -267,6 +271,10 @@ export const useFormDraftSaver = (
   // queued before a re-render still updates the draft its predecessor created
   // instead of creating a second one.
   const draftIdRef = useRef(draftId)
+  // Auto-save runs every 30s and on every blur while the form stays dirty, so
+  // it is only tracked when its outcome changes (first success, first failure
+  // of a streak, recovery). Manual saves are tracked every time.
+  const lastAutoSaveOutcomeRef = useRef<'saved' | 'failed' | null>(null)
 
   useEffect(() => {
     draftIdRef.current = draftId
@@ -318,8 +326,21 @@ export const useFormDraftSaver = (
     [enqueueWrite, updateProcess, createProcess, storeDraftId]
   )
 
+  const trackSaveOutcome = useCallback((trigger: DraftSaveTrigger, outcome: 'saved' | 'failed', error?: unknown) => {
+    if (trigger === 'auto') {
+      if (lastAutoSaveOutcomeRef.current === outcome) return
+      lastAutoSaveOutcomeRef.current = outcome
+    }
+    trackAnalyticsEvent(
+      outcome === 'saved'
+        ? { name: AnalyticsEvents.DraftSaved, props: { trigger } }
+        : { name: AnalyticsEvents.DraftSaveFailed, props: { trigger, ...getApiErrorProps(error) } }
+    )
+  }, [])
+
   const saveDraft = useCallback(
-    async (isAutoSave = true) => {
+    async (trigger: DraftSaveTrigger = 'auto') => {
+      const isAutoSave = trigger === 'auto'
       if (!isDirty || skipNextSaveRef.current) return 'skipped'
       // A draft can't be created without its owner org: wait for the address to resolve
       // instead of firing a request the API would reject.
@@ -342,8 +363,10 @@ export const useFormDraftSaver = (
         })
         saveCooldown?.(saveTimeoutMs)
         setDraftLimitReached(false)
+        trackSaveOutcome(trigger, 'saved')
         return 'saved'
       } catch (e) {
+        trackSaveOutcome(trigger, 'failed', e)
         // Check if it's a draft limit error
         if (isDraftLimitError(e)) {
           setDraftLimitReached(true)
@@ -361,7 +384,16 @@ export const useFormDraftSaver = (
         throw e
       }
     },
-    [isDirty, draftLimitReached, organization?.address, getValues, writeDraft, formToVotingProcessRequest, saveCooldown]
+    [
+      isDirty,
+      draftLimitReached,
+      organization?.address,
+      getValues,
+      writeDraft,
+      formToVotingProcessRequest,
+      saveCooldown,
+      trackSaveOutcome,
+    ]
   )
 
   useEffect(() => {
@@ -369,7 +401,7 @@ export const useFormDraftSaver = (
       if (!isDirty) return
       e.preventDefault()
       e.returnValue = ''
-      saveDraft(true)
+      saveDraft('auto')
     }
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
@@ -377,7 +409,7 @@ export const useFormDraftSaver = (
 
   useEffect(() => {
     const handleFocusOut = () => {
-      saveDraft(true)
+      saveDraft('auto')
     }
     window.addEventListener('focusout', handleFocusOut)
     return () => window.removeEventListener('focusout', handleFocusOut)
@@ -385,7 +417,7 @@ export const useFormDraftSaver = (
 
   useEffect(() => {
     const id = setInterval(() => {
-      saveDraft(true)
+      saveDraft('auto')
     }, saveTimeoutMs)
     return () => clearInterval(id)
   }, [saveDraft])
@@ -618,7 +650,6 @@ const ProcessCreateView = () => {
   const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
   const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
-  const { trackEvent } = useAnalytics()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
   // Confirm navigation if form is dirty
@@ -638,6 +669,11 @@ const ProcessCreateView = () => {
   )
   const { permission } = useSubscription()
   const { data: formDraft } = useDraft(effectiveDraftId)
+  const { trackValidationFailed, trackPublishFailed, trackCreated, trackDiscarded } = useProcessCreateAnalytics({
+    draftId,
+    effectiveDraftId,
+    formDraft,
+  })
 
   // Apply form draft if it exists
   useEffect(() => {
@@ -652,6 +688,7 @@ const ProcessCreateView = () => {
   }, [formDraft, groupId, methods])
 
   const resetForm = () => {
+    trackDiscarded('reset')
     reset()
     skipSave(true)
     queueMicrotask(() => {
@@ -683,7 +720,7 @@ const ProcessCreateView = () => {
 
   const handleSaveAndLeave = async () => {
     try {
-      const result = await saveDraft(false)
+      const result = await saveDraft('leave')
       // Only proceed if save was successful
       if (result === 'saved') {
         proceed()
@@ -695,7 +732,7 @@ const ProcessCreateView = () => {
 
   const handleManualSave = async () => {
     try {
-      const result = await saveDraft(false)
+      const result = await saveDraft('manual')
       if (result === 'saved') {
         toast({
           title: t('process.create.save_draft_success', { defaultValue: 'Draft saved' }),
@@ -713,6 +750,7 @@ const ProcessCreateView = () => {
       // Only wipe the form and forget the draft id once the navigation is really
       // released; a no-op `proceed()` leaves the user here with their work intact.
       if (!proceed()) return
+      trackDiscarded('leave')
       reset()
       storeDraftId(null)
     } catch (error) {
@@ -752,16 +790,7 @@ const ProcessCreateView = () => {
         queryKey: QueryKeys.organization.elections(organization?.address),
       })
 
-      trackEvent({
-        name: AnalyticsEvents.ProcessCreated,
-        props: {
-          census_type: form.censusType,
-          weighted: !!form.weightedVote,
-          anonymous: !!form.anonymousVoting,
-          question_count: form.questions?.length ?? 0,
-          from_draft: !!effectiveDraftId,
-        },
-      })
+      trackCreated(form, request)
 
       toast({
         title: t('form.process_create.success_title'),
@@ -777,6 +806,7 @@ const ProcessCreateView = () => {
       navigate(generatePath(Routes.dashboard.process, { id: processId }))
     } catch (error) {
       console.error('Error creating election:', error)
+      trackPublishFailed(error)
       // The draft is still a draft: let it keep auto-saving while the user fixes
       // whatever went wrong.
       skipSave(false)
@@ -814,13 +844,7 @@ const ProcessCreateView = () => {
 
     const hasSidebarErrors = sidebarFieldKeys.some((key) => key in errors)
 
-    trackEvent({
-      name: AnalyticsEvents.ProcessCreationFailed,
-      props: {
-        failed_fields: Object.keys(errors).join(','),
-        sidebar_errors: hasSidebarErrors,
-      },
-    })
+    trackValidationFailed(errors, hasSidebarErrors)
 
     if (hasSidebarErrors) {
       openSidebar()

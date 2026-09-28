@@ -357,7 +357,8 @@
     "not_found": "Pàgina No Trobada",
     "not_found_description": "La pàgina que cerques no existeix o ha estat moguda.",
     "return_to_home": "Torna a l'inici",
-    "title": "Error"
+    "title": "Error",
+    "unsupported_file": "Aquest fitxer no es pot importar. Puja un sol fitxer CSV, XLSX, XLS o ODS."
   },
   "error_removing_code": "Hi ha hagut un error eliminant el codi",
   "features": {

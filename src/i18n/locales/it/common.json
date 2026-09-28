@@ -357,7 +357,8 @@
     "not_found": "Pagina non trovata",
     "not_found_description": "La pagina che stai cercando non esiste o è stata spostata.",
     "return_to_home": "Torna alla home",
-    "title": "Errore"
+    "title": "Errore",
+    "unsupported_file": "Questo file non può essere importato. Carica un solo file CSV, XLSX, XLS o ODS."
   },
   "error_removing_code": "Errore durante la rimozione del codice",
   "features": {
