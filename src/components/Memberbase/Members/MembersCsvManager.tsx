@@ -12,7 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileSpreadsheet } from 'react-icons/lu'
@@ -21,6 +21,8 @@ import Uploader from '~components/Layout/Uploader'
 import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
+import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
+import ErrorMissingHeader from '~components/Spreadsheet/errors/ErrorMissingHeader'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { usePaginatedMembers } from '~queries/members'
 import { useTable } from '../TableProvider'
@@ -53,6 +55,7 @@ export const MembersCsvManager = () => {
     setValue,
     watch,
     setError,
+    clearErrors,
     formState: { errors },
   } = useFormContext()
   const { columns } = useTable()
@@ -65,9 +68,22 @@ export const MembersCsvManager = () => {
 
   // File dropzone
   const onDrop = useCallback(
-    async ([file]: File[]) => {
+    async ([file]: File[], rejections: FileRejection[] = []) => {
       setValue('spreadsheet', undefined)
-      setError('spreadsheet', {})
+      clearErrors('spreadsheet')
+      // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
+      if (rejections.length || !file) {
+        const tooMany = rejections.some(({ errors }) => errors.some(({ code }) => code === 'too-many-files'))
+        setError('spreadsheet', {
+          type: 'validate',
+          message: tooMany
+            ? t('memberbase.importer.error.too_many_files', { defaultValue: 'Upload one file at a time.' })
+            : t('memberbase.importer.error.invalid_file_type', {
+                defaultValue: "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
+              }),
+        })
+        return
+      }
       try {
         const spreadsheet = new SpreadsheetManager(file, true)
         await spreadsheet.read()
@@ -88,21 +104,25 @@ export const MembersCsvManager = () => {
           openModal('planUpgrade', { context: 'memberbase', limit: String(maxCensusSize ?? '') })
           return
         }
-        if (e instanceof Error) {
-          setError('spreadsheet', {
-            type: e.name,
-            message: e.message,
-          })
-        }
+        // Only our own errors carry a translated message; anything else (FileReader, xlsx) is raw browser text
+        const known = e instanceof ErrorMissingData || e instanceof ErrorMissingHeader
+        setError('spreadsheet', {
+          type: known ? e.name : 'validate',
+          message: known
+            ? e.message
+            : t('memberbase.importer.error.read_failed', {
+                defaultValue: "We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again.",
+              }),
+        })
         console.error('could not load file:', e)
       }
     },
-    [existingMembers, maxCensusSize, openModal, setError, setValue, t]
+    [clearErrors, existingMembers, maxCensusSize, openModal, setError, setValue, t]
   )
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
-    accept: SpreadsheetManager.AcceptedTypes.reduce((prev, curr) => ({ ...prev, [curr]: [] }), {}),
+    accept: SpreadsheetManager.Accept,
   })
   const [visibleColumns, setVisibleColumns] = useState<string[]>(['name', 'surname', 'email'])
   const handleColumnChange = (value: string[]) => setVisibleColumns(value)

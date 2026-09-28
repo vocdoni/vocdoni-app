@@ -24,7 +24,7 @@ vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
     filedata: string[][] = [['John', 'john@doe.com']]
     heading: string[] = ['Name', 'Email']
     header: string[] = ['Name', 'Email']
-    static AcceptedTypes = ['text/csv']
+    static Accept = { 'text/csv': ['.csv'] }
 
     async read() {
       return undefined

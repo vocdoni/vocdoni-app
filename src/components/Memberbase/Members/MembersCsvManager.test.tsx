@@ -1,15 +1,20 @@
 import '@testing-library/jest-dom'
 import { act, screen } from '@testing-library/react'
+import type { FileRejection } from 'react-dropzone'
 import { FormProvider, useForm } from 'react-hook-form'
+import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
 import { render } from '~src/test-utils'
 import { MembersCsvManager } from './MembersCsvManager'
 
-let dropHandler: ((files: File[]) => Promise<void>) | undefined
+type DropHandler = (files: File[], rejections?: FileRejection[]) => Promise<void>
+
+let dropHandler: DropHandler | undefined
 let mockRowCount = 0
+let mockReadError: Error | undefined
 const openModal = vi.fn()
 
 vi.mock('react-dropzone', () => ({
-  useDropzone: (options: { onDrop: (files: File[]) => Promise<void> }) => {
+  useDropzone: (options: { onDrop: DropHandler }) => {
     dropHandler = options.onDrop
     return {
       getRootProps: () => ({ 'data-testid': 'dropzone-root' }),
@@ -22,14 +27,14 @@ vi.mock('react-dropzone', () => ({
 vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
   class SpreadsheetManager {
     data: string[][]
-    static AcceptedTypes = ['text/csv']
+    static Accept = { 'text/csv': ['.csv'] }
 
     constructor() {
       this.data = Array.from({ length: mockRowCount }, () => ['row'])
     }
 
     async read() {
-      return undefined
+      if (mockReadError) throw mockReadError
     }
   }
 
@@ -84,6 +89,7 @@ const MembersCsvManagerForm = () => {
 describe('MembersCsvManager', () => {
   beforeEach(() => {
     mockRowCount = 0
+    mockReadError = undefined
     openModal.mockClear()
     dropHandler = undefined
   })
@@ -104,5 +110,64 @@ describe('MembersCsvManager', () => {
     render(<MembersCsvManagerForm />)
 
     expect(screen.getAllByTestId('dropzone-root')).toHaveLength(1)
+  })
+
+  it('asks for a supported file type when the dropped file is rejected', async () => {
+    render(<MembersCsvManagerForm />)
+
+    const file = new File(['data'], 'members.pdf', { type: 'application/pdf' })
+    await act(async () => {
+      await dropHandler?.(
+        [],
+        [{ file, errors: [{ code: 'file-invalid-type', message: 'File type must be text/csv' }] }]
+      )
+    })
+
+    expect(
+      screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
+    ).toBeInTheDocument()
+    expect(screen.queryByText('File type must be text/csv')).not.toBeInTheDocument()
+  })
+
+  it('asks for a single file when several files are dropped', async () => {
+    render(<MembersCsvManagerForm />)
+
+    const tooMany = { code: 'too-many-files', message: 'Too many files' }
+    const rejections = ['a.csv', 'b.csv'].map((name) => ({
+      file: new File(['data'], name, { type: 'text/csv' }),
+      errors: [tooMany],
+    }))
+    await act(async () => {
+      await dropHandler?.([], rejections)
+    })
+
+    expect(screen.getByText('Upload one file at a time.')).toBeInTheDocument()
+  })
+
+  it('shows a generic message instead of raw browser errors when the file cannot be read', async () => {
+    mockReadError = new TypeError(
+      "Failed to execute 'readAsBinaryString' on 'FileReader': parameter 1 is not of type 'Blob'."
+    )
+    render(<MembersCsvManagerForm />)
+
+    await act(async () => {
+      await dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+    })
+
+    expect(
+      screen.getByText("We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again.")
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/readAsBinaryString/)).not.toBeInTheDocument()
+  })
+
+  it('shows the spreadsheet validation message when the file has no data', async () => {
+    mockReadError = new ErrorMissingData()
+    render(<MembersCsvManagerForm />)
+
+    await act(async () => {
+      await dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+    })
+
+    expect(screen.getByText(mockReadError.message)).toBeInTheDocument()
   })
 })

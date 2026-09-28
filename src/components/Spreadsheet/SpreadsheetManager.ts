@@ -29,16 +29,18 @@ export class SpreadsheetManager {
     return this.load().then(() => this.validateDataIntegrity())
   }
 
-  public static AcceptedTypes = [
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-excel',
-    'text/csv',
-    'application/csv',
-    'application/x-csv',
-    'text/x-comma-separated-values',
-    'text/comma-separated-values',
-    'application/vnd.oasis.opendocument.spreadsheet',
-  ]
+  // MIME types mapped to their file extensions. Dropzones accept a file when either matches, so a .csv that
+  // the OS labels with a generic type (text/plain, application/octet-stream) is still accepted by name.
+  public static Accept: Record<string, string[]> = {
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+    'application/vnd.ms-excel': ['.xls'],
+    'text/csv': ['.csv'],
+    'application/csv': ['.csv'],
+    'application/x-csv': ['.csv'],
+    'text/x-comma-separated-values': ['.csv'],
+    'text/comma-separated-values': ['.csv'],
+    'application/vnd.oasis.opendocument.spreadsheet': ['.ods'],
+  }
 
   public validateDataIntegrity(): void {
     if (this.headed && (!this.header || this.header.length === 0)) {
@@ -75,6 +77,7 @@ export class SpreadsheetManager {
           reject(error)
         }
       }
+      this.reader.onerror = () => reject(this.reader.error)
       this.reader.readAsBinaryString(this.file)
     })
   }
