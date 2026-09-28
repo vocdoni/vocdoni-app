@@ -258,6 +258,14 @@ describe('votingProcessToForm', () => {
       expect(votingProcessToForm(process()).census).toBeNull()
     })
 
+    // A code-only census is a valid configuration: losing it on rehydration let
+    // the next autosave strip the one-time code from the stored draft.
+    it('keeps a census that only sends a one-time code', () => {
+      const form = votingProcessToForm(process({ census: { twoFaFields: ['email'] } }))
+
+      expect(form.census).toEqual({ credentials: [], use2FA: true, use2FAMethod: 'email' })
+    })
+
     it('restores anonymous voting', () => {
       expect(votingProcessToForm(process({ census: { anonymous: true } })).anonymousVoting).toBe(true)
     })
