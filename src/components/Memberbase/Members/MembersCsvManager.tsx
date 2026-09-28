@@ -12,7 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { type FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileSpreadsheet } from 'react-icons/lu'
@@ -20,9 +20,12 @@ import { useSubscription } from '~components/Auth/Subscription'
 import Uploader from '~components/Layout/Uploader'
 import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
+import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
+import ErrorMissingHeader from '~components/Spreadsheet/errors/ErrorMissingHeader'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
-import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
+import { getSpreadsheetFileType, SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { usePaginatedMembers } from '~queries/members'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useTable } from '../TableProvider'
 
 const generateFakeValue = (columnId: string): string => {
@@ -46,6 +49,12 @@ const generateFakeValue = (columnId: string): string => {
   }
 }
 
+const getImportFailureReason = (error: unknown) => {
+  if (error instanceof ErrorMissingHeader) return 'missing_header'
+  if (error instanceof ErrorMissingData) return 'missing_data'
+  return 'parse_error'
+}
+
 export const MembersCsvManager = () => {
   const { t } = useTranslation()
   const {
@@ -65,11 +74,31 @@ export const MembersCsvManager = () => {
 
   // File dropzone
   const onDrop = useCallback(
-    async ([file]: File[]) => {
+    async ([file]: File[], [rejection]: FileRejection[] = []) => {
       setValue('spreadsheet', undefined)
       setError('spreadsheet', {})
+      // react-dropzone calls onDrop for rejected files too (wrong type, several
+      // files at once), just with no accepted file
+      if (!file) {
+        trackAnalyticsEvent({
+          name: AnalyticsEvents.MembersImportFailed,
+          props: {
+            reason: 'rejected_file',
+            file_type: getSpreadsheetFileType(rejection?.file?.name),
+            // `file-invalid-type`, or `too-many-files` when several were dropped
+            rejection_code: rejection?.errors?.[0]?.code ?? 'unknown',
+          },
+        })
+        setError('spreadsheet', {
+          type: 'rejected_file',
+          message: t('error.unsupported_file', {
+            defaultValue: "This file can't be imported. Upload a single CSV, XLSX, XLS or ODS file.",
+          }),
+        })
+        return
+      }
+      const spreadsheet = new SpreadsheetManager(file, true)
       try {
-        const spreadsheet = new SpreadsheetManager(file, true)
         await spreadsheet.read()
         const totalMembers = spreadsheet.data.length + existingMembers
         const limitErrorMessage = t('uploader.csv_row_limit_exceeded', {
@@ -88,6 +117,14 @@ export const MembersCsvManager = () => {
           openModal('planUpgrade', { context: 'memberbase', limit: String(maxCensusSize ?? '') })
           return
         }
+        trackAnalyticsEvent({
+          name: AnalyticsEvents.MembersImportFailed,
+          props: {
+            reason: getImportFailureReason(e),
+            file_type: spreadsheet.fileType,
+            ...(spreadsheet.encoding && { encoding: spreadsheet.encoding }),
+          },
+        })
         if (e instanceof Error) {
           setError('spreadsheet', {
             type: e.name,

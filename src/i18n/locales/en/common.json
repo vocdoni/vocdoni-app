@@ -355,7 +355,8 @@
     "not_found": "Page Not Found",
     "not_found_description": "The page you're looking for does not exist or has been moved.",
     "return_to_home": "Back to home",
-    "title": "Error"
+    "title": "Error",
+    "unsupported_file": "This file can't be imported. Upload a single CSV, XLSX, XLS or ODS file."
   },
   "error_removing_code": "Error removing code",
   "features": {

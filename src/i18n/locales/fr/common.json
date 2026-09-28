@@ -357,7 +357,8 @@
     "not_found": "Page introuvable",
     "not_found_description": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "return_to_home": "Retour à l'accueil",
-    "title": "Erreur"
+    "title": "Erreur",
+    "unsupported_file": "Ce fichier ne peut pas être importé. Importez un seul fichier CSV, XLSX, XLS ou ODS."
   },
   "error_removing_code": "Erreur lors de la suppression du code",
   "features": {

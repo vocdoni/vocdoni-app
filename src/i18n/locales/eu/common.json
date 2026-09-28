@@ -355,7 +355,8 @@
     "not_found": "Ez da orria aurkitu",
     "not_found_description": "Bilatzen ari zaren orria ez dago edo lekuz aldatu da.",
     "return_to_home": "Itzuli hasierara",
-    "title": "Errorea"
+    "title": "Errorea",
+    "unsupported_file": "Fitxategi hau ezin da inportatu. Igo CSV, XLSX, XLS edo ODS fitxategi bakar bat."
   },
   "error_removing_code": "Errorea kodea kentzean",
   "features": {
