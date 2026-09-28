@@ -143,9 +143,7 @@
   "common": {
     "back": "Πίσω",
     "close_drawer": "Κλείσιμο",
-    "confirm": "Επιβεβαίωση",
     "home": "Αρχική",
-    "next": "Επόμενο",
     "retry": "Δοκιμάστε ξανά"
   },
   "confirm": {
@@ -884,7 +882,6 @@
     },
     "upgrade_plan": "Αναβάθμιση σχεδίου"
   },
-  "internal_server_error": "Εσωτερικό σφάλμα διακομιστή",
   "invalid_promo_code": "Μη έγκυρος κωδικός προσφοράς",
   "invite": {
     "account_not_verified": "Ο λογαριασμός σας δεν έχει επαληθευτεί. Επαληθεύστε τον λογαριασμό σας για να συνεχίσετε.",
@@ -1967,72 +1964,91 @@
   "vote_overwrite": "Αλλαγή ψήφου",
   "voter_anonymity": "",
   "voter_auth": {
-    "2fa_badge": "2FA",
-    "2fa_description": "Προσθέστε ένα επιπλέον επίπεδο ασφάλειας απαιτώντας από τους ψηφοφόρους να επαληθεύσουν την ταυτότητά τους",
-    "2fa_email": "<email /> Επαλήθευση μέσω email",
-    "2fa_email_description": "Οι ψηφοφόροι θα λάβουν κωδικό επαλήθευσης μέσω email",
-    "2fa_enable": "Ενεργοποίηση ελέγχου ταυτότητας δύο παραγόντων",
-    "2fa_method_title": "Επιλογή μεθόδου επαλήθευσης",
-    "2fa_security_description": "Ο έλεγχος ταυτότητας δύο παραγόντων αυξάνει σημαντικά την ασφάλεια της διαδικασίας ψηφοφορίας σας, διασφαλίζοντας ότι μόνο εξουσιοδοτημένα μέλη μπορούν να ψηφίσουν.",
-    "2fa_security_title": "Ενισχυμένη ασφάλεια",
-    "2fa_sms": "<phone /> Επαλήθευση μέσω SMS",
-    "2fa_sms_description": "Οι ψηφοφόροι θα λάβουν κωδικό επαλήθευσης μέσω SMS",
-    "2fa_voter_choice": "<email /> ή <phone /> Επιλογή ψηφοφόρου",
-    "2fa_voter_choice_description": "Οι ψηφοφόροι μπορούν να επιλέξουν την προτιμώμενη μέθοδο επαλήθευσης",
     "anonymity": "",
     "button": {
       "configure": "Ρύθμιση ταυτοποίησης ψηφοφόρων",
       "edit": "Επεξεργασία ταυτοποίησης ψηφοφόρων"
     },
-    "configured": "Η ταυτοποίηση ψηφοφόρων έχει ρυθμιστεί",
-    "configured_auth": "Ταυτοποίηση ψηφοφόρων",
-    "credentials": "Στοιχεία ταυτοποίησης",
-    "description": "Ρυθμίστε τον τρόπο με τον οποίο οι ψηφοφόροι θα ταυτοποιούνται για να συμμετέχουν σε αυτή την ψηφοφορία.",
-    "email": "Μέσω επαλήθευσης email",
-    "guarantees": "Εγγυήσεις ταυτοποίησης",
-    "guarantees_mid_description_intro": "Η ρύθμισή σας παρέχει μεσαίου επιπέδου εγγυήσεις ταυτοποίησης με 3 στοιχεία ταυτοποίησης.",
-    "guarantees_mid_list_1": "Ενεργοποιήστε την ταυτοποίηση δύο παραγόντων για ισχυρότερες εγγυήσεις",
-    "guarantees_mid_title": "Εγγυήσεις ταυτοποίησης μεσαίου επιπέδου",
-    "guarantees_strong_description": "Η ρύθμισή σας παρέχει ισχυρές εγγυήσεις ταυτοποίησης με επαλήθευση δύο παραγόντων.",
-    "guarantees_strong_title": "Ισχυρές εγγυήσεις ταυτοποίησης",
-    "guarantees_sub_mid": "Εγγυήσεις ταυτοποίησης μεσαίου επιπέδου με 3 στοιχεία ταυτοποίησης αλλά χωρίς επαλήθευση δύο παραγόντων.",
-    "guarantees_sub_strong": "Ισχυρές εγγυήσεις ταυτοποίησης με ενεργοποιημένη επαλήθευση δύο παραγόντων.",
-    "guarantees_sub_weak": "Βασικές εγγυήσεις ταυτοποίησης με 1 στοιχείο ταυτοποίησης και χωρίς επαλήθευση δύο παραγόντων.",
-    "guarantees_weak_description_intro": "Η τρέχουσα ρύθμισή σας παρέχει ελάχιστες εγγυήσεις ταυτοποίησης. Συνιστούμε έντονα:",
-    "guarantees_weak_list_1": "Προσθέστε περισσότερα στοιχεία ταυτοποίησης (στόχος: 2) για καλύτερη επαλήθευση ταυτότητας",
-    "guarantees_weak_list_2": "Ενεργοποιήστε την ταυτοποίηση δύο παραγόντων για ένα επιπλέον επίπεδο επαλήθευσης",
-    "guarantees_weak_title": "Αδύναμες εγγυήσεις ταυτοποίησης",
-    "level_mid": "Μεσαίο",
-    "level_strong": "Ισχυρό",
-    "level_weak": "Αδύναμο",
+    "code": {
+      "description": "",
+      "email_description": "",
+      "email_label": "",
+      "heading": "",
+      "none": "",
+      "none_description": "",
+      "sms_description": "",
+      "sms_label": "",
+      "voter_choice": "",
+      "voter_choice_description": ""
+    },
+    "details": {
+      "description": "",
+      "heading": "",
+      "optional": ""
+    },
+    "level": {
+      "basic": "",
+      "good": "",
+      "strong": "",
+      "unset": ""
+    },
+    "modal": {
+      "group_summary_one": "",
+      "group_summary_other": "",
+      "title": ""
+    },
     "no_group_description": "Επιλέξτε πρώτα μια ομάδα για να ρυθμίσετε την ταυτοποίηση.",
-    "security_level": "Καλή ασφάλεια",
-    "security_recommendation_1": "Για καλύτερη ασφάλεια, συνιστούμε να επιλέξετε τουλάχιστον 2 στοιχεία ταυτοποίησης.",
-    "security_recommendation_2_one": "Έχετε επιλέξει {{ count }} στοιχείο ταυτοποίησης, το οποίο παρέχει καλή ασφάλεια για τους ψηφοφόρους σας.",
-    "security_recommendation_2_other": "Έχετε επιλέξει {{ count }} στοιχεία ταυτοποίησης, τα οποία παρέχουν καλή ασφάλεια για τους ψηφοφόρους σας.",
-    "security_recommendation_title": "Σύσταση ασφάλειας",
-    "select_credentials": "Επιλέξτε τα απαιτούμενα στοιχεία ταυτοποίησης των ψηφοφόρων",
-    "select_credentials_description": "Επιλέξτε ποια πεδία πρέπει να δίνουν οι ψηφοφόροι για να ταυτοποιηθούν. Επιλέξτε έως 3 για την καλύτερη ισορροπία μεταξύ ασφάλειας και ευχρηστίας. Αν σκοπεύετε να χρησιμοποιήσετε μόνο email ή τηλέφωνο για το 2FA, παραλείψτε αυτό το βήμα και πατήστε Επόμενο για να το ρυθμίσετε.",
-    "selected_credentials_count_one": "{{ count }}/3 στοιχείο ταυτοποίησης επιλεγμένο",
-    "selected_credentials_count_other": "{{ count }}/3 στοιχεία ταυτοποίησης επιλεγμένα",
-    "sms": "Μέσω επαλήθευσης SMS",
-    "summary": "Σύνοψη",
-    "summary_2fa_enable": "Έλεγχος ταυτότητας δύο παραγόντων",
-    "summary_2fa_enabled": "Ενεργοποιημένο",
-    "summary_credentials": "Απαιτούμενα στοιχεία ταυτοποίησης",
-    "summary_title": "Σύνοψη ρύθμισης ταυτοποίησης",
-    "title": "Ρύθμιση ταυτοποίησης ψηφοφόρων",
-    "two_factor": "Δύο παραγόντων",
-    "validation_duplicates_one": "{{count}} διπλότυπος χρήστης",
-    "validation_duplicates_other": "{{count}} διπλότυποι χρήστες",
-    "validation_error_title": "Σφάλμα επικύρωσης",
-    "validation_failed": "Η επικύρωση απέτυχε",
-    "validation_missing_data_one": "{{count}} χρήστης χωρίς απαιτούμενα πεδία",
-    "validation_missing_data_other": "{{count}} χρήστες χωρίς απαιτούμενα πεδία",
-    "validation_summary": "Η επικύρωση απέτυχε για ορισμένους χρήστες.",
-    "validation_total_one": "{{count}} χρήστης συνολικά",
-    "validation_total_other": "{{count}} χρήστες συνολικά",
-    "voters_choice": "Επιλογή ψηφοφόρου"
+    "preview": {
+      "first_step": "",
+      "second_step": "",
+      "title": ""
+    },
+    "protection": {
+      "basic_risk": "",
+      "good_code_risk": "",
+      "good_details_risk": "",
+      "label": "",
+      "strong": "",
+      "unset": ""
+    },
+    "sample": {
+      "birthDate": "",
+      "email": "",
+      "memberNumber": "",
+      "name": "",
+      "nationalId": "",
+      "phone": "",
+      "surname": ""
+    },
+    "save": {
+      "submit": "",
+      "unchecked": ""
+    },
+    "saved": "",
+    "status": {
+      "both_contacts": "",
+      "checking": "",
+      "duplicated_members_one": "",
+      "duplicated_members_other": "",
+      "empty": "",
+      "fix": "",
+      "missing_members_one": "",
+      "missing_members_other": "",
+      "retry": "",
+      "unavailable": "",
+      "valid": "",
+      "valid_count_one": "",
+      "valid_count_other": ""
+    },
+    "summary": {
+      "code_choice": "",
+      "code_email": "",
+      "code_none": "",
+      "code_sms": "",
+      "details": "",
+      "member_list_mismatch": "",
+      "title": ""
+    }
   },
   "voting_link": {
     "description": "Μοιραστείτε αυτόν τον σύνδεσμο με τους ψηφοφόρους σας για να συμμετάσχουν στην ψηφοφορία",

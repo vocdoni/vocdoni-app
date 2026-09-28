@@ -133,7 +133,9 @@ const GroupCensusCreation = () => {
     formState: { errors },
   } = useFormContext<Process>()
   const censusType = watch('censusType')
+  const groupId = watch('groupId')
   const { data: groups, fetchNextPage, hasNextPage, isFetching } = useGroups(6)
+  const selectedGroup = groups?.find((group) => group.id === groupId) ?? null
 
   const TLink = ({ children }) => (
     <Link asChild textDecoration='underline'>
@@ -151,7 +153,7 @@ const GroupCensusCreation = () => {
             hasNextPage={hasNextPage}
             isFetching={isFetching}
           />
-          <VoterAuthentication />
+          <VoterAuthentication group={selectedGroup} />
         </>
       )}
 
