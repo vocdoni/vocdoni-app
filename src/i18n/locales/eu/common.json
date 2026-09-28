@@ -143,9 +143,7 @@
   "common": {
     "back": "Atzera",
     "close_drawer": "Itxi panela",
-    "confirm": "Berretsi",
     "home": "Hasiera",
-    "next": "Hurrengoa",
     "retry": "Berriro saiatu"
   },
   "confirm": {
@@ -891,7 +889,6 @@
     },
     "upgrade_plan": "Hobetu plana"
   },
-  "internal_server_error": "Zerbitzariaren barne-errorea",
   "invalid_promo_code": "Sustapen-kodea ez da baliozkoa",
   "invite": {
     "account_not_verified": "Zure kontua ez dago egiaztatuta. Egiaztatu zure kontua jarraitzeko.",
@@ -2003,78 +2000,96 @@
   "vote_overwrite": "Botoa berridaztea",
   "voter_anonymity": "Boto-emaileen anonimotasuna",
   "voter_auth": {
-    "2fa_badge": "2FA",
-    "2fa_description": "Gehitu segurtasun-geruza osagarri bat hautesleei nortasuna egiaztatzeko eskatuz",
-    "2fa_email": "<email /> Egiaztapena posta elektronikoz",
-    "2fa_email_description": "Hautesleek egiaztapen-kode bat jasoko dute posta elektronikoz",
-    "2fa_enable": "Gaitu bi pausoko autentifikazioa",
-    "2fa_method_title": "Hautatu egiaztapen-metodoa",
-    "2fa_security_description": "Bi pausoko autentifikazioak nabarmen handitzen du bozketa-prozesuaren segurtasuna, baimendutako kideek soilik bozka dezaten bermatuz.",
-    "2fa_security_title": "Indartutako segurtasuna",
-    "2fa_sms": "<phone /> Egiaztapena SMS bidez",
-    "2fa_sms_description": "Hautesleek egiaztapen-kode bat jasoko dute SMS bidez",
-    "2fa_voter_choice": "<email /> edo <phone /> Boto-emailearen aukera",
-    "2fa_voter_choice_description": "Hautesleek beren egiaztapen-metodo gogokoena hauta dezakete",
     "anonymity": "Botoaren anonimotasuna: {{ mode }}",
     "button": {
       "configure": "Konfiguratu hautesleen autentifikazioa",
       "edit": "Editatu hautesleen autentifikazioa"
     },
-    "configured": "Hautesleen autentifikazioa konfiguratuta",
-    "configured_auth": "Hautesleen autentifikazioa",
-    "credentials": "Kredentzialak",
-    "description": "Konfiguratu hautesleek nola autentifikatu beharko duten bozketa-prozesu honetan parte hartzeko.",
-    "email": "Posta elektroniko bidezko egiaztapenaren bidez",
-    "guarantees": "Autentifikazio-bermeak",
-    "guarantees_mid_description_intro": "Zure konfigurazioak ertaineko autentifikazio-bermeak eskaintzen ditu 3 kredentzialekin.",
-    "guarantees_mid_list_1": "Gaitu bi pausoko autentifikazioa bermeak indartzeko",
-    "guarantees_mid_title": "Ertaineko autentifikazio-bermeak",
-    "guarantees_strong_description": "Zure konfigurazioak autentifikazio-berme indartsuak eskaintzen ditu bi pausoko egiaztapenarekin.",
-    "guarantees_strong_title": "Autentifikazio-berme indartsuak",
-    "guarantees_sub_mid": "Ertaineko autentifikazio-bermeak 3 kredentzialekin, baina bi pausoko egiaztapenik gabe.",
-    "guarantees_sub_strong": "Autentifikazio-berme indartsuak bi pausoko egiaztapena gaituta.",
-    "guarantees_sub_weak": "Oinarrizko autentifikazio-bermeak kredentzial 1ekin eta bi pausoko egiaztapenik gabe.",
-    "guarantees_weak_description_intro": "Zure egungo konfigurazioak gutxieneko autentifikazio-bermeak eskaintzen ditu. Biziki gomendatzen dizugu:",
-    "guarantees_weak_list_1": "Kredentzial gehiago gehitzea (gutxienez 2) nortasunaren egiaztapena hobetzeko",
-    "guarantees_weak_list_2": "Bi pausoko autentifikazioa gaitzea egiaztapen-geruza osagarri bat gehitzeko",
-    "guarantees_weak_title": "Autentifikazio-berme ahulak",
-    "level_mid": "Ertaina",
-    "level_strong": "Indartsua",
-    "level_weak": "Ahula",
+    "code": {
+      "description": "Botoa eman aurretik, 6 digituko kode bat bidaltzen diegu botogilearen helbide elektronikora edo telefonora. Horrek frogatzen du berea dela, eta, beraz, inork ezin du beste norbaiten datuekin bozkatu.",
+      "email_description": "Zure kide-zerrendako helbide elektronikora bidaltzen da.",
+      "email_label": "Helbide elektronikoa",
+      "heading": "2. Behin erabiltzeko kode bat ere bidali?",
+      "none": "Koderik ez",
+      "none_description": "Botogileek beren datuekin soilik hasten dute saioa.",
+      "sms_description": "Zure kide-zerrendako telefono-zenbakira bidaltzen da.",
+      "sms_label": "SMSa",
+      "voter_choice": "Helbide elektronikoa edo SMSa",
+      "voter_choice_description": "Botogile bakoitzak aukeratzen du non jaso."
+    },
+    "details": {
+      "description": "Hautatu gehienez {{max}} datu zure kide-zerrendatik. Botogileek idazten dutenak zehatz-mehatz bat etorri behar du horrekin.",
+      "heading": "1. Zer idatziko dute botogileek?",
+      "optional": "Aukerakoa behin erabiltzeko kode bat bidaltzen baduzu: orduan botogileek kodearekin bakarrik hasi dezakete saioa."
+    },
+    "level": {
+      "basic": "Oinarrizkoa",
+      "good": "Ona",
+      "strong": "Sendoa",
+      "unset": "Ezarri gabe"
+    },
+    "modal": {
+      "group_summary_one": "{{group}} · {{count}} kide",
+      "group_summary_other": "{{group}} · {{count}} kide",
+      "title": "Nola hasiko dute saioa botogileek?"
+    },
     "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
     "pending": {
       "description": "Aukeratu hautesleek bozkatzeko zein kide-datu sartu behar dituzten, adibidez NANa edo kide-zenbakia.",
       "error_title": "Hau behar duzu argitaratzeko",
       "title": "Argitaratu aurretik beharrezkoa"
     },
-    "security_level": "Segurtasun ona",
-    "security_recommendation_1": "Segurtasun handiagorako, gutxienez 2 kredentzial hautatzea gomendatzen dugu.",
-    "security_recommendation_2_one": "{{ count }} kredentzial hautatu duzu, eta horrek segurtasun ona eskaintzen die zure hautesleei.",
-    "security_recommendation_2_other": "{{ count }} kredentzial hautatu dituzu, eta horrek segurtasun ona eskaintzen die zure hautesleei.",
-    "security_recommendation_title": "Segurtasun-gomendioa",
-    "select_credentials": "Hautatu hautesleen autentifikaziorako beharrezko kredentzialak",
-    "select_credentials_description": "Aukeratu hautesleek autentifikatzeko eman beharko dituzten eremuak. Hautatu 3 arte segurtasunaren eta erabilerraztasunaren arteko oreka onena lortzeko. 2FArako posta elektronikoa edo telefonoa bakarrik erabili nahi badituzu, saltatu urrats hau eta egin klik Hurrengoan konfiguratzeko.",
-    "selected_credentials_count_one": "{{ count }}/3 kredentzial hautatuta",
-    "selected_credentials_count_other": "{{ count }}/3 kredentzial hautatuta",
-    "sms": "SMS bidezko egiaztapena",
-    "summary": "Laburpena",
-    "summary_2fa_enable": "Bi pausoko autentifikazioa",
-    "summary_2fa_enabled": "Gaituta",
-    "summary_credentials": "Beharrezko kredentzialak",
-    "summary_title": "Autentifikazio-konfigurazioaren laburpena",
-    "title": "Konfiguratu hautesleen autentifikazioa",
-    "two_factor": "Bi pausokoa",
-    "validation_duplicates_one": "Erabiltzaile bikoiztu {{count}}",
-    "validation_duplicates_other": "Erabiltzaile bikoiztu {{count}}",
-    "validation_error_title": "Balidazio-errorea",
-    "validation_failed": "Balidazioak huts egin du",
-    "validation_missing_data_one": "Eremu beharrezkorik gabe {{count}} erabiltzaile",
-    "validation_missing_data_other": "Eremu beharrezkorik gabe {{count}} erabiltzaile",
-    "validation_review_members": "Berrikusi kideak",
-    "validation_summary": "Balidazioak huts egin du erabiltzaile batzuentzat.",
-    "validation_total_one": "Guztira {{count}} erabiltzaile",
-    "validation_total_other": "Guztira {{count}} erabiltzaile",
-    "voters_choice": "Boto-emailearen aukera"
+    "preview": {
+      "first_step": "Lehen urratsa",
+      "second_step": "Bigarren urratsa",
+      "title": "Botogileek ikusiko dutena"
+    },
+    "protection": {
+      "basic_risk": "Datu hauek dakien edonork bozka lezake kide baten ordez.",
+      "good_code_risk": "Kide baten helbide elektronikoa edo telefonoa ireki dezakeen edonork bozka lezake haren ordez.",
+      "good_details_risk": "Norbaitek hainbat datu pribatu beharko lituzke kide baten ordez bozkatzeko.",
+      "label": "Babesa",
+      "strong": "Norbaitek kide baten datuak eta haren helbide elektronikoa edo telefonoa beharko lituzke haren ordez bozkatzeko.",
+      "unset": "Aukeratu datu bat gutxienez edo kode bat."
+    },
+    "sample": {
+      "birthDate": "1979/03/14",
+      "email": "laura@example.org",
+      "memberNumber": "00482",
+      "name": "Laura",
+      "nationalId": "12345678Z",
+      "phone": "+1 555 010 0100",
+      "surname": "Smith"
+    },
+    "save": {
+      "submit": "Gorde",
+      "unchecked": "Gorde da, baina ezin izan dugu zure kide-zerrenda egiaztatu"
+    },
+    "saved": "Saio-hasierako ezarpenak gorde dira",
+    "status": {
+      "both_contacts": "{{contacts}} biak",
+      "checking": "Zure kide-zerrenda egiaztatzen…",
+      "duplicated_members_one": "Kide batek {{fields}} berbera du beste batekin, eta ezin dira bereizi.",
+      "duplicated_members_other": "{{count}} kidek {{fields}} berbera dute, eta ezin dira bereizi.",
+      "empty": "Aukeratu datu bat gutxienez edo kode bat.",
+      "fix": "Konpondu zure kide-zerrenda",
+      "missing_members_one": "Kide bati {{fields}} falta zaio.",
+      "missing_members_other": "{{count}} kideri {{fields}} falta zaie.",
+      "retry": "Egiaztatu berriro",
+      "unavailable": "Ezin izan dugu zure kide-zerrenda egiaztatu. Hala ere, gorde dezakezu.",
+      "valid": "Kide guztiek hasi dezakete saioa.",
+      "valid_count_one": "Talde honetako kide bakarrak hasi dezake saioa.",
+      "valid_count_other": "{{count}} kide guztiek hasi dezakete saioa."
+    },
+    "summary": {
+      "code_choice": "Behin erabiltzeko kodea helbide elektronikoz edo SMSz",
+      "code_email": "Behin erabiltzeko kodea helbide elektronikoz",
+      "code_none": "Behin erabiltzeko koderik ez",
+      "code_sms": "Behin erabiltzeko kodea SMSz",
+      "details": "Botogileek idazten dutena: {{fields}}",
+      "member_list_mismatch": "Ezarpen hauek ez datoz bat zure kide-zerrendarekin. Editatu zergatik ikusteko.",
+      "title": "Botogilearen saio-hasiera"
+    }
   },
   "voting_link": {
     "description": "Partekatu esteka hau zure hautesleekin bozketa-prozesuan parte hartzeko",

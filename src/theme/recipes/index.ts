@@ -27,7 +27,6 @@ import { OrganizationDescription, OrganizationImage, OrganizationName } from './
 import { Pagination, PaginationButton } from './pagination'
 import { Popover } from './popover'
 import { Progress } from './progress'
-import { SecurityLevelBox } from './securitylevelbox'
 import { Stepper } from './stepper'
 import { Table } from './table'
 import { Tabs } from './tabs'
@@ -57,7 +56,6 @@ export const recipes: Record<string, RecipeDefinition> = {
   OrganizationImage,
   OrganizationName,
   PaginationButton,
-  SecurityLevelBox,
 }
 
 export const slotRecipes: Record<string, SlotRecipeDefinition> = {
