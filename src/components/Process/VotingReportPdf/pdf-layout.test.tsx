@@ -43,9 +43,16 @@ const buildReportData = ({ questions, choices }: { questions: number; choices: n
   })
 }
 
+type ActEnvironment = typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }
+
 const layOutReport = async (data: ReturnType<typeof buildCertificateData>) => {
   const capturedPages: Record<string, number> = {}
   const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  // react-pdf renders with its own React root, outside Testing Library's act(). This is not a DOM
+  // test, so turn off the act environment instead of letting React warn about every update.
+  const actEnvironment = globalThis as ActEnvironment
+  const wasActEnvironment = actEnvironment.IS_REACT_ACT_ENVIRONMENT
+  actEnvironment.IS_REACT_ACT_ENVIRONMENT = false
 
   try {
     await pdf(
@@ -64,6 +71,7 @@ const layOutReport = async (data: ReturnType<typeof buildCertificateData>) => {
     return { capturedPages, unavailableSpaceWarnings }
   } finally {
     warn.mockRestore()
+    actEnvironment.IS_REACT_ACT_ENVIRONMENT = wasActEnvironment
   }
 }
 
