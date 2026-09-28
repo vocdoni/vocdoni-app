@@ -452,7 +452,6 @@
       }
     },
     "error": {
-      "census_config_required": "Configurez les paramètres d'authentification de la liste électorale.",
       "email_invalid": "Adresse e-mail invalide",
       "field_is_required": "Ce champ est obligatoire",
       "generic": "Erreur lors de l'opération",

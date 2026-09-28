@@ -1,14 +1,22 @@
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
-import { FormProvider, useForm, useFormContext } from 'react-hook-form'
+import { FormProvider, useController, useForm, useFormContext } from 'react-hook-form'
 import { CensusTypes } from '~components/Process/Census/CensusType'
 import { mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VoterAuthentication } from '.'
 import { Census, defaultQuestion, Process } from '../common'
+import { CENSUS_SETUP_TOAST_ID } from '../useCensusSetupToast'
 import { useVoterAuthDialog, VoterAuthDialogProvider } from './VoterAuthDialogContext'
 
 const mockValidateCensus = vi.fn()
+const mockCloseToast = vi.fn()
+
+// The test render wraps everything in the real ToastProvider, so keep it.
+vi.mock('~components/Toast', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~components/Toast')>()),
+  useToast: () => Object.assign(vi.fn(), { close: mockCloseToast }),
+}))
 const mockTrackAnalyticsEvent = vi.fn()
 
 // Partial mock: AllProviders (used by render) still mounts the real ApiClientProvider.
@@ -36,6 +44,15 @@ const defaultCensus: Census = {
   credentials: ['email'],
   use2FA: false,
   use2FAMethod: 'email',
+}
+
+// Mirrors GroupCensusCreation, which registers the census rule and hands the
+// field's ref to the dialog trigger.
+const RegisteredVoterAuthentication = () => {
+  const {
+    field: { ref },
+  } = useController<Process, 'census'>({ name: 'census', rules: { required: true } })
+  return <VoterAuthentication triggerRef={ref} />
 }
 
 const TestForm = ({
@@ -69,7 +86,7 @@ const TestForm = ({
 
   return (
     <FormProvider {...methods}>
-      <VoterAuthentication />
+      <RegisteredVoterAuthentication />
       <FormWatcher name='census' />
       {/* Stands in for the create view's Publish: runs the main form's validation. */}
       <button type='button' onClick={() => methods.handleSubmit(() => {})()}>
@@ -143,6 +160,26 @@ describe('VoterAuthentication', () => {
 
     const dialog = await screen.findByRole('dialog')
     expect(dialog.querySelector('input[value="memberNumber"]')).toBeChecked()
+  })
+
+  it('hands focus back to the trigger, and clears the missing-auth toast, after the first confirm', async () => {
+    mockValidateCensus.mockResolvedValue({ valid: true })
+    const user = userEvent.setup()
+    render(<TestForm initialCensus={null} />)
+
+    // Opened from the pending notice; confirming moves the trigger below the summary.
+    await user.click(
+      within(screen.getByRole('status')).getByRole('button', { name: /configure voter authentication/i })
+    )
+    const dialog = await screen.findByRole('dialog')
+    await user.click(dialog.querySelector('input[value="memberNumber"]')!)
+    await user.click(within(dialog).getByRole('button', { name: /next/i }))
+    await user.click(within(dialog).getByRole('button', { name: /next/i }))
+    await waitFor(() => expect(mockValidateCensus).toHaveBeenCalledTimes(1))
+    await user.click(await within(dialog).findByRole('button', { name: /confirm/i }))
+
+    await waitFor(() => expect(screen.getByRole('button', { name: /edit voter authentication/i })).toHaveFocus())
+    expect(mockCloseToast).toHaveBeenCalledWith(CENSUS_SETUP_TOAST_ID)
   })
 
   it('opens from outside through the shared dialog state', async () => {

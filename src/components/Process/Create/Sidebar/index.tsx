@@ -36,7 +36,9 @@ export const CreateSidebar = () => {
         )}
       </SidebarContents>
 
-      <SidebarContents flex='1' overflowY='auto'>
+      {/* Bottom room for the floating support chat launcher (bottom-right, over
+          this panel), so it never covers the last settings. */}
+      <SidebarContents flex='1' overflowY='auto' pb={24}>
         <SidebarSubtitle>
           <Trans i18nKey='process_create.basic_configuration'>Basic Configuration</Trans>
         </SidebarSubtitle>

@@ -41,7 +41,7 @@ describe('useCensusSetupToast', () => {
       expect.objectContaining({ id: CENSUS_SETUP_TOAST_ID, type: 'error', title: 'Choose who can vote' })
     )
     // There is nothing to set up authentication for yet.
-    expect(mockToast.mock.calls[0][0]).not.toHaveProperty('action')
+    expect(mockToast.mock.calls[0][0].action).toBeUndefined()
   })
 
   it('offers to open the voter authentication dialog when only that is missing', () => {
@@ -61,5 +61,20 @@ describe('useCensusSetupToast', () => {
     expect(result.current.dialog.open).toBe(false)
     act(() => mockToast.mock.calls[0][0].action.onClick())
     expect(result.current.dialog.open).toBe(true)
+  })
+
+  // The toaster merges an update into the visible toast with the same id, so a
+  // field the new variant leaves out would survive from the old one.
+  it('drops the "Set it up" action when the group-missing toast replaces the auth one', () => {
+    const shown = new Map<string, Record<string, unknown>>()
+    mockToast.mockImplementation((options) => shown.set(options.id, { ...shown.get(options.id), ...options }))
+    const { result } = renderToastHook()
+
+    result.current.showToast({ census: required } as FieldErrors<Process>)
+    result.current.showToast({ groupId: required, census: required } as FieldErrors<Process>)
+
+    const toast = shown.get(CENSUS_SETUP_TOAST_ID)
+    expect(toast?.title).toBe('Choose who can vote')
+    expect(toast?.action).toBeUndefined()
   })
 })

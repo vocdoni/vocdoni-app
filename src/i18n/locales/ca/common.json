@@ -452,7 +452,6 @@
       }
     },
     "error": {
-      "census_config_required": "Si us plau, configura com s'autenticaran els votants",
       "email_invalid": "Adreça de correu electrònic no vàlida",
       "field_is_required": "Aquest camp és obligatori",
       "generic": "Error en realitzar l'operació",

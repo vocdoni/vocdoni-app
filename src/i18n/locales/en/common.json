@@ -450,7 +450,6 @@
       }
     },
     "error": {
-      "census_config_required": "Please configure the census authentication settings.",
       "email_invalid": "Invalid email address",
       "field_is_required": "This field is required",
       "generic": "Error performing the operation",

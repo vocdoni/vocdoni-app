@@ -450,7 +450,6 @@
       }
     },
     "error": {
-      "census_config_required": "Konfiguratu erroldaren autentifikazio-ezarpenak.",
       "email_invalid": "Posta elektronikoaren helbidea ez da baliozkoa",
       "field_is_required": "Eremu hau bete beharrekoa da",
       "generic": "Errorea eragiketa burutzean",

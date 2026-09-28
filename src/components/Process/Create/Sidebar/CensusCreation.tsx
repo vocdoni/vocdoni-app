@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { chakraComponents } from 'chakra-react-select'
 import { useEffect, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { ControllerRenderProps, useController, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router'
@@ -26,10 +26,9 @@ import { Routes } from '~routes'
 import { Group, useGroups } from '~src/queries/groups'
 import { VoterAuthentication } from '../VoterAuthentication'
 import { Process } from '../common'
+import { StepStatus, useCensusSteps } from '../useCensusSteps'
 
 type GroupsQuery = ReturnType<typeof useGroups>
-
-type StepStatus = 'idle' | 'current' | 'error' | 'done'
 
 const stepMarkerStyles: Record<StepStatus, FlexProps> = {
   idle: { borderColor: 'border.emphasized', color: 'fg.muted' },
@@ -64,10 +63,7 @@ const StepMarker = ({ step, status }: { step: number; status: StepStatus }) => (
 // two steps are still missing, or ready once both are done.
 export const CensusStatusBadge = () => {
   const { t } = useTranslation()
-  const { watch } = useFormContext<Process>()
-  const groupId = watch('groupId')
-  const census = watch('census')
-  const stepsLeft = (groupId ? 0 : 1) + (census ? 0 : 1)
+  const { stepsLeft } = useCensusSteps()
 
   if (!stepsLeft) {
     return <Badge colorPalette='green'>{t('process_create.census.status.ready', { defaultValue: 'Ready' })}</Badge>
@@ -104,27 +100,27 @@ export const formatGroupOptionLabel = (group: Group, { context }: GroupOptionLab
 
 export type GroupSelectProps = {
   groups: Group[]
+  // Owned by GroupCensusCreation, which registers the field's rules (see there).
+  field: ControllerRenderProps<Process, 'groupId'>
 } & Pick<GroupsQuery, 'fetchNextPage' | 'hasNextPage' | 'isFetching'>
 
-export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: GroupSelectProps) => {
+export const GroupSelect = ({ groups, field, fetchNextPage, hasNextPage, isFetching }: GroupSelectProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const {
-    watch,
-    control,
     getValues,
     setValue,
     formState: { errors },
-  } = useFormContext()
-  const censusType = watch('censusType')
-  const groupId = watch('groupId')
+  } = useFormContext<Process>()
+  const { groupStatus } = useCensusSteps()
   const [hasFetchedScroll, setHasFetchedScroll] = useState(false)
+  const selected = groups?.find((g) => g.id === field.value) ?? null
 
   // Voter authentication is validated against the group it was set up for, so a
   // different group voids it. Only a user pick lands here: a draft restores both
   // fields with setValue and keeps its census. The dialog keeps the previous
   // choices ticked, so confirming them again for the new group is quick.
-  const changeGroup = (nextGroupId: string, onChange: (value: string) => void) => {
+  const changeGroup = (nextGroupId: string) => {
     if (nextGroupId !== getValues('groupId') && getValues('census')) {
       setValue('census', null, { shouldDirty: true })
       toast({
@@ -137,7 +133,7 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
         closable: true,
       })
     }
-    onChange(nextGroupId)
+    field.onChange(nextGroupId)
   }
 
   const CustomMenuList = (props) => {
@@ -161,49 +157,35 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
   return (
     <FieldRoot invalid={!!errors.groupId}>
       <FieldLabel gap={2} alignItems='flex-start'>
-        <StepMarker step={1} status={groupId ? 'done' : errors.groupId ? 'error' : 'idle'} />
+        <StepMarker step={1} status={groupStatus} />
         <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
       </FieldLabel>
-      <Controller
-        control={control}
-        name='groupId'
-        rules={{
-          required: {
-            value: censusType === CensusTypes.CSP,
-            message: t('form.error.required', 'This field is required'),
-          },
+      <Select
+        // Lets a blocked publish focus the combobox when no group is picked.
+        ref={field.ref}
+        // Stable handle for the group combobox (labelled by the
+        // FieldLabel above, which Chakra wires up by id).
+        inputId='groupId'
+        options={groups ?? []}
+        value={selected}
+        getOptionLabel={(option) =>
+          option.isAutoGroup ? t('groups_board.auto_group.title', { defaultValue: 'All Members' }) : option.title
+        }
+        getOptionValue={(option) => option.id}
+        placeholder={t('process_create.group.select', 'Select group')}
+        isLoading={isFetching}
+        onChange={(option) => changeGroup(option?.id ?? '')}
+        onBlur={field.onBlur}
+        formatOptionLabel={(option, meta) => formatGroupOptionLabel(option, meta)}
+        onMenuScrollToBottom={async () => {
+          if (hasNextPage && !hasFetchedScroll) {
+            setHasFetchedScroll(true)
+            await fetchNextPage()
+          }
         }}
-        render={({ field }) => {
-          const selected = groups?.find((g) => g.id === field.value) ?? null
-          return (
-            <Select
-              // Lets a blocked publish focus the combobox when no group is picked.
-              ref={field.ref}
-              // Stable handle for the group combobox (labelled by the
-              // FieldLabel above, which Chakra wires up by id).
-              inputId='groupId'
-              options={groups ?? []}
-              value={selected}
-              getOptionLabel={(option) =>
-                option.isAutoGroup ? t('groups_board.auto_group.title', { defaultValue: 'All Members' }) : option.title
-              }
-              getOptionValue={(option) => option.id}
-              placeholder={t('process_create.group.select', 'Select group')}
-              isLoading={isFetching}
-              onChange={(option) => changeGroup(option?.id ?? '', field.onChange)}
-              formatOptionLabel={(option, meta) => formatGroupOptionLabel(option, meta)}
-              onMenuScrollToBottom={async () => {
-                if (hasNextPage && !hasFetchedScroll) {
-                  setHasFetchedScroll(true)
-                  await fetchNextPage()
-                }
-              }}
-              closeMenuOnSelect
-              maxMenuHeight={200}
-              components={{ MenuList: CustomMenuList }}
-            />
-          )
-        }}
+        closeMenuOnSelect
+        maxMenuHeight={200}
+        components={{ MenuList: CustomMenuList }}
       />
       <FieldErrorText>{errors.groupId?.message?.toString()}</FieldErrorText>
     </FieldRoot>
@@ -212,14 +194,22 @@ export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: 
 
 const GroupCensusCreation = () => {
   const { t } = useTranslation()
-  const {
-    watch,
-    formState: { errors },
-  } = useFormContext<Process>()
-  const groupId = watch('groupId')
-  const census = watch('census')
+  const { control } = useFormContext<Process>()
+  const { required, authStatus } = useCensusSteps()
   const { data: groups, fetchNextPage, hasNextPage, isFetching } = useGroups(6)
-  const voterAuthStatus: StepStatus = census ? 'done' : !groupId ? 'idle' : errors.census ? 'error' : 'current'
+
+  // Both census fields are registered here, not in the controls that edit them:
+  // those only render once the organization has groups, and publishing must stay
+  // blocked while the groups are loading, failed to load, or there are none.
+  const { field: groupField } = useController({
+    control,
+    name: 'groupId',
+    rules: { required: { value: required, message: t('form.error.required', 'This field is required') } },
+  })
+  // No message: the pending notice in VoterAuthentication says what's missing.
+  const {
+    field: { ref: censusRef },
+  } = useController({ control, name: 'census', rules: { required } })
 
   const TLink = ({ children }) => (
     <Link asChild textDecoration='underline'>
@@ -233,6 +223,7 @@ const GroupCensusCreation = () => {
         <>
           <GroupSelect
             groups={groups}
+            field={groupField}
             fetchNextPage={fetchNextPage}
             hasNextPage={hasNextPage}
             isFetching={isFetching}
@@ -240,10 +231,10 @@ const GroupCensusCreation = () => {
           <Flex direction='column' gap={1.5}>
             {/* Styled after the group field's label above, so both steps read alike. */}
             <HStack gap={2} align='flex-start' textStyle='sm' fontWeight='medium'>
-              <StepMarker step={2} status={voterAuthStatus} />
+              <StepMarker step={2} status={authStatus} />
               {t('process_create.census.voter_auth.label', { defaultValue: 'Set how voters prove who they are' })}
             </HStack>
-            <VoterAuthentication />
+            <VoterAuthentication triggerRef={censusRef} />
           </Flex>
         </>
       )}

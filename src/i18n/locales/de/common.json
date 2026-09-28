@@ -450,7 +450,6 @@
       }
     },
     "error": {
-      "census_config_required": "Bitte konfiguriere die Authentifizierungseinstellungen für die Teilnehmerliste.",
       "email_invalid": "Ungültige E-Mail-Adresse",
       "field_is_required": "Dieses Feld ist erforderlich",
       "generic": "Fehler beim Ausführen der Operation",

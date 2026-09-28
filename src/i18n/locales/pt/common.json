@@ -452,7 +452,6 @@
       }
     },
     "error": {
-      "census_config_required": "Configura as definições de autenticação da lista de participantes.",
       "email_invalid": "Endereço de email inválido",
       "field_is_required": "Este campo é obrigatório",
       "generic": "Erro ao executar a operação",

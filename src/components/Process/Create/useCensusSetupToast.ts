@@ -2,10 +2,11 @@ import type { FieldErrors } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { Process } from './common'
-import { useVoterAuthDialog } from './VoterAuthentication/VoterAuthDialogContext'
+import { useOpenVoterAuthDialog } from './VoterAuthentication/VoterAuthDialogContext'
 
 // A fixed id makes the toaster update the one toast on repeated publish clicks
-// instead of stacking copies of it.
+// instead of stacking copies of it. An update merges into the visible toast, so
+// every variant must set every field it could inherit (see `action` below).
 export const CENSUS_SETUP_TOAST_ID = 'census-setup-missing'
 
 // The census is set up at the bottom of the settings sidebar, where its inline
@@ -15,7 +16,7 @@ export const CENSUS_SETUP_TOAST_ID = 'census-setup-missing'
 export const useCensusSetupToast = () => {
   const { t } = useTranslation()
   const toast = useToast()
-  const voterAuthDialog = useVoterAuthDialog()
+  const openVoterAuthDialog = useOpenVoterAuthDialog()
 
   return (errors: FieldErrors<Process>) => {
     if (!errors.groupId && !errors.census) return
@@ -30,6 +31,9 @@ export const useCensusSetupToast = () => {
         type: 'error',
         duration: 8000,
         closable: true,
+        // Explicit, so it clears a "Set it up" left by an earlier auth-missing
+        // toast: there's no group to set authentication up for.
+        action: undefined,
       })
       return
     }
@@ -45,7 +49,7 @@ export const useCensusSetupToast = () => {
       closable: true,
       action: {
         label: t('process_create.census.auth_missing.action', { defaultValue: 'Set it up' }),
-        onClick: voterAuthDialog.onOpen,
+        onClick: openVoterAuthDialog,
       },
     })
   }

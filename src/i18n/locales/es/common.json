@@ -452,7 +452,6 @@
       }
     },
     "error": {
-      "census_config_required": "Configura los ajustes de autenticación del censo.",
       "email_invalid": "Dirección de correo electrónico no válida",
       "field_is_required": "Este campo es obligatorio",
       "generic": "Error al realizar la operación",

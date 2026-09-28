@@ -26,7 +26,6 @@ import type {
 } from '@vocdoni/api-types'
 import { addDays, parse } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { flushSync } from 'react-dom'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuRotateCcw, LuSettings } from 'react-icons/lu'
@@ -834,10 +833,7 @@ const ProcessCreateView = () => {
     })
 
     if (hasSidebarErrors) {
-      // Commit the drawer before returning: react-hook-form focuses the first
-      // failing field right after this handler, and a closed (inert) drawer
-      // can't take focus, so on mobile the failing setting never got it.
-      flushSync(openSidebar)
+      openSidebar()
     }
 
     showCensusSetupToast(errors)

@@ -452,7 +452,6 @@
       }
     },
     "error": {
-      "census_config_required": "Configurare le impostazioni di autenticazione del censimento.",
       "email_invalid": "Indirizzo email non valido",
       "field_is_required": "Questo campo è obbligatorio",
       "generic": "Errore durante l'esecuzione dell'operazione",

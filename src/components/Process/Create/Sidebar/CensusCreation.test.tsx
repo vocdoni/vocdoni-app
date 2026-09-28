@@ -1,8 +1,8 @@
 import userEvent from '@testing-library/user-event'
 import i18n from 'i18next'
-import { FormProvider, useForm, UseFormReturn, useFormContext } from 'react-hook-form'
+import { FieldErrors, FormProvider, useController, useForm, UseFormReturn, useFormContext } from 'react-hook-form'
 import { Group } from '~src/queries/groups'
-import { act, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { act, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { Census, defaultProcessValues, Process } from '../common'
 import CensusCreation, { CensusStatusBadge, formatGroupOptionLabel, GroupSelect } from './CensusCreation'
 
@@ -23,13 +23,17 @@ vi.mock('~src/queries/groups', () => ({
   }),
 }))
 
-const CensusCreationHarness = () => {
-  const methods = useForm({ defaultValues: defaultProcessValues })
+const CensusCreationHarness = ({ onInvalid = vi.fn() }: { onInvalid?: (errors: FieldErrors<Process>) => void }) => {
+  const methods = useForm<Process>({ defaultValues: defaultProcessValues })
 
   return (
     <TestMemoryRouter>
       <FormProvider {...methods}>
         <CensusCreation />
+        {/* Stands in for the create view's Publish. */}
+        <button type='button' onClick={() => methods.handleSubmit(() => {}, onInvalid)()}>
+          Publish
+        </button>
       </FormProvider>
     </TestMemoryRouter>
   )
@@ -59,6 +63,12 @@ const CensusValue = () => {
 
 let formRef: UseFormReturn<Process>
 
+// GroupSelect gets its field from GroupCensusCreation, which owns the rules.
+const ControlledGroupSelect = () => {
+  const { field } = useController<Process, 'groupId'>({ name: 'groupId' })
+  return <GroupSelect groups={groups} field={field} fetchNextPage={vi.fn()} hasNextPage={false} isFetching={false} />
+}
+
 const GroupSelectHarness = () => {
   const methods = useForm<Process>({
     defaultValues: { ...defaultProcessValues, groupId: 'group-1', census: configuredCensus },
@@ -67,7 +77,7 @@ const GroupSelectHarness = () => {
 
   return (
     <FormProvider {...methods}>
-      <GroupSelect groups={groups} fetchNextPage={vi.fn()} hasNextPage={false} isFetching={false} />
+      <ControlledGroupSelect />
       <CensusValue />
     </FormProvider>
   )
@@ -142,6 +152,19 @@ describe('CensusCreation', () => {
       'To start a vote, you first need to create a group of eligible voters from your memberbase. <0/>.'
     )
     expect(() => render(<CensusCreationHarness />)).not.toThrow()
+  })
+
+  // The controls that edit the group and the census only render once the
+  // organization has groups; the rules must not depend on them.
+  it('blocks publishing while there are no groups to pick from', async () => {
+    const onInvalid = vi.fn()
+    const user = userEvent.setup()
+    render(<CensusCreationHarness onInvalid={onInvalid} />)
+
+    await user.click(screen.getByRole('button', { name: /publish/i }))
+
+    await waitFor(() => expect(onInvalid).toHaveBeenCalled())
+    expect(Object.keys(onInvalid.mock.calls[0][0])).toEqual(expect.arrayContaining(['groupId', 'census']))
   })
 
   it('shows the group member count in the dropdown menu label', () => {

@@ -16,17 +16,18 @@ import { useMutation } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
-import { useCallback, useEffect, useState } from 'react'
-import { FormProvider, useController, useForm, useFormContext } from 'react-hook-form'
+import { RefCallback, useCallback, useEffect, useRef, useState } from 'react'
+import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuKeyRound, LuUnlink } from 'react-icons/lu'
-import { CensusTypes } from '~components/Process/Census/CensusType'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { Census, Process } from '../common'
+import { CENSUS_SETUP_TOAST_ID } from '../useCensusSetupToast'
+import { useCensusSteps } from '../useCensusSteps'
 import { CredentialsForm } from './CredentialsForm'
 import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
 import { TwoFactorForm } from './TwoFactorForm'
@@ -69,7 +70,14 @@ const useValidateCensus = () => {
 const censusConfigSignature = (config: Census) =>
   JSON.stringify([[...(config.credentials ?? [])].sort(), !!config.use2FA, config.use2FAMethod ?? 'none'])
 
-export const VoterAuthentication = () => {
+type VoterAuthenticationProps = {
+  // The census field's ref. The census is only ever set through this dialog, so
+  // its trigger is the field's focus target: a blocked publish lands on the
+  // button that fixes it.
+  triggerRef?: RefCallback<HTMLButtonElement>
+}
+
+export const VoterAuthentication = ({ triggerRef }: VoterAuthenticationProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const mainForm = useFormContext<Process>()
@@ -93,23 +101,18 @@ export const VoterAuthentication = () => {
 
   const groupId = mainForm.watch('groupId')
   const census = mainForm.watch('census')
-  const censusType = mainForm.watch('censusType')
-  // The census is only ever set through this dialog, so its trigger is the field's
-  // focus target: a blocked publish lands on the button that fixes it.
-  const {
-    field: { ref: censusRef },
-    fieldState: { error: censusError },
-  } = useController({
-    control: mainForm.control,
-    name: 'census',
-    rules: {
-      required: {
-        value: censusType === CensusTypes.CSP,
-        message: t('form.error.census_config_required', 'Please configure the census authentication settings.'),
-      },
+  const { isAuthPending: isPending, hasAuthError: censusError } = useCensusSteps()
+  // The trigger moves once the census is set (from the pending notice to below
+  // the summary), so the button the dialog opened from is gone when it closes.
+  // Point focus at whichever trigger is mounted instead.
+  const triggerEl = useRef<HTMLButtonElement | null>(null)
+  const setTriggerRef = useCallback(
+    (el: HTMLButtonElement | null) => {
+      triggerEl.current = el
+      triggerRef?.(el)
     },
-  })
-  const isPending = !!groupId && !census
+    [triggerRef]
+  )
   const anonymousVoting = mainForm.watch('anonymousVoting')
   const anonymityLabel = useAnonymityLabels(anonymousVoting).title
   const formData = voterAuthForm.watch()
@@ -192,6 +195,8 @@ export const VoterAuthentication = () => {
         })
       }
       setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
+      // A blocked publish may still be saying authentication is missing.
+      toast.close(CENSUS_SETUP_TOAST_ID)
       toast({
         title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),
         type: 'success',
@@ -223,9 +228,19 @@ export const VoterAuthentication = () => {
 
   const isLoading = validateCensusMutation.isPending
 
+  // Long labels (in some languages) wrap instead of overflowing the sidebar.
   const trigger = (
     <Dialog.Trigger asChild>
-      <Button ref={censusRef} disabled={!groupId} colorPalette='gray' w='full'>
+      <Button
+        ref={setTriggerRef}
+        disabled={!groupId}
+        colorPalette='gray'
+        w='full'
+        h='auto'
+        minH={10}
+        py={2}
+        whiteSpace='normal'
+      >
         {census ? (
           <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
         ) : (
@@ -238,6 +253,7 @@ export const VoterAuthentication = () => {
   return (
     <Dialog.Root
       open={isOpen}
+      finalFocusEl={() => triggerEl.current}
       onOpenChange={(details) => {
         if (details.open) onOpen()
         else onClose()
