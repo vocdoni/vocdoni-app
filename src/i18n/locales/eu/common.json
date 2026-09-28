@@ -47,7 +47,7 @@
   "annual": "Urtekoa<1>% 40ko aurrezkia</1>",
   "apply": "Aplikatu",
   "aside": {
-    "anonymous_receipt_gone": "",
+    "anonymous_receipt_gone": "Zure egiaztagiria bozkatu zenuenean erakutsi zen, eta ezin da berreskuratu.",
     "has_already_voted": "Zure botoa behar bezala eman da",
     "is_not_in_census": "Ez zaude erroldan",
     "votes_one": "<span>1</span> <text>boto-emaile</text>",
@@ -1060,10 +1060,10 @@
       "select_process": "Hautatu prozesua",
       "selected_one": "Hautatuta: <strong>Kide bat</strong>",
       "selected_other": "Hautatuta: <strong>{{count}} kide</strong>",
-      "showing_members_one": "",
-      "showing_members_other": "",
-      "showing_results_one": "",
-      "showing_results_other": "",
+      "showing_members_one": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} kide",
+      "showing_members_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} kide",
+      "showing_results_one": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
+      "showing_results_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
       "toggle_column": "Txandakatu {{column}} zutabea"
     }
   },
@@ -1141,9 +1141,9 @@
     "title": {
       "read_more": "Zabaldu izenburua"
     },
-    "unavailable_description": "",
-    "unavailable_retry": "",
-    "unavailable_title": ""
+    "unavailable_description": "Arazo bat gertatu da zure erakundeak irakurtzean. Normalean aldi baterakoa izaten da; saiatu berriro.",
+    "unavailable_retry": "Saiatu berriro",
+    "unavailable_title": "Ezin izan dira zure erakundeak kargatu"
   },
   "organization_settings": {
     "phone_support": {
@@ -1171,9 +1171,9 @@
   "organizations": "Erakundeak ({{ numOrgs }})",
   "other_details": "Bestelako xehetasunak",
   "pagination": {
-    "next": "",
+    "next": "Hurrengo orrialdea",
     "page_out_of": "{{page}}. orrialdea, guztira {{total}}",
-    "previous": "",
+    "previous": "Aurreko orrialdea",
     "rows_per_page": "Errenkadak orrialdeko"
   },
   "password": "Pasahitza",
@@ -1380,7 +1380,7 @@
     "success_modal": {
       "btn": "Itxi",
       "text": "<p>Zure botoa eman da eta modu seguruan gorde da Vocdoniren teknologiarekin. <verify>Hemen egiazta dezakezu</verify>.</p>",
-      "text_no_id": "",
+      "text_no_id": "<p>Zure botoa behar bezala eman da.</p>",
       "title": "Botoa bidalita!"
     },
     "summary": {
@@ -1439,8 +1439,8 @@
   },
   "process_create": {
     "anonymity": {
-      "title": "",
-      "tooltip": ""
+      "title": "Bozketa anonimoa",
+      "tooltip": "Edozein kasutan, zure erakundeak ezin du ikusi norbaitek zer bozkatu duen. Boto-emaileen anonimotasunak geruza kriptografiko bat gehitzen du, eta ezinezko bihurtzen du boto bat pertsona batekin lotzea."
     },
     "auto_start": "Hasi berehala",
     "basic_configuration": "Oinarrizko konfigurazioa",
@@ -1487,7 +1487,7 @@
     "weight": {
       "equal": "Pertsona bat, boto bat",
       "title": "Boto-pisua",
-      "tooltip": "",
+      "tooltip": "Aukeratu boto-emaile hautagarri guztiek pisu bera duten ala botoak kide-oinarriko «Boto-pisua (Pisua)» eremuaren arabera haztatzen diren.",
       "weighted": "Boto-pisuan oinarritutako haztatzea"
     },
     "youtube": {
@@ -1964,12 +1964,12 @@
   "view_plans_and_pricing": "Ikusi planak eta prezioak",
   "vocdoni_logo": "Vocdoniren logotipoa",
   "vote": {
-    "anonymous_receipt": "",
+    "anonymous_receipt": "Boto anonimoa: gorde egiaztagiri hau orain; plataformak ezin izango dizu berriro erakutsi.",
     "voted_title": "Zure botoa behar bezala eman da!"
   },
   "vote_information": "Botoaren informazioa",
   "vote_overwrite": "Botoa berridaztea",
-  "voter_anonymity": "",
+  "voter_anonymity": "Boto-emaileen anonimotasuna",
   "voter_auth": {
     "2fa_badge": "2FA",
     "2fa_description": "Gehitu segurtasun-geruza osagarri bat hautesleei nortasuna egiaztatzeko eskatuz",
@@ -1983,7 +1983,7 @@
     "2fa_sms_description": "Hautesleek egiaztapen-kode bat jasoko dute SMS bidez",
     "2fa_voter_choice": "<email /> edo <phone /> Boto-emailearen aukera",
     "2fa_voter_choice_description": "Hautesleek beren egiaztapen-metodo gogokoena hauta dezakete",
-    "anonymity": "",
+    "anonymity": "Botoaren anonimotasuna: {{ mode }}",
     "button": {
       "configure": "Konfiguratu hautesleen autentifikazioa",
       "edit": "Editatu hautesleen autentifikazioa"

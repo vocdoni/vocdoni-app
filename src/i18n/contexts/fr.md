@@ -49,6 +49,8 @@ Address the user with formal **vous / votre** throughout — in French this is t
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. French uses the same two-form pattern — translate accordingly. Note that French treats 0 as plural (`_other`), unlike some languages.
 
+Keys ending in `_many` also exist: CLDR uses that form for large round numbers such as 1,000,000. Never leave them empty (an empty value falls back to English) — copy the `_other` value.
+
 ## Numbers & punctuation
 - Decimal separator: comma (e.g. "77,12 %").
 - Thousands separator: a narrow no-break space (e.g. "6 349", "6 723"), never a dot.

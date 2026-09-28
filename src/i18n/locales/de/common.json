@@ -47,7 +47,7 @@
   "annual": "Jährlich<1>40 % sparen</1>",
   "apply": "Anwenden",
   "aside": {
-    "anonymous_receipt_gone": "",
+    "anonymous_receipt_gone": "Dein Beleg wurde bei der Stimmabgabe angezeigt und kann nicht erneut abgerufen werden.",
     "has_already_voted": "Deine Stimme wurde erfolgreich abgegeben",
     "is_not_in_census": "Du bist nicht in der Teilnehmerliste",
     "votes_one": "<span>1</span> <text>Wählende Person</text>",
@@ -1060,10 +1060,10 @@
       "select_process": "Prozess auswählen",
       "selected_one": "Ausgewählt: <strong>{{count}} Mitglied</strong>",
       "selected_other": "Ausgewählt: <strong>{{count}} Mitglieder</strong>",
-      "showing_members_one": "",
-      "showing_members_other": "",
-      "showing_results_one": "",
-      "showing_results_other": "",
+      "showing_members_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitglied",
+      "showing_members_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitgliedern",
+      "showing_results_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnis",
+      "showing_results_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnissen",
       "toggle_column": "Spalte {{column}} ein-/ausblenden"
     }
   },
@@ -1141,9 +1141,9 @@
     "title": {
       "read_more": "Titel ausklappen"
     },
-    "unavailable_description": "",
-    "unavailable_retry": "",
-    "unavailable_title": ""
+    "unavailable_description": "Beim Lesen deiner Organisationen ist etwas schiefgelaufen. Das ist meist nur vorübergehend – versuch es bitte erneut.",
+    "unavailable_retry": "Erneut versuchen",
+    "unavailable_title": "Deine Organisationen konnten nicht geladen werden"
   },
   "organization_settings": {
     "phone_support": {
@@ -1171,9 +1171,9 @@
   "organizations": "Organisationen ({{ numOrgs }})",
   "other_details": "Weitere Details",
   "pagination": {
-    "next": "",
+    "next": "Nächste Seite",
     "page_out_of": "Seite {{page}} von {{total}}",
-    "previous": "",
+    "previous": "Vorherige Seite",
     "rows_per_page": "Zeilen pro Seite"
   },
   "password": "Passwort",
@@ -1380,7 +1380,7 @@
     "success_modal": {
       "btn": "Schließen",
       "text": "<p>Deine Stimme wurde sicher abgegeben und mit der Technologie von Vocdoni gespeichert. <verify>Du kannst sie hier überprüfen</verify>.</p>",
-      "text_no_id": "",
+      "text_no_id": "<p>Deine Stimme wurde erfolgreich abgegeben.</p>",
       "title": "Stimme abgegeben!"
     },
     "summary": {
@@ -1439,8 +1439,8 @@
   },
   "process_create": {
     "anonymity": {
-      "title": "",
-      "tooltip": ""
+      "title": "Anonyme Abstimmung",
+      "tooltip": "In beiden Fällen kann deine Organisation nicht sehen, wie jemand abgestimmt hat. Die Anonymität der Wählenden fügt eine kryptografische Ebene hinzu, die es unmöglich macht, eine Stimme einer Person zuzuordnen."
     },
     "auto_start": "Sofort starten",
     "basic_configuration": "Grundkonfiguration",
@@ -1487,7 +1487,7 @@
     "weight": {
       "equal": "Eine Person, eine Stimme",
       "title": "Stimmgewicht",
-      "tooltip": "",
+      "tooltip": "Lege fest, ob alle berechtigten Wählenden das gleiche Stimmgewicht haben oder ob die Stimmen nach dem Feld „Stimmgewicht“ der Mitgliederbasis gewichtet werden.",
       "weighted": "Gewichtet nach Stimmgewicht"
     },
     "youtube": {
@@ -1964,12 +1964,12 @@
   "view_plans_and_pricing": "Pläne & Preise anzeigen",
   "vocdoni_logo": "Vocdoni Logo",
   "vote": {
-    "anonymous_receipt": "",
+    "anonymous_receipt": "Anonyme Stimmabgabe: Speichere diesen Beleg jetzt, die Plattform kann ihn dir nicht erneut anzeigen.",
     "voted_title": "Deine Stimme wurde erfolgreich abgegeben!"
   },
   "vote_information": "Abstimmungsdetails",
   "vote_overwrite": "Stimme überschreiben",
-  "voter_anonymity": "",
+  "voter_anonymity": "Anonymität der Wählenden",
   "voter_auth": {
     "2fa_badge": "2FA",
     "2fa_description": "Erhöhe die Sicherheit, indem Wählende ihre Identität bestätigen müssen",
@@ -1983,7 +1983,7 @@
     "2fa_sms_description": "Wählende erhalten einen Bestätigungscode per SMS",
     "2fa_voter_choice": "<email /> oder <phone /> Wahl der Wählenden",
     "2fa_voter_choice_description": "Wählende können ihre bevorzugte Verifizierungsmethode wählen",
-    "anonymity": "",
+    "anonymity": "Anonymität der Stimmabgabe: {{ mode }}",
     "button": {
       "configure": "Wähler-Authentifizierung konfigurieren",
       "edit": "Wähler-Authentifizierung bearbeiten"
