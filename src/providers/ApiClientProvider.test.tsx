@@ -1,11 +1,11 @@
 import { act, renderHook } from '@testing-library/react'
 import { AuthProvider as SdkAuthProvider, useAuth as useSdkAuth } from '@vocdoni/react-providers'
-import i18next from 'i18next'
 import type { ReactNode } from 'react'
-import { I18nextProvider, initReactI18next } from 'react-i18next'
+import { I18nextProvider } from 'react-i18next'
 import { AppEnvProvider } from '~src/app-env'
 import { buildAppEnv } from '~src/app-env-build'
 import { ApiClientProvider, AUTH_STORAGE_KEY, useApiClient } from '~src/providers/ApiClientProvider'
+import { createTestI18n } from '~src/test-utils'
 
 // The global setup stubs the react-providers `useClient` (which `useApiClient`
 // re-exports) so component tests don't need a real ClientProvider. This suite is
@@ -99,18 +99,13 @@ describe('ApiClientProvider language wiring', () => {
 
   // A tree-local i18n instance, mirroring the per-page instance AppProviders
   // renders localized routes with.
-  const createInstance = async (lng: string) => {
-    const instance = i18next.createInstance()
-    await instance.use(initReactI18next).init({
+  const createInstance = (lng: string) =>
+    createTestI18n({
       lng,
-      fallbackLng: 'en',
-      supportedLngs: ['en', 'es', 'ca'],
-      lowerCaseLng: true,
+      useReactI18next: true,
       resources: { en: {}, es: {}, ca: {} },
-      initAsync: false,
+      options: { supportedLngs: ['en', 'es', 'ca'], lowerCaseLng: true, initAsync: false },
     })
-    return instance
-  }
 
   const languageWrapper =
     (instance: Awaited<ReturnType<typeof createInstance>>) =>

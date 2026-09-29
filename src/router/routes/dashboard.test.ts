@@ -1,6 +1,6 @@
-import { Fragment } from 'react'
+import { Fragment, type ReactElement } from 'react'
+import type { RouteObject } from 'react-router'
 import { renderHook } from '@testing-library/react'
-import { matchRoutes } from 'react-router'
 import { Routes } from '.'
 import { mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -47,46 +47,29 @@ describe('dashboard process routes', () => {
     })
   })
 
-  it('models process and process results as explicit nested routes', () => {
-    const matches = matchRoutes(
-      [
-        {
-          path: Routes.dashboard.process,
-          children: [{ index: true }, { path: Routes.dashboard.processResults }],
-        },
-      ],
-      '/admin/process/0xabc/results'
-    )
-
-    expect(matches?.map((match) => match.route.path ?? 'index')).toEqual([
-      Routes.dashboard.process,
-      Routes.dashboard.processResults,
-    ])
-  })
-
   it('renders the process view on the parent route so tab switches do not remount it', async () => {
     const { useDashboardRoutes } = await import('./dashboard')
-
     const { result } = renderHook(() => useDashboardRoutes())
-    // There's OrganizationTypeGuard wrapper before LayoutDashboard
-    const guardRoute = result.current.children?.[0]
-    expect(guardRoute).toBeDefined()
-    // Find the LayoutDashboard route (no path, has organizationCreate as child)
-    const layoutRoute = guardRoute?.children?.find(
-      (route: any) => !route.path && route.children?.some((c: any) => c.path === Routes.dashboard.organizationCreate)
-    )
-    expect(layoutRoute).toBeDefined()
-    // Find the OrganizationProtectedRoute wrapper (no path, has process as child)
-    const orgProtectedRoute = layoutRoute?.children?.find(
-      (route: any) => !route.path && route.children?.some((c: any) => c.path === Routes.dashboard.process)
-    )
-    expect(orgProtectedRoute).toBeDefined()
-    const processRoute = orgProtectedRoute?.children?.find((route: any) => route.path === Routes.dashboard.process)
-    const indexChild = processRoute?.children?.[0]
-    const resultsChild = processRoute?.children?.[1]
 
+    const findRoute = (routes: RouteObject[] | undefined, path: string): RouteObject | undefined => {
+      for (const route of routes ?? []) {
+        if (route.path === path) return route
+        const found = findRoute(route.children, path)
+        if (found) return found
+      }
+    }
+    const processRoute = findRoute([result.current], Routes.dashboard.process)
+
+    // The view sits on the parent; the tab routes render nothing of their own, so
+    // switching between them keeps the parent element (and its state) mounted.
     expect(processRoute?.element).toBeTruthy()
-    expect(indexChild && 'element' in indexChild ? indexChild.element : undefined).toBeTruthy()
-    expect(resultsChild && 'element' in resultsChild ? resultsChild.element : undefined).toBeTruthy()
+    expect(processRoute?.shouldRevalidate).toBe(shouldRevalidateDashboardProcess)
+    expect(processRoute?.children?.map((child) => (child.index ? 'index' : child.path))).toEqual([
+      'index',
+      Routes.dashboard.processResults,
+    ])
+    for (const child of processRoute?.children ?? []) {
+      expect((child.element as ReactElement).type).toBe(Fragment)
+    }
   })
 })

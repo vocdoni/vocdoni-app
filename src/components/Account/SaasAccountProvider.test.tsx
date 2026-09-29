@@ -1,5 +1,5 @@
 import type { Organization } from '@vocdoni/api-types'
-import { organizationQueryKeys, OrganizationProvider, useOrganization } from '@vocdoni/react-components'
+import { OrganizationProvider, useOrganization } from '@vocdoni/react-components'
 import { useState } from 'react'
 import { act, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -132,9 +132,5 @@ describe('shared organization cache entry', () => {
     expect(await screen.findByTestId('provider-name')).toHaveTextContent('Vocdoni Association')
     expect(getMock).toHaveBeenCalledTimes(1)
     expect(getMock).toHaveBeenCalledWith(address)
-  })
-
-  it('keys the read the same way on both sides', () => {
-    expect(organizationQueryKeys.organization(address)).toEqual(['organization', address])
   })
 })

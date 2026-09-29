@@ -192,11 +192,4 @@ describe('VoterAuthentication', () => {
     })
     expect(mockTrackAnalyticsEvent).not.toHaveBeenCalled()
   })
-
-  it('does not make API calls when toggling weightedVote', async () => {
-    // Weighted-vote changes no longer trigger census recreation
-    render(<TestForm />)
-    // If this test renders without error and no unexpected fetch calls, the effect is gone
-    expect(mockValidateCensus).not.toHaveBeenCalled()
-  })
 })

@@ -227,16 +227,16 @@ const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code']
 // hide fields we do want to read back — the organization name in settings being
 // the one case. Opt a field back in by adding `data-ph-unmask` to it (or to any
 // ancestor). Passwords are never unmasked, whatever the markup says.
-export const POSTHOG_UNMASK_ATTRIBUTE = 'data-ph-unmask'
+const POSTHOG_UNMASK_ATTRIBUTE = 'data-ph-unmask'
 
-export const posthogMaskInput = (text: string, element?: HTMLElement): string => {
+const posthogMaskInput = (text: string, element?: HTMLElement): string => {
   const masked = '*'.repeat(text.length)
   if (!element) return masked
   if (element instanceof HTMLInputElement && element.type === 'password') return masked
   return element.closest(`[${POSTHOG_UNMASK_ATTRIBUTE}]`) ? text : masked
 }
 
-export const sanitizeAnalyticsUrl = (url: string): string => {
+const sanitizeAnalyticsUrl = (url: string): string => {
   try {
     const parsed = new URL(url)
     let changed = false
@@ -263,10 +263,7 @@ const SCANNER_REJECTION_REGEX = /Object Not Found Matching Id:\d+, MethodName:\w
 // the scanner filter is worth stripping emails from, so both run in one pass.
 const EXCEPTION_PAYLOAD_KEYS = ['$exception_message', '$exception_values', '$exception_list'] as const
 
-export const posthogBeforeSend = (
-  event: CaptureResult | null,
-  votingRoutes: VotingRouteConfig = {}
-): CaptureResult | null => {
+const posthogBeforeSend = (event: CaptureResult | null, votingRoutes: VotingRouteConfig = {}): CaptureResult | null => {
   if (!event) return null
   if (canUseBrowserAnalytics() && isVotingPath(window.location.pathname, votingRoutes)) return null
 

@@ -41,7 +41,7 @@ const resolveToken = async (): Promise<string | undefined> => {
 
 describe.skipIf(!PROCESS_ID)('PDF generator', () => {
   it(`generates PDF for ${PROCESS_ID}`, async () => {
-    if (!i18next.isInitialized) await i18next.init({ lng: 'en', resources: {} })
+    if (!i18next.isInitialized) await i18next.init({ lng: 'en', resources: {}, showSupportNotice: false })
     const t = i18next.t.bind(i18next) as any
 
     const authToken = await resolveToken()

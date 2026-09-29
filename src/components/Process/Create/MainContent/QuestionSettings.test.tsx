@@ -21,10 +21,6 @@ const QuestionSettingsHarness = ({
 }
 
 describe('QuestionSettings', () => {
-  it('renders without field context errors', () => {
-    expect(() => render(<QuestionSettingsHarness />)).not.toThrow()
-  })
-
   it('shows each question its own type', () => {
     render(
       <QuestionSettingsHarness

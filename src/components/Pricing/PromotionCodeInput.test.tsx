@@ -16,7 +16,12 @@ vi.mock('@stripe/react-stripe-js/checkout', () => ({
 }))
 
 describe('PromotionCodeInput', () => {
-  it('renders a remove icon after applying a code', async () => {
+  beforeEach(() => {
+    applyPromotionCode.mockClear()
+    removePromotionCode.mockClear()
+  })
+
+  it('applies the typed code to the checkout and can remove it again', async () => {
     const user = userEvent.setup()
     render(<PromotionCodeInput />)
 
@@ -24,7 +29,23 @@ describe('PromotionCodeInput', () => {
     await user.click(screen.getByRole('button', { name: /apply/i }))
 
     expect(await screen.findByText('Code "PROMO" applied')).toBeInTheDocument()
-    const removeButton = screen.getByRole('button', { name: /remove/i })
-    expect(removeButton.querySelector('svg')).toBeTruthy()
+    expect(applyPromotionCode).toHaveBeenCalledWith('PROMO')
+
+    await user.click(screen.getByRole('button', { name: /remove/i }))
+
+    expect(removePromotionCode).toHaveBeenCalledTimes(1)
+    expect(await screen.findByPlaceholderText(/enter code/i)).toBeInTheDocument()
+  })
+
+  it('shows the checkout error and keeps the input when the code is rejected', async () => {
+    applyPromotionCode.mockResolvedValueOnce({ type: 'error', error: { message: 'Code expired' } })
+    const user = userEvent.setup()
+    render(<PromotionCodeInput />)
+
+    await user.type(screen.getByPlaceholderText(/enter code/i), 'OLD')
+    await user.click(screen.getByRole('button', { name: /apply/i }))
+
+    expect(await screen.findByText('Code expired')).toBeInTheDocument()
+    expect(screen.queryByText(/applied/)).not.toBeInTheDocument()
   })
 })

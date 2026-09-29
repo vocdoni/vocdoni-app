@@ -38,29 +38,17 @@ describe('public catch-all page', () => {
     expect(providers).not.toHaveBeenCalled()
   })
 
-  it('redirects bare public paths into the localized route space', async () => {
-    currentPageContext = { urlPathname: '/plans' }
+  it.each([
+    ['public', '/plans'],
+    ['auth', '/account/signin'],
+  ])('redirects bare %s paths into the localized route space', async (_, pathname) => {
+    currentPageContext = { urlPathname: pathname }
 
     const { default: Page } = await import('./@catchAll/+Page')
 
     render(<Page />)
 
-    expect(useLegacyPublicPathRedirect).toHaveBeenCalledWith({
-      pathname: '/plans',
-    })
-    expect(providers).not.toHaveBeenCalled()
-  })
-
-  it('redirects bare auth paths into the localized route space', async () => {
-    currentPageContext = { urlPathname: '/account/signin' }
-
-    const { default: Page } = await import('./@catchAll/+Page')
-
-    render(<Page />)
-
-    expect(useLegacyPublicPathRedirect).toHaveBeenCalledWith({
-      pathname: '/account/signin',
-    })
+    expect(useLegacyPublicPathRedirect).toHaveBeenCalledWith({ pathname })
     expect(providers).not.toHaveBeenCalled()
   })
 })
