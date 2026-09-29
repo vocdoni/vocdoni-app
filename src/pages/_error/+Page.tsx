@@ -8,18 +8,12 @@ const ErrorPage = () => {
   const statusCode = pageContext.abortStatusCode || 500
   const pathname = pageContext.urlPathname || '/'
   const language = pageContext.routeParams.lang
-  const errorMessage =
-    pageContext.abortReason instanceof Error
-      ? pageContext.abortReason.message
-      : typeof pageContext.abortReason === 'string'
-        ? pageContext.abortReason
-        : 'Error loading the page'
   const returnHomeHref = language ? `/${language}` : '/'
 
   return (
     <AppProviders language={language}>
       <PublicLayout pathname={pathname}>
-        <ErrorView isNotFound={statusCode === 404} message={errorMessage} returnHomeHref={returnHomeHref} />
+        <ErrorView isNotFound={statusCode === 404} returnHomeHref={returnHomeHref} />
       </PublicLayout>
     </AppProviders>
   )

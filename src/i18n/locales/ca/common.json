@@ -347,6 +347,9 @@
   "ended_processes": "Acabats",
   "enter_promo_code": "Introdueix el codi",
   "error": {
+    "crash_description": "Recarrega la pàgina o torna al tauler.",
+    "crash_title": "Alguna cosa ha anat malament",
+    "go_to_dashboard": "Ves al tauler",
     "loading_languages": "Error carregant idiomes",
     "loading_page": "Càrrega de pàgina errònia",
     "loading_roles": "Error carregant rols",
@@ -356,6 +359,7 @@
     "missing_header": "El full de càlcul no té capçalera.",
     "not_found": "Pàgina No Trobada",
     "not_found_description": "La pàgina que cerques no existeix o ha estat moguda.",
+    "reload": "Recarrega",
     "return_to_home": "Torna a l'inici",
     "title": "Error"
   },

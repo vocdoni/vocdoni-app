@@ -347,6 +347,9 @@
   "ended_processes": "Terminados",
   "enter_promo_code": "Introduzir código",
   "error": {
+    "crash_description": "Recarrega a página ou volta ao Dashboard.",
+    "crash_title": "Algo correu mal",
+    "go_to_dashboard": "Ir para o Dashboard",
     "loading_languages": "Erro ao carregar os idiomas",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar os perfis",
@@ -356,6 +359,7 @@
     "missing_header": "A folha de cálculo não tem cabeçalho.",
     "not_found": "Página não encontrada",
     "not_found_description": "A página que procuras não existe ou foi movida.",
+    "reload": "Recarregar",
     "return_to_home": "Voltar ao início",
     "title": "Erro"
   },

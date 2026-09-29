@@ -347,6 +347,9 @@
   "ended_processes": "Finalizados",
   "enter_promo_code": "Introduce el código promocional",
   "error": {
+    "crash_description": "Recarga la página o vuelve al panel.",
+    "crash_title": "Algo ha ido mal",
+    "go_to_dashboard": "Ir al panel",
     "loading_languages": "Error cargando idiomas",
     "loading_page": "Error al cargar la página",
     "loading_roles": "Error cargando roles",
@@ -356,6 +359,7 @@
     "missing_header": "La hoja de cálculo no tiene encabezado.",
     "not_found": "Página No Encontrada",
     "not_found_description": "La página que buscas no existe o ha sido movida.",
+    "reload": "Recargar",
     "return_to_home": "Volver al inicio",
     "title": "Error"
   },

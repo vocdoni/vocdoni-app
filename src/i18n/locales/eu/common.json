@@ -345,6 +345,9 @@
   "ended_processes": "Amaituak",
   "enter_promo_code": "Sartu sustapen-kodea",
   "error": {
+    "crash_description": "Kargatu berriro orria edo itzuli Dashboard-era.",
+    "crash_title": "Zerbait gaizki joan da",
+    "go_to_dashboard": "Joan Dashboard-era",
     "loading_languages": "Errorea hizkuntzak kargatzean",
     "loading_page": "Errorea orrialdea kargatzean",
     "loading_roles": "Errorea rolak kargatzean",
@@ -354,6 +357,7 @@
     "missing_header": "Kalkulu-orriak ez du goibururik.",
     "not_found": "Ez da orria aurkitu",
     "not_found_description": "Bilatzen ari zaren orria ez dago edo lekuz aldatu da.",
+    "reload": "Kargatu berriro",
     "return_to_home": "Itzuli hasierara",
     "title": "Errorea"
   },
