@@ -15,11 +15,11 @@ const UNAVAILABLE_SPACE_WARNING = "can't wrap between pages"
 // Real PDF layout is slow when the whole suite runs in parallel.
 const LAYOUT_TIMEOUT = 30000
 
-const buildReportData = ({ questions, choices }: { questions: number; choices: number }) => {
+const buildReportData = ({ questions, choices, title }: { questions: number; choices: number; title?: string }) => {
   const processQuestions = Array.from({ length: questions }, (_, questionIndex) =>
     createQuestion({
       id: `question-${questionIndex + 1}`,
-      title: { default: `Question ${questionIndex + 1}` },
+      title: { default: title ?? `Question ${questionIndex + 1}` },
       choices: Array.from({ length: choices }, (_, choiceIndex) => ({
         title: { default: `Option ${choiceIndex + 1}` },
         value: choiceIndex,
@@ -80,7 +80,8 @@ describe('voting report PDF layout', () => {
     { questions: 6, choices: 2 },
     { questions: 3, choices: 6 },
     { questions: 1, choices: 30 },
-    { questions: 12, choices: 3 },
+    // A title this long plus 15 options is taller than a page unless the card may split.
+    { questions: 1, choices: 15, title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(30) },
   ])(
     'fits every block on a page with $questions questions of $choices options',
     async (size) => {
@@ -94,8 +95,11 @@ describe('voting report PDF layout', () => {
   it(
     'lets the results and verification sections flow across pages for long processes',
     async () => {
-      const { capturedPages } = await layOutReport(buildReportData({ questions: 12, choices: 3 }))
+      const { capturedPages, unavailableSpaceWarnings } = await layOutReport(
+        buildReportData({ questions: 12, choices: 3 })
+      )
 
+      expect(unavailableSpaceWarnings).toEqual([])
       expect(capturedPages['sec-6-verification'] - capturedPages['sec-5-results']).toBeGreaterThan(1)
       expect(capturedPages['sec-7-issuer'] - capturedPages['sec-6-verification']).toBeGreaterThan(1)
     },

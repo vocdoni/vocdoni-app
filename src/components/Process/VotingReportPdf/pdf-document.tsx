@@ -91,6 +91,9 @@ const MAX_UNSPLIT_QUESTION_LINES = 15
 // Rough characters per line of the option column (Helvetica 8.7pt at 64% / 40% of the card width).
 const OPTION_CHARS_PER_LINE = 65
 const OPTION_CHARS_PER_LINE_WEIGHTED = 40
+// Rough characters per line of the question title (Helvetica Bold 11pt across the card width).
+// Every title line past the first counts as one more result line, so a long title can split the card.
+const QUESTION_TITLE_CHARS_PER_LINE = 75
 // A split card keeps its title, summary, table header and this many result rows together, so it
 // never ends a page with a heading and no results.
 const QUESTION_HEAD_RESULT_ROWS = 3
@@ -102,9 +105,10 @@ const MAX_UNSPLIT_VERIFICATION_ROWS = 8
 
 const canSplitQuestionCard = (question: CertificateQuestion) => {
   const charsPerLine = question.isWeighted ? OPTION_CHARS_PER_LINE_WEIGHTED : OPTION_CHARS_PER_LINE
+  const extraTitleLines = Math.max(0, Math.ceil(question.question.length / QUESTION_TITLE_CHARS_PER_LINE) - 1)
   const lines = question.choices.reduce(
     (total, choice) => total + Math.max(1, Math.ceil(choice.name.length / charsPerLine)),
-    0
+    extraTitleLines
   )
   return lines > MAX_UNSPLIT_QUESTION_LINES
 }
