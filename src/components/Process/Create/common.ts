@@ -1,5 +1,13 @@
+import { parse } from 'date-fns'
 import { CensusTypes } from '../Census/CensusType'
 import { TwoFAMethod } from './VoterAuthentication/utils'
+
+/**
+ * Reads the form's `yyyy-MM-dd` date (+ optional `HH:mm` time, midnight when missing) as local time.
+ * Shared by the form validation and the process request so both measure the same instants.
+ */
+export const parseFormDateTime = (date: string, time?: string): Date =>
+  parse(`${date} ${time || '00:00'}`, 'yyyy-MM-dd HH:mm', new Date())
 
 export enum SelectorTypes {
   Single = 'singleChoice',
