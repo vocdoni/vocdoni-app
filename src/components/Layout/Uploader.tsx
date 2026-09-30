@@ -17,7 +17,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { TFunction } from 'i18next'
 import { DropzoneInputProps, DropzoneRootProps, ErrorCode, FileRejection, useDropzone } from 'react-dropzone'
 import { SetValueConfig, useFormContext } from 'react-hook-form'
@@ -94,7 +94,7 @@ type ImageDropUploadOptions = {
   successTitle: string
   failureTitle: string
   // Prepended to the console error when an upload fails
-  logPrefix?: string
+  logPrefix: string
   setValueOptions?: SetValueConfig
 }
 
@@ -114,6 +114,19 @@ const useImageDropUpload = ({
 
   // Bumped on every drop so a slow upload from an earlier drop can't overwrite the outcome of a newer one
   const latestDrop = useRef(0)
+  // The drop whose upload is running, so the spinner doesn't keep spinning for an upload a newer drop superseded
+  const uploadingDrop = useRef(0)
+  // Field-array names are index based (e.g. `questions.0.options.2.image`) and shift when an earlier item is
+  // removed, so the upload result must go to the field's current name, not the one captured when it was dropped
+  const currentName = useRef(name)
+  currentName.current = name
+  // Once unmounted (e.g. the option was removed) a pending upload has no field left to write to
+  useEffect(
+    () => () => {
+      latestDrop.current++
+    },
+    []
+  )
   const onUpload = async (files: File[], rejections: FileRejection[] = []) => {
     // Nothing was dropped at all (e.g. an empty folder): keep any visible error and any upload in flight
     if (!files.length && !rejections.length) return
@@ -124,10 +137,11 @@ const useImageDropUpload = ({
       setError(name, { message: rejected })
       return
     }
+    uploadingDrop.current = drop
     try {
       const url = await uploadFile(files[0])
       if (drop !== latestDrop.current) return
-      setValue(name, url, setValueOptions)
+      setValue(currentName.current, url, setValueOptions)
       toast({
         title: successTitle,
         type: 'success',
@@ -138,7 +152,7 @@ const useImageDropUpload = ({
       if (drop !== latestDrop.current) return
       const errorMessage =
         error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
-      setError(name, { message: errorMessage })
+      setError(currentName.current, { message: errorMessage })
       toast({
         title: failureTitle,
         description: errorMessage,
@@ -146,8 +160,7 @@ const useImageDropUpload = ({
         duration: 3000,
         isClosable: true,
       })
-      if (logPrefix) console.error(logPrefix, error)
-      else console.error(error)
+      console.error(logPrefix, error)
     }
   }
 
@@ -157,7 +170,7 @@ const useImageDropUpload = ({
     accept: imageAccept,
   })
 
-  return { ...dropzone, isPending }
+  return { ...dropzone, isPending: isPending && uploadingDrop.current === latestDrop.current }
 }
 
 export const AvatarUploader = (props: FormControlProps) => {
@@ -252,6 +265,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
     name,
     successTitle: t('uploader.image_upload_success', { defaultValue: 'Image uploaded' }),
     failureTitle: t('uploader.image_upload_failed', { defaultValue: 'Image upload failed' }),
+    logPrefix: 'Error uploading image:',
     setValueOptions: { shouldDirty: true },
   })
 

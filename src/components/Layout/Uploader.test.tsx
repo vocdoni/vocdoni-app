@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import { act, screen } from '@testing-library/react'
 import type { FileRejection } from 'react-dropzone'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { render } from '~src/test-utils'
 import { AvatarUploader, ImageUploader } from './Uploader'
 
@@ -105,6 +105,8 @@ describe.each([
       slowDrop = dropHandler?.([png()], [])
     })
     await drop([], [invalidType(pdf())])
+    // The superseded upload is still running, but the dropzone must not keep spinning for it
+    expect(document.querySelector('.chakra-spinner')).not.toBeInTheDocument()
     await act(async () => {
       finishUpload({ urls: ['https://example.com/logo.png'] })
       await slowDrop
@@ -125,5 +127,66 @@ describe.each([
     expect(bearedFetch).toHaveBeenCalledTimes(1)
     const body = bearedFetch.mock.calls[0][1].body as FormData
     expect(body.get('file1')).toBe(file)
+  })
+})
+
+describe('ImageUploader in a field array', () => {
+  // Stands in for an option list: the uploader's field name is index based and shifts when an earlier item goes
+  const Options = ({ name, show = true }: { name: string; show?: boolean }) => {
+    const methods = useForm({ defaultValues: { options: [{ image: '' }, { image: '' }] } })
+    const options = useWatch({ control: methods.control, name: 'options' })
+    return (
+      <FormProvider {...methods}>
+        {show && <ImageUploader name={name} />}
+        <pre data-testid='values'>{JSON.stringify(options)}</pre>
+      </FormProvider>
+    )
+  }
+
+  const startSlowUpload = async () => {
+    let finishUpload: (value: { urls: string[] }) => void = () => {}
+    bearedFetch.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finishUpload = resolve
+      })
+    )
+    let slowDrop: Promise<void> | undefined
+    await act(async () => {
+      slowDrop = dropHandler?.([png()], [])
+    })
+    return async () => {
+      await act(async () => {
+        finishUpload({ urls: ['https://example.com/logo.png'] })
+        await slowDrop
+      })
+    }
+  }
+
+  beforeEach(() => {
+    dropHandler = undefined
+    bearedFetch.mockReset()
+  })
+
+  it('stores the upload under the field name the uploader has when it finishes', async () => {
+    const { rerender } = render(<Options name='options.1.image' />)
+    const finish = await startSlowUpload()
+
+    // An earlier option was removed while uploading, so this uploader now edits index 0
+    rerender(<Options name='options.0.image' />)
+    await finish()
+
+    expect(screen.getByTestId('values')).toHaveTextContent(
+      JSON.stringify([{ image: 'https://example.com/logo.png' }, { image: '' }])
+    )
+  })
+
+  it('drops the upload result once the uploader is gone', async () => {
+    const { rerender } = render(<Options name='options.1.image' />)
+    const finish = await startSlowUpload()
+
+    rerender(<Options name='options.1.image' show={false} />)
+    await finish()
+
+    expect(screen.getByTestId('values')).toHaveTextContent(JSON.stringify([{ image: '' }, { image: '' }]))
   })
 })
