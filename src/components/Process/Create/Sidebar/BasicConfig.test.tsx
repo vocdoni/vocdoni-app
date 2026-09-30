@@ -1,7 +1,7 @@
 import { addDays, format } from 'date-fns'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Routes } from '~routes'
-import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
+import { fireEvent, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import { defaultProcessValues, Process } from '../common'
 import { BasicConfig } from './BasicConfig'
 
@@ -11,19 +11,28 @@ vi.mock('~components/Auth/Subscription', () => ({
   }),
 }))
 
-const Harness = ({ endInDays, endTime = '' }: { endInDays: number; endTime?: string }) => {
+const inDays = (days: number) => format(addDays(new Date(), days), 'yyyy-MM-dd')
+
+const Harness = ({
+  endInDays,
+  endTime = '',
+  values,
+}: {
+  endInDays: number
+  endTime?: string
+  values?: Partial<Process>
+}) => {
   const methods = useForm<Process>({
-    defaultValues: {
-      ...defaultProcessValues,
-      endDate: format(addDays(new Date(), endInDays), 'yyyy-MM-dd'),
-      endTime,
-    },
+    defaultValues: { ...defaultProcessValues, endDate: inDays(endInDays), endTime, ...values },
   })
 
   return (
     <TestMemoryRouter>
       <FormProvider {...methods}>
-        <BasicConfig />
+        <form onSubmit={methods.handleSubmit(() => {})}>
+          <BasicConfig />
+          <button type='submit' />
+        </form>
       </FormProvider>
     </TestMemoryRouter>
   )
@@ -58,6 +67,20 @@ describe('BasicConfig plan duration limit', () => {
     render(<Harness endInDays={7} endTime='23:59' />)
 
     expect(await screen.findByText(/7-day limit/)).toBeInTheDocument()
+  })
+
+  it('re-validates the end date field when the start moves after a submit', async () => {
+    const { container } = render(
+      <Harness endInDays={10} endTime='10:00' values={{ autoStart: false, startDate: inDays(1), startTime: '10:00' }} />
+    )
+
+    fireEvent.click(container.querySelector('button[type="submit"]')!)
+    expect(await screen.findByText('Exceeds max duration.')).toBeInTheDocument()
+
+    // Nine days became five: the field error must clear through the start date's `deps`.
+    fireEvent.change(container.querySelector('input[name="startDate"]')!, { target: { value: inDays(5) } })
+
+    await waitFor(() => expect(screen.queryByText('Exceeds max duration.')).not.toBeInTheDocument())
   })
 
   it('shows no warning within the plan limit', () => {

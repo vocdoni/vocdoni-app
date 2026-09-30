@@ -12,20 +12,23 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { parse } from 'date-fns'
 import { MutableRefObject, ReactNode, useRef, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { FieldValues, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { SubscriptionPermission } from '~constants'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
+import { parseFormDateTime, Process } from '../common'
 
 const DateFormatHtml = 'yyyy-MM-dd'
 
-// Reads the form's date (+ optional time) inputs as local time, the same way the process request is built.
-const toLocalDate = (date: string, time?: string) => parse(`${date} ${time || '00:00'}`, 'yyyy-MM-dd HH:mm', new Date())
+type ScheduleValues = Pick<Process, 'autoStart' | 'startDate' | 'startTime' | 'endTime'>
+
+// When the vote opens: now for an immediate start (or while no start date is set), else the picked local date/time.
+const getStart = ({ autoStart, startDate, startTime }: ScheduleValues) =>
+  startDate && !autoStart ? parseFormDateTime(startDate, startTime) : new Date()
 
 // Trans replaces its component's children with the translated text, so the RouterLink must live
 // inside a wrapper; passed inline, `asChild` would be left without a child and Chakra would throw.
@@ -42,10 +45,11 @@ export const BasicConfig = () => {
   const maxDuration = permission(SubscriptionPermission.MaxDuration)
   const {
     register,
-    formState: { errors },
+    formState: { errors, isSubmitted },
     watch,
     setValue,
     clearErrors,
+    trigger,
   } = useFormContext()
   const startDateRef = useRef<HTMLInputElement | null>(null)
   const endDateRef = useRef<HTMLInputElement | null>(null)
@@ -64,22 +68,22 @@ export const BasicConfig = () => {
   }
 
   // Whether an end date goes past the plan's duration limit; shared by the field validation and the warning.
-  const exceedsMaxDuration = (value: string) => {
+  // Validators pass RHF's current form values: `deps`/`trigger` can run before a re-render refreshes these closures.
+  const exceedsMaxDuration = (value: string, values: ScheduleValues) => {
     if (!value || !maxDuration) return false
 
-    const start = startDate && !autoStart ? toLocalDate(startDate, startTime) : new Date()
-    const end = toLocalDate(value, endTime)
-    const durationDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    const end = parseFormDateTime(value, values.endTime)
+    const durationDays = (end.getTime() - getStart(values).getTime()) / (1000 * 60 * 60 * 24)
 
     return durationDays > parseInt(maxDuration)
   }
 
   // Derived on render, so it also clears when the end date is emptied or the limit goes away.
-  const durationExceeded = exceedsMaxDuration(endDate)
+  const durationExceeded = exceedsMaxDuration(endDate, { autoStart, startDate, startTime, endTime })
 
-  const validateDuration = (value: string) => {
+  const validateDuration = (value: string, values: FieldValues) => {
     return (
-      !exceedsMaxDuration(value) ||
+      !exceedsMaxDuration(value, values as Process) ||
       t('form.create_process.error.max_duration_exceeded', {
         defaultValue: 'Exceeds max duration.',
         days: maxDuration,
@@ -87,10 +91,10 @@ export const BasicConfig = () => {
     )
   }
 
-  const validateEndDateAfterStart = (value: string) => {
+  const validateEndDateAfterStart = (value: string, { startDate, autoStart }: FieldValues) => {
     if (!value || !startDate || autoStart) return true
-    const start = toLocalDate(startDate)
-    const end = toLocalDate(value)
+    const start = parseFormDateTime(startDate)
+    const end = parseFormDateTime(value)
 
     return (
       end >= start ||
@@ -101,9 +105,9 @@ export const BasicConfig = () => {
   }
 
   const startDateRegister = register('startDate', {
-    onChange: (e) => setMin(new Date(e.target.value)),
-    // Re-check the end date against the new start once the form has been submitted.
-    deps: ['endDate'],
+    onChange: (e) => setMin(parseFormDateTime(e.target.value)),
+    // Re-check the end date/time against the new start once the form has been submitted.
+    deps: ['endDate', 'endTime'],
     required: {
       value: !autoStart,
       message: t('form.error.field_is_required'),
@@ -112,6 +116,8 @@ export const BasicConfig = () => {
 
   const endDateRegister = register('endDate', {
     required,
+    // The end time is validated against the end date, so re-check it once the form has been submitted.
+    deps: ['endTime'],
     validate: { validateDuration, validateEndDateAfterStart },
   })
 
@@ -127,6 +133,8 @@ export const BasicConfig = () => {
       setMin(new Date())
       clearErrors(['startDate', 'startTime'])
     }
+    // The end fields are measured from the start, so re-check them for the new mode once submitted.
+    if (isSubmitted) trigger(['endDate', 'endTime'])
   }
 
   return (
@@ -166,7 +174,7 @@ export const BasicConfig = () => {
                   type='time'
                   {...register('startTime', {
                     required,
-                    deps: ['endDate'],
+                    deps: ['endDate', 'endTime'],
                   })}
                 />
               </Box>
@@ -203,10 +211,10 @@ export const BasicConfig = () => {
               {...register('endTime', {
                 required,
                 deps: ['endDate'],
-                validate: (value: string) => {
-                  if (!value || !endDate) return true
-                  const end = new Date(`${endDate}T${value}`)
-                  const start = startDate && !autoStart ? new Date(`${startDate}T${startTime}`) : new Date()
+                validate: (value: string, values: FieldValues) => {
+                  if (!value || !values.endDate) return true
+                  const end = parseFormDateTime(values.endDate, value)
+                  const start = getStart(values as Process)
                   return (
                     end >= start ||
                     t('form.create_process.error.end_time_greater_than_start', {
