@@ -31,7 +31,7 @@ export class SpreadsheetManager {
 
   // MIME types mapped to their file extensions. Dropzones accept a file when either matches, so a .csv that
   // the OS labels with a generic type (text/plain, application/octet-stream) is still accepted by name.
-  public static Accept: Record<string, string[]> = {
+  public static readonly Accept: Readonly<Record<string, readonly string[]>> = {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
     'application/vnd.ms-excel': ['.xls'],
     'text/csv': ['.csv'],
