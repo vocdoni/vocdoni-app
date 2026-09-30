@@ -267,7 +267,7 @@ const Uploader = ({ getRootProps, getInputProps, isDragActive, isLoading, format
   const { t } = useTranslation()
 
   if (!formats) {
-    formats = ['CSV', 'XLSX', 'ODS']
+    formats = ['CSV', 'XLS', 'XLSX', 'ODS']
   }
 
   return (
