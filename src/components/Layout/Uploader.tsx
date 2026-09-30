@@ -17,7 +17,8 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
-import { DropzoneInputProps, DropzoneRootProps, useDropzone } from 'react-dropzone'
+import type { TFunction } from 'i18next'
+import { DropzoneInputProps, DropzoneRootProps, ErrorCode, FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { BiTrash } from 'react-icons/bi'
@@ -37,6 +38,26 @@ export type UploaderProps = {
 type ImageUploaderProps = {
   name: string
 } & Pick<BoxProps, 'w' | 'h' | 'borderTopRadius'>
+
+const imageAccept = {
+  'image/png': ['.png'],
+  'image/jpeg': ['.jpg', '.jpeg'],
+}
+
+// react-dropzone only flags too-many-files when several files are accepted, so a supported file dropped alongside an
+// unsupported one also counts as too many
+export const isTooManyFiles = (accepted: File[], rejections: FileRejection[]) =>
+  accepted.length > 0 || rejections.some(({ errors }) => errors.some(({ code }) => code === ErrorCode.TooManyFiles))
+
+// react-dropzone calls onDrop even when every file was rejected, so explain why instead of uploading nothing
+const imageRejectionMessage = (t: TFunction, accepted: File[], rejections: FileRejection[]) => {
+  if (!rejections.length) return
+  return isTooManyFiles(accepted, rejections)
+    ? t('uploader.error.too_many_files', { defaultValue: 'Upload one file at a time.' })
+    : t('uploader.error.invalid_image_type', {
+        defaultValue: "This file type isn't supported. Upload a .png or .jpg image.",
+      })
+}
 
 const useUploadFile = () => {
   const { bearedFetch } = useAuth()
@@ -69,8 +90,15 @@ export const AvatarUploader = (props: FormControlProps) => {
   const avatar = watch('avatar')
   const name = getValues('name')
 
-  const onUpload = async (files: File[]) => {
+  const onUpload = async (files: File[], rejections: FileRejection[] = []) => {
     clearErrors('avatar')
+    const rejected = imageRejectionMessage(t, files, rejections)
+    if (rejected) {
+      setError('avatar', { message: rejected })
+      return
+    }
+    // Nothing was dropped at all (e.g. an empty folder)
+    if (!files.length) return
     try {
       const url = await uploadFile(files[0])
       setValue('avatar', url)
@@ -100,10 +128,7 @@ export const AvatarUploader = (props: FormControlProps) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: onUpload,
     multiple: false,
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
+    accept: imageAccept,
   })
 
   return (
@@ -184,8 +209,15 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
 
   const value = watch(name)
 
-  const onUpload = async (files: File[]) => {
+  const onUpload = async (files: File[], rejections: FileRejection[] = []) => {
     clearErrors(name)
+    const rejected = imageRejectionMessage(t, files, rejections)
+    if (rejected) {
+      setError(name, { message: rejected })
+      return
+    }
+    // Nothing was dropped at all (e.g. an empty folder)
+    if (!files.length) return
     try {
       const url = await uploadFile(files[0])
       setValue(name, url, { shouldDirty: true })
@@ -213,10 +245,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: onUpload,
     multiple: false,
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
+    accept: imageAccept,
   })
 
   return (

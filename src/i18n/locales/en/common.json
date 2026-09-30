@@ -1928,6 +1928,10 @@
     "csv_row_limit_exceeded_one": "This import would result in {{count}} total row, exceeding your plan limit of {{max}}.",
     "csv_row_limit_exceeded_other": "This import would result in {{count}} total rows, exceeding your plan limit of {{max}}.",
     "drop_here": "Drop the file here",
+    "error": {
+      "invalid_image_type": "This file type isn't supported. Upload a .png or .jpg image.",
+      "too_many_files": "Upload one file at a time."
+    },
     "image_upload_failed": "Image upload failed",
     "image_upload_success": "Image uploaded",
     "upload_failed": "Upload failed"

@@ -1928,6 +1928,10 @@
     "csv_row_limit_exceeded_one": "Dieser Import würde {{count}} Zeile ergeben und damit dein Planlimit von {{max}} überschreiten.",
     "csv_row_limit_exceeded_other": "Dieser Import würde {{count}} Zeilen ergeben und damit dein Planlimit von {{max}} überschreiten.",
     "drop_here": "Datei hier ablegen",
+    "error": {
+      "invalid_image_type": "Dieser Dateityp wird nicht unterstützt. Lade ein .png- oder .jpg-Bild hoch.",
+      "too_many_files": "Lade jeweils nur eine Datei hoch."
+    },
     "image_upload_failed": "Bild-Upload fehlgeschlagen",
     "image_upload_success": "Bild hochgeladen",
     "upload_failed": "Upload fehlgeschlagen"

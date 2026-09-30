@@ -12,12 +12,12 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { ErrorCode, FileRejection, useDropzone } from 'react-dropzone'
+import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileSpreadsheet } from 'react-icons/lu'
 import { useSubscription } from '~components/Auth/Subscription'
-import Uploader from '~components/Layout/Uploader'
+import Uploader, { isTooManyFiles } from '~components/Layout/Uploader'
 import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
@@ -79,11 +79,7 @@ export const MembersCsvManager = () => {
       clearErrors('spreadsheet')
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
       if (rejections.length) {
-        // react-dropzone only flags too-many-files when several files are accepted, so a supported file dropped
-        // alongside an unsupported one also counts as too many
-        const tooMany =
-          accepted.length > 0 ||
-          rejections.some(({ errors }) => errors.some(({ code }) => code === ErrorCode.TooManyFiles))
+        const tooMany = isTooManyFiles(accepted, rejections)
         setError('spreadsheet', {
           type: 'validate',
           message: tooMany

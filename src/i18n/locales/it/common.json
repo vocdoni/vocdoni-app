@@ -1956,6 +1956,10 @@
     "csv_row_limit_exceeded_many": "",
     "csv_row_limit_exceeded_other": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
     "drop_here": "Rilascia il file qui",
+    "error": {
+      "invalid_image_type": "Questo tipo di file non è supportato. Carica un'immagine .png o .jpg.",
+      "too_many_files": "Carica un solo file alla volta."
+    },
     "image_upload_failed": "Caricamento immagine non riuscito",
     "image_upload_success": "Immagine caricata",
     "upload_failed": "Caricamento non riuscito"

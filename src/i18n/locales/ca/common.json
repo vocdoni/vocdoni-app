@@ -1956,6 +1956,10 @@
     "csv_row_limit_exceeded_many": "",
     "csv_row_limit_exceeded_other": "Aquesta importació donaria un total de {{count}} files, superant el límit del teu pla de {{max}}.",
     "drop_here": "Deixa-ho aquí",
+    "error": {
+      "invalid_image_type": "Aquest tipus de fitxer no és compatible. Puja una imatge .png o .jpg.",
+      "too_many_files": "Puja un sol fitxer cada vegada."
+    },
     "image_upload_failed": "Error en pujar la imatge",
     "image_upload_success": "Imatge pujada",
     "upload_failed": "Error en pujar"

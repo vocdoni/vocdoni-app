@@ -1928,6 +1928,10 @@
     "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
     "csv_row_limit_exceeded_other": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
     "drop_here": "Jaregin hemen",
+    "error": {
+      "invalid_image_type": "Fitxategi mota hau ez da onartzen. Igo .png edo .jpg irudi bat.",
+      "too_many_files": "Igo fitxategi bakarra aldi bakoitzean."
+    },
     "image_upload_failed": "Errorea irudia kargatzean",
     "image_upload_success": "Irudia kargatu da",
     "upload_failed": "Errorea kargatzean"

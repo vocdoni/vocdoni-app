@@ -1956,6 +1956,10 @@
     "csv_row_limit_exceeded_many": "",
     "csv_row_limit_exceeded_other": "Cette importation aboutirait à un total de {{count}} lignes, dépassant la limite de votre forfait fixée à {{max}}.",
     "drop_here": "Déposez le fichier ici",
+    "error": {
+      "invalid_image_type": "Ce type de fichier n'est pas pris en charge. Importez une image .png ou .jpg.",
+      "too_many_files": "Importez un seul fichier à la fois."
+    },
     "image_upload_failed": "Échec du chargement de l'image",
     "image_upload_success": "Image chargée",
     "upload_failed": "Échec du chargement"
