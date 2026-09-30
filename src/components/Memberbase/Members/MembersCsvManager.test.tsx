@@ -195,6 +195,25 @@ describe('MembersCsvManager', () => {
     expect(screen.queryByText(/We couldn't read this file/)).not.toBeInTheDocument()
   })
 
+  it('shows the dropzone as busy while the latest file is read, and not once a newer drop replaces it', async () => {
+    // The prompt has no default text in tests, so its i18n key stands in for it
+    const prompt = 'uploader.click_or_drag_and_drop'
+    mockRead = () => new Promise(() => {})
+    render(<MembersCsvManagerForm />)
+
+    expect(screen.getByText(prompt)).toBeInTheDocument()
+    await act(async () => {
+      void dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+    })
+    expect(screen.queryByText(prompt)).not.toBeInTheDocument()
+
+    const pdf = new File(['data'], 'notes.pdf', { type: 'application/pdf' })
+    await act(async () => {
+      await dropHandler?.([], [{ file: pdf, errors: [{ code: 'file-invalid-type', message: 'Invalid type' }] }])
+    })
+    expect(screen.getByText(prompt)).toBeInTheDocument()
+  })
+
   it('asks for a single file when several files are dropped', async () => {
     render(<MembersCsvManagerForm />)
 

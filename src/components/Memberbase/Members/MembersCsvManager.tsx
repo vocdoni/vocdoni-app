@@ -68,6 +68,8 @@ export const MembersCsvManager = () => {
   // File dropzone
   // Bumped on every drop so a slow read from an earlier drop can't overwrite the outcome of a newer one
   const latestDrop = useRef(0)
+  // Whether the latest drop's file is still being read, so the dropzone shows it is busy
+  const [reading, setReading] = useState(false)
   const onDrop = useCallback(
     async (accepted: File[], rejections: FileRejection[] = []) => {
       const [file] = accepted
@@ -75,6 +77,7 @@ export const MembersCsvManager = () => {
       // bumping latestDrop, or an empty drop would silently discard a read that is still in flight
       if (!file && !rejections.length) return
       const drop = ++latestDrop.current
+      setReading(false)
       setValue('spreadsheet', undefined)
       clearErrors('spreadsheet')
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
@@ -90,6 +93,7 @@ export const MembersCsvManager = () => {
         setError('spreadsheet', { type: 'validate', message: rejected })
         return
       }
+      setReading(true)
       try {
         const spreadsheet = new SpreadsheetManager(file, true)
         await spreadsheet.read()
@@ -123,6 +127,8 @@ export const MembersCsvManager = () => {
               }),
         })
         console.error('could not load file:', e)
+      } finally {
+        if (drop === latestDrop.current) setReading(false)
       }
     },
     [clearErrors, existingMembers, maxCensusSize, openModal, setError, setValue, t]
@@ -205,7 +211,12 @@ export const MembersCsvManager = () => {
                 'Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.',
             })}
           </Text>
-          <Uploader getInputProps={getInputProps} getRootProps={getRootProps} isDragActive={isDragActive} />
+          <Uploader
+            getInputProps={getInputProps}
+            getRootProps={getRootProps}
+            isDragActive={isDragActive}
+            isLoading={reading}
+          />
           <FormErrorMessage display='flex' justifyContent='center'>
             {errors?.spreadsheet?.message?.toString()}
           </FormErrorMessage>
