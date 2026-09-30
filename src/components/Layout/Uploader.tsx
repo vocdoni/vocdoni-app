@@ -17,9 +17,8 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
-import type { TFunction } from 'i18next'
-import { DropzoneInputProps, DropzoneRootProps, ErrorCode, FileRejection, useDropzone } from 'react-dropzone'
+import { useRef, useState } from 'react'
+import { DropzoneInputProps, DropzoneRootProps, FileRejection, useDropzone } from 'react-dropzone'
 import { SetValueConfig, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { BiTrash } from 'react-icons/bi'
@@ -27,6 +26,7 @@ import { LuUpload } from 'react-icons/lu'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { useToast } from '~components/Toast'
+import { dropRejectionMessage, useLatestDrop } from './dropzone'
 
 export type UploaderProps = {
   getRootProps: <T extends DropzoneRootProps>(props?: T) => T
@@ -43,25 +43,6 @@ type ImageUploaderProps = {
 const imageAccept = {
   'image/png': ['.png'],
   'image/jpeg': ['.jpg', '.jpeg'],
-}
-
-// react-dropzone only flags too-many-files when several files are accepted, so a supported file dropped alongside an
-// unsupported one also counts as too many
-const isTooManyFiles = (accepted: File[], rejections: FileRejection[]) =>
-  accepted.length > 0 || rejections.some(({ errors }) => errors.some(({ code }) => code === ErrorCode.TooManyFiles))
-
-// react-dropzone calls onDrop even when every file was rejected, so explain why instead of silently doing nothing.
-// Returns undefined when nothing was rejected.
-export const dropRejectionMessage = (
-  t: TFunction,
-  accepted: File[],
-  rejections: FileRejection[],
-  invalidTypeMessage: string
-): string | undefined => {
-  if (!rejections.length) return
-  return isTooManyFiles(accepted, rejections)
-    ? t('uploader.error.too_many_files', { defaultValue: 'Upload one file at a time.' })
-    : invalidTypeMessage
 }
 
 const useUploadFile = () => {
@@ -103,28 +84,20 @@ const useImageDropUpload = ({
   const { t } = useTranslation()
   const toast = useToast()
   const { setValue } = useFormContext()
-  const { mutateAsync: uploadFile, isPending } = useUploadFile()
+  const { mutateAsync: uploadFile } = useUploadFile()
   const [error, setError] = useState<string>()
 
-  // Bumped on every drop so a slow upload from an earlier drop can't overwrite the outcome of a newer one
-  const latestDrop = useRef(0)
-  // The drop whose upload is running, so the spinner doesn't keep spinning for an upload a newer drop superseded
-  const uploadingDrop = useRef(0)
+  // A slow upload from an earlier drop can't overwrite the outcome of a newer one, and once unmounted (e.g. the
+  // option was removed) a pending upload has no field left to write to. `isPending` only reflects the latest drop, so
+  // the spinner doesn't keep spinning for an upload a newer drop superseded
+  const { busy: isPending, start, isLatest, finish } = useLatestDrop()
   // Field-array names are index based (e.g. `questions.0.options.2.image`) and shift when an earlier item is
   // removed, so the upload result must go to the field's current name, not the one captured when it was dropped
   const currentName = useRef(name)
   currentName.current = name
-  // Once unmounted (e.g. the option was removed) a pending upload has no field left to write to
-  useEffect(
-    () => () => {
-      latestDrop.current++
-    },
-    []
-  )
   const onUpload = async (files: File[], rejections: FileRejection[] = []) => {
     // Nothing was dropped at all (e.g. an empty folder): keep any visible error and any upload in flight
     if (!files.length && !rejections.length) return
-    const drop = ++latestDrop.current
     const rejected = dropRejectionMessage(
       t,
       files,
@@ -133,12 +106,12 @@ const useImageDropUpload = ({
         defaultValue: "This file type isn't supported. Upload a .png or .jpg image.",
       })
     )
+    const drop = start(!rejected)
     setError(rejected)
     if (rejected) return
-    uploadingDrop.current = drop
     try {
       const url = await uploadFile(files[0])
-      if (drop !== latestDrop.current) return
+      if (!isLatest(drop)) return
       setValue(currentName.current, url, setValueOptions)
       toast({
         title: successTitle,
@@ -148,7 +121,7 @@ const useImageDropUpload = ({
       })
     } catch (e) {
       console.error(logPrefix, e)
-      if (drop !== latestDrop.current) return
+      if (!isLatest(drop)) return
       const errorMessage =
         e instanceof Error ? e.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
       setError(errorMessage)
@@ -159,6 +132,8 @@ const useImageDropUpload = ({
         duration: 3000,
         isClosable: true,
       })
+    } finally {
+      finish(drop)
     }
   }
 
@@ -168,7 +143,7 @@ const useImageDropUpload = ({
     accept: imageAccept,
   })
 
-  return { ...dropzone, error, isPending: isPending && uploadingDrop.current === latestDrop.current }
+  return { ...dropzone, error, isPending }
 }
 
 export const AvatarUploader = (props: FormControlProps) => {

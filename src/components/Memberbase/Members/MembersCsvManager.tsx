@@ -11,13 +11,14 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileSpreadsheet } from 'react-icons/lu'
 import { useSubscription } from '~components/Auth/Subscription'
-import Uploader, { dropRejectionMessage } from '~components/Layout/Uploader'
+import { dropRejectionMessage, useLatestDrop } from '~components/Layout/dropzone'
+import Uploader from '~components/Layout/Uploader'
 import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
@@ -66,27 +67,17 @@ export const MembersCsvManager = () => {
   const existingMembers = membersData?.pagination?.totalItems ?? 0
 
   // File dropzone
-  // Bumped on every drop so a slow read from an earlier drop can't overwrite the outcome of a newer one
-  const latestDrop = useRef(0)
-  // The drawer unmounts this component on close while the form outlives it, so a read still in flight must not
-  // write its file (or open the upgrade modal) after the user closed the drawer or reopened it and dropped another
-  useEffect(
-    () => () => {
-      latestDrop.current++
-    },
-    []
-  )
-  // Whether the latest drop's file is still being read, so the dropzone shows it is busy
-  const [reading, setReading] = useState(false)
+  // A slow read from an earlier drop can't overwrite the outcome of a newer one. The drawer also unmounts this
+  // component on close while the form outlives it, so a read still in flight must not write its file (or open the
+  // upgrade modal) after the user closed the drawer or reopened it and dropped another. `reading` is true while the
+  // latest drop's file is read, so the dropzone shows it is busy
+  const { busy: reading, start, isLatest, finish } = useLatestDrop()
   const onDrop = useCallback(
     async (accepted: File[], rejections: FileRejection[] = []) => {
       const [file] = accepted
       // Nothing was dropped at all (e.g. an empty folder), so there is nothing to complain about. Bail out before
-      // bumping latestDrop, or an empty drop would silently discard a read that is still in flight
+      // starting a drop, or an empty drop would silently discard a read that is still in flight
       if (!file && !rejections.length) return
-      const drop = ++latestDrop.current
-      setValue('spreadsheet', undefined)
-      clearErrors('spreadsheet')
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
       const rejected = dropRejectionMessage(
         t,
@@ -96,8 +87,9 @@ export const MembersCsvManager = () => {
           defaultValue: "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
         })
       )
-      // Also stops the spinner of a read this drop supersedes
-      setReading(!rejected)
+      const drop = start(!rejected)
+      setValue('spreadsheet', undefined)
+      clearErrors('spreadsheet')
       if (rejected) {
         setError('spreadsheet', { type: 'validate', message: rejected })
         return
@@ -105,7 +97,7 @@ export const MembersCsvManager = () => {
       try {
         const spreadsheet = new SpreadsheetManager(file, true)
         await spreadsheet.read()
-        if (drop !== latestDrop.current) return
+        if (!isLatest(drop)) return
         const totalMembers = spreadsheet.data.length + existingMembers
         const limitErrorMessage = t('uploader.csv_row_limit_exceeded', {
           count: totalMembers,
@@ -119,7 +111,7 @@ export const MembersCsvManager = () => {
         })
         setValue('spreadsheet', spreadsheet)
       } catch (e) {
-        if (drop !== latestDrop.current) return
+        if (!isLatest(drop)) return
         if (e instanceof CsvRowLimitExceededError) {
           openModal('planUpgrade', { context: 'memberbase', limit: String(maxCensusSize ?? '') })
           return
@@ -136,10 +128,10 @@ export const MembersCsvManager = () => {
         })
         console.error('could not load file:', e)
       } finally {
-        if (drop === latestDrop.current) setReading(false)
+        finish(drop)
       }
     },
-    [clearErrors, existingMembers, maxCensusSize, openModal, setError, setValue, t]
+    [clearErrors, existingMembers, finish, isLatest, maxCensusSize, openModal, setError, setValue, start, t]
   )
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
