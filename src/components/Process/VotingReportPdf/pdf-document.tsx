@@ -1,5 +1,4 @@
 import * as ReactPDF from '@react-pdf/renderer'
-import { Buffer as BufferPolyfill } from 'buffer'
 import { type TFunction } from 'i18next'
 import { type ReactNode } from 'react'
 
@@ -17,11 +16,6 @@ import {
 import { styles } from './styles'
 
 const { Document, Font, Image, Link: PdfLink, Page, Text: PdfText, View } = ReactPDF
-
-// @react-pdf/layout calls `Buffer.isBuffer` after loading each image. Browsers have no Buffer, so
-// that call throws (logged as "Buffer is not defined") before the image cache key is set, and the
-// running-header icon gets embedded again on every page. Node (SSR, tests) keeps its own Buffer.
-globalThis.Buffer ??= BufferPolyfill as unknown as typeof globalThis.Buffer
 
 const preventPdfHyphenation = (word: string) => [word]
 
