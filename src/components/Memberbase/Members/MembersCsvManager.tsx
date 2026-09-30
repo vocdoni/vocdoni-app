@@ -11,7 +11,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -68,6 +68,14 @@ export const MembersCsvManager = () => {
   // File dropzone
   // Bumped on every drop so a slow read from an earlier drop can't overwrite the outcome of a newer one
   const latestDrop = useRef(0)
+  // The drawer unmounts this component on close while the form outlives it, so a read still in flight must not
+  // write its file (or open the upgrade modal) after the user closed the drawer or reopened it and dropped another
+  useEffect(
+    () => () => {
+      latestDrop.current++
+    },
+    []
+  )
   // Whether the latest drop's file is still being read, so the dropzone shows it is busy
   const [reading, setReading] = useState(false)
   const onDrop = useCallback(
@@ -77,7 +85,6 @@ export const MembersCsvManager = () => {
       // bumping latestDrop, or an empty drop would silently discard a read that is still in flight
       if (!file && !rejections.length) return
       const drop = ++latestDrop.current
-      setReading(false)
       setValue('spreadsheet', undefined)
       clearErrors('spreadsheet')
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
@@ -89,11 +96,12 @@ export const MembersCsvManager = () => {
           defaultValue: "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
         })
       )
+      // Also stops the spinner of a read this drop supersedes
+      setReading(!rejected)
       if (rejected) {
         setError('spreadsheet', { type: 'validate', message: rejected })
         return
       }
-      setReading(true)
       try {
         const spreadsheet = new SpreadsheetManager(file, true)
         await spreadsheet.read()

@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import { act, screen } from '@testing-library/react'
 import type { FileRejection } from 'react-dropzone'
-import { FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm, UseFormReturn } from 'react-hook-form'
 import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
 import { render } from '~src/test-utils'
 import { MembersCsvManager } from './MembersCsvManager'
@@ -87,6 +87,15 @@ const MembersCsvManagerForm = () => {
       <MembersCsvManager />
     </FormProvider>
   )
+}
+
+// The import drawer unmounts MembersCsvManager on close while its form lives on, as this wrapper does on `hidden`
+let formMethods: UseFormReturn<{ spreadsheet: unknown }> | undefined
+const PersistentFormWithManager = ({ hidden }: { hidden?: boolean }) => {
+  const methods = useForm<{ spreadsheet: unknown }>({ defaultValues: { spreadsheet: null } })
+  formMethods = methods
+
+  return <FormProvider {...methods}>{!hidden && <MembersCsvManager />}</FormProvider>
 }
 
 describe('MembersCsvManager', () => {
@@ -193,6 +202,49 @@ describe('MembersCsvManager', () => {
       screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
     ).toBeInTheDocument()
     expect(screen.queryByText(/We couldn't read this file/)).not.toBeInTheDocument()
+  })
+
+  it('drops the outcome of a read still in flight once the importer is closed', async () => {
+    let finishRead: () => void = () => {}
+    mockRead = () =>
+      new Promise((resolve) => {
+        finishRead = resolve
+      })
+    const { rerender } = render(<PersistentFormWithManager />)
+
+    let slowDrop: Promise<void> | undefined
+    await act(async () => {
+      slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+    })
+    rerender(<PersistentFormWithManager hidden />)
+    await act(async () => {
+      finishRead()
+      await slowDrop
+    })
+
+    expect(formMethods?.getValues('spreadsheet')).toBeUndefined()
+  })
+
+  it('does not open the upgrade modal for a read that finishes after the importer is closed', async () => {
+    mockRowCount = 901
+    let finishRead: () => void = () => {}
+    mockRead = () =>
+      new Promise((resolve) => {
+        finishRead = resolve
+      })
+    const { rerender } = render(<PersistentFormWithManager />)
+
+    let slowDrop: Promise<void> | undefined
+    await act(async () => {
+      slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+    })
+    rerender(<PersistentFormWithManager hidden />)
+    await act(async () => {
+      finishRead()
+      await slowDrop
+    })
+
+    expect(openModal).not.toHaveBeenCalled()
   })
 
   it('shows the dropzone as busy while the latest file is read, and not once a newer drop replaces it', async () => {
