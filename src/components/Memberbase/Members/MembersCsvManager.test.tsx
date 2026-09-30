@@ -144,6 +144,21 @@ describe('MembersCsvManager', () => {
     expect(screen.getByText('Upload one file at a time.')).toBeInTheDocument()
   })
 
+  it('asks for a single file when a valid file is dropped together with an unsupported one', async () => {
+    render(<MembersCsvManagerForm />)
+
+    // react-dropzone only flags too-many-files when more than one file is accepted, so this mix arrives as
+    // one accepted file plus one type rejection
+    const csv = new File(['name\nJohn'], 'members.csv', { type: 'text/csv' })
+    const pdf = new File(['data'], 'notes.pdf', { type: 'application/pdf' })
+    await act(async () => {
+      await dropHandler?.([csv], [{ file: pdf, errors: [{ code: 'file-invalid-type', message: 'Invalid type' }] }])
+    })
+
+    expect(screen.getByText('Upload one file at a time.')).toBeInTheDocument()
+    expect(screen.queryByText(/This file type isn't supported/)).not.toBeInTheDocument()
+  })
+
   it('shows a generic message instead of raw browser errors when the file cannot be read', async () => {
     mockReadError = new TypeError(
       "Failed to execute 'readAsBinaryString' on 'FileReader': parameter 1 is not of type 'Blob'."

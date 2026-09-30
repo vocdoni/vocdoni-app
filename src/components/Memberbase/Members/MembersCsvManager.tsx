@@ -68,12 +68,14 @@ export const MembersCsvManager = () => {
 
   // File dropzone
   const onDrop = useCallback(
-    async ([file]: File[], rejections: FileRejection[] = []) => {
+    async (accepted: File[], rejections: FileRejection[] = []) => {
+      const [file] = accepted
       setValue('spreadsheet', undefined)
       clearErrors('spreadsheet')
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
       if (rejections.length || !file) {
-        const tooMany = rejections.some(({ errors }) => errors.some(({ code }) => code === 'too-many-files'))
+        // react-dropzone only flags too-many-files when several files are accepted, so count the whole drop
+        const tooMany = accepted.length + rejections.length > 1
         setError('spreadsheet', {
           type: 'validate',
           message: tooMany
