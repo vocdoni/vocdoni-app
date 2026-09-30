@@ -83,6 +83,12 @@ describe('BasicConfig plan duration limit', () => {
     await waitFor(() => expect(screen.queryByText('Exceeds max duration.')).not.toBeInTheDocument())
   })
 
+  it('keeps the end date minimum at a start date that was loaded rather than typed', () => {
+    render(<Harness endInDays={5} values={{ autoStart: false, startDate: inDays(3), startTime: '10:00' }} />)
+
+    expect(screen.getByLabelText('End date and time')).toHaveAttribute('min', inDays(3))
+  })
+
   it('shows no warning within the plan limit', () => {
     render(<Harness endInDays={3} />)
 

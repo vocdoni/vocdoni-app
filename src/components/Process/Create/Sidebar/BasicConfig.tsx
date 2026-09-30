@@ -12,7 +12,7 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { MutableRefObject, ReactNode, useRef, useState } from 'react'
+import { MutableRefObject, ReactNode, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router'
@@ -53,7 +53,6 @@ export const BasicConfig = () => {
   } = useFormContext<Process>()
   const startDateRef = useRef<HTMLInputElement | null>(null)
   const endDateRef = useRef<HTMLInputElement | null>(null)
-  const [min, setMin] = useState<Date>(new Date())
 
   const autoStart = watch('autoStart')
   const startDate = watch('startDate')
@@ -61,6 +60,8 @@ export const BasicConfig = () => {
   const endDate = watch('endDate')
   const endTime = watch('endTime')
   const today = format(new Date(), DateFormatHtml)
+  // Derived from the form values, so it also holds for a start date loaded from a draft or cleared.
+  const endDateMin = !autoStart && startDate ? startDate : today
 
   const required = {
     value: true,
@@ -105,8 +106,6 @@ export const BasicConfig = () => {
   }
 
   const startDateRegister = register('startDate', {
-    // A cleared start date falls back to today, so the end date keeps a minimum.
-    onChange: (e) => setMin(e.target.value ? parseFormDateTime(e.target.value) : new Date()),
     // Re-check the end date/time against the new start once the form has been submitted.
     deps: ['endDate', 'endTime'],
     required: {
@@ -131,7 +130,6 @@ export const BasicConfig = () => {
     if (checked) {
       setValue('startDate', '')
       setValue('startTime', '')
-      setMin(new Date())
       clearErrors(['startDate', 'startTime'])
     }
     // The end fields are measured from the start, so re-check them for the new mode once submitted.
@@ -202,7 +200,7 @@ export const BasicConfig = () => {
                 endDateRef.current = e
               }}
               type='date'
-              min={format(min, DateFormatHtml)}
+              min={endDateMin}
               onFocus={() => showPicker(endDateRef)}
             />
           </Box>
