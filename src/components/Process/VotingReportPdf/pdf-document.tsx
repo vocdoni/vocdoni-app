@@ -598,6 +598,15 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
                     },
                   ]
 
+              const resultRows = question.choices.map((choice) => (
+                <ResultBarRow
+                  key={`${choice.name}-${choice.votes}-result`}
+                  choice={choice}
+                  isWeighted={question.isWeighted}
+                  notAvailableLabel={data.notAvailableLabel}
+                />
+              ))
+
               return (
                 <View
                   key={`${question.question}-${index}`}
@@ -659,27 +668,13 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
                             </PdfText>
                           )}
                         </View>
-                        {question.choices.slice(0, QUESTION_HEAD_RESULT_ROWS).map((choice) => (
-                          <ResultBarRow
-                            key={`${choice.name}-${choice.votes}-result`}
-                            choice={choice}
-                            isWeighted={question.isWeighted}
-                            notAvailableLabel={data.notAvailableLabel}
-                          />
-                        ))}
+                        {resultRows.slice(0, QUESTION_HEAD_RESULT_ROWS)}
                       </View>
                     ) : (
                       <PdfText style={styles.smallText}>{data.notAvailableLabel}</PdfText>
                     )}
                   </View>
-                  {question.choices.slice(QUESTION_HEAD_RESULT_ROWS).map((choice) => (
-                    <ResultBarRow
-                      key={`${choice.name}-${choice.votes}-result`}
-                      choice={choice}
-                      isWeighted={question.isWeighted}
-                      notAvailableLabel={data.notAvailableLabel}
-                    />
-                  ))}
+                  {resultRows.slice(QUESTION_HEAD_RESULT_ROWS)}
                 </View>
               )
             })
