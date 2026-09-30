@@ -118,6 +118,29 @@ describe.each([
     expect(screen.queryByRole('img')).not.toBeInTheDocument()
   })
 
+  it('does not block the form submit after a rejected drop', async () => {
+    const onValid = vi.fn()
+    const SubmitForm = () => {
+      const methods = useForm({ defaultValues: { avatar: '', image: '', name: 'Org' } })
+      return (
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onValid)}>
+            {renderUploader()}
+            <button type='submit'>Save</button>
+          </form>
+        </FormProvider>
+      )
+    }
+    render(<SubmitForm />)
+
+    await drop([], [invalidType(pdf())])
+    await act(async () => {
+      screen.getByRole('button', { name: 'Save' }).click()
+    })
+
+    expect(onValid).toHaveBeenCalledTimes(1)
+  })
+
   it('uploads a single accepted image', async () => {
     render(<Form>{renderUploader()}</Form>)
 
@@ -178,6 +201,14 @@ describe('ImageUploader in a field array', () => {
     expect(screen.getByTestId('values')).toHaveTextContent(
       JSON.stringify([{ image: 'https://example.com/logo.png' }, { image: '' }])
     )
+  })
+
+  it('shows why a drop was rejected under an index-based field name', async () => {
+    render(<Options name='options.1.image' />)
+
+    await drop([], [invalidType(pdf())])
+
+    expect(screen.getByText("This file type isn't supported. Upload a .png or .jpg image.")).toBeInTheDocument()
   })
 
   it('drops the upload result once the uploader is gone', async () => {
