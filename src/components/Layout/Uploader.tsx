@@ -282,6 +282,12 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
               h='100%'
               objectFit='cover'
             />
+            {/* A new image dropped over the current one is uploading */}
+            {isPending && (
+              <Flex position='absolute' inset={0} align='center' justify='center' bg='blackAlpha.500'>
+                <Spinner color='white' />
+              </Flex>
+            )}
           </Flex>
         ) : (
           <Flex
