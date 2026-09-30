@@ -12,7 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useCallback, useMemo, useState } from 'react'
-import { FileRejection, useDropzone } from 'react-dropzone'
+import { ErrorCode, FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileSpreadsheet } from 'react-icons/lu'
@@ -74,8 +74,11 @@ export const MembersCsvManager = () => {
       clearErrors('spreadsheet')
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
       if (rejections.length || !file) {
-        // react-dropzone only flags too-many-files when several files are accepted, so count the whole drop
-        const tooMany = accepted.length + rejections.length > 1
+        // react-dropzone only flags too-many-files when several files are accepted, so a supported file dropped
+        // alongside an unsupported one also counts as too many
+        const tooMany =
+          accepted.length > 0 ||
+          rejections.some(({ errors }) => errors.some(({ code }) => code === ErrorCode.TooManyFiles))
         setError('spreadsheet', {
           type: 'validate',
           message: tooMany

@@ -13,7 +13,8 @@ let mockRowCount = 0
 let mockReadError: Error | undefined
 const openModal = vi.fn()
 
-vi.mock('react-dropzone', () => ({
+vi.mock('react-dropzone', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-dropzone')>()),
   useDropzone: (options: { onDrop: DropHandler }) => {
     dropHandler = options.onDrop
     return {
@@ -142,6 +143,23 @@ describe('MembersCsvManager', () => {
     })
 
     expect(screen.getByText('Upload one file at a time.')).toBeInTheDocument()
+  })
+
+  it('asks for a supported file type when several unsupported files are dropped', async () => {
+    render(<MembersCsvManagerForm />)
+
+    const rejections = ['a.pdf', 'b.pdf'].map((name) => ({
+      file: new File(['data'], name, { type: 'application/pdf' }),
+      errors: [{ code: 'file-invalid-type', message: 'Invalid type' }],
+    }))
+    await act(async () => {
+      await dropHandler?.([], rejections)
+    })
+
+    expect(
+      screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Upload one file at a time.')).not.toBeInTheDocument()
   })
 
   it('asks for a single file when a valid file is dropped together with an unsupported one', async () => {
