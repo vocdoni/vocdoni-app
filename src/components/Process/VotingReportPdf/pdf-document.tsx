@@ -116,6 +116,9 @@ const SectionTitle = ({ children }: { children: string }) => <PdfText style={sty
 // squeezed onto a single page by react-pdf, which overlaps its contents.
 // The TOC anchor, the page probe and the title move together as one heading, so the TOC points
 // at the page where the title lands even when a wrapping section starts near a page bottom.
+// react-pdf only honours `minPresenceAhead` on a node that has earlier siblings in its parent (it
+// never breaks the first child), so a wrapping section lays its heading out next to its body
+// instead of inside it. The split styles add up to `styles.section`, keeping the same layout.
 const ReportSectionBlock = ({
   title,
   children,
@@ -128,9 +131,14 @@ const ReportSectionBlock = ({
   sectionId?: string
   onCapturePage?: (id: string, n: number) => void
   wrap?: boolean
-}) => (
-  <View wrap={wrap} style={styles.section}>
-    <View wrap={false} minPresenceAhead={SECTION_HEADING_MIN_PRESENCE_AHEAD} id={sectionId}>
+}) => {
+  const heading = (
+    <View
+      wrap={false}
+      minPresenceAhead={SECTION_HEADING_MIN_PRESENCE_AHEAD}
+      id={sectionId}
+      style={wrap ? styles.sectionHeading : undefined}
+    >
       {sectionId && onCapturePage && (
         <PdfText
           style={styles.captureProbe}
@@ -142,9 +150,24 @@ const ReportSectionBlock = ({
       )}
       <SectionTitle>{title}</SectionTitle>
     </View>
-    {children}
-  </View>
-)
+  )
+
+  if (!wrap) {
+    return (
+      <View wrap={false} style={styles.section}>
+        {heading}
+        {children}
+      </View>
+    )
+  }
+
+  return (
+    <>
+      {heading}
+      <View style={styles.sectionBody}>{children}</View>
+    </>
+  )
+}
 
 const KeyValueList = ({ items }: { items: CertificateField[] }) => (
   <View style={styles.keyValueTable}>
