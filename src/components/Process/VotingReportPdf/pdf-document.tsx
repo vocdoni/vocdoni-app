@@ -103,11 +103,15 @@ const SECTION_HEADING_MIN_PRESENCE_AHEAD = 60
 // page, the rest is margin for long labels); beyond that it must flow across pages.
 const MAX_UNSPLIT_VERIFICATION_ROWS = 8
 
+// Explicit line breaks each start a new line, so every paragraph of the text is counted on its own.
+const estimateTextLines = (text: string, charsPerLine: number) =>
+  text.split('\n').reduce((total, paragraph) => total + Math.max(1, Math.ceil(paragraph.length / charsPerLine)), 0)
+
 const canSplitQuestionCard = (question: CertificateQuestion) => {
   const charsPerLine = question.isWeighted ? OPTION_CHARS_PER_LINE_WEIGHTED : OPTION_CHARS_PER_LINE
-  const extraTitleLines = Math.max(0, Math.ceil(question.question.length / QUESTION_TITLE_CHARS_PER_LINE) - 1)
+  const extraTitleLines = estimateTextLines(question.question, QUESTION_TITLE_CHARS_PER_LINE) - 1
   const lines = question.choices.reduce(
-    (total, choice) => total + Math.max(1, Math.ceil(choice.name.length / charsPerLine)),
+    (total, choice) => total + estimateTextLines(choice.name, charsPerLine),
     extraTitleLines
   )
   return lines > MAX_UNSPLIT_QUESTION_LINES
