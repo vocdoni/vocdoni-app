@@ -144,6 +144,30 @@ describe('MembersCsvManager', () => {
     expect(screen.queryByText('Upload one file at a time.')).not.toBeInTheDocument()
   })
 
+  it('keeps the outcome of a read in flight when an empty drop happens meanwhile', async () => {
+    let failRead: (error: Error) => void = () => {}
+    mockRead = () =>
+      new Promise((_, reject) => {
+        failRead = reject
+      })
+    render(<MembersCsvManagerForm />)
+
+    let slowDrop: Promise<void> | undefined
+    await act(async () => {
+      slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+    })
+    await act(async () => {
+      await dropHandler?.([], [])
+    })
+    const missingData = new ErrorMissingData()
+    await act(async () => {
+      failRead(missingData)
+      await slowDrop
+    })
+
+    expect(screen.getByText(missingData.message)).toBeInTheDocument()
+  })
+
   it('ignores a slow read from an earlier drop once a newer file is dropped', async () => {
     let failRead: (error: Error) => void = () => {}
     mockRead = () =>

@@ -70,12 +70,13 @@ export const MembersCsvManager = () => {
   const latestDrop = useRef(0)
   const onDrop = useCallback(
     async (accepted: File[], rejections: FileRejection[] = []) => {
-      const drop = ++latestDrop.current
       const [file] = accepted
+      // Nothing was dropped at all (e.g. an empty folder), so there is nothing to complain about. Bail out before
+      // bumping latestDrop, or an empty drop would silently discard a read that is still in flight
+      if (!file && !rejections.length) return
+      const drop = ++latestDrop.current
       setValue('spreadsheet', undefined)
       clearErrors('spreadsheet')
-      // Nothing was dropped at all (e.g. an empty folder), so there is nothing to complain about
-      if (!file && !rejections.length) return
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
       if (rejections.length) {
         // react-dropzone only flags too-many-files when several files are accepted, so a supported file dropped
