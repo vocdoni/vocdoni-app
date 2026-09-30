@@ -12,6 +12,7 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react'
+import { parse } from 'date-fns'
 import { MutableRefObject, ReactNode, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -22,6 +23,9 @@ import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
 
 const DateFormatHtml = 'yyyy-MM-dd'
+
+// Reads the form's date (+ optional time) inputs as local time, the same way the process request is built.
+const toLocalDate = (date: string, time?: string) => parse(`${date} ${time || '00:00'}`, 'yyyy-MM-dd HH:mm', new Date())
 
 // Trans replaces its component's children with the translated text, so the RouterLink must live
 // inside a wrapper; passed inline, `asChild` would be left without a child and Chakra would throw.
@@ -51,7 +55,8 @@ export const BasicConfig = () => {
   const startDate = watch('startDate')
   const startTime = watch('startTime')
   const endDate = watch('endDate')
-  const today = new Date().toISOString().split('T')[0]
+  const endTime = watch('endTime')
+  const today = format(new Date(), DateFormatHtml)
 
   const required = {
     value: true,
@@ -62,8 +67,8 @@ export const BasicConfig = () => {
   const exceedsMaxDuration = (value: string) => {
     if (!value || !maxDuration) return false
 
-    const start = startDate && !autoStart ? new Date(startDate) : new Date()
-    const end = new Date(value)
+    const start = startDate && !autoStart ? toLocalDate(startDate, startTime) : new Date()
+    const end = toLocalDate(value, endTime)
     const durationDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
 
     return durationDays > parseInt(maxDuration)
@@ -84,8 +89,8 @@ export const BasicConfig = () => {
 
   const validateEndDateAfterStart = (value: string) => {
     if (!value || !startDate || autoStart) return true
-    const start = startDate && !autoStart ? new Date(startDate) : new Date()
-    const end = new Date(value)
+    const start = toLocalDate(startDate)
+    const end = toLocalDate(value)
 
     return (
       end >= start ||
@@ -97,6 +102,8 @@ export const BasicConfig = () => {
 
   const startDateRegister = register('startDate', {
     onChange: (e) => setMin(new Date(e.target.value)),
+    // Re-check the end date against the new start once the form has been submitted.
+    deps: ['endDate'],
     required: {
       value: !autoStart,
       message: t('form.error.field_is_required'),
@@ -159,6 +166,7 @@ export const BasicConfig = () => {
                   type='time'
                   {...register('startTime', {
                     required,
+                    deps: ['endDate'],
                   })}
                 />
               </Box>
@@ -194,6 +202,7 @@ export const BasicConfig = () => {
               type='time'
               {...register('endTime', {
                 required,
+                deps: ['endDate'],
                 validate: (value: string) => {
                   if (!value || !endDate) return true
                   const end = new Date(`${endDate}T${value}`)
