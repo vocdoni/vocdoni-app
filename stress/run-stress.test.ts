@@ -35,6 +35,9 @@ const successfulResult = {
 // the machine), so waits are generous deadlines rather than tight budgets. The fixtures finish
 // in well under a second when things are fast; the deadline only matters when a run hangs.
 const RUN_TIMEOUT_MS = 15000
+// How long the script gets to honour SIGTERM before the deadline gives up on it. Bash defers its
+// TERM trap until a foreground command returns, so a hung fake would otherwise block it forever.
+const KILL_GRACE_MS = 2000
 
 // Keep the real orchestration and JSON parser; replace Docker/network/process
 // boundaries so startup, crashes and resource failures need no Docker daemon.
@@ -105,9 +108,19 @@ if (args[0].endsWith('/loadgen.mjs')) {
     // so a timed-out run would otherwise look like any other non-zero exit and satisfy the
     // `code !== 0` assertions. SIGTERM (not SIGKILL) still lets its cleanup reap the fakes.
     let timedOut = false
+    let partial = ''
+    let killTimer: ReturnType<typeof setTimeout> | undefined
+    const deadlineError = (output: string) =>
+      new Error(`run-stress.sh did not finish within ${RUN_TIMEOUT_MS} ms\n${output}`)
     const timer = setTimeout(() => {
       timedOut = true
       child.kill('SIGTERM')
+      // If bash still has not exited, settle here: a hung fake inherits its stdio pipes, so
+      // execFile's callback would not fire even after bash itself is killed.
+      killTimer = setTimeout(() => {
+        child.kill('SIGKILL')
+        reject(deadlineError(partial))
+      }, KILL_GRACE_MS)
     }, RUN_TIMEOUT_MS)
     child = execFile(
       'bash',
@@ -123,17 +136,20 @@ if (args[0].endsWith('/loadgen.mjs')) {
       },
       (error, stdout, stderr) => {
         clearTimeout(timer)
-        if (timedOut) reject(new Error(`run-stress.sh did not finish within ${RUN_TIMEOUT_MS} ms\n${stdout}${stderr}`))
+        clearTimeout(killTimer)
+        if (timedOut) reject(deadlineError(`${stdout}${stderr}`))
         else resolve({ code: error ? error.code || error.signal || 1 : 0, stdout, stderr })
       }
     )
+    child.stdout?.on('data', (chunk) => (partial += chunk))
+    child.stderr?.on('data', (chunk) => (partial += chunk))
   })
   // A test can fail before awaiting `completed`; keep that from surfacing as an unhandled rejection.
   completed.catch(() => {})
   return { root, child: child!, completed }
 }
 
-describe('stress ramp orchestration', { timeout: RUN_TIMEOUT_MS + 5000 }, () => {
+describe('stress ramp orchestration', { timeout: RUN_TIMEOUT_MS + KILL_GRACE_MS + 3000 }, () => {
   it('isolates container names and artifacts for invocations with the same timestamp', async () => {
     const runs = await Promise.all([harness(), harness()])
     const outputs = await Promise.all(runs.map((run) => run.completed))
@@ -261,10 +277,16 @@ describe('stress ramp orchestration', { timeout: RUN_TIMEOUT_MS + 5000 }, () => 
 
   it('terminates on SIGTERM instead of continuing subsequent levels', async () => {
     const run = await harness('signal', successfulResult, '1 2')
-    await vi.waitFor(() => expect(existsSync(path.join(run.root, 'loadgen-started'))).toBe(true), {
-      timeout: RUN_TIMEOUT_MS,
-      interval: 10,
-    })
+    const started = path.join(run.root, 'loadgen-started')
+    await vi.waitFor(
+      () => {
+        // Stop waiting as soon as the script exits: it will never start the generator after that.
+        if (run.child.exitCode !== null || run.child.signalCode !== null) return
+        expect(existsSync(started)).toBe(true)
+      },
+      { timeout: RUN_TIMEOUT_MS, interval: 10 }
+    )
+    expect(existsSync(started)).toBe(true)
     run.child.kill('SIGTERM')
     const output = await run.completed
     expect(output.code).toBe(143)

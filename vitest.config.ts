@@ -12,6 +12,7 @@ export default defineConfig({
     // falls outside vitest's default `**/*.{test,spec}.*` glob — this is a
     // belt-and-braces guard so a future `*.test.ts` helper in there can never
     // be picked up by the unit run (it would try to launch a browser).
+    //
     // `stress` holds the load-test harness. Its self-tests fake Docker and spawn
     // about ten Node processes per case; they are meant to be run on demand when
     // stress testing (`pnpm test:stress`), not on every unit run.

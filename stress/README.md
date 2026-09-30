@@ -37,8 +37,9 @@ node stress/loadgen.mjs --url http://localhost:3000/en --concurrency 1000 --dura
 
 ## Harness self-tests
 
-`loadgen.test.ts` and `run-stress.test.ts` check the harness itself with faked
-Docker and network commands. They are excluded from `pnpm test`; run them with
+`loadgen.test.ts` drives the load generator against local HTTP servers, and
+`run-stress.test.ts` drives the orchestrator with faked Docker and network
+commands. They are excluded from `pnpm test`; run them with
 `pnpm test:stress` after changing anything in this directory.
 
 ## What gets hit
