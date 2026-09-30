@@ -2,7 +2,16 @@ import { type ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VotingReportPdfButton } from './VotingReportPdfButton'
-import { PROCESS_ID, collectTextContent, createElection, createQuestionResults, createResults } from './__fixtures__'
+import {
+  PROCESS_ID,
+  collectTextContent,
+  createElection,
+  createQuestionResults,
+  createResults,
+  translate,
+} from './__fixtures__'
+import { buildCertificateData } from './certificate-data'
+import { VotingCertificateDocument } from './pdf-document'
 
 const mockModule = vi.hoisted(() => ({
   pdfSpy: vi.fn(),
@@ -539,5 +548,19 @@ describe('VotingCertificateDocument', () => {
     expect(documentText).toContain('Share of cast power')
     expect(documentText).toContain('Share of eligible power')
     expect(documentText).not.toContain('Share of votes')
+  })
+
+  it('keeps the whole results intro when the process name appears in it more than once', () => {
+    const data = buildCertificateData({
+      election: createElection({ title: { default: 'The' } }),
+      results: createResults(),
+      t: translate,
+      explorerUrl: 'https://explorer.vote',
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    const documentText = collectTextContent(<VotingCertificateDocument data={data} t={translate} />)
+
+    expect(documentText.join('')).toContain('The voting process The consisted of 1 questions.')
   })
 })

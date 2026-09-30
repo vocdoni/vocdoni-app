@@ -370,6 +370,15 @@ const ReportPageNumber = () => (
   </View>
 )
 
+// Splits the results intro around the process name so the name can be set in italics. Slicing at
+// the first match, unlike `split`, keeps the text after a repeated match (a process titled "The").
+// Without a match the whole intro comes first and the name is appended.
+const splitAroundReference = (text: string, reference: string): [string, string] => {
+  const start = text.indexOf(reference)
+  if (start === -1) return [text, '']
+  return [text.slice(0, start), text.slice(start + reference.length)]
+}
+
 const RunningHeader = () => (
   <View fixed style={styles.runningHeader}>
     <View style={styles.pageBrand}>
@@ -380,6 +389,10 @@ const RunningHeader = () => (
 
 export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePage }: PdfDocumentProps) => {
   const reportSections = buildReportSections(t)
+  const [votingProcessIntroBefore, votingProcessIntroAfter] = splitAroundReference(
+    data.votingProcessIntro,
+    data.eventReference
+  )
   const formatVotingPowerShort = (power: string) =>
     power === data.notAvailableLabel
       ? data.notAvailableLabel
@@ -531,9 +544,9 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
           title={t('process_pdf.document.sections.voting_process', { defaultValue: '5. Questions and Results' })}
         >
           <PdfText style={styles.paragraph}>
-            {data.votingProcessIntro.split(data.eventReference)[0]}
+            {votingProcessIntroBefore}
             <PdfText style={styles.italicText}>{data.eventReference}</PdfText>
-            {data.votingProcessIntro.split(data.eventReference)[1]}
+            {votingProcessIntroAfter}
           </PdfText>
           {data.resultsHiddenText ? (
             <PdfText style={styles.smallText}>{data.resultsHiddenText}</PdfText>
