@@ -17,6 +17,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useMutation } from '@tanstack/react-query'
+import { useRef } from 'react'
 import type { TFunction } from 'i18next'
 import { DropzoneInputProps, DropzoneRootProps, ErrorCode, FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
@@ -46,18 +47,32 @@ const imageAccept = {
 
 // react-dropzone only flags too-many-files when several files are accepted, so a supported file dropped alongside an
 // unsupported one also counts as too many
-export const isTooManyFiles = (accepted: File[], rejections: FileRejection[]) =>
+const isTooManyFiles = (accepted: File[], rejections: FileRejection[]) =>
   accepted.length > 0 || rejections.some(({ errors }) => errors.some(({ code }) => code === ErrorCode.TooManyFiles))
 
-// react-dropzone calls onDrop even when every file was rejected, so explain why instead of uploading nothing
-const imageRejectionMessage = (t: TFunction, accepted: File[], rejections: FileRejection[]) => {
+// react-dropzone calls onDrop even when every file was rejected, so explain why instead of silently doing nothing.
+// Returns undefined when nothing was rejected.
+export const dropRejectionMessage = (
+  t: TFunction,
+  accepted: File[],
+  rejections: FileRejection[],
+  invalidTypeMessage: string
+): string | undefined => {
   if (!rejections.length) return
   return isTooManyFiles(accepted, rejections)
     ? t('uploader.error.too_many_files', { defaultValue: 'Upload one file at a time.' })
-    : t('uploader.error.invalid_image_type', {
-        defaultValue: "This file type isn't supported. Upload a .png or .jpg image.",
-      })
+    : invalidTypeMessage
 }
+
+const imageRejectionMessage = (t: TFunction, accepted: File[], rejections: FileRejection[]) =>
+  dropRejectionMessage(
+    t,
+    accepted,
+    rejections,
+    t('uploader.error.invalid_image_type', {
+      defaultValue: "This file type isn't supported. Upload a .png or .jpg image.",
+    })
+  )
 
 const useUploadFile = () => {
   const { bearedFetch } = useAuth()
@@ -90,17 +105,21 @@ export const AvatarUploader = (props: FormControlProps) => {
   const avatar = watch('avatar')
   const name = getValues('name')
 
+  // Bumped on every drop so a slow upload from an earlier drop can't overwrite the outcome of a newer one
+  const latestDrop = useRef(0)
   const onUpload = async (files: File[], rejections: FileRejection[] = []) => {
+    // Nothing was dropped at all (e.g. an empty folder): keep any visible error and any upload in flight
+    if (!files.length && !rejections.length) return
+    const drop = ++latestDrop.current
     clearErrors('avatar')
     const rejected = imageRejectionMessage(t, files, rejections)
     if (rejected) {
       setError('avatar', { message: rejected })
       return
     }
-    // Nothing was dropped at all (e.g. an empty folder)
-    if (!files.length) return
     try {
       const url = await uploadFile(files[0])
+      if (drop !== latestDrop.current) return
       setValue('avatar', url)
       toast({
         title: t('uploader.avatar_upload_success', { defaultValue: 'Avatar uploaded' }),
@@ -109,6 +128,7 @@ export const AvatarUploader = (props: FormControlProps) => {
         isClosable: true,
       })
     } catch (error) {
+      if (drop !== latestDrop.current) return
       const errorMessage =
         error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
       setError('avatar', {
@@ -209,17 +229,21 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
 
   const value = watch(name)
 
+  // Bumped on every drop so a slow upload from an earlier drop can't overwrite the outcome of a newer one
+  const latestDrop = useRef(0)
   const onUpload = async (files: File[], rejections: FileRejection[] = []) => {
+    // Nothing was dropped at all (e.g. an empty folder): keep any visible error and any upload in flight
+    if (!files.length && !rejections.length) return
+    const drop = ++latestDrop.current
     clearErrors(name)
     const rejected = imageRejectionMessage(t, files, rejections)
     if (rejected) {
       setError(name, { message: rejected })
       return
     }
-    // Nothing was dropped at all (e.g. an empty folder)
-    if (!files.length) return
     try {
       const url = await uploadFile(files[0])
+      if (drop !== latestDrop.current) return
       setValue(name, url, { shouldDirty: true })
       toast({
         title: t('uploader.image_upload_success', { defaultValue: 'Image uploaded' }),
@@ -228,6 +252,7 @@ export const ImageUploader = ({ name, borderTopRadius, w = 'full', h = '150px' }
         isClosable: true,
       })
     } catch (error) {
+      if (drop !== latestDrop.current) return
       const errorMessage =
         error && error instanceof Error ? error.message : t('uploader.upload_failed', { defaultValue: 'Upload failed' })
       setError(name, { message: errorMessage })

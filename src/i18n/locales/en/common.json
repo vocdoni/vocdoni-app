@@ -968,8 +968,7 @@
       "download_template_btn": "Download Template",
       "error": {
         "invalid_file_type": "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
-        "read_failed": "We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again.",
-        "too_many_files": "Upload one file at a time."
+        "read_failed": "We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again."
       },
       "field_mapper": {
         "empty": "-- Do not import --",

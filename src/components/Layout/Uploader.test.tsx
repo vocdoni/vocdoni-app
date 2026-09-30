@@ -82,6 +82,40 @@ describe.each([
     expect(screen.queryByText(/Upload one file at a time|isn't supported/)).not.toBeInTheDocument()
   })
 
+  it('keeps a visible error when nothing was dropped', async () => {
+    render(<Form>{renderUploader()}</Form>)
+
+    await drop([], [invalidType(pdf())])
+    await drop([])
+
+    expect(screen.getByText("This file type isn't supported. Upload a .png or .jpg image.")).toBeInTheDocument()
+  })
+
+  it('ignores a slow upload from an earlier drop once a newer file is dropped', async () => {
+    let finishUpload: (value: { urls: string[] }) => void = () => {}
+    bearedFetch.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finishUpload = resolve
+      })
+    )
+    render(<Form>{renderUploader()}</Form>)
+
+    let slowDrop: Promise<void> | undefined
+    await act(async () => {
+      slowDrop = dropHandler?.([png()], [])
+    })
+    await drop([], [invalidType(pdf())])
+    await act(async () => {
+      finishUpload({ urls: ['https://example.com/logo.png'] })
+      await slowDrop
+    })
+
+    expect(screen.getByText("This file type isn't supported. Upload a .png or .jpg image.")).toBeInTheDocument()
+    // Neither the avatar (with its remove button) nor the image preview may show the stale upload
+    expect(screen.queryByRole('button', { name: 'Remove avatar' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+  })
+
   it('uploads a single accepted image', async () => {
     render(<Form>{renderUploader()}</Form>)
 

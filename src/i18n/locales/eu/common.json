@@ -968,8 +968,7 @@
       "download_template_btn": "Deskargatu txantiloia",
       "error": {
         "invalid_file_type": "Fitxategi mota hau ez da onartzen. Igo .csv, .xlsx, .xls edo .ods fitxategi bat.",
-        "read_failed": "Ezin izan dugu fitxategi hau irakurri. Egiaztatu baliozko CSV edo kalkulu-orri bat dela eta saiatu berriro.",
-        "too_many_files": "Igo fitxategi bakarra aldi bakoitzean."
+        "read_failed": "Ezin izan dugu fitxategi hau irakurri. Egiaztatu baliozko CSV edo kalkulu-orri bat dela eta saiatu berriro."
       },
       "field_mapper": {
         "empty": "-- Ez inportatu --",

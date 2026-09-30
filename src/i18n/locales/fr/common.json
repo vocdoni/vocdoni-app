@@ -977,8 +977,7 @@
       "download_template_btn": "Télécharger le modèle",
       "error": {
         "invalid_file_type": "Ce type de fichier n'est pas pris en charge. Importez un fichier .csv, .xlsx, .xls ou .ods.",
-        "read_failed": "Nous n'avons pas pu lire ce fichier. Vérifiez qu'il s'agit d'un fichier CSV ou d'un tableur valide, puis réessayez.",
-        "too_many_files": "Importez un seul fichier à la fois."
+        "read_failed": "Nous n'avons pas pu lire ce fichier. Vérifiez qu'il s'agit d'un fichier CSV ou d'un tableur valide, puis réessayez."
       },
       "field_mapper": {
         "empty": "-- Ne pas importer --",

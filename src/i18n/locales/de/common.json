@@ -968,8 +968,7 @@
       "download_template_btn": "Vorlage herunterladen",
       "error": {
         "invalid_file_type": "Dieser Dateityp wird nicht unterstützt. Lade eine .csv-, .xlsx-, .xls- oder .ods-Datei hoch.",
-        "read_failed": "Wir konnten diese Datei nicht lesen. Prüfe, ob es eine gültige CSV- oder Tabellendatei ist, und versuche es erneut.",
-        "too_many_files": "Lade jeweils nur eine Datei hoch."
+        "read_failed": "Wir konnten diese Datei nicht lesen. Prüfe, ob es eine gültige CSV- oder Tabellendatei ist, und versuche es erneut."
       },
       "field_mapper": {
         "empty": "-- Nicht importieren --",

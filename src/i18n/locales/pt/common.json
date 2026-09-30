@@ -977,8 +977,7 @@
       "download_template_btn": "Transferir modelo",
       "error": {
         "invalid_file_type": "Este tipo de ficheiro não é suportado. Carrega um ficheiro .csv, .xlsx, .xls ou .ods.",
-        "read_failed": "Não conseguimos ler este ficheiro. Verifica se é um CSV ou uma folha de cálculo válida e tenta novamente.",
-        "too_many_files": "Carrega um ficheiro de cada vez."
+        "read_failed": "Não conseguimos ler este ficheiro. Verifica se é um CSV ou uma folha de cálculo válida e tenta novamente."
       },
       "field_mapper": {
         "empty": "-- Não importar --",

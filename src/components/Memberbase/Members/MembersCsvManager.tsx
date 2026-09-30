@@ -17,7 +17,7 @@ import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuFileSpreadsheet } from 'react-icons/lu'
 import { useSubscription } from '~components/Auth/Subscription'
-import Uploader, { isTooManyFiles } from '~components/Layout/Uploader'
+import Uploader, { dropRejectionMessage } from '~components/Layout/Uploader'
 import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
@@ -78,16 +78,16 @@ export const MembersCsvManager = () => {
       setValue('spreadsheet', undefined)
       clearErrors('spreadsheet')
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
-      if (rejections.length) {
-        const tooMany = isTooManyFiles(accepted, rejections)
-        setError('spreadsheet', {
-          type: 'validate',
-          message: tooMany
-            ? t('memberbase.importer.error.too_many_files', { defaultValue: 'Upload one file at a time.' })
-            : t('memberbase.importer.error.invalid_file_type', {
-                defaultValue: "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
-              }),
+      const rejected = dropRejectionMessage(
+        t,
+        accepted,
+        rejections,
+        t('memberbase.importer.error.invalid_file_type', {
+          defaultValue: "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
         })
+      )
+      if (rejected) {
+        setError('spreadsheet', { type: 'validate', message: rejected })
         return
       }
       try {

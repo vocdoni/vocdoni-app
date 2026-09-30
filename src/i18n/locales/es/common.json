@@ -977,8 +977,7 @@
       "download_template_btn": "Descargar plantilla",
       "error": {
         "invalid_file_type": "Este tipo de archivo no es compatible. Sube un archivo .csv, .xlsx, .xls u .ods.",
-        "read_failed": "No hemos podido leer este archivo. Comprueba que sea un CSV o una hoja de cálculo válida e inténtalo de nuevo.",
-        "too_many_files": "Sube un solo archivo cada vez."
+        "read_failed": "No hemos podido leer este archivo. Comprueba que sea un CSV o una hoja de cálculo válida e inténtalo de nuevo."
       },
       "field_mapper": {
         "empty": "-- No importar --",

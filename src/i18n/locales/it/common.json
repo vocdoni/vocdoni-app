@@ -977,8 +977,7 @@
       "download_template_btn": "Scarica modello",
       "error": {
         "invalid_file_type": "Questo tipo di file non è supportato. Carica un file .csv, .xlsx, .xls o .ods.",
-        "read_failed": "Non siamo riusciti a leggere questo file. Controlla che sia un CSV o un foglio di calcolo valido e riprova.",
-        "too_many_files": "Carica un solo file alla volta."
+        "read_failed": "Non siamo riusciti a leggere questo file. Controlla che sia un CSV o un foglio di calcolo valido e riprova."
       },
       "field_mapper": {
         "empty": "-- Non importare --",
