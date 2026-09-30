@@ -1,7 +1,7 @@
 import { addDays, format } from 'date-fns'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Routes } from '~routes'
-import { render, screen, TestMemoryRouter } from '~src/test-utils'
+import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { defaultProcessValues, Process } from '../common'
 import { BasicConfig } from './BasicConfig'
 
@@ -31,6 +31,15 @@ describe('BasicConfig plan duration limit', () => {
 
     expect(await screen.findByText(/7-day limit/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'contact us' })).toHaveAttribute('href', Routes.dashboard.settings.support)
+  })
+
+  it('drops the warning once the end date is cleared', async () => {
+    render(<Harness endInDays={30} />)
+    expect(await screen.findByText(/7-day limit/)).toBeInTheDocument()
+
+    fireEvent.change(document.getElementById('endDate')!, { target: { value: '' } })
+
+    expect(screen.queryByText(/7-day limit/)).not.toBeInTheDocument()
   })
 
   it('shows no warning within the plan limit', () => {

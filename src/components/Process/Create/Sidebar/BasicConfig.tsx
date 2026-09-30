@@ -12,7 +12,7 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { MutableRefObject, ReactNode, useEffect, useRef, useState } from 'react'
+import { MutableRefObject, ReactNode, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router'
@@ -36,7 +36,6 @@ export const BasicConfig = () => {
   const { permission } = useSubscription()
   const { format } = useDateFns()
   const maxDuration = permission(SubscriptionPermission.MaxDuration)
-  const [durationExceeded, setDurationExceeded] = useState(false)
   const {
     register,
     formState: { errors },
@@ -59,16 +58,23 @@ export const BasicConfig = () => {
     message: t('form.error.field_is_required'),
   }
 
-  const validateDuration = (value: string) => {
-    if (!value || !maxDuration) return true
+  // Whether an end date goes past the plan's duration limit; shared by the field validation and the warning.
+  const exceedsMaxDuration = (value: string) => {
+    if (!value || !maxDuration) return false
 
     const start = startDate && !autoStart ? new Date(startDate) : new Date()
     const end = new Date(value)
     const durationDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-    const maxDurationDays = parseInt(maxDuration)
 
+    return durationDays > parseInt(maxDuration)
+  }
+
+  // Derived on render, so it also clears when the end date is emptied or the limit goes away.
+  const durationExceeded = exceedsMaxDuration(endDate)
+
+  const validateDuration = (value: string) => {
     return (
-      durationDays <= maxDurationDays ||
+      !exceedsMaxDuration(value) ||
       t('form.create_process.error.max_duration_exceeded', {
         defaultValue: 'Exceeds max duration.',
         days: maxDuration,
@@ -105,17 +111,6 @@ export const BasicConfig = () => {
   const showPicker = (ref: MutableRefObject<HTMLInputElement | null | undefined>) => {
     if (ref.current && 'showPicker' in ref.current) ref.current.showPicker()
   }
-
-  useEffect(() => {
-    if (!endDate || !maxDuration) return
-
-    const start = startDate && !autoStart ? new Date(startDate) : new Date()
-    const end = new Date(endDate)
-    const maxDurationDays = parseInt(maxDuration)
-    const durationDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-
-    setDurationExceeded(durationDays > maxDurationDays)
-  }, [startDate, endDate, autoStart, maxDuration])
 
   const handleAutoStartChange = (checked: boolean) => {
     setValue('autoStart', checked)
