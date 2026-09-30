@@ -35,6 +35,12 @@ Run a single level by hand against an already-running server:
 node stress/loadgen.mjs --url http://localhost:3000/en --concurrency 1000 --duration 20 --warmup 3
 ```
 
+## Harness self-tests
+
+`loadgen.test.ts` and `run-stress.test.ts` check the harness itself with faked
+Docker and network commands. They are excluded from `pnpm test`; run them with
+`pnpm test:stress` after changing anything in this directory.
+
 ## What gets hit
 
 The default path is `/en`, which renders the client-app shell through Vike
