@@ -15,20 +15,29 @@ const UNAVAILABLE_SPACE_WARNING = "can't wrap between pages"
 // Real PDF layout is slow when the whole suite runs in parallel.
 const LAYOUT_TIMEOUT = 30000
 
-const buildReportData = ({ questions, choices, title }: { questions: number; choices: number; title?: string }) => {
+type ReportSize = {
+  questions: number
+  choices: number
+  title?: string
+  choiceName?: string
+  weighted?: boolean
+}
+
+const buildReportData = ({ questions, choices, title, choiceName, weighted }: ReportSize) => {
   const processQuestions = Array.from({ length: questions }, (_, questionIndex) =>
     createQuestion({
       id: `question-${questionIndex + 1}`,
       title: { default: title ?? `Question ${questionIndex + 1}` },
       choices: Array.from({ length: choices }, (_, choiceIndex) => ({
-        title: { default: `Option ${choiceIndex + 1}` },
+        title: { default: `${choiceName ?? 'Option'} ${choiceIndex + 1}` },
         value: choiceIndex,
       })),
     })
   )
+  const election = createElection({ questions: processQuestions })
 
   return buildCertificateData({
-    election: createElection({ questions: processQuestions }),
+    election: weighted ? { ...election, census: { ...election.census, weighted: true } } : election,
     results: createResults({
       questions: processQuestions.map((question) =>
         createQuestionResults({
@@ -82,7 +91,11 @@ describe('voting report PDF layout', () => {
     { questions: 1, choices: 30 },
     // A title this long plus 15 options is taller than a page unless the card may split.
     { questions: 1, choices: 15, title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '.repeat(30) },
-  ])(
+    // The most verification links section 6 still keeps on a single page.
+    { questions: 8, choices: 2 },
+    // Weighted cards have a narrower option column and more summary fields, but 15 options stay whole.
+    { questions: 1, choices: 15, choiceName: 'Candidate Josefina Martínez-Rodríguez', weighted: true },
+  ] satisfies ReportSize[])(
     'fits every block on a page with $questions questions of $choices options',
     async (size) => {
       const { unavailableSpaceWarnings } = await layOutReport(buildReportData(size))
