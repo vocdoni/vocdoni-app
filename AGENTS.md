@@ -22,6 +22,7 @@
 - `pnpm test`: run all Vitest tests once.
 - `pnpm test:watch`: run tests in watch mode.
 - `pnpm test:coverage`: generate coverage reports.
+- `pnpm test:stress`: run the load-test harness self-tests in `stress/` (excluded from `pnpm test`; run after changing that directory).
 - `pnpm test:e2e:stack`: boot the disposable backend and run the Playwright end-to-end suite (needs docker).
 - `pnpm translations`: extract i18n keys from source code and update locale files.
 - `pnpm chakra:typegen`: regenerate Chakra typings after theme/system changes.
