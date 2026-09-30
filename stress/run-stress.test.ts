@@ -3,8 +3,7 @@ import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promi
 import { existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { setTimeout as delay } from 'node:timers/promises'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const script = path.resolve(__dirname, 'run-stress.sh')
 const directories: string[] = []
@@ -101,12 +100,19 @@ if (args[0].endsWith('/loadgen.mjs')) {
     Object.entries(commands).map(([name, content]) => writeFile(path.join(bin, name), content, { mode: 0o755 }))
   )
   let child: ReturnType<typeof execFile>
-  const completed = new Promise<{ code: number | string; stdout: string; stderr: string }>((resolve) => {
+  const completed = new Promise<{ code: number | string; stdout: string; stderr: string }>((resolve, reject) => {
+    // Our own deadline rather than execFile's `timeout`: the script traps SIGTERM and exits 143,
+    // so a timed-out run would otherwise look like any other non-zero exit and satisfy the
+    // `code !== 0` assertions. SIGTERM (not SIGKILL) still lets its cleanup reap the fakes.
+    let timedOut = false
+    const timer = setTimeout(() => {
+      timedOut = true
+      child.kill('SIGTERM')
+    }, RUN_TIMEOUT_MS)
     child = execFile(
       'bash',
       [path.join(root, 'stress/run-stress.sh'), '--skip-build', '--levels', levels, '--keep'],
       {
-        timeout: RUN_TIMEOUT_MS,
         env: {
           ...process.env,
           PATH: `${bin}:${process.env.PATH}`,
@@ -115,9 +121,15 @@ if (args[0].endsWith('/loadgen.mjs')) {
           FIXTURE_RESULT: JSON.stringify(measurement),
         },
       },
-      (error, stdout, stderr) => resolve({ code: error ? error.code || error.signal || 1 : 0, stdout, stderr })
+      (error, stdout, stderr) => {
+        clearTimeout(timer)
+        if (timedOut) reject(new Error(`run-stress.sh did not finish within ${RUN_TIMEOUT_MS} ms\n${stdout}${stderr}`))
+        else resolve({ code: error ? error.code || error.signal || 1 : 0, stdout, stderr })
+      }
     )
   })
+  // A test can fail before awaiting `completed`; keep that from surfacing as an unhandled rejection.
+  completed.catch(() => {})
   return { root, child: child!, completed }
 }
 
@@ -249,10 +261,10 @@ describe('stress ramp orchestration', { timeout: RUN_TIMEOUT_MS + 5000 }, () => 
 
   it('terminates on SIGTERM instead of continuing subsequent levels', async () => {
     const run = await harness('signal', successfulResult, '1 2')
-    const loadgenStarted = path.join(run.root, 'loadgen-started')
-    const deadline = Date.now() + RUN_TIMEOUT_MS
-    while (!existsSync(loadgenStarted) && Date.now() < deadline) await delay(10)
-    expect(existsSync(loadgenStarted)).toBe(true)
+    await vi.waitFor(() => expect(existsSync(path.join(run.root, 'loadgen-started'))).toBe(true), {
+      timeout: RUN_TIMEOUT_MS,
+      interval: 10,
+    })
     run.child.kill('SIGTERM')
     const output = await run.completed
     expect(output.code).toBe(143)
