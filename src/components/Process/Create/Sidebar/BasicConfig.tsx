@@ -13,7 +13,7 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { MutableRefObject, ReactNode, useRef, useState } from 'react'
-import { FieldValues, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link as RouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
@@ -50,7 +50,7 @@ export const BasicConfig = () => {
     setValue,
     clearErrors,
     trigger,
-  } = useFormContext()
+  } = useFormContext<Process>()
   const startDateRef = useRef<HTMLInputElement | null>(null)
   const endDateRef = useRef<HTMLInputElement | null>(null)
   const [min, setMin] = useState<Date>(new Date())
@@ -81,9 +81,9 @@ export const BasicConfig = () => {
   // Derived on render, so it also clears when the end date is emptied or the limit goes away.
   const durationExceeded = exceedsMaxDuration(endDate, { autoStart, startDate, startTime, endTime })
 
-  const validateDuration = (value: string, values: FieldValues) => {
+  const validateDuration = (value: string, values: Process) => {
     return (
-      !exceedsMaxDuration(value, values as Process) ||
+      !exceedsMaxDuration(value, values) ||
       t('form.create_process.error.max_duration_exceeded', {
         defaultValue: 'Exceeds max duration.',
         days: maxDuration,
@@ -91,7 +91,7 @@ export const BasicConfig = () => {
     )
   }
 
-  const validateEndDateAfterStart = (value: string, { startDate, autoStart }: FieldValues) => {
+  const validateEndDateAfterStart = (value: string, { startDate, autoStart }: Process) => {
     if (!value || !startDate || autoStart) return true
     const start = parseFormDateTime(startDate)
     const end = parseFormDateTime(value)
@@ -105,7 +105,8 @@ export const BasicConfig = () => {
   }
 
   const startDateRegister = register('startDate', {
-    onChange: (e) => setMin(parseFormDateTime(e.target.value)),
+    // A cleared start date falls back to today, so the end date keeps a minimum.
+    onChange: (e) => setMin(e.target.value ? parseFormDateTime(e.target.value) : new Date()),
     // Re-check the end date/time against the new start once the form has been submitted.
     deps: ['endDate', 'endTime'],
     required: {
@@ -211,10 +212,10 @@ export const BasicConfig = () => {
               {...register('endTime', {
                 required,
                 deps: ['endDate'],
-                validate: (value: string, values: FieldValues) => {
+                validate: (value: string, values: Process) => {
                   if (!value || !values.endDate) return true
                   const end = parseFormDateTime(values.endDate, value)
-                  const start = getStart(values as Process)
+                  const start = getStart(values)
                   return (
                     end >= start ||
                     t('form.create_process.error.end_time_greater_than_start', {
