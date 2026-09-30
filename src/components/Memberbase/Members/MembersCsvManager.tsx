@@ -11,7 +11,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { ErrorCode, FileRejection, useDropzone } from 'react-dropzone'
 import { useFormContext } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -67,8 +67,11 @@ export const MembersCsvManager = () => {
   const existingMembers = membersData?.pagination?.totalItems ?? 0
 
   // File dropzone
+  // Bumped on every drop so a slow read from an earlier drop can't overwrite the outcome of a newer one
+  const latestDrop = useRef(0)
   const onDrop = useCallback(
     async (accepted: File[], rejections: FileRejection[] = []) => {
+      const drop = ++latestDrop.current
       const [file] = accepted
       setValue('spreadsheet', undefined)
       clearErrors('spreadsheet')
@@ -92,6 +95,7 @@ export const MembersCsvManager = () => {
       try {
         const spreadsheet = new SpreadsheetManager(file, true)
         await spreadsheet.read()
+        if (drop !== latestDrop.current) return
         const totalMembers = spreadsheet.data.length + existingMembers
         const limitErrorMessage = t('uploader.csv_row_limit_exceeded', {
           count: totalMembers,
@@ -105,6 +109,7 @@ export const MembersCsvManager = () => {
         })
         setValue('spreadsheet', spreadsheet)
       } catch (e) {
+        if (drop !== latestDrop.current) return
         if (e instanceof CsvRowLimitExceededError) {
           openModal('planUpgrade', { context: 'memberbase', limit: String(maxCensusSize ?? '') })
           return
