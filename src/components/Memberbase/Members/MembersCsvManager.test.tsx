@@ -11,6 +11,7 @@ type DropHandler = (files: File[], rejections?: FileRejection[]) => Promise<void
 let dropHandler: DropHandler | undefined
 let mockRowCount = 0
 let mockReadError: Error | undefined
+let mockRead: (() => Promise<void>) | undefined
 const openModal = vi.fn()
 
 vi.mock('react-dropzone', async (importOriginal) => ({
@@ -35,6 +36,7 @@ vi.mock('~components/Spreadsheet/SpreadsheetManager', () => {
     }
 
     async read() {
+      if (mockRead) return mockRead()
       if (mockReadError) throw mockReadError
     }
   }
@@ -91,6 +93,7 @@ describe('MembersCsvManager', () => {
   beforeEach(() => {
     mockRowCount = 0
     mockReadError = undefined
+    mockRead = undefined
     openModal.mockClear()
     dropHandler = undefined
   })
@@ -128,6 +131,44 @@ describe('MembersCsvManager', () => {
       screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
     ).toBeInTheDocument()
     expect(screen.queryByText('File type must be text/csv')).not.toBeInTheDocument()
+  })
+
+  it('shows no error when nothing was dropped', async () => {
+    render(<MembersCsvManagerForm />)
+
+    await act(async () => {
+      await dropHandler?.([], [])
+    })
+
+    expect(screen.queryByText(/This file type isn't supported/)).not.toBeInTheDocument()
+    expect(screen.queryByText('Upload one file at a time.')).not.toBeInTheDocument()
+  })
+
+  it('ignores a slow read from an earlier drop once a newer file is dropped', async () => {
+    let failRead: (error: Error) => void = () => {}
+    mockRead = () =>
+      new Promise((_, reject) => {
+        failRead = reject
+      })
+    render(<MembersCsvManagerForm />)
+
+    let slowDrop: Promise<void> | undefined
+    await act(async () => {
+      slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+    })
+    const pdf = new File(['data'], 'notes.pdf', { type: 'application/pdf' })
+    await act(async () => {
+      await dropHandler?.([], [{ file: pdf, errors: [{ code: 'file-invalid-type', message: 'Invalid type' }] }])
+    })
+    await act(async () => {
+      failRead(new TypeError('raw reader failure'))
+      await slowDrop
+    })
+
+    expect(
+      screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/We couldn't read this file/)).not.toBeInTheDocument()
   })
 
   it('asks for a single file when several files are dropped', async () => {

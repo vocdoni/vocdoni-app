@@ -21,8 +21,7 @@ import Uploader from '~components/Layout/Uploader'
 import { usePricingModal } from '~components/Pricing/use-pricing-modal'
 import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
-import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
-import ErrorMissingHeader from '~components/Spreadsheet/errors/ErrorMissingHeader'
+import SpreadsheetError from '~components/Spreadsheet/errors/SpreadsheetError'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { usePaginatedMembers } from '~queries/members'
 import { useTable } from '../TableProvider'
@@ -75,8 +74,10 @@ export const MembersCsvManager = () => {
       const [file] = accepted
       setValue('spreadsheet', undefined)
       clearErrors('spreadsheet')
+      // Nothing was dropped at all (e.g. an empty folder), so there is nothing to complain about
+      if (!file && !rejections.length) return
       // react-dropzone calls onDrop even when every file was rejected, so there may be nothing to read
-      if (rejections.length || !file) {
+      if (rejections.length) {
         // react-dropzone only flags too-many-files when several files are accepted, so a supported file dropped
         // alongside an unsupported one also counts as too many
         const tooMany =
@@ -115,7 +116,7 @@ export const MembersCsvManager = () => {
           return
         }
         // Only our own errors carry a translated message; anything else (FileReader, xlsx) is raw browser text
-        const known = e instanceof ErrorMissingData || e instanceof ErrorMissingHeader
+        const known = e instanceof SpreadsheetError
         setError('spreadsheet', {
           type: known ? e.name : 'validate',
           message: known
