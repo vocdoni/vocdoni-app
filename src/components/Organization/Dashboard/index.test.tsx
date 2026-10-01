@@ -1,4 +1,6 @@
-import { mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
+import type { QuestionStatus } from '@vocdoni/api-types'
+import { createElection, createQuestion } from '~components/Process/VotingReportPdf/__fixtures__'
+import { mockUseElection, mockUseOrganization, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock, setAuthMock, getAuthMock } from '~src/test-utils-react-providers-mock'
 import OrganizationDashboard from './index'
 
@@ -46,6 +48,11 @@ vi.mock('@vocdoni/react-components', async (importOriginal) => {
     ElectionTitle: () => <div>Title</div>,
   }
 })
+
+// Echo the calendar day, so tests can tell which date a line was given.
+vi.mock('~i18n/use-date-fns', () => ({
+  useDateFns: () => ({ format: (date: Date | string) => new Date(date).toISOString().slice(0, 10) }),
+}))
 
 vi.mock('./UsageLimits', () => ({
   UsageLimits: () => <div>UsageLimits</div>,
@@ -96,5 +103,42 @@ describe('OrganizationDashboard', () => {
       </TestMemoryRouter>
     )
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
+  })
+
+  describe('recent processes', () => {
+    // The fixture is configured to end on 2026-01-02.
+    const renderRecent = (status: QuestionStatus, endedAt?: string) => {
+      const election = { ...createElection({ questions: [createQuestion({ status })] }), endedAt }
+      electionsQueryState = { data: { processes: [election] }, isLoading: false, isError: false, error: null }
+      setReactProvidersMock({
+        ElectionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+        useOrganization: () => mockUseOrganization({ organization: { address: '0xabc' } }),
+        useElection: () => mockUseElection({ election, results: null }),
+      })
+
+      render(
+        <TestMemoryRouter>
+          <OrganizationDashboard />
+        </TestMemoryRouter>
+      )
+    }
+
+    it('says when a vote ended early actually ended', () => {
+      renderRecent('RESULTS', '2025-12-31T15:42:00Z')
+
+      expect(screen.getByText('Ended on 2025-12-31')).toBeInTheDocument()
+    })
+
+    it('says a finished vote ended on its configured end', () => {
+      renderRecent('ENDED')
+
+      expect(screen.getByText('Ended on 2026-01-02')).toBeInTheDocument()
+    })
+
+    it('says when a running vote ends', () => {
+      renderRecent('ONGOING')
+
+      expect(screen.getByText('Ends on 2026-01-02')).toBeInTheDocument()
+    })
   })
 })

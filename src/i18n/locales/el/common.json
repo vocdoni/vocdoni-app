@@ -333,6 +333,7 @@
     "underline": "Υπογράμμιση"
   },
   "election": {
+    "ended_on": "Έληξε στις {{date}}",
     "ends_on": "Λήγει στις {{date}}",
     "total_votes": "{{totalVotes}} ψήφοι"
   },

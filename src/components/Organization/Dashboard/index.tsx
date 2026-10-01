@@ -24,6 +24,7 @@ import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
+import { getProcessEndDate, hasStoppedVoting } from '~src/queries/process-end-date'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { UsageLimits } from './UsageLimits'
 
@@ -286,6 +287,8 @@ const RecentProcess = () => {
 
   if (!election) return null
 
+  const endDate = format(getProcessEndDate(election), t('organization.date_format'))
+
   return (
     <Flex align='center'>
       <Box flex='1' minW={0} mr={4}>
@@ -295,10 +298,9 @@ const RecentProcess = () => {
           </ReactRouterLink>
         </Link>
         <Text fontSize='sm' color='texts.subtle' truncate>
-          {t('election.ends_on', {
-            defaultValue: 'Ends on {{date}}',
-            date: format(election.endDate, t('organization.date_format')),
-          })}
+          {hasStoppedVoting(election)
+            ? t('election.ended_on', { defaultValue: 'Ended on {{date}}', date: endDate })
+            : t('election.ends_on', { defaultValue: 'Ends on {{date}}', date: endDate })}
         </Text>
       </Box>
       <Flex align='center' gap={2} flexShrink={0}>

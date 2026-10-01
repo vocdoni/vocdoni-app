@@ -23,8 +23,9 @@ const election = createElection({
   questions: [createQuestion({ status: 'ONGOING' })],
 })
 
+// Echo the calendar day, so tests can tell which date a cell was given.
 vi.mock('~i18n/use-date-fns', () => ({
-  useDateFns: () => ({ format: () => '2026-01-01' }),
+  useDateFns: () => ({ format: (date: Date | string) => new Date(date).toISOString().slice(0, 10) }),
 }))
 
 vi.mock('./use-clone-as-draft', () => ({
@@ -100,6 +101,41 @@ describe('ProcessesTable', () => {
     // Card view renders the dates as inline labelled lines ("Start date: …").
     expect(screen.getByText(/start date:/i)).toBeInTheDocument()
     expect(screen.getByText(/end date:/i)).toBeInTheDocument()
+  })
+
+  describe('end date', () => {
+    // The fixture is configured to end on 2026-01-02.
+    const renderWithEndedAt = (endedAt?: string) => {
+      const process = { ...election, questions: [createQuestion({ status: 'RESULTS' })], endedAt }
+      setReactProvidersMock({
+        ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+        useElection: () =>
+          mockUseElection({
+            election: process,
+            localize: (key: string) => key,
+            client: { explorerUrl: 'https://example.test' },
+          }),
+        useRoutedPagination: () => ({ pagination: null, initialPage: 1 }),
+      })
+
+      render(
+        <TestMemoryRouter>
+          <ProcessesTable processes={[process as any]} />
+        </TestMemoryRouter>
+      )
+    }
+
+    it('shows when voting actually stopped for a vote ended early', () => {
+      renderWithEndedAt('2025-12-31T15:42:00Z')
+
+      expect(screen.getByText('End date: 2025-12-31')).toBeInTheDocument()
+    })
+
+    it('shows the configured end for a vote that ran to its schedule', () => {
+      renderWithEndedAt()
+
+      expect(screen.getByText('End date: 2026-01-02')).toBeInTheDocument()
+    })
   })
 
   it('renders the table with column headers on desktop widths', () => {

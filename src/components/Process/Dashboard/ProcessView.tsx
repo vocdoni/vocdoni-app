@@ -78,7 +78,7 @@ import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Das
 import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useCensusSize } from '~queries/census'
-import { useProcessEarlyEndDate } from '~queries/process-end-date'
+import { getProcessEndDate } from '~queries/process-end-date'
 import { Routes } from '~src/router/routes'
 import { getPublicProcessPath } from '~src/ssr/public-pages'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
@@ -130,7 +130,6 @@ const ProcessViewContent = () => {
   const { showSidebar, toggleSidebar } = useSidebarVisibility()
   const { election, results, status } = useElection()
   const { size: censusSize } = useCensusSize()
-  const { data: earlyEndDate } = useProcessEarlyEndDate(election)
   const id = election?.id ?? ''
   const location = useLocation()
   const navigate = useNavigate()
@@ -251,22 +250,21 @@ const ProcessViewContent = () => {
                 subtext={election && formatDate(election.startDate, t('dashboard.process_view.time_format', 'p'))}
               />
               {/* One end, not two: a process stopped ahead of schedule keeps its configured `endDate`,
-                  so showing that would state a moment voting did not actually stop at. `earlyEndDate`
-                  is null whenever the process ran its course, which falls back to the configured one.
+                  so showing that would state a moment voting did not actually stop at.
                   The PDF certifies both dates instead — there the schedule is part of the record. */}
               <SettingsField
                 icon={LuCalendar}
                 text={t('end_date', 'End date')}
                 subtext={
                   election &&
-                  formatDate(earlyEndDate ?? election.endDate, t('dashboard.process_view.date_format', 'MMMM do, y'))
+                  formatDate(getProcessEndDate(election), t('dashboard.process_view.date_format', 'MMMM do, y'))
                 }
               />
               <SettingsField
                 icon={LuClock}
                 text={t('end_time', 'End time')}
                 subtext={
-                  election && formatDate(earlyEndDate ?? election.endDate, t('dashboard.process_view.time_format', 'p'))
+                  election && formatDate(getProcessEndDate(election), t('dashboard.process_view.time_format', 'p'))
                 }
               />
             </SimpleGrid>

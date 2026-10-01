@@ -10,6 +10,7 @@ import { useLocalizedText } from '~src/legacy/use-localized-text'
 import {
   fetchLegacyOrganizationElections,
   getVochainGatewayUrl,
+  isLegacyElectionOver,
   type LegacyElectionListItem,
   type LegacyElectionsPage,
   type LegacyOrganization,
@@ -23,6 +24,7 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
   const publicLanguage = usePublicLanguage()
 
   const title = localize(election.title) || election.id
+  const endDate = format(election.endDate, t('organization.date_format'))
 
   return (
     <Card.Root variant='outline' size='sm'>
@@ -35,10 +37,9 @@ const ElectionRow = ({ election }: { election: LegacyElectionListItem }) => {
               </RouterAwareLink>
             </Link>
             <Text fontSize='sm' color='texts.subtle'>
-              {t('election.ends_on', {
-                defaultValue: 'Ends on {{date}}',
-                date: format(election.endDate, t('organization.date_format')),
-              })}
+              {isLegacyElectionOver(election.status)
+                ? t('election.ended_on', { defaultValue: 'Ended on {{date}}', date: endDate })
+                : t('election.ends_on', { defaultValue: 'Ends on {{date}}', date: endDate })}
             </Text>
           </Box>
           <Flex align='center' gap={3} flexShrink={0}>

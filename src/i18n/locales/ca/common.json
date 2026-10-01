@@ -335,6 +335,7 @@
     "underline": "Subratllat"
   },
   "election": {
+    "ended_on": "Va finalitzar el {{date}}",
     "ends_on": "Acaba el {{date}}",
     "total_votes": "{{totalVotes}} vots"
   },

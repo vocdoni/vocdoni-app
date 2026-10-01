@@ -333,6 +333,7 @@
     "underline": "Underline"
   },
   "election": {
+    "ended_on": "Ended on {{date}}",
     "ends_on": "Ends on {{date}}",
     "total_votes": "{{totalVotes}} votes"
   },

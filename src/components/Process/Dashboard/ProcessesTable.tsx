@@ -31,6 +31,7 @@ import { ErrorBoundary } from '~components/Layout/ErrorBoundary'
 import RoutedPaginatedTableFooter from '~components/Pagination/PaginatedTableFooter'
 import { useDateFns } from '~i18n/use-date-fns'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
+import { getProcessEndDate } from '~queries/process-end-date'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
@@ -198,7 +199,7 @@ const ProcessCard = () => {
         </Text>
         <Text>
           {t('process_list.end_date', { defaultValue: 'End date' })}:{' '}
-          {format(election.endDate, t('organization.date_format'))}
+          {format(getProcessEndDate(election), t('organization.date_format'))}
         </Text>
         <Text>
           {t('process_list.recount', { defaultValue: 'Recount' })}: {processVoteCount(results)}
@@ -221,7 +222,7 @@ const ProcessRow = () => {
         <ProcessTitleLink process={election} />
       </Table.Cell>
       <Table.Cell>{format(election.startDate, t('organization.date_format'))}</Table.Cell>
-      <Table.Cell>{format(election.endDate, t('organization.date_format'))}</Table.Cell>
+      <Table.Cell>{format(getProcessEndDate(election), t('organization.date_format'))}</Table.Cell>
       <Table.Cell>
         <ProcessTypeBadge />
       </Table.Cell>

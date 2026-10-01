@@ -335,6 +335,7 @@
     "underline": "Sublinhado"
   },
   "election": {
+    "ended_on": "Terminou a {{date}}",
     "ends_on": "Termina a {{date}}",
     "total_votes": "{{totalVotes}} votos"
   },

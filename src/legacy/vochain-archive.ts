@@ -40,6 +40,10 @@ export type LegacyElectionStatus =
   | 'RESULTS'
   | 'PROCESS_UNKNOWN'
 
+/** True once an archived election no longer accepts votes, however it got there. */
+export const isLegacyElectionOver = (status: LegacyElectionStatus) =>
+  status === 'ENDED' || status === 'RESULTS' || status === 'CANCELED'
+
 export type LegacyChoiceResult = {
   title: LocalizedText
   value: number

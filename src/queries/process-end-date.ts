@@ -1,25 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
-
-import { getVochainGatewayUrl } from '~src/legacy/vochain-archive'
-import { QueryKeys } from './keys'
-
-/**
- * The gateway serving the chain a process was anchored to.
- *
- * Derived from the process' own `chainId` rather than from `VOCDONI_ENVIRONMENT`, because the two
- * do not always agree: the staging SaaS backend anchors its processes to the production chain
- * (`vocdoni/LTS/…`), so an environment-keyed lookup would query the dev gateway and miss them.
- */
-const getGatewayUrlForChain = (chainId?: string) => getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : 'dev')
-
-/**
- * A process left to run its course still ends a few seconds either side of its schedule — the chain
- * stops it at the block crossing `endDate`. Only a larger gap means somebody actually stopped it
- * ahead of time, so anything inside this window is treated as having ended as configured.
- */
-const EARLY_END_TOLERANCE_MS = 60_000
 
 const stoppedVotingStatuses = new Set<QuestionStatus>(['ENDED', 'CANCELED', 'RESULTS'])
 
@@ -27,69 +7,23 @@ const stoppedVotingStatuses = new Set<QuestionStatus>(['ENDED', 'CANCELED', 'RES
 export const hasStoppedVoting = (election?: VotingProcessResponse | null) =>
   !!election && stoppedVotingStatuses.has(computeProcessStatus(election.questions))
 
-/** The `endDate` the chain recorded for one question's election, or null when unreadable. */
-const fetchQuestionEndDate = async (gatewayUrl: string, upstreamId: string): Promise<Date | null> => {
-  try {
-    const response = await fetch(`${gatewayUrl}/elections/${upstreamId}`)
-
-    if (!response.ok) return null
-
-    const endDate = new Date(((await response.json()) as { endDate?: string }).endDate ?? '')
-
-    return Number.isNaN(endDate.getTime()) ? null : endDate
-  } catch {
-    return null
-  }
-}
-
 /**
- * When voting actually stopped, read from the chain.
+ * When voting actually stopped, for a process stopped ahead of its configured end — otherwise null.
  *
- * The SaaS process keeps `endDate` as the *configured* end and never rewrites it, so a process
- * stopped ahead of schedule still reports its original deadline. Each question is its own on-chain
- * election and the chain records the real end, so the process ends when its last question does.
- *
- * Returns null when no question can be read, leaving callers on the configured `endDate`.
+ * The SaaS process keeps `endDate` as the *configured* end and never rewrites it. The backend
+ * records the real end as `endedAt` (vocdoni/saas-backend#729), present only when every question
+ * was stopped early. `@vocdoni/api-types` does not type it yet, but the API client passes it through.
  */
-export const fetchOnChainEndDate = async (election: VotingProcessResponse): Promise<Date | null> => {
-  const gatewayUrl = getGatewayUrlForChain(election.chainId)
-  const upstreamIds = election.questions.map((question) => question.upstreamId).filter((id): id is string => !!id)
+export const getEarlyEndDate = (election: VotingProcessResponse): Date | null => {
+  const { endedAt } = election as { endedAt?: string }
 
-  if (!upstreamIds.length) return null
+  if (!endedAt) return null
 
-  const endDates = (await Promise.all(upstreamIds.map((id) => fetchQuestionEndDate(gatewayUrl, id)))).filter(
-    (date): date is Date => date !== null
-  )
+  const date = new Date(endedAt)
 
-  if (!endDates.length) return null
-
-  return endDates.reduce((latest, date) => (date > latest ? date : latest))
+  return Number.isNaN(date.getTime()) ? null : date
 }
 
-/**
- * The moment voting really stopped, but only when the process was stopped meaningfully before its
- * configured end — otherwise null, since there is nothing to report beyond the configured date.
- */
-export const getEarlyEndDate = (election: VotingProcessResponse, onChainEndDate?: Date | null): Date | null => {
-  if (!onChainEndDate) return null
-
-  const configured = new Date(election.endDate)
-
-  if (Number.isNaN(configured.getTime())) return null
-
-  return configured.getTime() - onChainEndDate.getTime() > EARLY_END_TOLERANCE_MS ? onChainEndDate : null
-}
-
-/**
- * The early end date of a process, or null when it ran to its configured end (or the chain could
- * not be read). Only queried once the process has stopped accepting votes — there is no early end
- * to report before that, and the read costs one gateway request per question.
- */
-export const useProcessEarlyEndDate = (election?: VotingProcessResponse | null) =>
-  useQuery({
-    queryKey: QueryKeys.process.endDate(election?.id),
-    queryFn: async () => getEarlyEndDate(election!, await fetchOnChainEndDate(election!)),
-    enabled: hasStoppedVoting(election),
-    staleTime: Infinity,
-    retry: false,
-  })
+/** When voting stops (or stopped): the real end of a process stopped early, else its configured end. */
+export const getProcessEndDate = (election: VotingProcessResponse): Date =>
+  getEarlyEndDate(election) ?? new Date(election.endDate ?? '')

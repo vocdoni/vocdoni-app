@@ -52,13 +52,6 @@ vi.mock('react-player', () => ({
   default: () => null,
 }))
 
-let earlyEndDate: Date | null = null
-
-vi.mock('~queries/process-end-date', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('~queries/process-end-date')>()),
-  useProcessEarlyEndDate: () => ({ data: earlyEndDate }),
-}))
-
 vi.mock('~components/Actions', () => ({
   ActionsProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
   ActionPause: ({ children }: { children: ReactNode }) => <button>{children}</button>,
@@ -238,12 +231,13 @@ describe('ProcessView navigation', () => {
 })
 
 describe('ProcessView schedule', () => {
-  const renderSchedule = () => {
+  // The backend reports the real end of a process stopped early as `endedAt`.
+  const renderSchedule = (endedAt?: string) => {
     setReactProvidersMock({
       ElectionProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
       useElection: () => ({
         id: '0xabc',
-        election: createProcess('0xabc', 'RESULTS'),
+        election: { ...createProcess('0xabc', 'RESULTS'), endedAt },
         status: 'RESULTS',
         results: null,
         loading: false,
@@ -258,13 +252,7 @@ describe('ProcessView schedule', () => {
     )
   }
 
-  afterEach(() => {
-    earlyEndDate = null
-  })
-
   it('shows the configured end for a process that ran its course', async () => {
-    earlyEndDate = null
-
     renderSchedule()
 
     expect(await screen.findByText('End date')).toBeInTheDocument()
@@ -273,9 +261,7 @@ describe('ProcessView schedule', () => {
 
   it('shows when voting actually stopped for a process ended ahead of schedule', async () => {
     // The configured end (Jan 2) never happened, so the dashboard must not show it as the end.
-    earlyEndDate = new Date('2026-01-01T15:42:00Z')
-
-    renderSchedule()
+    renderSchedule('2026-01-01T15:42:00Z')
 
     expect(await screen.findByText('End date')).toBeInTheDocument()
     // The process started Jan 1 and was stopped the same day, so both date fields read Jan 1 —
@@ -285,9 +271,7 @@ describe('ProcessView schedule', () => {
   })
 
   it('keeps one end field rather than a second "actual end" row', async () => {
-    earlyEndDate = new Date('2026-01-01T15:42:00Z')
-
-    renderSchedule()
+    renderSchedule('2026-01-01T15:42:00Z')
 
     expect(await screen.findByText('End date')).toBeInTheDocument()
     expect(screen.queryByText(/actual end/i)).toBeNull()

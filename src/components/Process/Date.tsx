@@ -2,6 +2,7 @@ import { Text } from '@chakra-ui/react'
 import { useElection } from '@vocdoni/react-components'
 import { isUpcoming } from '@vocdoni/api-client'
 import { useTranslation } from 'react-i18next'
+import { getProcessEndDate } from '~queries/process-end-date'
 import { ProcessInfoCard } from './View'
 
 const getStatusLabel = (t: ReturnType<typeof useTranslation>['t'], status: string | null, upcoming: boolean) => {
@@ -25,7 +26,7 @@ export const ProcessDate = () => {
   if (status === 'CANCELED') return null
 
   const startDate = new Date(election.startDate)
-  const endDate = new Date(election.endDate)
+  const endDate = getProcessEndDate(election)
   const upcoming = isUpcoming(election)
   const target = upcoming ? startDate : endDate
   const statusText = getStatusLabel(t, status, upcoming)
@@ -46,7 +47,7 @@ export const ProcessDateInline = () => {
   if (!election || !election?.startDate) return null
 
   const startDate = new Date(election.startDate)
-  const endDate = new Date(election.endDate)
+  const endDate = getProcessEndDate(election)
   const upcoming = isUpcoming(election)
   const target = upcoming ? startDate : endDate
   const statusLabel = getStatusLabel(t, status, upcoming)

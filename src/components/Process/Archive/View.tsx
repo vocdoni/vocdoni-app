@@ -5,7 +5,7 @@ import Editor from '~components/Editor'
 import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
 import { useLocalizedText } from '~src/legacy/use-localized-text'
-import type { LegacyElection, LegacyElectionStatus } from '~src/legacy/vochain-archive'
+import { isLegacyElectionOver, type LegacyElection, type LegacyElectionStatus } from '~src/legacy/vochain-archive'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 
 const StatusBadge = ({ status }: { status: LegacyElectionStatus }) => {
@@ -64,7 +64,11 @@ export const ArchiveProcessView = ({ election }: { election: LegacyElection }) =
             `${t('process.date.starts', { defaultValue: 'Starts' })} ${format(election.startDate, t('organization.date_format'))}`}
           {election.startDate && election.endDate && ' · '}
           {election.endDate &&
-            `${t('process.date.ends', { defaultValue: 'Ends' })} ${format(election.endDate, t('organization.date_format'))}`}
+            `${
+              isLegacyElectionOver(election.status)
+                ? t('process.date.ended', { defaultValue: 'Ended' })
+                : t('process.date.ends', { defaultValue: 'Ends' })
+            } ${format(election.endDate, t('organization.date_format'))}`}
         </Text>
         <Text color='texts.subtle' fontSize='sm'>
           {t('process.summary.votes_cast', {

@@ -11,7 +11,7 @@ import { LuFileDown } from 'react-icons/lu'
 import { useToast } from '~components/Toast'
 import { Tooltip } from '~components/ui/Tooltip'
 import { QueryKeys } from '~queries/keys'
-import { fetchOnChainEndDate, getEarlyEndDate } from '~queries/process-end-date'
+import { getEarlyEndDate } from '~queries/process-end-date'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { useApiClient } from '~src/providers/ApiClientProvider'
@@ -78,7 +78,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
       // when the read fails.
       const election = await resolveReportElection(client, report.election)
       const results = (await fetchProcessResults(client, election.id)) ?? report.results
-      const earlyEndDate = getEarlyEndDate(election, await fetchOnChainEndDate(election))
+      const earlyEndDate = getEarlyEndDate(election)
 
       // Push both back into the queries the ElectionProvider observes so the dashboard shows the
       // same numbers the report just certified, instead of waiting out the rest of the poll interval.

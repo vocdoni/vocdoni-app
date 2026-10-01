@@ -333,6 +333,7 @@
     "underline": "Azpimarratua"
   },
   "election": {
+    "ended_on": "Amaitua: {{date}}",
     "ends_on": "Amaiera: {{date}}",
     "total_votes": "{{totalVotes}} boto"
   },
