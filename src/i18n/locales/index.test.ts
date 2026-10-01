@@ -7,7 +7,7 @@ const emptyKeys = (resources: Record<string, any>, prefix = ''): string[] =>
   Object.entries(resources).flatMap(([key, value]) => {
     const path = prefix ? `${prefix}.${key}` : key
     if (value && typeof value === 'object') return emptyKeys(value, path)
-    return value === '' ? [path] : []
+    return typeof value === 'string' && value.trim() === '' ? [path] : []
   })
 
 const locales = Object.keys(translations).filter((lang) => lang !== 'en')
