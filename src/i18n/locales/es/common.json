@@ -1044,6 +1044,7 @@
       "add_to_group_confirmation_many": "Vas a añadir {{count}} miembros al grupo «{{group}}».",
       "add_to_group_confirmation_other": "Vas a añadir {{count}} miembros al grupo «{{group}}».",
       "add_to_group_description": "Selecciona un grupo al que añadir los miembros.",
+      "add_to_group_error": "Error al añadir miembros al grupo",
       "add_to_group_success": "Miembros añadidos al grupo correctamente",
       "bulk_delete": "Eliminar",
       "cancel": "Cancelar",
@@ -1379,6 +1380,17 @@
     "extended_info": "Información ampliada",
     "is_invalid": "Este proceso contiene datos incorrectos y, por tanto, no es válido",
     "no_description": "No se ha proporcionado descripción",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "Todavía se está procesando el pago de un proceso de votación que usa estos miembros. Vuelve a intentarlo cuando termine.",
+        "census_growth_payment_required": "Estos miembros ampliarían el censo de un proceso de votación más allá de lo que se pagó por él. Ampliarlo cuesta {{amount}} más (IVA no incluido).",
+        "payment_in_progress": "Todavía se está procesando el pago de este proceso de votación. Vuelve a intentarlo cuando termine.",
+        "publish_payment_required": "Este proceso de votación cuesta {{amount}} (IVA no incluido) y hay que pagarlo antes de publicarlo.",
+        "quote_required": "Los procesos de votación de más de 50.000 votantes necesitan un presupuesto personalizado. Contacta con nosotros para publicar este.",
+        "wallet_insufficient": "El saldo del integrador no cubre el precio de este proceso de votación. Recárgalo y vuelve a publicarlo.",
+        "wallet_insufficient_amounts": "El saldo del integrador es de {{available}} y publicar este proceso de votación cuesta {{required}} (IVA no incluido). Recárgalo y vuelve a publicarlo."
+      }
+    },
     "people_in_census_one": "Un votante",
     "people_in_census_many": "{{ count }} votantes",
     "people_in_census_other": "{{ count }} votantes",

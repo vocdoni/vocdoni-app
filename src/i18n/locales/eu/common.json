@@ -1030,6 +1030,7 @@
       "add_to_group_confirmation_one": "«{{group}}» taldera kide bat gehituko duzu.",
       "add_to_group_confirmation_other": "«{{group}}» taldera {{count}} kide gehituko dituzu.",
       "add_to_group_description": "Hautatu kideak gehitzeko taldea.",
+      "add_to_group_error": "",
       "add_to_group_success": "Kideak behar bezala gehitu dira taldera",
       "bulk_delete": "Ezabatu",
       "cancel": "Utzi",
@@ -1355,6 +1356,17 @@
     "extended_info": "Informazio zabaldua",
     "is_invalid": "Prozesu honek datu okerrak ditu eta, beraz, ez da baliozkoa",
     "no_description": "Ez da deskribapenik eman",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "",
+        "census_growth_payment_required": "",
+        "payment_in_progress": "",
+        "publish_payment_required": "",
+        "quote_required": "",
+        "wallet_insufficient": "",
+        "wallet_insufficient_amounts": ""
+      }
+    },
     "people_in_census_one": "Boto-emaile bat",
     "people_in_census_other": "{{ count }} boto-emaile",
     "question_type": {

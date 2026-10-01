@@ -1044,6 +1044,7 @@
       "add_to_group_confirmation_many": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
       "add_to_group_confirmation_other": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
       "add_to_group_description": "Seleziona un gruppo a cui aggiungere i membri.",
+      "add_to_group_error": "Errore durante l'aggiunta dei membri al gruppo",
       "add_to_group_success": "Membri aggiunti al gruppo con successo",
       "bulk_delete": "Elimina",
       "cancel": "Annulla",
@@ -1379,6 +1380,17 @@
     "extended_info": "Informazioni estese",
     "is_invalid": "Questo processo contiene dati errati, rendendolo non valido",
     "no_description": "Nessuna descrizione fornita",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "Il pagamento di un processo di voto che usa questi membri è ancora in elaborazione. Riprova quando sarà completato.",
+        "census_growth_payment_required": "Questi membri amplierebbero il censimento di un processo di voto oltre quanto è stato pagato. Ampliarlo costa {{amount}} in più (IVA esclusa).",
+        "payment_in_progress": "Il pagamento di questo processo di voto è ancora in elaborazione. Riprova quando sarà completato.",
+        "publish_payment_required": "Questo processo di voto costa {{amount}} (IVA esclusa) e deve essere pagato prima di poterlo pubblicare.",
+        "quote_required": "I processi di voto con più di 50.000 votanti richiedono un preventivo personalizzato. Contattaci per pubblicare questo.",
+        "wallet_insufficient": "Il saldo dell'integratore non copre il prezzo di questo processo di voto. Ricaricalo e pubblica di nuovo.",
+        "wallet_insufficient_amounts": "Il saldo dell'integratore è di {{available}} e pubblicare questo processo di voto costa {{required}} (IVA esclusa). Ricaricalo e pubblica di nuovo."
+      }
+    },
     "people_in_census_one": "Un votante",
     "people_in_census_many": "{{ count }} votanti",
     "people_in_census_other": "{{ count }} votanti",
