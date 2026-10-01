@@ -178,6 +178,7 @@ describe('MembersCsvManager', () => {
       })
 
       expect(screen.getByText(missingData.message)).toBeInTheDocument()
+      expect(consoleError).toHaveBeenCalledTimes(1)
       expect(consoleError).toHaveBeenCalledWith('could not load file:', missingData)
     } finally {
       consoleError.mockRestore()
@@ -185,30 +186,38 @@ describe('MembersCsvManager', () => {
   })
 
   it('ignores a slow read from an earlier drop once a newer file is dropped', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     let failRead: (error: Error) => void = () => {}
     mockRead = () =>
       new Promise((_, reject) => {
         failRead = reject
       })
-    render(<MembersCsvManagerForm />)
 
-    let slowDrop: Promise<void> | undefined
-    await act(async () => {
-      slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
-    })
-    const pdf = new File(['data'], 'notes.pdf', { type: 'application/pdf' })
-    await act(async () => {
-      await dropHandler?.([], [{ file: pdf, errors: [{ code: 'file-invalid-type', message: 'Invalid type' }] }])
-    })
-    await act(async () => {
-      failRead(new TypeError('raw reader failure'))
-      await slowDrop
-    })
+    try {
+      render(<MembersCsvManagerForm />)
 
-    expect(
-      screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
-    ).toBeInTheDocument()
-    expect(screen.queryByText(/We couldn't read this file/)).not.toBeInTheDocument()
+      let slowDrop: Promise<void> | undefined
+      await act(async () => {
+        slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+      })
+      const pdf = new File(['data'], 'notes.pdf', { type: 'application/pdf' })
+      await act(async () => {
+        await dropHandler?.([], [{ file: pdf, errors: [{ code: 'file-invalid-type', message: 'Invalid type' }] }])
+      })
+      await act(async () => {
+        failRead(new TypeError('raw reader failure'))
+        await slowDrop
+      })
+
+      expect(
+        screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/We couldn't read this file/)).not.toBeInTheDocument()
+      // A superseded read is dropped before it is logged
+      expect(consoleError).not.toHaveBeenCalled()
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 
   it('drops the outcome of a read still in flight once the importer is closed', async () => {
@@ -338,6 +347,7 @@ describe('MembersCsvManager', () => {
       ).toBeInTheDocument()
       expect(screen.queryByText(/readAsBinaryString/)).not.toBeInTheDocument()
       // The raw error still reaches the console, for debugging
+      expect(consoleError).toHaveBeenCalledTimes(1)
       expect(consoleError).toHaveBeenCalledWith('could not load file:', mockReadError)
     } finally {
       consoleError.mockRestore()
@@ -356,6 +366,7 @@ describe('MembersCsvManager', () => {
       })
 
       expect(screen.getByText(mockReadError.message)).toBeInTheDocument()
+      expect(consoleError).toHaveBeenCalledTimes(1)
       expect(consoleError).toHaveBeenCalledWith('could not load file:', mockReadError)
     } finally {
       consoleError.mockRestore()
