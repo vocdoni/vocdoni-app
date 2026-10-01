@@ -37,9 +37,11 @@
 ## Internationalization Workflow
 - Any new user-facing text must go through i18next (`t(...)`/translation keys), not hardcoded strings.
 - After adding or changing translation keys, always run `pnpm translations`.
-- Review generated locale diffs and ensure new keys are translated for supported locales (`en`, `es`, `ca`, `it`) when applicable.
+- Review generated locale diffs and translate new keys for every supported locale: each directory under `src/i18n/locales/` (`ca`, `de`, `el`, `es`, `eu`, `fr`, `it`, `pt`, `pt-br`). `pnpm translations` adds them as empty strings, and with `returnEmptyString: false` an empty value falls back to English.
 - Avoid leaving partial localization changes unreviewed.
-- Per-locale translation guidance lives in `src/i18n/contexts/` (one file per locale, e.g. `es.md`, `ca.md`; `en` is the source language and has none). These files are prompts that capture tone, register, and non-translatable terms (placeholders, component tags, brand/product names) for each language. When translating or reviewing strings for a locale, follow its context file, and keep it updated whenever its conventions change.
+- Per-locale translation guidance lives in `src/i18n/contexts/` (one file per locale, e.g. `es.md`, `ca.md`; `en` is the source language and has none). These files are prompts that capture tone, register, glossary terms, and non-translatable terms (placeholders, component tags, brand/product names) for each language. Read the whole file, glossary included, before translating or reviewing strings for a locale, follow it, and keep it updated whenever its conventions change.
+- `react-components.json` overrides the strings `@vocdoni/react-components` ships, which are English only. `pnpm translations` does not manage it, so when the package adds keys (e.g. after an upgrade), add their translations by hand to every non-English locale. English falls back to the package's own text and only needs a key to change its wording.
+- `src/i18n/locales/index.test.ts` fails when a locale has an empty, whitespace-only or null value, or lacks a key or CLDR plural form (e.g. `_many`) that English has. For `react-components`, "English" is the keys the installed package ships plus the app's own. It does not compare placeholders, so check that `{{ … }}` variables and component tags match English yourself.
 
 ## Testing Guidelines
 - Test stack: Vitest + Testing Library (`jsdom` environment).
