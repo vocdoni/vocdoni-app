@@ -197,7 +197,6 @@
   },
   "csp": {
     "auth_failed": "Échec de l'authentification",
-    "auth_success": "Authentification réussie",
     "authenticate": "S'identifier",
     "code_info": "Vous recevrez un code unique sur le canal sélectionné pour vérifier votre identité et finaliser l'authentification",
     "code_sent": "Code de vérification envoyé",

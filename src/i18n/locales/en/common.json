@@ -195,7 +195,6 @@
   },
   "csp": {
     "auth_failed": "Authentication failed",
-    "auth_success": "Authentication successful",
     "authenticate": "Identify",
     "code_info": "You will receive a unique code on the selected medium to verify your identity and complete authentication",
     "code_sent": "Verification code sent",

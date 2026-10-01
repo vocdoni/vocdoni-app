@@ -228,6 +228,8 @@ describe('Step1Base', () => {
     await waitFor(() => {
       expect(mutateAsync).toHaveBeenCalledWith('123456')
     })
+    // The Vote button replacing the dialog is the confirmation; a toast would cover it.
+    expect(screen.queryByText('Authentication successful')).not.toBeInTheDocument()
   })
 
   it('preserves the deleted position instead of compacting the remaining digits', async () => {

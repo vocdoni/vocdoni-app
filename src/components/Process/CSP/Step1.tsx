@@ -81,15 +81,9 @@ export const Step1Base = () => {
 
     try {
       // auth1 verifies the challenge and marks the voter connected in the
-      // process session — no token juggling on our side.
+      // process session — no token juggling on our side. No success toast: the
+      // Vote button appearing is the confirmation, and a toast would cover it.
       await auth.mutateAsync(code)
-
-      toast({
-        title: t('csp.auth_success', { defaultValue: 'Authentication successful' }),
-        type: 'success',
-        duration: 3000,
-        isClosable: true,
-      })
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('csp.auth_failed', { defaultValue: 'Authentication failed' })

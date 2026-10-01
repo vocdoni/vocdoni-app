@@ -125,15 +125,10 @@ export const Step0Base = () => {
           isClosable: true,
         })
         setCurrentStep(1)
-      } else {
-        // No 2FA - auth0 already verified the token and marked the voter connected
-        toast({
-          title: t('csp.auth_success', { defaultValue: 'Authentication successful' }),
-          type: 'success',
-          duration: 3000,
-          isClosable: true,
-        })
       }
+      // No 2FA: auth0 already verified the token and marked the voter connected.
+      // No success toast: the Vote button appearing is the confirmation, and a
+      // toast would cover it.
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t('csp.auth_failed', { defaultValue: 'Authentication failed' })

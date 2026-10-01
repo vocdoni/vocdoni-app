@@ -197,7 +197,6 @@
   },
   "csp": {
     "auth_failed": "Falha na autenticação",
-    "auth_success": "Autenticação bem-sucedida",
     "authenticate": "Identificar-se",
     "code_info": "Receberás um código único no meio selecionado para verificar a tua identidade e concluir a autenticação",
     "code_sent": "Código de verificação enviado",

@@ -197,7 +197,6 @@
   },
   "csp": {
     "auth_failed": "Autenticazione non riuscita",
-    "auth_success": "Autenticazione riuscita",
     "authenticate": "Identifica",
     "code_info": "Si riceverà un codice univoco sul mezzo selezionato per verificare l'identità e completare l'autenticazione",
     "code_sent": "Codice di verifica inviato",
