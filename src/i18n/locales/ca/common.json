@@ -1834,7 +1834,7 @@
       "remove_user": "Elimina l'usuari",
       "resend_invitation": "Reenvia la invitació",
       "resend_invitation_error": "Error en reenviar la invitació",
-      "resend_invitation_success": "Invitació reenviada correctament"
+      "resend_invitation_success": "Invitació reenviada correctament a {{email}}"
     },
     "cancel_invitation": {
       "cancel": "Cancel·la",
