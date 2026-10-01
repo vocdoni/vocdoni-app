@@ -195,7 +195,6 @@
   },
   "csp": {
     "auth_failed": "Autentifikazioak huts egin du",
-    "auth_success": "Autentifikazioa zuzena",
     "authenticate": "Identifikatu",
     "code_info": "Hautatutako bidetik kode bakar bat jasoko duzu zure nortasuna egiaztatzeko eta autentifikazioa burutzeko.",
     "code_sent": "Egiaztapen-kodea bidali da",

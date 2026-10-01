@@ -92,13 +92,10 @@ describe('Step0Base', () => {
     await user.click(screen.getByRole('checkbox'))
     await user.click(screen.getByRole('button', { name: 'Authenticate' }))
 
-    await waitFor(() =>
-      expect(csp.toast).toHaveBeenCalledWith(
-        expect.objectContaining({ title: 'Authentication successful', type: 'success' })
-      )
-    )
-    expect(csp.mutateAsync).toHaveBeenCalledWith({ nationalId: '12345678Z' })
+    await waitFor(() => expect(csp.mutateAsync).toHaveBeenCalledWith({ nationalId: '12345678Z' }))
     expect(csp.setCurrentStep).not.toHaveBeenCalled()
+    // The Vote button replacing the form is the confirmation; a toast would cover it.
+    expect(csp.toast).not.toHaveBeenCalled()
   })
 
   it('reports a rejected authentication and stays on this step', async () => {

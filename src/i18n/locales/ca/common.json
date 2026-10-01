@@ -197,7 +197,6 @@
   },
   "csp": {
     "auth_failed": "Autenticació fallida",
-    "auth_success": "Autenticació correcta",
     "authenticate": "Identifica't",
     "code_info": "Rebràs un codi únic al mitjà seleccionat per verificar la teva identitat i completar l'autenticació",
     "code_sent": "Codi de verificació enviat",
