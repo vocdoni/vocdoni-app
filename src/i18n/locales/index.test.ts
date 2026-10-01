@@ -18,6 +18,20 @@ const namespaces: Record<string, Record<string, Record<string, unknown>>> = {
   common: translations,
   'react-components': reactComponentsTranslations,
 }
+// The English keys every locale must translate. For react-components that is what the installed
+// package ships (it only ships English) plus any key the app adds on top, so the reference follows
+// package upgrades instead of a copy kept in the app's English file.
+const englishKeys: Record<string, string[]> = {
+  common: flatten(translations.en).map(([key]) => key),
+  'react-components': [
+    ...new Set(
+      [
+        ...flatten(reactComponentsResources.en[reactComponentsNamespace]),
+        ...flatten(reactComponentsTranslations.en),
+      ].map(([key]) => key)
+    ),
+  ],
+}
 // Every supported language, not just the ones wired into `./index`: one missing there is served
 // as `{}` at runtime, so every key falls back to English.
 const locales = Object.keys(baseLanguages)
@@ -34,23 +48,17 @@ describe('locale files', () => {
 
   // `pnpm translations` keeps `common` in sync with the code, but it skips the react-components
   // namespace, and it never adds a plural form (such as `_many`) to a key that already exists.
-  it.each(cases)('%s %s has every English key and plural form', (lang, ns) => {
-    const keys = new Set(flatten(namespaces[ns][lang] ?? {}).map(([key]) => key))
-    const categories = new Intl.PluralRules(lang).resolvedOptions().pluralCategories
-    const required = flatten(namespaces[ns].en).flatMap(([key]) =>
-      key.endsWith('_other') ? [key, ...categories.map((category) => key.replace(/_other$/, `_${category}`))] : [key]
-    )
+  // English react-components only needs the keys it overrides: the package supplies the rest.
+  it.each(cases.filter(([lang, ns]) => !(lang === 'en' && ns === 'react-components')))(
+    '%s %s has every English key and plural form',
+    (lang, ns) => {
+      const keys = new Set(flatten(namespaces[ns][lang] ?? {}).map(([key]) => key))
+      const categories = new Intl.PluralRules(lang).resolvedOptions().pluralCategories
+      const required = englishKeys[ns].flatMap((key) =>
+        key.endsWith('_other') ? [key, ...categories.map((category) => key.replace(/_other$/, `_${category}`))] : [key]
+      )
 
-    expect(required.filter((key) => !keys.has(key))).toEqual([])
-  })
-
-  // @vocdoni/react-components only ships English, so any of its keys the app does not override is
-  // shown in English in every locale. Requiring them in the app's English file makes the check
-  // above extend them to every other locale.
-  it('en react-components overrides every key the components library ships', () => {
-    const keys = new Set(flatten(reactComponentsTranslations.en).map(([key]) => key))
-    const shipped = flatten(reactComponentsResources.en[reactComponentsNamespace]).map(([key]) => key)
-
-    expect(shipped.filter((key) => !keys.has(key))).toEqual([])
-  })
+      expect(required.filter((key) => !keys.has(key))).toEqual([])
+    }
+  )
 })

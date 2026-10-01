@@ -28,9 +28,6 @@
     "not_voted_in_ended_election": "You signed but did not vote in this ended election.",
     "question_not_votable": "This question can't accept votes: one of its options was set up in a way the ledger can't record. Your vote has not been cast. Please contact the organizer.",
     "unauthorized": "Not authorized to vote",
-    "vote_failed": "Your vote could not be cast: {{ detail }}",
-    "vote_failed_unknown": "Your vote could not be cast. Please try again.",
-    "vote_partial": "Only part of your vote was cast: {{ cast }} of {{ total }} questions were recorded. {{ detail }} Submit again to retry the ones that failed.",
     "wrong_data_description": "The specified data is not correct",
     "wrong_data_title": "Wrong data"
   },
@@ -102,18 +99,6 @@
     "button": "Vote",
     "button_update": "Change my vote",
     "confirm": "Please confirm your choices:",
-    "disabled": {
-      "canceled": "Voting was canceled",
-      "ended": "Voting has ended",
-      "identify": "Identify first to vote",
-      "not_in_census": "You are not eligible to vote in this process",
-      "not_open": "Voting is not open",
-      "paused": "Voting is paused",
-      "upcoming": "Voting not open yet",
-      "upcoming_at": "Voting opens on {{ date }}",
-      "upcoming_date_format": "PPp",
-      "voted": "You have already voted"
-    },
     "rank_position": "#{{ position }}",
     "sign": "Sign first",
     "voted_description": "To verify your vote, you can use this unique identifier: {{ id }}",
