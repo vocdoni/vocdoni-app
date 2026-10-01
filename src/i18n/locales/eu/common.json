@@ -363,7 +363,7 @@
   },
   "error_removing_code": "Errorea kodea kentzean",
   "features": {
-    "anonymous": "Boto sekretua",
+    "anonymous": "Bozketa anonimoa",
     "approval": "Onarpen-bozketa",
     "audit": "Auditoria",
     "audit_blockchain": "% 100 auditagarria blockchainean",

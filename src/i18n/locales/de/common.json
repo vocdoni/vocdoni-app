@@ -363,7 +363,7 @@
   },
   "error_removing_code": "Fehler beim Entfernen des Codes",
   "features": {
-    "anonymous": "Geheime Abstimmung",
+    "anonymous": "Anonyme Abstimmung",
     "approval": "Zustimmungsabstimmung",
     "audit": "Prüfung",
     "audit_blockchain": "100 % blockchain-prüfbar",
