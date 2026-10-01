@@ -38,6 +38,12 @@ describe('publishPaymentErrorMessage', () => {
     )
   })
 
+  it('asks for a custom quote, not a payment, when the quote is above the self-service limit', () => {
+    expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.PaymentRequired, { ...quote, quoteRequired: true }))).toBe(
+      'Voting processes with more than 50,000 voters need a custom quote. Contact us to publish this one.'
+    )
+  })
+
   it('explains a short integrator wallet, with the amounts when the backend sends them', () => {
     expect(
       publishPaymentErrorMessage(
@@ -45,7 +51,7 @@ describe('publishPaymentErrorMessage', () => {
         sdkError(ErrorCode.InsufficientWalletBalance, { requiredCents: 29000, availableCents: 5000 })
       )
     ).toBe(
-      'The integrator wallet has €50 and publishing this voting process costs €290 (VAT excluded). Top up the wallet and publish again.'
+      'The integrator wallet has €50, but €290 (VAT excluded) is still due to publish this voting process. Top up the wallet and publish again.'
     )
     expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.InsufficientWalletBalance))).toBe(
       'The integrator wallet does not cover the price of this voting process. Top up the wallet and publish again.'
@@ -54,7 +60,7 @@ describe('publishPaymentErrorMessage', () => {
 
   it('explains the custom quote and in-flight payment refusals', () => {
     expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.QuoteRequired))).toMatch(/custom quote/)
-    expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.PaymentSessionConflict))).toMatch(/still being processed/)
+    expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.PaymentSessionConflict))).toMatch(/not settled yet/)
   })
 
   it('leaves non-payment errors, and a payment code without its quote, to the caller', () => {
