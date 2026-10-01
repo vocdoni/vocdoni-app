@@ -1044,7 +1044,7 @@
       "add_to_group_confirmation_many": "Você adicionará {{count}} membros ao grupo \"{{group}}\".",
       "add_to_group_confirmation_other": "Você adicionará {{count}} membros ao grupo \"{{group}}\".",
       "add_to_group_description": "Selecione um grupo para adicionar os membros.",
-      "add_to_group_error": "",
+      "add_to_group_error": "Erro ao adicionar os membros ao grupo",
       "add_to_group_success": "Membros adicionados ao grupo com sucesso",
       "bulk_delete": "Excluir",
       "cancel": "Cancelar",
@@ -1382,13 +1382,13 @@
     "no_description": "Nenhuma descrição fornecida",
     "payment": {
       "error": {
-        "census_growth_payment_in_progress": "",
-        "census_growth_payment_required": "",
-        "payment_in_progress": "",
-        "publish_payment_required": "",
-        "quote_required": "",
-        "wallet_insufficient": "",
-        "wallet_insufficient_amounts": ""
+        "census_growth_payment_in_progress": "O pagamento de um processo de votação que usa esses membros ainda está sendo processado. Tente novamente quando ele for concluído.",
+        "census_growth_payment_required": "Esses membros aumentariam a lista de participantes de um processo de votação além do que foi pago. Aumentá-la custa mais {{amount}} (impostos não incluídos).",
+        "payment_in_progress": "O pagamento deste processo de votação ainda não foi concluído, por isso ele não pode ser publicado agora. Tente novamente mais tarde e fale com a gente se continuar acontecendo.",
+        "publish_payment_required": "Este processo de votação custa {{amount}} (impostos não incluídos) e precisa ser pago antes de ser publicado.",
+        "quote_required": "Processos de votação com mais de 50.000 eleitores precisam de um orçamento personalizado. Fale com a gente para publicar este.",
+        "wallet_insufficient": "O saldo do integrador não cobre o preço deste processo de votação. Recarregue o saldo e publique novamente.",
+        "wallet_insufficient_amounts": "O saldo do integrador é de {{available}}, mas ainda faltam {{required}} (impostos não incluídos) para publicar este processo de votação. Recarregue o saldo e publique novamente."
       }
     },
     "people_in_census_one": "{{ count }} eleitor",
