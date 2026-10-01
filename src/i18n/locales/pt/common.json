@@ -967,7 +967,7 @@
       "title": "Grupos"
     },
     "import_file": {
-      "subtitle": "Importa o teu ficheiro CSV, XLS ou XLSX com os dados dos membros. Certifica-te de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",
+      "subtitle": "Importa o teu ficheiro CSV, XLS, XLSX ou ODS com os dados dos membros. Certifica-te de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",
       "title": "Importar ficheiro"
     },
     "importer": {
@@ -975,6 +975,10 @@
       "cancel": "Cancelar",
       "data_preview": "Pré-visualização dos dados",
       "download_template_btn": "Transferir modelo",
+      "error": {
+        "invalid_file_type": "Este tipo de ficheiro não é suportado. Carrega um ficheiro .csv, .xlsx, .xls ou .ods.",
+        "read_failed": "Não conseguimos ler este ficheiro. Verifica se é um CSV ou uma folha de cálculo válida e tenta novamente."
+      },
       "field_mapper": {
         "empty": "-- Não importar --",
         "placeholder": "Selecionar coluna"
@@ -987,7 +991,7 @@
       "reset": "Repor importação",
       "select_at_least_one_column": "Seleciona pelo menos uma coluna para transferir o modelo.",
       "submit": "Importar dados",
-      "subtitle": "Transfere um modelo ou importa o teu próprio ficheiro CSV, XLS ou XLSX para adicionar membros.",
+      "subtitle": "Transfere um modelo ou importa o teu próprio ficheiro CSV, XLS, XLSX ou ODS para adicionar membros.",
       "title": "Importar membros",
       "warning": {
         "subtitle": "A informação das colunas que não forem associadas não será importada.",
@@ -1951,6 +1955,10 @@
     "csv_row_limit_exceeded_many": "",
     "csv_row_limit_exceeded_other": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite do teu plano de {{max}}.",
     "drop_here": "Larga o ficheiro aqui",
+    "error": {
+      "invalid_image_type": "Este tipo de ficheiro não é suportado. Carrega uma imagem .png ou .jpg.",
+      "too_many_files": "Carrega um ficheiro de cada vez."
+    },
     "image_upload_failed": "Falha no carregamento da imagem",
     "image_upload_success": "Imagem carregada",
     "upload_failed": "Falha no carregamento"

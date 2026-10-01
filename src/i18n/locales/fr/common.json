@@ -967,7 +967,7 @@
       "title": "Groupes"
     },
     "import_file": {
-      "subtitle": "Importez votre fichier CSV, XLS ou XLSX contenant les données des membres. Assurez-vous que les en-têtes de colonnes correspondent au modèle pour une correspondance exacte.",
+      "subtitle": "Importez votre fichier CSV, XLS, XLSX ou ODS contenant les données des membres. Assurez-vous que les en-têtes de colonnes correspondent au modèle pour une correspondance exacte.",
       "title": "Importer un fichier"
     },
     "importer": {
@@ -975,6 +975,10 @@
       "cancel": "Annuler",
       "data_preview": "Aperçu des données",
       "download_template_btn": "Télécharger le modèle",
+      "error": {
+        "invalid_file_type": "Ce type de fichier n'est pas pris en charge. Importez un fichier .csv, .xlsx, .xls ou .ods.",
+        "read_failed": "Nous n'avons pas pu lire ce fichier. Vérifiez qu'il s'agit d'un fichier CSV ou d'un tableur valide, puis réessayez."
+      },
       "field_mapper": {
         "empty": "-- Ne pas importer --",
         "placeholder": "Sélectionnez une colonne"
@@ -987,7 +991,7 @@
       "reset": "Réinitialiser l'importation",
       "select_at_least_one_column": "Sélectionnez au moins une colonne pour télécharger le modèle.",
       "submit": "Importer les données",
-      "subtitle": "Téléchargez un modèle ou importez votre propre fichier CSV, XLS ou XLSX pour ajouter des membres.",
+      "subtitle": "Téléchargez un modèle ou importez votre propre fichier CSV, XLS, XLSX ou ODS pour ajouter des membres.",
       "title": "Importer des membres",
       "warning": {
         "subtitle": "Les informations des colonnes non associées ne seront pas importées.",
@@ -1951,6 +1955,10 @@
     "csv_row_limit_exceeded_many": "",
     "csv_row_limit_exceeded_other": "Cette importation aboutirait à un total de {{count}} lignes, dépassant la limite de votre forfait fixée à {{max}}.",
     "drop_here": "Déposez le fichier ici",
+    "error": {
+      "invalid_image_type": "Ce type de fichier n'est pas pris en charge. Importez une image .png ou .jpg.",
+      "too_many_files": "Importez un seul fichier à la fois."
+    },
     "image_upload_failed": "Échec du chargement de l'image",
     "image_upload_success": "Image chargée",
     "upload_failed": "Échec du chargement"

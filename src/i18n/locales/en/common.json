@@ -958,7 +958,7 @@
       "title": "Groups"
     },
     "import_file": {
-      "subtitle": "Import your CSV, XLS, or XLSX file containing member data. Ensure column headers match the template for accurate mapping.",
+      "subtitle": "Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.",
       "title": "Import File"
     },
     "importer": {
@@ -966,6 +966,10 @@
       "cancel": "Cancel",
       "data_preview": "Data Preview",
       "download_template_btn": "Download Template",
+      "error": {
+        "invalid_file_type": "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
+        "read_failed": "We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again."
+      },
       "field_mapper": {
         "empty": "-- Do not import --",
         "placeholder": "Select column"
@@ -978,7 +982,7 @@
       "reset": "Reset Import",
       "select_at_least_one_column": "Select at least one column to download the template.",
       "submit": "Import Data",
-      "subtitle": "Download a template or import your own CSV, XLS, or XLSX file to add members.",
+      "subtitle": "Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.",
       "title": "Import Members",
       "warning": {
         "subtitle": "The information of columns that are not mapped will not be imported.",
@@ -1923,6 +1927,10 @@
     "csv_row_limit_exceeded_one": "This import would result in {{count}} total row, exceeding your plan limit of {{max}}.",
     "csv_row_limit_exceeded_other": "This import would result in {{count}} total rows, exceeding your plan limit of {{max}}.",
     "drop_here": "Drop the file here",
+    "error": {
+      "invalid_image_type": "This file type isn't supported. Upload a .png or .jpg image.",
+      "too_many_files": "Upload one file at a time."
+    },
     "image_upload_failed": "Image upload failed",
     "image_upload_success": "Image uploaded",
     "upload_failed": "Upload failed"

@@ -967,7 +967,7 @@
       "title": "Grupos"
     },
     "import_file": {
-      "subtitle": "Importe seu arquivo CSV, XLS ou XLSX com os dados dos membros. Certifique-se de que os cabeçalhos das colunas correspondam ao modelo para um mapeamento correto.",
+      "subtitle": "Importe seu arquivo CSV, XLS, XLSX ou ODS com os dados dos membros. Certifique-se de que os cabeçalhos das colunas correspondam ao modelo para um mapeamento correto.",
       "title": "Importar arquivo"
     },
     "importer": {
@@ -975,6 +975,10 @@
       "cancel": "Cancelar",
       "data_preview": "Pré-visualização dos dados",
       "download_template_btn": "Baixar modelo",
+      "error": {
+        "invalid_file_type": "Este tipo de arquivo não é compatível. Envie um arquivo .csv, .xlsx, .xls ou .ods.",
+        "read_failed": "Não conseguimos ler este arquivo. Verifique se é um CSV ou uma planilha válida e tente novamente."
+      },
       "field_mapper": {
         "empty": "-- Não importar --",
         "placeholder": "Selecionar coluna"
@@ -987,7 +991,7 @@
       "reset": "Redefinir importação",
       "select_at_least_one_column": "Selecione pelo menos uma coluna para baixar o modelo.",
       "submit": "Importar dados",
-      "subtitle": "Baixe um modelo ou importe seu próprio arquivo CSV, XLS ou XLSX para adicionar membros.",
+      "subtitle": "Baixe um modelo ou importe seu próprio arquivo CSV, XLS, XLSX ou ODS para adicionar membros.",
       "title": "Importar membros",
       "warning": {
         "subtitle": "As informações das colunas não mapeadas não serão importadas.",
@@ -1951,6 +1955,10 @@
     "csv_row_limit_exceeded_many": "",
     "csv_row_limit_exceeded_other": "Esta importação resultaria em {{count}} linhas no total, excedendo o limite do seu plano de {{max}}.",
     "drop_here": "Solte o arquivo aqui",
+    "error": {
+      "invalid_image_type": "Este tipo de arquivo não é compatível. Envie uma imagem .png ou .jpg.",
+      "too_many_files": "Envie um arquivo de cada vez."
+    },
     "image_upload_failed": "Falha ao enviar a imagem",
     "image_upload_success": "Imagem enviada",
     "upload_failed": "Falha no envio"

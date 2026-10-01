@@ -967,7 +967,7 @@
       "title": "Grups"
     },
     "import_file": {
-      "subtitle": "Importa el teu fitxer CSV, XLS o XLSX amb les dades dels membres. Assegura't que les capçaleres de les columnes coincideixin amb la plantilla per fer un mapatge correcte.",
+      "subtitle": "Importa el teu fitxer CSV, XLS, XLSX o ODS amb les dades dels membres. Assegura't que les capçaleres de les columnes coincideixin amb la plantilla per fer un mapatge correcte.",
       "title": "Importar fitxer"
     },
     "importer": {
@@ -975,6 +975,10 @@
       "cancel": "Cancel·la",
       "data_preview": "Vista prèvia de les dades",
       "download_template_btn": "Descarregar plantilla",
+      "error": {
+        "invalid_file_type": "Aquest tipus de fitxer no és compatible. Puja un fitxer .csv, .xlsx, .xls o .ods.",
+        "read_failed": "No hem pogut llegir aquest fitxer. Comprova que sigui un CSV o un full de càlcul vàlid i torna-ho a provar."
+      },
       "field_mapper": {
         "empty": "-- No importar --",
         "placeholder": "Selecciona una columna"
@@ -987,7 +991,7 @@
       "reset": "Restableix la importació",
       "select_at_least_one_column": "Selecciona almenys una columna per descarregar la plantilla.",
       "submit": "Importa dades",
-      "subtitle": "Descarrega una plantilla o importa el teu propi fitxer CSV, XLS o XLSX per afegir membres.",
+      "subtitle": "Descarrega una plantilla o importa el teu propi fitxer CSV, XLS, XLSX o ODS per afegir membres.",
       "title": "Importar membres",
       "warning": {
         "subtitle": "La informació de les columnes que no es relacionin no s'importarà.",
@@ -1951,6 +1955,10 @@
     "csv_row_limit_exceeded_many": "",
     "csv_row_limit_exceeded_other": "Aquesta importació donaria un total de {{count}} files, superant el límit del teu pla de {{max}}.",
     "drop_here": "Deixa-ho aquí",
+    "error": {
+      "invalid_image_type": "Aquest tipus de fitxer no és compatible. Puja una imatge .png o .jpg.",
+      "too_many_files": "Puja un sol fitxer cada vegada."
+    },
     "image_upload_failed": "Error en pujar la imatge",
     "image_upload_success": "Imatge pujada",
     "upload_failed": "Error en pujar"

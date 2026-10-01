@@ -958,7 +958,7 @@
       "title": "Taldeak"
     },
     "import_file": {
-      "subtitle": "Inportatu zure CSV, XLS edo XLSX fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
+      "subtitle": "Inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
       "title": "Inportatu fitxategia"
     },
     "importer": {
@@ -966,6 +966,10 @@
       "cancel": "Utzi",
       "data_preview": "Datuen aurrebista",
       "download_template_btn": "Deskargatu txantiloia",
+      "error": {
+        "invalid_file_type": "Fitxategi mota hau ez da onartzen. Igo .csv, .xlsx, .xls edo .ods fitxategi bat.",
+        "read_failed": "Ezin izan dugu fitxategi hau irakurri. Egiaztatu baliozko CSV edo kalkulu-orri bat dela eta saiatu berriro."
+      },
       "field_mapper": {
         "empty": "-- Ez inportatu --",
         "placeholder": "Hautatu zutabea"
@@ -978,7 +982,7 @@
       "reset": "Berrezarri inportazioa",
       "select_at_least_one_column": "Hautatu gutxienez zutabe bat txantiloia deskargatzeko.",
       "submit": "Inportatu datuak",
-      "subtitle": "Deskargatu txantiloi bat edo inportatu zure CSV, XLS edo XLSX fitxategia kideak gehitzeko.",
+      "subtitle": "Deskargatu txantiloi bat edo inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideak gehitzeko.",
       "title": "Inportatu kideak",
       "warning": {
         "subtitle": "Ez da esleitzen ez diren zutabeen informazioa inportatuko.",
@@ -1923,6 +1927,10 @@
     "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
     "csv_row_limit_exceeded_other": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
     "drop_here": "Jaregin hemen",
+    "error": {
+      "invalid_image_type": "Fitxategi mota hau ez da onartzen. Igo .png edo .jpg irudi bat.",
+      "too_many_files": "Igo fitxategi bakarra aldi bakoitzean."
+    },
     "image_upload_failed": "Errorea irudia kargatzean",
     "image_upload_success": "Irudia kargatu da",
     "upload_failed": "Errorea kargatzean"
