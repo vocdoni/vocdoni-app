@@ -50,10 +50,10 @@
     "anonymous_receipt_gone": "Seu comprovante foi exibido quando você votou e não pode ser recuperado.",
     "has_already_voted": "Seu voto foi registrado corretamente",
     "is_not_in_census": "Você não está na lista de participantes",
-    "votes_one": "<span>1</span> <text>eleitor</text>",
+    "votes_one": "<span>{{ count }}</span> <text>eleitor</text>",
     "votes_many": "<span>{{ count }}</span> <text>eleitores</text>",
     "votes_other": "<span>{{ count }}</span> <text>eleitores</text>",
-    "votes_weight_one": "<span>1</span> <text>voto</text>",
+    "votes_weight_one": "<span>{{ count }}</span> <text>voto</text>",
     "votes_weight_many": "<span>{{ count }}</span> <text>votos</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
   },
@@ -1377,7 +1377,7 @@
     "extended_info": "Informações detalhadas",
     "is_invalid": "Este processo contém dados incorretos e, por isso, é inválido",
     "no_description": "Nenhuma descrição fornecida",
-    "people_in_census_one": "Um eleitor",
+    "people_in_census_one": "{{ count }} eleitor",
     "people_in_census_many": "{{ count }} eleitores",
     "people_in_census_other": "{{ count }} eleitores",
     "question_type": {
