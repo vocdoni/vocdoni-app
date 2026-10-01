@@ -108,7 +108,7 @@
       "identify": "Identifikatu lehenik bozkatzeko",
       "not_in_census": "Ezin duzu prozesu honetan bozkatu",
       "not_open": "Bozketa ez dago irekita",
-      "paused": "Bozketa etenda dago",
+      "paused": "Bozketa pausatuta dago",
       "upcoming": "Bozketa ez da oraindik ireki",
       "upcoming_at": "Bozketa {{ date }}(e)an irekiko da",
       "upcoming_date_format": "PPp",

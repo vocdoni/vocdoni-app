@@ -28,9 +28,9 @@
     "not_voted_in_ended_election": "Vous avez signé mais vous n'avez pas voté à cette élection terminée.",
     "question_not_votable": "Cette question ne peut pas accepter de votes : l'une de ses options a été configurée d'une manière que le registre ne peut pas enregistrer. Votre vote n'a pas été émis. Veuillez contacter l'organisation.",
     "unauthorized": "Non autorisé à voter",
-    "vote_failed": "Votre vote n'a pas pu être émis : {{ detail }}",
-    "vote_failed_unknown": "Votre vote n'a pas pu être émis. Veuillez réessayer.",
-    "vote_partial": "Votre vote n'a été émis qu'en partie : {{ cast }} questions sur {{ total }} ont été enregistrées. {{ detail }} Soumettez-le à nouveau pour réessayer celles qui ont échoué.",
+    "vote_failed": "Votre vote n'a pas pu être émis : {{ detail }}",
+    "vote_failed_unknown": "Votre vote n'a pas pu être émis. Réessayez.",
+    "vote_partial": "Votre vote n'a été émis qu'en partie : {{ cast }} questions sur {{ total }} ont été enregistrées. {{ detail }} Soumettez-le à nouveau pour réessayer celles qui ont échoué.",
     "wrong_data_description": "Les données fournies ne sont pas correctes",
     "wrong_data_title": "Données incorrectes"
   },

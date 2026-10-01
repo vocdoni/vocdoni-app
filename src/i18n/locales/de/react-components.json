@@ -103,7 +103,7 @@
     "button_update": "Meine Stimme ändern",
     "confirm": "Bitte bestätige deine Auswahl:",
     "disabled": {
-      "canceled": "Die Abstimmung wurde storniert",
+      "canceled": "Die Abstimmung wurde abgebrochen",
       "ended": "Die Abstimmung ist beendet",
       "identify": "Identifiziere dich zuerst, um abzustimmen",
       "not_in_census": "Du bist für diese Abstimmung nicht stimmberechtigt",
