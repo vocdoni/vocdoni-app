@@ -3,6 +3,7 @@ import { reactComponentsTranslations, translations } from './index'
 // i18next runs with `returnEmptyString: false`, so an empty value counts as missing and the
 // fallback language (English) is rendered instead. `pnpm translations` adds new keys as empty
 // strings for every non-English locale, so this catches keys that were never translated.
+// English is checked too: it is the last fallback, so an empty value there renders the raw key.
 const emptyKeys = (resources: Record<string, any>, prefix = ''): string[] =>
   Object.entries(resources).flatMap(([key, value]) => {
     const path = prefix ? `${prefix}.${key}` : key
@@ -10,7 +11,7 @@ const emptyKeys = (resources: Record<string, any>, prefix = ''): string[] =>
     return typeof value === 'string' && value.trim() === '' ? [path] : []
   })
 
-const locales = Object.keys(translations).filter((lang) => lang !== 'en')
+const locales = Object.keys(translations)
 
 describe('locale files', () => {
   it.each(locales)('%s has no empty translations', (lang) => {
