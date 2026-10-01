@@ -78,6 +78,8 @@ Use "tu" and its forms consistently:
 ## Pluralization keys
 Keys ending in `_one` and `_other` are singular and plural forms. Catalan uses the same two-form pattern — translate accordingly.
 
+Keys ending in `_many` also exist: CLDR uses that form for large round numbers such as 1,000,000. Never leave them empty (an empty value falls back to English) — copy the `_other` value.
+
 ## Numbers & punctuation
 - Decimal separator: comma (e.g. "77,12%").
 - Thousands separator: dot (e.g. "6.349", "6.723").

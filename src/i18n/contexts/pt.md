@@ -74,9 +74,9 @@ Use "tu" and its forms consistently:
 
 ## Pluralization keys
 Keys ending in `_one`, `_many`, and `_other` map to Portuguese CLDR plural rules:
-- `_one` → exactly 1 (e.g. "1 votação")
-- `_many` → not used in pt (do not leave empty — use `_other` value as fallback)
-- `_other` → all other quantities (0, 2, 3, …)
+- `_one` → 0 and 1 (CLDR `pt` rules, which i18next applies to this locale): never hardcode "1" or "Um" in a `_one` value whose count can be 0 — use `{{count}}`
+- `_many` → large round numbers such as 1,000,000 (do not leave empty — copy the `_other` value)
+- `_other` → all other quantities (2, 3, …)
 
 ## Spelling — PT-PT orthography
 Follow the 1990 Orthographic Agreement as ratified in Portugal:

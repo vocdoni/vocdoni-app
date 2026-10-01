@@ -47,7 +47,7 @@
   "annual": "Ετήσιο<1>Εξοικονόμηση 40%</1>",
   "apply": "Εφαρμογή",
   "aside": {
-    "anonymous_receipt_gone": "",
+    "anonymous_receipt_gone": "Η απόδειξή σας εμφανίστηκε όταν ψηφίσατε και δεν μπορεί να ανακτηθεί.",
     "has_already_voted": "Η ψήφος σας έχει καταχωρηθεί σωστά",
     "is_not_in_census": "Δεν ανήκετε στο μητρώο ψηφοφόρων",
     "votes_one": "<span>1</span> <text>ψηφοφόρος</text>",
@@ -1064,10 +1064,10 @@
       "select_process": "Επιλέξτε διαδικασία",
       "selected_one": "Επιλεγμένα: <strong>{{count}} μέλος</strong>",
       "selected_other": "Επιλεγμένα: <strong>{{count}} μέλη</strong>",
-      "showing_members_one": "",
-      "showing_members_other": "",
-      "showing_results_one": "",
-      "showing_results_other": "",
+      "showing_members_one": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} μέλος",
+      "showing_members_other": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} μέλη",
+      "showing_results_one": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} αποτέλεσμα",
+      "showing_results_other": "Εμφάνιση {{from, number}}–{{to, number}} από {{count, number}} αποτελέσματα",
       "toggle_column": "Εναλλαγή στήλης {{column}}"
     }
   },
@@ -1145,9 +1145,9 @@
     "title": {
       "read_more": "Ανάπτυξη τίτλου"
     },
-    "unavailable_description": "",
-    "unavailable_retry": "",
-    "unavailable_title": ""
+    "unavailable_description": "Παρουσιάστηκε σφάλμα κατά την ανάγνωση των οργανισμών σας. Συνήθως είναι προσωρινό — δοκιμάστε ξανά.",
+    "unavailable_retry": "Δοκιμάστε ξανά",
+    "unavailable_title": "Δεν ήταν δυνατή η φόρτωση των οργανισμών σας"
   },
   "organization_settings": {
     "phone_support": {
@@ -1384,7 +1384,7 @@
     "success_modal": {
       "btn": "Κλείσιμο",
       "text": "<p>Η ψήφος σας έχει καταχωρηθεί με ασφάλεια και αποθηκεύτηκε με την τεχνολογία της Vocdoni. <verify>Μπορείτε να την επαληθεύσετε εδώ</verify>.</p>",
-      "text_no_id": "",
+      "text_no_id": "<p>Η ψήφος σας καταχωρήθηκε με επιτυχία.</p>",
       "title": "Η ψήφος υποβλήθηκε!"
     },
     "summary": {
@@ -1443,8 +1443,8 @@
   },
   "process_create": {
     "anonymity": {
-      "title": "",
-      "tooltip": ""
+      "title": "Ανώνυμη ψηφοφορία",
+      "tooltip": "Σε κάθε περίπτωση, ο οργανισμός σας δεν μπορεί να δει τι ψήφισε ο καθένας. Η ανωνυμία των ψηφοφόρων προσθέτει ένα κρυπτογραφικό επίπεδο που καθιστά αδύνατη τη σύνδεση μιας ψήφου με ένα πρόσωπο."
     },
     "auto_start": "Άμεση έναρξη",
     "basic_configuration": "Βασική ρύθμιση",
@@ -1491,7 +1491,7 @@
     "weight": {
       "equal": "Ένα άτομο, μία ψήφος",
       "title": "Δύναμη ψήφου",
-      "tooltip": "",
+      "tooltip": "Ορίστε αν οι ψήφοι είναι ίσες για κάθε ψηφοφόρο με δικαίωμα ψήφου ή σταθμισμένες σύμφωνα με το πεδίο «Δύναμη ψήφου (Βάρος)» του μητρώου μελών.",
       "weighted": "Σταθμισμένη με βάση τη δύναμη ψήφου"
     },
     "youtube": {
@@ -1972,12 +1972,12 @@
   "view_plans_and_pricing": "Δείτε πλάνα και τιμές",
   "vocdoni_logo": "Λογότυπο Vocdoni",
   "vote": {
-    "anonymous_receipt": "",
+    "anonymous_receipt": "Ανώνυμη ψήφος: αποθηκεύστε αυτή την απόδειξη τώρα, η πλατφόρμα δεν μπορεί να σας την εμφανίσει ξανά.",
     "voted_title": "Η ψήφος σας έχει καταχωρηθεί με επιτυχία!"
   },
   "vote_information": "Πληροφορίες ψηφοφορίας",
   "vote_overwrite": "Αλλαγή ψήφου",
-  "voter_anonymity": "",
+  "voter_anonymity": "Ανωνυμία ψηφοφόρων",
   "voter_auth": {
     "2fa_badge": "2FA",
     "2fa_description": "Προσθέστε ένα επιπλέον επίπεδο ασφάλειας απαιτώντας από τους ψηφοφόρους να επαληθεύσουν την ταυτότητά τους",
@@ -1991,7 +1991,7 @@
     "2fa_sms_description": "Οι ψηφοφόροι θα λάβουν κωδικό επαλήθευσης μέσω SMS",
     "2fa_voter_choice": "<email /> ή <phone /> Επιλογή ψηφοφόρου",
     "2fa_voter_choice_description": "Οι ψηφοφόροι μπορούν να επιλέξουν την προτιμώμενη μέθοδο επαλήθευσης",
-    "anonymity": "",
+    "anonymity": "Ανωνυμία ψήφου: {{ mode }}",
     "button": {
       "configure": "Ρύθμιση ταυτοποίησης ψηφοφόρων",
       "edit": "Επεξεργασία ταυτοποίησης ψηφοφόρων"
