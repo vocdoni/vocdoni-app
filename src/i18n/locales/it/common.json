@@ -1384,11 +1384,11 @@
       "error": {
         "census_growth_payment_in_progress": "Il pagamento di un processo di voto che usa questi membri è ancora in elaborazione. Riprova quando sarà completato.",
         "census_growth_payment_required": "Questi membri amplierebbero il censimento di un processo di voto oltre quanto è stato pagato. Ampliarlo costa {{amount}} in più (IVA esclusa).",
-        "payment_in_progress": "Il pagamento di questo processo di voto è ancora in elaborazione. Riprova quando sarà completato.",
+        "payment_in_progress": "Il pagamento di questo processo di voto non è ancora definito, quindi non può essere pubblicato ora. Riprova più tardi e contattaci se continua a succedere.",
         "publish_payment_required": "Questo processo di voto costa {{amount}} (IVA esclusa) e deve essere pagato prima di poterlo pubblicare.",
         "quote_required": "I processi di voto con più di 50.000 votanti richiedono un preventivo personalizzato. Contattaci per pubblicare questo.",
         "wallet_insufficient": "Il saldo dell'integratore non copre il prezzo di questo processo di voto. Ricaricalo e pubblica di nuovo.",
-        "wallet_insufficient_amounts": "Il saldo dell'integratore è di {{available}} e pubblicare questo processo di voto costa {{required}} (IVA esclusa). Ricaricalo e pubblica di nuovo."
+        "wallet_insufficient_amounts": "Il saldo dell'integratore è di {{available}}, ma per pubblicare questo processo di voto mancano ancora {{required}} (IVA esclusa). Ricaricalo e pubblica di nuovo."
       }
     },
     "people_in_census_one": "Un votante",

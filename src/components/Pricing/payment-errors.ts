@@ -1,6 +1,5 @@
-import { VocdoniApiError } from '@vocdoni/api-client'
 import type { TFunction } from 'i18next'
-import { ApiError, ErrorCode } from '~components/Auth/api'
+import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { currency } from '~utils/numbers'
 
 // Pay-per-process billing (vocdoni-app#1767): the backend gates publication and census growth on
@@ -39,26 +38,15 @@ export type WalletShortfall = {
   availableCents: number
 }
 
-type ApiErrorDetails = {
-  code?: number
-  data?: unknown
-}
-
-// The app talks to the backend through both its own `api()` (ApiError) and the integrator SDK
-// (VocdoniApiError); both carry the parsed error body, just under different names.
-const apiErrorDetails = (error: unknown): ApiErrorDetails | undefined => {
-  if (error instanceof ApiError) return { code: error.apiError?.code, data: error.apiError?.data }
-  if (error instanceof VocdoniApiError) {
-    const body = error.body as { data?: unknown } | undefined
-    return { code: error.code, data: body?.data }
-  }
-  return undefined
-}
-
 const hasCents = <K extends string>(data: unknown, ...keys: K[]): data is Record<K, number> =>
   typeof data === 'object' &&
   data !== null &&
   keys.every((key) => typeof (data as Record<string, unknown>)[key] === 'number')
+
+const quoteRequiredMessage = (t: TFunction) =>
+  t('process.payment.error.quote_required', {
+    defaultValue: 'Voting processes with more than 50,000 voters need a custom quote. Contact us to publish this one.',
+  })
 
 // A translated explanation of why publishing a draft was refused for payment reasons, or
 // undefined when the error is not a payment one.
@@ -67,6 +55,9 @@ export const publishPaymentErrorMessage = (t: TFunction, error: unknown): string
   switch (details?.code) {
     case ErrorCode.PaymentRequired:
       if (!hasCents(details.data, 'totalCents')) break
+      // Above the self-service limit the quote is still sent, but checkout refuses it (40176):
+      // asking the user to pay that price would send them to a dead end.
+      if ((details.data as Partial<ProcessQuote>).quoteRequired === true) return quoteRequiredMessage(t)
       return t('process.payment.error.publish_payment_required', {
         defaultValue:
           'This voting process costs {{amount}} (VAT excluded) and must be paid before it can be published.',
@@ -75,9 +66,11 @@ export const publishPaymentErrorMessage = (t: TFunction, error: unknown): string
     case ErrorCode.InsufficientWalletBalance:
       if (hasCents(details.data, 'requiredCents', 'availableCents')) {
         const { requiredCents, availableCents } = details.data
+        // requiredCents is what is still due, not the full price: a process that grew after a
+        // wallet payment only owes the difference.
         return t('process.payment.error.wallet_insufficient_amounts', {
           defaultValue:
-            'The integrator wallet has {{available}} and publishing this voting process costs {{required}} (VAT excluded). Top up the wallet and publish again.',
+            'The integrator wallet has {{available}}, but {{required}} (VAT excluded) is still due to publish this voting process. Top up the wallet and publish again.',
           available: currency(availableCents),
           required: currency(requiredCents),
         })
@@ -87,13 +80,11 @@ export const publishPaymentErrorMessage = (t: TFunction, error: unknown): string
           'The integrator wallet does not cover the price of this voting process. Top up the wallet and publish again.',
       })
     case ErrorCode.QuoteRequired:
-      return t('process.payment.error.quote_required', {
-        defaultValue:
-          'Voting processes with more than 50,000 voters need a custom quote. Contact us to publish this one.',
-      })
+      return quoteRequiredMessage(t)
     case ErrorCode.PaymentSessionConflict:
       return t('process.payment.error.payment_in_progress', {
-        defaultValue: 'A payment for this voting process is still being processed. Try again once it completes.',
+        defaultValue:
+          'The payment of this voting process is not settled yet, so it cannot be published right now. Try again later, and contact us if it keeps happening.',
       })
   }
   return undefined
