@@ -100,7 +100,7 @@
   "back": "Zurück",
   "billing_details": "Rechnungsdetails",
   "booking": {
-    "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut."
+    "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuche es später erneut."
   },
   "calendar": {
     "max_duration_exceeded": "Die Dauer überschreitet das {{ maxDuration }}-Tage-Limit deines Plans. Verkürze den Abstimmungszeitraum oder <a>kontaktiere uns</a>, wenn du mehr Tage benötigst.",
@@ -1211,7 +1211,7 @@
   "passwords_do_not_match": "Passwörter stimmen nicht überein",
   "pause_vote": "Abstimmung pausieren",
   "payment": {
-    "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut."
+    "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuche es später erneut."
   },
   "plan": {
     "encouragement": "Eine Abstimmung zu starten ist einfach, und Teilnehmende können von überall mitmachen. Starke Garantien zu niedrigen Kosten haben Vocdoni zur vertrauenswürdigen Wahl für Hunderte von Gemeinden, Vereinen, politischen Parteien und Unternehmen gemacht.",
