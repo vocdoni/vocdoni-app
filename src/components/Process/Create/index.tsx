@@ -41,7 +41,7 @@ import {
 } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
-import { ApiError, ErrorCode } from '~components/Auth/api'
+import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import { publishPaymentErrorMessage } from '~components/Pricing/payment-errors'
@@ -87,9 +87,7 @@ type UpdateProcessRequest = {
  * The draft limit is reported by the SaaS API either through the app's own
  * `api()` wrapper or through the integrator-sdk client, depending on the call.
  */
-const isDraftLimitError = (error: unknown) =>
-  (error instanceof ApiError && error.apiError?.code === ErrorCode.DraftLimitReached) ||
-  (error instanceof VocdoniApiError && error.code === ErrorCode.DraftLimitReached)
+const isDraftLimitError = (error: unknown) => apiErrorDetails(error)?.code === ErrorCode.DraftLimitReached
 
 export const saveTimeoutMs = 30000
 
