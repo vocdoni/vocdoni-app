@@ -5,38 +5,12 @@ import { currency } from '~utils/numbers'
 // Pay-per-process billing (vocdoni-app#1767): the backend gates publication and census growth on
 // payment, answering with these error codes. Amounts are EUR cents, VAT excluded.
 
-export type QuoteLine = {
-  kind: string
-  description: string
-  amountCents: number
-}
-
-// `data` of a publish refused with 40178: the quote still owed for the draft.
-export type ProcessQuote = {
-  lines: QuoteLine[]
-  totalCents: number
-  quoteRecommended: boolean
-  quoteRequired: boolean
-}
-
-// `data` of a census growth refused with 40178: what growing the census of an already paid (or
-// grandfathered) process would cost on top of what was paid for it.
-export type ProcessCensusGrowthQuote = {
-  processId: string
-  lines: QuoteLine[]
-  totalCents: number
-  paidCents: number
-  dueCents: number
-  censusSize: number
-  currency: string
-}
-
-// `data` of a 40175: the integrator wallet balance against the debit it could not cover. Absent
-// when the backend could not read the balance.
-export type WalletShortfall = {
-  requiredCents: number
-  availableCents: number
-}
+// Payloads (`data`) the guards below read; amounts are integer cents:
+// - publish refused with 40178: the quote owed for the draft, `{ lines, totalCents, quoteRecommended, quoteRequired }`.
+// - census growth refused with 40178: what growing the census of a paid (or grandfathered) process
+//   would cost on top of what was paid, `{ processId, lines, totalCents, paidCents, dueCents, censusSize, currency }`.
+// - 40175: the integrator wallet shortfall, `{ requiredCents, availableCents }`; absent when the
+//   backend could not read the balance.
 
 const hasCents = <K extends string>(data: unknown, ...keys: K[]): data is Record<K, number> =>
   typeof data === 'object' &&
@@ -57,7 +31,7 @@ export const publishPaymentErrorMessage = (t: TFunction, error: unknown): string
       if (!hasCents(details.data, 'totalCents')) break
       // Above the self-service limit the quote is still sent, but checkout refuses it (40176):
       // asking the user to pay that price would send them to a dead end.
-      if ((details.data as Partial<ProcessQuote>).quoteRequired === true) return quoteRequiredMessage(t)
+      if ((details.data as { quoteRequired?: unknown }).quoteRequired === true) return quoteRequiredMessage(t)
       return t('process.payment.error.publish_payment_required', {
         defaultValue:
           'This voting process costs {{amount}} (VAT excluded) and must be paid before it can be published.',
