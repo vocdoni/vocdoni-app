@@ -1,3 +1,4 @@
+import { reactComponentsNamespace, reactComponentsResources } from '@vocdoni/react-components'
 import { reactComponentsTranslations, translations } from './index'
 
 // i18next runs with `returnEmptyString: false` (and the default `returnNull: false`), so an empty
@@ -38,5 +39,15 @@ describe('locale files', () => {
     )
 
     expect(required.filter((key) => !keys.has(key))).toEqual([])
+  })
+
+  // @vocdoni/react-components only ships English, so any of its keys the app does not override is
+  // shown in English in every locale. Requiring them in the app's English file makes the check
+  // above extend them to every other locale.
+  it('en react-components overrides every key the components library ships', () => {
+    const keys = new Set(flatten(reactComponentsTranslations.en).map(([key]) => key))
+    const shipped = flatten(reactComponentsResources.en[reactComponentsNamespace]).map(([key]) => key)
+
+    expect(shipped.filter((key) => !keys.has(key))).toEqual([])
   })
 })
