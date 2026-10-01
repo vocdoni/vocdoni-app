@@ -28,6 +28,9 @@
     "not_voted_in_ended_election": "Sinatu duzu, baina ez duzu botorik eman amaitu den bozketa honetan.",
     "question_not_votable": "Galdera honek ezin ditu botoak onartu: bere aukeretako bat erregistroak gorde ezin duen moduan konfiguratu zen. Zure botoa ez da eman. Jarri harremanetan erakundearekin.",
     "unauthorized": "Ez duzu bozkatzeko baimenik",
+    "vote_failed": "Ezin izan da zure botoa eman: {{ detail }}",
+    "vote_failed_unknown": "Ezin izan da zure botoa eman. Saiatu berriro.",
+    "vote_partial": "Zure botoaren zati bat bakarrik eman da: {{ total }} galderatik {{ cast }} erregistratu dira. {{ detail }} Bidali berriro huts egin dutenak berriz saiatzeko.",
     "wrong_data_description": "Emandako datuak ez dira zuzenak",
     "wrong_data_title": "Datu okerrak"
   },
@@ -99,6 +102,18 @@
     "button": "Bozkatu",
     "button_update": "Aldatu nire botoa",
     "confirm": "Berretsi zure aukerak:",
+    "disabled": {
+      "canceled": "Bozketa bertan behera utzi da",
+      "ended": "Bozketa amaitu da",
+      "identify": "Identifikatu lehenik bozkatzeko",
+      "not_in_census": "Ezin duzu prozesu honetan bozkatu",
+      "not_open": "Bozketa ez dago irekita",
+      "paused": "Bozketa etenda dago",
+      "upcoming": "Bozketa ez da oraindik ireki",
+      "upcoming_at": "Bozketa {{ date }}(e)an irekiko da",
+      "upcoming_date_format": "PPp",
+      "voted": "Dagoeneko bozkatu duzu"
+    },
     "rank_position": "#{{ position }}",
     "sign": "Sinatu lehenik",
     "voted_description": "Zure botoa egiaztatzeko, identifikatzaile bakar hau erabil dezakezu: {{ id }}",

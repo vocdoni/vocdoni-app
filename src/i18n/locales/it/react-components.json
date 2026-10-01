@@ -28,6 +28,9 @@
     "not_voted_in_ended_election": "Hai firmato ma non hai votato in questa elezione terminata.",
     "question_not_votable": "Questa domanda non può accettare voti: una delle sue opzioni è stata configurata in un modo che il registro non può memorizzare. Il tuo voto non è stato espresso. Contatta l'organizzazione.",
     "unauthorized": "Non autorizzato a votare",
+    "vote_failed": "Non è stato possibile esprimere il tuo voto: {{ detail }}",
+    "vote_failed_unknown": "Non è stato possibile esprimere il tuo voto. Riprova.",
+    "vote_partial": "Il tuo voto è stato espresso solo in parte: sono state registrate {{ cast }} domande su {{ total }}. {{ detail }} Invialo di nuovo per riprovare quelle non riuscite.",
     "wrong_data_description": "I dati specificati non sono corretti",
     "wrong_data_title": "Dati errati"
   },
@@ -99,6 +102,18 @@
     "button": "Vota",
     "button_update": "Modifica il mio voto",
     "confirm": "Confermare le scelte:",
+    "disabled": {
+      "canceled": "La votazione è stata annullata",
+      "ended": "La votazione è terminata",
+      "identify": "Identificati prima di votare",
+      "not_in_census": "Non puoi votare in questo processo",
+      "not_open": "La votazione non è aperta",
+      "paused": "La votazione è in pausa",
+      "upcoming": "La votazione non è ancora aperta",
+      "upcoming_at": "La votazione si apre il {{ date }}",
+      "upcoming_date_format": "PPp",
+      "voted": "Hai già votato"
+    },
     "rank_position": "#{{ position }}",
     "sign": "Firma prima",
     "voted_description": "Per verificare il voto, è possibile utilizzare questo identificatore univoco: {{ id }}",
