@@ -1031,6 +1031,7 @@
       "add_to_group_confirmation_one": "Θα προσθέσετε {{count}} μέλος στην ομάδα «{{group}}».",
       "add_to_group_confirmation_other": "Θα προσθέσετε {{count}} μέλη στην ομάδα «{{group}}».",
       "add_to_group_description": "Επιλέξτε ομάδα για να προσθέσετε τα μέλη.",
+      "add_to_group_error": "",
       "add_to_group_success": "Τα μέλη προστέθηκαν στην ομάδα με επιτυχία",
       "bulk_delete": "Διαγραφή",
       "cancel": "Ακύρωση",
@@ -1357,6 +1358,17 @@
     "extended_info": "Εκτεταμένες πληροφορίες",
     "is_invalid": "Αυτή η διαδικασία περιέχει λανθασμένα δεδομένα και επομένως είναι μη έγκυρη",
     "no_description": "Δεν παρέχεται περιγραφή",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "",
+        "census_growth_payment_required": "",
+        "payment_in_progress": "",
+        "publish_payment_required": "",
+        "quote_required": "",
+        "wallet_insufficient": "",
+        "wallet_insufficient_amounts": ""
+      }
+    },
     "people_in_census_one": "Ένας ψηφοφόρος",
     "people_in_census_other": "{{ count }} ψηφοφόροι",
     "question_type": {

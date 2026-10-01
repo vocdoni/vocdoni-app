@@ -44,6 +44,7 @@ import { useSubscription } from '~components/Auth/Subscription'
 import { ApiError, ErrorCode } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
+import { publishPaymentErrorMessage } from '~components/Pricing/payment-errors'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
@@ -783,7 +784,7 @@ const ProcessCreateView = () => {
 
       toast({
         title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
-        description: error instanceof Error ? error.message : String(error),
+        description: publishPaymentErrorMessage(t, error) ?? (error instanceof Error ? error.message : String(error)),
         type: 'error',
         duration: 4000,
       })

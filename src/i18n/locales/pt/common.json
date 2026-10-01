@@ -1045,6 +1045,7 @@
       "add_to_group_confirmation_many": "Vais adicionar {{count}} membros ao grupo «{{group}}».",
       "add_to_group_confirmation_other": "Vais adicionar {{count}} membros ao grupo «{{group}}».",
       "add_to_group_description": "Seleciona um grupo para adicionar os membros.",
+      "add_to_group_error": "",
       "add_to_group_success": "Membros adicionados ao grupo com sucesso",
       "bulk_delete": "Eliminar",
       "cancel": "Cancelar",
@@ -1381,6 +1382,17 @@
     "extended_info": "Informações detalhadas",
     "is_invalid": "Este processo contém dados incorretos, sendo por isso inválido",
     "no_description": "Não foi fornecida descrição",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "",
+        "census_growth_payment_required": "",
+        "payment_in_progress": "",
+        "publish_payment_required": "",
+        "quote_required": "",
+        "wallet_insufficient": "",
+        "wallet_insufficient_amounts": ""
+      }
+    },
     "people_in_census_one": "{{ count }} votante",
     "people_in_census_many": "{{ count }} votantes",
     "people_in_census_other": "{{ count }} votantes",

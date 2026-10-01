@@ -1031,6 +1031,7 @@
       "add_to_group_confirmation_one": "You will add {{count}} members to the \"{{group}}\" group.",
       "add_to_group_confirmation_other": "You will add {{count}} members to the \"{{group}}\" group.",
       "add_to_group_description": "Select a group to add the members to.",
+      "add_to_group_error": "Error adding members to the group",
       "add_to_group_success": "Members added to group successfully",
       "bulk_delete": "Delete",
       "cancel": "Cancel",
@@ -1357,6 +1358,17 @@
     "extended_info": "Extended info",
     "is_invalid": "This process has wrong data, thus making it invalid",
     "no_description": "No description provided",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "A payment for a voting process using these members is still being processed. Try again once it completes.",
+        "census_growth_payment_required": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs {{amount}} more (VAT excluded).",
+        "payment_in_progress": "A payment for this voting process is still being processed. Try again once it completes.",
+        "publish_payment_required": "This voting process costs {{amount}} (VAT excluded) and must be paid before it can be published.",
+        "quote_required": "Voting processes with more than 50,000 voters need a custom quote. Contact us to publish this one.",
+        "wallet_insufficient": "The integrator wallet does not cover the price of this voting process. Top up the wallet and publish again.",
+        "wallet_insufficient_amounts": "The integrator wallet has {{available}} and publishing this voting process costs {{required}} (VAT excluded). Top up the wallet and publish again."
+      }
+    },
     "people_in_census_one": "One voter",
     "people_in_census_other": "{{ count }} voters",
     "question_type": {

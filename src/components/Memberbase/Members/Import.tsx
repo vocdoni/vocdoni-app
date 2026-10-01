@@ -34,6 +34,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
 import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
+import { censusGrowthPaymentErrorMessage } from '~components/Pricing/payment-errors'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
@@ -512,7 +513,8 @@ export const ImportMembers = () => {
       toast({
         type: 'error',
         title: 'Import failed',
-        description: error?.message ?? 'Unexpected error while importing members',
+        description:
+          censusGrowthPaymentErrorMessage(t, error) ?? error?.message ?? 'Unexpected error while importing members',
       })
     }
   }
