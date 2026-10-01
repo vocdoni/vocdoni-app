@@ -25,8 +25,8 @@
   },
   "empty": "Dieser Prozess enthält offenbar keine Fragen",
   "errors": {
-    "not_voted_in_ended_election": "Sie haben unterzeichnet, aber in dieser bereits beendeten Wahl nicht abgestimmt.",
-    "question_not_votable": "Diese Frage kann keine Stimmen annehmen: Eine ihrer Optionen wurde so eingerichtet, dass das Register sie nicht erfassen kann. Ihre Stimme wurde nicht abgegeben. Bitte wenden Sie sich an die Organisation.",
+    "not_voted_in_ended_election": "Du hast unterzeichnet, aber in dieser bereits beendeten Wahl nicht abgestimmt.",
+    "question_not_votable": "Diese Frage kann keine Stimmen annehmen: Eine ihrer Optionen wurde so eingerichtet, dass das Register sie nicht erfassen kann. Deine Stimme wurde nicht abgegeben. Bitte wende dich an die Organisation.",
     "unauthorized": "Nicht zur Abstimmung berechtigt",
     "vote_failed": "Deine Stimme konnte nicht abgegeben werden: {{ detail }}",
     "vote_failed_unknown": "Deine Stimme konnte nicht abgegeben werden. Bitte versuche es erneut.",
@@ -42,18 +42,18 @@
   },
   "question_types": {
     "approval_title": "Zustimmungswahl",
-    "approval_tooltip": "Bei der Zustimmungswahl können Sie für so viele Optionen stimmen, wie Sie möchten. Die Option mit den meisten Stimmen gewinnt. Eine einfache Möglichkeit, alle von Ihnen befürworteten Optionen zu unterstützen.",
+    "approval_tooltip": "Bei der Zustimmungswahl kannst du für so viele Optionen stimmen, wie du möchtest. Die Option mit den meisten Stimmen gewinnt. Eine einfache Möglichkeit, alle von dir befürworteten Optionen zu unterstützen.",
     "budget_title": "Budget-Abstimmung {{ weighted }}",
-    "budget_tooltip": "Bei der Budget-Abstimmung können Sie Punkte auf die Optionen verteilen. Die Optionen mit den meisten Punkten gewinnen.",
-    "multichoice_desc": "Sie haben {{selected}} Optionen aus maximal {{maxcount}} ausgewählt",
+    "budget_tooltip": "Bei der Budget-Abstimmung kannst du Punkte auf die Optionen verteilen. Die Optionen mit den meisten Punkten gewinnen.",
+    "multichoice_desc": "Du hast {{selected}} Optionen aus maximal {{maxcount}} ausgewählt",
     "multichoice_desc_abstain": " (oder enthalten)",
     "multichoice_title": "Mehrfachauswahl {{ weighted }}",
-    "multichoice_tooltip": "Bei der Mehrfachauswahl können Sie für bis zu {{maxcount}} Optionen stimmen (festgelegt vom Veranstalter). Die Option mit den meisten Stimmen gewinnt.",
+    "multichoice_tooltip": "Bei der Mehrfachauswahl kannst du für bis zu {{maxcount}} Optionen stimmen (festgelegt vom Veranstalter). Die Option mit den meisten Stimmen gewinnt.",
     "quadratic_title": "Quadratische Abstimmung {{ weighted }}",
-    "quadratic_tooltip": "Bei der quadratischen Abstimmung können Sie Guthaben auf die Optionen verteilen, wobei jede zusätzliche Stimme für eine Option mehr kostet. Die Optionen mit den meisten Stimmen gewinnen.",
-    "ranked_desc": "Sie haben {{selected}} von {{maxcount}} Optionen eingeordnet",
+    "quadratic_tooltip": "Bei der quadratischen Abstimmung kannst du Guthaben auf die Optionen verteilen, wobei jede zusätzliche Stimme für eine Option mehr kostet. Die Optionen mit den meisten Stimmen gewinnen.",
+    "ranked_desc": "Du hast {{selected}} von {{maxcount}} Optionen eingeordnet",
     "ranked_title": "Rangfolge-Abstimmung {{ weighted }}",
-    "ranked_tooltip": "Bei der Rangfolge-Abstimmung ordnen Sie alle {{maxcount}} Optionen, von Ihrem Favoriten bis zum am wenigsten bevorzugten. Jede Position ist Punkte wert, und die Option mit den meisten Punkten gewinnt.",
+    "ranked_tooltip": "Bei der Rangfolge-Abstimmung ordnest du alle {{maxcount}} Optionen, von deinem Favoriten bis zum am wenigsten bevorzugten. Jede Position ist Punkte wert, und die Option mit den meisten Punkten gewinnt.",
     "singlechoice_title": "Einfachauswahl {{ weighted }}",
     "weighted_voting": "gewichtet"
   },
@@ -72,8 +72,8 @@
   },
   "spreadsheet": {
     "access_button": "Identifizieren",
-    "anon_sik_helper": "So bleibt Ihre Stimme anonym",
-    "anon_sik_label": "Legen Sie ein Passwort für Ihre Stimme fest",
+    "anon_sik_helper": "So bleibt deine Stimme anonym",
+    "anon_sik_label": "Lege ein Passwort für deine Stimme fest",
     "close": "Schließen",
     "logout": "Abmelden",
     "modal_title": "Authentifizierung"
@@ -90,18 +90,18 @@
     "upcoming": "Bevorstehend"
   },
   "validation": {
-    "at_least_one": "Wählen Sie mindestens eine Option aus",
-    "choices_count": "Wählen Sie {{ count }} Optionen aus",
-    "choices_range": "Wählen Sie zwischen {{ min }} und {{ max }} Optionen aus",
+    "at_least_one": "Wähle mindestens eine Option aus",
+    "choices_count": "Wähle {{ count }} Optionen aus",
+    "choices_range": "Wähle zwischen {{ min }} und {{ max }} Optionen aus",
     "min_length": "Dieses Feld muss mindestens {{ min }} Zeichen lang sein",
-    "rank_all": "Ordnen Sie alle {{ count }} Optionen ein",
+    "rank_all": "Ordne alle {{ count }} Optionen ein",
     "required": "Dieses Feld ist erforderlich"
   },
   "vote": {
     "abstain": "Enthalten",
     "button": "Abstimmen",
     "button_update": "Meine Stimme ändern",
-    "confirm": "Bitte bestätigen Sie Ihre Auswahl:",
+    "confirm": "Bitte bestätige deine Auswahl:",
     "disabled": {
       "canceled": "Die Abstimmung wurde storniert",
       "ended": "Die Abstimmung ist beendet",
@@ -116,9 +116,9 @@
     },
     "rank_position": "#{{ position }}",
     "sign": "Zuerst unterzeichnen",
-    "voted_description": "Zur Überprüfung Ihrer Stimme können Sie diese eindeutige Kennung verwenden: {{ id }}",
-    "voted_question_description": "Die Kennung Ihrer Stimme für „{{ title }}“ lautet {{ id }}.",
-    "voted_title": "Ihre Stimme wurde erfolgreich abgegeben!",
-    "weight": "Ihr Stimmgewicht beträgt: "
+    "voted_description": "Zur Überprüfung deiner Stimme kannst du diese eindeutige Kennung verwenden: {{ id }}",
+    "voted_question_description": "Die Kennung deiner Stimme für „{{ title }}“ lautet {{ id }}.",
+    "voted_title": "Deine Stimme wurde erfolgreich abgegeben!",
+    "weight": "Dein Stimmgewicht beträgt: "
   }
 }
