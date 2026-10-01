@@ -63,11 +63,18 @@ export enum ErrorCode {
   UserNotVerified = 40014,
   UserAlreadyVerified = 40015,
   DraftLimitReached = 40031,
+  // Pay-per-process billing
+  InsufficientWalletBalance = 40175,
+  QuoteRequired = 40176,
+  PaymentSessionConflict = 40177,
+  PaymentRequired = 40178,
 }
 
 interface IApiError {
   error: string
   code?: number
+  // Error-specific payload, e.g. the quote of a 402 payment error
+  data?: unknown
 }
 
 export class ApiError extends Error {
