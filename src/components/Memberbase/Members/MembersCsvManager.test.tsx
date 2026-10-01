@@ -154,54 +154,70 @@ describe('MembersCsvManager', () => {
   })
 
   it('keeps the outcome of a read in flight when an empty drop happens meanwhile', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     let failRead: (error: Error) => void = () => {}
     mockRead = () =>
       new Promise((_, reject) => {
         failRead = reject
       })
-    render(<MembersCsvManagerForm />)
 
-    let slowDrop: Promise<void> | undefined
-    await act(async () => {
-      slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
-    })
-    await act(async () => {
-      await dropHandler?.([], [])
-    })
-    const missingData = new ErrorMissingData()
-    await act(async () => {
-      failRead(missingData)
-      await slowDrop
-    })
+    try {
+      render(<MembersCsvManagerForm />)
 
-    expect(screen.getByText(missingData.message)).toBeInTheDocument()
+      let slowDrop: Promise<void> | undefined
+      await act(async () => {
+        slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+      })
+      await act(async () => {
+        await dropHandler?.([], [])
+      })
+      const missingData = new ErrorMissingData()
+      await act(async () => {
+        failRead(missingData)
+        await slowDrop
+      })
+
+      expect(screen.getByText(missingData.message)).toBeInTheDocument()
+      expect(consoleError).toHaveBeenCalledTimes(1)
+      expect(consoleError).toHaveBeenCalledWith('could not load file:', missingData)
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 
   it('ignores a slow read from an earlier drop once a newer file is dropped', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     let failRead: (error: Error) => void = () => {}
     mockRead = () =>
       new Promise((_, reject) => {
         failRead = reject
       })
-    render(<MembersCsvManagerForm />)
 
-    let slowDrop: Promise<void> | undefined
-    await act(async () => {
-      slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
-    })
-    const pdf = new File(['data'], 'notes.pdf', { type: 'application/pdf' })
-    await act(async () => {
-      await dropHandler?.([], [{ file: pdf, errors: [{ code: 'file-invalid-type', message: 'Invalid type' }] }])
-    })
-    await act(async () => {
-      failRead(new TypeError('raw reader failure'))
-      await slowDrop
-    })
+    try {
+      render(<MembersCsvManagerForm />)
 
-    expect(
-      screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
-    ).toBeInTheDocument()
-    expect(screen.queryByText(/We couldn't read this file/)).not.toBeInTheDocument()
+      let slowDrop: Promise<void> | undefined
+      await act(async () => {
+        slowDrop = dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+      })
+      const pdf = new File(['data'], 'notes.pdf', { type: 'application/pdf' })
+      await act(async () => {
+        await dropHandler?.([], [{ file: pdf, errors: [{ code: 'file-invalid-type', message: 'Invalid type' }] }])
+      })
+      await act(async () => {
+        failRead(new TypeError('raw reader failure'))
+        await slowDrop
+      })
+
+      expect(
+        screen.getByText("This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.")
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/We couldn't read this file/)).not.toBeInTheDocument()
+      // A superseded read is dropped before it is logged
+      expect(consoleError).not.toHaveBeenCalled()
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 
   it('drops the outcome of a read still in flight once the importer is closed', async () => {
@@ -314,29 +330,46 @@ describe('MembersCsvManager', () => {
   })
 
   it('shows a generic message instead of raw browser errors when the file cannot be read', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     mockReadError = new TypeError(
       "Failed to execute 'readAsBinaryString' on 'FileReader': parameter 1 is not of type 'Blob'."
     )
-    render(<MembersCsvManagerForm />)
 
-    await act(async () => {
-      await dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
-    })
+    try {
+      render(<MembersCsvManagerForm />)
 
-    expect(
-      screen.getByText("We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again.")
-    ).toBeInTheDocument()
-    expect(screen.queryByText(/readAsBinaryString/)).not.toBeInTheDocument()
+      await act(async () => {
+        await dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+      })
+
+      expect(
+        screen.getByText("We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again.")
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/readAsBinaryString/)).not.toBeInTheDocument()
+      // The raw error still reaches the console, for debugging
+      expect(consoleError).toHaveBeenCalledTimes(1)
+      expect(consoleError).toHaveBeenCalledWith('could not load file:', mockReadError)
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 
   it('shows the spreadsheet validation message when the file has no data', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     mockReadError = new ErrorMissingData()
-    render(<MembersCsvManagerForm />)
 
-    await act(async () => {
-      await dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
-    })
+    try {
+      render(<MembersCsvManagerForm />)
 
-    expect(screen.getByText(mockReadError.message)).toBeInTheDocument()
+      await act(async () => {
+        await dropHandler?.([new File(['data'], 'members.csv', { type: 'text/csv' })])
+      })
+
+      expect(screen.getByText(mockReadError.message)).toBeInTheDocument()
+      expect(consoleError).toHaveBeenCalledTimes(1)
+      expect(consoleError).toHaveBeenCalledWith('could not load file:', mockReadError)
+    } finally {
+      consoleError.mockRestore()
+    }
   })
 })
