@@ -1045,7 +1045,7 @@
       "add_to_group_confirmation_many": "Vous allez ajouter {{count}} membres au groupe « {{group}} ».",
       "add_to_group_confirmation_other": "Vous allez ajouter {{count}} membres au groupe « {{group}} ».",
       "add_to_group_description": "Sélectionnez un groupe auquel ajouter les membres.",
-      "add_to_group_error": "",
+      "add_to_group_error": "Erreur lors de l'ajout des membres au groupe",
       "add_to_group_success": "Membres ajoutés au groupe avec succès",
       "bulk_delete": "Supprimer",
       "cancel": "Annuler",
@@ -1384,13 +1384,13 @@
     "no_description": "Aucune description fournie",
     "payment": {
       "error": {
-        "census_growth_payment_in_progress": "",
-        "census_growth_payment_required": "",
-        "payment_in_progress": "",
-        "publish_payment_required": "",
-        "quote_required": "",
-        "wallet_insufficient": "",
-        "wallet_insufficient_amounts": ""
+        "census_growth_payment_in_progress": "Le paiement d'un processus de vote utilisant ces membres est encore en cours de traitement. Réessayez une fois qu'il sera terminé.",
+        "census_growth_payment_required": "Ces membres agrandiraient la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte {{amount}} de plus (HT).",
+        "payment_in_progress": "Le paiement de ce processus de vote n'est pas encore réglé, il ne peut donc pas être publié pour le moment. Réessayez plus tard et contactez-nous si le problème persiste.",
+        "publish_payment_required": "Ce processus de vote coûte {{amount}} (HT) et doit être payé avant de pouvoir être publié.",
+        "quote_required": "Les processus de vote de plus de 50 000 électeurs nécessitent un devis personnalisé. Contactez-nous pour publier celui-ci.",
+        "wallet_insufficient": "Le solde de l'intégrateur ne couvre pas le prix de ce processus de vote. Rechargez le solde et publiez à nouveau.",
+        "wallet_insufficient_amounts": "Le solde de l'intégrateur est de {{available}}, mais il reste {{required}} (HT) à payer pour publier ce processus de vote. Rechargez le solde et publiez à nouveau."
       }
     },
     "people_in_census_one": "{{ count }} électeur",
