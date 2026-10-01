@@ -1614,7 +1614,7 @@
     "voting_process": {
       "card": {
         "abstain": "Enthalten",
-        "item": "Frage {{index}}",
+        "item": "Stimmen gesamt",
         "option": "Option",
         "outcome_label": "Abstimmungsmethode",
         "participation_short": "{{votes}} Stimmen",

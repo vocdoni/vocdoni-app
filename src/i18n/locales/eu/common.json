@@ -1614,7 +1614,7 @@
     "voting_process": {
       "card": {
         "abstain": "Abstenitu",
-        "item": "{{index}}. galdera",
+        "item": "Boto guztira",
         "option": "Aukera",
         "outcome_label": "Bozketa-metodoa",
         "participation_short": "{{votes}} boto",
