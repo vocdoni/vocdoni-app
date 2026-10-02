@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { RiBarChartBoxLine, RiLock2Line, RiSearchEyeLine, RiShieldCheckLine } from 'react-icons/ri'
 import { useCensusSize } from '~queries/census'
+import { getProcessEndDate } from '~queries/process-end-date'
 import { Routes } from '~src/router/routes'
 
 // Returns the milliseconds left until the relevant deadline (start when upcoming, end otherwise).
@@ -97,7 +98,7 @@ const ParticipationCard = () => {
   const percent = census > 0 ? (voteCount / census) * 100 : 0
   const upcoming = isUpcoming(election)
   const startDate = new Date(election.startDate)
-  const endDate = new Date(election.endDate)
+  const endDate = getProcessEndDate(election)
   const target = upcoming ? startDate : endDate
   const nf = (value: number, fractionDigits = 0) =>
     new Intl.NumberFormat(i18n.language, {
@@ -233,7 +234,7 @@ const ResultsNotice = () => {
   // When results are neither published nor encrypted there's nothing to show here yet.
   if (!electionHasResults && !isEncrypted) return null
 
-  const endDate = new Date(election.endDate)
+  const endDate = getProcessEndDate(election)
   const closeDate = election.endDate
     ? new Intl.DateTimeFormat(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' }).format(endDate)
     : ''
