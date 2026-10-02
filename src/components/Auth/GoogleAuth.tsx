@@ -56,13 +56,16 @@ const GoogleAuth = () => {
       }
       const registered = localStorage.getItem(AuthStorageKeys.Registered)
       const isRegistered = registered === 'true' || registered === '1' || (registered as unknown) === true
-      // The flag is only set when this OAuth flow created the account
+      // The wallet writes the flag on every OAuth login; it is 'true' only when this flow created the account
       if (isRegistered) {
-        trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'google' } })
-        rememberSignupMethod('google')
+        // Only report outcomes of a session that was actually established
+        if (session) {
+          trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'google' } })
+          rememberSignupMethod('google')
+        }
         localStorage.removeItem(AuthStorageKeys.Registered)
         navigate(Routes.auth.organizationCreate)
-      } else {
+      } else if (session) {
         trackEvent({ name: AnalyticsEvents.UserLoggedIn, props: { method: 'google' } })
       }
       disconnect() // Disconnect the wallet after successful authentication (session is maintained via token)

@@ -435,8 +435,10 @@ export const applyPosthogConsent = (consent: PosthogConsent): void => {
 
 // The sign-up happens before the user is identified, and with
 // `person_profiles: 'identified_only'` an anonymous user has no person to hold
-// properties. The method is kept until the consented identify call, which sets
-// it once (`$set_once`), so a later login with another method never overwrites it.
+// properties. The method is kept in memory until the consented identify call, which
+// sets it once (`$set_once`), so a later login with another method never overwrites
+// it. It does not survive a page reload (e.g. opening the emailed verification link
+// in a new tab), in which case the method is simply not recorded.
 let pendingSignupMethod: AuthMethod | null = null
 
 export const rememberSignupMethod = (method: AuthMethod): void => {
@@ -455,6 +457,8 @@ export const identifyPosthogUser = (id: string, props?: Record<string, unknown>)
 }
 
 export const resetPosthogUser = (): void => {
+  // A method remembered for one account must never be attached to the next one to log in
+  pendingSignupMethod = null
   withPosthog('Failed to reset PostHog user:', (posthog) => {
     posthog.reset()
   })
