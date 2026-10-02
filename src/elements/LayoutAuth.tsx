@@ -4,6 +4,7 @@ import { Trans } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { Outlet, Link as RouterLink, useLocation } from 'react-router'
 import { AuthShowcase, AuthTrustBar, useAuthVertical, useVerticalSlug } from '~components/Auth/vertical'
+import { LanguagesMenu } from '~components/Navbar/LanguagesList'
 import { withVerticalParam } from '~constants/verticals'
 import { Routes } from '~routes'
 
@@ -33,14 +34,17 @@ const LayoutAuth = () => {
   return (
     <Flex justifyContent='center' minH='100dvh' p={{ base: 6, md: 10 }}>
       <Flex w='full' maxW={{ base: 'md', md: '4xl', lg: '6xl' }} flexDir='column' gap={2} my='auto'>
-        <Link asChild display='flex' alignItems='center' alignSelf='start'>
-          {/* The sign-in link carries the vertical like every other auth link; the home link is the
-              marketing site and takes no param. */}
-          <RouterLink to={isSignin ? Routes.vocdoni : withVerticalParam(Routes.auth.signIn, slug)}>
-            <Icon as={LuArrowLeft} />
-            {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
-          </RouterLink>
-        </Link>
+        <Flex alignItems='center' justifyContent='space-between' gap={2}>
+          <Link asChild display='flex' alignItems='center'>
+            {/* The sign-in link carries the vertical like every other auth link; the home link is the
+                marketing site and takes no param. */}
+            <RouterLink to={isSignin ? Routes.vocdoni : withVerticalParam(Routes.auth.signIn, slug)}>
+              <Icon as={LuArrowLeft} />
+              {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
+            </RouterLink>
+          </Link>
+          <LanguagesMenu />
+        </Flex>
         <Flex
           w='full'
           // Floor, not a fixed height: the row still grows for a long form or a long quote. It only
