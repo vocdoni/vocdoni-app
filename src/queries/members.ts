@@ -427,11 +427,19 @@ const membersMissing = async (client: ValidationClient, orgAddress: string, fiel
 /** Who can't get a voting code: no email and no mobile. */
 export const computeReadiness = (missingEmail: string[], missingPhone: string[]) => {
   const noPhone = new Set(missingPhone)
-  const unreachable = missingEmail.filter((id) => noPhone.has(id))
-  return { missingEmail: missingEmail.length, missingPhone: missingPhone.length, unreachable: unreachable.length }
+  const unreachableIds = missingEmail.filter((id) => noPhone.has(id))
+  return {
+    missingEmail: missingEmail.length,
+    missingPhone: missingPhone.length,
+    unreachable: unreachableIds.length,
+    /** Who has neither, for "Show them" */
+    unreachableIds,
+  }
 }
 
 export const READINESS_STALE_TIME = 5 * 60 * 1000
+
+const NO_IDS: string[] = []
 
 /**
  * How many members can get a voting code by email or SMS. Two validation calls (email, then
@@ -465,6 +473,8 @@ export const useSignInReadiness = () => {
     total: count,
     ready: count - unreachable,
     unreachable,
+    /** The members with neither an email nor a mobile */
+    unreachableIds: query.data?.unreachableIds ?? NO_IDS,
     isLoading: query.isLoading,
   }
 }

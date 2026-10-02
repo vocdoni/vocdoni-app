@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Text, VisuallyHidden } from '@chakra-ui/react'
+import { Box, Button, Flex, Icon, Text, VisuallyHidden } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuTriangleAlert } from 'react-icons/lu'
@@ -8,9 +8,10 @@ import type { PageSelectionState } from './useSelection'
 
 /**
  * "1,719 of 1,742 can get a voting code · ⚠ 23 have no email or mobile · Show them". Says nothing
- * when readiness can't be worked out.
+ * when readiness can't be worked out. Without `onShowThem` (organizations too big to load into
+ * memory), "Show them" is a "Soon" button.
  */
-export const ReadinessMessage = () => {
+export const ReadinessMessage = ({ onShowThem }: { onShowThem?: () => void }) => {
   const { t, i18n } = useTranslation()
   const readiness = useSignInReadiness()
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
@@ -69,18 +70,24 @@ export const ReadinessMessage = () => {
         </Box>
         <VisuallyHidden hideFrom='md'>{unreachableText}</VisuallyHidden>
       </Text>
-      <Box hideBelow='md' flexShrink={0}>
-        <ComingSoonButton
-          feature='members_show_flagged'
-          surface='people_readiness'
-          label={t('members.readiness.show_them', { defaultValue: 'Show them' })}
-          title={t('members.readiness.show_them_title', { defaultValue: 'See who can’t get a voting code' })}
-          description={t('members.readiness.show_them_description', {
-            defaultValue:
-              'Soon you’ll see the people without an email or mobile in one list, to fix them before a vote.',
-          })}
-        />
-      </Box>
+      {onShowThem ? (
+        <Button size='xs' variant='plain' px={0} h='auto' color='fg.info' flexShrink={0} onClick={onShowThem}>
+          {t('members.readiness.show_them', { defaultValue: 'Show them' })}
+        </Button>
+      ) : (
+        <Box hideBelow='md' flexShrink={0}>
+          <ComingSoonButton
+            feature='members_show_flagged'
+            surface='people_readiness'
+            label={t('members.readiness.show_them', { defaultValue: 'Show them' })}
+            title={t('members.readiness.show_them_title', { defaultValue: 'See who can’t get a voting code' })}
+            description={t('members.readiness.show_them_description', {
+              defaultValue:
+                'Soon you’ll see the people without an email or mobile in one list, to fix them before a vote.',
+            })}
+          />
+        </Box>
+      )}
     </>
   )
 }

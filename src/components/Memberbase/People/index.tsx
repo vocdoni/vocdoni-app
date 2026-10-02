@@ -6,7 +6,14 @@ import { LuListPlus, LuTrash2, LuUserPlus, LuUsers } from 'react-icons/lu'
 import { Banner } from '~components/ui/Banner'
 import { SelectionBar } from '~components/ui/SelectionBar'
 import { useAffectedVotes } from '~src/queries/affectedVotes'
-import { useImportJobProgress, usePaginatedMembers, useMembersCount } from '~src/queries/members'
+import {
+  MEMBERS_COLLECT_CAP,
+  useImportJobProgress,
+  useMemberIndex,
+  usePaginatedMembers,
+  useMembersCount,
+  useSignInReadiness,
+} from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useMemberFields } from '../fields'
 import { ImportProgress } from '../Members/Import'
@@ -56,8 +63,11 @@ const useDelayedFlag = (active: boolean, delay: number) => {
 
 const hasId = (member: { id?: string }): member is SelectedMember => !!member.id
 
-/** What the list shows: the server's page, or a set already in memory (the selected people) */
-type View = 'list' | 'selected'
+/**
+ * What the list shows: the server's page, or a set already in memory (the selected people, or
+ * those who can't get a voting code)
+ */
+type View = 'list' | 'selected' | 'attention'
 
 export const People = () => {
   const { t, i18n } = useTranslation()
@@ -81,7 +91,16 @@ export const People = () => {
   // Survives search, sort and paging; only another organization starts it over
   const selection = useSelection({ resetKey: organization?.address })
   const [view, setView] = useState<View>('list')
-  const local = useLocalRows(selection.members, {
+  const readiness = useSignInReadiness()
+  // "Show them" loads every member (5,000 at most) and keeps those without an email or mobile:
+  // there's no endpoint that reads members by id
+  const canShowThem = membersCount.count <= MEMBERS_COLLECT_CAP
+  const memberIndex = useMemberIndex({ enabled: view === 'attention' })
+  const attention = useMemo(() => {
+    const ids = new Set(readiness.unreachableIds)
+    return (memberIndex.data?.members ?? []).filter((member) => ids.has(member.id))
+  }, [memberIndex.data, readiness.unreachableIds])
+  const local = useLocalRows(view === 'attention' ? attention : selection.members, {
     sortedBy: url.sortedBy,
     order: url.order,
     size: url.size,
@@ -102,7 +121,8 @@ export const People = () => {
   const activeMember =
     members.find((member) => member.id === url.memberId) ??
     pageMembers.find((member) => member.id === url.memberId) ??
-    selection.members.find((member) => member.id === url.memberId)
+    selection.members.find((member) => member.id === url.memberId) ??
+    attention.find((member) => member.id === url.memberId)
 
   const visibleColumns = fields.filter((field) => !ALWAYS_VISIBLE.includes(field.id) && columns.isVisible(field.id))
   const surnameFirst = url.sortedBy === 'surname'
@@ -206,6 +226,28 @@ export const People = () => {
 
   const searching = Boolean(url.q)
   const empty = (() => {
+    if (view === 'attention') {
+      if (memberIndex.isError)
+        return (
+          <Banner
+            status='error'
+            action={
+              <Button size='sm' variant='outline' onClick={() => memberIndex.refetch()}>
+                {t('members.people.retry', { defaultValue: 'Try again' })}
+              </Button>
+            }
+          >
+            {t('members.attention.load_error', { defaultValue: "We couldn't load them." })}
+          </Banner>
+        )
+      if (!memberIndex.data) return <Box h='120px' />
+      if (members.length) return null
+      return (
+        <Text py={10} textAlign='center' color='fg.muted' fontSize='sm'>
+          {t('members.attention.none', { defaultValue: 'Everyone can get a voting code now.' })}
+        </Text>
+      )
+    }
     if (query.isError && !query.data)
       return (
         <Banner
@@ -292,7 +334,32 @@ export const People = () => {
       />
       <Box borderWidth='1px' borderColor='border' borderRadius='md' overflow='hidden' bg='bg'>
         <ContextBar>
-          {view === 'selected' ? (
+          {view === 'attention' ? (
+            <>
+              <Text fontSize='sm' fontVariantNumeric='tabular-nums' truncate role='status'>
+                {memberIndex.progress && !memberIndex.data
+                  ? t('members.attention.loading', {
+                      defaultValue: 'Loading your members… {{done}} of {{total}}',
+                      done: format(memberIndex.progress.collected),
+                      total: format(memberIndex.progress.total),
+                    })
+                  : !memberIndex.data
+                    ? null
+                    : attention.length
+                      ? t('members.attention.showing', {
+                          defaultValue_one: 'Showing the person with no email or mobile',
+                          defaultValue_other: 'Showing the {{formattedCount}} with no email or mobile',
+                          count: attention.length,
+                          formattedCount: format(attention.length),
+                        })
+                      : t('members.attention.none', { defaultValue: 'Everyone can get a voting code now.' })}
+              </Text>
+              <Separator />
+              <Button size='xs' variant='plain' px={0} color='fg.info' onClick={() => setView('list')}>
+                {t('members.selection.show_everyone', { defaultValue: 'Show everyone' })}
+              </Button>
+            </>
+          ) : view === 'selected' ? (
             <>
               <Text fontSize='sm' fontVariantNumeric='tabular-nums' truncate>
                 {t('members.selection.showing_selected', {
@@ -313,12 +380,12 @@ export const People = () => {
             <EveryoneSelectedMessage total={selection.count} onClear={selection.clear} />
           ) : pageSelection.some ? (
             <PageSelectionMessage pageSelection={pageSelection} pageSize={members.length}>
-              {pageSelection.all && matching > members.length && (
+              {view === 'list' && pageSelection.all && matching > members.length && (
                 <SelectAllOffer total={matching} searching={searching} selectAll={selectAll} />
               )}
             </PageSelectionMessage>
           ) : (
-            <ReadinessMessage />
+            <ReadinessMessage onShowThem={canShowThem ? () => setView('attention') : undefined} />
           )}
         </ContextBar>
         <Box ref={listRef} onKeyDown={(event) => step(event.nativeEvent)}>

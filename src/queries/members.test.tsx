@@ -95,6 +95,7 @@ describe('sign-in readiness', () => {
       missingEmail: 3,
       missingPhone: 3,
       unreachable: 2,
+      unreachableIds: ['b', 'c'],
     })
   })
 

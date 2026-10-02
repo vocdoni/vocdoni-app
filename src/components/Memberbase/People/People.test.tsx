@@ -10,7 +10,7 @@ const state = vi.hoisted(() => ({
   total: 0,
   count: 0,
   listArgs: [] as Record<string, unknown>[],
-  readiness: { available: false, total: 0, ready: 0, unreachable: 0, isLoading: false },
+  readiness: { available: false, total: 0, ready: 0, unreachable: 0, unreachableIds: [] as string[], isLoading: false },
   /** Every authenticated request the page makes (the collector's member pages among them) */
   fetch: vi.fn(async (_url: string, _params?: unknown): Promise<unknown> => ({})),
 }))
@@ -138,7 +138,7 @@ describe('People', () => {
     state.listArgs = []
     state.fetch.mockReset()
     state.fetch.mockResolvedValue({})
-    state.readiness = { available: false, total: 0, ready: 0, unreachable: 0, isLoading: false }
+    state.readiness = { available: false, total: 0, ready: 0, unreachable: 0, unreachableIds: [], isLoading: false }
     localStorage.clear()
     setReactProvidersMock({
       useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
@@ -466,19 +466,49 @@ describe('People', () => {
   })
 
   it('says how many can get a voting code, with a labelled warning for the rest', () => {
-    state.readiness = { available: true, total: 1742, ready: 1719, unreachable: 23, isLoading: false }
+    state.readiness = {
+      available: true,
+      total: 1742,
+      ready: 1719,
+      unreachable: 23,
+      unreachableIds: [],
+      isLoading: false,
+    }
+    // Past the 5,000 the app loads into memory
+    state.count = 6000
     renderPeople()
 
     expect(screen.getByText('1,719 of 1,742 can get a voting code')).toBeInTheDocument()
     // The sentence, plus its screen-reader copy beside the bare count shown on phones
     expect(screen.getAllByText('23 have no email or mobile')).toHaveLength(2)
     expect(screen.getByText('Warning:')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Show them/ })).toBeInTheDocument()
+    // Too many members to load into memory: "Show them" is a "Soon" button
+    expect(screen.getByRole('button', { name: /Show them/ })).toHaveTextContent('Soon')
+  })
+
+  it('shows the people who can’t get a voting code, from the member index', async () => {
+    const user = userEvent.setup()
+    state.readiness = { available: true, total: 2, ready: 1, unreachable: 1, unreachableIds: ['j2'], isLoading: false }
+    state.fetch.mockResolvedValue({ members: [anna, jordi], pagination: { totalItems: 2, lastPage: 1 } })
+    renderPeople()
+
+    await user.click(screen.getByRole('button', { name: 'Show them' }))
+    expect(await screen.findByText('Showing the person with no email or mobile')).toBeInTheDocument()
+    const table = screen.getByRole('table')
+    expect(
+      within(table)
+        .getAllByRole('link')
+        .map((link) => link.textContent)
+    ).toEqual(['Jordi Serra Mas'])
+    expect(memberPageRequests()).toEqual(['organizations/0xorg/members?page=1&limit=100&search='])
+
+    await user.click(screen.getByRole('button', { name: 'Show everyone' }))
+    expect(within(screen.getByRole('table')).getAllByRole('link')).toHaveLength(2)
   })
 
   it('swaps readiness for the page message while rows are selected', async () => {
     const user = userEvent.setup()
-    state.readiness = { available: true, total: 2, ready: 2, unreachable: 0, isLoading: false }
+    state.readiness = { available: true, total: 2, ready: 2, unreachable: 0, unreachableIds: [], isLoading: false }
     renderPeople()
 
     expect(screen.getByText('All 2 can get a voting code')).toBeInTheDocument()
