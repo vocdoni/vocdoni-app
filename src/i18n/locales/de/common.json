@@ -214,12 +214,16 @@
       "all_signed": "Niemand sonst kann entfernt werden: Alle haben schon mit der Stimmabgabe begonnen.",
       "confirm_one": "1 Person entfernen",
       "confirm_other": "{{formattedCount}} Personen entfernen",
+      "confirm_vote_one": "1 Wähler/in entfernen",
+      "confirm_vote_other": "{{formattedCount}} Wählende entfernen",
       "done": "{{before}} → {{after}} Personen",
       "done_detail": "Sie bleiben in deinen Mitgliedern.",
       "done_vote": "{{before}} → {{after}} Stimmberechtigte",
       "emptied_one": "Dann dürfte niemand mehr {{questions}} beantworten. Behalte mindestens eine der berechtigten Personen.",
       "emptied_other": "Dann dürfte niemand mehr {{questions}} beantworten. Behalte für jede Frage mindestens eine der berechtigten Personen.",
       "error": "Niemand wurde entfernt",
+      "find": "Suchen",
+      "in_vote": "In dieser Abstimmung suchen",
       "no_vote": "Sie können in dieser Abstimmung nicht mehr abstimmen.",
       "partial": "Nach {{removed}} entfernten Personen abgebrochen",
       "pick_button": "Personen entfernen…",
@@ -239,7 +243,14 @@
       "someone": "Jemand",
       "stay": "Sie bleiben in deinen Mitgliedern.",
       "title_one": "1 Person von „{{census}}“ entfernen?",
-      "title_other": "{{formattedCount}} Personen von „{{census}}“ entfernen?"
+      "title_other": "{{formattedCount}} Personen von „{{census}}“ entfernen?",
+      "title_vote_one": "1 Wähler/in aus „{{vote}}“ entfernen?",
+      "title_vote_other": "{{formattedCount}} Wählende aus „{{vote}}“ entfernen?",
+      "undo": "Wieder hinzufügen",
+      "undo_error": "Sie konnten nicht wieder hinzugefügt werden",
+      "undone": "{{before}} → {{after}} Personen",
+      "undone_detail": "Sie wurden wieder hinzugefügt.",
+      "undone_vote": "{{before}} → {{after}} Stimmberechtigte"
     },
     "search": "Nach Name, E-Mail oder Nummer suchen",
     "select_hint": "Wähle Personen aus, um sie von dieser Teilnehmerliste zu entfernen.",
@@ -256,6 +267,8 @@
     "source": {
       "everyone": "Alle: Auch Mitglieder, die du später hinzufügst, dürfen abstimmen.",
       "follows_everyone": "Diese Abstimmung folgt „Alle“: Auch Mitglieder, die du hinzufügst, dürfen darin abstimmen.",
+      "follows_everyone_live": "Diese Abstimmung folgt „Alle“: Auch Mitglieder, die du hinzufügst, dürfen darin abstimmen. Wen du hier entfernst, der ist nur aus dieser Abstimmung draußen.",
+      "legacy_saved": "Diese Abstimmung folgt der gespeicherten Teilnehmerliste „{{name}}“, daher wirken Änderungen daran auch hier. Was du hier änderst, betrifft nur diese Abstimmung.",
       "own": "Die eigene Teilnehmerliste dieser Abstimmung. Änderungen daran betreffen weder deine Mitglieder noch andere Abstimmungen.",
       "saved": "Eine gespeicherte Teilnehmerliste, die du in deinen Abstimmungen wiederverwenden kannst.",
       "selected": "Einzeln für diese Abstimmung ausgewählte Personen.",
@@ -701,11 +714,6 @@
   "google_oauth_conflict_error": "Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich mit deiner bisherigen Methode an.",
   "google_oauth_error": "Google OAuth-Fehler",
   "google_oauth_error_description": "Google OAuth-Fehler, bitte versuche es erneut",
-  "groups_board": {
-    "auto_group": {
-      "title": "Alle Mitglieder"
-    }
-  },
   "head": {
     "description": "Erstelle, verwalte und integriere sichere, Ende-zu-Ende-verifizierbare Abstimmungen mit Vocdoni. Eine flexible Plattform für Organisationen, Regierungen und Entwickler für vertrauenswürdige digitale Abstimmungen und Entscheidungsprozesse.",
     "title": "Vocdoni | Sichere & überprüfbare Abstimmungsinfrastruktur"
@@ -1364,6 +1372,14 @@
       "added": "Zu deinen Mitgliedern hinzugefügt",
       "cancel": "Abbrechen",
       "cant_clear": "Ein Feld zu leeren wird noch nicht gespeichert: Der aktuelle Wert bleibt.",
+      "censuses": {
+        "none": "Noch auf keiner Teilnehmerliste einer Abstimmung und keiner gespeicherten Teilnehmerliste.",
+        "phone_only": "Laufende Abstimmungen lassen sich für Personen mit nur einer Telefonnummer nicht prüfen.",
+        "saved": "Gespeicherte Teilnehmerliste",
+        "title": "Auf Teilnehmerlisten",
+        "unchecked_one": "1 laufende Abstimmung lässt sich nicht prüfen: Die Anmeldung nutzt Angaben, die diese Person nicht hat.",
+        "unchecked_other": "{{count}} laufende Abstimmungen lassen sich nicht prüfen: Die Anmeldung nutzt Angaben, die diese Person nicht hat."
+      },
       "edit": "Bearbeiten",
       "edit_everywhere": "Änderungen gelten für dieses Mitglied überall, auch auf den Teilnehmerlisten laufender Abstimmungen.",
       "error": {
@@ -1372,6 +1388,14 @@
         "invalid_weight": "Gib eine ganze Zahl ab 1 ein",
         "name_required": "Füge einen Vornamen oder Nachnamen hinzu"
       },
+      "live_confirm": {
+        "body_one": "Diese Person darf in „{{vote}}“ abstimmen. Ein neues Stimmgewicht oder eine neue Anmeldeangabe gilt dort sofort.",
+        "body_other": "Diese Person darf in „{{vote}}“ und {{others}} weiteren abstimmen. Ein neues Stimmgewicht oder eine neue Anmeldeangabe gilt dort sofort.",
+        "confirm": "Änderung speichern",
+        "title": "In einer laufenden Abstimmung ändern?"
+      },
+      "live_note_one": "Änderungen gelten sofort in „{{vote}}“.",
+      "live_note_other": "Änderungen gelten sofort in „{{vote}}“ und {{others}} weiteren.",
       "member_number_chip": "Nr. {{number}}",
       "not_found": "Diese Person ist nicht auf dieser Seite. Vielleicht wurde sie gelöscht oder die Liste hat sich geändert.",
       "not_set": "Nicht angegeben",
@@ -1875,6 +1899,10 @@
       "hidden": "Verborgen bis zum Ende",
       "live": "Live-Ergebnisse",
       "title": "Sichtbarkeit der Ergebnisse"
+    },
+    "review": {
+      "census_stale_reload": "Dieser Entwurf wurde woanders geändert. Lade ihn neu, um die neueste Version zu sehen, und veröffentliche ihn dann.",
+      "reload": "Neu laden"
     },
     "settings": "Einstellungen",
     "start_datetime": "Startdatum und -uhrzeit",

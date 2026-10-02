@@ -214,12 +214,16 @@
       "all_signed": "Nobody else can be removed: they've all started voting.",
       "confirm_one": "Remove 1 person",
       "confirm_other": "Remove {{formattedCount}} people",
+      "confirm_vote_one": "Remove 1 voter",
+      "confirm_vote_other": "Remove {{formattedCount}} voters",
       "done": "{{before}} → {{after}} people",
       "done_detail": "They stay in your members.",
       "done_vote": "{{before}} → {{after}} voters",
       "emptied_one": "This would leave nobody allowed to answer {{questions}}. Keep at least one of the people who can.",
       "emptied_other": "This would leave nobody allowed to answer {{questions}}. Keep at least one of the people who can answer each.",
       "error": "Nobody was removed",
+      "find": "Find",
+      "in_vote": "Find in this vote",
       "no_vote": "They can't vote in this vote anymore.",
       "partial": "Stopped after removing {{removed}}",
       "pick_button": "Remove people…",
@@ -239,7 +243,14 @@
       "someone": "Someone",
       "stay": "They stay in your members.",
       "title_one": "Remove 1 person from '{{census}}'?",
-      "title_other": "Remove {{formattedCount}} people from '{{census}}'?"
+      "title_other": "Remove {{formattedCount}} people from '{{census}}'?",
+      "title_vote_one": "Remove 1 voter from '{{vote}}'?",
+      "title_vote_other": "Remove {{formattedCount}} voters from '{{vote}}'?",
+      "undo": "Add them back",
+      "undo_error": "They couldn't be added back",
+      "undone": "{{before}} → {{after}} people",
+      "undone_detail": "They were added back.",
+      "undone_vote": "{{before}} → {{after}} voters"
     },
     "search": "Search by name, email or number",
     "select_hint": "Select people to remove them from this census.",
@@ -256,6 +267,8 @@
     "source": {
       "everyone": "Everyone: members you add later can vote too.",
       "follows_everyone": "This vote follows Everyone: members you add can vote in it too.",
+      "follows_everyone_live": "This vote follows Everyone: members you add can vote in it too. Removing someone here only takes them out of this vote.",
+      "legacy_saved": "This vote follows the saved census '{{name}}', so changes to it reach this vote too. Changes made here only affect this vote.",
       "own": "This vote's own census. Editing it doesn't change your members or other votes.",
       "saved": "A saved census you can reuse in your votes.",
       "selected": "People picked one by one for this vote.",
@@ -701,11 +714,6 @@
   "google_oauth_conflict_error": "An account with this email already exists. Please sign in using your existing method.",
   "google_oauth_error": "Google OAuth Error",
   "google_oauth_error_description": "Google OAuth error, please try again",
-  "groups_board": {
-    "auto_group": {
-      "title": "All Members"
-    }
-  },
   "head": {
     "description": "Build, manage, and integrate secure, e2e verifiable elections with Vocdoni. A flexible platform for organizations, governments, and developers to power trusted digital voting and decision-making.",
     "title": "Vocdoni | Secure & verifiable voting infrastructure"
@@ -1364,6 +1372,14 @@
       "added": "Added to your members",
       "cancel": "Cancel",
       "cant_clear": "Emptying a field isn't saved yet: the current value stays.",
+      "censuses": {
+        "none": "Not in any vote's census or saved census yet.",
+        "phone_only": "Can't check live votes for people with only a phone.",
+        "saved": "Saved census",
+        "title": "In censuses",
+        "unchecked_one": "Can't check 1 live vote: it signs in with details this person doesn't have.",
+        "unchecked_other": "Can't check {{count}} live votes: they sign in with details this person doesn't have."
+      },
       "edit": "Edit",
       "edit_everywhere": "Changes apply to this member everywhere, including the censuses of votes in progress.",
       "error": {
@@ -1372,6 +1388,14 @@
         "invalid_weight": "Use a whole number, 1 or more",
         "name_required": "Add a first name or a last name"
       },
+      "live_confirm": {
+        "body_one": "This person can vote in '{{vote}}'. A new voting power or sign-in detail applies there right away.",
+        "body_other": "This person can vote in '{{vote}}' and {{others}} more. A new voting power or sign-in detail applies there right away.",
+        "confirm": "Save change",
+        "title": "Change this in a vote in progress?"
+      },
+      "live_note_one": "Changes apply right away in '{{vote}}'.",
+      "live_note_other": "Changes apply right away in '{{vote}}' and {{others}} more.",
       "member_number_chip": "No. {{number}}",
       "not_found": "This person isn't on this page. They may have been deleted, or the list changed.",
       "not_set": "Not set",
@@ -1875,6 +1899,10 @@
       "hidden": "Hidden until the end",
       "live": "Live results",
       "title": "Result visibility"
+    },
+    "review": {
+      "census_stale_reload": "This draft was changed somewhere else. Reload it to see the latest version, then publish.",
+      "reload": "Reload"
     },
     "settings": "Settings",
     "start_datetime": "Start date and time",

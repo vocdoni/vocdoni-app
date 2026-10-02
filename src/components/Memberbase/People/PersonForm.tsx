@@ -276,7 +276,7 @@ export const PersonForm = ({
               vote: voteName(runningVotes[0]),
               others: runningVotes.length - 1,
               defaultValue_one: "Changes apply right away in '{{vote}}'.",
-              defaultValue_other: "Changes apply right away in '{{vote}}' and {{others}} more votes.",
+              defaultValue_other: "Changes apply right away in '{{vote}}' and {{others}} more.",
             })}
           </Banner>
         )}
@@ -333,7 +333,7 @@ export const PersonForm = ({
               defaultValue_one:
                 "This person can vote in '{{vote}}'. A new voting power or sign-in detail applies there right away.",
               defaultValue_other:
-                "This person can vote in '{{vote}}' and {{others}} more votes. A new voting power or sign-in detail applies there right away.",
+                "This person can vote in '{{vote}}' and {{others}} more. A new voting power or sign-in detail applies there right away.",
             })}
           </Text>
         </ConfirmDialog>

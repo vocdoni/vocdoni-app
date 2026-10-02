@@ -220,6 +220,9 @@
       "confirm_many": "Retirer {{formattedCount}} personnes",
       "confirm_one": "Retirer 1 personne",
       "confirm_other": "Retirer {{formattedCount}} personnes",
+      "confirm_vote_many": "Retirer {{formattedCount}} électeurs",
+      "confirm_vote_one": "Retirer 1 électeur",
+      "confirm_vote_other": "Retirer {{formattedCount}} électeurs",
       "done": "{{before}} → {{after}} personnes",
       "done_detail": "Elles restent dans vos membres.",
       "done_vote": "{{before}} → {{after}} électeurs",
@@ -227,6 +230,8 @@
       "emptied_one": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées.",
       "emptied_other": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées pour chacune.",
       "error": "Personne n'a été retiré",
+      "find": "Rechercher",
+      "in_vote": "Rechercher dans ce vote",
       "no_vote": "Elles ne pourront plus voter à ce vote.",
       "partial": "Arrêt après le retrait de {{removed}}",
       "pick_button": "Retirer des personnes…",
@@ -251,7 +256,15 @@
       "stay": "Elles restent dans vos membres.",
       "title_many": "Retirer {{formattedCount}} personnes de « {{census}} » ?",
       "title_one": "Retirer 1 personne de « {{census}} » ?",
-      "title_other": "Retirer {{formattedCount}} personnes de « {{census}} » ?"
+      "title_other": "Retirer {{formattedCount}} personnes de « {{census}} » ?",
+      "title_vote_many": "Retirer {{formattedCount}} électeurs de « {{vote}} » ?",
+      "title_vote_one": "Retirer 1 électeur de « {{vote}} » ?",
+      "title_vote_other": "Retirer {{formattedCount}} électeurs de « {{vote}} » ?",
+      "undo": "Les rajouter",
+      "undo_error": "Ils n'ont pas pu être rajoutés",
+      "undone": "{{before}} → {{after}} personnes",
+      "undone_detail": "Ils ont été rajoutés.",
+      "undone_vote": "{{before}} → {{after}} électeurs"
     },
     "search": "Rechercher par nom, e-mail ou numéro",
     "select_hint": "Sélectionnez des personnes pour les retirer de cette liste électorale.",
@@ -269,6 +282,8 @@
     "source": {
       "everyone": "Tout le monde : les membres que vous ajoutez plus tard peuvent aussi voter.",
       "follows_everyone": "Ce vote suit « Tout le monde » : les membres que vous ajoutez peuvent aussi y voter.",
+      "follows_everyone_live": "Ce vote suit « Tout le monde » : les membres que vous ajoutez peuvent aussi y voter. Retirer quelqu'un ici le retire seulement de ce vote.",
+      "legacy_saved": "Ce vote suit la liste électorale enregistrée « {{name}} », donc ses modifications s'y appliquent aussi. Les modifications faites ici ne concernent que ce vote.",
       "own": "La liste électorale propre à ce vote. La modifier ne change ni vos membres ni les autres votes.",
       "saved": "Une liste électorale enregistrée que vous pouvez réutiliser dans vos votes.",
       "selected": "Personnes choisies une à une pour ce vote.",
@@ -719,11 +734,6 @@
   "google_oauth_conflict_error": "Un compte avec cette adresse e-mail existe déjà. Veuillez vous connecter avec votre méthode existante.",
   "google_oauth_error": "Erreur OAuth Google",
   "google_oauth_error_description": "Erreur OAuth Google, veuillez réessayer",
-  "groups_board": {
-    "auto_group": {
-      "title": "Tous les membres"
-    }
-  },
   "head": {
     "description": "Créez, gérez et intégrez des élections sécurisées et vérifiables de bout en bout avec Vocdoni. Une plateforme flexible pour les organisations, les gouvernements et les développeurs, pour un vote numérique et une prise de décision fiables.",
     "title": "Vocdoni | Infrastructure de vote sécurisée et vérifiable"
@@ -1415,6 +1425,15 @@
       "added": "Ajoutée à vos membres",
       "cancel": "Annuler",
       "cant_clear": "Vider un champ n'est pas encore enregistré : la valeur actuelle est conservée.",
+      "censuses": {
+        "none": "Ne figure encore dans aucune liste électorale de vote ni liste enregistrée.",
+        "phone_only": "Impossible de vérifier les votes en cours pour les personnes qui n'ont qu'un téléphone.",
+        "saved": "Liste électorale enregistrée",
+        "title": "Dans les listes électorales",
+        "unchecked_many": "Impossible de vérifier {{count}} votes en cours : on s'y connecte avec des informations que cette personne n'a pas.",
+        "unchecked_one": "Impossible de vérifier 1 vote en cours : on s'y connecte avec des informations que cette personne n'a pas.",
+        "unchecked_other": "Impossible de vérifier {{count}} votes en cours : on s'y connecte avec des informations que cette personne n'a pas."
+      },
       "edit": "Modifier",
       "edit_everywhere": "Les modifications s'appliquent à ce membre partout, y compris dans les listes électorales des votes en cours.",
       "error": {
@@ -1423,6 +1442,16 @@
         "invalid_weight": "Saisissez un nombre entier, 1 ou plus",
         "name_required": "Ajoutez un prénom ou un nom"
       },
+      "live_confirm": {
+        "body_many": "Cette personne peut voter dans « {{vote}} » et {{others}} autres. Un nouveau poids de vote ou une nouvelle information de connexion s'y applique immédiatement.",
+        "body_one": "Cette personne peut voter dans « {{vote}} ». Un nouveau poids de vote ou une nouvelle information de connexion s'y applique immédiatement.",
+        "body_other": "Cette personne peut voter dans « {{vote}} » et {{others}} autres. Un nouveau poids de vote ou une nouvelle information de connexion s'y applique immédiatement.",
+        "confirm": "Enregistrer la modification",
+        "title": "Modifier dans un vote en cours ?"
+      },
+      "live_note_many": "Les modifications s'appliquent immédiatement dans « {{vote}} » et {{others}} autres.",
+      "live_note_one": "Les modifications s'appliquent immédiatement dans « {{vote}} ».",
+      "live_note_other": "Les modifications s'appliquent immédiatement dans « {{vote}} » et {{others}} autres.",
       "member_number_chip": "N° {{number}}",
       "not_found": "Cette personne n'est pas sur cette page. Elle a peut-être été supprimée, ou la liste a changé.",
       "not_set": "Non renseigné",
@@ -1945,6 +1974,10 @@
       "hidden": "Masqués jusqu'à la fin",
       "live": "Résultats en direct",
       "title": "Visibilité des résultats"
+    },
+    "review": {
+      "census_stale_reload": "Ce brouillon a été modifié ailleurs. Rechargez-le pour voir la dernière version, puis publiez-le.",
+      "reload": "Recharger"
     },
     "settings": "Paramètres",
     "start_datetime": "Date et heure de début",

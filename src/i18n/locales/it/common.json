@@ -220,6 +220,9 @@
       "confirm_many": "Togli {{formattedCount}} persone",
       "confirm_one": "Togli 1 persona",
       "confirm_other": "Togli {{formattedCount}} persone",
+      "confirm_vote_many": "Togli {{formattedCount}} votanti",
+      "confirm_vote_one": "Togli 1 votante",
+      "confirm_vote_other": "Togli {{formattedCount}} votanti",
       "done": "{{before}} → {{after}} persone",
       "done_detail": "Restano tra i tuoi membri.",
       "done_vote": "{{before}} → {{after}} votanti",
@@ -227,6 +230,8 @@
       "emptied_one": "Nessuno potrebbe più rispondere a {{questions}}. Mantieni almeno una delle persone che possono farlo.",
       "emptied_other": "Nessuno potrebbe più rispondere a {{questions}}. Mantieni almeno una delle persone che possono rispondere a ciascuna.",
       "error": "Nessuno è stato tolto",
+      "find": "Cerca",
+      "in_vote": "Cerca in questa votazione",
       "no_vote": "Non potranno più votare in questa votazione.",
       "partial": "Interrotto dopo averne tolte {{removed}}",
       "pick_button": "Togli persone…",
@@ -251,7 +256,15 @@
       "stay": "Restano tra i tuoi membri.",
       "title_many": "Togliere {{formattedCount}} persone da «{{census}}»?",
       "title_one": "Togliere 1 persona da «{{census}}»?",
-      "title_other": "Togliere {{formattedCount}} persone da «{{census}}»?"
+      "title_other": "Togliere {{formattedCount}} persone da «{{census}}»?",
+      "title_vote_many": "Togliere {{formattedCount}} votanti da «{{vote}}»?",
+      "title_vote_one": "Togliere 1 votante da «{{vote}}»?",
+      "title_vote_other": "Togliere {{formattedCount}} votanti da «{{vote}}»?",
+      "undo": "Aggiungili di nuovo",
+      "undo_error": "Non è stato possibile aggiungerli di nuovo",
+      "undone": "{{before}} → {{after}} persone",
+      "undone_detail": "Sono stati aggiunti di nuovo.",
+      "undone_vote": "{{before}} → {{after}} votanti"
     },
     "search": "Cerca per nome, email o numero",
     "select_hint": "Seleziona le persone da togliere da questo censimento.",
@@ -269,6 +282,8 @@
     "source": {
       "everyone": "Tutti: anche i membri che aggiungerai in seguito possono votare.",
       "follows_everyone": "Questa votazione segue «Tutti»: anche i membri che aggiungi possono votarci.",
+      "follows_everyone_live": "Questa votazione segue «Tutti»: anche i membri che aggiungi possono votarci. Se togli qualcuno qui, esce solo da questa votazione.",
+      "legacy_saved": "Questa votazione segue il censimento salvato «{{name}}», quindi le sue modifiche arrivano anche qui. Le modifiche che fai qui riguardano solo questa votazione.",
       "own": "Il censimento proprio di questa votazione. Modificarlo non cambia i tuoi membri né le altre votazioni.",
       "saved": "Un censimento salvato che puoi riutilizzare nelle tue votazioni.",
       "selected": "Persone scelte una a una per questa votazione.",
@@ -719,11 +734,6 @@
   "google_oauth_conflict_error": "Esiste già un account con questa email. Accedi utilizzando il metodo che hai utilizzato in precedenza.",
   "google_oauth_error": "Errore Google OAuth",
   "google_oauth_error_description": "Errore Google OAuth, riprovare",
-  "groups_board": {
-    "auto_group": {
-      "title": "Tutti i membri"
-    }
-  },
   "head": {
     "description": "Crea, gestisci e integra elezioni sicure e verificabili end-to-end con Vocdoni. Una piattaforma flessibile per organizzazioni, governi e sviluppatori per un voto digitale e processi decisionali affidabili.",
     "title": "Vocdoni | Infrastruttura di voto sicura e verificabile"
@@ -1415,6 +1425,15 @@
       "added": "Aggiunta ai tuoi membri",
       "cancel": "Annulla",
       "cant_clear": "Svuotare un campo non viene ancora salvato: resta il valore attuale.",
+      "censuses": {
+        "none": "Non è ancora in nessun censimento di votazione né censimento salvato.",
+        "phone_only": "Non è possibile controllare le votazioni in corso per chi ha solo un telefono.",
+        "saved": "Censimento salvato",
+        "title": "Nei censimenti",
+        "unchecked_many": "Non è possibile controllare {{count}} votazioni in corso: si accede con dati che questa persona non ha.",
+        "unchecked_one": "Non è possibile controllare 1 votazione in corso: si accede con dati che questa persona non ha.",
+        "unchecked_other": "Non è possibile controllare {{count}} votazioni in corso: si accede con dati che questa persona non ha."
+      },
       "edit": "Modifica",
       "edit_everywhere": "Le modifiche valgono per questo membro ovunque, anche nei censimenti delle votazioni in corso.",
       "error": {
@@ -1423,6 +1442,16 @@
         "invalid_weight": "Usa un numero intero, 1 o più",
         "name_required": "Aggiungi un nome o un cognome"
       },
+      "live_confirm": {
+        "body_many": "Questa persona può votare in «{{vote}}» e in altre {{others}}. Un nuovo peso del voto o un nuovo dato di accesso vale lì da subito.",
+        "body_one": "Questa persona può votare in «{{vote}}». Un nuovo peso del voto o un nuovo dato di accesso vale lì da subito.",
+        "body_other": "Questa persona può votare in «{{vote}}» e in altre {{others}}. Un nuovo peso del voto o un nuovo dato di accesso vale lì da subito.",
+        "confirm": "Salva la modifica",
+        "title": "Modificarlo in una votazione in corso?"
+      },
+      "live_note_many": "Le modifiche valgono subito in «{{vote}}» e in altre {{others}}.",
+      "live_note_one": "Le modifiche valgono subito in «{{vote}}».",
+      "live_note_other": "Le modifiche valgono subito in «{{vote}}» e in altre {{others}}.",
       "member_number_chip": "N. {{number}}",
       "not_found": "Questa persona non è in questa pagina. Forse è stata eliminata o l’elenco è cambiato.",
       "not_set": "Non indicato",
@@ -1945,6 +1974,10 @@
       "hidden": "Nascosto fino alla fine",
       "live": "Risultati in tempo reale",
       "title": "Visibilità risultati"
+    },
+    "review": {
+      "census_stale_reload": "Questa bozza è stata modificata altrove. Ricaricala per vedere l’ultima versione, poi pubblicala.",
+      "reload": "Ricarica"
     },
     "settings": "Impostazioni",
     "start_datetime": "Data e ora di inizio",

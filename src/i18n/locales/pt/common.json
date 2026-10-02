@@ -220,6 +220,9 @@
       "confirm_many": "Remover {{formattedCount}} pessoas",
       "confirm_one": "Remover 1 pessoa",
       "confirm_other": "Remover {{formattedCount}} pessoas",
+      "confirm_vote_many": "Remover {{formattedCount}} votantes",
+      "confirm_vote_one": "Remover 1 votante",
+      "confirm_vote_other": "Remover {{formattedCount}} votantes",
       "done": "{{before}} → {{after}} pessoas",
       "done_detail": "Continuam nos teus membros.",
       "done_vote": "{{before}} → {{after}} votantes",
@@ -227,6 +230,8 @@
       "emptied_one": "Ninguém poderia responder a {{questions}}. Mantém pelo menos uma das pessoas que podem fazê-lo.",
       "emptied_other": "Ninguém poderia responder a {{questions}}. Mantém pelo menos uma das pessoas que podem responder a cada uma.",
       "error": "Ninguém foi removido",
+      "find": "Procurar",
+      "in_vote": "Procurar nesta votação",
       "no_vote": "Deixam de poder votar nesta votação.",
       "partial": "Parou depois de remover {{removed}}",
       "pick_button": "Remover pessoas…",
@@ -251,7 +256,15 @@
       "stay": "Continuam nos teus membros.",
       "title_many": "Remover {{formattedCount}} pessoas de «{{census}}»?",
       "title_one": "Remover 1 pessoa de «{{census}}»?",
-      "title_other": "Remover {{formattedCount}} pessoas de «{{census}}»?"
+      "title_other": "Remover {{formattedCount}} pessoas de «{{census}}»?",
+      "title_vote_many": "Remover {{formattedCount}} votantes de «{{vote}}»?",
+      "title_vote_one": "Remover 1 votante de «{{vote}}»?",
+      "title_vote_other": "Remover {{formattedCount}} votantes de «{{vote}}»?",
+      "undo": "Voltar a adicioná-los",
+      "undo_error": "Não foi possível voltar a adicioná-los",
+      "undone": "{{before}} → {{after}} pessoas",
+      "undone_detail": "Foram adicionados novamente.",
+      "undone_vote": "{{before}} → {{after}} votantes"
     },
     "search": "Pesquisar por nome, email ou número",
     "select_hint": "Seleciona pessoas para as remover desta lista de participantes.",
@@ -269,6 +282,8 @@
     "source": {
       "everyone": "Todos: os membros que adicionares mais tarde também podem votar.",
       "follows_everyone": "Esta votação segue «Todos»: os membros que adicionares também podem votar nela.",
+      "follows_everyone_live": "Esta votação segue «Todos»: os membros que adicionares também podem votar nela. Se removeres alguém aqui, só sai desta votação.",
+      "legacy_saved": "Esta votação segue a lista de participantes guardada «{{name}}», por isso as alterações nela também chegam aqui. As alterações que fizeres aqui só afetam esta votação.",
       "own": "A lista de participantes própria desta votação. Editá-la não muda os teus membros nem outras votações.",
       "saved": "Uma lista de participantes guardada que podes reutilizar nas tuas votações.",
       "selected": "Pessoas escolhidas uma a uma para esta votação.",
@@ -719,11 +734,6 @@
   "google_oauth_conflict_error": "Já existe uma conta com este email. Inicia sessão com o método existente.",
   "google_oauth_error": "Erro de OAuth do Google",
   "google_oauth_error_description": "Erro de OAuth do Google, tenta novamente",
-  "groups_board": {
-    "auto_group": {
-      "title": "Todos os membros"
-    }
-  },
   "head": {
     "description": "Cria, gere e integra votações seguras e verificáveis de ponta a ponta com a Vocdoni. Uma plataforma flexível para organizações, governos e programadores impulsionarem a votação digital e a tomada de decisões de confiança.",
     "title": "Vocdoni | Infraestrutura de votação segura e verificável"
@@ -1415,6 +1425,15 @@
       "added": "Adicionada aos teus membros",
       "cancel": "Cancelar",
       "cant_clear": "Esvaziar um campo ainda não é guardado: o valor atual mantém-se.",
+      "censuses": {
+        "none": "Ainda não está em nenhuma lista de participantes de votação nem lista guardada.",
+        "phone_only": "Não é possível verificar as votações em curso de pessoas que só têm telefone.",
+        "saved": "Lista de participantes guardada",
+        "title": "Em listas de participantes",
+        "unchecked_many": "Não é possível verificar {{count}} votações em curso: entra-se com dados que esta pessoa não tem.",
+        "unchecked_one": "Não é possível verificar 1 votação em curso: entra-se com dados que esta pessoa não tem.",
+        "unchecked_other": "Não é possível verificar {{count}} votações em curso: entra-se com dados que esta pessoa não tem."
+      },
       "edit": "Editar",
       "edit_everywhere": "As alterações aplicam-se a este membro em todo o lado, incluindo nas listas de participantes das votações em curso.",
       "error": {
@@ -1423,6 +1442,16 @@
         "invalid_weight": "Usa um número inteiro, 1 ou mais",
         "name_required": "Adiciona um nome próprio ou um apelido"
       },
+      "live_confirm": {
+        "body_many": "Esta pessoa pode votar em «{{vote}}» e em mais {{others}}. Um novo peso de voto ou um novo dado de acesso aplica-se lá de imediato.",
+        "body_one": "Esta pessoa pode votar em «{{vote}}». Um novo peso de voto ou um novo dado de acesso aplica-se lá de imediato.",
+        "body_other": "Esta pessoa pode votar em «{{vote}}» e em mais {{others}}. Um novo peso de voto ou um novo dado de acesso aplica-se lá de imediato.",
+        "confirm": "Guardar a alteração",
+        "title": "Alterar numa votação em curso?"
+      },
+      "live_note_many": "As alterações aplicam-se de imediato em «{{vote}}» e em mais {{others}}.",
+      "live_note_one": "As alterações aplicam-se de imediato em «{{vote}}».",
+      "live_note_other": "As alterações aplicam-se de imediato em «{{vote}}» e em mais {{others}}.",
       "member_number_chip": "N.º {{number}}",
       "not_found": "Esta pessoa não está nesta página. Pode ter sido eliminada ou a lista mudou.",
       "not_set": "Não indicado",
@@ -1945,6 +1974,10 @@
       "hidden": "Ocultos até ao fim",
       "live": "Resultados em direto",
       "title": "Visibilidade dos resultados"
+    },
+    "review": {
+      "census_stale_reload": "Este rascunho foi alterado noutro local. Recarrega-o para veres a versão mais recente e depois publica-o.",
+      "reload": "Recarregar"
     },
     "settings": "Definições",
     "start_datetime": "Data e hora de início",

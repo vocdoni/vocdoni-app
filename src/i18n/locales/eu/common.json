@@ -214,12 +214,16 @@
       "all_signed": "Ezin da beste inor kendu: denak hasi dira bozkatzen.",
       "confirm_one": "Kendu pertsona 1",
       "confirm_other": "Kendu {{formattedCount}} pertsona",
+      "confirm_vote_one": "Kendu botogile 1",
+      "confirm_vote_other": "Kendu {{formattedCount}} botogile",
       "done": "{{before}} → {{after}} pertsona",
       "done_detail": "Zure kideetan jarraitzen dute.",
       "done_vote": "{{before}} → {{after}} botogile",
       "emptied_one": "Inork ezingo luke {{questions}} erantzun. Mantendu erantzun dezaketen pertsonetako bat gutxienez.",
       "emptied_other": "Inork ezingo lituzke {{questions}} erantzun. Mantendu bakoitza erantzun dezaketen pertsonetako bat gutxienez.",
       "error": "Ez da inor kendu",
+      "find": "Bilatu",
+      "in_vote": "Bilatu bozketa honetan",
       "no_vote": "Ezingo dute gehiago bozketa honetan bozkatu.",
       "partial": "{{removed}} kendu ondoren gelditu da",
       "pick_button": "Kendu pertsonak…",
@@ -239,7 +243,14 @@
       "someone": "Norbait",
       "stay": "Zure kideetan jarraitzen dute.",
       "title_one": "Pertsona 1 kendu «{{census}}» erroldetik?",
-      "title_other": "{{formattedCount}} pertsona kendu «{{census}}» erroldetik?"
+      "title_other": "{{formattedCount}} pertsona kendu «{{census}}» erroldetik?",
+      "title_vote_one": "Botogile 1 kendu «{{vote}}» bozketatik?",
+      "title_vote_other": "{{formattedCount}} botogile kendu «{{vote}}» bozketatik?",
+      "undo": "Gehitu berriro",
+      "undo_error": "Ezin izan dira berriro gehitu",
+      "undone": "{{before}} → {{after}} pertsona",
+      "undone_detail": "Berriro gehitu dira.",
+      "undone_vote": "{{before}} → {{after}} botogile"
     },
     "search": "Bilatu izenaren, posta elektronikoaren edo zenbakiaren arabera",
     "select_hint": "Hautatu pertsonak errolde honetatik kentzeko.",
@@ -256,6 +267,8 @@
     "source": {
       "everyone": "Denak: geroago gehitzen dituzun kideek ere bozka dezakete.",
       "follows_everyone": "Bozketa honek «Denak» jarraitzen du: gehitzen dituzun kideek ere bozka dezakete bertan.",
+      "follows_everyone_live": "Bozketa honek «Denak» jarraitzen du: gehitzen dituzun kideek ere bozka dezakete bertan. Hemen norbait kentzen baduzu, bozketa honetatik bakarrik ateratzen da.",
+      "legacy_saved": "Bozketa honek «{{name}}» gordetako erroldea jarraitzen du, beraz hartan egindako aldaketak hona ere iristen dira. Hemen egiten dituzun aldaketek bozketa honi bakarrik eragiten diote.",
       "own": "Bozketa honen errolde propioa. Editatzeak ez ditu aldatzen zure kideak ezta beste bozketak ere.",
       "saved": "Zure bozketetan berrerabil dezakezun gordetako erroldea.",
       "selected": "Bozketa honetarako banan-banan aukeratutako pertsonak.",
@@ -701,11 +714,6 @@
   "google_oauth_conflict_error": "Posta elektroniko honekin lotutako kontu bat dago dagoeneko. Mesedez, hasi saioa zure egungo metodoarekin.",
   "google_oauth_error": "Google OAuth errorea",
   "google_oauth_error_description": "Google OAuth errorea, saiatu berriro",
-  "groups_board": {
-    "auto_group": {
-      "title": "Kide guztiak"
-    }
-  },
   "head": {
     "description": "Sortu, kudeatu eta integratu hauteskunde seguruak eta muturretik muturrera egiaztagarriak Vocdonirekin. Plataforma malgua erakunde, gobernu eta garatzaileentzat, konfiantzazko boto-emate digitala eta erabakiak hartzea bultzatzeko.",
     "title": "Vocdoni | Boto-emate azpiegitura segurua eta egiaztagarria"
@@ -1364,6 +1372,14 @@
       "added": "Zure kideetara gehitu da",
       "cancel": "Utzi",
       "cant_clear": "Eremu bat hustea ez da oraindik gordetzen: uneko balioa mantentzen da.",
+      "censuses": {
+        "none": "Oraindik ez dago inongo bozketaren erroldan ezta gordetako erroldarik ere.",
+        "phone_only": "Ezin dira martxan dauden bozketak egiaztatu telefonoa bakarrik duten pertsonentzat.",
+        "saved": "Gordetako erroldea",
+        "title": "Erroldetan",
+        "unchecked_one": "Ezin da martxan dagoen bozketa 1 egiaztatu: pertsona honek ez dituen datuekin sartzen da.",
+        "unchecked_other": "Ezin dira martxan dauden {{count}} bozketa egiaztatu: pertsona honek ez dituen datuekin sartzen dira."
+      },
       "edit": "Editatu",
       "edit_everywhere": "Aldaketak kide honi aplikatzen zaizkio leku guztietan, baita martxan dauden bozketen erroldetan ere.",
       "error": {
@@ -1372,6 +1388,14 @@
         "invalid_weight": "Erabili zenbaki oso bat, 1 edo handiagoa",
         "name_required": "Gehitu izen bat edo abizen bat"
       },
+      "live_confirm": {
+        "body_one": "Pertsona honek «{{vote}}» bozketan bozka dezake. Boto-pisu berri bat edo sartzeko datu berri bat berehala aplikatzen da bertan.",
+        "body_other": "Pertsona honek «{{vote}}» bozketan eta beste {{others}}etan bozka dezake. Boto-pisu berri bat edo sartzeko datu berri bat berehala aplikatzen da bertan.",
+        "confirm": "Gorde aldaketa",
+        "title": "Martxan dagoen bozketa batean aldatu?"
+      },
+      "live_note_one": "Aldaketak berehala aplikatzen dira «{{vote}}» bozketan.",
+      "live_note_other": "Aldaketak berehala aplikatzen dira «{{vote}}» bozketan eta beste {{others}}etan.",
       "member_number_chip": "Zk. {{number}}",
       "not_found": "Pertsona hau ez dago orri honetan. Agian ezabatu egin da edo zerrenda aldatu da.",
       "not_set": "Zehaztu gabe",
@@ -1875,6 +1899,10 @@
       "hidden": "Ezkututa amaitu arte",
       "live": "Emaitzak zuzenean",
       "title": "Emaitzen ikusgaitasuna"
+    },
+    "review": {
+      "census_stale_reload": "Zirriborro hau beste nonbait aldatu da. Kargatu berriro azken bertsioa ikusteko, eta gero argitaratu.",
+      "reload": "Kargatu berriro"
     },
     "settings": "Konfigurazioa",
     "start_datetime": "Hasiera-data eta -ordua",

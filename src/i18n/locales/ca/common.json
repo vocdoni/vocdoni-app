@@ -220,6 +220,9 @@
       "confirm_many": "Treu {{formattedCount}} persones",
       "confirm_one": "Treu 1 persona",
       "confirm_other": "Treu {{formattedCount}} persones",
+      "confirm_vote_many": "Treu {{formattedCount}} votants",
+      "confirm_vote_one": "Treu 1 votant",
+      "confirm_vote_other": "Treu {{formattedCount}} votants",
       "done": "{{before}} → {{after}} persones",
       "done_detail": "Continuen als teus membres.",
       "done_vote": "{{before}} → {{after}} votants",
@@ -227,6 +230,8 @@
       "emptied_one": "Ningú podria respondre {{questions}}. Mantén com a mínim una de les persones que poden fer-ho.",
       "emptied_other": "Ningú podria respondre {{questions}}. Mantén com a mínim una de les persones que poden respondre cadascuna.",
       "error": "No s'ha tret ningú",
+      "find": "Cerca",
+      "in_vote": "Cerca en aquesta votació",
       "no_vote": "Ja no podran votar en aquesta votació.",
       "partial": "S'ha aturat després de treure'n {{removed}}",
       "pick_button": "Treu persones…",
@@ -251,7 +256,15 @@
       "stay": "Continuen als teus membres.",
       "title_many": "Vols treure {{formattedCount}} persones de «{{census}}»?",
       "title_one": "Vols treure 1 persona de «{{census}}»?",
-      "title_other": "Vols treure {{formattedCount}} persones de «{{census}}»?"
+      "title_other": "Vols treure {{formattedCount}} persones de «{{census}}»?",
+      "title_vote_many": "Vols treure {{formattedCount}} votants de «{{vote}}»?",
+      "title_vote_one": "Vols treure 1 votant de «{{vote}}»?",
+      "title_vote_other": "Vols treure {{formattedCount}} votants de «{{vote}}»?",
+      "undo": "Torna'ls a afegir",
+      "undo_error": "No s'han pogut tornar a afegir",
+      "undone": "{{before}} → {{after}} persones",
+      "undone_detail": "S'han tornat a afegir.",
+      "undone_vote": "{{before}} → {{after}} votants"
     },
     "search": "Cerca per nom, correu o número",
     "select_hint": "Selecciona persones per treure-les d'aquest cens.",
@@ -269,6 +282,8 @@
     "source": {
       "everyone": "Tothom: els membres que afegeixis més endavant també poden votar.",
       "follows_everyone": "Aquesta votació segueix «Tothom»: els membres que afegeixis també hi poden votar.",
+      "follows_everyone_live": "Aquesta votació segueix «Tothom»: els membres que afegeixis també hi poden votar. Si treus algú aquí, només surt d'aquesta votació.",
+      "legacy_saved": "Aquesta votació segueix el cens desat «{{name}}», així que els canvis que s'hi facin també arriben aquí. Els canvis que facis aquí només afecten aquesta votació.",
       "own": "El cens propi d'aquesta votació. Editar-lo no canvia els teus membres ni altres votacions.",
       "saved": "Un cens desat que pots reutilitzar a les teves votacions.",
       "selected": "Persones triades una a una per a aquesta votació.",
@@ -719,11 +734,6 @@
   "google_oauth_conflict_error": "Ja existeix un compte amb aquest correu electrònic. Si us plau, inicia sessió amb el teu mètode existent.",
   "google_oauth_error": "Error d'OAuth de Google",
   "google_oauth_error_description": "Error d'OAuth de Google, si us plau torna-ho a provar",
-  "groups_board": {
-    "auto_group": {
-      "title": "Tots els membres"
-    }
-  },
   "head": {
     "description": "Crea, gestiona i integra eleccions segures i verificables d'extrem a extrem amb Vocdoni. Una plataforma flexible perquè organitzacions, governs i desenvolupadors impulsin la votació digital i la presa de decisions de confiança.",
     "title": "Vocdoni | Infraestructura de votació segura i verificable"
@@ -1415,6 +1425,15 @@
       "added": "S'ha afegit als teus membres",
       "cancel": "Cancel·la",
       "cant_clear": "Encara no es pot buidar un camp: es manté el valor actual.",
+      "censuses": {
+        "none": "Encara no és a cap cens de votació ni a cap cens desat.",
+        "phone_only": "No es poden comprovar les votacions en curs de les persones que només tenen telèfon.",
+        "saved": "Cens desat",
+        "title": "En censos",
+        "unchecked_many": "No es poden comprovar {{count}} votacions en curs: s'hi entra amb dades que aquesta persona no té.",
+        "unchecked_one": "No es pot comprovar 1 votació en curs: s'hi entra amb dades que aquesta persona no té.",
+        "unchecked_other": "No es poden comprovar {{count}} votacions en curs: s'hi entra amb dades que aquesta persona no té."
+      },
       "edit": "Edita",
       "edit_everywhere": "Els canvis s'apliquen a aquest membre a tot arreu, també als censos de les votacions en curs.",
       "error": {
@@ -1423,6 +1442,16 @@
         "invalid_weight": "Fes servir un nombre enter, 1 o més",
         "name_required": "Afegeix un nom o un cognom"
       },
+      "live_confirm": {
+        "body_many": "Aquesta persona pot votar a «{{vote}}» i {{others}} més. Un nou pes del vot o una nova dada d'accés s'hi aplica de seguida.",
+        "body_one": "Aquesta persona pot votar a «{{vote}}». Un nou pes del vot o una nova dada d'accés s'hi aplica de seguida.",
+        "body_other": "Aquesta persona pot votar a «{{vote}}» i {{others}} més. Un nou pes del vot o una nova dada d'accés s'hi aplica de seguida.",
+        "confirm": "Desa el canvi",
+        "title": "Vols canviar-ho en una votació en curs?"
+      },
+      "live_note_many": "Els canvis s'apliquen de seguida a «{{vote}}» i {{others}} més.",
+      "live_note_one": "Els canvis s'apliquen de seguida a «{{vote}}».",
+      "live_note_other": "Els canvis s'apliquen de seguida a «{{vote}}» i {{others}} més.",
       "member_number_chip": "Núm. {{number}}",
       "not_found": "Aquesta persona no és en aquesta pàgina. Potser s'ha eliminat o la llista ha canviat.",
       "not_set": "Sense informar",
@@ -1945,6 +1974,10 @@
       "hidden": "Ocults fins al final",
       "live": "Resultats en directe",
       "title": "Visibilitat dels resultats"
+    },
+    "review": {
+      "census_stale_reload": "Aquest esborrany s'ha canviat des d'un altre lloc. Torna'l a carregar per veure'n la darrera versió i després publica'l.",
+      "reload": "Torna a carregar"
     },
     "settings": "Configuració",
     "start_datetime": "Data i hora d'inici",
