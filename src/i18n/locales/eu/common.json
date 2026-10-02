@@ -147,7 +147,6 @@
   },
   "common": {
     "back": "Atzera",
-    "close_drawer": "Itxi panela",
     "confirm": "Berretsi",
     "home": "Hasiera",
     "next": "Hurrengoa",
@@ -470,8 +469,7 @@
     "member": {
       "error": {
         "invalid_birth_date": "Jaioteguna ezin da etorkizunean egon",
-        "invalid_email": "Posta elektronikoaren helbidea ez da baliozkoa",
-        "invalid_phone": "Telefono-zenbakia ez da baliozkoa"
+        "invalid_email": "Posta elektronikoaren helbidea ez da baliozkoa"
       }
     },
     "process_create": {
@@ -927,40 +925,15 @@
     "hidden": "{{label}} ezkutatuta"
   },
   "memberbase": {
-    "add_member": {
-      "button": "Gehitu kidea",
-      "description": "Bete behean kidearen xehetasunak.",
-      "error": "Errorea kidea gehitzean.",
-      "success": "Kidea ongi gehitu da!",
-      "title": "Gehitu kidea"
-    },
+    "add_person": "Gehitu pertsona",
     "delete_member": {
       "cancel": "Utzi",
-      "delete": "Ezabatu",
-      "error_one": "Errorea kidea ezabatzean",
-      "error_other": "Errorea kideak ezabatzean",
-      "loading": "Ezabatzeko kideak kargatzen...",
-      "subtitle_one": "Ziur zaude kide bat ezabatu nahi duzula? Ekintza hau ezin da desegin.",
-      "subtitle_other": "Ziur zaude {{count}} kide ezabatu nahi dituzula? Ekintza hau ezin da desegin.",
-      "success_one": "Kidea ongi ezabatu da",
-      "success_other": "Kideak ongi ezabatu dira",
-      "title": "Ezabatu kideak"
+      "delete": "Ezabatu"
     },
+    "description": "Zure erakundeko guztiak. Zuk erabakitzen duzu nork bozkatzen duen bozketa bakoitzean.",
     "download_template": {
       "subtitle": "Deskargatu txantiloia hautatutako zutabeekin, gehitu zure kideen datuak eta kargatu fitxategia zure kide-oinarria konfiguratzeko. Behin prest dagoela, bozketak sortzen has zaitezke.",
       "title": "Deskargatu inportazio-txantiloia"
-    },
-    "edit_member": {
-      "description": "Editatu kidearen datuak behean.",
-      "error": "Errorea kidea eguneratzean.",
-      "missing_id": "Editatu beharreko kidearen IDa falta da.",
-      "success": "Kidea ongi eguneratu da!",
-      "title": "Editatu kidea"
-    },
-    "form": {
-      "cancel": "Utzi",
-      "phone_warning": "Telefono-zenbakia ezkutatuta. Hemen egindako aldaketa gainidatziko du.",
-      "save": "Gorde aldaketak"
     },
     "groups": {
       "title": "Taldeak"
@@ -978,6 +951,7 @@
         "invalid_file_type": "Fitxategi mota hau ez da onartzen. Igo .csv, .xlsx, .xls edo .ods fitxategi bat.",
         "read_failed": "Ezin izan dugu fitxategi hau irakurri. Egiaztatu baliozko CSV edo kalkulu-orri bat dela eta saiatu berriro."
       },
+      "failed": "Inportazioak huts egin du",
       "field_mapper": {
         "empty": "-- Ez inportatu --",
         "placeholder": "Hautatu zutabea"
@@ -1000,10 +974,46 @@
     "members": {
       "title": "Pertsonak"
     },
-    "subtitle": "Kudeatu zure erakundeko kideak eta sortu taldeak",
     "title": "Kideak"
   },
   "members": {
+    "delete": {
+      "affected_votes": "Hauetatik ere kentzen ditu: {{votes}} eta dauden beste edozein erroldatatik.",
+      "affected_votes_more_one": "Hauetatik ere kentzen ditu: {{votes}}, beste bozketa batetik eta dauden beste edozein erroldatatik.",
+      "affected_votes_more_other": "Hauetatik ere kentzen ditu: {{votes}}, beste {{count}} bozketatatik eta dauden beste edozein erroldatatik.",
+      "all_confirm": "Ezabatu kide guztiak",
+      "all_description": "Honek zure kide guztiak ezabatzen ditu, bilaketak zer erakusten duen gorabehera.",
+      "all_done": "Kide guztiak ezabatu dira",
+      "all_title_one": "Zure kide bakarra ezabatu?",
+      "all_title_other": "{{formattedCount}} kide guztiak ezabatu?",
+      "blocked_all_hint": "Itxaron bozketa hori itxi arte, edo hautatu besteak eta ezabatu.",
+      "blocked_hint": "Bozketa hori ixten denean ezabatu ahal izango dira.",
+      "blocked_names_one": "{{name}} eta beste pertsona bat bozkatzen hasi dira dagoeneko martxan dagoen bozketa batean.",
+      "blocked_names_other": "{{name}} eta beste {{count}} pertsona bozkatzen hasi dira dagoeneko martxan dagoen bozketa batean.",
+      "blocked_person": "{{name}} bozkatzen hasi da dagoeneko martxan dagoen bozketa batean.",
+      "blocked_someone_one": "Norbait bozkatzen hasi da dagoeneko martxan dagoen bozketa batean.",
+      "blocked_someone_other": "{{count}} pertsona bozkatzen hasi dira dagoeneko martxan dagoen bozketa batean.",
+      "blocked_title": "Ez da inor ezabatu",
+      "cant_undo": "Ezin da desegin.",
+      "confirm_one": "Ezabatu",
+      "confirm_other": "Ezabatu {{count}}",
+      "delete_others_one": "Ezabatu beste pertsona",
+      "delete_others_other": "Ezabatu beste {{count}}",
+      "done_one": "Kideetatik ezabatu da",
+      "done_other": "{{count}} pertsona ezabatu dira kideetatik",
+      "error": "Ez da inor ezabatu",
+      "no_votes": "Dauden edozein erroldatatik ere kentzen dira.",
+      "state_closed": "itxita",
+      "state_draft": "zirriborroa",
+      "state_live": "martxan",
+      "state_scheduled": "programatuta",
+      "title_people_one": "{{count}} pertsona kideetatik ezabatu?",
+      "title_people_other": "{{count}} pertsona kideetatik ezabatu?",
+      "title_person": "{{name}} kideetatik ezabatu?",
+      "type_count": "Idatzi {{number}} berresteko",
+      "untitled_vote": "Izenbururik gabeko bozketa",
+      "vote_with_state": "{{title}} ({{state}})"
+    },
     "fields": {
       "birth_date": "Jaioteguna",
       "email": "Posta elektronikoa",
@@ -1015,15 +1025,107 @@
       "surname": "Abizenak",
       "weight": "Boto-pisua (Pisua)"
     },
-    "list": {
-      "empty": "Ez da kiderik aurkitu",
-      "empty_description": "Gehitu zure lehen kidea hasiera emateko.",
-      "error": "Ezin izan dira kideak kargatu",
-      "no_search_results": "Ez dago zure bilaketarekin bat datorren kiderik",
-      "no_search_results_description": "Saiatu bilaketa-terminoak aldatzen."
+    "first_run": {
+      "add_cta": "Gehitu pertsonak",
+      "add_description": "Idatzi banan-banan. Talde txiki baterako edo lehenik probatzeko aproposa.",
+      "add_title": "Gehitu pertsonak",
+      "free": "Kideak doakoak eta mugagabeak dira.",
+      "import_cta": "Inportatu kalkulu-orri bat",
+      "import_description": "Erabili dagoeneko duzun fitxategia. Izen bat eta posta elektroniko edo mugikor bat nahikoak dira.",
+      "import_title": "Inportatu kalkulu-orri bat",
+      "privacy": "Zure fitxategia zure nabigatzailean irakurtzen da. Gordetzen dituzun zutabeak bakarrik bidaltzen dira.",
+      "template": "Deskargatu txantiloia",
+      "title": "Gehitu zure kideak",
+      "what_data": "Zer datu behar ditut?",
+      "what_data_extra": "Gehitu kide-zenbakia, NAN/AIZ edo jaioteguna saioa hasteko eskatuko badituzu bakarrik.",
+      "what_data_name": "Izen bat eta posta elektroniko edo mugikor bat nahikoak dira: hara bidaltzen da bozketa-kodea.",
+      "what_data_title": "Izen bat eta harremanetarako bide bat",
+      "what_data_weight": "Boto-pisuak kide batzuen botoek besteenek baino gehiago balio badute bakarrik du garrantzia.",
+      "you_choose": "Zuk erabakitzen duzu nork bozkatzen duen bozketa bakoitzean."
+    },
+    "people": {
+      "caption": "Kideak, ordena: {{sort}}, {{page}}/{{total}} orria",
+      "clear_search": "Garbitu bilaketa",
+      "column_actions": "Ekintzak",
+      "column_name": "Izena",
+      "column_name_surname_first": "Izena (abizenak lehenik)",
+      "columns": "Zutabeak",
+      "columns_title": "Erakutsi zutabeak",
+      "delete_all": "Ezabatu kide guztiak…",
+      "delete_person": "Ezabatu kideetatik…",
+      "empty": "Oraindik ez dago kiderik.",
+      "filter": "Iragazi",
+      "filter_soon_description": "Erakutsi posta elektronikorik eta mugikorrik gabeko pertsonak, errolda batean daudenak edo gordetzen duzun informazio gehigarriaren arabera.",
+      "filter_soon_title": "Iragazi zure kideak",
+      "list_label": "Kideak",
+      "load_error": "Ezin izan ditugu zure kideak kargatu.",
+      "more": "Ekintza gehiago",
+      "no_results": "Inor ez dator bat zure bilaketarekin",
+      "no_results_hint": "Bilaketak izenak, posta elektronikoak, kide-zenbakiak eta NAN/AIZ zenbakiak begiratzen ditu.",
+      "open": "Ireki",
+      "page_all_selected_one": "Orri honetako pertsona bakarra hautatuta dago",
+      "page_all_selected_other": "Orri honetako {{formattedCount}} guztiak hautatuta",
+      "page_size_one": "{{count}} orriko",
+      "page_size_other": "{{count}} orriko",
+      "page_some_selected": "{{selected}}/{{total}} hautatuta orri honetan",
+      "range_members_one": "{{from}}–{{to}} / {{total}} kide",
+      "range_members_other": "{{from}}–{{to}} / {{total}} kide",
+      "range_results_one": "{{from}}–{{to}} / {{total}} emaitza",
+      "range_results_other": "{{from}}–{{to}} / {{total}} emaitza",
+      "retry": "Saiatu berriro",
+      "row_actions": "Ekintzak: {{name}}",
+      "search_label": "Bilatu kideak",
+      "search_placeholder": "Bilatu izena, posta elektronikoa edo kide-zenbakia",
+      "select_done": "Eginda",
+      "select_mode": "Hautatu",
+      "select_page": "Hautatu orri honetako guztiak",
+      "sort_asc": "{{field}}, A-tik Z-ra",
+      "sort_desc": "{{field}}, Z-tik A-ra",
+      "sort_label": "Ordenatu honen arabera",
+      "toast": {
+        "added_to_group": "«{{group}}» taldera gehitu dira",
+        "group_created": "«{{title}}» taldea sortu da"
+      },
+      "unnamed": "Izenik gabe"
+    },
+    "person": {
+      "add_error": "Ez da pertsona hau gehitu",
+      "add_hint": "Izen bat eta posta elektroniko edo mugikor bat nahikoak dira. Gehitu gainerakoa saioa hasteko erabiltzen baduzu bakarrik.",
+      "add_submit": "Gehitu pertsona",
+      "add_title": "Gehitu pertsona bat",
+      "added": "Zure kideetara gehitu da",
+      "cancel": "Utzi",
+      "cant_clear": "Eremu bat hustea ez da oraindik gordetzen: uneko balioa mantentzen da.",
+      "edit": "Editatu",
+      "edit_everywhere": "Aldaketak kide honi aplikatzen zaizkio leku guztietan, baita martxan dauden bozketen erroldetan ere.",
+      "error": {
+        "contact_required": "Gehitu posta elektroniko bat edo mugikor-zenbaki bat, bozketa-kode bat jaso dezan",
+        "invalid_phone": "Erabili zenbaki osoa herrialde-kodearekin, adibidez +34 600 000 000",
+        "invalid_weight": "Erabili zenbaki oso bat, 1 edo handiagoa",
+        "name_required": "Gehitu izen bat edo abizen bat"
+      },
+      "member_number_chip": "Zk. {{number}}",
+      "not_found": "Pertsona hau ez dago orri honetan. Agian ezabatu egin da edo zerrenda aldatu da.",
+      "not_set": "Zehaztu gabe",
+      "phone_on_file": "Erregistratuta — idatzi zenbaki berri bat ordezteko",
+      "save": "Gorde",
+      "save_error": "Ez dira zure aldaketak gorde",
+      "saved": "Aldaketak gorde dira",
+      "title": "Pertsona",
+      "weight_chip": "Boto-pisua {{weight}}"
+    },
+    "readiness": {
+      "all_one": "Zure kideak bozketa-kode bat jaso dezake",
+      "all_other": "{{formattedCount}} kide guztiek jaso dezakete bozketa-kode bat",
+      "ready": "{{ready}}/{{total}} kidek jaso dezakete bozketa-kode bat",
+      "show_them": "Erakutsi",
+      "show_them_description": "Laster zerrenda batean ikusiko dituzu posta elektronikorik eta mugikorrik gabeko pertsonak, bozketa baten aurretik konpontzeko.",
+      "show_them_title": "Ikusi nork ezin duen bozketa-koderik jaso",
+      "unreachable_one": "{{formattedCount}} kidek ez du posta elektronikorik ez mugikorrik",
+      "unreachable_other": "{{formattedCount}} kidek ez dute posta elektronikorik ez mugikorrik",
+      "warning": "Abisua:"
     },
     "table": {
-      "actions": "Ekintzak",
       "add_to_census": "Gehitu erroldara",
       "add_to_census_button_one": "Gehitu {{count}} kide",
       "add_to_census_button_other": "Gehitu {{count}} kide",
@@ -1040,44 +1142,27 @@
       "add_to_group_confirmation_one": "«{{group}}» taldera kide bat gehituko duzu.",
       "add_to_group_confirmation_other": "«{{group}}» taldera {{count}} kide gehituko dituzu.",
       "add_to_group_description": "Hautatu kideak gehitzeko taldea.",
-      "add_to_group_success": "Kideak behar bezala gehitu dira taldera",
       "bulk_delete": "Ezabatu",
       "cancel": "Utzi",
-      "close_drawer": "Itxi",
       "create_group": "Sortu taldea",
       "create_group_error": "Errorea taldea sortzean",
       "create_group_form_description": "Sortu talde berri bat hautatutako kideetatik. Honek antolatuko ditu etorkizuneko boto-emate-prozesuetarako.",
       "create_group_form_title": "Sortu talde berria",
-      "create_group_success": "Taldea behar bezala sortu da",
-      "delete": "Ezabatu",
-      "delete_all": "Ezabatu (Guztiak)",
-      "edit": "Editatu",
       "group_description": "Deskribapena (aukerakoa)",
       "group_description_placeholder": "Sartu taldearen deskribapen labur bat",
-      "group_members": "Hautatutako kideak",
       "group_members_count_one": "Kide bat hautatuta",
       "group_members_count_other": "{{count}} kide hautatuta",
       "group_name": "Taldearen izena",
-      "manage_columns": "Kudeatu zutabeak",
-      "manage_columns_description": "Pertsonalizatu kideen taulan zer zutabe agertzen diren.",
       "no_active_processes": "Ez da prozesu aktiborik aurkitu",
-      "no_filter_results": "Ez dago atributu hauekin bat datorren kiderik",
       "no_results": "Ez da kiderik aurkitu",
       "remaining_members_one": "+{{count}} gehiago",
       "remaining_members_other": "+{{count}} gehiago",
-      "search": "Bilatu kideak...",
-      "select_all": "Hautatu denak",
       "select_group": "Hautatu taldea",
       "select_hint": "Hautatu kideak ekintza masiboak egiteko",
       "select_member": "Hautatu {{name}}",
       "select_process": "Hautatu prozesua",
       "selected_one": "Hautatuta: <strong>Kide bat</strong>",
-      "selected_other": "Hautatuta: <strong>{{count}} kide</strong>",
-      "showing_members_one": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} kide",
-      "showing_members_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} kide",
-      "showing_results_one": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
-      "showing_results_other": "{{from, number}}–{{to, number}} erakusten, guztira {{count, number}} emaitza",
-      "toggle_column": "Txandakatu {{column}} zutabea"
+      "selected_other": "Hautatuta: <strong>{{count}} kide</strong>"
     }
   },
   "membership_size": {

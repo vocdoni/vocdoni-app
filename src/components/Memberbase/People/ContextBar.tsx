@@ -108,7 +108,7 @@ export const ContextBar = ({ pageSelection, pageSize, children }: ContextBarProp
         <Text fontSize='sm' fontVariantNumeric='tabular-nums' truncate>
           {pageSelection.all
             ? t('members.people.page_all_selected', {
-                defaultValue_one: 'The {{formattedCount}} person on this page is selected',
+                defaultValue_one: 'The only person on this page is selected',
                 defaultValue_other: 'All {{formattedCount}} on this page selected',
                 count: pageSize,
                 formattedCount: format(pageSize),

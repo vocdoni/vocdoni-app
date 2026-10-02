@@ -147,7 +147,6 @@
   },
   "common": {
     "back": "Zurück",
-    "close_drawer": "Seitenleiste schließen",
     "confirm": "Bestätigen",
     "home": "Startseite",
     "next": "Weiter",
@@ -470,8 +469,7 @@
     "member": {
       "error": {
         "invalid_birth_date": "Geburtsdatum darf nicht in der Zukunft liegen",
-        "invalid_email": "Ungültige E-Mail-Adresse",
-        "invalid_phone": "Ungültige Telefonnummer"
+        "invalid_email": "Ungültige E-Mail-Adresse"
       }
     },
     "process_create": {
@@ -927,40 +925,15 @@
     "hidden": "{{label}} ausgeblendet"
   },
   "memberbase": {
-    "add_member": {
-      "button": "Mitglied hinzufügen",
-      "description": "Gib die Mitgliedsdaten unten ein.",
-      "error": "Fehler beim Hinzufügen des Mitglieds.",
-      "success": "Mitglied erfolgreich hinzugefügt!",
-      "title": "Mitglied hinzufügen"
-    },
+    "add_person": "Person hinzufügen",
     "delete_member": {
       "cancel": "Abbrechen",
-      "delete": "Löschen",
-      "error_one": "Fehler beim Löschen des Mitglieds",
-      "error_other": "Fehler beim Löschen der Mitglieder",
-      "loading": "Mitglieder werden geladen...",
-      "subtitle_one": "Möchtest du wirklich {{count}} Mitglied löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
-      "subtitle_other": "Möchtest du wirklich {{count}} Mitglieder löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
-      "success_one": "Mitglied erfolgreich gelöscht",
-      "success_other": "Mitglieder erfolgreich gelöscht",
-      "title": "Mitglieder löschen"
+      "delete": "Löschen"
     },
+    "description": "Alle in deiner Organisation. Du entscheidest, wer bei jeder Abstimmung abstimmt.",
     "download_template": {
       "subtitle": "Lade die Vorlage mit deinen gewählten Spalten herunter, trage deine Mitgliedsdaten ein und lade die Datei hoch, um deine Mitgliederliste einzurichten. Sobald sie fertig ist, kannst du Abstimmungen erstellen.",
       "title": "Import-Vorlage herunterladen"
-    },
-    "edit_member": {
-      "description": "Bearbeite die Mitgliedsdaten unten.",
-      "error": "Fehler beim Aktualisieren des Mitglieds.",
-      "missing_id": "Fehlende Mitglieds-ID für die Aktualisierung.",
-      "success": "Mitglied erfolgreich aktualisiert!",
-      "title": "Mitglied bearbeiten"
-    },
-    "form": {
-      "cancel": "Abbrechen",
-      "phone_warning": "Telefonnummer ausgeblendet. Änderungen hier überschreiben sie.",
-      "save": "Änderungen speichern"
     },
     "groups": {
       "title": "Gruppen"
@@ -978,6 +951,7 @@
         "invalid_file_type": "Dieser Dateityp wird nicht unterstützt. Lade eine .csv-, .xlsx-, .xls- oder .ods-Datei hoch.",
         "read_failed": "Wir konnten diese Datei nicht lesen. Prüfe, ob es eine gültige CSV- oder Tabellendatei ist, und versuche es erneut."
       },
+      "failed": "Import fehlgeschlagen",
       "field_mapper": {
         "empty": "-- Nicht importieren --",
         "placeholder": "Spalte auswählen"
@@ -1000,10 +974,46 @@
     "members": {
       "title": "Personen"
     },
-    "subtitle": "Verwalte die Mitglieder deiner Organisation und erstelle Gruppen",
     "title": "Mitglieder"
   },
   "members": {
+    "delete": {
+      "affected_votes": "Damit werden sie auch entfernt aus: {{votes}} und jeder anderen Teilnehmerliste, auf der sie stehen.",
+      "affected_votes_more_one": "Damit werden sie auch entfernt aus: {{votes}}, einer weiteren Abstimmung und jeder anderen Teilnehmerliste, auf der sie stehen.",
+      "affected_votes_more_other": "Damit werden sie auch entfernt aus: {{votes}}, {{count}} weiteren Abstimmungen und jeder anderen Teilnehmerliste, auf der sie stehen.",
+      "all_confirm": "Alle Mitglieder löschen",
+      "all_description": "Damit löschst du alle deine Mitglieder, unabhängig davon, was die Suche anzeigt.",
+      "all_done": "Alle Mitglieder gelöscht",
+      "all_title_one": "Dein einziges Mitglied löschen?",
+      "all_title_other": "Alle {{formattedCount}} Mitglieder löschen?",
+      "blocked_all_hint": "Warte, bis diese Abstimmung endet, oder wähle die anderen aus und lösche sie.",
+      "blocked_hint": "Sie können gelöscht werden, sobald diese Abstimmung endet.",
+      "blocked_names_one": "{{name}} und eine weitere Person haben in einer laufenden Abstimmung bereits mit dem Abstimmen begonnen.",
+      "blocked_names_other": "{{name}} und {{count}} weitere Personen haben in einer laufenden Abstimmung bereits mit dem Abstimmen begonnen.",
+      "blocked_person": "{{name}} hat in einer laufenden Abstimmung bereits mit dem Abstimmen begonnen.",
+      "blocked_someone_one": "Jemand hat in einer laufenden Abstimmung bereits mit dem Abstimmen begonnen.",
+      "blocked_someone_other": "{{count}} Personen haben in einer laufenden Abstimmung bereits mit dem Abstimmen begonnen.",
+      "blocked_title": "Niemand wurde gelöscht",
+      "cant_undo": "Das kann nicht rückgängig gemacht werden.",
+      "confirm_one": "Löschen",
+      "confirm_other": "{{count}} löschen",
+      "delete_others_one": "Die andere Person löschen",
+      "delete_others_other": "Die anderen {{count}} löschen",
+      "done_one": "Aus den Mitgliedern gelöscht",
+      "done_other": "{{count}} Personen aus den Mitgliedern gelöscht",
+      "error": "Niemand wurde gelöscht",
+      "no_votes": "Sie werden auch von jeder Teilnehmerliste entfernt, auf der sie stehen.",
+      "state_closed": "beendet",
+      "state_draft": "Entwurf",
+      "state_live": "läuft",
+      "state_scheduled": "geplant",
+      "title_people_one": "{{count}} Personen aus den Mitgliedern löschen?",
+      "title_people_other": "{{count}} Personen aus den Mitgliedern löschen?",
+      "title_person": "{{name}} aus den Mitgliedern löschen?",
+      "type_count": "Gib {{number}} ein, um zu bestätigen",
+      "untitled_vote": "Abstimmung ohne Titel",
+      "vote_with_state": "{{title}} ({{state}})"
+    },
     "fields": {
       "birth_date": "Geburtsdatum",
       "email": "E-Mail",
@@ -1015,15 +1025,107 @@
       "surname": "Nachname",
       "weight": "Stimmgewicht"
     },
-    "list": {
-      "empty": "Keine Mitglieder gefunden",
-      "empty_description": "Füge dein erstes Mitglied hinzu, um zu beginnen.",
-      "error": "Mitglieder konnten nicht geladen werden",
-      "no_search_results": "Keine Mitglieder entsprechen deiner Suche",
-      "no_search_results_description": "Versuche, deine Suchbegriffe anzupassen."
+    "first_run": {
+      "add_cta": "Personen hinzufügen",
+      "add_description": "Gib sie einzeln ein. Ideal für eine kleine Gruppe oder um alles erst auszuprobieren.",
+      "add_title": "Personen hinzufügen",
+      "free": "Mitglieder sind kostenlos und unbegrenzt.",
+      "import_cta": "Tabelle importieren",
+      "import_description": "Nutze die Datei, die du schon hast. Ein Name und eine E-Mail-Adresse oder Handynummer genügen.",
+      "import_title": "Tabelle importieren",
+      "privacy": "Deine Datei wird in deinem Browser gelesen. Nur die Spalten, die du behältst, werden gesendet.",
+      "template": "Vorlage herunterladen",
+      "title": "Füge deine Mitglieder hinzu",
+      "what_data": "Welche Daten brauche ich?",
+      "what_data_extra": "Füge Mitgliedsnummer, Ausweisnummer oder Geburtsdatum nur hinzu, wenn du sie zur Anmeldung abfragen willst.",
+      "what_data_name": "Ein Name und eine E-Mail-Adresse oder Handynummer genügen: Dorthin geht der Abstimmungscode.",
+      "what_data_title": "Ein Name und ein Weg, sie zu erreichen",
+      "what_data_weight": "Das Stimmgewicht spielt nur eine Rolle, wenn die Stimmen mancher Mitglieder mehr zählen als andere.",
+      "you_choose": "Du entscheidest, wer bei jeder Abstimmung abstimmt."
+    },
+    "people": {
+      "caption": "Mitglieder, sortiert nach {{sort}}, Seite {{page}} von {{total}}",
+      "clear_search": "Suche löschen",
+      "column_actions": "Aktionen",
+      "column_name": "Name",
+      "column_name_surname_first": "Name (Nachname zuerst)",
+      "columns": "Spalten",
+      "columns_title": "Spalten anzeigen",
+      "delete_all": "Alle Mitglieder löschen…",
+      "delete_person": "Aus den Mitgliedern löschen…",
+      "empty": "Noch keine Mitglieder.",
+      "filter": "Filtern",
+      "filter_soon_description": "Zeige nur Personen ohne E-Mail-Adresse oder Handynummer, die auf einer Teilnehmerliste stehen, oder nach zusätzlichen Angaben, die du speicherst.",
+      "filter_soon_title": "Mitglieder filtern",
+      "list_label": "Mitglieder",
+      "load_error": "Wir konnten deine Mitglieder nicht laden.",
+      "more": "Weitere Aktionen",
+      "no_results": "Niemand passt zu deiner Suche",
+      "no_results_hint": "Die Suche durchsucht Namen, E-Mail-Adressen, Mitgliedsnummern und Ausweisnummern.",
+      "open": "Öffnen",
+      "page_all_selected_one": "Die einzige Person auf dieser Seite ist ausgewählt",
+      "page_all_selected_other": "Alle {{formattedCount}} auf dieser Seite ausgewählt",
+      "page_size_one": "{{count}} pro Seite",
+      "page_size_other": "{{count}} pro Seite",
+      "page_some_selected": "{{selected}} von {{total}} auf dieser Seite ausgewählt",
+      "range_members_one": "{{from}}–{{to}} von {{total}} Mitglied",
+      "range_members_other": "{{from}}–{{to}} von {{total}} Mitgliedern",
+      "range_results_one": "{{from}}–{{to}} von {{total}} Ergebnis",
+      "range_results_other": "{{from}}–{{to}} von {{total}} Ergebnissen",
+      "retry": "Erneut versuchen",
+      "row_actions": "Aktionen für {{name}}",
+      "search_label": "Mitglieder suchen",
+      "search_placeholder": "Nach Name, E-Mail oder Mitgliedsnummer suchen",
+      "select_done": "Fertig",
+      "select_mode": "Auswählen",
+      "select_page": "Alle auf dieser Seite auswählen",
+      "sort_asc": "{{field}}, A bis Z",
+      "sort_desc": "{{field}}, Z bis A",
+      "sort_label": "Sortieren nach",
+      "toast": {
+        "added_to_group": "Zu „{{group}}“ hinzugefügt",
+        "group_created": "Gruppe „{{title}}“ erstellt"
+      },
+      "unnamed": "Ohne Namen"
+    },
+    "person": {
+      "add_error": "Diese Person wurde nicht hinzugefügt",
+      "add_hint": "Ein Name und eine E-Mail-Adresse oder Handynummer genügen. Füge den Rest nur hinzu, wenn du ihn zur Anmeldung nutzt.",
+      "add_submit": "Person hinzufügen",
+      "add_title": "Person hinzufügen",
+      "added": "Zu deinen Mitgliedern hinzugefügt",
+      "cancel": "Abbrechen",
+      "cant_clear": "Ein Feld zu leeren wird noch nicht gespeichert: Der aktuelle Wert bleibt.",
+      "edit": "Bearbeiten",
+      "edit_everywhere": "Änderungen gelten für dieses Mitglied überall, auch auf den Teilnehmerlisten laufender Abstimmungen.",
+      "error": {
+        "contact_required": "Füge eine E-Mail-Adresse oder Handynummer hinzu, damit die Person einen Abstimmungscode bekommen kann",
+        "invalid_phone": "Gib die vollständige Nummer mit Ländervorwahl ein, z. B. +49 151 00000000",
+        "invalid_weight": "Gib eine ganze Zahl ab 1 ein",
+        "name_required": "Füge einen Vornamen oder Nachnamen hinzu"
+      },
+      "member_number_chip": "Nr. {{number}}",
+      "not_found": "Diese Person ist nicht auf dieser Seite. Vielleicht wurde sie gelöscht oder die Liste hat sich geändert.",
+      "not_set": "Nicht angegeben",
+      "phone_on_file": "Hinterlegt — gib eine neue Nummer ein, um sie zu ersetzen",
+      "save": "Speichern",
+      "save_error": "Deine Änderungen wurden nicht gespeichert",
+      "saved": "Änderungen gespeichert",
+      "title": "Person",
+      "weight_chip": "Stimmgewicht {{weight}}"
+    },
+    "readiness": {
+      "all_one": "Dein Mitglied kann einen Abstimmungscode bekommen",
+      "all_other": "Alle {{formattedCount}} können einen Abstimmungscode bekommen",
+      "ready": "{{ready}} von {{total}} können einen Abstimmungscode bekommen",
+      "show_them": "Anzeigen",
+      "show_them_description": "Bald siehst du alle Personen ohne E-Mail-Adresse oder Handynummer in einer Liste, um sie vor einer Abstimmung zu ergänzen.",
+      "show_them_title": "Sieh, wer keinen Abstimmungscode bekommen kann",
+      "unreachable_one": "{{formattedCount}} hat keine E-Mail-Adresse oder Handynummer",
+      "unreachable_other": "{{formattedCount}} haben keine E-Mail-Adresse oder Handynummer",
+      "warning": "Warnung:"
     },
     "table": {
-      "actions": "Aktionen",
       "add_to_census": "Zur Teilnehmerliste hinzufügen",
       "add_to_census_button_one": "{{count}} Mitglied hinzufügen",
       "add_to_census_button_other": "{{count}} Mitglieder hinzufügen",
@@ -1040,44 +1142,27 @@
       "add_to_group_confirmation_one": "Du fügst {{count}} Mitglied der Gruppe \"{{group}}\" hinzu.",
       "add_to_group_confirmation_other": "Du fügst {{count}} Mitglieder der Gruppe \"{{group}}\" hinzu.",
       "add_to_group_description": "Wähle eine Gruppe aus, zu der die Mitglieder hinzugefügt werden sollen.",
-      "add_to_group_success": "Mitglieder erfolgreich zur Gruppe hinzugefügt",
       "bulk_delete": "Löschen",
       "cancel": "Abbrechen",
-      "close_drawer": "Schließen",
       "create_group": "Gruppe erstellen",
       "create_group_error": "Fehler beim Erstellen der Gruppe",
       "create_group_form_description": "Erstelle eine neue Gruppe aus den ausgewählten Mitgliedern. Diese wird für zukünftige Abstimmungsprozesse organisiert.",
       "create_group_form_title": "Neue Gruppe erstellen",
-      "create_group_success": "Gruppe erfolgreich erstellt",
-      "delete": "Löschen",
-      "delete_all": "Löschen (Alle)",
-      "edit": "Bearbeiten",
       "group_description": "Beschreibung (optional)",
       "group_description_placeholder": "Gib eine kurze Beschreibung der Gruppe ein",
-      "group_members": "Ausgewählte Mitglieder",
       "group_members_count_one": "{{count}} Mitglied ausgewählt",
       "group_members_count_other": "{{count}} Mitglieder ausgewählt",
       "group_name": "Gruppenname",
-      "manage_columns": "Spalten verwalten",
-      "manage_columns_description": "Passe an, welche Spalten in der Mitgliedertabelle angezeigt werden.",
       "no_active_processes": "Keine aktiven Prozesse gefunden",
-      "no_filter_results": "Keine Mitglieder mit diesen Attributen",
       "no_results": "Keine Mitglieder gefunden",
       "remaining_members_one": "+{{count}} weitere",
       "remaining_members_other": "+{{count}} weitere",
-      "search": "Mitglieder suchen...",
-      "select_all": "Alle auswählen",
       "select_group": "Gruppe auswählen",
       "select_hint": "Mitglieder auswählen, um Sammelaktionen durchzuführen",
       "select_member": "{{name}} auswählen",
       "select_process": "Prozess auswählen",
       "selected_one": "Ausgewählt: <strong>{{count}} Mitglied</strong>",
-      "selected_other": "Ausgewählt: <strong>{{count}} Mitglieder</strong>",
-      "showing_members_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitglied",
-      "showing_members_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitgliedern",
-      "showing_results_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnis",
-      "showing_results_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnissen",
-      "toggle_column": "Spalte {{column}} ein-/ausblenden"
+      "selected_other": "Ausgewählt: <strong>{{count}} Mitglieder</strong>"
     }
   },
   "membership_size": {
