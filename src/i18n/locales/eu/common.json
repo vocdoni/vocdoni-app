@@ -951,6 +951,7 @@
     "form": {
       "cancel": "Utzi",
       "phone_warning": "Telefono-zenbakia ezkutatuta. Hemen egindako aldaketa gainidatziko du.",
+      "phone_will_be_removed": "Gordetako telefono-zenbakia kendu egingo da gordetzean.",
       "save": "Gorde aldaketak"
     },
     "groups": {

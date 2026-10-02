@@ -61,6 +61,20 @@ describe('MemberManager edit', () => {
     expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '', weight: '5' })
   })
 
+  it('warns that the stored phone will be removed once the field is emptied', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    const phone = await screen.findByLabelText('Phone')
+    expect(screen.queryByText(/will be removed/)).not.toBeInTheDocument()
+
+    await user.type(phone, '1')
+    expect(screen.queryByText(/will be removed/)).not.toBeInTheDocument()
+
+    await user.clear(phone)
+    expect(screen.getByText(/will be removed/)).toBeInTheDocument()
+  })
+
   it('does not call the API when nothing changed', async () => {
     const user = userEvent.setup()
     render(<MemberManager member={member} open />)

@@ -960,6 +960,7 @@
     "form": {
       "cancel": "Cancelar",
       "phone_warning": "Número de telefone oculto. Qualquer alteração aqui irá sobrescrevê-lo.",
+      "phone_will_be_removed": "O número de telefone salvo será removido ao salvar.",
       "save": "Salvar alterações"
     },
     "groups": {

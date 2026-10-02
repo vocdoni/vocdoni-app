@@ -52,7 +52,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   const queryClient = useQueryClient()
   // The stored phone is never returned, so the field starts blank and cannot show a clear as a
   // change; track edits to it explicitly so emptying it still reaches the API.
-  const phoneEdited = useRef(false)
+  const [phoneEdited, setPhoneEdited] = useState(false)
   const hadPhone = !!member?.phone
 
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
@@ -148,7 +148,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
     // the API omits emptied fields; fall back to blanks so a stale value is not left on screen
     const values = { ...defaultValues, ...stringifyObjectValues(cleanMember) }
     if (isNewSession) {
-      phoneEdited.current = false
+      setPhoneEdited(false)
       methods.reset(values)
     } else {
       methods.reset(values, { keepDirtyValues: true, keepErrors: true, keepIsSubmitted: true, keepSubmitCount: true })
@@ -214,7 +214,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       // be left out rather than sent empty.
       const changes = Object.fromEntries(
         Object.entries(memberPayload).filter(
-          ([key]) => key !== 'id' && (dirtyFields[key] || (key === 'phone' && hadPhone && phoneEdited.current))
+          ([key]) => key !== 'id' && (dirtyFields[key] || (key === 'phone' && hadPhone && phoneEdited))
         )
       )
 
@@ -311,7 +311,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                             ...(fieldValidations[col.id] || {}),
                             ...(isPhone && {
                               onChange: () => {
-                                phoneEdited.current = true
+                                setPhoneEdited(true)
                               },
                             }),
                           })}
@@ -320,13 +320,19 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                           required={false} // we don't want HTML5 validation
                         />
                       )}
-                      {isPhone && hadPhone && (
+                      {isPhone && hadPhone && phoneEdited && !methods.watch('phone') ? (
+                        <FormHelperText color='fg.error'>
+                          {t('memberbase.form.phone_will_be_removed', {
+                            defaultValue: 'The stored phone number will be removed when you save.',
+                          })}
+                        </FormHelperText>
+                      ) : isPhone && hadPhone ? (
                         <FormHelperText>
                           {t('memberbase.form.phone_warning', {
                             defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
                           })}
                         </FormHelperText>
-                      )}
+                      ) : null}
                       <FormErrorMessage mt={2}>
                         {methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'}
                       </FormErrorMessage>

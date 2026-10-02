@@ -951,6 +951,7 @@
     "form": {
       "cancel": "Abbrechen",
       "phone_warning": "Telefonnummer ausgeblendet. Änderungen hier überschreiben sie.",
+      "phone_will_be_removed": "Die gespeicherte Telefonnummer wird beim Speichern entfernt.",
       "save": "Änderungen speichern"
     },
     "groups": {
