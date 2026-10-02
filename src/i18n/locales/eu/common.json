@@ -11,12 +11,10 @@
     "continue_description": "«{{ election.title.default }}» bozketa-prozesuari berrekiten...",
     "create_first_vote": "Ikusi prozesu guztiak",
     "create_new_vote": "Sortu bozketa berria",
-    "edit": "Editatu",
     "end": "Bozketa berehala amaitu, boto berririk eman ezin dadin, eta emaitzak agertarazi (kontuz: ezin da desegin).",
     "end_description": "«{{ election.title.default }}» bozketa-prozesua amaitzen...\n\nKontuz: ekintza hau ezin da desegin eta hautesleek ezingo dute jada bozkatu.",
     "error_title": "Errorea gertatu da transakzioa burutzean",
     "manage_team": "Kudeatu taldea",
-    "more": "Aukera gehiago",
     "pause": "Bozketa-prozesua aldi baterako etenarazi, eskuz berrekiten ez zaion arte. Etenda dagoen bitartean, hautesleek ezingo dute botorik eman.",
     "pause_description": "«{{ election.title.default }}» bozketa-prozesua etenarazten...",
     "save": "Gorde aldaketak",
@@ -132,7 +130,206 @@
       "voted_partial": "Botoa emana {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "actions": {
+      "rename": "Aldatu izena",
+      "title": "Gordetako erroldea",
+      "use": "Erabili bozketa berri batean"
+    },
+    "add": {
+      "button": "Gehitu pertsonak",
+      "created_error": "Zure kideetara gehitu da, baina ez errolde honetara. Gehitu «Zure kideetatik» atalean.",
+      "created_not_found": "Zure kideetara gehitu da, baina oraindik ez errolde honetara. Gehitu «Zure kideetatik» atalean.",
+      "done": "{{before}} → {{after}} pertsona",
+      "done_detail": "«{{name}}» erroldera gehituta",
+      "done_vote": "{{before}} → {{after}} botogile",
+      "error": "Ezin izan dira gehitu",
+      "from_members": "Zure kideetatik",
+      "new_hint": "Zure kideetara eta errolde honetara gehituko da.",
+      "new_person": "Pertsona berria",
+      "submit_one": "Gehitu pertsona 1",
+      "submit_other": "Gehitu {{formattedCount}} pertsona",
+      "title": "Gehitu pertsonak",
+      "updating_vote": "Gehituta. Bozketa eguneratzen, bozkatu ahal izan dezaten…"
+    },
+    "caption": "Errolde honetako pertsonak, {{page}}/{{pages}} orria",
+    "clear": "Garbitu hautapena",
+    "column": {
+      "email": "Posta elektronikoa",
+      "member_number": "Kide-zenbakia",
+      "name": "Izena"
+    },
+    "delete": {
+      "blocked_one": "Argitaratutako bozketa batek erabiltzen du; beraz, mantendu egiten da.",
+      "blocked_other": "Argitaratutako {{count}} bozketak erabiltzen dute; beraz, mantendu egiten da.",
+      "button": "Ezabatu gordetako erroldea",
+      "confirm": "Ezabatu erroldea",
+      "description": "Pertsonak zure kideetan geratzen dira. Ezin da desegin.",
+      "done": "Erroldea ezabatu da",
+      "error": "Ez da erroldea ezabatu",
+      "title": "«{{name}}» ezabatu?"
+    },
+    "edit": {
+      "error": "Ez dira zure aldaketak gorde",
+      "name_required": "Gehitu izen bat",
+      "saved": "Erroldea eguneratu da",
+      "submit": "Gorde",
+      "title": "Aldatu erroldearen izena"
+    },
+    "empty": "Oraindik ez dago inor errolde honetan.",
+    "export": {
+      "button": "Deskargatu erroldea (CSV)",
+      "error": "Ezin izan da erroldea deskargatu",
+      "hint": "Izenak, kide-zenbakiak eta helbide elektronikoak, gaurko datarekin. Nortasun-agiriak ezkutatuta daude eta telefonoak kanpoan geratzen dira.",
+      "progress": "{{total}}(e)tik {{done}} prestatzen…",
+      "title": "Deskargatu"
+    },
+    "load_error": "Ezin izan ditugu errolde honetako pertsonak kargatu.",
+    "loading": "{{total}}(e)tik {{done}} kargatzen…",
+    "lookup_note": "Errolde hau ez da erakuts dezakegun zerrenda gisa gordetzen. Norbait egiaztatzeko, bila ezazu bozketa honek erabiltzen duen datu baten bidez.",
+    "no_match": "Errolde honetako inor ez dator bat zure bilaketarekin.",
+    "no_search": "Bilaketak gehienez {{max}} pertsonako erroldeetan funtzionatzen du. Honetan, igaro orriak.",
+    "not_found": "Ez dugu errolde hau aurkitu.",
+    "open_draft": "Ireki zirriborroa",
+    "open_vote": "Ireki bozketa",
+    "people": {
+      "at_close": "{{unit}} itxieran",
+      "title": "Pertsonak"
+    },
+    "picker": {
+      "already_in": "Badago",
+      "paste": "Hautatu zerrenda batetik…",
+      "search": "Bilatu zure kideen artean",
+      "selected_one": "1 hautatuta",
+      "selected_other": "{{formattedCount}} hautatuta"
+    },
+    "range": "{{from}}–{{to}} / {{total}}",
+    "read_only": {
+      "draft_selected": "Nork bozka dezakeen aldatzeko, editatu zirriborroa.",
+      "ended": "Bozketa hau amaitu da; beraz, haren erroldea ezin da gehiago aldatu.",
+      "everyone": "«Denak» erroldeak zure kide guztiak hartzen ditu beti. Gehitu edo kendu pertsonak Pertsonak atalean.",
+      "follows_everyone": "Bozketa honek «Denak» jarraitzen du; beraz, zure kideekin batera aldatzen da."
+    },
+    "remove": {
+      "all_signed": "Ezin da beste inor kendu: denak hasi dira bozkatzen.",
+      "confirm_one": "Kendu pertsona 1",
+      "confirm_other": "Kendu {{formattedCount}} pertsona",
+      "done": "{{before}} → {{after}} pertsona",
+      "done_detail": "Zure kideetan jarraitzen dute.",
+      "done_vote": "{{before}} → {{after}} botogile",
+      "emptied_one": "Inork ezingo luke {{questions}} erantzun. Mantendu erantzun dezaketen pertsonetako bat gutxienez.",
+      "emptied_other": "Inork ezingo lituzke {{questions}} erantzun. Mantendu bakoitza erantzun dezaketen pertsonetako bat gutxienez.",
+      "error": "Ez da inor kendu",
+      "no_vote": "Ezingo dute gehiago bozketa honetan bozkatu.",
+      "partial": "{{removed}} kendu ondoren gelditu da",
+      "pick_button": "Kendu pertsonak…",
+      "pick_hint": "Bilatu zure kideen artean. Bozketa honetan ez dagoena dagoen bezala geratzen da.",
+      "pick_submit_one": "Kendu pertsona 1…",
+      "pick_submit_other": "Kendu {{formattedCount}} pertsona…",
+      "pick_title": "Kendu pertsonak",
+      "reason_soon": "Laster: ematen duzun arrazoia aldaketarekin batera gordeko da.",
+      "retry_one": "Kendu beste bat",
+      "retry_other": "Kendu beste {{formattedCount}}ak",
+      "retry_question_one": "Beste bat kendu?",
+      "retry_question_other": "Beste {{formattedCount}}ak kendu?",
+      "signed_one": "{{name}} bozkatzen hasi da jada.",
+      "signed_other": "{{name}} eta beste {{others}} bozkatzen hasi dira jada.",
+      "signed_title": "Ez da inor kendu",
+      "signed_title_partial": "{{removed}} kenduta, gainerakoak oraindik ez",
+      "someone": "Norbait",
+      "stay": "Zure kideetan jarraitzen dute.",
+      "title_one": "Pertsona 1 kendu «{{census}}» erroldetik?",
+      "title_other": "{{formattedCount}} pertsona kendu «{{census}}» erroldetik?"
+    },
+    "search": "Bilatu izenaren, posta elektronikoaren edo zenbakiaren arabera",
+    "select_hint": "Hautatu pertsonak errolde honetatik kentzeko.",
+    "select_page": "Hautatu orri honetako guztiak",
+    "select_person": "Hautatu {{name}}",
+    "selected_one": "1 hautatuta",
+    "selected_other": "{{formattedCount}} hautatuta",
+    "sign_in": {
+      "per_vote": "Bozketa bakoitzak erabakitzen du nola hasten duten saioa bere botogileek.",
+      "ready": "{{total}}(e)tik {{ready}}(e)k kode bat jaso dezakete",
+      "ready_any": "{{total}}(e)tik {{ready}}(e)k kode bat jaso dezakete posta elektronikoz edo SMS bidez",
+      "title": "Saio-hasiera"
+    },
+    "source": {
+      "everyone": "Denak: geroago gehitzen dituzun kideek ere bozka dezakete.",
+      "follows_everyone": "Bozketa honek «Denak» jarraitzen du: gehitzen dituzun kideek ere bozka dezakete bertan.",
+      "own": "Bozketa honen errolde propioa. Editatzeak ez ditu aldatzen zure kideak ezta beste bozketak ere.",
+      "saved": "Zure bozketetan berrerabil dezakezun gordetako erroldea.",
+      "selected": "Bozketa honetarako banan-banan aukeratutako pertsonak.",
+      "shared": "Hauekin partekatua: {{votes}}. Aldatzeak guztietan nork bozka dezakeen aldatzen du, baita itxitakoetan ere."
+    },
+    "this_census": "errolde hau",
+    "used_by": {
+      "none": "Oraindik ez du bozketa batek ere erabiltzen.",
+      "title": "Erabiltzen dute"
+    }
+  },
   "census_size": "Erroldeko tamaina",
+  "censuses": {
+    "description": "Nork bozka dezakeen zure bozketa bakoitzean, eta berrerabiltzeko gorde dituzun erroldeak.",
+    "empty": {
+      "description": "Nork bozka dezakeen aukeratzen duzunean, zerrenda hori hemen gordetzen da.",
+      "new_vote": "Bozketa berria",
+      "title": "Zure lehen erroldea zure lehen bozketarekin sortzen da."
+    },
+    "everyone": {
+      "description": "Zure kide guztiak, geroago gehitzen dituzunak barne.",
+      "title": "Denak"
+    },
+    "filter": {
+      "all": "Denak",
+      "label": "Iragazi erroldeak"
+    },
+    "group": {
+      "closed": "Itxita",
+      "drafts": "Zirriborroak",
+      "live": "Martxan",
+      "scheduled": "Programatuak"
+    },
+    "in_votes": "Bozketetan",
+    "load_error": "Ezin izan ditugu zure erroldeak kargatu.",
+    "more_votes_one": "beste {{count}}",
+    "more_votes_other": "beste {{count}}",
+    "saved": {
+      "title": "Gordetakoak",
+      "unused": "Ez du bozketa batek ere erabiltzen",
+      "updated": "Eguneratua: {{date}}",
+      "used_by_one": "Bozketa batek erabiltzen du",
+      "used_by_other": "{{count}} bozketak erabiltzen dute"
+    },
+    "source": {
+      "copy": "Kopia propioa",
+      "copy_from": "«{{name}}» erroldetik kopiatua",
+      "everyone": "Denak",
+      "saved": "Gordetako «{{name}}» erroldea",
+      "selected": "Hautatutako pertsonak",
+      "snapshot": "Denak, argitaratzean izoztua",
+      "test": "Proba-bozketa"
+    },
+    "state": {
+      "draft": "Zirriborroa"
+    },
+    "unit": {
+      "people_one": "pertsona",
+      "people_other": "pertsona",
+      "voters_one": "botogile",
+      "voters_other": "botogile"
+    },
+    "used_by_warning": "Honek nork bozka dezakeen ere aldatzen du hauetan: {{votes}}.",
+    "vote_group": {
+      "description": "«{{vote}}» bozketaren erroldea. Aldatzeak nork bozka dezakeen aldatzen du."
+    },
+    "vote_state": {
+      "closed": "itxita",
+      "draft": "zirriborroa",
+      "live": "martxan",
+      "scheduled": "programatua"
+    },
+    "vote_with_state": "«{{title}}» ({{state}})"
+  },
   "change_password": {
     "subtitle": "Sartu zure egungo pasahitza eta berri bat zure kredentzialak eguneratzeko.",
     "title": "Aldatu pasahitza"
@@ -317,9 +514,6 @@
     "question_type": {
       "mixed": "Nahasia"
     }
-  },
-  "drawer": {
-    "close": "Itxi panela"
   },
   "edit_saas_profile": {
     "edit_failed": "Errorea eguneratzean",
@@ -507,61 +701,10 @@
   "google_oauth_conflict_error": "Posta elektroniko honekin lotutako kontu bat dago dagoeneko. Mesedez, hasi saioa zure egungo metodoarekin.",
   "google_oauth_error": "Google OAuth errorea",
   "google_oauth_error_description": "Google OAuth errorea, saiatu berriro",
-  "group": {
-    "actions": {
-      "cancel": "Utzi",
-      "create_vote": "Sortu bozketa",
-      "delete": "Ezabatu",
-      "delete_confirm_description": "Ziur zaude <bold>{{title}}</bold> ezabatu nahi duzula? Ekintza hau ezin da desegin eta taldea betiko ezabatuko du zure erakundetik.",
-      "delete_confirm_title": "Ezabatu taldea",
-      "delete_error": "Errorea taldea ezabatzean",
-      "delete_group": "Ezabatu taldea",
-      "delete_success": "Taldea behar bezala ezabatu da",
-      "edit_description": "Eguneratu talde honen izena eta deskribapena.",
-      "edit_error": "Errorea taldea eguneratzean",
-      "edit_success": "Taldea behar bezala eguneratu da",
-      "history": "Historia",
-      "view_members": "Ikusi kideak"
-    },
-    "actions_description": "Bozketa berri bat sortzen denean, sistemak une horretan taldeko kideen argazki bat ateratzen du. Kide-zerrendan gerora egindako edozein aldaketak ez du eraginik izango sortutako erroldan.",
-    "actions_title": "Ekintzak",
-    "create_vote": "Sortu bozketa",
-    "created_on": "Sortua: {{date}}",
-    "delete_group": "Ezabatu taldea",
-    "delete_member": {
-      "subtitle_one": "Ziur zaude kide bat ezabatu nahi duzula?",
-      "subtitle_other": "Ziur zaude {{count}} kide ezabatu nahi dituzula?",
-      "title": "Ezabatu kideak"
-    },
-    "email": "Posta elektronikoa",
-    "members": {
-      "empty": "Ez da kiderik aurkitu",
-      "empty_description": "Gehitu kideak hemen ikusteko.",
-      "error": "Ezin izan dira taldeko kideak kargatu"
-    },
-    "members_one": "{{count}} kide",
-    "members_other": "{{count}} kide",
-    "name": "Izena"
-  },
   "groups_board": {
     "auto_group": {
-      "description": "Automatikoki barne hartzen ditu zure erakundeko kide guztiak.",
       "title": "Kide guztiak"
-    },
-    "create_group": "Sortu talde berri bat hasteko.",
-    "history": {
-      "close": "Itxi",
-      "description": "Kontsultatu talde honen eta lotutako erroldaren historia",
-      "title": "{{ title }} historia"
-    },
-    "info": {
-      "description": "Taldeak zure kide-oinarriko kide-multzoak dira, bozketa-prozesuetan errolda sortzeko erabil daitezkeenak.",
-      "extra": "Bozketa bat hastean, taldearen une horretako argazki gisa errolda bat sortzen da. Taldean gerora egiten diren aldaketek ez diote eraginik egingo dagoeneko sortutako erroldari, baina etorkizuneko prozesuetan islatuko dira.",
-      "title": "Taldeei buruz"
-    },
-    "load_error": "Ezin izan dira taldeak kargatu",
-    "load_more": "Kargatu gehiago",
-    "no_groups": "Ez da talderik aurkitu"
+    }
   },
   "head": {
     "description": "Sortu, kudeatu eta integratu hauteskunde seguruak eta muturretik muturrera egiaztagarriak Vocdonirekin. Plataforma malgua erakunde, gobernu eta garatzaileentzat, konfiantzazko boto-emate digitala eta erabakiak hartzea bultzatzeko.",
@@ -916,14 +1059,10 @@
   },
   "memberbase": {
     "add_person": "Gehitu pertsona",
-    "delete_member": {
-      "cancel": "Utzi",
-      "delete": "Ezabatu"
+    "censuses": {
+      "title": "Erroldeak"
     },
     "description": "Zure erakundeko guztiak. Zuk erabakitzen duzu nork bozkatzen duen bozketa bakoitzean.",
-    "groups": {
-      "title": "Taldeak"
-    },
     "importer": {
       "button": "Inportatu"
     },
@@ -1259,6 +1398,7 @@
       "description_label": "Deskribapena (aukerakoa)",
       "error": "Ezin izan dugu erroldea gorde",
       "name": "Izena",
+      "open": "Ireki erroldea",
       "saved": "«{{name}}» gisa gordeta",
       "submit": "Gorde erroldea",
       "title": "Gorde errolde gisa",
@@ -1318,17 +1458,9 @@
       "showing_selected_other": "Hautatutako {{formattedCount}} pertsonak erakusten dira"
     },
     "table": {
-      "bulk_delete": "Ezabatu",
-      "group_description": "Deskribapena (aukerakoa)",
-      "group_description_placeholder": "Sartu taldearen deskribapen labur bat",
-      "group_name": "Taldearen izena",
-      "no_results": "Ez da kiderik aurkitu",
       "remaining_members_one": "+{{count}} gehiago",
       "remaining_members_other": "+{{count}} gehiago",
-      "select_hint": "Hautatu kideak ekintza masiboak egiteko",
-      "select_member": "Hautatu {{name}}",
-      "selected_one": "Hautatuta: <strong>Kide bat</strong>",
-      "selected_other": "Hautatuta: <strong>{{count}} kide</strong>"
+      "select_member": "Hautatu {{name}}"
     }
   },
   "membership_size": {

@@ -11,12 +11,10 @@
     "continue_description": "A retomar o processo de votação «{{ election.title.default }}»…",
     "create_first_vote": "Ver todos os processos",
     "create_new_vote": "Criar nova votação",
-    "edit": "Editar",
     "end": "Termina imediatamente o processo, impedindo a submissão de novos votos e mostrando os resultados (atenção: a ação é irreversível)",
     "end_description": "A terminar o processo de votação «{{ election.title.default }}»…\n\nAtenção: esta ação é irreversível e os votantes deixarão de poder votar.",
     "error_title": "Ocorreu um erro ao executar a transação",
     "manage_team": "Gerir equipa",
-    "more": "Mais opções",
     "pause": "Pausa temporariamente o processo de votação até que seja retomado manualmente. Enquanto estiver em pausa, os votantes não podem votar.",
     "pause_description": "A pausar o processo de votação «{{ election.title.default }}»…",
     "save": "Guardar alterações",
@@ -134,7 +132,221 @@
       "voted_partial": "Votou {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "actions": {
+      "rename": "Mudar o nome",
+      "title": "Lista de participantes guardada",
+      "use": "Usar numa nova votação"
+    },
+    "add": {
+      "button": "Adicionar pessoas",
+      "created_error": "Adicionada aos teus membros, mas não a esta lista de participantes. Adiciona-a a partir de «Dos teus membros».",
+      "created_not_found": "Adicionada aos teus membros, mas ainda não a esta lista de participantes. Adiciona-a a partir de «Dos teus membros».",
+      "done": "{{before}} → {{after}} pessoas",
+      "done_detail": "Adicionadas a «{{name}}»",
+      "done_vote": "{{before}} → {{after}} votantes",
+      "error": "Não foi possível adicioná-las",
+      "from_members": "Dos teus membros",
+      "new_hint": "Será adicionada aos teus membros e a esta lista de participantes.",
+      "new_person": "Nova pessoa",
+      "submit_many": "Adicionar {{formattedCount}} pessoas",
+      "submit_one": "Adicionar 1 pessoa",
+      "submit_other": "Adicionar {{formattedCount}} pessoas",
+      "title": "Adicionar pessoas",
+      "updating_vote": "Adicionadas. A atualizar a votação para que possam votar…"
+    },
+    "caption": "Pessoas desta lista de participantes, página {{page}} de {{pages}}",
+    "clear": "Limpar seleção",
+    "column": {
+      "email": "Email",
+      "member_number": "Número de membro",
+      "name": "Nome"
+    },
+    "delete": {
+      "blocked_many": "{{count}} votações publicadas usam-na, por isso fica.",
+      "blocked_one": "Uma votação publicada usa-a, por isso fica.",
+      "blocked_other": "{{count}} votações publicadas usam-na, por isso fica.",
+      "button": "Eliminar a lista guardada",
+      "confirm": "Eliminar a lista",
+      "description": "As pessoas continuam nos teus membros. Não é possível desfazer.",
+      "done": "Lista de participantes eliminada",
+      "error": "A lista de participantes não foi eliminada",
+      "title": "Eliminar «{{name}}»?"
+    },
+    "edit": {
+      "error": "As tuas alterações não foram guardadas",
+      "name_required": "Adiciona um nome",
+      "saved": "Lista de participantes atualizada",
+      "submit": "Guardar",
+      "title": "Mudar o nome da lista"
+    },
+    "empty": "Ainda não há ninguém nesta lista de participantes.",
+    "export": {
+      "button": "Transferir a lista de participantes (CSV)",
+      "error": "Não foi possível transferir a lista de participantes",
+      "hint": "Nomes, números de membro e emails, com a data de hoje. Os documentos de identificação vão mascarados e os telefones ficam de fora.",
+      "progress": "A preparar {{done}} de {{total}}…",
+      "title": "Transferir"
+    },
+    "load_error": "Não foi possível carregar as pessoas desta lista de participantes.",
+    "loading": "A carregar {{done}} de {{total}}…",
+    "lookup_note": "Esta lista de participantes não é guardada como uma lista que possamos mostrar. Para verificar alguém, procura-o por um dado que esta votação usa.",
+    "no_match": "Ninguém nesta lista de participantes corresponde à tua pesquisa.",
+    "no_search": "A pesquisa funciona em listas de até {{max}} pessoas. Nesta, percorre as páginas.",
+    "not_found": "Não encontrámos esta lista de participantes.",
+    "open_draft": "Abrir o rascunho",
+    "open_vote": "Abrir a votação",
+    "people": {
+      "at_close": "{{unit}} no encerramento",
+      "title": "Pessoas"
+    },
+    "picker": {
+      "already_in": "Já está",
+      "paste": "Selecionar a partir de uma lista…",
+      "search": "Pesquisar nos teus membros",
+      "selected_many": "{{formattedCount}} selecionadas",
+      "selected_one": "1 selecionada",
+      "selected_other": "{{formattedCount}} selecionadas"
+    },
+    "range": "{{from}}–{{to}} de {{total}}",
+    "read_only": {
+      "draft_selected": "Para mudar quem pode votar, edita o rascunho.",
+      "ended": "Esta votação terminou, por isso a sua lista de participantes já não pode mudar.",
+      "everyone": "«Todos» inclui sempre todos os teus membros. Adiciona ou remove pessoas em Pessoas.",
+      "follows_everyone": "Esta votação segue «Todos», por isso muda com os teus membros."
+    },
+    "remove": {
+      "all_signed": "Não é possível remover mais ninguém: já todos começaram a votar.",
+      "confirm_many": "Remover {{formattedCount}} pessoas",
+      "confirm_one": "Remover 1 pessoa",
+      "confirm_other": "Remover {{formattedCount}} pessoas",
+      "done": "{{before}} → {{after}} pessoas",
+      "done_detail": "Continuam nos teus membros.",
+      "done_vote": "{{before}} → {{after}} votantes",
+      "emptied_many": "Ninguém poderia responder a {{questions}}. Mantém pelo menos uma das pessoas que podem responder a cada uma.",
+      "emptied_one": "Ninguém poderia responder a {{questions}}. Mantém pelo menos uma das pessoas que podem fazê-lo.",
+      "emptied_other": "Ninguém poderia responder a {{questions}}. Mantém pelo menos uma das pessoas que podem responder a cada uma.",
+      "error": "Ninguém foi removido",
+      "no_vote": "Deixam de poder votar nesta votação.",
+      "partial": "Parou depois de remover {{removed}}",
+      "pick_button": "Remover pessoas…",
+      "pick_hint": "Procura-as nos teus membros. Quem não estiver nesta votação fica como está.",
+      "pick_submit_many": "Remover {{formattedCount}} pessoas…",
+      "pick_submit_one": "Remover 1 pessoa…",
+      "pick_submit_other": "Remover {{formattedCount}} pessoas…",
+      "pick_title": "Remover pessoas",
+      "reason_soon": "Em breve: o motivo que indicares fica guardado com a alteração.",
+      "retry_many": "Remover as outras {{formattedCount}}",
+      "retry_one": "Remover a outra",
+      "retry_other": "Remover as outras {{formattedCount}}",
+      "retry_question_many": "Remover as outras {{formattedCount}}?",
+      "retry_question_one": "Remover a outra?",
+      "retry_question_other": "Remover as outras {{formattedCount}}?",
+      "signed_many": "{{name}} e mais {{others}} já começaram a votar.",
+      "signed_one": "{{name}} já começou a votar.",
+      "signed_other": "{{name}} e mais {{others}} já começaram a votar.",
+      "signed_title": "Ninguém foi removido",
+      "signed_title_partial": "{{removed}} removidas, as restantes ainda não",
+      "someone": "Alguém",
+      "stay": "Continuam nos teus membros.",
+      "title_many": "Remover {{formattedCount}} pessoas de «{{census}}»?",
+      "title_one": "Remover 1 pessoa de «{{census}}»?",
+      "title_other": "Remover {{formattedCount}} pessoas de «{{census}}»?"
+    },
+    "search": "Pesquisar por nome, email ou número",
+    "select_hint": "Seleciona pessoas para as remover desta lista de participantes.",
+    "select_page": "Selecionar todos nesta página",
+    "select_person": "Selecionar {{name}}",
+    "selected_many": "{{formattedCount}} selecionadas",
+    "selected_one": "1 selecionada",
+    "selected_other": "{{formattedCount}} selecionadas",
+    "sign_in": {
+      "per_vote": "Cada votação define como os seus votantes iniciam sessão.",
+      "ready": "{{ready}} de {{total}} podem receber um código",
+      "ready_any": "{{ready}} de {{total}} podem receber um código por email ou SMS",
+      "title": "Início de sessão"
+    },
+    "source": {
+      "everyone": "Todos: os membros que adicionares mais tarde também podem votar.",
+      "follows_everyone": "Esta votação segue «Todos»: os membros que adicionares também podem votar nela.",
+      "own": "A lista de participantes própria desta votação. Editá-la não muda os teus membros nem outras votações.",
+      "saved": "Uma lista de participantes guardada que podes reutilizar nas tuas votações.",
+      "selected": "Pessoas escolhidas uma a uma para esta votação.",
+      "shared": "Partilhada com {{votes}}. Mudá-la muda quem pode votar em todas, mesmo nas terminadas."
+    },
+    "this_census": "esta lista de participantes",
+    "used_by": {
+      "none": "Ainda nenhuma votação a usa.",
+      "title": "Usada por"
+    }
+  },
   "census_size": "Número de participantes",
+  "censuses": {
+    "description": "Quem pode votar em cada uma das tuas votações, e as listas de participantes que guardaste para reutilizar.",
+    "empty": {
+      "description": "Quando escolhes quem pode votar, essa lista fica guardada aqui.",
+      "new_vote": "Nova votação",
+      "title": "A tua primeira lista de participantes é criada com a tua primeira votação."
+    },
+    "everyone": {
+      "description": "Todos os teus membros, incluindo os que adicionares mais tarde.",
+      "title": "Todos"
+    },
+    "filter": {
+      "all": "Todas",
+      "label": "Filtrar listas de participantes"
+    },
+    "group": {
+      "closed": "Terminadas",
+      "drafts": "Rascunhos",
+      "live": "A decorrer",
+      "scheduled": "Agendadas"
+    },
+    "in_votes": "Em votações",
+    "load_error": "Não foi possível carregar as tuas listas de participantes.",
+    "more_votes_many": "mais {{count}}",
+    "more_votes_one": "mais {{count}}",
+    "more_votes_other": "mais {{count}}",
+    "saved": {
+      "title": "Guardadas",
+      "unused": "Nenhuma votação a usa",
+      "updated": "Atualizada a {{date}}",
+      "used_by_many": "Usada por {{count}} votações",
+      "used_by_one": "Usada por 1 votação",
+      "used_by_other": "Usada por {{count}} votações"
+    },
+    "source": {
+      "copy": "Cópia própria",
+      "copy_from": "Copiada de «{{name}}»",
+      "everyone": "Todos",
+      "saved": "Lista guardada «{{name}}»",
+      "selected": "Pessoas selecionadas",
+      "snapshot": "Todos, congelada ao publicar",
+      "test": "Votação de teste"
+    },
+    "state": {
+      "draft": "Rascunho"
+    },
+    "unit": {
+      "people_many": "pessoas",
+      "people_one": "pessoa",
+      "people_other": "pessoas",
+      "voters_many": "votantes",
+      "voters_one": "votante",
+      "voters_other": "votantes"
+    },
+    "used_by_warning": "Isto também muda quem pode votar em {{votes}}.",
+    "vote_group": {
+      "description": "Lista de participantes de «{{vote}}». Mudá-la muda quem pode votar."
+    },
+    "vote_state": {
+      "closed": "terminada",
+      "draft": "rascunho",
+      "live": "a decorrer",
+      "scheduled": "agendada"
+    },
+    "vote_with_state": "«{{title}}» ({{state}})"
+  },
   "change_password": {
     "subtitle": "Introduz a palavra-passe atual e uma nova para atualizar as tuas credenciais.",
     "title": "Alterar palavra-passe"
@@ -319,9 +531,6 @@
     "question_type": {
       "mixed": "Misto"
     }
-  },
-  "drawer": {
-    "close": "Fechar painel"
   },
   "edit_saas_profile": {
     "edit_failed": "Falha na atualização",
@@ -510,63 +719,10 @@
   "google_oauth_conflict_error": "Já existe uma conta com este email. Inicia sessão com o método existente.",
   "google_oauth_error": "Erro de OAuth do Google",
   "google_oauth_error_description": "Erro de OAuth do Google, tenta novamente",
-  "group": {
-    "actions": {
-      "cancel": "Cancelar",
-      "create_vote": "Criar uma votação",
-      "delete": "Eliminar",
-      "delete_confirm_description": "Tens a certeza de que pretendes eliminar <bold>{{title}}</bold>? Esta ação é irreversível e removerá permanentemente o grupo da tua organização.",
-      "delete_confirm_title": "Eliminar grupo",
-      "delete_error": "Erro ao eliminar o grupo",
-      "delete_group": "Eliminar grupo",
-      "delete_success": "Grupo eliminado com sucesso",
-      "edit_description": "Atualiza o nome e a descrição deste grupo.",
-      "edit_error": "Erro ao editar o grupo",
-      "edit_success": "Grupo editado com sucesso",
-      "history": "Histórico",
-      "view_members": "Ver membros"
-    },
-    "actions_description": "Quando é criada uma nova votação, o sistema tira uma fotografia dos membros do grupo nesse momento. As alterações posteriores à lista de membros não afetarão a lista de participantes já criada.",
-    "actions_title": "Ações",
-    "create_vote": "Criar uma votação",
-    "created_on": "Criado a {{date}}",
-    "delete_group": "Eliminar grupo",
-    "delete_member": {
-      "subtitle_one": "Tens a certeza de que pretendes eliminar {{count}} membro?",
-      "subtitle_many": "Tens a certeza de que pretendes eliminar {{count}} membros?",
-      "subtitle_other": "Tens a certeza de que pretendes eliminar {{count}} membros?",
-      "title": "Eliminar membros"
-    },
-    "email": "Email",
-    "members": {
-      "empty": "Não foram encontrados membros",
-      "empty_description": "Adiciona membros para os ver listados aqui.",
-      "error": "Não foi possível carregar os membros do grupo"
-    },
-    "members_one": "{{count}} membro",
-    "members_many": "{{count}} membros",
-    "members_other": "{{count}} membros",
-    "name": "Nome"
-  },
   "groups_board": {
     "auto_group": {
-      "description": "Inclui automaticamente todos os membros da tua organização.",
       "title": "Todos os membros"
-    },
-    "create_group": "Cria um novo grupo para começar.",
-    "history": {
-      "close": "Fechar",
-      "description": "Vê o histórico deste grupo e das listas de participantes associadas",
-      "title": "Histórico de {{ title }}"
-    },
-    "info": {
-      "description": "Os grupos são conjuntos de membros da tua base de membros que podem ser usados para criar listas de participantes para os processos de votação.",
-      "extra": "Quando inicias uma votação, é criada uma lista de participantes como uma fotografia do grupo num determinado momento. As alterações posteriores ao grupo não afetarão as listas de participantes já existentes, mas serão refletidas em futuros processos de votação.",
-      "title": "Sobre os grupos"
-    },
-    "load_error": "Não foi possível carregar os grupos",
-    "load_more": "Carregar mais",
-    "no_groups": "Não foi encontrado nenhum grupo"
+    }
   },
   "head": {
     "description": "Cria, gere e integra votações seguras e verificáveis de ponta a ponta com a Vocdoni. Uma plataforma flexível para organizações, governos e programadores impulsionarem a votação digital e a tomada de decisões de confiança.",
@@ -921,14 +1077,10 @@
   },
   "memberbase": {
     "add_person": "Adicionar pessoa",
-    "delete_member": {
-      "cancel": "Cancelar",
-      "delete": "Eliminar"
+    "censuses": {
+      "title": "Listas de participantes"
     },
     "description": "Todas as pessoas da tua organização. Tu escolhes quem vota em cada votação.",
-    "groups": {
-      "title": "Grupos"
-    },
     "importer": {
       "button": "Importar"
     },
@@ -1299,6 +1451,7 @@
       "description_label": "Descrição (opcional)",
       "error": "Não foi possível guardar a lista de participantes",
       "name": "Nome",
+      "open": "Abrir a lista",
       "saved": "Guardada como «{{name}}»",
       "submit": "Guardar lista",
       "title": "Guardar como lista de participantes",
@@ -1367,19 +1520,10 @@
       "showing_selected_other": "A mostrar as {{formattedCount}} pessoas selecionadas"
     },
     "table": {
-      "bulk_delete": "Eliminar",
-      "group_description": "Descrição (opcional)",
-      "group_description_placeholder": "Introduz uma breve descrição do grupo",
-      "group_name": "Nome do grupo",
-      "no_results": "Não foi encontrado nenhum membro",
       "remaining_members_one": "+{{count}} adicional",
       "remaining_members_many": "+{{count}} adicionais",
       "remaining_members_other": "+{{count}} adicionais",
-      "select_hint": "Seleciona membros para realizar ações em massa",
-      "select_member": "Selecionar {{name}}",
-      "selected_one": "Selecionado: <strong>{{count}} membro</strong>",
-      "selected_many": "Selecionados: <strong>{{count}} membros</strong>",
-      "selected_other": "Selecionados: <strong>{{count}} membros</strong>"
+      "select_member": "Selecionar {{name}}"
     }
   },
   "membership_size": {

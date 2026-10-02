@@ -11,12 +11,10 @@
     "continue_description": "Resuming \"{{ election.title.default }}\" voting process...",
     "create_first_vote": "View all processes",
     "create_new_vote": "Create new vote",
-    "edit": "Edit",
     "end": "End the process immediately, preventing new votes to be submitted, and shows the voting results (caution: it cannot be reverted)",
     "end_description": "Attention: ending \"{{ election.title.default }}\" is irreversible — voters will no longer be able to vote.",
     "error_title": "There was some error while executing the transaction",
     "manage_team": "Manage team",
-    "more": "More options",
     "pause": "Pause the voting process temporarily, until resumed manually. While the process is paused, voters cannot submit votes.",
     "pause_description": "Pausing \"{{ election.title.default }}\" voting process...",
     "save": "Save changes",
@@ -132,7 +130,206 @@
       "voted_partial": "Voted {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "actions": {
+      "rename": "Rename",
+      "title": "Saved census",
+      "use": "Use in a new vote"
+    },
+    "add": {
+      "button": "Add people",
+      "created_error": "Added to your members, but not to this census. Add them from 'From members'.",
+      "created_not_found": "Added to your members, but not to this census yet. Add them from 'From members'.",
+      "done": "{{before}} → {{after}} people",
+      "done_detail": "Added to '{{name}}'",
+      "done_vote": "{{before}} → {{after}} voters",
+      "error": "They couldn't be added",
+      "from_members": "From members",
+      "new_hint": "They'll be added to your members and to this census.",
+      "new_person": "New person",
+      "submit_one": "Add 1 person",
+      "submit_other": "Add {{formattedCount}} people",
+      "title": "Add people",
+      "updating_vote": "Added. Updating the vote so they can vote…"
+    },
+    "caption": "People in this census, page {{page}} of {{pages}}",
+    "clear": "Clear",
+    "column": {
+      "email": "Email",
+      "member_number": "Member number",
+      "name": "Name"
+    },
+    "delete": {
+      "blocked_one": "A published vote uses it, so it stays.",
+      "blocked_other": "{{count}} published votes use it, so it stays.",
+      "button": "Delete saved census",
+      "confirm": "Delete census",
+      "description": "The people stay in your members. This can't be undone.",
+      "done": "Census deleted",
+      "error": "The census wasn't deleted",
+      "title": "Delete '{{name}}'?"
+    },
+    "edit": {
+      "error": "Your changes weren't saved",
+      "name_required": "Add a name",
+      "saved": "Census updated",
+      "submit": "Save",
+      "title": "Rename census"
+    },
+    "empty": "Nobody is in this census yet.",
+    "export": {
+      "button": "Download census (CSV)",
+      "error": "The census couldn't be downloaded",
+      "hint": "Names, member numbers and emails, dated today. National IDs are masked and phones left out.",
+      "progress": "Preparing {{done}} of {{total}}…",
+      "title": "Download"
+    },
+    "load_error": "We couldn't load the people in this census.",
+    "loading": "Loading {{done}} of {{total}}…",
+    "lookup_note": "This census isn't kept as a list we can show. To check someone, look them up by a detail this vote uses.",
+    "no_match": "Nobody in this census matches your search.",
+    "no_search": "Search works in censuses of up to {{max}} people. Page through this one instead.",
+    "not_found": "We couldn't find this census.",
+    "open_draft": "Open the draft",
+    "open_vote": "Open vote",
+    "people": {
+      "at_close": "{{unit}} at close",
+      "title": "People"
+    },
+    "picker": {
+      "already_in": "Already in",
+      "paste": "Select from a list…",
+      "search": "Search your members",
+      "selected_one": "1 selected",
+      "selected_other": "{{formattedCount}} selected"
+    },
+    "range": "{{from}}–{{to}} of {{total}}",
+    "read_only": {
+      "draft_selected": "To change who can vote, edit the draft.",
+      "ended": "This vote has ended, so its census can't change.",
+      "everyone": "Everyone always holds all your members. Add or remove people in People.",
+      "follows_everyone": "This vote follows Everyone, so it changes with your members."
+    },
+    "remove": {
+      "all_signed": "Nobody else can be removed: they've all started voting.",
+      "confirm_one": "Remove 1 person",
+      "confirm_other": "Remove {{formattedCount}} people",
+      "done": "{{before}} → {{after}} people",
+      "done_detail": "They stay in your members.",
+      "done_vote": "{{before}} → {{after}} voters",
+      "emptied_one": "This would leave nobody allowed to answer {{questions}}. Keep at least one of the people who can.",
+      "emptied_other": "This would leave nobody allowed to answer {{questions}}. Keep at least one of the people who can answer each.",
+      "error": "Nobody was removed",
+      "no_vote": "They can't vote in this vote anymore.",
+      "partial": "Stopped after removing {{removed}}",
+      "pick_button": "Remove people…",
+      "pick_hint": "Find them in your members. Anyone who isn’t in this vote is left as is.",
+      "pick_submit_one": "Remove 1 person…",
+      "pick_submit_other": "Remove {{formattedCount}} people…",
+      "pick_title": "Remove people",
+      "reason_soon": "Soon: the reason you give is kept with the change.",
+      "retry_one": "Remove the other one",
+      "retry_other": "Remove the other {{formattedCount}}",
+      "retry_question_one": "Remove the other one?",
+      "retry_question_other": "Remove the other {{formattedCount}}?",
+      "signed_one": "{{name}} has already started voting.",
+      "signed_other": "{{name}} and {{others}} more have already started voting.",
+      "signed_title": "Nobody was removed",
+      "signed_title_partial": "{{removed}} removed, the rest not yet",
+      "someone": "Someone",
+      "stay": "They stay in your members.",
+      "title_one": "Remove 1 person from '{{census}}'?",
+      "title_other": "Remove {{formattedCount}} people from '{{census}}'?"
+    },
+    "search": "Search by name, email or number",
+    "select_hint": "Select people to remove them from this census.",
+    "select_page": "Select everyone on this page",
+    "select_person": "Select {{name}}",
+    "selected_one": "1 selected",
+    "selected_other": "{{formattedCount}} selected",
+    "sign_in": {
+      "per_vote": "Each vote sets how its voters sign in.",
+      "ready": "{{ready}} of {{total}} can get a code",
+      "ready_any": "{{ready}} of {{total}} can get a code by email or SMS",
+      "title": "Sign-in"
+    },
+    "source": {
+      "everyone": "Everyone: members you add later can vote too.",
+      "follows_everyone": "This vote follows Everyone: members you add can vote in it too.",
+      "own": "This vote's own census. Editing it doesn't change your members or other votes.",
+      "saved": "A saved census you can reuse in your votes.",
+      "selected": "People picked one by one for this vote.",
+      "shared": "Shared with {{votes}}. Changing it changes who can vote in all of them, even closed ones."
+    },
+    "this_census": "this census",
+    "used_by": {
+      "none": "No vote uses it yet.",
+      "title": "Used by"
+    }
+  },
   "census_size": "Census size",
+  "censuses": {
+    "description": "Who can vote in each of your votes, and censuses you saved to reuse.",
+    "empty": {
+      "description": "When you choose who can vote, that list is kept here.",
+      "new_vote": "New vote",
+      "title": "Your first census is created with your first vote."
+    },
+    "everyone": {
+      "description": "All your members, including people you add later.",
+      "title": "Everyone"
+    },
+    "filter": {
+      "all": "All",
+      "label": "Filter censuses"
+    },
+    "group": {
+      "closed": "Closed",
+      "drafts": "Drafts",
+      "live": "Live",
+      "scheduled": "Scheduled"
+    },
+    "in_votes": "In votes",
+    "load_error": "We couldn't load your censuses.",
+    "more_votes_one": "{{count}} more",
+    "more_votes_other": "{{count}} more",
+    "saved": {
+      "title": "Saved",
+      "unused": "Not used by any vote",
+      "updated": "Updated {{date}}",
+      "used_by_one": "Used by 1 vote",
+      "used_by_other": "Used by {{count}} votes"
+    },
+    "source": {
+      "copy": "Its own copy",
+      "copy_from": "Copied from '{{name}}'",
+      "everyone": "Everyone",
+      "saved": "Saved census '{{name}}'",
+      "selected": "Selected people",
+      "snapshot": "Everyone, frozen at publish",
+      "test": "Test vote"
+    },
+    "state": {
+      "draft": "Draft"
+    },
+    "unit": {
+      "people_one": "person",
+      "people_other": "people",
+      "voters_one": "voter",
+      "voters_other": "voters"
+    },
+    "used_by_warning": "This also changes who can vote in {{votes}}.",
+    "vote_group": {
+      "description": "Census of '{{vote}}'. Changing it changes who can vote."
+    },
+    "vote_state": {
+      "closed": "closed",
+      "draft": "draft",
+      "live": "live",
+      "scheduled": "scheduled"
+    },
+    "vote_with_state": "'{{title}}' ({{state}})"
+  },
   "change_password": {
     "subtitle": "Enter your current password and a new password to update your credentials.",
     "title": "Change password"
@@ -317,9 +514,6 @@
     "question_type": {
       "mixed": "Mixed"
     }
-  },
-  "drawer": {
-    "close": "Close drawer"
   },
   "edit_saas_profile": {
     "edit_failed": "Update failed",
@@ -507,61 +701,10 @@
   "google_oauth_conflict_error": "An account with this email already exists. Please sign in using your existing method.",
   "google_oauth_error": "Google OAuth Error",
   "google_oauth_error_description": "Google OAuth error, please try again",
-  "group": {
-    "actions": {
-      "cancel": "Cancel",
-      "create_vote": "Create a Vote",
-      "delete": "Delete",
-      "delete_confirm_description": "Are you sure you want to delete <bold>{{title}}</bold>? This action cannot be undone and will permanently remove the group from your organization.",
-      "delete_confirm_title": "Delete Group",
-      "delete_error": "Error deleting group",
-      "delete_group": "Delete Group",
-      "delete_success": "Group deleted successfully",
-      "edit_description": "Update the name and description of this group.",
-      "edit_error": "Error updating group",
-      "edit_success": "Group updated successfully",
-      "history": "History",
-      "view_members": "View Members"
-    },
-    "actions_description": "When a new vote is created, the system takes a snapshot of the group's members at that moment. Any changes to the member list afterward will not affect the created census.",
-    "actions_title": "Actions",
-    "create_vote": "Create a Vote",
-    "created_on": "Created {{date}}",
-    "delete_group": "Delete group",
-    "delete_member": {
-      "subtitle_one": "Are you sure you want to delete {{count}} member?",
-      "subtitle_other": "Are you sure you want to delete {{count}} members?",
-      "title": "Delete Members"
-    },
-    "email": "Email",
-    "members": {
-      "empty": "No members found",
-      "empty_description": "Add members to see them listed here.",
-      "error": "Unable to load group members"
-    },
-    "members_one": "{{count}} member",
-    "members_other": "{{count}} members",
-    "name": "Name"
-  },
   "groups_board": {
     "auto_group": {
-      "description": "Automatically includes all members of your organization.",
       "title": "All Members"
-    },
-    "create_group": "Create a new group to get started.",
-    "history": {
-      "close": "Close",
-      "description": "View the history of this group and its associated censuses",
-      "title": "{{ title }} History"
-    },
-    "info": {
-      "description": "Groups are collections of members within your memberbase that can be used to create censuses for voting processes.",
-      "extra": "When you initiate a vote, a census is created as a time-specific snapshot of the group. Any subsequent changes to the group will not affect existing censuses, but will be reflected in future voting processes.",
-      "title": "About Groups"
-    },
-    "load_error": "Unable to load groups",
-    "load_more": "Load more",
-    "no_groups": "No groups found"
+    }
   },
   "head": {
     "description": "Build, manage, and integrate secure, e2e verifiable elections with Vocdoni. A flexible platform for organizations, governments, and developers to power trusted digital voting and decision-making.",
@@ -916,14 +1059,10 @@
   },
   "memberbase": {
     "add_person": "Add person",
-    "delete_member": {
-      "cancel": "Cancel",
-      "delete": "Delete"
+    "censuses": {
+      "title": "Censuses"
     },
     "description": "Everyone in your organization. You choose who votes in each vote.",
-    "groups": {
-      "title": "Groups"
-    },
     "importer": {
       "button": "Import"
     },
@@ -1259,6 +1398,7 @@
       "description_label": "Description (optional)",
       "error": "We couldn't save the census",
       "name": "Name",
+      "open": "Open the census",
       "saved": "Saved as “{{name}}”",
       "submit": "Save census",
       "title": "Save as census",
@@ -1318,17 +1458,9 @@
       "showing_selected_other": "Showing the {{formattedCount}} you selected"
     },
     "table": {
-      "bulk_delete": "Delete",
-      "group_description": "Description (optional)",
-      "group_description_placeholder": "Enter a brief description of the group",
-      "group_name": "Group name",
-      "no_results": "No members found",
       "remaining_members_one": "+{{count}} more",
       "remaining_members_other": "+{{count}} more",
-      "select_hint": "Select members to perform bulk actions",
-      "select_member": "Select {{name}}",
-      "selected_one": "Selected: <strong>{{count}} member</strong>",
-      "selected_other": "Selected: <strong>{{count}} members</strong>"
+      "select_member": "Select {{name}}"
     }
   },
   "membership_size": {

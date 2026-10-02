@@ -11,12 +11,10 @@
     "continue_description": "Reprise du processus de vote « {{ election.title.default }} »…",
     "create_first_vote": "Voir tous les processus",
     "create_new_vote": "Créer un nouveau vote",
-    "edit": "Modifier",
     "end": "Clôt immédiatement le processus, empêche l'envoi de nouveaux votes et affiche les résultats (attention : action irréversible)",
     "end_description": "Clôture du processus de vote « {{ election.title.default }} »…\n\nAttention : cette action est irréversible et les électeurs ne pourront plus voter.",
     "error_title": "Une erreur est survenue lors de l'exécution de la transaction",
     "manage_team": "Gérer l'équipe",
-    "more": "Plus d'options",
     "pause": "Met temporairement le processus de vote en pause, jusqu'à reprise manuelle. Pendant la pause, les électeurs ne peuvent pas voter.",
     "pause_description": "Mise en pause du processus de vote « {{ election.title.default }} »…",
     "save": "Enregistrer les modifications",
@@ -134,7 +132,221 @@
       "voted_partial": "A voté {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "actions": {
+      "rename": "Renommer",
+      "title": "Liste électorale enregistrée",
+      "use": "Utiliser dans un nouveau vote"
+    },
+    "add": {
+      "button": "Ajouter des personnes",
+      "created_error": "Ajouté à vos membres, mais pas à cette liste électorale. Ajoutez-le depuis « Depuis vos membres ».",
+      "created_not_found": "Ajouté à vos membres, mais pas encore à cette liste électorale. Ajoutez-le depuis « Depuis vos membres ».",
+      "done": "{{before}} → {{after}} personnes",
+      "done_detail": "Ajoutées à « {{name}} »",
+      "done_vote": "{{before}} → {{after}} électeurs",
+      "error": "Elles n'ont pas pu être ajoutées",
+      "from_members": "Depuis vos membres",
+      "new_hint": "Elle sera ajoutée à vos membres et à cette liste électorale.",
+      "new_person": "Nouvelle personne",
+      "submit_many": "Ajouter {{formattedCount}} personnes",
+      "submit_one": "Ajouter 1 personne",
+      "submit_other": "Ajouter {{formattedCount}} personnes",
+      "title": "Ajouter des personnes",
+      "updating_vote": "Ajoutées. Mise à jour du vote pour qu'elles puissent voter…"
+    },
+    "caption": "Personnes de cette liste électorale, page {{page}} sur {{pages}}",
+    "clear": "Effacer la sélection",
+    "column": {
+      "email": "E-mail",
+      "member_number": "Numéro de membre",
+      "name": "Nom"
+    },
+    "delete": {
+      "blocked_many": "{{count}} votes publiés l'utilisent, elle est donc conservée.",
+      "blocked_one": "Un vote publié l'utilise, elle est donc conservée.",
+      "blocked_other": "{{count}} votes publiés l'utilisent, elle est donc conservée.",
+      "button": "Supprimer la liste électorale enregistrée",
+      "confirm": "Supprimer la liste",
+      "description": "Les personnes restent dans vos membres. Cette action est irréversible.",
+      "done": "Liste électorale supprimée",
+      "error": "La liste électorale n'a pas été supprimée",
+      "title": "Supprimer « {{name}} » ?"
+    },
+    "edit": {
+      "error": "Vos modifications n'ont pas été enregistrées",
+      "name_required": "Ajoutez un nom",
+      "saved": "Liste électorale mise à jour",
+      "submit": "Enregistrer",
+      "title": "Renommer la liste électorale"
+    },
+    "empty": "Personne ne figure encore sur cette liste électorale.",
+    "export": {
+      "button": "Télécharger la liste électorale (CSV)",
+      "error": "La liste électorale n'a pas pu être téléchargée",
+      "hint": "Noms, numéros de membre et e-mails, datés du jour. Les pièces d'identité sont masquées et les téléphones exclus.",
+      "progress": "Préparation de {{done}} sur {{total}}…",
+      "title": "Télécharger"
+    },
+    "load_error": "Impossible de charger les personnes de cette liste électorale.",
+    "loading": "Chargement de {{done}} sur {{total}}…",
+    "lookup_note": "Cette liste électorale n'est pas conservée sous une forme que nous pouvons afficher. Pour vérifier une personne, recherchez-la par une donnée utilisée par ce vote.",
+    "no_match": "Personne sur cette liste électorale ne correspond à votre recherche.",
+    "no_search": "La recherche fonctionne pour les listes électorales de {{max}} personnes maximum. Parcourez celle-ci page par page.",
+    "not_found": "Liste électorale introuvable.",
+    "open_draft": "Ouvrir le brouillon",
+    "open_vote": "Ouvrir le vote",
+    "people": {
+      "at_close": "{{unit}} à la clôture",
+      "title": "Personnes"
+    },
+    "picker": {
+      "already_in": "Déjà inscrite",
+      "paste": "Sélectionner depuis une liste…",
+      "search": "Rechercher dans vos membres",
+      "selected_many": "{{formattedCount}} sélectionnées",
+      "selected_one": "1 sélectionnée",
+      "selected_other": "{{formattedCount}} sélectionnées"
+    },
+    "range": "{{from}}–{{to}} sur {{total}}",
+    "read_only": {
+      "draft_selected": "Pour changer qui peut voter, modifiez le brouillon.",
+      "ended": "Ce vote est terminé, sa liste électorale ne peut donc plus changer.",
+      "everyone": "« Tout le monde » comprend toujours tous vos membres. Ajoutez ou retirez des personnes dans Personnes.",
+      "follows_everyone": "Ce vote suit « Tout le monde », il évolue donc avec vos membres."
+    },
+    "remove": {
+      "all_signed": "Personne d'autre ne peut être retiré : tous ont commencé à voter.",
+      "confirm_many": "Retirer {{formattedCount}} personnes",
+      "confirm_one": "Retirer 1 personne",
+      "confirm_other": "Retirer {{formattedCount}} personnes",
+      "done": "{{before}} → {{after}} personnes",
+      "done_detail": "Elles restent dans vos membres.",
+      "done_vote": "{{before}} → {{after}} électeurs",
+      "emptied_many": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées pour chacune.",
+      "emptied_one": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées.",
+      "emptied_other": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées pour chacune.",
+      "error": "Personne n'a été retiré",
+      "no_vote": "Elles ne pourront plus voter à ce vote.",
+      "partial": "Arrêt après le retrait de {{removed}}",
+      "pick_button": "Retirer des personnes…",
+      "pick_hint": "Trouvez-les dans vos membres. Les personnes qui ne participent pas à ce vote restent inchangées.",
+      "pick_submit_many": "Retirer {{formattedCount}} personnes…",
+      "pick_submit_one": "Retirer 1 personne…",
+      "pick_submit_other": "Retirer {{formattedCount}} personnes…",
+      "pick_title": "Retirer des personnes",
+      "reason_soon": "Bientôt : le motif indiqué sera conservé avec la modification.",
+      "retry_many": "Retirer les {{formattedCount}} autres",
+      "retry_one": "Retirer l'autre",
+      "retry_other": "Retirer les {{formattedCount}} autres",
+      "retry_question_many": "Retirer les {{formattedCount}} autres ?",
+      "retry_question_one": "Retirer l'autre ?",
+      "retry_question_other": "Retirer les {{formattedCount}} autres ?",
+      "signed_many": "{{name}} et {{others}} autres ont déjà commencé à voter.",
+      "signed_one": "{{name}} a déjà commencé à voter.",
+      "signed_other": "{{name}} et {{others}} autres ont déjà commencé à voter.",
+      "signed_title": "Personne n'a été retiré",
+      "signed_title_partial": "{{removed}} retirées, pas encore les autres",
+      "someone": "Quelqu'un",
+      "stay": "Elles restent dans vos membres.",
+      "title_many": "Retirer {{formattedCount}} personnes de « {{census}} » ?",
+      "title_one": "Retirer 1 personne de « {{census}} » ?",
+      "title_other": "Retirer {{formattedCount}} personnes de « {{census}} » ?"
+    },
+    "search": "Rechercher par nom, e-mail ou numéro",
+    "select_hint": "Sélectionnez des personnes pour les retirer de cette liste électorale.",
+    "select_page": "Sélectionner tout le monde sur cette page",
+    "select_person": "Sélectionner {{name}}",
+    "selected_many": "{{formattedCount}} sélectionnées",
+    "selected_one": "1 sélectionnée",
+    "selected_other": "{{formattedCount}} sélectionnées",
+    "sign_in": {
+      "per_vote": "Chaque vote définit comment ses électeurs se connectent.",
+      "ready": "{{ready}} sur {{total}} peuvent recevoir un code",
+      "ready_any": "{{ready}} sur {{total}} peuvent recevoir un code par e-mail ou SMS",
+      "title": "Connexion"
+    },
+    "source": {
+      "everyone": "Tout le monde : les membres que vous ajoutez plus tard peuvent aussi voter.",
+      "follows_everyone": "Ce vote suit « Tout le monde » : les membres que vous ajoutez peuvent aussi y voter.",
+      "own": "La liste électorale propre à ce vote. La modifier ne change ni vos membres ni les autres votes.",
+      "saved": "Une liste électorale enregistrée que vous pouvez réutiliser dans vos votes.",
+      "selected": "Personnes choisies une à une pour ce vote.",
+      "shared": "Partagée avec {{votes}}. La modifier change qui peut voter dans tous ces votes, même ceux clôturés."
+    },
+    "this_census": "cette liste électorale",
+    "used_by": {
+      "none": "Aucun vote ne l'utilise encore.",
+      "title": "Utilisée par"
+    }
+  },
   "census_size": "Nombre d'inscrits",
+  "censuses": {
+    "description": "Qui peut voter dans chacun de vos votes, et les listes électorales enregistrées pour les réutiliser.",
+    "empty": {
+      "description": "Quand vous choisissez qui peut voter, cette liste est conservée ici.",
+      "new_vote": "Nouveau vote",
+      "title": "Votre première liste électorale est créée avec votre premier vote."
+    },
+    "everyone": {
+      "description": "Tous vos membres, y compris ceux que vous ajouterez plus tard.",
+      "title": "Tout le monde"
+    },
+    "filter": {
+      "all": "Toutes",
+      "label": "Filtrer les listes électorales"
+    },
+    "group": {
+      "closed": "Clôturés",
+      "drafts": "Brouillons",
+      "live": "En cours",
+      "scheduled": "Programmés"
+    },
+    "in_votes": "Dans les votes",
+    "load_error": "Impossible de charger vos listes électorales.",
+    "more_votes_many": "{{count}} autres",
+    "more_votes_one": "{{count}} autre",
+    "more_votes_other": "{{count}} autres",
+    "saved": {
+      "title": "Enregistrées",
+      "unused": "Utilisée par aucun vote",
+      "updated": "Mise à jour le {{date}}",
+      "used_by_many": "Utilisée par {{count}} votes",
+      "used_by_one": "Utilisée par 1 vote",
+      "used_by_other": "Utilisée par {{count}} votes"
+    },
+    "source": {
+      "copy": "Copie propre",
+      "copy_from": "Copiée depuis « {{name}} »",
+      "everyone": "Tout le monde",
+      "saved": "Liste électorale enregistrée « {{name}} »",
+      "selected": "Personnes sélectionnées",
+      "snapshot": "Tout le monde, figée à la publication",
+      "test": "Vote d'essai"
+    },
+    "state": {
+      "draft": "Brouillon"
+    },
+    "unit": {
+      "people_many": "personnes",
+      "people_one": "personne",
+      "people_other": "personnes",
+      "voters_many": "électeurs",
+      "voters_one": "électeur",
+      "voters_other": "électeurs"
+    },
+    "used_by_warning": "Cela change aussi qui peut voter dans {{votes}}.",
+    "vote_group": {
+      "description": "Liste électorale de « {{vote}} ». La modifier change qui peut voter."
+    },
+    "vote_state": {
+      "closed": "clôturé",
+      "draft": "brouillon",
+      "live": "en cours",
+      "scheduled": "programmé"
+    },
+    "vote_with_state": "« {{title}} » ({{state}})"
+  },
   "change_password": {
     "subtitle": "Saisissez votre mot de passe actuel et un nouveau mot de passe pour mettre à jour vos identifiants.",
     "title": "Changer le mot de passe"
@@ -319,9 +531,6 @@
     "question_type": {
       "mixed": "Mixte"
     }
-  },
-  "drawer": {
-    "close": "Fermer le panneau"
   },
   "edit_saas_profile": {
     "edit_failed": "Échec de la mise à jour",
@@ -510,63 +719,10 @@
   "google_oauth_conflict_error": "Un compte avec cette adresse e-mail existe déjà. Veuillez vous connecter avec votre méthode existante.",
   "google_oauth_error": "Erreur OAuth Google",
   "google_oauth_error_description": "Erreur OAuth Google, veuillez réessayer",
-  "group": {
-    "actions": {
-      "cancel": "Annuler",
-      "create_vote": "Créer un vote",
-      "delete": "Supprimer",
-      "delete_confirm_description": "Voulez-vous vraiment supprimer <bold>{{title}}</bold> ? Cette action est irréversible et supprimera définitivement le groupe de votre organisation.",
-      "delete_confirm_title": "Supprimer le groupe",
-      "delete_error": "Erreur lors de la suppression du groupe",
-      "delete_group": "Supprimer le groupe",
-      "delete_success": "Groupe supprimé avec succès",
-      "edit_description": "Mettez à jour le nom et la description de ce groupe.",
-      "edit_error": "Erreur lors de la mise à jour du groupe",
-      "edit_success": "Groupe mis à jour avec succès",
-      "history": "Historique",
-      "view_members": "Voir les membres"
-    },
-    "actions_description": "Lorsqu'un nouveau vote est créé, le système prend un instantané des membres du groupe à ce moment-là. Toute modification ultérieure de la liste des membres n'aura pas d'impact sur la liste électorale créée.",
-    "actions_title": "Actions",
-    "create_vote": "Créer un vote",
-    "created_on": "Créé le {{date}}",
-    "delete_group": "Supprimer le groupe",
-    "delete_member": {
-      "subtitle_one": "Voulez-vous vraiment supprimer {{count}} membre ?",
-      "subtitle_many": "Voulez-vous vraiment supprimer {{count}} membres ?",
-      "subtitle_other": "Voulez-vous vraiment supprimer {{count}} membres ?",
-      "title": "Supprimer des membres"
-    },
-    "email": "E-mail",
-    "members": {
-      "empty": "Aucun membre trouvé",
-      "empty_description": "Ajoutez des membres pour les voir apparaître ici.",
-      "error": "Impossible de charger les membres du groupe"
-    },
-    "members_one": "{{count}} membre",
-    "members_many": "{{count}} membres",
-    "members_other": "{{count}} membres",
-    "name": "Nom"
-  },
   "groups_board": {
     "auto_group": {
-      "description": "Inclut automatiquement tous les membres de votre organisation.",
       "title": "Tous les membres"
-    },
-    "create_group": "Créez un nouveau groupe pour commencer.",
-    "history": {
-      "close": "Fermer",
-      "description": "Consultez l'historique de ce groupe et des listes électorales associées",
-      "title": "Historique de {{ title }}"
-    },
-    "info": {
-      "description": "Les groupes sont des ensembles de membres au sein de votre base de membres, utilisables pour créer des listes électorales pour les processus de vote.",
-      "extra": "Lorsque vous lancez un vote, une liste électorale est créée comme instantané du groupe à un moment précis. Les modifications ultérieures du groupe n'affecteront pas les listes existantes mais seront prises en compte dans les futurs processus de vote.",
-      "title": "À propos des groupes"
-    },
-    "load_error": "Impossible de charger les groupes",
-    "load_more": "Charger plus",
-    "no_groups": "Aucun groupe trouvé"
+    }
   },
   "head": {
     "description": "Créez, gérez et intégrez des élections sécurisées et vérifiables de bout en bout avec Vocdoni. Une plateforme flexible pour les organisations, les gouvernements et les développeurs, pour un vote numérique et une prise de décision fiables.",
@@ -921,14 +1077,10 @@
   },
   "memberbase": {
     "add_person": "Ajouter une personne",
-    "delete_member": {
-      "cancel": "Annuler",
-      "delete": "Supprimer"
+    "censuses": {
+      "title": "Listes électorales"
     },
     "description": "Toutes les personnes de votre organisation. Vous choisissez qui participe à chaque vote.",
-    "groups": {
-      "title": "Groupes"
-    },
     "importer": {
       "button": "Importer"
     },
@@ -1299,6 +1451,7 @@
       "description_label": "Description (facultatif)",
       "error": "Impossible d'enregistrer la liste électorale",
       "name": "Nom",
+      "open": "Ouvrir la liste électorale",
       "saved": "Enregistrée sous « {{name}} »",
       "submit": "Enregistrer la liste",
       "title": "Enregistrer comme liste électorale",
@@ -1367,19 +1520,10 @@
       "showing_selected_other": "Affichage des {{formattedCount}} personnes sélectionnées"
     },
     "table": {
-      "bulk_delete": "Supprimer",
-      "group_description": "Description (facultatif)",
-      "group_description_placeholder": "Saisissez une brève description du groupe",
-      "group_name": "Nom du groupe",
-      "no_results": "Aucun membre trouvé",
       "remaining_members_one": "+{{count}} de plus",
       "remaining_members_many": "+{{count}} de plus",
       "remaining_members_other": "+{{count}} de plus",
-      "select_hint": "Sélectionnez des membres pour effectuer des actions groupées",
-      "select_member": "Sélectionner {{name}}",
-      "selected_one": "Sélectionné : <strong>{{count}} membre</strong>",
-      "selected_many": "Sélectionnés : <strong>{{count}} membres</strong>",
-      "selected_other": "Sélectionnés : <strong>{{count}} membres</strong>"
+      "select_member": "Sélectionner {{name}}"
     }
   },
   "membership_size": {

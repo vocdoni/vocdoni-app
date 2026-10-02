@@ -11,12 +11,10 @@
     "continue_description": "Ripresa del processo di voto \"{{ election.title.default }}\"...",
     "create_first_vote": "Visualizza tutti i processi",
     "create_new_vote": "Crea nuova votazione",
-    "edit": "Modifica",
     "end": "Termina immediatamente il processo, impedendo l'invio di nuovi voti e mostrando i risultati (attenzione: non può essere annullato)",
     "end_description": "Attenzione: chiudere \"{{ election.title.default }}\" è irreversibile e i votanti non potranno più votare.",
     "error_title": "Si è verificato un errore durante l'esecuzione della transazione",
     "manage_team": "Gestisci team",
-    "more": "Altre opzioni",
     "pause": "Mette in pausa temporaneamente il processo di voto, fino alla ripresa manuale. Mentre il processo è in pausa, i votanti non possono inviare voti.",
     "pause_description": "Messa in pausa del processo di voto \"{{ election.title.default }}\"...",
     "save": "Salva modifiche",
@@ -134,7 +132,221 @@
       "voted_partial": "Ha votato {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "actions": {
+      "rename": "Rinomina",
+      "title": "Censimento salvato",
+      "use": "Usa in una nuova votazione"
+    },
+    "add": {
+      "button": "Aggiungi persone",
+      "created_error": "Aggiunta ai tuoi membri, ma non a questo censimento. Aggiungila da «Dai tuoi membri».",
+      "created_not_found": "Aggiunta ai tuoi membri, ma non ancora a questo censimento. Aggiungila da «Dai tuoi membri».",
+      "done": "{{before}} → {{after}} persone",
+      "done_detail": "Aggiunte a «{{name}}»",
+      "done_vote": "{{before}} → {{after}} votanti",
+      "error": "Non è stato possibile aggiungerle",
+      "from_members": "Dai tuoi membri",
+      "new_hint": "Verrà aggiunta ai tuoi membri e a questo censimento.",
+      "new_person": "Nuova persona",
+      "submit_many": "Aggiungi {{formattedCount}} persone",
+      "submit_one": "Aggiungi 1 persona",
+      "submit_other": "Aggiungi {{formattedCount}} persone",
+      "title": "Aggiungi persone",
+      "updating_vote": "Aggiunte. Aggiornamento della votazione perché possano votare…"
+    },
+    "caption": "Persone di questo censimento, pagina {{page}} di {{pages}}",
+    "clear": "Deseleziona",
+    "column": {
+      "email": "Email",
+      "member_number": "Numero di membro",
+      "name": "Nome"
+    },
+    "delete": {
+      "blocked_many": "Lo usano {{count}} votazioni pubblicate, quindi resta.",
+      "blocked_one": "Lo usa una votazione pubblicata, quindi resta.",
+      "blocked_other": "Lo usano {{count}} votazioni pubblicate, quindi resta.",
+      "button": "Elimina il censimento salvato",
+      "confirm": "Elimina il censimento",
+      "description": "Le persone restano tra i tuoi membri. Non si può annullare.",
+      "done": "Censimento eliminato",
+      "error": "Il censimento non è stato eliminato",
+      "title": "Eliminare «{{name}}»?"
+    },
+    "edit": {
+      "error": "Le modifiche non sono state salvate",
+      "name_required": "Aggiungi un nome",
+      "saved": "Censimento aggiornato",
+      "submit": "Salva",
+      "title": "Rinomina il censimento"
+    },
+    "empty": "Non c'è ancora nessuno in questo censimento.",
+    "export": {
+      "button": "Scarica il censimento (CSV)",
+      "error": "Non è stato possibile scaricare il censimento",
+      "hint": "Nomi, numeri di membro ed email, con la data di oggi. I documenti d'identità sono mascherati e i telefoni esclusi.",
+      "progress": "Preparazione di {{done}} su {{total}}…",
+      "title": "Scarica"
+    },
+    "load_error": "Non siamo riusciti a caricare le persone di questo censimento.",
+    "loading": "Caricamento di {{done}} su {{total}}…",
+    "lookup_note": "Questo censimento non è conservato come un elenco che possiamo mostrare. Per controllare qualcuno, cercalo con un dato che usa questa votazione.",
+    "no_match": "Nessuno in questo censimento corrisponde alla ricerca.",
+    "no_search": "La ricerca funziona nei censimenti fino a {{max}} persone. Qui scorri le pagine.",
+    "not_found": "Non abbiamo trovato questo censimento.",
+    "open_draft": "Apri la bozza",
+    "open_vote": "Apri la votazione",
+    "people": {
+      "at_close": "{{unit}} alla chiusura",
+      "title": "Persone"
+    },
+    "picker": {
+      "already_in": "Già presente",
+      "paste": "Seleziona da un elenco…",
+      "search": "Cerca tra i tuoi membri",
+      "selected_many": "{{formattedCount}} selezionate",
+      "selected_one": "1 selezionata",
+      "selected_other": "{{formattedCount}} selezionate"
+    },
+    "range": "{{from}}–{{to}} di {{total}}",
+    "read_only": {
+      "draft_selected": "Per cambiare chi può votare, modifica la bozza.",
+      "ended": "Questa votazione è terminata, quindi il suo censimento non può più cambiare.",
+      "everyone": "«Tutti» include sempre tutti i tuoi membri. Aggiungi o togli persone in Persone.",
+      "follows_everyone": "Questa votazione segue «Tutti», quindi cambia con i tuoi membri."
+    },
+    "remove": {
+      "all_signed": "Nessun altro può essere tolto: hanno tutti iniziato a votare.",
+      "confirm_many": "Togli {{formattedCount}} persone",
+      "confirm_one": "Togli 1 persona",
+      "confirm_other": "Togli {{formattedCount}} persone",
+      "done": "{{before}} → {{after}} persone",
+      "done_detail": "Restano tra i tuoi membri.",
+      "done_vote": "{{before}} → {{after}} votanti",
+      "emptied_many": "Nessuno potrebbe più rispondere a {{questions}}. Mantieni almeno una delle persone che possono rispondere a ciascuna.",
+      "emptied_one": "Nessuno potrebbe più rispondere a {{questions}}. Mantieni almeno una delle persone che possono farlo.",
+      "emptied_other": "Nessuno potrebbe più rispondere a {{questions}}. Mantieni almeno una delle persone che possono rispondere a ciascuna.",
+      "error": "Nessuno è stato tolto",
+      "no_vote": "Non potranno più votare in questa votazione.",
+      "partial": "Interrotto dopo averne tolte {{removed}}",
+      "pick_button": "Togli persone…",
+      "pick_hint": "Cercale tra i tuoi membri. Chi non è in questa votazione resta com'è.",
+      "pick_submit_many": "Togli {{formattedCount}} persone…",
+      "pick_submit_one": "Togli 1 persona…",
+      "pick_submit_other": "Togli {{formattedCount}} persone…",
+      "pick_title": "Togli persone",
+      "reason_soon": "Presto: il motivo che indichi verrà conservato insieme alla modifica.",
+      "retry_many": "Togli le altre {{formattedCount}}",
+      "retry_one": "Togli l'altra",
+      "retry_other": "Togli le altre {{formattedCount}}",
+      "retry_question_many": "Togliere le altre {{formattedCount}}?",
+      "retry_question_one": "Togliere l'altra?",
+      "retry_question_other": "Togliere le altre {{formattedCount}}?",
+      "signed_many": "{{name}} e altre {{others}} persone hanno già iniziato a votare.",
+      "signed_one": "{{name}} ha già iniziato a votare.",
+      "signed_other": "{{name}} e altre {{others}} persone hanno già iniziato a votare.",
+      "signed_title": "Nessuno è stato tolto",
+      "signed_title_partial": "{{removed}} tolte, le altre non ancora",
+      "someone": "Qualcuno",
+      "stay": "Restano tra i tuoi membri.",
+      "title_many": "Togliere {{formattedCount}} persone da «{{census}}»?",
+      "title_one": "Togliere 1 persona da «{{census}}»?",
+      "title_other": "Togliere {{formattedCount}} persone da «{{census}}»?"
+    },
+    "search": "Cerca per nome, email o numero",
+    "select_hint": "Seleziona le persone da togliere da questo censimento.",
+    "select_page": "Seleziona tutti in questa pagina",
+    "select_person": "Seleziona {{name}}",
+    "selected_many": "{{formattedCount}} selezionate",
+    "selected_one": "1 selezionata",
+    "selected_other": "{{formattedCount}} selezionate",
+    "sign_in": {
+      "per_vote": "Ogni votazione stabilisce come accedono i suoi votanti.",
+      "ready": "{{ready}} su {{total}} possono ricevere un codice",
+      "ready_any": "{{ready}} su {{total}} possono ricevere un codice via email o SMS",
+      "title": "Accesso"
+    },
+    "source": {
+      "everyone": "Tutti: anche i membri che aggiungerai in seguito possono votare.",
+      "follows_everyone": "Questa votazione segue «Tutti»: anche i membri che aggiungi possono votarci.",
+      "own": "Il censimento proprio di questa votazione. Modificarlo non cambia i tuoi membri né le altre votazioni.",
+      "saved": "Un censimento salvato che puoi riutilizzare nelle tue votazioni.",
+      "selected": "Persone scelte una a una per questa votazione.",
+      "shared": "Condiviso con {{votes}}. Modificarlo cambia chi può votare in tutte, anche in quelle chiuse."
+    },
+    "this_census": "questo censimento",
+    "used_by": {
+      "none": "Nessuna votazione lo usa ancora.",
+      "title": "Usato da"
+    }
+  },
   "census_size": "Dimensione del censimento",
+  "censuses": {
+    "description": "Chi può votare in ciascuna delle tue votazioni, e i censimenti che hai salvato per riutilizzarli.",
+    "empty": {
+      "description": "Quando scegli chi può votare, quell'elenco viene conservato qui.",
+      "new_vote": "Nuova votazione",
+      "title": "Il tuo primo censimento nasce con la tua prima votazione."
+    },
+    "everyone": {
+      "description": "Tutti i tuoi membri, compresi quelli che aggiungerai in seguito.",
+      "title": "Tutti"
+    },
+    "filter": {
+      "all": "Tutti",
+      "label": "Filtra i censimenti"
+    },
+    "group": {
+      "closed": "Chiuse",
+      "drafts": "Bozze",
+      "live": "In corso",
+      "scheduled": "Programmate"
+    },
+    "in_votes": "Nelle votazioni",
+    "load_error": "Non siamo riusciti a caricare i tuoi censimenti.",
+    "more_votes_many": "altre {{count}}",
+    "more_votes_one": "{{count}} altra",
+    "more_votes_other": "altre {{count}}",
+    "saved": {
+      "title": "Salvati",
+      "unused": "Non usato da nessuna votazione",
+      "updated": "Aggiornato il {{date}}",
+      "used_by_many": "Usato da {{count}} votazioni",
+      "used_by_one": "Usato da 1 votazione",
+      "used_by_other": "Usato da {{count}} votazioni"
+    },
+    "source": {
+      "copy": "Copia propria",
+      "copy_from": "Copiato da «{{name}}»",
+      "everyone": "Tutti",
+      "saved": "Censimento salvato «{{name}}»",
+      "selected": "Persone selezionate",
+      "snapshot": "Tutti, congelato alla pubblicazione",
+      "test": "Votazione di prova"
+    },
+    "state": {
+      "draft": "Bozza"
+    },
+    "unit": {
+      "people_many": "persone",
+      "people_one": "persona",
+      "people_other": "persone",
+      "voters_many": "votanti",
+      "voters_one": "votante",
+      "voters_other": "votanti"
+    },
+    "used_by_warning": "Questo cambia anche chi può votare in {{votes}}.",
+    "vote_group": {
+      "description": "Censimento di «{{vote}}». Modificarlo cambia chi può votare."
+    },
+    "vote_state": {
+      "closed": "chiusa",
+      "draft": "bozza",
+      "live": "in corso",
+      "scheduled": "programmata"
+    },
+    "vote_with_state": "«{{title}}» ({{state}})"
+  },
   "change_password": {
     "subtitle": "Inserire la password attuale e una nuova password per aggiornare le credenziali.",
     "title": "Cambia password"
@@ -319,9 +531,6 @@
     "question_type": {
       "mixed": "Misto"
     }
-  },
-  "drawer": {
-    "close": "Chiudi cassetto"
   },
   "edit_saas_profile": {
     "edit_failed": "Aggiornamento non riuscito",
@@ -510,63 +719,10 @@
   "google_oauth_conflict_error": "Esiste già un account con questa email. Accedi utilizzando il metodo che hai utilizzato in precedenza.",
   "google_oauth_error": "Errore Google OAuth",
   "google_oauth_error_description": "Errore Google OAuth, riprovare",
-  "group": {
-    "actions": {
-      "cancel": "Annulla",
-      "create_vote": "Crea una votazione",
-      "delete": "Elimina",
-      "delete_confirm_description": "Sei sicuro di voler eliminare <bold>{{title}}</bold>? Questa azione non può essere annullata e rimuoverà definitivamente il gruppo dall'organizzazione.",
-      "delete_confirm_title": "Elimina gruppo",
-      "delete_error": "Errore durante l'eliminazione del gruppo",
-      "delete_group": "Elimina gruppo",
-      "delete_success": "Gruppo eliminato con successo",
-      "edit_description": "Aggiorna il nome e la descrizione di questo gruppo.",
-      "edit_error": "Errore durante l'aggiornamento del gruppo",
-      "edit_success": "Gruppo aggiornato correttamente",
-      "history": "Cronologia",
-      "view_members": "Visualizza membri"
-    },
-    "actions_description": "Quando viene creata una nuova votazione, il sistema scatta un'istantanea dei membri del gruppo in quel momento. Eventuali modifiche successive all'elenco dei membri non influenzeranno il censimento creato.",
-    "actions_title": "Azioni",
-    "create_vote": "Crea una votazione",
-    "created_on": "Creato il {{date}}",
-    "delete_group": "Elimina gruppo",
-    "delete_member": {
-      "subtitle_one": "Sei sicuro di voler eliminare {{count}} membro?",
-      "subtitle_many": "Sei sicuro di voler eliminare {{count}} membri?",
-      "subtitle_other": "Sei sicuro di voler eliminare {{count}} membri?",
-      "title": "Elimina membri"
-    },
-    "email": "Email",
-    "members": {
-      "empty": "Nessun membro trovato",
-      "empty_description": "Aggiungi membri per vederli qui.",
-      "error": "Impossibile caricare i membri del gruppo"
-    },
-    "members_one": "{{count}} membro",
-    "members_many": "{{count}} membri",
-    "members_other": "{{count}} membri",
-    "name": "Nome"
-  },
   "groups_board": {
     "auto_group": {
-      "description": "Include automaticamente tutti i membri della tua organizzazione.",
       "title": "Tutti i membri"
-    },
-    "create_group": "Crea un nuovo gruppo per iniziare.",
-    "history": {
-      "close": "Chiudi",
-      "description": "Visualizza la cronologia di questo gruppo e i relativi censimenti",
-      "title": "Cronologia di {{ title }}"
-    },
-    "info": {
-      "description": "I gruppi sono raccolte di membri all'interno del database che possono essere utilizzati per creare censimenti per i processi di voto.",
-      "extra": "Quando si avvia una votazione, viene creato un censimento come istantanea temporale del gruppo. Eventuali modifiche successive al gruppo non influiranno sui censimenti esistenti, ma si rifletteranno nei futuri processi di voto.",
-      "title": "Informazioni sui gruppi"
-    },
-    "load_error": "Impossibile caricare i gruppi",
-    "load_more": "Carica altro",
-    "no_groups": "Nessun gruppo trovato"
+    }
   },
   "head": {
     "description": "Crea, gestisci e integra elezioni sicure e verificabili end-to-end con Vocdoni. Una piattaforma flessibile per organizzazioni, governi e sviluppatori per un voto digitale e processi decisionali affidabili.",
@@ -921,14 +1077,10 @@
   },
   "memberbase": {
     "add_person": "Aggiungi persona",
-    "delete_member": {
-      "cancel": "Annulla",
-      "delete": "Elimina"
+    "censuses": {
+      "title": "Censimenti"
     },
     "description": "Tutte le persone della tua organizzazione. Scegli tu chi vota in ogni votazione.",
-    "groups": {
-      "title": "Gruppi"
-    },
     "importer": {
       "button": "Importa"
     },
@@ -1299,6 +1451,7 @@
       "description_label": "Descrizione (facoltativa)",
       "error": "Non è stato possibile salvare il censimento",
       "name": "Nome",
+      "open": "Apri il censimento",
       "saved": "Salvato come «{{name}}»",
       "submit": "Salva censimento",
       "title": "Salva come censimento",
@@ -1367,19 +1520,10 @@
       "showing_selected_other": "Mostra le {{formattedCount}} persone selezionate"
     },
     "table": {
-      "bulk_delete": "Elimina",
-      "group_description": "Descrizione (opzionale)",
-      "group_description_placeholder": "Inserisci una breve descrizione del gruppo",
-      "group_name": "Nome del gruppo",
-      "no_results": "Nessun membro trovato",
       "remaining_members_one": "+{{count}} altro",
       "remaining_members_many": "+{{count}} altri",
       "remaining_members_other": "+{{count}} altri",
-      "select_hint": "Seleziona membri per eseguire azioni di massa",
-      "select_member": "Seleziona {{name}}",
-      "selected_one": "Selezionato: <strong>{{count}} membro</strong>",
-      "selected_many": "Selezionati: <strong>{{count}} membri</strong>",
-      "selected_other": "Selezionati: <strong>{{count}} membri</strong>"
+      "select_member": "Seleziona {{name}}"
     }
   },
   "membership_size": {
