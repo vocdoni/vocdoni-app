@@ -453,7 +453,6 @@
       }
     },
     "error": {
-      "census_config_required": "Please configure the census authentication settings.",
       "email_invalid": "Invalid email address",
       "field_is_required": "This field is required",
       "generic": "Error performing the operation",
@@ -1448,11 +1447,32 @@
     "auto_start": "Start immediately",
     "basic_configuration": "Basic configuration",
     "census": {
+      "auth_missing": {
+        "action": "Set it up",
+        "description": "Choose how voters will identify themselves, then publish again.",
+        "title": "Voter authentication isn't set up"
+      },
+      "auth_reset": {
+        "description": "It was checked against the previous group. Your choices are kept: confirm them for this one.",
+        "title": "Voter authentication was reset"
+      },
       "group": {
         "no_groups": "To start a vote, you first need to create a group of eligible voters from your memberbase. <1>Create one here</1>."
       },
+      "group_missing": {
+        "description": "Select a group of members and set up voter authentication, then publish again.",
+        "title": "Choose who can vote"
+      },
       "memberbase": {
         "label": "Select a group of members to create the census"
+      },
+      "status": {
+        "ready": "Ready",
+        "steps_left_one": "{{ count }} step left",
+        "steps_left_other": "{{ count }} steps left"
+      },
+      "voter_auth": {
+        "label": "Set how voters prove who they are"
       }
     },
     "census_creation": "Census creation",
@@ -2017,6 +2037,11 @@
     "level_strong": "Strong",
     "level_weak": "Weak",
     "no_group_description": "Please select a group first to configure authentication.",
+    "pending": {
+      "description": "Pick the member details voters must enter to vote, like their ID or member number.",
+      "error_title": "You need this to publish",
+      "title": "Required before publishing"
+    },
     "security_level": "Good security",
     "security_recommendation_1": "For better security, we recommend selecting at least 2 credentials.",
     "security_recommendation_2_one": "You've selected {{ count }} credentials, which provides good security for your voters.",
@@ -2040,6 +2065,7 @@
     "validation_failed": "Validation failed",
     "validation_missing_data_one": "{{count}} users missing required fields",
     "validation_missing_data_other": "{{count}} users missing required fields",
+    "validation_review_members": "Review members",
     "validation_summary": "Validation failed for some users.",
     "validation_total_one": "{{count}} users total",
     "validation_total_other": "{{count}} users total",
