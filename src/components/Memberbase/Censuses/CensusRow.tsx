@@ -3,19 +3,19 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuChevronRight } from 'react-icons/lu'
 import { Link as RouterLink } from 'react-router'
-import { StateBadge } from '~components/Process/Dashboard/View/shared'
+import { StateBadge } from '~components/Process/Dashboard/View/StateBadge'
 import type { VoteState } from './model'
 
 /** A vote's state as a badge, drafts included. */
-export const VoteStateBadge = ({ state }: { state?: VoteState }) => {
+export const VoteStateBadge = ({ state, size = 'md' }: { state?: VoteState; size?: 'sm' | 'md' }) => {
   const { t } = useTranslation()
   if (state === 'draft')
     return (
-      <Badge colorPalette='gray' variant='outline' size='md' flexShrink={0}>
+      <Badge colorPalette='gray' variant='outline' size={size} flexShrink={0}>
         {t('censuses.state.draft', { defaultValue: 'Draft' })}
       </Badge>
     )
-  return <StateBadge state={state} />
+  return <StateBadge state={state} size={size} />
 }
 
 type CensusRowProps = {

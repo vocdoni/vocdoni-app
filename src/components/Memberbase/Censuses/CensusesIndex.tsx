@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { LuPlus } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router'
 import type { ProcessGroups } from '~components/Process/List/organize'
-import { signInShortText } from '~components/Process/Dashboard/View/shared'
+import { signInShortText } from '~components/Process/Dashboard/View/signIn'
 import { Banner } from '~components/ui/Banner'
 import { EmptyState } from '~components/ui/EmptyState'
 import { FilterPills, type FilterPillItem } from '~components/ui/FilterPills'
@@ -96,7 +96,7 @@ export const CensusesIndex = () => {
         key={process.id}
         title={title || untitledVote(t, state === 'draft')}
         to={generatePath(Routes.dashboard.memberbase.voteCensus, { processId: process.id })}
-        badge={<VoteStateBadge state={state} />}
+        badge={<VoteStateBadge state={state} size='sm' />}
         meta={[
           signInShortText(t, process.census?.twoFaFields ?? []),
           censusSourceLabel(t, censusSourceOf(process, sourceContext)),
