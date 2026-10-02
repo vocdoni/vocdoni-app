@@ -1,11 +1,12 @@
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
 import { render, screen, waitFor } from '~src/test-utils'
 import { MembersImport } from './index'
 
 const members = vi.hoisted(() => ({
   mutateAsync: vi.fn(),
   job: undefined as unknown,
+  readiness: { available: false, total: 0, withEmail: 0 },
 }))
 const track = vi.hoisted(() => vi.fn())
 
@@ -13,6 +14,7 @@ vi.mock('~src/queries/members', () => ({
   useAddMembers: () => ({ mutateAsync: members.mutateAsync, isPending: false }),
   useImportJobProgress: (jobId: string | null) => ({ data: jobId ? members.job : undefined, isError: false }),
   useInvalidateMembers: () => vi.fn(),
+  useSignInReadiness: () => members.readiness,
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -31,12 +33,19 @@ const CSV = [
   'Pere;pere@;;00124;No',
 ].join('\n')
 
+const DraftProbe = () => (
+  <>
+    <h1>Draft</h1>
+    <output data-testid='nav-state'>{JSON.stringify(useLocation().state)}</output>
+  </>
+)
+
 const renderWizard = (url = '/admin/memberbase/import?returnTo=/admin/processes/create') =>
   render(
     <MemoryRouter initialEntries={[url]}>
       <Routes>
         <Route path='/admin/memberbase/import' element={<MembersImport />} />
-        <Route path='/admin/processes/create' element={<h1>Draft</h1>} />
+        <Route path='/admin/processes/create' element={<DraftProbe />} />
       </Routes>
     </MemoryRouter>
   )
@@ -51,6 +60,7 @@ describe('MembersImport', () => {
     localStorage.clear()
     members.mutateAsync.mockReset().mockResolvedValue({ jobId: 'job-1' })
     members.job = undefined
+    members.readiness = { available: false, total: 0, withEmail: 0 }
     track.mockReset()
   })
 
@@ -97,6 +107,32 @@ describe('MembersImport', () => {
     const leaveAfter = new Event('beforeunload', { cancelable: true })
     window.dispatchEvent(leaveAfter)
     expect(leaveAfter.defaultPrevented).toBe(false)
+  })
+
+  it('starts a vote for everyone, with email codes when nearly everyone has an email', async () => {
+    members.job = { jobId: 'job-1', status: 'completed', result: { added: 2, total: 2, progress: 100 }, errors: [] }
+    members.readiness = { available: true, total: 100, withEmail: 92 }
+    const user = userEvent.setup()
+    renderWizard('/admin/memberbase/import')
+    await upload(user)
+    await user.click(await screen.findByRole('button', { name: 'Continue' }))
+    await user.click(screen.getByRole('button', { name: 'Import 2 members' }))
+    await user.click(await screen.findByRole('button', { name: 'Create a vote with everyone' }))
+
+    expect(JSON.parse(screen.getByTestId('nav-state').textContent!)).toEqual({ fresh: true, signIn: 'email' })
+  })
+
+  it('leaves the sign-in to the organizer when too few have an email', async () => {
+    members.job = { jobId: 'job-1', status: 'completed', result: { added: 2, total: 2, progress: 100 }, errors: [] }
+    members.readiness = { available: true, total: 100, withEmail: 80 }
+    const user = userEvent.setup()
+    renderWizard('/admin/memberbase/import')
+    await upload(user)
+    await user.click(await screen.findByRole('button', { name: 'Continue' }))
+    await user.click(screen.getByRole('button', { name: 'Import 2 members' }))
+    await user.click(await screen.findByRole('button', { name: 'Create a vote with everyone' }))
+
+    expect(JSON.parse(screen.getByTestId('nav-state').textContent!)).toEqual({ fresh: true })
   })
 
   it('shows the receipt and the rows the job could not take whole', async () => {
