@@ -178,6 +178,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         isClosable: true,
       })
       methods.reset()
+      setPhoneEdited(false)
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.members(organization.address),
         exact: false,
@@ -223,7 +224,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         return
       }
 
-      // Until the backend keeps an omitted weight, leaving it out resets it to 1, so always carry
+      // TODO: drop once saas-backend#730 is deployed. Until the backend keeps an omitted weight, leaving it out resets it to 1, so always carry
       // the current one along.
       if (memberPayload.weight) changes.weight = memberPayload.weight
 
