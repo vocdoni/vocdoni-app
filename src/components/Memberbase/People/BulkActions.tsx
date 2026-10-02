@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Icon, Stack, Tag, Text, Wrap, WrapItem } from '@chakra-ui/react'
+import { Box, Button, Flex, Icon, Link, Stack, Tag, Text, Wrap, WrapItem } from '@chakra-ui/react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuUsers } from 'react-icons/lu'
+import { generatePath, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
@@ -14,10 +15,20 @@ import { useToast } from '~components/Toast'
 import { Banner } from '~components/ui/Banner'
 import { Sheet } from '~components/ui/Sheet'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { type Group, useAllGroups, useCreateGroup, useDeleteGroup, useUpdateGroup } from '~src/queries/groups'
+import {
+  censusJobIdsOf,
+  type Group,
+  useAllGroups,
+  useCreateGroup,
+  useDeleteGroup,
+  useUpdateGroup,
+  useUpdateGroupWithReport,
+} from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
 import { getSignedMemberIds, isAbortError, useMemberIdCollector } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
+import { useVoteGroupMarkers } from '~src/queries/voteGroups'
+import { Routes } from '~routes'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { memberDisplayName } from './display'
 import type { SelectedMember } from './useSelection'
@@ -148,6 +159,7 @@ type SaveForm = { title: string; description: string }
 export const SaveAsCensusSheet = ({ open, onOpenChange, members, everyone, onDone }: BulkSheetProps) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const navigate = useNavigate()
   const createGroup = useCreateGroup()
   const deleteGroup = useDeleteGroup()
   const methods = useForm<SaveForm>({ defaultValues: { title: '', description: '' } })
@@ -190,6 +202,17 @@ export const SaveAsCensusSheet = ({ open, onOpenChange, members, everyone, onDon
       const id = created?.id
       toast({
         title: t('members.save_census.saved', { defaultValue: 'Saved as “{{name}}”', name }),
+        // The toaster lives outside the router: a button that navigates, not a router link
+        description: id ? (
+          <Link asChild fontSize='sm' variant='underline'>
+            <button
+              type='button'
+              onClick={() => navigate(generatePath(Routes.dashboard.memberbase.census, { groupId: id }))}
+            >
+              {t('members.save_census.open', { defaultValue: 'Open the census' })}
+            </button>
+          </Link>
+        ) : undefined,
         type: 'success',
         duration: UNDO_DURATION,
         isClosable: true,
@@ -263,9 +286,12 @@ type GroupSheetProps = BulkSheetProps & {
 const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode }: GroupSheetProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
-  // Every saved census, not just the first page; "Everyone" can't be changed by hand
-  const { data: allGroups, isLoading } = useAllGroups({ enabled: open })
-  const groups = (allGroups ?? []).filter((group) => !group.isAutoGroup)
+  // Every saved census, not just the first page. Never "Everyone" (it can't be changed by hand), nor
+  // a vote's own census (that's changed from the vote)
+  const { data: allGroups, isLoading: groupsLoading } = useAllGroups({ enabled: open })
+  const { isVoteOwned, ready: markersReady } = useVoteGroupMarkers()
+  const isLoading = groupsLoading || !markersReady
+  const groups = (allGroups ?? []).filter((group) => !group.isAutoGroup && !isVoteOwned(group.id))
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
   const updateGroup = useUpdateGroup()
@@ -439,6 +465,8 @@ type VoteOption = {
   title: string
   /** The vote's census is "Everyone": every member is in it already */
   followsEveryone: boolean
+  /** The vote's census is a group of its own: people join it through the group, never around it */
+  ownGroupId?: string
 }
 
 /**
@@ -455,6 +483,8 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
   const target = useTargetIds(members, everyone)
   const { data: groups } = useAllGroups({ enabled: open })
+  const { isVoteOwned } = useVoteGroupMarkers()
+  const updateGroup = useUpdateGroupWithReport()
   const everyoneGroupId = groups?.find((group) => group.isAutoGroup)?.id
   const count = everyone ?? members.length
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
@@ -469,6 +499,7 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
       id: election.id,
       title: getElectionTitle(election) || election.id,
       followsEveryone: !!everyoneGroupId && election.census?.groupId === everyoneGroupId,
+      ownGroupId: isVoteOwned(election.census?.groupId) ? election.census?.groupId : undefined,
     }))
 
   const close = () => {
@@ -486,11 +517,18 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
       const ids = await target.resolve()
       let done = 0
       for (const part of chunk(ids)) {
-        const response = await client.elections.addCensusMembers(selectedVote.id, part)
-        // Members are in the census already; raising the vote's voter limit is a job
-        if (response.jobId) await client.jobs.waitFor(response.jobId, { timeoutMs: RESIZE_TIMEOUT })
-        added += response.added
-        skipped += response.errors?.length ?? 0
+        if (selectedVote.ownGroupId) {
+          // The vote's census follows its group: adding around it would leave the two apart
+          const report = await updateGroup.mutateAsync({ groupId: selectedVote.ownGroupId, body: { addMembers: part } })
+          for (const jobId of censusJobIdsOf(report)) await client.jobs.waitFor(jobId, { timeoutMs: RESIZE_TIMEOUT })
+          added += part.length
+        } else {
+          const response = await client.elections.addCensusMembers(selectedVote.id, part)
+          // Members are in the census already; raising the vote's voter limit is a job
+          if (response.jobId) await client.jobs.waitFor(response.jobId, { timeoutMs: RESIZE_TIMEOUT })
+          added += response.added
+          skipped += response.errors?.length ?? 0
+        }
         done += part.length
         setProgress({ done, total: ids.length })
       }
