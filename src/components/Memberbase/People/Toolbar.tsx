@@ -245,17 +245,18 @@ export const Toolbar = ({
   const { t } = useTranslation()
 
   return (
-    <Flex gap={2} direction={{ base: 'column', md: 'row' }} align={{ md: 'center' }} mb={3}>
-      <Flex gap={2} align='center' flex='1' minW={0}>
+    // The actions wrap under the search when the row runs out of room
+    <Flex gap={2} direction={{ base: 'column', md: 'row' }} wrap={{ md: 'wrap' }} align={{ md: 'center' }} mb={3}>
+      <Flex gap={2} align='center' flex={{ md: '1 1 520px' }} minW={0} wrap={{ base: 'wrap', md: 'nowrap' }}>
         <SearchBox value={value} onSearch={onSearch} />
         {selected && <ShowSelectedChip {...selected} />}
-      </Flex>
-      <Flex gap={2} align='center' ml={{ md: 'auto' }} wrap='wrap'>
         {onPasteSelect && (
-          <Button size='sm' variant='outline' onClick={onPasteSelect}>
+          <Button size='sm' variant='outline' onClick={onPasteSelect} flexShrink={0}>
             {t('members.paste.open', { defaultValue: 'Select from a list…' })}
           </Button>
         )}
+      </Flex>
+      <Flex gap={2} align='center' ml={{ md: 'auto' }} wrap='wrap'>
         <SortSelect sortedBy={sortedBy} order={order} fields={fields} onChange={onChange} />
         <Flex hideBelow='lg'>
           <ColumnsPopover fields={fields} isVisible={isVisible} setColumn={setColumn} />

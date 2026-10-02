@@ -35,9 +35,9 @@ export const SelectionActions = ({ onAction }: { onAction: (action: SelectionAct
           </Button>
         </Menu.Trigger>
         <Portal>
-          {/* Above the floating bar it opens from */}
-          <Menu.Positioner zIndex='popover'>
-            <Menu.Content minW='230px'>
+          <Menu.Positioner>
+            {/* Above the floating bar it opens from (the positioner copies the content's z-index) */}
+            <Menu.Content minW='230px' zIndex='popover'>
               <Menu.Item value='add_to_vote' hideFrom='md'>
                 {t('members.bulk.add_to_vote', { defaultValue: 'Add to a vote' })}
               </Menu.Item>

@@ -73,7 +73,8 @@ export const SelectionBar = ({ count, label, secondary, onClear, children, right
       animationDuration='moderate'
       _motionReduce={{ animation: 'none' }}
     >
-      <Flex direction='column' minW={0} mr='auto'>
+      {/* Phones: the count and the close button share the first row, the actions get the second */}
+      <Flex direction='column' minW={0} mr='auto' flex={{ base: '1', md: 'initial' }}>
         <Text fontSize='sm' fontWeight='bolder' fontVariantNumeric='tabular-nums' aria-hidden='true'>
           {countLabel}
         </Text>
@@ -86,10 +87,11 @@ export const SelectionBar = ({ count, label, secondary, onClear, children, right
       <VisuallyHidden role='status' aria-live='polite'>
         {announced}
       </VisuallyHidden>
-      <Flex gap={2} wrap='wrap' align='center'>
+      <Flex gap={2} wrap='wrap' align='center' order={{ base: 2, md: 0 }} w={{ base: 'full', md: 'auto' }}>
         {children}
       </Flex>
       <CloseButton
+        order={{ base: 1, md: 0 }}
         size='sm'
         onClick={onClear}
         aria-label={t('selection_bar.clear', { defaultValue: 'Clear selection' })}
