@@ -46,4 +46,46 @@ describe('MemberManager edit', () => {
     expect(editMutate).toHaveBeenCalledTimes(1)
     expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'Augusta', email: '' })
   })
+
+  it('sends an emptied phone so the stored one is cleared', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    const phone = await screen.findByLabelText('Phone')
+    await user.type(phone, '123')
+    await user.clear(phone)
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '' })
+  })
+
+  it('does not call the API when nothing changed', async () => {
+    const user = userEvent.setup()
+    render(<MemberManager member={member} open />)
+
+    await user.click(await screen.findByRole('button', { name: 'Save changes' }))
+
+    expect(editMutate).not.toHaveBeenCalled()
+  })
+
+  it('keeps what the user typed when the same member is refetched', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'X')
+    rerender(<MemberManager member={{ ...member, surname: 'Byron' }} open />)
+
+    expect(screen.getByLabelText('Name')).toHaveValue('AdaX')
+  })
+
+  it('discards edits abandoned with Cancel when the drawer is reopened', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'X')
+    rerender(<MemberManager member={member} open={false} />)
+    rerender(<MemberManager member={member} open />)
+
+    expect(await screen.findByLabelText('Name')).toHaveValue('Ada')
+  })
 })
