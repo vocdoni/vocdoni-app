@@ -44,12 +44,14 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
 4. **Session replay** only for authenticated users who accepted consent, with `maskAllInputs`; ballot
    content carries `.ph-no-capture` as defense in depth.
 5. **Memberbase PII is never recorded.** Every surface that renders a member record carries
-   `.ph-no-capture`, so rrweb skips the subtree entirely (text _and_ attributes): member table cells
-   (`Memberbase/Members/index.tsx`), member cards (`MemberCard.tsx` — the checkbox `aria-label`
-   embeds the member name, so the whole card is excluded), group member table cells
-   (`GroupsBoard.tsx`), and the CSV import error list (`Members/Import.tsx`), which quotes offending
-   rows. Member search and the add/edit member form are covered by `maskAllInputs`. Surrounding
-   chrome — tabs, headings, buttons, counts, group names — stays visible, so replays remain usable.
+   `.ph-no-capture`, so rrweb skips the subtree entirely (text _and_ attributes): People table cells,
+   including the checkbox and row-menu cells whose labels embed the name (`Memberbase/People/PeopleTable.tsx`),
+   the whole mobile card (`PeopleCards.tsx`), the person drawer and its form (`PersonSheet.tsx`,
+   `PersonForm.tsx`), names in bulk-action and delete dialogs, masked values (`ui/MaskedValue.tsx`),
+   group member table cells (`GroupsBoard.tsx`), and the CSV import error list (`Members/Import.tsx`),
+   which quotes offending rows. Member search and the add/edit member form are covered by
+   `maskAllInputs`, and `?q=`/`?member=` are stripped from tracked URLs. Surrounding chrome — tabs,
+   headings, buttons, counts, group names — stays visible, so replays remain usable.
    **When adding a component that renders member fields, add `className='ph-no-capture'` to it.**
 6. **Opting a field back in.** `maskAllInputs` hides every input value, including ones that are not
    personal data. `posthogMaskInput` (wired as `maskInputFn`) restores the value for inputs inside a
@@ -97,7 +99,11 @@ Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organi
 `process_action`, `process_results_viewed`, `members_import_started`,
 `members_import_completed`, `member_group_created`, `member_group_deleted`, `census_configured`,
 `team_member_invited`, `team_member_removed`, `pdf_report_downloaded`, `feature_interest` (a "Soon"
-feature someone asked for; prop `feature`).
+feature someone asked for; props `feature`, `surface`),
+`members_page_viewed` (`state`: empty|populated), `members_empty_state_cta_clicked` (`door`:
+import|template|add), `member_added` (`source`: form), `member_updated` (`in_live_vote`),
+`members_deleted` (`count`, `scope`: selection|single|all, `blocked`). Member events carry counts
+only, never names or search text.
 
 Organization-level BI: every session registers `org_address`/`org_name`/`org_plan` super properties, and
 the `organization` group profile carries name, plan, type, country, size, usage counters, and renewal
