@@ -20,7 +20,7 @@ vi.mock('react-i18next', async (importOriginal) => {
   return {
     ...actual,
     useTranslation: () => ({
-      t: (_key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? 'User menu',
+      t: (_key: string, options?: { defaultValue?: string }) => options?.defaultValue ?? _key,
       i18n: {
         language: 'en',
         changeLanguage,
