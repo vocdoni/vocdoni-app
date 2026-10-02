@@ -15,7 +15,7 @@ const needsQuotes = (value: string, delimiter: string) =>
   value.includes(delimiter) || /["\r\n]/.test(value) || value !== value.trim()
 
 // A cell starting with these runs as a formula when the file is opened in a spreadsheet
-const FORMULA_START = /^[=@\t\r]/
+const FORMULA_START = /^[=+\-@\t\r]/
 
 /** One CSV cell: quoted when needed, and never a formula. */
 export const csvCell = (value: string, delimiter = ';') => {
