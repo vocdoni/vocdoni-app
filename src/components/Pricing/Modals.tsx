@@ -9,7 +9,7 @@ type ModalProps = {
   onClose: () => void
 }
 
-type PlanUpgradeContext = 'collaboration' | 'memberbase' | 'generic'
+type PlanUpgradeContext = 'collaboration' | 'generic'
 
 export type PlanUpgradeData = {
   limit: string
@@ -22,47 +22,28 @@ export const PlanUpgradeModal = ({ open, onOpenChange, onClose, ...props }: Moda
   const { t } = useTranslation()
   const { limit, context = 'collaboration', titleKey, subtitleKey } = props
 
-  const titleI18nKey =
-    titleKey ??
-    (context === 'memberbase'
-      ? 'plan_upgrade.memberbase_title'
-      : context === 'generic'
-        ? 'plan_upgrade.generic_title'
-        : 'plan_upgrade.title')
+  const titleI18nKey = titleKey ?? (context === 'generic' ? 'plan_upgrade.generic_title' : 'plan_upgrade.title')
 
   const subtitleI18nKey =
-    subtitleKey ??
-    (context === 'memberbase'
-      ? 'plan_upgrade.memberbase_subtitle'
-      : context === 'generic'
-        ? 'plan_upgrade.generic_subtitle'
-        : 'plan_upgrade.subtitle')
+    subtitleKey ?? (context === 'generic' ? 'plan_upgrade.generic_subtitle' : 'plan_upgrade.subtitle')
 
   const titleDefault =
-    context === 'memberbase'
-      ? t('plan_upgrade.memberbase_title', 'Upgrade to add more members')
-      : context === 'generic'
-        ? t('plan_upgrade.generic_title', 'Upgrade your plan')
-        : t('plan_upgrade.title', 'Upgrade to add more team members')
+    context === 'generic'
+      ? t('plan_upgrade.generic_title', 'Upgrade your plan')
+      : t('plan_upgrade.title', 'Upgrade to add more team members')
 
   const subtitleDefault =
-    context === 'memberbase'
+    context === 'generic'
       ? t(
-          'plan_upgrade.memberbase_subtitle',
-          'Your current plan allows only {{limit}} members. Upgrade to increase the limit and unlock advanced features.',
+          'plan_upgrade.generic_subtitle',
+          'You reached a plan limit ({{limit}}). Upgrade to unlock more capacity and advanced features.',
           { limit }
         )
-      : context === 'generic'
-        ? t(
-            'plan_upgrade.generic_subtitle',
-            'You reached a plan limit ({{limit}}). Upgrade to unlock more capacity and advanced features.',
-            { limit }
-          )
-        : t(
-            'plan_upgrade.subtitle',
-            'Your current plan allows only {{limit}} for collaboration. Upgrade your plan to add more team members and unlock advanced features.',
-            { limit }
-          )
+      : t(
+          'plan_upgrade.subtitle',
+          'Your current plan allows only {{limit}} for collaboration. Upgrade your plan to add more team members and unlock advanced features.',
+          { limit }
+        )
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange} placement='center'>
