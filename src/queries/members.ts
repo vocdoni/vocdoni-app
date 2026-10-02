@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '~src/queries/pagination'
@@ -125,6 +126,146 @@ export const useMembersCount = () => {
   })
 
   return { count: query.data ?? 0, isLoading: query.isLoading, known: query.data !== undefined }
+}
+
+/** The most rows `GET /members` returns per page. */
+export const MEMBERS_PAGE_MAX = 100
+
+/**
+ * The most members the app loads into memory at once: "Select all matching" with a search, the
+ * member index used to match a pasted list, and "Show them". Past it, the UI says so first.
+ */
+export const MEMBERS_COLLECT_CAP = 5000
+
+export type CollectedMember = Member & { id: string }
+
+export type CollectProgress = {
+  collected: number
+  /** How many match, from the first page (0 until it arrives) */
+  total: number
+}
+
+export type CollectOptions = {
+  search?: string
+  /** Stop after this many. No cap when left out */
+  max?: number
+  signal?: AbortSignal
+  onProgress?: (progress: CollectProgress) => void
+}
+
+export type CollectResult = {
+  members: CollectedMember[]
+  /** How many matched when collecting started */
+  total: number
+  /** Stopped at `max` with more left */
+  capped: boolean
+}
+
+export type MembersPageFetcher = (params: { page: number; limit: number; search: string }) => Promise<MembersResponse>
+
+const abortError = () => new DOMException('Collecting members was stopped', 'AbortError')
+
+/** Whether an error comes from stopping a collection (or any aborted request). */
+export const isAbortError = (error: unknown) => error instanceof DOMException && error.name === 'AbortError'
+
+/**
+ * Pages through `GET /members` (100 at a time, one request after another) and returns every
+ * member matching `search`, up to `max`. There's no endpoint that returns ids alone, nor one that
+ * reads members by id, so this is how the app gets a set of members it hasn't shown. Throws an
+ * `AbortError` once `signal` aborts, between pages.
+ */
+export const collectMembers = async (
+  fetchPage: MembersPageFetcher,
+  { search = '', max = Infinity, signal, onProgress }: CollectOptions = {}
+): Promise<CollectResult> => {
+  const seen = new Map<string, CollectedMember>()
+  let total = 0
+  let page = 1
+  let lastPage = 1
+
+  do {
+    if (signal?.aborted) throw abortError()
+    const response = await fetchPage({ page, limit: MEMBERS_PAGE_MAX, search })
+    if (signal?.aborted) throw abortError()
+    if (page === 1) total = response.pagination?.totalItems ?? 0
+    lastPage = response.pagination?.lastPage ?? page
+    const rows = response.members ?? []
+    for (const member of rows) {
+      if (seen.size >= max) break
+      if (member.id && !seen.has(member.id)) seen.set(member.id, member as CollectedMember)
+    }
+    onProgress?.({ collected: seen.size, total: Math.min(total, max) })
+    if (!rows.length) break
+    page += 1
+  } while (page <= lastPage && seen.size < max)
+
+  return { members: [...seen.values()], total, capped: total > seen.size && seen.size >= max }
+}
+
+/** Fetches one page of members, outside React Query (the collector pages on its own). */
+export const useMembersPageFetcher = (): MembersPageFetcher => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+  const address = organization?.address
+
+  return useCallback(
+    ({ page, limit, search }) => {
+      const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', address)
+      return bearedFetch<MembersResponse>(`${baseUrl}?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`)
+    },
+    [bearedFetch, address]
+  )
+}
+
+/**
+ * Collects members matching a search, with progress and a way to stop. Reused wherever the app
+ * needs members it hasn't shown: "Select all matching", acting on everyone, pasted lists. Only one
+ * collection runs at a time: starting another stops the last, and so does unmounting.
+ */
+export const useMemberIdCollector = () => {
+  const fetchPage = useMembersPageFetcher()
+  const [progress, setProgress] = useState<CollectProgress | null>(null)
+  const controller = useRef<AbortController | null>(null)
+
+  useEffect(() => () => controller.current?.abort(), [])
+
+  const collect = useCallback(
+    async (options: Omit<CollectOptions, 'signal'> = {}) => {
+      controller.current?.abort()
+      const current = new AbortController()
+      controller.current = current
+      setProgress({ collected: 0, total: 0 })
+      try {
+        return await collectMembers(fetchPage, {
+          ...options,
+          signal: current.signal,
+          onProgress: (next) => {
+            if (!current.signal.aborted) setProgress(next)
+            options.onProgress?.(next)
+          },
+        })
+      } finally {
+        if (controller.current === current) {
+          controller.current = null
+          setProgress(null)
+        }
+      }
+    },
+    [fetchPage]
+  )
+
+  const abort = useCallback(() => controller.current?.abort(), [])
+
+  /** How many members match `search` right now (one single-row request) */
+  const count = useCallback(
+    async (search = '') => (await fetchPage({ page: 1, limit: 1, search })).pagination?.totalItems ?? 0,
+    [fetchPage]
+  )
+
+  return useMemo(
+    () => ({ collect, abort, count, progress, running: progress !== null }),
+    [collect, abort, count, progress]
+  )
 }
 
 /** Refreshes every member read (lists, count, sign-in readiness) after a write. */

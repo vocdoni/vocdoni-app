@@ -5,7 +5,16 @@ import { MemoryRouter } from 'react-router'
 import { mockUseOrganization } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VocdoniApiError } from '@vocdoni/api-client'
-import { computeReadiness, useMembersCount, usePaginatedMembers, useSignInReadiness } from './members'
+import {
+  collectMembers,
+  computeReadiness,
+  isAbortError,
+  type Member,
+  MEMBERS_COLLECT_CAP,
+  useMembersCount,
+  usePaginatedMembers,
+  useSignInReadiness,
+} from './members'
 
 const bearedFetch = vi.fn()
 
@@ -121,5 +130,64 @@ describe('sign-in readiness', () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false))
     expect(result.current.available).toBe(false)
+  })
+})
+
+/** A fake `GET /members` over `total` people, 100 a page. */
+const fakeMembersApi = (total: number) =>
+  vi.fn(async ({ page, limit }: { page: number; limit: number; search: string }) => {
+    const from = (page - 1) * limit
+    const count = Math.max(0, Math.min(limit, total - from))
+    return {
+      members: Array.from({ length: count }, (_, index) => ({ id: `m${from + index}` }) as Member),
+      pagination: {
+        totalItems: total,
+        lastPage: Math.max(1, Math.ceil(total / limit)),
+        currentPage: page,
+        previousPage: null,
+        nextPage: null,
+      },
+    }
+  })
+
+describe('collectMembers', () => {
+  it('pages through every match, 100 at a time, reporting progress', async () => {
+    const fetchPage = fakeMembersApi(250)
+    const onProgress = vi.fn()
+
+    const result = await collectMembers(fetchPage, { search: 'serra', onProgress })
+
+    expect(result.members).toHaveLength(250)
+    expect(result).toMatchObject({ total: 250, capped: false })
+    expect(fetchPage.mock.calls.map(([params]) => params)).toEqual([
+      { page: 1, limit: 100, search: 'serra' },
+      { page: 2, limit: 100, search: 'serra' },
+      { page: 3, limit: 100, search: 'serra' },
+    ])
+    expect(onProgress).toHaveBeenLastCalledWith({ collected: 250, total: 250 })
+  })
+
+  it('stops at the cap and says there were more', async () => {
+    const fetchPage = fakeMembersApi(12345)
+
+    const result = await collectMembers(fetchPage, { max: MEMBERS_COLLECT_CAP })
+
+    expect(result.members).toHaveLength(5000)
+    expect(result).toMatchObject({ total: 12345, capped: true })
+    expect(fetchPage).toHaveBeenCalledTimes(50)
+  })
+
+  it('stops between pages once aborted', async () => {
+    const fetchPage = fakeMembersApi(1000)
+    const controller = new AbortController()
+
+    const run = collectMembers(fetchPage, {
+      signal: controller.signal,
+      onProgress: ({ collected }) => collected >= 200 && controller.abort(),
+    })
+
+    const error = await run.catch((reason: unknown) => reason)
+    expect(isAbortError(error)).toBe(true)
+    expect(fetchPage).toHaveBeenCalledTimes(2)
   })
 })

@@ -11,11 +11,33 @@ const state = vi.hoisted(() => ({
   count: 0,
   listArgs: [] as Record<string, unknown>[],
   readiness: { available: false, total: 0, ready: 0, unreachable: 0, isLoading: false },
+  /** Every authenticated request the page makes (the collector's member pages among them) */
+  fetch: vi.fn(async (_url: string, _params?: unknown): Promise<unknown> => ({})),
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ bearedFetch: vi.fn().mockResolvedValue({}), currentAddress: '0xorg' }),
+  useAuth: () => ({ bearedFetch: state.fetch, currentAddress: '0xorg' }),
 }))
+
+/** Answers `GET /members?page=&limit=` like the backend would, over `total` made-up people. */
+const serveMembers = (total: number) =>
+  state.fetch.mockImplementation(async (url: string) => {
+    const params = new URL(url, 'http://test').searchParams
+    const page = Number(params.get('page'))
+    const limit = Number(params.get('limit'))
+    const from = (page - 1) * limit
+    const count = Math.max(0, Math.min(limit, total - from))
+    return {
+      members: Array.from({ length: count }, (_, index) => ({
+        id: `m${from + index}`,
+        name: `Person ${from + index}`,
+      })),
+      pagination: { totalItems: total, lastPage: Math.max(1, Math.ceil(total / limit)), currentPage: page },
+    }
+  })
+
+const memberPageRequests = () =>
+  state.fetch.mock.calls.map(([url]) => url as string).filter((url) => url.includes('/members?page='))
 
 vi.mock('~src/queries/members', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/queries/members')>()
@@ -114,6 +136,8 @@ describe('People', () => {
     state.total = 2
     state.count = 2
     state.listArgs = []
+    state.fetch.mockReset()
+    state.fetch.mockResolvedValue({})
     state.readiness = { available: false, total: 0, ready: 0, unreachable: 0, isLoading: false }
     localStorage.clear()
     setReactProvidersMock({
@@ -310,6 +334,86 @@ describe('People', () => {
     await user.click(screen.getByRole('button', { name: 'Show everyone' }))
     expect(within(screen.getByRole('table')).getByRole('link', { name: 'Carla Soler' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Show selected (1)' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('selects everyone without loading ids when there is no search', async () => {
+    const user = userEvent.setup()
+    state.total = 1742
+    state.count = 1742
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 1,742' }))
+
+    expect(barCount('1,742 selected')).toBeInTheDocument()
+    expect(screen.getByText('All 1,742 members selected')).toBeInTheDocument()
+    expect(memberPageRequests()).toEqual([])
+    // Nothing to list one by one
+    expect(screen.queryByRole('button', { name: /Show selected/ })).toBeNull()
+  })
+
+  it('pages the matches of a search into the selection, and checks the count again', async () => {
+    const user = userEvent.setup()
+    state.total = 230
+    serveMembers(230)
+    renderPeople('/admin/memberbase/members/1?q=serra')
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 230 matching' }))
+
+    expect(await screen.findByText('All 230 matching selected')).toBeInTheDocument()
+    // Anna and Jordi from the page, plus the 230 collected
+    expect(barCount('232 selected')).toBeInTheDocument()
+    expect(memberPageRequests()).toEqual([
+      'organizations/0xorg/members?page=1&limit=100&search=serra',
+      'organizations/0xorg/members?page=2&limit=100&search=serra',
+      'organizations/0xorg/members?page=3&limit=100&search=serra',
+      'organizations/0xorg/members?page=1&limit=1&search=serra',
+    ])
+  })
+
+  it('says it stops at 5,000 before collecting a bigger search', async () => {
+    const user = userEvent.setup()
+    state.total = 12345
+    serveMembers(12345)
+    renderPeople('/admin/memberbase/members/1?q=a')
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 12,345 matching' }))
+
+    expect(
+      screen.getByText('Select the first 5,000 of 12,345 matching — narrow your search to act on all')
+    ).toBeInTheDocument()
+    expect(memberPageRequests()).toEqual([])
+
+    await user.click(screen.getByRole('button', { name: 'Select 5,000' }))
+    expect(await screen.findByText('The first 5,000 matching selected')).toBeInTheDocument()
+    expect(barCount('5,002 selected')).toBeInTheDocument()
+    expect(memberPageRequests().filter((url) => url.includes('limit=100'))).toHaveLength(50)
+  })
+
+  it('stops collecting on Stop and leaves the selection as it was', async () => {
+    const user = userEvent.setup()
+    state.total = 300
+    serveMembers(300)
+    const served = state.fetch.getMockImplementation()!
+    let release: () => void = () => undefined
+    // The second page waits until the test lets it through
+    state.fetch.mockImplementation(async (url: string) => {
+      if (url.includes('page=2&limit=100')) await new Promise<void>((resolve) => (release = resolve))
+      return served(url)
+    })
+    renderPeople('/admin/memberbase/members/1?q=a')
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 300 matching' }))
+    expect(await screen.findByText('Collecting 100 of 300…')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Stop' }))
+    release()
+    expect(await screen.findByRole('button', { name: 'Select all 300 matching' })).toBeInTheDocument()
+    expect(barCount('2 selected')).toBeInTheDocument()
+    expect(memberPageRequests().some((url) => url.includes('page=3'))).toBe(false)
   })
 
   it('toggles a row with Space on its name', async () => {

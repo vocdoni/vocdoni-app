@@ -6,7 +6,7 @@ import { LuListPlus, LuTrash2, LuUserPlus, LuUsers } from 'react-icons/lu'
 import { Banner } from '~components/ui/Banner'
 import { SelectionBar } from '~components/ui/SelectionBar'
 import { useAffectedVotes } from '~src/queries/affectedVotes'
-import { usePaginatedMembers, useMembersCount } from '~src/queries/members'
+import { useImportJobProgress, usePaginatedMembers, useMembersCount } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useMemberFields } from '../fields'
 import { ImportProgress } from '../Members/Import'
@@ -22,6 +22,7 @@ import { PeopleCards } from './PeopleCards'
 import { PeopleTable } from './PeopleTable'
 import { PERSON_DRAWER_WIDTH, PersonSheet } from './PersonSheet'
 import { RowMenu } from './RowMenu'
+import { EveryoneSelectedMessage, SelectAllMessage, SelectAllOffer, useSelectAllMatching } from './SelectAll'
 import { Toolbar } from './Toolbar'
 import { ALWAYS_VISIBLE, useColumnVisibility } from './useColumnVisibility'
 import { usePeopleUrlState } from './urlState'
@@ -86,6 +87,10 @@ export const People = () => {
     resetKey: view,
   })
   const members = view === 'list' ? pageMembers : local.rows
+  const importJob = useImportJobProgress(jobId)
+  const importing = Boolean(jobId) && !importJob.isError && (!importJob.data || importJob.data.status === 'pending')
+  const matching = pagination?.totalItems ?? 0
+  const selectAll = useSelectAllMatching({ search: url.q, total: matching, selection, importing })
   const [selectMode, setSelectMode] = useState(false)
   const [target, setTarget] = useState<ActionTarget | null>(null)
   const [deleteAllOpen, setDeleteAllOpen] = useState(false)
@@ -299,8 +304,16 @@ export const People = () => {
                 {t('members.selection.show_everyone', { defaultValue: 'Show everyone' })}
               </Button>
             </>
+          ) : selectAll.state.status !== 'idle' ? (
+            <SelectAllMessage selectAll={selectAll} />
+          ) : selection.scope === 'all' ? (
+            <EveryoneSelectedMessage total={selection.count} onClear={selection.clear} />
           ) : pageSelection.some ? (
-            <PageSelectionMessage pageSelection={pageSelection} pageSize={members.length} />
+            <PageSelectionMessage pageSelection={pageSelection} pageSize={members.length}>
+              {pageSelection.all && matching > members.length && (
+                <SelectAllOffer total={matching} searching={searching} selectAll={selectAll} />
+              )}
+            </PageSelectionMessage>
           ) : (
             <ReadinessMessage />
           )}
