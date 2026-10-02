@@ -117,7 +117,7 @@ const SignUp = ({
   useEffect(() => {
     if (verifyInline && signup.isSuccess && !verifyingEmail) {
       trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'password' } })
-      rememberSignupMethod('password')
+      rememberSignupMethod('password', email)
       setVerifyingEmail(email)
       signup.reset()
     }
@@ -126,7 +126,7 @@ const SignUp = ({
   useEffect(() => {
     if (!verifyInline && signup.isSuccess && !registeredEmail) {
       trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'password' } })
-      rememberSignupMethod('password')
+      rememberSignupMethod('password', email)
       setRegisteredEmail(email)
       signup.reset()
     }
@@ -135,7 +135,7 @@ const SignUp = ({
   useEffect(() => {
     if (inviteSignup.isSuccess) {
       trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'invite' } })
-      rememberSignupMethod('invite')
+      rememberSignupMethod('invite', email)
     }
   }, [inviteSignup.isSuccess, trackEvent])
 

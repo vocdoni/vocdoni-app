@@ -439,17 +439,23 @@ export const applyPosthogConsent = (consent: PosthogConsent): void => {
 // sets it once (`$set_once`), so a later login with another method never overwrites
 // it. It does not survive a page reload (e.g. opening the emailed verification link
 // in a new tab), in which case the method is simply not recorded.
-let pendingSignupMethod: AuthMethod | null = null
+// When the email is known (password and invite signups) the method is only applied
+// to the profile with that email, so it can't end up on another account that logs in
+// first. The Google flow knows no email up front and applies to the next identify.
+let pendingSignup: { method: AuthMethod; email?: string } | null = null
 
-export const rememberSignupMethod = (method: AuthMethod): void => {
-  pendingSignupMethod = method
+const sameEmail = (a?: string, b?: unknown) =>
+  typeof b === 'string' && a?.trim().toLowerCase() === b.trim().toLowerCase()
+
+export const rememberSignupMethod = (method: AuthMethod, email?: string): void => {
+  pendingSignup = { method, email: email || undefined }
 }
 
 export const identifyPosthogUser = (id: string, props?: Record<string, unknown>): void => {
   withPosthog('Failed to identify PostHog user:', (posthog) => {
-    if (pendingSignupMethod) {
-      posthog.identify(id, props, { signup_method: pendingSignupMethod })
-      pendingSignupMethod = null
+    if (pendingSignup && (!pendingSignup.email || sameEmail(pendingSignup.email, props?.email))) {
+      posthog.identify(id, props, { signup_method: pendingSignup.method })
+      pendingSignup = null
     } else {
       posthog.identify(id, props)
     }
@@ -458,7 +464,7 @@ export const identifyPosthogUser = (id: string, props?: Record<string, unknown>)
 
 export const resetPosthogUser = (): void => {
   // A method remembered for one account must never be attached to the next one to log in
-  pendingSignupMethod = null
+  pendingSignup = null
   withPosthog('Failed to reset PostHog user:', (posthog) => {
     posthog.reset()
   })

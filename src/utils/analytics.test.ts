@@ -844,6 +844,24 @@ describe('posthog identity helpers', () => {
     await vi.waitFor(() => expect(mockPosthog.identify).toHaveBeenCalledTimes(1))
     expect(mockPosthog.identify).toHaveBeenCalledWith('user-2', { email: 'b@b.com' })
   })
+
+  it('applies an email-bound signup method only to the profile with that email', async () => {
+    const analytics = await import('./analytics')
+
+    analytics.initializePosthog({ key: 'phc_test', consent: 'accepted' })
+    analytics.rememberSignupMethod('password', 'New@x.com')
+    analytics.identifyPosthogUser('old', { email: 'old@x.com' })
+    analytics.identifyPosthogUser('new', { email: 'new@x.com' })
+
+    await vi.waitFor(() => expect(mockPosthog.identify).toHaveBeenCalledTimes(2))
+    expect(mockPosthog.identify).toHaveBeenNthCalledWith(1, 'old', { email: 'old@x.com' })
+    expect(mockPosthog.identify).toHaveBeenNthCalledWith(
+      2,
+      'new',
+      { email: 'new@x.com' },
+      { signup_method: 'password' }
+    )
+  })
 })
 
 describe('AnalyticsEvents export', () => {
