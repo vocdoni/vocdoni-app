@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Trans } from 'react-i18next'
 import { LuArrowLeft } from 'react-icons/lu'
 import { Outlet, Link as RouterLink, useLocation } from 'react-router'
+import { LanguagesMenu } from '~components/Navbar/LanguagesList'
 import { AuthOutletContextType } from '~elements/LayoutAuth'
 import { Routes } from '~routes'
 
@@ -17,12 +18,15 @@ const LayoutIntegratorsAuth = () => {
   return (
     <Flex justifyContent='center' minH='100dvh' p={{ base: 6, md: 10 }}>
       <Flex w='full' maxW='md' flexDir='column' gap={2} my='auto'>
-        <Link asChild display='flex' alignItems='center' alignSelf='start'>
-          <RouterLink to={isSignin ? Routes.vocdoni : Routes.integrators.signIn}>
-            <Icon as={LuArrowLeft} />
-            {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
-          </RouterLink>
-        </Link>
+        <Flex alignItems='center' justifyContent='space-between' gap={2}>
+          <Link asChild display='flex' alignItems='center'>
+            <RouterLink to={isSignin ? Routes.vocdoni : Routes.integrators.signIn}>
+              <Icon as={LuArrowLeft} />
+              {isSignin ? <Trans i18nKey='common.home'>Home</Trans> : <Trans i18nKey='common.back'>Back</Trans>}
+            </RouterLink>
+          </Link>
+          <LanguagesMenu />
+        </Flex>
         <Box
           w='full'
           _light={{ border: '1px solid', borderColor: 'auth.card.border' }}
