@@ -7,6 +7,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import { PageHeader } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
 import { useMembersCount } from '~src/queries/members'
+import { useCensusIndex } from './Censuses/useCensusIndex'
 import { getStoredImportJobId, readAccountId, setStoredImportJobId } from './importJobStorage'
 import { JobId, MembersPageProvider } from './MembersPageContext'
 import { AddPersonSheet } from './People/AddPersonSheet'
@@ -30,6 +31,7 @@ export const MemberbaseTabs = () => {
   // Unfiltered total: this query never carries the search term, so the count keeps showing the
   // whole member list while the table is filtered.
   const members = useMembersCount()
+  const censuses = useCensusIndex()
 
   const tabs: TabItem[] = [
     {
@@ -37,10 +39,14 @@ export const MemberbaseTabs = () => {
       route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
       count: members.known ? members.count : undefined,
     },
-    { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
+    {
+      label: t('memberbase.censuses.title', { defaultValue: 'Censuses' }),
+      route: Routes.dashboard.memberbase.censuses,
+      count: censuses.isLoading ? undefined : censuses.index.total,
+    },
   ]
-  const isGroups = location.pathname.startsWith(Routes.dashboard.memberbase.groups)
-  const activeTab = isGroups ? tabs[1].route : tabs[0].route
+  const isCensuses = location.pathname.startsWith(Routes.dashboard.memberbase.censuses)
+  const activeTab = isCensuses ? tabs[1].route : tabs[0].route
 
   useEffect(() => {
     setJobIdState(getStoredImportJobId(accountId))

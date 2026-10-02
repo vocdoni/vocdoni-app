@@ -21,6 +21,12 @@ vi.mock('~src/queries/members', async (importOriginal) => {
   }
 })
 
+const censuses = vi.hoisted(() => ({ total: 0, isLoading: true }))
+
+vi.mock('./Censuses/useCensusIndex', () => ({
+  useCensusIndex: () => ({ index: { total: censuses.total }, isLoading: censuses.isLoading }),
+}))
+
 // The header's add-person sheet isn't under test here
 vi.mock('./People/AddPersonSheet', () => ({ AddPersonSheet: () => null }))
 
@@ -39,6 +45,15 @@ const renderTabs = () =>
 describe('MemberbaseTabs', () => {
   afterEach(() => {
     membersCount.value = undefined
+    censuses.isLoading = true
+  })
+
+  it('counts saved censuses and votes on the Censuses tab', () => {
+    censuses.total = 7
+    censuses.isLoading = false
+    renderTabs()
+
+    expect(screen.getByRole('tab', { name: /Censuses/ })).toHaveTextContent('Censuses7')
   })
 
   it('shows the section header with its two actions', async () => {

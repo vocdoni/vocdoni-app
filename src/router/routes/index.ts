@@ -43,6 +43,12 @@ export const Routes = {
       members: '/admin/memberbase/members/:page?',
       // The import wizard, a full page outside the tabs. Takes `?returnTo=` (a dashboard path)
       import: '/admin/memberbase/import',
+      censuses: '/admin/memberbase/censuses',
+      // A saved census, or Everyone (read-only)
+      census: '/admin/memberbase/censuses/:groupId',
+      // A vote's census
+      voteCensus: '/admin/memberbase/censuses/vote/:processId',
+      // Pre-redesign Groups tab, kept so links redirect to the censuses
       groups: '/admin/memberbase/groups',
     },
     settings: {
