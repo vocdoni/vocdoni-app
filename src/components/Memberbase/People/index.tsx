@@ -12,7 +12,7 @@ import { ImportProgress } from '../Members/Import'
 import { useMembersPage } from '../MembersPageContext'
 import { AddToCensusSheet, AddToGroupSheet, CreateGroupSheet } from './BulkActions'
 import { ContextBar } from './ContextBar'
-import { DeleteMembersDialog } from './DeleteMembersDialog'
+import { DeleteAllMembersDialog, DeleteMembersDialog } from './DeleteMembersDialog'
 import { findMemberLink, isTypingTarget } from './display'
 import { PaginationFooter } from './PaginationFooter'
 import { PeopleCards } from './PeopleCards'
@@ -72,6 +72,7 @@ export const People = () => {
   const selection = useSelection({ resetKey: [url.q, url.page, url.size, url.sort, url.order].join('|') })
   const [selectMode, setSelectMode] = useState(false)
   const [target, setTarget] = useState<ActionTarget | null>(null)
+  const [deleteAllOpen, setDeleteAllOpen] = useState(false)
   const showSkeleton = useDelayedFlag(query.isLoading, SKELETON_DELAY_MS)
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -214,7 +215,7 @@ export const People = () => {
         onChange={url.setSort}
         isVisible={columns.isVisible}
         setColumn={columns.setColumn}
-        onDeleteAll={() => undefined}
+        onDeleteAll={() => setDeleteAllOpen(true)}
         canDeleteAll={membersCount.count > 0}
       />
       <Box borderWidth='1px' borderColor='border' borderRadius='md' overflow='hidden' bg='bg'>
@@ -332,7 +333,14 @@ export const People = () => {
         open={target?.action === 'delete'}
         onOpenChange={(open) => !open && closeAction()}
         members={target?.members ?? []}
+        scope={target?.fromSelection ? 'selection' : 'single'}
         onDeleted={actionDone}
+      />
+      <DeleteAllMembersDialog
+        open={deleteAllOpen}
+        onOpenChange={setDeleteAllOpen}
+        total={membersCount.count}
+        onDeleted={selection.clear}
       />
     </Box>
   )

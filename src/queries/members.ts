@@ -2,7 +2,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import { useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '~src/queries/pagination'
 import { useParams, useSearchParams } from 'react-router'
-import { ApiEndpoints } from '~components/Auth/api'
+import { ApiEndpoints, ApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import type { MemberSortField } from '~components/Memberbase/fields'
 import { QueryKeys } from './keys'
@@ -202,4 +202,16 @@ export const useImportJobProgress = (jobId: string | null) => {
     },
     refetchOnWindowFocus: false,
   })
+}
+
+/**
+ * The members a delete was refused for: the backend deletes nobody (409) when any of them has
+ * already been signed for in a vote that's still open, and lists them in `data.signedMemberIds`.
+ * `null` when the error is anything else.
+ */
+export const getSignedMemberIds = (error: unknown): string[] | null => {
+  if (!(error instanceof ApiError) || error.response?.status !== 409) return null
+  const data = (error.apiError as { data?: { signedMemberIds?: unknown } } | undefined)?.data
+  const ids = data?.signedMemberIds
+  return Array.isArray(ids) ? ids.filter((id): id is string => typeof id === 'string') : []
 }

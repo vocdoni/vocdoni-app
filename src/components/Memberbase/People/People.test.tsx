@@ -45,6 +45,10 @@ vi.mock('~src/queries/members', async (importOriginal) => {
   }
 })
 
+vi.mock('~src/queries/affectedVotes', () => ({
+  useAffectedVotes: () => ({ votes: [], hasActive: false, hasLive: false, isLoading: false }),
+}))
+
 vi.mock('~src/queries/groups', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/queries/groups')>()
   return {
