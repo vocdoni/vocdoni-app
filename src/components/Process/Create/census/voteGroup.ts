@@ -28,7 +28,7 @@ export const isRefused = (error: unknown) => {
 export const isStaleWrite = (error: unknown) =>
   error instanceof VocdoniApiError && error.status === 409 && error.code === 40171
 
-/** A conditional write that stayed stale after reading the draft again. */
+/** A conditional write the server refused because the draft had changed since it was read. */
 export class StaleDraftError extends Error {
   cause: unknown
   constructor(cause: unknown) {
@@ -40,7 +40,8 @@ export class StaleDraftError extends Error {
 
 /**
  * Writes with the draft's latest `updatedAt`, so nothing written in between is overwritten unseen.
- * Stale: reads it again and retries once; still stale throws `StaleDraftError`.
+ * Stale throws `StaleDraftError` without retrying: writing these values again on top of the newer
+ * draft would undo whatever changed it (another tab, another admin).
  */
 export const writeWithLatest = async (
   readUpdatedAt: () => Promise<string | undefined>,
@@ -49,12 +50,7 @@ export const writeWithLatest = async (
   try {
     await write(await readUpdatedAt())
   } catch (error) {
-    if (!isStaleWrite(error)) throw error
-    try {
-      await write(await readUpdatedAt())
-    } catch (retryError) {
-      throw isStaleWrite(retryError) ? new StaleDraftError(retryError) : retryError
-    }
+    throw isStaleWrite(error) ? new StaleDraftError(error) : error
   }
 }
 

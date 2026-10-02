@@ -96,18 +96,11 @@ describe('usePublishCensus', () => {
     expect(body.questions).toHaveLength(1)
   })
 
-  it('reads the draft again and retries once when the write was stale', async () => {
+  it('stops at a stale write instead of overwriting the newer draft, and deletes the snapshot it made', async () => {
     data.update.mockRejectedValueOnce(new VocdoniApiError(409, {}, 'stale', 40171))
 
-    expect(await prepare(form)).toBe('snap-new')
-    expect(data.update).toHaveBeenCalledTimes(2)
-    expect(data.update.mock.calls[1][1].updatedAt).toBe('t2')
-  })
-
-  it('aborts when it stays stale, and deletes the snapshot it made', async () => {
-    data.update.mockRejectedValue(new VocdoniApiError(409, {}, 'stale', 40171))
-
     expect(await prepare(form)).toBeInstanceOf(StaleDraftError)
+    expect(data.update).toHaveBeenCalledTimes(1)
     expect(api.deleteGroup).toHaveBeenCalledWith('snap-new')
   })
 

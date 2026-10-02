@@ -292,17 +292,18 @@ describe('freeze at publish', () => {
 })
 
 describe('writing with the latest updatedAt', () => {
-  it('reads the draft again and retries once when the write was stale', async () => {
-    const read = vi.fn().mockResolvedValueOnce('t1').mockResolvedValueOnce('t2')
-    const write = vi.fn().mockRejectedValueOnce(stale()).mockResolvedValueOnce(undefined)
+  it('never retries a stale write: it would overwrite the newer draft', async () => {
+    const read = vi.fn().mockResolvedValue('t1')
+    const write = vi.fn().mockRejectedValue(stale())
 
-    await writeWithLatest(read, write)
+    await expect(writeWithLatest(read, write)).rejects.toBeInstanceOf(StaleDraftError)
 
-    expect(write).toHaveBeenNthCalledWith(1, 't1')
-    expect(write).toHaveBeenNthCalledWith(2, 't2')
+    expect(read).toHaveBeenCalledTimes(1)
+    expect(write).toHaveBeenCalledTimes(1)
+    expect(write).toHaveBeenCalledWith('t1')
   })
 
-  it('gives up when it is still stale, and the snapshot it made is deleted', async () => {
+  it('gives up when it is stale, and the snapshot it made is deleted', async () => {
     const api = fakeApi()
     const write = vi.fn().mockRejectedValue(stale())
 
@@ -315,7 +316,7 @@ describe('writing with the latest updatedAt', () => {
       })
     ).rejects.toBeInstanceOf(StaleDraftError)
 
-    expect(write).toHaveBeenCalledTimes(2)
+    expect(write).toHaveBeenCalledTimes(1)
     expect(api.calls).toEqual(['create new1', 'mark new1', 'delete new1', 'unmark new1'])
   })
 
