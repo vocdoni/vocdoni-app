@@ -91,17 +91,17 @@ export const signUpWithOrganization = async (page: Page, organizationName: strin
 }
 
 /**
- * Imports members through the CSV drawer: upload → map every column → submit →
- * wait until the members table actually lists them.
+ * Imports members through the import wizard: upload → check each column's match → review → submit
+ * → wait until the members table actually lists them.
  *
- * The completion check is the members table, not the progress banner: the
- * banner is an intermediate signal, whereas "the members are in the memberbase"
- * is the outcome the rest of the journey depends on (the census is built from
- * it). The import runs as a background job, hence the generous expect timeout.
+ * The completion check is the members table, not the wizard's receipt: "the members are in the
+ * memberbase" is the outcome the rest of the journey depends on (the census is built from it). The
+ * import runs as a background job, hence the generous expect timeout.
  */
 export const importMembers = async (page: Page, members: TestMember[]): Promise<void> => {
   await page.goto('/admin/memberbase/members')
   await page.getByTestId('members-import-open').click()
+  await page.waitForURL(/\/admin\/memberbase\/import/)
 
   const fileInput = page.locator('input[type="file"]').first()
   await expect(fileInput).toBeAttached()
@@ -111,20 +111,25 @@ export const importMembers = async (page: Page, members: TestMember[]): Promise<
     buffer: membersCsv(members),
   })
 
-  // The mapper starts empty — nothing is auto-detected — so every column the
-  // census will need must be mapped explicitly. The option labels are the CSV's
-  // own header names. `weight` (the voting power a weighted process reads) only
-  // exists when the members carry one, matching what `membersCsv` emitted.
+  // Match: the wizard matches these headers by itself (they are the API field names); choosing
+  // each one again keeps the spec independent of the dictionary. Each column's select carries the
+  // file's own header as `data-column`, and its options' values are the member field ids.
+  // `weight` (the voting power a weighted process reads) only exists when the members carry one,
+  // matching what `membersCsv` emitted.
+  await expect(page.locator('[data-step="match"]')).toBeVisible()
   const columns = ['name', 'surname', 'email', 'memberNumber']
   if (members.some((member) => member.weight !== undefined)) columns.push('weight')
   for (const column of columns) {
-    await selectComboboxOption(page, page.locator(`#${column}`), column)
+    await page.locator(`select[data-column="${column}"]`).selectOption(column)
   }
+  // Each step is a form: its submit button is the step's primary action, whatever its label
+  await page.locator('[data-step="match"] form button[type="submit"]').click()
 
-  // `type=submit form=import-members` — targeting the form association avoids
-  // matching on the button's translated label.
-  await page.locator('button[form="import-members"]').click()
+  await expect(page.locator('[data-step="review"]')).toBeVisible()
+  await page.locator('[data-step="review"] form button[type="submit"]').click()
+  await expect(page.locator('[data-step="done"]')).toBeVisible()
 
+  await page.goto('/admin/memberbase/members')
   const [first] = members
   // The People list renders a table, a compact table and phone cards, switching by CSS: only one
   // copy of the email is visible at a time, so match that one.
