@@ -957,6 +957,7 @@
     "form": {
       "cancel": "Cancel·la",
       "phone_warning": "Número de telèfon ocult. Qualsevol canvi aquí el sobreescriurà.",
+      "phone_will_be_removed": "El número de telèfon desat s'eliminarà en desar.",
       "save": "Desa els canvis"
     },
     "groups": {

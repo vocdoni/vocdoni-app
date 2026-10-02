@@ -948,6 +948,7 @@
     "form": {
       "cancel": "Cancel",
       "phone_warning": "Phone number hidden. Any changes here will overwrite it.",
+      "phone_will_be_removed": "The stored phone number will be removed when you save.",
       "save": "Save changes"
     },
     "groups": {
