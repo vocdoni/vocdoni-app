@@ -1015,6 +1015,7 @@
       "firstname": "Nome próprio",
       "member_number": "Número de sócio",
       "national_id": "Cartão de cidadão",
+      "on_file": "Registado",
       "phone": "Telefone",
       "surname": "Apelido",
       "weight": "Poder de voto (peso)"

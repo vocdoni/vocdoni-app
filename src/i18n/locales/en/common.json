@@ -1006,6 +1006,7 @@
       "firstname": "First Name",
       "member_number": "Member Number",
       "national_id": "National ID",
+      "on_file": "On file",
       "phone": "Phone",
       "surname": "Last Name",
       "weight": "Voting power (Weight)"

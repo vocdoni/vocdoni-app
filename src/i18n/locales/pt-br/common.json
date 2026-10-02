@@ -1015,6 +1015,7 @@
       "firstname": "Nome",
       "member_number": "Número de membro",
       "national_id": "CPF/RG",
+      "on_file": "Registrado",
       "phone": "Telefone",
       "surname": "Sobrenome",
       "weight": "Poder de voto (peso)"

@@ -1015,6 +1015,7 @@
       "firstname": "Nombre",
       "member_number": "Número de miembro",
       "national_id": "DNI/NIE",
+      "on_file": "Registrado",
       "phone": "Teléfono",
       "surname": "Apellidos",
       "weight": "Poder de voto (Peso)"

@@ -1015,6 +1015,7 @@
       "firstname": "Nome",
       "member_number": "Numero socio",
       "national_id": "ID Nazionale",
+      "on_file": "Registrato",
       "phone": "Telefono",
       "surname": "Cognome",
       "weight": "Peso del voto"

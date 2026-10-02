@@ -1015,6 +1015,7 @@
       "firstname": "Prénom",
       "member_number": "Numéro d'adhérent",
       "national_id": "Pièce d'identité",
+      "on_file": "Enregistré",
       "phone": "Téléphone",
       "surname": "Nom",
       "weight": "Poids du vote"

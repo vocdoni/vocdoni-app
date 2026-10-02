@@ -4,55 +4,28 @@ import { useTranslation } from 'react-i18next'
 import { useOutletContext } from 'react-router'
 import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { MemberbaseTabsContext } from '~components/Memberbase'
+import { useMemberFields } from '~components/Memberbase/fields'
 import MembersTable from '~components/Memberbase/Members'
 import { TableProvider } from '~components/Memberbase/TableProvider'
 import { Routes } from '~routes'
 import { usePaginatedMembers } from '~src/queries/members'
 
+/**
+ * The member fields as table columns (`{ id, label, is2fa?, visible? }`). Kept for the screens
+ * that predate `useMemberFields`.
+ */
 export const useMemberColumns = () => {
-  const { t } = useTranslation()
+  const fields = useMemberFields()
 
   return useMemo(
-    () => [
-      {
-        label: t('members.fields.firstname', { defaultValue: 'First Name' }),
-        id: 'name',
-      },
-      {
-        label: t('members.fields.surname', { defaultValue: 'Last Name' }),
-        id: 'surname',
-      },
-      {
-        label: t('members.fields.email', { defaultValue: 'Email' }),
-        is2fa: true,
-        id: 'email',
-      },
-      {
-        label: t('members.fields.phone', { defaultValue: 'Phone' }),
-        is2fa: true,
-        id: 'phone',
-      },
-      {
-        label: t('members.fields.member_number', { defaultValue: 'Member Number' }),
-        id: 'memberNumber',
-      },
-      {
-        label: t('members.fields.national_id', { defaultValue: 'National ID' }),
-        id: 'nationalId',
-        visible: false,
-      },
-      {
-        label: t('members.fields.birth_date', { defaultValue: 'Birth Date' }),
-        id: 'birthDate',
-        visible: false,
-      },
-      {
-        label: t('members.fields.weight', { defaultValue: 'Voting power (Weight)' }),
-        id: 'weight',
-        visible: true,
-      },
-    ],
-    [t]
+    () =>
+      fields.map((field) => ({
+        id: field.id,
+        label: field.label,
+        is2fa: field.is2fa,
+        visible: field.defaultVisible,
+      })),
+    [fields]
   )
 }
 

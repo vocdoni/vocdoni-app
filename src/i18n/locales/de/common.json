@@ -1006,6 +1006,7 @@
       "firstname": "Vorname",
       "member_number": "Mitgliedsnummer",
       "national_id": "Ausweisnummer",
+      "on_file": "Hinterlegt",
       "phone": "Telefon",
       "surname": "Nachname",
       "weight": "Stimmgewicht"

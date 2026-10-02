@@ -1015,6 +1015,7 @@
       "firstname": "Nom",
       "member_number": "Número de Soci",
       "national_id": "Document d'Identitat",
+      "on_file": "Registrat",
       "phone": "Telèfon",
       "surname": "Cognom",
       "weight": "Poder de votació (Pes)"
