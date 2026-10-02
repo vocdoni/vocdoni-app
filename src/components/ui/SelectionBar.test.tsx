@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from '~src/test-utils'
 import { SupportChatControlsProvider, useSupportChatControls } from '~components/SupportChat/controls'
+import { TOAST_BOTTOM_OFFSET_VAR } from '~components/Toast'
 import { SELECTION_ANNOUNCE_DELAY, SelectionBar } from './SelectionBar'
 
 const ChatState = () => {
@@ -58,5 +59,13 @@ describe('SelectionBar', () => {
       </SupportChatControlsProvider>
     )
     expect(screen.getByTestId('chat')).toHaveTextContent('shown')
+  })
+
+  it('lifts the toasts above itself while it is showing', () => {
+    const { unmount } = render(<SelectionBar count={1} onClear={vi.fn()} />)
+    expect(document.documentElement.style.getPropertyValue(TOAST_BOTTOM_OFFSET_VAR)).toMatch(/px$/)
+
+    unmount()
+    expect(document.documentElement.style.getPropertyValue(TOAST_BOTTOM_OFFSET_VAR)).toBe('')
   })
 })

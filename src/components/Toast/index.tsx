@@ -1,12 +1,50 @@
 import { Box, Toast, Toaster, createToaster } from '@chakra-ui/react'
-import { PropsWithChildren, createContext, useContext, useMemo } from 'react'
+import { PropsWithChildren, RefObject, createContext, useContext, useLayoutEffect, useMemo } from 'react'
 
 type ToastContextValue = ReturnType<typeof createToaster>
+
+/** How far above the bottom edge toasts sit. Unset, they keep the toaster's default 1rem. */
+export const TOAST_BOTTOM_OFFSET_VAR = '--toast-offset-bottom'
+// Gap between a lifted toast and what it's lifted over
+const LIFT_GAP_PX = 12
+
+/**
+ * Lifts the toasts above a bar fixed to the bottom of the screen (the selection bar) while it's
+ * mounted, so a toast never covers its actions. The toaster reads the offset from a CSS variable.
+ */
+export const useLiftToasts = (ref: RefObject<HTMLElement | null>) => {
+  useLayoutEffect(() => {
+    const element = ref.current
+    if (!element) return
+    const root = document.documentElement
+    const update = () => {
+      // The bar's own bottom offset plus its height: transforms (its slide-in) don't change either
+      const bottom = parseFloat(getComputedStyle(element).bottom) || 0
+      root.style.setProperty(TOAST_BOTTOM_OFFSET_VAR, `${bottom + element.offsetHeight + LIFT_GAP_PX}px`)
+    }
+    update()
+    const observer = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(update)
+    observer?.observe(element)
+    window.addEventListener('resize', update)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', update)
+      root.style.removeProperty(TOAST_BOTTOM_OFFSET_VAR)
+    }
+  }, [ref])
+}
 
 const ToastContext = createContext<ToastContextValue | null>(null)
 
 export const ToastProvider = ({ children }: PropsWithChildren) => {
-  const toaster = useMemo(() => createToaster({ placement: 'bottom' }), [])
+  const toaster = useMemo(
+    () =>
+      createToaster({
+        placement: 'bottom',
+        offsets: { top: '1rem', left: '1rem', right: '1rem', bottom: `var(${TOAST_BOTTOM_OFFSET_VAR}, 1rem)` },
+      }),
+    []
+  )
   return (
     <ToastContext.Provider value={toaster}>
       {children}

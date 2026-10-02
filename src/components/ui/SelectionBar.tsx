@@ -1,7 +1,8 @@
 import { CloseButton, Flex, Text, VisuallyHidden } from '@chakra-ui/react'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSupportChatControls } from '~components/SupportChat/controls'
+import { useLiftToasts } from '~components/Toast'
 
 // How long the count must settle before it's announced, so a range of clicks reads out once
 export const SELECTION_ANNOUNCE_DELAY = 400
@@ -24,7 +25,8 @@ type SelectionBarProps = {
 
 /**
  * A floating bar for what's selected: bottom-centred on wide screens, full width at the bottom on
- * phones. It takes the support chat's corner, so the chat hides while it's showing.
+ * phones. It takes the support chat's corner, so the chat hides while it's showing, and lifts the
+ * toasts above itself.
  */
 export const SelectionBar = ({ count, label, secondary, onClear, children, rightInset }: SelectionBarProps) => {
   const { t, i18n } = useTranslation()
@@ -39,6 +41,9 @@ export const SelectionBar = ({ count, label, secondary, onClear, children, right
       defaultValue_other: '{{formattedCount}} selected',
     })
   const [announced, setAnnounced] = useState('')
+  const barRef = useRef<HTMLDivElement>(null)
+  // Toasts (its own Undo, errors) would otherwise land on top of the bar's actions
+  useLiftToasts(barRef)
 
   useEffect(() => hideChat?.(), [hideChat])
 
@@ -49,6 +54,7 @@ export const SelectionBar = ({ count, label, secondary, onClear, children, right
 
   return (
     <Flex
+      ref={barRef}
       position='fixed'
       zIndex='banner'
       bottom={{ base: 0, lg: 6 }}
