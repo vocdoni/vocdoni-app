@@ -32,6 +32,10 @@ export const AnalyticsEvents = {
   ProcessResultsViewed: 'process_results_viewed',
   MembersImportStarted: 'members_import_started',
   MembersImportCompleted: 'members_import_completed',
+  MembersImportMapped: 'members_import_mapped',
+  MembersImportErrorsDownloaded: 'members_import_errors_downloaded',
+  MembersImportNextClicked: 'members_import_next_clicked',
+  MembersTemplateDownloaded: 'members_template_downloaded',
   MembersPageViewed: 'members_page_viewed',
   MembersEmptyStateCtaClicked: 'members_empty_state_cta_clicked',
   MembersDeleted: 'members_deleted',
@@ -47,6 +51,7 @@ export const AnalyticsEvents = {
   TeamMemberRemoved: 'team_member_removed',
   PdfReportDownloaded: 'pdf_report_downloaded',
   AuthFailed: 'auth_failed',
+  HelpOffered: 'help_offered',
   FeatureInterest: 'feature_interest',
 } as const
 

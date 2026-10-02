@@ -560,7 +560,7 @@ describe('People', () => {
       'Import a spreadsheet',
       'Add people',
     ])
-    expect(screen.getByRole('link', { name: 'Get the template' })).toHaveAttribute('download', 'members-template.csv')
+    expect(screen.getByRole('button', { name: 'Get the template' })).toBeInTheDocument()
     expect(
       screen.getByText('Your file is read in your browser. Only the columns you keep are sent.')
     ).toBeInTheDocument()

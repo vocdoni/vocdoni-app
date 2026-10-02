@@ -1,15 +1,13 @@
 import { Button, Icon, Tabs, Text } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuUserPlus } from 'react-icons/lu'
-import { generatePath, Outlet, useLocation, useNavigate } from 'react-router'
-import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
+import { LuUpload, LuUserPlus } from 'react-icons/lu'
+import { generatePath, Outlet, Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import { PageHeader } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
 import { useMembersCount } from '~src/queries/members'
-import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
-import { ImportMembers } from './Members/Import'
+import { getStoredImportJobId, readAccountId, setStoredImportJobId } from './importJobStorage'
 import { JobId, MembersPageProvider } from './MembersPageContext'
 import { AddPersonSheet } from './People/AddPersonSheet'
 
@@ -21,15 +19,6 @@ type TabItem = {
   count?: number
 }
 
-const readAccountId = (currentAddress?: string) => {
-  if (currentAddress) return currentAddress
-  try {
-    return localStorage.getItem(LocalStorageKeys.SignerAddress)
-  } catch {
-    return null
-  }
-}
-
 export const MemberbaseTabs = () => {
   const { t, i18n } = useTranslation()
   const { currentAddress } = useAuth()
@@ -37,7 +26,6 @@ export const MemberbaseTabs = () => {
   const location = useLocation()
   const accountId = readAccountId(currentAddress)
   const [jobId, setJobIdState] = useState<JobId>(() => getStoredImportJobId(accountId))
-  const [importOpen, setImportOpen] = useState(false)
   const [addPersonOpen, setAddPersonOpen] = useState(false)
   // Unfiltered total: this query never carries the search term, so the count keeps showing the
   // whole member list while the table is filtered.
@@ -65,10 +53,10 @@ export const MemberbaseTabs = () => {
         setStoredImportJobId(next, accountId)
         setJobIdState(next)
       },
-      openImport: () => setImportOpen(true),
+      openImport: () => navigate(Routes.dashboard.memberbase.import),
       openAddPerson: () => setAddPersonOpen(true),
     }),
-    [jobId, accountId]
+    [jobId, accountId, navigate]
   )
 
   return (
@@ -80,7 +68,13 @@ export const MemberbaseTabs = () => {
         })}
         actions={
           <>
-            <ImportMembers open={importOpen} onOpenChange={setImportOpen} onJobStarted={context.setJobId} />
+            {/* data-testid: the e2e suite's copy-free handle for the way into the import */}
+            <Button asChild variant='outline'>
+              <RouterLink to={Routes.dashboard.memberbase.import} data-testid='members-import-open'>
+                <Icon as={LuUpload} />
+                {t('memberbase.importer.button', { defaultValue: 'Import' })}
+              </RouterLink>
+            </Button>
             <Button onClick={() => setAddPersonOpen(true)}>
               <Icon as={LuUserPlus} />
               {t('memberbase.add_person', { defaultValue: 'Add person' })}

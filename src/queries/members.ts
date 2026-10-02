@@ -315,7 +315,7 @@ export const useMemberIndex = ({ enabled }: { enabled: boolean }) => {
 }
 
 /** Refreshes every member read (lists, count, sign-in readiness) after a write. */
-const useInvalidateMembers = () => {
+export const useInvalidateMembers = () => {
   const queryClient = useQueryClient()
   const { organization } = useOrganization()
   return () =>

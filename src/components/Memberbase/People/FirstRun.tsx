@@ -1,11 +1,10 @@
-import { Box, Button, Flex, Grid, Heading, Icon, Link, List, Popover, Portal, Stack, Text } from '@chakra-ui/react'
-import { type ElementType, type ReactNode, useMemo } from 'react'
+import { Box, Button, Flex, Grid, Heading, Icon, List, Popover, Portal, Stack, Text } from '@chakra-ui/react'
+import { type ElementType, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuCircleHelp, LuDownload, LuFileSpreadsheet, LuLock, LuUserPlus } from 'react-icons/lu'
 import { useAffectedVotes } from '~src/queries/affectedVotes'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
-import { useMemberFields } from '../fields'
-import { buildMembersTemplate, DEFAULT_TEMPLATE_COLUMNS } from '../Members/MembersCsvManager'
+import { useDownloadTemplate } from '../Import/UploadStep'
 
 export type FirstRunDoor = 'import' | 'add' | 'template' | 'test_vote'
 
@@ -102,9 +101,8 @@ type FirstRunProps = {
 /** What the People tab shows before there's anyone in it: the ways to add members, side by side. */
 export const FirstRun = ({ onImport, onAddPeople, extraDoor }: FirstRunProps) => {
   const { t } = useTranslation()
-  const fields = useMemberFields()
   const { hasActive } = useAffectedVotes()
-  const template = useMemo(() => buildMembersTemplate(fields, DEFAULT_TEMPLATE_COLUMNS), [fields])
+  const downloadTemplate = useDownloadTemplate('first_run')
   const doors = extraDoor ? 3 : 2
 
   return (
@@ -136,10 +134,20 @@ export const FirstRun = ({ onImport, onAddPeople, extraDoor }: FirstRunProps) =>
           >
             {t('members.first_run.import_cta', { defaultValue: 'Import a spreadsheet' })}
           </Button>
-          <Link href={template.url} download='members-template.csv' fontSize='sm' onClick={() => trackDoor('template')}>
+          <Button
+            variant='plain'
+            size='sm'
+            px={0}
+            color='colorPalette.fg'
+            textDecoration='underline'
+            onClick={() => {
+              trackDoor('template')
+              downloadTemplate('xlsx')
+            }}
+          >
             <Icon as={LuDownload} />
             {t('members.first_run.template', { defaultValue: 'Get the template' })}
-          </Link>
+          </Button>
         </Door>
         <Door
           icon={LuUserPlus}

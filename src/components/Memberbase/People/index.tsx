@@ -15,7 +15,7 @@ import {
 } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useMemberFields } from '../fields'
-import { ImportProgress } from '../Members/Import'
+import { ImportProgress } from '../Import/ImportProgress'
 import { useMembersPage } from '../MembersPageContext'
 import { AddToGroupSheet, AddToVoteSheet, RemoveFromGroupSheet, SaveAsCensusSheet } from './BulkActions'
 import { ContextBar, PageSelectionMessage, ReadinessMessage, Separator } from './ContextBar'

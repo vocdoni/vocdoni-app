@@ -49,8 +49,10 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
    the whole mobile card (`PeopleCards.tsx`), the person drawer and its form (`PersonSheet.tsx`,
    `PersonForm.tsx`), names in bulk-action and delete dialogs, masked values (`ui/MaskedValue.tsx`),
    group member table cells (`GroupsBoard.tsx`), the pasted list and its "not found" values in
-   "Select from a list…" (`PasteSelectSheet.tsx`), and the CSV import error list (`Members/Import.tsx`),
-   which quotes offending rows. Member search and the add/edit member form are covered by
+   "Select from a list…" (`PasteSelectSheet.tsx`), and the import wizard's file values: the first values
+   of each column (`Import/MatchStep.tsx`), the review rows and duplicates (`Import/ReviewStep.tsx`), the
+   receipt and its failed rows (`Import/DoneStep.tsx`) and the job error list (`Import/ImportProgress.tsx`),
+   which quotes offending rows. The file itself is read in the browser and never tracked. Member search and the add/edit member form are covered by
    `maskAllInputs`, and `?q=`/`?member=` are stripped from tracked URLs. Surrounding chrome — tabs,
    headings, buttons, counts, group names — stays visible, so replays remain usable.
    **When adding a component that renders member fields, add `className='ph-no-capture'` to it.**
@@ -108,7 +110,14 @@ import|template|add), `member_added` (`source`: form), `member_updated` (`in_liv
 (`action`: save_census|add_to_vote|add_to_saved_census|remove_from_saved_census|delete, `count`; fired
 when the action is opened from the selection bar). `member_group_created` carries `group_size` and
 `source` (selection) when made from the People tab; `voters_added` carries `surface` (members) when
-added from there. Member events carry counts only, never names or search text.
+added from there. The import wizard (`/admin/memberbase/import`) sends `members_template_downloaded`
+(`format`: xlsx|csv, `surface`: import|first_run), `members_import_mapped` on leaving the Match step
+(`auto_pct`: share of columns matched automatically, `is_template`, `extra_columns`: columns kept as extra
+info), `members_import_started` (`total_rows`, `method`: file), `members_import_errors_downloaded`
+(`count`), `members_import_next_clicked` (`next`: create_vote|return|members) and `help_offered`
+(`trigger`: large_file, when a file has more than 2,000 people and a call is offered).
+`members_import_completed` fires once per job, from the receipt or the People banner, whichever sees
+it end. Member events carry counts only, never names or search text.
 
 Organization-level BI: every session registers `org_address`/`org_name`/`org_plan` super properties, and
 the `organization` group profile carries name, plan, type, country, size, usage counters, and renewal

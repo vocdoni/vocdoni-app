@@ -1,4 +1,5 @@
-import { MemoryRouter } from 'react-router'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes } from 'react-router'
 import { render, screen } from '~src/test-utils'
 import { MemberbaseTabs } from './index'
 
@@ -20,14 +21,16 @@ vi.mock('~src/queries/members', async (importOriginal) => {
   }
 })
 
-// The header's import drawer and add-person sheet aren't under test here
-vi.mock('./Members/Import', () => ({ ImportMembers: () => <button data-testid='members-import-open'>Import</button> }))
+// The header's add-person sheet isn't under test here
 vi.mock('./People/AddPersonSheet', () => ({ AddPersonSheet: () => null }))
 
 const renderTabs = () =>
   render(
     <MemoryRouter initialEntries={['/admin/memberbase/members/1']}>
-      <MemberbaseTabs />
+      <Routes>
+        <Route path='/admin/memberbase/members/:page' element={<MemberbaseTabs />} />
+        <Route path='/admin/memberbase/import' element={<h1>Import page</h1>} />
+      </Routes>
     </MemoryRouter>
   )
 
@@ -44,6 +47,14 @@ describe('MemberbaseTabs', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Members' })).toBeInTheDocument()
     expect(await screen.findByTestId('members-import-open')).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: 'Add person' })).toBeInTheDocument()
+  })
+
+  it('goes to the import page from the Import button', async () => {
+    renderTabs()
+
+    await userEvent.click(screen.getByTestId('members-import-open'))
+
+    expect(await screen.findByRole('heading', { name: 'Import page' })).toBeInTheDocument()
   })
 
   it('shows the exact, locale formatted member count on the People tab', async () => {

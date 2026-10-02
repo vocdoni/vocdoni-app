@@ -1,7 +1,14 @@
+import userEvent from '@testing-library/user-event'
 import { render, screen } from '~src/test-utils'
 import { Door, FirstRun } from './FirstRun'
 
 const affected = vi.hoisted(() => ({ hasActive: false }))
+
+const download = vi.hoisted(() => vi.fn())
+vi.mock('~utils/download', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/download')>()),
+  downloadBlob: download,
+}))
 
 vi.mock('~src/queries/affectedVotes', () => ({
   useAffectedVotes: () => ({ votes: [], hasActive: affected.hasActive, hasLive: false, isLoading: false }),
@@ -31,5 +38,14 @@ describe('FirstRun', () => {
     )
 
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(3)
+  })
+
+  it('downloads the Excel template', async () => {
+    affected.hasActive = false
+    render(<FirstRun onImport={vi.fn()} onAddPeople={vi.fn()} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Get the template' }))
+
+    expect(download).toHaveBeenCalledWith(expect.any(Blob), 'members-template.xlsx')
   })
 })

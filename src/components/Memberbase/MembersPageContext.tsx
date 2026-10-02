@@ -6,7 +6,7 @@ export type MembersPageContextValue = {
   /** The member import running in the background, if any */
   jobId: JobId
   setJobId: (jobId: JobId) => void
-  /** Opens the import drawer the page header owns */
+  /** Goes to the import page */
   openImport: () => void
   /** Opens the "Add person" sheet the page header owns */
   openAddPerson: () => void
