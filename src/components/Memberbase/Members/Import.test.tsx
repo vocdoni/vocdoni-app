@@ -3,14 +3,6 @@ import { mockUseOrganization, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { ImportProgress } from './Import'
 
-vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>()
-  return {
-    ...actual,
-    useOutletContext: () => ({ jobId: 'job-1', setJobId: vi.fn() }),
-  }
-})
-
 let mockJobData: ImportJob = {
   jobId: 'job-1',
   type: 'org_members',
@@ -45,7 +37,7 @@ describe('ImportProgress', () => {
   })
 
   it('renders completed status', () => {
-    render(<ImportProgress />)
+    render(<ImportProgress jobId='job-1' onDismiss={vi.fn()} />)
 
     expect(screen.getByText('Your member data has been imported successfully.')).toBeInTheDocument()
     expect(screen.getByText('You may now start using your imported members.')).toBeInTheDocument()
@@ -59,7 +51,7 @@ describe('ImportProgress', () => {
       status: 'failed',
       errors: [],
     }
-    render(<ImportProgress />)
+    render(<ImportProgress jobId='job-1' onDismiss={vi.fn()} />)
 
     expect(screen.getByText('Import Error')).toBeInTheDocument()
   })
@@ -72,7 +64,7 @@ describe('ImportProgress', () => {
       errors: ['row 3: bad email'],
       result: { progress: 100, added: 5, total: 5 },
     }
-    render(<ImportProgress />)
+    render(<ImportProgress jobId='job-1' onDismiss={vi.fn()} />)
 
     expect(screen.getByText('Import Completed with Errors')).toBeInTheDocument()
   })

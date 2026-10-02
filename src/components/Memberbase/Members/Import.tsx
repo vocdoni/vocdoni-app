@@ -32,15 +32,13 @@ import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
-import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
-import { MemberbaseTabsContext } from '..'
-import { useTable } from '../TableProvider'
+import { useMemberFields } from '../fields'
 import { MembersCsvManager } from './MembersCsvManager'
 
 type SpreadsheetRow = Record<string, string>
@@ -95,12 +93,17 @@ const TemplateUploader = () => {
   )
 }
 
-export const ImportProgress = () => {
+type ImportProgressProps = {
+  jobId: string | null
+  /** Closing the banner forgets the job */
+  onDismiss: () => void
+}
+
+export const ImportProgress = ({ jobId, onDismiss }: ImportProgressProps) => {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { organization } = useOrganization()
-  const { jobId, setJobId } = useOutletContext<MemberbaseTabsContext>()
-  const { data, isError } = useImportJobProgress()
+  const { data, isError } = useImportJobProgress(jobId)
 
   const [progress, setProgress] = useState(0)
   const isComplete = data?.status === 'completed'
@@ -153,7 +156,7 @@ export const ImportProgress = () => {
     })
   }, [jobId, isComplete, hasFailed, data])
 
-  const closeAlert = () => setJobId(null)
+  const closeAlert = () => onDismiss()
 
   const getStatus = () => {
     if (isComplete && hasErrors) return 'warning'
@@ -312,7 +315,7 @@ export const ImportProgress = () => {
 
 const FieldsMapper = ({ manager, columnMapping, setColumnMapping }: FieldsMapperProps) => {
   const { t } = useTranslation()
-  const { columns } = useTable()
+  const columns = useMemberFields()
 
   if (!manager || !manager.data) return null
 
@@ -474,10 +477,27 @@ const ImportDataPreview = ({ columnMapping, setColumnMapping }: ImportDataPrevie
   )
 }
 
-export const ImportMembers = () => {
+type ImportMembersProps = {
+  /** The background job the import started, to follow its progress */
+  onJobStarted: (jobId: string | null) => void
+  /** Controlled open state, so other entry points (the first-run doors) can open the same drawer */
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+export const ImportMembers = ({ onJobStarted, open, onOpenChange }: ImportMembersProps) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { open: isOpen, onOpen, onClose } = useDisclosure()
+  const disclosure = useDisclosure()
+  const isControlled = typeof open === 'boolean'
+  const isOpen = isControlled ? open : disclosure.open
+  const setOpen = (next: boolean) => {
+    if (isControlled) onOpenChange?.(next)
+    else if (next) disclosure.onOpen()
+    else disclosure.onClose()
+  }
+  const onOpen = () => setOpen(true)
+  const onClose = () => setOpen(false)
   const btnRef = useRef<HTMLButtonElement>(null)
   const methods = useForm({ defaultValues: { spreadsheet: null } })
   const spreadsheet = useWatch({
@@ -486,7 +506,6 @@ export const ImportMembers = () => {
   })
   const [columnMapping, setColumnMapping] = useState<ColumnMapping>({})
   const addMembers = useAddMembers(true)
-  const { setJobId } = useOutletContext<MemberbaseTabsContext>()
 
   const hasSpreadsheet = Boolean(spreadsheet?.filedata)
 
@@ -503,7 +522,7 @@ export const ImportMembers = () => {
     try {
       trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportStarted, props: { total_rows: finalData.length } })
       const data = await addMembers.mutateAsync(finalData)
-      setJobId(data?.jobId)
+      onJobStarted(data?.jobId ?? null)
       setColumnMapping({})
       methods.reset()
       onClose()
@@ -511,8 +530,8 @@ export const ImportMembers = () => {
       console.error(error)
       toast({
         type: 'error',
-        title: 'Import failed',
-        description: error?.message ?? 'Unexpected error while importing members',
+        title: t('memberbase.importer.failed', { defaultValue: 'Import failed' }),
+        description: error?.message,
       })
     }
   }

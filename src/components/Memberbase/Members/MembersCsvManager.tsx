@@ -25,7 +25,7 @@ import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spread
 import SpreadsheetError from '~components/Spreadsheet/errors/SpreadsheetError'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useMembersCount } from '~queries/members'
-import { useTable } from '../TableProvider'
+import { type MemberField, useMemberFields } from '../fields'
 
 const generateFakeValue = (columnId: string): string => {
   switch (columnId) {
@@ -48,6 +48,18 @@ const generateFakeValue = (columnId: string): string => {
   }
 }
 
+/** The columns a template starts with: enough to import someone and send them a code. */
+export const DEFAULT_TEMPLATE_COLUMNS = ['name', 'surname', 'email']
+
+/** A one-row CSV template with the given columns, headed by their labels. */
+export const buildMembersTemplate = (columns: Pick<MemberField, 'id' | 'label'>[], columnIds: string[]) => {
+  const included = columns.filter((column) => columnIds.includes(column.id))
+  return new CsvGenerator(
+    included.map((column) => column.label),
+    [included.map((column) => generateFakeValue(column.id))]
+  )
+}
+
 export const MembersCsvManager = () => {
   const { t } = useTranslation()
   const {
@@ -58,7 +70,7 @@ export const MembersCsvManager = () => {
     clearErrors,
     formState: { errors },
   } = useFormContext()
-  const { columns } = useTable()
+  const columns = useMemberFields()
   const { subscription } = useSubscription()
   const { openModal } = usePricingModal()
   const { count: existingMembers } = useMembersCount()
@@ -137,16 +149,9 @@ export const MembersCsvManager = () => {
     multiple: false,
     accept: SpreadsheetManager.Accept,
   })
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(['name', 'surname', 'email'])
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(DEFAULT_TEMPLATE_COLUMNS)
   const handleColumnChange = (value: string[]) => setVisibleColumns(value)
-  const template = useMemo(() => {
-    const header = columns.filter((column) => visibleColumns.includes(column.id)).map((column) => column.label)
-    const rows = columns
-      .filter((column) => visibleColumns.includes(column.id))
-      .map((column) => generateFakeValue(column.id))
-
-    return new CsvGenerator(header, [rows])
-  }, [visibleColumns])
+  const template = useMemo(() => buildMembersTemplate(columns, visibleColumns), [columns, visibleColumns])
 
   return (
     <Flex flexDirection='column' gap={4}>

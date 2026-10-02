@@ -66,15 +66,6 @@ vi.mock('~queries/members', () => ({
   useMembersCount: () => ({ count: 100, isLoading: false, known: true }),
 }))
 
-vi.mock('../TableProvider', () => ({
-  useTable: () => ({
-    columns: [
-      { id: 'name', label: 'Name' },
-      { id: 'email', label: 'Email' },
-    ],
-  }),
-}))
-
 const MembersCsvManagerForm = () => {
   const methods = useForm({
     defaultValues: { spreadsheet: { data: [] } },

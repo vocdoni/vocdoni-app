@@ -936,6 +936,7 @@ const MembersTable = () => {
     useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isMobile = useBreakpointValue({ base: true, md: false })
+  const { jobId, setJobId } = useOutletContext<MemberbaseTabsContext>()
 
   const openDeleteSelected = (member?: Member) => {
     setDeleteMode(DeleteModes.SELECTED)
@@ -969,7 +970,7 @@ const MembersTable = () => {
 
   return (
     <>
-      <ImportProgress />
+      <ImportProgress jobId={jobId} onDismiss={() => setJobId(null)} />
       <Box border='1px solid' borderRadius='sm' borderColor='table.border'>
         <Flex direction={{ base: 'column', lg: 'row' }} p={4} gap={2}>
           <Flex direction='column' flex={1} gap={2}>
@@ -981,7 +982,7 @@ const MembersTable = () => {
             />
           </Flex>
           <Flex gap={2}>
-            <ImportMembers />
+            <ImportMembers onJobStarted={setJobId} />
             <MemberManager
               control={
                 <Button>

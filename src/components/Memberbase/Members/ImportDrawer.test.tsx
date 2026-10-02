@@ -4,14 +4,6 @@ import userEvent from '@testing-library/user-event'
 import { render } from '~src/test-utils'
 import { ImportMembers } from './Import'
 
-vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>()
-  return {
-    ...actual,
-    useOutletContext: () => ({ jobId: null, setJobId: vi.fn() }),
-  }
-})
-
 vi.mock('~src/queries/members', () => ({
   useAddMembers: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useImportJobProgress: () => ({ data: undefined, isError: false }),
@@ -52,19 +44,10 @@ vi.mock('~components/Auth/Subscription', () => ({
   }),
 }))
 
-vi.mock('../TableProvider', () => ({
-  useTable: () => ({
-    columns: [
-      { id: 'name', label: 'Name' },
-      { id: 'email', label: 'Email' },
-    ],
-  }),
-}))
-
 describe('ImportMembers drawer', () => {
   it('keeps the drawer open and shows the mapping step after selecting a file', async () => {
     const user = userEvent.setup()
-    render(<ImportMembers />)
+    render(<ImportMembers onJobStarted={vi.fn()} />)
 
     await user.click(screen.getByRole('button', { name: 'Import' }))
     expect(await screen.findByRole('dialog')).toBeInTheDocument()

@@ -1,10 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '~src/queries/pagination'
-import { useOutletContext, useParams, useSearchParams } from 'react-router'
+import { useParams, useSearchParams } from 'react-router'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
-import type { MemberbaseTabsContext } from '~components/Memberbase'
 import { QueryKeys } from './keys'
 
 export type Member = {
@@ -141,14 +140,14 @@ export const useDeleteMembers = () => {
   })
 }
 
-export const useImportJobProgress = () => {
-  const { jobId } = useOutletContext<MemberbaseTabsContext>()
+/** Polls an import job until it completes or fails. Idle without a job id. */
+export const useImportJobProgress = (jobId: string | null) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
 
   // Authenticated so the response includes per-row import `errors`, which are
   // stripped for anonymous requests.
-  const url = ApiEndpoints.Job.replace('{jobId}', jobId)
+  const url = ApiEndpoints.Job.replace('{jobId}', jobId ?? '')
 
   return useQuery({
     enabled: Boolean(jobId),
