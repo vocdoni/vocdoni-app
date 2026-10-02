@@ -112,7 +112,8 @@ export const People = () => {
     if (!selection.count) return
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key !== 'Escape' || isTypingTarget(event.target)) return
-      if (document.querySelector('[role="dialog"], [role="alertdialog"], [role="menu"]')) return
+      // Popovers and menus stay mounted while closed: only an open one owns the key
+      if (document.querySelector(':is([role="dialog"], [role="alertdialog"], [role="menu"])[data-state="open"]')) return
       selection.clear()
     }
     document.addEventListener('keydown', onKeyDown)

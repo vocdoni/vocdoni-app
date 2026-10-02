@@ -1,4 +1,4 @@
-import { Flex, Icon, Text, VisuallyHidden } from '@chakra-ui/react'
+import { Box, Flex, Icon, Text, VisuallyHidden } from '@chakra-ui/react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuTriangleAlert } from 'react-icons/lu'
@@ -16,6 +16,13 @@ export const ReadinessMessage = () => {
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
 
   if (!readiness.available) return null
+
+  const unreachableText = t('members.readiness.unreachable', {
+    defaultValue_one: '{{formattedCount}} has no email or mobile',
+    defaultValue_other: '{{formattedCount}} have no email or mobile',
+    count: readiness.unreachable,
+    formattedCount: format(readiness.unreachable),
+  })
 
   if (!readiness.unreachable)
     return (
@@ -38,7 +45,7 @@ export const ReadinessMessage = () => {
           total: format(readiness.total),
         })}
       </Text>
-      <Text as='span' aria-hidden='true' color='fg.muted'>
+      <Text as='span' aria-hidden='true' color='fg.muted' hideBelow='md'>
         ·
       </Text>
       <Text
@@ -53,23 +60,27 @@ export const ReadinessMessage = () => {
       >
         <Icon as={LuTriangleAlert} boxSize={3.5} aria-hidden />
         <VisuallyHidden>{t('members.readiness.warning', { defaultValue: 'Warning:' })}</VisuallyHidden>
-        {t('members.readiness.unreachable', {
-          defaultValue_one: '{{formattedCount}} has no email or mobile',
-          defaultValue_other: '{{formattedCount}} have no email or mobile',
-          count: readiness.unreachable,
-          formattedCount: format(readiness.unreachable),
-        })}
+        {/* Phones get the count alone; the sentence stays for screen readers */}
+        <Box as='span' hideFrom='md' aria-hidden='true'>
+          {format(readiness.unreachable)}
+        </Box>
+        <Box as='span' hideBelow='md'>
+          {unreachableText}
+        </Box>
+        <VisuallyHidden hideFrom='md'>{unreachableText}</VisuallyHidden>
       </Text>
-      <ComingSoonButton
-        feature='members_show_flagged'
-        surface='people_readiness'
-        flexShrink={0}
-        label={t('members.readiness.show_them', { defaultValue: 'Show them' })}
-        title={t('members.readiness.show_them_title', { defaultValue: 'See who can’t get a voting code' })}
-        description={t('members.readiness.show_them_description', {
-          defaultValue: 'Soon you’ll see the people without an email or mobile in one list, to fix them before a vote.',
-        })}
-      />
+      <Box hideBelow='md' flexShrink={0}>
+        <ComingSoonButton
+          feature='members_show_flagged'
+          surface='people_readiness'
+          label={t('members.readiness.show_them', { defaultValue: 'Show them' })}
+          title={t('members.readiness.show_them_title', { defaultValue: 'See who can’t get a voting code' })}
+          description={t('members.readiness.show_them_description', {
+            defaultValue:
+              'Soon you’ll see the people without an email or mobile in one list, to fix them before a vote.',
+          })}
+        />
+      </Box>
     </>
   )
 }

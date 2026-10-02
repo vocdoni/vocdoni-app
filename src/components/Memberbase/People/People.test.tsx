@@ -102,6 +102,9 @@ const renderPeople = (url = '/admin/memberbase/members/1') =>
     </MemoryRouter>
   )
 
+// The SelectionBar's visible count (its live region repeats it once the count settles)
+const barCount = (text: string) => screen.getByText(text, { selector: '[aria-hidden="true"]' })
+
 const currentUrl = () => screen.getByTestId('location').textContent ?? ''
 
 describe('People', () => {
@@ -232,13 +235,13 @@ describe('People', () => {
     const table = screen.getByRole('table')
 
     await user.click(within(table).getByRole('checkbox', { name: 'Select Anna Vila Puig' }))
-    expect(screen.getByText('1 selected')).toBeInTheDocument()
+    expect(barCount('1 selected')).toBeInTheDocument()
     expect(screen.getByText('1 of 2 on this page selected')).toBeInTheDocument()
     expect(within(table).getByRole('checkbox', { name: 'Select everyone on this page' })).toBePartiallyChecked()
 
     await user.click(within(table).getByRole('button', { name: 'Actions for Jordi Serra Mas' }))
     await user.click(await screen.findByRole('menuitem', { name: 'Add to Group' }))
-    expect(screen.getByText('1 selected')).toBeInTheDocument()
+    expect(barCount('1 selected')).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: 'Add 1 member' })).toBeInTheDocument()
   })
 
@@ -247,7 +250,7 @@ describe('People', () => {
     renderPeople()
 
     await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
-    expect(screen.getByText('2 selected')).toBeInTheDocument()
+    expect(barCount('2 selected')).toBeInTheDocument()
     expect(screen.getByText('All 2 on this page selected')).toBeInTheDocument()
   })
 
@@ -294,7 +297,8 @@ describe('People', () => {
     renderPeople()
 
     expect(screen.getByText('1,719 of 1,742 can get a voting code')).toBeInTheDocument()
-    expect(screen.getByText('23 have no email or mobile')).toBeInTheDocument()
+    // The sentence, plus its screen-reader copy beside the bare count shown on phones
+    expect(screen.getAllByText('23 have no email or mobile')).toHaveLength(2)
     expect(screen.getByText('Warning:')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Show them/ })).toBeInTheDocument()
   })
