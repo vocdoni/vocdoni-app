@@ -268,6 +268,52 @@ export const useMemberIdCollector = () => {
   )
 }
 
+const memberIndexKey = (address?: string) => [...QueryKeys.organization.members(address), 'index']
+
+/** How long a loaded member index is reused (any member write refreshes it sooner) */
+export const MEMBER_INDEX_STALE_TIME = 5 * 60 * 1000
+
+/**
+ * Loads every member of an organization of up to 5,000 into memory, once, for matching on the
+ * client (a pasted list, the people missing contact details). Cached under the members key, so any
+ * member write refreshes it. Bigger organizations get the first 5,000 and `capped`.
+ */
+export const useLoadMemberIndex = () => {
+  const queryClient = useQueryClient()
+  const fetchPage = useMembersPageFetcher()
+  const { organization } = useOrganization()
+  const address = organization?.address
+
+  return useCallback(
+    (options: Pick<CollectOptions, 'onProgress' | 'signal'> = {}) =>
+      queryClient.fetchQuery({
+        queryKey: memberIndexKey(address),
+        queryFn: () => collectMembers(fetchPage, { ...options, max: MEMBERS_COLLECT_CAP }),
+        staleTime: MEMBER_INDEX_STALE_TIME,
+      }),
+    [queryClient, fetchPage, address]
+  )
+}
+
+/** The member index as a query, with loading progress: see `useLoadMemberIndex`. */
+export const useMemberIndex = ({ enabled }: { enabled: boolean }) => {
+  const fetchPage = useMembersPageFetcher()
+  const { organization } = useOrganization()
+  const address = organization?.address
+  const [progress, setProgress] = useState<CollectProgress | null>(null)
+
+  const query = useQuery({
+    queryKey: memberIndexKey(address),
+    enabled: enabled && !!address,
+    staleTime: MEMBER_INDEX_STALE_TIME,
+    retry: false,
+    refetchOnWindowFocus: false,
+    queryFn: ({ signal }) => collectMembers(fetchPage, { max: MEMBERS_COLLECT_CAP, signal, onProgress: setProgress }),
+  })
+
+  return { ...query, progress: query.isFetching ? progress : null }
+}
+
 /** Refreshes every member read (lists, count, sign-in readiness) after a write. */
 const useInvalidateMembers = () => {
   const queryClient = useQueryClient()
