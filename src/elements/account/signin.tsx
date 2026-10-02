@@ -18,7 +18,7 @@ const Signin = () => {
   useEffect(() => {
     setTitle(t('signin_title'))
     setSubtitle(t('signin_subtitle'))
-  }, [])
+  }, [setTitle, setSubtitle, t])
 
   return (
     <SignIn

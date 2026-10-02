@@ -16,7 +16,7 @@ const Signup = () => {
   useEffect(() => {
     setTitle(t('signup_title'))
     setSubtitle(t('signup_subtitle'))
-  }, [])
+  }, [setTitle, setSubtitle, t])
 
   return (
     <SignUp

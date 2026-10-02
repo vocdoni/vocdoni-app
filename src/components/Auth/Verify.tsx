@@ -164,7 +164,7 @@ export const VerificationPending = ({
         defaultValue: 'A verification email has been sent to:',
       })
     )
-  }, [])
+  }, [setTitle, setSubtitle, t])
 
   const resendMail = useCallback(() => {
     if (email && !isResendSuccess) {
