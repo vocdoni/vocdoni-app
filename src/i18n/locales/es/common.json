@@ -22,6 +22,92 @@
     "view_active_votes": "Ver votaciones activas",
     "waiting_title": "Esperando confirmación de la transacción..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "Clave de API",
+      "system": "Vocdoni"
+    },
+    "by": "por {{who}}",
+    "change": {
+      "changed": "{{field}} ha cambiado",
+      "empty": "vacío",
+      "values": "{{field}}: {{before}} → {{after}}"
+    },
+    "changes_one": "{{count}} cambio",
+    "changes_many": "{{count}} cambios",
+    "changes_other": "{{count}} cambios",
+    "empty": "Aún no hay nada. Las importaciones y las votaciones aparecerán aquí a medida que ocurran.",
+    "error": "No hemos podido cargar el historial de cambios. Vuelve a intentarlo en un momento.",
+    "event": {
+      "census_frozen": "Censo de <strong>{{name}}</strong> congelado al publicarse",
+      "census_members_added_one": "{{number}} persona añadida a '{{name}}'",
+      "census_members_added_many": "{{number}} personas añadidas a '{{name}}'",
+      "census_members_added_other": "{{number}} personas añadidas a '{{name}}'",
+      "census_members_removed_one": "{{number}} persona quitada de '{{name}}'",
+      "census_members_removed_many": "{{number}} personas quitadas de '{{name}}'",
+      "census_members_removed_other": "{{number}} personas quitadas de '{{name}}'",
+      "exported": "Historial de cambios exportado",
+      "group_created": "Censo <strong>{{name}}</strong> guardado",
+      "group_deleted": "Censo <strong>{{name}}</strong> eliminado",
+      "group_updated": "Censo <strong>{{name}}</strong> editado",
+      "import_one": "{{number}} miembro importado",
+      "import_many": "{{number}} miembros importados",
+      "import_other": "{{number}} miembros importados",
+      "member_added": "<strong>{{name}}</strong> añadido a los miembros",
+      "member_deleted": "<strong>{{name}}</strong> eliminado de los miembros",
+      "member_updated": "<strong>{{name}}</strong> editado",
+      "process_created": "<strong>{{name}}</strong> creada",
+      "process_ended": "<strong>{{name}}</strong> ha terminado",
+      "process_published": "<strong>{{name}}</strong> publicada",
+      "process_started": "<strong>{{name}}</strong> ha empezado"
+    },
+    "export": "Exportar CSV",
+    "export_error": "No hemos podido exportar el historial de cambios",
+    "field": {
+      "other": "Información adicional",
+      "title": "Nombre",
+      "unknown": "Un dato"
+    },
+    "filter": {
+      "all": "Todo",
+      "censuses": "Censos",
+      "imports": "Importaciones",
+      "label": "Filtrar el historial de cambios",
+      "people": "Personas",
+      "votes": "Votaciones"
+    },
+    "history": {
+      "census_title": "Historial",
+      "empty": "Aún no se ha registrado ningún cambio.",
+      "error": "No hemos podido cargar el historial.",
+      "person_title": "Historial"
+    },
+    "imports": {
+      "added_one": "{{added}} de {{total}} miembro importado",
+      "added_many": "{{added}} de {{total}} miembros importados",
+      "added_other": "{{added}} de {{total}} miembros importados",
+      "problems_one": "{{count}} fila tenía problemas",
+      "problems_many": "{{count}} filas tenían problemas",
+      "problems_other": "{{count}} filas tenían problemas",
+      "status": {
+        "completed": "Hecho",
+        "failed": "Ha fallado",
+        "pending": "Importando"
+      },
+      "title": "Importaciones recientes"
+    },
+    "newer": "Más recientes",
+    "older": "Más antiguos",
+    "soon": {
+      "description": "Las ediciones de miembros y censos aparecerán aquí, listas para exportarlas para tus actas.",
+      "title": "Pronto: cada cambio, con quién y cuándo"
+    },
+    "test_vote": "Votación de prueba",
+    "untitled": "Sin título",
+    "votes": {
+      "title": "Votaciones"
+    }
+  },
   "add_new_org": "Añadir una nueva organización",
   "additional_actions": "Acciones adicionales",
   "all_processes": "Todos",
@@ -1175,6 +1261,9 @@
     "hidden": "{{label}} oculto"
   },
   "memberbase": {
+    "activity": {
+      "title": "Historial de cambios"
+    },
     "add_person": "Añadir persona",
     "censuses": {
       "title": "Censos"

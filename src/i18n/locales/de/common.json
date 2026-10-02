@@ -22,6 +22,86 @@
     "view_active_votes": "Aktive Abstimmungen anzeigen",
     "waiting_title": "Warte auf Transaktionsbestätigung..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "API-Schlüssel",
+      "system": "Vocdoni"
+    },
+    "by": "von {{who}}",
+    "change": {
+      "changed": "{{field}} geändert",
+      "empty": "leer",
+      "values": "{{field}}: {{before}} → {{after}}"
+    },
+    "changes_one": "{{count}} Änderung",
+    "changes_other": "{{count}} Änderungen",
+    "empty": "Noch nichts zu sehen. Importe und Abstimmungen erscheinen hier, sobald sie stattfinden.",
+    "error": "Der Änderungsverlauf konnte nicht geladen werden. Versuche es gleich noch einmal.",
+    "event": {
+      "census_frozen": "Teilnehmerliste von <strong>{{name}}</strong> beim Veröffentlichen eingefroren",
+      "census_members_added_one": "{{number}} Person zu „{{name}}“ hinzugefügt",
+      "census_members_added_other": "{{number}} Personen zu „{{name}}“ hinzugefügt",
+      "census_members_removed_one": "{{number}} Person aus „{{name}}“ entfernt",
+      "census_members_removed_other": "{{number}} Personen aus „{{name}}“ entfernt",
+      "exported": "Änderungsverlauf exportiert",
+      "group_created": "Teilnehmerliste <strong>{{name}}</strong> gespeichert",
+      "group_deleted": "Teilnehmerliste <strong>{{name}}</strong> gelöscht",
+      "group_updated": "Teilnehmerliste <strong>{{name}}</strong> bearbeitet",
+      "import_one": "{{number}} Mitglied importiert",
+      "import_other": "{{number}} Mitglieder importiert",
+      "member_added": "<strong>{{name}}</strong> zu den Mitgliedern hinzugefügt",
+      "member_deleted": "<strong>{{name}}</strong> aus den Mitgliedern gelöscht",
+      "member_updated": "<strong>{{name}}</strong> bearbeitet",
+      "process_created": "<strong>{{name}}</strong> erstellt",
+      "process_ended": "<strong>{{name}}</strong> beendet",
+      "process_published": "<strong>{{name}}</strong> veröffentlicht",
+      "process_started": "<strong>{{name}}</strong> gestartet"
+    },
+    "export": "CSV exportieren",
+    "export_error": "Der Änderungsverlauf konnte nicht exportiert werden",
+    "field": {
+      "other": "Zusatzinfo",
+      "title": "Name",
+      "unknown": "Eine Angabe"
+    },
+    "filter": {
+      "all": "Alle",
+      "censuses": "Teilnehmerlisten",
+      "imports": "Importe",
+      "label": "Änderungsverlauf filtern",
+      "people": "Personen",
+      "votes": "Abstimmungen"
+    },
+    "history": {
+      "census_title": "Verlauf",
+      "empty": "Noch keine Änderungen erfasst.",
+      "error": "Der Verlauf konnte nicht geladen werden.",
+      "person_title": "Verlauf"
+    },
+    "imports": {
+      "added_one": "{{added}} von {{total}} Mitglied importiert",
+      "added_other": "{{added}} von {{total}} Mitgliedern importiert",
+      "problems_one": "{{count}} Zeile hatte Probleme",
+      "problems_other": "{{count}} Zeilen hatten Probleme",
+      "status": {
+        "completed": "Fertig",
+        "failed": "Fehlgeschlagen",
+        "pending": "Wird importiert"
+      },
+      "title": "Letzte Importe"
+    },
+    "newer": "Neuer",
+    "older": "Älter",
+    "soon": {
+      "description": "Änderungen an Mitgliedern und Teilnehmerlisten erscheinen hier, bereit zum Export für dein Protokoll.",
+      "title": "Bald: jede Änderung, mit wer und wann"
+    },
+    "test_vote": "Testabstimmung",
+    "untitled": "Ohne Titel",
+    "votes": {
+      "title": "Abstimmungen"
+    }
+  },
   "add_new_org": "Neue Organisation hinzufügen",
   "additional_actions": "Weitere Aktionen",
   "all_processes": "Alle",
@@ -1147,6 +1227,9 @@
     "hidden": "{{label}} ausgeblendet"
   },
   "memberbase": {
+    "activity": {
+      "title": "Änderungsverlauf"
+    },
     "add_person": "Person hinzufügen",
     "censuses": {
       "title": "Teilnehmerlisten"

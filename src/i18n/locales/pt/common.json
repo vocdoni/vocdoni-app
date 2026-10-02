@@ -22,6 +22,92 @@
     "view_active_votes": "Ver votações ativas",
     "waiting_title": "A aguardar a confirmação da transação…"
   },
+  "activity": {
+    "actor": {
+      "api_key": "Chave de API",
+      "system": "Vocdoni"
+    },
+    "by": "por {{who}}",
+    "change": {
+      "changed": "{{field}} alterado",
+      "empty": "vazio",
+      "values": "{{field}}: {{before}} → {{after}}"
+    },
+    "changes_one": "{{count}} alteração",
+    "changes_many": "{{count}} alterações",
+    "changes_other": "{{count}} alterações",
+    "empty": "Ainda não há nada. As importações e as votações aparecem aqui à medida que acontecem.",
+    "error": "Não foi possível carregar o histórico de alterações. Tenta novamente daqui a pouco.",
+    "event": {
+      "census_frozen": "Lista de participantes de <strong>{{name}}</strong> congelada ao publicar",
+      "census_members_added_one": "{{number}} pessoa adicionada a '{{name}}'",
+      "census_members_added_many": "{{number}} pessoas adicionadas a '{{name}}'",
+      "census_members_added_other": "{{number}} pessoas adicionadas a '{{name}}'",
+      "census_members_removed_one": "{{number}} pessoa removida de '{{name}}'",
+      "census_members_removed_many": "{{number}} pessoas removidas de '{{name}}'",
+      "census_members_removed_other": "{{number}} pessoas removidas de '{{name}}'",
+      "exported": "Histórico de alterações exportado",
+      "group_created": "Lista de participantes <strong>{{name}}</strong> guardada",
+      "group_deleted": "Lista de participantes <strong>{{name}}</strong> eliminada",
+      "group_updated": "Lista de participantes <strong>{{name}}</strong> editada",
+      "import_one": "{{number}} membro importado",
+      "import_many": "{{number}} membros importados",
+      "import_other": "{{number}} membros importados",
+      "member_added": "<strong>{{name}}</strong> adicionado aos membros",
+      "member_deleted": "<strong>{{name}}</strong> eliminado dos membros",
+      "member_updated": "<strong>{{name}}</strong> editado",
+      "process_created": "<strong>{{name}}</strong> criada",
+      "process_ended": "<strong>{{name}}</strong> terminou",
+      "process_published": "<strong>{{name}}</strong> publicada",
+      "process_started": "<strong>{{name}}</strong> começou"
+    },
+    "export": "Exportar CSV",
+    "export_error": "Não foi possível exportar o histórico de alterações",
+    "field": {
+      "other": "Informação adicional",
+      "title": "Nome",
+      "unknown": "Um dado"
+    },
+    "filter": {
+      "all": "Tudo",
+      "censuses": "Listas de participantes",
+      "imports": "Importações",
+      "label": "Filtrar o histórico de alterações",
+      "people": "Pessoas",
+      "votes": "Votações"
+    },
+    "history": {
+      "census_title": "Histórico",
+      "empty": "Ainda não foram registadas alterações.",
+      "error": "Não foi possível carregar o histórico.",
+      "person_title": "Histórico"
+    },
+    "imports": {
+      "added_one": "{{added}} de {{total}} membro importado",
+      "added_many": "{{added}} de {{total}} membros importados",
+      "added_other": "{{added}} de {{total}} membros importados",
+      "problems_one": "{{count}} linha tinha problemas",
+      "problems_many": "{{count}} linhas tinham problemas",
+      "problems_other": "{{count}} linhas tinham problemas",
+      "status": {
+        "completed": "Concluído",
+        "failed": "Falhou",
+        "pending": "A importar"
+      },
+      "title": "Importações recentes"
+    },
+    "newer": "Mais recentes",
+    "older": "Mais antigos",
+    "soon": {
+      "description": "As edições de membros e listas de participantes vão aparecer aqui, prontas a exportar para as tuas atas.",
+      "title": "Em breve: cada alteração, com quem e quando"
+    },
+    "test_vote": "Votação de teste",
+    "untitled": "Sem título",
+    "votes": {
+      "title": "Votações"
+    }
+  },
   "add_new_org": "Adicionar uma nova organização",
   "additional_actions": "Ações adicionais",
   "all_processes": "Todos",
@@ -1175,6 +1261,9 @@
     "hidden": "{{label}} oculto"
   },
   "memberbase": {
+    "activity": {
+      "title": "Histórico de alterações"
+    },
     "add_person": "Adicionar pessoa",
     "censuses": {
       "title": "Listas de participantes"

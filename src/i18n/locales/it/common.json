@@ -22,6 +22,92 @@
     "view_active_votes": "Visualizza votazioni attive",
     "waiting_title": "In attesa di conferma della transazione..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "Chiave API",
+      "system": "Vocdoni"
+    },
+    "by": "da {{who}}",
+    "change": {
+      "changed": "{{field}} modificato",
+      "empty": "vuoto",
+      "values": "{{field}}: {{before}} → {{after}}"
+    },
+    "changes_one": "{{count}} modifica",
+    "changes_many": "{{count}} modifiche",
+    "changes_other": "{{count}} modifiche",
+    "empty": "Ancora niente. Le importazioni e le votazioni compariranno qui man mano che avvengono.",
+    "error": "Non siamo riusciti a caricare il registro delle modifiche. Riprova tra un momento.",
+    "event": {
+      "census_frozen": "Censimento di <strong>{{name}}</strong> congelato alla pubblicazione",
+      "census_members_added_one": "{{number}} persona aggiunta a '{{name}}'",
+      "census_members_added_many": "{{number}} persone aggiunte a '{{name}}'",
+      "census_members_added_other": "{{number}} persone aggiunte a '{{name}}'",
+      "census_members_removed_one": "{{number}} persona rimossa da '{{name}}'",
+      "census_members_removed_many": "{{number}} persone rimosse da '{{name}}'",
+      "census_members_removed_other": "{{number}} persone rimosse da '{{name}}'",
+      "exported": "Registro delle modifiche esportato",
+      "group_created": "Censimento <strong>{{name}}</strong> salvato",
+      "group_deleted": "Censimento <strong>{{name}}</strong> eliminato",
+      "group_updated": "Censimento <strong>{{name}}</strong> modificato",
+      "import_one": "{{number}} membro importato",
+      "import_many": "{{number}} membri importati",
+      "import_other": "{{number}} membri importati",
+      "member_added": "<strong>{{name}}</strong> aggiunto ai membri",
+      "member_deleted": "<strong>{{name}}</strong> eliminato dai membri",
+      "member_updated": "<strong>{{name}}</strong> modificato",
+      "process_created": "<strong>{{name}}</strong> creata",
+      "process_ended": "<strong>{{name}}</strong> terminata",
+      "process_published": "<strong>{{name}}</strong> pubblicata",
+      "process_started": "<strong>{{name}}</strong> iniziata"
+    },
+    "export": "Esporta CSV",
+    "export_error": "Non siamo riusciti a esportare il registro delle modifiche",
+    "field": {
+      "other": "Informazioni aggiuntive",
+      "title": "Nome",
+      "unknown": "Un dato"
+    },
+    "filter": {
+      "all": "Tutto",
+      "censuses": "Censimenti",
+      "imports": "Importazioni",
+      "label": "Filtra il registro delle modifiche",
+      "people": "Persone",
+      "votes": "Votazioni"
+    },
+    "history": {
+      "census_title": "Cronologia",
+      "empty": "Nessuna modifica registrata finora.",
+      "error": "Non siamo riusciti a caricare la cronologia.",
+      "person_title": "Cronologia"
+    },
+    "imports": {
+      "added_one": "{{added}} di {{total}} membro importato",
+      "added_many": "{{added}} di {{total}} membri importati",
+      "added_other": "{{added}} di {{total}} membri importati",
+      "problems_one": "{{count}} riga aveva problemi",
+      "problems_many": "{{count}} righe avevano problemi",
+      "problems_other": "{{count}} righe avevano problemi",
+      "status": {
+        "completed": "Fatto",
+        "failed": "Non riuscito",
+        "pending": "Importazione in corso"
+      },
+      "title": "Importazioni recenti"
+    },
+    "newer": "Più recenti",
+    "older": "Meno recenti",
+    "soon": {
+      "description": "Le modifiche a membri e censimenti compariranno qui, pronte da esportare per i tuoi verbali.",
+      "title": "Presto: ogni modifica, con chi e quando"
+    },
+    "test_vote": "Votazione di prova",
+    "untitled": "Senza titolo",
+    "votes": {
+      "title": "Votazioni"
+    }
+  },
   "add_new_org": "Aggiungi una nuova organizzazione",
   "additional_actions": "Azioni aggiuntive",
   "all_processes": "Tutti",
@@ -1175,6 +1261,9 @@
     "hidden": "{{label}} nascosto"
   },
   "memberbase": {
+    "activity": {
+      "title": "Registro delle modifiche"
+    },
     "add_person": "Aggiungi persona",
     "censuses": {
       "title": "Censimenti"

@@ -22,6 +22,86 @@
     "view_active_votes": "Ikusi bozketa aktiboak",
     "waiting_title": "Transakzioa berresteko zain..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "API gakoa",
+      "system": "Vocdoni"
+    },
+    "by": "{{who}}(e)k",
+    "change": {
+      "changed": "{{field}} aldatu da",
+      "empty": "hutsik",
+      "values": "{{field}}: {{before}} → {{after}}"
+    },
+    "changes_one": "Aldaketa {{count}}",
+    "changes_other": "{{count}} aldaketa",
+    "empty": "Oraindik ez dago ezer. Inportazioak eta bozketak hemen agertuko dira gertatu ahala.",
+    "error": "Ezin izan dugu aldaketen erregistroa kargatu. Saiatu berriro geroxeago.",
+    "event": {
+      "census_frozen": "<strong>{{name}}</strong> bozketaren erroldea izoztu da argitaratzean",
+      "census_members_added_one": "{{number}} pertsona gehitu da '{{name}}' erroldera",
+      "census_members_added_other": "{{number}} pertsona gehitu dira '{{name}}' erroldera",
+      "census_members_removed_one": "{{number}} pertsona kendu da '{{name}}' erroldetik",
+      "census_members_removed_other": "{{number}} pertsona kendu dira '{{name}}' erroldetik",
+      "exported": "Aldaketen erregistroa esportatu da",
+      "group_created": "<strong>{{name}}</strong> erroldea gorde da",
+      "group_deleted": "<strong>{{name}}</strong> erroldea ezabatu da",
+      "group_updated": "<strong>{{name}}</strong> erroldea editatu da",
+      "import_one": "Kide {{number}} inportatu da",
+      "import_other": "{{number}} kide inportatu dira",
+      "member_added": "<strong>{{name}}</strong> kideetara gehitu da",
+      "member_deleted": "<strong>{{name}}</strong> kideetatik ezabatu da",
+      "member_updated": "<strong>{{name}}</strong> editatu da",
+      "process_created": "<strong>{{name}}</strong> sortu da",
+      "process_ended": "<strong>{{name}}</strong> amaitu da",
+      "process_published": "<strong>{{name}}</strong> argitaratu da",
+      "process_started": "<strong>{{name}}</strong> hasi da"
+    },
+    "export": "Esportatu CSV",
+    "export_error": "Ezin izan dugu aldaketen erregistroa esportatu",
+    "field": {
+      "other": "Informazio gehigarria",
+      "title": "Izena",
+      "unknown": "Datu bat"
+    },
+    "filter": {
+      "all": "Guztiak",
+      "censuses": "Erroldeak",
+      "imports": "Inportazioak",
+      "label": "Iragazi aldaketen erregistroa",
+      "people": "Pertsonak",
+      "votes": "Bozketak"
+    },
+    "history": {
+      "census_title": "Historia",
+      "empty": "Oraindik ez da aldaketarik erregistratu.",
+      "error": "Ezin izan dugu historia kargatu.",
+      "person_title": "Historia"
+    },
+    "imports": {
+      "added_one": "{{total}} kidetik {{added}} inportatu da",
+      "added_other": "{{total}} kidetik {{added}} inportatu dira",
+      "problems_one": "{{count}} errenkadak arazoak zituen",
+      "problems_other": "{{count}} errenkadak arazoak zituzten",
+      "status": {
+        "completed": "Eginda",
+        "failed": "Huts egin du",
+        "pending": "Inportatzen"
+      },
+      "title": "Azken inportazioak"
+    },
+    "newer": "Berriagoak",
+    "older": "Zaharragoak",
+    "soon": {
+      "description": "Kideen eta erroldeen edizioak hemen agertuko dira, zure akten esportatzeko prest.",
+      "title": "Laster: aldaketa guztiak, nork eta noiz"
+    },
+    "test_vote": "Proba-bozketa",
+    "untitled": "Izenbururik gabe",
+    "votes": {
+      "title": "Bozketak"
+    }
+  },
   "add_new_org": "Gehitu erakunde berri bat",
   "additional_actions": "Ekintza osagarriak",
   "all_processes": "Guztiak",
@@ -1147,6 +1227,9 @@
     "hidden": "{{label}} ezkutatuta"
   },
   "memberbase": {
+    "activity": {
+      "title": "Aldaketen erregistroa"
+    },
     "add_person": "Gehitu pertsona",
     "censuses": {
       "title": "Erroldeak"

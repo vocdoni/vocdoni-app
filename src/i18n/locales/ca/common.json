@@ -22,6 +22,92 @@
     "view_active_votes": "Mostra les votacions actives",
     "waiting_title": "Esperant la confirmació de la transacció..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "Clau d'API",
+      "system": "Vocdoni"
+    },
+    "by": "per {{who}}",
+    "change": {
+      "changed": "{{field}} ha canviat",
+      "empty": "buit",
+      "values": "{{field}}: {{before}} → {{after}}"
+    },
+    "changes_one": "{{count}} canvi",
+    "changes_many": "{{count}} canvis",
+    "changes_other": "{{count}} canvis",
+    "empty": "Encara no hi ha res. Les importacions i les votacions apareixeran aquí a mesura que passin.",
+    "error": "No hem pogut carregar el registre de canvis. Torna-ho a provar d'aquí a una estona.",
+    "event": {
+      "census_frozen": "Cens de <strong>{{name}}</strong> congelat en publicar-se",
+      "census_members_added_one": "{{number}} persona afegida a '{{name}}'",
+      "census_members_added_many": "{{number}} persones afegides a '{{name}}'",
+      "census_members_added_other": "{{number}} persones afegides a '{{name}}'",
+      "census_members_removed_one": "{{number}} persona treta de '{{name}}'",
+      "census_members_removed_many": "{{number}} persones tretes de '{{name}}'",
+      "census_members_removed_other": "{{number}} persones tretes de '{{name}}'",
+      "exported": "Registre de canvis exportat",
+      "group_created": "Cens <strong>{{name}}</strong> desat",
+      "group_deleted": "Cens <strong>{{name}}</strong> esborrat",
+      "group_updated": "Cens <strong>{{name}}</strong> editat",
+      "import_one": "{{number}} membre importat",
+      "import_many": "{{number}} membres importats",
+      "import_other": "{{number}} membres importats",
+      "member_added": "<strong>{{name}}</strong> afegit als membres",
+      "member_deleted": "<strong>{{name}}</strong> esborrat dels membres",
+      "member_updated": "<strong>{{name}}</strong> editat",
+      "process_created": "<strong>{{name}}</strong> creada",
+      "process_ended": "<strong>{{name}}</strong> ha acabat",
+      "process_published": "<strong>{{name}}</strong> publicada",
+      "process_started": "<strong>{{name}}</strong> ha començat"
+    },
+    "export": "Exporta CSV",
+    "export_error": "No hem pogut exportar el registre de canvis",
+    "field": {
+      "other": "Informació addicional",
+      "title": "Nom",
+      "unknown": "Una dada"
+    },
+    "filter": {
+      "all": "Tot",
+      "censuses": "Censos",
+      "imports": "Importacions",
+      "label": "Filtra el registre de canvis",
+      "people": "Persones",
+      "votes": "Votacions"
+    },
+    "history": {
+      "census_title": "Historial",
+      "empty": "Encara no s'ha registrat cap canvi.",
+      "error": "No hem pogut carregar l'historial.",
+      "person_title": "Historial"
+    },
+    "imports": {
+      "added_one": "{{added}} de {{total}} membre importat",
+      "added_many": "{{added}} de {{total}} membres importats",
+      "added_other": "{{added}} de {{total}} membres importats",
+      "problems_one": "{{count}} fila tenia problemes",
+      "problems_many": "{{count}} files tenien problemes",
+      "problems_other": "{{count}} files tenien problemes",
+      "status": {
+        "completed": "Fet",
+        "failed": "Ha fallat",
+        "pending": "Important"
+      },
+      "title": "Importacions recents"
+    },
+    "newer": "Més recents",
+    "older": "Més antics",
+    "soon": {
+      "description": "Les edicions de membres i censos es mostraran aquí, a punt per exportar-les per a les teves actes.",
+      "title": "Aviat: cada canvi, amb qui i quan"
+    },
+    "test_vote": "Votació de prova",
+    "untitled": "Sense títol",
+    "votes": {
+      "title": "Votacions"
+    }
+  },
   "add_new_org": "Afegeix una nova organització",
   "additional_actions": "Accions addicionals",
   "all_processes": "Tots",
@@ -1175,6 +1261,9 @@
     "hidden": "{{label}} ocult"
   },
   "memberbase": {
+    "activity": {
+      "title": "Registre de canvis"
+    },
     "add_person": "Afegeix una persona",
     "censuses": {
       "title": "Censos"

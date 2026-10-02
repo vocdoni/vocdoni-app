@@ -22,6 +22,86 @@
     "view_active_votes": "View active votes",
     "waiting_title": "Waiting for transaction confirmation..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "API key",
+      "system": "Vocdoni"
+    },
+    "by": "by {{who}}",
+    "change": {
+      "changed": "{{field}} changed",
+      "empty": "empty",
+      "values": "{{field}}: {{before}} → {{after}}"
+    },
+    "changes_one": "{{count}} change",
+    "changes_other": "{{count}} changes",
+    "empty": "Nothing here yet. Imports and votes appear as they happen.",
+    "error": "We couldn't load the activity. Try again in a moment.",
+    "event": {
+      "census_frozen": "Census of <strong>{{name}}</strong> frozen at publish",
+      "census_members_added_one": "{{number}} person added to '{{name}}'",
+      "census_members_added_other": "{{number}} people added to '{{name}}'",
+      "census_members_removed_one": "{{number}} person removed from '{{name}}'",
+      "census_members_removed_other": "{{number}} people removed from '{{name}}'",
+      "exported": "Activity exported",
+      "group_created": "Census <strong>{{name}}</strong> saved",
+      "group_deleted": "Census <strong>{{name}}</strong> deleted",
+      "group_updated": "Census <strong>{{name}}</strong> edited",
+      "import_one": "{{number}} member imported",
+      "import_other": "{{number}} members imported",
+      "member_added": "<strong>{{name}}</strong> added to members",
+      "member_deleted": "<strong>{{name}}</strong> deleted from members",
+      "member_updated": "<strong>{{name}}</strong> edited",
+      "process_created": "<strong>{{name}}</strong> created",
+      "process_ended": "<strong>{{name}}</strong> ended",
+      "process_published": "<strong>{{name}}</strong> published",
+      "process_started": "<strong>{{name}}</strong> started"
+    },
+    "export": "Export CSV",
+    "export_error": "We couldn't export the activity",
+    "field": {
+      "other": "Extra info",
+      "title": "Name",
+      "unknown": "A detail"
+    },
+    "filter": {
+      "all": "All",
+      "censuses": "Censuses",
+      "imports": "Imports",
+      "label": "Filter activity",
+      "people": "People",
+      "votes": "Votes"
+    },
+    "history": {
+      "census_title": "History",
+      "empty": "No changes recorded yet.",
+      "error": "We couldn't load the history.",
+      "person_title": "History"
+    },
+    "imports": {
+      "added_one": "{{added}} of {{total}} member imported",
+      "added_other": "{{added}} of {{total}} members imported",
+      "problems_one": "{{count}} row had problems",
+      "problems_other": "{{count}} rows had problems",
+      "status": {
+        "completed": "Done",
+        "failed": "Failed",
+        "pending": "Importing"
+      },
+      "title": "Recent imports"
+    },
+    "newer": "Newer",
+    "older": "Older",
+    "soon": {
+      "description": "Edits to members and censuses will show here, ready to export for your minutes.",
+      "title": "Soon: every change, with who and when"
+    },
+    "test_vote": "Test vote",
+    "untitled": "Untitled",
+    "votes": {
+      "title": "Votes"
+    }
+  },
   "add_new_org": "Add a new organization",
   "additional_actions": "Additional actions",
   "all_processes": "All",
@@ -1147,6 +1227,9 @@
     "hidden": "{{label}} hidden"
   },
   "memberbase": {
+    "activity": {
+      "title": "Activity"
+    },
     "add_person": "Add person",
     "censuses": {
       "title": "Censuses"
