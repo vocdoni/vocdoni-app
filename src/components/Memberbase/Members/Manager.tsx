@@ -51,6 +51,9 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
   const [hadPhone, setHadPhone] = useState(false)
+  // The stored phone is never returned, so the field starts blank and cannot show a clear as a
+  // change; track edits to it explicitly so emptying it still reaches the API.
+  const phoneEdited = useRef(false)
 
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
 
@@ -125,20 +128,21 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   /**
    * Syncs the form values with the selected member.
    *
-   * When the `member` prop changes, this effect resets the form fields
-   * to match the new member's data. This ensures that when editing an existing
-   * member, the form is pre-filled with their current information.
+   * The form is reset when the drawer opens or the selected member changes, so that edits
+   * abandoned with Cancel are discarded. A refetch of the same member while the drawer is open
+   * must not wipe what the user is typing.
    */
   useEffect(() => {
-    if (member) {
+    if (member && isOpen) {
       const cleanMember = { ...member }
       if (member.phone) {
         cleanMember.phone = ''
-        setHadPhone(true)
       }
+      setHadPhone(!!member.phone)
+      phoneEdited.current = false
       methods.reset(stringifyObjectValues(cleanMember))
     }
-  }, [member])
+  }, [member?.id, isOpen])
 
   const onSubmit = (data: Partial<Member>) => {
     const { id, memberNumber, name, surname, email, phone, nationalId, birthDate, weight } = data
@@ -198,8 +202,15 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       // An untouched phone is blank in the form (it is never returned in plaintext), so it must
       // be left out rather than sent empty.
       const changes = Object.fromEntries(
-        Object.entries(memberPayload).filter(([key]) => key !== 'id' && dirtyFields[key])
+        Object.entries(memberPayload).filter(
+          ([key]) => key !== 'id' && (dirtyFields[key] || (key === 'phone' && hadPhone && phoneEdited.current))
+        )
       )
+
+      if (Object.keys(changes).length === 0) {
+        closeDrawer()
+        return
+      }
 
       editMember.mutate(
         { id: memberId, ...changes },
@@ -269,9 +280,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                             <NumberInput.Root
                               w='full'
                               value={field.value === '' ? '' : String(field.value ?? '')}
-                              onValueChange={(details) =>
-                                field.onChange(details.value === '' ? '' : Number(details.value))
-                              }
+                              onValueChange={(details) => field.onChange(details.value)}
                             >
                               <NumberInput.Input />
                               <NumberInput.Control>
@@ -285,6 +294,11 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                         <Input
                           {...methods.register(col.id, {
                             ...(fieldValidations[col.id] || {}),
+                            ...(isPhone && {
+                              onChange: () => {
+                                phoneEdited.current = true
+                              },
+                            }),
                           })}
                           placeholder={hadPhone && isPhone ? '•••••••••••' : ''}
                           type={isBirthdate ? 'date' : isPhone ? 'tel' : 'text'}
