@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event'
 import { render, screen } from '~src/test-utils'
-import { changedFields, PersonForm } from './PersonForm'
+import { changedFields, editPayload, PersonForm } from './PersonForm'
 import type { SelectedMember } from './useSelection'
 
 const mocks = vi.hoisted(() => ({ edit: vi.fn(), add: vi.fn(), track: vi.fn() }))
@@ -56,6 +56,17 @@ describe('changedFields', () => {
   })
 })
 
+describe('editPayload', () => {
+  it('keeps the current voting power, which the API would otherwise reset to 1', () => {
+    expect(editPayload({ ...anna, weight: '5' }, { surname: 'Vila i Puig' })).toEqual({
+      surname: 'Vila i Puig',
+      weight: '5',
+    })
+    expect(editPayload({ ...anna, weight: '5' }, { weight: '3' })).toEqual({ weight: '3' })
+    expect(editPayload(anna, { surname: 'Vila i Puig' })).toEqual({ surname: 'Vila i Puig' })
+  })
+})
+
 describe('PersonForm', () => {
   beforeEach(() => {
     mocks.edit.mockReset().mockResolvedValue(undefined)
@@ -90,6 +101,16 @@ describe('PersonForm', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(mocks.edit).toHaveBeenCalledWith({ id: 'a1', phone: '+34600000000' })
+  })
+
+  it('sends the current voting power with any edit', async () => {
+    const user = userEvent.setup()
+    render(<Harness member={{ ...anna, weight: '5' }} />)
+
+    await user.type(screen.getByRole('textbox', { name: 'Last Name' }), ' i Serra')
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(mocks.edit).toHaveBeenCalledWith({ id: 'a1', surname: 'Vila Puig i Serra', weight: '5' })
   })
 
   it('saves nothing when nothing changed', async () => {

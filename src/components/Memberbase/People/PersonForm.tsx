@@ -46,6 +46,14 @@ export const changedFields = (member: Partial<Member>, values: PersonFormValues)
   return changed as Partial<Member>
 }
 
+/**
+ * The body of an edit: the changed fields plus the member's current voting power. The API writes
+ * the weight on every update and takes a missing one as 1, so leaving it out would reset anyone's
+ * voting power whenever another detail changes.
+ */
+export const editPayload = (member: Partial<Member>, changed: Partial<Member>): Partial<Member> =>
+  changed.weight === undefined && member.weight ? { ...changed, weight: member.weight } : changed
+
 /** What a new person is created with: every field that was filled in. */
 export const newMemberPayload = (values: PersonFormValues): Partial<Member> =>
   Object.fromEntries(
@@ -104,7 +112,7 @@ export const PersonForm = ({ formId, member, onSaved, onPendingChange, inLiveVot
         return
       }
       try {
-        await editMember.mutateAsync({ id: member.id, ...changed })
+        await editMember.mutateAsync({ id: member.id, ...editPayload(member, changed) })
         trackAnalyticsEvent({ name: AnalyticsEvents.MemberUpdated, props: { in_live_vote: inLiveVote } })
         toast({
           title: t('members.person.saved', { defaultValue: 'Changes saved' }),
