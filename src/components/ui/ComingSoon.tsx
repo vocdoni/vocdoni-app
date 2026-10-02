@@ -142,7 +142,7 @@ export const ComingSoonButton = ({
         size='xs'
         variant='outline'
         colorPalette='gray'
-        color='fg.subtle'
+        color='fg.muted'
         borderStyle='dashed'
         aria-description={typeof title === 'string' ? title : undefined}
         {...buttonProps}
