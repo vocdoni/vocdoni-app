@@ -567,6 +567,22 @@ describe('CensusDetail', () => {
       expect(state.track).toHaveBeenCalledWith({ name: 'voters_added', props: { count: 2, surface: 'undo_remove' } })
     })
 
+    it('offers no way back when the vote limits who answers a question, as that list would stay short', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus([
+        { id: 'q1', title: { default: 'Treasurer' }, status: 'ONGOING', eligibleMemberIds: ['m1', 'm2', 'm3'] },
+      ])
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await select(user, 'Person01 Vila')
+      await user.click(screen.getByRole('button', { name: 'Remove…' }))
+      await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Remove 1 voter' }))
+
+      await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '3 → 2 voters' })))
+      const removedToast = state.toast.mock.calls.find(([options]) => options.title === '3 → 2 voters')![0]
+      expect(removedToast.action).toBeUndefined()
+    })
+
     it('adds back only who actually went after someone blocked the first try', async () => {
       const user = userEvent.setup()
       liveOwnCensus()

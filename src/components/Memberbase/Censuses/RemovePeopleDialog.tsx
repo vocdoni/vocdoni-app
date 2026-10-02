@@ -60,6 +60,9 @@ export const RemovePeopleDialog = ({
   const running = census.state === 'live' || census.state === 'paused' || census.state === 'scheduled'
   const ids = people.map((person) => person.id)
   const emptied = vote ? questionsEmptiedBy(census.process?.questions, ids, language) : []
+  // The API also takes removed people off each question's list of who may answer it, and adding
+  // them back doesn't put them there again: no "Add them back" then, as it would only half undo it
+  const canUndo = !census.process?.questions?.some((question) => question.eligibleMemberIds?.length)
 
   useEffect(() => {
     if (!open) return
@@ -126,12 +129,13 @@ export const RemovePeopleDialog = ({
         type: 'success',
         duration: UNDO_DURATION,
         isClosable: true,
-        action: gone?.length
-          ? {
-              label: t('census_detail.remove.undo', { defaultValue: 'Add them back' }),
-              onClick: () => void addBack(gone, after),
-            }
-          : undefined,
+        action:
+          canUndo && gone?.length
+            ? {
+                label: t('census_detail.remove.undo', { defaultValue: 'Add them back' }),
+                onClick: () => void addBack(gone, after),
+              }
+            : undefined,
       })
       onRemoved?.()
     }
