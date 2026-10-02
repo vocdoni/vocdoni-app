@@ -2043,21 +2043,92 @@
     "auto_start": "Iniciar imediatamente",
     "basic_configuration": "Configuração básica",
     "census": {
-      "group": {
-        "no_groups": "Para iniciar uma votação, tens primeiro de criar um grupo de votantes elegíveis a partir da tua base de membros. <1>Cria um aqui</1>."
+      "choose": {
+        "card": "Escolher pessoas",
+        "description": "Pesquisa, seleciona ou cola uma lista.",
+        "find": "Procurar pessoas",
+        "hint": "Esta votação fica com a sua própria lista de participantes. Os teus membros ficam como estão.",
+        "none": "Ainda ninguém selecionado.",
+        "remove": "Remover {{name}}",
+        "selected_many": "Selecionadas ({{count}})",
+        "selected_one": "Selecionadas ({{count}})",
+        "selected_other": "Selecionadas ({{count}})",
+        "submit_many": "Usar {{formattedCount}} pessoas",
+        "submit_one": "Usar 1 pessoa",
+        "submit_other": "Usar {{formattedCount}} pessoas",
+        "title": "Escolhe quem pode votar"
+      },
+      "error": "Não foi possível alterar quem pode votar",
+      "error_detail": "Nada foi alterado. Tenta novamente daqui a pouco.",
+      "error_empty": "Não há ninguém para copiar",
+      "error_stale": "Este rascunho foi alterado noutro local. Recarrega a página e tenta novamente.",
+      "everyone": {
+        "description_many": "Todos os {{formattedCount}} membros. Os novos membros entram até publicares; depois fica congelada.",
+        "description_one": "O teu 1 membro. Os novos membros entram até publicares; depois fica congelada.",
+        "description_other": "Todos os {{formattedCount}} membros. Os novos membros entram até publicares; depois fica congelada.",
+        "title": "Todos"
+      },
+      "go_to_members": "Ir para Membros",
+      "group_title": "{{vote}} — lista de participantes",
+      "keep_current": "Manter a lista de participantes atual",
+      "line": {
+        "checking": "A verificar quem pode receber um código…",
+        "email": "{{email}} recebem o código por email",
+        "email_sms": "{{email}} recebem o código por email, {{sms}} por SMS",
+        "ready": "Lista de participantes pronta",
+        "review": "Rever lista de participantes",
+        "sms": "{{sms}} recebem o código por SMS",
+        "unreachable_many": "{{formattedCount}} votantes não podem receber um código: sem email nem telemóvel",
+        "unreachable_one": "1 votante não pode receber um código: sem email nem telemóvel",
+        "unreachable_other": "{{formattedCount}} votantes não podem receber um código: sem email nem telemóvel",
+        "voters_many": "{{formattedCount}} votantes",
+        "voters_one": "1 votante",
+        "voters_other": "{{formattedCount}} votantes"
       },
       "memberbase": {
         "label": "Seleciona um grupo de membros para criar a lista de participantes"
-      }
+      },
+      "missing": "A lista de participantes usada por este rascunho foi eliminada. Escolhe novamente quem pode votar.",
+      "name_first": "Dá primeiro um nome à votação, para que possa ter a sua própria lista de participantes",
+      "no_members": "Adiciona primeiro os teus membros: depois escolhes quem pode votar.",
+      "owned": {
+        "count_many": "{{formattedCount}} pessoas",
+        "count_one": "1 pessoa",
+        "count_other": "{{formattedCount}} pessoas",
+        "edit": "Editar lista de participantes",
+        "start_over": "Recomeçar"
+      },
+      "previous": {
+        "card": "Igual a uma votação anterior",
+        "description": "Copia quem podia votar nela.",
+        "hint": "Esta votação fica com a sua própria cópia das pessoas que podiam votar nela.",
+        "no_list": "As pessoas foram escolhidas uma a uma, por isso não há lista para copiar.",
+        "none": "Ainda não há outras votações.",
+        "title": "Igual a uma votação anterior"
+      },
+      "saved": {
+        "after_name": "Fica com a sua própria cópia assim que a votação tiver um nome.",
+        "description": "Esta votação fica com a sua própria cópia.",
+        "option": "{{name}} ({{formattedCount}})",
+        "placeholder": "Escolhe uma lista guardada",
+        "select": "Lista guardada",
+        "title": "De uma lista guardada"
+      },
+      "sheet_title": "Lista de participantes desta votação",
+      "source": {
+        "copied_on": "Copiada de «{{name}}» em {{date}}",
+        "test": "As pessoas da votação de teste"
+      },
+      "test_people_leave_out": "Deixá-las de fora",
+      "test_people_many": "{{count}} pessoas de teste estão nos teus membros",
+      "test_people_one": "1 pessoa de teste está nos teus membros",
+      "test_people_other": "{{count}} pessoas de teste estão nos teus membros"
     },
     "census_creation": "Criação da lista de participantes",
     "end_datetime": "Data e hora de fim",
     "extra_configuration": "Configuração adicional",
-    "group": {
-      "select": "Selecionar grupo"
-    },
-    "groups": {
-      "scroll_to_load": "Desce para carregar mais…"
+    "issue": {
+      "census_unreachable": "Alguns votantes não podem receber um código para iniciar sessão"
     },
     "new_option": "Adicionar uma nova opção",
     "option": {
@@ -2079,6 +2150,16 @@
       "hidden": "Ocultos até ao fim",
       "live": "Resultados em direto",
       "title": "Visibilidade dos resultados"
+    },
+    "review": {
+      "census_failed": "Não foi possível preparar a lista de participantes, por isso nada foi publicado. Tenta novamente.",
+      "census_stale": "Este rascunho foi alterado noutro local durante a publicação. Nada foi publicado. Recarrega a página e tenta novamente.",
+      "frozen_many": "Ao publicares, a lista de participantes fica congelada com as {{count}} pessoas que tem agora. Adiciona ou remove pessoas mais tarde no separador Votantes da votação.",
+      "frozen_one": "Ao publicares, a lista de participantes fica congelada com a 1 pessoa que tem agora. Adiciona ou remove pessoas mais tarde no separador Votantes da votação.",
+      "frozen_other": "Ao publicares, a lista de participantes fica congelada com as {{count}} pessoas que tem agora. Adiciona ou remove pessoas mais tarde no separador Votantes da votação.",
+      "own_census_many": "As {{count}} pessoas da lista de participantes desta votação podem votar",
+      "own_census_one": "A 1 pessoa da lista de participantes desta votação pode votar",
+      "own_census_other": "As {{count}} pessoas da lista de participantes desta votação podem votar"
     },
     "settings": "Definições",
     "start_datetime": "Data e hora de início",

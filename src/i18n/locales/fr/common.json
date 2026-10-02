@@ -2043,21 +2043,92 @@
     "auto_start": "Démarrer immédiatement",
     "basic_configuration": "Configuration de base",
     "census": {
-      "group": {
-        "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
+      "choose": {
+        "card": "Choisir des personnes",
+        "description": "Recherchez, cochez ou collez une liste.",
+        "find": "Rechercher des personnes",
+        "hint": "Ce vote reçoit sa propre liste électorale avec ces personnes. Vos membres ne changent pas.",
+        "none": "Personne n'est encore sélectionné.",
+        "remove": "Retirer {{name}}",
+        "selected_many": "Sélection ({{count}})",
+        "selected_one": "Sélection ({{count}})",
+        "selected_other": "Sélection ({{count}})",
+        "submit_many": "Utiliser {{formattedCount}} personnes",
+        "submit_one": "Utiliser 1 personne",
+        "submit_other": "Utiliser {{formattedCount}} personnes",
+        "title": "Choisir qui peut voter"
+      },
+      "error": "Impossible de modifier qui peut voter",
+      "error_detail": "Rien n'a changé. Réessayez dans un instant.",
+      "error_empty": "Il n'y a personne à copier",
+      "error_stale": "Ce brouillon a été modifié ailleurs. Rechargez la page et réessayez.",
+      "everyone": {
+        "description_many": "Tous les {{formattedCount}} membres. Les nouveaux membres s'ajoutent jusqu'à la publication, puis la liste est figée.",
+        "description_one": "Votre unique membre. Les nouveaux membres s'ajoutent jusqu'à la publication, puis la liste est figée.",
+        "description_other": "Tous les {{formattedCount}} membres. Les nouveaux membres s'ajoutent jusqu'à la publication, puis la liste est figée.",
+        "title": "Tout le monde"
+      },
+      "go_to_members": "Aller à Membres",
+      "group_title": "{{vote}} — liste électorale",
+      "keep_current": "Conserver la liste électorale actuelle",
+      "line": {
+        "checking": "Vérification de qui peut recevoir un code…",
+        "email": "{{email}} reçoivent leur code par e-mail",
+        "email_sms": "{{email}} reçoivent leur code par e-mail, {{sms}} par SMS",
+        "ready": "Liste électorale prête",
+        "review": "Vérifier la liste électorale",
+        "sms": "{{sms}} reçoivent leur code par SMS",
+        "unreachable_many": "{{formattedCount}} électeurs ne peuvent pas recevoir de code : ni e-mail ni mobile",
+        "unreachable_one": "1 électeur ne peut pas recevoir de code : ni e-mail ni mobile",
+        "unreachable_other": "{{formattedCount}} électeurs ne peuvent pas recevoir de code : ni e-mail ni mobile",
+        "voters_many": "{{formattedCount}} électeurs",
+        "voters_one": "1 électeur",
+        "voters_other": "{{formattedCount}} électeurs"
       },
       "memberbase": {
         "label": "Sélectionnez un groupe de membres pour créer la liste électorale"
-      }
+      },
+      "missing": "La liste électorale utilisée par ce brouillon a été supprimée. Choisissez à nouveau qui peut voter.",
+      "name_first": "Nommez d'abord votre vote pour qu'il ait sa propre liste électorale",
+      "no_members": "Ajoutez d'abord vos membres : vous choisirez ensuite qui peut voter.",
+      "owned": {
+        "count_many": "{{formattedCount}} personnes",
+        "count_one": "1 personne",
+        "count_other": "{{formattedCount}} personnes",
+        "edit": "Modifier la liste électorale",
+        "start_over": "Recommencer"
+      },
+      "previous": {
+        "card": "Comme un vote précédent",
+        "description": "Copier qui pouvait voter.",
+        "hint": "Ce vote reçoit sa propre copie des personnes qui pouvaient y voter.",
+        "no_list": "Ses personnes ont été choisies une à une : il n'y a pas de liste à copier.",
+        "none": "Il n'y a pas encore d'autres votes.",
+        "title": "Comme un vote précédent"
+      },
+      "saved": {
+        "after_name": "Elle reçoit sa propre copie dès que le vote a un nom.",
+        "description": "Ce vote reçoit sa propre copie.",
+        "option": "{{name}} ({{formattedCount}})",
+        "placeholder": "Choisir une liste électorale enregistrée",
+        "select": "Liste électorale enregistrée",
+        "title": "D'une liste électorale enregistrée"
+      },
+      "sheet_title": "Liste électorale de ce vote",
+      "source": {
+        "copied_on": "Copiée de « {{name}} » le {{date}}",
+        "test": "Les personnes du vote test"
+      },
+      "test_people_leave_out": "Les exclure",
+      "test_people_many": "{{count}} personnes de test figurent parmi vos membres",
+      "test_people_one": "1 personne de test figure parmi vos membres",
+      "test_people_other": "{{count}} personnes de test figurent parmi vos membres"
     },
     "census_creation": "Création de la liste électorale",
     "end_datetime": "Date et heure de fin",
     "extra_configuration": "Configuration supplémentaire",
-    "group": {
-      "select": "Sélectionner un groupe"
-    },
-    "groups": {
-      "scroll_to_load": "Faites défiler pour en charger davantage…"
+    "issue": {
+      "census_unreachable": "Certains électeurs ne peuvent pas recevoir de code pour se connecter"
     },
     "new_option": "Ajouter une nouvelle option",
     "option": {
@@ -2079,6 +2150,16 @@
       "hidden": "Masqués jusqu'à la fin",
       "live": "Résultats en direct",
       "title": "Visibilité des résultats"
+    },
+    "review": {
+      "census_failed": "La liste électorale n'a pas pu être préparée, rien n'a été publié. Réessayez.",
+      "census_stale": "Ce brouillon a été modifié ailleurs pendant la publication. Rien n'a été publié. Rechargez la page et réessayez.",
+      "frozen_many": "À la publication, la liste électorale est figée avec les {{count}} personnes qu'elle contient. Ajoutez ou retirez des personnes plus tard depuis l'onglet Électeurs du vote.",
+      "frozen_one": "À la publication, la liste électorale est figée avec la seule personne qu'elle contient. Ajoutez ou retirez des personnes plus tard depuis l'onglet Électeurs du vote.",
+      "frozen_other": "À la publication, la liste électorale est figée avec les {{count}} personnes qu'elle contient. Ajoutez ou retirez des personnes plus tard depuis l'onglet Électeurs du vote.",
+      "own_census_many": "Les {{count}} personnes de la liste électorale de ce vote peuvent voter",
+      "own_census_one": "La seule personne de la liste électorale de ce vote peut voter",
+      "own_census_other": "Les {{count}} personnes de la liste électorale de ce vote peuvent voter"
     },
     "settings": "Paramètres",
     "start_datetime": "Date et heure de début",

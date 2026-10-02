@@ -2043,21 +2043,92 @@
     "auto_start": "Iniciar de inmediato",
     "basic_configuration": "Configuración básica",
     "census": {
-      "group": {
-        "no_groups": "Para iniciar una votación, primero necesitas crear un grupo de votantes con derecho a voto a partir de tu base de miembros. <1>Créalo aquí</1>."
+      "choose": {
+        "card": "Elegir personas",
+        "description": "Busca, marca o pega una lista.",
+        "find": "Buscar personas",
+        "hint": "Esta votación tendrá su propio censo con ellas. Tus miembros no cambian.",
+        "none": "Aún no hay nadie seleccionado.",
+        "remove": "Quitar a {{name}}",
+        "selected_many": "Seleccionadas ({{count}})",
+        "selected_one": "Seleccionadas ({{count}})",
+        "selected_other": "Seleccionadas ({{count}})",
+        "submit_many": "Usar {{formattedCount}} personas",
+        "submit_one": "Usar 1 persona",
+        "submit_other": "Usar {{formattedCount}} personas",
+        "title": "Elige quién puede votar"
+      },
+      "error": "No se ha podido cambiar quién puede votar",
+      "error_detail": "No ha cambiado nada. Inténtalo de nuevo en un momento.",
+      "error_empty": "No hay nadie que copiar",
+      "error_stale": "Este borrador se ha cambiado desde otro sitio. Recarga la página e inténtalo de nuevo.",
+      "everyone": {
+        "description_many": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después queda congelado.",
+        "description_one": "Tu único miembro. Los nuevos miembros se añaden hasta que publiques; después queda congelado.",
+        "description_other": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después queda congelado.",
+        "title": "Todos"
+      },
+      "go_to_members": "Ir a Miembros",
+      "group_title": "{{vote}} — censo",
+      "keep_current": "Mantener el censo actual",
+      "line": {
+        "checking": "Comprobando quién puede recibir un código…",
+        "email": "{{email}} reciben el código por correo",
+        "email_sms": "{{email}} reciben el código por correo, {{sms}} por SMS",
+        "ready": "Censo listo",
+        "review": "Revisar censo",
+        "sms": "{{sms}} reciben el código por SMS",
+        "unreachable_many": "{{formattedCount}} votantes no pueden recibir un código: no tienen correo ni móvil",
+        "unreachable_one": "1 votante no puede recibir un código: no tiene correo ni móvil",
+        "unreachable_other": "{{formattedCount}} votantes no pueden recibir un código: no tienen correo ni móvil",
+        "voters_many": "{{formattedCount}} votantes",
+        "voters_one": "1 votante",
+        "voters_other": "{{formattedCount}} votantes"
       },
       "memberbase": {
         "label": "Selecciona un grupo de miembros para crear el censo"
-      }
+      },
+      "missing": "El censo que usaba este borrador se ha eliminado. Vuelve a elegir quién puede votar.",
+      "name_first": "Pon nombre a la votación primero, para que pueda tener su propio censo",
+      "no_members": "Añade primero tus miembros: después elegirás quién puede votar.",
+      "owned": {
+        "count_many": "{{formattedCount}} personas",
+        "count_one": "1 persona",
+        "count_other": "{{formattedCount}} personas",
+        "edit": "Editar censo",
+        "start_over": "Empezar de nuevo"
+      },
+      "previous": {
+        "card": "Igual que una votación anterior",
+        "description": "Copia quién podía votar en ella.",
+        "hint": "Esta votación tendrá su propia copia de las personas que podían votar en ella.",
+        "no_list": "Sus personas se eligieron una a una, así que no hay lista que copiar.",
+        "none": "Aún no hay otras votaciones.",
+        "title": "Igual que una votación anterior"
+      },
+      "saved": {
+        "after_name": "Tendrá su propia copia en cuanto la votación tenga nombre.",
+        "description": "Esta votación tendrá su propia copia.",
+        "option": "{{name}} ({{formattedCount}})",
+        "placeholder": "Elige un censo guardado",
+        "select": "Censo guardado",
+        "title": "De un censo guardado"
+      },
+      "sheet_title": "Censo de esta votación",
+      "source": {
+        "copied_on": "Copiado de «{{name}}» el {{date}}",
+        "test": "Las personas de la votación de prueba"
+      },
+      "test_people_leave_out": "Dejarlas fuera",
+      "test_people_many": "{{count}} personas de prueba están en tus miembros",
+      "test_people_one": "1 persona de prueba está en tus miembros",
+      "test_people_other": "{{count}} personas de prueba están en tus miembros"
     },
     "census_creation": "Creación de censo",
     "end_datetime": "Fecha y hora de finalización",
     "extra_configuration": "Configuración avanzada",
-    "group": {
-      "select": "Seleccionar grupo"
-    },
-    "groups": {
-      "scroll_to_load": "Desplázate para cargar más..."
+    "issue": {
+      "census_unreachable": "Algunos votantes no pueden recibir un código para iniciar sesión"
     },
     "new_option": "Añadir nueva opción",
     "option": {
@@ -2079,6 +2150,16 @@
       "hidden": "Ocultos hasta el final",
       "live": "Resultados en directo",
       "title": "Visibilidad de resultados"
+    },
+    "review": {
+      "census_failed": "No se ha podido preparar el censo, así que no se ha publicado nada. Inténtalo de nuevo.",
+      "census_stale": "Este borrador se ha cambiado desde otro sitio mientras se publicaba. No se ha publicado nada. Recarga la página e inténtalo de nuevo.",
+      "frozen_many": "Al publicar, el censo se congela con las {{count}} personas que hay ahora. Añade o quita personas más tarde desde la pestaña Votantes de la votación.",
+      "frozen_one": "Al publicar, el censo se congela con la 1 persona que hay ahora. Añade o quita personas más tarde desde la pestaña Votantes de la votación.",
+      "frozen_other": "Al publicar, el censo se congela con las {{count}} personas que hay ahora. Añade o quita personas más tarde desde la pestaña Votantes de la votación.",
+      "own_census_many": "Las {{count}} personas del censo de esta votación pueden votar",
+      "own_census_one": "La 1 persona del censo de esta votación puede votar",
+      "own_census_other": "Las {{count}} personas del censo de esta votación pueden votar"
     },
     "settings": "Configuración",
     "start_datetime": "Fecha y hora de inicio",

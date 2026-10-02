@@ -1958,21 +1958,85 @@
     "auto_start": "Sofort starten",
     "basic_configuration": "Grundkonfiguration",
     "census": {
-      "group": {
-        "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
+      "choose": {
+        "card": "Personen auswählen",
+        "description": "Suche, hake an oder füge eine Liste ein.",
+        "find": "Personen suchen",
+        "hint": "Diese Abstimmung bekommt daraus eine eigene Teilnehmerliste. Deine Mitglieder bleiben unverändert.",
+        "none": "Noch niemand ausgewählt.",
+        "remove": "{{name}} entfernen",
+        "selected_one": "Ausgewählt ({{count}})",
+        "selected_other": "Ausgewählt ({{count}})",
+        "submit_one": "1 Person verwenden",
+        "submit_other": "{{formattedCount}} Personen verwenden",
+        "title": "Auswählen, wer abstimmen kann"
+      },
+      "error": "Wer abstimmen kann, konnte nicht geändert werden",
+      "error_detail": "Nichts wurde geändert. Versuche es gleich noch einmal.",
+      "error_empty": "Es gibt niemanden zu kopieren",
+      "error_stale": "Dieser Entwurf wurde woanders geändert. Lade die Seite neu und versuche es erneut.",
+      "everyone": {
+        "description_one": "Dein einziges Mitglied. Neue Mitglieder kommen bis zur Veröffentlichung dazu, danach ist die Liste eingefroren.",
+        "description_other": "Alle {{formattedCount}} Mitglieder. Neue Mitglieder kommen bis zur Veröffentlichung dazu, danach ist die Liste eingefroren.",
+        "title": "Alle"
+      },
+      "go_to_members": "Zu den Mitgliedern",
+      "group_title": "{{vote}} — Teilnehmerliste",
+      "keep_current": "Aktuelle Teilnehmerliste behalten",
+      "line": {
+        "checking": "Prüfe, wer einen Code bekommen kann…",
+        "email": "{{email}} erhalten ihren Code per E-Mail",
+        "email_sms": "{{email}} erhalten ihren Code per E-Mail, {{sms}} per SMS",
+        "ready": "Teilnehmerliste bereit",
+        "review": "Teilnehmerliste prüfen",
+        "sms": "{{sms}} erhalten ihren Code per SMS",
+        "unreachable_one": "1 Person kann keinen Code erhalten: keine E-Mail oder Handynummer",
+        "unreachable_other": "{{formattedCount}} Personen können keinen Code erhalten: keine E-Mail oder Handynummer",
+        "voters_one": "1 Person",
+        "voters_other": "{{formattedCount}} Personen"
       },
       "memberbase": {
         "label": "Wähle eine Mitgliedergruppe aus, um die Teilnehmerliste zu erstellen"
-      }
+      },
+      "missing": "Die Teilnehmerliste dieses Entwurfs wurde gelöscht. Wähle erneut, wer abstimmen kann.",
+      "name_first": "Gib der Abstimmung zuerst einen Namen, damit sie eine eigene Teilnehmerliste bekommt",
+      "no_members": "Füge zuerst deine Mitglieder hinzu, dann wählst du, wer abstimmen kann.",
+      "owned": {
+        "count_one": "1 Person",
+        "count_other": "{{formattedCount}} Personen",
+        "edit": "Teilnehmerliste bearbeiten",
+        "start_over": "Neu beginnen"
+      },
+      "previous": {
+        "card": "Wie eine frühere Abstimmung",
+        "description": "Kopiere, wer abstimmen konnte.",
+        "hint": "Diese Abstimmung bekommt eine eigene Kopie der Personen, die dort abstimmen konnten.",
+        "no_list": "Die Personen wurden einzeln ausgewählt, daher gibt es keine Liste zum Kopieren.",
+        "none": "Es gibt noch keine anderen Abstimmungen.",
+        "title": "Wie eine frühere Abstimmung"
+      },
+      "saved": {
+        "after_name": "Sie bekommt eine eigene Kopie, sobald die Abstimmung einen Namen hat.",
+        "description": "Diese Abstimmung bekommt eine eigene Kopie.",
+        "option": "{{name}} ({{formattedCount}})",
+        "placeholder": "Gespeicherte Teilnehmerliste wählen",
+        "select": "Gespeicherte Teilnehmerliste",
+        "title": "Aus einer gespeicherten Teilnehmerliste"
+      },
+      "sheet_title": "Teilnehmerliste dieser Abstimmung",
+      "source": {
+        "copied_on": "Kopiert von „{{name}}“ am {{date}}",
+        "test": "Die Personen der Testabstimmung"
+      },
+      "test_people_leave_out": "Ausschließen",
+      "test_people_one": "1 Testperson ist unter deinen Mitgliedern",
+      "test_people_other": "{{count}} Testpersonen sind unter deinen Mitgliedern"
     },
     "census_creation": "Erstellung der Teilnehmerliste",
     "end_datetime": "Enddatum und -uhrzeit",
     "extra_configuration": "Zusätzliche Konfiguration",
-    "group": {
-      "select": "Gruppe auswählen"
-    },
-    "groups": {
-      "scroll_to_load": "Scrollen, um mehr zu laden…"
+    "issue": {
+      "census_unreachable": "Manche Wählende können keinen Code zum Anmelden erhalten"
     },
     "new_option": "Neue Option hinzufügen",
     "option": {
@@ -1994,6 +2058,14 @@
       "hidden": "Verborgen bis zum Ende",
       "live": "Live-Ergebnisse",
       "title": "Sichtbarkeit der Ergebnisse"
+    },
+    "review": {
+      "census_failed": "Die Teilnehmerliste konnte nicht vorbereitet werden, daher wurde nichts veröffentlicht. Versuche es erneut.",
+      "census_stale": "Dieser Entwurf wurde während der Veröffentlichung woanders geändert. Es wurde nichts veröffentlicht. Lade die Seite neu und versuche es erneut.",
+      "frozen_one": "Mit der Veröffentlichung wird die Teilnehmerliste mit der einen Person darin eingefroren. Füge später im Tab „Wählende“ der Abstimmung Personen hinzu oder entferne sie.",
+      "frozen_other": "Mit der Veröffentlichung wird die Teilnehmerliste mit den {{count}} Personen darin eingefroren. Füge später im Tab „Wählende“ der Abstimmung Personen hinzu oder entferne sie.",
+      "own_census_one": "Die eine Person in der Teilnehmerliste dieser Abstimmung kann abstimmen",
+      "own_census_other": "Die {{count}} Personen in der Teilnehmerliste dieser Abstimmung können abstimmen"
     },
     "settings": "Einstellungen",
     "start_datetime": "Startdatum und -uhrzeit",
