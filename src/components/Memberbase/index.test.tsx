@@ -22,7 +22,7 @@ vi.mock('~src/queries/members', async (importOriginal) => {
 
 // The header's import drawer and add-person sheet aren't under test here
 vi.mock('./Members/Import', () => ({ ImportMembers: () => <button data-testid='members-import-open'>Import</button> }))
-vi.mock('./Members/Manager', () => ({ MemberManager: () => null }))
+vi.mock('./People/AddPersonSheet', () => ({ AddPersonSheet: () => null }))
 
 const renderTabs = () =>
   render(

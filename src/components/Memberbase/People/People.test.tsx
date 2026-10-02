@@ -260,4 +260,22 @@ describe('People', () => {
     await user.click(screen.getAllByRole('button', { name: 'Clear search' })[0])
     expect(currentUrl()).toBe('/admin/memberbase/members/1')
   })
+
+  it("opens the drawer from ?member= with the person's details, and closing it drops the param", async () => {
+    const user = userEvent.setup()
+    renderPeople('/admin/memberbase/members/1?member=a1')
+
+    const drawer = await screen.findByRole('dialog')
+    expect(within(drawer).getByText('Anna Vila Puig')).toBeInTheDocument()
+    expect(within(drawer).getByText('No. 0042')).toBeInTheDocument()
+    expect(within(drawer).getByText('On file')).toBeInTheDocument()
+    expect(within(drawer).getByText('National ID ending in 78Z')).toBeInTheDocument()
+    expect(within(drawer).getByText('anna@example.test').closest('.ph-no-capture')).not.toBeNull()
+
+    await user.click(within(drawer).getByRole('button', { name: 'Edit' }))
+    expect(within(drawer).getByRole('textbox', { name: 'Email' })).toHaveValue('anna@example.test')
+
+    await user.click(within(drawer).getByRole('button', { name: 'Close' }))
+    await waitFor(() => expect(currentUrl()).toBe('/admin/memberbase/members/1'))
+  })
 })

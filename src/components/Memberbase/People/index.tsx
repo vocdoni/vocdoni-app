@@ -1,10 +1,11 @@
 import { Box, Button, Flex, Icon, Skeleton, Stack, Text } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
-import { KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuListPlus, LuTrash2, LuUserPlus, LuUsers } from 'react-icons/lu'
 import { Banner } from '~components/ui/Banner'
 import { SelectionBar } from '~components/ui/SelectionBar'
+import { useAffectedVotes } from '~src/queries/affectedVotes'
 import { usePaginatedMembers, useMembersCount } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useMemberFields } from '../fields'
@@ -17,6 +18,7 @@ import { findMemberLink, isTypingTarget } from './display'
 import { PaginationFooter } from './PaginationFooter'
 import { PeopleCards } from './PeopleCards'
 import { PeopleTable } from './PeopleTable'
+import { PersonSheet } from './PersonSheet'
 import { RowMenu } from './RowMenu'
 import { Toolbar } from './Toolbar'
 import { ALWAYS_VISIBLE, useColumnVisibility } from './useColumnVisibility'
@@ -75,6 +77,8 @@ export const People = () => {
   const [deleteAllOpen, setDeleteAllOpen] = useState(false)
   const showSkeleton = useDelayedFlag(query.isLoading, SKELETON_DELAY_MS)
   const listRef = useRef<HTMLDivElement>(null)
+  const { hasLive } = useAffectedVotes()
+  const activeMember = members.find((member) => member.id === url.memberId)
 
   const visibleColumns = fields.filter((field) => !ALWAYS_VISIBLE.includes(field.id) && columns.isVisible(field.id))
   const surnameFirst = url.sortedBy === 'surname'
@@ -116,7 +120,7 @@ export const People = () => {
 
   /** j/k step to the next/previous person: the open one in the drawer, or the focused row. */
   const step = useCallback(
-    (event: KeyboardEvent<HTMLElement>) => {
+    (event: Pick<KeyboardEvent, 'key' | 'metaKey' | 'ctrlKey' | 'altKey' | 'target' | 'preventDefault'>) => {
       if ((event.key !== 'j' && event.key !== 'k') || event.metaKey || event.ctrlKey || event.altKey) return
       if (isTypingTarget(event.target)) return
       const focusedRow = (event.target as HTMLElement).closest?.('[data-member-row]')?.getAttribute('data-member-row')
@@ -220,7 +224,7 @@ export const People = () => {
       />
       <Box borderWidth='1px' borderColor='border' borderRadius='md' overflow='hidden' bg='bg'>
         <ContextBar pageSelection={pageSelection} pageSize={members.length} />
-        <Box ref={listRef} onKeyDown={step}>
+        <Box ref={listRef} onKeyDown={(event) => step(event.nativeEvent)}>
           <Box hideBelow='md'>
             <PeopleTable
               members={members}
@@ -311,6 +315,15 @@ export const People = () => {
         </SelectionBar>
       )}
 
+      <PersonSheet
+        memberId={url.memberId}
+        member={activeMember}
+        loading={query.isLoading}
+        onClose={url.closeMember}
+        onDelete={(member) => openAction('delete', [member], false)}
+        onStep={step}
+        inLiveVote={hasLive}
+      />
       <CreateGroupSheet
         open={target?.action === 'create_group'}
         onOpenChange={(open) => !open && closeAction()}
@@ -334,7 +347,10 @@ export const People = () => {
         onOpenChange={(open) => !open && closeAction()}
         members={target?.members ?? []}
         scope={target?.fromSelection ? 'selection' : 'single'}
-        onDeleted={actionDone}
+        onDeleted={(ids) => {
+          actionDone()
+          if (url.memberId && ids.includes(url.memberId)) url.closeMember()
+        }}
       />
       <DeleteAllMembersDialog
         open={deleteAllOpen}

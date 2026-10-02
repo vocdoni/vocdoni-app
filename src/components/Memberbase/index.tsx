@@ -10,8 +10,8 @@ import { Routes } from '~routes'
 import { useMembersCount } from '~src/queries/members'
 import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
 import { ImportMembers } from './Members/Import'
-import { MemberManager } from './Members/Manager'
 import { JobId, MembersPageProvider } from './MembersPageContext'
+import { AddPersonSheet } from './People/AddPersonSheet'
 
 export type { JobId } from './MembersPageContext'
 
@@ -109,7 +109,7 @@ export const MemberbaseTabs = () => {
         </Tabs.List>
       </Tabs.Root>
       <Outlet />
-      <MemberManager open={addPersonOpen} onOpenChange={setAddPersonOpen} />
+      <AddPersonSheet open={addPersonOpen} onOpenChange={setAddPersonOpen} />
     </MembersPageProvider>
   )
 }
