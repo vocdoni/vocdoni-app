@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
+import i18n from 'i18next'
 import { OrganizationCreate } from './Create'
 
 const mockLanguages = vi.hoisted(() => ({
@@ -80,6 +81,38 @@ describe('OrganizationCreate defaultLang inference', () => {
 
     await selectOption(user, /country/i, /Spain/)
     await expectLanguage('English')
+  })
+
+  describe('with a non-English UI language', () => {
+    const setUiLanguage = (lng: string) => {
+      // Test i18n has no `es` bundle, so pin the resolved language directly
+      vi.spyOn(i18n, 'resolvedLanguage', 'get').mockReturnValue(lng)
+    }
+    afterEach(() => vi.restoreAllMocks())
+
+    it('defaults to the UI language when the backend serves it', async () => {
+      setUiLanguage('ca')
+      renderCreate()
+      await expectLanguage('Català')
+    })
+
+    it('falls back to the API default when the UI language is not served', async () => {
+      setUiLanguage('de')
+      renderCreate()
+      await expectLanguage('English')
+    })
+
+    it('lets the country take precedence, and keeps the UI language for other countries', async () => {
+      setUiLanguage('ca')
+      const user = userEvent.setup()
+      renderCreate()
+
+      await selectOption(user, /country/i, /Spain/)
+      await expectLanguage('Español')
+
+      await selectOption(user, /country/i, /Germany/)
+      await expectLanguage('Català')
+    })
   })
 
   it('keeps a manually picked language when the country changes', async () => {

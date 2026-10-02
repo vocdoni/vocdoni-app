@@ -97,15 +97,22 @@ const spanishSpeakingCountries = new Set([
   'VE',
 ])
 
-/** Infers an org's notification language from its country: Spanish-speaking → es,
- * Andorra → ca, anything else the API default. Clamped to the languages the backend
- * serves, so a preference it has no templates for falls back too. */
+/** Infers an org's notification language: Spanish-speaking country → es, Andorra → ca,
+ * otherwise the language the UI is rendered in, otherwise the API default. Every
+ * candidate is clamped to the languages the backend serves, so a preference it has no
+ * templates for falls through to the next one. */
 export const inferOrgLanguage = (
   country: string | undefined,
-  { languages, default: fallback }: OrganizationLanguages
+  { languages, default: fallback }: OrganizationLanguages,
+  uiLanguage?: string
 ): string => {
-  const lang = country === 'AD' ? 'ca' : country && spanishSpeakingCountries.has(country) ? 'es' : undefined
-  return lang && languages.includes(lang) ? lang : fallback
+  const fromCountry = country === 'AD' ? 'ca' : country && spanishSpeakingCountries.has(country) ? 'es' : undefined
+  const served = (lang?: string) => {
+    const code = lang?.toLowerCase()
+    return code && languages.includes(code) ? code : undefined
+  }
+  // `pt-BR` UI with a backend that only serves `pt` still gets Portuguese
+  return served(fromCountry) ?? served(uiLanguage) ?? served(uiLanguage?.split('-')[0]) ?? fallback
 }
 
 export default Object.keys(baseLanguages)

@@ -10,6 +10,7 @@ import { useAnalytics } from '~components/AnalyticsProvider'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
+import { resolveActiveLanguage } from '~i18n/active-language'
 import { inferOrgLanguage } from '~i18n/languages'
 import { CreateOrgParams } from '~components/Organization/AccountTypes'
 import { QueryKeys } from '~src/queries/keys'
@@ -77,20 +78,20 @@ export const OrganizationCreate = ({
   minified?: boolean
 } & FlexProps) => {
   const toast = useToast()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [isPending, setIsPending] = useState(false)
   const methods = useForm<FormData>()
   const { handleSubmit } = methods
   const { trackEvent } = useAnalytics()
 
-  // Infer the notification language from the selected country until the user
-  // picks one manually (the selector marks the field dirty on user picks)
+  // Infer the notification language from the selected country, else the UI language,
+  // until the user picks one manually (the selector marks the field dirty on user picks)
   const { data: orgLanguages, isLoading: isLoadingLanguages } = useOrganizationLanguages()
   const country = methods.watch('country')
   useEffect(() => {
     if (orgLanguages && !methods.getFieldState('defaultLang').isDirty) {
-      methods.setValue('defaultLang', inferOrgLanguage(country, orgLanguages))
+      methods.setValue('defaultLang', inferOrgLanguage(country, orgLanguages, resolveActiveLanguage(i18n)))
     }
   }, [country, orgLanguages])
 
