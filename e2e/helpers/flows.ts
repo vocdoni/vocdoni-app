@@ -126,7 +126,11 @@ export const importMembers = async (page: Page, members: TestMember[]): Promise<
   await page.locator('button[form="import-members"]').click()
 
   const [first] = members
-  await expect(page.getByText(first.email, { exact: false })).toBeVisible({ timeout: 120_000 })
+  // The People list renders a table, a compact table and phone cards, switching by CSS: only one
+  // copy of the email is visible at a time, so match that one.
+  await expect(page.getByText(first.email, { exact: false }).filter({ visible: true })).toBeVisible({
+    timeout: 120_000,
+  })
 }
 
 /**
