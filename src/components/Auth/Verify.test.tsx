@@ -87,12 +87,15 @@ vi.mock('@chakra-ui/react', async () => {
 const verifyAsyncMock = vi.fn()
 const navigateMock = vi.fn()
 const toastMock = vi.fn()
+// The verify mutation lives in AuthProvider, above the router, so it can already be pending
+// when the form mounts.
+const mailVerifyState = { isPending: false }
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({
     mailVerify: {
       mutateAsync: verifyAsyncMock,
-      isPending: false,
+      isPending: mailVerifyState.isPending,
       isError: false,
     },
   }),
@@ -132,6 +135,7 @@ describe('VerificationPending', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     verifyAsyncMock.mockResolvedValue(undefined)
+    mailVerifyState.isPending = false
   })
 
   it('renders 6 pin input fields', async () => {
@@ -198,5 +202,23 @@ describe('VerificationPending', () => {
         code: '123456',
       })
     })
+  })
+
+  it('auto-submits the code from the verification link', async () => {
+    render(<VerificationPending email='test@example.com' code='123456' />)
+
+    await waitFor(() => {
+      expect(verifyAsyncMock).toHaveBeenCalledWith({ email: 'test@example.com', code: '123456' })
+    })
+  })
+
+  // A language switch remounts the form while the first request is in flight; sending the code
+  // again would come back "already verified" and toast an error over a verification that worked.
+  it('does not auto-submit again while a verification is already in flight', async () => {
+    mailVerifyState.isPending = true
+    render(<VerificationPending email='test@example.com' code='123456' />)
+
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    expect(verifyAsyncMock).not.toHaveBeenCalled()
   })
 })

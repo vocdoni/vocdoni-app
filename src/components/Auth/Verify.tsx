@@ -69,8 +69,11 @@ const VerifyForm = ({
     }
   }, [codeString, email, verifyAsync, navigate, nextRoute, t, toast])
 
-  // Auto-submit if code is provided and autoSubmit is true, or when all 6 characters are entered
+  // Auto-submit if code is provided and autoSubmit is true, or when all 6 characters are entered.
+  // The verify mutation outlives this form: a language switch remounts it mid-request, and
+  // submitting the same code again would fail as already verified while the first succeeds.
   useEffect(() => {
+    if (isVerifyPending) return
     if ((autoSubmit && codeString) || (!autoSubmit && code.every((c) => c.trim() !== ''))) {
       verify()
     }
