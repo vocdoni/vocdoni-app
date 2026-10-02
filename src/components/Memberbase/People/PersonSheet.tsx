@@ -6,7 +6,9 @@ import { Sheet } from '~components/ui/Sheet'
 import { useMemberFields } from '../fields'
 import { findMemberLink, memberDisplayName } from './display'
 import { MemberValue } from './PeopleTable'
+import { PersonCensuses } from './PersonCensuses'
 import { PersonForm } from './PersonForm'
+import { usePersonCensuses } from './usePersonCensuses'
 import type { SelectedMember } from './useSelection'
 
 /** From xl the drawer sits beside the table without blocking it. */
@@ -63,6 +65,7 @@ export const PersonSheet = ({ memberId, member, loading, onClose, onDelete, onSt
   if (memberId) lastId.current = memberId
   const open = Boolean(memberId)
   const name = member ? memberDisplayName(member) : ''
+  const censuses = usePersonCensuses(open ? member : undefined)
 
   // A different person (j/k or another row) starts in view mode
   useEffect(() => {
@@ -195,6 +198,7 @@ export const PersonSheet = ({ memberId, member, loading, onClose, onDelete, onSt
                 </DataList.Item>
               ))}
           </DataList.Root>
+          <PersonCensuses censuses={censuses} />
         </Stack>
       )}
     </Sheet>
