@@ -16,6 +16,17 @@ const mocks = vi.hoisted(() => ({
   addCensusMembers: vi.fn(),
   waitFor: vi.fn(),
   processes: [] as unknown[],
+  markersReady: true,
+}))
+
+vi.mock('~components/Memberbase/Censuses/useCensusIndex', () => ({
+  useAllVotes: () => ({
+    published: mocks.processes,
+    drafts: [],
+    all: mocks.processes,
+    complete: true,
+    isLoading: false,
+  }),
 }))
 
 vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
@@ -40,7 +51,7 @@ vi.mock('~src/queries/voteGroups', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/queries/voteGroups')>()),
   useVoteGroupMarkers: () => ({
     markers: new Map(),
-    ready: true,
+    ready: mocks.markersReady,
     isVoteOwned: (id?: string) => !!id && mocks.voteOwned.has(id),
   }),
 }))
@@ -81,6 +92,8 @@ describe('bulk action sheets', () => {
     ]
     Object.values(mocks).forEach((mock) => typeof mock === 'function' && mock.mockReset())
     mocks.voteOwned = new Set()
+    mocks.processes = []
+    mocks.markersReady = true
     mocks.updateGroup.mockResolvedValue(undefined)
     setReactProvidersMock({
       useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
@@ -199,7 +212,8 @@ describe('bulk action sheets', () => {
 
   it('removes people from a saved census, saying they stay in the members', async () => {
     const user = userEvent.setup()
-    mocks.groups[1].censusIds = ['census-of-a-vote']
+    // A vote whose census is this saved census
+    mocks.processes = [{ id: 'p1', title: { default: 'Assemblea' }, census: { groupId: 'g0' }, questions: [] }]
     const onDone = vi.fn()
     render(<RemoveFromGroupSheet open onOpenChange={vi.fn()} members={[anna, jordi]} onDone={onDone} />)
 
@@ -231,5 +245,47 @@ describe('bulk action sheets', () => {
       expect(mocks.updateGroup).toHaveBeenCalledWith({ groupId: 'g1', body: { addMembers: ['x1', 'x2', 'x3'] } })
     )
     expect(mocks.fetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=100&search=')
+  })
+  it('warns about votes using a saved census only when one does', async () => {
+    const user = userEvent.setup()
+    mocks.groups[2].censusIds = ['census-of-a-deleted-vote']
+    render(<AddToGroupSheet open onOpenChange={vi.fn()} members={[anna]} />)
+
+    await pickGroup(user, 'Census 2')
+    expect(screen.queryByText(/If a vote uses this saved census/)).toBeNull()
+  })
+
+  it('asks again when everyone turns out to be a different number than confirmed', async () => {
+    const user = userEvent.setup()
+    mocks.fetch.mockResolvedValue({
+      members: [{ id: 'x1' }, { id: 'x2' }, { id: 'x3' }, { id: 'x4' }],
+      pagination: { totalItems: 4, lastPage: 1 },
+    })
+    render(<AddToGroupSheet open onOpenChange={vi.fn()} members={[]} everyone={3} />)
+
+    await pickGroup(user, 'Census 2')
+    await user.click(screen.getByRole('button', { name: 'Add 3 people' }))
+
+    expect(await screen.findByText(/there are 4 now\. Nothing was changed yet/)).toBeInTheDocument()
+    expect(mocks.updateGroup).not.toHaveBeenCalled()
+    expect(mocks.toast).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole('button', { name: 'Add 4 people' }))
+    await waitFor(() =>
+      expect(mocks.updateGroup).toHaveBeenCalledWith({
+        groupId: 'g1',
+        body: { addMembers: ['x1', 'x2', 'x3', 'x4'] },
+      })
+    )
+  })
+
+  it('waits for the vote censuses to be told apart before adding to a vote', () => {
+    mocks.markersReady = false
+    mocks.processes = [
+      { id: 'p1', title: { default: 'Assemblea' }, census: { groupId: 'owned' }, questions: [{ status: 'ONGOING' }] },
+    ]
+    render(<AddToVoteSheet open onOpenChange={vi.fn()} members={[anna]} />)
+
+    expect(screen.getByRole('button', { name: 'Add one person' })).toBeDisabled()
   })
 })
