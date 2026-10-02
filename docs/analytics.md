@@ -48,7 +48,8 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
    including the checkbox and row-menu cells whose labels embed the name (`Memberbase/People/PeopleTable.tsx`),
    the whole mobile card (`PeopleCards.tsx`), the person drawer and its form (`PersonSheet.tsx`,
    `PersonForm.tsx`), names in bulk-action and delete dialogs, masked values (`ui/MaskedValue.tsx`),
-   group member table cells (`GroupsBoard.tsx`), and the CSV import error list (`Members/Import.tsx`),
+   group member table cells (`GroupsBoard.tsx`), the pasted list and its "not found" values in
+   "Select from a list…" (`PasteSelectSheet.tsx`), and the CSV import error list (`Members/Import.tsx`),
    which quotes offending rows. Member search and the add/edit member form are covered by
    `maskAllInputs`, and `?q=`/`?member=` are stripped from tracked URLs. Surrounding chrome — tabs,
    headings, buttons, counts, group names — stays visible, so replays remain usable.
@@ -102,8 +103,12 @@ Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organi
 feature someone asked for; props `feature`, `surface`),
 `members_page_viewed` (`state`: empty|populated), `members_empty_state_cta_clicked` (`door`:
 import|template|add), `member_added` (`source`: form), `member_updated` (`in_live_vote`),
-`members_deleted` (`count`, `scope`: selection|single|all, `blocked`). Member events carry counts
-only, never names or search text.
+`members_deleted` (`count`, `scope`: selection|single|all, `blocked`), `members_select_all_matching`
+(`count`, `capped`: stopped at 5,000), `members_paste_select` (`found`, `not_found`), `members_bulk_action`
+(`action`: save_census|add_to_vote|add_to_saved_census|remove_from_saved_census|delete, `count`; fired
+when the action is opened from the selection bar). `member_group_created` carries `group_size` and
+`source` (selection) when made from the People tab; `voters_added` carries `surface` (members) when
+added from there. Member events carry counts only, never names or search text.
 
 Organization-level BI: every session registers `org_address`/`org_name`/`org_plan` super properties, and
 the `organization` group profile carries name, plan, type, country, size, usage counters, and renewal
