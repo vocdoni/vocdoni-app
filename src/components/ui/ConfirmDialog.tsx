@@ -55,7 +55,7 @@ export const ConfirmDialog = ({
             {children}
           </Dialog.Body>
           <Dialog.Footer justifyContent='flex-end' gap={2}>
-            <Dialog.CloseTrigger asChild>
+            <Dialog.CloseTrigger asChild position='static'>
               <Button variant='outline'>{cancelText || t('actions.cancel', { defaultValue: 'Cancel' })}</Button>
             </Dialog.CloseTrigger>
             <Button
