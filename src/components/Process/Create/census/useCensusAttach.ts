@@ -38,7 +38,11 @@ export const useCensusAttach = () => {
   const running = useRef(false)
   const [busy, setBusy] = useState<AttachBusy>(null)
 
-  /** Points the form at a group (with a sign-in if none) and saves the draft; puts it back on failure. */
+  /**
+   * Points the form at a group (with a sign-in if none) and saves the draft, conditionally: a draft
+   * changed in another tab isn't written over (it could point at a census deleted since). Puts the
+   * form back on failure.
+   */
   const repoint = useCallback(
     async (groupId: string) => {
       if (!draft) throw new Error('No draft to save')
@@ -46,7 +50,7 @@ export const useCensusAttach = () => {
       setValue('groupId', groupId, { shouldDirty: true })
       if (!hasSignIn(before.census)) setValue('census', { ...EMAIL_SIGN_IN }, { shouldDirty: true })
       try {
-        await draft.saveNow()
+        await draft.saveWithLatest()
       } catch (error) {
         setValue('groupId', before.groupId, { shouldDirty: true })
         setValue('census', before.census, { shouldDirty: true })
@@ -77,6 +81,13 @@ export const useCensusAttach = () => {
               : t('process_create.census.error_detail', {
                   defaultValue: 'Nothing changed. Try again in a moment.',
                 }),
+        action:
+          error instanceof StaleDraftError
+            ? {
+                label: t('process_create.census.reload', { defaultValue: 'Reload' }),
+                onClick: () => window.location.reload(),
+              }
+            : undefined,
       })
     },
     [toast, t]

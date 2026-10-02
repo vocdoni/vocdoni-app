@@ -1,14 +1,17 @@
 import { QueryClientProvider } from '@tanstack/react-query'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { createTestQueryClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultProcessValues, Process } from './common'
 import { getStoredDraftId, storeDraftId as persistDraftId } from './draft-storage'
+import { StaleDraftError } from './census/voteGroup'
 import { useFormDraftSaver } from './index'
 
 const create = vi.fn()
 const update = vi.fn()
+const get = vi.fn()
 
 vi.mock('~components/Auth/Subscription', () => ({
   useSubscription: () => ({ permission: () => true }),
@@ -27,7 +30,7 @@ vi.mock('~elements/dashboard/processes/drafts', () => ({
 }))
 
 vi.mock('~src/providers/ApiClientProvider', () => ({
-  useApiClient: () => ({ client: { elections: { create, update } } }),
+  useApiClient: () => ({ client: { elections: { create, update, get } } }),
 }))
 
 /** A promise plus the handle to settle it, so a request can be held in flight. */
@@ -235,6 +238,17 @@ describe('useFormDraftSaver', () => {
     })
 
     expect(update).toHaveBeenCalledTimes(1)
+  })
+
+  it('saves with the draft’s latest updatedAt when asked to, and says when it changed elsewhere', async () => {
+    get.mockResolvedValue({ updatedAt: '2026-10-02T10:00:00Z' })
+    const { result } = renderSaver('draft-1')
+
+    await expect(result.current.saveNowWithLatest()).resolves.toBe('draft-1')
+    expect(update).toHaveBeenCalledWith('draft-1', expect.objectContaining({ updatedAt: '2026-10-02T10:00:00Z' }))
+
+    update.mockRejectedValueOnce(new VocdoniApiError(409, {}, 'stale', 40171))
+    await expect(result.current.saveNowWithLatest()).rejects.toBeInstanceOf(StaleDraftError)
   })
 
   it('reports what a save sent and when it landed', async () => {

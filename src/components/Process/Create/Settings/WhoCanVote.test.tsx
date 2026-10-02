@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event'
+import { StaleDraftError } from '../census/voteGroup'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { mockUseOrganization, render, screen, TestMemoryRouter, waitFor, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -120,10 +121,13 @@ const Harness = ({ values = {}, draft }: { values?: Partial<Process>; draft: Dra
   )
 }
 
-const draftControls = (id: string | null = 'draft-1'): DraftControls & { saveNow: ReturnType<typeof vi.fn> } => ({
+const draftControls = (
+  id: string | null = 'draft-1'
+): DraftControls & { saveNow: ReturnType<typeof vi.fn>; saveWithLatest: ReturnType<typeof vi.fn> } => ({
   id,
   ensure: vi.fn(async () => id),
   saveNow: vi.fn(async () => id ?? 'draft-new'),
+  saveWithLatest: vi.fn(async () => id ?? 'draft-new'),
   pause: vi.fn(() => () => undefined),
   flush: vi.fn(async () => undefined),
 })
@@ -176,7 +180,7 @@ describe('WhoCanVote', () => {
       'own-new',
       expect.objectContaining({ processId: 'draft-1', kind: 'copy', from: 'Quota pagada', source: 'saved' })
     )
-    expect(draft.saveNow).toHaveBeenCalled()
+    expect(draft.saveWithLatest).toHaveBeenCalled()
     expect(formState().census).toEqual({ credentials: [], use2FA: true, use2FAMethod: 'email' })
     // With a sign-in set, the request carries the group
     expect(buildCensusSpec(lastForm()).groupId).toBe('own-new')
@@ -186,6 +190,23 @@ describe('WhoCanVote', () => {
     })
     // The saved census itself is never touched
     expect(api.deleteGroup).not.toHaveBeenCalled()
+  })
+
+  it('leaves a draft changed in another tab as it is, offering to reload', async () => {
+    const user = userEvent.setup()
+    const draft = draftControls()
+    draft.saveWithLatest.mockRejectedValue(new StaleDraftError(new Error('409')))
+    render(<Harness values={{ groupId: 'all' }} draft={draft} />)
+
+    await user.click(screen.getByRole('radio', { name: /From a saved census/ }))
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Saved census' }), 'quota')
+
+    expect(
+      await screen.findByText('This draft was changed somewhere else. Reload the page and try again.')
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Reload' })).toBeInTheDocument()
+    expect(formState().groupId).toBe('all')
+    expect(draft.saveNow).not.toHaveBeenCalled()
   })
 
   it('makes a census of people chosen by hand', async () => {
@@ -244,7 +265,7 @@ describe('WhoCanVote', () => {
 
     await waitFor(() => expect(api.unmark).toHaveBeenCalledWith('own-old'))
     expect(formState().groupId).toBe('all')
-    expect(draft.saveNow).toHaveBeenCalled()
+    expect(draft.saveWithLatest).toHaveBeenCalled()
     expect(api.deleteGroup).toHaveBeenCalledWith('own-old')
     // An existing sign-in is kept
     expect(formState().census.use2FAMethod).toBe('sms')

@@ -3,10 +3,12 @@ import type { CreateVotingProcessRequest } from '@vocdoni/api-types'
 import { useOrganization } from '@vocdoni/react-components'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { QueryKeys } from '~queries/keys'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import type { Process } from './common'
 import { isDraftLimitError } from './draft-limit'
 import { getStoredDraftId } from './draft-storage'
 import { useCreateProcess, useUpdateProcess } from './queries'
+import { writeWithLatest } from './census/voteGroup'
 import { buildCensusSpec, useFormToVotingProcessRequest } from './request'
 
 export const saveTimeoutMs = 30000
@@ -24,6 +26,7 @@ export const useFormDraftSaver = (
 ) => {
   const createProcess = useCreateProcess()
   const updateProcess = useUpdateProcess()
+  const { client } = useApiClient()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
@@ -236,11 +239,42 @@ export const useFormDraftSaver = (
     return id
   }, [writeDraft, getValues, formToVotingProcessRequest, onSaved])
 
+  /**
+   * Like `saveNow`, for a draft that exists already, but a conditional write: it carries the draft's
+   * latest `updatedAt`, as publishing does, so a draft changed meanwhile somewhere else throws
+   * `StaleDraftError` instead of being written over.
+   */
+  const saveNowWithLatest = useCallback(async () => {
+    let sent: Process | undefined
+    const id = await enqueueWrite(async () => {
+      const processId = draftIdRef.current
+      if (!processId) throw new Error('No draft to save')
+      await writeWithLatest(
+        async () => ((await client.elections.get(processId)) as { updatedAt?: string }).updatedAt,
+        async (updatedAt) => {
+          const form = getValues()
+          sent = form
+          const body = {
+            ...formToVotingProcessRequest(form, buildCensusSpec(form)),
+            ...(updatedAt ? { updatedAt } : {}),
+          }
+          await updateProcess.mutateAsync({ processId, body: body as CreateVotingProcessRequest })
+        }
+      )
+      return processId
+    })
+    setSaveFailed(false)
+    setLastSavedAt(new Date())
+    if (sent) onSaved?.(sent)
+    return id
+  }, [enqueueWrite, client, getValues, formToVotingProcessRequest, updateProcess, onSaved])
+
   return {
     saveDraft,
     pause,
     flush,
     saveNow,
+    saveNowWithLatest,
     /** Runs a write of its own in the same one-at-a-time queue as the draft saves */
     runExclusive: enqueueWrite,
     isSaving,
