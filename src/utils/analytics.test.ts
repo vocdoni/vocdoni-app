@@ -845,6 +845,26 @@ describe('posthog identity helpers', () => {
     expect(mockPosthog.identify).toHaveBeenCalledWith('user-2', { email: 'b@b.com' })
   })
 
+  it('keeps the signup method for an identify queued before a reset or a later remember', async () => {
+    const analytics = await import('./analytics')
+
+    analytics.initializePosthog({ key: 'phc_test', consent: 'accepted' })
+    analytics.rememberSignupMethod('password', 'b@b.com')
+    analytics.identifyPosthogUser('user-b', { email: 'b@b.com' })
+    analytics.resetPosthogUser()
+    analytics.identifyPosthogUser('user-a', { email: 'a@a.com' })
+    analytics.rememberSignupMethod('google')
+
+    await vi.waitFor(() => expect(mockPosthog.identify).toHaveBeenCalledTimes(2))
+    expect(mockPosthog.identify).toHaveBeenNthCalledWith(
+      1,
+      'user-b',
+      { email: 'b@b.com' },
+      { signup_method: 'password' }
+    )
+    expect(mockPosthog.identify).toHaveBeenNthCalledWith(2, 'user-a', { email: 'a@a.com' })
+  })
+
   it('applies an email-bound signup method only to the profile with that email', async () => {
     const analytics = await import('./analytics')
 

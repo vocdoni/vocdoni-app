@@ -452,10 +452,15 @@ export const rememberSignupMethod = (method: AuthMethod, email?: string): void =
 }
 
 export const identifyPosthogUser = (id: string, props?: Record<string, unknown>): void => {
+  // Decide at call time: the PostHog callback runs asynchronously, by when the pending
+  // method may belong to another sign-up or have been cleared by a reset.
+  const signup =
+    pendingSignup && (!pendingSignup.email || sameEmail(pendingSignup.email, props?.email)) ? pendingSignup : null
+  if (signup) pendingSignup = null
+
   withPosthog('Failed to identify PostHog user:', (posthog) => {
-    if (pendingSignup && (!pendingSignup.email || sameEmail(pendingSignup.email, props?.email))) {
-      posthog.identify(id, props, { signup_method: pendingSignup.method })
-      pendingSignup = null
+    if (signup) {
+      posthog.identify(id, props, { signup_method: signup.method })
     } else {
       posthog.identify(id, props)
     }

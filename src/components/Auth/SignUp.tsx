@@ -117,7 +117,7 @@ const SignUp = ({
   useEffect(() => {
     if (verifyInline && signup.isSuccess && !verifyingEmail) {
       trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'password' } })
-      rememberSignupMethod('password', email)
+      rememberSignupMethod('password', signup.variables?.email ?? email)
       setVerifyingEmail(email)
       signup.reset()
     }
@@ -126,7 +126,7 @@ const SignUp = ({
   useEffect(() => {
     if (!verifyInline && signup.isSuccess && !registeredEmail) {
       trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'password' } })
-      rememberSignupMethod('password', email)
+      rememberSignupMethod('password', signup.variables?.email ?? email)
       setRegisteredEmail(email)
       signup.reset()
     }
