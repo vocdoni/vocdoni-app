@@ -41,9 +41,10 @@ import {
 } from 'react-router'
 import { useAnalytics } from '~components/AnalyticsProvider'
 import { useSubscription } from '~components/Auth/Subscription'
-import { ApiError, ErrorCode } from '~components/Auth/api'
+import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
+import { publishPaymentErrorMessage } from '~components/Pricing/payment-errors'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
@@ -86,9 +87,7 @@ type UpdateProcessRequest = {
  * The draft limit is reported by the SaaS API either through the app's own
  * `api()` wrapper or through the integrator-sdk client, depending on the call.
  */
-const isDraftLimitError = (error: unknown) =>
-  (error instanceof ApiError && error.apiError?.code === ErrorCode.DraftLimitReached) ||
-  (error instanceof VocdoniApiError && error.code === ErrorCode.DraftLimitReached)
+const isDraftLimitError = (error: unknown) => apiErrorDetails(error)?.code === ErrorCode.DraftLimitReached
 
 export const saveTimeoutMs = 30000
 
@@ -783,7 +782,7 @@ const ProcessCreateView = () => {
 
       toast({
         title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
-        description: error instanceof Error ? error.message : String(error),
+        description: publishPaymentErrorMessage(t, error) ?? (error instanceof Error ? error.message : String(error)),
         type: 'error',
         duration: 4000,
       })
