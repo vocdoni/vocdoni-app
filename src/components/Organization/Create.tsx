@@ -89,11 +89,12 @@ export const OrganizationCreate = ({
   // until the user picks one manually (the selector marks the field dirty on user picks)
   const { data: orgLanguages, isLoading: isLoadingLanguages } = useOrganizationLanguages()
   const country = methods.watch('country')
+  const uiLanguage = resolveActiveLanguage(i18n)
   useEffect(() => {
     if (orgLanguages && !methods.getFieldState('defaultLang').isDirty) {
-      methods.setValue('defaultLang', inferOrgLanguage(country, orgLanguages, resolveActiveLanguage(i18n)))
+      methods.setValue('defaultLang', inferOrgLanguage(country, orgLanguages, uiLanguage))
     }
-  }, [country, orgLanguages])
+  }, [country, orgLanguages, uiLanguage])
 
   const { mutateAsync: createOrganization } = useOrganizationCreate({
     onSuccess: async ({ address }, values) => {

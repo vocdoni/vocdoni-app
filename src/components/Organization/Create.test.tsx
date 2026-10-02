@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
-import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
+import { act, render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
 import i18n from 'i18next'
 import { OrganizationCreate } from './Create'
 
@@ -100,6 +100,17 @@ describe('OrganizationCreate defaultLang inference', () => {
       setUiLanguage('de')
       renderCreate()
       await expectLanguage('English')
+    })
+
+    it('re-infers when the UI language changes while the form is open', async () => {
+      setUiLanguage('en')
+      const view = renderCreate()
+      await expectLanguage('English')
+
+      setUiLanguage('ca')
+      await act(() => i18n.emit('languageChanged', 'ca'))
+      await expectLanguage('Català')
+      view.unmount()
     })
 
     it('lets the country take precedence, and keeps the UI language for other countries', async () => {
