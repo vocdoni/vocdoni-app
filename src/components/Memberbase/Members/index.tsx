@@ -52,7 +52,7 @@ import { Routes } from '~routes'
 import { useAddCensusParticipants } from '~src/queries/census'
 import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
-import { Member, useDeleteMembers, usePaginatedMembers, useUrlPagination } from '~src/queries/members'
+import { Member, useDeleteMembers, useMembersCount, useUrlPagination } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { MemberbaseTabsContext } from '..'
 import { useTable } from '../TableProvider'
@@ -448,7 +448,7 @@ const ColumnManager = () => {
 const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
   const { t } = useTranslation()
   const { search, setSearch, submitSearch } = useOutletContext<MemberbaseTabsContext>()
-  const { data } = usePaginatedMembers({ showAll: true })
+  const { count: totalMembers } = useMembersCount()
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value)
@@ -477,7 +477,7 @@ const MemberFilters = ({ onDelete }: MemberFiltersProps) => {
           onChange={handleSearchChange}
         />
       </InputGroup>
-      {data?.members?.length >= 1 && (
+      {totalMembers >= 1 && (
         <Button variant='outline' colorPalette='red' onClick={onDelete}>
           <Icon as={LuTrash2} />
           {t('members.table.delete_all', {
@@ -809,13 +809,15 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
   const toast = useToast()
   const { organization } = useOrganization()
   const deleteMutation = useDeleteMembers()
-  const { data: allMembersData, isFetching: isFetchingAll } = usePaginatedMembers({ showAll: true })
+  // One-row request for the total: "Delete all" only needs how many there are
+  const { count: totalMembers, isLoading: isLoadingCount } = useMembersCount()
   const { selectedRows, resetSelectedRows } = useTable()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const selectedMembers = mode === DeleteModes.SELECTED ? selectedRows : allMembersData?.members
   const ids = selectedRows.map((member) => member.id)
   const isDeleteAllMode = mode === DeleteModes.ALL
+  const isFetchingAll = isDeleteAllMode && isLoadingCount
+  const deleteCount = isDeleteAllMode ? totalMembers : selectedRows.length
 
   const handleDelete = async () => {
     try {
@@ -826,7 +828,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         title: t('memberbase.delete_member.success', {
           defaultValue: 'Member deleted successfully',
           defaultValue_other: 'Members deleted successfully',
-          count: isDeleteAllMode ? allMembersData?.pagination.totalItems : selectedMembers.length,
+          count: deleteCount,
         }),
         type: 'success',
         duration: 3000,
@@ -843,7 +845,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
         title: t('memberbase.delete_member.error', {
           defaultValue: 'Error deleting member',
           defaultValue_other: 'Error deleting members',
-          count: selectedMembers.length,
+          count: deleteCount,
         }),
         description: error.message,
         type: 'error',
@@ -864,7 +866,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
           : t('memberbase.delete_member.subtitle', {
               defaultValue: 'Are you sure you want to delete {{count}} member? This action cannot be undone.',
               defaultValue_other: 'Are you sure you want to delete {{count}} members? This action cannot be undone.',
-              count: isDeleteAllMode ? allMembersData?.pagination.totalItems : selectedMembers.length,
+              count: deleteCount,
             })
       }
       open={isOpen}
@@ -879,7 +881,7 @@ const DeleteMemberModal = ({ isOpen, onClose, mode, ...props }: DeleteMemberModa
           loading={deleteMutation.isPending || isFetchingAll}
           colorPalette='red'
           onClick={handleDelete}
-          disabled={isFetchingAll || selectedMembers.length === 0}
+          disabled={isFetchingAll || deleteCount === 0}
         >
           {t('memberbase.delete_member.delete', { defaultValue: 'Delete' })}
         </Button>

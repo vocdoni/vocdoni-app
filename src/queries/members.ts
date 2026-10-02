@@ -31,7 +31,6 @@ type AddMembersResponse = {
 
 type PaginatedMembersProps = {
   search?: string
-  showAll?: boolean
 }
 
 export type ImportJobStatus = 'pending' | 'completed' | 'failed'
@@ -66,22 +65,39 @@ export const useUrlPagination = () => {
   }
 }
 
-export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedMembersProps) => {
+export const usePaginatedMembers = ({ search = '' }: PaginatedMembersProps) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
   const { page, limit } = useUrlPagination()
 
-  const effectivePage = showAll ? 1 : page
-  const effectiveLimit = showAll ? 0 : limit
-
   const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)
-  const fetchUrl = `${baseUrl}?page=${effectivePage}&limit=${effectiveLimit}&search=${search}`
+  const fetchUrl = `${baseUrl}?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`
 
   return useQuery<MembersResponse, Error>({
-    queryKey: [...QueryKeys.organization.members(organization?.address), effectivePage, effectiveLimit, search],
+    queryKey: [...QueryKeys.organization.members(organization?.address), page, limit, search],
     enabled: !!organization?.address,
     queryFn: () => bearedFetch<MembersResponse>(fetchUrl),
   })
+}
+
+/**
+ * The memberbase size. Asks for a single row and reads the pagination total, rather than
+ * downloading the whole memberbase just to count it. `known` stays false until the total arrives.
+ */
+export const useMembersCount = () => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+
+  const fetchUrl = `${ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)}?page=1&limit=1`
+
+  const query = useQuery<MembersResponse, Error, number>({
+    queryKey: [...QueryKeys.organization.members(organization?.address), 'count'],
+    enabled: !!organization?.address,
+    queryFn: () => bearedFetch<MembersResponse>(fetchUrl),
+    select: (data) => data.pagination.totalItems,
+  })
+
+  return { count: query.data ?? 0, isLoading: query.isLoading, known: query.data !== undefined }
 }
 
 export const useAddMembers = (isAsync: boolean = false) => {

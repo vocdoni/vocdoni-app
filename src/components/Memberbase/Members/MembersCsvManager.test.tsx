@@ -63,9 +63,7 @@ vi.mock('~components/Auth/Subscription', () => ({
 }))
 
 vi.mock('~queries/members', () => ({
-  usePaginatedMembers: () => ({
-    data: { pagination: { totalItems: 100 } },
-  }),
+  useMembersCount: () => ({ count: 100, isLoading: false, known: true }),
 }))
 
 vi.mock('../TableProvider', () => ({

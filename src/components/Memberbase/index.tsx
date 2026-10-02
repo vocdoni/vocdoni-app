@@ -6,7 +6,7 @@ import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
 import { useAuth } from '~components/Auth/useAuth'
 import { Heading, SubHeading } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
-import { usePaginatedMembers } from '~src/queries/members'
+import { useMembersCount } from '~src/queries/members'
 import { getStoredImportJobId, setStoredImportJobId } from './importJobStorage'
 
 export type MemberbaseTabsContext = {
@@ -37,12 +37,12 @@ export const MemberbaseTabs = () => {
   const [debouncedSearch, setDebouncedSearch] = useState(search)
   // Unfiltered total: this query never carries the search term, so the badge keeps showing the
   // whole memberbase while the table is filtered.
-  const { data: allMembersData } = usePaginatedMembers({ showAll: true })
+  const members = useMembersCount()
   const menuItems: MenuItem[] = [
     {
       label: t('memberbase.members.title', { defaultValue: 'Members' }),
       route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
-      count: allMembersData?.pagination?.totalItems,
+      count: members.known ? members.count : undefined,
     },
     { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
   ]

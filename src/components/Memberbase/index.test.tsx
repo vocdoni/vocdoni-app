@@ -2,7 +2,7 @@ import { MemoryRouter } from 'react-router'
 import { render, screen } from '~src/test-utils'
 import { MemberbaseTabs } from './index'
 
-const membersQuery = vi.hoisted(() => ({ data: undefined as unknown }))
+const membersCount = vi.hoisted(() => ({ value: undefined as number | undefined }))
 
 vi.mock('~components/Auth/useAuth', () => ({
   useAuth: () => ({ currentAddress: '0xabc' }),
@@ -12,7 +12,11 @@ vi.mock('~src/queries/members', async (importOriginal) => {
   const actual = await importOriginal<typeof import('~src/queries/members')>()
   return {
     ...actual,
-    usePaginatedMembers: () => ({ data: membersQuery.data }),
+    useMembersCount: () => ({
+      count: membersCount.value ?? 0,
+      isLoading: membersCount.value === undefined,
+      known: membersCount.value !== undefined,
+    }),
   }
 })
 
@@ -27,18 +31,18 @@ const renderTabs = () =>
 // waits inside act() for that, instead of asserting before it and leaking the update.
 describe('MemberbaseTabs member count', () => {
   afterEach(() => {
-    membersQuery.data = undefined
+    membersCount.value = undefined
   })
 
   it('shows the exact, locale formatted memberbase size on the Members tab', async () => {
-    membersQuery.data = { members: [], pagination: { totalItems: 1234, lastPage: 124, currentPage: 1 } }
+    membersCount.value = 1234
     renderTabs()
 
     expect(await screen.findByRole('tab', { name: /Members/ })).toHaveTextContent('Members1,234')
   })
 
   it('shows an empty memberbase as zero', async () => {
-    membersQuery.data = { members: [], pagination: { totalItems: 0, lastPage: 1, currentPage: 1 } }
+    membersCount.value = 0
     renderTabs()
 
     expect(await screen.findByRole('tab', { name: /Members/ })).toHaveTextContent('Members0')

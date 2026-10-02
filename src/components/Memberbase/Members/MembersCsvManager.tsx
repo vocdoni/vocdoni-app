@@ -24,7 +24,7 @@ import { CsvGenerator } from '~components/Spreadsheet/generator'
 import { CsvRowLimitExceededError, enforceCsvRowLimit } from '~components/Spreadsheet/limits'
 import SpreadsheetError from '~components/Spreadsheet/errors/SpreadsheetError'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
-import { usePaginatedMembers } from '~queries/members'
+import { useMembersCount } from '~queries/members'
 import { useTable } from '../TableProvider'
 
 const generateFakeValue = (columnId: string): string => {
@@ -61,10 +61,9 @@ export const MembersCsvManager = () => {
   const { columns } = useTable()
   const { subscription } = useSubscription()
   const { openModal } = usePricingModal()
-  const { data: membersData } = usePaginatedMembers({ showAll: true })
+  const { count: existingMembers } = useMembersCount()
   const manager: SpreadsheetManager | undefined = watch('spreadsheet')
   const maxCensusSize = subscription?.subscriptionDetails?.maxCensusSize || subscription?.plan?.organization?.maxCensus
-  const existingMembers = membersData?.pagination?.totalItems ?? 0
 
   // File dropzone
   // A slow read from an earlier drop can't overwrite the outcome of a newer one. The drawer also unmounts this
