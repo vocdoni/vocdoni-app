@@ -226,8 +226,9 @@ export const isVotingPath = (
 }
 
 // Query params that may carry PII (signup redirects carry `?email=`,
-// password-reset links carry tokens) and must never reach analytics.
-const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code']
+// password-reset links carry tokens, member search carries `?q=` and the open
+// member drawer carries their id) and must never reach analytics.
+const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code', 'q', 'person', 'member']
 
 // Session replay masks every input value (`maskAllInputs`), which would also
 // hide fields we do want to read back — the organization name in settings being

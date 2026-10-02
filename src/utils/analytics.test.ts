@@ -252,6 +252,17 @@ describe('posthog url sanitization', () => {
     )
   })
 
+  it('strips member search terms and member ids from urls', async () => {
+    const { sanitizeAnalyticsUrl } = await import('./analytics')
+
+    expect(
+      sanitizeAnalyticsUrl('https://app.vocdoni.io/admin/memberbase/members/2?q=jordi%20serra&sort=surname&member=m1')
+    ).toBe('https://app.vocdoni.io/admin/memberbase/members/2?sort=surname')
+    expect(sanitizeAnalyticsUrl('https://app.vocdoni.io/admin/memberbase/members?person=m1')).toBe(
+      'https://app.vocdoni.io/admin/memberbase/members'
+    )
+  })
+
   it('leaves clean or unparseable urls untouched', async () => {
     const sanitize = await sanitizerFromInit()
 
