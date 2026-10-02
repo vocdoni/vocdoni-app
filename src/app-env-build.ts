@@ -40,6 +40,7 @@ export type AppEnv = {
   HIDE_VOTER_COUNT?: boolean
   PRIMARY_COLOR?: string
   SHOW_ORG_LOGO?: boolean
+  ACTIVITY_LOG?: boolean
 }
 
 type AppEnvObject = AppEnv
@@ -237,5 +238,6 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     STREAM_URL: resolveStreamUrl(env.STREAM_URL),
     PRIMARY_COLOR: resolvePrimaryColor(env.PRIMARY_COLOR),
     SHOW_ORG_LOGO: env.SHOW_ORG_LOGO === 'true',
+    ACTIVITY_LOG: env.ACTIVITY_LOG === 'true',
   }
 }
