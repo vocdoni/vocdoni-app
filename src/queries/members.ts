@@ -1,10 +1,12 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '~src/queries/pagination'
 import { useParams, useSearchParams } from 'react-router'
 import { ApiEndpoints, ApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import type { MemberSortField } from '~components/Memberbase/fields'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from './keys'
 
 export type Member = {
@@ -214,4 +216,68 @@ export const getSignedMemberIds = (error: unknown): string[] | null => {
   const data = (error.apiError as { data?: { signedMemberIds?: unknown } } | undefined)?.data
   const ids = data?.signedMemberIds
   return Array.isArray(ids) ? ids.filter((id): id is string => typeof id === 'string') : []
+}
+
+type ValidationClient = ReturnType<typeof useApiClient>['client']
+
+/**
+ * The members who lack `field` (email or phone), from the census validation endpoint: a 200 means
+ * everyone has it, a 400 lists who doesn't in `data.missingData`. Any other failure throws.
+ */
+const membersMissing = async (client: ValidationClient, orgAddress: string, field: 'email' | 'phone') => {
+  try {
+    await client.elections.validateCensus({ orgAddress, census: { authFields: [], twoFaFields: [field] } })
+    return []
+  } catch (error) {
+    if (error instanceof VocdoniApiError && error.status === 400) {
+      const missing = (error.body as { data?: { missingData?: unknown } } | undefined)?.data?.missingData
+      if (Array.isArray(missing)) return missing.filter((id): id is string => typeof id === 'string')
+    }
+    throw error
+  }
+}
+
+/** Who can't get a voting code: no email and no mobile. */
+export const computeReadiness = (missingEmail: string[], missingPhone: string[]) => {
+  const noPhone = new Set(missingPhone)
+  const unreachable = missingEmail.filter((id) => noPhone.has(id))
+  return { missingEmail: missingEmail.length, missingPhone: missingPhone.length, unreachable: unreachable.length }
+}
+
+export const READINESS_STALE_TIME = 5 * 60 * 1000
+
+/**
+ * How many members can get a voting code by email or SMS. Two validation calls (email, then
+ * phone), cached for 5 minutes and refreshed by any member write (they share the members key).
+ * Never polled. `available` stays false when it can't be worked out, so the UI says nothing.
+ */
+export const useSignInReadiness = () => {
+  const { organization } = useOrganization()
+  const { client } = useApiClient()
+  const { count, known } = useMembersCount()
+  const address = organization?.address
+
+  const query = useQuery({
+    queryKey: [...QueryKeys.organization.members(address), 'readiness'],
+    enabled: !!address && known && count > 0,
+    staleTime: READINESS_STALE_TIME,
+    retry: false,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const [missingEmail, missingPhone] = await Promise.all([
+        membersMissing(client, address!, 'email'),
+        membersMissing(client, address!, 'phone'),
+      ])
+      return computeReadiness(missingEmail, missingPhone)
+    },
+  })
+
+  const unreachable = Math.min(query.data?.unreachable ?? 0, count)
+  return {
+    available: query.isSuccess && known && count > 0,
+    total: count,
+    ready: count - unreachable,
+    unreachable,
+    isLoading: query.isLoading,
+  }
 }

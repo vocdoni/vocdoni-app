@@ -10,6 +10,7 @@ const state = vi.hoisted(() => ({
   total: 0,
   count: 0,
   listArgs: [] as Record<string, unknown>[],
+  readiness: { available: false, total: 0, ready: 0, unreachable: 0, isLoading: false },
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -40,6 +41,7 @@ vi.mock('~src/queries/members', async (importOriginal) => {
       }
     },
     useMembersCount: () => ({ count: state.count, isLoading: false, known: true }),
+    useSignInReadiness: () => state.readiness,
     useImportJobProgress: () => ({ data: undefined, isError: false }),
     useDeleteMembers: () => ({ mutateAsync: vi.fn(), isPending: false }),
   }
@@ -101,6 +103,7 @@ describe('People', () => {
     state.total = 2
     state.count = 2
     state.listArgs = []
+    state.readiness = { available: false, total: 0, ready: 0, unreachable: 0, isLoading: false }
     localStorage.clear()
     setReactProvidersMock({
       useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
@@ -277,5 +280,25 @@ describe('People', () => {
 
     await user.click(within(drawer).getByRole('button', { name: 'Close' }))
     await waitFor(() => expect(currentUrl()).toBe('/admin/memberbase/members/1'))
+  })
+
+  it('says how many can get a voting code, with a labelled warning for the rest', () => {
+    state.readiness = { available: true, total: 1742, ready: 1719, unreachable: 23, isLoading: false }
+    renderPeople()
+
+    expect(screen.getByText('1,719 of 1,742 can get a voting code')).toBeInTheDocument()
+    expect(screen.getByText('23 have no email or mobile')).toBeInTheDocument()
+    expect(screen.getByText('Warning:')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Show them/ })).toBeInTheDocument()
+  })
+
+  it('swaps readiness for the page message while rows are selected', async () => {
+    const user = userEvent.setup()
+    state.readiness = { available: true, total: 2, ready: 2, unreachable: 0, isLoading: false }
+    renderPeople()
+
+    expect(screen.getByText('All 2 can get a voting code')).toBeInTheDocument()
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Anna Vila Puig' }))
+    expect(screen.queryByText('All 2 can get a voting code')).toBeNull()
   })
 })

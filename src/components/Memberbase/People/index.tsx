@@ -12,7 +12,7 @@ import { useMemberFields } from '../fields'
 import { ImportProgress } from '../Members/Import'
 import { useMembersPage } from '../MembersPageContext'
 import { AddToCensusSheet, AddToGroupSheet, CreateGroupSheet } from './BulkActions'
-import { ContextBar } from './ContextBar'
+import { ContextBar, ReadinessMessage } from './ContextBar'
 import { DeleteAllMembersDialog, DeleteMembersDialog } from './DeleteMembersDialog'
 import { findMemberLink, isTypingTarget } from './display'
 import { PaginationFooter } from './PaginationFooter'
@@ -223,7 +223,9 @@ export const People = () => {
         canDeleteAll={membersCount.count > 0}
       />
       <Box borderWidth='1px' borderColor='border' borderRadius='md' overflow='hidden' bg='bg'>
-        <ContextBar pageSelection={pageSelection} pageSize={members.length} />
+        <ContextBar pageSelection={pageSelection} pageSize={members.length}>
+          <ReadinessMessage />
+        </ContextBar>
         <Box ref={listRef} onKeyDown={(event) => step(event.nativeEvent)}>
           <Box hideBelow='md'>
             <PeopleTable

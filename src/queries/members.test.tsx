@@ -4,7 +4,8 @@ import React from 'react'
 import { MemoryRouter } from 'react-router'
 import { mockUseOrganization } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { useMembersCount, usePaginatedMembers } from './members'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import { computeReadiness, useMembersCount, usePaginatedMembers, useSignInReadiness } from './members'
 
 const bearedFetch = vi.fn()
 
@@ -59,5 +60,66 @@ describe('member queries', () => {
     expect(bearedFetch).toHaveBeenCalledWith(
       'organizations/0xorg/members?page=3&limit=50&search=&sortBy=surname&sortOrder=desc'
     )
+  })
+})
+
+describe('sign-in readiness', () => {
+  const validateCensus = vi.fn()
+  const missing = (ids: string[]) =>
+    new VocdoniApiError(400, { error: 'invalid', data: { missingData: ids } }, 'invalid')
+
+  beforeEach(() => {
+    bearedFetch.mockReset().mockResolvedValue({ members: [{}], pagination: { totalItems: 5 } })
+    validateCensus.mockReset()
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
+      useClient: () => ({ client: { elections: { validateCensus } } }),
+    })
+  })
+
+  afterEach(() => {
+    resetReactProvidersMock()
+  })
+
+  it('counts as unreachable only the members missing both email and phone', () => {
+    expect(computeReadiness(['a', 'b', 'c'], ['b', 'c', 'd'])).toEqual({
+      missingEmail: 3,
+      missingPhone: 3,
+      unreachable: 2,
+    })
+  })
+
+  it('asks the validation endpoint once for email and once for phone', async () => {
+    validateCensus.mockImplementation(({ census }) =>
+      Promise.reject(census.twoFaFields[0] === 'email' ? missing(['a', 'b']) : missing(['b', 'c']))
+    )
+    const { result } = renderHook(() => useSignInReadiness(), { wrapper })
+
+    await waitFor(() => expect(result.current.available).toBe(true))
+    expect(result.current).toMatchObject({ total: 5, ready: 4, unreachable: 1 })
+    expect(validateCensus).toHaveBeenCalledWith({
+      orgAddress: '0xorg',
+      census: { authFields: [], twoFaFields: ['email'] },
+    })
+    expect(validateCensus).toHaveBeenCalledWith({
+      orgAddress: '0xorg',
+      census: { authFields: [], twoFaFields: ['phone'] },
+    })
+  })
+
+  it('reads a 200 as everyone reachable', async () => {
+    validateCensus.mockResolvedValue('OK')
+    const { result } = renderHook(() => useSignInReadiness(), { wrapper })
+
+    await waitFor(() => expect(result.current.available).toBe(true))
+    expect(result.current).toMatchObject({ ready: 5, unreachable: 0 })
+  })
+
+  it('stays unavailable when validation fails for another reason', async () => {
+    validateCensus.mockRejectedValue(new VocdoniApiError(500, { error: 'boom' }, 'boom'))
+    const { result } = renderHook(() => useSignInReadiness(), { wrapper })
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
+    expect(result.current.available).toBe(false)
   })
 })
