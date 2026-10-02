@@ -28,15 +28,34 @@ describe('useSelection', () => {
     expect(result.current.ids).toEqual(['a'])
   })
 
-  it('clears when the reset key changes', () => {
+  it('clears only when the reset key (the organization) changes', () => {
     const { result, rerender } = renderHook(({ resetKey }) => useSelection({ resetKey }), {
-      initialProps: { resetKey: 'page-1' },
+      initialProps: { resetKey: '0xorg' },
     })
 
     act(() => result.current.toggle(page[0], true))
-    rerender({ resetKey: 'page-1' })
+    rerender({ resetKey: '0xorg' })
     expect(result.current.count).toBe(1)
-    rerender({ resetKey: 'page-2' })
+    rerender({ resetKey: '0xother' })
     expect(result.current.count).toBe(0)
+  })
+
+  it('selects everyone without ids, and unticking a row goes back to the people picked before', () => {
+    const { result } = renderHook(() => useSelection())
+
+    act(() => result.current.toggle(page[0], true))
+    act(() => result.current.toggle(page[1], true))
+    act(() => result.current.selectEveryone(1742))
+    expect(result.current).toMatchObject({ scope: 'all', count: 1742, ids: [], members: [] })
+    expect(result.current.isSelected('zzz')).toBe(true)
+    expect(result.current.pageState(['c', 'd'])).toEqual({ selected: 2, all: true, some: true })
+
+    act(() => result.current.toggle(page[1], false))
+    expect(result.current.scope).toBe('ids')
+    expect(result.current.ids).toEqual(['a'])
+
+    act(() => result.current.selectEveryone(1742))
+    act(() => result.current.clear())
+    expect(result.current).toMatchObject({ scope: 'ids', count: 0 })
   })
 })

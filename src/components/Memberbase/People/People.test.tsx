@@ -72,6 +72,7 @@ const anna = {
   birthDate: '1990-01-01',
 }
 const jordi = { id: 'j2', name: 'Jordi', surname: 'Serra Mas', email: 'jordi@example.test', memberNumber: '0043' }
+const carla = { id: 'c3', name: 'Carla', surname: 'Soler', email: 'carla@example.test', memberNumber: '0044' }
 
 const openImport = vi.fn()
 const openAddPerson = vi.fn()
@@ -252,6 +253,74 @@ describe('People', () => {
     await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
     expect(barCount('2 selected')).toBeInTheDocument()
     expect(screen.getByText('All 2 on this page selected')).toBeInTheDocument()
+  })
+
+  it('keeps the selection across pages and searches, and says how many are not on this page', async () => {
+    const user = userEvent.setup()
+    state.total = 30
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Anna Vila Puig' }))
+    state.members = [carla]
+    await user.click(screen.getByRole('button', { name: 'Next page' }))
+    expect(currentUrl()).toBe('/admin/memberbase/members/2')
+    expect(barCount('1 selected')).toBeInTheDocument()
+    expect(screen.getByText('(1 not on this page)')).toBeInTheDocument()
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search members' }), 'carla{Enter}')
+    expect(barCount('1 selected')).toBeInTheDocument()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Carla Soler' }))
+    expect(barCount('2 selected')).toBeInTheDocument()
+    expect(screen.getByText('(1 not on this page)')).toBeInTheDocument()
+
+    // Esc clears, once focus has left the search box
+    await user.click(screen.getByRole('table'))
+    await user.keyboard('{Escape}')
+    expect(screen.queryByText('2 selected')).toBeNull()
+  })
+
+  it('narrows the list to the selected people with the "Show selected" chip, and back', async () => {
+    const user = userEvent.setup()
+    state.total = 30
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Jordi Serra Mas' }))
+    state.members = [carla]
+    await user.click(screen.getByRole('button', { name: 'Next page' }))
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Carla Soler' }))
+
+    const chip = screen.getByRole('button', { name: 'Show selected (2)' })
+    await user.click(chip)
+    expect(chip).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByText('Showing the 2 you selected')).toBeInTheDocument()
+    const table = screen.getByRole('table')
+    expect(
+      within(table)
+        .getAllByRole('link')
+        .map((link) => link.textContent)
+    ).toEqual(['Carla Soler', 'Jordi Serra Mas'])
+    // The server's page stays where it was
+    expect(currentUrl()).toBe('/admin/memberbase/members/2')
+
+    // Unticking someone takes them out of the view
+    await user.click(within(table).getByRole('checkbox', { name: 'Select Carla Soler' }))
+    expect(within(screen.getByRole('table')).getAllByRole('link')).toHaveLength(1)
+
+    await user.click(screen.getByRole('button', { name: 'Show everyone' }))
+    expect(within(screen.getByRole('table')).getByRole('link', { name: 'Carla Soler' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Show selected (1)' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('toggles a row with Space on its name', async () => {
+    const user = userEvent.setup()
+    renderPeople()
+
+    within(screen.getByRole('table')).getByRole('link', { name: 'Anna Vila Puig' }).focus()
+    await user.keyboard(' ')
+    expect(barCount('1 selected')).toBeInTheDocument()
+    await user.keyboard(' ')
+    expect(screen.queryByText('1 selected')).toBeNull()
   })
 
   it('opens a member from their name', async () => {

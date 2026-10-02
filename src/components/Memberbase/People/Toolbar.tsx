@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuColumns3, LuEllipsis, LuFilter, LuSearch } from 'react-icons/lu'
+import { LuColumns3, LuEllipsis, LuFilter, LuListChecks, LuSearch } from 'react-icons/lu'
 import { ComingSoonButton } from '~components/ui/ComingSoon'
 import type { MemberField, MemberFieldId, MemberSortField } from '../fields'
 import { TOGGLEABLE_COLUMNS } from './useColumnVisibility'
@@ -185,11 +185,47 @@ export const OverflowMenu = ({ onDeleteAll, disabled }: { onDeleteAll: () => voi
   )
 }
 
+type ShowSelectedChipProps = {
+  /** How many are selected; the chip hides at 0 */
+  count: number
+  pressed: boolean
+  onToggle: () => void
+}
+
+/** "Show selected (12)": narrows the list to the selection, and back. */
+export const ShowSelectedChip = ({ count, pressed, onToggle }: ShowSelectedChipProps) => {
+  const { t, i18n } = useTranslation()
+  if (!count) return null
+
+  return (
+    <Button
+      size='sm'
+      variant={pressed ? 'subtle' : 'outline'}
+      aria-pressed={pressed}
+      onClick={onToggle}
+      flexShrink={0}
+      fontVariantNumeric='tabular-nums'
+    >
+      <Icon as={LuListChecks} />
+      {t('members.selection.show_selected', {
+        defaultValue_one: 'Show selected ({{formattedCount}})',
+        defaultValue_other: 'Show selected ({{formattedCount}})',
+        count,
+        formattedCount: count.toLocaleString(i18n.resolvedLanguage),
+      })}
+    </Button>
+  )
+}
+
 type ToolbarProps = SearchBoxProps &
   SortSelectProps &
   ColumnsPopoverProps & {
     onDeleteAll: () => void
     canDeleteAll: boolean
+    /** The "Show selected" chip; hidden when nobody is selected one by one */
+    selected?: ShowSelectedChipProps
+    /** Opens "Select from a list…" */
+    onPasteSelect?: () => void
   }
 
 export const Toolbar = ({
@@ -203,13 +239,23 @@ export const Toolbar = ({
   setColumn,
   onDeleteAll,
   canDeleteAll,
+  selected,
+  onPasteSelect,
 }: ToolbarProps) => {
   const { t } = useTranslation()
 
   return (
     <Flex gap={2} direction={{ base: 'column', md: 'row' }} align={{ md: 'center' }} mb={3}>
-      <SearchBox value={value} onSearch={onSearch} />
+      <Flex gap={2} align='center' flex='1' minW={0}>
+        <SearchBox value={value} onSearch={onSearch} />
+        {selected && <ShowSelectedChip {...selected} />}
+      </Flex>
       <Flex gap={2} align='center' ml={{ md: 'auto' }} wrap='wrap'>
+        {onPasteSelect && (
+          <Button size='sm' variant='outline' onClick={onPasteSelect}>
+            {t('members.paste.open', { defaultValue: 'Select from a list…' })}
+          </Button>
+        )}
         <SortSelect sortedBy={sortedBy} order={order} fields={fields} onChange={onChange} />
         <Flex hideBelow='lg'>
           <ColumnsPopover fields={fields} isVisible={isVisible} setColumn={setColumn} />

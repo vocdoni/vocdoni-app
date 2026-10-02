@@ -85,54 +85,66 @@ export const ReadinessMessage = () => {
   )
 }
 
-type ContextBarProps = {
+type PageSelectionMessageProps = {
   /** How much of the page is selected */
   pageSelection: PageSelectionState
   /** Rows on the page */
   pageSize: number
-  /** What the bar says when nothing is selected (sign-in readiness) */
+  /** After the sentence: "Select all 1,742" */
   children?: ReactNode
 }
 
-/**
- * One 40px line above the rows that says one thing at a time and never changes height: what's
- * selected on the page, or by default how many members can get a voting code.
- */
-export const ContextBar = ({ pageSelection, pageSize, children }: ContextBarProps) => {
+/** "All 25 on this page selected", or "3 of 25 on this page selected". */
+export const PageSelectionMessage = ({ pageSelection, pageSize, children }: PageSelectionMessageProps) => {
   const { t, i18n } = useTranslation()
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
 
   return (
-    <Flex
-      h='40px'
-      align='center'
-      gap={2}
-      px={4}
-      borderBottomWidth='1px'
-      borderColor='border'
-      bg='bg.subtle'
-      fontSize='sm'
-      overflow='hidden'
-      whiteSpace='nowrap'
-    >
-      {pageSelection.some ? (
-        <Text fontSize='sm' fontVariantNumeric='tabular-nums' truncate>
-          {pageSelection.all
-            ? t('members.people.page_all_selected', {
-                defaultValue_one: 'The only person on this page is selected',
-                defaultValue_other: 'All {{formattedCount}} on this page selected',
-                count: pageSize,
-                formattedCount: format(pageSize),
-              })
-            : t('members.people.page_some_selected', {
-                defaultValue: '{{selected}} of {{total}} on this page selected',
-                selected: format(pageSelection.selected),
-                total: format(pageSize),
-              })}
-        </Text>
-      ) : (
-        children
-      )}
-    </Flex>
+    <>
+      <Text fontSize='sm' fontVariantNumeric='tabular-nums' truncate flexShrink={1} minW={0}>
+        {pageSelection.all
+          ? t('members.people.page_all_selected', {
+              defaultValue_one: 'The only person on this page is selected',
+              defaultValue_other: 'All {{formattedCount}} on this page selected',
+              count: pageSize,
+              formattedCount: format(pageSize),
+            })
+          : t('members.people.page_some_selected', {
+              defaultValue: '{{selected}} of {{total}} on this page selected',
+              selected: format(pageSelection.selected),
+              total: format(pageSize),
+            })}
+      </Text>
+      {children}
+    </>
   )
 }
+
+/** The dot between two parts of a context bar message, hidden from screen readers. */
+export const Separator = () => (
+  <Text as='span' aria-hidden='true' color='fg.muted'>
+    ·
+  </Text>
+)
+
+/**
+ * One 40px line above the rows that says one thing at a time and never changes height: what's
+ * selected on the page, progress, or by default how many members can get a voting code. The page
+ * decides which message it shows.
+ */
+export const ContextBar = ({ children }: { children?: ReactNode }) => (
+  <Flex
+    h='40px'
+    align='center'
+    gap={2}
+    px={4}
+    borderBottomWidth='1px'
+    borderColor='border'
+    bg='bg.subtle'
+    fontSize='sm'
+    overflow='hidden'
+    whiteSpace='nowrap'
+  >
+    {children}
+  </Flex>
+)

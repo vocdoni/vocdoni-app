@@ -12,14 +12,15 @@ import { useMemberFields } from '../fields'
 import { ImportProgress } from '../Members/Import'
 import { useMembersPage } from '../MembersPageContext'
 import { AddToCensusSheet, AddToGroupSheet, CreateGroupSheet } from './BulkActions'
-import { ContextBar, ReadinessMessage } from './ContextBar'
+import { ContextBar, PageSelectionMessage, ReadinessMessage, Separator } from './ContextBar'
 import { DeleteAllMembersDialog, DeleteMembersDialog } from './DeleteMembersDialog'
 import { findMemberLink, isTypingTarget } from './display'
+import { useLocalRows } from './localView'
 import { FirstRun } from './FirstRun'
 import { PaginationFooter } from './PaginationFooter'
 import { PeopleCards } from './PeopleCards'
 import { PeopleTable } from './PeopleTable'
-import { PersonSheet } from './PersonSheet'
+import { PERSON_DRAWER_WIDTH, PersonSheet } from './PersonSheet'
 import { RowMenu } from './RowMenu'
 import { Toolbar } from './Toolbar'
 import { ALWAYS_VISIBLE, useColumnVisibility } from './useColumnVisibility'
@@ -53,8 +54,11 @@ const useDelayedFlag = (active: boolean, delay: number) => {
 
 const hasId = (member: { id?: string }): member is SelectedMember => !!member.id
 
+/** What the list shows: the server's page, or a set already in memory (the selected people) */
+type View = 'list' | 'selected'
+
 export const People = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { organization } = useOrganization()
   const url = usePeopleUrlState()
   const { jobId, setJobId, openImport, openAddPerson } = useMembersPage()
@@ -69,21 +73,36 @@ export const People = () => {
     sortOrder: url.sort ? url.order : undefined,
     keepPrevious: true,
   })
-  const members = useMemo(() => (query.data?.members ?? []).filter(hasId), [query.data])
+  const pageMembers = useMemo(() => (query.data?.members ?? []).filter(hasId), [query.data])
   const pagination = query.data?.pagination
   const lastPage = pagination?.lastPage ?? 0
-  const selection = useSelection({ resetKey: [url.q, url.page, url.size, url.sort, url.order].join('|') })
+  // Survives search, sort and paging; only another organization starts it over
+  const selection = useSelection({ resetKey: organization?.address })
+  const [view, setView] = useState<View>('list')
+  const local = useLocalRows(selection.members, {
+    sortedBy: url.sortedBy,
+    order: url.order,
+    size: url.size,
+    resetKey: view,
+  })
+  const members = view === 'list' ? pageMembers : local.rows
   const [selectMode, setSelectMode] = useState(false)
   const [target, setTarget] = useState<ActionTarget | null>(null)
   const [deleteAllOpen, setDeleteAllOpen] = useState(false)
   const showSkeleton = useDelayedFlag(query.isLoading, SKELETON_DELAY_MS)
   const listRef = useRef<HTMLDivElement>(null)
   const { hasLive } = useAffectedVotes()
-  const activeMember = members.find((member) => member.id === url.memberId)
+  const activeMember =
+    members.find((member) => member.id === url.memberId) ??
+    pageMembers.find((member) => member.id === url.memberId) ??
+    selection.members.find((member) => member.id === url.memberId)
 
   const visibleColumns = fields.filter((field) => !ALWAYS_VISIBLE.includes(field.id) && columns.isVisible(field.id))
   const surnameFirst = url.sortedBy === 'surname'
   const pageSelection = selection.pageState(members.map((member) => member.id))
+  // Shown in the bar: how many of the selected aren't among the rows on screen
+  const notOnPage = view === 'list' ? selection.count - pageSelection.selected : 0
+  const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
   const sortLabel = (() => {
     const label = fields.find((field) => field.id === url.sortedBy)?.label ?? url.sortedBy
     return url.order === 'desc'
@@ -107,6 +126,20 @@ export const People = () => {
     if (lastPage > 0 && url.page > lastPage) url.setPage(lastPage)
   }, [lastPage, url])
 
+  // Nothing left to show in the selected view (cleared, or "everyone" picked): back to the list
+  useEffect(() => {
+    if (view === 'selected' && (!selection.count || selection.scope === 'all')) setView('list')
+  }, [view, selection.count, selection.scope])
+
+  // A new search is about the whole list again
+  const onSearch = useCallback(
+    (value: string) => {
+      setView('list')
+      url.setQuery(value)
+    },
+    [url]
+  )
+
   // Esc clears the selection, unless a dialog or a field has the key
   useEffect(() => {
     if (!selection.count) return
@@ -120,12 +153,24 @@ export const People = () => {
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [selection])
 
-  /** j/k step to the next/previous person: the open one in the drawer, or the focused row. */
+  /**
+   * j/k step to the next/previous person: the open one in the drawer, or the focused row. Space on a
+   * row's name toggles that row (a checkbox handles Space itself).
+   */
   const step = useCallback(
     (event: Pick<KeyboardEvent, 'key' | 'metaKey' | 'ctrlKey' | 'altKey' | 'target' | 'preventDefault'>) => {
-      if ((event.key !== 'j' && event.key !== 'k') || event.metaKey || event.ctrlKey || event.altKey) return
-      if (isTypingTarget(event.target)) return
+      if (event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) return
       const focusedRow = (event.target as HTMLElement).closest?.('[data-member-row]')?.getAttribute('data-member-row')
+      if (event.key === ' ') {
+        const row = focusedRow ? members.find((member) => member.id === focusedRow) : undefined
+        if (!row || (event.target as HTMLElement).tagName !== 'A') return
+        // On phones the cards only select in select mode
+        if (!selectMode && !(event.target as HTMLElement).closest('table')) return
+        event.preventDefault()
+        selection.toggle(row, !selection.isSelected(row.id))
+        return
+      }
+      if (event.key !== 'j' && event.key !== 'k') return
       const currentId = url.memberId ?? focusedRow
       const index = members.findIndex((member) => member.id === currentId)
       const next = members[index === -1 ? 0 : index + (event.key === 'j' ? 1 : -1)]
@@ -134,7 +179,7 @@ export const People = () => {
       if (url.memberId) url.openMember(next.id)
       else findMemberLink(next.id)?.focus()
     },
-    [members, url]
+    [members, url, selection, selectMode]
   )
 
   const openAction = (action: BulkAction, targets: SelectedMember[], fromSelection: boolean) =>
@@ -218,7 +263,7 @@ export const People = () => {
       <ImportProgress jobId={jobId} onDismiss={() => setJobId(null)} />
       <Toolbar
         value={url.q}
-        onSearch={url.setQuery}
+        onSearch={onSearch}
         sortedBy={url.sortedBy}
         order={url.order}
         fields={fields}
@@ -227,10 +272,38 @@ export const People = () => {
         setColumn={columns.setColumn}
         onDeleteAll={() => setDeleteAllOpen(true)}
         canDeleteAll={membersCount.count > 0}
+        selected={
+          selection.scope === 'ids'
+            ? {
+                count: selection.count,
+                pressed: view === 'selected',
+                onToggle: () => setView(view === 'selected' ? 'list' : 'selected'),
+              }
+            : undefined
+        }
       />
       <Box borderWidth='1px' borderColor='border' borderRadius='md' overflow='hidden' bg='bg'>
-        <ContextBar pageSelection={pageSelection} pageSize={members.length}>
-          <ReadinessMessage />
+        <ContextBar>
+          {view === 'selected' ? (
+            <>
+              <Text fontSize='sm' fontVariantNumeric='tabular-nums' truncate>
+                {t('members.selection.showing_selected', {
+                  defaultValue_one: 'Showing the person you selected',
+                  defaultValue_other: 'Showing the {{formattedCount}} you selected',
+                  count: selection.count,
+                  formattedCount: format(selection.count),
+                })}
+              </Text>
+              <Separator />
+              <Button size='xs' variant='plain' px={0} color='fg.info' onClick={() => setView('list')}>
+                {t('members.selection.show_everyone', { defaultValue: 'Show everyone' })}
+              </Button>
+            </>
+          ) : pageSelection.some ? (
+            <PageSelectionMessage pageSelection={pageSelection} pageSize={members.length} />
+          ) : (
+            <ReadinessMessage />
+          )}
         </ContextBar>
         <Box ref={listRef} onKeyDown={(event) => step(event.nativeEvent)}>
           <Box hideBelow='md'>
@@ -283,22 +356,51 @@ export const People = () => {
             />
           </Box>
         </Box>
-        {pagination && pagination.totalItems > 0 && (
-          <PaginationFooter
-            page={url.page}
-            lastPage={lastPage}
-            size={url.size}
-            total={pagination.totalItems}
-            shown={members.length}
-            searching={searching}
-            onPage={url.setPage}
-            onSize={url.setSize}
-          />
-        )}
+        {view === 'list'
+          ? pagination &&
+            pagination.totalItems > 0 && (
+              <PaginationFooter
+                page={url.page}
+                lastPage={lastPage}
+                size={url.size}
+                total={pagination.totalItems}
+                shown={members.length}
+                searching={searching}
+                onPage={url.setPage}
+                onSize={url.setSize}
+              />
+            )
+          : local.total > 0 && (
+              <PaginationFooter
+                page={local.page}
+                lastPage={local.lastPage}
+                size={url.size}
+                total={local.total}
+                shown={members.length}
+                searching={false}
+                onPage={local.setPage}
+                onSize={url.setSize}
+              />
+            )}
       </Box>
 
       {selection.count > 0 && (
-        <SelectionBar count={selection.count} onClear={selection.clear}>
+        <SelectionBar
+          count={selection.count}
+          onClear={selection.clear}
+          secondary={
+            notOnPage > 0
+              ? t('members.selection.not_on_page', {
+                  defaultValue_one: '({{formattedCount}} not on this page)',
+                  defaultValue_other: '({{formattedCount}} not on this page)',
+                  count: notOnPage,
+                  formattedCount: format(notOnPage),
+                })
+              : undefined
+          }
+          // The person drawer sits beside the list from xl: keep the bar clear of it
+          rightInset={url.memberId ? PERSON_DRAWER_WIDTH : undefined}
+        >
           <Button size='sm' variant='outline' onClick={() => openAction('create_group', selection.members, true)}>
             <Icon as={LuUsers} />
             {t('members.table.create_group', { defaultValue: 'Create group' })}

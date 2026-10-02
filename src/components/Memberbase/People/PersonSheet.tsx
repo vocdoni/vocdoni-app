@@ -12,6 +12,9 @@ import type { SelectedMember } from './useSelection'
 /** From xl the drawer sits beside the table without blocking it. */
 const WIDE_QUERY = '(min-width: 80rem)'
 
+/** The drawer's width from md (the Sheet's `md` size, Chakra's `lg` size token) */
+export const PERSON_DRAWER_WIDTH = '32rem'
+
 const subscribeWide = (onChange: () => void) => {
   const query = typeof window !== 'undefined' ? window.matchMedia?.(WIDE_QUERY) : undefined
   query?.addEventListener?.('change', onChange)

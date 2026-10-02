@@ -15,13 +15,18 @@ type SelectionBarProps = {
   onClear: () => void
   /** The actions for the selection */
   children?: ReactNode
+  /**
+   * From xl, the width of a non-modal panel open on the right (the person drawer): the bar centres
+   * in the space left of it instead of sliding under it
+   */
+  rightInset?: string
 }
 
 /**
  * A floating bar for what's selected: bottom-centred on wide screens, full width at the bottom on
  * phones. It takes the support chat's corner, so the chat hides while it's showing.
  */
-export const SelectionBar = ({ count, label, secondary, onClear, children }: SelectionBarProps) => {
+export const SelectionBar = ({ count, label, secondary, onClear, children, rightInset }: SelectionBarProps) => {
   const { t, i18n } = useTranslation()
   const chat = useSupportChatControls()
   const hideChat = chat?.hideChat
@@ -47,10 +52,10 @@ export const SelectionBar = ({ count, label, secondary, onClear, children }: Sel
       position='fixed'
       zIndex='banner'
       bottom={{ base: 0, lg: 6 }}
-      left={{ base: 0, lg: '50%' }}
+      left={{ base: 0, lg: '50%', xl: rightInset ? `calc((100vw - ${rightInset}) / 2)` : '50%' }}
       right={{ base: 0, lg: 'auto' }}
       transform={{ lg: 'translateX(-50%)' }}
-      maxW={{ lg: 'calc(100vw - 3rem)' }}
+      maxW={{ lg: 'calc(100vw - 3rem)', xl: rightInset ? `calc(100vw - ${rightInset} - 3rem)` : 'calc(100vw - 3rem)' }}
       align='center'
       gap={3}
       wrap='wrap'
