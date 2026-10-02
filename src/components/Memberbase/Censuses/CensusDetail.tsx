@@ -1,9 +1,9 @@
-import { Box, Flex, Grid, Icon, Link, Skeleton, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Grid, Icon, Link, Skeleton, Stack, Text } from '@chakra-ui/react'
 import { ElectionProvider } from '@vocdoni/react-components'
 import type { TFunction } from 'i18next'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuLock } from 'react-icons/lu'
+import { LuLock, LuUserMinus, LuUserPlus } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink } from 'react-router'
 import { VoterLookup } from '~components/Process/Dashboard/View/VoterLookup'
 import { Banner } from '~components/ui/Banner'
@@ -11,11 +11,15 @@ import { SectionCard } from '~components/ui/SectionCard'
 import { Routes } from '~routes'
 import type { Group } from '~src/queries/groups'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import type { SelectedMember } from '../People/useSelection'
+import { AddPeopleSheet, PickToRemoveSheet } from './AddPeopleSheet'
 import { CensusMembersTable } from './CensusMembersTable'
 import { peopleUnit, votersUnit } from './labels'
 import { isEnded } from './model'
 import { ExportCard, readOnlyText, SavedCensusActions, SignInCard } from './SideCards'
+import { RemovePeopleDialog } from './RemovePeopleDialog'
 import { formatVoteList, UsedByCard } from './UsedBy'
+import { useCensusEditor } from './useCensusEditor'
 import { type CensusDetailTarget, type ResolvedCensusState, useResolvedCensus } from './useResolvedCensus'
 
 export type CensusDetailProps = CensusDetailTarget
@@ -74,8 +78,14 @@ const ReadOnlyNote = ({ census }: { census: ResolvedCensusState }) => {
 
 const PeopleCard = ({ census }: { census: ResolvedCensusState }) => {
   const { t, i18n } = useTranslation()
+  const editor = useCensusEditor(census)
+  const [adding, setAdding] = useState(false)
+  const [picking, setPicking] = useState(false)
+  const [removing, setRemoving] = useState<SelectedMember[] | null>(null)
+  const [removals, setRemovals] = useState(0)
   const count = census.count
   const unit = census.kind === 'vote' ? votersUnit(t, count) : peopleUnit(t, count)
+  const name = census.title || t('census_detail.this_census', { defaultValue: 'this census' })
 
   return (
     <SectionCard>
@@ -96,13 +106,33 @@ const PeopleCard = ({ census }: { census: ResolvedCensusState }) => {
               </Text>
             </Flex>
           </Box>
+          {census.edit !== 'none' && (
+            <Flex gap={2} wrap='wrap'>
+              {census.edit === 'process' && (
+                <Button size='sm' variant='outline' colorPalette='gray' onClick={() => setPicking(true)}>
+                  <Icon as={LuUserMinus} />
+                  {t('census_detail.remove.pick_button', { defaultValue: 'Remove people…' })}
+                </Button>
+              )}
+              <Button size='sm' onClick={() => setAdding(true)}>
+                <Icon as={LuUserPlus} />
+                {t('census_detail.add.button', { defaultValue: 'Add people' })}
+              </Button>
+            </Flex>
+          )}
         </Flex>
         <Text fontSize='sm' color='fg.muted'>
           {sourceSentence(t, i18n.resolvedLanguage, census)}
         </Text>
         <ReadOnlyNote census={census} />
         {census.browse === 'group' && census.groupId ? (
-          <CensusMembersTable groupId={census.groupId} total={census.count} selectable={false} />
+          <CensusMembersTable
+            groupId={census.groupId}
+            total={census.group?.memberIds?.length ?? census.count}
+            selectable={census.edit === 'group'}
+            onRemove={setRemoving}
+            resetKey={removals}
+          />
         ) : (
           <Text fontSize='sm' color='fg.muted'>
             {t('census_detail.lookup_note', {
@@ -112,6 +142,28 @@ const PeopleCard = ({ census }: { census: ResolvedCensusState }) => {
           </Text>
         )}
       </Stack>
+      {census.edit !== 'none' && (
+        <>
+          <AddPeopleSheet open={adding} onOpenChange={setAdding} census={census} editor={editor} name={name} />
+          <PickToRemoveSheet
+            open={picking}
+            onOpenChange={setPicking}
+            onPicked={(people) => {
+              setPicking(false)
+              setRemoving(people)
+            }}
+          />
+          <RemovePeopleDialog
+            open={!!removing}
+            onOpenChange={(open) => !open && setRemoving(null)}
+            people={removing ?? []}
+            census={census}
+            editor={editor}
+            name={name}
+            onRemoved={() => setRemovals((value) => value + 1)}
+          />
+        </>
+      )}
     </SectionCard>
   )
 }

@@ -67,13 +67,26 @@ type PersonFormProps = {
   formId: string
   /** Edits this member; without it, adds a new one */
   member?: SelectedMember
-  onSaved: () => void
+  /** After saving. A new person comes with what they were created with */
+  onSaved: (created?: Partial<Member>) => void
   onPendingChange?: (pending: boolean) => void
   /** For analytics: whether a live vote follows the member list */
   inLiveVote?: boolean
+  /** No "Added to your members" toast: the caller says what happened once it's done */
+  quiet?: boolean
+  /** For analytics: where a new person was added from */
+  source?: string
 }
 
-export const PersonForm = ({ formId, member, onSaved, onPendingChange, inLiveVote = false }: PersonFormProps) => {
+export const PersonForm = ({
+  formId,
+  member,
+  onSaved,
+  onPendingChange,
+  inLiveVote = false,
+  quiet = false,
+  source = 'form',
+}: PersonFormProps) => {
   const { t } = useTranslation()
   const toast = useToast()
   const fields = useMemberFields()
@@ -127,15 +140,17 @@ export const PersonForm = ({ formId, member, onSaved, onPendingChange, inLiveVot
       return
     }
     try {
-      await addMembers.mutateAsync([newMemberPayload(formValues)])
-      trackAnalyticsEvent({ name: AnalyticsEvents.MemberAdded, props: { source: 'form' } })
-      toast({
-        title: t('members.person.added', { defaultValue: 'Added to your members' }),
-        type: 'success',
-        duration: 3000,
-        isClosable: true,
-      })
-      onSaved()
+      const payload = newMemberPayload(formValues)
+      await addMembers.mutateAsync([payload])
+      trackAnalyticsEvent({ name: AnalyticsEvents.MemberAdded, props: { source } })
+      if (!quiet)
+        toast({
+          title: t('members.person.added', { defaultValue: 'Added to your members' }),
+          type: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+      onSaved(payload)
     } catch (error) {
       fail(error)
     }

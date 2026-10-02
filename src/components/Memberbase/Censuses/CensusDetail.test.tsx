@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
+import { ApiError } from '~components/Auth/api'
 import { mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusDetail } from './CensusDetail'
@@ -25,9 +26,17 @@ const state = vi.hoisted(() => ({
   drafts: [] as unknown[],
   meta: {} as Record<string, unknown>,
   process: null as unknown,
+  orgMembers: [] as Record<string, unknown>[],
+  conflicts: [] as string[][],
   fetch: vi.fn(),
   download: vi.fn(),
   track: vi.fn(),
+  toast: vi.fn(),
+}))
+
+vi.mock('~components/Toast', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~components/Toast')>()),
+  useToast: () => state.toast,
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -64,10 +73,36 @@ vi.mock('~utils/analytics', async (importOriginal) => ({
   trackAnalyticsEvent: state.track,
 }))
 
-const route = (url: string, options?: { method?: string }) => {
+const conflict = (signedMemberIds: string[]) =>
+  new ApiError(
+    { error: 'member already signed', data: { signedMemberIds } } as never,
+    new Response(null, { status: 409 })
+  )
+
+const route = (url: string, options?: { method?: string; body?: Record<string, unknown> }) => {
   const [path, query] = url.split('?')
   const params = new URLSearchParams(query)
   if (path.endsWith('/meta')) return { meta: state.meta }
+  if (path.endsWith('/census') && options?.method === 'DELETE')
+    return { removed: (options.body?.memberIds as string[]).length }
+  if (path.endsWith('/members') && !path.includes('/groups/')) {
+    if (options?.method === 'POST') {
+      const created = (options.body?.members as Record<string, unknown>[]).map((member, index) => ({
+        ...member,
+        id: `new${index}`,
+      }))
+      state.orgMembers.push(...created)
+      return { added: created.length }
+    }
+    const search = (params.get('search') ?? '').toLowerCase()
+    const list = state.orgMembers.filter(
+      (member) => !search || `${member.name} ${member.surname} ${member.email}`.toLowerCase().includes(search)
+    )
+    return {
+      members: list.slice(0, Number(params.get('limit') ?? 10)),
+      pagination: { totalItems: list.length, lastPage: 1, currentPage: 1 },
+    }
+  }
   const members = path.match(/groups\/([^/]+)\/members$/)
   if (members) {
     const list = state.members[members[1]] ?? []
@@ -81,6 +116,12 @@ const route = (url: string, options?: { method?: string }) => {
   const single = path.match(/groups\/([^/]+)$/)
   if (single) {
     if (options?.method === 'DELETE') return 'OK'
+    if (options?.method === 'PUT') {
+      const removing = (options.body?.removeMembers as string[] | undefined) ?? []
+      const signed = state.conflicts.shift()
+      if (signed && removing.some((id) => signed.includes(id))) throw conflict(signed)
+      return 'OK'
+    }
     const group = state.groups.find((entry) => entry.id === single[1])
     return { ...group, memberIds: (state.members[single[1]] ?? []).map((member) => (member as { id: string }).id) }
   }
@@ -132,6 +173,9 @@ describe('CensusDetail', () => {
     state.fetch.mockImplementation(async (url: string, options?: { method?: string }) => route(url, options))
     state.download.mockReset()
     state.track.mockReset()
+    state.toast.mockReset()
+    state.orgMembers = Array.from({ length: 3 }, (_, index) => person(index))
+    state.conflicts = []
     setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }) })
   })
 
@@ -272,5 +316,157 @@ describe('CensusDetail', () => {
     )
 
     expect(await screen.findByRole('heading', { name: 'Vote census' })).toBeInTheDocument()
+  })
+
+  describe('editing', () => {
+    const liveOwnCensus = (questions?: unknown[]) => {
+      state.meta = { vg_owned: { processId: 'p5', kind: 'copy', createdAt: past } }
+      state.members.owned = [person(1), person(2), person(3)]
+      state.groups.push(group('owned', 'Census of Assemblea'))
+      state.process = {
+        ...vote('p5', 'Assemblea General 2026', { groupId: 'owned', size: 3, twoFaFields: ['email'] }, 'ONGOING'),
+        ...(questions ? { questions } : {}),
+      }
+    }
+
+    const putCalls = () =>
+      state.fetch.mock.calls
+        .filter(([, options]) => options?.method === 'PUT')
+        .map(([url, options]) => ({ url, body: options.body }))
+
+    const select = async (user: ReturnType<typeof userEvent.setup>, ...names: string[]) => {
+      for (const name of names) await user.click(await screen.findByRole('checkbox', { name: `Select ${name}` }))
+    }
+
+    it('removes people from a live vote’s own census and shows the new size', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus()
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await select(user, 'Person01 Vila', 'Person02 Vila')
+      await user.click(screen.getByRole('button', { name: 'Remove…' }))
+
+      const dialog = await screen.findByRole('dialog')
+      expect(within(dialog).getByText("Remove 2 people from 'Assemblea General 2026'?")).toBeInTheDocument()
+      expect(dialog).toHaveTextContent("They can't vote in this vote anymore. They stay in your members.")
+      await user.click(within(dialog).getByRole('button', { name: 'Remove 2 people' }))
+
+      await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '3 → 1 voters' })))
+      expect(putCalls()).toEqual([{ url: 'organizations/0xorg/groups/owned', body: { removeMembers: ['m1', 'm2'] } }])
+      expect(state.track).toHaveBeenCalledWith({
+        name: 'voters_removed',
+        props: { requested: 2, removed: 2, blocked: 0 },
+      })
+    })
+
+    it('says who already started voting when nobody was removed, and removes the others on request', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus()
+      state.conflicts = [['m1']]
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await select(user, 'Person01 Vila', 'Person02 Vila', 'Person03 Vila')
+      await user.click(screen.getByRole('button', { name: 'Remove…' }))
+      await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Remove 3 people' }))
+
+      const retry = await screen.findByRole('dialog', { name: 'Nobody was removed' })
+      expect(retry).toHaveTextContent('Person01 Vila has already started voting. Remove the other 2?')
+      await user.click(within(retry).getByRole('button', { name: 'Remove the other 2' }))
+
+      await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '3 → 1 voters' })))
+      expect(putCalls().map((call) => call.body)).toEqual([
+        { removeMembers: ['m1', 'm2', 'm3'] },
+        { removeMembers: ['m2', 'm3'] },
+      ])
+      expect(state.track).toHaveBeenCalledWith({
+        name: 'voters_removed',
+        props: { requested: 3, removed: 2, blocked: 1 },
+      })
+    })
+
+    it('refuses a removal that would leave a question with nobody allowed to answer it', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus([
+        { id: 'q1', title: { default: 'Treasurer' }, status: 'ONGOING', eligibleMemberIds: ['m1', 'm2'] },
+        { id: 'q2', title: { default: 'Budget' }, status: 'ONGOING' },
+      ])
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await select(user, 'Person01 Vila', 'Person02 Vila')
+      await user.click(screen.getByRole('button', { name: 'Remove…' }))
+
+      const dialog = await screen.findByRole('dialog')
+      expect(dialog).toHaveTextContent("This would leave nobody allowed to answer 'Treasurer'.")
+      expect(within(dialog).getByRole('button', { name: 'Remove 2 people' })).toBeDisabled()
+    })
+
+    it('adds members picked from the member list, with those already in it locked', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus()
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await user.click(await screen.findByRole('button', { name: 'Add people' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Add people' })
+      expect(await within(sheet).findByRole('checkbox', { name: /Person01 Vila/ })).toBeDisabled()
+      await user.click(within(sheet).getByRole('checkbox', { name: /Person00 Vila/ }))
+      await user.click(within(sheet).getByRole('button', { name: 'Add 1 person' }))
+
+      await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '3 → 4 voters' })))
+      expect(putCalls()).toEqual([{ url: 'organizations/0xorg/groups/owned', body: { addMembers: ['m0'] } }])
+    })
+
+    it('creates a new person and adds them to the census at once', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus()
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await user.click(await screen.findByRole('button', { name: 'Add people' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Add people' })
+      await user.click(within(sheet).getByRole('tab', { name: 'New person' }))
+      expect(within(sheet).getByText("They'll be added to your members and to this census.")).toBeInTheDocument()
+      await user.type(within(sheet).getByRole('textbox', { name: 'First Name' }), 'Laia')
+      await user.type(within(sheet).getByRole('textbox', { name: 'Email' }), 'laia@example.org')
+      await user.click(within(sheet).getByRole('button', { name: 'Add person' }))
+
+      await waitFor(() =>
+        expect(putCalls()).toEqual([{ url: 'organizations/0xorg/groups/owned', body: { addMembers: ['new0'] } }])
+      )
+      expect(state.fetch).toHaveBeenCalledWith(expect.stringContaining('/members?async=false'), {
+        body: { members: [{ name: 'Laia', email: 'laia@example.org' }] },
+        method: 'POST',
+      })
+    })
+
+    it('removes picked people from a published vote without a group through its census', async () => {
+      const user = userEvent.setup()
+      state.process = vote('p7', 'Junta', { size: 5, twoFaFields: ['email'] }, 'ONGOING')
+      renderDetail({ kind: 'vote', processId: 'p7' })
+
+      expect(await screen.findByText(/isn't kept as a list we can show/)).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: 'Remove people…' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Remove people' })
+      await user.click(await within(sheet).findByRole('checkbox', { name: /Person00 Vila/ }))
+      await user.click(within(sheet).getByRole('button', { name: 'Remove 1 person…' }))
+      await user.click(
+        within(await screen.findByRole('dialog', { name: "Remove 1 person from 'Junta'?" })).getByRole('button', {
+          name: 'Remove 1 person',
+        })
+      )
+
+      await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '5 → 4 voters' })))
+      expect(state.fetch).toHaveBeenCalledWith('processes/p7/census', { method: 'DELETE', body: { memberIds: ['m0'] } })
+    })
+
+    it('offers no edits on a closed vote, nor on Everyone', async () => {
+      state.meta = { vg_owned: { processId: 'p9', kind: 'copy', createdAt: past } }
+      state.members.owned = [person(1)]
+      state.groups.push(group('owned', 'Census of Junta'))
+      state.process = vote('p9', 'Eleccions Junta 2025', { groupId: 'owned', size: 1 }, 'RESULTS')
+      renderDetail({ kind: 'vote', processId: 'p9' })
+
+      expect(await screen.findByText("This vote has ended, so its census can't change.")).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Add people' })).toBeNull()
+      expect(screen.queryByRole('checkbox')).toBeNull()
+    })
   })
 })
