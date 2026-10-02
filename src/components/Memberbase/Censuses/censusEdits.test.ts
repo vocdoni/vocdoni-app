@@ -72,8 +72,8 @@ describe('findCreatedMember', () => {
   it('finds a new person by their exact email, not a partial match', async () => {
     const fetchPage = vi.fn(async () =>
       page([
-        { id: '1', email: 'anna.vila2@example.org' },
-        { id: '2', email: 'anna.vila@example.org' },
+        { id: '1', email: 'anna.vila2@example.org', name: 'Anna' },
+        { id: '2', email: 'anna.vila@example.org', name: 'Anna' },
       ])
     )
 
@@ -81,6 +81,26 @@ describe('findCreatedMember', () => {
       id: '2',
     })
     expect(fetchPage).toHaveBeenCalledWith({ page: 1, limit: 100, search: 'Anna.Vila@example.org' })
+  })
+
+  it('skips an older member sharing the email, and gives up when it can’t tell who is new', async () => {
+    const older = vi.fn(async () =>
+      page([
+        { id: 'old', email: 'anna@example.org', name: 'Anna', surname: 'Puig' },
+        { id: 'new', email: 'anna@example.org', name: 'Anna', surname: 'Vila' },
+      ])
+    )
+    expect(await findCreatedMember(older, { email: 'anna@example.org', name: 'Anna', surname: 'Vila' })).toMatchObject({
+      id: 'new',
+    })
+
+    const twins = vi.fn(async () =>
+      page([
+        { id: 'old', email: 'anna@example.org', name: 'Anna' },
+        { id: 'new', email: 'anna@example.org', name: 'Anna' },
+      ])
+    )
+    expect(await findCreatedMember(twins, { email: 'anna@example.org', name: 'Anna' })).toBeNull()
   })
 
   it('falls back to a name nobody else has, and gives up when it is shared', async () => {

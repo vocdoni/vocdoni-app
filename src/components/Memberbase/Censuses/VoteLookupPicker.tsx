@@ -59,8 +59,9 @@ export const VoteLookupPicker = ({ process, selected, onChange }: VoteLookupPick
     })),
   })
 
-  // Tick everyone a lookup finds: they were pasted to be removed
-  const found = lookups.flatMap((lookup) => lookup.data ?? [])
+  // Tick who a lookup finds: they were pasted to be removed. A value several people share (a
+  // household email) ticks nobody: the admin picks among them
+  const found = lookups.flatMap((lookup) => (lookup.data?.length === 1 ? lookup.data : []))
   const foundKey = found.map((participant) => participant.memberId).join(',')
   useEffect(() => {
     if (!found.length) return
@@ -160,33 +161,44 @@ export const VoteLookupPicker = ({ process, selected, onChange }: VoteLookupPick
                     </Badge>
                   </Flex>
                 ) : (
-                  participants.map((participant) => {
-                    const person = {
-                      id: participant.memberId,
-                      name: participant.name,
-                      surname: participant.surname,
-                    } as SelectedMember
-                    const name = memberDisplayName(person) || value
-                    return (
-                      <Checkbox.Root
-                        key={participant.memberId}
-                        checked={selected.has(participant.memberId)}
-                        onCheckedChange={({ checked }) => toggle(person, checked === true)}
-                        w='full'
-                      >
-                        <Checkbox.HiddenInput />
-                        <Checkbox.Control />
-                        <Checkbox.Label flex='1' minW={0}>
-                          <Text fontSize='sm' truncate>
-                            {name}
-                          </Text>
-                          <Text fontSize='xs' color='fg.muted' truncate>
-                            {value}
-                          </Text>
-                        </Checkbox.Label>
-                      </Checkbox.Root>
-                    )
-                  })
+                  <>
+                    {participants.length > 1 && (
+                      <Text fontSize='xs' color='fg.muted' mb={1}>
+                        {t('census_detail.remove.several_match', {
+                          defaultValue: '{{number}} people match {{value}}. Tick who to take out.',
+                          number: participants.length,
+                          value,
+                        })}
+                      </Text>
+                    )}
+                    {participants.map((participant) => {
+                      const person = {
+                        id: participant.memberId,
+                        name: participant.name,
+                        surname: participant.surname,
+                      } as SelectedMember
+                      const name = memberDisplayName(person) || value
+                      return (
+                        <Checkbox.Root
+                          key={participant.memberId}
+                          checked={selected.has(participant.memberId)}
+                          onCheckedChange={({ checked }) => toggle(person, checked === true)}
+                          w='full'
+                        >
+                          <Checkbox.HiddenInput />
+                          <Checkbox.Control />
+                          <Checkbox.Label flex='1' minW={0}>
+                            <Text fontSize='sm' truncate>
+                              {name}
+                            </Text>
+                            <Text fontSize='xs' color='fg.muted' truncate>
+                              {value}
+                            </Text>
+                          </Checkbox.Label>
+                        </Checkbox.Root>
+                      )
+                    })}
+                  </>
                 )}
               </Box>
             )

@@ -200,7 +200,12 @@ describe('CensusDetail', () => {
         ? [{ memberId: 'm0', name: 'Person00', surname: 'Vila', questions: [] }]
         : value.startsWith('p1@')
           ? [{ memberId: 'm1', name: 'Person01', surname: 'Vila', questions: [] }]
-          : [],
+          : value.startsWith('home@')
+            ? [
+                { memberId: 'm3', name: 'Person03', surname: 'Vila', questions: [] },
+                { memberId: 'm4', name: 'Person04', surname: 'Vila', questions: [] },
+              ]
+            : [],
     }))
     setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }) })
   })
@@ -513,6 +518,21 @@ describe('CensusDetail', () => {
 
       await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '5 → 4 voters' })))
       expect(state.fetch).toHaveBeenCalledWith('processes/p7/census', { method: 'DELETE', body: { memberIds: ['m0'] } })
+    })
+
+    it('ticks nobody for a value several people share, leaving the choice to the admin', async () => {
+      const user = userEvent.setup()
+      state.process = vote('p7', 'Junta', { size: 5, twoFaFields: ['email'] }, 'ONGOING')
+      renderDetail({ kind: 'vote', processId: 'p7' })
+
+      await user.click(await screen.findByRole('button', { name: 'Remove people…' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Remove people' })
+      await user.type(within(sheet).getByRole('textbox', { name: 'Email to look up' }), 'home@example.org')
+      await user.click(within(sheet).getByRole('button', { name: 'Find' }))
+
+      expect(await within(sheet).findByRole('checkbox', { name: /Person03 Vila/ })).not.toBeChecked()
+      expect(within(sheet).getByRole('checkbox', { name: /Person04 Vila/ })).not.toBeChecked()
+      expect(within(sheet).getByText('2 people match home@example.org. Tick who to take out.')).toBeInTheDocument()
     })
 
     it('can still pick from the member list, with no way back for people who may not have been in the vote', async () => {

@@ -88,24 +88,40 @@ type NewPerson = Partial<Pick<Member, 'email' | 'memberNumber' | 'nationalId' | 
 
 const same = (a?: string, b?: string) => (a ?? '').trim().toLocaleLowerCase() === (b ?? '').trim().toLocaleLowerCase()
 
+const PERSON_FIELDS = ['email', 'memberNumber', 'nationalId', 'name', 'surname'] as const
+
+/** Whether a member has every detail the new person was created with. */
+const hasAllOf = (member: Partial<Member>, person: NewPerson) =>
+  PERSON_FIELDS.every((field) => !person[field]?.trim() || same(member[field], person[field]))
+
 /**
  * Finds the member just created from a form, since `POST /members` doesn't return ids: by their email,
- * member number or national ID (exact), else by a name nobody else has. Null when it can't tell.
+ * member number or national ID (exact), else by their name, and always with every other detail they
+ * were created with. An older member can share an email or a name: when more than one member fits,
+ * it can't tell which is new, and is null, like when nobody fits.
  */
 export const findCreatedMember = async (fetchPage: MembersPageFetcher, person: NewPerson) => {
   const search = async (value: string) => (await fetchPage({ page: 1, limit: 100, search: value })).members ?? []
+  const only = (members: Partial<Member>[]) => {
+    const ids = new Set(members.map((member) => member.id))
+    return ids.size === 1 ? (members[0] as Member & { id: string }) : null
+  }
 
   for (const value of [person.email, person.memberNumber, person.nationalId]) {
     const key = value?.trim()
     if (!key) continue
-    const found = (await search(key)).find((member) => member.id && memberMatchesValue(member, key))
-    if (found?.id) return found as Member & { id: string }
+    const fits = (await search(key)).filter(
+      (member) => member.id && memberMatchesValue(member, key) && hasAllOf(member, person)
+    )
+    if (fits.length) return only(fits)
   }
 
   const name = person.name?.trim() || person.surname?.trim()
   if (!name) return null
-  const matches = (await search(name)).filter(
-    (member) => member.id && same(member.name, person.name) && same(member.surname, person.surname)
+  return only(
+    (await search(name)).filter(
+      (member) =>
+        member.id && same(member.name, person.name) && same(member.surname, person.surname) && hasAllOf(member, person)
+    )
   )
-  return matches.length === 1 ? (matches[0] as Member & { id: string }) : null
 }
