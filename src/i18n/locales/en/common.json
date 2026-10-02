@@ -755,20 +755,6 @@
       "btn_watch": "Schedule a call"
     }
   },
-  "import_progress": {
-    "completed_with_errors": "Import Completed with Errors",
-    "completed_with_errors_description": "Your member data has been imported, but some errors occurred, and because of that some users have missing fields.",
-    "description": "Your member data is being imported. This may take a few minutes depending on the size of your file.",
-    "error_description": "An error occurred while importing your member data. Please try again later.",
-    "error_modal_title": "Import Errors",
-    "error_title": "Import Error",
-    "note": "You can safely close this page. An email will be sent to you upon completion.",
-    "success_description": "You may now start using your imported members.",
-    "success_title": "Your member data has been imported successfully.",
-    "title": "Memberbase Import in Progress",
-    "view_errors_one": "View {{count}} error",
-    "view_errors_other": "View {{count}} errors"
-  },
   "integrators": {
     "api_keys": {
       "actions": "Actions",
@@ -931,44 +917,14 @@
       "delete": "Delete"
     },
     "description": "Everyone in your organization. You choose who votes in each vote.",
-    "download_template": {
-      "subtitle": "Download the template with your chosen columns, add your member data, and upload the file to set up your memberbase. Once it's ready, you can start creating votes.",
-      "title": "Download Import Template"
-    },
     "groups": {
       "title": "Groups"
     },
-    "import_file": {
-      "subtitle": "Import your CSV, XLS, XLSX, or ODS file containing member data. Ensure column headers match the template for accurate mapping.",
-      "title": "Import File"
-    },
     "importer": {
       "button": "Import",
-      "cancel": "Cancel",
-      "data_preview": "Data Preview",
-      "download_template_btn": "Download Template",
       "error": {
         "invalid_file_type": "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
         "read_failed": "We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again."
-      },
-      "failed": "Import failed",
-      "field_mapper": {
-        "empty": "-- Do not import --",
-        "placeholder": "Select column"
-      },
-      "included_columns": "Select columns to include:",
-      "map_columns": {
-        "subtitle": "Map columns from your file to the corresponding fields in our system. Required fields are marked with an asterisk (*).",
-        "title": "Map Columns"
-      },
-      "reset": "Reset Import",
-      "select_at_least_one_column": "Select at least one column to download the template.",
-      "submit": "Import Data",
-      "subtitle": "Download a template or import your own CSV, XLS, XLSX, or ODS file to add members.",
-      "title": "Import Members",
-      "warning": {
-        "subtitle": "The information of columns that are not mapped will not be imported.",
-        "title": "Warning"
       }
     },
     "members": {
@@ -1080,6 +1036,143 @@
       "what_data_title": "A name and a way to reach them",
       "what_data_weight": "Voting power only matters if some members’ votes count more than others.",
       "you_choose": "You choose who votes in each vote."
+    },
+    "import": {
+      "back": "Back",
+      "banner": {
+        "dismiss": "Dismiss",
+        "done_one": "Import finished: {{formattedCount}} member added.",
+        "done_other": "Import finished: {{formattedCount}} members added.",
+        "done_with_errors_one": "Import finished, but one row had a value we couldn’t use.",
+        "done_with_errors_other": "Import finished, but {{count}} rows had values we couldn’t use.",
+        "errors_title": "Import problems",
+        "failed": "The import didn’t finish. Try again, or talk to us if it keeps happening.",
+        "label": "Import progress",
+        "running": "Importing your members… You can leave this page: we’ll email you when it’s done.",
+        "view_errors_one": "See the problem",
+        "view_errors_other": "See the {{count}} problems"
+      },
+      "continue": "Continue",
+      "done": {
+        "added_one": "{{formattedCount}} member added",
+        "added_other": "{{formattedCount}} members added",
+        "back": "Go back",
+        "back_to_draft": "Back to your draft",
+        "back_to_members": "Back to members",
+        "back_to_vote": "Back to the vote",
+        "create_vote": "Create a vote with everyone",
+        "download_failed_one": "Download the row",
+        "download_failed_other": "Download the {{count}} rows",
+        "failed_birth_date": "The birth date isn’t one we can read, so it was left out.",
+        "failed_email": "The email isn’t valid, so it was left out.",
+        "failed_phone": "The mobile isn’t valid, so it was left out.",
+        "failed_title_one": "One row was imported without a value we couldn’t use",
+        "failed_title_other": "{{count}} rows were imported without a value we couldn’t use",
+        "from_file": "From {{file}}",
+        "importing_one": "Importing {{formattedCount}} member…",
+        "importing_other": "Importing {{formattedCount}} members…",
+        "job_failed": "The import didn’t finish. Try again, or talk to us if it keeps happening.",
+        "leave": "You can leave this page: we’ll email you when it’s done.",
+        "more_failed_one": "And {{count}} more in the download.",
+        "more_failed_other": "And {{count}} more in the download.",
+        "problem_column": "Problem",
+        "receipt_dates_one": "Read one birth date written day first (31/12/1990).",
+        "receipt_dates_other": "Read {{formattedCount}} birth dates written day first (31/12/1990).",
+        "receipt_duplicates_one": "Left out one repeated row, as you chose.",
+        "receipt_duplicates_other": "Left out {{count}} repeated rows, as you chose.",
+        "receipt_encoding": "Read the accents in your file correctly (it was saved in an older Windows format).",
+        "receipt_extra": "Kept {{columns}} as extra info.",
+        "receipt_leading_zeros_one": "Kept the leading zeros of one value, like 00123.",
+        "receipt_leading_zeros_other": "Kept the leading zeros of {{formattedCount}} values, like 00123.",
+        "receipt_left_out": "Left out {{columns}}, as you chose.",
+        "receipt_matched": "Matched {{matched}} of {{total}} columns: {{columns}}.",
+        "receipt_title": "What we did for you",
+        "receipt_title_rows_one": "Skipped the title row above your column names.",
+        "receipt_title_rows_other": "Skipped the {{count}} title rows above your column names.",
+        "receipt_trimmed_one": "Removed extra spaces from one cell.",
+        "receipt_trimmed_other": "Removed extra spaces from {{formattedCount}} cells."
+      },
+      "failed": "The import couldn’t start",
+      "match": {
+        "extra": "Keep as extra info",
+        "fields": "Member fields",
+        "first_values": "First values",
+        "imported_as": "Imported as",
+        "intro": "We matched {{matched}} of {{total}} columns. Check them, then continue.",
+        "missing_both": "Choose the column with each person’s name, and the one with their email or mobile.",
+        "missing_contact": "Choose the column with each person’s email or mobile: that’s where their voting code goes.",
+        "missing_name": "Choose the column with each person’s name (or surname).",
+        "no_values": "Empty",
+        "sensitive": "Sensitive?",
+        "sensitive_kept": "Some columns you keep look like health, bank or private notes. Keep them only if you need them for your votes.",
+        "skip": "Don’t import",
+        "your_column": "Your column"
+      },
+      "review": {
+        "all_rows": "All rows",
+        "duplicate_same": "Same {{fields}}",
+        "duplicates_title_one": "The same person twice?",
+        "duplicates_title_other": "The same person twice? ({{count}})",
+        "edit_label": "{{field}}, row {{row}}",
+        "filter_label": "Rows to show",
+        "fix_contact": "Add an email or mobile, or they won’t get a voting code.",
+        "fix_email": "This email isn’t valid. Fix it, or they’re imported without it.",
+        "fix_name": "Add their name.",
+        "fix_phone": "This mobile isn’t valid. Use digits, with the country code (+34…) if it’s from abroad.",
+        "fixed": "Fixed",
+        "keep_all": "Keep all",
+        "keep_both": "Keep both",
+        "keep_first": "Keep first",
+        "keep_label": "Which to keep",
+        "keep_last": "Keep last",
+        "name": "Name",
+        "no_name": "No name",
+        "no_problems": "No problems left in the rows.",
+        "note": "Rows with problems are imported without the wrong value.",
+        "ok": "Ready",
+        "placeholder_contact": "Email or mobile",
+        "placeholder_email": "Email",
+        "placeholder_name": "Name",
+        "placeholder_phone": "Mobile",
+        "problem_rows": "Only rows with problems",
+        "ready_email": "Can get a code by email",
+        "ready_none": "Neither yet",
+        "ready_sms": "By SMS only",
+        "row": "Row",
+        "row_number": "Row {{row}}",
+        "show_more_one": "Show {{count}} more",
+        "show_more_other": "Show {{count}} more",
+        "submit_one": "Import {{formattedCount}} member",
+        "submit_other": "Import {{formattedCount}} members",
+        "value": "Value",
+        "what_to_fix": "What to fix"
+      },
+      "steps": {
+        "done": "Done",
+        "label": "Import steps",
+        "match": "Match",
+        "review": "Review",
+        "upload": "Upload"
+      },
+      "title": "Import members",
+      "upload": {
+        "book_call": "Book a call",
+        "empty": "This file looks empty.",
+        "invalid_type": "We can’t read this type of file. Upload an .xlsx, .xls, .csv or .ods file.",
+        "large_file": "Big file? We can import it with you on a 20-min call.",
+        "need_basic": "A name and an email or mobile.",
+        "need_extra": "Member number, national ID and birth date only if you’ll use them to sign in.",
+        "need_title": "What we need",
+        "no_rows": "We found the column names but nobody under them. Check the file and try again.",
+        "read_failed": "We couldn’t read this file. Check that it’s a spreadsheet or a CSV and try again.",
+        "summary_one": "{{formattedCount}} person · {{columns}} columns",
+        "summary_other": "{{formattedCount}} people · {{columns}} columns",
+        "template": "Download the template",
+        "template_csv": "CSV (.csv)",
+        "template_xlsx": "Excel (.xlsx)",
+        "too_many_files": "Upload one file at a time.",
+        "untitled_column": "Column {{letter}}"
+      }
     },
     "paste": {
       "adds": "They’re added to the people already selected.",
@@ -1415,8 +1508,6 @@
     "cancel": "Cancel",
     "generic_subtitle": "Your current plan limits this action to {{limit}}. Upgrade your plan to continue and unlock advanced features.",
     "generic_title": "Upgrade to increase your plan limits",
-    "memberbase_subtitle": "Your current plan allows up to {{limit}} members in your memberbase. Upgrade your plan to add more members and unlock advanced features.",
-    "memberbase_title": "Upgrade to add more members to your memberbase",
     "see_plans": "See Plans",
     "subtitle": "Your current plan allows only {{limit}} for collaboration. Upgrade your plan to add more team members and unlock advanced features.",
     "title": "Upgrade to add more team members"
@@ -2118,8 +2209,6 @@
     "avatar_upload_success": "Avatar uploaded",
     "click_or_drag_and_drop": "<click>Click to upload or drag and drop</click><formats>(Allowed formats: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Upload Image",
-    "csv_row_limit_exceeded_one": "This import would result in {{count}} total row, exceeding your plan limit of {{max}}.",
-    "csv_row_limit_exceeded_other": "This import would result in {{count}} total rows, exceeding your plan limit of {{max}}.",
     "drop_here": "Drop the file here",
     "error": {
       "invalid_image_type": "This file type isn't supported. Upload a .png or .jpg image.",

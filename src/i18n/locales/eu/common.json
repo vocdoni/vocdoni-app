@@ -755,20 +755,6 @@
       "btn_watch": "Antolatu dei bat"
     }
   },
-  "import_progress": {
-    "completed_with_errors": "Inportazioa erroreekin amaitu da",
-    "completed_with_errors_description": "Zure kideen datuak inportatu dira, baina errore batzuk gertatu dira eta horregatik kide batzuek eremu hutsak dituzte.",
-    "description": "Zure kideen datuak inportatzen ari dira. Fitxategiaren tamainaren arabera minutu batzuk iraun ditzake.",
-    "error_description": "Errorea gertatu da zure kideen datuak inportatzean. Saiatu berriro geroago.",
-    "error_modal_title": "Inportazio-erroreak",
-    "error_title": "Inportazio-errorea",
-    "note": "Orri hau lasai itxi dezakezu. Amaitzean, posta elektroniko bat jasoko duzu.",
-    "success_description": "Orain has zaitezke zure inportatutako kideak erabiltzen.",
-    "success_title": "Zure kideen datuak behar bezala inportatu dira.",
-    "title": "Kide-oinarriaren inportazioa abian",
-    "view_errors_one": "Ikusi {{count}} errorea",
-    "view_errors_other": "Ikusi {{count}} errore"
-  },
   "integrators": {
     "api_keys": {
       "actions": "Ekintzak",
@@ -931,44 +917,14 @@
       "delete": "Ezabatu"
     },
     "description": "Zure erakundeko guztiak. Zuk erabakitzen duzu nork bozkatzen duen bozketa bakoitzean.",
-    "download_template": {
-      "subtitle": "Deskargatu txantiloia hautatutako zutabeekin, gehitu zure kideen datuak eta kargatu fitxategia zure kide-oinarria konfiguratzeko. Behin prest dagoela, bozketak sortzen has zaitezke.",
-      "title": "Deskargatu inportazio-txantiloia"
-    },
     "groups": {
       "title": "Taldeak"
     },
-    "import_file": {
-      "subtitle": "Inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
-      "title": "Inportatu fitxategia"
-    },
     "importer": {
       "button": "Inportatu",
-      "cancel": "Utzi",
-      "data_preview": "Datuen aurrebista",
-      "download_template_btn": "Deskargatu txantiloia",
       "error": {
         "invalid_file_type": "Fitxategi mota hau ez da onartzen. Igo .csv, .xlsx, .xls edo .ods fitxategi bat.",
         "read_failed": "Ezin izan dugu fitxategi hau irakurri. Egiaztatu baliozko CSV edo kalkulu-orri bat dela eta saiatu berriro."
-      },
-      "failed": "Inportazioak huts egin du",
-      "field_mapper": {
-        "empty": "-- Ez inportatu --",
-        "placeholder": "Hautatu zutabea"
-      },
-      "included_columns": "Hautatu sartu nahi dituzun zutabeak:",
-      "map_columns": {
-        "subtitle": "Lotu zure fitxategiko zutabeak gure sistemako dagozkien eremuei. Nahitaezko eremuak izartxoarekin (*) markatuta daude.",
-        "title": "Lotu zutabeak"
-      },
-      "reset": "Berrezarri inportazioa",
-      "select_at_least_one_column": "Hautatu gutxienez zutabe bat txantiloia deskargatzeko.",
-      "submit": "Inportatu datuak",
-      "subtitle": "Deskargatu txantiloi bat edo inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideak gehitzeko.",
-      "title": "Inportatu kideak",
-      "warning": {
-        "subtitle": "Ez da esleitzen ez diren zutabeen informazioa inportatuko.",
-        "title": "Oharra"
       }
     },
     "members": {
@@ -1080,6 +1036,143 @@
       "what_data_title": "Izen bat eta harremanetarako bide bat",
       "what_data_weight": "Boto-pisuak kide batzuen botoek besteenek baino gehiago balio badute bakarrik du garrantzia.",
       "you_choose": "Zuk erabakitzen duzu nork bozkatzen duen bozketa bakoitzean."
+    },
+    "import": {
+      "back": "Atzera",
+      "banner": {
+        "dismiss": "Itxi",
+        "done_one": "Inportazioa amaitu da: {{formattedCount}} kide gehitu da.",
+        "done_other": "Inportazioa amaitu da: {{formattedCount}} kide gehitu dira.",
+        "done_with_errors_one": "Inportazioa amaitu da, baina errenkada batek erabili ezin izan dugun balio bat zuen.",
+        "done_with_errors_other": "Inportazioa amaitu da, baina {{count}} errenkadak erabili ezin izan ditugun balioak zituzten.",
+        "errors_title": "Inportazioaren arazoak",
+        "failed": "Inportazioa ez da amaitu. Saiatu berriro, edo jarri gurekin harremanetan berriz gertatzen bada.",
+        "label": "Inportazioaren aurrerapena",
+        "running": "Zure kideak inportatzen… Orri honetatik irten zaitezke: mezu elektroniko bat bidaliko dizugu amaitzean.",
+        "view_errors_one": "Ikusi arazoa",
+        "view_errors_other": "Ikusi {{count}} arazoak"
+      },
+      "continue": "Jarraitu",
+      "done": {
+        "added_one": "{{formattedCount}} kide gehituta",
+        "added_other": "{{formattedCount}} kide gehituta",
+        "back": "Itzuli",
+        "back_to_draft": "Itzuli zure zirriborrora",
+        "back_to_members": "Itzuli kideetara",
+        "back_to_vote": "Itzuli bozketara",
+        "create_vote": "Sortu bozketa bat denekin",
+        "download_failed_one": "Deskargatu errenkada",
+        "download_failed_other": "Deskargatu {{count}} errenkadak",
+        "failed_birth_date": "Ezin izan dugu jaioteguna irakurri, beraz, kanpoan utzi da.",
+        "failed_email": "Posta elektronikoa ez da baliozkoa, beraz, kanpoan utzi da.",
+        "failed_phone": "Mugikorra ez da baliozkoa, beraz, kanpoan utzi da.",
+        "failed_title_one": "Errenkada bat erabili ezin izan dugun balio bat gabe inportatu da",
+        "failed_title_other": "{{count}} errenkada erabili ezin izan dugun balio bat gabe inportatu dira",
+        "from_file": "{{file}} fitxategitik",
+        "importing_one": "{{formattedCount}} kide inportatzen…",
+        "importing_other": "{{formattedCount}} kide inportatzen…",
+        "job_failed": "Inportazioa ez da amaitu. Saiatu berriro, edo jarri gurekin harremanetan berriz gertatzen bada.",
+        "leave": "Orri honetatik irten zaitezke: mezu elektroniko bat bidaliko dizugu amaitzean.",
+        "more_failed_one": "Eta beste {{count}} deskargan.",
+        "more_failed_other": "Eta beste {{count}} deskargan.",
+        "problem_column": "Arazoa",
+        "receipt_dates_one": "Egunarekin hasten den jaiotegun bat irakurri dugu (31/12/1990).",
+        "receipt_dates_other": "Egunarekin hasten diren {{formattedCount}} jaiotegun irakurri ditugu (31/12/1990).",
+        "receipt_duplicates_one": "Errepikatutako errenkada bat kanpoan utzi dugu, zuk aukeratu bezala.",
+        "receipt_duplicates_other": "Errepikatutako {{count}} errenkada kanpoan utzi ditugu, zuk aukeratu bezala.",
+        "receipt_encoding": "Zure fitxategiko azentuak ondo irakurri ditugu (Windows-en formatu zahar batean gordeta zegoen).",
+        "receipt_extra": "Informazio gehigarri gisa gorde dugu: {{columns}}.",
+        "receipt_leading_zeros_one": "Balio baten hasierako zeroak mantendu ditugu, 00123 adibidez.",
+        "receipt_leading_zeros_other": "{{formattedCount}} balioren hasierako zeroak mantendu ditugu, 00123 adibidez.",
+        "receipt_left_out": "Zuk aukeratu bezala, kanpoan utzi dugu: {{columns}}.",
+        "receipt_matched": "{{total}} zutabetatik {{matched}} lotu ditugu: {{columns}}.",
+        "receipt_title": "Zuretzat egin duguna",
+        "receipt_title_rows_one": "Zutabe-izenen gaineko izenburu-errenkada saltatu dugu.",
+        "receipt_title_rows_other": "Zutabe-izenen gaineko {{count}} izenburu-errenkadak saltatu ditugu.",
+        "receipt_trimmed_one": "Gelaxka bateko soberako zuriuneak kendu ditugu.",
+        "receipt_trimmed_other": "{{formattedCount}} gelaxkatako soberako zuriuneak kendu ditugu."
+      },
+      "failed": "Ezin izan da inportazioa hasi",
+      "match": {
+        "extra": "Gorde informazio gehigarri gisa",
+        "fields": "Kidearen eremuak",
+        "first_values": "Lehen balioak",
+        "imported_as": "Honela inportatuko da",
+        "intro": "{{total}} zutabetatik {{matched}} lotu ditugu. Egiaztatu, eta jarraitu.",
+        "missing_both": "Aukeratu pertsona bakoitzaren izena duen zutabea, eta haren posta elektronikoa edo mugikorra duena.",
+        "missing_contact": "Aukeratu pertsona bakoitzaren posta elektronikoa edo mugikorra duen zutabea: hara bidaltzen da bozketa-kodea.",
+        "missing_name": "Aukeratu pertsona bakoitzaren izena (edo abizenak) duen zutabea.",
+        "no_values": "Hutsik",
+        "sensitive": "Datu sentikorrak?",
+        "sensitive_kept": "Gordetzen dituzun zutabe batzuek osasun-datuak, banku-datuak edo ohar pribatuak dirudite. Gorde itzazu zure bozketetarako behar badituzu bakarrik.",
+        "skip": "Ez inportatu",
+        "your_column": "Zure zutabea"
+      },
+      "review": {
+        "all_rows": "Errenkada guztiak",
+        "duplicate_same": "Bat dator: {{fields}}",
+        "duplicates_title_one": "Pertsona bera bi aldiz?",
+        "duplicates_title_other": "Pertsona bera bi aldiz? ({{count}})",
+        "edit_label": "{{field}}, {{row}}. errenkada",
+        "filter_label": "Erakutsi beharreko errenkadak",
+        "fix_contact": "Gehitu posta elektroniko bat edo mugikor bat; bestela, ez du bozketa-koderik jasoko.",
+        "fix_email": "Posta elektroniko hau ez da baliozkoa. Zuzendu, edo hura gabe inportatuko da.",
+        "fix_name": "Gehitu haren izena.",
+        "fix_phone": "Mugikor hau ez da baliozkoa. Erabili zenbakiak, herrialde-kodearekin (+34…) atzerrikoa bada.",
+        "fixed": "Zuzenduta",
+        "keep_all": "Gorde guztiak",
+        "keep_both": "Gorde biak",
+        "keep_first": "Gorde lehena",
+        "keep_label": "Zein gorde",
+        "keep_last": "Gorde azkena",
+        "name": "Izena",
+        "no_name": "Izenik gabe",
+        "no_problems": "Ez da arazorik geratzen errenkadetan.",
+        "note": "Arazoak dituzten errenkadak balio okerrik gabe inportatzen dira.",
+        "ok": "Prest",
+        "placeholder_contact": "Posta elektronikoa edo mugikorra",
+        "placeholder_email": "Posta elektronikoa",
+        "placeholder_name": "Izena",
+        "placeholder_phone": "Mugikorra",
+        "problem_rows": "Arazoak dituzten errenkadak bakarrik",
+        "ready_email": "Kodea posta elektronikoz jaso dezake",
+        "ready_none": "Bat ere ez oraindik",
+        "ready_sms": "SMS bidez bakarrik",
+        "row": "Errenkada",
+        "row_number": "{{row}}. errenkada",
+        "show_more_one": "Erakutsi beste {{count}}",
+        "show_more_other": "Erakutsi beste {{count}}",
+        "submit_one": "Inportatu {{formattedCount}} kide",
+        "submit_other": "Inportatu {{formattedCount}} kide",
+        "value": "Balioa",
+        "what_to_fix": "Zer zuzendu"
+      },
+      "steps": {
+        "done": "Eginda",
+        "label": "Inportazioaren urratsak",
+        "match": "Lotu",
+        "review": "Berrikusi",
+        "upload": "Igo"
+      },
+      "title": "Inportatu kideak",
+      "upload": {
+        "book_call": "Erreserbatu dei bat",
+        "empty": "Fitxategi hau hutsik dagoela dirudi.",
+        "invalid_type": "Ezin dugu fitxategi mota hau irakurri. Igo .xlsx, .xls, .csv edo .ods fitxategi bat.",
+        "large_file": "Fitxategi handia? Zurekin inporta dezakegu 20 minutuko dei batean.",
+        "need_basic": "Izen bat eta posta elektroniko edo mugikor bat.",
+        "need_extra": "Kide-zenbakia, NAN/AIZ eta jaioteguna saioa hasteko erabiliko badituzu bakarrik.",
+        "need_title": "Zer behar dugun",
+        "no_rows": "Zutabe-izenak aurkitu ditugu, baina inor ez haien azpian. Egiaztatu fitxategia eta saiatu berriro.",
+        "read_failed": "Ezin izan dugu fitxategi hau irakurri. Egiaztatu kalkulu-orri bat edo CSV bat dela eta saiatu berriro.",
+        "summary_one": "{{formattedCount}} pertsona · {{columns}} zutabe",
+        "summary_other": "{{formattedCount}} pertsona · {{columns}} zutabe",
+        "template": "Deskargatu txantiloia",
+        "template_csv": "CSV (.csv)",
+        "template_xlsx": "Excel (.xlsx)",
+        "too_many_files": "Igo fitxategi bat aldi bakoitzean.",
+        "untitled_column": "{{letter}} zutabea"
+      }
     },
     "paste": {
       "adds": "Dagoeneko hautatuta dauden pertsonei gehitzen zaizkie.",
@@ -1415,8 +1508,6 @@
     "cancel": "Utzi",
     "generic_subtitle": "Zure egungo planak ekintza hau {{limit}}era mugatzen du. Eguneratu zure plana jarraitzeko eta funtzio aurreratuak desblokeatzeko.",
     "generic_title": "Eguneratu zure plana mugak handitzeko",
-    "memberbase_subtitle": "Zure egungo planak {{limit}} kide arte onartzen ditu zure kide-oinarrian. Eguneratu zure plana kide gehiago gehitzeko eta funtzio aurreratuak desblokeatzeko.",
-    "memberbase_title": "Eguneratu zure plana zure kide-oinarrera kide gehiago gehitzeko",
     "see_plans": "Ikusi planak",
     "subtitle": "Zure egungo planak {{limit}} baino ez du onartzen lankidetzarako. Eguneratu zure plana taldera kide gehiago gehitzeko eta funtzio aurreratuak desblokeatzeko.",
     "title": "Eguneratu taldera kide gehiago gehitzeko"
@@ -2118,8 +2209,6 @@
     "avatar_upload_success": "Avatarra kargatu da",
     "click_or_drag_and_drop": "<click>Egin klik kargatzeko edo arrastatu eta jaregin</click><formats>(Onartutako formatuak: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Kargatu irudia",
-    "csv_row_limit_exceeded_one": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
-    "csv_row_limit_exceeded_other": "Inportazio honek guztira {{count}} errenkada emango lituzke, zure {{max}}eko planaren muga gaindituz.",
     "drop_here": "Jaregin hemen",
     "error": {
       "invalid_image_type": "Fitxategi mota hau ez da onartzen. Igo .png edo .jpg irudi bat.",
