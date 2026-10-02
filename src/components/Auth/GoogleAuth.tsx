@@ -7,8 +7,10 @@ import { BsGoogle } from 'react-icons/bs'
 import { useNavigate } from 'react-router'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { useToast } from '~components/Toast'
+import { useAnalytics } from '~components/AnalyticsProvider'
 import { useAppEnv } from '~src/app-env'
 import { Routes } from '~src/router/routes'
+import { AnalyticsEvents, rememberSignupMethod } from '~utils/analytics'
 import { useAuth } from './useAuth'
 
 const GoogleAuth = () => {
@@ -19,6 +21,7 @@ const GoogleAuth = () => {
   const { disconnect } = useDisconnect()
   const { t } = useTranslation()
   const toast = useToast()
+  const { trackEvent } = useAnalytics()
 
   const { connect, isPending, isError, error } = useConnect()
 
@@ -26,6 +29,10 @@ const GoogleAuth = () => {
     if (isError) {
       console.error('Google OAuth error', error?.message || '')
       const isOAuthConflictError = error?.message.indexOf('OAuthAccountConflictError') !== -1
+      trackEvent({
+        name: AnalyticsEvents.AuthFailed,
+        props: { method: 'google', reason: isOAuthConflictError ? 'account_conflict' : 'oauth_error' },
+      })
       toast({
         type: 'error',
         title: t('google_oauth_error', { defaultValue: 'Google OAuth Error' }),
@@ -49,9 +56,14 @@ const GoogleAuth = () => {
       }
       const registered = localStorage.getItem(AuthStorageKeys.Registered)
       const isRegistered = registered === 'true' || registered === '1' || (registered as unknown) === true
+      // The flag is only set when this OAuth flow created the account
       if (isRegistered) {
+        trackEvent({ name: AnalyticsEvents.AccountSignup, props: { method: 'google' } })
+        rememberSignupMethod('google')
         localStorage.removeItem(AuthStorageKeys.Registered)
         navigate(Routes.auth.organizationCreate)
+      } else {
+        trackEvent({ name: AnalyticsEvents.UserLoggedIn, props: { method: 'google' } })
       }
       disconnect() // Disconnect the wallet after successful authentication (session is maintained via token)
     }

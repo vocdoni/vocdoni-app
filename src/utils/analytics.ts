@@ -38,7 +38,12 @@ export const AnalyticsEvents = {
   TeamMemberInvited: 'team_member_invited',
   TeamMemberRemoved: 'team_member_removed',
   PdfReportDownloaded: 'pdf_report_downloaded',
+  AuthFailed: 'auth_failed',
 } as const
+
+// How an account was created or signed in to; sent as the `method` event
+// property and stored once on the person as `signup_method`.
+export type AuthMethod = 'password' | 'google' | 'invite'
 
 export interface AnalyticsEvent {
   name: (typeof AnalyticsEvents)[keyof typeof AnalyticsEvents]
@@ -428,9 +433,24 @@ export const applyPosthogConsent = (consent: PosthogConsent): void => {
   })
 }
 
+// The sign-up happens before the user is identified, and with
+// `person_profiles: 'identified_only'` an anonymous user has no person to hold
+// properties. The method is kept until the consented identify call, which sets
+// it once (`$set_once`), so a later login with another method never overwrites it.
+let pendingSignupMethod: AuthMethod | null = null
+
+export const rememberSignupMethod = (method: AuthMethod): void => {
+  pendingSignupMethod = method
+}
+
 export const identifyPosthogUser = (id: string, props?: Record<string, unknown>): void => {
   withPosthog('Failed to identify PostHog user:', (posthog) => {
-    posthog.identify(id, props)
+    if (pendingSignupMethod) {
+      posthog.identify(id, props, { signup_method: pendingSignupMethod })
+      pendingSignupMethod = null
+    } else {
+      posthog.identify(id, props)
+    }
   })
 }
 

@@ -819,6 +819,19 @@ describe('posthog identity helpers', () => {
     expect(mockPosthog.group).toHaveBeenCalledWith('organization', '0xabc', { plan_name: 'Free' })
     expect(mockPosthog.register).toHaveBeenCalledWith({ locale: 'ca' })
   })
+
+  it('sets the remembered signup method once on the next identify', async () => {
+    const analytics = await import('./analytics')
+
+    analytics.initializePosthog({ key: 'phc_test', consent: 'accepted' })
+    analytics.rememberSignupMethod('google')
+    analytics.identifyPosthogUser('user-1', { email: 'a@b.com' })
+    analytics.identifyPosthogUser('user-1', { email: 'a@b.com' })
+
+    await vi.waitFor(() => expect(mockPosthog.identify).toHaveBeenCalledTimes(2))
+    expect(mockPosthog.identify).toHaveBeenNthCalledWith(1, 'user-1', { email: 'a@b.com' }, { signup_method: 'google' })
+    expect(mockPosthog.identify).toHaveBeenNthCalledWith(2, 'user-1', { email: 'a@b.com' })
+  })
 })
 
 describe('AnalyticsEvents export', () => {
