@@ -922,6 +922,10 @@
   },
   "loading": "Kargatzen...",
   "logout": "Amaitu saioa",
+  "masked_value": {
+    "ending_in": "{{label}}, amaiera: {{tail}}",
+    "hidden": "{{label}} ezkutatuta"
+  },
   "memberbase": {
     "add_member": {
       "button": "Gehitu kidea",
@@ -1727,6 +1731,11 @@
   "section": {
     "help": "Laguntza",
     "platform": "Plataforma"
+  },
+  "selection_bar": {
+    "clear": "Garbitu hautapena",
+    "count_one": "{{formattedCount}} hautatuta",
+    "count_other": "{{formattedCount}} hautatuta"
   },
   "send_invitation": "Bidali gonbidapena",
   "settings": "Ezarpenak",

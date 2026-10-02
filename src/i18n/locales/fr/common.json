@@ -928,6 +928,10 @@
   },
   "loading": "Chargement…",
   "logout": "Se déconnecter",
+  "masked_value": {
+    "ending_in": "{{label}} se terminant par {{tail}}",
+    "hidden": "{{label}} masqué"
+  },
   "memberbase": {
     "add_member": {
       "button": "Ajouter un membre",
@@ -1754,6 +1758,12 @@
   "section": {
     "help": "Aide",
     "platform": "Plateforme"
+  },
+  "selection_bar": {
+    "clear": "Effacer la sélection",
+    "count_one": "{{formattedCount}} sélectionné",
+    "count_many": "{{formattedCount}} sélectionnés",
+    "count_other": "{{formattedCount}} sélectionnés"
   },
   "send_invitation": "Envoyer l'invitation",
   "settings": "Paramètres",

@@ -922,6 +922,10 @@
   },
   "loading": "Loading...",
   "logout": "Logout",
+  "masked_value": {
+    "ending_in": "{{label}} ending in {{tail}}",
+    "hidden": "{{label}} hidden"
+  },
   "memberbase": {
     "add_member": {
       "button": "Add Member",
@@ -1727,6 +1731,11 @@
   "section": {
     "help": "Help",
     "platform": "Platform"
+  },
+  "selection_bar": {
+    "clear": "Clear selection",
+    "count_one": "{{formattedCount}} selected",
+    "count_other": "{{formattedCount}} selected"
   },
   "send_invitation": "Send invitation",
   "settings": "Settings",

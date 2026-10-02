@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { MASK_DOTS } from '~components/ui/MaskedValue'
 
 /** The member fields the API stores, in the order the app shows them. The ids are the API keys. */
 export const MEMBER_FIELD_IDS = [
@@ -103,8 +104,6 @@ export type MemberField = MemberFieldDefinition & {
   /** The value as text, masked as the field requires ("On file", "•••23A") */
   format: (value?: string | null) => string
 }
-
-export const MASK_DOTS = '•••'
 
 /** The member fields with their labels in the current language. */
 export const useMemberFields = (): MemberField[] => {

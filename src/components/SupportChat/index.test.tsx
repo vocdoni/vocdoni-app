@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { act, fireEvent, render, screen, within } from '~src/test-utils'
 import { getAuthMock, resetAuthMock, setAuthMock } from '~src/test-utils-react-providers-mock'
 import { SupportChatControlsProvider, useSupportChatControls } from './controls'
@@ -88,6 +89,30 @@ describe('SupportChat', () => {
     await flushPresence()
 
     expect(screen.getByRole('button', { name: 'Close support chat', expanded: true })).toBeInTheDocument()
+  })
+
+  it('hides while another part of the dashboard asks it to, and comes back after', () => {
+    const Hider = () => {
+      const controls = useSupportChatControls()
+      useEffect(() => controls?.hideChat?.(), [controls?.hideChat])
+      return null
+    }
+    const { rerender } = render(
+      <SupportChatControlsProvider>
+        <Hider />
+        <SupportChat />
+      </SupportChatControlsProvider>
+    )
+
+    expect(screen.getByRole('button', { name: 'Open support chat', hidden: true })).not.toBeVisible()
+
+    rerender(
+      <SupportChatControlsProvider>
+        <SupportChat />
+      </SupportChatControlsProvider>
+    )
+
+    expect(screen.getByRole('button', { name: 'Open support chat' })).toBeVisible()
   })
 
   it('renders the collapsed launcher without panel or teaser', () => {

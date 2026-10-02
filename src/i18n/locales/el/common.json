@@ -922,6 +922,10 @@
   },
   "loading": "Φόρτωση...",
   "logout": "Αποσύνδεση",
+  "masked_value": {
+    "ending_in": "{{label}} που λήγει σε {{tail}}",
+    "hidden": "{{label}} κρυφό"
+  },
   "memberbase": {
     "add_member": {
       "button": "Προσθήκη μέλους",
@@ -1727,6 +1731,11 @@
   "section": {
     "help": "Βοήθεια",
     "platform": "Πλατφόρμα"
+  },
+  "selection_bar": {
+    "clear": "Εκκαθάριση επιλογής",
+    "count_one": "{{formattedCount}} επιλεγμένο",
+    "count_other": "{{formattedCount}} επιλεγμένα"
   },
   "send_invitation": "Αποστολή πρόσκλησης",
   "settings": "Ρυθμίσεις",

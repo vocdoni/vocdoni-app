@@ -26,6 +26,9 @@ export type SoonFeature =
   | 'activity_log'
   | 'quorum'
   | 'delegations'
+  | 'members_filter'
+  | 'members_show_flagged'
+  | 'removal_reason'
 
 const storageKey = (feature: SoonFeature) => `feature-interest:${feature}`
 
@@ -37,13 +40,19 @@ const readNoted = (feature: SoonFeature) => {
   }
 }
 
-/** Records, once per browser, that someone wants a feature that isn't built yet. */
-export const useFeatureInterest = (feature: SoonFeature) => {
+/**
+ * Records, once per browser, that someone wants a feature that isn't built yet. `surface` says
+ * where they asked (one feature can be offered in several places); it doesn't change the dedupe.
+ */
+export const useFeatureInterest = (feature: SoonFeature, surface?: string) => {
   const [noted, setNoted] = useState(() => readNoted(feature))
 
   const register = () => {
     if (noted) return
-    trackAnalyticsEvent({ name: AnalyticsEvents.FeatureInterest, props: { feature } })
+    trackAnalyticsEvent({
+      name: AnalyticsEvents.FeatureInterest,
+      props: surface ? { feature, surface } : { feature },
+    })
     try {
       localStorage.setItem(storageKey(feature), '1')
     } catch {
@@ -64,12 +73,36 @@ export const SoonTag = (props: BadgeProps) => {
   )
 }
 
-type SoonContentProps = { feature: SoonFeature; title: ReactNode; description: ReactNode }
-
-const SoonContent = ({ feature, title, description }: SoonContentProps) => {
+/** "I'd use this", which turns into a thank-you once pressed. */
+export const InterestButton = ({
+  feature,
+  surface,
+  ...props
+}: { feature: SoonFeature; surface?: string } & Omit<ButtonProps, 'onClick'>) => {
   const { t } = useTranslation()
-  const { noted, register } = useFeatureInterest(feature)
+  const { noted, register } = useFeatureInterest(feature, surface)
 
+  return (
+    <Button
+      size='xs'
+      variant={noted ? 'ghost' : 'outline'}
+      colorPalette='purple'
+      alignSelf='flex-start'
+      onClick={register}
+      disabled={noted}
+      {...props}
+    >
+      <Icon as={noted ? LuCheck : LuThumbsUp} />
+      {noted
+        ? t('coming_soon.noted', { defaultValue: "Thanks, we've noted it" })
+        : t('coming_soon.interest', { defaultValue: "I'd use this" })}
+    </Button>
+  )
+}
+
+type SoonContentProps = { feature: SoonFeature; title: ReactNode; description: ReactNode; surface?: string }
+
+const SoonContent = ({ feature, title, description, surface }: SoonContentProps) => {
   return (
     <Stack gap={2}>
       <Text fontSize='sm' fontWeight='bolder' display='flex' alignItems='center' gap={2}>
@@ -79,19 +112,7 @@ const SoonContent = ({ feature, title, description }: SoonContentProps) => {
       <Text fontSize='sm' color='fg.muted'>
         {description}
       </Text>
-      <Button
-        size='xs'
-        variant={noted ? 'ghost' : 'outline'}
-        colorPalette='purple'
-        alignSelf='flex-start'
-        onClick={register}
-        disabled={noted}
-      >
-        <Icon as={noted ? LuCheck : LuThumbsUp} />
-        {noted
-          ? t('coming_soon.noted', { defaultValue: "Thanks, we've noted it" })
-          : t('coming_soon.interest', { defaultValue: "I'd use this" })}
-      </Button>
+      <InterestButton feature={feature} surface={surface} />
     </Stack>
   )
 }
@@ -112,6 +133,7 @@ export const ComingSoonButton = ({
   description,
   label,
   icon,
+  surface,
   ...buttonProps
 }: ComingSoonButtonProps) => (
   <Popover.Root positioning={{ placement: 'bottom-start' }}>
@@ -133,7 +155,7 @@ export const ComingSoonButton = ({
     <Portal>
       <Popover.Positioner>
         <Popover.Content maxW='18rem' p={3}>
-          <SoonContent feature={feature} title={title} description={description} />
+          <SoonContent feature={feature} title={title} description={description} surface={surface} />
         </Popover.Content>
       </Popover.Positioner>
     </Portal>

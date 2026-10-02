@@ -1,4 +1,4 @@
-import { chakra, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
+import { Box, chakra, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuMessageCircle, LuX } from 'react-icons/lu'
@@ -50,7 +50,8 @@ const SupportChatWidget = () => {
   }
 
   return (
-    <>
+    // Hidden, not unmounted, so the conversation survives while something else uses its corner
+    <Box display={controls?.hidden ? 'none' : 'contents'}>
       {teaserVisible && !open && (
         <Flex
           position='fixed'
@@ -143,7 +144,7 @@ const SupportChatWidget = () => {
       >
         <Icon as={open ? LuX : LuMessageCircle} boxSize={6} />
       </IconButton>
-    </>
+    </Box>
   )
 }
 
