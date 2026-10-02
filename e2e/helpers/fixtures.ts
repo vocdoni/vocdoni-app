@@ -1,4 +1,4 @@
-import { type BrowserContext, type Locator, type Page, test as base } from '@playwright/test'
+import { type BrowserContext, expect, type Locator, type Page, test as base } from '@playwright/test'
 
 /**
  * Key and value read by src/components/Cookies/utils.ts. Seeding it means the
@@ -54,6 +54,13 @@ export { expect } from '@playwright/test'
  */
 export const checkCheckbox = async (scope: Locator): Promise<void> => {
   await scope.locator('[data-scope="checkbox"][data-part="control"]').first().click()
+}
+
+/** Picks a radio card by its input's `name` and `value`, so it doesn't depend on translated copy. */
+export const pickRadio = async (page: Page, name: string, value: string): Promise<void> => {
+  const input = page.locator(`input[type="radio"][name="${name}"][value="${value}"]`)
+  await page.locator('label').filter({ has: input }).first().click()
+  await expect(input).toBeChecked()
 }
 
 /**
