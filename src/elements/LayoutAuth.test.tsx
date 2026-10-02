@@ -69,12 +69,9 @@ describe('LayoutAuth', () => {
 
   // New users land here before reaching any page that offers a language switch.
   it('offers a language selector', async () => {
-    const { container } = renderAt('/account/signin')
-    // The trigger is icon-only, so it is found by the menu it opens rather than by its label.
-    const trigger = container.querySelector<HTMLButtonElement>('button[aria-haspopup="menu"]')
-    expect(trigger).not.toBeNull()
+    renderAt('/account/signin')
 
-    await userEvent.click(trigger!)
+    await userEvent.click(screen.getByRole('button', { name: 'Language' }))
 
     expect(await screen.findByRole('menuitem', { name: 'Español' })).toBeInTheDocument()
   })

@@ -45,7 +45,7 @@ describe('LanguagesList', () => {
       </ChakraProvider>
     )
 
-    expect(screen.getByRole('button', { name: /user menu/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Language' })).toBeInTheDocument()
   })
 
   it('navigates to the localized public url instead of only changing i18n state', async () => {
