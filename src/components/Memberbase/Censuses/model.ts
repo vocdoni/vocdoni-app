@@ -104,3 +104,112 @@ export const buildCensusIndex = ({
 
 /** Votes a saved census is used by that are already published (deleting it would empty them). */
 export const publishedUsers = (usedBy: AffectedVote[]) => usedBy.filter((vote) => vote.state !== 'draft')
+
+/** What a census page shows: a saved census, Everyone, or a vote's census. */
+export type CensusKind = 'saved' | 'everyone' | 'vote'
+
+/** Why people can't be added or removed here. */
+export type ReadOnlyReason = 'everyone' | 'ended' | 'follows_everyone' | 'draft_selected'
+
+/**
+ * How people are added and removed:
+ * - `group`: through the census' group (`PUT /groups/{id}`);
+ * - `process`: through the vote's census itself (`PUT`/`DELETE /processes/{id}/census`), for
+ *   published votes whose people were picked one by one, before each vote had its own census;
+ * - `none`: read-only (see `ReadOnlyReason`).
+ */
+export type EditPath = 'group' | 'process' | 'none'
+
+export type ResolvedCensus = {
+  kind: CensusKind
+  /** The group behind the list and the edits, if any */
+  groupId?: string
+  process?: VotingProcessResponse
+  state?: VoteState
+  source?: CensusSource
+  /** People, or the vote's voters */
+  count: number
+  /** The count is the on-chain number of voters of a closed vote */
+  atClose: boolean
+  /** Show the people as a list (a group), or only a point lookup (no list to read) */
+  browse: 'group' | 'lookup'
+  edit: EditPath
+  readOnly?: ReadOnlyReason
+  /** The votes that share this census' group: for a saved census, and for a vote using a saved one */
+  sharedWith: AffectedVote[]
+}
+
+export const resolveCensus = ({
+  kind,
+  group,
+  process,
+  everyoneId,
+  markers,
+  groupsById,
+  processes,
+}: {
+  kind: 'saved' | 'vote'
+  /** The saved census, or the vote's group once known */
+  group?: { id: string; isAutoGroup?: boolean; memberIds?: string[]; membersCount?: number }
+  process?: VotingProcessResponse
+  everyoneId?: string
+  markers: Map<string, VoteGroupMarker>
+  groupsById: Map<string, Group>
+  /** Every vote, to find the ones sharing a group */
+  processes: VotingProcessResponse[]
+}): ResolvedCensus => {
+  const size = (entry?: typeof group) =>
+    entry ? (entry.isAutoGroup ? (entry.membersCount ?? 0) : (entry.memberIds?.length ?? entry.membersCount ?? 0)) : 0
+
+  if (kind === 'saved') {
+    if (group?.isAutoGroup)
+      return {
+        kind: 'everyone',
+        groupId: group.id,
+        count: size(group),
+        atClose: false,
+        browse: 'group',
+        edit: 'none',
+        readOnly: 'everyone',
+        sharedWith: votesFollowingGroup(processes, group.id),
+      }
+    return {
+      kind: 'saved',
+      groupId: group?.id,
+      count: size(group),
+      atClose: false,
+      browse: 'group',
+      edit: 'group',
+      sharedWith: votesFollowingGroup(processes, group?.id),
+    }
+  }
+
+  const state = process ? voteStateOf(process) : undefined
+  const source = process ? censusSourceOf(process, { everyoneId, markers, groupsById }) : undefined
+  const groupId = source ? sourceGroupId(source) : undefined
+  const maxVoters = process?.questions?.[0]?.results?.maxVoters
+  const atClose = isEnded(state) && typeof maxVoters === 'number' && maxVoters > 0
+  const count = atClose ? maxVoters! : (process?.census?.size ?? size(group))
+
+  let edit: EditPath = 'none'
+  let readOnly: ReadOnlyReason | undefined
+  if (isEnded(state)) readOnly = 'ended'
+  else if (source?.kind === 'everyone') readOnly = 'follows_everyone'
+  else if (groupId) edit = 'group'
+  else if (process?.published) edit = 'process'
+  else readOnly = 'draft_selected'
+
+  return {
+    kind: 'vote',
+    groupId,
+    process,
+    state,
+    source,
+    count,
+    atClose,
+    browse: groupId ? 'group' : 'lookup',
+    edit,
+    readOnly,
+    sharedWith: source?.kind === 'saved' ? votesFollowingGroup(processes, groupId) : [],
+  }
+}

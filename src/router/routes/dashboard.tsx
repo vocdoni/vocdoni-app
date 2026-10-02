@@ -33,6 +33,8 @@ const MembersImport = lazy(() => import('~elements/dashboard/memberbase/import')
 const Members = lazy(() => import('~elements/dashboard/memberbase/members'))
 const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
 const Censuses = lazy(() => import('~elements/dashboard/memberbase/censuses'))
+const Census = lazy(() => import('~elements/dashboard/memberbase/census'))
+const VoteCensus = lazy(() => import('~elements/dashboard/memberbase/vote-census'))
 
 // others
 const Dashboard = lazy(() => import('~elements/dashboard'))
@@ -211,6 +213,22 @@ export const useDashboardRoutes = () => {
                             element: (
                               <SuspenseLoader>
                                 <Censuses />
+                              </SuspenseLoader>
+                            ),
+                          },
+                          {
+                            path: Routes.dashboard.memberbase.census,
+                            element: (
+                              <SuspenseLoader>
+                                <Census />
+                              </SuspenseLoader>
+                            ),
+                          },
+                          {
+                            path: Routes.dashboard.memberbase.voteCensus,
+                            element: (
+                              <SuspenseLoader>
+                                <VoteCensus />
                               </SuspenseLoader>
                             ),
                           },

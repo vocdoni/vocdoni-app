@@ -1,10 +1,18 @@
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
+import { useCallback, useState } from 'react'
 import { PaginationResponse } from '~src/queries/pagination'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from '~src/queries/keys'
-import { Member } from '~src/queries/members'
+import {
+  type CollectProgress,
+  collectMembers,
+  Member,
+  MEMBERS_COLLECT_CAP,
+  type MembersPageFetcher,
+  type MembersResponse,
+} from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
 export type Group = {
@@ -61,7 +69,8 @@ export const useGroups = (limit: number = 6) => {
   const { organization } = useOrganization()
 
   return useInfiniteQuery<GroupsResponse, Error, Group[]>({
-    queryKey: QueryKeys.organization.groups(organization?.address),
+    // The page size is part of the key: callers asking for 6 and for 100 must not share pages
+    queryKey: [...QueryKeys.organization.groups(organization?.address), 'paged', limit],
     enabled: !!organization?.address,
     refetchOnWindowFocus: false,
     initialPageParam: 1,
@@ -203,3 +212,112 @@ export const useUpdateGroup = () => {
     },
   })
 }
+
+/** One group as `GET /groups/{id}` returns it: with its member ids, except Everyone's (its count instead). */
+export type GroupInfo = Group & { memberIds?: string[] }
+
+/** How many people a group holds. */
+export const groupSize = (group?: Pick<GroupInfo, 'isAutoGroup' | 'memberIds' | 'membersCount'>) => {
+  if (!group) return 0
+  if (group.isAutoGroup) return group.membersCount ?? 0
+  return group.memberIds?.length ?? group.membersCount ?? 0
+}
+
+/** One group, with its member ids. Under the groups key, so any group write refreshes it. */
+export const useGroup = (groupId?: string) => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+  const address = organization?.address
+
+  return useQuery<GroupInfo, Error>({
+    queryKey: [...QueryKeys.organization.groups(address), 'detail', groupId],
+    enabled: !!address && !!groupId,
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+      bearedFetch<GroupInfo>(
+        ApiEndpoints.OrganizationGroup.replace('{address}', address).replace('{groupId}', groupId!)
+      ),
+  })
+}
+
+/** Fetches one page of a group's members (the endpoint has no search: `search` is ignored). */
+export const useGroupMembersFetcher = (groupId?: string): MembersPageFetcher => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+  const address = organization?.address
+
+  return useCallback(
+    ({ page, limit }) =>
+      bearedFetch<MembersResponse>(
+        ApiEndpoints.OrganizationGroupMembers.replace('{address}', address).replace('{groupId}', groupId ?? '') +
+          `?page=${page}&limit=${limit}`
+      ),
+    [bearedFetch, address, groupId]
+  )
+}
+
+const groupMembersKey = (address: string | undefined, groupId: string | undefined) => [
+  ...QueryKeys.organization.groups(address),
+  'members',
+  groupId,
+]
+
+/** One page of a group's members, for groups too big to load whole. Keeps the last page while the next loads. */
+export const useGroupMembersPage = (
+  groupId: string | undefined,
+  { page, limit, enabled = true }: { page: number; limit: number; enabled?: boolean }
+) => {
+  const { organization } = useOrganization()
+  const fetchPage = useGroupMembersFetcher(groupId)
+
+  return useQuery<MembersResponse, Error>({
+    queryKey: [...groupMembersKey(organization?.address, groupId), 'page', page, limit],
+    enabled: enabled && !!organization?.address && !!groupId,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
+    queryFn: () => fetchPage({ page, limit, search: '' }),
+  })
+}
+
+/**
+ * Every member of a group of up to 5,000, loaded 100 at a time, so the census can be searched on the
+ * client (the endpoint has no search). Bigger groups get the first 5,000 and `capped`.
+ */
+export const useAllGroupMembers = (groupId: string | undefined, { enabled = true }: { enabled?: boolean } = {}) => {
+  const { organization } = useOrganization()
+  const fetchPage = useGroupMembersFetcher(groupId)
+  const [progress, setProgress] = useState<CollectProgress | null>(null)
+
+  const query = useQuery({
+    queryKey: [...groupMembersKey(organization?.address, groupId), 'all'],
+    enabled: enabled && !!organization?.address && !!groupId,
+    refetchOnWindowFocus: false,
+    retry: false,
+    queryFn: ({ signal }) => collectMembers(fetchPage, { max: MEMBERS_COLLECT_CAP, signal, onProgress: setProgress }),
+  })
+
+  return { ...query, progress: query.isFetching ? progress : null }
+}
+
+/** What `PUT /groups/{id}` answers when it touched votes: resize jobs to wait for, and per-census problems. */
+export type UpdateGroupResponse = { censusJobIds?: string[]; errors?: string[] } | string | undefined
+
+/** `PUT /groups/{id}`, returning what it reports (the shared `useUpdateGroup` drops it). */
+export const useUpdateGroupWithReport = () => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ groupId, body }: { groupId: string; body: UpdateGroupData }) =>
+      bearedFetch<UpdateGroupResponse>(
+        ApiEndpoints.OrganizationGroup.replace('{address}', organization.address).replace('{groupId}', groupId),
+        { method: 'PUT', body }
+      ),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: QueryKeys.organization.groups(organization?.address) }),
+  })
+}
+
+/** The resize jobs a group update started (a bare "OK" started none). */
+export const censusJobIdsOf = (response: UpdateGroupResponse) =>
+  response && typeof response === 'object' ? (response.censusJobIds ?? []) : []
