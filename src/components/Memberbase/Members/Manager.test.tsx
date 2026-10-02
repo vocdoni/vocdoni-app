@@ -18,6 +18,7 @@ vi.mock('../TableProvider', () => ({
       { id: 'surname', label: 'Surname' },
       { id: 'email', label: 'Email' },
       { id: 'phone', label: 'Phone' },
+      { id: 'weight', label: 'Weight' },
     ],
   }),
 }))
@@ -28,6 +29,7 @@ const member = {
   surname: 'Lovelace',
   email: 'ada@example.com',
   phone: '+34*****001',
+  weight: '5',
 }
 
 describe('MemberManager edit', () => {
@@ -44,7 +46,7 @@ describe('MemberManager edit', () => {
 
     // surname and the hidden phone were not touched, so they are left out and kept
     expect(editMutate).toHaveBeenCalledTimes(1)
-    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'Augusta', email: '' })
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'Augusta', email: '', weight: '5' })
   })
 
   it('sends an emptied phone so the stored one is cleared', async () => {
@@ -56,7 +58,7 @@ describe('MemberManager edit', () => {
     await user.clear(phone)
     await user.click(screen.getByRole('button', { name: 'Save changes' }))
 
-    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '' })
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '', weight: '5' })
   })
 
   it('does not call the API when nothing changed', async () => {
@@ -68,7 +70,7 @@ describe('MemberManager edit', () => {
     expect(editMutate).not.toHaveBeenCalled()
   })
 
-  it('keeps what the user typed when the same member is refetched', async () => {
+  it('keeps typed values but refreshes untouched fields when the same member is refetched', async () => {
     const user = userEvent.setup()
     const { rerender } = render(<MemberManager member={member} open />)
 
@@ -76,6 +78,17 @@ describe('MemberManager edit', () => {
     rerender(<MemberManager member={{ ...member, surname: 'Byron' }} open />)
 
     expect(screen.getByLabelText('Name')).toHaveValue('AdaX')
+    expect(screen.getByLabelText('Surname')).toHaveValue('Byron')
+  })
+
+  it('blanks a field the refetched member no longer has', async () => {
+    const { rerender } = render(<MemberManager member={member} open />)
+
+    expect(await screen.findByLabelText('Surname')).toHaveValue('Lovelace')
+    const { surname: _surname, ...withoutSurname } = member
+    rerender(<MemberManager member={withoutSurname} open />)
+
+    expect(screen.getByLabelText('Surname')).toHaveValue('')
   })
 
   it('discards edits abandoned with Cancel when the drawer is reopened', async () => {
@@ -87,15 +100,5 @@ describe('MemberManager edit', () => {
     rerender(<MemberManager member={member} open />)
 
     expect(await screen.findByLabelText('Name')).toHaveValue('Ada')
-  })
-
-  it('shows fresh data for untouched fields when the member is refetched while open', async () => {
-    const user = userEvent.setup()
-    const { rerender } = render(<MemberManager member={member} open />)
-
-    await user.type(await screen.findByLabelText('Name'), 'X')
-    rerender(<MemberManager member={{ ...member, surname: 'Byron' }} open />)
-
-    expect(screen.getByLabelText('Surname')).toHaveValue('Byron')
   })
 })
