@@ -88,4 +88,14 @@ describe('MemberManager edit', () => {
 
     expect(await screen.findByLabelText('Name')).toHaveValue('Ada')
   })
+
+  it('shows fresh data for untouched fields when the member is refetched while open', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<MemberManager member={member} open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'X')
+    rerender(<MemberManager member={{ ...member, surname: 'Byron' }} open />)
+
+    expect(screen.getByLabelText('Surname')).toHaveValue('Byron')
+  })
 })

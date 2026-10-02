@@ -126,23 +126,33 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   }
 
   /**
-   * Syncs the form values with the selected member.
+   * Syncs the form values with the selected member (edit mode only).
    *
-   * The form is reset when the drawer opens or the selected member changes, so that edits
-   * abandoned with Cancel are discarded. A refetch of the same member while the drawer is open
-   * must not wipe what the user is typing.
+   * The form is fully reset when the drawer opens or the selected member changes, so edits
+   * abandoned with Cancel are discarded. When fresh data for the same member arrives while the
+   * drawer is open, only the fields the user has not touched are refreshed.
    */
+  const syncedMemberId = useRef<string | null>(null)
   useEffect(() => {
-    if (member && isOpen) {
-      const cleanMember = { ...member }
-      if (member.phone) {
-        cleanMember.phone = ''
-      }
-      setHadPhone(!!member.phone)
+    if (!member || !isOpen) {
+      syncedMemberId.current = null
+      return
+    }
+    const isNewSession = syncedMemberId.current !== member.id
+    syncedMemberId.current = member.id
+
+    const cleanMember = { ...member }
+    if (member.phone) {
+      cleanMember.phone = ''
+    }
+    setHadPhone(!!member.phone)
+    if (isNewSession) {
       phoneEdited.current = false
       methods.reset(stringifyObjectValues(cleanMember))
+    } else {
+      methods.reset(stringifyObjectValues(cleanMember), { keepDirtyValues: true })
     }
-  }, [member?.id, isOpen])
+  }, [member, isOpen])
 
   const onSubmit = (data: Partial<Member>) => {
     const { id, memberNumber, name, surname, email, phone, nationalId, birthDate, weight } = data
