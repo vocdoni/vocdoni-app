@@ -58,6 +58,8 @@ export const AnalyticsEvents = {
   FeatureInterest: 'feature_interest',
   HelpOpened: 'help_opened',
   VotersAdded: 'voters_added',
+  ActivityViewed: 'activity_viewed',
+  ActivityExported: 'activity_exported',
 } as const
 
 // How an account was created or signed in to; sent as the `method` event

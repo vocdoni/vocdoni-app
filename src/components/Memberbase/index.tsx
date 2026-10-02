@@ -6,6 +6,7 @@ import { generatePath, Outlet, Link as RouterLink, useLocation, useNavigate } fr
 import { useAuth } from '~components/Auth/useAuth'
 import { PageHeader } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
+import { useActivityAvailable } from '~src/queries/activity'
 import { useMembersCount } from '~src/queries/members'
 import { useCensusIndex } from './Censuses/useCensusIndex'
 import { getStoredImportJobId, readAccountId, setStoredImportJobId } from './importJobStorage'
@@ -33,6 +34,7 @@ export const MemberbaseTabs = () => {
   // whole member list while the table is filtered.
   const members = useMembersCount()
   const censuses = useCensusIndex()
+  const activity = useActivityAvailable()
 
   const tabs: TabItem[] = [
     {
@@ -45,9 +47,18 @@ export const MemberbaseTabs = () => {
       route: Routes.dashboard.memberbase.censuses,
       count: censuses.isLoading ? undefined : censuses.index.total,
     },
+    // Only once there's something real to show (see useActivityAvailable)
+    ...(activity.available
+      ? [
+          {
+            label: t('memberbase.activity.title', { defaultValue: 'Activity' }),
+            route: Routes.dashboard.memberbase.activity,
+          },
+        ]
+      : []),
   ]
-  const isCensuses = location.pathname.startsWith(Routes.dashboard.memberbase.censuses)
-  const activeTab = isCensuses ? tabs[1].route : tabs[0].route
+  const activeTab =
+    tabs.find((tab, index) => index > 0 && location.pathname.startsWith(tab.route))?.route ?? tabs[0].route
 
   useEffect(() => {
     setJobIdState(getStoredImportJobId(accountId))
