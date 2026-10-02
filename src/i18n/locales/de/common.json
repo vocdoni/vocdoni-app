@@ -998,10 +998,10 @@
       }
     },
     "members": {
-      "title": "Mitglieder"
+      "title": "Personen"
     },
     "subtitle": "Verwalte die Mitglieder deiner Organisation und erstelle Gruppen",
-    "title": "Mitgliederverwaltung"
+    "title": "Mitglieder"
   },
   "members": {
     "fields": {

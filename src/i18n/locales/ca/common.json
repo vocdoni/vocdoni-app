@@ -1007,10 +1007,10 @@
       }
     },
     "members": {
-      "title": "Membres"
+      "title": "Persones"
     },
     "subtitle": "Gestiona els membres de la teva organització i crea grups",
-    "title": "Base de membres"
+    "title": "Membres"
   },
   "members": {
     "fields": {

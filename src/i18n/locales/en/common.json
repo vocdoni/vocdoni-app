@@ -998,10 +998,10 @@
       }
     },
     "members": {
-      "title": "Members"
+      "title": "People"
     },
     "subtitle": "Manage your organization's members and create groups",
-    "title": "Memberbase"
+    "title": "Members"
   },
   "members": {
     "fields": {

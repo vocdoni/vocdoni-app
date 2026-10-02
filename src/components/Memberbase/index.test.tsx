@@ -34,23 +34,23 @@ describe('MemberbaseTabs member count', () => {
     membersCount.value = undefined
   })
 
-  it('shows the exact, locale formatted memberbase size on the Members tab', async () => {
+  it('shows the exact, locale formatted memberbase size on the People tab', async () => {
     membersCount.value = 1234
     renderTabs()
 
-    expect(await screen.findByRole('tab', { name: /Members/ })).toHaveTextContent('Members1,234')
+    expect(await screen.findByRole('tab', { name: /People/ })).toHaveTextContent('People1,234')
   })
 
   it('shows an empty memberbase as zero', async () => {
     membersCount.value = 0
     renderTabs()
 
-    expect(await screen.findByRole('tab', { name: /Members/ })).toHaveTextContent('Members0')
+    expect(await screen.findByRole('tab', { name: /People/ })).toHaveTextContent('People0')
   })
 
   it('shows no count until the total is known', async () => {
     renderTabs()
 
-    expect(await screen.findByRole('tab', { name: /Members/ })).toHaveTextContent(/^Members$/)
+    expect(await screen.findByRole('tab', { name: /People/ })).toHaveTextContent(/^People$/)
   })
 })

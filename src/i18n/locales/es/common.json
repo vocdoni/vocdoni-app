@@ -1007,10 +1007,10 @@
       }
     },
     "members": {
-      "title": "Miembros"
+      "title": "Personas"
     },
     "subtitle": "Gestiona los miembros de tu organización y crea grupos",
-    "title": "Base de miembros"
+    "title": "Miembros"
   },
   "members": {
     "fields": {

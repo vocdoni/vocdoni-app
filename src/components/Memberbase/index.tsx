@@ -40,7 +40,7 @@ export const MemberbaseTabs = () => {
   const members = useMembersCount()
   const menuItems: MenuItem[] = [
     {
-      label: t('memberbase.members.title', { defaultValue: 'Members' }),
+      label: t('memberbase.members.title', { defaultValue: 'People' }),
       route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
       count: members.known ? members.count : undefined,
     },
@@ -74,7 +74,7 @@ export const MemberbaseTabs = () => {
     <>
       <Heading>
         {t('memberbase.title', {
-          defaultValue: 'Memberbase',
+          defaultValue: 'Members',
         })}
       </Heading>
       <SubHeading>

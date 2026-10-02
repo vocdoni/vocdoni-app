@@ -19,7 +19,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | English | Catalan | Notes |
 |---|---|---|
 | election / voting process | elecció / procés de votació | Use consistently — don't drift to a bare "votació" for the process |
-| census | cens | The established Catalan electoral term — list of eligible voters |
+| census | cens | The established Catalan electoral term. In the app it means the people who can vote in a vote. Use "cens" everywhere, never a paraphrase like "llista de votants" |
+| Members (section) | Membres | The dashboard section with the organization's people. Formerly "Memberbase" ("Base de membres"): don't use the old name |
+| People (tab) | Persones | The tab in Members that lists every member |
+| saved census | cens desat | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | Registre de canvis | The tab with the dated history of imports and votes. Not "Activitat" |
 | organization | organització | |
 | voter | votant | Gender-neutral; prefer over "elector/electora" in most contexts |
 | voting power / weight | pes del vot | |
