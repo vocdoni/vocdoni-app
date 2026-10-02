@@ -16,7 +16,7 @@ import { Sheet } from '~components/ui/Sheet'
 import { Routes } from '~routes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAddCensusParticipants } from '~src/queries/census'
-import { useCreateGroup, useGroups, useUpdateGroup } from '~src/queries/groups'
+import { useAllGroups, useCreateGroup, useUpdateGroup } from '~src/queries/groups'
 import { paginatedElectionsQuery } from '~src/queries/organization'
 import { memberDisplayName } from './display'
 import type { SelectedMember } from './useSelection'
@@ -156,7 +156,8 @@ export const CreateGroupSheet = ({ open, onOpenChange, members, onDone }: BulkSh
 export const AddToGroupSheet = ({ open, onOpenChange, members, onDone }: BulkSheetProps) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const { data: allGroups } = useGroups()
+  // Every saved census, not just the first page; "Everyone" can't be added to
+  const { data: allGroups, isLoading } = useAllGroups({ enabled: open })
   const groups = (allGroups ?? []).filter((group) => !group.isAutoGroup)
   const [selectedGroup, setSelectedGroup] = useState<{ id: string; title: string } | null>(null)
   const updateGroup = useUpdateGroup()
@@ -202,6 +203,7 @@ export const AddToGroupSheet = ({ open, onOpenChange, members, onDone }: BulkShe
         <Select
           placeholder={t('members.table.select_group', { defaultValue: 'Select group' })}
           options={groups}
+          isLoading={isLoading}
           getOptionLabel={(option) => option.title}
           getOptionValue={(option) => option.id}
           formatOptionLabel={(option) => (

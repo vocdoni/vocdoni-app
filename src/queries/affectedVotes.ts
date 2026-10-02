@@ -2,7 +2,7 @@ import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { getElectionTitle } from '@vocdoni/react-components'
 import { useMemo } from 'react'
 import { getProcessState } from '~components/Process/processState'
-import { useGroups } from './groups'
+import { useAllGroups } from './groups'
 import { flattenPages, useDraftProcesses, usePublishedProcesses } from './processes'
 
 export type AffectedVoteState = 'live' | 'scheduled' | 'draft' | 'closed'
@@ -44,7 +44,8 @@ export const votesFollowingGroup = (processes: VotingProcessResponse[], groupId?
  * (and from any other census they're in), so the confirmations name them.
  */
 export const useAffectedVotes = () => {
-  const groups = useGroups()
+  // All pages: "Everyone" may not be on the first
+  const groups = useAllGroups()
   const everyone = groups.data?.find((group) => group.isAutoGroup)
   const published = usePublishedProcesses()
   const drafts = useDraftProcesses()

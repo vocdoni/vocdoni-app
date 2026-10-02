@@ -66,6 +66,40 @@ export const useGroups = (limit: number = 6) => {
   })
 }
 
+/** The most groups `GET /groups` returns per page. */
+const GROUPS_PAGE_MAX = 100
+
+/**
+ * Every group of the organization, all pages of them, for pickers that must offer each one (the
+ * paged `useGroups` stops at its first page until asked for more). Shares the groups key, so any
+ * group write refreshes it.
+ */
+export const useAllGroups = ({ enabled = true }: { enabled?: boolean } = {}) => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+  const address = organization?.address
+
+  return useQuery<Group[], Error>({
+    queryKey: [...QueryKeys.organization.groups(address), 'all'],
+    enabled: enabled && !!address,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const groups: Group[] = []
+      let page = 1
+      let lastPage = 1
+      do {
+        const response = await bearedFetch<GroupsResponse>(
+          ApiEndpoints.OrganizationGroups.replace('{address}', address) + `?page=${page}&limit=${GROUPS_PAGE_MAX}`
+        )
+        groups.push(...(response.groups ?? []))
+        lastPage = response.pagination?.lastPage ?? page
+        page += 1
+      } while (page <= lastPage)
+      return groups
+    },
+  })
+}
+
 export const useCreateGroup = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()

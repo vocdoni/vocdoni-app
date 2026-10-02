@@ -21,7 +21,7 @@ const data = vi.hoisted(() => ({
 }))
 
 vi.mock('./groups', () => ({
-  useGroups: () => ({ data: data.groups, isLoading: false }),
+  useAllGroups: () => ({ data: data.groups, isLoading: false }),
 }))
 
 vi.mock('./processes', async (importOriginal) => {

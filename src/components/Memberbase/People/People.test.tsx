@@ -78,6 +78,7 @@ vi.mock('~src/queries/groups', async (importOriginal) => {
   return {
     ...actual,
     useGroups: () => ({ data: [], isLoading: false }),
+    useAllGroups: () => ({ data: [], isLoading: false }),
     useCreateGroup: () => ({ mutate: vi.fn(), isPending: false }),
     useUpdateGroup: () => ({ mutate: vi.fn(), isPending: false }),
   }
