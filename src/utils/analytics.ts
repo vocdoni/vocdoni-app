@@ -33,6 +33,7 @@ export const AnalyticsEvents = {
   MembersImportStarted: 'members_import_started',
   MembersImportCompleted: 'members_import_completed',
   MembersPageViewed: 'members_page_viewed',
+  MembersEmptyStateCtaClicked: 'members_empty_state_cta_clicked',
   MembersDeleted: 'members_deleted',
   MemberAdded: 'member_added',
   MemberUpdated: 'member_updated',

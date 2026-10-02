@@ -15,6 +15,7 @@ import { AddToCensusSheet, AddToGroupSheet, CreateGroupSheet } from './BulkActio
 import { ContextBar, ReadinessMessage } from './ContextBar'
 import { DeleteAllMembersDialog, DeleteMembersDialog } from './DeleteMembersDialog'
 import { findMemberLink, isTypingTarget } from './display'
+import { FirstRun } from './FirstRun'
 import { PaginationFooter } from './PaginationFooter'
 import { PeopleCards } from './PeopleCards'
 import { PeopleTable } from './PeopleTable'
@@ -56,7 +57,7 @@ export const People = () => {
   const { t } = useTranslation()
   const { organization } = useOrganization()
   const url = usePeopleUrlState()
-  const { jobId, setJobId } = useMembersPage()
+  const { jobId, setJobId, openImport, openAddPerson } = useMembersPage()
   const fields = useMemberFields()
   const columns = useColumnVisibility(organization?.address)
   const membersCount = useMembersCount()
@@ -206,6 +207,10 @@ export const People = () => {
     page: url.page,
     total: Math.max(1, lastPage),
   })
+
+  // Nobody yet and nothing on its way: the ways to add people instead of an empty table
+  if (membersCount.known && membersCount.count === 0 && !jobId && !url.q)
+    return <FirstRun onImport={openImport} onAddPeople={openAddPerson} />
 
   return (
     <Box pb={selection.count ? 24 : 0}>

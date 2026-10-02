@@ -73,6 +73,13 @@ const anna = {
 }
 const jordi = { id: 'j2', name: 'Jordi', surname: 'Serra Mas', email: 'jordi@example.test', memberNumber: '0043' }
 
+const openImport = vi.fn()
+const openAddPerson = vi.fn()
+
+vi.mock('../MembersPageContext', () => ({
+  useMembersPage: () => ({ jobId: null, setJobId: vi.fn(), openImport, openAddPerson }),
+}))
+
 const LocationProbe = () => {
   const location = useLocation()
   return <output data-testid='location'>{`${location.pathname}${location.search}`}</output>
@@ -300,5 +307,39 @@ describe('People', () => {
     expect(screen.getByText('All 2 can get a voting code')).toBeInTheDocument()
     await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Anna Vila Puig' }))
     expect(screen.queryByText('All 2 can get a voting code')).toBeNull()
+  })
+
+  it('shows two doors instead of a table when there are no members yet', async () => {
+    const user = userEvent.setup()
+    state.members = []
+    state.total = 0
+    state.count = 0
+    renderPeople()
+
+    expect(screen.getByRole('heading', { name: 'Add your members' })).toBeInTheDocument()
+    expect(screen.getByText(/Members are free and unlimited\./)).toBeInTheDocument()
+    expect(screen.queryByRole('table')).toBeNull()
+    expect(screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)).toEqual([
+      'Import a spreadsheet',
+      'Add people',
+    ])
+    expect(screen.getByRole('link', { name: 'Get the template' })).toHaveAttribute('download', 'members-template.csv')
+    expect(
+      screen.getByText('Your file is read in your browser. Only the columns you keep are sent.')
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Import a spreadsheet' }))
+    expect(openImport).toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: 'Add people' }))
+    expect(openAddPerson).toHaveBeenCalled()
+  })
+
+  it('keeps the list (not the doors) while a search finds nobody', () => {
+    state.members = []
+    state.total = 0
+    state.count = 0
+    renderPeople('/admin/memberbase/members/1?q=x')
+
+    expect(screen.queryByRole('heading', { name: 'Add your members' })).toBeNull()
   })
 })
