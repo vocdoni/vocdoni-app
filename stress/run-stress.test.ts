@@ -1,10 +1,9 @@
-import { execFile } from 'node:child_process'
+import { spawn, type ChildProcess } from 'node:child_process'
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { setTimeout as delay } from 'node:timers/promises'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const script = path.resolve(__dirname, 'run-stress.sh')
 const directories: string[] = []
@@ -30,6 +29,15 @@ const successfulResult = {
   bytesReceived: 200,
   latencyMs: { min: 1, avg: 1, p50: 1, p90: 1, p99: 1, max: 1 },
 }
+
+// Every faked command below is a Node script, so one run starts about ten Node processes.
+// Process startup varies a lot (Node 26 starts ~2.5x slower than 22, and the full suite loads
+// the machine), so waits are generous deadlines rather than tight budgets. The fixtures finish
+// in well under a second when things are fast; the deadline only matters when a run hangs.
+const RUN_TIMEOUT_MS = 15000
+// How long the run gets to honour SIGTERM before the deadline SIGKILLs it. Bash defers its TERM
+// trap until a foreground command returns, so a hung fake would otherwise block it forever.
+const KILL_GRACE_MS = 2000
 
 // Keep the real orchestration and JSON parser; replace Docker/network/process
 // boundaries so startup, crashes and resource failures need no Docker daemon.
@@ -94,28 +102,64 @@ if (args[0].endsWith('/loadgen.mjs')) {
   await Promise.all(
     Object.entries(commands).map(([name, content]) => writeFile(path.join(bin, name), content, { mode: 0o755 }))
   )
-  let child: ReturnType<typeof execFile>
-  const completed = new Promise<{ code: number | string; stdout: string; stderr: string }>((resolve) => {
-    child = execFile(
-      'bash',
-      [path.join(root, 'stress/run-stress.sh'), '--skip-build', '--levels', levels, '--keep'],
-      {
-        timeout: 4000,
-        env: {
-          ...process.env,
-          PATH: `${bin}:${process.env.PATH}`,
-          FIXTURE_ROOT: root,
-          FIXTURE_SCENARIO: scenario,
-          FIXTURE_RESULT: JSON.stringify(measurement),
-        },
+  let child: ChildProcess
+  const completed = new Promise<{ code: number | string; stdout: string; stderr: string }>((resolve, reject) => {
+    // Our own deadline rather than a spawn `timeout`: the script traps SIGTERM and exits 143,
+    // so a timed-out run would otherwise look like any other non-zero exit and satisfy the
+    // `code !== 0` assertions.
+    let timedOut = false
+    let stdout = ''
+    let stderr = ''
+    let killTimer: ReturnType<typeof setTimeout> | undefined
+    const deadlineError = () =>
+      new Error(`run-stress.sh did not finish within ${RUN_TIMEOUT_MS} ms\n${stdout}${stderr}`)
+    // The script runs in its own process group (`detached`; execFile would silently drop that
+    // option) so the deadline can signal the whole run. Killing bash alone would orphan a hung
+    // fake and the subshell waiting on it: they keep running forever and hold the stdio pipes.
+    const killRun = (signal: NodeJS.Signals) => {
+      try {
+        process.kill(-child.pid!, signal)
+      } catch {
+        // The group is already gone.
+      }
+    }
+    child = spawn('bash', [path.join(root, 'stress/run-stress.sh'), '--skip-build', '--levels', levels, '--keep'], {
+      detached: true,
+      env: {
+        ...process.env,
+        PATH: `${bin}:${process.env.PATH}`,
+        FIXTURE_ROOT: root,
+        FIXTURE_SCENARIO: scenario,
+        FIXTURE_RESULT: JSON.stringify(measurement),
       },
-      (error, stdout, stderr) => resolve({ code: error ? error.code || error.signal || 1 : 0, stdout, stderr })
-    )
+    })
+    child.stdout!.on('data', (chunk) => (stdout += chunk))
+    child.stderr!.on('data', (chunk) => (stderr += chunk))
+    const timer = setTimeout(() => {
+      timedOut = true
+      // SIGTERM the group so a hung foreground fake dies too; bash's trap and cleanup then run.
+      killRun('SIGTERM')
+      killTimer = setTimeout(() => {
+        killRun('SIGKILL')
+        reject(deadlineError())
+      }, KILL_GRACE_MS)
+    }, RUN_TIMEOUT_MS)
+    const settle = (result: { code: number | string } | Error) => {
+      clearTimeout(timer)
+      clearTimeout(killTimer)
+      if (result instanceof Error) reject(result)
+      else if (timedOut) reject(deadlineError())
+      else resolve({ code: result.code, stdout, stderr })
+    }
+    child.on('error', settle)
+    child.on('close', (code, signal) => settle({ code: code ?? signal ?? 1 }))
   })
+  // A test can fail before awaiting `completed`; keep that from surfacing as an unhandled rejection.
+  completed.catch(() => {})
   return { root, child: child!, completed }
 }
 
-describe('stress ramp orchestration', () => {
+describe('stress ramp orchestration', { timeout: RUN_TIMEOUT_MS + KILL_GRACE_MS + 3000 }, () => {
   it('isolates container names and artifacts for invocations with the same timestamp', async () => {
     const runs = await Promise.all([harness(), harness()])
     const outputs = await Promise.all(runs.map((run) => run.completed))
@@ -243,8 +287,21 @@ describe('stress ramp orchestration', () => {
 
   it('terminates on SIGTERM instead of continuing subsequent levels', async () => {
     const run = await harness('signal', successfulResult, '1 2')
-    for (let i = 0; i < 100 && !existsSync(path.join(run.root, 'loadgen-started')); i++) await delay(10)
-    expect(existsSync(path.join(run.root, 'loadgen-started'))).toBe(true)
+    const started = path.join(run.root, 'loadgen-started')
+    await vi.waitFor(
+      () => {
+        // Stop waiting as soon as the script exits: it will never start the generator after that.
+        // The run's own deadline (armed earlier) always ends a hang first, so no timeout is needed.
+        if (run.child.exitCode !== null || run.child.signalCode !== null) return
+        expect(existsSync(started)).toBe(true)
+      },
+      { timeout: RUN_TIMEOUT_MS + KILL_GRACE_MS, interval: 10 }
+    )
+    if (!existsSync(started)) {
+      // Surface why: the script's output, or the deadline error if the run hung.
+      const output = await run.completed
+      throw new Error(`load generator never started (exit ${output.code})\n${output.stdout}${output.stderr}`)
+    }
     run.child.kill('SIGTERM')
     const output = await run.completed
     expect(output.code).toBe(143)

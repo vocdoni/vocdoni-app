@@ -47,7 +47,7 @@
   "annual": "Jährlich<1>40 % sparen</1>",
   "apply": "Anwenden",
   "aside": {
-    "anonymous_receipt_gone": "",
+    "anonymous_receipt_gone": "Dein Beleg wurde bei der Stimmabgabe angezeigt und kann nicht erneut abgerufen werden.",
     "has_already_voted": "Deine Stimme wurde erfolgreich abgegeben",
     "is_not_in_census": "Du bist nicht in der Teilnehmerliste",
     "votes_one": "<span>1</span> <text>Wählende Person</text>",
@@ -100,7 +100,7 @@
   "back": "Zurück",
   "billing_details": "Rechnungsdetails",
   "booking": {
-    "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut."
+    "unavailable": "Die Buchung ist derzeit nicht verfügbar. Bitte versuche es später erneut."
   },
   "calendar": {
     "max_duration_exceeded": "Die Dauer überschreitet das {{ maxDuration }}-Tage-Limit deines Plans. Verkürze den Abstimmungszeitraum oder <a>kontaktiere uns</a>, wenn du mehr Tage benötigst.",
@@ -195,7 +195,6 @@
   },
   "csp": {
     "auth_failed": "Authentifizierung fehlgeschlagen",
-    "auth_success": "Authentifizierung erfolgreich",
     "authenticate": "Identifizieren",
     "code_info": "Du erhältst einen einmaligen Code über das gewählte Medium, um deine Identität zu bestätigen und die Authentifizierung abzuschließen",
     "code_sent": "Bestätigungscode gesendet",
@@ -345,6 +344,9 @@
   "ended_processes": "Beendet",
   "enter_promo_code": "Code eingeben",
   "error": {
+    "crash_description": "Lade die Seite neu oder kehre zum Dashboard zurück.",
+    "crash_title": "Etwas ist schiefgelaufen",
+    "go_to_dashboard": "Zum Dashboard",
     "loading_languages": "Fehler beim Laden der Sprachen",
     "loading_page": "Fehler beim Laden der Seite",
     "loading_roles": "Fehler beim Laden der Rollen",
@@ -354,12 +356,13 @@
     "missing_header": "Die Tabelle enthält keine Kopfzeile.",
     "not_found": "Seite nicht gefunden",
     "not_found_description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "reload": "Neu laden",
     "return_to_home": "Zurück zur Startseite",
     "title": "Fehler"
   },
   "error_removing_code": "Fehler beim Entfernen des Codes",
   "features": {
-    "anonymous": "Geheime Abstimmung",
+    "anonymous": "Anonyme Abstimmung",
     "approval": "Zustimmungsabstimmung",
     "audit": "Prüfung",
     "audit_blockchain": "100 % blockchain-prüfbar",
@@ -954,7 +957,7 @@
       "title": "Gruppen"
     },
     "import_file": {
-      "subtitle": "Importiere deine CSV-, XLS- oder XLSX-Datei mit Mitgliederdaten. Stelle sicher, dass die Spaltenüberschriften mit der Vorlage übereinstimmen.",
+      "subtitle": "Importiere deine CSV-, XLS-, XLSX- oder ODS-Datei mit Mitgliederdaten. Stelle sicher, dass die Spaltenüberschriften mit der Vorlage übereinstimmen.",
       "title": "Datei importieren"
     },
     "importer": {
@@ -962,6 +965,10 @@
       "cancel": "Abbrechen",
       "data_preview": "Datenvorschau",
       "download_template_btn": "Vorlage herunterladen",
+      "error": {
+        "invalid_file_type": "Dieser Dateityp wird nicht unterstützt. Lade eine .csv-, .xlsx-, .xls- oder .ods-Datei hoch.",
+        "read_failed": "Wir konnten diese Datei nicht lesen. Prüfe, ob es eine gültige CSV- oder Tabellendatei ist, und versuche es erneut."
+      },
       "field_mapper": {
         "empty": "-- Nicht importieren --",
         "placeholder": "Spalte auswählen"
@@ -974,7 +981,7 @@
       "reset": "Import zurücksetzen",
       "select_at_least_one_column": "Wähle mindestens eine Spalte aus, um die Vorlage herunterzuladen.",
       "submit": "Daten importieren",
-      "subtitle": "Lade eine Vorlage herunter oder importiere deine eigene CSV-, XLS- oder XLSX-Datei, um Mitglieder hinzuzufügen.",
+      "subtitle": "Lade eine Vorlage herunter oder importiere deine eigene CSV-, XLS-, XLSX- oder ODS-Datei, um Mitglieder hinzuzufügen.",
       "title": "Mitglieder importieren",
       "warning": {
         "subtitle": "Die Informationen nicht zugeordneter Spalten werden nicht importiert.",
@@ -1056,10 +1063,10 @@
       "select_process": "Prozess auswählen",
       "selected_one": "Ausgewählt: <strong>{{count}} Mitglied</strong>",
       "selected_other": "Ausgewählt: <strong>{{count}} Mitglieder</strong>",
-      "showing_members_one": "",
-      "showing_members_other": "",
-      "showing_results_one": "",
-      "showing_results_other": "",
+      "showing_members_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitglied",
+      "showing_members_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Mitgliedern",
+      "showing_results_one": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnis",
+      "showing_results_other": "Zeige {{from, number}}–{{to, number}} von {{count, number}} Ergebnissen",
       "toggle_column": "Spalte {{column}} ein-/ausblenden"
     }
   },
@@ -1137,9 +1144,9 @@
     "title": {
       "read_more": "Titel ausklappen"
     },
-    "unavailable_description": "",
-    "unavailable_retry": "",
-    "unavailable_title": ""
+    "unavailable_description": "Beim Lesen deiner Organisationen ist etwas schiefgelaufen. Das ist meist nur vorübergehend – versuch es bitte erneut.",
+    "unavailable_retry": "Erneut versuchen",
+    "unavailable_title": "Deine Organisationen konnten nicht geladen werden"
   },
   "organization_settings": {
     "phone_support": {
@@ -1167,9 +1174,9 @@
   "organizations": "Organisationen ({{ numOrgs }})",
   "other_details": "Weitere Details",
   "pagination": {
-    "next": "",
+    "next": "Nächste Seite",
     "page_out_of": "Seite {{page}} von {{total}}",
-    "previous": "",
+    "previous": "Vorherige Seite",
     "rows_per_page": "Zeilen pro Seite"
   },
   "password": "Passwort",
@@ -1207,7 +1214,7 @@
   "passwords_do_not_match": "Passwörter stimmen nicht überein",
   "pause_vote": "Abstimmung pausieren",
   "payment": {
-    "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut."
+    "stripe_unavailable": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuche es später erneut."
   },
   "plan": {
     "encouragement": "Eine Abstimmung zu starten ist einfach, und Teilnehmende können von überall mitmachen. Starke Garantien zu niedrigen Kosten haben Vocdoni zur vertrauenswürdigen Wahl für Hunderte von Gemeinden, Vereinen, politischen Parteien und Unternehmen gemacht.",
@@ -1376,7 +1383,7 @@
     "success_modal": {
       "btn": "Schließen",
       "text": "<p>Deine Stimme wurde sicher abgegeben und mit der Technologie von Vocdoni gespeichert. <verify>Du kannst sie hier überprüfen</verify>.</p>",
-      "text_no_id": "",
+      "text_no_id": "<p>Deine Stimme wurde erfolgreich abgegeben.</p>",
       "title": "Stimme abgegeben!"
     },
     "summary": {
@@ -1435,8 +1442,8 @@
   },
   "process_create": {
     "anonymity": {
-      "title": "",
-      "tooltip": ""
+      "title": "Anonyme Abstimmung",
+      "tooltip": "In beiden Fällen kann deine Organisation nicht sehen, wie jemand abgestimmt hat. Die Anonymität der Wählenden fügt eine kryptografische Ebene hinzu, die es unmöglich macht, eine Stimme einer Person zuzuordnen."
     },
     "auto_start": "Sofort starten",
     "basic_configuration": "Grundkonfiguration",
@@ -1483,7 +1490,7 @@
     "weight": {
       "equal": "Eine Person, eine Stimme",
       "title": "Stimmgewicht",
-      "tooltip": "",
+      "tooltip": "Lege fest, ob alle berechtigten Wählenden das gleiche Stimmgewicht haben oder ob die Stimmen nach dem Feld „Stimmgewicht“ der Mitgliederbasis gewichtet werden.",
       "weighted": "Gewichtet nach Stimmgewicht"
     },
     "youtube": {
@@ -1610,7 +1617,7 @@
     "voting_process": {
       "card": {
         "abstain": "Enthalten",
-        "item": "Frage {{index}}",
+        "item": "Stimmen gesamt",
         "option": "Option",
         "outcome_label": "Abstimmungsmethode",
         "participation_short": "{{votes}} Stimmen",
@@ -1919,6 +1926,10 @@
     "csv_row_limit_exceeded_one": "Dieser Import würde {{count}} Zeile ergeben und damit dein Planlimit von {{max}} überschreiten.",
     "csv_row_limit_exceeded_other": "Dieser Import würde {{count}} Zeilen ergeben und damit dein Planlimit von {{max}} überschreiten.",
     "drop_here": "Datei hier ablegen",
+    "error": {
+      "invalid_image_type": "Dieser Dateityp wird nicht unterstützt. Lade ein .png- oder .jpg-Bild hoch.",
+      "too_many_files": "Lade jeweils nur eine Datei hoch."
+    },
     "image_upload_failed": "Bild-Upload fehlgeschlagen",
     "image_upload_success": "Bild hochgeladen",
     "upload_failed": "Upload fehlgeschlagen"
@@ -1960,12 +1971,12 @@
   "view_plans_and_pricing": "Pläne & Preise anzeigen",
   "vocdoni_logo": "Vocdoni Logo",
   "vote": {
-    "anonymous_receipt": "",
+    "anonymous_receipt": "Anonyme Stimmabgabe: Speichere diesen Beleg jetzt, die Plattform kann ihn dir nicht erneut anzeigen.",
     "voted_title": "Deine Stimme wurde erfolgreich abgegeben!"
   },
   "vote_information": "Abstimmungsdetails",
   "vote_overwrite": "Stimme überschreiben",
-  "voter_anonymity": "",
+  "voter_anonymity": "Anonymität der Wählenden",
   "voter_auth": {
     "2fa_badge": "2FA",
     "2fa_description": "Erhöhe die Sicherheit, indem Wählende ihre Identität bestätigen müssen",
@@ -1979,7 +1990,7 @@
     "2fa_sms_description": "Wählende erhalten einen Bestätigungscode per SMS",
     "2fa_voter_choice": "<email /> oder <phone /> Wahl der Wählenden",
     "2fa_voter_choice_description": "Wählende können ihre bevorzugte Verifizierungsmethode wählen",
-    "anonymity": "",
+    "anonymity": "Anonymität der Stimmabgabe: {{ mode }}",
     "button": {
       "configure": "Wähler-Authentifizierung konfigurieren",
       "edit": "Wähler-Authentifizierung bearbeiten"

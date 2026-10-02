@@ -28,6 +28,9 @@
     "not_voted_in_ended_election": "Assinaste mas não votaste nesta votação já terminada.",
     "question_not_votable": "Esta pergunta não pode aceitar votos: uma das suas opções foi configurada de uma forma que o registo não consegue guardar. O teu voto não foi submetido. Contacta a organização.",
     "unauthorized": "Sem autorização para votar",
+    "vote_failed": "Não foi possível registar o teu voto: {{ detail }}",
+    "vote_failed_unknown": "Não foi possível registar o teu voto. Tenta novamente.",
+    "vote_partial": "Só parte do teu voto foi registada: foram registadas {{ cast }} de {{ total }} perguntas. {{ detail }} Submete novamente para repetir as que falharam.",
     "wrong_data_description": "Os dados indicados não estão corretos",
     "wrong_data_title": "Dados incorretos"
   },
@@ -99,6 +102,18 @@
     "button": "Votar",
     "button_update": "Alterar o meu voto",
     "confirm": "Confirma as tuas escolhas:",
+    "disabled": {
+      "canceled": "A votação foi cancelada",
+      "ended": "A votação terminou",
+      "identify": "Identifica-te primeiro para votar",
+      "not_in_census": "Não podes votar neste processo",
+      "not_open": "A votação não está aberta",
+      "paused": "A votação está em pausa",
+      "upcoming": "A votação ainda não abriu",
+      "upcoming_at": "A votação abre a {{ date }}",
+      "upcoming_date_format": "PPp",
+      "voted": "Já votaste"
+    },
     "rank_position": "#{{ position }}",
     "sign": "Assina primeiro",
     "voted_description": "Para verificares o teu voto, podes utilizar este identificador único: {{ id }}",

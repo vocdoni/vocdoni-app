@@ -2,7 +2,16 @@ import { type ReactNode } from 'react'
 import { fireEvent, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VotingReportPdfButton } from './VotingReportPdfButton'
-import { PROCESS_ID, collectTextContent, createElection, createQuestionResults, createResults } from './__fixtures__'
+import {
+  PROCESS_ID,
+  collectTextContent,
+  createElection,
+  createQuestionResults,
+  createResults,
+  translate,
+} from './__fixtures__'
+import { buildCertificateData } from './certificate-data'
+import { VotingCertificateDocument } from './pdf-document'
 
 const mockModule = vi.hoisted(() => ({
   pdfSpy: vi.fn(),
@@ -174,18 +183,17 @@ describe('VotingCertificateDocument', () => {
       },
     })
 
-    const indexSection = secondPageChildren[3] as { props: { children: ReactNode } }
+    const indexSection = secondPageChildren[3] as { props: { title: string; children: ReactNode } }
     const indexSectionChildren = Array.isArray(indexSection.props.children)
       ? indexSection.props.children
       : [indexSection.props.children]
-    const indexTitle = indexSectionChildren[0] as { props: { children: ReactNode } }
-    const indexIntro = indexSectionChildren[1] as { props: { children: ReactNode } }
-    const indexList = indexSectionChildren[2] as { props: { children: ReactNode } }
+    const indexIntro = indexSectionChildren[0] as { props: { children: ReactNode } }
+    const indexList = indexSectionChildren[1] as { props: { children: ReactNode } }
     const indexListChildren = Array.isArray(indexList.props.children)
       ? indexList.props.children
       : [indexList.props.children]
 
-    expect(indexTitle.props.children).toBe('Index')
+    expect(indexSection.props.title).toBe('Index')
     expect(indexIntro.props.children).toContain('organized into the following sections')
     const indexFirstRow = indexListChildren[0] as {
       props: {
@@ -262,20 +270,16 @@ describe('VotingCertificateDocument', () => {
     const firstSectionChildren = Array.isArray(firstSection.props.children)
       ? firstSection.props.children
       : [firstSection.props.children]
-    const firstSectionBlock = firstSectionChildren[4] as { props: { children: ReactNode } }
-    const firstSectionBlockChildren = Array.isArray(firstSectionBlock.props.children)
-      ? firstSectionBlock.props.children
-      : [firstSectionBlock.props.children]
-    const sectionTitle = firstSectionBlockChildren[0] as { props: { children: ReactNode } }
+    const firstSectionBlock = firstSectionChildren[4] as { props: { title: string } }
 
-    expect(sectionTitle.props.children).toBe('1. Technical Framework')
+    expect(firstSectionBlock.props.title).toBe('1. Technical Framework')
 
     const turnoutSection = firstSectionChildren[7] as { props: { children: ReactNode } }
     const turnoutSectionChildren = Array.isArray(turnoutSection.props.children)
       ? turnoutSection.props.children
       : [turnoutSection.props.children]
 
-    expect(turnoutSectionChildren).toHaveLength(3)
+    expect(turnoutSectionChildren).toHaveLength(2)
 
     const thirdPage = pages[2] as { props: { children: ReactNode } }
     const thirdPageChildren = Array.isArray(thirdPage.props.children)
@@ -289,7 +293,7 @@ describe('VotingCertificateDocument', () => {
     const votingProcessSectionChildren = Array.isArray(votingProcessSection.props.children)
       ? votingProcessSection.props.children
       : [votingProcessSection.props.children]
-    const votingProcessIntro = votingProcessSectionChildren[1] as { props: { children: ReactNode } }
+    const votingProcessIntro = votingProcessSectionChildren[0] as { props: { children: ReactNode } }
     const votingProcessIntroChildren = Array.isArray(votingProcessIntro.props.children)
       ? votingProcessIntro.props.children
       : [votingProcessIntro.props.children]
@@ -306,13 +310,9 @@ describe('VotingCertificateDocument', () => {
     const fifthPageChildren = Array.isArray(fifthPage.props.children)
       ? fifthPage.props.children
       : [fifthPage.props.children]
-    const issuerSection = fifthPageChildren[4] as { props: { children: ReactNode } }
-    const issuerSectionChildren = Array.isArray(issuerSection.props.children)
-      ? issuerSection.props.children
-      : [issuerSection.props.children]
-    const issuerTitle = issuerSectionChildren[0] as { props: { children: ReactNode } }
+    const issuerSection = fifthPageChildren[4] as { props: { title: string } }
 
-    expect(issuerTitle.props.children).toBe('7. Issuer')
+    expect(issuerSection.props.title).toBe('7. Issuer')
 
     const legalNotice = fifthPageChildren[5] as { props: { style?: Record<string, unknown>; children: ReactNode } }
     expect(legalNotice.props.style).toMatchObject({
@@ -428,10 +428,12 @@ describe('VotingCertificateDocument', () => {
       ? votingProcessSection.props.children
       : [votingProcessSection.props.children]
     const flattenedVotingProcessChildren = votingProcessSectionChildren.flat()
-    const questionCard = flattenedVotingProcessChildren[2] as { props: { children: ReactNode } }
-    const questionCardChildren = Array.isArray(questionCard.props.children)
-      ? questionCard.props.children
-      : [questionCard.props.children]
+    const questionCard = flattenedVotingProcessChildren[1] as { props: { children: ReactNode } }
+    // The card head (title, summary, results label, table header and first rows) never splits.
+    const questionCardHead = (questionCard.props.children as ReactNode[])[0] as { props: { children: ReactNode } }
+    const questionCardChildren = Array.isArray(questionCardHead.props.children)
+      ? questionCardHead.props.children
+      : [questionCardHead.props.children]
     const questionTitle = questionCardChildren[0] as { props: { children: ReactNode } }
     const questionSummary = questionCardChildren[1] as { props: { children: ReactNode } }
     const questionSummaryChildren = Array.isArray(questionSummary.props.children)
@@ -546,5 +548,19 @@ describe('VotingCertificateDocument', () => {
     expect(documentText).toContain('Share of cast power')
     expect(documentText).toContain('Share of eligible power')
     expect(documentText).not.toContain('Share of votes')
+  })
+
+  it('keeps the whole results intro when the process name appears in it more than once', () => {
+    const data = buildCertificateData({
+      election: createElection({ title: { default: 'The' } }),
+      results: createResults(),
+      t: translate,
+      explorerUrl: 'https://explorer.vote',
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    const documentText = collectTextContent(<VotingCertificateDocument data={data} t={translate} />)
+
+    expect(documentText.join('')).toContain('The voting process The consisted of 1 questions.')
   })
 })

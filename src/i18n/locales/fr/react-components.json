@@ -28,6 +28,9 @@
     "not_voted_in_ended_election": "Vous avez signé mais vous n'avez pas voté à cette élection terminée.",
     "question_not_votable": "Cette question ne peut pas accepter de votes : l'une de ses options a été configurée d'une manière que le registre ne peut pas enregistrer. Votre vote n'a pas été émis. Veuillez contacter l'organisation.",
     "unauthorized": "Non autorisé à voter",
+    "vote_failed": "Votre vote n'a pas pu être émis : {{ detail }}",
+    "vote_failed_unknown": "Votre vote n'a pas pu être émis. Réessayez.",
+    "vote_partial": "Votre vote n'a été émis qu'en partie : {{ cast }} questions sur {{ total }} ont été enregistrées. {{ detail }} Soumettez-le à nouveau pour réessayer celles qui ont échoué.",
     "wrong_data_description": "Les données fournies ne sont pas correctes",
     "wrong_data_title": "Données incorrectes"
   },
@@ -99,6 +102,18 @@
     "button": "Voter",
     "button_update": "Modifier mon vote",
     "confirm": "Veuillez confirmer vos choix :",
+    "disabled": {
+      "canceled": "Le vote a été annulé",
+      "ended": "Le vote est terminé",
+      "identify": "Identifiez-vous d'abord pour voter",
+      "not_in_census": "Vous n'êtes pas autorisé à voter dans ce processus",
+      "not_open": "Le vote n'est pas ouvert",
+      "paused": "Le vote est en pause",
+      "upcoming": "Le vote n'est pas encore ouvert",
+      "upcoming_at": "Le vote ouvre le {{ date }}",
+      "upcoming_date_format": "PPp",
+      "voted": "Vous avez déjà voté"
+    },
     "rank_position": "#{{ position }}",
     "sign": "Signer d'abord",
     "voted_description": "Pour vérifier votre vote, vous pouvez utiliser cet identifiant unique : {{ id }}",

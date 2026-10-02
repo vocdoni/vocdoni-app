@@ -47,14 +47,14 @@
   "annual": "Anual<1>40% de desconto</1>",
   "apply": "Aplicar",
   "aside": {
-    "anonymous_receipt_gone": "",
+    "anonymous_receipt_gone": "O teu comprovativo foi mostrado quando votaste e não pode ser recuperado.",
     "has_already_voted": "O teu voto foi registado corretamente",
     "is_not_in_census": "Não constas da lista de participantes",
-    "votes_one": "<span>1</span> <text>votante</text>",
-    "votes_many": "",
+    "votes_one": "<span>{{ count }}</span> <text>votante</text>",
+    "votes_many": "<span>{{ count }}</span> <text>votantes</text>",
     "votes_other": "<span>{{ count }}</span> <text>votantes</text>",
-    "votes_weight_one": "<span>1</span> <text>voto</text>",
-    "votes_weight_many": "",
+    "votes_weight_one": "<span>{{ count }}</span> <text>voto</text>",
+    "votes_weight_many": "<span>{{ count }}</span> <text>votos</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>votos</text>"
   },
   "auth": {
@@ -197,7 +197,6 @@
   },
   "csp": {
     "auth_failed": "Falha na autenticação",
-    "auth_success": "Autenticação bem-sucedida",
     "authenticate": "Identificar-se",
     "code_info": "Receberás um código único no meio selecionado para verificar a tua identidade e concluir a autenticação",
     "code_sent": "Código de verificação enviado",
@@ -347,6 +346,9 @@
   "ended_processes": "Terminados",
   "enter_promo_code": "Introduzir código",
   "error": {
+    "crash_description": "Recarrega a página ou volta ao Dashboard.",
+    "crash_title": "Algo correu mal",
+    "go_to_dashboard": "Ir para o Dashboard",
     "loading_languages": "Erro ao carregar os idiomas",
     "loading_page": "Erro ao carregar a página",
     "loading_roles": "Erro ao carregar os perfis",
@@ -356,6 +358,7 @@
     "missing_header": "A folha de cálculo não tem cabeçalho.",
     "not_found": "Página não encontrada",
     "not_found_description": "A página que procuras não existe ou foi movida.",
+    "reload": "Recarregar",
     "return_to_home": "Voltar ao início",
     "title": "Erro"
   },
@@ -495,7 +498,7 @@
     }
   },
   "free_trial_days_one": "Um dia gratuito",
-  "free_trial_days_many": "",
+  "free_trial_days_many": "{{count}} dias gratuitos",
   "free_trial_days_other": "{{count}} dias gratuitos",
   "google_oauth_conflict_error": "Já existe uma conta com este email. Inicia sessão com o método existente.",
   "google_oauth_error": "Erro de OAuth do Google",
@@ -523,7 +526,7 @@
     "delete_group": "Eliminar grupo",
     "delete_member": {
       "subtitle_one": "Tens a certeza de que pretendes eliminar {{count}} membro?",
-      "subtitle_many": "",
+      "subtitle_many": "Tens a certeza de que pretendes eliminar {{count}} membros?",
       "subtitle_other": "Tens a certeza de que pretendes eliminar {{count}} membros?",
       "title": "Eliminar membros"
     },
@@ -534,7 +537,7 @@
       "error": "Não foi possível carregar os membros do grupo"
     },
     "members_one": "{{count}} membro",
-    "members_many": "",
+    "members_many": "{{count}} membros",
     "members_other": "{{count}} membros",
     "name": "Nome"
   },
@@ -766,7 +769,7 @@
     "success_title": "Os dados dos teus membros foram importados com sucesso.",
     "title": "Importação da base de membros em curso",
     "view_errors_one": "Ver {{count}} erro",
-    "view_errors_many": "",
+    "view_errors_many": "Ver {{count}} erros",
     "view_errors_other": "Ver {{count}} erros"
   },
   "integrators": {
@@ -932,14 +935,14 @@
       "cancel": "Cancelar",
       "delete": "Eliminar",
       "error_one": "Erro ao eliminar o membro",
-      "error_many": "",
+      "error_many": "Erro ao eliminar os membros",
       "error_other": "Erro ao eliminar os membros",
       "loading": "A carregar membros para eliminar…",
       "subtitle_one": "Tens a certeza de que pretendes eliminar {{count}} membro? Esta ação é irreversível.",
-      "subtitle_many": "",
+      "subtitle_many": "Tens a certeza de que pretendes eliminar {{count}} membros? Esta ação é irreversível.",
       "subtitle_other": "Tens a certeza de que pretendes eliminar {{count}} membros? Esta ação é irreversível.",
       "success_one": "Membro eliminado com sucesso",
-      "success_many": "",
+      "success_many": "Membros eliminados com sucesso",
       "success_other": "Membros eliminados com sucesso",
       "title": "Eliminar membros"
     },
@@ -963,7 +966,7 @@
       "title": "Grupos"
     },
     "import_file": {
-      "subtitle": "Importa o teu ficheiro CSV, XLS ou XLSX com os dados dos membros. Certifica-te de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",
+      "subtitle": "Importa o teu ficheiro CSV, XLS, XLSX ou ODS com os dados dos membros. Certifica-te de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",
       "title": "Importar ficheiro"
     },
     "importer": {
@@ -971,6 +974,10 @@
       "cancel": "Cancelar",
       "data_preview": "Pré-visualização dos dados",
       "download_template_btn": "Transferir modelo",
+      "error": {
+        "invalid_file_type": "Este tipo de ficheiro não é suportado. Carrega um ficheiro .csv, .xlsx, .xls ou .ods.",
+        "read_failed": "Não conseguimos ler este ficheiro. Verifica se é um CSV ou uma folha de cálculo válida e tenta novamente."
+      },
       "field_mapper": {
         "empty": "-- Não importar --",
         "placeholder": "Selecionar coluna"
@@ -983,7 +990,7 @@
       "reset": "Repor importação",
       "select_at_least_one_column": "Seleciona pelo menos uma coluna para transferir o modelo.",
       "submit": "Importar dados",
-      "subtitle": "Transfere um modelo ou importa o teu próprio ficheiro CSV, XLS ou XLSX para adicionar membros.",
+      "subtitle": "Transfere um modelo ou importa o teu próprio ficheiro CSV, XLS, XLSX ou ODS para adicionar membros.",
       "title": "Importar membros",
       "warning": {
         "subtitle": "A informação das colunas que não forem associadas não será importada.",
@@ -1018,23 +1025,23 @@
       "actions": "Ações",
       "add_to_census": "Adicionar à lista de participantes",
       "add_to_census_button_one": "Adicionar {{count}} membro",
-      "add_to_census_button_many": "",
+      "add_to_census_button_many": "Adicionar {{count}} membros",
       "add_to_census_button_other": "Adicionar {{count}} membros",
       "add_to_census_confirmation_one": "Vais adicionar {{count}} membro à lista de participantes do processo «{{process}}».",
-      "add_to_census_confirmation_many": "",
+      "add_to_census_confirmation_many": "Vais adicionar {{count}} membros à lista de participantes do processo «{{process}}».",
       "add_to_census_confirmation_other": "Vais adicionar {{count}} membros à lista de participantes do processo «{{process}}».",
       "add_to_census_description": "Seleciona um processo de votação ativo para adicionar os membros à respetiva lista de participantes.",
       "add_to_census_error": "Erro ao adicionar os membros à lista de participantes",
       "add_to_census_partial": "Não foi possível adicionar alguns membros.",
       "add_to_census_success_one": "{{count}} membro adicionado à lista de participantes",
-      "add_to_census_success_many": "",
+      "add_to_census_success_many": "{{count}} membros adicionados à lista de participantes",
       "add_to_census_success_other": "{{count}} membros adicionados à lista de participantes",
       "add_to_group": "Adicionar ao grupo",
       "add_to_group_button_one": "Adicionar {{count}} membro",
-      "add_to_group_button_many": "",
+      "add_to_group_button_many": "Adicionar {{count}} membros",
       "add_to_group_button_other": "Adicionar {{count}} membros",
       "add_to_group_confirmation_one": "Vais adicionar {{count}} membro ao grupo «{{group}}».",
-      "add_to_group_confirmation_many": "",
+      "add_to_group_confirmation_many": "Vais adicionar {{count}} membros ao grupo «{{group}}».",
       "add_to_group_confirmation_other": "Vais adicionar {{count}} membros ao grupo «{{group}}».",
       "add_to_group_description": "Seleciona um grupo para adicionar os membros.",
       "add_to_group_success": "Membros adicionados ao grupo com sucesso",
@@ -1053,7 +1060,7 @@
       "group_description_placeholder": "Introduz uma breve descrição do grupo",
       "group_members": "Membros selecionados",
       "group_members_count_one": "{{count}} membro selecionado",
-      "group_members_count_many": "",
+      "group_members_count_many": "{{count}} membros selecionados",
       "group_members_count_other": "{{count}} membros selecionados",
       "group_name": "Nome do grupo",
       "manage_columns": "Gerir colunas",
@@ -1062,7 +1069,7 @@
       "no_filter_results": "Nenhum membro corresponde a estes atributos",
       "no_results": "Não foi encontrado nenhum membro",
       "remaining_members_one": "+{{count}} adicional",
-      "remaining_members_many": "",
+      "remaining_members_many": "+{{count}} adicionais",
       "remaining_members_other": "+{{count}} adicionais",
       "search": "Pesquisar membros…",
       "select_all": "Selecionar todos",
@@ -1071,14 +1078,14 @@
       "select_member": "Selecionar {{name}}",
       "select_process": "Selecionar processo",
       "selected_one": "Selecionado: <strong>{{count}} membro</strong>",
-      "selected_many": "",
+      "selected_many": "Selecionados: <strong>{{count}} membros</strong>",
       "selected_other": "Selecionados: <strong>{{count}} membros</strong>",
-      "showing_members_one": "",
-      "showing_members_many": "",
-      "showing_members_other": "",
-      "showing_results_one": "",
-      "showing_results_many": "",
-      "showing_results_other": "",
+      "showing_members_one": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} membro",
+      "showing_members_many": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} membros",
+      "showing_members_other": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} membros",
+      "showing_results_one": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultado",
+      "showing_results_many": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultados",
+      "showing_results_other": "A mostrar {{from, number}}–{{to, number}} de {{count, number}} resultados",
       "toggle_column": "Mostrar/ocultar coluna {{column}}"
     }
   },
@@ -1112,7 +1119,7 @@
   "no_results_filtering": "O teu filtro de pesquisa atual não devolve resultados",
   "not_registred_yet": "Ainda não tens conta?",
   "number_of_members_one": "{{ count }} membro da equipa",
-  "number_of_members_many": "",
+  "number_of_members_many": "{{ count }} membros da equipa",
   "number_of_members_other": "{{ count }} membros da equipa",
   "oauth": {
     "link": {
@@ -1157,9 +1164,9 @@
     "title": {
       "read_more": "Expandir título"
     },
-    "unavailable_description": "",
-    "unavailable_retry": "",
-    "unavailable_title": ""
+    "unavailable_description": "Ocorreu um erro ao ler as tuas organizações. Normalmente é temporário — tenta de novo.",
+    "unavailable_retry": "Tenta de novo",
+    "unavailable_title": "Não foi possível carregar as tuas organizações"
   },
   "organization_settings": {
     "phone_support": {
@@ -1259,7 +1266,7 @@
       "footnote_on_demand": "* As funcionalidades pedidas serão avaliadas individualmente e podem implicar custos adicionais."
     },
     "core_voting_one": "Um único membro",
-    "core_voting_many": "",
+    "core_voting_many": "Até {{ count }} membros",
     "core_voting_other": "Até {{ count }} membros",
     "custom_branding": "Personalização da marca*",
     "custom_subtitle": "À medida das tuas necessidades",
@@ -1279,10 +1286,10 @@
     "ticket_support_48": "Apoio por email (48 h)",
     "ticket_support_72": "Apoio por email (72 h)",
     "up_to_admins_one": "Um administrador",
-    "up_to_admins_many": "",
+    "up_to_admins_many": "{{ count }} administradores",
     "up_to_admins_other": "{{ count }} administradores",
     "yearly_processes_one": "{{ count }} votação por ano¹",
-    "yearly_processes_many": "",
+    "yearly_processes_many": "{{ count }} votações por ano¹",
     "yearly_processes_other": "{{ count }} votações por ano¹"
   },
   "pricing_card": {
@@ -1337,7 +1344,7 @@
       },
       "limit_reached": {
         "message_one": "Atingiste o limite de {{ count }} rascunho. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano.",
-        "message_many": "",
+        "message_many": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano.",
         "message_other": "Atingiste o limite de {{ count }} rascunhos. Para guardar este rascunho, elimina um rascunho existente ou atualiza o teu plano."
       },
       "question": {
@@ -1373,8 +1380,8 @@
     "extended_info": "Informações detalhadas",
     "is_invalid": "Este processo contém dados incorretos, sendo por isso inválido",
     "no_description": "Não foi fornecida descrição",
-    "people_in_census_one": "Um votante",
-    "people_in_census_many": "",
+    "people_in_census_one": "{{ count }} votante",
+    "people_in_census_many": "{{ count }} votantes",
     "people_in_census_other": "{{ count }} votantes",
     "question_type": {
       "label": "Tipo de pergunta",
@@ -1401,7 +1408,7 @@
     "success_modal": {
       "btn": "Fechar",
       "text": "<p>O teu voto foi submetido e armazenado de forma segura através da tecnologia do Vocdoni. <verify>Podes verificá-lo aqui</verify>.</p>",
-      "text_no_id": "",
+      "text_no_id": "<p>O teu voto foi submetido com sucesso.</p>",
       "title": "Voto submetido!"
     },
     "summary": {
@@ -1426,7 +1433,7 @@
       "time_until_start": "Tempo até ao início",
       "view_summary": "Acompanhar o processo",
       "votes_cast_one": "{{votes}} voto emitido",
-      "votes_cast_many": "",
+      "votes_cast_many": "{{votes}} votos emitidos",
       "votes_cast_other": "{{votes}} votos emitidos"
     },
     "vote_failed": {
@@ -1461,8 +1468,8 @@
   },
   "process_create": {
     "anonymity": {
-      "title": "",
-      "tooltip": ""
+      "title": "Votação anónima",
+      "tooltip": "Em qualquer dos casos, a tua organização não consegue ver o que cada pessoa votou. O anonimato dos votantes acrescenta uma camada criptográfica que torna impossível associar um voto a uma pessoa."
     },
     "auto_start": "Iniciar imediatamente",
     "basic_configuration": "Configuração básica",
@@ -1509,7 +1516,7 @@
     "weight": {
       "equal": "Uma pessoa, um voto",
       "title": "Peso de voto",
-      "tooltip": "",
+      "tooltip": "Define se os votos têm o mesmo peso para cada votante elegível ou se são ponderados de acordo com o campo «Poder de voto (peso)» da base de membros.",
       "weighted": "Ponderado pelo peso de voto"
     },
     "youtube": {
@@ -1652,7 +1659,7 @@
         "weighted_method": "{{base}} com votação ponderada"
       },
       "intro_one": "O processo de votação {{process_name}} foi composto por 1 pergunta.",
-      "intro_many": "",
+      "intro_many": "O processo de votação {{process_name}} foi composto por {{count}} perguntas.",
       "intro_other": "O processo de votação {{process_name}} foi composto por {{count}} perguntas.",
       "results_hidden": "Os resultados ficam ocultos até que o processo atinja a fase de resultados finais."
     },
@@ -1944,9 +1951,13 @@
     "click_or_drag_and_drop": "<click>Clica para carregar ou arrasta e larga</click><formats>(Formatos permitidos: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carregar imagem",
     "csv_row_limit_exceeded_one": "Esta importação resultaria num total de {{count}} linha, excedendo o limite do teu plano de {{max}}.",
-    "csv_row_limit_exceeded_many": "",
+    "csv_row_limit_exceeded_many": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite do teu plano de {{max}}.",
     "csv_row_limit_exceeded_other": "Esta importação resultaria num total de {{count}} linhas, excedendo o limite do teu plano de {{max}}.",
     "drop_here": "Larga o ficheiro aqui",
+    "error": {
+      "invalid_image_type": "Este tipo de ficheiro não é suportado. Carrega uma imagem .png ou .jpg.",
+      "too_many_files": "Carrega um ficheiro de cada vez."
+    },
     "image_upload_failed": "Falha no carregamento da imagem",
     "image_upload_success": "Imagem carregada",
     "upload_failed": "Falha no carregamento"
@@ -1988,12 +1999,12 @@
   "view_plans_and_pricing": "Ver planos e preços",
   "vocdoni_logo": "Logótipo do Vocdoni",
   "vote": {
-    "anonymous_receipt": "",
+    "anonymous_receipt": "Voto anónimo: guarda este comprovativo agora, a plataforma não o pode voltar a mostrar.",
     "voted_title": "O teu voto foi registado com sucesso!"
   },
   "vote_information": "Informações sobre o voto",
   "vote_overwrite": "Alteração do voto",
-  "voter_anonymity": "",
+  "voter_anonymity": "Anonimato dos votantes",
   "voter_auth": {
     "2fa_badge": "2FA",
     "2fa_description": "Acrescenta uma camada extra de segurança exigindo aos votantes que verifiquem a sua identidade",
@@ -2007,7 +2018,7 @@
     "2fa_sms_description": "Os votantes receberão um código de verificação por SMS",
     "2fa_voter_choice": "<email /> ou <phone /> Escolha do votante",
     "2fa_voter_choice_description": "Os votantes podem escolher o método de verificação que preferirem",
-    "anonymity": "",
+    "anonymity": "Anonimato do voto: {{ mode }}",
     "button": {
       "configure": "Configurar autenticação dos votantes",
       "edit": "Editar autenticação dos votantes"
@@ -2037,13 +2048,13 @@
     "security_level": "Boa segurança",
     "security_recommendation_1": "Para uma melhor segurança, recomendamos selecionar pelo menos 2 credenciais.",
     "security_recommendation_2_one": "Selecionaste {{ count }} credencial, o que oferece uma boa segurança aos teus votantes.",
-    "security_recommendation_2_many": "",
+    "security_recommendation_2_many": "Selecionaste {{ count }} credenciais, o que oferece uma boa segurança aos teus votantes.",
     "security_recommendation_2_other": "Selecionaste {{ count }} credenciais, o que oferece uma boa segurança aos teus votantes.",
     "security_recommendation_title": "Recomendação de segurança",
     "select_credentials": "Seleciona as credenciais necessárias para a autenticação dos votantes",
     "select_credentials_description": "Escolhe os campos que os votantes terão de fornecer para se autenticarem. Seleciona até 3 para o melhor equilíbrio entre segurança e facilidade de utilização. Se planeias usar apenas email ou telefone para 2FA, ignora este passo e clica em Seguinte para o configurar",
     "selected_credentials_count_one": "{{ count }}/3 credencial selecionada",
-    "selected_credentials_count_many": "",
+    "selected_credentials_count_many": "{{ count }}/3 credenciais selecionadas",
     "selected_credentials_count_other": "{{ count }}/3 credenciais selecionadas",
     "sms": "Via verificação por SMS",
     "summary": "Resumo",
@@ -2054,16 +2065,16 @@
     "title": "Configurar autenticação dos votantes",
     "two_factor": "Dois fatores",
     "validation_duplicates_one": "{{count}} utilizador duplicado",
-    "validation_duplicates_many": "",
+    "validation_duplicates_many": "{{count}} utilizadores duplicados",
     "validation_duplicates_other": "{{count}} utilizadores duplicados",
     "validation_error_title": "Erro de validação",
     "validation_failed": "A validação falhou",
     "validation_missing_data_one": "{{count}} utilizador com campos obrigatórios em falta",
-    "validation_missing_data_many": "",
+    "validation_missing_data_many": "{{count}} utilizadores com campos obrigatórios em falta",
     "validation_missing_data_other": "{{count}} utilizadores com campos obrigatórios em falta",
     "validation_summary": "A validação falhou para alguns utilizadores.",
     "validation_total_one": "{{count}} utilizador no total",
-    "validation_total_many": "",
+    "validation_total_many": "{{count}} utilizadores no total",
     "validation_total_other": "{{count}} utilizadores no total",
     "voters_choice": "Escolha do votante"
   },

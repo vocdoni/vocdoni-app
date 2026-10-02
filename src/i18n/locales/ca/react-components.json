@@ -28,6 +28,9 @@
     "not_voted_in_ended_election": "Has signat però no has votat en aquesta elecció finalitzada.",
     "question_not_votable": "Aquesta pregunta no pot acceptar vots: una de les seves opcions es va configurar d'una manera que el registre no pot desar. El teu vot no s'ha emès. Posa't en contacte amb l'organització.",
     "unauthorized": "No autoritzat per votar",
+    "vote_failed": "No s'ha pogut emetre el teu vot: {{ detail }}",
+    "vote_failed_unknown": "No s'ha pogut emetre el teu vot. Torna-ho a provar.",
+    "vote_partial": "Només s'ha emès una part del teu vot: s'han registrat {{ cast }} de {{ total }} preguntes. {{ detail }} Torna a enviar-lo per reintentar les que han fallat.",
     "wrong_data_description": "Les dades especificades no són correctes",
     "wrong_data_title": "Dades incorrectes"
   },
@@ -99,6 +102,18 @@
     "button": "Vota",
     "button_update": "Canviar el meu vot",
     "confirm": "Confirma les teves seleccions:",
+    "disabled": {
+      "canceled": "La votació s'ha cancel·lat",
+      "ended": "La votació ha finalitzat",
+      "identify": "Identifica't per votar",
+      "not_in_census": "No pots votar en aquest procés",
+      "not_open": "La votació no està oberta",
+      "paused": "La votació està pausada",
+      "upcoming": "La votació encara no s'ha obert",
+      "upcoming_at": "La votació s'obre el {{ date }}",
+      "upcoming_date_format": "PPp",
+      "voted": "Ja has votat"
+    },
     "rank_position": "#{{ position }}",
     "sign": "Signa abans de votar",
     "voted_description": "Per verificar el teu vot, pots utilitzar aquesta identificació única: {{ id }}",

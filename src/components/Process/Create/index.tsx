@@ -24,7 +24,7 @@ import type {
   OrgMemberTwoFaField,
   VotingProcessQuestionRequest,
 } from '@vocdoni/api-types'
-import { addDays, parse } from 'date-fns'
+import { addDays } from 'date-fns'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -56,7 +56,7 @@ import { LiveStreamingInput } from './LiveStreamingInput'
 import { getStoredDraftId, useStoredDraftId } from './draft-storage'
 import { Questions } from './MainContent'
 import { CreateSidebar } from './Sidebar'
-import { defaultProcessValues, Option, Process, SelectorTypes } from './common'
+import { defaultProcessValues, Option, parseFormDateTime, Process, SelectorTypes } from './common'
 import { votingProcessToForm } from './draft-mapping'
 import { getTwoFaFields } from './VoterAuthentication/utils'
 
@@ -497,7 +497,7 @@ export const useFormToVotingProcessRequest = () => {
 
   const parseLocalDateTime = (dateStr?: string, timeStr?: string): string | undefined => {
     if (!dateStr || !timeStr) return undefined
-    return parse(`${dateStr} ${timeStr}`, 'yyyy-MM-dd HH:mm', new Date()).toISOString()
+    return parseFormDateTime(dateStr, timeStr).toISOString()
   }
 
   return (form: Process, censusSpec: CensusSpec): CreateVotingProcessRequest => {

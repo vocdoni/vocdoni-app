@@ -13,4 +13,10 @@ describe('SpreadsheetManager', () => {
     expect(manager.header).toEqual(['name', 'memberID'])
     expect(manager.data).toEqual([['Núria Sàez', '00123']])
   })
+
+  it('accepts every supported spreadsheet by extension, not only by MIME type', () => {
+    const extensions = Object.values(SpreadsheetManager.Accept).flat()
+
+    expect(new Set(extensions)).toEqual(new Set(['.csv', '.xlsx', '.xls', '.ods']))
+  })
 })

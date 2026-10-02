@@ -28,6 +28,9 @@
     "not_voted_in_ended_election": "Has firmado pero no has votado en esta elección finalizada.",
     "question_not_votable": "Esta pregunta no puede aceptar votos: una de sus opciones se configuró de una forma que el registro no puede almacenar. Tu voto no se ha emitido. Ponte en contacto con la organización.",
     "unauthorized": "No autorizado para votar",
+    "vote_failed": "No se ha podido emitir tu voto: {{ detail }}",
+    "vote_failed_unknown": "No se ha podido emitir tu voto. Inténtalo de nuevo.",
+    "vote_partial": "Solo se ha emitido una parte de tu voto: se han registrado {{ cast }} de {{ total }} preguntas. {{ detail }} Vuelve a enviarlo para reintentar las que han fallado.",
     "wrong_data_description": "Los datos especificados no son correctos",
     "wrong_data_title": "Datos incorrectos"
   },
@@ -99,6 +102,18 @@
     "button": "Votar",
     "button_update": "Cambiar mi voto",
     "confirm": "Confirma tus opciones:",
+    "disabled": {
+      "canceled": "La votación se ha cancelado",
+      "ended": "La votación ha finalizado",
+      "identify": "Identifícate para votar",
+      "not_in_census": "No puedes votar en este proceso",
+      "not_open": "La votación no está abierta",
+      "paused": "La votación está pausada",
+      "upcoming": "La votación aún no se ha abierto",
+      "upcoming_at": "La votación se abre el {{ date }}",
+      "upcoming_date_format": "PPp",
+      "voted": "Ya has votado"
+    },
     "rank_position": "#{{ position }}",
     "sign": "Firmar primero",
     "voted_description": "Para verificar tu voto, puedes usar este identificador único: {{ id }}",

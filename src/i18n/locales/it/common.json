@@ -51,10 +51,10 @@
     "has_already_voted": "Il voto è stato espresso correttamente",
     "is_not_in_census": "Non sei nel censimento",
     "votes_one": "<span>1</span> <text>votante</text>",
-    "votes_many": "",
+    "votes_many": "<span>{{ count }}</span> <text>votanti</text>",
     "votes_other": "<span>{{ count }}</span> <text>votanti</text>",
     "votes_weight_one": "<span>1</span> <text>voto</text>",
-    "votes_weight_many": "",
+    "votes_weight_many": "<span>{{ count }}</span> <text>voti</text>",
     "votes_weight_other": "<span>{{ count }}</span> <text>voti</text>"
   },
   "auth": {
@@ -197,7 +197,6 @@
   },
   "csp": {
     "auth_failed": "Autenticazione non riuscita",
-    "auth_success": "Autenticazione riuscita",
     "authenticate": "Identifica",
     "code_info": "Si riceverà un codice univoco sul mezzo selezionato per verificare l'identità e completare l'autenticazione",
     "code_sent": "Codice di verifica inviato",
@@ -347,6 +346,9 @@
   "ended_processes": "Terminati",
   "enter_promo_code": "Inserisci codice",
   "error": {
+    "crash_description": "Ricarica la pagina o torna alla dashboard.",
+    "crash_title": "Qualcosa è andato storto",
+    "go_to_dashboard": "Vai alla dashboard",
     "loading_languages": "Errore durante il caricamento delle lingue",
     "loading_page": "Errore durante il caricamento della pagina",
     "loading_roles": "Errore durante il caricamento dei ruoli",
@@ -356,6 +358,7 @@
     "missing_header": "Il foglio di calcolo non ha intestazione.",
     "not_found": "Pagina non trovata",
     "not_found_description": "La pagina che stai cercando non esiste o è stata spostata.",
+    "reload": "Ricarica",
     "return_to_home": "Torna alla home",
     "title": "Errore"
   },
@@ -495,7 +498,7 @@
     }
   },
   "free_trial_days_one": "Un giorno gratuito",
-  "free_trial_days_many": "",
+  "free_trial_days_many": "{{count}} giorni gratuiti",
   "free_trial_days_other": "{{count}} giorni gratuiti",
   "google_oauth_conflict_error": "Esiste già un account con questa email. Accedi utilizzando il metodo che hai utilizzato in precedenza.",
   "google_oauth_error": "Errore Google OAuth",
@@ -523,7 +526,7 @@
     "delete_group": "Elimina gruppo",
     "delete_member": {
       "subtitle_one": "Sei sicuro di voler eliminare {{count}} membro?",
-      "subtitle_many": "",
+      "subtitle_many": "Sei sicuro di voler eliminare {{count}} membri?",
       "subtitle_other": "Sei sicuro di voler eliminare {{count}} membri?",
       "title": "Elimina membri"
     },
@@ -534,7 +537,7 @@
       "error": "Impossibile caricare i membri del gruppo"
     },
     "members_one": "{{count}} membro",
-    "members_many": "",
+    "members_many": "{{count}} membri",
     "members_other": "{{count}} membri",
     "name": "Nome"
   },
@@ -766,7 +769,7 @@
     "success_title": "I dati dei membri sono stati importati con successo.",
     "title": "Importazione database membri in corso",
     "view_errors_one": "Visualizza {{count}} errore",
-    "view_errors_many": "",
+    "view_errors_many": "Visualizza {{count}} errori",
     "view_errors_other": "Visualizza {{count}} errori"
   },
   "integrators": {
@@ -932,14 +935,14 @@
       "cancel": "Annulla",
       "delete": "Elimina",
       "error_one": "Errore durante l'eliminazione del membro",
-      "error_many": "",
+      "error_many": "Errore durante l'eliminazione dei membri",
       "error_other": "Errore durante l'eliminazione dei membri",
       "loading": "Caricamento membri da eliminare...",
       "subtitle_one": "Sei sicuro di voler eliminare {{count}} membro? Questa azione non può essere annullata.",
-      "subtitle_many": "",
+      "subtitle_many": "Sei sicuro di voler eliminare {{count}} membri? Questa azione non può essere annullata.",
       "subtitle_other": "Sei sicuro di voler eliminare {{count}} membri? Questa azione non può essere annullata.",
       "success_one": "Membro eliminato con successo",
-      "success_many": "",
+      "success_many": "Membri eliminati con successo",
       "success_other": "Membri eliminati con successo",
       "title": "Elimina membri"
     },
@@ -963,7 +966,7 @@
       "title": "Gruppi"
     },
     "import_file": {
-      "subtitle": "Importa il file CSV, XLS o XLSX contenente i dati dei membri. Assicurati che le intestazioni delle colonne corrispondano al modello per una mappatura accurata.",
+      "subtitle": "Importa il file CSV, XLS, XLSX o ODS contenente i dati dei membri. Assicurati che le intestazioni delle colonne corrispondano al modello per una mappatura accurata.",
       "title": "Importa file"
     },
     "importer": {
@@ -971,6 +974,10 @@
       "cancel": "Annulla",
       "data_preview": "Anteprima dati",
       "download_template_btn": "Scarica modello",
+      "error": {
+        "invalid_file_type": "Questo tipo di file non è supportato. Carica un file .csv, .xlsx, .xls o .ods.",
+        "read_failed": "Non siamo riusciti a leggere questo file. Controlla che sia un CSV o un foglio di calcolo valido e riprova."
+      },
       "field_mapper": {
         "empty": "-- Non importare --",
         "placeholder": "Seleziona colonna"
@@ -983,7 +990,7 @@
       "reset": "Reimposta importazione",
       "select_at_least_one_column": "Seleziona almeno una colonna per scaricare il modello.",
       "submit": "Importa dati",
-      "subtitle": "Scarica un modello o importa il tuo file CSV, XLS o XLSX per aggiungere membri.",
+      "subtitle": "Scarica un modello o importa il tuo file CSV, XLS, XLSX o ODS per aggiungere membri.",
       "title": "Importa membri",
       "warning": {
         "subtitle": "Le informazioni delle colonne non mappate non verranno importate.",
@@ -1018,23 +1025,23 @@
       "actions": "Azioni",
       "add_to_census": "Aggiungi al censimento",
       "add_to_census_button_one": "Aggiungi {{count}} membro",
-      "add_to_census_button_many": "",
+      "add_to_census_button_many": "Aggiungi {{count}} membri",
       "add_to_census_button_other": "Aggiungi {{count}} membri",
       "add_to_census_confirmation_one": "Aggiungerai {{count}} membro al censimento del processo \"{{process}}\".",
-      "add_to_census_confirmation_many": "",
+      "add_to_census_confirmation_many": "Aggiungerai {{count}} membri al censimento del processo \"{{process}}\".",
       "add_to_census_confirmation_other": "Aggiungerai {{count}} membri al censimento del processo \"{{process}}\".",
       "add_to_census_description": "Seleziona un processo di voto attivo a cui aggiungere i membri nel suo censimento.",
       "add_to_census_error": "Errore durante l'aggiunta dei membri al censimento",
       "add_to_census_partial": "Alcuni membri non sono stati aggiunti.",
       "add_to_census_success_one": "{{count}} membro aggiunto al censimento",
-      "add_to_census_success_many": "",
+      "add_to_census_success_many": "{{count}} membri aggiunti al censimento",
       "add_to_census_success_other": "{{count}} membri aggiunti al censimento",
       "add_to_group": "Aggiungi al gruppo",
       "add_to_group_button_one": "Aggiungi {{count}} membro",
-      "add_to_group_button_many": "",
+      "add_to_group_button_many": "Aggiungi {{count}} membri",
       "add_to_group_button_other": "Aggiungi {{count}} membri",
       "add_to_group_confirmation_one": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
-      "add_to_group_confirmation_many": "",
+      "add_to_group_confirmation_many": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
       "add_to_group_confirmation_other": "Aggiungerai {{count}} membri al gruppo \"{{group}}\".",
       "add_to_group_description": "Seleziona un gruppo a cui aggiungere i membri.",
       "add_to_group_success": "Membri aggiunti al gruppo con successo",
@@ -1053,7 +1060,7 @@
       "group_description_placeholder": "Inserisci una breve descrizione del gruppo",
       "group_members": "Membri selezionati",
       "group_members_count_one": "{{count}} membri selezionati",
-      "group_members_count_many": "",
+      "group_members_count_many": "{{count}} membri selezionati",
       "group_members_count_other": "{{count}} membri selezionati",
       "group_name": "Nome del gruppo",
       "manage_columns": "Gestisci colonne",
@@ -1062,7 +1069,7 @@
       "no_filter_results": "Nessun membro corrisponde a questi attributi",
       "no_results": "Nessun membro trovato",
       "remaining_members_one": "+{{count}} altro",
-      "remaining_members_many": "",
+      "remaining_members_many": "+{{count}} altri",
       "remaining_members_other": "+{{count}} altri",
       "search": "Cerca membri...",
       "select_all": "Seleziona tutti",
@@ -1071,7 +1078,7 @@
       "select_member": "Seleziona {{name}}",
       "select_process": "Seleziona processo",
       "selected_one": "Selezionato: <strong>{{count}} membro</strong>",
-      "selected_many": "",
+      "selected_many": "Selezionati: <strong>{{count}} membri</strong>",
       "selected_other": "Selezionati: <strong>{{count}} membri</strong>",
       "showing_members_one": "Visualizzato {{from, number}}–{{to, number}} di {{count, number}} membro",
       "showing_members_many": "Visualizzati {{from, number}}–{{to, number}} di {{count, number}} membri",
@@ -1112,7 +1119,7 @@
   "no_results_filtering": "Il filtro di ricerca attuale non restituisce risultati",
   "not_registred_yet": "Non hai un account?",
   "number_of_members_one": "{{ count }} membro del team",
-  "number_of_members_many": "",
+  "number_of_members_many": "{{ count }} membri del team",
   "number_of_members_other": "{{ count }} membri del team",
   "oauth": {
     "link": {
@@ -1259,7 +1266,7 @@
       "footnote_on_demand": "* Le funzionalità richieste verranno valutate individualmente e potrebbero comportare costi aggiuntivi."
     },
     "core_voting_one": "Fino a {{ count }} membri",
-    "core_voting_many": "",
+    "core_voting_many": "Fino a {{ count }} membri",
     "core_voting_other": "Fino a {{ count }} membri",
     "custom_branding": "Branding personalizzato*",
     "custom_subtitle": "Su misura per le tue esigenze",
@@ -1279,10 +1286,10 @@
     "ticket_support_48": "Supporto email (48h)",
     "ticket_support_72": "Supporto email (72h)",
     "up_to_admins_one": "Un amministratore",
-    "up_to_admins_many": "",
+    "up_to_admins_many": "{{ count }} amministratori",
     "up_to_admins_other": "{{ count }} amministratori",
     "yearly_processes_one": "{{ count }} voto all'anno¹",
-    "yearly_processes_many": "",
+    "yearly_processes_many": "{{ count }} voti all'anno¹",
     "yearly_processes_other": "{{ count }} voti all'anno¹"
   },
   "pricing_card": {
@@ -1337,7 +1344,7 @@
       },
       "limit_reached": {
         "message_one": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano.",
-        "message_many": "",
+        "message_many": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano.",
         "message_other": "Hai raggiunto il limite di {{ count }} bozze. Per salvare questa bozza, elimina una bozza esistente o aggiorna il piano."
       },
       "question": {
@@ -1374,7 +1381,7 @@
     "is_invalid": "Questo processo contiene dati errati, rendendolo non valido",
     "no_description": "Nessuna descrizione fornita",
     "people_in_census_one": "Un votante",
-    "people_in_census_many": "",
+    "people_in_census_many": "{{ count }} votanti",
     "people_in_census_other": "{{ count }} votanti",
     "question_type": {
       "label": "Tipo di domanda",
@@ -1426,7 +1433,7 @@
       "time_until_start": "Tempo all'inizio",
       "view_summary": "Segui il processo",
       "votes_cast_one": "{{votes}} voto espresso",
-      "votes_cast_many": "",
+      "votes_cast_many": "{{votes}} voti espressi",
       "votes_cast_other": "{{votes}} voti espressi"
     },
     "vote_failed": {
@@ -1652,7 +1659,7 @@
         "weighted_method": "{{base}} con voto ponderato"
       },
       "intro_one": "Il processo di voto {{process_name}} è consistito in 1 domanda.",
-      "intro_many": "",
+      "intro_many": "Il processo di voto {{process_name}} è consistito in {{count}} domande.",
       "intro_other": "Il processo di voto {{process_name}} è consistito in {{count}} domande.",
       "results_hidden": "I risultati sono nascosti finché il processo non raggiunge la fase dei risultati finali."
     },
@@ -1944,9 +1951,13 @@
     "click_or_drag_and_drop": "<click>Clicca per caricare o trascina e rilascia</click><formats>(Formati consentiti: {{ formats, list }})</formats>",
     "click_or_drag_and_drop_image": "Carica Immagine",
     "csv_row_limit_exceeded_one": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
-    "csv_row_limit_exceeded_many": "",
+    "csv_row_limit_exceeded_many": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
     "csv_row_limit_exceeded_other": "Questa importazione porterebbe a un totale di {{count}} righe, superando il limite del tuo piano di {{max}}.",
     "drop_here": "Rilascia il file qui",
+    "error": {
+      "invalid_image_type": "Questo tipo di file non è supportato. Carica un'immagine .png o .jpg.",
+      "too_many_files": "Carica un solo file alla volta."
+    },
     "image_upload_failed": "Caricamento immagine non riuscito",
     "image_upload_success": "Immagine caricata",
     "upload_failed": "Caricamento non riuscito"
@@ -2037,13 +2048,13 @@
     "security_level": "Buona sicurezza",
     "security_recommendation_1": "Per una migliore sicurezza, consigliamo di selezionare almeno 2 credenziali.",
     "security_recommendation_2_one": "Hai selezionato {{ count }} credenziale, che fornisce una buona sicurezza per i tuoi votanti.",
-    "security_recommendation_2_many": "",
+    "security_recommendation_2_many": "Hai selezionato {{ count }} credenziali, che fornisce una buona sicurezza per i tuoi votanti.",
     "security_recommendation_2_other": "Hai selezionato {{ count }} credenziali, che fornisce una buona sicurezza per i tuoi votanti.",
     "security_recommendation_title": "Raccomandazione di sicurezza",
     "select_credentials": "Seleziona credenziali richieste per l'autenticazione del votante",
     "select_credentials_description": "Scegli i campi che i votanti devono fornire per autenticarsi. Seleziona fino a 3 per il miglior equilibrio tra sicurezza e facilità d'uso. Se prevedi di utilizzare solo email o telefono per la 2FA, salta questo passaggio e clicca su Avanti per configurarlo",
     "selected_credentials_count_one": "{{ count }}/3 credenziali selezionate",
-    "selected_credentials_count_many": "",
+    "selected_credentials_count_many": "{{ count }}/3 credenziali selezionate",
     "selected_credentials_count_other": "{{ count }}/3 credenziali selezionate",
     "sms": "Via verifica SMS",
     "summary": "Riepilogo",
@@ -2054,16 +2065,16 @@
     "title": "Configura Autenticazione Votante",
     "two_factor": "Due Fattori",
     "validation_duplicates_one": "{{count}} utenti duplicati",
-    "validation_duplicates_many": "",
+    "validation_duplicates_many": "{{count}} utenti duplicati",
     "validation_duplicates_other": "{{count}} utenti duplicati",
     "validation_error_title": "Errore di convalida",
     "validation_failed": "Validazione non riuscita",
     "validation_missing_data_one": "{{count}} utenti con campi obbligatori mancanti",
-    "validation_missing_data_many": "",
+    "validation_missing_data_many": "{{count}} utenti con campi obbligatori mancanti",
     "validation_missing_data_other": "{{count}} utenti con campi obbligatori mancanti",
     "validation_summary": "Convalida fallita per alcuni utenti.",
     "validation_total_one": "{{count}} utenti totali",
-    "validation_total_many": "",
+    "validation_total_many": "{{count}} utenti totali",
     "validation_total_other": "{{count}} utenti totali",
     "voters_choice": "Scelta del votante"
   },
