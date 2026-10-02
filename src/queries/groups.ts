@@ -8,7 +8,6 @@ import { QueryKeys } from '~src/queries/keys'
 import {
   type CollectProgress,
   collectMembers,
-  Member,
   MEMBERS_COLLECT_CAP,
   type MembersPageFetcher,
   type MembersResponse,
@@ -35,12 +34,6 @@ export const getNextGroupsPageParam = (lastPage: GroupsResponse) => {
   if (currentPage < lastPageNumber) return currentPage + 1
   return undefined
 }
-
-export type GroupMembers = {
-  members: Partial<Member>[]
-} & PaginationResponse
-
-export type GroupMembersQueryData = GroupMembers
 
 export type GroupData = {
   title: string
@@ -169,24 +162,6 @@ export const useDeleteGroup = () => {
         exact: false,
       })
     },
-  })
-}
-
-export const useGroupMembers = (groupId: string, page, isOpen: boolean = false) => {
-  const { bearedFetch } = useAuth()
-  const { organization } = useOrganization()
-
-  const baseUrl = ApiEndpoints.OrganizationGroupMembers.replace('{address}', organization?.address).replace(
-    '{groupId}',
-    groupId
-  )
-  const fetchUrl = `${baseUrl}?page=${page}`
-
-  return useQuery<GroupMembers, Error, GroupMembersQueryData>({
-    enabled: !!organization?.address && !!groupId && isOpen,
-    queryKey: [...QueryKeys.organization.groups(organization?.address), groupId, page],
-    queryFn: () => bearedFetch<GroupMembers>(fetchUrl),
-    refetchOnWindowFocus: false,
   })
 }
 

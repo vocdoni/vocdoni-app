@@ -64,7 +64,7 @@ describe('DashboardMenuOptions', () => {
   })
 
   it('marks memberbase as active on memberbase subroutes', () => {
-    renderMenu('/admin/memberbase/groups')
+    renderMenu('/admin/memberbase/censuses')
     expect(getMenuItemElement('Members')).toHaveAttribute('data-active', '')
   })
 

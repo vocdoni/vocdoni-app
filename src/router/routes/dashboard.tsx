@@ -31,7 +31,6 @@ const Memberbase = lazy(() => import('~elements/dashboard/memberbase'))
 const MemberbaseTabs = lazy(() => import('~elements/dashboard/memberbase/tabs'))
 const MembersImport = lazy(() => import('~elements/dashboard/memberbase/import'))
 const Members = lazy(() => import('~elements/dashboard/memberbase/members'))
-const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
 const Censuses = lazy(() => import('~elements/dashboard/memberbase/censuses'))
 const Census = lazy(() => import('~elements/dashboard/memberbase/census'))
 const VoteCensus = lazy(() => import('~elements/dashboard/memberbase/vote-census'))
@@ -233,12 +232,9 @@ export const useDashboardRoutes = () => {
                             ),
                           },
                           {
+                            // The Groups tab became Censuses: old links and bookmarks land there
                             path: Routes.dashboard.memberbase.groups,
-                            element: (
-                              <SuspenseLoader>
-                                <Groups />
-                              </SuspenseLoader>
-                            ),
+                            element: <Navigate to={Routes.dashboard.memberbase.censuses} replace />,
                           },
                         ],
                       },

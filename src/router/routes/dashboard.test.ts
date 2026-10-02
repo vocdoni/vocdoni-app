@@ -1,6 +1,6 @@
 import { Fragment, type ReactElement } from 'react'
-import type { RouteObject } from 'react-router'
 import { renderHook } from '@testing-library/react'
+import { matchRoutes, type RouteObject } from 'react-router'
 import { Routes } from '.'
 import { mockUseClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -71,5 +71,37 @@ describe('dashboard process routes', () => {
     for (const child of processRoute?.children ?? []) {
       expect((child.element as ReactElement).type).toBe(Fragment)
     }
+  })
+})
+
+describe('members routes', () => {
+  const findRoute = (routes: any[] | undefined, path: string): any => {
+    for (const route of routes ?? []) {
+      if (route.path === path) return route
+      const found = findRoute(route.children, path)
+      if (found) return found
+    }
+    return undefined
+  }
+
+  it('sends the old Groups tab to the censuses', async () => {
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { result } = renderHook(() => useDashboardRoutes())
+
+    const groups = findRoute([result.current], Routes.dashboard.memberbase.groups)
+    expect(groups?.element?.props).toMatchObject({ to: Routes.dashboard.memberbase.censuses, replace: true })
+  })
+
+  it('tells a vote’s census apart from a saved census', async () => {
+    const { useDashboardRoutes } = await import('./dashboard')
+    const { result } = renderHook(() => useDashboardRoutes())
+
+    const routes = [result.current] as RouteObject[]
+    const matches = matchRoutes(routes, '/admin/memberbase/censuses/vote/p1')
+    expect(matches?.at(-1)?.route.path).toBe(Routes.dashboard.memberbase.voteCensus)
+    expect(matches?.at(-1)?.params).toMatchObject({ processId: 'p1' })
+    expect(matchRoutes(routes, '/admin/memberbase/censuses/g1')?.at(-1)?.route.path).toBe(
+      Routes.dashboard.memberbase.census
+    )
   })
 })
