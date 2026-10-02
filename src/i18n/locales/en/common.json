@@ -1074,7 +1074,6 @@
     "selector_label": "Membership Size"
   },
   "menu": {
-    "burger_aria_label": "user menu",
     "collapse": "Collapse menu",
     "create": "Create Process",
     "dashboard": "Dashboard",

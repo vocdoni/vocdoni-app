@@ -1093,7 +1093,6 @@
     "selector_label": "Número de membros"
   },
   "menu": {
-    "burger_aria_label": "menu do usuário",
     "collapse": "Recolher menu",
     "create": "Criar processo",
     "dashboard": "Painel",

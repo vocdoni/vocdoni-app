@@ -93,10 +93,13 @@ const SignUp = ({
   const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
   const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
 
+  // Keyed on `t` so the title follows a language switch.
   useEffect(() => {
-    // set SignUp title and description
     setTitle(t('signup_title'))
     setSubtitle(t('signup_subtitle'))
+  }, [setTitle, setSubtitle, t])
+
+  useEffect(() => {
     signup.reset()
   }, [])
 

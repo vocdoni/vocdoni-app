@@ -95,7 +95,7 @@ export const LanguagesMenu = ({ publicLanguageLinks, ...props }: { publicLanguag
     <MenuRoot positioning={{ placement: 'bottom-end' }} onOpenChange={({ open }) => setIsOpen(open)}>
       <MenuTrigger asChild>
         <Button
-          aria-label={t('menu.burger_aria_label')}
+          aria-label={t('form.select_language', { defaultValue: 'Language' })}
           variant='subtle'
           colorPalette='gray'
           minW='none'
