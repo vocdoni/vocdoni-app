@@ -115,4 +115,31 @@ describe('MemberManager edit', () => {
 
     expect(await screen.findByLabelText('Name')).toHaveValue('Ada')
   })
+
+  it('drops the error of an untouched field once a refetch replaces its value', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<MemberManager member={{ ...member, email: 'not-an-email' }} open />)
+
+    await user.type(await screen.findByLabelText('Name'), 'X')
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+    expect(await screen.findByText(/invalid email/i)).toBeInTheDocument()
+
+    rerender(<MemberManager member={{ ...member, email: 'ada@example.com' }} open />)
+
+    expect(screen.getByLabelText('Email')).toHaveValue('ada@example.com')
+    expect(screen.queryByText(/invalid email/i)).not.toBeInTheDocument()
+  })
+
+  it('still sends the phone removal after a refetch of the same member', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<MemberManager member={member} open />)
+
+    const phone = await screen.findByLabelText('Phone')
+    await user.type(phone, '1')
+    await user.clear(phone)
+    rerender(<MemberManager member={{ ...member, surname: 'Byron' }} open />)
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '', weight: '5' })
+  })
 })

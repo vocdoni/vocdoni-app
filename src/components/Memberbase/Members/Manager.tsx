@@ -151,7 +151,10 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       setPhoneEdited(false)
       methods.reset(values)
     } else {
+      // errors on fields the user has not touched describe a value that was just replaced
+      const staleErrors = Object.keys(methods.formState.errors).filter((key) => !methods.getFieldState(key).isDirty)
       methods.reset(values, { keepDirtyValues: true, keepErrors: true, keepIsSubmitted: true, keepSubmitCount: true })
+      methods.clearErrors(staleErrors)
     }
   }, [member, isOpen])
 
