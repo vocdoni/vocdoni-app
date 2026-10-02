@@ -27,10 +27,20 @@ export const useAllVotes = ({ enabled = true }: { enabled?: boolean } = {}) => {
   const draftList = useMemo(() => flattenPages(drafts.data?.pages), [drafts.data])
   const all = useMemo(() => [...publishedList, ...draftList], [publishedList, draftList])
 
+  // Every page of both lists is in, with no failed page: only then is "no vote uses it" known
+  const complete =
+    !!published.data &&
+    !!drafts.data &&
+    !published.hasNextPage &&
+    !drafts.hasNextPage &&
+    !published.isError &&
+    !drafts.isError
+
   return {
     published: publishedList,
     drafts: draftList,
     all,
+    complete,
     isLoading: published.isLoading,
     isError: published.isError,
     error: published.error,

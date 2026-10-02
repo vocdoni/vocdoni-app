@@ -24,6 +24,8 @@ const state = vi.hoisted(() => ({
   members: {} as Record<string, unknown[]>,
   published: [] as unknown[],
   drafts: [] as unknown[],
+  /** More draft pages are still to load */
+  moreDrafts: false,
   meta: {} as Record<string, unknown>,
   process: null as unknown,
   orgMembers: [] as Record<string, unknown>[],
@@ -65,7 +67,13 @@ vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
 vi.mock('~src/queries/processes', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/queries/processes')>()),
   usePublishedProcesses: () => ({ data: { pages: [{ processes: state.published }] }, isLoading: false }),
-  useDraftProcesses: () => ({ data: { pages: [{ processes: state.drafts }] }, isLoading: false }),
+  useDraftProcesses: () => ({
+    data: { pages: [{ processes: state.drafts }] },
+    isLoading: false,
+    hasNextPage: state.moreDrafts,
+    isFetchingNextPage: state.moreDrafts,
+    fetchNextPage: vi.fn(),
+  }),
 }))
 
 vi.mock('~utils/download', async (importOriginal) => ({
@@ -172,6 +180,7 @@ describe('CensusDetail', () => {
     ]
     state.published = [vote('p1', 'Assemblea General 2026', { groupId: 'quota', size: 30 }, 'ONGOING')]
     state.drafts = []
+    state.moreDrafts = false
     state.meta = {}
     state.process = null
     state.fetch.mockReset()
@@ -268,6 +277,17 @@ describe('CensusDetail', () => {
     await waitFor(() =>
       expect(state.fetch).toHaveBeenCalledWith('organizations/0xorg/groups/quota', { method: 'DELETE' })
     )
+  })
+
+  it('waits for every vote to load before a saved census can be deleted', async () => {
+    state.published = []
+    state.moreDrafts = true
+    renderDetail({ kind: 'saved', groupId: 'quota' })
+
+    expect(await screen.findByRole('button', { name: 'Delete saved census' })).toBeDisabled()
+    expect(
+      screen.getAllByText('Deleting waits until all your votes are checked, so none still using it is missed.').length
+    ).toBeGreaterThan(0)
   })
 
   it('downloads the census as a CSV without phones and with national IDs masked', async () => {

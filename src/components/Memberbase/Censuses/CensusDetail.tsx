@@ -247,7 +247,11 @@ export const CensusDetail = (props: CensusDetailProps) => {
         {census.kind === 'saved' && census.group && (
           <>
             <UsedByCard votes={census.sharedWith} />
-            <SavedCensusActions group={census.group as Group} usedBy={census.sharedWith} />
+            <SavedCensusActions
+              group={census.group as Group}
+              usedBy={census.sharedWith}
+              votesComplete={census.votesComplete}
+            />
           </>
         )}
         {census.browse === 'group' && census.groupId && (

@@ -237,9 +237,19 @@ const EditSavedSheet = ({
 
 /**
  * What can be done with a saved census: use it in a vote, rename it, delete it. Deleting is refused
- * while a published vote uses it, since that vote's census would be emptied.
+ * while a published vote uses it, since that vote's census would be emptied, and until every vote is
+ * loaded, since only then is it known that none does.
  */
-export const SavedCensusActions = ({ group, usedBy }: { group: Group; usedBy: AffectedVote[] }) => {
+export const SavedCensusActions = ({
+  group,
+  usedBy,
+  votesComplete = true,
+}: {
+  group: Group
+  usedBy: AffectedVote[]
+  /** Every vote (published and drafts) is loaded with no failed page */
+  votesComplete?: boolean
+}) => {
   const { t } = useTranslation()
   const toast = useToast()
   const navigate = useNavigate()
@@ -249,6 +259,17 @@ export const SavedCensusActions = ({ group, usedBy }: { group: Group; usedBy: Af
   const [deleting, setDeleting] = useState(false)
   const blockers = publishedUsers(usedBy)
   const drafts = usedBy.filter((vote) => vote.state === 'draft')
+  const blockedText = blockers.length
+    ? t('census_detail.delete.blocked', {
+        count: blockers.length,
+        defaultValue_one: 'A published vote uses it, so it stays.',
+        defaultValue_other: '{{count}} published votes use it, so it stays.',
+      })
+    : !votesComplete
+      ? t('census_detail.delete.checking', {
+          defaultValue: 'Deleting waits until all your votes are checked, so none still using it is missed.',
+        })
+      : ''
 
   const remove = async () => {
     try {
@@ -278,7 +299,7 @@ export const SavedCensusActions = ({ group, usedBy }: { group: Group; usedBy: Af
       variant='ghost'
       colorPalette='red'
       justifyContent='flex-start'
-      disabled={blockers.length > 0}
+      disabled={!!blockedText}
       onClick={() => setDeleting(true)}
     >
       <Icon as={LuTrash2} />
@@ -309,26 +330,16 @@ export const SavedCensusActions = ({ group, usedBy }: { group: Group; usedBy: Af
           <Icon as={LuPencil} />
           {t('census_detail.actions.rename', { defaultValue: 'Rename' })}
         </Button>
-        {blockers.length ? (
-          <Tooltip
-            content={t('census_detail.delete.blocked', {
-              count: blockers.length,
-              defaultValue_one: 'A published vote uses it, so it stays.',
-              defaultValue_other: '{{count}} published votes use it, so it stays.',
-            })}
-          >
+        {blockedText ? (
+          <Tooltip content={blockedText}>
             <Box>{deleteButton}</Box>
           </Tooltip>
         ) : (
           deleteButton
         )}
-        {blockers.length > 0 && (
+        {blockedText && (
           <Text fontSize='xs' color='fg.muted' px={3}>
-            {t('census_detail.delete.blocked', {
-              count: blockers.length,
-              defaultValue_one: 'A published vote uses it, so it stays.',
-              defaultValue_other: '{{count}} published votes use it, so it stays.',
-            })}
+            {blockedText}
           </Text>
         )}
       </Stack>

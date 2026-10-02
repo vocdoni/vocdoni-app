@@ -33,7 +33,7 @@ export const useResolvedCensus = ({ kind, groupId: savedGroupId, processId }: Ce
   const { t } = useTranslation()
   const language = usePublicLanguage()
   const groups = useAllGroups()
-  const { all: processes } = useAllVotes()
+  const { all: processes, complete: votesComplete } = useAllVotes()
   const { markers, ready: markersReady } = useVoteGroupMarkers()
   const process = useProcess(kind === 'vote' ? processId : undefined)
 
@@ -83,6 +83,8 @@ export const useResolvedCensus = ({ kind, groupId: savedGroupId, processId }: Ce
     group: group.data,
     marker: groupId ? markers.get(groupId) : undefined,
     markers,
+    /** Every vote is loaded, so `sharedWith` is the full list of votes using it */
+    votesComplete,
     isLoading: groups.isLoading || !markersReady || (kind === 'vote' ? process.isLoading : false) || waitingForGroup,
     error: (kind === 'vote' ? process.error : group.error) ?? groups.error,
   }
