@@ -413,7 +413,7 @@ type ValidationClient = ReturnType<typeof useApiClient>['client']
  * The members who lack `field` (email or phone), from the census validation endpoint: a 200 means
  * everyone has it, a 400 lists who doesn't in `data.missingData`. Any other failure throws.
  */
-const membersMissing = async (
+export const membersMissing = async (
   client: ValidationClient,
   orgAddress: string,
   field: 'email' | 'phone',
@@ -456,7 +456,7 @@ const NO_IDS: string[] = []
  * phone), cached for 5 minutes and refreshed by any member write (they share the members key).
  * Never polled. `available` stays false when it can't be worked out, so the UI says nothing.
  */
-export const useSignInReadiness = () => {
+export const useSignInReadiness = ({ enabled = true }: { enabled?: boolean } = {}) => {
   const { organization } = useOrganization()
   const { client } = useApiClient()
   const { count, known } = useMembersCount()
@@ -464,7 +464,7 @@ export const useSignInReadiness = () => {
 
   const query = useQuery({
     queryKey: [...QueryKeys.organization.members(address), 'readiness'],
-    enabled: !!address && known && count > 0,
+    enabled: enabled && !!address && known && count > 0,
     staleTime: READINESS_STALE_TIME,
     retry: false,
     refetchOnWindowFocus: false,
@@ -483,6 +483,8 @@ export const useSignInReadiness = () => {
     total: count,
     ready: count - unreachable,
     unreachable,
+    /** How many have an email (a code by email reaches them) */
+    withEmail: Math.max(0, count - (query.data?.missingEmail ?? count)),
     /** The members with neither an email nor a mobile */
     unreachableIds: query.data?.unreachableIds ?? NO_IDS,
     isLoading: query.isLoading,

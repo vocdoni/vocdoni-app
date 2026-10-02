@@ -28,6 +28,10 @@ export const useFormDraftSaver = (
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
   const skipNextSaveRef = useRef(false)
+  // Steps that rewrite the draft's census on their own (attaching a census, freezing Everyone at
+  // publish) hold autosave off while they run, so no autosave sends a census they then undo.
+  // A count, so two of them overlapping never resume each other early.
+  const pausesRef = useRef(0)
   const [draftLimitReached, setDraftLimitReached] = useState(false)
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null)
   const [saveFailed, setSaveFailed] = useState(false)
@@ -95,7 +99,7 @@ export const useFormDraftSaver = (
 
   const saveDraft = useCallback(
     async (isAutoSave = true): Promise<SaveResult> => {
-      if (!isDirty || skipNextSaveRef.current) return 'skipped'
+      if (!isDirty || skipNextSaveRef.current || pausesRef.current > 0) return 'skipped'
       // A draft can't be created without its owner org: wait for the address to resolve
       // instead of firing a request the API would reject.
       if (!organization?.address) return 'skipped'
@@ -199,8 +203,46 @@ export const useFormDraftSaver = (
     [organization?.address, storeDraftId]
   )
 
+  /** Holds autosave off until the returned function is called (once; later calls do nothing). */
+  const pause = useCallback(() => {
+    pausesRef.current += 1
+    let resumed = false
+    return () => {
+      if (resumed) return
+      resumed = true
+      pausesRef.current = Math.max(0, pausesRef.current - 1)
+    }
+  }, [])
+
+  /** Resolves once every write already queued has landed (or failed). */
+  const flush = useCallback(async () => {
+    while (pendingWriteRef.current) await pendingWriteRef.current
+  }, [])
+
+  /**
+   * Saves the form as it stands right now, whatever autosave is doing, and resolves with the draft
+   * id (creating the draft first if needed). Throws when the write fails.
+   */
+  const saveNow = useCallback(async () => {
+    let sent: Process | undefined
+    const id = await writeDraft(() => {
+      const form = getValues()
+      sent = form
+      return formToVotingProcessRequest(form, buildCensusSpec(form))
+    })
+    setSaveFailed(false)
+    setLastSavedAt(new Date())
+    if (sent) onSaved?.(sent)
+    return id
+  }, [writeDraft, getValues, formToVotingProcessRequest, onSaved])
+
   return {
     saveDraft,
+    pause,
+    flush,
+    saveNow,
+    /** Runs a write of its own in the same one-at-a-time queue as the draft saves */
+    runExclusive: enqueueWrite,
     isSaving,
     skipSave,
     draftLimitReached,

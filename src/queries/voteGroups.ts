@@ -1,9 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { useOrganization } from '@vocdoni/react-components'
 import type { TFunction } from 'i18next'
 import { useCallback, useMemo } from 'react'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import { useApiClient } from '~src/providers/ApiClientProvider'
 import { QueryKeys } from './keys'
 import { useOrganizationMeta } from './organization'
 
@@ -161,3 +163,265 @@ export const voteGroupDescription = (t: TFunction, vote: string) =>
     defaultValue: "Census of '{{vote}}'. Changing it changes who can vote.",
     vote,
   })
+
+/** What a new group is created with (`POST /groups`). */
+export type NewGroup = {
+  title: string
+  description?: string
+  memberIds?: string[]
+  /** Stores a snapshot of every member's id instead of `memberIds` */
+  includeAllMembers?: boolean
+}
+
+/**
+ * The group and meta calls the vote-census steps are made of (copy-on-attach, freeze at publish,
+ * cleanup), as plain functions so the steps can be tested against a fake.
+ */
+export type VoteGroupApi = {
+  /** The member ids of a group (`GET /groups/{id}`); empty for Everyone, whose ids aren't listed */
+  readMemberIds: (groupId: string) => Promise<string[]>
+  /** A group as `GET /groups/{id}` returns it */
+  readGroup: (groupId: string) => Promise<{ isAutoGroup?: boolean; memberIds?: string[]; title?: string }>
+  /** Resolves with the new group's id */
+  createGroup: (group: NewGroup) => Promise<string>
+  deleteGroup: (groupId: string) => Promise<void>
+  mark: (groupId: string, marker: VoteGroupMarker) => Promise<void>
+  unmark: (groupId: string) => Promise<void>
+  /** The markers as stored right now, read fresh (not from the cache) */
+  markers: () => Promise<Map<string, VoteGroupMarker>>
+}
+
+export const voteGroupApi = (fetch: MetaFetch, address: string): VoteGroupApi => {
+  const groupUrl = (groupId: string) =>
+    ApiEndpoints.OrganizationGroup.replace('{address}', address).replace('{groupId}', groupId)
+  const readGroup = async (groupId: string) =>
+    (await fetch<{ isAutoGroup?: boolean; memberIds?: string[]; title?: string }>(groupUrl(groupId))) ?? {}
+  return {
+    readGroup,
+    readMemberIds: async (groupId) => (await readGroup(groupId)).memberIds ?? [],
+    createGroup: async (group) => {
+      const created = await fetch<{ id?: string }>(ApiEndpoints.OrganizationGroups.replace('{address}', address), {
+        method: 'POST',
+        body: group,
+      })
+      if (!created?.id) throw new Error('The census was not created')
+      return created.id
+    },
+    deleteGroup: async (groupId) => {
+      await fetch<void>(groupUrl(groupId), { method: 'DELETE' })
+    },
+    mark: async (groupId, marker) => {
+      await markVoteGroup(fetch, address, groupId, marker)
+    },
+    unmark: async (groupId) => {
+      await unmarkVoteGroup(fetch, address, groupId)
+    },
+    markers: async () => {
+      const response = await fetch<{ meta?: Record<string, unknown> }>(
+        ApiEndpoints.OrganizationMeta.replace('{address}', address)
+      )
+      return parseVoteGroupMarkers(response?.meta)
+    },
+  }
+}
+
+/** `voteGroupApi` for the current organization; every write refreshes the groups and the markers. */
+export const useVoteGroupApi = (): VoteGroupApi | null => {
+  const { bearedFetch } = useAuth()
+  const { organization } = useOrganization()
+  const queryClient = useQueryClient()
+  const address = organization?.address
+
+  return useMemo(() => {
+    if (!address) return null
+    const api = voteGroupApi(bearedFetch, address)
+    const groups = () => queryClient.invalidateQueries({ queryKey: QueryKeys.organization.groups(address) })
+    const meta = () => queryClient.invalidateQueries({ queryKey: QueryKeys.organization.meta(address) })
+    return {
+      ...api,
+      createGroup: async (group) => {
+        const id = await api.createGroup(group)
+        void groups()
+        return id
+      },
+      deleteGroup: async (groupId) => {
+        await api.deleteGroup(groupId)
+        void groups()
+      },
+      mark: async (groupId, marker) => {
+        await api.mark(groupId, marker)
+        void meta()
+      },
+      unmark: async (groupId) => {
+        await api.unmark(groupId)
+        void meta()
+      },
+    }
+  }, [bearedFetch, address, queryClient])
+}
+
+/** Ignores a failed cleanup step: whatever is left behind still carries its marker, for the sweep. */
+const quietly = async (step: () => Promise<unknown>) => {
+  try {
+    await step()
+    return true
+  } catch (error) {
+    console.warn('Vote census cleanup step failed', error)
+    return false
+  }
+}
+
+/**
+ * Deletes a vote-owned group, then its marker. The marker only goes once the group is gone, so a
+ * group that couldn't be deleted is still known and the sweep tries again. Never throws.
+ */
+export const discardVoteGroup = async (api: Pick<VoteGroupApi, 'deleteGroup' | 'unmark'>, groupId: string) => {
+  if (!(await quietly(() => api.deleteGroup(groupId)))) return false
+  return quietly(() => api.unmark(groupId))
+}
+
+/**
+ * Deletes every group a vote owns (after the vote itself was deleted). Only groups with a marker for
+ * that vote are touched. Never throws; resolves with the ids it deleted.
+ */
+export const discardVoteGroupsOf = async (api: VoteGroupApi, processId: string) => {
+  let markers: Map<string, VoteGroupMarker>
+  try {
+    markers = await api.markers()
+  } catch (error) {
+    console.warn('Could not read the vote census markers', error)
+    return []
+  }
+  const deleted: string[] = []
+  for (const [groupId, marker] of markers) {
+    if (marker.processId !== processId) continue
+    if (await discardVoteGroup(api, groupId)) deleted.push(groupId)
+  }
+  return deleted
+}
+
+/** The bit of a process the sweep reads: which group its census follows, if any. */
+export type SweepProcess = { published?: boolean; census?: { groupId?: string } | null }
+
+/** How old a marker must be before the sweep may delete its group: an attach may still be under way. */
+export const SWEEP_MIN_AGE_MS = 10 * 60 * 1000
+
+/**
+ * Deletes the vote-owned groups nothing uses any more: those whose vote is gone, or whose vote's
+ * census now follows another group. Only groups that carry a marker are ever deleted, never one
+ * younger than `minAgeMs` (it may be mid-attach), and never one whose vote can't be read for another
+ * reason than not existing. A draft whose stored census has no group yet (saved before sign-in was
+ * set up) keeps its groups: the editor may still be pointing at one.
+ *
+ * `readProcess` resolves with the process, or `null` when it doesn't exist (404); any other failure
+ * should throw. Resolves with the ids it deleted.
+ */
+export const sweepOrphanVoteGroups = async (
+  api: VoteGroupApi,
+  readProcess: (processId: string) => Promise<SweepProcess | null>,
+  { now = Date.now(), minAgeMs = SWEEP_MIN_AGE_MS }: { now?: number; minAgeMs?: number } = {}
+) => {
+  const markers = await api.markers()
+  const processes = new Map<string, Promise<SweepProcess | null | undefined>>()
+  const read = (processId: string) => {
+    if (!processes.has(processId))
+      processes.set(
+        processId,
+        readProcess(processId).catch(() => undefined) // unknown: leave its groups alone
+      )
+    return processes.get(processId)!
+  }
+
+  const deleted: string[] = []
+  for (const [groupId, marker] of markers) {
+    const created = Date.parse(marker.createdAt)
+    if (!Number.isFinite(created) || now - created < minAgeMs) continue
+    const process = await read(marker.processId)
+    if (process === undefined) continue
+    const following = process?.census?.groupId
+    const orphan = process === null || (following ? following !== groupId : !!process.published)
+    if (orphan && (await discardVoteGroup(api, groupId))) deleted.push(groupId)
+  }
+  return deleted
+}
+
+const SWEEP_SESSION_KEY = 'vocdoni.voteGroupSweep'
+const sweptThisSession = new Set<string>()
+
+const alreadySwept = (address: string) => {
+  if (sweptThisSession.has(address)) return true
+  try {
+    return sessionStorage.getItem(`${SWEEP_SESSION_KEY}.${address}`) === '1'
+  } catch {
+    return false
+  }
+}
+
+const rememberSwept = (address: string) => {
+  sweptThisSession.add(address)
+  try {
+    sessionStorage.setItem(`${SWEEP_SESSION_KEY}.${address}`, '1')
+  } catch {
+    // Private mode: the in-memory flag is enough for this page load
+  }
+}
+
+/**
+ * Runs `sweepOrphanVoteGroups` for the current organization. `{ throttle: true }` runs it at most once
+ * per browser session (the Censuses tab); without it, it always runs (right after a publish). Never
+ * throws: a sweep that fails is simply tried again another time.
+ */
+export const useSweepOrphanVoteGroups = () => {
+  const api = useVoteGroupApi()
+  const { client } = useApiClient()
+  const { organization } = useOrganization()
+  const address = organization?.address
+
+  return useCallback(
+    async ({ throttle = false }: { throttle?: boolean } = {}) => {
+      if (!api || !address) return []
+      if (throttle && alreadySwept(address)) return []
+      rememberSwept(address)
+      try {
+        return await sweepOrphanVoteGroups(api, async (processId) => {
+          try {
+            return (await client.elections.get(processId)) as SweepProcess
+          } catch (error) {
+            if (error instanceof VocdoniApiError && error.status === 404) return null
+            throw error
+          }
+        })
+      } catch (error) {
+        console.warn('Vote census sweep failed', error)
+        return []
+      }
+    },
+    [api, address, client]
+  )
+}
+
+/**
+ * The guarded test vote, recorded in the organization meta under `testVote` when it's created: its
+ * draft, its group and the people it added to the members.
+ */
+export type TestVote = { processId: string; groupId: string; memberIds: string[] }
+
+export const TEST_VOTE_META_KEY = 'testVote'
+
+export const parseTestVote = (meta?: Record<string, unknown> | null): TestVote | null => {
+  const value = meta?.[TEST_VOTE_META_KEY] as Partial<TestVote> | undefined
+  if (!value || typeof value !== 'object' || !Array.isArray(value.memberIds)) return null
+  const memberIds = value.memberIds.filter((id): id is string => typeof id === 'string' && !!id)
+  if (!memberIds.length) return null
+  return {
+    processId: typeof value.processId === 'string' ? value.processId : '',
+    groupId: typeof value.groupId === 'string' ? value.groupId : '',
+    memberIds,
+  }
+}
+
+/** The organization's test vote, if it has one with people in it. */
+export const useTestVote = () => {
+  const { meta } = useOrganizationMeta()
+  return useMemo(() => parseTestVote(meta as Record<string, unknown> | undefined), [meta])
+}

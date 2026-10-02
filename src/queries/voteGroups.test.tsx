@@ -3,10 +3,13 @@ import { mockUseOrganization } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { AllProviders } from '~src/test-utils'
 import {
+  discardVoteGroupsOf,
   isVoteOwned,
   markVoteGroup,
   parseVoteGroupMarkers,
   copySourceName,
+  sweepOrphanVoteGroups,
+  type VoteGroupApi,
   type VoteGroupMarker,
   unmarkVoteGroup,
   useVoteGroupMarkers,
@@ -109,5 +112,79 @@ describe('vote-owned group markers', () => {
     expect(voteGroupDescription(t, 'Assemblea 2026')).toBe(
       "Census of 'Assemblea 2026'. Changing it changes who can vote."
     )
+  })
+})
+
+describe('cleaning up vote-owned groups', () => {
+  const OLD = '2026-10-01T10:00:00.000Z'
+  const NOW = Date.parse('2026-10-02T10:00:00.000Z')
+
+  const fakeApi = (markers: Record<string, Partial<VoteGroupMarker>>) => {
+    const api: VoteGroupApi = {
+      readMemberIds: vi.fn(),
+      readGroup: vi.fn(),
+      createGroup: vi.fn(),
+      deleteGroup: vi.fn(async () => undefined),
+      mark: vi.fn(),
+      unmark: vi.fn(async () => undefined),
+      markers: vi.fn(
+        async () =>
+          new Map(
+            Object.entries(markers).map(([id, marker]) => [
+              id,
+              { kind: 'copy', createdAt: OLD, ...marker } as VoteGroupMarker,
+            ])
+          )
+      ),
+    }
+    return api
+  }
+
+  it('deletes a deleted draft’s groups and their markers, and nobody else’s', async () => {
+    const api = fakeApi({ g1: { processId: 'draft' }, g2: { processId: 'other' }, g3: { processId: 'draft' } })
+
+    expect(await discardVoteGroupsOf(api, 'draft')).toEqual(['g1', 'g3'])
+    expect(api.deleteGroup).toHaveBeenCalledTimes(2)
+    expect(api.deleteGroup).not.toHaveBeenCalledWith('g2')
+    expect(api.unmark).toHaveBeenCalledWith('g1')
+    expect(api.unmark).toHaveBeenCalledWith('g3')
+  })
+
+  it('keeps the marker of a group that could not be deleted, for the next sweep', async () => {
+    const api = fakeApi({ g1: { processId: 'draft' } })
+    api.deleteGroup = vi.fn(async () => {
+      throw new Error('409')
+    })
+
+    expect(await discardVoteGroupsOf(api, 'draft')).toEqual([])
+    expect(api.unmark).not.toHaveBeenCalled()
+  })
+
+  it('sweeps only marked groups nothing uses any more', async () => {
+    const api = fakeApi({
+      used: { processId: 'p1' },
+      replaced: { processId: 'p1' },
+      gone: { processId: 'deleted' },
+      fresh: { processId: 'p1', createdAt: '2026-10-02T09:55:00.000Z' },
+      unreadable: { processId: 'flaky' },
+      draftWithoutGroup: { processId: 'p2' },
+      publishedWithoutGroup: { processId: 'p3' },
+    })
+    const processes: Record<string, unknown> = {
+      p1: { census: { groupId: 'used' } },
+      deleted: null,
+      p2: { published: false, census: {} },
+      p3: { published: true, census: {} },
+    }
+    const readProcess = vi.fn(async (id: string) => {
+      if (id === 'flaky') throw new Error('500')
+      return processes[id] as never
+    })
+
+    const deleted = await sweepOrphanVoteGroups(api, readProcess, { now: NOW })
+
+    expect(deleted.sort()).toEqual(['gone', 'publishedWithoutGroup', 'replaced'])
+    // One read per vote
+    expect(readProcess.mock.calls.filter(([id]) => id === 'p1')).toHaveLength(1)
   })
 })

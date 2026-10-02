@@ -108,6 +108,53 @@ describe('useFormDraftSaver', () => {
     expect(update).toHaveBeenLastCalledWith('draft-1', { published: true })
   })
 
+  it('holds autosave off while paused, and saves again once every pause is over', async () => {
+    const { result } = renderSaver('draft-1')
+
+    const resumeFirst = result.current.pause()
+    const resumeSecond = result.current.pause()
+    await expect(result.current.saveDraft(true)).resolves.toBe('skipped')
+    await expect(result.current.saveDraft(false)).resolves.toBe('skipped')
+
+    resumeFirst()
+    resumeFirst() // a second call does nothing
+    await expect(result.current.saveDraft(true)).resolves.toBe('skipped')
+
+    resumeSecond()
+    await act(async () => {
+      await expect(result.current.saveDraft(true)).resolves.toBe('saved')
+    })
+    expect(update).toHaveBeenCalledTimes(1)
+  })
+
+  it('saves right now while paused, and flush waits for the writes already queued', async () => {
+    const inFlight = deferred()
+    update.mockReturnValueOnce(inFlight.promise)
+    const { result, onSaved } = renderSaver('draft-1')
+    const resume = result.current.pause()
+
+    let saved: string | undefined
+    const saving = result.current.saveNow().then((id) => {
+      saved = id
+    })
+    let flushed = false
+    const flushing = result.current.flush().then(() => {
+      flushed = true
+    })
+    await waitFor(() => expect(update).toHaveBeenCalledTimes(1))
+    expect(flushed).toBe(false)
+
+    inFlight.resolve()
+    await act(async () => {
+      await saving
+      await flushing
+    })
+    expect(saved).toBe('draft-1')
+    expect(flushed).toBe(true)
+    expect(onSaved).toHaveBeenCalledWith(form)
+    resume()
+  })
+
   it('skips an auto-save while another write is running', async () => {
     const inFlight = deferred()
     update.mockReturnValueOnce(inFlight.promise)
