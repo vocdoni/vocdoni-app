@@ -11,7 +11,6 @@ import {
   Stack,
   Table,
   Text,
-  VisuallyHidden,
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -115,35 +114,48 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
         </Text>
       )}
 
-      {selectable && selected.size > 0 && (
+      {selectable && (
+        // Always there, one height: selecting doesn't push the table down
         <Flex
           align='center'
           justify='space-between'
           gap={3}
-          wrap='wrap'
           px={3}
-          py={2}
+          h={10}
           borderRadius='md'
-          bg='bg.muted'
+          bg={selected.size ? 'bg.muted' : undefined}
           role='status'
         >
-          <Text fontSize='sm' fontVariantNumeric='tabular-nums'>
-            {t('census_detail.selected', {
-              count: selected.size,
-              formattedCount: format(selected.size),
-              defaultValue_one: '1 selected',
-              defaultValue_other: '{{formattedCount}} selected',
-            })}
-          </Text>
-          <Flex gap={2}>
-            <Button size='xs' variant='ghost' colorPalette='gray' onClick={() => setSelected(new Map())}>
-              {t('census_detail.clear', { defaultValue: 'Clear' })}
-            </Button>
-            <Button size='xs' variant='outline' colorPalette='red' onClick={() => onRemove?.([...selected.values()])}>
-              <Icon as={LuUserMinus} />
-              {t('census_detail.remove', { defaultValue: 'Remove…' })}
-            </Button>
-          </Flex>
+          {selected.size ? (
+            <>
+              <Text fontSize='sm' fontVariantNumeric='tabular-nums'>
+                {t('census_detail.selected', {
+                  count: selected.size,
+                  formattedCount: format(selected.size),
+                  defaultValue_one: '1 selected',
+                  defaultValue_other: '{{formattedCount}} selected',
+                })}
+              </Text>
+              <Flex gap={2}>
+                <Button size='xs' variant='ghost' colorPalette='gray' onClick={() => setSelected(new Map())}>
+                  {t('census_detail.clear', { defaultValue: 'Clear' })}
+                </Button>
+                <Button
+                  size='xs'
+                  variant='outline'
+                  colorPalette='red'
+                  onClick={() => onRemove?.([...selected.values()])}
+                >
+                  <Icon as={LuUserMinus} />
+                  {t('census_detail.remove', { defaultValue: 'Remove…' })}
+                </Button>
+              </Flex>
+            </>
+          ) : (
+            <Text fontSize='sm' color='fg.muted'>
+              {t('census_detail.select_hint', { defaultValue: 'Select people to remove them from this census.' })}
+            </Text>
+          )}
         </Flex>
       )}
 
@@ -176,19 +188,17 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
         ) : (
           <Table.ScrollArea>
             <Table.Root size='sm' opacity={!inMemory && paged.isPlaceholderData ? 0.6 : 1}>
-              <Table.Caption>
-                <VisuallyHidden>
-                  {t('census_detail.caption', {
-                    defaultValue: 'People in this census, page {{page}} of {{pages}}',
-                    page,
-                    pages: lastPage,
-                  })}
-                </VisuallyHidden>
+              <Table.Caption srOnly>
+                {t('census_detail.caption', {
+                  defaultValue: 'People in this census, page {{page}} of {{pages}}',
+                  page,
+                  pages: lastPage,
+                })}
               </Table.Caption>
               <Table.Header>
                 <Table.Row bg='bg.subtle'>
                   {selectable && (
-                    <Table.ColumnHeader w='44px'>
+                    <Table.ColumnHeader w='1%'>
                       <Checkbox.Root
                         size='sm'
                         checked={pageSelected === rows.length ? true : pageSelected ? 'indeterminate' : false}
@@ -204,7 +214,7 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
                   <Table.ColumnHeader hideBelow='md'>
                     {t('census_detail.column.email', { defaultValue: 'Email' })}
                   </Table.ColumnHeader>
-                  <Table.ColumnHeader hideBelow='sm'>
+                  <Table.ColumnHeader hideBelow='sm' w='1%' whiteSpace='nowrap'>
                     {t('census_detail.column.member_number', { defaultValue: 'Member number' })}
                   </Table.ColumnHeader>
                 </Table.Row>
@@ -232,7 +242,7 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
                         </Table.Cell>
                       )}
                       {/* ph-no-capture: member data is never recorded in session replays */}
-                      <Table.Cell className='ph-no-capture' maxW='0' w='40%'>
+                      <Table.Cell className='ph-no-capture' maxW='0' w={{ md: '40%' }}>
                         <Text fontSize='sm' truncate>
                           {name}
                         </Text>
@@ -245,7 +255,12 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
                           {member.email}
                         </Text>
                       </Table.Cell>
-                      <Table.Cell className='ph-no-capture' hideBelow='sm' fontVariantNumeric='tabular-nums'>
+                      <Table.Cell
+                        className='ph-no-capture'
+                        hideBelow='sm'
+                        fontVariantNumeric='tabular-nums'
+                        whiteSpace='nowrap'
+                      >
                         {member.memberNumber}
                       </Table.Cell>
                     </Table.Row>
