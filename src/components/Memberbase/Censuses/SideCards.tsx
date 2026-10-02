@@ -378,6 +378,11 @@ export const readOnlyText = (t: ReturnType<typeof useTranslation>['t'], reason: 
       return t('census_detail.read_only.follows_everyone', {
         defaultValue: 'This vote follows Everyone, so it changes with your members.',
       })
+    case 'draft_saved':
+      return t('census_detail.read_only.draft_saved', {
+        defaultValue:
+          'This draft still uses a saved census other votes share. Open it in the editor to give it a copy of its own you can change.',
+      })
     default:
       return t('census_detail.read_only.draft_selected', {
         defaultValue: 'To change who can vote, edit the draft.',

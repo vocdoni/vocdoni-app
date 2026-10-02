@@ -109,7 +109,7 @@ export const publishedUsers = (usedBy: AffectedVote[]) => usedBy.filter((vote) =
 export type CensusKind = 'saved' | 'everyone' | 'vote'
 
 /** Why people can't be added or removed here. */
-export type ReadOnlyReason = 'everyone' | 'ended' | 'follows_everyone' | 'draft_selected'
+export type ReadOnlyReason = 'everyone' | 'ended' | 'follows_everyone' | 'draft_selected' | 'draft_saved'
 
 /**
  * How people are added and removed:
@@ -200,6 +200,10 @@ export const resolveCensus = ({
   if (isEnded(state)) readOnly = 'ended'
   else if (legacy) edit = 'process'
   else if (source?.kind === 'everyone') readOnly = 'follows_everyone'
+  // A draft still on a shared saved census (from before drafts got their own copy, or not copied
+  // yet): editing its group would change the saved census for every vote using it. The editor
+  // gives the draft its own copy when it opens.
+  else if (source?.kind === 'saved') readOnly = 'draft_saved'
   else if (groupId) edit = 'group'
   else if (process?.published) edit = 'process'
   else readOnly = 'draft_selected'

@@ -322,6 +322,20 @@ describe('CensusDetail', () => {
     expect(screen.queryByRole('button', { name: 'Delete saved census' })).toBeNull()
   })
 
+  it('keeps a draft still on a shared saved census read-only, sending the admin to the editor', async () => {
+    state.process = vote('d1', 'Comitè', { groupId: 'quota', size: 30 }, 'UPCOMING', false)
+    state.drafts = [state.process]
+    renderDetail({ kind: 'vote', processId: 'd1' })
+
+    expect(await screen.findByText(/This draft still uses a saved census other votes share/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Open in editor' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('draftId=d1')
+    )
+    expect(screen.queryByRole('button', { name: 'Add people' })).toBeNull()
+    expect(screen.queryByRole('checkbox')).toBeNull()
+  })
+
   it('locks the census of a vote that has ended and counts its voters at close', async () => {
     state.meta = { vg_owned: { processId: 'p9', kind: 'copy', createdAt: past } }
     state.members.owned = [person(1), person(2)]

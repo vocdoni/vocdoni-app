@@ -73,7 +73,7 @@ const ReadOnlyNote = ({ census }: { census: ResolvedCensusState }) => {
       <Icon as={LuLock} mt={0.5} flexShrink={0} aria-hidden />
       <Text fontSize='sm'>
         {readOnlyText(t, census.readOnly)}{' '}
-        {census.readOnly === 'draft_selected' && census.process && (
+        {(census.readOnly === 'draft_selected' || census.readOnly === 'draft_saved') && census.process && (
           <Link asChild fontSize='sm'>
             <RouterLink
               to={{
@@ -81,7 +81,9 @@ const ReadOnlyNote = ({ census }: { census: ResolvedCensusState }) => {
                 search: createSearchParams({ draftId: census.process.id }).toString(),
               }}
             >
-              {t('census_detail.open_draft', { defaultValue: 'Open the draft' })}
+              {census.readOnly === 'draft_saved'
+                ? t('census_detail.open_in_editor', { defaultValue: 'Open in editor' })
+                : t('census_detail.open_draft', { defaultValue: 'Open the draft' })}
             </RouterLink>
           </Link>
         )}

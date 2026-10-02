@@ -142,7 +142,7 @@ describe('resolveCensus', () => {
     expect(census).toMatchObject({ edit: 'process', browse: 'lookup', groupId: undefined, sharedWith: [] })
   })
 
-  it('still edits a draft on a saved census through that census, naming the votes sharing it', () => {
+  it('keeps a draft on a saved census read-only, naming the votes sharing it', () => {
     const draft = vote('d1', { groupId: 'quota' }, 'UPCOMING', { published: false })
     const census = resolveCensus({
       ...base,
@@ -150,7 +150,7 @@ describe('resolveCensus', () => {
       process: draft,
       processes: [draft, vote('p2', { groupId: 'quota' }, 'RESULTS')],
     })
-    expect(census.edit).toBe('group')
+    expect(census).toMatchObject({ edit: 'none', readOnly: 'draft_saved', browse: 'group', groupId: 'quota' })
     expect(census.sharedWith.map((entry) => entry.id)).toEqual(['d1', 'p2'])
   })
 })
