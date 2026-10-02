@@ -54,6 +54,26 @@ describe('DeleteMembersDialog', () => {
     ).toBeInTheDocument()
   })
 
+  it('asks to type the number before deleting 100 people or more', async () => {
+    const user = userEvent.setup()
+    mocks.mutateAsync.mockResolvedValue(undefined)
+    const many = Array.from({ length: 120 }, (_, index) => ({ id: `m${index}`, name: `P${index}` }) as SelectedMember)
+    const { unmount } = render(<DeleteMembersDialog open onOpenChange={vi.fn()} members={many} scope='selection' />)
+
+    const confirm = screen.getByRole('button', { name: 'Delete 120' })
+    expect(confirm).toBeDisabled()
+    await user.type(screen.getByRole('textbox', { name: 'Type 120 to confirm' }), '120')
+    expect(confirm).toBeEnabled()
+    await user.click(confirm)
+    expect(mocks.mutateAsync).toHaveBeenCalledWith({ ids: many.map((member) => member.id) })
+    unmount()
+
+    // Fewer than 100: one click, as before
+    render(<DeleteMembersDialog open onOpenChange={vi.fn()} members={many.slice(0, 99)} scope='selection' />)
+    expect(screen.queryByRole('textbox', { name: /to confirm/ })).toBeNull()
+    expect(screen.getByRole('button', { name: 'Delete 99' })).toBeEnabled()
+  })
+
   it('says who blocked the delete and offers to delete the others', async () => {
     const user = userEvent.setup()
     const onDeleted = vi.fn()

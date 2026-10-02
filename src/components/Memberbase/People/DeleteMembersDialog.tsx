@@ -12,6 +12,38 @@ import type { SelectedMember } from './useSelection'
 /** How many votes the copy names before "and N more". */
 const NAMED_VOTES = 3
 
+/** From this many people, deleting asks to type the number first */
+export const TYPED_DELETE_THRESHOLD = 100
+
+/** "Type 1,742 to confirm", accepting the number with or without separators. */
+const TypeToConfirm = ({
+  count,
+  value,
+  onChange,
+}: {
+  count: number
+  value: string
+  onChange: (value: string) => void
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Field.Root>
+      <Field.Label fontSize='sm'>
+        {t('members.delete.type_count', { defaultValue: 'Type {{number}} to confirm', number: String(count) })}
+      </Field.Label>
+      <Input
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        inputMode='numeric'
+        autoComplete='off'
+        fontSize={{ base: 'md', md: 'sm' }}
+      />
+    </Field.Root>
+  )
+}
+
+const typedMatches = (typed: string, count: number) => count > 0 && typed.replace(/\D/g, '') === String(count)
+
 /**
  * "This also removes them from: Assemblea General 2026 (live) · Eleccions Junta 2025 (closed) and
  * any other census they're in."
@@ -91,9 +123,12 @@ export const DeleteMembersDialog = ({ open, onOpenChange, members, scope, onDele
   const deleteMembers = useDeleteMembers()
   const { votes } = useAffectedVotes()
   const [signedIds, setSignedIds] = useState<string[] | null>(null)
+  const [typed, setTyped] = useState('')
 
   useEffect(() => {
-    if (!open) setSignedIds(null)
+    if (open) return
+    setSignedIds(null)
+    setTyped('')
   }, [open])
 
   const signed = signedIds ? members.filter((member) => signedIds.includes(member.id)) : []
@@ -201,11 +236,13 @@ export const DeleteMembersDialog = ({ open, onOpenChange, members, scope, onDele
         count,
       })}
       loading={deleteMembers.isPending}
+      confirmDisabled={count >= TYPED_DELETE_THRESHOLD && !typedMatches(typed, count)}
       onConfirm={() => run(members)}
     >
       <Stack gap={2}>
         <AffectedVotesText votes={votes} />
         <CantUndo />
+        {count >= TYPED_DELETE_THRESHOLD && <TypeToConfirm count={count} value={typed} onChange={setTyped} />}
       </Stack>
     </ConfirmDialog>
   )
@@ -227,7 +264,7 @@ export const DeleteAllMembersDialog = ({ open, onOpenChange, total, onDeleted }:
   const { votes } = useAffectedVotes()
   const [typed, setTyped] = useState('')
   const [blocked, setBlocked] = useState<number | null>(null)
-  const matches = total > 0 && typed.replace(/\D/g, '') === String(total)
+  const matches = typedMatches(typed, total)
 
   useEffect(() => {
     if (open) return
@@ -313,18 +350,7 @@ export const DeleteAllMembersDialog = ({ open, onOpenChange, total, onDeleted }:
         </Text>
         <AffectedVotesText votes={votes} />
         <CantUndo />
-        <Field.Root>
-          <Field.Label fontSize='sm'>
-            {t('members.delete.type_count', { defaultValue: 'Type {{number}} to confirm', number: String(total) })}
-          </Field.Label>
-          <Input
-            value={typed}
-            onChange={(event) => setTyped(event.target.value)}
-            inputMode='numeric'
-            autoComplete='off'
-            fontSize={{ base: 'md', md: 'sm' }}
-          />
-        </Field.Root>
+        <TypeToConfirm count={total} value={typed} onChange={setTyped} />
       </Stack>
     </ConfirmDialog>
   )

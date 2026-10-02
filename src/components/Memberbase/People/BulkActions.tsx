@@ -1,33 +1,62 @@
 import { Box, Button, Flex, Icon, Stack, Tag, Text, Wrap, WrapItem } from '@chakra-ui/react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
 import { getElectionTitle } from '@vocdoni/react-components'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuUsers } from 'react-icons/lu'
-import { useNavigate } from 'react-router'
 import { useAuth } from '~components/Auth/useAuth'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
 import { useToast } from '~components/Toast'
+import { Banner } from '~components/ui/Banner'
 import { Sheet } from '~components/ui/Sheet'
-import { Routes } from '~routes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { useAddCensusParticipants } from '~src/queries/census'
-import { useAllGroups, useCreateGroup, useUpdateGroup } from '~src/queries/groups'
+import { type Group, useAllGroups, useCreateGroup, useDeleteGroup, useUpdateGroup } from '~src/queries/groups'
+import { QueryKeys } from '~src/queries/keys'
+import { getSignedMemberIds, isAbortError, useMemberIdCollector } from '~src/queries/members'
 import { paginatedElectionsQuery } from '~src/queries/organization'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { memberDisplayName } from './display'
 import type { SelectedMember } from './useSelection'
 
-type BulkSheetProps = {
+/** Ids per request when adding to or removing from a census: the backend does ~4 queries each */
+export const BULK_CHUNK_SIZE = 500
+
+/** How long "Saved as …" offers Undo */
+export const UNDO_DURATION = 8000
+
+/** How long to wait for a vote's on-chain voter limit to grow after adding people */
+const RESIZE_TIMEOUT = 5 * 60 * 1000
+
+export const chunk = <T,>(items: T[], size = BULK_CHUNK_SIZE): T[][] =>
+  Array.from({ length: Math.ceil(items.length / size) }, (_, index) => items.slice(index * size, (index + 1) * size))
+
+export type BulkSheetProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** Who the action applies to: the selection, or the one row whose menu opened it */
   members: SelectedMember[]
-  /** After the action went through (the selection clears only when it was the target) */
+  /** Everyone in the organization is selected, this many (`members` is then empty) */
+  everyone?: number
+  /** After the action went through */
   onDone?: () => void
+}
+
+/**
+ * The ids an action applies to: the given members', or, when everyone is selected, every member's,
+ * collected page by page (no endpoint lists ids alone).
+ */
+const useTargetIds = (members: SelectedMember[], everyone?: number) => {
+  const collector = useMemberIdCollector()
+  const { collect } = collector
+  const resolve = useCallback(async () => {
+    if (everyone === undefined) return members.map((member) => member.id)
+    return (await collect()).members.map((member) => member.id)
+  }, [members, everyone, collect])
+  return { resolve, collecting: collector.progress, abort: collector.abort }
 }
 
 /** Up to five names, then "+N more". */
@@ -59,46 +88,126 @@ const MemberChips = ({ members }: { members: SelectedMember[] }) => {
   )
 }
 
-export const CreateGroupSheet = ({ open, onOpenChange, members, onDone }: BulkSheetProps) => {
+/** Who an action is about: "Everyone in your members (1,742)", or the count and some names. */
+const TargetSummary = ({ members, everyone }: { members: SelectedMember[]; everyone?: number }) => {
+  const { t, i18n } = useTranslation()
+  const count = everyone ?? members.length
+  const formattedCount = count.toLocaleString(i18n.resolvedLanguage)
+
+  if (everyone !== undefined)
+    return (
+      <Text fontSize='sm' fontVariantNumeric='tabular-nums'>
+        {t('members.bulk.everyone', {
+          defaultValue: 'Everyone in your members ({{formattedCount}})',
+          formattedCount,
+        })}
+      </Text>
+    )
+
+  return (
+    <Box>
+      <Text fontSize='sm' mb={2} fontVariantNumeric='tabular-nums'>
+        {t('members.bulk.people', {
+          defaultValue_one: 'One person',
+          defaultValue_other: '{{formattedCount}} people',
+          count,
+          formattedCount,
+        })}
+      </Text>
+      <MemberChips members={members} />
+    </Box>
+  )
+}
+
+/** "Collecting 312 of 1,742…" while everyone's ids are gathered, or how far an action has got. */
+const ProgressNote = ({ progress }: { progress: { done: number; total: number; collecting: boolean } | null }) => {
+  const { t, i18n } = useTranslation()
+  if (!progress) return null
+  const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
+
+  return (
+    <Text fontSize='sm' color='fg.muted' fontVariantNumeric='tabular-nums' role='status'>
+      {progress.collecting
+        ? t('members.bulk.collecting', {
+            defaultValue: 'Collecting {{done}} of {{total}}…',
+            done: format(progress.done),
+            total: format(progress.total),
+          })
+        : t('members.bulk.progress', {
+            defaultValue: '{{done}} of {{total}} done…',
+            done: format(progress.done),
+            total: format(progress.total),
+          })}
+    </Text>
+  )
+}
+
+type SaveForm = { title: string; description: string }
+
+/** "Save as census": a saved census with these people, with an 8-second Undo. */
+export const SaveAsCensusSheet = ({ open, onOpenChange, members, everyone, onDone }: BulkSheetProps) => {
   const { t } = useTranslation()
   const toast = useToast()
-  const navigate = useNavigate()
   const createGroup = useCreateGroup()
-  const methods = useForm({ defaultValues: { title: '', description: '' } })
+  const deleteGroup = useDeleteGroup()
+  const methods = useForm<SaveForm>({ defaultValues: { title: '', description: '' } })
+  const count = everyone ?? members.length
 
   useEffect(() => {
     if (!open) methods.reset()
   }, [open, methods])
 
-  const onSubmit = (data: { title: string; description: string }) => {
-    createGroup.mutate(
-      { ...data, memberIDs: members.map((member) => member.id) },
-      {
-        onSuccess: () => {
-          toast({
-            title: t('members.people.toast.group_created', {
-              defaultValue: 'Group “{{title}}” created',
-              title: data.title,
-            }),
-            type: 'success',
-            duration: 3000,
-            isClosable: true,
-          })
-          onOpenChange(false)
-          onDone?.()
-          navigate(Routes.dashboard.memberbase.groups)
-        },
-        onError: (error: Error) => {
-          toast({
-            title: t('members.table.create_group_error', { defaultValue: 'Error creating group' }),
-            description: error.message,
-            type: 'error',
-            duration: 3000,
-            isClosable: true,
-          })
-        },
-      }
-    )
+  const undo = (id: string) =>
+    deleteGroup.mutate(id, {
+      onSuccess: () =>
+        toast({
+          title: t('members.save_census.undone', { defaultValue: 'Census removed' }),
+          type: 'info',
+          duration: 3000,
+          isClosable: true,
+        }),
+      onError: (error: Error) =>
+        toast({
+          title: t('members.save_census.undo_error', { defaultValue: "We couldn't remove the census" }),
+          description: error.message,
+          type: 'error',
+          duration: 5000,
+          isClosable: true,
+        }),
+    })
+
+  const onSubmit = async ({ title, description }: SaveForm) => {
+    const name = title.trim()
+    try {
+      const created = await createGroup.mutateAsync({
+        title: name,
+        description: description.trim(),
+        // Everyone: the server stores a snapshot of every id, so none has to be loaded here
+        ...(everyone !== undefined ? { includeAllMembers: true } : { memberIds: members.map((member) => member.id) }),
+        source: 'selection',
+        size: count,
+      })
+      const id = created?.id
+      toast({
+        title: t('members.save_census.saved', { defaultValue: 'Saved as “{{name}}”', name }),
+        type: 'success',
+        duration: UNDO_DURATION,
+        isClosable: true,
+        action: id
+          ? { label: t('members.save_census.undo', { defaultValue: 'Undo' }), onClick: () => undo(id) }
+          : undefined,
+      })
+      onOpenChange(false)
+      onDone?.()
+    } catch (error) {
+      toast({
+        title: t('members.save_census.error', { defaultValue: "We couldn't save the census" }),
+        description: error instanceof Error ? error.message : undefined,
+        type: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
+    }
   }
 
   return (
@@ -106,232 +215,395 @@ export const CreateGroupSheet = ({ open, onOpenChange, members, onDone }: BulkSh
       open={open}
       onOpenChange={onOpenChange}
       size='sm'
-      title={t('members.table.create_group_form_title', { defaultValue: 'Create New Group' })}
+      title={t('members.save_census.title', { defaultValue: 'Save as census' })}
       footer={
         <Flex justify='flex-end' gap={2} w='full'>
           <Button variant='outline' onClick={() => onOpenChange(false)}>
-            {t('members.table.cancel', { defaultValue: 'Cancel' })}
+            {t('members.bulk.cancel', { defaultValue: 'Cancel' })}
           </Button>
-          <Button type='submit' form='create-group-form' loading={createGroup.isPending} disabled={!members.length}>
-            {t('members.table.create_group', { defaultValue: 'Create group' })}
+          <Button type='submit' form='save-census-form' loading={createGroup.isPending} disabled={!count}>
+            {t('members.save_census.submit', { defaultValue: 'Save census' })}
           </Button>
         </Flex>
       }
     >
       <FormProvider {...methods}>
-        <Stack as='form' id='create-group-form' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
+        <Stack as='form' id='save-census-form' gap={4} onSubmit={methods.handleSubmit(onSubmit)}>
           <Text fontSize='sm' color='fg.muted'>
-            {t('members.table.create_group_form_description', {
-              defaultValue:
-                'Create a new group from selected members. This will organize them for future voting processes.',
+            {t('members.save_census.description', {
+              defaultValue: 'Keep these people as a list you can use in a vote. They stay in your members.',
             })}
           </Text>
           <InputBasic
             formValue='title'
-            label={t('members.table.group_name', { defaultValue: 'Group name' })}
+            label={t('members.save_census.name', { defaultValue: 'Name' })}
             required
+            autoComplete='off'
+            fontSize={{ base: 'md', md: 'sm' }}
           />
           <InputBasic
             formValue='description'
-            label={t('members.table.group_description', { defaultValue: 'Description (Optional)' })}
-            placeholder={t('members.table.group_description_placeholder', {
-              defaultValue: 'Enter a brief description of the group',
-            })}
+            label={t('members.save_census.description_label', { defaultValue: 'Description (optional)' })}
+            autoComplete='off'
+            fontSize={{ base: 'md', md: 'sm' }}
           />
-          <Box>
-            <Text fontSize='sm' mb={2}>
-              {t('members.table.group_members_count', {
-                defaultValue: '{{count}} members selected',
-                count: members.length,
-              })}
-            </Text>
-            <MemberChips members={members} />
-          </Box>
+          <TargetSummary members={members} everyone={everyone} />
         </Stack>
       </FormProvider>
     </Sheet>
   )
 }
 
-export const AddToGroupSheet = ({ open, onOpenChange, members, onDone }: BulkSheetProps) => {
-  const { t } = useTranslation()
+type GroupSheetProps = BulkSheetProps & {
+  /** Adds the people to the saved census, or removes them from it */
+  mode: 'add' | 'remove'
+}
+
+/** Add to, or remove from, a saved census: any of them, never "Everyone". */
+const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode }: GroupSheetProps) => {
+  const { t, i18n } = useTranslation()
   const toast = useToast()
-  // Every saved census, not just the first page; "Everyone" can't be added to
+  // Every saved census, not just the first page; "Everyone" can't be changed by hand
   const { data: allGroups, isLoading } = useAllGroups({ enabled: open })
   const groups = (allGroups ?? []).filter((group) => !group.isAutoGroup)
-  const [selectedGroup, setSelectedGroup] = useState<{ id: string; title: string } | null>(null)
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
   const updateGroup = useUpdateGroup()
+  const target = useTargetIds(members, everyone)
+  const count = everyone ?? members.length
+  const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
+  const busy = progress !== null
 
   const close = () => {
+    target.abort()
     setSelectedGroup(null)
     onOpenChange(false)
   }
 
-  const submit = () => {
+  const submit = async () => {
     if (!selectedGroup) return
-    updateGroup.mutate(
-      { groupId: selectedGroup.id, body: { addMembers: members.map((member) => member.id) } },
-      {
-        onSuccess: () => {
-          toast({
-            title: t('members.people.toast.added_to_group', {
-              defaultValue: 'Added to “{{group}}”',
-              group: selectedGroup.title,
-            }),
-            type: 'success',
-            duration: 3000,
-            isClosable: true,
-          })
-          close()
-          onDone?.()
-        },
+    setProgress({ done: 0, total: count })
+    let done = 0
+    try {
+      const ids = await target.resolve()
+      for (const part of chunk(ids)) {
+        await updateGroup.mutateAsync({
+          groupId: selectedGroup.id,
+          body: mode === 'add' ? { addMembers: part } : { removeMembers: part },
+        })
+        done += part.length
+        setProgress({ done, total: ids.length })
       }
-    )
+      toast({
+        title:
+          mode === 'add'
+            ? t('members.saved_census.added', { defaultValue: 'Added to “{{group}}”', group: selectedGroup.title })
+            : t('members.saved_census.removed', {
+                defaultValue: 'Removed from “{{group}}”',
+                group: selectedGroup.title,
+              }),
+        type: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+      close()
+      onDone?.()
+    } catch (error) {
+      if (isAbortError(error)) return
+      const signed = getSignedMemberIds(error)
+      toast({
+        title: done
+          ? t('members.saved_census.partial', {
+              defaultValue: 'Stopped after {{done}} of {{total}}',
+              done: format(done),
+              total: format(count),
+            })
+          : t('members.saved_census.error', { defaultValue: 'Nothing was changed' }),
+        description: signed
+          ? t('members.saved_census.signed', {
+              defaultValue: 'Some of them have already started voting in a live vote that uses this census.',
+            })
+          : error instanceof Error
+            ? error.message
+            : undefined,
+        type: 'error',
+        duration: 6000,
+        isClosable: true,
+      })
+    } finally {
+      setProgress(null)
+    }
   }
+
+  const add = mode === 'add'
 
   return (
     <Sheet
       open={open}
-      onOpenChange={(next) => (next ? onOpenChange(true) : close())}
+      onOpenChange={(next) => (next ? onOpenChange(true) : !busy && close())}
       size='sm'
-      title={t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
+      title={
+        add
+          ? t('members.saved_census.add_title', { defaultValue: 'Add to a saved census' })
+          : t('members.saved_census.remove_title', { defaultValue: 'Remove from a saved census' })
+      }
+      footer={
+        <Flex justify='flex-end' gap={2} w='full'>
+          <Button variant='outline' onClick={close} disabled={busy && !target.collecting}>
+            {t('members.bulk.cancel', { defaultValue: 'Cancel' })}
+          </Button>
+          <Button
+            onClick={submit}
+            loading={busy}
+            disabled={!selectedGroup || !count}
+            colorPalette={add ? undefined : 'red'}
+          >
+            {add
+              ? t('members.saved_census.add_submit', {
+                  defaultValue_one: 'Add one person',
+                  defaultValue_other: 'Add {{formattedCount}} people',
+                  count,
+                  formattedCount: format(count),
+                })
+              : t('members.saved_census.remove_submit', {
+                  defaultValue_one: 'Remove one person',
+                  defaultValue_other: 'Remove {{formattedCount}} people',
+                  count,
+                  formattedCount: format(count),
+                })}
+          </Button>
+        </Flex>
+      }
     >
       <Stack gap={4}>
-        <Text fontSize='sm' color='fg.muted'>
-          {t('members.table.add_to_group_description', { defaultValue: 'Select a group to add the members to.' })}
-        </Text>
         <Select
-          placeholder={t('members.table.select_group', { defaultValue: 'Select group' })}
+          aria-label={t('members.saved_census.pick', { defaultValue: 'Saved census' })}
+          placeholder={t('members.saved_census.pick_placeholder', { defaultValue: 'Choose a saved census' })}
           options={groups}
           isLoading={isLoading}
-          getOptionLabel={(option) => option.title}
-          getOptionValue={(option) => option.id}
-          formatOptionLabel={(option) => (
+          noOptionsMessage={() => t('members.saved_census.none', { defaultValue: 'No saved censuses yet' })}
+          getOptionLabel={(option: Group) => option.title}
+          getOptionValue={(option: Group) => option.id}
+          formatOptionLabel={(option: Group) => (
             <Flex align='center' gap={2}>
               {option.title}
-              <Flex align='center' gap={1} fontSize='sm' color='fg.muted'>
-                <Icon as={LuUsers} />
+              <Flex align='center' gap={1} fontSize='sm' color='fg.muted' fontVariantNumeric='tabular-nums'>
+                <Icon as={LuUsers} aria-hidden />
                 {option.membersCount}
               </Flex>
             </Flex>
           )}
           value={selectedGroup}
-          onChange={(option) => setSelectedGroup(option)}
+          onChange={(option: Group | null) => setSelectedGroup(option)}
+          isDisabled={busy}
         />
-        {selectedGroup && (
+        {!add && (
           <Text fontSize='sm' color='fg.muted'>
-            {t('members.table.add_to_group_confirmation', {
-              defaultValue: 'You will add {{count}} members to the "{{group}}" group.',
-              count: members.length,
-              group: selectedGroup.title,
-            })}
+            {t('members.saved_census.stay', { defaultValue: 'They stay in your members.' })}
           </Text>
         )}
-        <Button onClick={submit} loading={updateGroup.isPending} disabled={!selectedGroup || !members.length}>
-          {t('members.table.add_to_group_button', { defaultValue: 'Add {{count}} member', count: members.length })}
-        </Button>
+        {!!selectedGroup?.censusIds?.length && (
+          <Banner status='warning'>
+            {add
+              ? t('members.saved_census.used_add', {
+                  defaultValue: 'If a vote uses this saved census, they’re added to that vote’s census too.',
+                })
+              : t('members.saved_census.used_remove', {
+                  defaultValue: 'If a vote uses this saved census, they’re removed from that vote’s census too.',
+                })}
+          </Banner>
+        )}
+        <TargetSummary members={members} everyone={everyone} />
+        <ProgressNote
+          progress={
+            target.collecting
+              ? { done: target.collecting.collected, total: target.collecting.total, collecting: true }
+              : progress && progress.done
+                ? { ...progress, collecting: false }
+                : null
+          }
+        />
       </Stack>
     </Sheet>
   )
 }
 
+export const AddToGroupSheet = (props: BulkSheetProps) => <SavedCensusSheet {...props} mode='add' />
+
+export const RemoveFromGroupSheet = (props: BulkSheetProps) => <SavedCensusSheet {...props} mode='remove' />
+
 const ACTIVE_PROCESS_STATUSES: QuestionStatus[] = ['ONGOING', 'UPCOMING', 'PAUSED']
 
-export const AddToCensusSheet = ({ open, onOpenChange, members, onDone }: BulkSheetProps) => {
-  const { t } = useTranslation()
+type VoteOption = {
+  id: string
+  title: string
+  /** The vote's census is "Everyone": every member is in it already */
+  followsEveryone: boolean
+}
+
+/**
+ * "Add to a vote": adds the people to a live or scheduled vote's census, 500 at a time, waiting
+ * for the vote's voter limit to grow after each batch.
+ */
+export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }: BulkSheetProps) => {
+  const { t, i18n } = useTranslation()
   const toast = useToast()
   const { client } = useApiClient()
   const { currentAddress } = useAuth()
-  const [selectedProcess, setSelectedProcess] = useState<{ id: string; title: string } | null>(null)
-  const addCensusParticipants = useAddCensusParticipants()
+  const queryClient = useQueryClient()
+  const [selectedVote, setSelectedVote] = useState<VoteOption | null>(null)
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
+  const target = useTargetIds(members, everyone)
+  const { data: groups } = useAllGroups({ enabled: open })
+  const everyoneGroupId = groups?.find((group) => group.isAutoGroup)?.id
+  const count = everyone ?? members.length
+  const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
+  const busy = progress !== null
 
   const electionsQuery = paginatedElectionsQuery(currentAddress, client, { limit: 100 })
   const { data: elections, isLoading } = useQuery({ ...electionsQuery, enabled: electionsQuery.enabled && open })
 
-  const processes = (elections?.processes ?? [])
+  const votes: VoteOption[] = (elections?.processes ?? [])
     .filter((election) => ACTIVE_PROCESS_STATUSES.includes(computeProcessStatus(election.questions)))
-    .map((election) => ({ id: election.id, title: getElectionTitle(election) || election.id }))
+    .map((election) => ({
+      id: election.id,
+      title: getElectionTitle(election) || election.id,
+      followsEveryone: !!everyoneGroupId && election.census?.groupId === everyoneGroupId,
+    }))
 
   const close = () => {
-    setSelectedProcess(null)
+    target.abort()
+    setSelectedVote(null)
     onOpenChange(false)
   }
 
-  const submit = () => {
-    if (!selectedProcess) return
-    addCensusParticipants.mutate(
-      { processId: selectedProcess.id, memberIds: members.map((member) => member.id) },
-      {
-        onSuccess: (response) => {
-          toast({
-            title: t('members.table.add_to_census_success', {
-              defaultValue: '{{count}} member added to the census',
-              defaultValue_other: '{{count}} members added to the census',
-              count: response.added,
-            }),
-            description: response.errors?.length
-              ? t('members.table.add_to_census_partial', { defaultValue: 'Some members could not be added.' })
-              : undefined,
-            type: 'success',
-            duration: 3000,
-            isClosable: true,
-          })
-          close()
-          onDone?.()
-        },
-        onError: (error: Error) => {
-          toast({
-            title: t('members.table.add_to_census_error', { defaultValue: 'Error adding members to the census' }),
-            description: error.message,
-            type: 'error',
-            duration: 3000,
-            isClosable: true,
-          })
-        },
+  const submit = async () => {
+    if (!selectedVote || selectedVote.followsEveryone) return
+    setProgress({ done: 0, total: count })
+    let added = 0
+    let skipped = 0
+    try {
+      const ids = await target.resolve()
+      let done = 0
+      for (const part of chunk(ids)) {
+        const response = await client.elections.addCensusMembers(selectedVote.id, part)
+        // Members are in the census already; raising the vote's voter limit is a job
+        if (response.jobId) await client.jobs.waitFor(response.jobId, { timeoutMs: RESIZE_TIMEOUT })
+        added += response.added
+        skipped += response.errors?.length ?? 0
+        done += part.length
+        setProgress({ done, total: ids.length })
       }
-    )
+      trackAnalyticsEvent({ name: AnalyticsEvents.VotersAdded, props: { count: added, surface: 'members' } })
+      queryClient.invalidateQueries({ queryKey: QueryKeys.election.process(selectedVote.id) })
+      toast({
+        title: t('members.add_to_vote.success', {
+          defaultValue_one: 'One person added to “{{vote}}”',
+          defaultValue_other: '{{formattedCount}} people added to “{{vote}}”',
+          count: added,
+          formattedCount: format(added),
+          vote: selectedVote.title,
+        }),
+        description: skipped
+          ? t('members.add_to_vote.partial', { defaultValue: 'Some were already in this vote.' })
+          : undefined,
+        type: 'success',
+        duration: 4000,
+        isClosable: true,
+      })
+      close()
+      onDone?.()
+    } catch (error) {
+      if (isAbortError(error)) return
+      toast({
+        title: added
+          ? t('members.add_to_vote.stopped', {
+              defaultValue: 'Stopped after adding {{added}}',
+              added: format(added),
+            })
+          : t('members.add_to_vote.error', { defaultValue: "They couldn't be added" }),
+        description: error instanceof Error ? error.message : undefined,
+        type: 'error',
+        duration: 6000,
+        isClosable: true,
+      })
+    } finally {
+      setProgress(null)
+    }
   }
 
   return (
     <Sheet
       open={open}
-      onOpenChange={(next) => (next ? onOpenChange(true) : close())}
+      onOpenChange={(next) => (next ? onOpenChange(true) : !busy && close())}
       size='sm'
-      title={t('members.table.add_to_census', { defaultValue: 'Add to census' })}
+      title={t('members.add_to_vote.title', { defaultValue: 'Add to a vote' })}
+      footer={
+        <Flex justify='flex-end' gap={2} w='full'>
+          <Button variant='outline' onClick={close} disabled={busy && !target.collecting}>
+            {t('members.bulk.cancel', { defaultValue: 'Cancel' })}
+          </Button>
+          <Button onClick={submit} loading={busy} disabled={!selectedVote || selectedVote.followsEveryone || !count}>
+            {t('members.add_to_vote.submit', {
+              defaultValue_one: 'Add one person',
+              defaultValue_other: 'Add {{formattedCount}} people',
+              count,
+              formattedCount: format(count),
+            })}
+          </Button>
+        </Flex>
+      }
     >
       <Stack gap={4}>
         <Text fontSize='sm' color='fg.muted'>
-          {t('members.table.add_to_census_description', {
-            defaultValue: 'Select an active voting process to add the members to its census.',
+          {t('members.add_to_vote.description', {
+            defaultValue: 'Live and scheduled votes. They can vote as soon as they’re added.',
           })}
         </Text>
-        <Select
-          placeholder={t('members.table.select_process', { defaultValue: 'Select process' })}
-          options={processes}
-          isLoading={isLoading}
-          noOptionsMessage={() => t('members.table.no_active_processes', { defaultValue: 'No active processes found' })}
-          getOptionLabel={(option) => option.title}
-          getOptionValue={(option) => option.id}
-          value={selectedProcess}
-          onChange={(option) => setSelectedProcess(option)}
-        />
-        {selectedProcess && (
-          <Text fontSize='sm' color='fg.muted'>
-            {t('members.table.add_to_census_confirmation', {
-              defaultValue: 'You will add {{count}} member to the "{{process}}" process census.',
-              defaultValue_other: 'You will add {{count}} members to the "{{process}}" process census.',
-              count: members.length,
-              process: selectedProcess.title,
+        {everyone !== undefined && (
+          <Banner status='info'>
+            {t('members.add_to_vote.everyone_hint', {
+              defaultValue:
+                'A vote whose census is “Everyone” already includes all your members. For any other vote, they’re added in batches.',
             })}
-          </Text>
+          </Banner>
         )}
-        <Button
-          onClick={submit}
-          loading={addCensusParticipants.isPending}
-          disabled={!selectedProcess || !members.length}
-        >
-          {t('members.table.add_to_census_button', { defaultValue: 'Add {{count}} member', count: members.length })}
-        </Button>
+        <Select
+          aria-label={t('members.add_to_vote.pick', { defaultValue: 'Vote' })}
+          placeholder={t('members.add_to_vote.pick_placeholder', { defaultValue: 'Choose a vote' })}
+          options={votes}
+          isLoading={isLoading}
+          noOptionsMessage={() => t('members.add_to_vote.none', { defaultValue: 'No live or scheduled votes' })}
+          getOptionLabel={(option: VoteOption) =>
+            option.followsEveryone
+              ? t('members.add_to_vote.option_everyone', {
+                  defaultValue: '{{title}} (everyone)',
+                  title: option.title,
+                })
+              : option.title
+          }
+          getOptionValue={(option: VoteOption) => option.id}
+          value={selectedVote}
+          onChange={(option: VoteOption | null) => setSelectedVote(option)}
+          isDisabled={busy}
+        />
+        {selectedVote?.followsEveryone && (
+          <Banner status='info'>
+            {t('members.add_to_vote.follows_everyone', {
+              defaultValue: 'This vote’s census is “Everyone”, so they’re all in it already.',
+            })}
+          </Banner>
+        )}
+        <TargetSummary members={members} everyone={everyone} />
+        <ProgressNote
+          progress={
+            target.collecting
+              ? { done: target.collecting.collected, total: target.collecting.total, collecting: true }
+              : progress && progress.done
+                ? { ...progress, collecting: false }
+                : null
+          }
+        />
       </Stack>
     </Sheet>
   )

@@ -1,8 +1,7 @@
-import { Box, Button, Flex, Icon, Skeleton, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuListPlus, LuTrash2, LuUserPlus, LuUsers } from 'react-icons/lu'
 import { Banner } from '~components/ui/Banner'
 import { SelectionBar } from '~components/ui/SelectionBar'
 import { useAffectedVotes } from '~src/queries/affectedVotes'
@@ -18,7 +17,7 @@ import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useMemberFields } from '../fields'
 import { ImportProgress } from '../Members/Import'
 import { useMembersPage } from '../MembersPageContext'
-import { AddToCensusSheet, AddToGroupSheet, CreateGroupSheet } from './BulkActions'
+import { AddToGroupSheet, AddToVoteSheet, RemoveFromGroupSheet, SaveAsCensusSheet } from './BulkActions'
 import { ContextBar, PageSelectionMessage, ReadinessMessage, Separator } from './ContextBar'
 import { DeleteAllMembersDialog, DeleteMembersDialog } from './DeleteMembersDialog'
 import { findMemberLink, isTypingTarget } from './display'
@@ -30,6 +29,7 @@ import { PeopleCards } from './PeopleCards'
 import { PeopleTable } from './PeopleTable'
 import { PERSON_DRAWER_WIDTH, PersonSheet } from './PersonSheet'
 import { RowMenu } from './RowMenu'
+import { type SelectionAction, SelectionActions } from './SelectionActions'
 import { EveryoneSelectedMessage, SelectAllMessage, SelectAllOffer, useSelectAllMatching } from './SelectAll'
 import { Toolbar } from './Toolbar'
 import { ALWAYS_VISIBLE, useColumnVisibility } from './useColumnVisibility'
@@ -38,12 +38,12 @@ import { type SelectedMember, useSelection } from './useSelection'
 
 export const SKELETON_DELAY_MS = 300
 
-type BulkAction = 'create_group' | 'add_to_group' | 'add_to_census' | 'delete'
-
 type ActionTarget = {
-  action: BulkAction
+  action: SelectionAction
   members: SelectedMember[]
-  /** Acting on the selection clears it once done; a row's menu leaves it alone */
+  /** Everyone in the organization is selected, this many (`members` is then empty) */
+  everyone?: number
+  /** Deleting the selection clears it; a row's menu leaves it alone */
   fromSelection: boolean
 }
 
@@ -209,11 +209,24 @@ export const People = () => {
     [members, url, selection, selectMode]
   )
 
-  const openAction = (action: BulkAction, targets: SelectedMember[], fromSelection: boolean) =>
+  const openAction = (action: SelectionAction, targets: SelectedMember[], fromSelection: boolean) =>
     setTarget({ action, members: targets, fromSelection })
   const closeAction = () => setTarget(null)
-  const actionDone = () => {
-    if (target?.fromSelection) selection.clear()
+
+  /** An action from the SelectionBar, on everyone selected */
+  const actOnSelection = (action: SelectionAction) => {
+    trackAnalyticsEvent({ name: AnalyticsEvents.MembersBulkAction, props: { action, count: selection.count } })
+    // Deleting everyone is the typed "Delete all members" flow
+    if (action === 'delete' && selection.scope === 'all') {
+      setDeleteAllOpen(true)
+      return
+    }
+    setTarget({
+      action,
+      members: selection.members,
+      everyone: selection.scope === 'all' ? selection.count : undefined,
+      fromSelection: true,
+    })
   }
 
   const renderRowMenu = (member: SelectedMember, name: string) => (
@@ -484,27 +497,7 @@ export const People = () => {
           // The person drawer sits beside the list from xl: keep the bar clear of it
           rightInset={url.memberId ? PERSON_DRAWER_WIDTH : undefined}
         >
-          <Button size='sm' variant='outline' onClick={() => openAction('create_group', selection.members, true)}>
-            <Icon as={LuUsers} />
-            {t('members.table.create_group', { defaultValue: 'Create group' })}
-          </Button>
-          <Button size='sm' variant='outline' onClick={() => openAction('add_to_group', selection.members, true)}>
-            <Icon as={LuUserPlus} />
-            {t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
-          </Button>
-          <Button size='sm' variant='outline' onClick={() => openAction('add_to_census', selection.members, true)}>
-            <Icon as={LuListPlus} />
-            {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
-          </Button>
-          <Button
-            size='sm'
-            variant='outline'
-            colorPalette='red'
-            onClick={() => openAction('delete', selection.members, true)}
-          >
-            <Icon as={LuTrash2} />
-            {t('members.table.bulk_delete', { defaultValue: 'Delete' })}
-          </Button>
+          <SelectionActions onAction={actOnSelection} />
         </SelectionBar>
       )}
 
@@ -517,23 +510,29 @@ export const People = () => {
         onStep={step}
         inLiveVote={hasLive}
       />
-      <CreateGroupSheet
-        open={target?.action === 'create_group'}
+      <SaveAsCensusSheet
+        open={target?.action === 'save_census'}
         onOpenChange={(open) => !open && closeAction()}
         members={target?.members ?? []}
-        onDone={actionDone}
+        everyone={target?.everyone}
+      />
+      <AddToVoteSheet
+        open={target?.action === 'add_to_vote'}
+        onOpenChange={(open) => !open && closeAction()}
+        members={target?.members ?? []}
+        everyone={target?.everyone}
       />
       <AddToGroupSheet
-        open={target?.action === 'add_to_group'}
+        open={target?.action === 'add_to_saved_census'}
         onOpenChange={(open) => !open && closeAction()}
         members={target?.members ?? []}
-        onDone={actionDone}
+        everyone={target?.everyone}
       />
-      <AddToCensusSheet
-        open={target?.action === 'add_to_census'}
+      <RemoveFromGroupSheet
+        open={target?.action === 'remove_from_saved_census'}
         onOpenChange={(open) => !open && closeAction()}
         members={target?.members ?? []}
-        onDone={actionDone}
+        everyone={target?.everyone}
       />
       <DeleteMembersDialog
         open={target?.action === 'delete'}
@@ -541,7 +540,9 @@ export const People = () => {
         members={target?.members ?? []}
         scope={target?.fromSelection ? 'selection' : 'single'}
         onDeleted={(ids) => {
-          actionDone()
+          // A done delete of the selection clears it; one person's leaves the rest selected
+          if (target?.fromSelection) selection.clear()
+          else selection.setMany(target?.members ?? [], false)
           if (url.memberId && ids.includes(url.memberId)) url.closeMember()
         }}
       />

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { LuEllipsis } from 'react-icons/lu'
 import type { SelectedMember } from './useSelection'
 
-export type RowAction = 'open' | 'add_to_group' | 'add_to_census' | 'delete'
+export type RowAction = 'open' | 'add_to_saved_census' | 'add_to_vote' | 'delete'
 
 type RowMenuProps = {
   member: SelectedMember
@@ -33,11 +33,11 @@ export const RowMenu = ({ member, name, onAction }: RowMenuProps) => {
             <Menu.Item value='open' onSelect={() => onAction('open', member)}>
               {t('members.people.open', { defaultValue: 'Open' })}
             </Menu.Item>
-            <Menu.Item value='add_to_group' onSelect={() => onAction('add_to_group', member)}>
-              {t('members.table.add_to_group', { defaultValue: 'Add to Group' })}
+            <Menu.Item value='add_to_vote' onSelect={() => onAction('add_to_vote', member)}>
+              {t('members.bulk.add_to_vote', { defaultValue: 'Add to a vote' })}
             </Menu.Item>
-            <Menu.Item value='add_to_census' onSelect={() => onAction('add_to_census', member)}>
-              {t('members.table.add_to_census', { defaultValue: 'Add to census' })}
+            <Menu.Item value='add_to_saved_census' onSelect={() => onAction('add_to_saved_census', member)}>
+              {t('members.bulk.add_to_saved_census', { defaultValue: 'Add to a saved census' })}
             </Menu.Item>
             <Menu.Separator />
             <Menu.Item value='delete' color='fg.error' onSelect={() => onAction('delete', member)}>

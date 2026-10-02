@@ -37,7 +37,16 @@ export type GroupMembersQueryData = GroupMembers
 export type GroupData = {
   title: string
   description?: string
-  memberIDs: string[]
+  memberIds?: string[]
+  /** Stores a snapshot of every member's id instead of `memberIds` */
+  includeAllMembers?: boolean
+}
+
+export type CreateGroupVariables = GroupData & {
+  /** For analytics only, never sent: where the group was made */
+  source?: 'selection'
+  /** For analytics only: how many people it holds (with `includeAllMembers` the ids aren't sent) */
+  size?: number
 }
 
 export type UpdateGroupData = {
@@ -106,16 +115,16 @@ export const useCreateGroup = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (body: GroupData) => {
-      await bearedFetch(ApiEndpoints.OrganizationGroups.replace('{address}', organization.address), {
+    /** Resolves with the new group's id */
+    mutationFn: async ({ source: _source, size: _size, ...body }: CreateGroupVariables) =>
+      await bearedFetch<{ id?: string }>(ApiEndpoints.OrganizationGroups.replace('{address}', organization.address), {
         method: 'POST',
         body,
-      })
-    },
-    onSuccess: (_data, body) => {
+      }),
+    onSuccess: (_data, { source, size, memberIds }) => {
       trackAnalyticsEvent({
         name: AnalyticsEvents.MemberGroupCreated,
-        props: { group_size: body?.memberIDs?.length ?? 0 },
+        props: { group_size: size ?? memberIds?.length ?? 0, ...(source ? { source } : {}) },
       })
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.groups(organization.address),

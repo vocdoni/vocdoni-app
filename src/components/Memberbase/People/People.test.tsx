@@ -266,9 +266,9 @@ describe('People', () => {
     expect(within(table).getByRole('checkbox', { name: 'Select everyone on this page' })).toBePartiallyChecked()
 
     await user.click(within(table).getByRole('button', { name: 'Actions for Jordi Serra Mas' }))
-    await user.click(await screen.findByRole('menuitem', { name: 'Add to Group' }))
+    await user.click(await screen.findByRole('menuitem', { name: 'Add to a saved census' }))
     expect(barCount('1 selected')).toBeInTheDocument()
-    expect(await screen.findByRole('button', { name: 'Add 1 member' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Add one person' })).toBeInTheDocument()
   })
 
   it('selects the whole page from the header checkbox', async () => {
@@ -415,6 +415,35 @@ describe('People', () => {
     expect(await screen.findByRole('button', { name: 'Select all 300 matching' })).toBeInTheDocument()
     expect(barCount('2 selected')).toBeInTheDocument()
     expect(memberPageRequests().some((url) => url.includes('page=3'))).toBe(false)
+  })
+
+  it('acts on the selection from the bar, with Delete only under More', async () => {
+    const user = userEvent.setup()
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    const bar = barCount('2 selected').parentElement!.parentElement!
+    expect(within(bar).getByRole('button', { name: 'Save as census' })).toBeInTheDocument()
+    expect(within(bar).queryByRole('button', { name: /Delete/ })).toBeNull()
+
+    await user.click(within(bar).getByRole('button', { name: 'More' }))
+    await user.click(await screen.findByRole('menuitem', { name: 'Delete…' }))
+    expect(await screen.findByText('Delete 2 people from members?')).toBeInTheDocument()
+  })
+
+  it('deletes everyone through the typed flow when everyone is selected', async () => {
+    const user = userEvent.setup()
+    state.total = 1742
+    state.count = 1742
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 1,742' }))
+    await user.click(screen.getByRole('button', { name: 'More' }))
+    await user.click(await screen.findByRole('menuitem', { name: 'Delete…' }))
+
+    expect(await screen.findByText('Delete all 1,742 members?')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Type 1742 to confirm' })).toBeInTheDocument()
   })
 
   it('toggles a row with Space on its name', async () => {
