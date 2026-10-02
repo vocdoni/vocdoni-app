@@ -252,6 +252,7 @@
       "undone_detail": "They were added back.",
       "undone_vote": "{{before}} → {{after}} voters"
     },
+    "remove_button": "Remove…",
     "search": "Search by name, email or number",
     "select_hint": "Select people to remove them from this census.",
     "select_page": "Select everyone on this page",

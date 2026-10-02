@@ -266,6 +266,7 @@
       "undone_detail": "Sono stati aggiunti di nuovo.",
       "undone_vote": "{{before}} → {{after}} votanti"
     },
+    "remove_button": "Togli…",
     "search": "Cerca per nome, email o numero",
     "select_hint": "Seleziona le persone da togliere da questo censimento.",
     "select_page": "Seleziona tutti in questa pagina",

@@ -252,6 +252,7 @@
       "undone_detail": "Sie wurden wieder hinzugefügt.",
       "undone_vote": "{{before}} → {{after}} Stimmberechtigte"
     },
+    "remove_button": "Entfernen…",
     "search": "Nach Name, E-Mail oder Nummer suchen",
     "select_hint": "Wähle Personen aus, um sie von dieser Teilnehmerliste zu entfernen.",
     "select_page": "Alle auf dieser Seite auswählen",

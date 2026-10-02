@@ -266,6 +266,7 @@
       "undone_detail": "Ils ont été rajoutés.",
       "undone_vote": "{{before}} → {{after}} électeurs"
     },
+    "remove_button": "Retirer…",
     "search": "Rechercher par nom, e-mail ou numéro",
     "select_hint": "Sélectionnez des personnes pour les retirer de cette liste électorale.",
     "select_page": "Sélectionner tout le monde sur cette page",

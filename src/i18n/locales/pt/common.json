@@ -266,6 +266,7 @@
       "undone_detail": "Foram adicionados novamente.",
       "undone_vote": "{{before}} → {{after}} votantes"
     },
+    "remove_button": "Remover…",
     "search": "Pesquisar por nome, email ou número",
     "select_hint": "Seleciona pessoas para as remover desta lista de participantes.",
     "select_page": "Selecionar todos nesta página",

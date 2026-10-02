@@ -252,6 +252,7 @@
       "undone_detail": "Berriro gehitu dira.",
       "undone_vote": "{{before}} → {{after}} botogile"
     },
+    "remove_button": "Kendu…",
     "search": "Bilatu izenaren, posta elektronikoaren edo zenbakiaren arabera",
     "select_hint": "Hautatu pertsonak errolde honetatik kentzeko.",
     "select_page": "Hautatu orri honetako guztiak",

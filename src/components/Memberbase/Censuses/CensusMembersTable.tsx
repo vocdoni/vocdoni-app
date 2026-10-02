@@ -147,7 +147,7 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
                   onClick={() => onRemove?.([...selected.values()])}
                 >
                   <Icon as={LuUserMinus} />
-                  {t('census_detail.remove', { defaultValue: 'Remove…' })}
+                  {t('census_detail.remove_button', { defaultValue: 'Remove…' })}
                 </Button>
               </Flex>
             </>

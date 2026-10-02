@@ -266,6 +266,7 @@
       "undone_detail": "S'han tornat a afegir.",
       "undone_vote": "{{before}} → {{after}} votants"
     },
+    "remove_button": "Treu…",
     "search": "Cerca per nom, correu o número",
     "select_hint": "Selecciona persones per treure-les d'aquest cens.",
     "select_page": "Selecciona tothom d'aquesta pàgina",
