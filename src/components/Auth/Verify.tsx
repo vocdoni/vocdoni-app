@@ -40,7 +40,12 @@ const VerifyForm = ({
   const { t } = useTranslation()
   const [code, setCode] = useState<string[]>(() => Array.from({ length: 6 }, (_, i) => initialCode[i] ?? ''))
   const {
-    mailVerify: { mutateAsync: verifyAsync, isPending: isVerifyPending, isError: isVerifyError },
+    mailVerify: {
+      mutateAsync: verifyAsync,
+      isPending: isVerifyPending,
+      isError: isVerifyError,
+      variables: verifyVariables,
+    },
   } = useAuth()
 
   const codeString = code.join('')
@@ -72,8 +77,9 @@ const VerifyForm = ({
   // Auto-submit if code is provided and autoSubmit is true, or when all 6 characters are entered.
   // The verify mutation outlives this form: a language switch remounts it mid-request, and
   // submitting the same code again would fail as already verified while the first succeeds.
+  // Only that exact code is skipped, so a code corrected while a request is pending still goes.
   useEffect(() => {
-    if (isVerifyPending) return
+    if (isVerifyPending && verifyVariables?.code === codeString) return
     if ((autoSubmit && codeString) || (!autoSubmit && code.every((c) => c.trim() !== ''))) {
       verify()
     }
