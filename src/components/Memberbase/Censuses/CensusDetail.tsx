@@ -12,6 +12,7 @@ import { Routes } from '~routes'
 import type { Group } from '~src/queries/groups'
 import { useCensusReadiness } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { CensusHistory } from '../Activity/SubjectHistory'
 import type { SelectedMember } from '../People/useSelection'
 import { AddPeopleSheet, PickToRemoveSheet } from './AddPeopleSheet'
 import { CensusMembersTable } from './CensusMembersTable'
@@ -348,6 +349,10 @@ export const CensusDetail = (props: CensusDetailProps) => {
           )}
         </>
       )}
+      <CensusHistory
+        groupId={census.kind === 'everyone' ? undefined : census.groupId}
+        processId={census.kind === 'vote' ? census.process?.id : undefined}
+      />
 
       {census.edit !== 'none' && (
         <>

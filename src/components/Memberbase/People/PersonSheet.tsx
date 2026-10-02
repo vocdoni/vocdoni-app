@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { useTranslation } from 'react-i18next'
 import { LuPencil } from 'react-icons/lu'
 import { Sheet } from '~components/ui/Sheet'
+import { PersonHistory } from '../Activity/SubjectHistory'
 import { useMemberFields } from '../fields'
 import { findMemberLink, memberDisplayName } from './display'
 import { MemberValue } from './PeopleTable'
@@ -205,6 +206,7 @@ export const PersonSheet = ({ memberId, member, loading, onClose, onDelete, onSt
               ))}
           </DataList.Root>
           <PersonCensuses censuses={censuses} />
+          <PersonHistory memberId={member.id} />
         </Stack>
       )}
     </Sheet>
