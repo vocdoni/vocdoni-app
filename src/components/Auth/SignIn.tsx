@@ -78,11 +78,13 @@ const SignIn = ({
   const { mutateAsync: checkVerificationCodeStatus } = useVerificationCodeStatus()
   const { mutateAsync: resendVerificationCode } = useResendVerificationCode()
 
-  // Keyed on `t` so the title follows a language switch.
+  // Keyed on `t` so the title follows a language switch. While the verification step is shown
+  // it owns the title: this effect runs after the child's, so it would otherwise overwrite it.
   useEffect(() => {
+    if (verifyNeeded) return
     setTitle(t('signin_title'))
     setSubtitle(t('signin_subtitle'))
-  }, [setTitle, setSubtitle, t])
+  }, [setTitle, setSubtitle, t, verifyNeeded])
 
   // reset the form to clear the errors
   useEffect(() => {
