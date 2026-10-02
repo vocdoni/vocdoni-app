@@ -18,6 +18,9 @@ import { TEMPLATE_FILE_NAMES, templateBlob, type TemplateFormat, templateRows } 
 /** Above this many people, a call with our team is offered */
 export const LARGE_FILE_ROWS = 2000
 
+// The files the call was offered for
+const offered = new WeakSet<Table>()
+
 /** Downloads the member template in the admin's language. */
 export const useDownloadTemplate = (surface: 'import' | 'first_run') => {
   const fields = useMemberFields()
@@ -129,7 +132,10 @@ export const UploadStep = ({ table, onTable, onContinue }: UploadStepProps) => {
 
   const large = Boolean(table && table.rows.length > LARGE_FILE_ROWS)
   useEffect(() => {
-    if (large) trackAnalyticsEvent({ name: AnalyticsEvents.HelpOffered, props: { trigger: 'large_file' } })
+    // Once per file: coming back to this step shows the offer again without counting it again
+    if (!large || !table || offered.has(table)) return
+    offered.add(table)
+    trackAnalyticsEvent({ name: AnalyticsEvents.HelpOffered, props: { trigger: 'large_file' } })
   }, [large, table])
 
   const rows = table?.rows.length ?? 0

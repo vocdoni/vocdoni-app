@@ -164,4 +164,18 @@ describe('MembersImport', () => {
       'We can’t read this type of file. Upload an .xlsx, .xls, .csv or .ods file.'
     )
   })
+
+  it('offers a call for a big file before matching it', async () => {
+    const user = userEvent.setup()
+    renderWizard()
+    const rows = Array.from({ length: 2001 }, (_, i) => `Person ${i};person${i}@example.org`)
+    await upload(user, ['Name;Email', ...rows].join('\n'))
+
+    expect(await screen.findByText('Big file? We can import it with you on a 20-min call.')).toBeInTheDocument()
+    expect(screen.getByText('2,001 people · 2 columns')).toBeInTheDocument()
+    expect(track).toHaveBeenCalledWith({ name: 'help_offered', props: { trigger: 'large_file' } })
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }))
+    expect(screen.getByText('We matched 2 of 2 columns. Check them, then continue.')).toBeInTheDocument()
+  })
 })
