@@ -76,6 +76,14 @@ describe('getReadiness', () => {
     expect(codes({ ...ready, groupId: '' })).toEqual(['group_missing'])
   })
 
+  it('warns, without blocking, when some voters can’t get a code', () => {
+    const readiness = getReadiness(ready, { now, unreachable: 3 })
+    expect(readiness.issues).toEqual([])
+    expect(readiness.first).toBeUndefined()
+    expect(readiness.warnings).toEqual([{ section: 'voters', code: 'census_unreachable', field: 'groupId' }])
+    expect(getReadiness(ready, { now, unreachable: 0 }).warnings).toEqual([])
+  })
+
   it('reports schedule issues against the date field to fix', () => {
     const readiness = getReadiness({ ...ready, endDate: '2026-12-31' }, { now, maxDays: 30 })
     expect(readiness.sections.schedule).toEqual({

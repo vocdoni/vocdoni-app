@@ -29,6 +29,7 @@ const data = vi.hoisted(() => ({
   markers: new Map<string, unknown>(),
   track: vi.fn(),
   unreachable: 0,
+  sweep: vi.fn(async () => []),
 }))
 
 vi.mock('~src/queries/groups', async (importOriginal) => ({
@@ -54,6 +55,7 @@ vi.mock('~src/queries/voteGroups', async (importOriginal) => ({
     ready: true,
     isVoteOwned: (id: string) => data.markers.has(id),
   }),
+  useSweepOrphanVoteGroups: () => data.sweep,
 }))
 
 vi.mock('~src/queries/members', async (importOriginal) => ({

@@ -14,6 +14,8 @@ export type IssueCode =
   | 'group_missing'
   | 'group_empty'
   | 'sign_in_missing'
+  /** A warning, never a blocker: some voters can't get a code (no email or mobile for it) */
+  | 'census_unreachable'
   | ScheduleIssue
 
 export type ReadinessIssue = {
@@ -33,6 +35,8 @@ export type Readiness = {
   total: number
   issues: ReadinessIssue[]
   first?: ReadinessIssue
+  /** Worth a look, but nothing that stops publishing */
+  warnings: ReadinessIssue[]
 }
 
 type ReadinessContext = {
@@ -40,6 +44,8 @@ type ReadinessContext = {
   maxDays?: number
   /** Members in the chosen group, when known */
   groupMembers?: number
+  /** Voters who can't get a code by the channels the sign-in uses, when known */
+  unreachable?: number
 }
 
 const isBlank = (value?: string) => !value?.trim()
@@ -95,7 +101,10 @@ const scheduleField = (issue: ScheduleIssue) => (issue.startsWith('start') ? 'st
  * What's left before the vote can be published, section by section. It reads the values as they
  * are, not the form's validation errors, so it's right before anyone has pressed a button.
  */
-export const getReadiness = (values: Process, { now, maxDays, groupMembers }: ReadinessContext): Readiness => {
+export const getReadiness = (
+  values: Process,
+  { now, maxDays, groupMembers, unreachable }: ReadinessContext
+): Readiness => {
   const bySection: Record<SectionId, ReadinessIssue[]> = {
     ballot: ballotIssues(values),
     voters: voterIssues(values, groupMembers),
@@ -118,5 +127,9 @@ export const getReadiness = (values: Process, { now, maxDays, groupMembers }: Re
     total: SECTIONS.length,
     issues,
     first: issues[0],
+    warnings:
+      values.groupId && unreachable && unreachable > 0
+        ? [{ section: 'voters', code: 'census_unreachable', field: 'groupId' }]
+        : [],
   }
 }

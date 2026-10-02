@@ -36,6 +36,7 @@ import { FilterPills, type FilterPillItem } from '~components/ui/FilterPills'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
 import { useCensusReadiness } from '~src/queries/members'
+import { useSweepOrphanVoteGroups } from '~src/queries/voteGroups'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { censusSourceLabel, peopleUnit, untitledVote, votersUnit } from './labels'
 import { type CensusSource, censusSourceOf, type SavedCensusRow, sourceGroupId, voteStateOf } from './model'
@@ -396,6 +397,13 @@ export const CensusesIndex = () => {
   useEffect(() => {
     trackAnalyticsEvent({ name: AnalyticsEvents.CensusesViewed })
   }, [])
+
+  // Vote censuses nothing uses any more (a deleted draft's, a replaced copy): cleaned up at most once
+  // per session, in the background
+  const sweep = useSweepOrphanVoteGroups()
+  useEffect(() => {
+    if (!isLoading && !isError) void sweep({ throttle: true })
+  }, [isLoading, isError, sweep])
 
   const groupsById = useMemo(() => new Map(index.saved.map(({ group }) => [group.id, group])), [index.saved])
   const voteTitles = useMemo(
