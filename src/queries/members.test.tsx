@@ -48,4 +48,16 @@ describe('member queries', () => {
       'organizations/0xorg/members?page=1&limit=10&search=a%2Bb%40x.org%20%26%20co'
     )
   })
+
+  it('asks the server for the page, size and sort it is given', async () => {
+    bearedFetch.mockResolvedValue({ members: [], pagination: { totalItems: 0 } })
+    renderHook(() => usePaginatedMembers({ search: '', page: 3, limit: 50, sortBy: 'surname', sortOrder: 'desc' }), {
+      wrapper,
+    })
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
+    expect(bearedFetch).toHaveBeenCalledWith(
+      'organizations/0xorg/members?page=3&limit=50&search=&sortBy=surname&sortOrder=desc'
+    )
+  })
 })

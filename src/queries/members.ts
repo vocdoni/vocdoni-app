@@ -1,9 +1,10 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
 import { PaginationResponse } from '~src/queries/pagination'
 import { useParams, useSearchParams } from 'react-router'
 import { ApiEndpoints } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
+import type { MemberSortField } from '~components/Memberbase/fields'
 import { QueryKeys } from './keys'
 
 export type Member = {
@@ -30,6 +31,14 @@ type AddMembersResponse = {
 
 type PaginatedMembersProps = {
   search?: string
+  /** Defaults to the route's `:page` */
+  page?: number
+  /** Defaults to the `?limit` query param */
+  limit?: number
+  sortBy?: MemberSortField
+  sortOrder?: 'asc' | 'desc'
+  /** Keeps showing the last page while the next one loads, instead of an empty list */
+  keepPrevious?: boolean
 }
 
 export type ImportJobStatus = 'pending' | 'completed' | 'failed'
@@ -64,18 +73,35 @@ export const useUrlPagination = () => {
   }
 }
 
-export const usePaginatedMembers = ({ search = '' }: PaginatedMembersProps) => {
+export const usePaginatedMembers = ({
+  search = '',
+  page: pageProp,
+  limit: limitProp,
+  sortBy,
+  sortOrder,
+  keepPrevious = false,
+}: PaginatedMembersProps) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
-  const { page, limit } = useUrlPagination()
+  const urlPagination = useUrlPagination()
+  const page = pageProp ?? urlPagination.page
+  const limit = limitProp ?? urlPagination.limit
 
   const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization?.address)
-  const fetchUrl = `${baseUrl}?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`
+  const sort = sortBy ? `&sortBy=${sortBy}&sortOrder=${sortOrder ?? 'asc'}` : ''
+  const fetchUrl = `${baseUrl}?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}${sort}`
 
   return useQuery<MembersResponse, Error>({
-    queryKey: [...QueryKeys.organization.members(organization?.address), page, limit, search],
+    queryKey: [
+      ...QueryKeys.organization.members(organization?.address),
+      page,
+      limit,
+      search,
+      ...(sortBy ? [sortBy, sortOrder ?? 'asc'] : []),
+    ],
     enabled: !!organization?.address,
     queryFn: () => bearedFetch<MembersResponse>(fetchUrl),
+    placeholderData: keepPrevious ? keepPreviousData : undefined,
   })
 }
 
@@ -99,9 +125,18 @@ export const useMembersCount = () => {
   return { count: query.data ?? 0, isLoading: query.isLoading, known: query.data !== undefined }
 }
 
+/** Refreshes every member read (lists, count, sign-in readiness) after a write. */
+const useInvalidateMembers = () => {
+  const queryClient = useQueryClient()
+  const { organization } = useOrganization()
+  return () =>
+    queryClient.invalidateQueries({ queryKey: QueryKeys.organization.members(organization?.address), exact: false })
+}
+
 export const useAddMembers = (isAsync: boolean = false) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
+  const invalidate = useInvalidateMembers()
 
   const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization.address)
   const fetchUrl = `${baseUrl}?async=${isAsync}`
@@ -110,12 +145,14 @@ export const useAddMembers = (isAsync: boolean = false) => {
     mutationKey: QueryKeys.organization.members(organization?.address),
     mutationFn: async (members) =>
       await bearedFetch<AddMembersResponse>(fetchUrl, { body: { members }, method: 'POST' }),
+    onSuccess: () => invalidate(),
   })
 }
 
 export const useEditMember = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
+  const invalidate = useInvalidateMembers()
 
   const baseUrl = ApiEndpoints.OrganizationMembers.replace('{address}', organization.address)
 
@@ -123,12 +160,14 @@ export const useEditMember = () => {
     mutationKey: QueryKeys.organization.members(organization?.address),
     mutationFn: async ({ id, ...member }) =>
       await bearedFetch<void>(baseUrl, { body: { id, ...member }, method: 'PUT' }),
+    onSuccess: () => invalidate(),
   })
 }
 
 export const useDeleteMembers = () => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
+  const invalidate = useInvalidateMembers()
 
   return useMutation<void, Error, MembersData>({
     mutationKey: QueryKeys.organization.members(organization?.address),
@@ -137,6 +176,7 @@ export const useDeleteMembers = () => {
         body,
         method: 'DELETE',
       }),
+    onSuccess: () => invalidate(),
   })
 }
 

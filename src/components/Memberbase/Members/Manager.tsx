@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
-import { useTable } from '../TableProvider'
+import { useMemberFields } from '../fields'
 
 type MemberFormData = Record<string, string>
 
@@ -45,7 +45,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   const toast = useToast()
   const { open: disclosureOpen, onOpen, onClose } = useDisclosure()
   const btnRef = useRef(null)
-  const { columns } = useTable()
+  const columns = useMemberFields()
   const addMember = useAddMembers()
   const editMember = useEditMember()
   const { organization } = useOrganization()

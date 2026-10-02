@@ -32,6 +32,7 @@ export const AnalyticsEvents = {
   ProcessResultsViewed: 'process_results_viewed',
   MembersImportStarted: 'members_import_started',
   MembersImportCompleted: 'members_import_completed',
+  MembersPageViewed: 'members_page_viewed',
   MemberGroupCreated: 'member_group_created',
   MemberGroupDeleted: 'member_group_deleted',
   CensusConfigured: 'census_configured',
