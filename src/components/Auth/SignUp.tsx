@@ -93,15 +93,11 @@ const SignUp = ({
   const privacyPolicyUrl = appEnv.PRIVACY_POLICY_URL
   const termsOfServiceUrl = appEnv.TERMS_OF_SERVICE_URL
 
-  const showVerification = verifyInline && (signup.isSuccess || !!verifyingEmail)
-
-  // Keyed on `t` so the title follows a language switch. While the verification step is shown
-  // it owns the title: this effect runs after the child's, so it would otherwise overwrite it.
+  // Keyed on `t` so the title follows a language switch.
   useEffect(() => {
-    if (showVerification) return
     setTitle(t('signup_title'))
     setSubtitle(t('signup_subtitle'))
-  }, [setTitle, setSubtitle, t, showVerification])
+  }, [setTitle, setSubtitle, t])
 
   useEffect(() => {
     signup.reset()
@@ -146,7 +142,7 @@ const SignUp = ({
     }
   }, [inviteSignup.isSuccess, trackEvent])
 
-  if (showVerification) {
+  if (verifyInline && (signup.isSuccess || verifyingEmail)) {
     return <VerificationPending email={verifyingEmail ?? email} nextRoute={verifyNextRoute} />
   }
 
