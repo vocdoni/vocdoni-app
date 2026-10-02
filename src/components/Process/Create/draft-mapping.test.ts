@@ -254,6 +254,14 @@ describe('votingProcessToForm', () => {
       expect(form.census?.use2FAMethod).toBe(expected)
     })
 
+    it('reads back a code alone (nothing to type) as a sign-in', () => {
+      expect(votingProcessToForm(process({ census: { twoFaFields: ['email'] } as any })).census).toEqual({
+        credentials: [],
+        use2FA: true,
+        use2FAMethod: 'email',
+      })
+    })
+
     it('leaves the credentials unset when the census has none', () => {
       expect(votingProcessToForm(process()).census).toBeNull()
     })
