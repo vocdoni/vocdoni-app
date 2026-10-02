@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { Sheet } from '~components/ui/Sheet'
 import { type Member, useMembersPageFetcher } from '~src/queries/members'
+import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { PersonForm } from '../People/PersonForm'
 import type { SelectedMember } from '../People/useSelection'
 import { findCreatedMember } from './censusEdits'
@@ -21,13 +22,15 @@ type AddPeopleSheetProps = {
   editor: ReturnType<typeof useCensusEditor>
   /** The census' name, for messages */
   name: string
+  /** For analytics: where the census is shown */
+  surface?: string
 }
 
 /**
  * "Add people": pick existing members (search, or paste a list), or create a new one, who joins the
  * members and this census at once.
  */
-export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name }: AddPeopleSheetProps) => {
+export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name, surface }: AddPeopleSheetProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
   const fetchPage = useMembersPageFetcher()
@@ -48,6 +51,11 @@ export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name }: Add
 
   const done = (added: number) => {
     const after = census.count + added
+    if (vote)
+      trackAnalyticsEvent({
+        name: AnalyticsEvents.VotersAdded,
+        props: { count: added, surface: surface ?? 'census_page' },
+      })
     toast({
       title: vote
         ? t('census_detail.add.done_vote', {

@@ -22,7 +22,10 @@ import { formatVoteList, UsedByCard } from './UsedBy'
 import { useCensusEditor } from './useCensusEditor'
 import { type CensusDetailTarget, type ResolvedCensusState, useResolvedCensus } from './useResolvedCensus'
 
-export type CensusDetailProps = CensusDetailTarget
+export type CensusDetailProps = CensusDetailTarget & {
+  /** For analytics: where the census is shown (its page in Members, a vote's Voters tab) */
+  surface?: string
+}
 
 /** One sentence on where this census' people come from and what changing it touches. */
 const sourceSentence = (t: TFunction, language: string | undefined, census: ResolvedCensusState) => {
@@ -43,8 +46,19 @@ const sourceSentence = (t: TFunction, language: string | undefined, census: Reso
         defaultValue: "This vote's own census. Editing it doesn't change your members or other votes.",
       })
     case 'everyone':
-      return t('census_detail.source.follows_everyone', {
-        defaultValue: 'This vote follows Everyone: members you add can vote in it too.',
+      return census.edit === 'process'
+        ? t('census_detail.source.follows_everyone_live', {
+            defaultValue:
+              'This vote follows Everyone: members you add can vote in it too. Removing someone here only takes them out of this vote.',
+          })
+        : t('census_detail.source.follows_everyone', {
+            defaultValue: 'This vote follows Everyone: members you add can vote in it too.',
+          })
+    case 'saved':
+      return t('census_detail.source.legacy_saved', {
+        defaultValue:
+          "This vote follows the saved census '{{name}}', so changes to it reach this vote too. Changes made here only affect this vote.",
+        name: census.source.group.title,
       })
     default:
       return t('census_detail.source.selected', { defaultValue: 'People picked one by one for this vote.' })
@@ -76,7 +90,7 @@ const ReadOnlyNote = ({ census }: { census: ResolvedCensusState }) => {
   )
 }
 
-const PeopleCard = ({ census }: { census: ResolvedCensusState }) => {
+const PeopleCard = ({ census, surface }: { census: ResolvedCensusState; surface?: string }) => {
   const { t, i18n } = useTranslation()
   const editor = useCensusEditor(census)
   const [adding, setAdding] = useState(false)
@@ -114,10 +128,13 @@ const PeopleCard = ({ census }: { census: ResolvedCensusState }) => {
                   {t('census_detail.remove.pick_button', { defaultValue: 'Remove people…' })}
                 </Button>
               )}
-              <Button size='sm' onClick={() => setAdding(true)}>
-                <Icon as={LuUserPlus} />
-                {t('census_detail.add.button', { defaultValue: 'Add people' })}
-              </Button>
+              {/* Everyone already holds every member: there's nobody to add */}
+              {census.source?.kind !== 'everyone' && (
+                <Button size='sm' onClick={() => setAdding(true)}>
+                  <Icon as={LuUserPlus} />
+                  {t('census_detail.add.button', { defaultValue: 'Add people' })}
+                </Button>
+              )}
             </Flex>
           )}
         </Flex>
@@ -144,7 +161,14 @@ const PeopleCard = ({ census }: { census: ResolvedCensusState }) => {
       </Stack>
       {census.edit !== 'none' && (
         <>
-          <AddPeopleSheet open={adding} onOpenChange={setAdding} census={census} editor={editor} name={name} />
+          <AddPeopleSheet
+            open={adding}
+            onOpenChange={setAdding}
+            census={census}
+            editor={editor}
+            name={name}
+            surface={surface}
+          />
           <PickToRemoveSheet
             open={picking}
             onOpenChange={setPicking}
@@ -205,7 +229,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
   return (
     <Grid templateColumns={{ base: 'minmax(0, 1fr)', lg: 'minmax(0, 2fr) minmax(0, 1fr)' }} gap={4} alignItems='start'>
       <Stack gap={4} minW={0}>
-        <PeopleCard census={census} />
+        <PeopleCard census={census} surface={props.surface ?? 'census_page'} />
         {census.browse === 'lookup' && census.process && (
           <ElectionProvider id={census.process.id}>
             <VoterLookup />

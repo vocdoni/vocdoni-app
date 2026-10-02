@@ -21,7 +21,6 @@ export type SoonFeature =
   | 'non_voters'
   | 'reminders'
   | 'code_delivery_log'
-  | 'remove_voters'
   | 'extend_end_date'
   | 'activity_log'
   | 'quorum'

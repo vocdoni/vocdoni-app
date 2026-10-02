@@ -29,6 +29,8 @@ const state = vi.hoisted(() => ({
   orgMembers: [] as Record<string, unknown>[],
   conflicts: [] as string[][],
   fetch: vi.fn(),
+  addCensus: vi.fn(),
+  waitFor: vi.fn(),
   download: vi.fn(),
   track: vi.fn(),
   toast: vi.fn(),
@@ -51,8 +53,9 @@ vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
         get: async () => state.process,
         // Everyone can get a code: a 200
         validateCensus: async () => 'OK',
+        addCensusMembers: state.addCensus,
       },
-      jobs: { waitFor: async () => ({}) },
+      jobs: { waitFor: state.waitFor },
     },
   }),
 }))
@@ -176,6 +179,11 @@ describe('CensusDetail', () => {
     state.toast.mockReset()
     state.orgMembers = Array.from({ length: 3 }, (_, index) => person(index))
     state.conflicts = []
+    state.addCensus.mockReset().mockImplementation(async (_id: string, ids: string[]) => ({
+      added: ids.length,
+      jobId: `job-${ids[0]}`,
+    }))
+    state.waitFor.mockReset().mockResolvedValue({})
     setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }) })
   })
 
@@ -455,6 +463,43 @@ describe('CensusDetail', () => {
 
       await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '5 → 4 voters' })))
       expect(state.fetch).toHaveBeenCalledWith('processes/p7/census', { method: 'DELETE', body: { memberIds: ['m0'] } })
+    })
+
+    it('adds to a live vote on a shared saved census through the vote, waiting for it to grow', async () => {
+      const user = userEvent.setup()
+      state.process = vote('p1', 'Assemblea General 2026', { groupId: 'quota', size: 30 }, 'ONGOING')
+      renderDetail({ kind: 'vote', processId: 'p1', surface: 'vote_voters_tab' })
+
+      expect(
+        await screen.findByText(
+          "This vote follows the saved census 'Quota pagada', so changes to it reach this vote too. Changes made here only affect this vote."
+        )
+      ).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: 'Add people' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Add people' })
+      await user.click(await within(sheet).findByRole('checkbox', { name: /Person00 Vila/ }))
+      await user.click(within(sheet).getByRole('button', { name: 'Add 1 person' }))
+
+      await waitFor(() =>
+        expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '30 → 31 voters' }))
+      )
+      expect(state.addCensus).toHaveBeenCalledWith('p1', ['m0'])
+      expect(state.waitFor).toHaveBeenCalledWith('job-m0', expect.anything())
+      // The saved census and the other votes on it are left alone
+      expect(putCalls()).toEqual([])
+      expect(state.track).toHaveBeenCalledWith({
+        name: 'voters_added',
+        props: { count: 1, surface: 'vote_voters_tab' },
+      })
+    })
+
+    it('lets a live vote following Everyone lose people, but not gain them: everyone is in already', async () => {
+      state.process = vote('p2', 'Assemblea', { groupId: 'everyone', size: 1742, twoFaFields: ['email'] }, 'ONGOING')
+      renderDetail({ kind: 'vote', processId: 'p2' })
+
+      expect(await screen.findByRole('button', { name: 'Remove people…' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Add people' })).toBeNull()
+      expect(screen.getByText(/Removing someone here only takes them out of this vote/)).toBeInTheDocument()
     })
 
     it('offers no edits on a closed vote, nor on Everyone', async () => {

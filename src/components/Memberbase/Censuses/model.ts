@@ -114,8 +114,9 @@ export type ReadOnlyReason = 'everyone' | 'ended' | 'follows_everyone' | 'draft_
 /**
  * How people are added and removed:
  * - `group`: through the census' group (`PUT /groups/{id}`);
- * - `process`: through the vote's census itself (`PUT`/`DELETE /processes/{id}/census`), for
- *   published votes whose people were picked one by one, before each vote had its own census;
+ * - `process`: through the vote's census itself (`PUT`/`DELETE /processes/{id}/census`), for votes
+ *   published before each vote had its own census: people picked one by one, Everyone, or a saved
+ *   census shared with other votes (whose group is left alone);
  * - `none`: read-only (see `ReadOnlyReason`).
  */
 export type EditPath = 'group' | 'process' | 'none'
@@ -186,7 +187,10 @@ export const resolveCensus = ({
 
   const state = process ? voteStateOf(process) : undefined
   const source = process ? censusSourceOf(process, { everyoneId, markers, groupsById }) : undefined
-  const groupId = source ? sourceGroupId(source) : undefined
+  // Published before each vote had its own census, following Everyone or a saved census other votes
+  // share: edited through the vote's own census, so a change here never reaches those other votes
+  const legacy = !!process?.published && (source?.kind === 'everyone' || source?.kind === 'saved')
+  const groupId = source && !legacy ? sourceGroupId(source) : undefined
   const maxVoters = process?.questions?.[0]?.results?.maxVoters
   const atClose = isEnded(state) && typeof maxVoters === 'number' && maxVoters > 0
   const count = atClose ? maxVoters! : (process?.census?.size ?? size(group))
@@ -194,6 +198,7 @@ export const resolveCensus = ({
   let edit: EditPath = 'none'
   let readOnly: ReadOnlyReason | undefined
   if (isEnded(state)) readOnly = 'ended'
+  else if (legacy) edit = 'process'
   else if (source?.kind === 'everyone') readOnly = 'follows_everyone'
   else if (groupId) edit = 'group'
   else if (process?.published) edit = 'process'
@@ -210,6 +215,6 @@ export const resolveCensus = ({
     browse: groupId ? 'group' : 'lookup',
     edit,
     readOnly,
-    sharedWith: source?.kind === 'saved' ? votesFollowingGroup(processes, groupId) : [],
+    sharedWith: source?.kind === 'saved' && groupId ? votesFollowingGroup(processes, groupId) : [],
   }
 }

@@ -106,8 +106,18 @@ describe('resolveCensus', () => {
     expect(census).toMatchObject({ edit: 'none', readOnly: 'ended', count: 40, atClose: true })
   })
 
-  it('keeps a vote following Everyone read-only, with a lookup instead of a list', () => {
+  it('edits a published vote following Everyone through its own census, with a lookup instead of a list', () => {
     const census = resolveCensus({ ...base, kind: 'vote', process: vote('p', { groupId: 'everyone' }, 'ONGOING') })
+    expect(census).toMatchObject({ edit: 'process', browse: 'lookup', source: { kind: 'everyone' } })
+    expect(census.readOnly).toBeUndefined()
+  })
+
+  it('keeps a draft following Everyone read-only: it is frozen at publish', () => {
+    const census = resolveCensus({
+      ...base,
+      kind: 'vote',
+      process: vote('p', { groupId: 'everyone' }, 'UPCOMING', { published: false }),
+    })
     expect(census).toMatchObject({ edit: 'none', readOnly: 'follows_everyone', browse: 'lookup' })
   })
 
@@ -121,7 +131,7 @@ describe('resolveCensus', () => {
     ).toMatchObject({ edit: 'none', readOnly: 'draft_selected', state: 'draft' })
   })
 
-  it('warns that a vote on a saved census shares it with the other votes using it', () => {
+  it('edits a published vote on a shared saved census through its own census, leaving the others alone', () => {
     const shared = vote('p1', { groupId: 'quota' }, 'ONGOING')
     const census = resolveCensus({
       ...base,
@@ -129,7 +139,18 @@ describe('resolveCensus', () => {
       process: shared,
       processes: [shared, vote('p2', { groupId: 'quota' }, 'RESULTS')],
     })
+    expect(census).toMatchObject({ edit: 'process', browse: 'lookup', groupId: undefined, sharedWith: [] })
+  })
+
+  it('still edits a draft on a saved census through that census, naming the votes sharing it', () => {
+    const draft = vote('d1', { groupId: 'quota' }, 'UPCOMING', { published: false })
+    const census = resolveCensus({
+      ...base,
+      kind: 'vote',
+      process: draft,
+      processes: [draft, vote('p2', { groupId: 'quota' }, 'RESULTS')],
+    })
     expect(census.edit).toBe('group')
-    expect(census.sharedWith.map((entry) => entry.id)).toEqual(['p1', 'p2'])
+    expect(census.sharedWith.map((entry) => entry.id)).toEqual(['d1', 'p2'])
   })
 })
