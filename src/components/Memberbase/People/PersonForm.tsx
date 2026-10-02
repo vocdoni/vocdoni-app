@@ -1,8 +1,10 @@
 import { Field, Input, type InputProps, Stack, Text } from '@chakra-ui/react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { Banner } from '~components/ui/Banner'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { type Member, useAddMembers, useEditMember } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { type MemberFieldId, MEMBER_FIELD_IDS, useMemberFields } from '../fields'
@@ -54,6 +56,30 @@ export const changedFields = (member: Partial<Member>, values: PersonFormValues)
 export const editPayload = (member: Partial<Member>, changed: Partial<Member>): Partial<Member> =>
   changed.weight === undefined && member.weight ? { ...changed, weight: member.weight } : changed
 
+/** A vote in progress the member can vote in, where an edit applies right away. */
+export type RunningVote = { id: string; title: string; signInFields: string[] }
+
+/**
+ * Whether an edit reaches voters of a vote in progress hard enough to ask first: it changes the
+ * member's voting power, or changes or empties a detail one of those votes signs in with.
+ */
+export const needsLiveConfirm = (
+  member: Partial<Member>,
+  values: PersonFormValues,
+  changed: Partial<Member>,
+  votes: RunningVote[]
+) => {
+  if (!votes.length) return false
+  if ('weight' in changed) return true
+  const signIn = new Set(votes.flatMap((vote) => vote.signInFields))
+  return MEMBER_FIELD_IDS.some((id) => {
+    if (!signIn.has(id)) return false
+    if (id in changed) return true
+    const original = id === 'phone' ? '' : String(member[id as keyof Member] ?? '').trim()
+    return !!original && !values[id].trim()
+  })
+}
+
 /** What a new person is created with: every field that was filled in. */
 export const newMemberPayload = (values: PersonFormValues): Partial<Member> =>
   Object.fromEntries(
@@ -76,6 +102,8 @@ type PersonFormProps = {
   quiet?: boolean
   /** For analytics: where a new person was added from */
   source?: string
+  /** Live or scheduled votes this member can vote in: edits apply there right away */
+  runningVotes?: RunningVote[]
 }
 
 export const PersonForm = ({
@@ -86,6 +114,7 @@ export const PersonForm = ({
   inLiveVote = false,
   quiet = false,
   source = 'form',
+  runningVotes = [],
 }: PersonFormProps) => {
   const { t } = useTranslation()
   const toast = useToast()
@@ -104,6 +133,9 @@ export const PersonForm = ({
   } = useForm<PersonFormValues>({ defaultValues: valuesOf(member), mode: 'onTouched' })
   const values = useWatch({ control })
 
+  // Values waiting for "Save change" because they reach a vote in progress
+  const [confirming, setConfirming] = useState<PersonFormValues | null>(null)
+
   useEffect(() => onPendingChange?.(pending), [pending, onPendingChange])
 
   const fail = (error: unknown) =>
@@ -117,16 +149,24 @@ export const PersonForm = ({
       isClosable: true,
     })
 
-  const onSubmit = async (formValues: PersonFormValues) => {
+  const onSubmit = async (formValues: PersonFormValues, confirmed = false) => {
     if (member) {
       const changed = changedFields(member, formValues)
       if (!Object.keys(changed).length) {
         onSaved()
         return
       }
+      if (!confirmed && needsLiveConfirm(member, formValues, changed, runningVotes)) {
+        setConfirming(formValues)
+        return
+      }
+      setConfirming(null)
       try {
         await editMember.mutateAsync({ id: member.id, ...editPayload(member, changed) })
-        trackAnalyticsEvent({ name: AnalyticsEvents.MemberUpdated, props: { in_live_vote: inLiveVote } })
+        trackAnalyticsEvent({
+          name: AnalyticsEvents.MemberUpdated,
+          props: { in_live_vote: inLiveVote || runningVotes.length > 0 },
+        })
         toast({
           title: t('members.person.saved', { defaultValue: 'Changes saved' }),
           type: 'success',
@@ -155,6 +195,9 @@ export const PersonForm = ({
       fail(error)
     }
   }
+
+  const voteName = (vote?: RunningVote) =>
+    vote?.title || t('processes.list.untitled', { defaultValue: 'Untitled vote' })
 
   const needsName = t('members.person.error.name_required', { defaultValue: 'Add a first name or a last name' })
   const needsContact = t('members.person.error.contact_required', {
@@ -213,13 +256,29 @@ export const PersonForm = ({
   return (
     // ph-no-capture: the values typed are member data (inputs are masked anyway)
     <Stack asChild gap={4}>
-      <form id={formId} noValidate onSubmit={handleSubmit(onSubmit)} className='ph-no-capture'>
+      <form
+        id={formId}
+        noValidate
+        onSubmit={handleSubmit((formValues) => onSubmit(formValues))}
+        className='ph-no-capture'
+      >
         {isEdit && (
           <Text fontSize='sm' color='fg.muted'>
             {t('members.person.edit_everywhere', {
               defaultValue: 'Changes apply to this member everywhere, including the censuses of votes in progress.',
             })}
           </Text>
+        )}
+        {isEdit && runningVotes.length > 0 && (
+          <Banner status='warning'>
+            {t('members.person.live_note', {
+              count: runningVotes.length,
+              vote: voteName(runningVotes[0]),
+              others: runningVotes.length - 1,
+              defaultValue_one: "Changes apply right away in '{{vote}}'.",
+              defaultValue_other: "Changes apply right away in '{{vote}}' and {{others}} more votes.",
+            })}
+          </Banner>
         )}
         {fields.map((field) => {
           const error = errors[field.id]?.message
@@ -257,6 +316,27 @@ export const PersonForm = ({
             </Field.Root>
           )
         })}
+        <ConfirmDialog
+          open={!!confirming}
+          onOpenChange={({ open }) => !open && !pending && setConfirming(null)}
+          destructive={false}
+          title={t('members.person.live_confirm.title', { defaultValue: 'Change this in a vote in progress?' })}
+          confirmText={t('members.person.live_confirm.confirm', { defaultValue: 'Save change' })}
+          loading={pending}
+          onConfirm={() => confirming && onSubmit(confirming, true)}
+        >
+          <Text fontSize='sm'>
+            {t('members.person.live_confirm.body', {
+              count: runningVotes.length,
+              vote: voteName(runningVotes[0]),
+              others: runningVotes.length - 1,
+              defaultValue_one:
+                "This person can vote in '{{vote}}'. A new voting power or sign-in detail applies there right away.",
+              defaultValue_other:
+                "This person can vote in '{{vote}}' and {{others}} more votes. A new voting power or sign-in detail applies there right away.",
+            })}
+          </Text>
+        </ConfirmDialog>
       </form>
     </Stack>
   )

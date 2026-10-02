@@ -158,6 +158,7 @@ export const PersonSheet = ({ memberId, member, loading, onClose, onDelete, onSt
           onSaved={() => setEditing(false)}
           onPendingChange={setSaving}
           inLiveVote={inLiveVote}
+          runningVotes={censuses.running}
         />
       ) : (
         <Stack gap={5}>

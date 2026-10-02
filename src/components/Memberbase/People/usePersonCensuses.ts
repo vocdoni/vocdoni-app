@@ -20,7 +20,14 @@ const STALE_TIME = 5 * 60 * 1000
 export type PersonVoteState = 'live' | 'scheduled' | 'draft'
 
 export type PersonCensus =
-  | { kind: 'vote'; id: string; title: string; state: PersonVoteState }
+  | {
+      kind: 'vote'
+      id: string
+      title: string
+      state: PersonVoteState
+      /** The member details the vote signs in with */
+      signInFields: string[]
+    }
   | { kind: 'saved'; id: string; title: string }
 
 export type Lookup = { field: ProcessParticipantLookupField; value: string }
@@ -51,6 +58,10 @@ const runningState = (process: VotingProcessResponse): PersonVoteState | null =>
   if (state === 'scheduled') return 'scheduled'
   return null
 }
+
+const signInFieldsOf = (process: VotingProcessResponse) => [
+  ...new Set([...(process.census?.authFields ?? []), ...(process.census?.twoFaFields ?? [])]),
+]
 
 const ORDER: Record<PersonVoteState, number> = { live: 0, scheduled: 1, draft: 2 }
 
@@ -87,13 +98,25 @@ export const buildPersonCensuses = ({
     const state = runningState(process)
     if (!state) return
     if (!found.get(process.id)?.some((participant) => participant.memberId === memberId)) return
-    votes.push({ kind: 'vote', id: process.id, title: getElectionTitle(process) ?? '', state })
+    votes.push({
+      kind: 'vote',
+      id: process.id,
+      title: getElectionTitle(process) ?? '',
+      state,
+      signInFields: signInFieldsOf(process),
+    })
   })
   drafts.forEach((process) => {
     const groupId = process.census?.groupId
     if (!groupId) return
     if (groupId !== everyoneId && !members.get(groupId)?.includes(memberId)) return
-    votes.push({ kind: 'vote', id: process.id, title: getElectionTitle(process) ?? '', state: 'draft' })
+    votes.push({
+      kind: 'vote',
+      id: process.id,
+      title: getElectionTitle(process) ?? '',
+      state: 'draft',
+      signInFields: signInFieldsOf(process),
+    })
   })
   votes.sort((a, b) => (a.kind === 'vote' && b.kind === 'vote' ? ORDER[a.state] - ORDER[b.state] : 0))
 
