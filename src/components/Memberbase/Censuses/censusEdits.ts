@@ -25,17 +25,18 @@ export class PartialRemovalError extends Error {
 }
 
 export type RemovalOutcome =
-  | { status: 'done'; removed: number }
+  | { status: 'done'; removed: number; removedIds: string[] | null }
   /**
    * Refused (409): someone in a batch has already started voting in a vote that's running, so that
    * batch removed nobody. `remaining` is everyone not removed yet minus them, to offer again.
    */
-  | { status: 'blocked'; removed: number; signed: string[]; remaining: string[] }
+  | { status: 'blocked'; removed: number; removedIds: string[] | null; signed: string[]; remaining: string[] }
 
 /**
  * Removes people batch by batch. `send` removes one batch and resolves with how many went. A 409 with
  * `signedMemberIds` stops it and says who blocked it; any other failure throws a
- * `PartialRemovalError` with how many had gone before.
+ * `PartialRemovalError` with how many had gone before. `removedIds` says exactly who went, or is null
+ * when a batch removed fewer than it was sent (some weren't in the census) and that can't be told.
  */
 export const removeInChunks = async (
   ids: string[],
@@ -43,10 +44,13 @@ export const removeInChunks = async (
   size = GROUP_REMOVE_CHUNK_SIZE
 ): Promise<RemovalOutcome> => {
   let removed = 0
+  let removedIds: string[] | null = []
   const batches = chunk(ids, size)
   for (let index = 0; index < batches.length; index += 1) {
     try {
-      removed += await send(batches[index])
+      const count = await send(batches[index])
+      removed += count
+      removedIds = removedIds && count === batches[index].length ? [...removedIds, ...batches[index]] : null
     } catch (error) {
       const signed = getSignedMemberIds(error)
       if (signed === null) throw new PartialRemovalError(error, removed)
@@ -55,10 +59,10 @@ export const removeInChunks = async (
         .slice(index)
         .flat()
         .filter((id) => !blocked.has(id))
-      return { status: 'blocked', removed, signed, remaining }
+      return { status: 'blocked', removed, removedIds, signed, remaining }
     }
   }
-  return { status: 'done', removed }
+  return { status: 'done', removed, removedIds }
 }
 
 /**

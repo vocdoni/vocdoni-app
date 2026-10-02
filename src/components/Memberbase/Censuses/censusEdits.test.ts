@@ -12,7 +12,7 @@ describe('removeInChunks', () => {
     const send = vi.fn(async (batch: string[]) => batch.length)
     const ids = Array.from({ length: 1200 }, (_, index) => `m${index}`)
 
-    expect(await removeInChunks(ids, send, 500)).toEqual({ status: 'done', removed: 1200 })
+    expect(await removeInChunks(ids, send, 500)).toEqual({ status: 'done', removed: 1200, removedIds: ids })
     expect(send.mock.calls.map(([batch]) => batch.length)).toEqual([500, 500, 200])
   })
 
@@ -24,7 +24,19 @@ describe('removeInChunks', () => {
 
     const outcome = await removeInChunks(['a', 'b', 'c', 'd', 'e'], send, 2)
 
-    expect(outcome).toEqual({ status: 'blocked', removed: 2, signed: ['c'], remaining: ['d', 'e'] })
+    expect(outcome).toEqual({
+      status: 'blocked',
+      removed: 2,
+      removedIds: ['a', 'b'],
+      signed: ['c'],
+      remaining: ['d', 'e'],
+    })
+  })
+
+  it("can't say who went when a batch removed fewer than it was sent", async () => {
+    const send = vi.fn().mockResolvedValueOnce(1)
+
+    expect(await removeInChunks(['a', 'b'], send, 2)).toEqual({ status: 'done', removed: 1, removedIds: null })
   })
 
   it('reports how many went before any other failure', async () => {

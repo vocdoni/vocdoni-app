@@ -31,6 +31,7 @@ const state = vi.hoisted(() => ({
   fetch: vi.fn(),
   addCensus: vi.fn(),
   waitFor: vi.fn(),
+  participants: vi.fn(),
   download: vi.fn(),
   track: vi.fn(),
   toast: vi.fn(),
@@ -54,6 +55,7 @@ vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
         // Everyone can get a code: a 200
         validateCensus: async () => 'OK',
         addCensusMembers: state.addCensus,
+        participants: state.participants,
       },
       jobs: { waitFor: state.waitFor },
     },
@@ -184,6 +186,13 @@ describe('CensusDetail', () => {
       jobId: `job-${ids[0]}`,
     }))
     state.waitFor.mockReset().mockResolvedValue({})
+    state.participants.mockReset().mockImplementation(async (_id: string, { value }: { value: string }) => ({
+      participants: value.startsWith('p0@')
+        ? [{ memberId: 'm0', name: 'Person00', surname: 'Vila', questions: [] }]
+        : value.startsWith('p1@')
+          ? [{ memberId: 'm1', name: 'Person01', surname: 'Vila', questions: [] }]
+          : [],
+    }))
     setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }) })
   })
 
@@ -355,9 +364,9 @@ describe('CensusDetail', () => {
       await user.click(screen.getByRole('button', { name: 'Remove…' }))
 
       const dialog = await screen.findByRole('dialog')
-      expect(within(dialog).getByText("Remove 2 people from 'Assemblea General 2026'?")).toBeInTheDocument()
+      expect(within(dialog).getByText("Remove 2 voters from 'Assemblea General 2026'?")).toBeInTheDocument()
       expect(dialog).toHaveTextContent("They can't vote in this vote anymore. They stay in your members.")
-      await user.click(within(dialog).getByRole('button', { name: 'Remove 2 people' }))
+      await user.click(within(dialog).getByRole('button', { name: 'Remove 2 voters' }))
 
       await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '3 → 1 voters' })))
       expect(putCalls()).toEqual([{ url: 'organizations/0xorg/groups/owned', body: { removeMembers: ['m1', 'm2'] } }])
@@ -375,7 +384,7 @@ describe('CensusDetail', () => {
 
       await select(user, 'Person01 Vila', 'Person02 Vila', 'Person03 Vila')
       await user.click(screen.getByRole('button', { name: 'Remove…' }))
-      await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Remove 3 people' }))
+      await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Remove 3 voters' }))
 
       const retry = await screen.findByRole('dialog', { name: 'Nobody was removed' })
       expect(retry).toHaveTextContent('Person01 Vila has already started voting. Remove the other 2?')
@@ -405,7 +414,7 @@ describe('CensusDetail', () => {
 
       const dialog = await screen.findByRole('dialog')
       expect(dialog).toHaveTextContent("This would leave nobody allowed to answer 'Treasurer'.")
-      expect(within(dialog).getByRole('button', { name: 'Remove 2 people' })).toBeDisabled()
+      expect(within(dialog).getByRole('button', { name: 'Remove 2 voters' })).toBeDisabled()
     })
 
     it('adds members picked from the member list, with those already in it locked', async () => {
@@ -445,7 +454,7 @@ describe('CensusDetail', () => {
       })
     })
 
-    it('removes picked people from a published vote without a group through its census', async () => {
+    it('finds people in a vote without a list by what they sign in with, and removes them through its census', async () => {
       const user = userEvent.setup()
       state.process = vote('p7', 'Junta', { size: 5, twoFaFields: ['email'] }, 'ONGOING')
       renderDetail({ kind: 'vote', processId: 'p7' })
@@ -453,16 +462,97 @@ describe('CensusDetail', () => {
       expect(await screen.findByText(/isn't kept as a list we can show/)).toBeInTheDocument()
       await user.click(screen.getByRole('button', { name: 'Remove people…' }))
       const sheet = await screen.findByRole('dialog', { name: 'Remove people' })
-      await user.click(await within(sheet).findByRole('checkbox', { name: /Person00 Vila/ }))
+      expect(within(sheet).getByRole('tab', { name: 'Find in this vote', selected: true })).toBeInTheDocument()
+      await user.type(within(sheet).getByRole('textbox', { name: 'Email to look up' }), 'p0@example.org, nobody@x.org')
+      await user.click(within(sheet).getByRole('button', { name: 'Find' }))
+
+      // Found people come ticked; values not in the vote say so
+      expect(await within(sheet).findByRole('checkbox', { name: /Person00 Vila/ })).toBeChecked()
+      expect(within(sheet).getByText('Not in this vote')).toBeInTheDocument()
+      expect(state.participants).toHaveBeenCalledWith('p7', { field: 'email', value: 'p0@example.org' })
       await user.click(within(sheet).getByRole('button', { name: 'Remove 1 person…' }))
       await user.click(
-        within(await screen.findByRole('dialog', { name: "Remove 1 person from 'Junta'?" })).getByRole('button', {
-          name: 'Remove 1 person',
+        within(await screen.findByRole('dialog', { name: "Remove 1 voter from 'Junta'?" })).getByRole('button', {
+          name: 'Remove 1 voter',
         })
       )
 
       await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '5 → 4 voters' })))
       expect(state.fetch).toHaveBeenCalledWith('processes/p7/census', { method: 'DELETE', body: { memberIds: ['m0'] } })
+    })
+
+    it('can still pick from the member list, with no way back for people who may not have been in the vote', async () => {
+      const user = userEvent.setup()
+      state.fetch.mockImplementation(
+        async (url: string, options?: { method?: string; body?: Record<string, unknown> }) =>
+          url.endsWith('/census') && options?.method === 'DELETE' ? { removed: 0 } : route(url, options)
+      )
+      state.process = vote('p7', 'Junta', { size: 5, twoFaFields: ['email'] }, 'ONGOING')
+      renderDetail({ kind: 'vote', processId: 'p7' })
+
+      await user.click(await screen.findByRole('button', { name: 'Remove people…' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Remove people' })
+      await user.click(within(sheet).getByRole('tab', { name: 'From members' }))
+      await user.click(await within(sheet).findByRole('checkbox', { name: /Person02 Vila/ }))
+      await user.click(within(sheet).getByRole('button', { name: 'Remove 1 person…' }))
+      await user.click(
+        within(await screen.findByRole('dialog', { name: /Remove 1 voter/ })).getByRole('button', {
+          name: 'Remove 1 voter',
+        })
+      )
+
+      await waitFor(() =>
+        expect(state.track).toHaveBeenCalledWith({
+          name: 'voters_removed',
+          props: { requested: 1, removed: 0, blocked: 0 },
+        })
+      )
+      expect(state.toast).not.toHaveBeenCalled()
+    })
+
+    it('offers to add removed voters back, through the same path they went out', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus()
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await select(user, 'Person01 Vila', 'Person02 Vila')
+      await user.click(screen.getByRole('button', { name: 'Remove…' }))
+      await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Remove 2 voters' }))
+
+      await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '3 → 1 voters' })))
+      const removedToast = state.toast.mock.calls.find(([options]) => options.title === '3 → 1 voters')![0]
+      expect(removedToast).toMatchObject({ duration: 8000, action: { label: 'Add them back' } })
+
+      await removedToast.action.onClick()
+
+      await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '1 → 3 voters' })))
+      expect(putCalls().map((call) => call.body)).toEqual([
+        { removeMembers: ['m1', 'm2'] },
+        { addMembers: ['m1', 'm2'] },
+      ])
+      expect(state.track).toHaveBeenCalledWith({ name: 'voters_added', props: { count: 2, surface: 'undo_remove' } })
+    })
+
+    it('adds back only who actually went after someone blocked the first try', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus()
+      state.conflicts = [['m1']]
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await select(user, 'Person01 Vila', 'Person02 Vila', 'Person03 Vila')
+      await user.click(screen.getByRole('button', { name: 'Remove…' }))
+      await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: 'Remove 3 voters' }))
+      await user.click(
+        within(await screen.findByRole('dialog', { name: 'Nobody was removed' })).getByRole('button', {
+          name: 'Remove the other 2',
+        })
+      )
+
+      await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '3 → 1 voters' })))
+      const removedToast = state.toast.mock.calls.find(([options]) => options.title === '3 → 1 voters')![0]
+      await removedToast.action.onClick()
+
+      await waitFor(() => expect(putCalls().at(-1)?.body).toEqual({ addMembers: ['m2', 'm3'] }))
     })
 
     it('adds to a live vote on a shared saved census through the vote, waiting for it to grow', async () => {

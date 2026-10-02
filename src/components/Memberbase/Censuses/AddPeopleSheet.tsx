@@ -1,7 +1,9 @@
 import { Button, Flex, Stack, Tabs, Text } from '@chakra-ui/react'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
+import { lookupFieldsOf } from '~components/Process/Dashboard/View/VoterLookup'
 import { Sheet } from '~components/ui/Sheet'
 import { type Member, useMembersPageFetcher } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
@@ -12,6 +14,7 @@ import { MemberPicker } from './MemberPicker'
 import { UsedByWarning } from './UsedBy'
 import type { useCensusEditor } from './useCensusEditor'
 import type { ResolvedCensusState } from './useResolvedCensus'
+import { VoteLookupPicker } from './VoteLookupPicker'
 
 const FORM_ID = 'census-new-person'
 
@@ -204,25 +207,33 @@ export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name, surfa
 }
 
 /**
- * For a vote whose people were picked one by one there's no list to tick in: pick the members to take
- * out from the member list instead (anyone not in the vote is simply skipped).
+ * For a vote whose census isn't kept as a list there's nothing to tick in: find the people in the vote
+ * by a detail it signs in with (up to 20 at a time), or pick them from the member list (anyone who
+ * isn't in the vote is simply skipped).
  */
 export const PickToRemoveSheet = ({
   open,
   onOpenChange,
   onPicked,
+  process,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   onPicked: (people: SelectedMember[]) => void
+  /** The vote, to look people up in it */
+  process?: VotingProcessResponse
 }) => {
   const { t, i18n } = useTranslation()
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
+  const canLookUp = !!process && lookupFieldsOf(process.census).length > 0
+  const [tab, setTab] = useState<'vote' | 'members'>(canLookUp ? 'vote' : 'members')
   const [selected, setSelected] = useState<Map<string, SelectedMember>>(() => new Map())
 
   useEffect(() => {
-    if (!open) setSelected(new Map())
-  }, [open])
+    if (open) return
+    setSelected(new Map())
+    setTab(canLookUp ? 'vote' : 'members')
+  }, [open, canLookUp])
 
   return (
     <Sheet
@@ -245,14 +256,50 @@ export const PickToRemoveSheet = ({
         </Flex>
       }
     >
-      <Stack gap={4}>
-        <Text fontSize='sm' color='fg.muted'>
-          {t('census_detail.remove.pick_hint', {
-            defaultValue: 'Find them in your members. Anyone who isn’t in this vote is left as is.',
-          })}
-        </Text>
-        <MemberPicker selected={selected} onChange={setSelected} />
-      </Stack>
+      {canLookUp ? (
+        <Tabs.Root
+          value={tab}
+          onValueChange={({ value }) => {
+            setTab(value as 'vote' | 'members')
+            setSelected(new Map())
+          }}
+          variant='line'
+        >
+          <Tabs.List>
+            <Tabs.Trigger value='vote'>
+              {t('census_detail.remove.in_vote', { defaultValue: 'Find in this vote' })}
+            </Tabs.Trigger>
+            <Tabs.Trigger value='members'>
+              {t('census_detail.add.from_members', { defaultValue: 'From members' })}
+            </Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Content value='vote'>
+            <VoteLookupPicker process={process!} selected={selected} onChange={setSelected} />
+          </Tabs.Content>
+          <Tabs.Content value='members'>
+            <PickFromMembers selected={selected} onChange={setSelected} />
+          </Tabs.Content>
+        </Tabs.Root>
+      ) : (
+        <PickFromMembers selected={selected} onChange={setSelected} />
+      )}
     </Sheet>
+  )
+}
+
+const PickFromMembers = (props: {
+  selected: Map<string, SelectedMember>
+  onChange: (next: Map<string, SelectedMember>) => void
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Stack gap={4}>
+      <Text fontSize='sm' color='fg.muted'>
+        {t('census_detail.remove.pick_hint', {
+          defaultValue: 'Find them in your members. Anyone who isn’t in this vote is left as is.',
+        })}
+      </Text>
+      <MemberPicker {...props} />
+    </Stack>
   )
 }

@@ -170,6 +170,7 @@ const PeopleCard = ({ census, surface }: { census: ResolvedCensusState; surface?
             surface={surface}
           />
           <PickToRemoveSheet
+            process={census.process}
             open={picking}
             onOpenChange={setPicking}
             onPicked={(people) => {

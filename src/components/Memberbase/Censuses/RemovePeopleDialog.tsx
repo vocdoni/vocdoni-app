@@ -14,6 +14,9 @@ import { UsedByWarning } from './UsedBy'
 import type { useCensusEditor } from './useCensusEditor'
 import type { ResolvedCensusState } from './useResolvedCensus'
 
+/** How long "Add them back" stays on offer. */
+const UNDO_DURATION = 8000
+
 type Step =
   | { name: 'confirm' }
   /** The API refused a batch: someone in it has already started voting */
@@ -51,6 +54,8 @@ export const RemovePeopleDialog = ({
   const [step, setStep] = useState<Step>({ name: 'confirm' })
   const [removed, setRemoved] = useState(0)
   const [blocked, setBlocked] = useState<string[]>([])
+  // Exactly who went so far, for "Add them back"; null once that can't be told
+  const [removedIds, setRemovedIds] = useState<string[] | null>([])
   const vote = census.kind === 'vote'
   const running = census.state === 'live' || census.state === 'paused' || census.state === 'scheduled'
   const ids = people.map((person) => person.id)
@@ -61,9 +66,44 @@ export const RemovePeopleDialog = ({
     setStep({ name: 'confirm' })
     setRemoved(0)
     setBlocked([])
+    setRemovedIds([])
   }, [open])
 
-  const finish = (removedTotal: number, blockedIds: string[]) => {
+  /** "Add them back": the people just removed go back in, the same way they went out. */
+  const addBack = async (back: string[], countBefore: number) => {
+    try {
+      const added = await editor.add(back)
+      if (vote)
+        trackAnalyticsEvent({ name: AnalyticsEvents.VotersAdded, props: { count: added, surface: 'undo_remove' } })
+      toast({
+        title: vote
+          ? t('census_detail.remove.undone_vote', {
+              defaultValue: '{{before}} → {{after}} voters',
+              before: format(countBefore),
+              after: format(countBefore + added),
+            })
+          : t('census_detail.remove.undone', {
+              defaultValue: '{{before}} → {{after}} people',
+              before: format(countBefore),
+              after: format(countBefore + added),
+            }),
+        description: t('census_detail.remove.undone_detail', { defaultValue: 'They were added back.' }),
+        type: 'success',
+        duration: 4000,
+        isClosable: true,
+      })
+    } catch (error) {
+      toast({
+        title: t('census_detail.remove.undo_error', { defaultValue: "They couldn't be added back" }),
+        description: error instanceof Error ? error.message : undefined,
+        type: 'error',
+        duration: 6000,
+        isClosable: true,
+      })
+    }
+  }
+
+  const finish = (removedTotal: number, blockedIds: string[], gone: string[] | null) => {
     trackAnalyticsEvent({
       name: AnalyticsEvents.VotersRemoved,
       props: { requested: ids.length, removed: removedTotal, blocked: blockedIds.length },
@@ -84,8 +124,14 @@ export const RemovePeopleDialog = ({
             }),
         description: t('census_detail.remove.done_detail', { defaultValue: 'They stay in your members.' }),
         type: 'success',
-        duration: 4000,
+        duration: UNDO_DURATION,
         isClosable: true,
+        action: gone?.length
+          ? {
+              label: t('census_detail.remove.undo', { defaultValue: 'Add them back' }),
+              onClick: () => void addBack(gone, after),
+            }
+          : undefined,
       })
       onRemoved?.()
     }
@@ -96,8 +142,10 @@ export const RemovePeopleDialog = ({
     try {
       const outcome = await editor.remove(targets)
       const removedTotal = removed + outcome.removed
+      const gone = removedIds && outcome.removedIds ? [...removedIds, ...outcome.removedIds] : null
       setRemoved(removedTotal)
-      if (outcome.status === 'done') return finish(removedTotal, blocked)
+      setRemovedIds(gone)
+      if (outcome.status === 'done') return finish(removedTotal, blocked, gone)
       const blockedIds = [...blocked, ...outcome.signed]
       setBlocked(blockedIds)
       if (!outcome.remaining.length) {
@@ -109,7 +157,7 @@ export const RemovePeopleDialog = ({
           duration: 6000,
           isClosable: true,
         })
-        return finish(removedTotal, blockedIds)
+        return finish(removedTotal, blockedIds, gone)
       }
       setStep({ name: 'signed', signed: outcome.signed, remaining: outcome.remaining })
     } catch (error) {
@@ -126,7 +174,7 @@ export const RemovePeopleDialog = ({
         duration: 6000,
         isClosable: true,
       })
-      if (removedTotal) finish(removedTotal, blocked)
+      if (removedTotal) finish(removedTotal, blocked, null)
     }
   }
 
@@ -180,19 +228,38 @@ export const RemovePeopleDialog = ({
     <ConfirmDialog
       open={open}
       onOpenChange={({ open: next }) => (next || !editor.busy ? onOpenChange(next) : undefined)}
-      title={t('census_detail.remove.title', {
-        count: ids.length,
-        formattedCount: format(ids.length),
-        census: name,
-        defaultValue_one: "Remove 1 person from '{{census}}'?",
-        defaultValue_other: "Remove {{formattedCount}} people from '{{census}}'?",
-      })}
-      confirmText={t('census_detail.remove.confirm', {
-        count: ids.length,
-        formattedCount: format(ids.length),
-        defaultValue_one: 'Remove 1 person',
-        defaultValue_other: 'Remove {{formattedCount}} people',
-      })}
+      title={
+        vote
+          ? t('census_detail.remove.title_vote', {
+              count: ids.length,
+              formattedCount: format(ids.length),
+              vote: name,
+              defaultValue_one: "Remove 1 voter from '{{vote}}'?",
+              defaultValue_other: "Remove {{formattedCount}} voters from '{{vote}}'?",
+            })
+          : t('census_detail.remove.title', {
+              count: ids.length,
+              formattedCount: format(ids.length),
+              census: name,
+              defaultValue_one: "Remove 1 person from '{{census}}'?",
+              defaultValue_other: "Remove {{formattedCount}} people from '{{census}}'?",
+            })
+      }
+      confirmText={
+        vote
+          ? t('census_detail.remove.confirm_vote', {
+              count: ids.length,
+              formattedCount: format(ids.length),
+              defaultValue_one: 'Remove 1 voter',
+              defaultValue_other: 'Remove {{formattedCount}} voters',
+            })
+          : t('census_detail.remove.confirm', {
+              count: ids.length,
+              formattedCount: format(ids.length),
+              defaultValue_one: 'Remove 1 person',
+              defaultValue_other: 'Remove {{formattedCount}} people',
+            })
+      }
       loading={editor.busy}
       confirmDisabled={emptied.length > 0 || !ids.length}
       onConfirm={() => run(ids)}

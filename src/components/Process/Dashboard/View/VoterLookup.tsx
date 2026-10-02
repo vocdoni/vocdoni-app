@@ -29,7 +29,7 @@ export const splitLookupValues = (input: string) =>
     )
   ).slice(0, MAX_LOOKUPS)
 
-const fieldLabel = (t: TFunction, field: ProcessParticipantLookupField) => {
+export const lookupFieldLabel = (t: TFunction, field: ProcessParticipantLookupField) => {
   switch (field) {
     case 'email':
       return t('census.search.field.email', { defaultValue: 'Email' })
@@ -41,6 +41,10 @@ const fieldLabel = (t: TFunction, field: ProcessParticipantLookupField) => {
       return t('census.search.field.national_id', { defaultValue: 'National ID' })
   }
 }
+
+/** The details a vote's voters can be looked up by: the ones it signs in with. */
+export const lookupFieldsOf = (census?: { authFields?: string[]; twoFaFields?: string[] }) =>
+  Array.from(new Set([...(census?.authFields ?? []), ...(census?.twoFaFields ?? [])])).filter(isParticipantLookupField)
 
 // Each question is its own on-chain election, so a voter may have cast some questions and not others
 const VotedBadge = ({ participant }: { participant: ProcessParticipantEntry }) => {
@@ -77,10 +81,7 @@ export const VoterLookup = () => {
   const [input, setInput] = useState('')
   const [submitted, setSubmitted] = useState<string[]>([])
 
-  const options = useMemo(() => {
-    const fields = [...(election?.census?.authFields ?? []), ...(election?.census?.twoFaFields ?? [])]
-    return Array.from(new Set(fields)).filter(isParticipantLookupField)
-  }, [election?.census])
+  const options = useMemo(() => lookupFieldsOf(election?.census), [election?.census])
   const selectedField = field && options.includes(field) ? field : options[0]
 
   const lookups = useQueries({
@@ -111,7 +112,7 @@ export const VoterLookup = () => {
               >
                 {options.map((option) => (
                   <option key={option} value={option}>
-                    {fieldLabel(t, option)}
+                    {lookupFieldLabel(t, option)}
                   </option>
                 ))}
               </NativeSelect.Field>
@@ -129,7 +130,7 @@ export const VoterLookup = () => {
             })}
             aria-label={t('process_view.lookup.label', {
               defaultValue: '{{field}} to look up',
-              field: fieldLabel(t, selectedField),
+              field: lookupFieldLabel(t, selectedField),
             })}
           />
           <Button
