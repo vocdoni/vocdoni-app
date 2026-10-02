@@ -50,10 +50,10 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   const editMember = useEditMember()
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
-  const [hadPhone, setHadPhone] = useState(false)
   // The stored phone is never returned, so the field starts blank and cannot show a clear as a
   // change; track edits to it explicitly so emptying it still reaches the API.
   const phoneEdited = useRef(false)
+  const hadPhone = !!member?.phone
 
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
 
@@ -145,12 +145,13 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
     if (member.phone) {
       cleanMember.phone = ''
     }
-    setHadPhone(!!member.phone)
+    // the API omits emptied fields; fall back to blanks so a stale value is not left on screen
+    const values = { ...defaultValues, ...stringifyObjectValues(cleanMember) }
     if (isNewSession) {
       phoneEdited.current = false
-      methods.reset(stringifyObjectValues(cleanMember))
+      methods.reset(values)
     } else {
-      methods.reset(stringifyObjectValues(cleanMember), { keepDirtyValues: true })
+      methods.reset(values, { keepDirtyValues: true, keepErrors: true, keepIsSubmitted: true, keepSubmitCount: true })
     }
   }, [member, isOpen])
 
@@ -221,6 +222,10 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         closeDrawer()
         return
       }
+
+      // Until the backend keeps an omitted weight, leaving it out resets it to 1, so always carry
+      // the current one along.
+      if (memberPayload.weight) changes.weight = memberPayload.weight
 
       editMember.mutate(
         { id: memberId, ...changes },
