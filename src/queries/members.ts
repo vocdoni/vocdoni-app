@@ -396,13 +396,15 @@ export const useImportJobProgress = (jobId: string | null) => {
 /**
  * The members a delete was refused for: the backend deletes nobody (409) when any of them has
  * already been signed for in a vote that's still open, and lists them in `data.signedMemberIds`.
- * `null` when the error is anything else.
+ * `null` when the error is anything else, including a 409 that names nobody: callers would otherwise
+ * offer to retry "the others" forever.
  */
 export const getSignedMemberIds = (error: unknown): string[] | null => {
   if (!(error instanceof ApiError) || error.response?.status !== 409) return null
   const data = (error.apiError as { data?: { signedMemberIds?: unknown } } | undefined)?.data
   const ids = data?.signedMemberIds
-  return Array.isArray(ids) ? ids.filter((id): id is string => typeof id === 'string') : []
+  const signed = Array.isArray(ids) ? ids.filter((id): id is string => typeof id === 'string') : []
+  return signed.length ? signed : null
 }
 
 type ValidationClient = ReturnType<typeof useApiClient>['client']

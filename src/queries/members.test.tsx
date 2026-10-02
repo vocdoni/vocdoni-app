@@ -5,8 +5,10 @@ import { MemoryRouter } from 'react-router'
 import { mockUseOrganization } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { VocdoniApiError } from '@vocdoni/api-client'
+import { ApiError } from '~components/Auth/api'
 import {
   collectMembers,
+  getSignedMemberIds,
   computeReadiness,
   isAbortError,
   type Member,
@@ -190,5 +192,21 @@ describe('collectMembers', () => {
     const error = await run.catch((reason: unknown) => reason)
     expect(isAbortError(error)).toBe(true)
     expect(fetchPage).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('getSignedMemberIds', () => {
+  const conflict = (data?: unknown, status = 409) =>
+    new ApiError({ error: 'conflict', data } as never, new Response(null, { status }))
+
+  it('lists who already started voting from a 409', () => {
+    expect(getSignedMemberIds(conflict({ signedMemberIds: ['a', 'b'] }))).toEqual(['a', 'b'])
+  })
+
+  it('is null for a 409 that names nobody, or any other error', () => {
+    expect(getSignedMemberIds(conflict())).toBeNull()
+    expect(getSignedMemberIds(conflict({ signedMemberIds: [] }))).toBeNull()
+    expect(getSignedMemberIds(conflict({ signedMemberIds: ['a'] }, 500))).toBeNull()
+    expect(getSignedMemberIds(new Error('offline'))).toBeNull()
   })
 })
