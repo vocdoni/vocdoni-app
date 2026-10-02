@@ -55,6 +55,8 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
 
   const methods = useForm({ defaultValues })
+  // read during render so react-hook-form tracks it
+  const { dirtyFields } = methods.formState
   const isControlled = typeof controlledOpen === 'boolean'
   const isOpen = isControlled ? controlledOpen : disclosureOpen
 
@@ -192,10 +194,15 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         return
       }
 
-      const { id: _omitId, ...payload } = memberPayload
+      // Send only what the user changed: the API keeps a field left out and clears one sent empty.
+      // An untouched phone is blank in the form (it is never returned in plaintext), so it must
+      // be left out rather than sent empty.
+      const changes = Object.fromEntries(
+        Object.entries(memberPayload).filter(([key]) => key !== 'id' && dirtyFields[key])
+      )
 
       editMember.mutate(
-        { id: memberId, ...payload },
+        { id: memberId, ...changes },
         {
           onSuccess: handleSuccess,
           onError: handleError,
