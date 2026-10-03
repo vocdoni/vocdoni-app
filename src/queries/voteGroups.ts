@@ -301,49 +301,67 @@ export const discardVoteGroupsOf = async (api: VoteGroupApi, processId: string) 
 }
 
 /** The bit of a process the sweep reads: which group its census follows, if any. */
-export type SweepProcess = { published?: boolean; census?: { groupId?: string } | null }
+export type SweepProcess = { id: string; published?: boolean; census?: { groupId?: string } | null }
 
 /** How old a marker must be before the sweep may delete its group: an attach may still be under way. */
 export const SWEEP_MIN_AGE_MS = 10 * 60 * 1000
 
 /**
  * Deletes the vote-owned groups nothing uses any more: those whose vote is gone, or whose vote's
- * census now follows another group. Only groups that carry a marker are ever deleted, never one
- * younger than `minAgeMs` (it may be mid-attach), and never one whose vote can't be read for another
- * reason than not existing. A draft whose stored census has no group yet (saved before sign-in was
- * set up) keeps its groups: the editor may still be pointing at one.
+ * census now follows another group. Deleting a group empties every census built on it, so it errs
+ * towards keeping:
+ * - only groups that carry a marker are ever deleted, never one younger than `minAgeMs` (it may be
+ *   mid-attach);
+ * - never one that any vote of the organization follows, whatever its marker says;
+ * - never one whose vote can't be read for another reason than not existing;
+ * - never one whose vote shows no group: a draft saved before sign-in was set up, or a census the API
+ *   failed to read (it answers without one rather than failing).
  *
- * `readProcess` resolves with the process, or `null` when it doesn't exist (404); any other failure
- * should throw. Resolves with the ids it deleted.
+ * `listProcesses` resolves with every process of the organization, drafts included, or throws (then
+ * nothing is swept). Markers of votes missing from it are read one by one with `readProcess`, which
+ * resolves with `null` when the vote doesn't exist (404) and should throw on any other failure.
+ * Resolves with the ids it deleted.
  */
 export const sweepOrphanVoteGroups = async (
   api: VoteGroupApi,
+  listProcesses: () => Promise<SweepProcess[]>,
   readProcess: (processId: string) => Promise<SweepProcess | null>,
   { now = Date.now(), minAgeMs = SWEEP_MIN_AGE_MS }: { now?: number; minAgeMs?: number } = {}
 ) => {
   const markers = await api.markers()
-  const processes = new Map<string, Promise<SweepProcess | null | undefined>>()
+  const due = [...markers].filter(([, marker]) => {
+    const created = Date.parse(marker.createdAt)
+    return Number.isFinite(created) && now - created >= minAgeMs
+  })
+  if (!due.length) return []
+
+  const listed = new Map((await listProcesses()).map((process) => [process.id, process]))
+  const followed = new Set([...listed.values()].map((process) => process.census?.groupId).filter(Boolean))
+  const unlisted = new Map<string, Promise<SweepProcess | null | undefined>>()
   const read = (processId: string) => {
-    if (!processes.has(processId))
-      processes.set(
+    if (listed.has(processId)) return Promise.resolve(listed.get(processId))
+    if (!unlisted.has(processId))
+      unlisted.set(
         processId,
         readProcess(processId).catch(() => undefined) // unknown: leave its groups alone
       )
-    return processes.get(processId)!
+    return unlisted.get(processId)!
   }
 
   const deleted: string[] = []
-  for (const [groupId, marker] of markers) {
-    const created = Date.parse(marker.createdAt)
-    if (!Number.isFinite(created) || now - created < minAgeMs) continue
+  for (const [groupId, marker] of due) {
+    if (followed.has(groupId)) continue
     const process = await read(marker.processId)
     if (process === undefined) continue
     const following = process?.census?.groupId
-    const orphan = process === null || (following ? following !== groupId : !!process.published)
+    const orphan = process === null || (!!following && following !== groupId)
     if (orphan && (await discardVoteGroup(api, groupId))) deleted.push(groupId)
   }
   return deleted
 }
+
+/** Processes per list request while sweeping (the API's maximum). */
+const SWEEP_PAGE_SIZE = 100
 
 const SWEEP_SESSION_KEY = 'vocdoni.voteGroupSweep'
 const sweptThisSession = new Set<string>()
@@ -383,14 +401,28 @@ export const useSweepOrphanVoteGroups = () => {
       if (throttle && alreadySwept(address)) return []
       rememberSwept(address)
       try {
-        return await sweepOrphanVoteGroups(api, async (processId) => {
-          try {
-            return (await client.elections.get(processId)) as SweepProcess
-          } catch (error) {
-            if (error instanceof VocdoniApiError && error.status === 404) return null
-            throw error
+        return await sweepOrphanVoteGroups(
+          api,
+          async () => {
+            // With no `published` filter a manager gets every process, drafts included
+            const processes: SweepProcess[] = []
+            let page: number | null | undefined = 1
+            while (page) {
+              const result = await client.elections.list({ orgAddress: address, page, limit: SWEEP_PAGE_SIZE })
+              processes.push(...((result.processes ?? []) as SweepProcess[]))
+              page = result.pagination?.nextPage
+            }
+            return processes
+          },
+          async (processId) => {
+            try {
+              return (await client.elections.get(processId)) as SweepProcess
+            } catch (error) {
+              if (error instanceof VocdoniApiError && error.status === 404) return null
+              throw error
+            }
           }
-        })
+        )
       } catch (error) {
         console.warn('Vote census sweep failed', error)
         return []

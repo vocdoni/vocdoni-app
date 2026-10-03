@@ -168,23 +168,46 @@ describe('cleaning up vote-owned groups', () => {
       fresh: { processId: 'p1', createdAt: '2026-10-02T09:55:00.000Z' },
       unreadable: { processId: 'flaky' },
       draftWithoutGroup: { processId: 'p2' },
+      // A published vote answered without a group: its census read failed, so it's unknown
       publishedWithoutGroup: { processId: 'p3' },
+      // Its marker names a vote that moved on, but another vote follows it
+      mislabelled: { processId: 'p1' },
     })
-    const processes: Record<string, unknown> = {
-      p1: { census: { groupId: 'used' } },
-      deleted: null,
-      p2: { published: false, census: {} },
-      p3: { published: true, census: {} },
-    }
+    const listed = [
+      { id: 'p1', census: { groupId: 'used' } },
+      { id: 'p2', published: false, census: {} },
+      { id: 'p3', published: true, census: {} },
+      { id: 'p4', published: true, census: { groupId: 'mislabelled' } },
+    ]
+    const listProcesses = vi.fn(async () => listed)
     const readProcess = vi.fn(async (id: string) => {
       if (id === 'flaky') throw new Error('500')
-      return processes[id] as never
+      return null
     })
 
-    const deleted = await sweepOrphanVoteGroups(api, readProcess, { now: NOW })
+    const deleted = await sweepOrphanVoteGroups(api, listProcesses, readProcess, { now: NOW })
 
-    expect(deleted.sort()).toEqual(['gone', 'publishedWithoutGroup', 'replaced'])
-    // One read per vote
-    expect(readProcess.mock.calls.filter(([id]) => id === 'p1')).toHaveLength(1)
+    expect(deleted.sort()).toEqual(['gone', 'replaced'])
+    // Listed votes aren't read again: only the ones the list doesn't have
+    expect(readProcess.mock.calls.map(([id]) => id).sort()).toEqual(['deleted', 'flaky'])
+    expect(listProcesses).toHaveBeenCalledTimes(1)
+  })
+
+  it('sweeps nothing when the votes can’t all be listed', async () => {
+    const api = fakeApi({ gone: { processId: 'deleted' } })
+    const listProcesses = vi.fn(async () => {
+      throw new Error('500')
+    })
+
+    await expect(sweepOrphanVoteGroups(api, listProcesses, vi.fn(), { now: NOW })).rejects.toThrow('500')
+    expect(api.deleteGroup).not.toHaveBeenCalled()
+  })
+
+  it('lists no votes while every marker is too recent to sweep', async () => {
+    const api = fakeApi({ fresh: { processId: 'p1', createdAt: '2026-10-02T09:55:00.000Z' } })
+    const listProcesses = vi.fn(async () => [])
+
+    expect(await sweepOrphanVoteGroups(api, listProcesses, vi.fn(), { now: NOW })).toEqual([])
+    expect(listProcesses).not.toHaveBeenCalled()
   })
 })
