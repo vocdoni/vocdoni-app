@@ -29,7 +29,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | Members (section) | सदस्य | The dashboard section with the organization's people. Formerly "Memberbase": don't use the old name |
 | People (tab) | लोग | The tab in Members that lists every member |
 | saved census | सहेजी गई मतदाता सूची | A reusable selection of people, copied into a vote when used |
-| Activity (tab) | बदलावों का इतिहास | The tab with the dated history of imports and votes |
+| Activity (tab) | गतिविधि | What has happened: vote dates and imports today, every change once the activity log ships. It was named for a change log until 2026-10-03; the plain word fits what it shows |
 | census size | मतदाता सूची का आकार | Or "मतदाताओं की संख्या" |
 | organization | संगठन | |
 | voter | मतदाता | Invariant in the plural; oblique plural is "मतदाताओं" |

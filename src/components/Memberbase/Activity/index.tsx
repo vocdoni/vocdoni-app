@@ -158,6 +158,12 @@ const DerivedActivity = () => {
 
   return (
     <Stack gap={4}>
+      {/* The tab is named for what it shows today, and says what it doesn't show yet */}
+      <Banner status='info'>
+        {t('activity.not_yet', {
+          defaultValue: "Changes to people and censuses don't show here yet. Votes and imports do.",
+        })}
+      </Banner>
       {activity.isLoading ? (
         <SectionCard>
           <Loading />
@@ -185,7 +191,8 @@ const DerivedActivity = () => {
         surface='members_activity'
         title={t('activity.soon.title', { defaultValue: 'Soon: every change, with who and when' })}
         description={t('activity.soon.description', {
-          defaultValue: 'Edits to members and censuses will show here, ready to export for your minutes.',
+          defaultValue:
+            "Edits to members and censuses, and each vote's census as it was at publish and at close, will show here, ready to export for your minutes.",
         })}
       />
     </Stack>

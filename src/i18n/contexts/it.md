@@ -23,7 +23,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | Members (section) | Membri | The dashboard section with the organization's people. Formerly "Memberbase" ("Database membri"): don't use the old name |
 | People (tab) | Persone | The tab in Members that lists every member |
 | saved census | censimento salvato | A reusable selection of people, copied into a vote when used |
-| Activity (tab) | Registro delle modifiche | The tab with the dated history of imports and votes |
+| Activity (tab) | Attività | What has happened: vote dates and imports today, every change once the activity log ships. It was named for a change log until 2026-10-03; the plain word fits what it shows |
 | organization | organizzazione | |
 | voter | votante | Gender-neutral; prefer over "elettore/elettrice" in most contexts |
 | voting power / weight | peso del voto | |
