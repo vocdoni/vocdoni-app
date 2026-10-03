@@ -63,7 +63,7 @@ describe('copy-on-attach', () => {
     expect(api.mark).toHaveBeenCalledWith('new1', {
       processId: 'p1',
       kind: 'copy',
-      from: 'Quota pagada',
+      fromId: 'saved',
       source: 'saved',
       createdAt: '2026-10-02T10:00:00.000Z',
     })
@@ -84,7 +84,7 @@ describe('copy-on-attach', () => {
     })
 
     expect(api.readMemberIds).not.toHaveBeenCalled()
-    expect(api.mark).toHaveBeenCalledWith('new1', expect.not.objectContaining({ from: expect.anything() }))
+    expect(api.mark).toHaveBeenCalledWith('new1', expect.not.objectContaining({ fromId: expect.anything() }))
   })
 
   it('refuses to create a census of nobody', async () => {

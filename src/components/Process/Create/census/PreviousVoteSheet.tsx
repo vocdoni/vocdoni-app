@@ -67,17 +67,17 @@ export const PreviousVoteSheet = ({
   const votes = useAllVotes({ enabled: open })
   const groupsById = useMemo(() => new Map(groups.map((group) => [group.id, group])), [groups])
 
-  const rows = useMemo(
-    () =>
-      votes.all
-        .filter((vote) => vote.id !== draftId)
-        .map((vote: VotingProcessResponse) => {
-          const source = censusSourceOf(vote, { everyoneId, markers, groupsById })
-          const name = processTitle(vote, language) || untitledVote(t, !vote.published)
-          return { vote, name, source, state: voteStateOf(vote), choice: previousChoiceOf(source, name) }
-        }),
-    [votes.all, draftId, everyoneId, markers, groupsById, language, t]
-  )
+  const rows = useMemo(() => {
+    const titles = new Map(votes.all.map((vote) => [vote.id, processTitle(vote, language)]))
+    const voteTitle = (processId: string) => titles.get(processId)
+    return votes.all
+      .filter((vote) => vote.id !== draftId)
+      .map((vote: VotingProcessResponse) => {
+        const source = censusSourceOf(vote, { everyoneId, markers, groupsById, voteTitle })
+        const name = processTitle(vote, language) || untitledVote(t, !vote.published)
+        return { vote, name, source, state: voteStateOf(vote), choice: previousChoiceOf(source, name) }
+      })
+  }, [votes.all, draftId, everyoneId, markers, groupsById, language, t])
 
   return (
     <Sheet

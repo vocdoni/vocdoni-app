@@ -57,8 +57,8 @@ export const writeWithLatest = async (
 export type CreateVoteGroupInput = {
   processId: string
   kind: VoteGroupKind
-  /** For a copy: the name of what it was copied from */
-  from?: string
+  /** For a copy: the group it was copied from */
+  fromId?: string
   /** For a copy: what kind of thing it was copied from */
   source?: VoteGroupSource
   group: NewGroup
@@ -79,7 +79,7 @@ export type CreateVoteGroupInput = {
  */
 export const createVoteGroup = async (
   api: VoteGroupApi,
-  { processId, kind, from, source, group, repoint, replacing, now = () => new Date() }: CreateVoteGroupInput
+  { processId, kind, fromId, source, group, repoint, replacing, now = () => new Date() }: CreateVoteGroupInput
 ) => {
   const groupId = await api.createGroup(group)
 
@@ -87,7 +87,7 @@ export const createVoteGroup = async (
     processId,
     kind,
     createdAt: now().toISOString(),
-    ...(from ? { from } : {}),
+    ...(fromId ? { fromId } : {}),
     ...(source ? { source } : {}),
   }
   try {

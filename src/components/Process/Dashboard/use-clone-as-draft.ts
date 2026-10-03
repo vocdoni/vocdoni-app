@@ -39,7 +39,6 @@ export const useCloneProcess = () => {
         ? await cloneWithOwnCensus(voteGroups, {
             request,
             create: (body) => createProcess.mutateAsync(body),
-            name,
             title: voteGroupTitle(t, name),
             description: voteGroupDescription(t, name),
           })

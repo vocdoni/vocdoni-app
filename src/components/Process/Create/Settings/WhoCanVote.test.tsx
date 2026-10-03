@@ -141,7 +141,7 @@ describe('WhoCanVote', () => {
     data.groups = [EVERYONE, SAVED, { id: 'own-old', title: 'Old vote — census', membersCount: 2 }]
     data.details = { quota: { memberIds: ['m1', 'm2', 'm3'] }, 'own-old': { memberIds: ['m1', 'm9'] } }
     data.markers = new Map([
-      ['own-old', { processId: 'draft-1', kind: 'copy', createdAt: '2026-10-02T09:00:00Z', from: 'Quota pagada' }],
+      ['own-old', { processId: 'draft-1', kind: 'copy', createdAt: '2026-10-02T09:00:00Z', fromId: 'quota' }],
     ])
     data.testVote = null
     data.votes = []
@@ -178,7 +178,7 @@ describe('WhoCanVote', () => {
     })
     expect(api.mark).toHaveBeenCalledWith(
       'own-new',
-      expect.objectContaining({ processId: 'draft-1', kind: 'copy', from: 'Quota pagada', source: 'saved' })
+      expect.objectContaining({ processId: 'draft-1', kind: 'copy', fromId: 'quota', source: 'saved' })
     )
     expect(draft.saveWithLatest).toHaveBeenCalled()
     expect(formState().census).toEqual({ credentials: [], use2FA: true, use2FAMethod: 'email' })
@@ -322,7 +322,7 @@ describe('WhoCanVote', () => {
     expect(api.createGroup).toHaveBeenCalledWith(expect.objectContaining({ memberIds: ['j1', 'j2'] }))
     expect(api.mark).toHaveBeenCalledWith(
       'own-new',
-      expect.objectContaining({ from: 'Junta 2025', source: 'previous' })
+      expect.objectContaining({ fromId: 'junta', source: 'previous' })
     )
   })
 

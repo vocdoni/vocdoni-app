@@ -48,7 +48,7 @@ export const attachCensus = async (api: VoteGroupApi, input: AttachInput) => {
   const groupId = await createVoteGroup(api, {
     processId: input.processId,
     kind: 'copy',
-    from: 'name' in source ? source.name : undefined,
+    fromId: 'groupId' in source ? source.groupId : undefined,
     source: source.kind,
     group: { title: input.title, description: input.description, memberIds },
     repoint: input.repoint,

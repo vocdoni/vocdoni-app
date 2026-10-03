@@ -5,8 +5,6 @@ type CloneInput = {
   request: CreateVotingProcessRequest
   /** Creates the copy's draft; resolves with its id */
   create: (request: CreateVotingProcessRequest) => Promise<string>
-  /** The source vote's name, for where the copy's census came from */
-  name: string
   /** What the copy's census is called and says about itself */
   title: string
   description: string
@@ -58,7 +56,7 @@ export const cloneWithOwnCensus = async (api: VoteGroupApi, input: CloneInput) =
   const marker = {
     processId,
     kind: 'copy' as const,
-    from: input.name,
+    fromId: groupId,
     source: 'previous' as const,
     createdAt: (input.now ?? (() => new Date()))().toISOString(),
   }

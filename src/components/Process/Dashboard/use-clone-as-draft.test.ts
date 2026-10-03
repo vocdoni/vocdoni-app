@@ -228,7 +228,7 @@ describe('useCloneAsDraft', () => {
       expect(clonedRequest().census?.groupId).toBe('copy-1')
       expect(voteGroups.mark).toHaveBeenCalledWith(
         'copy-1',
-        expect.objectContaining({ processId: 'draft-123', kind: 'copy', from: 'Test Election', source: 'previous' })
+        expect.objectContaining({ processId: 'draft-123', kind: 'copy', fromId: 'board', source: 'previous' })
       )
     })
 

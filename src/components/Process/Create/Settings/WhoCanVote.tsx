@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next'
 import { LuCircleAlert, LuCircleCheck, LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router'
 import { CensusDetail } from '~components/Memberbase/Censuses/CensusDetail'
-import { everyoneTitle } from '~components/Memberbase/Censuses/labels'
+import { copiedFromUnnamed, everyoneTitle } from '~components/Memberbase/Censuses/labels'
 import { Banner } from '~components/ui/Banner'
 import { Sheet } from '~components/ui/Sheet'
 import { useToast } from '~components/Toast'
@@ -26,7 +26,7 @@ import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
 import { useUpdateGroupWithReport } from '~src/queries/groups'
 import { MEMBERS_COLLECT_CAP, useMemberIdCollector } from '~src/queries/members'
-import { type TestVote, useTestVote, type VoteGroupMarker } from '~src/queries/voteGroups'
+import { copySourceName, type TestVote, useTestVote } from '~src/queries/voteGroups'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { ChoosePeopleSheet } from '../census/ChoosePeopleSheet'
 import { type PreviousChoice, PreviousVoteSheet } from '../census/PreviousVoteSheet'
@@ -41,21 +41,24 @@ export type CensusSourceChoice = 'everyone' | 'saved' | 'choose' | 'previous'
 type DraftCensus = ReturnType<typeof useDraftCensus>
 
 /** Where a vote's own census came from, in a few words: "Copied from 'Quota pagada' on 2 Oct". */
-const useOwnedSource = (marker?: VoteGroupMarker) => {
+const useOwnedSource = (census: DraftCensus) => {
   const { t } = useTranslation()
   const { format } = useDateFns()
+  const { marker, groups, markers } = census
+  const groupsById = useMemo(() => new Map(groups.map((group) => [group.id, group])), [groups])
   if (!marker) return ''
   const date = format(marker.createdAt, 'd MMM')
   if (marker.kind === 'test') return t('process_create.census.source.test', { defaultValue: 'The test vote’s people' })
-  if (marker.from)
+  const name = copySourceName(marker, { groupsById, markers })
+  if (name)
     return date
       ? t('process_create.census.source.copied_on', {
           defaultValue: "Copied from '{{name}}' on {{date}}",
-          name: marker.from,
+          name,
           date,
         })
-      : t('censuses.source.copy_from', { defaultValue: "Copied from '{{name}}'", name: marker.from })
-  return t('censuses.source.chosen', { defaultValue: 'Chosen by hand' })
+      : t('censuses.source.copy_from', { defaultValue: "Copied from '{{name}}'", name })
+  return copiedFromUnnamed(t, marker.source)
 }
 
 /** The census in a sheet: browse it, check who can sign in and, for the vote's own, add or remove people. */
@@ -134,7 +137,7 @@ const CensusLine = ({ census, onReview }: { census: DraftCensus; onReview: () =>
         source:
           census.mode === 'everyone'
             ? 'everyone'
-            : (marker?.source ?? (marker?.kind === 'test' ? 'test' : marker?.from ? 'saved' : 'choose')),
+            : (marker?.source ?? (marker?.kind === 'test' ? 'test' : marker?.fromId ? 'saved' : 'choose')),
         voters: total,
         is_test: marker?.kind === 'test',
         unreachable: breakdown?.unreachable ?? 0,
@@ -289,7 +292,7 @@ export const WhoCanVote = () => {
   const draftId = draft?.id ?? null
   const census = useDraftCensus()
   const { attach, chooseEveryone, busy } = useCensusAttach()
-  const ownedSource = useOwnedSource(census.marker)
+  const ownedSource = useOwnedSource(census)
   const testVote = useTestVote()
   const collector = useMemberIdCollector()
   const updateGroup = useUpdateGroupWithReport()
