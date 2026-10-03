@@ -18,7 +18,7 @@ import { peopleUnit, votersUnit } from './labels'
 import { isEnded } from './model'
 import { ExportCard, readOnlyText, SavedCensusActions, SignInCard } from './SideCards'
 import { RemovePeopleDialog } from './RemovePeopleDialog'
-import { formatVoteList, UsedByCard } from './UsedBy'
+import { CopiedIntoCard, CopiedIntoRunningBanner, formatVoteList, UsedByCard } from './UsedBy'
 import { useCensusEditor } from './useCensusEditor'
 import { type CensusDetailTarget, type ResolvedCensusState, useResolvedCensus } from './useResolvedCensus'
 
@@ -232,6 +232,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
   return (
     <Grid templateColumns={{ base: 'minmax(0, 1fr)', lg: 'minmax(0, 2fr) minmax(0, 1fr)' }} gap={4} alignItems='start'>
       <Stack gap={4} minW={0}>
+        {census.kind === 'saved' && <CopiedIntoRunningBanner votes={census.copiedInto} />}
         <PeopleCard census={census} surface={props.surface ?? 'census_page'} />
         {census.browse === 'lookup' && census.process && (
           <ElectionProvider id={census.process.id}>
@@ -248,7 +249,11 @@ export const CensusDetail = (props: CensusDetailProps) => {
         />
         {census.kind === 'saved' && census.group && (
           <>
-            <UsedByCard votes={census.sharedWith} />
+            {/* "No vote uses it yet" above a list of votes that copied it would read as a contradiction */}
+            {(census.sharedWith.length > 0 || census.copiedInto.length === 0) && (
+              <UsedByCard votes={census.sharedWith} />
+            )}
+            <CopiedIntoCard votes={census.copiedInto} />
             <SavedCensusActions
               group={census.group as Group}
               usedBy={census.sharedWith}

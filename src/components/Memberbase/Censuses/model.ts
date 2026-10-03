@@ -1,7 +1,7 @@
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { organizeProcesses, type ProcessGroups } from '~components/Process/List/organize'
 import { getProcessState, type ProcessState } from '~components/Process/processState'
-import { type AffectedVote, votesFollowingGroup } from '~src/queries/affectedVotes'
+import { type AffectedVote, type CopyingVote, votesCopying, votesFollowingGroup } from '~src/queries/affectedVotes'
 import type { Group } from '~src/queries/groups'
 import { copySourceName, type VoteGroupMarker, type VoteGroupSource } from '~src/queries/voteGroups'
 
@@ -141,6 +141,8 @@ export type ResolvedCensus = {
   readOnly?: ReadOnlyReason
   /** The votes that share this census' group: for a saved census, and for a vote using a saved one */
   sharedWith: AffectedVote[]
+  /** For a saved census: the votes that copied it into a census of their own, which its edits don't reach */
+  copiedInto: CopyingVote[]
 }
 
 export const resolveCensus = ({
@@ -176,6 +178,7 @@ export const resolveCensus = ({
         edit: 'none',
         readOnly: 'everyone',
         sharedWith: votesFollowingGroup(processes, group.id),
+        copiedInto: [],
       }
     return {
       kind: 'saved',
@@ -185,6 +188,7 @@ export const resolveCensus = ({
       browse: 'group',
       edit: 'group',
       sharedWith: votesFollowingGroup(processes, group?.id),
+      copiedInto: votesCopying(processes, markers, group?.id),
     }
   }
 
@@ -223,5 +227,6 @@ export const resolveCensus = ({
     edit,
     readOnly,
     sharedWith: source?.kind === 'saved' && groupId ? votesFollowingGroup(processes, groupId) : [],
+    copiedInto: [],
   }
 }

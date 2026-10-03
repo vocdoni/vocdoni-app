@@ -288,6 +288,46 @@ describe('CensusDetail', () => {
     )
   })
 
+  it('lists the votes that copied a saved census, and warns while one of them is live', async () => {
+    state.groups.push(group('own-p2', 'Census of Assemblea'), group('own-d2', 'Census of Junta'))
+    state.meta = {
+      'vg_own-p2': {
+        processId: 'p2',
+        kind: 'copy',
+        createdAt: '2026-09-30T10:00:00Z',
+        fromId: 'quota',
+        source: 'saved',
+      },
+      'vg_own-d2': {
+        processId: 'd2',
+        kind: 'copy',
+        createdAt: '2026-10-02T10:00:00Z',
+        fromId: 'quota',
+        source: 'saved',
+      },
+      // Replaced since: its vote follows another census now
+      'vg_own-old': { processId: 'd2', kind: 'copy', createdAt: '2026-09-01T10:00:00Z', fromId: 'quota' },
+    }
+    state.published = [vote('p2', 'Assemblea General 2026', { groupId: 'own-p2', size: 30 }, 'ONGOING')]
+    state.drafts = [vote('d2', 'Junta 2027', { groupId: 'own-d2' }, 'UPCOMING', false)]
+    renderDetail({ kind: 'saved', groupId: 'quota' })
+
+    const card = (await screen.findByRole('heading', { name: 'Copied into' })).closest('div')!.parentElement!
+    expect(
+      within(card)
+        .getAllByRole('link')
+        .map((link) => link.textContent)
+    ).toEqual(['Assemblea General 2026', 'Junta 2027'])
+    expect(
+      within(card).getByText("These votes have their own copy. Changes here don't reach them.")
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText("A live or scheduled vote uses a copy of this census. Changes here don't reach it.")
+    ).toBeInTheDocument()
+    // Nothing shares it, and "No vote uses it yet" would contradict the list
+    expect(screen.queryByText('No vote uses it yet.')).toBeNull()
+  })
+
   it('waits for every vote to load before a saved census can be deleted', async () => {
     state.published = []
     state.moreDrafts = true
