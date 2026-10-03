@@ -1,5 +1,18 @@
 import type { TFunction } from 'i18next'
+import type { VoteGroupSource } from '~src/queries/voteGroups'
 import type { CensusSource } from './model'
+
+/** Where a copy came from when its source can't be named (deleted since, or not loaded). */
+export const copiedFromUnnamed = (t: TFunction, source?: VoteGroupSource) => {
+  switch (source) {
+    case 'saved':
+      return t('censuses.source.copy_saved', { defaultValue: 'Copied from a saved census' })
+    case 'previous':
+      return t('censuses.source.copy_previous', { defaultValue: 'Copied from another vote' })
+    default:
+      return t('censuses.source.chosen', { defaultValue: 'Chosen by hand' })
+  }
+}
 
 /** Where a vote's voters come from, in a few words for its row. */
 export const censusSourceLabel = (t: TFunction, source: CensusSource) => {
@@ -7,9 +20,9 @@ export const censusSourceLabel = (t: TFunction, source: CensusSource) => {
     case 'everyone':
       return t('censuses.source.everyone', { defaultValue: 'Everyone' })
     case 'copy':
-      return source.from
-        ? t('censuses.source.copy_from', { defaultValue: "Copied from '{{name}}'", name: source.from })
-        : t('censuses.source.copy', { defaultValue: 'Its own copy' })
+      if (source.from)
+        return t('censuses.source.copy_from', { defaultValue: "Copied from '{{name}}'", name: source.from })
+      return copiedFromUnnamed(t, source.source)
     case 'snapshot':
       return t('censuses.source.snapshot', { defaultValue: 'Everyone, frozen at publish' })
     case 'test':

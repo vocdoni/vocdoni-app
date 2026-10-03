@@ -99,7 +99,7 @@ describe('CensusesIndex', () => {
       }),
     ]
     data.drafts = [vote('draft', 'Comitè', { size: 3 }, 'UPCOMING', { published: false })]
-    data.markers = new Map([['owned', { processId: 'live', kind: 'copy', createdAt: past, from: 'Quota pagada' }]])
+    data.markers = new Map([['owned', { processId: 'live', kind: 'copy', createdAt: past, fromId: 'quota' }]])
     data.track.mockReset()
   })
 

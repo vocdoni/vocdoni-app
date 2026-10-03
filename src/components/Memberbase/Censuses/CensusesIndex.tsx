@@ -65,7 +65,21 @@ export const CensusesIndex = () => {
   }, [])
 
   const groupsById = useMemo(() => new Map(index.saved.map(({ group }) => [group.id, group])), [index.saved])
-  const sourceContext = { everyoneId: index.everyone?.id, markers, groupsById }
+  const voteTitles = useMemo(
+    () =>
+      new Map(
+        (Object.keys(index.votes) as (keyof ProcessGroups)[]).flatMap((key) =>
+          index.votes[key].map((entry) => [entry.process.id, entry.title] as const)
+        )
+      ),
+    [index.votes]
+  )
+  const sourceContext = {
+    everyoneId: index.everyone?.id,
+    markers,
+    groupsById,
+    voteTitle: (processId: string) => voteTitles.get(processId),
+  }
 
   const groupLabels: Record<keyof ProcessGroups, string> = {
     live: t('censuses.group.live', { defaultValue: 'Live' }),

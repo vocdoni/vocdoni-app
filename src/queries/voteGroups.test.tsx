@@ -6,6 +6,8 @@ import {
   isVoteOwned,
   markVoteGroup,
   parseVoteGroupMarkers,
+  copySourceName,
+  type VoteGroupMarker,
   unmarkVoteGroup,
   useVoteGroupMarkers,
   voteGroupDescription,
@@ -27,7 +29,14 @@ describe('vote-owned group markers', () => {
   it('reads one marker per vg_ key and ignores everything else', () => {
     const markers = parseVoteGroupMarkers({
       isDashboardTutorialClosed: true,
-      vg_g1: { processId: 'p1', kind: 'copy', createdAt: '2026-10-02T10:00:00Z', from: 'Quota pagada' },
+      // A name stored by an older build is dropped: the meta is public
+      vg_g1: {
+        processId: 'p1',
+        kind: 'copy',
+        createdAt: '2026-10-02T10:00:00Z',
+        fromId: 'quota',
+        from: 'Quota pagada',
+      },
       vg_g2: { processId: 'p2', kind: 'snapshot', createdAt: '2026-10-02T11:00:00Z' },
       vg_bad: { processId: 'p3', kind: 'unknown' },
       vg_: { processId: 'p4', kind: 'copy' },
@@ -39,11 +48,30 @@ describe('vote-owned group markers', () => {
       processId: 'p1',
       kind: 'copy',
       createdAt: '2026-10-02T10:00:00Z',
-      from: 'Quota pagada',
+      fromId: 'quota',
     })
     expect(isVoteOwned(markers, 'g2')).toBe(true)
     expect(isVoteOwned(markers, 'saved')).toBe(false)
     expect(isVoteOwned(markers, undefined)).toBe(false)
+  })
+
+  it('names what a copy came from only by looking it up', () => {
+    const markers = new Map<string, VoteGroupMarker>([
+      ['saved-copy', { processId: 'p1', kind: 'copy', createdAt: '', fromId: 'quota', source: 'saved' }],
+      ['vote-copy', { processId: 'p2', kind: 'copy', createdAt: '', fromId: 'junta-own', source: 'previous' }],
+      ['junta-own', { processId: 'junta', kind: 'copy', createdAt: '' }],
+      ['gone-copy', { processId: 'p3', kind: 'copy', createdAt: '', fromId: 'deleted', source: 'saved' }],
+    ])
+    const context = {
+      groupsById: new Map([['quota', { title: 'Quota pagada' }]]),
+      markers,
+      voteTitle: (id: string) => (id === 'junta' ? 'Junta 2025' : undefined),
+    }
+
+    expect(copySourceName(markers.get('saved-copy'), context)).toBe('Quota pagada')
+    expect(copySourceName(markers.get('vote-copy'), context)).toBe('Junta 2025')
+    expect(copySourceName(markers.get('gone-copy'), context)).toBeUndefined()
+    expect(copySourceName(markers.get('vote-copy'), { ...context, voteTitle: undefined })).toBeUndefined()
   })
 
   it('marks a group by sending only its own key, which the API merges into the meta', async () => {

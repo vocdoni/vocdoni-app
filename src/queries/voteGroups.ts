@@ -13,6 +13,9 @@ import { useOrganizationMeta } from './organization'
  * vote's people). It's a normal group to the API, so the app marks it in the organization meta:
  * one top-level key per group, because `PUT /meta` merges top-level keys and two admins marking
  * different groups never overwrite each other.
+ *
+ * The organization meta is public (`GET /organizations/{address}` needs no session), so a marker
+ * holds ids and dates only, never a name: what a copy came from is looked up when it's shown.
  */
 export type VoteGroupKind = 'copy' | 'snapshot' | 'test'
 
@@ -21,9 +24,16 @@ export type VoteGroupMarker = {
   kind: VoteGroupKind
   /** ISO date */
   createdAt: string
-  /** For a copy: the name of what it was copied from, as it was then */
-  from?: string
+  /** For a copy: the group it was copied from (a saved census, or another vote's census) */
+  fromId?: string
+  /** For a copy: what kind of thing it was copied from (a hand-picked copy has no `fromId`) */
+  source?: VoteGroupSource
 }
+
+/** What a vote's own copy was made from. */
+export type VoteGroupSource = 'saved' | 'previous' | 'choose' | 'everyone'
+
+const SOURCES: VoteGroupSource[] = ['saved', 'previous', 'choose', 'everyone']
 
 export const VOTE_GROUP_META_PREFIX = 'vg_'
 
@@ -48,10 +58,33 @@ export const parseVoteGroupMarkers = (meta?: Record<string, unknown> | null): Ma
       processId: value.processId,
       kind: value.kind,
       createdAt: typeof value.createdAt === 'string' ? value.createdAt : '',
-      ...(typeof value.from === 'string' && value.from ? { from: value.from } : {}),
+      ...(typeof value.fromId === 'string' && value.fromId ? { fromId: value.fromId } : {}),
+      ...(SOURCES.includes(value.source as VoteGroupSource) ? { source: value.source } : {}),
     })
   })
   return markers
+}
+
+/**
+ * What a copy was copied from, by name, looked up now: a saved census's title, or the title of the
+ * vote whose census it copied (when `voteTitle` knows it). Undefined when that's gone or unknown.
+ */
+export const copySourceName = (
+  marker: VoteGroupMarker | undefined,
+  {
+    groupsById,
+    markers,
+    voteTitle,
+  }: {
+    groupsById: Map<string, { title?: string }>
+    markers: Map<string, VoteGroupMarker>
+    voteTitle?: (processId: string) => string | undefined
+  }
+) => {
+  if (!marker?.fromId) return undefined
+  const from = markers.get(marker.fromId)
+  if (from) return voteTitle?.(from.processId) || undefined
+  return groupsById.get(marker.fromId)?.title || undefined
 }
 
 /** Whether a group is the census of a vote, rather than a saved census or Everyone. */

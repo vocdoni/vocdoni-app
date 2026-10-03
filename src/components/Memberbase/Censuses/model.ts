@@ -3,7 +3,7 @@ import { organizeProcesses, type ProcessGroups } from '~components/Process/List/
 import { getProcessState, type ProcessState } from '~components/Process/processState'
 import { type AffectedVote, votesFollowingGroup } from '~src/queries/affectedVotes'
 import type { Group } from '~src/queries/groups'
-import type { VoteGroupMarker } from '~src/queries/voteGroups'
+import { copySourceName, type VoteGroupMarker, type VoteGroupSource } from '~src/queries/voteGroups'
 
 /** Where a vote is in its life, drafts included. */
 export type VoteState = ProcessState | 'draft'
@@ -23,7 +23,7 @@ export const isEnded = (state?: VoteState) => state === 'ended' || state === 'ca
  */
 export type CensusSource =
   | { kind: 'everyone' }
-  | { kind: 'copy'; from?: string; groupId: string }
+  | { kind: 'copy'; from?: string; source?: VoteGroupSource; groupId: string }
   | { kind: 'snapshot'; groupId: string }
   | { kind: 'test'; groupId: string }
   | { kind: 'saved'; group: Group }
@@ -33,6 +33,8 @@ type SourceContext = {
   everyoneId?: string
   markers: Map<string, VoteGroupMarker>
   groupsById: Map<string, Group>
+  /** A vote's title, to name the vote a copy came from */
+  voteTitle?: (processId: string) => string | undefined
 }
 
 export const censusSourceOf = (process: VotingProcessResponse, context: SourceContext): CensusSource => {
@@ -40,7 +42,8 @@ export const censusSourceOf = (process: VotingProcessResponse, context: SourceCo
   if (!groupId) return { kind: 'selected' }
   if (groupId === context.everyoneId) return { kind: 'everyone' }
   const marker = context.markers.get(groupId)
-  if (marker?.kind === 'copy') return { kind: 'copy', from: marker.from, groupId }
+  if (marker?.kind === 'copy')
+    return { kind: 'copy', from: copySourceName(marker, context), source: marker.source, groupId }
   if (marker?.kind === 'snapshot') return { kind: 'snapshot', groupId }
   if (marker?.kind === 'test') return { kind: 'test', groupId }
   const group = context.groupsById.get(groupId)
