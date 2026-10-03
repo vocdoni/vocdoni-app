@@ -159,7 +159,7 @@ export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name, surfa
               {t('members.bulk.cancel', { defaultValue: 'Cancel' })}
             </Button>
             {tab === 'members' ? (
-              <Button onClick={addSelected} loading={busy} disabled={!selected.size}>
+              <Button key='add-selected' onClick={addSelected} loading={busy} disabled={!selected.size}>
                 {t('census_detail.add.submit', {
                   count: selected.size,
                   formattedCount: format(selected.size),
@@ -168,7 +168,7 @@ export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name, surfa
                 })}
               </Button>
             ) : (
-              <Button type='submit' form={FORM_ID} loading={busy}>
+              <Button key='add-created' type='submit' form={FORM_ID} loading={busy}>
                 {t('members.person.add_submit', { defaultValue: 'Add person' })}
               </Button>
             )}
