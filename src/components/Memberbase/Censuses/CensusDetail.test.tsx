@@ -30,6 +30,8 @@ const state = vi.hoisted(() => ({
   process: null as unknown,
   orgMembers: [] as Record<string, unknown>[],
   conflicts: [] as string[][],
+  /** What the next group PUTs report in `errors` */
+  putErrors: [] as string[],
   fetch: vi.fn(),
   addCensus: vi.fn(),
   waitFor: vi.fn(),
@@ -133,6 +135,7 @@ const route = (url: string, options?: { method?: string; body?: Record<string, u
       const removing = (options.body?.removeMembers as string[] | undefined) ?? []
       const signed = state.conflicts.shift()
       if (signed && removing.some((id) => signed.includes(id))) throw conflict(signed)
+      if (state.putErrors.length) return { censusJobIds: [], errors: state.putErrors.splice(0) }
       return 'OK'
     }
     const group = state.groups.find((entry) => entry.id === single[1])
@@ -190,6 +193,7 @@ describe('CensusDetail', () => {
     state.toast.mockReset()
     state.orgMembers = Array.from({ length: 3 }, (_, index) => person(index))
     state.conflicts = []
+    state.putErrors = []
     state.addCensus.mockReset().mockImplementation(async (_id: string, ids: string[]) => ({
       added: ids.length,
       jobId: `job-${ids[0]}`,
@@ -482,6 +486,28 @@ describe('CensusDetail', () => {
 
       await waitFor(() => expect(state.toast).toHaveBeenCalledWith(expect.objectContaining({ title: '3 → 4 voters' })))
       expect(putCalls()).toEqual([{ url: 'organizations/0xorg/groups/owned', body: { addMembers: ['m0'] } }])
+    })
+
+    it('counts only the people the vote took, and says who it left out for lacking sign-in details', async () => {
+      const user = userEvent.setup()
+      liveOwnCensus()
+      state.putErrors = ['m0: missing required auth data']
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await user.click(await screen.findByRole('button', { name: 'Add people' }))
+      const sheet = await screen.findByRole('dialog', { name: 'Add people' })
+      await user.click(await within(sheet).findByRole('checkbox', { name: /Person00 Vila/ }))
+      await user.click(within(sheet).getByRole('button', { name: 'Add 1 person' }))
+
+      await waitFor(() =>
+        expect(state.toast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: '3 → 3 voters',
+            description: "1 person wasn't added: they don't have the details this vote signs in with.",
+            type: 'warning',
+          })
+        )
+      )
     })
 
     it('creates a new person and adds them to the census at once', async () => {

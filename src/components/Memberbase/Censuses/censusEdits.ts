@@ -9,6 +9,20 @@ export const ADD_CHUNK_SIZE = 500
 /** Ids per request when removing through a group (the process endpoint takes up to 1,000). */
 export const GROUP_REMOVE_CHUNK_SIZE = 500
 
+/**
+ * The members of `ids` the API left out of a vote's census because they lack the details it signs in
+ * with. It reports each as "<memberId>: missing required auth data" in the response's `errors`.
+ */
+export const missingLoginDataIds = (errors: string[] | undefined, ids: string[]) => {
+  const wanted = new Set(ids)
+  const skipped = new Set<string>()
+  errors?.forEach((error) => {
+    const match = error.match(/^(\S+): missing required auth data/)
+    if (match && wanted.has(match[1])) skipped.add(match[1])
+  })
+  return [...skipped]
+}
+
 export const chunk = <T>(items: T[], size: number): T[][] =>
   Array.from({ length: Math.ceil(items.length / size) }, (_, index) => items.slice(index * size, (index + 1) * size))
 

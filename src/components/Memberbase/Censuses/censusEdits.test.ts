@@ -1,5 +1,11 @@
 import { ApiError } from '~components/Auth/api'
-import { findCreatedMember, PartialRemovalError, questionsEmptiedBy, removeInChunks } from './censusEdits'
+import {
+  findCreatedMember,
+  missingLoginDataIds,
+  PartialRemovalError,
+  questionsEmptiedBy,
+  removeInChunks,
+} from './censusEdits'
 
 const conflict = (signedMemberIds: string[]) =>
   new ApiError(
@@ -114,5 +120,22 @@ describe('findCreatedMember', () => {
       ])
     )
     expect(await findCreatedMember(shared, { name: 'Pere', surname: 'Roca' })).toBeNull()
+  })
+})
+
+describe('missingLoginDataIds', () => {
+  it('reads who a census left out for lacking sign-in details, among the ids sent', () => {
+    expect(
+      missingLoginDataIds(
+        [
+          'm1: missing required auth data',
+          'm2: invalid data',
+          'census c9: not found',
+          'm7: missing required auth data',
+        ],
+        ['m1', 'm2', 'm3']
+      )
+    ).toEqual(['m1'])
+    expect(missingLoginDataIds(undefined, ['m1'])).toEqual([])
   })
 })

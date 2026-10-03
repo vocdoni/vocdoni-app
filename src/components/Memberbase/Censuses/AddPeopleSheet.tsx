@@ -12,7 +12,7 @@ import type { SelectedMember } from '../People/useSelection'
 import { findCreatedMember } from './censusEdits'
 import { MemberPicker } from './MemberPicker'
 import { UsedByWarning } from './UsedBy'
-import type { useCensusEditor } from './useCensusEditor'
+import type { AddResult, useCensusEditor } from './useCensusEditor'
 import type { ResolvedCensusState } from './useResolvedCensus'
 import { VoteLookupPicker } from './VoteLookupPicker'
 
@@ -52,7 +52,7 @@ export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name, surfa
     setTab('members')
   }, [open])
 
-  const done = (added: number) => {
+  const done = ({ added, skipped }: AddResult) => {
     const after = census.count + added
     if (vote)
       trackAnalyticsEvent({
@@ -71,9 +71,15 @@ export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name, surfa
             before: format(census.count),
             after: format(after),
           }),
-      description: t('census_detail.add.done_detail', { defaultValue: "Added to '{{name}}'", name }),
-      type: 'success',
-      duration: 4000,
+      description: skipped.length
+        ? t('census_detail.add.skipped', {
+            count: skipped.length,
+            defaultValue_one: "1 person wasn't added: they don't have the details this vote signs in with.",
+            defaultValue_other: "{{count}} people weren't added: they don't have the details this vote signs in with.",
+          })
+        : t('census_detail.add.done_detail', { defaultValue: "Added to '{{name}}'", name }),
+      type: skipped.length ? 'warning' : 'success',
+      duration: skipped.length ? 8000 : 4000,
       isClosable: true,
     })
     onOpenChange(false)

@@ -75,7 +75,7 @@ export const RemovePeopleDialog = ({
   /** "Add them back": the people just removed go back in, the same way they went out. */
   const addBack = async (back: string[], countBefore: number) => {
     try {
-      const added = await editor.add(back)
+      const { added } = await editor.add(back)
       if (vote)
         trackAnalyticsEvent({ name: AnalyticsEvents.VotersAdded, props: { count: added, surface: 'undo_remove' } })
       toast({

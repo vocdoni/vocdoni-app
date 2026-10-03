@@ -7,13 +7,16 @@ import { CENSUS_REMOVAL_MAX, useRemoveCensusParticipants } from '~src/queries/ce
 import { censusJobIdsOf, useUpdateGroupWithReport } from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
 import { useInvalidateMembers } from '~src/queries/members'
-import { ADD_CHUNK_SIZE, chunk, GROUP_REMOVE_CHUNK_SIZE, removeInChunks } from './censusEdits'
+import { ADD_CHUNK_SIZE, chunk, GROUP_REMOVE_CHUNK_SIZE, missingLoginDataIds, removeInChunks } from './censusEdits'
 import type { ResolvedCensusState } from './useResolvedCensus'
 
 /** How long to wait for a vote's on-chain voter limit to grow after adding people. */
 const RESIZE_TIMEOUT = 5 * 60 * 1000
 
 export type EditProgress = { done: number; total: number; phase: 'sending' | 'updating_vote' }
+
+/** What an addition did: how many the census gained, and who it left out for lacking sign-in details. */
+export type AddResult = { added: number; skipped: string[] }
 
 /**
  * Adds and removes people in a census, the way its kind requires: through its group (saved censuses,
@@ -49,22 +52,33 @@ export const useCensusEditor = (census: Pick<ResolvedCensusState, 'edit' | 'grou
     [client]
   )
 
-  /** Adds people; resolves with how many the census gained (people already in it are skipped). */
+  /**
+   * Adds people; resolves with how many the census gained (people already in it are skipped) and, for
+   * a vote, who it left out because they lack the details the vote signs in with.
+   */
   const add = useCallback(
-    async (ids: string[]) => {
-      if (!ids.length) return 0
+    async (ids: string[]): Promise<AddResult> => {
+      if (!ids.length) return { added: 0, skipped: [] }
       let done = 0
       let added = 0
+      const skipped: string[] = []
       const jobs: string[] = []
       setProgress({ done, total: ids.length, phase: 'sending' })
       try {
         for (const part of chunk(ids, ADD_CHUNK_SIZE)) {
           if (edit === 'group' && groupId) {
-            jobs.push(...censusJobIdsOf(await updateGroup.mutateAsync({ groupId, body: { addMembers: part } })))
-            added += part.length
+            const response = await updateGroup.mutateAsync({ groupId, body: { addMembers: part } })
+            jobs.push(...censusJobIdsOf(response))
+            // A saved census holds them anyway; a vote's census leaves out who can't sign in
+            const left = processId
+              ? missingLoginDataIds(typeof response === 'object' ? response?.errors : undefined, part)
+              : []
+            skipped.push(...left)
+            added += part.length - left.length
           } else if (edit === 'process' && processId) {
             const response = await client.elections.addCensusMembers(processId, part)
             if (response.jobId) jobs.push(response.jobId)
+            skipped.push(...missingLoginDataIds(response.errors, part))
             added += response.added
           } else throw new Error('This census is read-only')
           done += part.length
@@ -74,7 +88,7 @@ export const useCensusEditor = (census: Pick<ResolvedCensusState, 'edit' | 'grou
           setProgress({ done, total: ids.length, phase: 'updating_vote' })
           await waitForJobs(jobs)
         }
-        return added
+        return { added, skipped }
       } finally {
         setProgress(null)
         refresh()
