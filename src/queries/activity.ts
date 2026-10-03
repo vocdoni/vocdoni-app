@@ -128,8 +128,6 @@ export type DatedJob = JobStatusResponse & { createdAt?: string; completedAt?: s
 
 export const jobDate = (job: DatedJob) => validDate(job.completedAt) ?? validDate(job.createdAt)
 
-export const hasDatedJobs = (jobs: DatedJob[]) => jobs.some((job) => !!jobDate(job))
-
 const importType = (status: JobStatusResponse['status']): ActivityType =>
   status === 'completed' ? 'import.completed' : status === 'failed' ? 'import.failed' : 'import.started'
 
@@ -304,9 +302,8 @@ export const useRecentImportJobs = ({ enabled = true }: { enabled?: boolean } = 
  */
 export const useActivityAvailable = () => {
   const { ACTIVITY_LOG } = useAppEnv()
-  const jobs = useRecentImportJobs({ enabled: !ACTIVITY_LOG })
-  if (ACTIVITY_LOG) return { available: true, isLoading: false, full: true }
-  return { available: !!jobs.data && hasDatedJobs(jobs.data), isLoading: jobs.isLoading, full: false }
+  // The tab always shows: what isn't there yet (dated imports, every change) is said in the tab itself
+  return { full: !!ACTIVITY_LOG }
 }
 
 /** The activity log's page of events, straight from the backend (ACTIVITY_LOG on). */

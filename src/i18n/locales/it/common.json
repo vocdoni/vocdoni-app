@@ -86,6 +86,7 @@
       "added_one": "{{added}} di {{total}} membro importato",
       "added_many": "{{added}} di {{total}} membri importati",
       "added_other": "{{added}} di {{total}} membri importati",
+      "no_date": "Data non ancora disponibile",
       "problems_one": "{{count}} riga aveva problemi",
       "problems_many": "{{count}} righe avevano problemi",
       "problems_other": "{{count}} righe avevano problemi",

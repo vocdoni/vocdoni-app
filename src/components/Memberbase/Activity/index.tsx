@@ -2,13 +2,11 @@ import { Button, Flex, Icon, Skeleton, Stack, Text } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuDownload, LuHistory } from 'react-icons/lu'
-import { generatePath, Navigate } from 'react-router'
 import { useToast } from '~components/Toast'
 import { Banner } from '~components/ui/Banner'
 import { ComingSoonCard } from '~components/ui/ComingSoonCard'
 import { FilterPills, type FilterPillItem } from '~components/ui/FilterPills'
 import { SectionCard } from '~components/ui/SectionCard'
-import { Routes } from '~routes'
 import {
   ACTIVITY_CATEGORIES,
   type ActivityCategory,
@@ -199,16 +197,8 @@ const DerivedActivity = () => {
   )
 }
 
-/** The Members section's Activity tab. Until it has something real to show, it sends people to People. */
+/** The Members section's Activity tab: the full log once it exists, what can be derived until then. */
 export const ActivityTab = () => {
-  const { available, isLoading, full } = useActivityAvailable()
-
-  if (isLoading)
-    return (
-      <SectionCard>
-        <Loading />
-      </SectionCard>
-    )
-  if (!available) return <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: '1' })} replace />
+  const { full } = useActivityAvailable()
   return full ? <FullActivity /> : <DerivedActivity />
 }

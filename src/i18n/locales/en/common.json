@@ -81,6 +81,7 @@
     "imports": {
       "added_one": "{{added}} of {{total}} member imported",
       "added_other": "{{added}} of {{total}} members imported",
+      "no_date": "Date not shown yet",
       "problems_one": "{{count}} row had problems",
       "problems_other": "{{count}} rows had problems",
       "status": {

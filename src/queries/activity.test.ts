@@ -6,7 +6,6 @@ import {
   deriveVoteEvents,
   formatChange,
   groupByDay,
-  hasDatedJobs,
   sortEvents,
   type ActivityEvent,
   type DatedJob,
@@ -122,11 +121,6 @@ describe('deriveImportEvents', () => {
 
   it('keeps only member imports', () => {
     expect(deriveImportEvents([job('c', { type: 'census_participants' })])).toEqual([])
-  })
-
-  it('detects dated jobs one by one', () => {
-    expect(hasDatedJobs([job('a')])).toBe(false)
-    expect(hasDatedJobs([job('a'), job('b', { createdAt: '2026-09-10T08:00:00Z' })])).toBe(true)
   })
 })
 

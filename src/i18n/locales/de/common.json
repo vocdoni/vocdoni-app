@@ -81,6 +81,7 @@
     "imports": {
       "added_one": "{{added}} von {{total}} Mitglied importiert",
       "added_other": "{{added}} von {{total}} Mitgliedern importiert",
+      "no_date": "Datum noch nicht verfügbar",
       "problems_one": "{{count}} Zeile hatte Probleme",
       "problems_other": "{{count}} Zeilen hatten Probleme",
       "status": {

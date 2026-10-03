@@ -81,6 +81,7 @@
     "imports": {
       "added_one": "{{added}} από {{total}} μέλος εισήχθη",
       "added_other": "{{added}} από {{total}} μέλη εισήχθησαν",
+      "no_date": "Η ημερομηνία δεν είναι ακόμη διαθέσιμη",
       "problems_one": "{{count}} γραμμή είχε προβλήματα",
       "problems_other": "{{count}} γραμμές είχαν προβλήματα",
       "status": {

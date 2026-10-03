@@ -84,18 +84,28 @@ describe('ActivityTab', () => {
     data.download.mockReset()
   })
 
-  it('sends people to People while jobs carry no dates', async () => {
+  it('shows imports without a date as such while jobs carry none, and the votes it has', async () => {
     data.jobs = [job('j1')]
+    data.published = [vote('p1', 'Annual assembly', '2026-09-01T09:00:00', '2026-09-01T18:00:00')]
     renderTab()
 
-    expect(await screen.findByRole('heading', { name: 'People page' })).toBeInTheDocument()
+    expect(await screen.findByText('Recent imports')).toBeInTheDocument()
+    expect(screen.getByText('Date not shown yet')).toBeInTheDocument()
+    expect(screen.getAllByText(/Annual assembly/).length).toBeGreaterThan(0)
+    expect(
+      screen.getByText("Changes to people and censuses don't show here yet. Votes and imports do.")
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'People page' })).toBeNull()
   })
 
-  it('sends people to People when the jobs can not be read', async () => {
+  it('stays on the tab when the jobs can not be read', async () => {
     data.jobsError = true
     renderTab()
 
-    expect(await screen.findByRole('heading', { name: 'People page' })).toBeInTheDocument()
+    expect(
+      await screen.findByText("Changes to people and censuses don't show here yet. Votes and imports do.")
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'People page' })).toBeNull()
   })
 
   it('shows vote history by day, recent imports and a single Soon card once jobs are dated', async () => {

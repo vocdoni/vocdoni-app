@@ -70,11 +70,12 @@ export const RecentImports = ({ imports }: { imports: ActivityEvent[] }) => {
                   </Text>
                 )}
               </Text>
-              {event.at && (
-                <Text as='span' fontSize='xs' color='fg.muted' fontVariantNumeric='tabular-nums' flexShrink={0}>
-                  {format(event.at, 'PP p')}
-                </Text>
-              )}
+              <Text as='span' fontSize='xs' color='fg.muted' fontVariantNumeric='tabular-nums' flexShrink={0}>
+                {/* Imports carry no date until the backend sends one (ticket T7a) */}
+                {event.at
+                  ? format(event.at, 'PP p')
+                  : t('activity.imports.no_date', { defaultValue: 'Date not shown yet' })}
+              </Text>
               <StatusBadge status={summary.status} />
             </Flex>
           )

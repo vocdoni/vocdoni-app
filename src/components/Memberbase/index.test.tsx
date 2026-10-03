@@ -34,12 +34,6 @@ vi.mock('./Censuses/useCensusIndex', () => ({
   useCensusIndex: () => ({ index: { total: censuses.total }, isLoading: censuses.isLoading }),
 }))
 
-const activity = vi.hoisted(() => ({ available: false }))
-
-vi.mock('~src/queries/activity', () => ({
-  useActivityAvailable: () => ({ available: activity.available, isLoading: false, full: false }),
-}))
-
 // The header's add-person sheet isn't under test here
 vi.mock('./People/AddPersonSheet', () => ({ AddPersonSheet: () => null }))
 
@@ -61,17 +55,9 @@ describe('MemberbaseTabs', () => {
   afterEach(() => {
     membersCount.value = undefined
     censuses.isLoading = true
-    activity.available = false
   })
 
-  it('hides the Activity tab until there is activity to show', () => {
-    renderTabs()
-
-    expect(screen.queryByRole('tab', { name: 'Activity' })).not.toBeInTheDocument()
-  })
-
-  it('shows the Activity tab once there is activity to show', () => {
-    activity.available = true
+  it('always shows the Activity tab, which says itself what it has yet to show', () => {
     renderTabs()
 
     expect(screen.getByRole('tab', { name: 'Activity' })).toBeInTheDocument()

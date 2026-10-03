@@ -81,6 +81,7 @@
     "imports": {
       "added_one": "{{total}} kidetik {{added}} inportatu da",
       "added_other": "{{total}} kidetik {{added}} inportatu dira",
+      "no_date": "Data oraindik ez dago eskuragarri",
       "problems_one": "{{count}} errenkadak arazoak zituen",
       "problems_other": "{{count}} errenkadak arazoak zituzten",
       "status": {
