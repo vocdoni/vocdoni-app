@@ -1,4 +1,4 @@
-import type { CaptureResult } from 'posthog-js'
+import type { CapturedNetworkRequest, CaptureResult } from 'posthog-js'
 import {
   getHomeProcessRouteMatch,
   getPublicLocalizedProcessRouteMatch,
@@ -241,9 +241,10 @@ export const isVotingPath = (
 }
 
 // Query params that may carry PII (signup redirects carry `?email=`,
-// password-reset links carry tokens, member search carries `?q=` and the open
-// member drawer carries their id) and must never reach analytics.
-const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code', 'q', 'person', 'member']
+// password-reset links carry tokens, member search carries `?q=` on the page and
+// `?search=` on the API, and the open member drawer carries their id) and must
+// never reach analytics.
+const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code', 'q', 'search', 'person', 'member']
 
 // Session replay masks every input value (`maskAllInputs`), which would also
 // hide fields we do want to read back — the organization name in settings being
@@ -273,6 +274,16 @@ const sanitizeAnalyticsUrl = (url: string): string => {
     return url
   }
 }
+
+// Session replay keeps its own copy of every page URL and network request, which
+// `before_send` never sees: both go through this instead. Bodies are dropped
+// outright, since API calls carry member data.
+export const posthogMaskNetworkRequest = (request: CapturedNetworkRequest): CapturedNetworkRequest => ({
+  ...request,
+  name: typeof request.name === 'string' ? sanitizeAnalyticsUrl(request.name) : request.name,
+  requestBody: null,
+  responseBody: null,
+})
 
 const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
 
@@ -396,6 +407,7 @@ export const initializePosthog = ({
         session_recording: {
           maskAllInputs: true,
           maskInputFn: posthogMaskInput,
+          maskCapturedNetworkRequestFn: posthogMaskNetworkRequest,
         },
         capture_exceptions: true,
         before_send: (event) => posthogBeforeSend(event, votingRoutes),

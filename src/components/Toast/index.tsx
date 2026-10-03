@@ -50,7 +50,8 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
       {children}
       <Toaster toaster={toaster}>
         {(toast) => (
-          <Toast.Root w='fit-content' maxW='sm' mx='auto'>
+          // Titles and descriptions can name members or quote what the API refused: kept out of replays
+          <Toast.Root w='fit-content' maxW='sm' mx='auto' className='ph-no-capture'>
             <Toast.Indicator />
             <Box flex='1'>
               {toast.title ? <Toast.Title>{toast.title}</Toast.Title> : null}
