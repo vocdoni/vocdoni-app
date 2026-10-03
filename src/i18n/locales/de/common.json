@@ -133,6 +133,11 @@
     }
   },
   "census_size": "Teilnehmerzahl",
+  "censuses": {
+    "source": {
+      "copy_everyone": "Von Alle kopiert"
+    }
+  },
   "change_password": {
     "subtitle": "Gib dein aktuelles Passwort und ein neues Passwort ein, um deine Zugangsdaten zu aktualisieren.",
     "title": "Passwort ändern"
@@ -1014,7 +1019,7 @@
       "firstname": "Vorname",
       "member_number": "Mitgliedsnummer",
       "national_id": "Ausweisnummer",
-      "on_file": "Hinterlegt",
+      "on_file": "Gespeichert (aus Datenschutzgründen ausgeblendet)",
       "phone": "Telefon",
       "surname": "Nachname",
       "weight": "Stimmgewicht"
@@ -1258,7 +1263,7 @@
       "member_number_chip": "Nr. {{number}}",
       "not_found": "Diese Person ist nicht auf dieser Seite. Vielleicht wurde sie gelöscht oder die Liste hat sich geändert.",
       "not_set": "Nicht angegeben",
-      "phone_on_file": "Hinterlegt — gib eine neue Nummer ein, um sie zu ersetzen",
+      "phone_on_file": "Eine Nummer ist gespeichert, aber aus Datenschutzgründen ausgeblendet. Gib eine neue ein, um sie zu ersetzen.",
       "save": "Speichern",
       "save_error": "Deine Änderungen wurden nicht gespeichert",
       "saved": "Änderungen gespeichert",
@@ -1729,11 +1734,23 @@
     "auto_start": "Sofort starten",
     "basic_configuration": "Grundkonfiguration",
     "census": {
+      "copy_everyone": {
+        "button": "Diese Liste bearbeiten",
+        "confirm": "Eigene Liste anlegen",
+        "description": "Diese Abstimmung bekommt eine eigene Liste mit allen Mitgliedern, wie sie jetzt sind, und du kannst Personen hinzufügen oder entfernen. Danach kommen neue Mitglieder nicht mehr von selbst dazu.",
+        "title": "Diese Liste bearbeiten?"
+      },
       "group": {
         "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
       },
+      "group_title_dated": "{{vote}} — {{date}}",
       "memberbase": {
         "label": "Wähle eine Mitgliedergruppe aus, um die Teilnehmerliste zu erstellen"
+      },
+      "not_in_copy": {
+        "review": "Prüfen",
+        "text_one": "1 Mitglied ist nicht in dieser Liste: später hinzugefügt oder entfernt.",
+        "text_other": "{{formattedCount}} Mitglieder sind nicht in dieser Liste: später hinzugefügt oder entfernt."
       }
     },
     "census_creation": "Erstellung der Teilnehmerliste",
@@ -1765,6 +1782,10 @@
       "hidden": "Verborgen bis zum Ende",
       "live": "Live-Ergebnisse",
       "title": "Sichtbarkeit der Ergebnisse"
+    },
+    "review": {
+      "not_in_copy_one": "1 Mitglied ist nicht in der Liste dieser Abstimmung. Wenn es abstimmen soll, füge es vor dem Veröffentlichen unter Wer abstimmen darf hinzu.",
+      "not_in_copy_other": "{{count}} Mitglieder sind nicht in der Liste dieser Abstimmung. Wenn sie abstimmen sollen, füge sie vor dem Veröffentlichen unter Wer abstimmen darf hinzu."
     },
     "settings": "Einstellungen",
     "start_datetime": "Startdatum und -uhrzeit",

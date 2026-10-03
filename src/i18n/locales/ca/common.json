@@ -135,6 +135,11 @@
     }
   },
   "census_size": "Mida del cens",
+  "censuses": {
+    "source": {
+      "copy_everyone": "Copiat de Tothom"
+    }
+  },
   "change_password": {
     "subtitle": "Introdueix la contrasenya actual i una de nova per actualitzar les teves credencials.",
     "title": "Canvia la contrasenya"
@@ -1031,7 +1036,7 @@
       "firstname": "Nom",
       "member_number": "Número de Soci",
       "national_id": "Document d'Identitat",
-      "on_file": "Registrat",
+      "on_file": "Desat (ocult per privacitat)",
       "phone": "Telèfon",
       "surname": "Cognom",
       "weight": "Poder de votació (Pes)"
@@ -1299,7 +1304,7 @@
       "member_number_chip": "Núm. {{number}}",
       "not_found": "Aquesta persona no és en aquesta pàgina. Potser s'ha eliminat o la llista ha canviat.",
       "not_set": "Sense informar",
-      "phone_on_file": "Registrat — escriu un número nou per substituir-lo",
+      "phone_on_file": "Hi ha un número desat, però ocult per privacitat. Escriu-ne un de nou per substituir-lo.",
       "save": "Desa",
       "save_error": "No s'han desat els canvis",
       "saved": "S'han desat els canvis",
@@ -1790,11 +1795,24 @@
     "auto_start": "Comença immediatament",
     "basic_configuration": "Configuració bàsica",
     "census": {
+      "copy_everyone": {
+        "button": "Edita aquesta llista",
+        "confirm": "Fes-li una llista pròpia",
+        "description": "Aquesta votació tindrà la seva pròpia llista amb tots els teus membres tal com són ara, i hi podràs afegir o treure persones. A partir d'aleshores, els membres nous no s'hi afegiran sols.",
+        "title": "Vols editar aquesta llista?"
+      },
       "group": {
         "no_groups": "Per començar una votació, primer has de crear un grup de votants elegibles a partir de la teva base de membres. <1>Crea'n un aquí</1>."
       },
+      "group_title_dated": "{{vote}} — {{date}}",
       "memberbase": {
         "label": "Selecciona un grup de membres per crear el cens"
+      },
+      "not_in_copy": {
+        "review": "Revisa",
+        "text_many": "{{formattedCount}} membres no són en aquesta llista: persones afegides després de fer-la, o que n'has tret.",
+        "text_one": "1 membre no és en aquesta llista: algú afegit després de fer-la, o que n'has tret.",
+        "text_other": "{{formattedCount}} membres no són en aquesta llista: persones afegides després de fer-la, o que n'has tret."
       }
     },
     "census_creation": "Creació del cens",
@@ -1826,6 +1844,11 @@
       "hidden": "Ocults fins al final",
       "live": "Resultats en directe",
       "title": "Visibilitat dels resultats"
+    },
+    "review": {
+      "not_in_copy_many": "{{count}} membres no són a la llista d'aquesta votació. Si han de votar, afegeix-los a Qui pot votar abans de publicar.",
+      "not_in_copy_one": "1 membre no és a la llista d'aquesta votació. Si ha de votar, afegeix-lo a Qui pot votar abans de publicar.",
+      "not_in_copy_other": "{{count}} membres no són a la llista d'aquesta votació. Si han de votar, afegeix-los a Qui pot votar abans de publicar."
     },
     "settings": "Configuració",
     "start_datetime": "Data i hora d'inici",

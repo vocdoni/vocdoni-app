@@ -51,7 +51,7 @@ describe('useMemberFields', () => {
     const byId = Object.fromEntries(result.current.map((field) => [field.id, field]))
 
     expect(byId.name.label).toBe('First Name')
-    expect(byId.phone.format('a1b2c3')).toBe('On file')
+    expect(byId.phone.format('a1b2c3')).toBe('Saved (hidden for privacy)')
     expect(byId.phone.format(undefined)).toBe('')
     expect(byId.nationalId.format('12345623A')).toBe('•••23A')
     expect(byId.birthDate.format('1990-01-01')).toBe('•••')

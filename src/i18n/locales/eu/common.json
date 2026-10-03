@@ -133,6 +133,11 @@
     }
   },
   "census_size": "Erroldeko tamaina",
+  "censuses": {
+    "source": {
+      "copy_everyone": "«Denak»-etik kopiatua"
+    }
+  },
   "change_password": {
     "subtitle": "Sartu zure egungo pasahitza eta berri bat zure kredentzialak eguneratzeko.",
     "title": "Aldatu pasahitza"
@@ -1014,7 +1019,7 @@
       "firstname": "Izena",
       "member_number": "Kide-zenbakia",
       "national_id": "NAN/AIZ",
-      "on_file": "Erregistratuta",
+      "on_file": "Gordeta (ezkutuan, pribatutasunagatik)",
       "phone": "Telefonoa",
       "surname": "Abizenak",
       "weight": "Boto-pisua (Pisua)"
@@ -1258,7 +1263,7 @@
       "member_number_chip": "Zk. {{number}}",
       "not_found": "Pertsona hau ez dago orri honetan. Agian ezabatu egin da edo zerrenda aldatu da.",
       "not_set": "Zehaztu gabe",
-      "phone_on_file": "Erregistratuta — idatzi zenbaki berri bat ordezteko",
+      "phone_on_file": "Zenbaki bat gordeta dago, baina ezkutuan pribatutasunagatik. Idatzi berri bat ordezkatzeko.",
       "save": "Gorde",
       "save_error": "Ez dira zure aldaketak gorde",
       "saved": "Aldaketak gorde dira",
@@ -1729,11 +1734,23 @@
     "auto_start": "Hasi berehala",
     "basic_configuration": "Oinarrizko konfigurazioa",
     "census": {
+      "copy_everyone": {
+        "button": "Editatu zerrenda hau",
+        "confirm": "Eman zerrenda propioa",
+        "description": "Bozketa honek bere zerrenda izango du zure kide guztiekin, orain dauden bezala, eta pertsonak gehitu edo kendu ahal izango dituzu. Hortik aurrera, kide berriak ez dira berez gehituko.",
+        "title": "Zerrenda hau editatu?"
+      },
       "group": {
         "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },
+      "group_title_dated": "{{vote}} — {{date}}",
       "memberbase": {
         "label": "Hautatu kide-talde bat errolda sortzeko"
+      },
+      "not_in_copy": {
+        "review": "Berrikusi",
+        "text_one": "Kide 1 ez dago zerrenda honetan: sortu ondoren gehitua, edo kendua.",
+        "text_other": "{{formattedCount}} kide ez daude zerrenda honetan: sortu ondoren gehituak, edo kenduak."
       }
     },
     "census_creation": "Erroldaren sorrera",
@@ -1765,6 +1782,10 @@
       "hidden": "Ezkututa amaitu arte",
       "live": "Emaitzak zuzenean",
       "title": "Emaitzen ikusgaitasuna"
+    },
+    "review": {
+      "not_in_copy_one": "Kide 1 ez dago bozketa honen zerrendan. Bozkatu behar badu, gehitu Nork bozka dezake atalean argitaratu aurretik.",
+      "not_in_copy_other": "{{count}} kide ez daude bozketa honen zerrendan. Bozkatu behar badute, gehitu Nork bozka dezake atalean argitaratu aurretik."
     },
     "settings": "Konfigurazioa",
     "start_datetime": "Hasiera-data eta -ordua",

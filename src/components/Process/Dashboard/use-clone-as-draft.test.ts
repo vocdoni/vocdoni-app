@@ -40,6 +40,7 @@ vi.mock('react-i18next', () => ({
       // Simple template string replacement for {{ count }}
       return options.defaultValue.replace('{{ count }}', options.count)
     },
+    i18n: { resolvedLanguage: 'en' },
   }),
   initReactI18next: { type: '3rdParty', init: vi.fn() },
 }))

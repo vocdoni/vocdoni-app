@@ -218,14 +218,16 @@ export const PersonForm = ({ formId, member, onSaved, onPendingChange, inLiveVot
                 autoComplete='off'
                 fontSize={{ base: 'md', md: 'sm' }}
                 placeholder={
-                  field.id === 'phone' && hadPhone ? t('members.fields.on_file', { defaultValue: 'On file' }) : ''
+                  field.id === 'phone' && hadPhone
+                    ? t('members.fields.on_file', { defaultValue: 'Saved (hidden for privacy)' })
+                    : ''
                 }
                 {...inputProps[field.id]}
               />
               {field.id === 'phone' && hadPhone && !error && (
                 <Field.HelperText>
                   {t('members.person.phone_on_file', {
-                    defaultValue: 'On file — type a new number to replace it',
+                    defaultValue: 'A number is saved but hidden for privacy. Type a new one to replace it.',
                   })}
                 </Field.HelperText>
               )}

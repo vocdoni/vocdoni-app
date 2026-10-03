@@ -135,6 +135,11 @@
     }
   },
   "census_size": "Número de participantes",
+  "censuses": {
+    "source": {
+      "copy_everyone": "Copiada de Todos"
+    }
+  },
   "change_password": {
     "subtitle": "Introduz a palavra-passe atual e uma nova para atualizar as tuas credenciais.",
     "title": "Alterar palavra-passe"
@@ -1031,7 +1036,7 @@
       "firstname": "Nome próprio",
       "member_number": "Número de sócio",
       "national_id": "Cartão de cidadão",
-      "on_file": "Registado",
+      "on_file": "Guardado (oculto por privacidade)",
       "phone": "Telefone",
       "surname": "Apelido",
       "weight": "Poder de voto (peso)"
@@ -1299,7 +1304,7 @@
       "member_number_chip": "N.º {{number}}",
       "not_found": "Esta pessoa não está nesta página. Pode ter sido eliminada ou a lista mudou.",
       "not_set": "Não indicado",
-      "phone_on_file": "Registado — escreve um número novo para o substituir",
+      "phone_on_file": "Há um número guardado, mas oculto por privacidade. Escreve um novo para o substituir.",
       "save": "Guardar",
       "save_error": "As tuas alterações não foram guardadas",
       "saved": "Alterações guardadas",
@@ -1790,11 +1795,24 @@
     "auto_start": "Iniciar imediatamente",
     "basic_configuration": "Configuração básica",
     "census": {
+      "copy_everyone": {
+        "button": "Editar esta lista",
+        "confirm": "Dar-lhe uma lista própria",
+        "description": "Esta votação vai ter a sua própria lista com todos os teus membros tal como estão agora, e podes adicionar ou remover pessoas. A partir daí, os novos membros não entram sozinhos.",
+        "title": "Editar esta lista?"
+      },
       "group": {
         "no_groups": "Para iniciar uma votação, tens primeiro de criar um grupo de votantes elegíveis a partir da tua base de membros. <1>Cria um aqui</1>."
       },
+      "group_title_dated": "{{vote}} — {{date}}",
       "memberbase": {
         "label": "Seleciona um grupo de membros para criar a lista de participantes"
+      },
+      "not_in_copy": {
+        "review": "Rever",
+        "text_many": "{{formattedCount}} membros não estão nesta lista: adicionados depois de a criares, ou removidos.",
+        "text_one": "1 membro não está nesta lista: adicionado depois de a criares, ou removido.",
+        "text_other": "{{formattedCount}} membros não estão nesta lista: adicionados depois de a criares, ou removidos."
       }
     },
     "census_creation": "Criação da lista de participantes",
@@ -1826,6 +1844,11 @@
       "hidden": "Ocultos até ao fim",
       "live": "Resultados em direto",
       "title": "Visibilidade dos resultados"
+    },
+    "review": {
+      "not_in_copy_many": "{{count}} membros não estão na lista desta votação. Se devem votar, adiciona-os em Quem pode votar antes de publicar.",
+      "not_in_copy_one": "1 membro não está na lista desta votação. Se deve votar, adiciona-o em Quem pode votar antes de publicar.",
+      "not_in_copy_other": "{{count}} membros não estão na lista desta votação. Se devem votar, adiciona-os em Quem pode votar antes de publicar."
     },
     "settings": "Definições",
     "start_datetime": "Data e hora de início",

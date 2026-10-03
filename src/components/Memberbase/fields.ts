@@ -121,7 +121,7 @@ export const useMemberFields = (): MemberField[] => {
       birthDate: t('members.fields.birth_date', { defaultValue: 'Birth Date' }),
       weight: t('members.fields.weight', { defaultValue: 'Voting power (Weight)' }),
     }
-    const onFileLabel = t('members.fields.on_file', { defaultValue: 'On file' })
+    const onFileLabel = t('members.fields.on_file', { defaultValue: 'Saved (hidden for privacy)' })
 
     return MEMBER_FIELDS.map((definition) => ({
       ...definition,

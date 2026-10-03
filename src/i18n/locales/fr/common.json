@@ -135,6 +135,11 @@
     }
   },
   "census_size": "Nombre d'inscrits",
+  "censuses": {
+    "source": {
+      "copy_everyone": "Copiée de Tout le monde"
+    }
+  },
   "change_password": {
     "subtitle": "Saisissez votre mot de passe actuel et un nouveau mot de passe pour mettre à jour vos identifiants.",
     "title": "Changer le mot de passe"
@@ -1031,7 +1036,7 @@
       "firstname": "Prénom",
       "member_number": "Numéro d'adhérent",
       "national_id": "Pièce d'identité",
-      "on_file": "Enregistré",
+      "on_file": "Enregistré (masqué pour la confidentialité)",
       "phone": "Téléphone",
       "surname": "Nom",
       "weight": "Poids du vote"
@@ -1299,7 +1304,7 @@
       "member_number_chip": "N° {{number}}",
       "not_found": "Cette personne n'est pas sur cette page. Elle a peut-être été supprimée, ou la liste a changé.",
       "not_set": "Non renseigné",
-      "phone_on_file": "Enregistré — saisissez un nouveau numéro pour le remplacer",
+      "phone_on_file": "Un numéro est enregistré mais masqué pour la confidentialité. Saisissez-en un nouveau pour le remplacer.",
       "save": "Enregistrer",
       "save_error": "Vos modifications n'ont pas été enregistrées",
       "saved": "Modifications enregistrées",
@@ -1790,11 +1795,24 @@
     "auto_start": "Démarrer immédiatement",
     "basic_configuration": "Configuration de base",
     "census": {
+      "copy_everyone": {
+        "button": "Modifier cette liste",
+        "confirm": "Lui donner sa propre liste",
+        "description": "Ce vote aura sa propre liste avec tous vos membres tels qu'ils sont maintenant, et vous pourrez ajouter ou retirer des personnes. Ensuite, les nouveaux membres n'y entreront plus d'eux-mêmes.",
+        "title": "Modifier cette liste ?"
+      },
       "group": {
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
       },
+      "group_title_dated": "{{vote}} — {{date}}",
       "memberbase": {
         "label": "Sélectionnez un groupe de membres pour créer la liste électorale"
+      },
+      "not_in_copy": {
+        "review": "Vérifier",
+        "text_many": "{{formattedCount}} membres ne sont pas dans cette liste : ajoutés après sa création, ou retirés.",
+        "text_one": "1 membre n'est pas dans cette liste : ajouté après sa création, ou retiré.",
+        "text_other": "{{formattedCount}} membres ne sont pas dans cette liste : ajoutés après sa création, ou retirés."
       }
     },
     "census_creation": "Création de la liste électorale",
@@ -1826,6 +1844,11 @@
       "hidden": "Masqués jusqu'à la fin",
       "live": "Résultats en direct",
       "title": "Visibilité des résultats"
+    },
+    "review": {
+      "not_in_copy_many": "{{count}} membres ne sont pas dans la liste de ce vote. S'ils doivent voter, ajoutez-les dans Qui peut voter avant de publier.",
+      "not_in_copy_one": "1 membre n'est pas dans la liste de ce vote. S'il doit voter, ajoutez-le dans Qui peut voter avant de publier.",
+      "not_in_copy_other": "{{count}} membres ne sont pas dans la liste de ce vote. S'ils doivent voter, ajoutez-les dans Qui peut voter avant de publier."
     },
     "settings": "Paramètres",
     "start_datetime": "Date et heure de début",

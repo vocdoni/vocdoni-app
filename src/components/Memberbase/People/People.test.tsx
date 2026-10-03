@@ -146,13 +146,13 @@ describe('People', () => {
     })
   })
 
-  it('lists members in a table with one name link each, phone "On file" and the national ID hidden', () => {
+  it('lists members in a table with one name link each, phone "Saved (hidden for privacy)" and the national ID hidden', () => {
     renderPeople()
     const table = screen.getByRole('table')
 
     expect(within(table).getByRole('link', { name: 'Anna Vila Puig' })).toBeInTheDocument()
     expect(within(table).getByRole('link', { name: 'Jordi Serra Mas' })).toBeInTheDocument()
-    expect(within(table).getByRole('cell', { name: 'On file' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: 'Saved (hidden for privacy)' })).toBeInTheDocument()
     expect(within(table).queryByRole('columnheader', { name: /National ID/ })).not.toBeInTheDocument()
     expect(within(table).getByText('Members, sorted by First Name, A to Z, page 1 of 1')).toBeInTheDocument()
   })
@@ -230,7 +230,7 @@ describe('People', () => {
   it('keeps every member value out of session replays, in the table and the cards', () => {
     renderPeople()
     const table = screen.getByRole('table')
-    for (const value of ['Anna Vila Puig', 'anna@example.test', '0042', 'On file']) {
+    for (const value of ['Anna Vila Puig', 'anna@example.test', '0042', 'Saved (hidden for privacy)']) {
       expect(within(table).getAllByText(value)[0].closest('.ph-no-capture')).not.toBeNull()
     }
     const cards = screen.getByRole('list', { name: 'Members' })
@@ -484,7 +484,7 @@ describe('People', () => {
     const drawer = await screen.findByRole('dialog')
     expect(within(drawer).getByText('Anna Vila Puig')).toBeInTheDocument()
     expect(within(drawer).getByText('No. 0042')).toBeInTheDocument()
-    expect(within(drawer).getByText('On file')).toBeInTheDocument()
+    expect(within(drawer).getByText('Saved (hidden for privacy)')).toBeInTheDocument()
     expect(within(drawer).getByText('National ID ending in 78Z')).toBeInTheDocument()
     expect(within(drawer).getByText('anna@example.test').closest('.ph-no-capture')).not.toBeNull()
 

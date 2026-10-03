@@ -133,6 +133,11 @@
     }
   },
   "census_size": "Census size",
+  "censuses": {
+    "source": {
+      "copy_everyone": "Copied from Everyone"
+    }
+  },
   "change_password": {
     "subtitle": "Enter your current password and a new password to update your credentials.",
     "title": "Change password"
@@ -1014,7 +1019,7 @@
       "firstname": "First Name",
       "member_number": "Member Number",
       "national_id": "National ID",
-      "on_file": "On file",
+      "on_file": "Saved (hidden for privacy)",
       "phone": "Phone",
       "surname": "Last Name",
       "weight": "Voting power (Weight)"
@@ -1258,7 +1263,7 @@
       "member_number_chip": "No. {{number}}",
       "not_found": "This person isn't on this page. They may have been deleted, or the list changed.",
       "not_set": "Not set",
-      "phone_on_file": "On file — type a new number to replace it",
+      "phone_on_file": "A number is saved but hidden for privacy. Type a new one to replace it.",
       "save": "Save",
       "save_error": "Your changes weren't saved",
       "saved": "Changes saved",
@@ -1729,11 +1734,23 @@
     "auto_start": "Start immediately",
     "basic_configuration": "Basic configuration",
     "census": {
+      "copy_everyone": {
+        "button": "Edit this list",
+        "confirm": "Make its own list",
+        "description": "This vote gets its own list with all your members as they are now, and you can add or take out people. From then on, new members won't join it by themselves.",
+        "title": "Edit this list?"
+      },
       "group": {
         "no_groups": "To start a vote, you first need to create a group of eligible voters from your memberbase. <1>Create one here</1>."
       },
+      "group_title_dated": "{{vote}} — {{date}}",
       "memberbase": {
         "label": "Select a group of members to create the census"
+      },
+      "not_in_copy": {
+        "review": "Review",
+        "text_one": "1 member isn't in this list: someone added after you made it, or taken out of it.",
+        "text_other": "{{formattedCount}} members aren't in this list: people added after you made it, or taken out of it."
       }
     },
     "census_creation": "Census creation",
@@ -1765,6 +1782,10 @@
       "hidden": "Hidden until the end",
       "live": "Live results",
       "title": "Result visibility"
+    },
+    "review": {
+      "not_in_copy_one": "1 member isn't in this vote's list. If they should vote, add them in Who can vote before publishing.",
+      "not_in_copy_other": "{{count}} members aren't in this vote's list. If they should vote, add them in Who can vote before publishing."
     },
     "settings": "Settings",
     "start_datetime": "Start date and time",

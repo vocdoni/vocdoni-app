@@ -81,7 +81,9 @@ describe('PersonForm', () => {
 
     const phone = screen.getByRole('textbox', { name: 'Phone' })
     expect(phone).toHaveValue('')
-    expect(screen.getByText('On file — type a new number to replace it')).toBeInTheDocument()
+    expect(
+      screen.getByText('A number is saved but hidden for privacy. Type a new one to replace it.')
+    ).toBeInTheDocument()
 
     const email = screen.getByRole('textbox', { name: 'Email' })
     await user.clear(email)
