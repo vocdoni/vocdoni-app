@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { generatePath, useLocation, useNavigate, useParams, useSearchParams } from 'react-router'
 import { Routes } from '~routes'
+import { safeId } from '~utils/ids'
 import type { MemberSortField } from '../fields'
 
 export const PAGE_SIZES = [25, 50, 100] as const
@@ -37,7 +38,7 @@ export const usePeopleUrlState = () => {
   const order: SortOrder = sort && searchParams.get('order') === 'desc' ? 'desc' : 'asc'
   const sizeParam = Number(searchParams.get('size'))
   const size = (PAGE_SIZES as readonly number[]).includes(sizeParam) ? sizeParam : DEFAULT_PAGE_SIZE
-  const memberId = searchParams.get('member')
+  const memberId = safeId(searchParams.get('member')) ?? null
   const memberOpenedInApp = Boolean((location.state as MemberLocationState)?.memberOpenedInApp)
 
   const buildLocation = useCallback(
