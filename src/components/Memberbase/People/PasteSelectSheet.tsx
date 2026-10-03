@@ -75,7 +75,13 @@ export const PasteSelectSheet = ({ open, onOpenChange, total, onSelect }: PasteS
         setStep({ name: 'matching', done: 0, total: checkable.length, loadingIndex: false })
         match = await matchPastedValuesRemotely(
           checkable,
-          async (value) => (await fetchPage({ page: 1, limit: MEMBERS_PAGE_MAX, search: value })).members ?? [],
+          async (term, page) => {
+            const response = await fetchPage({ page, limit: MEMBERS_PAGE_MAX, search: term })
+            return {
+              members: response.members ?? [],
+              hasMore: page < (response.pagination?.lastPage ?? page),
+            }
+          },
           {
             signal: current.signal,
             onProgress: (done) => setStep({ name: 'matching', done, total: checkable.length, loadingIndex: false }),
