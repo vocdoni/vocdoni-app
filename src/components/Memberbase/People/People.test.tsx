@@ -488,8 +488,11 @@ describe('People', () => {
     expect(within(drawer).getByText('National ID ending in 78Z')).toBeInTheDocument()
     expect(within(drawer).getByText('anna@example.test').closest('.ph-no-capture')).not.toBeNull()
 
-    await user.click(within(drawer).getByRole('button', { name: 'Edit' }))
+    const edit = within(drawer).getByRole('button', { name: 'Edit' })
+    await user.click(edit)
     expect(within(drawer).getByRole('textbox', { name: 'Email' })).toHaveValue('anna@example.test')
+    // Not reused as the Save button: a browser would then submit the form on that same click and close it
+    expect(edit).not.toBeInTheDocument()
 
     await user.click(within(drawer).getByRole('button', { name: 'Close' }))
     await waitFor(() => expect(currentUrl()).toBe('/admin/memberbase/members/1'))

@@ -102,7 +102,7 @@ export const PersonSheet = ({ memberId, member, loading, onClose, onDelete, onSt
         <Button variant='outline' onClick={() => setEditing(false)}>
           {t('members.person.cancel', { defaultValue: 'Cancel' })}
         </Button>
-        <Button type='submit' form={FORM_ID} loading={saving} hideBelow='md'>
+        <Button key='save' type='submit' form={FORM_ID} loading={saving} hideBelow='md'>
           {t('members.person.save', { defaultValue: 'Save' })}
         </Button>
       </Flex>
@@ -111,7 +111,8 @@ export const PersonSheet = ({ memberId, member, loading, onClose, onDelete, onSt
         <Button variant='ghost' colorPalette='red' onClick={() => onDelete(member)}>
           {t('members.people.delete_person', { defaultValue: 'Delete from members…' })}
         </Button>
-        <Button onClick={() => setEditing(true)}>
+        {/* Its own key: reused as the Save button above, the click that opens the form would submit it */}
+        <Button key='edit' onClick={() => setEditing(true)}>
           <Icon as={LuPencil} />
           {t('members.person.edit', { defaultValue: 'Edit' })}
         </Button>
