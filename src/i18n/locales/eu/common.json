@@ -132,10 +132,18 @@
       "voted_partial": "Botoa emana {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "add": {
+      "skipped_one": "Pertsona 1 ez da gehitu: ez ditu bozketa honetan saioa hasteko datuak.",
+      "skipped_other": "{{count}} pertsona ez dira gehitu: ez dituzte bozketa honetan saioa hasteko datuak."
+    }
+  },
   "census_size": "Erroldeko tamaina",
   "censuses": {
     "source": {
-      "copy_everyone": "«Denak»-etik kopiatua"
+      "copy_everyone": "«Denak»-etik kopiatua",
+      "copy_previous": "Beste bozketa batetik kopiatua",
+      "copy_saved": "Gordetako errolda batetik kopiatua"
     }
   },
   "change_password": {
@@ -253,6 +261,11 @@
     "process_view": {
       "date_format": "y MMMM do",
       "time_format": "p"
+    },
+    "setup": {
+      "members": {
+        "description": "Inportatu kalkulu-orri bat edo gehitu banan-banan. Gero, bozketa bakoitzean nork bozka dezakeen aukeratzen duzu."
+      }
     },
     "usage": {
       "2fa_email": "2FA kodeak posta elektronikoz",
@@ -1006,7 +1019,7 @@
       "state_draft": "zirriborroa",
       "state_live": "martxan",
       "state_scheduled": "programatuta",
-      "title_people_one": "{{count}} pertsona kideetatik ezabatu?",
+      "title_people_one": "Pertsona 1 kideetatik ezabatu?",
       "title_people_other": "{{count}} pertsona kideetatik ezabatu?",
       "title_person": "{{name}} kideetatik ezabatu?",
       "type_count": "Idatzi {{number}} berresteko",
@@ -1175,7 +1188,9 @@
         "template": "Deskargatu txantiloia",
         "template_csv": "CSV (.csv)",
         "template_xlsx": "Excel (.xlsx)",
+        "too_big": "Fitxategi honek {{size}} MB baino gehiago ditu. Zatitu fitxategi txikiagotan eta inportatu banan-banan.",
         "too_many_files": "Igo fitxategi bat aldi bakoitzean.",
+        "too_many_rows": "Fitxategi honek {{rows}} errenkada baino gehiago ditu. Zatitu fitxategi txikiagotan eta inportatu banan-banan.",
         "untitled_column": "{{letter}} zutabea"
       }
     },
@@ -1252,6 +1267,10 @@
       "added": "Zure kideetara gehitu da",
       "cancel": "Utzi",
       "cant_clear": "Eremu bat hustea ez da oraindik gordetzen: uneko balioa mantentzen da.",
+      "censuses": {
+        "too_big_one": "Gordetako errolda edo zirriborro batek {{max}} pertsona baino gehiago ditu; beraz, ez da hemen egiaztatzen.",
+        "too_big_other": "Gordetako {{count}} errolda edo zirriborrok {{max}} pertsona baino gehiago dituzte; beraz, ez dira hemen egiaztatzen."
+      },
       "edit": "Editatu",
       "edit_everywhere": "Aldaketak kide honi aplikatzen zaizkio leku guztietan, baita martxan dauden bozketen erroldetan ere.",
       "error": {
@@ -1751,7 +1770,8 @@
         "review": "Berrikusi",
         "text_one": "Kide 1 ez dago zerrenda honetan: sortu ondoren gehitua, edo kendua.",
         "text_other": "{{formattedCount}} kide ez daude zerrenda honetan: sortu ondoren gehituak, edo kenduak."
-      }
+      },
+      "too_many_to_copy": "{{max}} kide baino gehiago dituzu, gehiegi hemendik inor kanpoan uzteko."
     },
     "census_creation": "Erroldaren sorrera",
     "end_datetime": "Amaiera-data eta -ordua",
@@ -1761,6 +1781,9 @@
     },
     "groups": {
       "scroll_to_load": "Gehiago kargatzeko korritu..."
+    },
+    "issue": {
+      "group_empty": "Aukeratutako erroldak ez du inor"
     },
     "new_option": "Gehitu aukera berria",
     "option": {
@@ -1785,7 +1808,8 @@
     },
     "review": {
       "not_in_copy_one": "Kide 1 ez dago bozketa honen zerrendan. Bozkatu behar badu, gehitu Nork bozka dezake atalean argitaratu aurretik.",
-      "not_in_copy_other": "{{count}} kide ez daude bozketa honen zerrendan. Bozkatu behar badute, gehitu Nork bozka dezake atalean argitaratu aurretik."
+      "not_in_copy_other": "{{count}} kide ez daude bozketa honen zerrendan. Bozkatu behar badute, gehitu Nork bozka dezake atalean argitaratu aurretik.",
+      "own_census_one": "Bozketa honen erroldako pertsona bakarrak bozka dezake"
     },
     "settings": "Konfigurazioa",
     "start_datetime": "Hasiera-data eta -ordua",
@@ -2321,7 +2345,7 @@
     "level_mid": "Ertaina",
     "level_strong": "Indartsua",
     "level_weak": "Ahula",
-    "no_group_description": "Hautatu lehenik talde bat autentifikazioa konfiguratzeko.",
+    "no_group_description": "Aukeratu lehenik nork bozka dezakeen, eta gero nola hasten duen saioa.",
     "security_level": "Segurtasun ona",
     "security_recommendation_1": "Segurtasun handiagorako, gutxienez 2 kredentzial hautatzea gomendatzen dugu.",
     "security_recommendation_2_one": "{{ count }} kredentzial hautatu duzu, eta horrek segurtasun ona eskaintzen die zure hautesleei.",

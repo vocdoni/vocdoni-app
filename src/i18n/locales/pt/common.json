@@ -134,10 +134,19 @@
       "voted_partial": "Votou {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "add": {
+      "skipped_many": "{{count}} pessoas não foram adicionadas: não têm os dados com que se inicia sessão nesta votação.",
+      "skipped_one": "1 pessoa não foi adicionada: não tem os dados com que se inicia sessão nesta votação.",
+      "skipped_other": "{{count}} pessoas não foram adicionadas: não têm os dados com que se inicia sessão nesta votação."
+    }
+  },
   "census_size": "Número de participantes",
   "censuses": {
     "source": {
-      "copy_everyone": "Copiada de Todos"
+      "copy_everyone": "Copiada de Todos",
+      "copy_previous": "Copiada de outra votação",
+      "copy_saved": "Copiada de uma lista de participantes guardada"
     }
   },
   "change_password": {
@@ -255,6 +264,11 @@
     "process_view": {
       "date_format": "d 'de' MMMM 'de' y",
       "time_format": "p"
+    },
+    "setup": {
+      "members": {
+        "description": "Importa uma folha de cálculo ou adiciona-os um a um. Depois escolhes quem pode votar em cada votação."
+      }
     },
     "usage": {
       "2fa_email": "Códigos 2FA por email",
@@ -1023,7 +1037,7 @@
       "state_live": "em curso",
       "state_scheduled": "agendada",
       "title_people_many": "Eliminar {{count}} pessoas dos membros?",
-      "title_people_one": "Eliminar {{count}} pessoas dos membros?",
+      "title_people_one": "Eliminar 1 pessoa dos membros?",
       "title_people_other": "Eliminar {{count}} pessoas dos membros?",
       "title_person": "Eliminar {{name}} dos membros?",
       "type_count": "Escreve {{number}} para confirmar",
@@ -1209,7 +1223,9 @@
         "template": "Transferir o modelo",
         "template_csv": "CSV (.csv)",
         "template_xlsx": "Excel (.xlsx)",
+        "too_big": "Este ficheiro tem mais de {{size}} MB. Divide-o em ficheiros mais pequenos e importa-os um a um.",
         "too_many_files": "Carrega um ficheiro de cada vez.",
+        "too_many_rows": "Este ficheiro tem mais de {{rows}} linhas. Divide-o em ficheiros mais pequenos e importa-os um a um.",
         "untitled_column": "Coluna {{letter}}"
       }
     },
@@ -1293,6 +1309,11 @@
       "added": "Adicionada aos teus membros",
       "cancel": "Cancelar",
       "cant_clear": "Esvaziar um campo ainda não é guardado: o valor atual mantém-se.",
+      "censuses": {
+        "too_big_many": "{{count}} listas guardadas ou rascunhos têm mais de {{max}} pessoas, por isso não são verificados aqui.",
+        "too_big_one": "1 lista de participantes guardada ou rascunho tem mais de {{max}} pessoas, por isso não é verificada aqui.",
+        "too_big_other": "{{count}} listas guardadas ou rascunhos têm mais de {{max}} pessoas, por isso não são verificados aqui."
+      },
       "edit": "Editar",
       "edit_everywhere": "As alterações aplicam-se a este membro em todo o lado, incluindo nas listas de participantes das votações em curso.",
       "error": {
@@ -1813,7 +1834,8 @@
         "text_many": "{{formattedCount}} membros não estão nesta lista: adicionados depois de a criares, ou removidos.",
         "text_one": "1 membro não está nesta lista: adicionado depois de a criares, ou removido.",
         "text_other": "{{formattedCount}} membros não estão nesta lista: adicionados depois de a criares, ou removidos."
-      }
+      },
+      "too_many_to_copy": "Tens mais de {{max}} membros, demasiados para deixar alguém de fora aqui."
     },
     "census_creation": "Criação da lista de participantes",
     "end_datetime": "Data e hora de fim",
@@ -1823,6 +1845,9 @@
     },
     "groups": {
       "scroll_to_load": "Desce para carregar mais…"
+    },
+    "issue": {
+      "group_empty": "A lista de participantes escolhida está vazia"
     },
     "new_option": "Adicionar uma nova opção",
     "option": {
@@ -1848,7 +1873,8 @@
     "review": {
       "not_in_copy_many": "{{count}} membros não estão na lista desta votação. Se devem votar, adiciona-os em Quem pode votar antes de publicar.",
       "not_in_copy_one": "1 membro não está na lista desta votação. Se deve votar, adiciona-o em Quem pode votar antes de publicar.",
-      "not_in_copy_other": "{{count}} membros não estão na lista desta votação. Se devem votar, adiciona-os em Quem pode votar antes de publicar."
+      "not_in_copy_other": "{{count}} membros não estão na lista desta votação. Se devem votar, adiciona-os em Quem pode votar antes de publicar.",
+      "own_census_one": "A única pessoa da lista de participantes desta votação pode votar"
     },
     "settings": "Definições",
     "start_datetime": "Data e hora de início",
@@ -2386,7 +2412,7 @@
     "level_mid": "Médio",
     "level_strong": "Forte",
     "level_weak": "Fraco",
-    "no_group_description": "Seleciona primeiro um grupo para configurar a autenticação.",
+    "no_group_description": "Escolhe primeiro quem pode votar e depois como inicia sessão.",
     "security_level": "Boa segurança",
     "security_recommendation_1": "Para uma melhor segurança, recomendamos selecionar pelo menos 2 credenciais.",
     "security_recommendation_2_one": "Selecionaste {{ count }} credencial, o que oferece uma boa segurança aos teus votantes.",

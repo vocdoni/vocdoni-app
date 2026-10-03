@@ -134,10 +134,33 @@
       "voted_partial": "Ha votado {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "add": {
+      "skipped_many": "{{count}} personas no se han añadido: no tienen los datos con los que se inicia sesión en esta votación.",
+      "skipped_one": "1 persona no se ha añadido: no tiene los datos con los que se inicia sesión en esta votación.",
+      "skipped_other": "{{count}} personas no se han añadido: no tienen los datos con los que se inicia sesión en esta votación."
+    },
+    "lookup_note": "Este censo no se guarda de forma que podamos mostrarlo. Para comprobar a alguien, búscalo por un dato que use esta votación.",
+    "remove": {
+      "signed_many": "{{name}} y {{others}} más ya han iniciado sesión para votar.",
+      "signed_one": "{{name}} ya ha iniciado sesión para votar.",
+      "signed_other": "{{name}} y {{others}} más ya han iniciado sesión para votar.",
+      "signed_title_partial": "Se han quitado {{removed}}; el resto, no"
+    }
+  },
   "census_size": "Tamaño del censo",
   "censuses": {
+    "empty": {
+      "description": "Cuando eliges quién puede votar, ese censo se guarda aquí."
+    },
+    "everyone": {
+      "title": "Todos los miembros"
+    },
     "source": {
-      "copy_everyone": "Copiado de Todos los miembros"
+      "copy_everyone": "Copiado de Todos los miembros",
+      "copy_previous": "Copiado de otra votación",
+      "copy_saved": "Copiado de un censo guardado",
+      "everyone": "Todos los miembros"
     }
   },
   "change_password": {
@@ -255,6 +278,11 @@
     "process_view": {
       "date_format": "MMMM do, y",
       "time_format": "p"
+    },
+    "setup": {
+      "members": {
+        "description": "Importa una hoja de cálculo o añádelos uno a uno. Después eliges quién puede votar en cada votación."
+      }
     },
     "usage": {
       "2fa_email": "Códigos 2FA por email",
@@ -1014,7 +1042,7 @@
       "delete_others_one": "Eliminar a la otra",
       "delete_others_other": "Eliminar a las otras {{count}}",
       "done_many": "{{count}} personas eliminadas de los miembros",
-      "done_one": "Eliminada de los miembros",
+      "done_one": "Se ha eliminado de los miembros",
       "done_other": "{{count}} personas eliminadas de los miembros",
       "error": "No se ha eliminado a nadie",
       "no_votes": "También se les quita de cualquier censo en el que estén.",
@@ -1023,7 +1051,7 @@
       "state_live": "en curso",
       "state_scheduled": "programada",
       "title_people_many": "¿Eliminar a {{count}} personas de los miembros?",
-      "title_people_one": "¿Eliminar a {{count}} personas de los miembros?",
+      "title_people_one": "¿Eliminar a 1 persona de los miembros?",
       "title_people_other": "¿Eliminar a {{count}} personas de los miembros?",
       "title_person": "¿Eliminar a {{name}} de los miembros?",
       "type_count": "Escribe {{number}} para confirmar",
@@ -1209,7 +1237,9 @@
         "template": "Descargar la plantilla",
         "template_csv": "CSV (.csv)",
         "template_xlsx": "Excel (.xlsx)",
+        "too_big": "Este archivo ocupa más de {{size}} MB. Divídelo en archivos más pequeños e impórtalos uno a uno.",
         "too_many_files": "Sube un solo archivo cada vez.",
+        "too_many_rows": "Este archivo tiene más de {{rows}} filas. Divídelo en archivos más pequeños e impórtalos uno a uno.",
         "untitled_column": "Columna {{letter}}"
       }
     },
@@ -1293,6 +1323,11 @@
       "added": "Añadida a tus miembros",
       "cancel": "Cancelar",
       "cant_clear": "Todavía no se puede vaciar un campo: se mantiene el valor actual.",
+      "censuses": {
+        "too_big_many": "{{count}} censos guardados o borradores tienen más de {{max}} personas, así que aquí no se comprueban.",
+        "too_big_one": "1 censo guardado o borrador tiene más de {{max}} personas, así que aquí no se comprueba.",
+        "too_big_other": "{{count}} censos guardados o borradores tienen más de {{max}} personas, así que aquí no se comprueban."
+      },
       "edit": "Editar",
       "edit_everywhere": "Los cambios se aplican a este miembro en todas partes, también en los censos de las votaciones en curso.",
       "error": {
@@ -1325,7 +1360,7 @@
       "warning": "Aviso:"
     },
     "save_census": {
-      "description": "Guarda a estas personas como una lista que puedes usar en una votación. Siguen en tus miembros.",
+      "description": "Guarda a estas personas como un censo que puedes usar en una votación. Siguen en tus miembros.",
       "description_label": "Descripción (opcional)",
       "error": "No hemos podido guardar el censo",
       "name": "Nombre",
@@ -1801,6 +1836,9 @@
         "description": "Esta votación tendrá su propia lista con todos tus miembros tal como están ahora, y podrás añadir o quitar personas. A partir de entonces, los miembros nuevos no se añadirán solos.",
         "title": "¿Editar esta lista?"
       },
+      "everyone": {
+        "title": "Todos los miembros"
+      },
       "group": {
         "no_groups": "Para iniciar una votación, primero necesitas crear un grupo de votantes con derecho a voto a partir de tu base de miembros. <1>Créalo aquí</1>."
       },
@@ -1813,7 +1851,8 @@
         "text_many": "{{formattedCount}} miembros no están en esta lista: personas añadidas después de crearla, o que has quitado.",
         "text_one": "1 miembro no está en esta lista: alguien añadido después de crearla, o que has quitado.",
         "text_other": "{{formattedCount}} miembros no están en esta lista: personas añadidas después de crearla, o que has quitado."
-      }
+      },
+      "too_many_to_copy": "Tienes más de {{max}} miembros, demasiados para dejar fuera a nadie desde aquí."
     },
     "census_creation": "Creación de censo",
     "end_datetime": "Fecha y hora de finalización",
@@ -1823,6 +1862,9 @@
     },
     "groups": {
       "scroll_to_load": "Desplázate para cargar más..."
+    },
+    "issue": {
+      "group_empty": "El censo elegido no tiene a nadie"
     },
     "new_option": "Añadir nueva opción",
     "option": {
@@ -1848,7 +1890,8 @@
     "review": {
       "not_in_copy_many": "{{count}} miembros no están en la lista de esta votación. Si deben votar, añádelos en Quién puede votar antes de publicar.",
       "not_in_copy_one": "1 miembro no está en la lista de esta votación. Si debe votar, añádelo en Quién puede votar antes de publicar.",
-      "not_in_copy_other": "{{count}} miembros no están en la lista de esta votación. Si deben votar, añádelos en Quién puede votar antes de publicar."
+      "not_in_copy_other": "{{count}} miembros no están en la lista de esta votación. Si deben votar, añádelos en Quién puede votar antes de publicar.",
+      "own_census_one": "La única persona del censo de esta votación puede votar"
     },
     "settings": "Configuración",
     "start_datetime": "Fecha y hora de inicio",
@@ -2386,7 +2429,7 @@
     "level_mid": "Media",
     "level_strong": "Fuerte",
     "level_weak": "Débil",
-    "no_group_description": "Selecciona primero un grupo para configurar la autenticación.",
+    "no_group_description": "Elige primero quién puede votar y después cómo inicia sesión.",
     "security_level": "Buena seguridad",
     "security_recommendation_1": "Para una mayor seguridad, recomendamos seleccionar al menos 2 credenciales.",
     "security_recommendation_2_one": "Has seleccionado {{ count }} credenciales, lo que proporciona una buena seguridad para tus votantes.",

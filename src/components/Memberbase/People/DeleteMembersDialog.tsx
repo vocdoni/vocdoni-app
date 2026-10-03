@@ -227,7 +227,11 @@ export const DeleteMembersDialog = ({ open, onOpenChange, members, scope, onDele
             {t('members.delete.title_person', { defaultValue: 'Delete {{name}} from members?', name: single })}
           </span>
         ) : (
-          t('members.delete.title_people', { defaultValue: 'Delete {{count}} people from members?', count })
+          t('members.delete.title_people', {
+            defaultValue_one: 'Delete 1 person from members?',
+            defaultValue_other: 'Delete {{count}} people from members?',
+            count,
+          })
         )
       }
       confirmText={t('members.delete.confirm', {

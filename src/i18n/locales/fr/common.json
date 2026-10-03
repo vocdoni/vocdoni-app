@@ -134,10 +134,19 @@
       "voted_partial": "A voté {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "add": {
+      "skipped_many": "{{count}} personnes n'ont pas été ajoutées : il leur manque les informations de connexion de ce vote.",
+      "skipped_one": "1 personne n'a pas été ajoutée : il lui manque les informations de connexion de ce vote.",
+      "skipped_other": "{{count}} personnes n'ont pas été ajoutées : il leur manque les informations de connexion de ce vote."
+    }
+  },
   "census_size": "Nombre d'inscrits",
   "censuses": {
     "source": {
-      "copy_everyone": "Copiée de Tout le monde"
+      "copy_everyone": "Copiée de Tout le monde",
+      "copy_previous": "Copiée d'un autre vote",
+      "copy_saved": "Copiée d'une liste électorale enregistrée"
     }
   },
   "change_password": {
@@ -255,6 +264,11 @@
     "process_view": {
       "date_format": "d MMMM y",
       "time_format": "p"
+    },
+    "setup": {
+      "members": {
+        "description": "Importez un tableur ou ajoutez-les un par un. Vous choisissez ensuite qui peut voter à chaque vote."
+      }
     },
     "usage": {
       "2fa_email": "Codes 2FA par e-mail",
@@ -1023,7 +1037,7 @@
       "state_live": "en cours",
       "state_scheduled": "programmé",
       "title_people_many": "Supprimer {{count}} personnes des membres ?",
-      "title_people_one": "Supprimer {{count}} personnes des membres ?",
+      "title_people_one": "Supprimer 1 personne des membres ?",
       "title_people_other": "Supprimer {{count}} personnes des membres ?",
       "title_person": "Supprimer {{name}} des membres ?",
       "type_count": "Saisissez {{number}} pour confirmer",
@@ -1209,7 +1223,9 @@
         "template": "Télécharger le modèle",
         "template_csv": "CSV (.csv)",
         "template_xlsx": "Excel (.xlsx)",
+        "too_big": "Ce fichier dépasse {{size}} Mo. Divisez-le en fichiers plus petits et importez-les un par un.",
         "too_many_files": "Chargez un seul fichier à la fois.",
+        "too_many_rows": "Ce fichier compte plus de {{rows}} lignes. Divisez-le en fichiers plus petits et importez-les un par un.",
         "untitled_column": "Colonne {{letter}}"
       }
     },
@@ -1293,6 +1309,11 @@
       "added": "Ajoutée à vos membres",
       "cancel": "Annuler",
       "cant_clear": "Vider un champ n'est pas encore enregistré : la valeur actuelle est conservée.",
+      "censuses": {
+        "too_big_many": "{{count}} listes électorales enregistrées ou brouillons dépassent {{max}} personnes : ils ne sont pas vérifiés ici.",
+        "too_big_one": "Une liste électorale enregistrée ou un brouillon dépasse {{max}} personnes : il n’est pas vérifié ici.",
+        "too_big_other": "{{count}} listes électorales enregistrées ou brouillons dépassent {{max}} personnes : ils ne sont pas vérifiés ici."
+      },
       "edit": "Modifier",
       "edit_everywhere": "Les modifications s'appliquent à ce membre partout, y compris dans les listes électorales des votes en cours.",
       "error": {
@@ -1813,7 +1834,8 @@
         "text_many": "{{formattedCount}} membres ne sont pas dans cette liste : ajoutés après sa création, ou retirés.",
         "text_one": "1 membre n'est pas dans cette liste : ajouté après sa création, ou retiré.",
         "text_other": "{{formattedCount}} membres ne sont pas dans cette liste : ajoutés après sa création, ou retirés."
-      }
+      },
+      "too_many_to_copy": "Vous avez plus de {{max}} membres, trop pour en exclure depuis ici."
     },
     "census_creation": "Création de la liste électorale",
     "end_datetime": "Date et heure de fin",
@@ -1823,6 +1845,9 @@
     },
     "groups": {
       "scroll_to_load": "Faites défiler pour en charger davantage…"
+    },
+    "issue": {
+      "group_empty": "La liste électorale choisie est vide"
     },
     "new_option": "Ajouter une nouvelle option",
     "option": {
@@ -2386,7 +2411,7 @@
     "level_mid": "Intermédiaire",
     "level_strong": "Fort",
     "level_weak": "Faible",
-    "no_group_description": "Veuillez d'abord sélectionner un groupe pour configurer l'authentification.",
+    "no_group_description": "Choisissez d'abord qui peut voter, puis comment ces personnes se connectent.",
     "security_level": "Bonne sécurité",
     "security_recommendation_1": "Pour une meilleure sécurité, nous recommandons de sélectionner au moins 2 identifiants.",
     "security_recommendation_2_one": "Vous avez sélectionné {{ count }} identifiant, ce qui offre une bonne sécurité pour vos électeurs.",

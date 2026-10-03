@@ -132,10 +132,18 @@
       "voted_partial": "Abgestimmt {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "add": {
+      "skipped_one": "1 Person wurde nicht hinzugefügt: Ihr fehlen die Angaben, mit denen man sich bei dieser Abstimmung anmeldet.",
+      "skipped_other": "{{count}} Personen wurden nicht hinzugefügt: Ihnen fehlen die Angaben, mit denen man sich bei dieser Abstimmung anmeldet."
+    }
+  },
   "census_size": "Teilnehmerzahl",
   "censuses": {
     "source": {
-      "copy_everyone": "Von Alle kopiert"
+      "copy_everyone": "Von Alle kopiert",
+      "copy_previous": "Aus einer anderen Abstimmung kopiert",
+      "copy_saved": "Aus einer gespeicherten Teilnehmerliste kopiert"
     }
   },
   "change_password": {
@@ -253,6 +261,11 @@
     "process_view": {
       "date_format": "MMMM do, y",
       "time_format": "p"
+    },
+    "setup": {
+      "members": {
+        "description": "Importiere eine Tabelle oder füge sie einzeln hinzu. Dann wählst du für jede Abstimmung, wer abstimmen darf."
+      }
     },
     "usage": {
       "2fa_email": "2FA-E-Mail-Codes",
@@ -1006,7 +1019,7 @@
       "state_draft": "Entwurf",
       "state_live": "läuft",
       "state_scheduled": "geplant",
-      "title_people_one": "{{count}} Personen aus den Mitgliedern löschen?",
+      "title_people_one": "1 Person aus den Mitgliedern löschen?",
       "title_people_other": "{{count}} Personen aus den Mitgliedern löschen?",
       "title_person": "{{name}} aus den Mitgliedern löschen?",
       "type_count": "Gib {{number}} ein, um zu bestätigen",
@@ -1175,7 +1188,9 @@
         "template": "Vorlage herunterladen",
         "template_csv": "CSV (.csv)",
         "template_xlsx": "Excel (.xlsx)",
+        "too_big": "Diese Datei ist größer als {{size}} MB. Teile sie in kleinere Dateien auf und importiere sie einzeln.",
         "too_many_files": "Lade jeweils nur eine Datei hoch.",
+        "too_many_rows": "Diese Datei hat mehr als {{rows}} Zeilen. Teile sie in kleinere Dateien auf und importiere sie einzeln.",
         "untitled_column": "Spalte {{letter}}"
       }
     },
@@ -1252,6 +1267,10 @@
       "added": "Zu deinen Mitgliedern hinzugefügt",
       "cancel": "Abbrechen",
       "cant_clear": "Ein Feld zu leeren wird noch nicht gespeichert: Der aktuelle Wert bleibt.",
+      "censuses": {
+        "too_big_one": "1 gespeicherte Teilnehmerliste oder ein Entwurf hat mehr als {{max}} Personen und wird hier daher nicht geprüft.",
+        "too_big_other": "{{count}} gespeicherte Teilnehmerlisten oder Entwürfe haben mehr als {{max}} Personen und werden hier daher nicht geprüft."
+      },
       "edit": "Bearbeiten",
       "edit_everywhere": "Änderungen gelten für dieses Mitglied überall, auch auf den Teilnehmerlisten laufender Abstimmungen.",
       "error": {
@@ -1751,7 +1770,8 @@
         "review": "Prüfen",
         "text_one": "1 Mitglied ist nicht in dieser Liste: später hinzugefügt oder entfernt.",
         "text_other": "{{formattedCount}} Mitglieder sind nicht in dieser Liste: später hinzugefügt oder entfernt."
-      }
+      },
+      "too_many_to_copy": "Du hast mehr als {{max}} Mitglieder, zu viele, um hier jemanden auszulassen."
     },
     "census_creation": "Erstellung der Teilnehmerliste",
     "end_datetime": "Enddatum und -uhrzeit",
@@ -1761,6 +1781,9 @@
     },
     "groups": {
       "scroll_to_load": "Scrollen, um mehr zu laden…"
+    },
+    "issue": {
+      "group_empty": "Die gewählte Teilnehmerliste ist leer"
     },
     "new_option": "Neue Option hinzufügen",
     "option": {
@@ -1785,7 +1808,8 @@
     },
     "review": {
       "not_in_copy_one": "1 Mitglied ist nicht in der Liste dieser Abstimmung. Wenn es abstimmen soll, füge es vor dem Veröffentlichen unter Wer abstimmen darf hinzu.",
-      "not_in_copy_other": "{{count}} Mitglieder sind nicht in der Liste dieser Abstimmung. Wenn sie abstimmen sollen, füge sie vor dem Veröffentlichen unter Wer abstimmen darf hinzu."
+      "not_in_copy_other": "{{count}} Mitglieder sind nicht in der Liste dieser Abstimmung. Wenn sie abstimmen sollen, füge sie vor dem Veröffentlichen unter Wer abstimmen darf hinzu.",
+      "own_census_one": "Die einzige Person in der Teilnehmerliste dieser Abstimmung kann abstimmen"
     },
     "settings": "Einstellungen",
     "start_datetime": "Startdatum und -uhrzeit",
@@ -2321,7 +2345,7 @@
     "level_mid": "Mittel",
     "level_strong": "Stark",
     "level_weak": "Schwach",
-    "no_group_description": "Bitte wähle zuerst eine Gruppe aus, um die Authentifizierung zu konfigurieren.",
+    "no_group_description": "Wähle zuerst, wer abstimmen darf, und dann, wie sich diese Personen anmelden.",
     "security_level": "Gute Sicherheit",
     "security_recommendation_1": "Für mehr Sicherheit empfehlen wir, mindestens 2 Zugangsdaten auszuwählen.",
     "security_recommendation_2_one": "Du hast {{ count }} Zugangsdatum ausgewählt, was deinen Wählenden gute Sicherheit bietet.",

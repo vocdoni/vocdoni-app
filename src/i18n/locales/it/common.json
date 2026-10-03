@@ -134,10 +134,19 @@
       "voted_partial": "Ha votato {{voted}}/{{total}}"
     }
   },
+  "census_detail": {
+    "add": {
+      "skipped_many": "{{count}} persone non sono state aggiunte: non hanno i dati con cui si accede a questa votazione.",
+      "skipped_one": "1 persona non è stata aggiunta: non ha i dati con cui si accede a questa votazione.",
+      "skipped_other": "{{count}} persone non sono state aggiunte: non hanno i dati con cui si accede a questa votazione."
+    }
+  },
   "census_size": "Dimensione del censimento",
   "censuses": {
     "source": {
-      "copy_everyone": "Copiato da Tutti"
+      "copy_everyone": "Copiato da Tutti",
+      "copy_previous": "Copiato da un'altra votazione",
+      "copy_saved": "Copiato da un censimento salvato"
     }
   },
   "change_password": {
@@ -255,6 +264,11 @@
     "process_view": {
       "date_format": "do MMMM y",
       "time_format": "p"
+    },
+    "setup": {
+      "members": {
+        "description": "Importa un foglio di calcolo o aggiungili uno alla volta. Poi scegli chi può votare in ogni votazione."
+      }
     },
     "usage": {
       "2fa_email": "Codici email 2FA",
@@ -1023,7 +1037,7 @@
       "state_live": "in corso",
       "state_scheduled": "programmata",
       "title_people_many": "Eliminare {{count}} persone dai membri?",
-      "title_people_one": "Eliminare {{count}} persone dai membri?",
+      "title_people_one": "Eliminare 1 persona dai membri?",
       "title_people_other": "Eliminare {{count}} persone dai membri?",
       "title_person": "Eliminare {{name}} dai membri?",
       "type_count": "Scrivi {{number}} per confermare",
@@ -1209,7 +1223,9 @@
         "template": "Scarica il modello",
         "template_csv": "CSV (.csv)",
         "template_xlsx": "Excel (.xlsx)",
+        "too_big": "Questo file supera i {{size}} MB. Dividilo in file più piccoli e importali uno alla volta.",
         "too_many_files": "Carica un file alla volta.",
+        "too_many_rows": "Questo file ha più di {{rows}} righe. Dividilo in file più piccoli e importali uno alla volta.",
         "untitled_column": "Colonna {{letter}}"
       }
     },
@@ -1293,6 +1309,11 @@
       "added": "Aggiunta ai tuoi membri",
       "cancel": "Annulla",
       "cant_clear": "Svuotare un campo non viene ancora salvato: resta il valore attuale.",
+      "censuses": {
+        "too_big_many": "{{count}} censimenti salvati o bozze hanno più di {{max}} persone, quindi qui non vengono controllati.",
+        "too_big_one": "1 censimento salvato o bozza ha più di {{max}} persone, quindi qui non viene controllato.",
+        "too_big_other": "{{count}} censimenti salvati o bozze hanno più di {{max}} persone, quindi qui non vengono controllati."
+      },
       "edit": "Modifica",
       "edit_everywhere": "Le modifiche valgono per questo membro ovunque, anche nei censimenti delle votazioni in corso.",
       "error": {
@@ -1813,7 +1834,8 @@
         "text_many": "{{formattedCount}} membri non sono in questa lista: aggiunti dopo averla creata, o tolti.",
         "text_one": "1 membro non è in questa lista: aggiunto dopo averla creata, o tolto.",
         "text_other": "{{formattedCount}} membri non sono in questa lista: aggiunti dopo averla creata, o tolti."
-      }
+      },
+      "too_many_to_copy": "Hai più di {{max}} membri, troppi per escludere qualcuno da qui."
     },
     "census_creation": "Creazione censimento",
     "end_datetime": "Data e ora di fine",
@@ -1823,6 +1845,9 @@
     },
     "groups": {
       "scroll_to_load": "Scorri per caricare altro..."
+    },
+    "issue": {
+      "group_empty": "Il censimento scelto è vuoto"
     },
     "new_option": "Aggiungi una nuova opzione",
     "option": {
@@ -2386,7 +2411,7 @@
     "level_mid": "Medio",
     "level_strong": "Forte",
     "level_weak": "Debole",
-    "no_group_description": "Seleziona prima un gruppo per configurare l'autenticazione.",
+    "no_group_description": "Scegli prima chi può votare, poi come accede.",
     "security_level": "Buona sicurezza",
     "security_recommendation_1": "Per una migliore sicurezza, consigliamo di selezionare almeno 2 credenziali.",
     "security_recommendation_2_one": "Hai selezionato {{ count }} credenziale, che fornisce una buona sicurezza per i tuoi votanti.",
