@@ -4,7 +4,7 @@ import { generatePath, Link as RouterLink } from 'react-router'
 import { Routes } from '~routes'
 import { VoteStateBadge } from '../Censuses/CensusRow'
 import { untitledVote } from '../Censuses/labels'
-import type { usePersonCensuses } from './usePersonCensuses'
+import { PERSON_CENSUS_READ_MAX, type usePersonCensuses } from './usePersonCensuses'
 
 type PersonCensusesProps = { censuses: ReturnType<typeof usePersonCensuses> }
 
@@ -13,8 +13,8 @@ type PersonCensusesProps = { censuses: ReturnType<typeof usePersonCensuses> }
  * hold them, each a link to that census. Closed votes aren't listed.
  */
 export const PersonCensuses = ({ censuses }: PersonCensusesProps) => {
-  const { t } = useTranslation()
-  const { items, isLoading, phoneOnly, unchecked } = censuses
+  const { t, i18n } = useTranslation()
+  const { items, isLoading, phoneOnly, unchecked, tooBig } = censuses
 
   return (
     <Stack gap={2} as='section' aria-labelledby='person-censuses-title'>
@@ -71,6 +71,17 @@ export const PersonCensuses = ({ censuses }: PersonCensusesProps) => {
             count: unchecked.length,
             defaultValue_one: "Can't check 1 live vote: it signs in with details this person doesn't have.",
             defaultValue_other: "Can't check {{count}} live votes: they sign in with details this person doesn't have.",
+          })}
+        </Text>
+      )}
+      {!isLoading && tooBig > 0 && (
+        <Text fontSize='xs' color='fg.muted'>
+          {t('members.person.censuses.too_big', {
+            count: tooBig,
+            max: PERSON_CENSUS_READ_MAX.toLocaleString(i18n.resolvedLanguage),
+            defaultValue_one: "1 saved census or draft has more than {{max}} people, so it isn't checked here.",
+            defaultValue_other:
+              "{{count}} saved censuses or drafts have more than {{max}} people, so they aren't checked here.",
           })}
         </Text>
       )}

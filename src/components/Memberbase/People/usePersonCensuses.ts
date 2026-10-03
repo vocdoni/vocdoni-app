@@ -17,6 +17,12 @@ import { useAllVotes } from '../Censuses/useCensusIndex'
 /** How long what a person is in stays cached: it's read when their drawer opens, never polled. */
 const STALE_TIME = 5 * 60 * 1000
 
+/**
+ * Censuses above this many people aren't read to see whether someone is in them: `GET /groups/{id}`
+ * returns every member id, so a few big ones would weigh tens of MB on every drawer open.
+ */
+export const PERSON_CENSUS_READ_MAX = 5000
+
 export type PersonVoteState = 'live' | 'scheduled' | 'draft'
 
 export type PersonCensus =
@@ -160,9 +166,10 @@ export const usePersonCensuses = (member?: Member & { id: string }) => {
     })),
   })
 
-  // The groups whose member ids tell: drafts' own (or saved) groups, and the saved censuses
-  const groupIds = useMemo(() => {
-    if (!member) return []
+  // The groups whose member ids tell: drafts' own (or saved) groups, and the saved censuses, except
+  // the big ones, only counted
+  const { groupIds, tooBig } = useMemo(() => {
+    if (!member) return { groupIds: [], tooBig: 0 }
     const ids = new Set<string>()
     votes.drafts.forEach((process) => {
       const groupId = process.census?.groupId
@@ -171,7 +178,10 @@ export const usePersonCensuses = (member?: Member & { id: string }) => {
     ;(groups.data ?? []).forEach((group) => {
       if (!group.isAutoGroup && !markers.has(group.id)) ids.add(group.id)
     })
-    return [...ids]
+    const sizes = new Map((groups.data ?? []).map((group) => [group.id, group.membersCount ?? 0]))
+    const all = [...ids]
+    const small = all.filter((id) => (sizes.get(id) ?? 0) <= PERSON_CENSUS_READ_MAX)
+    return { groupIds: small, tooBig: all.length - small.length }
   }, [member, votes.drafts, groups.data, everyoneId, markers])
 
   const groupReads = useQueries({
@@ -214,6 +224,8 @@ export const usePersonCensuses = (member?: Member & { id: string }) => {
     phoneOnly: phoneOnly && running.length > 0,
     /** Live votes that sign in with details they don't have (or we can't look up) */
     unchecked: phoneOnly ? [] : checks.filter((check) => !check.lookup).map((check) => check.process),
+    /** Saved censuses and drafts too big to read here, so not checked */
+    tooBig,
     isLoading:
       votes.isLoading ||
       groups.isLoading ||

@@ -144,6 +144,24 @@ describe('PersonCensuses', () => {
     expect(state.participants).not.toHaveBeenCalledWith('closed', expect.anything())
   })
 
+  it('never reads a census too big to check, and says so', async () => {
+    state.groups = [
+      group('everyone', { isAutoGroup: true }),
+      group('board'),
+      group('huge', { membersCount: 45_000 }),
+      group('own-draft'),
+      group('own-live'),
+    ]
+    state.memberIds.huge = ['a1']
+    renderFor(anna)
+
+    expect(
+      await screen.findByText("1 saved census or draft has more than 5,000 people, so it isn't checked here.")
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Group huge' })).toBeNull()
+    expect(state.fetch.mock.calls.map(([url]) => String(url)).filter((url) => url.endsWith('/groups/huge'))).toEqual([])
+  })
+
   it("says live votes can't be checked for someone with only a phone, and still shows drafts", async () => {
     renderFor({ id: 'a1', name: 'Pere', phone: 'hash' } as SelectedMember)
 
