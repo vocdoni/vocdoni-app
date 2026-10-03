@@ -150,7 +150,8 @@ export const VoterLookup = () => {
         </Text>
 
         {submitted.length > 0 && (
-          <Stack gap={0} as='ul' listStyleType='none' m={0} p={0}>
+          // Names, the details looked up and whether each person voted: kept out of replays and autocapture
+          <Stack gap={0} as='ul' listStyleType='none' m={0} p={0} className='ph-no-capture'>
             {submitted.map((value, index) => {
               const lookup = lookups[index]
               const participants = lookup?.data ?? []
