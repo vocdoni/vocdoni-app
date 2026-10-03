@@ -41,6 +41,13 @@ const ICONS: Record<ActivityType, ElementType> = {
 
 const strong = { strong: <chakra.strong fontWeight='bolder' /> }
 
+/**
+ * Names and titles come from admins and imported files: escaped before `Trans` reads the sentence for
+ * tags (interpolation is unescaped app-wide), then shown as plain text again. Unescaped, a name like
+ * `<strong position="fixed" ...>` would render as a real element.
+ */
+const asText = { tOptions: { interpolation: { escapeValue: true } }, shouldUnescape: true }
+
 /** What happened, as a sentence with its subject in bold. */
 const EventSentence = ({ event }: { event: ActivityEvent }) => {
   const { t, i18n } = useTranslation()
@@ -56,6 +63,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='<strong>{{name}}</strong> started'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'process.ended':
@@ -65,6 +73,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='<strong>{{name}}</strong> ended'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'process.created':
@@ -74,6 +83,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='<strong>{{name}}</strong> created'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'process.published':
@@ -83,6 +93,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='<strong>{{name}}</strong> published'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'member.added':
@@ -92,6 +103,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='<strong>{{name}}</strong> added to members'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'member.updated':
@@ -101,6 +113,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='<strong>{{name}}</strong> edited'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'member.deleted':
@@ -110,6 +123,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='<strong>{{name}}</strong> deleted from members'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'import.started':
@@ -128,6 +142,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='Census <strong>{{name}}</strong> saved'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'group.updated':
@@ -137,6 +152,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='Census <strong>{{name}}</strong> edited'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'group.deleted':
@@ -146,6 +162,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='Census <strong>{{name}}</strong> deleted'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'census.members_added':
@@ -171,6 +188,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
           defaults='Census of <strong>{{name}}</strong> frozen at publish'
           values={values}
           components={strong}
+          {...asText}
         />
       )
     case 'activity.exported':
