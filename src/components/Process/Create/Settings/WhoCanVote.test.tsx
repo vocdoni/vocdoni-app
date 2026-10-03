@@ -320,10 +320,7 @@ describe('WhoCanVote', () => {
 
     await waitFor(() => expect(formState().groupId).toBe('own-new'))
     expect(api.createGroup).toHaveBeenCalledWith(expect.objectContaining({ memberIds: ['j1', 'j2'] }))
-    expect(api.mark).toHaveBeenCalledWith(
-      'own-new',
-      expect.objectContaining({ fromId: 'junta', source: 'previous' })
-    )
+    expect(api.mark).toHaveBeenCalledWith('own-new', expect.objectContaining({ fromId: 'junta', source: 'previous' }))
   })
 
   it('tells how voters get their codes, then that the census is ready, and reports it once', async () => {
