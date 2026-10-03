@@ -20,6 +20,7 @@ import { Link as ReactRouterLink } from 'react-router'
 import { CensusDetail } from '~components/Memberbase/Censuses/CensusDetail'
 import { copiedFromUnnamed, everyoneTitle } from '~components/Memberbase/Censuses/labels'
 import { Banner } from '~components/ui/Banner'
+import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { Sheet } from '~components/ui/Sheet'
 import { useToast } from '~components/Toast'
 import { useDateFns } from '~i18n/use-date-fns'
@@ -31,7 +32,7 @@ import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { ChoosePeopleSheet } from '../census/ChoosePeopleSheet'
 import { type PreviousChoice, PreviousVoteSheet } from '../census/PreviousVoteSheet'
 import { useCensusAttach } from '../census/useCensusAttach'
-import { codeChannelsOf } from '../census/useCensusFacts'
+import { type CensusFacts, codeChannelsOf } from '../census/useCensusFacts'
 import type { Process } from '../common'
 import { useEditor } from '../editor-context'
 import { useDraftCensus } from '../useReadiness'
@@ -49,7 +50,7 @@ const useOwnedSource = (census: DraftCensus) => {
   if (!marker) return ''
   const date = format(marker.createdAt, 'd MMM')
   if (marker.kind === 'test') return t('process_create.census.source.test', { defaultValue: 'The test vote’s people' })
-  const name = copySourceName(marker, { groupsById, markers })
+  const name = marker.source === 'everyone' ? everyoneTitle(t) : copySourceName(marker, { groupsById, markers })
   if (name)
     return date
       ? t('process_create.census.source.copied_on', {
@@ -235,6 +236,22 @@ const CensusLine = ({ census, onReview }: { census: DraftCensus; onReview: () =>
   )
 }
 
+/**
+ * For a vote's own list copied from Everyone ("Edit this list"): how many members aren't in it, the
+ * test people left out on purpose aside. They joined after the copy, or were taken out of it. Null
+ * when it isn't such a list or the numbers aren't in yet.
+ */
+export const membersNotInCopy = (
+  census: Pick<CensusFacts, 'mode' | 'marker' | 'memberIds' | 'everyone'>,
+  testVote: TestVote | null
+) => {
+  if (census.mode !== 'owned' || census.marker?.source !== 'everyone' || !census.memberIds || !census.everyone)
+    return null
+  const inList = new Set(census.memberIds)
+  const testLeftOut = (testVote?.memberIds ?? []).filter((id) => !inList.has(id)).length
+  return Math.max(0, (census.everyone.membersCount ?? 0) - inList.size - testLeftOut)
+}
+
 /** How many of the test vote's people are in the census, or 0. */
 export const testPeopleIn = (census: Pick<DraftCensus, 'mode' | 'memberIds'>, testVote: TestVote | null) => {
   if (!testVote) return 0
@@ -291,7 +308,7 @@ export const WhoCanVote = () => {
   const { draft } = useEditor()
   const draftId = draft?.id ?? null
   const census = useDraftCensus()
-  const { attach, chooseEveryone, busy } = useCensusAttach()
+  const { attach, chooseEveryone, copyEveryone, busy } = useCensusAttach()
   const ownedSource = useOwnedSource(census)
   const testVote = useTestVote()
   const collector = useMemberIdCollector()
@@ -303,6 +320,7 @@ export const WhoCanVote = () => {
   const [previousOpen, setPreviousOpen] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [leavingOut, setLeavingOut] = useState(false)
+  const [confirmCopy, setConfirmCopy] = useState(false)
 
   // The census of this vote's own the next choice replaces (a snapshot from a failed publish too)
   const replacing = census.marker ? groupId : undefined
@@ -432,8 +450,26 @@ export const WhoCanVote = () => {
         }}
       />
       <CensusSheet open={sheetOpen} onOpenChange={setSheetOpen} census={census} draftId={draftId} />
+      <ConfirmDialog
+        open={confirmCopy}
+        onOpenChange={({ open }) => setConfirmCopy(open)}
+        title={t('process_create.census.copy_everyone.title', { defaultValue: 'Edit this list?' })}
+        description={t('process_create.census.copy_everyone.description', {
+          defaultValue:
+            "This vote gets its own list with all your members as they are now, and you can add or take out people. From then on, new members won't join it by themselves.",
+        })}
+        confirmText={t('process_create.census.copy_everyone.confirm', { defaultValue: 'Make its own list' })}
+        loading={busy === 'everyone'}
+        onConfirm={async () => {
+          if (await copyEveryone()) {
+            setConfirmCopy(false)
+            setSheetOpen(true)
+          }
+        }}
+      />
     </>
   )
+  const notInCopy = membersNotInCopy(census, testVote)
 
   // The vote has its own census: say what it is, and offer to edit it or choose again
   if (census.mode === 'owned' && !startingOver)
@@ -464,6 +500,26 @@ export const WhoCanVote = () => {
           </Box>
         </Flex>
         <CensusLine census={census} onReview={() => setSheetOpen(true)} />
+        {!!notInCopy && (
+          <Banner
+            status='warning'
+            action={
+              <Button size='2xs' variant='outline' colorPalette='gray' onClick={() => setSheetOpen(true)}>
+                {t('process_create.census.not_in_copy.review', { defaultValue: 'Review' })}
+              </Button>
+            }
+          >
+            <Text fontSize='xs'>
+              {t('process_create.census.not_in_copy.text', {
+                count: notInCopy,
+                formattedCount: format(notInCopy),
+                defaultValue_one: "1 member isn't in this list: someone added after you made it, or taken out of it.",
+                defaultValue_other:
+                  "{{formattedCount}} members aren't in this list: people added after you made it, or taken out of it.",
+              })}
+            </Text>
+          </Banner>
+        )}
         {testWarning}
         {sheets}
       </Stack>
@@ -614,6 +670,19 @@ export const WhoCanVote = () => {
 
       {!startingOver && (census.mode === 'everyone' || census.mode === 'pending') && (
         <CensusLine census={census} onReview={() => setSheetOpen(true)} />
+      )}
+      {!startingOver && census.mode === 'everyone' && (
+        // Everyone itself can't be edited: this gives the vote its own list of everyone, to adjust
+        <Button
+          size='xs'
+          variant='outline'
+          colorPalette='gray'
+          alignSelf='flex-start'
+          disabled={busy !== null}
+          onClick={() => setConfirmCopy(true)}
+        >
+          {t('process_create.census.copy_everyone.button', { defaultValue: 'Edit this list' })}
+        </Button>
       )}
       {!startingOver && testWarning}
       {sheets}

@@ -27,7 +27,7 @@ export const usePublishCensus = (
     learnVersion: (processId: string) => Promise<void>
   }
 ) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const api = useVoteGroupApi()
   const { client } = useApiClient()
   const groups = useAllGroups()
@@ -69,11 +69,11 @@ export const usePublishCensus = (
 
       return preparePublishCensus(api, plan, {
         processId,
-        title: voteGroupTitle(t, vote),
+        title: voteGroupTitle(t, vote, i18n.resolvedLanguage),
         description: voteGroupDescription(t, vote),
         repoint,
       })
     },
-    [api, groups, client, toRequest, runExclusive, versions, t]
+    [api, groups, client, toRequest, runExclusive, versions, t, i18n.resolvedLanguage]
   )
 }

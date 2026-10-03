@@ -20,7 +20,7 @@ import { votingProcessToCreateRequest } from '../Create/draft-mapping'
  * gets a copy of its own (Everyone stays Everyone), see `cloneWithOwnCensus`.
  */
 export const useCloneProcess = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const toast = useToast()
   const createProcess = useCreateProcess()
@@ -39,7 +39,7 @@ export const useCloneProcess = () => {
         ? await cloneWithOwnCensus(voteGroups, {
             request,
             create: (body) => createProcess.mutateAsync(body),
-            title: voteGroupTitle(t, name),
+            title: voteGroupTitle(t, name, i18n.resolvedLanguage),
             description: voteGroupDescription(t, name),
           })
         : await createProcess.mutateAsync({ ...request, census: { ...request.census, groupId: undefined } })

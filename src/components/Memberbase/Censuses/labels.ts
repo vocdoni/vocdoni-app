@@ -9,6 +9,8 @@ export const copiedFromUnnamed = (t: TFunction, source?: VoteGroupSource) => {
       return t('censuses.source.copy_saved', { defaultValue: 'Copied from a saved census' })
     case 'previous':
       return t('censuses.source.copy_previous', { defaultValue: 'Copied from another vote' })
+    case 'everyone':
+      return t('censuses.source.copy_everyone', { defaultValue: 'Copied from Everyone' })
     default:
       return t('censuses.source.chosen', { defaultValue: 'Chosen by hand' })
   }

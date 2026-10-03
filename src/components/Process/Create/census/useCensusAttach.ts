@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { discardVoteGroup, useVoteGroupApi, voteGroupDescription } from '~src/queries/voteGroups'
+import { createVoteGroup } from './voteGroup'
 import { useOrganization } from '@vocdoni/react-components'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import type { Process } from '../common'
@@ -14,9 +15,19 @@ import { type AttachSource, attachCensus, EmptyCensusError } from './attach'
 import { EMAIL_SIGN_IN, hasSignIn } from './useCensusFacts'
 import { StaleDraftError } from './voteGroup'
 
-/** What a vote's own census is called among the groups. */
-export const voteGroupTitle = (t: TFunction, vote: string) =>
-  t('process_create.census.group_title', { defaultValue: '{{vote}} — census', vote })
+/**
+ * What a vote's own census is called among the groups: the vote's name and the day it was made, so
+ * the list of groups says which is which ("Assemblea 2026 — 3 Oct 2026").
+ */
+export const voteGroupTitle = (t: TFunction, vote: string, language?: string, now: Date = new Date()) => {
+  let date: string
+  try {
+    date = new Intl.DateTimeFormat(language, { day: 'numeric', month: 'short', year: 'numeric' }).format(now)
+  } catch {
+    date = now.toISOString().slice(0, 10)
+  }
+  return t('process_create.census.group_title_dated', { defaultValue: '{{vote}} — {{date}}', vote, date })
+}
 
 /** What Who can vote is busy doing, for the spinner on the right card. */
 export type AttachBusy = AttachSource['kind'] | 'everyone' | null
@@ -28,7 +39,7 @@ export type AttachBusy = AttachSource['kind'] | 'everyone' | null
  * census is always saved with the draft. Resolves with whether it worked; failures are told in a toast.
  */
 export const useCensusAttach = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const toast = useToast()
   const api = useVoteGroupApi()
   const queryClient = useQueryClient()
@@ -141,7 +152,7 @@ export const useCensusAttach = () => {
         const { count } = await attachCensus(api!, {
           processId,
           source,
-          title: voteGroupTitle(t, vote),
+          title: voteGroupTitle(t, vote, i18n.resolvedLanguage),
           description: voteGroupDescription(t, vote),
           repoint,
           replacing,
@@ -151,7 +162,36 @@ export const useCensusAttach = () => {
           props: { group_size: count, source: source.kind },
         })
       }),
-    [run, getValues, t, api, repoint]
+    [run, getValues, t, i18n.resolvedLanguage, api, repoint]
+  )
+
+  /**
+   * "Edit this list" on Everyone: the vote gets a census of its own holding every member as of now
+   * (made by the API, so there's no limit on how many), test people left out, which can then be
+   * edited. From then on new members don't join it by themselves.
+   */
+  const copyEveryone = useCallback(
+    () =>
+      run('everyone', async (processId) => {
+        const vote =
+          getValues('title')?.trim() || t('processes.list.untitled_draft', { defaultValue: 'Untitled draft' })
+        const testVote = await api!.testVote()
+        const leaveOut = testVote && !testVote.processIds.includes(processId) ? testVote.memberIds : []
+        await createVoteGroup(api!, {
+          processId,
+          kind: 'copy',
+          source: 'everyone',
+          group: {
+            title: voteGroupTitle(t, vote, i18n.resolvedLanguage),
+            description: voteGroupDescription(t, vote),
+            includeAllMembers: true,
+          },
+          repoint,
+          leaveOut,
+        })
+        trackAnalyticsEvent({ name: AnalyticsEvents.MemberGroupCreated, props: { group_size: 0, source: 'everyone' } })
+      }),
+    [run, getValues, t, i18n.resolvedLanguage, api, repoint]
   )
 
   /**
@@ -174,5 +214,5 @@ export const useCensusAttach = () => {
     [run, repoint, api, setValue, getValues]
   )
 
-  return { attach, chooseEveryone, busy }
+  return { attach, chooseEveryone, copyEveryone, busy }
 }

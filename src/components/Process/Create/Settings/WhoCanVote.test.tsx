@@ -172,7 +172,8 @@ describe('WhoCanVote', () => {
 
     await waitFor(() => expect(formState().groupId).toBe('own-new'))
     expect(api.createGroup).toHaveBeenCalledWith({
-      title: 'Assemblea — census',
+      // The vote's name and the day: "Assemblea — Oct 3, 2026"
+      title: expect.stringMatching(/^Assemblea — .*2026/),
       description: "Census of 'Assemblea'. Changing it changes who can vote.",
       memberIds: ['m1', 'm2', 'm3'],
     })
@@ -248,6 +249,40 @@ describe('WhoCanVote', () => {
 
     await user.click(screen.getByRole('button', { name: 'Edit census' }))
     expect(await screen.findByText('census detail vote draft-1')).toBeInTheDocument()
+  })
+
+  it('gives an Everyone vote a list of its own to edit, made from every member now', async () => {
+    const user = userEvent.setup()
+    const draft = draftControls()
+    render(<Harness values={{ groupId: 'all' }} draft={draft} />)
+
+    await user.click(screen.getByRole('button', { name: 'Edit this list' }))
+    const dialog = await screen.findByRole('alertdialog').catch(() => screen.findByRole('dialog'))
+    expect(within(dialog).getByText(/From then on, new members won't join it by themselves/)).toBeInTheDocument()
+    await user.click(within(dialog).getByRole('button', { name: 'Make its own list' }))
+
+    await waitFor(() => expect(formState().groupId).toBe('own-new'))
+    expect(api.createGroup).toHaveBeenCalledWith(
+      expect.objectContaining({ title: expect.stringMatching(/^Assemblea — /), includeAllMembers: true })
+    )
+    expect(api.mark).toHaveBeenCalledWith(
+      'own-new',
+      expect.objectContaining({ processId: 'draft-1', kind: 'copy', source: 'everyone' })
+    )
+    expect(draft.saveWithLatest).toHaveBeenCalled()
+  })
+
+  it('says how many members a list copied from Everyone is missing', () => {
+    data.markers = new Map([
+      ['own-old', { processId: 'draft-1', kind: 'copy', createdAt: '2026-10-02T09:00:00Z', source: 'everyone' }],
+    ])
+    render(<Harness values={{ groupId: 'own-old' }} draft={draftControls()} />)
+
+    expect(screen.getByText("Copied from 'Everyone' on 2 Oct")).toBeInTheDocument()
+    // Everyone has 120, the list 2
+    expect(
+      screen.getByText("118 members aren't in this list: people added after you made it, or taken out of it.")
+    ).toBeInTheDocument()
   })
 
   it('starts over: back to Everyone, then deletes the old copy once the draft is saved', async () => {
