@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { LuArrowUpRight } from 'react-icons/lu'
 import { createSearchParams, generatePath, Navigate, Link as RouterLink, useParams } from 'react-router'
 import { Routes } from '~routes'
+import { safeId } from '~utils/ids'
 import { CensusDetail } from './CensusDetail'
 import { VoteStateBadge } from './CensusRow'
 import { untitledVote } from './labels'
@@ -16,7 +17,7 @@ export const CensusPage = ({ kind }: { kind: 'saved' | 'vote' }) => {
   const { t } = useTranslation()
   const params = useParams()
   const target: CensusDetailTarget =
-    kind === 'vote' ? { kind, processId: params.processId } : { kind, groupId: params.groupId }
+    kind === 'vote' ? { kind, processId: safeId(params.processId) } : { kind, groupId: safeId(params.groupId) }
   const census = useResolvedCensus(target)
 
   if (kind === 'saved' && census.marker)

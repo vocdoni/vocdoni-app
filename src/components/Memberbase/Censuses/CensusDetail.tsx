@@ -221,7 +221,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
       </Grid>
     )
 
-  if (census.error || (props.kind === 'saved' && !census.group))
+  if (census.error || (props.kind === 'saved' ? !census.group : !census.process))
     return (
       <Banner status='error'>{t('census_detail.not_found', { defaultValue: "We couldn't find this census." })}</Banner>
     )
