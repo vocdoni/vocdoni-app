@@ -75,6 +75,9 @@ export const useGroups = (limit: number = 6) => {
   })
 }
 
+/** How long the full groups list counts as fresh. */
+export const ALL_GROUPS_STALE_TIME = 60 * 1000
+
 /** The most groups `GET /groups` returns per page. */
 const GROUPS_PAGE_MAX = 100
 
@@ -91,6 +94,9 @@ export const useAllGroups = ({ enabled = true }: { enabled?: boolean } = {}) => 
   return useQuery<Group[], Error>({
     queryKey: [...QueryKeys.organization.groups(address), 'all'],
     enabled: enabled && !!address,
+    // Every group with every member id: a minute fresh, so screens and drawers that mount it don't each
+    // read it again. Group writes invalidate the key, so the app's own changes still show at once.
+    staleTime: ALL_GROUPS_STALE_TIME,
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const groups: Group[] = []
