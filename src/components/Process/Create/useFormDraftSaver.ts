@@ -7,7 +7,7 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import type { Process } from './common'
 import { isDraftLimitError } from './draft-limit'
 import { getStoredDraftId } from './draft-storage'
-import { useCreateProcess, useUpdateProcess } from './queries'
+import { draftVersionKey, useCreateProcess, useUpdateProcess } from './queries'
 import { writeWithLatest } from './census/voteGroup'
 import { buildCensusSpec, useFormToVotingProcessRequest } from './request'
 
@@ -52,6 +52,41 @@ export const useFormDraftSaver = (
     draftIdRef.current = draftId
   }, [draftId])
 
+  // The draft's `updatedAt` as this editor last saw it: when it loaded, then after each of its own
+  // writes. A conditional write sends it, so a draft written meanwhile from another tab or device is
+  // refused (409) rather than written over. `PUT /processes/{id}` doesn't return it, so it's read back.
+  const seenVersionRef = useRef<{ processId: string; updatedAt?: string } | null>(null)
+
+  const readVersion = useCallback(
+    async (processId: string) => ((await client.elections.get(processId)) as { updatedAt?: string }).updatedAt,
+    [client]
+  )
+
+  /** Records the version this editor's own write just left. Unknown if it can't be read. */
+  const learnVersion = useCallback(
+    async (processId: string) => {
+      try {
+        seenVersionRef.current = { processId, updatedAt: await readVersion(processId) }
+      } catch {
+        seenVersionRef.current = null
+      }
+    },
+    [readVersion]
+  )
+
+  /**
+   * The `updatedAt` a conditional write should carry: the one this editor last saw, or the one the
+   * draft loaded with. Only when neither is known is it read now (and then nothing older is caught).
+   */
+  const seenVersion = useCallback(
+    async (processId: string) => {
+      if (seenVersionRef.current?.processId === processId) return seenVersionRef.current.updatedAt
+      const loaded = queryClient.getQueryData<string | null>(draftVersionKey(processId))
+      return loaded ?? (await readVersion(processId))
+    },
+    [queryClient, readVersion]
+  )
+
   const isCreating = createProcess.isPending
   const isUpdating = updateProcess.isPending
   const isSaving = isCreating || isUpdating
@@ -86,9 +121,11 @@ export const useFormDraftSaver = (
         const body = getBody()
         if (draftIdRef.current) {
           await updateProcess.mutateAsync({ processId: draftIdRef.current, body })
+          await learnVersion(draftIdRef.current)
           return draftIdRef.current
         }
         const draftProcessId = await createProcess.mutateAsync(body)
+        await learnVersion(draftProcessId)
         // Record the new id before returning: a publish that fails after this
         // point must keep updating this draft instead of leaking another one.
         draftIdRef.current = draftProcessId
@@ -97,7 +134,7 @@ export const useFormDraftSaver = (
         queryClient.invalidateQueries({ queryKey: QueryKeys.organization.drafts(organization?.address) })
         return draftProcessId
       }),
-    [enqueueWrite, updateProcess, createProcess, storeDraftId, queryClient, organization?.address]
+    [enqueueWrite, updateProcess, createProcess, learnVersion, storeDraftId, queryClient, organization?.address]
   )
 
   const saveDraft = useCallback(
@@ -240,8 +277,8 @@ export const useFormDraftSaver = (
   }, [writeDraft, getValues, formToVotingProcessRequest, onSaved])
 
   /**
-   * Like `saveNow`, for a draft that exists already, but a conditional write: it carries the draft's
-   * latest `updatedAt`, as publishing does, so a draft changed meanwhile somewhere else throws
+   * Like `saveNow`, for a draft that exists already, but a conditional write: it carries the
+   * `updatedAt` this editor last saw, so a draft changed meanwhile somewhere else throws
    * `StaleDraftError` instead of being written over.
    */
   const saveNowWithLatest = useCallback(async () => {
@@ -250,7 +287,7 @@ export const useFormDraftSaver = (
       const processId = draftIdRef.current
       if (!processId) throw new Error('No draft to save')
       await writeWithLatest(
-        async () => ((await client.elections.get(processId)) as { updatedAt?: string }).updatedAt,
+        () => seenVersion(processId),
         async (updatedAt) => {
           const form = getValues()
           sent = form
@@ -261,13 +298,14 @@ export const useFormDraftSaver = (
           await updateProcess.mutateAsync({ processId, body: body as CreateVotingProcessRequest })
         }
       )
+      await learnVersion(processId)
       return processId
     })
     setSaveFailed(false)
     setLastSavedAt(new Date())
     if (sent) onSaved?.(sent)
     return id
-  }, [enqueueWrite, client, getValues, formToVotingProcessRequest, updateProcess, onSaved])
+  }, [enqueueWrite, seenVersion, learnVersion, getValues, formToVotingProcessRequest, updateProcess, onSaved])
 
   return {
     saveDraft,
@@ -277,6 +315,10 @@ export const useFormDraftSaver = (
     saveNowWithLatest,
     /** Runs a write of its own in the same one-at-a-time queue as the draft saves */
     runExclusive: enqueueWrite,
+    /** The `updatedAt` a conditional write of the draft should carry (see `seenVersion`) */
+    seenVersion,
+    /** Records the version a write of the editor's own just left */
+    learnVersion,
     isSaving,
     skipSave,
     draftLimitReached,

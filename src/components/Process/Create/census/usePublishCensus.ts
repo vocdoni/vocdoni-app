@@ -20,7 +20,13 @@ type RunExclusive = <T>(write: () => Promise<T>) => Promise<T>
  * with the group the draft follows afterwards, or `null` when nothing changed. Throws when the
  * census couldn't be prepared: then nothing is published.
  */
-export const usePublishCensus = (runExclusive: RunExclusive) => {
+export const usePublishCensus = (
+  runExclusive: RunExclusive,
+  versions: {
+    seenVersion: (processId: string) => Promise<string | undefined>
+    learnVersion: (processId: string) => Promise<void>
+  }
+) => {
   const { t } = useTranslation()
   const api = useVoteGroupApi()
   const { client } = useApiClient()
@@ -51,11 +57,12 @@ export const usePublishCensus = (runExclusive: RunExclusive) => {
       const repoint = (groupId: string) =>
         runExclusive(() =>
           writeWithLatest(
-            async () => ((await client.elections.get(processId)) as { updatedAt?: string }).updatedAt,
+            () => versions.seenVersion(processId),
             async (updatedAt) => {
               const next = { ...form, groupId }
               const body = { ...toRequest(next, buildCensusSpec(next)), ...(updatedAt ? { updatedAt } : {}) }
               await client.elections.update(processId, body as CreateVotingProcessRequest)
+              await versions.learnVersion(processId)
             }
           )
         )
@@ -67,6 +74,6 @@ export const usePublishCensus = (runExclusive: RunExclusive) => {
         repoint,
       })
     },
-    [api, groups, client, toRequest, runExclusive, t]
+    [api, groups, client, toRequest, runExclusive, versions, t]
   )
 }

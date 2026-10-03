@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { CreateVotingProcessRequest } from '@vocdoni/api-types'
 import { useApiClient } from '~src/providers/ApiClientProvider'
@@ -26,15 +26,22 @@ export const useUpdateProcess = () => {
   })
 }
 
+/** Where the `updatedAt` of the draft an editor loaded is kept, beside the draft itself. */
+export const draftVersionKey = (draftId: string) => ['draft', draftId, 'updatedAt']
+
 export const useDraft = (draftId?: string | null) => {
   const { client } = useApiClient()
+  const queryClient = useQueryClient()
 
   return useQuery<Process | null, Error>({
     queryKey: ['draft', draftId],
     enabled: !!draftId,
     queryFn: async () => {
       try {
-        return votingProcessToForm(await client.elections.get(draftId!))
+        const process = await client.elections.get(draftId!)
+        // The form drops it: kept so the editor's conditional writes compare against what it loaded
+        queryClient.setQueryData(draftVersionKey(draftId!), (process as { updatedAt?: string }).updatedAt ?? null)
+        return votingProcessToForm(process)
       } catch (error) {
         // A stale draft id (deleted elsewhere, or left over from the legacy
         // draft store) must not break the wizard: fall back to a blank form.

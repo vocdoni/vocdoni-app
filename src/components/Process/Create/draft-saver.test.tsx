@@ -8,6 +8,7 @@ import { defaultProcessValues, Process } from './common'
 import { getStoredDraftId, storeDraftId as persistDraftId } from './draft-storage'
 import { StaleDraftError } from './census/voteGroup'
 import { useFormDraftSaver } from './index'
+import { draftVersionKey } from './queries'
 
 const create = vi.fn()
 const update = vi.fn()
@@ -59,13 +60,19 @@ const orgAddress = '0xorgaddr'
  */
 const renderSaver = (
   draftId: string | null = null,
-  { persist = false, values = form }: { persist?: boolean; values?: Process } = {}
+  {
+    persist = false,
+    values = form,
+    loadedVersion,
+  }: { persist?: boolean; values?: Process; loadedVersion?: string } = {}
 ) => {
   const storeDraftId = vi.fn((id: string | null) => {
     if (persist) persistDraftId(orgAddress, id)
   })
   const onSaved = vi.fn()
   const queryClient = createTestQueryClient()
+  // What `useDraft` keeps when the editor loads the draft
+  if (draftId && loadedVersion) queryClient.setQueryData(draftVersionKey(draftId), loadedVersion)
   const { result } = renderHook(
     () => useFormDraftSaver(true, () => values, draftId, storeDraftId, undefined, onSaved),
     {
@@ -249,6 +256,23 @@ describe('useFormDraftSaver', () => {
 
     update.mockRejectedValueOnce(new VocdoniApiError(409, {}, 'stale', 40171))
     await expect(result.current.saveNowWithLatest()).rejects.toBeInstanceOf(StaleDraftError)
+  })
+
+  it('sends the version the editor saw, not the draft as it is now, so a write from elsewhere is caught', async () => {
+    // Another tab saved since this one loaded the draft at v-load
+    get.mockResolvedValue({ updatedAt: 'v-other' })
+    const { result } = renderSaver('draft-1', { loadedVersion: 'v-load' })
+
+    await result.current.saveNowWithLatest()
+    expect(update).toHaveBeenLastCalledWith('draft-1', expect.objectContaining({ updatedAt: 'v-load' }))
+
+    // After a write of its own, it compares against what that write left
+    get.mockResolvedValue({ updatedAt: 'v-mine' })
+    await act(async () => {
+      await result.current.saveDraft(false)
+    })
+    await result.current.saveNowWithLatest()
+    expect(update).toHaveBeenLastCalledWith('draft-1', expect.objectContaining({ updatedAt: 'v-mine' }))
   })
 
   it('reports what a save sent and when it landed', async () => {

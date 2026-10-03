@@ -59,8 +59,14 @@ const runExclusive = <T,>(write: () => Promise<T>): Promise<T> => {
   return write()
 }
 
+// The version the editor last saw of the draft, and what its own writes leave
+const versions = {
+  seenVersion: vi.fn(async () => 'seen-1'),
+  learnVersion: vi.fn(async () => undefined),
+}
+
 const prepare = async (values: Process) => {
-  const { result } = renderHook(() => usePublishCensus(runExclusive), { wrapper: AllProviders })
+  const { result } = renderHook(() => usePublishCensus(runExclusive, versions), { wrapper: AllProviders })
   let outcome: unknown
   await act(async () => {
     outcome = await result.current('draft-1', values).catch((error) => error)
@@ -77,9 +83,11 @@ describe('usePublishCensus', () => {
     data.get.mockReset().mockImplementation(async () => ({ updatedAt: `t${++reads}` }))
     Object.values(api).forEach((fn) => fn.mockClear())
     exclusive.mockClear()
+    versions.seenVersion.mockClear()
+    versions.learnVersion.mockClear()
   })
 
-  it('freezes Everyone: repoints the draft at the snapshot with the same sign-in and its latest updatedAt', async () => {
+  it('freezes Everyone: repoints the draft at the snapshot with the same sign-in and the version the editor saw', async () => {
     expect(await prepare(form)).toBe('snap-new')
 
     expect(api.createGroup).toHaveBeenCalledWith(expect.objectContaining({ includeAllMembers: true }))
@@ -91,7 +99,10 @@ describe('usePublishCensus', () => {
     expect(data.update).toHaveBeenCalledTimes(1)
     const [processId, body] = data.update.mock.calls[0]
     expect(processId).toBe('draft-1')
-    expect(body.updatedAt).toBe('t1')
+    // Not the draft as it is now: the version this editor last saw, so a write from elsewhere is caught
+    expect(body.updatedAt).toBe('seen-1')
+    expect(data.get).not.toHaveBeenCalled()
+    expect(versions.learnVersion).toHaveBeenCalledWith('draft-1')
     expect(body.census).toMatchObject({ groupId: 'snap-new', authFields: ['memberNumber'], twoFaFields: ['email'] })
     expect(body.questions).toHaveLength(1)
   })
