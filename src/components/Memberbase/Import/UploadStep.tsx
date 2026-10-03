@@ -6,8 +6,15 @@ import { LuCalendar, LuDownload, LuFileSpreadsheet, LuLock } from 'react-icons/l
 import { BookerModalButton } from '~components/Dashboard/Booker'
 import Uploader from '~components/Layout/Uploader'
 import ErrorMissingData from '~components/Spreadsheet/errors/ErrorMissingData'
+import ErrorFileTooBig from '~components/Spreadsheet/errors/ErrorFileTooBig'
 import ErrorMissingHeader from '~components/Spreadsheet/errors/ErrorMissingHeader'
-import { readTable, SPREADSHEET_ACCEPT, type Table } from '~components/Spreadsheet/readTable'
+import {
+  MAX_FILE_BYTES,
+  MAX_SHEET_ROWS,
+  readTable,
+  SPREADSHEET_ACCEPT,
+  type Table,
+} from '~components/Spreadsheet/readTable'
 import { SectionCard } from '~components/ui/SectionCard'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { downloadBlob } from '~utils/download'
@@ -109,6 +116,20 @@ export const UploadStep = ({ table, onTable, onContinue }: UploadStepProps) => {
               defaultValue: 'We found the column names but nobody under them. Check the file and try again.',
             })
           )
+        else if (e instanceof ErrorFileTooBig)
+          setError(
+            e.limit === 'bytes'
+              ? t('members.import.upload.too_big', {
+                  defaultValue:
+                    'This file is bigger than {{size}} MB. Split it into smaller files and import each one.',
+                  size: MAX_FILE_BYTES / 1024 / 1024,
+                })
+              : t('members.import.upload.too_many_rows', {
+                  defaultValue:
+                    'This file has more than {{rows}} rows. Split it into smaller files and import each one.',
+                  rows: MAX_SHEET_ROWS.toLocaleString(i18n.resolvedLanguage),
+                })
+          )
         else if (e instanceof ErrorMissingHeader)
           setError(t('members.import.upload.empty', { defaultValue: 'This file looks empty.' }))
         else
@@ -121,7 +142,7 @@ export const UploadStep = ({ table, onTable, onContinue }: UploadStepProps) => {
         if (drop === latestDrop.current) setReading(false)
       }
     },
-    [onTable, t, untitledColumn]
+    [onTable, t, i18n, untitledColumn]
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

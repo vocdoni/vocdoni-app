@@ -1,4 +1,5 @@
 import { type CellObject, read, SSF, utils, type WorkSheet } from 'xlsx'
+import ErrorFileTooBig from './errors/ErrorFileTooBig'
 import ErrorMissingData from './errors/ErrorMissingData'
 import ErrorMissingHeader from './errors/ErrorMissingHeader'
 
@@ -235,7 +236,8 @@ export const buildTable = (
   if (!data.length) throw new ErrorMissingData()
 
   const headerRow = rows[headerIndex]
-  const width = Math.max(headerRow.length, ...data.map(({ row }) => row.length))
+  // A loop, not Math.max(...rows): spreading hundreds of thousands of arguments overflows the stack
+  const width = data.reduce((max, { row }) => Math.max(max, row.length), headerRow.length)
   // Columns with a header, or with data under an empty header
   const columns = Array.from({ length: width }, (_, index) => index).filter(
     (index) => headerRow[index] || data.some(({ row }) => row[index])
@@ -288,14 +290,24 @@ export const cellText = (cell?: CellObject): string => {
   return cell.w ?? String(cell.v)
 }
 
+/** The biggest file read, in bytes. */
+export const MAX_FILE_BYTES = 50 * 1024 * 1024
+
+/** The most rows a sheet may have; past this the file is refused rather than cut short. */
+export const MAX_SHEET_ROWS = 500_000
+
+/** The columns read: a stray cell far to the right (column XFD) must not make every row that wide. */
+export const MAX_SHEET_COLUMNS = 256
+
 /** The first sheet's cells as text rows, and the row number the first of them sits at. */
 export const sheetRows = (sheet: WorkSheet): { rows: string[][]; firstRowNumber: number } => {
   if (!sheet['!ref']) return { rows: [], firstRowNumber: 1 }
   const range = utils.decode_range(sheet['!ref'])
+  const lastColumn = Math.min(range.e.c, MAX_SHEET_COLUMNS - 1)
   const rows: string[][] = []
   for (let r = range.s.r; r <= range.e.r; r++) {
     const row: string[] = []
-    for (let c = 0; c <= range.e.c; c++) row.push(cellText(sheet[utils.encode_cell({ r, c })]))
+    for (let c = 0; c <= lastColumn; c++) row.push(cellText(sheet[utils.encode_cell({ r, c })]))
     rows.push(row)
   }
   return { rows, firstRowNumber: range.s.r + 1 }
@@ -303,17 +315,23 @@ export const sheetRows = (sheet: WorkSheet): { rows: string[][]; firstRowNumber:
 
 /** Reads a member file: decoding, delimiter, header row and cleanup included. */
 export const readTable = async (file: File, options: ReadTableOptions = {}): Promise<Table> => {
+  if (file.size > MAX_FILE_BYTES) throw new ErrorFileTooBig('bytes')
   const bytes = await readBytes(file)
   if (isCsvFile(file)) {
     const { text, encoding } = decodeText(bytes)
-    const table = buildTable(parseDelimited(text, sniffDelimiter(text)), options)
+    const parsed = parseDelimited(text, sniffDelimiter(text))
+    if (parsed.length > MAX_SHEET_ROWS) throw new ErrorFileTooBig('rows')
+    const table = buildTable(parsed, options)
     if (encoding === 'windows-1252') table.fixes.unshift({ kind: 'encoding' })
     return { fileName: file.name, ...table }
   }
-  // cellNF keeps each cell's number format, which is how a date cell tells itself apart from a number
-  const workbook = read(bytes, { type: 'array', cellNF: true })
+  // cellNF keeps each cell's number format, which is how a date cell tells itself apart from a number.
+  // `nodim` sizes the sheet from its cells, not from what the file claims (a tiny file can claim a
+  // million rows), and one row past the limit is read to tell a file that's too long.
+  const workbook = read(bytes, { type: 'array', cellNF: true, nodim: true, sheetRows: MAX_SHEET_ROWS + 1 })
   const sheet = workbook.Sheets[workbook.SheetNames[0]]
   if (!sheet) throw new ErrorMissingData()
   const { rows, firstRowNumber } = sheetRows(sheet)
+  if (rows.length > MAX_SHEET_ROWS) throw new ErrorFileTooBig('rows')
   return { fileName: file.name, ...buildTable(rows, options, firstRowNumber) }
 }

@@ -1,8 +1,10 @@
-import { utils, write } from 'xlsx'
+import { CFB, utils, write } from 'xlsx'
+import ErrorFileTooBig from './errors/ErrorFileTooBig'
 import {
   buildTable,
   decodeText,
   findHeaderRow,
+  MAX_FILE_BYTES,
   normaliseDate,
   parseDelimited,
   readTable,
@@ -171,5 +173,34 @@ describe('readTable', () => {
 
     expect(table.header).toEqual(['Name', 'Phone', 'Birth date', 'Member'])
     expect(table.rows).toEqual([['Anna', '34612345678', '1990-12-31', '00123']])
+  })
+
+  it('reads a sheet by its cells, not by the size the file claims for it', async () => {
+    const sheet = utils.aoa_to_sheet([
+      ['Name', 'Surname'],
+      ['Anna', 'Vila'],
+    ])
+    const book = utils.book_new()
+    utils.book_append_sheet(book, sheet, 'Members')
+    // A tiny file whose sheet claims every row and column Excel has: read as claimed, 17 billion cells
+    const zip = CFB.read(new Uint8Array(write(book, { type: 'array', bookType: 'xlsx' })), { type: 'buffer' })
+    const path = zip.FullPaths.find((name: string) => name.endsWith('worksheets/sheet1.xml'))
+    const xml = new TextDecoder()
+      .decode(CFB.find(zip, path).content)
+      .replace(/<dimension ref="[^"]*"/, '<dimension ref="A1:XFD1048576"')
+    CFB.utils.cfb_add(zip, path, new TextEncoder().encode(xml))
+    const file = new File([CFB.write(zip, { fileType: 'zip', type: 'array' })], 'members.xlsx')
+
+    const table = await readTable(file, { isKnownHeader: known })
+
+    expect(table.header).toEqual(['Name', 'Surname'])
+    expect(table.rows).toEqual([['Anna', 'Vila']])
+  })
+
+  it('refuses a file over the size limit before reading it', async () => {
+    const file = new File(['Name\nAnna\n'], 'members.csv', { type: 'text/csv' })
+    Object.defineProperty(file, 'size', { value: MAX_FILE_BYTES + 1 })
+
+    await expect(readTable(file, { isKnownHeader: known })).rejects.toEqual(new ErrorFileTooBig('bytes'))
   })
 })
