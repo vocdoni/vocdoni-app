@@ -31,8 +31,8 @@
       "all": "Tots els censos",
       "filter_by": "Mostra només {{name}}",
       "in_votes": "En votacions",
-      "many_many": "{{count}} censos",
       "many_one": "{{count}} cens",
+      "many_many": "{{count}} censos",
       "many_other": "{{count}} censos",
       "many_title": "Aquest canvi ha arribat a:",
       "no_match": "Cap cens coincideix",
@@ -46,11 +46,11 @@
       "empty": "buit",
       "hidden": "Ha canviat, ocult per privadesa"
     },
-    "changes_hide_many": "Amaga {{count}} canvis",
     "changes_hide_one": "Amaga {{count}} canvi",
+    "changes_hide_many": "Amaga {{count}} canvis",
     "changes_hide_other": "Amaga {{count}} canvis",
-    "changes_show_many": "Mostra {{count}} canvis",
     "changes_show_one": "Mostra {{count}} canvi",
+    "changes_show_many": "Mostra {{count}} canvis",
     "changes_show_other": "Mostra {{count}} canvis",
     "day": {
       "today": "Avui · {{date}}",
@@ -73,15 +73,15 @@
       "member_added": "<strong>{{name}}</strong> afegit als membres",
       "member_deleted": "<strong>{{name}}</strong> esborrat dels membres",
       "member_details_changed": "Dades de <strong>{{name}}</strong> canviades",
-      "people_added_many": "{{number}} persones afegides",
       "people_added_one": "{{number}} persona afegida",
+      "people_added_many": "{{number}} persones afegides",
       "people_added_other": "{{number}} persones afegides",
-      "people_removed_many": "{{number}} persones eliminades",
       "people_removed_one": "{{number}} persona eliminada",
+      "people_removed_many": "{{number}} persones eliminades",
       "people_removed_other": "{{number}} persones eliminades",
       "saved_created": "Cens desat creat",
-      "saved_created_with_many": "Cens desat creat amb {{number}} persones",
       "saved_created_with_one": "Cens desat creat amb {{number}} persona",
+      "saved_created_with_many": "Cens desat creat amb {{number}} persones",
       "saved_created_with_other": "Cens desat creat amb {{number}} persones",
       "vote_created": "Votació creada",
       "vote_published": "Votació publicada",
@@ -1289,7 +1289,7 @@
   },
   "memberbase": {
     "activity": {
-      "title": "Registre de canvis"
+      "title": "Activitat"
     },
     "add_person": "Afegeix una persona",
     "censuses": {

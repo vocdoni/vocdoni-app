@@ -31,8 +31,8 @@
       "all": "Todos los censos",
       "filter_by": "Mostrar solo {{name}}",
       "in_votes": "En votaciones",
-      "many_many": "{{count}} censos",
       "many_one": "{{count}} censo",
+      "many_many": "{{count}} censos",
       "many_other": "{{count}} censos",
       "many_title": "Este cambio llegó a:",
       "no_match": "Ningún censo coincide",
@@ -46,11 +46,11 @@
       "empty": "vacío",
       "hidden": "Cambiado, oculto por privacidad"
     },
-    "changes_hide_many": "Ocultar {{count}} cambios",
     "changes_hide_one": "Ocultar {{count}} cambio",
+    "changes_hide_many": "Ocultar {{count}} cambios",
     "changes_hide_other": "Ocultar {{count}} cambios",
-    "changes_show_many": "Mostrar {{count}} cambios",
     "changes_show_one": "Mostrar {{count}} cambio",
+    "changes_show_many": "Mostrar {{count}} cambios",
     "changes_show_other": "Mostrar {{count}} cambios",
     "day": {
       "today": "Hoy · {{date}}",
@@ -73,15 +73,15 @@
       "member_added": "<strong>{{name}}</strong> añadido a los miembros",
       "member_deleted": "<strong>{{name}}</strong> eliminado de los miembros",
       "member_details_changed": "Datos de <strong>{{name}}</strong> cambiados",
-      "people_added_many": "{{number}} personas añadidas",
       "people_added_one": "{{number}} persona añadida",
+      "people_added_many": "{{number}} personas añadidas",
       "people_added_other": "{{number}} personas añadidas",
-      "people_removed_many": "{{number}} personas eliminadas",
       "people_removed_one": "{{number}} persona eliminada",
+      "people_removed_many": "{{number}} personas eliminadas",
       "people_removed_other": "{{number}} personas eliminadas",
       "saved_created": "Censo guardado creado",
-      "saved_created_with_many": "Censo guardado creado con {{number}} personas",
       "saved_created_with_one": "Censo guardado creado con {{number}} persona",
+      "saved_created_with_many": "Censo guardado creado con {{number}} personas",
       "saved_created_with_other": "Censo guardado creado con {{number}} personas",
       "vote_created": "Votación creada",
       "vote_published": "Votación publicada",
@@ -1289,7 +1289,7 @@
   },
   "memberbase": {
     "activity": {
-      "title": "Historial de cambios"
+      "title": "Actividad"
     },
     "add_person": "Añadir persona",
     "censuses": {

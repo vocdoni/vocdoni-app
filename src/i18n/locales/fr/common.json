@@ -31,8 +31,8 @@
       "all": "Toutes les listes électorales",
       "filter_by": "Afficher seulement {{name}}",
       "in_votes": "Dans des votes",
-      "many_many": "{{count}} listes électorales",
       "many_one": "{{count}} liste électorale",
+      "many_many": "{{count}} listes électorales",
       "many_other": "{{count}} listes électorales",
       "many_title": "Ce changement a touché :",
       "no_match": "Aucune liste ne correspond",
@@ -46,11 +46,11 @@
       "empty": "vide",
       "hidden": "Modifié, masqué par confidentialité"
     },
-    "changes_hide_many": "Masquer {{count}} changements",
     "changes_hide_one": "Masquer {{count}} changement",
+    "changes_hide_many": "Masquer {{count}} changements",
     "changes_hide_other": "Masquer {{count}} changements",
-    "changes_show_many": "Afficher {{count}} changements",
     "changes_show_one": "Afficher {{count}} changement",
+    "changes_show_many": "Afficher {{count}} changements",
     "changes_show_other": "Afficher {{count}} changements",
     "day": {
       "today": "Aujourd'hui · {{date}}",
@@ -73,15 +73,15 @@
       "member_added": "<strong>{{name}}</strong> ajouté aux membres",
       "member_deleted": "<strong>{{name}}</strong> supprimé des membres",
       "member_details_changed": "Infos de <strong>{{name}}</strong> modifiées",
-      "people_added_many": "{{number}} personnes ajoutées",
       "people_added_one": "{{number}} personne ajoutée",
+      "people_added_many": "{{number}} personnes ajoutées",
       "people_added_other": "{{number}} personnes ajoutées",
-      "people_removed_many": "{{number}} personnes retirées",
       "people_removed_one": "{{number}} personne retirée",
+      "people_removed_many": "{{number}} personnes retirées",
       "people_removed_other": "{{number}} personnes retirées",
       "saved_created": "Liste électorale enregistrée créée",
-      "saved_created_with_many": "Liste enregistrée créée avec {{number}} personnes",
       "saved_created_with_one": "Liste enregistrée créée avec {{number}} personne",
+      "saved_created_with_many": "Liste enregistrée créée avec {{number}} personnes",
       "saved_created_with_other": "Liste enregistrée créée avec {{number}} personnes",
       "vote_created": "Vote créé",
       "vote_published": "Vote publié",
@@ -1289,7 +1289,7 @@
   },
   "memberbase": {
     "activity": {
-      "title": "Historique des modifications"
+      "title": "Activité"
     },
     "add_person": "Ajouter une personne",
     "censuses": {

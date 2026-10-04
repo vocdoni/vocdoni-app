@@ -31,8 +31,8 @@
       "all": "Tutti i censimenti",
       "filter_by": "Mostra solo {{name}}",
       "in_votes": "Nelle votazioni",
-      "many_many": "{{count}} censimenti",
       "many_one": "{{count}} censimento",
+      "many_many": "{{count}} censimenti",
       "many_other": "{{count}} censimenti",
       "many_title": "Questa modifica ha raggiunto:",
       "no_match": "Nessun censimento corrisponde",
@@ -46,11 +46,11 @@
       "empty": "vuoto",
       "hidden": "Modificato, nascosto per privacy"
     },
-    "changes_hide_many": "Nascondi {{count}} modifiche",
     "changes_hide_one": "Nascondi {{count}} modifica",
+    "changes_hide_many": "Nascondi {{count}} modifiche",
     "changes_hide_other": "Nascondi {{count}} modifiche",
-    "changes_show_many": "Mostra {{count}} modifiche",
     "changes_show_one": "Mostra {{count}} modifica",
+    "changes_show_many": "Mostra {{count}} modifiche",
     "changes_show_other": "Mostra {{count}} modifiche",
     "day": {
       "today": "Oggi · {{date}}",
@@ -73,15 +73,15 @@
       "member_added": "<strong>{{name}}</strong> aggiunto ai membri",
       "member_deleted": "<strong>{{name}}</strong> eliminato dai membri",
       "member_details_changed": "Dati di <strong>{{name}}</strong> modificati",
-      "people_added_many": "{{number}} persone aggiunte",
       "people_added_one": "{{number}} persona aggiunta",
+      "people_added_many": "{{number}} persone aggiunte",
       "people_added_other": "{{number}} persone aggiunte",
-      "people_removed_many": "{{number}} persone rimosse",
       "people_removed_one": "{{number}} persona rimossa",
+      "people_removed_many": "{{number}} persone rimosse",
       "people_removed_other": "{{number}} persone rimosse",
       "saved_created": "Censimento salvato creato",
-      "saved_created_with_many": "Censimento salvato creato con {{number}} persone",
       "saved_created_with_one": "Censimento salvato creato con {{number}} persona",
+      "saved_created_with_many": "Censimento salvato creato con {{number}} persone",
       "saved_created_with_other": "Censimento salvato creato con {{number}} persone",
       "vote_created": "Votazione creata",
       "vote_published": "Votazione pubblicata",
@@ -1289,7 +1289,7 @@
   },
   "memberbase": {
     "activity": {
-      "title": "Registro delle modifiche"
+      "title": "Attività"
     },
     "add_person": "Aggiungi persona",
     "censuses": {
