@@ -49,7 +49,7 @@ export const VoteCard = ({ process, state, source, madeAt, groupId, total, noRea
       }
   const day = (value?: string) => (value ? format(value, 'd MMM yyyy, HH:mm') : '')
   const details = (process.census?.authFields ?? []).map((id) => fields.find((field) => field.id === id)?.label ?? id)
-  const origin = source ? censusSourceLabel(t, source) : ''
+  const origin = source ? censusSourceLabel(t, source, (iso) => format(iso, 'd MMM yyyy')) : ''
   const madeOn = madeAt ? format(madeAt, 'd MMM yyyy') : ''
 
   const row = (label: string, value: string) => (
@@ -83,7 +83,8 @@ export const VoteCard = ({ process, state, source, madeAt, groupId, total, noRea
         {origin &&
           row(
             t('census_detail.vote_card.people', { defaultValue: 'People from' }),
-            madeOn
+            // A copy of every member already says when it was made
+            madeOn && source?.kind !== 'snapshot'
               ? t('census_detail.vote_card.origin_on', {
                   defaultValue: '{{origin}}, on {{date}}',
                   origin,
@@ -108,12 +109,18 @@ export const VoteCard = ({ process, state, source, madeAt, groupId, total, noRea
           )}
       </DataList.Root>
       {source?.kind === 'snapshot' && (
-        // A list made from Everyone isn't fixed: say what it was made from, and that it can still change
+        // Not a fixed list: what it was copied from, what doesn't reach it, and what can still change
         <Text fontSize='xs' color='fg.muted' mt={3}>
-          {t('census_detail.vote_card.snapshot_note', {
-            defaultValue:
-              "This census was made with all your members when the vote was published. You can still add, edit and remove people; members you add to your organization later don't join it by themselves.",
-          })}
+          {source.madeAt
+            ? t('census_detail.vote_card.snapshot_note_on', {
+                defaultValue:
+                  "This census is a copy of all your members on {{date}}, the day you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
+                date: format(source.madeAt, 'd MMM yyyy'),
+              })
+            : t('census_detail.vote_card.snapshot_note', {
+                defaultValue:
+                  "This census is a copy of all your members when you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
+              })}
         </Text>
       )}
       {readiness.available && (

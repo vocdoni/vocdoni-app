@@ -150,6 +150,7 @@ type VoteRowProps = {
  */
 const VoteRow = ({ process, title, source, when, everyoneId }: VoteRowProps) => {
   const { t, i18n } = useTranslation()
+  const { format } = useDateFns()
   const state = voteStateOf(process)
   const size = process.census?.size ?? 0
   const twoFaFields = process.census?.twoFaFields ?? []
@@ -186,7 +187,7 @@ const VoteRow = ({ process, title, source, when, everyoneId }: VoteRowProps) => 
           </RouterLink>
         </Link>
         <Text fontSize='xs' color='fg.muted' mt={0.5}>
-          {censusSourceLabel(t, source)}
+          {censusSourceLabel(t, source, (iso) => format(iso, 'd MMM yyyy'))}
         </Text>
         {/* Phones: when and sign-in fold under the name */}
         <Text fontSize='xs' color='fg.muted' hideFrom='md'>

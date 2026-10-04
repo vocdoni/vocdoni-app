@@ -24,7 +24,7 @@
   },
   "activity": {
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> hat bei der Veröffentlichung eine eigene Liste aller Mitglieder behalten"
+      "census_frozen": "<strong>{{name}}</strong>: Teilnehmerliste aus allen Mitgliedern kopiert"
     }
   },
   "add_new_org": "Neue Organisation hinzufügen",
@@ -291,7 +291,8 @@
       "origin_on": "{{origin}}, am {{date}}",
       "people": "Personen aus",
       "sign_in": "Anmeldung mit",
-      "snapshot_note": "Diese Teilnehmerliste wurde bei der Veröffentlichung der Abstimmung mit allen Mitgliedern erstellt. Du kannst weiterhin Personen hinzufügen, bearbeiten und entfernen; später hinzugefügte Mitglieder kommen nicht von selbst dazu.",
+      "snapshot_note": "Diese Teilnehmerliste ist eine Kopie aller Mitglieder zum Zeitpunkt der Veröffentlichung. Du kannst in dieser Teilnehmerliste Personen hinzufügen und entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
+      "snapshot_note_on": "Diese Teilnehmerliste ist eine Kopie aller Mitglieder vom {{date}}, dem Tag, an dem du die Abstimmung veröffentlicht hast. Du kannst in dieser Teilnehmerliste Personen hinzufügen und entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
       "title": "Abstimmung",
       "weight": "Stimmgewicht",
       "weighted": "Gewichtet je Mitglied"
@@ -353,7 +354,8 @@
       "everyone": "Alle",
       "saved": "Gespeicherte Teilnehmerliste „{{name}}“",
       "selected": "Ausgewählte Personen",
-      "snapshot": "Alle Mitglieder bei Veröffentlichung der Abstimmung",
+      "snapshot": "Kopie aller Mitglieder bei der Veröffentlichung",
+      "snapshot_on": "Kopie aller Mitglieder vom {{date}}",
       "test": "Testabstimmung"
     },
     "state": {
@@ -1911,8 +1913,8 @@
     "basic_configuration": "Grundkonfiguration",
     "census": {
       "everyone": {
-        "description_one": "Dein einziges Mitglied. Neue Mitglieder kommen bis zur Veröffentlichung dazu; danach fügst du sie selbst hinzu.",
-        "description_other": "Alle {{formattedCount}} Mitglieder. Neue Mitglieder kommen bis zur Veröffentlichung dazu; danach fügst du sie selbst hinzu."
+        "description_one": "Dein einziges Mitglied. Wen du vor der Veröffentlichung hinzufügst, ist dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu.",
+        "description_other": "Alle {{formattedCount}} Mitglieder. Wen du vor der Veröffentlichung hinzufügst, ist dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu."
       },
       "group": {
         "no_groups": "Um eine Abstimmung zu starten, musst du zunächst eine Gruppe berechtigter Wählender aus deiner Mitgliederbasis erstellen. <1>Hier eine Gruppe erstellen</1>."
@@ -1953,8 +1955,8 @@
     },
     "review": {
       "census_stale_reload": "Dieser Entwurf wurde woanders geändert. Lade ihn neu, um die neueste Version zu sehen, und veröffentliche ihn dann.",
-      "frozen_one": "Mit der Veröffentlichung behält diese Abstimmung eine eigene Liste mit der einen Person darin. Später hinzugefügte Mitglieder kommen nicht von selbst dazu: Füge im Tab „Wählende“ der Abstimmung Personen hinzu oder entferne sie.",
-      "frozen_other": "Mit der Veröffentlichung behält diese Abstimmung eine eigene Liste mit den {{count}} Personen darin. Später hinzugefügte Mitglieder kommen nicht von selbst dazu: Füge im Tab „Wählende“ der Abstimmung Personen hinzu oder entferne sie.",
+      "frozen_one": "Mit der Veröffentlichung bekommt diese Abstimmung eine eigene Kopie dieser einen Person. Wer später beitritt, wird nicht automatisch hinzugefügt: Füge diese Personen im Tab „Wählende“ der Abstimmung hinzu, wo du auch Personen entfernen kannst.",
+      "frozen_other": "Mit der Veröffentlichung bekommt diese Abstimmung eine eigene Kopie dieser {{count}} Personen. Wer später beitritt, wird nicht automatisch hinzugefügt: Füge diese Personen im Tab „Wählende“ der Abstimmung hinzu, wo du auch Personen entfernen kannst.",
       "reload": "Neu laden"
     },
     "settings": "Einstellungen",

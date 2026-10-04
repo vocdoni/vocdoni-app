@@ -14,8 +14,11 @@ export const copiedFromUnnamed = (t: TFunction, source?: VoteGroupSource) => {
   }
 }
 
-/** Where a vote's voters come from, in a few words for its row. */
-export const censusSourceLabel = (t: TFunction, source: CensusSource) => {
+/**
+ * Where a vote's voters come from, in a few words for its row. `day` formats a date ("30 Sep") for the
+ * copy of every member, so it says when that copy was made.
+ */
+export const censusSourceLabel = (t: TFunction, source: CensusSource, day?: (iso: string) => string) => {
   switch (source.kind) {
     case 'everyone':
       return t('censuses.source.everyone', { defaultValue: 'Everyone' })
@@ -24,7 +27,12 @@ export const censusSourceLabel = (t: TFunction, source: CensusSource) => {
         return t('censuses.source.copy_from', { defaultValue: "Copied from '{{name}}'", name: source.from })
       return copiedFromUnnamed(t, source.source)
     case 'snapshot':
-      return t('censuses.source.snapshot', { defaultValue: 'All members when the vote was published' })
+      return source.madeAt && day
+        ? t('censuses.source.snapshot_on', {
+            defaultValue: 'Copy of all your members on {{date}}',
+            date: day(source.madeAt),
+          })
+        : t('censuses.source.snapshot', { defaultValue: 'Copy of all your members when you published' })
     case 'test':
       return t('censuses.source.test', { defaultValue: 'Test vote' })
     case 'saved':

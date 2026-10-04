@@ -419,10 +419,10 @@ describe('CensusDetail', () => {
     state.process = vote('p8', 'Assemblea 2026', { groupId: 'snap', size: 2, twoFaFields: ['email'] }, 'ONGOING')
     renderDetail({ kind: 'vote', processId: 'p8' })
 
-    expect(await screen.findByText(/All members when the vote was published/)).toBeInTheDocument()
+    expect(await screen.findByText(/^Copy of all your members on \d+ \w+ \d{4}$/)).toBeInTheDocument()
     expect(
       screen.getByText(
-        "This census was made with all your members when the vote was published. You can still add, edit and remove people; members you add to your organization later don't join it by themselves."
+        /^This census is a copy of all your members on \d+ \w+ \d{4}, the day you published the vote\. You can add and remove people in this census\. Fixing someone's details changes them in your members list too\.$/
       )
     ).toBeInTheDocument()
   })

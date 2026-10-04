@@ -24,7 +24,7 @@ export const isEnded = (state?: VoteState) => state === 'ended' || state === 'ca
 export type CensusSource =
   | { kind: 'everyone' }
   | { kind: 'copy'; from?: string; source?: VoteGroupSource; groupId: string }
-  | { kind: 'snapshot'; groupId: string }
+  | { kind: 'snapshot'; groupId: string; /** When it was copied from every member: the publish */ madeAt?: string }
   | { kind: 'test'; groupId: string }
   | { kind: 'saved'; group: Group }
   | { kind: 'selected' }
@@ -44,7 +44,7 @@ export const censusSourceOf = (process: VotingProcessResponse, context: SourceCo
   const marker = context.markers.get(groupId)
   if (marker?.kind === 'copy')
     return { kind: 'copy', from: copySourceName(marker, context), source: marker.source, groupId }
-  if (marker?.kind === 'snapshot') return { kind: 'snapshot', groupId }
+  if (marker?.kind === 'snapshot') return { kind: 'snapshot', groupId, madeAt: marker.createdAt || undefined }
   if (marker?.kind === 'test') return { kind: 'test', groupId }
   const group = context.groupsById.get(groupId)
   if (group?.isAutoGroup) return { kind: 'everyone' }

@@ -43,6 +43,8 @@ describe('censusSourceOf', () => {
     expect(censusSourceOf(vote('b', { groupId: 'owned' }, 'ONGOING'), context)).toEqual({
       kind: 'snapshot',
       groupId: 'owned',
+      // When it was copied from every member, to say so
+      madeAt: past,
     })
     expect(censusSourceOf(vote('c', { groupId: 'quota' }, 'ONGOING'), context)).toMatchObject({ kind: 'saved' })
     expect(censusSourceOf(vote('d', {}, 'ONGOING'), context)).toEqual({ kind: 'selected' })

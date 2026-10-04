@@ -24,7 +24,7 @@
   },
   "activity": {
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> a gardé sa propre liste de tout le monde à la publication"
+      "census_frozen": "<strong>{{name}}</strong> : liste électorale copiée de tous vos membres"
     }
   },
   "add_new_org": "Ajouter une nouvelle organisation",
@@ -306,7 +306,8 @@
       "origin_on": "{{origin}}, le {{date}}",
       "people": "Personnes issues de",
       "sign_in": "Connexion avec",
-      "snapshot_note": "Cette liste électorale a été créée avec tous vos membres à la publication du vote. Vous pouvez toujours ajouter, modifier et retirer des personnes ; les membres ajoutés ensuite à l'organisation n'y entrent pas d'eux-mêmes.",
+      "snapshot_note": "Cette liste électorale est une copie de tous vos membres au moment de la publication du vote. Vous pouvez ajouter et retirer des personnes dans cette liste électorale. Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres.",
+      "snapshot_note_on": "Cette liste électorale est une copie de tous vos membres au {{date}}, le jour de la publication du vote. Vous pouvez ajouter et retirer des personnes dans cette liste électorale. Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres.",
       "title": "Vote",
       "weight": "Poids du vote",
       "weighted": "Pondéré par membre"
@@ -373,7 +374,8 @@
       "everyone": "Tout le monde",
       "saved": "Liste électorale enregistrée « {{name}} »",
       "selected": "Personnes sélectionnées",
-      "snapshot": "Tous les membres à la publication du vote",
+      "snapshot": "Copie de tous vos membres à la publication",
+      "snapshot_on": "Copie de tous vos membres au {{date}}",
       "test": "Vote d'essai"
     },
     "state": {
@@ -1989,9 +1991,9 @@
     "basic_configuration": "Configuration de base",
     "census": {
       "everyone": {
-        "description_many": "Tous les {{formattedCount}} membres. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même.",
-        "description_one": "Votre unique membre. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même.",
-        "description_other": "Tous les {{formattedCount}} membres. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même."
+        "description_many": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
+        "description_one": "Votre unique membre. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
+        "description_other": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote."
       },
       "group": {
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
@@ -2032,9 +2034,9 @@
     },
     "review": {
       "census_stale_reload": "Ce brouillon a été modifié ailleurs. Rechargez-le pour voir la dernière version, puis publiez-le.",
-      "frozen_many": "À la publication, ce vote garde sa propre liste avec les {{count}} personnes qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
-      "frozen_one": "À la publication, ce vote garde sa propre liste avec la personne qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
-      "frozen_other": "À la publication, ce vote garde sa propre liste avec les {{count}} personnes qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
+      "frozen_many": "À la publication, ce vote aura sa propre copie de ces {{count}} personnes. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
+      "frozen_one": "À la publication, ce vote aura sa propre copie de cette personne. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
+      "frozen_other": "À la publication, ce vote aura sa propre copie de ces {{count}} personnes. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
       "reload": "Recharger"
     },
     "settings": "Paramètres",

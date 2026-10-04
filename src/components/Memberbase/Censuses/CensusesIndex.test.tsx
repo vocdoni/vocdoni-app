@@ -180,7 +180,7 @@ describe('CensusesIndex', () => {
     expect(row('Junta 2026')).toHaveTextContent('Chosen by hand')
     await user.click(screen.getByRole('button', { name: /Closed/ }))
     const frozen = await screen.findByRole('link', { name: 'Assemblea 2025' })
-    expect(frozen.closest('li')).toHaveTextContent('All members when the vote was published')
+    expect(frozen.closest('li')).toHaveTextContent(/Copy of all your members on \d+ \w+ \d{4}/)
   })
 
   it('shows saved censuses as cards: which vote they went into, a way to use them, and a way to make one', () => {

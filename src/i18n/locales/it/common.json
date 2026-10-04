@@ -24,7 +24,7 @@
   },
   "activity": {
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> ha tenuto una propria lista di tutti alla pubblicazione"
+      "census_frozen": "<strong>{{name}}</strong>: censimento copiato da tutti i tuoi membri"
     }
   },
   "add_new_org": "Aggiungi una nuova organizzazione",
@@ -306,7 +306,8 @@
       "origin_on": "{{origin}}, il {{date}}",
       "people": "Persone da",
       "sign_in": "Accesso con",
-      "snapshot_note": "Questo censimento è stato creato con tutti i tuoi membri alla pubblicazione della votazione. Puoi ancora aggiungere, modificare e togliere persone; i membri che aggiungi dopo all'organizzazione non entrano da soli.",
+      "snapshot_note": "Questo censimento è una copia di tutti i tuoi membri al momento della pubblicazione della votazione. In questo censimento puoi aggiungere e togliere persone. Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri.",
+      "snapshot_note_on": "Questo censimento è una copia di tutti i tuoi membri al {{date}}, il giorno in cui hai pubblicato la votazione. In questo censimento puoi aggiungere e togliere persone. Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri.",
       "title": "Votazione",
       "weight": "Peso del voto",
       "weighted": "Ponderato per ogni membro"
@@ -373,7 +374,8 @@
       "everyone": "Tutti",
       "saved": "Censimento salvato «{{name}}»",
       "selected": "Persone selezionate",
-      "snapshot": "Tutti i membri alla pubblicazione della votazione",
+      "snapshot": "Copia di tutti i tuoi membri alla pubblicazione",
+      "snapshot_on": "Copia di tutti i tuoi membri al {{date}}",
       "test": "Votazione di prova"
     },
     "state": {
@@ -1989,9 +1991,9 @@
     "basic_configuration": "Configurazione base",
     "census": {
       "everyone": {
-        "description_many": "Tutti i {{formattedCount}} membri. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu.",
-        "description_one": "Il tuo unico membro. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu.",
-        "description_other": "Tutti i {{formattedCount}} membri. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu."
+        "description_many": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
+        "description_one": "Il tuo unico membro. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
+        "description_other": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione."
       },
       "group": {
         "no_groups": "Per avviare una votazione, devi prima creare un gruppo di votanti idonei dal tuo database membri. <1>Creane uno qui</1>."
@@ -2032,9 +2034,9 @@
     },
     "review": {
       "census_stale_reload": "Questa bozza è stata modificata altrove. Ricaricala per vedere l’ultima versione, poi pubblicala.",
-      "frozen_many": "Quando pubblichi, questa votazione tiene una propria lista con le {{count}} persone presenti. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
-      "frozen_one": "Quando pubblichi, questa votazione tiene una propria lista con l'unica persona presente. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
-      "frozen_other": "Quando pubblichi, questa votazione tiene una propria lista con le {{count}} persone presenti. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
+      "frozen_many": "Quando pubblichi, questa votazione avrà una propria copia di queste {{count}} persone. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
+      "frozen_one": "Quando pubblichi, questa votazione avrà una propria copia di questa persona. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
+      "frozen_other": "Quando pubblichi, questa votazione avrà una propria copia di queste {{count}} persone. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
       "reload": "Ricarica"
     },
     "settings": "Impostazioni",

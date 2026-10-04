@@ -24,7 +24,7 @@
   },
   "activity": {
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> se quedó su propia lista de todos los miembros al publicarse"
+      "census_frozen": "<strong>{{name}}</strong>: censo copiado de todos tus miembros"
     }
   },
   "add_new_org": "Añadir una nueva organización",
@@ -306,7 +306,8 @@
       "origin_on": "{{origin}}, el {{date}}",
       "people": "Personas de",
       "sign_in": "Inicio de sesión con",
-      "snapshot_note": "Este censo se hizo con todos tus miembros cuando se publicó la votación. Aún puedes añadir, editar y quitar personas; los miembros que añadas después a la organización no se añaden solos.",
+      "snapshot_note": "Este censo es una copia de todos tus miembros de cuando publicaste la votación. En este censo puedes añadir y quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
+      "snapshot_note_on": "Este censo es una copia de todos tus miembros del {{date}}, el día que publicaste la votación. En este censo puedes añadir y quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
       "title": "Votación",
       "weight": "Poder de voto",
       "weighted": "Ponderado por cada miembro"
@@ -373,7 +374,8 @@
       "everyone": "Todos",
       "saved": "Censo guardado «{{name}}»",
       "selected": "Personas seleccionadas",
-      "snapshot": "Todos los miembros cuando se publicó la votación",
+      "snapshot": "Copia de todos tus miembros cuando publicaste",
+      "snapshot_on": "Copia de todos tus miembros del {{date}}",
       "test": "Votación de prueba"
     },
     "state": {
@@ -1989,9 +1991,9 @@
     "basic_configuration": "Configuración básica",
     "census": {
       "everyone": {
-        "description_many": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después, los añades tú.",
-        "description_one": "Tu único miembro. Los nuevos miembros se añaden hasta que publiques; después, los añades tú.",
-        "description_other": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después, los añades tú."
+        "description_many": "Todos tus {{formattedCount}} miembros. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación.",
+        "description_one": "Tu único miembro. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación.",
+        "description_other": "Todos tus {{formattedCount}} miembros. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación."
       },
       "group": {
         "no_groups": "Para iniciar una votación, primero necesitas crear un grupo de votantes con derecho a voto a partir de tu base de miembros. <1>Créalo aquí</1>."
@@ -2032,9 +2034,9 @@
     },
     "review": {
       "census_stale_reload": "Este borrador se ha cambiado desde otro sitio. Vuelve a cargarlo para ver la última versión y luego publícalo.",
-      "frozen_many": "Al publicar, esta votación se queda su propia lista con las {{count}} personas que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
-      "frozen_one": "Al publicar, esta votación se queda su propia lista con la persona que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
-      "frozen_other": "Al publicar, esta votación se queda su propia lista con las {{count}} personas que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
+      "frozen_many": "Al publicar, esta votación tendrá su propia copia de estas {{count}} personas. Las personas que se incorporen después no se añaden solas: añádelas desde la pestaña Votantes de la votación, donde también puedes quitar personas.",
+      "frozen_one": "Al publicar, esta votación tendrá su propia copia de esta persona. Las personas que se incorporen después no se añaden solas: añádelas desde la pestaña Votantes de la votación, donde también puedes quitar personas.",
+      "frozen_other": "Al publicar, esta votación tendrá su propia copia de estas {{count}} personas. Las personas que se incorporen después no se añaden solas: añádelas desde la pestaña Votantes de la votación, donde también puedes quitar personas.",
       "reload": "Volver a cargar"
     },
     "settings": "Configuración",

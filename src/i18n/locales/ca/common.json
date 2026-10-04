@@ -24,7 +24,7 @@
   },
   "activity": {
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> es va quedar la seva pròpia llista de tothom en publicar-se"
+      "census_frozen": "<strong>{{name}}</strong>: cens copiat de tots els teus membres"
     }
   },
   "add_new_org": "Afegeix una nova organització",
@@ -306,7 +306,8 @@
       "origin_on": "{{origin}}, el {{date}}",
       "people": "Persones de",
       "sign_in": "Inici de sessió amb",
-      "snapshot_note": "Aquest cens es va fer amb tots els teus membres quan es va publicar la votació. Encara hi pots afegir, editar i treure persones; els membres que afegeixis després a l'organització no s'hi afegeixen sols.",
+      "snapshot_note": "Aquest cens és una còpia de tots els teus membres de quan vas publicar la votació. En aquest cens hi pots afegir i treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
+      "snapshot_note_on": "Aquest cens és una còpia de tots els teus membres del {{date}}, el dia que vas publicar la votació. En aquest cens hi pots afegir i treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
       "title": "Votació",
       "weight": "Poder de vot",
       "weighted": "Ponderat per cada membre"
@@ -373,7 +374,8 @@
       "everyone": "Tothom",
       "saved": "Cens desat «{{name}}»",
       "selected": "Persones seleccionades",
-      "snapshot": "Tots els membres quan es va publicar la votació",
+      "snapshot": "Còpia de tots els teus membres quan vas publicar",
+      "snapshot_on": "Còpia de tots els teus membres del {{date}}",
       "test": "Votació de prova"
     },
     "state": {
@@ -1989,9 +1991,9 @@
     "basic_configuration": "Configuració bàsica",
     "census": {
       "everyone": {
-        "description_many": "Tots els {{formattedCount}} membres. Els nous membres s'hi afegeixen fins que publiquis; després, els afegeixes tu.",
-        "description_one": "El teu únic membre. Els nous membres s'hi afegeixen fins que publiquis; després, els afegeixes tu.",
-        "description_other": "Tots els {{formattedCount}} membres. Els nous membres s'hi afegeixen fins que publiquis; després, els afegeixes tu."
+        "description_many": "Tots els {{formattedCount}} membres. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
+        "description_one": "El teu únic membre. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
+        "description_other": "Tots els {{formattedCount}} membres. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació."
       },
       "group": {
         "no_groups": "Per començar una votació, primer has de crear un grup de votants elegibles a partir de la teva base de membres. <1>Crea'n un aquí</1>."
@@ -2032,9 +2034,9 @@
     },
     "review": {
       "census_stale_reload": "Aquest esborrany s'ha canviat des d'un altre lloc. Torna'l a carregar per veure'n la darrera versió i després publica'l.",
-      "frozen_many": "En publicar, aquesta votació es queda la seva pròpia llista amb les {{count}} persones que hi ha ara. Els membres que afegeixis després no s'hi afegeixen sols: afegeix o treu persones des de la pestanya Votants de la votació.",
-      "frozen_one": "En publicar, aquesta votació es queda la seva pròpia llista amb la persona que hi ha ara. Els membres que afegeixis després no s'hi afegeixen sols: afegeix o treu persones des de la pestanya Votants de la votació.",
-      "frozen_other": "En publicar, aquesta votació es queda la seva pròpia llista amb les {{count}} persones que hi ha ara. Els membres que afegeixis després no s'hi afegeixen sols: afegeix o treu persones des de la pestanya Votants de la votació.",
+      "frozen_many": "En publicar, aquesta votació tindrà la seva pròpia còpia d'aquestes {{count}} persones. Les persones que s'incorporin després no s'hi afegeixen soles: afegeix-les des de la pestanya Votants de la votació, on també en pots treure.",
+      "frozen_one": "En publicar, aquesta votació tindrà la seva pròpia còpia d'aquesta persona. Les persones que s'incorporin després no s'hi afegeixen soles: afegeix-les des de la pestanya Votants de la votació, on també en pots treure.",
+      "frozen_other": "En publicar, aquesta votació tindrà la seva pròpia còpia d'aquestes {{count}} persones. Les persones que s'incorporin després no s'hi afegeixen soles: afegeix-les des de la pestanya Votants de la votació, on també en pots treure.",
       "reload": "Torna a carregar"
     },
     "settings": "Configuració",
