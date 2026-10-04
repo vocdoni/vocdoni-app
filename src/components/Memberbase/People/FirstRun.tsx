@@ -94,7 +94,7 @@ const WhatDataPopover = () => {
 type FirstRunProps = {
   onImport: () => void
   onAddPeople: () => void
-  /** A third door after these two. PR7 puts the guarded free test vote here. */
+  /** An optional third door after these two (the guarded free test vote, when it ships) */
   extraDoor?: ReactNode
 }
 
