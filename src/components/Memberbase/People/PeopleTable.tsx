@@ -74,9 +74,6 @@ const VALUE_MAX_W = '16rem'
  */
 const pinned = (left: string, bg = 'bg') => ({ position: 'sticky', left, zIndex: 1, bg }) as const
 
-/** The edge of the pinned columns, so what scrolls under them reads as scrolling. */
-const PINNED_EDGE = 'inset -1px 0 0 {colors.border}'
-
 type SortHeaderProps = {
   field: MemberSortField
   label: string
@@ -182,12 +179,7 @@ export const PeopleTable = ({
                 <Checkbox.Control />
               </Checkbox.Root>
             </Table.ColumnHeader>
-            <Table.ColumnHeader
-              {...headerProps}
-              aria-sort={ariaSort(nameActive, order)}
-              {...pinned('44px')}
-              boxShadow={PINNED_EDGE}
-            >
+            <Table.ColumnHeader {...headerProps} aria-sort={ariaSort(nameActive, order)} {...pinned('44px')}>
               <SortHeaderButton
                 field={surnameFirst ? 'surname' : 'name'}
                 label={nameLabel}
@@ -267,13 +259,7 @@ export const PeopleTable = ({
                     </Checkbox.Root>
                   </Table.Cell>
                   {/* ph-no-capture: member data is never recorded in session replays */}
-                  <Table.Cell
-                    py={0}
-                    className='ph-no-capture'
-                    maxW={VALUE_MAX_W}
-                    {...pinned('44px', rowBg)}
-                    boxShadow={PINNED_EDGE}
-                  >
+                  <Table.Cell py={0} className='ph-no-capture' maxW={VALUE_MAX_W} {...pinned('44px', rowBg)}>
                     <MemberNameLink member={member} label={name} to={memberLocation(member.id)} onOpen={onOpen} />
                     {member.email && (
                       <Text hideFrom='lg' fontSize='xs' color='fg.muted' truncate>
