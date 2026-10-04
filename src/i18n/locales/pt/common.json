@@ -134,21 +134,7 @@
       "voted_partial": "Votou {{voted}}/{{total}}"
     }
   },
-  "census_detail": {
-    "add": {
-      "skipped_many": "{{count}} pessoas não foram adicionadas: não têm os dados com que se inicia sessão nesta votação.",
-      "skipped_one": "1 pessoa não foi adicionada: não tem os dados com que se inicia sessão nesta votação.",
-      "skipped_other": "{{count}} pessoas não foram adicionadas: não têm os dados com que se inicia sessão nesta votação."
-    }
-  },
   "census_size": "Número de participantes",
-  "censuses": {
-    "source": {
-      "copy_everyone": "Copiada de Todos",
-      "copy_previous": "Copiada de outra votação",
-      "copy_saved": "Copiada de uma lista de participantes guardada"
-    }
-  },
   "change_password": {
     "subtitle": "Introduz a palavra-passe atual e uma nova para atualizar as tuas credenciais.",
     "title": "Alterar palavra-passe"
@@ -264,11 +250,6 @@
     "process_view": {
       "date_format": "d 'de' MMMM 'de' y",
       "time_format": "p"
-    },
-    "setup": {
-      "members": {
-        "description": "Importa uma folha de cálculo ou adiciona-os um a um. Depois escolhes quem pode votar em cada votação."
-      }
     },
     "usage": {
       "2fa_email": "Códigos 2FA por email",
@@ -945,11 +926,7 @@
       "title": "Grupos"
     },
     "importer": {
-      "button": "Importar",
-      "error": {
-        "invalid_file_type": "Este tipo de ficheiro não é suportado. Carrega um ficheiro .csv, .xlsx, .xls ou .ods.",
-        "read_failed": "Não conseguimos ler este ficheiro. Verifica se é um CSV ou uma folha de cálculo válida e tenta novamente."
-      }
+      "button": "Importar"
     },
     "members": {
       "title": "Pessoas"
@@ -968,11 +945,11 @@
       "pick": "Votação",
       "pick_placeholder": "Escolhe uma votação",
       "stopped": "Parou depois de adicionar {{added}}",
-      "submit_many": "Adicionar {{formattedCount}} pessoas",
       "submit_one": "Adicionar uma pessoa",
+      "submit_many": "Adicionar {{formattedCount}} pessoas",
       "submit_other": "Adicionar {{formattedCount}} pessoas",
-      "success_many": "{{formattedCount}} pessoas adicionadas a «{{vote}}»",
       "success_one": "Uma pessoa adicionada a «{{vote}}»",
+      "success_many": "{{formattedCount}} pessoas adicionadas a «{{vote}}»",
       "success_other": "{{formattedCount}} pessoas adicionadas a «{{vote}}»",
       "title": "Adicionar a uma votação"
     },
@@ -980,8 +957,8 @@
       "load_error": "Não foi possível carregá-los.",
       "loading": "A carregar os teus membros… {{done}} de {{total}}",
       "none": "Agora todos podem receber um código de votação.",
-      "showing_many": "A mostrar as {{formattedCount}} pessoas sem email nem telemóvel",
       "showing_one": "A mostrar a pessoa sem email nem telemóvel",
+      "showing_many": "A mostrar as {{formattedCount}} pessoas sem email nem telemóvel",
       "showing_other": "A mostrar as {{formattedCount}} pessoas sem email nem telemóvel"
     },
     "bulk": {
@@ -992,8 +969,8 @@
       "delete": "Eliminar…",
       "everyone": "Todos os teus membros ({{formattedCount}})",
       "more": "Mais",
-      "people_many": "{{formattedCount}} pessoas",
       "people_one": "Uma pessoa",
+      "people_many": "{{formattedCount}} pessoas",
       "people_other": "{{formattedCount}} pessoas",
       "progress": "{{done}} de {{total}} feitos…",
       "remove_from_saved_census": "Remover de uma lista de participantes guardada",
@@ -1001,34 +978,34 @@
     },
     "delete": {
       "affected_votes": "Também os remove de: {{votes}} e de qualquer outra lista de participantes em que estejam.",
-      "affected_votes_more_many": "Também os remove de: {{votes}}, mais {{count}} votações e qualquer outra lista de participantes em que estejam.",
       "affected_votes_more_one": "Também os remove de: {{votes}}, mais uma votação e qualquer outra lista de participantes em que estejam.",
+      "affected_votes_more_many": "Também os remove de: {{votes}}, mais {{count}} votações e qualquer outra lista de participantes em que estejam.",
       "affected_votes_more_other": "Também os remove de: {{votes}}, mais {{count}} votações e qualquer outra lista de participantes em que estejam.",
       "all_confirm": "Eliminar todos os membros",
       "all_description": "Isto elimina todas as pessoas dos teus membros, independentemente do que a pesquisa mostra.",
       "all_done": "Todos os membros foram eliminados",
-      "all_title_many": "Eliminar os {{formattedCount}} membros?",
       "all_title_one": "Eliminar o teu único membro?",
+      "all_title_many": "Eliminar os {{formattedCount}} membros?",
       "all_title_other": "Eliminar os {{formattedCount}} membros?",
       "blocked_all_hint": "Espera que essa votação termine, ou seleciona os restantes e elimina-os.",
       "blocked_hint": "Podem ser eliminados quando essa votação terminar.",
-      "blocked_names_many": "{{name}} e mais {{count}} pessoas já começaram a votar numa votação em curso.",
       "blocked_names_one": "{{name}} e outra pessoa já começaram a votar numa votação em curso.",
+      "blocked_names_many": "{{name}} e mais {{count}} pessoas já começaram a votar numa votação em curso.",
       "blocked_names_other": "{{name}} e mais {{count}} pessoas já começaram a votar numa votação em curso.",
       "blocked_person": "{{name}} já começou a votar numa votação em curso.",
-      "blocked_someone_many": "{{count}} pessoas já começaram a votar numa votação em curso.",
       "blocked_someone_one": "Alguém já começou a votar numa votação em curso.",
+      "blocked_someone_many": "{{count}} pessoas já começaram a votar numa votação em curso.",
       "blocked_someone_other": "{{count}} pessoas já começaram a votar numa votação em curso.",
       "blocked_title": "Ninguém foi eliminado",
       "cant_undo": "Não é possível anular.",
-      "confirm_many": "Eliminar {{count}}",
       "confirm_one": "Eliminar",
+      "confirm_many": "Eliminar {{count}}",
       "confirm_other": "Eliminar {{count}}",
-      "delete_others_many": "Eliminar as outras {{count}}",
       "delete_others_one": "Eliminar a outra pessoa",
+      "delete_others_many": "Eliminar as outras {{count}}",
       "delete_others_other": "Eliminar as outras {{count}}",
-      "done_many": "{{count}} pessoas eliminadas dos membros",
       "done_one": "Eliminado dos membros",
+      "done_many": "{{count}} pessoas eliminadas dos membros",
       "done_other": "{{count}} pessoas eliminadas dos membros",
       "error": "Ninguém foi eliminado",
       "no_votes": "Também são removidos de qualquer lista de participantes em que estejam.",
@@ -1036,8 +1013,8 @@
       "state_draft": "rascunho",
       "state_live": "em curso",
       "state_scheduled": "agendada",
-      "title_people_many": "Eliminar {{count}} pessoas dos membros?",
       "title_people_one": "Eliminar 1 pessoa dos membros?",
+      "title_people_many": "Eliminar {{count}} pessoas dos membros?",
       "title_people_other": "Eliminar {{count}} pessoas dos membros?",
       "title_person": "Eliminar {{name}} dos membros?",
       "type_count": "Escreve {{number}} para confirmar",
@@ -1077,68 +1054,68 @@
       "back": "Voltar",
       "banner": {
         "dismiss": "Dispensar",
-        "done_many": "Importação concluída: {{formattedCount}} membros adicionados.",
         "done_one": "Importação concluída: {{formattedCount}} membro adicionado.",
+        "done_many": "Importação concluída: {{formattedCount}} membros adicionados.",
         "done_other": "Importação concluída: {{formattedCount}} membros adicionados.",
-        "done_with_errors_many": "Importação concluída, mas {{count}} linhas tinham valores que não pudemos usar.",
         "done_with_errors_one": "Importação concluída, mas uma linha tinha um valor que não pudemos usar.",
+        "done_with_errors_many": "Importação concluída, mas {{count}} linhas tinham valores que não pudemos usar.",
         "done_with_errors_other": "Importação concluída, mas {{count}} linhas tinham valores que não pudemos usar.",
         "errors_title": "Problemas da importação",
         "failed": "A importação não terminou. Tenta de novo ou fala connosco se continuar a acontecer.",
         "label": "Progresso da importação",
         "running": "A importar os teus membros… Podes sair desta página: enviamos-te um email quando terminar.",
-        "view_errors_many": "Ver os {{count}} problemas",
         "view_errors_one": "Ver o problema",
+        "view_errors_many": "Ver os {{count}} problemas",
         "view_errors_other": "Ver os {{count}} problemas"
       },
       "continue": "Continuar",
       "done": {
-        "added_many": "{{formattedCount}} membros adicionados",
         "added_one": "{{formattedCount}} membro adicionado",
+        "added_many": "{{formattedCount}} membros adicionados",
         "added_other": "{{formattedCount}} membros adicionados",
         "back": "Voltar",
         "back_to_draft": "Voltar ao teu rascunho",
         "back_to_members": "Voltar aos membros",
         "back_to_vote": "Voltar à votação",
         "create_vote": "Criar uma votação com todos",
-        "download_failed_many": "Transferir as {{count}} linhas",
         "download_failed_one": "Transferir a linha",
+        "download_failed_many": "Transferir as {{count}} linhas",
         "download_failed_other": "Transferir as {{count}} linhas",
         "failed_birth_date": "Não conseguimos ler a data de nascimento, por isso ficou de fora.",
         "failed_email": "O email não é válido, por isso ficou de fora.",
         "failed_phone": "O telemóvel não é válido, por isso ficou de fora.",
-        "failed_title_many": "{{count}} linhas foram importadas sem um valor que não pudemos usar",
         "failed_title_one": "Uma linha foi importada sem um valor que não pudemos usar",
+        "failed_title_many": "{{count}} linhas foram importadas sem um valor que não pudemos usar",
         "failed_title_other": "{{count}} linhas foram importadas sem um valor que não pudemos usar",
         "from_file": "De {{file}}",
-        "importing_many": "A importar {{formattedCount}} membros…",
         "importing_one": "A importar {{formattedCount}} membro…",
+        "importing_many": "A importar {{formattedCount}} membros…",
         "importing_other": "A importar {{formattedCount}} membros…",
         "job_failed": "A importação não terminou. Tenta de novo ou fala connosco se continuar a acontecer.",
         "leave": "Podes sair desta página: enviamos-te um email quando terminar.",
-        "more_failed_many": "E mais {{count}} no ficheiro transferido.",
         "more_failed_one": "E mais {{count}} no ficheiro transferido.",
+        "more_failed_many": "E mais {{count}} no ficheiro transferido.",
         "more_failed_other": "E mais {{count}} no ficheiro transferido.",
         "problem_column": "Problema",
-        "receipt_dates_many": "Lemos {{formattedCount}} datas de nascimento escritas com o dia primeiro (31/12/1990).",
         "receipt_dates_one": "Lemos uma data de nascimento escrita com o dia primeiro (31/12/1990).",
+        "receipt_dates_many": "Lemos {{formattedCount}} datas de nascimento escritas com o dia primeiro (31/12/1990).",
         "receipt_dates_other": "Lemos {{formattedCount}} datas de nascimento escritas com o dia primeiro (31/12/1990).",
-        "receipt_duplicates_many": "Deixámos de fora {{count}} linhas repetidas, como escolheste.",
         "receipt_duplicates_one": "Deixámos de fora uma linha repetida, como escolheste.",
+        "receipt_duplicates_many": "Deixámos de fora {{count}} linhas repetidas, como escolheste.",
         "receipt_duplicates_other": "Deixámos de fora {{count}} linhas repetidas, como escolheste.",
         "receipt_encoding": "Lemos corretamente os acentos do teu ficheiro (estava guardado num formato antigo do Windows).",
         "receipt_extra": "Mantivemos {{columns}} como informação extra.",
-        "receipt_leading_zeros_many": "Mantivemos os zeros à esquerda de {{formattedCount}} valores, como 00123.",
         "receipt_leading_zeros_one": "Mantivemos os zeros à esquerda de um valor, como 00123.",
+        "receipt_leading_zeros_many": "Mantivemos os zeros à esquerda de {{formattedCount}} valores, como 00123.",
         "receipt_leading_zeros_other": "Mantivemos os zeros à esquerda de {{formattedCount}} valores, como 00123.",
         "receipt_left_out": "Deixámos de fora {{columns}}, como escolheste.",
         "receipt_matched": "Associámos {{matched}} de {{total}} colunas: {{columns}}.",
         "receipt_title": "O que fizemos por ti",
-        "receipt_title_rows_many": "Ignorámos as {{count}} linhas de título acima dos nomes das tuas colunas.",
         "receipt_title_rows_one": "Ignorámos a linha de título acima dos nomes das tuas colunas.",
+        "receipt_title_rows_many": "Ignorámos as {{count}} linhas de título acima dos nomes das tuas colunas.",
         "receipt_title_rows_other": "Ignorámos as {{count}} linhas de título acima dos nomes das tuas colunas.",
-        "receipt_trimmed_many": "Removemos espaços a mais de {{formattedCount}} células.",
         "receipt_trimmed_one": "Removemos espaços a mais de uma célula.",
+        "receipt_trimmed_many": "Removemos espaços a mais de {{formattedCount}} células.",
         "receipt_trimmed_other": "Removemos espaços a mais de {{formattedCount}} células."
       },
       "failed": "Não foi possível iniciar a importação",
@@ -1160,8 +1137,8 @@
       "review": {
         "all_rows": "Todas as linhas",
         "duplicate_same": "Igual em {{fields}}",
-        "duplicates_title_many": "A mesma pessoa duas vezes? ({{count}})",
         "duplicates_title_one": "A mesma pessoa duas vezes?",
+        "duplicates_title_many": "A mesma pessoa duas vezes? ({{count}})",
         "duplicates_title_other": "A mesma pessoa duas vezes? ({{count}})",
         "edit_label": "{{field}}, linha {{row}}",
         "filter_label": "Linhas a mostrar",
@@ -1190,11 +1167,11 @@
         "ready_sms": "Só por SMS",
         "row": "Linha",
         "row_number": "Linha {{row}}",
-        "show_more_many": "Mostrar mais {{count}}",
         "show_more_one": "Mostrar mais {{count}}",
+        "show_more_many": "Mostrar mais {{count}}",
         "show_more_other": "Mostrar mais {{count}}",
-        "submit_many": "Importar {{formattedCount}} membros",
         "submit_one": "Importar {{formattedCount}} membro",
+        "submit_many": "Importar {{formattedCount}} membros",
         "submit_other": "Importar {{formattedCount}} membros",
         "value": "Valor",
         "what_to_fix": "O que corrigir"
@@ -1217,8 +1194,8 @@
         "need_title": "Do que precisamos",
         "no_rows": "Encontrámos os nomes das colunas, mas ninguém por baixo. Verifica o ficheiro e tenta de novo.",
         "read_failed": "Não conseguimos ler este ficheiro. Verifica se é uma folha de cálculo ou um CSV e tenta de novo.",
-        "summary_many": "{{formattedCount}} pessoas · {{columns}} colunas",
         "summary_one": "{{formattedCount}} pessoa · {{columns}} colunas",
+        "summary_many": "{{formattedCount}} pessoas · {{columns}} colunas",
         "summary_other": "{{formattedCount}} pessoas · {{columns}} colunas",
         "template": "Transferir o modelo",
         "template_csv": "CSV (.csv)",
@@ -1233,8 +1210,8 @@
       "adds": "São adicionados às pessoas que já tens selecionadas.",
       "cancel": "Cancelar",
       "checking": "A verificar {{done}} de {{total}}…",
-      "count_many": "{{formattedCount}} valores diferentes",
       "count_one": "Um valor",
+      "count_many": "{{formattedCount}} valores diferentes",
       "count_other": "{{formattedCount}} valores diferentes",
       "edit": "Editar a lista",
       "error": "Não foi possível verificar a lista. Tenta novamente.",
@@ -1243,15 +1220,15 @@
       "help": "Cola uma coluna da tua folha de cálculo. Um por linha, ou separados por vírgulas ou pontos e vírgulas.",
       "label": "Números de sócio, emails ou números do cartão de cidadão",
       "loading_members": "A carregar os teus membros… {{done}} de {{total}}",
-      "not_found_many": "{{formattedCount}} não encontrados",
       "not_found_one": "{{formattedCount}} não encontrado",
+      "not_found_many": "{{formattedCount}} não encontrados",
       "not_found_other": "{{formattedCount}} não encontrados",
       "open": "Selecionar a partir de uma lista…",
       "remote_limit": "Com mais de {{cap}} membros, verificamos até {{max}} valores de cada vez. Serão verificados os primeiros {{max}}.",
       "select": "Selecioná-los",
       "show_not_found": "Mostrar os não encontrados",
-      "skipped_many": "Mais {{count}} valores não foram verificados: cola até {{max}} de cada vez.",
       "skipped_one": "Mais um valor não foi verificado: cola até {{max}} de cada vez.",
+      "skipped_many": "Mais {{count}} valores não foram verificados: cola até {{max}} de cada vez.",
       "skipped_other": "Mais {{count}} valores não foram verificados: cola até {{max}} de cada vez.",
       "stop": "Parar",
       "title": "Selecionar a partir de uma lista"
@@ -1276,18 +1253,18 @@
       "no_results": "Ninguém corresponde à tua pesquisa",
       "no_results_hint": "A pesquisa procura em nomes, emails, números de sócio e cartões de cidadão.",
       "open": "Abrir",
-      "page_all_selected_many": "Selecionadas as {{formattedCount}} pessoas desta página",
       "page_all_selected_one": "A única pessoa desta página está selecionada",
+      "page_all_selected_many": "Selecionadas as {{formattedCount}} pessoas desta página",
       "page_all_selected_other": "Selecionadas as {{formattedCount}} pessoas desta página",
-      "page_size_many": "{{count}} por página",
       "page_size_one": "{{count}} por página",
+      "page_size_many": "{{count}} por página",
       "page_size_other": "{{count}} por página",
       "page_some_selected": "{{selected}} de {{total}} selecionadas nesta página",
-      "range_members_many": "{{from}}–{{to}} de {{total}} membros",
       "range_members_one": "{{from}}–{{to}} de {{total}} membro",
+      "range_members_many": "{{from}}–{{to}} de {{total}} membros",
       "range_members_other": "{{from}}–{{to}} de {{total}} membros",
-      "range_results_many": "{{from}}–{{to}} de {{total}} resultados",
       "range_results_one": "{{from}}–{{to}} de {{total}} resultado",
+      "range_results_many": "{{from}}–{{to}} de {{total}} resultados",
       "range_results_other": "{{from}}–{{to}} de {{total}} resultados",
       "retry": "Tentar novamente",
       "row_actions": "Ações para {{name}}",
@@ -1309,11 +1286,6 @@
       "added": "Adicionada aos teus membros",
       "cancel": "Cancelar",
       "cant_clear": "Esvaziar um campo ainda não é guardado: o valor atual mantém-se.",
-      "censuses": {
-        "too_big_many": "{{count}} listas guardadas ou rascunhos têm mais de {{max}} pessoas, por isso não são verificados aqui.",
-        "too_big_one": "1 lista de participantes guardada ou rascunho tem mais de {{max}} pessoas, por isso não é verificada aqui.",
-        "too_big_other": "{{count}} listas guardadas ou rascunhos têm mais de {{max}} pessoas, por isso não são verificados aqui."
-      },
       "edit": "Editar",
       "edit_everywhere": "As alterações aplicam-se a este membro em todo o lado, incluindo nas listas de participantes das votações em curso.",
       "error": {
@@ -1333,15 +1305,15 @@
       "weight_chip": "Peso de voto {{weight}}"
     },
     "readiness": {
-      "all_many": "Os {{formattedCount}} podem receber um código de votação",
       "all_one": "O teu membro pode receber um código de votação",
+      "all_many": "Os {{formattedCount}} podem receber um código de votação",
       "all_other": "Os {{formattedCount}} podem receber um código de votação",
       "ready": "{{ready}} de {{total}} podem receber um código de votação",
       "show_them": "Mostrar",
       "show_them_description": "Em breve vais ver numa lista as pessoas sem email nem telemóvel, para as corrigires antes de uma votação.",
       "show_them_title": "Vê quem não pode receber um código de votação",
-      "unreachable_many": "{{formattedCount}} não têm email nem telemóvel",
       "unreachable_one": "{{formattedCount}} não tem email nem telemóvel",
+      "unreachable_many": "{{formattedCount}} não têm email nem telemóvel",
       "unreachable_other": "{{formattedCount}} não têm email nem telemóvel",
       "warning": "Aviso:"
     },
@@ -1358,8 +1330,8 @@
       "undone": "Lista de participantes removida"
     },
     "saved_census": {
-      "add_submit_many": "Adicionar {{formattedCount}} pessoas",
       "add_submit_one": "Adicionar uma pessoa",
+      "add_submit_many": "Adicionar {{formattedCount}} pessoas",
       "add_submit_other": "Adicionar {{formattedCount}} pessoas",
       "add_title": "Adicionar a uma lista de participantes guardada",
       "added": "Adicionados a «{{group}}»",
@@ -1368,8 +1340,8 @@
       "partial": "Parou depois de {{done}} de {{total}}",
       "pick": "Lista de participantes guardada",
       "pick_placeholder": "Escolhe uma lista de participantes guardada",
-      "remove_submit_many": "Remover {{formattedCount}} pessoas",
       "remove_submit_one": "Remover uma pessoa",
+      "remove_submit_many": "Remover {{formattedCount}} pessoas",
       "remove_submit_other": "Remover {{formattedCount}} pessoas",
       "remove_title": "Remover de uma lista de participantes guardada",
       "removed": "Removidos de «{{group}}»",
@@ -1386,35 +1358,35 @@
       "clear": "Limpar a seleção",
       "collecting": "A recolher {{collected}} de {{total}}…",
       "collecting_start": "A recolher os resultados…",
-      "done_capped": "Selecionados os primeiros {{cap}} resultados",
-      "done_many": "Selecionados os {{formattedCount}} resultados",
       "done_one": "O único resultado está selecionado",
+      "done_many": "Selecionados os {{formattedCount}} resultados",
       "done_other": "Selecionados os {{formattedCount}} resultados",
+      "done_capped": "Selecionados os primeiros {{cap}} resultados",
       "error": "Não foi possível selecionar todos os resultados.",
-      "everyone_many": "Selecionados os {{formattedCount}} membros",
       "everyone_one": "O teu único membro está selecionado",
+      "everyone_many": "Selecionados os {{formattedCount}} membros",
       "everyone_other": "Selecionados os {{formattedCount}} membros",
       "importing": "Uma importação ainda está a adicionar pessoas. Seleciona todos os resultados quando terminar.",
-      "offer_many": "Selecionar os {{formattedCount}}",
-      "offer_matching_many": "Selecionar os {{formattedCount}} resultados",
-      "offer_matching_one": "Selecionar o único resultado",
-      "offer_matching_other": "Selecionar os {{formattedCount}} resultados",
       "offer_one": "Selecionar o teu único membro",
+      "offer_many": "Selecionar os {{formattedCount}}",
       "offer_other": "Selecionar os {{formattedCount}}",
+      "offer_matching_one": "Selecionar o único resultado",
+      "offer_matching_many": "Selecionar os {{formattedCount}} resultados",
+      "offer_matching_other": "Selecionar os {{formattedCount}} resultados",
       "ok": "OK",
       "retry": "Tentar novamente",
       "stop": "Parar"
     },
     "selection": {
-      "not_on_page_many": "({{formattedCount}} fora desta página)",
       "not_on_page_one": "({{formattedCount}} fora desta página)",
+      "not_on_page_many": "({{formattedCount}} fora desta página)",
       "not_on_page_other": "({{formattedCount}} fora desta página)",
       "show_everyone": "Mostrar todos",
-      "show_selected_many": "Mostrar selecionados ({{formattedCount}})",
       "show_selected_one": "Mostrar selecionados ({{formattedCount}})",
+      "show_selected_many": "Mostrar selecionados ({{formattedCount}})",
       "show_selected_other": "Mostrar selecionados ({{formattedCount}})",
-      "showing_selected_many": "A mostrar as {{formattedCount}} pessoas selecionadas",
       "showing_selected_one": "A mostrar a pessoa selecionada",
+      "showing_selected_many": "A mostrar as {{formattedCount}} pessoas selecionadas",
       "showing_selected_other": "A mostrar as {{formattedCount}} pessoas selecionadas"
     },
     "table": {
@@ -1816,26 +1788,12 @@
     "auto_start": "Iniciar imediatamente",
     "basic_configuration": "Configuração básica",
     "census": {
-      "copy_everyone": {
-        "button": "Editar esta lista",
-        "confirm": "Dar-lhe uma lista própria",
-        "description": "Esta votação vai ter a sua própria lista com todos os teus membros tal como estão agora, e podes adicionar ou remover pessoas. A partir daí, os novos membros não entram sozinhos.",
-        "title": "Editar esta lista?"
-      },
       "group": {
         "no_groups": "Para iniciar uma votação, tens primeiro de criar um grupo de votantes elegíveis a partir da tua base de membros. <1>Cria um aqui</1>."
       },
-      "group_title_dated": "{{vote}} — {{date}}",
       "memberbase": {
         "label": "Seleciona um grupo de membros para criar a lista de participantes"
-      },
-      "not_in_copy": {
-        "review": "Rever",
-        "text_many": "{{formattedCount}} membros não estão nesta lista: adicionados depois de a criares, ou removidos.",
-        "text_one": "1 membro não está nesta lista: adicionado depois de a criares, ou removido.",
-        "text_other": "{{formattedCount}} membros não estão nesta lista: adicionados depois de a criares, ou removidos."
-      },
-      "too_many_to_copy": "Tens mais de {{max}} membros, demasiados para deixar alguém de fora aqui."
+      }
     },
     "census_creation": "Criação da lista de participantes",
     "end_datetime": "Data e hora de fim",
@@ -1845,9 +1803,6 @@
     },
     "groups": {
       "scroll_to_load": "Desce para carregar mais…"
-    },
-    "issue": {
-      "group_empty": "A lista de participantes escolhida está vazia"
     },
     "new_option": "Adicionar uma nova opção",
     "option": {
@@ -1869,12 +1824,6 @@
       "hidden": "Ocultos até ao fim",
       "live": "Resultados em direto",
       "title": "Visibilidade dos resultados"
-    },
-    "review": {
-      "not_in_copy_many": "{{count}} membros não estão na lista desta votação. Se devem votar, adiciona-os em Quem pode votar antes de publicar.",
-      "not_in_copy_one": "1 membro não está na lista desta votação. Se deve votar, adiciona-o em Quem pode votar antes de publicar.",
-      "not_in_copy_other": "{{count}} membros não estão na lista desta votação. Se devem votar, adiciona-os em Quem pode votar antes de publicar.",
-      "own_census_one": "A única pessoa da lista de participantes desta votação pode votar"
     },
     "settings": "Definições",
     "start_datetime": "Data e hora de início",

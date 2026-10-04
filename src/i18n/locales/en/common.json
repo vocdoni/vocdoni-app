@@ -132,20 +132,7 @@
       "voted_partial": "Voted {{voted}}/{{total}}"
     }
   },
-  "census_detail": {
-    "add": {
-      "skipped_one": "1 person wasn't added: they don't have the details this vote signs in with.",
-      "skipped_other": "{{count}} people weren't added: they don't have the details this vote signs in with."
-    }
-  },
   "census_size": "Census size",
-  "censuses": {
-    "source": {
-      "copy_everyone": "Copied from Everyone",
-      "copy_previous": "Copied from another vote",
-      "copy_saved": "Copied from a saved census"
-    }
-  },
   "change_password": {
     "subtitle": "Enter your current password and a new password to update your credentials.",
     "title": "Change password"
@@ -261,11 +248,6 @@
     "process_view": {
       "date_format": "MMMM do, y",
       "time_format": "p"
-    },
-    "setup": {
-      "members": {
-        "description": "Import a spreadsheet or add them one by one. Then you choose who can vote in each vote."
-      }
     },
     "usage": {
       "2fa_email": "2FA mail codes",
@@ -939,11 +921,7 @@
       "title": "Groups"
     },
     "importer": {
-      "button": "Import",
-      "error": {
-        "invalid_file_type": "This file type isn't supported. Upload a .csv, .xlsx, .xls or .ods file.",
-        "read_failed": "We couldn't read this file. Check that it's a valid CSV or spreadsheet and try again."
-      }
+      "button": "Import"
     },
     "members": {
       "title": "People"
@@ -1267,10 +1245,6 @@
       "added": "Added to your members",
       "cancel": "Cancel",
       "cant_clear": "Emptying a field isn't saved yet: the current value stays.",
-      "censuses": {
-        "too_big_one": "1 saved census or draft has more than {{max}} people, so it isn't checked here.",
-        "too_big_other": "{{count}} saved censuses or drafts have more than {{max}} people, so they aren't checked here."
-      },
       "edit": "Edit",
       "edit_everywhere": "Changes apply to this member everywhere, including the censuses of votes in progress.",
       "error": {
@@ -1753,25 +1727,12 @@
     "auto_start": "Start immediately",
     "basic_configuration": "Basic configuration",
     "census": {
-      "copy_everyone": {
-        "button": "Edit this list",
-        "confirm": "Make its own list",
-        "description": "This vote gets its own list with all your members as they are now, and you can add or take out people. From then on, new members won't join it by themselves.",
-        "title": "Edit this list?"
-      },
       "group": {
         "no_groups": "To start a vote, you first need to create a group of eligible voters from your memberbase. <1>Create one here</1>."
       },
-      "group_title_dated": "{{vote}} — {{date}}",
       "memberbase": {
         "label": "Select a group of members to create the census"
-      },
-      "not_in_copy": {
-        "review": "Review",
-        "text_one": "1 member isn't in this list: someone added after you made it, or taken out of it.",
-        "text_other": "{{formattedCount}} members aren't in this list: people added after you made it, or taken out of it."
-      },
-      "too_many_to_copy": "You have more than {{max}} members, too many to leave anyone out here."
+      }
     },
     "census_creation": "Census creation",
     "end_datetime": "End date and time",
@@ -1781,9 +1742,6 @@
     },
     "groups": {
       "scroll_to_load": "Scroll to load more..."
-    },
-    "issue": {
-      "group_empty": "The chosen census has nobody in it"
     },
     "new_option": "Add a new option",
     "option": {
@@ -1805,12 +1763,6 @@
       "hidden": "Hidden until the end",
       "live": "Live results",
       "title": "Result visibility"
-    },
-    "review": {
-      "all_members_one": "The only member of your organization can vote",
-      "not_in_copy_one": "1 member isn't in this vote's list. If they should vote, add them in Who can vote before publishing.",
-      "not_in_copy_other": "{{count}} members aren't in this vote's list. If they should vote, add them in Who can vote before publishing.",
-      "own_census_one": "The only person in this vote's census can vote"
     },
     "settings": "Settings",
     "start_datetime": "Start date and time",
