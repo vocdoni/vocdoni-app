@@ -225,8 +225,7 @@
       "unreachable_other": "No poden rebre codi · {{count}}"
     },
     "header": {
-      "copied_at": "Còpia feta el {{date}} a les {{time}}",
-      "created_at": "Creat el {{date}} a les {{time}}"
+      "created_at": "Cens creat el {{date}} a les {{time}}"
     },
     "load_error": "No hem pogut carregar les persones d'aquest cens.",
     "loading": "S'estan carregant {{done}} de {{total}}…",
@@ -331,7 +330,6 @@
       "follows_everyone": "Aquesta votació segueix «Tothom»: els membres que afegeixis també hi poden votar.",
       "follows_everyone_live": "Aquesta votació segueix «Tothom»: els membres que afegeixis també hi poden votar. Si treus algú aquí, només surt d'aquesta votació.",
       "legacy_saved": "Aquesta votació segueix el cens desat «{{name}}», així que els canvis que s'hi facin també arriben aquí. Els canvis que facis aquí només afecten aquesta votació.",
-      "own": "El cens propi d'aquesta votació. Editar-lo no canvia els teus membres ni altres votacions.",
       "saved": "Un cens desat que pots reutilitzar a les teves votacions.",
       "selected": "Persones triades una a una per a aquesta votació.",
       "shared": "Compartit amb {{votes}}. Canviar-lo canvia qui pot votar en totes, fins i tot en les tancades."

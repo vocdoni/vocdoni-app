@@ -225,8 +225,7 @@
       "unreachable_other": "Senza codice · {{count}}"
     },
     "header": {
-      "copied_at": "Copia fatta il {{date}} alle {{time}}",
-      "created_at": "Creato il {{date}} alle {{time}}"
+      "created_at": "Censimento creato il {{date}} alle {{time}}"
     },
     "load_error": "Non siamo riusciti a caricare le persone di questo censimento.",
     "loading": "Caricamento di {{done}} su {{total}}…",
@@ -331,7 +330,6 @@
       "follows_everyone": "Questa votazione segue «Tutti»: anche i membri che aggiungi possono votarci.",
       "follows_everyone_live": "Questa votazione segue «Tutti»: anche i membri che aggiungi possono votarci. Se togli qualcuno qui, esce solo da questa votazione.",
       "legacy_saved": "Questa votazione segue il censimento salvato «{{name}}», quindi le sue modifiche arrivano anche qui. Le modifiche che fai qui riguardano solo questa votazione.",
-      "own": "Il censimento proprio di questa votazione. Modificarlo non cambia i tuoi membri né le altre votazioni.",
       "saved": "Un censimento salvato che puoi riutilizzare nelle tue votazioni.",
       "selected": "Persone scelte una a una per questa votazione.",
       "shared": "Condiviso con {{votes}}. Modificarlo cambia chi può votare in tutte, anche in quelle chiuse."

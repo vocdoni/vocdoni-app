@@ -437,10 +437,9 @@ describe('CensusDetail', () => {
     expect(await screen.findByText("This vote has ended, so its census can't change.")).toBeInTheDocument()
     expect(screen.getByText('voters at close')).toBeInTheDocument()
     expect(screen.getByText('31')).toBeInTheDocument()
-    expect(
-      screen.getByText("This vote's own census. Editing it doesn't change your members or other votes.")
-    ).toBeInTheDocument()
-    // The vote it belongs to, and exactly how its people signed in to it
+    // No sentence restating what the facts already say
+    expect(screen.queryByText(/This vote's own census/)).toBeNull()
+    expect(screen.getByText(/^Census created on \d+ \w+ \d{4} at \d{2}:\d{2}$/)).toBeInTheDocument()
     // The facts: how they signed in, exactly, and where the people came from
     expect(screen.getByRole('heading', { name: 'Eleccions Junta 2025' })).toBeInTheDocument()
     expect(screen.getByText('Code by email')).toBeInTheDocument()

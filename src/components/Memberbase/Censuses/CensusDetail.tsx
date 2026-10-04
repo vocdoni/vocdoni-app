@@ -46,9 +46,8 @@ const sourceSentence = (t: TFunction, language: string | undefined, census: Reso
     case 'copy':
     case 'snapshot':
     case 'test':
-      return t('census_detail.source.own', {
-        defaultValue: "This vote's own census. Editing it doesn't change your members or other votes.",
-      })
+      // The facts and the note already say what this census is
+      return null
     case 'everyone':
       return census.edit === 'process'
         ? t('census_detail.source.follows_everyone_live', {
@@ -191,6 +190,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
     )
 
   const name = census.title || t('census_detail.this_census', { defaultValue: 'this census' })
+  const purpose = sourceSentence(t, i18n.resolvedLanguage, census)
   // A vote's own census was made by the app (its marker says when); a saved one when it was saved.
   // Censuses from before vote-owned ones carry no such date: then nothing is said.
   const createdAt =
@@ -281,23 +281,19 @@ export const CensusDetail = (props: CensusDetailProps) => {
               <Flex align='center' gap={1.5} color='fg.muted' mt={1}>
                 <Icon as={LuClock} boxSize={3.5} aria-hidden />
                 <Text fontSize='xs' fontVariantNumeric='tabular-nums'>
-                  {census.kind === 'vote' && census.source?.kind === 'snapshot'
-                    ? t('census_detail.header.copied_at', {
-                        defaultValue: 'Copy made on {{date}} at {{time}}',
-                        date: format(createdAt, 'd MMM yyyy'),
-                        time: format(createdAt, 'HH:mm'),
-                      })
-                    : t('census_detail.header.created_at', {
-                        defaultValue: 'Created on {{date}} at {{time}}',
-                        date: format(createdAt, 'd MMM yyyy'),
-                        time: format(createdAt, 'HH:mm'),
-                      })}
+                  {t('census_detail.header.created_at', {
+                    defaultValue: 'Census created on {{date}} at {{time}}',
+                    date: format(createdAt, 'd MMM yyyy'),
+                    time: format(createdAt, 'HH:mm'),
+                  })}
                 </Text>
               </Flex>
             )}
-            <Text fontSize='sm' color='fg.muted' mt={2} maxW='3xl'>
-              {sourceSentence(t, i18n.resolvedLanguage, census)}
-            </Text>
+            {purpose && (
+              <Text fontSize='sm' color='fg.muted' mt={2} maxW='3xl'>
+                {purpose}
+              </Text>
+            )}
           </Box>
           <Flex gap={2} wrap='wrap' flexShrink={0}>
             {actions}
@@ -307,7 +303,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
         // Embedded (a vote's Voters tab, the editor): no header, but still what this census is
         <Flex justify='space-between' align='center' gap={3} wrap='wrap'>
           <Text fontSize='sm' color='fg.muted' flex='1' minW='16rem'>
-            {sourceSentence(t, i18n.resolvedLanguage, census)}
+            {purpose}
           </Text>
           {(canAdd || removeButton) && (
             <Flex gap={2} wrap='wrap'>

@@ -218,8 +218,7 @@
       "unreachable_other": "Kein Code möglich · {{count}}"
     },
     "header": {
-      "copied_at": "Kopie erstellt am {{date}} um {{time}}",
-      "created_at": "Erstellt am {{date}} um {{time}}"
+      "created_at": "Teilnehmerliste erstellt am {{date}} um {{time}}"
     },
     "load_error": "Die Personen auf dieser Teilnehmerliste konnten nicht geladen werden.",
     "loading": "{{done}} von {{total}} werden geladen…",
@@ -312,7 +311,6 @@
       "follows_everyone": "Diese Abstimmung folgt „Alle“: Auch Mitglieder, die du hinzufügst, dürfen darin abstimmen.",
       "follows_everyone_live": "Diese Abstimmung folgt „Alle“: Auch Mitglieder, die du hinzufügst, dürfen darin abstimmen. Wen du hier entfernst, der ist nur aus dieser Abstimmung draußen.",
       "legacy_saved": "Diese Abstimmung folgt der gespeicherten Teilnehmerliste „{{name}}“, daher wirken Änderungen daran auch hier. Was du hier änderst, betrifft nur diese Abstimmung.",
-      "own": "Die eigene Teilnehmerliste dieser Abstimmung. Änderungen daran betreffen weder deine Mitglieder noch andere Abstimmungen.",
       "saved": "Eine gespeicherte Teilnehmerliste, die du in deinen Abstimmungen wiederverwenden kannst.",
       "selected": "Einzeln für diese Abstimmung ausgewählte Personen.",
       "shared": "Geteilt mit {{votes}}. Eine Änderung ändert, wer in all diesen Abstimmungen abstimmen darf, auch in beendeten."

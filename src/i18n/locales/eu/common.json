@@ -218,8 +218,7 @@
       "unreachable_other": "Koderik ezin · {{count}}"
     },
     "header": {
-      "copied_at": "Kopia: {{date}}, {{time}}",
-      "created_at": "Sortua: {{date}}, {{time}}"
+      "created_at": "Errolda sortua: {{date}}, {{time}}"
     },
     "load_error": "Ezin izan ditugu errolde honetako pertsonak kargatu.",
     "loading": "{{total}}(e)tik {{done}} kargatzen…",
@@ -312,7 +311,6 @@
       "follows_everyone": "Bozketa honek «Denak» jarraitzen du: gehitzen dituzun kideek ere bozka dezakete bertan.",
       "follows_everyone_live": "Bozketa honek «Denak» jarraitzen du: gehitzen dituzun kideek ere bozka dezakete bertan. Hemen norbait kentzen baduzu, bozketa honetatik bakarrik ateratzen da.",
       "legacy_saved": "Bozketa honek «{{name}}» gordetako erroldea jarraitzen du, beraz hartan egindako aldaketak hona ere iristen dira. Hemen egiten dituzun aldaketek bozketa honi bakarrik eragiten diote.",
-      "own": "Bozketa honen errolde propioa. Editatzeak ez ditu aldatzen zure kideak ezta beste bozketak ere.",
       "saved": "Zure bozketetan berrerabil dezakezun gordetako erroldea.",
       "selected": "Bozketa honetarako banan-banan aukeratutako pertsonak.",
       "shared": "Hauekin partekatua: {{votes}}. Aldatzeak guztietan nork bozka dezakeen aldatzen du, baita itxitakoetan ere."

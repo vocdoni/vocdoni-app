@@ -225,8 +225,7 @@
       "unreachable_other": "No pueden recibir código · {{count}}"
     },
     "header": {
-      "copied_at": "Copia hecha el {{date}} a las {{time}}",
-      "created_at": "Creado el {{date}} a las {{time}}"
+      "created_at": "Censo creado el {{date}} a las {{time}}"
     },
     "load_error": "No hemos podido cargar las personas de este censo.",
     "loading": "Cargando {{done}} de {{total}}…",
@@ -331,7 +330,6 @@
       "follows_everyone": "Esta votación sigue a «Todos»: los miembros que añadas también pueden votar en ella.",
       "follows_everyone_live": "Esta votación sigue a «Todos»: los miembros que añadas también pueden votar en ella. Si quitas a alguien aquí, solo sale de esta votación.",
       "legacy_saved": "Esta votación sigue el censo guardado «{{name}}», así que los cambios en él también llegan aquí. Los cambios que hagas aquí solo afectan a esta votación.",
-      "own": "El censo propio de esta votación. Editarlo no cambia tus miembros ni otras votaciones.",
       "saved": "Un censo guardado que puedes reutilizar en tus votaciones.",
       "selected": "Personas elegidas una a una para esta votación.",
       "shared": "Compartido con {{votes}}. Cambiarlo cambia quién puede votar en todas ellas, incluso en las cerradas."

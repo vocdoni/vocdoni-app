@@ -225,8 +225,7 @@
       "unreachable_other": "Sans code possible · {{count}}"
     },
     "header": {
-      "copied_at": "Copie faite le {{date}} à {{time}}",
-      "created_at": "Créée le {{date}} à {{time}}"
+      "created_at": "Liste électorale créée le {{date}} à {{time}}"
     },
     "load_error": "Impossible de charger les personnes de cette liste électorale.",
     "loading": "Chargement de {{done}} sur {{total}}…",
@@ -331,7 +330,6 @@
       "follows_everyone": "Ce vote suit « Tout le monde » : les membres que vous ajoutez peuvent aussi y voter.",
       "follows_everyone_live": "Ce vote suit « Tout le monde » : les membres que vous ajoutez peuvent aussi y voter. Retirer quelqu'un ici le retire seulement de ce vote.",
       "legacy_saved": "Ce vote suit la liste électorale enregistrée « {{name}} », donc ses modifications s'y appliquent aussi. Les modifications faites ici ne concernent que ce vote.",
-      "own": "La liste électorale propre à ce vote. La modifier ne change ni vos membres ni les autres votes.",
       "saved": "Une liste électorale enregistrée que vous pouvez réutiliser dans vos votes.",
       "selected": "Personnes choisies une à une pour ce vote.",
       "shared": "Partagée avec {{votes}}. La modifier change qui peut voter dans tous ces votes, même ceux clôturés."

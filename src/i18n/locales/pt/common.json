@@ -225,8 +225,7 @@
       "unreachable_other": "Sem código possível · {{count}}"
     },
     "header": {
-      "copied_at": "Cópia feita a {{date}} às {{time}}",
-      "created_at": "Criada a {{date}} às {{time}}"
+      "created_at": "Lista de participantes criada a {{date}} às {{time}}"
     },
     "load_error": "Não foi possível carregar as pessoas desta lista de participantes.",
     "loading": "A carregar {{done}} de {{total}}…",
@@ -331,7 +330,6 @@
       "follows_everyone": "Esta votação segue «Todos»: os membros que adicionares também podem votar nela.",
       "follows_everyone_live": "Esta votação segue «Todos»: os membros que adicionares também podem votar nela. Se removeres alguém aqui, só sai desta votação.",
       "legacy_saved": "Esta votação segue a lista de participantes guardada «{{name}}», por isso as alterações nela também chegam aqui. As alterações que fizeres aqui só afetam esta votação.",
-      "own": "A lista de participantes própria desta votação. Editá-la não muda os teus membros nem outras votações.",
       "saved": "Uma lista de participantes guardada que podes reutilizar nas tuas votações.",
       "selected": "Pessoas escolhidas uma a uma para esta votação.",
       "shared": "Partilhada com {{votes}}. Mudá-la muda quem pode votar em todas, mesmo nas terminadas."

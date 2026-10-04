@@ -218,8 +218,7 @@
       "unreachable_other": "Can't get a code · {{count}}"
     },
     "header": {
-      "copied_at": "Copy made on {{date}} at {{time}}",
-      "created_at": "Created on {{date}} at {{time}}"
+      "created_at": "Census created on {{date}} at {{time}}"
     },
     "load_error": "We couldn't load the people in this census.",
     "loading": "Loading {{done}} of {{total}}…",
@@ -312,7 +311,6 @@
       "follows_everyone": "This vote follows Everyone: members you add can vote in it too.",
       "follows_everyone_live": "This vote follows Everyone: members you add can vote in it too. Removing someone here only takes them out of this vote.",
       "legacy_saved": "This vote follows the saved census '{{name}}', so changes to it reach this vote too. Changes made here only affect this vote.",
-      "own": "This vote's own census. Editing it doesn't change your members or other votes.",
       "saved": "A saved census you can reuse in your votes.",
       "selected": "People picked one by one for this vote.",
       "shared": "Shared with {{votes}}. Changing it changes who can vote in all of them, even closed ones."
