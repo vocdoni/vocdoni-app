@@ -58,7 +58,8 @@ export const ToastProvider = ({ children }: PropsWithChildren) => {
               {toast.description ? <Toast.Description>{toast.description}</Toast.Description> : null}
             </Box>
             {toast.action ? (
-              <Toast.ActionTrigger onClick={toast.action.onClick}>{toast.action.label}</Toast.ActionTrigger>
+              // The toast runs the action itself on click: passing onClick too would run it twice
+              <Toast.ActionTrigger>{toast.action.label}</Toast.ActionTrigger>
             ) : null}
             {toast.closable ? <Toast.CloseTrigger /> : null}
           </Toast.Root>
