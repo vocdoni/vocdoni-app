@@ -1,6 +1,7 @@
 import type { Group } from '~src/queries/groups'
 import type { VoteGroupMarker } from '~src/queries/voteGroups'
-import { buildCensusIndex, censusSourceOf, resolveCensus } from './model'
+import type { VotingProcessResponse } from '@vocdoni/api-types'
+import { buildCensusIndex, censusSourceOf, resolveCensus, voteCensusDeletion } from './model'
 
 const past = new Date(Date.now() - 86_400_000).toISOString()
 const future = new Date(Date.now() + 86_400_000).toISOString()
@@ -154,5 +155,31 @@ describe('resolveCensus', () => {
     })
     expect(census).toMatchObject({ edit: 'none', readOnly: 'draft_saved', browse: 'group', groupId: 'quota' })
     expect(census.sharedWith.map((entry) => entry.id)).toEqual(['d1', 'p2'])
+  })
+})
+
+describe('voteCensusDeletion', () => {
+  const marker = { processId: 'p1', kind: 'copy' as const, createdAt: '2026-10-01T10:00:00Z' }
+  const base = {
+    kind: 'vote' as const,
+    groupId: 'g1',
+    process: { id: 'p1' } as VotingProcessResponse,
+    markers: new Map([['g1', marker]]),
+  }
+
+  it('lets a draft, canceled or ended vote delete its own census, and keeps an open one', () => {
+    expect(voteCensusDeletion({ ...base, state: 'draft' })).toBe('draft')
+    expect(voteCensusDeletion({ ...base, state: 'canceled' })).toBe('canceled')
+    expect(voteCensusDeletion({ ...base, state: 'ended' })).toBe('ended')
+    for (const state of ['live', 'paused', 'scheduled'] as const)
+      expect(voteCensusDeletion({ ...base, state })).toBe('blocked')
+  })
+
+  it('never offers to delete a group the vote does not own', () => {
+    expect(voteCensusDeletion({ ...base, state: 'draft', markers: new Map() })).toBe('none')
+    expect(
+      voteCensusDeletion({ ...base, state: 'draft', markers: new Map([['g1', { ...marker, processId: 'p2' }]]) })
+    ).toBe('none')
+    expect(voteCensusDeletion({ ...base, state: 'draft', groupId: undefined })).toBe('none')
   })
 })

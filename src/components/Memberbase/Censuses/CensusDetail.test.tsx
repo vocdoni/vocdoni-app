@@ -848,4 +848,73 @@ describe('CensusDetail', () => {
       expect(screen.queryByRole('checkbox')).toBeNull()
     })
   })
+
+  describe('deleting a vote’s census', () => {
+    const own = (id: string, status: string, published = true) => {
+      state.meta = { vg_owned: { processId: id, kind: 'copy', createdAt: past } }
+      state.members.owned = [person(1)]
+      state.groups.push(group('owned', 'Census of Junta'))
+      state.process = vote(id, 'Junta', { groupId: 'owned', size: 1, twoFaFields: ['email'] }, status, published)
+    }
+    const deletes = () =>
+      state.fetch.mock.calls.filter(([url, options]) => options?.method === 'DELETE' && url.endsWith('/groups/owned'))
+
+    it('deletes a draft’s census after one confirmation', async () => {
+      const user = userEvent.setup()
+      own('p4', 'READY', false)
+      renderDetail({ kind: 'vote', processId: 'p4' })
+
+      await user.click(await screen.findByRole('button', { name: 'More actions' }))
+      await user.click(await screen.findByRole('menuitem', { name: /Delete census/ }))
+      const dialog = await screen.findByRole('dialog')
+      expect(
+        within(dialog).getByText('The draft stays. Before you publish it, choose who can vote again.')
+      ).toBeInTheDocument()
+      await user.click(within(dialog).getByRole('button', { name: 'Delete census' }))
+
+      await waitFor(() => expect(deletes()).toHaveLength(1))
+    })
+
+    it('asks an ended vote to confirm twice, since its record of who could vote goes', async () => {
+      const user = userEvent.setup()
+      own('p9', 'RESULTS')
+      renderDetail({ kind: 'vote', processId: 'p9' })
+
+      await user.click(await screen.findByRole('button', { name: 'More actions' }))
+      await user.click(await screen.findByRole('menuitem', { name: /Delete census/ }))
+      const dialog = await screen.findByRole('dialog')
+      const confirm = within(dialog).getByRole('button', { name: 'Delete census' })
+      expect(confirm).toBeDisabled()
+      await user.click(
+        within(dialog).getByRole('checkbox', {
+          name: 'I understand the record of who could vote in this vote will be deleted',
+        })
+      )
+      await user.click(confirm)
+
+      await waitFor(() => expect(deletes()).toHaveLength(1))
+    })
+
+    it('keeps the census of a vote that is live', async () => {
+      const user = userEvent.setup()
+      own('p5', 'ONGOING')
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await user.click(await screen.findByRole('button', { name: 'More actions' }))
+      const item = await screen.findByRole('menuitem', { name: /Delete census/ })
+      expect(item).toHaveAttribute('data-disabled')
+      expect(
+        screen.getByText("This vote is published and not over yet, so its census can't be deleted.")
+      ).toBeInTheDocument()
+      expect(deletes()).toHaveLength(0)
+    })
+
+    it('offers no delete for a vote that follows Everyone', async () => {
+      state.process = vote('p2', 'Assemblea', { groupId: 'everyone', size: 1742 }, 'READY', false)
+      renderDetail({ kind: 'vote', processId: 'p2' })
+
+      expect(await screen.findByText('All your members')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'More actions' })).toBeNull()
+    })
+  })
 })

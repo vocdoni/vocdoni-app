@@ -19,8 +19,8 @@ import { CensusMembersTable } from './CensusMembersTable'
 import { VoteStateBadge } from './CensusRow'
 import { FactsStrip } from './FactsStrip'
 import { untitledVote } from './labels'
-import { isEnded } from './model'
-import { CensusDownloadButton, readOnlyText, SavedCensusMenu } from './SideCards'
+import { isEnded, voteCensusDeletion } from './model'
+import { CensusDownloadButton, readOnlyText, SavedCensusMenu, VoteCensusMenu } from './SideCards'
 import { RemovePeopleDialog } from './RemovePeopleDialog'
 import { formatVoteList } from './UsedBy'
 import { useCensusEditor } from './useCensusEditor'
@@ -193,6 +193,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
   // Everyone already holds every member: there's nobody to add
   const canAdd = census.edit !== 'none' && census.source?.kind !== 'everyone'
   const showUnreachable = () => setOnlyUnreachable(true)
+  const deletion = voteCensusDeletion(census)
   const process = census.process
   const voteLink = process
     ? process.published
@@ -248,6 +249,9 @@ export const CensusDetail = (props: CensusDetailProps) => {
         )}
         {removeButton}
         {addButton('solid')}
+        {page && census.groupId && deletion !== 'none' && (
+          <VoteCensusMenu groupId={census.groupId} name={name} deletion={deletion} />
+        )}
       </>
     )
 
