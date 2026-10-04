@@ -38,7 +38,7 @@
     "empty": "Oraindik ez dago ezer. Inportazioak eta bozketak hemen agertuko dira gertatu ahala.",
     "error": "Ezin izan dugu aldaketen erregistroa kargatu. Saiatu berriro geroxeago.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> bozketaren erroldea izoztu da argitaratzean",
+      "census_frozen": "<strong>{{name}}</strong> bozketak denen zerrenda propioa gorde zuen argitaratzean",
       "census_members_added_one": "{{number}} pertsona gehitu da '{{name}}' erroldera",
       "census_members_added_other": "{{number}} pertsona gehitu dira '{{name}}' erroldera",
       "census_members_removed_one": "{{number}} pertsona kendu da '{{name}}' erroldetik",

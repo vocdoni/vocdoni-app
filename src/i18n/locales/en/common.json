@@ -38,7 +38,7 @@
     "empty": "Nothing here yet. Imports and votes appear as they happen.",
     "error": "We couldn't load the activity. Try again in a moment.",
     "event": {
-      "census_frozen": "Census of <strong>{{name}}</strong> frozen at publish",
+      "census_frozen": "<strong>{{name}}</strong> kept its own list of everyone at publish",
       "census_members_added_one": "{{number}} person added to '{{name}}'",
       "census_members_added_other": "{{number}} people added to '{{name}}'",
       "census_members_removed_one": "{{number}} person removed from '{{name}}'",
