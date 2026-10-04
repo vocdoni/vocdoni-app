@@ -3,7 +3,7 @@ import { ElectionProvider } from '@vocdoni/react-components'
 import type { TFunction } from 'i18next'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowUpRight, LuBookmark, LuInfo, LuLock, LuUserMinus, LuUserPlus, LuVote } from 'react-icons/lu'
+import { LuArrowUpRight, LuClock, LuInfo, LuLock, LuUserMinus, LuUserPlus, LuVote } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink } from 'react-router'
 import { VoterLookup } from '~components/Process/Dashboard/View/VoterLookup'
 import { Banner } from '~components/ui/Banner'
@@ -141,6 +141,7 @@ const CensusNote = ({ census }: { census: ResolvedCensusState }) => {
  */
 export const CensusDetail = (props: CensusDetailProps) => {
   const { t, i18n } = useTranslation()
+  const { format } = useDateFns()
   const census = useResolvedCensus(props)
   const editor = useCensusEditor(census)
   const navigateToVote = useNavigateToVote()
@@ -190,6 +191,14 @@ export const CensusDetail = (props: CensusDetailProps) => {
     )
 
   const name = census.title || t('census_detail.this_census', { defaultValue: 'this census' })
+  // A vote's own census was made by the app (its marker says when); a saved one when it was saved.
+  // Censuses from before vote-owned ones carry no such date: then nothing is said.
+  const createdAt =
+    census.kind === 'saved'
+      ? census.group?.createdAt
+      : census.groupId
+        ? census.markers.get(census.groupId)?.createdAt
+        : undefined
   // Everyone already holds every member: there's nobody to add
   const canAdd = census.edit !== 'none' && census.source?.kind !== 'everyone'
   const showUnreachable = () => setOnlyUnreachable(true)
@@ -261,21 +270,32 @@ export const CensusDetail = (props: CensusDetailProps) => {
           direction={{ base: 'column', md: 'row' }}
         >
           <Box minW={0}>
-            <Flex align='center' gap={1.5} color='fg.muted' mb={0.5}>
-              <Icon as={census.kind === 'saved' ? LuBookmark : LuVote} boxSize={3.5} aria-hidden />
-              <Text fontSize='xs'>
-                {census.kind === 'saved'
-                  ? t('census_detail.header.saved', { defaultValue: 'Saved census' })
-                  : t('census_detail.header.vote', { defaultValue: 'Census of a vote' })}
-              </Text>
-            </Flex>
-            <Flex align='center' gap={2} minW={0} wrap='wrap'>
+            <Flex align='center' gap={2.5} minW={0} wrap='wrap'>
               <Heading as='h2' size='lg' fontWeight='bolder'>
                 {name}
               </Heading>
               {census.kind === 'vote' && <VoteStateBadge state={census.state} />}
             </Flex>
-            <Text fontSize='sm' color='fg.muted' mt={1} maxW='3xl'>
+            {createdAt && (
+              // When this census came to be, to the minute: a copy is a picture of a moment
+              <Flex align='center' gap={1.5} color='fg.muted' mt={1}>
+                <Icon as={LuClock} boxSize={3.5} aria-hidden />
+                <Text fontSize='xs' fontVariantNumeric='tabular-nums'>
+                  {census.kind === 'vote' && census.source?.kind === 'snapshot'
+                    ? t('census_detail.header.copied_at', {
+                        defaultValue: 'Copy made on {{date}} at {{time}}',
+                        date: format(createdAt, 'd MMM yyyy'),
+                        time: format(createdAt, 'HH:mm'),
+                      })
+                    : t('census_detail.header.created_at', {
+                        defaultValue: 'Created on {{date}} at {{time}}',
+                        date: format(createdAt, 'd MMM yyyy'),
+                        time: format(createdAt, 'HH:mm'),
+                      })}
+                </Text>
+              </Flex>
+            )}
+            <Text fontSize='sm' color='fg.muted' mt={2} maxW='3xl'>
               {sourceSentence(t, i18n.resolvedLanguage, census)}
             </Text>
           </Box>

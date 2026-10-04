@@ -225,8 +225,8 @@
       "unreachable_other": "No pueden recibir código · {{count}}"
     },
     "header": {
-      "saved": "Censo guardado",
-      "vote": "Censo de una votación"
+      "copied_at": "Copia hecha el {{date}} a las {{time}}",
+      "created_at": "Creado el {{date}} a las {{time}}"
     },
     "load_error": "No hemos podido cargar las personas de este censo.",
     "loading": "Cargando {{done}} de {{total}}…",

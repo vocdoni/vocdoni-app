@@ -225,8 +225,8 @@
       "unreachable_other": "No poden rebre codi · {{count}}"
     },
     "header": {
-      "saved": "Cens desat",
-      "vote": "Cens d'una votació"
+      "copied_at": "Còpia feta el {{date}} a les {{time}}",
+      "created_at": "Creat el {{date}} a les {{time}}"
     },
     "load_error": "No hem pogut carregar les persones d'aquest cens.",
     "loading": "S'estan carregant {{done}} de {{total}}…",

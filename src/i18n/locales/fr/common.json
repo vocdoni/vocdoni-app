@@ -225,8 +225,8 @@
       "unreachable_other": "Sans code possible · {{count}}"
     },
     "header": {
-      "saved": "Liste électorale enregistrée",
-      "vote": "Liste électorale d'un vote"
+      "copied_at": "Copie faite le {{date}} à {{time}}",
+      "created_at": "Créée le {{date}} à {{time}}"
     },
     "load_error": "Impossible de charger les personnes de cette liste électorale.",
     "loading": "Chargement de {{done}} sur {{total}}…",

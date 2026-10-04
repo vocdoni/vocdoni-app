@@ -225,8 +225,8 @@
       "unreachable_other": "Sem código possível · {{count}}"
     },
     "header": {
-      "saved": "Lista de participantes guardada",
-      "vote": "Lista de participantes de uma votação"
+      "copied_at": "Cópia feita a {{date}} às {{time}}",
+      "created_at": "Criada a {{date}} às {{time}}"
     },
     "load_error": "Não foi possível carregar as pessoas desta lista de participantes.",
     "loading": "A carregar {{done}} de {{total}}…",

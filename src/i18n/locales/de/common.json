@@ -218,8 +218,8 @@
       "unreachable_other": "Kein Code möglich · {{count}}"
     },
     "header": {
-      "saved": "Gespeicherte Teilnehmerliste",
-      "vote": "Teilnehmerliste einer Abstimmung"
+      "copied_at": "Kopie erstellt am {{date}} um {{time}}",
+      "created_at": "Erstellt am {{date}} um {{time}}"
     },
     "load_error": "Die Personen auf dieser Teilnehmerliste konnten nicht geladen werden.",
     "loading": "{{done}} von {{total}} werden geladen…",

@@ -218,8 +218,8 @@
       "unreachable_other": "Can't get a code · {{count}}"
     },
     "header": {
-      "saved": "Saved census",
-      "vote": "Census of a vote"
+      "copied_at": "Copy made on {{date}} at {{time}}",
+      "created_at": "Created on {{date}} at {{time}}"
     },
     "load_error": "We couldn't load the people in this census.",
     "loading": "Loading {{done}} of {{total}}…",

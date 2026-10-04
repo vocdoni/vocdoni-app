@@ -218,8 +218,8 @@
       "unreachable_other": "Koderik ezin · {{count}}"
     },
     "header": {
-      "saved": "Gordetako errolda",
-      "vote": "Bozketa baten errolda"
+      "copied_at": "Kopia: {{date}}, {{time}}",
+      "created_at": "Sortua: {{date}}, {{time}}"
     },
     "load_error": "Ezin izan ditugu errolde honetako pertsonak kargatu.",
     "loading": "{{total}}(e)tik {{done}} kargatzen…",

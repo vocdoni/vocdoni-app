@@ -225,8 +225,8 @@
       "unreachable_other": "Senza codice · {{count}}"
     },
     "header": {
-      "saved": "Censimento salvato",
-      "vote": "Censimento di una votazione"
+      "copied_at": "Copia fatta il {{date}} alle {{time}}",
+      "created_at": "Creato il {{date}} alle {{time}}"
     },
     "load_error": "Non siamo riusciti a caricare le persone di questo censimento.",
     "loading": "Caricamento di {{done}} su {{total}}…",
