@@ -256,7 +256,6 @@
     },
     "picker": {
       "already_in": "Già presente",
-      "paste": "Seleziona da un elenco…",
       "search": "Cerca tra i tuoi membri",
       "selected_one": "1 selezionata",
       "selected_many": "{{formattedCount}} selezionate",
@@ -399,7 +398,7 @@
       "copied_into_one": "Copiato in «{{name}}»",
       "copied_into_many": "Copiato in «{{name}}» e altre {{more}}",
       "copied_into_other": "Copiato in «{{name}}» e altre {{more}}",
-      "new_description": "Scegli persone o incolla numeri di socio in Persone. Utile per «soci in regola» o «il direttivo».",
+      "new_description": "Scegli persone in Persone. Utile per «soci in regola» o «il direttivo».",
       "new_title": "Salva una lista da riutilizzare",
       "unused": "Non ancora usato in una votazione",
       "use": "Usa in una votazione"
@@ -407,6 +406,7 @@
     "search": "Cerca censimenti",
     "source": {
       "chosen": "Scelte a mano",
+      "copy_everyone": "Copiato da Tutti",
       "copy_from": "Copiato da «{{name}}»",
       "copy_previous": "Copiato da un'altra votazione",
       "copy_saved": "Copiato da un censimento salvato",
@@ -821,11 +821,6 @@
   "google_oauth_conflict_error": "Esiste già un account con questa email. Accedi utilizzando il metodo che hai utilizzato in precedenza.",
   "google_oauth_error": "Errore Google OAuth",
   "google_oauth_error_description": "Errore Google OAuth, riprovare",
-  "groups_board": {
-    "auto_group": {
-      "title": "Tutti i membri"
-    }
-  },
   "head": {
     "description": "Crea, gestisci e integra elezioni sicure e verificabili end-to-end con Vocdoni. Una piattaforma flessibile per organizzazioni, governi e sviluppatori per un voto digitale e processi decisionali affidabili.",
     "title": "Vocdoni | Infrastruttura di voto sicura e verificabile"
@@ -1508,7 +1503,7 @@
       "range_results_other": "{{from}}–{{to}} di {{total}} risultati",
       "retry": "Riprova",
       "row_actions": "Azioni per {{name}}",
-      "save_census_hint": "Seleziona le persone della tua lista (spuntale, o «Seleziona da un elenco…» per incollare numeri di socio), poi scegli «Salva come censimento» nella barra in basso.",
+      "save_census_hint": "Spunta le persone della tua lista, poi scegli «Salva come censimento» nella barra in basso.",
       "search_label": "Cerca membri",
       "search_placeholder": "Cerca per nome, email o numero socio",
       "select_done": "Fatto",
@@ -1930,6 +1925,7 @@
         "title": "Errore durante il salvataggio della bozza"
       },
       "save_draft_success": "Bozza salvata",
+      "save_draft_untitled": "Dai un nome alla votazione per salvarla come bozza",
       "selectionLimits": {
         "full": "I votanti devono selezionare almeno <min /> e al massimo <max /> opzioni.",
         "title": "Limiti di selezione:"
@@ -2045,31 +2041,37 @@
     "census": {
       "choose": {
         "card": "Scegli le persone",
-        "description": "Cerca, spunta o incolla un elenco.",
+        "description": "Cerca e spunta persone.",
         "find": "Cerca persone",
         "hint": "Questo voto ha un censimento tutto suo con queste persone. I tuoi membri restano invariati.",
         "none": "Ancora nessuno selezionato.",
         "remove": "Rimuovi {{name}}",
-        "selected_many": "Selezionati ({{count}})",
         "selected_one": "Selezionati ({{count}})",
+        "selected_many": "Selezionati ({{count}})",
         "selected_other": "Selezionati ({{count}})",
-        "submit_many": "Usa {{formattedCount}} persone",
         "submit_one": "Usa 1 persona",
+        "submit_many": "Usa {{formattedCount}} persone",
         "submit_other": "Usa {{formattedCount}} persone",
         "title": "Scegli chi può votare"
+      },
+      "copy_everyone": {
+        "button": "Modifica questa lista",
+        "confirm": "Dagli una lista propria",
+        "description": "Questa votazione avrà una lista propria con tutti i tuoi membri come sono adesso, e potrai aggiungere o togliere persone. Da quel momento i nuovi membri non entreranno da soli.",
+        "title": "Modificare questa lista?"
       },
       "error": "Impossibile modificare chi può votare",
       "error_detail": "Non è cambiato nulla. Riprova tra un attimo.",
       "error_empty": "Non c'è nessuno da copiare",
       "error_stale": "Questa bozza è stata modificata altrove. Ricarica la pagina e riprova.",
       "everyone": {
-        "description_many": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
         "description_one": "Il tuo unico membro. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
+        "description_many": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
         "description_other": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
         "title": "Tutti"
       },
       "go_to_members": "Vai a Membri",
-      "group_title": "{{vote}} — censimento",
+      "group_title_dated": "{{vote}} — {{date}}",
       "keep_current": "Mantieni il censimento attuale",
       "line": {
         "checking": "Verifica di chi può ricevere un codice…",
@@ -2078,22 +2080,25 @@
         "ready": "Censimento pronto",
         "review": "Controlla il censimento",
         "sms": "{{sms}} ricevono il codice via SMS",
-        "unreachable_many": "{{formattedCount}} votanti non possono ricevere un codice: niente email né cellulare",
         "unreachable_one": "1 votante non può ricevere un codice: niente email né cellulare",
+        "unreachable_many": "{{formattedCount}} votanti non possono ricevere un codice: niente email né cellulare",
         "unreachable_other": "{{formattedCount}} votanti non possono ricevere un codice: niente email né cellulare",
-        "voters_many": "{{formattedCount}} votanti",
         "voters_one": "1 votante",
+        "voters_many": "{{formattedCount}} votanti",
         "voters_other": "{{formattedCount}} votanti"
-      },
-      "memberbase": {
-        "label": "Seleziona un gruppo di membri per creare il censimento"
       },
       "missing": "Il censimento usato da questa bozza è stato eliminato. Scegli di nuovo chi può votare.",
       "name_first": "Dai prima un nome al voto, così potrà avere un censimento tutto suo",
       "no_members": "Aggiungi prima i tuoi membri: poi sceglierai chi può votare.",
+      "not_in_copy": {
+        "review": "Controlla",
+        "text_one": "1 membro non è in questa lista: aggiunto dopo averla creata, o tolto.",
+        "text_many": "{{formattedCount}} membri non sono in questa lista: aggiunti dopo averla creata, o tolti.",
+        "text_other": "{{formattedCount}} membri non sono in questa lista: aggiunti dopo averla creata, o tolti."
+      },
       "owned": {
-        "count_many": "{{formattedCount}} persone",
         "count_one": "1 persona",
+        "count_many": "{{formattedCount}} persone",
         "count_other": "{{formattedCount}} persone",
         "edit": "Modifica il censimento",
         "start_over": "Ricomincia"
@@ -2106,6 +2111,7 @@
         "none": "Non ci sono ancora altri voti.",
         "title": "Come un voto precedente"
       },
+      "reload": "Ricarica",
       "saved": {
         "after_name": "Ne riceve una copia propria appena il voto ha un nome.",
         "description": "Questo voto ottiene una copia propria.",
@@ -2119,17 +2125,17 @@
         "copied_on": "Copiato da «{{name}}» il {{date}}",
         "test": "Le persone del voto di prova"
       },
-      "test_people_leave_out": "Escludile",
-      "test_people_many": "{{count}} persone di prova sono tra i tuoi membri",
       "test_people_one": "1 persona di prova è tra i tuoi membri",
-      "test_people_other": "{{count}} persone di prova sono tra i tuoi membri"
+      "test_people_many": "{{count}} persone di prova sono tra i tuoi membri",
+      "test_people_other": "{{count}} persone di prova sono tra i tuoi membri",
+      "test_people_leave_out": "Escludile",
+      "test_people_left_out_one": "La persona di prova della tua votazione di prova non sarà in questa votazione. Chi aggiungi prima di pubblicare sì.",
+      "test_people_left_out_many": "Le {{count}} persone di prova della tua votazione di prova non saranno in questa votazione. Chi aggiungi prima di pubblicare sì.",
+      "test_people_left_out_other": "Le {{count}} persone di prova della tua votazione di prova non saranno in questa votazione. Chi aggiungi prima di pubblicare sì."
     },
     "census_creation": "Creazione censimento",
     "end_datetime": "Data e ora di fine",
     "extra_configuration": "Configurazione extra",
-    "issue": {
-      "census_unreachable": "Alcuni votanti non possono ricevere un codice per accedere"
-    },
     "new_option": "Aggiungi una nuova opzione",
     "option": {
       "description_placeholder": "Descrizione (opzionale)",
@@ -2137,13 +2143,16 @@
       "remove": "Rimuovi opzione"
     },
     "question": {
+      "abstain": "Astensione",
       "description": {
         "placeholder": "Aggiungi qui la descrizione della domanda (opzionale)..."
       },
+      "no": "No",
       "remove": "Rimuovi domanda",
       "title": {
         "placeholder": "Aggiungi un titolo alla domanda"
-      }
+      },
+      "yes": "Sì"
     },
     "remove_option": "Rimuovi opzione",
     "result_visibility": {
@@ -2152,17 +2161,13 @@
       "title": "Visibilità risultati"
     },
     "review": {
-      "census_failed": "Non è stato possibile preparare il censimento, quindi non è stato pubblicato nulla. Riprova.",
-      "census_stale": "Questa bozza è stata modificata altrove durante la pubblicazione. Non è stato pubblicato nulla. Ricarica la pagina e riprova.",
-      "frozen_many": "Quando pubblichi, questa votazione avrà una propria copia di queste {{count}} persone. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
-      "frozen_one": "Quando pubblichi, questa votazione avrà una propria copia di questa persona. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
-      "frozen_other": "Quando pubblichi, questa votazione avrà una propria copia di queste {{count}} persone. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
-      "own_census_many": "Le {{count}} persone nel censimento di questo voto possono votare",
-      "own_census_one": "L'unica persona nel censimento di questo voto può votare",
-      "own_census_other": "Le {{count}} persone nel censimento di questo voto possono votare"
+      "census_stale_reload": "Questa bozza è stata modificata altrove. Ricaricala per vedere l’ultima versione, poi pubblicala."
     },
     "settings": "Impostazioni",
     "start_datetime": "Data e ora di inizio",
+    "voters": {
+      "title": "Chi può votare"
+    },
     "weight": {
       "equal": "Una persona, un voto",
       "title": "Potere di voto",
@@ -2343,6 +2348,7 @@
       "placeholder": "Uno o più, separati da virgole o a capo",
       "title": "Qualcuno ha votato?"
     },
+    "manage_census": "Gestisci il censimento",
     "sign_in": {
       "details": "I membri accedono con i propri dati.",
       "email": "I membri accedono con i propri dati e un codice monouso via email.",

@@ -247,7 +247,6 @@
     },
     "picker": {
       "already_in": "Schon dabei",
-      "paste": "Aus einer Liste auswählen…",
       "search": "In deinen Mitgliedern suchen",
       "selected_one": "1 ausgewählt",
       "selected_other": "{{formattedCount}} ausgewählt"
@@ -374,7 +373,7 @@
     "saved_card": {
       "copied_into_one": "In „{{name}}“ kopiert",
       "copied_into_other": "In „{{name}}“ und {{more}} weitere kopiert",
-      "new_description": "Wähle Personen aus oder füge Mitgliedsnummern unter Personen ein. Praktisch für „zahlende Mitglieder“ oder „den Vorstand“.",
+      "new_description": "Wähle Personen unter Personen aus. Praktisch für „zahlende Mitglieder“ oder „den Vorstand“.",
       "new_title": "Speichere eine Liste zum Wiederverwenden",
       "unused": "Noch in keiner Abstimmung verwendet",
       "use": "In einer Abstimmung verwenden"
@@ -382,6 +381,7 @@
     "search": "Teilnehmerlisten suchen",
     "source": {
       "chosen": "Von Hand ausgewählt",
+      "copy_everyone": "Von Alle kopiert",
       "copy_from": "Kopiert von „{{name}}“",
       "copy_previous": "Aus einer anderen Abstimmung kopiert",
       "copy_saved": "Aus einer gespeicherten Teilnehmerliste kopiert",
@@ -793,11 +793,6 @@
   "google_oauth_conflict_error": "Ein Konto mit dieser E-Mail-Adresse existiert bereits. Bitte melde dich mit deiner bisherigen Methode an.",
   "google_oauth_error": "Google OAuth-Fehler",
   "google_oauth_error_description": "Google OAuth-Fehler, bitte versuche es erneut",
-  "groups_board": {
-    "auto_group": {
-      "title": "Alle Mitglieder"
-    }
-  },
   "head": {
     "description": "Erstelle, verwalte und integriere sichere, Ende-zu-Ende-verifizierbare Abstimmungen mit Vocdoni. Eine flexible Plattform für Organisationen, Regierungen und Entwickler für vertrauenswürdige digitale Abstimmungen und Entscheidungsprozesse.",
     "title": "Vocdoni | Sichere & überprüfbare Abstimmungsinfrastruktur"
@@ -1446,7 +1441,7 @@
       "range_results_other": "{{from}}–{{to}} von {{total}} Ergebnissen",
       "retry": "Erneut versuchen",
       "row_actions": "Aktionen für {{name}}",
-      "save_census_hint": "Wähle die Personen für deine Liste aus (hake sie an oder füge über „Aus einer Liste auswählen …“ Mitgliedsnummern ein) und wähle dann unten in der Leiste „Als Teilnehmerliste speichern“.",
+      "save_census_hint": "Hake die Personen für deine Liste an und wähle dann unten in der Leiste „Als Teilnehmerliste speichern“.",
       "search_label": "Mitglieder suchen",
       "search_placeholder": "Nach Name, E-Mail oder Mitgliedsnummer suchen",
       "select_done": "Fertig",
@@ -1847,6 +1842,7 @@
         "title": "Fehler beim Speichern des Entwurfs"
       },
       "save_draft_success": "Entwurf gespeichert",
+      "save_draft_untitled": "Gib deiner Abstimmung einen Namen, um sie als Entwurf zu speichern",
       "selectionLimits": {
         "full": "Wählende müssen mindestens  <min />  und höchstens  <max />  Optionen auswählen.",
         "title": "Auswahlgrenzen:"
@@ -1960,7 +1956,7 @@
     "census": {
       "choose": {
         "card": "Personen auswählen",
-        "description": "Suche, hake an oder füge eine Liste ein.",
+        "description": "Suche und hake Personen an.",
         "find": "Personen suchen",
         "hint": "Diese Abstimmung bekommt daraus eine eigene Teilnehmerliste. Deine Mitglieder bleiben unverändert.",
         "none": "Noch niemand ausgewählt.",
@@ -1970,6 +1966,12 @@
         "submit_one": "1 Person verwenden",
         "submit_other": "{{formattedCount}} Personen verwenden",
         "title": "Auswählen, wer abstimmen kann"
+      },
+      "copy_everyone": {
+        "button": "Diese Liste bearbeiten",
+        "confirm": "Eigene Liste anlegen",
+        "description": "Diese Abstimmung bekommt eine eigene Liste mit allen Mitgliedern, wie sie jetzt sind, und du kannst Personen hinzufügen oder entfernen. Danach kommen neue Mitglieder nicht mehr von selbst dazu.",
+        "title": "Diese Liste bearbeiten?"
       },
       "error": "Wer abstimmen kann, konnte nicht geändert werden",
       "error_detail": "Nichts wurde geändert. Versuche es gleich noch einmal.",
@@ -1981,7 +1983,7 @@
         "title": "Alle"
       },
       "go_to_members": "Zu den Mitgliedern",
-      "group_title": "{{vote}} — Teilnehmerliste",
+      "group_title_dated": "{{vote}} — {{date}}",
       "keep_current": "Aktuelle Teilnehmerliste behalten",
       "line": {
         "checking": "Prüfe, wer einen Code bekommen kann…",
@@ -1995,12 +1997,14 @@
         "voters_one": "1 Person",
         "voters_other": "{{formattedCount}} Personen"
       },
-      "memberbase": {
-        "label": "Wähle eine Mitgliedergruppe aus, um die Teilnehmerliste zu erstellen"
-      },
       "missing": "Die Teilnehmerliste dieses Entwurfs wurde gelöscht. Wähle erneut, wer abstimmen kann.",
       "name_first": "Gib der Abstimmung zuerst einen Namen, damit sie eine eigene Teilnehmerliste bekommt",
       "no_members": "Füge zuerst deine Mitglieder hinzu, dann wählst du, wer abstimmen kann.",
+      "not_in_copy": {
+        "review": "Prüfen",
+        "text_one": "1 Mitglied ist nicht in dieser Liste: später hinzugefügt oder entfernt.",
+        "text_other": "{{formattedCount}} Mitglieder sind nicht in dieser Liste: später hinzugefügt oder entfernt."
+      },
       "owned": {
         "count_one": "1 Person",
         "count_other": "{{formattedCount}} Personen",
@@ -2015,6 +2019,7 @@
         "none": "Es gibt noch keine anderen Abstimmungen.",
         "title": "Wie eine frühere Abstimmung"
       },
+      "reload": "Neu laden",
       "saved": {
         "after_name": "Sie bekommt eine eigene Kopie, sobald die Abstimmung einen Namen hat.",
         "description": "Diese Abstimmung bekommt eine eigene Kopie.",
@@ -2028,16 +2033,15 @@
         "copied_on": "Kopiert von „{{name}}“ am {{date}}",
         "test": "Die Personen der Testabstimmung"
       },
-      "test_people_leave_out": "Ausschließen",
       "test_people_one": "1 Testperson ist unter deinen Mitgliedern",
-      "test_people_other": "{{count}} Testpersonen sind unter deinen Mitgliedern"
+      "test_people_other": "{{count}} Testpersonen sind unter deinen Mitgliedern",
+      "test_people_leave_out": "Ausschließen",
+      "test_people_left_out_one": "Die Testperson aus deiner Testabstimmung ist bei dieser Abstimmung nicht dabei. Alle, die du vor dem Veröffentlichen hinzufügst, schon.",
+      "test_people_left_out_other": "Die {{count}} Testpersonen aus deiner Testabstimmung sind bei dieser Abstimmung nicht dabei. Alle, die du vor dem Veröffentlichen hinzufügst, schon."
     },
     "census_creation": "Erstellung der Teilnehmerliste",
     "end_datetime": "Enddatum und -uhrzeit",
     "extra_configuration": "Zusätzliche Konfiguration",
-    "issue": {
-      "census_unreachable": "Manche Wählende können keinen Code zum Anmelden erhalten"
-    },
     "new_option": "Neue Option hinzufügen",
     "option": {
       "description_placeholder": "Beschreibung (optional)",
@@ -2045,13 +2049,16 @@
       "remove": "Option entfernen"
     },
     "question": {
+      "abstain": "Enthaltung",
       "description": {
         "placeholder": "Beschreibung der Frage hier hinzufügen (optional)…"
       },
+      "no": "Nein",
       "remove": "Frage entfernen",
       "title": {
         "placeholder": "Titel der Frage hinzufügen"
-      }
+      },
+      "yes": "Ja"
     },
     "remove_option": "Option entfernen",
     "result_visibility": {
@@ -2060,15 +2067,13 @@
       "title": "Sichtbarkeit der Ergebnisse"
     },
     "review": {
-      "census_failed": "Die Teilnehmerliste konnte nicht vorbereitet werden, daher wurde nichts veröffentlicht. Versuche es erneut.",
-      "census_stale": "Dieser Entwurf wurde während der Veröffentlichung woanders geändert. Es wurde nichts veröffentlicht. Lade die Seite neu und versuche es erneut.",
-      "frozen_one": "Mit der Veröffentlichung bekommt diese Abstimmung eine eigene Kopie dieser einen Person. Wer später beitritt, wird nicht automatisch hinzugefügt: Füge diese Personen im Tab „Wählende“ der Abstimmung hinzu, wo du auch Personen entfernen kannst.",
-      "frozen_other": "Mit der Veröffentlichung bekommt diese Abstimmung eine eigene Kopie dieser {{count}} Personen. Wer später beitritt, wird nicht automatisch hinzugefügt: Füge diese Personen im Tab „Wählende“ der Abstimmung hinzu, wo du auch Personen entfernen kannst.",
-      "own_census_one": "Die eine Person in der Teilnehmerliste dieser Abstimmung kann abstimmen",
-      "own_census_other": "Die {{count}} Personen in der Teilnehmerliste dieser Abstimmung können abstimmen"
+      "census_stale_reload": "Dieser Entwurf wurde woanders geändert. Lade ihn neu, um die neueste Version zu sehen, und veröffentliche ihn dann."
     },
     "settings": "Einstellungen",
     "start_datetime": "Startdatum und -uhrzeit",
+    "voters": {
+      "title": "Wer abstimmen kann"
+    },
     "weight": {
       "equal": "Eine Person, eine Stimme",
       "title": "Stimmgewicht",
@@ -2248,6 +2253,7 @@
       "placeholder": "Ein oder mehrere Einträge, getrennt durch Kommas oder Zeilenumbrüche",
       "title": "Hat jemand abgestimmt?"
     },
+    "manage_census": "Teilnehmerliste verwalten",
     "sign_in": {
       "details": "Mitglieder melden sich mit ihren Daten an.",
       "email": "Mitglieder melden sich mit ihren Daten und einem Einmalcode per E-Mail an.",

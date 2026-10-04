@@ -247,7 +247,6 @@
     },
     "picker": {
       "already_in": "Already in",
-      "paste": "Select from a list…",
       "search": "Search your members",
       "selected_one": "1 selected",
       "selected_other": "{{formattedCount}} selected"
@@ -374,7 +373,7 @@
     "saved_card": {
       "copied_into_one": "Copied into '{{name}}'",
       "copied_into_other": "Copied into '{{name}}' and {{more}} more",
-      "new_description": "Pick people or paste member numbers in People. Handy for 'paid-up members' or 'the board'.",
+      "new_description": "Pick people in People. Handy for 'paid-up members' or 'the board'.",
       "new_title": "Save a list you'll reuse",
       "unused": "Not used in a vote yet",
       "use": "Use in a vote"
@@ -382,6 +381,7 @@
     "search": "Search censuses",
     "source": {
       "chosen": "Chosen by hand",
+      "copy_everyone": "Copied from Everyone",
       "copy_from": "Copied from '{{name}}'",
       "copy_previous": "Copied from another vote",
       "copy_saved": "Copied from a saved census",
@@ -793,11 +793,6 @@
   "google_oauth_conflict_error": "An account with this email already exists. Please sign in using your existing method.",
   "google_oauth_error": "Google OAuth Error",
   "google_oauth_error_description": "Google OAuth error, please try again",
-  "groups_board": {
-    "auto_group": {
-      "title": "All Members"
-    }
-  },
   "head": {
     "description": "Build, manage, and integrate secure, e2e verifiable elections with Vocdoni. A flexible platform for organizations, governments, and developers to power trusted digital voting and decision-making.",
     "title": "Vocdoni | Secure & verifiable voting infrastructure"
@@ -1446,7 +1441,7 @@
       "range_results_other": "{{from}}–{{to}} of {{total}} results",
       "retry": "Try again",
       "row_actions": "Actions for {{name}}",
-      "save_census_hint": "Select the people for your list (tick them, or 'Select from a list…' to paste member numbers), then choose 'Save as census' in the bar below.",
+      "save_census_hint": "Tick the people for your list, then choose 'Save as census' in the bar below.",
       "search_label": "Search members",
       "search_placeholder": "Search name, email or member number",
       "select_done": "Done",
@@ -1847,6 +1842,7 @@
         "title": "Error saving draft"
       },
       "save_draft_success": "Draft saved",
+      "save_draft_untitled": "Name your vote to save it as a draft",
       "selectionLimits": {
         "full": "Voters must select at least  <min />  and at most  <max />  options.",
         "title": "Selection limits:"
@@ -1960,7 +1956,7 @@
     "census": {
       "choose": {
         "card": "Choose people",
-        "description": "Search, tick or paste a list.",
+        "description": "Search and tick people.",
         "find": "Find people",
         "hint": "This vote gets its own census of them. Your members stay as they are.",
         "none": "Nobody selected yet.",
@@ -1970,6 +1966,12 @@
         "submit_one": "Use 1 person",
         "submit_other": "Use {{formattedCount}} people",
         "title": "Choose who can vote"
+      },
+      "copy_everyone": {
+        "button": "Edit this list",
+        "confirm": "Make its own list",
+        "description": "This vote gets its own list with all your members as they are now, and you can add or take out people. From then on, new members won't join it by themselves.",
+        "title": "Edit this list?"
       },
       "error": "Who can vote couldn't be changed",
       "error_detail": "Nothing changed. Try again in a moment.",
@@ -1981,7 +1983,7 @@
         "title": "Everyone"
       },
       "go_to_members": "Go to Members",
-      "group_title": "{{vote}} — census",
+      "group_title_dated": "{{vote}} — {{date}}",
       "keep_current": "Keep the current census",
       "line": {
         "checking": "Checking who can get a code…",
@@ -1995,12 +1997,14 @@
         "voters_one": "1 voter",
         "voters_other": "{{formattedCount}} voters"
       },
-      "memberbase": {
-        "label": "Select a group of members to create the census"
-      },
       "missing": "The census this draft used was deleted. Choose who can vote again.",
       "name_first": "Name your vote first, so it can have a census of its own",
       "no_members": "Add your members first: then you choose who can vote.",
+      "not_in_copy": {
+        "review": "Review",
+        "text_one": "1 member isn't in this list: someone added after you made it, or taken out of it.",
+        "text_other": "{{formattedCount}} members aren't in this list: people added after you made it, or taken out of it."
+      },
       "owned": {
         "count_one": "1 person",
         "count_other": "{{formattedCount}} people",
@@ -2015,6 +2019,7 @@
         "none": "There are no other votes yet.",
         "title": "Same as a previous vote"
       },
+      "reload": "Reload",
       "saved": {
         "after_name": "It gets its own copy as soon as the vote has a name.",
         "description": "This vote gets its own copy.",
@@ -2028,16 +2033,15 @@
         "copied_on": "Copied from '{{name}}' on {{date}}",
         "test": "The test vote’s people"
       },
-      "test_people_leave_out": "Leave them out",
       "test_people_one": "1 test person is in your members",
-      "test_people_other": "{{count}} test people are in your members"
+      "test_people_other": "{{count}} test people are in your members",
+      "test_people_leave_out": "Leave them out",
+      "test_people_left_out_one": "The test person from your test vote won't be in this vote. Everyone else you add before publishing will.",
+      "test_people_left_out_other": "The {{count}} test people from your test vote won't be in this vote. Everyone else you add before publishing will."
     },
     "census_creation": "Census creation",
     "end_datetime": "End date and time",
     "extra_configuration": "Extra configuration",
-    "issue": {
-      "census_unreachable": "Some voters can't get a code to sign in"
-    },
     "new_option": "Add a new option",
     "option": {
       "description_placeholder": "Description (optional)",
@@ -2045,13 +2049,16 @@
       "remove": "Remove option"
     },
     "question": {
+      "abstain": "Abstain",
       "description": {
         "placeholder": "Add the description of the question here (optional)..."
       },
+      "no": "No",
       "remove": "Remove question",
       "title": {
         "placeholder": "Add a title to the question"
-      }
+      },
+      "yes": "Yes"
     },
     "remove_option": "Remove option",
     "result_visibility": {
@@ -2060,15 +2067,13 @@
       "title": "Result visibility"
     },
     "review": {
-      "census_failed": "The census couldn't be prepared, so nothing was published. Try again.",
-      "census_stale": "This draft was changed somewhere else while publishing. Nothing was published. Reload the page and try again.",
-      "frozen_one": "When you publish, this vote gets its own copy of this 1 person. People who join later aren't added automatically: add them from the vote's Voters tab, where you can also remove people.",
-      "frozen_other": "When you publish, this vote gets its own copy of these {{count}} people. People who join later aren't added automatically: add them from the vote's Voters tab, where you can also remove people.",
-      "own_census_one": "The 1 person in this vote's census can vote",
-      "own_census_other": "The {{count}} people in this vote's census can vote"
+      "census_stale_reload": "This draft was changed somewhere else. Reload it to see the latest version, then publish."
     },
     "settings": "Settings",
     "start_datetime": "Start date and time",
+    "voters": {
+      "title": "Who can vote"
+    },
     "weight": {
       "equal": "One person, one vote",
       "title": "Voting power",
@@ -2248,6 +2253,7 @@
       "placeholder": "One or more, separated by commas or new lines",
       "title": "Has someone voted?"
     },
+    "manage_census": "Manage census",
     "sign_in": {
       "details": "Members sign in with their details.",
       "email": "Members sign in with their details and a one-time code by email.",

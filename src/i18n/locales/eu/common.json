@@ -247,7 +247,6 @@
     },
     "picker": {
       "already_in": "Badago",
-      "paste": "Hautatu zerrenda batetik…",
       "search": "Bilatu zure kideen artean",
       "selected_one": "1 hautatuta",
       "selected_other": "{{formattedCount}} hautatuta"
@@ -374,7 +373,7 @@
     "saved_card": {
       "copied_into_one": "«{{name}}» bozketara kopiatua",
       "copied_into_other": "«{{name}}» bozketara eta beste {{more}}etara kopiatua",
-      "new_description": "Aukeratu pertsonak edo itsatsi bazkide-zenbakiak Pertsonak atalean. Erabilgarria «kuotak egunean dituzten bazkideak» edo «zuzendaritza» egiteko.",
+      "new_description": "Aukeratu pertsonak Pertsonak atalean. Erabilgarria «kuotak egunean dituzten bazkideak» edo «zuzendaritza» egiteko.",
       "new_title": "Gorde berrerabiliko duzun zerrenda bat",
       "unused": "Oraindik ez da bozketa batean erabili",
       "use": "Erabili bozketa batean"
@@ -382,6 +381,7 @@
     "search": "Bilatu erroldak",
     "source": {
       "chosen": "Eskuz hautatuak",
+      "copy_everyone": "«Denak»-etik kopiatua",
       "copy_from": "«{{name}}» erroldetik kopiatua",
       "copy_previous": "Beste bozketa batetik kopiatua",
       "copy_saved": "Gordetako errolda batetik kopiatua",
@@ -793,11 +793,6 @@
   "google_oauth_conflict_error": "Posta elektroniko honekin lotutako kontu bat dago dagoeneko. Mesedez, hasi saioa zure egungo metodoarekin.",
   "google_oauth_error": "Google OAuth errorea",
   "google_oauth_error_description": "Google OAuth errorea, saiatu berriro",
-  "groups_board": {
-    "auto_group": {
-      "title": "Kide guztiak"
-    }
-  },
   "head": {
     "description": "Sortu, kudeatu eta integratu hauteskunde seguruak eta muturretik muturrera egiaztagarriak Vocdonirekin. Plataforma malgua erakunde, gobernu eta garatzaileentzat, konfiantzazko boto-emate digitala eta erabakiak hartzea bultzatzeko.",
     "title": "Vocdoni | Boto-emate azpiegitura segurua eta egiaztagarria"
@@ -1446,7 +1441,7 @@
       "range_results_other": "{{from}}–{{to}} / {{total}} emaitza",
       "retry": "Saiatu berriro",
       "row_actions": "Ekintzak: {{name}}",
-      "save_census_hint": "Hautatu zure zerrendako pertsonak (markatu, edo erabili «Hautatu zerrenda batetik…» bazkide-zenbakiak itsasteko) eta aukeratu «Gorde errolde gisa» beheko barran.",
+      "save_census_hint": "Markatu zure zerrendako pertsonak eta aukeratu «Gorde errolde gisa» beheko barran.",
       "search_label": "Bilatu kideak",
       "search_placeholder": "Bilatu izena, posta elektronikoa edo kide-zenbakia",
       "select_done": "Eginda",
@@ -1847,6 +1842,7 @@
         "title": "Errorea zirriborroa gordetzean"
       },
       "save_draft_success": "Zirriborroa gorde da",
+      "save_draft_untitled": "Jarri izena zure bozketari zirriborro gisa gordetzeko",
       "selectionLimits": {
         "full": "Hautesleek gutxienez <min /> eta gehienez <max /> aukera hautatu behar dituzte.",
         "title": "Hautaketa-mugak:"
@@ -1960,7 +1956,7 @@
     "census": {
       "choose": {
         "card": "Hautatu pertsonak",
-        "description": "Bilatu, markatu edo itsatsi zerrenda bat.",
+        "description": "Bilatu eta markatu pertsonak.",
         "find": "Bilatu pertsonak",
         "hint": "Bozketa honek haiekin osatutako erroldea izango du. Zure kideak ez dira aldatzen.",
         "none": "Oraindik ez da inor hautatu.",
@@ -1970,6 +1966,12 @@
         "submit_one": "Erabili pertsona 1",
         "submit_other": "Erabili {{formattedCount}} pertsona",
         "title": "Hautatu nork bozka dezakeen"
+      },
+      "copy_everyone": {
+        "button": "Editatu zerrenda hau",
+        "confirm": "Eman zerrenda propioa",
+        "description": "Bozketa honek bere zerrenda izango du zure kide guztiekin, orain dauden bezala, eta pertsonak gehitu edo kendu ahal izango dituzu. Hortik aurrera, kide berriak ez dira berez gehituko.",
+        "title": "Zerrenda hau editatu?"
       },
       "error": "Ezin izan da aldatu nork bozka dezakeen",
       "error_detail": "Ez da ezer aldatu. Saiatu berriro une batean.",
@@ -1981,7 +1983,7 @@
         "title": "Denak"
       },
       "go_to_members": "Joan Kideetara",
-      "group_title": "{{vote}} — erroldea",
+      "group_title_dated": "{{vote}} — {{date}}",
       "keep_current": "Mantendu uneko erroldea",
       "line": {
         "checking": "Nork jaso dezakeen kodea egiaztatzen…",
@@ -1995,12 +1997,14 @@
         "voters_one": "Botogile 1",
         "voters_other": "{{formattedCount}} botogile"
       },
-      "memberbase": {
-        "label": "Hautatu kide-talde bat errolda sortzeko"
-      },
       "missing": "Zirriborro honek erabiltzen zuen erroldea ezabatu da. Hautatu berriro nork bozka dezakeen.",
       "name_first": "Jarri izena bozketari lehenik, bere errolda propioa izan dezan",
       "no_members": "Gehitu zure kideak lehenik: gero hautatuko duzu nork bozka dezakeen.",
+      "not_in_copy": {
+        "review": "Berrikusi",
+        "text_one": "Kide 1 ez dago zerrenda honetan: sortu ondoren gehitua, edo kendua.",
+        "text_other": "{{formattedCount}} kide ez daude zerrenda honetan: sortu ondoren gehituak, edo kenduak."
+      },
       "owned": {
         "count_one": "Pertsona 1",
         "count_other": "{{formattedCount}} pertsona",
@@ -2015,6 +2019,7 @@
         "none": "Oraindik ez dago beste bozketarik.",
         "title": "Aurreko bozketa bera"
       },
+      "reload": "Birkargatu",
       "saved": {
         "after_name": "Bere kopia propioa izango du bozketak izena duenean.",
         "description": "Bozketa honek bere kopia propioa izango du.",
@@ -2028,16 +2033,15 @@
         "copied_on": "«{{name}}» erroldetik kopiatua, {{date}}(e)an",
         "test": "Proba-bozketako pertsonak"
       },
-      "test_people_leave_out": "Utzi kanpoan",
       "test_people_one": "Proba-pertsona 1 dago zure kideen artean",
-      "test_people_other": "{{count}} proba-pertsona daude zure kideen artean"
+      "test_people_other": "{{count}} proba-pertsona daude zure kideen artean",
+      "test_people_leave_out": "Utzi kanpoan",
+      "test_people_left_out_one": "Zure proba-bozketako proba-pertsona ez da bozketa honetan egongo. Argitaratu aurretik gehitzen dituzunak bai.",
+      "test_people_left_out_other": "Zure proba-bozketako {{count}} proba-pertsonak ez dira bozketa honetan egongo. Argitaratu aurretik gehitzen dituzunak bai."
     },
     "census_creation": "Erroldaren sorrera",
     "end_datetime": "Amaiera-data eta -ordua",
     "extra_configuration": "Konfigurazio aurreratua",
-    "issue": {
-      "census_unreachable": "Botogile batzuek ezin dute saioa hasteko kodea jaso"
-    },
     "new_option": "Gehitu aukera berria",
     "option": {
       "description_placeholder": "Deskribapena (aukerakoa)",
@@ -2045,13 +2049,16 @@
       "remove": "Kendu aukera"
     },
     "question": {
+      "abstain": "Abstentzioa",
       "description": {
         "placeholder": "Gehitu galderaren deskribapena hemen (aukerakoa)..."
       },
+      "no": "Ez",
       "remove": "Kendu galdera",
       "title": {
         "placeholder": "Gehitu izenburu galderari"
-      }
+      },
+      "yes": "Bai"
     },
     "remove_option": "Kendu aukera",
     "result_visibility": {
@@ -2060,15 +2067,13 @@
       "title": "Emaitzen ikusgaitasuna"
     },
     "review": {
-      "census_failed": "Ezin izan da erroldea prestatu, beraz ez da ezer argitaratu. Saiatu berriro.",
-      "census_stale": "Zirriborro hau beste nonbait aldatu da argitaratzen ari zen bitartean. Ez da ezer argitaratu. Birkargatu orria eta saiatu berriro.",
-      "frozen_one": "Argitaratzean, bozketa honek pertsona honen kopia propioa izango du. Geroago sartzen direnak ez dira automatikoki gehitzen: gehitu bozketaren Botogileak fitxatik, eta han pertsonak kendu ere egin ditzakezu.",
-      "frozen_other": "Argitaratzean, bozketa honek {{count}} pertsona hauen kopia propioa izango du. Geroago sartzen direnak ez dira automatikoki gehitzen: gehitu bozketaren Botogileak fitxatik, eta han pertsonak kendu ere egin ditzakezu.",
-      "own_census_one": "Bozketa honen erroldako pertsona 1ek bozka dezake",
-      "own_census_other": "Bozketa honen erroldako {{count}} pertsonek bozka dezakete"
+      "census_stale_reload": "Zirriborro hau beste nonbait aldatu da. Kargatu berriro azken bertsioa ikusteko, eta gero argitaratu."
     },
     "settings": "Konfigurazioa",
     "start_datetime": "Hasiera-data eta -ordua",
+    "voters": {
+      "title": "Nork bozka dezake"
+    },
     "weight": {
       "equal": "Pertsona bat, boto bat",
       "title": "Boto-pisua",
@@ -2248,6 +2253,7 @@
       "placeholder": "Bat edo gehiago, komaz edo lerro-jauziz bereizita",
       "title": "Norbaitek bozkatu du?"
     },
+    "manage_census": "Kudeatu erroldea",
     "sign_in": {
       "details": "Kideek beren datuekin hasten dute saioa.",
       "email": "Kideek beren datuekin eta posta elektronikoz jasotako erabilera bakarreko kode batekin hasten dute saioa.",

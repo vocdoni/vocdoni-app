@@ -256,7 +256,6 @@
     },
     "picker": {
       "already_in": "Déjà inscrite",
-      "paste": "Sélectionner depuis une liste…",
       "search": "Rechercher dans vos membres",
       "selected_one": "1 sélectionnée",
       "selected_many": "{{formattedCount}} sélectionnées",
@@ -399,7 +398,7 @@
       "copied_into_one": "Copiée dans « {{name}} »",
       "copied_into_many": "Copiée dans « {{name}} » et {{more}} autres",
       "copied_into_other": "Copiée dans « {{name}} » et {{more}} autres",
-      "new_description": "Choisissez des personnes ou collez des numéros de membre dans Personnes. Pratique pour « membres à jour » ou « le bureau ».",
+      "new_description": "Choisissez des personnes dans Personnes. Pratique pour « membres à jour » ou « le bureau ».",
       "new_title": "Enregistrez une liste à réutiliser",
       "unused": "Pas encore utilisée dans un vote",
       "use": "Utiliser dans un vote"
@@ -407,6 +406,7 @@
     "search": "Rechercher des listes",
     "source": {
       "chosen": "Choisies à la main",
+      "copy_everyone": "Copiée de Tout le monde",
       "copy_from": "Copiée depuis « {{name}} »",
       "copy_previous": "Copiée d'un autre vote",
       "copy_saved": "Copiée d'une liste électorale enregistrée",
@@ -821,11 +821,6 @@
   "google_oauth_conflict_error": "Un compte avec cette adresse e-mail existe déjà. Veuillez vous connecter avec votre méthode existante.",
   "google_oauth_error": "Erreur OAuth Google",
   "google_oauth_error_description": "Erreur OAuth Google, veuillez réessayer",
-  "groups_board": {
-    "auto_group": {
-      "title": "Tous les membres"
-    }
-  },
   "head": {
     "description": "Créez, gérez et intégrez des élections sécurisées et vérifiables de bout en bout avec Vocdoni. Une plateforme flexible pour les organisations, les gouvernements et les développeurs, pour un vote numérique et une prise de décision fiables.",
     "title": "Vocdoni | Infrastructure de vote sécurisée et vérifiable"
@@ -1508,7 +1503,7 @@
       "range_results_other": "{{from}}–{{to}} sur {{total}} résultats",
       "retry": "Réessayer",
       "row_actions": "Actions pour {{name}}",
-      "save_census_hint": "Sélectionnez les personnes de votre liste (cochez-les, ou « Sélectionner depuis une liste… » pour coller des numéros de membre), puis choisissez « Enregistrer comme liste électorale » dans la barre en bas.",
+      "save_census_hint": "Cochez les personnes de votre liste, puis choisissez « Enregistrer comme liste électorale » dans la barre en bas.",
       "search_label": "Rechercher des membres",
       "search_placeholder": "Rechercher par nom, e-mail ou numéro d'adhérent",
       "select_done": "Terminé",
@@ -1930,6 +1925,7 @@
         "title": "Erreur lors de l'enregistrement du brouillon"
       },
       "save_draft_success": "Brouillon enregistré",
+      "save_draft_untitled": "Nommez votre vote pour l’enregistrer comme brouillon",
       "selectionLimits": {
         "full": "Les électeurs doivent sélectionner au moins  <min />  et au plus  <max />  options.",
         "title": "Limites de sélection :"
@@ -2045,31 +2041,37 @@
     "census": {
       "choose": {
         "card": "Choisir des personnes",
-        "description": "Recherchez, cochez ou collez une liste.",
+        "description": "Recherchez et cochez des personnes.",
         "find": "Rechercher des personnes",
         "hint": "Ce vote reçoit sa propre liste électorale avec ces personnes. Vos membres ne changent pas.",
         "none": "Personne n'est encore sélectionné.",
         "remove": "Retirer {{name}}",
-        "selected_many": "Sélection ({{count}})",
         "selected_one": "Sélection ({{count}})",
+        "selected_many": "Sélection ({{count}})",
         "selected_other": "Sélection ({{count}})",
-        "submit_many": "Utiliser {{formattedCount}} personnes",
         "submit_one": "Utiliser 1 personne",
+        "submit_many": "Utiliser {{formattedCount}} personnes",
         "submit_other": "Utiliser {{formattedCount}} personnes",
         "title": "Choisir qui peut voter"
+      },
+      "copy_everyone": {
+        "button": "Modifier cette liste",
+        "confirm": "Lui donner sa propre liste",
+        "description": "Ce vote aura sa propre liste avec tous vos membres tels qu'ils sont maintenant, et vous pourrez ajouter ou retirer des personnes. Ensuite, les nouveaux membres n'y entreront plus d'eux-mêmes.",
+        "title": "Modifier cette liste ?"
       },
       "error": "Impossible de modifier qui peut voter",
       "error_detail": "Rien n'a changé. Réessayez dans un instant.",
       "error_empty": "Il n'y a personne à copier",
       "error_stale": "Ce brouillon a été modifié ailleurs. Rechargez la page et réessayez.",
       "everyone": {
-        "description_many": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
         "description_one": "Votre unique membre. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
+        "description_many": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
         "description_other": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
         "title": "Tout le monde"
       },
       "go_to_members": "Aller à Membres",
-      "group_title": "{{vote}} — liste électorale",
+      "group_title_dated": "{{vote}} — {{date}}",
       "keep_current": "Conserver la liste électorale actuelle",
       "line": {
         "checking": "Vérification de qui peut recevoir un code…",
@@ -2078,22 +2080,25 @@
         "ready": "Liste électorale prête",
         "review": "Vérifier la liste électorale",
         "sms": "{{sms}} reçoivent leur code par SMS",
-        "unreachable_many": "{{formattedCount}} électeurs ne peuvent pas recevoir de code : ni e-mail ni mobile",
         "unreachable_one": "1 électeur ne peut pas recevoir de code : ni e-mail ni mobile",
+        "unreachable_many": "{{formattedCount}} électeurs ne peuvent pas recevoir de code : ni e-mail ni mobile",
         "unreachable_other": "{{formattedCount}} électeurs ne peuvent pas recevoir de code : ni e-mail ni mobile",
-        "voters_many": "{{formattedCount}} électeurs",
         "voters_one": "1 électeur",
+        "voters_many": "{{formattedCount}} électeurs",
         "voters_other": "{{formattedCount}} électeurs"
-      },
-      "memberbase": {
-        "label": "Sélectionnez un groupe de membres pour créer la liste électorale"
       },
       "missing": "La liste électorale utilisée par ce brouillon a été supprimée. Choisissez à nouveau qui peut voter.",
       "name_first": "Nommez d'abord votre vote pour qu'il ait sa propre liste électorale",
       "no_members": "Ajoutez d'abord vos membres : vous choisirez ensuite qui peut voter.",
+      "not_in_copy": {
+        "review": "Vérifier",
+        "text_one": "1 membre n'est pas dans cette liste : ajouté après sa création, ou retiré.",
+        "text_many": "{{formattedCount}} membres ne sont pas dans cette liste : ajoutés après sa création, ou retirés.",
+        "text_other": "{{formattedCount}} membres ne sont pas dans cette liste : ajoutés après sa création, ou retirés."
+      },
       "owned": {
-        "count_many": "{{formattedCount}} personnes",
         "count_one": "1 personne",
+        "count_many": "{{formattedCount}} personnes",
         "count_other": "{{formattedCount}} personnes",
         "edit": "Modifier la liste électorale",
         "start_over": "Recommencer"
@@ -2106,6 +2111,7 @@
         "none": "Il n'y a pas encore d'autres votes.",
         "title": "Comme un vote précédent"
       },
+      "reload": "Recharger",
       "saved": {
         "after_name": "Elle reçoit sa propre copie dès que le vote a un nom.",
         "description": "Ce vote reçoit sa propre copie.",
@@ -2119,17 +2125,17 @@
         "copied_on": "Copiée de « {{name}} » le {{date}}",
         "test": "Les personnes du vote test"
       },
-      "test_people_leave_out": "Les exclure",
-      "test_people_many": "{{count}} personnes de test figurent parmi vos membres",
       "test_people_one": "1 personne de test figure parmi vos membres",
-      "test_people_other": "{{count}} personnes de test figurent parmi vos membres"
+      "test_people_many": "{{count}} personnes de test figurent parmi vos membres",
+      "test_people_other": "{{count}} personnes de test figurent parmi vos membres",
+      "test_people_leave_out": "Les exclure",
+      "test_people_left_out_one": "La personne de test de votre vote de test ne fera pas partie de ce vote. Toutes les personnes ajoutées avant la publication, si.",
+      "test_people_left_out_many": "Les {{count}} personnes de test de votre vote de test ne feront pas partie de ce vote. Toutes les personnes ajoutées avant la publication, si.",
+      "test_people_left_out_other": "Les {{count}} personnes de test de votre vote de test ne feront pas partie de ce vote. Toutes les personnes ajoutées avant la publication, si."
     },
     "census_creation": "Création de la liste électorale",
     "end_datetime": "Date et heure de fin",
     "extra_configuration": "Configuration supplémentaire",
-    "issue": {
-      "census_unreachable": "Certains électeurs ne peuvent pas recevoir de code pour se connecter"
-    },
     "new_option": "Ajouter une nouvelle option",
     "option": {
       "description_placeholder": "Description (facultatif)",
@@ -2137,13 +2143,16 @@
       "remove": "Supprimer l'option"
     },
     "question": {
+      "abstain": "Abstention",
       "description": {
         "placeholder": "Ajoutez ici la description de la question (facultatif)…"
       },
+      "no": "Non",
       "remove": "Supprimer la question",
       "title": {
         "placeholder": "Ajouter un titre à la question"
-      }
+      },
+      "yes": "Oui"
     },
     "remove_option": "Supprimer l'option",
     "result_visibility": {
@@ -2152,17 +2161,13 @@
       "title": "Visibilité des résultats"
     },
     "review": {
-      "census_failed": "La liste électorale n'a pas pu être préparée, rien n'a été publié. Réessayez.",
-      "census_stale": "Ce brouillon a été modifié ailleurs pendant la publication. Rien n'a été publié. Rechargez la page et réessayez.",
-      "frozen_many": "À la publication, ce vote aura sa propre copie de ces {{count}} personnes. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
-      "frozen_one": "À la publication, ce vote aura sa propre copie de cette personne. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
-      "frozen_other": "À la publication, ce vote aura sa propre copie de ces {{count}} personnes. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
-      "own_census_many": "Les {{count}} personnes de la liste électorale de ce vote peuvent voter",
-      "own_census_one": "La seule personne de la liste électorale de ce vote peut voter",
-      "own_census_other": "Les {{count}} personnes de la liste électorale de ce vote peuvent voter"
+      "census_stale_reload": "Ce brouillon a été modifié ailleurs. Rechargez-le pour voir la dernière version, puis publiez-le."
     },
     "settings": "Paramètres",
     "start_datetime": "Date et heure de début",
+    "voters": {
+      "title": "Qui peut voter"
+    },
     "weight": {
       "equal": "Une personne, une voix",
       "title": "Poids du vote",
@@ -2343,6 +2348,7 @@
       "placeholder": "Un ou plusieurs, séparés par des virgules ou des retours à la ligne",
       "title": "Quelqu’un a-t-il voté ?"
     },
+    "manage_census": "Gérer la liste électorale",
     "sign_in": {
       "details": "Les membres se connectent avec leurs informations.",
       "email": "Les membres se connectent avec leurs informations et un code à usage unique reçu par e-mail.",
