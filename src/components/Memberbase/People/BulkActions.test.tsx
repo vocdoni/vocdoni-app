@@ -193,6 +193,22 @@ describe('bulk action sheets', () => {
     await waitFor(() => expect(mocks.waitFor).toHaveBeenCalledWith('job-1', expect.anything()))
   })
 
+  it('adds people taken out of a vote that follows Everyone back to its census', async () => {
+    const user = userEvent.setup()
+    mocks.addCensusMembers.mockResolvedValue({ added: 1, errors: [] })
+    mocks.processes = [
+      { id: 'p1', title: { default: 'Assemblea' }, census: { groupId: 'all' }, questions: [{ status: 'ONGOING' }] },
+    ]
+    render(<AddToVoteSheet open onOpenChange={vi.fn()} members={[anna]} />)
+
+    await user.click(screen.getByRole('combobox'))
+    await user.click(await screen.findByRole('option', { name: /Assemblea/ }))
+    await user.click(screen.getByRole('button', { name: 'Add one person' }))
+
+    await waitFor(() => expect(mocks.addCensusMembers).toHaveBeenCalledWith('p1', ['a1']))
+    expect(mocks.updateGroup).not.toHaveBeenCalled()
+  })
+
   it('adds a big selection to a saved census 500 at a time', async () => {
     const user = userEvent.setup()
     const members = Array.from({ length: 1200 }, (_, index) => person(index))

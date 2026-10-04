@@ -503,7 +503,7 @@ const ACTIVE_PROCESS_STATUSES: QuestionStatus[] = ['ONGOING', 'UPCOMING', 'PAUSE
 type VoteOption = {
   id: string
   title: string
-  /** The vote's census is "Everyone": every member is in it already */
+  /** The vote's census is "Everyone": every member is in it unless taken out of this vote */
   followsEveryone: boolean
   /** The vote's census is a group of its own: people join it through the group, never around it */
   ownGroupId?: string
@@ -552,7 +552,7 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
   }
 
   const submit = async () => {
-    if (!selectedVote || selectedVote.followsEveryone || !markersReady) return
+    if (!selectedVote || !markersReady) return
     setProgress({ done: 0, total: count })
     let added = 0
     let skipped = 0
@@ -628,11 +628,7 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
           <Button variant='outline' onClick={close} disabled={busy && !target.collecting}>
             {t('members.bulk.cancel', { defaultValue: 'Cancel' })}
           </Button>
-          <Button
-            onClick={submit}
-            loading={busy}
-            disabled={!selectedVote || selectedVote.followsEveryone || !count || !markersReady}
-          >
+          <Button onClick={submit} loading={busy} disabled={!selectedVote || !count || !markersReady}>
             {t('members.add_to_vote.submit', {
               defaultValue_one: 'Add one person',
               defaultValue_other: 'Add {{formattedCount}} people',
@@ -678,8 +674,9 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
         />
         {selectedVote?.followsEveryone && (
           <Banner status='info'>
-            {t('members.add_to_vote.follows_everyone', {
-              defaultValue: 'This vote’s census is “Everyone”, so they’re all in it already.',
+            {t('members.add_to_vote.follows_everyone_again', {
+              defaultValue:
+                'This vote’s census is “Everyone”: anyone taken out of this vote is added back, and those already in it are left as they are.',
             })}
           </Banner>
         )}
