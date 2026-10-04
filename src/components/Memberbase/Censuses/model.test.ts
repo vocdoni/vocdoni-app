@@ -112,7 +112,7 @@ describe('resolveCensus', () => {
     expect(census.readOnly).toBeUndefined()
   })
 
-  it('keeps a draft following Everyone read-only: it is frozen at publish', () => {
+  it('keeps a draft following Everyone read-only: it gets its own list at publish', () => {
     const census = resolveCensus({
       ...base,
       kind: 'vote',

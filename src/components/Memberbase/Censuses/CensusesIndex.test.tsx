@@ -165,7 +165,7 @@ describe('CensusesIndex', () => {
     expect(row('Comitè')).not.toHaveTextContent("can't get a code")
   })
 
-  it('labels the censuses votes own: copied, chosen by hand, frozen at publish', async () => {
+  it('labels the censuses votes own: copied, chosen by hand, all members when published', async () => {
     const user = userEvent.setup()
     data.published.push(
       vote('chosen', 'Junta 2026', { groupId: 'hand', size: 9, twoFaFields: ['email'] }, 'ONGOING'),
@@ -180,7 +180,7 @@ describe('CensusesIndex', () => {
     expect(row('Junta 2026')).toHaveTextContent('Chosen by hand')
     await user.click(screen.getByRole('button', { name: /Closed/ }))
     const frozen = await screen.findByRole('link', { name: 'Assemblea 2025' })
-    expect(frozen.closest('li')).toHaveTextContent('Everyone, frozen at publish')
+    expect(frozen.closest('li')).toHaveTextContent('All members when the vote was published')
   })
 
   it('shows saved censuses as cards: which vote they went into, a way to use them, and a way to make one', () => {

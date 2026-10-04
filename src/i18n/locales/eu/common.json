@@ -22,6 +22,11 @@
     "view_active_votes": "Ikusi bozketa aktiboak",
     "waiting_title": "Transakzioa berresteko zain..."
   },
+  "activity": {
+    "event": {
+      "census_frozen": "<strong>{{name}}</strong> bozketak denen zerrenda propioa gorde zuen argitaratzean"
+    }
+  },
   "add_new_org": "Gehitu erakunde berri bat",
   "additional_actions": "Ekintza osagarriak",
   "all_processes": "Guztiak",
@@ -286,6 +291,7 @@
       "origin_on": "{{origin}}, {{date}}",
       "people": "Pertsonen jatorria",
       "sign_in": "Saioa hasteko",
+      "snapshot_note": "Errolda hau kide guztiekin sortu zen bozketa argitaratu zenean. Oraindik pertsonak gehitu, editatu eta kendu ditzakezu; geroago erakundera gehitutako kideak ez dira berez sartzen.",
       "title": "Bozketa",
       "weight": "Botoaren pisua",
       "weighted": "Kide bakoitzaren arabera haztatua"
@@ -347,7 +353,7 @@
       "everyone": "Denak",
       "saved": "Gordetako «{{name}}» erroldea",
       "selected": "Hautatutako pertsonak",
-      "snapshot": "Denak, argitaratzean izoztua",
+      "snapshot": "Kide guztiak bozketa argitaratu zenean",
       "test": "Proba-bozketa"
     },
     "state": {
@@ -1904,6 +1910,10 @@
     "auto_start": "Hasi berehala",
     "basic_configuration": "Oinarrizko konfigurazioa",
     "census": {
+      "everyone": {
+        "description_one": "Zure kide bakarra. Kide berriak argitaratu arte gehitzen dira; gero, zuk gehitzen dituzu.",
+        "description_other": "Zure {{formattedCount}} kideak. Kide berriak argitaratu arte gehitzen dira; gero, zuk gehitzen dituzu."
+      },
       "group": {
         "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },
@@ -1943,6 +1953,8 @@
     },
     "review": {
       "census_stale_reload": "Zirriborro hau beste nonbait aldatu da. Kargatu berriro azken bertsioa ikusteko, eta gero argitaratu.",
+      "frozen_one": "Argitaratzean, bozketa honek bere zerrenda gordetzen du orain dagoen pertsonarekin. Geroago gehitutako kideak ez dira berez sartzen: gehitu edo kendu pertsonak bozketaren Botogileak fitxatik.",
+      "frozen_other": "Argitaratzean, bozketa honek bere zerrenda gordetzen du orain dauden {{count}} pertsonekin. Geroago gehitutako kideak ez dira berez sartzen: gehitu edo kendu pertsonak bozketaren Botogileak fitxatik.",
       "reload": "Kargatu berriro"
     },
     "settings": "Konfigurazioa",

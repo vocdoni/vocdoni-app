@@ -22,6 +22,11 @@
     "view_active_votes": "Ver votações ativas",
     "waiting_title": "Aguardando confirmação da transação..."
   },
+  "activity": {
+    "event": {
+      "census_frozen": "<strong>{{name}}</strong> ficou com sua própria lista de todos ao publicar"
+    }
+  },
   "add_new_org": "Adicionar uma nova organização",
   "additional_actions": "Ações adicionais",
   "all_processes": "Todos",
@@ -301,6 +306,7 @@
       "origin_on": "{{origin}}, em {{date}}",
       "people": "Pessoas de",
       "sign_in": "Acesso com",
+      "snapshot_note": "Esta lista foi criada com todos os seus membros quando a votação foi publicada. Você ainda pode adicionar, editar e remover pessoas; os membros que você adicionar depois à organização não entram sozinhos.",
       "title": "Votação",
       "weight": "Peso do voto",
       "weighted": "Ponderado por cada membro"
@@ -367,7 +373,7 @@
       "everyone": "Todos",
       "saved": "Lista salva “{{name}}”",
       "selected": "Pessoas selecionadas",
-      "snapshot": "Todos, congelada ao publicar",
+      "snapshot": "Todos os membros quando a votação foi publicada",
       "test": "Votação de teste"
     },
     "state": {
@@ -1982,6 +1988,11 @@
     "auto_start": "Iniciar imediatamente",
     "basic_configuration": "Configuração básica",
     "census": {
+      "everyone": {
+        "description_many": "Todos os {{formattedCount}} membros. Os novos membros entram até você publicar; depois, você os adiciona.",
+        "description_one": "Seu único membro. Os novos membros entram até você publicar; depois, você os adiciona.",
+        "description_other": "Todos os {{formattedCount}} membros. Os novos membros entram até você publicar; depois, você os adiciona."
+      },
       "group": {
         "no_groups": "Para iniciar uma votação, você precisa primeiro criar um grupo de eleitores elegíveis a partir da sua base de membros. <1>Crie um aqui</1>."
       },
@@ -2021,6 +2032,9 @@
     },
     "review": {
       "census_stale_reload": "Este rascunho foi alterado em outro lugar. Recarregue para ver a versão mais recente e depois publique.",
+      "frozen_many": "Ao publicar, esta votação fica com sua própria lista com as {{count}} pessoas que tem agora. Os membros adicionados depois não entram sozinhos: adicione ou remova pessoas na aba Eleitores da votação.",
+      "frozen_one": "Ao publicar, esta votação fica com sua própria lista com a pessoa que tem agora. Os membros adicionados depois não entram sozinhos: adicione ou remova pessoas na aba Eleitores da votação.",
+      "frozen_other": "Ao publicar, esta votação fica com sua própria lista com as {{count}} pessoas que tem agora. Os membros adicionados depois não entram sozinhos: adicione ou remova pessoas na aba Eleitores da votação.",
       "reload": "Recarregar"
     },
     "settings": "Configurações",

@@ -22,6 +22,11 @@
     "view_active_votes": "Ver votaciones activas",
     "waiting_title": "Esperando confirmación de la transacción..."
   },
+  "activity": {
+    "event": {
+      "census_frozen": "<strong>{{name}}</strong> se quedó su propia lista de todos los miembros al publicarse"
+    }
+  },
   "add_new_org": "Añadir una nueva organización",
   "additional_actions": "Acciones adicionales",
   "all_processes": "Todos",
@@ -301,6 +306,7 @@
       "origin_on": "{{origin}}, el {{date}}",
       "people": "Personas de",
       "sign_in": "Inicio de sesión con",
+      "snapshot_note": "Este censo se hizo con todos tus miembros cuando se publicó la votación. Aún puedes añadir, editar y quitar personas; los miembros que añadas después a la organización no se añaden solos.",
       "title": "Votación",
       "weight": "Poder de voto",
       "weighted": "Ponderado por cada miembro"
@@ -367,7 +373,7 @@
       "everyone": "Todos",
       "saved": "Censo guardado «{{name}}»",
       "selected": "Personas seleccionadas",
-      "snapshot": "Todos, congelado al publicar",
+      "snapshot": "Todos los miembros cuando se publicó la votación",
       "test": "Votación de prueba"
     },
     "state": {
@@ -1982,6 +1988,11 @@
     "auto_start": "Iniciar de inmediato",
     "basic_configuration": "Configuración básica",
     "census": {
+      "everyone": {
+        "description_many": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después, los añades tú.",
+        "description_one": "Tu único miembro. Los nuevos miembros se añaden hasta que publiques; después, los añades tú.",
+        "description_other": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después, los añades tú."
+      },
       "group": {
         "no_groups": "Para iniciar una votación, primero necesitas crear un grupo de votantes con derecho a voto a partir de tu base de miembros. <1>Créalo aquí</1>."
       },
@@ -2021,6 +2032,9 @@
     },
     "review": {
       "census_stale_reload": "Este borrador se ha cambiado desde otro sitio. Vuelve a cargarlo para ver la última versión y luego publícalo.",
+      "frozen_many": "Al publicar, esta votación se queda su propia lista con las {{count}} personas que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
+      "frozen_one": "Al publicar, esta votación se queda su propia lista con la persona que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
+      "frozen_other": "Al publicar, esta votación se queda su propia lista con las {{count}} personas que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
       "reload": "Volver a cargar"
     },
     "settings": "Configuración",

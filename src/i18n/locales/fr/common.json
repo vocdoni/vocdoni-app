@@ -22,6 +22,11 @@
     "view_active_votes": "Voir les votes actifs",
     "waiting_title": "En attente de la confirmation de la transaction…"
   },
+  "activity": {
+    "event": {
+      "census_frozen": "<strong>{{name}}</strong> a gardé sa propre liste de tout le monde à la publication"
+    }
+  },
   "add_new_org": "Ajouter une nouvelle organisation",
   "additional_actions": "Actions supplémentaires",
   "all_processes": "Tous",
@@ -301,6 +306,7 @@
       "origin_on": "{{origin}}, le {{date}}",
       "people": "Personnes issues de",
       "sign_in": "Connexion avec",
+      "snapshot_note": "Cette liste électorale a été créée avec tous vos membres à la publication du vote. Vous pouvez toujours ajouter, modifier et retirer des personnes ; les membres ajoutés ensuite à l'organisation n'y entrent pas d'eux-mêmes.",
       "title": "Vote",
       "weight": "Poids du vote",
       "weighted": "Pondéré par membre"
@@ -367,7 +373,7 @@
       "everyone": "Tout le monde",
       "saved": "Liste électorale enregistrée « {{name}} »",
       "selected": "Personnes sélectionnées",
-      "snapshot": "Tout le monde, figée à la publication",
+      "snapshot": "Tous les membres à la publication du vote",
       "test": "Vote d'essai"
     },
     "state": {
@@ -1982,6 +1988,11 @@
     "auto_start": "Démarrer immédiatement",
     "basic_configuration": "Configuration de base",
     "census": {
+      "everyone": {
+        "description_many": "Tous les {{formattedCount}} membres. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même.",
+        "description_one": "Votre unique membre. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même.",
+        "description_other": "Tous les {{formattedCount}} membres. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même."
+      },
       "group": {
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
       },
@@ -2021,6 +2032,9 @@
     },
     "review": {
       "census_stale_reload": "Ce brouillon a été modifié ailleurs. Rechargez-le pour voir la dernière version, puis publiez-le.",
+      "frozen_many": "À la publication, ce vote garde sa propre liste avec les {{count}} personnes qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
+      "frozen_one": "À la publication, ce vote garde sa propre liste avec la personne qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
+      "frozen_other": "À la publication, ce vote garde sa propre liste avec les {{count}} personnes qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
       "reload": "Recharger"
     },
     "settings": "Paramètres",

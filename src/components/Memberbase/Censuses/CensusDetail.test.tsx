@@ -412,6 +412,21 @@ describe('CensusDetail', () => {
     expect(screen.queryByText(/can get a code/)).toBeNull()
   })
 
+  it('explains a census made from every member at publish can still change', async () => {
+    state.meta = { vg_snap: { processId: 'p8', kind: 'snapshot', createdAt: past } }
+    state.members.snap = [person(1), person(2)]
+    state.groups.push(group('snap', 'Census of Assemblea'))
+    state.process = vote('p8', 'Assemblea 2026', { groupId: 'snap', size: 2, twoFaFields: ['email'] }, 'ONGOING')
+    renderDetail({ kind: 'vote', processId: 'p8' })
+
+    expect(await screen.findByText(/All members when the vote was published/)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        "This census was made with all your members when the vote was published. You can still add, edit and remove people; members you add to your organization later don't join it by themselves."
+      )
+    ).toBeInTheDocument()
+  })
+
   it('sends an old link to the Everyone census to People', async () => {
     render(
       <MemoryRouter initialEntries={['/admin/memberbase/censuses/everyone']}>

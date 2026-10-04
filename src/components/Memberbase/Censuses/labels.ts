@@ -24,7 +24,7 @@ export const censusSourceLabel = (t: TFunction, source: CensusSource) => {
         return t('censuses.source.copy_from', { defaultValue: "Copied from '{{name}}'", name: source.from })
       return copiedFromUnnamed(t, source.source)
     case 'snapshot':
-      return t('censuses.source.snapshot', { defaultValue: 'Everyone, frozen at publish' })
+      return t('censuses.source.snapshot', { defaultValue: 'All members when the vote was published' })
     case 'test':
       return t('censuses.source.test', { defaultValue: 'Test vote' })
     case 'saved':

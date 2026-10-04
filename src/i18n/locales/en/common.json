@@ -22,6 +22,11 @@
     "view_active_votes": "View active votes",
     "waiting_title": "Waiting for transaction confirmation..."
   },
+  "activity": {
+    "event": {
+      "census_frozen": "<strong>{{name}}</strong> kept its own list of everyone at publish"
+    }
+  },
   "add_new_org": "Add a new organization",
   "additional_actions": "Additional actions",
   "all_processes": "All",
@@ -286,6 +291,7 @@
       "origin_on": "{{origin}}, on {{date}}",
       "people": "People from",
       "sign_in": "Sign in with",
+      "snapshot_note": "This census was made with all your members when the vote was published. You can still add, edit and remove people; members you add to your organization later don't join it by themselves.",
       "title": "Vote",
       "weight": "Voting power",
       "weighted": "Weighted by each member"
@@ -347,7 +353,7 @@
       "everyone": "Everyone",
       "saved": "Saved census '{{name}}'",
       "selected": "Selected people",
-      "snapshot": "Everyone, frozen at publish",
+      "snapshot": "All members when the vote was published",
       "test": "Test vote"
     },
     "state": {
@@ -1904,6 +1910,10 @@
     "auto_start": "Start immediately",
     "basic_configuration": "Basic configuration",
     "census": {
+      "everyone": {
+        "description_one": "Your 1 member. New members join until you publish; after that, you add them yourself.",
+        "description_other": "All {{formattedCount}} members. New members join until you publish; after that, you add them yourself."
+      },
       "group": {
         "no_groups": "To start a vote, you first need to create a group of eligible voters from your memberbase. <1>Create one here</1>."
       },
@@ -1943,6 +1953,8 @@
     },
     "review": {
       "census_stale_reload": "This draft was changed somewhere else. Reload it to see the latest version, then publish.",
+      "frozen_one": "When you publish, this vote keeps its own list with the 1 person in it now. Members added later don't join it by themselves: add or remove people from the vote's Voters tab.",
+      "frozen_other": "When you publish, this vote keeps its own list with the {{count}} people in it now. Members added later don't join it by themselves: add or remove people from the vote's Voters tab.",
       "reload": "Reload"
     },
     "settings": "Settings",

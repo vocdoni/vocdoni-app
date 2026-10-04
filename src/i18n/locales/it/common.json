@@ -22,6 +22,11 @@
     "view_active_votes": "Visualizza votazioni attive",
     "waiting_title": "In attesa di conferma della transazione..."
   },
+  "activity": {
+    "event": {
+      "census_frozen": "<strong>{{name}}</strong> ha tenuto una propria lista di tutti alla pubblicazione"
+    }
+  },
   "add_new_org": "Aggiungi una nuova organizzazione",
   "additional_actions": "Azioni aggiuntive",
   "all_processes": "Tutti",
@@ -301,6 +306,7 @@
       "origin_on": "{{origin}}, il {{date}}",
       "people": "Persone da",
       "sign_in": "Accesso con",
+      "snapshot_note": "Questo censimento è stato creato con tutti i tuoi membri alla pubblicazione della votazione. Puoi ancora aggiungere, modificare e togliere persone; i membri che aggiungi dopo all'organizzazione non entrano da soli.",
       "title": "Votazione",
       "weight": "Peso del voto",
       "weighted": "Ponderato per ogni membro"
@@ -367,7 +373,7 @@
       "everyone": "Tutti",
       "saved": "Censimento salvato «{{name}}»",
       "selected": "Persone selezionate",
-      "snapshot": "Tutti, congelato alla pubblicazione",
+      "snapshot": "Tutti i membri alla pubblicazione della votazione",
       "test": "Votazione di prova"
     },
     "state": {
@@ -1982,6 +1988,11 @@
     "auto_start": "Avvia immediatamente",
     "basic_configuration": "Configurazione base",
     "census": {
+      "everyone": {
+        "description_many": "Tutti i {{formattedCount}} membri. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu.",
+        "description_one": "Il tuo unico membro. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu.",
+        "description_other": "Tutti i {{formattedCount}} membri. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu."
+      },
       "group": {
         "no_groups": "Per avviare una votazione, devi prima creare un gruppo di votanti idonei dal tuo database membri. <1>Creane uno qui</1>."
       },
@@ -2021,6 +2032,9 @@
     },
     "review": {
       "census_stale_reload": "Questa bozza è stata modificata altrove. Ricaricala per vedere l’ultima versione, poi pubblicala.",
+      "frozen_many": "Quando pubblichi, questa votazione tiene una propria lista con le {{count}} persone presenti. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
+      "frozen_one": "Quando pubblichi, questa votazione tiene una propria lista con l'unica persona presente. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
+      "frozen_other": "Quando pubblichi, questa votazione tiene una propria lista con le {{count}} persone presenti. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
       "reload": "Ricarica"
     },
     "settings": "Impostazioni",

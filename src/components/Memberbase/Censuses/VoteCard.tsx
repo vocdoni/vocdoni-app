@@ -107,6 +107,15 @@ export const VoteCard = ({ process, state, source, madeAt, groupId, total, noRea
             t('census_detail.vote_card.weighted', { defaultValue: 'Weighted by each member' })
           )}
       </DataList.Root>
+      {source?.kind === 'snapshot' && (
+        // A list made from Everyone isn't fixed: say what it was made from, and that it can still change
+        <Text fontSize='xs' color='fg.muted' mt={3}>
+          {t('census_detail.vote_card.snapshot_note', {
+            defaultValue:
+              "This census was made with all your members when the vote was published. You can still add, edit and remove people; members you add to your organization later don't join it by themselves.",
+          })}
+        </Text>
+      )}
       {readiness.available && (
         <Text
           fontSize='sm'
