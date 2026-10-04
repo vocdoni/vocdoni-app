@@ -39,7 +39,7 @@
     "empty": "Rien pour l’instant. Les importations et les votes apparaîtront ici au fur et à mesure.",
     "error": "Impossible de charger l’historique des modifications. Réessayez dans un instant.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> a gardé sa propre liste de tout le monde à la publication",
+      "census_frozen": "<strong>{{name}}</strong> : liste électorale copiée de tous vos membres",
       "census_members_added_one": "{{number}} personne ajoutée à « {{name}} »",
       "census_members_added_many": "{{number}} personnes ajoutées à « {{name}} »",
       "census_members_added_other": "{{number}} personnes ajoutées à « {{name}} »",

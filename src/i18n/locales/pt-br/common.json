@@ -39,7 +39,7 @@
     "empty": "Ainda não há nada. As importações e as votações aparecem aqui conforme acontecem.",
     "error": "Não foi possível carregar o histórico de alterações. Tente novamente em instantes.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> ficou com sua própria lista de todos ao publicar",
+      "census_frozen": "<strong>{{name}}</strong>: lista de participantes copiada de todos os seus membros",
       "census_members_added_one": "{{number}} pessoa adicionada a '{{name}}'",
       "census_members_added_many": "{{number}} pessoas adicionadas a '{{name}}'",
       "census_members_added_other": "{{number}} pessoas adicionadas a '{{name}}'",

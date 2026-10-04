@@ -39,7 +39,7 @@
     "empty": "Encara no hi ha res. Les importacions i les votacions apareixeran aquí a mesura que passin.",
     "error": "No hem pogut carregar el registre de canvis. Torna-ho a provar d'aquí a una estona.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> es va quedar la seva pròpia llista de tothom en publicar-se",
+      "census_frozen": "<strong>{{name}}</strong>: cens copiat de tots els teus membres",
       "census_members_added_one": "{{number}} persona afegida a '{{name}}'",
       "census_members_added_many": "{{number}} persones afegides a '{{name}}'",
       "census_members_added_other": "{{number}} persones afegides a '{{name}}'",

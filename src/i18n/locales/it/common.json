@@ -39,7 +39,7 @@
     "empty": "Ancora niente. Le importazioni e le votazioni compariranno qui man mano che avvengono.",
     "error": "Non siamo riusciti a caricare il registro delle modifiche. Riprova tra un momento.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> ha tenuto una propria lista di tutti alla pubblicazione",
+      "census_frozen": "<strong>{{name}}</strong>: censimento copiato da tutti i tuoi membri",
       "census_members_added_one": "{{number}} persona aggiunta a '{{name}}'",
       "census_members_added_many": "{{number}} persone aggiunte a '{{name}}'",
       "census_members_added_other": "{{number}} persone aggiunte a '{{name}}'",

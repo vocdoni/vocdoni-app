@@ -38,7 +38,7 @@
     "empty": "Noch nichts zu sehen. Importe und Abstimmungen erscheinen hier, sobald sie stattfinden.",
     "error": "Der Änderungsverlauf konnte nicht geladen werden. Versuche es gleich noch einmal.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> hat bei der Veröffentlichung eine eigene Liste aller Mitglieder behalten",
+      "census_frozen": "<strong>{{name}}</strong>: Teilnehmerliste aus allen Mitgliedern kopiert",
       "census_members_added_one": "{{number}} Person zu „{{name}}“ hinzugefügt",
       "census_members_added_other": "{{number}} Personen zu „{{name}}“ hinzugefügt",
       "census_members_removed_one": "{{number}} Person aus „{{name}}“ entfernt",

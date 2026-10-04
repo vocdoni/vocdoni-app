@@ -185,7 +185,7 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
       return (
         <Trans
           i18nKey='activity.event.census_frozen'
-          defaults='<strong>{{name}}</strong> kept its own list of everyone at publish'
+          defaults='<strong>{{name}}</strong>: census copied from all your members'
           values={values}
           components={strong}
           {...asText}
