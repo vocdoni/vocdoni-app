@@ -2063,9 +2063,9 @@
       "error_empty": "No hay nadie que copiar",
       "error_stale": "Este borrador se ha cambiado desde otro sitio. Recarga la página e inténtalo de nuevo.",
       "everyone": {
-        "description_many": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después queda congelado.",
-        "description_one": "Tu único miembro. Los nuevos miembros se añaden hasta que publiques; después queda congelado.",
-        "description_other": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después queda congelado.",
+        "description_many": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después, los añades tú.",
+        "description_one": "Tu único miembro. Los nuevos miembros se añaden hasta que publiques; después, los añades tú.",
+        "description_other": "Todos tus {{formattedCount}} miembros. Los nuevos miembros se añaden hasta que publiques; después, los añades tú.",
         "title": "Todos"
       },
       "go_to_members": "Ir a Miembros",
@@ -2154,9 +2154,9 @@
     "review": {
       "census_failed": "No se ha podido preparar el censo, así que no se ha publicado nada. Inténtalo de nuevo.",
       "census_stale": "Este borrador se ha cambiado desde otro sitio mientras se publicaba. No se ha publicado nada. Recarga la página e inténtalo de nuevo.",
-      "frozen_many": "Al publicar, el censo se congela con las {{count}} personas que hay ahora. Añade o quita personas más tarde desde la pestaña Votantes de la votación.",
-      "frozen_one": "Al publicar, el censo se congela con la 1 persona que hay ahora. Añade o quita personas más tarde desde la pestaña Votantes de la votación.",
-      "frozen_other": "Al publicar, el censo se congela con las {{count}} personas que hay ahora. Añade o quita personas más tarde desde la pestaña Votantes de la votación.",
+      "frozen_many": "Al publicar, esta votación se queda su propia lista con las {{count}} personas que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
+      "frozen_one": "Al publicar, esta votación se queda su propia lista con la persona que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
+      "frozen_other": "Al publicar, esta votación se queda su propia lista con las {{count}} personas que hay ahora. Los miembros que añadas después no se añaden solos: añade o quita personas desde la pestaña Votantes de la votación.",
       "own_census_many": "Las {{count}} personas del censo de esta votación pueden votar",
       "own_census_one": "La 1 persona del censo de esta votación puede votar",
       "own_census_other": "Las {{count}} personas del censo de esta votación pueden votar"

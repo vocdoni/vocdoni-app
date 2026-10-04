@@ -2063,9 +2063,9 @@
       "error_empty": "Não há ninguém para copiar",
       "error_stale": "Este rascunho foi alterado noutro local. Recarrega a página e tenta novamente.",
       "everyone": {
-        "description_many": "Todos os {{formattedCount}} membros. Os novos membros entram até publicares; depois fica congelada.",
-        "description_one": "O teu 1 membro. Os novos membros entram até publicares; depois fica congelada.",
-        "description_other": "Todos os {{formattedCount}} membros. Os novos membros entram até publicares; depois fica congelada.",
+        "description_many": "Todos os {{formattedCount}} membros. Os novos membros entram até publicares; depois, és tu que os adicionas.",
+        "description_one": "O teu único membro. Os novos membros entram até publicares; depois, és tu que os adicionas.",
+        "description_other": "Todos os {{formattedCount}} membros. Os novos membros entram até publicares; depois, és tu que os adicionas.",
         "title": "Todos"
       },
       "go_to_members": "Ir para Membros",
@@ -2154,9 +2154,9 @@
     "review": {
       "census_failed": "Não foi possível preparar a lista de participantes, por isso nada foi publicado. Tenta novamente.",
       "census_stale": "Este rascunho foi alterado noutro local durante a publicação. Nada foi publicado. Recarrega a página e tenta novamente.",
-      "frozen_many": "Ao publicares, a lista de participantes fica congelada com as {{count}} pessoas que tem agora. Adiciona ou remove pessoas mais tarde no separador Votantes da votação.",
-      "frozen_one": "Ao publicares, a lista de participantes fica congelada com a 1 pessoa que tem agora. Adiciona ou remove pessoas mais tarde no separador Votantes da votação.",
-      "frozen_other": "Ao publicares, a lista de participantes fica congelada com as {{count}} pessoas que tem agora. Adiciona ou remove pessoas mais tarde no separador Votantes da votação.",
+      "frozen_many": "Ao publicares, esta votação fica com a sua própria lista com as {{count}} pessoas que tem agora. Os membros que adicionares depois não entram sozinhos: adiciona ou remove pessoas no separador Votantes da votação.",
+      "frozen_one": "Ao publicares, esta votação fica com a sua própria lista com a pessoa que tem agora. Os membros que adicionares depois não entram sozinhos: adiciona ou remove pessoas no separador Votantes da votação.",
+      "frozen_other": "Ao publicares, esta votação fica com a sua própria lista com as {{count}} pessoas que tem agora. Os membros que adicionares depois não entram sozinhos: adiciona ou remove pessoas no separador Votantes da votação.",
       "own_census_many": "As {{count}} pessoas da lista de participantes desta votação podem votar",
       "own_census_one": "A 1 pessoa da lista de participantes desta votação pode votar",
       "own_census_other": "As {{count}} pessoas da lista de participantes desta votação podem votar"

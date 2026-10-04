@@ -1976,8 +1976,8 @@
       "error_empty": "There is nobody in it to copy",
       "error_stale": "This draft was changed somewhere else. Reload the page and try again.",
       "everyone": {
-        "description_one": "Your 1 member. New members join until you publish; then it's frozen.",
-        "description_other": "All {{formattedCount}} members. New members join until you publish; then it's frozen.",
+        "description_one": "Your 1 member. New members join until you publish; after that, you add them yourself.",
+        "description_other": "All {{formattedCount}} members. New members join until you publish; after that, you add them yourself.",
         "title": "Everyone"
       },
       "go_to_members": "Go to Members",
@@ -2062,8 +2062,8 @@
     "review": {
       "census_failed": "The census couldn't be prepared, so nothing was published. Try again.",
       "census_stale": "This draft was changed somewhere else while publishing. Nothing was published. Reload the page and try again.",
-      "frozen_one": "When you publish, the census is frozen with the 1 person in it now. Add or remove people later from the vote's Voters tab.",
-      "frozen_other": "When you publish, the census is frozen with the {{count}} people in it now. Add or remove people later from the vote's Voters tab.",
+      "frozen_one": "When you publish, this vote keeps its own list with the 1 person in it now. Members added later don't join it by themselves: add or remove people from the vote's Voters tab.",
+      "frozen_other": "When you publish, this vote keeps its own list with the {{count}} people in it now. Members added later don't join it by themselves: add or remove people from the vote's Voters tab.",
       "own_census_one": "The 1 person in this vote's census can vote",
       "own_census_other": "The {{count}} people in this vote's census can vote"
     },

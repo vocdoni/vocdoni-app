@@ -584,9 +584,9 @@ export const WhoCanVote = () => {
             t('process_create.census.everyone.description', {
               count: membersCount,
               formattedCount: format(membersCount),
-              defaultValue_one: "Your 1 member. New members join until you publish; then it's frozen.",
+              defaultValue_one: 'Your 1 member. New members join until you publish; after that, you add them yourself.',
               defaultValue_other:
-                "All {{formattedCount}} members. New members join until you publish; then it's frozen.",
+                'All {{formattedCount}} members. New members join until you publish; after that, you add them yourself.',
             }),
             !census.everyoneId
           )}
