@@ -31,8 +31,18 @@ export const MemberNameLink = ({ member, label, to, onOpen, fontSize = 'sm' }: M
   }
 
   return (
-    <Link asChild variant='plain' fontWeight='bolder' fontSize={fontSize} textDecoration='none' color='fg'>
-      <RouterLink to={to} onClick={onClick} data-member-link={member.id}>
+    <Link
+      asChild
+      variant='plain'
+      fontWeight='bolder'
+      fontSize={fontSize}
+      textDecoration='none'
+      color='fg'
+      display='block'
+      maxW='full'
+      truncate
+    >
+      <RouterLink to={to} onClick={onClick} data-member-link={member.id} title={label || undefined}>
         {label || t('members.people.unnamed', { defaultValue: 'No name' })}
       </RouterLink>
     </Link>
@@ -45,8 +55,27 @@ export const MemberValue = ({ field, member }: { field: MemberField; member: Sel
   const display = field.mask(raw)
   if (display.kind === 'empty') return null
   if (display.kind === 'masked') return <MaskedValue label={field.label} tail={display.tail} />
-  return <>{field.format(raw)}</>
+  const text = field.format(raw)
+  // A long email shouldn't widen every row: cut, with the whole value on hover
+  return (
+    <Text as='span' display='block' fontSize='inherit' truncate title={text}>
+      {text}
+    </Text>
+  )
 }
+
+/** The widest a text column gets before its values are cut ("…", whole value on hover). */
+const VALUE_MAX_W = '16rem'
+
+/**
+ * The checkbox and name columns stay in place while the rest scrolls sideways, so a wide row is
+ * still readable. Each pinned cell paints its own background, or the scrolled cells would show
+ * through it.
+ */
+const pinned = (left: string, bg = 'bg') => ({ position: 'sticky', left, zIndex: 1, bg }) as const
+
+/** The edge of the pinned columns, so what scrolls under them reads as scrolling. */
+const PINNED_EDGE = 'inset -1px 0 0 {colors.border}'
 
 type SortHeaderProps = {
   field: MemberSortField
@@ -141,7 +170,7 @@ export const PeopleTable = ({
         <Table.Caption srOnly>{caption}</Table.Caption>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader {...headerProps} w='44px'>
+            <Table.ColumnHeader {...headerProps} w='44px' minW='44px' {...pinned('0')}>
               <Checkbox.Root
                 size='sm'
                 checked={pageState.all ? true : pageState.some ? 'indeterminate' : false}
@@ -153,7 +182,12 @@ export const PeopleTable = ({
                 <Checkbox.Control />
               </Checkbox.Root>
             </Table.ColumnHeader>
-            <Table.ColumnHeader {...headerProps} aria-sort={ariaSort(nameActive, order)}>
+            <Table.ColumnHeader
+              {...headerProps}
+              aria-sort={ariaSort(nameActive, order)}
+              {...pinned('44px')}
+              boxShadow={PINNED_EDGE}
+            >
               <SortHeaderButton
                 field={surnameFirst ? 'surname' : 'name'}
                 label={nameLabel}
@@ -200,11 +234,12 @@ export const PeopleTable = ({
             members.map((member) => {
               const name = memberDisplayName(member, surnameFirst)
               const selected = selection.isSelected(member.id)
+              const rowBg = selected || activeId === member.id ? 'bg.muted' : 'bg'
               return (
                 <Table.Row
                   key={member.id}
                   h={{ md: '56px', lg: '44px' }}
-                  bg={selected || activeId === member.id ? 'bg.muted' : undefined}
+                  bg={rowBg}
                   data-member-row={member.id}
                   data-selected={selected ? '' : undefined}
                   aria-current={activeId === member.id ? 'true' : undefined}
@@ -213,6 +248,7 @@ export const PeopleTable = ({
                     py={0}
                     boxShadow={selected ? 'inset 2px 0 0 {colors.colorPalette.solid}' : undefined}
                     className='ph-no-capture'
+                    {...pinned('0', rowBg)}
                   >
                     <Checkbox.Root
                       size='sm'
@@ -231,7 +267,13 @@ export const PeopleTable = ({
                     </Checkbox.Root>
                   </Table.Cell>
                   {/* ph-no-capture: member data is never recorded in session replays */}
-                  <Table.Cell py={0} className='ph-no-capture'>
+                  <Table.Cell
+                    py={0}
+                    className='ph-no-capture'
+                    maxW={VALUE_MAX_W}
+                    {...pinned('44px', rowBg)}
+                    boxShadow={PINNED_EDGE}
+                  >
                     <MemberNameLink member={member} label={name} to={memberLocation(member.id)} onOpen={onOpen} />
                     {member.email && (
                       <Text hideFrom='lg' fontSize='xs' color='fg.muted' truncate>
@@ -249,6 +291,8 @@ export const PeopleTable = ({
                         field.id === 'memberNumber' || field.id === 'weight' ? 'tabular-nums' : undefined
                       }
                       color={field.id === 'phone' ? 'fg.muted' : undefined}
+                      maxW={VALUE_MAX_W}
+                      whiteSpace='nowrap'
                     >
                       <MemberValue field={field} member={member} />
                     </Table.Cell>
