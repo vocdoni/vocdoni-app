@@ -131,7 +131,6 @@
     "newer": "Más recientes",
     "older": "Más antiguos",
     "show_everything": "Mostrar todo",
-    "soon_line": "Por ahora aquí ves votaciones e importaciones. Pronto también los cambios en personas y censos, con quién los hizo.",
     "test_vote": "Votación de prueba",
     "untitled": "Sin título"
   },
@@ -340,7 +339,6 @@
         "code_only": "Con un código de un solo uso por {{channel}}",
         "confirm": "Confirman su {{details}}",
         "label": "Cómo acceden los votantes",
-        "no_code": "Sin código de un solo uso",
         "then_code": "Después, un código de un solo uso por {{channel}}"
       },
       "members_at_close_one": "miembro al cierre",
@@ -376,7 +374,7 @@
         "snapshot": "Tus miembros cuando publicaste",
         "snapshot_closed": "Fijado al publicar",
         "snapshot_on": "Tus miembros del {{date}}",
-        "snapshot_open": "Fijado al publicar. Añade aquí a los miembros nuevos."
+        "snapshot_open": "Aún puedes añadir y quitar miembros de este censo"
       },
       "used_more_one": "Y 1 votación más: los cambios de aquí le llegan",
       "used_more_many": "Y {{count}} votaciones más: los cambios de aquí les llegan",
@@ -499,50 +497,6 @@
       "saved": "Un censo guardado que puedes reutilizar en tus votaciones.",
       "selected": "Personas elegidas una a una para esta votación.",
       "shared": "Compartido con {{votes}}. Cambiarlo cambia quién puede votar en todas ellas, incluso en las cerradas."
-    },
-    "summary": {
-      "copy": "Copiar",
-      "how": {
-        "code": "Acceden a la votación con un código de un solo uso que reciben por {{channel}}.",
-        "details": "Acceden a la votación confirmando su {{details}}, sin código de un solo uso.",
-        "details_code": "Acceden a la votación confirmando su {{details}} y con un código de un solo uso que reciben por {{channel}}."
-      },
-      "weighted": "Cada voto cuenta según su peso.",
-      "when": {
-        "canceled": "La votación se ha cancelado.",
-        "draft": "Aún no se han fijado las fechas de votación.",
-        "ran": "La votación estuvo abierta del {{start}} al {{end}} y cerró a las {{at}}.",
-        "runs": "La votación está abierta del {{start}} al {{end}} y cierra a las {{at}}."
-      },
-      "who": {
-        "everyone_draft_one": "Hay 1 miembro en el censo: todos tus miembros, más cualquier persona que añadas antes de publicar.",
-        "everyone_draft_many": "Hay {{formattedCount}} miembros en el censo: todos tus miembros, más cualquier persona que añadas antes de publicar.",
-        "everyone_draft_other": "Hay {{formattedCount}} miembros en el censo: todos tus miembros, más cualquier persona que añadas antes de publicar.",
-        "everyone_live_one": "Hay 1 miembro en el censo: todos tus miembros, más cualquier persona que añadas.",
-        "everyone_live_many": "Hay {{formattedCount}} miembros en el censo: todos tus miembros, más cualquier persona que añadas.",
-        "everyone_live_other": "Hay {{formattedCount}} miembros en el censo: todos tus miembros, más cualquier persona que añadas.",
-        "from_saved_one": "Hay 1 miembro en el censo, copiado del censo guardado «{{name}}».",
-        "from_saved_many": "Hay {{formattedCount}} miembros en el censo, copiados del censo guardado «{{name}}».",
-        "from_saved_other": "Hay {{formattedCount}} miembros en el censo, copiados del censo guardado «{{name}}».",
-        "from_vote_one": "Hay 1 miembro en el censo, copiado de la votación «{{name}}».",
-        "from_vote_many": "Hay {{formattedCount}} miembros en el censo, copiados de la votación «{{name}}».",
-        "from_vote_other": "Hay {{formattedCount}} miembros en el censo, copiados de la votación «{{name}}».",
-        "members_copy_one": "Hay 1 miembro en el censo: una copia de tus miembros hecha el {{date}}.",
-        "members_copy_many": "Hay {{formattedCount}} miembros en el censo: una copia de tus miembros hecha el {{date}}.",
-        "members_copy_other": "Hay {{formattedCount}} miembros en el censo: una copia de tus miembros hecha el {{date}}.",
-        "picked_one": "Hay 1 miembro en el censo, elegido a mano.",
-        "picked_many": "Hay {{formattedCount}} miembros en el censo, elegidos uno a uno.",
-        "picked_other": "Hay {{formattedCount}} miembros en el censo, elegidos uno a uno.",
-        "plain_one": "Hay 1 miembro en el censo.",
-        "plain_many": "Hay {{formattedCount}} miembros en el censo.",
-        "plain_other": "Hay {{formattedCount}} miembros en el censo.",
-        "shared_one": "Hay 1 miembro en el censo, del censo guardado «{{name}}».",
-        "shared_many": "Hay {{formattedCount}} miembros en el censo, del censo guardado «{{name}}».",
-        "shared_other": "Hay {{formattedCount}} miembros en el censo, del censo guardado «{{name}}».",
-        "snapshot_on_one": "Hay 1 miembro en el censo: tus miembros tal como estaban el {{date}}, cuando publicaste.",
-        "snapshot_on_many": "Hay {{formattedCount}} miembros en el censo: tus miembros tal como estaban el {{date}}, cuando publicaste.",
-        "snapshot_on_other": "Hay {{formattedCount}} miembros en el censo: tus miembros tal como estaban el {{date}}, cuando publicaste."
-      }
     },
     "this_census": "este censo",
     "used_by": {

@@ -1,11 +1,10 @@
 import { Box, Button, Flex, Icon, Skeleton, Stack, Text } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuDownload, LuHistory, LuInfo } from 'react-icons/lu'
+import { LuDownload, LuHistory } from 'react-icons/lu'
 import { useSearchParams } from 'react-router'
 import { useToast } from '~components/Toast'
 import { Banner } from '~components/ui/Banner'
-import { InterestButton, SoonTag } from '~components/ui/ComingSoon'
 import { FilterPills, type FilterPillItem } from '~components/ui/FilterPills'
 import { SectionCard } from '~components/ui/SectionCard'
 import {
@@ -63,35 +62,6 @@ const Empty = ({ onShowAll }: { onShowAll?: () => void }) => {
   )
 }
 
-/** Today's tab, before the activity log: one quiet line on what's missing, instead of a banner and a card. */
-const SoonLine = () => {
-  const { t } = useTranslation()
-  return (
-    <Flex
-      align={{ base: 'flex-start', sm: 'center' }}
-      direction={{ base: 'column', sm: 'row' }}
-      gap={3}
-      px={3}
-      py={2}
-      mb={3}
-      borderRadius='md'
-      bg='purple.subtle'
-    >
-      <Flex align='center' gap={2} flex='1' minW={0}>
-        <Icon as={LuInfo} boxSize={4} color='purple.fg' flexShrink={0} aria-hidden />
-        <Text fontSize='sm' color='purple.fg'>
-          {t('activity.soon_line', {
-            defaultValue:
-              'For now this shows votes and imports. Edits to people and censuses, with who made them, are coming.',
-          })}{' '}
-          <SoonTag />
-        </Text>
-      </Flex>
-      <InterestButton feature='activity_log' surface='members_activity' flexShrink={0} />
-    </Flex>
-  )
-}
-
 /** The census filter as the activity log reads it: a vote's census by its vote, a saved one by its id. */
 const censusQuery = (census: CensusFilter): Pick<ActivityQuery, 'processId' | 'subjectId'> => {
   if (census.startsWith('vote:')) return { processId: census.slice(5) }
@@ -104,7 +74,7 @@ const censusQuery = (census: CensusFilter): Pick<ActivityQuery, 'processId' | 's
  * belongs to. Filter by census (or click a census' chip) to read that census' history, and by kind.
  *
  * With AppEnv `ACTIVITY_LOG` on, it reads the backend's log a page at a time and exports it; until
- * then, the same timeline shows what can be derived (vote dates and imports) under one Soon line.
+ * then, the same timeline shows what can be derived (vote dates and imports) with no banner.
  */
 export const ActivityTab = () => {
   const { t } = useTranslation()
@@ -201,7 +171,6 @@ export const ActivityTab = () => {
         )}
       </Flex>
       <SectionCard>
-        {!full && <SoonLine />}
         {activity.isLoading ? (
           <Loading />
         ) : activity.isError ? (

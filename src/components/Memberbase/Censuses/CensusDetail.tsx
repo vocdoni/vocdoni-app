@@ -3,7 +3,7 @@ import { ElectionProvider } from '@vocdoni/react-components'
 import type { TFunction } from 'i18next'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowUpRight, LuClock, LuInfo, LuLock, LuUserMinus, LuUserPlus, LuVote } from 'react-icons/lu'
+import { LuArrowUpRight, LuClock, LuLock, LuUserMinus, LuUserPlus, LuVote } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink } from 'react-router'
 import { VoterLookup } from '~components/Process/Dashboard/View/VoterLookup'
 import { Banner } from '~components/ui/Banner'
@@ -95,9 +95,7 @@ const ReadOnlyNote = ({ census }: { census: ResolvedCensusState }) => {
 }
 
 /** The neutral line under the facts: what this kind of census does when it changes. */
-const CensusNote = ({ census }: { census: ResolvedCensusState }) => {
-  const { t } = useTranslation()
-  const { format } = useDateFns()
+const censusNote = (t: TFunction, format: ReturnType<typeof useDateFns>['format'], census: ResolvedCensusState) => {
   let text: string | null = null
   if (census.kind === 'vote' && census.source?.kind === 'snapshot')
     text = census.source.madeAt
@@ -123,13 +121,7 @@ const CensusNote = ({ census }: { census: ResolvedCensusState }) => {
       defaultValue_other:
         "The {{count}} votes that copied this census have their own copies, so changes here don't change who votes there.",
     })
-  if (!text) return null
-  return (
-    <Flex gap={2} align='flex-start' px={3} py={2} borderRadius='md' bg='bg.subtle' color='fg.muted'>
-      <Icon as={LuInfo} mt={0.5} flexShrink={0} aria-hidden />
-      <Text fontSize='sm'>{text}</Text>
-    </Flex>
-  )
+  return text
 }
 
 /**
@@ -312,8 +304,13 @@ export const CensusDetail = (props: CensusDetailProps) => {
         </Flex>
       )}
 
-      <FactsStrip census={census} readiness={readiness} onShowUnreachable={showUnreachable} withVote={page} />
-      <CensusNote census={census} />
+      <FactsStrip
+        census={census}
+        readiness={readiness}
+        onShowUnreachable={showUnreachable}
+        withVote={page}
+        note={censusNote(t, format, census)}
+      />
       <ReadOnlyNote census={census} />
 
       {census.browse === 'group' && census.groupId ? (

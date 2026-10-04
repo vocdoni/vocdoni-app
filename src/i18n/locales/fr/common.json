@@ -131,7 +131,6 @@
     "newer": "Plus récents",
     "older": "Plus anciens",
     "show_everything": "Tout afficher",
-    "soon_line": "Pour l'instant, vous voyez ici les votes et les imports. Les changements de personnes et de listes, avec leur auteur, arrivent bientôt.",
     "test_vote": "Vote d'essai",
     "untitled": "Sans titre"
   },
@@ -340,7 +339,6 @@
         "code_only": "Avec un code à usage unique envoyé par {{channel}}",
         "confirm": "Ils confirment {{details}}",
         "label": "Comment les électeurs accèdent au vote",
-        "no_code": "Sans code à usage unique",
         "then_code": "Puis un code à usage unique par {{channel}}"
       },
       "members_at_close_one": "membre à la clôture",
@@ -376,7 +374,7 @@
         "snapshot": "Vos membres au moment de la publication",
         "snapshot_closed": "Figée à la publication",
         "snapshot_on": "Vos membres au {{date}}",
-        "snapshot_open": "Figée à la publication. Ajoutez ici les membres arrivés après."
+        "snapshot_open": "Vous pouvez encore ajouter et retirer des membres de cette liste"
       },
       "used_more_one": "Et 1 autre vote : les modifications faites ici l'atteignent",
       "used_more_many": "Et {{count}} autres votes : les modifications faites ici les atteignent",
@@ -499,50 +497,6 @@
       "saved": "Une liste électorale enregistrée que vous pouvez réutiliser dans vos votes.",
       "selected": "Personnes choisies une à une pour ce vote.",
       "shared": "Partagée avec {{votes}}. La modifier change qui peut voter dans tous ces votes, même ceux clôturés."
-    },
-    "summary": {
-      "copy": "Copier",
-      "how": {
-        "code": "Ils accèdent au vote avec un code à usage unique envoyé par {{channel}}.",
-        "details": "Ils accèdent au vote en confirmant {{details}}, sans code à usage unique.",
-        "details_code": "Ils accèdent au vote en confirmant {{details}}, puis avec un code à usage unique envoyé par {{channel}}."
-      },
-      "weighted": "Les votes comptent selon le poids de vote.",
-      "when": {
-        "canceled": "Le vote a été annulé.",
-        "draft": "Les dates du vote ne sont pas encore fixées.",
-        "ran": "Le vote s'est déroulé du {{start}} au {{end}} et a été clôturé à {{at}}.",
-        "runs": "Le vote a lieu du {{start}} au {{end}} et sera clôturé à {{at}}."
-      },
-      "who": {
-        "everyone_draft_one": "{{formattedCount}} membre figure sur la liste électorale : tous vos membres, plus ceux que vous ajouterez avant la publication.",
-        "everyone_draft_many": "{{formattedCount}} membres figurent sur la liste électorale : tous vos membres, plus ceux que vous ajouterez avant la publication.",
-        "everyone_draft_other": "{{formattedCount}} membres figurent sur la liste électorale : tous vos membres, plus ceux que vous ajouterez avant la publication.",
-        "everyone_live_one": "{{formattedCount}} membre figure sur la liste électorale : tous vos membres, plus ceux que vous ajoutez.",
-        "everyone_live_many": "{{formattedCount}} membres figurent sur la liste électorale : tous vos membres, plus ceux que vous ajoutez.",
-        "everyone_live_other": "{{formattedCount}} membres figurent sur la liste électorale : tous vos membres, plus ceux que vous ajoutez.",
-        "from_saved_one": "{{formattedCount}} membre figure sur la liste électorale, copié depuis la liste électorale enregistrée « {{name}} ».",
-        "from_saved_many": "{{formattedCount}} membres figurent sur la liste électorale, copiés depuis la liste électorale enregistrée « {{name}} ».",
-        "from_saved_other": "{{formattedCount}} membres figurent sur la liste électorale, copiés depuis la liste électorale enregistrée « {{name}} ».",
-        "from_vote_one": "{{formattedCount}} membre figure sur la liste électorale, copié depuis le vote « {{name}} ».",
-        "from_vote_many": "{{formattedCount}} membres figurent sur la liste électorale, copiés depuis le vote « {{name}} ».",
-        "from_vote_other": "{{formattedCount}} membres figurent sur la liste électorale, copiés depuis le vote « {{name}} ».",
-        "members_copy_one": "{{formattedCount}} membre figure sur la liste électorale : une copie de vos membres faite le {{date}}.",
-        "members_copy_many": "{{formattedCount}} membres figurent sur la liste électorale : une copie de vos membres faite le {{date}}.",
-        "members_copy_other": "{{formattedCount}} membres figurent sur la liste électorale : une copie de vos membres faite le {{date}}.",
-        "picked_one": "{{formattedCount}} membre figure sur la liste électorale, choisi un par un.",
-        "picked_many": "{{formattedCount}} membres figurent sur la liste électorale, choisis un par un.",
-        "picked_other": "{{formattedCount}} membres figurent sur la liste électorale, choisis un par un.",
-        "plain_one": "{{formattedCount}} membre figure sur la liste électorale.",
-        "plain_many": "{{formattedCount}} membres figurent sur la liste électorale.",
-        "plain_other": "{{formattedCount}} membres figurent sur la liste électorale.",
-        "shared_one": "{{formattedCount}} membre figure sur la liste électorale, issu de la liste électorale enregistrée « {{name}} ».",
-        "shared_many": "{{formattedCount}} membres figurent sur la liste électorale, issus de la liste électorale enregistrée « {{name}} ».",
-        "shared_other": "{{formattedCount}} membres figurent sur la liste électorale, issus de la liste électorale enregistrée « {{name}} ».",
-        "snapshot_on_one": "{{formattedCount}} membre figure sur la liste électorale : vos membres tels qu'ils étaient le {{date}}, lors de la publication.",
-        "snapshot_on_many": "{{formattedCount}} membres figurent sur la liste électorale : vos membres tels qu'ils étaient le {{date}}, lors de la publication.",
-        "snapshot_on_other": "{{formattedCount}} membres figurent sur la liste électorale : vos membres tels qu'ils étaient le {{date}}, lors de la publication."
-      }
     },
     "this_census": "cette liste électorale",
     "used_by": {

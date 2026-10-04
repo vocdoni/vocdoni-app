@@ -1,14 +1,14 @@
-import { Box, Button, Clipboard, Flex, Grid, Icon, Link, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Grid, Icon, Link, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { IconType } from 'react-icons'
-import { LuCalendar, LuCheck, LuCircleAlert, LuCopy, LuInfo, LuKeyRound, LuUsers, LuVote } from 'react-icons/lu'
+import { LuCalendar, LuCircleAlert, LuCopy, LuInfo, LuKeyRound, LuUsers, LuVote } from 'react-icons/lu'
 import { generatePath, Link as RouterLink } from 'react-router'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
 import { VoteStateBadge } from './CensusRow'
-import { censusSummary, codeChannel, detailsList, signInFacts, sourceFacts, zoneName } from './facts'
+import { codeChannel, signInFacts, sourceFacts, zoneName } from './facts'
 import { membersUnit, peopleUnit, untitledVote } from './labels'
 import type { ResolvedCensusState } from './useResolvedCensus'
 
@@ -151,21 +151,21 @@ type FactsStripProps = {
   onShowUnreachable?: () => void
   /** Name the vote's dates: off where the vote is the page already (its Voters tab) */
   withVote?: boolean
+  /** What this kind of census does when it changes, under the facts */
+  note?: string | null
 }
 
 /**
  * A census in four facts, one row: who's in it and whether they can get a code, how they sign in,
  * where they came from, and when the vote runs (or, for a saved census, which votes copied it).
  */
-export const FactsStrip = ({ census, readiness, onShowUnreachable, withVote = true }: FactsStripProps) => {
+export const FactsStrip = ({ census, readiness, onShowUnreachable, withVote = true, note }: FactsStripProps) => {
   const { t, i18n } = useTranslation()
   const { format } = useDateFns()
   const number = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
   const day = (iso: string) => format(iso, 'd MMM yyyy') ?? ''
 
   const tiles: ReactNode[] = []
-
-  let summary: string | undefined
 
   if (census.kind === 'vote' && census.process) {
     const process = census.process
@@ -236,7 +236,7 @@ export const FactsStrip = ({ census, readiness, onShowUnreachable, withVote = tr
           {source.sub && <Sub>{source.sub}</Sub>}
         </Tile>
       )
-    if (withVote) {
+    if (withVote)
       tiles.push(
         <Tile
           key='voting'
@@ -288,26 +288,6 @@ export const FactsStrip = ({ census, readiness, onShowUnreachable, withVote = tr
           )}
         </Tile>
       )
-      summary = censusSummary(t, {
-        count: census.count,
-        formattedCount: number(census.count),
-        source: census.source,
-        draft,
-        copiedOn: copiedOn ? day(copiedOn) : undefined,
-        day,
-        details: authFields.length ? detailsList(t, language, authFields) : undefined,
-        channel: codeChannel(t, twoFaFields),
-        weighted: !!process.census?.weighted,
-        dates: dates && {
-          start: format(process.startDate, 'd MMM yyyy') ?? '',
-          end: format(process.endDate, 'EEE d MMM yyyy') ?? '',
-          time: dates.time,
-          zone: dates.zone,
-          over,
-          canceled: census.state === 'canceled',
-        },
-      })
-    }
   } else if (census.kind === 'saved') {
     const updated = census.group?.updatedAt || census.group?.createdAt
     const first = census.copiedInto[0]
@@ -394,36 +374,30 @@ export const FactsStrip = ({ census, readiness, onShowUnreachable, withVote = tr
       )
   }
 
-  if (!tiles.length) return null
-  const grid = (
-    <Grid
-      templateColumns={{ base: 'repeat(2, minmax(0, 1fr))', md: `repeat(${tiles.length}, minmax(0, 1fr))` }}
-      rowGap={{ base: 2, md: 0 }}
-      py={{ base: 1, md: 0 }}
-    >
-      {tiles}
-    </Grid>
-  )
+  if (!tiles.length && !note) return null
   return (
     <Box borderWidth='1px' borderColor='border' borderRadius='lg' bg='bg' overflow='hidden'>
-      {grid}
-      {summary && (
-        // The same facts in sentences, to paste into an email to the board
-        <Flex gap={3} align='flex-start' px={4} py={3} bg='bg.subtle' borderTopWidth='1px' borderColor='border'>
+      {tiles.length > 0 && (
+        <Grid
+          templateColumns={{ base: 'repeat(2, minmax(0, 1fr))', md: `repeat(${tiles.length}, minmax(0, 1fr))` }}
+          rowGap={{ base: 2, md: 0 }}
+          py={{ base: 1, md: 0 }}
+        >
+          {tiles}
+        </Grid>
+      )}
+      {note && (
+        <Flex
+          gap={3}
+          align='flex-start'
+          px={4}
+          py={3}
+          bg='bg.subtle'
+          borderTopWidth={tiles.length ? '1px' : 0}
+          borderColor='border'
+        >
           <Icon as={LuInfo} boxSize={4} color='fg.muted' mt='2px' flexShrink={0} aria-hidden />
-          <Text fontSize='sm' flex={1}>
-            {summary}
-          </Text>
-          <Clipboard.Root value={summary} flexShrink={0}>
-            <Clipboard.Trigger asChild>
-              <Button size='xs' variant='outline' colorPalette='gray'>
-                <Clipboard.Indicator copied={<Icon as={LuCheck} />}>
-                  <Icon as={LuCopy} />
-                </Clipboard.Indicator>
-                {t('census_detail.summary.copy', { defaultValue: 'Copy' })}
-              </Button>
-            </Clipboard.Trigger>
-          </Clipboard.Root>
+          <Text fontSize='sm'>{note}</Text>
         </Flex>
       )}
     </Box>

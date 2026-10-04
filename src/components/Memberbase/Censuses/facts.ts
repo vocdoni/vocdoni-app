@@ -69,9 +69,10 @@ export const signInFacts = (
       defaultValue: 'They confirm their {{details}}',
       details: detailsList(t, language, authFields),
     }),
+    // Only a code that is sent is worth saying: nothing when there's none
     sub: channel
       ? t('census_detail.facts.get_in.then_code', { defaultValue: 'Then a one-time code by {{channel}}', channel })
-      : t('census_detail.facts.get_in.no_code', { defaultValue: 'Without a one-time code' }),
+      : undefined,
   }
 }
 
@@ -117,7 +118,7 @@ export const sourceFacts = (
           : t('census_detail.facts.source.snapshot', { defaultValue: 'Your members when you published' }),
         sub: editable
           ? t('census_detail.facts.source.snapshot_open', {
-              defaultValue: 'Fixed when you published. Add late members here.',
+              defaultValue: 'You can still add and remove members in this census',
             })
           : t('census_detail.facts.source.snapshot_closed', { defaultValue: 'Fixed when you published' }),
       }
@@ -184,166 +185,4 @@ export const zoneName = (iso: string, language?: string) => {
   } catch {
     return undefined
   }
-}
-
-type SummaryInput = {
-  count: number
-  formattedCount: string
-  source?: CensusSource
-  draft: boolean
-  /** When a vote's own copy was made, formatted */
-  copiedOn?: string
-  day: (iso: string) => string
-  details?: string
-  channel?: string
-  weighted: boolean
-  /** Voting dates, already formatted; none for a draft */
-  dates?: { start: string; end: string; time: string; zone?: string; over: boolean; canceled: boolean }
-}
-
-/** "1,184 members are on the voter list", then where they come from. */
-const summaryWho = (t: TFunction, { count, formattedCount, source, draft, copiedOn, day }: SummaryInput) => {
-  switch (source?.kind) {
-    case 'everyone':
-      return draft
-        ? t('census_detail.summary.who.everyone_draft', {
-            count,
-            formattedCount,
-            defaultValue_one:
-              '1 member is on the voter list: all your members, plus anyone you add before you publish.',
-            defaultValue_other:
-              '{{formattedCount}} members are on the voter list: all your members, plus anyone you add before you publish.',
-          })
-        : t('census_detail.summary.who.everyone_live', {
-            count,
-            formattedCount,
-            defaultValue_one: '1 member is on the voter list: all your members, plus anyone you add.',
-            defaultValue_other:
-              '{{formattedCount}} members are on the voter list: all your members, plus anyone you add.',
-          })
-    case 'snapshot':
-      if (source.madeAt)
-        return t('census_detail.summary.who.snapshot_on', {
-          count,
-          formattedCount,
-          date: day(source.madeAt),
-          defaultValue_one: '1 member is on the voter list: your members as they were on {{date}}, when you published.',
-          defaultValue_other:
-            '{{formattedCount}} members are on the voter list: your members as they were on {{date}}, when you published.',
-        })
-      break
-    case 'copy':
-      if (source.source === 'choose')
-        return t('census_detail.summary.who.picked', {
-          count,
-          formattedCount,
-          defaultValue_one: '1 member is on the voter list, picked one by one.',
-          defaultValue_other: '{{formattedCount}} members are on the voter list, picked one by one.',
-        })
-      if (source.source === 'everyone' && copiedOn)
-        return t('census_detail.summary.who.members_copy', {
-          count,
-          formattedCount,
-          date: copiedOn,
-          defaultValue_one: '1 member is on the voter list: a copy of your members made on {{date}}.',
-          defaultValue_other:
-            '{{formattedCount}} members are on the voter list: a copy of your members made on {{date}}.',
-        })
-      if (source.from)
-        return source.source === 'previous'
-          ? t('census_detail.summary.who.from_vote', {
-              count,
-              formattedCount,
-              name: source.from,
-              defaultValue_one: "1 member is on the voter list, copied from the vote '{{name}}'.",
-              defaultValue_other: "{{formattedCount}} members are on the voter list, copied from the vote '{{name}}'.",
-            })
-          : t('census_detail.summary.who.from_saved', {
-              count,
-              formattedCount,
-              name: source.from,
-              defaultValue_one: "1 member is on the voter list, copied from the saved census '{{name}}'.",
-              defaultValue_other:
-                "{{formattedCount}} members are on the voter list, copied from the saved census '{{name}}'.",
-            })
-      break
-    case 'saved':
-      return t('census_detail.summary.who.shared', {
-        count,
-        formattedCount,
-        name: source.group.title,
-        defaultValue_one: "1 member is on the voter list, from the saved census '{{name}}'.",
-        defaultValue_other: "{{formattedCount}} members are on the voter list, from the saved census '{{name}}'.",
-      })
-    case 'selected':
-      return t('census_detail.summary.who.picked', {
-        count,
-        formattedCount,
-        defaultValue_one: '1 member is on the voter list, picked one by one.',
-        defaultValue_other: '{{formattedCount}} members are on the voter list, picked one by one.',
-      })
-  }
-  return t('census_detail.summary.who.plain', {
-    count,
-    formattedCount,
-    defaultValue_one: '1 member is on the voter list.',
-    defaultValue_other: '{{formattedCount}} members are on the voter list.',
-  })
-}
-
-/** The census in a few sentences, to paste into an email to the board. */
-export const censusSummary = (t: TFunction, input: SummaryInput) => {
-  const { details, channel, weighted, dates } = input
-  const parts: string[] = []
-  const who = summaryWho(t, input)
-  parts.push(who)
-
-  if (details && channel)
-    parts.push(
-      t('census_detail.summary.how.details_code', {
-        defaultValue: 'They get in by confirming their {{details}} and a one-time code sent by {{channel}}.',
-        details,
-        channel,
-      })
-    )
-  else if (details)
-    parts.push(
-      t('census_detail.summary.how.details', {
-        defaultValue: 'They get in by confirming their {{details}}, without a one-time code.',
-        details,
-      })
-    )
-  else if (channel)
-    parts.push(
-      t('census_detail.summary.how.code', {
-        defaultValue: 'They get in with a one-time code sent by {{channel}}.',
-        channel,
-      })
-    )
-
-  if (weighted) parts.push(t('census_detail.summary.weighted', { defaultValue: 'Votes count by voting power.' }))
-
-  if (!dates) parts.push(t('census_detail.summary.when.draft', { defaultValue: "The voting dates aren't set yet." }))
-  else {
-    const at = dates.zone ? `${dates.time} (${dates.zone})` : dates.time
-    if (dates.canceled) parts.push(t('census_detail.summary.when.canceled', { defaultValue: 'The vote was canceled.' }))
-    else
-      parts.push(
-        dates.over
-          ? t('census_detail.summary.when.ran', {
-              defaultValue: 'Voting ran from {{start}} to {{end}} and closed at {{at}}.',
-              start: dates.start,
-              end: dates.end,
-              at,
-            })
-          : t('census_detail.summary.when.runs', {
-              defaultValue: 'Voting runs from {{start}} to {{end}} and closes at {{at}}.',
-              start: dates.start,
-              end: dates.end,
-              at,
-            })
-      )
-  }
-
-  return parts.join(' ')
 }

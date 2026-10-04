@@ -122,7 +122,6 @@
     "newer": "Berriagoak",
     "older": "Zaharragoak",
     "show_everything": "Erakutsi dena",
-    "soon_line": "Oraingoz bozketak eta inportazioak ikusten dituzu hemen. Laster pertsonen eta erroldaren aldaketak ere, nork egin dituen barne.",
     "test_vote": "Proba-bozketa",
     "untitled": "Izenbururik gabe"
   },
@@ -324,7 +323,6 @@
         "code_only": "Aldi bakarreko kode batekin, {{channel}} bidez",
         "confirm": "Beren {{details}} baieztatuz",
         "label": "Nola sartzen diren botogileak",
-        "no_code": "Aldi bakarreko koderik gabe",
         "then_code": "Gero, aldi bakarreko kode bat {{channel}} bidez"
       },
       "members_at_close_one": "kide itxieran",
@@ -359,7 +357,7 @@
         "snapshot": "Zure kideak, argitaratu zenuenean",
         "snapshot_closed": "Argitaratu zenuenean finkatua",
         "snapshot_on": "Zure kideak ({{date}})",
-        "snapshot_open": "Argitaratu zenuenean finkatua. Gehitu hemen kide berriak."
+        "snapshot_open": "Oraindik kideak gehitu eta kendu ditzakezu errolde honetan"
       },
       "used_more_one": "Eta beste bozketa 1: hemengo aldaketak iristen zaizkio",
       "used_more_other": "Eta beste {{count}} bozketa: hemengo aldaketak iristen zaizkie",
@@ -468,41 +466,6 @@
       "saved": "Zure bozketetan berrerabil dezakezun gordetako erroldea.",
       "selected": "Bozketa honetarako banan-banan aukeratutako pertsonak.",
       "shared": "Hauekin partekatua: {{votes}}. Aldatzeak guztietan nork bozka dezakeen aldatzen du, baita itxitakoetan ere."
-    },
-    "summary": {
-      "copy": "Kopiatu",
-      "how": {
-        "code": "Bozketan aldi bakarreko kode batekin sartzen dira, {{channel}} bidez jasotzen dutena.",
-        "details": "Bozketan beren {{details}} baieztatuz sartzen dira, aldi bakarreko koderik gabe.",
-        "details_code": "Bozketan beren {{details}} baieztatuz eta {{channel}} bidez jasotzen duten aldi bakarreko kode batekin sartzen dira."
-      },
-      "weighted": "Boto bakoitzak bere boto-pisuaren arabera balio du.",
-      "when": {
-        "canceled": "Bozketa bertan behera utzi da.",
-        "draft": "Bozketaren datak ez dira oraindik ezarri.",
-        "ran": "Bozketa {{start}} eta {{end}} bitartean egin zen, eta itxiera-ordua {{at}} izan zen.",
-        "runs": "Bozketa {{start}} eta {{end}} bitartean egiten da, eta itxiera-ordua {{at}} da."
-      },
-      "who": {
-        "everyone_draft_one": "Kide 1 dago erroldean: zure kide guztiak, gehi argitaratu aurretik gehitzen duzun edonor.",
-        "everyone_draft_other": "{{formattedCount}} kide daude erroldean: zure kide guztiak, gehi argitaratu aurretik gehitzen duzun edonor.",
-        "everyone_live_one": "Kide 1 dago erroldean: zure kide guztiak, gehi gehitzen duzun edonor.",
-        "everyone_live_other": "{{formattedCount}} kide daude erroldean: zure kide guztiak, gehi gehitzen duzun edonor.",
-        "from_saved_one": "Kide 1 dago erroldean, «{{name}}» gordetako erroldetik kopiatua.",
-        "from_saved_other": "{{formattedCount}} kide daude erroldean, «{{name}}» gordetako erroldetik kopiatuak.",
-        "from_vote_one": "Kide 1 dago erroldean, «{{name}}» bozketatik kopiatua.",
-        "from_vote_other": "{{formattedCount}} kide daude erroldean, «{{name}}» bozketatik kopiatuak.",
-        "members_copy_one": "Kide 1 dago erroldean: zure kideen kopia bat, {{date}}(e)an egina.",
-        "members_copy_other": "{{formattedCount}} kide daude erroldean: zure kideen kopia bat, {{date}}(e)an egina.",
-        "picked_one": "Kide 1 dago erroldean, eskuz aukeratua.",
-        "picked_other": "{{formattedCount}} kide daude erroldean, banan-banan aukeratuak.",
-        "plain_one": "Kide 1 dago erroldean.",
-        "plain_other": "{{formattedCount}} kide daude erroldean.",
-        "shared_one": "Kide 1 dago erroldean, «{{name}}» gordetako erroldekoa.",
-        "shared_other": "{{formattedCount}} kide daude erroldean, «{{name}}» gordetako erroldekoak.",
-        "snapshot_on_one": "Kide 1 dago erroldean: zure kideak {{date}}(e)an zeuden bezala, argitaratu zenuenean.",
-        "snapshot_on_other": "{{formattedCount}} kide daude erroldean: zure kideak {{date}}(e)an zeuden bezala, argitaratu zenuenean."
-      }
     },
     "this_census": "errolde hau",
     "used_by": {

@@ -122,7 +122,6 @@
     "newer": "Newer",
     "older": "Older",
     "show_everything": "Show everything",
-    "soon_line": "For now this shows votes and imports. Edits to people and censuses, with who made them, are coming.",
     "test_vote": "Test vote",
     "untitled": "Untitled"
   },
@@ -324,7 +323,6 @@
         "code_only": "With a one-time code by {{channel}}",
         "confirm": "They confirm their {{details}}",
         "label": "How voters get in",
-        "no_code": "Without a one-time code",
         "then_code": "Then a one-time code by {{channel}}"
       },
       "members_at_close_one": "member at close",
@@ -359,7 +357,7 @@
         "snapshot": "Your members when you published",
         "snapshot_closed": "Fixed when you published",
         "snapshot_on": "Your members on {{date}}",
-        "snapshot_open": "Fixed when you published. Add late members here."
+        "snapshot_open": "You can still add and remove members in this census"
       },
       "used_more_one": "And 1 more vote: changes here reach them",
       "used_more_other": "And {{count}} more votes: changes here reach them",
@@ -468,41 +466,6 @@
       "saved": "A saved census you can reuse in your votes.",
       "selected": "People picked one by one for this vote.",
       "shared": "Shared with {{votes}}. Changing it changes who can vote in all of them, even closed ones."
-    },
-    "summary": {
-      "copy": "Copy",
-      "how": {
-        "code": "They get in with a one-time code sent by {{channel}}.",
-        "details": "They get in by confirming their {{details}}, without a one-time code.",
-        "details_code": "They get in by confirming their {{details}} and a one-time code sent by {{channel}}."
-      },
-      "weighted": "Votes count by voting power.",
-      "when": {
-        "canceled": "The vote was canceled.",
-        "draft": "The voting dates aren't set yet.",
-        "ran": "Voting ran from {{start}} to {{end}} and closed at {{at}}.",
-        "runs": "Voting runs from {{start}} to {{end}} and closes at {{at}}."
-      },
-      "who": {
-        "everyone_draft_one": "1 member is on the voter list: all your members, plus anyone you add before you publish.",
-        "everyone_draft_other": "{{formattedCount}} members are on the voter list: all your members, plus anyone you add before you publish.",
-        "everyone_live_one": "1 member is on the voter list: all your members, plus anyone you add.",
-        "everyone_live_other": "{{formattedCount}} members are on the voter list: all your members, plus anyone you add.",
-        "from_saved_one": "1 member is on the voter list, copied from the saved census '{{name}}'.",
-        "from_saved_other": "{{formattedCount}} members are on the voter list, copied from the saved census '{{name}}'.",
-        "from_vote_one": "1 member is on the voter list, copied from the vote '{{name}}'.",
-        "from_vote_other": "{{formattedCount}} members are on the voter list, copied from the vote '{{name}}'.",
-        "members_copy_one": "1 member is on the voter list: a copy of your members made on {{date}}.",
-        "members_copy_other": "{{formattedCount}} members are on the voter list: a copy of your members made on {{date}}.",
-        "picked_one": "1 member is on the voter list, picked one by one.",
-        "picked_other": "{{formattedCount}} members are on the voter list, picked one by one.",
-        "plain_one": "1 member is on the voter list.",
-        "plain_other": "{{formattedCount}} members are on the voter list.",
-        "shared_one": "1 member is on the voter list, from the saved census '{{name}}'.",
-        "shared_other": "{{formattedCount}} members are on the voter list, from the saved census '{{name}}'.",
-        "snapshot_on_one": "1 member is on the voter list: your members as they were on {{date}}, when you published.",
-        "snapshot_on_other": "{{formattedCount}} members are on the voter list: your members as they were on {{date}}, when you published."
-      }
     },
     "this_census": "this census",
     "used_by": {

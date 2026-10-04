@@ -122,7 +122,6 @@
     "newer": "Neuer",
     "older": "Älter",
     "show_everything": "Alles zeigen",
-    "soon_line": "Vorerst siehst du hier Abstimmungen und Importe. Bald auch Änderungen an Personen und Listen und wer sie gemacht hat.",
     "test_vote": "Testabstimmung",
     "untitled": "Ohne Titel"
   },
@@ -324,7 +323,6 @@
         "code_only": "Mit einem Einmalcode per {{channel}}",
         "confirm": "Sie bestätigen {{details}}",
         "label": "So melden sich Wählende an",
-        "no_code": "Ohne Einmalcode",
         "then_code": "Danach ein Einmalcode per {{channel}}"
       },
       "members_at_close_one": "Mitglied bei Abstimmungsende",
@@ -359,7 +357,7 @@
         "snapshot": "Deine Mitglieder bei der Veröffentlichung",
         "snapshot_closed": "Bei der Veröffentlichung festgelegt",
         "snapshot_on": "Deine Mitglieder am {{date}}",
-        "snapshot_open": "Bei der Veröffentlichung festgelegt. Spätere Mitglieder fügst du hier hinzu."
+        "snapshot_open": "Du kannst dieser Liste weiterhin Mitglieder hinzufügen oder sie daraus entfernen"
       },
       "used_more_one": "Und 1 weitere Abstimmung: Änderungen hier erreichen sie",
       "used_more_other": "Und {{count}} weitere Abstimmungen: Änderungen hier erreichen sie",
@@ -468,41 +466,6 @@
       "saved": "Eine gespeicherte Teilnehmerliste, die du in deinen Abstimmungen wiederverwenden kannst.",
       "selected": "Einzeln für diese Abstimmung ausgewählte Personen.",
       "shared": "Geteilt mit {{votes}}. Eine Änderung ändert, wer in all diesen Abstimmungen abstimmen darf, auch in beendeten."
-    },
-    "summary": {
-      "copy": "Kopieren",
-      "how": {
-        "code": "Sie melden sich mit einem Einmalcode an, der per {{channel}} gesendet wird.",
-        "details": "Sie melden sich an, indem sie {{details}} bestätigen, ohne Einmalcode.",
-        "details_code": "Sie melden sich an, indem sie {{details}} bestätigen und einen Einmalcode eingeben, der per {{channel}} gesendet wird."
-      },
-      "weighted": "Die Stimmen zählen nach Stimmgewicht.",
-      "when": {
-        "canceled": "Die Abstimmung wurde abgebrochen.",
-        "draft": "Der Abstimmungszeitraum steht noch nicht fest.",
-        "ran": "Die Abstimmung lief vom {{start}} bis zum {{end}} und endete um {{at}}.",
-        "runs": "Die Abstimmung läuft vom {{start}} bis zum {{end}} und endet um {{at}}."
-      },
-      "who": {
-        "everyone_draft_one": "1 Mitglied steht auf der Liste der Stimmberechtigten: alle deine Mitglieder und alle, die du vor der Veröffentlichung hinzufügst.",
-        "everyone_draft_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten: alle deine Mitglieder und alle, die du vor der Veröffentlichung hinzufügst.",
-        "everyone_live_one": "1 Mitglied steht auf der Liste der Stimmberechtigten: alle deine Mitglieder und alle, die du hinzufügst.",
-        "everyone_live_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten: alle deine Mitglieder und alle, die du hinzufügst.",
-        "from_saved_one": "1 Mitglied steht auf der Liste der Stimmberechtigten, kopiert aus der gespeicherten Teilnehmerliste „{{name}}“.",
-        "from_saved_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten, kopiert aus der gespeicherten Teilnehmerliste „{{name}}“.",
-        "from_vote_one": "1 Mitglied steht auf der Liste der Stimmberechtigten, kopiert aus der Abstimmung „{{name}}“.",
-        "from_vote_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten, kopiert aus der Abstimmung „{{name}}“.",
-        "members_copy_one": "1 Mitglied steht auf der Liste der Stimmberechtigten: eine Kopie deiner Mitglieder vom {{date}}.",
-        "members_copy_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten: eine Kopie deiner Mitglieder vom {{date}}.",
-        "picked_one": "1 Mitglied steht auf der Liste der Stimmberechtigten, einzeln ausgewählt.",
-        "picked_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten, einzeln ausgewählt.",
-        "plain_one": "1 Mitglied steht auf der Liste der Stimmberechtigten.",
-        "plain_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten.",
-        "shared_one": "1 Mitglied steht auf der Liste der Stimmberechtigten, aus der gespeicherten Teilnehmerliste „{{name}}“.",
-        "shared_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten, aus der gespeicherten Teilnehmerliste „{{name}}“.",
-        "snapshot_on_one": "1 Mitglied steht auf der Liste der Stimmberechtigten: deine Mitglieder so, wie sie am {{date}} bei der Veröffentlichung waren.",
-        "snapshot_on_other": "{{formattedCount}} Mitglieder stehen auf der Liste der Stimmberechtigten: deine Mitglieder so, wie sie am {{date}} bei der Veröffentlichung waren."
-      }
     },
     "this_census": "diese Teilnehmerliste",
     "used_by": {

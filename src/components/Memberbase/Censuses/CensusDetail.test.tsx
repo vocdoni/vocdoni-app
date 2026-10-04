@@ -447,12 +447,6 @@ describe('CensusDetail', () => {
     expect(screen.getAllByText(/^Copied from|^Chosen by hand/).length).toBeGreaterThan(0)
     // Nobody signs in to a vote that's over: no readiness
     expect(screen.queryByText(/can get the code|can't get the code/)).toBeNull()
-    // The same facts in sentences, in the past tense
-    expect(
-      screen.getByText(
-        /^31 members are on the voter list\. They get in by confirming their member number and national ID and a one-time code sent by email\. Voting ran from .+ and closed at \d{2}:\d{2}/
-      )
-    ).toBeInTheDocument()
   })
 
   it('explains a census made from every member at publish can still change', async () => {
@@ -463,12 +457,8 @@ describe('CensusDetail', () => {
     renderDetail({ kind: 'vote', processId: 'p8' })
 
     expect(await screen.findByText(/^Your members on \d+ \w+ \d{4}$/)).toBeInTheDocument()
-    expect(screen.getByText('Fixed when you published. Add late members here.')).toBeInTheDocument()
-    expect(
-      screen.getByText(
-        /^2 members are on the voter list: your members as they were on \d+ \w+ \d{4}, when you published\./
-      )
-    ).toBeInTheDocument()
+    expect(screen.getByText('You can still add and remove members in this census')).toBeInTheDocument()
+    // The note sits under the facts, once
     expect(
       screen.getByText(
         /^This list is your members as they were on \d+ \w+ \d{4}, when you published the vote\. You can still add or remove people here\. Fixing someone's details also changes them in your members list\.$/
@@ -827,7 +817,7 @@ describe('CensusDetail', () => {
       expect(screen.getByText(/Removing someone here only takes them out of this vote/)).toBeInTheDocument()
     })
 
-    it('says nothing about codes for a draft that sends none, and that members added later join', async () => {
+    it('says nothing about codes for a vote that sends none, and that members added later join', async () => {
       state.process = vote(
         'p3',
         'Assemblea 2027',
@@ -838,17 +828,12 @@ describe('CensusDetail', () => {
       renderDetail({ kind: 'vote', processId: 'p3' })
 
       expect(await screen.findByText('They confirm their first name')).toBeInTheDocument()
-      expect(screen.getByText('Without a one-time code')).toBeInTheDocument()
-      expect(screen.queryByText(/the code/)).toBeNull()
+      // No code is sent: nothing is said about one
+      expect(screen.queryByText(/code/)).toBeNull()
       expect(screen.getByText('All your members')).toBeInTheDocument()
       expect(screen.getByText('Members you add before publishing can vote too')).toBeInTheDocument()
       expect(screen.getByText('Not scheduled yet')).toBeInTheDocument()
-      expect(
-        screen.getByText(
-          "1,742 members are on the voter list: all your members, plus anyone you add before you publish. They get in by confirming their first name, without a one-time code. The voting dates aren't set yet."
-        )
-      ).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /copy/i })).toBeNull()
     })
 
     it('offers no edits on a closed vote, nor on Everyone', async () => {

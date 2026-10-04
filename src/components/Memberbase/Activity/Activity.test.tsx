@@ -116,7 +116,8 @@ describe('ActivityTab', () => {
     expect(within(undated).getByText('Members list only')).toBeInTheDocument()
     expect(within(undated).getByText('Imports get a date soon')).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: 'Annual assembly' })).toHaveLength(2)
-    expect(screen.getByText(SOON)).toBeInTheDocument()
+    // No banner about what's coming
+    expect(screen.queryByText(SOON)).toBeNull()
     expect(screen.queryByRole('button', { name: /Export CSV/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'People page' })).toBeNull()
   })
@@ -125,11 +126,11 @@ describe('ActivityTab', () => {
     data.jobsError = true
     renderTab()
 
-    expect(await screen.findByText(SOON)).toBeInTheDocument()
+    expect(await screen.findByText(/No activity yet|Nothing here yet/)).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'People page' })).toBeNull()
   })
 
-  it('shows votes and imports by day, with one Soon tag and only the filters that have something', async () => {
+  it('shows votes and imports by day, with no Soon tag and only the filters that have something', async () => {
     data.jobs = [job('j1', { completedAt: '2026-09-20T10:00:00Z' }), job('j2', { status: 'failed', errors: [] })]
     data.published = [
       vote('p1', 'Annual assembly', '2026-09-01T09:00:00', '2026-09-01T18:00:00'),
@@ -150,7 +151,7 @@ describe('ActivityTab', () => {
     expect(screen.getByText('Failed')).toBeInTheDocument()
     expect(screen.queryByText(/example\.org|34600/)).not.toBeInTheDocument()
 
-    expect(screen.getAllByText('Soon')).toHaveLength(1)
+    expect(screen.queryByText('Soon')).toBeNull()
     const filters = screen.getByRole('group', { name: 'Filter activity' })
     expect(
       within(filters)

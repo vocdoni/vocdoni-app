@@ -131,7 +131,6 @@
     "newer": "Més recents",
     "older": "Més antics",
     "show_everything": "Mostra-ho tot",
-    "soon_line": "De moment aquí veus votacions i importacions. Aviat també els canvis a persones i censos, amb qui els ha fet.",
     "test_vote": "Votació de prova",
     "untitled": "Sense títol"
   },
@@ -340,7 +339,6 @@
         "code_only": "Amb un codi d'un sol ús per {{channel}}",
         "confirm": "Confirmen {{details}}",
         "label": "Com accedeixen els votants",
-        "no_code": "Sense codi d'un sol ús",
         "then_code": "Després, un codi d'un sol ús per {{channel}}"
       },
       "members_at_close_one": "membre en tancar",
@@ -376,7 +374,7 @@
         "snapshot": "Els teus membres quan vas publicar",
         "snapshot_closed": "Fixat quan vas publicar",
         "snapshot_on": "Els teus membres del {{date}}",
-        "snapshot_open": "Fixat quan vas publicar. Afegeix aquí els membres nous."
+        "snapshot_open": "Encara pots afegir i treure membres d'aquest cens"
       },
       "used_more_one": "I 1 votació més: els canvis d'aquí hi arriben",
       "used_more_many": "I {{count}} votacions més: els canvis d'aquí hi arriben",
@@ -499,50 +497,6 @@
       "saved": "Un cens desat que pots reutilitzar a les teves votacions.",
       "selected": "Persones triades una a una per a aquesta votació.",
       "shared": "Compartit amb {{votes}}. Canviar-lo canvia qui pot votar en totes, fins i tot en les tancades."
-    },
-    "summary": {
-      "copy": "Copia",
-      "how": {
-        "code": "Accedeixen a la votació amb un codi d'un sol ús que reben per {{channel}}.",
-        "details": "Accedeixen a la votació confirmant {{details}}, sense codi d'un sol ús.",
-        "details_code": "Accedeixen a la votació confirmant {{details}} i amb un codi d'un sol ús que reben per {{channel}}."
-      },
-      "weighted": "Cada vot compta segons el seu pes.",
-      "when": {
-        "canceled": "La votació s'ha cancel·lat.",
-        "draft": "Encara no s'han fixat les dates de votació.",
-        "ran": "La votació va estar oberta del {{start}} al {{end}} i va tancar a les {{at}}.",
-        "runs": "La votació està oberta del {{start}} al {{end}} i tanca a les {{at}}."
-      },
-      "who": {
-        "everyone_draft_one": "Hi ha 1 membre al cens: tots els teus membres, més qualsevol persona que afegeixis abans de publicar.",
-        "everyone_draft_many": "Hi ha {{formattedCount}} membres al cens: tots els teus membres, més qualsevol persona que afegeixis abans de publicar.",
-        "everyone_draft_other": "Hi ha {{formattedCount}} membres al cens: tots els teus membres, més qualsevol persona que afegeixis abans de publicar.",
-        "everyone_live_one": "Hi ha 1 membre al cens: tots els teus membres, més qualsevol persona que afegeixis.",
-        "everyone_live_many": "Hi ha {{formattedCount}} membres al cens: tots els teus membres, més qualsevol persona que afegeixis.",
-        "everyone_live_other": "Hi ha {{formattedCount}} membres al cens: tots els teus membres, més qualsevol persona que afegeixis.",
-        "from_saved_one": "Hi ha 1 membre al cens, copiat del cens desat «{{name}}».",
-        "from_saved_many": "Hi ha {{formattedCount}} membres al cens, copiats del cens desat «{{name}}».",
-        "from_saved_other": "Hi ha {{formattedCount}} membres al cens, copiats del cens desat «{{name}}».",
-        "from_vote_one": "Hi ha 1 membre al cens, copiat de la votació «{{name}}».",
-        "from_vote_many": "Hi ha {{formattedCount}} membres al cens, copiats de la votació «{{name}}».",
-        "from_vote_other": "Hi ha {{formattedCount}} membres al cens, copiats de la votació «{{name}}».",
-        "members_copy_one": "Hi ha 1 membre al cens: una còpia dels teus membres feta el {{date}}.",
-        "members_copy_many": "Hi ha {{formattedCount}} membres al cens: una còpia dels teus membres feta el {{date}}.",
-        "members_copy_other": "Hi ha {{formattedCount}} membres al cens: una còpia dels teus membres feta el {{date}}.",
-        "picked_one": "Hi ha 1 membre al cens, triat a mà.",
-        "picked_many": "Hi ha {{formattedCount}} membres al cens, triats un a un.",
-        "picked_other": "Hi ha {{formattedCount}} membres al cens, triats un a un.",
-        "plain_one": "Hi ha 1 membre al cens.",
-        "plain_many": "Hi ha {{formattedCount}} membres al cens.",
-        "plain_other": "Hi ha {{formattedCount}} membres al cens.",
-        "shared_one": "Hi ha 1 membre al cens, del cens desat «{{name}}».",
-        "shared_many": "Hi ha {{formattedCount}} membres al cens, del cens desat «{{name}}».",
-        "shared_other": "Hi ha {{formattedCount}} membres al cens, del cens desat «{{name}}».",
-        "snapshot_on_one": "Hi ha 1 membre al cens: els teus membres tal com eren el {{date}}, quan vas publicar.",
-        "snapshot_on_many": "Hi ha {{formattedCount}} membres al cens: els teus membres tal com eren el {{date}}, quan vas publicar.",
-        "snapshot_on_other": "Hi ha {{formattedCount}} membres al cens: els teus membres tal com eren el {{date}}, quan vas publicar."
-      }
     },
     "this_census": "aquest cens",
     "used_by": {

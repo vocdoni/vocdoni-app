@@ -131,7 +131,6 @@
     "newer": "Mais recentes",
     "older": "Mais antigos",
     "show_everything": "Mostrar tudo",
-    "soon_line": "Por agora vê aqui votações e importações. Em breve também as alterações a pessoas e listas, com quem as fez.",
     "test_vote": "Votação de teste",
     "untitled": "Sem título"
   },
@@ -340,7 +339,6 @@
         "code_only": "Com um código de utilização única por {{channel}}",
         "confirm": "Confirmam os seus dados: {{details}}",
         "label": "Como entram os votantes",
-        "no_code": "Sem código de utilização única",
         "then_code": "Depois, um código de utilização única por {{channel}}"
       },
       "members_at_close_one": "membro à data do fecho",
@@ -376,7 +374,7 @@
         "snapshot": "Os teus membros quando publicaste",
         "snapshot_closed": "Fixada quando publicaste",
         "snapshot_on": "Os teus membros a {{date}}",
-        "snapshot_open": "Fixada quando publicaste. Adiciona aqui os membros que chegarem depois."
+        "snapshot_open": "Ainda podes adicionar e remover membros desta lista"
       },
       "used_more_one": "E mais 1 votação: as alterações feitas aqui chegam-lhe",
       "used_more_many": "E mais {{count}} votações: as alterações feitas aqui chegam-lhes",
@@ -499,50 +497,6 @@
       "saved": "Uma lista de participantes guardada que podes reutilizar nas tuas votações.",
       "selected": "Pessoas escolhidas uma a uma para esta votação.",
       "shared": "Partilhada com {{votes}}. Mudá-la muda quem pode votar em todas, mesmo nas terminadas."
-    },
-    "summary": {
-      "copy": "Copiar",
-      "how": {
-        "code": "Para entrar, usam um código de utilização única enviado por {{channel}}.",
-        "details": "Para entrar, confirmam os seus dados ({{details}}), sem código de utilização única.",
-        "details_code": "Para entrar, confirmam os seus dados ({{details}}) e um código de utilização única enviado por {{channel}}."
-      },
-      "weighted": "Os votos contam segundo o peso de voto.",
-      "when": {
-        "canceled": "A votação foi cancelada.",
-        "draft": "As datas da votação ainda não estão definidas.",
-        "ran": "A votação decorreu de {{start}} a {{end}} e terminou às {{at}}.",
-        "runs": "A votação decorre de {{start}} a {{end}} e termina às {{at}}."
-      },
-      "who": {
-        "everyone_draft_one": "{{formattedCount}} membro está na lista de participantes: todos os teus membros, mais quem adicionares antes de publicar.",
-        "everyone_draft_many": "{{formattedCount}} membros estão na lista de participantes: todos os teus membros, mais quem adicionares antes de publicar.",
-        "everyone_draft_other": "{{formattedCount}} membros estão na lista de participantes: todos os teus membros, mais quem adicionares antes de publicar.",
-        "everyone_live_one": "{{formattedCount}} membro está na lista de participantes: todos os teus membros, mais quem adicionares.",
-        "everyone_live_many": "{{formattedCount}} membros estão na lista de participantes: todos os teus membros, mais quem adicionares.",
-        "everyone_live_other": "{{formattedCount}} membros estão na lista de participantes: todos os teus membros, mais quem adicionares.",
-        "from_saved_one": "{{formattedCount}} membro está na lista de participantes, copiada da lista guardada «{{name}}».",
-        "from_saved_many": "{{formattedCount}} membros estão na lista de participantes, copiada da lista guardada «{{name}}».",
-        "from_saved_other": "{{formattedCount}} membros estão na lista de participantes, copiada da lista guardada «{{name}}».",
-        "from_vote_one": "{{formattedCount}} membro está na lista de participantes, copiada da votação «{{name}}».",
-        "from_vote_many": "{{formattedCount}} membros estão na lista de participantes, copiada da votação «{{name}}».",
-        "from_vote_other": "{{formattedCount}} membros estão na lista de participantes, copiada da votação «{{name}}».",
-        "members_copy_one": "{{formattedCount}} membro está na lista de participantes: uma cópia dos teus membros feita a {{date}}.",
-        "members_copy_many": "{{formattedCount}} membros estão na lista de participantes: uma cópia dos teus membros feita a {{date}}.",
-        "members_copy_other": "{{formattedCount}} membros estão na lista de participantes: uma cópia dos teus membros feita a {{date}}.",
-        "picked_one": "{{formattedCount}} membro está na lista de participantes, escolhido individualmente.",
-        "picked_many": "{{formattedCount}} membros estão na lista de participantes, escolhidos um a um.",
-        "picked_other": "{{formattedCount}} membros estão na lista de participantes, escolhidos um a um.",
-        "plain_one": "{{formattedCount}} membro está na lista de participantes.",
-        "plain_many": "{{formattedCount}} membros estão na lista de participantes.",
-        "plain_other": "{{formattedCount}} membros estão na lista de participantes.",
-        "shared_one": "{{formattedCount}} membro está na lista de participantes, da lista guardada «{{name}}».",
-        "shared_many": "{{formattedCount}} membros estão na lista de participantes, da lista guardada «{{name}}».",
-        "shared_other": "{{formattedCount}} membros estão na lista de participantes, da lista guardada «{{name}}».",
-        "snapshot_on_one": "{{formattedCount}} membro está na lista de participantes: os teus membros tal como estavam a {{date}}, quando publicaste.",
-        "snapshot_on_many": "{{formattedCount}} membros estão na lista de participantes: os teus membros tal como estavam a {{date}}, quando publicaste.",
-        "snapshot_on_other": "{{formattedCount}} membros estão na lista de participantes: os teus membros tal como estavam a {{date}}, quando publicaste."
-      }
     },
     "this_census": "esta lista de participantes",
     "used_by": {

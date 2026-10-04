@@ -131,7 +131,6 @@
     "newer": "Più recenti",
     "older": "Meno recenti",
     "show_everything": "Mostra tutto",
-    "soon_line": "Per ora qui vedi votazioni e importazioni. Presto anche le modifiche a persone e censimenti, con chi le ha fatte.",
     "test_vote": "Votazione di prova",
     "untitled": "Senza titolo"
   },
@@ -340,7 +339,6 @@
         "code_only": "Con un codice monouso via {{channel}}",
         "confirm": "Confermano {{details}}",
         "label": "Come accedono i votanti",
-        "no_code": "Senza codice monouso",
         "then_code": "Poi un codice monouso via {{channel}}"
       },
       "members_at_close_one": "membro alla chiusura",
@@ -376,7 +374,7 @@
         "snapshot": "I tuoi membri al momento della pubblicazione",
         "snapshot_closed": "Fissato alla pubblicazione",
         "snapshot_on": "I tuoi membri al {{date}}",
-        "snapshot_open": "Fissato alla pubblicazione. Aggiungi qui i membri arrivati dopo."
+        "snapshot_open": "Puoi ancora aggiungere e togliere membri da questo elenco"
       },
       "used_more_one": "E 1 altra votazione: le modifiche fatte qui la raggiungono",
       "used_more_many": "E altre {{count}} votazioni: le modifiche fatte qui le raggiungono",
@@ -499,50 +497,6 @@
       "saved": "Un censimento salvato che puoi riutilizzare nelle tue votazioni.",
       "selected": "Persone scelte una a una per questa votazione.",
       "shared": "Condiviso con {{votes}}. Modificarlo cambia chi può votare in tutte, anche in quelle chiuse."
-    },
-    "summary": {
-      "copy": "Copia",
-      "how": {
-        "code": "Accedono con un codice monouso inviato via {{channel}}.",
-        "details": "Accedono confermando {{details}}, senza codice monouso.",
-        "details_code": "Accedono confermando {{details}} e con un codice monouso inviato via {{channel}}."
-      },
-      "weighted": "I voti contano in base al peso del voto.",
-      "when": {
-        "canceled": "La votazione è stata annullata.",
-        "draft": "Le date della votazione non sono ancora state fissate.",
-        "ran": "La votazione si è svolta dal {{start}} al {{end}} e si è chiusa alle {{at}}.",
-        "runs": "La votazione si svolge dal {{start}} al {{end}} e si chiude alle {{at}}."
-      },
-      "who": {
-        "everyone_draft_one": "1 membro è nell'elenco dei votanti: tutti i tuoi membri, più chi aggiungi prima della pubblicazione.",
-        "everyone_draft_many": "{{formattedCount}} membri sono nell'elenco dei votanti: tutti i tuoi membri, più chi aggiungi prima della pubblicazione.",
-        "everyone_draft_other": "{{formattedCount}} membri sono nell'elenco dei votanti: tutti i tuoi membri, più chi aggiungi prima della pubblicazione.",
-        "everyone_live_one": "1 membro è nell'elenco dei votanti: tutti i tuoi membri, più chi aggiungi.",
-        "everyone_live_many": "{{formattedCount}} membri sono nell'elenco dei votanti: tutti i tuoi membri, più chi aggiungi.",
-        "everyone_live_other": "{{formattedCount}} membri sono nell'elenco dei votanti: tutti i tuoi membri, più chi aggiungi.",
-        "from_saved_one": "1 membro è nell'elenco dei votanti, copiato dal censimento salvato «{{name}}».",
-        "from_saved_many": "{{formattedCount}} membri sono nell'elenco dei votanti, copiati dal censimento salvato «{{name}}».",
-        "from_saved_other": "{{formattedCount}} membri sono nell'elenco dei votanti, copiati dal censimento salvato «{{name}}».",
-        "from_vote_one": "1 membro è nell'elenco dei votanti, copiato dalla votazione «{{name}}».",
-        "from_vote_many": "{{formattedCount}} membri sono nell'elenco dei votanti, copiati dalla votazione «{{name}}».",
-        "from_vote_other": "{{formattedCount}} membri sono nell'elenco dei votanti, copiati dalla votazione «{{name}}».",
-        "members_copy_one": "1 membro è nell'elenco dei votanti: una copia dei tuoi membri fatta il {{date}}.",
-        "members_copy_many": "{{formattedCount}} membri sono nell'elenco dei votanti: una copia dei tuoi membri fatta il {{date}}.",
-        "members_copy_other": "{{formattedCount}} membri sono nell'elenco dei votanti: una copia dei tuoi membri fatta il {{date}}.",
-        "picked_one": "1 membro è nell'elenco dei votanti, scelto uno a uno.",
-        "picked_many": "{{formattedCount}} membri sono nell'elenco dei votanti, scelti uno a uno.",
-        "picked_other": "{{formattedCount}} membri sono nell'elenco dei votanti, scelti uno a uno.",
-        "plain_one": "1 membro è nell'elenco dei votanti.",
-        "plain_many": "{{formattedCount}} membri sono nell'elenco dei votanti.",
-        "plain_other": "{{formattedCount}} membri sono nell'elenco dei votanti.",
-        "shared_one": "1 membro è nell'elenco dei votanti, dal censimento salvato «{{name}}».",
-        "shared_many": "{{formattedCount}} membri sono nell'elenco dei votanti, dal censimento salvato «{{name}}».",
-        "shared_other": "{{formattedCount}} membri sono nell'elenco dei votanti, dal censimento salvato «{{name}}».",
-        "snapshot_on_one": "1 membro è nell'elenco dei votanti: i tuoi membri com'erano il {{date}}, quando hai pubblicato.",
-        "snapshot_on_many": "{{formattedCount}} membri sono nell'elenco dei votanti: i tuoi membri com'erano il {{date}}, quando hai pubblicato.",
-        "snapshot_on_other": "{{formattedCount}} membri sono nell'elenco dei votanti: i tuoi membri com'erano il {{date}}, quando hai pubblicato."
-      }
     },
     "this_census": "questo censimento",
     "used_by": {
