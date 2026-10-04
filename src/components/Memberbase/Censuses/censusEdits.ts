@@ -1,7 +1,7 @@
 import type { VotingProcessQuestion } from '@vocdoni/api-types'
 import { getSignedMemberIds, type Member, type MembersPageFetcher } from '~src/queries/members'
 import { getLocalizedRawText, type LocalizedTextMap } from '~utils/localized-text'
-import { memberMatchesValue } from '../People/pasteMatch'
+import { memberMatchesValue } from './memberMatch'
 
 /** Ids per request when adding to a census: the backend does about four queries for each. */
 export const ADD_CHUNK_SIZE = 500

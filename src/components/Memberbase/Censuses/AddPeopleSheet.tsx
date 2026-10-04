@@ -30,7 +30,7 @@ type AddPeopleSheetProps = {
 }
 
 /**
- * "Add people": pick existing members (search, or paste a list), or create a new one, who joins the
+ * "Add people": pick existing members (search and tick them), or create a new one, who joins the
  * members and this census at once.
  */
 export const AddPeopleSheet = ({ open, onOpenChange, census, editor, name, surface }: AddPeopleSheetProps) => {

@@ -328,8 +328,7 @@ export const People = () => {
         <Box mb={4}>
           <Banner status='info'>
             {t('members.people.save_census_hint', {
-              defaultValue:
-                "Select the people for your list (tick them, or 'Select from a list…' to paste member numbers), then choose 'Save as census' in the bar below.",
+              defaultValue: "Tick the people for your list, then choose 'Save as census' in the bar below.",
             })}
           </Banner>
         </Box>

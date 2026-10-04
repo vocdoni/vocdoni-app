@@ -595,7 +595,7 @@ export const WhoCanVote = () => {
             'choose',
             t('process_create.census.choose.card', { defaultValue: 'Choose people' }),
             t('process_create.census.choose.description', {
-              defaultValue: 'Search, tick or paste a list.',
+              defaultValue: 'Search and tick people.',
             }),
             membersCount === 0
           )}

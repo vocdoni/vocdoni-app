@@ -31,7 +31,7 @@ export type Selection = {
    * same state to every row between the last one toggled and this one.
    */
   toggle: (member: SelectedMember, checked: boolean, options?: { shiftKey?: boolean; range?: SelectedMember[] }) => void
-  /** Selects or clears every given member (the page's header checkbox, a pasted list) */
+  /** Selects or clears every given member (the page's header checkbox) */
   setMany: (members: SelectedMember[], checked: boolean) => void
   /** Selects everyone in the organization (`total` of them) without loading their ids */
   selectEveryone: (total: number) => void

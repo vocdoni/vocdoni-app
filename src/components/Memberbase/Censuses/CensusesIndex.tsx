@@ -373,7 +373,7 @@ const NewSavedCard = () => {
       </Text>
       <Text fontSize='xs' color='fg.muted'>
         {t('censuses.saved_card.new_description', {
-          defaultValue: "Pick people or paste member numbers in People. Handy for 'paid-up members' or 'the board'.",
+          defaultValue: "Pick people in People. Handy for 'paid-up members' or 'the board'.",
         })}
       </Text>
       <Button asChild size='xs' variant='outline' colorPalette='gray' alignSelf='flex-start'>

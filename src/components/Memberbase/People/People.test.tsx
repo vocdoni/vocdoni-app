@@ -465,9 +465,7 @@ describe('People', () => {
     renderPeople('/admin/memberbase/members/1', { saveCensusHint: true })
 
     expect(
-      await screen.findByText(
-        "Select the people for your list (tick them, or 'Select from a list…' to paste member numbers), then choose 'Save as census' in the bar below."
-      )
+      await screen.findByText("Tick the people for your list, then choose 'Save as census' in the bar below.")
     ).toBeInTheDocument()
   })
 

@@ -16,7 +16,7 @@ type ChoosePeopleSheetProps = {
 }
 
 /**
- * "Choose people": search the members, tick them or paste a list, check the ones picked so far in
+ * "Choose people": search the members and tick them, check the ones picked so far in
  * "Selected", and make the vote's census of them.
  */
 export const ChoosePeopleSheet = ({ open, onOpenChange, onConfirm, busy }: ChoosePeopleSheetProps) => {

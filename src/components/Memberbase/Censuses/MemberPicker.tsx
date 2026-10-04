@@ -14,10 +14,9 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuChevronLeft, LuChevronRight, LuClipboardList, LuSearch } from 'react-icons/lu'
-import { type CollectedMember, useMembersCount, usePaginatedMembers } from '~src/queries/members'
+import { LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu'
+import { usePaginatedMembers } from '~src/queries/members'
 import { memberDisplayName } from '../People/display'
-import { PasteSelectSheet } from '../People/PasteSelectSheet'
 import type { SelectedMember } from '../People/useSelection'
 
 const PAGE_SIZE = 20
@@ -39,17 +38,14 @@ type MemberPickerProps = {
 }
 
 /**
- * Picks members to add to (or take out of) a census: search the member list, tick people, or paste a
- * column of member numbers, emails or national IDs to tick everyone it names.
+ * Picks members to add to (or take out of) a census: search the member list and tick people.
  */
 export const MemberPicker = ({ selected, onChange, existing }: MemberPickerProps) => {
   const { t, i18n } = useTranslation()
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
-  const [pasting, setPasting] = useState(false)
   const debounced = useDebounced(search)
-  const members = useMembersCount()
   const { data, isLoading, isPlaceholderData } = usePaginatedMembers({
     search: debounced,
     page,
@@ -85,10 +81,6 @@ export const MemberPicker = ({ selected, onChange, existing }: MemberPickerProps
             aria-label={t('census_detail.picker.search', { defaultValue: 'Search your members' })}
           />
         </InputGroup>
-        <Button size='sm' variant='outline' colorPalette='gray' onClick={() => setPasting(true)}>
-          <Icon as={LuClipboardList} />
-          {t('census_detail.picker.paste', { defaultValue: 'Select from a list…' })}
-        </Button>
       </Flex>
 
       <Flex justify='space-between' align='center' minH={6}>
@@ -187,13 +179,6 @@ export const MemberPicker = ({ selected, onChange, existing }: MemberPickerProps
           </IconButton>
         </Flex>
       )}
-
-      <PasteSelectSheet
-        open={pasting}
-        onOpenChange={setPasting}
-        total={members.count}
-        onSelect={(found: CollectedMember[]) => toggle(found, true)}
-      />
     </Stack>
   )
 }
