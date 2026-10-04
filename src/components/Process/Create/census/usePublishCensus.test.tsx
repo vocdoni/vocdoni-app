@@ -8,6 +8,7 @@ import { StaleDraftError } from './voteGroup'
 
 const data = vi.hoisted(() => ({
   markers: new Map<string, unknown>(),
+  testVote: null as null | { processId: string; groupId: string; memberIds: string[]; processIds: string[] },
   updatedAt: ['t1'],
   update: vi.fn(),
   get: vi.fn(),
@@ -21,6 +22,8 @@ const api = vi.hoisted(() => ({
   mark: vi.fn(async () => undefined),
   unmark: vi.fn(async () => undefined),
   markers: vi.fn(async () => data.markers),
+  removeMembers: vi.fn(async () => undefined),
+  testVote: vi.fn(async () => data.testVote),
 }))
 
 vi.mock('~components/Auth/Subscription', () => ({ useSubscription: () => ({ permission: () => true }) }))
@@ -78,6 +81,7 @@ describe('usePublishCensus', () => {
   beforeEach(() => {
     setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }) })
     data.markers = new Map()
+    data.testVote = null
     data.update.mockReset().mockResolvedValue(undefined)
     let reads = 0
     data.get.mockReset().mockImplementation(async () => ({ updatedAt: `t${++reads}` }))
@@ -105,6 +109,28 @@ describe('usePublishCensus', () => {
     expect(versions.learnVersion).toHaveBeenCalledWith('draft-1')
     expect(body.census).toMatchObject({ groupId: 'snap-new', authFields: ['memberNumber'], twoFaFields: ['email'] })
     expect(body.questions).toHaveLength(1)
+  })
+
+  it('freezes Everyone without the test people, before the draft points at it', async () => {
+    data.testVote = { processId: 'test-1', groupId: 'tg', memberIds: ['t1', 't2'], processIds: ['test-1'] }
+    const order: string[] = []
+    api.removeMembers.mockImplementationOnce(async () => {
+      order.push('trim')
+    })
+    data.update.mockImplementationOnce(async () => {
+      order.push('repoint')
+    })
+
+    expect(await prepare(form)).toBe('snap-new')
+    expect(api.removeMembers).toHaveBeenCalledWith('snap-new', ['t1', 't2'])
+    expect(order).toEqual(['trim', 'repoint'])
+  })
+
+  it('keeps the test people in the test vote itself', async () => {
+    data.testVote = { processId: 'draft-1', groupId: 'tg', memberIds: ['t1'], processIds: ['draft-1'] }
+
+    await prepare(form)
+    expect(api.removeMembers).not.toHaveBeenCalled()
   })
 
   it('stops at a stale write instead of overwriting the newer draft, and deletes the snapshot it made', async () => {

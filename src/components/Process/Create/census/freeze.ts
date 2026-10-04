@@ -44,12 +44,14 @@ export type FreezeInput = {
   repoint: Repoint
   /** An earlier snapshot of this vote, deleted once the new one is in place */
   replacing?: string
+  /** Members left out of the snapshot: the test vote's test people, for any other vote */
+  leaveOut?: string[]
   now?: () => Date
 }
 
 /**
  * Freezes an Everyone census: a group holding every member's id as of now (`includeAllMembers`),
- * marked as this vote's snapshot, which the draft then points at. Resolves with its id.
+ * minus `leaveOut`, marked as this vote's snapshot, which the draft then points at. Resolves with its id.
  */
 export const freezeEveryone = (api: VoteGroupApi, input: FreezeInput) =>
   createVoteGroup(api, {
@@ -58,6 +60,7 @@ export const freezeEveryone = (api: VoteGroupApi, input: FreezeInput) =>
     group: { title: input.title, description: input.description, includeAllMembers: true },
     repoint: input.repoint,
     replacing: input.replacing,
+    leaveOut: input.leaveOut,
     now: input.now,
   })
 

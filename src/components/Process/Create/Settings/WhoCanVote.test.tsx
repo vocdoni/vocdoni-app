@@ -27,6 +27,8 @@ const api = vi.hoisted(() => ({
   mark: vi.fn(async () => undefined),
   unmark: vi.fn(async () => undefined),
   markers: vi.fn(async () => data.markers),
+  removeMembers: vi.fn(async () => undefined),
+  testVote: vi.fn(async () => null),
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({ useAuth: () => ({ bearedFetch: vi.fn() }) }))
@@ -112,7 +114,7 @@ const Harness = ({ values = {}, draft }: { values?: Partial<Process>; draft: Dra
   return (
     <TestMemoryRouter>
       <FormProvider {...methods}>
-        <EditorContext.Provider value={{ attempted: false, review: vi.fn(), reviewing: false, draft }}>
+        <EditorContext.Provider value={{ draft }}>
           <WhoCanVote />
           <Watch />
         </EditorContext.Provider>
@@ -413,6 +415,18 @@ describe('WhoCanVote', () => {
     await user.click(screen.getByRole('button', { name: 'Leave them out' }))
 
     expect(data.removeMembers).toHaveBeenCalledWith({ groupId: 'own-old', body: { removeMembers: ['m9'] } })
+  })
+
+  it('says an Everyone vote leaves the test people out, with nothing to click', () => {
+    data.testVote = { processId: 'test-draft', groupId: 'test', memberIds: ['t1', 't2'] }
+    render(<Harness values={{ groupId: 'all' }} draft={draftControls()} />)
+
+    expect(
+      screen.getByText(
+        "The 2 test people from your test vote won't be in this vote. Everyone else you add before publishing will."
+      )
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Leave them out' })).toBeNull()
   })
 
   it('says nothing about test people in the test vote itself', () => {

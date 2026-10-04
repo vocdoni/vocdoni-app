@@ -32,6 +32,10 @@ const fakeApi = (members: Record<string, string[]> = {}) => {
       calls.push(`unmark ${groupId}`)
     }),
     markers: vi.fn(async () => new Map()),
+    removeMembers: vi.fn(async (groupId: string, ids: string[]) => {
+      calls.push(`remove ${ids.join(',')} from ${groupId}`)
+    }),
+    testVote: vi.fn(async () => null),
   }
   return api
 }

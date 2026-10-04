@@ -189,7 +189,14 @@ export type VoteGroupApi = {
   unmark: (groupId: string) => Promise<void>
   /** The markers as stored right now, read fresh (not from the cache) */
   markers: () => Promise<Map<string, VoteGroupMarker>>
+  /** Takes people out of a group (`PUT /groups/{id}`), in batches the API takes */
+  removeMembers: (groupId: string, memberIds: string[]) => Promise<void>
+  /** The test vote's record as stored right now, read fresh */
+  testVote: () => Promise<TestVote | null>
 }
+
+/** Ids per `removeMembers` request. */
+const GROUP_REMOVE_BATCH = 500
 
 export const voteGroupApi = (fetch: MetaFetch, address: string): VoteGroupApi => {
   const groupUrl = (groupId: string) =>
@@ -221,6 +228,19 @@ export const voteGroupApi = (fetch: MetaFetch, address: string): VoteGroupApi =>
         ApiEndpoints.OrganizationMeta.replace('{address}', address)
       )
       return parseVoteGroupMarkers(response?.meta)
+    },
+    removeMembers: async (groupId, memberIds) => {
+      for (let start = 0; start < memberIds.length; start += GROUP_REMOVE_BATCH)
+        await fetch<void>(groupUrl(groupId), {
+          method: 'PUT',
+          body: { removeMembers: memberIds.slice(start, start + GROUP_REMOVE_BATCH) },
+        })
+    },
+    testVote: async () => {
+      const response = await fetch<{ meta?: Record<string, unknown> }>(
+        ApiEndpoints.OrganizationMeta.replace('{address}', address)
+      )
+      return parseTestVote(response?.meta)
     },
   }
 }
@@ -435,25 +455,95 @@ export const useSweepOrphanVoteGroups = () => {
 /**
  * The guarded test vote, recorded in the organization meta under `testVote` when it's created: its
  * draft, its group and the people it added to the members.
+ *
+ * - `memberIds` are the test people: the members the test vote created who aren't real members. The
+ *   admin is one of them unless they ticked "I'm a member" (`adminIsMember`). Removing the test people
+ *   empties it, but the record stays, so the test vote keeps being left out of the setup progress.
+ * - `processIds` are every test vote run so far (the current one included), all left out of counts.
  */
-export type TestVote = { processId: string; groupId: string; memberIds: string[] }
+export type TestVote = {
+  processId: string
+  groupId: string
+  memberIds: string[]
+  adminIsMember?: boolean
+  processIds: string[]
+}
 
 export const TEST_VOTE_META_KEY = 'testVote'
 
+/** The most people a test vote takes, the admin included. */
+export const TEST_VOTE_MAX_PEOPLE = 10
+
+const strings = (value: unknown) =>
+  Array.isArray(value) ? value.filter((id): id is string => typeof id === 'string' && !!id) : []
+
 export const parseTestVote = (meta?: Record<string, unknown> | null): TestVote | null => {
   const value = meta?.[TEST_VOTE_META_KEY] as Partial<TestVote> | undefined
-  if (!value || typeof value !== 'object' || !Array.isArray(value.memberIds)) return null
-  const memberIds = value.memberIds.filter((id): id is string => typeof id === 'string' && !!id)
-  if (!memberIds.length) return null
+  if (!value || typeof value !== 'object') return null
+  const processId = typeof value.processId === 'string' ? value.processId : ''
+  const memberIds = strings(value.memberIds)
+  if (!processId && !memberIds.length) return null
   return {
-    processId: typeof value.processId === 'string' ? value.processId : '',
+    processId,
     groupId: typeof value.groupId === 'string' ? value.groupId : '',
     memberIds,
+    adminIsMember: value.adminIsMember === true,
+    processIds: [...new Set([...strings(value.processIds), ...(processId ? [processId] : [])])],
   }
 }
 
-/** The organization's test vote, if it has one with people in it. */
+/** Records the test vote. Sends only its own key, which the API merges in. */
+export const writeTestVote = (fetch: MetaFetch, address: string, testVote: TestVote) =>
+  fetch(ApiEndpoints.OrganizationMeta.replace('{address}', address), {
+    method: 'PUT',
+    body: { meta: { [TEST_VOTE_META_KEY]: testVote } },
+  })
+
+/**
+ * The test vote without the test people who were just deleted from the members, or `null` when none
+ * of them were. Deleting everyone forgets them all. Keeps the real member count (members minus test
+ * people) right after a test person is deleted by hand.
+ */
+export const pruneTestPeople = (testVote: TestVote | null, deleted: { ids?: string[]; all?: boolean }) => {
+  if (!testVote?.memberIds.length) return null
+  const gone = new Set(deleted.ids ?? [])
+  const memberIds = deleted.all ? [] : testVote.memberIds.filter((id) => !gone.has(id))
+  return memberIds.length < testVote.memberIds.length ? { ...testVote, memberIds } : null
+}
+
+/**
+ * Forgets deleted members from the test vote's test people, reading the meta fresh. Never throws: a
+ * failure leaves a stale id, which the real member count tolerates (it never goes below zero).
+ */
+export const forgetDeletedTestPeople = async (
+  fetch: MetaFetch,
+  address: string,
+  deleted: { ids?: string[]; all?: boolean }
+) => {
+  try {
+    const response = await fetch<{ meta?: Record<string, unknown> }>(
+      ApiEndpoints.OrganizationMeta.replace('{address}', address)
+    )
+    const pruned = pruneTestPeople(parseTestVote(response?.meta), deleted)
+    if (!pruned) return false
+    await writeTestVote(fetch, address, pruned)
+    return true
+  } catch (error) {
+    console.warn('Could not update the test people after deleting members', error)
+    return false
+  }
+}
+
+/** The organization's test vote, if it ever had one. */
 export const useTestVote = () => {
   const { meta } = useOrganizationMeta()
   return useMemo(() => parseTestVote(meta as Record<string, unknown> | undefined), [meta])
+}
+
+/** `useTestVote`, plus whether the meta has been read (so the door neither flashes nor shows on a failed read). */
+export const useTestVoteState = () => {
+  const { meta, metaIsLoading, metaIsError } = useOrganizationMeta()
+  const testVote = useMemo(() => parseTestVote(meta as Record<string, unknown> | undefined), [meta])
+  // A failed read isn't "no test vote": offering another could record two
+  return { testVote, ready: !metaIsLoading && !metaIsError }
 }

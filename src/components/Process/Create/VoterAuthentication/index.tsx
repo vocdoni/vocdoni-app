@@ -61,19 +61,7 @@ const useValidateCensus = () => {
   })
 }
 
-// Order-insensitive identity of an auth configuration, used to tell an actual
-// change from a no-op re-confirm. Credentials are a set, not a sequence.
-const censusConfigSignature = (config: Census) =>
-  JSON.stringify([[...(config.credentials ?? [])].sort(), !!config.use2FA, config.use2FAMethod ?? 'none'])
-
-type VoterAuthenticationProps = {
-  /** Replaces the full-width button that opens the dialog */
-  trigger?: (state: { configured: boolean; disabled: boolean }) => ReactElement
-  /** Leaves the summary of the configured sign-in to the caller */
-  hideSummary?: boolean
-}
-
-export const VoterAuthentication = ({ trigger, hideSummary = false }: VoterAuthenticationProps = {}) => {
+export const VoterAuthentication = () => {
   const { t } = useTranslation()
   const toast = useToast()
   const mainForm = useFormContext<Process>()

@@ -4,11 +4,13 @@ import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { AllProviders } from '~src/test-utils'
 import {
   discardVoteGroupsOf,
+  forgetDeletedTestPeople,
   isVoteOwned,
   markVoteGroup,
   parseVoteGroupMarkers,
-  copySourceName,
+  pruneTestPeople,
   sweepOrphanVoteGroups,
+  copySourceName,
   type VoteGroupApi,
   type VoteGroupMarker,
   unmarkVoteGroup,
@@ -127,6 +129,8 @@ describe('cleaning up vote-owned groups', () => {
       deleteGroup: vi.fn(async () => undefined),
       mark: vi.fn(),
       unmark: vi.fn(async () => undefined),
+      removeMembers: vi.fn(async () => undefined),
+      testVote: vi.fn(async () => null),
       markers: vi.fn(
         async () =>
           new Map(
@@ -209,5 +213,46 @@ describe('cleaning up vote-owned groups', () => {
 
     expect(await sweepOrphanVoteGroups(api, listProcesses, vi.fn(), { now: NOW })).toEqual([])
     expect(listProcesses).not.toHaveBeenCalled()
+  })
+})
+
+describe('deleted test people', () => {
+  const testVote = { processId: 'p1', groupId: 'g1', memberIds: ['a', 'b', 'c'], processIds: ['p1'] }
+
+  // Its own fetch: queries left from the hooks above may still call the shared one
+  const metaFetch = vi.fn()
+  beforeEach(() => metaFetch.mockReset())
+
+  it('forgets the test people who were deleted', () => {
+    expect(pruneTestPeople(testVote, { ids: ['b', 'x'] })?.memberIds).toEqual(['a', 'c'])
+    expect(pruneTestPeople(testVote, { all: true })?.memberIds).toEqual([])
+  })
+
+  it('changes nothing when no test person was deleted', () => {
+    expect(pruneTestPeople(testVote, { ids: ['x'] })).toBeNull()
+    expect(pruneTestPeople(null, { all: true })).toBeNull()
+  })
+
+  it('writes the test vote back without them, keeping the rest of the record', async () => {
+    metaFetch.mockImplementation(async (_url: string, init?: { method?: string }) =>
+      init?.method === 'PUT' ? undefined : { meta: { testVote } }
+    )
+
+    expect(await forgetDeletedTestPeople(metaFetch, '0xorg', { ids: ['a'] })).toBe(true)
+
+    expect(metaFetch).toHaveBeenLastCalledWith('organizations/0xorg/meta', {
+      method: 'PUT',
+      body: { meta: { testVote: { ...testVote, adminIsMember: false, memberIds: ['b', 'c'] } } },
+    })
+  })
+
+  it('never fails the delete when the meta can not be read', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const failing = vi.fn(async () => {
+      throw new Error('down')
+    })
+
+    expect(await forgetDeletedTestPeople(failing as never, '0xorg', { ids: ['a'] })).toBe(false)
+    warn.mockRestore()
   })
 })

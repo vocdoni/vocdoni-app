@@ -37,10 +37,13 @@ export const usePublishCensus = (
     async (processId: string, form: Process) => {
       if (!api) throw new Error('No organization')
       // Read fresh: a stale cache could take this vote's own census for someone else's
-      const [markers, list] = await Promise.all([
+      const [markers, list, testVote] = await Promise.all([
         api.markers(),
         groups.data ? Promise.resolve(groups.data) : groups.refetch().then((result) => result.data ?? []),
+        api.testVote(),
       ])
+      // Test people never vote in a real vote: an Everyone census is frozen without them
+      const leaveOut = testVote && !testVote.processIds.includes(processId) ? testVote.memberIds : []
       const everyoneId = list.find((group) => group.isAutoGroup)?.id
       const plan = planPublishCensus({
         processId,
@@ -72,6 +75,7 @@ export const usePublishCensus = (
         title: voteGroupTitle(t, vote, i18n.resolvedLanguage),
         description: voteGroupDescription(t, vote),
         repoint,
+        leaveOut,
       })
     },
     [api, groups, client, toRequest, runExclusive, versions, t, i18n.resolvedLanguage]

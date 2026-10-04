@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useOrganization } from '@vocdoni/react-components'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { LuRotateCcw, LuSettings } from 'react-icons/lu'
@@ -29,11 +29,15 @@ import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
 import { Routes } from '~routes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
+import { useSweepOrphanVoteGroups } from '~src/queries/voteGroups'
 import { AnalyticsEvents } from '~utils/analytics'
+import { usePublishCensus } from './census/usePublishCensus'
+import { StaleDraftError } from './census/voteGroup'
 import { defaultProcessValues, Process } from './common'
 import { isDraftLimitError } from './draft-limit'
 import { formSnapshot } from './draft-snapshot'
 import { useStoredDraftId } from './draft-storage'
+import { type DraftControls, EditorContext } from './editor-context'
 import { LiveStreamingInput } from './LiveStreamingInput'
 import { Questions } from './MainContent'
 import { useDraft } from './queries'
@@ -96,14 +100,37 @@ const VoteEditorForm = ({ draftId, saved, initial }: VoteEditorFormProps) => {
     },
     [storeDraftId, navigate]
   )
-  const { saveDraft, isSaving, skipSave, writeDraft, clearPublishedDraftId } = useFormDraftSaver(
-    unsaved,
-    methods.getValues,
-    currentDraftId,
-    rememberDraft,
-    saveCooldown,
-    onSaved
-  )
+  const {
+    saveDraft,
+    isSaving,
+    skipSave,
+    writeDraft,
+    pause,
+    flush,
+    saveNow: saveDraftNow,
+    saveNowWithLatest,
+    runExclusive,
+    seenVersion,
+    learnVersion,
+    clearPublishedDraftId,
+  } = useFormDraftSaver(unsaved, methods.getValues, currentDraftId, rememberDraft, saveCooldown, onSaved)
+  const versions = useMemo(() => ({ seenVersion, learnVersion }), [seenVersion, learnVersion])
+  const prepareCensus = usePublishCensus(runExclusive, versions)
+  const sweepVoteGroups = useSweepOrphanVoteGroups()
+
+  // For the census steps that write the draft themselves (a census of its own)
+  const draftControls: DraftControls = {
+    id: currentDraftId,
+    ensure: async () => {
+      if (currentDraftId) return currentDraftId
+      if (!methods.getValues('title')?.trim()) return null
+      return saveDraftNow()
+    },
+    saveNow: saveDraftNow,
+    saveWithLatest: saveNowWithLatest,
+    pause,
+    flush,
+  }
   const { permission } = useSubscription()
 
   // Starting over is a new editing session: the page remounts the editor on a fresh navigation
@@ -198,7 +225,19 @@ const VoteEditorForm = ({ draftId, saved, initial }: VoteEditorFormProps) => {
       // inside the queue, so a blur auto-save still in flight is updated rather
       // than raced.
       const processId = await writeDraft(() => request)
+
+      // Everyone is frozen with the people in it now (and a census the vote doesn't own is copied),
+      // the last thing before publishing. Nothing else writes the draft meanwhile: autosave is off.
+      // A failed publish leaves the draft frozen; the next try freezes it afresh.
+      const frozen = await prepareCensus(processId, form)
+      if (frozen) {
+        methods.setValue('groupId', frozen)
+        onSaved({ ...form, groupId: frozen })
+      }
+
       await apiClient.elections.publishAndWait(processId)
+      // Snapshots and copies left behind by earlier attempts, anywhere in the organization
+      void sweepVoteGroups()
 
       // Drop the cached elections pages so the processes index reflects the new
       // vote without a full page refresh. The index loads through a route loader
@@ -238,14 +277,30 @@ const VoteEditorForm = ({ draftId, saved, initial }: VoteEditorFormProps) => {
       // whatever went wrong.
       skipSave(false)
 
+      // A stale draft is left exactly as the other tab saved it: nothing here is written over it
+      const stale = error instanceof StaleDraftError
       toast({
         title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
-        description: error instanceof Error ? error.message : String(error),
+        description: stale
+          ? t('process_create.review.census_stale_reload', {
+              defaultValue: 'This draft was changed somewhere else. Reload it to see the latest version, then publish.',
+            })
+          : error instanceof Error
+            ? error.message
+            : String(error),
         type: 'error',
-        duration: 4000,
+        duration: stale ? 10000 : 4000,
+        action: stale
+          ? {
+              label: t('process_create.census.reload', { defaultValue: 'Reload' }),
+              onClick: () => window.location.reload(),
+            }
+          : undefined,
       })
     }
   }
+
+  const editorContext = { draft: draftControls }
 
   const onError = (errors) => {
     console.error(
@@ -286,140 +341,142 @@ const VoteEditorForm = ({ draftId, saved, initial }: VoteEditorFormProps) => {
 
   return (
     <FormProvider {...methods}>
-      <Box position='relative' w='full' overflow='hidden' height='full'>
-        <DashboardContents
-          as='form'
-          onSubmit={methods.handleSubmit(onSubmit, onError)}
-          display='flex'
-          flexDirection='row'
-          position='relative'
-          id='process-create'
-          overflow='hidden'
-        >
-          <Box
-            flex={1}
-            marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
-            transition='margin-right 0.3s'
+      <EditorContext.Provider value={editorContext}>
+        <Box position='relative' w='full' overflow='hidden' height='full'>
+          <DashboardContents
+            as='form'
+            onSubmit={methods.handleSubmit(onSubmit, onError)}
             display='flex'
-            flexDirection='column'
-            gap={8}
-            paddingRight={4}
-            paddingBottom={4}
+            flexDirection='row'
+            position='relative'
+            id='process-create'
+            overflow='hidden'
           >
-            {/* Top bar with draft status and sidebar toggle */}
-            <HStack position='sticky' top='0px' p={2} bg='chakra.body.bg' zIndex='contents'>
-              {currentDraftId && (
-                <Box px={3} py={1} borderRadius='full' bg='bg.muted' fontSize='sm'>
-                  <Trans i18nKey='process.create.status.draft'>Draft</Trans>
-                </Box>
-              )}
-              <Spacer />
-              <ButtonGroup size='sm'>
-                {unsaved && (
-                  <IconButton
-                    onClick={() => {
-                      setResetRequested(true)
-                      openConfirmationModal()
-                    }}
-                    variant='outline'
-                    aria-label={t('dashboard.actions.reset_form', {
-                      defaultValue: 'Reset form',
-                    })}
-                  >
-                    <Icon as={LuRotateCcw} />
-                  </IconButton>
+            <Box
+              flex={1}
+              marginRight={showSidebar ? { base: 0, md: 'sidebar' } : 0}
+              transition='margin-right 0.3s'
+              display='flex'
+              flexDirection='column'
+              gap={8}
+              paddingRight={4}
+              paddingBottom={4}
+            >
+              {/* Top bar with draft status and sidebar toggle */}
+              <HStack position='sticky' top='0px' p={2} bg='chakra.body.bg' zIndex='contents'>
+                {currentDraftId && (
+                  <Box px={3} py={1} borderRadius='full' bg='bg.muted' fontSize='sm'>
+                    <Trans i18nKey='process.create.status.draft'>Draft</Trans>
+                  </Box>
                 )}
-                {/* data-testid: icon-only, so its only other handle is a
+                <Spacer />
+                <ButtonGroup size='sm'>
+                  {unsaved && (
+                    <IconButton
+                      onClick={() => {
+                        setResetRequested(true)
+                        openConfirmationModal()
+                      }}
+                      variant='outline'
+                      aria-label={t('dashboard.actions.reset_form', {
+                        defaultValue: 'Reset form',
+                      })}
+                    >
+                      <Icon as={LuRotateCcw} />
+                    </IconButton>
+                  )}
+                  {/* data-testid: icon-only, so its only other handle is a
                     translated aria-label — and below `md` the e2e suite must
                     open this drawer before it can reach any setting. */}
-                <IconButton
-                  data-testid='wizard-settings-toggle'
-                  aria-label={t('dashboard.actions.toggle_sidebar', {
-                    defaultValue: 'Toggle sidebar',
-                  })}
-                  variant='outline'
-                  onClick={toggleSidebar}
-                >
-                  <Icon as={LuSettings} />
-                </IconButton>
-                {/* Both writes need the owner org address; keep them disabled until it resolves. */}
-                <Button
-                  type='submit'
-                  alignSelf='flex-end'
-                  loading={methods.formState.isSubmitting}
-                  disabled={!organization?.address}
-                >
-                  <Trans i18nKey='process.create.action.publish'>Publish</Trans>
-                </Button>
-                <Button
-                  type='button'
-                  variant='outline'
-                  onClick={handleManualSave}
-                  loading={isSaving}
-                  disabled={!organization?.address}
-                >
-                  <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
-                </Button>
-              </ButtonGroup>
-            </HStack>
+                  <IconButton
+                    data-testid='wizard-settings-toggle'
+                    aria-label={t('dashboard.actions.toggle_sidebar', {
+                      defaultValue: 'Toggle sidebar',
+                    })}
+                    variant='outline'
+                    onClick={toggleSidebar}
+                  >
+                    <Icon as={LuSettings} />
+                  </IconButton>
+                  {/* Both writes need the owner org address; keep them disabled until it resolves. */}
+                  <Button
+                    type='submit'
+                    alignSelf='flex-end'
+                    loading={methods.formState.isSubmitting}
+                    disabled={!organization?.address}
+                  >
+                    <Trans i18nKey='process.create.action.publish'>Publish</Trans>
+                  </Button>
+                  <Button
+                    type='button'
+                    variant='outline'
+                    onClick={handleManualSave}
+                    loading={isSaving}
+                    disabled={!organization?.address}
+                  >
+                    <Trans i18nKey='process.create.action.save_draft'>Save</Trans>
+                  </Button>
+                </ButtonGroup>
+              </HStack>
 
-            {/* Title, Video, and Description */}
-            <VStack as='header' align='stretch' gap={4}>
-              <FormControl invalid={!!methods.formState.errors.title}>
-                <Input
-                  variant='borderless'
-                  placeholder={t('process.create.description.title', {
-                    defaultValue: 'Voting Process Title',
-                  })}
-                  size='2xl'
-                  fontWeight='bold'
-                  {...methods.register('title', {
-                    required: t('form.error.required', 'This field is required'),
-                  })}
-                />
-                <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
-              </FormControl>
-
-              {/* Live streaming video URL */}
-              <LiveStreamingInput />
-              <Controller
-                name='description'
-                control={methods.control}
-                render={({ field }) => (
-                  <Editor
-                    onChange={field.onChange}
+              {/* Title, Video, and Description */}
+              <VStack as='header' align='stretch' gap={4}>
+                <FormControl invalid={!!methods.formState.errors.title}>
+                  <Input
                     variant='borderless'
-                    placeholder={t('process.create.description.placeholder', 'Add a description...')}
-                    defaultValue={field.value}
+                    placeholder={t('process.create.description.title', {
+                      defaultValue: 'Voting Process Title',
+                    })}
+                    size='2xl'
+                    fontWeight='bold'
+                    {...methods.register('title', {
+                      required: t('form.error.required', 'This field is required'),
+                    })}
                   />
-                )}
-              />
-            </VStack>
+                  <FormErrorMessage>{methods.formState.errors.title?.message?.toString()}</FormErrorMessage>
+                </FormControl>
 
-            <Questions />
-          </Box>
-        </DashboardContents>
-        <CreateSidebar />
-      </Box>
-      <LeaveConfirmationModal
-        isOpen={isLeaveConfirmationOpen}
-        onCancel={() => {
-          setResetRequested(false)
-          setLeaveConfirmationOpen(false)
-          cancel()
-        }}
-        onLeave={discardAndLeave}
-        onSaveAndLeave={handleSaveAndLeave}
-        onResetSamePath={() => {
-          setLeaveConfirmationOpen(false)
-          cancel()
-          resetForm()
-        }}
-        // Only the reset button asks to start over: following a link to another vote remounts the
-        // editor, so that is leaving like any other
-        isSamePath={resetRequested}
-        canSave={!!currentDraftId || !!values.title?.trim()}
-      />
+                {/* Live streaming video URL */}
+                <LiveStreamingInput />
+                <Controller
+                  name='description'
+                  control={methods.control}
+                  render={({ field }) => (
+                    <Editor
+                      onChange={field.onChange}
+                      variant='borderless'
+                      placeholder={t('process.create.description.placeholder', 'Add a description...')}
+                      defaultValue={field.value}
+                    />
+                  )}
+                />
+              </VStack>
+
+              <Questions />
+            </Box>
+          </DashboardContents>
+          <CreateSidebar />
+        </Box>
+        <LeaveConfirmationModal
+          isOpen={isLeaveConfirmationOpen}
+          onCancel={() => {
+            setResetRequested(false)
+            setLeaveConfirmationOpen(false)
+            cancel()
+          }}
+          onLeave={discardAndLeave}
+          onSaveAndLeave={handleSaveAndLeave}
+          onResetSamePath={() => {
+            setLeaveConfirmationOpen(false)
+            cancel()
+            resetForm()
+          }}
+          // Only the reset button asks to start over: following a link to another vote remounts the
+          // editor, so that is leaving like any other
+          isSamePath={resetRequested}
+          canSave={!!currentDraftId || !!values.title?.trim()}
+        />
+      </EditorContext.Provider>
     </FormProvider>
   )
 }

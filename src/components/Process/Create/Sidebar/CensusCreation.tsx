@@ -1,170 +1,54 @@
-import {
-  AlertRoot as Alert,
-  AlertDescription,
-  Box,
-  FieldErrorText,
-  FieldLabel,
-  FieldRoot,
-  HStack,
-  Input,
-  Link,
-  Spinner,
-  Text,
-} from '@chakra-ui/react'
-import { chakraComponents } from 'chakra-react-select'
-import { useEffect, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { Trans, useTranslation } from 'react-i18next'
-import { LuUsers } from 'react-icons/lu'
-import { Link as ReactRouterLink } from 'react-router'
-import { Select } from '~components/Form/Select'
+import { Box, FieldErrorText, FieldRoot, Input } from '@chakra-ui/react'
+import { useEffect } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { CensusTypes } from '~components/Process/Census/CensusType'
-import { Routes } from '~routes'
-import { Group, useGroups } from '~src/queries/groups'
+import { useAllGroups } from '~src/queries/groups'
+import { WhoCanVote } from '../Settings/WhoCanVote'
 import { VoterAuthentication } from '../VoterAuthentication'
 import { Process } from '../common'
 
-type GroupsQuery = ReturnType<typeof useGroups>
-
-type GroupOptionLabelContext = {
-  context: 'menu' | 'value'
-}
-
-export const formatGroupOptionLabel = (group: Group, { context }: GroupOptionLabelContext) => {
-  if (context === 'value') return group.title
-
-  return (
-    <HStack gap={4} align='center' justifyContent='space-between' w='full'>
-      <Text as='span'>{group.title}</Text>
-      <HStack gap={1.5} color='texts.subtle' fontSize='sm' flexShrink={0}>
-        <LuUsers />
-        <Text as='span'>{group.membersCount || 0}</Text>
-      </HStack>
-    </HStack>
-  )
-}
-
-export type GroupSelectProps = {
-  groups: Group[]
-} & Pick<GroupsQuery, 'fetchNextPage' | 'hasNextPage' | 'isFetching'>
-
-export const GroupSelect = ({ groups, fetchNextPage, hasNextPage, isFetching }: GroupSelectProps) => {
+/**
+ * Who can vote: where the voters come from (Everyone to start with, see `WhoCanVote`, which gives
+ * the vote a census of its own when it isn't Everyone) and how they sign in.
+ */
+const CensusCreation = () => {
   const { t } = useTranslation()
   const {
-    watch,
+    register,
+    resetField,
+    setValue,
     control,
     formState: { errors },
-  } = useFormContext()
-  const censusType = watch('censusType')
-  const [hasFetchedScroll, setHasFetchedScroll] = useState(false)
+  } = useFormContext<Process>()
+  const [censusType, groupId] = useWatch({ control, name: ['censusType', 'groupId'] })
+  const { data: groups } = useAllGroups()
 
-  const CustomMenuList = (props) => {
-    return (
-      <chakraComponents.MenuList {...props}>
-        {props.children}
-        {hasNextPage && (
-          <Box py={2} textAlign='center'>
-            {isFetching ? <Spinner size='sm' /> : t('process_create.groups.scroll_to_load', 'Scroll to load more...')}
-          </Box>
-        )}
-      </chakraComponents.MenuList>
-    )
-  }
-
-  // Reset hasFetchedScroll when fetching starts
+  // Set default census type to Memberbase (Group) if not set
   useEffect(() => {
-    if (!isFetching) setHasFetchedScroll(false)
-  }, [isFetching])
+    if (!censusType) setValue('censusType', CensusTypes.CSP)
+  }, [censusType, setValue])
+
+  // Most votes are for every member: start there, without it counting as a change to save
+  const autoGroup = groups?.find((group) => group.isAutoGroup)
+  useEffect(() => {
+    if (!groupId && autoGroup) resetField('groupId', { defaultValue: autoGroup.id })
+  }, [groupId, autoGroup, resetField])
 
   return (
-    <FieldRoot invalid={!!errors.groupId}>
-      <FieldLabel>
-        <Trans i18nKey='process_create.census.memberbase.label'>Select a group of members to create the census</Trans>
-      </FieldLabel>
-      <Controller
-        control={control}
-        name='groupId'
-        rules={{
+    <Box display='flex' flexDirection='column' gap={4}>
+      {/* Registered so the form knows the field (and resetting it to Everyone above takes) */}
+      <input
+        type='hidden'
+        {...register('groupId', {
           required: {
             value: censusType === CensusTypes.CSP,
             message: t('form.error.required', 'This field is required'),
           },
-        }}
-        render={({ field }) => {
-          const selected = groups?.find((g) => g.id === field.value) ?? null
-          return (
-            <Select
-              // Stable handle for the group combobox (labelled by the
-              // FieldLabel above, which Chakra wires up by id).
-              inputId='groupId'
-              options={groups ?? []}
-              value={selected}
-              getOptionLabel={(option) =>
-                option.isAutoGroup ? t('groups_board.auto_group.title', { defaultValue: 'All Members' }) : option.title
-              }
-              getOptionValue={(option) => option.id}
-              placeholder={t('process_create.group.select', 'Select group')}
-              isLoading={isFetching}
-              onChange={(option) => field.onChange(option?.id ?? '')}
-              formatOptionLabel={(option, meta) => formatGroupOptionLabel(option, meta)}
-              onMenuScrollToBottom={async () => {
-                if (hasNextPage && !hasFetchedScroll) {
-                  setHasFetchedScroll(true)
-                  await fetchNextPage()
-                }
-              }}
-              closeMenuOnSelect
-              maxMenuHeight={200}
-              components={{ MenuList: CustomMenuList }}
-            />
-          )
-        }}
+        })}
       />
-      <FieldErrorText>{errors.groupId?.message?.toString()}</FieldErrorText>
-    </FieldRoot>
-  )
-}
-
-const GroupCensusCreation = () => {
-  const { t } = useTranslation()
-  const {
-    register,
-    watch,
-    formState: { errors },
-  } = useFormContext<Process>()
-  const censusType = watch('censusType')
-  const { data: groups, fetchNextPage, hasNextPage, isFetching } = useGroups(6)
-
-  const TLink = ({ children }) => (
-    <Link asChild textDecoration='underline'>
-      <ReactRouterLink to={Routes.dashboard.memberbase.base}>{children}</ReactRouterLink>
-    </Link>
-  )
-
-  return (
-    <Box display='flex' flexDirection='column' gap={4}>
-      {groups?.length > 0 && (
-        <>
-          <GroupSelect
-            groups={groups}
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetching={isFetching}
-          />
-          <VoterAuthentication />
-        </>
-      )}
-
-      {(!groups || groups?.length === 0) && (
-        <Alert status='warning' fontSize='xs' color='texts.subtle'>
-          <AlertDescription>
-            <Trans i18nKey='process_create.census.group.no_groups'>
-              To start a vote, you first need to create a group of eligible voters from your memberbase.
-              <TLink>Create one here</TLink>.
-            </Trans>
-          </AlertDescription>
-        </Alert>
-      )}
+      <WhoCanVote />
+      <VoterAuthentication />
 
       <FieldRoot invalid={!!errors.census}>
         <Input
@@ -180,20 +64,6 @@ const GroupCensusCreation = () => {
       </FieldRoot>
     </Box>
   )
-}
-
-const CensusCreation = () => {
-  const { setValue, watch } = useFormContext()
-  const censusType = watch('censusType')
-
-  // Set default census type to Memberbase (Group) if not set
-  useEffect(() => {
-    if (!censusType) {
-      setValue('censusType', CensusTypes.CSP)
-    }
-  }, [censusType, setValue])
-
-  return <GroupCensusCreation />
 }
 
 export default CensusCreation

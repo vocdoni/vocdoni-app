@@ -65,6 +65,8 @@ export type CreateVoteGroupInput = {
   repoint: Repoint
   /** The vote's current own group, deleted (with its marker) once the vote points at the new one */
   replacing?: string
+  /** People taken out of the new group before the vote points at it (it backs no census yet) */
+  leaveOut?: string[]
   now?: () => Date
 }
 
@@ -72,14 +74,15 @@ export type CreateVoteGroupInput = {
  * The one way a vote gets a census of its own:
  * 1. create the group;
  * 2. mark it as this vote's (if that fails, the unmarked group is deleted at once: nothing uses it);
- * 3. point the draft at it (if the server refuses, the new group goes; any other failure leaves it,
+ * 3. take `leaveOut` out of it (if that fails, the new group goes: nothing points at it yet);
+ * 4. point the draft at it (if the server refuses, the new group goes; any other failure leaves it,
  *    marked, for the sweep, since the draft may already point at it);
- * 4. only then delete the group it replaces.
+ * 5. only then delete the group it replaces.
  * Resolves with the new group's id.
  */
 export const createVoteGroup = async (
   api: VoteGroupApi,
-  { processId, kind, fromId, source, group, repoint, replacing, now = () => new Date() }: CreateVoteGroupInput
+  { processId, kind, fromId, source, group, repoint, replacing, leaveOut, now = () => new Date() }: CreateVoteGroupInput
 ) => {
   const groupId = await api.createGroup(group)
 
@@ -100,6 +103,14 @@ export const createVoteGroup = async (
     }
     throw error
   }
+
+  if (leaveOut?.length)
+    try {
+      await api.removeMembers(groupId, leaveOut)
+    } catch (error) {
+      await discardVoteGroup(api, groupId)
+      throw error
+    }
 
   try {
     await repoint(groupId)

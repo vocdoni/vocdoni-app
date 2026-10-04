@@ -26,7 +26,6 @@ import { useToast } from '~components/Toast'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
 import { useUpdateGroupWithReport } from '~src/queries/groups'
-import { MEMBERS_COLLECT_CAP, useMemberIdCollector } from '~src/queries/members'
 import { copySourceName, type TestVote, useTestVote } from '~src/queries/voteGroups'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { ChoosePeopleSheet } from '../census/ChoosePeopleSheet'
@@ -35,7 +34,7 @@ import { useCensusAttach } from '../census/useCensusAttach'
 import { type CensusFacts, codeChannelsOf } from '../census/useCensusFacts'
 import type { Process } from '../common'
 import { useEditor } from '../editor-context'
-import { useDraftCensus } from '../useReadiness'
+import { useDraftCensus } from '../useDraftCensus'
 
 export type CensusSourceChoice = 'everyone' | 'saved' | 'choose' | 'previous'
 
@@ -311,7 +310,6 @@ export const WhoCanVote = () => {
   const { attach, chooseEveryone, copyEveryone, busy } = useCensusAttach()
   const ownedSource = useOwnedSource(census)
   const testVote = useTestVote()
-  const collector = useMemberIdCollector()
   const updateGroup = useUpdateGroupWithReport()
 
   const [startingOver, setStartingOver] = useState(false)
@@ -374,30 +372,17 @@ export const WhoCanVote = () => {
     )
 
   const testCount = testVote && testVote.processId !== draftId ? testPeopleIn(census, testVote) : 0
+  // Only a census of the vote's own is edited here: Everyone leaves the test people out when it's
+  // frozen at publish (see `usePublishCensus`)
   const leaveOut = async () => {
-    if (!testVote) return
+    if (!testVote || census.mode !== 'owned' || !groupId) return
     const test = new Set(testVote.memberIds)
     setLeavingOut(true)
     try {
-      if (census.mode === 'owned' && groupId) {
-        await updateGroup.mutateAsync({
-          groupId,
-          body: { removeMembers: (census.memberIds ?? []).filter((id) => test.has(id)) },
-        })
-        return
-      }
-      const { members, capped } = await collector.collect({ max: MEMBERS_COLLECT_CAP })
-      if (capped) throw new Error('Too many members to copy here')
-      done(
-        await attach(
-          {
-            kind: 'everyone',
-            memberIds: members.map((member) => member.id).filter((id) => !test.has(id)),
-            name: everyoneTitle(t),
-          },
-          replacing
-        )
-      )
+      await updateGroup.mutateAsync({
+        groupId,
+        body: { removeMembers: (census.memberIds ?? []).filter((id) => test.has(id)) },
+      })
     } catch (error) {
       toast({
         type: 'error',
@@ -409,14 +394,23 @@ export const WhoCanVote = () => {
     }
   }
 
-  const testWarning = testCount > 0 && (
-    <TestPeopleWarning
-      count={testCount}
-      canLeaveOut={census.mode === 'owned' || membersCount <= MEMBERS_COLLECT_CAP}
-      busy={leavingOut}
-      onLeaveOut={leaveOut}
-    />
-  )
+  const testWarning =
+    testCount > 0 &&
+    (census.mode === 'everyone' ? (
+      <Banner status='info'>
+        <Text fontSize='xs'>
+          {t('process_create.census.test_people_left_out', {
+            count: testCount,
+            defaultValue_one:
+              "The test person from your test vote won't be in this vote. Everyone else you add before publishing will.",
+            defaultValue_other:
+              "The {{count}} test people from your test vote won't be in this vote. Everyone else you add before publishing will.",
+          })}
+        </Text>
+      </Banner>
+    ) : (
+      <TestPeopleWarning count={testCount} canLeaveOut busy={leavingOut} onLeaveOut={leaveOut} />
+    ))
   const sheets = (
     <>
       <ChoosePeopleSheet
