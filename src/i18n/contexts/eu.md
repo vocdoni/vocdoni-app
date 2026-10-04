@@ -19,7 +19,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | English | Basque | Notes |
 |---|---|---|
 | election / voting process | hauteskunde / boto-ematearen prozesua | Use consistently |
-| census | erroldea | Not "zentsua" |
+| census | erroldea | Not "zentsua". In the app it means the people who can vote in a vote; keep this one noun everywhere |
+| Members (section) | Kideak | The dashboard section with the organization's people. Formerly "Memberbase" ("Kide-oinarria"): don't use the old name |
+| People (tab) | Pertsonak | The tab in Members that lists every member |
+| saved census | gordetako erroldea | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | Aldaketen erregistroa | The tab with the dated history of imports and votes |
 | organization | erakundea | |
 | voter | botogilea | |
 | voting power / weight | boto-pisua | |

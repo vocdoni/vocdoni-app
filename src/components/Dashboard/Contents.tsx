@@ -60,6 +60,40 @@ export const SubHeading = forwardRef<HTMLParagraphElement, TextProps>((props, re
   />
 ))
 
+export type PageHeaderProps = Omit<FlexProps, 'title'> & {
+  title: ReactNode
+  description?: ReactNode
+  actions?: ReactNode
+}
+
+/** A page's title (the only h1), an optional one-line description, and its top-level actions. */
+export const PageHeader = ({ title, description, actions, ...props }: PageHeaderProps) => (
+  <Flex
+    direction={{ base: 'column', md: 'row' }}
+    align={{ base: 'stretch', md: 'flex-end' }}
+    justify='space-between'
+    gap={4}
+    mb={6}
+    {...props}
+  >
+    <Box minW={0}>
+      <CHeading as='h1' size='2xl' fontWeight='bold'>
+        {title}
+      </CHeading>
+      {description && (
+        <Text mt={1} fontSize='md' color='fg.muted'>
+          {description}
+        </Text>
+      )}
+    </Box>
+    {actions && (
+      <Flex gap={2} flexShrink={0}>
+        {actions}
+      </Flex>
+    )}
+  </Flex>
+)
+
 export const SectionHeader = forwardRef<HTMLDivElement, FlexProps>((props, ref) => (
   <Flex flex={1} direction='column' ref={ref} {...props} />
 ))

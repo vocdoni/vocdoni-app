@@ -19,7 +19,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | English | German | Notes |
 |---|---|---|
 | election / voting process | Abstimmung / Abstimmungsprozess | Use consistently — don't mix with "Wahl" |
-| census | Teilnehmerliste | Not "Zensus" |
+| census | Teilnehmerliste | Not "Zensus". In the app it means the people who can vote in a vote; keep this one noun everywhere |
+| Members (section) | Mitglieder | The dashboard section with the organization's people. Formerly "Memberbase" ("Mitgliederverwaltung"): don't use the old name |
+| People (tab) | Personen | The tab in Members that lists every member |
+| saved census | gespeicherte Teilnehmerliste | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | Änderungsverlauf | The tab with the dated history of imports and votes |
 | organization | Organisation | |
 | voter | Wähler/Wählerin | Use "Wählende" when gender-neutral form fits |
 | voting power / weight | Stimmgewicht | |

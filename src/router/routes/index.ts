@@ -41,6 +41,8 @@ export const Routes = {
     memberbase: {
       base: '/admin/memberbase',
       members: '/admin/memberbase/members/:page?',
+      // The import wizard, a full page outside the tabs. Takes `?returnTo=` (a dashboard path)
+      import: '/admin/memberbase/import',
       groups: '/admin/memberbase/groups',
     },
     settings: {

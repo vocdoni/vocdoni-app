@@ -1,3 +1,5 @@
+import { LocalStorageKeys } from '~components/Auth/useAuthProvider'
+
 const IMPORT_JOB_STORAGE_KEY = 'memberbaseImportJobId'
 
 const normalizeAccountId = (accountId: string | null) => accountId?.trim().toLowerCase() || null
@@ -22,4 +24,14 @@ export const setStoredImportJobId = (jobId: string | null, accountId: string | n
 
   localStorage.setItem(scopedStorageKey, jobId)
   localStorage.removeItem(IMPORT_JOB_STORAGE_KEY)
+}
+
+/** Whose import jobs to read: the signed-in address, or the last one stored while it loads. */
+export const readAccountId = (currentAddress?: string | null) => {
+  if (currentAddress) return currentAddress
+  try {
+    return localStorage.getItem(LocalStorageKeys.SignerAddress)
+  } catch {
+    return null
+  }
 }

@@ -1,0 +1,585 @@
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router'
+import { mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { People } from './index'
+import { columnsStorageKey } from './useColumnVisibility'
+
+const state = vi.hoisted(() => ({
+  members: [] as Record<string, string>[],
+  total: 0,
+  count: 0,
+  listArgs: [] as Record<string, unknown>[],
+  readiness: { available: false, total: 0, ready: 0, unreachable: 0, unreachableIds: [] as string[], isLoading: false },
+  /** Every authenticated request the page makes (the collector's member pages among them) */
+  fetch: vi.fn(async (_url: string, _params?: unknown): Promise<unknown> => ({})),
+}))
+
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => ({ bearedFetch: state.fetch, currentAddress: '0xorg' }),
+}))
+
+/** Answers `GET /members?page=&limit=` like the backend would, over `total` made-up people. */
+const serveMembers = (total: number) =>
+  state.fetch.mockImplementation(async (url: string) => {
+    const params = new URL(url, 'http://test').searchParams
+    const page = Number(params.get('page'))
+    const limit = Number(params.get('limit'))
+    const from = (page - 1) * limit
+    const count = Math.max(0, Math.min(limit, total - from))
+    return {
+      members: Array.from({ length: count }, (_, index) => ({
+        id: `m${from + index}`,
+        name: `Person ${from + index}`,
+      })),
+      pagination: { totalItems: total, lastPage: Math.max(1, Math.ceil(total / limit)), currentPage: page },
+    }
+  })
+
+const memberPageRequests = () =>
+  state.fetch.mock.calls.map(([url]) => url as string).filter((url) => url.includes('/members?page='))
+
+vi.mock('~src/queries/members', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~src/queries/members')>()
+  return {
+    ...actual,
+    usePaginatedMembers: (args: Record<string, unknown>) => {
+      state.listArgs.push(args)
+      return {
+        data: {
+          members: state.members,
+          pagination: {
+            totalItems: state.total,
+            lastPage: Math.max(1, Math.ceil(state.total / 25)),
+            currentPage: 1,
+            previousPage: null,
+            nextPage: null,
+          },
+        },
+        isLoading: false,
+        isError: false,
+        isPlaceholderData: false,
+        refetch: vi.fn(),
+      }
+    },
+    useMembersCount: () => ({ count: state.count, isLoading: false, known: true }),
+    useSignInReadiness: () => state.readiness,
+    useImportJobProgress: () => ({ data: undefined, isError: false }),
+    useDeleteMembers: () => ({ mutateAsync: vi.fn(), isPending: false }),
+  }
+})
+
+vi.mock('~src/queries/affectedVotes', () => ({
+  useAffectedVotes: () => ({ votes: [], hasActive: false, hasLive: false, isLoading: false }),
+}))
+
+vi.mock('~src/queries/groups', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('~src/queries/groups')>()
+  return {
+    ...actual,
+    useGroups: () => ({ data: [], isLoading: false }),
+    useAllGroups: () => ({ data: [], isLoading: false }),
+    useCreateGroup: () => ({ mutate: vi.fn(), isPending: false }),
+    useUpdateGroup: () => ({ mutate: vi.fn(), isPending: false }),
+  }
+})
+
+const anna = {
+  id: 'a1',
+  name: 'Anna',
+  surname: 'Vila Puig',
+  email: 'anna@example.test',
+  phone: 'hash-1',
+  memberNumber: '0042',
+  nationalId: '12345678Z',
+  birthDate: '1990-01-01',
+}
+const jordi = { id: 'j2', name: 'Jordi', surname: 'Serra Mas', email: 'jordi@example.test', memberNumber: '0043' }
+const carla = { id: 'c3', name: 'Carla', surname: 'Soler', email: 'carla@example.test', memberNumber: '0044' }
+
+const openImport = vi.fn()
+const openAddPerson = vi.fn()
+
+vi.mock('../MembersPageContext', () => ({
+  useMembersPage: () => ({ jobId: null, setJobId: vi.fn(), openImport, openAddPerson }),
+}))
+
+const LocationProbe = () => {
+  const location = useLocation()
+  return <output data-testid='location'>{`${location.pathname}${location.search}`}</output>
+}
+
+const renderPeople = (url = '/admin/memberbase/members/1') =>
+  render(
+    <MemoryRouter initialEntries={[url]}>
+      <Routes>
+        <Route
+          path='/admin/memberbase/members/:page?'
+          element={
+            <>
+              <People />
+              <LocationProbe />
+            </>
+          }
+        />
+      </Routes>
+    </MemoryRouter>
+  )
+
+// The SelectionBar's visible count (its live region repeats it once the count settles)
+const barCount = (text: string) => screen.getByText(text, { selector: '[aria-hidden="true"]' })
+
+const currentUrl = () => screen.getByTestId('location').textContent ?? ''
+
+describe('People', () => {
+  beforeEach(() => {
+    state.members = [anna, jordi]
+    state.total = 2
+    state.count = 2
+    state.listArgs = []
+    state.fetch.mockReset()
+    state.fetch.mockResolvedValue({})
+    state.readiness = { available: false, total: 0, ready: 0, unreachable: 0, unreachableIds: [], isLoading: false }
+    localStorage.clear()
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
+    })
+  })
+
+  it('lists members in a table with one name link each, phone "Saved (hidden for privacy)" and the national ID hidden', () => {
+    renderPeople()
+    const table = screen.getByRole('table')
+
+    expect(within(table).getByRole('link', { name: 'Anna Vila Puig' })).toBeInTheDocument()
+    expect(within(table).getByRole('link', { name: 'Jordi Serra Mas' })).toBeInTheDocument()
+    expect(within(table).getByRole('cell', { name: 'Saved (hidden for privacy)' })).toBeInTheDocument()
+    expect(within(table).queryByRole('columnheader', { name: /National ID/ })).not.toBeInTheDocument()
+    expect(within(table).getByText('Members, sorted by First Name, A to Z, page 1 of 1')).toBeInTheDocument()
+  })
+
+  it('names the list by surname first when sorted by surname, and sends the sort to the server', () => {
+    renderPeople('/admin/memberbase/members/1?sort=surname&order=desc')
+    const table = screen.getByRole('table')
+
+    expect(within(table).getByRole('link', { name: 'Vila Puig, Anna' })).toBeInTheDocument()
+    expect(state.listArgs.at(-1)).toMatchObject({ sortBy: 'surname', sortOrder: 'desc', page: 1, limit: 25 })
+  })
+
+  it('toggles the sort from the column headers and marks it with aria-sort', async () => {
+    const user = userEvent.setup()
+    renderPeople('/admin/memberbase/members/3')
+    const table = screen.getByRole('table')
+    const nameHeader = within(table).getByRole('columnheader', { name: /Name/ })
+    expect(nameHeader).toHaveAttribute('aria-sort', 'ascending')
+
+    await user.click(within(nameHeader).getByRole('button'))
+    expect(currentUrl()).toBe('/admin/memberbase/members/1?sort=name&order=desc')
+
+    await user.click(within(table).getByRole('button', { name: /Email/ }))
+    expect(currentUrl()).toBe('/admin/memberbase/members/1?sort=email')
+    expect(within(screen.getByRole('table')).getByRole('columnheader', { name: /Email/ })).toHaveAttribute(
+      'aria-sort',
+      'ascending'
+    )
+  })
+
+  it('puts the search in the URL, encoded, and goes back to page 1', async () => {
+    const user = userEvent.setup()
+    renderPeople('/admin/memberbase/members/4?size=50')
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search members' }), 'a+b@x.org')
+    await waitFor(() => expect(currentUrl()).toBe('/admin/memberbase/members/1?size=50&q=a%2Bb%40x.org'))
+    expect(state.listArgs.at(-1)).toMatchObject({ search: 'a+b@x.org', page: 1, limit: 50 })
+  })
+
+  it('searches at once on Enter and keeps the search after a reload', async () => {
+    const user = userEvent.setup()
+    const { unmount } = renderPeople()
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search members' }), 'serra{Enter}')
+    expect(currentUrl()).toBe('/admin/memberbase/members/1?q=serra')
+    unmount()
+
+    renderPeople('/admin/memberbase/members/1?q=serra')
+    expect(screen.getByRole('searchbox', { name: 'Search members' })).toHaveValue('serra')
+  })
+
+  it('remembers the columns per organization', async () => {
+    const user = userEvent.setup()
+    const { unmount } = renderPeople()
+
+    await user.click(screen.getByRole('button', { name: 'Columns' }))
+    await user.click(await screen.findByRole('checkbox', { name: 'National ID' }))
+    expect(JSON.parse(localStorage.getItem(columnsStorageKey('0xorg')) ?? '[]')).toContain('nationalId')
+    unmount()
+
+    const second = renderPeople()
+    const table = screen.getByRole('table')
+    expect(within(table).getByRole('columnheader', { name: 'National ID' })).toBeInTheDocument()
+    // Masked: only the last 3 characters are shown
+    expect(within(table).getByText('National ID ending in 78Z')).toBeInTheDocument()
+    second.unmount()
+
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xother' } }),
+    })
+    renderPeople()
+    expect(within(screen.getByRole('table')).queryByRole('columnheader', { name: 'National ID' })).toBeNull()
+  })
+
+  it('keeps every member value out of session replays, in the table and the cards', () => {
+    renderPeople()
+    const table = screen.getByRole('table')
+    for (const value of ['Anna Vila Puig', 'anna@example.test', '0042', 'Saved (hidden for privacy)']) {
+      expect(within(table).getAllByText(value)[0].closest('.ph-no-capture')).not.toBeNull()
+    }
+    const cards = screen.getByRole('list', { name: 'Members' })
+    expect(within(cards).getByText('Anna Vila Puig').closest('.ph-no-capture')).not.toBeNull()
+    expect(
+      within(cards)
+        .getByText(/anna@example.test/)
+        .closest('.ph-no-capture')
+    ).not.toBeNull()
+    // Field names are not member data
+    expect(within(table).getByRole('columnheader', { name: /Email/ }).closest('.ph-no-capture')).toBeNull()
+  })
+
+  it('renders cards for phones that show checkboxes only in select mode', async () => {
+    const user = userEvent.setup()
+    renderPeople()
+    const cards = screen.getByRole('list', { name: 'Members' })
+
+    expect(within(cards).getAllByRole('listitem')).toHaveLength(2)
+    expect(within(cards).queryByRole('checkbox')).toBeNull()
+    await user.click(screen.getByRole('button', { name: 'Select' }))
+    expect(within(cards).getByRole('checkbox', { name: 'Select Anna Vila Puig' })).toBeInTheDocument()
+  })
+
+  it('selects with labelled checkboxes, shows the page message, and a row menu never clears the selection', async () => {
+    const user = userEvent.setup()
+    renderPeople()
+    const table = screen.getByRole('table')
+
+    await user.click(within(table).getByRole('checkbox', { name: 'Select Anna Vila Puig' }))
+    expect(barCount('1 selected')).toBeInTheDocument()
+    expect(screen.getByText('1 of 2 on this page selected')).toBeInTheDocument()
+    expect(within(table).getByRole('checkbox', { name: 'Select everyone on this page' })).toBePartiallyChecked()
+
+    await user.click(within(table).getByRole('button', { name: 'Actions for Jordi Serra Mas' }))
+    await user.click(await screen.findByRole('menuitem', { name: 'Add to a saved census' }))
+    expect(barCount('1 selected')).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Add one person' })).toBeInTheDocument()
+  })
+
+  it('selects the whole page from the header checkbox', async () => {
+    const user = userEvent.setup()
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    expect(barCount('2 selected')).toBeInTheDocument()
+    expect(screen.getByText('All 2 on this page selected')).toBeInTheDocument()
+  })
+
+  it('keeps the selection across pages and searches, and says how many are not on this page', async () => {
+    const user = userEvent.setup()
+    state.total = 30
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Anna Vila Puig' }))
+    state.members = [carla]
+    await user.click(screen.getByRole('button', { name: 'Next page' }))
+    expect(currentUrl()).toBe('/admin/memberbase/members/2')
+    expect(barCount('1 selected')).toBeInTheDocument()
+    expect(screen.getByText('(1 not on this page)')).toBeInTheDocument()
+
+    await user.type(screen.getByRole('searchbox', { name: 'Search members' }), 'carla{Enter}')
+    expect(barCount('1 selected')).toBeInTheDocument()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Carla Soler' }))
+    expect(barCount('2 selected')).toBeInTheDocument()
+    expect(screen.getByText('(1 not on this page)')).toBeInTheDocument()
+
+    // Esc clears, once focus has left the search box
+    await user.click(screen.getByRole('table'))
+    await user.keyboard('{Escape}')
+    expect(screen.queryByText('2 selected')).toBeNull()
+  })
+
+  it('narrows the list to the selected people with the "Show selected" chip, and back', async () => {
+    const user = userEvent.setup()
+    state.total = 30
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Jordi Serra Mas' }))
+    state.members = [carla]
+    await user.click(screen.getByRole('button', { name: 'Next page' }))
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Carla Soler' }))
+
+    const chip = screen.getByRole('button', { name: 'Show selected (2)' })
+    await user.click(chip)
+    expect(chip).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByText('Showing the 2 you selected')).toBeInTheDocument()
+    const table = screen.getByRole('table')
+    expect(
+      within(table)
+        .getAllByRole('link')
+        .map((link) => link.textContent)
+    ).toEqual(['Carla Soler', 'Jordi Serra Mas'])
+    // The server's page stays where it was
+    expect(currentUrl()).toBe('/admin/memberbase/members/2')
+
+    // Unticking someone takes them out of the view
+    await user.click(within(table).getByRole('checkbox', { name: 'Select Carla Soler' }))
+    expect(within(screen.getByRole('table')).getAllByRole('link')).toHaveLength(1)
+
+    await user.click(screen.getByRole('button', { name: 'Show everyone' }))
+    expect(within(screen.getByRole('table')).getByRole('link', { name: 'Carla Soler' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Show selected (1)' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('selects everyone without loading ids when there is no search', async () => {
+    const user = userEvent.setup()
+    state.total = 1742
+    state.count = 1742
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 1,742' }))
+
+    expect(barCount('1,742 selected')).toBeInTheDocument()
+    expect(screen.getByText('All 1,742 members selected')).toBeInTheDocument()
+    expect(memberPageRequests()).toEqual([])
+    // Nothing to list one by one
+    expect(screen.queryByRole('button', { name: /Show selected/ })).toBeNull()
+  })
+
+  it('pages the matches of a search into the selection, and checks the count again', async () => {
+    const user = userEvent.setup()
+    state.total = 230
+    serveMembers(230)
+    renderPeople('/admin/memberbase/members/1?q=serra')
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 230 matching' }))
+
+    expect(await screen.findByText('All 230 matching selected')).toBeInTheDocument()
+    // Anna and Jordi from the page, plus the 230 collected
+    expect(barCount('232 selected')).toBeInTheDocument()
+    expect(memberPageRequests()).toEqual([
+      'organizations/0xorg/members?page=1&limit=100&search=serra',
+      'organizations/0xorg/members?page=2&limit=100&search=serra',
+      'organizations/0xorg/members?page=3&limit=100&search=serra',
+      'organizations/0xorg/members?page=1&limit=1&search=serra',
+    ])
+  })
+
+  it('says it stops at 5,000 before collecting a bigger search', async () => {
+    const user = userEvent.setup()
+    state.total = 12345
+    serveMembers(12345)
+    renderPeople('/admin/memberbase/members/1?q=a')
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 12,345 matching' }))
+
+    expect(
+      screen.getByText('Select the first 5,000 of 12,345 matching — narrow your search to act on all')
+    ).toBeInTheDocument()
+    expect(memberPageRequests()).toEqual([])
+
+    await user.click(screen.getByRole('button', { name: 'Select 5,000' }))
+    expect(await screen.findByText('The first 5,000 matching selected')).toBeInTheDocument()
+    expect(barCount('5,002 selected')).toBeInTheDocument()
+    expect(memberPageRequests().filter((url) => url.includes('limit=100'))).toHaveLength(50)
+  })
+
+  it('stops collecting on Stop and leaves the selection as it was', async () => {
+    const user = userEvent.setup()
+    state.total = 300
+    serveMembers(300)
+    const served = state.fetch.getMockImplementation()!
+    let release: () => void = () => undefined
+    // The second page waits until the test lets it through
+    state.fetch.mockImplementation(async (url: string) => {
+      if (url.includes('page=2&limit=100')) await new Promise<void>((resolve) => (release = resolve))
+      return served(url)
+    })
+    renderPeople('/admin/memberbase/members/1?q=a')
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 300 matching' }))
+    expect(await screen.findByText('Collecting 100 of 300…')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Stop' }))
+    release()
+    expect(await screen.findByRole('button', { name: 'Select all 300 matching' })).toBeInTheDocument()
+    expect(barCount('2 selected')).toBeInTheDocument()
+    expect(memberPageRequests().some((url) => url.includes('page=3'))).toBe(false)
+  })
+
+  it('acts on the selection from the bar, with Delete only under More', async () => {
+    const user = userEvent.setup()
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    const bar = barCount('2 selected').parentElement!.parentElement!
+    expect(within(bar).getByRole('button', { name: 'Save as census' })).toBeInTheDocument()
+    expect(within(bar).queryByRole('button', { name: /Delete/ })).toBeNull()
+
+    await user.click(within(bar).getByRole('button', { name: 'More' }))
+    await user.click(await screen.findByRole('menuitem', { name: 'Delete…' }))
+    expect(await screen.findByText('Delete 2 people from members?')).toBeInTheDocument()
+  })
+
+  it('deletes everyone through the typed flow when everyone is selected', async () => {
+    const user = userEvent.setup()
+    state.total = 1742
+    state.count = 1742
+    renderPeople()
+
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select everyone on this page' }))
+    await user.click(screen.getByRole('button', { name: 'Select all 1,742' }))
+    await user.click(screen.getByRole('button', { name: 'More' }))
+    await user.click(await screen.findByRole('menuitem', { name: 'Delete…' }))
+
+    expect(await screen.findByText('Delete all 1,742 members?')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Type 1742 to confirm' })).toBeInTheDocument()
+  })
+
+  it('toggles a row with Space on its name', async () => {
+    const user = userEvent.setup()
+    renderPeople()
+
+    within(screen.getByRole('table')).getByRole('link', { name: 'Anna Vila Puig' }).focus()
+    await user.keyboard(' ')
+    expect(barCount('1 selected')).toBeInTheDocument()
+    await user.keyboard(' ')
+    expect(screen.queryByText('1 selected')).toBeNull()
+  })
+
+  it('opens a member from their name', async () => {
+    const user = userEvent.setup()
+    state.total = 30
+    renderPeople('/admin/memberbase/members/2?q=vila')
+
+    await user.click(within(screen.getByRole('table')).getByRole('link', { name: 'Anna Vila Puig' }))
+    expect(currentUrl()).toBe('/admin/memberbase/members/2?q=vila&member=a1')
+  })
+
+  it('offers to clear a search that finds nobody', async () => {
+    const user = userEvent.setup()
+    state.members = []
+    state.total = 0
+    renderPeople('/admin/memberbase/members/1?q=zzz')
+
+    expect(screen.getAllByText('Nobody matches your search')[0]).toBeInTheDocument()
+    await user.click(screen.getAllByRole('button', { name: 'Clear search' })[0])
+    expect(currentUrl()).toBe('/admin/memberbase/members/1')
+  })
+
+  it("opens the drawer from ?member= with the person's details, and closing it drops the param", async () => {
+    const user = userEvent.setup()
+    renderPeople('/admin/memberbase/members/1?member=a1')
+
+    const drawer = await screen.findByRole('dialog')
+    expect(within(drawer).getByText('Anna Vila Puig')).toBeInTheDocument()
+    expect(within(drawer).getByText('No. 0042')).toBeInTheDocument()
+    expect(within(drawer).getByText('Saved (hidden for privacy)')).toBeInTheDocument()
+    expect(within(drawer).getByText('National ID ending in 78Z')).toBeInTheDocument()
+    expect(within(drawer).getByText('anna@example.test').closest('.ph-no-capture')).not.toBeNull()
+
+    const edit = within(drawer).getByRole('button', { name: 'Edit' })
+    await user.click(edit)
+    expect(within(drawer).getByRole('textbox', { name: 'Email' })).toHaveValue('anna@example.test')
+    // Not reused as the Save button: a browser would then submit the form on that same click and close it
+    expect(edit).not.toBeInTheDocument()
+
+    await user.click(within(drawer).getByRole('button', { name: 'Close' }))
+    await waitFor(() => expect(currentUrl()).toBe('/admin/memberbase/members/1'))
+  })
+
+  it('says how many can get a voting code, with a labelled warning for the rest', () => {
+    state.readiness = {
+      available: true,
+      total: 1742,
+      ready: 1719,
+      unreachable: 23,
+      unreachableIds: [],
+      isLoading: false,
+    }
+    // Past the 5,000 the app loads into memory
+    state.count = 6000
+    renderPeople()
+
+    expect(screen.getByText('1,719 of 1,742 can get a voting code')).toBeInTheDocument()
+    // The sentence, plus its screen-reader copy beside the bare count shown on phones
+    expect(screen.getAllByText('23 have no email or mobile')).toHaveLength(2)
+    expect(screen.getByText('Warning:')).toBeInTheDocument()
+    // Too many members to load into memory: "Show them" is a "Soon" button
+    expect(screen.getByRole('button', { name: /Show them/ })).toHaveTextContent('Soon')
+  })
+
+  it('shows the people who can’t get a voting code, from the member index', async () => {
+    const user = userEvent.setup()
+    state.readiness = { available: true, total: 2, ready: 1, unreachable: 1, unreachableIds: ['j2'], isLoading: false }
+    state.fetch.mockResolvedValue({ members: [anna, jordi], pagination: { totalItems: 2, lastPage: 1 } })
+    renderPeople()
+
+    await user.click(screen.getByRole('button', { name: 'Show them' }))
+    expect(await screen.findByText('Showing the person with no email or mobile')).toBeInTheDocument()
+    const table = screen.getByRole('table')
+    expect(
+      within(table)
+        .getAllByRole('link')
+        .map((link) => link.textContent)
+    ).toEqual(['Jordi Serra Mas'])
+    expect(memberPageRequests()).toEqual(['organizations/0xorg/members?page=1&limit=100&search='])
+
+    await user.click(screen.getByRole('button', { name: 'Show everyone' }))
+    expect(within(screen.getByRole('table')).getAllByRole('link')).toHaveLength(2)
+  })
+
+  it('swaps readiness for the page message while rows are selected', async () => {
+    const user = userEvent.setup()
+    state.readiness = { available: true, total: 2, ready: 2, unreachable: 0, unreachableIds: [], isLoading: false }
+    renderPeople()
+
+    expect(screen.getByText('All 2 can get a voting code')).toBeInTheDocument()
+    await user.click(within(screen.getByRole('table')).getByRole('checkbox', { name: 'Select Anna Vila Puig' }))
+    expect(screen.queryByText('All 2 can get a voting code')).toBeNull()
+  })
+
+  it('shows two doors instead of a table when there are no members yet', async () => {
+    const user = userEvent.setup()
+    state.members = []
+    state.total = 0
+    state.count = 0
+    renderPeople()
+
+    expect(screen.getByRole('heading', { name: 'Add your members' })).toBeInTheDocument()
+    expect(screen.getByText(/Members are free and unlimited\./)).toBeInTheDocument()
+    expect(screen.queryByRole('table')).toBeNull()
+    expect(screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent)).toEqual([
+      'Import a spreadsheet',
+      'Add people',
+    ])
+    expect(screen.getByRole('button', { name: 'Get the template' })).toBeInTheDocument()
+    expect(
+      screen.getByText('Your file is read in your browser. Only the columns you keep are sent.')
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Import a spreadsheet' }))
+    expect(openImport).toHaveBeenCalled()
+    await user.click(screen.getByRole('button', { name: 'Add people' }))
+    expect(openAddPerson).toHaveBeenCalled()
+  })
+
+  it('keeps the list (not the doors) while a search finds nobody', () => {
+    state.members = []
+    state.total = 0
+    state.count = 0
+    renderPeople('/admin/memberbase/members/1?q=x')
+
+    expect(screen.queryByRole('heading', { name: 'Add your members' })).toBeNull()
+  })
+})

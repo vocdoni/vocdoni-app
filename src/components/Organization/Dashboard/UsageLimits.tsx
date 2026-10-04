@@ -24,7 +24,7 @@ import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, DashboardCardHeader } from '~components/Dashboard/Contents'
 import { TwoFACodePrice } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
-import { usePaginatedMembers } from '~queries/members'
+import { useMembersCount } from '~queries/members'
 import { Routes } from '~routes'
 
 type UsageMetric = {
@@ -90,8 +90,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
   const language = usePublicLanguage()
   const { subscription, loading } = useSubscription()
 
-  // Fetch memberbase data to get total count
-  const { data: membersData } = usePaginatedMembers({ showAll: true })
+  const { count: membersCount } = useMembersCount()
 
   if (loading || !subscription) {
     return null
@@ -127,7 +126,7 @@ export const UsageLimits = (props: React.ComponentProps<typeof DashboardBox>) =>
     {
       icon: LuUsers,
       label: t('dashboard.usage.memberbase_size', { defaultValue: 'Memberbase size' }),
-      current: membersData?.pagination?.totalItems || 0,
+      current: membersCount,
       max: maxCensusSize,
       color: 'purple',
       tooltip: t('dashboard.usage.memberbase_tooltip', {

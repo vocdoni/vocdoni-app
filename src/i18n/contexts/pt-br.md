@@ -19,7 +19,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | English | Brazilian Portuguese | Notes |
 |---|---|---|
 | election / voting process | eleição / processo de votação | Use consistently — don't mix the two |
-| census | lista de participantes | Not "censo" |
+| census | lista de participantes | Not "censo". In the app it means the people who can vote in a vote; keep this one noun everywhere |
+| Members (section) | Membros | The dashboard section with the organization's people. Formerly "Memberbase" ("Base de membros"): don't use the old name |
+| People (tab) | Pessoas | The tab in Members that lists every member |
+| saved census | lista de participantes salva | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | Histórico de alterações | The tab with the dated history of imports and votes |
 | organization | organização | |
 | voter | eleitor / eleitora | Use "eleitor(a)" when gender-neutral form fits |
 | voting power / weight | peso do voto | |

@@ -1,12 +1,11 @@
+import { Outlet } from 'react-router'
 import { DashboardContents } from '~components/Dashboard/Contents'
-import { MemberbaseTabs } from '~components/Memberbase'
 
-const Memberbase = () => {
-  return (
-    <DashboardContents>
-      <MemberbaseTabs />
-    </DashboardContents>
-  )
-}
+/** The Members section's frame: its tabs, or the full-page import. */
+const Memberbase = () => (
+  <DashboardContents>
+    <Outlet />
+  </DashboardContents>
+)
 
 export default Memberbase

@@ -1,4 +1,4 @@
-import type { CaptureResult } from 'posthog-js'
+import type { CapturedNetworkRequest, CaptureResult } from 'posthog-js'
 import {
   getHomeProcessRouteMatch,
   getPublicLocalizedProcessRouteMatch,
@@ -32,6 +32,17 @@ export const AnalyticsEvents = {
   ProcessResultsViewed: 'process_results_viewed',
   MembersImportStarted: 'members_import_started',
   MembersImportCompleted: 'members_import_completed',
+  MembersImportMapped: 'members_import_mapped',
+  MembersImportErrorsDownloaded: 'members_import_errors_downloaded',
+  MembersImportNextClicked: 'members_import_next_clicked',
+  MembersTemplateDownloaded: 'members_template_downloaded',
+  MembersPageViewed: 'members_page_viewed',
+  MembersEmptyStateCtaClicked: 'members_empty_state_cta_clicked',
+  MembersDeleted: 'members_deleted',
+  MembersSelectAllMatching: 'members_select_all_matching',
+  MembersBulkAction: 'members_bulk_action',
+  MemberAdded: 'member_added',
+  MemberUpdated: 'member_updated',
   MemberGroupCreated: 'member_group_created',
   MemberGroupDeleted: 'member_group_deleted',
   CensusConfigured: 'census_configured',
@@ -39,6 +50,10 @@ export const AnalyticsEvents = {
   TeamMemberRemoved: 'team_member_removed',
   PdfReportDownloaded: 'pdf_report_downloaded',
   AuthFailed: 'auth_failed',
+  HelpOffered: 'help_offered',
+  FeatureInterest: 'feature_interest',
+  HelpOpened: 'help_opened',
+  VotersAdded: 'voters_added',
 } as const
 
 // How an account was created or signed in to; sent as the `method` event
@@ -225,8 +240,10 @@ export const isVotingPath = (
 }
 
 // Query params that may carry PII (signup redirects carry `?email=`,
-// password-reset links carry tokens) and must never reach analytics.
-const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code']
+// password-reset links carry tokens, member search carries `?q=` on the page and
+// `?search=` on the API, and the open member drawer carries their id) and must
+// never reach analytics.
+const SENSITIVE_QUERY_PARAMS = ['email', 'token', 'code', 'q', 'search', 'person', 'member']
 
 // Session replay masks every input value (`maskAllInputs`), which would also
 // hide fields we do want to read back — the organization name in settings being
@@ -256,6 +273,16 @@ const sanitizeAnalyticsUrl = (url: string): string => {
     return url
   }
 }
+
+// Session replay keeps its own copy of every page URL and network request, which
+// `before_send` never sees: both go through this instead. Bodies are dropped
+// outright, since API calls carry member data.
+export const posthogMaskNetworkRequest = (request: CapturedNetworkRequest): CapturedNetworkRequest => ({
+  ...request,
+  name: typeof request.name === 'string' ? sanitizeAnalyticsUrl(request.name) : request.name,
+  requestBody: null,
+  responseBody: null,
+})
 
 const EMAIL_REGEX = /[\w.+-]+@[\w-]+\.[\w.-]+/g
 
@@ -379,6 +406,7 @@ export const initializePosthog = ({
         session_recording: {
           maskAllInputs: true,
           maskInputFn: posthogMaskInput,
+          maskCapturedNetworkRequestFn: posthogMaskNetworkRequest,
         },
         capture_exceptions: true,
         before_send: (event) => posthogBeforeSend(event, votingRoutes),

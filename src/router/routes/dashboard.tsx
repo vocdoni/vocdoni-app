@@ -28,6 +28,8 @@ const OrganizationTeam = lazy(() => import('~components/Organization/Dashboard/T
 const Profile = lazy(() => import('~elements/dashboard/profile'))
 const Settings = lazy(() => import('~elements/dashboard/settings'))
 const Memberbase = lazy(() => import('~elements/dashboard/memberbase'))
+const MemberbaseTabs = lazy(() => import('~elements/dashboard/memberbase/tabs'))
+const MembersImport = lazy(() => import('~elements/dashboard/memberbase/import'))
 const Members = lazy(() => import('~elements/dashboard/memberbase/members'))
 const Groups = lazy(() => import('~elements/dashboard/memberbase/groups'))
 
@@ -174,26 +176,44 @@ export const useDashboardRoutes = () => {
                     errorElement: <Error />,
                     children: [
                       {
-                        index: true,
-                        element: (
-                          <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: '1' })} replace />
-                        ),
-                      },
-                      {
-                        path: Routes.dashboard.memberbase.members,
+                        // A full page of its own, outside the section's header and tabs
+                        path: Routes.dashboard.memberbase.import,
                         element: (
                           <SuspenseLoader>
-                            <Members />
+                            <MembersImport />
                           </SuspenseLoader>
                         ),
                       },
                       {
-                        path: Routes.dashboard.memberbase.groups,
                         element: (
                           <SuspenseLoader>
-                            <Groups />
+                            <MemberbaseTabs />
                           </SuspenseLoader>
                         ),
+                        children: [
+                          {
+                            index: true,
+                            element: (
+                              <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: '1' })} replace />
+                            ),
+                          },
+                          {
+                            path: Routes.dashboard.memberbase.members,
+                            element: (
+                              <SuspenseLoader>
+                                <Members />
+                              </SuspenseLoader>
+                            ),
+                          },
+                          {
+                            path: Routes.dashboard.memberbase.groups,
+                            element: (
+                              <SuspenseLoader>
+                                <Groups />
+                              </SuspenseLoader>
+                            ),
+                          },
+                        ],
                       },
                     ],
                   },

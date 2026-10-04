@@ -19,7 +19,11 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | English | Italian | Notes |
 |---|---|---|
 | election / voting process | elezione / processo di voto | Use consistently — don't drift to a bare "votazione" for the process |
-| census | censimento | This is the term used consistently throughout the existing translations ("Non sei nel censimento", "Cerca nel censimento…"). Keep "censimento" — do not switch to "lista elettorale" |
+| census | censimento | This is the term used consistently throughout the existing translations ("Non sei nel censimento", "Cerca nel censimento…"). In the app it means the people who can vote in a vote. Keep "censimento" — do not switch to "lista elettorale" |
+| Members (section) | Membri | The dashboard section with the organization's people. Formerly "Memberbase" ("Database membri"): don't use the old name |
+| People (tab) | Persone | The tab in Members that lists every member |
+| saved census | censimento salvato | A reusable selection of people, copied into a vote when used |
+| Activity (tab) | Registro delle modifiche | The tab with the dated history of imports and votes |
 | organization | organizzazione | |
 | voter | votante | Gender-neutral; prefer over "elettore/elettrice" in most contexts |
 | voting power / weight | peso del voto | |
