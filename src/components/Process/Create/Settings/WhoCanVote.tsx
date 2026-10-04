@@ -92,7 +92,7 @@ const CensusSheet = ({
     >
       {open &&
         (owned ? (
-          <CensusDetail kind='vote' processId={draftId} />
+          <CensusDetail kind='vote' processId={draftId} surface='vote_editor' />
         ) : groupId ? (
           <CensusDetail kind='saved' groupId={groupId} />
         ) : null)}
