@@ -22,11 +22,6 @@
     "view_active_votes": "Ikusi bozketa aktiboak",
     "waiting_title": "Transakzioa berresteko zain..."
   },
-  "activity": {
-    "event": {
-      "census_frozen": "<strong>{{name}}</strong>: kide guztietatik kopiatutako errolda"
-    }
-  },
   "add_new_org": "Gehitu erakunde berri bat",
   "additional_actions": "Ekintza osagarriak",
   "all_processes": "Guztiak",
@@ -151,6 +146,8 @@
       "from_members": "Zure kideetatik",
       "new_hint": "Zure kideetara eta errolde honetara gehituko da.",
       "new_person": "Pertsona berria",
+      "skipped_one": "Pertsona 1 ez da gehitu: ez ditu bozketa honetan saioa hasteko datuak.",
+      "skipped_other": "{{count}} pertsona ez dira gehitu: ez dituzte bozketa honetan saioa hasteko datuak.",
       "submit_one": "Gehitu pertsona 1",
       "submit_other": "Gehitu {{formattedCount}} pertsona",
       "title": "Gehitu pertsonak",
@@ -165,10 +162,15 @@
       "member_number": "Kide-zenbakia",
       "name": "Izena"
     },
+    "copied_into": {
+      "on": "{{date}}(e)an kopiatua",
+      "title": "Hona kopiatua"
+    },
     "delete": {
       "blocked_one": "Argitaratutako bozketa batek erabiltzen du; beraz, mantendu egiten da.",
       "blocked_other": "Argitaratutako {{count}} bozketak erabiltzen dute; beraz, mantendu egiten da.",
       "button": "Ezabatu gordetako erroldea",
+      "checking": "Ezabatzeak zure bozketa guztiak egiaztatu arte itxaroten du, oraindik erabiltzen duen bat ere ez ahazteko.",
       "confirm": "Ezabatu erroldea",
       "description": "Pertsonak zure kideetan geratzen dira. Ezin da desegin.",
       "done": "Erroldea ezabatu da",
@@ -238,6 +240,7 @@
       "own": "Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira. Norbait kentzen baduzu, bozketa honetatik bakarrik kentzen duzu."
     },
     "open_draft": "Ireki zirriborroa",
+    "open_in_editor": "Ireki editorean",
     "open_vote": "Ireki bozketa",
     "people": {
       "at_close": "{{unit}} itxieran"
@@ -251,6 +254,7 @@
     },
     "range": "{{from}}–{{to}} / {{total}}",
     "read_only": {
+      "draft_saved": "Zirriborro honek beste bozketekin partekatzen duen gordetako errolda bat erabiltzen du oraindik. Ireki editorean bere kopia propioa izan dezan, aldatu ahal izateko.",
       "draft_selected": "Nork bozka dezakeen aldatzeko, editatu zirriborroa.",
       "ended": "Bozketa hau amaitu da; beraz, haren erroldea ezin da gehiago aldatu.",
       "everyone": "«Denak» erroldeak zure kide guztiak hartzen ditu beti. Gehitu edo kendu pertsonak Pertsonak atalean.",
@@ -281,6 +285,7 @@
       "retry_other": "Kendu beste {{formattedCount}}ak",
       "retry_question_one": "Beste bat kendu?",
       "retry_question_other": "Beste {{formattedCount}}ak kendu?",
+      "several_match": "{{number}} pertsona bat datoz {{value}} balioarekin. Markatu nor kendu nahi duzu.",
       "signed_one": "{{name}} bozkatzen hasi da jada.",
       "signed_other": "{{name}} eta beste {{others}} bozkatzen hasi dira jada.",
       "signed_title": "Ez da inor kendu",
@@ -376,8 +381,10 @@
     },
     "search": "Bilatu erroldak",
     "source": {
-      "copy": "Kopia propioa",
+      "chosen": "Eskuz hautatuak",
       "copy_from": "«{{name}}» erroldetik kopiatua",
+      "copy_previous": "Beste bozketa batetik kopiatua",
+      "copy_saved": "Gordetako errolda batetik kopiatua",
       "everyone": "Denak",
       "saved": "Gordetako «{{name}}» erroldea",
       "selected": "Hautatutako pertsonak",
@@ -597,6 +604,9 @@
       "mixed": "Nahasia"
     }
   },
+  "drawer": {
+    "close": "Itxi panela"
+  },
   "edit_saas_profile": {
     "edit_failed": "Errorea eguneratzean",
     "edited_successfully": "Behar bezala eguneratu da"
@@ -783,6 +793,11 @@
   "google_oauth_conflict_error": "Posta elektroniko honekin lotutako kontu bat dago dagoeneko. Mesedez, hasi saioa zure egungo metodoarekin.",
   "google_oauth_error": "Google OAuth errorea",
   "google_oauth_error_description": "Google OAuth errorea, saiatu berriro",
+  "groups_board": {
+    "auto_group": {
+      "title": "Kide guztiak"
+    }
+  },
   "head": {
     "description": "Sortu, kudeatu eta integratu hauteskunde seguruak eta muturretik muturrera egiaztagarriak Vocdonirekin. Plataforma malgua erakunde, gobernu eta garatzaileentzat, konfiantzazko boto-emate digitala eta erabakiak hartzea bultzatzeko.",
     "title": "Vocdoni | Boto-emate azpiegitura segurua eta egiaztagarria"
@@ -1190,6 +1205,8 @@
       "people_one": "Pertsona bat",
       "people_other": "{{formattedCount}} pertsona",
       "progress": "{{done}}/{{total}} eginda…",
+      "recount_one": "Zure kideak aldatu dira bitartean: orain bat dago. Oraindik ez da ezer aldatu, beraz, egiaztatu eta berretsi berriro.",
+      "recount_other": "Zure kideak aldatu dira bitartean: orain {{formattedCount}} daude. Oraindik ez da ezer aldatu, beraz, egiaztatu eta berretsi berriro.",
       "remove_from_saved_census": "Kendu gordetako errolde batetik",
       "save_census": "Gorde errolde gisa"
     },
@@ -1453,6 +1470,8 @@
         "phone_only": "Ezin dira martxan dauden bozketak egiaztatu telefonoa bakarrik duten pertsonentzat.",
         "saved": "Gordetako erroldea",
         "title": "Erroldetan",
+        "too_big_one": "Gordetako errolda edo zirriborro batek {{max}} pertsona baino gehiago ditu; beraz, ez da hemen egiaztatzen.",
+        "too_big_other": "Gordetako {{count}} errolda edo zirriborrok {{max}} pertsona baino gehiago dituzte; beraz, ez dira hemen egiaztatzen.",
         "unchecked_one": "Ezin da martxan dagoen bozketa 1 egiaztatu: pertsona honek ez dituen datuekin sartzen da.",
         "unchecked_other": "Ezin dira martxan dauden {{count}} bozketa egiaztatu: pertsona honek ez dituen datuekin sartzen dira."
       },
@@ -1939,10 +1958,6 @@
     "auto_start": "Hasi berehala",
     "basic_configuration": "Oinarrizko konfigurazioa",
     "census": {
-      "everyone": {
-        "description_one": "Zure kide bakarra. Argitaratu aurretik gehitzen duzuna barne dago; gero, pertsona berriak zuk gehitzen dituzu bozketara.",
-        "description_other": "Zure {{formattedCount}} kideak. Argitaratu aurretik gehitzen dituzunak barne daude; gero, pertsona berriak zuk gehitzen dituzu bozketara."
-      },
       "group": {
         "no_groups": "Bozketa bat hasteko, lehenik zure kide-oinarritik bozkatzeko eskubidea duten boto-emaileen talde bat sortu behar duzu. <1>Sortu hemen</1>."
       },
@@ -1979,12 +1994,6 @@
       "hidden": "Ezkututa amaitu arte",
       "live": "Emaitzak zuzenean",
       "title": "Emaitzen ikusgaitasuna"
-    },
-    "review": {
-      "census_stale_reload": "Zirriborro hau beste nonbait aldatu da. Kargatu berriro azken bertsioa ikusteko, eta gero argitaratu.",
-      "frozen_one": "Argitaratzean, bozketa honek pertsona honen kopia propioa izango du. Geroago sartzen direnak ez dira automatikoki gehitzen: gehitu bozketaren Botogileak fitxatik, eta han pertsonak kendu ere egin ditzakezu.",
-      "frozen_other": "Argitaratzean, bozketa honek {{count}} pertsona hauen kopia propioa izango du. Geroago sartzen direnak ez dira automatikoki gehitzen: gehitu bozketaren Botogileak fitxatik, eta han pertsonak kendu ere egin ditzakezu.",
-      "reload": "Kargatu berriro"
     },
     "settings": "Konfigurazioa",
     "start_datetime": "Hasiera-data eta -ordua",
@@ -2153,6 +2162,9 @@
     }
   },
   "process_view": {
+    "add_voters": {
+      "none": "Ez dago bilaketarekin bat datorren kiderik."
+    },
     "lookup": {
       "anonymous": "Boto sekretua: norbaitek bozkatu duen ikus dezakezu, inoiz ez zer aukeratu duen.",
       "check": "Egiaztatu",
@@ -2187,6 +2199,10 @@
   "processes": {
     "empty": "Ez da bozketa-prozesurik aurkitu",
     "empty_description": "Sortu bozketa-prozesu bat hasteko.",
+    "list": {
+      "untitled": "Izenbururik gabeko bozketa",
+      "untitled_draft": "Izenbururik gabeko zirriborroa"
+    },
     "load_error": "Ezin izan dira bozketa-prozesuak kargatu",
     "load_error_description": "Saiatu berriro.",
     "no_results": "Ez dago iragazki honentzat emaitzarik",

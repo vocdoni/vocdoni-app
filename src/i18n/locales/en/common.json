@@ -22,11 +22,6 @@
     "view_active_votes": "View active votes",
     "waiting_title": "Waiting for transaction confirmation..."
   },
-  "activity": {
-    "event": {
-      "census_frozen": "<strong>{{name}}</strong>: census copied from all your members"
-    }
-  },
   "add_new_org": "Add a new organization",
   "additional_actions": "Additional actions",
   "all_processes": "All",
@@ -151,6 +146,8 @@
       "from_members": "From members",
       "new_hint": "They'll be added to your members and to this census.",
       "new_person": "New person",
+      "skipped_one": "1 person wasn't added: they don't have the details this vote signs in with.",
+      "skipped_other": "{{count}} people weren't added: they don't have the details this vote signs in with.",
       "submit_one": "Add 1 person",
       "submit_other": "Add {{formattedCount}} people",
       "title": "Add people",
@@ -165,10 +162,15 @@
       "member_number": "Member number",
       "name": "Name"
     },
+    "copied_into": {
+      "on": "Copied on {{date}}",
+      "title": "Copied into"
+    },
     "delete": {
       "blocked_one": "A published vote uses it, so it stays.",
       "blocked_other": "{{count}} published votes use it, so it stays.",
       "button": "Delete saved census",
+      "checking": "Deleting waits until all your votes are checked, so none still using it is missed.",
       "confirm": "Delete census",
       "description": "The people stay in your members. This can't be undone.",
       "done": "Census deleted",
@@ -238,6 +240,7 @@
       "own": "Fixing someone's details changes them in your members list too. Removing someone only takes them out of this vote."
     },
     "open_draft": "Open the draft",
+    "open_in_editor": "Open in editor",
     "open_vote": "Open vote",
     "people": {
       "at_close": "{{unit}} at close"
@@ -251,6 +254,7 @@
     },
     "range": "{{from}}–{{to}} of {{total}}",
     "read_only": {
+      "draft_saved": "This draft still uses a saved census other votes share. Open it in the editor to give it a copy of its own you can change.",
       "draft_selected": "To change who can vote, edit the draft.",
       "ended": "This vote has ended, so its census can't change.",
       "everyone": "Everyone always holds all your members. Add or remove people in People.",
@@ -281,6 +285,7 @@
       "retry_other": "Remove the other {{formattedCount}}",
       "retry_question_one": "Remove the other one?",
       "retry_question_other": "Remove the other {{formattedCount}}?",
+      "several_match": "{{number}} people match {{value}}. Tick who to take out.",
       "signed_one": "{{name}} has already started voting.",
       "signed_other": "{{name}} and {{others}} more have already started voting.",
       "signed_title": "Nobody was removed",
@@ -376,8 +381,10 @@
     },
     "search": "Search censuses",
     "source": {
-      "copy": "Its own copy",
+      "chosen": "Chosen by hand",
       "copy_from": "Copied from '{{name}}'",
+      "copy_previous": "Copied from another vote",
+      "copy_saved": "Copied from a saved census",
       "everyone": "Everyone",
       "saved": "Saved census '{{name}}'",
       "selected": "Selected people",
@@ -597,6 +604,9 @@
       "mixed": "Mixed"
     }
   },
+  "drawer": {
+    "close": "Close drawer"
+  },
   "edit_saas_profile": {
     "edit_failed": "Update failed",
     "edited_successfully": "Updated successfully"
@@ -783,6 +793,11 @@
   "google_oauth_conflict_error": "An account with this email already exists. Please sign in using your existing method.",
   "google_oauth_error": "Google OAuth Error",
   "google_oauth_error_description": "Google OAuth error, please try again",
+  "groups_board": {
+    "auto_group": {
+      "title": "All Members"
+    }
+  },
   "head": {
     "description": "Build, manage, and integrate secure, e2e verifiable elections with Vocdoni. A flexible platform for organizations, governments, and developers to power trusted digital voting and decision-making.",
     "title": "Vocdoni | Secure & verifiable voting infrastructure"
@@ -1190,6 +1205,8 @@
       "people_one": "One person",
       "people_other": "{{formattedCount}} people",
       "progress": "{{done}} of {{total}} done…",
+      "recount_one": "Your members changed meanwhile: there is one now. Nothing was changed yet, so check and confirm again.",
+      "recount_other": "Your members changed meanwhile: there are {{formattedCount}} now. Nothing was changed yet, so check and confirm again.",
       "remove_from_saved_census": "Remove from a saved census",
       "save_census": "Save as census"
     },
@@ -1453,6 +1470,8 @@
         "phone_only": "Can't check live votes for people with only a phone.",
         "saved": "Saved census",
         "title": "In censuses",
+        "too_big_one": "1 saved census or draft has more than {{max}} people, so it isn't checked here.",
+        "too_big_other": "{{count}} saved censuses or drafts have more than {{max}} people, so they aren't checked here.",
         "unchecked_one": "Can't check 1 live vote: it signs in with details this person doesn't have.",
         "unchecked_other": "Can't check {{count}} live votes: they sign in with details this person doesn't have."
       },
@@ -1939,10 +1958,6 @@
     "auto_start": "Start immediately",
     "basic_configuration": "Basic configuration",
     "census": {
-      "everyone": {
-        "description_one": "Your 1 member. Anyone you add before publishing is included; after that, you add new people to the vote yourself.",
-        "description_other": "All {{formattedCount}} members. Anyone you add before publishing is included; after that, you add new people to the vote yourself."
-      },
       "group": {
         "no_groups": "To start a vote, you first need to create a group of eligible voters from your memberbase. <1>Create one here</1>."
       },
@@ -1979,12 +1994,6 @@
       "hidden": "Hidden until the end",
       "live": "Live results",
       "title": "Result visibility"
-    },
-    "review": {
-      "census_stale_reload": "This draft was changed somewhere else. Reload it to see the latest version, then publish.",
-      "frozen_one": "When you publish, this vote gets its own copy of this 1 person. People who join later aren't added automatically: add them from the vote's Voters tab, where you can also remove people.",
-      "frozen_other": "When you publish, this vote gets its own copy of these {{count}} people. People who join later aren't added automatically: add them from the vote's Voters tab, where you can also remove people.",
-      "reload": "Reload"
     },
     "settings": "Settings",
     "start_datetime": "Start date and time",
@@ -2153,6 +2162,9 @@
     }
   },
   "process_view": {
+    "add_voters": {
+      "none": "No members match your search."
+    },
     "lookup": {
       "anonymous": "Anonymous vote: you can see whether someone voted, never what they chose.",
       "check": "Check",
@@ -2187,6 +2199,10 @@
   "processes": {
     "empty": "No voting processes found",
     "empty_description": "Create a voting process to get started.",
+    "list": {
+      "untitled": "Untitled vote",
+      "untitled_draft": "Untitled draft"
+    },
     "load_error": "Unable to load voting processes",
     "load_error_description": "Please try again.",
     "no_results": "No results for this filter",

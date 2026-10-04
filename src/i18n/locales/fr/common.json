@@ -22,11 +22,6 @@
     "view_active_votes": "Voir les votes actifs",
     "waiting_title": "En attente de la confirmation de la transaction…"
   },
-  "activity": {
-    "event": {
-      "census_frozen": "<strong>{{name}}</strong> : liste électorale copiée de tous vos membres"
-    }
-  },
   "add_new_org": "Ajouter une nouvelle organisation",
   "additional_actions": "Actions supplémentaires",
   "all_processes": "Tous",
@@ -153,8 +148,11 @@
       "from_members": "Depuis vos membres",
       "new_hint": "Elle sera ajoutée à vos membres et à cette liste électorale.",
       "new_person": "Nouvelle personne",
-      "submit_many": "Ajouter {{formattedCount}} personnes",
+      "skipped_one": "1 personne n'a pas été ajoutée : il lui manque les informations de connexion de ce vote.",
+      "skipped_many": "{{count}} personnes n'ont pas été ajoutées : il leur manque les informations de connexion de ce vote.",
+      "skipped_other": "{{count}} personnes n'ont pas été ajoutées : il leur manque les informations de connexion de ce vote.",
       "submit_one": "Ajouter 1 personne",
+      "submit_many": "Ajouter {{formattedCount}} personnes",
       "submit_other": "Ajouter {{formattedCount}} personnes",
       "title": "Ajouter des personnes",
       "updating_vote": "Ajoutées. Mise à jour du vote pour qu'elles puissent voter…"
@@ -168,11 +166,16 @@
       "member_number": "Numéro de membre",
       "name": "Nom"
     },
+    "copied_into": {
+      "on": "Copiée le {{date}}",
+      "title": "Copiée dans"
+    },
     "delete": {
-      "blocked_many": "{{count}} votes publiés l'utilisent, elle est donc conservée.",
       "blocked_one": "Un vote publié l'utilise, elle est donc conservée.",
+      "blocked_many": "{{count}} votes publiés l'utilisent, elle est donc conservée.",
       "blocked_other": "{{count}} votes publiés l'utilisent, elle est donc conservée.",
       "button": "Supprimer la liste électorale enregistrée",
+      "checking": "La suppression attend que tous vos votes soient vérifiés, afin de n'oublier aucun vote qui l'utilise encore.",
       "confirm": "Supprimer la liste",
       "description": "Les personnes restent dans vos membres. Cette action est irréversible.",
       "done": "Liste électorale supprimée",
@@ -198,8 +201,8 @@
       "can_get_code": "Peuvent recevoir un code",
       "closed": "Clos le {{date}}",
       "closes": "Clôture le {{date}}",
-      "copied_more_many": "Et {{count}} autres votes",
       "copied_more_one": "Et 1 autre vote",
+      "copied_more_many": "Et {{count}} autres votes",
       "copied_more_other": "Et {{count}} autres votes",
       "dates": "{{start}} – {{end}}",
       "draft": "Un brouillon : les dates se règlent dans l'éditeur",
@@ -212,16 +215,16 @@
       "show_them": "Les afficher",
       "sign_in": "Connexion",
       "they_type": "Ils saisissent aussi : {{details}}",
-      "used_more_many": "Et {{count}} autres votes : les modifications faites ici les atteignent",
       "used_more_one": "Et 1 autre vote : les modifications faites ici l'atteignent",
+      "used_more_many": "Et {{count}} autres votes : les modifications faites ici les atteignent",
       "used_more_other": "Et {{count}} autres votes : les modifications faites ici les atteignent",
       "used_reach": "Les modifications faites ici atteignent ce vote",
       "voters": "Électeurs",
       "voting": "Vote"
     },
     "filter": {
-      "unreachable_many": "Sans code possible · {{count}}",
       "unreachable_one": "Sans code possible · {{count}}",
+      "unreachable_many": "Sans code possible · {{count}}",
       "unreachable_other": "Sans code possible · {{count}}"
     },
     "header": {
@@ -240,12 +243,13 @@
     "no_unreachable": "Toutes les personnes restantes peuvent recevoir un code.",
     "not_found": "Liste électorale introuvable.",
     "note": {
-      "copied_many": "Les {{count}} votes qui ont copié cette liste électorale ont leur propre copie : les modifications faites ici ne changent pas qui y vote.",
       "copied_one": "« {{name}} » a sa propre copie de cette liste électorale : les modifications faites ici ne changent pas qui y vote.",
+      "copied_many": "Les {{count}} votes qui ont copié cette liste électorale ont leur propre copie : les modifications faites ici ne changent pas qui y vote.",
       "copied_other": "Les {{count}} votes qui ont copié cette liste électorale ont leur propre copie : les modifications faites ici ne changent pas qui y vote.",
       "own": "Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres. Retirer quelqu'un le retire seulement de ce vote."
     },
     "open_draft": "Ouvrir le brouillon",
+    "open_in_editor": "Ouvrir dans l'éditeur",
     "open_vote": "Ouvrir le vote",
     "people": {
       "at_close": "{{unit}} à la clôture"
@@ -254,12 +258,13 @@
       "already_in": "Déjà inscrite",
       "paste": "Sélectionner depuis une liste…",
       "search": "Rechercher dans vos membres",
-      "selected_many": "{{formattedCount}} sélectionnées",
       "selected_one": "1 sélectionnée",
+      "selected_many": "{{formattedCount}} sélectionnées",
       "selected_other": "{{formattedCount}} sélectionnées"
     },
     "range": "{{from}}–{{to}} sur {{total}}",
     "read_only": {
+      "draft_saved": "Ce brouillon utilise encore une liste électorale enregistrée partagée avec d'autres votes. Ouvrez-le dans l'éditeur pour lui donner sa propre copie, que vous pourrez modifier.",
       "draft_selected": "Pour changer qui peut voter, modifiez le brouillon.",
       "ended": "Ce vote est terminé, sa liste électorale ne peut donc plus changer.",
       "everyone": "« Tout le monde » comprend toujours tous vos membres. Ajoutez ou retirez des personnes dans Personnes.",
@@ -267,17 +272,17 @@
     },
     "remove": {
       "all_signed": "Personne d'autre ne peut être retiré : tous ont commencé à voter.",
-      "confirm_many": "Retirer {{formattedCount}} personnes",
       "confirm_one": "Retirer 1 personne",
+      "confirm_many": "Retirer {{formattedCount}} personnes",
       "confirm_other": "Retirer {{formattedCount}} personnes",
-      "confirm_vote_many": "Retirer {{formattedCount}} électeurs",
       "confirm_vote_one": "Retirer 1 électeur",
+      "confirm_vote_many": "Retirer {{formattedCount}} électeurs",
       "confirm_vote_other": "Retirer {{formattedCount}} électeurs",
       "done": "{{before}} → {{after}} personnes",
       "done_detail": "Elles restent dans vos membres.",
       "done_vote": "{{before}} → {{after}} électeurs",
-      "emptied_many": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées pour chacune.",
       "emptied_one": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées.",
+      "emptied_many": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées pour chacune.",
       "emptied_other": "Plus personne ne pourrait répondre à {{questions}}. Gardez au moins une des personnes autorisées pour chacune.",
       "error": "Personne n'a été retiré",
       "find": "Rechercher",
@@ -286,28 +291,29 @@
       "partial": "Arrêt après le retrait de {{removed}}",
       "pick_button": "Retirer des personnes…",
       "pick_hint": "Trouvez-les dans vos membres. Les personnes qui ne participent pas à ce vote restent inchangées.",
-      "pick_submit_many": "Retirer {{formattedCount}} personnes…",
       "pick_submit_one": "Retirer 1 personne…",
+      "pick_submit_many": "Retirer {{formattedCount}} personnes…",
       "pick_submit_other": "Retirer {{formattedCount}} personnes…",
       "pick_title": "Retirer des personnes",
-      "retry_many": "Retirer les {{formattedCount}} autres",
       "retry_one": "Retirer l'autre",
+      "retry_many": "Retirer les {{formattedCount}} autres",
       "retry_other": "Retirer les {{formattedCount}} autres",
-      "retry_question_many": "Retirer les {{formattedCount}} autres ?",
       "retry_question_one": "Retirer l'autre ?",
+      "retry_question_many": "Retirer les {{formattedCount}} autres ?",
       "retry_question_other": "Retirer les {{formattedCount}} autres ?",
-      "signed_many": "{{name}} et {{others}} autres ont déjà commencé à voter.",
+      "several_match": "{{number}} personnes correspondent à {{value}}. Cochez qui retirer.",
       "signed_one": "{{name}} a déjà commencé à voter.",
+      "signed_many": "{{name}} et {{others}} autres ont déjà commencé à voter.",
       "signed_other": "{{name}} et {{others}} autres ont déjà commencé à voter.",
       "signed_title": "Personne n'a été retiré",
       "signed_title_partial": "{{removed}} retirées, pas encore les autres",
       "someone": "Quelqu'un",
       "stay": "Elles restent dans vos membres.",
-      "title_many": "Retirer {{formattedCount}} personnes de « {{census}} » ?",
       "title_one": "Retirer 1 personne de « {{census}} » ?",
+      "title_many": "Retirer {{formattedCount}} personnes de « {{census}} » ?",
       "title_other": "Retirer {{formattedCount}} personnes de « {{census}} » ?",
-      "title_vote_many": "Retirer {{formattedCount}} électeurs de « {{vote}} » ?",
       "title_vote_one": "Retirer 1 électeur de « {{vote}} » ?",
+      "title_vote_many": "Retirer {{formattedCount}} électeurs de « {{vote}} » ?",
       "title_vote_other": "Retirer {{formattedCount}} électeurs de « {{vote}} » ?",
       "undo": "Les rajouter",
       "undo_error": "Ils n'ont pas pu être rajoutés",
@@ -319,8 +325,8 @@
     "search": "Rechercher par nom, e-mail ou numéro",
     "select_page": "Sélectionner tout le monde sur cette page",
     "select_person": "Sélectionner {{name}}",
-    "selected_many": "{{formattedCount}} sélectionnées",
     "selected_one": "1 sélectionnée",
+    "selected_many": "{{formattedCount}} sélectionnées",
     "selected_other": "{{formattedCount}} sélectionnées",
     "sign_in": {
       "per_vote": "Chaque vote définit comment ses électeurs se connectent."
@@ -372,8 +378,8 @@
     "in_votes": "Dans les votes",
     "in_votes_hint": "Chaque vote a sa propre liste électorale",
     "load_error": "Impossible de charger vos listes électorales.",
-    "more_votes_many": "{{count}} autres",
     "more_votes_one": "{{count}} autre",
+    "more_votes_many": "{{count}} autres",
     "more_votes_other": "{{count}} autres",
     "row": {
       "unreachable_one": "1 ne peut pas recevoir de code",
@@ -385,8 +391,8 @@
       "new": "Nouvelle liste enregistrée",
       "title": "Enregistrées",
       "updated": "Mise à jour le {{date}}",
-      "used_by_many": "Utilisée par {{count}} votes",
       "used_by_one": "Utilisée par 1 vote",
+      "used_by_many": "Utilisée par {{count}} votes",
       "used_by_other": "Utilisée par {{count}} votes"
     },
     "saved_card": {
@@ -400,8 +406,10 @@
     },
     "search": "Rechercher des listes",
     "source": {
-      "copy": "Copie propre",
+      "chosen": "Choisies à la main",
       "copy_from": "Copiée depuis « {{name}} »",
+      "copy_previous": "Copiée d'un autre vote",
+      "copy_saved": "Copiée d'une liste électorale enregistrée",
       "everyone": "Tout le monde",
       "saved": "Liste électorale enregistrée « {{name}} »",
       "selected": "Personnes sélectionnées",
@@ -413,11 +421,11 @@
       "draft": "Brouillon"
     },
     "unit": {
-      "people_many": "personnes",
       "people_one": "personne",
+      "people_many": "personnes",
       "people_other": "personnes",
-      "voters_many": "électeurs",
       "voters_one": "électeur",
+      "voters_many": "électeurs",
       "voters_other": "électeurs"
     },
     "used_by_warning": "Cela change aussi qui peut voter dans {{votes}}.",
@@ -623,6 +631,9 @@
       "mixed": "Mixte"
     }
   },
+  "drawer": {
+    "close": "Fermer le panneau"
+  },
   "edit_saas_profile": {
     "edit_failed": "Échec de la mise à jour",
     "edited_successfully": "Mise à jour réussie"
@@ -810,6 +821,11 @@
   "google_oauth_conflict_error": "Un compte avec cette adresse e-mail existe déjà. Veuillez vous connecter avec votre méthode existante.",
   "google_oauth_error": "Erreur OAuth Google",
   "google_oauth_error_description": "Erreur OAuth Google, veuillez réessayer",
+  "groups_board": {
+    "auto_group": {
+      "title": "Tous les membres"
+    }
+  },
   "head": {
     "description": "Créez, gérez et intégrez des élections sécurisées et vérifiables de bout en bout avec Vocdoni. Une plateforme flexible pour les organisations, les gouvernements et les développeurs, pour un vote numérique et une prise de décision fiables.",
     "title": "Vocdoni | Infrastructure de vote sécurisée et vérifiable"
@@ -1221,6 +1237,9 @@
       "people_many": "{{formattedCount}} personnes",
       "people_other": "{{formattedCount}} personnes",
       "progress": "{{done}} sur {{total}} traités…",
+      "recount_one": "Vos membres ont changé entre-temps : il y en a un maintenant. Rien n'a encore été modifié, vérifiez et confirmez à nouveau.",
+      "recount_many": "Vos membres ont changé entre-temps : il y en a {{formattedCount}} maintenant. Rien n'a encore été modifié, vérifiez et confirmez à nouveau.",
+      "recount_other": "Vos membres ont changé entre-temps : il y en a {{formattedCount}} maintenant. Rien n'a encore été modifié, vérifiez et confirmez à nouveau.",
       "remove_from_saved_census": "Retirer d'une liste électorale enregistrée",
       "save_census": "Enregistrer comme liste électorale"
     },
@@ -1513,8 +1532,11 @@
         "phone_only": "Impossible de vérifier les votes en cours pour les personnes qui n'ont qu'un téléphone.",
         "saved": "Liste électorale enregistrée",
         "title": "Dans les listes électorales",
-        "unchecked_many": "Impossible de vérifier {{count}} votes en cours : on s'y connecte avec des informations que cette personne n'a pas.",
+        "too_big_one": "Une liste électorale enregistrée ou un brouillon dépasse {{max}} personnes : il n’est pas vérifié ici.",
+        "too_big_many": "{{count}} listes électorales enregistrées ou brouillons dépassent {{max}} personnes : ils ne sont pas vérifiés ici.",
+        "too_big_other": "{{count}} listes électorales enregistrées ou brouillons dépassent {{max}} personnes : ils ne sont pas vérifiés ici.",
         "unchecked_one": "Impossible de vérifier 1 vote en cours : on s'y connecte avec des informations que cette personne n'a pas.",
+        "unchecked_many": "Impossible de vérifier {{count}} votes en cours : on s'y connecte avec des informations que cette personne n'a pas.",
         "unchecked_other": "Impossible de vérifier {{count}} votes en cours : on s'y connecte avec des informations que cette personne n'a pas."
       },
       "edit": "Modifier",
@@ -1526,14 +1548,14 @@
         "name_required": "Ajoutez un prénom ou un nom"
       },
       "live_confirm": {
-        "body_many": "Cette personne peut voter dans « {{vote}} » et {{others}} autres. Un nouveau poids de vote ou une nouvelle information de connexion s'y applique immédiatement.",
         "body_one": "Cette personne peut voter dans « {{vote}} ». Un nouveau poids de vote ou une nouvelle information de connexion s'y applique immédiatement.",
+        "body_many": "Cette personne peut voter dans « {{vote}} » et {{others}} autres. Un nouveau poids de vote ou une nouvelle information de connexion s'y applique immédiatement.",
         "body_other": "Cette personne peut voter dans « {{vote}} » et {{others}} autres. Un nouveau poids de vote ou une nouvelle information de connexion s'y applique immédiatement.",
         "confirm": "Enregistrer la modification",
         "title": "Modifier dans un vote en cours ?"
       },
-      "live_note_many": "Les modifications s'appliquent immédiatement dans « {{vote}} » et {{others}} autres.",
       "live_note_one": "Les modifications s'appliquent immédiatement dans « {{vote}} ».",
+      "live_note_many": "Les modifications s'appliquent immédiatement dans « {{vote}} » et {{others}} autres.",
       "live_note_other": "Les modifications s'appliquent immédiatement dans « {{vote}} » et {{others}} autres.",
       "member_number_chip": "N° {{number}}",
       "not_found": "Cette personne n'est pas sur cette page. Elle a peut-être été supprimée, ou la liste a changé.",
@@ -2021,11 +2043,6 @@
     "auto_start": "Démarrer immédiatement",
     "basic_configuration": "Configuration de base",
     "census": {
-      "everyone": {
-        "description_many": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
-        "description_one": "Votre unique membre. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
-        "description_other": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote."
-      },
       "group": {
         "no_groups": "Pour démarrer un vote, vous devez d'abord créer un groupe d'électeurs éligibles à partir de votre base de membres. <1>Créez-en un ici</1>."
       },
@@ -2062,13 +2079,6 @@
       "hidden": "Masqués jusqu'à la fin",
       "live": "Résultats en direct",
       "title": "Visibilité des résultats"
-    },
-    "review": {
-      "census_stale_reload": "Ce brouillon a été modifié ailleurs. Rechargez-le pour voir la dernière version, puis publiez-le.",
-      "frozen_many": "À la publication, ce vote aura sa propre copie de ces {{count}} personnes. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
-      "frozen_one": "À la publication, ce vote aura sa propre copie de cette personne. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
-      "frozen_other": "À la publication, ce vote aura sa propre copie de ces {{count}} personnes. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
-      "reload": "Recharger"
     },
     "settings": "Paramètres",
     "start_datetime": "Date et heure de début",
@@ -2238,6 +2248,9 @@
     }
   },
   "process_view": {
+    "add_voters": {
+      "none": "Aucun membre ne correspond à votre recherche."
+    },
     "lookup": {
       "anonymous": "Vote anonyme : vous pouvez voir si quelqu’un a voté, jamais ce qu’il a choisi.",
       "check": "Vérifier",
@@ -2272,6 +2285,10 @@
   "processes": {
     "empty": "Aucun processus de vote trouvé",
     "empty_description": "Créez un processus de vote pour commencer.",
+    "list": {
+      "untitled": "Vote sans titre",
+      "untitled_draft": "Brouillon sans titre"
+    },
     "load_error": "Impossible de charger les processus de vote",
     "load_error_description": "Réessayez.",
     "no_results": "Aucun résultat pour ce filtre",
