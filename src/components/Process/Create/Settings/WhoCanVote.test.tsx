@@ -108,14 +108,22 @@ const formState = () => JSON.parse(screen.getByTestId('form').textContent!)
 
 let lastForm: () => Process
 
-const Harness = ({ values = {}, draft }: { values?: Partial<Process>; draft: DraftControls }) => {
+const Harness = ({
+  values = {},
+  draft,
+  onStartingOverChange,
+}: {
+  values?: Partial<Process>
+  draft: DraftControls
+  onStartingOverChange?: (startingOver: boolean) => void
+}) => {
   const methods = useForm<Process>({ defaultValues: { ...defaultProcessValues, title: 'Assemblea', ...values } })
   lastForm = methods.getValues
   return (
     <TestMemoryRouter>
       <FormProvider {...methods}>
         <EditorContext.Provider value={{ draft }}>
-          <WhoCanVote />
+          <WhoCanVote onStartingOverChange={onStartingOverChange} />
           <Watch />
         </EditorContext.Provider>
       </FormProvider>
@@ -156,11 +164,11 @@ describe('WhoCanVote', () => {
   it('offers the four sources, with Everyone chosen and its size', () => {
     render(<Harness values={{ groupId: 'all' }} draft={draftControls()} />)
 
-    const everyone = screen.getByRole('radio', { name: /Everyone/ })
+    const everyone = screen.getByRole('radio', { name: /All 120 members of your memberbase/ })
     expect(everyone).toBeChecked()
     expect(
       screen.getByText(
-        'All 120 members. Anyone you add before publishing is included; after that, you add new people to the vote yourself.'
+        'Anyone you add before publishing is included; after that, you add new people to the vote yourself.'
       )
     ).toBeVisible()
     expect(screen.getByRole('radio', { name: /From a saved census/ })).not.toBeChecked()
@@ -257,25 +265,10 @@ describe('WhoCanVote', () => {
     expect(await screen.findByText('census detail vote draft-1')).toBeInTheDocument()
   })
 
-  it('gives an Everyone vote a list of its own to edit, made from every member now', async () => {
-    const user = userEvent.setup()
-    const draft = draftControls()
-    render(<Harness values={{ groupId: 'all' }} draft={draft} />)
+  it('offers no way to turn Everyone into a list of its own', () => {
+    render(<Harness values={{ groupId: 'all' }} draft={draftControls()} />)
 
-    await user.click(screen.getByRole('button', { name: 'Edit this list' }))
-    const dialog = await screen.findByRole('alertdialog').catch(() => screen.findByRole('dialog'))
-    expect(within(dialog).getByText(/From then on, new members won't join it by themselves/)).toBeInTheDocument()
-    await user.click(within(dialog).getByRole('button', { name: 'Make its own list' }))
-
-    await waitFor(() => expect(formState().groupId).toBe('own-new'))
-    expect(api.createGroup).toHaveBeenCalledWith(
-      expect.objectContaining({ title: expect.stringMatching(/^Assemblea — /), includeAllMembers: true })
-    )
-    expect(api.mark).toHaveBeenCalledWith(
-      'own-new',
-      expect.objectContaining({ processId: 'draft-1', kind: 'copy', source: 'everyone' })
-    )
-    expect(draft.saveWithLatest).toHaveBeenCalled()
+    expect(screen.queryByRole('button', { name: 'Edit this list' })).toBeNull()
   })
 
   it('says how many members a list copied from Everyone is missing', () => {
@@ -291,6 +284,19 @@ describe('WhoCanVote', () => {
     ).toBeInTheDocument()
   })
 
+  it('says when it starts choosing a new census, and when that ends', async () => {
+    const user = userEvent.setup()
+    const onStartingOverChange = vi.fn()
+    render(
+      <Harness values={{ groupId: 'own-old' }} draft={draftControls()} onStartingOverChange={onStartingOverChange} />
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Start over' }))
+    expect(onStartingOverChange).toHaveBeenLastCalledWith(true)
+    await user.click(screen.getByRole('button', { name: 'Keep the current census' }))
+    expect(onStartingOverChange).toHaveBeenLastCalledWith(false)
+  })
+
   it('starts over: back to Everyone, then deletes the old copy once the draft is saved', async () => {
     const user = userEvent.setup()
     const draft = draftControls()
@@ -302,7 +308,7 @@ describe('WhoCanVote', () => {
     )
 
     await user.click(screen.getByRole('button', { name: 'Start over' }))
-    await user.click(screen.getByRole('radio', { name: /Everyone/ }))
+    await user.click(screen.getByRole('radio', { name: /All 120 members of your memberbase/ }))
 
     await waitFor(() => expect(api.unmark).toHaveBeenCalledWith('own-old'))
     expect(formState().groupId).toBe('all')

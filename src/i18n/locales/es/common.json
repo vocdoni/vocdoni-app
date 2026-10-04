@@ -294,6 +294,16 @@
       "error": "No se ha eliminado el censo",
       "title": "¿Eliminar «{{name}}»?"
     },
+    "delete_vote": {
+      "blocked": "Esta votación está publicada y aún no ha terminado, así que no se puede eliminar su censo.",
+      "button": "Eliminar censo",
+      "canceled": "La votación sigue cancelada. Se elimina su lista de quién podía votar, y no se puede deshacer.",
+      "confirm": "Eliminar censo",
+      "draft": "El borrador se queda. Antes de publicarlo, vuelve a elegir quién puede votar.",
+      "ended": "La votación y sus resultados se quedan como están, pero se elimina su lista de quién podía votar. Ya no podrás consultar quién podía votar en ella, y no se puede deshacer.",
+      "title": "¿Eliminar el censo de «{{name}}»?",
+      "understand": "Entiendo que se eliminará el registro de quién podía votar en esta votación"
+    },
     "edit": {
       "error": "No se han guardado los cambios",
       "name_required": "Añade un nombre",
@@ -350,7 +360,7 @@
         "mobile": "número de móvil"
       },
       "no_copy": "Aún ninguna votación",
-      "no_copy_hint": "La votación que lo use tendrá su propia copia",
+      "no_copy_new": "Una votación que lo use recibe un censo nuevo basado en él",
       "not_scheduled": "Aún sin programar",
       "not_scheduled_hint": "Las fechas las eliges al editar la votación",
       "opens_at": "Abre el {{date}} a las {{at}}",
@@ -2217,21 +2227,15 @@
         "submit_other": "Usar {{formattedCount}} personas",
         "title": "Elige quién puede votar"
       },
-      "copy_everyone": {
-        "button": "Editar esta lista",
-        "confirm": "Darle una lista propia",
-        "description": "Esta votación tendrá su propia lista con todos tus miembros tal como están ahora, y podrás añadir o quitar personas. A partir de entonces, los miembros nuevos no se añadirán solos.",
-        "title": "¿Editar esta lista?"
-      },
       "error": "No se ha podido cambiar quién puede votar",
       "error_detail": "No ha cambiado nada. Inténtalo de nuevo en un momento.",
       "error_empty": "No hay nadie que copiar",
       "error_stale": "Este borrador se ha cambiado desde otro sitio. Recarga la página e inténtalo de nuevo.",
       "everyone": {
-        "description_one": "Tu único miembro. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación.",
-        "description_many": "Todos tus {{formattedCount}} miembros. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación.",
-        "description_other": "Todos tus {{formattedCount}} miembros. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación.",
-        "title": "Todos los miembros"
+        "all_one": "El único miembro de tu organización",
+        "all_many": "Todos los {{formattedCount}} miembros de tu organización",
+        "all_other": "Todos los {{formattedCount}} miembros de tu organización",
+        "included": "Se incluye a quien añadas antes de publicar; después, las personas nuevas las añades tú a la votación."
       },
       "go_to_members": "Ir a Miembros",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2269,15 +2273,15 @@
       "previous": {
         "card": "Igual que una votación anterior",
         "description": "Copia quién podía votar en ella.",
-        "hint": "Esta votación tendrá su propia copia de las personas que podían votar en ella.",
+        "new_census": "Se crea un censo nuevo con las personas que podían votar en ella.",
         "no_list": "Sus personas se eligieron una a una, así que no hay lista que copiar.",
         "none": "Aún no hay otras votaciones.",
         "title": "Igual que una votación anterior"
       },
       "reload": "Recargar",
       "saved": {
-        "after_name": "Tendrá su propia copia en cuanto la votación tenga nombre.",
-        "description": "Esta votación tendrá su propia copia.",
+        "based_on": "Se crea un censo nuevo basado en él.",
+        "created_after_name": "El censo nuevo se crea en cuanto la votación tiene nombre.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Elige un censo guardado",
         "select": "Censo guardado",

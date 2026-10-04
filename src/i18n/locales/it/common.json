@@ -294,6 +294,16 @@
       "error": "Il censimento non è stato eliminato",
       "title": "Eliminare «{{name}}»?"
     },
+    "delete_vote": {
+      "blocked": "Questa votazione è pubblicata e non è ancora terminata, quindi il suo censimento non si può eliminare.",
+      "button": "Elimina il censimento",
+      "canceled": "La votazione resta annullata. Il suo elenco di chi poteva votare viene eliminato e non si può tornare indietro.",
+      "confirm": "Elimina il censimento",
+      "draft": "La bozza resta. Prima di pubblicarla, scegli di nuovo chi può votare.",
+      "ended": "La votazione e i suoi risultati restano come sono, ma il suo elenco di chi poteva votare viene eliminato. Non potrai più verificare chi poteva votare e non si può tornare indietro.",
+      "title": "Eliminare il censimento di «{{name}}»?",
+      "understand": "Capisco che il registro di chi poteva votare in questa votazione verrà eliminato"
+    },
     "edit": {
       "error": "Le modifiche non sono state salvate",
       "name_required": "Aggiungi un nome",
@@ -350,7 +360,7 @@
         "mobile": "numero di cellulare"
       },
       "no_copy": "Ancora nessuna votazione",
-      "no_copy_hint": "La votazione che lo usa ne avrà una copia propria",
+      "no_copy_new": "Una votazione che lo usa riceve un nuovo censimento basato su di esso",
       "not_scheduled": "Non ancora programmata",
       "not_scheduled_hint": "Le date si impostano quando modifichi la votazione",
       "opens_at": "Si apre il {{date}} alle {{at}}",
@@ -2217,21 +2227,15 @@
         "submit_other": "Usa {{formattedCount}} persone",
         "title": "Scegli chi può votare"
       },
-      "copy_everyone": {
-        "button": "Modifica questa lista",
-        "confirm": "Dagli una lista propria",
-        "description": "Questa votazione avrà una lista propria con tutti i tuoi membri come sono adesso, e potrai aggiungere o togliere persone. Da quel momento i nuovi membri non entreranno da soli.",
-        "title": "Modificare questa lista?"
-      },
       "error": "Impossibile modificare chi può votare",
       "error_detail": "Non è cambiato nulla. Riprova tra un attimo.",
       "error_empty": "Non c'è nessuno da copiare",
       "error_stale": "Questa bozza è stata modificata altrove. Ricarica la pagina e riprova.",
       "everyone": {
-        "description_one": "Il tuo unico membro. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
-        "description_many": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
-        "description_other": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
-        "title": "Tutti"
+        "all_one": "L'unico membro della tua organizzazione",
+        "all_many": "Tutti i {{formattedCount}} membri della tua organizzazione",
+        "all_other": "Tutti i {{formattedCount}} membri della tua organizzazione",
+        "included": "Chiunque aggiungi prima della pubblicazione è incluso; dopo, le nuove persone le aggiungi tu alla votazione."
       },
       "go_to_members": "Vai a Membri",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2269,15 +2273,15 @@
       "previous": {
         "card": "Come un voto precedente",
         "description": "Copia chi poteva votare.",
-        "hint": "Questo voto ottiene una copia propria delle persone che potevano votare.",
+        "new_census": "Viene creato un nuovo censimento con le persone che potevano votare.",
         "no_list": "Le persone sono state scelte una per una, quindi non c'è nessun elenco da copiare.",
         "none": "Non ci sono ancora altri voti.",
         "title": "Come un voto precedente"
       },
       "reload": "Ricarica",
       "saved": {
-        "after_name": "Ne riceve una copia propria appena il voto ha un nome.",
-        "description": "Questo voto ottiene una copia propria.",
+        "based_on": "Viene creato un nuovo censimento basato su di esso.",
+        "created_after_name": "Il nuovo censimento viene creato non appena la votazione ha un nome.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Scegli un censimento salvato",
         "select": "Censimento salvato",

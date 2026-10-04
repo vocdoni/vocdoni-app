@@ -20,7 +20,6 @@ import { Link as ReactRouterLink } from 'react-router'
 import { CensusDetail } from '~components/Memberbase/Censuses/CensusDetail'
 import { copiedFromUnnamed, everyoneTitle } from '~components/Memberbase/Censuses/labels'
 import { Banner } from '~components/ui/Banner'
-import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { Sheet } from '~components/ui/Sheet'
 import { useToast } from '~components/Toast'
 import { useDateFns } from '~i18n/use-date-fns'
@@ -298,7 +297,12 @@ const TestPeopleWarning = ({
  * until publishing, when it's frozen. Once the vote has its own census, a summary takes the cards'
  * place, with a way to edit it or start over.
  */
-export const WhoCanVote = () => {
+export const WhoCanVote = ({
+  onStartingOverChange,
+}: {
+  /** Told when the admin starts choosing a new census (and when they're done): nothing is chosen meanwhile */
+  onStartingOverChange?: (startingOver: boolean) => void
+} = {}) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
@@ -307,18 +311,20 @@ export const WhoCanVote = () => {
   const { draft } = useEditor()
   const draftId = draft?.id ?? null
   const census = useDraftCensus()
-  const { attach, chooseEveryone, copyEveryone, busy } = useCensusAttach()
+  const { attach, chooseEveryone, busy } = useCensusAttach()
   const ownedSource = useOwnedSource(census)
   const testVote = useTestVote()
   const updateGroup = useUpdateGroupWithReport()
 
   const [startingOver, setStartingOver] = useState(false)
+  useEffect(() => {
+    onStartingOverChange?.(startingOver)
+  }, [startingOver, onStartingOverChange])
   const [picked, setPicked] = useState<CensusSourceChoice | null>(null)
   const [choosing, setChoosing] = useState(false)
   const [previousOpen, setPreviousOpen] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [leavingOut, setLeavingOut] = useState(false)
-  const [confirmCopy, setConfirmCopy] = useState(false)
 
   // The census of this vote's own the next choice replaces (a snapshot from a failed publish too)
   const replacing = census.marker ? groupId : undefined
@@ -444,23 +450,6 @@ export const WhoCanVote = () => {
         }}
       />
       <CensusSheet open={sheetOpen} onOpenChange={setSheetOpen} census={census} draftId={draftId} />
-      <ConfirmDialog
-        open={confirmCopy}
-        onOpenChange={({ open }) => setConfirmCopy(open)}
-        title={t('process_create.census.copy_everyone.title', { defaultValue: 'Edit this list?' })}
-        description={t('process_create.census.copy_everyone.description', {
-          defaultValue:
-            "This vote gets its own list with all your members as they are now, and you can add or take out people. From then on, new members won't join it by themselves.",
-        })}
-        confirmText={t('process_create.census.copy_everyone.confirm', { defaultValue: 'Make its own list' })}
-        loading={busy === 'everyone'}
-        onConfirm={async () => {
-          if (await copyEveryone()) {
-            setConfirmCopy(false)
-            setSheetOpen(true)
-          }
-        }}
-      />
     </>
   )
   const notInCopy = membersNotInCopy(census, testVote)
@@ -574,21 +563,22 @@ export const WhoCanVote = () => {
         <SimpleGrid columns={{ base: 1, sm: 2 }} gap={2}>
           {card(
             'everyone',
-            t('process_create.census.everyone.title', { defaultValue: 'Everyone' }),
-            t('process_create.census.everyone.description', {
+            t('process_create.census.everyone.all', {
               count: membersCount,
               formattedCount: format(membersCount),
-              defaultValue_one:
-                'Your 1 member. Anyone you add before publishing is included; after that, you add new people to the vote yourself.',
-              defaultValue_other:
-                'All {{formattedCount}} members. Anyone you add before publishing is included; after that, you add new people to the vote yourself.',
+              defaultValue_one: 'The 1 member of your memberbase',
+              defaultValue_other: 'All {{formattedCount}} members of your memberbase',
+            }),
+            t('process_create.census.everyone.included', {
+              defaultValue:
+                'Anyone you add before publishing is included; after that, you add new people to the vote yourself.',
             }),
             !census.everyoneId
           )}
           {card(
             'saved',
             t('process_create.census.saved.title', { defaultValue: 'From a saved census' }),
-            t('process_create.census.saved.description', { defaultValue: 'This vote gets its own copy.' }),
+            t('process_create.census.saved.based_on', { defaultValue: 'A new census is created based on it.' }),
             !saved.length && !pendingGroup
           )}
           {card(
@@ -638,8 +628,8 @@ export const WhoCanVote = () => {
           </NativeSelect.Root>
           {pendingGroup && !draftId && (
             <Text fontSize='xs' color='fg.muted'>
-              {t('process_create.census.saved.after_name', {
-                defaultValue: 'It gets its own copy as soon as the vote has a name.',
+              {t('process_create.census.saved.created_after_name', {
+                defaultValue: 'The new census is created as soon as the vote has a name.',
               })}
             </Text>
           )}
@@ -665,19 +655,6 @@ export const WhoCanVote = () => {
 
       {!startingOver && (census.mode === 'everyone' || census.mode === 'pending') && (
         <CensusLine census={census} onReview={() => setSheetOpen(true)} />
-      )}
-      {!startingOver && census.mode === 'everyone' && (
-        // Everyone itself can't be edited: this gives the vote its own list of everyone, to adjust
-        <Button
-          size='xs'
-          variant='outline'
-          colorPalette='gray'
-          alignSelf='flex-start'
-          disabled={busy !== null}
-          onClick={() => setConfirmCopy(true)}
-        >
-          {t('process_create.census.copy_everyone.button', { defaultValue: 'Edit this list' })}
-        </Button>
       )}
       {!startingOver && testWarning}
       {sheets}

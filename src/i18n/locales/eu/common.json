@@ -280,6 +280,16 @@
       "error": "Ez da erroldea ezabatu",
       "title": "«{{name}}» ezabatu?"
     },
+    "delete_vote": {
+      "blocked": "Bozketa hau argitaratuta dago eta oraindik ez da amaitu; beraz, ezin da bere erroldea ezabatu.",
+      "button": "Ezabatu erroldea",
+      "canceled": "Bozketak bertan behera utzita jarraitzen du. Nork bozka zezakeen zerrenda ezabatu egiten da, eta ezin da desegin.",
+      "confirm": "Ezabatu erroldea",
+      "draft": "Zirriborroa mantendu egiten da. Argitaratu aurretik, aukeratu berriro nork bozka dezakeen.",
+      "ended": "Bozketa eta bere emaitzak dauden bezala geratzen dira, baina nork bozka zezakeen zerrenda ezabatu egiten da. Ezingo duzu gehiago egiaztatu nork bozka zezakeen bertan, eta ezin da desegin.",
+      "title": "«{{name}}» bozketaren erroldea ezabatu?",
+      "understand": "Ulertzen dut bozketa honetan nork bozka zezakeen erregistroa ezabatu egingo dela"
+    },
     "edit": {
       "error": "Ez dira zure aldaketak gorde",
       "name_required": "Gehitu izen bat",
@@ -333,7 +343,7 @@
         "mobile": "mugikor-zenbakirik"
       },
       "no_copy": "Bozketarik ez oraindik",
-      "no_copy_hint": "Erabiltzen duen bozketak bere kopia izango du",
+      "no_copy_new": "Erabiltzen duen bozketa batek horretan oinarritutako errolda berri bat jasotzen du",
       "not_scheduled": "Oraindik programatu gabe",
       "not_scheduled_hint": "Datak bozketa editatzean ezartzen dituzu",
       "opens_at": "Irekiera: {{date}}, {{at}}",
@@ -2118,20 +2128,14 @@
         "submit_other": "Erabili {{formattedCount}} pertsona",
         "title": "Hautatu nork bozka dezakeen"
       },
-      "copy_everyone": {
-        "button": "Editatu zerrenda hau",
-        "confirm": "Eman zerrenda propioa",
-        "description": "Bozketa honek bere zerrenda izango du zure kide guztiekin, orain dauden bezala, eta pertsonak gehitu edo kendu ahal izango dituzu. Hortik aurrera, kide berriak ez dira berez gehituko.",
-        "title": "Zerrenda hau editatu?"
-      },
       "error": "Ezin izan da aldatu nork bozka dezakeen",
       "error_detail": "Ez da ezer aldatu. Saiatu berriro une batean.",
       "error_empty": "Ez dago kopiatzeko inor",
       "error_stale": "Zirriborro hau beste nonbait aldatu da. Birkargatu orria eta saiatu berriro.",
       "everyone": {
-        "description_one": "Zure kide bakarra. Argitaratu aurretik gehitzen duzuna barne dago; gero, pertsona berriak zuk gehitzen dituzu bozketara.",
-        "description_other": "Zure {{formattedCount}} kideak. Argitaratu aurretik gehitzen dituzunak barne daude; gero, pertsona berriak zuk gehitzen dituzu bozketara.",
-        "title": "Denak"
+        "all_one": "Zure erakundeko kide bakarra",
+        "all_other": "Zure erakundeko {{formattedCount}} kide guztiak",
+        "included": "Argitaratu aurretik gehitzen duzun edonor barne dago; ondoren, pertsona berriak zuk zeuk gehitzen dituzu bozketara."
       },
       "go_to_members": "Joan Kideetara",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2165,15 +2169,15 @@
       "previous": {
         "card": "Aurreko bozketa bera",
         "description": "Kopiatu nork bozka zezakeen.",
-        "hint": "Bozketa honek bere kopia propioa izango du bertan bozka zezaketen pertsonena.",
+        "new_census": "Errolda berri bat sortzen da bertan bozka zezaketen pertsonekin.",
         "no_list": "Bere pertsonak banan-banan hautatu ziren, beraz ez dago kopiatzeko zerrendarik.",
         "none": "Oraindik ez dago beste bozketarik.",
         "title": "Aurreko bozketa bera"
       },
       "reload": "Birkargatu",
       "saved": {
-        "after_name": "Bere kopia propioa izango du bozketak izena duenean.",
-        "description": "Bozketa honek bere kopia propioa izango du.",
+        "based_on": "Horretan oinarritutako errolda berri bat sortzen da.",
+        "created_after_name": "Errolda berria bozketak izena izan bezain laster sortzen da.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Hautatu gordetako errolda bat",
         "select": "Gordetako erroldea",

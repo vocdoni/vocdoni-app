@@ -345,7 +345,9 @@ export const FactsStrip = ({ census, readiness, onShowUnreachable, withVote = tr
           <>
             <Value>{t('census_detail.facts.no_copy', { defaultValue: 'No vote yet' })}</Value>
             <Sub>
-              {t('census_detail.facts.no_copy_hint', { defaultValue: 'A vote that uses it gets its own copy' })}
+              {t('census_detail.facts.no_copy_new', {
+                defaultValue: 'A vote that uses it gets a new census based on it',
+              })}
             </Sub>
           </>
         )}

@@ -294,6 +294,16 @@
       "error": "La liste électorale n'a pas été supprimée",
       "title": "Supprimer « {{name}} » ?"
     },
+    "delete_vote": {
+      "blocked": "Ce vote est publié et n'est pas encore terminé, sa liste électorale ne peut donc pas être supprimée.",
+      "button": "Supprimer la liste électorale",
+      "canceled": "Le vote reste annulé. Sa liste des personnes qui pouvaient voter est supprimée. Cette action est irréversible.",
+      "confirm": "Supprimer la liste",
+      "draft": "Le brouillon est conservé. Avant de le publier, choisissez à nouveau qui peut voter.",
+      "ended": "Le vote et ses résultats restent tels quels, mais sa liste des personnes qui pouvaient voter est supprimée. Vous ne pourrez plus vérifier qui pouvait y voter. Cette action est irréversible.",
+      "title": "Supprimer la liste électorale de « {{name}} » ?",
+      "understand": "Je comprends que la trace des personnes qui pouvaient voter à ce vote sera supprimée"
+    },
     "edit": {
       "error": "Vos modifications n'ont pas été enregistrées",
       "name_required": "Ajoutez un nom",
@@ -350,7 +360,7 @@
         "mobile": "numéro de mobile"
       },
       "no_copy": "Aucun vote pour l’instant",
-      "no_copy_hint": "Le vote qui l’utilise en aura sa propre copie",
+      "no_copy_new": "Un vote qui l'utilise reçoit une nouvelle liste électorale basée sur celle-ci",
       "not_scheduled": "Pas encore programmé",
       "not_scheduled_hint": "Vous fixez les dates en modifiant le vote",
       "opens_at": "Ouverture le {{date}} à {{at}}",
@@ -2217,21 +2227,15 @@
         "submit_other": "Utiliser {{formattedCount}} personnes",
         "title": "Choisir qui peut voter"
       },
-      "copy_everyone": {
-        "button": "Modifier cette liste",
-        "confirm": "Lui donner sa propre liste",
-        "description": "Ce vote aura sa propre liste avec tous vos membres tels qu'ils sont maintenant, et vous pourrez ajouter ou retirer des personnes. Ensuite, les nouveaux membres n'y entreront plus d'eux-mêmes.",
-        "title": "Modifier cette liste ?"
-      },
       "error": "Impossible de modifier qui peut voter",
       "error_detail": "Rien n'a changé. Réessayez dans un instant.",
       "error_empty": "Il n'y a personne à copier",
       "error_stale": "Ce brouillon a été modifié ailleurs. Rechargez la page et réessayez.",
       "everyone": {
-        "description_one": "Votre unique membre. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
-        "description_many": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
-        "description_other": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
-        "title": "Tout le monde"
+        "all_one": "{{formattedCount}} membre de votre organisation",
+        "all_many": "Les {{formattedCount}} membres de votre organisation",
+        "all_other": "Les {{formattedCount}} membres de votre organisation",
+        "included": "Toute personne ajoutée avant la publication est incluse ; ensuite, c'est vous qui ajoutez les nouvelles personnes au vote."
       },
       "go_to_members": "Aller à Membres",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2269,15 +2273,15 @@
       "previous": {
         "card": "Comme un vote précédent",
         "description": "Copier qui pouvait voter.",
-        "hint": "Ce vote reçoit sa propre copie des personnes qui pouvaient y voter.",
+        "new_census": "Une nouvelle liste électorale est créée avec les personnes qui pouvaient y voter.",
         "no_list": "Ses personnes ont été choisies une à une : il n'y a pas de liste à copier.",
         "none": "Il n'y a pas encore d'autres votes.",
         "title": "Comme un vote précédent"
       },
       "reload": "Recharger",
       "saved": {
-        "after_name": "Elle reçoit sa propre copie dès que le vote a un nom.",
-        "description": "Ce vote reçoit sa propre copie.",
+        "based_on": "Une nouvelle liste électorale est créée à partir de celle-ci.",
+        "created_after_name": "La nouvelle liste électorale est créée dès que le vote a un nom.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Choisir une liste électorale enregistrée",
         "select": "Liste électorale enregistrée",

@@ -280,6 +280,16 @@
       "error": "Die Teilnehmerliste wurde nicht gelöscht",
       "title": "„{{name}}“ löschen?"
     },
+    "delete_vote": {
+      "blocked": "Diese Abstimmung ist veröffentlicht und noch nicht beendet, deshalb kann ihre Teilnehmerliste nicht gelöscht werden.",
+      "button": "Teilnehmerliste löschen",
+      "canceled": "Die Abstimmung bleibt abgebrochen. Die Liste, wer abstimmen durfte, wird gelöscht. Das lässt sich nicht rückgängig machen.",
+      "confirm": "Teilnehmerliste löschen",
+      "draft": "Der Entwurf bleibt erhalten. Lege vor der Veröffentlichung erneut fest, wer abstimmen darf.",
+      "ended": "Die Abstimmung und ihre Ergebnisse bleiben unverändert, aber die Liste, wer abstimmen durfte, wird gelöscht. Du kannst danach nicht mehr nachsehen, wer abstimmen durfte. Das lässt sich nicht rückgängig machen.",
+      "title": "Teilnehmerliste von „{{name}}“ löschen?",
+      "understand": "Mir ist klar, dass die Aufzeichnung, wer bei dieser Abstimmung abstimmen durfte, gelöscht wird"
+    },
     "edit": {
       "error": "Deine Änderungen wurden nicht gespeichert",
       "name_required": "Gib einen Namen ein",
@@ -333,7 +343,7 @@
         "mobile": "Handynummer"
       },
       "no_copy": "Noch keine Abstimmung",
-      "no_copy_hint": "Eine Abstimmung, die sie nutzt, bekommt eine eigene Kopie",
+      "no_copy_new": "Eine Abstimmung, die sie verwendet, erhält eine neue Teilnehmerliste auf ihrer Grundlage",
       "not_scheduled": "Noch nicht geplant",
       "not_scheduled_hint": "Die Termine legst du fest, wenn du die Abstimmung bearbeitest",
       "opens_at": "Beginnt am {{date}} um {{at}}",
@@ -2118,20 +2128,14 @@
         "submit_other": "{{formattedCount}} Personen verwenden",
         "title": "Auswählen, wer abstimmen kann"
       },
-      "copy_everyone": {
-        "button": "Diese Liste bearbeiten",
-        "confirm": "Eigene Liste anlegen",
-        "description": "Diese Abstimmung bekommt eine eigene Liste mit allen Mitgliedern, wie sie jetzt sind, und du kannst Personen hinzufügen oder entfernen. Danach kommen neue Mitglieder nicht mehr von selbst dazu.",
-        "title": "Diese Liste bearbeiten?"
-      },
       "error": "Wer abstimmen kann, konnte nicht geändert werden",
       "error_detail": "Nichts wurde geändert. Versuche es gleich noch einmal.",
       "error_empty": "Es gibt niemanden zu kopieren",
       "error_stale": "Dieser Entwurf wurde woanders geändert. Lade die Seite neu und versuche es erneut.",
       "everyone": {
-        "description_one": "Dein einziges Mitglied. Wen du vor der Veröffentlichung hinzufügst, ist dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu.",
-        "description_other": "Alle {{formattedCount}} Mitglieder. Wen du vor der Veröffentlichung hinzufügst, ist dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu.",
-        "title": "Alle"
+        "all_one": "Das einzige Mitglied deiner Organisation",
+        "all_other": "Alle {{formattedCount}} Mitglieder deiner Organisation",
+        "included": "Alle, die du vor der Veröffentlichung hinzufügst, sind dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu."
       },
       "go_to_members": "Zu den Mitgliedern",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2165,15 +2169,15 @@
       "previous": {
         "card": "Wie eine frühere Abstimmung",
         "description": "Kopiere, wer abstimmen konnte.",
-        "hint": "Diese Abstimmung bekommt eine eigene Kopie der Personen, die dort abstimmen konnten.",
+        "new_census": "Es wird eine neue Teilnehmerliste mit den Personen erstellt, die dort abstimmen durften.",
         "no_list": "Die Personen wurden einzeln ausgewählt, daher gibt es keine Liste zum Kopieren.",
         "none": "Es gibt noch keine anderen Abstimmungen.",
         "title": "Wie eine frühere Abstimmung"
       },
       "reload": "Neu laden",
       "saved": {
-        "after_name": "Sie bekommt eine eigene Kopie, sobald die Abstimmung einen Namen hat.",
-        "description": "Diese Abstimmung bekommt eine eigene Kopie.",
+        "based_on": "Auf ihrer Grundlage wird eine neue Teilnehmerliste erstellt.",
+        "created_after_name": "Die neue Teilnehmerliste wird erstellt, sobald die Abstimmung einen Namen hat.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Gespeicherte Teilnehmerliste wählen",
         "select": "Gespeicherte Teilnehmerliste",

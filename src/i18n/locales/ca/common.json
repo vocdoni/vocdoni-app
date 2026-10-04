@@ -294,6 +294,16 @@
       "error": "No s'ha eliminat el cens",
       "title": "Vols eliminar «{{name}}»?"
     },
+    "delete_vote": {
+      "blocked": "Aquesta votació està publicada i encara no ha acabat, així que no se'n pot eliminar el cens.",
+      "button": "Elimina el cens",
+      "canceled": "La votació continua cancel·lada. Se n'elimina la llista de qui hi podia votar, i no es pot desfer.",
+      "confirm": "Elimina el cens",
+      "draft": "L'esborrany es queda. Abans de publicar-lo, torna a triar qui pot votar.",
+      "ended": "La votació i els seus resultats es queden tal com estan, però se n'elimina la llista de qui hi podia votar. Ja no podràs consultar qui hi podia votar, i no es pot desfer.",
+      "title": "Vols eliminar el cens de «{{name}}»?",
+      "understand": "Entenc que s'eliminarà el registre de qui podia votar en aquesta votació"
+    },
     "edit": {
       "error": "No s'han desat els canvis",
       "name_required": "Afegeix un nom",
@@ -350,7 +360,7 @@
         "mobile": "número de mòbil"
       },
       "no_copy": "Encara cap votació",
-      "no_copy_hint": "La votació que el faci servir en tindrà una còpia pròpia",
+      "no_copy_new": "Una votació que el faci servir rep un cens nou basat en aquest",
       "not_scheduled": "Encara sense programar",
       "not_scheduled_hint": "Les dates les tries quan edites la votació",
       "opens_at": "S'obre el {{date}} a les {{at}}",
@@ -2217,21 +2227,15 @@
         "submit_other": "Usa {{formattedCount}} persones",
         "title": "Tria qui pot votar"
       },
-      "copy_everyone": {
-        "button": "Edita aquesta llista",
-        "confirm": "Fes-li una llista pròpia",
-        "description": "Aquesta votació tindrà la seva pròpia llista amb tots els teus membres tal com són ara, i hi podràs afegir o treure persones. A partir d'aleshores, els membres nous no s'hi afegiran sols.",
-        "title": "Vols editar aquesta llista?"
-      },
       "error": "No s'ha pogut canviar qui pot votar",
       "error_detail": "No ha canviat res. Torna-ho a provar d'aquí a un moment.",
       "error_empty": "No hi ha ningú per copiar",
       "error_stale": "Aquest esborrany s'ha canviat des d'un altre lloc. Recarrega la pàgina i torna-ho a provar.",
       "everyone": {
-        "description_one": "El teu únic membre. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
-        "description_many": "Tots els {{formattedCount}} membres. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
-        "description_other": "Tots els {{formattedCount}} membres. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
-        "title": "Tothom"
+        "all_one": "L'únic membre de la teva organització",
+        "all_many": "Tots els {{formattedCount}} membres de la teva organització",
+        "all_other": "Tots els {{formattedCount}} membres de la teva organització",
+        "included": "S'hi inclou tothom que afegeixis abans de publicar; després, les persones noves les afegeixes tu a la votació."
       },
       "go_to_members": "Ves a Membres",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2269,15 +2273,15 @@
       "previous": {
         "card": "Igual que una votació anterior",
         "description": "Copia qui hi podia votar.",
-        "hint": "Aquesta votació tindrà la seva pròpia còpia de les persones que hi podien votar.",
+        "new_census": "Es crea un cens nou amb les persones que hi podien votar.",
         "no_list": "Les seves persones es van triar una a una, així que no hi ha cap llista per copiar.",
         "none": "Encara no hi ha cap altra votació.",
         "title": "Igual que una votació anterior"
       },
       "reload": "Torna a carregar",
       "saved": {
-        "after_name": "En tindrà la seva pròpia còpia quan la votació tingui nom.",
-        "description": "Aquesta votació tindrà la seva pròpia còpia.",
+        "based_on": "Es crea un cens nou a partir d'aquest.",
+        "created_after_name": "El cens nou es crea tan bon punt la votació té un nom.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Tria un cens desat",
         "select": "Cens desat",

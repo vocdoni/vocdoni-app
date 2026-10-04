@@ -294,6 +294,16 @@
       "error": "A lista de participantes não foi eliminada",
       "title": "Eliminar «{{name}}»?"
     },
+    "delete_vote": {
+      "blocked": "Esta votação está publicada e ainda não terminou, por isso a sua lista de participantes não pode ser eliminada.",
+      "button": "Eliminar a lista de participantes",
+      "canceled": "A votação continua cancelada. A lista de quem podia votar é eliminada e não é possível desfazer.",
+      "confirm": "Eliminar a lista",
+      "draft": "O rascunho mantém-se. Antes de o publicares, escolhe novamente quem pode votar.",
+      "ended": "A votação e os seus resultados ficam como estão, mas a lista de quem podia votar é eliminada. Deixarás de poder verificar quem podia votar nela e não é possível desfazer.",
+      "title": "Eliminar a lista de participantes de «{{name}}»?",
+      "understand": "Compreendo que o registo de quem podia votar nesta votação será eliminado"
+    },
     "edit": {
       "error": "As tuas alterações não foram guardadas",
       "name_required": "Adiciona um nome",
@@ -350,7 +360,7 @@
         "mobile": "telemóvel"
       },
       "no_copy": "Ainda nenhuma votação",
-      "no_copy_hint": "A votação que a usar terá a sua própria cópia",
+      "no_copy_new": "Uma votação que a use recebe uma nova lista de participantes com base nela",
       "not_scheduled": "Ainda não agendada",
       "not_scheduled_hint": "Defines as datas quando editas a votação",
       "opens_at": "Abre a {{date}} às {{at}}",
@@ -2217,21 +2227,15 @@
         "submit_other": "Usar {{formattedCount}} pessoas",
         "title": "Escolhe quem pode votar"
       },
-      "copy_everyone": {
-        "button": "Editar esta lista",
-        "confirm": "Dar-lhe uma lista própria",
-        "description": "Esta votação vai ter a sua própria lista com todos os teus membros tal como estão agora, e podes adicionar ou remover pessoas. A partir daí, os novos membros não entram sozinhos.",
-        "title": "Editar esta lista?"
-      },
       "error": "Não foi possível alterar quem pode votar",
       "error_detail": "Nada foi alterado. Tenta novamente daqui a pouco.",
       "error_empty": "Não há ninguém para copiar",
       "error_stale": "Este rascunho foi alterado noutro local. Recarrega a página e tenta novamente.",
       "everyone": {
-        "description_one": "O teu único membro. Quem adicionares antes de publicar fica incluído; depois, és tu que adicionas as pessoas novas à votação.",
-        "description_many": "Todos os {{formattedCount}} membros. Quem adicionares antes de publicar fica incluído; depois, és tu que adicionas as pessoas novas à votação.",
-        "description_other": "Todos os {{formattedCount}} membros. Quem adicionares antes de publicar fica incluído; depois, és tu que adicionas as pessoas novas à votação.",
-        "title": "Todos"
+        "all_one": "{{formattedCount}} membro da tua organização",
+        "all_many": "Todos os {{formattedCount}} membros da tua organização",
+        "all_other": "Todos os {{formattedCount}} membros da tua organização",
+        "included": "Quem adicionares antes de publicar fica incluído; depois disso, és tu que adicionas as novas pessoas à votação."
       },
       "go_to_members": "Ir para Membros",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2269,15 +2273,15 @@
       "previous": {
         "card": "Igual a uma votação anterior",
         "description": "Copia quem podia votar nela.",
-        "hint": "Esta votação fica com a sua própria cópia das pessoas que podiam votar nela.",
+        "new_census": "É criada uma nova lista de participantes com as pessoas que podiam votar nela.",
         "no_list": "As pessoas foram escolhidas uma a uma, por isso não há lista para copiar.",
         "none": "Ainda não há outras votações.",
         "title": "Igual a uma votação anterior"
       },
       "reload": "Recarregar",
       "saved": {
-        "after_name": "Fica com a sua própria cópia assim que a votação tiver um nome.",
-        "description": "Esta votação fica com a sua própria cópia.",
+        "based_on": "É criada uma nova lista de participantes com base nela.",
+        "created_after_name": "A nova lista de participantes é criada assim que a votação tiver um nome.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Escolhe uma lista guardada",
         "select": "Lista guardada",

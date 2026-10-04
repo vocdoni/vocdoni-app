@@ -280,6 +280,16 @@
       "error": "The census wasn't deleted",
       "title": "Delete '{{name}}'?"
     },
+    "delete_vote": {
+      "blocked": "This vote is published and not over yet, so its census can't be deleted.",
+      "button": "Delete census",
+      "canceled": "The vote stays canceled. Its list of who could vote is deleted, and this can't be undone.",
+      "confirm": "Delete census",
+      "draft": "The draft stays. Before you publish it, choose who can vote again.",
+      "ended": "The vote and its results stay as they are, but its list of who could vote is deleted. You won't be able to check who could vote in it any more, and this can't be undone.",
+      "title": "Delete the census of '{{name}}'?",
+      "understand": "I understand the record of who could vote in this vote will be deleted"
+    },
     "edit": {
       "error": "Your changes weren't saved",
       "name_required": "Add a name",
@@ -333,7 +343,7 @@
         "mobile": "mobile number"
       },
       "no_copy": "No vote yet",
-      "no_copy_hint": "A vote that uses it gets its own copy",
+      "no_copy_new": "A vote that uses it gets a new census based on it",
       "not_scheduled": "Not scheduled yet",
       "not_scheduled_hint": "You set the dates when you edit the vote",
       "opens_at": "Opens {{date}} at {{at}}",
@@ -2118,20 +2128,14 @@
         "submit_other": "Use {{formattedCount}} people",
         "title": "Choose who can vote"
       },
-      "copy_everyone": {
-        "button": "Edit this list",
-        "confirm": "Make its own list",
-        "description": "This vote gets its own list with all your members as they are now, and you can add or take out people. From then on, new members won't join it by themselves.",
-        "title": "Edit this list?"
-      },
       "error": "Who can vote couldn't be changed",
       "error_detail": "Nothing changed. Try again in a moment.",
       "error_empty": "There is nobody in it to copy",
       "error_stale": "This draft was changed somewhere else. Reload the page and try again.",
       "everyone": {
-        "description_one": "Your 1 member. Anyone you add before publishing is included; after that, you add new people to the vote yourself.",
-        "description_other": "All {{formattedCount}} members. Anyone you add before publishing is included; after that, you add new people to the vote yourself.",
-        "title": "Everyone"
+        "all_one": "The 1 member of your memberbase",
+        "all_other": "All {{formattedCount}} members of your memberbase",
+        "included": "Anyone you add before publishing is included; after that, you add new people to the vote yourself."
       },
       "go_to_members": "Go to Members",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2165,15 +2169,15 @@
       "previous": {
         "card": "Same as a previous vote",
         "description": "Copy who could vote in it.",
-        "hint": "This vote gets its own copy of the people who could vote in it.",
+        "new_census": "A new census is created with the people who could vote in it.",
         "no_list": "Its people were picked one by one, so there's no list to copy.",
         "none": "There are no other votes yet.",
         "title": "Same as a previous vote"
       },
       "reload": "Reload",
       "saved": {
-        "after_name": "It gets its own copy as soon as the vote has a name.",
-        "description": "This vote gets its own copy.",
+        "based_on": "A new census is created based on it.",
+        "created_after_name": "The new census is created as soon as the vote has a name.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Choose a saved census",
         "select": "Saved census",
