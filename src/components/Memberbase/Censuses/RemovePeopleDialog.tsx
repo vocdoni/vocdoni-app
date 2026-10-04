@@ -95,9 +95,17 @@ export const RemovePeopleDialog = ({
         isClosable: true,
       })
     } catch (error) {
+      // The server's own words can name ids and addresses: the console keeps them, the toast says what to do
+      console.error('Could not add them back', error)
       toast({
         title: t('census_detail.remove.undo_error', { defaultValue: "They couldn't be added back" }),
-        description: error instanceof Error ? error.message : undefined,
+        description: vote
+          ? t('census_detail.remove.undo_error_vote', {
+              defaultValue: "They're still in your members. Select them in People and choose 'Add to a vote'.",
+            })
+          : t('census_detail.remove.undo_error_saved', {
+              defaultValue: "They're still in your members. Select them in People and choose 'Add to a saved census'.",
+            }),
         type: 'error',
         duration: 6000,
         isClosable: true,
