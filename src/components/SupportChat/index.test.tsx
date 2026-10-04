@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, within } from '~src/test-utils'
 import { getAuthMock, resetAuthMock, setAuthMock } from '~src/test-utils-react-providers-mock'
+import { SupportChatControlsProvider, useSupportChatControls } from './controls'
 import SupportChat from './index'
 
 const bearedFetchMock = vi.fn()
@@ -65,6 +66,28 @@ describe('SupportChat', () => {
     setAuthMock({ currentAddress: undefined })
     render(<SupportChat />)
     expect(screen.queryByRole('button', { name: 'Open support chat' })).not.toBeInTheDocument()
+  })
+
+  it('opens when another part of the dashboard asks it to', async () => {
+    const ChatLink = () => {
+      const controls = useSupportChatControls()
+      return (
+        <button type='button' onClick={controls?.openChat}>
+          Chat with us
+        </button>
+      )
+    }
+    render(
+      <SupportChatControlsProvider>
+        <ChatLink />
+        <SupportChat />
+      </SupportChatControlsProvider>
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Chat with us' }))
+    await flushPresence()
+
+    expect(screen.getByRole('button', { name: 'Close support chat', expanded: true })).toBeInTheDocument()
   })
 
   it('renders the collapsed launcher without panel or teaser', () => {

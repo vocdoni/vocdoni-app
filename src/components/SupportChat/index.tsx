@@ -1,9 +1,10 @@
 import { chakra, CloseButton, Flex, Icon, IconButton, Presence } from '@chakra-ui/react'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LuMessageCircle, LuX } from 'react-icons/lu'
 import { useAuth } from '~components/Auth/useAuth'
 import { ChatPanel } from './ChatPanel'
+import { useSupportChatControls } from './controls'
 import { useSupportChat } from './useSupportChat'
 
 /**
@@ -36,6 +37,12 @@ const SupportChatWidget = () => {
     retry,
     startNewRequest,
   } = useSupportChat()
+  const controls = useSupportChatControls()
+
+  // "Chat with us" links elsewhere in the dashboard ask the widget to open
+  useEffect(() => {
+    if (controls?.openRequest) openChat()
+  }, [controls?.openRequest])
 
   const close = () => {
     closeChat()
