@@ -309,6 +309,9 @@
   },
   "census_size": "Número de participantes",
   "censuses": {
+    "closed_summary_one": "1 votação · «{{name}}»",
+    "closed_summary_many": "{{count}} votações · a última: «{{name}}»",
+    "closed_summary_other": "{{count}} votações · a última: «{{name}}»",
     "description": "Quem pode votar em cada uma das tuas votações, e as listas de participantes que guardaste para reutilizar.",
     "empty": {
       "description": "Uma lista de participantes é criada quando escolhes quem pode votar numa votação, ou quando guardas uma seleção em Pessoas.",
@@ -329,21 +332,35 @@
       "scheduled": "Agendadas"
     },
     "in_votes": "Em votações",
+    "in_votes_hint": "Cada votação tem a sua lista de participantes",
     "load_error": "Não foi possível carregar as tuas listas de participantes.",
     "more_votes_many": "mais {{count}}",
     "more_votes_one": "mais {{count}}",
     "more_votes_other": "mais {{count}}",
+    "row": {
+      "unreachable_one": "1 não pode receber o código",
+      "unreachable_many": "{{formattedCount}} não podem receber o código",
+      "unreachable_other": "{{formattedCount}} não podem receber o código"
+    },
     "saved": {
-      "copied_into_one": "Copiada para 1 votação",
-      "copied_into_many": "Copiada para {{count}} votações",
-      "copied_into_other": "Copiada para {{count}} votações",
+      "hint": "Listas reutilizáveis, copiadas para uma votação quando as usas",
+      "new": "Nova lista guardada",
       "title": "Guardadas",
-      "unused": "Nenhuma votação a usa",
       "updated": "Atualizada a {{date}}",
       "used_by_many": "Usada por {{count}} votações",
       "used_by_one": "Usada por 1 votação",
       "used_by_other": "Usada por {{count}} votações"
     },
+    "saved_card": {
+      "copied_into_one": "Copiada para «{{name}}»",
+      "copied_into_many": "Copiada para «{{name}}» e mais {{more}}",
+      "copied_into_other": "Copiada para «{{name}}» e mais {{more}}",
+      "new_description": "Escolhe pessoas ou cola números de sócio em Pessoas. Útil para «sócios com quotas em dia» ou «a direção».",
+      "new_title": "Guarda uma lista para reutilizar",
+      "unused": "Ainda não usada numa votação",
+      "use": "Usar numa votação"
+    },
+    "search": "Pesquisar listas",
     "source": {
       "copy": "Cópia própria",
       "copy_from": "Copiada de «{{name}}»",
@@ -378,6 +395,7 @@
     "when": {
       "closed": "Fechada a {{date}}",
       "closes": "Fecha a {{date}}",
+      "no_dates": "Ainda sem datas",
       "opens": "Abre a {{date}}"
     }
   },
@@ -1432,6 +1450,7 @@
       "range_results_other": "{{from}}–{{to}} de {{total}} resultados",
       "retry": "Tentar novamente",
       "row_actions": "Ações para {{name}}",
+      "save_census_hint": "Seleciona as pessoas da tua lista (marca-as, ou «Selecionar a partir de uma lista…» para colar números de sócio) e escolhe «Guardar como lista de participantes» na barra em baixo.",
       "search_label": "Pesquisar membros",
       "search_placeholder": "Pesquisa por nome, email ou número de sócio",
       "select_done": "Concluído",

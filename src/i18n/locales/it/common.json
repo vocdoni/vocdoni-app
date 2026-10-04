@@ -309,6 +309,9 @@
   },
   "census_size": "Dimensione del censimento",
   "censuses": {
+    "closed_summary_one": "1 votazione · «{{name}}»",
+    "closed_summary_many": "{{count}} votazioni · l'ultima: «{{name}}»",
+    "closed_summary_other": "{{count}} votazioni · l'ultima: «{{name}}»",
     "description": "Chi può votare in ciascuna delle tue votazioni, e i censimenti che hai salvato per riutilizzarli.",
     "empty": {
       "description": "Un censimento si crea quando scegli chi può votare in una votazione, o quando salvi una selezione in Persone.",
@@ -329,21 +332,35 @@
       "scheduled": "Programmate"
     },
     "in_votes": "Nelle votazioni",
+    "in_votes_hint": "Ogni votazione ha il suo censimento",
     "load_error": "Non siamo riusciti a caricare i tuoi censimenti.",
     "more_votes_many": "altre {{count}}",
     "more_votes_one": "{{count}} altra",
     "more_votes_other": "altre {{count}}",
+    "row": {
+      "unreachable_one": "1 non può ricevere il codice",
+      "unreachable_many": "{{formattedCount}} non possono ricevere il codice",
+      "unreachable_other": "{{formattedCount}} non possono ricevere il codice"
+    },
     "saved": {
-      "copied_into_one": "Copiato in 1 votazione",
-      "copied_into_many": "Copiato in {{count}} votazioni",
-      "copied_into_other": "Copiato in {{count}} votazioni",
+      "hint": "Liste riutilizzabili, copiate in una votazione quando le usi",
+      "new": "Nuovo censimento salvato",
       "title": "Salvati",
-      "unused": "Non usato da nessuna votazione",
       "updated": "Aggiornato il {{date}}",
       "used_by_many": "Usato da {{count}} votazioni",
       "used_by_one": "Usato da 1 votazione",
       "used_by_other": "Usato da {{count}} votazioni"
     },
+    "saved_card": {
+      "copied_into_one": "Copiato in «{{name}}»",
+      "copied_into_many": "Copiato in «{{name}}» e altre {{more}}",
+      "copied_into_other": "Copiato in «{{name}}» e altre {{more}}",
+      "new_description": "Scegli persone o incolla numeri di socio in Persone. Utile per «soci in regola» o «il direttivo».",
+      "new_title": "Salva una lista da riutilizzare",
+      "unused": "Non ancora usato in una votazione",
+      "use": "Usa in una votazione"
+    },
+    "search": "Cerca censimenti",
     "source": {
       "copy": "Copia propria",
       "copy_from": "Copiato da «{{name}}»",
@@ -378,6 +395,7 @@
     "when": {
       "closed": "Chiusa il {{date}}",
       "closes": "Chiude il {{date}}",
+      "no_dates": "Ancora senza date",
       "opens": "Apre il {{date}}"
     }
   },
@@ -1432,6 +1450,7 @@
       "range_results_other": "{{from}}–{{to}} di {{total}} risultati",
       "retry": "Riprova",
       "row_actions": "Azioni per {{name}}",
+      "save_census_hint": "Seleziona le persone della tua lista (spuntale, o «Seleziona da un elenco…» per incollare numeri di socio), poi scegli «Salva come censimento» nella barra in basso.",
       "search_label": "Cerca membri",
       "search_placeholder": "Cerca per nome, email o numero socio",
       "select_done": "Fatto",

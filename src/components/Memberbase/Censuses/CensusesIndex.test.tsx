@@ -28,6 +28,7 @@ const data = vi.hoisted(() => ({
   drafts: [] as unknown[],
   markers: new Map<string, unknown>(),
   track: vi.fn(),
+  unreachable: 0,
 }))
 
 vi.mock('~src/queries/groups', async (importOriginal) => ({
@@ -58,6 +59,13 @@ vi.mock('~src/queries/voteGroups', async (importOriginal) => ({
 vi.mock('~src/queries/members', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/queries/members')>()),
   useMembersCount: () => ({ count: 1742, known: true, isLoading: false }),
+  useCensusReadiness: ({ total, enabled }: { total: number; enabled?: boolean }) => ({
+    available: !!enabled && total > 0,
+    total,
+    ready: total - data.unreachable,
+    unreachable: data.unreachable,
+    isLoading: false,
+  }),
 }))
 
 vi.mock('~utils/analytics', async (importOriginal) => ({
@@ -101,14 +109,15 @@ describe('CensusesIndex', () => {
     data.drafts = [vote('draft', 'Comitè', { size: 3 }, 'UPCOMING', { published: false })]
     data.markers = new Map([['owned', { processId: 'live', kind: 'copy', createdAt: past, fromId: 'quota' }]])
     data.track.mockReset()
+    data.unreachable = 0
   })
 
-  it('groups the votes by state and lists the saved censuses, with no row for Everyone', () => {
+  it('groups the votes in a card per state, with closed ones folded away, and no row for Everyone', async () => {
+    const user = userEvent.setup()
     renderIndex()
 
     // Everyone is a way to choose who votes, not a census: its people are the People tab
     expect(screen.queryByRole('link', { name: 'Everyone' })).toBeNull()
-    expect(screen.queryByText('All your members, including people you add later.')).toBeNull()
 
     const votes = screen.getByRole('region', { name: 'In votes' })
     expect(
@@ -120,74 +129,100 @@ describe('CensusesIndex', () => {
       within(votes)
         .getAllByRole('link')
         .map((link) => link.textContent)
-    ).toEqual(['Assemblea General 2026', 'Pressupost', 'Comitè', 'Eleccions Junta 2025'])
-
+    ).toEqual(['Assemblea General 2026', 'Pressupost', 'Comitè'])
     expect(screen.getByRole('link', { name: 'Assemblea General 2026' })).toHaveAttribute(
       'href',
       '/admin/memberbase/censuses/vote/live'
     )
+
+    // Closed votes pile up: one line until opened
+    await user.click(within(votes).getByRole('button', { name: /Closed.*1 vote/ }))
+    expect(await within(votes).findByRole('link', { name: 'Eleccions Junta 2025' })).toBeInTheDocument()
   })
 
-  it('says where each vote’s voters come from and how they sign in', () => {
+  it('says where each vote’s voters come from, when it runs and how they sign in', () => {
     renderIndex()
     const row = (name: string) => screen.getByRole('link', { name }).closest('li') as HTMLElement
 
-    expect(row('Assemblea General 2026')).toHaveTextContent("Code by email·Copied from 'Quota pagada'")
-    expect(row('Pressupost')).toHaveTextContent('Code by email or SMS·Everyone')
-    expect(row('Eleccions Junta 2025')).toHaveTextContent("Code by SMS·Saved census 'Quota pagada'")
-    expect(row('Comitè')).toHaveTextContent('Details only·Selected people')
-    expect(row('Assemblea General 2026')).toHaveTextContent('1,700voters')
-    // When each runs: a live vote's close, a scheduled one's opening, nothing for a draft
-    expect(row('Assemblea General 2026')).toHaveTextContent(/^Assemblea General 2026.*Closes \d+ \w+·Code by email/)
-    expect(row('Pressupost')).toHaveTextContent(/Opens \d+ \w+·Code by email or SMS/)
-    expect(row('Comitè')).not.toHaveTextContent(/Opens|Closes|Closed/)
+    expect(row('Assemblea General 2026')).toHaveTextContent("Copied from 'Quota pagada'")
+    expect(row('Assemblea General 2026')).toHaveTextContent(/Closes \w+ \d+ \w+/)
+    expect(row('Assemblea General 2026')).toHaveTextContent('Code by email')
+    expect(row('Assemblea General 2026')).toHaveTextContent('1,700 voters')
+    expect(row('Pressupost')).toHaveTextContent('Everyone')
+    expect(row('Pressupost')).toHaveTextContent(/Opens \w+ \d+ \w+/)
+    expect(row('Pressupost')).toHaveTextContent('Code by email or SMS')
+    expect(row('Comitè')).toHaveTextContent('Selected people')
+    expect(row('Comitè')).toHaveTextContent('No dates yet')
   })
 
-  it('says a saved census was copied into a vote rather than unused', () => {
-    data.markers = new Map([
-      [
-        'owned',
-        { processId: 'live', kind: 'copy', createdAt: '2026-09-30T10:00:00Z', fromId: 'quota', source: 'saved' },
-      ],
-    ])
+  it('says on the row how many in a running vote can’t get a code', () => {
+    data.unreachable = 92
     renderIndex()
-    const saved = screen.getByRole('link', { name: 'Quota pagada' }).closest('li') as HTMLElement
+    const row = (name: string) => screen.getByRole('link', { name }).closest('li') as HTMLElement
 
-    expect(saved).toHaveTextContent('Copied into 1 vote')
-    expect(saved).not.toHaveTextContent('Not used by any vote')
+    expect(row('Assemblea General 2026')).toHaveTextContent("92 can't get a code")
+    // Drafts aren't checked: nobody signs in to them yet
+    expect(row('Comitè')).not.toHaveTextContent("can't get a code")
   })
 
-  it('hides a vote’s own census from the saved ones and counts the votes using each', () => {
+  it('labels the censuses votes own: copied, chosen by hand, frozen at publish', async () => {
+    const user = userEvent.setup()
+    data.published.push(
+      vote('chosen', 'Junta 2026', { groupId: 'hand', size: 9, twoFaFields: ['email'] }, 'ONGOING'),
+      vote('frozen', 'Assemblea 2025', { groupId: 'snap', size: 1700, twoFaFields: ['email'] }, 'RESULTS')
+    )
+    data.markers.set('hand', { processId: 'chosen', kind: 'copy', createdAt: past, source: 'choose' })
+    data.markers.set('snap', { processId: 'frozen', kind: 'snapshot', createdAt: past })
+    renderIndex()
+    const row = (name: string) => screen.getByRole('link', { name }).closest('li') as HTMLElement
+
+    expect(row('Assemblea General 2026')).toHaveTextContent("Copied from 'Quota pagada'")
+    expect(row('Junta 2026')).toHaveTextContent('Chosen by hand')
+    await user.click(screen.getByRole('button', { name: /Closed/ }))
+    const frozen = await screen.findByRole('link', { name: 'Assemblea 2025' })
+    expect(frozen.closest('li')).toHaveTextContent('Everyone, frozen at publish')
+  })
+
+  it('shows saved censuses as cards: which vote they went into, a way to use them, and a way to make one', () => {
     renderIndex()
 
     const saved = screen.getByRole('region', { name: 'Saved' })
-    expect(
-      within(saved)
-        .getAllByRole('link')
-        .map((link) => link.textContent)
-    ).toEqual(['Quota pagada', 'Junta'])
-    expect(within(saved).getByRole('link', { name: 'Quota pagada' }).closest('li')).toHaveTextContent('Used by 1 vote')
-    expect(within(saved).getByRole('link', { name: 'Junta' }).closest('li')).toHaveTextContent('Not used by any vote')
+    const card = (name: string) => within(saved).getByRole('link', { name }).closest('li') as HTMLElement
+    expect(card('Quota pagada')).toHaveTextContent("Copied into 'Assemblea General 2026'")
+    expect(within(card('Quota pagada')).getByRole('button', { name: 'Use in a vote' })).toBeInTheDocument()
+    expect(card('Junta')).toHaveTextContent('Not used in a vote yet')
+    // A vote's own census is never a saved one
     expect(screen.queryByText('Census of Assemblea')).toBeNull()
+
+    const create = within(saved).getAllByRole('link', { name: 'New saved census' })
+    expect(create.length).toBeGreaterThan(0)
+    create.forEach((link) => expect(link).toHaveAttribute('href', '/admin/memberbase/members/1'))
     expect(data.track).toHaveBeenCalledWith({ name: 'censuses_viewed' })
   })
 
-  it('shows filter pills only past eight censuses', async () => {
+  it('shows search and filter pills only past eight censuses', async () => {
     renderIndex()
     expect(screen.queryByRole('group', { name: 'Filter censuses' })).toBeNull()
+    expect(screen.queryByRole('textbox', { name: 'Search censuses' })).toBeNull()
   })
 
-  it('filters a long list by state', async () => {
+  it('filters a long list by state, and searches it by name', async () => {
     data.groups.push(...Array.from({ length: 6 }, (_, index) => group(`s${index}`, `Saved ${index}`, 2)))
     const user = userEvent.setup()
     renderIndex()
 
     const pills = screen.getByRole('group', { name: 'Filter censuses' })
     await user.click(within(pills).getByRole('button', { name: /Saved/ }))
-
     expect(screen.queryByRole('region', { name: 'In votes' })).toBeNull()
-    expect(screen.queryByRole('link', { name: 'Everyone' })).toBeNull()
-    expect(within(screen.getByRole('region', { name: 'Saved' })).getAllByRole('link')).toHaveLength(8)
+    expect(
+      within(screen.getByRole('region', { name: 'Saved' })).getAllByRole('button', { name: 'Use in a vote' })
+    ).toHaveLength(8)
+
+    await user.click(within(pills).getByRole('button', { name: /All/ }))
+    await user.type(screen.getByRole('textbox', { name: 'Search censuses' }), 'assemblea')
+    expect(screen.getByRole('link', { name: 'Assemblea General 2026' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Pressupost' })).toBeNull()
+    expect(screen.queryByRole('region', { name: 'Saved' })).toBeNull()
   })
 
   it('explains where censuses come from when there are none yet', () => {

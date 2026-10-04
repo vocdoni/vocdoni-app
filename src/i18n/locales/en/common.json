@@ -294,6 +294,8 @@
   },
   "census_size": "Census size",
   "censuses": {
+    "closed_summary_one": "1 vote · '{{name}}'",
+    "closed_summary_other": "{{count}} votes · last: '{{name}}'",
     "description": "Who can vote in each of your votes, and censuses you saved to reuse.",
     "empty": {
       "description": "A census is made when you choose who can vote in a vote, or when you save a selection in People.",
@@ -314,18 +316,31 @@
       "scheduled": "Scheduled"
     },
     "in_votes": "In votes",
+    "in_votes_hint": "Each vote has its own census",
     "load_error": "We couldn't load your censuses.",
     "more_votes_one": "{{count}} more",
     "more_votes_other": "{{count}} more",
+    "row": {
+      "unreachable_one": "1 can't get a code",
+      "unreachable_other": "{{formattedCount}} can't get a code"
+    },
     "saved": {
-      "copied_into_one": "Copied into 1 vote",
-      "copied_into_other": "Copied into {{count}} votes",
+      "hint": "Reusable lists, copied into a vote when you use them",
+      "new": "New saved census",
       "title": "Saved",
-      "unused": "Not used by any vote",
       "updated": "Updated {{date}}",
       "used_by_one": "Used by 1 vote",
       "used_by_other": "Used by {{count}} votes"
     },
+    "saved_card": {
+      "copied_into_one": "Copied into '{{name}}'",
+      "copied_into_other": "Copied into '{{name}}' and {{more}} more",
+      "new_description": "Pick people or paste member numbers in People. Handy for 'paid-up members' or 'the board'.",
+      "new_title": "Save a list you'll reuse",
+      "unused": "Not used in a vote yet",
+      "use": "Use in a vote"
+    },
+    "search": "Search censuses",
     "source": {
       "copy": "Its own copy",
       "copy_from": "Copied from '{{name}}'",
@@ -358,6 +373,7 @@
     "when": {
       "closed": "Closed {{date}}",
       "closes": "Closes {{date}}",
+      "no_dates": "No dates yet",
       "opens": "Opens {{date}}"
     }
   },
@@ -1378,6 +1394,7 @@
       "range_results_other": "{{from}}–{{to}} of {{total}} results",
       "retry": "Try again",
       "row_actions": "Actions for {{name}}",
+      "save_census_hint": "Select the people for your list (tick them, or 'Select from a list…' to paste member numbers), then choose 'Save as census' in the bar below.",
       "search_label": "Search members",
       "search_placeholder": "Search name, email or member number",
       "select_done": "Done",

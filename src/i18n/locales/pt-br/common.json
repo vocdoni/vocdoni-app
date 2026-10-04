@@ -309,6 +309,9 @@
   },
   "census_size": "Número de participantes",
   "censuses": {
+    "closed_summary_one": "1 votação · “{{name}}”",
+    "closed_summary_many": "{{count}} votações · a última: “{{name}}”",
+    "closed_summary_other": "{{count}} votações · a última: “{{name}}”",
     "description": "Quem pode votar em cada uma das suas votações, e as listas de participantes que você salvou para reutilizar.",
     "empty": {
       "description": "Uma lista de participantes é criada quando você escolhe quem pode votar em uma votação, ou quando salva uma seleção em Pessoas.",
@@ -329,21 +332,35 @@
       "scheduled": "Agendadas"
     },
     "in_votes": "Em votações",
+    "in_votes_hint": "Cada votação tem sua lista de participantes",
     "load_error": "Não foi possível carregar suas listas de participantes.",
     "more_votes_many": "mais {{count}}",
     "more_votes_one": "mais {{count}}",
     "more_votes_other": "mais {{count}}",
+    "row": {
+      "unreachable_one": "1 não pode receber o código",
+      "unreachable_many": "{{formattedCount}} não podem receber o código",
+      "unreachable_other": "{{formattedCount}} não podem receber o código"
+    },
     "saved": {
-      "copied_into_one": "Copiada para 1 votação",
-      "copied_into_many": "Copiada para {{count}} votações",
-      "copied_into_other": "Copiada para {{count}} votações",
+      "hint": "Listas reutilizáveis, copiadas para uma votação quando você as usa",
+      "new": "Nova lista salva",
       "title": "Salvas",
-      "unused": "Nenhuma votação usa",
       "updated": "Atualizada em {{date}}",
       "used_by_many": "Usada por {{count}} votações",
       "used_by_one": "Usada por 1 votação",
       "used_by_other": "Usada por {{count}} votações"
     },
+    "saved_card": {
+      "copied_into_one": "Copiada para “{{name}}”",
+      "copied_into_many": "Copiada para “{{name}}” e mais {{more}}",
+      "copied_into_other": "Copiada para “{{name}}” e mais {{more}}",
+      "new_description": "Escolha pessoas ou cole números de associado em Pessoas. Útil para “associados em dia” ou “a diretoria”.",
+      "new_title": "Salve uma lista para reutilizar",
+      "unused": "Ainda não usada em uma votação",
+      "use": "Usar em uma votação"
+    },
+    "search": "Pesquisar listas",
     "source": {
       "copy": "Cópia própria",
       "copy_from": "Copiada de “{{name}}”",
@@ -378,6 +395,7 @@
     "when": {
       "closed": "Encerrada em {{date}}",
       "closes": "Fecha em {{date}}",
+      "no_dates": "Ainda sem datas",
       "opens": "Abre em {{date}}"
     }
   },
@@ -1432,6 +1450,7 @@
       "range_results_other": "{{from}}–{{to}} de {{total}} resultados",
       "retry": "Tentar novamente",
       "row_actions": "Ações para {{name}}",
+      "save_census_hint": "Selecione as pessoas da sua lista (marque-as, ou “Selecionar a partir de uma lista…” para colar números de associado) e escolha “Salvar como lista de participantes” na barra abaixo.",
       "search_label": "Buscar membros",
       "search_placeholder": "Busque por nome, e-mail ou número de membro",
       "select_done": "Concluído",

@@ -309,6 +309,9 @@
   },
   "census_size": "Tamaño del censo",
   "censuses": {
+    "closed_summary_one": "1 votación · «{{name}}»",
+    "closed_summary_many": "{{count}} votaciones · la última: «{{name}}»",
+    "closed_summary_other": "{{count}} votaciones · la última: «{{name}}»",
     "description": "Quién puede votar en cada una de tus votaciones, y los censos que guardaste para reutilizarlos.",
     "empty": {
       "description": "Un censo se crea cuando eliges quién puede votar en una votación, o cuando guardas una selección en Personas.",
@@ -329,21 +332,35 @@
       "scheduled": "Programadas"
     },
     "in_votes": "En votaciones",
+    "in_votes_hint": "Cada votación tiene su propio censo",
     "load_error": "No hemos podido cargar tus censos.",
     "more_votes_many": "{{count}} más",
     "more_votes_one": "{{count}} más",
     "more_votes_other": "{{count}} más",
+    "row": {
+      "unreachable_one": "1 no puede recibir el código",
+      "unreachable_many": "{{formattedCount}} no pueden recibir el código",
+      "unreachable_other": "{{formattedCount}} no pueden recibir el código"
+    },
     "saved": {
-      "copied_into_one": "Copiado en 1 votación",
-      "copied_into_many": "Copiado en {{count}} votaciones",
-      "copied_into_other": "Copiado en {{count}} votaciones",
+      "hint": "Listas reutilizables que se copian a una votación cuando las usas",
+      "new": "Nuevo censo guardado",
       "title": "Guardados",
-      "unused": "No lo usa ninguna votación",
       "updated": "Actualizado el {{date}}",
       "used_by_many": "Lo usan {{count}} votaciones",
       "used_by_one": "Lo usa 1 votación",
       "used_by_other": "Lo usan {{count}} votaciones"
     },
+    "saved_card": {
+      "copied_into_one": "Copiado en «{{name}}»",
+      "copied_into_many": "Copiado en «{{name}}» y {{more}} más",
+      "copied_into_other": "Copiado en «{{name}}» y {{more}} más",
+      "new_description": "Elige personas o pega números de miembro en Personas. Útil para «socios al corriente» o «la junta».",
+      "new_title": "Guarda una lista que vas a reutilizar",
+      "unused": "Aún no se ha usado en ninguna votación",
+      "use": "Usar en una votación"
+    },
+    "search": "Buscar censos",
     "source": {
       "copy": "Copia propia",
       "copy_from": "Copiado de «{{name}}»",
@@ -378,6 +395,7 @@
     "when": {
       "closed": "Cerrada el {{date}}",
       "closes": "Cierra el {{date}}",
+      "no_dates": "Aún sin fechas",
       "opens": "Abre el {{date}}"
     }
   },
@@ -1432,6 +1450,7 @@
       "range_results_other": "{{from}}–{{to}} de {{total}} resultados",
       "retry": "Reintentar",
       "row_actions": "Acciones para {{name}}",
+      "save_census_hint": "Selecciona a las personas de tu lista (márcalas, o «Seleccionar desde una lista…» para pegar números de miembro) y elige «Guardar como censo» en la barra de abajo.",
       "search_label": "Buscar miembros",
       "search_placeholder": "Busca por nombre, correo o número de miembro",
       "select_done": "Hecho",

@@ -309,6 +309,9 @@
   },
   "census_size": "Nombre d'inscrits",
   "censuses": {
+    "closed_summary_one": "1 vote · « {{name}} »",
+    "closed_summary_many": "{{count}} votes · dernier : « {{name}} »",
+    "closed_summary_other": "{{count}} votes · dernier : « {{name}} »",
     "description": "Qui peut voter dans chacun de vos votes, et les listes électorales enregistrées pour les réutiliser.",
     "empty": {
       "description": "Une liste électorale est créée quand vous choisissez qui peut voter dans un vote, ou quand vous enregistrez une sélection dans Personnes.",
@@ -329,21 +332,35 @@
       "scheduled": "Programmés"
     },
     "in_votes": "Dans les votes",
+    "in_votes_hint": "Chaque vote a sa propre liste électorale",
     "load_error": "Impossible de charger vos listes électorales.",
     "more_votes_many": "{{count}} autres",
     "more_votes_one": "{{count}} autre",
     "more_votes_other": "{{count}} autres",
+    "row": {
+      "unreachable_one": "1 ne peut pas recevoir de code",
+      "unreachable_many": "{{formattedCount}} ne peuvent pas recevoir de code",
+      "unreachable_other": "{{formattedCount}} ne peuvent pas recevoir de code"
+    },
     "saved": {
-      "copied_into_one": "Copiée dans 1 vote",
-      "copied_into_many": "Copiée dans {{count}} votes",
-      "copied_into_other": "Copiée dans {{count}} votes",
+      "hint": "Listes réutilisables, copiées dans un vote quand vous les utilisez",
+      "new": "Nouvelle liste enregistrée",
       "title": "Enregistrées",
-      "unused": "Utilisée par aucun vote",
       "updated": "Mise à jour le {{date}}",
       "used_by_many": "Utilisée par {{count}} votes",
       "used_by_one": "Utilisée par 1 vote",
       "used_by_other": "Utilisée par {{count}} votes"
     },
+    "saved_card": {
+      "copied_into_one": "Copiée dans « {{name}} »",
+      "copied_into_many": "Copiée dans « {{name}} » et {{more}} autres",
+      "copied_into_other": "Copiée dans « {{name}} » et {{more}} autres",
+      "new_description": "Choisissez des personnes ou collez des numéros de membre dans Personnes. Pratique pour « membres à jour » ou « le bureau ».",
+      "new_title": "Enregistrez une liste à réutiliser",
+      "unused": "Pas encore utilisée dans un vote",
+      "use": "Utiliser dans un vote"
+    },
+    "search": "Rechercher des listes",
     "source": {
       "copy": "Copie propre",
       "copy_from": "Copiée depuis « {{name}} »",
@@ -378,6 +395,7 @@
     "when": {
       "closed": "Clos le {{date}}",
       "closes": "Clôture le {{date}}",
+      "no_dates": "Pas encore de dates",
       "opens": "Ouvre le {{date}}"
     }
   },
@@ -1432,6 +1450,7 @@
       "range_results_other": "{{from}}–{{to}} sur {{total}} résultats",
       "retry": "Réessayer",
       "row_actions": "Actions pour {{name}}",
+      "save_census_hint": "Sélectionnez les personnes de votre liste (cochez-les, ou « Sélectionner depuis une liste… » pour coller des numéros de membre), puis choisissez « Enregistrer comme liste électorale » dans la barre en bas.",
       "search_label": "Rechercher des membres",
       "search_placeholder": "Rechercher par nom, e-mail ou numéro d'adhérent",
       "select_done": "Terminé",

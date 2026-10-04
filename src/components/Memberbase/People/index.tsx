@@ -2,6 +2,7 @@ import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router'
 import { Banner } from '~components/ui/Banner'
 import { SelectionBar } from '~components/ui/SelectionBar'
 import { useAffectedVotes } from '~src/queries/affectedVotes'
@@ -110,7 +111,9 @@ export const People = () => {
   const importing = Boolean(jobId) && !importJob.isError && (!importJob.data || importJob.data.status === 'pending')
   const matching = pagination?.totalItems ?? 0
   const selectAll = useSelectAllMatching({ search: url.q, total: matching, selection, importing })
-  const [selectMode, setSelectMode] = useState(false)
+  // Sent here by "New saved census": pick the people, then "Save as census" in the bar
+  const saveCensusHint = Boolean((useLocation().state as { saveCensusHint?: boolean } | null)?.saveCensusHint)
+  const [selectMode, setSelectMode] = useState(saveCensusHint)
   const [target, setTarget] = useState<ActionTarget | null>(null)
   const [deleteAllOpen, setDeleteAllOpen] = useState(false)
   const showSkeleton = useDelayedFlag(query.isLoading, SKELETON_DELAY_MS)
@@ -321,6 +324,16 @@ export const People = () => {
   return (
     <Box pb={selection.count ? 24 : 0}>
       <ImportProgress jobId={jobId} onDismiss={() => setJobId(null)} />
+      {saveCensusHint && !selection.count && (
+        <Box mb={4}>
+          <Banner status='info'>
+            {t('members.people.save_census_hint', {
+              defaultValue:
+                "Select the people for your list (tick them, or 'Select from a list…' to paste member numbers), then choose 'Save as census' in the bar below.",
+            })}
+          </Banner>
+        </Box>
+      )}
       <Toolbar
         value={url.q}
         onSearch={onSearch}

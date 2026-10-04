@@ -109,9 +109,13 @@ const LocationProbe = () => {
   return <output data-testid='location'>{`${location.pathname}${location.search}`}</output>
 }
 
-const renderPeople = (url = '/admin/memberbase/members/1') =>
+const renderPeople = (url = '/admin/memberbase/members/1', state?: unknown) =>
   render(
-    <MemoryRouter initialEntries={[url]}>
+    <MemoryRouter
+      initialEntries={[
+        { pathname: url.split('?')[0], search: url.includes('?') ? `?${url.split('?')[1]}` : '', state },
+      ]}
+    >
       <Routes>
         <Route
           path='/admin/memberbase/members/:page?'
@@ -455,6 +459,16 @@ describe('People', () => {
     expect(barCount('1 selected')).toBeInTheDocument()
     await user.keyboard(' ')
     expect(screen.queryByText('1 selected')).toBeNull()
+  })
+
+  it('says how to make a saved census when sent here to make one', async () => {
+    renderPeople('/admin/memberbase/members/1', { saveCensusHint: true })
+
+    expect(
+      await screen.findByText(
+        "Select the people for your list (tick them, or 'Select from a list…' to paste member numbers), then choose 'Save as census' in the bar below."
+      )
+    ).toBeInTheDocument()
   })
 
   it('opens a member from their name', async () => {

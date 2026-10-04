@@ -294,6 +294,8 @@
   },
   "census_size": "Erroldeko tamaina",
   "censuses": {
+    "closed_summary_one": "Bozketa 1 · «{{name}}»",
+    "closed_summary_other": "{{count}} bozketa · azkena: «{{name}}»",
     "description": "Nork bozka dezakeen zure bozketa bakoitzean, eta berrerabiltzeko gorde dituzun erroldeak.",
     "empty": {
       "description": "Errolda bat sortzen da bozketa batean nork bozka dezakeen aukeratzen duzunean, edo Pertsonak atalean hautapen bat gordetzen duzunean.",
@@ -314,18 +316,31 @@
       "scheduled": "Programatuak"
     },
     "in_votes": "Bozketetan",
+    "in_votes_hint": "Bozketa bakoitzak bere errolda du",
     "load_error": "Ezin izan ditugu zure erroldeak kargatu.",
     "more_votes_one": "beste {{count}}",
     "more_votes_other": "beste {{count}}",
+    "row": {
+      "unreachable_one": "1ek ezin du koderik jaso",
+      "unreachable_other": "{{formattedCount}}k ezin dute koderik jaso"
+    },
     "saved": {
-      "copied_into_one": "Bozketa batera kopiatua",
-      "copied_into_other": "{{count}} bozketatara kopiatua",
+      "hint": "Zerrenda berrerabilgarriak, erabiltzen dituzunean bozketa batera kopiatzen direnak",
+      "new": "Gordetako errolda berria",
       "title": "Gordetakoak",
-      "unused": "Ez du bozketa batek ere erabiltzen",
       "updated": "Eguneratua: {{date}}",
       "used_by_one": "Bozketa batek erabiltzen du",
       "used_by_other": "{{count}} bozketak erabiltzen dute"
     },
+    "saved_card": {
+      "copied_into_one": "«{{name}}» bozketara kopiatua",
+      "copied_into_other": "«{{name}}» bozketara eta beste {{more}}etara kopiatua",
+      "new_description": "Aukeratu pertsonak edo itsatsi bazkide-zenbakiak Pertsonak atalean. Erabilgarria «kuotak egunean dituzten bazkideak» edo «zuzendaritza» egiteko.",
+      "new_title": "Gorde berrerabiliko duzun zerrenda bat",
+      "unused": "Oraindik ez da bozketa batean erabili",
+      "use": "Erabili bozketa batean"
+    },
+    "search": "Bilatu erroldak",
     "source": {
       "copy": "Kopia propioa",
       "copy_from": "«{{name}}» erroldetik kopiatua",
@@ -358,6 +373,7 @@
     "when": {
       "closed": "Itxita: {{date}}",
       "closes": "Itxiera: {{date}}",
+      "no_dates": "Oraindik datarik gabe",
       "opens": "Irekiera: {{date}}"
     }
   },
@@ -1378,6 +1394,7 @@
       "range_results_other": "{{from}}–{{to}} / {{total}} emaitza",
       "retry": "Saiatu berriro",
       "row_actions": "Ekintzak: {{name}}",
+      "save_census_hint": "Hautatu zure zerrendako pertsonak (markatu, edo erabili «Hautatu zerrenda batetik…» bazkide-zenbakiak itsasteko) eta aukeratu «Gorde errolde gisa» beheko barran.",
       "search_label": "Bilatu kideak",
       "search_placeholder": "Bilatu izena, posta elektronikoa edo kide-zenbakia",
       "select_done": "Eginda",

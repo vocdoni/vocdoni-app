@@ -294,6 +294,8 @@
   },
   "census_size": "Teilnehmerzahl",
   "censuses": {
+    "closed_summary_one": "1 Abstimmung · „{{name}}“",
+    "closed_summary_other": "{{count}} Abstimmungen · zuletzt: „{{name}}“",
     "description": "Wer in jeder deiner Abstimmungen abstimmen darf, und Teilnehmerlisten, die du zum Wiederverwenden gespeichert hast.",
     "empty": {
       "description": "Eine Teilnehmerliste entsteht, wenn du festlegst, wer in einer Abstimmung abstimmen darf, oder wenn du eine Auswahl unter Personen speicherst.",
@@ -314,18 +316,31 @@
       "scheduled": "Geplant"
     },
     "in_votes": "In Abstimmungen",
+    "in_votes_hint": "Jede Abstimmung hat ihre eigene Teilnehmerliste",
     "load_error": "Deine Teilnehmerlisten konnten nicht geladen werden.",
     "more_votes_one": "{{count}} weitere",
     "more_votes_other": "{{count}} weitere",
+    "row": {
+      "unreachable_one": "1 kann keinen Code erhalten",
+      "unreachable_other": "{{formattedCount}} können keinen Code erhalten"
+    },
     "saved": {
-      "copied_into_one": "In 1 Abstimmung kopiert",
-      "copied_into_other": "In {{count}} Abstimmungen kopiert",
+      "hint": "Wiederverwendbare Listen, die in eine Abstimmung kopiert werden, wenn du sie nutzt",
+      "new": "Neue gespeicherte Teilnehmerliste",
       "title": "Gespeichert",
-      "unused": "Von keiner Abstimmung verwendet",
       "updated": "Aktualisiert am {{date}}",
       "used_by_one": "Von 1 Abstimmung verwendet",
       "used_by_other": "Von {{count}} Abstimmungen verwendet"
     },
+    "saved_card": {
+      "copied_into_one": "In „{{name}}“ kopiert",
+      "copied_into_other": "In „{{name}}“ und {{more}} weitere kopiert",
+      "new_description": "Wähle Personen aus oder füge Mitgliedsnummern unter Personen ein. Praktisch für „zahlende Mitglieder“ oder „den Vorstand“.",
+      "new_title": "Speichere eine Liste zum Wiederverwenden",
+      "unused": "Noch in keiner Abstimmung verwendet",
+      "use": "In einer Abstimmung verwenden"
+    },
+    "search": "Teilnehmerlisten suchen",
     "source": {
       "copy": "Eigene Kopie",
       "copy_from": "Kopiert von „{{name}}“",
@@ -358,6 +373,7 @@
     "when": {
       "closed": "Beendet am {{date}}",
       "closes": "Endet am {{date}}",
+      "no_dates": "Noch keine Termine",
       "opens": "Beginnt am {{date}}"
     }
   },
@@ -1378,6 +1394,7 @@
       "range_results_other": "{{from}}–{{to}} von {{total}} Ergebnissen",
       "retry": "Erneut versuchen",
       "row_actions": "Aktionen für {{name}}",
+      "save_census_hint": "Wähle die Personen für deine Liste aus (hake sie an oder füge über „Aus einer Liste auswählen …“ Mitgliedsnummern ein) und wähle dann unten in der Leiste „Als Teilnehmerliste speichern“.",
       "search_label": "Mitglieder suchen",
       "search_placeholder": "Nach Name, E-Mail oder Mitgliedsnummer suchen",
       "select_done": "Fertig",

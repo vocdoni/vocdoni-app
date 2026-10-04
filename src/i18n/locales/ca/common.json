@@ -309,6 +309,9 @@
   },
   "census_size": "Mida del cens",
   "censuses": {
+    "closed_summary_one": "1 votació · «{{name}}»",
+    "closed_summary_many": "{{count}} votacions · l'última: «{{name}}»",
+    "closed_summary_other": "{{count}} votacions · l'última: «{{name}}»",
     "description": "Qui pot votar en cadascuna de les teves votacions, i els censos que has desat per reutilitzar-los.",
     "empty": {
       "description": "Un cens es crea quan tries qui pot votar en una votació, o quan deses una selecció a Persones.",
@@ -329,21 +332,35 @@
       "scheduled": "Programades"
     },
     "in_votes": "En votacions",
+    "in_votes_hint": "Cada votació té el seu propi cens",
     "load_error": "No hem pogut carregar els teus censos.",
     "more_votes_many": "{{count}} més",
     "more_votes_one": "{{count}} més",
     "more_votes_other": "{{count}} més",
+    "row": {
+      "unreachable_one": "1 no pot rebre cap codi",
+      "unreachable_many": "{{formattedCount}} no poden rebre cap codi",
+      "unreachable_other": "{{formattedCount}} no poden rebre cap codi"
+    },
     "saved": {
-      "copied_into_one": "Copiat a 1 votació",
-      "copied_into_many": "Copiat a {{count}} votacions",
-      "copied_into_other": "Copiat a {{count}} votacions",
+      "hint": "Llistes reutilitzables que es copien a una votació quan les fas servir",
+      "new": "Nou cens desat",
       "title": "Desats",
-      "unused": "No el fa servir cap votació",
       "updated": "Actualitzat el {{date}}",
       "used_by_many": "El fan servir {{count}} votacions",
       "used_by_one": "El fa servir 1 votació",
       "used_by_other": "El fan servir {{count}} votacions"
     },
+    "saved_card": {
+      "copied_into_one": "Copiat a «{{name}}»",
+      "copied_into_many": "Copiat a «{{name}}» i {{more}} més",
+      "copied_into_other": "Copiat a «{{name}}» i {{more}} més",
+      "new_description": "Tria persones o enganxa números de soci a Persones. Útil per a «socis al corrent» o «la junta».",
+      "new_title": "Desa una llista que reutilitzaràs",
+      "unused": "Encara no s'ha fet servir en cap votació",
+      "use": "Fes-lo servir en una votació"
+    },
+    "search": "Cerca censos",
     "source": {
       "copy": "Còpia pròpia",
       "copy_from": "Copiat de «{{name}}»",
@@ -378,6 +395,7 @@
     "when": {
       "closed": "Tancada el {{date}}",
       "closes": "Tanca el {{date}}",
+      "no_dates": "Encara sense dates",
       "opens": "S'obre el {{date}}"
     }
   },
@@ -1432,6 +1450,7 @@
       "range_results_other": "{{from}}–{{to}} de {{total}} resultats",
       "retry": "Torna-ho a provar",
       "row_actions": "Accions per a {{name}}",
+      "save_census_hint": "Selecciona les persones de la teva llista (marca-les, o «Selecciona des d'una llista…» per enganxar números de soci) i tria «Desa com a cens» a la barra de sota.",
       "search_label": "Cerca membres",
       "search_placeholder": "Cerca per nom, correu o número de soci",
       "select_done": "Fet",
