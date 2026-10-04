@@ -106,10 +106,6 @@ export const useFormToVotingProcessRequest = () => {
       // draft, so never let the flag through on a plan without the feature.
       census: permission(SubscriptionPermission.Anonymous) ? censusSpec : { ...censusSpec, anonymous: undefined },
       questions,
-      // Question by question: every question is published paused and the organizer opens each
-      // one. Only meaningful with several questions. @vocdoni/api-types 2.1.0 doesn't declare
-      // the field yet; the API accepts it (see the OpenAPI spec).
-      ...(form.questionFlow === 'one_by_one' && questions.length > 1 ? { initialStatus: 'PAUSED' } : {}),
     }
     return request
   }
