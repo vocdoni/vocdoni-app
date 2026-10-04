@@ -109,13 +109,14 @@ import|template|add), `member_added` (`source`: form), `member_updated` (`in_liv
 (`count`, `capped`: stopped at 5,000), `members_paste_select` (`found`, `not_found`), `members_bulk_action`
 (`action`: save_census|add_to_vote|add_to_saved_census|remove_from_saved_census|delete, `count`; fired
 when the action is opened from the selection bar). `member_group_created` carries `group_size` and
-`source` (selection) when made from the People tab; `voters_added` carries `surface` (members) when
-added from there. The import wizard (`/admin/memberbase/import`) sends `members_template_downloaded`
+`source` (selection) when made from the People tab; `voters_added` (`count`, `surface`: members) fires
+when people are added to a vote's census from there. The import wizard (`/admin/memberbase/import`) sends `members_template_downloaded`
 (`format`: xlsx|csv, `surface`: import|first_run), `members_import_mapped` on leaving the Match step
 (`auto_pct`: share of columns matched automatically, `is_template`, `extra_columns`: columns kept as extra
 info), `members_import_started` (`total_rows`, `method`: file), `members_import_errors_downloaded`
 (`count`), `members_import_next_clicked` (`next`: create_vote|return|members) and `help_offered`
-(`trigger`: large_file, when a file has more than 2,000 people and a call is offered).
+(`trigger`: large_file, when a file has more than 2,000 people and a call is offered), then
+`help_opened` (`channel`: call) if the call link is followed.
 `members_import_completed` fires once per job, from the receipt or the People banner, whichever sees
 it end. Member events carry counts only, never names or search text.
 
