@@ -503,8 +503,8 @@
       "title": "Fet servir a"
     },
     "vote_card": {
-      "snapshot_note": "Aquest cens són els teus membres tal com eren quan vas publicar la votació. Aquí encara hi pots afegir o treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
-      "snapshot_note_on": "Aquest cens són els teus membres tal com eren el {{date}}, quan vas publicar la votació. Aquí encara hi pots afegir o treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres."
+      "snapshot_note": "Per crear aquest cens es va utilitzar la llista dels teus membres tal com eren quan vas publicar la votació. Aquí encara hi pots afegir o treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
+      "snapshot_note_on": "Per crear aquest cens es va utilitzar la llista dels teus membres tal com eren el {{date}}, quan vas publicar la votació. Aquí encara hi pots afegir o treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres."
     }
   },
   "census_size": "Mida del cens",
