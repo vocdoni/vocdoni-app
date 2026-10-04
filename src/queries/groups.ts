@@ -155,11 +155,18 @@ export const useDeleteGroup = () => {
         }
       )
     },
-    onSuccess: () => {
+    onSuccess: (_data, groupId) => {
       trackAnalyticsEvent({ name: AnalyticsEvents.MemberGroupDeleted })
+      // The deleted group's own queries go, rather than being read again (and failing) while its page
+      // closes; the lists refresh
+      const ofDeleted = (key: readonly unknown[]) => key.includes(groupId)
+      queryClient.removeQueries({
+        queryKey: QueryKeys.organization.groups(organization.address),
+        predicate: (query) => ofDeleted(query.queryKey),
+      })
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.groups(organization.address),
-        exact: false,
+        predicate: (query) => !ofDeleted(query.queryKey),
       })
     },
   })
