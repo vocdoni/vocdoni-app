@@ -142,6 +142,11 @@
   "close": "Fechar",
   "code_applied": "Código \"{{appliedCode}}\" aplicado",
   "color_mode_switcher": "Alternar modo de cor",
+  "coming_soon": {
+    "interest": "Eu usaria isso",
+    "noted": "Obrigado, anotamos",
+    "tag": "Em breve"
+  },
   "common": {
     "back": "Voltar",
     "close_drawer": "Fechar painel",

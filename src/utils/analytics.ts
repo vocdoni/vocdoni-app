@@ -39,6 +39,7 @@ export const AnalyticsEvents = {
   TeamMemberRemoved: 'team_member_removed',
   PdfReportDownloaded: 'pdf_report_downloaded',
   AuthFailed: 'auth_failed',
+  FeatureInterest: 'feature_interest',
 } as const
 
 // How an account was created or signed in to; sent as the `method` event

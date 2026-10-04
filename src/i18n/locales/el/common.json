@@ -140,6 +140,11 @@
   "close": "Κλείσιμο",
   "code_applied": "Ο κωδικός «{{appliedCode}}» εφαρμόστηκε",
   "color_mode_switcher": "Εναλλαγή λειτουργίας χρώματος",
+  "coming_soon": {
+    "interest": "Θα το χρησιμοποιούσα",
+    "noted": "Ευχαριστούμε, το σημειώσαμε",
+    "tag": "Σύντομα"
+  },
   "common": {
     "back": "Πίσω",
     "close_drawer": "Κλείσιμο",

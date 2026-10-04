@@ -142,6 +142,11 @@
   "close": "Fermer",
   "code_applied": "Code « {{appliedCode}} » appliqué",
   "color_mode_switcher": "Changer de mode d'affichage",
+  "coming_soon": {
+    "interest": "Ça m’intéresse",
+    "noted": "Merci, c’est noté",
+    "tag": "Bientôt"
+  },
   "common": {
     "back": "Retour",
     "close_drawer": "Fermer le panneau",

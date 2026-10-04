@@ -96,7 +96,8 @@ Current taxonomy (PostHog names): `account_signed_up`, `user_logged_in`, `organi
 `billing_portal_opened`, `paywall_viewed`, `feature_blocked`, `process_creation_failed`,
 `process_action`, `process_results_viewed`, `members_import_started`,
 `members_import_completed`, `member_group_created`, `member_group_deleted`, `census_configured`,
-`team_member_invited`, `team_member_removed`, `pdf_report_downloaded`.
+`team_member_invited`, `team_member_removed`, `pdf_report_downloaded`, `feature_interest` (a "Soon"
+feature someone asked for; prop `feature`).
 
 Organization-level BI: every session registers `org_address`/`org_name`/`org_plan` super properties, and
 the `organization` group profile carries name, plan, type, country, size, usage counters, and renewal

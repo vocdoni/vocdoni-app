@@ -142,6 +142,11 @@
   "close": "Tanca",
   "code_applied": "Codi \"{{appliedCode}}\" aplicat",
   "color_mode_switcher": "Commutador de mode de color",
+  "coming_soon": {
+    "interest": "Ho faria servir",
+    "noted": "Gràcies, ho hem anotat",
+    "tag": "Aviat"
+  },
   "common": {
     "back": "Enrere",
     "close_drawer": "Tanca el panell lateral",

@@ -140,6 +140,11 @@
   "close": "Close",
   "code_applied": "Code \"{{appliedCode}}\" applied",
   "color_mode_switcher": "Color mode switcher",
+  "coming_soon": {
+    "interest": "I'd use this",
+    "noted": "Thanks, we've noted it",
+    "tag": "Soon"
+  },
   "common": {
     "back": "Back",
     "close_drawer": "Close drawer",

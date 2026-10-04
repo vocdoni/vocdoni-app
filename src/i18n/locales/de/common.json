@@ -140,6 +140,11 @@
   "close": "Schließen",
   "code_applied": "Code „{{appliedCode}}\" angewendet",
   "color_mode_switcher": "Farbmodus-Umschalter",
+  "coming_soon": {
+    "interest": "Würde ich nutzen",
+    "noted": "Danke, haben wir notiert",
+    "tag": "Bald"
+  },
   "common": {
     "back": "Zurück",
     "close_drawer": "Seitenleiste schließen",

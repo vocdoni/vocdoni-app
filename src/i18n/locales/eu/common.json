@@ -140,6 +140,11 @@
   "close": "Itxi",
   "code_applied": "«{{appliedCode}}» kodea aplikatu da",
   "color_mode_switcher": "Aldatu kolore-modua",
+  "coming_soon": {
+    "interest": "Erabiliko nuke",
+    "noted": "Eskerrik asko, jaso dugu",
+    "tag": "Laster"
+  },
   "common": {
     "back": "Atzera",
     "close_drawer": "Itxi panela",

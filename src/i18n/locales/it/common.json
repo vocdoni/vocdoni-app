@@ -142,6 +142,11 @@
   "close": "Chiudi",
   "code_applied": "Codice \"{{appliedCode}}\" applicato",
   "color_mode_switcher": "Selettore modalità colore",
+  "coming_soon": {
+    "interest": "Mi servirebbe",
+    "noted": "Grazie, ne abbiamo preso nota",
+    "tag": "Presto"
+  },
   "common": {
     "back": "Indietro",
     "close_drawer": "Chiudi cassetto",
