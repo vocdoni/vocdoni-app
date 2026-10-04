@@ -389,7 +389,12 @@ describe('CensusDetail', () => {
     state.meta = { vg_owned: { processId: 'p9', kind: 'copy', createdAt: past } }
     state.members.owned = [person(1), person(2)]
     state.groups.push(group('owned', 'Census of Junta'))
-    state.process = vote('p9', 'Eleccions Junta 2025', { groupId: 'owned', size: 2, twoFaFields: ['email'] }, 'RESULTS')
+    state.process = vote(
+      'p9',
+      'Eleccions Junta 2025',
+      { groupId: 'owned', size: 2, authFields: ['memberNumber', 'nationalId'], twoFaFields: ['email'] },
+      'RESULTS'
+    )
     renderDetail({ kind: 'vote', processId: 'p9' })
 
     expect(await screen.findByText("This vote has ended, so its census can't change.")).toBeInTheDocument()
@@ -398,7 +403,11 @@ describe('CensusDetail', () => {
     expect(
       screen.getByText("This vote's own census. Editing it doesn't change your members or other votes.")
     ).toBeInTheDocument()
-    expect(screen.getByText('Members sign in with their details and a one-time code by email.')).toBeInTheDocument()
+    // The vote it belongs to, and exactly how its people signed in to it
+    const card = screen.getByRole('heading', { name: 'Vote' }).closest('div')!.parentElement!
+    expect(within(card).getByRole('link', { name: 'Eleccions Junta 2025' })).toBeInTheDocument()
+    expect(within(card).getByText('Member Number, National ID · Code by email')).toBeInTheDocument()
+    expect(within(card).getByText(/^Copied from|^Chosen by hand/)).toBeInTheDocument()
     // Nobody signs in to a vote that's over: no readiness
     expect(screen.queryByText(/can get a code/)).toBeNull()
   })

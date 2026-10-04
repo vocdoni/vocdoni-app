@@ -294,7 +294,19 @@
     "used_by": {
       "none": "Nessuna votazione lo usa ancora.",
       "title": "Usato da"
-    }
+    },
+    "vote_card": {
+      "closes": "Chiude",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Apre",
+      "origin_on": "{{origin}}, il {{date}}",
+      "people": "Persone da",
+      "sign_in": "Accesso con",
+      "title": "Votazione",
+      "weight": "Peso del voto",
+      "weighted": "Ponderato per ogni membro"
+    },
+    "vote_heading": "Censimento di {{vote}}"
   },
   "census_size": "Dimensione del censimento",
   "censuses": {
@@ -323,6 +335,9 @@
     "more_votes_one": "{{count}} altra",
     "more_votes_other": "altre {{count}}",
     "saved": {
+      "copied_into_one": "Copiato in 1 votazione",
+      "copied_into_many": "Copiato in {{count}} votazioni",
+      "copied_into_other": "Copiato in {{count}} votazioni",
       "title": "Salvati",
       "unused": "Non usato da nessuna votazione",
       "updated": "Aggiornato il {{date}}",
@@ -360,7 +375,12 @@
       "live": "in corso",
       "scheduled": "programmata"
     },
-    "vote_with_state": "«{{title}}» ({{state}})"
+    "vote_with_state": "«{{title}}» ({{state}})",
+    "when": {
+      "closed": "Chiusa il {{date}}",
+      "closes": "Chiude il {{date}}",
+      "opens": "Apre il {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Inserire la password attuale e una nuova password per aggiornare le credenziali.",

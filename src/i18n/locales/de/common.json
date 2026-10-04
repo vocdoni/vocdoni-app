@@ -279,7 +279,19 @@
     "used_by": {
       "none": "Noch keine Abstimmung verwendet sie.",
       "title": "Verwendet von"
-    }
+    },
+    "vote_card": {
+      "closes": "Endet",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Beginnt",
+      "origin_on": "{{origin}}, am {{date}}",
+      "people": "Personen aus",
+      "sign_in": "Anmeldung mit",
+      "title": "Abstimmung",
+      "weight": "Stimmgewicht",
+      "weighted": "Gewichtet je Mitglied"
+    },
+    "vote_heading": "Teilnehmerliste von {{vote}}"
   },
   "census_size": "Teilnehmerzahl",
   "censuses": {
@@ -307,6 +319,8 @@
     "more_votes_one": "{{count}} weitere",
     "more_votes_other": "{{count}} weitere",
     "saved": {
+      "copied_into_one": "In 1 Abstimmung kopiert",
+      "copied_into_other": "In {{count}} Abstimmungen kopiert",
       "title": "Gespeichert",
       "unused": "Von keiner Abstimmung verwendet",
       "updated": "Aktualisiert am {{date}}",
@@ -341,7 +355,12 @@
       "live": "laufend",
       "scheduled": "geplant"
     },
-    "vote_with_state": "„{{title}}“ ({{state}})"
+    "vote_with_state": "„{{title}}“ ({{state}})",
+    "when": {
+      "closed": "Beendet am {{date}}",
+      "closes": "Endet am {{date}}",
+      "opens": "Beginnt am {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Gib dein aktuelles Passwort und ein neues Passwort ein, um deine Zugangsdaten zu aktualisieren.",

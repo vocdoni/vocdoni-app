@@ -20,6 +20,7 @@ import { ExportCard, readOnlyText, SavedCensusActions, SignInCard } from './Side
 import { RemovePeopleDialog } from './RemovePeopleDialog'
 import { CopiedIntoCard, CopiedIntoRunningBanner, formatVoteList, UsedByCard } from './UsedBy'
 import { useCensusEditor } from './useCensusEditor'
+import { VoteCard } from './VoteCard'
 import { type CensusDetailTarget, type ResolvedCensusState, useResolvedCensus } from './useResolvedCensus'
 
 export type CensusDetailProps = CensusDetailTarget & {
@@ -241,12 +242,26 @@ export const CensusDetail = (props: CensusDetailProps) => {
         )}
       </Stack>
       <Stack gap={4} minW={0}>
-        <SignInCard
-          twoFaFields={twoFaFields}
-          groupId={readinessGroupId}
-          total={census.count}
-          noReadiness={isEnded(census.state) || (census.browse === 'lookup' && census.source?.kind !== 'everyone')}
-        />
+        {census.kind === 'vote' && census.process ? (
+          // Which vote this census belongs to, and exactly how its people sign in to it
+          <VoteCard
+            process={census.process}
+            state={census.state}
+            source={census.source}
+            madeAt={census.groupId ? census.markers.get(census.groupId)?.createdAt : undefined}
+            groupId={readinessGroupId}
+            total={census.count}
+            noReadiness={isEnded(census.state) || (census.browse === 'lookup' && census.source?.kind !== 'everyone')}
+            withVote={(props.surface ?? 'census_page') === 'census_page'}
+          />
+        ) : (
+          <SignInCard
+            twoFaFields={twoFaFields}
+            groupId={readinessGroupId}
+            total={census.count}
+            noReadiness={isEnded(census.state) || (census.browse === 'lookup' && census.source?.kind !== 'everyone')}
+          />
+        )}
         {census.kind === 'saved' && census.group && (
           <>
             {/* "No vote uses it yet" above a list of votes that copied it would read as a contradiction */}

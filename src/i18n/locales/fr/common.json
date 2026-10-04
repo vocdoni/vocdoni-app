@@ -294,7 +294,19 @@
     "used_by": {
       "none": "Aucun vote ne l'utilise encore.",
       "title": "Utilisée par"
-    }
+    },
+    "vote_card": {
+      "closes": "Clôture",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Ouverture",
+      "origin_on": "{{origin}}, le {{date}}",
+      "people": "Personnes issues de",
+      "sign_in": "Connexion avec",
+      "title": "Vote",
+      "weight": "Poids du vote",
+      "weighted": "Pondéré par membre"
+    },
+    "vote_heading": "Liste électorale de {{vote}}"
   },
   "census_size": "Nombre d'inscrits",
   "censuses": {
@@ -323,6 +335,9 @@
     "more_votes_one": "{{count}} autre",
     "more_votes_other": "{{count}} autres",
     "saved": {
+      "copied_into_one": "Copiée dans 1 vote",
+      "copied_into_many": "Copiée dans {{count}} votes",
+      "copied_into_other": "Copiée dans {{count}} votes",
       "title": "Enregistrées",
       "unused": "Utilisée par aucun vote",
       "updated": "Mise à jour le {{date}}",
@@ -360,7 +375,12 @@
       "live": "en cours",
       "scheduled": "programmé"
     },
-    "vote_with_state": "« {{title}} » ({{state}})"
+    "vote_with_state": "« {{title}} » ({{state}})",
+    "when": {
+      "closed": "Clos le {{date}}",
+      "closes": "Clôture le {{date}}",
+      "opens": "Ouvre le {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Saisissez votre mot de passe actuel et un nouveau mot de passe pour mettre à jour vos identifiants.",

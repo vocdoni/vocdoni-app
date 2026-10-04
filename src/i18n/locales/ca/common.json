@@ -294,7 +294,19 @@
     "used_by": {
       "none": "Encara no el fa servir cap votació.",
       "title": "Fet servir a"
-    }
+    },
+    "vote_card": {
+      "closes": "Tanca",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Obre",
+      "origin_on": "{{origin}}, el {{date}}",
+      "people": "Persones de",
+      "sign_in": "Inici de sessió amb",
+      "title": "Votació",
+      "weight": "Poder de vot",
+      "weighted": "Ponderat per cada membre"
+    },
+    "vote_heading": "Cens de {{vote}}"
   },
   "census_size": "Mida del cens",
   "censuses": {
@@ -323,6 +335,9 @@
     "more_votes_one": "{{count}} més",
     "more_votes_other": "{{count}} més",
     "saved": {
+      "copied_into_one": "Copiat a 1 votació",
+      "copied_into_many": "Copiat a {{count}} votacions",
+      "copied_into_other": "Copiat a {{count}} votacions",
       "title": "Desats",
       "unused": "No el fa servir cap votació",
       "updated": "Actualitzat el {{date}}",
@@ -360,7 +375,12 @@
       "live": "en curs",
       "scheduled": "programada"
     },
-    "vote_with_state": "«{{title}}» ({{state}})"
+    "vote_with_state": "«{{title}}» ({{state}})",
+    "when": {
+      "closed": "Tancada el {{date}}",
+      "closes": "Tanca el {{date}}",
+      "opens": "S'obre el {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Introdueix la contrasenya actual i una de nova per actualitzar les teves credencials.",

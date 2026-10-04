@@ -279,7 +279,19 @@
     "used_by": {
       "none": "Καμία ψηφοφορία δεν τον χρησιμοποιεί ακόμα.",
       "title": "Χρησιμοποιείται από"
-    }
+    },
+    "vote_card": {
+      "closes": "Κλείνει",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Ανοίγει",
+      "origin_on": "{{origin}}, στις {{date}}",
+      "people": "Άτομα από",
+      "sign_in": "Σύνδεση με",
+      "title": "Ψηφοφορία",
+      "weight": "Βάρος ψήφου",
+      "weighted": "Σταθμισμένη ανά μέλος"
+    },
+    "vote_heading": "Κατάλογος ψηφοφόρων της ψηφοφορίας {{vote}}"
   },
   "census_size": "Μέγεθος μητρώου",
   "censuses": {
@@ -307,6 +319,8 @@
     "more_votes_one": "{{count}} ακόμα",
     "more_votes_other": "{{count}} ακόμα",
     "saved": {
+      "copied_into_one": "Αντιγράφηκε σε 1 ψηφοφορία",
+      "copied_into_other": "Αντιγράφηκε σε {{count}} ψηφοφορίες",
       "title": "Αποθηκευμένοι",
       "unused": "Δεν τον χρησιμοποιεί καμία ψηφοφορία",
       "updated": "Ενημερώθηκε {{date}}",
@@ -341,7 +355,12 @@
       "live": "σε εξέλιξη",
       "scheduled": "προγραμματισμένη"
     },
-    "vote_with_state": "«{{title}}» ({{state}})"
+    "vote_with_state": "«{{title}}» ({{state}})",
+    "when": {
+      "closed": "Έκλεισε στις {{date}}",
+      "closes": "Κλείνει στις {{date}}",
+      "opens": "Ανοίγει στις {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Πληκτρολογήστε τον τρέχοντα κωδικό πρόσβασης και έναν νέο για να ενημερώσετε τα στοιχεία σύνδεσής σας.",

@@ -100,6 +100,17 @@ export const CensusesIndex = () => {
     ...(index.saved.length ? [{ value: 'saved' as Filter, label: savedLabel, count: index.saved.length }] : []),
   ]
 
+  /** When the vote runs, in a few words: "Closes 12 Oct", "Opens 1 Oct", "Closed 3 Mar" (drafts: nothing). */
+  const voteWhen = (process: VotingProcessResponse, state: ReturnType<typeof voteStateOf>) => {
+    if (state === 'draft') return ''
+    if (state === 'scheduled' && process.startDate)
+      return t('censuses.when.opens', { defaultValue: 'Opens {{date}}', date: format(process.startDate, 'd MMM') })
+    if (!process.endDate) return ''
+    return state === 'ended' || state === 'canceled'
+      ? t('censuses.when.closed', { defaultValue: 'Closed {{date}}', date: format(process.endDate, 'd MMM yyyy') })
+      : t('censuses.when.closes', { defaultValue: 'Closes {{date}}', date: format(process.endDate, 'd MMM') })
+  }
+
   const voteRow = (process: VotingProcessResponse, title: string) => {
     const state = voteStateOf(process)
     const size = process.census?.size ?? 0
@@ -110,16 +121,17 @@ export const CensusesIndex = () => {
         to={generatePath(Routes.dashboard.memberbase.voteCensus, { processId: process.id })}
         badge={<VoteStateBadge state={state} size='sm' />}
         meta={[
+          voteWhen(process, state),
           signInShortText(t, process.census?.twoFaFields ?? []),
           censusSourceLabel(t, censusSourceOf(process, sourceContext)),
-        ]}
+        ].filter(Boolean)}
         count={size}
         unit={votersUnit(t, size)}
       />
     )
   }
 
-  const savedRow = ({ group, usedBy }: SavedCensusRow) => {
+  const savedRow = ({ group, usedBy, copiedInto }: SavedCensusRow) => {
     const count = group.membersCount ?? 0
     const updated = format(group.updatedAt || group.createdAt, 'd MMM yyyy')
     return (
@@ -134,7 +146,16 @@ export const CensusesIndex = () => {
                 defaultValue_one: 'Used by 1 vote',
                 defaultValue_other: 'Used by {{count}} votes',
               })
-            : t('censuses.saved.unused', { defaultValue: 'Not used by any vote' }),
+            : copiedInto.length
+              ? null
+              : t('censuses.saved.unused', { defaultValue: 'Not used by any vote' }),
+          copiedInto.length
+            ? t('censuses.saved.copied_into', {
+                count: copiedInto.length,
+                defaultValue_one: 'Copied into 1 vote',
+                defaultValue_other: 'Copied into {{count}} votes',
+              })
+            : null,
           updated ? t('censuses.saved.updated', { defaultValue: 'Updated {{date}}', date: updated }) : null,
         ]}
         count={count}

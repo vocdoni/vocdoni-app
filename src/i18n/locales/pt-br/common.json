@@ -294,7 +294,19 @@
     "used_by": {
       "none": "Nenhuma votação usa esta lista ainda.",
       "title": "Usada por"
-    }
+    },
+    "vote_card": {
+      "closes": "Fecha",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Abre",
+      "origin_on": "{{origin}}, em {{date}}",
+      "people": "Pessoas de",
+      "sign_in": "Acesso com",
+      "title": "Votação",
+      "weight": "Peso do voto",
+      "weighted": "Ponderado por cada membro"
+    },
+    "vote_heading": "Lista de participantes de {{vote}}"
   },
   "census_size": "Número de participantes",
   "censuses": {
@@ -323,6 +335,9 @@
     "more_votes_one": "mais {{count}}",
     "more_votes_other": "mais {{count}}",
     "saved": {
+      "copied_into_one": "Copiada para 1 votação",
+      "copied_into_many": "Copiada para {{count}} votações",
+      "copied_into_other": "Copiada para {{count}} votações",
       "title": "Salvas",
       "unused": "Nenhuma votação usa",
       "updated": "Atualizada em {{date}}",
@@ -360,7 +375,12 @@
       "live": "em andamento",
       "scheduled": "agendada"
     },
-    "vote_with_state": "“{{title}}” ({{state}})"
+    "vote_with_state": "“{{title}}” ({{state}})",
+    "when": {
+      "closed": "Encerrada em {{date}}",
+      "closes": "Fecha em {{date}}",
+      "opens": "Abre em {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Insira sua senha atual e uma nova senha para atualizar suas credenciais.",

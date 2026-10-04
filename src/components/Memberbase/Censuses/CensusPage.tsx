@@ -63,7 +63,9 @@ export const CensusPage = ({ kind }: { kind: 'saved' | 'vote' }) => {
       <Flex justify='space-between' align='center' gap={3} wrap='wrap'>
         <Flex align='center' gap={2} minW={0}>
           <Heading as='h2' size='lg' fontWeight='bolder' truncate>
-            {title}
+            {kind === 'vote' && title
+              ? t('census_detail.vote_heading', { defaultValue: 'Census of {{vote}}', vote: title })
+              : title}
           </Heading>
           {kind === 'vote' && <VoteStateBadge state={census.state} />}
         </Flex>

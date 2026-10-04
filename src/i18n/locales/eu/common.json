@@ -279,7 +279,19 @@
     "used_by": {
       "none": "Oraindik ez du bozketa batek ere erabiltzen.",
       "title": "Erabiltzen dute"
-    }
+    },
+    "vote_card": {
+      "closes": "Itxiera",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Irekiera",
+      "origin_on": "{{origin}}, {{date}}",
+      "people": "Pertsonen jatorria",
+      "sign_in": "Saioa hasteko",
+      "title": "Bozketa",
+      "weight": "Botoaren pisua",
+      "weighted": "Kide bakoitzaren arabera haztatua"
+    },
+    "vote_heading": "{{vote}} bozketaren errolda"
   },
   "census_size": "Erroldeko tamaina",
   "censuses": {
@@ -307,6 +319,8 @@
     "more_votes_one": "beste {{count}}",
     "more_votes_other": "beste {{count}}",
     "saved": {
+      "copied_into_one": "Bozketa batera kopiatua",
+      "copied_into_other": "{{count}} bozketatara kopiatua",
       "title": "Gordetakoak",
       "unused": "Ez du bozketa batek ere erabiltzen",
       "updated": "Eguneratua: {{date}}",
@@ -341,7 +355,12 @@
       "live": "martxan",
       "scheduled": "programatua"
     },
-    "vote_with_state": "«{{title}}» ({{state}})"
+    "vote_with_state": "«{{title}}» ({{state}})",
+    "when": {
+      "closed": "Itxita: {{date}}",
+      "closes": "Itxiera: {{date}}",
+      "opens": "Irekiera: {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Sartu zure egungo pasahitza eta berri bat zure kredentzialak eguneratzeko.",

@@ -137,6 +137,24 @@ describe('CensusesIndex', () => {
     expect(row('Eleccions Junta 2025')).toHaveTextContent("Code by SMS·Saved census 'Quota pagada'")
     expect(row('Comitè')).toHaveTextContent('Details only·Selected people')
     expect(row('Assemblea General 2026')).toHaveTextContent('1,700voters')
+    // When each runs: a live vote's close, a scheduled one's opening, nothing for a draft
+    expect(row('Assemblea General 2026')).toHaveTextContent(/^Assemblea General 2026.*Closes \d+ \w+·Code by email/)
+    expect(row('Pressupost')).toHaveTextContent(/Opens \d+ \w+·Code by email or SMS/)
+    expect(row('Comitè')).not.toHaveTextContent(/Opens|Closes|Closed/)
+  })
+
+  it('says a saved census was copied into a vote rather than unused', () => {
+    data.markers = new Map([
+      [
+        'owned',
+        { processId: 'live', kind: 'copy', createdAt: '2026-09-30T10:00:00Z', fromId: 'quota', source: 'saved' },
+      ],
+    ])
+    renderIndex()
+    const saved = screen.getByRole('link', { name: 'Quota pagada' }).closest('li') as HTMLElement
+
+    expect(saved).toHaveTextContent('Copied into 1 vote')
+    expect(saved).not.toHaveTextContent('Not used by any vote')
   })
 
   it('hides a vote’s own census from the saved ones and counts the votes using each', () => {

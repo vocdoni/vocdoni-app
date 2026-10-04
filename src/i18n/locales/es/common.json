@@ -294,7 +294,19 @@
     "used_by": {
       "none": "Aún no lo usa ninguna votación.",
       "title": "Usado por"
-    }
+    },
+    "vote_card": {
+      "closes": "Cierra",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Abre",
+      "origin_on": "{{origin}}, el {{date}}",
+      "people": "Personas de",
+      "sign_in": "Inicio de sesión con",
+      "title": "Votación",
+      "weight": "Poder de voto",
+      "weighted": "Ponderado por cada miembro"
+    },
+    "vote_heading": "Censo de {{vote}}"
   },
   "census_size": "Tamaño del censo",
   "censuses": {
@@ -323,6 +335,9 @@
     "more_votes_one": "{{count}} más",
     "more_votes_other": "{{count}} más",
     "saved": {
+      "copied_into_one": "Copiado en 1 votación",
+      "copied_into_many": "Copiado en {{count}} votaciones",
+      "copied_into_other": "Copiado en {{count}} votaciones",
       "title": "Guardados",
       "unused": "No lo usa ninguna votación",
       "updated": "Actualizado el {{date}}",
@@ -360,7 +375,12 @@
       "live": "en curso",
       "scheduled": "programada"
     },
-    "vote_with_state": "«{{title}}» ({{state}})"
+    "vote_with_state": "«{{title}}» ({{state}})",
+    "when": {
+      "closed": "Cerrada el {{date}}",
+      "closes": "Cierra el {{date}}",
+      "opens": "Abre el {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Introduce tu contraseña actual y una nueva para actualizar tus credenciales.",

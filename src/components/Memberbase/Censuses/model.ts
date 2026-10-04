@@ -70,6 +70,8 @@ export type SavedCensusRow = {
   group: Group
   /** The votes whose census is this saved census (shared, as before each vote had its own) */
   usedBy: AffectedVote[]
+  /** The votes that copied it into a census of their own */
+  copiedInto: CopyingVote[]
 }
 
 export type CensusIndex = {
@@ -99,7 +101,11 @@ export const buildCensusIndex = ({
   const saved = groups
     .filter((group) => !group.isAutoGroup && !markers.has(group.id))
     .sort((a, b) => (b.updatedAt ?? '').localeCompare(a.updatedAt ?? ''))
-    .map((group) => ({ group, usedBy: votesFollowingGroup(all, group.id) }))
+    .map((group) => ({
+      group,
+      usedBy: votesFollowingGroup(all, group.id),
+      copiedInto: votesCopying(all, markers, group.id),
+    }))
   const voteCount = votes.live.length + votes.scheduled.length + votes.drafts.length + votes.closed.length
 
   return { everyone, votes, saved, total: saved.length + voteCount }

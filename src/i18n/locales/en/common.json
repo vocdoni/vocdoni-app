@@ -279,7 +279,19 @@
     "used_by": {
       "none": "No vote uses it yet.",
       "title": "Used by"
-    }
+    },
+    "vote_card": {
+      "closes": "Closes",
+      "details_and_code": "{{details}} · {{code}}",
+      "opens": "Opens",
+      "origin_on": "{{origin}}, on {{date}}",
+      "people": "People from",
+      "sign_in": "Sign in with",
+      "title": "Vote",
+      "weight": "Voting power",
+      "weighted": "Weighted by each member"
+    },
+    "vote_heading": "Census of {{vote}}"
   },
   "census_size": "Census size",
   "censuses": {
@@ -307,6 +319,8 @@
     "more_votes_one": "{{count}} more",
     "more_votes_other": "{{count}} more",
     "saved": {
+      "copied_into_one": "Copied into 1 vote",
+      "copied_into_other": "Copied into {{count}} votes",
       "title": "Saved",
       "unused": "Not used by any vote",
       "updated": "Updated {{date}}",
@@ -341,7 +355,12 @@
       "live": "live",
       "scheduled": "scheduled"
     },
-    "vote_with_state": "'{{title}}' ({{state}})"
+    "vote_with_state": "'{{title}}' ({{state}})",
+    "when": {
+      "closed": "Closed {{date}}",
+      "closes": "Closes {{date}}",
+      "opens": "Opens {{date}}"
+    }
   },
   "change_password": {
     "subtitle": "Enter your current password and a new password to update your credentials.",
