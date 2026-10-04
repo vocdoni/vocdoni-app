@@ -37,11 +37,13 @@ vi.mock('./Censuses/useCensusIndex', () => ({
 // The header's add-person sheet isn't under test here
 vi.mock('./People/AddPersonSheet', () => ({ AddPersonSheet: () => null }))
 
-const renderTabs = () =>
+const renderTabs = (path = '/admin/memberbase/members/1') =>
   render(
-    <MemoryRouter initialEntries={['/admin/memberbase/members/1']}>
+    <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route path='/admin/memberbase/members/:page' element={<MemberbaseTabs />} />
+        <Route path='/admin/memberbase/censuses/:groupId' element={<MemberbaseTabs />} />
+        <Route path='/admin/memberbase/censuses' element={<h1>Censuses list</h1>} />
         <Route path='/admin/memberbase/import' element={<h1>Import page</h1>} />
       </Routes>
     </MemoryRouter>
@@ -101,6 +103,14 @@ describe('MemberbaseTabs', () => {
     expect(await screen.findByRole('heading', { level: 1, name: 'Members' })).toBeInTheDocument()
     expect(await screen.findByTestId('members-import-open')).toBeInTheDocument()
     expect(await screen.findByRole('button', { name: 'Add person' })).toBeInTheDocument()
+  })
+
+  it("leads back to the census list from a census' page", async () => {
+    renderTabs('/admin/memberbase/censuses/g1')
+
+    await userEvent.click(screen.getByRole('tab', { name: /Censuses/ }))
+
+    expect(screen.getByRole('heading', { name: 'Censuses list' })).toBeInTheDocument()
   })
 
   it('goes to the import page from the Import button', async () => {

@@ -129,7 +129,12 @@ export const PersonSheet = ({ memberId, member, loading, onClose, onDelete, onSt
       onOpenChange={(next) => !next && onClose()}
       title={title}
       modal={!isWide}
-      closeOnInteractOutside={!isWide}
+      closeOnInteractOutside
+      // Side by side with the list: a click on another person switches to them instead of closing
+      onInteractOutside={(event) => {
+        const target = (event.detail?.originalEvent?.target ?? event.target) as Element | null
+        if (target?.closest?.('[data-member-link]')) event.preventDefault()
+      }}
       initialFocusEl={headingFocus}
       finalFocusEl={restoreFocus}
       contentRef={contentRef}

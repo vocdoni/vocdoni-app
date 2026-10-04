@@ -17,6 +17,8 @@ type SheetProps = {
   /** Non-modal sheets leave the page usable behind them */
   modal?: boolean
   closeOnInteractOutside?: boolean
+  /** Called on a click or focus outside it; `event.preventDefault()` keeps it open */
+  onInteractOutside?: Drawer.RootProps['onInteractOutside']
   /** Width from md up */
   size?: 'sm' | 'md' | 'lg' | 'xl'
   contentRef?: RefObject<HTMLDivElement>
@@ -37,6 +39,7 @@ export const Sheet = ({
   initialFocusEl,
   modal = true,
   closeOnInteractOutside,
+  onInteractOutside,
   size = 'md',
   contentRef,
 }: SheetProps) => {
@@ -52,6 +55,7 @@ export const Sheet = ({
       initialFocusEl={initialFocusEl}
       modal={modal}
       closeOnInteractOutside={closeOnInteractOutside ?? modal}
+      onInteractOutside={onInteractOutside}
     >
       <Portal>
         {modal && <Drawer.Backdrop />}

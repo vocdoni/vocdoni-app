@@ -103,7 +103,14 @@ export const MemberbaseTabs = () => {
       >
         <Tabs.List mb={5} overflowX='auto' overflowY='hidden'>
           {tabs.map((tab) => (
-            <Tabs.Trigger key={tab.route} value={tab.route}>
+            <Tabs.Trigger
+              key={tab.route}
+              value={tab.route}
+              // On a page inside the tab (a census), the tab leads back to its list
+              onClick={() => {
+                if (location.pathname.startsWith(`${tab.route}/`)) navigate(tab.route)
+              }}
+            >
               {tab.label}
               {!!tab.count && (
                 <Text as='span' fontSize='xs' color='fg.muted' fontVariantNumeric='tabular-nums'>
