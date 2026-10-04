@@ -63,7 +63,7 @@ import {
   LuX,
 } from 'react-icons/lu'
 import ReactPlayer from 'react-player'
-import { generatePath, matchPath, useLocation, useNavigate } from 'react-router'
+import { generatePath, matchPath, Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import { ActionCancel, ActionContinue, ActionEnd, ActionPause, ActionsProvider } from '~components/Actions'
 import {
   DashboardBox,
@@ -513,6 +513,14 @@ const ProcessViewSidebar = () => {
               </Text>
               <Text fontSize='inherit'>{censusSize || ''}</Text>
             </Box>
+            {election?.id && (
+              // Browse, add and remove this vote's voters on its census page in Members
+              <Link asChild fontSize='sm' textDecoration='underline' alignSelf='flex-start'>
+                <RouterLink to={generatePath(Routes.dashboard.memberbase.voteCensus, { processId: election.id })}>
+                  {t('process_view.manage_census', { defaultValue: 'Manage census' })}
+                </RouterLink>
+              </Link>
+            )}
           </DashboardBox>
 
           {/* Census voter lookup */}
