@@ -403,6 +403,19 @@ describe('CensusDetail', () => {
     expect(screen.queryByText(/can get a code/)).toBeNull()
   })
 
+  it('sends an old link to the Everyone census to People', async () => {
+    render(
+      <MemoryRouter initialEntries={['/admin/memberbase/censuses/everyone']}>
+        <Routes>
+          <Route path='/admin/memberbase/censuses/:groupId' element={<CensusPage kind='saved' />} />
+          <Route path='/admin/memberbase/members/:page' element={<h1>People page</h1>} />
+        </Routes>
+      </MemoryRouter>
+    )
+
+    expect(await screen.findByRole('heading', { name: 'People page' })).toBeInTheDocument()
+  })
+
   it('never puts an id that walks the API path into a request', async () => {
     render(
       <MemoryRouter initialEntries={['/admin/memberbase/censuses/..%2F..%2F0xother%2Fgroups%2Fg1']}>

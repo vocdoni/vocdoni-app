@@ -300,12 +300,11 @@
   "censuses": {
     "description": "Chi può votare in ciascuna delle tue votazioni, e i censimenti che hai salvato per riutilizzarli.",
     "empty": {
-      "description": "Quando scegli chi può votare, quell'elenco viene conservato qui.",
+      "description": "Un censimento si crea quando scegli chi può votare in una votazione, o quando salvi una selezione in Persone.",
       "new_vote": "Nuova votazione",
       "title": "Il tuo primo censimento nasce con la tua prima votazione."
     },
     "everyone": {
-      "description": "Tutti i tuoi membri, compresi quelli che aggiungerai in seguito.",
       "title": "Tutti"
     },
     "filter": {
@@ -1092,6 +1091,12 @@
       "title": "Censimenti"
     },
     "description": "Tutte le persone della tua organizzazione. Scegli tu chi vota in ogni votazione.",
+    "export": {
+      "button": "Esporta",
+      "error": "Non è stato possibile scaricare i tuoi membri",
+      "file_name": "membri",
+      "progress": "{{done}} di {{total}}…"
+    },
     "importer": {
       "button": "Importa"
     },

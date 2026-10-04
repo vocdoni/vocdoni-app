@@ -103,13 +103,12 @@ describe('CensusesIndex', () => {
     data.track.mockReset()
   })
 
-  it('pins Everyone, groups the votes by state and lists the saved censuses', () => {
+  it('groups the votes by state and lists the saved censuses, with no row for Everyone', () => {
     renderIndex()
 
-    const lists = screen.getAllByRole('listitem')
-    expect(within(lists[0]).getByRole('link', { name: 'Everyone' })).toBeInTheDocument()
-    expect(lists[0]).toHaveTextContent('All your members, including people you add later.')
-    expect(lists[0]).toHaveTextContent('1,742')
+    // Everyone is a way to choose who votes, not a census: its people are the People tab
+    expect(screen.queryByRole('link', { name: 'Everyone' })).toBeNull()
+    expect(screen.queryByText('All your members, including people you add later.')).toBeNull()
 
     const votes = screen.getByRole('region', { name: 'In votes' })
     expect(

@@ -20,6 +20,10 @@ export const CensusPage = ({ kind }: { kind: 'saved' | 'vote' }) => {
     kind === 'vote' ? { kind, processId: safeId(params.processId) } : { kind, groupId: safeId(params.groupId) }
   const census = useResolvedCensus(target)
 
+  // Everyone isn't a census of its own any more: its people are the People tab
+  if (kind === 'saved' && census.kind === 'everyone')
+    return <Navigate to={generatePath(Routes.dashboard.memberbase.members, { page: '1' })} replace />
+
   if (kind === 'saved' && census.marker)
     return (
       <Navigate

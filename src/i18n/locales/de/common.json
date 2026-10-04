@@ -285,12 +285,11 @@
   "censuses": {
     "description": "Wer in jeder deiner Abstimmungen abstimmen darf, und Teilnehmerlisten, die du zum Wiederverwenden gespeichert hast.",
     "empty": {
-      "description": "Wenn du auswählst, wer abstimmen darf, wird diese Liste hier aufbewahrt.",
+      "description": "Eine Teilnehmerliste entsteht, wenn du festlegst, wer in einer Abstimmung abstimmen darf, oder wenn du eine Auswahl unter Personen speicherst.",
       "new_vote": "Neue Abstimmung",
       "title": "Deine erste Teilnehmerliste entsteht mit deiner ersten Abstimmung."
     },
     "everyone": {
-      "description": "Alle deine Mitglieder, auch die, die du später hinzufügst.",
       "title": "Alle"
     },
     "filter": {
@@ -1072,6 +1071,12 @@
       "title": "Teilnehmerlisten"
     },
     "description": "Alle in deiner Organisation. Du entscheidest, wer bei jeder Abstimmung abstimmt.",
+    "export": {
+      "button": "Exportieren",
+      "error": "Deine Mitglieder konnten nicht heruntergeladen werden",
+      "file_name": "mitglieder",
+      "progress": "{{done}} von {{total}}…"
+    },
     "importer": {
       "button": "Importieren"
     },

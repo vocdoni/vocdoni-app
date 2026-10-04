@@ -300,12 +300,11 @@
   "censuses": {
     "description": "Qui peut voter dans chacun de vos votes, et les listes électorales enregistrées pour les réutiliser.",
     "empty": {
-      "description": "Quand vous choisissez qui peut voter, cette liste est conservée ici.",
+      "description": "Une liste électorale est créée quand vous choisissez qui peut voter dans un vote, ou quand vous enregistrez une sélection dans Personnes.",
       "new_vote": "Nouveau vote",
       "title": "Votre première liste électorale est créée avec votre premier vote."
     },
     "everyone": {
-      "description": "Tous vos membres, y compris ceux que vous ajouterez plus tard.",
       "title": "Tout le monde"
     },
     "filter": {
@@ -1092,6 +1091,12 @@
       "title": "Listes électorales"
     },
     "description": "Toutes les personnes de votre organisation. Vous choisissez qui participe à chaque vote.",
+    "export": {
+      "button": "Exporter",
+      "error": "Vos membres n'ont pas pu être téléchargés",
+      "file_name": "membres",
+      "progress": "{{done}} sur {{total}}…"
+    },
     "importer": {
       "button": "Importer"
     },

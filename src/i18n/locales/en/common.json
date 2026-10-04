@@ -285,12 +285,11 @@
   "censuses": {
     "description": "Who can vote in each of your votes, and censuses you saved to reuse.",
     "empty": {
-      "description": "When you choose who can vote, that list is kept here.",
+      "description": "A census is made when you choose who can vote in a vote, or when you save a selection in People.",
       "new_vote": "New vote",
       "title": "Your first census is created with your first vote."
     },
     "everyone": {
-      "description": "All your members, including people you add later.",
       "title": "Everyone"
     },
     "filter": {
@@ -1072,6 +1071,12 @@
       "title": "Censuses"
     },
     "description": "Everyone in your organization. You choose who votes in each vote.",
+    "export": {
+      "button": "Export",
+      "error": "Your members couldn't be downloaded",
+      "file_name": "members",
+      "progress": "{{done}} of {{total}}…"
+    },
     "importer": {
       "button": "Import"
     },

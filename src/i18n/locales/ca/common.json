@@ -300,12 +300,11 @@
   "censuses": {
     "description": "Qui pot votar en cadascuna de les teves votacions, i els censos que has desat per reutilitzar-los.",
     "empty": {
-      "description": "Quan tries qui pot votar, aquesta llista es desa aquí.",
+      "description": "Un cens es crea quan tries qui pot votar en una votació, o quan deses una selecció a Persones.",
       "new_vote": "Nova votació",
       "title": "El teu primer cens es crea amb la teva primera votació."
     },
     "everyone": {
-      "description": "Tots els teus membres, inclosos els que afegeixis més endavant.",
       "title": "Tothom"
     },
     "filter": {
@@ -1092,6 +1091,12 @@
       "title": "Censos"
     },
     "description": "Tothom de la teva organització. Tu tries qui vota a cada votació.",
+    "export": {
+      "button": "Exporta",
+      "error": "No s'han pogut descarregar els teus membres",
+      "file_name": "membres",
+      "progress": "{{done}} de {{total}}…"
+    },
     "importer": {
       "button": "Importa"
     },

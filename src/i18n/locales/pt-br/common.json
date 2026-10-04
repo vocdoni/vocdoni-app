@@ -300,12 +300,11 @@
   "censuses": {
     "description": "Quem pode votar em cada uma das suas votações, e as listas de participantes que você salvou para reutilizar.",
     "empty": {
-      "description": "Quando você escolhe quem pode votar, essa lista fica guardada aqui.",
+      "description": "Uma lista de participantes é criada quando você escolhe quem pode votar em uma votação, ou quando salva uma seleção em Pessoas.",
       "new_vote": "Nova votação",
       "title": "Sua primeira lista de participantes é criada com a sua primeira votação."
     },
     "everyone": {
-      "description": "Todos os seus membros, inclusive os que você adicionar depois.",
       "title": "Todos"
     },
     "filter": {
@@ -1092,6 +1091,12 @@
       "title": "Listas de participantes"
     },
     "description": "Todas as pessoas da sua organização. Você escolhe quem vota em cada votação.",
+    "export": {
+      "button": "Exportar",
+      "error": "Não foi possível baixar seus membros",
+      "file_name": "membros",
+      "progress": "{{done}} de {{total}}…"
+    },
     "importer": {
       "button": "Importar"
     },

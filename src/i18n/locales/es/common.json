@@ -300,12 +300,11 @@
   "censuses": {
     "description": "Quién puede votar en cada una de tus votaciones, y los censos que guardaste para reutilizarlos.",
     "empty": {
-      "description": "Cuando eliges quién puede votar, esa lista se guarda aquí.",
+      "description": "Un censo se crea cuando eliges quién puede votar en una votación, o cuando guardas una selección en Personas.",
       "new_vote": "Nueva votación",
       "title": "Tu primer censo se crea con tu primera votación."
     },
     "everyone": {
-      "description": "Todos tus miembros, incluidos los que añadas más adelante.",
       "title": "Todos"
     },
     "filter": {
@@ -1092,6 +1091,12 @@
       "title": "Censos"
     },
     "description": "Todas las personas de tu organización. Tú eliges quién vota en cada votación.",
+    "export": {
+      "button": "Exportar",
+      "error": "No se han podido descargar tus miembros",
+      "file_name": "miembros",
+      "progress": "{{done}} de {{total}}…"
+    },
     "importer": {
       "button": "Importar"
     },

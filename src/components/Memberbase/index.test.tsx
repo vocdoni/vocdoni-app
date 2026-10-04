@@ -1,12 +1,19 @@
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
-import { render, screen } from '~src/test-utils'
+import { render, screen, waitFor } from '~src/test-utils'
 import { MemberbaseTabs } from './index'
 
 const membersCount = vi.hoisted(() => ({ value: undefined as number | undefined }))
 
+const exportData = vi.hoisted(() => ({ fetch: vi.fn(), download: vi.fn() }))
+
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ currentAddress: '0xabc' }),
+  useAuth: () => ({ currentAddress: '0xabc', bearedFetch: exportData.fetch }),
+}))
+
+vi.mock('~utils/download', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/download')>()),
+  downloadBlob: exportData.download,
 }))
 
 vi.mock('~src/queries/members', async (importOriginal) => {
@@ -46,6 +53,38 @@ describe('MemberbaseTabs', () => {
   afterEach(() => {
     membersCount.value = undefined
     censuses.isLoading = true
+  })
+
+  it('exports every member from the header, phones left out, once there are members', async () => {
+    const user = userEvent.setup()
+    exportData.fetch.mockResolvedValue({
+      members: [
+        { id: 'm1', name: 'Anna', surname: 'Vila', email: 'anna@example.test', phone: 'hash', nationalId: '12345678Z' },
+      ],
+      pagination: { totalItems: 1, lastPage: 1, currentPage: 1 },
+    })
+    membersCount.value = 1
+    renderTabs()
+
+    await user.click(screen.getByRole('button', { name: 'Export' }))
+
+    await waitFor(() => expect(exportData.download).toHaveBeenCalled())
+    const [blob, fileName] = exportData.download.mock.calls[0]
+    expect(fileName).toMatch(/^members-\d{4}-\d{2}-\d{2}\.csv$/)
+    const csv = await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(String(reader.result))
+      reader.readAsText(blob as Blob)
+    })
+    expect(csv).toContain('anna@example.test')
+    expect(csv).not.toContain('hash')
+    expect(csv).not.toContain('12345678Z')
+  })
+
+  it('offers no export with nobody to export', () => {
+    membersCount.value = 0
+    renderTabs()
+    expect(screen.queryByRole('button', { name: 'Export' })).toBeNull()
   })
 
   it('counts saved censuses and votes on the Censuses tab', () => {

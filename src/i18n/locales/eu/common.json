@@ -285,12 +285,11 @@
   "censuses": {
     "description": "Nork bozka dezakeen zure bozketa bakoitzean, eta berrerabiltzeko gorde dituzun erroldeak.",
     "empty": {
-      "description": "Nork bozka dezakeen aukeratzen duzunean, zerrenda hori hemen gordetzen da.",
+      "description": "Errolda bat sortzen da bozketa batean nork bozka dezakeen aukeratzen duzunean, edo Pertsonak atalean hautapen bat gordetzen duzunean.",
       "new_vote": "Bozketa berria",
       "title": "Zure lehen erroldea zure lehen bozketarekin sortzen da."
     },
     "everyone": {
-      "description": "Zure kide guztiak, geroago gehitzen dituzunak barne.",
       "title": "Denak"
     },
     "filter": {
@@ -1072,6 +1071,12 @@
       "title": "Erroldeak"
     },
     "description": "Zure erakundeko guztiak. Zuk erabakitzen duzu nork bozkatzen duen bozketa bakoitzean.",
+    "export": {
+      "button": "Esportatu",
+      "error": "Ezin izan dira zure kideak deskargatu",
+      "file_name": "kideak",
+      "progress": "{{done}} / {{total}}…"
+    },
     "importer": {
       "button": "Inportatu"
     },

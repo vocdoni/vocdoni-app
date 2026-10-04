@@ -11,10 +11,9 @@ import { EmptyState } from '~components/ui/EmptyState'
 import { FilterPills, type FilterPillItem } from '~components/ui/FilterPills'
 import { useDateFns } from '~i18n/use-date-fns'
 import { Routes } from '~routes'
-import { useMembersCount } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { CensusRow, VoteStateBadge } from './CensusRow'
-import { censusSourceLabel, everyoneTitle, peopleUnit, untitledVote, votersUnit } from './labels'
+import { censusSourceLabel, peopleUnit, untitledVote, votersUnit } from './labels'
 import { censusSourceOf, type SavedCensusRow, voteStateOf } from './model'
 import { useCensusIndex } from './useCensusIndex'
 
@@ -57,7 +56,6 @@ export const CensusesIndex = () => {
   const { t } = useTranslation()
   const { format } = useDateFns()
   const { index, isLoading, isError, error, markers } = useCensusIndex()
-  const members = useMembersCount()
   const [filter, setFilter] = useState<Filter>('all')
 
   useEffect(() => {
@@ -162,8 +160,6 @@ export const CensusesIndex = () => {
       </Banner>
     )
 
-  const everyoneCount = members.known ? members.count : (index.everyone?.membersCount ?? 0)
-
   return (
     <Stack gap={6}>
       <Text fontSize='sm' color='fg.muted'>
@@ -179,23 +175,6 @@ export const CensusesIndex = () => {
           onSelect={(value) => setFilter(value)}
           label={t('censuses.filter.label', { defaultValue: 'Filter censuses' })}
         />
-      )}
-
-      {index.everyone && filter === 'all' && (
-        <Stack as='ul' listStyleType='none' m={0} p={0}>
-          <CensusRow
-            pinned
-            title={everyoneTitle(t)}
-            to={generatePath(Routes.dashboard.memberbase.census, { groupId: index.everyone.id })}
-            meta={[
-              t('censuses.everyone.description', {
-                defaultValue: 'All your members, including people you add later.',
-              }),
-            ]}
-            count={everyoneCount}
-            unit={peopleUnit(t, everyoneCount)}
-          />
-        </Stack>
       )}
 
       {voteCount > 0 && VOTE_GROUPS.some((key) => visible(key) && index.votes[key].length) && (
@@ -222,7 +201,8 @@ export const CensusesIndex = () => {
         <EmptyState
           title={t('censuses.empty.title', { defaultValue: 'Your first census is created with your first vote.' })}
           description={t('censuses.empty.description', {
-            defaultValue: 'When you choose who can vote, that list is kept here.',
+            defaultValue:
+              'A census is made when you choose who can vote in a vote, or when you save a selection in People.',
           })}
           py={10}
           border='1px dashed'

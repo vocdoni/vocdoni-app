@@ -11,6 +11,7 @@ import { useCensusIndex } from './Censuses/useCensusIndex'
 import { getStoredImportJobId, readAccountId, setStoredImportJobId } from './importJobStorage'
 import { JobId, MembersPageProvider } from './MembersPageContext'
 import { AddPersonSheet } from './People/AddPersonSheet'
+import { ExportMembersButton } from './People/ExportMembersButton'
 
 export type { JobId } from './MembersPageContext'
 
@@ -81,6 +82,7 @@ export const MemberbaseTabs = () => {
                 {t('memberbase.importer.button', { defaultValue: 'Import' })}
               </RouterLink>
             </Button>
+            {members.known && members.count > 0 && <ExportMembersButton />}
             <Button onClick={() => setAddPersonOpen(true)}>
               <Icon as={LuUserPlus} />
               {t('memberbase.add_person', { defaultValue: 'Add person' })}
