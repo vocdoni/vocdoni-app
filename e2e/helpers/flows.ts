@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test'
 import { membersCsv, TEST_PASSWORD, type TestMember, uniqueEmail } from './data'
-import { checkCheckbox, fillPinInput, selectComboboxOption, toggleSwitch } from './fixtures'
+import { checkCheckbox, fillPinInput, pickRadio, selectComboboxOption, toggleSwitch } from './fixtures'
 import { MailSubjects, waitForCode } from './mailhog'
 
 /**
@@ -311,9 +311,10 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
     await expect(anonymous).toBeChecked()
   }
 
-  // The census is the group; voter authentication cannot be configured until
-  // one is chosen (the modal button reports as much).
-  await selectComboboxOption(page, page.locator('#groupId'), /All Members/i)
+  // Who can vote: Everyone, the default (live until publish, frozen then). Picked
+  // explicitly anyway, so the suite doesn't lean on the default. The radio cards'
+  // hidden inputs carry `name="censusSource"`, so this doesn't depend on copy.
+  await pickRadio(page, 'censusSource', 'everyone')
 
   await page.getByRole('button', { name: /Configure Voter Authentication/i }).click()
   const dialog = page.getByRole('dialog')
@@ -339,7 +340,9 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
     'data-selected',
     ''
   )
-  await toggleSwitch(dialog)
+  // Choosing who can vote may already have set up email codes: switch them on only if off.
+  const twoFactor = dialog.locator('[data-scope="switch"][data-part="control"]').first()
+  if ((await twoFactor.getAttribute('data-state')) !== 'checked') await toggleSwitch(dialog)
   await expect(dialog.locator('input[value="email"]')).toBeChecked()
   await advance.click()
 

@@ -383,6 +383,15 @@ describe('ProcessView voting settings', () => {
     )
   }
 
+  it("leads to the vote's census page in Members", async () => {
+    renderWithCensus(false)
+
+    expect((await screen.findByText('Manage census')).closest('a')).toHaveAttribute(
+      'href',
+      '/admin/memberbase/censuses/vote/0xabc'
+    )
+  })
+
   it('reports an anonymous census in the voting settings', async () => {
     renderWithCensus(true)
 

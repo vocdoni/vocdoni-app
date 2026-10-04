@@ -7,7 +7,7 @@ import { useAuth } from '~components/Auth/useAuth'
 import type { Table } from '~components/Spreadsheet/readTable'
 import { useToast } from '~components/Toast'
 import { Routes } from '~routes'
-import { useAddMembers } from '~src/queries/members'
+import { useAddMembers, useSignInReadiness } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { type MemberFieldId, useMemberFields } from '../fields'
 import { getStoredImportJobId, readAccountId, setStoredImportJobId } from '../importJobStorage'
@@ -21,6 +21,9 @@ import { returnToKind, safeReturnTo } from './returnTo'
 import { ReviewStep } from './ReviewStep'
 import { type ImportStep, Stepper } from './Stepper'
 import { LARGE_FILE_ROWS, UploadStep } from './UploadStep'
+
+/** The share of members with an email above which a vote from the import starts with email codes. */
+const EMAIL_SIGN_IN_SHARE = 0.9
 
 type Submitted = {
   jobId: string | null
@@ -138,6 +141,10 @@ export const MembersImport = () => {
     }
   }
 
+  // Whether nearly everyone (90% or more) can get a code by email, for "Create a vote with everyone"
+  const readiness = useSignInReadiness({ enabled: step === 'done' })
+  const emailSignIn = readiness.available && readiness.withEmail >= readiness.total * EMAIL_SIGN_IN_SHARE
+
   // The receipt now tells how the job went, so the People tab needn't follow it too
   const onSettled = useCallback(() => {
     const account = readAccountId(currentAddress)
@@ -146,7 +153,11 @@ export const MembersImport = () => {
 
   const onNext = (next: NextAction) => {
     trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportNextClicked, props: { next } })
-    if (next === 'create_vote') navigate(generatePath(Routes.processes.create))
+    if (next === 'create_vote')
+      // A new vote for Everyone, with codes by email already set when nearly everyone has one
+      navigate(generatePath(Routes.processes.create), {
+        state: { fresh: true, ...(emailSignIn ? { signIn: 'email' } : {}) },
+      })
     else if (next === 'return' && returnTo) navigate(returnTo)
     else navigate(membersPath)
   }

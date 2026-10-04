@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event'
-import { mockUseOrganization, render, screen, waitFor } from '~src/test-utils'
+import { fireEvent, mockUseOrganization, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { AddToGroupSheet, RemoveFromGroupSheet, SaveAsCensusSheet, UNDO_DURATION } from './BulkActions'
+import { AddToGroupSheet, AddToVoteSheet, RemoveFromGroupSheet, SaveAsCensusSheet, UNDO_DURATION } from './BulkActions'
 import type { SelectedMember } from './useSelection'
 
 const mocks = vi.hoisted(() => ({
@@ -11,6 +11,49 @@ const mocks = vi.hoisted(() => ({
   deleteGroup: vi.fn(),
   toast: vi.fn(),
   fetch: vi.fn(),
+  navigate: vi.fn(),
+  voteOwned: new Set<string>(),
+  addCensusMembers: vi.fn(),
+  waitFor: vi.fn(),
+  processes: [] as unknown[],
+  markersReady: true,
+}))
+
+vi.mock('~components/Memberbase/Censuses/useCensusIndex', () => ({
+  useAllVotes: () => ({
+    published: mocks.processes,
+    drafts: [],
+    all: mocks.processes,
+    complete: true,
+    isLoading: false,
+  }),
+}))
+
+vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~src/providers/ApiClientProvider')>()),
+  useApiClient: () => ({
+    client: {
+      elections: {
+        list: async () => ({ processes: mocks.processes, pagination: {} }),
+        addCensusMembers: mocks.addCensusMembers,
+      },
+      jobs: { waitFor: mocks.waitFor },
+    },
+  }),
+}))
+
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('react-router')>()),
+  useNavigate: () => mocks.navigate,
+}))
+
+vi.mock('~src/queries/voteGroups', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~src/queries/voteGroups')>()),
+  useVoteGroupMarkers: () => ({
+    markers: new Map(),
+    ready: mocks.markersReady,
+    isVoteOwned: (id?: string) => !!id && mocks.voteOwned.has(id),
+  }),
 }))
 
 vi.mock('~components/Auth/useAuth', () => ({
@@ -26,6 +69,7 @@ vi.mock('~src/queries/groups', async (importOriginal) => ({
   ...(await importOriginal<typeof import('~src/queries/groups')>()),
   useAllGroups: () => ({ data: mocks.groups, isLoading: false }),
   useUpdateGroup: () => ({ mutateAsync: mocks.updateGroup, isPending: false }),
+  useUpdateGroupWithReport: () => ({ mutateAsync: mocks.updateGroup, isPending: false }),
   useCreateGroup: () => ({ mutateAsync: mocks.createGroup, isPending: false }),
   useDeleteGroup: () => ({ mutate: mocks.deleteGroup, isPending: false }),
 }))
@@ -47,6 +91,9 @@ describe('bulk action sheets', () => {
       ...Array.from({ length: 7 }, (_, index) => ({ id: `g${index}`, title: `Census ${index + 1}`, membersCount: 1 })),
     ]
     Object.values(mocks).forEach((mock) => typeof mock === 'function' && mock.mockReset())
+    mocks.voteOwned = new Set()
+    mocks.processes = []
+    mocks.markersReady = true
     mocks.updateGroup.mockResolvedValue(undefined)
     setReactProvidersMock({
       useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
@@ -81,6 +128,12 @@ describe('bulk action sheets', () => {
 
     saved.action.onClick()
     expect(mocks.deleteGroup).toHaveBeenCalledWith('new-group', expect.anything())
+
+    // The toast also leads to the new census
+    render(saved.description)
+    // The sheet is still open in this test, so the page behind it takes no pointer events
+    fireEvent.click(screen.getByRole('button', { name: 'Open the census' }))
+    expect(mocks.navigate).toHaveBeenCalledWith('/admin/memberbase/censuses/new-group')
   })
 
   it('saves everyone through includeAllMembers, without sending ids', async () => {
@@ -110,6 +163,52 @@ describe('bulk action sheets', () => {
     expect(screen.queryByRole('option', { name: /Everyone/ })).toBeNull()
   })
 
+  it('never offers a vote’s own census among the saved ones', async () => {
+    const user = userEvent.setup()
+    mocks.voteOwned = new Set(['g0'])
+    render(<RemoveFromGroupSheet open onOpenChange={vi.fn()} members={[anna]} />)
+
+    await user.click(screen.getByRole('combobox'))
+    expect(screen.queryByRole('option', { name: /Census 1/ })).toBeNull()
+    expect(screen.getAllByRole('option')).toHaveLength(6)
+  })
+
+  it('adds people to a vote with a census of its own through that census, so the two never drift apart', async () => {
+    const user = userEvent.setup()
+    mocks.voteOwned = new Set(['owned'])
+    mocks.updateGroup.mockResolvedValue({ censusJobIds: ['job-1'] })
+    mocks.processes = [
+      { id: 'p1', title: { default: 'Assemblea' }, census: { groupId: 'owned' }, questions: [{ status: 'ONGOING' }] },
+    ]
+    render(<AddToVoteSheet open onOpenChange={vi.fn()} members={[anna, jordi]} />)
+
+    await user.click(screen.getByRole('combobox'))
+    await user.click(await screen.findByRole('option', { name: 'Assemblea' }))
+    await user.click(screen.getByRole('button', { name: 'Add 2 people' }))
+
+    await waitFor(() =>
+      expect(mocks.updateGroup).toHaveBeenCalledWith({ groupId: 'owned', body: { addMembers: ['a1', 'j2'] } })
+    )
+    expect(mocks.addCensusMembers).not.toHaveBeenCalled()
+    await waitFor(() => expect(mocks.waitFor).toHaveBeenCalledWith('job-1', expect.anything()))
+  })
+
+  it('adds people taken out of a vote that follows Everyone back to its census', async () => {
+    const user = userEvent.setup()
+    mocks.addCensusMembers.mockResolvedValue({ added: 1, errors: [] })
+    mocks.processes = [
+      { id: 'p1', title: { default: 'Assemblea' }, census: { groupId: 'all' }, questions: [{ status: 'ONGOING' }] },
+    ]
+    render(<AddToVoteSheet open onOpenChange={vi.fn()} members={[anna]} />)
+
+    await user.click(screen.getByRole('combobox'))
+    await user.click(await screen.findByRole('option', { name: /Assemblea/ }))
+    await user.click(screen.getByRole('button', { name: 'Add one person' }))
+
+    await waitFor(() => expect(mocks.addCensusMembers).toHaveBeenCalledWith('p1', ['a1']))
+    expect(mocks.updateGroup).not.toHaveBeenCalled()
+  })
+
   it('adds a big selection to a saved census 500 at a time', async () => {
     const user = userEvent.setup()
     const members = Array.from({ length: 1200 }, (_, index) => person(index))
@@ -129,7 +228,8 @@ describe('bulk action sheets', () => {
 
   it('removes people from a saved census, saying they stay in the members', async () => {
     const user = userEvent.setup()
-    mocks.groups[1].censusIds = ['census-of-a-vote']
+    // A vote whose census is this saved census
+    mocks.processes = [{ id: 'p1', title: { default: 'Assemblea' }, census: { groupId: 'g0' }, questions: [] }]
     const onDone = vi.fn()
     render(<RemoveFromGroupSheet open onOpenChange={vi.fn()} members={[anna, jordi]} onDone={onDone} />)
 
@@ -161,5 +261,47 @@ describe('bulk action sheets', () => {
       expect(mocks.updateGroup).toHaveBeenCalledWith({ groupId: 'g1', body: { addMembers: ['x1', 'x2', 'x3'] } })
     )
     expect(mocks.fetch).toHaveBeenCalledWith('organizations/0xorg/members?page=1&limit=100&search=')
+  })
+  it('warns about votes using a saved census only when one does', async () => {
+    const user = userEvent.setup()
+    mocks.groups[2].censusIds = ['census-of-a-deleted-vote']
+    render(<AddToGroupSheet open onOpenChange={vi.fn()} members={[anna]} />)
+
+    await pickGroup(user, 'Census 2')
+    expect(screen.queryByText(/If a vote uses this saved census/)).toBeNull()
+  })
+
+  it('asks again when everyone turns out to be a different number than confirmed', async () => {
+    const user = userEvent.setup()
+    mocks.fetch.mockResolvedValue({
+      members: [{ id: 'x1' }, { id: 'x2' }, { id: 'x3' }, { id: 'x4' }],
+      pagination: { totalItems: 4, lastPage: 1 },
+    })
+    render(<AddToGroupSheet open onOpenChange={vi.fn()} members={[]} everyone={3} />)
+
+    await pickGroup(user, 'Census 2')
+    await user.click(screen.getByRole('button', { name: 'Add 3 people' }))
+
+    expect(await screen.findByText(/there are 4 now\. Nothing was changed yet/)).toBeInTheDocument()
+    expect(mocks.updateGroup).not.toHaveBeenCalled()
+    expect(mocks.toast).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole('button', { name: 'Add 4 people' }))
+    await waitFor(() =>
+      expect(mocks.updateGroup).toHaveBeenCalledWith({
+        groupId: 'g1',
+        body: { addMembers: ['x1', 'x2', 'x3', 'x4'] },
+      })
+    )
+  })
+
+  it('waits for the vote censuses to be told apart before adding to a vote', () => {
+    mocks.markersReady = false
+    mocks.processes = [
+      { id: 'p1', title: { default: 'Assemblea' }, census: { groupId: 'owned' }, questions: [{ status: 'ONGOING' }] },
+    ]
+    render(<AddToVoteSheet open onOpenChange={vi.fn()} members={[anna]} />)
+
+    expect(screen.getByRole('button', { name: 'Add one person' })).toBeDisabled()
   })
 })

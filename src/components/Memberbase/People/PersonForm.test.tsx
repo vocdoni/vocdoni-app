@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event'
-import { render, screen } from '~src/test-utils'
-import { changedFields, editPayload, PersonForm } from './PersonForm'
+import { render, screen, waitFor, within } from '~src/test-utils'
+import { changedFields, editPayload, needsLiveConfirm, PersonForm, type RunningVote } from './PersonForm'
 import type { SelectedMember } from './useSelection'
 
 const mocks = vi.hoisted(() => ({ edit: vi.fn(), add: vi.fn(), track: vi.fn() }))
@@ -31,9 +31,17 @@ const anna = {
   password: '',
 } as SelectedMember
 
-const Harness = ({ member, onSaved = vi.fn() }: { member?: SelectedMember; onSaved?: () => void }) => (
+const Harness = ({
+  member,
+  onSaved = vi.fn(),
+  runningVotes,
+}: {
+  member?: SelectedMember
+  onSaved?: () => void
+  runningVotes?: RunningVote[]
+}) => (
   <>
-    <PersonForm formId='f' member={member} onSaved={onSaved} inLiveVote />
+    <PersonForm formId='f' member={member} onSaved={onSaved} inLiveVote runningVotes={runningVotes} />
     <button type='submit' form='f'>
       Save
     </button>
@@ -159,5 +167,64 @@ describe('PersonForm', () => {
 
     expect(mocks.add).toHaveBeenCalledWith([{ surname: 'Serra', phone: '+34600000001', memberNumber: '7' }])
     expect(mocks.track).toHaveBeenCalledWith({ name: 'member_added', props: { source: 'form' } })
+  })
+
+  describe('in a vote in progress', () => {
+    const assemblea: RunningVote = { id: 'p1', title: 'Assemblea 2026', signInFields: ['memberNumber', 'email'] }
+
+    it('says changes apply right away there', () => {
+      render(<Harness member={anna} runningVotes={[assemblea]} />)
+      expect(screen.getByText("Changes apply right away in 'Assemblea 2026'.")).toBeInTheDocument()
+    })
+
+    it('asks before changing a detail the vote signs in with, naming the vote, then saves', async () => {
+      const user = userEvent.setup()
+      render(<Harness member={anna} runningVotes={[assemblea]} />)
+
+      const email = screen.getByRole('textbox', { name: 'Email' })
+      await user.clear(email)
+      await user.type(email, 'anna.vila@example.test')
+      await user.click(screen.getByRole('button', { name: 'Save' }))
+
+      const dialog = await screen.findByRole('dialog', { name: 'Change this in a vote in progress?' })
+      expect(dialog).toHaveTextContent("This person can vote in 'Assemblea 2026'.")
+      expect(mocks.edit).not.toHaveBeenCalled()
+      await user.click(within(dialog).getByRole('button', { name: 'Save change' }))
+
+      await waitFor(() => expect(mocks.edit).toHaveBeenCalledWith({ id: 'a1', email: 'anna.vila@example.test' }))
+    })
+
+    it('saves other details straight away', async () => {
+      const user = userEvent.setup()
+      render(<Harness member={anna} runningVotes={[assemblea]} />)
+
+      await user.type(screen.getByRole('textbox', { name: 'Last Name' }), ' i Serra')
+      await user.click(screen.getByRole('button', { name: 'Save' }))
+
+      expect(mocks.edit).toHaveBeenCalledWith({ id: 'a1', surname: 'Vila Puig i Serra' })
+      expect(screen.queryByRole('dialog')).toBeNull()
+    })
+  })
+})
+
+describe('needsLiveConfirm', () => {
+  const votes: RunningVote[] = [{ id: 'p1', title: 'A', signInFields: ['memberNumber'] }]
+  const values = {
+    name: 'Anna',
+    surname: 'Vila Puig',
+    email: 'anna@example.test',
+    phone: '',
+    memberNumber: '0042',
+    nationalId: '',
+    birthDate: '',
+    weight: '',
+  }
+
+  it('asks for a new voting power, or a changed or emptied sign-in detail, only with a vote in progress', () => {
+    expect(needsLiveConfirm(anna, values, { weight: '3' }, votes)).toBe(true)
+    expect(needsLiveConfirm(anna, values, { memberNumber: '43' }, votes)).toBe(true)
+    expect(needsLiveConfirm(anna, { ...values, memberNumber: '' }, { surname: 'X' }, votes)).toBe(true)
+    expect(needsLiveConfirm(anna, values, { email: 'x@y.z' }, votes)).toBe(false)
+    expect(needsLiveConfirm(anna, values, { weight: '3' }, [])).toBe(false)
   })
 })

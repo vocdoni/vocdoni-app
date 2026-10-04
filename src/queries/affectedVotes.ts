@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { getProcessState } from '~components/Process/processState'
 import { useAllGroups } from './groups'
 import { flattenPages, useDraftProcesses, usePublishedProcesses } from './processes'
+import type { VoteGroupMarker } from './voteGroups'
 
 export type AffectedVoteState = 'live' | 'scheduled' | 'draft' | 'closed'
 
@@ -36,6 +37,35 @@ export const votesFollowingGroup = (processes: VotingProcessResponse[], groupId?
     })
     .map((process) => ({ id: process.id, title: getElectionTitle(process) ?? '', state: stateOf(process) }))
     .sort((a, b) => STATE_ORDER.indexOf(a.state) - STATE_ORDER.indexOf(b.state))
+}
+
+/** A vote that copied a saved census into a census of its own, and when. */
+export type CopyingVote = AffectedVote & { copiedAt: string }
+
+/**
+ * The votes that copied the given saved census into one of their own (their marker's `fromId`), live
+ * ones first. A copy its vote no longer follows (replaced since) isn't listed: that vote has moved on.
+ */
+export const votesCopying = (
+  processes: VotingProcessResponse[],
+  markers: Map<string, VoteGroupMarker>,
+  groupId?: string
+): CopyingVote[] => {
+  if (!groupId) return []
+  const byId = new Map(processes.map((process) => [process.id, process]))
+  const copies: CopyingVote[] = []
+  markers.forEach((marker, copyId) => {
+    if (marker.kind !== 'copy' || marker.fromId !== groupId) return
+    const process = byId.get(marker.processId)
+    if (!process || process.census?.groupId !== copyId) return
+    copies.push({
+      id: process.id,
+      title: getElectionTitle(process) ?? '',
+      state: stateOf(process),
+      copiedAt: marker.createdAt,
+    })
+  })
+  return copies.sort((a, b) => STATE_ORDER.indexOf(a.state) - STATE_ORDER.indexOf(b.state))
 }
 
 /**

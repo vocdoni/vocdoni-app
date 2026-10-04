@@ -413,9 +413,17 @@ type ValidationClient = ReturnType<typeof useApiClient>['client']
  * The members who lack `field` (email or phone), from the census validation endpoint: a 200 means
  * everyone has it, a 400 lists who doesn't in `data.missingData`. Any other failure throws.
  */
-const membersMissing = async (client: ValidationClient, orgAddress: string, field: 'email' | 'phone') => {
+export const membersMissing = async (
+  client: ValidationClient,
+  orgAddress: string,
+  field: 'email' | 'phone',
+  groupId?: string
+) => {
   try {
-    await client.elections.validateCensus({ orgAddress, census: { authFields: [], twoFaFields: [field] } })
+    await client.elections.validateCensus({
+      orgAddress,
+      census: { authFields: [], twoFaFields: [field], ...(groupId ? { groupId } : {}) },
+    })
     return []
   } catch (error) {
     if (error instanceof VocdoniApiError && error.status === 400) {
@@ -448,7 +456,7 @@ const NO_IDS: string[] = []
  * phone), cached for 5 minutes and refreshed by any member write (they share the members key).
  * Never polled. `available` stays false when it can't be worked out, so the UI says nothing.
  */
-export const useSignInReadiness = () => {
+export const useSignInReadiness = ({ enabled = true }: { enabled?: boolean } = {}) => {
   const { organization } = useOrganization()
   const { client } = useApiClient()
   const { count, known } = useMembersCount()
@@ -456,7 +464,7 @@ export const useSignInReadiness = () => {
 
   const query = useQuery({
     queryKey: [...QueryKeys.organization.members(address), 'readiness'],
-    enabled: !!address && known && count > 0,
+    enabled: enabled && !!address && known && count > 0,
     staleTime: READINESS_STALE_TIME,
     retry: false,
     refetchOnWindowFocus: false,
@@ -475,8 +483,67 @@ export const useSignInReadiness = () => {
     total: count,
     ready: count - unreachable,
     unreachable,
+    /** How many have an email (a code by email reaches them) */
+    withEmail: Math.max(0, count - (query.data?.missingEmail ?? count)),
     /** The members with neither an email nor a mobile */
     unreachableIds: query.data?.unreachableIds ?? NO_IDS,
+    isLoading: query.isLoading,
+  }
+}
+
+export type CodeChannel = 'email' | 'phone'
+
+/** Who can't get a code by any of the channels: those missing every one of them. */
+export const unreachableAcross = (missing: string[][]) => {
+  if (!missing.length) return []
+  const [first, ...rest] = missing
+  const others = rest.map((ids) => new Set(ids))
+  return first.filter((id) => others.every((set) => set.has(id)))
+}
+
+/**
+ * How many people of a census can get a one-time voting code by the channels it uses: one validation
+ * call per channel, scoped to the census' group (the whole organization without one). Someone who
+ * has any of the channels can get a code. `available` stays false when it can't be worked out (no
+ * code channel, or the validation failed), so the UI says nothing.
+ */
+export const useCensusReadiness = ({
+  groupId,
+  channels,
+  total,
+  enabled = true,
+}: {
+  groupId?: string
+  channels: string[]
+  total: number
+  enabled?: boolean
+}) => {
+  const { organization } = useOrganization()
+  const { client } = useApiClient()
+  const address = organization?.address
+  const fields = (['email', 'phone'] as CodeChannel[]).filter((field) => channels.includes(field))
+
+  const query = useQuery({
+    queryKey: [...QueryKeys.organization.members(address), 'readiness', groupId ?? 'all', ...fields],
+    enabled: enabled && !!address && fields.length > 0 && total > 0,
+    staleTime: READINESS_STALE_TIME,
+    retry: false,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      const missing = await Promise.all(fields.map((field) => membersMissing(client, address!, field, groupId)))
+      return unreachableAcross(missing)
+    },
+  })
+
+  const unreachableIds = query.data ?? NO_IDS
+  const unreachable = Math.min(unreachableIds.length, total)
+  return {
+    available: query.isSuccess && total > 0,
+    total,
+    ready: total - unreachable,
+    unreachable,
+    /** Who can't get a code: the ids the validation names, to show them */
+    unreachableIds,
     isLoading: query.isLoading,
   }
 }

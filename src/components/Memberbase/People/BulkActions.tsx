@@ -1,5 +1,5 @@
-import { Box, Button, Flex, Icon, Stack, Tag, Text, Wrap, WrapItem } from '@chakra-ui/react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { Box, Button, Flex, Icon, Link, Stack, Tag, Text, Wrap, WrapItem } from '@chakra-ui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
 import { getElectionTitle } from '@vocdoni/react-components'
@@ -7,18 +7,29 @@ import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { LuUsers } from 'react-icons/lu'
-import { useAuth } from '~components/Auth/useAuth'
+import { generatePath, useNavigate } from 'react-router'
 import InputBasic from '~components/Form/InputBasic'
 import { Select } from '~components/Form/Select'
 import { useToast } from '~components/Toast'
 import { Banner } from '~components/ui/Banner'
 import { Sheet } from '~components/ui/Sheet'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { type Group, useAllGroups, useCreateGroup, useDeleteGroup, useUpdateGroup } from '~src/queries/groups'
+import {
+  censusJobIdsOf,
+  type Group,
+  useAllGroups,
+  useCreateGroup,
+  useDeleteGroup,
+  useUpdateGroup,
+  useUpdateGroupWithReport,
+} from '~src/queries/groups'
 import { QueryKeys } from '~src/queries/keys'
 import { getSignedMemberIds, isAbortError, useMemberIdCollector } from '~src/queries/members'
-import { paginatedElectionsQuery } from '~src/queries/organization'
+import { votesFollowingGroup } from '~src/queries/affectedVotes'
+import { useVoteGroupMarkers } from '~src/queries/voteGroups'
+import { Routes } from '~routes'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { useAllVotes } from '../Censuses/useCensusIndex'
 import { memberDisplayName } from './display'
 import type { SelectedMember } from './useSelection'
 
@@ -45,18 +56,48 @@ export type BulkSheetProps = {
   onDone?: () => void
 }
 
+/** Everyone's ids came out a different number than the admin confirmed: they confirm again. */
+export class CountChangedError extends Error {
+  constructor(public count: number) {
+    super(`The members changed: there are ${count} now`)
+    this.name = 'CountChangedError'
+  }
+}
+
 /**
  * The ids an action applies to: the given members', or, when everyone is selected, every member's,
- * collected page by page (no endpoint lists ids alone).
+ * collected page by page (no endpoint lists ids alone). When that collection finds a different number
+ * of people than `confirmed` (members were added or deleted meanwhile), it throws `CountChangedError`
+ * rather than act on people the admin didn't confirm.
  */
-const useTargetIds = (members: SelectedMember[], everyone?: number) => {
+const useTargetIds = (members: SelectedMember[], everyone: number | undefined, confirmed: number) => {
   const collector = useMemberIdCollector()
   const { collect } = collector
   const resolve = useCallback(async () => {
     if (everyone === undefined) return members.map((member) => member.id)
-    return (await collect()).members.map((member) => member.id)
-  }, [members, everyone, collect])
+    const ids = (await collect()).members.map((member) => member.id)
+    if (ids.length !== confirmed) throw new CountChangedError(ids.length)
+    return ids
+  }, [members, everyone, confirmed, collect])
   return { resolve, collecting: collector.progress, abort: collector.abort }
+}
+
+/** "There are N now": shown after everyone's ids came out a different number than confirmed. */
+const RecountBanner = ({ count }: { count: number | null }) => {
+  const { t, i18n } = useTranslation()
+  if (count === null) return null
+  return (
+    <Banner status='warning'>
+      {t('members.bulk.recount', {
+        defaultValue_one:
+          'Your members changed meanwhile: there is one now. Nothing was changed yet, so check and confirm again.',
+        defaultValue_other:
+          'Your members changed meanwhile: there are {{formattedCount}} now. Nothing was changed yet, so check and confirm again.',
+        count,
+        formattedCount: count.toLocaleString(i18n.resolvedLanguage),
+      })}
+    </Banner>
+  )
 }
 
 /** Up to five names, then "+N more". */
@@ -148,6 +189,7 @@ type SaveForm = { title: string; description: string }
 export const SaveAsCensusSheet = ({ open, onOpenChange, members, everyone, onDone }: BulkSheetProps) => {
   const { t } = useTranslation()
   const toast = useToast()
+  const navigate = useNavigate()
   const createGroup = useCreateGroup()
   const deleteGroup = useDeleteGroup()
   const methods = useForm<SaveForm>({ defaultValues: { title: '', description: '' } })
@@ -190,6 +232,17 @@ export const SaveAsCensusSheet = ({ open, onOpenChange, members, everyone, onDon
       const id = created?.id
       toast({
         title: t('members.save_census.saved', { defaultValue: 'Saved as “{{name}}”', name }),
+        // The toaster lives outside the router: a button that navigates, not a router link
+        description: id ? (
+          <Link asChild fontSize='sm' variant='underline'>
+            <button
+              type='button'
+              onClick={() => navigate(generatePath(Routes.dashboard.memberbase.census, { groupId: id }))}
+            >
+              {t('members.save_census.open', { defaultValue: 'Open the census' })}
+            </button>
+          </Link>
+        ) : undefined,
         type: 'success',
         duration: UNDO_DURATION,
         isClosable: true,
@@ -263,20 +316,28 @@ type GroupSheetProps = BulkSheetProps & {
 const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode }: GroupSheetProps) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
-  // Every saved census, not just the first page; "Everyone" can't be changed by hand
-  const { data: allGroups, isLoading } = useAllGroups({ enabled: open })
-  const groups = (allGroups ?? []).filter((group) => !group.isAutoGroup)
+  // Every saved census, not just the first page. Never "Everyone" (it can't be changed by hand), nor
+  // a vote's own census (that's changed from the vote)
+  const { data: allGroups, isLoading: groupsLoading } = useAllGroups({ enabled: open })
+  const { isVoteOwned, ready: markersReady } = useVoteGroupMarkers()
+  const isLoading = groupsLoading || !markersReady
+  const groups = (allGroups ?? []).filter((group) => !group.isAutoGroup && !isVoteOwned(group.id))
+  // The votes using it, as the Censuses tab counts them (a group's own `censusIds` only ever grows)
+  const votes = useAllVotes({ enabled: open })
   const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
+  const usedByVotes = selectedGroup ? votesFollowingGroup(votes.all, selectedGroup.id).length > 0 : false
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
+  const [recount, setRecount] = useState<number | null>(null)
   const updateGroup = useUpdateGroup()
-  const target = useTargetIds(members, everyone)
-  const count = everyone ?? members.length
+  const count = recount ?? everyone ?? members.length
+  const target = useTargetIds(members, everyone, count)
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
   const busy = progress !== null
 
   const close = () => {
     target.abort()
     setSelectedGroup(null)
+    setRecount(null)
     onOpenChange(false)
   }
 
@@ -310,6 +371,10 @@ const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode 
       onDone?.()
     } catch (error) {
       if (isAbortError(error)) return
+      if (error instanceof CountChangedError) {
+        setRecount(error.count)
+        return
+      }
       const signed = getSignedMemberIds(error)
       toast({
         title: done
@@ -402,7 +467,7 @@ const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode 
             {t('members.saved_census.stay', { defaultValue: 'They stay in your members.' })}
           </Text>
         )}
-        {!!selectedGroup?.censusIds?.length && (
+        {usedByVotes && (
           <Banner status='warning'>
             {add
               ? t('members.saved_census.used_add', {
@@ -414,6 +479,7 @@ const SavedCensusSheet = ({ open, onOpenChange, members, everyone, onDone, mode 
           </Banner>
         )}
         <TargetSummary members={members} everyone={everyone} />
+        <RecountBanner count={recount} />
         <ProgressNote
           progress={
             target.collecting
@@ -437,8 +503,10 @@ const ACTIVE_PROCESS_STATUSES: QuestionStatus[] = ['ONGOING', 'UPCOMING', 'PAUSE
 type VoteOption = {
   id: string
   title: string
-  /** The vote's census is "Everyone": every member is in it already */
+  /** The vote's census is "Everyone": every member is in it unless taken out of this vote */
   followsEveryone: boolean
+  /** The vote's census is a group of its own: people join it through the group, never around it */
+  ownGroupId?: string
 }
 
 /**
@@ -449,36 +517,42 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
   const { t, i18n } = useTranslation()
   const toast = useToast()
   const { client } = useApiClient()
-  const { currentAddress } = useAuth()
   const queryClient = useQueryClient()
   const [selectedVote, setSelectedVote] = useState<VoteOption | null>(null)
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
-  const target = useTargetIds(members, everyone)
+  const [recount, setRecount] = useState<number | null>(null)
+  const count = recount ?? everyone ?? members.length
+  const target = useTargetIds(members, everyone, count)
   const { data: groups } = useAllGroups({ enabled: open })
+  // Until the markers are in, a vote's own census can't be told from a saved one it shares
+  const { isVoteOwned, ready: markersReady } = useVoteGroupMarkers()
+  const updateGroup = useUpdateGroupWithReport()
   const everyoneGroupId = groups?.find((group) => group.isAutoGroup)?.id
-  const count = everyone ?? members.length
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
   const busy = progress !== null
 
-  const electionsQuery = paginatedElectionsQuery(currentAddress, client, { limit: 100 })
-  const { data: elections, isLoading } = useQuery({ ...electionsQuery, enabled: electionsQuery.enabled && open })
+  // Every published vote, all pages of them, not just the first hundred
+  const { published, isLoading: votesLoading } = useAllVotes({ enabled: open })
+  const isLoading = votesLoading || !markersReady
 
-  const votes: VoteOption[] = (elections?.processes ?? [])
+  const votes: VoteOption[] = published
     .filter((election) => ACTIVE_PROCESS_STATUSES.includes(computeProcessStatus(election.questions)))
     .map((election) => ({
       id: election.id,
       title: getElectionTitle(election) || election.id,
       followsEveryone: !!everyoneGroupId && election.census?.groupId === everyoneGroupId,
+      ownGroupId: isVoteOwned(election.census?.groupId) ? election.census?.groupId : undefined,
     }))
 
   const close = () => {
     target.abort()
     setSelectedVote(null)
+    setRecount(null)
     onOpenChange(false)
   }
 
   const submit = async () => {
-    if (!selectedVote || selectedVote.followsEveryone) return
+    if (!selectedVote || !markersReady) return
     setProgress({ done: 0, total: count })
     let added = 0
     let skipped = 0
@@ -486,11 +560,18 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
       const ids = await target.resolve()
       let done = 0
       for (const part of chunk(ids)) {
-        const response = await client.elections.addCensusMembers(selectedVote.id, part)
-        // Members are in the census already; raising the vote's voter limit is a job
-        if (response.jobId) await client.jobs.waitFor(response.jobId, { timeoutMs: RESIZE_TIMEOUT })
-        added += response.added
-        skipped += response.errors?.length ?? 0
+        if (selectedVote.ownGroupId) {
+          // The vote's census follows its group: adding around it would leave the two apart
+          const report = await updateGroup.mutateAsync({ groupId: selectedVote.ownGroupId, body: { addMembers: part } })
+          for (const jobId of censusJobIdsOf(report)) await client.jobs.waitFor(jobId, { timeoutMs: RESIZE_TIMEOUT })
+          added += part.length
+        } else {
+          const response = await client.elections.addCensusMembers(selectedVote.id, part)
+          // Members are in the census already; raising the vote's voter limit is a job
+          if (response.jobId) await client.jobs.waitFor(response.jobId, { timeoutMs: RESIZE_TIMEOUT })
+          added += response.added
+          skipped += response.errors?.length ?? 0
+        }
         done += part.length
         setProgress({ done, total: ids.length })
       }
@@ -515,6 +596,10 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
       onDone?.()
     } catch (error) {
       if (isAbortError(error)) return
+      if (error instanceof CountChangedError) {
+        setRecount(error.count)
+        return
+      }
       toast({
         title: added
           ? t('members.add_to_vote.stopped', {
@@ -543,7 +628,7 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
           <Button variant='outline' onClick={close} disabled={busy && !target.collecting}>
             {t('members.bulk.cancel', { defaultValue: 'Cancel' })}
           </Button>
-          <Button onClick={submit} loading={busy} disabled={!selectedVote || selectedVote.followsEveryone || !count}>
+          <Button onClick={submit} loading={busy} disabled={!selectedVote || !count || !markersReady}>
             {t('members.add_to_vote.submit', {
               defaultValue_one: 'Add one person',
               defaultValue_other: 'Add {{formattedCount}} people',
@@ -589,12 +674,14 @@ export const AddToVoteSheet = ({ open, onOpenChange, members, everyone, onDone }
         />
         {selectedVote?.followsEveryone && (
           <Banner status='info'>
-            {t('members.add_to_vote.follows_everyone', {
-              defaultValue: 'This vote’s census is “Everyone”, so they’re all in it already.',
+            {t('members.add_to_vote.follows_everyone_again', {
+              defaultValue:
+                'This vote’s census is “Everyone”: anyone taken out of this vote is added back, and those already in it are left as they are.',
             })}
           </Banner>
         )}
         <TargetSummary members={members} everyone={everyone} />
+        <RecountBanner count={recount} />
         <ProgressNote
           progress={
             target.collecting

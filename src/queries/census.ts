@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useElection } from '@vocdoni/react-components'
+import { ApiEndpoints } from '~components/Auth/api'
+import { useAuth } from '~components/Auth/useAuth'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 
 // The process read carries the census member count directly (`census.size`, response-only;
@@ -22,5 +24,28 @@ export const useAddCensusParticipants = () => {
   return useMutation({
     mutationFn: ({ processId, memberIds }: { processId: string; memberIds: string[] }) =>
       client.elections.addCensusMembers(processId, memberIds),
+  })
+}
+
+/** The most ids `DELETE /processes/{id}/census` takes per request. */
+export const CENSUS_REMOVAL_MAX = 1000
+
+export type RemoveCensusResponse = { removed?: number }
+
+/**
+ * Takes members out of a published process's census via `DELETE /processes/{id}/census` (no SDK
+ * method yet), for votes whose census isn't backed by a group of their own. All or nothing per
+ * request: a 409 lists in `signedMemberIds` who has already started voting, and removes nobody.
+ * At most `CENSUS_REMOVAL_MAX` ids per call.
+ */
+export const useRemoveCensusParticipants = () => {
+  const { bearedFetch } = useAuth()
+
+  return useMutation({
+    mutationFn: ({ processId, memberIds }: { processId: string; memberIds: string[] }) =>
+      bearedFetch<RemoveCensusResponse>(ApiEndpoints.ProcessCensus.replace('{processId}', processId), {
+        method: 'DELETE',
+        body: { memberIds },
+      }),
   })
 }

@@ -8,9 +8,10 @@ import { DraftsTable, useDeleteDraft } from './drafts'
 
 const toastSpy = vi.fn()
 const deleteElectionMock = vi.fn().mockResolvedValue(undefined)
+const { bearedFetch } = vi.hoisted(() => ({ bearedFetch: vi.fn() }))
 
 vi.mock('~components/Auth/useAuth', () => ({
-  useAuth: () => ({ currentAddress: '0xorg' }),
+  useAuth: () => ({ currentAddress: '0xorg', bearedFetch }),
 }))
 
 // Partial mock: AllProviders (used by render) still mounts the real ApiClientProvider.
@@ -44,6 +45,17 @@ afterEach(() => {
 
 describe('useDeleteDraft', () => {
   beforeEach(() => {
+    bearedFetch.mockReset()
+    bearedFetch.mockImplementation(async (path: string, params?: { method?: string }) =>
+      path === 'organizations/0xorg/meta' && !params?.method
+        ? {
+            meta: {
+              vg_own: { processId: 'draft-1', kind: 'copy', createdAt: '2026-10-01T00:00:00Z' },
+              vg_other: { processId: 'vote-9', kind: 'snapshot', createdAt: '2026-10-01T00:00:00Z' },
+            },
+          }
+        : undefined
+    )
     deleteElectionMock.mockClear()
     toastSpy.mockClear()
     localStorage.clear()
@@ -64,6 +76,44 @@ describe('useDeleteDraft', () => {
     expect(deleteElectionMock).toHaveBeenCalledWith('draft-1')
     expect(toastSpy).toHaveBeenCalled()
     expect(invalidateSpy).toHaveBeenCalled()
+  })
+
+  it('deletes the draft’s own census with it, once the draft is gone, and nobody else’s', async () => {
+    const queryClient = new QueryClient()
+    const order: string[] = []
+    deleteElectionMock.mockImplementationOnce(async () => {
+      order.push('delete draft')
+    })
+    bearedFetch.mockImplementation(async (path: string, params?: { method?: string }) => {
+      if (params?.method) order.push(`${params.method} ${path}`)
+      return path === 'organizations/0xorg/meta' && !params?.method
+        ? {
+            meta: {
+              vg_own: { processId: 'draft-1', kind: 'copy', createdAt: '2026-10-01T00:00:00Z' },
+              vg_other: { processId: 'vote-9', kind: 'snapshot', createdAt: '2026-10-01T00:00:00Z' },
+            },
+          }
+        : undefined
+    })
+    const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
+
+    await act(async () => {
+      await result.current.mutateAsync({ draftId: 'draft-1', silent: true })
+    })
+
+    expect(order).toEqual(['delete draft', 'DELETE organizations/0xorg/groups/own', 'DELETE organizations/0xorg/meta'])
+  })
+
+  it('leaves the census alone when the draft could not be deleted', async () => {
+    const queryClient = new QueryClient()
+    deleteElectionMock.mockRejectedValueOnce(new Error('boom'))
+    const { result } = renderHook(() => useDeleteDraft(), { wrapper: createWrapper(queryClient) })
+
+    await act(async () => {
+      await expect(result.current.mutateAsync({ draftId: 'draft-1', silent: true })).rejects.toThrow('boom')
+    })
+
+    expect(bearedFetch).not.toHaveBeenCalled()
   })
 
   it('suppresses the toast when called with silent=true', async () => {

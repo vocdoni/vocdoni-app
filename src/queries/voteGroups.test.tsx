@@ -1,0 +1,258 @@
+import { renderHook, waitFor } from '@testing-library/react'
+import { mockUseOrganization } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { AllProviders } from '~src/test-utils'
+import {
+  discardVoteGroupsOf,
+  forgetDeletedTestPeople,
+  isVoteOwned,
+  markVoteGroup,
+  parseVoteGroupMarkers,
+  pruneTestPeople,
+  sweepOrphanVoteGroups,
+  copySourceName,
+  type VoteGroupApi,
+  type VoteGroupMarker,
+  unmarkVoteGroup,
+  useVoteGroupMarkers,
+  voteGroupDescription,
+  voteGroupMetaKey,
+} from './voteGroups'
+
+const fetch = vi.hoisted(() => vi.fn())
+
+vi.mock('~components/Auth/useAuth', () => ({
+  useAuth: () => ({ bearedFetch: fetch }),
+}))
+
+describe('vote-owned group markers', () => {
+  beforeEach(() => {
+    fetch.mockReset()
+    setReactProvidersMock({ useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }) })
+  })
+
+  it('reads one marker per vg_ key and ignores everything else', () => {
+    const markers = parseVoteGroupMarkers({
+      isDashboardTutorialClosed: true,
+      // A name stored by an older build is dropped: the meta is public
+      vg_g1: {
+        processId: 'p1',
+        kind: 'copy',
+        createdAt: '2026-10-02T10:00:00Z',
+        fromId: 'quota',
+        from: 'Quota pagada',
+      },
+      vg_g2: { processId: 'p2', kind: 'snapshot', createdAt: '2026-10-02T11:00:00Z' },
+      vg_bad: { processId: 'p3', kind: 'unknown' },
+      vg_: { processId: 'p4', kind: 'copy' },
+      vg_g5: 'nonsense',
+    })
+
+    expect([...markers.keys()]).toEqual(['g1', 'g2'])
+    expect(markers.get('g1')).toEqual({
+      processId: 'p1',
+      kind: 'copy',
+      createdAt: '2026-10-02T10:00:00Z',
+      fromId: 'quota',
+    })
+    expect(isVoteOwned(markers, 'g2')).toBe(true)
+    expect(isVoteOwned(markers, 'saved')).toBe(false)
+    expect(isVoteOwned(markers, undefined)).toBe(false)
+  })
+
+  it('names what a copy came from only by looking it up', () => {
+    const markers = new Map<string, VoteGroupMarker>([
+      ['saved-copy', { processId: 'p1', kind: 'copy', createdAt: '', fromId: 'quota', source: 'saved' }],
+      ['vote-copy', { processId: 'p2', kind: 'copy', createdAt: '', fromId: 'junta-own', source: 'previous' }],
+      ['junta-own', { processId: 'junta', kind: 'copy', createdAt: '' }],
+      ['gone-copy', { processId: 'p3', kind: 'copy', createdAt: '', fromId: 'deleted', source: 'saved' }],
+    ])
+    const context = {
+      groupsById: new Map([['quota', { title: 'Quota pagada' }]]),
+      markers,
+      voteTitle: (id: string) => (id === 'junta' ? 'Junta 2025' : undefined),
+    }
+
+    expect(copySourceName(markers.get('saved-copy'), context)).toBe('Quota pagada')
+    expect(copySourceName(markers.get('vote-copy'), context)).toBe('Junta 2025')
+    expect(copySourceName(markers.get('gone-copy'), context)).toBeUndefined()
+    expect(copySourceName(markers.get('vote-copy'), { ...context, voteTitle: undefined })).toBeUndefined()
+  })
+
+  it('marks a group by sending only its own key, which the API merges into the meta', async () => {
+    fetch.mockResolvedValue(undefined)
+    const marker = { processId: 'p1', kind: 'test' as const, createdAt: '2026-10-02T10:00:00Z' }
+
+    await markVoteGroup(fetch, '0xorg', 'g1', marker)
+    await unmarkVoteGroup(fetch, '0xorg', 'g1')
+
+    expect(voteGroupMetaKey('g1')).toBe('vg_g1')
+    expect(fetch).toHaveBeenNthCalledWith(1, 'organizations/0xorg/meta', {
+      method: 'PUT',
+      body: { meta: { vg_g1: marker } },
+    })
+    expect(fetch).toHaveBeenNthCalledWith(2, 'organizations/0xorg/meta', {
+      method: 'DELETE',
+      body: { keys: ['vg_g1'] },
+    })
+  })
+
+  it('exposes the markers of the organization meta', async () => {
+    fetch.mockResolvedValue({ meta: { vg_g1: { processId: 'p1', kind: 'snapshot', createdAt: '' } } })
+
+    const { result } = renderHook(() => useVoteGroupMarkers(), { wrapper: AllProviders })
+
+    await waitFor(() => expect(result.current.ready).toBe(true))
+    await waitFor(() => expect(result.current.isVoteOwned('g1')).toBe(true))
+    expect(result.current.markers.get('g1')?.processId).toBe('p1')
+    expect(result.current.isVoteOwned('g2')).toBe(false)
+  })
+
+  it('describes the group in words', () => {
+    const t = ((_key: string, options: { defaultValue: string; vote: string }) =>
+      options.defaultValue.replace('{{vote}}', options.vote)) as never
+    expect(voteGroupDescription(t, 'Assemblea 2026')).toBe(
+      "Census of 'Assemblea 2026'. Changing it changes who can vote."
+    )
+  })
+})
+
+describe('cleaning up vote-owned groups', () => {
+  const OLD = '2026-10-01T10:00:00.000Z'
+  const NOW = Date.parse('2026-10-02T10:00:00.000Z')
+
+  const fakeApi = (markers: Record<string, Partial<VoteGroupMarker>>) => {
+    const api: VoteGroupApi = {
+      readMemberIds: vi.fn(),
+      readGroup: vi.fn(),
+      createGroup: vi.fn(),
+      deleteGroup: vi.fn(async () => undefined),
+      mark: vi.fn(),
+      unmark: vi.fn(async () => undefined),
+      removeMembers: vi.fn(async () => undefined),
+      testVote: vi.fn(async () => null),
+      markers: vi.fn(
+        async () =>
+          new Map(
+            Object.entries(markers).map(([id, marker]) => [
+              id,
+              { kind: 'copy', createdAt: OLD, ...marker } as VoteGroupMarker,
+            ])
+          )
+      ),
+    }
+    return api
+  }
+
+  it('deletes a deleted draft’s groups and their markers, and nobody else’s', async () => {
+    const api = fakeApi({ g1: { processId: 'draft' }, g2: { processId: 'other' }, g3: { processId: 'draft' } })
+
+    expect(await discardVoteGroupsOf(api, 'draft')).toEqual(['g1', 'g3'])
+    expect(api.deleteGroup).toHaveBeenCalledTimes(2)
+    expect(api.deleteGroup).not.toHaveBeenCalledWith('g2')
+    expect(api.unmark).toHaveBeenCalledWith('g1')
+    expect(api.unmark).toHaveBeenCalledWith('g3')
+  })
+
+  it('keeps the marker of a group that could not be deleted, for the next sweep', async () => {
+    const api = fakeApi({ g1: { processId: 'draft' } })
+    api.deleteGroup = vi.fn(async () => {
+      throw new Error('409')
+    })
+
+    expect(await discardVoteGroupsOf(api, 'draft')).toEqual([])
+    expect(api.unmark).not.toHaveBeenCalled()
+  })
+
+  it('sweeps only marked groups nothing uses any more', async () => {
+    const api = fakeApi({
+      used: { processId: 'p1' },
+      replaced: { processId: 'p1' },
+      gone: { processId: 'deleted' },
+      fresh: { processId: 'p1', createdAt: '2026-10-02T09:55:00.000Z' },
+      unreadable: { processId: 'flaky' },
+      draftWithoutGroup: { processId: 'p2' },
+      // A published vote answered without a group: its census read failed, so it's unknown
+      publishedWithoutGroup: { processId: 'p3' },
+      // Its marker names a vote that moved on, but another vote follows it
+      mislabelled: { processId: 'p1' },
+    })
+    const listed = [
+      { id: 'p1', census: { groupId: 'used' } },
+      { id: 'p2', published: false, census: {} },
+      { id: 'p3', published: true, census: {} },
+      { id: 'p4', published: true, census: { groupId: 'mislabelled' } },
+    ]
+    const listProcesses = vi.fn(async () => listed)
+    const readProcess = vi.fn(async (id: string) => {
+      if (id === 'flaky') throw new Error('500')
+      return null
+    })
+
+    const deleted = await sweepOrphanVoteGroups(api, listProcesses, readProcess, { now: NOW })
+
+    expect(deleted.sort()).toEqual(['gone', 'replaced'])
+    // Listed votes aren't read again: only the ones the list doesn't have
+    expect(readProcess.mock.calls.map(([id]) => id).sort()).toEqual(['deleted', 'flaky'])
+    expect(listProcesses).toHaveBeenCalledTimes(1)
+  })
+
+  it('sweeps nothing when the votes can’t all be listed', async () => {
+    const api = fakeApi({ gone: { processId: 'deleted' } })
+    const listProcesses = vi.fn(async () => {
+      throw new Error('500')
+    })
+
+    await expect(sweepOrphanVoteGroups(api, listProcesses, vi.fn(), { now: NOW })).rejects.toThrow('500')
+    expect(api.deleteGroup).not.toHaveBeenCalled()
+  })
+
+  it('lists no votes while every marker is too recent to sweep', async () => {
+    const api = fakeApi({ fresh: { processId: 'p1', createdAt: '2026-10-02T09:55:00.000Z' } })
+    const listProcesses = vi.fn(async () => [])
+
+    expect(await sweepOrphanVoteGroups(api, listProcesses, vi.fn(), { now: NOW })).toEqual([])
+    expect(listProcesses).not.toHaveBeenCalled()
+  })
+})
+
+describe('deleted test people', () => {
+  const testVote = { processId: 'p1', groupId: 'g1', memberIds: ['a', 'b', 'c'], processIds: ['p1'] }
+
+  // Its own fetch: queries left from the hooks above may still call the shared one
+  const metaFetch = vi.fn()
+  beforeEach(() => metaFetch.mockReset())
+
+  it('forgets the test people who were deleted', () => {
+    expect(pruneTestPeople(testVote, { ids: ['b', 'x'] })?.memberIds).toEqual(['a', 'c'])
+    expect(pruneTestPeople(testVote, { all: true })?.memberIds).toEqual([])
+  })
+
+  it('changes nothing when no test person was deleted', () => {
+    expect(pruneTestPeople(testVote, { ids: ['x'] })).toBeNull()
+    expect(pruneTestPeople(null, { all: true })).toBeNull()
+  })
+
+  it('writes the test vote back without them, keeping the rest of the record', async () => {
+    metaFetch.mockImplementation(async (_url: string, init?: { method?: string }) =>
+      init?.method === 'PUT' ? undefined : { meta: { testVote } }
+    )
+
+    expect(await forgetDeletedTestPeople(metaFetch, '0xorg', { ids: ['a'] })).toBe(true)
+
+    expect(metaFetch).toHaveBeenLastCalledWith('organizations/0xorg/meta', {
+      method: 'PUT',
+      body: { meta: { testVote: { ...testVote, adminIsMember: false, memberIds: ['b', 'c'] } } },
+    })
+  })
+
+  it('never fails the delete when the meta can not be read', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    const failing = vi.fn(async () => {
+      throw new Error('down')
+    })
+
+    expect(await forgetDeletedTestPeople(failing as never, '0xorg', { ids: ['a'] })).toBe(false)
+    warn.mockRestore()
+  })
+})

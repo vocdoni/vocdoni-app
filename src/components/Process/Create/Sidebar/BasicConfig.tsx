@@ -139,7 +139,8 @@ export const BasicConfig = () => {
   return (
     <VStack align='stretch' gap={4}>
       <Switch.Root checked={autoStart} onCheckedChange={(details) => handleAutoStartChange(details.checked)}>
-        <Switch.HiddenInput {...register('autoStart')} />
+        {/* Controlled: registering the hidden input stored its "on" value instead of the boolean */}
+        <Switch.HiddenInput />
         <Switch.Control>
           <Switch.Thumb />
         </Switch.Control>

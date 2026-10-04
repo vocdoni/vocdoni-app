@@ -24,7 +24,6 @@ import { useAnonymityLabels } from '~components/Process/anonymityLabels'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
-import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { Census, Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
 import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
@@ -61,11 +60,6 @@ const useValidateCensus = () => {
       }),
   })
 }
-
-// Order-insensitive identity of an auth configuration, used to tell an actual
-// change from a no-op re-confirm. Credentials are a set, not a sequence.
-const censusConfigSignature = (config: Census) =>
-  JSON.stringify([[...(config.credentials ?? [])].sort(), !!config.use2FA, config.use2FAMethod ?? 'none'])
 
 export const VoterAuthentication = () => {
   const { t } = useTranslation()
@@ -157,21 +151,9 @@ export const VoterAuthentication = () => {
         use2FA: currentFormData.use2FA,
         use2FAMethod: currentFormData.use2FAMethod ?? 'email',
       }
-      // The modal doubles as the "Edit" entry point, so a confirm that changes
-      // nothing must not report a fresh configuration — otherwise every reopen
-      // inflates the count.
-      const configChanged = !census || censusConfigSignature(census) !== censusConfigSignature(nextCensus)
+      // `census_configured` is reported by Who can vote once the whole census (who, plus how they
+      // sign in) has been checked, so a confirm here doesn't report it too
       mainForm.setValue('census', nextCensus)
-      if (configChanged) {
-        trackAnalyticsEvent({
-          name: AnalyticsEvents.CensusConfigured,
-          props: {
-            auth_fields_count: nextCensus.credentials?.length ?? 0,
-            two_fa: !!nextCensus.use2FA,
-            two_fa_method: nextCensus.use2FAMethod ?? 'none',
-          },
-        })
-      }
       setStepCompletion((prev) => ({ ...prev, step2Completed: true }))
       toast({
         title: t('voter_auth.configured', { defaultValue: 'Voter authentication configured' }),

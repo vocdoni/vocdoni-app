@@ -2,6 +2,8 @@ import { act, renderHook, waitFor } from '@testing-library/react'
 import type { CreateVotingProcessRequest, VotingProcessQuestion, VotingProcessResponse } from '@vocdoni/api-types'
 import { mockUseElection } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import { ErrorCode } from '~components/Auth/api'
 import { useCloneAsDraft } from './use-clone-as-draft'
 
 // Mock dependencies
@@ -32,6 +34,25 @@ vi.mock('../Create', () => ({
     mutateAsync: mockMutateAsync,
   }),
 }))
+
+const { voteGroups } = vi.hoisted(() => ({
+  voteGroups: {
+    markers: vi.fn(async () => new Map()),
+    readGroup: vi.fn(async () => ({ isAutoGroup: true })),
+    readMemberIds: vi.fn(async () => []),
+    createGroup: vi.fn(async () => 'copy-1'),
+    deleteGroup: vi.fn(async () => undefined),
+    mark: vi.fn(async () => undefined),
+    unmark: vi.fn(async () => undefined),
+  },
+}))
+
+vi.mock('~src/queries/voteGroups', () => ({
+  useVoteGroupApi: () => voteGroups,
+  voteGroupDescription: (_t: unknown, vote: string) => `Census of '${vote}'`,
+}))
+
+vi.mock('~i18n/usePublicLanguage', () => ({ usePublicLanguage: () => 'en' }))
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -132,8 +153,6 @@ describe('useCloneAsDraft', () => {
     await waitFor(() => expect(mockMutateAsync).toHaveBeenCalled())
   }
 
-  // The field-by-field mapping is owned by draft-mapping.test; this only proves the hook
-  // hands the mapped election to the create mutation under the election's organization.
   describe('the cloned draft request', () => {
     it('copies the process content into a new draft owned by the same organization', async () => {
       await cloneWith(createMockElection([{ title: 'Option 1' }, { title: 'Option 2' }]))
@@ -154,6 +173,126 @@ describe('useCloneAsDraft', () => {
           },
         ],
       })
+    })
+
+    it('schedules the clone afresh instead of copying the source dates', async () => {
+      await cloneWith(createMockElection([{ title: 'Option 1' }]))
+
+      expect(clonedRequest().startDate).toBeUndefined()
+      expect(clonedRequest().endDate).toBeUndefined()
+    })
+
+    it('carries the per-choice extended info through the question metadata', async () => {
+      await cloneWith(
+        createMockElection([
+          { title: 'Option 1', description: 'Why option 1', image: 'https://example.com/1.png' },
+          { title: 'Option 2' },
+        ])
+      )
+
+      expect(clonedRequest().questions[0].metadata).toEqual({
+        choices: [
+          { value: 0, description: 'Why option 1', image: 'https://example.com/1.png' },
+          { value: 1, description: undefined, image: undefined },
+        ],
+      })
+    })
+
+    it('preserves the census configuration and secrecy of the source', async () => {
+      await cloneWith(
+        createMockElection(
+          [{ title: 'Option 1' }],
+          { census: { weighted: true, authFields: ['memberNumber'], twoFaFields: ['email'] } },
+          { secretUntilTheEnd: true }
+        )
+      )
+
+      expect(clonedRequest().census).toMatchObject({
+        weighted: true,
+        authFields: ['memberNumber'],
+        twoFaFields: ['email'],
+      })
+      expect(clonedRequest().questions[0].secretUntilTheEnd).toBe(true)
+    })
+
+    it('gives the copy a census of its own instead of sharing the source’s group', async () => {
+      voteGroups.readGroup.mockResolvedValueOnce({ isAutoGroup: false, memberIds: ['m1', 'm2'] } as never)
+      await cloneWith(
+        createMockElection([{ title: 'Option 1' }], {
+          census: { groupId: 'board', twoFaFields: ['email'] },
+        })
+      )
+
+      expect(voteGroups.createGroup).toHaveBeenCalledWith(
+        expect.objectContaining({ memberIds: ['m1', 'm2'], description: "Census of 'Test Election'" })
+      )
+      expect(clonedRequest().census?.groupId).toBe('copy-1')
+      expect(voteGroups.mark).toHaveBeenCalledWith(
+        'copy-1',
+        expect.objectContaining({ processId: 'draft-123', kind: 'copy', fromId: 'board', source: 'previous' })
+      )
+    })
+
+    it('keeps Everyone, and turns a census frozen from Everyone back into Everyone', async () => {
+      voteGroups.markers.mockResolvedValueOnce(
+        new Map([['snap', { processId: 'process-1', kind: 'snapshot', createdAt: '' }]]) as never
+      )
+      await cloneWith(
+        createMockElection([{ title: 'Option 1' }], { census: { groupId: 'snap', twoFaFields: ['email'] } })
+      )
+
+      expect(clonedRequest().census?.groupId).toBeUndefined()
+      expect(voteGroups.createGroup).not.toHaveBeenCalled()
+    })
+
+    it('deletes the copied census when the draft could not be created', async () => {
+      voteGroups.readGroup.mockResolvedValueOnce({ isAutoGroup: false, memberIds: ['m1'] } as never)
+      mockElection = createMockElection([{ title: 'Option 1' }], {
+        census: { groupId: 'board', twoFaFields: ['email'] },
+      })
+      mockMutateAsync.mockRejectedValue(new Error('limit'))
+      const { result } = renderHook(() => useCloneAsDraft())
+      await act(async () => {
+        await result.current.cloneAsDraft()
+      })
+
+      expect(voteGroups.deleteGroup).toHaveBeenCalledWith('copy-1')
+      expect(voteGroups.mark).not.toHaveBeenCalled()
+    })
+
+    it('preserves multi-choice limits', async () => {
+      await cloneWith(
+        createMockElection([{ title: 'A' }, { title: 'B' }, { title: 'C' }], undefined, {
+          type: 'multichoice',
+          typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: true },
+        })
+      )
+
+      expect(clonedRequest().questions[0]).toMatchObject({
+        type: 'multichoice',
+        // uniqueChoices sanitized to false even when the source process carried true.
+        typeSetup: { maxChoices: 2, minChoices: 1, uniqueChoices: false },
+      })
+    })
+
+    it('falls back to the raw ballot protocol for backend-derived questions with no named type', async () => {
+      await cloneWith(createMockElection([{ title: 'A' }], undefined, { type: '' }))
+
+      expect(clonedRequest().questions[0].type).toBeUndefined()
+      expect(clonedRequest().questions[0].ballotProtocol).toEqual(SINGLE_CHOICE_PROTOCOL)
+    })
+
+    it('clones every question of a multi-question process', async () => {
+      const election = createMockElection([{ title: 'A' }])
+      election.questions = [
+        createMockQuestion([{ title: 'A' }], { title: { default: 'First' } }),
+        createMockQuestion([{ title: 'B' }], { title: { default: 'Second' } }),
+      ]
+
+      await cloneWith(election)
+
+      expect(clonedRequest().questions).toHaveLength(2)
+      expect(clonedRequest().questions.map((q) => q.title)).toEqual([{ default: 'First' }, { default: 'Second' }])
     })
   })
 
@@ -183,6 +322,32 @@ describe('useCloneAsDraft', () => {
         expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ type: 'error' }))
       })
       expect(mockNavigate).not.toHaveBeenCalled()
+    })
+
+    it('blames the draft limit only when the API says so', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }])
+      mockMutateAsync.mockRejectedValue(new VocdoniApiError(400, {}, 'too many drafts', ErrorCode.DraftLimitReached))
+
+      const { result } = renderHook(() => useCloneAsDraft())
+      await act(async () => {
+        await result.current.cloneAsDraft()
+      })
+
+      expect(mockToast).toHaveBeenCalledWith(
+        expect.objectContaining({ description: expect.stringMatching(/limit of 5 drafts/) })
+      )
+    })
+
+    it('reports any other failure as it is, without mentioning the draft limit', async () => {
+      mockElection = createMockElection([{ title: 'Option 1' }])
+      mockMutateAsync.mockRejectedValue(new Error('Network down'))
+
+      const { result } = renderHook(() => useCloneAsDraft())
+      await act(async () => {
+        await result.current.cloneAsDraft()
+      })
+
+      expect(mockToast).toHaveBeenCalledWith(expect.objectContaining({ description: 'Network down' }))
     })
   })
 

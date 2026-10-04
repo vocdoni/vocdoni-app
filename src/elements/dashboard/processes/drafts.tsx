@@ -35,6 +35,7 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~queries/keys'
 import { useUrlPagination } from '~queries/members'
+import { discardVoteGroupsOf, useVoteGroupApi } from '~queries/voteGroups'
 import { Routes } from '~routes'
 
 type Draft = VotingProcessResponse
@@ -66,10 +67,15 @@ export const useDeleteDraft = () => {
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
   const toast = useToast()
+  const voteGroups = useVoteGroupApi()
 
   return useMutation<void, unknown, { draftId: string; silent?: boolean }>({
     mutationKey: QueryKeys.organization.drafts(organization?.address),
-    mutationFn: ({ draftId }: { draftId: string; silent?: boolean }) => client.elections.delete(draftId),
+    mutationFn: async ({ draftId }: { draftId: string; silent?: boolean }) => {
+      await client.elections.delete(draftId)
+      // Its own census goes with it, only once the draft is gone (never throws: leftovers are swept)
+      if (voteGroups) await discardVoteGroupsOf(voteGroups, draftId)
+    },
     onSuccess: (_data, variables) => {
       // Only forget the resumable draft pointer once the server actually deleted
       // it, and only when it points at this draft

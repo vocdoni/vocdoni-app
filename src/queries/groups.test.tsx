@@ -1,9 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { renderHook, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import React from 'react'
 import { mockUseOrganization } from '~src/test-utils'
 import { resetReactProvidersMock, setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { getNextGroupsPageParam, useAllGroups } from './groups'
+import { getNextGroupsPageParam, useAllGroups, useDeleteGroup } from './groups'
 
 const bearedFetch = vi.fn()
 
@@ -59,5 +59,37 @@ describe('useAllGroups', () => {
       'organizations/0xorg/groups?page=1&limit=100',
       'organizations/0xorg/groups?page=2&limit=100',
     ])
+  })
+})
+
+describe('useDeleteGroup', () => {
+  beforeEach(() => {
+    bearedFetch.mockReset()
+    setReactProvidersMock({
+      useOrganization: () => mockUseOrganization({ organization: { address: '0xorg' } }),
+    })
+  })
+
+  afterEach(() => resetReactProvidersMock())
+
+  it("forgets the deleted group's own data, and refreshes the lists instead of reading it again", async () => {
+    const queryClient = new QueryClient()
+    const detail = ['organizations', 'groups', '0xorg', 'detail', 'g1']
+    const members = ['organizations', 'groups', '0xorg', 'members', 'g1', 'all']
+    const list = ['organizations', 'groups', '0xorg', 'all']
+    queryClient.setQueryData(detail, { id: 'g1' })
+    queryClient.setQueryData(members, [])
+    queryClient.setQueryData(list, [{ id: 'g1' }])
+    const { result } = renderHook(() => useDeleteGroup(), {
+      wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
+    })
+
+    await act(async () => {
+      await result.current.mutateAsync('g1')
+    })
+
+    expect(queryClient.getQueryState(detail)).toBeUndefined()
+    expect(queryClient.getQueryState(members)).toBeUndefined()
+    expect(queryClient.getQueryState(list)?.isInvalidated).toBe(true)
   })
 })

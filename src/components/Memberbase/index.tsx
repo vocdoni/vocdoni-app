@@ -7,9 +7,11 @@ import { useAuth } from '~components/Auth/useAuth'
 import { PageHeader } from '~components/Dashboard/Contents'
 import { Routes } from '~routes'
 import { useMembersCount } from '~src/queries/members'
+import { useCensusIndex } from './Censuses/useCensusIndex'
 import { getStoredImportJobId, readAccountId, setStoredImportJobId } from './importJobStorage'
 import { JobId, MembersPageProvider } from './MembersPageContext'
 import { AddPersonSheet } from './People/AddPersonSheet'
+import { ExportMembersButton } from './People/ExportMembersButton'
 
 export type { JobId } from './MembersPageContext'
 
@@ -30,6 +32,7 @@ export const MemberbaseTabs = () => {
   // Unfiltered total: this query never carries the search term, so the count keeps showing the
   // whole member list while the table is filtered.
   const members = useMembersCount()
+  const censuses = useCensusIndex()
 
   const tabs: TabItem[] = [
     {
@@ -37,10 +40,14 @@ export const MemberbaseTabs = () => {
       route: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
       count: members.known ? members.count : undefined,
     },
-    { label: t('memberbase.groups.title', { defaultValue: 'Groups' }), route: Routes.dashboard.memberbase.groups },
+    {
+      label: t('memberbase.censuses.title', { defaultValue: 'Censuses' }),
+      route: Routes.dashboard.memberbase.censuses,
+      count: censuses.isLoading ? undefined : censuses.index.total,
+    },
   ]
-  const isGroups = location.pathname.startsWith(Routes.dashboard.memberbase.groups)
-  const activeTab = isGroups ? tabs[1].route : tabs[0].route
+  const isCensuses = location.pathname.startsWith(Routes.dashboard.memberbase.censuses)
+  const activeTab = isCensuses ? tabs[1].route : tabs[0].route
 
   useEffect(() => {
     setJobIdState(getStoredImportJobId(accountId))
@@ -75,7 +82,12 @@ export const MemberbaseTabs = () => {
                 {t('memberbase.importer.button', { defaultValue: 'Import' })}
               </RouterLink>
             </Button>
-            <Button onClick={() => setAddPersonOpen(true)}>
+            {members.known && members.count > 0 && <ExportMembersButton />}
+            {/* On a census page its own action is the main one: only one black button per page */}
+            <Button
+              variant={location.pathname.startsWith(`${Routes.dashboard.memberbase.censuses}/`) ? 'outline' : 'solid'}
+              onClick={() => setAddPersonOpen(true)}
+            >
               <Icon as={LuUserPlus} />
               {t('memberbase.add_person', { defaultValue: 'Add person' })}
             </Button>
@@ -91,7 +103,14 @@ export const MemberbaseTabs = () => {
       >
         <Tabs.List mb={5} overflowX='auto' overflowY='hidden'>
           {tabs.map((tab) => (
-            <Tabs.Trigger key={tab.route} value={tab.route}>
+            <Tabs.Trigger
+              key={tab.route}
+              value={tab.route}
+              // On a page inside the tab (a census), the tab leads back to its list
+              onClick={() => {
+                if (location.pathname.startsWith(`${tab.route}/`)) navigate(tab.route)
+              }}
+            >
               {tab.label}
               {!!tab.count && (
                 <Text as='span' fontSize='xs' color='fg.muted' fontVariantNumeric='tabular-nums'>
