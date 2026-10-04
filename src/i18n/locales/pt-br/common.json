@@ -503,8 +503,8 @@
       "title": "Usada por"
     },
     "vote_card": {
-      "snapshot_note": "Esta lista é formada pelos seus membros como estavam quando você publicou a votação. Você ainda pode adicionar ou remover pessoas aqui. Se você corrigir os dados de alguém, eles também mudam na sua lista de membros.",
-      "snapshot_note_on": "Esta lista é formada pelos seus membros como estavam em {{date}}, quando você publicou a votação. Você ainda pode adicionar ou remover pessoas aqui. Se você corrigir os dados de alguém, eles também mudam na sua lista de membros."
+      "snapshot_note": "Para criar esta lista, foi usada a lista dos seus membros como estava quando você publicou a votação. Você ainda pode adicionar ou remover pessoas aqui. Se você corrigir os dados de alguém, eles também mudam na sua lista de membros.",
+      "snapshot_note_on": "Para criar esta lista, foi usada a lista dos seus membros como estava em {{date}}, quando você publicou a votação. Você ainda pode adicionar ou remover pessoas aqui. Se você corrigir os dados de alguém, eles também mudam na sua lista de membros."
     }
   },
   "census_size": "Número de participantes",

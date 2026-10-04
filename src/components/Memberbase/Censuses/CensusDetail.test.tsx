@@ -461,7 +461,7 @@ describe('CensusDetail', () => {
     // The note sits under the facts, once
     expect(
       screen.getByText(
-        /^This list is your members as they were on \d+ \w+ \d{4}, when you published the vote\. You can still add or remove people here\. Fixing someone's details also changes them in your members list\.$/
+        /^This census was created from your members list as it was on \d+ \w+ \d{4}, when you published the vote\. You can still add or remove people here\. Fixing someone's details also changes them in your members list\.$/
       )
     ).toBeInTheDocument()
   })

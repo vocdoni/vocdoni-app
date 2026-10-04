@@ -503,8 +503,8 @@
       "title": "Usato da"
     },
     "vote_card": {
-      "snapshot_note": "Questo elenco contiene i tuoi membri com'erano quando hai pubblicato la votazione. Qui puoi ancora aggiungere o togliere persone. Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri.",
-      "snapshot_note_on": "Questo elenco contiene i tuoi membri com'erano il {{date}}, quando hai pubblicato la votazione. Qui puoi ancora aggiungere o togliere persone. Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri."
+      "snapshot_note": "Per creare questo elenco è stato usato l'elenco dei tuoi membri com'era quando hai pubblicato la votazione. Qui puoi ancora aggiungere o togliere persone. Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri.",
+      "snapshot_note_on": "Per creare questo elenco è stato usato l'elenco dei tuoi membri com'era il {{date}}, quando hai pubblicato la votazione. Qui puoi ancora aggiungere o togliere persone. Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri."
     }
   },
   "census_size": "Dimensione del censimento",

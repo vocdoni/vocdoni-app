@@ -503,8 +503,8 @@
       "title": "Usado por"
     },
     "vote_card": {
-      "snapshot_note": "Este censo son tus miembros tal como estaban cuando publicaste la votación. Aquí aún puedes añadir o quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
-      "snapshot_note_on": "Este censo son tus miembros tal como estaban el {{date}}, cuando publicaste la votación. Aquí aún puedes añadir o quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros."
+      "snapshot_note": "Para crear este censo se usó la lista de tus miembros tal como estaban cuando publicaste la votación. Aquí aún puedes añadir o quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
+      "snapshot_note_on": "Para crear este censo se usó la lista de tus miembros tal como estaban el {{date}}, cuando publicaste la votación. Aquí aún puedes añadir o quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros."
     }
   },
   "census_size": "Tamaño del censo",

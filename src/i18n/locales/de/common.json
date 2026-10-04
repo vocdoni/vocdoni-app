@@ -472,8 +472,8 @@
       "title": "Verwendet von"
     },
     "vote_card": {
-      "snapshot_note": "Diese Liste enthält deine Mitglieder so, wie sie bei der Veröffentlichung der Abstimmung waren. Du kannst hier weiterhin Personen hinzufügen oder entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
-      "snapshot_note_on": "Diese Liste enthält deine Mitglieder so, wie sie am {{date}} waren, als du die Abstimmung veröffentlicht hast. Du kannst hier weiterhin Personen hinzufügen oder entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste."
+      "snapshot_note": "Diese Liste wurde aus deiner Mitgliederliste erstellt, so wie sie bei der Veröffentlichung der Abstimmung war. Du kannst hier weiterhin Personen hinzufügen oder entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
+      "snapshot_note_on": "Diese Liste wurde aus deiner Mitgliederliste erstellt, so wie sie am {{date}} war, als du die Abstimmung veröffentlicht hast. Du kannst hier weiterhin Personen hinzufügen oder entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste."
     }
   },
   "census_size": "Teilnehmerzahl",

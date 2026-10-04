@@ -101,12 +101,12 @@ const censusNote = (t: TFunction, format: ReturnType<typeof useDateFns>['format'
     text = census.source.madeAt
       ? t('census_detail.vote_card.snapshot_note_on', {
           defaultValue:
-            "This list is your members as they were on {{date}}, when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
+            "This census was created from your members list as it was on {{date}}, when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
           date: format(census.source.madeAt, 'd MMM yyyy'),
         })
       : t('census_detail.vote_card.snapshot_note', {
           defaultValue:
-            "This list is your members as they were when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
+            "This census was created from your members list as it was when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
         })
   else if (census.kind === 'vote' && (census.source?.kind === 'copy' || census.source?.kind === 'test'))
     text = t('census_detail.note.own', {

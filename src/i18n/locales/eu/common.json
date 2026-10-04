@@ -472,8 +472,8 @@
       "title": "Erabiltzen dute"
     },
     "vote_card": {
-      "snapshot_note": "Errolde hau zure kideek osatzen dute, bozketa argitaratu zenuenean zeuden bezala. Hemen oraindik pertsonak gehitu edo kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira.",
-      "snapshot_note_on": "Errolde hau zure kideek osatzen dute, {{date}}(e)an zeuden bezala, bozketa argitaratu zenuenean. Hemen oraindik pertsonak gehitu edo kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira."
+      "snapshot_note": "Errolde hau sortzeko, zure kideen zerrenda erabili zen, bozketa argitaratu zenuenean zegoen bezala. Hemen oraindik pertsonak gehitu edo kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira.",
+      "snapshot_note_on": "Errolde hau sortzeko, zure kideen zerrenda erabili zen, {{date}}(e)an zegoen bezala, bozketa argitaratu zenuenean. Hemen oraindik pertsonak gehitu edo kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira."
     }
   },
   "census_size": "Erroldeko tamaina",
