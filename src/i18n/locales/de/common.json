@@ -1976,8 +1976,8 @@
       "error_empty": "Es gibt niemanden zu kopieren",
       "error_stale": "Dieser Entwurf wurde woanders geändert. Lade die Seite neu und versuche es erneut.",
       "everyone": {
-        "description_one": "Dein einziges Mitglied. Neue Mitglieder kommen bis zur Veröffentlichung dazu; danach fügst du sie selbst hinzu.",
-        "description_other": "Alle {{formattedCount}} Mitglieder. Neue Mitglieder kommen bis zur Veröffentlichung dazu; danach fügst du sie selbst hinzu.",
+        "description_one": "Dein einziges Mitglied. Wen du vor der Veröffentlichung hinzufügst, ist dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu.",
+        "description_other": "Alle {{formattedCount}} Mitglieder. Wen du vor der Veröffentlichung hinzufügst, ist dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu.",
         "title": "Alle"
       },
       "go_to_members": "Zu den Mitgliedern",
@@ -2062,8 +2062,8 @@
     "review": {
       "census_failed": "Die Teilnehmerliste konnte nicht vorbereitet werden, daher wurde nichts veröffentlicht. Versuche es erneut.",
       "census_stale": "Dieser Entwurf wurde während der Veröffentlichung woanders geändert. Es wurde nichts veröffentlicht. Lade die Seite neu und versuche es erneut.",
-      "frozen_one": "Mit der Veröffentlichung behält diese Abstimmung eine eigene Liste mit der einen Person darin. Später hinzugefügte Mitglieder kommen nicht von selbst dazu: Füge im Tab „Wählende“ der Abstimmung Personen hinzu oder entferne sie.",
-      "frozen_other": "Mit der Veröffentlichung behält diese Abstimmung eine eigene Liste mit den {{count}} Personen darin. Später hinzugefügte Mitglieder kommen nicht von selbst dazu: Füge im Tab „Wählende“ der Abstimmung Personen hinzu oder entferne sie.",
+      "frozen_one": "Mit der Veröffentlichung bekommt diese Abstimmung eine eigene Kopie dieser einen Person. Wer später beitritt, wird nicht automatisch hinzugefügt: Füge diese Personen im Tab „Wählende“ der Abstimmung hinzu, wo du auch Personen entfernen kannst.",
+      "frozen_other": "Mit der Veröffentlichung bekommt diese Abstimmung eine eigene Kopie dieser {{count}} Personen. Wer später beitritt, wird nicht automatisch hinzugefügt: Füge diese Personen im Tab „Wählende“ der Abstimmung hinzu, wo du auch Personen entfernen kannst.",
       "own_census_one": "Die eine Person in der Teilnehmerliste dieser Abstimmung kann abstimmen",
       "own_census_other": "Die {{count}} Personen in der Teilnehmerliste dieser Abstimmung können abstimmen"
     },

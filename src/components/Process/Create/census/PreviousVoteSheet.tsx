@@ -2,6 +2,7 @@ import { Box, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react'
 import type { VotingProcessResponse } from '@vocdoni/api-types'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useDateFns } from '~i18n/use-date-fns'
 import { VoteStateBadge } from '~components/Memberbase/Censuses/CensusRow'
 import { censusSourceLabel, untitledVote, votersUnit } from '~components/Memberbase/Censuses/labels'
 import { type CensusSource, censusSourceOf, voteStateOf } from '~components/Memberbase/Censuses/model'
@@ -63,6 +64,7 @@ export const PreviousVoteSheet = ({
   busy,
 }: PreviousVoteSheetProps) => {
   const { t, i18n } = useTranslation()
+  const { format } = useDateFns()
   const language = usePublicLanguage()
   const votes = useAllVotes({ enabled: open })
   const groupsById = useMemo(() => new Map(groups.map((group) => [group.id, group])), [groups])
@@ -131,7 +133,7 @@ export const PreviousVoteSheet = ({
                         {[
                           typeof size === 'number' &&
                             `${size.toLocaleString(i18n.resolvedLanguage)} ${votersUnit(t, size)}`,
-                          censusSourceLabel(t, source),
+                          censusSourceLabel(t, source, (iso) => format(iso, 'd MMM yyyy')),
                         ]
                           .filter(Boolean)
                           .join(' · ')}

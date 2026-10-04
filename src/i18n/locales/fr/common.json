@@ -2063,9 +2063,9 @@
       "error_empty": "Il n'y a personne à copier",
       "error_stale": "Ce brouillon a été modifié ailleurs. Rechargez la page et réessayez.",
       "everyone": {
-        "description_many": "Tous les {{formattedCount}} membres. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même.",
-        "description_one": "Votre unique membre. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même.",
-        "description_other": "Tous les {{formattedCount}} membres. Les nouveaux membres s'ajoutent jusqu'à la publication ; ensuite, vous les ajoutez vous-même.",
+        "description_many": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
+        "description_one": "Votre unique membre. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
+        "description_other": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
         "title": "Tout le monde"
       },
       "go_to_members": "Aller à Membres",
@@ -2154,9 +2154,9 @@
     "review": {
       "census_failed": "La liste électorale n'a pas pu être préparée, rien n'a été publié. Réessayez.",
       "census_stale": "Ce brouillon a été modifié ailleurs pendant la publication. Rien n'a été publié. Rechargez la page et réessayez.",
-      "frozen_many": "À la publication, ce vote garde sa propre liste avec les {{count}} personnes qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
-      "frozen_one": "À la publication, ce vote garde sa propre liste avec la personne qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
-      "frozen_other": "À la publication, ce vote garde sa propre liste avec les {{count}} personnes qu'elle contient. Les membres ajoutés ensuite n'y entrent pas d'eux-mêmes : ajoutez ou retirez des personnes depuis l'onglet Électeurs du vote.",
+      "frozen_many": "À la publication, ce vote aura sa propre copie de ces {{count}} personnes. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
+      "frozen_one": "À la publication, ce vote aura sa propre copie de cette personne. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
+      "frozen_other": "À la publication, ce vote aura sa propre copie de ces {{count}} personnes. Les personnes qui rejoignent ensuite l'organisation ne sont pas ajoutées automatiquement : ajoutez-les depuis l'onglet Électeurs du vote, où vous pouvez aussi retirer des personnes.",
       "own_census_many": "Les {{count}} personnes de la liste électorale de ce vote peuvent voter",
       "own_census_one": "La seule personne de la liste électorale de ce vote peut voter",
       "own_census_other": "Les {{count}} personnes de la liste électorale de ce vote peuvent voter"

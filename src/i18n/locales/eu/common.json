@@ -1976,8 +1976,8 @@
       "error_empty": "Ez dago kopiatzeko inor",
       "error_stale": "Zirriborro hau beste nonbait aldatu da. Birkargatu orria eta saiatu berriro.",
       "everyone": {
-        "description_one": "Zure kide bakarra. Kide berriak argitaratu arte gehitzen dira; gero, zuk gehitzen dituzu.",
-        "description_other": "Zure {{formattedCount}} kideak. Kide berriak argitaratu arte gehitzen dira; gero, zuk gehitzen dituzu.",
+        "description_one": "Zure kide bakarra. Argitaratu aurretik gehitzen duzuna barne dago; gero, pertsona berriak zuk gehitzen dituzu bozketara.",
+        "description_other": "Zure {{formattedCount}} kideak. Argitaratu aurretik gehitzen dituzunak barne daude; gero, pertsona berriak zuk gehitzen dituzu bozketara.",
         "title": "Denak"
       },
       "go_to_members": "Joan Kideetara",
@@ -2062,8 +2062,8 @@
     "review": {
       "census_failed": "Ezin izan da erroldea prestatu, beraz ez da ezer argitaratu. Saiatu berriro.",
       "census_stale": "Zirriborro hau beste nonbait aldatu da argitaratzen ari zen bitartean. Ez da ezer argitaratu. Birkargatu orria eta saiatu berriro.",
-      "frozen_one": "Argitaratzean, bozketa honek bere zerrenda gordetzen du orain dagoen pertsonarekin. Geroago gehitutako kideak ez dira berez sartzen: gehitu edo kendu pertsonak bozketaren Botogileak fitxatik.",
-      "frozen_other": "Argitaratzean, bozketa honek bere zerrenda gordetzen du orain dauden {{count}} pertsonekin. Geroago gehitutako kideak ez dira berez sartzen: gehitu edo kendu pertsonak bozketaren Botogileak fitxatik.",
+      "frozen_one": "Argitaratzean, bozketa honek pertsona honen kopia propioa izango du. Geroago sartzen direnak ez dira automatikoki gehitzen: gehitu bozketaren Botogileak fitxatik, eta han pertsonak kendu ere egin ditzakezu.",
+      "frozen_other": "Argitaratzean, bozketa honek {{count}} pertsona hauen kopia propioa izango du. Geroago sartzen direnak ez dira automatikoki gehitzen: gehitu bozketaren Botogileak fitxatik, eta han pertsonak kendu ere egin ditzakezu.",
       "own_census_one": "Bozketa honen erroldako pertsona 1ek bozka dezake",
       "own_census_other": "Bozketa honen erroldako {{count}} pertsonek bozka dezakete"
     },

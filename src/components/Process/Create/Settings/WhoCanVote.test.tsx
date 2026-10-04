@@ -157,7 +157,9 @@ describe('WhoCanVote', () => {
     const everyone = screen.getByRole('radio', { name: /Everyone/ })
     expect(everyone).toBeChecked()
     expect(
-      screen.getByText('All 120 members. New members join until you publish; after that, you add them yourself.')
+      screen.getByText(
+        'All 120 members. Anyone you add before publishing is included; after that, you add new people to the vote yourself.'
+      )
     ).toBeVisible()
     expect(screen.getByRole('radio', { name: /From a saved census/ })).not.toBeChecked()
     expect(screen.getByRole('radio', { name: /Choose people/ })).toBeInTheDocument()

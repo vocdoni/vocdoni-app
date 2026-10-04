@@ -584,9 +584,10 @@ export const WhoCanVote = () => {
             t('process_create.census.everyone.description', {
               count: membersCount,
               formattedCount: format(membersCount),
-              defaultValue_one: 'Your 1 member. New members join until you publish; after that, you add them yourself.',
+              defaultValue_one:
+                'Your 1 member. Anyone you add before publishing is included; after that, you add new people to the vote yourself.',
               defaultValue_other:
-                'All {{formattedCount}} members. New members join until you publish; after that, you add them yourself.',
+                'All {{formattedCount}} members. Anyone you add before publishing is included; after that, you add new people to the vote yourself.',
             }),
             !census.everyoneId
           )}

@@ -2063,9 +2063,9 @@
       "error_empty": "No hi ha ningú per copiar",
       "error_stale": "Aquest esborrany s'ha canviat des d'un altre lloc. Recarrega la pàgina i torna-ho a provar.",
       "everyone": {
-        "description_many": "Tots els {{formattedCount}} membres. Els nous membres s'hi afegeixen fins que publiquis; després, els afegeixes tu.",
-        "description_one": "El teu únic membre. Els nous membres s'hi afegeixen fins que publiquis; després, els afegeixes tu.",
-        "description_other": "Tots els {{formattedCount}} membres. Els nous membres s'hi afegeixen fins que publiquis; després, els afegeixes tu.",
+        "description_many": "Tots els {{formattedCount}} membres. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
+        "description_one": "El teu únic membre. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
+        "description_other": "Tots els {{formattedCount}} membres. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
         "title": "Tothom"
       },
       "go_to_members": "Ves a Membres",
@@ -2154,9 +2154,9 @@
     "review": {
       "census_failed": "No s'ha pogut preparar el cens, així que no s'ha publicat res. Torna-ho a provar.",
       "census_stale": "Aquest esborrany s'ha canviat des d'un altre lloc mentre es publicava. No s'ha publicat res. Recarrega la pàgina i torna-ho a provar.",
-      "frozen_many": "En publicar, aquesta votació es queda la seva pròpia llista amb les {{count}} persones que hi ha ara. Els membres que afegeixis després no s'hi afegeixen sols: afegeix o treu persones des de la pestanya Votants de la votació.",
-      "frozen_one": "En publicar, aquesta votació es queda la seva pròpia llista amb la persona que hi ha ara. Els membres que afegeixis després no s'hi afegeixen sols: afegeix o treu persones des de la pestanya Votants de la votació.",
-      "frozen_other": "En publicar, aquesta votació es queda la seva pròpia llista amb les {{count}} persones que hi ha ara. Els membres que afegeixis després no s'hi afegeixen sols: afegeix o treu persones des de la pestanya Votants de la votació.",
+      "frozen_many": "En publicar, aquesta votació tindrà la seva pròpia còpia d'aquestes {{count}} persones. Les persones que s'incorporin després no s'hi afegeixen soles: afegeix-les des de la pestanya Votants de la votació, on també en pots treure.",
+      "frozen_one": "En publicar, aquesta votació tindrà la seva pròpia còpia d'aquesta persona. Les persones que s'incorporin després no s'hi afegeixen soles: afegeix-les des de la pestanya Votants de la votació, on també en pots treure.",
+      "frozen_other": "En publicar, aquesta votació tindrà la seva pròpia còpia d'aquestes {{count}} persones. Les persones que s'incorporin després no s'hi afegeixen soles: afegeix-les des de la pestanya Votants de la votació, on també en pots treure.",
       "own_census_many": "Les {{count}} persones del cens d'aquesta votació poden votar",
       "own_census_one": "La 1 persona del cens d'aquesta votació pot votar",
       "own_census_other": "Les {{count}} persones del cens d'aquesta votació poden votar"

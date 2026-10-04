@@ -2063,9 +2063,9 @@
       "error_empty": "Non c'è nessuno da copiare",
       "error_stale": "Questa bozza è stata modificata altrove. Ricarica la pagina e riprova.",
       "everyone": {
-        "description_many": "Tutti i {{formattedCount}} membri. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu.",
-        "description_one": "Il tuo unico membro. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu.",
-        "description_other": "Tutti i {{formattedCount}} membri. I nuovi membri si aggiungono fino alla pubblicazione; dopo, li aggiungi tu.",
+        "description_many": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
+        "description_one": "Il tuo unico membro. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
+        "description_other": "Tutti i {{formattedCount}} membri. Chi aggiungi prima di pubblicare è incluso; dopo, le persone nuove le aggiungi tu alla votazione.",
         "title": "Tutti"
       },
       "go_to_members": "Vai a Membri",
@@ -2154,9 +2154,9 @@
     "review": {
       "census_failed": "Non è stato possibile preparare il censimento, quindi non è stato pubblicato nulla. Riprova.",
       "census_stale": "Questa bozza è stata modificata altrove durante la pubblicazione. Non è stato pubblicato nulla. Ricarica la pagina e riprova.",
-      "frozen_many": "Quando pubblichi, questa votazione tiene una propria lista con le {{count}} persone presenti. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
-      "frozen_one": "Quando pubblichi, questa votazione tiene una propria lista con l'unica persona presente. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
-      "frozen_other": "Quando pubblichi, questa votazione tiene una propria lista con le {{count}} persone presenti. I membri aggiunti dopo non entrano da soli: aggiungi o rimuovi persone dalla scheda Votanti del voto.",
+      "frozen_many": "Quando pubblichi, questa votazione avrà una propria copia di queste {{count}} persone. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
+      "frozen_one": "Quando pubblichi, questa votazione avrà una propria copia di questa persona. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
+      "frozen_other": "Quando pubblichi, questa votazione avrà una propria copia di queste {{count}} persone. Chi entra dopo non viene aggiunto automaticamente: aggiungilo dalla scheda Votanti del voto, dove puoi anche togliere persone.",
       "own_census_many": "Le {{count}} persone nel censimento di questo voto possono votare",
       "own_census_one": "L'unica persona nel censimento di questo voto può votare",
       "own_census_other": "Le {{count}} persone nel censimento di questo voto possono votare"
