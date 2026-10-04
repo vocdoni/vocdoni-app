@@ -27,35 +27,59 @@
       "api_key": "Κλειδί API",
       "system": "Vocdoni"
     },
-    "by": "από {{who}}",
-    "change": {
-      "changed": "Το πεδίο {{field}} άλλαξε",
-      "empty": "κενό",
-      "values": "{{field}}: {{before}} → {{after}}"
+    "census": {
+      "all": "Όλοι οι κατάλογοι ψηφοφόρων",
+      "filter_by": "Μόνο {{name}}",
+      "in_votes": "Σε ψηφοφορίες",
+      "many_one": "{{count}} κατάλογος",
+      "many_other": "{{count}} κατάλογοι",
+      "many_title": "Αυτή η αλλαγή αφορά:",
+      "no_match": "Κανένας κατάλογος δεν ταιριάζει",
+      "none": "Μόνο λίστα μελών",
+      "picker": "Κατάλογος ψηφοφόρων",
+      "picker_label": "Κατάλογος ψηφοφόρων: {{name}}",
+      "saved": "Αποθηκευμένοι",
+      "search": "Βρείτε κατάλογο ή ψηφοφορία"
     },
-    "changes_one": "{{count}} αλλαγή",
-    "changes_other": "{{count}} αλλαγές",
+    "change": {
+      "empty": "κενό",
+      "hidden": "Άλλαξε, κρυφό για λόγους απορρήτου"
+    },
+    "changes_hide_one": "Απόκρυψη {{count}} αλλαγής",
+    "changes_hide_other": "Απόκρυψη {{count}} αλλαγών",
+    "changes_show_one": "Εμφάνιση {{count}} αλλαγής",
+    "changes_show_other": "Εμφάνιση {{count}} αλλαγών",
+    "day": {
+      "today": "Σήμερα · {{date}}",
+      "undated": "Η ημερομηνία δεν έχει καταγραφεί ακόμη",
+      "undated_hint": "Οι εισαγωγές θα έχουν σύντομα ημερομηνία",
+      "yesterday": "Χθες · {{date}}"
+    },
+    "during_voting": "Κατά την ψηφοφορία",
     "empty": "Δεν υπάρχει τίποτα ακόμη. Οι εισαγωγές και οι ψηφοφορίες εμφανίζονται εδώ καθώς γίνονται.",
+    "empty_filtered": "Δεν έχει καταγραφεί τίποτα εδώ ακόμη.",
     "error": "Δεν ήταν δυνατή η φόρτωση του ιστορικού αλλαγών. Δοκιμάστε ξανά σε λίγο.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong>: κατάλογος ψηφοφόρων αντιγραμμένος από όλα τα μέλη σας",
-      "census_members_added_one": "{{number}} άτομο προστέθηκε στο «{{name}}»",
-      "census_members_added_other": "{{number}} άτομα προστέθηκαν στο «{{name}}»",
-      "census_members_removed_one": "{{number}} άτομο αφαιρέθηκε από το «{{name}}»",
-      "census_members_removed_other": "{{number}} άτομα αφαιρέθηκαν από το «{{name}}»",
+      "census_details_changed": "Τα στοιχεία του καταλόγου άλλαξαν",
+      "census_from_everyone": "Ο κατάλογος αντιγράφηκε από όλα τα μέλη σας",
       "exported": "Το ιστορικό αλλαγών εξήχθη",
-      "group_created": "Ο κατάλογος ψηφοφόρων <strong>{{name}}</strong> αποθηκεύτηκε",
       "group_deleted": "Ο κατάλογος ψηφοφόρων <strong>{{name}}</strong> διαγράφηκε",
-      "group_updated": "Ο κατάλογος ψηφοφόρων <strong>{{name}}</strong> επεξεργάστηκε",
       "import_one": "{{number}} μέλος εισήχθη",
       "import_other": "{{number}} μέλη εισήχθησαν",
       "member_added": "<strong>{{name}}</strong>: προστέθηκε στα μέλη",
       "member_deleted": "<strong>{{name}}</strong>: διαγράφηκε από τα μέλη",
-      "member_updated": "<strong>{{name}}</strong>: επεξεργάστηκε",
-      "process_created": "<strong>{{name}}</strong>: δημιουργήθηκε",
-      "process_ended": "<strong>{{name}}</strong>: έληξε",
-      "process_published": "<strong>{{name}}</strong>: δημοσιεύτηκε",
-      "process_started": "<strong>{{name}}</strong>: ξεκίνησε"
+      "member_details_changed": "Τα στοιχεία του/της <strong>{{name}}</strong> άλλαξαν",
+      "people_added_one": "{{number}} άτομο προστέθηκε",
+      "people_added_other": "{{number}} άτομα προστέθηκαν",
+      "people_removed_one": "{{number}} άτομο αφαιρέθηκε",
+      "people_removed_other": "{{number}} άτομα αφαιρέθηκαν",
+      "saved_created": "Δημιουργήθηκε αποθηκευμένος κατάλογος",
+      "saved_created_with_one": "Δημιουργήθηκε αποθηκευμένος κατάλογος με {{number}} άτομο",
+      "saved_created_with_other": "Δημιουργήθηκε αποθηκευμένος κατάλογος με {{number}} άτομα",
+      "vote_created": "Η ψηφοφορία δημιουργήθηκε",
+      "vote_published": "Η ψηφοφορία δημοσιεύτηκε",
+      "voting_closed": "Η ψηφοφορία έκλεισε",
+      "voting_opened": "Η ψηφοφορία άνοιξε"
     },
     "export": "Εξαγωγή CSV",
     "export_error": "Δεν ήταν δυνατή η εξαγωγή του ιστορικού αλλαγών",
@@ -65,43 +89,42 @@
       "unknown": "Ένα στοιχείο"
     },
     "filter": {
-      "all": "Όλα",
-      "censuses": "Κατάλογοι ψηφοφόρων",
+      "census_changes": "Αλλαγές καταλόγου",
+      "everything": "Όλα",
       "imports": "Εισαγωγές",
       "label": "Φιλτράρισμα ιστορικού αλλαγών",
       "people": "Άτομα",
       "votes": "Ψηφοφορίες"
     },
     "history": {
+      "census_created": "Ο κατάλογος δημιουργήθηκε",
+      "census_empty": "Δεν έχει συμβεί τίποτα ακόμη σε αυτόν τον κατάλογο.",
       "census_title": "Ιστορικό",
+      "copied_into": "Αντιγράφηκε στο «{{name}}»",
       "empty": "Δεν έχουν καταγραφεί αλλαγές ακόμη.",
       "error": "Δεν ήταν δυνατή η φόρτωση του ιστορικού.",
-      "person_title": "Ιστορικό"
+      "person_title": "Ιστορικό",
+      "see_in_activity": "Δείτε στη Δραστηριότητα",
+      "soon": "Σύντομα θα βλέπετε εδώ τις αλλαγές στα άτομά του, με το ποιος τις έκανε.",
+      "voting_open": "Όσο η ψηφοφορία ήταν ανοιχτή"
     },
     "imports": {
       "added_one": "{{added}} από {{total}} μέλος εισήχθη",
       "added_other": "{{added}} από {{total}} μέλη εισήχθησαν",
-      "no_date": "Η ημερομηνία δεν είναι ακόμη διαθέσιμη",
       "problems_one": "{{count}} γραμμή είχε προβλήματα",
       "problems_other": "{{count}} γραμμές είχαν προβλήματα",
       "status": {
         "completed": "Ολοκληρώθηκε",
         "failed": "Απέτυχε",
         "pending": "Εισαγωγή σε εξέλιξη"
-      },
-      "title": "Πρόσφατες εισαγωγές"
+      }
     },
     "newer": "Νεότερα",
     "older": "Παλαιότερα",
-    "soon": {
-      "description": "Οι αλλαγές σε μέλη και καταλόγους ψηφοφόρων θα εμφανίζονται εδώ, έτοιμες για εξαγωγή για τα πρακτικά σας.",
-      "title": "Σύντομα: κάθε αλλαγή, με το ποιος και πότε"
-    },
+    "show_everything": "Εμφάνιση όλων",
+    "soon_line": "Προς το παρόν εδώ βλέπετε ψηφοφορίες και εισαγωγές. Σύντομα και τις αλλαγές σε άτομα και καταλόγους, με το ποιος τις έκανε.",
     "test_vote": "Δοκιμαστική ψηφοφορία",
-    "untitled": "Χωρίς τίτλο",
-    "votes": {
-      "title": "Ψηφοφορίες"
-    }
+    "untitled": "Χωρίς τίτλο"
   },
   "add_new_org": "Προσθήκη νέου οργανισμού",
   "additional_actions": "Πρόσθετες ενέργειες",

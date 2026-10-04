@@ -27,39 +27,66 @@
       "api_key": "Clé API",
       "system": "Vocdoni"
     },
-    "by": "par {{who}}",
-    "change": {
-      "changed": "{{field}} modifié",
-      "empty": "vide",
-      "values": "{{field}} : {{before}} → {{after}}"
+    "census": {
+      "all": "Toutes les listes électorales",
+      "filter_by": "Afficher seulement {{name}}",
+      "in_votes": "Dans des votes",
+      "many_many": "{{count}} listes électorales",
+      "many_one": "{{count}} liste électorale",
+      "many_other": "{{count}} listes électorales",
+      "many_title": "Ce changement a touché :",
+      "no_match": "Aucune liste ne correspond",
+      "none": "Liste des membres seulement",
+      "picker": "Liste électorale",
+      "picker_label": "Liste électorale : {{name}}",
+      "saved": "Enregistrées",
+      "search": "Chercher une liste ou un vote"
     },
-    "changes_one": "{{count}} modification",
-    "changes_many": "{{count}} modifications",
-    "changes_other": "{{count}} modifications",
+    "change": {
+      "empty": "vide",
+      "hidden": "Modifié, masqué par confidentialité"
+    },
+    "changes_hide_many": "Masquer {{count}} changements",
+    "changes_hide_one": "Masquer {{count}} changement",
+    "changes_hide_other": "Masquer {{count}} changements",
+    "changes_show_many": "Afficher {{count}} changements",
+    "changes_show_one": "Afficher {{count}} changement",
+    "changes_show_other": "Afficher {{count}} changements",
+    "day": {
+      "today": "Aujourd'hui · {{date}}",
+      "undated": "Date pas encore enregistrée",
+      "undated_hint": "Les imports seront bientôt datés",
+      "yesterday": "Hier · {{date}}"
+    },
+    "during_voting": "Pendant le vote",
     "empty": "Rien pour l’instant. Les importations et les votes apparaîtront ici au fur et à mesure.",
+    "empty_filtered": "Rien d'enregistré ici pour l'instant.",
     "error": "Impossible de charger l’historique des modifications. Réessayez dans un instant.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong> : liste électorale copiée de tous vos membres",
-      "census_members_added_one": "{{number}} personne ajoutée à « {{name}} »",
-      "census_members_added_many": "{{number}} personnes ajoutées à « {{name}} »",
-      "census_members_added_other": "{{number}} personnes ajoutées à « {{name}} »",
-      "census_members_removed_one": "{{number}} personne retirée de « {{name}} »",
-      "census_members_removed_many": "{{number}} personnes retirées de « {{name}} »",
-      "census_members_removed_other": "{{number}} personnes retirées de « {{name}} »",
+      "census_details_changed": "Infos de la liste électorale modifiées",
+      "census_from_everyone": "Liste électorale copiée depuis tous vos membres",
       "exported": "Historique des modifications exporté",
-      "group_created": "Liste électorale <strong>{{name}}</strong> enregistrée",
       "group_deleted": "Liste électorale <strong>{{name}}</strong> supprimée",
-      "group_updated": "Liste électorale <strong>{{name}}</strong> modifiée",
       "import_one": "{{number}} membre importé",
       "import_many": "{{number}} membres importés",
       "import_other": "{{number}} membres importés",
       "member_added": "<strong>{{name}}</strong> ajouté aux membres",
       "member_deleted": "<strong>{{name}}</strong> supprimé des membres",
-      "member_updated": "<strong>{{name}}</strong> modifié",
-      "process_created": "<strong>{{name}}</strong> créé",
-      "process_ended": "<strong>{{name}}</strong> terminé",
-      "process_published": "<strong>{{name}}</strong> publié",
-      "process_started": "<strong>{{name}}</strong> commencé"
+      "member_details_changed": "Infos de <strong>{{name}}</strong> modifiées",
+      "people_added_many": "{{number}} personnes ajoutées",
+      "people_added_one": "{{number}} personne ajoutée",
+      "people_added_other": "{{number}} personnes ajoutées",
+      "people_removed_many": "{{number}} personnes retirées",
+      "people_removed_one": "{{number}} personne retirée",
+      "people_removed_other": "{{number}} personnes retirées",
+      "saved_created": "Liste électorale enregistrée créée",
+      "saved_created_with_many": "Liste enregistrée créée avec {{number}} personnes",
+      "saved_created_with_one": "Liste enregistrée créée avec {{number}} personne",
+      "saved_created_with_other": "Liste enregistrée créée avec {{number}} personnes",
+      "vote_created": "Vote créé",
+      "vote_published": "Vote publié",
+      "voting_closed": "Vote clôturé",
+      "voting_opened": "Vote ouvert"
     },
     "export": "Exporter en CSV",
     "export_error": "Impossible d’exporter l’historique des modifications",
@@ -69,24 +96,29 @@
       "unknown": "Une donnée"
     },
     "filter": {
-      "all": "Tout",
-      "censuses": "Listes électorales",
+      "census_changes": "Changements de liste",
+      "everything": "Tout",
       "imports": "Importations",
       "label": "Filtrer l’historique des modifications",
       "people": "Personnes",
       "votes": "Votes"
     },
     "history": {
+      "census_created": "Liste électorale créée",
+      "census_empty": "Rien ne s'est encore passé pour cette liste.",
       "census_title": "Historique",
+      "copied_into": "Copiée dans « {{name}} »",
       "empty": "Aucune modification enregistrée pour l’instant.",
       "error": "Impossible de charger l’historique.",
-      "person_title": "Historique"
+      "person_title": "Historique",
+      "see_in_activity": "Voir dans Activité",
+      "soon": "Les changements de ses personnes, avec leur auteur, apparaîtront bientôt ici.",
+      "voting_open": "Pendant que le vote était ouvert"
     },
     "imports": {
       "added_one": "{{added}} membre importé sur {{total}}",
       "added_many": "{{added}} membres importés sur {{total}}",
       "added_other": "{{added}} membres importés sur {{total}}",
-      "no_date": "Date pas encore disponible",
       "problems_one": "{{count}} ligne présentait des problèmes",
       "problems_many": "{{count}} lignes présentaient des problèmes",
       "problems_other": "{{count}} lignes présentaient des problèmes",
@@ -94,20 +126,14 @@
         "completed": "Terminé",
         "failed": "Échec",
         "pending": "Importation en cours"
-      },
-      "title": "Importations récentes"
+      }
     },
     "newer": "Plus récents",
     "older": "Plus anciens",
-    "soon": {
-      "description": "Les modifications des membres et des listes électorales apparaîtront ici, prêtes à être exportées pour vos procès-verbaux.",
-      "title": "Bientôt : chaque modification, avec qui et quand"
-    },
+    "show_everything": "Tout afficher",
+    "soon_line": "Pour l'instant, vous voyez ici les votes et les imports. Les changements de personnes et de listes, avec leur auteur, arrivent bientôt.",
     "test_vote": "Vote d'essai",
-    "untitled": "Sans titre",
-    "votes": {
-      "title": "Votes"
-    }
+    "untitled": "Sans titre"
   },
   "add_new_org": "Ajouter une nouvelle organisation",
   "additional_actions": "Actions supplémentaires",

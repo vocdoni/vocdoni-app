@@ -27,35 +27,59 @@
       "api_key": "API gakoa",
       "system": "Vocdoni"
     },
-    "by": "{{who}}(e)k",
-    "change": {
-      "changed": "{{field}} aldatu da",
-      "empty": "hutsik",
-      "values": "{{field}}: {{before}} → {{after}}"
+    "census": {
+      "all": "Errolda guztiak",
+      "filter_by": "Erakutsi {{name}} soilik",
+      "in_votes": "Bozketetan",
+      "many_one": "Errolda {{count}}",
+      "many_other": "{{count}} errolda",
+      "many_title": "Aldaketa honek hauek ukitu ditu:",
+      "no_match": "Ez dago bat datorren erroldarik",
+      "none": "Kideen zerrenda soilik",
+      "picker": "Errolda",
+      "picker_label": "Errolda: {{name}}",
+      "saved": "Gordeak",
+      "search": "Bilatu errolda edo bozketa"
     },
-    "changes_one": "Aldaketa {{count}}",
-    "changes_other": "{{count}} aldaketa",
+    "change": {
+      "empty": "hutsik",
+      "hidden": "Aldatua, pribatutasunagatik ezkutatua"
+    },
+    "changes_hide_one": "Ezkutatu aldaketa {{count}}",
+    "changes_hide_other": "Ezkutatu {{count}} aldaketa",
+    "changes_show_one": "Erakutsi aldaketa {{count}}",
+    "changes_show_other": "Erakutsi {{count}} aldaketa",
+    "day": {
+      "today": "Gaur · {{date}}",
+      "undated": "Data oraindik ez da erregistratu",
+      "undated_hint": "Inportazioek laster izango dute data",
+      "yesterday": "Atzo · {{date}}"
+    },
+    "during_voting": "Bozketan zehar",
     "empty": "Oraindik ez dago ezer. Inportazioak eta bozketak hemen agertuko dira gertatu ahala.",
+    "empty_filtered": "Oraindik ez dago ezer erregistratuta hemen.",
     "error": "Ezin izan dugu aldaketen erregistroa kargatu. Saiatu berriro geroxeago.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong>: kide guztietatik kopiatutako errolda",
-      "census_members_added_one": "{{number}} pertsona gehitu da '{{name}}' erroldera",
-      "census_members_added_other": "{{number}} pertsona gehitu dira '{{name}}' erroldera",
-      "census_members_removed_one": "{{number}} pertsona kendu da '{{name}}' erroldetik",
-      "census_members_removed_other": "{{number}} pertsona kendu dira '{{name}}' erroldetik",
+      "census_details_changed": "Erroldaren datuak aldatu dira",
+      "census_from_everyone": "Errolda zure kide guztietatik kopiatua",
       "exported": "Aldaketen erregistroa esportatu da",
-      "group_created": "<strong>{{name}}</strong> erroldea gorde da",
       "group_deleted": "<strong>{{name}}</strong> erroldea ezabatu da",
-      "group_updated": "<strong>{{name}}</strong> erroldea editatu da",
       "import_one": "Kide {{number}} inportatu da",
       "import_other": "{{number}} kide inportatu dira",
       "member_added": "<strong>{{name}}</strong> kideetara gehitu da",
       "member_deleted": "<strong>{{name}}</strong> kideetatik ezabatu da",
-      "member_updated": "<strong>{{name}}</strong> editatu da",
-      "process_created": "<strong>{{name}}</strong> sortu da",
-      "process_ended": "<strong>{{name}}</strong> amaitu da",
-      "process_published": "<strong>{{name}}</strong> argitaratu da",
-      "process_started": "<strong>{{name}}</strong> hasi da"
+      "member_details_changed": "<strong>{{name}}</strong>(r)en datuak aldatu dira",
+      "people_added_one": "Pertsona {{number}} gehitu da",
+      "people_added_other": "{{number}} pertsona gehitu dira",
+      "people_removed_one": "Pertsona {{number}} kendu da",
+      "people_removed_other": "{{number}} pertsona kendu dira",
+      "saved_created": "Gordetako errolda sortu da",
+      "saved_created_with_one": "Gordetako errolda sortu da pertsona {{number}}ekin",
+      "saved_created_with_other": "Gordetako errolda sortu da {{number}} pertsonarekin",
+      "vote_created": "Bozketa sortu da",
+      "vote_published": "Bozketa argitaratu da",
+      "voting_closed": "Bozketa itxi da",
+      "voting_opened": "Bozketa ireki da"
     },
     "export": "Esportatu CSV",
     "export_error": "Ezin izan dugu aldaketen erregistroa esportatu",
@@ -65,43 +89,42 @@
       "unknown": "Datu bat"
     },
     "filter": {
-      "all": "Guztiak",
-      "censuses": "Erroldeak",
+      "census_changes": "Erroldako aldaketak",
+      "everything": "Dena",
       "imports": "Inportazioak",
       "label": "Iragazi aldaketen erregistroa",
       "people": "Pertsonak",
       "votes": "Bozketak"
     },
     "history": {
+      "census_created": "Errolda sortu da",
+      "census_empty": "Oraindik ez da ezer gertatu errolda honetan.",
       "census_title": "Historia",
+      "copied_into": "'{{name}}'(e)ra kopiatua",
       "empty": "Oraindik ez da aldaketarik erregistratu.",
       "error": "Ezin izan dugu historia kargatu.",
-      "person_title": "Historia"
+      "person_title": "Historia",
+      "see_in_activity": "Ikusi Jardueran",
+      "soon": "Laster ikusiko dituzu hemen bere pertsonen aldaketak, nork egin dituen barne.",
+      "voting_open": "Bozketa irekita zegoen bitartean"
     },
     "imports": {
       "added_one": "{{total}} kidetik {{added}} inportatu da",
       "added_other": "{{total}} kidetik {{added}} inportatu dira",
-      "no_date": "Data oraindik ez dago eskuragarri",
       "problems_one": "{{count}} errenkadak arazoak zituen",
       "problems_other": "{{count}} errenkadak arazoak zituzten",
       "status": {
         "completed": "Eginda",
         "failed": "Huts egin du",
         "pending": "Inportatzen"
-      },
-      "title": "Azken inportazioak"
+      }
     },
     "newer": "Berriagoak",
     "older": "Zaharragoak",
-    "soon": {
-      "description": "Kideen eta erroldeen edizioak hemen agertuko dira, zure akten esportatzeko prest.",
-      "title": "Laster: aldaketa guztiak, nork eta noiz"
-    },
+    "show_everything": "Erakutsi dena",
+    "soon_line": "Oraingoz bozketak eta inportazioak ikusten dituzu hemen. Laster pertsonen eta erroldaren aldaketak ere, nork egin dituen barne.",
     "test_vote": "Proba-bozketa",
-    "untitled": "Izenbururik gabe",
-    "votes": {
-      "title": "Bozketak"
-    }
+    "untitled": "Izenbururik gabe"
   },
   "add_new_org": "Gehitu erakunde berri bat",
   "additional_actions": "Ekintza osagarriak",

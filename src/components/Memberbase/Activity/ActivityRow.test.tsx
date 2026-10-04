@@ -5,12 +5,11 @@ import { ActivityRow } from './ActivityRow'
 const event = (label: string): ActivityEvent =>
   ({
     id: 'e1',
-    type: 'process.started',
+    type: 'member.updated',
     at: '2026-10-02T10:00:00.000Z',
     actor: null,
     source: 'derived',
-    subject: { type: 'process', id: 'p1', label },
-    processIds: ['p1'],
+    subject: { type: 'member', id: 'm1', label },
   }) as ActivityEvent
 
 describe('ActivityRow', () => {

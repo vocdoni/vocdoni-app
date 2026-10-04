@@ -444,7 +444,7 @@ describe('CensusDetail', () => {
     expect(screen.getByRole('heading', { name: 'Eleccions Junta 2025' })).toBeInTheDocument()
     expect(screen.getByText('Code by email')).toBeInTheDocument()
     expect(screen.getByText('They also type: Member Number, National ID')).toBeInTheDocument()
-    expect(screen.getByText(/^Copied from|^Chosen by hand/)).toBeInTheDocument()
+    expect(screen.getAllByText(/^Copied from|^Chosen by hand/).length).toBeGreaterThan(0)
     // Nobody signs in to a vote that's over: no readiness
     expect(screen.queryByText(/can get a code/)).toBeNull()
   })

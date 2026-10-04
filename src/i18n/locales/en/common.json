@@ -27,35 +27,59 @@
       "api_key": "API key",
       "system": "Vocdoni"
     },
-    "by": "by {{who}}",
-    "change": {
-      "changed": "{{field}} changed",
-      "empty": "empty",
-      "values": "{{field}}: {{before}} → {{after}}"
+    "census": {
+      "all": "All censuses",
+      "filter_by": "Show only {{name}}",
+      "in_votes": "In votes",
+      "many_one": "{{count}} census",
+      "many_other": "{{count}} censuses",
+      "many_title": "This change reached:",
+      "no_match": "No census matches",
+      "none": "Members list only",
+      "picker": "Census",
+      "picker_label": "Census: {{name}}",
+      "saved": "Saved",
+      "search": "Find a census or vote"
     },
-    "changes_one": "{{count}} change",
-    "changes_other": "{{count}} changes",
+    "change": {
+      "empty": "empty",
+      "hidden": "Changed, hidden for privacy"
+    },
+    "changes_hide_one": "Hide {{count}} change",
+    "changes_hide_other": "Hide {{count}} changes",
+    "changes_show_one": "Show {{count}} change",
+    "changes_show_other": "Show {{count}} changes",
+    "day": {
+      "today": "Today · {{date}}",
+      "undated": "Date not recorded yet",
+      "undated_hint": "Imports get a date soon",
+      "yesterday": "Yesterday · {{date}}"
+    },
+    "during_voting": "During voting",
     "empty": "Nothing here yet. Imports and votes appear as they happen.",
+    "empty_filtered": "Nothing recorded here yet.",
     "error": "We couldn't load the activity. Try again in a moment.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong>: census copied from all your members",
-      "census_members_added_one": "{{number}} person added to '{{name}}'",
-      "census_members_added_other": "{{number}} people added to '{{name}}'",
-      "census_members_removed_one": "{{number}} person removed from '{{name}}'",
-      "census_members_removed_other": "{{number}} people removed from '{{name}}'",
+      "census_details_changed": "Census details changed",
+      "census_from_everyone": "Census copied from all your members",
       "exported": "Activity exported",
-      "group_created": "Census <strong>{{name}}</strong> saved",
       "group_deleted": "Census <strong>{{name}}</strong> deleted",
-      "group_updated": "Census <strong>{{name}}</strong> edited",
       "import_one": "{{number}} member imported",
       "import_other": "{{number}} members imported",
       "member_added": "<strong>{{name}}</strong> added to members",
       "member_deleted": "<strong>{{name}}</strong> deleted from members",
-      "member_updated": "<strong>{{name}}</strong> edited",
-      "process_created": "<strong>{{name}}</strong> created",
-      "process_ended": "<strong>{{name}}</strong> ended",
-      "process_published": "<strong>{{name}}</strong> published",
-      "process_started": "<strong>{{name}}</strong> started"
+      "member_details_changed": "<strong>{{name}}</strong>'s details changed",
+      "people_added_one": "{{number}} person added",
+      "people_added_other": "{{number}} people added",
+      "people_removed_one": "{{number}} person removed",
+      "people_removed_other": "{{number}} people removed",
+      "saved_created": "Saved census created",
+      "saved_created_with_one": "Saved census created with {{number}} person",
+      "saved_created_with_other": "Saved census created with {{number}} people",
+      "vote_created": "Vote created",
+      "vote_published": "Vote published",
+      "voting_closed": "Voting closed",
+      "voting_opened": "Voting opened"
     },
     "export": "Export CSV",
     "export_error": "We couldn't export the activity",
@@ -65,43 +89,42 @@
       "unknown": "A detail"
     },
     "filter": {
-      "all": "All",
-      "censuses": "Censuses",
+      "census_changes": "Census changes",
+      "everything": "Everything",
       "imports": "Imports",
       "label": "Filter activity",
       "people": "People",
       "votes": "Votes"
     },
     "history": {
+      "census_created": "Census created",
+      "census_empty": "Nothing has happened to this census yet.",
       "census_title": "History",
+      "copied_into": "Copied into '{{name}}'",
       "empty": "No changes recorded yet.",
       "error": "We couldn't load the history.",
-      "person_title": "History"
+      "person_title": "History",
+      "see_in_activity": "See in Activity",
+      "soon": "Edits to its people, with who made them, will show here soon.",
+      "voting_open": "While voting was open"
     },
     "imports": {
       "added_one": "{{added}} of {{total}} member imported",
       "added_other": "{{added}} of {{total}} members imported",
-      "no_date": "Date not shown yet",
       "problems_one": "{{count}} row had problems",
       "problems_other": "{{count}} rows had problems",
       "status": {
         "completed": "Done",
         "failed": "Failed",
         "pending": "Importing"
-      },
-      "title": "Recent imports"
+      }
     },
     "newer": "Newer",
     "older": "Older",
-    "soon": {
-      "description": "Edits to members and censuses will show here, ready to export for your minutes.",
-      "title": "Soon: every change, with who and when"
-    },
+    "show_everything": "Show everything",
+    "soon_line": "For now this shows votes and imports. Edits to people and censuses, with who made them, are coming.",
     "test_vote": "Test vote",
-    "untitled": "Untitled",
-    "votes": {
-      "title": "Votes"
-    }
+    "untitled": "Untitled"
   },
   "add_new_org": "Add a new organization",
   "additional_actions": "Additional actions",

@@ -27,39 +27,66 @@
       "api_key": "Chave de API",
       "system": "Vocdoni"
     },
-    "by": "por {{who}}",
-    "change": {
-      "changed": "{{field}} alterado",
-      "empty": "vazio",
-      "values": "{{field}}: {{before}} → {{after}}"
+    "census": {
+      "all": "Todas as listas de participantes",
+      "filter_by": "Mostrar só {{name}}",
+      "in_votes": "Em votações",
+      "many_many": "{{count}} listas de participantes",
+      "many_one": "{{count}} lista de participantes",
+      "many_other": "{{count}} listas de participantes",
+      "many_title": "Esta alteração chegou a:",
+      "no_match": "Nenhuma lista corresponde",
+      "none": "Só a lista de membros",
+      "picker": "Lista de participantes",
+      "picker_label": "Lista de participantes: {{name}}",
+      "saved": "Guardadas",
+      "search": "Procure uma lista ou uma votação"
     },
-    "changes_one": "{{count}} alteração",
-    "changes_many": "{{count}} alterações",
-    "changes_other": "{{count}} alterações",
+    "change": {
+      "empty": "vazio",
+      "hidden": "Alterado, oculto por privacidade"
+    },
+    "changes_hide_many": "Ocultar {{count}} alterações",
+    "changes_hide_one": "Ocultar {{count}} alteração",
+    "changes_hide_other": "Ocultar {{count}} alterações",
+    "changes_show_many": "Mostrar {{count}} alterações",
+    "changes_show_one": "Mostrar {{count}} alteração",
+    "changes_show_other": "Mostrar {{count}} alterações",
+    "day": {
+      "today": "Hoje · {{date}}",
+      "undated": "Data ainda não registada",
+      "undated_hint": "As importações terão data em breve",
+      "yesterday": "Ontem · {{date}}"
+    },
+    "during_voting": "Durante a votação",
     "empty": "Ainda não há nada. As importações e as votações aparecem aqui à medida que acontecem.",
+    "empty_filtered": "Ainda não há nada registado aqui.",
     "error": "Não foi possível carregar o histórico de alterações. Tenta novamente daqui a pouco.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong>: lista de participantes copiada de todos os teus membros",
-      "census_members_added_one": "{{number}} pessoa adicionada a '{{name}}'",
-      "census_members_added_many": "{{number}} pessoas adicionadas a '{{name}}'",
-      "census_members_added_other": "{{number}} pessoas adicionadas a '{{name}}'",
-      "census_members_removed_one": "{{number}} pessoa removida de '{{name}}'",
-      "census_members_removed_many": "{{number}} pessoas removidas de '{{name}}'",
-      "census_members_removed_other": "{{number}} pessoas removidas de '{{name}}'",
+      "census_details_changed": "Dados da lista de participantes alterados",
+      "census_from_everyone": "Lista copiada de todos os seus membros",
       "exported": "Histórico de alterações exportado",
-      "group_created": "Lista de participantes <strong>{{name}}</strong> guardada",
       "group_deleted": "Lista de participantes <strong>{{name}}</strong> eliminada",
-      "group_updated": "Lista de participantes <strong>{{name}}</strong> editada",
       "import_one": "{{number}} membro importado",
       "import_many": "{{number}} membros importados",
       "import_other": "{{number}} membros importados",
       "member_added": "<strong>{{name}}</strong> adicionado aos membros",
       "member_deleted": "<strong>{{name}}</strong> eliminado dos membros",
-      "member_updated": "<strong>{{name}}</strong> editado",
-      "process_created": "<strong>{{name}}</strong> criada",
-      "process_ended": "<strong>{{name}}</strong> terminou",
-      "process_published": "<strong>{{name}}</strong> publicada",
-      "process_started": "<strong>{{name}}</strong> começou"
+      "member_details_changed": "Dados de <strong>{{name}}</strong> alterados",
+      "people_added_many": "{{number}} pessoas adicionadas",
+      "people_added_one": "{{number}} pessoa adicionada",
+      "people_added_other": "{{number}} pessoas adicionadas",
+      "people_removed_many": "{{number}} pessoas removidas",
+      "people_removed_one": "{{number}} pessoa removida",
+      "people_removed_other": "{{number}} pessoas removidas",
+      "saved_created": "Lista guardada criada",
+      "saved_created_with_many": "Lista guardada criada com {{number}} pessoas",
+      "saved_created_with_one": "Lista guardada criada com {{number}} pessoa",
+      "saved_created_with_other": "Lista guardada criada com {{number}} pessoas",
+      "vote_created": "Votação criada",
+      "vote_published": "Votação publicada",
+      "voting_closed": "Votação encerrada",
+      "voting_opened": "Votação aberta"
     },
     "export": "Exportar CSV",
     "export_error": "Não foi possível exportar o histórico de alterações",
@@ -69,24 +96,29 @@
       "unknown": "Um dado"
     },
     "filter": {
-      "all": "Tudo",
-      "censuses": "Listas de participantes",
+      "census_changes": "Alterações à lista",
+      "everything": "Tudo",
       "imports": "Importações",
       "label": "Filtrar o histórico de alterações",
       "people": "Pessoas",
       "votes": "Votações"
     },
     "history": {
+      "census_created": "Lista de participantes criada",
+      "census_empty": "Ainda não aconteceu nada nesta lista.",
       "census_title": "Histórico",
+      "copied_into": "Copiada para '{{name}}'",
       "empty": "Ainda não foram registadas alterações.",
       "error": "Não foi possível carregar o histórico.",
-      "person_title": "Histórico"
+      "person_title": "Histórico",
+      "see_in_activity": "Ver em Atividade",
+      "soon": "Em breve verá aqui as alterações às suas pessoas, com quem as fez.",
+      "voting_open": "Enquanto a votação esteve aberta"
     },
     "imports": {
       "added_one": "{{added}} de {{total}} membro importado",
       "added_many": "{{added}} de {{total}} membros importados",
       "added_other": "{{added}} de {{total}} membros importados",
-      "no_date": "Data ainda não disponível",
       "problems_one": "{{count}} linha tinha problemas",
       "problems_many": "{{count}} linhas tinham problemas",
       "problems_other": "{{count}} linhas tinham problemas",
@@ -94,20 +126,14 @@
         "completed": "Concluído",
         "failed": "Falhou",
         "pending": "A importar"
-      },
-      "title": "Importações recentes"
+      }
     },
     "newer": "Mais recentes",
     "older": "Mais antigos",
-    "soon": {
-      "description": "As edições de membros e listas de participantes vão aparecer aqui, prontas a exportar para as tuas atas.",
-      "title": "Em breve: cada alteração, com quem e quando"
-    },
+    "show_everything": "Mostrar tudo",
+    "soon_line": "Por agora vê aqui votações e importações. Em breve também as alterações a pessoas e listas, com quem as fez.",
     "test_vote": "Votação de teste",
-    "untitled": "Sem título",
-    "votes": {
-      "title": "Votações"
-    }
+    "untitled": "Sem título"
   },
   "add_new_org": "Adicionar uma nova organização",
   "additional_actions": "Ações adicionais",

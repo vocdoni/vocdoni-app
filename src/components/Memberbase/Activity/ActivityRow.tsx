@@ -1,4 +1,4 @@
-import { Badge, Box, chakra, Flex, Icon, Stack, Text } from '@chakra-ui/react'
+import { Badge, Box, chakra, Flex, Grid, Icon, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
 import { ElementType, useId, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -6,11 +6,12 @@ import {
   LuChevronDown,
   LuCirclePlay,
   LuCircleStop,
+  LuCopy,
   LuDownload,
   LuFlag,
   LuListChecks,
+  LuLock,
   LuPencil,
-  LuSnowflake,
   LuUpload,
   LuUserMinus,
   LuUserPlus,
@@ -18,8 +19,10 @@ import {
 import { useDateFns } from '~i18n/use-date-fns'
 import { formatChange, type ActivityEvent, type ActivityType, type FormattedChange } from '~src/queries/activity'
 import { useMemberFields } from '../fields'
+import { CensusChips } from './CensusChip'
+import type { CensusFilter, CensusRef } from './censusRefs'
 
-const ICONS: Record<ActivityType, ElementType> = {
+export const ICONS: Record<ActivityType, ElementType> = {
   'member.added': LuUserPlus,
   'member.updated': LuPencil,
   'member.deleted': LuUserMinus,
@@ -31,7 +34,7 @@ const ICONS: Record<ActivityType, ElementType> = {
   'group.deleted': LuListChecks,
   'census.members_added': LuUserPlus,
   'census.members_removed': LuUserMinus,
-  'census.frozen': LuSnowflake,
+  'census.frozen': LuCopy,
   'process.created': LuFlag,
   'process.published': LuFlag,
   'process.started': LuCirclePlay,
@@ -48,54 +51,25 @@ const strong = { strong: <chakra.strong fontWeight='bolder' /> }
  */
 const asText = { tOptions: { interpolation: { escapeValue: true } }, shouldUnescape: true }
 
-/** What happened, as a sentence with its subject in bold. */
-const EventSentence = ({ event }: { event: ActivityEvent }) => {
+/**
+ * What happened, as a plain sentence. The census it happened to isn't in it: the row names it in its
+ * own column, so a sentence reads the same in the Activity tab and on the census' page.
+ */
+export const EventSentence = ({ event }: { event: ActivityEvent }) => {
   const { t, i18n } = useTranslation()
   const values = { name: event.subject.label || t('activity.untitled', { defaultValue: 'Untitled' }) }
   const count = event.count ?? 0
   const number = count.toLocaleString(i18n.resolvedLanguage)
 
   switch (event.type) {
-    case 'process.started':
-      return (
-        <Trans
-          i18nKey='activity.event.process_started'
-          defaults='<strong>{{name}}</strong> started'
-          values={values}
-          components={strong}
-          {...asText}
-        />
-      )
-    case 'process.ended':
-      return (
-        <Trans
-          i18nKey='activity.event.process_ended'
-          defaults='<strong>{{name}}</strong> ended'
-          values={values}
-          components={strong}
-          {...asText}
-        />
-      )
     case 'process.created':
-      return (
-        <Trans
-          i18nKey='activity.event.process_created'
-          defaults='<strong>{{name}}</strong> created'
-          values={values}
-          components={strong}
-          {...asText}
-        />
-      )
+      return t('activity.event.vote_created', { defaultValue: 'Vote created' })
     case 'process.published':
-      return (
-        <Trans
-          i18nKey='activity.event.process_published'
-          defaults='<strong>{{name}}</strong> published'
-          values={values}
-          components={strong}
-          {...asText}
-        />
-      )
+      return t('activity.event.vote_published', { defaultValue: 'Vote published' })
+    case 'process.started':
+      return t('activity.event.voting_opened', { defaultValue: 'Voting opened' })
+    case 'process.ended':
+      return t('activity.event.voting_closed', { defaultValue: 'Voting closed' })
     case 'member.added':
       return (
         <Trans
@@ -109,8 +83,8 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
     case 'member.updated':
       return (
         <Trans
-          i18nKey='activity.event.member_updated'
-          defaults='<strong>{{name}}</strong> edited'
+          i18nKey='activity.event.member_details_changed'
+          defaults="<strong>{{name}}</strong>'s details changed"
           values={values}
           components={strong}
           {...asText}
@@ -129,6 +103,14 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
     case 'import.started':
     case 'import.completed':
     case 'import.failed':
+      if (event.import)
+        return t('activity.imports.added', {
+          defaultValue_one: '{{added}} of {{total}} member imported',
+          defaultValue_other: '{{added}} of {{total}} members imported',
+          added: event.import.added.toLocaleString(i18n.resolvedLanguage),
+          total: event.import.total.toLocaleString(i18n.resolvedLanguage),
+          count: event.import.total,
+        })
       return t('activity.event.import', {
         defaultValue_one: '{{number}} member imported',
         defaultValue_other: '{{number}} members imported',
@@ -136,25 +118,16 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
         number,
       })
     case 'group.created':
-      return (
-        <Trans
-          i18nKey='activity.event.group_created'
-          defaults='Census <strong>{{name}}</strong> saved'
-          values={values}
-          components={strong}
-          {...asText}
-        />
-      )
+      return event.count === undefined
+        ? t('activity.event.saved_created', { defaultValue: 'Saved census created' })
+        : t('activity.event.saved_created_with', {
+            defaultValue_one: 'Saved census created with {{number}} person',
+            defaultValue_other: 'Saved census created with {{number}} people',
+            count,
+            number,
+          })
     case 'group.updated':
-      return (
-        <Trans
-          i18nKey='activity.event.group_updated'
-          defaults='Census <strong>{{name}}</strong> edited'
-          values={values}
-          components={strong}
-          {...asText}
-        />
-      )
+      return t('activity.event.census_details_changed', { defaultValue: 'Census details changed' })
     case 'group.deleted':
       return (
         <Trans
@@ -166,68 +139,136 @@ const EventSentence = ({ event }: { event: ActivityEvent }) => {
         />
       )
     case 'census.members_added':
-      return t('activity.event.census_members_added', {
-        defaultValue_one: "{{number}} person added to '{{name}}'",
-        defaultValue_other: "{{number}} people added to '{{name}}'",
+      return t('activity.event.people_added', {
+        defaultValue_one: '{{number}} person added',
+        defaultValue_other: '{{number}} people added',
         count,
         number,
-        name: values.name,
       })
     case 'census.members_removed':
-      return t('activity.event.census_members_removed', {
-        defaultValue_one: "{{number}} person removed from '{{name}}'",
-        defaultValue_other: "{{number}} people removed from '{{name}}'",
+      return t('activity.event.people_removed', {
+        defaultValue_one: '{{number}} person removed',
+        defaultValue_other: '{{number}} people removed',
         count,
         number,
-        name: values.name,
       })
     case 'census.frozen':
-      return (
-        <Trans
-          i18nKey='activity.event.census_frozen'
-          defaults='<strong>{{name}}</strong>: census copied from all your members'
-          values={values}
-          components={strong}
-          {...asText}
-        />
-      )
+      return t('activity.event.census_from_everyone', { defaultValue: 'Census copied from all your members' })
     case 'activity.exported':
       return t('activity.event.exported', { defaultValue: 'Activity exported' })
   }
 }
 
-const actorLabel = (t: TFunction, event: ActivityEvent) => {
+/** Who did it, muted: a person's name, an API key's name with an "API key" tag, or Vocdoni. */
+export const ActorLabel = ({ event }: { event: ActivityEvent }) => {
+  const { t } = useTranslation()
   const { actor } = event
   if (!actor) return null
-  if (actor.label) return actor.label
-  if (actor.type === 'api_key') return t('activity.actor.api_key', { defaultValue: 'API key' })
-  if (actor.type === 'system') return t('activity.actor.system', { defaultValue: 'Vocdoni' })
-  return null
-}
-
-const ChangeLine = ({ change, label }: { change: FormattedChange; label: string }) => {
-  const { t } = useTranslation()
-  const empty = t('activity.change.empty', { defaultValue: 'empty' })
-
+  const name = actor.label || (actor.type === 'system' ? t('activity.actor.system', { defaultValue: 'Vocdoni' }) : null)
+  if (!name && actor.type !== 'api_key') return null
   return (
-    <Text as='li' fontSize='sm' color='fg.muted'>
-      {change.kind === 'changed'
-        ? t('activity.change.changed', { defaultValue: '{{field}} changed', field: label })
-        : t('activity.change.values', {
-            defaultValue: '{{field}}: {{before}} → {{after}}',
-            field: label,
-            before: change.before ?? empty,
-            after: change.after ?? empty,
-          })}
+    <Text as='span' fontSize='sm' color='fg.muted' display='inline-flex' alignItems='center' gap={1.5}>
+      {name}
+      {actor.type === 'api_key' && (
+        <Badge size='xs' variant='outline' color='fg.muted'>
+          {t('activity.actor.api_key', { defaultValue: 'API key' })}
+        </Badge>
+      )}
     </Text>
   )
 }
 
+const ImportStatus = ({ status }: { status: NonNullable<ActivityEvent['import']>['status'] }) => {
+  const { t } = useTranslation()
+  const [palette, label] =
+    status === 'pending'
+      ? ['blue', t('activity.imports.status.pending', { defaultValue: 'Importing' })]
+      : status === 'failed'
+        ? ['red', t('activity.imports.status.failed', { defaultValue: 'Failed' })]
+        : ['green', t('activity.imports.status.completed', { defaultValue: 'Done' })]
+  return (
+    <Badge size='xs' variant='subtle' colorPalette={palette}>
+      {label}
+    </Badge>
+  )
+}
+
+const fieldLabel = (t: TFunction, fields: { id: string; label: string }[], field: string) =>
+  fields.find((item) => item.id === field)?.label ??
+  (field === 'other'
+    ? t('activity.field.other', { defaultValue: 'Extra info' })
+    : field === 'title'
+      ? t('activity.field.title', { defaultValue: 'Name' })
+      : t('activity.field.unknown', { defaultValue: 'A detail' }))
+
+/** The changed fields, masked: before → after, or a lock where the value is kept private. */
+const ChangeList = ({
+  id,
+  changes,
+  labelOf,
+}: {
+  id: string
+  changes: FormattedChange[]
+  labelOf: (field: string) => string
+}) => {
+  const { t } = useTranslation()
+  const empty = t('activity.change.empty', { defaultValue: 'empty' })
+  return (
+    <Grid
+      as='dl'
+      id={id}
+      templateColumns='minmax(90px, max-content) 1fr'
+      columnGap={4}
+      rowGap={1}
+      mt={2}
+      px={3}
+      py={2}
+      bg='bg.subtle'
+      borderRadius='md'
+      fontSize='sm'
+      className='ph-no-capture'
+    >
+      {changes.map((change, index) => (
+        <Box key={`${change.field}-${index}`} display='contents'>
+          <Text as='dt' color='fg.muted'>
+            {labelOf(change.field)}
+          </Text>
+          <Text as='dd' m={0} minW={0}>
+            {change.kind === 'changed' ? (
+              <Text as='span' color='fg.muted' display='inline-flex' alignItems='center' gap={1}>
+                <Icon as={LuLock} boxSize={3} aria-hidden />
+                {t('activity.change.hidden', { defaultValue: 'Changed, hidden for privacy' })}
+              </Text>
+            ) : (
+              <>
+                <Text as='span' color='fg.muted' textDecoration='line-through'>
+                  {change.before ?? empty}
+                </Text>
+                {' → '}
+                <Text as='span'>{change.after ?? empty}</Text>
+              </>
+            )}
+          </Text>
+        </Box>
+      ))}
+    </Grid>
+  )
+}
+
+type ActivityRowProps = {
+  event: ActivityEvent
+  /** Show the date with the time: off in the day-grouped timeline, whose heading says the day */
+  showDate?: boolean
+  /** The censuses it reached, in the right-hand column. Left out where the census is the page itself */
+  censuses?: CensusRef[]
+  onSelectCensus?: (filter: CensusFilter) => void
+}
+
 /**
- * One event: an icon, a sentence, who did it and when. When it changed fields, they open beneath it,
- * masked (see `formatChange`).
+ * One event, left to right: when, what (a plain sentence) and who, then on the right the census it
+ * belongs to. Changed fields open beneath it, masked (see `formatChange`).
  */
-export const ActivityRow = ({ event, showDate = false }: { event: ActivityEvent; showDate?: boolean }) => {
+export const ActivityRow = ({ event, showDate = false, censuses, onSelectCensus }: ActivityRowProps) => {
   const { t } = useTranslation()
   const { format } = useDateFns()
   const fields = useMemberFields()
@@ -236,74 +277,112 @@ export const ActivityRow = ({ event, showDate = false }: { event: ActivityEvent;
   const changes = (event.changes ?? []).map((change) =>
     formatChange(change.field, change.before, change.after, change.redacted)
   )
-  const labelOf = (field: string) =>
-    fields.find((item) => item.id === field)?.label ??
-    (field === 'other'
-      ? t('activity.field.other', { defaultValue: 'Extra info' })
-      : field === 'title'
-        ? t('activity.field.title', { defaultValue: 'Name' })
-        : t('activity.field.unknown', { defaultValue: 'A detail' }))
-  const who = actorLabel(t, event)
-  const when = event.at ? format(event.at, showDate ? 'PP p' : 'p') : undefined
+  const when = event.at ? format(event.at, showDate ? 'PP p' : 'p') : '–'
+  // "During voting" is the one coloured flag: a change that reached a vote while it was open. A vote
+  // opening is not a change made during voting.
+  const duringVoting = !!event.live && !event.type.startsWith('process.')
+  const withCensus = !!censuses && !!onSelectCensus
+  const hasSide = withCensus || duringVoting
 
   return (
-    <Box as='li' listStyleType='none'>
-      <Flex align='center' gap={3} minH='40px' py={1}>
-        <Icon as={ICONS[event.type]} boxSize={4} color='fg.muted' flexShrink={0} aria-hidden />
-        <Text fontSize='sm' flex='1' minW={0} className='ph-no-capture'>
-          <EventSentence event={event} />
+    <Grid
+      as='li'
+      listStyleType='none'
+      templateColumns={{ base: '20px minmax(0, 1fr)', md: `64px 20px minmax(0, 1fr)${hasSide ? ' auto' : ''}` }}
+      templateAreas={{
+        base: `"icon main" ". side"`,
+        md: `"time icon main${hasSide ? ' side' : ''}"`,
+      }}
+      columnGap={3}
+      rowGap={1.5}
+      py={2.5}
+      borderBottomWidth='1px'
+      borderColor='border.muted'
+      _last={{ borderBottomWidth: 0 }}
+      alignItems='start'
+    >
+      <chakra.time
+        gridArea='time'
+        display={{ base: 'none', md: 'block' }}
+        dateTime={event.at ?? undefined}
+        fontSize='sm'
+        color='fg.muted'
+        fontVariantNumeric='tabular-nums'
+        lineHeight='1.5rem'
+        whiteSpace='nowrap'
+      >
+        {when}
+      </chakra.time>
+      <Flex gridArea='icon' h={6} align='center'>
+        <Icon as={ICONS[event.type]} boxSize={4} color='fg.muted' aria-hidden />
+      </Flex>
+      <Box gridArea='main' minW={0}>
+        <Flex align='center' columnGap={2} rowGap={0.5} wrap='wrap' minH={6}>
+          <Text fontSize='sm' className='ph-no-capture'>
+            <EventSentence event={event} />
+          </Text>
           {event.test && (
-            <Badge size='xs' variant='subtle' ms={2}>
+            <Badge size='xs' variant='subtle'>
               {t('activity.test_vote', { defaultValue: 'Test vote' })}
             </Badge>
           )}
-          {who && (
-            <Text as='span' fontSize='sm' color='fg.muted'>
-              {' · '}
-              {t('activity.by', { defaultValue: 'by {{who}}', who })}
-            </Text>
+          {!!event.import?.problems && (
+            <Badge size='xs' variant='outline' color='fg.muted'>
+              {t('activity.imports.problems', {
+                defaultValue_one: '{{count}} row had problems',
+                defaultValue_other: '{{count}} rows had problems',
+                count: event.import.problems,
+              })}
+            </Badge>
           )}
+          {event.import && <ImportStatus status={event.import.status} />}
+          <ActorLabel event={event} />
+          {changes.length > 0 && (
+            <chakra.button
+              type='button'
+              display='inline-flex'
+              alignItems='center'
+              gap={1}
+              fontSize='sm'
+              color='fg.muted'
+              _hover={{ color: 'fg' }}
+              aria-expanded={open}
+              aria-controls={changesId}
+              onClick={() => setOpen((value) => !value)}
+            >
+              {open
+                ? t('activity.changes_hide', {
+                    defaultValue_one: 'Hide {{count}} change',
+                    defaultValue_other: 'Hide {{count}} changes',
+                    count: changes.length,
+                  })
+                : t('activity.changes_show', {
+                    defaultValue_one: 'Show {{count}} change',
+                    defaultValue_other: 'Show {{count}} changes',
+                    count: changes.length,
+                  })}
+              <Icon as={LuChevronDown} boxSize={3} transform={open ? 'rotate(180deg)' : undefined} aria-hidden />
+            </chakra.button>
+          )}
+        </Flex>
+        {/* On phones the time sits under the sentence, the chips under that */}
+        <Text display={{ base: 'block', md: 'none' }} fontSize='xs' color='fg.muted' fontVariantNumeric='tabular-nums'>
+          {when}
         </Text>
-        {changes.length > 0 && (
-          <chakra.button
-            type='button'
-            display='inline-flex'
-            alignItems='center'
-            gap={1}
-            fontSize='xs'
-            color='fg.muted'
-            _hover={{ color: 'fg' }}
-            aria-expanded={open}
-            aria-controls={changesId}
-            onClick={() => setOpen((value) => !value)}
-          >
-            {t('activity.changes', {
-              defaultValue_one: '{{count}} change',
-              defaultValue_other: '{{count}} changes',
-              count: changes.length,
-            })}
-            <Icon as={LuChevronDown} boxSize={3} transform={open ? 'rotate(180deg)' : undefined} />
-          </chakra.button>
+        {open && changes.length > 0 && (
+          <ChangeList id={changesId} changes={changes} labelOf={(field) => fieldLabel(t, fields, field)} />
         )}
-        {when && (
-          <chakra.time
-            dateTime={event.at!}
-            fontSize='xs'
-            color='fg.muted'
-            fontVariantNumeric='tabular-nums'
-            flexShrink={0}
-          >
-            {when}
-          </chakra.time>
-        )}
-      </Flex>
-      {open && changes.length > 0 && (
-        <Stack as='ul' id={changesId} gap={0.5} ps={7} pb={2} m={0} className='ph-no-capture'>
-          {changes.map((change, index) => (
-            <ChangeLine key={`${change.field}-${index}`} change={change} label={labelOf(change.field)} />
-          ))}
-        </Stack>
+      </Box>
+      {hasSide && (
+        <Flex gridArea='side' align='center' gap={2} justify={{ base: 'flex-start', md: 'flex-end' }} wrap='wrap'>
+          {duringVoting && (
+            <Badge size='sm' variant='subtle' colorPalette='yellow'>
+              {t('activity.during_voting', { defaultValue: 'During voting' })}
+            </Badge>
+          )}
+          {withCensus && <CensusChips censuses={censuses!} onSelect={onSelectCensus!} />}
+        </Flex>
       )}
-    </Box>
+    </Grid>
   )
 }

@@ -349,10 +349,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
           )}
         </>
       )}
-      <CensusHistory
-        groupId={census.kind === 'everyone' ? undefined : census.groupId}
-        processId={census.kind === 'vote' ? census.process?.id : undefined}
-      />
+      <CensusHistory census={census} />
 
       {census.edit !== 'none' && (
         <>

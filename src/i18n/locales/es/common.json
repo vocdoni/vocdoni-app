@@ -27,39 +27,66 @@
       "api_key": "Clave de API",
       "system": "Vocdoni"
     },
-    "by": "por {{who}}",
-    "change": {
-      "changed": "{{field}} ha cambiado",
-      "empty": "vacío",
-      "values": "{{field}}: {{before}} → {{after}}"
+    "census": {
+      "all": "Todos los censos",
+      "filter_by": "Mostrar solo {{name}}",
+      "in_votes": "En votaciones",
+      "many_many": "{{count}} censos",
+      "many_one": "{{count}} censo",
+      "many_other": "{{count}} censos",
+      "many_title": "Este cambio llegó a:",
+      "no_match": "Ningún censo coincide",
+      "none": "Solo la lista de miembros",
+      "picker": "Censo",
+      "picker_label": "Censo: {{name}}",
+      "saved": "Guardados",
+      "search": "Busca un censo o una votación"
     },
-    "changes_one": "{{count}} cambio",
-    "changes_many": "{{count}} cambios",
-    "changes_other": "{{count}} cambios",
+    "change": {
+      "empty": "vacío",
+      "hidden": "Cambiado, oculto por privacidad"
+    },
+    "changes_hide_many": "Ocultar {{count}} cambios",
+    "changes_hide_one": "Ocultar {{count}} cambio",
+    "changes_hide_other": "Ocultar {{count}} cambios",
+    "changes_show_many": "Mostrar {{count}} cambios",
+    "changes_show_one": "Mostrar {{count}} cambio",
+    "changes_show_other": "Mostrar {{count}} cambios",
+    "day": {
+      "today": "Hoy · {{date}}",
+      "undated": "Fecha aún no registrada",
+      "undated_hint": "Las importaciones tendrán fecha pronto",
+      "yesterday": "Ayer · {{date}}"
+    },
+    "during_voting": "Durante la votación",
     "empty": "Aún no hay nada. Las importaciones y las votaciones aparecerán aquí a medida que ocurran.",
+    "empty_filtered": "Todavía no hay nada registrado aquí.",
     "error": "No hemos podido cargar el historial de cambios. Vuelve a intentarlo en un momento.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong>: censo copiado de todos tus miembros",
-      "census_members_added_one": "{{number}} persona añadida a '{{name}}'",
-      "census_members_added_many": "{{number}} personas añadidas a '{{name}}'",
-      "census_members_added_other": "{{number}} personas añadidas a '{{name}}'",
-      "census_members_removed_one": "{{number}} persona quitada de '{{name}}'",
-      "census_members_removed_many": "{{number}} personas quitadas de '{{name}}'",
-      "census_members_removed_other": "{{number}} personas quitadas de '{{name}}'",
+      "census_details_changed": "Datos del censo cambiados",
+      "census_from_everyone": "Censo copiado de todos tus miembros",
       "exported": "Historial de cambios exportado",
-      "group_created": "Censo <strong>{{name}}</strong> guardado",
       "group_deleted": "Censo <strong>{{name}}</strong> eliminado",
-      "group_updated": "Censo <strong>{{name}}</strong> editado",
       "import_one": "{{number}} miembro importado",
       "import_many": "{{number}} miembros importados",
       "import_other": "{{number}} miembros importados",
       "member_added": "<strong>{{name}}</strong> añadido a los miembros",
       "member_deleted": "<strong>{{name}}</strong> eliminado de los miembros",
-      "member_updated": "<strong>{{name}}</strong> editado",
-      "process_created": "<strong>{{name}}</strong> creada",
-      "process_ended": "<strong>{{name}}</strong> ha terminado",
-      "process_published": "<strong>{{name}}</strong> publicada",
-      "process_started": "<strong>{{name}}</strong> ha empezado"
+      "member_details_changed": "Datos de <strong>{{name}}</strong> cambiados",
+      "people_added_many": "{{number}} personas añadidas",
+      "people_added_one": "{{number}} persona añadida",
+      "people_added_other": "{{number}} personas añadidas",
+      "people_removed_many": "{{number}} personas eliminadas",
+      "people_removed_one": "{{number}} persona eliminada",
+      "people_removed_other": "{{number}} personas eliminadas",
+      "saved_created": "Censo guardado creado",
+      "saved_created_with_many": "Censo guardado creado con {{number}} personas",
+      "saved_created_with_one": "Censo guardado creado con {{number}} persona",
+      "saved_created_with_other": "Censo guardado creado con {{number}} personas",
+      "vote_created": "Votación creada",
+      "vote_published": "Votación publicada",
+      "voting_closed": "Votación cerrada",
+      "voting_opened": "Votación abierta"
     },
     "export": "Exportar CSV",
     "export_error": "No hemos podido exportar el historial de cambios",
@@ -69,24 +96,29 @@
       "unknown": "Un dato"
     },
     "filter": {
-      "all": "Todo",
-      "censuses": "Censos",
+      "census_changes": "Cambios en el censo",
+      "everything": "Todo",
       "imports": "Importaciones",
       "label": "Filtrar el historial de cambios",
       "people": "Personas",
       "votes": "Votaciones"
     },
     "history": {
+      "census_created": "Censo creado",
+      "census_empty": "Todavía no ha pasado nada en este censo.",
       "census_title": "Historial",
+      "copied_into": "Copiado a '{{name}}'",
       "empty": "Aún no se ha registrado ningún cambio.",
       "error": "No hemos podido cargar el historial.",
-      "person_title": "Historial"
+      "person_title": "Historial",
+      "see_in_activity": "Ver en Actividad",
+      "soon": "Pronto verás aquí los cambios en sus personas, con quién los hizo.",
+      "voting_open": "Mientras la votación estaba abierta"
     },
     "imports": {
       "added_one": "{{added}} de {{total}} miembro importado",
       "added_many": "{{added}} de {{total}} miembros importados",
       "added_other": "{{added}} de {{total}} miembros importados",
-      "no_date": "Fecha aún no disponible",
       "problems_one": "{{count}} fila tenía problemas",
       "problems_many": "{{count}} filas tenían problemas",
       "problems_other": "{{count}} filas tenían problemas",
@@ -94,20 +126,14 @@
         "completed": "Hecho",
         "failed": "Ha fallado",
         "pending": "Importando"
-      },
-      "title": "Importaciones recientes"
+      }
     },
     "newer": "Más recientes",
     "older": "Más antiguos",
-    "soon": {
-      "description": "Las ediciones de miembros y censos aparecerán aquí, listas para exportarlas para tus actas.",
-      "title": "Pronto: cada cambio, con quién y cuándo"
-    },
+    "show_everything": "Mostrar todo",
+    "soon_line": "Por ahora aquí ves votaciones e importaciones. Pronto también los cambios en personas y censos, con quién los hizo.",
     "test_vote": "Votación de prueba",
-    "untitled": "Sin título",
-    "votes": {
-      "title": "Votaciones"
-    }
+    "untitled": "Sin título"
   },
   "add_new_org": "Añadir una nueva organización",
   "additional_actions": "Acciones adicionales",

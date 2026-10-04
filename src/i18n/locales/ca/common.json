@@ -27,39 +27,66 @@
       "api_key": "Clau d'API",
       "system": "Vocdoni"
     },
-    "by": "per {{who}}",
-    "change": {
-      "changed": "{{field}} ha canviat",
-      "empty": "buit",
-      "values": "{{field}}: {{before}} → {{after}}"
+    "census": {
+      "all": "Tots els censos",
+      "filter_by": "Mostra només {{name}}",
+      "in_votes": "En votacions",
+      "many_many": "{{count}} censos",
+      "many_one": "{{count}} cens",
+      "many_other": "{{count}} censos",
+      "many_title": "Aquest canvi ha arribat a:",
+      "no_match": "Cap cens coincideix",
+      "none": "Només la llista de membres",
+      "picker": "Cens",
+      "picker_label": "Cens: {{name}}",
+      "saved": "Desats",
+      "search": "Cerca un cens o una votació"
     },
-    "changes_one": "{{count}} canvi",
-    "changes_many": "{{count}} canvis",
-    "changes_other": "{{count}} canvis",
+    "change": {
+      "empty": "buit",
+      "hidden": "Ha canviat, ocult per privadesa"
+    },
+    "changes_hide_many": "Amaga {{count}} canvis",
+    "changes_hide_one": "Amaga {{count}} canvi",
+    "changes_hide_other": "Amaga {{count}} canvis",
+    "changes_show_many": "Mostra {{count}} canvis",
+    "changes_show_one": "Mostra {{count}} canvi",
+    "changes_show_other": "Mostra {{count}} canvis",
+    "day": {
+      "today": "Avui · {{date}}",
+      "undated": "Data encara no registrada",
+      "undated_hint": "Les importacions tindran data aviat",
+      "yesterday": "Ahir · {{date}}"
+    },
+    "during_voting": "Durant la votació",
     "empty": "Encara no hi ha res. Les importacions i les votacions apareixeran aquí a mesura que passin.",
+    "empty_filtered": "Encara no hi ha res registrat aquí.",
     "error": "No hem pogut carregar el registre de canvis. Torna-ho a provar d'aquí a una estona.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong>: cens copiat de tots els teus membres",
-      "census_members_added_one": "{{number}} persona afegida a '{{name}}'",
-      "census_members_added_many": "{{number}} persones afegides a '{{name}}'",
-      "census_members_added_other": "{{number}} persones afegides a '{{name}}'",
-      "census_members_removed_one": "{{number}} persona treta de '{{name}}'",
-      "census_members_removed_many": "{{number}} persones tretes de '{{name}}'",
-      "census_members_removed_other": "{{number}} persones tretes de '{{name}}'",
+      "census_details_changed": "Dades del cens canviades",
+      "census_from_everyone": "Cens copiat de tots els teus membres",
       "exported": "Registre de canvis exportat",
-      "group_created": "Cens <strong>{{name}}</strong> desat",
       "group_deleted": "Cens <strong>{{name}}</strong> esborrat",
-      "group_updated": "Cens <strong>{{name}}</strong> editat",
       "import_one": "{{number}} membre importat",
       "import_many": "{{number}} membres importats",
       "import_other": "{{number}} membres importats",
       "member_added": "<strong>{{name}}</strong> afegit als membres",
       "member_deleted": "<strong>{{name}}</strong> esborrat dels membres",
-      "member_updated": "<strong>{{name}}</strong> editat",
-      "process_created": "<strong>{{name}}</strong> creada",
-      "process_ended": "<strong>{{name}}</strong> ha acabat",
-      "process_published": "<strong>{{name}}</strong> publicada",
-      "process_started": "<strong>{{name}}</strong> ha començat"
+      "member_details_changed": "Dades de <strong>{{name}}</strong> canviades",
+      "people_added_many": "{{number}} persones afegides",
+      "people_added_one": "{{number}} persona afegida",
+      "people_added_other": "{{number}} persones afegides",
+      "people_removed_many": "{{number}} persones eliminades",
+      "people_removed_one": "{{number}} persona eliminada",
+      "people_removed_other": "{{number}} persones eliminades",
+      "saved_created": "Cens desat creat",
+      "saved_created_with_many": "Cens desat creat amb {{number}} persones",
+      "saved_created_with_one": "Cens desat creat amb {{number}} persona",
+      "saved_created_with_other": "Cens desat creat amb {{number}} persones",
+      "vote_created": "Votació creada",
+      "vote_published": "Votació publicada",
+      "voting_closed": "Votació tancada",
+      "voting_opened": "Votació oberta"
     },
     "export": "Exporta CSV",
     "export_error": "No hem pogut exportar el registre de canvis",
@@ -69,24 +96,29 @@
       "unknown": "Una dada"
     },
     "filter": {
-      "all": "Tot",
-      "censuses": "Censos",
+      "census_changes": "Canvis al cens",
+      "everything": "Tot",
       "imports": "Importacions",
       "label": "Filtra el registre de canvis",
       "people": "Persones",
       "votes": "Votacions"
     },
     "history": {
+      "census_created": "Cens creat",
+      "census_empty": "Encara no ha passat res en aquest cens.",
       "census_title": "Historial",
+      "copied_into": "Copiat a '{{name}}'",
       "empty": "Encara no s'ha registrat cap canvi.",
       "error": "No hem pogut carregar l'historial.",
-      "person_title": "Historial"
+      "person_title": "Historial",
+      "see_in_activity": "Veure a Activitat",
+      "soon": "Aviat veuràs aquí els canvis a les seves persones, amb qui els ha fet.",
+      "voting_open": "Mentre la votació era oberta"
     },
     "imports": {
       "added_one": "{{added}} de {{total}} membre importat",
       "added_many": "{{added}} de {{total}} membres importats",
       "added_other": "{{added}} de {{total}} membres importats",
-      "no_date": "Data encara no disponible",
       "problems_one": "{{count}} fila tenia problemes",
       "problems_many": "{{count}} files tenien problemes",
       "problems_other": "{{count}} files tenien problemes",
@@ -94,20 +126,14 @@
         "completed": "Fet",
         "failed": "Ha fallat",
         "pending": "Important"
-      },
-      "title": "Importacions recents"
+      }
     },
     "newer": "Més recents",
     "older": "Més antics",
-    "soon": {
-      "description": "Les edicions de membres i censos es mostraran aquí, a punt per exportar-les per a les teves actes.",
-      "title": "Aviat: cada canvi, amb qui i quan"
-    },
+    "show_everything": "Mostra-ho tot",
+    "soon_line": "De moment aquí veus votacions i importacions. Aviat també els canvis a persones i censos, amb qui els ha fet.",
     "test_vote": "Votació de prova",
-    "untitled": "Sense títol",
-    "votes": {
-      "title": "Votacions"
-    }
+    "untitled": "Sense títol"
   },
   "add_new_org": "Afegeix una nova organització",
   "additional_actions": "Accions addicionals",

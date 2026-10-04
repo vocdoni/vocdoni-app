@@ -27,35 +27,59 @@
       "api_key": "API-Schlüssel",
       "system": "Vocdoni"
     },
-    "by": "von {{who}}",
-    "change": {
-      "changed": "{{field}} geändert",
-      "empty": "leer",
-      "values": "{{field}}: {{before}} → {{after}}"
+    "census": {
+      "all": "Alle Teilnehmerlisten",
+      "filter_by": "Nur {{name}} zeigen",
+      "in_votes": "In Abstimmungen",
+      "many_one": "{{count}} Teilnehmerliste",
+      "many_other": "{{count}} Teilnehmerlisten",
+      "many_title": "Diese Änderung betraf:",
+      "no_match": "Keine Liste passt",
+      "none": "Nur Mitgliederliste",
+      "picker": "Teilnehmerliste",
+      "picker_label": "Teilnehmerliste: {{name}}",
+      "saved": "Gespeichert",
+      "search": "Liste oder Abstimmung suchen"
     },
-    "changes_one": "{{count}} Änderung",
-    "changes_other": "{{count}} Änderungen",
+    "change": {
+      "empty": "leer",
+      "hidden": "Geändert, aus Datenschutzgründen verborgen"
+    },
+    "changes_hide_one": "{{count}} Änderung ausblenden",
+    "changes_hide_other": "{{count}} Änderungen ausblenden",
+    "changes_show_one": "{{count}} Änderung zeigen",
+    "changes_show_other": "{{count}} Änderungen zeigen",
+    "day": {
+      "today": "Heute · {{date}}",
+      "undated": "Datum noch nicht erfasst",
+      "undated_hint": "Importe bekommen bald ein Datum",
+      "yesterday": "Gestern · {{date}}"
+    },
+    "during_voting": "Während der Abstimmung",
     "empty": "Noch nichts zu sehen. Importe und Abstimmungen erscheinen hier, sobald sie stattfinden.",
+    "empty_filtered": "Hier ist noch nichts erfasst.",
     "error": "Der Änderungsverlauf konnte nicht geladen werden. Versuche es gleich noch einmal.",
     "event": {
-      "census_frozen": "<strong>{{name}}</strong>: Teilnehmerliste aus allen Mitgliedern kopiert",
-      "census_members_added_one": "{{number}} Person zu „{{name}}“ hinzugefügt",
-      "census_members_added_other": "{{number}} Personen zu „{{name}}“ hinzugefügt",
-      "census_members_removed_one": "{{number}} Person aus „{{name}}“ entfernt",
-      "census_members_removed_other": "{{number}} Personen aus „{{name}}“ entfernt",
+      "census_details_changed": "Angaben der Teilnehmerliste geändert",
+      "census_from_everyone": "Teilnehmerliste aus allen Mitgliedern kopiert",
       "exported": "Änderungsverlauf exportiert",
-      "group_created": "Teilnehmerliste <strong>{{name}}</strong> gespeichert",
       "group_deleted": "Teilnehmerliste <strong>{{name}}</strong> gelöscht",
-      "group_updated": "Teilnehmerliste <strong>{{name}}</strong> bearbeitet",
       "import_one": "{{number}} Mitglied importiert",
       "import_other": "{{number}} Mitglieder importiert",
       "member_added": "<strong>{{name}}</strong> zu den Mitgliedern hinzugefügt",
       "member_deleted": "<strong>{{name}}</strong> aus den Mitgliedern gelöscht",
-      "member_updated": "<strong>{{name}}</strong> bearbeitet",
-      "process_created": "<strong>{{name}}</strong> erstellt",
-      "process_ended": "<strong>{{name}}</strong> beendet",
-      "process_published": "<strong>{{name}}</strong> veröffentlicht",
-      "process_started": "<strong>{{name}}</strong> gestartet"
+      "member_details_changed": "Angaben von <strong>{{name}}</strong> geändert",
+      "people_added_one": "{{number}} Person hinzugefügt",
+      "people_added_other": "{{number}} Personen hinzugefügt",
+      "people_removed_one": "{{number}} Person entfernt",
+      "people_removed_other": "{{number}} Personen entfernt",
+      "saved_created": "Gespeicherte Teilnehmerliste erstellt",
+      "saved_created_with_one": "Gespeicherte Liste mit {{number}} Person erstellt",
+      "saved_created_with_other": "Gespeicherte Liste mit {{number}} Personen erstellt",
+      "vote_created": "Abstimmung erstellt",
+      "vote_published": "Abstimmung veröffentlicht",
+      "voting_closed": "Abstimmung geschlossen",
+      "voting_opened": "Abstimmung geöffnet"
     },
     "export": "CSV exportieren",
     "export_error": "Der Änderungsverlauf konnte nicht exportiert werden",
@@ -65,43 +89,42 @@
       "unknown": "Eine Angabe"
     },
     "filter": {
-      "all": "Alle",
-      "censuses": "Teilnehmerlisten",
+      "census_changes": "Listenänderungen",
+      "everything": "Alles",
       "imports": "Importe",
       "label": "Änderungsverlauf filtern",
       "people": "Personen",
       "votes": "Abstimmungen"
     },
     "history": {
+      "census_created": "Teilnehmerliste erstellt",
+      "census_empty": "Mit dieser Liste ist noch nichts passiert.",
       "census_title": "Verlauf",
+      "copied_into": "In „{{name}}“ kopiert",
       "empty": "Noch keine Änderungen erfasst.",
       "error": "Der Verlauf konnte nicht geladen werden.",
-      "person_title": "Verlauf"
+      "person_title": "Verlauf",
+      "see_in_activity": "In Aktivität ansehen",
+      "soon": "Bald siehst du hier Änderungen an ihren Personen und wer sie gemacht hat.",
+      "voting_open": "Während die Abstimmung offen war"
     },
     "imports": {
       "added_one": "{{added}} von {{total}} Mitglied importiert",
       "added_other": "{{added}} von {{total}} Mitgliedern importiert",
-      "no_date": "Datum noch nicht verfügbar",
       "problems_one": "{{count}} Zeile hatte Probleme",
       "problems_other": "{{count}} Zeilen hatten Probleme",
       "status": {
         "completed": "Fertig",
         "failed": "Fehlgeschlagen",
         "pending": "Wird importiert"
-      },
-      "title": "Letzte Importe"
+      }
     },
     "newer": "Neuer",
     "older": "Älter",
-    "soon": {
-      "description": "Änderungen an Mitgliedern und Teilnehmerlisten erscheinen hier, bereit zum Export für dein Protokoll.",
-      "title": "Bald: jede Änderung, mit wer und wann"
-    },
+    "show_everything": "Alles zeigen",
+    "soon_line": "Vorerst siehst du hier Abstimmungen und Importe. Bald auch Änderungen an Personen und Listen und wer sie gemacht hat.",
     "test_vote": "Testabstimmung",
-    "untitled": "Ohne Titel",
-    "votes": {
-      "title": "Abstimmungen"
-    }
+    "untitled": "Ohne Titel"
   },
   "add_new_org": "Neue Organisation hinzufügen",
   "additional_actions": "Weitere Aktionen",
