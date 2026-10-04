@@ -31,6 +31,7 @@ import { Routes } from '~routes'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useSweepOrphanVoteGroups } from '~src/queries/voteGroups'
 import { AnalyticsEvents } from '~utils/analytics'
+import { EMAIL_SIGN_IN } from './census/useCensusFacts'
 import { usePublishCensus } from './census/usePublishCensus'
 import { StaleDraftError } from './census/voteGroup'
 import { defaultProcessValues, Process } from './common'
@@ -495,12 +496,19 @@ const Loading = () => (
  */
 export const VoteEditor = ({ draftId }: { draftId: string | null }) => {
   const { groupId } = useParams()
+  const location = useLocation()
   const { data: draft, isFetchedAfterMount, isError } = useDraft(draftId)
 
   if (draftId && !isFetchedAfterMount && !isError) return <Loading />
 
-  const saved = draft ?? { ...defaultProcessValues, groupId: groupId ?? '' }
-  // A group picked from the groups board wins over the one the draft had
+  // "Create a vote with everyone" after an import where nearly everyone has an email: email codes
+  const signIn = (location.state as { signIn?: 'email' } | null)?.signIn
+  const saved = draft ?? {
+    ...defaultProcessValues,
+    groupId: groupId ?? '',
+    census: signIn === 'email' ? { ...EMAIL_SIGN_IN } : defaultProcessValues.census,
+  }
+  // A saved census picked from the Censuses tab wins over the one the draft had (it gets its own copy)
   const initial = groupId ? { ...saved, groupId } : saved
 
   return <VoteEditorForm draftId={draft ? draftId : null} saved={saved} initial={initial} />
