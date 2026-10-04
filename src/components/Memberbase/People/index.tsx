@@ -24,7 +24,6 @@ import { findMemberLink, isTypingTarget } from './display'
 import { useLocalRows } from './localView'
 import { FirstRun } from './FirstRun'
 import { PaginationFooter } from './PaginationFooter'
-import { PasteSelectSheet } from './PasteSelectSheet'
 import { PeopleCards } from './PeopleCards'
 import { PeopleTable } from './PeopleTable'
 import { PERSON_DRAWER_WIDTH, PersonSheet } from './PersonSheet'
@@ -114,7 +113,6 @@ export const People = () => {
   const [selectMode, setSelectMode] = useState(false)
   const [target, setTarget] = useState<ActionTarget | null>(null)
   const [deleteAllOpen, setDeleteAllOpen] = useState(false)
-  const [pasteOpen, setPasteOpen] = useState(false)
   const showSkeleton = useDelayedFlag(query.isLoading, SKELETON_DELAY_MS)
   const listRef = useRef<HTMLDivElement>(null)
   const { hasLive } = useAffectedVotes()
@@ -334,7 +332,6 @@ export const People = () => {
         setColumn={columns.setColumn}
         onDeleteAll={() => setDeleteAllOpen(true)}
         canDeleteAll={membersCount.count > 0}
-        onPasteSelect={() => setPasteOpen(true)}
         selected={
           selection.scope === 'ids'
             ? {
@@ -545,12 +542,6 @@ export const People = () => {
           else selection.setMany(target?.members ?? [], false)
           if (url.memberId && ids.includes(url.memberId)) url.closeMember()
         }}
-      />
-      <PasteSelectSheet
-        open={pasteOpen}
-        onOpenChange={setPasteOpen}
-        total={membersCount.count}
-        onSelect={(found) => selection.setMany(found, true)}
       />
       <DeleteAllMembersDialog
         open={deleteAllOpen}

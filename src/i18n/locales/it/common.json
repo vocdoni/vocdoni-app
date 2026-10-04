@@ -1206,33 +1206,6 @@
         "untitled_column": "Colonna {{letter}}"
       }
     },
-    "paste": {
-      "adds": "Si aggiungono alle persone già selezionate.",
-      "cancel": "Annulla",
-      "checking": "Controllo di {{done}} su {{total}}…",
-      "count_one": "Un valore",
-      "count_many": "{{formattedCount}} valori diversi",
-      "count_other": "{{formattedCount}} valori diversi",
-      "edit": "Modifica l'elenco",
-      "error": "Non è stato possibile controllare l'elenco. Riprova.",
-      "find": "Trovali",
-      "found": "{{found}} trovati",
-      "help": "Incolla una colonna del tuo foglio di calcolo. Uno per riga, oppure separati da virgole o punti e virgola.",
-      "label": "Numeri socio, email o ID nazionali",
-      "loading_members": "Caricamento dei tuoi membri… {{done}} di {{total}}",
-      "not_found_one": "{{formattedCount}} non trovato",
-      "not_found_many": "{{formattedCount}} non trovati",
-      "not_found_other": "{{formattedCount}} non trovati",
-      "open": "Seleziona da un elenco…",
-      "remote_limit": "Con più di {{cap}} membri, controlliamo fino a {{max}} valori alla volta. Verranno controllati i primi {{max}}.",
-      "select": "Selezionali",
-      "show_not_found": "Mostra i non trovati",
-      "skipped_one": "Un altro valore non è stato controllato: incollane fino a {{max}} alla volta.",
-      "skipped_many": "Altri {{count}} valori non sono stati controllati: incollane fino a {{max}} alla volta.",
-      "skipped_other": "Altri {{count}} valori non sono stati controllati: incollane fino a {{max}} alla volta.",
-      "stop": "Interrompi",
-      "title": "Seleziona da un elenco"
-    },
     "people": {
       "caption": "Membri, ordinati per {{sort}}, pagina {{page}} di {{total}}",
       "clear_search": "Cancella la ricerca",

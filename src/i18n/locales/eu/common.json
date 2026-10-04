@@ -1172,30 +1172,6 @@
         "untitled_column": "{{letter}} zutabea"
       }
     },
-    "paste": {
-      "adds": "Dagoeneko hautatuta dauden pertsonei gehitzen zaizkie.",
-      "cancel": "Utzi",
-      "checking": "{{done}}/{{total}} egiaztatzen…",
-      "count_one": "Balio bat",
-      "count_other": "{{formattedCount}} balio desberdin",
-      "edit": "Editatu zerrenda",
-      "error": "Ezin izan dugu zerrenda egiaztatu. Saiatu berriro.",
-      "find": "Bilatu",
-      "found": "{{found}} aurkituta",
-      "help": "Itsatsi zure kalkulu-orriko zutabe bat. Bat lerroko, edo komaz edo puntu eta komaz bereizita.",
-      "label": "Kide-zenbakiak, posta elektronikoak edo NANak",
-      "loading_members": "Zure kideak kargatzen… {{done}}/{{total}}",
-      "not_found_one": "{{formattedCount}} ez da aurkitu",
-      "not_found_other": "{{formattedCount}} ez dira aurkitu",
-      "open": "Hautatu zerrenda batetik…",
-      "remote_limit": "{{cap}} kide baino gehiagorekin, gehienez {{max}} balio egiaztatzen ditugu aldi bakoitzean. Lehen {{max}}ak egiaztatuko dira.",
-      "select": "Hautatu",
-      "show_not_found": "Erakutsi aurkitu ez direnak",
-      "skipped_one": "Beste balio bat ez da egiaztatu: itsatsi gehienez {{max}} aldi bakoitzean.",
-      "skipped_other": "Beste {{count}} balio ez dira egiaztatu: itsatsi gehienez {{max}} aldi bakoitzean.",
-      "stop": "Gelditu",
-      "title": "Hautatu zerrenda batetik"
-    },
     "people": {
       "caption": "Kideak, ordena: {{sort}}, {{page}}/{{total}} orria",
       "clear_search": "Garbitu bilaketa",

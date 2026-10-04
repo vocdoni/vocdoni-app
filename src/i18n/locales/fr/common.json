@@ -1206,33 +1206,6 @@
         "untitled_column": "Colonne {{letter}}"
       }
     },
-    "paste": {
-      "adds": "Ils s'ajoutent aux personnes déjà sélectionnées.",
-      "cancel": "Annuler",
-      "checking": "Vérification de {{done}} sur {{total}}…",
-      "count_one": "Une valeur",
-      "count_many": "{{formattedCount}} valeurs différentes",
-      "count_other": "{{formattedCount}} valeurs différentes",
-      "edit": "Modifier la liste",
-      "error": "Impossible de vérifier la liste. Réessayez.",
-      "find": "Les trouver",
-      "found": "{{found}} trouvés",
-      "help": "Collez une colonne de votre tableur. Une valeur par ligne, ou séparées par des virgules ou des points-virgules.",
-      "label": "Numéros d'adhérent, e-mails ou numéros de pièce d'identité",
-      "loading_members": "Chargement de vos membres… {{done}} sur {{total}}",
-      "not_found_one": "{{formattedCount}} introuvable",
-      "not_found_many": "{{formattedCount}} introuvables",
-      "not_found_other": "{{formattedCount}} introuvables",
-      "open": "Sélectionner depuis une liste…",
-      "remote_limit": "Au-delà de {{cap}} membres, nous vérifions jusqu'à {{max}} valeurs à la fois. Les {{max}} premières seront vérifiées.",
-      "select": "Les sélectionner",
-      "show_not_found": "Afficher les introuvables",
-      "skipped_one": "Une valeur de plus n'a pas été vérifiée : collez-en jusqu'à {{max}} à la fois.",
-      "skipped_many": "{{count}} valeurs de plus n'ont pas été vérifiées : collez-en jusqu'à {{max}} à la fois.",
-      "skipped_other": "{{count}} valeurs de plus n'ont pas été vérifiées : collez-en jusqu'à {{max}} à la fois.",
-      "stop": "Arrêter",
-      "title": "Sélectionner depuis une liste"
-    },
     "people": {
       "caption": "Membres, triés par {{sort}}, page {{page}} sur {{total}}",
       "clear_search": "Effacer la recherche",

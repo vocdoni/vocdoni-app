@@ -1206,33 +1206,6 @@
         "untitled_column": "Coluna {{letter}}"
       }
     },
-    "paste": {
-      "adds": "Eles são adicionados às pessoas já selecionadas.",
-      "cancel": "Cancelar",
-      "checking": "Verificando {{done}} de {{total}}…",
-      "count_one": "Um valor",
-      "count_many": "{{formattedCount}} valores diferentes",
-      "count_other": "{{formattedCount}} valores diferentes",
-      "edit": "Editar a lista",
-      "error": "Não foi possível verificar a lista. Tente novamente.",
-      "find": "Encontrá-los",
-      "found": "{{found}} encontrados",
-      "help": "Cole uma coluna da sua planilha. Um por linha, ou separados por vírgulas ou ponto e vírgula.",
-      "label": "Números de membro, e-mails ou CPF/RG",
-      "loading_members": "Carregando seus membros… {{done}} de {{total}}",
-      "not_found_one": "{{formattedCount}} não encontrado",
-      "not_found_many": "{{formattedCount}} não encontrados",
-      "not_found_other": "{{formattedCount}} não encontrados",
-      "open": "Selecionar a partir de uma lista…",
-      "remote_limit": "Com mais de {{cap}} membros, verificamos até {{max}} valores por vez. Os primeiros {{max}} serão verificados.",
-      "select": "Selecioná-los",
-      "show_not_found": "Mostrar os não encontrados",
-      "skipped_one": "Mais um valor não foi verificado: cole até {{max}} por vez.",
-      "skipped_many": "Mais {{count}} valores não foram verificados: cole até {{max}} por vez.",
-      "skipped_other": "Mais {{count}} valores não foram verificados: cole até {{max}} por vez.",
-      "stop": "Parar",
-      "title": "Selecionar a partir de uma lista"
-    },
     "people": {
       "caption": "Membros, ordenados por {{sort}}, página {{page}} de {{total}}",
       "clear_search": "Limpar a busca",

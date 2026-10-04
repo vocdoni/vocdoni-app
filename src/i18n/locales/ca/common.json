@@ -1206,33 +1206,6 @@
         "untitled_column": "Columna {{letter}}"
       }
     },
-    "paste": {
-      "adds": "S'afegeixen a les persones que ja tens seleccionades.",
-      "cancel": "Cancel·la",
-      "checking": "Comprovant {{done}} de {{total}}…",
-      "count_one": "Un valor",
-      "count_many": "{{formattedCount}} valors diferents",
-      "count_other": "{{formattedCount}} valors diferents",
-      "edit": "Edita la llista",
-      "error": "No hem pogut comprovar la llista. Torna-ho a provar.",
-      "find": "Cerca'ls",
-      "found": "{{found}} trobats",
-      "help": "Enganxa una columna del teu full de càlcul. Un per línia, o separats per comes o punts i coma.",
-      "label": "Números de soci, correus o documents d'identitat",
-      "loading_members": "Carregant els teus membres… {{done}} de {{total}}",
-      "not_found_one": "{{formattedCount}} no trobat",
-      "not_found_many": "{{formattedCount}} no trobats",
-      "not_found_other": "{{formattedCount}} no trobats",
-      "open": "Selecciona des d'una llista…",
-      "remote_limit": "Amb més de {{cap}} membres, comprovem fins a {{max}} valors cada vegada. Es comprovaran els {{max}} primers.",
-      "select": "Selecciona'ls",
-      "show_not_found": "Mostra els no trobats",
-      "skipped_one": "No s'ha comprovat un valor més: enganxa'n fins a {{max}} cada vegada.",
-      "skipped_many": "No s'han comprovat {{count}} valors més: enganxa'n fins a {{max}} cada vegada.",
-      "skipped_other": "No s'han comprovat {{count}} valors més: enganxa'n fins a {{max}} cada vegada.",
-      "stop": "Atura",
-      "title": "Selecciona des d'una llista"
-    },
     "people": {
       "caption": "Membres, ordenats per {{sort}}, pàgina {{page}} de {{total}}",
       "clear_search": "Esborra la cerca",

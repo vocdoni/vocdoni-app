@@ -1206,33 +1206,6 @@
         "untitled_column": "Columna {{letter}}"
       }
     },
-    "paste": {
-      "adds": "Se añaden a las personas que ya tienes seleccionadas.",
-      "cancel": "Cancelar",
-      "checking": "Comprobando {{done}} de {{total}}…",
-      "count_one": "Un valor",
-      "count_many": "{{formattedCount}} valores distintos",
-      "count_other": "{{formattedCount}} valores distintos",
-      "edit": "Editar la lista",
-      "error": "No hemos podido comprobar la lista. Inténtalo de nuevo.",
-      "find": "Buscarlos",
-      "found": "{{found}} encontrados",
-      "help": "Pega una columna de tu hoja de cálculo. Uno por línea, o separados por comas o puntos y coma.",
-      "label": "Números de miembro, correos o DNI/NIE",
-      "loading_members": "Cargando tus miembros… {{done}} de {{total}}",
-      "not_found_one": "{{formattedCount}} no encontrado",
-      "not_found_many": "{{formattedCount}} no encontrados",
-      "not_found_other": "{{formattedCount}} no encontrados",
-      "open": "Seleccionar desde una lista…",
-      "remote_limit": "Con más de {{cap}} miembros, comprobamos hasta {{max}} valores cada vez. Se comprobarán los {{max}} primeros.",
-      "select": "Seleccionarlos",
-      "show_not_found": "Ver los no encontrados",
-      "skipped_one": "No se ha comprobado un valor más: pega hasta {{max}} cada vez.",
-      "skipped_many": "No se han comprobado {{count}} valores más: pega hasta {{max}} cada vez.",
-      "skipped_other": "No se han comprobado {{count}} valores más: pega hasta {{max}} cada vez.",
-      "stop": "Detener",
-      "title": "Seleccionar desde una lista"
-    },
     "people": {
       "caption": "Miembros, ordenados por {{sort}}, página {{page}} de {{total}}",
       "clear_search": "Borrar la búsqueda",

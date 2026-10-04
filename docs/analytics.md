@@ -48,8 +48,7 @@ Env is runtime-injected (see `src/app-env-build.ts`), so a single Docker image w
    including the checkbox and row-menu cells whose labels embed the name (`Memberbase/People/PeopleTable.tsx`),
    the whole mobile card (`PeopleCards.tsx`), the person drawer and its form (`PersonSheet.tsx`,
    `PersonForm.tsx`), names in bulk-action and delete dialogs, masked values (`ui/MaskedValue.tsx`),
-   group member table cells (`GroupsBoard.tsx`), the pasted list and its "not found" values in
-   "Select from a list…" (`PasteSelectSheet.tsx`), and the import wizard's file values: the first values
+   group member table cells (`GroupsBoard.tsx`), and the import wizard's file values: the first values
    of each column (`Import/MatchStep.tsx`), the review rows and duplicates (`Import/ReviewStep.tsx`), the
    receipt and its failed rows (`Import/DoneStep.tsx`) and the job error list (`Import/ImportProgress.tsx`),
    which quotes offending rows. The file itself is read in the browser and never tracked. Member search and the add/edit member form are covered by
@@ -106,7 +105,7 @@ feature someone asked for; props `feature`, `surface`),
 `members_page_viewed` (`state`: empty|populated), `members_empty_state_cta_clicked` (`door`:
 import|template|add), `member_added` (`source`: form), `member_updated` (`in_live_vote`),
 `members_deleted` (`count`, `scope`: selection|single|all, `blocked`), `members_select_all_matching`
-(`count`, `capped`: stopped at 5,000), `members_paste_select` (`found`, `not_found`), `members_bulk_action`
+(`count`, `capped`: stopped at 5,000), `members_bulk_action`
 (`action`: save_census|add_to_vote|add_to_saved_census|remove_from_saved_census|delete, `count`; fired
 when the action is opened from the selection bar). `member_group_created` carries `group_size` and
 `source` (selection) when made from the People tab; `voters_added` (`count`, `surface`: members) fires

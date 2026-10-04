@@ -1172,30 +1172,6 @@
         "untitled_column": "Column {{letter}}"
       }
     },
-    "paste": {
-      "adds": "They’re added to the people already selected.",
-      "cancel": "Cancel",
-      "checking": "Checking {{done}} of {{total}}…",
-      "count_one": "One value",
-      "count_other": "{{formattedCount}} different values",
-      "edit": "Edit the list",
-      "error": "We couldn't check the list. Try again.",
-      "find": "Find them",
-      "found": "{{found}} found",
-      "help": "Paste a column from your spreadsheet. One per line, or separated by commas or semicolons.",
-      "label": "Member numbers, emails or national IDs",
-      "loading_members": "Loading your members… {{done}} of {{total}}",
-      "not_found_one": "{{formattedCount}} not found",
-      "not_found_other": "{{formattedCount}} not found",
-      "open": "Select from a list…",
-      "remote_limit": "With more than {{cap}} members, we check up to {{max}} values at a time. The first {{max}} will be checked.",
-      "select": "Select them",
-      "show_not_found": "Show not found",
-      "skipped_one": "One more value wasn’t checked: paste up to {{max}} at a time.",
-      "skipped_other": "{{count}} more values weren’t checked: paste up to {{max}} at a time.",
-      "stop": "Stop",
-      "title": "Select from a list"
-    },
     "people": {
       "caption": "Members, sorted by {{sort}}, page {{page}} of {{total}}",
       "clear_search": "Clear search",

@@ -224,8 +224,6 @@ type ToolbarProps = SearchBoxProps &
     canDeleteAll: boolean
     /** The "Show selected" chip; hidden when nobody is selected one by one */
     selected?: ShowSelectedChipProps
-    /** Opens "Select from a list…" */
-    onPasteSelect?: () => void
   }
 
 export const Toolbar = ({
@@ -240,7 +238,6 @@ export const Toolbar = ({
   onDeleteAll,
   canDeleteAll,
   selected,
-  onPasteSelect,
 }: ToolbarProps) => {
   const { t } = useTranslation()
 
@@ -250,11 +247,6 @@ export const Toolbar = ({
       <Flex gap={2} align='center' flex={{ md: '1 1 520px' }} minW={0} wrap={{ base: 'wrap', md: 'nowrap' }}>
         <SearchBox value={value} onSearch={onSearch} />
         {selected && <ShowSelectedChip {...selected} />}
-        {onPasteSelect && (
-          <Button size='sm' variant='outline' onClick={onPasteSelect} flexShrink={0}>
-            {t('members.paste.open', { defaultValue: 'Select from a list…' })}
-          </Button>
-        )}
       </Flex>
       <Flex gap={2} align='center' ml={{ md: 'auto' }} wrap='wrap'>
         <SortSelect sortedBy={sortedBy} order={order} fields={fields} onChange={onChange} />

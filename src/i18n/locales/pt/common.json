@@ -1206,33 +1206,6 @@
         "untitled_column": "Coluna {{letter}}"
       }
     },
-    "paste": {
-      "adds": "São adicionados às pessoas que já tens selecionadas.",
-      "cancel": "Cancelar",
-      "checking": "A verificar {{done}} de {{total}}…",
-      "count_one": "Um valor",
-      "count_many": "{{formattedCount}} valores diferentes",
-      "count_other": "{{formattedCount}} valores diferentes",
-      "edit": "Editar a lista",
-      "error": "Não foi possível verificar a lista. Tenta novamente.",
-      "find": "Procurá-los",
-      "found": "{{found}} encontrados",
-      "help": "Cola uma coluna da tua folha de cálculo. Um por linha, ou separados por vírgulas ou pontos e vírgulas.",
-      "label": "Números de sócio, emails ou números do cartão de cidadão",
-      "loading_members": "A carregar os teus membros… {{done}} de {{total}}",
-      "not_found_one": "{{formattedCount}} não encontrado",
-      "not_found_many": "{{formattedCount}} não encontrados",
-      "not_found_other": "{{formattedCount}} não encontrados",
-      "open": "Selecionar a partir de uma lista…",
-      "remote_limit": "Com mais de {{cap}} membros, verificamos até {{max}} valores de cada vez. Serão verificados os primeiros {{max}}.",
-      "select": "Selecioná-los",
-      "show_not_found": "Mostrar os não encontrados",
-      "skipped_one": "Mais um valor não foi verificado: cola até {{max}} de cada vez.",
-      "skipped_many": "Mais {{count}} valores não foram verificados: cola até {{max}} de cada vez.",
-      "skipped_other": "Mais {{count}} valores não foram verificados: cola até {{max}} de cada vez.",
-      "stop": "Parar",
-      "title": "Selecionar a partir de uma lista"
-    },
     "people": {
       "caption": "Membros, ordenados por {{sort}}, página {{page}} de {{total}}",
       "clear_search": "Limpar a pesquisa",

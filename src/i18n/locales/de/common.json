@@ -1172,30 +1172,6 @@
         "untitled_column": "Spalte {{letter}}"
       }
     },
-    "paste": {
-      "adds": "Sie kommen zu den bereits ausgewählten Personen hinzu.",
-      "cancel": "Abbrechen",
-      "checking": "{{done}} von {{total}} werden geprüft …",
-      "count_one": "Ein Wert",
-      "count_other": "{{formattedCount}} verschiedene Werte",
-      "edit": "Liste bearbeiten",
-      "error": "Wir konnten die Liste nicht prüfen. Versuche es noch einmal.",
-      "find": "Suchen",
-      "found": "{{found}} gefunden",
-      "help": "Füge eine Spalte aus deiner Tabelle ein. Ein Wert pro Zeile oder getrennt durch Kommas oder Semikolons.",
-      "label": "Mitgliedsnummern, E-Mail-Adressen oder Ausweisnummern",
-      "loading_members": "Deine Mitglieder werden geladen … {{done}} von {{total}}",
-      "not_found_one": "{{formattedCount}} nicht gefunden",
-      "not_found_other": "{{formattedCount}} nicht gefunden",
-      "open": "Aus einer Liste auswählen …",
-      "remote_limit": "Bei mehr als {{cap}} Mitgliedern prüfen wir bis zu {{max}} Werte auf einmal. Die ersten {{max}} werden geprüft.",
-      "select": "Auswählen",
-      "show_not_found": "Nicht gefundene anzeigen",
-      "skipped_one": "Ein weiterer Wert wurde nicht geprüft: Füge bis zu {{max}} auf einmal ein.",
-      "skipped_other": "{{count}} weitere Werte wurden nicht geprüft: Füge bis zu {{max}} auf einmal ein.",
-      "stop": "Anhalten",
-      "title": "Aus einer Liste auswählen"
-    },
     "people": {
       "caption": "Mitglieder, sortiert nach {{sort}}, Seite {{page}} von {{total}}",
       "clear_search": "Suche löschen",

@@ -40,7 +40,6 @@ export const AnalyticsEvents = {
   MembersEmptyStateCtaClicked: 'members_empty_state_cta_clicked',
   MembersDeleted: 'members_deleted',
   MembersSelectAllMatching: 'members_select_all_matching',
-  MembersPasteSelect: 'members_paste_select',
   MembersBulkAction: 'members_bulk_action',
   MemberAdded: 'member_added',
   MemberUpdated: 'member_updated',
