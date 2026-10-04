@@ -316,6 +316,8 @@
       "title_vote_other": "Vols treure {{formattedCount}} votants de «{{vote}}»?",
       "undo": "Torna'ls a afegir",
       "undo_error": "No s'han pogut tornar a afegir",
+      "undo_error_saved": "Continuen als teus membres. Selecciona'ls a Persones i tria «Afegeix a un cens desat».",
+      "undo_error_vote": "Continuen als teus membres. Selecciona'ls a Persones i tria «Afegeix a una votació».",
       "undone": "{{before}} → {{after}} persones",
       "undone_detail": "S'han tornat a afegir.",
       "undone_vote": "{{before}} → {{after}} votants"
@@ -1197,7 +1199,7 @@
       "description": "Votacions en curs i programades. Podran votar tan bon punt s'afegeixin.",
       "error": "No s'han pogut afegir",
       "everyone_hint": "Una votació amb el cens «Tothom» ja inclou tots els teus membres. En qualsevol altra, s'afegeixen per tandes.",
-      "follows_everyone": "El cens d'aquesta votació és «Tothom», així que ja hi són tots.",
+      "follows_everyone_again": "El cens d'aquesta votació és «Tothom»: qui n'hagis tret hi torna, i qui ja hi és es queda com està.",
       "none": "No hi ha votacions en curs ni programades",
       "option_everyone": "{{title}} (tothom)",
       "partial": "Alguns ja eren en aquesta votació.",

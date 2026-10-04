@@ -316,6 +316,8 @@
       "title_vote_other": "Togliere {{formattedCount}} votanti da «{{vote}}»?",
       "undo": "Aggiungili di nuovo",
       "undo_error": "Non è stato possibile aggiungerli di nuovo",
+      "undo_error_saved": "Restano tra i tuoi membri. Selezionali in Persone e scegli «Aggiungi a un censimento salvato».",
+      "undo_error_vote": "Restano tra i tuoi membri. Selezionali in Persone e scegli «Aggiungi a una votazione».",
       "undone": "{{before}} → {{after}} persone",
       "undone_detail": "Sono stati aggiunti di nuovo.",
       "undone_vote": "{{before}} → {{after}} votanti"
@@ -1197,7 +1199,7 @@
       "description": "Votazioni in corso e programmate. Potranno votare appena aggiunti.",
       "error": "Non è stato possibile aggiungerli",
       "everyone_hint": "Una votazione con censimento «Tutti» include già tutti i tuoi membri. In qualsiasi altra, vengono aggiunti a blocchi.",
-      "follows_everyone": "Il censimento di questa votazione è «Tutti», quindi ci sono già tutti.",
+      "follows_everyone_again": "Il censimento di questa votazione è «Tutti»: chi è stato tolto da questa votazione viene aggiunto di nuovo, e chi c'è già resta com'è.",
       "none": "Nessuna votazione in corso o programmata",
       "option_everyone": "{{title}} (tutti)",
       "partial": "Alcuni erano già in questa votazione.",

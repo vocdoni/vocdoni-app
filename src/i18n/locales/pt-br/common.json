@@ -316,6 +316,8 @@
       "title_vote_other": "Remover {{formattedCount}} eleitores de “{{vote}}”?",
       "undo": "Adicionar de volta",
       "undo_error": "Não foi possível adicioná-los de volta",
+      "undo_error_saved": "Eles continuam nos seus membros. Selecione-os em Pessoas e escolha “Adicionar a uma lista de participantes salva”.",
+      "undo_error_vote": "Eles continuam nos seus membros. Selecione-os em Pessoas e escolha “Adicionar a uma votação”.",
       "undone": "{{before}} → {{after}} pessoas",
       "undone_detail": "Eles foram adicionados de volta.",
       "undone_vote": "{{before}} → {{after}} eleitores"
@@ -1197,7 +1199,7 @@
       "description": "Votações em andamento e agendadas. Eles podem votar assim que forem adicionados.",
       "error": "Não foi possível adicioná-los",
       "everyone_hint": "Uma votação cuja lista de participantes é “Todos” já inclui todos os seus membros. Em qualquer outra, eles são adicionados em lotes.",
-      "follows_everyone": "A lista de participantes desta votação é “Todos”, então todos já estão nela.",
+      "follows_everyone_again": "A lista de participantes desta votação é “Todos”: quem foi retirado desta votação é adicionado de novo, e quem já está nela continua como está.",
       "none": "Nenhuma votação em andamento ou agendada",
       "option_everyone": "{{title}} (todos)",
       "partial": "Alguns já estavam nesta votação.",

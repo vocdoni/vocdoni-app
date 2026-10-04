@@ -316,6 +316,8 @@
       "title_vote_other": "¿Quitar {{formattedCount}} votantes de «{{vote}}»?",
       "undo": "Volver a añadirlos",
       "undo_error": "No se han podido volver a añadir",
+      "undo_error_saved": "Siguen en tus miembros. Selecciónalos en Personas y elige «Añadir a un censo guardado».",
+      "undo_error_vote": "Siguen en tus miembros. Selecciónalos en Personas y elige «Añadir a una votación».",
       "undone": "{{before}} → {{after}} personas",
       "undone_detail": "Se han vuelto a añadir.",
       "undone_vote": "{{before}} → {{after}} votantes"
@@ -1197,7 +1199,7 @@
       "description": "Votaciones en curso y programadas. Podrán votar en cuanto se añadan.",
       "error": "No se han podido añadir",
       "everyone_hint": "Una votación cuyo censo es «Todos» ya incluye a todos tus miembros. En cualquier otra, se añaden por tandas.",
-      "follows_everyone": "El censo de esta votación es «Todos», así que ya están todos.",
+      "follows_everyone_again": "El censo de esta votación es «Todos»: quien hayas sacado vuelve a estar, y quien ya está se queda como está.",
       "none": "No hay votaciones en curso ni programadas",
       "option_everyone": "{{title}} (todos)",
       "partial": "Algunos ya estaban en esta votación.",

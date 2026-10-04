@@ -297,6 +297,8 @@
       "title_vote_other": "{{formattedCount}} botogile kendu «{{vote}}» bozketatik?",
       "undo": "Gehitu berriro",
       "undo_error": "Ezin izan dira berriro gehitu",
+      "undo_error_saved": "Zure kideen artean jarraitzen dute. Hautatu Pertsonak atalean eta aukeratu «Gehitu gordetako errolde batera».",
+      "undo_error_vote": "Zure kideen artean jarraitzen dute. Hautatu Pertsonak atalean eta aukeratu «Gehitu bozketa batera».",
       "undone": "{{before}} → {{after}} pertsona",
       "undone_detail": "Berriro gehitu dira.",
       "undone_vote": "{{before}} → {{after}} botogile"
@@ -1169,7 +1171,7 @@
       "description": "Martxan dauden eta programatutako bozketak. Gehitu bezain laster bozkatu ahal izango dute.",
       "error": "Ezin izan dira gehitu",
       "everyone_hint": "«Denak» erroldea duen bozketa batek zure kide guztiak ditu jada. Beste edozeinetan, txandaka gehitzen dira.",
-      "follows_everyone": "Bozketa honen erroldea «Denak» da, beraz, guztiak daude jada.",
+      "follows_everyone_again": "Bozketa honen erroldea «Denak» da: bozketa honetatik kendutakoak berriro gehitzen dira, eta lehendik daudenak dauden bezala geratzen dira.",
       "none": "Ez dago martxan dagoen edo programatutako bozketarik",
       "option_everyone": "{{title}} (denak)",
       "partial": "Batzuk jada bozketa honetan zeuden.",

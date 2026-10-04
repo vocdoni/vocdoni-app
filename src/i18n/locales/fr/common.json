@@ -316,6 +316,8 @@
       "title_vote_other": "Retirer {{formattedCount}} électeurs de « {{vote}} » ?",
       "undo": "Les rajouter",
       "undo_error": "Ils n'ont pas pu être rajoutés",
+      "undo_error_saved": "Elles restent dans vos membres. Sélectionnez-les dans Personnes et choisissez « Ajouter à une liste électorale enregistrée ».",
+      "undo_error_vote": "Elles restent dans vos membres. Sélectionnez-les dans Personnes et choisissez « Ajouter à un vote ».",
       "undone": "{{before}} → {{after}} personnes",
       "undone_detail": "Ils ont été rajoutés.",
       "undone_vote": "{{before}} → {{after}} électeurs"
@@ -1197,7 +1199,7 @@
       "description": "Votes en cours et programmés. Ils pourront voter dès qu'ils seront ajoutés.",
       "error": "Impossible de les ajouter",
       "everyone_hint": "Un vote dont la liste électorale est « Tout le monde » inclut déjà tous vos membres. Pour tout autre vote, ils sont ajoutés par lots.",
-      "follows_everyone": "La liste électorale de ce vote est « Tout le monde » : ils y figurent déjà tous.",
+      "follows_everyone_again": "La liste électorale de ce vote est « Tout le monde » : les personnes retirées de ce vote y sont ajoutées à nouveau, et celles qui y sont déjà restent telles quelles.",
       "none": "Aucun vote en cours ou programmé",
       "option_everyone": "{{title}} (tout le monde)",
       "partial": "Certains figuraient déjà dans ce vote.",

@@ -297,6 +297,8 @@
       "title_vote_other": "{{formattedCount}} Wählende aus „{{vote}}“ entfernen?",
       "undo": "Wieder hinzufügen",
       "undo_error": "Sie konnten nicht wieder hinzugefügt werden",
+      "undo_error_saved": "Sie sind weiterhin in deinen Mitgliedern. Wähle sie unter Personen aus und wähle „Zu einer gespeicherten Teilnehmerliste hinzufügen“.",
+      "undo_error_vote": "Sie sind weiterhin in deinen Mitgliedern. Wähle sie unter Personen aus und wähle „Zu einer Abstimmung hinzufügen“.",
       "undone": "{{before}} → {{after}} Personen",
       "undone_detail": "Sie wurden wieder hinzugefügt.",
       "undone_vote": "{{before}} → {{after}} Stimmberechtigte"
@@ -1169,7 +1171,7 @@
       "description": "Laufende und geplante Abstimmungen. Sie können abstimmen, sobald sie hinzugefügt sind.",
       "error": "Sie konnten nicht hinzugefügt werden",
       "everyone_hint": "Eine Abstimmung mit der Teilnehmerliste „Alle“ enthält schon alle deine Mitglieder. Bei jeder anderen werden sie in Etappen hinzugefügt.",
-      "follows_everyone": "Die Teilnehmerliste dieser Abstimmung ist „Alle“, sie sind also schon alle dabei.",
+      "follows_everyone_again": "Die Teilnehmerliste dieser Abstimmung ist „Alle“: Wer aus dieser Abstimmung entfernt wurde, kommt wieder hinzu, und wer schon dabei ist, bleibt unverändert.",
       "none": "Keine laufenden oder geplanten Abstimmungen",
       "option_everyone": "{{title}} (alle)",
       "partial": "Einige waren schon in dieser Abstimmung.",

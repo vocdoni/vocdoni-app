@@ -297,6 +297,8 @@
       "title_vote_other": "Remove {{formattedCount}} voters from '{{vote}}'?",
       "undo": "Add them back",
       "undo_error": "They couldn't be added back",
+      "undo_error_saved": "They're still in your members. Select them in People and choose 'Add to a saved census'.",
+      "undo_error_vote": "They're still in your members. Select them in People and choose 'Add to a vote'.",
       "undone": "{{before}} → {{after}} people",
       "undone_detail": "They were added back.",
       "undone_vote": "{{before}} → {{after}} voters"
@@ -1169,7 +1171,7 @@
       "description": "Live and scheduled votes. They can vote as soon as they’re added.",
       "error": "They couldn't be added",
       "everyone_hint": "A vote whose census is “Everyone” already includes all your members. For any other vote, they’re added in batches.",
-      "follows_everyone": "This vote’s census is “Everyone”, so they’re all in it already.",
+      "follows_everyone_again": "This vote’s census is “Everyone”: anyone taken out of this vote is added back, and those already in it are left as they are.",
       "none": "No live or scheduled votes",
       "option_everyone": "{{title}} (everyone)",
       "partial": "Some were already in this vote.",
