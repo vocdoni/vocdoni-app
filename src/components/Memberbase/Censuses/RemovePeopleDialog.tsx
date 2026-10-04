@@ -1,9 +1,8 @@
-import { Flex, Stack, Text } from '@chakra-ui/react'
+import { Stack, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { Banner } from '~components/ui/Banner'
-import { InterestButton } from '~components/ui/ComingSoon'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
@@ -288,14 +287,6 @@ export const RemovePeopleDialog = ({
           </Banner>
         )}
         <UsedByWarning votes={census.sharedWith} />
-        <Flex gap={2} align='center' wrap='wrap'>
-          <Text fontSize='xs' color='fg.muted'>
-            {t('census_detail.remove.reason_soon', {
-              defaultValue: 'Soon: the reason you give is kept with the change.',
-            })}
-          </Text>
-          <InterestButton feature='removal_reason' surface='census_remove' size='2xs' />
-        </Flex>
       </Stack>
     </ConfirmDialog>
   )

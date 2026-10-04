@@ -240,7 +240,6 @@
       "pick_submit_one": "Togli 1 persona…",
       "pick_submit_other": "Togli {{formattedCount}} persone…",
       "pick_title": "Togli persone",
-      "reason_soon": "Presto: il motivo che indichi verrà conservato insieme alla modifica.",
       "retry_many": "Togli le altre {{formattedCount}}",
       "retry_one": "Togli l'altra",
       "retry_other": "Togli le altre {{formattedCount}}",

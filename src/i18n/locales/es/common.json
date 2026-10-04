@@ -240,7 +240,6 @@
       "pick_submit_one": "Quitar 1 persona…",
       "pick_submit_other": "Quitar {{formattedCount}} personas…",
       "pick_title": "Quitar personas",
-      "reason_soon": "Próximamente: el motivo que indiques se guardará con el cambio.",
       "retry_many": "Quitar a las otras {{formattedCount}}",
       "retry_one": "Quitar a la otra",
       "retry_other": "Quitar a las otras {{formattedCount}}",

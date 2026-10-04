@@ -231,7 +231,6 @@
       "pick_submit_one": "Αφαίρεση 1 ατόμου…",
       "pick_submit_other": "Αφαίρεση {{formattedCount}} ατόμων…",
       "pick_title": "Αφαίρεση ατόμων",
-      "reason_soon": "Σύντομα: ο λόγος που δίνετε θα αποθηκεύεται μαζί με την αλλαγή.",
       "retry_one": "Αφαίρεση του άλλου ατόμου",
       "retry_other": "Αφαίρεση των άλλων {{formattedCount}}",
       "retry_question_one": "Να αφαιρεθεί το άλλο άτομο;",

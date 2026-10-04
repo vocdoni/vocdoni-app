@@ -240,7 +240,6 @@
       "pick_submit_one": "Retirer 1 personne…",
       "pick_submit_other": "Retirer {{formattedCount}} personnes…",
       "pick_title": "Retirer des personnes",
-      "reason_soon": "Bientôt : le motif indiqué sera conservé avec la modification.",
       "retry_many": "Retirer les {{formattedCount}} autres",
       "retry_one": "Retirer l'autre",
       "retry_other": "Retirer les {{formattedCount}} autres",

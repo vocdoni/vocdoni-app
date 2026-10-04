@@ -231,7 +231,6 @@
       "pick_submit_one": "Remove 1 person…",
       "pick_submit_other": "Remove {{formattedCount}} people…",
       "pick_title": "Remove people",
-      "reason_soon": "Soon: the reason you give is kept with the change.",
       "retry_one": "Remove the other one",
       "retry_other": "Remove the other {{formattedCount}}",
       "retry_question_one": "Remove the other one?",

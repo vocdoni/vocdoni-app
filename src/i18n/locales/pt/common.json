@@ -240,7 +240,6 @@
       "pick_submit_one": "Remover 1 pessoa…",
       "pick_submit_other": "Remover {{formattedCount}} pessoas…",
       "pick_title": "Remover pessoas",
-      "reason_soon": "Em breve: o motivo que indicares fica guardado com a alteração.",
       "retry_many": "Remover as outras {{formattedCount}}",
       "retry_one": "Remover a outra",
       "retry_other": "Remover as outras {{formattedCount}}",

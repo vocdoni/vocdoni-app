@@ -231,7 +231,6 @@
       "pick_submit_one": "Kendu pertsona 1…",
       "pick_submit_other": "Kendu {{formattedCount}} pertsona…",
       "pick_title": "Kendu pertsonak",
-      "reason_soon": "Laster: ematen duzun arrazoia aldaketarekin batera gordeko da.",
       "retry_one": "Kendu beste bat",
       "retry_other": "Kendu beste {{formattedCount}}ak",
       "retry_question_one": "Beste bat kendu?",
