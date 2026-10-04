@@ -143,6 +143,10 @@
   "code_applied": "Código «{{appliedCode}}» aplicado",
   "color_mode_switcher": "Alternar modo de cor",
   "coming_soon": {
+    "delivery": {
+      "description": "Vê quando foi enviado um código de acesso a este membro e se foi entregue, para esclarecer o «nunca recebi o código».",
+      "title": "Registo de envio de códigos"
+    },
     "interest": "Usaria isto",
     "noted": "Obrigado, tomámos nota",
     "tag": "Em breve"
@@ -1963,6 +1967,38 @@
       "paragraph_2": "Quando um processo de votação é criado, a sua configuração é registada na blockchain antes do início da votação, criando um registo público e auditável de como o processo deve funcionar. Isto inclui o período de votação, o método de votação, o conjunto de participantes elegíveis, as perguntas e as regras que determinam como os resultados são apurados. A lista de participantes define quem pode participar no processo, preservando a privacidade de cada votante.",
       "paragraph_3": "Durante o período de votação, os votantes elegíveis autenticam-se de acordo com o método configurado e submetem os seus boletins através do sistema de votação. O protocolo foi concebido para que o processo possa ser verificado de ponta a ponta.",
       "paragraph_4": "Uma vez concluído o processo de votação, os resultados finais e os registos relevantes do processo são ancorados na blockchain. Isto torna o processo auditável e ajuda a garantir que o relatório publicado pode ser comparado com os registos técnicos públicos."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Votação anónima: podes ver se alguém votou, nunca o que escolheu.",
+      "check": "Verificar",
+      "delivery": "Envio do código",
+      "label": "{{field}} a procurar",
+      "limit": "Até {{max}} de cada vez.",
+      "not_in_vote": "Não está nesta votação",
+      "not_yet": "Ainda não",
+      "placeholder": "Um ou mais, separados por vírgulas ou linhas novas",
+      "title": "Alguém já votou?"
+    },
+    "sign_in": {
+      "details": "Os membros iniciam sessão com os seus dados.",
+      "email": "Os membros iniciam sessão com os seus dados e um código de utilização única enviado por email.",
+      "email_or_sms": "Os membros iniciam sessão com os seus dados e um código de utilização única enviado por email ou SMS.",
+      "sms": "Os membros iniciam sessão com os seus dados e um código de utilização única enviado por SMS."
+    },
+    "sign_in_short": {
+      "details": "Só dados",
+      "email": "Código por email",
+      "email_or_sms": "Código por email ou SMS",
+      "sms": "Código por SMS"
+    },
+    "state": {
+      "canceled": "Cancelada",
+      "ended": "Terminada",
+      "live": "A decorrer",
+      "paused": "Pausada",
+      "scheduled": "Agendada"
     }
   },
   "processes": {

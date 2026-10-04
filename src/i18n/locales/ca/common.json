@@ -117,7 +117,7 @@
       "field": {
         "birth_date": "Data de naixement",
         "email": "Correu electrònic",
-        "member_number": "Número de soci",
+        "member_number": "Número de membre",
         "name": "Nom",
         "national_id": "Document d'identitat",
         "phone": "Telèfon",
@@ -143,6 +143,10 @@
   "code_applied": "Codi \"{{appliedCode}}\" aplicat",
   "color_mode_switcher": "Commutador de mode de color",
   "coming_soon": {
+    "delivery": {
+      "description": "Consulta quan s'ha enviat un codi d'accés a aquest membre i si s'ha lliurat, per resoldre els «no m'ha arribat el codi».",
+      "title": "Registre d'enviament de codis"
+    },
     "interest": "Ho faria servir",
     "noted": "Gràcies, ho hem anotat",
     "tag": "Aviat"
@@ -1963,6 +1967,38 @@
       "paragraph_2": "Quan es crea un procés de votació, la seva configuració es registra a la blockchain abans que comenci la votació, creant un registre públic i auditable de com està previst que funcioni el procés. Això inclou el període de votació, el mètode de votació, el conjunt de participants elegibles, les preguntes i les regles que determinen com es compten els resultats. El cens defineix qui pot participar en el procés, tot preservant la privacitat dels votants individuals.",
       "paragraph_3": "Durant el període de votació, els votants elegibles s'autentiquen segons el mètode configurat i envien les seves paperetes a través del sistema de votació. El protocol està dissenyat perquè el procés es pugui verificar d'extrem a extrem.",
       "paragraph_4": "Un cop completat el procés de votació, els resultats finals i els registres rellevants del procés queden ancorats a la blockchain. Això fa que el procés sigui auditable i ajuda a garantir que l'informe publicat es pugui comparar amb registres tècnics públics."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Votació anònima: pots veure si algú ha votat, mai què ha triat.",
+      "check": "Comprova",
+      "delivery": "Enviament del codi",
+      "label": "{{field}} per cercar",
+      "limit": "Fins a {{max}} alhora.",
+      "not_in_vote": "No és en aquesta votació",
+      "not_yet": "Encara no",
+      "placeholder": "Un o més, separats per comes o salts de línia",
+      "title": "Ha votat algú?"
+    },
+    "sign_in": {
+      "details": "Els membres inicien sessió amb les seves dades.",
+      "email": "Els membres inicien sessió amb les seves dades i un codi d'un sol ús per correu.",
+      "email_or_sms": "Els membres inicien sessió amb les seves dades i un codi d'un sol ús per correu o SMS.",
+      "sms": "Els membres inicien sessió amb les seves dades i un codi d'un sol ús per SMS."
+    },
+    "sign_in_short": {
+      "details": "Només dades",
+      "email": "Codi per correu",
+      "email_or_sms": "Codi per correu o SMS",
+      "sms": "Codi per SMS"
+    },
+    "state": {
+      "canceled": "Cancel·lada",
+      "ended": "Tancada",
+      "live": "En curs",
+      "paused": "En pausa",
+      "scheduled": "Programada"
     }
   },
   "processes": {

@@ -141,6 +141,10 @@
   "code_applied": "Code \"{{appliedCode}}\" applied",
   "color_mode_switcher": "Color mode switcher",
   "coming_soon": {
+    "delivery": {
+      "description": "See when a sign-in code was sent to this member and whether it was delivered, to settle \"I never got the code\".",
+      "title": "Code delivery log"
+    },
     "interest": "I'd use this",
     "noted": "Thanks, we've noted it",
     "tag": "Soon"
@@ -1904,6 +1908,38 @@
       "paragraph_2": "When a voting process is created, its configuration is recorded on the blockchain before voting begins, creating a public and auditable record of how the process is intended to work. This includes the voting period, the voting method, the eligible participant set, the questions, and the rules that determine how results are counted. The census defines who is allowed to participate in the process, while preserving the privacy of individual voters.",
       "paragraph_3": "During the voting period, eligible voters authenticate according to the configured method and submit their ballots through the voting system. The protocol is designed so that the process can be verified end to end.",
       "paragraph_4": "Once the voting process is completed, the final results and the relevant process records are anchored in the blockchain. This makes the process auditable and helps ensure that the published report can be compared against public technical records."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Anonymous vote: you can see whether someone voted, never what they chose.",
+      "check": "Check",
+      "delivery": "Code delivery",
+      "label": "{{field}} to look up",
+      "limit": "Up to {{max}} at a time.",
+      "not_in_vote": "Not in this vote",
+      "not_yet": "Not yet",
+      "placeholder": "One or more, separated by commas or new lines",
+      "title": "Has someone voted?"
+    },
+    "sign_in": {
+      "details": "Members sign in with their details.",
+      "email": "Members sign in with their details and a one-time code by email.",
+      "email_or_sms": "Members sign in with their details and a one-time code by email or SMS.",
+      "sms": "Members sign in with their details and a one-time code by SMS."
+    },
+    "sign_in_short": {
+      "details": "Details only",
+      "email": "Code by email",
+      "email_or_sms": "Code by email or SMS",
+      "sms": "Code by SMS"
+    },
+    "state": {
+      "canceled": "Canceled",
+      "ended": "Closed",
+      "live": "Live",
+      "paused": "Paused",
+      "scheduled": "Scheduled"
     }
   },
   "processes": {

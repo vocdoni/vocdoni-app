@@ -141,6 +141,10 @@
   "code_applied": "Code „{{appliedCode}}\" angewendet",
   "color_mode_switcher": "Farbmodus-Umschalter",
   "coming_soon": {
+    "delivery": {
+      "description": "Sieh, wann diesem Mitglied ein Anmeldecode gesendet wurde und ob er angekommen ist, um „Ich habe nie einen Code bekommen“ zu klären.",
+      "title": "Protokoll der Code-Zustellung"
+    },
     "interest": "Würde ich nutzen",
     "noted": "Danke, haben wir notiert",
     "tag": "Bald"
@@ -1904,6 +1908,38 @@
       "paragraph_2": "Wenn ein Abstimmungsprozess erstellt wird, wird seine Konfiguration vor Beginn der Abstimmung in der Blockchain erfasst – so entsteht ein öffentliches und prüfbares Protokoll der geplanten Durchführung. Dies umfasst den Abstimmungszeitraum, die Abstimmungsmethode, die berechtigten Teilnehmenden, die Fragen sowie die Regeln zur Ergebnisermittlung. Die Teilnehmerliste legt fest, wer an der Abstimmung teilnehmen darf, und schützt dabei die Privatsphäre der einzelnen Wählenden.",
       "paragraph_3": "Während des Abstimmungszeitraums authentifizieren sich berechtigte Wählende entsprechend der konfigurierten Methode und geben ihre Stimmzettel über das Abstimmungssystem ab. Das Protokoll ist so konzipiert, dass der Prozess von Anfang bis Ende nachvollziehbar ist.",
       "paragraph_4": "Nach Abschluss des Abstimmungsprozesses werden die Endergebnisse und die relevanten Prozessaufzeichnungen in der Blockchain verankert. Dadurch ist der Prozess prüfbar, und der veröffentlichte Bericht kann mit den öffentlichen technischen Aufzeichnungen verglichen werden."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Geheime Abstimmung: Du siehst, ob jemand abgestimmt hat, aber nie, wie.",
+      "check": "Prüfen",
+      "delivery": "Code-Zustellung",
+      "label": "{{field}} zum Nachschlagen",
+      "limit": "Bis zu {{max}} auf einmal.",
+      "not_in_vote": "Nicht Teil dieser Abstimmung",
+      "not_yet": "Noch nicht",
+      "placeholder": "Ein oder mehrere Einträge, getrennt durch Kommas oder Zeilenumbrüche",
+      "title": "Hat jemand abgestimmt?"
+    },
+    "sign_in": {
+      "details": "Mitglieder melden sich mit ihren Daten an.",
+      "email": "Mitglieder melden sich mit ihren Daten und einem Einmalcode per E-Mail an.",
+      "email_or_sms": "Mitglieder melden sich mit ihren Daten und einem Einmalcode per E-Mail oder SMS an.",
+      "sms": "Mitglieder melden sich mit ihren Daten und einem Einmalcode per SMS an."
+    },
+    "sign_in_short": {
+      "details": "Nur Angaben",
+      "email": "Code per E-Mail",
+      "email_or_sms": "Code per E-Mail oder SMS",
+      "sms": "Code per SMS"
+    },
+    "state": {
+      "canceled": "Abgebrochen",
+      "ended": "Beendet",
+      "live": "Laufend",
+      "paused": "Pausiert",
+      "scheduled": "Geplant"
     }
   },
   "processes": {

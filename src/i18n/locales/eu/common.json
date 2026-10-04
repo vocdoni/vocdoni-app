@@ -141,6 +141,10 @@
   "code_applied": "«{{appliedCode}}» kodea aplikatu da",
   "color_mode_switcher": "Aldatu kolore-modua",
   "coming_soon": {
+    "delivery": {
+      "description": "Ikusi noiz bidali zitzaion saioa hasteko kodea kide honi eta iritsi zen ala ez, «ez zait koderik iritsi» argitzeko.",
+      "title": "Kodeen bidalketa-erregistroa"
+    },
     "interest": "Erabiliko nuke",
     "noted": "Eskerrik asko, jaso dugu",
     "tag": "Laster"
@@ -1904,6 +1908,38 @@
       "paragraph_2": "Bozketa-prozesu bat sortzen denean, bere konfigurazioa blockchainean erregistratzen da bozketa hasi aurretik, prozesuak nola funtzionatu behar duen jakiteko erregistro publiko eta aztergarria sortuz. Horrek barne hartzen ditu bozketa-epea, bozketa-metodoa, parte-hartzaile egokien multzoa, galderak eta emaitzak nola zenbatzen diren zehazten dituzten arauak. Erroldeak prozesuan parte hartzeko baimena dutenak definitzen ditu, botogile bakoitzaren pribatutasuna gordetzearekin batera.",
       "paragraph_3": "Bozketa-epean zehar, botogile egokiek konfiguraturiko metodoaren arabera autentifikatzen dira eta beren botoak bozketa-sistemaren bidez aurkezten dituzte. Protokoloa horrela diseinatuta dago prozesua mutur-muturreraino egiaztatu ahal izateko.",
       "paragraph_4": "Bozketa-prozesua amaitutakoan, emaitza finalak eta prozesuaren erregistro egokiak blockchainean finkatzen dira. Horrek prozesua aztergarri bihurtzen du eta argitaratutako txostena erregistro tekniko publikoekin konpara daitekeela bermatzen laguntzen du."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Boto sekretua: norbaitek bozkatu duen ikus dezakezu, inoiz ez zer aukeratu duen.",
+      "check": "Egiaztatu",
+      "delivery": "Kodearen bidalketa",
+      "label": "Bilatzeko {{field}}",
+      "limit": "Gehienez {{max}} aldi berean.",
+      "not_in_vote": "Ez dago bozketa honetan",
+      "not_yet": "Oraindik ez",
+      "placeholder": "Bat edo gehiago, komaz edo lerro-jauziz bereizita",
+      "title": "Norbaitek bozkatu du?"
+    },
+    "sign_in": {
+      "details": "Kideek beren datuekin hasten dute saioa.",
+      "email": "Kideek beren datuekin eta posta elektronikoz jasotako erabilera bakarreko kode batekin hasten dute saioa.",
+      "email_or_sms": "Kideek beren datuekin eta posta elektronikoz edo SMS bidez jasotako erabilera bakarreko kode batekin hasten dute saioa.",
+      "sms": "Kideek beren datuekin eta SMS bidez jasotako erabilera bakarreko kode batekin hasten dute saioa."
+    },
+    "sign_in_short": {
+      "details": "Datuak soilik",
+      "email": "Kodea posta elektronikoz",
+      "email_or_sms": "Kodea posta elektronikoz edo SMS bidez",
+      "sms": "Kodea SMS bidez"
+    },
+    "state": {
+      "canceled": "Bertan behera utzia",
+      "ended": "Itxita",
+      "live": "Martxan",
+      "paused": "Etenda",
+      "scheduled": "Programatua"
     }
   },
   "processes": {

@@ -143,6 +143,10 @@
   "code_applied": "Codice \"{{appliedCode}}\" applicato",
   "color_mode_switcher": "Selettore modalità colore",
   "coming_soon": {
+    "delivery": {
+      "description": "Vedi quando è stato inviato un codice di accesso a questo membro e se è stato consegnato, per chiarire i casi di «non ho mai ricevuto il codice».",
+      "title": "Registro di invio dei codici"
+    },
     "interest": "Mi servirebbe",
     "noted": "Grazie, ne abbiamo preso nota",
     "tag": "Presto"
@@ -1963,6 +1967,38 @@
       "paragraph_2": "Quando viene creato un processo di voto, la sua configurazione viene registrata sulla blockchain prima dell'inizio della votazione, creando un registro pubblico e auditabile di come il processo dovrebbe funzionare. Questo include il periodo di voto, il metodo di voto, l'insieme dei partecipanti eleggibili, le domande e le regole che determinano come vengono conteggiati i risultati. Il censimento definisce chi può partecipare al processo, preservando al contempo la privacy dei singoli votanti.",
       "paragraph_3": "Durante il periodo di voto, gli elettori eleggibili si autenticano secondo il metodo configurato e inviano le proprie schede attraverso il sistema di voto. Il protocollo è progettato affinché il processo possa essere verificato end-to-end.",
       "paragraph_4": "Una volta completato il processo di voto, i risultati finali e i registri rilevanti del processo vengono ancorati nella blockchain. Questo rende il processo auditabile e contribuisce a garantire che il report pubblicato possa essere confrontato con registri tecnici pubblici."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Votazione anonima: puoi vedere se qualcuno ha votato, mai cosa ha scelto.",
+      "check": "Verifica",
+      "delivery": "Invio del codice",
+      "label": "{{field}} da cercare",
+      "limit": "Fino a {{max}} alla volta.",
+      "not_in_vote": "Non è in questa votazione",
+      "not_yet": "Non ancora",
+      "placeholder": "Uno o più, separati da virgole o a capo",
+      "title": "Qualcuno ha votato?"
+    },
+    "sign_in": {
+      "details": "I membri accedono con i propri dati.",
+      "email": "I membri accedono con i propri dati e un codice monouso via email.",
+      "email_or_sms": "I membri accedono con i propri dati e un codice monouso via email o SMS.",
+      "sms": "I membri accedono con i propri dati e un codice monouso via SMS."
+    },
+    "sign_in_short": {
+      "details": "Solo dati",
+      "email": "Codice via email",
+      "email_or_sms": "Codice via email o SMS",
+      "sms": "Codice via SMS"
+    },
+    "state": {
+      "canceled": "Annullata",
+      "ended": "Chiusa",
+      "live": "In corso",
+      "paused": "In pausa",
+      "scheduled": "Programmata"
     }
   },
   "processes": {

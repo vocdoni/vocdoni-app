@@ -143,6 +143,10 @@
   "code_applied": "Código \"{{appliedCode}}\" aplicado",
   "color_mode_switcher": "Cambiar modo de color",
   "coming_soon": {
+    "delivery": {
+      "description": "Consulta cuándo se envió un código de acceso a este miembro y si se entregó, para resolver los «no me ha llegado el código».",
+      "title": "Registro de envío de códigos"
+    },
     "interest": "Lo usaría",
     "noted": "Gracias, lo hemos anotado",
     "tag": "Pronto"
@@ -1963,6 +1967,38 @@
       "paragraph_2": "Cuando se crea un proceso de votación, su configuración se registra en la blockchain antes de que comience la votación, creando un registro público y auditable de cómo está previsto que funcione el proceso. Esto incluye el periodo de votación, el método de votación, el conjunto de participantes elegibles, las preguntas y las reglas que determinan cómo se cuentan los resultados. El censo define quién puede participar en el proceso, preservando la privacidad de los votantes individuales.",
       "paragraph_3": "Durante el periodo de votación, los votantes elegibles se autentican según el método configurado y envían sus papeletas a través del sistema de votación. El protocolo está diseñado para que el proceso pueda verificarse de extremo a extremo.",
       "paragraph_4": "Una vez completado el proceso de votación, los resultados finales y los registros relevantes del proceso quedan anclados en la blockchain. Esto hace que el proceso sea auditable y ayuda a garantizar que el informe publicado pueda compararse con registros técnicos públicos."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Votación anónima: puedes ver si alguien ha votado, nunca qué ha elegido.",
+      "check": "Comprobar",
+      "delivery": "Envío del código",
+      "label": "{{field}} que buscar",
+      "limit": "Hasta {{max}} a la vez.",
+      "not_in_vote": "No está en esta votación",
+      "not_yet": "Aún no",
+      "placeholder": "Uno o más, separados por comas o saltos de línea",
+      "title": "¿Ha votado alguien?"
+    },
+    "sign_in": {
+      "details": "Los miembros inician sesión con sus datos.",
+      "email": "Los miembros inician sesión con sus datos y un código de un solo uso por correo.",
+      "email_or_sms": "Los miembros inician sesión con sus datos y un código de un solo uso por correo o SMS.",
+      "sms": "Los miembros inician sesión con sus datos y un código de un solo uso por SMS."
+    },
+    "sign_in_short": {
+      "details": "Solo datos",
+      "email": "Código por correo",
+      "email_or_sms": "Código por correo o SMS",
+      "sms": "Código por SMS"
+    },
+    "state": {
+      "canceled": "Cancelada",
+      "ended": "Cerrada",
+      "live": "En curso",
+      "paused": "En pausa",
+      "scheduled": "Programada"
     }
   },
   "processes": {

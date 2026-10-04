@@ -143,6 +143,10 @@
   "code_applied": "Código \"{{appliedCode}}\" aplicado",
   "color_mode_switcher": "Alternar modo de cor",
   "coming_soon": {
+    "delivery": {
+      "description": "Veja quando um código de acesso foi enviado a este membro e se foi entregue, para resolver o “nunca recebi o código”.",
+      "title": "Registro de envio de códigos"
+    },
     "interest": "Eu usaria isso",
     "noted": "Obrigado, anotamos",
     "tag": "Em breve"
@@ -1963,6 +1967,38 @@
       "paragraph_2": "Quando um processo de votação é criado, sua configuração é registrada na blockchain antes do início da votação, criando um registro público e auditável de como o processo deve funcionar. Isso inclui o período de votação, o método de votação, o conjunto de participantes elegíveis, as perguntas e as regras que determinam como os resultados são contabilizados. A lista de participantes define quem pode participar do processo, preservando a privacidade de cada eleitor.",
       "paragraph_3": "Durante o período de votação, os eleitores elegíveis se autenticam de acordo com o método configurado e enviam seus votos pelo sistema de votação. O protocolo foi projetado para que o processo possa ser verificado de ponta a ponta.",
       "paragraph_4": "Quando o processo de votação é concluído, os resultados finais e os registros relevantes do processo são ancorados na blockchain. Isso torna o processo auditável e ajuda a garantir que o relatório publicado possa ser comparado com os registros técnicos públicos."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Votação anônima: você pode ver se alguém votou, nunca o que escolheu.",
+      "check": "Verificar",
+      "delivery": "Envio do código",
+      "label": "{{field}} para consultar",
+      "limit": "Até {{max}} por vez.",
+      "not_in_vote": "Não está nesta votação",
+      "not_yet": "Ainda não",
+      "placeholder": "Um ou mais, separados por vírgulas ou quebras de linha",
+      "title": "Alguém já votou?"
+    },
+    "sign_in": {
+      "details": "Os membros fazem login com seus dados.",
+      "email": "Os membros fazem login com seus dados e um código de uso único enviado por e-mail.",
+      "email_or_sms": "Os membros fazem login com seus dados e um código de uso único enviado por e-mail ou SMS.",
+      "sms": "Os membros fazem login com seus dados e um código de uso único enviado por SMS."
+    },
+    "sign_in_short": {
+      "details": "Só dados",
+      "email": "Código por e-mail",
+      "email_or_sms": "Código por e-mail ou SMS",
+      "sms": "Código por SMS"
+    },
+    "state": {
+      "canceled": "Cancelada",
+      "ended": "Encerrada",
+      "live": "Em andamento",
+      "paused": "Pausada",
+      "scheduled": "Agendada"
     }
   },
   "processes": {

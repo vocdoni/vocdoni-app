@@ -143,6 +143,10 @@
   "code_applied": "Code « {{appliedCode}} » appliqué",
   "color_mode_switcher": "Changer de mode d'affichage",
   "coming_soon": {
+    "delivery": {
+      "description": "Voyez quand un code de connexion a été envoyé à ce membre et s’il a bien été reçu, pour régler les « Je n’ai jamais reçu le code ».",
+      "title": "Journal d’envoi des codes"
+    },
     "interest": "Ça m’intéresse",
     "noted": "Merci, c’est noté",
     "tag": "Bientôt"
@@ -1963,6 +1967,38 @@
       "paragraph_2": "Lorsqu'un processus de vote est créé, sa configuration est enregistrée sur la blockchain avant le début du vote, ce qui crée un enregistrement public et vérifiable de la manière dont le processus est censé fonctionner. Cela inclut la période de vote, la méthode de vote, l'ensemble des participants éligibles, les questions et les règles qui déterminent le mode de comptage des résultats. La liste électorale définit qui est autorisé à participer au processus, tout en préservant la confidentialité de chaque électeur.",
       "paragraph_3": "Pendant la période de vote, les électeurs éligibles s'authentifient selon la méthode configurée et soumettent leurs bulletins via le système de vote. Le protocole est conçu de manière à ce que le processus puisse être vérifié de bout en bout.",
       "paragraph_4": "Une fois le processus de vote terminé, les résultats finaux et les enregistrements pertinents du processus sont ancrés dans la blockchain. Cela rend le processus vérifiable et contribue à garantir que le rapport publié peut être comparé aux enregistrements techniques publics."
+    }
+  },
+  "process_view": {
+    "lookup": {
+      "anonymous": "Vote anonyme : vous pouvez voir si quelqu’un a voté, jamais ce qu’il a choisi.",
+      "check": "Vérifier",
+      "delivery": "Envoi du code",
+      "label": "{{field}} à rechercher",
+      "limit": "Jusqu’à {{max}} à la fois.",
+      "not_in_vote": "Ne participe pas à ce vote",
+      "not_yet": "Pas encore",
+      "placeholder": "Un ou plusieurs, séparés par des virgules ou des retours à la ligne",
+      "title": "Quelqu’un a-t-il voté ?"
+    },
+    "sign_in": {
+      "details": "Les membres se connectent avec leurs informations.",
+      "email": "Les membres se connectent avec leurs informations et un code à usage unique reçu par e-mail.",
+      "email_or_sms": "Les membres se connectent avec leurs informations et un code à usage unique reçu par e-mail ou SMS.",
+      "sms": "Les membres se connectent avec leurs informations et un code à usage unique reçu par SMS."
+    },
+    "sign_in_short": {
+      "details": "Données uniquement",
+      "email": "Code par e-mail",
+      "email_or_sms": "Code par e-mail ou SMS",
+      "sms": "Code par SMS"
+    },
+    "state": {
+      "canceled": "Annulé",
+      "ended": "Clôturé",
+      "live": "En cours",
+      "paused": "En pause",
+      "scheduled": "Programmé"
     }
   },
   "processes": {
