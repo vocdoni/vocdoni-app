@@ -7,7 +7,6 @@ const data = vi.hoisted(() => ({
   published: [] as unknown[],
   jobs: [] as Record<string, unknown>[],
   jobsError: false,
-  testVote: null as null | { processIds: string[]; memberIds: string[] },
   fetch: vi.fn(),
   track: vi.fn(),
   download: vi.fn(),
@@ -33,11 +32,6 @@ vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
 
 vi.mock('~components/Memberbase/Censuses/useCensusIndex', () => ({
   useAllVotes: () => ({ published: data.published, drafts: [], all: data.published, isLoading: false, isError: false }),
-}))
-
-vi.mock('~src/queries/voteGroups', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('~src/queries/voteGroups')>()),
-  useTestVote: () => data.testVote,
 }))
 
 vi.mock('~utils/analytics', async (importOriginal) => ({
@@ -85,7 +79,6 @@ describe('ActivityTab', () => {
     data.published = []
     data.jobs = []
     data.jobsError = false
-    data.testVote = null
     data.fetch.mockReset()
     data.track.mockReset()
     data.download.mockReset()
@@ -111,14 +104,12 @@ describe('ActivityTab', () => {
       vote('p1', 'Annual assembly', '2026-09-01T09:00:00', '2026-09-01T18:00:00'),
       vote('p2', 'Board election', '2026-09-05T09:00:00', '2026-09-06T18:00:00'),
     ]
-    data.testVote = { processIds: ['p2'], memberIds: [] }
     renderTab()
 
     const days = await screen.findAllByRole('heading', { level: 3 })
     expect(days).toHaveLength(3)
     const first = screen.getByRole('region', { name: days[0].textContent! })
     expect(within(first).getByText(/Board election/)).toBeInTheDocument()
-    expect(within(first).getByText('Test vote')).toBeInTheDocument()
     const assembly = screen.getByRole('region', { name: days[2].textContent! })
     expect(within(assembly).getAllByRole('listitem')).toHaveLength(2)
     expect(within(assembly).getByText('started')).toBeInTheDocument()

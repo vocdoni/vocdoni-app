@@ -13,11 +13,6 @@ vi.mock('~components/Memberbase/Censuses/useCensusIndex', () => ({
   useAllVotes: () => ({ published: [], drafts: [], all: [], isLoading: false, isError: false }),
 }))
 
-vi.mock('~src/queries/voteGroups', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('~src/queries/voteGroups')>()),
-  useTestVote: () => null,
-}))
-
 const actor = { type: 'user', label: 'Marta' }
 
 describe('CensusHistory and PersonHistory', () => {

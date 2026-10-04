@@ -8,7 +8,6 @@ import { processTitle } from '~components/Process/List/organize'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
 import { useAppEnv } from '~src/app-env'
 import { useApiClient } from '~src/providers/ApiClientProvider'
-import { useTestVote } from './voteGroups'
 
 /**
  * The organization's activity: what changed, when and by whom.
@@ -337,16 +336,12 @@ export const useActivity = (query: ActivityQuery = {}) => {
   const derive = enabled && !ACTIVITY_LOG && orgWide
   const votes = useAllVotes({ enabled: derive })
   const jobs = useRecentImportJobs({ enabled: derive })
-  const testVote = useTestVote()
   const language = usePublicLanguage()
 
   const derived = useMemo(() => {
     if (!derive) return []
-    return sortEvents([
-      ...deriveVoteEvents(votes.published, { language, testProcessIds: testVote?.processIds }),
-      ...deriveImportEvents(jobs.data ?? []),
-    ])
-  }, [derive, votes.published, jobs.data, language, testVote])
+    return sortEvents([...deriveVoteEvents(votes.published, { language }), ...deriveImportEvents(jobs.data ?? [])])
+  }, [derive, votes.published, jobs.data, language])
 
   if (ACTIVITY_LOG)
     return {
