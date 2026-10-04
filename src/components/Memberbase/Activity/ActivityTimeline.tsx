@@ -25,7 +25,8 @@ const DayHeading = ({ children, aside }: { children: ReactNode; aside?: ReactNod
     borderBottom='1px solid'
     borderColor='border.muted'
   >
-    <Text as='span' fontSize='inherit' textTransform='capitalize'>
+    {/* Only the first letter: capitalizing every word gives "28 De Setembre" in ca/es */}
+    <Text as='span' fontSize='inherit' _firstLetter={{ textTransform: 'uppercase' }}>
       {children}
     </Text>
     {aside && (
