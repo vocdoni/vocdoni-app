@@ -310,30 +310,80 @@
       "progress": "Preparando {{done}} de {{total}}…"
     },
     "facts": {
-      "all_ready": "Todos pueden recibir un código",
       "can_get_code": "Pueden recibir un código",
-      "closed": "Cerrada el {{date}}",
-      "closes": "Cierra el {{date}}",
+      "channel": {
+        "email": "correo electrónico",
+        "email_or_sms": "correo electrónico o SMS",
+        "sms": "SMS"
+      },
+      "closed_at": "Cerrada el {{date}} a las {{at}}",
+      "closes_at": "Cierra el {{date}} a las {{at}}",
+      "code_all": "Todos pueden recibir el código por {{channel}}",
+      "code_missing_one": "1 no tiene {{missing}}, así que no puede recibir el código",
+      "code_missing_many": "{{formattedCount}} no tienen {{missing}}, así que no pueden recibir el código",
+      "code_missing_other": "{{formattedCount}} no tienen {{missing}}, así que no pueden recibir el código",
       "copied_more_one": "Y 1 votación más",
       "copied_more_many": "Y {{count}} votaciones más",
       "copied_more_other": "Y {{count}} votaciones más",
       "dates": "{{start}} – {{end}}",
-      "draft": "Un borrador: las fechas se ponen en el editor",
+      "dates_label": "Fechas de votación",
+      "field": {
+        "birth_date": "fecha de nacimiento",
+        "email": "correo electrónico",
+        "member_number": "número de miembro",
+        "name": "nombre",
+        "national_id": "documento de identidad",
+        "phone": "número de móvil",
+        "surname": "apellidos"
+      },
+      "get_in": {
+        "code_only": "Con un código de un solo uso por {{channel}}",
+        "confirm": "Confirman su {{details}}",
+        "label": "Cómo acceden los votantes",
+        "no_code": "Sin código de un solo uso",
+        "then_code": "Después, un código de un solo uso por {{channel}}"
+      },
+      "members_at_close_one": "miembro al cierre",
+      "members_at_close_many": "miembros al cierre",
+      "members_at_close_other": "miembros al cierre",
+      "missing": {
+        "email": "correo electrónico",
+        "email_or_mobile": "correo electrónico ni número de móvil",
+        "mobile": "número de móvil"
+      },
       "no_copy": "Aún ninguna votación",
       "no_copy_hint": "La votación que lo use tendrá su propia copia",
-      "not_published": "Aún no publicada",
-      "opens": "Abre el {{date}}",
+      "not_scheduled": "Aún sin programar",
+      "not_scheduled_hint": "Las fechas las eliges al editar la votación",
+      "opens_at": "Abre el {{date}} a las {{at}}",
       "people": "Personas",
       "ready_any": "{{ready}} por email o SMS",
+      "see_who": "Ver quiénes",
       "show_them": "Mostrarlas",
-      "sign_in": "Inicio de sesión",
-      "they_type": "También escriben: {{details}}",
+      "source": {
+        "everyone": "Todos tus miembros",
+        "everyone_draft": "Los miembros que añadas antes de publicar también pueden votar",
+        "everyone_live": "Los miembros que añadas también pueden votar",
+        "from_saved": "Del censo guardado «{{name}}»",
+        "from_vote": "De la votación «{{name}}»",
+        "label": "De dónde sale el censo",
+        "members_copy": "Una copia de tus miembros",
+        "members_copy_hint": "No incluye a los miembros que añadas después",
+        "picked": "Personas que elegiste una a una",
+        "picked_on": "Elegidas el {{date}}",
+        "shared": "El censo guardado «{{name}}»",
+        "shared_hint": "Los cambios en él llegan a esta votación",
+        "snapshot": "Tus miembros cuando publicaste",
+        "snapshot_closed": "Fijado al publicar",
+        "snapshot_on": "Tus miembros del {{date}}",
+        "snapshot_open": "Fijado al publicar. Añade aquí a los miembros nuevos."
+      },
       "used_more_one": "Y 1 votación más: los cambios de aquí le llegan",
       "used_more_many": "Y {{count}} votaciones más: los cambios de aquí les llegan",
       "used_more_other": "Y {{count}} votaciones más: los cambios de aquí les llegan",
       "used_reach": "Los cambios de aquí llegan a esta votación",
-      "voters": "Votantes",
-      "voting": "Votación"
+      "weighted": "Cada voto cuenta según su peso",
+      "who": "Quién puede votar"
     },
     "filter": {
       "unreachable_one": "No pueden recibir código · {{count}}",
@@ -364,9 +414,6 @@
     "open_draft": "Abrir el borrador",
     "open_in_editor": "Abrir en el editor",
     "open_vote": "Abrir la votación",
-    "people": {
-      "at_close": "{{unit}} al cierre"
-    },
     "picker": {
       "already_in": "Ya está",
       "search": "Busca en tus miembros",
@@ -447,22 +494,63 @@
     },
     "source": {
       "everyone": "Todos: los miembros que añadas más adelante también pueden votar.",
-      "follows_everyone": "Esta votación sigue a «Todos»: los miembros que añadas también pueden votar en ella.",
-      "follows_everyone_live": "Esta votación sigue a «Todos»: los miembros que añadas también pueden votar en ella. Si quitas a alguien aquí, solo sale de esta votación.",
+      "everyone_remove": "Si quitas a alguien aquí, solo lo quitas de esta votación.",
       "legacy_saved": "Esta votación sigue el censo guardado «{{name}}», así que los cambios en él también llegan aquí. Los cambios que hagas aquí solo afectan a esta votación.",
       "saved": "Un censo guardado que puedes reutilizar en tus votaciones.",
       "selected": "Personas elegidas una a una para esta votación.",
       "shared": "Compartido con {{votes}}. Cambiarlo cambia quién puede votar en todas ellas, incluso en las cerradas."
+    },
+    "summary": {
+      "copy": "Copiar",
+      "how": {
+        "code": "Acceden a la votación con un código de un solo uso que reciben por {{channel}}.",
+        "details": "Acceden a la votación confirmando su {{details}}, sin código de un solo uso.",
+        "details_code": "Acceden a la votación confirmando su {{details}} y con un código de un solo uso que reciben por {{channel}}."
+      },
+      "weighted": "Cada voto cuenta según su peso.",
+      "when": {
+        "canceled": "La votación se ha cancelado.",
+        "draft": "Aún no se han fijado las fechas de votación.",
+        "ran": "La votación estuvo abierta del {{start}} al {{end}} y cerró a las {{at}}.",
+        "runs": "La votación está abierta del {{start}} al {{end}} y cierra a las {{at}}."
+      },
+      "who": {
+        "everyone_draft_one": "Hay 1 miembro en el censo: todos tus miembros, más cualquier persona que añadas antes de publicar.",
+        "everyone_draft_many": "Hay {{formattedCount}} miembros en el censo: todos tus miembros, más cualquier persona que añadas antes de publicar.",
+        "everyone_draft_other": "Hay {{formattedCount}} miembros en el censo: todos tus miembros, más cualquier persona que añadas antes de publicar.",
+        "everyone_live_one": "Hay 1 miembro en el censo: todos tus miembros, más cualquier persona que añadas.",
+        "everyone_live_many": "Hay {{formattedCount}} miembros en el censo: todos tus miembros, más cualquier persona que añadas.",
+        "everyone_live_other": "Hay {{formattedCount}} miembros en el censo: todos tus miembros, más cualquier persona que añadas.",
+        "from_saved_one": "Hay 1 miembro en el censo, copiado del censo guardado «{{name}}».",
+        "from_saved_many": "Hay {{formattedCount}} miembros en el censo, copiados del censo guardado «{{name}}».",
+        "from_saved_other": "Hay {{formattedCount}} miembros en el censo, copiados del censo guardado «{{name}}».",
+        "from_vote_one": "Hay 1 miembro en el censo, copiado de la votación «{{name}}».",
+        "from_vote_many": "Hay {{formattedCount}} miembros en el censo, copiados de la votación «{{name}}».",
+        "from_vote_other": "Hay {{formattedCount}} miembros en el censo, copiados de la votación «{{name}}».",
+        "members_copy_one": "Hay 1 miembro en el censo: una copia de tus miembros hecha el {{date}}.",
+        "members_copy_many": "Hay {{formattedCount}} miembros en el censo: una copia de tus miembros hecha el {{date}}.",
+        "members_copy_other": "Hay {{formattedCount}} miembros en el censo: una copia de tus miembros hecha el {{date}}.",
+        "picked_one": "Hay 1 miembro en el censo, elegido a mano.",
+        "picked_many": "Hay {{formattedCount}} miembros en el censo, elegidos uno a uno.",
+        "picked_other": "Hay {{formattedCount}} miembros en el censo, elegidos uno a uno.",
+        "plain_one": "Hay 1 miembro en el censo.",
+        "plain_many": "Hay {{formattedCount}} miembros en el censo.",
+        "plain_other": "Hay {{formattedCount}} miembros en el censo.",
+        "shared_one": "Hay 1 miembro en el censo, del censo guardado «{{name}}».",
+        "shared_many": "Hay {{formattedCount}} miembros en el censo, del censo guardado «{{name}}».",
+        "shared_other": "Hay {{formattedCount}} miembros en el censo, del censo guardado «{{name}}».",
+        "snapshot_on_one": "Hay 1 miembro en el censo: tus miembros tal como estaban el {{date}}, cuando publicaste.",
+        "snapshot_on_many": "Hay {{formattedCount}} miembros en el censo: tus miembros tal como estaban el {{date}}, cuando publicaste.",
+        "snapshot_on_other": "Hay {{formattedCount}} miembros en el censo: tus miembros tal como estaban el {{date}}, cuando publicaste."
+      }
     },
     "this_census": "este censo",
     "used_by": {
       "title": "Usado por"
     },
     "vote_card": {
-      "people": "Personas de",
-      "snapshot_note": "Este censo es una copia de todos tus miembros de cuando publicaste la votación. En este censo puedes añadir y quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
-      "snapshot_note_on": "Este censo es una copia de todos tus miembros del {{date}}, el día que publicaste la votación. En este censo puedes añadir y quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
-      "weighted": "Ponderado por cada miembro"
+      "snapshot_note": "Este censo son tus miembros tal como estaban cuando publicaste la votación. Aquí aún puedes añadir o quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
+      "snapshot_note_on": "Este censo son tus miembros tal como estaban el {{date}}, cuando publicaste la votación. Aquí aún puedes añadir o quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros."
     }
   },
   "census_size": "Tamaño del censo",
@@ -536,6 +624,9 @@
       "draft": "Borrador"
     },
     "unit": {
+      "members_one": "miembro",
+      "members_many": "miembros",
+      "members_other": "miembros",
       "people_one": "persona",
       "people_many": "personas",
       "people_other": "personas",

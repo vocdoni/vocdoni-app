@@ -346,7 +346,7 @@ describe('CensusDetail', () => {
     state.missing = ['m3', 'm7']
     renderDetail({ kind: 'saved', groupId: 'quota' })
 
-    expect(await screen.findByText("2 can't get a code")).toBeInTheDocument()
+    expect(await screen.findByText(/^2 can't get a code/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Show them' }))
 
     expect(screen.getByRole('button', { name: "Can't get a code · 2" })).toHaveAttribute('aria-pressed', 'true')
@@ -435,18 +435,24 @@ describe('CensusDetail', () => {
     renderDetail({ kind: 'vote', processId: 'p9' })
 
     expect(await screen.findByText("This vote has ended, so its census can't change.")).toBeInTheDocument()
-    expect(screen.getByText('voters at close')).toBeInTheDocument()
+    expect(screen.getByText('members at close')).toBeInTheDocument()
     expect(screen.getByText('31')).toBeInTheDocument()
     // No sentence restating what the facts already say
     expect(screen.queryByText(/This vote's own census/)).toBeNull()
     expect(screen.getByText(/^Census created on \d+ \w+ \d{4} at \d{2}:\d{2}$/)).toBeInTheDocument()
     // The facts: how they signed in, exactly, and where the people came from
     expect(screen.getByRole('heading', { name: 'Eleccions Junta 2025' })).toBeInTheDocument()
-    expect(screen.getByText('Code by email')).toBeInTheDocument()
-    expect(screen.getByText('They also type: Member Number, National ID')).toBeInTheDocument()
+    expect(screen.getByText('They confirm their member number and national ID')).toBeInTheDocument()
+    expect(screen.getByText('Then a one-time code by email')).toBeInTheDocument()
     expect(screen.getAllByText(/^Copied from|^Chosen by hand/).length).toBeGreaterThan(0)
     // Nobody signs in to a vote that's over: no readiness
-    expect(screen.queryByText(/can get a code/)).toBeNull()
+    expect(screen.queryByText(/can get the code|can't get the code/)).toBeNull()
+    // The same facts in sentences, in the past tense
+    expect(
+      screen.getByText(
+        /^31 members are on the voter list\. They get in by confirming their member number and national ID and a one-time code sent by email\. Voting ran from .+ and closed at \d{2}:\d{2}/
+      )
+    ).toBeInTheDocument()
   })
 
   it('explains a census made from every member at publish can still change', async () => {
@@ -456,10 +462,16 @@ describe('CensusDetail', () => {
     state.process = vote('p8', 'Assemblea 2026', { groupId: 'snap', size: 2, twoFaFields: ['email'] }, 'ONGOING')
     renderDetail({ kind: 'vote', processId: 'p8' })
 
-    expect(await screen.findByText(/^Copy of all your members on \d+ \w+ \d{4}$/)).toBeInTheDocument()
+    expect(await screen.findByText(/^Your members on \d+ \w+ \d{4}$/)).toBeInTheDocument()
+    expect(screen.getByText('Fixed when you published. Add late members here.')).toBeInTheDocument()
     expect(
       screen.getByText(
-        /^This census is a copy of all your members on \d+ \w+ \d{4}, the day you published the vote\. You can add and remove people in this census\. Fixing someone's details changes them in your members list too\.$/
+        /^2 members are on the voter list: your members as they were on \d+ \w+ \d{4}, when you published\./
+      )
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        /^This list is your members as they were on \d+ \w+ \d{4}, when you published the vote\. You can still add or remove people here\. Fixing someone's details also changes them in your members list\.$/
       )
     ).toBeInTheDocument()
   })
@@ -813,6 +825,30 @@ describe('CensusDetail', () => {
       expect(await screen.findByRole('button', { name: 'Remove people…' })).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: 'Add people' })).toBeNull()
       expect(screen.getByText(/Removing someone here only takes them out of this vote/)).toBeInTheDocument()
+    })
+
+    it('says nothing about codes for a draft that sends none, and that members added later join', async () => {
+      state.process = vote(
+        'p3',
+        'Assemblea 2027',
+        { groupId: 'everyone', size: 1742, authFields: ['name'], twoFaFields: [] },
+        'READY',
+        false
+      )
+      renderDetail({ kind: 'vote', processId: 'p3' })
+
+      expect(await screen.findByText('They confirm their first name')).toBeInTheDocument()
+      expect(screen.getByText('Without a one-time code')).toBeInTheDocument()
+      expect(screen.queryByText(/the code/)).toBeNull()
+      expect(screen.getByText('All your members')).toBeInTheDocument()
+      expect(screen.getByText('Members you add before publishing can vote too')).toBeInTheDocument()
+      expect(screen.getByText('Not scheduled yet')).toBeInTheDocument()
+      expect(
+        screen.getByText(
+          "1,742 members are on the voter list: all your members, plus anyone you add before you publish. They get in by confirming their first name, without a one-time code. The voting dates aren't set yet."
+        )
+      ).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /copy/i })).toBeInTheDocument()
     })
 
     it('offers no edits on a closed vote, nor on Everyone', async () => {

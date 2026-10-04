@@ -296,28 +296,76 @@
       "progress": "{{total}}(e)tik {{done}} prestatzen…"
     },
     "facts": {
-      "all_ready": "Denek jaso dezakete kodea",
       "can_get_code": "Kodea jaso dezakete",
-      "closed": "Itxita: {{date}}",
-      "closes": "Itxiera: {{date}}",
+      "channel": {
+        "email": "posta elektroniko",
+        "email_or_sms": "posta elektroniko edo SMS",
+        "sms": "SMS"
+      },
+      "closed_at": "Itxita: {{date}}, {{at}}",
+      "closes_at": "Itxiera: {{date}}, {{at}}",
+      "code_all": "Guztiek jaso dezakete kodea {{channel}} bidez",
+      "code_missing_one": "1ek ez du {{missing}}; beraz, ezin du kodea jaso",
+      "code_missing_other": "{{formattedCount}}k ez dute {{missing}}; beraz, ezin dute kodea jaso",
       "copied_more_one": "Eta beste bozketa 1",
       "copied_more_other": "Eta beste {{count}} bozketa",
       "dates": "{{start}} – {{end}}",
-      "draft": "Zirriborroa: datak editorean jartzen dira",
+      "dates_label": "Bozketaren datak",
+      "field": {
+        "birth_date": "jaiotze-data",
+        "email": "posta elektronikoa",
+        "member_number": "kide-zenbakia",
+        "name": "izena",
+        "national_id": "nortasun-agiria",
+        "phone": "mugikor-zenbakia",
+        "surname": "abizenak"
+      },
+      "get_in": {
+        "code_only": "Aldi bakarreko kode batekin, {{channel}} bidez",
+        "confirm": "Beren {{details}} baieztatuz",
+        "label": "Nola sartzen diren botogileak",
+        "no_code": "Aldi bakarreko koderik gabe",
+        "then_code": "Gero, aldi bakarreko kode bat {{channel}} bidez"
+      },
+      "members_at_close_one": "kide itxieran",
+      "members_at_close_other": "kide itxieran",
+      "missing": {
+        "email": "posta elektronikorik",
+        "email_or_mobile": "posta elektronikorik ez mugikor-zenbakirik",
+        "mobile": "mugikor-zenbakirik"
+      },
       "no_copy": "Bozketarik ez oraindik",
       "no_copy_hint": "Erabiltzen duen bozketak bere kopia izango du",
-      "not_published": "Argitaratu gabe oraindik",
-      "opens": "Irekiera: {{date}}",
+      "not_scheduled": "Oraindik programatu gabe",
+      "not_scheduled_hint": "Datak bozketa editatzean ezartzen dituzu",
+      "opens_at": "Irekiera: {{date}}, {{at}}",
       "people": "Pertsonak",
       "ready_any": "{{ready}} posta edo SMS bidez",
+      "see_who": "Ikusi nortzuk",
       "show_them": "Erakutsi",
-      "sign_in": "Saio-hasiera",
-      "they_type": "Hauek ere idazten dituzte: {{details}}",
+      "source": {
+        "everyone": "Zure kide guztiak",
+        "everyone_draft": "Argitaratu aurretik gehitzen dituzun kideek ere bozka dezakete",
+        "everyone_live": "Gehitzen dituzun kideek ere bozka dezakete",
+        "from_saved": "«{{name}}» gordetako erroldetik",
+        "from_vote": "«{{name}}» bozketatik",
+        "label": "Nondik datorren erroldea",
+        "members_copy": "Zure kideen kopia bat",
+        "members_copy_hint": "Geroago gehitzen dituzun kideak ez daude barne",
+        "picked": "Banan-banan aukeratu dituzun pertsonak",
+        "picked_on": "Aukeratuak: {{date}}",
+        "shared": "«{{name}}» gordetako erroldea",
+        "shared_hint": "Hartan egindako aldaketak bozketa honetara iristen dira",
+        "snapshot": "Zure kideak, argitaratu zenuenean",
+        "snapshot_closed": "Argitaratu zenuenean finkatua",
+        "snapshot_on": "Zure kideak ({{date}})",
+        "snapshot_open": "Argitaratu zenuenean finkatua. Gehitu hemen kide berriak."
+      },
       "used_more_one": "Eta beste bozketa 1: hemengo aldaketak iristen zaizkio",
       "used_more_other": "Eta beste {{count}} bozketa: hemengo aldaketak iristen zaizkie",
       "used_reach": "Hemengo aldaketak bozketa honetara iristen dira",
-      "voters": "Botogileak",
-      "voting": "Bozketa"
+      "weighted": "Boto bakoitzak bere boto-pisuaren arabera balio du",
+      "who": "Nork bozka dezakeen"
     },
     "filter": {
       "unreachable_one": "Koderik ezin · {{count}}",
@@ -346,9 +394,6 @@
     "open_draft": "Ireki zirriborroa",
     "open_in_editor": "Ireki editorean",
     "open_vote": "Ireki bozketa",
-    "people": {
-      "at_close": "{{unit}} itxieran"
-    },
     "picker": {
       "already_in": "Badago",
       "search": "Bilatu zure kideen artean",
@@ -418,22 +463,54 @@
     },
     "source": {
       "everyone": "Denak: geroago gehitzen dituzun kideek ere bozka dezakete.",
-      "follows_everyone": "Bozketa honek «Denak» jarraitzen du: gehitzen dituzun kideek ere bozka dezakete bertan.",
-      "follows_everyone_live": "Bozketa honek «Denak» jarraitzen du: gehitzen dituzun kideek ere bozka dezakete bertan. Hemen norbait kentzen baduzu, bozketa honetatik bakarrik ateratzen da.",
+      "everyone_remove": "Hemen norbait kentzen baduzu, bozketa honetatik bakarrik kentzen duzu.",
       "legacy_saved": "Bozketa honek «{{name}}» gordetako erroldea jarraitzen du, beraz hartan egindako aldaketak hona ere iristen dira. Hemen egiten dituzun aldaketek bozketa honi bakarrik eragiten diote.",
       "saved": "Zure bozketetan berrerabil dezakezun gordetako erroldea.",
       "selected": "Bozketa honetarako banan-banan aukeratutako pertsonak.",
       "shared": "Hauekin partekatua: {{votes}}. Aldatzeak guztietan nork bozka dezakeen aldatzen du, baita itxitakoetan ere."
+    },
+    "summary": {
+      "copy": "Kopiatu",
+      "how": {
+        "code": "Bozketan aldi bakarreko kode batekin sartzen dira, {{channel}} bidez jasotzen dutena.",
+        "details": "Bozketan beren {{details}} baieztatuz sartzen dira, aldi bakarreko koderik gabe.",
+        "details_code": "Bozketan beren {{details}} baieztatuz eta {{channel}} bidez jasotzen duten aldi bakarreko kode batekin sartzen dira."
+      },
+      "weighted": "Boto bakoitzak bere boto-pisuaren arabera balio du.",
+      "when": {
+        "canceled": "Bozketa bertan behera utzi da.",
+        "draft": "Bozketaren datak ez dira oraindik ezarri.",
+        "ran": "Bozketa {{start}} eta {{end}} bitartean egin zen, eta itxiera-ordua {{at}} izan zen.",
+        "runs": "Bozketa {{start}} eta {{end}} bitartean egiten da, eta itxiera-ordua {{at}} da."
+      },
+      "who": {
+        "everyone_draft_one": "Kide 1 dago erroldean: zure kide guztiak, gehi argitaratu aurretik gehitzen duzun edonor.",
+        "everyone_draft_other": "{{formattedCount}} kide daude erroldean: zure kide guztiak, gehi argitaratu aurretik gehitzen duzun edonor.",
+        "everyone_live_one": "Kide 1 dago erroldean: zure kide guztiak, gehi gehitzen duzun edonor.",
+        "everyone_live_other": "{{formattedCount}} kide daude erroldean: zure kide guztiak, gehi gehitzen duzun edonor.",
+        "from_saved_one": "Kide 1 dago erroldean, «{{name}}» gordetako erroldetik kopiatua.",
+        "from_saved_other": "{{formattedCount}} kide daude erroldean, «{{name}}» gordetako erroldetik kopiatuak.",
+        "from_vote_one": "Kide 1 dago erroldean, «{{name}}» bozketatik kopiatua.",
+        "from_vote_other": "{{formattedCount}} kide daude erroldean, «{{name}}» bozketatik kopiatuak.",
+        "members_copy_one": "Kide 1 dago erroldean: zure kideen kopia bat, {{date}}(e)an egina.",
+        "members_copy_other": "{{formattedCount}} kide daude erroldean: zure kideen kopia bat, {{date}}(e)an egina.",
+        "picked_one": "Kide 1 dago erroldean, eskuz aukeratua.",
+        "picked_other": "{{formattedCount}} kide daude erroldean, banan-banan aukeratuak.",
+        "plain_one": "Kide 1 dago erroldean.",
+        "plain_other": "{{formattedCount}} kide daude erroldean.",
+        "shared_one": "Kide 1 dago erroldean, «{{name}}» gordetako erroldekoa.",
+        "shared_other": "{{formattedCount}} kide daude erroldean, «{{name}}» gordetako erroldekoak.",
+        "snapshot_on_one": "Kide 1 dago erroldean: zure kideak {{date}}(e)an zeuden bezala, argitaratu zenuenean.",
+        "snapshot_on_other": "{{formattedCount}} kide daude erroldean: zure kideak {{date}}(e)an zeuden bezala, argitaratu zenuenean."
+      }
     },
     "this_census": "errolde hau",
     "used_by": {
       "title": "Erabiltzen dute"
     },
     "vote_card": {
-      "people": "Pertsonen jatorria",
-      "snapshot_note": "Errolda hau zure kide guztien kopia bat da, bozketa argitaratu zenuenekoa. Errolda honetan pertsonak gehitu eta kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira.",
-      "snapshot_note_on": "Errolda hau zure kide guztien kopia bat da, {{date}} egunekoa, bozketa argitaratu zenuen egunekoa. Errolda honetan pertsonak gehitu eta kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira.",
-      "weighted": "Kide bakoitzaren arabera haztatua"
+      "snapshot_note": "Errolde hau zure kideek osatzen dute, bozketa argitaratu zenuenean zeuden bezala. Hemen oraindik pertsonak gehitu edo kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira.",
+      "snapshot_note_on": "Errolde hau zure kideek osatzen dute, {{date}}(e)an zeuden bezala, bozketa argitaratu zenuenean. Hemen oraindik pertsonak gehitu edo kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira."
     }
   },
   "census_size": "Erroldeko tamaina",
@@ -502,6 +579,8 @@
       "draft": "Zirriborroa"
     },
     "unit": {
+      "members_one": "kide",
+      "members_other": "kide",
       "people_one": "pertsona",
       "people_other": "pertsona",
       "voters_one": "botogile",

@@ -50,14 +50,12 @@ const sourceSentence = (t: TFunction, language: string | undefined, census: Reso
       // The facts and the note already say what this census is
       return null
     case 'everyone':
+      // The facts already say all members can vote: only what removing someone does is left to say
       return census.edit === 'process'
-        ? t('census_detail.source.follows_everyone_live', {
-            defaultValue:
-              'This vote follows Everyone: members you add can vote in it too. Removing someone here only takes them out of this vote.',
+        ? t('census_detail.source.everyone_remove', {
+            defaultValue: 'Removing someone here only takes them out of this vote.',
           })
-        : t('census_detail.source.follows_everyone', {
-            defaultValue: 'This vote follows Everyone: members you add can vote in it too.',
-          })
+        : null
     case 'saved':
       return t('census_detail.source.legacy_saved', {
         defaultValue:
@@ -105,12 +103,12 @@ const CensusNote = ({ census }: { census: ResolvedCensusState }) => {
     text = census.source.madeAt
       ? t('census_detail.vote_card.snapshot_note_on', {
           defaultValue:
-            "This census is a copy of all your members on {{date}}, the day you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
+            "This list is your members as they were on {{date}}, when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
           date: format(census.source.madeAt, 'd MMM yyyy'),
         })
       : t('census_detail.vote_card.snapshot_note', {
           defaultValue:
-            "This census is a copy of all your members when you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
+            "This list is your members as they were when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
         })
   else if (census.kind === 'vote' && (census.source?.kind === 'copy' || census.source?.kind === 'test'))
     text = t('census_detail.note.own', {
