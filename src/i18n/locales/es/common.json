@@ -139,9 +139,8 @@
   },
   "census_detail": {
     "actions": {
-      "rename": "Cambiar nombre",
-      "title": "Censo guardado",
-      "use": "Usar en una votación nueva"
+      "more": "Más acciones",
+      "rename": "Cambiar nombre"
     },
     "add": {
       "button": "Añadir personas",
@@ -160,9 +159,11 @@
       "title": "Añadir personas",
       "updating_vote": "Añadidas. Actualizando la votación para que puedan votar…"
     },
+    "add_detail": "Añadir uno",
     "caption": "Personas de este censo, página {{page}} de {{pages}}",
     "clear": "Quitar selección",
     "column": {
+      "code": "Puede recibir un código",
       "email": "Correo electrónico",
       "member_number": "Número de miembro",
       "name": "Nombre"
@@ -187,23 +188,68 @@
     },
     "empty": "Aún no hay nadie en este censo.",
     "export": {
-      "button": "Descargar censo (CSV)",
+      "csv": "Descargar CSV",
       "error": "No se ha podido descargar el censo",
       "hint": "Nombres, números de miembro y correos, con la fecha de hoy. Los documentos de identidad van enmascarados y los teléfonos no se incluyen.",
-      "progress": "Preparando {{done}} de {{total}}…",
-      "title": "Descargar"
+      "progress": "Preparando {{done}} de {{total}}…"
+    },
+    "facts": {
+      "all_ready": "Todos pueden recibir un código",
+      "can_get_code": "Pueden recibir un código",
+      "closed": "Cerrada el {{date}}",
+      "closes": "Cierra el {{date}}",
+      "copied_more_many": "Y {{count}} votaciones más",
+      "copied_more_one": "Y 1 votación más",
+      "copied_more_other": "Y {{count}} votaciones más",
+      "dates": "{{start}} – {{end}}",
+      "draft": "Un borrador: las fechas se ponen en el editor",
+      "no_copy": "Aún ninguna votación",
+      "no_copy_hint": "La votación que lo use tendrá su propia copia",
+      "not_published": "Aún no publicada",
+      "opens": "Abre el {{date}}",
+      "people": "Personas",
+      "ready_any": "{{ready}} por email o SMS",
+      "show_them": "Mostrarlas",
+      "sign_in": "Inicio de sesión",
+      "they_type": "También escriben: {{details}}",
+      "used_more_many": "Y {{count}} votaciones más: los cambios de aquí les llegan",
+      "used_more_one": "Y 1 votación más: los cambios de aquí le llegan",
+      "used_more_other": "Y {{count}} votaciones más: los cambios de aquí les llegan",
+      "used_reach": "Los cambios de aquí llegan a esta votación",
+      "voters": "Votantes",
+      "voting": "Votación"
+    },
+    "filter": {
+      "unreachable_many": "No pueden recibir código · {{count}}",
+      "unreachable_one": "No pueden recibir código · {{count}}",
+      "unreachable_other": "No pueden recibir código · {{count}}"
+    },
+    "header": {
+      "saved": "Censo guardado",
+      "vote": "Censo de una votación"
     },
     "load_error": "No hemos podido cargar las personas de este censo.",
     "loading": "Cargando {{done}} de {{total}}…",
     "lookup_note": "Este censo no se guarda como una lista que podamos mostrar. Para comprobar a alguien, búscalo por un dato que use esta votación.",
+    "missing": {
+      "both": "Sin email ni móvil",
+      "email": "Sin email",
+      "phone": "Sin móvil"
+    },
     "no_match": "Nadie de este censo coincide con tu búsqueda.",
     "no_search": "La búsqueda funciona en censos de hasta {{max}} personas. En este, ve pasando páginas.",
+    "no_unreachable": "Todas las personas que quedan pueden recibir un código.",
     "not_found": "No hemos encontrado este censo.",
+    "note": {
+      "copied_many": "Las {{count}} votaciones que copiaron este censo tienen su propia copia, así que los cambios de aquí no cambian quién vota allí.",
+      "copied_one": "«{{name}}» tiene su propia copia de este censo, así que los cambios de aquí no cambian quién vota allí.",
+      "copied_other": "Las {{count}} votaciones que copiaron este censo tienen su propia copia, así que los cambios de aquí no cambian quién vota allí.",
+      "own": "Si corriges los datos de alguien, también cambian en tu lista de miembros. Si quitas a alguien, solo lo quitas de esta votación."
+    },
     "open_draft": "Abrir el borrador",
     "open_vote": "Abrir la votación",
     "people": {
-      "at_close": "{{unit}} al cierre",
-      "title": "Personas"
+      "at_close": "{{unit}} al cierre"
     },
     "picker": {
       "already_in": "Ya está",
@@ -272,17 +318,13 @@
     },
     "remove_button": "Quitar…",
     "search": "Busca por nombre, correo o número",
-    "select_hint": "Selecciona personas para quitarlas de este censo.",
     "select_page": "Seleccionar a todos en esta página",
     "select_person": "Seleccionar a {{name}}",
     "selected_many": "{{formattedCount}} seleccionadas",
     "selected_one": "1 seleccionada",
     "selected_other": "{{formattedCount}} seleccionadas",
     "sign_in": {
-      "per_vote": "Cada votación decide cómo inician sesión sus votantes.",
-      "ready": "{{ready}} de {{total}} pueden recibir un código",
-      "ready_any": "{{ready}} de {{total}} pueden recibir un código por correo o SMS",
-      "title": "Inicio de sesión"
+      "per_vote": "Cada votación decide cómo inician sesión sus votantes."
     },
     "source": {
       "everyone": "Todos: los miembros que añadas más adelante también pueden votar.",
@@ -296,23 +338,14 @@
     },
     "this_census": "este censo",
     "used_by": {
-      "none": "Aún no lo usa ninguna votación.",
       "title": "Usado por"
     },
     "vote_card": {
-      "closes": "Cierra",
-      "details_and_code": "{{details}} · {{code}}",
-      "opens": "Abre",
-      "origin_on": "{{origin}}, el {{date}}",
       "people": "Personas de",
-      "sign_in": "Inicio de sesión con",
       "snapshot_note": "Este censo es una copia de todos tus miembros de cuando publicaste la votación. En este censo puedes añadir y quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
       "snapshot_note_on": "Este censo es una copia de todos tus miembros del {{date}}, el día que publicaste la votación. En este censo puedes añadir y quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
-      "title": "Votación",
-      "weight": "Poder de voto",
       "weighted": "Ponderado por cada miembro"
-    },
-    "vote_heading": "Censo de {{vote}}"
+    }
   },
   "census_size": "Tamaño del censo",
   "censuses": {

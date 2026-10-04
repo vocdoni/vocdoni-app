@@ -139,9 +139,8 @@
   },
   "census_detail": {
     "actions": {
-      "rename": "Mudar o nome",
-      "title": "Lista de participantes guardada",
-      "use": "Usar numa nova votação"
+      "more": "Mais ações",
+      "rename": "Mudar o nome"
     },
     "add": {
       "button": "Adicionar pessoas",
@@ -160,9 +159,11 @@
       "title": "Adicionar pessoas",
       "updating_vote": "Adicionadas. A atualizar a votação para que possam votar…"
     },
+    "add_detail": "Adicionar",
     "caption": "Pessoas desta lista de participantes, página {{page}} de {{pages}}",
     "clear": "Limpar seleção",
     "column": {
+      "code": "Pode receber um código",
       "email": "Email",
       "member_number": "Número de membro",
       "name": "Nome"
@@ -187,23 +188,68 @@
     },
     "empty": "Ainda não há ninguém nesta lista de participantes.",
     "export": {
-      "button": "Transferir a lista de participantes (CSV)",
+      "csv": "Transferir CSV",
       "error": "Não foi possível transferir a lista de participantes",
       "hint": "Nomes, números de membro e emails, com a data de hoje. Os documentos de identificação vão mascarados e os telefones ficam de fora.",
-      "progress": "A preparar {{done}} de {{total}}…",
-      "title": "Transferir"
+      "progress": "A preparar {{done}} de {{total}}…"
+    },
+    "facts": {
+      "all_ready": "Todos podem receber um código",
+      "can_get_code": "Podem receber um código",
+      "closed": "Fechada a {{date}}",
+      "closes": "Fecha a {{date}}",
+      "copied_more_many": "E mais {{count}} votações",
+      "copied_more_one": "E mais 1 votação",
+      "copied_more_other": "E mais {{count}} votações",
+      "dates": "{{start}} – {{end}}",
+      "draft": "Um rascunho: as datas definem-se no editor",
+      "no_copy": "Ainda nenhuma votação",
+      "no_copy_hint": "A votação que a usar terá a sua própria cópia",
+      "not_published": "Ainda não publicada",
+      "opens": "Abre a {{date}}",
+      "people": "Pessoas",
+      "ready_any": "{{ready}} por email ou SMS",
+      "show_them": "Mostrá-las",
+      "sign_in": "Início de sessão",
+      "they_type": "Também escrevem: {{details}}",
+      "used_more_many": "E mais {{count}} votações: as alterações feitas aqui chegam-lhes",
+      "used_more_one": "E mais 1 votação: as alterações feitas aqui chegam-lhe",
+      "used_more_other": "E mais {{count}} votações: as alterações feitas aqui chegam-lhes",
+      "used_reach": "As alterações feitas aqui chegam a esta votação",
+      "voters": "Votantes",
+      "voting": "Votação"
+    },
+    "filter": {
+      "unreachable_many": "Sem código possível · {{count}}",
+      "unreachable_one": "Sem código possível · {{count}}",
+      "unreachable_other": "Sem código possível · {{count}}"
+    },
+    "header": {
+      "saved": "Lista de participantes guardada",
+      "vote": "Lista de participantes de uma votação"
     },
     "load_error": "Não foi possível carregar as pessoas desta lista de participantes.",
     "loading": "A carregar {{done}} de {{total}}…",
     "lookup_note": "Esta lista de participantes não é guardada como uma lista que possamos mostrar. Para verificar alguém, procura-o por um dado que esta votação usa.",
+    "missing": {
+      "both": "Sem email nem telemóvel",
+      "email": "Sem email",
+      "phone": "Sem telemóvel"
+    },
     "no_match": "Ninguém nesta lista de participantes corresponde à tua pesquisa.",
     "no_search": "A pesquisa funciona em listas de até {{max}} pessoas. Nesta, percorre as páginas.",
+    "no_unreachable": "Todas as pessoas que restam podem receber um código.",
     "not_found": "Não encontrámos esta lista de participantes.",
+    "note": {
+      "copied_many": "As {{count}} votações que copiaram esta lista têm a sua própria cópia, por isso as alterações feitas aqui não mudam quem lá vota.",
+      "copied_one": "«{{name}}» tem a sua própria cópia desta lista, por isso as alterações feitas aqui não mudam quem lá vota.",
+      "copied_other": "As {{count}} votações que copiaram esta lista têm a sua própria cópia, por isso as alterações feitas aqui não mudam quem lá vota.",
+      "own": "Se corrigires os dados de alguém, também mudam na tua lista de membros. Se removeres alguém, só o removes desta votação."
+    },
     "open_draft": "Abrir o rascunho",
     "open_vote": "Abrir a votação",
     "people": {
-      "at_close": "{{unit}} no encerramento",
-      "title": "Pessoas"
+      "at_close": "{{unit}} no encerramento"
     },
     "picker": {
       "already_in": "Já está",
@@ -272,17 +318,13 @@
     },
     "remove_button": "Remover…",
     "search": "Pesquisar por nome, email ou número",
-    "select_hint": "Seleciona pessoas para as remover desta lista de participantes.",
     "select_page": "Selecionar todos nesta página",
     "select_person": "Selecionar {{name}}",
     "selected_many": "{{formattedCount}} selecionadas",
     "selected_one": "1 selecionada",
     "selected_other": "{{formattedCount}} selecionadas",
     "sign_in": {
-      "per_vote": "Cada votação define como os seus votantes iniciam sessão.",
-      "ready": "{{ready}} de {{total}} podem receber um código",
-      "ready_any": "{{ready}} de {{total}} podem receber um código por email ou SMS",
-      "title": "Início de sessão"
+      "per_vote": "Cada votação define como os seus votantes iniciam sessão."
     },
     "source": {
       "everyone": "Todos: os membros que adicionares mais tarde também podem votar.",
@@ -296,23 +338,14 @@
     },
     "this_census": "esta lista de participantes",
     "used_by": {
-      "none": "Ainda nenhuma votação a usa.",
       "title": "Usada por"
     },
     "vote_card": {
-      "closes": "Fecha",
-      "details_and_code": "{{details}} · {{code}}",
-      "opens": "Abre",
-      "origin_on": "{{origin}}, a {{date}}",
       "people": "Pessoas de",
-      "sign_in": "Início de sessão com",
       "snapshot_note": "Esta lista de participantes é uma cópia de todos os teus membros de quando publicaste a votação. Podes adicionar e remover pessoas nesta lista de participantes. Se corrigires os dados de alguém, também mudam na tua lista de membros.",
       "snapshot_note_on": "Esta lista de participantes é uma cópia de todos os teus membros a {{date}}, o dia em que publicaste a votação. Podes adicionar e remover pessoas nesta lista de participantes. Se corrigires os dados de alguém, também mudam na tua lista de membros.",
-      "title": "Votação",
-      "weight": "Peso do voto",
       "weighted": "Ponderado por cada membro"
-    },
-    "vote_heading": "Lista de participantes de {{vote}}"
+    }
   },
   "census_size": "Número de participantes",
   "censuses": {

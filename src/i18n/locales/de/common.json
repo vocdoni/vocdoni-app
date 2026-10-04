@@ -137,9 +137,8 @@
   },
   "census_detail": {
     "actions": {
-      "rename": "Umbenennen",
-      "title": "Gespeicherte Teilnehmerliste",
-      "use": "In einer neuen Abstimmung verwenden"
+      "more": "Weitere Aktionen",
+      "rename": "Umbenennen"
     },
     "add": {
       "button": "Personen hinzufügen",
@@ -157,9 +156,11 @@
       "title": "Personen hinzufügen",
       "updating_vote": "Hinzugefügt. Die Abstimmung wird aktualisiert, damit sie abstimmen können…"
     },
+    "add_detail": "Ergänzen",
     "caption": "Personen auf dieser Teilnehmerliste, Seite {{page}} von {{pages}}",
     "clear": "Auswahl aufheben",
     "column": {
+      "code": "Kann einen Code erhalten",
       "email": "E-Mail",
       "member_number": "Mitgliedsnummer",
       "name": "Name"
@@ -183,23 +184,64 @@
     },
     "empty": "Auf dieser Teilnehmerliste steht noch niemand.",
     "export": {
-      "button": "Teilnehmerliste herunterladen (CSV)",
+      "csv": "CSV herunterladen",
       "error": "Die Teilnehmerliste konnte nicht heruntergeladen werden",
       "hint": "Namen, Mitgliedsnummern und E-Mails, mit heutigem Datum. Ausweisnummern sind maskiert, Telefonnummern fehlen.",
-      "progress": "{{done}} von {{total}} werden vorbereitet…",
-      "title": "Herunterladen"
+      "progress": "{{done}} von {{total}} werden vorbereitet…"
+    },
+    "facts": {
+      "all_ready": "Alle können einen Code erhalten",
+      "can_get_code": "Können einen Code erhalten",
+      "closed": "Beendet am {{date}}",
+      "closes": "Endet am {{date}}",
+      "copied_more_one": "Und 1 weitere Abstimmung",
+      "copied_more_other": "Und {{count}} weitere Abstimmungen",
+      "dates": "{{start}} – {{end}}",
+      "draft": "Ein Entwurf: die Termine legst du im Editor fest",
+      "no_copy": "Noch keine Abstimmung",
+      "no_copy_hint": "Eine Abstimmung, die sie nutzt, bekommt eine eigene Kopie",
+      "not_published": "Noch nicht veröffentlicht",
+      "opens": "Beginnt am {{date}}",
+      "people": "Personen",
+      "ready_any": "{{ready}} per E-Mail oder SMS",
+      "show_them": "Anzeigen",
+      "sign_in": "Anmeldung",
+      "they_type": "Zusätzlich eingeben: {{details}}",
+      "used_more_one": "Und 1 weitere Abstimmung: Änderungen hier erreichen sie",
+      "used_more_other": "Und {{count}} weitere Abstimmungen: Änderungen hier erreichen sie",
+      "used_reach": "Änderungen hier erreichen diese Abstimmung",
+      "voters": "Wählende",
+      "voting": "Abstimmung"
+    },
+    "filter": {
+      "unreachable_one": "Kein Code möglich · {{count}}",
+      "unreachable_other": "Kein Code möglich · {{count}}"
+    },
+    "header": {
+      "saved": "Gespeicherte Teilnehmerliste",
+      "vote": "Teilnehmerliste einer Abstimmung"
     },
     "load_error": "Die Personen auf dieser Teilnehmerliste konnten nicht geladen werden.",
     "loading": "{{done}} von {{total}} werden geladen…",
     "lookup_note": "Diese Teilnehmerliste wird nicht als Liste gespeichert, die wir anzeigen können. Um jemanden zu prüfen, such die Person über eine Angabe, die diese Abstimmung verwendet.",
+    "missing": {
+      "both": "Weder E-Mail noch Handy",
+      "email": "Keine E-Mail",
+      "phone": "Kein Handy"
+    },
     "no_match": "Niemand auf dieser Teilnehmerliste passt zu deiner Suche.",
     "no_search": "Die Suche funktioniert bei Teilnehmerlisten mit bis zu {{max}} Personen. Blättere bei dieser durch die Seiten.",
+    "no_unreachable": "Alle Übrigen können einen Code erhalten.",
     "not_found": "Diese Teilnehmerliste wurde nicht gefunden.",
+    "note": {
+      "copied_one": "„{{name}}“ hat eine eigene Kopie dieser Teilnehmerliste, Änderungen hier ändern also nicht, wer dort abstimmt.",
+      "copied_other": "Die {{count}} Abstimmungen, die diese Teilnehmerliste kopiert haben, haben eigene Kopien, Änderungen hier ändern also nicht, wer dort abstimmt.",
+      "own": "Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste. Wenn du jemanden entfernst, nur aus dieser Abstimmung."
+    },
     "open_draft": "Entwurf öffnen",
     "open_vote": "Abstimmung öffnen",
     "people": {
-      "at_close": "{{unit}} beim Abschluss",
-      "title": "Personen"
+      "at_close": "{{unit}} beim Abschluss"
     },
     "picker": {
       "already_in": "Schon dabei",
@@ -258,16 +300,12 @@
     },
     "remove_button": "Entfernen…",
     "search": "Nach Name, E-Mail oder Nummer suchen",
-    "select_hint": "Wähle Personen aus, um sie von dieser Teilnehmerliste zu entfernen.",
     "select_page": "Alle auf dieser Seite auswählen",
     "select_person": "{{name}} auswählen",
     "selected_one": "1 ausgewählt",
     "selected_other": "{{formattedCount}} ausgewählt",
     "sign_in": {
-      "per_vote": "Jede Abstimmung legt fest, wie sich ihre Wählenden anmelden.",
-      "ready": "{{ready}} von {{total}} können einen Code erhalten",
-      "ready_any": "{{ready}} von {{total}} können einen Code per E-Mail oder SMS erhalten",
-      "title": "Anmeldung"
+      "per_vote": "Jede Abstimmung legt fest, wie sich ihre Wählenden anmelden."
     },
     "source": {
       "everyone": "Alle: Auch Mitglieder, die du später hinzufügst, dürfen abstimmen.",
@@ -281,23 +319,14 @@
     },
     "this_census": "diese Teilnehmerliste",
     "used_by": {
-      "none": "Noch keine Abstimmung verwendet sie.",
       "title": "Verwendet von"
     },
     "vote_card": {
-      "closes": "Endet",
-      "details_and_code": "{{details}} · {{code}}",
-      "opens": "Beginnt",
-      "origin_on": "{{origin}}, am {{date}}",
       "people": "Personen aus",
-      "sign_in": "Anmeldung mit",
       "snapshot_note": "Diese Teilnehmerliste ist eine Kopie aller Mitglieder zum Zeitpunkt der Veröffentlichung. Du kannst in dieser Teilnehmerliste Personen hinzufügen und entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
       "snapshot_note_on": "Diese Teilnehmerliste ist eine Kopie aller Mitglieder vom {{date}}, dem Tag, an dem du die Abstimmung veröffentlicht hast. Du kannst in dieser Teilnehmerliste Personen hinzufügen und entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
-      "title": "Abstimmung",
-      "weight": "Stimmgewicht",
       "weighted": "Gewichtet je Mitglied"
-    },
-    "vote_heading": "Teilnehmerliste von {{vote}}"
+    }
   },
   "census_size": "Teilnehmerzahl",
   "censuses": {

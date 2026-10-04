@@ -137,9 +137,8 @@
   },
   "census_detail": {
     "actions": {
-      "rename": "Aldatu izena",
-      "title": "Gordetako erroldea",
-      "use": "Erabili bozketa berri batean"
+      "more": "Ekintza gehiago",
+      "rename": "Aldatu izena"
     },
     "add": {
       "button": "Gehitu pertsonak",
@@ -157,9 +156,11 @@
       "title": "Gehitu pertsonak",
       "updating_vote": "Gehituta. Bozketa eguneratzen, bozkatu ahal izan dezaten…"
     },
+    "add_detail": "Gehitu",
     "caption": "Errolde honetako pertsonak, {{page}}/{{pages}} orria",
     "clear": "Garbitu hautapena",
     "column": {
+      "code": "Kodea jaso dezake",
       "email": "Posta elektronikoa",
       "member_number": "Kide-zenbakia",
       "name": "Izena"
@@ -183,23 +184,64 @@
     },
     "empty": "Oraindik ez dago inor errolde honetan.",
     "export": {
-      "button": "Deskargatu erroldea (CSV)",
+      "csv": "Deskargatu CSVa",
       "error": "Ezin izan da erroldea deskargatu",
       "hint": "Izenak, kide-zenbakiak eta helbide elektronikoak, gaurko datarekin. Nortasun-agiriak ezkutatuta daude eta telefonoak kanpoan geratzen dira.",
-      "progress": "{{total}}(e)tik {{done}} prestatzen…",
-      "title": "Deskargatu"
+      "progress": "{{total}}(e)tik {{done}} prestatzen…"
+    },
+    "facts": {
+      "all_ready": "Denek jaso dezakete kodea",
+      "can_get_code": "Kodea jaso dezakete",
+      "closed": "Itxita: {{date}}",
+      "closes": "Itxiera: {{date}}",
+      "copied_more_one": "Eta beste bozketa 1",
+      "copied_more_other": "Eta beste {{count}} bozketa",
+      "dates": "{{start}} – {{end}}",
+      "draft": "Zirriborroa: datak editorean jartzen dira",
+      "no_copy": "Bozketarik ez oraindik",
+      "no_copy_hint": "Erabiltzen duen bozketak bere kopia izango du",
+      "not_published": "Argitaratu gabe oraindik",
+      "opens": "Irekiera: {{date}}",
+      "people": "Pertsonak",
+      "ready_any": "{{ready}} posta edo SMS bidez",
+      "show_them": "Erakutsi",
+      "sign_in": "Saio-hasiera",
+      "they_type": "Hauek ere idazten dituzte: {{details}}",
+      "used_more_one": "Eta beste bozketa 1: hemengo aldaketak iristen zaizkio",
+      "used_more_other": "Eta beste {{count}} bozketa: hemengo aldaketak iristen zaizkie",
+      "used_reach": "Hemengo aldaketak bozketa honetara iristen dira",
+      "voters": "Botogileak",
+      "voting": "Bozketa"
+    },
+    "filter": {
+      "unreachable_one": "Koderik ezin · {{count}}",
+      "unreachable_other": "Koderik ezin · {{count}}"
+    },
+    "header": {
+      "saved": "Gordetako errolda",
+      "vote": "Bozketa baten errolda"
     },
     "load_error": "Ezin izan ditugu errolde honetako pertsonak kargatu.",
     "loading": "{{total}}(e)tik {{done}} kargatzen…",
     "lookup_note": "Errolde hau ez da erakuts dezakegun zerrenda gisa gordetzen. Norbait egiaztatzeko, bila ezazu bozketa honek erabiltzen duen datu baten bidez.",
+    "missing": {
+      "both": "Ez posta ez mugikorra",
+      "email": "Posta gabe",
+      "phone": "Mugikorrik gabe"
+    },
     "no_match": "Errolde honetako inor ez dator bat zure bilaketarekin.",
     "no_search": "Bilaketak gehienez {{max}} pertsonako erroldeetan funtzionatzen du. Honetan, igaro orriak.",
+    "no_unreachable": "Gainerako guztiek jaso dezakete kodea.",
     "not_found": "Ez dugu errolde hau aurkitu.",
+    "note": {
+      "copied_one": "«{{name}}» bozketak errolda honen kopia propioa du; beraz, hemengo aldaketek ez dute aldatzen nork bozkatzen duen han.",
+      "copied_other": "Errolda hau kopiatu duten {{count}} bozketek kopia propioa dute; beraz, hemengo aldaketek ez dute aldatzen nork bozkatzen duen han.",
+      "own": "Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira. Norbait kentzen baduzu, bozketa honetatik bakarrik kentzen duzu."
+    },
     "open_draft": "Ireki zirriborroa",
     "open_vote": "Ireki bozketa",
     "people": {
-      "at_close": "{{unit}} itxieran",
-      "title": "Pertsonak"
+      "at_close": "{{unit}} itxieran"
     },
     "picker": {
       "already_in": "Badago",
@@ -258,16 +300,12 @@
     },
     "remove_button": "Kendu…",
     "search": "Bilatu izenaren, posta elektronikoaren edo zenbakiaren arabera",
-    "select_hint": "Hautatu pertsonak errolde honetatik kentzeko.",
     "select_page": "Hautatu orri honetako guztiak",
     "select_person": "Hautatu {{name}}",
     "selected_one": "1 hautatuta",
     "selected_other": "{{formattedCount}} hautatuta",
     "sign_in": {
-      "per_vote": "Bozketa bakoitzak erabakitzen du nola hasten duten saioa bere botogileek.",
-      "ready": "{{total}}(e)tik {{ready}}(e)k kode bat jaso dezakete",
-      "ready_any": "{{total}}(e)tik {{ready}}(e)k kode bat jaso dezakete posta elektronikoz edo SMS bidez",
-      "title": "Saio-hasiera"
+      "per_vote": "Bozketa bakoitzak erabakitzen du nola hasten duten saioa bere botogileek."
     },
     "source": {
       "everyone": "Denak: geroago gehitzen dituzun kideek ere bozka dezakete.",
@@ -281,23 +319,14 @@
     },
     "this_census": "errolde hau",
     "used_by": {
-      "none": "Oraindik ez du bozketa batek ere erabiltzen.",
       "title": "Erabiltzen dute"
     },
     "vote_card": {
-      "closes": "Itxiera",
-      "details_and_code": "{{details}} · {{code}}",
-      "opens": "Irekiera",
-      "origin_on": "{{origin}}, {{date}}",
       "people": "Pertsonen jatorria",
-      "sign_in": "Saioa hasteko",
       "snapshot_note": "Errolda hau zure kide guztien kopia bat da, bozketa argitaratu zenuenekoa. Errolda honetan pertsonak gehitu eta kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira.",
       "snapshot_note_on": "Errolda hau zure kide guztien kopia bat da, {{date}} egunekoa, bozketa argitaratu zenuen egunekoa. Errolda honetan pertsonak gehitu eta kendu ditzakezu. Norbaiten datuak zuzentzen badituzu, zure kideen zerrendan ere aldatzen dira.",
-      "title": "Bozketa",
-      "weight": "Botoaren pisua",
       "weighted": "Kide bakoitzaren arabera haztatua"
-    },
-    "vote_heading": "{{vote}} bozketaren errolda"
+    }
   },
   "census_size": "Erroldeko tamaina",
   "censuses": {

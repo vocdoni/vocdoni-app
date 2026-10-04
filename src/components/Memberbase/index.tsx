@@ -83,7 +83,11 @@ export const MemberbaseTabs = () => {
               </RouterLink>
             </Button>
             {members.known && members.count > 0 && <ExportMembersButton />}
-            <Button onClick={() => setAddPersonOpen(true)}>
+            {/* On a census page its own action is the main one: only one black button per page */}
+            <Button
+              variant={location.pathname.startsWith(`${Routes.dashboard.memberbase.censuses}/`) ? 'outline' : 'solid'}
+              onClick={() => setAddPersonOpen(true)}
+            >
               <Icon as={LuUserPlus} />
               {t('memberbase.add_person', { defaultValue: 'Add person' })}
             </Button>

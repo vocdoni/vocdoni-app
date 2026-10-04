@@ -1,17 +1,15 @@
-import { Breadcrumb, Button, Flex, Heading, Icon, Stack } from '@chakra-ui/react'
+import { Breadcrumb, Stack } from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowUpRight } from 'react-icons/lu'
-import { createSearchParams, generatePath, Navigate, Link as RouterLink, useParams } from 'react-router'
+import { generatePath, Navigate, Link as RouterLink, useParams } from 'react-router'
 import { Routes } from '~routes'
 import { safeId } from '~utils/ids'
 import { CensusDetail } from './CensusDetail'
-import { VoteStateBadge } from './CensusRow'
 import { untitledVote } from './labels'
 import { type CensusDetailTarget, useResolvedCensus } from './useResolvedCensus'
 
 /**
- * A census as a page of the Members section: the way back to the index, its name, and for a vote's
- * census a way into the vote. `/censuses/:groupId` of a vote's own group goes to that vote's census.
+ * A census as a page of the Members section: the way back to the index, then the census with its own
+ * header (name, purpose, actions). `/censuses/:groupId` of a vote's own group goes to that vote's census.
  */
 export const CensusPage = ({ kind }: { kind: 'saved' | 'vote' }) => {
   const { t } = useTranslation()
@@ -32,16 +30,7 @@ export const CensusPage = ({ kind }: { kind: 'saved' | 'vote' }) => {
       />
     )
 
-  const process = census.process
   const title = census.title || (kind === 'vote' && !census.isLoading ? untitledVote(t, census.state === 'draft') : '')
-  const voteLink = process
-    ? process.published
-      ? generatePath(Routes.dashboard.process, { id: process.id })
-      : {
-          pathname: generatePath(Routes.processes.create),
-          search: createSearchParams({ draftId: process.id }).toString(),
-        }
-    : null
 
   return (
     <Stack gap={4}>
@@ -60,24 +49,6 @@ export const CensusPage = ({ kind }: { kind: 'saved' | 'vote' }) => {
           </Breadcrumb.Item>
         </Breadcrumb.List>
       </Breadcrumb.Root>
-      <Flex justify='space-between' align='center' gap={3} wrap='wrap'>
-        <Flex align='center' gap={2} minW={0}>
-          <Heading as='h2' size='lg' fontWeight='bolder' truncate>
-            {kind === 'vote' && title
-              ? t('census_detail.vote_heading', { defaultValue: 'Census of {{vote}}', vote: title })
-              : title}
-          </Heading>
-          {kind === 'vote' && <VoteStateBadge state={census.state} />}
-        </Flex>
-        {voteLink && (
-          <Button asChild size='sm' variant='outline' colorPalette='gray'>
-            <RouterLink to={voteLink}>
-              {t('census_detail.open_vote', { defaultValue: 'Open vote' })}
-              <Icon as={LuArrowUpRight} />
-            </RouterLink>
-          </Button>
-        )}
-      </Flex>
       <CensusDetail {...target} />
     </Stack>
   )

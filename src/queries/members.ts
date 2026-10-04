@@ -529,16 +529,19 @@ export const useCensusReadiness = ({
     refetchOnWindowFocus: false,
     queryFn: async () => {
       const missing = await Promise.all(fields.map((field) => membersMissing(client, address!, field, groupId)))
-      return unreachableAcross(missing).length
+      return unreachableAcross(missing)
     },
   })
 
-  const unreachable = Math.min(query.data ?? 0, total)
+  const unreachableIds = query.data ?? NO_IDS
+  const unreachable = Math.min(unreachableIds.length, total)
   return {
     available: query.isSuccess && total > 0,
     total,
     ready: total - unreachable,
     unreachable,
+    /** Who can't get a code: the ids the validation names, to show them */
+    unreachableIds,
     isLoading: query.isLoading,
   }
 }

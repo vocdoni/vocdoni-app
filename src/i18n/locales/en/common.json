@@ -137,9 +137,8 @@
   },
   "census_detail": {
     "actions": {
-      "rename": "Rename",
-      "title": "Saved census",
-      "use": "Use in a new vote"
+      "more": "More actions",
+      "rename": "Rename"
     },
     "add": {
       "button": "Add people",
@@ -157,9 +156,11 @@
       "title": "Add people",
       "updating_vote": "Added. Updating the vote so they can vote…"
     },
+    "add_detail": "Add one",
     "caption": "People in this census, page {{page}} of {{pages}}",
     "clear": "Clear",
     "column": {
+      "code": "Can get a code",
       "email": "Email",
       "member_number": "Member number",
       "name": "Name"
@@ -183,23 +184,64 @@
     },
     "empty": "Nobody is in this census yet.",
     "export": {
-      "button": "Download census (CSV)",
+      "csv": "Download CSV",
       "error": "The census couldn't be downloaded",
       "hint": "Names, member numbers and emails, dated today. National IDs are masked and phones left out.",
-      "progress": "Preparing {{done}} of {{total}}…",
-      "title": "Download"
+      "progress": "Preparing {{done}} of {{total}}…"
+    },
+    "facts": {
+      "all_ready": "All can get a code",
+      "can_get_code": "Can get a code",
+      "closed": "Closed {{date}}",
+      "closes": "Closes {{date}}",
+      "copied_more_one": "And 1 more vote",
+      "copied_more_other": "And {{count}} more votes",
+      "dates": "{{start}} – {{end}}",
+      "draft": "A draft: dates are set in the editor",
+      "no_copy": "No vote yet",
+      "no_copy_hint": "A vote that uses it gets its own copy",
+      "not_published": "Not published yet",
+      "opens": "Opens {{date}}",
+      "people": "People",
+      "ready_any": "{{ready}} by email or SMS",
+      "show_them": "Show them",
+      "sign_in": "Sign-in",
+      "they_type": "They also type: {{details}}",
+      "used_more_one": "And 1 more vote: changes here reach them",
+      "used_more_other": "And {{count}} more votes: changes here reach them",
+      "used_reach": "Changes here reach this vote",
+      "voters": "Voters",
+      "voting": "Voting"
+    },
+    "filter": {
+      "unreachable_one": "Can't get a code · {{count}}",
+      "unreachable_other": "Can't get a code · {{count}}"
+    },
+    "header": {
+      "saved": "Saved census",
+      "vote": "Census of a vote"
     },
     "load_error": "We couldn't load the people in this census.",
     "loading": "Loading {{done}} of {{total}}…",
     "lookup_note": "This census isn't kept as a list we can show. To check someone, look them up by a detail this vote uses.",
+    "missing": {
+      "both": "No email or mobile",
+      "email": "No email",
+      "phone": "No mobile"
+    },
     "no_match": "Nobody in this census matches your search.",
     "no_search": "Search works in censuses of up to {{max}} people. Page through this one instead.",
+    "no_unreachable": "Everyone left can get a code.",
     "not_found": "We couldn't find this census.",
+    "note": {
+      "copied_one": "'{{name}}' has its own copy of this census, so changes here don't change who votes there.",
+      "copied_other": "The {{count}} votes that copied this census have their own copies, so changes here don't change who votes there.",
+      "own": "Fixing someone's details changes them in your members list too. Removing someone only takes them out of this vote."
+    },
     "open_draft": "Open the draft",
     "open_vote": "Open vote",
     "people": {
-      "at_close": "{{unit}} at close",
-      "title": "People"
+      "at_close": "{{unit}} at close"
     },
     "picker": {
       "already_in": "Already in",
@@ -258,16 +300,12 @@
     },
     "remove_button": "Remove…",
     "search": "Search by name, email or number",
-    "select_hint": "Select people to remove them from this census.",
     "select_page": "Select everyone on this page",
     "select_person": "Select {{name}}",
     "selected_one": "1 selected",
     "selected_other": "{{formattedCount}} selected",
     "sign_in": {
-      "per_vote": "Each vote sets how its voters sign in.",
-      "ready": "{{ready}} of {{total}} can get a code",
-      "ready_any": "{{ready}} of {{total}} can get a code by email or SMS",
-      "title": "Sign-in"
+      "per_vote": "Each vote sets how its voters sign in."
     },
     "source": {
       "everyone": "Everyone: members you add later can vote too.",
@@ -281,23 +319,14 @@
     },
     "this_census": "this census",
     "used_by": {
-      "none": "No vote uses it yet.",
       "title": "Used by"
     },
     "vote_card": {
-      "closes": "Closes",
-      "details_and_code": "{{details}} · {{code}}",
-      "opens": "Opens",
-      "origin_on": "{{origin}}, on {{date}}",
       "people": "People from",
-      "sign_in": "Sign in with",
       "snapshot_note": "This census is a copy of all your members when you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
       "snapshot_note_on": "This census is a copy of all your members on {{date}}, the day you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
-      "title": "Vote",
-      "weight": "Voting power",
       "weighted": "Weighted by each member"
-    },
-    "vote_heading": "Census of {{vote}}"
+    }
   },
   "census_size": "Census size",
   "censuses": {

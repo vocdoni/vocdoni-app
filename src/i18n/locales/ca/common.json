@@ -139,9 +139,8 @@
   },
   "census_detail": {
     "actions": {
-      "rename": "Canvia el nom",
-      "title": "Cens desat",
-      "use": "Fes-lo servir en una votació nova"
+      "more": "Més accions",
+      "rename": "Canvia el nom"
     },
     "add": {
       "button": "Afegeix persones",
@@ -160,9 +159,11 @@
       "title": "Afegeix persones",
       "updating_vote": "Afegides. S'està actualitzant la votació perquè puguin votar…"
     },
+    "add_detail": "Afegeix-ne un",
     "caption": "Persones d'aquest cens, pàgina {{page}} de {{pages}}",
     "clear": "Treu la selecció",
     "column": {
+      "code": "Pot rebre un codi",
       "email": "Correu electrònic",
       "member_number": "Número de membre",
       "name": "Nom"
@@ -187,23 +188,68 @@
     },
     "empty": "Encara no hi ha ningú en aquest cens.",
     "export": {
-      "button": "Baixa el cens (CSV)",
+      "csv": "Descarrega CSV",
       "error": "No s'ha pogut baixar el cens",
       "hint": "Noms, números de membre i correus, amb la data d'avui. Els documents d'identitat surten emmascarats i els telèfons no s'hi inclouen.",
-      "progress": "S'estan preparant {{done}} de {{total}}…",
-      "title": "Baixa"
+      "progress": "S'estan preparant {{done}} de {{total}}…"
+    },
+    "facts": {
+      "all_ready": "Tothom pot rebre un codi",
+      "can_get_code": "Poden rebre un codi",
+      "closed": "Tancada el {{date}}",
+      "closes": "Tanca el {{date}}",
+      "copied_more_many": "I {{count}} votacions més",
+      "copied_more_one": "I 1 votació més",
+      "copied_more_other": "I {{count}} votacions més",
+      "dates": "{{start}} – {{end}}",
+      "draft": "Un esborrany: les dates es posen a l'editor",
+      "no_copy": "Encara cap votació",
+      "no_copy_hint": "La votació que el faci servir en tindrà una còpia pròpia",
+      "not_published": "Encara no publicada",
+      "opens": "S'obre el {{date}}",
+      "people": "Persones",
+      "ready_any": "{{ready}} per correu o SMS",
+      "show_them": "Mostra-les",
+      "sign_in": "Inici de sessió",
+      "they_type": "També escriuen: {{details}}",
+      "used_more_many": "I {{count}} votacions més: els canvis d'aquí hi arriben",
+      "used_more_one": "I 1 votació més: els canvis d'aquí hi arriben",
+      "used_more_other": "I {{count}} votacions més: els canvis d'aquí hi arriben",
+      "used_reach": "Els canvis d'aquí arriben a aquesta votació",
+      "voters": "Votants",
+      "voting": "Votació"
+    },
+    "filter": {
+      "unreachable_many": "No poden rebre codi · {{count}}",
+      "unreachable_one": "No poden rebre codi · {{count}}",
+      "unreachable_other": "No poden rebre codi · {{count}}"
+    },
+    "header": {
+      "saved": "Cens desat",
+      "vote": "Cens d'una votació"
     },
     "load_error": "No hem pogut carregar les persones d'aquest cens.",
     "loading": "S'estan carregant {{done}} de {{total}}…",
     "lookup_note": "Aquest cens no es desa com una llista que puguem mostrar. Per comprovar algú, cerca'l per una dada que faci servir aquesta votació.",
+    "missing": {
+      "both": "Sense correu ni mòbil",
+      "email": "Sense correu",
+      "phone": "Sense mòbil"
+    },
     "no_match": "Ningú d'aquest cens coincideix amb la cerca.",
     "no_search": "La cerca funciona en censos de fins a {{max}} persones. En aquest, passa les pàgines.",
+    "no_unreachable": "Tothom qui queda pot rebre un codi.",
     "not_found": "No hem trobat aquest cens.",
+    "note": {
+      "copied_many": "Les {{count}} votacions que han copiat aquest cens tenen la seva pròpia còpia, així que els canvis d'aquí no canvien qui hi vota.",
+      "copied_one": "«{{name}}» té la seva pròpia còpia d'aquest cens, així que els canvis d'aquí no canvien qui hi vota.",
+      "copied_other": "Les {{count}} votacions que han copiat aquest cens tenen la seva pròpia còpia, així que els canvis d'aquí no canvien qui hi vota.",
+      "own": "Si corregeixes les dades d'algú, també canvien a la teva llista de membres. Si treus algú, només el treus d'aquesta votació."
+    },
     "open_draft": "Obre l'esborrany",
     "open_vote": "Obre la votació",
     "people": {
-      "at_close": "{{unit}} al tancament",
-      "title": "Persones"
+      "at_close": "{{unit}} al tancament"
     },
     "picker": {
       "already_in": "Ja hi és",
@@ -272,17 +318,13 @@
     },
     "remove_button": "Treu…",
     "search": "Cerca per nom, correu o número",
-    "select_hint": "Selecciona persones per treure-les d'aquest cens.",
     "select_page": "Selecciona tothom d'aquesta pàgina",
     "select_person": "Selecciona {{name}}",
     "selected_many": "{{formattedCount}} seleccionades",
     "selected_one": "1 seleccionada",
     "selected_other": "{{formattedCount}} seleccionades",
     "sign_in": {
-      "per_vote": "Cada votació decideix com inicien sessió els seus votants.",
-      "ready": "{{ready}} de {{total}} poden rebre un codi",
-      "ready_any": "{{ready}} de {{total}} poden rebre un codi per correu o SMS",
-      "title": "Inici de sessió"
+      "per_vote": "Cada votació decideix com inicien sessió els seus votants."
     },
     "source": {
       "everyone": "Tothom: els membres que afegeixis més endavant també poden votar.",
@@ -296,23 +338,14 @@
     },
     "this_census": "aquest cens",
     "used_by": {
-      "none": "Encara no el fa servir cap votació.",
       "title": "Fet servir a"
     },
     "vote_card": {
-      "closes": "Tanca",
-      "details_and_code": "{{details}} · {{code}}",
-      "opens": "Obre",
-      "origin_on": "{{origin}}, el {{date}}",
       "people": "Persones de",
-      "sign_in": "Inici de sessió amb",
       "snapshot_note": "Aquest cens és una còpia de tots els teus membres de quan vas publicar la votació. En aquest cens hi pots afegir i treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
       "snapshot_note_on": "Aquest cens és una còpia de tots els teus membres del {{date}}, el dia que vas publicar la votació. En aquest cens hi pots afegir i treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
-      "title": "Votació",
-      "weight": "Poder de vot",
       "weighted": "Ponderat per cada membre"
-    },
-    "vote_heading": "Cens de {{vote}}"
+    }
   },
   "census_size": "Mida del cens",
   "censuses": {

@@ -139,9 +139,8 @@
   },
   "census_detail": {
     "actions": {
-      "rename": "Rinomina",
-      "title": "Censimento salvato",
-      "use": "Usa in una nuova votazione"
+      "more": "Altre azioni",
+      "rename": "Rinomina"
     },
     "add": {
       "button": "Aggiungi persone",
@@ -160,9 +159,11 @@
       "title": "Aggiungi persone",
       "updating_vote": "Aggiunte. Aggiornamento della votazione perché possano votare…"
     },
+    "add_detail": "Aggiungine uno",
     "caption": "Persone di questo censimento, pagina {{page}} di {{pages}}",
     "clear": "Deseleziona",
     "column": {
+      "code": "Può ricevere un codice",
       "email": "Email",
       "member_number": "Numero di membro",
       "name": "Nome"
@@ -187,23 +188,68 @@
     },
     "empty": "Non c'è ancora nessuno in questo censimento.",
     "export": {
-      "button": "Scarica il censimento (CSV)",
+      "csv": "Scarica CSV",
       "error": "Non è stato possibile scaricare il censimento",
       "hint": "Nomi, numeri di membro ed email, con la data di oggi. I documenti d'identità sono mascherati e i telefoni esclusi.",
-      "progress": "Preparazione di {{done}} su {{total}}…",
-      "title": "Scarica"
+      "progress": "Preparazione di {{done}} su {{total}}…"
+    },
+    "facts": {
+      "all_ready": "Tutti possono ricevere un codice",
+      "can_get_code": "Possono ricevere un codice",
+      "closed": "Chiusa il {{date}}",
+      "closes": "Chiude il {{date}}",
+      "copied_more_many": "E altre {{count}} votazioni",
+      "copied_more_one": "E 1 altra votazione",
+      "copied_more_other": "E altre {{count}} votazioni",
+      "dates": "{{start}} – {{end}}",
+      "draft": "Una bozza: le date si impostano nell'editor",
+      "no_copy": "Ancora nessuna votazione",
+      "no_copy_hint": "La votazione che lo usa ne avrà una copia propria",
+      "not_published": "Non ancora pubblicata",
+      "opens": "Apre il {{date}}",
+      "people": "Persone",
+      "ready_any": "{{ready}} via email o SMS",
+      "show_them": "Mostrale",
+      "sign_in": "Accesso",
+      "they_type": "Inseriscono anche: {{details}}",
+      "used_more_many": "E altre {{count}} votazioni: le modifiche fatte qui le raggiungono",
+      "used_more_one": "E 1 altra votazione: le modifiche fatte qui la raggiungono",
+      "used_more_other": "E altre {{count}} votazioni: le modifiche fatte qui le raggiungono",
+      "used_reach": "Le modifiche fatte qui raggiungono questa votazione",
+      "voters": "Votanti",
+      "voting": "Votazione"
+    },
+    "filter": {
+      "unreachable_many": "Senza codice · {{count}}",
+      "unreachable_one": "Senza codice · {{count}}",
+      "unreachable_other": "Senza codice · {{count}}"
+    },
+    "header": {
+      "saved": "Censimento salvato",
+      "vote": "Censimento di una votazione"
     },
     "load_error": "Non siamo riusciti a caricare le persone di questo censimento.",
     "loading": "Caricamento di {{done}} su {{total}}…",
     "lookup_note": "Questo censimento non è conservato come un elenco che possiamo mostrare. Per controllare qualcuno, cercalo con un dato che usa questa votazione.",
+    "missing": {
+      "both": "Senza email né cellulare",
+      "email": "Senza email",
+      "phone": "Senza cellulare"
+    },
     "no_match": "Nessuno in questo censimento corrisponde alla ricerca.",
     "no_search": "La ricerca funziona nei censimenti fino a {{max}} persone. Qui scorri le pagine.",
+    "no_unreachable": "Tutte le persone rimaste possono ricevere un codice.",
     "not_found": "Non abbiamo trovato questo censimento.",
+    "note": {
+      "copied_many": "Le {{count}} votazioni che hanno copiato questo censimento hanno una propria copia, quindi le modifiche fatte qui non cambiano chi vota lì.",
+      "copied_one": "«{{name}}» ha una propria copia di questo censimento, quindi le modifiche fatte qui non cambiano chi vota lì.",
+      "copied_other": "Le {{count}} votazioni che hanno copiato questo censimento hanno una propria copia, quindi le modifiche fatte qui non cambiano chi vota lì.",
+      "own": "Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri. Se togli qualcuno, lo togli solo da questa votazione."
+    },
     "open_draft": "Apri la bozza",
     "open_vote": "Apri la votazione",
     "people": {
-      "at_close": "{{unit}} alla chiusura",
-      "title": "Persone"
+      "at_close": "{{unit}} alla chiusura"
     },
     "picker": {
       "already_in": "Già presente",
@@ -272,17 +318,13 @@
     },
     "remove_button": "Togli…",
     "search": "Cerca per nome, email o numero",
-    "select_hint": "Seleziona le persone da togliere da questo censimento.",
     "select_page": "Seleziona tutti in questa pagina",
     "select_person": "Seleziona {{name}}",
     "selected_many": "{{formattedCount}} selezionate",
     "selected_one": "1 selezionata",
     "selected_other": "{{formattedCount}} selezionate",
     "sign_in": {
-      "per_vote": "Ogni votazione stabilisce come accedono i suoi votanti.",
-      "ready": "{{ready}} su {{total}} possono ricevere un codice",
-      "ready_any": "{{ready}} su {{total}} possono ricevere un codice via email o SMS",
-      "title": "Accesso"
+      "per_vote": "Ogni votazione stabilisce come accedono i suoi votanti."
     },
     "source": {
       "everyone": "Tutti: anche i membri che aggiungerai in seguito possono votare.",
@@ -296,23 +338,14 @@
     },
     "this_census": "questo censimento",
     "used_by": {
-      "none": "Nessuna votazione lo usa ancora.",
       "title": "Usato da"
     },
     "vote_card": {
-      "closes": "Chiude",
-      "details_and_code": "{{details}} · {{code}}",
-      "opens": "Apre",
-      "origin_on": "{{origin}}, il {{date}}",
       "people": "Persone da",
-      "sign_in": "Accesso con",
       "snapshot_note": "Questo censimento è una copia di tutti i tuoi membri al momento della pubblicazione della votazione. In questo censimento puoi aggiungere e togliere persone. Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri.",
       "snapshot_note_on": "Questo censimento è una copia di tutti i tuoi membri al {{date}}, il giorno in cui hai pubblicato la votazione. In questo censimento puoi aggiungere e togliere persone. Se correggi i dati di qualcuno, cambiano anche nel tuo elenco dei membri.",
-      "title": "Votazione",
-      "weight": "Peso del voto",
       "weighted": "Ponderato per ogni membro"
-    },
-    "vote_heading": "Censimento di {{vote}}"
+    }
   },
   "census_size": "Dimensione del censimento",
   "censuses": {

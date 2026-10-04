@@ -139,9 +139,8 @@
   },
   "census_detail": {
     "actions": {
-      "rename": "Renommer",
-      "title": "Liste électorale enregistrée",
-      "use": "Utiliser dans un nouveau vote"
+      "more": "Plus d'actions",
+      "rename": "Renommer"
     },
     "add": {
       "button": "Ajouter des personnes",
@@ -160,9 +159,11 @@
       "title": "Ajouter des personnes",
       "updating_vote": "Ajoutées. Mise à jour du vote pour qu'elles puissent voter…"
     },
+    "add_detail": "En ajouter un",
     "caption": "Personnes de cette liste électorale, page {{page}} sur {{pages}}",
     "clear": "Effacer la sélection",
     "column": {
+      "code": "Peut recevoir un code",
       "email": "E-mail",
       "member_number": "Numéro de membre",
       "name": "Nom"
@@ -187,23 +188,68 @@
     },
     "empty": "Personne ne figure encore sur cette liste électorale.",
     "export": {
-      "button": "Télécharger la liste électorale (CSV)",
+      "csv": "Télécharger le CSV",
       "error": "La liste électorale n'a pas pu être téléchargée",
       "hint": "Noms, numéros de membre et e-mails, datés du jour. Les pièces d'identité sont masquées et les téléphones exclus.",
-      "progress": "Préparation de {{done}} sur {{total}}…",
-      "title": "Télécharger"
+      "progress": "Préparation de {{done}} sur {{total}}…"
+    },
+    "facts": {
+      "all_ready": "Tout le monde peut recevoir un code",
+      "can_get_code": "Peuvent recevoir un code",
+      "closed": "Clos le {{date}}",
+      "closes": "Clôture le {{date}}",
+      "copied_more_many": "Et {{count}} autres votes",
+      "copied_more_one": "Et 1 autre vote",
+      "copied_more_other": "Et {{count}} autres votes",
+      "dates": "{{start}} – {{end}}",
+      "draft": "Un brouillon : les dates se règlent dans l'éditeur",
+      "no_copy": "Aucun vote pour l’instant",
+      "no_copy_hint": "Le vote qui l’utilise en aura sa propre copie",
+      "not_published": "Pas encore publié",
+      "opens": "Ouvre le {{date}}",
+      "people": "Personnes",
+      "ready_any": "{{ready}} par e-mail ou SMS",
+      "show_them": "Les afficher",
+      "sign_in": "Connexion",
+      "they_type": "Ils saisissent aussi : {{details}}",
+      "used_more_many": "Et {{count}} autres votes : les modifications faites ici les atteignent",
+      "used_more_one": "Et 1 autre vote : les modifications faites ici l'atteignent",
+      "used_more_other": "Et {{count}} autres votes : les modifications faites ici les atteignent",
+      "used_reach": "Les modifications faites ici atteignent ce vote",
+      "voters": "Électeurs",
+      "voting": "Vote"
+    },
+    "filter": {
+      "unreachable_many": "Sans code possible · {{count}}",
+      "unreachable_one": "Sans code possible · {{count}}",
+      "unreachable_other": "Sans code possible · {{count}}"
+    },
+    "header": {
+      "saved": "Liste électorale enregistrée",
+      "vote": "Liste électorale d'un vote"
     },
     "load_error": "Impossible de charger les personnes de cette liste électorale.",
     "loading": "Chargement de {{done}} sur {{total}}…",
     "lookup_note": "Cette liste électorale n'est pas conservée sous une forme que nous pouvons afficher. Pour vérifier une personne, recherchez-la par une donnée utilisée par ce vote.",
+    "missing": {
+      "both": "Ni e-mail ni mobile",
+      "email": "Pas d’e-mail",
+      "phone": "Pas de mobile"
+    },
     "no_match": "Personne sur cette liste électorale ne correspond à votre recherche.",
     "no_search": "La recherche fonctionne pour les listes électorales de {{max}} personnes maximum. Parcourez celle-ci page par page.",
+    "no_unreachable": "Toutes les personnes restantes peuvent recevoir un code.",
     "not_found": "Liste électorale introuvable.",
+    "note": {
+      "copied_many": "Les {{count}} votes qui ont copié cette liste électorale ont leur propre copie : les modifications faites ici ne changent pas qui y vote.",
+      "copied_one": "« {{name}} » a sa propre copie de cette liste électorale : les modifications faites ici ne changent pas qui y vote.",
+      "copied_other": "Les {{count}} votes qui ont copié cette liste électorale ont leur propre copie : les modifications faites ici ne changent pas qui y vote.",
+      "own": "Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres. Retirer quelqu'un le retire seulement de ce vote."
+    },
     "open_draft": "Ouvrir le brouillon",
     "open_vote": "Ouvrir le vote",
     "people": {
-      "at_close": "{{unit}} à la clôture",
-      "title": "Personnes"
+      "at_close": "{{unit}} à la clôture"
     },
     "picker": {
       "already_in": "Déjà inscrite",
@@ -272,17 +318,13 @@
     },
     "remove_button": "Retirer…",
     "search": "Rechercher par nom, e-mail ou numéro",
-    "select_hint": "Sélectionnez des personnes pour les retirer de cette liste électorale.",
     "select_page": "Sélectionner tout le monde sur cette page",
     "select_person": "Sélectionner {{name}}",
     "selected_many": "{{formattedCount}} sélectionnées",
     "selected_one": "1 sélectionnée",
     "selected_other": "{{formattedCount}} sélectionnées",
     "sign_in": {
-      "per_vote": "Chaque vote définit comment ses électeurs se connectent.",
-      "ready": "{{ready}} sur {{total}} peuvent recevoir un code",
-      "ready_any": "{{ready}} sur {{total}} peuvent recevoir un code par e-mail ou SMS",
-      "title": "Connexion"
+      "per_vote": "Chaque vote définit comment ses électeurs se connectent."
     },
     "source": {
       "everyone": "Tout le monde : les membres que vous ajoutez plus tard peuvent aussi voter.",
@@ -296,23 +338,14 @@
     },
     "this_census": "cette liste électorale",
     "used_by": {
-      "none": "Aucun vote ne l'utilise encore.",
       "title": "Utilisée par"
     },
     "vote_card": {
-      "closes": "Clôture",
-      "details_and_code": "{{details}} · {{code}}",
-      "opens": "Ouverture",
-      "origin_on": "{{origin}}, le {{date}}",
       "people": "Personnes issues de",
-      "sign_in": "Connexion avec",
       "snapshot_note": "Cette liste électorale est une copie de tous vos membres au moment de la publication du vote. Vous pouvez ajouter et retirer des personnes dans cette liste électorale. Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres.",
       "snapshot_note_on": "Cette liste électorale est une copie de tous vos membres au {{date}}, le jour de la publication du vote. Vous pouvez ajouter et retirer des personnes dans cette liste électorale. Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres.",
-      "title": "Vote",
-      "weight": "Poids du vote",
       "weighted": "Pondéré par membre"
-    },
-    "vote_heading": "Liste électorale de {{vote}}"
+    }
   },
   "census_size": "Nombre d'inscrits",
   "censuses": {

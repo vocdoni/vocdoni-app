@@ -1,88 +1,48 @@
-import { Box, Button, Field, Flex, Icon, Input, Stack, Text, Textarea } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Field,
+  Flex,
+  Icon,
+  IconButton,
+  Input,
+  Menu,
+  Portal,
+  Stack,
+  Text,
+  Textarea,
+} from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuDownload, LuPencil, LuTrash2, LuVote } from 'react-icons/lu'
+import { LuDownload, LuEllipsis, LuPencil, LuTrash2 } from 'react-icons/lu'
 import { useNavigate } from 'react-router'
 import { useMemberFields, type MemberFieldId } from '~components/Memberbase/fields'
-import { signInText } from '~components/Process/Dashboard/View/signIn'
 import { useToast } from '~components/Toast'
 import { ConfirmDialog } from '~components/ui/ConfirmDialog'
-import { SectionCard } from '~components/ui/SectionCard'
 import { Sheet } from '~components/ui/Sheet'
 import { Tooltip } from '~components/ui/Tooltip'
 import { Routes } from '~routes'
 import type { AffectedVote } from '~src/queries/affectedVotes'
 import { type Group, useDeleteGroup, useGroupMembersFetcher, useUpdateGroup } from '~src/queries/groups'
-import { collectMembers, isAbortError, useCensusReadiness } from '~src/queries/members'
+import { collectMembers, isAbortError } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { csvBlob, downloadBlob } from '~utils/download'
 import { censusCsvRows, censusFileName } from './exportCsv'
 import { publishedUsers } from './model'
 import { UsedByWarning } from './UsedBy'
-import { useNavigateToVote } from './useNavigateToVote'
-
-type SignInCardProps = {
-  /** The vote's one-time code channels; undefined for a saved census (each vote sets its own) */
-  twoFaFields?: string[]
-  /** Scopes the readiness check; none checks the whole organization */
-  groupId?: string
-  total: number
-  /** Readiness can't be checked (a census of people picked one by one has no group to check) */
-  noReadiness?: boolean
-}
-
-/** How people sign in, and how many of them can get a one-time code. */
-export const SignInCard = ({ twoFaFields, groupId, total, noReadiness }: SignInCardProps) => {
-  const { t, i18n } = useTranslation()
-  const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
-  const forVote = twoFaFields !== undefined
-  const channels = forVote ? twoFaFields : ['email', 'phone']
-  const readiness = useCensusReadiness({ groupId, channels, total, enabled: !noReadiness })
-
-  return (
-    <SectionCard title={t('census_detail.sign_in.title', { defaultValue: 'Sign-in' })}>
-      <Text fontSize='sm'>
-        {forVote
-          ? signInText(t, twoFaFields)
-          : t('census_detail.sign_in.per_vote', { defaultValue: 'Each vote sets how its voters sign in.' })}
-      </Text>
-      {readiness.available && (
-        <Text
-          fontSize='sm'
-          color={readiness.unreachable ? 'fg.warning' : 'fg.muted'}
-          mt={2}
-          fontVariantNumeric='tabular-nums'
-        >
-          {forVote
-            ? t('census_detail.sign_in.ready', {
-                defaultValue: '{{ready}} of {{total}} can get a code',
-                ready: format(readiness.ready),
-                total: format(readiness.total),
-              })
-            : t('census_detail.sign_in.ready_any', {
-                defaultValue: '{{ready}} of {{total}} can get a code by email or SMS',
-                ready: format(readiness.ready),
-                total: format(readiness.total),
-              })}
-        </Text>
-      )}
-    </SectionCard>
-  )
-}
 
 /**
- * "Download census (CSV)": every person of the census' group, loaded page by page and saved as a
- * semicolon CSV in the browser. Names, member numbers and emails; national IDs masked; never phones.
+ * Downloads every person of a census' group as a semicolon CSV, loaded page by page in the browser.
+ * Names, member numbers and emails; national IDs masked; never phones.
  */
-export const ExportCard = ({ groupId, name, kind }: { groupId: string; name: string; kind: string }) => {
-  const { t, i18n } = useTranslation()
+export const useCensusDownload = (groupId: string, name: string, kind: string) => {
+  const { t } = useTranslation()
   const toast = useToast()
   const fields = useMemberFields()
   const fetchPage = useGroupMembersFetcher(groupId)
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null)
   const controller = useRef<AbortController | null>(null)
-  const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
 
   useEffect(() => () => controller.current?.abort(), [])
 
@@ -117,27 +77,41 @@ export const ExportCard = ({ groupId, name, kind }: { groupId: string; name: str
     }
   }
 
+  return { download, progress }
+}
+
+/** "Download CSV", for the table's toolbar. Says what leaves out on hover, and how far along it is. */
+export const CensusDownloadButton = ({ groupId, name, kind }: { groupId: string; name: string; kind: string }) => {
+  const { t, i18n } = useTranslation()
+  const { download, progress } = useCensusDownload(groupId, name, kind)
+  const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
+
   return (
-    <SectionCard title={t('census_detail.export.title', { defaultValue: 'Download' })}>
-      <Text fontSize='sm' color='fg.muted' mb={3}>
-        {t('census_detail.export.hint', {
-          defaultValue: 'Names, member numbers and emails, dated today. National IDs are masked and phones left out.',
-        })}
-      </Text>
-      <Button size='sm' variant='outline' colorPalette='gray' onClick={download} loading={!!progress}>
+    <Tooltip
+      content={t('census_detail.export.hint', {
+        defaultValue: 'Names, member numbers and emails, dated today. National IDs are masked and phones left out.',
+      })}
+    >
+      <Button
+        size='sm'
+        variant='outline'
+        colorPalette='gray'
+        onClick={download}
+        loading={!!progress}
+        loadingText={
+          progress?.total
+            ? t('census_detail.export.progress', {
+                defaultValue: 'Preparing {{done}} of {{total}}…',
+                done: format(progress.done),
+                total: format(progress.total),
+              })
+            : undefined
+        }
+      >
         <Icon as={LuDownload} />
-        {t('census_detail.export.button', { defaultValue: 'Download census (CSV)' })}
+        {t('census_detail.export.csv', { defaultValue: 'Download CSV' })}
       </Button>
-      {progress && progress.total > 0 && (
-        <Text fontSize='xs' color='fg.muted' mt={2} fontVariantNumeric='tabular-nums' role='status'>
-          {t('census_detail.export.progress', {
-            defaultValue: 'Preparing {{done}} of {{total}}…',
-            done: format(progress.done),
-            total: format(progress.total),
-          })}
-        </Text>
-      )}
-    </SectionCard>
+    </Tooltip>
   )
 }
 
@@ -236,11 +210,11 @@ const EditSavedSheet = ({
 }
 
 /**
- * What can be done with a saved census: use it in a vote, rename it, delete it. Deleting is refused
- * while a published vote uses it, since that vote's census would be emptied, and until every vote is
- * loaded, since only then is it known that none does.
+ * The rarer actions on a saved census, in a "…" menu: rename it, delete it. Deleting is refused while a
+ * published vote uses it, since that vote's census would be emptied, and until every vote is loaded,
+ * since only then is it known that none does.
  */
-export const SavedCensusActions = ({
+export const SavedCensusMenu = ({
   group,
   usedBy,
   votesComplete = true,
@@ -253,7 +227,6 @@ export const SavedCensusActions = ({
   const { t } = useTranslation()
   const toast = useToast()
   const navigate = useNavigate()
-  const navigateToVote = useNavigateToVote()
   const deleteGroup = useDeleteGroup()
   const [editing, setEditing] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -293,56 +266,41 @@ export const SavedCensusActions = ({
     }
   }
 
-  const deleteButton = (
-    <Button
-      size='sm'
-      variant='ghost'
-      colorPalette='red'
-      justifyContent='flex-start'
-      disabled={!!blockedText}
-      onClick={() => setDeleting(true)}
-    >
-      <Icon as={LuTrash2} />
-      {t('census_detail.delete.button', { defaultValue: 'Delete saved census' })}
-    </Button>
-  )
-
   return (
-    <SectionCard title={t('census_detail.actions.title', { defaultValue: 'Saved census' })}>
-      <Stack gap={1} align='stretch'>
-        <Button
-          size='sm'
-          variant='ghost'
-          colorPalette='gray'
-          justifyContent='flex-start'
-          onClick={() => navigateToVote(group.id)}
-        >
-          <Icon as={LuVote} />
-          {t('census_detail.actions.use', { defaultValue: 'Use in a new vote' })}
-        </Button>
-        <Button
-          size='sm'
-          variant='ghost'
-          colorPalette='gray'
-          justifyContent='flex-start'
-          onClick={() => setEditing(true)}
-        >
-          <Icon as={LuPencil} />
-          {t('census_detail.actions.rename', { defaultValue: 'Rename' })}
-        </Button>
-        {blockedText ? (
-          <Tooltip content={blockedText}>
-            <Box>{deleteButton}</Box>
-          </Tooltip>
-        ) : (
-          deleteButton
-        )}
-        {blockedText && (
-          <Text fontSize='xs' color='fg.muted' px={3}>
-            {blockedText}
-          </Text>
-        )}
-      </Stack>
+    <>
+      <Menu.Root positioning={{ placement: 'bottom-end' }}>
+        <Menu.Trigger asChild>
+          <IconButton
+            size='sm'
+            variant='outline'
+            colorPalette='gray'
+            aria-label={t('census_detail.actions.more', { defaultValue: 'More actions' })}
+          >
+            <LuEllipsis />
+          </IconButton>
+        </Menu.Trigger>
+        <Portal>
+          <Menu.Positioner>
+            <Menu.Content minW='240px'>
+              <Menu.Item value='rename' onSelect={() => setEditing(true)}>
+                <Icon as={LuPencil} />
+                {t('census_detail.actions.rename', { defaultValue: 'Rename' })}
+              </Menu.Item>
+              <Menu.Item value='delete' color='fg.error' disabled={!!blockedText} onSelect={() => setDeleting(true)}>
+                <Icon as={LuTrash2} />
+                <Box>
+                  <Text fontSize='sm'>{t('census_detail.delete.button', { defaultValue: 'Delete saved census' })}</Text>
+                  {blockedText && (
+                    <Text fontSize='xs' color='fg.muted'>
+                      {blockedText}
+                    </Text>
+                  )}
+                </Box>
+              </Menu.Item>
+            </Menu.Content>
+          </Menu.Positioner>
+        </Portal>
+      </Menu.Root>
       <EditSavedSheet open={editing} onOpenChange={setEditing} group={group} usedBy={usedBy} />
       <ConfirmDialog
         open={deleting}
@@ -361,7 +319,7 @@ export const SavedCensusActions = ({
           </Box>
         )}
       </ConfirmDialog>
-    </SectionCard>
+    </>
   )
 }
 

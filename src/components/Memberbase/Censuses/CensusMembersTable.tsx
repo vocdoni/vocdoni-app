@@ -7,14 +7,17 @@ import {
   IconButton,
   Input,
   InputGroup,
+  Link,
   Skeleton,
   Stack,
   Table,
   Text,
 } from '@chakra-ui/react'
-import { useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuChevronLeft, LuChevronRight, LuSearch, LuUserMinus } from 'react-icons/lu'
+import { LuChevronLeft, LuChevronRight, LuCircleAlert, LuSearch, LuUserMinus, LuUserPlus } from 'react-icons/lu'
+import { generatePath, Link as RouterLink } from 'react-router'
+import { Routes } from '~routes'
 import { useAllGroupMembers, useGroupMembersPage } from '~src/queries/groups'
 import { type CollectedMember, MEMBERS_COLLECT_CAP } from '~src/queries/members'
 import { memberDisplayName } from '../People/display'
@@ -48,13 +51,44 @@ type CensusMembersTableProps = {
   onRemove?: (members: SelectedMember[]) => void
   /** Clears the selection when this changes (after a removal) */
   resetKey?: unknown
+  /** Who can't get a voting code, when that's known */
+  unreachable?: Set<string>
+  /** The code channels the census uses, to say what each of them is missing */
+  channels?: string[]
+  /** Show only whoever can't get a code */
+  onlyUnreachable?: boolean
+  onOnlyUnreachableChange?: (only: boolean) => void
+  /** Offered when the census is empty */
+  onAdd?: () => void
+  /** At the end of the toolbar (the download) */
+  toolbarEnd?: ReactNode
 }
+
+/** What someone who can't get a code is missing, for the codes this census sends. */
+const missingText = (t: ReturnType<typeof useTranslation>['t'], channels: string[]) =>
+  channels.includes('email') && channels.includes('phone')
+    ? t('census_detail.missing.both', { defaultValue: 'No email or mobile' })
+    : channels.includes('phone')
+      ? t('census_detail.missing.phone', { defaultValue: 'No mobile' })
+      : t('census_detail.missing.email', { defaultValue: 'No email' })
 
 /**
  * The people of a census, from its group. Up to 5,000 are loaded once and searched in the browser
  * (the endpoint has no search); bigger censuses are paged from the server, without search.
  */
-export const CensusMembersTable = ({ groupId, total, selectable, onRemove, resetKey }: CensusMembersTableProps) => {
+export const CensusMembersTable = ({
+  groupId,
+  total,
+  selectable,
+  onRemove,
+  resetKey,
+  unreachable,
+  channels = ['email'],
+  onlyUnreachable = false,
+  onOnlyUnreachableChange,
+  onAdd,
+  toolbarEnd,
+}: CensusMembersTableProps) => {
   const { t, i18n } = useTranslation()
   const format = (value: number) => value.toLocaleString(i18n.resolvedLanguage)
   const inMemory = total <= MEMBERS_COLLECT_CAP
@@ -66,12 +100,18 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
   const paged = useGroupMembersPage(groupId, { page, limit: CENSUS_PAGE_SIZE, enabled: !inMemory })
 
   useEffect(() => setSelected(new Map()), [resetKey, groupId])
-  useEffect(() => setPage(1), [query])
+  useEffect(() => setPage(1), [query, onlyUnreachable])
 
+  // The filter needs every person in memory: past the limit it isn't offered
+  const filtering = inMemory && onlyUnreachable && !!unreachable
   const matching = useMemo(
-    () => (all.data?.members ?? []).filter((member) => memberMatchesSearch(member, query)),
-    [all.data, query]
+    () =>
+      (all.data?.members ?? []).filter(
+        (member) => memberMatchesSearch(member, query) && (!filtering || unreachable!.has(member.id))
+      ),
+    [all.data, query, filtering, unreachable]
   )
+  const unreachableCount = unreachable?.size ?? 0
   const lastPage = inMemory
     ? Math.max(1, Math.ceil(matching.length / CENSUS_PAGE_SIZE))
     : Math.max(1, paged.data?.pagination?.lastPage ?? 1)
@@ -93,29 +133,48 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
 
   return (
     <Stack gap={3}>
-      {inMemory ? (
-        <InputGroup startElement={<Icon as={LuSearch} color='fg.muted' />} maxW={{ md: '360px' }}>
-          <Input
+      <Flex gap={2} align='center' wrap='wrap'>
+        {inMemory ? (
+          <InputGroup startElement={<Icon as={LuSearch} color='fg.muted' />} maxW={{ md: '320px' }}>
+            <Input
+              size='sm'
+              fontSize={{ base: 'md', md: 'sm' }}
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              autoComplete='off'
+              placeholder={t('census_detail.search', { defaultValue: 'Search by name, email or number' })}
+              aria-label={t('census_detail.search', { defaultValue: 'Search by name, email or number' })}
+            />
+          </InputGroup>
+        ) : (
+          <Text fontSize='xs' color='fg.muted'>
+            {t('census_detail.no_search', {
+              defaultValue: 'Search works in censuses of up to {{max}} people. Page through this one instead.',
+              max: format(MEMBERS_COLLECT_CAP),
+            })}
+          </Text>
+        )}
+        {inMemory && unreachableCount > 0 && (
+          <Button
             size='sm'
-            fontSize={{ base: 'md', md: 'sm' }}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            autoComplete='off'
-            placeholder={t('census_detail.search', { defaultValue: 'Search by name, email or number' })}
-            aria-label={t('census_detail.search', { defaultValue: 'Search by name, email or number' })}
-          />
-        </InputGroup>
-      ) : (
-        <Text fontSize='xs' color='fg.muted'>
-          {t('census_detail.no_search', {
-            defaultValue: 'Search works in censuses of up to {{max}} people. Page through this one instead.',
-            max: format(MEMBERS_COLLECT_CAP),
-          })}
-        </Text>
-      )}
+            variant={onlyUnreachable ? 'solid' : 'outline'}
+            colorPalette='orange'
+            borderRadius='full'
+            aria-pressed={onlyUnreachable}
+            onClick={() => onOnlyUnreachableChange?.(!onlyUnreachable)}
+          >
+            <Icon as={LuCircleAlert} />
+            {t('census_detail.filter.unreachable', {
+              defaultValue: "Can't get a code · {{count}}",
+              count: unreachableCount,
+            })}
+          </Button>
+        )}
+        <Box flex='1' />
+        {toolbarEnd}
+      </Flex>
 
-      {selectable && (
-        // Always there, one height: selecting doesn't push the table down
+      {selectable && selected.size > 0 && (
         <Flex
           align='center'
           justify='space-between'
@@ -123,39 +182,26 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
           px={3}
           h={10}
           borderRadius='md'
-          bg={selected.size ? 'bg.muted' : undefined}
+          bg='bg.muted'
           role='status'
         >
-          {selected.size ? (
-            <>
-              <Text fontSize='sm' fontVariantNumeric='tabular-nums'>
-                {t('census_detail.selected', {
-                  count: selected.size,
-                  formattedCount: format(selected.size),
-                  defaultValue_one: '1 selected',
-                  defaultValue_other: '{{formattedCount}} selected',
-                })}
-              </Text>
-              <Flex gap={2}>
-                <Button size='xs' variant='ghost' colorPalette='gray' onClick={() => setSelected(new Map())}>
-                  {t('census_detail.clear', { defaultValue: 'Clear' })}
-                </Button>
-                <Button
-                  size='xs'
-                  variant='outline'
-                  colorPalette='red'
-                  onClick={() => onRemove?.([...selected.values()])}
-                >
-                  <Icon as={LuUserMinus} />
-                  {t('census_detail.remove_button', { defaultValue: 'Remove…' })}
-                </Button>
-              </Flex>
-            </>
-          ) : (
-            <Text fontSize='sm' color='fg.muted'>
-              {t('census_detail.select_hint', { defaultValue: 'Select people to remove them from this census.' })}
-            </Text>
-          )}
+          <Text fontSize='sm' fontVariantNumeric='tabular-nums'>
+            {t('census_detail.selected', {
+              count: selected.size,
+              formattedCount: format(selected.size),
+              defaultValue_one: '1 selected',
+              defaultValue_other: '{{formattedCount}} selected',
+            })}
+          </Text>
+          <Flex gap={2}>
+            <Button size='xs' variant='ghost' colorPalette='gray' onClick={() => setSelected(new Map())}>
+              {t('census_detail.clear', { defaultValue: 'Clear' })}
+            </Button>
+            <Button size='xs' variant='outline' colorPalette='red' onClick={() => onRemove?.([...selected.values()])}>
+              <Icon as={LuUserMinus} />
+              {t('census_detail.remove_button', { defaultValue: 'Remove…' })}
+            </Button>
+          </Flex>
         </Flex>
       )}
 
@@ -180,11 +226,21 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
             )}
           </Stack>
         ) : rows.length === 0 ? (
-          <Text fontSize='sm' color='fg.muted' p={6} textAlign='center'>
-            {query
-              ? t('census_detail.no_match', { defaultValue: 'Nobody in this census matches your search.' })
-              : t('census_detail.empty', { defaultValue: 'Nobody is in this census yet.' })}
-          </Text>
+          <Stack align='center' gap={3} p={8} textAlign='center'>
+            <Text fontSize='sm' color='fg.muted'>
+              {filtering
+                ? t('census_detail.no_unreachable', { defaultValue: 'Everyone left can get a code.' })
+                : query
+                  ? t('census_detail.no_match', { defaultValue: 'Nobody in this census matches your search.' })
+                  : t('census_detail.empty', { defaultValue: 'Nobody is in this census yet.' })}
+            </Text>
+            {!query && !filtering && onAdd && (
+              <Button size='sm' onClick={onAdd}>
+                <Icon as={LuUserPlus} />
+                {t('census_detail.add.button', { defaultValue: 'Add people' })}
+              </Button>
+            )}
+          </Stack>
         ) : (
           <Table.ScrollArea>
             <Table.Root size='sm' opacity={!inMemory && paged.isPlaceholderData ? 0.6 : 1}>
@@ -217,6 +273,11 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
                   <Table.ColumnHeader hideBelow='sm' w='1%' whiteSpace='nowrap'>
                     {t('census_detail.column.member_number', { defaultValue: 'Member number' })}
                   </Table.ColumnHeader>
+                  {unreachableCount > 0 && (
+                    <Table.ColumnHeader w='1%' whiteSpace='nowrap'>
+                      <Box srOnly>{t('census_detail.column.code', { defaultValue: 'Can get a code' })}</Box>
+                    </Table.ColumnHeader>
+                  )}
                 </Table.Row>
               </Table.Header>
               <Table.Body>
@@ -263,6 +324,31 @@ export const CensusMembersTable = ({ groupId, total, selectable, onRemove, reset
                       >
                         {member.memberNumber}
                       </Table.Cell>
+                      {unreachableCount > 0 && (
+                        <Table.Cell whiteSpace='nowrap' textAlign='end'>
+                          {unreachable?.has(member.id) && (
+                            <Flex gap={2} align='center' justify='flex-end' fontSize='xs'>
+                              <Flex align='center' gap={1} color='fg.warning'>
+                                <Icon as={LuCircleAlert} boxSize={3} aria-hidden />
+                                <Text as='span' fontSize='xs'>
+                                  {missingText(t, channels)}
+                                </Text>
+                              </Flex>
+                              {/* Their details are fixed where every member's are: their drawer in People */}
+                              <Link asChild fontSize='xs' textDecoration='underline'>
+                                <RouterLink
+                                  to={{
+                                    pathname: generatePath(Routes.dashboard.memberbase.members, { page: '1' }),
+                                    search: `?member=${encodeURIComponent(member.id)}`,
+                                  }}
+                                >
+                                  {t('census_detail.add_detail', { defaultValue: 'Add one' })}
+                                </RouterLink>
+                              </Link>
+                            </Flex>
+                          )}
+                        </Table.Cell>
+                      )}
                     </Table.Row>
                   )
                 })}

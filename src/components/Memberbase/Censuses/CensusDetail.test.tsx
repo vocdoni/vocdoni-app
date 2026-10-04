@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
+import { VocdoniApiError } from '@vocdoni/api-client'
 import { ApiError } from '~components/Auth/api'
 import { mockUseOrganization, render, screen, waitFor, within } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
@@ -30,6 +31,8 @@ const state = vi.hoisted(() => ({
   process: null as unknown,
   orgMembers: [] as Record<string, unknown>[],
   conflicts: [] as string[][],
+  /** Who the validation says can't get a code */
+  missing: [] as string[],
   /** What the next group PUTs report in `errors` */
   putErrors: [] as string[],
   fetch: vi.fn(),
@@ -56,8 +59,11 @@ vi.mock('~src/providers/ApiClientProvider', async (importOriginal) => ({
     client: {
       elections: {
         get: async () => state.process,
-        // Everyone can get a code: a 200
-        validateCensus: async () => 'OK',
+        // Everyone can get a code (a 200), unless the test names who can't
+        validateCensus: async () => {
+          if (!state.missing.length) return 'OK'
+          throw new VocdoniApiError(400, { data: { missingData: state.missing } }, 'missing data', 40000)
+        },
         addCensusMembers: state.addCensus,
         participants: state.participants,
       },
@@ -193,6 +199,7 @@ describe('CensusDetail', () => {
     state.toast.mockReset()
     state.orgMembers = Array.from({ length: 3 }, (_, index) => person(index))
     state.conflicts = []
+    state.missing = []
     state.putErrors = []
     state.addCensus.mockReset().mockImplementation(async (_id: string, ids: string[]) => ({
       added: ids.length,
@@ -256,6 +263,7 @@ describe('CensusDetail', () => {
   })
 
   it('names the votes sharing a saved census and keeps it while a published vote uses it', async () => {
+    const user = userEvent.setup()
     renderDetail({ kind: 'saved', groupId: 'quota' })
 
     expect(
@@ -263,13 +271,17 @@ describe('CensusDetail', () => {
         "Shared with 'Assemblea General 2026' (live). Changing it changes who can vote in all of them, even closed ones."
       )
     ).toBeInTheDocument()
-    const usedBy = screen.getByRole('heading', { name: 'Used by' }).parentElement!.parentElement!
-    expect(within(usedBy).getByRole('link', { name: 'Assemblea General 2026' })).toHaveAttribute(
+    // The facts strip names the vote that uses it
+    expect(screen.getByText('Used by')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Assemblea General 2026' })).toHaveAttribute(
       'href',
       '/admin/memberbase/censuses/vote/p1'
     )
-    expect(screen.getByRole('button', { name: 'Delete saved census' })).toBeDisabled()
-    expect(screen.getAllByText('A published vote uses it, so it stays.').length).toBeGreaterThan(0)
+    // Delete is in the "…" menu, refused with its reason
+    await user.click(screen.getByRole('button', { name: 'More actions' }))
+    const remove = await screen.findByRole('menuitem', { name: /Delete saved census/ })
+    expect(remove).toHaveAttribute('aria-disabled', 'true')
+    expect(remove).toHaveTextContent('A published vote uses it, so it stays.')
   })
 
   it('deletes a saved census only drafts use, naming the drafts it empties', async () => {
@@ -278,7 +290,8 @@ describe('CensusDetail', () => {
     state.drafts = [vote('d1', 'Comitè', { groupId: 'quota' }, 'UPCOMING', false)]
     renderDetail({ kind: 'saved', groupId: 'quota' })
 
-    await user.click(await screen.findByRole('button', { name: 'Delete saved census' }))
+    await user.click(await screen.findByRole('button', { name: 'More actions' }))
+    await user.click(await screen.findByRole('menuitem', { name: /Delete saved census/ }))
     const dialog = await screen.findByRole('dialog')
     expect(within(dialog).getByText("This also changes who can vote in 'Comitè' (draft).")).toBeInTheDocument()
     await user.click(within(dialog).getByRole('button', { name: 'Delete census' }))
@@ -288,7 +301,7 @@ describe('CensusDetail', () => {
     )
   })
 
-  it('lists the votes that copied a saved census, and warns while one of them is live', async () => {
+  it('names the votes that copied a saved census, and says calmly that changes here don’t reach them', async () => {
     state.groups.push(group('own-p2', 'Census of Assemblea'), group('own-d2', 'Census of Junta'))
     state.meta = {
       'vg_own-p2': {
@@ -312,38 +325,62 @@ describe('CensusDetail', () => {
     state.drafts = [vote('d2', 'Junta 2027', { groupId: 'own-d2' }, 'UPCOMING', false)]
     renderDetail({ kind: 'saved', groupId: 'quota' })
 
-    const card = (await screen.findByRole('heading', { name: 'Copied into' })).closest('div')!.parentElement!
+    expect(await screen.findByText('Copied into')).toBeInTheDocument()
+    // The live one first, then how many more
+    expect(screen.getByRole('link', { name: 'Assemblea General 2026' })).toHaveAttribute(
+      'href',
+      '/admin/memberbase/censuses/vote/p2'
+    )
+    expect(screen.getByText('And 1 more vote')).toBeInTheDocument()
     expect(
-      within(card)
-        .getAllByRole('link')
-        .map((link) => link.textContent)
-    ).toEqual(['Assemblea General 2026', 'Junta 2027'])
-    expect(
-      within(card).getByText("These votes have their own copy. Changes here don't reach them.")
+      screen.getByText(
+        "The 2 votes that copied this census have their own copies, so changes here don't change who votes there."
+      )
     ).toBeInTheDocument()
-    expect(
-      screen.getByText("A live or scheduled vote uses a copy of this census. Changes here don't reach it.")
-    ).toBeInTheDocument()
-    // Nothing shares it, and "No vote uses it yet" would contradict the list
-    expect(screen.queryByText('No vote uses it yet.')).toBeNull()
+    // Nothing shares it: no "Used by"
+    expect(screen.queryByText('Used by')).toBeNull()
+  })
+
+  it('shows who can’t get a code, with a way to add what they’re missing', async () => {
+    const user = userEvent.setup()
+    state.missing = ['m3', 'm7']
+    renderDetail({ kind: 'saved', groupId: 'quota' })
+
+    expect(await screen.findByText("2 can't get a code")).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Show them' }))
+
+    expect(screen.getByRole('button', { name: "Can't get a code · 2" })).toHaveAttribute('aria-pressed', 'true')
+    const rows = within(screen.getByRole('table')).getAllByRole('row').slice(1)
+    expect(rows.map((row) => within(row).getByText(/^Person\d+/).textContent)).toEqual([
+      'Person03 Vila',
+      'Person07 Núñez',
+    ])
+    expect(within(rows[0]).getByText('No email or mobile')).toBeInTheDocument()
+    expect(within(rows[0]).getByRole('link', { name: 'Add one' })).toHaveAttribute(
+      'href',
+      '/admin/memberbase/members/1?member=m3'
+    )
   })
 
   it('waits for every vote to load before a saved census can be deleted', async () => {
+    const user = userEvent.setup()
     state.published = []
     state.moreDrafts = true
     renderDetail({ kind: 'saved', groupId: 'quota' })
 
-    expect(await screen.findByRole('button', { name: 'Delete saved census' })).toBeDisabled()
-    expect(
-      screen.getAllByText('Deleting waits until all your votes are checked, so none still using it is missed.').length
-    ).toBeGreaterThan(0)
+    await user.click(await screen.findByRole('button', { name: 'More actions' }))
+    const remove = await screen.findByRole('menuitem', { name: /Delete saved census/ })
+    expect(remove).toHaveAttribute('aria-disabled', 'true')
+    expect(remove).toHaveTextContent(
+      'Deleting waits until all your votes are checked, so none still using it is missed.'
+    )
   })
 
   it('downloads the census as a CSV without phones and with national IDs masked', async () => {
     const user = userEvent.setup()
     renderDetail({ kind: 'saved', groupId: 'quota' })
 
-    await user.click(await screen.findByRole('button', { name: 'Download census (CSV)' }))
+    await user.click(await screen.findByRole('button', { name: 'Download CSV' }))
 
     await waitFor(() => expect(state.download).toHaveBeenCalled())
     const [blob, fileName] = state.download.mock.calls[0]
@@ -404,10 +441,11 @@ describe('CensusDetail', () => {
       screen.getByText("This vote's own census. Editing it doesn't change your members or other votes.")
     ).toBeInTheDocument()
     // The vote it belongs to, and exactly how its people signed in to it
-    const card = screen.getByRole('heading', { name: 'Vote' }).closest('div')!.parentElement!
-    expect(within(card).getByRole('link', { name: 'Eleccions Junta 2025' })).toBeInTheDocument()
-    expect(within(card).getByText('Member Number, National ID · Code by email')).toBeInTheDocument()
-    expect(within(card).getByText(/^Copied from|^Chosen by hand/)).toBeInTheDocument()
+    // The facts: how they signed in, exactly, and where the people came from
+    expect(screen.getByRole('heading', { name: 'Eleccions Junta 2025' })).toBeInTheDocument()
+    expect(screen.getByText('Code by email')).toBeInTheDocument()
+    expect(screen.getByText('They also type: Member Number, National ID')).toBeInTheDocument()
+    expect(screen.getByText(/^Copied from|^Chosen by hand/)).toBeInTheDocument()
     // Nobody signs in to a vote that's over: no readiness
     expect(screen.queryByText(/can get a code/)).toBeNull()
   })
