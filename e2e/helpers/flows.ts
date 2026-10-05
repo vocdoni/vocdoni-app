@@ -316,7 +316,7 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   // hidden inputs carry `name="censusSource"`, so this doesn't depend on copy.
   await pickRadio(page, 'censusSource', 'everyone')
 
-  await page.getByRole('button', { name: /Configure Voter Authentication/i }).click()
+  await page.getByRole('button', { name: /Set up voter sign-in/i }).click()
   const dialog = page.getByRole('dialog')
 
   // Tab 1 — credentials. The checkbox `value` is the API field name, so this

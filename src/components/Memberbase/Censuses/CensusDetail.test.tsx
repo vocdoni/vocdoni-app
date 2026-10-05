@@ -346,7 +346,7 @@ describe('CensusDetail', () => {
     state.missing = ['m3', 'm7']
     renderDetail({ kind: 'saved', groupId: 'quota' })
 
-    expect(await screen.findByText("2 can't get a code")).toBeInTheDocument()
+    expect(await screen.findByText(/^2 can't get a code/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Show them' }))
 
     expect(screen.getByRole('button', { name: "Can't get a code · 2" })).toHaveAttribute('aria-pressed', 'true')
@@ -435,18 +435,18 @@ describe('CensusDetail', () => {
     renderDetail({ kind: 'vote', processId: 'p9' })
 
     expect(await screen.findByText("This vote has ended, so its census can't change.")).toBeInTheDocument()
-    expect(screen.getByText('voters at close')).toBeInTheDocument()
+    expect(screen.getByText('members at close')).toBeInTheDocument()
     expect(screen.getByText('31')).toBeInTheDocument()
     // No sentence restating what the facts already say
     expect(screen.queryByText(/This vote's own census/)).toBeNull()
     expect(screen.getByText(/^Census created on \d+ \w+ \d{4} at \d{2}:\d{2}$/)).toBeInTheDocument()
     // The facts: how they signed in, exactly, and where the people came from
     expect(screen.getByRole('heading', { name: 'Eleccions Junta 2025' })).toBeInTheDocument()
-    expect(screen.getByText('Code by email')).toBeInTheDocument()
-    expect(screen.getByText('They also type: Member Number, National ID')).toBeInTheDocument()
-    expect(screen.getByText(/^Copied from|^Chosen by hand/)).toBeInTheDocument()
+    expect(screen.getByText('They confirm their member number and national ID')).toBeInTheDocument()
+    expect(screen.getByText('Then a one-time code by email')).toBeInTheDocument()
+    expect(screen.getAllByText(/^Copied from|^Chosen by hand/).length).toBeGreaterThan(0)
     // Nobody signs in to a vote that's over: no readiness
-    expect(screen.queryByText(/can get a code/)).toBeNull()
+    expect(screen.queryByText(/can get the code|can't get the code/)).toBeNull()
   })
 
   it('explains a census made from every member at publish can still change', async () => {
@@ -456,10 +456,12 @@ describe('CensusDetail', () => {
     state.process = vote('p8', 'Assemblea 2026', { groupId: 'snap', size: 2, twoFaFields: ['email'] }, 'ONGOING')
     renderDetail({ kind: 'vote', processId: 'p8' })
 
-    expect(await screen.findByText(/^Copy of all your members on \d+ \w+ \d{4}$/)).toBeInTheDocument()
+    expect(await screen.findByText(/^Your members on \d+ \w+ \d{4}$/)).toBeInTheDocument()
+    expect(screen.getByText('You can still add and remove members in this census')).toBeInTheDocument()
+    // The note sits under the facts, once
     expect(
       screen.getByText(
-        /^This census is a copy of all your members on \d+ \w+ \d{4}, the day you published the vote\. You can add and remove people in this census\. Fixing someone's details changes them in your members list too\.$/
+        /^This census was created from your members list as it was on \d+ \w+ \d{4}, when you published the vote\. You can still add or remove people here\. Fixing someone's details also changes them in your members list\.$/
       )
     ).toBeInTheDocument()
   })
@@ -815,6 +817,25 @@ describe('CensusDetail', () => {
       expect(screen.getByText(/Removing someone here only takes them out of this vote/)).toBeInTheDocument()
     })
 
+    it('says nothing about codes for a vote that sends none, and that members added later join', async () => {
+      state.process = vote(
+        'p3',
+        'Assemblea 2027',
+        { groupId: 'everyone', size: 1742, authFields: ['name'], twoFaFields: [] },
+        'READY',
+        false
+      )
+      renderDetail({ kind: 'vote', processId: 'p3' })
+
+      expect(await screen.findByText('They confirm their first name')).toBeInTheDocument()
+      // No code is sent: nothing is said about one
+      expect(screen.queryByText(/code/)).toBeNull()
+      expect(screen.getByText('All your members')).toBeInTheDocument()
+      expect(screen.getByText('Members you add before publishing can vote too')).toBeInTheDocument()
+      expect(screen.getByText('Not scheduled yet')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /copy/i })).toBeNull()
+    })
+
     it('offers no edits on a closed vote, nor on Everyone', async () => {
       state.meta = { vg_owned: { processId: 'p9', kind: 'copy', createdAt: past } }
       state.members.owned = [person(1)]
@@ -825,6 +846,75 @@ describe('CensusDetail', () => {
       expect(await screen.findByText("This vote has ended, so its census can't change.")).toBeInTheDocument()
       expect(screen.queryByRole('button', { name: 'Add people' })).toBeNull()
       expect(screen.queryByRole('checkbox')).toBeNull()
+    })
+  })
+
+  describe('deleting a vote’s census', () => {
+    const own = (id: string, status: string, published = true) => {
+      state.meta = { vg_owned: { processId: id, kind: 'copy', createdAt: past } }
+      state.members.owned = [person(1)]
+      state.groups.push(group('owned', 'Census of Junta'))
+      state.process = vote(id, 'Junta', { groupId: 'owned', size: 1, twoFaFields: ['email'] }, status, published)
+    }
+    const deletes = () =>
+      state.fetch.mock.calls.filter(([url, options]) => options?.method === 'DELETE' && url.endsWith('/groups/owned'))
+
+    it('deletes a draft’s census after one confirmation', async () => {
+      const user = userEvent.setup()
+      own('p4', 'READY', false)
+      renderDetail({ kind: 'vote', processId: 'p4' })
+
+      await user.click(await screen.findByRole('button', { name: 'More actions' }))
+      await user.click(await screen.findByRole('menuitem', { name: /Delete census/ }))
+      const dialog = await screen.findByRole('dialog')
+      expect(
+        within(dialog).getByText('The draft stays. Before you publish it, choose who can vote again.')
+      ).toBeInTheDocument()
+      await user.click(within(dialog).getByRole('button', { name: 'Delete census' }))
+
+      await waitFor(() => expect(deletes()).toHaveLength(1))
+    })
+
+    it('asks an ended vote to confirm twice, since its record of who could vote goes', async () => {
+      const user = userEvent.setup()
+      own('p9', 'RESULTS')
+      renderDetail({ kind: 'vote', processId: 'p9' })
+
+      await user.click(await screen.findByRole('button', { name: 'More actions' }))
+      await user.click(await screen.findByRole('menuitem', { name: /Delete census/ }))
+      const dialog = await screen.findByRole('dialog')
+      const confirm = within(dialog).getByRole('button', { name: 'Delete census' })
+      expect(confirm).toBeDisabled()
+      await user.click(
+        within(dialog).getByRole('checkbox', {
+          name: 'I understand the record of who could vote in this vote will be deleted',
+        })
+      )
+      await user.click(confirm)
+
+      await waitFor(() => expect(deletes()).toHaveLength(1))
+    })
+
+    it('keeps the census of a vote that is live', async () => {
+      const user = userEvent.setup()
+      own('p5', 'ONGOING')
+      renderDetail({ kind: 'vote', processId: 'p5' })
+
+      await user.click(await screen.findByRole('button', { name: 'More actions' }))
+      const item = await screen.findByRole('menuitem', { name: /Delete census/ })
+      expect(item).toHaveAttribute('data-disabled')
+      expect(
+        screen.getByText("This vote is published and not over yet, so its census can't be deleted.")
+      ).toBeInTheDocument()
+      expect(deletes()).toHaveLength(0)
+    })
+
+    it('offers no delete for a vote that follows Everyone', async () => {
+      state.process = vote('p2', 'Assemblea', { groupId: 'everyone', size: 1742 }, 'READY', false)
+      renderDetail({ kind: 'vote', processId: 'p2' })
+
+      expect(await screen.findByText('All your members')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'More actions' })).toBeNull()
     })
   })
 })

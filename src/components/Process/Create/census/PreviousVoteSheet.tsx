@@ -89,8 +89,8 @@ export const PreviousVoteSheet = ({
     >
       <Stack gap={3}>
         <Text fontSize='sm' color='fg.muted'>
-          {t('process_create.census.previous.hint', {
-            defaultValue: 'This vote gets its own copy of the people who could vote in it.',
+          {t('process_create.census.previous.new_census', {
+            defaultValue: 'A new census is created with the people who could vote in it.',
           })}
         </Text>
         {votes.isLoading ? (

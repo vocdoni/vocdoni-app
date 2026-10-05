@@ -3,7 +3,7 @@ import { ElectionProvider } from '@vocdoni/react-components'
 import type { TFunction } from 'i18next'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { LuArrowUpRight, LuClock, LuInfo, LuLock, LuUserMinus, LuUserPlus, LuVote } from 'react-icons/lu'
+import { LuArrowUpRight, LuClock, LuLock, LuUserMinus, LuUserPlus, LuVote } from 'react-icons/lu'
 import { createSearchParams, generatePath, Link as RouterLink } from 'react-router'
 import { VoterLookup } from '~components/Process/Dashboard/View/VoterLookup'
 import { Banner } from '~components/ui/Banner'
@@ -12,14 +12,15 @@ import { Routes } from '~routes'
 import type { Group } from '~src/queries/groups'
 import { useCensusReadiness } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
+import { CensusHistory } from '../Activity/SubjectHistory'
 import type { SelectedMember } from '../People/useSelection'
 import { AddPeopleSheet, PickToRemoveSheet } from './AddPeopleSheet'
 import { CensusMembersTable } from './CensusMembersTable'
 import { VoteStateBadge } from './CensusRow'
 import { FactsStrip } from './FactsStrip'
 import { untitledVote } from './labels'
-import { isEnded } from './model'
-import { CensusDownloadButton, readOnlyText, SavedCensusMenu } from './SideCards'
+import { isEnded, voteCensusDeletion } from './model'
+import { CensusDownloadButton, readOnlyText, SavedCensusMenu, VoteCensusMenu } from './SideCards'
 import { RemovePeopleDialog } from './RemovePeopleDialog'
 import { formatVoteList } from './UsedBy'
 import { useCensusEditor } from './useCensusEditor'
@@ -49,14 +50,12 @@ const sourceSentence = (t: TFunction, language: string | undefined, census: Reso
       // The facts and the note already say what this census is
       return null
     case 'everyone':
+      // The facts already say all members can vote: only what removing someone does is left to say
       return census.edit === 'process'
-        ? t('census_detail.source.follows_everyone_live', {
-            defaultValue:
-              'This vote follows Everyone: members you add can vote in it too. Removing someone here only takes them out of this vote.',
+        ? t('census_detail.source.everyone_remove', {
+            defaultValue: 'Removing someone here only takes them out of this vote.',
           })
-        : t('census_detail.source.follows_everyone', {
-            defaultValue: 'This vote follows Everyone: members you add can vote in it too.',
-          })
+        : null
     case 'saved':
       return t('census_detail.source.legacy_saved', {
         defaultValue:
@@ -96,20 +95,18 @@ const ReadOnlyNote = ({ census }: { census: ResolvedCensusState }) => {
 }
 
 /** The neutral line under the facts: what this kind of census does when it changes. */
-const CensusNote = ({ census }: { census: ResolvedCensusState }) => {
-  const { t } = useTranslation()
-  const { format } = useDateFns()
+const censusNote = (t: TFunction, format: ReturnType<typeof useDateFns>['format'], census: ResolvedCensusState) => {
   let text: string | null = null
   if (census.kind === 'vote' && census.source?.kind === 'snapshot')
     text = census.source.madeAt
       ? t('census_detail.vote_card.snapshot_note_on', {
           defaultValue:
-            "This census is a copy of all your members on {{date}}, the day you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
+            "This census was created from your members list as it was on {{date}}, when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
           date: format(census.source.madeAt, 'd MMM yyyy'),
         })
       : t('census_detail.vote_card.snapshot_note', {
           defaultValue:
-            "This census is a copy of all your members when you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
+            "This census was created from your members list as it was when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
         })
   else if (census.kind === 'vote' && (census.source?.kind === 'copy' || census.source?.kind === 'test'))
     text = t('census_detail.note.own', {
@@ -124,13 +121,7 @@ const CensusNote = ({ census }: { census: ResolvedCensusState }) => {
       defaultValue_other:
         "The {{count}} votes that copied this census have their own copies, so changes here don't change who votes there.",
     })
-  if (!text) return null
-  return (
-    <Flex gap={2} align='flex-start' px={3} py={2} borderRadius='md' bg='bg.subtle' color='fg.muted'>
-      <Icon as={LuInfo} mt={0.5} flexShrink={0} aria-hidden />
-      <Text fontSize='sm'>{text}</Text>
-    </Flex>
-  )
+  return text
 }
 
 /**
@@ -202,6 +193,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
   // Everyone already holds every member: there's nobody to add
   const canAdd = census.edit !== 'none' && census.source?.kind !== 'everyone'
   const showUnreachable = () => setOnlyUnreachable(true)
+  const deletion = voteCensusDeletion(census)
   const process = census.process
   const voteLink = process
     ? process.published
@@ -257,6 +249,9 @@ export const CensusDetail = (props: CensusDetailProps) => {
         )}
         {removeButton}
         {addButton('solid')}
+        {page && census.groupId && deletion !== 'none' && (
+          <VoteCensusMenu groupId={census.groupId} name={name} deletion={deletion} />
+        )}
       </>
     )
 
@@ -313,8 +308,13 @@ export const CensusDetail = (props: CensusDetailProps) => {
         </Flex>
       )}
 
-      <FactsStrip census={census} readiness={readiness} onShowUnreachable={showUnreachable} withVote={page} />
-      <CensusNote census={census} />
+      <FactsStrip
+        census={census}
+        readiness={readiness}
+        onShowUnreachable={showUnreachable}
+        withVote={page}
+        note={censusNote(t, format, census)}
+      />
       <ReadOnlyNote census={census} />
 
       {census.browse === 'group' && census.groupId ? (
@@ -348,6 +348,7 @@ export const CensusDetail = (props: CensusDetailProps) => {
           )}
         </>
       )}
+      <CensusHistory census={census} />
 
       {census.edit !== 'none' && (
         <>

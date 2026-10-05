@@ -23,7 +23,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | Members (section) | Membres | The dashboard section with the organization's people. Formerly "Memberbase" ("Base de membres"): don't use the old name |
 | People (tab) | Persones | The tab in Members that lists every member |
 | saved census | cens desat | A reusable selection of people, copied into a vote when used |
-| Activity (tab) | Registre de canvis | The tab with the dated history of imports and votes. Not "Activitat" |
+| Activity (tab) | Activitat | What has happened: vote dates and imports today, every change once the activity log ships. It was named for a change log until 2026-10-03; the plain word fits what it shows |
 | organization | organització | |
 | voter | votant | Gender-neutral; prefer over "elector/electora" in most contexts |
 | voting power / weight | pes del vot | |

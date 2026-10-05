@@ -22,6 +22,118 @@
     "view_active_votes": "Ver votações ativas",
     "waiting_title": "A aguardar a confirmação da transação…"
   },
+  "activity": {
+    "actor": {
+      "api_key": "Chave de API",
+      "system": "Vocdoni"
+    },
+    "census": {
+      "all": "Todas as listas de participantes",
+      "filter_by": "Mostrar só {{name}}",
+      "in_votes": "Em votações",
+      "many_one": "{{count}} lista de participantes",
+      "many_many": "{{count}} listas de participantes",
+      "many_other": "{{count}} listas de participantes",
+      "many_title": "Esta alteração chegou a:",
+      "no_match": "Nenhuma lista corresponde",
+      "none": "Só a lista de membros",
+      "picker": "Lista de participantes",
+      "picker_label": "Lista de participantes: {{name}}",
+      "saved": "Guardadas",
+      "search": "Procure uma lista ou uma votação"
+    },
+    "change": {
+      "empty": "vazio",
+      "hidden": "Alterado, oculto por privacidade"
+    },
+    "changes_hide_one": "Ocultar {{count}} alteração",
+    "changes_hide_many": "Ocultar {{count}} alterações",
+    "changes_hide_other": "Ocultar {{count}} alterações",
+    "changes_show_one": "Mostrar {{count}} alteração",
+    "changes_show_many": "Mostrar {{count}} alterações",
+    "changes_show_other": "Mostrar {{count}} alterações",
+    "day": {
+      "today": "Hoje · {{date}}",
+      "undated": "Data ainda não registada",
+      "undated_hint": "As importações terão data em breve",
+      "yesterday": "Ontem · {{date}}"
+    },
+    "during_voting": "Durante a votação",
+    "empty": "Ainda não há nada. As importações e as votações aparecem aqui à medida que acontecem.",
+    "empty_filtered": "Ainda não há nada registado aqui.",
+    "error": "Não foi possível carregar o histórico de alterações. Tenta novamente daqui a pouco.",
+    "event": {
+      "census_details_changed": "Dados da lista de participantes alterados",
+      "census_from_everyone": "Lista copiada de todos os seus membros",
+      "exported": "Histórico de alterações exportado",
+      "group_deleted": "Lista de participantes <strong>{{name}}</strong> eliminada",
+      "import_one": "{{number}} membro importado",
+      "import_many": "{{number}} membros importados",
+      "import_other": "{{number}} membros importados",
+      "member_added": "<strong>{{name}}</strong> adicionado aos membros",
+      "member_deleted": "<strong>{{name}}</strong> eliminado dos membros",
+      "member_details_changed": "Dados de <strong>{{name}}</strong> alterados",
+      "people_added_one": "{{number}} pessoa adicionada",
+      "people_added_many": "{{number}} pessoas adicionadas",
+      "people_added_other": "{{number}} pessoas adicionadas",
+      "people_removed_one": "{{number}} pessoa removida",
+      "people_removed_many": "{{number}} pessoas removidas",
+      "people_removed_other": "{{number}} pessoas removidas",
+      "saved_created": "Lista guardada criada",
+      "saved_created_with_one": "Lista guardada criada com {{number}} pessoa",
+      "saved_created_with_many": "Lista guardada criada com {{number}} pessoas",
+      "saved_created_with_other": "Lista guardada criada com {{number}} pessoas",
+      "vote_created": "Votação criada",
+      "vote_published": "Votação publicada",
+      "voting_closed": "Votação encerrada",
+      "voting_opened": "Votação aberta"
+    },
+    "export": "Exportar CSV",
+    "export_error": "Não foi possível exportar o histórico de alterações",
+    "field": {
+      "other": "Informação adicional",
+      "title": "Nome",
+      "unknown": "Um dado"
+    },
+    "filter": {
+      "census_changes": "Alterações à lista",
+      "everything": "Tudo",
+      "imports": "Importações",
+      "label": "Filtrar o histórico de alterações",
+      "people": "Pessoas",
+      "votes": "Votações"
+    },
+    "history": {
+      "census_created": "Lista de participantes criada",
+      "census_empty": "Ainda não aconteceu nada nesta lista.",
+      "census_title": "Histórico",
+      "copied_into": "Copiada para '{{name}}'",
+      "empty": "Ainda não foram registadas alterações.",
+      "error": "Não foi possível carregar o histórico.",
+      "person_title": "Histórico",
+      "see_in_activity": "Ver em Atividade",
+      "soon": "Em breve verá aqui as alterações às suas pessoas, com quem as fez.",
+      "voting_open": "Enquanto a votação esteve aberta"
+    },
+    "imports": {
+      "added_one": "{{added}} de {{total}} membro importado",
+      "added_many": "{{added}} de {{total}} membros importados",
+      "added_other": "{{added}} de {{total}} membros importados",
+      "problems_one": "{{count}} linha tinha problemas",
+      "problems_many": "{{count}} linhas tinham problemas",
+      "problems_other": "{{count}} linhas tinham problemas",
+      "status": {
+        "completed": "Concluído",
+        "failed": "Falhou",
+        "pending": "A importar"
+      }
+    },
+    "newer": "Mais recentes",
+    "older": "Mais antigos",
+    "show_everything": "Mostrar tudo",
+    "test_vote": "Votação de teste",
+    "untitled": "Sem título"
+  },
   "add_new_org": "Adicionar uma nova organização",
   "additional_actions": "Ações adicionais",
   "all_processes": "Todos",
@@ -182,6 +294,16 @@
       "error": "A lista de participantes não foi eliminada",
       "title": "Eliminar «{{name}}»?"
     },
+    "delete_vote": {
+      "blocked": "Esta votação está publicada e ainda não terminou, por isso a sua lista de participantes não pode ser eliminada.",
+      "button": "Eliminar a lista de participantes",
+      "canceled": "A votação continua cancelada. A lista de quem podia votar é eliminada e não é possível desfazer.",
+      "confirm": "Eliminar a lista",
+      "draft": "O rascunho mantém-se. Antes de o publicares, escolhe novamente quem pode votar.",
+      "ended": "A votação e os seus resultados ficam como estão, mas a lista de quem podia votar é eliminada. Deixarás de poder verificar quem podia votar nela e não é possível desfazer.",
+      "title": "Eliminar a lista de participantes de «{{name}}»?",
+      "understand": "Compreendo que o registo de quem podia votar nesta votação será eliminado"
+    },
     "edit": {
       "error": "As tuas alterações não foram guardadas",
       "name_required": "Adiciona um nome",
@@ -197,30 +319,79 @@
       "progress": "A preparar {{done}} de {{total}}…"
     },
     "facts": {
-      "all_ready": "Todos podem receber um código",
       "can_get_code": "Podem receber um código",
-      "closed": "Fechada a {{date}}",
-      "closes": "Fecha a {{date}}",
+      "channel": {
+        "email": "email",
+        "email_or_sms": "email ou SMS",
+        "sms": "SMS"
+      },
+      "closed_at": "Terminou a {{date}} às {{at}}",
+      "closes_at": "Termina a {{date}} às {{at}}",
+      "code_all": "Todos podem receber o código por {{channel}}",
+      "code_missing_one": "{{formattedCount}} não tem {{missing}}, por isso não pode receber o código",
+      "code_missing_many": "{{formattedCount}} não têm {{missing}}, por isso não podem receber o código",
+      "code_missing_other": "{{formattedCount}} não têm {{missing}}, por isso não podem receber o código",
       "copied_more_one": "E mais 1 votação",
       "copied_more_many": "E mais {{count}} votações",
       "copied_more_other": "E mais {{count}} votações",
       "dates": "{{start}} – {{end}}",
-      "draft": "Um rascunho: as datas definem-se no editor",
+      "dates_label": "Datas da votação",
+      "field": {
+        "birth_date": "data de nascimento",
+        "email": "email",
+        "member_number": "número de membro",
+        "name": "nome próprio",
+        "national_id": "número de identificação",
+        "phone": "número de telemóvel",
+        "surname": "apelido"
+      },
+      "get_in": {
+        "code_only": "Com um código de utilização única por {{channel}}",
+        "confirm": "Confirmam os seus dados: {{details}}",
+        "label": "Como entram os votantes",
+        "then_code": "Depois, um código de utilização única por {{channel}}"
+      },
+      "members_at_close_one": "membro à data do fecho",
+      "members_at_close_many": "membros à data do fecho",
+      "members_at_close_other": "membros à data do fecho",
+      "missing": {
+        "email": "email",
+        "email_or_mobile": "email nem telemóvel",
+        "mobile": "telemóvel"
+      },
       "no_copy": "Ainda nenhuma votação",
-      "no_copy_hint": "A votação que a usar terá a sua própria cópia",
-      "not_published": "Ainda não publicada",
-      "opens": "Abre a {{date}}",
+      "no_copy_new": "Uma votação que a use recebe uma nova lista de participantes com base nela",
+      "not_scheduled": "Ainda não agendada",
+      "not_scheduled_hint": "Defines as datas quando editas a votação",
+      "opens_at": "Abre a {{date}} às {{at}}",
       "people": "Pessoas",
       "ready_any": "{{ready}} por email ou SMS",
+      "see_who": "Ver quem",
       "show_them": "Mostrá-las",
-      "sign_in": "Início de sessão",
-      "they_type": "Também escrevem: {{details}}",
+      "source": {
+        "everyone": "Todos os teus membros",
+        "everyone_draft": "Os membros que adicionares antes de publicar também podem votar",
+        "everyone_live": "Os membros que adicionares também podem votar",
+        "from_saved": "Da lista de participantes guardada «{{name}}»",
+        "from_vote": "Da votação «{{name}}»",
+        "label": "De onde vem a lista",
+        "members_copy": "Uma cópia dos teus membros",
+        "members_copy_hint": "Os membros que adicionares depois não estão incluídos",
+        "picked": "Pessoas que escolheste uma a uma",
+        "picked_on": "Escolhidas a {{date}}",
+        "shared": "A lista de participantes guardada «{{name}}»",
+        "shared_hint": "As alterações nela chegam a esta votação",
+        "snapshot": "Os teus membros quando publicaste",
+        "snapshot_closed": "Fixada quando publicaste",
+        "snapshot_on": "Os teus membros a {{date}}",
+        "snapshot_open": "Ainda podes adicionar e remover membros desta lista"
+      },
       "used_more_one": "E mais 1 votação: as alterações feitas aqui chegam-lhe",
       "used_more_many": "E mais {{count}} votações: as alterações feitas aqui chegam-lhes",
       "used_more_other": "E mais {{count}} votações: as alterações feitas aqui chegam-lhes",
       "used_reach": "As alterações feitas aqui chegam a esta votação",
-      "voters": "Votantes",
-      "voting": "Votação"
+      "weighted": "Os votos contam segundo o peso de voto",
+      "who": "Quem pode votar"
     },
     "filter": {
       "unreachable_one": "Sem código possível · {{count}}",
@@ -251,9 +422,6 @@
     "open_draft": "Abrir o rascunho",
     "open_in_editor": "Abrir no editor",
     "open_vote": "Abrir a votação",
-    "people": {
-      "at_close": "{{unit}} no encerramento"
-    },
     "picker": {
       "already_in": "Já está",
       "search": "Pesquisar nos teus membros",
@@ -334,8 +502,7 @@
     },
     "source": {
       "everyone": "Todos: os membros que adicionares mais tarde também podem votar.",
-      "follows_everyone": "Esta votação segue «Todos»: os membros que adicionares também podem votar nela.",
-      "follows_everyone_live": "Esta votação segue «Todos»: os membros que adicionares também podem votar nela. Se removeres alguém aqui, só sai desta votação.",
+      "everyone_remove": "Remover alguém aqui só o retira desta votação.",
       "legacy_saved": "Esta votação segue a lista de participantes guardada «{{name}}», por isso as alterações nela também chegam aqui. As alterações que fizeres aqui só afetam esta votação.",
       "saved": "Uma lista de participantes guardada que podes reutilizar nas tuas votações.",
       "selected": "Pessoas escolhidas uma a uma para esta votação.",
@@ -346,10 +513,8 @@
       "title": "Usada por"
     },
     "vote_card": {
-      "people": "Pessoas de",
-      "snapshot_note": "Esta lista de participantes é uma cópia de todos os teus membros de quando publicaste a votação. Podes adicionar e remover pessoas nesta lista de participantes. Se corrigires os dados de alguém, também mudam na tua lista de membros.",
-      "snapshot_note_on": "Esta lista de participantes é uma cópia de todos os teus membros a {{date}}, o dia em que publicaste a votação. Podes adicionar e remover pessoas nesta lista de participantes. Se corrigires os dados de alguém, também mudam na tua lista de membros.",
-      "weighted": "Ponderado por cada membro"
+      "snapshot_note": "Para criar esta lista, foi usada a lista dos teus membros tal como estava quando publicaste a votação. Ainda podes adicionar ou remover pessoas aqui. Se corrigires os dados de alguém, também mudam na tua lista de membros.",
+      "snapshot_note_on": "Para criar esta lista, foi usada a lista dos teus membros tal como estava a {{date}}, quando publicaste a votação. Ainda podes adicionar ou remover pessoas aqui. Se corrigires os dados de alguém, também mudam na tua lista de membros."
     }
   },
   "census_size": "Número de participantes",
@@ -423,6 +588,9 @@
       "draft": "Rascunho"
     },
     "unit": {
+      "members_one": "membro",
+      "members_many": "membros",
+      "members_other": "membros",
       "people_one": "pessoa",
       "people_many": "pessoas",
       "people_other": "pessoas",
@@ -1175,6 +1343,9 @@
     "hidden": "{{label}} oculto"
   },
   "memberbase": {
+    "activity": {
+      "title": "Atividade"
+    },
     "add_person": "Adicionar pessoa",
     "censuses": {
       "title": "Listas de participantes"
@@ -2056,21 +2227,15 @@
         "submit_other": "Usar {{formattedCount}} pessoas",
         "title": "Escolhe quem pode votar"
       },
-      "copy_everyone": {
-        "button": "Editar esta lista",
-        "confirm": "Dar-lhe uma lista própria",
-        "description": "Esta votação vai ter a sua própria lista com todos os teus membros tal como estão agora, e podes adicionar ou remover pessoas. A partir daí, os novos membros não entram sozinhos.",
-        "title": "Editar esta lista?"
-      },
       "error": "Não foi possível alterar quem pode votar",
       "error_detail": "Nada foi alterado. Tenta novamente daqui a pouco.",
       "error_empty": "Não há ninguém para copiar",
       "error_stale": "Este rascunho foi alterado noutro local. Recarrega a página e tenta novamente.",
       "everyone": {
-        "description_one": "O teu único membro. Quem adicionares antes de publicar fica incluído; depois, és tu que adicionas as pessoas novas à votação.",
-        "description_many": "Todos os {{formattedCount}} membros. Quem adicionares antes de publicar fica incluído; depois, és tu que adicionas as pessoas novas à votação.",
-        "description_other": "Todos os {{formattedCount}} membros. Quem adicionares antes de publicar fica incluído; depois, és tu que adicionas as pessoas novas à votação.",
-        "title": "Todos"
+        "all_one": "{{formattedCount}} membro da tua organização",
+        "all_many": "Todos os {{formattedCount}} membros da tua organização",
+        "all_other": "Todos os {{formattedCount}} membros da tua organização",
+        "new_census": "É criada uma nova lista com todos os membros da tua organização. Mais tarde podes adicionar ou remover membros."
       },
       "go_to_members": "Ir para Membros",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2106,21 +2271,21 @@
         "start_over": "Recomeçar"
       },
       "previous": {
-        "card": "Igual a uma votação anterior",
         "description": "Copia quem podia votar nela.",
-        "hint": "Esta votação fica com a sua própria cópia das pessoas que podiam votar nela.",
+        "new_census": "É criada uma nova lista de participantes com as pessoas que podiam votar nela.",
         "no_list": "As pessoas foram escolhidas uma a uma, por isso não há lista para copiar.",
         "none": "Ainda não há outras votações.",
+        "reuse": "Reutilizar a lista de uma votação anterior",
         "title": "Igual a uma votação anterior"
       },
       "reload": "Recarregar",
       "saved": {
-        "after_name": "Fica com a sua própria cópia assim que a votação tiver um nome.",
-        "description": "Esta votação fica com a sua própria cópia.",
+        "based_on": "É criada uma nova lista de participantes com base nela.",
+        "created_after_name": "A nova lista de participantes é criada assim que a votação tiver um nome.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Escolhe uma lista guardada",
         "select": "Lista guardada",
-        "title": "De uma lista guardada"
+        "short": "Lista guardada"
       },
       "sheet_title": "Lista de participantes desta votação",
       "source": {
@@ -2706,7 +2871,6 @@
   "vote_overwrite": "Alteração do voto",
   "voter_anonymity": "Anonimato dos votantes",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Acrescenta uma camada extra de segurança exigindo aos votantes que verifiquem a sua identidade",
     "2fa_email": "<email /> Verificação por email",
     "2fa_email_description": "Os votantes receberão um código de verificação por email",
@@ -2718,13 +2882,19 @@
     "2fa_sms_description": "Os votantes receberão um código de verificação por SMS",
     "2fa_voter_choice": "<email /> ou <phone /> Escolha do votante",
     "2fa_voter_choice_description": "Os votantes podem escolher o método de verificação que preferirem",
-    "anonymity": "Anonimato do voto: {{ mode }}",
     "button": {
-      "configure": "Configurar autenticação dos votantes",
-      "edit": "Editar autenticação dos votantes"
+      "set_up_sign_in": "Configurar o início de sessão dos votantes"
+    },
+    "card": {
+      "code": "Um código de utilização única por {{channel}}",
+      "edit": "Editar",
+      "intro": "Escolhe o que os votantes escrevem para provar quem são e se também recebem um código.",
+      "then": "Depois",
+      "they_get": "Recebem",
+      "they_type": "Escrevem",
+      "title": "Como os votantes iniciam sessão"
     },
     "configured": "Autenticação dos votantes configurada",
-    "configured_auth": "Autenticação dos votantes",
     "credentials": "Credenciais",
     "description": "Define como os votantes se autenticarão para participar neste processo de votação.",
     "email": "Por verificação de email",

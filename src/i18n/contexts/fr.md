@@ -25,7 +25,7 @@ Address the user with formal **vous / votre** throughout — in French this is t
 | Members (section) | Membres | The dashboard section with the organization's people. Formerly "Memberbase" ("Base de membres"): don't use the old name |
 | People (tab) | Personnes | The tab in Members that lists every member |
 | saved census | liste électorale enregistrée | A reusable selection of people, copied into a vote when used |
-| Activity (tab) | Historique des modifications | The tab with the dated history of imports and votes |
+| Activity (tab) | Activité | What has happened: vote dates and imports today, every change once the activity log ships. It was named for a change log until 2026-10-03; the plain word fits what it shows |
 | organization | organisation | |
 | voter | électeur / électrice | Use "les électeurs" as the generic plural; add "(trices)" only in formal written contexts |
 | voting power / weight | poids de vote | |

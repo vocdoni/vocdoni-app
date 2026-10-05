@@ -57,6 +57,12 @@ describe('MemberbaseTabs', () => {
     censuses.isLoading = true
   })
 
+  it('always shows the Activity tab, which says itself what it has yet to show', () => {
+    renderTabs()
+
+    expect(screen.getByRole('tab', { name: 'Activity' })).toBeInTheDocument()
+  })
+
   it('exports every member from the header, phones left out, once there are members', async () => {
     const user = userEvent.setup()
     exportData.fetch.mockResolvedValue({

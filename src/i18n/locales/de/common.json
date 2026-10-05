@@ -22,6 +22,109 @@
     "view_active_votes": "Aktive Abstimmungen anzeigen",
     "waiting_title": "Warte auf Transaktionsbestätigung..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "API-Schlüssel",
+      "system": "Vocdoni"
+    },
+    "census": {
+      "all": "Alle Teilnehmerlisten",
+      "filter_by": "Nur {{name}} zeigen",
+      "in_votes": "In Abstimmungen",
+      "many_one": "{{count}} Teilnehmerliste",
+      "many_other": "{{count}} Teilnehmerlisten",
+      "many_title": "Diese Änderung betraf:",
+      "no_match": "Keine Liste passt",
+      "none": "Nur Mitgliederliste",
+      "picker": "Teilnehmerliste",
+      "picker_label": "Teilnehmerliste: {{name}}",
+      "saved": "Gespeichert",
+      "search": "Liste oder Abstimmung suchen"
+    },
+    "change": {
+      "empty": "leer",
+      "hidden": "Geändert, aus Datenschutzgründen verborgen"
+    },
+    "changes_hide_one": "{{count}} Änderung ausblenden",
+    "changes_hide_other": "{{count}} Änderungen ausblenden",
+    "changes_show_one": "{{count}} Änderung zeigen",
+    "changes_show_other": "{{count}} Änderungen zeigen",
+    "day": {
+      "today": "Heute · {{date}}",
+      "undated": "Datum noch nicht erfasst",
+      "undated_hint": "Importe bekommen bald ein Datum",
+      "yesterday": "Gestern · {{date}}"
+    },
+    "during_voting": "Während der Abstimmung",
+    "empty": "Noch nichts zu sehen. Importe und Abstimmungen erscheinen hier, sobald sie stattfinden.",
+    "empty_filtered": "Hier ist noch nichts erfasst.",
+    "error": "Der Änderungsverlauf konnte nicht geladen werden. Versuche es gleich noch einmal.",
+    "event": {
+      "census_details_changed": "Angaben der Teilnehmerliste geändert",
+      "census_from_everyone": "Teilnehmerliste aus allen Mitgliedern kopiert",
+      "exported": "Änderungsverlauf exportiert",
+      "group_deleted": "Teilnehmerliste <strong>{{name}}</strong> gelöscht",
+      "import_one": "{{number}} Mitglied importiert",
+      "import_other": "{{number}} Mitglieder importiert",
+      "member_added": "<strong>{{name}}</strong> zu den Mitgliedern hinzugefügt",
+      "member_deleted": "<strong>{{name}}</strong> aus den Mitgliedern gelöscht",
+      "member_details_changed": "Angaben von <strong>{{name}}</strong> geändert",
+      "people_added_one": "{{number}} Person hinzugefügt",
+      "people_added_other": "{{number}} Personen hinzugefügt",
+      "people_removed_one": "{{number}} Person entfernt",
+      "people_removed_other": "{{number}} Personen entfernt",
+      "saved_created": "Gespeicherte Teilnehmerliste erstellt",
+      "saved_created_with_one": "Gespeicherte Liste mit {{number}} Person erstellt",
+      "saved_created_with_other": "Gespeicherte Liste mit {{number}} Personen erstellt",
+      "vote_created": "Abstimmung erstellt",
+      "vote_published": "Abstimmung veröffentlicht",
+      "voting_closed": "Abstimmung geschlossen",
+      "voting_opened": "Abstimmung geöffnet"
+    },
+    "export": "CSV exportieren",
+    "export_error": "Der Änderungsverlauf konnte nicht exportiert werden",
+    "field": {
+      "other": "Zusatzinfo",
+      "title": "Name",
+      "unknown": "Eine Angabe"
+    },
+    "filter": {
+      "census_changes": "Listenänderungen",
+      "everything": "Alles",
+      "imports": "Importe",
+      "label": "Änderungsverlauf filtern",
+      "people": "Personen",
+      "votes": "Abstimmungen"
+    },
+    "history": {
+      "census_created": "Teilnehmerliste erstellt",
+      "census_empty": "Mit dieser Liste ist noch nichts passiert.",
+      "census_title": "Verlauf",
+      "copied_into": "In „{{name}}“ kopiert",
+      "empty": "Noch keine Änderungen erfasst.",
+      "error": "Der Verlauf konnte nicht geladen werden.",
+      "person_title": "Verlauf",
+      "see_in_activity": "In Aktivität ansehen",
+      "soon": "Bald siehst du hier Änderungen an ihren Personen und wer sie gemacht hat.",
+      "voting_open": "Während die Abstimmung offen war"
+    },
+    "imports": {
+      "added_one": "{{added}} von {{total}} Mitglied importiert",
+      "added_other": "{{added}} von {{total}} Mitgliedern importiert",
+      "problems_one": "{{count}} Zeile hatte Probleme",
+      "problems_other": "{{count}} Zeilen hatten Probleme",
+      "status": {
+        "completed": "Fertig",
+        "failed": "Fehlgeschlagen",
+        "pending": "Wird importiert"
+      }
+    },
+    "newer": "Neuer",
+    "older": "Älter",
+    "show_everything": "Alles zeigen",
+    "test_vote": "Testabstimmung",
+    "untitled": "Ohne Titel"
+  },
   "add_new_org": "Neue Organisation hinzufügen",
   "additional_actions": "Weitere Aktionen",
   "all_processes": "Alle",
@@ -177,6 +280,16 @@
       "error": "Die Teilnehmerliste wurde nicht gelöscht",
       "title": "„{{name}}“ löschen?"
     },
+    "delete_vote": {
+      "blocked": "Diese Abstimmung ist veröffentlicht und noch nicht beendet, deshalb kann ihre Teilnehmerliste nicht gelöscht werden.",
+      "button": "Teilnehmerliste löschen",
+      "canceled": "Die Abstimmung bleibt abgebrochen. Die Liste, wer abstimmen durfte, wird gelöscht. Das lässt sich nicht rückgängig machen.",
+      "confirm": "Teilnehmerliste löschen",
+      "draft": "Der Entwurf bleibt erhalten. Lege vor der Veröffentlichung erneut fest, wer abstimmen darf.",
+      "ended": "Die Abstimmung und ihre Ergebnisse bleiben unverändert, aber die Liste, wer abstimmen durfte, wird gelöscht. Du kannst danach nicht mehr nachsehen, wer abstimmen durfte. Das lässt sich nicht rückgängig machen.",
+      "title": "Teilnehmerliste von „{{name}}“ löschen?",
+      "understand": "Mir ist klar, dass die Aufzeichnung, wer bei dieser Abstimmung abstimmen durfte, gelöscht wird"
+    },
     "edit": {
       "error": "Deine Änderungen wurden nicht gespeichert",
       "name_required": "Gib einen Namen ein",
@@ -192,28 +305,75 @@
       "progress": "{{done}} von {{total}} werden vorbereitet…"
     },
     "facts": {
-      "all_ready": "Alle können einen Code erhalten",
       "can_get_code": "Können einen Code erhalten",
-      "closed": "Beendet am {{date}}",
-      "closes": "Endet am {{date}}",
+      "channel": {
+        "email": "E-Mail",
+        "email_or_sms": "E-Mail oder SMS",
+        "sms": "SMS"
+      },
+      "closed_at": "Endete am {{date}} um {{at}}",
+      "closes_at": "Endet am {{date}} um {{at}}",
+      "code_all": "Alle können den Code per {{channel}} erhalten",
+      "code_missing_one": "1 Person ohne {{missing}} kann den Code nicht erhalten",
+      "code_missing_other": "{{formattedCount}} Personen ohne {{missing}} können den Code nicht erhalten",
       "copied_more_one": "Und 1 weitere Abstimmung",
       "copied_more_other": "Und {{count}} weitere Abstimmungen",
       "dates": "{{start}} – {{end}}",
-      "draft": "Ein Entwurf: die Termine legst du im Editor fest",
+      "dates_label": "Abstimmungszeitraum",
+      "field": {
+        "birth_date": "ihr Geburtsdatum",
+        "email": "ihre E-Mail-Adresse",
+        "member_number": "ihre Mitgliedsnummer",
+        "name": "ihren Vornamen",
+        "national_id": "ihre Ausweisnummer",
+        "phone": "ihre Handynummer",
+        "surname": "ihren Nachnamen"
+      },
+      "get_in": {
+        "code_only": "Mit einem Einmalcode per {{channel}}",
+        "confirm": "Sie bestätigen {{details}}",
+        "label": "So melden sich Wählende an",
+        "then_code": "Danach ein Einmalcode per {{channel}}"
+      },
+      "members_at_close_one": "Mitglied bei Abstimmungsende",
+      "members_at_close_other": "Mitglieder bei Abstimmungsende",
+      "missing": {
+        "email": "E-Mail-Adresse",
+        "email_or_mobile": "E-Mail-Adresse und Handynummer",
+        "mobile": "Handynummer"
+      },
       "no_copy": "Noch keine Abstimmung",
-      "no_copy_hint": "Eine Abstimmung, die sie nutzt, bekommt eine eigene Kopie",
-      "not_published": "Noch nicht veröffentlicht",
-      "opens": "Beginnt am {{date}}",
+      "no_copy_new": "Eine Abstimmung, die sie verwendet, erhält eine neue Teilnehmerliste auf ihrer Grundlage",
+      "not_scheduled": "Noch nicht geplant",
+      "not_scheduled_hint": "Die Termine legst du fest, wenn du die Abstimmung bearbeitest",
+      "opens_at": "Beginnt am {{date}} um {{at}}",
       "people": "Personen",
       "ready_any": "{{ready}} per E-Mail oder SMS",
+      "see_who": "Personen anzeigen",
       "show_them": "Anzeigen",
-      "sign_in": "Anmeldung",
-      "they_type": "Zusätzlich eingeben: {{details}}",
+      "source": {
+        "everyone": "Alle deine Mitglieder",
+        "everyone_draft": "Auch Mitglieder, die du vor der Veröffentlichung hinzufügst, dürfen abstimmen",
+        "everyone_live": "Auch Mitglieder, die du hinzufügst, dürfen abstimmen",
+        "from_saved": "Aus der gespeicherten Teilnehmerliste „{{name}}“",
+        "from_vote": "Aus der Abstimmung „{{name}}“",
+        "label": "Woher die Liste kommt",
+        "members_copy": "Eine Kopie deiner Mitglieder",
+        "members_copy_hint": "Später hinzugefügte Mitglieder sind nicht dabei",
+        "picked": "Einzeln ausgewählte Personen",
+        "picked_on": "Ausgewählt am {{date}}",
+        "shared": "Die gespeicherte Teilnehmerliste „{{name}}“",
+        "shared_hint": "Änderungen daran wirken sich auf diese Abstimmung aus",
+        "snapshot": "Deine Mitglieder bei der Veröffentlichung",
+        "snapshot_closed": "Bei der Veröffentlichung festgelegt",
+        "snapshot_on": "Deine Mitglieder am {{date}}",
+        "snapshot_open": "Du kannst dieser Liste weiterhin Mitglieder hinzufügen oder sie daraus entfernen"
+      },
       "used_more_one": "Und 1 weitere Abstimmung: Änderungen hier erreichen sie",
       "used_more_other": "Und {{count}} weitere Abstimmungen: Änderungen hier erreichen sie",
       "used_reach": "Änderungen hier erreichen diese Abstimmung",
-      "voters": "Wählende",
-      "voting": "Abstimmung"
+      "weighted": "Stimmen zählen nach Stimmgewicht",
+      "who": "Wer abstimmen darf"
     },
     "filter": {
       "unreachable_one": "Kein Code möglich · {{count}}",
@@ -242,9 +402,6 @@
     "open_draft": "Entwurf öffnen",
     "open_in_editor": "Im Editor öffnen",
     "open_vote": "Abstimmung öffnen",
-    "people": {
-      "at_close": "{{unit}} beim Abschluss"
-    },
     "picker": {
       "already_in": "Schon dabei",
       "search": "In deinen Mitgliedern suchen",
@@ -314,8 +471,7 @@
     },
     "source": {
       "everyone": "Alle: Auch Mitglieder, die du später hinzufügst, dürfen abstimmen.",
-      "follows_everyone": "Diese Abstimmung folgt „Alle“: Auch Mitglieder, die du hinzufügst, dürfen darin abstimmen.",
-      "follows_everyone_live": "Diese Abstimmung folgt „Alle“: Auch Mitglieder, die du hinzufügst, dürfen darin abstimmen. Wen du hier entfernst, der ist nur aus dieser Abstimmung draußen.",
+      "everyone_remove": "Wenn du hier jemanden entfernst, betrifft das nur diese Abstimmung.",
       "legacy_saved": "Diese Abstimmung folgt der gespeicherten Teilnehmerliste „{{name}}“, daher wirken Änderungen daran auch hier. Was du hier änderst, betrifft nur diese Abstimmung.",
       "saved": "Eine gespeicherte Teilnehmerliste, die du in deinen Abstimmungen wiederverwenden kannst.",
       "selected": "Einzeln für diese Abstimmung ausgewählte Personen.",
@@ -326,10 +482,8 @@
       "title": "Verwendet von"
     },
     "vote_card": {
-      "people": "Personen aus",
-      "snapshot_note": "Diese Teilnehmerliste ist eine Kopie aller Mitglieder zum Zeitpunkt der Veröffentlichung. Du kannst in dieser Teilnehmerliste Personen hinzufügen und entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
-      "snapshot_note_on": "Diese Teilnehmerliste ist eine Kopie aller Mitglieder vom {{date}}, dem Tag, an dem du die Abstimmung veröffentlicht hast. Du kannst in dieser Teilnehmerliste Personen hinzufügen und entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
-      "weighted": "Gewichtet je Mitglied"
+      "snapshot_note": "Diese Liste wurde aus deiner Mitgliederliste erstellt, so wie sie bei der Veröffentlichung der Abstimmung war. Du kannst hier weiterhin Personen hinzufügen oder entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste.",
+      "snapshot_note_on": "Diese Liste wurde aus deiner Mitgliederliste erstellt, so wie sie am {{date}} war, als du die Abstimmung veröffentlicht hast. Du kannst hier weiterhin Personen hinzufügen oder entfernen. Wenn du Angaben von jemandem korrigierst, ändern sie sich auch in deiner Mitgliederliste."
     }
   },
   "census_size": "Teilnehmerzahl",
@@ -398,6 +552,8 @@
       "draft": "Entwurf"
     },
     "unit": {
+      "members_one": "Mitglied",
+      "members_other": "Mitglieder",
       "people_one": "Person",
       "people_other": "Personen",
       "voters_one": "stimmberechtigte Person",
@@ -1147,6 +1303,9 @@
     "hidden": "{{label}} ausgeblendet"
   },
   "memberbase": {
+    "activity": {
+      "title": "Aktivität"
+    },
     "add_person": "Person hinzufügen",
     "censuses": {
       "title": "Teilnehmerlisten"
@@ -1969,20 +2128,14 @@
         "submit_other": "{{formattedCount}} Personen verwenden",
         "title": "Auswählen, wer abstimmen kann"
       },
-      "copy_everyone": {
-        "button": "Diese Liste bearbeiten",
-        "confirm": "Eigene Liste anlegen",
-        "description": "Diese Abstimmung bekommt eine eigene Liste mit allen Mitgliedern, wie sie jetzt sind, und du kannst Personen hinzufügen oder entfernen. Danach kommen neue Mitglieder nicht mehr von selbst dazu.",
-        "title": "Diese Liste bearbeiten?"
-      },
       "error": "Wer abstimmen kann, konnte nicht geändert werden",
       "error_detail": "Nichts wurde geändert. Versuche es gleich noch einmal.",
       "error_empty": "Es gibt niemanden zu kopieren",
       "error_stale": "Dieser Entwurf wurde woanders geändert. Lade die Seite neu und versuche es erneut.",
       "everyone": {
-        "description_one": "Dein einziges Mitglied. Wen du vor der Veröffentlichung hinzufügst, ist dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu.",
-        "description_other": "Alle {{formattedCount}} Mitglieder. Wen du vor der Veröffentlichung hinzufügst, ist dabei; danach fügst du neue Personen selbst zur Abstimmung hinzu.",
-        "title": "Alle"
+        "all_one": "Das einzige Mitglied deiner Organisation",
+        "all_other": "Alle {{formattedCount}} Mitglieder deiner Organisation",
+        "new_census": "Eine neue Teilnehmerliste wird mit allen Mitgliedern deiner Organisation erstellt. Du kannst später Mitglieder hinzufügen oder entfernen."
       },
       "go_to_members": "Zu den Mitgliedern",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2014,21 +2167,21 @@
         "start_over": "Neu beginnen"
       },
       "previous": {
-        "card": "Wie eine frühere Abstimmung",
         "description": "Kopiere, wer abstimmen konnte.",
-        "hint": "Diese Abstimmung bekommt eine eigene Kopie der Personen, die dort abstimmen konnten.",
+        "new_census": "Es wird eine neue Teilnehmerliste mit den Personen erstellt, die dort abstimmen durften.",
         "no_list": "Die Personen wurden einzeln ausgewählt, daher gibt es keine Liste zum Kopieren.",
         "none": "Es gibt noch keine anderen Abstimmungen.",
+        "reuse": "Teilnehmerliste einer früheren Abstimmung wiederverwenden",
         "title": "Wie eine frühere Abstimmung"
       },
       "reload": "Neu laden",
       "saved": {
-        "after_name": "Sie bekommt eine eigene Kopie, sobald die Abstimmung einen Namen hat.",
-        "description": "Diese Abstimmung bekommt eine eigene Kopie.",
+        "based_on": "Auf ihrer Grundlage wird eine neue Teilnehmerliste erstellt.",
+        "created_after_name": "Die neue Teilnehmerliste wird erstellt, sobald die Abstimmung einen Namen hat.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Gespeicherte Teilnehmerliste wählen",
         "select": "Gespeicherte Teilnehmerliste",
-        "title": "Aus einer gespeicherten Teilnehmerliste"
+        "short": "Gespeicherte Teilnehmerliste"
       },
       "sheet_title": "Teilnehmerliste dieser Abstimmung",
       "source": {
@@ -2610,7 +2763,6 @@
   "vote_overwrite": "Stimme überschreiben",
   "voter_anonymity": "Anonymität der Wählenden",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Erhöhe die Sicherheit, indem Wählende ihre Identität bestätigen müssen",
     "2fa_email": "<email /> E-Mail-Verifizierung",
     "2fa_email_description": "Wählende erhalten einen Bestätigungscode per E-Mail",
@@ -2622,13 +2774,19 @@
     "2fa_sms_description": "Wählende erhalten einen Bestätigungscode per SMS",
     "2fa_voter_choice": "<email /> oder <phone /> Wahl der Wählenden",
     "2fa_voter_choice_description": "Wählende können ihre bevorzugte Verifizierungsmethode wählen",
-    "anonymity": "Anonymität der Stimmabgabe: {{ mode }}",
     "button": {
-      "configure": "Wähler-Authentifizierung konfigurieren",
-      "edit": "Wähler-Authentifizierung bearbeiten"
+      "set_up_sign_in": "Anmeldung der Wählenden einrichten"
+    },
+    "card": {
+      "code": "Ein Einmalcode per {{channel}}",
+      "edit": "Bearbeiten",
+      "intro": "Wähle, was Wählende eingeben, um zu zeigen, wer sie sind, und ob sie zusätzlich einen Code erhalten.",
+      "then": "Danach",
+      "they_get": "Sie erhalten",
+      "they_type": "Sie geben ein",
+      "title": "So melden sich Wählende an"
     },
     "configured": "Wähler-Authentifizierung konfiguriert",
-    "configured_auth": "Wähler-Authentifizierung",
     "credentials": "Zugangsdaten",
     "description": "Lege fest, wie sich Wählende authentifizieren, um an diesem Abstimmungsprozess teilzunehmen.",
     "email": "Per E-Mail-Verifizierung",

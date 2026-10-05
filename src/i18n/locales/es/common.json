@@ -22,6 +22,118 @@
     "view_active_votes": "Ver votaciones activas",
     "waiting_title": "Esperando confirmación de la transacción..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "Clave de API",
+      "system": "Vocdoni"
+    },
+    "census": {
+      "all": "Todos los censos",
+      "filter_by": "Mostrar solo {{name}}",
+      "in_votes": "En votaciones",
+      "many_one": "{{count}} censo",
+      "many_many": "{{count}} censos",
+      "many_other": "{{count}} censos",
+      "many_title": "Este cambio llegó a:",
+      "no_match": "Ningún censo coincide",
+      "none": "Solo la lista de miembros",
+      "picker": "Censo",
+      "picker_label": "Censo: {{name}}",
+      "saved": "Guardados",
+      "search": "Busca un censo o una votación"
+    },
+    "change": {
+      "empty": "vacío",
+      "hidden": "Cambiado, oculto por privacidad"
+    },
+    "changes_hide_one": "Ocultar {{count}} cambio",
+    "changes_hide_many": "Ocultar {{count}} cambios",
+    "changes_hide_other": "Ocultar {{count}} cambios",
+    "changes_show_one": "Mostrar {{count}} cambio",
+    "changes_show_many": "Mostrar {{count}} cambios",
+    "changes_show_other": "Mostrar {{count}} cambios",
+    "day": {
+      "today": "Hoy · {{date}}",
+      "undated": "Fecha aún no registrada",
+      "undated_hint": "Las importaciones tendrán fecha pronto",
+      "yesterday": "Ayer · {{date}}"
+    },
+    "during_voting": "Durante la votación",
+    "empty": "Aún no hay nada. Las importaciones y las votaciones aparecerán aquí a medida que ocurran.",
+    "empty_filtered": "Todavía no hay nada registrado aquí.",
+    "error": "No hemos podido cargar el historial de cambios. Vuelve a intentarlo en un momento.",
+    "event": {
+      "census_details_changed": "Datos del censo cambiados",
+      "census_from_everyone": "Censo copiado de todos tus miembros",
+      "exported": "Historial de cambios exportado",
+      "group_deleted": "Censo <strong>{{name}}</strong> eliminado",
+      "import_one": "{{number}} miembro importado",
+      "import_many": "{{number}} miembros importados",
+      "import_other": "{{number}} miembros importados",
+      "member_added": "<strong>{{name}}</strong> añadido a los miembros",
+      "member_deleted": "<strong>{{name}}</strong> eliminado de los miembros",
+      "member_details_changed": "Datos de <strong>{{name}}</strong> cambiados",
+      "people_added_one": "{{number}} persona añadida",
+      "people_added_many": "{{number}} personas añadidas",
+      "people_added_other": "{{number}} personas añadidas",
+      "people_removed_one": "{{number}} persona eliminada",
+      "people_removed_many": "{{number}} personas eliminadas",
+      "people_removed_other": "{{number}} personas eliminadas",
+      "saved_created": "Censo guardado creado",
+      "saved_created_with_one": "Censo guardado creado con {{number}} persona",
+      "saved_created_with_many": "Censo guardado creado con {{number}} personas",
+      "saved_created_with_other": "Censo guardado creado con {{number}} personas",
+      "vote_created": "Votación creada",
+      "vote_published": "Votación publicada",
+      "voting_closed": "Votación cerrada",
+      "voting_opened": "Votación abierta"
+    },
+    "export": "Exportar CSV",
+    "export_error": "No hemos podido exportar el historial de cambios",
+    "field": {
+      "other": "Información adicional",
+      "title": "Nombre",
+      "unknown": "Un dato"
+    },
+    "filter": {
+      "census_changes": "Cambios en el censo",
+      "everything": "Todo",
+      "imports": "Importaciones",
+      "label": "Filtrar el historial de cambios",
+      "people": "Personas",
+      "votes": "Votaciones"
+    },
+    "history": {
+      "census_created": "Censo creado",
+      "census_empty": "Todavía no ha pasado nada en este censo.",
+      "census_title": "Historial",
+      "copied_into": "Copiado a '{{name}}'",
+      "empty": "Aún no se ha registrado ningún cambio.",
+      "error": "No hemos podido cargar el historial.",
+      "person_title": "Historial",
+      "see_in_activity": "Ver en Actividad",
+      "soon": "Pronto verás aquí los cambios en sus personas, con quién los hizo.",
+      "voting_open": "Mientras la votación estaba abierta"
+    },
+    "imports": {
+      "added_one": "{{added}} de {{total}} miembro importado",
+      "added_many": "{{added}} de {{total}} miembros importados",
+      "added_other": "{{added}} de {{total}} miembros importados",
+      "problems_one": "{{count}} fila tenía problemas",
+      "problems_many": "{{count}} filas tenían problemas",
+      "problems_other": "{{count}} filas tenían problemas",
+      "status": {
+        "completed": "Hecho",
+        "failed": "Ha fallado",
+        "pending": "Importando"
+      }
+    },
+    "newer": "Más recientes",
+    "older": "Más antiguos",
+    "show_everything": "Mostrar todo",
+    "test_vote": "Votación de prueba",
+    "untitled": "Sin título"
+  },
   "add_new_org": "Añadir una nueva organización",
   "additional_actions": "Acciones adicionales",
   "all_processes": "Todos",
@@ -182,6 +294,16 @@
       "error": "No se ha eliminado el censo",
       "title": "¿Eliminar «{{name}}»?"
     },
+    "delete_vote": {
+      "blocked": "Esta votación está publicada y aún no ha terminado, así que no se puede eliminar su censo.",
+      "button": "Eliminar censo",
+      "canceled": "La votación sigue cancelada. Se elimina su lista de quién podía votar, y no se puede deshacer.",
+      "confirm": "Eliminar censo",
+      "draft": "El borrador se queda. Antes de publicarlo, vuelve a elegir quién puede votar.",
+      "ended": "La votación y sus resultados se quedan como están, pero se elimina su lista de quién podía votar. Ya no podrás consultar quién podía votar en ella, y no se puede deshacer.",
+      "title": "¿Eliminar el censo de «{{name}}»?",
+      "understand": "Entiendo que se eliminará el registro de quién podía votar en esta votación"
+    },
     "edit": {
       "error": "No se han guardado los cambios",
       "name_required": "Añade un nombre",
@@ -197,30 +319,79 @@
       "progress": "Preparando {{done}} de {{total}}…"
     },
     "facts": {
-      "all_ready": "Todos pueden recibir un código",
       "can_get_code": "Pueden recibir un código",
-      "closed": "Cerrada el {{date}}",
-      "closes": "Cierra el {{date}}",
+      "channel": {
+        "email": "correo electrónico",
+        "email_or_sms": "correo electrónico o SMS",
+        "sms": "SMS"
+      },
+      "closed_at": "Cerrada el {{date}} a las {{at}}",
+      "closes_at": "Cierra el {{date}} a las {{at}}",
+      "code_all": "Todos pueden recibir el código por {{channel}}",
+      "code_missing_one": "1 no tiene {{missing}}, así que no puede recibir el código",
+      "code_missing_many": "{{formattedCount}} no tienen {{missing}}, así que no pueden recibir el código",
+      "code_missing_other": "{{formattedCount}} no tienen {{missing}}, así que no pueden recibir el código",
       "copied_more_one": "Y 1 votación más",
       "copied_more_many": "Y {{count}} votaciones más",
       "copied_more_other": "Y {{count}} votaciones más",
       "dates": "{{start}} – {{end}}",
-      "draft": "Un borrador: las fechas se ponen en el editor",
+      "dates_label": "Fechas de votación",
+      "field": {
+        "birth_date": "fecha de nacimiento",
+        "email": "correo electrónico",
+        "member_number": "número de miembro",
+        "name": "nombre",
+        "national_id": "documento de identidad",
+        "phone": "número de móvil",
+        "surname": "apellidos"
+      },
+      "get_in": {
+        "code_only": "Con un código de un solo uso por {{channel}}",
+        "confirm": "Confirman su {{details}}",
+        "label": "Cómo acceden los votantes",
+        "then_code": "Después, un código de un solo uso por {{channel}}"
+      },
+      "members_at_close_one": "miembro al cierre",
+      "members_at_close_many": "miembros al cierre",
+      "members_at_close_other": "miembros al cierre",
+      "missing": {
+        "email": "correo electrónico",
+        "email_or_mobile": "correo electrónico ni número de móvil",
+        "mobile": "número de móvil"
+      },
       "no_copy": "Aún ninguna votación",
-      "no_copy_hint": "La votación que lo use tendrá su propia copia",
-      "not_published": "Aún no publicada",
-      "opens": "Abre el {{date}}",
+      "no_copy_new": "Una votación que lo use recibe un censo nuevo basado en él",
+      "not_scheduled": "Aún sin programar",
+      "not_scheduled_hint": "Las fechas las eliges al editar la votación",
+      "opens_at": "Abre el {{date}} a las {{at}}",
       "people": "Personas",
       "ready_any": "{{ready}} por email o SMS",
+      "see_who": "Ver quiénes",
       "show_them": "Mostrarlas",
-      "sign_in": "Inicio de sesión",
-      "they_type": "También escriben: {{details}}",
+      "source": {
+        "everyone": "Todos tus miembros",
+        "everyone_draft": "Los miembros que añadas antes de publicar también pueden votar",
+        "everyone_live": "Los miembros que añadas también pueden votar",
+        "from_saved": "Del censo guardado «{{name}}»",
+        "from_vote": "De la votación «{{name}}»",
+        "label": "De dónde sale el censo",
+        "members_copy": "Una copia de tus miembros",
+        "members_copy_hint": "No incluye a los miembros que añadas después",
+        "picked": "Personas que elegiste una a una",
+        "picked_on": "Elegidas el {{date}}",
+        "shared": "El censo guardado «{{name}}»",
+        "shared_hint": "Los cambios en él llegan a esta votación",
+        "snapshot": "Tus miembros cuando publicaste",
+        "snapshot_closed": "Fijado al publicar",
+        "snapshot_on": "Tus miembros del {{date}}",
+        "snapshot_open": "Aún puedes añadir y quitar miembros de este censo"
+      },
       "used_more_one": "Y 1 votación más: los cambios de aquí le llegan",
       "used_more_many": "Y {{count}} votaciones más: los cambios de aquí les llegan",
       "used_more_other": "Y {{count}} votaciones más: los cambios de aquí les llegan",
       "used_reach": "Los cambios de aquí llegan a esta votación",
-      "voters": "Votantes",
-      "voting": "Votación"
+      "weighted": "Cada voto cuenta según su peso",
+      "who": "Quién puede votar"
     },
     "filter": {
       "unreachable_one": "No pueden recibir código · {{count}}",
@@ -251,9 +422,6 @@
     "open_draft": "Abrir el borrador",
     "open_in_editor": "Abrir en el editor",
     "open_vote": "Abrir la votación",
-    "people": {
-      "at_close": "{{unit}} al cierre"
-    },
     "picker": {
       "already_in": "Ya está",
       "search": "Busca en tus miembros",
@@ -334,8 +502,7 @@
     },
     "source": {
       "everyone": "Todos: los miembros que añadas más adelante también pueden votar.",
-      "follows_everyone": "Esta votación sigue a «Todos»: los miembros que añadas también pueden votar en ella.",
-      "follows_everyone_live": "Esta votación sigue a «Todos»: los miembros que añadas también pueden votar en ella. Si quitas a alguien aquí, solo sale de esta votación.",
+      "everyone_remove": "Si quitas a alguien aquí, solo lo quitas de esta votación.",
       "legacy_saved": "Esta votación sigue el censo guardado «{{name}}», así que los cambios en él también llegan aquí. Los cambios que hagas aquí solo afectan a esta votación.",
       "saved": "Un censo guardado que puedes reutilizar en tus votaciones.",
       "selected": "Personas elegidas una a una para esta votación.",
@@ -346,10 +513,8 @@
       "title": "Usado por"
     },
     "vote_card": {
-      "people": "Personas de",
-      "snapshot_note": "Este censo es una copia de todos tus miembros de cuando publicaste la votación. En este censo puedes añadir y quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
-      "snapshot_note_on": "Este censo es una copia de todos tus miembros del {{date}}, el día que publicaste la votación. En este censo puedes añadir y quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
-      "weighted": "Ponderado por cada miembro"
+      "snapshot_note": "Para crear este censo se usó la lista de tus miembros tal como estaban cuando publicaste la votación. Aquí aún puedes añadir o quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros.",
+      "snapshot_note_on": "Para crear este censo se usó la lista de tus miembros tal como estaban el {{date}}, cuando publicaste la votación. Aquí aún puedes añadir o quitar personas. Si corriges los datos de alguien, también cambian en tu lista de miembros."
     }
   },
   "census_size": "Tamaño del censo",
@@ -423,6 +588,9 @@
       "draft": "Borrador"
     },
     "unit": {
+      "members_one": "miembro",
+      "members_many": "miembros",
+      "members_other": "miembros",
       "people_one": "persona",
       "people_many": "personas",
       "people_other": "personas",
@@ -1175,6 +1343,9 @@
     "hidden": "{{label}} oculto"
   },
   "memberbase": {
+    "activity": {
+      "title": "Actividad"
+    },
     "add_person": "Añadir persona",
     "censuses": {
       "title": "Censos"
@@ -2056,21 +2227,15 @@
         "submit_other": "Usar {{formattedCount}} personas",
         "title": "Elige quién puede votar"
       },
-      "copy_everyone": {
-        "button": "Editar esta lista",
-        "confirm": "Darle una lista propia",
-        "description": "Esta votación tendrá su propia lista con todos tus miembros tal como están ahora, y podrás añadir o quitar personas. A partir de entonces, los miembros nuevos no se añadirán solos.",
-        "title": "¿Editar esta lista?"
-      },
       "error": "No se ha podido cambiar quién puede votar",
       "error_detail": "No ha cambiado nada. Inténtalo de nuevo en un momento.",
       "error_empty": "No hay nadie que copiar",
       "error_stale": "Este borrador se ha cambiado desde otro sitio. Recarga la página e inténtalo de nuevo.",
       "everyone": {
-        "description_one": "Tu único miembro. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación.",
-        "description_many": "Todos tus {{formattedCount}} miembros. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación.",
-        "description_other": "Todos tus {{formattedCount}} miembros. Quien añadas antes de publicar estará incluido; después, las personas nuevas las añades tú a la votación.",
-        "title": "Todos los miembros"
+        "all_one": "El único miembro de tu organización",
+        "all_many": "Todos los {{formattedCount}} miembros de tu organización",
+        "all_other": "Todos los {{formattedCount}} miembros de tu organización",
+        "new_census": "Se crea un censo nuevo con todos los miembros de tu organización. Más adelante puedes añadir o quitar miembros."
       },
       "go_to_members": "Ir a Miembros",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2106,21 +2271,21 @@
         "start_over": "Empezar de nuevo"
       },
       "previous": {
-        "card": "Igual que una votación anterior",
         "description": "Copia quién podía votar en ella.",
-        "hint": "Esta votación tendrá su propia copia de las personas que podían votar en ella.",
+        "new_census": "Se crea un censo nuevo con las personas que podían votar en ella.",
         "no_list": "Sus personas se eligieron una a una, así que no hay lista que copiar.",
         "none": "Aún no hay otras votaciones.",
+        "reuse": "Reutilizar el censo de una votación anterior",
         "title": "Igual que una votación anterior"
       },
       "reload": "Recargar",
       "saved": {
-        "after_name": "Tendrá su propia copia en cuanto la votación tenga nombre.",
-        "description": "Esta votación tendrá su propia copia.",
+        "based_on": "Se crea un censo nuevo basado en él.",
+        "created_after_name": "El censo nuevo se crea en cuanto la votación tiene nombre.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Elige un censo guardado",
         "select": "Censo guardado",
-        "title": "De un censo guardado"
+        "short": "Censo guardado"
       },
       "sheet_title": "Censo de esta votación",
       "source": {
@@ -2706,7 +2871,6 @@
   "vote_overwrite": "Sobrescritura del voto",
   "voter_anonymity": "Anonimato del votante",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Añade una capa adicional de seguridad exigiendo a los votantes que verifiquen su identidad",
     "2fa_email": "<email /> Verificación por correo electrónico",
     "2fa_email_description": "Los votantes recibirán un código de verificación por correo electrónico",
@@ -2718,13 +2882,19 @@
     "2fa_sms_description": "Los votantes recibirán un código de verificación por SMS",
     "2fa_voter_choice": "<email /> o <phone /> Elección del votante",
     "2fa_voter_choice_description": "Los votantes pueden elegir su método de verificación preferido",
-    "anonymity": "Anonimato del voto: {{ mode }}",
     "button": {
-      "configure": "Configurar autenticación de votantes",
-      "edit": "Editar autenticación de votantes"
+      "set_up_sign_in": "Configurar inicio de sesión de votantes"
+    },
+    "card": {
+      "code": "Un código de un solo uso por {{channel}}",
+      "edit": "Editar",
+      "intro": "Elige qué escriben los votantes para demostrar quiénes son y si también reciben un código.",
+      "then": "Después",
+      "they_get": "Reciben",
+      "they_type": "Escriben",
+      "title": "Cómo inician sesión los votantes"
     },
     "configured": "Autenticación de votantes configurada",
-    "configured_auth": "Autenticación de votantes",
     "credentials": "Credenciales",
     "description": "Configura cómo se autenticarán los votantes para participar en este proceso de votación.",
     "email": "Por verificación de correo electrónico",

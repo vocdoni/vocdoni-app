@@ -23,7 +23,7 @@ Tone: professional yet approachable. Strings are user-facing UI text (buttons, l
 | Members (section) | Membros | The dashboard section with the organization's people. Formerly "Memberbase" ("Base de membros"): don't use the old name |
 | People (tab) | Pessoas | The tab in Members that lists every member |
 | saved census | lista de participantes guardada | A reusable selection of people, copied into a vote when used |
-| Activity (tab) | Histórico de alterações | The tab with the dated history of imports and votes |
+| Activity (tab) | Atividade | What has happened: vote dates and imports today, every change once the activity log ships. It was named for a change log until 2026-10-03; the plain word fits what it shows |
 | organization | organização | |
 | voter | votante | Gender-neutral; prefer over "eleitor/eleitora" in most contexts |
 | voting power / weight | peso de voto | |

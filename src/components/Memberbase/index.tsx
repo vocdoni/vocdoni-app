@@ -45,9 +45,13 @@ export const MemberbaseTabs = () => {
       route: Routes.dashboard.memberbase.censuses,
       count: censuses.isLoading ? undefined : censuses.index.total,
     },
+    {
+      label: t('memberbase.activity.title', { defaultValue: 'Activity' }),
+      route: Routes.dashboard.memberbase.activity,
+    },
   ]
-  const isCensuses = location.pathname.startsWith(Routes.dashboard.memberbase.censuses)
-  const activeTab = isCensuses ? tabs[1].route : tabs[0].route
+  const activeTab =
+    tabs.find((tab, index) => index > 0 && location.pathname.startsWith(tab.route))?.route ?? tabs[0].route
 
   useEffect(() => {
     setJobIdState(getStoredImportJobId(accountId))

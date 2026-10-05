@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   Field,
   Flex,
   Icon,
@@ -26,10 +27,11 @@ import { Routes } from '~routes'
 import type { AffectedVote } from '~src/queries/affectedVotes'
 import { type Group, useDeleteGroup, useGroupMembersFetcher, useUpdateGroup } from '~src/queries/groups'
 import { collectMembers, isAbortError } from '~src/queries/members'
+import { useVoteGroupApi } from '~src/queries/voteGroups'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { csvBlob, downloadBlob } from '~utils/download'
 import { censusCsvRows, censusFileName } from './exportCsv'
-import { publishedUsers } from './model'
+import { publishedUsers, type VoteCensusDeletion } from './model'
 import { UsedByWarning } from './UsedBy'
 
 /**
@@ -317,6 +319,138 @@ export const SavedCensusMenu = ({
           <Box mt={3}>
             <UsedByWarning votes={drafts} />
           </Box>
+        )}
+      </ConfirmDialog>
+    </>
+  )
+}
+
+/**
+ * A vote's census menu: deletes the census the vote owns. A draft or canceled vote asks once; an
+ * ended one also asks to tick that its record of who could vote goes; an open vote keeps it.
+ */
+export const VoteCensusMenu = ({
+  groupId,
+  name,
+  deletion,
+}: {
+  groupId: string
+  /** The vote's title */
+  name: string
+  deletion: Exclude<VoteCensusDeletion, 'none'>
+}) => {
+  const { t } = useTranslation()
+  const toast = useToast()
+  const navigate = useNavigate()
+  const api = useVoteGroupApi()
+  const [deleting, setDeleting] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [understood, setUnderstood] = useState(false)
+
+  const remove = async () => {
+    if (!api) return
+    setPending(true)
+    try {
+      await api.deleteGroup(groupId)
+      // The group is gone; a marker left behind is only noise the sweep clears later
+      await api.unmark(groupId).catch((error) => console.warn('Could not remove the census marker', error))
+      trackAnalyticsEvent({ name: AnalyticsEvents.MemberGroupDeleted })
+      toast({
+        title: t('census_detail.delete.done', { defaultValue: 'Census deleted' }),
+        type: 'success',
+        duration: 3000,
+        isClosable: true,
+      })
+      setDeleting(false)
+      navigate(Routes.dashboard.memberbase.censuses)
+    } catch (error) {
+      toast({
+        title: t('census_detail.delete.error', { defaultValue: "The census wasn't deleted" }),
+        description: error instanceof Error ? error.message : undefined,
+        type: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
+    } finally {
+      setPending(false)
+    }
+  }
+
+  const description =
+    deletion === 'draft'
+      ? t('census_detail.delete_vote.draft', {
+          defaultValue: 'The draft stays. Before you publish it, choose who can vote again.',
+        })
+      : deletion === 'canceled'
+        ? t('census_detail.delete_vote.canceled', {
+            defaultValue: "The vote stays canceled. Its list of who could vote is deleted, and this can't be undone.",
+          })
+        : t('census_detail.delete_vote.ended', {
+            defaultValue:
+              "The vote and its results stay as they are, but its list of who could vote is deleted. You won't be able to check who could vote in it any more, and this can't be undone.",
+          })
+
+  return (
+    <>
+      <Menu.Root positioning={{ placement: 'bottom-end' }}>
+        <Menu.Trigger asChild>
+          <IconButton
+            size='sm'
+            variant='outline'
+            colorPalette='gray'
+            aria-label={t('census_detail.actions.more', { defaultValue: 'More actions' })}
+          >
+            <LuEllipsis />
+          </IconButton>
+        </Menu.Trigger>
+        <Portal>
+          <Menu.Positioner>
+            <Menu.Content minW='240px'>
+              <Menu.Item
+                value='delete'
+                color='fg.error'
+                disabled={deletion === 'blocked'}
+                onSelect={() => {
+                  setUnderstood(false)
+                  setDeleting(true)
+                }}
+              >
+                <Icon as={LuTrash2} />
+                <Box>
+                  <Text fontSize='sm'>{t('census_detail.delete_vote.button', { defaultValue: 'Delete census' })}</Text>
+                  {deletion === 'blocked' && (
+                    <Text fontSize='xs' color='fg.muted'>
+                      {t('census_detail.delete_vote.blocked', {
+                        defaultValue: "This vote is published and not over yet, so its census can't be deleted.",
+                      })}
+                    </Text>
+                  )}
+                </Box>
+              </Menu.Item>
+            </Menu.Content>
+          </Menu.Positioner>
+        </Portal>
+      </Menu.Root>
+      <ConfirmDialog
+        open={deleting}
+        onOpenChange={({ open }) => setDeleting(open)}
+        title={t('census_detail.delete_vote.title', { defaultValue: "Delete the census of '{{name}}'?", name })}
+        description={description}
+        confirmText={t('census_detail.delete_vote.confirm', { defaultValue: 'Delete census' })}
+        loading={pending}
+        confirmDisabled={deletion === 'ended' && !understood}
+        onConfirm={remove}
+      >
+        {deletion === 'ended' && (
+          <Checkbox.Root mt={4} checked={understood} onCheckedChange={({ checked }) => setUnderstood(checked === true)}>
+            <Checkbox.HiddenInput />
+            <Checkbox.Control />
+            <Checkbox.Label fontSize='sm'>
+              {t('census_detail.delete_vote.understand', {
+                defaultValue: 'I understand the record of who could vote in this vote will be deleted',
+              })}
+            </Checkbox.Label>
+          </Checkbox.Root>
         )}
       </ConfirmDialog>
     </>

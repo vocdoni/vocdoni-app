@@ -22,6 +22,109 @@
     "view_active_votes": "View active votes",
     "waiting_title": "Waiting for transaction confirmation..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "API key",
+      "system": "Vocdoni"
+    },
+    "census": {
+      "all": "All censuses",
+      "filter_by": "Show only {{name}}",
+      "in_votes": "In votes",
+      "many_one": "{{count}} census",
+      "many_other": "{{count}} censuses",
+      "many_title": "This change reached:",
+      "no_match": "No census matches",
+      "none": "Members list only",
+      "picker": "Census",
+      "picker_label": "Census: {{name}}",
+      "saved": "Saved",
+      "search": "Find a census or vote"
+    },
+    "change": {
+      "empty": "empty",
+      "hidden": "Changed, hidden for privacy"
+    },
+    "changes_hide_one": "Hide {{count}} change",
+    "changes_hide_other": "Hide {{count}} changes",
+    "changes_show_one": "Show {{count}} change",
+    "changes_show_other": "Show {{count}} changes",
+    "day": {
+      "today": "Today · {{date}}",
+      "undated": "Date not recorded yet",
+      "undated_hint": "Imports get a date soon",
+      "yesterday": "Yesterday · {{date}}"
+    },
+    "during_voting": "During voting",
+    "empty": "Nothing here yet. Imports and votes appear as they happen.",
+    "empty_filtered": "Nothing recorded here yet.",
+    "error": "We couldn't load the activity. Try again in a moment.",
+    "event": {
+      "census_details_changed": "Census details changed",
+      "census_from_everyone": "Census copied from all your members",
+      "exported": "Activity exported",
+      "group_deleted": "Census <strong>{{name}}</strong> deleted",
+      "import_one": "{{number}} member imported",
+      "import_other": "{{number}} members imported",
+      "member_added": "<strong>{{name}}</strong> added to members",
+      "member_deleted": "<strong>{{name}}</strong> deleted from members",
+      "member_details_changed": "<strong>{{name}}</strong>'s details changed",
+      "people_added_one": "{{number}} person added",
+      "people_added_other": "{{number}} people added",
+      "people_removed_one": "{{number}} person removed",
+      "people_removed_other": "{{number}} people removed",
+      "saved_created": "Saved census created",
+      "saved_created_with_one": "Saved census created with {{number}} person",
+      "saved_created_with_other": "Saved census created with {{number}} people",
+      "vote_created": "Vote created",
+      "vote_published": "Vote published",
+      "voting_closed": "Voting closed",
+      "voting_opened": "Voting opened"
+    },
+    "export": "Export CSV",
+    "export_error": "We couldn't export the activity",
+    "field": {
+      "other": "Extra info",
+      "title": "Name",
+      "unknown": "A detail"
+    },
+    "filter": {
+      "census_changes": "Census changes",
+      "everything": "Everything",
+      "imports": "Imports",
+      "label": "Filter activity",
+      "people": "People",
+      "votes": "Votes"
+    },
+    "history": {
+      "census_created": "Census created",
+      "census_empty": "Nothing has happened to this census yet.",
+      "census_title": "History",
+      "copied_into": "Copied into '{{name}}'",
+      "empty": "No changes recorded yet.",
+      "error": "We couldn't load the history.",
+      "person_title": "History",
+      "see_in_activity": "See in Activity",
+      "soon": "Edits to its people, with who made them, will show here soon.",
+      "voting_open": "While voting was open"
+    },
+    "imports": {
+      "added_one": "{{added}} of {{total}} member imported",
+      "added_other": "{{added}} of {{total}} members imported",
+      "problems_one": "{{count}} row had problems",
+      "problems_other": "{{count}} rows had problems",
+      "status": {
+        "completed": "Done",
+        "failed": "Failed",
+        "pending": "Importing"
+      }
+    },
+    "newer": "Newer",
+    "older": "Older",
+    "show_everything": "Show everything",
+    "test_vote": "Test vote",
+    "untitled": "Untitled"
+  },
   "add_new_org": "Add a new organization",
   "additional_actions": "Additional actions",
   "all_processes": "All",
@@ -177,6 +280,16 @@
       "error": "The census wasn't deleted",
       "title": "Delete '{{name}}'?"
     },
+    "delete_vote": {
+      "blocked": "This vote is published and not over yet, so its census can't be deleted.",
+      "button": "Delete census",
+      "canceled": "The vote stays canceled. Its list of who could vote is deleted, and this can't be undone.",
+      "confirm": "Delete census",
+      "draft": "The draft stays. Before you publish it, choose who can vote again.",
+      "ended": "The vote and its results stay as they are, but its list of who could vote is deleted. You won't be able to check who could vote in it any more, and this can't be undone.",
+      "title": "Delete the census of '{{name}}'?",
+      "understand": "I understand the record of who could vote in this vote will be deleted"
+    },
     "edit": {
       "error": "Your changes weren't saved",
       "name_required": "Add a name",
@@ -192,28 +305,75 @@
       "progress": "Preparing {{done}} of {{total}}…"
     },
     "facts": {
-      "all_ready": "All can get a code",
       "can_get_code": "Can get a code",
-      "closed": "Closed {{date}}",
-      "closes": "Closes {{date}}",
+      "channel": {
+        "email": "email",
+        "email_or_sms": "email or SMS",
+        "sms": "SMS"
+      },
+      "closed_at": "Closed {{date}} at {{at}}",
+      "closes_at": "Closes {{date}} at {{at}}",
+      "code_all": "All can get the code by {{channel}}",
+      "code_missing_one": "1 has no {{missing}}, so they can't get the code",
+      "code_missing_other": "{{formattedCount}} have no {{missing}}, so they can't get the code",
       "copied_more_one": "And 1 more vote",
       "copied_more_other": "And {{count}} more votes",
       "dates": "{{start}} – {{end}}",
-      "draft": "A draft: dates are set in the editor",
+      "dates_label": "Voting dates",
+      "field": {
+        "birth_date": "date of birth",
+        "email": "email",
+        "member_number": "member number",
+        "name": "first name",
+        "national_id": "national ID",
+        "phone": "mobile number",
+        "surname": "last name"
+      },
+      "get_in": {
+        "code_only": "With a one-time code by {{channel}}",
+        "confirm": "They confirm their {{details}}",
+        "label": "How voters get in",
+        "then_code": "Then a one-time code by {{channel}}"
+      },
+      "members_at_close_one": "member at close",
+      "members_at_close_other": "members at close",
+      "missing": {
+        "email": "email",
+        "email_or_mobile": "email or mobile number",
+        "mobile": "mobile number"
+      },
       "no_copy": "No vote yet",
-      "no_copy_hint": "A vote that uses it gets its own copy",
-      "not_published": "Not published yet",
-      "opens": "Opens {{date}}",
+      "no_copy_new": "A vote that uses it gets a new census based on it",
+      "not_scheduled": "Not scheduled yet",
+      "not_scheduled_hint": "You set the dates when you edit the vote",
+      "opens_at": "Opens {{date}} at {{at}}",
       "people": "People",
       "ready_any": "{{ready}} by email or SMS",
+      "see_who": "See who",
       "show_them": "Show them",
-      "sign_in": "Sign-in",
-      "they_type": "They also type: {{details}}",
+      "source": {
+        "everyone": "All your members",
+        "everyone_draft": "Members you add before publishing can vote too",
+        "everyone_live": "Members you add can vote too",
+        "from_saved": "From the saved census '{{name}}'",
+        "from_vote": "From the vote '{{name}}'",
+        "label": "Where the list comes from",
+        "members_copy": "A copy of your members",
+        "members_copy_hint": "Members you add later aren't included",
+        "picked": "People you picked one by one",
+        "picked_on": "Chosen on {{date}}",
+        "shared": "The saved census '{{name}}'",
+        "shared_hint": "Changes to it reach this vote",
+        "snapshot": "Your members when you published",
+        "snapshot_closed": "Fixed when you published",
+        "snapshot_on": "Your members on {{date}}",
+        "snapshot_open": "You can still add and remove members in this census"
+      },
       "used_more_one": "And 1 more vote: changes here reach them",
       "used_more_other": "And {{count}} more votes: changes here reach them",
       "used_reach": "Changes here reach this vote",
-      "voters": "Voters",
-      "voting": "Voting"
+      "weighted": "Votes count by voting power",
+      "who": "Who can vote"
     },
     "filter": {
       "unreachable_one": "Can't get a code · {{count}}",
@@ -242,9 +402,6 @@
     "open_draft": "Open the draft",
     "open_in_editor": "Open in editor",
     "open_vote": "Open vote",
-    "people": {
-      "at_close": "{{unit}} at close"
-    },
     "picker": {
       "already_in": "Already in",
       "search": "Search your members",
@@ -314,8 +471,7 @@
     },
     "source": {
       "everyone": "Everyone: members you add later can vote too.",
-      "follows_everyone": "This vote follows Everyone: members you add can vote in it too.",
-      "follows_everyone_live": "This vote follows Everyone: members you add can vote in it too. Removing someone here only takes them out of this vote.",
+      "everyone_remove": "Removing someone here only takes them out of this vote.",
       "legacy_saved": "This vote follows the saved census '{{name}}', so changes to it reach this vote too. Changes made here only affect this vote.",
       "saved": "A saved census you can reuse in your votes.",
       "selected": "People picked one by one for this vote.",
@@ -326,10 +482,8 @@
       "title": "Used by"
     },
     "vote_card": {
-      "people": "People from",
-      "snapshot_note": "This census is a copy of all your members when you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
-      "snapshot_note_on": "This census is a copy of all your members on {{date}}, the day you published the vote. You can add and remove people in this census. Fixing someone's details changes them in your members list too.",
-      "weighted": "Weighted by each member"
+      "snapshot_note": "This census was created from your members list as it was when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list.",
+      "snapshot_note_on": "This census was created from your members list as it was on {{date}}, when you published the vote. You can still add or remove people here. Fixing someone's details also changes them in your members list."
     }
   },
   "census_size": "Census size",
@@ -398,6 +552,8 @@
       "draft": "Draft"
     },
     "unit": {
+      "members_one": "member",
+      "members_other": "members",
       "people_one": "person",
       "people_other": "people",
       "voters_one": "voter",
@@ -1147,6 +1303,9 @@
     "hidden": "{{label}} hidden"
   },
   "memberbase": {
+    "activity": {
+      "title": "Activity"
+    },
     "add_person": "Add person",
     "censuses": {
       "title": "Censuses"
@@ -1969,20 +2128,14 @@
         "submit_other": "Use {{formattedCount}} people",
         "title": "Choose who can vote"
       },
-      "copy_everyone": {
-        "button": "Edit this list",
-        "confirm": "Make its own list",
-        "description": "This vote gets its own list with all your members as they are now, and you can add or take out people. From then on, new members won't join it by themselves.",
-        "title": "Edit this list?"
-      },
       "error": "Who can vote couldn't be changed",
       "error_detail": "Nothing changed. Try again in a moment.",
       "error_empty": "There is nobody in it to copy",
       "error_stale": "This draft was changed somewhere else. Reload the page and try again.",
       "everyone": {
-        "description_one": "Your 1 member. Anyone you add before publishing is included; after that, you add new people to the vote yourself.",
-        "description_other": "All {{formattedCount}} members. Anyone you add before publishing is included; after that, you add new people to the vote yourself.",
-        "title": "Everyone"
+        "all_one": "The 1 member of your memberbase",
+        "all_other": "All {{formattedCount}} members of your memberbase",
+        "new_census": "A new census is created with everyone in your memberbase. You can add or remove members in it later."
       },
       "go_to_members": "Go to Members",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2014,21 +2167,21 @@
         "start_over": "Start over"
       },
       "previous": {
-        "card": "Same as a previous vote",
         "description": "Copy who could vote in it.",
-        "hint": "This vote gets its own copy of the people who could vote in it.",
+        "new_census": "A new census is created with the people who could vote in it.",
         "no_list": "Its people were picked one by one, so there's no list to copy.",
         "none": "There are no other votes yet.",
+        "reuse": "Reuse census from a previous vote",
         "title": "Same as a previous vote"
       },
       "reload": "Reload",
       "saved": {
-        "after_name": "It gets its own copy as soon as the vote has a name.",
-        "description": "This vote gets its own copy.",
+        "based_on": "A new census is created based on it.",
+        "created_after_name": "The new census is created as soon as the vote has a name.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Choose a saved census",
         "select": "Saved census",
-        "title": "From a saved census"
+        "short": "Saved census"
       },
       "sheet_title": "Census of this vote",
       "source": {
@@ -2610,7 +2763,6 @@
   "vote_overwrite": "Vote overwrite",
   "voter_anonymity": "Voter anonymity",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Add an extra layer of security by requiring voters to verify their identity",
     "2fa_email": "<email /> Email verification",
     "2fa_email_description": "Voters will receive a verification code via email",
@@ -2622,13 +2774,19 @@
     "2fa_sms_description": "Voters will receive a verification code via SMS",
     "2fa_voter_choice": "<email /> or <phone /> Voter's choice",
     "2fa_voter_choice_description": "Voters can choose their preferred verification method",
-    "anonymity": "Ballot anonymity: {{ mode }}",
     "button": {
-      "configure": "Configure Voter Authentication",
-      "edit": "Edit Voter Authentication"
+      "set_up_sign_in": "Set up voter sign-in"
+    },
+    "card": {
+      "code": "A one-time code by {{channel}}",
+      "edit": "Edit",
+      "intro": "Choose what voters type to prove who they are, and whether they also get a code.",
+      "then": "Then",
+      "they_get": "They get",
+      "they_type": "They type",
+      "title": "How voters sign in"
     },
     "configured": "Voter authentication configured",
-    "configured_auth": "Voter Authentication",
     "credentials": "Credentials",
     "description": "Set up how voters will authenticate to participate in this voting process.",
     "email": "Via email verification",

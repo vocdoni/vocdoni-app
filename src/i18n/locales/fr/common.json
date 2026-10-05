@@ -22,6 +22,118 @@
     "view_active_votes": "Voir les votes actifs",
     "waiting_title": "En attente de la confirmation de la transaction…"
   },
+  "activity": {
+    "actor": {
+      "api_key": "Clé API",
+      "system": "Vocdoni"
+    },
+    "census": {
+      "all": "Toutes les listes électorales",
+      "filter_by": "Afficher seulement {{name}}",
+      "in_votes": "Dans des votes",
+      "many_one": "{{count}} liste électorale",
+      "many_many": "{{count}} listes électorales",
+      "many_other": "{{count}} listes électorales",
+      "many_title": "Ce changement a touché :",
+      "no_match": "Aucune liste ne correspond",
+      "none": "Liste des membres seulement",
+      "picker": "Liste électorale",
+      "picker_label": "Liste électorale : {{name}}",
+      "saved": "Enregistrées",
+      "search": "Chercher une liste ou un vote"
+    },
+    "change": {
+      "empty": "vide",
+      "hidden": "Modifié, masqué par confidentialité"
+    },
+    "changes_hide_one": "Masquer {{count}} changement",
+    "changes_hide_many": "Masquer {{count}} changements",
+    "changes_hide_other": "Masquer {{count}} changements",
+    "changes_show_one": "Afficher {{count}} changement",
+    "changes_show_many": "Afficher {{count}} changements",
+    "changes_show_other": "Afficher {{count}} changements",
+    "day": {
+      "today": "Aujourd'hui · {{date}}",
+      "undated": "Date pas encore enregistrée",
+      "undated_hint": "Les imports seront bientôt datés",
+      "yesterday": "Hier · {{date}}"
+    },
+    "during_voting": "Pendant le vote",
+    "empty": "Rien pour l’instant. Les importations et les votes apparaîtront ici au fur et à mesure.",
+    "empty_filtered": "Rien d'enregistré ici pour l'instant.",
+    "error": "Impossible de charger l’historique des modifications. Réessayez dans un instant.",
+    "event": {
+      "census_details_changed": "Infos de la liste électorale modifiées",
+      "census_from_everyone": "Liste électorale copiée depuis tous vos membres",
+      "exported": "Historique des modifications exporté",
+      "group_deleted": "Liste électorale <strong>{{name}}</strong> supprimée",
+      "import_one": "{{number}} membre importé",
+      "import_many": "{{number}} membres importés",
+      "import_other": "{{number}} membres importés",
+      "member_added": "<strong>{{name}}</strong> ajouté aux membres",
+      "member_deleted": "<strong>{{name}}</strong> supprimé des membres",
+      "member_details_changed": "Infos de <strong>{{name}}</strong> modifiées",
+      "people_added_one": "{{number}} personne ajoutée",
+      "people_added_many": "{{number}} personnes ajoutées",
+      "people_added_other": "{{number}} personnes ajoutées",
+      "people_removed_one": "{{number}} personne retirée",
+      "people_removed_many": "{{number}} personnes retirées",
+      "people_removed_other": "{{number}} personnes retirées",
+      "saved_created": "Liste électorale enregistrée créée",
+      "saved_created_with_one": "Liste enregistrée créée avec {{number}} personne",
+      "saved_created_with_many": "Liste enregistrée créée avec {{number}} personnes",
+      "saved_created_with_other": "Liste enregistrée créée avec {{number}} personnes",
+      "vote_created": "Vote créé",
+      "vote_published": "Vote publié",
+      "voting_closed": "Vote clôturé",
+      "voting_opened": "Vote ouvert"
+    },
+    "export": "Exporter en CSV",
+    "export_error": "Impossible d’exporter l’historique des modifications",
+    "field": {
+      "other": "Informations supplémentaires",
+      "title": "Nom",
+      "unknown": "Une donnée"
+    },
+    "filter": {
+      "census_changes": "Changements de liste",
+      "everything": "Tout",
+      "imports": "Importations",
+      "label": "Filtrer l’historique des modifications",
+      "people": "Personnes",
+      "votes": "Votes"
+    },
+    "history": {
+      "census_created": "Liste électorale créée",
+      "census_empty": "Rien ne s'est encore passé pour cette liste.",
+      "census_title": "Historique",
+      "copied_into": "Copiée dans « {{name}} »",
+      "empty": "Aucune modification enregistrée pour l’instant.",
+      "error": "Impossible de charger l’historique.",
+      "person_title": "Historique",
+      "see_in_activity": "Voir dans Activité",
+      "soon": "Les changements de ses personnes, avec leur auteur, apparaîtront bientôt ici.",
+      "voting_open": "Pendant que le vote était ouvert"
+    },
+    "imports": {
+      "added_one": "{{added}} membre importé sur {{total}}",
+      "added_many": "{{added}} membres importés sur {{total}}",
+      "added_other": "{{added}} membres importés sur {{total}}",
+      "problems_one": "{{count}} ligne présentait des problèmes",
+      "problems_many": "{{count}} lignes présentaient des problèmes",
+      "problems_other": "{{count}} lignes présentaient des problèmes",
+      "status": {
+        "completed": "Terminé",
+        "failed": "Échec",
+        "pending": "Importation en cours"
+      }
+    },
+    "newer": "Plus récents",
+    "older": "Plus anciens",
+    "show_everything": "Tout afficher",
+    "test_vote": "Vote d'essai",
+    "untitled": "Sans titre"
+  },
   "add_new_org": "Ajouter une nouvelle organisation",
   "additional_actions": "Actions supplémentaires",
   "all_processes": "Tous",
@@ -182,6 +294,16 @@
       "error": "La liste électorale n'a pas été supprimée",
       "title": "Supprimer « {{name}} » ?"
     },
+    "delete_vote": {
+      "blocked": "Ce vote est publié et n'est pas encore terminé, sa liste électorale ne peut donc pas être supprimée.",
+      "button": "Supprimer la liste électorale",
+      "canceled": "Le vote reste annulé. Sa liste des personnes qui pouvaient voter est supprimée. Cette action est irréversible.",
+      "confirm": "Supprimer la liste",
+      "draft": "Le brouillon est conservé. Avant de le publier, choisissez à nouveau qui peut voter.",
+      "ended": "Le vote et ses résultats restent tels quels, mais sa liste des personnes qui pouvaient voter est supprimée. Vous ne pourrez plus vérifier qui pouvait y voter. Cette action est irréversible.",
+      "title": "Supprimer la liste électorale de « {{name}} » ?",
+      "understand": "Je comprends que la trace des personnes qui pouvaient voter à ce vote sera supprimée"
+    },
     "edit": {
       "error": "Vos modifications n'ont pas été enregistrées",
       "name_required": "Ajoutez un nom",
@@ -197,30 +319,79 @@
       "progress": "Préparation de {{done}} sur {{total}}…"
     },
     "facts": {
-      "all_ready": "Tout le monde peut recevoir un code",
       "can_get_code": "Peuvent recevoir un code",
-      "closed": "Clos le {{date}}",
-      "closes": "Clôture le {{date}}",
+      "channel": {
+        "email": "e-mail",
+        "email_or_sms": "e-mail ou SMS",
+        "sms": "SMS"
+      },
+      "closed_at": "Clôturé le {{date}} à {{at}}",
+      "closes_at": "Clôture le {{date}} à {{at}}",
+      "code_all": "Tous peuvent recevoir le code par {{channel}}",
+      "code_missing_one": "{{formattedCount}} personne sans {{missing}} ne peut pas recevoir le code",
+      "code_missing_many": "{{formattedCount}} personnes sans {{missing}} ne peuvent pas recevoir le code",
+      "code_missing_other": "{{formattedCount}} personnes sans {{missing}} ne peuvent pas recevoir le code",
       "copied_more_one": "Et 1 autre vote",
       "copied_more_many": "Et {{count}} autres votes",
       "copied_more_other": "Et {{count}} autres votes",
       "dates": "{{start}} – {{end}}",
-      "draft": "Un brouillon : les dates se règlent dans l'éditeur",
+      "dates_label": "Dates du vote",
+      "field": {
+        "birth_date": "leur date de naissance",
+        "email": "leur adresse e-mail",
+        "member_number": "leur numéro de membre",
+        "name": "leur prénom",
+        "national_id": "leur numéro de pièce d'identité",
+        "phone": "leur numéro de mobile",
+        "surname": "leur nom de famille"
+      },
+      "get_in": {
+        "code_only": "Avec un code à usage unique envoyé par {{channel}}",
+        "confirm": "Ils confirment {{details}}",
+        "label": "Comment les électeurs accèdent au vote",
+        "then_code": "Puis un code à usage unique par {{channel}}"
+      },
+      "members_at_close_one": "membre à la clôture",
+      "members_at_close_many": "membres à la clôture",
+      "members_at_close_other": "membres à la clôture",
+      "missing": {
+        "email": "adresse e-mail",
+        "email_or_mobile": "adresse e-mail ni numéro de mobile",
+        "mobile": "numéro de mobile"
+      },
       "no_copy": "Aucun vote pour l’instant",
-      "no_copy_hint": "Le vote qui l’utilise en aura sa propre copie",
-      "not_published": "Pas encore publié",
-      "opens": "Ouvre le {{date}}",
+      "no_copy_new": "Un vote qui l'utilise reçoit une nouvelle liste électorale basée sur celle-ci",
+      "not_scheduled": "Pas encore programmé",
+      "not_scheduled_hint": "Vous fixez les dates en modifiant le vote",
+      "opens_at": "Ouverture le {{date}} à {{at}}",
       "people": "Personnes",
       "ready_any": "{{ready}} par e-mail ou SMS",
+      "see_who": "Voir qui",
       "show_them": "Les afficher",
-      "sign_in": "Connexion",
-      "they_type": "Ils saisissent aussi : {{details}}",
+      "source": {
+        "everyone": "Tous vos membres",
+        "everyone_draft": "Les membres ajoutés avant la publication peuvent aussi voter",
+        "everyone_live": "Les membres que vous ajoutez peuvent aussi voter",
+        "from_saved": "Depuis la liste électorale enregistrée « {{name}} »",
+        "from_vote": "Depuis le vote « {{name}} »",
+        "label": "D'où vient la liste",
+        "members_copy": "Une copie de vos membres",
+        "members_copy_hint": "Les membres ajoutés ensuite n'y figurent pas",
+        "picked": "Des personnes choisies une à une",
+        "picked_on": "Choisies le {{date}}",
+        "shared": "La liste électorale enregistrée « {{name}} »",
+        "shared_hint": "Ses modifications s'appliquent à ce vote",
+        "snapshot": "Vos membres au moment de la publication",
+        "snapshot_closed": "Figée à la publication",
+        "snapshot_on": "Vos membres au {{date}}",
+        "snapshot_open": "Vous pouvez encore ajouter et retirer des membres de cette liste"
+      },
       "used_more_one": "Et 1 autre vote : les modifications faites ici l'atteignent",
       "used_more_many": "Et {{count}} autres votes : les modifications faites ici les atteignent",
       "used_more_other": "Et {{count}} autres votes : les modifications faites ici les atteignent",
       "used_reach": "Les modifications faites ici atteignent ce vote",
-      "voters": "Électeurs",
-      "voting": "Vote"
+      "weighted": "Les votes comptent selon le poids de vote",
+      "who": "Qui peut voter"
     },
     "filter": {
       "unreachable_one": "Sans code possible · {{count}}",
@@ -251,9 +422,6 @@
     "open_draft": "Ouvrir le brouillon",
     "open_in_editor": "Ouvrir dans l'éditeur",
     "open_vote": "Ouvrir le vote",
-    "people": {
-      "at_close": "{{unit}} à la clôture"
-    },
     "picker": {
       "already_in": "Déjà inscrite",
       "search": "Rechercher dans vos membres",
@@ -334,8 +502,7 @@
     },
     "source": {
       "everyone": "Tout le monde : les membres que vous ajoutez plus tard peuvent aussi voter.",
-      "follows_everyone": "Ce vote suit « Tout le monde » : les membres que vous ajoutez peuvent aussi y voter.",
-      "follows_everyone_live": "Ce vote suit « Tout le monde » : les membres que vous ajoutez peuvent aussi y voter. Retirer quelqu'un ici le retire seulement de ce vote.",
+      "everyone_remove": "Retirer quelqu'un ici le retire seulement de ce vote.",
       "legacy_saved": "Ce vote suit la liste électorale enregistrée « {{name}} », donc ses modifications s'y appliquent aussi. Les modifications faites ici ne concernent que ce vote.",
       "saved": "Une liste électorale enregistrée que vous pouvez réutiliser dans vos votes.",
       "selected": "Personnes choisies une à une pour ce vote.",
@@ -346,10 +513,8 @@
       "title": "Utilisée par"
     },
     "vote_card": {
-      "people": "Personnes issues de",
-      "snapshot_note": "Cette liste électorale est une copie de tous vos membres au moment de la publication du vote. Vous pouvez ajouter et retirer des personnes dans cette liste électorale. Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres.",
-      "snapshot_note_on": "Cette liste électorale est une copie de tous vos membres au {{date}}, le jour de la publication du vote. Vous pouvez ajouter et retirer des personnes dans cette liste électorale. Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres.",
-      "weighted": "Pondéré par membre"
+      "snapshot_note": "Cette liste a été créée à partir de votre liste de membres telle qu'elle était lors de la publication du vote. Vous pouvez encore y ajouter ou en retirer des personnes. Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres.",
+      "snapshot_note_on": "Cette liste a été créée à partir de votre liste de membres telle qu'elle était le {{date}}, lors de la publication du vote. Vous pouvez encore y ajouter ou en retirer des personnes. Corriger les informations de quelqu'un les modifie aussi dans votre liste de membres."
     }
   },
   "census_size": "Nombre d'inscrits",
@@ -423,6 +588,9 @@
       "draft": "Brouillon"
     },
     "unit": {
+      "members_one": "membre",
+      "members_many": "membres",
+      "members_other": "membres",
       "people_one": "personne",
       "people_many": "personnes",
       "people_other": "personnes",
@@ -1175,6 +1343,9 @@
     "hidden": "{{label}} masqué"
   },
   "memberbase": {
+    "activity": {
+      "title": "Activité"
+    },
     "add_person": "Ajouter une personne",
     "censuses": {
       "title": "Listes électorales"
@@ -2056,21 +2227,15 @@
         "submit_other": "Utiliser {{formattedCount}} personnes",
         "title": "Choisir qui peut voter"
       },
-      "copy_everyone": {
-        "button": "Modifier cette liste",
-        "confirm": "Lui donner sa propre liste",
-        "description": "Ce vote aura sa propre liste avec tous vos membres tels qu'ils sont maintenant, et vous pourrez ajouter ou retirer des personnes. Ensuite, les nouveaux membres n'y entreront plus d'eux-mêmes.",
-        "title": "Modifier cette liste ?"
-      },
       "error": "Impossible de modifier qui peut voter",
       "error_detail": "Rien n'a changé. Réessayez dans un instant.",
       "error_empty": "Il n'y a personne à copier",
       "error_stale": "Ce brouillon a été modifié ailleurs. Rechargez la page et réessayez.",
       "everyone": {
-        "description_one": "Votre unique membre. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
-        "description_many": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
-        "description_other": "Tous les {{formattedCount}} membres. Toute personne ajoutée avant la publication est incluse ; ensuite, vous ajoutez vous-même les nouvelles personnes au vote.",
-        "title": "Tout le monde"
+        "all_one": "{{formattedCount}} membre de votre organisation",
+        "all_many": "Les {{formattedCount}} membres de votre organisation",
+        "all_other": "Les {{formattedCount}} membres de votre organisation",
+        "new_census": "Une nouvelle liste électorale est créée avec tous les membres de votre organisation. Vous pourrez ensuite y ajouter ou en retirer des membres."
       },
       "go_to_members": "Aller à Membres",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2106,21 +2271,21 @@
         "start_over": "Recommencer"
       },
       "previous": {
-        "card": "Comme un vote précédent",
         "description": "Copier qui pouvait voter.",
-        "hint": "Ce vote reçoit sa propre copie des personnes qui pouvaient y voter.",
+        "new_census": "Une nouvelle liste électorale est créée avec les personnes qui pouvaient y voter.",
         "no_list": "Ses personnes ont été choisies une à une : il n'y a pas de liste à copier.",
         "none": "Il n'y a pas encore d'autres votes.",
+        "reuse": "Réutiliser la liste électorale d'un vote précédent",
         "title": "Comme un vote précédent"
       },
       "reload": "Recharger",
       "saved": {
-        "after_name": "Elle reçoit sa propre copie dès que le vote a un nom.",
-        "description": "Ce vote reçoit sa propre copie.",
+        "based_on": "Une nouvelle liste électorale est créée à partir de celle-ci.",
+        "created_after_name": "La nouvelle liste électorale est créée dès que le vote a un nom.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Choisir une liste électorale enregistrée",
         "select": "Liste électorale enregistrée",
-        "title": "D'une liste électorale enregistrée"
+        "short": "Liste électorale enregistrée"
       },
       "sheet_title": "Liste électorale de ce vote",
       "source": {
@@ -2706,7 +2871,6 @@
   "vote_overwrite": "Modification du vote",
   "voter_anonymity": "Anonymat des électeurs",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Ajoutez une couche de sécurité supplémentaire en exigeant des électeurs qu'ils vérifient leur identité",
     "2fa_email": "<email /> Vérification par e-mail",
     "2fa_email_description": "Les électeurs recevront un code de vérification par e-mail",
@@ -2718,13 +2882,19 @@
     "2fa_sms_description": "Les électeurs recevront un code de vérification par SMS",
     "2fa_voter_choice": "<email /> ou <phone /> Choix de l'électeur",
     "2fa_voter_choice_description": "Les électeurs peuvent choisir leur méthode de vérification préférée",
-    "anonymity": "Anonymat du bulletin : {{ mode }}",
     "button": {
-      "configure": "Configurer l'authentification des électeurs",
-      "edit": "Modifier l'authentification des électeurs"
+      "set_up_sign_in": "Configurer la connexion des électeurs"
+    },
+    "card": {
+      "code": "Un code à usage unique par {{channel}}",
+      "edit": "Modifier",
+      "intro": "Choisissez ce que les électeurs saisissent pour prouver leur identité, et s'ils reçoivent aussi un code.",
+      "then": "Ensuite",
+      "they_get": "Ils reçoivent",
+      "they_type": "Ils saisissent",
+      "title": "Comment les électeurs se connectent"
     },
     "configured": "Authentification des électeurs configurée",
-    "configured_auth": "Authentification des électeurs",
     "credentials": "Identifiants",
     "description": "Définissez la manière dont les électeurs s'authentifieront pour participer à ce processus de vote.",
     "email": "Par vérification par e-mail",

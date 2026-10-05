@@ -34,6 +34,7 @@ const Members = lazy(() => import('~elements/dashboard/memberbase/members'))
 const Censuses = lazy(() => import('~elements/dashboard/memberbase/censuses'))
 const Census = lazy(() => import('~elements/dashboard/memberbase/census'))
 const VoteCensus = lazy(() => import('~elements/dashboard/memberbase/vote-census'))
+const MembersActivity = lazy(() => import('~elements/dashboard/memberbase/activity'))
 
 // others
 const Dashboard = lazy(() => import('~elements/dashboard'))
@@ -228,6 +229,14 @@ export const useDashboardRoutes = () => {
                             element: (
                               <SuspenseLoader>
                                 <VoteCensus />
+                              </SuspenseLoader>
+                            ),
+                          },
+                          {
+                            path: Routes.dashboard.memberbase.activity,
+                            element: (
+                              <SuspenseLoader>
+                                <MembersActivity />
                               </SuspenseLoader>
                             ),
                           },

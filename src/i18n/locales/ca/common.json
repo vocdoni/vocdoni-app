@@ -22,6 +22,118 @@
     "view_active_votes": "Mostra les votacions actives",
     "waiting_title": "Esperant la confirmació de la transacció..."
   },
+  "activity": {
+    "actor": {
+      "api_key": "Clau d'API",
+      "system": "Vocdoni"
+    },
+    "census": {
+      "all": "Tots els censos",
+      "filter_by": "Mostra només {{name}}",
+      "in_votes": "En votacions",
+      "many_one": "{{count}} cens",
+      "many_many": "{{count}} censos",
+      "many_other": "{{count}} censos",
+      "many_title": "Aquest canvi ha arribat a:",
+      "no_match": "Cap cens coincideix",
+      "none": "Només la llista de membres",
+      "picker": "Cens",
+      "picker_label": "Cens: {{name}}",
+      "saved": "Desats",
+      "search": "Cerca un cens o una votació"
+    },
+    "change": {
+      "empty": "buit",
+      "hidden": "Ha canviat, ocult per privadesa"
+    },
+    "changes_hide_one": "Amaga {{count}} canvi",
+    "changes_hide_many": "Amaga {{count}} canvis",
+    "changes_hide_other": "Amaga {{count}} canvis",
+    "changes_show_one": "Mostra {{count}} canvi",
+    "changes_show_many": "Mostra {{count}} canvis",
+    "changes_show_other": "Mostra {{count}} canvis",
+    "day": {
+      "today": "Avui · {{date}}",
+      "undated": "Data encara no registrada",
+      "undated_hint": "Les importacions tindran data aviat",
+      "yesterday": "Ahir · {{date}}"
+    },
+    "during_voting": "Durant la votació",
+    "empty": "Encara no hi ha res. Les importacions i les votacions apareixeran aquí a mesura que passin.",
+    "empty_filtered": "Encara no hi ha res registrat aquí.",
+    "error": "No hem pogut carregar el registre de canvis. Torna-ho a provar d'aquí a una estona.",
+    "event": {
+      "census_details_changed": "Dades del cens canviades",
+      "census_from_everyone": "Cens copiat de tots els teus membres",
+      "exported": "Registre de canvis exportat",
+      "group_deleted": "Cens <strong>{{name}}</strong> esborrat",
+      "import_one": "{{number}} membre importat",
+      "import_many": "{{number}} membres importats",
+      "import_other": "{{number}} membres importats",
+      "member_added": "<strong>{{name}}</strong> afegit als membres",
+      "member_deleted": "<strong>{{name}}</strong> esborrat dels membres",
+      "member_details_changed": "Dades de <strong>{{name}}</strong> canviades",
+      "people_added_one": "{{number}} persona afegida",
+      "people_added_many": "{{number}} persones afegides",
+      "people_added_other": "{{number}} persones afegides",
+      "people_removed_one": "{{number}} persona eliminada",
+      "people_removed_many": "{{number}} persones eliminades",
+      "people_removed_other": "{{number}} persones eliminades",
+      "saved_created": "Cens desat creat",
+      "saved_created_with_one": "Cens desat creat amb {{number}} persona",
+      "saved_created_with_many": "Cens desat creat amb {{number}} persones",
+      "saved_created_with_other": "Cens desat creat amb {{number}} persones",
+      "vote_created": "Votació creada",
+      "vote_published": "Votació publicada",
+      "voting_closed": "Votació tancada",
+      "voting_opened": "Votació oberta"
+    },
+    "export": "Exporta CSV",
+    "export_error": "No hem pogut exportar el registre de canvis",
+    "field": {
+      "other": "Informació addicional",
+      "title": "Nom",
+      "unknown": "Una dada"
+    },
+    "filter": {
+      "census_changes": "Canvis al cens",
+      "everything": "Tot",
+      "imports": "Importacions",
+      "label": "Filtra el registre de canvis",
+      "people": "Persones",
+      "votes": "Votacions"
+    },
+    "history": {
+      "census_created": "Cens creat",
+      "census_empty": "Encara no ha passat res en aquest cens.",
+      "census_title": "Historial",
+      "copied_into": "Copiat a '{{name}}'",
+      "empty": "Encara no s'ha registrat cap canvi.",
+      "error": "No hem pogut carregar l'historial.",
+      "person_title": "Historial",
+      "see_in_activity": "Veure a Activitat",
+      "soon": "Aviat veuràs aquí els canvis a les seves persones, amb qui els ha fet.",
+      "voting_open": "Mentre la votació era oberta"
+    },
+    "imports": {
+      "added_one": "{{added}} de {{total}} membre importat",
+      "added_many": "{{added}} de {{total}} membres importats",
+      "added_other": "{{added}} de {{total}} membres importats",
+      "problems_one": "{{count}} fila tenia problemes",
+      "problems_many": "{{count}} files tenien problemes",
+      "problems_other": "{{count}} files tenien problemes",
+      "status": {
+        "completed": "Fet",
+        "failed": "Ha fallat",
+        "pending": "Important"
+      }
+    },
+    "newer": "Més recents",
+    "older": "Més antics",
+    "show_everything": "Mostra-ho tot",
+    "test_vote": "Votació de prova",
+    "untitled": "Sense títol"
+  },
   "add_new_org": "Afegeix una nova organització",
   "additional_actions": "Accions addicionals",
   "all_processes": "Tots",
@@ -182,6 +294,16 @@
       "error": "No s'ha eliminat el cens",
       "title": "Vols eliminar «{{name}}»?"
     },
+    "delete_vote": {
+      "blocked": "Aquesta votació està publicada i encara no ha acabat, així que no se'n pot eliminar el cens.",
+      "button": "Elimina el cens",
+      "canceled": "La votació continua cancel·lada. Se n'elimina la llista de qui hi podia votar, i no es pot desfer.",
+      "confirm": "Elimina el cens",
+      "draft": "L'esborrany es queda. Abans de publicar-lo, torna a triar qui pot votar.",
+      "ended": "La votació i els seus resultats es queden tal com estan, però se n'elimina la llista de qui hi podia votar. Ja no podràs consultar qui hi podia votar, i no es pot desfer.",
+      "title": "Vols eliminar el cens de «{{name}}»?",
+      "understand": "Entenc que s'eliminarà el registre de qui podia votar en aquesta votació"
+    },
     "edit": {
       "error": "No s'han desat els canvis",
       "name_required": "Afegeix un nom",
@@ -197,30 +319,79 @@
       "progress": "S'estan preparant {{done}} de {{total}}…"
     },
     "facts": {
-      "all_ready": "Tothom pot rebre un codi",
       "can_get_code": "Poden rebre un codi",
-      "closed": "Tancada el {{date}}",
-      "closes": "Tanca el {{date}}",
+      "channel": {
+        "email": "correu electrònic",
+        "email_or_sms": "correu electrònic o SMS",
+        "sms": "SMS"
+      },
+      "closed_at": "Tancada el {{date}} a les {{at}}",
+      "closes_at": "Tanca el {{date}} a les {{at}}",
+      "code_all": "Tothom pot rebre el codi per {{channel}}",
+      "code_missing_one": "1 no té {{missing}}, així que no pot rebre el codi",
+      "code_missing_many": "{{formattedCount}} no tenen {{missing}}, així que no poden rebre el codi",
+      "code_missing_other": "{{formattedCount}} no tenen {{missing}}, així que no poden rebre el codi",
       "copied_more_one": "I 1 votació més",
       "copied_more_many": "I {{count}} votacions més",
       "copied_more_other": "I {{count}} votacions més",
       "dates": "{{start}} – {{end}}",
-      "draft": "Un esborrany: les dates es posen a l'editor",
+      "dates_label": "Dates de votació",
+      "field": {
+        "birth_date": "la data de naixement",
+        "email": "el correu electrònic",
+        "member_number": "el número de soci",
+        "name": "el nom",
+        "national_id": "el document d'identitat",
+        "phone": "el número de mòbil",
+        "surname": "els cognoms"
+      },
+      "get_in": {
+        "code_only": "Amb un codi d'un sol ús per {{channel}}",
+        "confirm": "Confirmen {{details}}",
+        "label": "Com accedeixen els votants",
+        "then_code": "Després, un codi d'un sol ús per {{channel}}"
+      },
+      "members_at_close_one": "membre en tancar",
+      "members_at_close_many": "membres en tancar",
+      "members_at_close_other": "membres en tancar",
+      "missing": {
+        "email": "correu electrònic",
+        "email_or_mobile": "correu electrònic ni número de mòbil",
+        "mobile": "número de mòbil"
+      },
       "no_copy": "Encara cap votació",
-      "no_copy_hint": "La votació que el faci servir en tindrà una còpia pròpia",
-      "not_published": "Encara no publicada",
-      "opens": "S'obre el {{date}}",
+      "no_copy_new": "Una votació que el faci servir rep un cens nou basat en aquest",
+      "not_scheduled": "Encara sense programar",
+      "not_scheduled_hint": "Les dates les tries quan edites la votació",
+      "opens_at": "S'obre el {{date}} a les {{at}}",
       "people": "Persones",
       "ready_any": "{{ready}} per correu o SMS",
+      "see_who": "Mostra qui són",
       "show_them": "Mostra-les",
-      "sign_in": "Inici de sessió",
-      "they_type": "També escriuen: {{details}}",
+      "source": {
+        "everyone": "Tots els teus membres",
+        "everyone_draft": "Els membres que afegeixis abans de publicar també poden votar",
+        "everyone_live": "Els membres que afegeixis també poden votar",
+        "from_saved": "Del cens desat «{{name}}»",
+        "from_vote": "De la votació «{{name}}»",
+        "label": "D'on surt el cens",
+        "members_copy": "Una còpia dels teus membres",
+        "members_copy_hint": "Els membres que afegeixis després no hi són",
+        "picked": "Persones que has triat una a una",
+        "picked_on": "Triades el {{date}}",
+        "shared": "El cens desat «{{name}}»",
+        "shared_hint": "Els canvis que s'hi facin arriben a aquesta votació",
+        "snapshot": "Els teus membres quan vas publicar",
+        "snapshot_closed": "Fixat quan vas publicar",
+        "snapshot_on": "Els teus membres del {{date}}",
+        "snapshot_open": "Encara pots afegir i treure membres d'aquest cens"
+      },
       "used_more_one": "I 1 votació més: els canvis d'aquí hi arriben",
       "used_more_many": "I {{count}} votacions més: els canvis d'aquí hi arriben",
       "used_more_other": "I {{count}} votacions més: els canvis d'aquí hi arriben",
       "used_reach": "Els canvis d'aquí arriben a aquesta votació",
-      "voters": "Votants",
-      "voting": "Votació"
+      "weighted": "Cada vot compta segons el seu pes",
+      "who": "Qui pot votar"
     },
     "filter": {
       "unreachable_one": "No poden rebre codi · {{count}}",
@@ -251,9 +422,6 @@
     "open_draft": "Obre l'esborrany",
     "open_in_editor": "Obre a l'editor",
     "open_vote": "Obre la votació",
-    "people": {
-      "at_close": "{{unit}} al tancament"
-    },
     "picker": {
       "already_in": "Ja hi és",
       "search": "Cerca als teus membres",
@@ -334,8 +502,7 @@
     },
     "source": {
       "everyone": "Tothom: els membres que afegeixis més endavant també poden votar.",
-      "follows_everyone": "Aquesta votació segueix «Tothom»: els membres que afegeixis també hi poden votar.",
-      "follows_everyone_live": "Aquesta votació segueix «Tothom»: els membres que afegeixis també hi poden votar. Si treus algú aquí, només surt d'aquesta votació.",
+      "everyone_remove": "Si treus algú d'aquí, només el treus d'aquesta votació.",
       "legacy_saved": "Aquesta votació segueix el cens desat «{{name}}», així que els canvis que s'hi facin també arriben aquí. Els canvis que facis aquí només afecten aquesta votació.",
       "saved": "Un cens desat que pots reutilitzar a les teves votacions.",
       "selected": "Persones triades una a una per a aquesta votació.",
@@ -346,10 +513,8 @@
       "title": "Fet servir a"
     },
     "vote_card": {
-      "people": "Persones de",
-      "snapshot_note": "Aquest cens és una còpia de tots els teus membres de quan vas publicar la votació. En aquest cens hi pots afegir i treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
-      "snapshot_note_on": "Aquest cens és una còpia de tots els teus membres del {{date}}, el dia que vas publicar la votació. En aquest cens hi pots afegir i treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
-      "weighted": "Ponderat per cada membre"
+      "snapshot_note": "Per crear aquest cens es va utilitzar la llista dels teus membres tal com eren quan vas publicar la votació. Aquí encara hi pots afegir o treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres.",
+      "snapshot_note_on": "Per crear aquest cens es va utilitzar la llista dels teus membres tal com eren el {{date}}, quan vas publicar la votació. Aquí encara hi pots afegir o treure persones. Si corregeixes les dades d'algú, també canvien a la teva llista de membres."
     }
   },
   "census_size": "Mida del cens",
@@ -423,6 +588,9 @@
       "draft": "Esborrany"
     },
     "unit": {
+      "members_one": "membre",
+      "members_many": "membres",
+      "members_other": "membres",
       "people_one": "persona",
       "people_many": "persones",
       "people_other": "persones",
@@ -1175,6 +1343,9 @@
     "hidden": "{{label}} ocult"
   },
   "memberbase": {
+    "activity": {
+      "title": "Activitat"
+    },
     "add_person": "Afegeix una persona",
     "censuses": {
       "title": "Censos"
@@ -2056,21 +2227,15 @@
         "submit_other": "Usa {{formattedCount}} persones",
         "title": "Tria qui pot votar"
       },
-      "copy_everyone": {
-        "button": "Edita aquesta llista",
-        "confirm": "Fes-li una llista pròpia",
-        "description": "Aquesta votació tindrà la seva pròpia llista amb tots els teus membres tal com són ara, i hi podràs afegir o treure persones. A partir d'aleshores, els membres nous no s'hi afegiran sols.",
-        "title": "Vols editar aquesta llista?"
-      },
       "error": "No s'ha pogut canviar qui pot votar",
       "error_detail": "No ha canviat res. Torna-ho a provar d'aquí a un moment.",
       "error_empty": "No hi ha ningú per copiar",
       "error_stale": "Aquest esborrany s'ha canviat des d'un altre lloc. Recarrega la pàgina i torna-ho a provar.",
       "everyone": {
-        "description_one": "El teu únic membre. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
-        "description_many": "Tots els {{formattedCount}} membres. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
-        "description_other": "Tots els {{formattedCount}} membres. Qui afegeixis abans de publicar hi serà; després, les persones noves les afegeixes tu a la votació.",
-        "title": "Tothom"
+        "all_one": "L'únic membre de la teva organització",
+        "all_many": "Tots els {{formattedCount}} membres de la teva organització",
+        "all_other": "Tots els {{formattedCount}} membres de la teva organització",
+        "new_census": "Es crea un cens nou amb tots els membres de la teva organització. Més endavant hi pots afegir o treure membres."
       },
       "go_to_members": "Ves a Membres",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2106,21 +2271,21 @@
         "start_over": "Torna a començar"
       },
       "previous": {
-        "card": "Igual que una votació anterior",
         "description": "Copia qui hi podia votar.",
-        "hint": "Aquesta votació tindrà la seva pròpia còpia de les persones que hi podien votar.",
+        "new_census": "Es crea un cens nou amb les persones que hi podien votar.",
         "no_list": "Les seves persones es van triar una a una, així que no hi ha cap llista per copiar.",
         "none": "Encara no hi ha cap altra votació.",
+        "reuse": "Reutilitza el cens d'una votació anterior",
         "title": "Igual que una votació anterior"
       },
       "reload": "Torna a carregar",
       "saved": {
-        "after_name": "En tindrà la seva pròpia còpia quan la votació tingui nom.",
-        "description": "Aquesta votació tindrà la seva pròpia còpia.",
+        "based_on": "Es crea un cens nou a partir d'aquest.",
+        "created_after_name": "El cens nou es crea tan bon punt la votació té un nom.",
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Tria un cens desat",
         "select": "Cens desat",
-        "title": "D'un cens desat"
+        "short": "Cens desat"
       },
       "sheet_title": "Cens d'aquesta votació",
       "source": {
@@ -2706,7 +2871,6 @@
   "vote_overwrite": "Sobreescriptura de la votació",
   "voter_anonymity": "Anonimat del votant",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Afegeix una capa extra de seguretat requerint que els votants verifiquin la seva identitat",
     "2fa_email": "<email /> Verificació per correu electrònic",
     "2fa_email_description": "Els votants rebran un codi de verificació per correu electrònic",
@@ -2718,13 +2882,19 @@
     "2fa_sms_description": "Els votants rebran un codi de verificació per SMS",
     "2fa_voter_choice": "<email /> o <phone /> Elecció del votant",
     "2fa_voter_choice_description": "Els votants poden escollir el mètode de verificació que prefereixin",
-    "anonymity": "Anonimat del vot: {{ mode }}",
     "button": {
-      "configure": "Configura l'autenticació dels votants",
-      "edit": "Edita l'autenticació dels votants"
+      "set_up_sign_in": "Configura l'inici de sessió dels votants"
+    },
+    "card": {
+      "code": "Un codi d'un sol ús per {{channel}}",
+      "edit": "Edita",
+      "intro": "Tria què escriuen els votants per demostrar qui són i si també reben un codi.",
+      "then": "Després",
+      "they_get": "Reben",
+      "they_type": "Escriuen",
+      "title": "Com inicien sessió els votants"
     },
     "configured": "Autenticació de votants configurada",
-    "configured_auth": "Autenticació configurada",
     "credentials": "Credencials",
     "description": "Configura com s'autenticaran els votants per participar en aquest procés de votació.",
     "email": "Via verificació per correu electrònic",

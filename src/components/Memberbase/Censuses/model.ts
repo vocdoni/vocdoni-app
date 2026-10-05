@@ -236,3 +236,32 @@ export const resolveCensus = ({
     copiedInto: [],
   }
 }
+
+/**
+ * Whether a vote's census can be deleted from its page, and how firmly to ask:
+ * - `none`: nothing to delete here (the vote follows Everyone or a group it doesn't own);
+ * - `blocked`: the vote is published and not over (scheduled, live or paused): its census stays;
+ * - `draft` / `canceled`: a plain confirmation;
+ * - `ended`: a second, explicit confirmation, since it deletes the record of who could vote.
+ */
+export type VoteCensusDeletion = 'none' | 'blocked' | 'draft' | 'canceled' | 'ended'
+
+export const voteCensusDeletion = ({
+  kind,
+  groupId,
+  process,
+  state,
+  markers,
+}: {
+  kind: CensusKind
+  groupId?: string
+  process?: VotingProcessResponse
+  state?: VoteState
+  markers: Map<string, VoteGroupMarker>
+}): VoteCensusDeletion => {
+  if (kind !== 'vote' || !groupId || !process) return 'none'
+  // Only a group this vote owns: never a saved census or another vote's census it still follows
+  if (markers.get(groupId)?.processId !== process.id) return 'none'
+  if (state === 'draft' || state === 'canceled' || state === 'ended') return state
+  return 'blocked'
+}

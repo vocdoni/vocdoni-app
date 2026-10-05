@@ -35,6 +35,8 @@ export enum ApiEndpoints {
   OrganizationSubscription = 'organizations/{address}/subscription',
   OrganizationsSupport = 'organizations/{address}/ticket',
   OrganizationMeta = 'organizations/{address}/meta',
+  // The activity log (backend ticket T1), read only with AppEnv ACTIVITY_LOG on
+  OrganizationActivity = 'organizations/{address}/activity',
   OrganizationMembers = 'organizations/{address}/members',
   OrganizationGroups = 'organizations/{address}/groups',
   OrganizationGroup = 'organizations/{address}/groups/{groupId}',

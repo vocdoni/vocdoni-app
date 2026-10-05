@@ -80,14 +80,30 @@ describe('VoterAuthentication', () => {
     })
   })
 
-  it('shows Configure button when census is null', () => {
+  it('offers to set up the sign-in when there is none', () => {
     render(<TestForm initialCensus={null} />)
-    expect(screen.getByRole('button', { name: /configure voter authentication/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Set up voter sign-in' })).toBeInTheDocument()
   })
 
-  it('shows Edit button when census is already configured', () => {
+  it('says how voters sign in in plain words', () => {
+    render(
+      <TestForm
+        initialCensus={{ credentials: ['memberNumber', 'birthDate'], use2FA: true, use2FAMethod: 'email' }}
+        anonymousVoting
+      />
+    )
+    expect(screen.getByText('How voters sign in')).toBeInTheDocument()
+    expect(screen.getByText('They type')).toBeInTheDocument()
+    expect(screen.getByText('Member Number, Birth Date')).toBeInTheDocument()
+    expect(screen.getByText('A one-time code by email')).toBeInTheDocument()
+    // No jargon badge, and the ballot's anonymity is left to its own setting
+    expect(screen.queryByText('2FA')).toBeNull()
+    expect(screen.queryByText(/Ballot anonymity/)).toBeNull()
+  })
+
+  it('offers to edit a sign-in already set up', () => {
     render(<TestForm />)
-    expect(screen.getByRole('button', { name: /edit voter authentication/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
   })
 
   it('Confirm synchronously writes credentials and 2FA config to form.census', async () => {
@@ -99,7 +115,7 @@ describe('VoterAuthentication', () => {
     render(<TestForm initialCensus={defaultCensus} />)
 
     // Open modal (shows "Edit" when census is already configured)
-    await user.click(screen.getByRole('button', { name: /voter authentication/i }))
+    await user.click(screen.getByRole('button', { name: 'Edit' }))
 
     // Step 1 → step 2
     await user.click(await screen.findByRole('button', { name: /next/i }))
@@ -137,7 +153,7 @@ describe('VoterAuthentication', () => {
     const user = userEvent.setup()
     render(<TestForm anonymousVoting />)
 
-    await user.click(screen.getByRole('button', { name: /voter authentication/i }))
+    await user.click(screen.getByRole('button', { name: 'Edit' }))
     await user.click(await screen.findByRole('button', { name: /next/i }))
     await user.click(screen.getByRole('button', { name: /next/i }))
 
@@ -155,7 +171,7 @@ describe('VoterAuthentication', () => {
     const user = userEvent.setup()
     render(<TestForm initialCensus={defaultCensus} />)
 
-    await user.click(screen.getByRole('button', { name: /voter authentication/i }))
+    await user.click(screen.getByRole('button', { name: 'Edit' }))
     await user.click(await screen.findByRole('button', { name: /next/i }))
     await user.click(screen.getByRole('checkbox', { name: /enable two-factor authentication/i }))
     await user.click(screen.getByRole('button', { name: /next/i }))

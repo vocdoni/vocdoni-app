@@ -47,6 +47,9 @@ export const censusSourceLabel = (t: TFunction, source: CensusSource, day?: (iso
 export const votersUnit = (t: TFunction, count: number) =>
   t('censuses.unit.voters', { count, defaultValue_one: 'voter', defaultValue_other: 'voters' })
 
+export const membersUnit = (t: TFunction, count: number) =>
+  t('censuses.unit.members', { count, defaultValue_one: 'member', defaultValue_other: 'members' })
+
 export const peopleUnit = (t: TFunction, count: number) =>
   t('censuses.unit.people', { count, defaultValue_one: 'person', defaultValue_other: 'people' })
 
