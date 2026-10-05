@@ -2235,6 +2235,16 @@
       "tooltip": "Aukeratu boto-emaile hautagarri guztiek pisu bera duten ala botoak kide-oinarriko «Boto-pisua (Pisua)» eremuaren arabera haztatzen diren.",
       "weighted": "Boto-pisuan oinarritutako haztatzea"
     },
+    "who": {
+      "can_vote_one": "bozka dezake.",
+      "can_vote_other": "bozka dezakete.",
+      "change": "Aldatu nork bozka dezakeen: {{who}}",
+      "code_only": "Aldi bakarreko kode bat jasotzen dute <b>{{channel}}</b> bidez.",
+      "confirm": "Beren <b>{{details}}</b> baieztatzen dute.",
+      "confirm_code": "Beren <b>{{details}}</b> baieztatzen dute, eta aldi bakarreko kode bat jasotzen dute <b>{{channel}}</b> bidez.",
+      "from_saved_one": "«{{name}}» erroldeko pertsona 1",
+      "from_saved_other": "«{{name}}» erroldeko {{formattedCount}} pertsona"
+    },
     "youtube": {
       "accordion_title": "Erantsi bideoa (aukerakoa)",
       "title": "Zuzeneko bideo-transmisioa"
@@ -2778,7 +2788,9 @@
     "anonymity": "Botoaren anonimotasuna: {{ mode }}",
     "button": {
       "configure": "Konfiguratu hautesleen autentifikazioa",
-      "edit": "Editatu hautesleen autentifikazioa"
+      "edit": "Editatu hautesleen autentifikazioa",
+      "edit_sign_in": "Editatu botogileen saio-hasiera",
+      "set_up_sign_in": "Konfiguratu botogileen saio-hasiera"
     },
     "configured": "Hautesleen autentifikazioa konfiguratuta",
     "configured_auth": "Hautesleen autentifikazioa",

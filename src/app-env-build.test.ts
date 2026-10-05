@@ -35,6 +35,12 @@ describe('buildAppEnv', () => {
     expect(buildAppEnv({ SHOW_ORG_LOGO: '1' }).SHOW_ORG_LOGO).toBe(false)
   })
 
+  it('only brings back the classic census step for the exact string "true"', () => {
+    expect(buildAppEnv({}).CENSUS_STEP_CLASSIC).toBe(false)
+    expect(buildAppEnv({ CENSUS_STEP_CLASSIC: 'true' }).CENSUS_STEP_CLASSIC).toBe(true)
+    expect(buildAppEnv({ CENSUS_STEP_CLASSIC: '1' }).CENSUS_STEP_CLASSIC).toBe(false)
+  })
+
   it('only enables ACTIVITY_LOG for the exact string "true"', () => {
     expect(buildAppEnv({}).ACTIVITY_LOG).toBe(false)
     expect(buildAppEnv({ ACTIVITY_LOG: 'true' }).ACTIVITY_LOG).toBe(true)

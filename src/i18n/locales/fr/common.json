@@ -2341,6 +2341,18 @@
       "tooltip": "Choisissez si chaque électeur éligible dispose d'une voix égale ou si les votes sont pondérés selon le champ « Poids du vote » de la base de membres.",
       "weighted": "Pondéré par poids du vote"
     },
+    "who": {
+      "can_vote_one": "peut voter.",
+      "can_vote_many": "peuvent voter.",
+      "can_vote_other": "peuvent voter.",
+      "change": "Modifier qui peut voter : {{who}}",
+      "code_only": "Ils reçoivent un code à usage unique par <b>{{channel}}</b>.",
+      "confirm": "Ils confirment <b>{{details}}</b>.",
+      "confirm_code": "Ils confirment <b>{{details}}</b> et reçoivent un code à usage unique par <b>{{channel}}</b>.",
+      "from_saved_one": "{{formattedCount}} personne de « {{name}} »",
+      "from_saved_many": "{{formattedCount}} personnes de « {{name}} »",
+      "from_saved_other": "{{formattedCount}} personnes de « {{name}} »"
+    },
     "youtube": {
       "accordion_title": "Joindre une vidéo (facultatif)",
       "title": "Diffusion vidéo en direct"
@@ -2886,7 +2898,9 @@
     "anonymity": "Anonymat du bulletin : {{ mode }}",
     "button": {
       "configure": "Configurer l'authentification des électeurs",
-      "edit": "Modifier l'authentification des électeurs"
+      "edit": "Modifier l'authentification des électeurs",
+      "edit_sign_in": "Modifier la connexion des électeurs",
+      "set_up_sign_in": "Configurer la connexion des électeurs"
     },
     "configured": "Authentification des électeurs configurée",
     "configured_auth": "Authentification des électeurs",

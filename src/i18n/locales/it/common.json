@@ -2341,6 +2341,18 @@
       "tooltip": "Definisce se tutti i votanti hanno lo stesso voto o se il voto è ponderato in base al campo \"Peso del voto\" della tua base di membri.",
       "weighted": "Ponderato in base al potere di voto del votante"
     },
+    "who": {
+      "can_vote_one": "può votare.",
+      "can_vote_many": "possono votare.",
+      "can_vote_other": "possono votare.",
+      "change": "Cambia chi può votare: {{who}}",
+      "code_only": "Ricevono un codice monouso via <b>{{channel}}</b>.",
+      "confirm": "Confermano <b>{{details}}</b>.",
+      "confirm_code": "Confermano <b>{{details}}</b> e ricevono un codice monouso via <b>{{channel}}</b>.",
+      "from_saved_one": "1 persona di «{{name}}»",
+      "from_saved_many": "{{formattedCount}} persone di «{{name}}»",
+      "from_saved_other": "{{formattedCount}} persone di «{{name}}»"
+    },
     "youtube": {
       "accordion_title": "Allega video (opzionale)",
       "title": "Video live streaming"
@@ -2886,7 +2898,9 @@
     "anonymity": "Anonimato del voto: {{ mode }}",
     "button": {
       "configure": "Configura Autenticazione Votante",
-      "edit": "Modifica Autenticazione Votante"
+      "edit": "Modifica Autenticazione Votante",
+      "edit_sign_in": "Modifica l'accesso dei votanti",
+      "set_up_sign_in": "Configura l'accesso dei votanti"
     },
     "configured": "Autenticazione dei votanti configurata",
     "configured_auth": "Autenticazione Votante",

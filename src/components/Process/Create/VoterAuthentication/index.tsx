@@ -19,7 +19,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuUnlink } from 'react-icons/lu'
+import { LuKeyRound, LuUnlink } from 'react-icons/lu'
 import { useAnonymityLabels } from '~components/Process/anonymityLabels'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
@@ -61,7 +61,11 @@ const useValidateCensus = () => {
   })
 }
 
-export const VoterAuthentication = () => {
+/**
+ * How voters sign in: a summary card and the button that opens the setup dialog. `compact` leaves the
+ * card out (the census sentence above already says it) and keeps only the button and its dialog.
+ */
+export const VoterAuthentication = ({ compact = false }: { compact?: boolean } = {}) => {
   const { t } = useTranslation()
   const toast = useToast()
   const mainForm = useFormContext<Process>()
@@ -188,7 +192,7 @@ export const VoterAuthentication = () => {
 
   return (
     <>
-      {census && (
+      {census && !compact && (
         <Flex p={4} direction='column' border='1px solid' borderColor='table.border' borderRadius='md' gap={2}>
           <Flex justify='space-between'>
             <Text fontWeight='semibold'>
@@ -230,13 +234,28 @@ export const VoterAuthentication = () => {
         }}
       >
         <Dialog.Trigger asChild>
-          <Button disabled={!groupId} colorPalette='gray' w='full'>
-            {census ? (
-              <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
-            ) : (
-              <Trans i18nKey='voter_auth.button.configure'>Configure Voter Authentication</Trans>
-            )}
-          </Button>
+          {compact ? (
+            <Button
+              disabled={!groupId}
+              size='sm'
+              w='full'
+              variant={census ? 'outline' : 'solid'}
+              colorPalette={census ? 'gray' : undefined}
+            >
+              <Icon as={LuKeyRound} />
+              {census
+                ? t('voter_auth.button.edit_sign_in', { defaultValue: 'Edit voter sign-in' })
+                : t('voter_auth.button.set_up_sign_in', { defaultValue: 'Set up voter sign-in' })}
+            </Button>
+          ) : (
+            <Button disabled={!groupId} colorPalette='gray' w='full'>
+              {census ? (
+                <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
+              ) : (
+                <Trans i18nKey='voter_auth.button.configure'>Configure Voter Authentication</Trans>
+              )}
+            </Button>
+          )}
         </Dialog.Trigger>
         <Portal>
           <Dialog.Backdrop />

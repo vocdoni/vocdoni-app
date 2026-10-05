@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CensusTypes } from '~components/Process/Census/CensusType'
+import { useAppEnv } from '~src/app-env'
 import { useAllGroups } from '~src/queries/groups'
 import { WhoCanVote } from '../Settings/WhoCanVote'
 import { VoterAuthentication } from '../VoterAuthentication'
@@ -25,6 +26,8 @@ const CensusCreation = () => {
   const { data: groups } = useAllGroups()
   // While a new census is being chosen, the sign-in summary would describe the one being replaced
   const [startingOver, setStartingOver] = useState(false)
+  // AppEnv `CENSUS_STEP_CLASSIC` brings back the cards and the full sign-in card
+  const compact = !useAppEnv().CENSUS_STEP_CLASSIC
 
   // Set default census type to Memberbase (Group) if not set
   useEffect(() => {
@@ -49,8 +52,8 @@ const CensusCreation = () => {
           },
         })}
       />
-      <WhoCanVote onStartingOverChange={setStartingOver} />
-      {!startingOver && <VoterAuthentication />}
+      <WhoCanVote onStartingOverChange={setStartingOver} compact={compact} />
+      {!startingOver && <VoterAuthentication compact={compact} />}
 
       <FieldRoot invalid={!!errors.census}>
         <Input

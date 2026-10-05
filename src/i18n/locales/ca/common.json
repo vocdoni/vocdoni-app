@@ -2341,6 +2341,18 @@
       "tooltip": "Defineix si tots els votants tenen el mateix vot o si es pondera segons el camp \"Pes del vot\" de la teva base de membres.",
       "weighted": "Ponderat pel poder de votació"
     },
+    "who": {
+      "can_vote_one": "pot votar.",
+      "can_vote_many": "poden votar.",
+      "can_vote_other": "poden votar.",
+      "change": "Canvia qui pot votar: {{who}}",
+      "code_only": "Reben un codi d'un sol ús per <b>{{channel}}</b>.",
+      "confirm": "Confirmen <b>{{details}}</b>.",
+      "confirm_code": "Confirmen <b>{{details}}</b> i reben un codi d'un sol ús per <b>{{channel}}</b>.",
+      "from_saved_one": "1 persona de «{{name}}»",
+      "from_saved_many": "{{formattedCount}} persones de «{{name}}»",
+      "from_saved_other": "{{formattedCount}} persones de «{{name}}»"
+    },
     "youtube": {
       "accordion_title": "Adjunta un vídeo (opcional)",
       "title": "Vídeo en directe"
@@ -2886,7 +2898,9 @@
     "anonymity": "Anonimat del vot: {{ mode }}",
     "button": {
       "configure": "Configura l'autenticació dels votants",
-      "edit": "Edita l'autenticació dels votants"
+      "edit": "Edita l'autenticació dels votants",
+      "edit_sign_in": "Edita l'accés dels votants",
+      "set_up_sign_in": "Configura l'accés dels votants"
     },
     "configured": "Autenticació de votants configurada",
     "configured_auth": "Autenticació configurada",

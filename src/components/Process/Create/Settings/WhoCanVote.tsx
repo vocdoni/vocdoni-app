@@ -14,10 +14,11 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
-import { LuCircleAlert, LuCircleCheck, LuUsers } from 'react-icons/lu'
+import { Trans, useTranslation } from 'react-i18next'
+import { LuChevronDown, LuCircleAlert, LuCircleCheck, LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router'
 import { CensusDetail } from '~components/Memberbase/Censuses/CensusDetail'
+import { codeChannel, detailsList } from '~components/Memberbase/Censuses/facts'
 import { copiedFromUnnamed, everyoneTitle } from '~components/Memberbase/Censuses/labels'
 import { Banner } from '~components/ui/Banner'
 import { Sheet } from '~components/ui/Sheet'
@@ -34,6 +35,7 @@ import { type CensusFacts, codeChannelsOf } from '../census/useCensusFacts'
 import type { Process } from '../common'
 import { useEditor } from '../editor-context'
 import { useDraftCensus } from '../useDraftCensus'
+import { getTwoFaFields } from '../VoterAuthentication/utils'
 
 export type CensusSourceChoice = 'everyone' | 'saved' | 'choose' | 'previous'
 
@@ -299,9 +301,15 @@ const TestPeopleWarning = ({
  */
 export const WhoCanVote = ({
   onStartingOverChange,
+  compact = false,
 }: {
   /** Told when the admin starts choosing a new census (and when they're done): nothing is chosen meanwhile */
   onStartingOverChange?: (startingOver: boolean) => void
+  /**
+   * Says who can vote and how they sign in as one sentence, and lists the sources (one per line) only
+   * when the admin changes them. Off, the four sources always show as cards.
+   */
+  compact?: boolean
 } = {}) => {
   const { t, i18n } = useTranslation()
   const toast = useToast()
@@ -325,6 +333,9 @@ export const WhoCanVote = ({
   const [previousOpen, setPreviousOpen] = useState(false)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [leavingOut, setLeavingOut] = useState(false)
+  // Compact: the sources show only while the admin changes who can vote
+  const [browsing, setBrowsing] = useState(false)
+  const signIn = useWatch({ control, name: 'census' })
 
   // The census of this vote's own the next choice replaces (a snapshot from a failed publish too)
   const replacing = census.marker ? groupId : undefined
@@ -340,6 +351,7 @@ export const WhoCanVote = ({
     if (!worked) return false
     setPicked(null)
     setStartingOver(false)
+    setBrowsing(false)
     return true
   }
 
@@ -454,6 +466,151 @@ export const WhoCanVote = ({
   )
   const notInCopy = membersNotInCopy(census, testVote)
 
+  const notInCopyBanner = !!notInCopy && (
+    <Banner
+      status='warning'
+      action={
+        <Button size='2xs' variant='outline' colorPalette='gray' onClick={() => setSheetOpen(true)}>
+          {t('process_create.census.not_in_copy.review', { defaultValue: 'Review' })}
+        </Button>
+      }
+    >
+      <Text fontSize='xs'>
+        {t('process_create.census.not_in_copy.text', {
+          count: notInCopy,
+          formattedCount: format(notInCopy),
+          defaultValue_one: "1 member isn't in this list: someone added after you made it, or taken out of it.",
+          defaultValue_other:
+            "{{formattedCount}} members aren't in this list: people added after you made it, or taken out of it.",
+        })}
+      </Text>
+    </Banner>
+  )
+
+  // Compact: who can vote and how they sign in, in one sentence; the who opens the sources
+  const sentence = () => {
+    // The verb agrees with how many can vote ("puede" / "pueden")
+    const whoCount =
+      census.mode === 'owned'
+        ? census.total
+        : census.mode === 'pending' && census.group
+          ? (census.group.membersCount ?? 0)
+          : membersCount
+    const who =
+      census.mode === 'owned'
+        ? t('process_create.census.owned.count', {
+            count: census.total,
+            formattedCount: format(census.total),
+            defaultValue_one: '1 person',
+            defaultValue_other: '{{formattedCount}} people',
+          })
+        : census.mode === 'pending' && census.group
+          ? t('process_create.who.from_saved', {
+              count: census.group.membersCount ?? 0,
+              formattedCount: format(census.group.membersCount ?? 0),
+              name: census.group.title,
+              defaultValue_one: "1 person from '{{name}}'",
+              defaultValue_other: "{{formattedCount}} people from '{{name}}'",
+            })
+          : t('process_create.census.everyone.all', {
+              count: membersCount,
+              formattedCount: format(membersCount),
+              defaultValue_one: 'The 1 member of your memberbase',
+              defaultValue_other: 'All {{formattedCount}} members of your memberbase',
+            })
+    const credentials = signIn?.credentials ?? []
+    const details = credentials.length ? detailsList(t, i18n.resolvedLanguage, credentials) : undefined
+    const channel = signIn?.use2FA ? codeChannel(t, getTwoFaFields(signIn.use2FAMethod)) : undefined
+    const bold = { b: <Text as='strong' fontSize='inherit' fontWeight='bolder' /> }
+    const how =
+      details && channel ? (
+        <Trans
+          i18nKey='process_create.who.confirm_code'
+          defaults='They confirm their <b>{{details}}</b> and get a one-time code by <b>{{channel}}</b>.'
+          values={{ details, channel }}
+          components={bold}
+        />
+      ) : details ? (
+        <Trans
+          i18nKey='process_create.who.confirm'
+          defaults='They confirm their <b>{{details}}</b>.'
+          values={{ details }}
+          components={bold}
+        />
+      ) : channel ? (
+        <Trans
+          i18nKey='process_create.who.code_only'
+          defaults='They get a one-time code by <b>{{channel}}</b>.'
+          values={{ channel }}
+          components={bold}
+        />
+      ) : null
+    const hint =
+      census.mode === 'owned'
+        ? ownedSource
+        : census.mode === 'pending'
+          ? !draftId
+            ? t('process_create.census.saved.created_after_name', {
+                defaultValue: 'The new census is created as soon as the vote has a name.',
+              })
+            : null
+          : t('process_create.census.everyone.included', {
+              defaultValue:
+                'Anyone you add before publishing is included; after that, you add new people to the vote yourself.',
+            })
+    return (
+      <Stack gap={1}>
+        <Text fontSize='15px' lineHeight='tall'>
+          <Button
+            // The handle the e2e suite opens the sources by, whatever the census is called
+            data-testid='census-source-change'
+            variant='plain'
+            h='auto'
+            p={0}
+            minW={0}
+            fontSize='inherit'
+            fontWeight='bolder'
+            verticalAlign='baseline'
+            whiteSpace='normal'
+            textAlign='start'
+            borderWidth={0}
+            borderBottomWidth='1.5px'
+            borderStyle='dashed'
+            borderColor='fg.muted'
+            borderRadius={0}
+            aria-label={t('process_create.who.change', { defaultValue: 'Change who can vote: {{who}}', who })}
+            onClick={() => (census.mode === 'owned' ? setStartingOver(true) : setBrowsing(true))}
+          >
+            {who}
+            <Icon as={LuChevronDown} boxSize={3.5} />
+          </Button>{' '}
+          {t('process_create.who.can_vote', {
+            count: whoCount,
+            defaultValue_one: 'can vote.',
+            defaultValue_other: 'can vote.',
+          })}
+          {how && <> {how}</>}
+        </Text>
+        {hint && (
+          <Text fontSize='xs' color='fg.muted'>
+            {hint}
+          </Text>
+        )}
+      </Stack>
+    )
+  }
+
+  if (compact && census.mode === 'owned' && !startingOver)
+    return (
+      <Stack gap={2}>
+        {sentence()}
+        <CensusLine census={census} onReview={() => setSheetOpen(true)} />
+        {notInCopyBanner}
+        {testWarning}
+        {sheets}
+      </Stack>
+    )
+
   // The vote has its own census: say what it is, and offer to edit it or choose again
   if (census.mode === 'owned' && !startingOver)
     return (
@@ -483,26 +640,7 @@ export const WhoCanVote = ({
           </Box>
         </Flex>
         <CensusLine census={census} onReview={() => setSheetOpen(true)} />
-        {!!notInCopy && (
-          <Banner
-            status='warning'
-            action={
-              <Button size='2xs' variant='outline' colorPalette='gray' onClick={() => setSheetOpen(true)}>
-                {t('process_create.census.not_in_copy.review', { defaultValue: 'Review' })}
-              </Button>
-            }
-          >
-            <Text fontSize='xs'>
-              {t('process_create.census.not_in_copy.text', {
-                count: notInCopy,
-                formattedCount: format(notInCopy),
-                defaultValue_one: "1 member isn't in this list: someone added after you made it, or taken out of it.",
-                defaultValue_other:
-                  "{{formattedCount}} members aren't in this list: people added after you made it, or taken out of it.",
-              })}
-            </Text>
-          </Banner>
-        )}
+        {notInCopyBanner}
         {testWarning}
         {sheets}
       </Stack>
@@ -532,14 +670,28 @@ export const WhoCanVote = ({
           <RadioCard.ItemText fontSize='sm' fontWeight='bolder'>
             {title}
           </RadioCard.ItemText>
-          <RadioCard.ItemDescription fontSize='xs' color='fg.muted'>
-            {description}
-          </RadioCard.ItemDescription>
+          {/* Compact: one line each, the hint only under the one chosen */}
+          {(!compact || value === choice) && (
+            <RadioCard.ItemDescription fontSize='xs' color='fg.muted'>
+              {description}
+            </RadioCard.ItemDescription>
+          )}
         </RadioCard.ItemContent>
         {busy === choice ? <Spinner size='xs' flexShrink={0} /> : <RadioCard.ItemIndicator />}
       </RadioCard.ItemControl>
     </RadioCard.Item>
   )
+
+  const listing = !compact || browsing || startingOver || (census.mode !== 'everyone' && census.mode !== 'pending')
+  if (!listing)
+    return (
+      <Stack gap={2}>
+        {sentence()}
+        <CensusLine census={census} onReview={() => setSheetOpen(true)} />
+        {testWarning}
+        {sheets}
+      </Stack>
+    )
 
   return (
     <Stack gap={2}>
@@ -560,7 +712,7 @@ export const WhoCanVote = ({
         onValueChange={({ value: next }) => next && onChoose(next as CensusSourceChoice)}
         aria-label={t('process_create.voters.title', { defaultValue: 'Who can vote' })}
       >
-        <SimpleGrid columns={{ base: 1, sm: 2 }} gap={2}>
+        <SimpleGrid columns={compact ? 1 : { base: 1, sm: 2 }} gap={compact ? 1.5 : 2}>
           {card(
             'everyone',
             t('process_create.census.everyone.all', {
@@ -636,7 +788,7 @@ export const WhoCanVote = ({
         </Stack>
       )}
 
-      {startingOver && (
+      {(startingOver || browsing) && (
         <Button
           variant='plain'
           size='xs'
@@ -646,6 +798,7 @@ export const WhoCanVote = ({
           textDecoration='underline'
           onClick={() => {
             setStartingOver(false)
+            setBrowsing(false)
             setPicked(null)
           }}
         >
@@ -653,10 +806,10 @@ export const WhoCanVote = ({
         </Button>
       )}
 
-      {!startingOver && (census.mode === 'everyone' || census.mode === 'pending') && (
+      {!compact && !startingOver && (census.mode === 'everyone' || census.mode === 'pending') && (
         <CensusLine census={census} onReview={() => setSheetOpen(true)} />
       )}
-      {!startingOver && testWarning}
+      {!compact && !startingOver && testWarning}
       {sheets}
     </Stack>
   )
