@@ -2235,7 +2235,7 @@
         "all_one": "L'unico membro della tua organizzazione",
         "all_many": "Tutti i {{formattedCount}} membri della tua organizzazione",
         "all_other": "Tutti i {{formattedCount}} membri della tua organizzazione",
-        "included": "Chiunque aggiungi prima della pubblicazione è incluso; dopo, le nuove persone le aggiungi tu alla votazione."
+        "new_census": "Viene creato un nuovo censimento con tutti i membri della tua organizzazione. In seguito puoi aggiungere o togliere membri."
       },
       "go_to_members": "Vai a Membri",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2271,11 +2271,11 @@
         "start_over": "Ricomincia"
       },
       "previous": {
-        "card": "Come un voto precedente",
         "description": "Copia chi poteva votare.",
         "new_census": "Viene creato un nuovo censimento con le persone che potevano votare.",
         "no_list": "Le persone sono state scelte una per una, quindi non c'è nessun elenco da copiare.",
         "none": "Non ci sono ancora altri voti.",
+        "reuse": "Riutilizza il censimento di una votazione precedente",
         "title": "Come un voto precedente"
       },
       "reload": "Ricarica",
@@ -2285,7 +2285,7 @@
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Scegli un censimento salvato",
         "select": "Censimento salvato",
-        "title": "Da un censimento salvato"
+        "short": "Censimento salvato"
       },
       "sheet_title": "Censimento di questo voto",
       "source": {
@@ -2871,7 +2871,6 @@
   "vote_overwrite": "Sovrascrittura voto",
   "voter_anonymity": "Anonimato del votante",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Aggiungi un ulteriore livello di sicurezza richiedendo ai votanti di verificare la propria identità",
     "2fa_email": "<email /> Verifica email",
     "2fa_email_description": "I votanti riceveranno un codice di verifica via email",
@@ -2883,13 +2882,19 @@
     "2fa_sms_description": "I votanti riceveranno un codice di verifica via SMS",
     "2fa_voter_choice": "<email /> o <phone /> Scelta del votante",
     "2fa_voter_choice_description": "I votanti possono scegliere il metodo di verifica preferito",
-    "anonymity": "Anonimato del voto: {{ mode }}",
     "button": {
-      "configure": "Configura Autenticazione Votante",
-      "edit": "Modifica Autenticazione Votante"
+      "set_up_sign_in": "Configura l'accesso dei votanti"
+    },
+    "card": {
+      "code": "Un codice monouso via {{channel}}",
+      "edit": "Modifica",
+      "intro": "Scegli cosa digitano i votanti per dimostrare chi sono e se ricevono anche un codice.",
+      "then": "Poi",
+      "they_get": "Ricevono",
+      "they_type": "Digitano",
+      "title": "Come accedono i votanti"
     },
     "configured": "Autenticazione dei votanti configurata",
-    "configured_auth": "Autenticazione Votante",
     "credentials": "Credenziali",
     "description": "Imposta come i votanti si autenticheranno per partecipare a questo processo di voto.",
     "email": "Via verifica email",

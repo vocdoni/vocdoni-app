@@ -15,7 +15,8 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { LuCircleAlert, LuCircleCheck, LuUsers } from 'react-icons/lu'
+import type { IconType } from 'react-icons'
+import { LuBookmark, LuCircleAlert, LuCircleCheck, LuHistory, LuListChecks, LuUsers } from 'react-icons/lu'
 import { Link as ReactRouterLink } from 'react-router'
 import { CensusDetail } from '~components/Memberbase/Censuses/CensusDetail'
 import { copiedFromUnnamed, everyoneTitle } from '~components/Memberbase/Censuses/labels'
@@ -524,19 +525,27 @@ export const WhoCanVote = ({
   }
 
   const pendingGroup = census.mode === 'pending' ? census.group : undefined
-  const card = (choice: CensusSourceChoice, title: string, description: string, disabled = false) => (
+  // What each source means, said once under the tiles for the one chosen
+  const hints: Record<CensusSourceChoice, string> = {
+    everyone: t('process_create.census.everyone.new_census', {
+      defaultValue:
+        'A new census is created with everyone in your memberbase. You can add or remove members in it later.',
+    }),
+    saved: t('process_create.census.saved.based_on', { defaultValue: 'A new census is created based on it.' }),
+    choose: t('process_create.census.choose.description', { defaultValue: 'Search and tick people.' }),
+    previous: t('process_create.census.previous.description', { defaultValue: 'Copy who could vote in it.' }),
+  }
+  const card = (choice: CensusSourceChoice, icon: IconType, title: string, disabled = false) => (
     <RadioCard.Item value={choice} disabled={disabled || (busy !== null && busy !== choice)}>
       <RadioCard.ItemHiddenInput />
-      <RadioCard.ItemControl p={2.5}>
-        <RadioCard.ItemContent gap={0.5}>
-          <RadioCard.ItemText fontSize='sm' fontWeight='bolder'>
-            {title}
-          </RadioCard.ItemText>
-          <RadioCard.ItemDescription fontSize='xs' color='fg.muted'>
-            {description}
-          </RadioCard.ItemDescription>
-        </RadioCard.ItemContent>
-        {busy === choice ? <Spinner size='xs' flexShrink={0} /> : <RadioCard.ItemIndicator />}
+      <RadioCard.ItemControl p={2.5} flexDirection='column' alignItems='stretch' gap={1.5}>
+        <Flex justify='space-between' align='center'>
+          <Icon as={icon} boxSize={4} color={value === choice ? 'fg' : 'fg.muted'} aria-hidden />
+          {busy === choice ? <Spinner size='xs' flexShrink={0} /> : <RadioCard.ItemIndicator />}
+        </Flex>
+        <RadioCard.ItemText fontSize='13px' fontWeight={value === choice ? 'bolder' : 'medium'} lineHeight='short'>
+          {title}
+        </RadioCard.ItemText>
       </RadioCard.ItemControl>
     </RadioCard.Item>
   )
@@ -560,42 +569,42 @@ export const WhoCanVote = ({
         onValueChange={({ value: next }) => next && onChoose(next as CensusSourceChoice)}
         aria-label={t('process_create.voters.title', { defaultValue: 'Who can vote' })}
       >
-        <SimpleGrid columns={{ base: 1, sm: 2 }} gap={2}>
+        <SimpleGrid columns={2} gap={2}>
           {card(
             'everyone',
+            LuUsers,
             t('process_create.census.everyone.all', {
               count: membersCount,
               formattedCount: format(membersCount),
               defaultValue_one: 'The 1 member of your memberbase',
               defaultValue_other: 'All {{formattedCount}} members of your memberbase',
             }),
-            t('process_create.census.everyone.included', {
-              defaultValue:
-                'Anyone you add before publishing is included; after that, you add new people to the vote yourself.',
-            }),
             !census.everyoneId
           )}
           {card(
             'saved',
-            t('process_create.census.saved.title', { defaultValue: 'From a saved census' }),
-            t('process_create.census.saved.based_on', { defaultValue: 'A new census is created based on it.' }),
+            LuBookmark,
+            t('process_create.census.saved.short', { defaultValue: 'Saved census' }),
             !saved.length && !pendingGroup
           )}
           {card(
             'choose',
+            LuListChecks,
             t('process_create.census.choose.card', { defaultValue: 'Choose people' }),
-            t('process_create.census.choose.description', {
-              defaultValue: 'Search and tick people.',
-            }),
             membersCount === 0
           )}
           {card(
             'previous',
-            t('process_create.census.previous.card', { defaultValue: 'Same as a previous vote' }),
-            t('process_create.census.previous.description', { defaultValue: 'Copy who could vote in it.' })
+            LuHistory,
+            t('process_create.census.previous.reuse', { defaultValue: 'Reuse census from a previous vote' })
           )}
         </SimpleGrid>
       </RadioCard.Root>
+      {value && (
+        <Text fontSize='xs' color='fg.muted'>
+          {hints[value]}
+        </Text>
+      )}
 
       {value === 'saved' && (
         <Stack gap={1}>

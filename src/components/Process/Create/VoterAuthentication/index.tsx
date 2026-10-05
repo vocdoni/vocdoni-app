@@ -1,13 +1,14 @@
 import {
-  Badge,
+  Box,
   Button,
   CloseButton,
   Dialog,
   Flex,
+  Grid,
   Heading,
-  HStack,
   Icon,
   Portal,
+  Stack,
   Tabs,
   Text,
   useDisclosure,
@@ -19,14 +20,15 @@ import { useOrganization } from '@vocdoni/react-components'
 import { useCallback, useEffect, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { LuUnlink } from 'react-icons/lu'
-import { useAnonymityLabels } from '~components/Process/anonymityLabels'
+import { LuKeyRound, LuMail, LuPencil } from 'react-icons/lu'
+import { codeChannel } from '~components/Memberbase/Censuses/facts'
+import { useMemberFields } from '~components/Memberbase/fields'
 import { getApiErrorMessage } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useToast } from '~components/Toast'
 import { Census, Process } from '../common'
 import { CredentialsForm } from './CredentialsForm'
-import { CredentialsOverview, SummaryDisplay } from './SummaryDisplay'
+import { SummaryDisplay } from './SummaryDisplay'
 import { TwoFactorForm } from './TwoFactorForm'
 import { getTwoFaFields, StepCompletionState, VoterAuthFormData } from './utils'
 import { ValidationError, ValidationErrorsAlert } from './ValidationErrorsAlert'
@@ -86,7 +88,10 @@ export const VoterAuthentication = () => {
   const groupId = mainForm.watch('groupId')
   const census = mainForm.watch('census')
   const anonymousVoting = mainForm.watch('anonymousVoting')
-  const anonymityLabel = useAnonymityLabels(anonymousVoting).title
+  const fields = useMemberFields()
+  // The sign-in in plain words: the fields' names as members see them, and where the code goes
+  const details = (census?.credentials ?? []).map((id) => fields.find((field) => field.id === id)?.label ?? id)
+  const channel = census?.use2FA ? codeChannel(t, getTwoFaFields(census.use2FAMethod)) : undefined
   const formData = voterAuthForm.watch()
   const hasNoCredentialsSelected = !formData?.credentials?.length && !formData?.use2FA
   const tabValues = ['credentials', 'twoFactor', 'summary'] as const
@@ -188,40 +193,6 @@ export const VoterAuthentication = () => {
 
   return (
     <>
-      {census && (
-        <Flex p={4} direction='column' border='1px solid' borderColor='table.border' borderRadius='md' gap={2}>
-          <Flex justify='space-between'>
-            <Text fontWeight='semibold'>
-              {t('voter_auth.configured_auth', {
-                defaultValue: 'Voter Authentication',
-              })}
-            </Text>
-            {census?.use2FA && (
-              <Badge fontSize='xs'>
-                <Trans i18nKey='voter_auth.2fa_badge'>2FA</Trans>
-              </Badge>
-            )}
-          </Flex>
-          <CredentialsOverview
-            credentials={census?.credentials}
-            use2FA={census?.use2FA}
-            use2FAMethod={census?.use2FAMethod}
-          />
-          {/* Neutral, and deliberately outside the credentials list and the
-              guarantees framing: anonymity is a different axis from how strongly
-              a voter is identified, not a further rung of it. Set in the
-              settings sidebar, echoed here so the census reads whole. */}
-          <HStack gap={2}>
-            <Icon as={LuUnlink} color='texts.subtle' />
-            <Text fontSize='sm' color='texts.subtle'>
-              {t('voter_auth.anonymity', {
-                defaultValue: 'Ballot anonymity: {{ mode }}',
-                mode: anonymityLabel,
-              })}
-            </Text>
-          </HStack>
-        </Flex>
-      )}
       <Dialog.Root
         open={isOpen}
         onOpenChange={(details) => {
@@ -229,15 +200,76 @@ export const VoterAuthentication = () => {
           else onClose()
         }}
       >
-        <Dialog.Trigger asChild>
-          <Button disabled={!groupId} colorPalette='gray' w='full'>
-            {census ? (
-              <Trans i18nKey='voter_auth.button.edit'>Edit Voter Authentication</Trans>
-            ) : (
-              <Trans i18nKey='voter_auth.button.configure'>Configure Voter Authentication</Trans>
+        <Box borderWidth='1px' borderColor='border' borderRadius='md' overflow='hidden'>
+          <Flex
+            px={3}
+            py={2}
+            align='center'
+            justify='space-between'
+            gap={2}
+            bg='bg.subtle'
+            borderBottomWidth='1px'
+            borderColor='border'
+          >
+            <Flex gap={2} align='center' minW={0}>
+              <Icon as={LuKeyRound} color='fg.muted' aria-hidden />
+              <Text fontSize='sm' fontWeight='bolder'>
+                {t('voter_auth.card.title', { defaultValue: 'How voters sign in' })}
+              </Text>
+            </Flex>
+            {census && (
+              <Dialog.Trigger asChild>
+                <Button size='xs' variant='ghost' colorPalette='gray' disabled={!groupId}>
+                  <Icon as={LuPencil} />
+                  {t('voter_auth.card.edit', { defaultValue: 'Edit' })}
+                </Button>
+              </Dialog.Trigger>
             )}
-          </Button>
-        </Dialog.Trigger>
+          </Flex>
+          {census ? (
+            <Grid templateColumns='auto 1fr' columnGap={3} rowGap={1.5} px={3} py={3} fontSize='13px'>
+              {details.length > 0 && (
+                <>
+                  <Text fontSize='inherit' color='fg.muted'>
+                    {t('voter_auth.card.they_type', { defaultValue: 'They type' })}
+                  </Text>
+                  <Text fontSize='inherit' fontWeight='medium'>
+                    {details.join(', ')}
+                  </Text>
+                </>
+              )}
+              {channel && (
+                <>
+                  <Text fontSize='inherit' color='fg.muted'>
+                    {details.length
+                      ? t('voter_auth.card.then', { defaultValue: 'Then' })
+                      : t('voter_auth.card.they_get', { defaultValue: 'They get' })}
+                  </Text>
+                  <Flex gap={1.5} align='center'>
+                    <Icon as={LuMail} boxSize={3.5} aria-hidden />
+                    <Text fontSize='inherit' fontWeight='medium'>
+                      {t('voter_auth.card.code', { defaultValue: 'A one-time code by {{channel}}', channel })}
+                    </Text>
+                  </Flex>
+                </>
+              )}
+            </Grid>
+          ) : (
+            <Stack gap={2.5} px={3} py={3}>
+              <Text fontSize='13px' color='fg.muted'>
+                {t('voter_auth.card.intro', {
+                  defaultValue: 'Choose what voters type to prove who they are, and whether they also get a code.',
+                })}
+              </Text>
+              <Dialog.Trigger asChild>
+                <Button size='sm' w='full' disabled={!groupId}>
+                  <Icon as={LuKeyRound} />
+                  {t('voter_auth.button.set_up_sign_in', { defaultValue: 'Set up voter sign-in' })}
+                </Button>
+              </Dialog.Trigger>
+            </Stack>
+          )}
+        </Box>
         <Portal>
           <Dialog.Backdrop />
           <Dialog.Positioner>

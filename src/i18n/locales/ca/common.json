@@ -2235,7 +2235,7 @@
         "all_one": "L'únic membre de la teva organització",
         "all_many": "Tots els {{formattedCount}} membres de la teva organització",
         "all_other": "Tots els {{formattedCount}} membres de la teva organització",
-        "included": "S'hi inclou tothom que afegeixis abans de publicar; després, les persones noves les afegeixes tu a la votació."
+        "new_census": "Es crea un cens nou amb tots els membres de la teva organització. Més endavant hi pots afegir o treure membres."
       },
       "go_to_members": "Ves a Membres",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2271,11 +2271,11 @@
         "start_over": "Torna a començar"
       },
       "previous": {
-        "card": "Igual que una votació anterior",
         "description": "Copia qui hi podia votar.",
         "new_census": "Es crea un cens nou amb les persones que hi podien votar.",
         "no_list": "Les seves persones es van triar una a una, així que no hi ha cap llista per copiar.",
         "none": "Encara no hi ha cap altra votació.",
+        "reuse": "Reutilitza el cens d'una votació anterior",
         "title": "Igual que una votació anterior"
       },
       "reload": "Torna a carregar",
@@ -2285,7 +2285,7 @@
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Tria un cens desat",
         "select": "Cens desat",
-        "title": "D'un cens desat"
+        "short": "Cens desat"
       },
       "sheet_title": "Cens d'aquesta votació",
       "source": {
@@ -2871,7 +2871,6 @@
   "vote_overwrite": "Sobreescriptura de la votació",
   "voter_anonymity": "Anonimat del votant",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Afegeix una capa extra de seguretat requerint que els votants verifiquin la seva identitat",
     "2fa_email": "<email /> Verificació per correu electrònic",
     "2fa_email_description": "Els votants rebran un codi de verificació per correu electrònic",
@@ -2883,13 +2882,19 @@
     "2fa_sms_description": "Els votants rebran un codi de verificació per SMS",
     "2fa_voter_choice": "<email /> o <phone /> Elecció del votant",
     "2fa_voter_choice_description": "Els votants poden escollir el mètode de verificació que prefereixin",
-    "anonymity": "Anonimat del vot: {{ mode }}",
     "button": {
-      "configure": "Configura l'autenticació dels votants",
-      "edit": "Edita l'autenticació dels votants"
+      "set_up_sign_in": "Configura l'inici de sessió dels votants"
+    },
+    "card": {
+      "code": "Un codi d'un sol ús per {{channel}}",
+      "edit": "Edita",
+      "intro": "Tria què escriuen els votants per demostrar qui són i si també reben un codi.",
+      "then": "Després",
+      "they_get": "Reben",
+      "they_type": "Escriuen",
+      "title": "Com inicien sessió els votants"
     },
     "configured": "Autenticació de votants configurada",
-    "configured_auth": "Autenticació configurada",
     "credentials": "Credencials",
     "description": "Configura com s'autenticaran els votants per participar en aquest procés de votació.",
     "email": "Via verificació per correu electrònic",

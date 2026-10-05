@@ -2135,7 +2135,7 @@
       "everyone": {
         "all_one": "Zure erakundeko kide bakarra",
         "all_other": "Zure erakundeko {{formattedCount}} kide guztiak",
-        "included": "Argitaratu aurretik gehitzen duzun edonor barne dago; ondoren, pertsona berriak zuk zeuk gehitzen dituzu bozketara."
+        "new_census": "Errolda berri bat sortzen da zure erakundeko kide guztiekin. Geroago kideak gehitu edo kendu ditzakezu."
       },
       "go_to_members": "Joan Kideetara",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2167,11 +2167,11 @@
         "start_over": "Hasi berriro"
       },
       "previous": {
-        "card": "Aurreko bozketa bera",
         "description": "Kopiatu nork bozka zezakeen.",
         "new_census": "Errolda berri bat sortzen da bertan bozka zezaketen pertsonekin.",
         "no_list": "Bere pertsonak banan-banan hautatu ziren, beraz ez dago kopiatzeko zerrendarik.",
         "none": "Oraindik ez dago beste bozketarik.",
+        "reuse": "Berrerabili aurreko bozketa baten errolda",
         "title": "Aurreko bozketa bera"
       },
       "reload": "Birkargatu",
@@ -2181,7 +2181,7 @@
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Hautatu gordetako errolda bat",
         "select": "Gordetako erroldea",
-        "title": "Gordetako errolda batetik"
+        "short": "Gordetako erroldea"
       },
       "sheet_title": "Bozketa honen erroldea",
       "source": {
@@ -2763,7 +2763,6 @@
   "vote_overwrite": "Botoa berridaztea",
   "voter_anonymity": "Boto-emaileen anonimotasuna",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Gehitu segurtasun-geruza osagarri bat hautesleei nortasuna egiaztatzeko eskatuz",
     "2fa_email": "<email /> Egiaztapena posta elektronikoz",
     "2fa_email_description": "Hautesleek egiaztapen-kode bat jasoko dute posta elektronikoz",
@@ -2775,13 +2774,19 @@
     "2fa_sms_description": "Hautesleek egiaztapen-kode bat jasoko dute SMS bidez",
     "2fa_voter_choice": "<email /> edo <phone /> Boto-emailearen aukera",
     "2fa_voter_choice_description": "Hautesleek beren egiaztapen-metodo gogokoena hauta dezakete",
-    "anonymity": "Botoaren anonimotasuna: {{ mode }}",
     "button": {
-      "configure": "Konfiguratu hautesleen autentifikazioa",
-      "edit": "Editatu hautesleen autentifikazioa"
+      "set_up_sign_in": "Konfiguratu botogileen saio-hasiera"
+    },
+    "card": {
+      "code": "{{channel}} bidezko aldi bateko kode bat",
+      "edit": "Editatu",
+      "intro": "Aukeratu botogileek zer idazten duten nor diren frogatzeko, eta kode bat ere jasotzen duten.",
+      "then": "Ondoren",
+      "they_get": "Jasotzen dute",
+      "they_type": "Idazten dute",
+      "title": "Botogileek nola hasten duten saioa"
     },
     "configured": "Hautesleen autentifikazioa konfiguratuta",
-    "configured_auth": "Hautesleen autentifikazioa",
     "credentials": "Kredentzialak",
     "description": "Konfiguratu hautesleek nola autentifikatu beharko duten bozketa-prozesu honetan parte hartzeko.",
     "email": "Posta elektroniko bidezko egiaztapenaren bidez",

@@ -168,12 +168,12 @@ describe('WhoCanVote', () => {
     expect(everyone).toBeChecked()
     expect(
       screen.getByText(
-        'Anyone you add before publishing is included; after that, you add new people to the vote yourself.'
+        'A new census is created with everyone in your memberbase. You can add or remove members in it later.'
       )
     ).toBeVisible()
-    expect(screen.getByRole('radio', { name: /From a saved census/ })).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: /Saved census/ })).not.toBeChecked()
     expect(screen.getByRole('radio', { name: /Choose people/ })).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: /Same as a previous vote/ })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /Reuse census from a previous vote/ })).toBeInTheDocument()
   })
 
   it('gives the vote its own copy of a saved census, with email codes so the census is saved', async () => {
@@ -181,7 +181,7 @@ describe('WhoCanVote', () => {
     const draft = draftControls()
     render(<Harness values={{ groupId: 'all' }} draft={draft} />)
 
-    await user.click(screen.getByRole('radio', { name: /From a saved census/ }))
+    await user.click(screen.getByRole('radio', { name: /Saved census/ }))
     await user.selectOptions(screen.getByRole('combobox', { name: 'Saved census' }), 'quota')
 
     await waitFor(() => expect(formState().groupId).toBe('own-new'))
@@ -213,7 +213,7 @@ describe('WhoCanVote', () => {
     draft.saveWithLatest.mockRejectedValue(new StaleDraftError(new Error('409')))
     render(<Harness values={{ groupId: 'all' }} draft={draft} />)
 
-    await user.click(screen.getByRole('radio', { name: /From a saved census/ }))
+    await user.click(screen.getByRole('radio', { name: /Saved census/ }))
     await user.selectOptions(screen.getByRole('combobox', { name: 'Saved census' }), 'quota')
 
     expect(
@@ -245,7 +245,7 @@ describe('WhoCanVote', () => {
     const draft = draftControls(null)
     render(<Harness values={{ groupId: 'all', title: '' }} draft={draft} />)
 
-    await user.click(screen.getByRole('radio', { name: /From a saved census/ }))
+    await user.click(screen.getByRole('radio', { name: /Saved census/ }))
     await user.selectOptions(screen.getByRole('combobox', { name: 'Saved census' }), 'quota')
 
     expect(await screen.findByText('Name your vote first, so it can have a census of its own')).toBeInTheDocument()
@@ -323,7 +323,7 @@ describe('WhoCanVote', () => {
     render(<Harness values={{ groupId: 'own-old' }} draft={draftControls()} />)
 
     await user.click(screen.getByRole('button', { name: 'Start over' }))
-    await user.click(screen.getByRole('radio', { name: /From a saved census/ }))
+    await user.click(screen.getByRole('radio', { name: /Saved census/ }))
     await user.selectOptions(screen.getByRole('combobox', { name: 'Saved census' }), 'quota')
 
     await waitFor(() => expect(api.deleteGroup).toHaveBeenCalledWith('own-old'))
@@ -356,7 +356,7 @@ describe('WhoCanVote', () => {
     ]
     render(<Harness values={{ groupId: 'all' }} draft={draftControls()} />)
 
-    await user.click(screen.getByRole('radio', { name: /Same as a previous vote/ }))
+    await user.click(screen.getByRole('radio', { name: /Reuse census from a previous vote/ }))
     const sheet = await screen.findByRole('dialog', { name: 'Same as a previous vote' })
     expect(within(sheet).queryByText('This one')).toBeNull()
     const picked = within(sheet).getByRole('button', { name: /Picked by hand/ })

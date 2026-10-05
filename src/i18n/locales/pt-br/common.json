@@ -2235,7 +2235,7 @@
         "all_one": "{{formattedCount}} membro da sua organização",
         "all_many": "Todos os {{formattedCount}} membros da sua organização",
         "all_other": "Todos os {{formattedCount}} membros da sua organização",
-        "included": "Quem você adicionar antes de publicar fica incluído; depois disso, você mesmo adiciona as novas pessoas à votação."
+        "new_census": "Uma nova lista é criada com todos os membros da sua organização. Depois, você pode adicionar ou remover membros."
       },
       "go_to_members": "Ir para Membros",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2271,11 +2271,11 @@
         "start_over": "Recomeçar"
       },
       "previous": {
-        "card": "Igual a uma votação anterior",
         "description": "Copie quem podia votar nela.",
         "new_census": "Uma nova lista de participantes é criada com as pessoas que podiam votar nela.",
         "no_list": "As pessoas foram escolhidas uma a uma, então não há lista para copiar.",
         "none": "Ainda não há outras votações.",
+        "reuse": "Reutilizar a lista de uma votação anterior",
         "title": "Igual a uma votação anterior"
       },
       "reload": "Recarregar",
@@ -2285,7 +2285,7 @@
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Escolha uma lista salva",
         "select": "Lista salva",
-        "title": "De uma lista salva"
+        "short": "Lista salva"
       },
       "sheet_title": "Lista de participantes desta votação",
       "source": {
@@ -2871,7 +2871,6 @@
   "vote_overwrite": "Substituição do voto",
   "voter_anonymity": "Anonimato do eleitor",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Adicione uma camada extra de segurança exigindo que os eleitores verifiquem sua identidade",
     "2fa_email": "<email /> Verificação por e-mail",
     "2fa_email_description": "Os eleitores receberão um código de verificação por e-mail",
@@ -2883,13 +2882,19 @@
     "2fa_sms_description": "Os eleitores receberão um código de verificação por SMS",
     "2fa_voter_choice": "<email /> ou <phone /> Escolha do eleitor",
     "2fa_voter_choice_description": "Os eleitores podem escolher o método de verificação de sua preferência",
-    "anonymity": "Anonimato do voto: {{ mode }}",
     "button": {
-      "configure": "Configurar autenticação de eleitores",
-      "edit": "Editar autenticação de eleitores"
+      "set_up_sign_in": "Configurar o login dos eleitores"
+    },
+    "card": {
+      "code": "Um código de uso único por {{channel}}",
+      "edit": "Editar",
+      "intro": "Escolha o que os eleitores digitam para provar quem são e se também recebem um código.",
+      "then": "Depois",
+      "they_get": "Recebem",
+      "they_type": "Digitam",
+      "title": "Como os eleitores fazem login"
     },
     "configured": "Autenticação de eleitores configurada",
-    "configured_auth": "Autenticação de eleitores",
     "credentials": "Credenciais",
     "description": "Defina como os eleitores se autenticarão para participar neste processo de votação.",
     "email": "Por verificação de e-mail",

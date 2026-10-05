@@ -2135,7 +2135,7 @@
       "everyone": {
         "all_one": "The 1 member of your memberbase",
         "all_other": "All {{formattedCount}} members of your memberbase",
-        "included": "Anyone you add before publishing is included; after that, you add new people to the vote yourself."
+        "new_census": "A new census is created with everyone in your memberbase. You can add or remove members in it later."
       },
       "go_to_members": "Go to Members",
       "group_title_dated": "{{vote}} — {{date}}",
@@ -2167,11 +2167,11 @@
         "start_over": "Start over"
       },
       "previous": {
-        "card": "Same as a previous vote",
         "description": "Copy who could vote in it.",
         "new_census": "A new census is created with the people who could vote in it.",
         "no_list": "Its people were picked one by one, so there's no list to copy.",
         "none": "There are no other votes yet.",
+        "reuse": "Reuse census from a previous vote",
         "title": "Same as a previous vote"
       },
       "reload": "Reload",
@@ -2181,7 +2181,7 @@
         "option": "{{name}} ({{formattedCount}})",
         "placeholder": "Choose a saved census",
         "select": "Saved census",
-        "title": "From a saved census"
+        "short": "Saved census"
       },
       "sheet_title": "Census of this vote",
       "source": {
@@ -2763,7 +2763,6 @@
   "vote_overwrite": "Vote overwrite",
   "voter_anonymity": "Voter anonymity",
   "voter_auth": {
-    "2fa_badge": "2FA",
     "2fa_description": "Add an extra layer of security by requiring voters to verify their identity",
     "2fa_email": "<email /> Email verification",
     "2fa_email_description": "Voters will receive a verification code via email",
@@ -2775,13 +2774,19 @@
     "2fa_sms_description": "Voters will receive a verification code via SMS",
     "2fa_voter_choice": "<email /> or <phone /> Voter's choice",
     "2fa_voter_choice_description": "Voters can choose their preferred verification method",
-    "anonymity": "Ballot anonymity: {{ mode }}",
     "button": {
-      "configure": "Configure Voter Authentication",
-      "edit": "Edit Voter Authentication"
+      "set_up_sign_in": "Set up voter sign-in"
+    },
+    "card": {
+      "code": "A one-time code by {{channel}}",
+      "edit": "Edit",
+      "intro": "Choose what voters type to prove who they are, and whether they also get a code.",
+      "then": "Then",
+      "they_get": "They get",
+      "they_type": "They type",
+      "title": "How voters sign in"
     },
     "configured": "Voter authentication configured",
-    "configured_auth": "Voter Authentication",
     "credentials": "Credentials",
     "description": "Set up how voters will authenticate to participate in this voting process.",
     "email": "Via email verification",
