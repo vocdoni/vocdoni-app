@@ -2235,16 +2235,6 @@
       "tooltip": "Set whether votes are equal for each eligible voter or weighted according to the memberbase \"Vote power\" field.",
       "weighted": "Weighted by voting power"
     },
-    "who": {
-      "can_vote_one": "can vote.",
-      "can_vote_other": "can vote.",
-      "change": "Change who can vote: {{who}}",
-      "code_only": "They get a one-time code by <b>{{channel}}</b>.",
-      "confirm": "They confirm their <b>{{details}}</b>.",
-      "confirm_code": "They confirm their <b>{{details}}</b> and get a one-time code by <b>{{channel}}</b>.",
-      "from_saved_one": "1 person from '{{name}}'",
-      "from_saved_other": "{{formattedCount}} people from '{{name}}'"
-    },
     "youtube": {
       "accordion_title": "Attach video (optional)",
       "title": "Live streaming video"
@@ -2788,9 +2778,7 @@
     "anonymity": "Ballot anonymity: {{ mode }}",
     "button": {
       "configure": "Configure Voter Authentication",
-      "edit": "Edit Voter Authentication",
-      "edit_sign_in": "Edit voter sign-in",
-      "set_up_sign_in": "Set up voter sign-in"
+      "edit": "Edit Voter Authentication"
     },
     "configured": "Voter authentication configured",
     "configured_auth": "Voter Authentication",

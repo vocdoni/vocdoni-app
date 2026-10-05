@@ -112,9 +112,6 @@ there, here's a list of variables you can use:
   them (the dashboard, auth, pricing…) keep the Vocdoni logo, and so does an organization that has no logo
   set or whose logo URL fails to load. Only the header is affected: the footer logo is always Vocdoni. It is
   read at runtime, so a single build/image can be branded with `docker run -e SHOW_ORG_LOGO=true`.
-- `CENSUS_STEP_CLASSIC` set it to `true` to bring back the previous "Who can vote" step when creating a vote:
-  the four census sources always shown as cards and the full voter authentication card. Unset, the step says
-  who can vote and how they sign in in one sentence, and lists the sources only when the admin changes them.
 
 You can also start the app by prefixing these vars instead of defining your
 custom `.env` file:

@@ -40,11 +40,9 @@ const defaultCensus: Census = {
 const TestForm = ({
   initialCensus = defaultCensus,
   anonymousVoting = false,
-  compact = false,
 }: {
   initialCensus?: Census | null
   anonymousVoting?: boolean
-  compact?: boolean
 }) => {
   const methods = useForm<Process>({
     defaultValues: {
@@ -68,7 +66,7 @@ const TestForm = ({
 
   return (
     <FormProvider {...methods}>
-      <VoterAuthentication compact={compact} />
+      <VoterAuthentication />
       <FormWatcher name='census' />
     </FormProvider>
   )
@@ -85,16 +83,6 @@ describe('VoterAuthentication', () => {
   it('shows Configure button when census is null', () => {
     render(<TestForm initialCensus={null} />)
     expect(screen.getByRole('button', { name: /configure voter authentication/i })).toBeInTheDocument()
-  })
-
-  it('keeps only the button when compact, worded as setting up or editing the sign-in', () => {
-    const { unmount } = render(<TestForm initialCensus={null} compact />)
-    expect(screen.getByRole('button', { name: 'Set up voter sign-in' })).toBeInTheDocument()
-    unmount()
-    render(<TestForm compact />)
-    expect(screen.getByRole('button', { name: 'Edit voter sign-in' })).toBeInTheDocument()
-    // The census sentence says how they sign in: no card repeating it
-    expect(screen.queryByText('Voter Authentication')).toBeNull()
   })
 
   it('shows Edit button when census is already configured', () => {

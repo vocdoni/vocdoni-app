@@ -112,12 +112,10 @@ const Harness = ({
   values = {},
   draft,
   onStartingOverChange,
-  compact,
 }: {
   values?: Partial<Process>
   draft: DraftControls
   onStartingOverChange?: (startingOver: boolean) => void
-  compact?: boolean
 }) => {
   const methods = useForm<Process>({ defaultValues: { ...defaultProcessValues, title: 'Assemblea', ...values } })
   lastForm = methods.getValues
@@ -125,7 +123,7 @@ const Harness = ({
     <TestMemoryRouter>
       <FormProvider {...methods}>
         <EditorContext.Provider value={{ draft }}>
-          <WhoCanVote onStartingOverChange={onStartingOverChange} compact={compact} />
+          <WhoCanVote onStartingOverChange={onStartingOverChange} />
           <Watch />
         </EditorContext.Provider>
       </FormProvider>
@@ -284,55 +282,6 @@ describe('WhoCanVote', () => {
     expect(
       screen.getByText("118 members aren't in this list: people added after you made it, or taken out of it.")
     ).toBeInTheDocument()
-  })
-
-  describe('compact', () => {
-    const signIn = { credentials: ['memberNumber'], use2FA: true, use2FAMethod: 'email' as const }
-
-    it('says who can vote and how they sign in in one sentence, and lists the sources on demand', async () => {
-      const user = userEvent.setup()
-      render(<Harness values={{ groupId: 'all', census: signIn }} draft={draftControls()} compact />)
-
-      const change = screen.getByRole('button', { name: 'Change who can vote: All 120 members of your memberbase' })
-      expect(change.closest('p')).toHaveTextContent(
-        'All 120 members of your memberbase can vote. They confirm their member number and get a one-time code by email.'
-      )
-      expect(screen.queryByRole('radio')).toBeNull()
-
-      await user.click(change)
-      expect(screen.getByRole('radio', { name: /All 120 members of your memberbase/ })).toBeChecked()
-      // One line each: only the chosen source says what it means
-      expect(screen.getByText(/Anyone you add before publishing is included/)).toBeInTheDocument()
-      expect(screen.queryByText('A new census is created based on it.')).toBeNull()
-
-      await user.click(screen.getByRole('button', { name: 'Keep the current census' }))
-      expect(screen.queryByRole('radio')).toBeNull()
-    })
-
-    it('leaves the sign-in out of the sentence until it is set', () => {
-      render(<Harness values={{ groupId: 'all', census: null }} draft={draftControls()} compact />)
-
-      expect(screen.getByRole('button', { name: /Change who can vote/ }).closest('p')).toHaveTextContent(
-        /^All 120 members of your memberbase can vote\.$/
-      )
-    })
-
-    it('starts over from a census of the vote’s own', async () => {
-      const user = userEvent.setup()
-      const onStartingOverChange = vi.fn()
-      render(
-        <Harness
-          values={{ groupId: 'own-old', census: signIn }}
-          draft={draftControls()}
-          onStartingOverChange={onStartingOverChange}
-          compact
-        />
-      )
-
-      await user.click(screen.getByRole('button', { name: /^Change who can vote: \d+ people$/ }))
-      expect(onStartingOverChange).toHaveBeenLastCalledWith(true)
-      expect(screen.getAllByRole('radio')).toHaveLength(4)
-    })
   })
 
   it('says when it starts choosing a new census, and when that ends', async () => {

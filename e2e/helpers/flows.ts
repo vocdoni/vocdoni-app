@@ -314,12 +314,9 @@ export const createAndPublishTwoFactorProcess = async (page: Page, spec: Process
   // Who can vote: Everyone, the default (live until publish, frozen then). Picked
   // explicitly anyway, so the suite doesn't lean on the default. The radio cards'
   // hidden inputs carry `name="censusSource"`, so this doesn't depend on copy.
-  // The step says who can vote in one sentence; its census opens the list of sources
-  const changeCensus = page.getByTestId('census-source-change')
-  if (await changeCensus.isVisible()) await changeCensus.click()
   await pickRadio(page, 'censusSource', 'everyone')
 
-  await page.getByRole('button', { name: /Configure Voter Authentication|Set up voter sign-in/i }).click()
+  await page.getByRole('button', { name: /Configure Voter Authentication/i }).click()
   const dialog = page.getByRole('dialog')
 
   // Tab 1 — credentials. The checkbox `value` is the API field name, so this

@@ -2235,16 +2235,6 @@
       "tooltip": "Lege fest, ob alle berechtigten Wählenden das gleiche Stimmgewicht haben oder ob die Stimmen nach dem Feld „Stimmgewicht“ der Mitgliederbasis gewichtet werden.",
       "weighted": "Gewichtet nach Stimmgewicht"
     },
-    "who": {
-      "can_vote_one": "kann abstimmen.",
-      "can_vote_other": "können abstimmen.",
-      "change": "Ändern, wer abstimmen kann: {{who}}",
-      "code_only": "Sie erhalten einen Einmalcode per <b>{{channel}}</b>.",
-      "confirm": "Sie bestätigen <b>{{details}}</b>.",
-      "confirm_code": "Sie bestätigen <b>{{details}}</b> und erhalten einen Einmalcode per <b>{{channel}}</b>.",
-      "from_saved_one": "1 Person aus „{{name}}“",
-      "from_saved_other": "{{formattedCount}} Personen aus „{{name}}“"
-    },
     "youtube": {
       "accordion_title": "Video anhängen (optional)",
       "title": "Livestreaming-Video"
@@ -2788,9 +2778,7 @@
     "anonymity": "Anonymität der Stimmabgabe: {{ mode }}",
     "button": {
       "configure": "Wähler-Authentifizierung konfigurieren",
-      "edit": "Wähler-Authentifizierung bearbeiten",
-      "edit_sign_in": "Anmeldung der Wählenden bearbeiten",
-      "set_up_sign_in": "Anmeldung der Wählenden einrichten"
+      "edit": "Wähler-Authentifizierung bearbeiten"
     },
     "configured": "Wähler-Authentifizierung konfiguriert",
     "configured_auth": "Wähler-Authentifizierung",

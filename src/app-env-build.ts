@@ -41,7 +41,6 @@ export type AppEnv = {
   PRIMARY_COLOR?: string
   SHOW_ORG_LOGO?: boolean
   ACTIVITY_LOG?: boolean
-  CENSUS_STEP_CLASSIC?: boolean
 }
 
 type AppEnvObject = AppEnv
@@ -240,6 +239,5 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     PRIMARY_COLOR: resolvePrimaryColor(env.PRIMARY_COLOR),
     SHOW_ORG_LOGO: env.SHOW_ORG_LOGO === 'true',
     ACTIVITY_LOG: env.ACTIVITY_LOG === 'true',
-    CENSUS_STEP_CLASSIC: env.CENSUS_STEP_CLASSIC === 'true',
   }
 }
