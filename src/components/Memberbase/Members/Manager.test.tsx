@@ -142,4 +142,17 @@ describe('MemberManager edit', () => {
 
     expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '', weight: '5' })
   })
+
+  it('stops treating an edit as a change once a refetch brings the same value', async () => {
+    const user = userEvent.setup()
+    const { rerender } = render(<MemberManager member={member} open />)
+
+    const name = await screen.findByLabelText('Name')
+    await user.clear(name)
+    await user.type(name, 'Augusta')
+    rerender(<MemberManager member={{ ...member, name: 'Augusta' }} open />)
+    await user.click(screen.getByRole('button', { name: 'Save changes' }))
+
+    expect(editMutate).not.toHaveBeenCalled()
+  })
 })

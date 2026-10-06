@@ -155,8 +155,16 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
       const staleErrors = Object.keys(methods.formState.errors).filter((key) => !methods.getFieldState(key).isDirty)
       methods.reset(values, { keepDirtyValues: true, keepErrors: true, keepIsSubmitted: true, keepSubmitCount: true })
       methods.clearErrors(staleErrors)
+      // an edited field that now matches the refetched value is no longer a change
+      Object.entries(values).forEach(([key, value]) => {
+        if (methods.getFieldState(key).isDirty && methods.getValues(key) === value) {
+          methods.resetField(key, { defaultValue: value })
+        }
+      })
     }
   }, [member, isOpen])
+
+  const phoneWillBeRemoved = hadPhone && phoneEdited && !methods.watch('phone')
 
   const onSubmit = (data: Partial<Member>) => {
     const { id, memberNumber, name, surname, email, phone, nationalId, birthDate, weight } = data
@@ -324,7 +332,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                           required={false} // we don't want HTML5 validation
                         />
                       )}
-                      {isPhone && hadPhone && phoneEdited && !methods.watch('phone') ? (
+                      {isPhone && phoneWillBeRemoved ? (
                         <FormHelperText color='fg.error'>
                           {t('memberbase.form.phone_will_be_removed', {
                             defaultValue: 'The stored phone number will be removed when you save.',
