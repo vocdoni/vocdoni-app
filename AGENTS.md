@@ -1,5 +1,23 @@
 # Repository Guidelines
 
+## Required Agent Skills
+- The `vocdoni-integrator-sdk` skill is mandatory. This app is built on the Integrator SDK packages
+  (`@vocdoni/api-client`, `@vocdoni/api-voting`, `@vocdoni/react-providers`, `@vocdoni/react-components`),
+  and the skill documents their current API, auth flows and ballot model.
+- Before starting any task, check that a skill covering the Vocdoni Integrator SDK is loaded. Depending
+  on how it was installed it may be listed as `vocdoni-integrator-sdk`, `vocdoni-integrator-sdk:vocdoni-integrator-sdk`
+  or an older name such as `integrator-sdk`; any of them counts.
+- If it is not loaded, install it for this project yourself, without asking first:
+  `npx -y skills add vocdoni/vocdoni-integrator-sdk -y`. This puts the skill in `.agents/skills/` (read by
+  Codex, Gemini CLI, Copilot, OpenCode and others), symlinks it into `.claude/skills/` for Claude Code, and
+  writes `skills-lock.json`. All of these are git-ignored; never commit them.
+- After installing, load the skill: read `.agents/skills/vocdoni-integrator-sdk/SKILL.md` now, since most agents
+  only pick up new skills when a session starts. If the install fails, tell the user and ask them to install it
+  rather than continuing without it.
+- Keep it current with `npx -y skills update -p -y`. Claude Code users may install it instead as a plugin from
+  the Vocdoni marketplace (`claude plugin marketplace add vocdoni/skills`, then
+  `claude plugin install vocdoni-integrator-sdk@vocdoni`).
+
 ## Project Structure & Module Organization
 - `src/components/`: reusable UI and feature components (organized by domain).
 - `src/elements/`: route-level screens composed from components.
