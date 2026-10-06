@@ -516,17 +516,23 @@ export const electionComponents: ComponentsPartialDefinition = {
                 return (
                   <Box key={choice.title} position='relative'>
                     <Text css={styles.choiceTitle}>{choice.title}</Text>
-                    <Text css={styles.choiceVotes}>
-                      {t('results.votes', {
-                        votes: choice.votes,
-                        percent: choice.percent,
-                      })}
-                    </Text>
-                    <Progress.Root css={[styles.progress, progressStyles.root]} value={percent} max={100}>
-                      <Progress.Track css={progressStyles.track}>
-                        <Progress.Range css={progressStyles.range} />
-                      </Progress.Track>
-                    </Progress.Root>
+                    {/* `votes` is empty for a question whose ballot type can't be inferred (e.g. a legacy
+                        process with no type nor ballotProtocol): there is no tally to show, not a zero one. */}
+                    {choice.votes ? (
+                      <>
+                        <Text css={styles.choiceVotes}>
+                          {t('results.votes', {
+                            votes: choice.votes,
+                            percent: choice.percent,
+                          })}
+                        </Text>
+                        <Progress.Root css={[styles.progress, progressStyles.root]} value={percent} max={100}>
+                          <Progress.Track css={progressStyles.track}>
+                            <Progress.Range css={progressStyles.range} />
+                          </Progress.Track>
+                        </Progress.Root>
+                      </>
+                    ) : null}
                     {choice.description ? <Box mt={2}>{markdown(choice.description)}</Box> : null}
                   </Box>
                 )
