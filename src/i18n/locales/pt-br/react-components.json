@@ -27,6 +27,7 @@
   "errors": {
     "not_voted_in_ended_election": "Você assinou, mas não votou nesta eleição já encerrada.",
     "question_not_votable": "Esta pergunta não pode aceitar votos: uma das suas opções foi configurada de uma forma que o registro não consegue armazenar. Seu voto não foi registrado. Entre em contato com a organização.",
+    "question_unsupported": "O tipo de cédula desta pergunta não é compatível aqui, então ela não pode aceitar votos.",
     "unauthorized": "Sem autorização para votar",
     "vote_failed": "Não foi possível registrar seu voto: {{ detail }}",
     "vote_failed_unknown": "Não foi possível registrar seu voto. Tente novamente.",

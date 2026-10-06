@@ -27,6 +27,7 @@
   "errors": {
     "not_voted_in_ended_election": "Vous avez signé mais vous n'avez pas voté à cette élection terminée.",
     "question_not_votable": "Cette question ne peut pas accepter de votes : l'une de ses options a été configurée d'une manière que le registre ne peut pas enregistrer. Votre vote n'a pas été émis. Veuillez contacter l'organisation.",
+    "question_unsupported": "Le type de bulletin de cette question n'est pas pris en charge ici : elle ne peut donc pas accepter de votes.",
     "unauthorized": "Non autorisé à voter",
     "vote_failed": "Votre vote n'a pas pu être émis : {{ detail }}",
     "vote_failed_unknown": "Votre vote n'a pas pu être émis. Réessayez.",
