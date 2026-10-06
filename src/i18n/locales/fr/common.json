@@ -960,6 +960,7 @@
     "form": {
       "cancel": "Annuler",
       "phone_warning": "Numéro de téléphone masqué. Toute modification ici l'écrasera.",
+      "phone_will_be_removed": "Le numéro de téléphone enregistré sera supprimé lors de l'enregistrement.",
       "save": "Enregistrer les modifications"
     },
     "groups": {

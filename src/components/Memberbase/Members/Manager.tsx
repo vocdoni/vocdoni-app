@@ -50,11 +50,16 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   const editMember = useEditMember()
   const { organization } = useOrganization()
   const queryClient = useQueryClient()
-  const [hadPhone, setHadPhone] = useState(false)
+  // The stored phone is never returned, so the field starts blank and cannot show a clear as a
+  // change; track edits to it explicitly so emptying it still reaches the API.
+  const [phoneEdited, setPhoneEdited] = useState(false)
+  const hadPhone = !!member?.phone
 
   const defaultValues: MemberFormData = useMemo(() => Object.fromEntries(columns.map((col) => [col.id, ''])), [columns])
 
   const methods = useForm({ defaultValues })
+  // read during render so react-hook-form tracks it
+  const { dirtyFields } = methods.formState
   const isControlled = typeof controlledOpen === 'boolean'
   const isOpen = isControlled ? controlledOpen : disclosureOpen
 
@@ -121,22 +126,45 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
   }
 
   /**
-   * Syncs the form values with the selected member.
+   * Syncs the form values with the selected member (edit mode only).
    *
-   * When the `member` prop changes, this effect resets the form fields
-   * to match the new member's data. This ensures that when editing an existing
-   * member, the form is pre-filled with their current information.
+   * The form is fully reset when the drawer opens or the selected member changes, so edits
+   * abandoned with Cancel are discarded. When fresh data for the same member arrives while the
+   * drawer is open, only the fields the user has not touched are refreshed.
    */
+  const syncedMemberId = useRef<string | null>(null)
   useEffect(() => {
-    if (member) {
-      const cleanMember = { ...member }
-      if (member.phone) {
-        cleanMember.phone = ''
-        setHadPhone(true)
-      }
-      methods.reset(stringifyObjectValues(cleanMember))
+    if (!member || !isOpen) {
+      syncedMemberId.current = null
+      return
     }
-  }, [member])
+    const isNewSession = syncedMemberId.current !== member.id
+    syncedMemberId.current = member.id
+
+    const cleanMember = { ...member }
+    if (member.phone) {
+      cleanMember.phone = ''
+    }
+    // the API omits emptied fields; fall back to blanks so a stale value is not left on screen
+    const values = { ...defaultValues, ...stringifyObjectValues(cleanMember) }
+    if (isNewSession) {
+      setPhoneEdited(false)
+      methods.reset(values)
+    } else {
+      // errors on fields the user has not touched describe a value that was just replaced
+      const staleErrors = Object.keys(methods.formState.errors).filter((key) => !methods.getFieldState(key).isDirty)
+      methods.reset(values, { keepDirtyValues: true, keepErrors: true, keepIsSubmitted: true, keepSubmitCount: true })
+      methods.clearErrors(staleErrors)
+      // an edited field that now matches the refetched value is no longer a change
+      Object.entries(values).forEach(([key, value]) => {
+        if (methods.getFieldState(key).isDirty && methods.getValues(key) === value) {
+          methods.resetField(key, { defaultValue: value })
+        }
+      })
+    }
+  }, [member, isOpen])
+
+  const phoneWillBeRemoved = hadPhone && phoneEdited && !methods.watch('phone')
 
   const onSubmit = (data: Partial<Member>) => {
     const { id, memberNumber, name, surname, email, phone, nationalId, birthDate, weight } = data
@@ -161,6 +189,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         isClosable: true,
       })
       methods.reset()
+      setPhoneEdited(false)
       queryClient.invalidateQueries({
         queryKey: QueryKeys.organization.members(organization.address),
         exact: false,
@@ -192,10 +221,22 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         return
       }
 
-      const { id: _omitId, ...payload } = memberPayload
+      // Send only what the user changed: the API keeps a field left out and clears one sent empty.
+      // An untouched phone is blank in the form (it is never returned in plaintext), so it must
+      // be left out rather than sent empty.
+      const changes = Object.fromEntries(
+        Object.entries(memberPayload).filter(
+          ([key]) => key !== 'id' && (dirtyFields[key] || (key === 'phone' && hadPhone && phoneEdited))
+        )
+      )
+
+      if (Object.keys(changes).length === 0) {
+        closeDrawer()
+        return
+      }
 
       editMember.mutate(
-        { id: memberId, ...payload },
+        { id: memberId, ...changes },
         {
           onSuccess: handleSuccess,
           onError: handleError,
@@ -262,9 +303,7 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                             <NumberInput.Root
                               w='full'
                               value={field.value === '' ? '' : String(field.value ?? '')}
-                              onValueChange={(details) =>
-                                field.onChange(details.value === '' ? '' : Number(details.value))
-                              }
+                              onValueChange={(details) => field.onChange(details.value)}
                             >
                               <NumberInput.Input />
                               <NumberInput.Control>
@@ -278,19 +317,30 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
                         <Input
                           {...methods.register(col.id, {
                             ...(fieldValidations[col.id] || {}),
+                            ...(isPhone && {
+                              onChange: () => {
+                                setPhoneEdited(true)
+                              },
+                            }),
                           })}
                           placeholder={hadPhone && isPhone ? '•••••••••••' : ''}
                           type={isBirthdate ? 'date' : isPhone ? 'tel' : 'text'}
                           required={false} // we don't want HTML5 validation
                         />
                       )}
-                      {isPhone && hadPhone && (
+                      {isPhone && phoneWillBeRemoved ? (
+                        <FormHelperText color='fg.error'>
+                          {t('memberbase.form.phone_will_be_removed', {
+                            defaultValue: 'The stored phone number will be removed when you save.',
+                          })}
+                        </FormHelperText>
+                      ) : isPhone && hadPhone ? (
                         <FormHelperText>
                           {t('memberbase.form.phone_warning', {
                             defaultValue: 'Phone number hidden. Any changes here will overwrite it.',
                           })}
                         </FormHelperText>
-                      )}
+                      ) : null}
                       <FormErrorMessage mt={2}>
                         {methods.formState.errors[col.id]?.message?.toString() || 'Error performing the operation'}
                       </FormErrorMessage>
