@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useOutletContext } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
 import { createTestMemoryRouter, render, screen, TestRouterProvider } from '~src/test-utils'
 import { Routes } from '~routes'
 import LayoutAuth, { type AuthOutletContextType } from './LayoutAuth'
@@ -64,5 +65,14 @@ describe('LayoutAuth', () => {
     renderAt('/account/signin?type=banana')
 
     expect(screen.getByText(/Organizations in every sector already trust Vocdoni/)).toBeInTheDocument()
+  })
+
+  // New users land here before reaching any page that offers a language switch.
+  it('offers a language selector', async () => {
+    renderAt('/account/signin')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Language' }))
+
+    expect(await screen.findByRole('menuitem', { name: 'Español' })).toBeInTheDocument()
   })
 })

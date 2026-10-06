@@ -1074,7 +1074,6 @@
     "selector_label": "Kide-kopurua"
   },
   "menu": {
-    "burger_aria_label": "erabiltzaile-menua",
     "collapse": "Tolestu menua",
     "create": "Sortu prozesua",
     "dashboard": "Panela",

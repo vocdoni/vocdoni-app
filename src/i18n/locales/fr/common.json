@@ -1093,7 +1093,6 @@
     "selector_label": "Taille de l'adhésion"
   },
   "menu": {
-    "burger_aria_label": "menu utilisateur",
     "collapse": "Réduire le menu",
     "create": "Créer un processus",
     "dashboard": "Dashboard",
