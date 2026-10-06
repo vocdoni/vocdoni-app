@@ -87,8 +87,9 @@
 - `d/<name>` branches are long-lived, client-specific deployments that diverge from `develop`. Do not branch from or
   target them unless the task is about that deployment.
 - CI follows the base branch (`.github/workflows/test.yml`): PRs to `develop` run lint, tests and the dev build; PRs to
-  `stage` or `d/**` run them with the stg build. The integration workflow runs on merges into `develop` and on PRs
-  promoting to `stage` or `main`. The full flow and deploy links are in the README's "Branching and deploys" section.
+  `stage` or `d/**` run them with the stg build. PRs to `main` (e.g. a hotfix) get neither job, so run `pnpm lint` and
+  `pnpm test` locally before opening one. The integration workflow (`.github/workflows/integration.yml`) runs on merges
+  into `develop` and on every PR to `stage` or `main`, release and hotfix alike. The full flow and deploy links are in the README's "Branching and deploys" section.
 
 ## Commit & Pull Request Guidelines
 - Follow existing Conventional Commit patterns from repo history (`fix(scope): ...`, `chore(scope): ...`, `refactor(scope): ...`).
