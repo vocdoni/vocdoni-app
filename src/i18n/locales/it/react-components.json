@@ -27,6 +27,7 @@
   "errors": {
     "not_voted_in_ended_election": "Hai firmato ma non hai votato in questa elezione terminata.",
     "question_not_votable": "Questa domanda non può accettare voti: una delle sue opzioni è stata configurata in un modo che il registro non può memorizzare. Il tuo voto non è stato espresso. Contatta l'organizzazione.",
+    "question_unsupported": "Il tipo di scheda di questa domanda non è supportato qui, quindi non può accettare voti.",
     "unauthorized": "Non autorizzato a votare",
     "vote_failed": "Non è stato possibile esprimere il tuo voto: {{ detail }}",
     "vote_failed_unknown": "Non è stato possibile esprimere il tuo voto. Riprova.",

@@ -11,6 +11,7 @@ import {
   decodeQuestionResults,
   inferQuestionBallotType,
   questionReservesAbstain,
+  tryInferQuestionBallotType,
   type DecodedQuestionResults,
 } from '@vocdoni/ballot'
 import { useElection } from '@vocdoni/react-components'
@@ -224,8 +225,10 @@ const getCastVotingPower = (question: VotingProcessQuestion, decoded: DecodedQue
 }
 
 const getVotingMethod = (question: VotingProcessQuestion, t: TFunction, isWeighted: boolean) => {
+  const type = tryInferQuestionBallotType(question)
+  if (type === undefined) return notAvailable(t)
   const base =
-    inferQuestionBallotType(question) === BallotType.MultiChoice
+    type === BallotType.MultiChoice
       ? t('process.question_type.multiple', { defaultValue: 'Multiple choice' })
       : t('process.question_type.single', { defaultValue: 'Single choice' })
 
@@ -285,11 +288,14 @@ export const buildCertificateData = ({
   const count = results ? processVoteCount(results) : null
 
   // Decode each question's on-chain histogram into per-choice tallies (plus the
-  // unified abstain bucket for multichoice questions).
+  // unified abstain bucket for multichoice questions). A question whose ballot type
+  // can't be inferred (e.g. a legacy process with neither a type nor a ballot
+  // protocol) can't be decoded either: it is left out, so its tallies read as not
+  // available instead of failing the whole report.
   const decodedByQuestionId = new Map<string, DecodedQuestionResults>()
   for (const question of election.questions) {
     const questionResults = questionsResults.get(question.id)
-    if (questionResults?.results?.length) {
+    if (questionResults?.results?.length && tryInferQuestionBallotType(question) !== undefined) {
       decodedByQuestionId.set(question.id, decodeQuestionResults(question, questionResults.results))
     }
   }

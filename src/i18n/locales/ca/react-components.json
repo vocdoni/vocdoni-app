@@ -27,6 +27,7 @@
   "errors": {
     "not_voted_in_ended_election": "Has signat però no has votat en aquesta elecció finalitzada.",
     "question_not_votable": "Aquesta pregunta no pot acceptar vots: una de les seves opcions es va configurar d'una manera que el registre no pot desar. El teu vot no s'ha emès. Posa't en contacte amb l'organització.",
+    "question_unsupported": "El tipus de papereta d'aquesta pregunta no és compatible aquí, així que no pot acceptar vots.",
     "unauthorized": "No autoritzat per votar",
     "vote_failed": "No s'ha pogut emetre el teu vot: {{ detail }}",
     "vote_failed_unknown": "No s'ha pogut emetre el teu vot. Torna-ho a provar.",
