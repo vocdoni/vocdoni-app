@@ -46,7 +46,7 @@ describe('MemberManager edit', () => {
 
     // surname and the hidden phone were not touched, so they are left out and kept
     expect(editMutate).toHaveBeenCalledTimes(1)
-    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'Augusta', email: '', weight: '5' })
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', name: 'Augusta', email: '' })
   })
 
   it('sends an emptied phone so the stored one is cleared', async () => {
@@ -58,7 +58,7 @@ describe('MemberManager edit', () => {
     await user.clear(phone)
     await user.click(screen.getByRole('button', { name: 'Save changes' }))
 
-    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '', weight: '5' })
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '' })
   })
 
   it('warns that the stored phone will be removed once the field is emptied', async () => {
@@ -140,7 +140,7 @@ describe('MemberManager edit', () => {
     rerender(<MemberManager member={{ ...member, surname: 'Byron' }} open />)
     await user.click(screen.getByRole('button', { name: 'Save changes' }))
 
-    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '', weight: '5' })
+    expect(editMutate.mock.calls[0][0]).toEqual({ id: 'member-1', phone: '' })
   })
 
   it('stops treating an edit as a change once a refetch brings the same value', async () => {
