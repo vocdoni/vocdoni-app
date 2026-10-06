@@ -1,5 +1,33 @@
 # Repository Guidelines
 
+## Required Agent Skills
+- The `vocdoni-integrator-sdk` skill is mandatory. This app is built on the Integrator SDK packages
+  (`@vocdoni/api-client`, `@vocdoni/api-voting`, `@vocdoni/react-providers`, `@vocdoni/react-components`),
+  and the skill documents their current API, auth flows and ballot model.
+- Before starting any task, check that the skill is loaded under its current name: `vocdoni-integrator-sdk`
+  (or `vocdoni-integrator-sdk:vocdoni-integrator-sdk` when installed as a Claude Code plugin). A skill named
+  `integrator-sdk`, including the plugin form `vocdoni-integrator-sdk:integrator-sdk`, is an outdated copy that
+  documents removed APIs (e.g. `BundleProvider`); it does not count. If one is loaded, never use it, and
+  tell the user so they can update or remove it (it usually lives in their user-level skills or plugins, outside
+  this repository).
+- If it is not loaded, install it for this project yourself, without asking first:
+  `npx -y skills@1.7.0 add vocdoni/vocdoni-integrator-sdk -y -a claude-code codex`. Install it only from that
+  repository, and keep the `-a` list: without it the CLI may also write to other agents' folders that are not
+  git-ignored. This puts the skill in `.agents/skills/` (read by Codex, Gemini CLI, Copilot, OpenCode and others),
+  symlinks it into `.claude/skills/` for Claude Code, and writes `skills-lock.json`. All of these are git-ignored;
+  never commit them.
+- The install is per checkout: every clone or git worktree needs its own, and each one gets the skill's latest
+  version at install time. To bring an older install up to date, re-run the same install command (not
+  `skills update`, which ignores the `-a` list).
+- After installing, load the skill: read `.agents/skills/vocdoni-integrator-sdk/SKILL.md` now, since most agents
+  only pick up new skills when a session starts.
+- If the install fails (e.g. offline or sandboxed), tell the user. Carry on with tasks that do not touch the
+  Integrator SDK packages; for tasks that do, ask the user to install the skill before continuing.
+- Claude Code users may install it instead as a plugin from the Vocdoni marketplace
+  (`claude plugin marketplace add vocdoni/skills`, then `claude plugin install vocdoni-integrator-sdk@vocdoni`).
+  An outdated plugin install is updated with `claude plugin marketplace update vocdoni`, then
+  `claude plugin update vocdoni-integrator-sdk@vocdoni`.
+
 ## Project Structure & Module Organization
 - `src/components/`: reusable UI and feature components (organized by domain).
 - `src/elements/`: route-level screens composed from components.
@@ -100,6 +128,7 @@
 
 ## Agent Working Rules
 - Treat this file as execution guidance for repository tasks.
+- Make sure the required skills are loaded first (see Required Agent Skills).
 - Before finishing any code change, always run `pnpm lint` and `pnpm test`.
 - When text keys/locales are touched, also run `pnpm translations` before completion.
 - Use `git diff` to review only relevant changes and avoid expanding context with unrelated files.
