@@ -27,7 +27,7 @@
   "errors": {
     "not_voted_in_ended_election": "Sinatu duzu, baina ez duzu botorik eman amaitu den bozketa honetan.",
     "question_not_votable": "Galdera honek ezin ditu botoak onartu: bere aukeretako bat erregistroak gorde ezin duen moduan konfiguratu zen. Zure botoa ez da eman. Jarri harremanetan erakundearekin.",
-    "question_unsupported": "Galdera honen papereta mota ez da hemen onartzen, beraz ezin ditu botoak onartu.",
+    "question_unsupported": "Galdera honen papereta mota ez da bateragarria hemen; beraz, ezin ditu botoak onartu.",
     "unauthorized": "Ez duzu bozkatzeko baimenik",
     "vote_failed": "Ezin izan da zure botoa eman: {{ detail }}",
     "vote_failed_unknown": "Ezin izan da zure botoa eman. Saiatu berriro.",
