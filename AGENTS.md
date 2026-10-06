@@ -76,6 +76,20 @@
 - Keep this split incremental: do not move unrelated routes to SSR unless explicitly requested.
 - For public SSR pages, prefer Vike `+data`, `+Head`, and page metadata over client-side document mutations.
 
+## Branching Model
+- `develop` is the default and integration branch. Branch new work off `develop` and open PRs against it unless told
+  otherwise. It deploys to app-dev.vocdoni.io (SaaS api-dev, vochain dev).
+- `stage` deploys to app-stg.vocdoni.io (SaaS api-stg, vochain LTS) and `main` is production, app.vocdoni.io (SaaS
+  api-lts, vochain LTS). Do not target them with feature or fix PRs: they only receive release PRs, `develop` →
+  `stage` → `main`.
+- Hotfixes for an already deployed version are the one exception: branch from `stage` or `main` (e.g. `h/<name>`) and
+  PR back to that same branch. Only do this when explicitly asked.
+- `d/<name>` branches are long-lived, client-specific deployments that diverge from `develop`. Do not branch from or
+  target them unless the task is about that deployment.
+- CI follows the base branch (`.github/workflows/test.yml`): PRs to `develop` run lint, tests and the dev build; PRs to
+  `stage` or `d/**` run them with the stg build. The integration workflow runs on merges into `develop` and on PRs
+  promoting to `stage` or `main`. The full flow and deploy links are in the README's "Branching and deploys" section.
+
 ## Commit & Pull Request Guidelines
 - Follow existing Conventional Commit patterns from repo history (`fix(scope): ...`, `chore(scope): ...`, `refactor(scope): ...`).
 - Keep commits scoped to one concern and use imperative summaries.
