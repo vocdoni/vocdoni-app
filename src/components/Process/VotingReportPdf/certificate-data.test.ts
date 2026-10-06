@@ -302,6 +302,28 @@ describe('buildCertificateData', () => {
     })
   })
 
+  it('reports not-available tallies for a question whose ballot type cannot be inferred', () => {
+    // Prod projection of a legacy election: no type and no ballot protocol, so it can't be decoded.
+    const election = createElection({ questions: [createQuestion({ type: '', ballotProtocol: undefined })] })
+
+    const data = buildCertificateData({
+      election,
+      results: createResults(),
+      t: plainT,
+      now: new Date('2026-01-03T10:00:00Z'),
+    })
+
+    expect(data.votingProcessQuestions[0]).toMatchObject({
+      totalVotes: 'Not available',
+      votingMethod: 'Not available',
+      submittedBallots: '10',
+      choices: [
+        { name: 'Approve', votes: 'Not available', percentage: 'Not available', numericVotes: null },
+        { name: 'Reject', votes: 'Not available', percentage: 'Not available', numericVotes: null },
+      ],
+    })
+  })
+
   it('marks results visibility as hidden when any question is secret until the end', () => {
     const election = createElection({ questions: [createQuestion({ secretUntilTheEnd: true })] })
 
