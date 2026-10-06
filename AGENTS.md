@@ -7,7 +7,9 @@
 - Before starting any task, check that the skill is loaded under its current name: `vocdoni-integrator-sdk`
   (or `vocdoni-integrator-sdk:vocdoni-integrator-sdk` when installed as a Claude Code plugin). A skill named
   `integrator-sdk`, including the plugin form `vocdoni-integrator-sdk:integrator-sdk`, is an outdated copy that
-  documents removed APIs (e.g. `BundleProvider`); it does not count.
+  documents removed APIs (e.g. `BundleProvider`); it does not count. If one is loaded alongside the current
+  skill, never use it, and tell the user so they can update or remove it (it usually lives in their user-level
+  skills or plugins, outside this repository).
 - If it is not loaded, install it for this project yourself, without asking first:
   `npx -y skills@1.7.0 add vocdoni/vocdoni-integrator-sdk -y -a claude-code codex`. Install it only from that
   repository, and keep the `-a` list: without it the CLI may also write to other agents' folders that are not
