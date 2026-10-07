@@ -202,6 +202,7 @@
     "errors": {
       "participant_not_found": "The voter is not listed in the census, or the provided credentials are incorrect.",
       "requests_on_cooldown": "Too many requests. Please wait a moment before trying again.",
+      "requests_on_cooldown_seconds": "You can request a new code in {{seconds}} s.",
       "zero_voting_weight": "You don't have enough voting power to access the election."
     },
     "fields": {
@@ -220,9 +221,11 @@
     "step1": {
       "footer_text": "If you experience any issues, contact your organization.",
       "helper_text": "We've sent a code to your phone number or email address. If you chose to receive it by email, please check your spam folder.",
+      "resend_countdown": "Didn't receive the code? You can request it again in {{seconds}} s.",
       "resend_failed": "Failed to resend code",
       "resend_success": "Code resent successfully",
       "resend_text": "Didn't receive the code? <resendBtn>Resend it</resendBtn>",
+      "same_code_text": "Asking again sends the same code, so the one you already received still works.",
       "start_over_text": "Wrong details? <restartBtn>Start over</restartBtn>",
       "subtitle": "Enter the verification code",
       "title": "Authentication",

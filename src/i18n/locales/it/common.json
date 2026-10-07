@@ -204,6 +204,7 @@
     "errors": {
       "participant_not_found": "Il votante non è presente nel censimento o le credenziali fornite non sono corrette.",
       "requests_on_cooldown": "Troppe richieste. Attendi un momento prima di riprovare.",
+      "requests_on_cooldown_seconds": "Puoi richiedere un nuovo codice tra {{seconds}} s.",
       "zero_voting_weight": "Non hai abbastanza potere di voto per accedere alla votazione."
     },
     "fields": {
@@ -222,9 +223,11 @@
     "step1": {
       "footer_text": "In caso di problemi, contatta la tua organizzazione.",
       "helper_text": "Abbiamo inviato un codice di verifica al numero di telefono o all’indirizzo email indicato. Se hai scelto di riceverlo via email, controlla anche la cartella spam.",
+      "resend_countdown": "Non hai ricevuto il codice? Puoi richiederlo di nuovo tra {{seconds}} s.",
       "resend_failed": "Invio del codice non riuscito",
       "resend_success": "Codice inviato correttamente",
       "resend_text": "Non hai ricevuto il codice? <resendBtn>Invia di nuovo</resendBtn>",
+      "same_code_text": "Se lo richiedi di nuovo, riceverai lo stesso codice, quindi quello che hai già ricevuto resta valido.",
       "start_over_text": "Dati errati? <restartBtn>Ricomincia</restartBtn>",
       "subtitle": "Inserisci il codice di verifica",
       "title": "Autenticazione",

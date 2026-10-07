@@ -17,7 +17,15 @@ import { Controller, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import { useToast } from '~components/Toast'
 import { useCspAuthContext } from './CSPStepsProvider'
-import { useCspAuth1, useCspAuthPending, useCspResend, useIsCspAuthBusy } from './basics'
+import {
+  CspCooldownError,
+  RESEND_COOLDOWN_MS,
+  useCountdown,
+  useCspAuth1,
+  useCspAuthPending,
+  useCspResend,
+  useIsCspAuthBusy,
+} from './basics'
 
 // Define the form data structure
 type CSPStep1FormData = {
@@ -43,9 +51,11 @@ export const Step1Base = () => {
   // closed mid-request, so this dialog's own isPending flags aren't enough.
   const authPending = useCspAuthPending()
   const isAuthBusy = useIsCspAuthBusy()
+  // The backend sends a code at most once per cooldown, so the link waits it out.
+  const cooldown = useCountdown()
 
   const handleResend = async () => {
-    if (isAuthBusy()) return
+    if (isAuthBusy() || cooldown.secondsLeft > 0) return
 
     try {
       // The pending auth token lives in the process session; only the contact
@@ -54,6 +64,7 @@ export const Step1Base = () => {
         email: authData.email,
         phone: authData.phone,
       })
+      cooldown.start(RESEND_COOLDOWN_MS)
       toast({
         title: t('csp.step1.resend_success', { defaultValue: 'Code resent successfully' }),
         type: 'success',
@@ -61,6 +72,11 @@ export const Step1Base = () => {
         isClosable: true,
       })
     } catch (error) {
+      // Not a failure: the code already sent still works, the countdown says when to ask again.
+      if (error instanceof CspCooldownError) {
+        cooldown.start(error.retryAfterMs ?? RESEND_COOLDOWN_MS)
+        return
+      }
       const errorMessage =
         error instanceof Error ? error.message : t('csp.step1.resend_failed', { defaultValue: 'Failed to resend code' })
       toast({
@@ -157,21 +173,33 @@ export const Step1Base = () => {
                   </Trans>
                 </Text>
                 <Text>
-                  <Trans
-                    i18nKey='csp.step1.resend_text'
-                    defaults="Didn't receive the code? <resendBtn>Resend it</resendBtn>"
-                    components={{
-                      resendBtn: (
-                        <Button
-                          variant='link'
-                          verticalAlign='unset'
-                          loading={resend.isPending}
-                          disabled={authPending}
-                          onClick={handleResend}
-                        />
-                      ),
-                    }}
-                  />
+                  {cooldown.secondsLeft > 0 ? (
+                    t('csp.step1.resend_countdown', {
+                      defaultValue: "Didn't receive the code? You can request it again in {{seconds}} s.",
+                      seconds: cooldown.secondsLeft,
+                    })
+                  ) : (
+                    <Trans
+                      i18nKey='csp.step1.resend_text'
+                      defaults="Didn't receive the code? <resendBtn>Resend it</resendBtn>"
+                      components={{
+                        resendBtn: (
+                          <Button
+                            variant='link'
+                            verticalAlign='unset'
+                            loading={resend.isPending}
+                            disabled={authPending}
+                            onClick={handleResend}
+                          />
+                        ),
+                      }}
+                    />
+                  )}
+                </Text>
+                <Text>
+                  {t('csp.step1.same_code_text', {
+                    defaultValue: 'Asking again sends the same code, so the one you already received still works.',
+                  })}
                 </Text>
                 {/* Every Identify button on the page resumes this step, so this
                     is the only way back to step 0 short of a reload (e.g. a
