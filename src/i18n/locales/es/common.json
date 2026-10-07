@@ -1383,8 +1383,10 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Todavía se está procesando el pago de un proceso de votación que usa estos miembros. Vuelve a intentarlo cuando termine.",
-        "census_growth_payment_required": "Estos miembros ampliarían el censo de un proceso de votación más allá de lo que se pagó por él. Ampliarlo cuesta {{amount}} más (IVA no incluido).",
-        "payment_in_progress": "El pago de este proceso de votación aún no se ha resuelto, así que no se puede publicar ahora. Vuelve a intentarlo más tarde y contacta con nosotros si sigue pasando.",
+        "census_growth_payment_required": "Estos miembros ampliarían el censo de un proceso de votación más allá de lo que se pagó por él. Ampliarlo cuesta hasta {{amount}} más (IVA no incluido).",
+        "census_growth_quote_required": "Estos miembros harían que el censo de un proceso de votación superara los 50.000 votantes, lo que requiere un presupuesto personalizado. Contacta con nosotros para ampliarlo.",
+        "draft_payment_in_progress": "Este borrador no se puede modificar mientras se procesa su pago. Vuelve a intentarlo más tarde y contacta con nosotros si sigue pasando.",
+        "payment_in_progress": "Un pago, una compra o un reembolso de este proceso de votación aún no ha terminado, así que no se puede publicar ahora. Vuelve a intentarlo más tarde y contacta con nosotros si sigue pasando.",
         "publish_payment_required": "Este proceso de votación cuesta {{amount}} (IVA no incluido) y hay que pagarlo antes de publicarlo.",
         "quote_required": "Los procesos de votación de más de 50.000 votantes necesitan un presupuesto personalizado. Contacta con nosotros para publicar este.",
         "wallet_insufficient": "El saldo del integrador no cubre el precio de este proceso de votación. Recárgalo y vuelve a publicarlo.",

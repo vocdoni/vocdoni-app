@@ -28,7 +28,7 @@ import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus } from '@vocdoni/api-types'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { useAuth } from '~components/Auth/useAuth'
-import { censusGrowthPaymentErrorMessage } from '~components/Pricing/payment-errors'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastDuration } from '~components/Pricing/payment-errors'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
@@ -142,11 +142,12 @@ const AddMembersToGroupDrawer = ({ isOpen, onClose }: AddMembersToGroupDrawerPro
           onClose()
         },
         onError: (error: Error) => {
+          const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
           toast({
             title: t('members.table.add_to_group_error', { defaultValue: 'Error adding members to the group' }),
-            description: censusGrowthPaymentErrorMessage(t, error) ?? error.message,
+            description: paymentMessage ?? error.message,
             type: 'error',
-            duration: 3000,
+            duration: paymentMessage ? paymentErrorToastDuration : 3000,
             isClosable: true,
           })
         },
@@ -276,11 +277,12 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
           handleClose()
         },
         onError: (error: Error) => {
+          const paymentMessage = censusGrowthPaymentErrorMessage(t, error)
           toast({
             title: t('members.table.add_to_census_error', { defaultValue: 'Error adding members to the census' }),
-            description: censusGrowthPaymentErrorMessage(t, error) ?? error.message,
+            description: paymentMessage ?? error.message,
             type: 'error',
-            duration: 3000,
+            duration: paymentMessage ? paymentErrorToastDuration : 3000,
             isClosable: true,
           })
         },

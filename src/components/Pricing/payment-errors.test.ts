@@ -1,7 +1,11 @@
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { TFunction } from 'i18next'
 import { ApiError, ErrorCode } from '~components/Auth/api'
-import { censusGrowthPaymentErrorMessage, publishPaymentErrorMessage } from './payment-errors'
+import {
+  censusGrowthPaymentErrorMessage,
+  draftSavePaymentErrorMessage,
+  publishPaymentErrorMessage,
+} from './payment-errors'
 
 vi.mock('~utils/numbers', () => ({ currency: (cents: number) => `€${cents / 100}` }))
 
@@ -60,7 +64,9 @@ describe('publishPaymentErrorMessage', () => {
 
   it('explains the custom quote and in-flight payment refusals', () => {
     expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.QuoteRequired))).toMatch(/custom quote/)
-    expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.PaymentSessionConflict))).toMatch(/not settled yet/)
+    expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.PaymentSessionConflict))).toMatch(
+      /payment, checkout or refund/
+    )
   })
 
   it('leaves non-payment errors, and a payment code without its quote, to the caller', () => {
@@ -77,8 +83,19 @@ describe('censusGrowthPaymentErrorMessage', () => {
     ['the app api client', apiError],
   ])('explains a census growth refused for payment through %s, with the amount due', (_, build) => {
     expect(censusGrowthPaymentErrorMessage(t, build(ErrorCode.PaymentRequired, growth))).toBe(
-      'These members would grow the census of a voting process beyond what was paid for it. Growing it costs €20 more (VAT excluded).'
+      'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to €20 more (VAT excluded).'
     )
+  })
+
+  it('asks for a custom quote, not a payment, when the grown census is above the self-service limit', () => {
+    expect(
+      censusGrowthPaymentErrorMessage(t, apiError(ErrorCode.PaymentRequired, { ...growth, censusSize: 50001 }))
+    ).toBe(
+      'These members would take the census of a voting process above 50,000 voters, which needs a custom quote. Contact us to grow it.'
+    )
+    expect(
+      censusGrowthPaymentErrorMessage(t, apiError(ErrorCode.PaymentRequired, { ...growth, censusSize: 50000 }))
+    ).toMatch(/costs up to €20 more/)
   })
 
   it('explains a growth refused while a payment is in flight', () => {
@@ -91,5 +108,15 @@ describe('censusGrowthPaymentErrorMessage', () => {
     // 40178 is shared by both refusals; only the growth payload carries what is due
     expect(censusGrowthPaymentErrorMessage(t, apiError(ErrorCode.PaymentRequired, quote))).toBeUndefined()
     expect(censusGrowthPaymentErrorMessage(t, apiError(ErrorCode.MalformedJSONBody))).toBeUndefined()
+  })
+})
+
+describe('draftSavePaymentErrorMessage', () => {
+  it('explains a draft locked by its payment, and leaves any other error to the caller', () => {
+    expect(draftSavePaymentErrorMessage(t, sdkError(ErrorCode.PaymentSessionConflict))).toMatch(
+      /payment is being processed/
+    )
+    expect(draftSavePaymentErrorMessage(t, sdkError(ErrorCode.DraftLimitReached))).toBeUndefined()
+    expect(draftSavePaymentErrorMessage(t, new Error('network down'))).toBeUndefined()
   })
 })

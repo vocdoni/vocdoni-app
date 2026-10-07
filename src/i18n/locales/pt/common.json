@@ -1383,10 +1383,12 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "O pagamento de um processo de votação que usa estes membros ainda está a ser processado. Tenta novamente quando terminar.",
-        "census_growth_payment_required": "Estes membros aumentariam a lista de participantes de um processo de votação para além do que foi pago. Aumentá-la custa mais {{amount}} (IVA não incluído).",
-        "payment_in_progress": "O pagamento deste processo de votação ainda não está concluído, por isso não pode ser publicado agora. Tenta novamente mais tarde e contacta-nos se continuar a acontecer.",
+        "census_growth_payment_required": "Estes membros aumentariam a lista de participantes de um processo de votação para além do que foi pago. Aumentá-la custa até {{amount}} a mais (IVA não incluído).",
+        "census_growth_quote_required": "Estes membros levariam a lista de participantes de um processo de votação para além dos 50.000 votantes, o que exige um orçamento personalizado. Contacta-nos para a aumentar.",
+        "draft_payment_in_progress": "Este rascunho não pode ser alterado enquanto o seu pagamento está a ser processado. Tenta novamente mais tarde e contacta-nos se continuar a acontecer.",
+        "payment_in_progress": "Um pagamento, uma compra ou um reembolso deste processo de votação ainda não está concluído, por isso o processo não pode ser publicado agora. Tenta novamente mais tarde e contacta-nos se continuar a acontecer.",
         "publish_payment_required": "Este processo de votação custa {{amount}} (IVA não incluído) e tem de ser pago antes de ser publicado.",
-        "quote_required": "Os processos de votação com mais de 50 000 votantes precisam de um orçamento personalizado. Contacta-nos para publicar este.",
+        "quote_required": "Os processos de votação com mais de 50.000 votantes precisam de um orçamento personalizado. Contacta-nos para publicar este.",
         "wallet_insufficient": "O saldo do integrador não cobre o preço deste processo de votação. Carrega o saldo e publica novamente.",
         "wallet_insufficient_amounts": "O saldo do integrador é de {{available}}, mas ainda faltam {{required}} (IVA não incluído) para publicar este processo de votação. Carrega o saldo e publica novamente."
       }

@@ -1359,8 +1359,10 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "A payment for a voting process using these members is still being processed. Try again once it completes.",
-        "census_growth_payment_required": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs {{amount}} more (VAT excluded).",
-        "payment_in_progress": "The payment of this voting process is not settled yet, so it cannot be published right now. Try again later, and contact us if it keeps happening.",
+        "census_growth_payment_required": "These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded).",
+        "census_growth_quote_required": "These members would take the census of a voting process above 50,000 voters, which needs a custom quote. Contact us to grow it.",
+        "draft_payment_in_progress": "This draft cannot be changed while its payment is being processed. Try again later, and contact us if it keeps happening.",
+        "payment_in_progress": "A payment, checkout or refund of this voting process is not finished yet, so it cannot be published right now. Try again later, and contact us if it keeps happening.",
         "publish_payment_required": "This voting process costs {{amount}} (VAT excluded) and must be paid before it can be published.",
         "quote_required": "Voting processes with more than 50,000 voters need a custom quote. Contact us to publish this one.",
         "wallet_insufficient": "The integrator wallet does not cover the price of this voting process. Top up the wallet and publish again.",

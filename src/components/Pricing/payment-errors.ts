@@ -17,6 +17,10 @@ const hasCents = <K extends string>(data: unknown, ...keys: K[]): data is Record
   data !== null &&
   keys.every((key) => typeof (data as Record<string, unknown>)[key] === 'number')
 
+// Above this many voters the backend only sells a process through a custom quote: checkout and
+// the integrator wallet both refuse it (40176), so no message may ask the user to pay.
+const selfServiceVoterLimit = 50_000
+
 const quoteRequiredMessage = (t: TFunction) =>
   t('process.payment.error.quote_required', {
     defaultValue: 'Voting processes with more than 50,000 voters need a custom quote. Contact us to publish this one.',
@@ -56,12 +60,27 @@ export const publishPaymentErrorMessage = (t: TFunction, error: unknown): string
     case ErrorCode.QuoteRequired:
       return quoteRequiredMessage(t)
     case ErrorCode.PaymentSessionConflict:
+      // Also answered for a pending checkout or an unfinished refund, not only a payment being
+      // processed, so the copy cannot promise that waiting is enough.
       return t('process.payment.error.payment_in_progress', {
         defaultValue:
-          'The payment of this voting process is not settled yet, so it cannot be published right now. Try again later, and contact us if it keeps happening.',
+          'A payment, checkout or refund of this voting process is not finished yet, so it cannot be published right now. Try again later, and contact us if it keeps happening.',
       })
   }
   return undefined
+}
+
+// Payment explanations are longer than a usual error toast, so they stay up long enough to read.
+export const paymentErrorToastDuration = 10000
+
+// A translated explanation of why a draft could not be saved because its payment is being
+// processed (the backend locks it meanwhile), or undefined for any other error.
+export const draftSavePaymentErrorMessage = (t: TFunction, error: unknown): string | undefined => {
+  if (apiErrorDetails(error)?.code !== ErrorCode.PaymentSessionConflict) return undefined
+  return t('process.payment.error.draft_payment_in_progress', {
+    defaultValue:
+      'This draft cannot be changed while its payment is being processed. Try again later, and contact us if it keeps happening.',
+  })
 }
 
 // A translated explanation of why adding members was refused because it would grow the census of
@@ -73,9 +92,17 @@ export const censusGrowthPaymentErrorMessage = (t: TFunction, error: unknown): s
   switch (details?.code) {
     case ErrorCode.PaymentRequired:
       if (!hasCents(details.data, 'dueCents')) break
+      if (hasCents(details.data, 'censusSize') && details.data.censusSize > selfServiceVoterLimit) {
+        return t('process.payment.error.census_growth_quote_required', {
+          defaultValue:
+            'These members would take the census of a voting process above 50,000 voters, which needs a custom quote. Contact us to grow it.',
+        })
+      }
+      // An upper bound: a bulk import is priced on every submitted row, including members the
+      // census already has.
       return t('process.payment.error.census_growth_payment_required', {
         defaultValue:
-          'These members would grow the census of a voting process beyond what was paid for it. Growing it costs {{amount}} more (VAT excluded).',
+          'These members would grow the census of a voting process beyond what was paid for it. Growing it costs up to {{amount}} more (VAT excluded).',
         amount: currency(details.data.dueCents),
       })
     case ErrorCode.PaymentSessionConflict:

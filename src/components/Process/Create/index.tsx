@@ -44,7 +44,11 @@ import { useSubscription } from '~components/Auth/Subscription'
 import { apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
-import { publishPaymentErrorMessage } from '~components/Pricing/payment-errors'
+import {
+  draftSavePaymentErrorMessage,
+  paymentErrorToastDuration,
+  publishPaymentErrorMessage,
+} from '~components/Pricing/payment-errors'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
@@ -672,7 +676,7 @@ const ProcessCreateView = () => {
 
   const showDraftSaveError = (error: unknown) => {
     const limit = permission(SubscriptionPermission.Drafts)
-    let description = error instanceof Error ? error.message : String(error)
+    let description = draftSavePaymentErrorMessage(t, error) ?? (error instanceof Error ? error.message : String(error))
 
     if (isDraftLimitError(error)) {
       description = t('process.create.limit_reached.message', {
@@ -790,11 +794,12 @@ const ProcessCreateView = () => {
       // whatever went wrong.
       skipSave(false)
 
+      const paymentMessage = publishPaymentErrorMessage(t, error)
       toast({
         title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
-        description: publishPaymentErrorMessage(t, error) ?? (error instanceof Error ? error.message : String(error)),
+        description: paymentMessage ?? (error instanceof Error ? error.message : String(error)),
         type: 'error',
-        duration: 4000,
+        duration: paymentMessage ? paymentErrorToastDuration : 4000,
       })
     }
   }

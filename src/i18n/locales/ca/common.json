@@ -1383,8 +1383,10 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Encara s'està processant el pagament d'un procés de votació que fa servir aquests membres. Torna-ho a provar quan acabi.",
-        "census_growth_payment_required": "Aquests membres ampliarien el cens d'un procés de votació més enllà del que se'n va pagar. Ampliar-lo costa {{amount}} més (IVA no inclòs).",
-        "payment_in_progress": "El pagament d'aquest procés de votació encara no s'ha resolt, així que no es pot publicar ara. Torna-ho a provar més tard i contacta amb nosaltres si continua passant.",
+        "census_growth_payment_required": "Aquests membres ampliarien el cens d'un procés de votació més enllà del que se'n va pagar. Ampliar-lo costa fins a {{amount}} més (IVA no inclòs).",
+        "census_growth_quote_required": "Aquests membres farien que el cens d'un procés de votació superés els 50.000 votants, i això necessita un pressupost personalitzat. Contacta amb nosaltres per ampliar-lo.",
+        "draft_payment_in_progress": "Aquest esborrany no es pot modificar mentre se'n processa el pagament. Torna-ho a provar més tard i contacta amb nosaltres si continua passant.",
+        "payment_in_progress": "Un pagament, una compra o un reemborsament d'aquest procés de votació encara no ha acabat, així que no es pot publicar ara. Torna-ho a provar més tard i contacta amb nosaltres si continua passant.",
         "publish_payment_required": "Aquest procés de votació costa {{amount}} (IVA no inclòs) i cal pagar-lo abans de publicar-lo.",
         "quote_required": "Els processos de votació de més de 50.000 votants necessiten un pressupost personalitzat. Contacta amb nosaltres per publicar aquest.",
         "wallet_insufficient": "El saldo de l'integrador no cobreix el preu d'aquest procés de votació. Recarrega'l i torna'l a publicar.",

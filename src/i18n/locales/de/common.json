@@ -1359,8 +1359,10 @@
     "payment": {
       "error": {
         "census_growth_payment_in_progress": "Die Zahlung für einen Abstimmungsprozess mit diesen Mitgliedern wird noch verarbeitet. Versuch es erneut, sobald sie abgeschlossen ist.",
-        "census_growth_payment_required": "Diese Mitglieder würden die Teilnehmerliste eines Abstimmungsprozesses über das Bezahlte hinaus vergrößern. Die Erweiterung kostet {{amount}} mehr (zzgl. MwSt.).",
-        "payment_in_progress": "Die Zahlung für diesen Abstimmungsprozess ist noch nicht abgeschlossen, daher kann er gerade nicht veröffentlicht werden. Versuch es später erneut und kontaktiere uns, falls es weiterhin passiert.",
+        "census_growth_payment_required": "Diese Mitglieder würden die Teilnehmerliste eines Abstimmungsprozesses über das Bezahlte hinaus vergrößern. Die Erweiterung kostet bis zu {{amount}} mehr (zzgl. MwSt.).",
+        "census_growth_quote_required": "Diese Mitglieder würden die Teilnehmerliste eines Abstimmungsprozesses auf mehr als 50.000 Wählende bringen, wofür ein individuelles Angebot nötig ist. Kontaktiere uns, um sie zu erweitern.",
+        "draft_payment_in_progress": "Dieser Entwurf kann nicht geändert werden, solange seine Zahlung verarbeitet wird. Versuch es später erneut und kontaktiere uns, falls es weiterhin passiert.",
+        "payment_in_progress": "Eine Zahlung, ein Kaufvorgang oder eine Rückerstattung für diesen Abstimmungsprozess ist noch nicht abgeschlossen, daher kann der Prozess gerade nicht veröffentlicht werden. Versuch es später erneut und kontaktiere uns, falls es weiterhin passiert.",
         "publish_payment_required": "Dieser Abstimmungsprozess kostet {{amount}} (zzgl. MwSt.) und muss vor der Veröffentlichung bezahlt werden.",
         "quote_required": "Abstimmungsprozesse mit mehr als 50.000 Wählenden brauchen ein individuelles Angebot. Kontaktiere uns, um diesen zu veröffentlichen.",
         "wallet_insufficient": "Das Guthaben des Integrators deckt den Preis dieses Abstimmungsprozesses nicht. Lade das Guthaben auf und veröffentliche erneut.",
