@@ -1385,12 +1385,12 @@
         "census_growth_payment_in_progress": "O pagamento de um processo de votação que usa esses membros ainda está sendo processado. Tente novamente quando ele for concluído.",
         "census_growth_payment_required": "Esses membros aumentariam a lista de participantes de um processo de votação além do que foi pago. Aumentá-la custa até {{amount}} a mais (impostos não incluídos).",
         "census_growth_quote_required": "Esses membros levariam a lista de participantes de um processo de votação para mais de 50.000 eleitores, o que exige um orçamento personalizado. Fale com a gente para aumentá-la.",
-        "draft_payment_in_progress": "Este rascunho não pode ser alterado enquanto o pagamento dele está sendo processado. Tente novamente mais tarde e fale com a gente se continuar acontecendo.",
+        "draft_payment_in_progress": "Este rascunho não pode ser salvo por causa do pagamento dele: ou o pagamento ainda está sendo processado, ou a alteração não é permitida depois do pagamento (como adicionar uma marca personalizada). Fale com a gente se continuar acontecendo.",
         "payment_in_progress": "Um pagamento, uma compra ou um reembolso deste processo de votação ainda não foi concluído, por isso o processo não pode ser publicado agora. Tente novamente mais tarde e fale com a gente se continuar acontecendo.",
-        "publish_payment_required": "Este processo de votação custa {{amount}} (impostos não incluídos) e precisa ser pago antes de ser publicado.",
+        "publish_payment_required": "Este processo de votação custa {{amount}} no total (impostos não incluídos) e precisa ser pago antes de ser publicado. Se uma parte já foi paga, só falta pagar a diferença.",
         "quote_required": "Processos de votação com mais de 50.000 eleitores precisam de um orçamento personalizado. Fale com a gente para publicar este.",
-        "wallet_insufficient": "O saldo do integrador não cobre o preço deste processo de votação. Recarregue o saldo e publique novamente.",
-        "wallet_insufficient_amounts": "O saldo do integrador é de {{available}}, mas ainda faltam {{required}} (impostos não incluídos) para publicar este processo de votação. Recarregue o saldo e publique novamente."
+        "wallet_insufficient": "O saldo do integrador não cobre o preço deste processo de votação. O integrador que gerencia esta organização precisa recarregar o saldo dele antes que você publique novamente.",
+        "wallet_insufficient_amounts": "O saldo do integrador é de {{available}}, mas ainda faltam {{required}} (impostos não incluídos) para publicar este processo de votação. O integrador que gerencia esta organização precisa recarregar o saldo dele antes que você publique novamente."
       }
     },
     "people_in_census_one": "{{ count }} eleitor",

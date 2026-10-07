@@ -46,7 +46,7 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import {
   draftSavePaymentErrorMessage,
-  paymentErrorToastDuration,
+  paymentErrorToastOptions,
   publishPaymentErrorMessage,
 } from '~components/Pricing/payment-errors'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
@@ -263,6 +263,15 @@ export const useFormDraftSaver = (
   const { organization } = useOrganization()
   const skipNextSaveRef = useRef(false)
   const [draftLimitReached, setDraftLimitReached] = useState(false)
+  const { t } = useTranslation()
+  const toast = useToast()
+  // Read through a ref: useToast returns a new function every render, which would recreate
+  // saveDraft and restart the auto-save effects that depend on it.
+  const notifyRef = useRef({ t, toast })
+  notifyRef.current = { t, toast }
+  // Auto-save otherwise fails silently; a draft locked by its payment would keep refusing every
+  // edit, so it is explained once, until a save goes through again.
+  const paymentLockNotifiedRef = useRef(false)
   // Saving a draft replaces its whole question set server-side (the API deletes
   // the stored questions and inserts the ones it receives), so two writes in
   // flight at once can interleave and leave a duplicated question behind. Every
@@ -347,6 +356,7 @@ export const useFormDraftSaver = (
         })
         saveCooldown?.(saveTimeoutMs)
         setDraftLimitReached(false)
+        paymentLockNotifiedRef.current = false
         return 'saved'
       } catch (e) {
         // Check if it's a draft limit error
@@ -361,6 +371,17 @@ export const useFormDraftSaver = (
         // For other errors, only log in auto-save mode
         if (isAutoSave) {
           console.error('Failed to save draft:', e)
+          const { t, toast } = notifyRef.current
+          const paymentMessage = draftSavePaymentErrorMessage(t, e)
+          if (paymentMessage && !paymentLockNotifiedRef.current) {
+            paymentLockNotifiedRef.current = true
+            toast({
+              title: t('process.create.save_draft_error.title', { defaultValue: 'Error saving draft' }),
+              description: paymentMessage,
+              type: 'error',
+              ...paymentErrorToastOptions,
+            })
+          }
           return 'error'
         }
         throw e
@@ -799,7 +820,8 @@ const ProcessCreateView = () => {
         title: t('form.process_create.error_title', { defaultValue: 'Error creating process' }),
         description: paymentMessage ?? (error instanceof Error ? error.message : String(error)),
         type: 'error',
-        duration: paymentMessage ? paymentErrorToastDuration : 4000,
+        duration: 4000,
+        ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }
   }

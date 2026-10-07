@@ -17,7 +17,7 @@ import { useOrganization } from '@vocdoni/react-components'
 import { cloneElement, useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { censusGrowthPaymentErrorMessage, paymentErrorToastDuration } from '~components/Pricing/payment-errors'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
 import { Member, useAddMembers, useEditMember } from '~src/queries/members'
@@ -204,8 +204,9 @@ export const MemberManager = ({ control, member = null, open: controlledOpen, on
         title: errorToastMessage,
         description: paymentMessage ?? error.message,
         type: 'error',
-        duration: paymentMessage ? paymentErrorToastDuration : 3000,
+        duration: 3000,
         isClosable: true,
+        ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }
 

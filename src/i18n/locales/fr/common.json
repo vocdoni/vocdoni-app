@@ -1385,12 +1385,12 @@
         "census_growth_payment_in_progress": "Le paiement d'un processus de vote utilisant ces membres est encore en cours de traitement. Réessayez une fois qu'il sera terminé.",
         "census_growth_payment_required": "Ces membres agrandiraient la liste électorale d'un processus de vote au-delà de ce qui a été payé. L'agrandir coûte jusqu'à {{amount}} de plus (HT).",
         "census_growth_quote_required": "Ces membres porteraient la liste électorale d'un processus de vote au-delà de 50 000 électeurs, ce qui nécessite un devis personnalisé. Contactez-nous pour l'agrandir.",
-        "draft_payment_in_progress": "Ce brouillon ne peut pas être modifié pendant le traitement de son paiement. Réessayez plus tard et contactez-nous si le problème persiste.",
+        "draft_payment_in_progress": "Ce brouillon ne peut pas être enregistré à cause de son paiement : soit le paiement est encore en cours de traitement, soit la modification n'est plus autorisée une fois le paiement effectué (comme l'ajout d'une marque personnalisée). Contactez-nous si le problème persiste.",
         "payment_in_progress": "Un paiement, un achat ou un remboursement de ce processus de vote n'est pas encore terminé, le processus ne peut donc pas être publié pour le moment. Réessayez plus tard et contactez-nous si le problème persiste.",
-        "publish_payment_required": "Ce processus de vote coûte {{amount}} (HT) et doit être payé avant de pouvoir être publié.",
+        "publish_payment_required": "Ce processus de vote coûte {{amount}} au total (HT) et doit être payé avant de pouvoir être publié. Si une partie a déjà été payée, seule la différence reste due.",
         "quote_required": "Les processus de vote de plus de 50 000 électeurs nécessitent un devis personnalisé. Contactez-nous pour publier celui-ci.",
-        "wallet_insufficient": "Le solde de l'intégrateur ne couvre pas le prix de ce processus de vote. Rechargez le solde et publiez à nouveau.",
-        "wallet_insufficient_amounts": "Le solde de l'intégrateur est de {{available}}, mais il reste {{required}} (HT) à payer pour publier ce processus de vote. Rechargez le solde et publiez à nouveau."
+        "wallet_insufficient": "Le solde de l'intégrateur ne couvre pas le prix de ce processus de vote. L'intégrateur qui gère cette organisation doit recharger son solde avant toute nouvelle publication.",
+        "wallet_insufficient_amounts": "Le solde de l'intégrateur est de {{available}}, mais il reste {{required}} (HT) à payer pour publier ce processus de vote. L'intégrateur qui gère cette organisation doit recharger son solde avant toute nouvelle publication."
       }
     },
     "people_in_census_one": "{{ count }} électeur",

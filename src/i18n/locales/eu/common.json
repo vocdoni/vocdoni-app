@@ -1361,12 +1361,12 @@
         "census_growth_payment_in_progress": "Kide hauek erabiltzen dituen boto-ematearen prozesu baten ordainketa oraindik prozesatzen ari da. Saiatu berriro amaitzen denean.",
         "census_growth_payment_required": "Kide hauek boto-ematearen prozesu baten erroldea ordaindutakoaz haratago handituko lukete. Handitzeak gehienez {{amount}} gehiago balio du (BEZa kanpo).",
         "census_growth_quote_required": "Kide hauek boto-ematearen prozesu baten erroldea 50.000 botogiletik gora eramango lukete, eta horrek aurrekontu pertsonalizatua behar du. Jarri gurekin harremanetan handitzeko.",
-        "draft_payment_in_progress": "Zirriborro hau ezin da aldatu bere ordainketa prozesatzen ari den bitartean. Saiatu berriro geroago, eta jarri gurekin harremanetan horrela jarraitzen badu.",
+        "draft_payment_in_progress": "Zirriborro hau ezin da gorde bere ordainketagatik: edo ordainketa oraindik prozesatzen ari da, edo aldaketa ez da onartzen ordaindu ondoren (adibidez, marka pertsonalizatua gehitzea). Jarri gurekin harremanetan horrela jarraitzen badu.",
         "payment_in_progress": "Boto-ematearen prozesu honen ordainketa, erosketa edo itzulketa bat oraindik ez da amaitu, beraz ezin da orain argitaratu. Saiatu berriro geroago, eta jarri gurekin harremanetan horrela jarraitzen badu.",
-        "publish_payment_required": "Boto-ematearen prozesu honek {{amount}} balio du (BEZa kanpo) eta argitaratu aurretik ordaindu behar da.",
+        "publish_payment_required": "Boto-ematearen prozesu honek guztira {{amount}} balio du (BEZa kanpo) eta argitaratu aurretik ordaindu behar da. Zati bat dagoeneko ordaindu bada, aldea bakarrik ordaindu behar da.",
         "quote_required": "50.000 botogile baino gehiagoko boto-ematearen prozesuek aurrekontu pertsonalizatua behar dute. Jarri gurekin harremanetan hau argitaratzeko.",
-        "wallet_insufficient": "Integratzailearen saldoak ez du boto-ematearen prozesu honen prezioa estaltzen. Kargatu saldoa eta argitaratu berriro.",
-        "wallet_insufficient_amounts": "Integratzailearen saldoa {{available}} da, baina boto-ematearen prozesu hau argitaratzeko {{required}} (BEZa kanpo) ordaintzeke daude. Kargatu saldoa eta argitaratu berriro."
+        "wallet_insufficient": "Integratzailearen saldoak ez du boto-ematearen prozesu honen prezioa estaltzen. Erakunde hau kudeatzen duen integratzaileak bere saldoa kargatu behar du berriro argitaratu aurretik.",
+        "wallet_insufficient_amounts": "Integratzailearen saldoa {{available}} da, baina boto-ematearen prozesu hau argitaratzeko {{required}} (BEZa kanpo) ordaintzeke daude. Erakunde hau kudeatzen duen integratzaileak bere saldoa kargatu behar du berriro argitaratu aurretik."
       }
     },
     "people_in_census_one": "Boto-emaile bat",

@@ -34,7 +34,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { LuCheck, LuTriangleAlert, LuUpload } from 'react-icons/lu'
 import { useOutletContext } from 'react-router'
 import { Select } from '~components/Form/Select'
-import { censusGrowthPaymentErrorMessage, paymentErrorToastDuration } from '~components/Pricing/payment-errors'
+import { censusGrowthPaymentErrorMessage, paymentErrorToastOptions } from '~components/Pricing/payment-errors'
 import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { useToast } from '~components/Toast'
 import { QueryKeys } from '~src/queries/keys'
@@ -520,7 +520,7 @@ export const ImportMembers = () => {
           t('import_progress.error_description', {
             defaultValue: 'An error occurred while importing your member data. Please try again later.',
           }),
-        ...(paymentMessage && { duration: paymentErrorToastDuration }),
+        ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }
   }

@@ -5,6 +5,7 @@ import {
   censusGrowthPaymentErrorMessage,
   draftSavePaymentErrorMessage,
   publishPaymentErrorMessage,
+  selfServiceVoterLimit,
 } from './payment-errors'
 
 vi.mock('~utils/numbers', () => ({ currency: (cents: number) => `€${cents / 100}` }))
@@ -38,7 +39,7 @@ describe('publishPaymentErrorMessage', () => {
     ['the app api client', apiError],
   ])('explains a publish refused for payment through %s, with the quoted price', (_, build) => {
     expect(publishPaymentErrorMessage(t, build(ErrorCode.PaymentRequired, quote))).toBe(
-      'This voting process costs €290 (VAT excluded) and must be paid before it can be published.'
+      'This voting process costs €290 in total (VAT excluded) and must be paid before it can be published. If part of it was already paid, only the difference is due.'
     )
   })
 
@@ -55,10 +56,10 @@ describe('publishPaymentErrorMessage', () => {
         sdkError(ErrorCode.InsufficientWalletBalance, { requiredCents: 29000, availableCents: 5000 })
       )
     ).toBe(
-      'The integrator wallet has €50, but €290 (VAT excluded) is still due to publish this voting process. Top up the wallet and publish again.'
+      'The integrator wallet has €50, but €290 (VAT excluded) is still due to publish this voting process. The integrator managing this organization must top up its wallet before you publish again.'
     )
     expect(publishPaymentErrorMessage(t, sdkError(ErrorCode.InsufficientWalletBalance))).toBe(
-      'The integrator wallet does not cover the price of this voting process. Top up the wallet and publish again.'
+      'The integrator wallet does not cover the price of this voting process. The integrator managing this organization must top up its wallet before you publish again.'
     )
   })
 
@@ -98,6 +99,18 @@ describe('censusGrowthPaymentErrorMessage', () => {
     ).toMatch(/costs up to €20 more/)
   })
 
+  it("follows the backend's own custom-quote verdict when the payload carries one", () => {
+    expect(
+      censusGrowthPaymentErrorMessage(
+        t,
+        apiError(ErrorCode.PaymentRequired, { ...growth, censusSize: 50001, quoteRequired: false })
+      )
+    ).toMatch(/costs up to €20 more/)
+    expect(
+      censusGrowthPaymentErrorMessage(t, apiError(ErrorCode.PaymentRequired, { ...growth, quoteRequired: true }))
+    ).toMatch(/custom quote/)
+  })
+
   it('explains a growth refused while a payment is in flight', () => {
     expect(censusGrowthPaymentErrorMessage(t, apiError(ErrorCode.PaymentSessionConflict))).toMatch(
       /still being processed/
@@ -114,9 +127,26 @@ describe('censusGrowthPaymentErrorMessage', () => {
 describe('draftSavePaymentErrorMessage', () => {
   it('explains a draft locked by its payment, and leaves any other error to the caller', () => {
     expect(draftSavePaymentErrorMessage(t, sdkError(ErrorCode.PaymentSessionConflict))).toMatch(
-      /payment is being processed/
+      /payment is still being processed/
     )
     expect(draftSavePaymentErrorMessage(t, sdkError(ErrorCode.DraftLimitReached))).toBeUndefined()
     expect(draftSavePaymentErrorMessage(t, new Error('network down'))).toBeUndefined()
+  })
+})
+
+describe('selfServiceVoterLimit', () => {
+  // The copy states the limit as a literal, each locale with its own digit grouping, so it is
+  // checked here against the constant the messages are chosen by.
+  const locales = import.meta.glob<{ process: { payment: { error: Record<string, string> } } }>(
+    '../../i18n/locales/*/common.json',
+    { eager: true, import: 'default' }
+  )
+
+  it.each(Object.keys(locales))('is the limit %s states in its custom-quote messages', (path) => {
+    const { error } = locales[path].process.payment
+    for (const key of ['quote_required', 'census_growth_quote_required']) {
+      const digits = error[key].replace(/(\d)[\s.,\u00a0\u202f](?=\d{3})/g, '$1')
+      expect(digits).toContain(String(selfServiceVoterLimit))
+    }
   })
 })
