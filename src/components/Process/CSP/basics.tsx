@@ -2,6 +2,7 @@ import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-quer
 import { VocdoniApiError } from '@vocdoni/api-client'
 import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useElectionAuth } from '@vocdoni/react-components'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 export type CensusData = {
@@ -31,6 +32,29 @@ export type ResendChallengePayload = {
   phone?: string
 }
 
+// How long the backend makes a voter wait between two sends of a code. Used
+// after a successful resend, whose response doesn't carry it.
+export const RESEND_COOLDOWN_MS = 60_000
+
+// A request refused because a code was sent too recently (40103). retryAfterMs
+// is the wait the backend reported, if it did.
+export class CspCooldownError extends Error {
+  retryAfterMs?: number
+
+  constructor(message: string, retryAfterMs?: number) {
+    super(message)
+    this.name = 'CspCooldownError'
+    this.retryAfterMs = retryAfterMs
+  }
+}
+
+// The backend reports the wait left as data.coolDownTime, in milliseconds.
+const coolDownTimeMs = (error: VocdoniApiError): number | undefined => {
+  const data = (error.body as { data?: { coolDownTime?: unknown } } | null)?.data
+  const ms = data?.coolDownTime
+  return typeof ms === 'number' && ms > 0 ? ms : undefined
+}
+
 // Maps the SaaS CSP auth error codes to translated, voter-facing messages. Any
 // other failure keeps the API's own message.
 const useTranslateCspError = () => {
@@ -45,12 +69,23 @@ const useTranslateCspError = () => {
               defaultValue: 'The voter is not listed in the census, or the provided credentials are incorrect.',
             })
           )
-        case 40103:
-          return new Error(
-            t('csp.errors.requests_on_cooldown', {
-              defaultValue: 'Too many requests. Please wait a moment before trying again.',
-            })
+        case 40103: {
+          const retryAfterMs = coolDownTimeMs(error)
+          if (retryAfterMs === undefined) {
+            return new CspCooldownError(
+              t('csp.errors.requests_on_cooldown', {
+                defaultValue: 'Too many requests. Please wait a moment before trying again.',
+              })
+            )
+          }
+          return new CspCooldownError(
+            t('csp.errors.requests_on_cooldown_seconds', {
+              defaultValue: 'You can request a new code in {{seconds}} s.',
+              seconds: Math.ceil(retryAfterMs / 1000),
+            }),
+            retryAfterMs
           )
+        }
         case 40801:
           return new Error(
             t('csp.errors.zero_voting_weight', {
@@ -131,4 +166,28 @@ export const useCspResend = () => {
       }
     },
   })
+}
+
+// Seconds left of a wait started with start(ms); 0 when there is none.
+export const useCountdown = () => {
+  const [until, setUntil] = useState(0)
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    if (until <= Date.now()) return
+    const timer = setInterval(() => {
+      const current = Date.now()
+      setNow(current)
+      if (current >= until) clearInterval(timer)
+    }, 250)
+    return () => clearInterval(timer)
+  }, [until])
+
+  const start = (ms: number) => {
+    const current = Date.now()
+    setNow(current)
+    setUntil(current + ms)
+  }
+
+  return { secondsLeft: Math.max(0, Math.ceil((until - now) / 1000)), start }
 }

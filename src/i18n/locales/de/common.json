@@ -202,6 +202,7 @@
     "errors": {
       "participant_not_found": "Die/der Wählende ist nicht in der Teilnehmerliste aufgeführt, oder die angegebenen Zugangsdaten sind falsch.",
       "requests_on_cooldown": "Zu viele Anfragen. Bitte warte einen Moment, bevor du es erneut versuchst.",
+      "requests_on_cooldown_seconds": "Du kannst in {{seconds}} s einen neuen Code anfordern.",
       "zero_voting_weight": "Du hast kein ausreichendes Stimmgewicht, um an der Abstimmung teilzunehmen."
     },
     "fields": {
@@ -220,9 +221,11 @@
     "step1": {
       "footer_text": "Bei Problemen wende dich an deine Organisation.",
       "helper_text": "Wir haben einen Code an deine Telefonnummer oder E-Mail-Adresse gesendet. Wenn du ihn per E-Mail erhalten hast, prüfe bitte auch deinen Spam-Ordner.",
+      "resend_countdown": "Code nicht erhalten? Du kannst ihn in {{seconds}} s erneut anfordern.",
       "resend_failed": "Code erneut senden fehlgeschlagen",
       "resend_success": "Code erfolgreich erneut gesendet",
       "resend_text": "Code nicht erhalten? <resendBtn>Erneut senden</resendBtn>",
+      "same_code_text": "Wenn du ihn erneut anforderst, erhältst du denselben Code – der bereits erhaltene bleibt also gültig.",
       "start_over_text": "Falsche Angaben? <restartBtn>Neu beginnen</restartBtn>",
       "subtitle": "Bestätigungscode eingeben",
       "title": "Authentifizierung",

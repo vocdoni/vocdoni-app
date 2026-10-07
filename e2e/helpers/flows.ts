@@ -380,12 +380,12 @@ export const openIdentifyModal = async (page: Page): Promise<Locator> => {
 }
 
 /**
- * Authenticates a voter against a 2FA census: CSP step 0 (credentials +
- * contact) → read the emailed OTP → CSP step 1.
+ * CSP step 0 for a 2FA census: opens the Identify modal and submits the
+ * member's credentials + contact, which emails them an OTP.
  *
- * Leaves the voter connected on the process page, ready to vote.
+ * Returns the dialog, left on the code step.
  */
-export const authenticateVoterWithOtp = async (page: Page, member: TestMember): Promise<string> => {
+export const identifyVoter = async (page: Page, member: TestMember): Promise<Locator> => {
   const dialog = await openIdentifyModal(page)
 
   await dialog.locator('input[name="memberNumber"]').fill(member.memberNumber)
@@ -397,8 +397,23 @@ export const authenticateVoterWithOtp = async (page: Page, member: TestMember): 
   // and makes the browser block submission until it is ticked.
   await checkCheckbox(dialog)
 
-  const requestedAt = new Date()
   await dialog.locator('button[type="submit"]').click()
+  await expect(dialog.locator('input[data-scope="pin-input"][data-part="input"]').first()).toBeVisible({
+    timeout: 30_000,
+  })
+
+  return dialog
+}
+
+/**
+ * Authenticates a voter against a 2FA census: CSP step 0 (credentials +
+ * contact) → read the emailed OTP → CSP step 1.
+ *
+ * Leaves the voter connected on the process page, ready to vote.
+ */
+export const authenticateVoterWithOtp = async (page: Page, member: TestMember): Promise<string> => {
+  const requestedAt = new Date()
+  const dialog = await identifyVoter(page, member)
 
   const otp = await waitForCode({
     to: member.email,
