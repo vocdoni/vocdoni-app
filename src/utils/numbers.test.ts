@@ -10,6 +10,8 @@ describe('currency', () => {
     expect(currency(2900)).toBe('€29')
     expect(currency(29710)).toBe('€297.10')
     expect(currency(5050)).toBe('€50.50')
+    // a fractional amount that rounds to whole euros, as a yearly price split into months
+    expect(currency(59995 / 12)).toBe('€50')
   })
 
   it('formats in the language the page renders in', () => {

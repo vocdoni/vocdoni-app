@@ -7,7 +7,8 @@ export const currency = (amount: number, currency: string = 'EUR') =>
   (amount / 100).toLocaleString(getActiveLanguage() ?? i18n.resolvedLanguage, {
     style: 'currency',
     currency,
-    minimumFractionDigits: amount % 100 === 0 ? 0 : 2,
+    // Rounded first: callers may pass fractional cents (a yearly price split into months)
+    minimumFractionDigits: Math.round(amount) % 100 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
     currencyDisplay: 'symbol',
   })
