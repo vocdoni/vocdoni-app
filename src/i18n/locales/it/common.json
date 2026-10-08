@@ -1396,6 +1396,22 @@
     "people_in_census_one": "Un votante",
     "people_in_census_many": "{{ count }} votanti",
     "people_in_census_other": "{{ count }} votanti",
+    "price": {
+      "free": "Questo processo di voto è gratuito: viene pubblicato senza pagamento.",
+      "line": {
+        "base": "Processo di voto",
+        "branding": "Branding e white-label",
+        "custom_url": "URL personalizzato",
+        "email_two_fa": "Codice di verifica via email",
+        "signed_certificate": "Certificato dei risultati firmato",
+        "sms_two_fa": "Codice di verifica via SMS"
+      },
+      "quote_recommended": "Per i processi di voto con più di {{limit}} votanti ti consigliamo un preventivo personalizzato. <contact>Richiedi un preventivo</contact>, oppure pubblicalo al prezzo indicato nelle impostazioni.",
+      "quote_required": "I processi di voto con più di {{limit}} votanti possono essere pubblicati solo con un preventivo personalizzato. <contact>Richiedi un preventivo</contact> per pubblicare questo.",
+      "total": "Totale",
+      "unavailable": "Il prezzo appare qui una volta salvata la bozza con i votanti e la loro autenticazione configurata.",
+      "vat_excluded": "IVA esclusa. Viene aggiunta al momento del pagamento."
+    },
     "question_type": {
       "label": "Tipo di domanda",
       "multiple": "Scelta multipla",
@@ -1531,6 +1547,7 @@
       "placeholder": "Opzione {{number}}",
       "remove": "Rimuovi opzione"
     },
+    "price": "Prezzo",
     "question": {
       "description": {
         "placeholder": "Aggiungi qui la descrizione della domanda (opzionale)..."

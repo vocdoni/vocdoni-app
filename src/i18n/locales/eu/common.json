@@ -1371,6 +1371,22 @@
     },
     "people_in_census_one": "Boto-emaile bat",
     "people_in_census_other": "{{ count }} boto-emaile",
+    "price": {
+      "free": "Boto-ematearen prozesu hau doakoa da: ordaindu gabe argitaratzen da.",
+      "line": {
+        "base": "Boto-ematearen prozesua",
+        "branding": "Marka pertsonalizatua eta marka zuria",
+        "custom_url": "URL pertsonalizatua",
+        "email_two_fa": "Egiaztapen-kodea posta elektronikoz",
+        "signed_certificate": "Emaitzen ziurtagiri sinatua",
+        "sms_two_fa": "Egiaztapen-kodea SMS bidez"
+      },
+      "quote_recommended": "{{limit}} botogile baino gehiagoko boto-ematearen prozesuetarako aurrekontu pertsonalizatua gomendatzen dizugu. <contact>Eskatu aurrekontua</contact>, edo argitaratu ezarpenetan agertzen den prezioan.",
+      "quote_required": "{{limit}} botogile baino gehiagoko boto-ematearen prozesuak aurrekontu pertsonalizatu batekin bakarrik argitara daitezke. <contact>Eskatu aurrekontua</contact> hau argitaratzeko.",
+      "total": "Guztira",
+      "unavailable": "Prezioa hemen agertuko da zirriborroa botogileekin eta haien autentifikazioa konfiguratuta gordetzen duzunean.",
+      "vat_excluded": "BEZa kanpo. Ordaintzean gehitzen da."
+    },
     "question_type": {
       "label": "Galdera mota",
       "multiple": "Aukera anitza",
@@ -1504,6 +1520,7 @@
       "placeholder": "{{number}}. aukera",
       "remove": "Kendu aukera"
     },
+    "price": "Prezioa",
     "question": {
       "description": {
         "placeholder": "Gehitu galderaren deskribapena hemen (aukerakoa)..."

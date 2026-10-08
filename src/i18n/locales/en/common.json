@@ -1371,6 +1371,22 @@
     },
     "people_in_census_one": "One voter",
     "people_in_census_other": "{{ count }} voters",
+    "price": {
+      "free": "This voting process is free: it publishes without payment.",
+      "line": {
+        "base": "Voting process",
+        "branding": "Branding and white label",
+        "custom_url": "Custom URL",
+        "email_two_fa": "Email verification code",
+        "signed_certificate": "Signed results certificate",
+        "sms_two_fa": "SMS verification code"
+      },
+      "quote_recommended": "For voting processes with more than {{limit}} voters we recommend a custom quote. <contact>Request a quote</contact>, or publish it at the price shown in the settings.",
+      "quote_required": "Voting processes with more than {{limit}} voters can only be published with a custom quote. <contact>Request a quote</contact> to publish this one.",
+      "total": "Total",
+      "unavailable": "The price shows up here once the draft is saved with its voters and their authentication set up.",
+      "vat_excluded": "VAT excluded. It is added at checkout."
+    },
     "question_type": {
       "label": "Question type",
       "multiple": "Multiple choice",
@@ -1504,6 +1520,7 @@
       "placeholder": "Option {{number}}",
       "remove": "Remove option"
     },
+    "price": "Price",
     "question": {
       "description": {
         "placeholder": "Add the description of the question here (optional)..."

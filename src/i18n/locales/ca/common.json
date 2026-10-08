@@ -1396,6 +1396,22 @@
     "people_in_census_one": "Un votant",
     "people_in_census_many": "{{ count }} votants",
     "people_in_census_other": "{{ count }} votants",
+    "price": {
+      "free": "Aquest procés de votació és gratuït: es publica sense pagament.",
+      "line": {
+        "base": "Procés de votació",
+        "branding": "Marca personalitzada i marca blanca",
+        "custom_url": "URL personalitzada",
+        "email_two_fa": "Codi de verificació per correu electrònic",
+        "signed_certificate": "Certificat de resultats signat",
+        "sms_two_fa": "Codi de verificació per SMS"
+      },
+      "quote_recommended": "Per a processos de votació de més de {{limit}} votants et recomanem un pressupost personalitzat. <contact>Demana un pressupost</contact>, o publica'l al preu que es mostra a la configuració.",
+      "quote_required": "Els processos de votació de més de {{limit}} votants només es poden publicar amb un pressupost personalitzat. <contact>Demana un pressupost</contact> per publicar aquest.",
+      "total": "Total",
+      "unavailable": "El preu apareixerà aquí un cop desis l'esborrany amb els votants i la seva autenticació configurada.",
+      "vat_excluded": "IVA no inclòs. S'afegeix en el moment del pagament."
+    },
     "question_type": {
       "label": "Tipus de pregunta",
       "multiple": "Elecció múltiple",
@@ -1531,6 +1547,7 @@
       "placeholder": "Opció {{number}}",
       "remove": "Esborra l'opció"
     },
+    "price": "Preu",
     "question": {
       "description": {
         "placeholder": "Afegeix aquí la descripció de la pregunta (opcional)..."

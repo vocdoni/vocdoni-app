@@ -1396,6 +1396,22 @@
     "people_in_census_one": "{{ count }} eleitor",
     "people_in_census_many": "{{ count }} eleitores",
     "people_in_census_other": "{{ count }} eleitores",
+    "price": {
+      "free": "Este processo de votação é gratuito: ele é publicado sem pagamento.",
+      "line": {
+        "base": "Processo de votação",
+        "branding": "Marca personalizada e marca branca",
+        "custom_url": "URL personalizada",
+        "email_two_fa": "Código de verificação por e-mail",
+        "signed_certificate": "Certificado de resultados assinado",
+        "sms_two_fa": "Código de verificação por SMS"
+      },
+      "quote_recommended": "Para processos de votação com mais de {{limit}} eleitores, recomendamos um orçamento personalizado. <contact>Solicite um orçamento</contact> ou publique pelo preço mostrado nas configurações.",
+      "quote_required": "Processos de votação com mais de {{limit}} eleitores só podem ser publicados com um orçamento personalizado. <contact>Solicite um orçamento</contact> para publicar este.",
+      "total": "Total",
+      "unavailable": "O preço aparece aqui assim que o rascunho for salvo com os eleitores e a autenticação deles configurada.",
+      "vat_excluded": "Impostos não incluídos. Eles são adicionados no pagamento."
+    },
     "question_type": {
       "label": "Tipo de pergunta",
       "multiple": "Múltipla escolha",
@@ -1531,6 +1547,7 @@
       "placeholder": "Opção {{number}}",
       "remove": "Remover opção"
     },
+    "price": "Preço",
     "question": {
       "description": {
         "placeholder": "Adicione aqui a descrição da pergunta (opcional)..."

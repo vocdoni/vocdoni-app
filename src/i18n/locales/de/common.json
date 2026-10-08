@@ -1371,6 +1371,22 @@
     },
     "people_in_census_one": "Ein Wähler",
     "people_in_census_other": "{{ count }} Wählende",
+    "price": {
+      "free": "Dieser Abstimmungsprozess ist kostenlos: Er wird ohne Zahlung veröffentlicht.",
+      "line": {
+        "base": "Abstimmungsprozess",
+        "branding": "Branding und White-Label",
+        "custom_url": "Eigene URL",
+        "email_two_fa": "Bestätigungscode per E-Mail",
+        "signed_certificate": "Signiertes Ergebniszertifikat",
+        "sms_two_fa": "Bestätigungscode per SMS"
+      },
+      "quote_recommended": "Für Abstimmungsprozesse mit mehr als {{limit}} Wählenden empfehlen wir ein individuelles Angebot. <contact>Fordere ein Angebot an</contact> oder veröffentliche ihn zum Preis, der in den Einstellungen angezeigt wird.",
+      "quote_required": "Abstimmungsprozesse mit mehr als {{limit}} Wählenden können nur mit einem individuellen Angebot veröffentlicht werden. <contact>Fordere ein Angebot an</contact>, um diesen zu veröffentlichen.",
+      "total": "Gesamt",
+      "unavailable": "Der Preis wird hier angezeigt, sobald der Entwurf mit den Wählenden und ihrer Authentifizierung gespeichert ist.",
+      "vat_excluded": "Zzgl. MwSt. Sie wird an der Kasse hinzugefügt."
+    },
     "question_type": {
       "label": "Fragetyp",
       "multiple": "Mehrfachauswahl",
@@ -1504,6 +1520,7 @@
       "placeholder": "Option {{number}}",
       "remove": "Option entfernen"
     },
+    "price": "Preis",
     "question": {
       "description": {
         "placeholder": "Beschreibung der Frage hier hinzufügen (optional)…"

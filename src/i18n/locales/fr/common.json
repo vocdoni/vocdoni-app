@@ -1396,6 +1396,22 @@
     "people_in_census_one": "{{ count }} électeur",
     "people_in_census_many": "{{ count }} électeurs",
     "people_in_census_other": "{{ count }} électeurs",
+    "price": {
+      "free": "Ce processus de vote est gratuit : il est publié sans paiement.",
+      "line": {
+        "base": "Processus de vote",
+        "branding": "Marque personnalisée et marque blanche",
+        "custom_url": "URL personnalisée",
+        "email_two_fa": "Code de vérification par e-mail",
+        "signed_certificate": "Certificat de résultats signé",
+        "sms_two_fa": "Code de vérification par SMS"
+      },
+      "quote_recommended": "Pour les processus de vote de plus de {{limit}} électeurs, nous recommandons un devis personnalisé. <contact>Demandez un devis</contact>, ou publiez-le au prix indiqué dans les paramètres.",
+      "quote_required": "Les processus de vote de plus de {{limit}} électeurs ne peuvent être publiés qu'avec un devis personnalisé. <contact>Demandez un devis</contact> pour publier celui-ci.",
+      "total": "Total",
+      "unavailable": "Le prix s'affiche ici une fois le brouillon enregistré avec ses électeurs et leur authentification configurée.",
+      "vat_excluded": "HT. La TVA est ajoutée lors du paiement."
+    },
     "question_type": {
       "label": "Type de question",
       "multiple": "Choix multiple",
@@ -1531,6 +1547,7 @@
       "placeholder": "Option {{number}}",
       "remove": "Supprimer l'option"
     },
+    "price": "Prix",
     "question": {
       "description": {
         "placeholder": "Ajoutez ici la description de la question (facultatif)…"
