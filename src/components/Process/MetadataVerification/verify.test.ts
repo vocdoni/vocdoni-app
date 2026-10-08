@@ -220,12 +220,18 @@ describe('summarize', () => {
   it('lets any mismatch win, parent, questions or media', () => {
     expect(summarize(doc('mismatch'), [doc('verified')], [])).toBe('mismatch')
     expect(summarize(doc('verified'), [doc('verified'), doc('mismatch')], [])).toBe('mismatch')
-    expect(summarize(doc('verified'), [doc('verified')], [{ url: HEADER, status: 'mismatch' }])).toBe('mismatch')
+    expect(summarize(doc('verified'), [doc('verified')], [{ url: HEADER, committed: true, status: 'mismatch' }])).toBe(
+      'mismatch'
+    )
   })
 
-  it('does not downgrade a verified ballot for an unhashable link', () => {
+  it('does not downgrade a verified ballot for an image nothing commits', () => {
     expect(
-      summarize(doc('verified'), [doc('verified')], [{ url: VIDEO, status: 'unverifiable', reason: 'not-listed' }])
+      summarize(
+        doc('verified'),
+        [doc('verified')],
+        [{ url: IMAGE, committed: false, status: 'unverifiable', reason: 'not-committed' }]
+      )
     ).toBe('verified')
   })
 

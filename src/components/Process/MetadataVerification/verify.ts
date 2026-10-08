@@ -506,7 +506,9 @@ export const verifyProcessMetadata = async (
   }
 
   // Only a document whose bytes match its committed hash vouches for image hashes.
-  const sourceOf = new Map(published.map((question, index) => [question, questions[index]]))
+  const sourceOf = new Map<DisplayedQuestion, FetchedDocument>(
+    published.map((question, index) => [question, questions[index]])
+  )
   const media = await Promise.all(
     displayedImages(process).map(({ url, question }) =>
       verifyImage(url, question ? sourceOf.get(question) : parent, deps)
