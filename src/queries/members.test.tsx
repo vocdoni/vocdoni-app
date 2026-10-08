@@ -103,4 +103,33 @@ describe('usePaginatedMembers placeholder data', () => {
     expect(result.current.query.isPlaceholderData).toBe(true)
     expect(result.current.query.data?.members).toEqual(firstPage.members)
   })
+
+  it('never lends another organization its rows, even when its search equals the new address', async () => {
+    const orgARows = { members: [{ id: '1', name: 'Ada' }], pagination: {} }
+    const bearedFetch = vi
+      .fn()
+      .mockResolvedValueOnce(orgARows)
+      .mockReturnValue(new Promise(() => {}))
+    setAuthMock({ bearedFetch })
+    // The mock reads `address` on every call, so flipping it and rerendering switches the organization.
+    let address = '0xa'
+    setReactProvidersMock({ useOrganization: () => ({ organization: { address } }) })
+    const queryClient = createTestQueryClient()
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <AllProviders queryClient={queryClient}>
+        <TestMemoryRouter initialEntries={['/']}>{children}</TestMemoryRouter>
+      </AllProviders>
+    )
+    // Organization A is searching for the very string that is organization B's address, so B's
+    // key contains A's search term and a loose "address anywhere in the key" check would match.
+    const { result, rerender } = renderHook(() => usePaginatedMembers({ search: '0xb' }), { wrapper })
+    await waitFor(() => expect(result.current.data?.members).toEqual(orgARows.members))
+
+    address = '0xb'
+    rerender()
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalledTimes(2))
+    expect(result.current.isPlaceholderData).toBe(false)
+    expect(result.current.data).toBeUndefined()
+  })
 })

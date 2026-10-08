@@ -116,6 +116,15 @@ export const useUrlMemberSort = () => {
   return { sort, toggleSort }
 }
 
+// Only a query of the same organization may lend its rows as placeholder data. The check is
+// positional on the members key prefix: `search` is also part of the key, so looking for the
+// address anywhere in it would match another organization whose search term equals this address.
+const isSameOrganizationQuery = (queryKey: readonly unknown[], address?: string) => {
+  if (!address) return false
+  const prefix = QueryKeys.organization.members(address)
+  return prefix.every((part, index) => queryKey[index] === part)
+}
+
 export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedMembersProps) => {
   const { bearedFetch } = useAuth()
   const { organization } = useOrganization()
@@ -145,7 +154,9 @@ export const usePaginatedMembers = ({ search = '', showAll = false }: PaginatedM
     // Keep showing the current rows while another page, sort or search loads, so the table doesn't
     // collapse and jump. Only within the same organization, never another org's members.
     placeholderData: (previousData, previousQuery) =>
-      previousQuery?.queryKey.includes(organization?.address) ? previousData : undefined,
+      previousQuery && isSameOrganizationQuery(previousQuery.queryKey, organization?.address)
+        ? previousData
+        : undefined,
   })
 }
 
