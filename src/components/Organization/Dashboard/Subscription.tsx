@@ -1,8 +1,7 @@
-import { AlertRoot as Alert, AlertDescription, Button, Flex, Link, Progress, Text } from '@chakra-ui/react'
+import { AlertRoot as Alert, AlertDescription, Button, Flex, Progress, Text } from '@chakra-ui/react'
 import { isBefore, isValid, parseISO } from 'date-fns'
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as ReactRouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
 import { DashboardBox, SectionHeader, SectionHeading, SectionSubHeading } from '~components/Dashboard/Contents'
 import { ComparisonTable } from '~components/Pricing/ComparisonTable'
@@ -11,7 +10,7 @@ import { SubscriptionCheckoutProvider } from '~components/Pricing/SubscriptionCh
 import { SubscriptionPayment } from '~components/Pricing/SubscriptionPayment'
 import { useSubscriptionCheckout } from '~components/Pricing/use-subscription-checkout'
 import { usePortalSession } from '~queries/stripe'
-import { Routes } from '~routes'
+import { SupportLink } from '~components/Layout/SupportLink'
 
 const SubscriptionPageContent = () => {
   const { t } = useTranslation()
@@ -19,12 +18,6 @@ const SubscriptionPageContent = () => {
   const { mutateAsync, isPending } = usePortalSession()
   const [showComparisonTable, setShowComparisonTable] = useState(false)
   const { view, checkout, showPlans } = useSubscriptionCheckout()
-
-  const SupportLink = ({ children }: { children?: ReactNode }) => (
-    <Link fontWeight='extrabold' fontSize='sm' asChild>
-      <ReactRouterLink to={Routes.dashboard.settings.support}>{children}</ReactRouterLink>
-    </Link>
-  )
 
   const handleChangeClick = () =>
     mutateAsync()
@@ -102,7 +95,7 @@ const SubscriptionPageContent = () => {
             i18nKey='subscription_plan.need_help'
             components={[
               <Text key='help-text' fontSize='sm' color='texts.subtle' textAlign='center' />,
-              <SupportLink key='support-link' />,
+              <SupportLink key='support-link' fontWeight='extrabold' fontSize='sm' />,
             ]}
           />
         </Flex>

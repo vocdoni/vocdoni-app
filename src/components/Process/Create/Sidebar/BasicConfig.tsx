@@ -8,18 +8,16 @@ import {
   FieldLabel as FormLabel,
   HStack,
   Input,
-  Link,
   Switch,
   VStack,
 } from '@chakra-ui/react'
-import { MutableRefObject, ReactNode, useRef } from 'react'
+import { MutableRefObject, useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router'
 import { useSubscription } from '~components/Auth/Subscription'
+import { SupportLink } from '~components/Layout/SupportLink'
 import { SubscriptionPermission } from '~constants'
 import { useDateFns } from '~i18n/use-date-fns'
-import { Routes } from '~routes'
 import { parseFormDateTime, Process } from '../common'
 
 const DateFormatHtml = 'yyyy-MM-dd'
@@ -29,14 +27,6 @@ type ScheduleValues = Pick<Process, 'autoStart' | 'startDate' | 'startTime' | 'e
 // When the vote opens: now for an immediate start (or while no start date is set), else the picked local date/time.
 const getStart = ({ autoStart, startDate, startTime }: ScheduleValues) =>
   startDate && !autoStart ? parseFormDateTime(startDate, startTime) : new Date()
-
-// Trans replaces its component's children with the translated text, so the RouterLink must live
-// inside a wrapper; passed inline, `asChild` would be left without a child and Chakra would throw.
-const SupportLink = ({ children }: { children?: ReactNode }) => (
-  <Link asChild>
-    <RouterLink to={Routes.dashboard.settings.support}>{children}</RouterLink>
-  </Link>
-)
 
 export const BasicConfig = () => {
   const { t } = useTranslation()
