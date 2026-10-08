@@ -1,7 +1,16 @@
 import type { ImportJob } from '~src/queries/members'
 import { mockUseOrganization, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { setStoredImportJobMeta } from '../importJobStorage'
 import { ImportProgress } from './Import'
+
+const mockTrackAnalyticsEvent = vi.fn()
+
+// Partial mock: keep the real AnalyticsEvents taxonomy, intercept only the sink.
+vi.mock('~utils/analytics', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/analytics')>()),
+  trackAnalyticsEvent: (...args: unknown[]) => mockTrackAnalyticsEvent(...args),
+}))
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
@@ -42,6 +51,31 @@ describe('ImportProgress', () => {
       errors: [],
       result: { progress: 100, added: 5, total: 5 },
     }
+    mockTrackAnalyticsEvent.mockClear()
+    localStorage.clear()
+  })
+
+  it('tracks the completed job once, with what was imported', () => {
+    setStoredImportJobMeta('job-1', { file_type: 'csv', rows: 5, encoding: 'non-utf-8' })
+
+    const { unmount } = render(<ImportProgress />)
+    unmount()
+    // The alert stays up until dismissed, so it remounts on every tab switch
+    render(<ImportProgress />)
+
+    expect(mockTrackAnalyticsEvent).toHaveBeenCalledTimes(1)
+    expect(mockTrackAnalyticsEvent).toHaveBeenCalledWith({
+      name: 'members_import_completed',
+      props: {
+        file_type: 'csv',
+        rows: 5,
+        encoding: 'non-utf-8',
+        status: 'completed',
+        added: 5,
+        total: 5,
+        error_count: 0,
+      },
+    })
   })
 
   it('renders completed status', () => {

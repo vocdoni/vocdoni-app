@@ -21,6 +21,7 @@ import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import { WhatsAppButton } from '~components/Layout/WhatsappButton'
 import { isPlanNamed, PlanName } from '~constants'
 import { usePublicLanguage } from '~i18n/usePublicLanguage'
+import { processCreateLinkState } from '~components/Process/Create/source'
 import { Routes } from '~routes'
 import { useAppEnv } from '~src/app-env'
 import { useProfile } from '~src/queries/account'
@@ -106,7 +107,7 @@ const Tutorial = () => {
         </Text>
         <Flex gap={3} flexDirection={{ base: 'column', sm: 'row' }}>
           <Button asChild>
-            <ReactRouterLink to={generatePath(Routes.processes.create)}>
+            <ReactRouterLink to={generatePath(Routes.processes.create)} state={processCreateLinkState('dashboard')}>
               <HStack gap={2}>
                 <Icon as={LuPlus} />
                 <Text as='span'>
@@ -235,7 +236,7 @@ const Processes = () => {
           })}
         />
         <Button asChild colorPalette='gray' variant='outline'>
-          <ReactRouterLink to={generatePath(Routes.processes.create)}>
+          <ReactRouterLink to={generatePath(Routes.processes.create)} state={processCreateLinkState('empty_state')}>
             {t('dashboard.welcome.create_first_vote', {
               defaultValue: 'Create your first vote',
             })}
@@ -327,7 +328,7 @@ const QuickActions = (props: React.ComponentProps<typeof DashboardBox>) => {
       </Text>
       <Flex flexDirection='column' gap={4} minW={0}>
         <Button asChild colorPalette='gray' variant='outline' justifyContent='start' fontWeight='bold' minW={0}>
-          <ReactRouterLink to={generatePath(Routes.processes.create)}>
+          <ReactRouterLink to={generatePath(Routes.processes.create)} state={processCreateLinkState('dashboard')}>
             <HStack gap={2} minW={0}>
               <Icon as={LuPlus} flexShrink={0} />
               <Text as='span' truncate>

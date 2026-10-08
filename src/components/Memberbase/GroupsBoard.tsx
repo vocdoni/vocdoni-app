@@ -41,6 +41,7 @@ import { ListStateAlert } from '~components/Feedback/ListStateAlert'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { PaginatedTableFooter } from '~components/Pagination/PaginatedTableFooter'
 import { useToast } from '~components/Toast'
+import { processCreateLinkState } from '~components/Process/Create/source'
 import { Routes } from '~routes'
 import { Group, useDeleteGroup, useGroupMembers, useGroups, useUpdateGroup } from '~src/queries/groups'
 import { TableProvider, useTable } from './TableProvider'
@@ -104,7 +105,7 @@ export const useNavigateToVote = () => {
 
   return (groupId: string) => {
     const votePath = generatePath(Routes.processes.create, { groupId })
-    navigate(votePath)
+    navigate(votePath, { state: processCreateLinkState('memberbase') })
   }
 }
 

@@ -7,6 +7,7 @@ import { SubscriptionPermission } from '~constants'
 import { Routes } from '~src/router/routes'
 import { useCreateProcess } from '../Create'
 import { votingProcessToCreateRequest } from '../Create/draft-mapping'
+import { processCreateLinkState } from '../Create/source'
 
 export const useCloneAsDraft = () => {
   const { t } = useTranslation()
@@ -37,7 +38,7 @@ export const useCloneAsDraft = () => {
           pathname: generatePath(Routes.processes.create, { page: '1' }),
           search: createSearchParams({ draftId: clonedDraftId }).toString(),
         },
-        { replace: true }
+        { replace: true, state: processCreateLinkState('clone') }
       )
     } catch (error) {
       toast({

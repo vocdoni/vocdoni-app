@@ -41,6 +41,7 @@ import { QueryKeys } from '~src/queries/keys'
 import { useAddMembers, useImportJobProgress } from '~src/queries/members'
 import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { MemberbaseTabsContext } from '..'
+import { setStoredImportJobMeta, takeStoredImportJobMeta } from '../importJobStorage'
 import { useTable } from '../TableProvider'
 import { MembersCsvManager } from './MembersCsvManager'
 
@@ -138,14 +139,17 @@ export const ImportProgress = () => {
     }
   }, [queryClient, organization.address, isComplete])
 
-  // Track the async job outcome once per job
-  const trackedJobRef = useRef<string | null>(null)
+  // Track the async job outcome once per job. The stored metadata is consumed
+  // here, so a finished job whose alert is still showing is not tracked again
+  // when this remounts.
   useEffect(() => {
-    if (!jobId || trackedJobRef.current === jobId || (!isComplete && !hasFailed)) return
-    trackedJobRef.current = jobId
+    if (!jobId || (!isComplete && !hasFailed)) return
+    const meta = takeStoredImportJobMeta(jobId)
+    if (!meta) return
     trackAnalyticsEvent({
       name: AnalyticsEvents.MembersImportCompleted,
       props: {
+        ...meta,
         status: hasFailed ? 'failed' : 'completed',
         added: data?.result?.added ?? 0,
         total: data?.result?.total ?? 0,
@@ -504,6 +508,13 @@ export const ImportMembers = () => {
     try {
       trackAnalyticsEvent({ name: AnalyticsEvents.MembersImportStarted, props: { total_rows: finalData.length } })
       const data = await addMembers.mutateAsync(finalData)
+      if (data?.jobId) {
+        setStoredImportJobMeta(data.jobId, {
+          file_type: spreadsheet.fileType,
+          rows: finalData.length,
+          encoding: spreadsheet.encoding ?? 'unknown',
+        })
+      }
       setJobId(data?.jobId)
       setColumnMapping({})
       methods.reset()

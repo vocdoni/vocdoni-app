@@ -12,9 +12,16 @@ import { useFormDraftSaver } from './index'
 const create = vi.fn()
 const update = vi.fn()
 const toast = vi.fn()
+const mockTrackAnalyticsEvent = vi.fn()
 
 vi.mock('~components/Toast', () => ({
   useToast: () => toast,
+}))
+
+// Partial mock: keep the real AnalyticsEvents taxonomy, intercept only the sink.
+vi.mock('~utils/analytics', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('~utils/analytics')>()),
+  trackAnalyticsEvent: (...args: unknown[]) => mockTrackAnalyticsEvent(...args),
 }))
 
 vi.mock('~components/Auth/Subscription', () => ({
@@ -91,7 +98,7 @@ describe('useFormDraftSaver', () => {
     update.mockReturnValueOnce(inFlight.promise)
     const { result } = renderSaver('draft-1')
 
-    const saving = result.current.saveDraft(false)
+    const saving = result.current.saveDraft('manual')
     const publishing = result.current.writeDraft(() => ({ published: true }) as never)
 
     await waitFor(() => expect(update).toHaveBeenCalledTimes(1))
@@ -113,10 +120,10 @@ describe('useFormDraftSaver', () => {
     update.mockReturnValueOnce(inFlight.promise)
     const { result } = renderSaver('draft-1')
 
-    const saving = result.current.saveDraft(false)
+    const saving = result.current.saveDraft('manual')
     await waitFor(() => expect(update).toHaveBeenCalledTimes(1))
 
-    await expect(result.current.saveDraft(true)).resolves.toBe('skipped')
+    await expect(result.current.saveDraft('auto')).resolves.toBe('skipped')
 
     inFlight.resolve()
     await act(async () => {
@@ -130,8 +137,8 @@ describe('useFormDraftSaver', () => {
     create.mockReturnValueOnce(inFlight.promise.then(() => 'draft-1'))
     const { result, storeDraftId } = renderSaver(null)
 
-    const first = result.current.saveDraft(false)
-    const second = result.current.saveDraft(false)
+    const first = result.current.saveDraft('manual')
+    const second = result.current.saveDraft('manual')
 
     inFlight.resolve()
     await first
@@ -152,7 +159,7 @@ describe('useFormDraftSaver', () => {
 
     // Clicking Publish blurs the focused field first, so the auto-save starts
     // creating the draft...
-    const autoSaving = result.current.saveDraft(true)
+    const autoSaving = result.current.saveDraft('auto')
     // ...and the click submits before that round-trip resolves, so the render
     // closure still sees no draft id. Deciding create-vs-update from it here
     // would publish a second process and orphan the one being created.
@@ -178,15 +185,15 @@ describe('useFormDraftSaver', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
     const { result } = renderSaver('draft-1')
 
-    await expect(result.current.saveDraft(true)).resolves.toBe('error')
-    await expect(result.current.saveDraft(true)).resolves.toBe('error')
+    await expect(result.current.saveDraft('auto')).resolves.toBe('error')
+    await expect(result.current.saveDraft('auto')).resolves.toBe('error')
     expect(toast).toHaveBeenCalledTimes(1)
     expect(toast).toHaveBeenCalledWith(expect.objectContaining({ type: 'error', isClosable: true }))
 
     // once a save goes through, a later lock is explained again
     update.mockResolvedValueOnce(undefined)
-    await expect(result.current.saveDraft(true)).resolves.toBe('saved')
-    await expect(result.current.saveDraft(true)).resolves.toBe('error')
+    await expect(result.current.saveDraft('auto')).resolves.toBe('saved')
+    await expect(result.current.saveDraft('auto')).resolves.toBe('error')
     expect(toast).toHaveBeenCalledTimes(2)
   })
 
@@ -195,8 +202,75 @@ describe('useFormDraftSaver', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
     const { result } = renderSaver('draft-1')
 
-    await expect(result.current.saveDraft(true)).resolves.toBe('error')
+    await expect(result.current.saveDraft('auto')).resolves.toBe('error')
     expect(toast).not.toHaveBeenCalled()
+  })
+
+  describe('tracking', () => {
+    const tracked = () => mockTrackAnalyticsEvent.mock.calls.map(([event]) => event)
+
+    it('tracks every manual save, whichever way it ends', async () => {
+      update
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new VocdoniApiError(500, {}, 'boom'))
+      const { result } = renderSaver('draft-1')
+
+      await act(async () => {
+        await result.current.saveDraft('manual')
+      })
+      await act(async () => {
+        await result.current.saveDraft('leave')
+      })
+      await act(async () => {
+        await expect(result.current.saveDraft('manual')).rejects.toThrow('boom')
+      })
+
+      expect(tracked()).toEqual([
+        { name: 'draft_saved', props: { trigger: 'manual' } },
+        { name: 'draft_saved', props: { trigger: 'leave' } },
+        { name: 'draft_save_failed', props: { trigger: 'manual', status: 500 } },
+      ])
+    })
+
+    it('tracks auto-saves only when their outcome changes', async () => {
+      // Auto-save fires every 30s and on every blur: a steady state is one event
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+      update
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+        .mockRejectedValueOnce(new TypeError('Failed to fetch'))
+        .mockResolvedValueOnce(undefined)
+      const { result } = renderSaver('draft-1')
+
+      for (let i = 0; i < 5; i++) {
+        await act(async () => {
+          await result.current.saveDraft('auto')
+        })
+      }
+
+      expect(update).toHaveBeenCalledTimes(5)
+      expect(tracked()).toEqual([
+        { name: 'draft_saved', props: { trigger: 'auto' } },
+        { name: 'draft_save_failed', props: { trigger: 'auto', status: 0 } },
+        { name: 'draft_saved', props: { trigger: 'auto' } },
+      ])
+      consoleError.mockRestore()
+    })
+
+    it('reports the draft limit with its error code', async () => {
+      create.mockRejectedValueOnce(new VocdoniApiError(403, {}, 'draft limit reached', 40031))
+      const { result } = renderSaver(null)
+
+      await act(async () => {
+        await expect(result.current.saveDraft('auto')).resolves.toBe('limit-reached')
+      })
+
+      expect(tracked()).toEqual([
+        { name: 'draft_save_failed', props: { trigger: 'auto', status: 403, error_code: 40031 } },
+      ])
+    })
   })
 
   describe('clearPublishedDraftId', () => {

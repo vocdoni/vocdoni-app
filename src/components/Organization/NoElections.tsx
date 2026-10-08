@@ -2,6 +2,7 @@ import { Button, Card } from '@chakra-ui/react'
 import { useOrganization } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '~components/Auth/useAuth'
+import { processCreateLinkState } from '~components/Process/Create/source'
 import { RouterAwareLink } from '~components/RouterAwareLink'
 import { EmptyState } from '~components/ui/EmptyState'
 import { Routes } from '~src/router/routes'
@@ -28,7 +29,9 @@ const NoElections = () => {
         >
           {isOwner && (
             <Button mt={4} w='100%' asChild>
-              <RouterAwareLink to={generatePath(Routes.processes.create)}>{t('menu.create')}</RouterAwareLink>
+              <RouterAwareLink to={generatePath(Routes.processes.create)} state={processCreateLinkState('empty_state')}>
+                {t('menu.create')}
+              </RouterAwareLink>
             </Button>
           )}
         </EmptyState>

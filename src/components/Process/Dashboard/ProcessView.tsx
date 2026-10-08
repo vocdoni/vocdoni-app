@@ -39,6 +39,7 @@ import {
 } from '@vocdoni/react-components'
 import { hasResults, isLive, isSecretUntilTheEnd, processVoteCount } from '@vocdoni/api-client'
 import { tryInferQuestionBallotType } from '@vocdoni/ballot'
+import type { QuestionStatus } from '@vocdoni/api-types'
 import { useDateFns } from '~i18n/use-date-fns'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
@@ -119,6 +120,23 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
   )
 })
 
+/** The admin-facing lifecycle, grouped the way the process sidebar labels it. */
+const getDashboardStatus = (status: QuestionStatus): 'upcoming' | 'live' | 'ended' | 'unknown' => {
+  switch (status) {
+    case 'UPCOMING':
+      return 'upcoming'
+    case 'ONGOING':
+    case 'PAUSED':
+      return 'live'
+    case 'ENDED':
+    case 'RESULTS':
+    case 'CANCELED':
+      return 'ended'
+    default:
+      return 'unknown'
+  }
+}
+
 export const ProcessView = () => (
   <SidebarVisibilityProvider>
     <ProcessViewContent />
@@ -145,6 +163,13 @@ const ProcessViewContent = () => {
   const votingLink = `${document.location.origin}${getPublicProcessPath({ id, language: publicLanguage })}`
   const { copy } = useClipboard({ value: votingLink })
 
+  // Voting pages are never tracked, so a copied link is the best in-app sign
+  // that the vote is actually being distributed.
+  const copyVotingLink = () => {
+    copy()
+    trackAnalyticsEvent({ name: AnalyticsEvents.VotingLinkCopied, props: { election_id: id } })
+  }
+
   useEffect(() => {
     if (resolvedInitialTabElectionIdRef.current !== id) {
       resolvedInitialTabElectionIdRef.current = id
@@ -167,6 +192,18 @@ const ProcessViewContent = () => {
       navigate(getProcessViewPathForTab(id, 'questions'), { replace: true })
     }
   }, [tabValue, showResultsTab, navigate, id])
+
+  // Once per process, whichever tab it opens on. The ref matters: status flips
+  // UPCOMING → ONGOING on its own at the start date, which re-runs this effect.
+  const trackedDashboardElectionRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (!election || !status || trackedDashboardElectionRef.current === id) return
+    trackedDashboardElectionRef.current = id
+    trackAnalyticsEvent({
+      name: AnalyticsEvents.ProcessDashboardViewed,
+      props: { election_id: id, status: getDashboardStatus(status) },
+    })
+  }, [election, status, id])
 
   // Election-level participation BI, captured admin-side only (voters are never tracked)
   const trackedResultsElectionRef = useRef<string | null>(null)
@@ -290,7 +327,12 @@ const ProcessViewContent = () => {
 
             <Flex justifyContent='space-between' gap={2} wrap='wrap'>
               <Input readOnly value={votingLink} flex='1 1 18rem' minW={0} />
-              <IconButton variant='outline' onClick={copy} title={t('copy.copy', 'Copy')} aria-label={t('copy.copy')}>
+              <IconButton
+                variant='outline'
+                onClick={copyVotingLink}
+                title={t('copy.copy', 'Copy')}
+                aria-label={t('copy.copy')}
+              >
                 <Icon as={LuCopy} />
               </IconButton>
               <IconButton asChild variant='outline' title={t('preview', 'Preview')} aria-label={t('preview')}>
