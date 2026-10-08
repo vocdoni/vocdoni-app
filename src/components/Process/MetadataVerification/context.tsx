@@ -48,10 +48,10 @@ export const MetadataVerificationProvider = ({ children }: PropsWithChildren) =>
       pending: enabled && isPending,
       failed: isError,
       data,
-      gate: voteGate({ enabled, pending: enabled && isPending, failed: isError, data, hasParent }),
+      gate: voteGate({ enabled, pending: enabled && isPending, failed: isError, data }),
       srcFor,
     }),
-    [enabled, isPending, isError, data, hasParent, srcFor]
+    [enabled, isPending, isError, data, srcFor]
   )
 
   return <MetadataVerificationContext.Provider value={value}>{children}</MetadataVerificationContext.Provider>

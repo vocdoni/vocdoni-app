@@ -8,6 +8,7 @@ const bytesOf = (text: string) => new TextEncoder().encode(text).buffer as Array
 
 const verified = (url: string, text = 'png-bytes'): MediaVerification => ({
   url,
+  committed: true,
   status: 'verified',
   expectedHash: 'ab',
   actualHash: 'ab',
@@ -22,7 +23,7 @@ const result = (status: ProcessVerification['status'], media: MediaVerification[
 })
 
 describe('voteGate', () => {
-  const base = { enabled: true, pending: false, failed: false, hasParent: true }
+  const base = { enabled: true, pending: false, failed: false }
 
   it('waits while the check runs', () => {
     expect(voteGate({ ...base, pending: true })).toBe('pending')
@@ -37,7 +38,7 @@ describe('voteGate', () => {
   })
 
   it('blocks a committed image that could not be fetched and hashed', () => {
-    const unfetched: MediaVerification = { url: IMAGE, status: 'unverifiable', reason: 'fetch-failed' }
+    const unfetched: MediaVerification = { url: IMAGE, committed: true, status: 'unverifiable', reason: 'fetch-failed' }
     expect(voteGate({ ...base, data: result('verified', [verified(HEADER), unfetched]) })).toBe('blocked')
   })
 
@@ -49,9 +50,25 @@ describe('voteGate', () => {
     expect(voteGate({ ...base, data: result('no-hash') })).toBe('allowed')
   })
 
-  it('does not block images of a process without a parent, which nothing commits', () => {
-    const uncovered: MediaVerification = { url: HEADER, status: 'unverifiable', reason: 'no-parent' }
-    expect(voteGate({ ...base, hasParent: false, data: result('verified', [uncovered]) })).toBe('allowed')
+  it('blocks a choice image whose question document could not be verified', () => {
+    const unchecked: MediaVerification = {
+      url: IMAGE,
+      committed: true,
+      status: 'unverifiable',
+      reason: 'document-unverified',
+    }
+    expect(voteGate({ ...base, data: result('verified', [verified(HEADER), unchecked]) })).toBe('blocked')
+  })
+
+  it('does not block images nothing commits', () => {
+    const noParent: MediaVerification = { url: HEADER, committed: false, status: 'unverifiable', reason: 'no-parent' }
+    const notCommitted: MediaVerification = {
+      url: IMAGE,
+      committed: false,
+      status: 'unverifiable',
+      reason: 'not-committed',
+    }
+    expect(voteGate({ ...base, data: result('verified', [noParent, notCommitted]) })).toBe('allowed')
   })
 
   it('allows the vote when there is nothing to check', () => {
@@ -70,12 +87,14 @@ describe('resolveMediaSrc', () => {
   it('never falls back to the original URL for a committed image', () => {
     // Still checking, failed, or mismatched: nothing is shown rather than unverified bytes.
     expect(resolveMediaSrc(HEADER, { hasParent: true, blobUrls: {} })).toBeUndefined()
-    const data = result('mismatch', [{ url: IMAGE, status: 'mismatch' }])
+    const data = result('mismatch', [{ url: IMAGE, committed: true, status: 'mismatch' }])
     expect(resolveMediaSrc(IMAGE, { hasParent: true, data, blobUrls })).toBeUndefined()
   })
 
   it('keeps the original URL where nothing commits the image', () => {
     expect(resolveMediaSrc(HEADER, { hasParent: false, blobUrls: {} })).toBe(HEADER)
+    const data = result('verified', [{ url: IMAGE, committed: false, status: 'unverifiable', reason: 'not-committed' }])
+    expect(resolveMediaSrc(IMAGE, { hasParent: true, data, blobUrls: {} })).toBe(IMAGE)
     expect(resolveMediaSrc(HEADER, { hasParent: true, data: result('no-hash'), blobUrls: {} })).toBe(HEADER)
   })
 
@@ -107,7 +126,7 @@ describe('createBlobUrls', () => {
       [
         verified(HEADER, 'header-bytes'),
         verified(IMAGE, '<svg></svg>'),
-        { url: 'https://cdn.example.org/bad.png', status: 'mismatch' },
+        { url: 'https://cdn.example.org/bad.png', committed: true, status: 'mismatch' },
       ],
       create
     )

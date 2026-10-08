@@ -5,7 +5,7 @@ import {
   compareQuestionContent,
   createFetchBytes,
   createSha256Hex,
-  displayedImageUrls,
+  displayedImages,
   localizedMatches,
   normalizeHash,
   readMediaHashes,
@@ -58,7 +58,11 @@ const question = (upstreamId: string): DisplayedQuestion => ({
   upstreamId,
   title: { default: `Who should chair board ${upstreamId}?`, es: `¿Quién preside la junta ${upstreamId}?` },
   choices: [
-    { title: { default: 'Alice', es: 'Alicia' }, value: 0, meta: { image: { default: IMAGE } } },
+    {
+      title: { default: 'Alice', es: 'Alicia' },
+      value: 0,
+      meta: { image: { default: IMAGE }, description: 'Chair since 2024.' },
+    },
     { title: { default: 'Bob', es: 'Roberto' }, value: 1 },
   ],
 })
@@ -74,14 +78,16 @@ const shownProcess = (ids: string[] = ['e1'], upstreamId: string | null = PARENT
   questions: ids.map(question),
 })
 
-/** The backend hashes every image it publishes; these are the fixtures' header and choice image. */
-const committedImageHashes = () => ({ [HEADER]: nodeHash(headerBytes), [IMAGE]: nodeHash(imageBytes) })
+/** The backend hashes every image it publishes: the header in the parent document... */
+const headerHashes = () => ({ [HEADER]: nodeHash(headerBytes) })
+/** ...and each choice image in its question's. */
+const choiceImageHashes = () => ({ [IMAGE]: nodeHash(imageBytes) })
 
 /** The parent election's document saas-backend writes for `process`. */
 const parentDoc = (
   process: DisplayedProcess,
   {
-    mediaHashes = committedImageHashes(),
+    mediaHashes = headerHashes(),
     questionElections = (process.questions ?? []).map((q) => q.upstreamId),
   }: { mediaHashes?: Record<string, string>; questionElections?: unknown } = {}
 ) => ({
@@ -94,16 +100,20 @@ const parentDoc = (
   type: { name: 'single-choice-multiquestion', properties: null },
 })
 
-/** The document saas-backend writes for one question. */
-const questionDoc = (q: DisplayedQuestion) => ({
+/** The document saas-backend writes for one question: each choice's display entry as its `meta`. */
+const questionDoc = (
+  q: DisplayedQuestion,
+  { mediaHashes = choiceImageHashes() }: { mediaHashes?: Record<string, string> } = {}
+) => ({
   title: q.title,
   version: '1.0',
   description: null,
+  meta: { mediaHashes },
   questions: [
     {
       title: q.title,
       description: q.description ?? null,
-      choices: q.choices!.map(({ title, value }) => ({ title, value })),
+      choices: q.choices!.map(({ title, value, meta }) => ({ title, value, ...(meta ? { meta } : {}) })),
     },
   ],
   type: { name: 'single-choice-multiquestion', properties: null },
@@ -119,11 +129,14 @@ const committedWorld = (
   process: DisplayedProcess,
   {
     parent = parentDoc(process),
+    questionDocs = {},
     served = {},
     files = {},
     organizations = {},
   }: {
     parent?: unknown
+    /** Document committed for a question election, keyed by its id (default: `questionDoc`). */
+    questionDocs?: Record<string, unknown>
     served?: Record<string, Uint8Array>
     files?: World['files']
     organizations?: Record<string, string>
@@ -136,7 +149,9 @@ const committedWorld = (
   }
   if (process.upstreamId) add(process.upstreamId, PARENT_URL, encodeDoc(parent))
   for (const q of process.questions ?? []) {
-    if (q.upstreamId) add(q.upstreamId, questionUrl(q.upstreamId), encodeDoc(questionDoc(q)))
+    if (q.upstreamId) {
+      add(q.upstreamId, questionUrl(q.upstreamId), encodeDoc(questionDocs[q.upstreamId] ?? questionDoc(q)))
+    }
   }
   return world
 }
@@ -169,17 +184,22 @@ describe('hash helpers', () => {
   })
 })
 
-describe('displayedImageUrls', () => {
-  it('collects header, stream and choice images in both shapes, once each', () => {
-    const urls = displayedImageUrls({
-      header: HEADER,
-      streamUri: VIDEO,
-      questions: [
-        { choices: [{ meta: { image: { default: IMAGE, thumbnail: IMAGE } } }, { meta: { image: HEADER } }, {}] },
-      ],
-    })
+describe('displayedImages', () => {
+  const THUMB = 'https://cdn.example.org/choice-thumb.png'
+
+  it('collects the header and choice images in both shapes, once each, with their question', () => {
+    const published: DisplayedQuestion = {
+      upstreamId: 'e1',
+      choices: [{ meta: { image: { default: IMAGE, thumbnail: THUMB } } }, { meta: { image: HEADER } }, {}],
+    }
+    const images = displayedImages({ header: HEADER, streamUri: VIDEO, questions: [published] })
+
     // The video is not an image: its content is never hashed.
-    expect(urls).toEqual([HEADER, IMAGE])
+    expect(images).toEqual([{ url: HEADER }, { url: IMAGE, question: published }, { url: THUMB, question: published }])
+  })
+
+  it('skips draft questions, which nothing commits', () => {
+    expect(displayedImages({ questions: [{ choices: [{ meta: { image: IMAGE } }] }] })).toEqual([])
   })
 })
 
@@ -289,10 +309,42 @@ describe('compareQuestionContent', () => {
       'choices',
       'choice-title',
       'choice-value',
+      'choice-description',
+      'choice-image',
       'choice-title',
       'choice-value',
+      'choice-description',
+      'choice-image',
     ])
     expect(mismatches(fields)).toEqual([])
+  })
+
+  it('compares the choice description and image URLs with the document', () => {
+    const q = question('e1')
+    const [alice, bob] = q.choices!
+    const shown: DisplayedQuestion = {
+      ...q,
+      choices: [
+        { ...alice, meta: { image: { default: IMAGE }, description: 'Chair since 2023.' } },
+        { ...bob, meta: { image: { default: 'https://cdn.example.org/bob.png' } } },
+      ],
+    }
+
+    expect(mismatches(compareQuestionContent(shown, questionDoc(q)))).toEqual([
+      { field: 'choice-description', choice: 0, status: 'mismatch' },
+      { field: 'choice-image', choice: 1, status: 'mismatch' },
+    ])
+  })
+
+  it('treats an image URL string as the default image', () => {
+    const q = question('e1')
+    const doc = questionDoc(q)
+    doc.questions[0].choices[0] = {
+      ...doc.questions[0].choices[0],
+      meta: { image: IMAGE, description: 'Chair since 2024.' },
+    }
+
+    expect(mismatches(compareQuestionContent(q, doc))).toEqual([])
   })
 
   it('names each differing field, in any language', () => {
@@ -300,10 +352,7 @@ describe('compareQuestionContent', () => {
     const shown: DisplayedQuestion = {
       ...q,
       title: { default: 'Who should chair board e1?', es: 'Otra pregunta' },
-      choices: [
-        { title: { default: 'Alice', es: 'Alicia' }, value: 0 },
-        { title: { default: 'Bob', es: 'Roberto' }, value: 2 },
-      ],
+      choices: [q.choices![0], { ...q.choices![1], value: 2 }],
     }
 
     expect(mismatches(compareQuestionContent(shown, questionDoc(q)))).toEqual([
@@ -324,12 +373,10 @@ describe('compareQuestionContent', () => {
 })
 
 describe('verifyProcessMetadata', () => {
-  it('verifies the parent, every question, and each image listed by the parent', async () => {
+  it('verifies the parent, every question, and each image against the document that lists it', async () => {
     const process = shownProcess(['e1', 'e2'])
-    const parent = parentDoc(process, {
-      mediaHashes: { [HEADER]: nodeHash(headerBytes), [IMAGE]: nodeHash(imageBytes).toUpperCase() },
-    })
-    const world = committedWorld(process, { parent, files: { [HEADER]: headerBytes, [IMAGE]: imageBytes } })
+    const parent = parentDoc(process, { mediaHashes: { [HEADER]: nodeHash(headerBytes).toUpperCase() } })
+    const world = committedWorld(process, { parent })
 
     const result = await verifyProcessMetadata(process, depsFor(world))
 
@@ -341,8 +388,8 @@ describe('verifyProcessMetadata', () => {
       ['e2', 'verified'],
     ])
     expect(result.media).toEqual([
-      expect.objectContaining({ url: HEADER, status: 'verified' }),
-      expect.objectContaining({ url: IMAGE, status: 'verified' }),
+      expect.objectContaining({ url: HEADER, committed: true, status: 'verified' }),
+      expect.objectContaining({ url: IMAGE, committed: true, status: 'verified' }),
     ])
     // The verified bytes are kept, so the page renders exactly what was hashed.
     expect(Array.from(new Uint8Array(result.media[0].bytes!))).toEqual(Array.from(headerBytes))
@@ -366,14 +413,47 @@ describe('verifyProcessMetadata', () => {
     expect(result.process.fields?.find((f) => f.field === 'stream')?.status).toBe('verified')
   })
 
-  it('reports an image the verified parent does not list as a mismatch', async () => {
+  it('reports a header the verified parent does not list as a mismatch', async () => {
     const process = shownProcess()
-    const parent = parentDoc(process, { mediaHashes: { [HEADER]: nodeHash(headerBytes) } })
+    const parent = parentDoc(process, { mediaHashes: {} })
 
     const result = await verifyProcessMetadata(process, depsFor(committedWorld(process, { parent })))
 
     expect(result.status).toBe('mismatch')
-    expect(result.media[1]).toEqual({ url: IMAGE, status: 'mismatch', reason: 'not-listed' })
+    expect(result.media[0]).toEqual({ url: HEADER, committed: true, status: 'mismatch', reason: 'not-listed' })
+  })
+
+  it('checks a choice image against its question document, not the parent', async () => {
+    const process = shownProcess()
+    // The parent listing the choice image does not help: its question document must.
+    const parent = parentDoc(process, { mediaHashes: { ...headerHashes(), ...choiceImageHashes() } })
+    const questionDocs = { e1: questionDoc(process.questions![0], { mediaHashes: {} }) }
+
+    const result = await verifyProcessMetadata(process, depsFor(committedWorld(process, { parent, questionDocs })))
+
+    expect(result.status).toBe('mismatch')
+    expect(result.media[1]).toEqual({ url: IMAGE, committed: true, status: 'mismatch', reason: 'not-listed' })
+  })
+
+  it('reports a choice image whose bytes changed as a mismatch', async () => {
+    const process = shownProcess()
+    const world = committedWorld(process, { files: { [IMAGE]: encode('another photo') } })
+
+    const result = await verifyProcessMetadata(process, depsFor(world))
+
+    expect(result.status).toBe('mismatch')
+    expect(result.media[1]).toMatchObject({ url: IMAGE, status: 'mismatch' })
+    expect(result.media[1].bytes).toBeUndefined()
+  })
+
+  it('leaves a choice image uncommitted when its election committed no hash', async () => {
+    const process = shownProcess(['e1'], null)
+    const world = committedWorld(process)
+    world.chain.e1 = { organizationId: ORG, metadataURL: questionUrl('e1') }
+
+    const result = await verifyProcessMetadata(process, depsFor(world))
+
+    expect(result.media[1]).toEqual({ url: IMAGE, committed: false, status: 'unverifiable', reason: 'not-committed' })
   })
 
   it('reports a mismatch when the page shows other question text than the hash-verified document', async () => {
@@ -443,12 +523,14 @@ describe('verifyProcessMetadata', () => {
       ['header', 'unverifiable'],
       ['stream', 'unverifiable'],
     ])
-    expect(result.media.every((m) => m.status === 'unverifiable' && m.reason === 'no-parent')).toBe(true)
+    expect(result.media[0]).toEqual({ url: HEADER, committed: false, status: 'unverifiable', reason: 'no-parent' })
+    // Choice images are committed by their question election, parent or not.
+    expect(result.media[1]).toMatchObject({ url: IMAGE, committed: true, status: 'verified' })
   })
 
   it('flags a parent whose bytes differ from its committed hash, and ignores its media list', async () => {
     const process = shownProcess()
-    const tampered = encodeDoc(parentDoc(process, { mediaHashes: { [HEADER]: nodeHash(headerBytes) } }))
+    const tampered = encodeDoc(parentDoc(process, { mediaHashes: { [HEADER]: nodeHash(encode('other header')) } }))
     const world = committedWorld(process, { served: { [PARENT]: tampered }, files: { [HEADER]: headerBytes } })
 
     const result = await verifyProcessMetadata(process, depsFor(world))
@@ -456,7 +538,12 @@ describe('verifyProcessMetadata', () => {
     expect(result.status).toBe('mismatch')
     expect(result.process.status).toBe('mismatch')
     expect(result.process.fields?.map((f) => f.field)).toEqual(['organization'])
-    expect(result.media[0]).toEqual({ url: HEADER, status: 'unverifiable', reason: 'parent-unverified' })
+    expect(result.media[0]).toEqual({
+      url: HEADER,
+      committed: true,
+      status: 'unverifiable',
+      reason: 'document-unverified',
+    })
   })
 
   it('flags a question document whose bytes differ from its committed hash', async () => {
@@ -472,9 +559,7 @@ describe('verifyProcessMetadata', () => {
 
   it('flags a medium whose bytes changed', async () => {
     const process = shownProcess()
-    const parent = parentDoc(process, {
-      mediaHashes: { ...committedImageHashes(), [HEADER]: nodeHash(encode('original header')) },
-    })
+    const parent = parentDoc(process, { mediaHashes: { [HEADER]: nodeHash(encode('original header')) } })
     const world = committedWorld(process, { parent })
 
     const result = await verifyProcessMetadata(process, depsFor(world))

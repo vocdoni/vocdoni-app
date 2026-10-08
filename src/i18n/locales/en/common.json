@@ -1425,6 +1425,8 @@
         "verified": "What this page shows matches, byte for byte, the version the organizer committed on the Vochain."
       },
       "field": {
+        "choice_description": "Option {{number}} description",
+        "choice_image": "Option {{number}} image",
         "choice_title": "Option {{number}} text",
         "choice_value": "Option {{number}} value",
         "choices": "Number of options",

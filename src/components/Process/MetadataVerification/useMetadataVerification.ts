@@ -43,7 +43,7 @@ export const useMetadataVerification = () => {
               choices: (question.choices ?? []).map((choice) => ({
                 title: choice.title,
                 value: choice.value,
-                meta: { image: choice.meta?.image },
+                meta: { image: choice.meta?.image, description: choice.meta?.description },
               })),
             })),
           }

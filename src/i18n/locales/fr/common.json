@@ -1451,6 +1451,8 @@
         "verified": "Ce qu'affiche cette page correspond, octet par octet, à la version que l'organisation a enregistrée sur la Vochain."
       },
       "field": {
+        "choice_description": "Description de l'option {{number}}",
+        "choice_image": "Image de l'option {{number}}",
         "choice_title": "Texte de l'option {{number}}",
         "choice_value": "Valeur de l'option {{number}}",
         "choices": "Nombre d'options",

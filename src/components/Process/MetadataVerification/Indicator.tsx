@@ -80,6 +80,14 @@ const useFieldLabel = () => {
         number,
         defaultValue: 'Option {{number}} value',
       }),
+      'choice-description': t('process.verification.field.choice_description', {
+        number,
+        defaultValue: 'Option {{number}} description',
+      }),
+      'choice-image': t('process.verification.field.choice_image', {
+        number,
+        defaultValue: 'Option {{number}} image',
+      }),
       header: t('process.verification.field.header', { defaultValue: 'Header image' }),
       stream: t('process.verification.field.stream', { defaultValue: 'Video' }),
       organization: t('process.verification.field.organization', { defaultValue: 'Organization' }),

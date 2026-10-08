@@ -1425,6 +1425,8 @@
         "verified": "Όσα εμφανίζει αυτή η σελίδα ταιριάζουν, byte προς byte, με την έκδοση που καταχώρησε ο οργανισμός στο Vochain."
       },
       "field": {
+        "choice_description": "Περιγραφή επιλογής {{number}}",
+        "choice_image": "Εικόνα επιλογής {{number}}",
         "choice_title": "Κείμενο επιλογής {{number}}",
         "choice_value": "Τιμή επιλογής {{number}}",
         "choices": "Αριθμός επιλογών",

@@ -1425,6 +1425,8 @@
         "verified": "Was diese Seite anzeigt, stimmt Byte für Byte mit der Version überein, die die Organisation in der Vochain hinterlegt hat."
       },
       "field": {
+        "choice_description": "Beschreibung von Option {{number}}",
+        "choice_image": "Bild von Option {{number}}",
         "choice_title": "Text von Option {{number}}",
         "choice_value": "Wert von Option {{number}}",
         "choices": "Anzahl der Optionen",

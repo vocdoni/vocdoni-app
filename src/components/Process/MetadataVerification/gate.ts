@@ -17,24 +17,26 @@ export type VoteGateInput = {
   pending: boolean
   failed: boolean
   data?: ProcessVerification
-  /** The process was published with a parent election, which commits its images. */
-  hasParent: boolean
 }
 
-export const voteGate = ({ enabled, pending, failed, data, hasParent }: VoteGateInput): VoteGate => {
+export const voteGate = ({ enabled, pending, failed, data }: VoteGateInput): VoteGate => {
   if (!enabled) return 'allowed'
   if (pending) return 'pending'
   if (failed || !data) return 'blocked'
   // Published before the chain committed any hash: there is nothing to hold the page to.
   if (data.status === 'no-hash') return 'allowed'
   if (data.status === 'mismatch') return 'blocked'
-  // Images are always committed through the parent: one that could not be fetched and
-  // hashed would be shown unverified, or not at all.
-  if (hasParent && data.media.some((medium) => medium.status !== 'verified')) return 'blocked'
+  // A committed image that could not be fetched and hashed would be shown unverified, or not
+  // at all: the voter would not be voting on the committed ballot.
+  if (data.media.some((medium) => medium.committed && medium.status !== 'verified')) return 'blocked'
   return 'allowed'
 }
 
 export type MediaSourceInput = {
+  /**
+   * The process was published with a parent election. Until the check says otherwise, its
+   * images are assumed committed and are not shown.
+   */
   hasParent: boolean
   data?: ProcessVerification
   /** Object URLs of the verified bytes, keyed by the image URL as displayed. */
@@ -45,15 +47,17 @@ export type MediaSourceInput = {
  * The `src` an image is rendered from. A committed image is only ever shown from the bytes
  * that were hashed (an object URL), never by asking the original URL again, so the voter
  * cannot see different bytes than the verified ones; until those exist it is not shown.
- * Images of a process published without a parent election, or of one that committed no
- * hash at all, are not covered and keep their original URL.
+ * Images nothing commits (no parent election, or an election without a metadata hash) are
+ * not covered and keep their original URL.
  */
 export const resolveMediaSrc = (url: string | undefined, { hasParent, data, blobUrls }: MediaSourceInput) => {
   if (!url) return undefined
-  if (!hasParent) return url
   if (blobUrls[url]) return blobUrls[url]
+  const medium = data?.media.find((entry) => entry.url === url)
+  if (medium) return medium.committed ? undefined : url
   if (data?.status === 'no-hash') return url
-  return undefined
+  // Not checked (yet): a process with a parent election commits its images.
+  return hasParent ? undefined : url
 }
 
 /**

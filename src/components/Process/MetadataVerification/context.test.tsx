@@ -34,6 +34,7 @@ const verified: ProcessVerification = {
   media: [
     {
       url: HEADER,
+      committed: true,
       status: 'verified',
       expectedHash: 'ab',
       actualHash: 'ab',

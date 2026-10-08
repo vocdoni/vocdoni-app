@@ -1425,6 +1425,8 @@
         "verified": "Orri honek erakusten duena bat dator, bytez byte, erakundeak Vochain-en erregistratutako bertsioarekin."
       },
       "field": {
+        "choice_description": "{{number}}. aukeraren deskribapena",
+        "choice_image": "{{number}}. aukeraren irudia",
         "choice_title": "{{number}}. aukeraren testua",
         "choice_value": "{{number}}. aukeraren balioa",
         "choices": "Aukera kopurua",

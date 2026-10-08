@@ -5,10 +5,11 @@
  * process title, description and media, plus one election per question, whose document
  * carries that question and its choices. Each election commits `metadataHash`: the lowercase
  * hex SHA-256 of the exact bytes served at its metadata URL (vocdoni/vocdoni-node#1486).
- * Images (the header, choice images) are covered by the parent document's `meta.mediaHashes`,
- * a map from each image URL (as written in the metadata) to the SHA-256 of its bytes. The
- * backend hashes every image, so an image a verified parent does not list is a mismatch. A
- * video is never hashed: only its URL is covered, as the parent's `media.streamUri`.
+ * Images are covered by a `meta.mediaHashes` map, from each image URL (as written in the
+ * metadata) to the SHA-256 of its bytes: the header by the parent document's, each choice
+ * image (default and thumbnail) by its question document's. The backend hashes every image,
+ * so an image a verified document does not list is a mismatch. A video is never hashed:
+ * only its URL is covered, as the parent's `media.streamUri`.
  *
  * Everything that touches the network or WebCrypto is injected, so this module stays pure
  * and testable.
@@ -26,8 +27,10 @@ export type UnverifiableReason =
   | 'not-listed'
   /** The process was published without a parent election, so nothing commits its own fields. */
   | 'no-parent'
-  /** The parent election exists but its document could not be verified, so its image hashes are unknown. */
-  | 'parent-unverified'
+  /** The election committing the image exists but its document could not be verified. */
+  | 'document-unverified'
+  /** The election the image belongs to committed no metadata hash, so nothing covers it. */
+  | 'not-committed'
 
 /** A piece of the ballot the voter is shown, compared with the verified metadata document. */
 export type ContentField =
@@ -38,6 +41,9 @@ export type ContentField =
   | 'choices'
   | 'choice-title'
   | 'choice-value'
+  | 'choice-description'
+  /** The choice's image URLs (default and thumbnail), not its bytes: those are checked as media. */
+  | 'choice-image'
   | 'header'
   | 'stream'
   /** The parent election belongs to the same organization as the question elections. */
@@ -71,6 +77,11 @@ export type DocumentVerification = {
 /** One displayed image, checked against the parent document's `meta.mediaHashes`. */
 export type MediaVerification = {
   url: string
+  /**
+   * The image is committed on chain (its election has a metadata hash, or its process a
+   * parent election), so it must verify before it is shown or a vote is cast.
+   */
+  committed: boolean
   expectedHash?: string
   actualHash?: string
   status: Exclude<HashCheck, 'no-hash'>
@@ -95,7 +106,11 @@ export type ProcessVerification = {
 /** Multi-language text as served by the SaaS API or written in a metadata document. */
 export type LocalizedValue = string | Record<string, string | undefined> | null | undefined
 
-export type DisplayedChoice = { title?: LocalizedValue; value?: number; meta?: { image?: unknown } }
+export type DisplayedChoice = {
+  title?: LocalizedValue
+  value?: number
+  meta?: { image?: unknown; description?: unknown }
+}
 
 export type DisplayedQuestion = {
   /** On-chain election id; questions without one are not published and are skipped. */
@@ -253,9 +268,20 @@ export const compareProcessContent = (
   ]
 }
 
+/** A choice image as `{ default, thumbnail }`: a plain URL string is its `default`. */
+const imageUrls = (image: unknown): { default?: string; thumbnail?: string } => {
+  if (typeof image === 'string') return image ? { default: image } : {}
+  const value = record(image)
+  return {
+    default: typeof value.default === 'string' && value.default ? value.default : undefined,
+    thumbnail: typeof value.thumbnail === 'string' && value.thumbnail ? value.thumbnail : undefined,
+  }
+}
+
 /**
- * Compares one question as the page shows it (title, description, choices by position with
- * their values) with that question's hash-verified metadata document.
+ * Compares one question as the page shows it (title, description, and each choice by
+ * position: title, value, description and image URLs) with that question's hash-verified
+ * metadata document, whose `choices[i].meta` carries the choice's description and image.
  */
 export const compareQuestionContent = (question: DisplayedQuestion, metadata: unknown): FieldCheck[] => {
   const doc = record(metadata)
@@ -271,12 +297,26 @@ export const compareQuestionContent = (question: DisplayedQuestion, metadata: un
   shownChoices.forEach((choice, index) => {
     const docChoice = docChoices[index]
     if (!isRecord(docChoice)) {
-      fields.push(check('choice-title', false, index), check('choice-value', false, index))
+      fields.push(
+        check('choice-title', false, index),
+        check('choice-value', false, index),
+        check('choice-description', false, index),
+        check('choice-image', false, index)
+      )
       return
     }
+    const docMeta = record(docChoice.meta)
+    const shownImage = imageUrls(choice.meta?.image)
+    const docImage = imageUrls(docMeta.image)
     fields.push(
       check('choice-title', localizedMatches(choice.title, docChoice.title), index),
-      check('choice-value', choice.value === docChoice.value, index)
+      check('choice-value', choice.value === docChoice.value, index),
+      check('choice-description', localizedMatches(choice.meta?.description, docMeta.description), index),
+      check(
+        'choice-image',
+        sameText(shownImage.default, docImage.default) && sameText(shownImage.thumbnail, docImage.thumbnail),
+        index
+      )
     )
   })
   return fields
@@ -307,6 +347,8 @@ export const summarize = (
 
 type FetchedDocument = {
   verification: DocumentVerification
+  /** The election commits a metadata hash, and with it the images its document lists. */
+  committed: boolean
   organizationId?: string
   /** Parsed document (null when not JSON), only when its bytes match the committed hash. */
   metadata?: unknown
@@ -318,16 +360,21 @@ const fetchDocument = async (electionId: string, deps: VerifyDeps): Promise<Fetc
   try {
     info = await deps.getElection(electionId)
   } catch {
-    return { verification: { electionId, status: 'unverifiable', reason: 'chain-unavailable' } }
+    // Unknown whether it commits anything: treat it as committing, so nothing passes unchecked.
+    return { verification: { electionId, status: 'unverifiable', reason: 'chain-unavailable' }, committed: true }
   }
 
   const { metadataURL, organizationId } = info
   const expectedHash = normalizeHash(info.metadataHash)
   const base = { electionId, metadataURL, expectedHash }
 
-  if (!expectedHash) return { verification: { ...base, status: 'no-hash' }, organizationId }
+  if (!expectedHash) return { verification: { ...base, status: 'no-hash' }, committed: false, organizationId }
   if (!isFetchableUrl(metadataURL)) {
-    return { verification: { ...base, status: 'unverifiable', reason: 'unsupported-url' }, organizationId }
+    return {
+      verification: { ...base, status: 'unverifiable', reason: 'unsupported-url' },
+      committed: true,
+      organizationId,
+    }
   }
 
   let bytes: ArrayBuffer
@@ -335,7 +382,7 @@ const fetchDocument = async (electionId: string, deps: VerifyDeps): Promise<Fetc
     bytes = await deps.fetchBytes(metadataURL)
   } catch (error) {
     const reason = error instanceof ResourceTooLargeError ? 'too-large' : 'fetch-failed'
-    return { verification: { ...base, status: 'unverifiable', reason }, organizationId }
+    return { verification: { ...base, status: 'unverifiable', reason }, committed: true, organizationId }
   }
 
   const actualHash = await deps.sha256(bytes)
@@ -344,6 +391,7 @@ const fetchDocument = async (electionId: string, deps: VerifyDeps): Promise<Fetc
   // them from a document the chain vouches for, never from one that failed the check.
   return {
     verification: { ...base, actualHash, status },
+    committed: true,
     organizationId,
     // A verified document that is not valid JSON still gets compared (as an empty one), so
     // the page cannot pass as verified against content nobody can read.
@@ -362,15 +410,25 @@ const withFields = (verification: DocumentVerification, fields: FieldCheck[]): D
   fields,
 })
 
+/** Checks one image against the document that commits it (`source`, absent when there is none). */
 const verifyImage = async (
   url: string,
-  expectedHash: string | undefined,
+  source: FetchedDocument | undefined,
   deps: VerifyDeps
 ): Promise<MediaVerification> => {
-  // The backend hashes every image it publishes: one a verified parent does not list was
+  if (!source) return { url, committed: false, status: 'unverifiable', reason: 'no-parent' }
+  if (!source.committed) return { url, committed: false, status: 'unverifiable', reason: 'not-committed' }
+  if (source.metadata === undefined) {
+    return { url, committed: true, status: 'unverifiable', reason: 'document-unverified' }
+  }
+
+  // The backend hashes every image it publishes: one a verified document does not list was
   // not committed by the organizer.
-  if (!expectedHash) return { url, status: 'mismatch', reason: 'not-listed' }
-  if (!isFetchableUrl(url)) return { url, expectedHash, status: 'unverifiable', reason: 'unsupported-url' }
+  const expectedHash = readMediaHashes(source.metadata)[url]
+  if (!expectedHash) return { url, committed: true, status: 'mismatch', reason: 'not-listed' }
+  if (!isFetchableUrl(url)) {
+    return { url, committed: true, expectedHash, status: 'unverifiable', reason: 'unsupported-url' }
+  }
 
   let bytes: ArrayBuffer
   try {
@@ -378,13 +436,13 @@ const verifyImage = async (
   } catch (error) {
     // CORS failures land here too: the browser hides the bytes, so the medium can't be checked.
     const reason = error instanceof ResourceTooLargeError ? 'too-large' : 'fetch-failed'
-    return { url, expectedHash, status: 'unverifiable', reason }
+    return { url, committed: true, expectedHash, status: 'unverifiable', reason }
   }
 
   const actualHash = await deps.sha256(bytes)
   return compareHash(actualHash, expectedHash) === 'verified'
-    ? { url, expectedHash, actualHash, status: 'verified', bytes }
-    : { url, expectedHash, actualHash, status: 'mismatch' }
+    ? { url, committed: true, expectedHash, actualHash, status: 'verified', bytes }
+    : { url, committed: true, expectedHash, actualHash, status: 'mismatch' }
 }
 
 /**
@@ -397,7 +455,8 @@ const verifyImage = async (
  *   fields not verifiable;
  * - each published question's election commits that question's document: title,
  *   description and choices;
- * - each displayed medium is hashed against the parent document's `meta.mediaHashes`.
+ * - each displayed image is hashed against the `meta.mediaHashes` of the document that commits
+ *   it: the header against the parent's, a choice image against its question's.
  */
 export const verifyProcessMetadata = async (
   process: DisplayedProcess,
@@ -446,15 +505,13 @@ export const verifyProcessMetadata = async (
     processVerification = withFields(parent.verification, fields)
   }
 
-  // Only a parent whose bytes match its committed hash vouches for image hashes.
-  const images = displayedImageUrls(process)
-  const media: MediaVerification[] =
-    parent?.metadata === undefined
-      ? images.map((url) => ({ url, status: 'unverifiable', reason: parent ? 'parent-unverified' : 'no-parent' }))
-      : await (async () => {
-          const hashes = readMediaHashes(parent.metadata)
-          return Promise.all(images.map((url) => verifyImage(url, hashes[url], deps)))
-        })()
+  // Only a document whose bytes match its committed hash vouches for image hashes.
+  const sourceOf = new Map(published.map((question, index) => [question, questions[index]]))
+  const media = await Promise.all(
+    displayedImages(process).map(({ url, question }) =>
+      verifyImage(url, question ? sourceOf.get(question) : parent, deps)
+    )
+  )
 
   return {
     status: summarize(processVerification, documents, media),
@@ -465,29 +522,33 @@ export const verifyProcessMetadata = async (
 }
 
 /**
- * The image URLs a voter sees on the ballot: the header and choice images, as written (the
- * page looks them up by the same string). The video is not one: its content is never hashed.
+ * The images a voter sees on the ballot, with the published question committing each (none
+ * for the header, which the parent commits): the header and every choice image, default and
+ * thumbnail, as written (the page looks them up by the same string). The video is not one:
+ * its content is never hashed. A URL shown more than once is checked once, against its first
+ * occurrence.
  */
-export const displayedImageUrls = (election: DisplayedProcess): string[] => {
-  const urls: string[] = []
-  const push = (value: unknown) => {
-    if (typeof value === 'string' && value.trim()) urls.push(value)
+export const displayedImages = (election: DisplayedProcess): Array<{ url: string; question?: DisplayedQuestion }> => {
+  const images: Array<{ url: string; question?: DisplayedQuestion }> = []
+  const seen = new Set<string>()
+  const push = (value: unknown, question?: DisplayedQuestion) => {
+    if (typeof value !== 'string' || !value.trim() || seen.has(value)) return
+    seen.add(value)
+    images.push({ url: value, question })
   }
 
   push(election.header)
   for (const question of election.questions ?? []) {
+    // Drafts are not on chain: nothing commits their images.
+    if (!question.upstreamId) continue
     for (const choice of question.choices ?? []) {
-      const image = choice.meta?.image
-      if (isRecord(image)) {
-        push(image.default)
-        push(image.thumbnail)
-      } else {
-        push(image)
-      }
+      const { default: image, thumbnail } = imageUrls(choice.meta?.image)
+      push(image, question)
+      push(thumbnail, question)
     }
   }
 
-  return [...new Set(urls)]
+  return images
 }
 
 /** Largest resource the browser downloads to hash. Larger ones are reported as too large. */
