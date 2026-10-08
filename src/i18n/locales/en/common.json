@@ -1372,6 +1372,7 @@
     "people_in_census_one": "One voter",
     "people_in_census_other": "{{ count }} voters",
     "price": {
+      "error": "The price could not be loaded.",
       "free": "This voting process is free: it publishes without payment.",
       "line": {
         "base": "Voting process",

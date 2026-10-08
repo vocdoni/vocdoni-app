@@ -56,7 +56,7 @@ import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
-import { useProcessPrice } from '~queries/process-price'
+import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
@@ -486,24 +486,34 @@ const LeaveConfirmationModal = ({
   )
 }
 
-// A saved draft may have changed its census or add-ons, and with them its price.
 export const useCreateProcess = () => {
   const { client } = useApiClient()
-  const queryClient = useQueryClient()
 
   return useMutation<string, Error, CreateVotingProcessRequest>({
     mutationFn: (request) => client.elections.create(request),
-    onSuccess: (processId) => queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) }),
   })
 }
+
+// What the backend prices a draft on, out of what a save sends: its census (size and 2FA channels).
+const pricedFields = (body: CreateVotingProcessRequest) => JSON.stringify(body.census ?? null)
 
 const useUpdateProcess = () => {
   const { client } = useApiClient()
   const queryClient = useQueryClient()
+  // The priced fields each draft was last saved with, so only a save that changed them re-prices it:
+  // most saves only touch its texts or dates.
+  const pricedRef = useRef(new Map<string, string>())
 
   return useMutation<void, Error, UpdateProcessRequest>({
     mutationFn: ({ processId, body }) => client.elections.update(processId, body),
-    onSuccess: (_, { processId }) => queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) }),
+    onSuccess: (_, { processId, body }) => {
+      const priced = pricedFields(body)
+      if (pricedRef.current.get(processId) === priced) return
+      pricedRef.current.set(processId, priced)
+      // Not awaited: a returned promise would hold the save, and every write queued behind it,
+      // until the price is read again
+      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
+    },
   })
 }
 
@@ -678,7 +688,7 @@ const ProcessCreateView = () => {
   const { data: formDraft } = useDraft(effectiveDraftId)
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
-  const quoteRequired = !!useProcessPrice(effectiveDraftId).data?.quoteRequired
+  const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).data)
 
   // Apply form draft if it exists
   useEffect(() => {
@@ -945,7 +955,7 @@ const ProcessCreateView = () => {
                   type='submit'
                   alignSelf='flex-end'
                   loading={methods.formState.isSubmitting}
-                  disabled={!organization?.address || quoteRequired}
+                  disabled={!organization?.address || quoteOnly}
                 >
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>

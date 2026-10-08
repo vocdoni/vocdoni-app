@@ -1372,6 +1372,7 @@
     "people_in_census_one": "Boto-emaile bat",
     "people_in_census_other": "{{ count }} boto-emaile",
     "price": {
+      "error": "Ezin izan da prezioa kargatu.",
       "free": "Boto-ematearen prozesu hau doakoa da: ordaindu gabe argitaratzen da.",
       "line": {
         "base": "Boto-ematearen prozesua",

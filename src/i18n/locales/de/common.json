@@ -1372,6 +1372,7 @@
     "people_in_census_one": "Ein Wähler",
     "people_in_census_other": "{{ count }} Wählende",
     "price": {
+      "error": "Der Preis konnte nicht geladen werden.",
       "free": "Dieser Abstimmungsprozess ist kostenlos: Er wird ohne Zahlung veröffentlicht.",
       "line": {
         "base": "Abstimmungsprozess",

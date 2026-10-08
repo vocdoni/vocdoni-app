@@ -1,10 +1,8 @@
-import { Alert, Flex, Link, Skeleton, Stack, Text } from '@chakra-ui/react'
+import { Alert, Button, Flex, Skeleton, Stack, Text } from '@chakra-ui/react'
 import type { TFunction } from 'i18next'
-import { ReactNode } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Link as RouterLink } from 'react-router'
-import { ProcessPriceLine, useProcessPrice } from '~queries/process-price'
-import { Routes } from '~routes'
+import { SupportLink } from '~components/Layout/SupportLink'
+import { isQuoteOnly, isUnpriceableDraft, ProcessPriceLine, useProcessPrice } from '~queries/process-price'
 import { currency, quantity } from '~utils/numbers'
 import { selfServiceVoterLimit } from './payment-errors'
 
@@ -32,13 +30,7 @@ const lineLabel = (t: TFunction, { kind, description }: ProcessPriceLine) => {
   }
 }
 
-// Trans replaces its component's children with the translated text, so the RouterLink must live
-// inside a wrapper; passed inline, `asChild` would be left without a child and Chakra would throw.
-const QuoteLink = ({ children }: { children?: ReactNode }) => (
-  <Link asChild fontWeight='semibold' textDecoration='underline'>
-    <RouterLink to={Routes.dashboard.settings.support}>{children}</RouterLink>
-  </Link>
-)
+const quoteLink = <SupportLink fontWeight='semibold' textDecoration='underline' />
 
 /**
  * The backend's price breakdown of a draft, VAT excluded. Before the draft is saved with its
@@ -46,9 +38,24 @@ const QuoteLink = ({ children }: { children?: ReactNode }) => (
  */
 export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null }) => {
   const { t } = useTranslation()
-  const { data: price, isLoading } = useProcessPrice(processId)
+  const { data: price, isLoading, error, refetch, isFetching } = useProcessPrice(processId)
 
   if (isLoading) return <Skeleton height={16} />
+
+  // Anything but a draft the backend cannot price yet (a 500, a network failure...) is not fixed by
+  // setting up voters, so it is not explained as if it were
+  if (error && !isUnpriceableDraft(error)) {
+    return (
+      <Stack gap={2} align='flex-start'>
+        <Text fontSize='sm' color='texts.subtle'>
+          <Trans i18nKey='process.price.error'>The price could not be loaded.</Trans>
+        </Text>
+        <Button size='xs' variant='outline' onClick={() => refetch()} loading={isFetching}>
+          <Trans i18nKey='common.retry'>Try again</Trans>
+        </Button>
+      </Stack>
+    )
+  }
 
   if (!price) {
     return (
@@ -61,7 +68,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
   }
 
   return (
-    <Stack gap={2} fontSize='sm' data-testid='process-price'>
+    <Stack gap={2} fontSize='sm'>
       {price.lines.map((line) => (
         <Flex key={line.kind} justify='space-between' gap={2}>
           <Text>{lineLabel(t, line)}</Text>
@@ -92,16 +99,19 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
 export const ProcessQuoteAlert = ({ processId }: { processId?: string | null }) => {
   const { data: price } = useProcessPrice(processId)
 
-  if (price?.quoteRequired) {
+  // A paid process has nothing left to quote
+  if (price?.paymentStatus === 'paid') return null
+
+  if (isQuoteOnly(price)) {
     return (
-      <Alert.Root status='warning' data-testid='process-quote-required'>
+      <Alert.Root status='warning'>
         <Alert.Indicator />
         <Alert.Description>
           <Trans
             i18nKey='process.price.quote_required'
             defaults='Voting processes with more than {{limit}} voters can only be published with a custom quote. <contact>Request a quote</contact> to publish this one.'
             values={{ limit: quantity(selfServiceVoterLimit) }}
-            components={{ contact: <QuoteLink /> }}
+            components={{ contact: quoteLink }}
           />
         </Alert.Description>
       </Alert.Root>
@@ -110,14 +120,14 @@ export const ProcessQuoteAlert = ({ processId }: { processId?: string | null }) 
 
   if (price?.quoteRecommended) {
     return (
-      <Alert.Root status='info' data-testid='process-quote-recommended'>
+      <Alert.Root status='info'>
         <Alert.Indicator />
         <Alert.Description>
           <Trans
             i18nKey='process.price.quote_recommended'
             defaults='For voting processes with more than {{limit}} voters we recommend a custom quote. <contact>Request a quote</contact>, or publish it at the price shown in the settings.'
             values={{ limit: quantity(quoteRecommendedVoterLimit) }}
-            components={{ contact: <QuoteLink /> }}
+            components={{ contact: quoteLink }}
           />
         </Alert.Description>
       </Alert.Root>

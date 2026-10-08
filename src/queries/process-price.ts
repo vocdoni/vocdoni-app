@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ApiEndpoints } from '~components/Auth/api'
+import { ApiEndpoints, BadRequestApiError } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from './keys'
 
@@ -32,19 +32,32 @@ export type ProcessPrice = {
 /**
  * The backend's own price of a draft, the only one the app may show before payment: it depends on
  * the census size, the 2FA channels and the add-ons stored with the draft, so it only changes when
- * the draft is saved (see useCreateProcess/useUpdateProcess) or its group grows.
+ * the draft saves them (see useUpdateProcess) or its group grows.
  *
- * The backend refuses to price a draft without a census, which drafts lack until their voters
- * and authentication are set up, so callers treat an error as "no price yet".
+ * A failed refetch keeps the last price in the query's `data`; it is dropped here, so a price the
+ * backend no longer stands by is never shown, nor acted on.
  */
 export const useProcessPrice = (processId?: string | null) => {
   const { bearedFetch } = useAuth()
 
-  return useQuery<ProcessPrice, Error>({
+  const query = useQuery<ProcessPrice, Error>({
     queryKey: QueryKeys.process.price(processId ?? undefined),
     enabled: !!processId,
-    queryFn: () => bearedFetch<ProcessPrice>(ApiEndpoints.ProcessPrice.replace('{processId}', processId!)),
-    // A missing census is the expected error here: retrying it only delays the hint
+    // The id comes from the URL (?draftId=): encoded, so it cannot point the request elsewhere
+    queryFn: () =>
+      bearedFetch<ProcessPrice>(ApiEndpoints.ProcessPrice.replace('{processId}', encodeURIComponent(processId!))),
+    // Most failures are a draft the backend cannot price yet (isUnpriceableDraft): retrying them
+    // only delays the hint
     retry: false,
   })
+
+  return { ...query, data: query.isError ? undefined : query.data }
 }
+
+// The backend refuses to price a draft without voters (400), which drafts lack until their voters
+// and authentication are set up.
+export const isUnpriceableDraft = (error: unknown) => error instanceof BadRequestApiError
+
+// Above the self-service limit only a custom quote publishes a process, so the app offers no way
+// to publish it, until a payment settled that quote.
+export const isQuoteOnly = (price?: ProcessPrice) => !!price?.quoteRequired && price.paymentStatus !== 'paid'

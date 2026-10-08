@@ -1397,6 +1397,7 @@
     "people_in_census_many": "{{ count }} votanti",
     "people_in_census_other": "{{ count }} votanti",
     "price": {
+      "error": "Non è stato possibile caricare il prezzo.",
       "free": "Questo processo di voto è gratuito: viene pubblicato senza pagamento.",
       "line": {
         "base": "Processo di voto",
