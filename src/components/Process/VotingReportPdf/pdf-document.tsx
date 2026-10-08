@@ -375,13 +375,18 @@ const MetadataAuditBody = ({ audit }: { audit: CertificateMetadataAudit }) => (
     <PdfText style={styles.paragraph}>{audit.intro}</PdfText>
     <PdfText style={styles.paragraph}>{audit.summary}</PdfText>
     {audit.integrityWarning && <PdfText style={styles.paragraph}>{audit.integrityWarning}</PdfText>}
+    {audit.questionElectionsWarning && <PdfText style={styles.paragraph}>{audit.questionElectionsWarning}</PdfText>}
     {audit.legend && <PdfText style={styles.smallText}>{audit.legend}</PdfText>}
     {audit.elections.map((election, electionIndex) => (
       <View key={`${election.title}-${electionIndex}`} style={styles.questionCard}>
         <View wrap={false} minPresenceAhead={SECTION_HEADING_MIN_PRESENCE_AHEAD}>
           <PdfText style={styles.questionTitle}>{election.title}</PdfText>
           <PdfText style={styles.questionMeta}>{election.summary}</PdfText>
+          {election.warning && (
+            <PdfText style={[styles.metadataChangeText, styles.metadataWarning]}>{election.warning}</PdfText>
+          )}
         </View>
+        {election.fields && <KeyValueList items={election.fields} />}
         {election.versions.map((version, versionIndex) => (
           <View key={`${version.heading}-${versionIndex}`} style={styles.metadataVersion}>
             <View wrap={false}>

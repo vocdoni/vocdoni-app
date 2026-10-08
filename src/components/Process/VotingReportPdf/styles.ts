@@ -521,6 +521,10 @@ export const styles = StyleSheet.create({
     lineHeight: 1.35,
     color: '#2f3a4c',
   },
+  metadataWarning: {
+    color: '#b42318',
+    marginBottom: 5,
+  },
   diffRemoved: {
     color: '#b42318',
     textDecoration: 'line-through',

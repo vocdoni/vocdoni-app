@@ -25,11 +25,14 @@ type ReportSize = {
   metadataAudits?: ElectionMetadataAudit[]
 }
 
+// On-chain election ids are hex, which the audit relies on to match elections and questions.
+const questionElectionId = (questionIndex: number) => (questionIndex + 1).toString(16).padStart(40, '0')
+
 const buildReportData = ({ questions, choices, title, choiceName, weighted, metadataAudits }: ReportSize) => {
   const processQuestions = Array.from({ length: questions }, (_, questionIndex) =>
     createQuestion({
       id: `question-${questionIndex + 1}`,
-      upstreamId: `election-${questionIndex + 1}`,
+      upstreamId: questionElectionId(questionIndex),
       title: { default: title ?? `Question ${questionIndex + 1}` },
       choices: Array.from({ length: choices }, (_, choiceIndex) => ({
         title: { default: `${choiceName ?? 'Option'} ${choiceIndex + 1}` },
@@ -61,7 +64,7 @@ const LONG_TEXT = 'The board proposes to renew the agreement with the current pr
 // Every question edited several times, with a long description rewritten each time.
 const createEditedAudits = (questions: number, edits: number): ElectionMetadataAudit[] =>
   Array.from({ length: questions }, (_, questionIndex) => ({
-    electionId: `election-${questionIndex + 1}`,
+    electionId: questionElectionId(questionIndex),
     available: true,
     versions: Array.from({ length: edits + 1 }, (_, versionIndex) => ({
       metadataURL: `https://store.example/${questionIndex}-${versionIndex}`,
@@ -71,6 +74,7 @@ const createEditedAudits = (questions: number, edits: number): ElectionMetadataA
       txHash: 'ab'.repeat(32),
       timestamp: new Date('2026-01-01T10:00:00Z'),
       integrity: 'verified' as const,
+      questionElections: null,
       changes:
         versionIndex === 0
           ? null

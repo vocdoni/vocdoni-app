@@ -20,7 +20,12 @@ import { getAnonymityLabels } from '~components/Process/anonymityLabels'
 import { getGatewayUrlForChain } from '~queries/process-end-date'
 import { type TFunction } from 'i18next'
 
-import { auditElectionMetadata, type ElectionMetadataAudit } from './metadata-audit'
+import {
+  auditElectionMetadata,
+  getListedQuestionElections,
+  normalizeHex,
+  type ElectionMetadataAudit,
+} from './metadata-audit'
 import { buildMetadataAuditSection, type CertificateMetadataAudit } from './metadata-audit-section'
 
 /** Anything callers may hand us as an election: a typed process response or an untyped record. */
@@ -679,6 +684,7 @@ export const buildCertificateData = ({
       }),
     ],
     metadataAudit: buildMetadataAuditSection({
+      process: { title: eventReference, upstreamId: getProcessUpstreamId(election) },
       questions: election.questions.map((question) => ({
         title: getDefaultText(question.title),
         upstreamId: question.upstreamId,
@@ -745,14 +751,33 @@ export const fetchProcessResults = async (
 }
 
 /**
- * Audit the metadata history of every question's on-chain election, read from the gateway of the
- * chain the process was anchored to. Never rejects: unreadable histories come back as unavailable.
+ * The process' parent on-chain election, whose metadata holds the process title, description and
+ * media. Absent for processes published before parent elections existed.
  */
-export const fetchMetadataAudits = (election: VotingProcessResponse): Promise<ElectionMetadataAudit[]> => {
-  const gatewayUrl = getGatewayUrlForChain(election.chainId)
-  const electionIds = election.questions.map((question) => question.upstreamId).filter((id): id is string => !!id)
+export const getProcessUpstreamId = (election: VotingProcessResponse): string | undefined => {
+  const upstreamId = (election as { upstreamId?: unknown }).upstreamId
+  return typeof upstreamId === 'string' && upstreamId ? upstreamId : undefined
+}
 
-  return Promise.all(electionIds.map((electionId) => auditElectionMetadata({ gatewayUrl, electionId })))
+/**
+ * Audit the metadata history of the process' parent election and of its question elections, read
+ * from the gateway of the chain the process was anchored to. The parent is read first because the
+ * question elections it lists on chain are the ones audited, together with any question of the
+ * process it does not list, so a mismatch between the two shows in the report. Never rejects:
+ * unreadable histories come back as unavailable.
+ */
+export const fetchMetadataAudits = async (election: VotingProcessResponse): Promise<ElectionMetadataAudit[]> => {
+  const gatewayUrl = getGatewayUrlForChain(election.chainId)
+  const processId = normalizeHex(getProcessUpstreamId(election))
+  const processAudit = processId ? await auditElectionMetadata({ gatewayUrl, electionId: processId }) : null
+  const listed = (processAudit && getListedQuestionElections(processAudit)) ?? []
+  const questionIds = election.questions.map((question) => normalizeHex(question.upstreamId))
+  const electionIds = [...new Set([...listed, ...questionIds])].filter((id) => id && id !== processId)
+  const questionAudits = await Promise.all(
+    electionIds.map((electionId) => auditElectionMetadata({ gatewayUrl, electionId }))
+  )
+
+  return processAudit ? [processAudit, ...questionAudits] : questionAudits
 }
 
 /**

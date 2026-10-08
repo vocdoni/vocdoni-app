@@ -34,11 +34,10 @@ export type MetadataIntegrity = 'verified' | 'mismatch' | 'unrecorded' | 'unreac
 export type MetadataChangeField =
   | 'title'
   | 'description'
-  | 'processTitle'
-  | 'processDescription'
   | 'header'
   | 'streamUri'
   | 'mediaHash'
+  | 'questionElections'
   | 'questionTitle'
   | 'questionDescription'
   | 'choiceTitle'
@@ -75,6 +74,11 @@ export type AuditedMetadataVersion = {
    * null for the first version and whenever either side is unreadable or failed verification.
    */
   changes: MetadataChange[] | null
+  /**
+   * The question elections a process' parent election lists in `meta.questionElections`, in question
+   * order, as lowercase hex. Null when the document does not list any or could not be trusted.
+   */
+  questionElections: string[] | null
 }
 
 export type ElectionMetadataAudit = {
@@ -188,51 +192,45 @@ const stableStringify = (value: unknown): string => {
   return JSON.stringify(value) ?? 'null'
 }
 
+/** `meta.questionElections` as normalized ids, or null when the document has no such list. */
+const readQuestionElections = (doc: unknown): string[] | null => {
+  const list = asRecord(asRecord(doc).meta).questionElections
+  return Array.isArray(list) ? list.map((id) => normalizeHex(typeof id === 'string' ? id : '')) : null
+}
+
 const omit = (value: unknown, keys: string[]): Record<string, unknown> =>
   Object.fromEntries(Object.entries(asRecord(value)).filter(([key]) => !keys.includes(key)))
 
 /** The document without the fields diffed one by one, to detect any change in the rest of it. */
-const withoutAuditedFields = (doc: Record<string, unknown>): unknown => {
-  // Only the rest of `meta.process` counts, so a document without it equals one carrying just the
-  // audited title and description.
-  const otherProcess = omit(asRecord(doc.meta).process, ['title', 'description'])
-  return {
-    ...omit(doc, ['title', 'description', 'media', 'meta', 'questions']),
-    media: omit(doc.media, ['header', 'streamUri']),
-    meta: {
-      ...omit(doc.meta, ['mediaHashes', 'process']),
-      ...(Object.keys(otherProcess).length ? { process: otherProcess } : {}),
-    },
-    questions: asArray(doc.questions).map((question) =>
-      isRecord(question)
-        ? {
-            ...omit(question, ['title', 'description', 'choices']),
-            choices: asArray(question.choices).map((choice) => (isRecord(choice) ? omit(choice, ['title']) : choice)),
-          }
-        : question
-    ),
-  }
-}
+const withoutAuditedFields = (doc: Record<string, unknown>): unknown => ({
+  ...omit(doc, ['title', 'description', 'media', 'meta', 'questions']),
+  media: omit(doc.media, ['header', 'streamUri']),
+  meta: omit(doc.meta, ['mediaHashes', 'questionElections']),
+  questions: asArray(doc.questions).map((question) =>
+    isRecord(question)
+      ? {
+          ...omit(question, ['title', 'description', 'choices']),
+          choices: asArray(question.choices).map((choice) => (isRecord(choice) ? omit(choice, ['title']) : choice)),
+        }
+      : question
+  ),
+})
 
 /**
  * Field-level differences between two election metadata documents: multi-language title and
- * description, the title and description of the process the election belongs to (`meta.process`,
- * set by the SaaS backend on every question's document), header image and video URLs, recorded media hashes, and the title and description of
- * every question and the title of every choice. Anything else that differs is reported as a single
- * `other` change, so no difference goes unreported.
+ * description, header image and video URLs, recorded media hashes, the question elections a parent
+ * election lists, the title and description of every question and the title of every choice.
+ * Anything else that differs is reported as a single `other` change, so no difference goes
+ * unreported.
  */
 export const diffMetadata = (beforeDoc: unknown, afterDoc: unknown): MetadataChange[] => {
   const before = asRecord(beforeDoc)
   const after = asRecord(afterDoc)
   const beforeMedia = asRecord(before.media)
   const afterMedia = asRecord(after.media)
-  const beforeProcess = asRecord(asRecord(before.meta).process)
-  const afterProcess = asRecord(asRecord(after.meta).process)
   const changes: MetadataChange[] = [
     ...diffText(before.title, after.title, { field: 'title' }),
     ...diffText(before.description, after.description, { field: 'description' }),
-    ...diffText(beforeProcess.title, afterProcess.title, { field: 'processTitle' }),
-    ...diffText(beforeProcess.description, afterProcess.description, { field: 'processDescription' }),
     ...diffString(beforeMedia.header, afterMedia.header, { field: 'header' }),
     ...diffString(beforeMedia.streamUri, afterMedia.streamUri, { field: 'streamUri' }),
   ]
@@ -244,6 +242,18 @@ export const diffMetadata = (beforeDoc: unknown, afterDoc: unknown): MetadataCha
     const afterHash = normalizeHex(afterHashes[url]) || null
     if (beforeHash !== afterHash)
       changes.push({ field: 'mediaHash', mediaUrl: url, before: beforeHash, after: afterHash })
+  }
+
+  // A parent election lists its question elections; the list is fixed at publish time, so any
+  // change to it is notable and reported on its own.
+  const beforeElections = readQuestionElections(before)
+  const afterElections = readQuestionElections(after)
+  if ((beforeElections ?? []).join('\n') !== (afterElections ?? []).join('\n')) {
+    changes.push({
+      field: 'questionElections',
+      before: beforeElections?.length ? beforeElections.join('\n') : null,
+      after: afterElections?.length ? afterElections.join('\n') : null,
+    })
   }
 
   const beforeQuestions = asArray(before.questions)
@@ -414,6 +424,7 @@ export const auditMetadataVersions = async (
       txHash: normalizeHex(entry.txHash),
       timestamp: parseTimestamp(entry.timestamp),
       integrity: current.integrity,
+      questionElections: isComparable(current) ? readQuestionElections(current.document) : null,
       changes,
     }
   })
@@ -450,6 +461,13 @@ export const auditElectionMetadata = async ({
 }
 
 /** True when the election had at least one metadata update after the version it was created with. */
+/**
+ * The question elections listed by the latest trusted version of a parent election's metadata, or
+ * null when no version lists them.
+ */
+export const getListedQuestionElections = (audit: ElectionMetadataAudit): string[] | null =>
+  [...audit.versions].reverse().find((version) => version.questionElections !== null)?.questionElections ?? null
+
 export const hasMetadataUpdates = (audit: ElectionMetadataAudit) => audit.versions.length > 1
 
 /** True when some version could not be verified against its recorded hash. */

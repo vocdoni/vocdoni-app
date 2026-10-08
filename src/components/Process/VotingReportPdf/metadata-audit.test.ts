@@ -5,6 +5,7 @@ import {
   condenseDiff,
   diffMetadata,
   diffWords,
+  getListedQuestionElections,
   hasIntegrityIssues,
   hasMetadataUpdates,
   normalizeHex,
@@ -166,40 +167,20 @@ describe('diffMetadata', () => {
     ])
   })
 
-  it('reports the process title and description from meta.process as their own fields', () => {
-    const withProcess = (process: Record<string, unknown>) => ({
+  it('reports a change of the question elections a parent election lists', () => {
+    const parent = (questionElections: string[]) => ({
       ...baseMetadata,
-      meta: { ...baseMetadata.meta, process },
+      questions: [],
+      meta: { ...baseMetadata.meta, questionElections },
     })
 
+    expect(diffMetadata(parent(['0xAB01', 'ab02']), parent(['ab01', 'ab02']))).toEqual([])
+    expect(diffMetadata(parent(['ab01', 'ab02']), parent(['ab02', 'ab01']))).toEqual([
+      { field: 'questionElections', before: 'ab01\nab02', after: 'ab02\nab01' },
+    ])
     expect(
-      diffMetadata(
-        withProcess({ title: { default: 'Annual assembly', es: 'Asamblea anual' } }),
-        withProcess({
-          title: { default: 'Annual general assembly', es: 'Asamblea anual' },
-          description: { default: 'Agenda for 2026.' },
-        })
-      )
-    ).toEqual([
-      {
-        field: 'processTitle',
-        lang: 'default',
-        before: 'Annual assembly',
-        after: 'Annual general assembly',
-      },
-      { field: 'processDescription', lang: 'default', before: null, after: 'Agenda for 2026.' },
-    ])
-  })
-
-  it('does not report meta.process as another change when it is added or removed', () => {
-    const withProcess = { ...baseMetadata, meta: { ...baseMetadata.meta, process: { title: { default: 'Assembly' } } } }
-
-    expect(diffMetadata(baseMetadata, withProcess)).toEqual([
-      { field: 'processTitle', lang: 'default', before: null, after: 'Assembly' },
-    ])
-    expect(diffMetadata(withProcess, baseMetadata)).toEqual([
-      { field: 'processTitle', lang: 'default', before: 'Assembly', after: null },
-    ])
+      diffMetadata(baseMetadata, { ...baseMetadata, meta: { ...baseMetadata.meta, questionElections: ['ab01'] } })
+    ).toEqual([{ field: 'questionElections', before: null, after: 'ab01' }])
   })
 
   it('reports any other difference once', () => {
@@ -290,6 +271,7 @@ describe('auditElectionMetadata', () => {
         timestamp: new Date('2026-01-01T10:00:00Z'),
         integrity: 'verified',
         changes: null,
+        questionElections: null,
       },
     ])
   })
@@ -396,6 +378,40 @@ describe('auditElectionMetadata', () => {
       timestamp: null,
     })
     expect(hasIntegrityIssues(audit)).toBe(false)
+  })
+
+  it('reads the question elections a parent election lists from its latest trusted version', async () => {
+    const parentV1 = JSON.stringify({ ...baseMetadata, questions: [], meta: { questionElections: ['0xAB01', 'ab02'] } })
+    const parentV2 = JSON.stringify({ ...baseMetadata, questions: [], meta: { questionElections: ['ab01', 'ab03'] } })
+    const fetchImpl = createFetch({
+      [historyUrl]: {
+        body: JSON.stringify({
+          versions: [
+            version('https://store.example/p1', parentV1),
+            // Recorded with another hash than the document served, so its list is not trusted.
+            version('https://store.example/p2', 'something else'),
+          ],
+        }),
+      },
+      'https://store.example/p1': { body: parentV1 },
+      'https://store.example/p2': { body: parentV2 },
+    })
+
+    const audit = await auditElectionMetadata({ gatewayUrl: GATEWAY, electionId: ELECTION_ID, fetchImpl })
+
+    expect(audit.versions.map((entry) => entry.questionElections)).toEqual([['ab01', 'ab02'], null])
+    expect(getListedQuestionElections(audit)).toEqual(['ab01', 'ab02'])
+  })
+
+  it('reports no listed question elections for a document without the list', async () => {
+    const fetchImpl = createFetch({
+      [historyUrl]: { body: JSON.stringify({ versions: [version('https://store.example/v1', v1)] }) },
+      'https://store.example/v1': { body: v1 },
+    })
+
+    const audit = await auditElectionMetadata({ gatewayUrl: GATEWAY, electionId: ELECTION_ID, fetchImpl })
+
+    expect(getListedQuestionElections(audit)).toBeNull()
   })
 
   it('reports the history as unavailable when the gateway cannot serve it', async () => {

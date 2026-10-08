@@ -7,8 +7,10 @@ import {
   type MetadataChange,
   condenseDiff,
   diffWords,
+  getListedQuestionElections,
   hasIntegrityIssues,
   hasMetadataUpdates,
+  normalizeHex,
 } from './metadata-audit'
 
 /** Shape shared with `CertificateField` in certificate-data, kept local to avoid an import cycle. */
@@ -29,6 +31,8 @@ export type CertificateMetadataVersion = {
 export type CertificateMetadataElection = {
   title: string
   summary: string
+  warning?: string
+  fields?: AuditField[]
   versions: CertificateMetadataVersion[]
 }
 
@@ -36,18 +40,17 @@ export type CertificateMetadataAudit = {
   intro: string
   summary: string
   integrityWarning?: string
+  questionElectionsWarning?: string
   legend?: string
   elections: CertificateMetadataElection[]
 }
 
-/** A question of the process, with the on-chain election that carries it. */
+/** The process or one of its questions, with the on-chain election that carries its metadata. */
 export type AuditedQuestion = { title: string; upstreamId?: string }
 
 const TEXT_FIELDS = new Set<MetadataChange['field']>([
   'title',
   'description',
-  'processTitle',
-  'processDescription',
   'questionTitle',
   'questionDescription',
   'choiceTitle',
@@ -88,12 +91,6 @@ const getChangeLabel = (change: MetadataChange, singleQuestion: boolean, t: TFun
     case 'description':
       label = t('process_pdf.metadata_audit.field.description', { defaultValue: 'Description' })
       break
-    case 'processTitle':
-      label = t('process_pdf.metadata_audit.field.process_title', { defaultValue: 'Process title' })
-      break
-    case 'processDescription':
-      label = t('process_pdf.metadata_audit.field.process_description', { defaultValue: 'Process description' })
-      break
     case 'header':
       label = t('process_pdf.metadata_audit.field.header', { defaultValue: 'Header image' })
       break
@@ -102,6 +99,9 @@ const getChangeLabel = (change: MetadataChange, singleQuestion: boolean, t: TFun
       break
     case 'mediaHash':
       label = t('process_pdf.metadata_audit.field.media_hash', { defaultValue: 'Media file hash' })
+      break
+    case 'questionElections':
+      label = t('process_pdf.metadata_audit.field.question_elections', { defaultValue: 'Question elections' })
       break
     case 'questionTitle':
       label = singleQuestion
@@ -224,28 +224,56 @@ const buildVersion = (
 }
 
 /**
- * The "Metadata changes" section: one entry per question, each listing the metadata versions of its
- * on-chain election with their integrity check and the differences against the previous version.
- * `audits` is undefined when the history was not read at all.
+ * The "Metadata changes" section. It starts with the voting process itself, whose title,
+ * description and media live in the metadata of its parent on-chain election; that metadata also
+ * lists the process' question elections, which decide the question entries that follow (with any
+ * question of the process it does not list appended, and the mismatch flagged). Each entry lists
+ * the metadata versions of its election with their integrity check and the differences against the
+ * previous version. A process published without a parent election has no process-level history on
+ * chain, which its entry says. `audits` is undefined when the history was not read at all.
  */
 export const buildMetadataAuditSection = ({
+  process,
   questions,
   audits,
   t,
   notAvailableLabel,
 }: {
+  process: AuditedQuestion
   questions: AuditedQuestion[]
   audits?: ElectionMetadataAudit[] | null
   t: TFunction
   notAvailableLabel: string
 }): CertificateMetadataAudit => {
-  const auditsById = new Map((audits ?? []).map((audit) => [audit.electionId, audit]))
-  const entries = questions
-    .map((question, index) => ({ question, index, audit: auditsById.get(question.upstreamId ?? '') }))
-    .filter(({ question }) => question.upstreamId)
-  const readable = entries.flatMap(({ audit }) => (audit?.available ? [audit] : []))
-  const anyUnreadable = readable.length < entries.length
+  const auditsById = new Map((audits ?? []).map((audit) => [normalizeHex(audit.electionId), audit]))
+  const processId = normalizeHex(process.upstreamId)
+  const processAudit = processId ? auditsById.get(processId) : undefined
+  const listed = processAudit?.available ? getListedQuestionElections(processAudit) : null
+  const questionIds = questions.map((question) => normalizeHex(question.upstreamId))
+  const questionsById = new Map(
+    questions.map((question, index) => [questionIds[index], { question, index }] as const).filter(([id]) => id)
+  )
+  // The parent's list must name exactly the process' questions, in the same order.
+  const listMismatch =
+    listed !== null && (listed.length !== questionIds.length || listed.some((id, index) => id !== questionIds[index]))
+  const electionIds = [...new Set([...(listed ?? []), ...questionIds])].filter((id) => id && id !== processId)
+
+  // Only elections that exist on chain have a history to read; a missing parent is reported apart.
+  const recorded = [processId, ...electionIds].filter(Boolean).map((id) => auditsById.get(id))
+  const readable = recorded.filter((audit): audit is ElectionMetadataAudit => !!audit?.available)
+  const anyUnreadable = readable.length < recorded.length
   const anyUpdates = readable.some(hasMetadataUpdates)
+  const buildVersions = (audit?: ElectionMetadataAudit) =>
+    audit?.available
+      ? audit.versions.map((version, versionIndex) => buildVersion(version, versionIndex, t, notAvailableLabel))
+      : []
+  const getHistorySummary = (audit: ElectionMetadataAudit) =>
+    hasMetadataUpdates(audit)
+      ? t('process_pdf.metadata_audit.question_changed', {
+          defaultValue: 'Changes after creation: {{changes}}.',
+          changes: audit.versions.length - 1,
+        })
+      : t('process_pdf.metadata_audit.question_unchanged', { defaultValue: 'Unchanged since creation.' })
 
   let summary: string
   if (!readable.length) {
@@ -260,7 +288,12 @@ export const buildMetadataAuditSection = ({
   } else if (anyUnreadable) {
     summary = t('process_pdf.metadata_audit.summary_unchanged_partial', {
       defaultValue:
-        'No changes were made to the information shown to voters in the questions whose history could be read. The history of the other questions could not be read.',
+        'No changes were made to the information shown to voters wherever its history could be read. The rest of the history could not be read.',
+    })
+  } else if (!processId) {
+    summary = t('process_pdf.metadata_audit.summary_unchanged_questions', {
+      defaultValue:
+        'No changes were made to the questions shown to voters after the voting process was created. Changes to the process title, description and media are not recorded on chain for this voting process.',
     })
   } else {
     summary = t('process_pdf.metadata_audit.summary_unchanged', {
@@ -268,10 +301,69 @@ export const buildMetadataAuditSection = ({
     })
   }
 
+  const questionElectionsWarning = listMismatch
+    ? t('process_pdf.metadata_audit.question_elections_mismatch', {
+        defaultValue:
+          'The question elections the voting process lists on chain do not match its questions. Check which of the questions below belong to it.',
+      })
+    : undefined
+
+  const processEntry: CertificateMetadataElection = {
+    title: t('process_pdf.metadata_audit.process_heading', {
+      defaultValue: 'Voting process: {{title}}',
+      title: process.title || notAvailableLabel,
+    }),
+    summary: !processId
+      ? t('process_pdf.metadata_audit.process_not_recorded', {
+          defaultValue:
+            'Changes to the process title, description and media are not recorded on chain for this voting process, because it was published before they were.',
+        })
+      : !processAudit?.available
+        ? t('process_pdf.metadata_audit.process_history_unavailable', {
+            defaultValue: 'The change history of the voting process could not be read.',
+          })
+        : getHistorySummary(processAudit),
+    warning: questionElectionsWarning,
+    fields: processId
+      ? [
+          {
+            label: t('process_pdf.metadata_audit.question_elections_listed', {
+              defaultValue: 'Question elections listed on chain',
+            }),
+            value: listed?.length ? listed.map((id, index) => `${index + 1}. ${id}`).join('\n') : notAvailableLabel,
+          },
+        ]
+      : undefined,
+    versions: buildVersions(processAudit),
+  }
+
+  const questionEntries = electionIds.map((id): CertificateMetadataElection => {
+    const audit = auditsById.get(id)
+    const match = questionsById.get(id)
+    return {
+      title: match
+        ? t('process_pdf.metadata_audit.question_heading', {
+            defaultValue: 'Question {{number}}: {{title}}',
+            number: match.index + 1,
+            title: match.question.title || notAvailableLabel,
+          })
+        : t('process_pdf.metadata_audit.unlisted_question', {
+            defaultValue: 'Election {{id}}, not a question of this voting process',
+            id,
+          }),
+      summary: !audit?.available
+        ? t('process_pdf.metadata_audit.history_unavailable', {
+            defaultValue: 'The change history of this question could not be read.',
+          })
+        : getHistorySummary(audit),
+      versions: buildVersions(audit),
+    }
+  })
+
   return {
     intro: t('process_pdf.metadata_audit.intro', {
       defaultValue:
-        'Voters were shown a title, a description, media and the text of every question and option. The blockchain records the SHA-256 hash of the exact document that contains this information when each question is created, and a new hash every time that document is changed. This section lists every recorded version, checks each document against its hash, and shows what changed from one version to the next.',
+        'Voters were shown a title, a description, media and the text of every question and option. The blockchain records the SHA-256 hash of the exact documents that contain this information when the voting process and each of its questions are published, and a new hash every time one of those documents is changed. This section lists every recorded version, checks each document against its hash, and shows what changed from one version to the next.',
     }),
     summary,
     integrityWarning: readable.some(hasIntegrityIssues)
@@ -279,30 +371,12 @@ export const buildMetadataAuditSection = ({
           defaultValue: 'Some versions could not be verified against their recorded hash. See the details below.',
         })
       : undefined,
+    questionElectionsWarning,
     legend: anyUpdates
       ? t('process_pdf.metadata_audit.legend', {
           defaultValue: 'Removed text is shown struck through in red, and added text underlined in green.',
         })
       : undefined,
-    elections: entries.map(({ question, index, audit }) => ({
-      title: t('process_pdf.metadata_audit.question_heading', {
-        defaultValue: 'Question {{number}}: {{title}}',
-        number: index + 1,
-        title: question.title || notAvailableLabel,
-      }),
-      summary: !audit?.available
-        ? t('process_pdf.metadata_audit.history_unavailable', {
-            defaultValue: 'The change history of this question could not be read.',
-          })
-        : hasMetadataUpdates(audit)
-          ? t('process_pdf.metadata_audit.question_changed', {
-              defaultValue: 'Changes after creation: {{changes}}.',
-              changes: audit.versions.length - 1,
-            })
-          : t('process_pdf.metadata_audit.question_unchanged', { defaultValue: 'Unchanged since creation.' }),
-      versions: audit?.available
-        ? audit.versions.map((version, versionIndex) => buildVersion(version, versionIndex, t, notAvailableLabel))
-        : [],
-    })),
+    elections: [processEntry, ...questionEntries],
   }
 }
