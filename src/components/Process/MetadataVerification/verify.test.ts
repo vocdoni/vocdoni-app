@@ -226,7 +226,7 @@ describe('createFetchBytes', () => {
 
   it('returns the response bytes', async () => {
     const bytes = await createFetchBytes(respond(headerBytes))(HEADER)
-    expect(new Uint8Array(bytes)).toEqual(headerBytes)
+    expect(Array.from(new Uint8Array(bytes))).toEqual(Array.from(headerBytes))
   })
 
   it('refuses a resource above the cap, by header or while streaming', async () => {
