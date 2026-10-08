@@ -38,7 +38,6 @@ export type MetadataChangeField =
   | 'streamUri'
   | 'mediaHash'
   | 'headerContent'
-  | 'questionElections'
   | 'questionTitle'
   | 'questionDescription'
   | 'choiceTitle'
@@ -80,11 +79,6 @@ export type AuditedMetadataVersion = {
    * null for the first version and whenever either side is unreadable or failed verification.
    */
   changes: MetadataChange[] | null
-  /**
-   * The question elections a process' parent election lists in `meta.questionElections`, in question
-   * order, as lowercase hex. Null when the document does not list any or could not be trusted.
-   */
-  questionElections: string[] | null
 }
 
 export type ElectionMetadataAudit = {
@@ -202,12 +196,6 @@ const stableStringify = (value: unknown): string => {
   return JSON.stringify(value) ?? 'null'
 }
 
-/** `meta.questionElections` as normalized ids, or null when the document has no such list. */
-const readQuestionElections = (doc: unknown): string[] | null => {
-  const list = asRecord(asRecord(doc).meta).questionElections
-  return Array.isArray(list) ? list.map((id) => normalizeHex(typeof id === 'string' ? id : '')) : null
-}
-
 const omit = (value: unknown, keys: string[]): Record<string, unknown> =>
   Object.fromEntries(Object.entries(asRecord(value)).filter(([key]) => !keys.includes(key)))
 
@@ -232,7 +220,7 @@ const withoutAuditedChoiceFields = (choice: Record<string, unknown>) => {
 const withoutAuditedFields = (doc: Record<string, unknown>): unknown => ({
   ...omit(doc, ['title', 'description', 'media', 'meta', 'questions']),
   media: omit(doc.media, ['header', 'streamUri']),
-  meta: omit(doc.meta, ['mediaHashes', 'questionElections']),
+  meta: omit(doc.meta, ['mediaHashes']),
   questions: asArray(doc.questions).map((question) =>
     isRecord(question)
       ? {
@@ -247,9 +235,9 @@ const withoutAuditedFields = (doc: Record<string, unknown>): unknown => ({
 
 /**
  * Field-level differences between two election metadata documents: multi-language title and
- * description, header image and video URLs, recorded media hashes, the question elections a parent
- * election lists, the title and description of every question, and the title, description and
- * image URLs of every choice, whose image hashes are reported per choice.
+ * description, header image and video URLs, recorded media hashes, the title and description of
+ * every question, and the title, description and image URLs of every choice, whose image hashes
+ * are reported per choice.
  * Anything else that differs is reported as a single `other` change, so no difference goes
  * unreported.
  */
@@ -294,18 +282,6 @@ export const diffMetadata = (beforeDoc: unknown, afterDoc: unknown): MetadataCha
       mediaUrl: url,
       before: beforeHash,
       after: afterHash,
-    })
-  }
-
-  // A parent election lists its question elections; the list is fixed at publish time, so any
-  // change to it is notable and reported on its own.
-  const beforeElections = readQuestionElections(before)
-  const afterElections = readQuestionElections(after)
-  if ((beforeElections ?? []).join('\n') !== (afterElections ?? []).join('\n')) {
-    changes.push({
-      field: 'questionElections',
-      before: beforeElections?.length ? beforeElections.join('\n') : null,
-      after: afterElections?.length ? afterElections.join('\n') : null,
     })
   }
 
@@ -498,7 +474,6 @@ export const auditMetadataVersions = async (
       txHash: normalizeHex(entry.txHash),
       timestamp: parseTimestamp(entry.timestamp),
       integrity: current.integrity,
-      questionElections: isComparable(current) ? readQuestionElections(current.document) : null,
       changes,
     }
   })
@@ -535,15 +510,76 @@ export const auditElectionMetadata = async ({
 }
 
 /** True when the election had at least one metadata update after the version it was created with. */
-/**
- * The question elections listed by the latest trusted version of a parent election's metadata, or
- * null when no version lists them.
- */
-export const getListedQuestionElections = (audit: ElectionMetadataAudit): string[] | null =>
-  [...audit.versions].reverse().find((version) => version.questionElections !== null)?.questionElections ?? null
-
 export const hasMetadataUpdates = (audit: ElectionMetadataAudit) => audit.versions.length > 1
 
 /** True when some version could not be verified against its recorded hash. */
 export const hasIntegrityIssues = (audit: ElectionMetadataAudit) =>
   audit.versions.some((version) => version.integrity === 'mismatch' || version.integrity === 'unreachable')
+
+// --- Parent and children ----------------------------------------------------------------------
+
+/** An election linked on chain to a metadata-only parent, as listed by the gateway. */
+export type ChildElection = {
+  electionId: string
+  /** The parent the election itself declares, lowercase hex; empty when it declares none. */
+  parentElectionId: string
+}
+
+export type ElectionChildren = {
+  /** False when the list could not be read completely. */
+  available: boolean
+  /** Oldest first, as the chain linked them. */
+  children: ChildElection[]
+}
+
+const CHILDREN_PAGE_SIZE = 50
+// Bounds the pagination against a gateway that keeps announcing a next page.
+const MAX_CHILDREN_PAGES = 100
+
+/**
+ * Reads the elections linked on chain to a metadata-only parent election, following the pages of
+ * `GET /elections/{electionId}/children`. Never throws: a list that cannot be read in full comes
+ * back as `available: false`, since a partial list could hide a missing link.
+ */
+export const fetchElectionChildren = async ({
+  gatewayUrl,
+  electionId,
+  fetchImpl = (input) => fetch(input),
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+}: {
+  gatewayUrl: string
+  electionId: string
+  fetchImpl?: FetchLike
+  timeoutMs?: number
+}): Promise<ElectionChildren> => {
+  const children: ChildElection[] = []
+  try {
+    for (let page = 0; page < MAX_CHILDREN_PAGES; page++) {
+      const response = await withTimeout(
+        fetchImpl(`${gatewayUrl}/elections/${electionId}/children?page=${page}&limit=${CHILDREN_PAGE_SIZE}`),
+        timeoutMs
+      )
+      if (!response.ok) return { available: false, children: [] }
+      const body = asRecord(await withTimeout(response.json(), timeoutMs))
+      for (const entry of asArray(body.elections)) {
+        const summary = asRecord(entry)
+        children.push({
+          electionId: normalizeHex(typeof summary.electionId === 'string' ? summary.electionId : ''),
+          parentElectionId: normalizeHex(typeof summary.parentElectionId === 'string' ? summary.parentElectionId : ''),
+        })
+      }
+      const nextPage = asRecord(body.pagination).nextPage
+      if (typeof nextPage !== 'number') return { available: true, children }
+    }
+    return { available: false, children: [] }
+  } catch {
+    return { available: false, children: [] }
+  }
+}
+
+/** What the report audits for a process: every election's metadata history and the parent's children. */
+export type ProcessMetadataAudit = {
+  audits: ElectionMetadataAudit[]
+  /** Null when the process has no parent election. */
+  children: ElectionChildren | null
+}

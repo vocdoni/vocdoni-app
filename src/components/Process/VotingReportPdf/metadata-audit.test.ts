@@ -5,7 +5,7 @@ import {
   condenseDiff,
   diffMetadata,
   diffWords,
-  getListedQuestionElections,
+  fetchElectionChildren,
   hasIntegrityIssues,
   hasMetadataUpdates,
   normalizeHex,
@@ -193,114 +193,6 @@ describe('diffMetadata', () => {
     ])
   })
 
-  it('reports a change of the question elections a parent election lists', () => {
-    const parent = (questionElections: string[]) => ({
-      ...baseMetadata,
-      questions: [],
-      meta: { ...baseMetadata.meta, questionElections },
-    })
-
-    expect(diffMetadata(parent(['0xAB01', 'ab02']), parent(['ab01', 'ab02']))).toEqual([])
-    expect(diffMetadata(parent(['ab01', 'ab02']), parent(['ab02', 'ab01']))).toEqual([
-      { field: 'questionElections', before: 'ab01\nab02', after: 'ab02\nab01' },
-    ])
-    expect(
-      diffMetadata(baseMetadata, { ...baseMetadata, meta: { ...baseMetadata.meta, questionElections: ['ab01'] } })
-    ).toEqual([{ field: 'questionElections', before: null, after: 'ab01' }])
-  })
-
-  describe('choice description and images', () => {
-    const alicePhoto = 'https://media.example/alice.png'
-    const aliceThumb = 'https://media.example/alice-thumb.png'
-    const withChoices = (aliceMeta: Record<string, unknown>, mediaHashes: Record<string, string> = {}) => ({
-      ...baseMetadata,
-      meta: { mediaHashes },
-      questions: [
-        {
-          ...baseMetadata.questions[0],
-          choices: [
-            { title: { default: 'Alice' }, value: 0, meta: aliceMeta },
-            { title: { default: 'Bob' }, value: 1 },
-          ],
-        },
-      ],
-    })
-
-    it('reports the description, the image URLs and the image content hash per choice', () => {
-      const changes = diffMetadata(
-        withChoices({ description: 'Lawyer from Lleida.', image: alicePhoto }, { [alicePhoto]: 'aa'.repeat(32) }),
-        withChoices(
-          { description: 'Lawyer from Girona.', image: { default: alicePhoto, thumbnail: aliceThumb } },
-          { [alicePhoto]: 'bb'.repeat(32), [aliceThumb]: 'cc'.repeat(32) }
-        )
-      )
-
-      expect(changes).toEqual([
-        {
-          field: 'choiceImageContent',
-          question: 0,
-          choice: 0,
-          mediaUrl: aliceThumb,
-          before: null,
-          after: 'cc'.repeat(32),
-        },
-        {
-          field: 'choiceImageContent',
-          question: 0,
-          choice: 0,
-          mediaUrl: alicePhoto,
-          before: 'aa'.repeat(32),
-          after: 'bb'.repeat(32),
-        },
-        {
-          field: 'choiceDescription',
-          question: 0,
-          choice: 0,
-          lang: 'default',
-          before: 'Lawyer from Lleida.',
-          after: 'Lawyer from Girona.',
-        },
-        { field: 'choiceImage', question: 0, choice: 0, variant: 'thumbnail', before: null, after: aliceThumb },
-      ])
-    })
-
-    it('reports a choice image whose content changed under the same URL', () => {
-      expect(
-        diffMetadata(
-          withChoices({ image: alicePhoto }, { [alicePhoto]: 'aa'.repeat(32) }),
-          withChoices({ image: alicePhoto }, { [alicePhoto]: 'dd'.repeat(32) })
-        )
-      ).toEqual([
-        {
-          field: 'choiceImageContent',
-          question: 0,
-          choice: 0,
-          mediaUrl: alicePhoto,
-          before: 'aa'.repeat(32),
-          after: 'dd'.repeat(32),
-        },
-      ])
-    })
-
-    it('treats an empty choice meta as absent and other choice meta keys as other settings', () => {
-      expect(diffMetadata(withChoices({}), { ...withChoices({}), questions: baseMetadata.questions })).toEqual([])
-      expect(diffMetadata(withChoices({ party: 'A' }), withChoices({ party: 'B' }))).toEqual([
-        { field: 'other', before: null, after: null },
-      ])
-    })
-
-    it('reports question meta changes as other settings', () => {
-      const withQuestionMeta = (meta: Record<string, unknown>) => ({
-        ...baseMetadata,
-        questions: [{ ...baseMetadata.questions[0], meta }],
-      })
-
-      expect(diffMetadata(withQuestionMeta({ layout: 'grid' }), withQuestionMeta({ layout: 'list' }))).toEqual([
-        { field: 'other', before: null, after: null },
-      ])
-    })
-  })
-
   it('reports any other difference once', () => {
     expect(diffMetadata(baseMetadata, { ...baseMetadata, type: { name: 'approval', properties: {} } })).toEqual([
       { field: 'other', before: null, after: null },
@@ -389,7 +281,6 @@ describe('auditElectionMetadata', () => {
         timestamp: new Date('2026-01-01T10:00:00Z'),
         integrity: 'verified',
         changes: null,
-        questionElections: null,
       },
     ])
   })
@@ -498,40 +389,6 @@ describe('auditElectionMetadata', () => {
     expect(hasIntegrityIssues(audit)).toBe(false)
   })
 
-  it('reads the question elections a parent election lists from its latest trusted version', async () => {
-    const parentV1 = JSON.stringify({ ...baseMetadata, questions: [], meta: { questionElections: ['0xAB01', 'ab02'] } })
-    const parentV2 = JSON.stringify({ ...baseMetadata, questions: [], meta: { questionElections: ['ab01', 'ab03'] } })
-    const fetchImpl = createFetch({
-      [historyUrl]: {
-        body: JSON.stringify({
-          versions: [
-            version('https://store.example/p1', parentV1),
-            // Recorded with another hash than the document served, so its list is not trusted.
-            version('https://store.example/p2', 'something else'),
-          ],
-        }),
-      },
-      'https://store.example/p1': { body: parentV1 },
-      'https://store.example/p2': { body: parentV2 },
-    })
-
-    const audit = await auditElectionMetadata({ gatewayUrl: GATEWAY, electionId: ELECTION_ID, fetchImpl })
-
-    expect(audit.versions.map((entry) => entry.questionElections)).toEqual([['ab01', 'ab02'], null])
-    expect(getListedQuestionElections(audit)).toEqual(['ab01', 'ab02'])
-  })
-
-  it('reports no listed question elections for a document without the list', async () => {
-    const fetchImpl = createFetch({
-      [historyUrl]: { body: JSON.stringify({ versions: [version('https://store.example/v1', v1)] }) },
-      'https://store.example/v1': { body: v1 },
-    })
-
-    const audit = await auditElectionMetadata({ gatewayUrl: GATEWAY, electionId: ELECTION_ID, fetchImpl })
-
-    expect(getListedQuestionElections(audit)).toBeNull()
-  })
-
   it('reports the history as unavailable when the gateway cannot serve it', async () => {
     const audit = await auditElectionMetadata({
       gatewayUrl: GATEWAY,
@@ -550,5 +407,56 @@ describe('auditElectionMetadata', () => {
     })
 
     expect(audit.available).toBe(false)
+  })
+})
+
+describe('fetchElectionChildren', () => {
+  const childrenUrl = (page: number) => `${GATEWAY}/elections/${ELECTION_ID}/children?page=${page}&limit=50`
+  const summary = (electionId: string, parentElectionId?: string) => ({ electionId, parentElectionId, status: 'READY' })
+
+  it('follows every page and normalizes the ids', async () => {
+    const fetchImpl = createFetch({
+      [childrenUrl(0)]: {
+        body: JSON.stringify({
+          elections: [summary('0xAB01', ELECTION_ID), summary('ab02', ELECTION_ID)],
+          pagination: { totalItems: 3, previousPage: null, currentPage: 0, nextPage: 1, lastPage: 1 },
+        }),
+      },
+      [childrenUrl(1)]: {
+        body: JSON.stringify({
+          elections: [summary('ab03')],
+          pagination: { totalItems: 3, previousPage: 0, currentPage: 1, nextPage: null, lastPage: 1 },
+        }),
+      },
+    })
+
+    expect(await fetchElectionChildren({ gatewayUrl: GATEWAY, electionId: ELECTION_ID, fetchImpl })).toEqual({
+      available: true,
+      children: [
+        { electionId: 'ab01', parentElectionId: ELECTION_ID },
+        { electionId: 'ab02', parentElectionId: ELECTION_ID },
+        { electionId: 'ab03', parentElectionId: '' },
+      ],
+    })
+  })
+
+  it('reports the list as unavailable when any page cannot be read', async () => {
+    const fetchImpl = createFetch({
+      [childrenUrl(0)]: {
+        body: JSON.stringify({ elections: [summary('ab01', ELECTION_ID)], pagination: { nextPage: 1 } }),
+      },
+      [childrenUrl(1)]: new Error('offline'),
+    })
+
+    expect(await fetchElectionChildren({ gatewayUrl: GATEWAY, electionId: ELECTION_ID, fetchImpl })).toEqual({
+      available: false,
+      children: [],
+    })
+  })
+
+  it('reports the list as unavailable on a gateway without the endpoint', async () => {
+    expect(
+      await fetchElectionChildren({ gatewayUrl: GATEWAY, electionId: ELECTION_ID, fetchImpl: createFetch({}) })
+    ).toEqual({ available: false, children: [] })
   })
 })

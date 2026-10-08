@@ -20,12 +20,7 @@ import { getAnonymityLabels } from '~components/Process/anonymityLabels'
 import { getGatewayUrlForChain } from '~queries/process-end-date'
 import { type TFunction } from 'i18next'
 
-import {
-  auditElectionMetadata,
-  getListedQuestionElections,
-  normalizeHex,
-  type ElectionMetadataAudit,
-} from './metadata-audit'
+import { auditElectionMetadata, fetchElectionChildren, normalizeHex, type ProcessMetadataAudit } from './metadata-audit'
 import { buildMetadataAuditSection, type CertificateMetadataAudit } from './metadata-audit-section'
 
 /** Anything callers may hand us as an election: a typed process response or an untyped record. */
@@ -272,7 +267,7 @@ export const buildCertificateData = ({
   explorerUrl,
   now,
   earlyEndDate,
-  metadataAudits,
+  metadataAudit,
 }: {
   election: PublishedVotingProcessResponse
   results: VotingProcessResultsResponse | null
@@ -282,8 +277,8 @@ export const buildCertificateData = ({
   now: Date
   /** When voting really stopped, set only if the process was stopped early — see `getEarlyEndDate`. */
   earlyEndDate?: Date | null
-  /** Metadata history of each question's on-chain election — see `fetchMetadataAudits`. */
-  metadataAudits?: ElectionMetadataAudit[] | null
+  /** Metadata history of the process' elections and the parent's children — see `fetchMetadataAudit`. */
+  metadataAudit?: ProcessMetadataAudit | null
 }): CertificateData => {
   const notAvailableLabel = notAvailable(t)
   const eventReference = getDefaultText(election.title).trim() || election.id
@@ -689,7 +684,8 @@ export const buildCertificateData = ({
         title: getDefaultText(question.title),
         upstreamId: question.upstreamId,
       })),
-      audits: metadataAudits,
+      audits: metadataAudit?.audits,
+      children: metadataAudit?.children,
       t,
       notAvailableLabel,
     }),
@@ -761,23 +757,28 @@ export const getProcessUpstreamId = (election: VotingProcessResponse): string | 
 
 /**
  * Audit the metadata history of the process' parent election and of its question elections, read
- * from the gateway of the chain the process was anchored to. The parent is read first because the
- * question elections it lists on chain are the ones audited, together with any question of the
- * process it does not list, so a mismatch between the two shows in the report. Never rejects:
- * unreadable histories come back as unavailable.
+ * from the gateway of the chain the process was anchored to. The question elections are the
+ * parent's children as linked on chain, together with any question of the process that is not
+ * among them, so a mismatch between the two shows in the report. Never rejects: unreadable
+ * histories and children lists come back as unavailable.
  */
-export const fetchMetadataAudits = async (election: VotingProcessResponse): Promise<ElectionMetadataAudit[]> => {
+export const fetchMetadataAudit = async (election: VotingProcessResponse): Promise<ProcessMetadataAudit> => {
   const gatewayUrl = getGatewayUrlForChain(election.chainId)
   const processId = normalizeHex(getProcessUpstreamId(election))
-  const processAudit = processId ? await auditElectionMetadata({ gatewayUrl, electionId: processId }) : null
-  const listed = (processAudit && getListedQuestionElections(processAudit)) ?? []
+  const [processAudit, children] = processId
+    ? await Promise.all([
+        auditElectionMetadata({ gatewayUrl, electionId: processId }),
+        fetchElectionChildren({ gatewayUrl, electionId: processId }),
+      ])
+    : [null, null]
+  const childIds = children?.children.map((child) => child.electionId) ?? []
   const questionIds = election.questions.map((question) => normalizeHex(question.upstreamId))
-  const electionIds = [...new Set([...listed, ...questionIds])].filter((id) => id && id !== processId)
+  const electionIds = [...new Set([...childIds, ...questionIds])].filter((id) => id && id !== processId)
   const questionAudits = await Promise.all(
     electionIds.map((electionId) => auditElectionMetadata({ gatewayUrl, electionId }))
   )
 
-  return processAudit ? [processAudit, ...questionAudits] : questionAudits
+  return { audits: processAudit ? [processAudit, ...questionAudits] : questionAudits, children }
 }
 
 /**

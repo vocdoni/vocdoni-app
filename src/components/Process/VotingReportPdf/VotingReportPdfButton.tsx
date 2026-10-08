@@ -19,7 +19,7 @@ import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 
 import {
   buildCertificateData,
-  fetchMetadataAudits,
+  fetchMetadataAudit,
   fetchProcessResults,
   getDefaultText,
   getReportContext,
@@ -78,10 +78,10 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
       // a full poll interval or more out of date. The cached results stay as the fallback for
       // when the read fails.
       const election = await resolveReportElection(client, report.election)
-      const [fetchedResults, onChainEndDate, metadataAudits] = await Promise.all([
+      const [fetchedResults, onChainEndDate, metadataAudit] = await Promise.all([
         fetchProcessResults(client, election.id),
         fetchOnChainEndDate(election),
-        fetchMetadataAudits(election),
+        fetchMetadataAudit(election),
       ])
       const results = fetchedResults ?? report.results
       const earlyEndDate = getEarlyEndDate(election, onChainEndDate)
@@ -94,7 +94,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
         election,
         results,
         earlyEndDate,
-        metadataAudits,
+        metadataAudit,
         t,
         organizationName: getDefaultText(organization?.name) || undefined,
         explorerUrl,

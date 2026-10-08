@@ -3,11 +3,11 @@ import { type TFunction } from 'i18next'
 import {
   type AuditedMetadataVersion,
   type DiffSegment,
+  type ElectionChildren,
   type ElectionMetadataAudit,
   type MetadataChange,
   condenseDiff,
   diffWords,
-  getListedQuestionElections,
   hasIntegrityIssues,
   hasMetadataUpdates,
   normalizeHex,
@@ -31,7 +31,7 @@ export type CertificateMetadataVersion = {
 export type CertificateMetadataElection = {
   title: string
   summary: string
-  warning?: string
+  warnings?: string[]
   note?: string
   fields?: AuditField[]
   versions: CertificateMetadataVersion[]
@@ -41,7 +41,7 @@ export type CertificateMetadataAudit = {
   intro: string
   summary: string
   integrityWarning?: string
-  questionElectionsWarning?: string
+  linkWarning?: string
   legend?: string
   elections: CertificateMetadataElection[]
 }
@@ -104,9 +104,6 @@ const getChangeLabel = (change: MetadataChange, singleQuestion: boolean, t: TFun
       break
     case 'mediaHash':
       label = t('process_pdf.metadata_audit.field.media_hash', { defaultValue: 'Media file hash' })
-      break
-    case 'questionElections':
-      label = t('process_pdf.metadata_audit.field.question_elections', { defaultValue: 'Question elections' })
       break
     case 'questionTitle':
       label = singleQuestion
@@ -284,10 +281,11 @@ const buildVersion = (
 
 /**
  * The "Metadata changes" section. It starts with the voting process itself, whose title,
- * description and media live in the metadata of its parent on-chain election; that metadata also
- * lists the process' question elections, which decide the question entries that follow (with any
- * question of the process it does not list appended, and the mismatch flagged). Each entry lists
- * the metadata versions of its election with their integrity check and the differences against the
+ * description and media live in the metadata of its parent on-chain election (a metadata-only
+ * election). The question entries that follow are the parent's children as linked on chain, with
+ * any question of the process that is not among them appended; a question that is not a child, a
+ * child that is not a question, or a child declaring another parent is flagged. Each entry lists the
+ * metadata versions of its election with their integrity check and the differences against the
  * previous version. A process published without a parent election has no process-level history on
  * chain, which its entry says. `audits` is undefined when the history was not read at all.
  */
@@ -295,27 +293,70 @@ export const buildMetadataAuditSection = ({
   process,
   questions,
   audits,
+  children,
   t,
   notAvailableLabel,
 }: {
   process: AuditedQuestion
   questions: AuditedQuestion[]
   audits?: ElectionMetadataAudit[] | null
+  children?: ElectionChildren | null
   t: TFunction
   notAvailableLabel: string
 }): CertificateMetadataAudit => {
   const auditsById = new Map((audits ?? []).map((audit) => [normalizeHex(audit.electionId), audit]))
   const processId = normalizeHex(process.upstreamId)
   const processAudit = processId ? auditsById.get(processId) : undefined
-  const listed = processAudit?.available ? getListedQuestionElections(processAudit) : null
+  const linked = processId && children?.available ? children.children : null
+  const childIds = linked?.map((child) => child.electionId) ?? []
   const questionIds = questions.map((question) => normalizeHex(question.upstreamId))
   const questionsById = new Map(
     questions.map((question, index) => [questionIds[index], { question, index }] as const).filter(([id]) => id)
   )
-  // The parent's list must name exactly the process' questions, in the same order.
-  const listMismatch =
-    listed !== null && (listed.length !== questionIds.length || listed.some((id, index) => id !== questionIds[index]))
-  const electionIds = [...new Set([...(listed ?? []), ...questionIds])].filter((id) => id && id !== processId)
+  const electionIds = [...new Set([...childIds, ...questionIds])].filter((id) => id && id !== processId)
+
+  // The chain links every question election to its parent; the links must match the questions.
+  const linkWarnings: string[] = []
+  if (processId && !linked) {
+    linkWarnings.push(
+      t('process_pdf.metadata_audit.children_unavailable', {
+        defaultValue: 'The elections linked on chain to the voting process could not be read.',
+      })
+    )
+  }
+  if (linked) {
+    questions.forEach((_, index) => {
+      if (!childIds.includes(questionIds[index])) {
+        linkWarnings.push(
+          t('process_pdf.metadata_audit.question_not_child', {
+            defaultValue: 'Question {{number}} is not linked on chain to the voting process.',
+            number: index + 1,
+          })
+        )
+      }
+    })
+    for (const child of linked) {
+      if (child.parentElectionId !== processId) {
+        linkWarnings.push(
+          t('process_pdf.metadata_audit.child_parent_mismatch', {
+            defaultValue:
+              'Election {{id}} is listed among the elections of the voting process but declares another parent: {{parent}}.',
+            id: child.electionId,
+            parent: child.parentElectionId || notAvailableLabel,
+          })
+        )
+      }
+      if (!questionsById.has(child.electionId)) {
+        linkWarnings.push(
+          t('process_pdf.metadata_audit.child_not_question', {
+            defaultValue: 'Election {{id}} is linked on chain to the voting process but is not one of its questions.',
+            id: child.electionId,
+          })
+        )
+      }
+    }
+  }
+  const linksMismatch = linked !== null && linkWarnings.length > 0
 
   // Only elections that exist on chain have a history to read; a missing parent is reported apart.
   const recorded = [processId, ...electionIds].filter(Boolean).map((id) => auditsById.get(id))
@@ -360,13 +401,6 @@ export const buildMetadataAuditSection = ({
     })
   }
 
-  const questionElectionsWarning = listMismatch
-    ? t('process_pdf.metadata_audit.question_elections_mismatch', {
-        defaultValue:
-          'The question elections the voting process lists on chain do not match its questions. Check which of the questions below belong to it.',
-      })
-    : undefined
-
   const processEntry: CertificateMetadataElection = {
     title: t('process_pdf.metadata_audit.process_heading', {
       defaultValue: 'Voting process: {{title}}',
@@ -382,7 +416,7 @@ export const buildMetadataAuditSection = ({
             defaultValue: 'The change history of the voting process could not be read.',
           })
         : getHistorySummary(processAudit),
-    warning: questionElectionsWarning,
+    warnings: linkWarnings.length ? linkWarnings : undefined,
     note: t('process_pdf.metadata_audit.media_note', {
       defaultValue:
         'The header image and option images are covered by the hash of their content, so any change to them is reported. The video and any images embedded in descriptions are covered only by their URL, as part of the text: changes to their content are outside this guarantee, and only changes to their URL are tracked.',
@@ -390,10 +424,10 @@ export const buildMetadataAuditSection = ({
     fields: processId
       ? [
           {
-            label: t('process_pdf.metadata_audit.question_elections_listed', {
-              defaultValue: 'Question elections listed on chain',
+            label: t('process_pdf.metadata_audit.children_listed', {
+              defaultValue: 'Question elections linked on chain',
             }),
-            value: listed?.length ? listed.map((id, index) => `${index + 1}. ${id}`).join('\n') : notAvailableLabel,
+            value: childIds.length ? childIds.map((id, index) => `${index + 1}. ${id}`).join('\n') : notAvailableLabel,
           },
         ]
       : undefined,
@@ -434,7 +468,12 @@ export const buildMetadataAuditSection = ({
           defaultValue: 'Some versions could not be verified against their recorded hash. See the details below.',
         })
       : undefined,
-    questionElectionsWarning,
+    linkWarning: linksMismatch
+      ? t('process_pdf.metadata_audit.links_mismatch', {
+          defaultValue:
+            'The elections linked on chain to the voting process do not match its questions. See the voting process details below.',
+        })
+      : undefined,
     legend: anyUpdates
       ? t('process_pdf.metadata_audit.legend', {
           defaultValue: 'Removed text is shown struck through in red, and added text underlined in green.',

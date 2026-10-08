@@ -1,5 +1,5 @@
 import { translate } from './__fixtures__'
-import { type AuditedMetadataVersion, type ElectionMetadataAudit } from './metadata-audit'
+import { type AuditedMetadataVersion, type ElectionChildren, type ElectionMetadataAudit } from './metadata-audit'
 import { type AuditedQuestion, buildMetadataAuditSection } from './metadata-audit-section'
 
 const NA = 'Not available'
@@ -13,7 +13,6 @@ const createVersion = (overrides: Partial<AuditedMetadataVersion> = {}): Audited
   timestamp: new Date('2026-01-01T10:00:00Z'),
   integrity: 'verified',
   changes: null,
-  questionElections: null,
   ...overrides,
 })
 
@@ -28,14 +27,20 @@ const PARENT = 'aa01'
 const build = (
   audits?: ElectionMetadataAudit[] | null,
   questions: AuditedQuestion[] = [{ title: 'Chair', upstreamId: 'e1' }],
-  process: AuditedQuestion = { title: 'Annual vote' }
-) => buildMetadataAuditSection({ process, questions, audits, t: translate, notAvailableLabel: NA })
+  process: AuditedQuestion = { title: 'Annual vote' },
+  children?: ElectionChildren | null
+) => buildMetadataAuditSection({ process, questions, audits, children, t: translate, notAvailableLabel: NA })
 
-const createParentAudit = (questionElections: string[] | null, versions: Partial<AuditedMetadataVersion>[] = [{}]) =>
+const createParentAudit = (versions: Partial<AuditedMetadataVersion>[] = [{}]) =>
   createAudit(
     PARENT,
-    versions.map((overrides) => createVersion({ questionElections, ...overrides }))
+    versions.map((overrides) => createVersion(overrides))
   )
+
+const linkedChildren = (...children: [string, string?][]): ElectionChildren => ({
+  available: true,
+  children: children.map(([electionId, parentElectionId = PARENT]) => ({ electionId, parentElectionId })),
+})
 
 describe('buildMetadataAuditSection', () => {
   it('says nothing changed when every question kept its original metadata', () => {
@@ -51,7 +56,7 @@ describe('buildMetadataAuditSection', () => {
       title: 'Voting process: Annual vote',
       summary:
         'Changes to the process title, description and media are not recorded on chain for this voting process, because it was published before they were.',
-      warning: undefined,
+      warnings: undefined,
       fields: undefined,
       note: 'The header image and option images are covered by the hash of their content, so any change to them is reported. The video and any images embedded in descriptions are covered only by their URL, as part of the text: changes to their content are outside this guarantee, and only changes to their URL are tracked.',
       versions: [],
@@ -281,41 +286,42 @@ describe('buildMetadataAuditSection', () => {
       { title: 'Treasurer', upstreamId: 'e2' },
     ]
     const process = { title: 'Annual vote', upstreamId: PARENT }
+    const questionAudits = [createAudit('e1', [createVersion()]), createAudit('e2', [createVersion()])]
 
     it('audits the process first and says nothing changed when no election did', () => {
       const section = build(
-        [createParentAudit(['e1', 'e2']), createAudit('e1', [createVersion()]), createAudit('e2', [createVersion()])],
+        [createParentAudit(), ...questionAudits],
         questions,
-        process
+        process,
+        linkedChildren(['e1'], ['e2'])
       )
 
       expect(section.summary).toBe(
         'No changes were made to the information shown to voters after the voting process was created.'
       )
-      expect(section.questionElectionsWarning).toBeUndefined()
+      expect(section.linkWarning).toBeUndefined()
       const [processCard, ...questionCards] = section.elections
       expect(processCard.title).toBe('Voting process: Annual vote')
       expect(processCard.summary).toBe('Unchanged since creation.')
-      expect(processCard.warning).toBeUndefined()
-      expect(processCard.fields).toEqual([{ label: 'Question elections listed on chain', value: '1. e1\n2. e2' }])
+      expect(processCard.warnings).toBeUndefined()
+      expect(processCard.fields).toEqual([{ label: 'Question elections linked on chain', value: '1. e1\n2. e2' }])
       expect(processCard.versions).toHaveLength(1)
       expect(questionCards.map((card) => card.title)).toEqual(['Question 1: Chair', 'Question 2: Treasurer'])
     })
 
-    it('follows the elections the parent lists and flags a mismatch with the questions', () => {
+    it('follows the chain children and flags questions that are not among them', () => {
       const section = build(
-        [
-          createParentAudit(['e2', 'e3']),
-          createAudit('e1', [createVersion()]),
-          createAudit('e2', [createVersion()]),
-          createAudit('e3', [createVersion()]),
-        ],
+        [createParentAudit(), ...questionAudits, createAudit('e3', [createVersion()])],
         questions,
-        process
+        process,
+        linkedChildren(['e2'], ['e3'])
       )
 
-      expect(section.questionElectionsWarning).toContain('do not match its questions')
-      expect(section.elections[0].warning).toBe(section.questionElectionsWarning)
+      expect(section.linkWarning).toContain('do not match its questions')
+      expect(section.elections[0].warnings).toEqual([
+        'Question 1 is not linked on chain to the voting process.',
+        'Election e3 is linked on chain to the voting process but is not one of its questions.',
+      ])
       expect(section.elections.map((card) => card.title)).toEqual([
         'Voting process: Annual vote',
         'Question 2: Treasurer',
@@ -324,55 +330,47 @@ describe('buildMetadataAuditSection', () => {
       ])
     })
 
-    it('flags a parent list in a different order than the questions', () => {
+    it('flags a child that declares another parent', () => {
       const section = build(
-        [createParentAudit(['e2', 'e1']), createAudit('e1', [createVersion()]), createAudit('e2', [createVersion()])],
+        [createParentAudit(), ...questionAudits],
         questions,
-        process
+        process,
+        linkedChildren(['e1'], ['e2', 'bb02'])
       )
 
-      expect(section.questionElectionsWarning).toBeDefined()
-    })
-
-    it('reports a change of the listed question elections as its own field', () => {
-      const section = build(
-        [
-          createParentAudit(
-            ['e1', 'e2'],
-            [{}, { changes: [{ field: 'questionElections', before: 'e1\ne2', after: 'e1\ne2\ne3' }] }]
-          ),
-          createAudit('e1', [createVersion()]),
-          createAudit('e2', [createVersion()]),
-        ],
-        questions,
-        process
-      )
-
-      expect(section.summary).toContain('was changed after the voting process was created')
-      expect(section.elections[0].versions[1].changes).toEqual([
-        { kind: 'replace', label: 'Question elections', detail: undefined, before: 'e1\ne2', after: 'e1\ne2\ne3' },
+      expect(section.linkWarning).toBeDefined()
+      expect(section.elections[0].warnings).toEqual([
+        'Election e2 is listed among the elections of the voting process but declares another parent: bb02.',
       ])
     })
 
-    it('says when the process history could not be read and audits the questions alone', () => {
-      const section = build(
-        [
-          { electionId: PARENT, available: false, versions: [] },
-          createAudit('e1', [createVersion()]),
-          createAudit('e2', [createVersion()]),
-        ],
-        questions,
-        process
-      )
+    it('says when the children could not be read and audits the questions alone', () => {
+      const section = build([createParentAudit(), ...questionAudits], questions, process, {
+        available: false,
+        children: [],
+      })
 
-      expect(section.summary).toContain('wherever its history could be read')
-      expect(section.elections[0].summary).toBe('The change history of the voting process could not be read.')
-      expect(section.elections[0].fields).toEqual([{ label: 'Question elections listed on chain', value: NA }])
-      expect(section.questionElectionsWarning).toBeUndefined()
+      expect(section.linkWarning).toBeUndefined()
+      expect(section.elections[0].warnings).toEqual([
+        'The elections linked on chain to the voting process could not be read.',
+      ])
+      expect(section.elections[0].fields).toEqual([{ label: 'Question elections linked on chain', value: NA }])
       expect(section.elections.slice(1).map((card) => card.title)).toEqual([
         'Question 1: Chair',
         'Question 2: Treasurer',
       ])
+    })
+
+    it('says when the process history could not be read', () => {
+      const section = build(
+        [{ electionId: PARENT, available: false, versions: [] }, ...questionAudits],
+        questions,
+        process,
+        linkedChildren(['e1'], ['e2'])
+      )
+
+      expect(section.summary).toContain('wherever its history could be read')
+      expect(section.elections[0].summary).toBe('The change history of the voting process could not be read.')
     })
   })
 })

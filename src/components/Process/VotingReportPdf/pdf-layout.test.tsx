@@ -55,7 +55,7 @@ const buildReportData = ({ questions, choices, title, choiceName, weighted, meta
     t: translate,
     explorerUrl: 'https://explorer.vote',
     now: new Date('2026-01-03T10:00:00Z'),
-    metadataAudits,
+    metadataAudit: metadataAudits ? { audits: metadataAudits, children: null } : undefined,
   })
 }
 
@@ -74,7 +74,6 @@ const createEditedAudits = (questions: number, edits: number): ElectionMetadataA
       txHash: 'ab'.repeat(32),
       timestamp: new Date('2026-01-01T10:00:00Z'),
       integrity: 'verified' as const,
-      questionElections: null,
       changes:
         versionIndex === 0
           ? null
