@@ -2,7 +2,7 @@ import { Box, Button, Flex, Icon, Popover, Portal, Spinner, Text } from '@chakra
 import type { IconType } from 'react-icons'
 import { useTranslation } from 'react-i18next'
 import { RiQuestionLine, RiShieldCheckLine, RiShieldCrossLine, RiShieldLine } from 'react-icons/ri'
-import { useMetadataVerification } from './useMetadataVerification'
+import { useMetadataVerificationContext } from './context'
 import type { ContentField, FieldCheck, HashCheck } from './verify'
 
 const STATUS_STYLE: Record<HashCheck, { icon: IconType; color: string }> = {
@@ -129,13 +129,14 @@ const Row = ({
  */
 export const MetadataVerificationIndicator = () => {
   const { t } = useTranslation()
-  const { enabled, data, isPending, isError } = useMetadataVerification()
+  const verification = useMetadataVerificationContext()
   const { headline, description } = useStatusLabels()
   const fieldLabel = useFieldLabel()
 
-  if (!enabled) return null
+  if (!verification?.enabled) return null
+  const { data, pending, failed } = verification
 
-  if (isPending) {
+  if (pending) {
     return (
       <Flex alignItems='center' gap={2} fontSize='sm' color='texts.subtle'>
         <Spinner size='xs' />
@@ -144,7 +145,7 @@ export const MetadataVerificationIndicator = () => {
     )
   }
 
-  const status: HashCheck = isError || !data ? 'unverifiable' : data.status
+  const status: HashCheck = failed || !data ? 'unverifiable' : data.status
   const { icon, color } = STATUS_STYLE[status]
   const documents = data?.documents ?? []
   const entries = [
@@ -167,6 +168,8 @@ export const MetadataVerificationIndicator = () => {
     })),
   ]
   const media = data?.media ?? []
+  // A video is never hashed: a verified stream field only vouches for its URL.
+  const videoUrlVerified = !!data?.process.fields?.some((f) => f.field === 'stream' && f.status === 'verified')
 
   return (
     <Popover.Root positioning={{ placement: 'bottom-start' }}>
@@ -207,12 +210,19 @@ export const MetadataVerificationIndicator = () => {
               {media.length > 0 && (
                 <Box display='flex' flexDirection='column' gap={1}>
                   <Text fontSize='xs' fontWeight='bold' color='texts.subtle'>
-                    {t('process.verification.media', { defaultValue: 'Images and video' })}
+                    {t('process.verification.images', { defaultValue: 'Images' })}
                   </Text>
                   {media.map((medium) => (
                     <Row key={medium.url} label={mediaName(medium.url)} title={medium.url} status={medium.status} />
                   ))}
                 </Box>
+              )}
+              {videoUrlVerified && (
+                <Text fontSize='sm'>
+                  {t('process.verification.video_url', {
+                    defaultValue: 'Video: URL verified; the video content itself is not covered.',
+                  })}
+                </Text>
               )}
               <Text fontSize='xs' color='texts.subtle'>
                 {t('process.verification.footnote', {

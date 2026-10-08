@@ -1438,13 +1438,13 @@
         "stream": "Video"
       },
       "footnote": "In deinem Browser geprüft: Der Hash des Inhalts wird berechnet und mit der Vochain verglichen.",
+      "images": "Bilder",
       "item": {
         "mismatch": "Stimmt nicht überein",
         "no_hash": "Kein Hash",
         "unverifiable": "Nicht prüfbar",
         "verified": "Geprüft"
       },
-      "media": "Bilder und Video",
       "process": "Angaben zur Abstimmung",
       "question": "Frage {{number}}",
       "status": {
@@ -1453,13 +1453,18 @@
         "unverifiable": "Inhalt nicht prüfbar",
         "verified": "Inhalt geprüft"
       },
-      "title": "Prüfung des Inhalts"
+      "title": "Prüfung des Inhalts",
+      "video_url": "Video: URL geprüft; der Inhalt des Videos ist nicht abgedeckt."
     },
     "vote_failed": {
       "close": "Schließen",
       "none": "Es wurde keine Antwort registriert. Bitte versuche es erneut.",
       "partial": "Einige Antworten wurden nicht registriert. Stimme erneut ab, um die übrigen zu senden.",
       "title": "Deine Stimme konnte nicht abgegeben werden"
+    },
+    "vote_gate": {
+      "blocked": "Der Inhalt des Stimmzettels stimmt nicht mit dem überein, was die Organisation hinterlegt hat, daher kann die Stimme nicht abgegeben werden. Versuche es später erneut oder wende dich an die Organisation.",
+      "pending": "Der Inhalt des Stimmzettels wird vor der Abstimmung geprüft…"
     },
     "voters": "Wählende",
     "voting": "Deine Stimme wird verarbeitet. Das dauert einige Sekunden. Bitte schließe oder aktualisiere diese Seite nicht.",

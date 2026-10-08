@@ -1464,13 +1464,13 @@
         "stream": "Video"
       },
       "footnote": "Verificato nel tuo browser calcolando l'hash del contenuto e confrontandolo con la Vochain.",
+      "images": "Immagini",
       "item": {
         "mismatch": "Non corrisponde",
         "no_hash": "Senza hash",
         "unverifiable": "Non verificabile",
         "verified": "Verificato"
       },
-      "media": "Immagini e video",
       "process": "Dati della votazione",
       "question": "Domanda {{number}}",
       "status": {
@@ -1479,13 +1479,18 @@
         "unverifiable": "Contenuto non verificabile",
         "verified": "Contenuto verificato"
       },
-      "title": "Verifica del contenuto"
+      "title": "Verifica del contenuto",
+      "video_url": "Video: URL verificato; il contenuto del video non è coperto."
     },
     "vote_failed": {
       "close": "Chiudi",
       "none": "Nessuna risposta è stata registrata. Riprova.",
       "partial": "Alcune risposte non sono state registrate. Vota di nuovo per inviare le restanti.",
       "title": "Non è stato possibile inviare il tuo voto"
+    },
+    "vote_gate": {
+      "blocked": "Il contenuto della scheda non corrisponde a quanto registrato dall'organizzazione, quindi il voto non può essere espresso. Riprova più tardi o contatta l'organizzazione.",
+      "pending": "Verifica del contenuto della scheda prima del voto…"
     },
     "voters": "Votanti",
     "voting": "Stiamo elaborando il tuo voto. Questo processo richiederà alcuni secondi. Non chiudere o aggiornare questa pagina.",

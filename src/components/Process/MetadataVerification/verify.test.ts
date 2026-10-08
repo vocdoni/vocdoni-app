@@ -5,7 +5,7 @@ import {
   compareQuestionContent,
   createFetchBytes,
   createSha256Hex,
-  displayedMediaUrls,
+  displayedImageUrls,
   localizedMatches,
   normalizeHash,
   readMediaHashes,
@@ -74,11 +74,14 @@ const shownProcess = (ids: string[] = ['e1'], upstreamId: string | null = PARENT
   questions: ids.map(question),
 })
 
+/** The backend hashes every image it publishes; these are the fixtures' header and choice image. */
+const committedImageHashes = () => ({ [HEADER]: nodeHash(headerBytes), [IMAGE]: nodeHash(imageBytes) })
+
 /** The parent election's document saas-backend writes for `process`. */
 const parentDoc = (
   process: DisplayedProcess,
   {
-    mediaHashes = {},
+    mediaHashes = committedImageHashes(),
     questionElections = (process.questions ?? []).map((q) => q.upstreamId),
   }: { mediaHashes?: Record<string, string>; questionElections?: unknown } = {}
 ) => ({
@@ -126,7 +129,7 @@ const committedWorld = (
     organizations?: Record<string, string>
   } = {}
 ): World => {
-  const world: World = { chain: {}, files: { ...files } }
+  const world: World = { chain: {}, files: { [HEADER]: headerBytes, [IMAGE]: imageBytes, ...files } }
   const add = (id: string, url: string, doc: Uint8Array) => {
     world.chain[id] = { organizationId: organizations[id] ?? ORG, metadataURL: url, metadataHash: nodeHash(doc) }
     world.files[url] = served[id] ?? doc
@@ -166,16 +169,17 @@ describe('hash helpers', () => {
   })
 })
 
-describe('displayedMediaUrls', () => {
+describe('displayedImageUrls', () => {
   it('collects header, stream and choice images in both shapes, once each', () => {
-    const urls = displayedMediaUrls({
+    const urls = displayedImageUrls({
       header: HEADER,
       streamUri: VIDEO,
       questions: [
         { choices: [{ meta: { image: { default: IMAGE, thumbnail: IMAGE } } }, { meta: { image: HEADER } }, {}] },
       ],
     })
-    expect(urls).toEqual([HEADER, VIDEO, IMAGE])
+    // The video is not an image: its content is never hashed.
+    expect(urls).toEqual([HEADER, IMAGE])
   })
 })
 
@@ -320,7 +324,7 @@ describe('compareQuestionContent', () => {
 })
 
 describe('verifyProcessMetadata', () => {
-  it('verifies the parent, every question, and each medium listed by the parent', async () => {
+  it('verifies the parent, every question, and each image listed by the parent', async () => {
     const process = shownProcess(['e1', 'e2'])
     const parent = parentDoc(process, {
       mediaHashes: { [HEADER]: nodeHash(headerBytes), [IMAGE]: nodeHash(imageBytes).toUpperCase() },
@@ -338,9 +342,38 @@ describe('verifyProcessMetadata', () => {
     ])
     expect(result.media).toEqual([
       expect.objectContaining({ url: HEADER, status: 'verified' }),
-      { url: VIDEO, status: 'unverifiable', reason: 'not-listed' },
       expect.objectContaining({ url: IMAGE, status: 'verified' }),
     ])
+    // The verified bytes are kept, so the page renders exactly what was hashed.
+    expect(Array.from(new Uint8Array(result.media[0].bytes!))).toEqual(Array.from(headerBytes))
+  })
+
+  it('never hashes the video, only covers its URL through the parent document', async () => {
+    const process = shownProcess()
+    const fetched: string[] = []
+    const deps = depsFor(committedWorld(process))
+
+    const result = await verifyProcessMetadata(process, {
+      ...deps,
+      fetchBytes: (url) => {
+        fetched.push(url)
+        return deps.fetchBytes(url)
+      },
+    })
+
+    expect(fetched).not.toContain(VIDEO)
+    expect(result.media.map((m) => m.url)).not.toContain(VIDEO)
+    expect(result.process.fields?.find((f) => f.field === 'stream')?.status).toBe('verified')
+  })
+
+  it('reports an image the verified parent does not list as a mismatch', async () => {
+    const process = shownProcess()
+    const parent = parentDoc(process, { mediaHashes: { [HEADER]: nodeHash(headerBytes) } })
+
+    const result = await verifyProcessMetadata(process, depsFor(committedWorld(process, { parent })))
+
+    expect(result.status).toBe('mismatch')
+    expect(result.media[1]).toEqual({ url: IMAGE, status: 'mismatch', reason: 'not-listed' })
   })
 
   it('reports a mismatch when the page shows other question text than the hash-verified document', async () => {
@@ -410,7 +443,7 @@ describe('verifyProcessMetadata', () => {
       ['header', 'unverifiable'],
       ['stream', 'unverifiable'],
     ])
-    expect(result.media.every((m) => m.reason === 'not-listed')).toBe(true)
+    expect(result.media.every((m) => m.status === 'unverifiable' && m.reason === 'no-parent')).toBe(true)
   })
 
   it('flags a parent whose bytes differ from its committed hash, and ignores its media list', async () => {
@@ -423,7 +456,7 @@ describe('verifyProcessMetadata', () => {
     expect(result.status).toBe('mismatch')
     expect(result.process.status).toBe('mismatch')
     expect(result.process.fields?.map((f) => f.field)).toEqual(['organization'])
-    expect(result.media[0]).toEqual({ url: HEADER, status: 'unverifiable', reason: 'not-listed' })
+    expect(result.media[0]).toEqual({ url: HEADER, status: 'unverifiable', reason: 'parent-unverified' })
   })
 
   it('flags a question document whose bytes differ from its committed hash', async () => {
@@ -439,8 +472,10 @@ describe('verifyProcessMetadata', () => {
 
   it('flags a medium whose bytes changed', async () => {
     const process = shownProcess()
-    const parent = parentDoc(process, { mediaHashes: { [HEADER]: nodeHash(encode('original header')) } })
-    const world = committedWorld(process, { parent, files: { [HEADER]: headerBytes } })
+    const parent = parentDoc(process, {
+      mediaHashes: { ...committedImageHashes(), [HEADER]: nodeHash(encode('original header')) },
+    })
+    const world = committedWorld(process, { parent })
 
     const result = await verifyProcessMetadata(process, depsFor(world))
 
@@ -448,15 +483,15 @@ describe('verifyProcessMetadata', () => {
     expect(result.media[0]).toMatchObject({ url: HEADER, status: 'mismatch', actualHash: nodeHash(headerBytes) })
   })
 
-  it('reports media blocked by CORS as not verifiable rather than failing', async () => {
+  it('reports an image blocked by CORS as not verifiable, without bytes to render', async () => {
     const process = shownProcess()
-    const parent = parentDoc(process, { mediaHashes: { [HEADER]: nodeHash(headerBytes) } })
-    const world = committedWorld(process, { parent, files: { [HEADER]: new TypeError('Failed to fetch') } })
+    const world = committedWorld(process, { files: { [HEADER]: new TypeError('Failed to fetch') } })
 
     const result = await verifyProcessMetadata(process, depsFor(world))
 
     expect(result.status).toBe('verified')
     expect(result.media[0]).toMatchObject({ status: 'unverifiable', reason: 'fetch-failed' })
+    expect(result.media[0].bytes).toBeUndefined()
   })
 
   it('reports no-hash for elections that committed none, without fetching their metadata', async () => {

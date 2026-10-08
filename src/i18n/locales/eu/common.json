@@ -1438,13 +1438,13 @@
         "stream": "Bideoa"
       },
       "footnote": "Zure nabigatzailean egiaztatua, edukiaren hasha kalkulatuz eta Vochain-ekin alderatuz.",
+      "images": "Irudiak",
       "item": {
         "mismatch": "Ez dator bat",
         "no_hash": "Hashik gabe",
         "unverifiable": "Ezin da egiaztatu",
         "verified": "Egiaztatua"
       },
-      "media": "Irudiak eta bideoa",
       "process": "Bozketaren datuak",
       "question": "{{number}}. galdera",
       "status": {
@@ -1453,13 +1453,18 @@
         "unverifiable": "Edukia ezin da egiaztatu",
         "verified": "Edukia egiaztatua"
       },
-      "title": "Edukiaren egiaztapena"
+      "title": "Edukiaren egiaztapena",
+      "video_url": "Bideoa: URLa egiaztatua; bideoaren edukia ez dago estalita."
     },
     "vote_failed": {
       "close": "Itxi",
       "none": "Ez da erantzunik erregistratu. Saiatu berriro.",
       "partial": "Erantzun batzuk ez dira erregistratu. Bozkatu berriro gainerakoak bidaltzeko.",
       "title": "Ezin izan da zure botoa eman"
+    },
+    "vote_gate": {
+      "blocked": "Txartelaren edukia ez dator bat erakundeak erregistratutakoarekin, beraz ezin da botoa eman. Saiatu berriro geroago edo jarri harremanetan erakundearekin.",
+      "pending": "Txartelaren edukia egiaztatzen bozkatu aurretik…"
     },
     "voters": "Boto-emaileak",
     "voting": "Zure botoa prozesatzen ari gara. Honek segundo batzuk iraungo ditu. Ez itxi edo eguneratu orrialde hau.",

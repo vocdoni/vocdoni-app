@@ -1438,13 +1438,13 @@
         "stream": "Video"
       },
       "footnote": "Checked in your browser by hashing the content and comparing it with the Vochain.",
+      "images": "Images",
       "item": {
         "mismatch": "Does not match",
         "no_hash": "No hash",
         "unverifiable": "Not verifiable",
         "verified": "Verified"
       },
-      "media": "Images and video",
       "process": "Vote details",
       "question": "Question {{number}}",
       "status": {
@@ -1453,13 +1453,18 @@
         "unverifiable": "Content not verifiable",
         "verified": "Content verified"
       },
-      "title": "Content verification"
+      "title": "Content verification",
+      "video_url": "Video: URL verified; the video content itself is not covered."
     },
     "vote_failed": {
       "close": "Close",
       "none": "No answer was registered. Please try again.",
       "partial": "Some answers were not registered. Vote again to send the remaining ones.",
       "title": "Your vote could not be cast"
+    },
+    "vote_gate": {
+      "blocked": "The ballot content doesn't match what the organizer committed, so the vote can't be cast. Try again later or contact the organizer.",
+      "pending": "Checking the ballot content before you vote…"
     },
     "voters": "Voters",
     "voting": "We are processing your vote. This process will take a few seconds. Please do not close or refresh this page.",

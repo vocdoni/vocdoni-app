@@ -1464,13 +1464,13 @@
         "stream": "Vídeo"
       },
       "footnote": "Verificado no seu navegador, calculando o hash do conteúdo e comparando-o com a Vochain.",
+      "images": "Imagens",
       "item": {
         "mismatch": "Não corresponde",
         "no_hash": "Sem hash",
         "unverifiable": "Não verificável",
         "verified": "Verificado"
       },
-      "media": "Imagens e vídeo",
       "process": "Dados da votação",
       "question": "Pergunta {{number}}",
       "status": {
@@ -1479,13 +1479,18 @@
         "unverifiable": "Conteúdo não verificável",
         "verified": "Conteúdo verificado"
       },
-      "title": "Verificação do conteúdo"
+      "title": "Verificação do conteúdo",
+      "video_url": "Vídeo: URL verificada; o conteúdo do vídeo não é coberto."
     },
     "vote_failed": {
       "close": "Fechar",
       "none": "Nenhuma resposta foi registrada. Tente novamente.",
       "partial": "Algumas respostas não foram registradas. Vote novamente para enviar as restantes.",
       "title": "Não foi possível registrar seu voto"
+    },
+    "vote_gate": {
+      "blocked": "O conteúdo da cédula não corresponde ao que a organização registrou, então o voto não pode ser registrado. Tente mais tarde ou entre em contato com a organização.",
+      "pending": "Verificando o conteúdo da cédula antes de você votar…"
     },
     "voters": "Eleitores",
     "voting": "Estamos processando seu voto. Esse processo levará alguns segundos. Não feche nem atualize esta página.",

@@ -1464,13 +1464,13 @@
         "stream": "Vídeo"
       },
       "footnote": "Comprovat al teu navegador calculant el hash del contingut i comparant-lo amb la Vochain.",
+      "images": "Imatges",
       "item": {
         "mismatch": "No coincideix",
         "no_hash": "Sense hash",
         "unverifiable": "No verificable",
         "verified": "Verificat"
       },
-      "media": "Imatges i vídeo",
       "process": "Dades de la votació",
       "question": "Pregunta {{number}}",
       "status": {
@@ -1479,13 +1479,18 @@
         "unverifiable": "Contingut no verificable",
         "verified": "Contingut verificat"
       },
-      "title": "Verificació del contingut"
+      "title": "Verificació del contingut",
+      "video_url": "Vídeo: URL verificada; el contingut del vídeo no està cobert."
     },
     "vote_failed": {
       "close": "Tanca",
       "none": "No s’ha registrat cap resposta. Torna-ho a provar.",
       "partial": "Algunes respostes no s’han registrat. Torna a votar per enviar les restants.",
       "title": "No s’ha pogut emetre el teu vot"
+    },
+    "vote_gate": {
+      "blocked": "El contingut de la papereta no coincideix amb el que va registrar l'organització, així que no es pot emetre el vot. Torna-ho a provar més tard o contacta amb l'organització.",
+      "pending": "Comprovant el contingut de la papereta abans de votar…"
     },
     "voters": "Votants",
     "voting": "Estem processant el teu vot. Aquest procés trigarà uns segons. Si us plau, no tanquis ni actualitzis aquesta pàgina.",

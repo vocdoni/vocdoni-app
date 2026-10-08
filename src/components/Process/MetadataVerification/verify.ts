@@ -5,9 +5,10 @@
  * process title, description and media, plus one election per question, whose document
  * carries that question and its choices. Each election commits `metadataHash`: the lowercase
  * hex SHA-256 of the exact bytes served at its metadata URL (vocdoni/vocdoni-node#1486).
- * Media are covered by the parent document's `meta.mediaHashes`, a map from each media URL
- * (as written in the metadata) to the SHA-256 of its bytes. A URL missing from that map is
- * simply not verifiable (e.g. a YouTube link), never an error.
+ * Images (the header, choice images) are covered by the parent document's `meta.mediaHashes`,
+ * a map from each image URL (as written in the metadata) to the SHA-256 of its bytes. The
+ * backend hashes every image, so an image a verified parent does not list is a mismatch. A
+ * video is never hashed: only its URL is covered, as the parent's `media.streamUri`.
  *
  * Everything that touches the network or WebCrypto is injected, so this module stays pure
  * and testable.
@@ -25,6 +26,8 @@ export type UnverifiableReason =
   | 'not-listed'
   /** The process was published without a parent election, so nothing commits its own fields. */
   | 'no-parent'
+  /** The parent election exists but its document could not be verified, so its image hashes are unknown. */
+  | 'parent-unverified'
 
 /** A piece of the ballot the voter is shown, compared with the verified metadata document. */
 export type ContentField =
@@ -65,13 +68,19 @@ export type DocumentVerification = {
   fields?: FieldCheck[]
 }
 
+/** One displayed image, checked against the parent document's `meta.mediaHashes`. */
 export type MediaVerification = {
   url: string
   expectedHash?: string
   actualHash?: string
-  /** Media are never `no-hash`: a URL absent from `meta.mediaHashes` is `unverifiable`. */
   status: Exclude<HashCheck, 'no-hash'>
   reason?: UnverifiableReason
+  /**
+   * The exact bytes that matched `expectedHash`, present only when `verified`. The page
+   * renders the image from these bytes, never from a second request to `url`, so the voter
+   * sees what was verified.
+   */
+  bytes?: ArrayBuffer
 }
 
 export type ProcessVerification = {
@@ -353,12 +362,14 @@ const withFields = (verification: DocumentVerification, fields: FieldCheck[]): D
   fields,
 })
 
-const verifyMedium = async (
+const verifyImage = async (
   url: string,
   expectedHash: string | undefined,
   deps: VerifyDeps
 ): Promise<MediaVerification> => {
-  if (!expectedHash) return { url, status: 'unverifiable', reason: 'not-listed' }
+  // The backend hashes every image it publishes: one a verified parent does not list was
+  // not committed by the organizer.
+  if (!expectedHash) return { url, status: 'mismatch', reason: 'not-listed' }
   if (!isFetchableUrl(url)) return { url, expectedHash, status: 'unverifiable', reason: 'unsupported-url' }
 
   let bytes: ArrayBuffer
@@ -371,12 +382,9 @@ const verifyMedium = async (
   }
 
   const actualHash = await deps.sha256(bytes)
-  return {
-    url,
-    expectedHash,
-    actualHash,
-    status: compareHash(actualHash, expectedHash) === 'verified' ? 'verified' : 'mismatch',
-  }
+  return compareHash(actualHash, expectedHash) === 'verified'
+    ? { url, expectedHash, actualHash, status: 'verified', bytes }
+    : { url, expectedHash, actualHash, status: 'mismatch' }
 }
 
 /**
@@ -438,9 +446,15 @@ export const verifyProcessMetadata = async (
     processVerification = withFields(parent.verification, fields)
   }
 
-  // Only a parent whose bytes match its committed hash vouches for media hashes.
-  const mediaHashes = parent?.metadata === undefined ? {} : readMediaHashes(parent.metadata)
-  const media = await Promise.all(displayedMediaUrls(process).map((url) => verifyMedium(url, mediaHashes[url], deps)))
+  // Only a parent whose bytes match its committed hash vouches for image hashes.
+  const images = displayedImageUrls(process)
+  const media: MediaVerification[] =
+    parent?.metadata === undefined
+      ? images.map((url) => ({ url, status: 'unverifiable', reason: parent ? 'parent-unverified' : 'no-parent' }))
+      : await (async () => {
+          const hashes = readMediaHashes(parent.metadata)
+          return Promise.all(images.map((url) => verifyImage(url, hashes[url], deps)))
+        })()
 
   return {
     status: summarize(processVerification, documents, media),
@@ -450,15 +464,17 @@ export const verifyProcessMetadata = async (
   }
 }
 
-/** The media URLs a voter sees on the ballot: header, stream and choice images. */
-export const displayedMediaUrls = (election: DisplayedProcess): string[] => {
+/**
+ * The image URLs a voter sees on the ballot: the header and choice images, as written (the
+ * page looks them up by the same string). The video is not one: its content is never hashed.
+ */
+export const displayedImageUrls = (election: DisplayedProcess): string[] => {
   const urls: string[] = []
   const push = (value: unknown) => {
-    if (typeof value === 'string' && value.trim()) urls.push(value.trim())
+    if (typeof value === 'string' && value.trim()) urls.push(value)
   }
 
   push(election.header)
-  push(election.streamUri)
   for (const question of election.questions ?? []) {
     for (const choice of question.choices ?? []) {
       const image = choice.meta?.image
@@ -474,13 +490,13 @@ export const displayedMediaUrls = (election: DisplayedProcess): string[] => {
   return [...new Set(urls)]
 }
 
-/** Largest resource the browser downloads to hash. Videos above it are reported as too large. */
+/** Largest resource the browser downloads to hash. Larger ones are reported as too large. */
 export const MAX_VERIFIABLE_BYTES = 25 * 1024 * 1024
 
 /**
  * {@link FetchBytes} on top of `fetch`: no credentials (public resources only), and a byte cap
- * enforced both from `Content-Length` and while streaming, so a long video is not downloaded
- * just to be hashed.
+ * enforced both from `Content-Length` and while streaming, so an oversized resource is not
+ * downloaded just to be hashed.
  */
 export const createFetchBytes =
   (fetchImpl: typeof fetch = globalThis.fetch, maxBytes = MAX_VERIFIABLE_BYTES): FetchBytes =>

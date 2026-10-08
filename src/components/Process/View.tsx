@@ -40,6 +40,7 @@ import { ProcessDate } from './Date'
 import Header from './Header'
 import { useAnonymityLabels } from './anonymityLabels'
 import { BallotUpdatedNotice, BallotUpdateProvider, useBallotUpdate } from './BallotUpdate'
+import { MetadataVerificationProvider } from './MetadataVerification/context'
 import { MetadataVerificationIndicator } from './MetadataVerification/Indicator'
 
 type ProcessInfoCardProps = {
@@ -153,7 +154,10 @@ const ProcessInfoPanel = () => {
 
 export const ProcessView = () => (
   <BallotUpdateProvider>
-    <ProcessViewContents />
+    {/* One ballot verification for the page: indicator, vote gate and verified images. */}
+    <MetadataVerificationProvider>
+      <ProcessViewContents />
+    </MetadataVerificationProvider>
   </BallotUpdateProvider>
 )
 
