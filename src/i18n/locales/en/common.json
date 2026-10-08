@@ -1429,9 +1429,11 @@
         "choice_value": "Option {{number}} value",
         "choices": "Number of options",
         "header": "Header image",
+        "organization": "Organization",
         "process_description": "Vote description",
         "process_title": "Vote title",
         "question_description": "Question description",
+        "question_list": "Question list",
         "question_title": "Question",
         "stream": "Video"
       },
@@ -1443,6 +1445,7 @@
         "verified": "Verified"
       },
       "media": "Images and video",
+      "process": "Vote details",
       "question": "Question {{number}}",
       "status": {
         "mismatch": "Content does not match",

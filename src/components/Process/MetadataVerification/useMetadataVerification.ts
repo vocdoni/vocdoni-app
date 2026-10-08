@@ -29,6 +29,9 @@ export const useMetadataVerification = () => {
     () =>
       election
         ? {
+            // The parent election's id, served by saas-backend for processes published with one;
+            // read loosely because the published API types do not declare it yet.
+            upstreamId: (election as { upstreamId?: string }).upstreamId,
             title: election.title,
             description: election.description,
             header: election.header,

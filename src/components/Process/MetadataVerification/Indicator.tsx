@@ -82,6 +82,8 @@ const useFieldLabel = () => {
       }),
       header: t('process.verification.field.header', { defaultValue: 'Header image' }),
       stream: t('process.verification.field.stream', { defaultValue: 'Video' }),
+      organization: t('process.verification.field.organization', { defaultValue: 'Organization' }),
+      'question-list': t('process.verification.field.question_list', { defaultValue: 'Question list' }),
     }
     return labels[field]
   }
@@ -145,6 +147,25 @@ export const MetadataVerificationIndicator = () => {
   const status: HashCheck = isError || !data ? 'unverifiable' : data.status
   const { icon, color } = STATUS_STYLE[status]
   const documents = data?.documents ?? []
+  const entries = [
+    ...(data
+      ? [
+          {
+            key: 'process',
+            label: t('process.verification.process', { defaultValue: 'Vote details' }),
+            document: data.process,
+          },
+        ]
+      : []),
+    ...documents.map((document, index) => ({
+      key: document.electionId ?? String(index),
+      label:
+        documents.length > 1
+          ? t('process.verification.question', { number: index + 1, defaultValue: 'Question {{number}}' })
+          : t('process.verification.ballot', { defaultValue: 'Ballot text' }),
+      document,
+    })),
+  ]
   const media = data?.media ?? []
 
   return (
@@ -163,22 +184,11 @@ export const MetadataVerificationIndicator = () => {
                 {t('process.verification.title', { defaultValue: 'Content verification' })}
               </Popover.Title>
               <Text fontSize='sm'>{description[status]}</Text>
-              {documents.length > 0 && (
+              {entries.length > 0 && (
                 <Box display='flex' flexDirection='column' gap={1}>
-                  {documents.map((document, index) => (
-                    <Box key={document.electionId} display='flex' flexDirection='column' gap={1}>
-                      <Row
-                        label={
-                          documents.length > 1
-                            ? t('process.verification.question', {
-                                number: index + 1,
-                                defaultValue: 'Question {{number}}',
-                              })
-                            : t('process.verification.ballot', { defaultValue: 'Ballot text' })
-                        }
-                        title={document.metadataURL}
-                        status={document.status}
-                      />
+                  {entries.map(({ key, label, document }) => (
+                    <Box key={key} display='flex' flexDirection='column' gap={1}>
+                      <Row label={label} title={document.metadataURL} status={document.status} />
                       {/* Only what did not check out: a verified field is the expected case. */}
                       {document.fields
                         ?.filter((field) => field.status !== 'verified')

@@ -1455,9 +1455,11 @@
         "choice_value": "Valeur de l'option {{number}}",
         "choices": "Nombre d'options",
         "header": "Image d'en-tête",
+        "organization": "Organisation",
         "process_description": "Description du vote",
         "process_title": "Titre du vote",
         "question_description": "Description de la question",
+        "question_list": "Liste des questions",
         "question_title": "Question",
         "stream": "Vidéo"
       },
@@ -1469,6 +1471,7 @@
         "verified": "Vérifié"
       },
       "media": "Images et vidéo",
+      "process": "Informations du vote",
       "question": "Question {{number}}",
       "status": {
         "mismatch": "Le contenu ne correspond pas",

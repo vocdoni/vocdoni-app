@@ -1429,9 +1429,11 @@
         "choice_value": "Τιμή επιλογής {{number}}",
         "choices": "Αριθμός επιλογών",
         "header": "Εικόνα κεφαλίδας",
+        "organization": "Οργανισμός",
         "process_description": "Περιγραφή ψηφοφορίας",
         "process_title": "Τίτλος ψηφοφορίας",
         "question_description": "Περιγραφή ερώτησης",
+        "question_list": "Λίστα ερωτήσεων",
         "question_title": "Ερώτηση",
         "stream": "Βίντεο"
       },
@@ -1443,6 +1445,7 @@
         "verified": "Επαληθεύτηκε"
       },
       "media": "Εικόνες και βίντεο",
+      "process": "Στοιχεία ψηφοφορίας",
       "question": "Ερώτηση {{number}}",
       "status": {
         "mismatch": "Το περιεχόμενο δεν ταιριάζει",

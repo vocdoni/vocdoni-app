@@ -1455,9 +1455,11 @@
         "choice_value": "Valore dell'opzione {{number}}",
         "choices": "Numero di opzioni",
         "header": "Immagine di intestazione",
+        "organization": "Organizzazione",
         "process_description": "Descrizione della votazione",
         "process_title": "Titolo della votazione",
         "question_description": "Descrizione della domanda",
+        "question_list": "Elenco delle domande",
         "question_title": "Domanda",
         "stream": "Video"
       },
@@ -1469,6 +1471,7 @@
         "verified": "Verificato"
       },
       "media": "Immagini e video",
+      "process": "Dati della votazione",
       "question": "Domanda {{number}}",
       "status": {
         "mismatch": "Il contenuto non corrisponde",

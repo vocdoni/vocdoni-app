@@ -1429,9 +1429,11 @@
         "choice_value": "Wert von Option {{number}}",
         "choices": "Anzahl der Optionen",
         "header": "Titelbild",
+        "organization": "Organisation",
         "process_description": "Beschreibung der Abstimmung",
         "process_title": "Titel der Abstimmung",
         "question_description": "Beschreibung der Frage",
+        "question_list": "Fragenliste",
         "question_title": "Frage",
         "stream": "Video"
       },
@@ -1443,6 +1445,7 @@
         "verified": "Geprüft"
       },
       "media": "Bilder und Video",
+      "process": "Angaben zur Abstimmung",
       "question": "Frage {{number}}",
       "status": {
         "mismatch": "Inhalt stimmt nicht überein",

@@ -1429,9 +1429,11 @@
         "choice_value": "{{number}}. aukeraren balioa",
         "choices": "Aukera kopurua",
         "header": "Goiburuko irudia",
+        "organization": "Erakundea",
         "process_description": "Bozketaren deskribapena",
         "process_title": "Bozketaren izenburua",
         "question_description": "Galderaren deskribapena",
+        "question_list": "Galderen zerrenda",
         "question_title": "Galdera",
         "stream": "Bideoa"
       },
@@ -1443,6 +1445,7 @@
         "verified": "Egiaztatua"
       },
       "media": "Irudiak eta bideoa",
+      "process": "Bozketaren datuak",
       "question": "{{number}}. galdera",
       "status": {
         "mismatch": "Edukia ez dator bat",
