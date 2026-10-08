@@ -1,7 +1,8 @@
 import { VocdoniApiError } from '@vocdoni/api-client'
-import { ErrorCode } from '~components/Auth/api'
+import { ApiError, ErrorCode } from '~components/Auth/api'
 import {
   paymentOutcome,
+  processCheckoutEndpoint,
   publishPaidProcess,
   waitForPaymentOutcome,
   type ProcessCheckoutStatus,
@@ -30,6 +31,15 @@ const fakeClock = () => {
     },
   }
 }
+
+describe('processCheckoutEndpoint', () => {
+  it('only names a process', () => {
+    expect(processCheckoutEndpoint('6650f0c0c0c0c0c0c0c0c0c0')).toBe('processes/6650f0c0c0c0c0c0c0c0c0c0/checkout')
+    // Both survive encoding and would resolve to another endpoint
+    expect(() => processCheckoutEndpoint('..')).toThrow()
+    expect(() => processCheckoutEndpoint('.')).toThrow()
+  })
+})
 
 describe('paymentOutcome', () => {
   it('follows the stored payment, never the browser', () => {
@@ -70,6 +80,15 @@ describe('waitForPaymentOutcome', () => {
     ).resolves.toBe('timeout')
     expect(clock.sleeps).toEqual([1000, 2000, 4000, 4000, 4000, 4000])
     expect(read).toHaveBeenCalledTimes(7)
+  })
+
+  it('does not wait on a payment it is refused to read', async () => {
+    const clock = fakeClock()
+    const refusal = new ApiError({ error: 'process has no payment' }, new Response(null, { status: 404 }))
+    const read = vi.fn().mockRejectedValue(refusal)
+
+    await expect(waitForPaymentOutcome(read, clock)).rejects.toBe(refusal)
+    expect(read).toHaveBeenCalledTimes(1)
   })
 
   it('stops reading once aborted', async () => {

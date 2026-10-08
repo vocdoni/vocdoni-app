@@ -1,4 +1,7 @@
-import { loadStripe, Stripe, StripeCheckoutOptions } from '@stripe/stripe-js'
+import type { Stripe, StripeCheckoutOptions } from '@stripe/stripe-js'
+// The pure entry loads Stripe.js on first use, not on import: the checkouts live in chunks (the
+// process wizard) most visits never pay from
+import { loadStripe } from '@stripe/stripe-js/pure'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAppEnv } from '~src/app-env'

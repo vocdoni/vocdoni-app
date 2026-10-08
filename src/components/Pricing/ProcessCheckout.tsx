@@ -42,8 +42,9 @@ type Step =
   | { name: 'processing' }
   | { name: 'failed' }
   | { name: 'timeout' }
-  // retry: the step its retry button goes back to; detail: the backend's reason, when any
-  | { name: 'error'; message: string; detail?: string; retry: 'checkout' | 'publishing' }
+  // retry: the step its retry button goes back to, absent when retrying cannot help; detail: the
+  // backend's reason, when any
+  | { name: 'error'; message: string; detail?: string; retry?: 'checkout' | 'confirming' | 'publishing' }
 
 type ProcessCheckoutDialogProps = {
   // The draft being paid for; the dialog is open while set
@@ -101,6 +102,8 @@ const ProcessCheckoutFlow = ({
   const { bearedFetch } = useAuth()
   const { client } = useApiClient()
   const queryClient = useQueryClient()
+  // Once per dialog, not per checkout attempt
+  const stripePromise = useStripePromise()
   const [step, setStep] = useState<Step>({ name: start })
   // Each checkout attempt opens its session once: a second request while the first one holds the
   // draft is refused (40903), and the backend reuses an open session anyway
@@ -118,10 +121,14 @@ const ProcessCheckoutFlow = ({
   useEffect(() => {
     if (step.name !== 'checkout' || requestedAttempt.current === attempt) return
     requestedAttempt.current = attempt
-    bearedFetch<ProcessCheckoutSession>(processCheckoutEndpoint(processId), {
-      method: 'POST',
-      body: { locale: i18n.resolvedLanguage },
-    })
+    // Chained, so an id the endpoint refuses lands in the catch below
+    Promise.resolve()
+      .then(() =>
+        bearedFetch<ProcessCheckoutSession>(processCheckoutEndpoint(processId), {
+          method: 'POST',
+          body: { locale: i18n.resolvedLanguage },
+        })
+      )
       .then(({ clientSecret }) => setSession({ attempt, clientSecret }))
       .catch((error) => {
         // Already paid, processing, or completed and settling: never a second charge, so its
@@ -130,10 +137,12 @@ const ProcessCheckoutFlow = ({
           setStep({ name: 'confirming' })
           return
         }
+        // Only a custom quote can settle a process above the self-service limit: retrying never will
+        const quoteOnly = apiErrorDetails(error)?.code === ErrorCode.QuoteRequired
         setStep({
           name: 'error',
           message: publishPaymentErrorMessage(t, error) ?? errorMessage(error),
-          retry: 'checkout',
+          retry: quoteOnly ? undefined : 'checkout',
         })
       })
   }, [step.name, attempt, processId, bearedFetch, i18n.resolvedLanguage, t])
@@ -143,23 +152,32 @@ const ProcessCheckoutFlow = ({
     const controller = new AbortController()
     waitForPaymentOutcome(() => bearedFetch<ProcessCheckoutStatus>(processCheckoutEndpoint(processId)), {
       signal: controller.signal,
-    }).then((outcome) => {
-      // The price (and its payment status) moved along with the payment
-      void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
-      switch (outcome) {
-        case 'paid':
-          return setStep({ name: 'publishing' })
-        case 'processing':
-          return setStep({ name: 'processing' })
-        case 'failed':
-          return setStep({ name: 'failed' })
-        case 'timeout':
-          return setStep({ name: 'timeout' })
-        case 'open':
-          // Never completed: resume the session, which the backend reuses
-          return retryCheckout()
-      }
     })
+      .catch((error) => {
+        // The payment cannot be read (not allowed, or there is none): waiting would not change it
+        if (!controller.signal.aborted) {
+          setStep({ name: 'error', message: errorMessage(error), retry: 'confirming' })
+        }
+        return undefined
+      })
+      .then((outcome) => {
+        if (outcome === undefined) return
+        // The price (and its payment status) moved along with the payment
+        void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
+        switch (outcome) {
+          case 'paid':
+            return setStep({ name: 'publishing' })
+          case 'processing':
+            return setStep({ name: 'processing' })
+          case 'failed':
+            return setStep({ name: 'failed' })
+          case 'timeout':
+            return setStep({ name: 'timeout' })
+          case 'open':
+            // Never completed: resume the session, which the backend reuses
+            return retryCheckout()
+        }
+      })
     return () => controller.abort()
     // retryCheckout only bumps state
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -168,13 +186,21 @@ const ProcessCheckoutFlow = ({
   useEffect(() => {
     if (step.name !== 'publishing') return
     const controller = new AbortController()
-    publishPaidProcess(() => client.elections.publishAndWait(processId), { signal: controller.signal })
+    publishPaidProcess(() => client.elections.publishAndWait(processId, { signal: controller.signal }), {
+      signal: controller.signal,
+    })
       .then(() => {
         if (!controller.signal.aborted) onPublishedRef.current(processId)
       })
       .catch((error) => {
         if (controller.signal.aborted) return
         const t = tRef.current
+        // A draft edited after it was paid can be worth more than was paid: publishing again only
+        // repeats that refusal, so it is explained on its own
+        if (apiErrorDetails(error)?.code === ErrorCode.PaymentRequired) {
+          setStep({ name: 'error', message: publishPaymentErrorMessage(t, error) ?? errorMessage(error) })
+          return
+        }
         setStep({
           name: 'error',
           message: t('process.checkout.publish_failed', {
@@ -201,6 +227,7 @@ const ProcessCheckoutFlow = ({
         <CheckoutForm
           key={attempt}
           processId={processId}
+          stripePromise={stripePromise}
           clientSecret={session.clientSecret}
           onPaid={() => setStep({ name: 'confirming' })}
         />
@@ -263,9 +290,17 @@ const ProcessCheckoutFlow = ({
         <Outcome
           status='error'
           action={
-            <Button onClick={step.retry === 'checkout' ? retryCheckout : () => setStep({ name: 'publishing' })}>
-              <Trans i18nKey='common.retry'>Try again</Trans>
-            </Button>
+            step.retry && (
+              <Button
+                onClick={() => {
+                  if (step.retry === 'checkout') retryCheckout()
+                  else if (step.retry === 'confirming') setStep({ name: 'confirming' })
+                  else setStep({ name: 'publishing' })
+                }}
+              >
+                <Trans i18nKey='common.retry'>Try again</Trans>
+              </Button>
+            )
           }
         >
           {step.message}
@@ -306,13 +341,13 @@ const Outcome = ({
 
 type CheckoutFormProps = {
   processId: string
+  stripePromise: ReturnType<typeof useStripePromise>
   clientSecret: string
   onPaid: () => void
 }
 
-const CheckoutForm = ({ processId, clientSecret, onPaid }: CheckoutFormProps) => {
+const CheckoutForm = ({ processId, stripePromise, clientSecret, onPaid }: CheckoutFormProps) => {
   const { t } = useTranslation()
-  const stripePromise = useStripePromise()
   const elementsOptions = useCheckoutElementsOptions()
   const options = useMemo<StripeCheckoutOptions>(
     () => ({ fetchClientSecret: () => Promise.resolve(clientSecret), elementsOptions }),
@@ -348,7 +383,7 @@ const returnUrl = (processId: string) => {
   return url.toString()
 }
 
-const CheckoutFormFields = ({ processId, onPaid }: Omit<CheckoutFormProps, 'clientSecret'>) => {
+const CheckoutFormFields = ({ processId, onPaid }: Pick<CheckoutFormProps, 'processId' | 'onPaid'>) => {
   const { t } = useTranslation()
   const checkoutState = useCheckout()
   const { price } = useProcessPrice(processId)

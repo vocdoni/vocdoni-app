@@ -1,5 +1,5 @@
-import { ApiEndpoints, apiErrorDetails, ErrorCode } from '~components/Auth/api'
-import type { ProcessPaymentStatus } from './process-price'
+import { ApiEndpoints, ApiError, apiErrorDetails, ErrorCode } from '~components/Auth/api'
+import { isProcessId, type ProcessPaymentStatus } from './process-price'
 
 // One-time checkout of a voting process (vocdoni-app#1767): the embedded Stripe session the
 // process is paid through. AmountCents is the net total, VAT excluded.
@@ -20,9 +20,19 @@ export type ProcessCheckoutStatus = {
   sessionPaymentStatus?: 'paid' | 'unpaid' | 'no_payment_required' | (string & {})
 }
 
-// The id comes from the URL (?draftId=): encoded, so it cannot point the request elsewhere
-export const processCheckoutEndpoint = (processId: string) =>
-  ApiEndpoints.ProcessCheckout.replace('{processId}', encodeURIComponent(processId))
+// The id may come from the URL (?draftId=); one that is not a process id could point the request
+// at another endpoint (see isProcessId), so it is refused instead
+export const processCheckoutEndpoint = (processId: string) => {
+  if (!isProcessId(processId)) throw new Error(`invalid process id: ${processId}`)
+  return ApiEndpoints.ProcessCheckout.replace('{processId}', processId)
+}
+
+// A refusal no wait changes (not allowed, no such process or payment), unlike a failed request or
+// a server error, which the next read may get past
+const isPermanentFailure = (error: unknown) => {
+  const status = error instanceof ApiError ? error.response?.status : undefined
+  return status !== undefined && status >= 400 && status < 500 && status !== 408 && status !== 429
+}
 
 /**
  * What a payment status means for the customer waiting on it:
@@ -73,7 +83,8 @@ const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(r
  * delay and a time limit, unlike the subscription flow, which polls forever. Resolves to
  * `timeout` once the limit passes with the payment still settling: the webhook may still land,
  * so the caller offers to check again rather than claiming it failed. A failed read is retried
- * like a settling one, since the payment did not change because a request failed.
+ * like a settling one, since the payment did not change because a request failed, except for a
+ * refusal (4xx), which is thrown: waiting on a payment that cannot be read only delays saying so.
  */
 export const waitForPaymentOutcome = async (
   read: () => Promise<ProcessCheckoutStatus>,
@@ -94,6 +105,7 @@ export const waitForPaymentOutcome = async (
       const outcome = paymentOutcome(await read())
       if (outcome !== 'settling') return signal?.aborted ? undefined : outcome
     } catch (error) {
+      if (isPermanentFailure(error)) throw error
       console.warn('could not read the payment status, retrying', error)
     }
     if (now() + delay > deadline) return signal?.aborted ? undefined : 'timeout'

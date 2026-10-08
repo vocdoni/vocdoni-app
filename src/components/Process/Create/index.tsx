@@ -46,6 +46,7 @@ import { useApiClient } from '~src/providers/ApiClientProvider'
 import { DashboardContents } from '~components/Dashboard/Contents'
 import {
   draftSavePaymentErrorMessage,
+  isQuoteOnlyRefusal,
   paymentErrorToastOptions,
   publishPaymentErrorMessage,
 } from '~components/Pricing/payment-errors'
@@ -57,7 +58,7 @@ import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
-import { isQuoteOnly, useProcessPrice } from '~queries/process-price'
+import { isProcessId, isQuoteOnly, useProcessPrice } from '~queries/process-price'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
@@ -78,8 +79,7 @@ export const checkoutStart = (error: unknown): ProcessCheckoutStart | undefined 
   const details = apiErrorDetails(error)
   switch (details?.code) {
     case ErrorCode.PaymentRequired:
-      if ((details.data as { quoteRequired?: unknown } | undefined)?.quoteRequired === true) return undefined
-      return 'checkout'
+      return isQuoteOnlyRefusal(details.data) ? undefined : 'checkout'
     case ErrorCode.PaymentSessionConflict:
       return 'confirming'
   }
@@ -636,7 +636,10 @@ export const useDraft = (draftId?: string | null) => {
     enabled: !!draftId,
     queryFn: async () => {
       try {
-        return votingProcessToForm(await client.elections.get(draftId!))
+        const process = await client.elections.get(draftId!)
+        // Published since its id was stored (e.g. by its payment): it is no draft any more
+        if (process.published) return null
+        return votingProcessToForm(process)
       } catch (error) {
         // A stale draft id (deleted elsewhere, or left over from the legacy
         // draft store) must not break the wizard: fall back to a blank form.
@@ -659,7 +662,7 @@ const ProcessCreateView = () => {
   // The draft being paid for before it publishes: set once publishing it asks for payment, or
   // when Stripe returns here from a payment that left the page
   const [checkout, setCheckout] = useState<{ processId: string; start: ProcessCheckoutStart } | null>(() =>
-    draftId && searchParams.has(checkoutReturnParam) ? { processId: draftId, start: 'confirming' } : null
+    isProcessId(draftId) && searchParams.has(checkoutReturnParam) ? { processId: draftId, start: 'confirming' } : null
   )
   const navigate = useNavigate()
   const location = useLocation()
@@ -680,7 +683,11 @@ const ProcessCreateView = () => {
   // resumes (and tries to update) a draft owned by a different org
   const [storedDraftId, storeDraftId] = useStoredDraftId(organization?.address)
   const queryClient = useQueryClient()
-  const { isSubmitting, isSubmitSuccessful, isDirty } = methods.formState
+  const { isSubmitting, isSubmitSuccessful, isDirty: isFormDirty } = methods.formState
+  // While its checkout is open the draft is left alone: not auto-saved (a payment being processed
+  // locks it anyway), and leaving is not guarded, since paying may redirect to the bank and a paid
+  // draft leaves for its process page
+  const isDirty = isFormDirty && !checkout
   const { trackEvent } = useAnalytics()
   const formToVotingProcessRequest = useFormToVotingProcessRequest()
   const effectiveDraftId = draftId ?? storedDraftId
@@ -703,13 +710,12 @@ const ProcessCreateView = () => {
   const { data: formDraft } = useDraft(effectiveDraftId)
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
-  const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).price)
+  const { price } = useProcessPrice(effectiveDraftId)
+  const quoteOnly = isQuoteOnly(price)
 
-  // The return flag has done its job once the dialog is open; a reload must not reopen it. The
-  // draft is not auto-saved meanwhile, as when publishing opens the dialog.
+  // The return flag has done its job once the dialog is open; a reload must not reopen it
   useEffect(() => {
     if (!searchParams.has(checkoutReturnParam)) return
-    skipSave(true)
     setSearchParams(
       (params) => {
         params.delete(checkoutReturnParam)
@@ -717,7 +723,23 @@ const ProcessCreateView = () => {
       },
       { replace: true }
     )
-  }, [searchParams, setSearchParams, skipSave])
+  }, [searchParams, setSearchParams])
+
+  // A draft id that loads nothing (deleted, or published since, e.g. by its payment once the
+  // checkout was closed) is forgotten, so the form stops saving onto it
+  useEffect(() => {
+    if (!effectiveDraftId || formDraft !== null) return
+    clearPublishedDraftId(effectiveDraftId)
+    if (draftId === effectiveDraftId) {
+      setSearchParams(
+        (params) => {
+          params.delete('draftId')
+          return params
+        },
+        { replace: true }
+      )
+    }
+  }, [formDraft, effectiveDraftId, draftId, clearPublishedDraftId, setSearchParams])
 
   // Apply form draft if it exists
   useEffect(() => {
@@ -821,14 +843,29 @@ const ProcessCreateView = () => {
       // through `writeDraft` is what makes that hold — it resolves the draft id
       // inside the queue, so a blur auto-save still in flight is updated rather
       // than raced.
-      const processId = await writeDraft(() => request)
+      let processId: string
+      try {
+        processId = await writeDraft(() => request)
+      } catch (error) {
+        // The backend locks a draft while its payment is processing: that payment is waited for
+        if (
+          effectiveDraftId &&
+          price?.paymentStatus === 'processing' &&
+          apiErrorDetails(error)?.code === ErrorCode.PaymentSessionConflict
+        ) {
+          skipSave(false)
+          setCheckout({ processId: effectiveDraftId, start: 'confirming' })
+          return
+        }
+        throw error
+      }
       try {
         await apiClient.elections.publishAndWait(processId)
       } catch (error) {
         const start = checkoutStart(error)
         if (!start) throw error
-        // Left for the checkout to publish. Auto-save stays off meanwhile: the dialog covers the
-        // form, and a payment being processed locks the draft anyway.
+        // Left for the checkout to publish, which keeps the draft from auto-saving meanwhile
+        skipSave(false)
         setCheckout({ processId, start })
         return
       }
@@ -888,10 +925,7 @@ const ProcessCreateView = () => {
     navigate(generatePath(Routes.dashboard.process, { id: processId }))
   }
 
-  const closeCheckout = () => {
-    setCheckout(null)
-    skipSave(false)
-  }
+  const closeCheckout = () => setCheckout(null)
 
   const onError = (errors) => {
     console.error(

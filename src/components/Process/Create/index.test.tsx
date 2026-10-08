@@ -1,14 +1,16 @@
-import { act, renderHook } from '@testing-library/react'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import type { Blocker } from 'react-router'
 import { useLocation, useNavigate } from 'react-router'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { ErrorCode } from '~components/Auth/api'
-import { TestMemoryRouter } from '~src/test-utils'
+import { useApiClient } from '~src/providers/ApiClientProvider'
+import { createTestQueryClient, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultQuestion, Process, SelectorTypes } from './common'
-import { buildCensusSpec, checkoutStart, useConfirmOnNavigate, useFormToVotingProcessRequest } from './index'
+import { buildCensusSpec, checkoutStart, useConfirmOnNavigate, useDraft, useFormToVotingProcessRequest } from './index'
 
 const mockPermission = vi.fn()
 
@@ -48,6 +50,23 @@ vi.mock('~elements/dashboard/processes/drafts', () => ({
 vi.mock('~src/providers/ApiClientProvider', () => ({
   useApiClient: vi.fn(),
 }))
+
+describe('useDraft', () => {
+  it('loads nothing for a process published since its id was stored', async () => {
+    const get = vi.fn().mockResolvedValue({ id: 'p1', published: true })
+    vi.mocked(useApiClient).mockReturnValue({ client: { elections: { get } } } as unknown as ReturnType<
+      typeof useApiClient
+    >)
+    const queryClient = createTestQueryClient()
+
+    const { result } = renderHook(() => useDraft('p1'), {
+      wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data).toBeNull()
+  })
+})
 
 describe('checkoutStart', () => {
   const refusal = (code: number, data?: unknown) => new VocdoniApiError(402, { data }, 'refused', code)

@@ -146,7 +146,7 @@ describe('ProcessCheckoutDialog', () => {
     const { returnUrl } = confirm.mock.calls[0][0]
     expect(new URL(returnUrl).searchParams.get('draftId')).toBe(processId)
     expect(new URL(returnUrl).searchParams.get('checkout')).toBe('return')
-    expect(publishAndWait).toHaveBeenCalledWith(processId)
+    expect(publishAndWait).toHaveBeenCalledWith(processId, { signal: expect.any(AbortSignal) })
   })
 
   it('keeps the form when Stripe refuses the payment, and asks the backend nothing', async () => {
@@ -213,6 +213,31 @@ describe('ProcessCheckoutDialog', () => {
     renderDialog()
 
     expect(await screen.findByText(/need a custom quote/)).toBeInTheDocument()
+    // Retrying is refused the same way
+    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument()
+  })
+
+  it('says so when its payment cannot be read, instead of waiting on it', async () => {
+    bearedFetch.mockImplementation(() =>
+      Promise.reject(new ApiError({ error: 'process has no payment' }, new Response(null, { status: 404 })))
+    )
+    renderDialog('confirming')
+
+    expect(await screen.findByText('process has no payment')).toBeInTheDocument()
+    expect(bearedFetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('explains a paid draft that grew past its payment, with nothing to retry', async () => {
+    backend({ statuses: [status({ status: 'paid' })] })
+    publishAndWait.mockRejectedValue(
+      new VocdoniApiError(402, { data: { totalCents: 49000 } }, 'payment required', ErrorCode.PaymentRequired)
+    )
+    renderDialog('confirming')
+
+    expect(await screen.findByText(/only the difference is due/)).toBeInTheDocument()
+    expect(screen.queryByText(/Publishing it again is free/)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Try again' })).not.toBeInTheDocument()
+    expect(publishAndWait).toHaveBeenCalledTimes(1)
   })
 
   it('lets a paid process that failed to publish be published again, for free', async () => {
