@@ -1619,6 +1619,7 @@
         "choice_title": "Option {{choice}}",
         "description": "Beschreibung",
         "header": "Titelbild",
+        "header_content": "Inhalt des Titelbilds geändert",
         "media_hash": "Hash der Mediendatei",
         "other": "Weitere Einstellungen",
         "question_description": "Beschreibung der Frage",
@@ -1642,6 +1643,7 @@
       "integrity_warning": "Einige Versionen konnten nicht anhand ihres gespeicherten Hashes überprüft werden. Details findest du unten.",
       "intro": "Den Wählenden wurden ein Titel, eine Beschreibung, Medien und der Text jeder Frage und Option angezeigt. Die Blockchain speichert beim Veröffentlichen des Abstimmungsprozesses und jeder seiner Fragen den SHA-256-Hash der genauen Dokumente mit diesen Informationen und bei jeder Änderung eines dieser Dokumente einen neuen Hash. Dieser Abschnitt listet alle gespeicherten Versionen auf, prüft jedes Dokument anhand seines Hashes und zeigt, was sich von einer Version zur nächsten geändert hat.",
       "legend": "Entfernter Text ist rot durchgestrichen, hinzugefügter Text grün unterstrichen.",
+      "media_note": "Bilder sind durch den Hash ihres Inhalts abgedeckt, daher wird jede Änderung an einem Bild gemeldet. Das Video ist nur durch seine URL abgedeckt: Änderungen am Inhalt des Videos selbst fallen nicht unter diese Garantie, nur Änderungen seiner URL werden verfolgt.",
       "no_content_change": "Der den Wählenden angezeigte Inhalt hat sich nicht geändert.",
       "other_changed": "Andere, oben nicht aufgeführte Teile des Dokuments haben sich geändert.",
       "process_heading": "Abstimmungsprozess: {{title}}",
@@ -1661,7 +1663,8 @@
       "transaction": "Transaktion",
       "unlisted_question": "Abstimmung {{id}}, keine Frage dieses Abstimmungsprozesses",
       "version_change": "Änderung {{number}}",
-      "version_original": "Ursprüngliche Version"
+      "version_original": "Ursprüngliche Version",
+      "video_url_only": "Nur die URL des Videos wird verfolgt: Änderungen am Inhalt des Videos selbst sind nicht abgedeckt."
     },
     "not_available": "Nicht verfügbar",
     "pending_results": "Der Bericht ist verfügbar, sobald der Abstimmungsprozess alle Ergebnisse berechnet hat.",

@@ -1646,6 +1646,7 @@
         "choice_title": "Opción {{choice}}",
         "description": "Descripción",
         "header": "Imagen de cabecera",
+        "header_content": "Ha cambiado el contenido de la imagen de cabecera",
         "media_hash": "Hash del archivo multimedia",
         "other": "Otros ajustes",
         "question_description": "Descripción de la pregunta",
@@ -1669,6 +1670,7 @@
       "integrity_warning": "Algunas versiones no se han podido verificar con su hash registrado. Consulta los detalles a continuación.",
       "intro": "A los votantes se les mostró un título, una descripción, contenido multimedia y el texto de cada pregunta y opción. La blockchain registra el hash SHA-256 de los documentos exactos que contienen esta información cuando se publican el proceso de votación y cada una de sus preguntas, y un nuevo hash cada vez que uno de esos documentos cambia. Esta sección enumera todas las versiones registradas, comprueba cada documento con su hash y muestra qué cambió de una versión a la siguiente.",
       "legend": "El texto eliminado aparece tachado en rojo y el texto añadido, subrayado en verde.",
+      "media_note": "Las imágenes están cubiertas por el hash de su contenido, así que se informa de cualquier cambio en una imagen. El vídeo solo está cubierto por su URL: los cambios en el contenido del propio vídeo quedan fuera de esta garantía y solo se controlan los cambios en su URL.",
       "no_content_change": "El contenido mostrado a los votantes no cambió.",
       "other_changed": "Cambiaron otras partes del documento que no se detallan arriba.",
       "process_heading": "Proceso de votación: {{title}}",
@@ -1688,7 +1690,8 @@
       "transaction": "Transacción",
       "unlisted_question": "Elección {{id}}, que no es una pregunta de este proceso de votación",
       "version_change": "Cambio {{number}}",
-      "version_original": "Versión original"
+      "version_original": "Versión original",
+      "video_url_only": "Solo se controla la URL del vídeo: los cambios en el contenido del propio vídeo no están cubiertos."
     },
     "not_available": "No disponible",
     "pending_results": "El informe estará disponible cuando el proceso de votación haya calculado todos sus resultados.",

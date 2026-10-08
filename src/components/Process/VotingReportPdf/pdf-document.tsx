@@ -387,6 +387,7 @@ const MetadataAuditBody = ({ audit }: { audit: CertificateMetadataAudit }) => (
           )}
         </View>
         {election.fields && <KeyValueList items={election.fields} />}
+        {election.note && <PdfText style={styles.smallText}>{election.note}</PdfText>}
         {election.versions.map((version, versionIndex) => (
           <View key={`${version.heading}-${versionIndex}`} style={styles.metadataVersion}>
             <View wrap={false}>

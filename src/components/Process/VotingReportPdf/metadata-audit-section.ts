@@ -32,6 +32,7 @@ export type CertificateMetadataElection = {
   title: string
   summary: string
   warning?: string
+  note?: string
   fields?: AuditField[]
   versions: CertificateMetadataVersion[]
 }
@@ -97,6 +98,9 @@ const getChangeLabel = (change: MetadataChange, singleQuestion: boolean, t: TFun
     case 'streamUri':
       label = t('process_pdf.metadata_audit.field.stream_uri', { defaultValue: 'Video' })
       break
+    case 'headerContent':
+      label = t('process_pdf.metadata_audit.field.header_content', { defaultValue: 'Header image content changed' })
+      break
     case 'mediaHash':
       label = t('process_pdf.metadata_audit.field.media_hash', { defaultValue: 'Media file hash' })
       break
@@ -157,7 +161,13 @@ const buildChange = (change: MetadataChange, singleQuestion: boolean, t: TFuncti
   return {
     kind: 'replace',
     label,
-    detail: change.mediaUrl,
+    // The video is covered only by its URL, never by its content, so its rows say so.
+    detail:
+      change.field === 'streamUri'
+        ? t('process_pdf.metadata_audit.video_url_only', {
+            defaultValue: 'Only the video URL is tracked: changes to the video content itself are not covered.',
+          })
+        : change.mediaUrl,
     before: change.before ?? empty,
     after: change.after ?? empty,
   }
@@ -324,6 +334,10 @@ export const buildMetadataAuditSection = ({
           })
         : getHistorySummary(processAudit),
     warning: questionElectionsWarning,
+    note: t('process_pdf.metadata_audit.media_note', {
+      defaultValue:
+        'Images are covered by the hash of their content, so any change to an image is reported. The video is covered only by its URL: changes to the video content itself are outside this guarantee, and only changes to its URL are tracked.',
+    }),
     fields: processId
       ? [
           {

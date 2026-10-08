@@ -1646,6 +1646,7 @@
         "choice_title": "Opzione {{choice}}",
         "description": "Descrizione",
         "header": "Immagine di intestazione",
+        "header_content": "Contenuto dell'immagine di intestazione modificato",
         "media_hash": "Hash del file multimediale",
         "other": "Altre impostazioni",
         "question_description": "Descrizione della domanda",
@@ -1669,6 +1670,7 @@
       "integrity_warning": "Non è stato possibile verificare alcune versioni con il loro hash registrato. Consulta i dettagli qui sotto.",
       "intro": "Ai votanti sono stati mostrati un titolo, una descrizione, contenuti multimediali e il testo di ogni domanda e opzione. La blockchain registra l'hash SHA-256 dei documenti esatti che contengono queste informazioni quando vengono pubblicati il processo di voto e ciascuna delle sue domande, e un nuovo hash ogni volta che uno di questi documenti viene modificato. Questa sezione elenca tutte le versioni registrate, verifica ogni documento con il suo hash e mostra cosa è cambiato da una versione all'altra.",
       "legend": "Il testo rimosso è barrato in rosso e il testo aggiunto è sottolineato in verde.",
+      "media_note": "Le immagini sono coperte dall'hash del loro contenuto, quindi qualsiasi modifica a un'immagine viene segnalata. Il video è coperto solo dal suo URL: le modifiche al contenuto del video stesso sono escluse da questa garanzia e vengono controllate solo le modifiche al suo URL.",
       "no_content_change": "Il contenuto mostrato ai votanti non è cambiato.",
       "other_changed": "Sono cambiate altre parti del documento non elencate sopra.",
       "process_heading": "Processo di voto: {{title}}",
@@ -1688,7 +1690,8 @@
       "transaction": "Transazione",
       "unlisted_question": "Elezione {{id}}, che non è una domanda di questo processo di voto",
       "version_change": "Modifica {{number}}",
-      "version_original": "Versione originale"
+      "version_original": "Versione originale",
+      "video_url_only": "Viene controllato solo l'URL del video: le modifiche al contenuto del video stesso non sono coperte."
     },
     "not_available": "Non disponibile",
     "pending_results": "Il rapporto sarà disponibile quando il processo di voto avrà calcolato tutti i risultati.",

@@ -53,6 +53,7 @@ describe('buildMetadataAuditSection', () => {
         'Changes to the process title, description and media are not recorded on chain for this voting process, because it was published before they were.',
       warning: undefined,
       fields: undefined,
+      note: 'Images are covered by the hash of their content, so any change to an image is reported. The video is covered only by its URL: changes to the video content itself are outside this guarantee, and only changes to its URL are tracked.',
       versions: [],
     })
     expect(section.elections[1].title).toBe('Question 1: Chair')
@@ -125,7 +126,7 @@ describe('buildMetadataAuditSection', () => {
       {
         kind: 'replace',
         label: 'Video',
-        detail: undefined,
+        detail: 'Only the video URL is tracked: changes to the video content itself are not covered.',
         before: '(none)',
         after: 'https://video.example/v',
       },
@@ -158,6 +159,34 @@ describe('buildMetadataAuditSection', () => {
       value: 'Mismatch: the document available now does not match the hash recorded on chain',
       helperText: `Hash of the document available now: ${'cc'.repeat(32)}`,
     })
+  })
+
+  it('labels a header image content change with its URL and old and new hashes', () => {
+    const section = build([
+      createAudit('e1', [
+        createVersion(),
+        createVersion({
+          changes: [
+            {
+              field: 'headerContent',
+              mediaUrl: 'https://media.example/header.png',
+              before: 'aa'.repeat(32),
+              after: 'bb'.repeat(32),
+            },
+          ],
+        }),
+      ]),
+    ])
+
+    expect(section.elections[1].versions[1].changes).toEqual([
+      {
+        kind: 'replace',
+        label: 'Header image content changed',
+        detail: 'https://media.example/header.png',
+        before: 'aa'.repeat(32),
+        after: 'bb'.repeat(32),
+      },
+    ])
   })
 
   it('reports a version with no content change', () => {

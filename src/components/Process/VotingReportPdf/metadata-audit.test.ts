@@ -127,12 +127,38 @@ describe('diffMetadata', () => {
     expect(changes).toEqual([
       { field: 'streamUri', before: null, after: 'https://video.example/v' },
       {
-        field: 'mediaHash',
+        field: 'headerContent',
         mediaUrl: 'https://media.example/header.png',
         before: 'aa'.repeat(32),
         after: 'bb'.repeat(32),
       },
     ])
+  })
+
+  it('reports a header image whose content hash changed under the same URL', () => {
+    const changes = diffMetadata(baseMetadata, {
+      ...baseMetadata,
+      meta: { mediaHashes: { 'https://media.example/header.png': 'cc'.repeat(32) } },
+    })
+
+    expect(changes).toEqual([
+      {
+        field: 'headerContent',
+        mediaUrl: 'https://media.example/header.png',
+        before: 'aa'.repeat(32),
+        after: 'cc'.repeat(32),
+      },
+    ])
+  })
+
+  it('reports the hash of other media files apart from the header image', () => {
+    const extra = 'https://media.example/logo.png'
+    const changes = diffMetadata(
+      { ...baseMetadata, meta: { mediaHashes: { ...baseMetadata.meta.mediaHashes, [extra]: 'dd'.repeat(32) } } },
+      { ...baseMetadata, meta: { mediaHashes: { ...baseMetadata.meta.mediaHashes, [extra]: 'ee'.repeat(32) } } }
+    )
+
+    expect(changes).toEqual([{ field: 'mediaHash', mediaUrl: extra, before: 'dd'.repeat(32), after: 'ee'.repeat(32) }])
   })
 
   it('reports question and choice text changes, including added choices', () => {

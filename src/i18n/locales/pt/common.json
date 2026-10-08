@@ -1646,6 +1646,7 @@
         "choice_title": "Opção {{choice}}",
         "description": "Descrição",
         "header": "Imagem de cabeçalho",
+        "header_content": "O conteúdo da imagem de cabeçalho mudou",
         "media_hash": "Hash do ficheiro multimédia",
         "other": "Outras definições",
         "question_description": "Descrição da pergunta",
@@ -1669,6 +1670,7 @@
       "integrity_warning": "Não foi possível verificar algumas versões com o respetivo hash registado. Consulta os detalhes abaixo.",
       "intro": "Aos votantes foram mostrados um título, uma descrição, conteúdos multimédia e o texto de cada pergunta e opção. A blockchain regista o hash SHA-256 dos documentos exatos que contêm esta informação quando o processo de votação e cada uma das suas perguntas são publicados, e um novo hash sempre que um desses documentos é alterado. Esta secção lista todas as versões registadas, verifica cada documento com o respetivo hash e mostra o que mudou de uma versão para a seguinte.",
       "legend": "O texto removido aparece riscado a vermelho e o texto adicionado, sublinhado a verde.",
+      "media_note": "As imagens estão cobertas pelo hash do seu conteúdo, pelo que qualquer alteração a uma imagem é indicada. O vídeo está coberto apenas pelo seu URL: as alterações ao conteúdo do próprio vídeo ficam fora desta garantia e só são controladas as alterações ao seu URL.",
       "no_content_change": "O conteúdo mostrado aos votantes não mudou.",
       "other_changed": "Mudaram outras partes do documento que não estão indicadas acima.",
       "process_heading": "Processo de votação: {{title}}",
@@ -1688,7 +1690,8 @@
       "transaction": "Transação",
       "unlisted_question": "Votação {{id}}, que não é uma pergunta deste processo de votação",
       "version_change": "Alteração {{number}}",
-      "version_original": "Versão original"
+      "version_original": "Versão original",
+      "video_url_only": "Só o URL do vídeo é controlado: as alterações ao conteúdo do próprio vídeo não estão cobertas."
     },
     "not_available": "Não disponível",
     "pending_results": "O relatório ficará disponível assim que o processo de votação tiver calculado todos os resultados.",

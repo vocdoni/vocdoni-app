@@ -37,6 +37,7 @@ export type MetadataChangeField =
   | 'header'
   | 'streamUri'
   | 'mediaHash'
+  | 'headerContent'
   | 'questionElections'
   | 'questionTitle'
   | 'questionDescription'
@@ -240,8 +241,16 @@ export const diffMetadata = (beforeDoc: unknown, afterDoc: unknown): MetadataCha
   for (const url of [...new Set([...Object.keys(beforeHashes), ...Object.keys(afterHashes)])].sort()) {
     const beforeHash = normalizeHex(beforeHashes[url]) || null
     const afterHash = normalizeHex(afterHashes[url]) || null
-    if (beforeHash !== afterHash)
-      changes.push({ field: 'mediaHash', mediaUrl: url, before: beforeHash, after: afterHash })
+    if (beforeHash === afterHash) continue
+    // Images are covered by the hash of their content, so a header image whose hash changed shows
+    // different content even when its URL stayed the same.
+    const isHeader = url === beforeMedia.header || url === afterMedia.header
+    changes.push({
+      field: isHeader ? 'headerContent' : 'mediaHash',
+      mediaUrl: url,
+      before: beforeHash,
+      after: afterHash,
+    })
   }
 
   // A parent election lists its question elections; the list is fixed at publish time, so any

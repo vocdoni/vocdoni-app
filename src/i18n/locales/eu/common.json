@@ -1619,6 +1619,7 @@
         "choice_title": "{{choice}}. aukera",
         "description": "Deskribapena",
         "header": "Goiburuko irudia",
+        "header_content": "Goiburuko irudiaren edukia aldatu da",
         "media_hash": "Multimedia-fitxategiaren hasha",
         "other": "Beste ezarpen batzuk",
         "question_description": "Galderaren deskribapena",
@@ -1642,6 +1643,7 @@
       "integrity_warning": "Bertsio batzuk ezin izan dira egiaztatu erregistratutako hasharekin. Ikusi xehetasunak behean.",
       "intro": "Botogileei izenburu bat, deskribapen bat, multimedia-edukia eta galdera eta aukera bakoitzaren testua erakutsi zitzaizkien. Blockchainak informazio hori duten dokumentu zehatzen SHA-256 hasha erregistratzen du boto-ematearen prozesua eta haren galdera bakoitza argitaratzean, eta hash berri bat dokumentu horietako bat aldatzen den bakoitzean. Atal honek erregistratutako bertsio guztiak zerrendatzen ditu, dokumentu bakoitza bere hasharekin egiaztatzen du eta bertsio batetik hurrengora zer aldatu den erakusten du.",
       "legend": "Kendutako testua gorriz eta marratuta ageri da, eta gehitutakoa berdez eta azpimarratuta.",
+      "media_note": "Irudiak beren edukiaren hasharen bidez daude estalita, beraz irudi baten edozein aldaketa jakinarazten da. Bideoa bere URLaren bidez bakarrik dago estalita: bideoaren beraren edukiaren aldaketak berme honetatik kanpo geratzen dira, eta haren URLaren aldaketak bakarrik kontrolatzen dira.",
       "no_content_change": "Botogileei erakutsitako edukia ez zen aldatu.",
       "other_changed": "Goian zerrendatu gabeko dokumentuaren beste zati batzuk aldatu ziren.",
       "process_heading": "Boto-ematearen prozesua: {{title}}",
@@ -1661,7 +1663,8 @@
       "transaction": "Transakzioa",
       "unlisted_question": "{{id}} hauteskundea, ez da boto-ematearen prozesu honetako galdera bat",
       "version_change": "{{number}}. aldaketa",
-      "version_original": "Jatorrizko bertsioa"
+      "version_original": "Jatorrizko bertsioa",
+      "video_url_only": "Bideoaren URLa bakarrik kontrolatzen da: bideoaren beraren edukiaren aldaketak ez daude estalita."
     },
     "not_available": "Ez dago eskuragarri",
     "pending_results": "Txostena eskuragarri egongo da boto-ematearen prozesuak emaitza guztiak kalkulatu ondoren.",

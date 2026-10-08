@@ -1646,6 +1646,7 @@
         "choice_title": "Opção {{choice}}",
         "description": "Descrição",
         "header": "Imagem de cabeçalho",
+        "header_content": "O conteúdo da imagem de cabeçalho mudou",
         "media_hash": "Hash do arquivo de mídia",
         "other": "Outras configurações",
         "question_description": "Descrição da pergunta",
@@ -1669,6 +1670,7 @@
       "integrity_warning": "Não foi possível verificar algumas versões com o hash registrado. Veja os detalhes abaixo.",
       "intro": "Os eleitores viram um título, uma descrição, mídias e o texto de cada pergunta e opção. A blockchain registra o hash SHA-256 dos documentos exatos que contêm essas informações quando o processo de votação e cada uma de suas perguntas são publicados, e um novo hash sempre que um desses documentos é alterado. Esta seção lista todas as versões registradas, verifica cada documento com seu hash e mostra o que mudou de uma versão para a seguinte.",
       "legend": "O texto removido aparece riscado em vermelho, e o texto adicionado, sublinhado em verde.",
+      "media_note": "As imagens são cobertas pelo hash do seu conteúdo, então qualquer alteração em uma imagem é informada. O vídeo é coberto apenas pela sua URL: alterações no conteúdo do próprio vídeo ficam fora desta garantia, e apenas as alterações na sua URL são monitoradas.",
       "no_content_change": "O conteúdo mostrado aos eleitores não mudou.",
       "other_changed": "Outras partes do documento que não estão listadas acima mudaram.",
       "process_heading": "Processo de votação: {{title}}",
@@ -1688,7 +1690,8 @@
       "transaction": "Transação",
       "unlisted_question": "Eleição {{id}}, que não é uma pergunta deste processo de votação",
       "version_change": "Alteração {{number}}",
-      "version_original": "Versão original"
+      "version_original": "Versão original",
+      "video_url_only": "Só a URL do vídeo é monitorada: alterações no conteúdo do próprio vídeo não estão cobertas."
     },
     "not_available": "Não disponível",
     "pending_results": "O relatório estará disponível assim que o processo de votação tiver calculado todos os resultados.",
