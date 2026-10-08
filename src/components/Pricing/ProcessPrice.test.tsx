@@ -1,4 +1,6 @@
-import { ApiError } from '~components/Auth/api'
+import { act } from '@testing-library/react'
+import { ApiError, BadRequestApiError } from '~components/Auth/api'
+import { QueryKeys } from '~queries/keys'
 import type { ProcessPrice } from '~queries/process-price'
 import { Routes } from '~src/router/routes'
 import { render, screen, TestMemoryRouter, waitFor } from '~src/test-utils'
@@ -73,7 +75,7 @@ describe('ProcessPriceBreakdown', () => {
   })
 
   it('shows the same hint when the backend cannot price the draft yet, without retrying', async () => {
-    bearedFetch.mockRejectedValue(new ApiError({ error: 'census not found' }, new Response(null, { status: 400 })))
+    bearedFetch.mockRejectedValue(new BadRequestApiError({ error: 'census size must be between 1 and 10000000' }))
 
     renderWithRouter(<ProcessPriceBreakdown processId='draft-1' />)
 
@@ -82,9 +84,64 @@ describe('ProcessPriceBreakdown', () => {
   })
 })
 
+describe('ProcessPriceBreakdown failures', () => {
+  beforeEach(() => {
+    bearedFetch.mockReset()
+  })
+
+  it('says the price could not be loaded on any other error, and lets the user retry', async () => {
+    bearedFetch.mockRejectedValueOnce(new ApiError({ error: 'boom' }, new Response(null, { status: 500 })))
+    bearedFetch.mockResolvedValueOnce(price())
+
+    renderWithRouter(<ProcessPriceBreakdown processId='draft-1' />)
+
+    expect(await screen.findByText('The price could not be loaded.')).toBeInTheDocument()
+    expect(screen.queryByText(/once the draft is saved/)).not.toBeInTheDocument()
+    act(() => screen.getByRole('button', { name: 'Try again' }).click())
+    expect(await screen.findByText('€297')).toBeInTheDocument()
+  })
+
+  it('drops a price the backend no longer stands by when re-reading it fails', async () => {
+    bearedFetch.mockResolvedValueOnce(price({ quoteRecommended: true, quoteRequired: true }))
+    bearedFetch.mockRejectedValueOnce(new BadRequestApiError({ error: 'census size must be between 1 and 10000000' }))
+
+    const { queryClient } = renderWithRouter(
+      <>
+        <ProcessPriceBreakdown processId='draft-1' />
+        <ProcessQuoteAlert processId='draft-1' />
+      </>
+    )
+
+    expect(await screen.findByText('€297')).toBeInTheDocument()
+    expect(screen.getByText(/can only be published with a custom quote/)).toBeInTheDocument()
+    await act(() => queryClient.invalidateQueries({ queryKey: QueryKeys.process.price('draft-1') }))
+
+    expect(await screen.findByText(/once the draft is saved/)).toBeInTheDocument()
+    expect(screen.queryByText('€297')).not.toBeInTheDocument()
+    expect(screen.queryByText(/custom quote/)).not.toBeInTheDocument()
+  })
+
+  it('keeps the draft id from pointing the request at another endpoint', async () => {
+    bearedFetch.mockResolvedValue(price())
+
+    renderWithRouter(<ProcessPriceBreakdown processId='x/../../users/me?' />)
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalledWith('processes/x%2F..%2F..%2Fusers%2Fme%3F/price'))
+  })
+})
+
 describe('ProcessQuoteAlert', () => {
   beforeEach(() => {
     bearedFetch.mockReset()
+  })
+
+  it('asks nothing of a process whose quote is already paid', async () => {
+    bearedFetch.mockResolvedValue(price({ quoteRecommended: true, quoteRequired: true, paymentStatus: 'paid' }))
+
+    renderWithRouter(<ProcessQuoteAlert processId='draft-1' />)
+
+    await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
+    expect(screen.queryByText(/custom quote/)).not.toBeInTheDocument()
   })
 
   it('renders nothing below the custom-quote thresholds', async () => {
@@ -93,7 +150,7 @@ describe('ProcessQuoteAlert', () => {
     renderWithRouter(<ProcessQuoteAlert processId='draft-1' />)
 
     await waitFor(() => expect(bearedFetch).toHaveBeenCalled())
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.queryByText(/custom quote/)).not.toBeInTheDocument()
   })
 
   it('recommends a custom quote above 15,000 voters, without blocking publication', async () => {
