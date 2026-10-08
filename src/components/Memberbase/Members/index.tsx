@@ -57,6 +57,7 @@ import {
   isMemberSortField,
   Member,
   MemberSortField,
+  SortOrder,
   useDeleteMembers,
   usePaginatedMembers,
   useUrlMemberSort,
@@ -363,12 +364,19 @@ const AddMembersToCensusDrawer = ({ isOpen, onClose }: AddMembersToCensusDrawerP
 const MemberActions = ({ member, onDelete, onAddToGroup, onAddToCensus }: MemberActionsProps) => {
   const { t } = useTranslation()
   const { open: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure()
+  const { isPlaceholderData } = useTable()
 
   return (
     <>
       <Menu.Root>
         <Menu.Trigger asChild>
-          <IconButton variant='ghost' size='sm' aria-label={t('members.table.actions', { defaultValue: 'Actions' })}>
+          <IconButton
+            variant='ghost'
+            size='sm'
+            aria-label={t('members.table.actions', { defaultValue: 'Actions' })}
+            // Placeholder rows are about to be replaced, so no action may start from them.
+            disabled={isPlaceholderData}
+          >
             <LuEllipsis />
           </IconButton>
         </Menu.Trigger>
@@ -702,23 +710,32 @@ const MembersList = ({ openDeleteSelected, onAddToGroup, onAddToCensus }: Member
   const { data = [], isLoading, isFetching, isPlaceholderData } = useTable()
   const isLoadingOrImporting = isLoading || isFetching
   const isEmpty = data.length === 0 && !isLoadingOrImporting
+
+  if (isLoading && !data.length) {
+    return (
+      <Table.Body>
+        <MembersLoadingRow />
+      </Table.Body>
+    )
+  }
+  if (isEmpty) {
+    return (
+      <Table.Body>
+        <EmptyMembers />
+      </Table.Body>
+    )
+  }
   return (
     <Table.Body {...placeholderRowsStyle(isPlaceholderData)}>
-      {isLoading && !data.length ? (
-        <MembersLoadingRow />
-      ) : isEmpty ? (
-        <EmptyMembers />
-      ) : (
-        data.map((member) => (
-          <MemberTableItem
-            key={member.id}
-            member={member}
-            openDeleteSelected={() => openDeleteSelected(member)}
-            onAddToGroup={() => onAddToGroup(member)}
-            onAddToCensus={() => onAddToCensus(member)}
-          />
-        ))
-      )}
+      {data.map((member) => (
+        <MemberTableItem
+          key={member.id}
+          member={member}
+          openDeleteSelected={() => openDeleteSelected(member)}
+          onAddToGroup={() => onAddToGroup(member)}
+          onAddToCensus={() => onAddToCensus(member)}
+        />
+      ))}
     </Table.Body>
   )
 }
@@ -774,7 +791,8 @@ const EmptyMembersMessage = () => {
 }
 
 // While the next page or sort loads, the previous rows stay in place but faded, so the table
-// gives feedback without changing height.
+// gives feedback without changing height. Their checkboxes and action menus are disabled meanwhile
+// (see `isPlaceholderData` below), so nothing can select or act on rows about to be replaced.
 const placeholderRowsStyle = (isPlaceholderData: boolean) => ({
   'aria-busy': isPlaceholderData || undefined,
   opacity: isPlaceholderData ? 0.5 : 1,
@@ -815,13 +833,15 @@ const EmptyMembers = () => {
 const sortCaretStyle = (active: boolean) =>
   active ? { color: 'texts.primary' } : { color: 'texts.subtle', opacity: 0.5 }
 
+const ARIA_SORT: Record<SortOrder, 'ascending' | 'descending'> = { asc: 'ascending', desc: 'descending' }
+
 const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: MemberSortField }) => {
   const { t } = useTranslation()
   const { sort, toggleSort } = useUrlMemberSort()
   const order = sort?.sortBy === field ? sort.sortOrder : null
   return (
     // aria-sort goes on the active column only, as the ARIA spec recommends.
-    <Table.ColumnHeader aria-sort={order ? (order === 'asc' ? 'ascending' : 'descending') : undefined}>
+    <Table.ColumnHeader aria-sort={order ? ARIA_SORT[order] : undefined}>
       <Button
         variant='plain'
         size='sm'
@@ -845,7 +865,7 @@ const SortableColumnHeader = ({ column, field }: { column: TableColumn; field: M
 }
 
 const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCensus }: MemberTableItemProps) => {
-  const { isSelected, toggleOne, columns } = useTable()
+  const { isSelected, toggleOne, columns, isPlaceholderData } = useTable()
 
   return (
     <Table.Row>
@@ -853,6 +873,7 @@ const MemberTableItem = ({ member, openDeleteSelected, onAddToGroup, onAddToCens
         <Checkbox.Root
           checked={isSelected(member.id)}
           onCheckedChange={({ checked }) => toggleOne(member.id, checked === true)}
+          disabled={isPlaceholderData}
         >
           <Checkbox.HiddenInput />
           <Checkbox.Control />
@@ -1004,7 +1025,8 @@ const MembersTable = () => {
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
   const { open: isAddToGroupOpen, onOpen: onOpenAddToGroup, onClose: onAddToGroupClose } = useDisclosure()
   const { open: isAddToCensusOpen, onOpen: onOpenAddToCensus, onClose: onAddToCensusClose } = useDisclosure()
-  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns } = useTable()
+  const { allVisibleSelected, someSelected, resetSelectedRows, toggleAll, toggleOne, columns, isPlaceholderData } =
+    useTable()
   const isMobile = useBreakpointValue({ base: true, md: false })
 
   const openDeleteSelected = (member?: Member) => {
@@ -1068,6 +1090,7 @@ const MembersTable = () => {
               <Checkbox.Root
                 checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                 onCheckedChange={({ checked }) => toggleAll(checked === true)}
+                disabled={isPlaceholderData}
               >
                 <Checkbox.HiddenInput />
                 <Checkbox.Control />
@@ -1095,6 +1118,7 @@ const MembersTable = () => {
                     <Checkbox.Root
                       checked={allVisibleSelected ? true : someSelected ? 'indeterminate' : false}
                       onCheckedChange={({ checked }) => toggleAll(checked === true)}
+                      disabled={isPlaceholderData}
                     >
                       <Checkbox.HiddenInput />
                       <Checkbox.Control />
