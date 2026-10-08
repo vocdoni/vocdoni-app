@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { createHash, webcrypto } from 'node:crypto'
 import {
   compareHash,
