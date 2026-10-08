@@ -1651,7 +1651,7 @@
       "integrity_warning": "Einige Versionen konnten nicht anhand ihres gespeicherten Hashes überprüft werden. Details findest du unten.",
       "intro": "Den Wählenden wurden ein Titel, eine Beschreibung, Medien und der Text jeder Frage und Option angezeigt. Die Blockchain speichert beim Veröffentlichen des Abstimmungsprozesses und jeder seiner Fragen den SHA-256-Hash der genauen Dokumente mit diesen Informationen und bei jeder Änderung eines dieser Dokumente einen neuen Hash. Dieser Abschnitt listet alle gespeicherten Versionen auf, prüft jedes Dokument anhand seines Hashes und zeigt, was sich von einer Version zur nächsten geändert hat.",
       "legend": "Entfernter Text ist rot durchgestrichen, hinzugefügter Text grün unterstrichen.",
-      "media_note": "Bilder sind durch den Hash ihres Inhalts abgedeckt, daher wird jede Änderung an einem Bild gemeldet. Das Video ist nur durch seine URL abgedeckt: Änderungen am Inhalt des Videos selbst fallen nicht unter diese Garantie, nur Änderungen seiner URL werden verfolgt.",
+      "media_note": "Das Titelbild und die Bilder der Optionen sind durch den Hash ihres Inhalts abgedeckt, daher wird jede Änderung daran gemeldet. Das Video und in Beschreibungen eingebettete Bilder sind nur durch ihre URL als Teil des Textes abgedeckt: Änderungen an ihrem Inhalt fallen nicht unter diese Garantie, nur Änderungen ihrer URL werden verfolgt.",
       "no_content_change": "Der den Wählenden angezeigte Inhalt hat sich nicht geändert.",
       "other_changed": "Andere, oben nicht aufgeführte Teile des Dokuments haben sich geändert.",
       "process_heading": "Abstimmungsprozess: {{title}}",

@@ -1678,7 +1678,7 @@
       "integrity_warning": "Algunas versiones no se han podido verificar con su hash registrado. Consulta los detalles a continuación.",
       "intro": "A los votantes se les mostró un título, una descripción, contenido multimedia y el texto de cada pregunta y opción. La blockchain registra el hash SHA-256 de los documentos exactos que contienen esta información cuando se publican el proceso de votación y cada una de sus preguntas, y un nuevo hash cada vez que uno de esos documentos cambia. Esta sección enumera todas las versiones registradas, comprueba cada documento con su hash y muestra qué cambió de una versión a la siguiente.",
       "legend": "El texto eliminado aparece tachado en rojo y el texto añadido, subrayado en verde.",
-      "media_note": "Las imágenes están cubiertas por el hash de su contenido, así que se informa de cualquier cambio en una imagen. El vídeo solo está cubierto por su URL: los cambios en el contenido del propio vídeo quedan fuera de esta garantía y solo se controlan los cambios en su URL.",
+      "media_note": "La imagen de cabecera y las imágenes de las opciones están cubiertas por el hash de su contenido, así que se informa de cualquier cambio en ellas. El vídeo y las imágenes insertadas en las descripciones solo están cubiertos por su URL, como parte del texto: los cambios en su contenido quedan fuera de esta garantía y solo se controlan los cambios en su URL.",
       "no_content_change": "El contenido mostrado a los votantes no cambió.",
       "other_changed": "Cambiaron otras partes del documento que no se detallan arriba.",
       "process_heading": "Proceso de votación: {{title}}",

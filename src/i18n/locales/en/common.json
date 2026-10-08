@@ -1651,7 +1651,7 @@
       "integrity_warning": "Some versions could not be verified against their recorded hash. See the details below.",
       "intro": "Voters were shown a title, a description, media and the text of every question and option. The blockchain records the SHA-256 hash of the exact documents that contain this information when the voting process and each of its questions are published, and a new hash every time one of those documents is changed. This section lists every recorded version, checks each document against its hash, and shows what changed from one version to the next.",
       "legend": "Removed text is shown struck through in red, and added text underlined in green.",
-      "media_note": "Images are covered by the hash of their content, so any change to an image is reported. The video is covered only by its URL: changes to the video content itself are outside this guarantee, and only changes to its URL are tracked.",
+      "media_note": "The header image and option images are covered by the hash of their content, so any change to them is reported. The video and any images embedded in descriptions are covered only by their URL, as part of the text: changes to their content are outside this guarantee, and only changes to their URL are tracked.",
       "no_content_change": "The content shown to voters did not change.",
       "other_changed": "Other parts of the document that are not listed above changed.",
       "process_heading": "Voting process: {{title}}",

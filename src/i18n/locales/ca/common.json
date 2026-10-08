@@ -1678,7 +1678,7 @@
       "integrity_warning": "Algunes versions no s'han pogut verificar amb el seu hash registrat. Consulta'n els detalls a continuació.",
       "intro": "Als votants se'ls va mostrar un títol, una descripció, contingut multimèdia i el text de cada pregunta i opció. La blockchain registra el hash SHA-256 dels documents exactes que contenen aquesta informació quan es publiquen el procés de votació i cadascuna de les seves preguntes, i un hash nou cada vegada que un d'aquests documents canvia. Aquesta secció enumera totes les versions registrades, comprova cada document amb el seu hash i mostra què va canviar d'una versió a la següent.",
       "legend": "El text eliminat apareix ratllat en vermell i el text afegit, subratllat en verd.",
-      "media_note": "Les imatges estan cobertes pel hash del seu contingut, de manera que s'informa de qualsevol canvi en una imatge. El vídeo només està cobert pel seu URL: els canvis en el contingut del vídeo mateix queden fora d'aquesta garantia i només es controlen els canvis en el seu URL.",
+      "media_note": "La imatge de capçalera i les imatges de les opcions estan cobertes pel hash del seu contingut, de manera que s'informa de qualsevol canvi que hi hagi. El vídeo i les imatges inserides a les descripcions només estan coberts pel seu URL, com a part del text: els canvis en el seu contingut queden fora d'aquesta garantia i només es controlen els canvis en el seu URL.",
       "no_content_change": "El contingut mostrat als votants no va canviar.",
       "other_changed": "Van canviar altres parts del document que no es detallen a dalt.",
       "process_heading": "Procés de votació: {{title}}",
