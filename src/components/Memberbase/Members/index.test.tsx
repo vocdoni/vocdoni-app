@@ -310,3 +310,62 @@ describe('MembersTable column sorting', () => {
     expect(navigateMock).toHaveBeenCalledWith('/admin/memberbase/members/1?sortBy=memberNumber&sortOrder=asc')
   })
 })
+
+// Placeholder rows are the previous page or sort, kept on screen while the requested one loads.
+// Selecting or acting on them would target members the user is no longer looking at.
+describe('MembersTable placeholder rows', () => {
+  const original = window.matchMedia
+  const placeholder = { isFetching: true, isPlaceholderData: true }
+
+  const setDesktop = (matches: boolean) =>
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    })
+
+  afterEach(() => {
+    Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
+  })
+
+  const expectRowsLocked = (locked: boolean) => {
+    // Select all, plus one checkbox and one actions menu per row.
+    const checkboxes = screen.getAllByRole('checkbox')
+    const actions = screen.getAllByRole('button', { name: 'Actions' })
+    expect(checkboxes).toHaveLength(members.length + 1)
+    expect(actions).toHaveLength(members.length)
+    for (const control of [...checkboxes, ...actions]) {
+      if (locked) expect(control).toBeDisabled()
+      else expect(control).toBeEnabled()
+    }
+  }
+
+  it('locks selection and row actions in the table while the requested rows load', () => {
+    setDesktop(true)
+    renderMembers('/admin/memberbase/members/2', placeholder)
+
+    expectRowsLocked(true)
+  })
+
+  it('locks selection and row actions in the mobile cards too', () => {
+    setDesktop(false)
+    renderMembers('/admin/memberbase/members/2', placeholder)
+
+    expectRowsLocked(true)
+  })
+
+  it('frees them again once the rows are the requested ones', () => {
+    setDesktop(true)
+    renderMembers('/admin/memberbase/members/2')
+
+    expectRowsLocked(false)
+  })
+})
