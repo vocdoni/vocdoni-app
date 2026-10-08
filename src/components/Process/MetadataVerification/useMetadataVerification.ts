@@ -7,8 +7,8 @@ import {
   createFetchBytes,
   createGetChainElection,
   createSha256Hex,
-  displayedMediaUrls,
   verifyProcessMetadata,
+  type DisplayedProcess,
   type ProcessVerification,
 } from './verify'
 
@@ -23,26 +23,45 @@ export const useMetadataVerification = () => {
   const { election } = useElection()
   const { VOCDONI_ENVIRONMENT } = useAppEnv()
 
-  const electionIds = useMemo(
-    () => (election?.questions ?? []).map((question) => question.upstreamId).filter((id): id is string => !!id),
+  // Snapshot of what the page renders: the check compares it with the verified documents,
+  // so a change in the displayed content must re-run it.
+  const shown = useMemo<DisplayedProcess | null>(
+    () =>
+      election
+        ? {
+            title: election.title,
+            description: election.description,
+            header: election.header,
+            streamUri: election.streamUri,
+            questions: (election.questions ?? []).map((question) => ({
+              upstreamId: question.upstreamId,
+              title: question.title,
+              description: question.description,
+              choices: (question.choices ?? []).map((choice) => ({
+                title: choice.title,
+                value: choice.value,
+                meta: { image: choice.meta?.image },
+              })),
+            })),
+          }
+        : null,
     [election]
   )
-  const mediaUrls = useMemo(() => (election ? displayedMediaUrls(election) : []), [election])
 
   const enabled =
-    !!election?.id && electionIds.length > 0 && typeof window !== 'undefined' && !!globalThis.crypto?.subtle
+    !!election?.id &&
+    !!shown?.questions?.some((question) => !!question.upstreamId) &&
+    typeof window !== 'undefined' &&
+    !!globalThis.crypto?.subtle
 
   const query = useQuery<ProcessVerification>({
-    queryKey: [...metadataVerificationQueryKey(election?.id ?? ''), electionIds, mediaUrls],
+    queryKey: [...metadataVerificationQueryKey(election?.id ?? ''), shown],
     queryFn: () =>
-      verifyProcessMetadata(
-        { electionIds, mediaUrls },
-        {
-          getElection: createGetChainElection(getVochainGatewayUrl(VOCDONI_ENVIRONMENT)),
-          fetchBytes: createFetchBytes(),
-          sha256: createSha256Hex(),
-        }
-      ),
+      verifyProcessMetadata(shown!, {
+        getElection: createGetChainElection(getVochainGatewayUrl(VOCDONI_ENVIRONMENT)),
+        fetchBytes: createFetchBytes(),
+        sha256: createSha256Hex(),
+      }),
     enabled,
     // Content only changes through a signed on-chain tx, which is rare; a stale-ballot
     // rejection invalidates this query right away, so a slow refresh is enough otherwise.

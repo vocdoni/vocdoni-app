@@ -1424,6 +1424,17 @@
         "unverifiable": "Zure nabigatzaileak ezin izan du eduki hau Vochain-ekin egiaztatu.",
         "verified": "Orri honek erakusten duena bat dator, bytez byte, erakundeak Vochain-en erregistratutako bertsioarekin."
       },
+      "field": {
+        "choice_title": "{{number}}. aukeraren testua",
+        "choice_value": "{{number}}. aukeraren balioa",
+        "choices": "Aukera kopurua",
+        "header": "Goiburuko irudia",
+        "process_description": "Bozketaren deskribapena",
+        "process_title": "Bozketaren izenburua",
+        "question_description": "Galderaren deskribapena",
+        "question_title": "Galdera",
+        "stream": "Bideoa"
+      },
       "footnote": "Zure nabigatzailean egiaztatua, edukiaren hasha kalkulatuz eta Vochain-ekin alderatuz.",
       "item": {
         "mismatch": "Ez dator bat",

@@ -1450,6 +1450,17 @@
         "unverifiable": "O teu navegador não conseguiu verificar este conteúdo com a Vochain.",
         "verified": "O que esta página mostra corresponde, byte a byte, à versão que a organização registou na Vochain."
       },
+      "field": {
+        "choice_title": "Texto da opção {{number}}",
+        "choice_value": "Valor da opção {{number}}",
+        "choices": "Número de opções",
+        "header": "Imagem de cabeçalho",
+        "process_description": "Descrição da votação",
+        "process_title": "Título da votação",
+        "question_description": "Descrição da pergunta",
+        "question_title": "Pergunta",
+        "stream": "Vídeo"
+      },
       "footnote": "Verificado no teu navegador, calculando o hash do conteúdo e comparando-o com a Vochain.",
       "item": {
         "mismatch": "Não corresponde",

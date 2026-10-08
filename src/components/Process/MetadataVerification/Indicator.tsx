@@ -3,7 +3,7 @@ import type { IconType } from 'react-icons'
 import { useTranslation } from 'react-i18next'
 import { RiQuestionLine, RiShieldCheckLine, RiShieldCrossLine, RiShieldLine } from 'react-icons/ri'
 import { useMetadataVerification } from './useMetadataVerification'
-import type { HashCheck } from './verify'
+import type { ContentField, FieldCheck, HashCheck } from './verify'
 
 const STATUS_STYLE: Record<HashCheck, { icon: IconType; color: string }> = {
   verified: { icon: RiShieldCheckLine, color: 'green.600' },
@@ -57,12 +57,58 @@ const mediaName = (url: string) => {
   }
 }
 
-const Row = ({ label, title, status }: { label: string; title?: string; status: HashCheck }) => {
+const useFieldLabel = () => {
+  const { t } = useTranslation()
+
+  return ({ field, choice }: FieldCheck) => {
+    const number = (choice ?? 0) + 1
+    const labels: Record<ContentField, string> = {
+      'process-title': t('process.verification.field.process_title', { defaultValue: 'Vote title' }),
+      'process-description': t('process.verification.field.process_description', {
+        defaultValue: 'Vote description',
+      }),
+      'question-title': t('process.verification.field.question_title', { defaultValue: 'Question' }),
+      'question-description': t('process.verification.field.question_description', {
+        defaultValue: 'Question description',
+      }),
+      choices: t('process.verification.field.choices', { defaultValue: 'Number of options' }),
+      'choice-title': t('process.verification.field.choice_title', {
+        number,
+        defaultValue: 'Option {{number}} text',
+      }),
+      'choice-value': t('process.verification.field.choice_value', {
+        number,
+        defaultValue: 'Option {{number}} value',
+      }),
+      header: t('process.verification.field.header', { defaultValue: 'Header image' }),
+      stream: t('process.verification.field.stream', { defaultValue: 'Video' }),
+    }
+    return labels[field]
+  }
+}
+
+const Row = ({
+  label,
+  title,
+  status,
+  nested,
+}: {
+  label: string
+  title?: string
+  status: HashCheck
+  nested?: boolean
+}) => {
   const { item } = useStatusLabels()
   const { icon, color } = STATUS_STYLE[status]
 
   return (
-    <Flex justifyContent='space-between' alignItems='center' gap={3} fontSize='sm'>
+    <Flex
+      justifyContent='space-between'
+      alignItems='center'
+      gap={3}
+      fontSize={nested ? 'xs' : 'sm'}
+      ps={nested ? 3 : 0}
+    >
       <Text truncate title={title ?? label}>
         {label}
       </Text>
@@ -83,6 +129,7 @@ export const MetadataVerificationIndicator = () => {
   const { t } = useTranslation()
   const { enabled, data, isPending, isError } = useMetadataVerification()
   const { headline, description } = useStatusLabels()
+  const fieldLabel = useFieldLabel()
 
   if (!enabled) return null
 
@@ -119,19 +166,31 @@ export const MetadataVerificationIndicator = () => {
               {documents.length > 0 && (
                 <Box display='flex' flexDirection='column' gap={1}>
                   {documents.map((document, index) => (
-                    <Row
-                      key={document.electionId}
-                      label={
-                        documents.length > 1
-                          ? t('process.verification.question', {
-                              number: index + 1,
-                              defaultValue: 'Question {{number}}',
-                            })
-                          : t('process.verification.ballot', { defaultValue: 'Ballot text' })
-                      }
-                      title={document.metadataURL}
-                      status={document.status}
-                    />
+                    <Box key={document.electionId} display='flex' flexDirection='column' gap={1}>
+                      <Row
+                        label={
+                          documents.length > 1
+                            ? t('process.verification.question', {
+                                number: index + 1,
+                                defaultValue: 'Question {{number}}',
+                              })
+                            : t('process.verification.ballot', { defaultValue: 'Ballot text' })
+                        }
+                        title={document.metadataURL}
+                        status={document.status}
+                      />
+                      {/* Only what did not check out: a verified field is the expected case. */}
+                      {document.fields
+                        ?.filter((field) => field.status !== 'verified')
+                        .map((field) => (
+                          <Row
+                            key={`${field.field}-${field.choice ?? ''}`}
+                            label={fieldLabel(field)}
+                            status={field.status}
+                            nested
+                          />
+                        ))}
+                    </Box>
                   ))}
                 </Box>
               )}

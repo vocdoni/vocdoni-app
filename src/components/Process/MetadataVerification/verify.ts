@@ -18,14 +18,39 @@ export type HashCheck = 'verified' | 'mismatch' | 'unverifiable' | 'no-hash'
 /** Why a document or medium could not be checked. */
 export type UnverifiableReason = 'chain-unavailable' | 'unsupported-url' | 'fetch-failed' | 'too-large' | 'not-listed'
 
+/** A piece of the ballot the voter is shown, compared with the verified metadata document. */
+export type ContentField =
+  | 'process-title'
+  | 'process-description'
+  | 'question-title'
+  | 'question-description'
+  | 'choices'
+  | 'choice-title'
+  | 'choice-value'
+  | 'header'
+  | 'stream'
+
+export type FieldCheck = {
+  field: ContentField
+  /** Choice position, for `choice-title` / `choice-value`. */
+  choice?: number
+  status: Exclude<HashCheck, 'no-hash'>
+}
+
 export type DocumentVerification = {
   /** On-chain election id of the question. */
   electionId: string
   metadataURL?: string
   expectedHash?: string
   actualHash?: string
+  /**
+   * `mismatch` either when the bytes differ from the committed hash, or when they match but
+   * what the page shows differs from them (then `fields` names the differing pieces).
+   */
   status: HashCheck
   reason?: UnverifiableReason
+  /** Field-by-field comparison of the shown ballot with a hash-verified document. */
+  fields?: FieldCheck[]
 }
 
 export type MediaVerification = {
@@ -41,6 +66,28 @@ export type ProcessVerification = {
   status: HashCheck
   documents: DocumentVerification[]
   media: MediaVerification[]
+}
+
+/** Multi-language text as served by the SaaS API or written in a metadata document. */
+export type LocalizedValue = string | Record<string, string | undefined> | null | undefined
+
+export type DisplayedChoice = { title?: LocalizedValue; value?: number; meta?: { image?: unknown } }
+
+export type DisplayedQuestion = {
+  /** On-chain election id; questions without one are not published and are skipped. */
+  upstreamId?: string
+  title?: LocalizedValue
+  description?: LocalizedValue
+  choices?: DisplayedChoice[]
+}
+
+/** What the voter page renders, as read from the SaaS API. */
+export type DisplayedProcess = {
+  title?: LocalizedValue
+  description?: LocalizedValue
+  header?: string
+  streamUri?: string
+  questions?: DisplayedQuestion[]
 }
 
 /** The Vochain API election fields this check reads. */
@@ -117,6 +164,84 @@ export const parseMetadata = (bytes: ArrayBuffer | Uint8Array): unknown => {
   }
 }
 
+const toLanguageMap = (value: unknown): Record<string, string> => {
+  if (typeof value === 'string') return value ? { default: value } : {}
+  if (!isRecord(value)) return {}
+  return Object.fromEntries(
+    Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === 'string' && entry[1] !== '')
+  )
+}
+
+/**
+ * True when the shown text matches the document's in every language the document has. A
+ * document without the text matches only a page that shows none either.
+ */
+export const localizedMatches = (shown: unknown, documented: unknown): boolean => {
+  const doc = toLanguageMap(documented)
+  const page = toLanguageMap(shown)
+  const languages = Object.keys(doc)
+  if (languages.length === 0) return Object.keys(page).length === 0
+  return languages.every((language) => page[language] === doc[language])
+}
+
+const sameText = (shown: unknown, documented: unknown) =>
+  (typeof shown === 'string' ? shown : '') === (typeof documented === 'string' ? documented : '')
+
+const check = (field: ContentField, matches: boolean, choice?: number): FieldCheck => ({
+  field,
+  ...(choice === undefined ? {} : { choice }),
+  status: matches ? 'verified' : 'mismatch',
+})
+
+/**
+ * Compares what the page shows for one question (and its process) with that question's
+ * hash-verified metadata document. The process title and description live under
+ * `meta.process` in the document; a document without it leaves them unverifiable, not
+ * mismatched.
+ */
+export const compareContent = (
+  process: DisplayedProcess,
+  question: DisplayedQuestion,
+  metadata: unknown
+): FieldCheck[] => {
+  const record = (value: unknown): Record<string, unknown> => (isRecord(value) ? value : {})
+  const doc = record(metadata)
+  const meta = record(doc.meta)
+  const media = record(doc.media)
+  const docQuestion = record(Array.isArray(doc.questions) ? doc.questions[0] : undefined)
+  const docChoices: unknown[] = Array.isArray(docQuestion.choices) ? docQuestion.choices : []
+  const shownChoices = question.choices ?? []
+
+  const fields: FieldCheck[] = []
+
+  const docProcess = meta.process
+  if (isRecord(docProcess)) {
+    fields.push(check('process-title', localizedMatches(process.title, docProcess.title)))
+    fields.push(check('process-description', localizedMatches(process.description, docProcess.description)))
+  } else {
+    fields.push({ field: 'process-title', status: 'unverifiable' })
+    fields.push({ field: 'process-description', status: 'unverifiable' })
+  }
+
+  fields.push(check('question-title', localizedMatches(question.title, docQuestion.title)))
+  fields.push(check('question-description', localizedMatches(question.description, docQuestion.description)))
+  fields.push(check('choices', shownChoices.length === docChoices.length))
+  shownChoices.forEach((choice, index) => {
+    const docChoice = docChoices[index]
+    if (!isRecord(docChoice)) {
+      fields.push(check('choice-title', false, index))
+      fields.push(check('choice-value', false, index))
+      return
+    }
+    fields.push(check('choice-title', localizedMatches(choice.title, docChoice.title), index))
+    fields.push(check('choice-value', choice.value === docChoice.value, index))
+  })
+  fields.push(check('header', sameText(process.header, media.header)))
+  fields.push(check('stream', sameText(process.streamUri, media.streamUri)))
+
+  return fields
+}
+
 const isFetchableUrl = (url?: string): url is string => !!url && /^https?:\/\//i.test(url)
 
 /**
@@ -133,7 +258,12 @@ export const summarize = (documents: DocumentVerification[], media: MediaVerific
 
 type DocumentResult = { verification: DocumentVerification; mediaHashes: Record<string, string> }
 
-const verifyDocument = async (electionId: string, deps: VerifyDeps): Promise<DocumentResult> => {
+const verifyDocument = async (
+  process: DisplayedProcess,
+  question: DisplayedQuestion & { upstreamId: string },
+  deps: VerifyDeps
+): Promise<DocumentResult> => {
+  const electionId = question.upstreamId
   let info: ChainElectionInfo
   try {
     info = await deps.getElection(electionId)
@@ -160,11 +290,20 @@ const verifyDocument = async (electionId: string, deps: VerifyDeps): Promise<Doc
 
   const actualHash = await deps.sha256(bytes)
   const status = compareHash(actualHash, expectedHash)
-  // Media hashes are only as trustworthy as the document listing them: read them from a
-  // document the chain vouches for, never from one that failed the check.
-  const mediaHashes = status === 'verified' ? readMediaHashes(parseMetadata(bytes)) : {}
+  // Content and media hashes are only as trustworthy as the document carrying them: read
+  // them from a document the chain vouches for, never from one that failed the check.
+  if (status !== 'verified') return { verification: { ...base, actualHash, status }, mediaHashes: {} }
 
-  return { verification: { ...base, actualHash, status }, mediaHashes }
+  // The page renders the SaaS API's copy of the ballot, not this document: a matching hash
+  // proves nothing about the screen until the two are compared field by field.
+  const metadata = parseMetadata(bytes)
+  const fields = compareContent(process, question, metadata)
+  const contentStatus: HashCheck = fields.some((field) => field.status === 'mismatch') ? 'mismatch' : 'verified'
+
+  return {
+    verification: { ...base, actualHash, status: contentStatus, fields },
+    mediaHashes: readMediaHashes(metadata),
+  }
 }
 
 const verifyMedium = async (
@@ -194,14 +333,19 @@ const verifyMedium = async (
 }
 
 /**
- * Verifies the metadata document of every given on-chain election and every displayed media
+ * Verifies the metadata document of every published question against its on-chain hash,
+ * compares what the page shows with each verified document, and checks every displayed media
  * URL against the hashes those documents list.
  */
 export const verifyProcessMetadata = async (
-  { electionIds, mediaUrls }: { electionIds: string[]; mediaUrls: string[] },
+  process: DisplayedProcess,
   deps: VerifyDeps
 ): Promise<ProcessVerification> => {
-  const results = await Promise.all(electionIds.map((id) => verifyDocument(id, deps)))
+  const published = (process.questions ?? []).filter(
+    (question): question is DisplayedQuestion & { upstreamId: string } => !!question.upstreamId
+  )
+  const mediaUrls = displayedMediaUrls(process)
+  const results = await Promise.all(published.map((question) => verifyDocument(process, question, deps)))
   const documents = results.map((r) => r.verification)
 
   const mediaHashes: Record<string, string> = {}
@@ -209,18 +353,14 @@ export const verifyProcessMetadata = async (
     for (const [url, hash] of Object.entries(hashes)) mediaHashes[url] ??= hash
   }
 
-  const uniqueMedia = [...new Set(mediaUrls.filter(Boolean))]
+  const uniqueMedia = [...new Set(mediaUrls)]
   const media = await Promise.all(uniqueMedia.map((url) => verifyMedium(url, mediaHashes[url], deps)))
 
   return { status: summarize(documents, media), documents, media }
 }
 
 /** The media URLs a voter sees on the ballot: header, stream and choice images. */
-export const displayedMediaUrls = (election: {
-  header?: string
-  streamUri?: string
-  questions?: Array<{ choices?: Array<{ meta?: { image?: unknown } }> }>
-}): string[] => {
+export const displayedMediaUrls = (election: DisplayedProcess): string[] => {
   const urls: string[] = []
   const push = (value: unknown) => {
     if (typeof value === 'string' && value.trim()) urls.push(value.trim())
