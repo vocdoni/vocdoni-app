@@ -1456,6 +1456,7 @@
         "verified": "Inhalt geprüft"
       },
       "title": "Prüfung des Inhalts",
+      "url_only_note": "In Beschreibungen eingebettete Bilder und das Video sind nur über ihre URL abgedeckt.",
       "video_url": "Video: URL geprüft; der Inhalt des Videos ist nicht abgedeckt."
     },
     "vote_failed": {

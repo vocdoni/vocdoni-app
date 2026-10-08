@@ -232,6 +232,13 @@ export const MetadataVerificationIndicator = () => {
                   })}
                 </Text>
               )}
+              {/* Only the structured images (header, choice images) are hash-checked; anything else is
+                  only as good as the text that links it, which the comparison covers. */}
+              <Text fontSize='xs' color='texts.subtle'>
+                {t('process.verification.url_only_note', {
+                  defaultValue: 'Images embedded in descriptions and the video are covered only by their URL.',
+                })}
+              </Text>
               <Text fontSize='xs' color='texts.subtle'>
                 {t('process.verification.footnote', {
                   defaultValue: 'Checked in your browser by hashing the content and comparing it with the Vochain.',

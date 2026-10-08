@@ -1482,6 +1482,7 @@
         "verified": "Conteúdo verificado"
       },
       "title": "Verificação do conteúdo",
+      "url_only_note": "As imagens incorporadas nas descrições e o vídeo são cobertos apenas pela URL.",
       "video_url": "Vídeo: URL verificada; o conteúdo do vídeo não é coberto."
     },
     "vote_failed": {

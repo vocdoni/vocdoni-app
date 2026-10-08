@@ -1456,6 +1456,7 @@
         "verified": "Edukia egiaztatua"
       },
       "title": "Edukiaren egiaztapena",
+      "url_only_note": "Deskribapenetan txertatutako irudiak eta bideoa URLaren bidez soilik daude estalita.",
       "video_url": "Bideoa: URLa egiaztatua; bideoaren edukia ez dago estalita."
     },
     "vote_failed": {

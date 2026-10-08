@@ -1456,6 +1456,7 @@
         "verified": "Content verified"
       },
       "title": "Content verification",
+      "url_only_note": "Images embedded in descriptions and the video are covered only by their URL.",
       "video_url": "Video: URL verified; the video content itself is not covered."
     },
     "vote_failed": {
