@@ -46,6 +46,7 @@ export enum ApiEndpoints {
   PasswordRecovery = 'users/password/recovery',
   PasswordReset = 'users/password/reset',
   Plans = 'plans',
+  ProcessCheckout = 'processes/{processId}/checkout',
   ProcessPrice = 'processes/{processId}/price',
   Refresh = 'auth/refresh',
   Register = 'users',
@@ -70,6 +71,8 @@ export enum ErrorCode {
   QuoteRequired = 40176,
   PaymentSessionConflict = 40177,
   PaymentRequired = 40178,
+  // Another request (e.g. the publication a paid checkout triggers) is publishing the process
+  PublishInProgress = 40903,
 }
 
 interface IApiError {

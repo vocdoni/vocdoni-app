@@ -1,12 +1,16 @@
-import { act, renderHook } from '@testing-library/react'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import type { Blocker } from 'react-router'
 import { useLocation, useNavigate } from 'react-router'
-import { TestMemoryRouter } from '~src/test-utils'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import { ErrorCode } from '~components/Auth/api'
+import { useApiClient } from '~src/providers/ApiClientProvider'
+import { createTestQueryClient, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultQuestion, Process, SelectorTypes } from './common'
-import { buildCensusSpec, useConfirmOnNavigate, useFormToVotingProcessRequest } from './index'
+import { buildCensusSpec, checkoutStart, useConfirmOnNavigate, useDraft, useFormToVotingProcessRequest } from './index'
 
 const mockPermission = vi.fn()
 
@@ -46,6 +50,48 @@ vi.mock('~elements/dashboard/processes/drafts', () => ({
 vi.mock('~src/providers/ApiClientProvider', () => ({
   useApiClient: vi.fn(),
 }))
+
+describe('useDraft', () => {
+  it('loads nothing for a process published since its id was stored', async () => {
+    const get = vi.fn().mockResolvedValue({ id: 'p1', published: true })
+    vi.mocked(useApiClient).mockReturnValue({ client: { elections: { get } } } as unknown as ReturnType<
+      typeof useApiClient
+    >)
+    const queryClient = createTestQueryClient()
+
+    const { result } = renderHook(() => useDraft('p1'), {
+      wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data).toBeNull()
+  })
+})
+
+describe('checkoutStart', () => {
+  const refusal = (code: number, data?: unknown) => new VocdoniApiError(402, { data }, 'refused', code)
+
+  it('sends a draft that must be paid to its checkout', () => {
+    expect(checkoutStart(refusal(ErrorCode.PaymentRequired, { totalCents: 29700, quoteRequired: false }))).toBe(
+      'checkout'
+    )
+  })
+
+  it('waits for a payment already under way instead of charging again', () => {
+    expect(checkoutStart(refusal(ErrorCode.PaymentSessionConflict))).toBe('confirming')
+  })
+
+  it('leaves out what no checkout can settle', () => {
+    // Only a custom quote publishes it: checkout would refuse it (40176)
+    expect(checkoutStart(refusal(ErrorCode.PaymentRequired, { totalCents: 900000, quoteRequired: true }))).toBe(
+      undefined
+    )
+    expect(checkoutStart(refusal(ErrorCode.QuoteRequired))).toBeUndefined()
+    // A managed organization pays from its integrator's wallet, which only the integrator tops up
+    expect(checkoutStart(refusal(ErrorCode.InsufficientWalletBalance))).toBeUndefined()
+    expect(checkoutStart(new Error('network down'))).toBeUndefined()
+  })
+})
 
 describe('buildCensusSpec', () => {
   const form = (overrides: Partial<Process> = {}): Process =>

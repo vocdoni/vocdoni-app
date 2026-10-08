@@ -1324,6 +1324,26 @@
       }
     },
     "census": "Censimento",
+    "checkout": {
+      "check_again": "Controlla di nuovo",
+      "confirming": "Conferma del pagamento in corso…",
+      "failed": "Il pagamento non è andato a buon fine, quindi non è stato addebitato nulla e il processo di voto non è stato pubblicato. Puoi riprovare, con lo stesso metodo di pagamento o con un altro.",
+      "pay": "Paga {{amount}} e pubblica",
+      "processing": "Il tuo pagamento è in fase di elaborazione. Alcuni metodi di pagamento richiedono qualche giorno. Il processo di voto viene pubblicato automaticamente non appena il pagamento è completato e nel frattempo la sua bozza non può essere modificata. Puoi chiudere questa finestra.",
+      "publish_failed": "Il tuo pagamento è andato a buon fine, ma non è ancora stato possibile pubblicare il processo di voto. Pubblicarlo di nuovo è gratuito.",
+      "publishing": "Pagamento ricevuto. Pubblicazione del tuo processo di voto in corso…",
+      "retry_payment": "Riprova il pagamento",
+      "summary": {
+        "one_time": "Pagamento una tantum per questo processo di voto",
+        "subtotal": "Subtotale",
+        "title": "Riepilogo dell'ordine",
+        "total": "Totale da pagare oggi",
+        "vat": "IVA",
+        "vat_pending": "Calcolata in base al tuo indirizzo di fatturazione"
+      },
+      "timeout": "Il tuo pagamento non è ancora stato confermato. Non pagare di nuovo: una volta confermato, il processo di voto verrà pubblicato automaticamente. Controlla di nuovo tra un momento.",
+      "title": "Paga e pubblica"
+    },
     "create": {
       "action": {
         "publish": "Pubblica",
