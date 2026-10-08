@@ -1301,6 +1301,26 @@
       }
     },
     "census": "Teilnehmerliste",
+    "checkout": {
+      "check_again": "Erneut prüfen",
+      "confirming": "Deine Zahlung wird bestätigt…",
+      "failed": "Die Zahlung ist nicht durchgegangen, es wurde also nichts abgebucht und der Abstimmungsprozess wurde nicht veröffentlicht. Du kannst es erneut versuchen, mit derselben oder einer anderen Zahlungsmethode.",
+      "pay": "{{amount}} bezahlen und veröffentlichen",
+      "processing": "Deine Zahlung wird bearbeitet. Bei manchen Zahlungsmethoden dauert es einige Tage, bis sie abgeschlossen ist. Der Abstimmungsprozess wird danach automatisch veröffentlicht, und sein Entwurf kann bis dahin nicht geändert werden. Du kannst dieses Fenster schließen.",
+      "publish_failed": "Deine Zahlung ist durchgegangen, aber der Abstimmungsprozess konnte noch nicht veröffentlicht werden. Die erneute Veröffentlichung ist kostenlos.",
+      "publishing": "Zahlung erhalten. Dein Abstimmungsprozess wird veröffentlicht…",
+      "retry_payment": "Zahlung erneut versuchen",
+      "summary": {
+        "one_time": "Einmalzahlung für diesen Abstimmungsprozess",
+        "subtotal": "Zwischensumme",
+        "title": "Bestellübersicht",
+        "total": "Heute fälliger Gesamtbetrag",
+        "vat": "MwSt.",
+        "vat_pending": "Wird anhand deiner Rechnungsadresse berechnet"
+      },
+      "timeout": "Deine Zahlung wurde noch nicht bestätigt. Bezahle nicht erneut: Sobald sie bestätigt ist, wird der Abstimmungsprozess automatisch veröffentlicht. Prüfe es gleich noch einmal.",
+      "title": "Bezahlen und veröffentlichen"
+    },
     "create": {
       "action": {
         "publish": "Veröffentlichen",

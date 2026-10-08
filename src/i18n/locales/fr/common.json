@@ -1324,6 +1324,26 @@
       }
     },
     "census": "Liste électorale",
+    "checkout": {
+      "check_again": "Vérifier à nouveau",
+      "confirming": "Confirmation de votre paiement…",
+      "failed": "Le paiement n'a pas abouti : rien n'a été débité et le processus de vote n'a pas été publié. Vous pouvez réessayer, avec le même moyen de paiement ou un autre.",
+      "pay": "Payer {{amount}} et publier",
+      "processing": "Votre paiement est en cours de traitement. Certains moyens de paiement prennent quelques jours. Le processus de vote est publié automatiquement une fois le paiement validé, et son brouillon ne peut pas être modifié d'ici là. Vous pouvez fermer cette fenêtre.",
+      "publish_failed": "Votre paiement a abouti, mais le processus de vote n'a pas encore pu être publié. Le republier est gratuit.",
+      "publishing": "Paiement reçu. Publication de votre processus de vote…",
+      "retry_payment": "Réessayer le paiement",
+      "summary": {
+        "one_time": "Paiement unique pour ce processus de vote",
+        "subtotal": "Sous-total",
+        "title": "Récapitulatif de la commande",
+        "total": "Total à payer aujourd'hui",
+        "vat": "TVA",
+        "vat_pending": "Calculée à partir de votre adresse de facturation"
+      },
+      "timeout": "Votre paiement n'a pas encore été confirmé. Ne payez pas une seconde fois : dès qu'il sera confirmé, le processus de vote sera publié automatiquement. Vérifiez à nouveau dans un instant.",
+      "title": "Payer et publier"
+    },
     "create": {
       "action": {
         "publish": "Publier",

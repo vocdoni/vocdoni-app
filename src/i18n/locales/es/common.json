@@ -1324,6 +1324,26 @@
       }
     },
     "census": "Censo",
+    "checkout": {
+      "check_again": "Comprobar de nuevo",
+      "confirming": "Confirmando tu pago…",
+      "failed": "El pago no se ha completado, así que no se ha cobrado nada y el proceso de votación no se ha publicado. Puedes volver a intentarlo con el mismo método de pago u otro.",
+      "pay": "Pagar {{amount}} y publicar",
+      "processing": "Tu pago se está procesando. Algunos métodos de pago tardan unos días en completarse. El proceso de votación se publicará automáticamente cuando se complete y, mientras tanto, su borrador no se puede modificar. Puedes cerrar esta ventana.",
+      "publish_failed": "Tu pago se ha completado, pero el proceso de votación aún no se ha podido publicar. Volver a publicarlo es gratis.",
+      "publishing": "Pago recibido. Publicando tu proceso de votación…",
+      "retry_payment": "Reintentar el pago",
+      "summary": {
+        "one_time": "Pago único para este proceso de votación",
+        "subtotal": "Subtotal",
+        "title": "Resumen del pedido",
+        "total": "Total a pagar hoy",
+        "vat": "IVA",
+        "vat_pending": "Se calcula a partir de tu dirección de facturación"
+      },
+      "timeout": "Tu pago aún no se ha confirmado. No vuelvas a pagar: cuando se confirme, el proceso de votación se publicará automáticamente. Vuelve a comprobarlo en un momento.",
+      "title": "Pagar y publicar"
+    },
     "create": {
       "action": {
         "publish": "Publicar",
