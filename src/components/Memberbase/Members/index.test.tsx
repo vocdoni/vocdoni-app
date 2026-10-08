@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router'
-import { render, screen } from '~src/test-utils'
+import { fireEvent, render, screen, TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { TableProvider } from '../TableProvider'
 import MembersTable from './index'
@@ -49,11 +49,13 @@ vi.mock('./Manager', () => ({
   MemberManager: () => null,
 }))
 
+const navigateMock = vi.hoisted(() => vi.fn())
+
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>()
   return {
     ...actual,
-    useNavigate: () => vi.fn(),
+    useNavigate: () => navigateMock,
     useOutletContext: () => ({
       search: '',
       setSearch: vi.fn(),
@@ -74,13 +76,21 @@ const columns = [
   { id: 'name', label: 'First Name', visible: true },
   { id: 'surname', label: 'Last Name', visible: true },
   { id: 'email', label: 'Email', visible: true },
+  { id: 'phone', label: 'Phone', visible: true },
+  { id: 'memberNumber', label: 'Member Number', visible: true },
+  { id: 'weight', label: 'Voting power (Weight)', visible: true },
 ]
 
-const renderMembers = () =>
+const renderMembers = (
+  url = '/admin/memberbase/members/1',
+  state: { isFetching?: boolean; isPlaceholderData?: boolean } = {}
+) =>
   render(
-    <TableProvider data={members} initialColumns={columns}>
-      <MembersTable />
-    </TableProvider>
+    <TestMemoryRouter initialEntries={[url]}>
+      <TableProvider data={members} initialColumns={columns} {...state}>
+        <MembersTable />
+      </TableProvider>
+    </TestMemoryRouter>
   )
 
 describe('MembersTable layout', () => {
@@ -213,5 +223,149 @@ describe('MembersTable range summary', () => {
 
     expect(screen.getByText('Showing 1–2 of 2 results')).toBeInTheDocument()
     expect(screen.queryByText(/of 2 members/)).not.toBeInTheDocument()
+  })
+})
+
+describe('MembersTable column sorting', () => {
+  const original = window.matchMedia
+
+  beforeEach(() => {
+    navigateMock.mockClear()
+    // Desktop widths, so the table headers render (see the layout tests above).
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches: true,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    })
+  })
+
+  afterEach(() => {
+    Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
+  })
+
+  const sortButton = (label: string) => screen.queryByRole('button', { name: label })
+
+  it('only makes first name, last name, email and member number sortable', () => {
+    renderMembers()
+
+    for (const label of ['First Name', 'Last Name', 'Email', 'Member Number']) {
+      expect(sortButton(label)).toBeInTheDocument()
+    }
+    for (const label of ['Phone', 'Voting power (Weight)']) {
+      expect(screen.getByRole('columnheader', { name: label })).toBeInTheDocument()
+      expect(sortButton(label)).not.toBeInTheDocument()
+    }
+    // Nothing is sorted by default, so no header claims a sort direction.
+    for (const header of screen.getAllByRole('columnheader')) {
+      expect(header).not.toHaveAttribute('aria-sort')
+    }
+  })
+
+  it('sorts an unsorted column ascending, back on page 1 and keeping other params', () => {
+    renderMembers('/admin/memberbase/members/3?limit=20')
+
+    fireEvent.click(sortButton('Last Name'))
+
+    expect(navigateMock).toHaveBeenCalledWith('/admin/memberbase/members/1?limit=20&sortBy=surname&sortOrder=asc')
+  })
+
+  it('marks the active column and cycles it asc -> desc -> unsorted', () => {
+    const { unmount } = renderMembers('/admin/memberbase/members/2?sortBy=email&sortOrder=asc')
+
+    expect(screen.getByRole('columnheader', { name: 'Email' })).toHaveAttribute('aria-sort', 'ascending')
+    fireEvent.click(sortButton('Email'))
+    expect(navigateMock).toHaveBeenLastCalledWith('/admin/memberbase/members/1?sortBy=email&sortOrder=desc')
+    unmount()
+
+    renderMembers('/admin/memberbase/members/2?limit=30&sortBy=email&sortOrder=desc')
+    expect(screen.getByRole('columnheader', { name: 'Email' })).toHaveAttribute('aria-sort', 'descending')
+    fireEvent.click(sortButton('Email'))
+    expect(navigateMock).toHaveBeenLastCalledWith('/admin/memberbase/members/1?limit=30')
+  })
+
+  it('keeps the current rows in place, marked busy, while a new sort loads', () => {
+    renderMembers('/admin/memberbase/members/1?sortBy=name&sortOrder=asc', {
+      isFetching: true,
+      isPlaceholderData: true,
+    })
+
+    // The rows stay in place (no progress bar pushing the table down), only marked as busy.
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    expect(screen.getByRole('cell', { name: 'Ada' }).closest('tbody')).toHaveAttribute('aria-busy', 'true')
+  })
+
+  it('switches to another column ascending (single-column sort)', () => {
+    renderMembers('/admin/memberbase/members/1?sortBy=name&sortOrder=desc')
+
+    fireEvent.click(sortButton('Member Number'))
+
+    expect(navigateMock).toHaveBeenCalledWith('/admin/memberbase/members/1?sortBy=memberNumber&sortOrder=asc')
+  })
+})
+
+// Placeholder rows are the previous page or sort, kept on screen while the requested one loads.
+// Selecting or acting on them would target members the user is no longer looking at.
+describe('MembersTable placeholder rows', () => {
+  const original = window.matchMedia
+  const placeholder = { isFetching: true, isPlaceholderData: true }
+
+  const setDesktop = (matches: boolean) =>
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: (query: string) => ({
+        matches,
+        media: query,
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => true,
+      }),
+    })
+
+  afterEach(() => {
+    Object.defineProperty(window, 'matchMedia', { writable: true, value: original })
+  })
+
+  const expectRowsLocked = (locked: boolean) => {
+    // Select all, plus one checkbox and one actions menu per row.
+    const checkboxes = screen.getAllByRole('checkbox')
+    const actions = screen.getAllByRole('button', { name: 'Actions' })
+    expect(checkboxes).toHaveLength(members.length + 1)
+    expect(actions).toHaveLength(members.length)
+    for (const control of [...checkboxes, ...actions]) {
+      if (locked) expect(control).toBeDisabled()
+      else expect(control).toBeEnabled()
+    }
+  }
+
+  it('locks selection and row actions in the table while the requested rows load', () => {
+    setDesktop(true)
+    renderMembers('/admin/memberbase/members/2', placeholder)
+
+    expectRowsLocked(true)
+  })
+
+  it('locks selection and row actions in the mobile cards too', () => {
+    setDesktop(false)
+    renderMembers('/admin/memberbase/members/2', placeholder)
+
+    expectRowsLocked(true)
+  })
+
+  it('frees them again once the rows are the requested ones', () => {
+    setDesktop(true)
+    renderMembers('/admin/memberbase/members/2')
+
+    expectRowsLocked(false)
   })
 })

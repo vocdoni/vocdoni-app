@@ -1087,6 +1087,7 @@
       "showing_results_one": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultado",
       "showing_results_many": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultados",
       "showing_results_other": "Mostrando {{from, number}}–{{to, number}} de {{count, number}} resultados",
+      "sort_by": "Ordenar por {{column}}",
       "toggle_column": "Alternar coluna {{column}}"
     }
   },
