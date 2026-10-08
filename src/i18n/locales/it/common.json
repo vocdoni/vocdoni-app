@@ -1648,6 +1648,8 @@
         "header": "Immagine di intestazione",
         "media_hash": "Hash del file multimediale",
         "other": "Altre impostazioni",
+        "process_description": "Descrizione del processo",
+        "process_title": "Titolo del processo",
         "question_description": "Descrizione della domanda",
         "question_n_choice_title": "Domanda {{question}}, opzione {{choice}}",
         "question_n_description": "Descrizione della domanda {{question}}",

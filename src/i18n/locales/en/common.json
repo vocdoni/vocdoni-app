@@ -1621,6 +1621,8 @@
         "header": "Header image",
         "media_hash": "Media file hash",
         "other": "Other settings",
+        "process_description": "Process description",
+        "process_title": "Process title",
         "question_description": "Question description",
         "question_n_choice_title": "Question {{question}}, option {{choice}}",
         "question_n_description": "Question {{question}} description",

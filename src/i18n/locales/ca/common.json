@@ -1648,6 +1648,8 @@
         "header": "Imatge de capçalera",
         "media_hash": "Hash del fitxer multimèdia",
         "other": "Altres paràmetres",
+        "process_description": "Descripció del procés",
+        "process_title": "Títol del procés",
         "question_description": "Descripció de la pregunta",
         "question_n_choice_title": "Pregunta {{question}}, opció {{choice}}",
         "question_n_description": "Descripció de la pregunta {{question}}",

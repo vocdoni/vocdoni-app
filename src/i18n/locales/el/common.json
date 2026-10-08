@@ -1621,6 +1621,8 @@
         "header": "Εικόνα κεφαλίδας",
         "media_hash": "Hash αρχείου πολυμέσων",
         "other": "Άλλες ρυθμίσεις",
+        "process_description": "Περιγραφή διαδικασίας",
+        "process_title": "Τίτλος διαδικασίας",
         "question_description": "Περιγραφή ερώτησης",
         "question_n_choice_title": "Ερώτηση {{question}}, επιλογή {{choice}}",
         "question_n_description": "Περιγραφή ερώτησης {{question}}",

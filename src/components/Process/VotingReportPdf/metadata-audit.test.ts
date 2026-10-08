@@ -166,6 +166,42 @@ describe('diffMetadata', () => {
     ])
   })
 
+  it('reports the process title and description from meta.process as their own fields', () => {
+    const withProcess = (process: Record<string, unknown>) => ({
+      ...baseMetadata,
+      meta: { ...baseMetadata.meta, process },
+    })
+
+    expect(
+      diffMetadata(
+        withProcess({ title: { default: 'Annual assembly', es: 'Asamblea anual' } }),
+        withProcess({
+          title: { default: 'Annual general assembly', es: 'Asamblea anual' },
+          description: { default: 'Agenda for 2026.' },
+        })
+      )
+    ).toEqual([
+      {
+        field: 'processTitle',
+        lang: 'default',
+        before: 'Annual assembly',
+        after: 'Annual general assembly',
+      },
+      { field: 'processDescription', lang: 'default', before: null, after: 'Agenda for 2026.' },
+    ])
+  })
+
+  it('does not report meta.process as another change when it is added or removed', () => {
+    const withProcess = { ...baseMetadata, meta: { ...baseMetadata.meta, process: { title: { default: 'Assembly' } } } }
+
+    expect(diffMetadata(baseMetadata, withProcess)).toEqual([
+      { field: 'processTitle', lang: 'default', before: null, after: 'Assembly' },
+    ])
+    expect(diffMetadata(withProcess, baseMetadata)).toEqual([
+      { field: 'processTitle', lang: 'default', before: 'Assembly', after: null },
+    ])
+  })
+
   it('reports any other difference once', () => {
     expect(diffMetadata(baseMetadata, { ...baseMetadata, type: { name: 'approval', properties: {} } })).toEqual([
       { field: 'other', before: null, after: null },

@@ -34,6 +34,8 @@ export type MetadataIntegrity = 'verified' | 'mismatch' | 'unrecorded' | 'unreac
 export type MetadataChangeField =
   | 'title'
   | 'description'
+  | 'processTitle'
+  | 'processDescription'
   | 'header'
   | 'streamUri'
   | 'mediaHash'
@@ -190,23 +192,32 @@ const omit = (value: unknown, keys: string[]): Record<string, unknown> =>
   Object.fromEntries(Object.entries(asRecord(value)).filter(([key]) => !keys.includes(key)))
 
 /** The document without the fields diffed one by one, to detect any change in the rest of it. */
-const withoutAuditedFields = (doc: Record<string, unknown>): unknown => ({
-  ...omit(doc, ['title', 'description', 'media', 'meta', 'questions']),
-  media: omit(doc.media, ['header', 'streamUri']),
-  meta: omit(doc.meta, ['mediaHashes']),
-  questions: asArray(doc.questions).map((question) =>
-    isRecord(question)
-      ? {
-          ...omit(question, ['title', 'description', 'choices']),
-          choices: asArray(question.choices).map((choice) => (isRecord(choice) ? omit(choice, ['title']) : choice)),
-        }
-      : question
-  ),
-})
+const withoutAuditedFields = (doc: Record<string, unknown>): unknown => {
+  // Only the rest of `meta.process` counts, so a document without it equals one carrying just the
+  // audited title and description.
+  const otherProcess = omit(asRecord(doc.meta).process, ['title', 'description'])
+  return {
+    ...omit(doc, ['title', 'description', 'media', 'meta', 'questions']),
+    media: omit(doc.media, ['header', 'streamUri']),
+    meta: {
+      ...omit(doc.meta, ['mediaHashes', 'process']),
+      ...(Object.keys(otherProcess).length ? { process: otherProcess } : {}),
+    },
+    questions: asArray(doc.questions).map((question) =>
+      isRecord(question)
+        ? {
+            ...omit(question, ['title', 'description', 'choices']),
+            choices: asArray(question.choices).map((choice) => (isRecord(choice) ? omit(choice, ['title']) : choice)),
+          }
+        : question
+    ),
+  }
+}
 
 /**
  * Field-level differences between two election metadata documents: multi-language title and
- * description, header image and video URLs, recorded media hashes, and the title and description of
+ * description, the title and description of the process the election belongs to (`meta.process`,
+ * set by the SaaS backend on every question's document), header image and video URLs, recorded media hashes, and the title and description of
  * every question and the title of every choice. Anything else that differs is reported as a single
  * `other` change, so no difference goes unreported.
  */
@@ -215,9 +226,13 @@ export const diffMetadata = (beforeDoc: unknown, afterDoc: unknown): MetadataCha
   const after = asRecord(afterDoc)
   const beforeMedia = asRecord(before.media)
   const afterMedia = asRecord(after.media)
+  const beforeProcess = asRecord(asRecord(before.meta).process)
+  const afterProcess = asRecord(asRecord(after.meta).process)
   const changes: MetadataChange[] = [
     ...diffText(before.title, after.title, { field: 'title' }),
     ...diffText(before.description, after.description, { field: 'description' }),
+    ...diffText(beforeProcess.title, afterProcess.title, { field: 'processTitle' }),
+    ...diffText(beforeProcess.description, afterProcess.description, { field: 'processDescription' }),
     ...diffString(beforeMedia.header, afterMedia.header, { field: 'header' }),
     ...diffString(beforeMedia.streamUri, afterMedia.streamUri, { field: 'streamUri' }),
   ]

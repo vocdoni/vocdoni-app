@@ -1621,6 +1621,8 @@
         "header": "Titelbild",
         "media_hash": "Hash der Mediendatei",
         "other": "Weitere Einstellungen",
+        "process_description": "Beschreibung des Prozesses",
+        "process_title": "Titel des Prozesses",
         "question_description": "Beschreibung der Frage",
         "question_n_choice_title": "Frage {{question}}, Option {{choice}}",
         "question_n_description": "Beschreibung von Frage {{question}}",

@@ -46,6 +46,8 @@ export type AuditedQuestion = { title: string; upstreamId?: string }
 const TEXT_FIELDS = new Set<MetadataChange['field']>([
   'title',
   'description',
+  'processTitle',
+  'processDescription',
   'questionTitle',
   'questionDescription',
   'choiceTitle',
@@ -85,6 +87,12 @@ const getChangeLabel = (change: MetadataChange, singleQuestion: boolean, t: TFun
       break
     case 'description':
       label = t('process_pdf.metadata_audit.field.description', { defaultValue: 'Description' })
+      break
+    case 'processTitle':
+      label = t('process_pdf.metadata_audit.field.process_title', { defaultValue: 'Process title' })
+      break
+    case 'processDescription':
+      label = t('process_pdf.metadata_audit.field.process_description', { defaultValue: 'Process description' })
       break
     case 'header':
       label = t('process_pdf.metadata_audit.field.header', { defaultValue: 'Header image' })

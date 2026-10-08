@@ -1648,6 +1648,8 @@
         "header": "Image d'en-tête",
         "media_hash": "Hash du fichier média",
         "other": "Autres paramètres",
+        "process_description": "Description du processus",
+        "process_title": "Titre du processus",
         "question_description": "Description de la question",
         "question_n_choice_title": "Question {{question}}, option {{choice}}",
         "question_n_description": "Description de la question {{question}}",

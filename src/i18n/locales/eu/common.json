@@ -1621,6 +1621,8 @@
         "header": "Goiburuko irudia",
         "media_hash": "Multimedia-fitxategiaren hasha",
         "other": "Beste ezarpen batzuk",
+        "process_description": "Prozesuaren deskribapena",
+        "process_title": "Prozesuaren izenburua",
         "question_description": "Galderaren deskribapena",
         "question_n_choice_title": "{{question}}. galdera, {{choice}}. aukera",
         "question_n_description": "{{question}}. galderaren deskribapena",

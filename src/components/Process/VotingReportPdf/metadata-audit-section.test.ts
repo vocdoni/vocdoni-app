@@ -140,6 +140,39 @@ describe('buildMetadataAuditSection', () => {
     })
   })
 
+  it('labels process-level changes and diffs them word by word', () => {
+    const section = build([
+      createAudit('e1', [
+        createVersion(),
+        createVersion({
+          changes: [
+            { field: 'processTitle', lang: 'default', before: 'Annual assembly', after: 'Annual general assembly' },
+            { field: 'processDescription', lang: 'ca', before: null, after: 'Ordre del dia' },
+          ],
+        }),
+      ]),
+    ])
+
+    expect(section.elections[0].versions[1].changes).toEqual([
+      {
+        kind: 'inline',
+        label: 'Process title',
+        segments: [
+          { type: 'same', text: 'Annual ' },
+          { type: 'added', text: 'general ' },
+          { type: 'same', text: 'assembly' },
+        ],
+      },
+      {
+        kind: 'replace',
+        label: 'Process description (ca)',
+        detail: undefined,
+        before: '(none)',
+        after: 'Ordre del dia',
+      },
+    ])
+  })
+
   it('reports a version with no content change', () => {
     const section = build([createAudit('e1', [createVersion(), createVersion({ changes: [] })])])
 
