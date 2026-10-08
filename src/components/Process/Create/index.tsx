@@ -49,12 +49,14 @@ import {
   paymentErrorToastOptions,
   publishPaymentErrorMessage,
 } from '~components/Pricing/payment-errors'
+import { ProcessQuoteAlert } from '~components/Pricing/ProcessPrice'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
 import DeleteModal from '~components/Modal/DeleteModal'
 import { useToast } from '~components/Toast'
 import { SubscriptionPermission } from '~constants'
 import { QueryKeys } from '~queries/keys'
+import { useProcessPrice } from '~queries/process-price'
 import { Routes } from '~routes'
 import { AnalyticsEvents } from '~utils/analytics'
 import { LiveStreamingInput } from './LiveStreamingInput'
@@ -484,19 +486,24 @@ const LeaveConfirmationModal = ({
   )
 }
 
+// A saved draft may have changed its census or add-ons, and with them its price.
 export const useCreateProcess = () => {
   const { client } = useApiClient()
+  const queryClient = useQueryClient()
 
   return useMutation<string, Error, CreateVotingProcessRequest>({
     mutationFn: (request) => client.elections.create(request),
+    onSuccess: (processId) => queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) }),
   })
 }
 
 const useUpdateProcess = () => {
   const { client } = useApiClient()
+  const queryClient = useQueryClient()
 
   return useMutation<void, Error, UpdateProcessRequest>({
     mutationFn: ({ processId, body }) => client.elections.update(processId, body),
+    onSuccess: (_, { processId }) => queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) }),
   })
 }
 
@@ -669,6 +676,9 @@ const ProcessCreateView = () => {
   )
   const { permission } = useSubscription()
   const { data: formDraft } = useDraft(effectiveDraftId)
+  // Above the self-service limit the backend refuses any payment: only a custom quote publishes
+  // it, which ProcessQuoteAlert points to, so publishing is not offered.
+  const quoteRequired = !!useProcessPrice(effectiveDraftId).data?.quoteRequired
 
   // Apply form draft if it exists
   useEffect(() => {
@@ -935,7 +945,7 @@ const ProcessCreateView = () => {
                   type='submit'
                   alignSelf='flex-end'
                   loading={methods.formState.isSubmitting}
-                  disabled={!organization?.address}
+                  disabled={!organization?.address || quoteRequired}
                 >
                   <Trans i18nKey='process.create.action.publish'>Publish</Trans>
                 </Button>
@@ -950,6 +960,8 @@ const ProcessCreateView = () => {
                 </Button>
               </ButtonGroup>
             </HStack>
+
+            <ProcessQuoteAlert processId={effectiveDraftId} />
 
             {/* Title, Video, and Description */}
             <VStack as='header' align='stretch' gap={4}>
@@ -988,7 +1000,7 @@ const ProcessCreateView = () => {
             <Questions />
           </Box>
         </DashboardContents>
-        <CreateSidebar />
+        <CreateSidebar draftId={effectiveDraftId} />
       </Box>
       <LeaveConfirmationModal
         isOpen={isLeaveConfirmationOpen}

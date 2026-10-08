@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { VocdoniApiError } from '@vocdoni/api-client'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { ErrorCode } from '~components/Auth/api'
+import { QueryKeys } from '~queries/keys'
 import { createTestQueryClient } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
@@ -70,7 +71,7 @@ const renderSaver = (draftId: string | null = null, { persist = false }: { persi
     wrapper: ({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>,
   })
 
-  return { result, storeDraftId }
+  return { result, storeDraftId, queryClient }
 }
 
 describe('useFormDraftSaver', () => {
@@ -165,6 +166,21 @@ describe('useFormDraftSaver', () => {
     expect(storeDraftId).toHaveBeenCalledWith('draft-1')
     expect(publishedId).toBe('draft-1')
     expect(update).toHaveBeenCalledWith('draft-1', { published: true })
+  })
+
+  // The price depends on the census and add-ons the draft stores, so it is re-read after each save
+  it('re-prices the draft it creates or updates', async () => {
+    const { result, queryClient } = renderSaver()
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
+
+    await act(() => result.current.saveDraft(false))
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-1') })
+
+    const { result: saved, queryClient: savedClient } = renderSaver('draft-2')
+    const invalidateSaved = vi.spyOn(savedClient, 'invalidateQueries')
+    await act(() => saved.current.saveDraft(false))
+    expect(update).toHaveBeenCalledWith('draft-2', expect.anything())
+    expect(invalidateSaved).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-2') })
   })
 
   it('explains a draft locked by its payment once, not on every auto-save', async () => {
