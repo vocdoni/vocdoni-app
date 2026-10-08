@@ -494,24 +494,17 @@ export const useCreateProcess = () => {
   })
 }
 
-// What the backend prices a draft on, out of what a save sends: its census (size and 2FA channels).
-const pricedFields = (body: CreateVotingProcessRequest) => JSON.stringify(body.census ?? null)
-
 const useUpdateProcess = () => {
   const { client } = useApiClient()
   const queryClient = useQueryClient()
-  // The priced fields each draft was last saved with, so only a save that changed them re-prices it:
-  // most saves only touch its texts or dates.
-  const pricedRef = useRef(new Map<string, string>())
 
   return useMutation<void, Error, UpdateProcessRequest>({
     mutationFn: ({ processId, body }) => client.elections.update(processId, body),
-    onSuccess: (_, { processId, body }) => {
-      const priced = pricedFields(body)
-      if (pricedRef.current.get(processId) === priced) return
-      pricedRef.current.set(processId, priced)
-      // Not awaited: a returned promise would hold the save, and every write queued behind it,
-      // until the price is read again
+    // Every save re-prices the draft, even one that only touched its texts: the backend rebuilds
+    // its census from the group each time, and the group may have changed since the last save.
+    // Not awaited: a returned promise would hold the save, and every write queued behind it,
+    // until the price is read again.
+    onSuccess: (_, { processId }) => {
       void queryClient.invalidateQueries({ queryKey: QueryKeys.process.price(processId) })
     },
   })
@@ -688,7 +681,7 @@ const ProcessCreateView = () => {
   const { data: formDraft } = useDraft(effectiveDraftId)
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
-  const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).data)
+  const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).price)
 
   // Apply form draft if it exists
   useEffect(() => {

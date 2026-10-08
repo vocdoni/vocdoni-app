@@ -168,28 +168,17 @@ describe('useFormDraftSaver', () => {
     expect(update).toHaveBeenCalledWith('draft-1', { published: true })
   })
 
-  // The price depends on the census the draft stores, so it is re-read after a save that changes it
-  it('re-prices the draft only when a save changes its census', async () => {
+  // The backend rebuilds the census from its group on every save, so any save may change the price
+  it('re-prices the draft after every save, without waiting for it', async () => {
     const { result, queryClient } = renderSaver('draft-2')
-    const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries').mockReturnValue(new Promise(() => {}))
 
     await act(() => result.current.saveDraft(false))
-    expect(update).toHaveBeenCalledWith('draft-2', expect.anything())
-    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-2') })
-
-    invalidate.mockClear()
     await act(() => result.current.saveDraft(false))
+
     expect(update).toHaveBeenCalledTimes(2)
-    expect(invalidate).not.toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-2') })
-
-    const { groupId, census } = form
-    try {
-      Object.assign(form, { groupId: 'g1', census: { credentials: ['memberNumber'], use2FA: false } })
-      await act(() => result.current.saveDraft(false))
-      expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-2') })
-    } finally {
-      Object.assign(form, { groupId, census })
-    }
+    expect(invalidate).toHaveBeenCalledTimes(2)
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: QueryKeys.process.price('draft-2') })
   })
 
   it('explains a draft locked by its payment once, not on every auto-save', async () => {

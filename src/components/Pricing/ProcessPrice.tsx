@@ -38,7 +38,10 @@ const quoteLink = <SupportLink fontWeight='semibold' textDecoration='underline' 
  */
 export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null }) => {
   const { t } = useTranslation()
-  const { data: price, isLoading, error, refetch, isFetching } = useProcessPrice(processId)
+  const {
+    price,
+    query: { isLoading, error, refetch, isFetching },
+  } = useProcessPrice(processId)
 
   if (isLoading) return <Skeleton height={16} />
 
@@ -97,7 +100,7 @@ export const ProcessPriceBreakdown = ({ processId }: { processId?: string | null
  * publish above 50,000, where self-service payment is refused. Renders nothing otherwise.
  */
 export const ProcessQuoteAlert = ({ processId }: { processId?: string | null }) => {
-  const { data: price } = useProcessPrice(processId)
+  const { price } = useProcessPrice(processId)
 
   // A paid process has nothing left to quote
   if (price?.paymentStatus === 'paid') return null

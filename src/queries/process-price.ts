@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { ApiEndpoints, BadRequestApiError } from '~components/Auth/api'
+import { ApiEndpoints, apiErrorDetails, ErrorCode } from '~components/Auth/api'
 import { useAuth } from '~components/Auth/useAuth'
 import { QueryKeys } from './keys'
 
@@ -29,34 +29,40 @@ export type ProcessPrice = {
   paymentStatus?: ProcessPaymentStatus
 }
 
+// Process ids are MongoDB ObjectIDs. The id priced comes from the URL (?draftId=), and encoding it
+// is not enough: "." and ".." survive encodeURIComponent and the URL would resolve them, pointing
+// the request at another endpoint.
+export const isProcessId = (id?: string | null): id is string => !!id && /^[0-9a-f]{24}$/i.test(id)
+
 /**
  * The backend's own price of a draft, the only one the app may show before payment: it depends on
- * the census size, the 2FA channels and the add-ons stored with the draft, so it only changes when
- * the draft saves them (see useUpdateProcess) or its group grows.
+ * the census size, the 2FA channels and the add-ons stored with the draft. The census is rebuilt
+ * from its group on every save, so the price is re-read after each one (see useUpdateProcess), and
+ * when the window regains focus, since the group may have grown from another tab.
  *
- * A failed refetch keeps the last price in the query's `data`; it is dropped here, so a price the
- * backend no longer stands by is never shown, nor acted on.
+ * A failed refetch keeps the last price in the query's `data`; `price` drops it, so a price the
+ * backend no longer stands by is never shown, nor acted on. Read the query's own state through
+ * `query`: it only re-renders the caller for the fields it reads.
  */
 export const useProcessPrice = (processId?: string | null) => {
   const { bearedFetch } = useAuth()
 
   const query = useQuery<ProcessPrice, Error>({
     queryKey: QueryKeys.process.price(processId ?? undefined),
-    enabled: !!processId,
-    // The id comes from the URL (?draftId=): encoded, so it cannot point the request elsewhere
-    queryFn: () =>
-      bearedFetch<ProcessPrice>(ApiEndpoints.ProcessPrice.replace('{processId}', encodeURIComponent(processId!))),
+    enabled: isProcessId(processId),
+    queryFn: () => bearedFetch<ProcessPrice>(ApiEndpoints.ProcessPrice.replace('{processId}', processId!)),
     // Most failures are a draft the backend cannot price yet (isUnpriceableDraft): retrying them
     // only delays the hint
     retry: false,
+    refetchOnWindowFocus: true,
   })
 
-  return { ...query, data: query.isError ? undefined : query.data }
+  return { price: query.isError ? undefined : query.data, query }
 }
 
-// The backend refuses to price a draft without voters (400), which drafts lack until their voters
-// and authentication are set up.
-export const isUnpriceableDraft = (error: unknown) => error instanceof BadRequestApiError
+// The backend refuses to price a draft without voters (a census of size 0 fails its price formula),
+// which drafts lack until their voters and authentication are set up.
+export const isUnpriceableDraft = (error: unknown) => apiErrorDetails(error)?.code === ErrorCode.MalformedJSONBody
 
 // Above the self-service limit only a custom quote publishes a process, so the app offers no way
 // to publish it, until a payment settled that quote.
