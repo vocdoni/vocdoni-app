@@ -223,7 +223,7 @@ describe('verifyProcessMetadata', () => {
 
 describe('createFetchBytes', () => {
   const respond = (body: Uint8Array, headers: Record<string, string> = {}) =>
-    (async () => new Response(body, { headers })) as unknown as typeof fetch
+    (async () => new Response(new Uint8Array(body), { headers })) as unknown as typeof fetch
 
   it('returns the response bytes', async () => {
     const bytes = await createFetchBytes(respond(headerBytes))(HEADER)
