@@ -86,6 +86,8 @@ import { AnalyticsEvents, trackAnalyticsEvent } from '~utils/analytics'
 import { useAnonymityLabels } from '../anonymityLabels'
 import { useResultTypeLabel } from '../resultTypeLabels'
 import { VotingReportPdfButton } from '../VotingReportPdf/VotingReportPdfButton'
+import { MetadataVerificationProvider } from '../MetadataVerification/context'
+import { MetadataVerificationIndicator } from '../MetadataVerification/Indicator'
 import { CensusSearch } from './CensusSearch'
 
 export type ProcessViewTab = 'questions' | 'results'
@@ -121,7 +123,11 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
 
 export const ProcessView = () => (
   <SidebarVisibilityProvider>
-    <ProcessViewContent />
+    {/* The organizer sees the same on-chain check as voters: what the page shows against what
+        is committed for a published process (the indicator renders nothing for a draft). */}
+    <MetadataVerificationProvider>
+      <ProcessViewContent />
+    </MetadataVerificationProvider>
   </SidebarVisibilityProvider>
 )
 
@@ -210,7 +216,10 @@ const ProcessViewContent = () => {
         >
           {/* Title, schedule, and description */}
           <HStack justifyContent={'space-between'}>
-            <ElectionStatusBadge />
+            <HStack gap={3} wrap='wrap'>
+              <ElectionStatusBadge />
+              <MetadataVerificationIndicator />
+            </HStack>
             <IconButton
               aria-label={t('dashboard.actions.toggle_sidebar', { defaultValue: 'Toggle sidebar' })}
               variant='outline'

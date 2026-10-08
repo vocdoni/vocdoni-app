@@ -57,6 +57,23 @@ export const MetadataVerificationProvider = ({ children }: PropsWithChildren) =>
   return <MetadataVerificationContext.Provider value={value}>{children}</MetadataVerificationContext.Provider>
 }
 
+/**
+ * The resolver shape `@vocdoni/react-components` takes as `<ComponentsProvider resolveMediaUrl>`
+ * (vocdoni/vocdoni-integrator-sdk#82): a blob URL for verified bytes, the URL unchanged for
+ * media nothing commits, undefined while not ready.
+ */
+export type MediaUrlResolver = (url: string) => string | undefined
+
+/**
+ * {@link MediaUrlResolver} backed by the verified images, for the components that render media
+ * themselves. Its identity changes only with the blob cache, so components re-render then.
+ */
+export const useMediaUrlResolver = (): MediaUrlResolver => {
+  const context = useMetadataVerificationContext()
+  const srcFor = context?.srcFor
+  return useCallback((url: string) => (srcFor ? srcFor(url) : url), [srcFor])
+}
+
 /** The `src` to render an image from: its verified bytes on the voter page, the URL elsewhere. */
 export const useVerifiedMediaSrc = (url?: string) => {
   const context = useMetadataVerificationContext()
