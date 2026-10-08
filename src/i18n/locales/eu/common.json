@@ -1431,7 +1431,6 @@
         "choice_value": "{{number}}. aukeraren balioa",
         "choices": "Aukera kopurua",
         "header": "Goiburuko irudia",
-        "organization": "Erakundea",
         "process_description": "Bozketaren deskribapena",
         "process_title": "Bozketaren izenburua",
         "question_description": "Galderaren deskribapena",

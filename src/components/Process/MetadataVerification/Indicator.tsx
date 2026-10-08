@@ -90,7 +90,6 @@ const useFieldLabel = () => {
       }),
       header: t('process.verification.field.header', { defaultValue: 'Header image' }),
       stream: t('process.verification.field.stream', { defaultValue: 'Video' }),
-      organization: t('process.verification.field.organization', { defaultValue: 'Organization' }),
       'question-list': t('process.verification.field.question_list', { defaultValue: 'Question list' }),
     }
     return labels[field]

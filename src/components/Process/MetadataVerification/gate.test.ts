@@ -42,6 +42,18 @@ describe('voteGate', () => {
     expect(voteGate({ ...base, data: result('verified', [verified(HEADER), unfetched]) })).toBe('blocked')
   })
 
+  it('blocks a committed document the storage could not serve', () => {
+    const data = result('unverifiable')
+    data.documents = [{ electionId: 'e1', status: 'unverifiable', reason: 'fetch-failed' }]
+    expect(voteGate({ ...base, data })).toBe('blocked')
+  })
+
+  it('does not hold back a process published without a parent election', () => {
+    const data = result('verified')
+    data.process = { status: 'unverifiable', reason: 'no-parent' }
+    expect(voteGate({ ...base, data })).toBe('allowed')
+  })
+
   it('blocks when the check itself failed', () => {
     expect(voteGate({ ...base, failed: true })).toBe('blocked')
   })

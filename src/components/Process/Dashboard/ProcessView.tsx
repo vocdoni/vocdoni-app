@@ -123,9 +123,10 @@ export const ElectionVideo = forwardRef<HTMLDivElement, ElectionVideoProps>((pro
 
 export const ProcessView = () => (
   <SidebarVisibilityProvider>
-    {/* The organizer sees the same on-chain check as voters: what the page shows against what
-        is committed for a published process (the indicator renders nothing for a draft). */}
-    <MetadataVerificationProvider>
+    {/* The organizer gets an independent check of a published process: what the page shows
+        against what the Vochain itself commits, read from the Vochain API rather than taking
+        the SaaS API's hashes on trust (the indicator renders nothing for a draft). */}
+    <MetadataVerificationProvider source='chain'>
       <ProcessViewContent />
     </MetadataVerificationProvider>
   </SidebarVisibilityProvider>

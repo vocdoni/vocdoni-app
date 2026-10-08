@@ -1,7 +1,7 @@
 import { useElection } from '@vocdoni/react-components'
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { createBlobUrls, resolveMediaSrc, voteGate, type VoteGate } from './gate'
-import { useMetadataVerification } from './useMetadataVerification'
+import { useMetadataVerification, type MetadataVerificationSource } from './useMetadataVerification'
 import type { ProcessVerification } from './verify'
 
 export type MetadataVerificationContextValue = {
@@ -24,10 +24,14 @@ export const useMetadataVerificationContext = () => useContext(MetadataVerificat
  * Runs the ballot verification once for the voter page and shares its result: the indicator,
  * the vote button gate and the images rendered from their verified bytes all read it here.
  */
-export const MetadataVerificationProvider = ({ children }: PropsWithChildren) => {
+export const MetadataVerificationProvider = ({
+  children,
+  source = 'saas',
+}: PropsWithChildren<{ source?: MetadataVerificationSource }>) => {
   const { election } = useElection()
-  const { enabled, data, isPending, isError } = useMetadataVerification()
-  const hasParent = !!(election as { upstreamId?: string } | null)?.upstreamId
+  const { enabled, data, isPending, isError } = useMetadataVerification(source)
+  const parent = election as { upstreamId?: string; metadataURL?: string; metadataHash?: string } | null
+  const hasParent = !!(parent?.upstreamId || parent?.metadataURL || parent?.metadataHash)
   const [blobUrls, setBlobUrls] = useState<Record<string, string>>({})
 
   // Object URLs live as long as the result they were made from.

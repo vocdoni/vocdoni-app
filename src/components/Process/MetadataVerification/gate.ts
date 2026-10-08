@@ -26,6 +26,11 @@ export const voteGate = ({ enabled, pending, failed, data }: VoteGateInput): Vot
   // Published before the chain committed any hash: there is nothing to hold the page to.
   if (data.status === 'no-hash') return 'allowed'
   if (data.status === 'mismatch') return 'blocked'
+  // A committed document that could not be fetched or checked leaves the shown ballot
+  // unverified. It is served by the same server as the ballot itself, so this adds no new
+  // availability dependency.
+  const documents = data.process.reason === 'no-parent' ? data.documents : [data.process, ...data.documents]
+  if (documents.some((document) => document.status === 'unverifiable')) return 'blocked'
   // A committed image that could not be fetched and hashed would be shown unverified, or not
   // at all: the voter would not be voting on the committed ballot.
   if (data.media.some((medium) => medium.committed && medium.status !== 'verified')) return 'blocked'

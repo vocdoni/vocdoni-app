@@ -1457,7 +1457,6 @@
         "choice_value": "Valeur de l'option {{number}}",
         "choices": "Nombre d'options",
         "header": "Image d'en-tête",
-        "organization": "Organisation",
         "process_description": "Description du vote",
         "process_title": "Titre du vote",
         "question_description": "Description de la question",
