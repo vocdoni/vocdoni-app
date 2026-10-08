@@ -189,6 +189,60 @@ describe('buildMetadataAuditSection', () => {
     ])
   })
 
+  it('labels choice description, image and image content changes', () => {
+    const photo = 'https://media.example/alice.png'
+    const section = build([
+      createAudit('e1', [
+        createVersion(),
+        createVersion({
+          changes: [
+            {
+              field: 'choiceDescription',
+              question: 0,
+              choice: 0,
+              lang: 'default',
+              before: 'From Lleida',
+              after: 'From Girona',
+            },
+            { field: 'choiceImage', question: 0, choice: 0, variant: 'default', before: null, after: photo },
+            { field: 'choiceImage', question: 0, choice: 0, variant: 'thumbnail', before: photo, after: null },
+            { field: 'choiceImage', question: 0, choice: 0, variant: 'large', before: null, after: photo },
+            {
+              field: 'choiceImageContent',
+              question: 0,
+              choice: 0,
+              mediaUrl: photo,
+              before: 'aa'.repeat(32),
+              after: 'bb'.repeat(32),
+            },
+          ],
+        }),
+      ]),
+    ])
+
+    expect(section.elections[1].versions[1].changes).toEqual([
+      {
+        kind: 'inline',
+        label: 'Option 1 description',
+        segments: [
+          { type: 'same', text: 'From ' },
+          { type: 'removed', text: 'Lleida' },
+          { type: 'added', text: 'Girona' },
+        ],
+      },
+      { kind: 'replace', label: 'Option 1 image', detail: undefined, before: '(none)', after: photo },
+      { kind: 'replace', label: 'Option 1 thumbnail', detail: undefined, before: photo, after: '(none)' },
+      { kind: 'replace', label: 'Option 1 image (large)', detail: undefined, before: '(none)', after: photo },
+      {
+        kind: 'replace',
+        label: 'Option 1 image content changed',
+        detail: photo,
+        before: 'aa'.repeat(32),
+        after: 'bb'.repeat(32),
+      },
+    ])
+  })
+
   it('reports a version with no content change', () => {
     const section = build([createAudit('e1', [createVersion(), createVersion({ changes: [] })])])
 

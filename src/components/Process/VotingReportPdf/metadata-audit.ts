@@ -42,6 +42,9 @@ export type MetadataChangeField =
   | 'questionTitle'
   | 'questionDescription'
   | 'choiceTitle'
+  | 'choiceDescription'
+  | 'choiceImage'
+  | 'choiceImageContent'
   | 'other'
 
 /**
@@ -54,6 +57,8 @@ export type MetadataChange = {
   question?: number
   choice?: number
   mediaUrl?: string
+  /** Which image of a choice: `default`, `thumbnail` or any other key the document uses. */
+  variant?: string
   before: string | null
   after: string | null
 }
@@ -167,7 +172,11 @@ const diffText = (
     .map((lang) => ({ ...base, lang, before: beforeMap[lang] ?? null, after: afterMap[lang] ?? null }))
 }
 
-const diffString = (before: unknown, after: unknown, base: Pick<MetadataChange, 'field'>): MetadataChange[] => {
+const diffString = (
+  before: unknown,
+  after: unknown,
+  base: Omit<MetadataChange, 'before' | 'after'>
+): MetadataChange[] => {
   const beforeValue = typeof before === 'string' && before ? before : null
   const afterValue = typeof after === 'string' && after ? after : null
   return beforeValue === afterValue ? [] : [{ ...base, before: beforeValue, after: afterValue }]
@@ -202,6 +211,23 @@ const readQuestionElections = (doc: unknown): string[] | null => {
 const omit = (value: unknown, keys: string[]): Record<string, unknown> =>
   Object.fromEntries(Object.entries(asRecord(value)).filter(([key]) => !keys.includes(key)))
 
+/** A choice's image URLs by variant: a plain URL is the `default` one, an object maps variants. */
+const getChoiceImages = (choice: unknown): Record<string, string> => {
+  const image = asRecord(asRecord(choice).meta).image
+  if (typeof image === 'string') return image ? { default: image } : {}
+  return Object.fromEntries(
+    Object.entries(asRecord(image)).filter(
+      (entry): entry is [string, string] => typeof entry[1] === 'string' && !!entry[1]
+    )
+  )
+}
+
+/** A choice without its audited fields; its `meta` is kept only when something else is left in it. */
+const withoutAuditedChoiceFields = (choice: Record<string, unknown>) => {
+  const otherMeta = omit(choice.meta, ['description', 'image'])
+  return { ...omit(choice, ['title', 'meta']), ...(Object.keys(otherMeta).length ? { meta: otherMeta } : {}) }
+}
+
 /** The document without the fields diffed one by one, to detect any change in the rest of it. */
 const withoutAuditedFields = (doc: Record<string, unknown>): unknown => ({
   ...omit(doc, ['title', 'description', 'media', 'meta', 'questions']),
@@ -211,7 +237,9 @@ const withoutAuditedFields = (doc: Record<string, unknown>): unknown => ({
     isRecord(question)
       ? {
           ...omit(question, ['title', 'description', 'choices']),
-          choices: asArray(question.choices).map((choice) => (isRecord(choice) ? omit(choice, ['title']) : choice)),
+          choices: asArray(question.choices).map((choice) =>
+            isRecord(choice) ? withoutAuditedChoiceFields(choice) : choice
+          ),
         }
       : question
   ),
@@ -220,7 +248,8 @@ const withoutAuditedFields = (doc: Record<string, unknown>): unknown => ({
 /**
  * Field-level differences between two election metadata documents: multi-language title and
  * description, header image and video URLs, recorded media hashes, the question elections a parent
- * election lists, the title and description of every question and the title of every choice.
+ * election lists, the title and description of every question, and the title, description and
+ * image URLs of every choice, whose image hashes are reported per choice.
  * Anything else that differs is reported as a single `other` change, so no difference goes
  * unreported.
  */
@@ -236,6 +265,19 @@ export const diffMetadata = (beforeDoc: unknown, afterDoc: unknown): MetadataCha
     ...diffString(beforeMedia.streamUri, afterMedia.streamUri, { field: 'streamUri' }),
   ]
 
+  // Choice images are hashed in the same document as their choice, so each hash entry is attributed
+  // to the choice whose image URL it covers, in either version.
+  const choiceImageOwners = new Map<string, { question: number; choice: number }>()
+  for (const doc of [before, after]) {
+    asArray(doc.questions).forEach((question, questionIndex) =>
+      asArray(asRecord(question).choices).forEach((choice, choiceIndex) => {
+        for (const url of Object.values(getChoiceImages(choice))) {
+          choiceImageOwners.set(url, { question: questionIndex, choice: choiceIndex })
+        }
+      })
+    )
+  }
+
   const beforeHashes = getMediaHashes(before)
   const afterHashes = getMediaHashes(after)
   for (const url of [...new Set([...Object.keys(beforeHashes), ...Object.keys(afterHashes)])].sort()) {
@@ -245,8 +287,10 @@ export const diffMetadata = (beforeDoc: unknown, afterDoc: unknown): MetadataCha
     // Images are covered by the hash of their content, so a header image whose hash changed shows
     // different content even when its URL stayed the same.
     const isHeader = url === beforeMedia.header || url === afterMedia.header
+    const choiceOwner = isHeader ? undefined : choiceImageOwners.get(url)
     changes.push({
-      field: isHeader ? 'headerContent' : 'mediaHash',
+      field: isHeader ? 'headerContent' : choiceOwner ? 'choiceImageContent' : 'mediaHash',
+      ...choiceOwner,
       mediaUrl: url,
       before: beforeHash,
       after: afterHash,
@@ -280,7 +324,28 @@ export const diffMetadata = (beforeDoc: unknown, afterDoc: unknown): MetadataCha
     for (let choice = 0; choice < Math.max(beforeChoices.length, afterChoices.length); choice++) {
       const beforeChoice = asRecord(beforeChoices[choice])
       const afterChoice = asRecord(afterChoices[choice])
-      changes.push(...diffText(beforeChoice.title, afterChoice.title, { field: 'choiceTitle', question, choice }))
+      changes.push(
+        ...diffText(beforeChoice.title, afterChoice.title, { field: 'choiceTitle', question, choice }),
+        ...diffText(asRecord(beforeChoice.meta).description, asRecord(afterChoice.meta).description, {
+          field: 'choiceDescription',
+          question,
+          choice,
+        })
+      )
+      const beforeImages = getChoiceImages(beforeChoice)
+      const afterImages = getChoiceImages(afterChoice)
+      for (const variant of [...new Set([...Object.keys(beforeImages), ...Object.keys(afterImages)])].sort(
+        compareLanguages
+      )) {
+        changes.push(
+          ...diffString(beforeImages[variant], afterImages[variant], {
+            field: 'choiceImage',
+            question,
+            choice,
+            variant,
+          })
+        )
+      }
     }
   }
 

@@ -209,6 +209,98 @@ describe('diffMetadata', () => {
     ).toEqual([{ field: 'questionElections', before: null, after: 'ab01' }])
   })
 
+  describe('choice description and images', () => {
+    const alicePhoto = 'https://media.example/alice.png'
+    const aliceThumb = 'https://media.example/alice-thumb.png'
+    const withChoices = (aliceMeta: Record<string, unknown>, mediaHashes: Record<string, string> = {}) => ({
+      ...baseMetadata,
+      meta: { mediaHashes },
+      questions: [
+        {
+          ...baseMetadata.questions[0],
+          choices: [
+            { title: { default: 'Alice' }, value: 0, meta: aliceMeta },
+            { title: { default: 'Bob' }, value: 1 },
+          ],
+        },
+      ],
+    })
+
+    it('reports the description, the image URLs and the image content hash per choice', () => {
+      const changes = diffMetadata(
+        withChoices({ description: 'Lawyer from Lleida.', image: alicePhoto }, { [alicePhoto]: 'aa'.repeat(32) }),
+        withChoices(
+          { description: 'Lawyer from Girona.', image: { default: alicePhoto, thumbnail: aliceThumb } },
+          { [alicePhoto]: 'bb'.repeat(32), [aliceThumb]: 'cc'.repeat(32) }
+        )
+      )
+
+      expect(changes).toEqual([
+        {
+          field: 'choiceImageContent',
+          question: 0,
+          choice: 0,
+          mediaUrl: aliceThumb,
+          before: null,
+          after: 'cc'.repeat(32),
+        },
+        {
+          field: 'choiceImageContent',
+          question: 0,
+          choice: 0,
+          mediaUrl: alicePhoto,
+          before: 'aa'.repeat(32),
+          after: 'bb'.repeat(32),
+        },
+        {
+          field: 'choiceDescription',
+          question: 0,
+          choice: 0,
+          lang: 'default',
+          before: 'Lawyer from Lleida.',
+          after: 'Lawyer from Girona.',
+        },
+        { field: 'choiceImage', question: 0, choice: 0, variant: 'thumbnail', before: null, after: aliceThumb },
+      ])
+    })
+
+    it('reports a choice image whose content changed under the same URL', () => {
+      expect(
+        diffMetadata(
+          withChoices({ image: alicePhoto }, { [alicePhoto]: 'aa'.repeat(32) }),
+          withChoices({ image: alicePhoto }, { [alicePhoto]: 'dd'.repeat(32) })
+        )
+      ).toEqual([
+        {
+          field: 'choiceImageContent',
+          question: 0,
+          choice: 0,
+          mediaUrl: alicePhoto,
+          before: 'aa'.repeat(32),
+          after: 'dd'.repeat(32),
+        },
+      ])
+    })
+
+    it('treats an empty choice meta as absent and other choice meta keys as other settings', () => {
+      expect(diffMetadata(withChoices({}), { ...withChoices({}), questions: baseMetadata.questions })).toEqual([])
+      expect(diffMetadata(withChoices({ party: 'A' }), withChoices({ party: 'B' }))).toEqual([
+        { field: 'other', before: null, after: null },
+      ])
+    })
+
+    it('reports question meta changes as other settings', () => {
+      const withQuestionMeta = (meta: Record<string, unknown>) => ({
+        ...baseMetadata,
+        questions: [{ ...baseMetadata.questions[0], meta }],
+      })
+
+      expect(diffMetadata(withQuestionMeta({ layout: 'grid' }), withQuestionMeta({ layout: 'list' }))).toEqual([
+        { field: 'other', before: null, after: null },
+      ])
+    })
+  })
+
   it('reports any other difference once', () => {
     expect(diffMetadata(baseMetadata, { ...baseMetadata, type: { name: 'approval', properties: {} } })).toEqual([
       { field: 'other', before: null, after: null },

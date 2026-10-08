@@ -55,6 +55,7 @@ const TEXT_FIELDS = new Set<MetadataChange['field']>([
   'questionTitle',
   'questionDescription',
   'choiceTitle',
+  'choiceDescription',
 ])
 
 const formatTimestamp = (date: Date | null) =>
@@ -128,6 +129,54 @@ const getChangeLabel = (change: MetadataChange, singleQuestion: boolean, t: TFun
         ? t('process_pdf.metadata_audit.field.choice_title', { defaultValue: 'Option {{choice}}', choice })
         : t('process_pdf.metadata_audit.field.question_n_choice_title', {
             defaultValue: 'Question {{question}}, option {{choice}}',
+            question,
+            choice,
+          })
+      break
+    case 'choiceDescription':
+      label = singleQuestion
+        ? t('process_pdf.metadata_audit.field.choice_description', {
+            defaultValue: 'Option {{choice}} description',
+            choice,
+          })
+        : t('process_pdf.metadata_audit.field.question_n_choice_description', {
+            defaultValue: 'Question {{question}}, option {{choice}} description',
+            question,
+            choice,
+          })
+      break
+    case 'choiceImage':
+      if (change.variant === 'thumbnail') {
+        label = singleQuestion
+          ? t('process_pdf.metadata_audit.field.choice_thumbnail', {
+              defaultValue: 'Option {{choice}} thumbnail',
+              choice,
+            })
+          : t('process_pdf.metadata_audit.field.question_n_choice_thumbnail', {
+              defaultValue: 'Question {{question}}, option {{choice}} thumbnail',
+              question,
+              choice,
+            })
+        break
+      }
+      label = singleQuestion
+        ? t('process_pdf.metadata_audit.field.choice_image', { defaultValue: 'Option {{choice}} image', choice })
+        : t('process_pdf.metadata_audit.field.question_n_choice_image', {
+            defaultValue: 'Question {{question}}, option {{choice}} image',
+            question,
+            choice,
+          })
+      // Variant names other than the two known ones are data, shown as stored in the document.
+      if (change.variant && change.variant !== 'default') label = `${label} (${change.variant})`
+      break
+    case 'choiceImageContent':
+      label = singleQuestion
+        ? t('process_pdf.metadata_audit.field.choice_image_content', {
+            defaultValue: 'Option {{choice}} image content changed',
+            choice,
+          })
+        : t('process_pdf.metadata_audit.field.question_n_choice_image_content', {
+            defaultValue: 'Question {{question}}, option {{choice}} image content changed',
             question,
             choice,
           })
