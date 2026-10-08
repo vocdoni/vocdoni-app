@@ -49,6 +49,7 @@ import {
   paymentErrorToastOptions,
   publishPaymentErrorMessage,
 } from '~components/Pricing/payment-errors'
+import { checkoutReturnParam, ProcessCheckoutDialog, ProcessCheckoutStart } from '~components/Pricing/ProcessCheckout'
 import { ProcessQuoteAlert } from '~components/Pricing/ProcessPrice'
 import { SidebarVisibilityProvider, useSidebarVisibility } from '~components/Dashboard/SidebarContext'
 import Editor from '~components/Editor'
@@ -68,6 +69,22 @@ import { votingProcessToForm } from './draft-mapping'
 import { useCensusSetupToast } from './useCensusSetupToast'
 import { getTwoFaFields } from './VoterAuthentication/utils'
 import { VoterAuthDialogProvider } from './VoterAuthentication/VoterAuthDialogContext'
+
+// Where publishing a draft hands over to its checkout, from the backend's refusal: `checkout`
+// when the draft must be paid first, `confirming` when a payment of it is already under way
+// (processing, or completed and settling), which is waited for instead of charged again.
+// Anything else, including a price only a custom quote can settle, is not the checkout's.
+export const checkoutStart = (error: unknown): ProcessCheckoutStart | undefined => {
+  const details = apiErrorDetails(error)
+  switch (details?.code) {
+    case ErrorCode.PaymentRequired:
+      if ((details.data as { quoteRequired?: unknown } | undefined)?.quoteRequired === true) return undefined
+      return 'checkout'
+    case ErrorCode.PaymentSessionConflict:
+      return 'confirming'
+  }
+  return undefined
+}
 
 type ConfirmOnNavigateOptions = {
   isDirty: boolean
@@ -637,8 +654,13 @@ const ProcessCreateView = () => {
   const [formDraftLoaded, setFormDraftLoaded] = useState(false)
   const [nextId, setNextId] = useState('')
   const { groupId } = useParams()
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const draftId = searchParams.get('draftId')
+  // The draft being paid for before it publishes: set once publishing it asks for payment, or
+  // when Stripe returns here from a payment that left the page
+  const [checkout, setCheckout] = useState<{ processId: string; start: ProcessCheckoutStart } | null>(() =>
+    draftId && searchParams.has(checkoutReturnParam) ? { processId: draftId, start: 'confirming' } : null
+  )
   const navigate = useNavigate()
   const location = useLocation()
   const { showSidebar, toggleSidebar, openSidebar } = useSidebarVisibility()
@@ -682,6 +704,20 @@ const ProcessCreateView = () => {
   // Above the self-service limit the backend refuses any payment: only a custom quote publishes
   // it, which ProcessQuoteAlert points to, so publishing is not offered.
   const quoteOnly = isQuoteOnly(useProcessPrice(effectiveDraftId).price)
+
+  // The return flag has done its job once the dialog is open; a reload must not reopen it. The
+  // draft is not auto-saved meanwhile, as when publishing opens the dialog.
+  useEffect(() => {
+    if (!searchParams.has(checkoutReturnParam)) return
+    skipSave(true)
+    setSearchParams(
+      (params) => {
+        params.delete(checkoutReturnParam)
+        return params
+      },
+      { replace: true }
+    )
+  }, [searchParams, setSearchParams, skipSave])
 
   // Apply form draft if it exists
   useEffect(() => {
@@ -786,42 +822,17 @@ const ProcessCreateView = () => {
       // inside the queue, so a blur auto-save still in flight is updated rather
       // than raced.
       const processId = await writeDraft(() => request)
-      await apiClient.elections.publishAndWait(processId)
-
-      // Drop the cached elections pages so the processes index reflects the new
-      // vote without a full page refresh. The index loads through a route loader
-      // backed by ensureQueryData, which returns cached data without refetching
-      // when it is merely marked stale — so invalidateQueries isn't enough here.
-      // Removing the entries forces the loader to fetch fresh data on its next
-      // navigation. The key omits the pagination params so every paginated/status
-      // variant is evicted.
-      queryClient.removeQueries({
-        queryKey: QueryKeys.organization.elections(organization?.address),
-      })
-
-      trackEvent({
-        name: AnalyticsEvents.ProcessCreated,
-        props: {
-          census_type: form.censusType,
-          weighted: !!form.weightedVote,
-          anonymous: !!form.anonymousVoting,
-          question_count: form.questions?.length ?? 0,
-          from_draft: !!effectiveDraftId,
-        },
-      })
-
-      toast({
-        title: t('form.process_create.success_title'),
-        description: t('form.process_create.success_description'),
-        type: 'success',
-        duration: 4000,
-      })
-
-      methods.reset(defaultProcessValues)
-
-      clearPublishedDraftId(processId)
-
-      navigate(generatePath(Routes.dashboard.process, { id: processId }))
+      try {
+        await apiClient.elections.publishAndWait(processId)
+      } catch (error) {
+        const start = checkoutStart(error)
+        if (!start) throw error
+        // Left for the checkout to publish. Auto-save stays off meanwhile: the dialog covers the
+        // form, and a payment being processed locks the draft anyway.
+        setCheckout({ processId, start })
+        return
+      }
+      onPublished(processId, form)
     } catch (error) {
       console.error('Error creating election:', error)
       // The draft is still a draft: let it keep auto-saving while the user fixes
@@ -837,6 +848,49 @@ const ProcessCreateView = () => {
         ...(paymentMessage ? paymentErrorToastOptions : {}),
       })
     }
+  }
+
+  // A published draft is a process: leave the wizard for its page
+  const onPublished = (processId: string, form: Process) => {
+    // Drop the cached elections pages so the processes index reflects the new
+    // vote without a full page refresh. The index loads through a route loader
+    // backed by ensureQueryData, which returns cached data without refetching
+    // when it is merely marked stale — so invalidateQueries isn't enough here.
+    // Removing the entries forces the loader to fetch fresh data on its next
+    // navigation. The key omits the pagination params so every paginated/status
+    // variant is evicted.
+    queryClient.removeQueries({
+      queryKey: QueryKeys.organization.elections(organization?.address),
+    })
+
+    trackEvent({
+      name: AnalyticsEvents.ProcessCreated,
+      props: {
+        census_type: form.censusType,
+        weighted: !!form.weightedVote,
+        anonymous: !!form.anonymousVoting,
+        question_count: form.questions?.length ?? 0,
+        from_draft: !!effectiveDraftId,
+      },
+    })
+
+    toast({
+      title: t('form.process_create.success_title'),
+      description: t('form.process_create.success_description'),
+      type: 'success',
+      duration: 4000,
+    })
+
+    methods.reset(defaultProcessValues)
+
+    clearPublishedDraftId(processId)
+
+    navigate(generatePath(Routes.dashboard.process, { id: processId }))
+  }
+
+  const closeCheckout = () => {
+    setCheckout(null)
+    skipSave(false)
   }
 
   const onError = (errors) => {
@@ -1012,6 +1066,15 @@ const ProcessCreateView = () => {
         onSaveAndLeave={handleSaveAndLeave}
         onResetSamePath={() => resetSamePath(() => resetForm())}
         isSamePath={isSamePath}
+      />
+      <ProcessCheckoutDialog
+        processId={checkout?.processId ?? null}
+        start={checkout?.start ?? 'checkout'}
+        onClose={closeCheckout}
+        onPublished={(processId) => {
+          setCheckout(null)
+          onPublished(processId, methods.getValues())
+        }}
       />
     </FormProvider>
   )

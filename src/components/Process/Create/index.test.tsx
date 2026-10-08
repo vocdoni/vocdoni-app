@@ -2,11 +2,13 @@ import { act, renderHook } from '@testing-library/react'
 import type { PropsWithChildren } from 'react'
 import type { Blocker } from 'react-router'
 import { useLocation, useNavigate } from 'react-router'
+import { VocdoniApiError } from '@vocdoni/api-client'
+import { ErrorCode } from '~components/Auth/api'
 import { TestMemoryRouter } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { CensusTypes } from '../Census/CensusType'
 import { defaultQuestion, Process, SelectorTypes } from './common'
-import { buildCensusSpec, useConfirmOnNavigate, useFormToVotingProcessRequest } from './index'
+import { buildCensusSpec, checkoutStart, useConfirmOnNavigate, useFormToVotingProcessRequest } from './index'
 
 const mockPermission = vi.fn()
 
@@ -46,6 +48,31 @@ vi.mock('~elements/dashboard/processes/drafts', () => ({
 vi.mock('~src/providers/ApiClientProvider', () => ({
   useApiClient: vi.fn(),
 }))
+
+describe('checkoutStart', () => {
+  const refusal = (code: number, data?: unknown) => new VocdoniApiError(402, { data }, 'refused', code)
+
+  it('sends a draft that must be paid to its checkout', () => {
+    expect(checkoutStart(refusal(ErrorCode.PaymentRequired, { totalCents: 29700, quoteRequired: false }))).toBe(
+      'checkout'
+    )
+  })
+
+  it('waits for a payment already under way instead of charging again', () => {
+    expect(checkoutStart(refusal(ErrorCode.PaymentSessionConflict))).toBe('confirming')
+  })
+
+  it('leaves out what no checkout can settle', () => {
+    // Only a custom quote publishes it: checkout would refuse it (40176)
+    expect(checkoutStart(refusal(ErrorCode.PaymentRequired, { totalCents: 900000, quoteRequired: true }))).toBe(
+      undefined
+    )
+    expect(checkoutStart(refusal(ErrorCode.QuoteRequired))).toBeUndefined()
+    // A managed organization pays from its integrator's wallet, which only the integrator tops up
+    expect(checkoutStart(refusal(ErrorCode.InsufficientWalletBalance))).toBeUndefined()
+    expect(checkoutStart(new Error('network down'))).toBeUndefined()
+  })
+})
 
 describe('buildCensusSpec', () => {
   const form = (overrides: Partial<Process> = {}): Process =>
