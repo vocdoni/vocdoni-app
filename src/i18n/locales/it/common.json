@@ -1323,6 +1323,12 @@
         "title": "Voto privato"
       }
     },
+    "ballot_updated": {
+      "description": "L'organizzazione ha modificato il contenuto di questa votazione dopo che l'hai aperta. Rivedi le domande aggiornate e vota di nuovo.",
+      "modal": "Il tuo voto non è stato espresso perché l'organizzazione ha modificato questa votazione. Rivedi le domande aggiornate e vota di nuovo.",
+      "modal_partial": "Alcune risposte non sono state registrate perché l'organizzazione ha modificato questa votazione. Rivedi le domande aggiornate e vota di nuovo per inviare quelle mancanti.",
+      "title": "La scheda è stata aggiornata"
+    },
     "census": "Censimento",
     "create": {
       "action": {
@@ -1449,11 +1455,58 @@
       "votes_cast_many": "{{votes}} voti espressi",
       "votes_cast_other": "{{votes}} voti espressi"
     },
+    "verification": {
+      "ballot": "Testo della scheda",
+      "checking": "Verifica del contenuto…",
+      "description": {
+        "mismatch": "Parte di ciò che mostra questa pagina non corrisponde alla versione registrata sulla Vochain. Contatta l'organizzazione prima di votare.",
+        "no_hash": "Questa votazione è stata pubblicata senza un hash del contenuto sulla Vochain, quindi il suo contenuto non può essere verificato.",
+        "unverifiable": "Il tuo browser non è riuscito a verificare questo contenuto con la Vochain.",
+        "verified": "Ciò che mostra questa pagina corrisponde, byte per byte, alla versione che l'organizzazione ha registrato sulla Vochain."
+      },
+      "field": {
+        "choice_description": "Descrizione dell'opzione {{number}}",
+        "choice_image": "Immagine dell'opzione {{number}}",
+        "choice_title": "Testo dell'opzione {{number}}",
+        "choice_value": "Valore dell'opzione {{number}}",
+        "choices": "Numero di opzioni",
+        "header": "Immagine di intestazione",
+        "process_description": "Descrizione della votazione",
+        "process_title": "Titolo della votazione",
+        "question_description": "Descrizione della domanda",
+        "question_list": "Elenco delle domande",
+        "question_title": "Domanda",
+        "stream": "Video"
+      },
+      "footnote": "Verificato nel tuo browser calcolando l'hash del contenuto e confrontandolo con la Vochain.",
+      "images": "Immagini",
+      "item": {
+        "mismatch": "Non corrisponde",
+        "no_hash": "Senza hash",
+        "unverifiable": "Non verificabile",
+        "verified": "Verificato"
+      },
+      "process": "Dati della votazione",
+      "question": "Domanda {{number}}",
+      "status": {
+        "mismatch": "Il contenuto non corrisponde",
+        "no_hash": "Nessun hash del contenuto sulla catena",
+        "unverifiable": "Contenuto non verificabile",
+        "verified": "Contenuto verificato"
+      },
+      "title": "Verifica del contenuto",
+      "url_only_note": "Le immagini incorporate nelle descrizioni e il video sono coperti solo dal loro URL.",
+      "video_url": "Video: URL verificato; il contenuto del video non è coperto."
+    },
     "vote_failed": {
       "close": "Chiudi",
       "none": "Nessuna risposta è stata registrata. Riprova.",
       "partial": "Alcune risposte non sono state registrate. Vota di nuovo per inviare le restanti.",
       "title": "Non è stato possibile inviare il tuo voto"
+    },
+    "vote_gate": {
+      "blocked": "Il contenuto della scheda non corrisponde a quanto registrato dall'organizzazione, quindi il voto non può essere espresso. Riprova più tardi o contatta l'organizzazione.",
+      "pending": "Verifica del contenuto della scheda prima del voto…"
     },
     "voters": "Votanti",
     "voting": "Stiamo elaborando il tuo voto. Questo processo richiederà alcuni secondi. Non chiudere o aggiornare questa pagina.",

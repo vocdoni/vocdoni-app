@@ -1323,6 +1323,12 @@
         "title": "Vote privé"
       }
     },
+    "ballot_updated": {
+      "description": "L'organisation a modifié le contenu de ce vote après que vous l'avez ouvert. Relisez les questions mises à jour et votez à nouveau.",
+      "modal": "Votre vote n'a pas été enregistré car l'organisation a modifié ce vote. Relisez les questions mises à jour et votez à nouveau.",
+      "modal_partial": "Certaines réponses n'ont pas été enregistrées car l'organisation a modifié ce vote. Relisez les questions mises à jour et votez à nouveau pour envoyer les autres.",
+      "title": "Le bulletin a été mis à jour"
+    },
     "census": "Liste électorale",
     "create": {
       "action": {
@@ -1449,11 +1455,58 @@
       "votes_cast_many": "{{votes}} votes exprimés",
       "votes_cast_other": "{{votes}} votes exprimés"
     },
+    "verification": {
+      "ballot": "Texte du bulletin",
+      "checking": "Vérification du contenu…",
+      "description": {
+        "mismatch": "Une partie de ce qu'affiche cette page ne correspond pas à la version enregistrée sur la Vochain. Contactez l'organisation avant de voter.",
+        "no_hash": "Ce vote a été publié sans hash du contenu sur la Vochain : son contenu ne peut donc pas être vérifié.",
+        "unverifiable": "Votre navigateur n'a pas pu vérifier ce contenu auprès de la Vochain.",
+        "verified": "Ce qu'affiche cette page correspond, octet par octet, à la version que l'organisation a enregistrée sur la Vochain."
+      },
+      "field": {
+        "choice_description": "Description de l'option {{number}}",
+        "choice_image": "Image de l'option {{number}}",
+        "choice_title": "Texte de l'option {{number}}",
+        "choice_value": "Valeur de l'option {{number}}",
+        "choices": "Nombre d'options",
+        "header": "Image d'en-tête",
+        "process_description": "Description du vote",
+        "process_title": "Titre du vote",
+        "question_description": "Description de la question",
+        "question_list": "Liste des questions",
+        "question_title": "Question",
+        "stream": "Vidéo"
+      },
+      "footnote": "Vérifié dans votre navigateur en calculant le hash du contenu et en le comparant à la Vochain.",
+      "images": "Images",
+      "item": {
+        "mismatch": "Ne correspond pas",
+        "no_hash": "Sans hash",
+        "unverifiable": "Non vérifiable",
+        "verified": "Vérifié"
+      },
+      "process": "Informations du vote",
+      "question": "Question {{number}}",
+      "status": {
+        "mismatch": "Le contenu ne correspond pas",
+        "no_hash": "Aucun hash du contenu sur la chaîne",
+        "unverifiable": "Contenu non vérifiable",
+        "verified": "Contenu vérifié"
+      },
+      "title": "Vérification du contenu",
+      "url_only_note": "Les images intégrées aux descriptions et la vidéo ne sont couvertes que par leur URL.",
+      "video_url": "Vidéo : URL vérifiée ; le contenu de la vidéo n'est pas couvert."
+    },
     "vote_failed": {
       "close": "Fermer",
       "none": "Aucune réponse n’a été enregistrée. Réessayez.",
       "partial": "Certaines réponses n’ont pas été enregistrées. Votez à nouveau pour envoyer les restantes.",
       "title": "Votre vote n’a pas pu être enregistré"
+    },
+    "vote_gate": {
+      "blocked": "Le contenu du bulletin ne correspond pas à ce que l'organisation a enregistré : le vote ne peut donc pas être émis. Réessayez plus tard ou contactez l'organisation.",
+      "pending": "Vérification du contenu du bulletin avant votre vote…"
     },
     "voters": "Électeurs",
     "voting": "Nous traitons votre vote. Cela prendra quelques secondes. Veuillez ne pas fermer ni actualiser cette page.",

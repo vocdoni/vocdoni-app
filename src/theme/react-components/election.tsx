@@ -36,12 +36,20 @@ import {
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
+import { VoteErrorText } from '~components/Process/BallotUpdate'
+import { useVerifiedMediaSrc } from '~components/Process/MetadataVerification/context'
 import { Markdown } from '~components/ui/Markdown'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
 import { resultsProgressRecipe } from '~theme/recipes/election'
 
 const markdown = (value?: string) => (value ? <Markdown>{value}</Markdown> : null)
+
+/** An image rendered from its verified bytes on the voter page (see `useVerifiedMediaSrc`). */
+const VerifiedImage = ({ src, ...props }: ImageProps) => {
+  const verifiedSrc = useVerifiedMediaSrc(typeof src === 'string' ? src : undefined)
+  return verifiedSrc ? <Image src={verifiedSrc} {...props} /> : null
+}
 
 export const electionComponents: ComponentsPartialDefinition = {
   HR: defineComponent<'HR', BoxProps>((props) => <Box as='hr' borderColor='table.border' {...props} />),
@@ -80,9 +88,9 @@ export const electionComponents: ComponentsPartialDefinition = {
       </Tag.Root>
     )
   }),
-  ElectionHeader: defineComponent<'ElectionHeader', ImageProps>(({ src, alt, ...props }) =>
-    src ? <Image src={src} alt={alt} {...props} /> : null
-  ),
+  ElectionHeader: defineComponent<'ElectionHeader', ImageProps>(({ src, alt, ...props }) => (
+    <VerifiedImage src={src} alt={alt} {...props} />
+  )),
   ElectionQuestions: defineComponent<'ElectionQuestions', BoxProps>(({ form, ...props }) => {
     const recipe = useSlotRecipe({ key: 'ElectionQuestions' })
     const styles = recipe({ layout: 'list' })
@@ -138,9 +146,11 @@ export const electionComponents: ComponentsPartialDefinition = {
       const [loaded, setLoaded] = useState(false)
       const imageRef = useRef<HTMLImageElement>(null)
 
-      const imageDefault = image?.default
-      const imageThumbnail = image?.thumbnail ?? imageDefault
-      const hasImage = Boolean(imageThumbnail)
+      // On the voter page a committed image is rendered from its verified bytes; the slot keeps
+      // its layout (and skeleton) while those are still being checked.
+      const hasImage = Boolean(image?.thumbnail ?? image?.default)
+      const imageDefault = useVerifiedMediaSrc(image?.default)
+      const imageThumbnail = useVerifiedMediaSrc(image?.thumbnail ?? image?.default)
 
       // An image can already be fully loaded before React attaches `onLoad` — it
       // happens with cached responses and, on SSR pages, with images the browser
@@ -322,9 +332,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='red.500' {...props}>
-      {error}
-    </Text>
+    <VoteErrorText error={error} {...props} />
   )),
   ConfirmShell: defineComponent<'ConfirmShell', BoxProps>(({ isOpen, onClose, content, ...props }) => {
     const recipe = useSlotRecipe({ key: 'ConfirmModal' })

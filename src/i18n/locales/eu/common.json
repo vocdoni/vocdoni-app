@@ -1300,6 +1300,12 @@
         "title": "Boto pribatua"
       }
     },
+    "ballot_updated": {
+      "description": "Erakundeak bozketa honen edukia aldatu du zuk ireki ondoren. Berrikusi eguneratutako galderak eta bozkatu berriro.",
+      "modal": "Zure botoa ez da eman, erakundeak bozketa hau aldatu duelako. Berrikusi eguneratutako galderak eta bozkatu berriro.",
+      "modal_partial": "Erantzun batzuk ez dira erregistratu, erakundeak bozketa hau aldatu duelako. Berrikusi eguneratutako galderak eta bozkatu berriro gainerakoak bidaltzeko.",
+      "title": "Txartela eguneratu da"
+    },
     "census": "Errolda",
     "create": {
       "action": {
@@ -1423,11 +1429,58 @@
       "votes_cast_one": "{{votes}} boto eman da",
       "votes_cast_other": "{{votes}} boto eman dira"
     },
+    "verification": {
+      "ballot": "Txartelaren testua",
+      "checking": "Edukia egiaztatzen…",
+      "description": {
+        "mismatch": "Orri honek erakusten duenaren zati bat ez dator bat Vochain-en erregistratutako bertsioarekin. Jarri harremanetan erakundearekin bozkatu aurretik.",
+        "no_hash": "Bozketa hau Vochain-en edukiaren hashik gabe argitaratu zen, beraz ezin da haren edukia egiaztatu.",
+        "unverifiable": "Zure nabigatzaileak ezin izan du eduki hau Vochain-ekin egiaztatu.",
+        "verified": "Orri honek erakusten duena bat dator, bytez byte, erakundeak Vochain-en erregistratutako bertsioarekin."
+      },
+      "field": {
+        "choice_description": "{{number}}. aukeraren deskribapena",
+        "choice_image": "{{number}}. aukeraren irudia",
+        "choice_title": "{{number}}. aukeraren testua",
+        "choice_value": "{{number}}. aukeraren balioa",
+        "choices": "Aukera kopurua",
+        "header": "Goiburuko irudia",
+        "process_description": "Bozketaren deskribapena",
+        "process_title": "Bozketaren izenburua",
+        "question_description": "Galderaren deskribapena",
+        "question_list": "Galderen zerrenda",
+        "question_title": "Galdera",
+        "stream": "Bideoa"
+      },
+      "footnote": "Zure nabigatzailean egiaztatua, edukiaren hasha kalkulatuz eta Vochain-ekin alderatuz.",
+      "images": "Irudiak",
+      "item": {
+        "mismatch": "Ez dator bat",
+        "no_hash": "Hashik gabe",
+        "unverifiable": "Ezin da egiaztatu",
+        "verified": "Egiaztatua"
+      },
+      "process": "Bozketaren datuak",
+      "question": "{{number}}. galdera",
+      "status": {
+        "mismatch": "Edukia ez dator bat",
+        "no_hash": "Edukiaren hashik ez katean",
+        "unverifiable": "Edukia ezin da egiaztatu",
+        "verified": "Edukia egiaztatua"
+      },
+      "title": "Edukiaren egiaztapena",
+      "url_only_note": "Deskribapenetan txertatutako irudiak eta bideoa URLaren bidez soilik daude estalita.",
+      "video_url": "Bideoa: URLa egiaztatua; bideoaren edukia ez dago estalita."
+    },
     "vote_failed": {
       "close": "Itxi",
       "none": "Ez da erantzunik erregistratu. Saiatu berriro.",
       "partial": "Erantzun batzuk ez dira erregistratu. Bozkatu berriro gainerakoak bidaltzeko.",
       "title": "Ezin izan da zure botoa eman"
+    },
+    "vote_gate": {
+      "blocked": "Txartelaren edukia ez dator bat erakundeak erregistratutakoarekin, beraz ezin da botoa eman. Saiatu berriro geroago edo jarri harremanetan erakundearekin.",
+      "pending": "Txartelaren edukia egiaztatzen bozkatu aurretik…"
     },
     "voters": "Boto-emaileak",
     "voting": "Zure botoa prozesatzen ari gara. Honek segundo batzuk iraungo ditu. Ez itxi edo eguneratu orrialde hau.",

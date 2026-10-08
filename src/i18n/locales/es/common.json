@@ -1323,6 +1323,12 @@
         "title": "Voto privado"
       }
     },
+    "ballot_updated": {
+      "description": "La organización ha cambiado el contenido de esta votación después de que la abrieras. Revisa las preguntas actualizadas y vuelve a votar.",
+      "modal": "Tu voto no se ha emitido porque la organización ha cambiado esta votación. Revisa las preguntas actualizadas y vuelve a votar.",
+      "modal_partial": "Algunas respuestas no se han registrado porque la organización ha cambiado esta votación. Revisa las preguntas actualizadas y vuelve a votar para enviar las restantes.",
+      "title": "La papeleta se ha actualizado"
+    },
     "census": "Censo",
     "create": {
       "action": {
@@ -1449,11 +1455,58 @@
       "votes_cast_many": "{{votes}} votos emitidos",
       "votes_cast_other": "{{votes}} votos emitidos"
     },
+    "verification": {
+      "ballot": "Texto de la papeleta",
+      "checking": "Comprobando el contenido…",
+      "description": {
+        "mismatch": "Parte de lo que muestra esta página no coincide con la versión registrada en la Vochain. Contacta con la organización antes de votar.",
+        "no_hash": "Esta votación se publicó sin un hash del contenido en la Vochain, así que su contenido no se puede comprobar.",
+        "unverifiable": "Tu navegador no ha podido comprobar este contenido con la Vochain.",
+        "verified": "Lo que muestra esta página coincide, byte a byte, con la versión que la organización registró en la Vochain."
+      },
+      "field": {
+        "choice_description": "Descripción de la opción {{number}}",
+        "choice_image": "Imagen de la opción {{number}}",
+        "choice_title": "Texto de la opción {{number}}",
+        "choice_value": "Valor de la opción {{number}}",
+        "choices": "Número de opciones",
+        "header": "Imagen de cabecera",
+        "process_description": "Descripción de la votación",
+        "process_title": "Título de la votación",
+        "question_description": "Descripción de la pregunta",
+        "question_list": "Lista de preguntas",
+        "question_title": "Pregunta",
+        "stream": "Vídeo"
+      },
+      "footnote": "Comprobado en tu navegador calculando el hash del contenido y comparándolo con la Vochain.",
+      "images": "Imágenes",
+      "item": {
+        "mismatch": "No coincide",
+        "no_hash": "Sin hash",
+        "unverifiable": "No verificable",
+        "verified": "Verificado"
+      },
+      "process": "Datos de la votación",
+      "question": "Pregunta {{number}}",
+      "status": {
+        "mismatch": "El contenido no coincide",
+        "no_hash": "Sin hash del contenido en la cadena",
+        "unverifiable": "Contenido no verificable",
+        "verified": "Contenido verificado"
+      },
+      "title": "Verificación del contenido",
+      "url_only_note": "Las imágenes incrustadas en las descripciones y el vídeo solo están cubiertos por su URL.",
+      "video_url": "Vídeo: URL verificada; el contenido del vídeo no está cubierto."
+    },
     "vote_failed": {
       "close": "Cerrar",
       "none": "No se ha registrado ninguna respuesta. Inténtalo de nuevo.",
       "partial": "Algunas respuestas no se han registrado. Vuelve a votar para enviar las restantes.",
       "title": "No se ha podido emitir tu voto"
+    },
+    "vote_gate": {
+      "blocked": "El contenido de la papeleta no coincide con lo que registró la organización, así que no se puede emitir el voto. Inténtalo más tarde o contacta con la organización.",
+      "pending": "Comprobando el contenido de la papeleta antes de votar…"
     },
     "voters": "Votantes",
     "voting": "Estamos procesando tu voto. Este proceso tardará unos segundos. No cierres ni actualices esta página.",
