@@ -493,6 +493,42 @@ export const styles = StyleSheet.create({
     fontSize: 9,
     color: '#697386',
   },
+  metadataVersion: {
+    marginTop: 6,
+  },
+  metadataVersionHeading: {
+    fontSize: 8.5,
+    fontWeight: 700,
+    color: '#111827',
+    marginBottom: 4,
+  },
+  metadataChange: {
+    marginBottom: 6,
+  },
+  metadataChangeLabel: {
+    fontSize: 8,
+    fontWeight: 700,
+    color: '#4b5563',
+    marginBottom: 2,
+  },
+  metadataChangeDetail: {
+    fontSize: 7.6,
+    color: '#5f6b7a',
+    marginBottom: 2,
+  },
+  metadataChangeText: {
+    fontSize: 8.5,
+    lineHeight: 1.35,
+    color: '#2f3a4c',
+  },
+  diffRemoved: {
+    color: '#b42318',
+    textDecoration: 'line-through',
+  },
+  diffAdded: {
+    color: '#067647',
+    textDecoration: 'underline',
+  },
   // Zero-size invisible text node used as a layout probe to capture the PDF page number
   // a section block lands on. Must NOT include lineHeight (react-pdf v4 render-prop constraint).
   captureProbe: {

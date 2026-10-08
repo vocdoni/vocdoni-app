@@ -13,6 +13,7 @@ import {
   formatPdfFieldValue,
   shouldStackFieldValue,
 } from './certificate-data'
+import { type CertificateMetadataAudit, type CertificateMetadataChange } from './metadata-audit-section'
 import { styles } from './styles'
 
 const { Document, Font, Image, Link: PdfLink, Page, Text: PdfText, View } = ReactPDF
@@ -49,8 +50,8 @@ const PREAMBLE_PAGE_COUNT = 1 as const
 // The numeric suffix is kept for legacy PDF bookmark compatibility.
 const REPORT_PAGE_IDS = {
   sectionsA: 'report-page-3', // Sections 1-4
-  sectionsB: 'report-page-4', // Sections 5-6
-  sectionsC: 'report-page-5', // Section 7
+  sectionsB: 'report-page-4', // Sections 5-7
+  sectionsC: 'report-page-5', // Section 8
 } as const
 
 // Per-section capture IDs – one per TOC entry.
@@ -63,7 +64,8 @@ const SECTION_IDS = {
   s4: 'sec-4-census',
   s5: 'sec-5-results',
   s6: 'sec-6-verification',
-  s7: 'sec-7-issuer',
+  s7: 'sec-7-metadata',
+  s8: 'sec-8-issuer',
 } as const
 
 // Static fallback page numbers (report-relative, i.e. pdfPage - PREAMBLE_PAGE_COUNT).
@@ -75,7 +77,8 @@ const SECTION_DEFAULT_PAGES: Record<string, string> = {
   [SECTION_IDS.s4]: '2',
   [SECTION_IDS.s5]: '3',
   [SECTION_IDS.s6]: '3',
-  [SECTION_IDS.s7]: '4',
+  [SECTION_IDS.s7]: '3',
+  [SECTION_IDS.s8]: '4',
 }
 
 // A question card moves whole to the next page, unless its results are long enough that it could
@@ -260,10 +263,16 @@ export const buildReportSections = (t: TFunction): ReportSection[] => [
     pageId: SECTION_IDS.s6,
   },
   {
-    title: t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' }),
+    title: t('process_pdf.document.sections.metadata_audit', { defaultValue: '7. Metadata Changes' }),
     href: `#${SECTION_IDS.s7}`,
     page: SECTION_DEFAULT_PAGES[SECTION_IDS.s7],
     pageId: SECTION_IDS.s7,
+  },
+  {
+    title: t('process_pdf.document.sections.issuer', { defaultValue: '8. Issuer' }),
+    href: `#${SECTION_IDS.s8}`,
+    page: SECTION_DEFAULT_PAGES[SECTION_IDS.s8],
+    pageId: SECTION_IDS.s8,
   },
 ]
 
@@ -328,6 +337,65 @@ const ResultBarRow = ({
         <PdfText style={styles.resultShareText}>{choice.eligiblePowerPercentage ?? notAvailableLabel}</PdfText>
       </View>
     )}
+  </View>
+)
+
+const getDiffSegmentStyle = (type: 'same' | 'removed' | 'added') =>
+  type === 'removed' ? styles.diffRemoved : type === 'added' ? styles.diffAdded : undefined
+
+const MetadataChangeRow = ({ change }: { change: CertificateMetadataChange }) => (
+  <View style={styles.metadataChange}>
+    <PdfText minPresenceAhead={SECTION_HEADING_MIN_PRESENCE_AHEAD / 2} style={styles.metadataChangeLabel}>
+      {change.label}
+    </PdfText>
+    {change.kind === 'inline' && (
+      <PdfText style={styles.metadataChangeText}>
+        {change.segments.map((segment, index) => (
+          <PdfText key={`${segment.type}-${index}`} style={getDiffSegmentStyle(segment.type)}>
+            {segment.text}
+          </PdfText>
+        ))}
+      </PdfText>
+    )}
+    {change.kind === 'replace' && (
+      <>
+        {change.detail && <PdfText style={styles.metadataChangeDetail}>{change.detail}</PdfText>}
+        <PdfText style={[styles.metadataChangeText, styles.diffRemoved]}>{change.before}</PdfText>
+        <PdfText style={[styles.metadataChangeText, styles.diffAdded]}>{change.after}</PdfText>
+      </>
+    )}
+    {change.kind === 'note' && <PdfText style={styles.metadataChangeText}>{change.text}</PdfText>}
+  </View>
+)
+
+// Each question's history may run longer than a page (long descriptions, many changes), so its card
+// flows across pages; only the headings and each version's identification table are kept whole.
+const MetadataAuditBody = ({ audit }: { audit: CertificateMetadataAudit }) => (
+  <View>
+    <PdfText style={styles.paragraph}>{audit.intro}</PdfText>
+    <PdfText style={styles.paragraph}>{audit.summary}</PdfText>
+    {audit.integrityWarning && <PdfText style={styles.paragraph}>{audit.integrityWarning}</PdfText>}
+    {audit.legend && <PdfText style={styles.smallText}>{audit.legend}</PdfText>}
+    {audit.elections.map((election, electionIndex) => (
+      <View key={`${election.title}-${electionIndex}`} style={styles.questionCard}>
+        <View wrap={false} minPresenceAhead={SECTION_HEADING_MIN_PRESENCE_AHEAD}>
+          <PdfText style={styles.questionTitle}>{election.title}</PdfText>
+          <PdfText style={styles.questionMeta}>{election.summary}</PdfText>
+        </View>
+        {election.versions.map((version, versionIndex) => (
+          <View key={`${version.heading}-${versionIndex}`} style={styles.metadataVersion}>
+            <View wrap={false}>
+              <PdfText style={styles.metadataVersionHeading}>{version.heading}</PdfText>
+              <KeyValueList items={version.fields} />
+            </View>
+            {version.note && <PdfText style={styles.smallText}>{version.note}</PdfText>}
+            {version.changes.map((change, changeIndex) => (
+              <MetadataChangeRow key={`${change.label}-${changeIndex}`} change={change} />
+            ))}
+          </View>
+        ))}
+      </View>
+    ))}
   </View>
 )
 
@@ -706,6 +774,15 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
           </PdfText>
           <NumberedList items={data.verificationProcedures} />
         </ReportSectionBlock>
+
+        <ReportSectionBlock
+          wrap
+          sectionId={SECTION_IDS.s7}
+          onCapturePage={onCapturePage}
+          title={t('process_pdf.document.sections.metadata_audit', { defaultValue: '7. Metadata Changes' })}
+        >
+          <MetadataAuditBody audit={data.metadataAudit} />
+        </ReportSectionBlock>
       </Page>
       <Page
         size='A4'
@@ -719,9 +796,9 @@ export const VotingCertificateDocument = ({ data, t, capturedPages, onCapturePag
         <ReportPageNumber />
         {onCapturePage && <PageStartCapture pageId={REPORT_PAGE_IDS.sectionsC} onCapturePage={onCapturePage} />}
         <ReportSectionBlock
-          sectionId={SECTION_IDS.s7}
+          sectionId={SECTION_IDS.s8}
           onCapturePage={onCapturePage}
-          title={t('process_pdf.document.sections.issuer', { defaultValue: '7. Issuer' })}
+          title={t('process_pdf.document.sections.issuer', { defaultValue: '8. Issuer' })}
         >
           <KeyValueList items={data.issuer} />
           <PdfText style={[styles.paragraph, styles.afterBoxText]}>

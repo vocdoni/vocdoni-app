@@ -17,7 +17,11 @@ import {
 import { useElection } from '@vocdoni/react-components'
 
 import { getAnonymityLabels } from '~components/Process/anonymityLabels'
+import { getGatewayUrlForChain } from '~queries/process-end-date'
 import { type TFunction } from 'i18next'
+
+import { auditElectionMetadata, type ElectionMetadataAudit } from './metadata-audit'
+import { buildMetadataAuditSection, type CertificateMetadataAudit } from './metadata-audit-section'
 
 /** Anything callers may hand us as an election: a typed process response or an untyped record. */
 export type ElectionLike = VotingProcessResponse | Record<string, unknown> | null | undefined
@@ -89,6 +93,7 @@ export type CertificateData = {
   resultsHiddenText?: string
   verification: CertificateField[]
   verificationProcedures: string[]
+  metadataAudit: CertificateMetadataAudit
   issuer: CertificateField[]
   disclaimerParagraphs: string[]
   disclaimerBullets: string[]
@@ -262,6 +267,7 @@ export const buildCertificateData = ({
   explorerUrl,
   now,
   earlyEndDate,
+  metadataAudits,
 }: {
   election: PublishedVotingProcessResponse
   results: VotingProcessResultsResponse | null
@@ -271,6 +277,8 @@ export const buildCertificateData = ({
   now: Date
   /** When voting really stopped, set only if the process was stopped early — see `getEarlyEndDate`. */
   earlyEndDate?: Date | null
+  /** Metadata history of each question's on-chain election — see `fetchMetadataAudits`. */
+  metadataAudits?: ElectionMetadataAudit[] | null
 }): CertificateData => {
   const notAvailableLabel = notAvailable(t)
   const eventReference = getDefaultText(election.title).trim() || election.id
@@ -670,6 +678,15 @@ export const buildCertificateData = ({
           'For a deeper technical audit, an auditor may inspect the public records in more detail or recompute the tally to confirm that the recorded ballots and final results are consistent.',
       }),
     ],
+    metadataAudit: buildMetadataAuditSection({
+      questions: election.questions.map((question) => ({
+        title: getDefaultText(question.title),
+        upstreamId: question.upstreamId,
+      })),
+      audits: metadataAudits,
+      t,
+      notAvailableLabel,
+    }),
     issuer: [
       { label: t('process_pdf.issuer.provider', { defaultValue: 'Provider' }), value: 'Vocdoni (Synergize SL)' },
       {
@@ -725,6 +742,17 @@ export const fetchProcessResults = async (
   } catch {
     return null
   }
+}
+
+/**
+ * Audit the metadata history of every question's on-chain election, read from the gateway of the
+ * chain the process was anchored to. Never rejects: unreadable histories come back as unavailable.
+ */
+export const fetchMetadataAudits = (election: VotingProcessResponse): Promise<ElectionMetadataAudit[]> => {
+  const gatewayUrl = getGatewayUrlForChain(election.chainId)
+  const electionIds = election.questions.map((question) => question.upstreamId).filter((id): id is string => !!id)
+
+  return Promise.all(electionIds.map((electionId) => auditElectionMetadata({ gatewayUrl, electionId })))
 }
 
 /**
