@@ -64,8 +64,9 @@ const question = (upstreamId: string): DisplayedQuestion => ({
 })
 
 /** What the page shows, as read from the SaaS API. */
-const shownProcess = (ids: string[] = ['e1'], upstreamId: string | undefined = PARENT): DisplayedProcess => ({
-  upstreamId,
+/** `upstreamId: null` is a process published without a parent election. */
+const shownProcess = (ids: string[] = ['e1'], upstreamId: string | null = PARENT): DisplayedProcess => ({
+  upstreamId: upstreamId ?? undefined,
   title: { default: 'Board election', es: 'Elección de la junta' },
   description: { default: 'Choose the chair.' },
   header: HEADER,
@@ -395,7 +396,7 @@ describe('verifyProcessMetadata', () => {
   })
 
   it('leaves the process fields and media not verifiable for a process without a parent', async () => {
-    const process = shownProcess(['e1'], undefined)
+    const process = shownProcess(['e1'], null)
     const world = committedWorld(process, { files: { [HEADER]: headerBytes } })
 
     const result = await verifyProcessMetadata(process, depsFor(world))
@@ -479,7 +480,7 @@ describe('verifyProcessMetadata', () => {
   })
 
   it('skips questions that are not published', async () => {
-    const process = { ...shownProcess([], undefined), questions: [{ title: { default: 'Draft' } }] }
+    const process = { ...shownProcess([], null), questions: [{ title: { default: 'Draft' } }] }
 
     const result = await verifyProcessMetadata(process, depsFor({ chain: {}, files: {} }))
 
@@ -496,7 +497,7 @@ describe('verifyProcessMetadata', () => {
       files: { [questionUrl('e2')]: new ResourceTooLargeError(questionUrl('e2')) },
     }
 
-    const result = await verifyProcessMetadata(shownProcess(['e1', 'e2', 'e3'], undefined), depsFor(world))
+    const result = await verifyProcessMetadata(shownProcess(['e1', 'e2', 'e3'], null), depsFor(world))
 
     expect(result.status).toBe('unverifiable')
     expect(result.documents.map((d) => d.reason)).toEqual(['chain-unavailable', 'too-large', 'unsupported-url'])
