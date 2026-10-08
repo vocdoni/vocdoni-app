@@ -1299,6 +1299,12 @@
         "title": "Private vote"
       }
     },
+    "ballot_updated": {
+      "description": "The organizer changed the content of this vote after you opened it. Review the updated questions and vote again.",
+      "modal": "Your vote was not cast because the organizer changed this vote. Review the updated questions and vote again.",
+      "modal_partial": "Some answers were not registered because the organizer changed this vote. Review the updated questions and vote again to send the remaining ones.",
+      "title": "The ballot has been updated"
+    },
     "census": "Census",
     "create": {
       "action": {
@@ -1408,6 +1414,32 @@
       "view_summary": "Follow the process",
       "votes_cast_one": "{{votes}} vote cast",
       "votes_cast_other": "{{votes}} votes cast"
+    },
+    "verification": {
+      "ballot": "Ballot text",
+      "checking": "Checking content…",
+      "description": {
+        "mismatch": "Part of what this page shows does not match the version committed on the Vochain. Contact the organizer before voting.",
+        "no_hash": "This vote was published without a content hash on the Vochain, so its content cannot be checked.",
+        "unverifiable": "Your browser could not check this content against the Vochain.",
+        "verified": "What this page shows matches, byte for byte, the version the organizer committed on the Vochain."
+      },
+      "footnote": "Checked in your browser by hashing the content and comparing it with the Vochain.",
+      "item": {
+        "mismatch": "Does not match",
+        "no_hash": "No hash",
+        "unverifiable": "Not verifiable",
+        "verified": "Verified"
+      },
+      "media": "Images and video",
+      "question": "Question {{number}}",
+      "status": {
+        "mismatch": "Content does not match",
+        "no_hash": "No content hash on chain",
+        "unverifiable": "Content not verifiable",
+        "verified": "Content verified"
+      },
+      "title": "Content verification"
     },
     "vote_failed": {
       "close": "Close",

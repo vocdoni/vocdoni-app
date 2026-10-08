@@ -1322,6 +1322,12 @@
         "title": "Voto privato"
       }
     },
+    "ballot_updated": {
+      "description": "L'organizzazione ha modificato il contenuto di questa votazione dopo che l'hai aperta. Rivedi le domande aggiornate e vota di nuovo.",
+      "modal": "Il tuo voto non è stato espresso perché l'organizzazione ha modificato questa votazione. Rivedi le domande aggiornate e vota di nuovo.",
+      "modal_partial": "Alcune risposte non sono state registrate perché l'organizzazione ha modificato questa votazione. Rivedi le domande aggiornate e vota di nuovo per inviare quelle mancanti.",
+      "title": "La scheda è stata aggiornata"
+    },
     "census": "Censimento",
     "create": {
       "action": {
@@ -1434,6 +1440,32 @@
       "votes_cast_one": "{{votes}} voto espresso",
       "votes_cast_many": "{{votes}} voti espressi",
       "votes_cast_other": "{{votes}} voti espressi"
+    },
+    "verification": {
+      "ballot": "Testo della scheda",
+      "checking": "Verifica del contenuto…",
+      "description": {
+        "mismatch": "Parte di ciò che mostra questa pagina non corrisponde alla versione registrata sulla Vochain. Contatta l'organizzazione prima di votare.",
+        "no_hash": "Questa votazione è stata pubblicata senza un hash del contenuto sulla Vochain, quindi il suo contenuto non può essere verificato.",
+        "unverifiable": "Il tuo browser non è riuscito a verificare questo contenuto con la Vochain.",
+        "verified": "Ciò che mostra questa pagina corrisponde, byte per byte, alla versione che l'organizzazione ha registrato sulla Vochain."
+      },
+      "footnote": "Verificato nel tuo browser calcolando l'hash del contenuto e confrontandolo con la Vochain.",
+      "item": {
+        "mismatch": "Non corrisponde",
+        "no_hash": "Senza hash",
+        "unverifiable": "Non verificabile",
+        "verified": "Verificato"
+      },
+      "media": "Immagini e video",
+      "question": "Domanda {{number}}",
+      "status": {
+        "mismatch": "Il contenuto non corrisponde",
+        "no_hash": "Nessun hash del contenuto sulla catena",
+        "unverifiable": "Contenuto non verificabile",
+        "verified": "Contenuto verificato"
+      },
+      "title": "Verifica del contenuto"
     },
     "vote_failed": {
       "close": "Chiudi",

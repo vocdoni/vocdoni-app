@@ -1322,6 +1322,12 @@
         "title": "Voto privado"
       }
     },
+    "ballot_updated": {
+      "description": "La organización ha cambiado el contenido de esta votación después de que la abrieras. Revisa las preguntas actualizadas y vuelve a votar.",
+      "modal": "Tu voto no se ha emitido porque la organización ha cambiado esta votación. Revisa las preguntas actualizadas y vuelve a votar.",
+      "modal_partial": "Algunas respuestas no se han registrado porque la organización ha cambiado esta votación. Revisa las preguntas actualizadas y vuelve a votar para enviar las restantes.",
+      "title": "La papeleta se ha actualizado"
+    },
     "census": "Censo",
     "create": {
       "action": {
@@ -1434,6 +1440,32 @@
       "votes_cast_one": "{{votes}} voto emitido",
       "votes_cast_many": "{{votes}} votos emitidos",
       "votes_cast_other": "{{votes}} votos emitidos"
+    },
+    "verification": {
+      "ballot": "Texto de la papeleta",
+      "checking": "Comprobando el contenido…",
+      "description": {
+        "mismatch": "Parte de lo que muestra esta página no coincide con la versión registrada en la Vochain. Contacta con la organización antes de votar.",
+        "no_hash": "Esta votación se publicó sin un hash del contenido en la Vochain, así que su contenido no se puede comprobar.",
+        "unverifiable": "Tu navegador no ha podido comprobar este contenido con la Vochain.",
+        "verified": "Lo que muestra esta página coincide, byte a byte, con la versión que la organización registró en la Vochain."
+      },
+      "footnote": "Comprobado en tu navegador calculando el hash del contenido y comparándolo con la Vochain.",
+      "item": {
+        "mismatch": "No coincide",
+        "no_hash": "Sin hash",
+        "unverifiable": "No verificable",
+        "verified": "Verificado"
+      },
+      "media": "Imágenes y vídeo",
+      "question": "Pregunta {{number}}",
+      "status": {
+        "mismatch": "El contenido no coincide",
+        "no_hash": "Sin hash del contenido en la cadena",
+        "unverifiable": "Contenido no verificable",
+        "verified": "Contenido verificado"
+      },
+      "title": "Verificación del contenido"
     },
     "vote_failed": {
       "close": "Cerrar",

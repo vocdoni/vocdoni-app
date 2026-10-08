@@ -1322,6 +1322,12 @@
         "title": "Voto privado"
       }
     },
+    "ballot_updated": {
+      "description": "A organização alterou o conteúdo desta votação depois que você a abriu. Revise as perguntas atualizadas e vote novamente.",
+      "modal": "Seu voto não foi registrado porque a organização alterou esta votação. Revise as perguntas atualizadas e vote novamente.",
+      "modal_partial": "Algumas respostas não foram registradas porque a organização alterou esta votação. Revise as perguntas atualizadas e vote novamente para enviar as restantes.",
+      "title": "A cédula foi atualizada"
+    },
     "census": "Lista de participantes",
     "create": {
       "action": {
@@ -1434,6 +1440,32 @@
       "votes_cast_one": "{{votes}} voto emitido",
       "votes_cast_many": "{{votes}} votos emitidos",
       "votes_cast_other": "{{votes}} votos emitidos"
+    },
+    "verification": {
+      "ballot": "Texto da cédula",
+      "checking": "Verificando o conteúdo…",
+      "description": {
+        "mismatch": "Parte do que esta página mostra não corresponde à versão registrada na Vochain. Entre em contato com a organização antes de votar.",
+        "no_hash": "Esta votação foi publicada sem um hash do conteúdo na Vochain, então seu conteúdo não pode ser verificado.",
+        "unverifiable": "Seu navegador não conseguiu verificar este conteúdo com a Vochain.",
+        "verified": "O que esta página mostra corresponde, byte a byte, à versão que a organização registrou na Vochain."
+      },
+      "footnote": "Verificado no seu navegador, calculando o hash do conteúdo e comparando-o com a Vochain.",
+      "item": {
+        "mismatch": "Não corresponde",
+        "no_hash": "Sem hash",
+        "unverifiable": "Não verificável",
+        "verified": "Verificado"
+      },
+      "media": "Imagens e vídeo",
+      "question": "Pergunta {{number}}",
+      "status": {
+        "mismatch": "O conteúdo não corresponde",
+        "no_hash": "Sem hash do conteúdo na cadeia",
+        "unverifiable": "Conteúdo não verificável",
+        "verified": "Conteúdo verificado"
+      },
+      "title": "Verificação do conteúdo"
     },
     "vote_failed": {
       "close": "Fechar",

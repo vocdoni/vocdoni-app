@@ -1322,6 +1322,12 @@
         "title": "Vot privat"
       }
     },
+    "ballot_updated": {
+      "description": "L'organització ha canviat el contingut d'aquesta votació després que l'obrissis. Revisa les preguntes actualitzades i torna a votar.",
+      "modal": "El teu vot no s'ha emès perquè l'organització ha canviat aquesta votació. Revisa les preguntes actualitzades i torna a votar.",
+      "modal_partial": "Algunes respostes no s'han registrat perquè l'organització ha canviat aquesta votació. Revisa les preguntes actualitzades i torna a votar per enviar les que falten.",
+      "title": "La papereta s'ha actualitzat"
+    },
     "census": "Cens",
     "create": {
       "action": {
@@ -1434,6 +1440,32 @@
       "votes_cast_one": "{{votes}} vot emès",
       "votes_cast_many": "{{votes}} vots emesos",
       "votes_cast_other": "{{votes}} vots emesos"
+    },
+    "verification": {
+      "ballot": "Text de la papereta",
+      "checking": "Comprovant el contingut…",
+      "description": {
+        "mismatch": "Part del que mostra aquesta pàgina no coincideix amb la versió registrada a la Vochain. Contacta amb l'organització abans de votar.",
+        "no_hash": "Aquesta votació es va publicar sense un hash del contingut a la Vochain, així que el seu contingut no es pot comprovar.",
+        "unverifiable": "El teu navegador no ha pogut comprovar aquest contingut amb la Vochain.",
+        "verified": "El que mostra aquesta pàgina coincideix, byte a byte, amb la versió que l'organització va registrar a la Vochain."
+      },
+      "footnote": "Comprovat al teu navegador calculant el hash del contingut i comparant-lo amb la Vochain.",
+      "item": {
+        "mismatch": "No coincideix",
+        "no_hash": "Sense hash",
+        "unverifiable": "No verificable",
+        "verified": "Verificat"
+      },
+      "media": "Imatges i vídeo",
+      "question": "Pregunta {{number}}",
+      "status": {
+        "mismatch": "El contingut no coincideix",
+        "no_hash": "Sense hash del contingut a la cadena",
+        "unverifiable": "Contingut no verificable",
+        "verified": "Contingut verificat"
+      },
+      "title": "Verificació del contingut"
     },
     "vote_failed": {
       "close": "Tanca",

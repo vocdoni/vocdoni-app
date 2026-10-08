@@ -1322,6 +1322,12 @@
         "title": "Vote privé"
       }
     },
+    "ballot_updated": {
+      "description": "L'organisation a modifié le contenu de ce vote après que vous l'avez ouvert. Relisez les questions mises à jour et votez à nouveau.",
+      "modal": "Votre vote n'a pas été enregistré car l'organisation a modifié ce vote. Relisez les questions mises à jour et votez à nouveau.",
+      "modal_partial": "Certaines réponses n'ont pas été enregistrées car l'organisation a modifié ce vote. Relisez les questions mises à jour et votez à nouveau pour envoyer les autres.",
+      "title": "Le bulletin a été mis à jour"
+    },
     "census": "Liste électorale",
     "create": {
       "action": {
@@ -1434,6 +1440,32 @@
       "votes_cast_one": "{{votes}} vote exprimé",
       "votes_cast_many": "{{votes}} votes exprimés",
       "votes_cast_other": "{{votes}} votes exprimés"
+    },
+    "verification": {
+      "ballot": "Texte du bulletin",
+      "checking": "Vérification du contenu…",
+      "description": {
+        "mismatch": "Une partie de ce qu'affiche cette page ne correspond pas à la version enregistrée sur la Vochain. Contactez l'organisation avant de voter.",
+        "no_hash": "Ce vote a été publié sans hash du contenu sur la Vochain : son contenu ne peut donc pas être vérifié.",
+        "unverifiable": "Votre navigateur n'a pas pu vérifier ce contenu auprès de la Vochain.",
+        "verified": "Ce qu'affiche cette page correspond, octet par octet, à la version que l'organisation a enregistrée sur la Vochain."
+      },
+      "footnote": "Vérifié dans votre navigateur en calculant le hash du contenu et en le comparant à la Vochain.",
+      "item": {
+        "mismatch": "Ne correspond pas",
+        "no_hash": "Sans hash",
+        "unverifiable": "Non vérifiable",
+        "verified": "Vérifié"
+      },
+      "media": "Images et vidéo",
+      "question": "Question {{number}}",
+      "status": {
+        "mismatch": "Le contenu ne correspond pas",
+        "no_hash": "Aucun hash du contenu sur la chaîne",
+        "unverifiable": "Contenu non vérifiable",
+        "verified": "Contenu vérifié"
+      },
+      "title": "Vérification du contenu"
     },
     "vote_failed": {
       "close": "Fermer",

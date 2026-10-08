@@ -36,6 +36,7 @@ import {
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaCircleCheck } from 'react-icons/fa6'
+import { VoteErrorText } from '~components/Process/BallotUpdate'
 import { Markdown } from '~components/ui/Markdown'
 import { useAppEnv } from '~src/app-env'
 import { getVocdoniClientConfig } from '~src/providers/vocdoni-client-config'
@@ -322,9 +323,7 @@ export const electionComponents: ComponentsPartialDefinition = {
     )
   }),
   QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='red.500' {...props}>
-      {error}
-    </Text>
+    <VoteErrorText error={error} {...props} />
   )),
   ConfirmShell: defineComponent<'ConfirmShell', BoxProps>(({ isOpen, onClose, content, ...props }) => {
     const recipe = useSlotRecipe({ key: 'ConfirmModal' })

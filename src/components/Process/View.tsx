@@ -39,6 +39,8 @@ import { ElectionVideo } from './Dashboard/ProcessView'
 import { ProcessDate } from './Date'
 import Header from './Header'
 import { useAnonymityLabels } from './anonymityLabels'
+import { BallotUpdatedNotice, BallotUpdateProvider, useBallotUpdate } from './BallotUpdate'
+import { MetadataVerificationIndicator } from './MetadataVerification/Indicator'
 
 type ProcessInfoCardProps = {
   label: string
@@ -112,6 +114,7 @@ const ProcessInfoPanel = () => {
         )}
         <ManageProcessLink />
       </Box>
+      <MetadataVerificationIndicator />
       <AnonymityInfoCard anonymous={election.census?.anonymous} />
       <ProcessInfoCard
         label={t('process.census')}
@@ -148,8 +151,15 @@ const ProcessInfoPanel = () => {
   )
 }
 
-export const ProcessView = () => {
+export const ProcessView = () => (
+  <BallotUpdateProvider>
+    <ProcessViewContents />
+  </BallotUpdateProvider>
+)
+
+const ProcessViewContents = () => {
   const { t } = useTranslation()
+  const ballotUpdate = useBallotUpdate()
   const { election, hasVoted, status } = useElection()
   // No CSP session guard needed in v2: process auth tokens live in memory, scoped
   // to their ElectionProvider, so a stale session from another election can't leak in.
@@ -159,6 +169,14 @@ export const ProcessView = () => {
   const [formErrors, setFormErrors] = useState<any>(null)
 
   const setQuestionsTab = () => setTabValue('questions')
+
+  // A ballot that changed under the voter must be reviewed, so bring the questions back.
+  const ballotUpdated = !!ballotUpdate?.updated
+  useEffect(() => {
+    if (!ballotUpdated) return
+    setTabValue('questions')
+    electionRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [ballotUpdated])
 
   // If the election is finished, show the results tab
   useEffect(() => {
@@ -235,6 +253,7 @@ export const ProcessView = () => {
               </TabsList>
               <TabsContentGroup mt={6}>
                 <TabsContent value='questions' p={0}>
+                  <BallotUpdatedNotice />
                   <Box
                     ref={electionRef}
                     p={6}
@@ -363,11 +382,14 @@ export const SuccessVoteModal = () => {
  * form, so a failure would otherwise surface nowhere at all. The batch is
  * accepted or rejected as a unit, so a rejected relay means nothing was cast and
  * the voter can simply vote again; only a chain-level failure can leave some
- * questions cast, and voting again then sends just the remaining ones.
+ * questions cast, and voting again then sends just the remaining ones. A rejection
+ * because the ballot changed under the voter gets its own wording: the voter has to
+ * review the reloaded questions, not just retry.
  */
 export const VotingVoteModal = () => {
   const { t } = useTranslation()
   const { voting, voteStatus } = useElection()
+  const ballotUpdated = !!useBallotUpdate()?.updated
   const [dismissedFailure, setDismissedFailure] = useState(false)
 
   const statuses = Object.values(voteStatus)
@@ -394,7 +416,24 @@ export const VotingVoteModal = () => {
         <Dialog.Content>
           {/* This dialog has no header, so the body has to supply the top padding it would provide. */}
           <Dialog.Body pt={6}>
-            {showFailure ? (
+            {showFailure && ballotUpdated ? (
+              <>
+                <Text textAlign='center' fontWeight='bold' mb={2}>
+                  {t('process.ballot_updated.title', { defaultValue: 'The ballot has been updated' })}
+                </Text>
+                <Text textAlign='center'>
+                  {confirmed > 0
+                    ? t('process.ballot_updated.modal_partial', {
+                        defaultValue:
+                          'Some answers were not registered because the organizer changed this vote. Review the updated questions and vote again to send the remaining ones.',
+                      })
+                    : t('process.ballot_updated.modal', {
+                        defaultValue:
+                          'Your vote was not cast because the organizer changed this vote. Review the updated questions and vote again.',
+                      })}
+                </Text>
+              </>
+            ) : showFailure ? (
               <>
                 <Text textAlign='center' fontWeight='bold' mb={2}>
                   {t('process.vote_failed.title', { defaultValue: 'Your vote could not be cast' })}

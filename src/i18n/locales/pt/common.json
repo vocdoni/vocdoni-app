@@ -1322,6 +1322,12 @@
         "title": "Voto privado"
       }
     },
+    "ballot_updated": {
+      "description": "A organização alterou o conteúdo desta votação depois de a abrires. Revê as perguntas atualizadas e vota novamente.",
+      "modal": "O teu voto não foi registado porque a organização alterou esta votação. Revê as perguntas atualizadas e vota novamente.",
+      "modal_partial": "Algumas respostas não foram registadas porque a organização alterou esta votação. Revê as perguntas atualizadas e vota novamente para enviar as restantes.",
+      "title": "O boletim foi atualizado"
+    },
     "census": "Lista de participantes",
     "create": {
       "action": {
@@ -1434,6 +1440,32 @@
       "votes_cast_one": "{{votes}} voto emitido",
       "votes_cast_many": "{{votes}} votos emitidos",
       "votes_cast_other": "{{votes}} votos emitidos"
+    },
+    "verification": {
+      "ballot": "Texto do boletim",
+      "checking": "A verificar o conteúdo…",
+      "description": {
+        "mismatch": "Parte do que esta página mostra não corresponde à versão registada na Vochain. Contacta a organização antes de votar.",
+        "no_hash": "Esta votação foi publicada sem um hash do conteúdo na Vochain, por isso o seu conteúdo não pode ser verificado.",
+        "unverifiable": "O teu navegador não conseguiu verificar este conteúdo com a Vochain.",
+        "verified": "O que esta página mostra corresponde, byte a byte, à versão que a organização registou na Vochain."
+      },
+      "footnote": "Verificado no teu navegador, calculando o hash do conteúdo e comparando-o com a Vochain.",
+      "item": {
+        "mismatch": "Não corresponde",
+        "no_hash": "Sem hash",
+        "unverifiable": "Não verificável",
+        "verified": "Verificado"
+      },
+      "media": "Imagens e vídeo",
+      "question": "Pergunta {{number}}",
+      "status": {
+        "mismatch": "O conteúdo não corresponde",
+        "no_hash": "Sem hash do conteúdo na cadeia",
+        "unverifiable": "Conteúdo não verificável",
+        "verified": "Conteúdo verificado"
+      },
+      "title": "Verificação do conteúdo"
     },
     "vote_failed": {
       "close": "Fechar",
