@@ -1030,6 +1030,7 @@
       "add_to_group_confirmation_one": "Du fügst {{count}} Mitglied der Gruppe \"{{group}}\" hinzu.",
       "add_to_group_confirmation_other": "Du fügst {{count}} Mitglieder der Gruppe \"{{group}}\" hinzu.",
       "add_to_group_description": "Wähle eine Gruppe aus, zu der die Mitglieder hinzugefügt werden sollen.",
+      "add_to_group_error": "Fehler beim Hinzufügen der Mitglieder zur Gruppe",
       "add_to_group_success": "Mitglieder erfolgreich zur Gruppe hinzugefügt",
       "bulk_delete": "Löschen",
       "cancel": "Abbrechen",
@@ -1355,6 +1356,19 @@
     "extended_info": "Erweiterte Infos",
     "is_invalid": "Dieser Prozess enthält fehlerhafte Daten und ist daher ungültig",
     "no_description": "Keine Beschreibung vorhanden",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "Die Zahlung für einen Abstimmungsprozess mit diesen Mitgliedern wird noch verarbeitet. Versuch es erneut, sobald sie abgeschlossen ist.",
+        "census_growth_payment_required": "Diese Mitglieder würden die Teilnehmerliste eines Abstimmungsprozesses über das Bezahlte hinaus vergrößern. Die Erweiterung kostet bis zu {{amount}} mehr (zzgl. MwSt.).",
+        "census_growth_quote_required": "Diese Mitglieder würden die Teilnehmerliste eines Abstimmungsprozesses auf mehr als 50.000 Wählende bringen, wofür ein individuelles Angebot nötig ist. Kontaktiere uns, um sie zu erweitern.",
+        "draft_payment_in_progress": "Dieser Entwurf kann wegen seiner Zahlung nicht gespeichert werden: Entweder wird die Zahlung noch verarbeitet, oder die Änderung ist nach der Zahlung nicht mehr erlaubt (etwa das Hinzufügen von Branding). Kontaktiere uns, falls es weiterhin passiert.",
+        "payment_in_progress": "Eine Zahlung, ein Kaufvorgang oder eine Rückerstattung für diesen Abstimmungsprozess ist noch nicht abgeschlossen, daher kann der Prozess gerade nicht veröffentlicht werden. Versuch es später erneut und kontaktiere uns, falls es weiterhin passiert.",
+        "publish_payment_required": "Dieser Abstimmungsprozess kostet insgesamt {{amount}} (zzgl. MwSt.) und muss vor der Veröffentlichung bezahlt werden. Wurde bereits ein Teil bezahlt, ist nur noch die Differenz fällig.",
+        "quote_required": "Abstimmungsprozesse mit mehr als 50.000 Wählenden brauchen ein individuelles Angebot. Kontaktiere uns, um diesen zu veröffentlichen.",
+        "wallet_insufficient": "Das Guthaben des Integrators deckt den Preis dieses Abstimmungsprozesses nicht. Der Integrator, der diese Organisation verwaltet, muss sein Guthaben aufladen, bevor du erneut veröffentlichst.",
+        "wallet_insufficient_amounts": "Das Guthaben des Integrators beträgt {{available}}, für die Veröffentlichung dieses Abstimmungsprozesses sind aber noch {{required}} (zzgl. MwSt.) fällig. Der Integrator, der diese Organisation verwaltet, muss sein Guthaben aufladen, bevor du erneut veröffentlichst."
+      }
+    },
     "people_in_census_one": "Ein Wähler",
     "people_in_census_other": "{{ count }} Wählende",
     "question_type": {

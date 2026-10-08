@@ -1044,6 +1044,7 @@
       "add_to_group_confirmation_many": "Afegiràs {{count}} membres al grup \"{{group}}\".",
       "add_to_group_confirmation_other": "Afegiràs {{count}} membres al grup \"{{group}}\".",
       "add_to_group_description": "Selecciona un grup on afegir els membres.",
+      "add_to_group_error": "Error en afegir membres al grup",
       "add_to_group_success": "Membres afegits al grup correctament",
       "bulk_delete": "Elimina",
       "cancel": "Cancel·la",
@@ -1379,6 +1380,19 @@
     "extended_info": "Informació ampliada",
     "is_invalid": "Aquest procés té dades no vàlides i per tant no pot carregar-se",
     "no_description": "No hi ha cap descripció proporcionada",
+    "payment": {
+      "error": {
+        "census_growth_payment_in_progress": "Encara s'està processant el pagament d'un procés de votació que fa servir aquests membres. Torna-ho a provar quan acabi.",
+        "census_growth_payment_required": "Aquests membres ampliarien el cens d'un procés de votació més enllà del que se'n va pagar. Ampliar-lo costa fins a {{amount}} més (IVA no inclòs).",
+        "census_growth_quote_required": "Aquests membres farien que el cens d'un procés de votació superés els 50.000 votants, i això necessita un pressupost personalitzat. Contacta amb nosaltres per ampliar-lo.",
+        "draft_payment_in_progress": "Aquest esborrany no es pot desar a causa del seu pagament: o bé el pagament encara s'està processant, o bé el canvi no es permet un cop pagat (com ara afegir una marca personalitzada). Contacta amb nosaltres si continua passant.",
+        "payment_in_progress": "Un pagament, una compra o un reemborsament d'aquest procés de votació encara no ha acabat, així que no es pot publicar ara. Torna-ho a provar més tard i contacta amb nosaltres si continua passant.",
+        "publish_payment_required": "Aquest procés de votació costa {{amount}} en total (IVA no inclòs) i cal pagar-lo abans de publicar-lo. Si ja se n'ha pagat una part, només cal pagar la diferència.",
+        "quote_required": "Els processos de votació de més de 50.000 votants necessiten un pressupost personalitzat. Contacta amb nosaltres per publicar aquest.",
+        "wallet_insufficient": "El saldo de l'integrador no cobreix el preu d'aquest procés de votació. L'integrador que gestiona aquesta organització ha de recarregar el saldo abans que el tornis a publicar.",
+        "wallet_insufficient_amounts": "El saldo de l'integrador és de {{available}}, però encara falten {{required}} (IVA no inclòs) per publicar aquest procés de votació. L'integrador que gestiona aquesta organització ha de recarregar el saldo abans que el tornis a publicar."
+      }
+    },
     "people_in_census_one": "Un votant",
     "people_in_census_many": "{{ count }} votants",
     "people_in_census_other": "{{ count }} votants",
