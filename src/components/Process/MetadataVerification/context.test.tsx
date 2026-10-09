@@ -1,7 +1,7 @@
+import type { ProcessVerification } from '@vocdoni/metadata-verify'
 import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { MetadataVerificationProvider, useMetadataVerificationContext, useVerifiedMediaSrc } from './context'
-import type { ProcessVerification } from './verify'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
@@ -34,6 +34,7 @@ const verified: ProcessVerification = {
   media: [
     {
       url: HEADER,
+      coverage: 'content',
       committed: true,
       status: 'verified',
       expectedHash: 'ab',
@@ -41,6 +42,7 @@ const verified: ProcessVerification = {
       bytes: new TextEncoder().encode('png').buffer as ArrayBuffer,
     },
   ],
+  urlOnly: [],
 }
 
 describe('MetadataVerificationProvider', () => {

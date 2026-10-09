@@ -1,17 +1,16 @@
-import { type TFunction } from 'i18next'
-
 import {
   type AuditedMetadataVersion,
   type DiffSegment,
-  type ElectionChildren,
   type ElectionMetadataAudit,
   type MetadataChange,
+  type ProcessMetadataAudit,
   condenseDiff,
   diffWords,
   hasIntegrityIssues,
   hasMetadataUpdates,
   normalizeHex,
-} from './metadata-audit'
+} from '@vocdoni/metadata-verify'
+import { type TFunction } from 'i18next'
 
 /** Shape shared with `CertificateField` in certificate-data, kept local to avoid an import cycle. */
 type AuditField = { label: string; value: string; helperText?: string }
@@ -62,7 +61,7 @@ const formatTimestamp = (date: Date | null) =>
   date ? `${date.toISOString().slice(0, 19).replace('T', ' ')} UTC` : null
 
 const getIntegrityText = (version: AuditedMetadataVersion, t: TFunction) => {
-  switch (version.integrity) {
+  switch (version.status) {
     case 'verified':
       return t('process_pdf.metadata_audit.integrity.verified', {
         defaultValue: 'Verified: the document matches the hash recorded on chain',
@@ -71,7 +70,7 @@ const getIntegrityText = (version: AuditedMetadataVersion, t: TFunction) => {
       return t('process_pdf.metadata_audit.integrity.mismatch', {
         defaultValue: 'Mismatch: the document available now does not match the hash recorded on chain',
       })
-    case 'unrecorded':
+    case 'no-hash':
       return t('process_pdf.metadata_audit.integrity.unrecorded', {
         defaultValue: 'Not verifiable: no hash was recorded on chain for this version',
       })
@@ -248,16 +247,16 @@ const buildVersion = (
       },
       {
         label: t('process_pdf.metadata_audit.recorded_hash', { defaultValue: 'Recorded hash (SHA-256)' }),
-        value: version.recordedHash || notAvailableLabel,
+        value: version.expectedHash || notAvailableLabel,
       },
       {
         label: t('process_pdf.metadata_audit.integrity.label', { defaultValue: 'Integrity' }),
         value: getIntegrityText(version, t),
         helperText:
-          version.integrity === 'mismatch'
+          version.status === 'mismatch'
             ? t('process_pdf.metadata_audit.integrity.computed_hash', {
                 defaultValue: 'Hash of the document available now: {{hash}}',
-                hash: version.computedHash,
+                hash: version.actualHash,
               })
             : undefined,
       },
@@ -283,37 +282,40 @@ const buildVersion = (
  * The "Metadata changes" section. It starts with the voting process itself, whose title,
  * description and media live in the metadata of its parent on-chain election (a metadata-only
  * election). The question entries that follow are the parent's children as linked on chain, with
- * any question of the process that is not among them appended; a question that is not a child, a
- * child that is not a question, or a child declaring another parent is flagged. Each entry lists the
- * metadata versions of its election with their integrity check and the differences against the
- * previous version. A process published without a parent election has no process-level history on
- * chain, which its entry says. `audits` is undefined when the history was not read at all.
+ * any question of the process that is not among them appended (the order `auditProcessMetadata`
+ * returns them in); a question that is not a child, a child that is not a question, or a child
+ * declaring another parent is flagged. Each entry lists the metadata versions of its election with
+ * their integrity check and the differences against the previous version. A process published
+ * without a parent election has no process-level history on chain, which its entry says. `audit`
+ * is undefined when the history was not read at all.
  */
 export const buildMetadataAuditSection = ({
   process,
   questions,
-  audits,
-  children,
+  audit,
   t,
   notAvailableLabel,
 }: {
   process: AuditedQuestion
   questions: AuditedQuestion[]
-  audits?: ElectionMetadataAudit[] | null
-  children?: ElectionChildren | null
+  audit?: ProcessMetadataAudit | null
   t: TFunction
   notAvailableLabel: string
 }): CertificateMetadataAudit => {
-  const auditsById = new Map((audits ?? []).map((audit) => [normalizeHex(audit.electionId), audit]))
-  const processId = normalizeHex(process.upstreamId)
-  const processAudit = processId ? auditsById.get(processId) : undefined
-  const linked = processId && children?.available ? children.children : null
-  const childIds = linked?.map((child) => child.electionId) ?? []
+  const processId = audit ? (audit.parentElectionId ?? undefined) : normalizeHex(process.upstreamId)
+  const processAudit = audit?.process ?? undefined
   const questionIds = questions.map((question) => normalizeHex(question.upstreamId))
   const questionsById = new Map(
-    questions.map((question, index) => [questionIds[index], { question, index }] as const).filter(([id]) => id)
+    questions
+      .map((question, index) => [questionIds[index], { question, index }] as const)
+      .filter((entry): entry is readonly [string, { question: AuditedQuestion; index: number }] => !!entry[0])
   )
-  const electionIds = [...new Set([...childIds, ...questionIds])].filter((id) => id && id !== processId)
+  // The question elections, each with its audit when the history was read.
+  const entries: Array<{ id: string; audit?: ElectionMetadataAudit }> = audit
+    ? audit.questions.map((question) => ({ id: question.electionId, audit: question }))
+    : [...new Set(questionIds)].filter((id): id is string => !!id && id !== processId).map((id) => ({ id }))
+  const linked = processId && audit?.childrenAvailable ? audit.questions.filter((question) => question.child) : null
+  const childIds = linked?.map((child) => child.electionId) ?? []
 
   // The chain links every question election to its parent; the links must match the questions.
   const linkWarnings: string[] = []
@@ -326,7 +328,8 @@ export const buildMetadataAuditSection = ({
   }
   if (linked) {
     questions.forEach((_, index) => {
-      if (!childIds.includes(questionIds[index])) {
+      const id = questionIds[index]
+      if (!id || !childIds.includes(id)) {
         linkWarnings.push(
           t('process_pdf.metadata_audit.question_not_child', {
             defaultValue: 'Question {{number}} is not linked on chain to the voting process.',
@@ -336,7 +339,7 @@ export const buildMetadataAuditSection = ({
       }
     })
     for (const child of linked) {
-      if (child.parentElectionId !== processId) {
+      if (child.issues.includes('wrong-parent')) {
         linkWarnings.push(
           t('process_pdf.metadata_audit.child_parent_mismatch', {
             defaultValue:
@@ -346,7 +349,7 @@ export const buildMetadataAuditSection = ({
           })
         )
       }
-      if (!questionsById.has(child.electionId)) {
+      if (child.issues.includes('not-in-process')) {
         linkWarnings.push(
           t('process_pdf.metadata_audit.child_not_question', {
             defaultValue: 'Election {{id}} is linked on chain to the voting process but is not one of its questions.',
@@ -359,7 +362,7 @@ export const buildMetadataAuditSection = ({
   const linksMismatch = linked !== null && linkWarnings.length > 0
 
   // Only elections that exist on chain have a history to read; a missing parent is reported apart.
-  const recorded = [processId, ...electionIds].filter(Boolean).map((id) => auditsById.get(id))
+  const recorded = [...(processId ? [processAudit] : []), ...entries.map((entry) => entry.audit)]
   const readable = recorded.filter((audit): audit is ElectionMetadataAudit => !!audit?.available)
   const anyUnreadable = readable.length < recorded.length
   const anyUpdates = readable.some(hasMetadataUpdates)
@@ -434,8 +437,7 @@ export const buildMetadataAuditSection = ({
     versions: buildVersions(processAudit),
   }
 
-  const questionEntries = electionIds.map((id): CertificateMetadataElection => {
-    const audit = auditsById.get(id)
+  const questionEntries = entries.map(({ id, audit: questionAudit }): CertificateMetadataElection => {
     const match = questionsById.get(id)
     return {
       title: match
@@ -448,12 +450,12 @@ export const buildMetadataAuditSection = ({
             defaultValue: 'Election {{id}}, not a question of this voting process',
             id,
           }),
-      summary: !audit?.available
+      summary: !questionAudit?.available
         ? t('process_pdf.metadata_audit.history_unavailable', {
             defaultValue: 'The change history of this question could not be read.',
           })
-        : getHistorySummary(audit),
-      versions: buildVersions(audit),
+        : getHistorySummary(questionAudit),
+      versions: buildVersions(questionAudit),
     }
   })
 

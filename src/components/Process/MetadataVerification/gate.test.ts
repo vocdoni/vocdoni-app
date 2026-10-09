@@ -1,5 +1,5 @@
+import type { MediaVerification, ProcessVerification } from '@vocdoni/metadata-verify'
 import { createBlobUrls, imageMimeType, resolveMediaSrc, voteGate } from './gate'
-import type { MediaVerification, ProcessVerification } from './verify'
 
 const HEADER = 'https://cdn.example.org/header.png'
 const IMAGE = 'https://cdn.example.org/choice.png'
@@ -8,6 +8,7 @@ const bytesOf = (text: string) => new TextEncoder().encode(text).buffer as Array
 
 const verified = (url: string, text = 'png-bytes'): MediaVerification => ({
   url,
+  coverage: 'content',
   committed: true,
   status: 'verified',
   expectedHash: 'ab',
@@ -20,6 +21,7 @@ const result = (status: ProcessVerification['status'], media: MediaVerification[
   process: { electionId: 'p0', status: status === 'no-hash' ? 'no-hash' : 'verified' },
   documents: [{ electionId: 'e1', status }],
   media,
+  urlOnly: [],
 })
 
 describe('voteGate', () => {
@@ -38,7 +40,13 @@ describe('voteGate', () => {
   })
 
   it('blocks a committed image that could not be fetched and hashed', () => {
-    const unfetched: MediaVerification = { url: IMAGE, committed: true, status: 'unverifiable', reason: 'fetch-failed' }
+    const unfetched: MediaVerification = {
+      url: IMAGE,
+      coverage: 'content',
+      committed: true,
+      status: 'unverifiable',
+      reason: 'fetch-failed',
+    }
     expect(voteGate({ ...base, data: result('verified', [verified(HEADER), unfetched]) })).toBe('blocked')
   })
 
@@ -65,6 +73,7 @@ describe('voteGate', () => {
   it('blocks a choice image whose question document could not be verified', () => {
     const unchecked: MediaVerification = {
       url: IMAGE,
+      coverage: 'content',
       committed: true,
       status: 'unverifiable',
       reason: 'document-unverified',
@@ -73,9 +82,16 @@ describe('voteGate', () => {
   })
 
   it('does not block images nothing commits', () => {
-    const noParent: MediaVerification = { url: HEADER, committed: false, status: 'unverifiable', reason: 'no-parent' }
+    const noParent: MediaVerification = {
+      url: HEADER,
+      coverage: 'content',
+      committed: false,
+      status: 'unverifiable',
+      reason: 'no-parent',
+    }
     const notCommitted: MediaVerification = {
       url: IMAGE,
+      coverage: 'content',
       committed: false,
       status: 'unverifiable',
       reason: 'not-committed',
@@ -99,13 +115,15 @@ describe('resolveMediaSrc', () => {
   it('never falls back to the original URL for a committed image', () => {
     // Still checking, failed, or mismatched: nothing is shown rather than unverified bytes.
     expect(resolveMediaSrc(HEADER, { hasParent: true, blobUrls: {} })).toBeUndefined()
-    const data = result('mismatch', [{ url: IMAGE, committed: true, status: 'mismatch' }])
+    const data = result('mismatch', [{ url: IMAGE, coverage: 'content', committed: true, status: 'mismatch' }])
     expect(resolveMediaSrc(IMAGE, { hasParent: true, data, blobUrls })).toBeUndefined()
   })
 
   it('keeps the original URL where nothing commits the image', () => {
     expect(resolveMediaSrc(HEADER, { hasParent: false, blobUrls: {} })).toBe(HEADER)
-    const data = result('verified', [{ url: IMAGE, committed: false, status: 'unverifiable', reason: 'not-committed' }])
+    const data = result('verified', [
+      { url: IMAGE, coverage: 'content', committed: false, status: 'unverifiable', reason: 'not-committed' },
+    ])
     expect(resolveMediaSrc(IMAGE, { hasParent: true, data, blobUrls: {} })).toBe(IMAGE)
     expect(resolveMediaSrc(HEADER, { hasParent: true, data: result('no-hash'), blobUrls: {} })).toBe(HEADER)
   })
@@ -138,7 +156,7 @@ describe('createBlobUrls', () => {
       [
         verified(HEADER, 'header-bytes'),
         verified(IMAGE, '<svg></svg>'),
-        { url: 'https://cdn.example.org/bad.png', committed: true, status: 'mismatch' },
+        { url: 'https://cdn.example.org/bad.png', coverage: 'content', committed: true, status: 'mismatch' },
       ],
       create
     )

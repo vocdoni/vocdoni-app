@@ -1,17 +1,22 @@
+import {
+  type AuditedMetadataVersion,
+  type ElectionMetadataAudit,
+  type ProcessMetadataAudit,
+  type QuestionLinkIssue,
+} from '@vocdoni/metadata-verify'
 import { translate } from './__fixtures__'
-import { type AuditedMetadataVersion, type ElectionChildren, type ElectionMetadataAudit } from './metadata-audit'
 import { type AuditedQuestion, buildMetadataAuditSection } from './metadata-audit-section'
 
 const NA = 'Not available'
 
 const createVersion = (overrides: Partial<AuditedMetadataVersion> = {}): AuditedMetadataVersion => ({
   metadataURL: 'https://store.example/v1',
-  recordedHash: 'aa'.repeat(32),
-  computedHash: 'aa'.repeat(32),
+  expectedHash: 'aa'.repeat(32),
+  actualHash: 'aa'.repeat(32),
   blockHeight: 100,
   txHash: 'ab'.repeat(32),
   timestamp: new Date('2026-01-01T10:00:00Z'),
-  integrity: 'verified',
+  status: 'verified',
   changes: null,
   ...overrides,
 })
@@ -24,12 +29,59 @@ const createAudit = (electionId: string, versions: AuditedMetadataVersion[]): El
 
 const PARENT = 'aa01'
 
+/** The parent's children as the chain lists them, with the parent each one declares. */
+type ChainChildren = { available: boolean; children: Array<{ electionId: string; parentElectionId?: string }> }
+
+/**
+ * What `auditProcessMetadata` returns given each election's history and the parent's children on
+ * chain: the parent first, then its children, then any question the chain does not list. A
+ * question outside the list is read as linking to the process's parent.
+ */
+const toProcessAudit = (
+  audits: ElectionMetadataAudit[],
+  questions: AuditedQuestion[],
+  process: AuditedQuestion,
+  children?: ChainChildren | null
+): ProcessMetadataAudit => {
+  const parentId = process.upstreamId ?? null
+  const auditOf = (electionId: string) =>
+    audits.find((audit) => audit.electionId === electionId) ?? { electionId, available: false, versions: [] }
+  const listed = children?.available ? children.children : null
+  const shown = questions.map((question) => question.upstreamId).filter((id): id is string => !!id)
+  const ids = [...new Set([...(listed ?? []).map((child) => child.electionId), ...shown])].filter(
+    (id) => id !== parentId
+  )
+  return {
+    parentElectionId: parentId,
+    process: parentId ? auditOf(parentId) : null,
+    childrenAvailable: !!listed,
+    questions: ids.map((id) => {
+      const link = listed?.find((child) => child.electionId === id)
+      const child = listed ? !!link : null
+      const inProcess = shown.includes(id)
+      const parentElectionId = link ? link.parentElectionId : (parentId ?? undefined)
+      const issues: QuestionLinkIssue[] = []
+      if (parentId && parentElectionId !== parentId) issues.push('wrong-parent')
+      if (child === false && inProcess) issues.push('not-a-child')
+      if (child && !inProcess) issues.push('not-in-process')
+      return { ...auditOf(id), parentElectionId, child, inProcess, issues }
+    }),
+  }
+}
+
 const build = (
   audits?: ElectionMetadataAudit[] | null,
   questions: AuditedQuestion[] = [{ title: 'Chair', upstreamId: 'e1' }],
   process: AuditedQuestion = { title: 'Annual vote' },
-  children?: ElectionChildren | null
-) => buildMetadataAuditSection({ process, questions, audits, children, t: translate, notAvailableLabel: NA })
+  children?: ChainChildren | null
+) =>
+  buildMetadataAuditSection({
+    process,
+    questions,
+    audit: audits ? toProcessAudit(audits, questions, process, children) : undefined,
+    t: translate,
+    notAvailableLabel: NA,
+  })
 
 const createParentAudit = (versions: Partial<AuditedMetadataVersion>[] = [{}]) =>
   createAudit(
@@ -37,7 +89,7 @@ const createParentAudit = (versions: Partial<AuditedMetadataVersion>[] = [{}]) =
     versions.map((overrides) => createVersion(overrides))
   )
 
-const linkedChildren = (...children: [string, string?][]): ElectionChildren => ({
+const linkedChildren = (...children: [string, string?][]): ChainChildren => ({
   available: true,
   children: children.map(([electionId, parentElectionId = PARENT]) => ({ electionId, parentElectionId })),
 })
@@ -153,7 +205,7 @@ describe('buildMetadataAuditSection', () => {
 
   it('explains versions that could not be compared and shows the hash of a mismatching document', () => {
     const section = build([
-      createAudit('e1', [createVersion(), createVersion({ integrity: 'mismatch', computedHash: 'cc'.repeat(32) })]),
+      createAudit('e1', [createVersion(), createVersion({ status: 'mismatch', actualHash: 'cc'.repeat(32) })]),
     ])
 
     expect(section.integrityWarning).toBeDefined()
@@ -258,7 +310,7 @@ describe('buildMetadataAuditSection', () => {
     const section = build(
       [
         createAudit('e2', [
-          createVersion({ blockHeight: 0, txHash: '', recordedHash: '', timestamp: null, integrity: 'unrecorded' }),
+          createVersion({ blockHeight: 0, txHash: '', expectedHash: undefined, timestamp: null, status: 'no-hash' }),
         ]),
       ],
       [

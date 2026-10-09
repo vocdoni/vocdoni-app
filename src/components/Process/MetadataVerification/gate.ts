@@ -6,7 +6,7 @@
  * The chain cannot tell what the voter's screen showed, so the client enforces it: a vote is
  * only cast once the ballot shown matches what the organizer committed.
  */
-import type { MediaVerification, ProcessVerification } from './verify'
+import type { MediaVerification, ProcessVerification } from '@vocdoni/metadata-verify'
 
 /** `pending` while the check runs, `blocked` when the ballot shown is not the committed one. */
 export type VoteGate = 'allowed' | 'pending' | 'blocked'

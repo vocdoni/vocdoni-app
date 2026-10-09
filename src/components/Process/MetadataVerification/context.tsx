@@ -1,8 +1,8 @@
+import type { ProcessVerification } from '@vocdoni/metadata-verify'
 import { useElection } from '@vocdoni/react-components'
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { createBlobUrls, resolveMediaSrc, voteGate, type VoteGate } from './gate'
 import { useMetadataVerification, type MetadataVerificationSource } from './useMetadataVerification'
-import type { ProcessVerification } from './verify'
 
 export type MetadataVerificationContextValue = {
   /** False when there is nothing to check; the indicator then renders nothing. */

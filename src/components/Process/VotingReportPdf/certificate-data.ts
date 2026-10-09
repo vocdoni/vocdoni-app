@@ -18,9 +18,9 @@ import { useElection } from '@vocdoni/react-components'
 
 import { getAnonymityLabels } from '~components/Process/anonymityLabels'
 import { getGatewayUrlForChain } from '~queries/process-end-date'
+import { auditProcessMetadata, type ProcessMetadataAudit } from '@vocdoni/metadata-verify'
 import { type TFunction } from 'i18next'
 
-import { auditElectionMetadata, fetchElectionChildren, normalizeHex, type ProcessMetadataAudit } from './metadata-audit'
 import { buildMetadataAuditSection, type CertificateMetadataAudit } from './metadata-audit-section'
 
 /** Anything callers may hand us as an election: a typed process response or an untyped record. */
@@ -684,8 +684,7 @@ export const buildCertificateData = ({
         title: getDefaultText(question.title),
         upstreamId: question.upstreamId,
       })),
-      audits: metadataAudit?.audits,
-      children: metadataAudit?.children,
+      audit: metadataAudit,
       t,
       notAvailableLabel,
     }),
@@ -757,29 +756,19 @@ export const getProcessUpstreamId = (election: VotingProcessResponse): string | 
 
 /**
  * Audit the metadata history of the process' parent election and of its question elections, read
- * from the gateway of the chain the process was anchored to. The question elections are the
+ * from the Vochain API of the chain the process was anchored to. The question elections are the
  * parent's children as linked on chain, together with any question of the process that is not
  * among them, so a mismatch between the two shows in the report. Never rejects: unreadable
  * histories and children lists come back as unavailable.
  */
-export const fetchMetadataAudit = async (election: VotingProcessResponse): Promise<ProcessMetadataAudit> => {
-  const gatewayUrl = getGatewayUrlForChain(election.chainId)
-  const processId = normalizeHex(getProcessUpstreamId(election))
-  const [processAudit, children] = processId
-    ? await Promise.all([
-        auditElectionMetadata({ gatewayUrl, electionId: processId }),
-        fetchElectionChildren({ gatewayUrl, electionId: processId }),
-      ])
-    : [null, null]
-  const childIds = children?.children.map((child) => child.electionId) ?? []
-  const questionIds = election.questions.map((question) => normalizeHex(question.upstreamId))
-  const electionIds = [...new Set([...childIds, ...questionIds])].filter((id) => id && id !== processId)
-  const questionAudits = await Promise.all(
-    electionIds.map((electionId) => auditElectionMetadata({ gatewayUrl, electionId }))
+export const fetchMetadataAudit = (election: VotingProcessResponse): Promise<ProcessMetadataAudit> =>
+  auditProcessMetadata(
+    {
+      upstreamId: getProcessUpstreamId(election),
+      questions: election.questions.map((question) => ({ upstreamId: question.upstreamId })),
+    },
+    { vochainApiUrl: getGatewayUrlForChain(election.chainId) }
   )
-
-  return { audits: processAudit ? [processAudit, ...questionAudits] : questionAudits, children }
-}
 
 /**
  * Re-read `GET /processes/{id}` at download time. The report certifies a point in time, so it must

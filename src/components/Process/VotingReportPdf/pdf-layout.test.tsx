@@ -4,9 +4,9 @@
  * us through a console warning.
  */
 import * as ReactPDF from '@react-pdf/renderer'
+import { type ElectionMetadataAudit } from '@vocdoni/metadata-verify'
 import { describe, expect, it, vi } from 'vitest'
 import { buildCertificateData } from './certificate-data'
-import { type ElectionMetadataAudit } from './metadata-audit'
 import { VotingCertificateDocument } from './pdf-document'
 import { createElection, createQuestion, createQuestionResults, createResults, translate } from './__fixtures__'
 
@@ -55,7 +55,14 @@ const buildReportData = ({ questions, choices, title, choiceName, weighted, meta
     t: translate,
     explorerUrl: 'https://explorer.vote',
     now: new Date('2026-01-03T10:00:00Z'),
-    metadataAudit: metadataAudits ? { audits: metadataAudits, children: null } : undefined,
+    metadataAudit: metadataAudits
+      ? {
+          parentElectionId: null,
+          process: null,
+          childrenAvailable: false,
+          questions: metadataAudits.map((audit) => ({ ...audit, child: null, inProcess: true, issues: [] })),
+        }
+      : undefined,
   })
 }
 
@@ -68,12 +75,12 @@ const createEditedAudits = (questions: number, edits: number): ElectionMetadataA
     available: true,
     versions: Array.from({ length: edits + 1 }, (_, versionIndex) => ({
       metadataURL: `https://store.example/${questionIndex}-${versionIndex}`,
-      recordedHash: 'aa'.repeat(32),
-      computedHash: 'aa'.repeat(32),
+      expectedHash: 'aa'.repeat(32),
+      actualHash: 'aa'.repeat(32),
       blockHeight: 100 + versionIndex,
       txHash: 'ab'.repeat(32),
       timestamp: new Date('2026-01-01T10:00:00Z'),
-      integrity: 'verified' as const,
+      status: 'verified' as const,
       changes:
         versionIndex === 0
           ? null

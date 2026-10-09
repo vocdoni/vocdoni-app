@@ -1,17 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
+import { verifyProcessMetadata, type DisplayedProcess, type ProcessVerification } from '@vocdoni/metadata-verify'
 import { useElection } from '@vocdoni/react-components'
 import { useMemo } from 'react'
 import { useAppEnv } from '~src/app-env'
 import { getVochainGatewayUrl } from '~src/legacy/vochain-archive'
-import {
-  createFetchBytes,
-  createGetChainElection,
-  createGetChildren,
-  createSha256Hex,
-  verifyProcessMetadata,
-  type DisplayedProcess,
-  type ProcessVerification,
-} from './verify'
 
 export const metadataVerificationQueryKey = (processId: string) => ['process', 'metadata-verification', processId]
 
@@ -24,7 +16,7 @@ export type MetadataVerificationSource =
    * carries both hashes and the chain rejects it unless they are the current ones.
    */
   | 'saas'
-  /** An independent check (the organizer's): hashes and parent/children links read from the Vochain API. */
+  /** An independent check (the organizer's): hashes and parent links read from the Vochain API. */
   | 'chain'
 
 /**
@@ -75,16 +67,11 @@ export const useMetadataVerification = (source: MetadataVerificationSource = 'sa
 
   const query = useQuery<ProcessVerification>({
     queryKey: [...metadataVerificationQueryKey(election?.id ?? ''), source, shown],
-    queryFn: () => {
-      const gateway = getVochainGatewayUrl(VOCDONI_ENVIRONMENT)
-      return verifyProcessMetadata(shown!, {
-        ...(source === 'chain'
-          ? { chain: { getElection: createGetChainElection(gateway), getChildren: createGetChildren(gateway) } }
-          : {}),
-        fetchBytes: createFetchBytes(),
-        sha256: createSha256Hex(),
-      })
-    },
+    queryFn: () =>
+      verifyProcessMetadata(
+        shown!,
+        source === 'chain' ? { independent: true, vochainApiUrl: getVochainGatewayUrl(VOCDONI_ENVIRONMENT) } : {}
+      ),
     enabled,
     // Content only changes through a signed on-chain tx, which is rare; a stale-ballot
     // rejection invalidates this query right away, so a slow refresh is enough otherwise.

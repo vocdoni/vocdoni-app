@@ -1,9 +1,9 @@
 import { Box, Button, Flex, Icon, Popover, Portal, Spinner, Text } from '@chakra-ui/react'
+import type { ContentField, FieldCheck, HashCheck } from '@vocdoni/metadata-verify'
 import type { IconType } from 'react-icons'
 import { useTranslation } from 'react-i18next'
 import { RiQuestionLine, RiShieldCheckLine, RiShieldCrossLine, RiShieldLine } from 'react-icons/ri'
 import { useMetadataVerificationContext } from './context'
-import type { ContentField, FieldCheck, HashCheck } from './verify'
 
 const STATUS_STYLE: Record<HashCheck, { icon: IconType; color: string }> = {
   verified: { icon: RiShieldCheckLine, color: 'green.600' },
@@ -90,7 +90,8 @@ const useFieldLabel = () => {
       }),
       header: t('process.verification.field.header', { defaultValue: 'Header image' }),
       stream: t('process.verification.field.stream', { defaultValue: 'Video' }),
-      'question-list': t('process.verification.field.question_list', { defaultValue: 'Question list' }),
+      // Independent check only: every question election links on chain to this vote's parent election.
+      'parent-link': t('process.verification.field.question_list', { defaultValue: 'Question list' }),
     }
     return labels[field]
   }
