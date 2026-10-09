@@ -49,3 +49,6 @@ yarn.lock
 
 # Local Netlify folder
 .netlify
+
+# packed integrator-sdk tarballs for the e2e test build
+.e2e-tarballs/

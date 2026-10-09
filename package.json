@@ -66,7 +66,8 @@
     "vike-react": "^0.6.21",
     "wagmi": "^2.19.5",
     "web-vitals": "^3.5.2",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+    "@vocdoni/metadata-verify": "0.0.0"
   },
   "engines": {
     "pnpm": "^10.16.1",

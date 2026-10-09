@@ -20,3 +20,16 @@ overrides:
   # cloning) plus several moderate prototype-pollution/DoS advisories. Drop this
   # once @coinbase/cdp-sdk pins axios >= 1.18.0.
   axios: ^1.18.0
+  # E2E test build: integrator-sdk packages packed from
+  # vocdoni-integrator-sdk `integration/parent-process` (PR #84), and the
+  # unreleased @vocdoni/proto 1.18.0 they depend on (dvote-protobuf#86).
+  # The tarballs live in the git-ignored .e2e-tarballs/ directory.
+  '@vocdoni/api-client': file:./.e2e-tarballs/vocdoni-api-client-2.3.0.tgz
+  '@vocdoni/api-types': file:./.e2e-tarballs/vocdoni-api-types-2.2.0.tgz
+  '@vocdoni/api-voting': file:./.e2e-tarballs/vocdoni-api-voting-1.2.2.tgz
+  '@vocdoni/api-voting-zk': file:./.e2e-tarballs/vocdoni-api-voting-zk-1.0.3.tgz
+  '@vocdoni/ballot': file:./.e2e-tarballs/vocdoni-ballot-1.3.0.tgz
+  '@vocdoni/metadata-verify': file:./.e2e-tarballs/vocdoni-metadata-verify-0.0.0.tgz
+  '@vocdoni/react-components': file:./.e2e-tarballs/vocdoni-react-components-3.1.1.tgz
+  '@vocdoni/react-providers': file:./.e2e-tarballs/vocdoni-react-providers-3.0.3.tgz
+  '@vocdoni/proto@1.18.0': git+https://github.com/vocdoni/dvote-protobuf.git#04e7afe6fe2b24f1a20fd5f3fbef0b9fdad87e76
