@@ -58,7 +58,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
   const { organization } = useOrganization()
   const { client } = useApiClient()
   const queryClient = useQueryClient()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const { VOCDONI_ENVIRONMENT, VOCHAIN_API_URL } = useAppEnv()
   const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const electionContext = useOptionalElectionContext()
   // Announced while the tallies are still being computed: the control shows, disabled, instead of
@@ -80,8 +80,8 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
       const election = await resolveReportElection(client, report.election)
       const [fetchedResults, onChainEndDate, metadataAudit] = await Promise.all([
         fetchProcessResults(client, election.id),
-        fetchOnChainEndDate(election),
-        fetchMetadataAudit(election),
+        fetchOnChainEndDate(election, VOCHAIN_API_URL),
+        fetchMetadataAudit(election, VOCHAIN_API_URL),
       ])
       const results = fetchedResults ?? report.results
       const earlyEndDate = getEarlyEndDate(election, onChainEndDate)

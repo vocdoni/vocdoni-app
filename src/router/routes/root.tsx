@@ -83,11 +83,11 @@ const RootElements = (client: VocdoniApiClient, vochainGateway: string) => [
 
 export const useRootRoutes = () => {
   const { client } = useApiClient()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const { VOCDONI_ENVIRONMENT, VOCHAIN_API_URL } = useAppEnv()
 
   return {
     path: Routes.root,
     element: <Layout />,
-    children: RootElements(client, getVochainGatewayUrl(VOCDONI_ENVIRONMENT)),
+    children: RootElements(client, getVochainGatewayUrl(VOCDONI_ENVIRONMENT, VOCHAIN_API_URL)),
   }
 }

@@ -759,15 +759,19 @@ export const getProcessUpstreamId = (election: VotingProcessResponse): string | 
  * from the Vochain API of the chain the process was anchored to. The question elections are the
  * parent's children as linked on chain, together with any question of the process that is not
  * among them, so a mismatch between the two shows in the report. Never rejects: unreadable
- * histories and children lists come back as unavailable.
+ * histories and children lists come back as unavailable. `vochainApiUrl` is the app's
+ * VOCHAIN_API_URL, which replaces the chain's gateway when set.
  */
-export const fetchMetadataAudit = (election: VotingProcessResponse): Promise<ProcessMetadataAudit> =>
+export const fetchMetadataAudit = (
+  election: VotingProcessResponse,
+  vochainApiUrl?: string
+): Promise<ProcessMetadataAudit> =>
   auditProcessMetadata(
     {
       upstreamId: getProcessUpstreamId(election),
       questions: election.questions.map((question) => ({ upstreamId: question.upstreamId })),
     },
-    { vochainApiUrl: getGatewayUrlForChain(election.chainId) }
+    { vochainApiUrl: getGatewayUrlForChain(election.chainId, vochainApiUrl) }
   )
 
 /**

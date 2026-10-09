@@ -15,6 +15,12 @@ export type AppEnv = {
   title?: string
   STRIPE_PUBLIC_KEY?: string
   SAAS_URL?: string
+  /**
+   * Vochain API base URL including the version (e.g. `http://localhost:9090/v2` for a local
+   * voconed). When set, every Vochain read uses it instead of the public gateway picked from
+   * VOCDONI_ENVIRONMENT or from a process's chain id.
+   */
+  VOCHAIN_API_URL?: string
   OAUTH_URL?: string
   PRIORITY_SUPPORT_PHONE?: string
   CALCOM_EVENT_SLUG?: string
@@ -197,6 +203,7 @@ export const buildAppEnv = (env: EnvSource = {}): AppEnvObject => {
     APP_URL: env.APP_URL,
     STRIPE_PUBLIC_KEY: env.STRIPE_PUBLIC_KEY,
     SAAS_URL: trimTrailingSlash(env.SAAS_URL || 'https://saas-api-dev.vocdoni.net'),
+    VOCHAIN_API_URL: env.VOCHAIN_API_URL ? trimTrailingSlash(env.VOCHAIN_API_URL) : undefined,
     OAUTH_URL: env.OAUTH_URL || 'https://oauth.vocdoni.io',
     PRIORITY_SUPPORT_PHONE: env.PRIORITY_SUPPORT_PHONE,
     CALCOM_EVENT_SLUG: env.CALCOM_EVENT_SLUG,

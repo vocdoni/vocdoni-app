@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { computeProcessStatus } from '@vocdoni/api-client'
 import type { QuestionStatus, VotingProcessResponse } from '@vocdoni/api-types'
 
+import { useAppEnv } from '~src/app-env'
 import { getVochainGatewayUrl } from '~src/legacy/vochain-archive'
 import { QueryKeys } from './keys'
 
@@ -11,9 +12,10 @@ import { QueryKeys } from './keys'
  * Derived from the process' own `chainId` rather than from `VOCDONI_ENVIRONMENT`, because the two
  * do not always agree: the staging SaaS backend anchors its processes to the production chain
  * (`vocdoni/LTS/…`), so an environment-keyed lookup would query the dev gateway and miss them.
+ * `override` (the app's VOCHAIN_API_URL) replaces the gateway whatever the chain.
  */
-export const getGatewayUrlForChain = (chainId?: string) =>
-  getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : 'dev')
+export const getGatewayUrlForChain = (chainId?: string, override?: string) =>
+  getVochainGatewayUrl(chainId?.includes('/LTS/') ? 'prod' : 'dev', override)
 
 /**
  * A process left to run its course still ends a few seconds either side of its schedule — the chain
@@ -52,8 +54,11 @@ const fetchQuestionEndDate = async (gatewayUrl: string, upstreamId: string): Pro
  *
  * Returns null when no question can be read, leaving callers on the configured `endDate`.
  */
-export const fetchOnChainEndDate = async (election: VotingProcessResponse): Promise<Date | null> => {
-  const gatewayUrl = getGatewayUrlForChain(election.chainId)
+export const fetchOnChainEndDate = async (
+  election: VotingProcessResponse,
+  vochainApiUrl?: string
+): Promise<Date | null> => {
+  const gatewayUrl = getGatewayUrlForChain(election.chainId, vochainApiUrl)
   const upstreamIds = election.questions.map((question) => question.upstreamId).filter((id): id is string => !!id)
 
   if (!upstreamIds.length) return null
@@ -86,11 +91,13 @@ export const getEarlyEndDate = (election: VotingProcessResponse, onChainEndDate?
  * not be read). Only queried once the process has stopped accepting votes — there is no early end
  * to report before that, and the read costs one gateway request per question.
  */
-export const useProcessEarlyEndDate = (election?: VotingProcessResponse | null) =>
-  useQuery({
+export const useProcessEarlyEndDate = (election?: VotingProcessResponse | null) => {
+  const { VOCHAIN_API_URL } = useAppEnv()
+  return useQuery({
     queryKey: QueryKeys.process.endDate(election?.id),
-    queryFn: async () => getEarlyEndDate(election!, await fetchOnChainEndDate(election!)),
+    queryFn: async () => getEarlyEndDate(election!, await fetchOnChainEndDate(election!, VOCHAIN_API_URL)),
     enabled: hasStoppedVoting(election),
     staleTime: Infinity,
     retry: false,
   })
+}

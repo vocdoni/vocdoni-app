@@ -53,6 +53,13 @@ describe('buildAppEnv', () => {
     expect(env.TERMS_OF_SERVICE_URL).toBe('https://example.com/terms')
   })
 
+  it('leaves VOCHAIN_API_URL unset by default and trims a configured one', () => {
+    expect(buildAppEnv({}).VOCHAIN_API_URL).toBeUndefined()
+    expect(buildAppEnv({ VOCHAIN_API_URL: 'http://localhost:9090/v2/' }).VOCHAIN_API_URL).toBe(
+      'http://localhost:9090/v2'
+    )
+  })
+
   it('parses VIDEO_TUTORIAL json and falls back on invalid input', () => {
     expect(buildAppEnv({ VIDEO_TUTORIAL: '{"en":"https://x/y"}' }).VIDEO_TUTORIAL).toEqual({ en: 'https://x/y' })
 

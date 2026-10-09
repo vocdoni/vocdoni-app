@@ -26,7 +26,7 @@ export type MetadataVerificationSource =
  */
 export const useMetadataVerification = (source: MetadataVerificationSource = 'saas') => {
   const { election } = useElection()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const { VOCDONI_ENVIRONMENT, VOCHAIN_API_URL } = useAppEnv()
 
   // Snapshot of what the page renders: the check compares it with the verified documents,
   // so a change in the displayed content must re-run it.
@@ -70,7 +70,9 @@ export const useMetadataVerification = (source: MetadataVerificationSource = 'sa
     queryFn: () =>
       verifyProcessMetadata(
         shown!,
-        source === 'chain' ? { independent: true, vochainApiUrl: getVochainGatewayUrl(VOCDONI_ENVIRONMENT) } : {}
+        source === 'chain'
+          ? { independent: true, vochainApiUrl: getVochainGatewayUrl(VOCDONI_ENVIRONMENT, VOCHAIN_API_URL) }
+          : {}
       ),
     enabled,
     // Content only changes through a signed on-chain tx, which is rare; a stale-ballot
