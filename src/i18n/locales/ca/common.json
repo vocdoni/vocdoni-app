@@ -1323,6 +1323,12 @@
         "title": "Vot privat"
       }
     },
+    "ballot_updated": {
+      "description": "L'organització ha canviat el contingut d'aquesta votació després que l'obrissis. Revisa les preguntes actualitzades i torna a votar.",
+      "modal": "El teu vot no s'ha emès perquè l'organització ha canviat aquesta votació. Revisa les preguntes actualitzades i torna a votar.",
+      "modal_partial": "Algunes respostes no s'han registrat perquè l'organització ha canviat aquesta votació. Revisa les preguntes actualitzades i torna a votar per enviar les que falten.",
+      "title": "La papereta s'ha actualitzat"
+    },
     "census": "Cens",
     "create": {
       "action": {
@@ -1449,11 +1455,58 @@
       "votes_cast_many": "{{votes}} vots emesos",
       "votes_cast_other": "{{votes}} vots emesos"
     },
+    "verification": {
+      "ballot": "Text de la papereta",
+      "checking": "Comprovant el contingut…",
+      "description": {
+        "mismatch": "Part del que mostra aquesta pàgina no coincideix amb la versió registrada a la Vochain. Contacta amb l'organització abans de votar.",
+        "no_hash": "Aquesta votació es va publicar sense un hash del contingut a la Vochain, així que el seu contingut no es pot comprovar.",
+        "unverifiable": "El teu navegador no ha pogut comprovar aquest contingut amb la Vochain.",
+        "verified": "El que mostra aquesta pàgina coincideix, byte a byte, amb la versió que l'organització va registrar a la Vochain."
+      },
+      "field": {
+        "choice_description": "Descripció de l'opció {{number}}",
+        "choice_image": "Imatge de l'opció {{number}}",
+        "choice_title": "Text de l'opció {{number}}",
+        "choice_value": "Valor de l'opció {{number}}",
+        "choices": "Nombre d'opcions",
+        "header": "Imatge de capçalera",
+        "process_description": "Descripció de la votació",
+        "process_title": "Títol de la votació",
+        "question_description": "Descripció de la pregunta",
+        "question_list": "Llista de preguntes",
+        "question_title": "Pregunta",
+        "stream": "Vídeo"
+      },
+      "footnote": "Comprovat al teu navegador calculant el hash del contingut i comparant-lo amb la Vochain.",
+      "images": "Imatges",
+      "item": {
+        "mismatch": "No coincideix",
+        "no_hash": "Sense hash",
+        "unverifiable": "No verificable",
+        "verified": "Verificat"
+      },
+      "process": "Dades de la votació",
+      "question": "Pregunta {{number}}",
+      "status": {
+        "mismatch": "El contingut no coincideix",
+        "no_hash": "Sense hash del contingut a la cadena",
+        "unverifiable": "Contingut no verificable",
+        "verified": "Contingut verificat"
+      },
+      "title": "Verificació del contingut",
+      "url_only_note": "Les imatges incrustades a les descripcions i el vídeo només estan coberts per la seva URL.",
+      "video_url": "Vídeo: URL verificada; el contingut del vídeo no està cobert."
+    },
     "vote_failed": {
       "close": "Tanca",
       "none": "No s’ha registrat cap resposta. Torna-ho a provar.",
       "partial": "Algunes respostes no s’han registrat. Torna a votar per enviar les restants.",
       "title": "No s’ha pogut emetre el teu vot"
+    },
+    "vote_gate": {
+      "blocked": "El contingut de la papereta no coincideix amb el que va registrar l'organització, així que no es pot emetre el vot. Torna-ho a provar més tard o contacta amb l'organització.",
+      "pending": "Comprovant el contingut de la papereta abans de votar…"
     },
     "voters": "Votants",
     "voting": "Estem processant el teu vot. Aquest procés trigarà uns segons. Si us plau, no tanquis ni actualitzis aquesta pàgina.",

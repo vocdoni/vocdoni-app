@@ -1300,6 +1300,12 @@
         "title": "Private Stimmabgabe"
       }
     },
+    "ballot_updated": {
+      "description": "Die Organisation hat den Inhalt dieser Abstimmung geändert, nachdem du sie geöffnet hast. Prüfe die aktualisierten Fragen und stimme erneut ab.",
+      "modal": "Deine Stimme wurde nicht abgegeben, weil die Organisation diese Abstimmung geändert hat. Prüfe die aktualisierten Fragen und stimme erneut ab.",
+      "modal_partial": "Einige Antworten wurden nicht erfasst, weil die Organisation diese Abstimmung geändert hat. Prüfe die aktualisierten Fragen und stimme erneut ab, um die restlichen zu senden.",
+      "title": "Der Stimmzettel wurde aktualisiert"
+    },
     "census": "Teilnehmerliste",
     "create": {
       "action": {
@@ -1423,11 +1429,58 @@
       "votes_cast_one": "{{votes}} Stimme abgegeben",
       "votes_cast_other": "{{votes}} Stimmen abgegeben"
     },
+    "verification": {
+      "ballot": "Text des Stimmzettels",
+      "checking": "Inhalt wird geprüft…",
+      "description": {
+        "mismatch": "Ein Teil dessen, was diese Seite anzeigt, stimmt nicht mit der in der Vochain hinterlegten Version überein. Wende dich vor der Abstimmung an die Organisation.",
+        "no_hash": "Diese Abstimmung wurde ohne Inhalts-Hash in der Vochain veröffentlicht, daher kann ihr Inhalt nicht geprüft werden.",
+        "unverifiable": "Dein Browser konnte diesen Inhalt nicht mit der Vochain abgleichen.",
+        "verified": "Was diese Seite anzeigt, stimmt Byte für Byte mit der Version überein, die die Organisation in der Vochain hinterlegt hat."
+      },
+      "field": {
+        "choice_description": "Beschreibung von Option {{number}}",
+        "choice_image": "Bild von Option {{number}}",
+        "choice_title": "Text von Option {{number}}",
+        "choice_value": "Wert von Option {{number}}",
+        "choices": "Anzahl der Optionen",
+        "header": "Titelbild",
+        "process_description": "Beschreibung der Abstimmung",
+        "process_title": "Titel der Abstimmung",
+        "question_description": "Beschreibung der Frage",
+        "question_list": "Fragenliste",
+        "question_title": "Frage",
+        "stream": "Video"
+      },
+      "footnote": "In deinem Browser geprüft: Der Hash des Inhalts wird berechnet und mit der Vochain verglichen.",
+      "images": "Bilder",
+      "item": {
+        "mismatch": "Stimmt nicht überein",
+        "no_hash": "Kein Hash",
+        "unverifiable": "Nicht prüfbar",
+        "verified": "Geprüft"
+      },
+      "process": "Angaben zur Abstimmung",
+      "question": "Frage {{number}}",
+      "status": {
+        "mismatch": "Inhalt stimmt nicht überein",
+        "no_hash": "Kein Inhalts-Hash in der Chain",
+        "unverifiable": "Inhalt nicht prüfbar",
+        "verified": "Inhalt geprüft"
+      },
+      "title": "Prüfung des Inhalts",
+      "url_only_note": "In Beschreibungen eingebettete Bilder und das Video sind nur über ihre URL abgedeckt.",
+      "video_url": "Video: URL geprüft; der Inhalt des Videos ist nicht abgedeckt."
+    },
     "vote_failed": {
       "close": "Schließen",
       "none": "Es wurde keine Antwort registriert. Bitte versuche es erneut.",
       "partial": "Einige Antworten wurden nicht registriert. Stimme erneut ab, um die übrigen zu senden.",
       "title": "Deine Stimme konnte nicht abgegeben werden"
+    },
+    "vote_gate": {
+      "blocked": "Der Inhalt des Stimmzettels stimmt nicht mit dem überein, was die Organisation hinterlegt hat, daher kann die Stimme nicht abgegeben werden. Versuche es später erneut oder wende dich an die Organisation.",
+      "pending": "Der Inhalt des Stimmzettels wird vor der Abstimmung geprüft…"
     },
     "voters": "Wählende",
     "voting": "Deine Stimme wird verarbeitet. Das dauert einige Sekunden. Bitte schließe oder aktualisiere diese Seite nicht.",

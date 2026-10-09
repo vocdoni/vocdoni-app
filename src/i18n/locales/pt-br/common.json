@@ -1323,6 +1323,12 @@
         "title": "Voto privado"
       }
     },
+    "ballot_updated": {
+      "description": "A organização alterou o conteúdo desta votação depois que você a abriu. Revise as perguntas atualizadas e vote novamente.",
+      "modal": "Seu voto não foi registrado porque a organização alterou esta votação. Revise as perguntas atualizadas e vote novamente.",
+      "modal_partial": "Algumas respostas não foram registradas porque a organização alterou esta votação. Revise as perguntas atualizadas e vote novamente para enviar as restantes.",
+      "title": "A cédula foi atualizada"
+    },
     "census": "Lista de participantes",
     "create": {
       "action": {
@@ -1449,11 +1455,58 @@
       "votes_cast_many": "{{votes}} votos emitidos",
       "votes_cast_other": "{{votes}} votos emitidos"
     },
+    "verification": {
+      "ballot": "Texto da cédula",
+      "checking": "Verificando o conteúdo…",
+      "description": {
+        "mismatch": "Parte do que esta página mostra não corresponde à versão registrada na Vochain. Entre em contato com a organização antes de votar.",
+        "no_hash": "Esta votação foi publicada sem um hash do conteúdo na Vochain, então seu conteúdo não pode ser verificado.",
+        "unverifiable": "Seu navegador não conseguiu verificar este conteúdo com a Vochain.",
+        "verified": "O que esta página mostra corresponde, byte a byte, à versão que a organização registrou na Vochain."
+      },
+      "field": {
+        "choice_description": "Descrição da opção {{number}}",
+        "choice_image": "Imagem da opção {{number}}",
+        "choice_title": "Texto da opção {{number}}",
+        "choice_value": "Valor da opção {{number}}",
+        "choices": "Número de opções",
+        "header": "Imagem de cabeçalho",
+        "process_description": "Descrição da votação",
+        "process_title": "Título da votação",
+        "question_description": "Descrição da pergunta",
+        "question_list": "Lista de perguntas",
+        "question_title": "Pergunta",
+        "stream": "Vídeo"
+      },
+      "footnote": "Verificado no seu navegador, calculando o hash do conteúdo e comparando-o com a Vochain.",
+      "images": "Imagens",
+      "item": {
+        "mismatch": "Não corresponde",
+        "no_hash": "Sem hash",
+        "unverifiable": "Não verificável",
+        "verified": "Verificado"
+      },
+      "process": "Dados da votação",
+      "question": "Pergunta {{number}}",
+      "status": {
+        "mismatch": "O conteúdo não corresponde",
+        "no_hash": "Sem hash do conteúdo na cadeia",
+        "unverifiable": "Conteúdo não verificável",
+        "verified": "Conteúdo verificado"
+      },
+      "title": "Verificação do conteúdo",
+      "url_only_note": "As imagens incorporadas nas descrições e o vídeo são cobertos apenas pela URL.",
+      "video_url": "Vídeo: URL verificada; o conteúdo do vídeo não é coberto."
+    },
     "vote_failed": {
       "close": "Fechar",
       "none": "Nenhuma resposta foi registrada. Tente novamente.",
       "partial": "Algumas respostas não foram registradas. Vote novamente para enviar as restantes.",
       "title": "Não foi possível registrar seu voto"
+    },
+    "vote_gate": {
+      "blocked": "O conteúdo da cédula não corresponde ao que a organização registrou, então o voto não pode ser registrado. Tente mais tarde ou entre em contato com a organização.",
+      "pending": "Verificando o conteúdo da cédula antes de você votar…"
     },
     "voters": "Eleitores",
     "voting": "Estamos processando seu voto. Esse processo levará alguns segundos. Não feche nem atualize esta página.",

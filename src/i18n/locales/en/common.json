@@ -1300,6 +1300,12 @@
         "title": "Private vote"
       }
     },
+    "ballot_updated": {
+      "description": "The organizer changed the content of this vote after you opened it. Review the updated questions and vote again.",
+      "modal": "Your vote was not cast because the organizer changed this vote. Review the updated questions and vote again.",
+      "modal_partial": "Some answers were not registered because the organizer changed this vote. Review the updated questions and vote again to send the remaining ones.",
+      "title": "The ballot has been updated"
+    },
     "census": "Census",
     "create": {
       "action": {
@@ -1423,11 +1429,58 @@
       "votes_cast_one": "{{votes}} vote cast",
       "votes_cast_other": "{{votes}} votes cast"
     },
+    "verification": {
+      "ballot": "Ballot text",
+      "checking": "Checking content…",
+      "description": {
+        "mismatch": "Part of what this page shows does not match the version committed on the Vochain. Contact the organizer before voting.",
+        "no_hash": "This vote was published without a content hash on the Vochain, so its content cannot be checked.",
+        "unverifiable": "Your browser could not check this content against the Vochain.",
+        "verified": "What this page shows matches, byte for byte, the version the organizer committed on the Vochain."
+      },
+      "field": {
+        "choice_description": "Option {{number}} description",
+        "choice_image": "Option {{number}} image",
+        "choice_title": "Option {{number}} text",
+        "choice_value": "Option {{number}} value",
+        "choices": "Number of options",
+        "header": "Header image",
+        "process_description": "Vote description",
+        "process_title": "Vote title",
+        "question_description": "Question description",
+        "question_list": "Question list",
+        "question_title": "Question",
+        "stream": "Video"
+      },
+      "footnote": "Checked in your browser by hashing the content and comparing it with the Vochain.",
+      "images": "Images",
+      "item": {
+        "mismatch": "Does not match",
+        "no_hash": "No hash",
+        "unverifiable": "Not verifiable",
+        "verified": "Verified"
+      },
+      "process": "Vote details",
+      "question": "Question {{number}}",
+      "status": {
+        "mismatch": "Content does not match",
+        "no_hash": "No content hash on chain",
+        "unverifiable": "Content not verifiable",
+        "verified": "Content verified"
+      },
+      "title": "Content verification",
+      "url_only_note": "Images embedded in descriptions and the video are covered only by their URL.",
+      "video_url": "Video: URL verified; the video content itself is not covered."
+    },
     "vote_failed": {
       "close": "Close",
       "none": "No answer was registered. Please try again.",
       "partial": "Some answers were not registered. Vote again to send the remaining ones.",
       "title": "Your vote could not be cast"
+    },
+    "vote_gate": {
+      "blocked": "The ballot content doesn't match what the organizer committed, so the vote can't be cast. Try again later or contact the organizer.",
+      "pending": "Checking the ballot content before you vote…"
     },
     "voters": "Voters",
     "voting": "We are processing your vote. This process will take a few seconds. Please do not close or refresh this page.",
