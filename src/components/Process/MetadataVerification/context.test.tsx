@@ -1,7 +1,8 @@
 import type { ProcessVerification } from '@vocdoni/metadata-verify'
+import { useResolveMediaUrl } from '@vocdoni/react-components'
 import { mockUseElection, render, screen, waitFor } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
-import { MetadataVerificationProvider, useMetadataVerificationContext, useVerifiedMediaSrc } from './context'
+import { MetadataVerificationProvider, useMetadataVerificationContext } from './context'
 
 vi.mock('@vocdoni/react-components', async (importOriginal) => {
   const actual = (await importOriginal()) as typeof import('@vocdoni/react-components')
@@ -17,7 +18,7 @@ vi.mock('./useMetadataVerification', () => ({
 const HEADER = 'https://cdn.example.org/header.png'
 
 const Probe = () => {
-  const src = useVerifiedMediaSrc(HEADER)
+  const src = useResolveMediaUrl()(HEADER)
   const gate = useMetadataVerificationContext()?.gate
   return (
     <>
@@ -100,7 +101,7 @@ describe('MetadataVerificationProvider', () => {
   })
 })
 
-describe('useVerifiedMediaSrc outside the voter page', () => {
+describe('the media resolver outside the voter page', () => {
   it('keeps the original URL', () => {
     render(<Probe />)
     expect(screen.getByRole('img')).toHaveAttribute('src', HEADER)

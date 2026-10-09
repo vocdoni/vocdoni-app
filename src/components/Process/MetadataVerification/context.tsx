@@ -1,5 +1,5 @@
 import type { ProcessVerification } from '@vocdoni/metadata-verify'
-import { useElection } from '@vocdoni/react-components'
+import { ComponentsProvider, useComponents, useElection } from '@vocdoni/react-components'
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { createBlobUrls, resolveMediaSrc, voteGate, type VoteGate } from './gate'
 import { useMetadataVerification, type MetadataVerificationSource } from './useMetadataVerification'
@@ -23,6 +23,10 @@ export const useMetadataVerificationContext = () => useContext(MetadataVerificat
 /**
  * Runs the ballot verification once for the voter page and shares its result: the indicator,
  * the vote button gate and the images rendered from their verified bytes all read it here.
+ *
+ * Images reach the page through the `resolveMediaUrl` of `@vocdoni/react-components`: the
+ * SDK's election components and the app's own (via `useResolveMediaUrl`) render a committed
+ * image only from the object URL of its verified bytes, and treat it as pending until then.
  */
 export const MetadataVerificationProvider = ({
   children,
@@ -46,6 +50,10 @@ export const MetadataVerificationProvider = ({
     [hasParent, data, blobUrls]
   )
 
+  // A ComponentsProvider does not inherit from an outer one, so the scoped provider that adds
+  // the resolver is handed the app's component definitions again.
+  const components = useComponents()
+
   const value = useMemo<MetadataVerificationContextValue>(
     () => ({
       enabled,
@@ -58,28 +66,13 @@ export const MetadataVerificationProvider = ({
     [enabled, isPending, isError, data, srcFor]
   )
 
-  return <MetadataVerificationContext.Provider value={value}>{children}</MetadataVerificationContext.Provider>
-}
-
-/**
- * The resolver shape `@vocdoni/react-components` takes as `<ComponentsProvider resolveMediaUrl>`
- * (vocdoni/vocdoni-integrator-sdk#82): a blob URL for verified bytes, the URL unchanged for
- * media nothing commits, undefined while not ready.
- */
-export type MediaUrlResolver = (url: string) => string | undefined
-
-/**
- * {@link MediaUrlResolver} backed by the verified images, for the components that render media
- * themselves. Its identity changes only with the blob cache, so components re-render then.
- */
-export const useMediaUrlResolver = (): MediaUrlResolver => {
-  const context = useMetadataVerificationContext()
-  const srcFor = context?.srcFor
-  return useCallback((url: string) => (srcFor ? srcFor(url) : url), [srcFor])
-}
-
-/** The `src` to render an image from: its verified bytes on the voter page, the URL elsewhere. */
-export const useVerifiedMediaSrc = (url?: string) => {
-  const context = useMetadataVerificationContext()
-  return context ? context.srcFor(url) : url
+  return (
+    <MetadataVerificationContext.Provider value={value}>
+      {/* srcFor changes identity only with the verification result and the blob cache, so the
+          components re-render exactly when an image's resolution can change. */}
+      <ComponentsProvider components={components} resolveMediaUrl={srcFor}>
+        {children}
+      </ComponentsProvider>
+    </MetadataVerificationContext.Provider>
+  )
 }

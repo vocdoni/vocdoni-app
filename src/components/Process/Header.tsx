@@ -6,17 +6,19 @@ import {
   ElectionTitle,
   getElectionDescription,
   useElection,
+  useResolveMediaUrl,
 } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
 import { useReadMoreMarkdown } from '~components/Layout/use-read-more'
-import { useVerifiedMediaSrc } from './MetadataVerification/context'
 
 const ProcessHeader = () => {
   const { t } = useTranslation()
   const { election } = useElection()
   const { ReadMoreMarkdownWrapper, ReadMoreMarkdownButton } = useReadMoreMarkdown(600, 20)
-  // Rendered from the verified bytes when the header is committed on chain (empty until then).
-  const headerSrc = useVerifiedMediaSrc(election?.header)
+  // Through the components context's media resolver, like the SDK's own election header: on
+  // the voter page a committed header is rendered from its verified bytes (empty until then).
+  const resolveMediaUrl = useResolveMediaUrl()
+  const headerSrc = election?.header ? resolveMediaUrl(election.header) : undefined
 
   if (!election) return null
 
