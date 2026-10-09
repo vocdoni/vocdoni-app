@@ -1,14 +1,4 @@
-import {
-  Box,
-  Heading,
-  Image,
-  Text,
-  useRecipe,
-  type BoxProps,
-  type HeadingProps,
-  type ImageProps,
-  type TextProps,
-} from '@chakra-ui/react'
+import { Box, Heading, Image, useRecipe, type BoxProps, type HeadingProps, type ImageProps } from '@chakra-ui/react'
 import { defineComponent, type ComponentsPartialDefinition } from '@vocdoni/react-components'
 import { Markdown } from '~components/ui/Markdown'
 
@@ -40,9 +30,4 @@ export const organizationComponents: ComponentsPartialDefinition = {
 
     return <Image css={styles} src={src} alt={alt} {...props} />
   }),
-  QuestionsError: defineComponent<'QuestionsError', TextProps>(({ error, variant: _variant, ...props }) => (
-    <Text color='red.500' {...props}>
-      {error}
-    </Text>
-  )),
 }
