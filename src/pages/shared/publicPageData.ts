@@ -74,7 +74,7 @@ const renderNotFoundIfNeeded = (error: unknown) => {
 export const loadOrganizationPublicPageData = async (pageContext: PageContextServer) => {
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
   const client = createVocdoniApiClient(getServerAppEnv().SAAS_URL!, language)
-  const vochainGateway = getVochainGatewayUrl(getServerAppEnv().VOCDONI_ENVIRONMENT)
+  const vochainGateway = getVochainGatewayUrl(getServerAppEnv().VOCDONI_ENVIRONMENT, getServerAppEnv().VOCHAIN_API_URL)
   const origin = resolvePublicOrigin(pageContext)
   const address = pageContext.routeParams.address
   const pathnameByLanguage = Object.fromEntries(
@@ -110,7 +110,7 @@ type ProcessPathBuilder = (params: { id: string; language: string }) => string
 const loadProcessPublicPageDataWith = async (pageContext: PageContextServer, buildPath: ProcessPathBuilder) => {
   const { language, supportedLanguages } = resolvePageLanguage(pageContext)
   const client = createVocdoniApiClient(getServerAppEnv().SAAS_URL!, language)
-  const vochainGateway = getVochainGatewayUrl(getServerAppEnv().VOCDONI_ENVIRONMENT)
+  const vochainGateway = getVochainGatewayUrl(getServerAppEnv().VOCDONI_ENVIRONMENT, getServerAppEnv().VOCHAIN_API_URL)
   const origin = resolvePublicOrigin(pageContext)
   const id = pageContext.routeParams.id
   const pathnameByLanguage = Object.fromEntries(

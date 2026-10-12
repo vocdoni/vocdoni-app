@@ -67,7 +67,7 @@ export const ArchiveOrganizationView = ({
 }) => {
   const { t } = useTranslation()
   const localize = useLocalizedText()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const { VOCDONI_ENVIRONMENT, VOCHAIN_API_URL } = useAppEnv()
   const [elections, setElections] = useState<LegacyElectionListItem[]>(initialElectionsPage?.elections ?? [])
   const [pagination, setPagination] = useState(initialElectionsPage?.pagination)
   const [loading, setLoading] = useState(false)
@@ -82,7 +82,7 @@ export const ArchiveOrganizationView = ({
     setLoading(true)
     try {
       const nextPage = await fetchLegacyOrganizationElections(
-        getVochainGatewayUrl(VOCDONI_ENVIRONMENT),
+        getVochainGatewayUrl(VOCDONI_ENVIRONMENT, VOCHAIN_API_URL),
         organization.address,
         pagination.nextPage ?? pagination.currentPage + 1
       )

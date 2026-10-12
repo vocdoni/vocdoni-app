@@ -57,7 +57,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
   const { organization } = useOrganization()
   const { client } = useApiClient()
   const queryClient = useQueryClient()
-  const { VOCDONI_ENVIRONMENT } = useAppEnv()
+  const { VOCDONI_ENVIRONMENT, VOCHAIN_API_URL } = useAppEnv()
   const explorerUrl = getVocdoniClientConfig(VOCDONI_ENVIRONMENT).explorerUrl ?? 'https://explorer.vote'
   const electionContext = useOptionalElectionContext()
   // Announced while the tallies are still being computed: the control shows, disabled, instead of
@@ -78,7 +78,7 @@ export const useVotingReportPdfDownload = (election?: ElectionLike) => {
       // when the read fails.
       const election = await resolveReportElection(client, report.election)
       const results = (await fetchProcessResults(client, election.id)) ?? report.results
-      const earlyEndDate = getEarlyEndDate(election, await fetchOnChainEndDate(election))
+      const earlyEndDate = getEarlyEndDate(election, await fetchOnChainEndDate(election, VOCHAIN_API_URL))
 
       // Push both back into the queries the ElectionProvider observes so the dashboard shows the
       // same numbers the report just certified, instead of waiting out the rest of the poll interval.

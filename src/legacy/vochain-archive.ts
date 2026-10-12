@@ -11,8 +11,12 @@ import { decodeResults, type DecodedQuestionResults } from '@vocdoni/ballot'
 
 export type LocalizedText = Record<string, string | undefined>
 
-/** Vochain gateway base URL per app environment — same defaults the legacy SDK used. */
-export const getVochainGatewayUrl = (environment: string = 'dev') => {
+/**
+ * Vochain gateway base URL per app environment — same defaults the legacy SDK used — unless
+ * `override` (the app's VOCHAIN_API_URL) is set, which then wins for every environment.
+ */
+export const getVochainGatewayUrl = (environment: string = 'dev', override?: string) => {
+  if (override) return override
   switch (environment.toLowerCase()) {
     case 'prod':
       return 'https://api.vocdoni.io/v2'

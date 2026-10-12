@@ -26,6 +26,14 @@ describe('fetchOnChainEndDate', () => {
     expect(fetchMock.mock.calls[0][0]).toBe('https://api-dev.vocdoni.net/v2/elections/up-1')
   })
 
+  it('reads the configured Vochain API instead of the chain gateway when one is set', async () => {
+    const fetchMock = vi.fn(async (_url: string) => onChain('2026-01-01T15:42:00Z'))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await fetchOnChainEndDate(withQuestions(['up-1'], { chainId: 'vocdoni/LTS/1.2' }), 'http://localhost:9090/v2')
+    expect(fetchMock.mock.calls[0][0]).toBe('http://localhost:9090/v2/elections/up-1')
+  })
+
   it('ends when the last question ends', async () => {
     // Each question is its own election and they stop seconds apart, so the latest one wins.
     vi.stubGlobal(

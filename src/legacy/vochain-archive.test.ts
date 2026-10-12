@@ -47,6 +47,14 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
+describe('getVochainGatewayUrl', () => {
+  it('picks the gateway by environment unless an override is set', () => {
+    expect(getVochainGatewayUrl('prod')).toBe('https://api.vocdoni.io/v2')
+    expect(getVochainGatewayUrl('dev')).toBe('https://api-dev.vocdoni.net/v2')
+    expect(getVochainGatewayUrl('prod', 'http://localhost:9090/v2')).toBe('http://localhost:9090/v2')
+  })
+})
+
 describe('isLegacyProcessId', () => {
   it('matches 64-hex vochain ids with or without 0x and rejects Mongo ids', () => {
     expect(isLegacyProcessId(rawElection.electionId)).toBe(true)
