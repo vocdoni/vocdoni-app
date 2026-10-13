@@ -49,7 +49,7 @@
   },
   "results": {
     "date_format": "d 'de' MMMM 'de' y 'a les' H:mm",
-    "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi el {{ endDate }}",
+    "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi",
     "title": "Resultats per a \"{{ title }}\"",
     "votes": "{{ votes }} vots ({{ percent }})"
   },
