@@ -2,7 +2,7 @@ import { Signer } from '@ethersproject/abstract-signer'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ClientEnv, ComponentsProvider } from '@vocdoni/react-components'
 import { setDefaultOptions } from 'date-fns'
-import { PropsWithChildren, useEffect, useMemo } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useWalletClient, WagmiProvider } from 'wagmi'
 import { SaasAccountProvider } from '~components/Account/SaasAccountProvider'
@@ -60,14 +60,6 @@ const AppProviders = () => {
   const { i18n } = useTranslation()
   const locale = datesLocale(i18n.language)
   const clientEnv: ClientEnv = VocdoniEnvironment === 'prod' ? 'prod' : 'dev'
-  const options = useMemo(() => {
-    const next: { options?: { api_url: string } } = {}
-    if (clientEnv === 'dev') {
-      next.options = { api_url: 'https://one-dev.vocdoni.net/v2' }
-    }
-    return next
-  }, [clientEnv])
-
   const signer = data ? walletClientToSigner(data) : null
 
   useEffect(() => {
@@ -77,7 +69,7 @@ const AppProviders = () => {
   return (
     <RainbowKitTheme>
       <ComponentsProvider components={uiScaffoldComponents}>
-        <ClientProvider env={clientEnv} signer={signer as Signer} {...options}>
+        <ClientProvider env={clientEnv} signer={signer as Signer}>
           <ConnectionToastProvider>
             <SaasProviders>
               <AnalyticsProvider>
