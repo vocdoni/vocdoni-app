@@ -29,7 +29,9 @@ const danger = {
 }
 
 const neutral = {
-  confirm: {},
+  confirm: {
+    colorPalette: 'yellow',
+  },
 }
 
 export const ConfirmModal = defineSlotRecipe({
