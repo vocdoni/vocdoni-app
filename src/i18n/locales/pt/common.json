@@ -200,6 +200,7 @@
     "code_sent": "Código de verificação enviado",
     "contact_match_help": "Tens de corresponder ao registado no sistema",
     "errors": {
+      "credentials_or_password_incorrect": "Não foi possível verificar a tua identidade. Confirma as tuas credenciais e a tua palavra-passe e tenta novamente.",
       "participant_not_found": "O votante não consta da lista de participantes ou as credenciais fornecidas estão incorretas.",
       "requests_on_cooldown": "Demasiados pedidos. Aguarda um momento antes de tentar novamente.",
       "too_many_attempts": "Demasiadas tentativas. Tenta novamente mais tarde.",
@@ -474,7 +475,8 @@
       "error": {
         "invalid_birth_date": "A data de nascimento não pode estar no futuro",
         "invalid_email": "Endereço de email inválido",
-        "invalid_phone": "Número de telefone inválido"
+        "invalid_phone": "Número de telefone inválido",
+        "password_requirements": "Usa pelo menos 6 caracteres, com uma letra e um número."
       }
     },
     "process_create": {
@@ -972,6 +974,11 @@
     },
     "groups": {
       "title": "Grupos"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} linha não foi importada porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linha {{lines}}.",
+      "password_rows_skipped_many": "{{count}} linhas não foram importadas porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}.",
+      "password_rows_skipped_other": "{{count}} linhas não foram importadas porque a sua palavra-passe não cumpre os requisitos (pelo menos 6 caracteres, com uma letra e um número): linhas {{lines}}."
     },
     "import_file": {
       "subtitle": "Importa o teu ficheiro CSV, XLS, XLSX ou ODS com os dados dos membros. Certifica-te de que os cabeçalhos das colunas correspondem ao modelo para uma associação correta.",

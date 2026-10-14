@@ -198,6 +198,7 @@
     "code_sent": "Egiaztapen-kodea bidali da",
     "contact_match_help": "Sisteman erregistratutakoarekin bat etorri behar du",
     "errors": {
+      "credentials_or_password_incorrect": "Ezin izan dugu zure identitatea egiaztatu. Egiaztatu zure kredentzialak eta pasahitza, eta saiatu berriro.",
       "participant_not_found": "Botogilea ez dago erroldan edo emandako kredentzialak ez dira zuzenak.",
       "requests_on_cooldown": "Eskaera gehiegi. Itxaron pixka bat berriro saiatu aurretik.",
       "too_many_attempts": "Saiakera gehiegi. Saiatu berriro geroago.",
@@ -470,7 +471,8 @@
       "error": {
         "invalid_birth_date": "Jaioteguna ezin da etorkizunean egon",
         "invalid_email": "Posta elektronikoaren helbidea ez da baliozkoa",
-        "invalid_phone": "Telefono-zenbakia ez da baliozkoa"
+        "invalid_phone": "Telefono-zenbakia ez da baliozkoa",
+        "password_requirements": "Erabili gutxienez 6 karaktere, letra bat eta zenbaki bat barne."
       }
     },
     "process_create": {
@@ -961,6 +963,10 @@
     },
     "groups": {
       "title": "Taldeak"
+    },
+    "import": {
+      "password_rows_skipped_one": "{{count}} errenkada ez da inportatu, bere pasahitzak ez dituelako betetzen baldintzak (gutxienez 6 karaktere, letra bat eta zenbaki bat barne): {{lines}}. lerroa.",
+      "password_rows_skipped_other": "{{count}} errenkada ez dira inportatu, haien pasahitzek ez dituztelako betetzen baldintzak (gutxienez 6 karaktere, letra bat eta zenbaki bat barne): {{lines}} lerroak."
     },
     "import_file": {
       "subtitle": "Inportatu zure CSV, XLS, XLSX edo ODS fitxategia kideen datuekin. Ziurtatu zutabeen goiburuak txantiloiarekin bat datozela esleipen zuzena egiteko.",
