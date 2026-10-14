@@ -2,7 +2,15 @@ name: Integration
 
 # Runs the Playwright end-to-end suite (e2e/) against a disposable
 # mongo + vocone + saas-backend + MailHog stack (integration/docker-compose.ci.yml),
-# built from published `:main` images.
+# built from published `:main` images, or from source at refs pinned by a
+# `/integration` PR comment or the workflow_dispatch inputs (see integration/README.md,
+# "Pinning upstream commits").
+#
+# A writer's `/integration vocdoni-node=<ref> saas-backend=<ref> integrator-sdk=<ref>`
+# comment on a pull request runs it once against those refs (each key is optional).
+# Refs that are branches, tags or #PRs also stick to the PR until `/integration reset`,
+# and the pull_request event re-resolves sticky refs on every push. workflow_dispatch
+# takes the same refs as inputs.
 #
 # `pnpm test:e2e` runs every project in playwright.config.ts, so this covers both
 # the desktop (`chromium`) and the emulated-phone (`mobile-chrome`) passes. Adding
@@ -14,35 +22,193 @@ name: Integration
 # lint/unit/build job.
 #
 # Where it runs, and why: on every merge into `develop` (the integration point,
-# where a break should surface), and on pull requests promoting `develop`
-# onward to `stage` or to `main` (production) — the two moments where shipping
-# a broken email/2FA journey would actually reach users. Feature PRs targeting
-# `develop` deliberately do NOT run it: they are already covered by test.yml,
-# and this job costs several minutes and a live chain.
+# where a break should surface), on pull requests promoting `develop` onward to
+# `stage` or to `main` (production), and on any pull request with pinned refs —
+# the moments where shipping a broken email/2FA journey would actually reach users.
+# Other feature PRs targeting `develop` deliberately do NOT run it: they are already
+# covered by test.yml, and this job costs several minutes and a live chain.
 on:
   push:
     branches: [develop]
   pull_request:
-    branches: [stage, main]
   workflow_dispatch:
-
-concurrency:
-  group: integration-${{ github.ref }}
-  cancel-in-progress: true
+    inputs:
+      vocdoni_node_ref:
+        description: 'vocdoni-node commit SHA, branch, tag or #PR to build from source (empty = :main image)'
+        type: string
+        required: false
+        default: ''
+      saas_backend_ref:
+        description: 'saas-backend commit SHA, branch, tag or #PR to build from source (empty = :main image)'
+        type: string
+        required: false
+        default: ''
+      integrator_sdk_ref:
+        description: 'integrator-sdk commit SHA, branch, tag or #PR to build and install in place of the npm packages (empty = npm versions from the lockfile)'
+        type: string
+        required: false
+        default: ''
+  issue_comment:
+    types: [created]
 
 jobs:
+  resolve:
+    name: Resolve refs
+    runs-on: ubuntu-latest
+    # Runs for a dispatch, a pull_request, or a `/integration` comment on a pull
+    # request. push never reaches it, and an unrelated comment is skipped here,
+    # which skips the e2e job too.
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request && startsWith(github.event.comment.body, '/integration'))
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write # the 👀 reaction on the comment
+    outputs:
+      authorized: ${{ steps.refs.outputs.authorized }}
+      parsed: ${{ steps.refs.outputs.parsed }}
+      reset: ${{ steps.refs.outputs.reset }}
+      sticky: ${{ steps.refs.outputs.sticky }}
+      checkout_ref: ${{ steps.refs.outputs.checkout_ref }}
+      head_sha: ${{ steps.refs.outputs.head_sha }}
+      vocdoni_node_ref: ${{ steps.refs.outputs.vocdoni_node_ref }}
+      saas_backend_ref: ${{ steps.refs.outputs.saas_backend_ref }}
+      integrator_sdk_ref: ${{ steps.refs.outputs.integrator_sdk_ref }}
+    steps:
+      # Default ref: on issue_comment that is the default branch, so the parser
+      # runs trusted code, never the commented PR's. On pull_request it is the PR's
+      # merge commit, so the sticky script comes from that merge.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Resolve refs
+        id: refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          COMMENTER: ${{ github.event.comment.user.login }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          PR: ${{ github.event.issue.number }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          DISPATCH_NODE: ${{ inputs.vocdoni_node_ref }}
+          DISPATCH_SAAS: ${{ inputs.saas_backend_ref }}
+          DISPATCH_SDK: ${{ inputs.integrator_sdk_ref }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = pull_request ]; then
+            # Sticky pins from the PR's own comments. Refs are re-resolved here
+            # on every push; checkout_ref stays empty (the default merge ref).
+            gh api --paginate "repos/$REPO/issues/$PR_NUMBER/comments" | jq -s 'add // []' | scripts/integration-sticky.sh >> "$GITHUB_OUTPUT"
+          elif [ "$EVENT_NAME" = issue_comment ]; then
+            # A failed lookup fails this step (reported as an error). Only a
+            # successful answer below admin/maintain/write is a rejection.
+            if ! permission="$(gh api "repos/$REPO/collaborators/$COMMENTER/permission" --jq .permission)"; then
+              echo "::error::could not look up the permission of $COMMENTER on $REPO (gh api failed, see above)" >&2
+              exit 1
+            fi
+            case "$permission" in
+              admin | maintain | write) ;;
+              *)
+                echo "::error::$COMMENTER has '$permission' on $REPO; /integration needs write access" >&2
+                exit 1
+                ;;
+            esac
+            echo "authorized=true" >> "$GITHUB_OUTPUT"
+            gh api -X POST "repos/$REPO/issues/comments/$COMMENT_ID/reactions" -f content=eyes >/dev/null || true
+            pins_out="$RUNNER_TEMP/pins.out"
+            printf '%s\n' "$COMMENT_BODY" | scripts/integration-pins.sh > "$pins_out"
+            cat "$pins_out" >> "$GITHUB_OUTPUT"
+            echo "parsed=true" >> "$GITHUB_OUTPUT"
+            # `/integration reset` builds nothing: the report only says the sticky state is cleared.
+            if grep -qx 'reset=true' "$pins_out"; then
+              exit 0
+            fi
+            # Tests the same merge commit a pull_request run would, frozen when
+            # this run starts; a push after that is not picked up.
+            pr_json="$RUNNER_TEMP/pr.json"
+            for _ in 1 2 3 4 5; do
+              gh api "repos/$REPO/pulls/$PR" > "$pr_json"
+              if [ "$(jq -r '.mergeable' "$pr_json")" != null ]; then
+                break
+              fi
+              sleep 3
+            done
+            merge_sha="$(jq -r '.merge_commit_sha // empty' "$pr_json")"
+            mergeable="$(jq -r '.mergeable' "$pr_json")"
+            if [ -z "$merge_sha" ] || [ "$mergeable" != true ]; then
+              echo "::error::PR #$PR does not merge cleanly into its base (mergeable=$mergeable)" >&2
+              exit 1
+            fi
+            head_sha="$(jq -r '.head.sha' "$pr_json")"
+            {
+              echo "checkout_ref=$merge_sha"
+              echo "head_sha=$head_sha"
+            } >> "$GITHUB_OUTPUT"
+          else
+            # Whitespace would let one input smuggle a second key into the line below.
+            for value in "$DISPATCH_NODE" "$DISPATCH_SAAS" "$DISPATCH_SDK"; do
+              if [[ "$value" =~ [[:space:]] ]]; then
+                echo "::error::ref inputs must not contain whitespace" >&2
+                exit 1
+              fi
+            done
+            line="/integration"
+            if [ -n "$DISPATCH_NODE" ]; then
+              line="$line vocdoni-node=$DISPATCH_NODE"
+            fi
+            if [ -n "$DISPATCH_SAAS" ]; then
+              line="$line saas-backend=$DISPATCH_SAAS"
+            fi
+            if [ -n "$DISPATCH_SDK" ]; then
+              line="$line integrator-sdk=$DISPATCH_SDK"
+            fi
+            printf '%s\n' "$line" | scripts/integration-pins.sh >> "$GITHUB_OUTPUT"
+            echo "parsed=true" >> "$GITHUB_OUTPUT"
+          fi
+
   e2e:
     name: End-to-end suite
+    needs: resolve
+    # resolve only runs for dispatches, pull requests and /integration comments.
+    # push skips it and still runs this job, as it always has. An unrelated comment
+    # skips resolve, and that skip must skip this job too. A cleared
+    # `/integration reset` builds nothing, so it skips this job as well.
+    #
+    # For a pull_request the job runs when the base is stage or main (release and
+    # hotfix PRs, as before), or when a ref is pinned, sticky or one-shot. Other
+    # feature PRs into develop run only test.yml.
+    if: ${{ !cancelled() && needs.resolve.outputs.reset != 'true' && (needs.resolve.result == 'success' || (needs.resolve.result == 'skipped' && github.event_name != 'issue_comment')) && (github.event_name != 'pull_request' || github.base_ref == 'stage' || github.base_ref == 'main' || needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') }}
     runs-on: ubuntu-latest
     # The suite publishes real on-chain processes and casts real votes, and
     # vocone's first boot downloads its zk circuit artifacts. Budget for that —
     # and note every journey now runs twice, desktop and mobile.
-    timeout-minutes: 45
+    #
+    # Building upstream from source (any pinned ref) or an SDK build adds a lot
+    # of time, hence 90 over the default 45.
+    timeout-minutes: ${{ (needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != '' || needs.resolve.outputs.integrator_sdk_ref != '') && 90 || 45 }}
+    # Every comment and dispatch run gets its own group, so a pinned run is never
+    # cancelled by a push or another comment. Queue order between groups is not
+    # guaranteed, so "newest wins" could not be relied on.
+    concurrency:
+      group: integration-${{ (github.event_name == 'issue_comment' || github.event_name == 'workflow_dispatch') && github.run_id || github.ref }}
+      cancel-in-progress: true
     permissions:
       contents: read
+    outputs:
+      vocdoni_node_sha: ${{ steps.pins.outputs.vocdoni_node_sha }}
+      saas_backend_sha: ${{ steps.pins.outputs.saas_backend_sha }}
+      integrator_sdk_sha: ${{ steps.sdk.outputs.integrator_sdk_sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Empty except for /integration comment runs (the PR's merge commit);
+          # empty means the default event ref, as for a pull request or a push.
+          ref: ${{ needs.resolve.outputs.checkout_ref }}
+          persist-credentials: false
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -51,23 +217,141 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
-          cache: pnpm
+          # No pnpm cache for /integration comment runs or a pinned SDK. Comment
+          # runs would save PR code's store into the default branch's cache scope.
+          # That is hygiene, not a defence: the write-access gate in resolve is what
+          # limits who reaches this path. A pinned SDK install would save a store
+          # that does not match the lockfile key.
+          cache: ${{ (github.event_name != 'issue_comment' && needs.resolve.outputs.integrator_sdk_ref == '') && 'pnpm' || '' }}
+
+      - name: Build pinned SDK
+        id: sdk
+        if: needs.resolve.outputs.integrator_sdk_ref != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
+        run: |
+          set -euo pipefail
+          # The build output goes to a file, not $(...): errexit is suppressed
+          # inside a command substitution, so a failed build would go unnoticed.
+          scripts/integration-build-sdk.sh "$SDK_REF" "$RUNNER_TEMP/sdk-tarballs" > "$RUNNER_TEMP/sdk.out"
+          sha="$(sed -n 's/^sha=//p' "$RUNNER_TEMP/sdk.out")"
+          [ -n "$sha" ] || { echo "::error::no sha from build of integrator-sdk" >&2; exit 1; }
+          echo "integrator_sdk_sha=$sha" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        env:
+          SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
+        run: |
+          set -euo pipefail
+          if [ -n "$SDK_REF" ]; then
+            # Overrides every @vocdoni/* package, transitive copies included, with
+            # the built tarballs. This rewrites pnpm-workspace.yaml and the lockfile
+            # for this run only; nothing is committed back.
+            node scripts/integration-use-sdk.mjs "$RUNNER_TEMP/sdk-tarballs"
+            pnpm install --no-frozen-lockfile
+            # Shows in the log which @vocdoni/* packages resolved to the tarballs.
+            pnpm ls -r --depth Infinity '@vocdoni/*' || true
+          else
+            pnpm install --frozen-lockfile
+          fi
 
       - name: Install Playwright browser
         run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build pinned images
+        id: pins
+        if: needs.resolve.outputs.vocdoni_node_ref != '' || needs.resolve.outputs.saas_backend_ref != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
+          SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
+        run: |
+          set -euo pipefail
+          # build <repo> <ref> <ENV_VAR> <output_name>: runs in the background.
+          # Output goes to files, so a failure shows at `wait`, not via errexit.
+          build() {
+            local repo="$1" ref="$2" env_var="$3" output="$4"
+            local image sha
+            scripts/integration-build-image.sh "$repo" "$ref" > "$RUNNER_TEMP/$repo.out" 2> "$RUNNER_TEMP/$repo.log" || return 1
+            image="$(sed -n 's/^image=//p' "$RUNNER_TEMP/$repo.out")"
+            sha="$(sed -n 's/^sha=//p' "$RUNNER_TEMP/$repo.out")"
+            [ -n "$image" ] && [ -n "$sha" ] || return 1
+            echo "$env_var=$image" >> "$GITHUB_ENV"
+            echo "$output=$sha" >> "$GITHUB_OUTPUT"
+          }
+          names=()
+          pids=()
+          if [ -n "$NODE_REF" ]; then
+            build vocdoni-node "$NODE_REF" VOCDONI_NODE_IMAGE vocdoni_node_sha &
+            names+=(vocdoni-node)
+            pids+=("$!")
+          fi
+          if [ -n "$SAAS_REF" ]; then
+            build saas-backend "$SAAS_REF" SAAS_BACKEND_IMAGE saas_backend_sha &
+            names+=(saas-backend)
+            pids+=("$!")
+          fi
+          failed=0
+          for i in "${!pids[@]}"; do
+            if ! wait "${pids[$i]}"; then
+              echo "::error::build of ${names[$i]} failed" >&2
+              failed=1
+            fi
+          done
+          for repo in "${names[@]}"; do
+            echo "::group::$repo build"
+            cat "$RUNNER_TEMP/$repo.log"
+            echo "::endgroup::"
+          done
+          [ "$failed" = 0 ]
 
       - name: Print resolved image digests
         # `:main` is tracked deliberately, so a green run can go red with no
         # change in this repo. Printing the digests makes such a run
         # reproducible locally and tells you immediately that upstream moved.
         run: |
-          docker pull ghcr.io/vocdoni/vocdoni-node:main
-          docker pull ghcr.io/vocdoni/saas-backend:main
-          docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/vocdoni-node:main
-          docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/saas-backend:main
+          if [ -n "${VOCDONI_NODE_IMAGE:-}" ]; then
+            echo "vocdoni-node built from source: $VOCDONI_NODE_IMAGE"
+          else
+            docker pull ghcr.io/vocdoni/vocdoni-node:main
+            docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/vocdoni-node:main
+          fi
+          if [ -n "${SAAS_BACKEND_IMAGE:-}" ]; then
+            echo "saas-backend built from source: $SAAS_BACKEND_IMAGE"
+          else
+            docker pull ghcr.io/vocdoni/saas-backend:main
+            docker inspect --format '{{index .RepoDigests 0}}' ghcr.io/vocdoni/saas-backend:main
+          fi
+
+      - name: Summarize tested refs
+        env:
+          NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
+          NODE_SHA: ${{ steps.pins.outputs.vocdoni_node_sha }}
+          SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
+          SAAS_SHA: ${{ steps.pins.outputs.saas_backend_sha }}
+          SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
+          SDK_SHA: ${{ steps.sdk.outputs.integrator_sdk_sha }}
+        run: |
+          {
+            echo "### Tested refs"
+            echo "- app: \`$(git rev-parse --short HEAD)\`"
+            if [ -n "$NODE_REF" ]; then
+              echo "- vocdoni-node: \`$NODE_REF\` → \`$NODE_SHA\`"
+            else
+              echo "- vocdoni-node: :main image"
+            fi
+            if [ -n "$SAAS_REF" ]; then
+              echo "- saas-backend: \`$SAAS_REF\` → \`$SAAS_SHA\`"
+            else
+              echo "- saas-backend: :main image"
+            fi
+            if [ -n "$SDK_REF" ]; then
+              echo "- integrator-sdk: \`$SDK_REF\` → \`$SDK_SHA\`"
+            else
+              echo "- integrator-sdk: npm (lockfile)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Start stack
         run: scripts/integration-stack.sh up
@@ -120,3 +404,89 @@ jobs:
       - name: Tear down stack
         if: always()
         run: scripts/integration-stack.sh down
+
+  report:
+    name: Report to PR
+    needs: [resolve, e2e]
+    # Only an authorized /integration comment gets a reply. Anyone else is
+    # ignored silently. A writer whose command did not parse still gets the
+    # "rejected" reply.
+    if: ${{ always() && github.event_name == 'issue_comment' && needs.resolve.outputs.authorized == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Post result to the PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.issue.number }}
+          PARSED: ${{ needs.resolve.outputs.parsed }}
+          RESOLVE: ${{ needs.resolve.result }}
+          RESULT: ${{ needs.e2e.result }}
+          RESET: ${{ needs.resolve.outputs.reset }}
+          STICKY: ${{ needs.resolve.outputs.sticky }}
+          CHECKOUT: ${{ needs.resolve.outputs.checkout_ref }}
+          HEAD_SHA: ${{ needs.resolve.outputs.head_sha }}
+          NODE_REF: ${{ needs.resolve.outputs.vocdoni_node_ref }}
+          SAAS_REF: ${{ needs.resolve.outputs.saas_backend_ref }}
+          SDK_REF: ${{ needs.resolve.outputs.integrator_sdk_ref }}
+          NODE_SHA: ${{ needs.e2e.outputs.vocdoni_node_sha }}
+          SAAS_SHA: ${{ needs.e2e.outputs.saas_backend_sha }}
+          SDK_SHA: ${{ needs.e2e.outputs.integrator_sdk_sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          body="$RUNNER_TEMP/report.md"
+          # SHAs reach this job through outputs of the PR's own build steps, so only
+          # a full 40-digit lowercase hex SHA is printed; anything else gets the label.
+          sha_or() {
+            if [[ "$1" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "$1"
+            else
+              echo "$2"
+            fi
+          }
+          # One line per upstream: ':main image' when unpinned, 'ref → sha' when pinned.
+          upstream() {
+            if [ -n "$2" ]; then
+              echo "- $1: $2 → $(sha_or "$3" 'not built')"
+            else
+              echo "- $1: :main image"
+            fi
+          }
+          {
+            if [ "$PARSED" != true ]; then
+              echo "Integration run: **rejected**: the \`/integration\` command could not be parsed, see the run log."
+            elif [ "$RESOLVE" != success ]; then
+              echo "Integration run: **error** resolving the PR ($RESOLVE), see the run log; comment again to retry."
+            elif [ "$RESET" = true ]; then
+              echo "Sticky integration refs cleared; pushes use the \`:main\` images and the npm SDK again."
+              echo
+              echo "- Run: $RUN_URL"
+            else
+              echo "Integration run: **$RESULT**"
+              echo
+              if [[ "$CHECKOUT" =~ ^[0-9a-f]{40}$ && "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+                echo "- App: merge of $HEAD_SHA ($CHECKOUT)"
+              else
+                echo "- App: not resolved"
+              fi
+              upstream vocdoni-node "$NODE_REF" "$NODE_SHA"
+              upstream saas-backend "$SAAS_REF" "$SAAS_SHA"
+              if [ -n "$SDK_REF" ]; then
+                echo "- integrator-sdk: $SDK_REF → $(sha_or "$SDK_SHA" 'not built')"
+              else
+                echo "- integrator-sdk: npm (lockfile)"
+              fi
+              echo "- Run: $RUN_URL"
+              if [ "$STICKY" = true ]; then
+                echo
+                echo "These refs are re-resolved on every push to this PR until \`/integration reset\`."
+              else
+                echo
+                echo "One-shot run: pushes keep using the previous sticky refs, if any."
+              fi
+            fi
+          } > "$body"
+          gh pr comment "$PR" -R "$REPO" --body-file "$body"

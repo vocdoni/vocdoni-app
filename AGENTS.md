@@ -117,8 +117,9 @@
 - CI follows the base branch (`.github/workflows/test.yml`): PRs to `develop` run lint, tests and the dev build; PRs to
   `stage` or `d/**` run them with the stg build. PRs to any other base (`main`, an `h/` branch, or a feature branch in a
   stacked PR) get neither job, so a green check there means lint and tests never ran: run `pnpm lint` and `pnpm test`
-  locally. The integration workflow (`.github/workflows/integration.yml`) runs on merges into `develop` and on every PR
-  to `stage` or `main`, release and hotfix alike.
+  locally. The integration workflow (`.github/workflows/integration.yml`) runs on merges into `develop`, on PRs to
+  `stage` or `main` (release and hotfix alike), on any PR with sticky `/integration` pins, and on a `/integration` PR
+  comment from a user with write access.
 - The full flow and deploy links are in the README's "Branching and deploys" section.
 
 ## Commit & Pull Request Guidelines
