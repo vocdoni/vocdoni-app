@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event'
 import { render, screen, waitFor } from '~src/test-utils'
+import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
 import { Step0Base } from './Step0'
 
 const csp = vi.hoisted(() => ({
@@ -36,10 +37,18 @@ vi.mock('~components/Toast', async (importOriginal) => ({
   useToast: () => csp.toast,
 }))
 
-const renderStep0 = ({ authFields = [], twoFaFields = [] }: { authFields?: string[]; twoFaFields?: string[] }) => {
+const renderStep0 = ({
+  authFields = [],
+  twoFaFields = [],
+  crispWebsiteId,
+}: {
+  authFields?: string[]
+  twoFaFields?: string[]
+  crispWebsiteId?: string
+}) => {
   csp.authFields = authFields
   csp.twoFaFields = twoFaFields
-  return render(<Step0Base />)
+  return render(<Step0Base />, crispWebsiteId ? { appEnv: { CRISP_WEBSITE_ID: crispWebsiteId } } : undefined)
 }
 
 // The form fields have no accessible name tying them to their label, so address them by
@@ -149,5 +158,59 @@ describe('Step0Base', () => {
     renderStep0({})
 
     expect(screen.getByRole('button', { name: 'Authenticate' })).toBeDisabled()
+  })
+
+  describe('member password', () => {
+    // process reads return the organization address unprefixed; the hash is the shared test vector
+    const S3CRET_HASH = '2f7e83a0b19a82fa9a5dc6ecc6ff44ec82679ea87012a7187bd3313366bf277e'
+
+    beforeEach(() => {
+      setReactProvidersMock({
+        useElection: () => ({ election: { orgAddress: '00000000000000000000000000000000000000aa' } }),
+      })
+    })
+
+    afterEach(() => {
+      delete window.$crisp
+    })
+
+    it('asks for the password in a masked input', () => {
+      renderStep0({ authFields: ['memberNumber', 'password'] })
+
+      expect(field('password')).toHaveAttribute('type', 'password')
+    })
+
+    it('sends the hash of the trimmed password, never the plaintext', async () => {
+      const user = userEvent.setup()
+      renderStep0({ authFields: ['memberNumber', 'password'] })
+
+      await user.type(field('memberNumber'), '00123')
+      await user.type(field('password'), ' s3cret ')
+      await user.click(screen.getByRole('checkbox'))
+      await user.click(screen.getByRole('button', { name: 'Authenticate' }))
+
+      await waitFor(() =>
+        expect(csp.mutateAsync).toHaveBeenCalledWith({ memberNumber: '00123', password: S3CRET_HASH })
+      )
+      expect(JSON.stringify(csp.mutateAsync.mock.calls)).not.toContain('s3cret')
+    })
+
+    it('never pushes the password to Crisp, even when it is the first credential', async () => {
+      const push = vi.fn()
+      window.$crisp = { push } as unknown as typeof window.$crisp
+      const user = userEvent.setup()
+      renderStep0({ authFields: ['password', 'memberNumber'], crispWebsiteId: 'crisp-site' })
+
+      await user.type(field('password'), 's3cret')
+      await user.type(field('memberNumber'), '00123')
+      await user.click(screen.getByRole('checkbox'))
+      await user.click(screen.getByRole('button', { name: 'Authenticate' }))
+
+      await waitFor(() => expect(push).toHaveBeenCalled())
+      expect(push).toHaveBeenCalledWith(['set', 'user:nickname', ['memberNumber 00123']])
+      const pushed = JSON.stringify(push.mock.calls)
+      expect(pushed).not.toContain('s3cret')
+      expect(pushed).not.toContain(S3CRET_HASH)
+    })
   })
 })
