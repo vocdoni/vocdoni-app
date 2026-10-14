@@ -219,6 +219,7 @@
       "surname": "Cognoms"
     },
     "important": "Important",
+    "password_unavailable": "No es pot comprovar la contrasenya ara mateix. Recarrega la pàgina i torna-ho a provar.",
     "receive_code": "Rebre codi",
     "step1": {
       "footer_text": "Si tens cap problema, contacta amb la teva organització.",

@@ -217,6 +217,7 @@
       "surname": "Surname"
     },
     "important": "Important",
+    "password_unavailable": "The password cannot be checked right now. Reload the page and try again.",
     "receive_code": "Receive Code",
     "step1": {
       "footer_text": "If you experience any issues, contact your organization.",

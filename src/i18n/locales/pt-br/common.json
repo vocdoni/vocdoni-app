@@ -219,6 +219,7 @@
       "surname": "Sobrenome"
     },
     "important": "Importante",
+    "password_unavailable": "Não foi possível verificar a senha agora. Recarregue a página e tente novamente.",
     "receive_code": "Receber código",
     "step1": {
       "footer_text": "Se tiver algum problema, entre em contato com sua organização.",

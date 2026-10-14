@@ -219,6 +219,7 @@
       "surname": "Apelido"
     },
     "important": "Importante",
+    "password_unavailable": "Não é possível verificar a palavra-passe neste momento. Recarrega a página e tenta novamente.",
     "receive_code": "Receber código",
     "step1": {
       "footer_text": "Se tiveres algum problema, contacta a tua organização.",

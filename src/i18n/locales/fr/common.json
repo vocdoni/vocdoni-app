@@ -219,6 +219,7 @@
       "surname": "Nom"
     },
     "important": "Important",
+    "password_unavailable": "Le mot de passe ne peut pas être vérifié pour le moment. Rechargez la page et réessayez.",
     "receive_code": "Recevoir le code",
     "step1": {
       "footer_text": "En cas de problème, contactez votre organisation.",

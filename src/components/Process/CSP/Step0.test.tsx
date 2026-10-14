@@ -195,6 +195,29 @@ describe('Step0Base', () => {
       expect(JSON.stringify(csp.mutateAsync.mock.calls)).not.toContain('s3cret')
     })
 
+    it('shows a translated error, not the developer message, when the password cannot be hashed', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+      setReactProvidersMock({ useElection: () => ({ election: undefined }) })
+      const user = userEvent.setup()
+      renderStep0({ authFields: ['memberNumber', 'password'] })
+
+      await user.type(field('memberNumber'), '00123')
+      await user.type(field('password'), 's3cret')
+      await user.click(screen.getByRole('checkbox'))
+      await user.click(screen.getByRole('button', { name: 'Authenticate' }))
+
+      await waitFor(() =>
+        expect(csp.toast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'error',
+            description: 'The password cannot be checked right now. Reload the page and try again.',
+          })
+        )
+      )
+      expect(JSON.stringify(csp.toast.mock.calls)).not.toContain('Cannot hash')
+      expect(csp.mutateAsync).not.toHaveBeenCalled()
+    })
+
     it('never pushes the password to Crisp, even when it is the first credential', async () => {
       const push = vi.fn()
       window.$crisp = { push } as unknown as typeof window.$crisp

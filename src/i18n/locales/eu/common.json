@@ -217,6 +217,7 @@
       "surname": "Abizenak"
     },
     "important": "Garrantzitsua",
+    "password_unavailable": "Une honetan ezin da pasahitza egiaztatu. Birkargatu orria eta saiatu berriro.",
     "receive_code": "Jaso kodea",
     "step1": {
       "footer_text": "Arazoren bat baduzu, jarri zure erakundearekin harremanetan.",

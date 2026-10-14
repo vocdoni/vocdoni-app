@@ -219,6 +219,7 @@
       "surname": "Cognome"
     },
     "important": "Importante",
+    "password_unavailable": "Al momento non è possibile verificare la password. Ricarica la pagina e riprova.",
     "receive_code": "Ricevi codice",
     "step1": {
       "footer_text": "In caso di problemi, contatta la tua organizzazione.",
