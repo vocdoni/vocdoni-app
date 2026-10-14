@@ -16,6 +16,14 @@ describe('hashMemberPassword', () => {
     await expect(hashMemberPassword('0x00000000000000000000000000000000000000aa', '  s3cret \n')).resolves.toBe(VECTOR)
   })
 
+  it('hashes the NFC and NFD spellings of an accented password identically', async () => {
+    const nfc = 'caf\u00e912'
+    const nfd = 'cafe\u030112'
+    expect(nfc).not.toBe(nfd)
+    const address = '0x00000000000000000000000000000000000000aa'
+    await expect(hashMemberPassword(address, nfd)).resolves.toBe(await hashMemberPassword(address, nfc))
+  })
+
   it('does not fold case', async () => {
     await expect(hashMemberPassword('0x00000000000000000000000000000000000000aa', 'S3CRET')).resolves.not.toBe(VECTOR)
   })
