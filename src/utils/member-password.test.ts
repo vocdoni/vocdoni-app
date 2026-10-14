@@ -1,4 +1,4 @@
-import { hashMemberPassword, hashMemberPasswords } from './member-password'
+import { hashMemberPassword, hashMemberPasswords, isValidMemberPassword } from './member-password'
 
 // The fixed vector shared with the backend spec and the SDK docs: whatever form the
 // organization address comes in, the hash is the same.
@@ -36,5 +36,15 @@ describe('hashMemberPasswords', () => {
       { memberNumber: '3' },
     ])
     expect(rows).toEqual([{ memberNumber: '1', password: VECTOR }, { memberNumber: '2' }, { memberNumber: '3' }])
+  })
+})
+
+describe('isValidMemberPassword', () => {
+  it.each(['abc123', 'Ñandú1', ' abc123 ', 's3cret'])('accepts %j', (password) => {
+    expect(isValidMemberPassword(password)).toBe(true)
+  })
+
+  it.each(['abc12', 'abcdef', '123456', '', '      ', ' abc1  '])('rejects %j', (password) => {
+    expect(isValidMemberPassword(password)).toBe(false)
   })
 })
