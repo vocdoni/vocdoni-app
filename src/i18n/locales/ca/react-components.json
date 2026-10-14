@@ -49,7 +49,7 @@
   },
   "results": {
     "date_format": "d 'de' MMMM 'de' y 'a les' H:mm",
-    "secret_until_the_end": "Els resultats es faran públics quan el procés finalitzi",
+    "secret_until_the_end": "Els resultats provisionals es faran públics quan el procés finalitzi",
     "title": "Resultats per a \"{{ title }}\"",
     "votes": "{{ votes }} vots ({{ percent }})"
   },
@@ -58,7 +58,7 @@
     "ended": "Finalitzada",
     "ongoing": "En curs",
     "paused": "Pausada",
-    "results": "Resultats",
+    "results": "Resultats provisionals",
     "upcoming": "Propera",
     "process_unknown": "Desconeguda",
     "invalid": "Invàlida"
