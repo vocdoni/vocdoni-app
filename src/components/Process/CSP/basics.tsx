@@ -3,6 +3,7 @@ import { VocdoniApiError } from '@vocdoni/api-client'
 import type { AuthRequest, OrgMemberAuthField, OrgMemberTwoFaField } from '@vocdoni/api-types'
 import { useElectionAuth } from '@vocdoni/react-components'
 import { useTranslation } from 'react-i18next'
+import { useOptionalCspAuthContext } from './CSPStepsProvider'
 
 // TODO(member-password): drop these two widenings once @vocdoni/api-types ships the `password`
 // auth field and `AuthRequest.password` (vocdoni-integrator-sdk feat/member-password).
@@ -51,6 +52,7 @@ const retryAfterSeconds = (body: unknown): number | undefined => {
 // other failure keeps the API's own message.
 const useTranslateCspError = () => {
   const { t } = useTranslation()
+  const hasPassword = !!useOptionalCspAuthContext()?.authFields.includes('password')
 
   return (error: unknown): Error => {
     if (error instanceof VocdoniApiError) {
@@ -58,6 +60,16 @@ const useTranslateCspError = () => {
         // 40802 covers both an unknown participant and a contact mismatch; older backends send 40029.
         case 40029:
         case 40802:
+          // A wrong password is answered like an unknown participant (no membership oracle), so with a
+          // password the message must not blame the password, or any single field, specifically.
+          if (hasPassword) {
+            return new Error(
+              t('csp.errors.credentials_or_password_incorrect', {
+                defaultValue:
+                  "We couldn't verify your identity. Check your credentials and your password and try again.",
+              })
+            )
+          }
           return new Error(
             t('csp.errors.participant_not_found', {
               defaultValue: 'The voter is not listed in the census, or the provided credentials are incorrect.',

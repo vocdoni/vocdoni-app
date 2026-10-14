@@ -169,13 +169,15 @@ export const Step0Base = () => {
     <VStack gap={6} align='stretch' w='full'>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack gap={4}>
-          {/* Render auth fields */}
-          {authFields.map((field) => (
-            <FieldRoot key={field} invalid={!!errors[field]} required>
-              <FieldLabel>{getAuthFieldLabel(t, field)}</FieldLabel>
-              <Input {...register(field, { required: true })} type={getAuthFieldInputType(field)} />
-            </FieldRoot>
-          ))}
+          {/* Render auth fields, the password always last */}
+          {[...authFields.filter((f) => f !== 'password'), ...authFields.filter((f) => f === 'password')].map(
+            (field) => (
+              <FieldRoot key={field} invalid={!!errors[field]} required>
+                <FieldLabel>{getAuthFieldLabel(t, field)}</FieldLabel>
+                <Input {...register(field, { required: true })} type={getAuthFieldInputType(field)} />
+              </FieldRoot>
+            )
+          )}
 
           {/* Render 2FA field */}
           {is2Factor && (
