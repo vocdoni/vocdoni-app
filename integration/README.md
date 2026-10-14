@@ -53,25 +53,50 @@ Each key is optional:
 
 - A bare `/integration` is an ordinary run: `:main` images and the npm packages
   from the lockfile.
-- A ref is a branch, a tag or a commit SHA. A short SHA only resolves for a commit
-  reachable from a branch or tag; for any other commit use the full SHA. An upstream
-  PR head works as `pull/<N>/head`.
+- A ref is a commit SHA (7-40 hex), a branch, a tag, or `#<PR number>` for that
+  upstream repo's PR head (e.g. `saas-backend=#760`).
 - `vocdoni-node` and `saas-backend` are built into Docker images and the stack
   runs those instead of `:main`.
-- `integrator-sdk` is cloned, built and packed. Its `@vocdoni/*` packages are
-  installed in place of the npm versions, transitive copies included, through
-  pnpm overrides. The overrides are added to `pnpm-workspace.yaml` for that run
-  only, so nothing is committed back.
-- Only users with write access can trigger it. The PR head is pinned when the
-  run starts, so later pushes do not change what runs.
-- Source builds take a long time (the Go images and the SDK each take minutes),
-  so a pinned run gets 90 minutes instead of 45.
-- The result is posted back to the PR with the App head, the upstream SHAs and
-  the run link.
-- The comment trigger runs the workflow file from `develop` (the default
-  branch), so changes to the workflow only take effect once merged.
-- The Actions tab's "Run workflow" takes the same refs as the
-  `vocdoni_node_ref`, `saas_backend_ref` and `integrator_sdk_ref` inputs.
+- `integrator-sdk` is built and packed. Its `@vocdoni/*` packages are installed in
+  place of the npm versions, transitive copies included, through pnpm overrides.
+  The overrides are added to `pnpm-workspace.yaml` for that run only, so nothing
+  is committed back.
+- Only users with write access count: comments from anyone else are ignored
+  silently. A `/integration` line that does not parse gets a "rejected" reply.
+- The run tests the PR's merge commit, as the `pull_request` check does, as it is
+  when the run starts. A push after that is not picked up by that run.
+- Each comment starts its own run; earlier ones are not cancelled.
+- Images and the SDK are built from source, so allow ~10+ extra minutes. A pinned
+  run gets 90 minutes instead of 45.
+- The result is posted back to the PR as a comment with the App head, the upstream
+  SHAs and the run link.
+- The comment trigger runs the workflow file from `develop` (the default branch),
+  so changes to the workflow only take effect once merged.
+
+### One-shot or sticky
+
+- A comment with any SHA runs once.
+- A comment whose refs are all branches, tags or `#PR`s sticks: every push to the
+  PR re-resolves those refs and builds them again, until `/integration reset`. A
+  later sticky comment replaces the earlier one, for all three keys.
+- A bare `/integration` is one-shot and does not change the sticky state.
+- `/integration reset` clears the sticky state, and takes no other token.
+- Only sticky refs from users with write access count, checked the same way as
+  comment runs. Other comments are ignored for this purpose.
+- A sticky pin also runs the end-to-end job on pull requests into `develop`, which
+  otherwise skip it, so every push to that PR runs the suite against those refs.
+- A push to an upstream PR does not trigger a run: comment the same line again, or
+  re-run the workflow from the Actions tab.
+- The `pull_request` run uses the workflow from the PR's merge commit, so once this
+  is merged into `develop`, open PRs pick it up on their next push, unless they
+  conflict with `develop`.
+
+### Actions tab
+
+The "Run workflow" form takes `vocdoni_node_ref`, `saas_backend_ref` (same forms
+as above) and `integrator_sdk_ref`: the SDK commit, branch, tag or `#PR` to build
+and install. Leave `integrator_sdk_ref` empty for the npm packages from the
+lockfile. The branch picked in "Use workflow from" is the app under test.
 
 Locally, build an image and point the stack at it:
 
@@ -81,7 +106,8 @@ image="$(sed -n 's/^image=//p' <<<"$out")"
 [ -n "$image" ] && VOCDONI_NODE_IMAGE="$image" pnpm test:e2e:stack
 ```
 
-Use `SAAS_BACKEND_IMAGE` and `saas-backend` the same way.
+Use `SAAS_BACKEND_IMAGE` and `saas-backend` the same way. `up` prints the two
+images it is using, so a run shows what it tested.
 
 Locally, pack the SDK and install it in place of the npm packages:
 
@@ -89,8 +115,9 @@ Locally, pack the SDK and install it in place of the npm packages:
 scripts/integration-build-sdk.sh <ref> /tmp/sdk-tgz
 node scripts/integration-use-sdk.mjs /tmp/sdk-tgz
 pnpm install --no-frozen-lockfile
-# when done, restore the files the last two commands rewrote:
+# when done, restore the files the last two commands rewrote, then the npm versions:
 git checkout pnpm-workspace.yaml pnpm-lock.yaml
+pnpm install
 ```
 
 ## Reading the mail

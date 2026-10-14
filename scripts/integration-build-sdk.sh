@@ -23,11 +23,9 @@ fi
 ref="$1"
 out_dir="$2"
 
-# Ref grammar: the same rule is duplicated in integration-pins.sh, integration-build-image.sh and
-
-# integration-build-sdk.sh. Keep all three in sync. No '..', no trailing '/' (not a valid git ref).
-
-if ! [[ "$ref" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]{0,99}$ ]] || [[ "$ref" == *..* || "$ref" == */ ]]; then
+# Ref grammar: the same rule is duplicated in integration-pins.sh and
+# integration-build-image.sh. Keep all three in sync.
+if ! [[ "$ref" =~ ^#[0-9]{1,9}$ || "$ref" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]{0,99}$ ]] || [[ "$ref" == *..* ]]; then
   echo "ERROR: invalid ref '$ref'" >&2
   exit 1
 fi
@@ -35,25 +33,38 @@ fi
 dir="$(mktemp -d)"
 trap 'rm -rf "$dir"' EXIT
 
-git clone --quiet --filter=blob:none --no-checkout "https://github.com/vocdoni/vocdoni-integrator-sdk.git" "$dir" >&2
-
-# Same resolution order as integration-build-image.sh: branches and tags, then
-# remote branches, then a direct fetch for refs only reachable by SHA.
-resolve() {
-  git -C "$dir" rev-parse --verify --quiet "$1^{commit}" 2>/dev/null || true
-}
-sha="$(resolve "$ref")"
-if [ -z "$sha" ]; then
-  sha="$(resolve "origin/$ref")"
+# Resolves the ref through the GitHub API, then shallow-fetches exactly that commit.
+# A #N ref reads the PR's head SHA; a branch, tag or short/full SHA goes via commits.
+auth=()
+if [ -n "${GH_TOKEN:-}" ]; then
+  auth=(-H "Authorization: Bearer $GH_TOKEN")
 fi
-if [ -z "$sha" ] && git -C "$dir" fetch --quiet origin "$ref" >&2; then
-  sha="$(resolve FETCH_HEAD)"
+body="$dir/resolve.txt"
+if [[ "$ref" == \#* ]]; then
+  command -v jq >/dev/null || {
+    echo "ERROR: jq is required to resolve '$ref'" >&2
+    exit 1
+  }
+  if curl -fsSL ${auth[@]+"${auth[@]}"} -H 'Accept: application/vnd.github+json' \
+    "https://api.github.com/repos/vocdoni/vocdoni-integrator-sdk/pulls/${ref:1}" -o "$body"; then
+    sha="$(jq -r '.head.sha // empty' "$body")"
+  else
+    sha=""
+  fi
+elif curl -fsSL ${auth[@]+"${auth[@]}"} -H 'Accept: application/vnd.github.sha' \
+  "https://api.github.com/repos/vocdoni/vocdoni-integrator-sdk/commits/$ref" -o "$body"; then
+  sha="$(cat "$body")"
+else
+  sha=""
 fi
-if [ -z "$sha" ]; then
+rm -f "$body"
+if ! [[ "$sha" =~ ^[0-9a-f]{40}$ ]]; then
   echo "ERROR: could not resolve '$ref' in vocdoni/vocdoni-integrator-sdk" >&2
   exit 1
 fi
-git -C "$dir" checkout --quiet "$sha" >&2
+git -C "$dir" init --quiet >&2
+git -C "$dir" fetch --quiet --depth 1 "https://github.com/vocdoni/vocdoni-integrator-sdk.git" "$sha" >&2
+git -C "$dir" checkout --quiet FETCH_HEAD >&2
 
 # packageManager looks like "pnpm@11.0.0+sha512.<hash>": keep the version only.
 pnpm_version="$(node -e '
