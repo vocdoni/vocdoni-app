@@ -1,6 +1,7 @@
 import { Box, HStack, List, useRecipe } from '@chakra-ui/react'
 import type { JSX } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
+import { countedCredentials, PASSWORD_CREDENTIAL } from './utils'
 
 export enum SecurityLevels {
   WEAK = 'WEAK',
@@ -103,7 +104,11 @@ export const getSecurityLevelMessages = (level: SecurityLevel): SecurityLevelMes
 
 export const getSecurityLevel = (use2FA: boolean, credentials: string[]): SecurityLevel => {
   if (use2FA) return SecurityLevels.STRONG
-  return credentials?.length === 3 ? SecurityLevels.MID : SecurityLevels.WEAK
+  // The password never lowers the level: it counts as a second factor of identity next to any other
+  // credential, but is not an identity on its own.
+  const identities = countedCredentials(credentials)
+  const hasPassword = credentials?.includes(PASSWORD_CREDENTIAL)
+  return identities === 3 || (identities >= 1 && hasPassword) ? SecurityLevels.MID : SecurityLevels.WEAK
 }
 
 const SecurityLevelBox = ({ level, isActive }: { level: SecurityLevel; isActive: boolean }) => {
