@@ -1,6 +1,7 @@
 import type { ImportJob } from '~src/queries/members'
 import { mockUseOrganization, render, screen } from '~src/test-utils'
 import { setReactProvidersMock } from '~src/test-utils-react-providers-mock'
+import { SpreadsheetManager } from '~components/Spreadsheet/SpreadsheetManager'
 import { buildImportRows, ImportProgress } from './Import'
 import { maskIfNeeded } from './maskIfNeeded'
 
@@ -101,6 +102,22 @@ describe('buildImportRows', () => {
       skippedLines: [],
     })
     expect(JSON.stringify(rows)).not.toContain('s3cret')
+  })
+
+  it('reports the real file line of a skipped row when blank rows were dropped', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const csv = 'name,password\na,abc123\n\n,,\nb,bad\n'
+    const manager = new SpreadsheetManager(new File([csv], 'members.csv', { type: 'text/csv' }), true)
+    await manager.read()
+
+    const result = await buildImportRows(
+      '0x00000000000000000000000000000000000000AA',
+      { heading: manager.header, filedata: manager.data, lineNumbers: manager.lineNumbers },
+      { name: 'name', password: 'password' }
+    )
+
+    expect(result.rows).toHaveLength(1)
+    expect(result.skippedLines).toEqual([5])
   })
 
   it('skips the rows whose password does not meet the requirements and reports their spreadsheet lines', async () => {

@@ -82,11 +82,12 @@ const mapSpreadsheetData = (data: SpreadsheetRow[], mapping: ColumnMapping): Map
  * The members to import from an uploaded spreadsheet, mapped to member fields. Passwords are
  * replaced by their hashes here, so the plaintext never leaves the browser. A row whose password
  * is set but does not meet the requirements is left out entirely; its spreadsheet line number
- * (the header is line 1) is returned in `skippedLines`.
+ * (the header is line 1) is returned in `skippedLines`
+ * (`lineNumbers` carries the real file line of each row, as blank rows are dropped on read).
  */
 export const buildImportRows = async (
   orgAddress: string,
-  spreadsheet: { heading: string[]; filedata: string[][] },
+  spreadsheet: { heading: string[]; filedata: string[][]; lineNumbers?: number[] },
   mapping: ColumnMapping
 ): Promise<{ rows: MappedRow[]; skippedLines: number[] }> => {
   const parsedRows: SpreadsheetRow[] = spreadsheet.filedata.map((row) =>
@@ -98,7 +99,7 @@ export const buildImportRows = async (
   const skippedLines: number[] = []
   const valid = mapSpreadsheetData(parsedRows, mapping).filter(({ password }, index) => {
     if (!password?.trim() || isValidMemberPassword(password)) return true
-    skippedLines.push(index + 2)
+    skippedLines.push(spreadsheet.lineNumbers?.[index] ?? index + 2)
     return false
   })
   return { rows: await hashMemberPasswords(orgAddress, valid), skippedLines }
